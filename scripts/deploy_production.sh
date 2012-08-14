@@ -17,7 +17,7 @@ cd ${ROOT}
 echo "Collecting static"
 . ./venv/bin/activate
 cd ${ROOT}/src
-python ./manage.py collectstatic
+python ./manage.py collectstatic --noinput --verbosity=0
 
 echo "Updating permissions"
 cd ${ROOT}
