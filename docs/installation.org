@@ -1,0 +1,143 @@
+* Installation Notes
+
+** dependencies (ubuntu)
+
+sudo apt-get install postgresql rabbitmq-server
+
+** setup postgres
+You must use postgres because of some raw SQL commands in the timepiece app.
+
+*** create user and database
+
+    $ sudo su - postgres
+    $ createuser
+    Enter name of user to add: imp
+    Shall the new user be allowed to create databases? (y/n) n
+    Shall the new user be allowed to create more new users? (y/n) n
+
+    $ psql
+    > ALTER USER imp WITH ENCRYPTED PASSWORD 'imp';
+    > exit
+
+    $ createdb -O imp implicitdesign   (note that -O is a capital o, not a zero)
+
+*** fixing login permissions
+
+If you can't login, you might need to configure the authentication settings for postgres
+
+edit the file /etc/postgres/../pg_hba.conf.
+    look for lines like the following:
+
+    local	all				ident sameuser
+    host	all	all	127.0.0.1/32	ident sameuser
+    host	all	all	::1/128		ident sameuser
+
+    and modify these lines to read:
+
+    local	all				password
+    host	all	all	127.0.0.1/32	password
+    host	all	all	::1/128		password
+
+ Then:
+  $ /etc/init.d/postgres restart
+
+** build timepiece documentation
+$ cd venv/src/django-timepiece/docs/
+$ make html
+
+Now you can view documentation using file:///XXXX/venv/src/django-timepiece/docs/_build/html/index.html
+
+** populate database
++ login as a superuser
++ click on your username in the top right and select admin
++ click on 'attributes'
++ add attributes for the different types in the dropdown
+
++ return to admin home on click on 'locations'
++ add a location 'office'
++ add attributes project_status='open', 'closed'
+
+* Postgresql command hints (for mysql users)
+
+Start postgresql:
+- sudo to the postgres user (eg sudo su - postgres)
+- psql
+
+
+
+mysql: USE database
+postgresql: \c database
+
+mysql: SHOW TABLES
+postgresql: \d
+postgresql: SELECT table_name FROM information_schema.tables WHERE table_schema = 'public';
+
+mysql: SHOW DATABASES
+postgresql: \l
+postgresql: SELECT datname FROM pg_database;
+
+mysql: SHOW COLUMNS
+postgresql: \d table
+postgresql: SELECT column_name FROM information_schema.columns WHERE table_name ='table';
+
+mysql: DESCRIBE TABLE
+postgresql: \d+ table
+postgresql: SELECT column_name FROM information_schema.columns WHERE table_name ='table';
+
+
+* Celery
+
+celery is used for message passing and is required for the
+delayed/cron-type jobs, such as parsing emacs timesheet files. To run this on a development environment, do:
+
+$ . ./venv/bin/activate
+$ cd src
+$ python manage.py celery worker -E
+
+You can then view running tasks in the /admin/djcelery/taskstate/
+
+
+
+
+
+* Deprecated
+These are some old instructions that might be useful for something.
+** install less
+   
+This was required for the initial conversion from the timepoint less
+files into src/implicitdesign/static/css/timepiece.css.  The
+compression and less converter the timepiece code was using was
+out-of-date and discontinued, and I prefer scss anyway so I just added
+the compiled version to git.
+
+These instructions did the trick.
+
+*** install node
+ sudo apt-get update
+ sudo apt-get install git-core curl build-essential openssl libssl-dev
+ git clone https://github.com/joyent/node.git
+ cd node
+ ./configure
+ make
+ sudo make install
+ node -v
+   v0.6.12
+
+*** install npm
+ curl -k https://npmjs.org/install.sh > sudo sh
+ npm -v
+   1.1.4
+
+*** install less
+
+ npm install less
+ 
+ edit ~/.bashrc:
+   PATH=$PATH:$HOME/node_modules/less/bin  #(for ubuntu 10)
+   PATH=$PATH:$HOME/node/node_modules/less/bin #(for ubuntu 12)
+   source ~/.bashrc
+
+confirm that 'lessc' works from the command line
+
+
+

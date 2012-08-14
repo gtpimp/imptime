@@ -1,0 +1,21 @@
+Django==1.4.1
+MySQL-python==1.2.3
+South==0.7.6
+amqplib==1.0.2
+anyjson==0.3.3
+argparse==1.2.1
+billiard==2.7.3.12
+celery==3.0.5
+distribute==0.6.24
+django-appconf==0.5
+django-bootstrap-toolkit==2.5.4
+django-celery==3.0.4
+django-pagination==1.0.7
+-e git+https://github.com/cyberdelia/django-pipeline.git@d238058ab8c29e41f9160c1c8db7452fee1abed6#egg=django_pipeline-dev
+django-selectable==0.4.1
+-e git+https://github.com/gtp/django-timepiece.git@a951448f32b4952d9b5ef2b20493c61d6deca732#egg=django_timepiece-dev
+kombu==2.3.2
+psycopg2==2.4.1
+python-dateutil==1.5
+pytz==2012c
+wsgiref==0.1.2
