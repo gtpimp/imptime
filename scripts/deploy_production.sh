@@ -11,8 +11,8 @@ git reset --hard HEAD
 git pull origin master
 
 echo "Updating permissions"
-git chown -R www-data:impwebsite *
-git chmow g+w -R *
+sudo chown -R www-data:impwebsite *
+sudo chmod g+w -R *
 
 echo "Reloading apache"
 sudo /etc/init.d/apache2 reload
