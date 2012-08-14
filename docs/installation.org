@@ -86,6 +86,25 @@ cd scripts
 problems in the timepiece migrations. If it doesn't stop the deploy,
 don't worry about it)
 
+** setup apache
+
+*** alias and directory config
+add a file to /etc/apache2/sites-enabled, with an entry something like this:
+
+  Alias /impwebsite /home/website/impwebsite/src/implicitdesign/wsgi.py
+  <Directory /home/website/impwebsite/src/implicitdesign>
+    AuthType Basic
+    AuthName "us"
+    AuthUserFile /etc/apache2/us.passwd
+    Require user us
+    Options ExecCGI
+    SetHandler wsgi-script
+    DirectoryIndex wsgi.py
+  </Directory>
+
+*** wsgi executable
+chmod +x /home/website/impwebsite/src/implicitdesign/wsgi.py
+
 ** populate database
 + login as a superuser
 + click on your username in the top right and select admin

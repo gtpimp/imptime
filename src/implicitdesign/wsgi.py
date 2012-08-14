@@ -14,18 +14,25 @@ framework.
 
 """
 import os
+import sys 
 
 os.environ.setdefault("DJANGO_SETTINGS_MODULE", "implicitdesign.settings")
 
-import djcelery
-djcelery.setup_loader()
-
-import sys 
+# Add extra imports, add more as needed, apache won't find anything in venv/src by default
 sys.stdout = sys.stderr
-VENV_HOME = os.path.join(os.path.dirname(os.path.realpath(__file__), "..", "..", "venv"))
+PROJECT_HOME= os.path.join(os.path.dirname(os.path.realpath(__file__)), "..", "..")
+VENV_HOME = os.path.join(PROJECT_HOME, "venv")
+SRC_HOME = os.path.join(PROJECT_HOME, "src")
+sys.path.append(SRC_HOME)
 sys.path.append(VENV_HOME + '/src/django-timepiece')
 sys.path.append(VENV_HOME + '/src/django-pipeline')
-sys.path.insert(0, VENV_HOME + '/src/venv/lib/python2.6/site-packages')
+sys.path.insert(0, VENV_HOME + '/lib/python2.6/site-packages')
+
+sys.stdout = sys.stderr
+
+# Setup celery (cron jobs)
+import djcelery
+djcelery.setup_loader()
 
 # This application object is used by any WSGI server configured to use this
 # file. This includes Django's development server, if the WSGI_APPLICATION

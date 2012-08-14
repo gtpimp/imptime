@@ -10,6 +10,10 @@ echo "Updating from git"
 git reset --hard HEAD
 git pull origin master
 
+echo "Updating permissions"
+git chown -R www-data:impwebsite *
+git chmow g+w -R *
+
 echo "Reloading apache"
 sudo /etc/init.d/apache2 reload
 
