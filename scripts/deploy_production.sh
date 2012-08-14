@@ -3,12 +3,15 @@
 #force a sudo early
 sudo ls > /dev/null
 
-ROOT=/home/website/impwebsite
+ROOT=~/impwebsite
 cd ${ROOT}
 
 echo "Updating from git"
-git reset --hard HEAD
+#git reset --hard HEAD
 git pull origin master
+
+echo "Running deploy_local"
+./scripts/deploy_local.sh
 
 echo "Updating permissions"
 sudo chown -R www-data:impwebsite *
