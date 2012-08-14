@@ -4,16 +4,23 @@
 sudo ls > /dev/null
 
 ROOT=~/impwebsite
-cd ${ROOT}
 
 echo "Updating from git"
+cd ${ROOT}
 #git reset --hard HEAD
 git pull origin master
 
 echo "Running deploy_local"
+cd ${ROOT}
 ./scripts/deploy_local.sh
 
+echo "Collecting static"
+. ./venv/bin/activate
+cd ${ROOT}/src
+python ./manage.py collectstatic
+
 echo "Updating permissions"
+cd ${ROOT}
 sudo chown -R www-data:impwebsite *
 sudo chmod g+w -R *
 

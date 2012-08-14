@@ -105,6 +105,11 @@ add a file to /etc/apache2/sites-enabled, with an entry something like this:
 *** wsgi executable
 chmod +x /home/website/impwebsite/src/implicitdesign/wsgi.py
 
+*** static
+in local_settings, add something like this:
+  STATIC_URL='/us/static/'
+  STATIC_ROOT = "/home/impwebsite/static"
+
 ** populate database
 + login as a superuser
 + click on your username in the top right and select admin
