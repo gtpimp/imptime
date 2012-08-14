@@ -3,7 +3,7 @@
 #force a sudo early
 sudo ls > /dev/null
 
-ROOT=`git rev-parse --show-toplevel`
+ROOT=/home/website/impwebsite
 cd ${ROOT}
 
 echo "Updating from git"
