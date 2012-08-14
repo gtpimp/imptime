@@ -23,9 +23,13 @@ You must use postgres because of some raw SQL commands in the timepiece app.
 
 *** fixing login permissions
 
-If you can't login, you might need to configure the authentication settings for postgres
+If you can't login with this error:
 
-edit the file /etc/postgres/../pg_hba.conf.
+  psycopg2.OperationalError: FATAL:  Ident authentication failed for user "imp"
+
+then you might need to configure the authentication settings for postgres
+
+edit the file /etc/postgresql/../pg_hba.conf.
     look for lines like the following:
 
     local	all				ident sameuser
@@ -47,6 +51,41 @@ $ make html
 
 Now you can view documentation using file:///XXXX/venv/src/django-timepiece/docs/_build/html/index.html
 
+** setup rabbitmq
+
+If rabbitmq_server won't start (might fail during install) with this error
+      $ sudo apt-get install rabbitmq-server 
+      Reading package lists... Done
+      Building dependency tree       
+      Reading state information... Done
+      rabbitmq-server is already the newest version.
+      0 upgraded, 0 newly installed, 0 to remove and 58 not upgraded.
+      1 not fully installed or removed.
+      After this operation, 0B of additional disk space will be used.
+      Setting up rabbitmq-server (1.7.2-1ubuntu1) ...
+      Starting rabbitmq-server: FAILED - check /var/log/rabbitmq/startup_log, _err
+      rabbitmq-server.
+      invoke-rc.d: initscript rabbitmq-server, action "start" failed.
+  >   dpkg: error processing rabbitmq-server (--configure):
+       subprocess installed post-installation script returned error exit status 1
+      Errors were encountered while processing:
+       rabbitmq-server
+      E: Sub-process /usr/bin/dpkg returned an error code (1)
+
+Then try putting this in /etc/rabbitmq/rabbitmq.conf (create the file if necessary):
+
+    NODENAME=rabbit@localhost
+    NODE_IP_ADDRESS=127.0.0.1
+
+** deploy_local
+
+cd scripts
+./deploy_local.sh
+
+(ignore errors in migration, even the FATAL ones, there are some
+problems in the timepiece migrations. If it doesn't stop the deploy,
+don't worry about it)
+
 ** populate database
 + login as a superuser
 + click on your username in the top right and select admin
@@ -56,6 +95,7 @@ Now you can view documentation using file:///XXXX/venv/src/django-timepiece/docs
 + return to admin home on click on 'locations'
 + add a location 'office'
 + add attributes project_status='open', 'closed'
+
 
 * Postgresql command hints (for mysql users)
 

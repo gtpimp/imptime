@@ -20,6 +20,13 @@ os.environ.setdefault("DJANGO_SETTINGS_MODULE", "implicitdesign.settings")
 import djcelery
 djcelery.setup_loader()
 
+import sys 
+sys.stdout = sys.stderr
+VENV_HOME = os.path.join(os.path.dirname(os.path.realpath(__file__), "..", "..", "venv"))
+sys.path.append(VENV_HOME + '/src/django-timepiece')
+sys.path.append(VENV_HOME + '/src/django-pipeline')
+sys.path.insert(0, VENV_HOME + '/src/venv/lib/python2.6/site-packages')
+
 # This application object is used by any WSGI server configured to use this
 # file. This includes Django's development server, if the WSGI_APPLICATION
 # setting points here.

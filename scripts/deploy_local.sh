@@ -47,7 +47,7 @@ fi
 cd -
 
 echo "fixing permissions"
-cd ${HOME}
+cd ${ROOT}
 if [ ! -d logs ]; then
     mkdir logs
 fi
