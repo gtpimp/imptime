@@ -89,7 +89,7 @@ don't worry about it)
 ** setup apache
 
 *** alias and directory config
-add a file to /etc/apache2/sites-enabled, with an entry something like this:
+add a file to /etc/apache2/sites-enabled/000-default, with an entry something like this:
 
   Alias /impwebsite /home/website/impwebsite/src/implicitdesign/wsgi.py
   <Directory /home/website/impwebsite/src/implicitdesign>
@@ -107,8 +107,18 @@ chmod +x /home/website/impwebsite/src/implicitdesign/wsgi.py
 
 *** static
 in local_settings, add something like this:
-  STATIC_URL='/us/static/'
+  STATIC_URL='/us_static/'
   STATIC_ROOT = "/home/impwebsite/static"
+
+And then another entry to /etc/apache2/sites-enabled/000-default for static serving:
+
+  Alias /us_static /home/website/impwebsite/static                                             
+  <Directory /home/website/impwebsite/static>                                                  
+    AuthType Basic                                                                             
+    AuthName "us"                                                                              
+    AuthUserFile /etc/apache2/us.passwd                                                        
+    Require user us                                                                            
+  </Directory>
 
 ** populate database
 + login as a superuser
@@ -119,6 +129,12 @@ in local_settings, add something like this:
 + return to admin home on click on 'locations'
 + add a location 'office'
 + add attributes project_status='open', 'closed'
+
+** setup celery
+You will need to start celery as a daemon. Look for example init.d scripts here: https://github.com/ask/celery/tree/master/contrib/generic-init.d
+If you have problems running them, run them in verbose mode like this:
+
+  sh -x /etc/init.d/celeryd start
 
 
 * Postgresql command hints (for mysql users)

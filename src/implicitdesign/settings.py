@@ -80,7 +80,7 @@ STATICFILES_FINDERS = (
     'django.contrib.staticfiles.finders.AppDirectoriesFinder',
 #    'django.contrib.staticfiles.finders.DefaultStorageFinder',
 )
-STATICFILES_STORAGE = 'pipeline.storage.PipelineCachedStorage'
+#STATICFILES_STORAGE = 'pipeline.storage.PipelineCachedStorage'
 # PIPELINE_CSS = {
 #     'colors': {
 #         'source_filenames': (
@@ -95,9 +95,9 @@ STATICFILES_STORAGE = 'pipeline.storage.PipelineCachedStorage'
 #     },
 # }
 
-PIPELINE_COMPILERS = (
-  'pipeline.compilers.less.LessCompiler',
-)
+# PIPELINE_COMPILERS = (
+#   'pipeline.compilers.less.LessCompiler',
+# )
 
 # PIPELINE_JS = {
 #     'stats': {

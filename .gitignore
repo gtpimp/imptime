@@ -1,6 +1,7 @@
 venv
 *pyc
 *~
-src/celeryev.pid
+src/*.pid
+*.log
 logs
 src/implicitdesign/local_settings.py

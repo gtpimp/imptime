@@ -12,7 +12,7 @@ def do_import(request, template="import.html", context=None):
         context['msg'] = 'import task run'
     else:
         task = import_timesheets_from_emacs_task.delay()
-        context['msg'] = 'import task started : current result is %s' % task.result
+        context['msg'] = 'delayed import task started : current result is %s' % task.result
 
     return render_to_response(template, context, context_instance=RequestContext(request))
 
