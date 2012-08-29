@@ -135,8 +135,8 @@ class Processor(object):
                 continue
 
             if "Daily report" in line:
-                running_date = datetime.strptime(line[-16:-6], "%Y-%m-%d")
-                running_date = datetime(running_date.year, running_date.month, running_date.day, 1, 0) # Start time for each day, nice and early so we can fit all the overtime in.
+                start_date = datetime.strptime(line[-16:-6], "%Y-%m-%d")
+                start_date = datetime(start_date.year, start_date.month, start_date.day, 1, 0)
 
             elif "#+END" in line:
                 return clocktable_entries
@@ -151,13 +151,12 @@ class Processor(object):
                 elif len(issue_time)>0:
                     hours, minutes = issue_time.split(":")
                     minutes = 60*int(hours) + int(minutes)
-                    started = running_date
+                    started = start_date
                     ended = started + timedelta(minutes=minutes)
                     clocktable_entries.append( {'sprint': current_sprint_name,
                                                 'issue': description,
                                                 'started': started,
                                                 'ended': ended } )
-                    running_date = ended
             
         raise Exception("Shouldn't get here")
 
@@ -199,9 +198,34 @@ class Processor(object):
 
             try:
                 entry = Entry.objects.get(user=timesheet_user, 
-                                          start_time=clocktable_entry['started'], end_time=clocktable_entry['ended'],
-                                          activity=activity,location=location,project=project)
-                logger.debug("Existing entry: %s %s %s %s : %s" % (business, project, clocktable_entry['started'], clocktable_entry['ended'], entry))
+                                          activity=activity,location=location,project=project,
+                                          start_time__year=clocktable_entry['started'].year,
+                                          start_time__month=clocktable_entry['started'].month,
+                                          start_time__day=clocktable_entry['started'].day)
+
+                if entry.start_time.replace(tzinfo=None) != clocktable_entry['started'] or entry.end_time.replace(tzinfo=None) != clocktable_entry['ended']:
+                    logger.debug("Existing entry: %s %s %s %s : %s" % (business, project, clocktable_entry['started'], clocktable_entry['ended'], entry))
+                    logger.info("Timesheet entry changed. Was %s to %s, now %s to %s, updating" % (entry.start_time, entry.end_time, clocktable_entry['started'], clocktable_entry['ended']))
+                    entry.start_time = clocktable_entry['started']
+                    entry.end_time = clocktable_entry['ended']
+                    entry.save()
+
+            except Entry.MultipleObjectsReturned:
+                for entry in Entry.objects.filter(user=timesheet_user, 
+                                             activity=activity,location=location,project=project,
+                                             start_time__year=clocktable_entry['started'].year,
+                                             start_time__month=clocktable_entry['started'].month,
+                                             start_time__day=clocktable_entry['started'].day):
+                    entry.delete()
+
+                entry = Entry.objects.create(user=timesheet_user, 
+                                             start_time=clocktable_entry['started'], end_time=clocktable_entry['ended'],
+                                             activity=activity,location=location,project=project,
+                                             status='approved',
+                                             comments='auto_created')
+                logger.debug("Created entry: %s %s %s %s : %s" % (business, project, clocktable_entry['started'], 
+                                                                  clocktable_entry['ended'], entry))
+                    
             except Entry.DoesNotExist:
                 entry = Entry.objects.create(user=timesheet_user, 
                                              start_time=clocktable_entry['started'], end_time=clocktable_entry['ended'],
