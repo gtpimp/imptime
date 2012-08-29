@@ -1,5 +1,6 @@
 import sys
 import os
+import fnmatch, re
 import json
 import copy
 from implicitdesign import settings
@@ -58,23 +59,29 @@ class Processor(object):
 
         self.update_input_folder()
         
-        def callback(arg, dirname, fnames):
-            for fname in fnames:
-                
-                only_include_rated_files = True
-                
-                is_valid_timesheet_file = fname[-4:] == ".org" and fname[0] != "." and fname[0] != "#" and \
-                    ( not only_include_rated_files or fname in self.user_rates.keys())
-                
-                if is_valid_timesheet_file:
-                    tstart = self.ref_current_date - timedelta(days=self.num_historical_days) 
-                    tend = self.ref_current_date
-                    self.process_file(dirname, fname, tstart, tend)
-                else:
-                    logger.debug("%s: Ignoring : %s" % (self.user,fname))
+        def handle_file(dirname, fname):
+            only_include_rated_files = True
+
+            is_valid_timesheet_file = fname[-4:] == ".org" and fname[0] != "." and fname[0] != "#" and \
+                ( not only_include_rated_files or fname in self.user_rates.keys())
+
+            if is_valid_timesheet_file:
+                tstart = self.ref_current_date - timedelta(days=self.num_historical_days) 
+                tend = self.ref_current_date
+                self.process_file(dirname, fname, tstart, tend)
+            else:
+                logger.debug("%s: Ignoring : %s" % (self.user,fname))
 
         logger.debug( "looking for timesheet files in %s" % self.input_path)
-        os.path.walk(self.input_path, callback, None)
+        #os.path.walk(self.input_path, callback, topdown=True)
+
+        includes = ["*.org",]
+        excludes = [".git",]
+        for root, dirs, files in os.walk(self.input_path, topdown=True):
+            dirs[:] = [d for d in dirs if d not in excludes] 
+            for pat in includes:
+                for f in fnmatch.filter(files, pat):
+                    handle_file(root, f)
 
         return self.status
 
