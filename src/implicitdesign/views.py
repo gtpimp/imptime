@@ -4,3 +4,7 @@ from django.template import RequestContext
 def home(request, template="home.html", context=None):
     context = context or {}
     return render_to_response(template, context, context_instance=RequestContext(request))
+
+def timesheet_graphs(request):
+    pass
+    

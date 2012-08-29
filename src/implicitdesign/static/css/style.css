@@ -1,0 +1,38 @@
+
+body {
+    color: #666;
+    font: 13px Verdana, sans-serif;
+    width: 100%;
+    background: #efefef;
+
+}
+
+.header img {
+    width: 200px;
+}
+
+.menu {
+    width: 100%;
+    text-align: center;
+    background-color: #333333;
+}
+
+.menu ul {
+    position: relative;
+}
+
+.menu li {
+    float: left;
+    padding: 10px;
+}
+
+.menu li a {
+    text-decoration: none;
+    color: #000000;
+    padding: 2px;
+}
+
+.menu li a:hover {
+    border-bottom: 1px solid #232323;
+    background-color: #cccccb;
+}
