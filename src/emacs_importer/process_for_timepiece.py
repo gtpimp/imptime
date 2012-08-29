@@ -83,7 +83,7 @@ class Processor(object):
             return
 
         process_args = [os.path.join(self.root_folder, 'reset_input_folder.sh'), self.input_path]
-        p = subprocess.Popen(process_args, stdout=sys.stdout, stderr=sys.stdout)
+        p = subprocess.Popen(process_args, stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
         p.wait()
 
     def process_file(self, dirname, fname, tstart, tend):
