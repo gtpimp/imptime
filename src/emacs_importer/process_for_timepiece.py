@@ -2,6 +2,7 @@ import sys
 import os
 import json
 import copy
+from implicitdesign import settings
 import calendar
 from django.contrib.auth.models import User
 from timepiece.models import Business, Project, Activity, Entry, Location, Attribute
@@ -89,7 +90,6 @@ class Processor(object):
 
         filepath = os.path.join(dirname, fname)
 
-        import settings
         self.output_path = settings.EMACSIMPORTER_TEMP_DIR
         self.temp_filename = os.path.join(self.output_path, "temp.org")
 
