@@ -105,7 +105,7 @@ class Processor(object):
         self.create_clocktable_file(filepath, self.temp_filename, tstart, tend)
         self.create_clocktable(self.temp_filename)
         clocktable_entries = self.extract_clocktable_entries(self.temp_filename)
-        self.clean_clocktable_entries(tstart, tend)
+        self.clean_clocktable_entries(self.user, tstart, tend)
         self.import_clocktable_entries(fname, clocktable_entries)
         
     def create_clocktable_file(self, input_file, output_file, tstart, tend):
@@ -135,8 +135,8 @@ class Processor(object):
         p.wait()
         logger.debug("Emacs done")
 
-    def clean_clocktable_entries(self, tstart, tend):
-        Entry.objects.all().filter(start_time__gte=tstart).filter(end_time__lte=tend).delete()
+    def clean_clocktable_entries(self, user, tstart, tend):
+        Entry.objects.all().filter(user__username=user).filter(start_time__gte=tstart).filter(end_time__lte=tend).delete()
 
     def extract_clocktable_entries(self, input_file):
         f = open(input_file)
