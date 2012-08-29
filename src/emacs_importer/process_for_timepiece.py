@@ -83,6 +83,7 @@ class Processor(object):
                 for f in fnmatch.filter(files, pat):
                     handle_file(root, f)
 
+        logger.debug( "Import process complete")
         return self.status
 
     def update_input_folder(self):
