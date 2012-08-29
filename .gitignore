@@ -5,3 +5,4 @@ src/*.pid
 *.log
 logs
 src/implicitdesign/local_settings.py
+src/implicitdesign/static/admin
