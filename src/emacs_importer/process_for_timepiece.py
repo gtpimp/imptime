@@ -52,6 +52,9 @@ class Processor(object):
 
     def process(self):
 
+        tstart = self.ref_current_date - timedelta(days=self.num_historical_days) 
+        tend = self.ref_current_date
+        self.clean_clocktable_entries(self.user, tstart, tend)
         self.status = { 'num_entries_created' : 0,
                         'num_entries_deleted' : 0,
                         'num_entries_updated' : 0,
@@ -66,8 +69,6 @@ class Processor(object):
                 ( not only_include_rated_files or fname in self.user_rates.keys())
 
             if is_valid_timesheet_file:
-                tstart = self.ref_current_date - timedelta(days=self.num_historical_days) 
-                tend = self.ref_current_date
                 self.process_file(dirname, fname, tstart, tend)
             else:
                 logger.debug("%s: Ignoring : %s" % (self.user,fname))
@@ -105,7 +106,6 @@ class Processor(object):
         self.create_clocktable_file(filepath, self.temp_filename, tstart, tend)
         self.create_clocktable(self.temp_filename)
         clocktable_entries = self.extract_clocktable_entries(self.temp_filename)
-        self.clean_clocktable_entries(self.user, tstart, tend)
         self.import_clocktable_entries(fname, clocktable_entries)
         
     def create_clocktable_file(self, input_file, output_file, tstart, tend):
@@ -137,6 +137,7 @@ class Processor(object):
 
     def clean_clocktable_entries(self, user, tstart, tend):
         Entry.objects.all().filter(user__username=user).filter(start_time__gte=tstart).filter(end_time__lte=tend).delete()
+        logger.debug("Wiping for %s from %s to %s" % (user, tstart, tend))
 
     def extract_clocktable_entries(self, input_file):
         f = open(input_file)
