@@ -128,7 +128,7 @@ class Processor(object):
         logger.debug("Emacs done")
 
     def clean_clocktable_entries(self, tstart, tend):
-        list([x.delete() for x in Entry.objects.all().filter(start_time__gte=tstart).filter(end_time__lte=tend)])
+        Entry.objects.all().filter(start_time__gte=tstart).filter(end_time__lte=tend).delete()
 
     def extract_clocktable_entries(self, input_file):
         f = open(input_file)
