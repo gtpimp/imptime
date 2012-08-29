@@ -69,7 +69,7 @@ class Processor(object):
                 
                 if is_valid_timesheet_file:
                     tstart = self.ref_current_date - timedelta(days=self.num_historical_days) 
-                    tend = self.ref_current_date - timedelta(days=1)
+                    tend = self.ref_current_date
                     self.process_file(dirname, fname, tstart, tend)
                 else:
                     logger.debug("%s: Ignoring : %s" % (self.user,fname))
