@@ -12,11 +12,11 @@
 
     <div class="menu">
       <ul>
-	<li><a href="{% url timepiece-entries %}">project timesheets</a></li>
-	<li><a href="http://www.implicitdesign.co.za/invoice">create invoices</a></li>
-	<li><a href="http://www.implicitdesign.co.za/us/timesheetfiles/browse/">raw timesheet files</a></li>
+	<li><a href="{% url list_projects %}">timepiece</a></li>
+	<li><a href="http://www.implicitdesign.co.za/invoice">bamboo</a></li>
+	<li><a href="http://www.implicitdesign.co.za/us/timesheetfiles/browse/">timesheet graphs</a></li>
 	<li><a href="http://www.implicitdesign.co.za/invoices/invoices">old invoices</a></li>
-	<li><a href="{% url emacs_importer:do_import %}?immediate=1">(admin) refresh timesheet files</a></li>
+	<li class='admin'><a href="{% url emacs_importer:do_import %}?immediate=1">refresh timesheet files</a></li>
       </ul>
     </div>
 
