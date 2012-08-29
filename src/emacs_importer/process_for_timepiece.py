@@ -1,6 +1,5 @@
 import sys
 import os
-import settings
 import json
 import copy
 import calendar
@@ -44,8 +43,6 @@ class Processor(object):
         if not os.path.exists(self.input_path):
             logger.error(Exception("No user input file at %s " % self.input_path))
 
-        self.output_path = settings.EMACSIMPORTER_TEMP_DIR
-        self.temp_filename = os.path.join(self.output_path, "temp.org")
         self.load_rates(rates_info)
 
     def load_rates(self, rates_info):
@@ -91,6 +88,10 @@ class Processor(object):
     def process_file(self, dirname, fname, tstart, tend):
 
         filepath = os.path.join(dirname, fname)
+
+        import settings
+        self.output_path = settings.EMACSIMPORTER_TEMP_DIR
+        self.temp_filename = os.path.join(self.output_path, "temp.org")
 
         self.create_clocktable_file(filepath, self.temp_filename, tstart, tend)
         self.create_clocktable(self.temp_filename)
