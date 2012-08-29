@@ -1,5 +1,10 @@
 #!/bin/bash
 
+if [ `whoami` != 'website' ]; then
+    echo "Please run as user 'website'"
+    exit 1
+fi
+
 #force a sudo early
 sudo ls > /dev/null
 
