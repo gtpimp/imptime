@@ -43,7 +43,7 @@ class Processor(object):
         if not os.path.exists(self.input_path):
             logger.error(Exception("No user input file at %s " % self.input_path))
 
-        self.output_path = "/tmp/" #os.path.join(self.root_folder, "output", self.user)
+        self.output_path = settings.EMACSIMPORTER_TEMP_DIR
         self.temp_filename = os.path.join(self.output_path, "temp.org")
         self.load_rates(rates_info)
 
@@ -57,6 +57,7 @@ class Processor(object):
         self.historical_summary_files = []
         self.historical_dates = []
         self.crossfile_clocktables = {}
+
         self.update_input_folder()
         
         def callback(arg, dirname, fnames):

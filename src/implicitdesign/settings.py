@@ -195,6 +195,7 @@ EMACSIMPORTER_POINTPERSON_USERNAME='gtp'
 EMACSIMPORTER_RATES = { "test":{"id-test.org":50,
                                 "id-koen.org":100,
                                 "id-fonk.org":200} }
+EMACSIMPORTER_TEMP_DIR = "/tmp"
 
 # # These urls may need to be specified on a production server when the site it not hosted at the root domain.
 #LOGIN_URL=
