@@ -11,7 +11,8 @@ def import_timesheets_from_emacs():
 
     user_email = "gtp@implicitdesign.co.za"
 
-    for user in ["alec", "gtp", "stephan"]:
+    status = {}
+    for user in settings.EMACS_USERS_TO_PROCESS:
 
         processor_kwargs = { 'root_folder': settings.EMACSIMPORTER_TIMESHEET_ROOT_FOLDER,
                              'email_from': settings.EMACSIMPORTER_EMAIL_FROM,
@@ -21,4 +22,5 @@ def import_timesheets_from_emacs():
                              #'ref_current_date': datetime(2011, 8, 30)
                              }
 
-        Processor(user, user_email, **processor_kwargs).process()
+        status[user] = Processor(user, user_email, **processor_kwargs).process()
+    return status

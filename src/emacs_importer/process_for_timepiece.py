@@ -25,7 +25,7 @@ logger = logging.getLogger(__name__)
 class Processor(object):
     
     email_from = "gtp@implicitdesign.co.za"
-    email_to = ["gtp@implicitdesign.co.za", "laila@implicitdesign.co.za"]
+    email_to = settings.EMACS_ADMIN_USER_EMAILS
     
     def __init__(self, user="test", user_email="fake@implicitdesign.co.za", 
                  root_folder = '.', email_from='gtp@implicitdesign.co.za', 
@@ -51,11 +51,10 @@ class Processor(object):
 
     def process(self):
 
-        self.output_files = []
-        self.summary_files = []
-        self.historical_summary_files = []
-        self.historical_dates = []
-        self.crossfile_clocktables = {}
+        self.status = { 'num_entries_created' : 0,
+                        'num_entries_deleted' : 0,
+                        'num_entries_updated' : 0,
+                        'num_entries_unchanged' : 0 }
 
         self.update_input_folder()
         
@@ -77,6 +76,8 @@ class Processor(object):
         logger.debug( "looking for timesheet files in %s" % self.input_path)
         os.path.walk(self.input_path, callback, None)
 
+        return self.status
+
     def update_input_folder(self):
         if self.user == "test":
             #'test' doesn't have a git repo, and we don't want to reset our code during development
@@ -96,11 +97,12 @@ class Processor(object):
         self.create_clocktable_file(filepath, self.temp_filename, tstart, tend)
         self.create_clocktable(self.temp_filename)
         clocktable_entries = self.extract_clocktable_entries(self.temp_filename)
+        self.clean_clocktable_entries(tstart, tend)
         self.import_clocktable_entries(fname, clocktable_entries)
         
     def create_clocktable_file(self, input_file, output_file, tstart, tend):
         date_format = "%Y-%m-%d %a"
-        clocktable_def = '#+BEGIN: clocktable :maxlevel 3 :scope file :link nil :tstart "<%s>" :tend "<%s>" :step day\n#+END:\n' % (tstart.strftime(date_format), tend.strftime(date_format))
+        clocktable_def = '#+BEGIN: clocktable :maxlevel 2 :scope file :link nil :tstart "<%s>" :tend "<%s>" :step day\n#+END:\n' % (tstart.strftime(date_format), tend.strftime(date_format))
         f = open(output_file, "w")
         f.write(clocktable_def)
         f.write(open(input_file).read())
@@ -125,6 +127,9 @@ class Processor(object):
         p.wait()
         logger.debug("Emacs done")
 
+    def clean_clocktable_entries(self, tstart, tend):
+        list([x.delete() for x in Entry.objects.all().filter(start_time__gte=tstart).filter(end_time__lte=tend)])
+
     def extract_clocktable_entries(self, input_file):
         f = open(input_file)
         f.readline() 
@@ -139,7 +144,7 @@ class Processor(object):
 
             if "Daily report" in line:
                 start_date = datetime.strptime(line[-16:-6], "%Y-%m-%d")
-                start_date = datetime(start_date.year, start_date.month, start_date.day, 1, 0)
+                start_date = datetime(start_date.year, start_date.month, start_date.day, 3, 0)
 
             elif "#+END" in line:
                 return clocktable_entries
@@ -148,18 +153,28 @@ class Processor(object):
             elif len(time_parts) >= 6:
                 description = time_parts[2].strip()
                 sprint_time = time_parts[4].strip()
-                issue_time = time_parts[5].strip()
+                #issue_time = time_parts[5].strip()
+                current_sprint_name = description
                 if len(sprint_time)>0:
-                    current_sprint_name = description
-                elif len(issue_time)>0:
-                    hours, minutes = issue_time.split(":")
+
+                    hours, minutes = sprint_time.split(":")
                     minutes = 60*int(hours) + int(minutes)
                     started = start_date
                     ended = started + timedelta(minutes=minutes)
                     clocktable_entries.append( {'sprint': current_sprint_name,
-                                                'issue': description,
+                                                'issue': "daily dev",
                                                 'started': started,
                                                 'ended': ended } )
+
+                # elif len(issue_time)>0:
+                #     hours, minutes = issue_time.split(":")
+                #     minutes = 60*int(hours) + int(minutes)
+                #     started = start_date
+                #     ended = started + timedelta(minutes=minutes)
+                #     clocktable_entries.append( {'sprint': current_sprint_name,
+                #                                 'issue': description,
+                #                                 'started': started,
+                #                                 'ended': ended } )
             
         raise Exception("Shouldn't get here")
 
@@ -189,6 +204,7 @@ class Processor(object):
                                                slug=business_name.replace(" ","_"),
                                                email="%s@implicitdesign.co.za"%business_name.replace(" ","_"),
                                                description="(auto_created from timesheets")
+
         for clocktable_entry in clocktable_entries:
             project_name = clocktable_entry['sprint']
             try:
@@ -199,45 +215,15 @@ class Processor(object):
                                                  status=project_status, type=project_type,
                                                  description=project_name + " (auto_created)")
 
-            try:
-                entry = Entry.objects.get(user=timesheet_user, 
-                                          activity=activity,location=location,project=project,
-                                          start_time__year=clocktable_entry['started'].year,
-                                          start_time__month=clocktable_entry['started'].month,
-                                          start_time__day=clocktable_entry['started'].day)
-
-                if entry.start_time.replace(tzinfo=None) != clocktable_entry['started'] or entry.end_time.replace(tzinfo=None) != clocktable_entry['ended']:
-                    logger.debug("Existing entry: %s %s %s %s : %s" % (business, project, clocktable_entry['started'], clocktable_entry['ended'], entry))
-                    logger.info("Timesheet entry changed. Was %s to %s, now %s to %s, updating" % (entry.start_time, entry.end_time, clocktable_entry['started'], clocktable_entry['ended']))
-                    entry.start_time = clocktable_entry['started']
-                    entry.end_time = clocktable_entry['ended']
-                    entry.save()
-
-            except Entry.MultipleObjectsReturned:
-                for entry in Entry.objects.filter(user=timesheet_user, 
-                                             activity=activity,location=location,project=project,
-                                             start_time__year=clocktable_entry['started'].year,
-                                             start_time__month=clocktable_entry['started'].month,
-                                             start_time__day=clocktable_entry['started'].day):
-                    entry.delete()
-
-                entry = Entry.objects.create(user=timesheet_user, 
-                                             start_time=clocktable_entry['started'], end_time=clocktable_entry['ended'],
-                                             activity=activity,location=location,project=project,
-                                             status='approved',
-                                             comments='auto_created')
-                logger.debug("Created entry: %s %s %s %s : %s" % (business, project, clocktable_entry['started'], 
+            entry = Entry.objects.create(user=timesheet_user, 
+                                         start_time=clocktable_entry['started'], end_time=clocktable_entry['ended'],
+                                         activity=activity,location=location,project=project,
+                                         status='approved',
+                                         comments='auto_created')
+            self.status['num_entries_created'] += 1
+            logger.debug("Created new entry: %s %s %s %s : %s" % (business, project, clocktable_entry['started'], 
                                                                   clocktable_entry['ended'], entry))
-                    
-            except Entry.DoesNotExist:
-                entry = Entry.objects.create(user=timesheet_user, 
-                                             start_time=clocktable_entry['started'], end_time=clocktable_entry['ended'],
-                                             activity=activity,location=location,project=project,
-                                             status='approved',
-                                             comments='auto_created')
-                logger.debug("Created entry: %s %s %s %s : %s" % (business, project, clocktable_entry['started'], 
-                                                                  clocktable_entry['ended'], entry))
-        
+            
 
 if __name__== "__main__":
     

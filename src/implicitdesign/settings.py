@@ -196,6 +196,8 @@ EMACSIMPORTER_RATES = { "test":{"id-test.org":50,
                                 "id-koen.org":100,
                                 "id-fonk.org":200} }
 EMACSIMPORTER_TEMP_DIR = "/tmp"
+EMACS_USERS_TO_PROCESS = ["test", ]
+EMACS_ADMIN_USER_EMAILS = ["gtp@implicitdesign.co.za",]
 
 # # These urls may need to be specified on a production server when the site it not hosted at the root domain.
 #LOGIN_URL=
