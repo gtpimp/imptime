@@ -163,7 +163,7 @@ class Processor(object):
                 description = time_parts[2].strip()
                 sprint_time = time_parts[4].strip()
                 #issue_time = time_parts[5].strip()
-                current_sprint_name = description
+                current_sprint_name = description.replace("INVOICED","").replace("INVOICE","").replace("TODO","").replace("STARTED","").replace("WAITING","").replace("PAID","")
                 if len(sprint_time)>0:
 
                     hours, minutes = sprint_time.split(":")
