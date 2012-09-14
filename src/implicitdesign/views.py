@@ -8,3 +8,6 @@ def home(request, template="home.html", context=None):
 def timesheet_graphs(request):
     pass
     
+def generate_incremental_timesheet(request, template="generate_incremental_timesheet.html", context=None):
+    context = context or {}
+    return render_to_response(template, context, context_instance=RequestContext(request))

@@ -1,0 +1,22 @@
+{% extends "home.html" %}
+
+{% block content %}
+
+<h2>Generation of incremental timesheets</h2>
+
+<form action="{% url generate_incremental_timesheet %}" method="POST">
+  <table>
+    <tr>
+      <td>Date from: </td><td><input type="text" value=""/></td>
+    </tr>
+    <tr>
+      <td>Client: </td><td><input type="text" value=""/></td>
+    </tr>
+    <tr>
+      <td><input type="submit" value="Generate"/></td>
+    </tr>
+  </table>
+
+</form>
+
+{% endblock %}

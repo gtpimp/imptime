@@ -14,7 +14,13 @@ body {
 .menu {
     width: 100%;
     text-align: center;
-    background-color: #333333;
+    background-color: #eeeeee;
+    margin-bottom: 10px;
+    border-bottom: 1px solid #212121;
+}
+
+.flush {
+    clear: both;
 }
 
 .menu ul {
@@ -29,7 +35,12 @@ body {
 .menu li a {
     text-decoration: none;
     color: #000000;
-    padding: 2px;
+    padding: 4px;
+    background: #afafaf;
+    border: solid 1px #565656;
+    -webkit-border-radius: 0.5em;
+    -moz-border-radius: 0.5em;
+    border-radius: 0.5em;
 }
 
 .menu li a:hover {
@@ -39,4 +50,8 @@ body {
 
 .menu li.admin {
     float: right;
+}
+
+.content {
+    clear: both;
 }
