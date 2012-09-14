@@ -62,7 +62,7 @@ def generate_incremental_timesheet(request, template="generate_incremental_times
             with open(clocktable_file, "w") as f:
                 f.write(clocktable_raw)
             zip_file = os.path.join(settings.EMACSIMPORTER_TEMP_DIR, filename) + ".zip"
-            z = ZipFile(zip_file, 'w'):
+            z = ZipFile(zip_file, 'w')
             z.write(clocktable_file)
             z.close()
             email.attach(filename + ".zip", open(zip_file).read())
