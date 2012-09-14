@@ -123,7 +123,7 @@ class Processor(object):
         return self.temp_filename
         
     def create_clocktable_file(self, input_file, output_file, tstart, tend):
-        date_format = "%Y-%m-%d %a"
+        date_format = "%Y-%M-%d %a"
         clocktable_def = '#+BEGIN: clocktable :maxlevel %d :scope file :link nil :tstart "<%s>" :tend "<%s>" %s\n#+END:\n' % (self.maxlevel, tstart.strftime(date_format), tend.strftime(date_format), self.step)
         f = open(output_file, "w")
         f.write(clocktable_def)
