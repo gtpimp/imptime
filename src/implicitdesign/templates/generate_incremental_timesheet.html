@@ -5,15 +5,25 @@
 <h2>Generation of incremental timesheets</h2>
 
 <form action="{% url generate_incremental_timesheet %}" method="POST">
+  {% csrf_token %}
   <table>
     <tr>
-      <td>Date from: </td><td><input type="text" value=""/></td>
+      <td>Developer username: </td><td><input type="text" name="username" value=""/></td>
     </tr>
     <tr>
-      <td>Client: </td><td><input type="text" value=""/></td>
+      <td>Date from: </td><td><input type="text" name="date_from" value=""/></td><td>(yyyy-mm-dd)</td>
     </tr>
     <tr>
-      <td><input type="submit" value="Generate"/></td>
+      <td>Date to: </td><td><input type="text" name="date_to" value=""/></td><td>(yyyy-mm-dd)</td>
+    </tr>
+    <tr>
+      <td>Client: </td><td><input type="text" name="client" value=""/></td><td>(name of the client without the .org extension)</td>
+    </tr>
+    <tr>
+      <td>Email to: </td><td><input type="text" name="email_to" value=""/></td><td>(separate muliple addresses with comma)</td>
+    </tr>
+    <tr>
+      <td colspan="2"><input type="submit" value="Generate"/></td>
     </tr>
   </table>
 

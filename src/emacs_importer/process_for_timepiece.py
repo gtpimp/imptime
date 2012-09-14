@@ -33,7 +33,9 @@ class Processor(object):
                  num_historical_days=60, 
                  pointperson_username='test',
                  rates_info = {'test':{}},
-                 ref_current_date = None):
+                 ref_current_date = None,
+                 step = ":step day",
+                 maxlevel = 2):
         self.user = user
         self.user_email = user_email
         self.root_folder = root_folder
@@ -41,6 +43,8 @@ class Processor(object):
         self.num_historical_days = num_historical_days
         self.pointperson_username = pointperson_username
         self.ref_current_date = ref_current_date or datetime.today()
+        self.step = step
+        self.maxlevel = maxlevel
 
         if not os.path.exists(self.input_path):
             logger.error(Exception("No user input file at %s " % self.input_path))
@@ -51,9 +55,14 @@ class Processor(object):
         self.user_rates = rates_info[self.user]
 
     def process(self):
-
         tstart = self.ref_current_date - timedelta(days=self.num_historical_days) 
         tend = self.ref_current_date
+        return generate_incremental(from_date=tstart, to_date=tend)
+
+    def generate_incremental(self, from_date, to_date=None, only_these_files=None, import_clocktable_entries=True):
+        tstart = from_date
+        tend = to_date or datetime.today()
+        
         self.clean_clocktable_entries(self.user, tstart, tend)
         self.status = { 'num_entries_created' : 0,
                         'num_entries_deleted' : 0,
@@ -62,19 +71,22 @@ class Processor(object):
 
         self.update_input_folder()
         
+        self.clocktable_raws = []
+
         def handle_file(dirname, fname):
             only_include_rated_files = True
 
             is_valid_timesheet_file = fname[-4:] == ".org" and fname[0] != "." and fname[0] != "#" and \
-                ( not only_include_rated_files or fname in self.user_rates.keys())
+                ( not only_include_rated_files or fname in self.user_rates.keys()) and \
+                (only_these_files is None or fname in only_these_files)
 
             if is_valid_timesheet_file:
-                self.process_file(dirname, fname, tstart, tend)
+                temp_filename = self.process_file(dirname, fname, tstart, tend, import_clocktable_entries=import_clocktable_entries)
+                self.clocktable_raws.append(self.extract_clocktable_entries_raw(temp_filename))
             else:
                 logger.debug("%s: Ignoring : %s" % (self.user,fname))
 
         logger.debug( "looking for timesheet files in %s" % self.input_path)
-        #os.path.walk(self.input_path, callback, topdown=True)
 
         includes = ["*.org",]
         excludes = [".git",]
@@ -96,7 +108,7 @@ class Processor(object):
         p = subprocess.Popen(process_args, stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
         p.wait()
 
-    def process_file(self, dirname, fname, tstart, tend):
+    def process_file(self, dirname, fname, tstart, tend, import_clocktable_entries=True):
 
         filepath = os.path.join(dirname, fname)
 
@@ -105,12 +117,14 @@ class Processor(object):
 
         self.create_clocktable_file(filepath, self.temp_filename, tstart, tend)
         self.create_clocktable(self.temp_filename)
-        clocktable_entries = self.extract_clocktable_entries(self.temp_filename)
-        self.import_clocktable_entries(fname, clocktable_entries)
+        if import_clocktable_entries:
+            clocktable_entries = self.extract_clocktable_entries(self.temp_filename)
+            self.import_clocktable_entries(fname, clocktable_entries)
+        return self.temp_filename
         
     def create_clocktable_file(self, input_file, output_file, tstart, tend):
         date_format = "%Y-%m-%d %a"
-        clocktable_def = '#+BEGIN: clocktable :maxlevel 2 :scope file :link nil :tstart "<%s>" :tend "<%s>" :step day\n#+END:\n' % (tstart.strftime(date_format), tend.strftime(date_format))
+        clocktable_def = '#+BEGIN: clocktable :maxlevel %d :scope file :link nil :tstart "<%s>" :tend "<%s>" %s\n#+END:\n' % (self.maxlevel, tstart.strftime(date_format), tend.strftime(date_format), self.step)
         f = open(output_file, "w")
         f.write(clocktable_def)
         f.write(open(input_file).read())
@@ -138,6 +152,17 @@ class Processor(object):
     def clean_clocktable_entries(self, user, tstart, tend):
         Entry.objects.all().filter(user__username=user).filter(start_time__gte=tstart).filter(end_time__lte=tend).delete()
         logger.debug("Wiping for %s from %s to %s" % (user, tstart, tend))
+
+    def extract_clocktable_entries_raw(self, input_file):
+        f = open(input_file)
+        f.readline() 
+        output = []
+
+        for line in f:
+            if "#+END" in line:
+                return "".join(output)
+            output.append(line)
+        raise Exception("Shouldn't get here")
 
     def extract_clocktable_entries(self, input_file):
         f = open(input_file)
