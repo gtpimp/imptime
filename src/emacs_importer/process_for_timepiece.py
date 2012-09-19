@@ -57,7 +57,7 @@ class Processor(object):
     def process(self):
         tstart = self.ref_current_date - timedelta(days=self.num_historical_days) 
         tend = self.ref_current_date
-        return generate_incremental(from_date=tstart, to_date=tend)
+        return self.generate_incremental(from_date=tstart, to_date=tend)
 
     def generate_incremental(self, from_date, to_date=None, only_these_files=None, import_clocktable_entries=True):
         tstart = from_date
