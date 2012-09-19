@@ -64,8 +64,8 @@ class Processor(object):
         tend = to_date or datetime.today()
         
         self.clean_clocktable_entries(self.user, tstart, tend)
-        self.status = { 'from': tstart.strftime("%Y-%M-%d %a"),
-                        'to': tend.strftime("%Y-%M-%d %a"),
+        self.status = { 'from': tstart.strftime("%Y-%m-%d %a"),
+                        'to': tend.strftime("%Y-%m-%d %a"),
                         'num_entries_created' : 0,
                         'num_entries_deleted' : 0,
                         'num_entries_updated' : 0,
@@ -125,7 +125,7 @@ class Processor(object):
         return self.temp_filename
         
     def create_clocktable_file(self, input_file, output_file, tstart, tend):
-        date_format = "%Y-%M-%d %a"
+        date_format = "%Y-%m-%d %a"
         clocktable_def = '#+BEGIN: clocktable :maxlevel %d :scope file :link nil :tstart "<%s>" :tend "<%s>" %s\n#+END:\n' % (self.maxlevel, tstart.strftime(date_format), tend.strftime(date_format), self.step)
         f = open(output_file, "w")
         f.write(clocktable_def)
