@@ -64,7 +64,9 @@ class Processor(object):
         tend = to_date or datetime.today()
         
         self.clean_clocktable_entries(self.user, tstart, tend)
-        self.status = { 'num_entries_created' : 0,
+        self.status = { 'from': tstart,
+                        'to': tend,
+                        'num_entries_created' : 0,
                         'num_entries_deleted' : 0,
                         'num_entries_updated' : 0,
                         'num_entries_unchanged' : 0 }
