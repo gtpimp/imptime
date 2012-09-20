@@ -19,8 +19,8 @@ def generate_incremental_timesheet(request, template="generate_incremental_times
     context = context or {}
 
     if request.POST:
-        from_date = datetime.strptime(request.POST['date_from'], '%Y-%M-%d')
-        to_date = datetime.strptime(request.POST['date_to'], '%Y-%M-%d')
+        from_date = datetime.strptime(request.POST['date_from'], '%Y-%m-%d')
+        to_date = datetime.strptime(request.POST['date_to'], '%Y-%m-%d')
         client = request.POST['client']
         username = request.POST['username']
         email_to = request.POST['email_to']
@@ -46,7 +46,7 @@ def generate_incremental_timesheet(request, template="generate_incremental_times
             return HttpResponse("Invalid username or clientname: %s" % username)
 
         clocktable_raw = clocktable_raw.replace(","," ").replace("|",",") #make friendly for csv
-        clocktable_raw = "User=%s\nClient=%s\nFrom=%s , To=%s\n%s" % (username, client, from_date.strftime("%Y-%M-%d"), to_date.strftime("%Y-%M-%d"), clocktable_raw)
+        clocktable_raw = "User=%s\nClient=%s\nFrom=%s , To=%s\n%s" % (username, client, from_date.strftime("%Y-%m-%d"), to_date.strftime("%Y-%m-%d"), clocktable_raw)
 
         response = HttpResponse(clocktable_raw)
         filename = "%s_%s.csv" % (username, client)

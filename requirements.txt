@@ -16,7 +16,7 @@ django-grappelli==2.4.0
 django-pagination==1.0.7
 -e git+https://github.com/cyberdelia/django-pipeline.git@d238058ab8c29e41f9160c1c8db7452fee1abed6#egg=django_pipeline-dev
 django-selectable==0.4.1
--e git+https://github.com/gtp/django-timepiece.git@0584673d97d1d9d94c812d9063bcc3c658a58cef#egg=django_timepiece-dev
+-e git+https://github.com/gtp/django-timepiece.git#egg=django_timepiece-dev
 kombu==2.3.2
 psycopg2==2.4.1
 python-dateutil==1.5
