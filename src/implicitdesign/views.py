@@ -53,7 +53,8 @@ def generate_incremental_timesheet(request, template="generate_incremental_times
         response['Content-Disposition'] = 'attachment; filename="%s"' % filename
 
         if len(email_to.strip())>0:
-            email = EmailMessage('Incremental timesheet: %s %s' % (username, client), 'Attached', 'gtp@implicitdesign.co.za',
+            email = EmailMessage('Incremental timesheet: %s %s. %s -> %s' % (username, client, from_date.strftime("%Y-%m-%d"), to_date.strftime("%Y-%m-%d")), 
+                                 'Attached', 'gtp@implicitdesign.co.za',
                                  email_to.split(","), [],
                                  headers = {'Reply-To': 'gtp@implicitdesign.co.za'})
             email.attach(filename, clocktable_raw)
