@@ -24,6 +24,7 @@ def generate_incremental_timesheet(request, template="generate_incremental_times
         client = request.POST['client']
         username = request.POST['username']
         email_to = request.POST['email_to']
+        email_subject = request.POST['email_subject']
 
         processor_kwargs = { 'user': username,
                              'user_email': 'gtp@implicitdesign.co.za',
@@ -53,7 +54,7 @@ def generate_incremental_timesheet(request, template="generate_incremental_times
         response['Content-Disposition'] = 'attachment; filename="%s"' % filename
 
         if len(email_to.strip())>0:
-            email = EmailMessage('Incremental timesheet: %s %s. %s -> %s' % (username, client, from_date.strftime("%Y-%m-%d"), to_date.strftime("%Y-%m-%d")), 
+            email = EmailMessage('%s: %s %s. %s -> %s' % (email_subject, username, client, from_date.strftime("%Y-%m-%d"), to_date.strftime("%Y-%m-%d")), 
                                  'Attached', 'gtp@implicitdesign.co.za',
                                  email_to.split(","), [],
                                  headers = {'Reply-To': 'gtp@implicitdesign.co.za'})
