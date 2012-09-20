@@ -46,7 +46,7 @@ def generate_incremental_timesheet(request, template="generate_incremental_times
             return HttpResponse("Invalid username or clientname: %s" % username)
 
         clocktable_raw = clocktable_raw.replace(","," ").replace("|",",") #make friendly for csv
-        clocktable_raw = "User=%s\nClient=%s\nFrom=%s , To=%s\n%s" % (username, client, from_date.strftime("%Y-%m-%d"), to_date.strftime("%Y-%m-%d"), clocktable_raw)
+        clocktable_raw = "User=%s\nClient=%s\nFrom=%s , To=%s\n%s" % (str(username), str(client), from_date.strftime("%Y-%m-%d"), to_date.strftime("%Y-%m-%d"), clocktable_raw.encode('utf-8'))
 
         response = HttpResponse(clocktable_raw)
         filename = "%s_%s.csv" % (username, client)
