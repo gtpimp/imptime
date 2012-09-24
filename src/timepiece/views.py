@@ -1934,6 +1934,13 @@ def salary_edit(request, user_id, template="timepiece/salary/payslip.html", cont
     if salary_form.is_valid():
         salary_form.save()
         salary_form = timepiece_forms.SalaryForm(instance=salary)
+
+    user_form = timepiece_forms.QuickEditPersonForm(request.POST or None, instance=salary.user, prefix="user_form")
+    if user_form.is_valid():
+        user_form.save()
+        user_form = timepiece_forms.QuickEditPersonForm(instance=salary.user, prefix="user_form")
+    context['user_form'] = user_form
+
     context['salary_form'] = salary_form
     context['salary'] = salary
     return render_to_response(template, context, context_instance=RequestContext(request))

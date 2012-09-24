@@ -113,6 +113,11 @@ class EditPersonForm(auth_forms.UserChangeForm):
                 'is_staff')
 
 
+class QuickEditPersonForm(forms.ModelForm):
+    class Meta:
+        model = auth_models.User
+        fields = ["first_name", "last_name"]
+
 class QuickSearchForm(forms.Form):
     quick_search = selectable_forms.AutoCompleteSelectField(
         QuickLookup,

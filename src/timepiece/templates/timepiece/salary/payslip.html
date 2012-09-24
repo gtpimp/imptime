@@ -22,13 +22,22 @@
     </div>
   </div>
 
-  <div class="row-fluid">
+  <div>
     <form class="form-inline" method="post" action="" accept-charset="utf-8">
       {% csrf_token %}
+
+      <table>
+	{{ user_form.as_table }}
+      </table>
+
+      <hr/>
+
       <table>
 	{{ salary_form.as_table }}
       </table>
+ 
       <input type="submit" value="update">
+
     </form>
   </div>
 
