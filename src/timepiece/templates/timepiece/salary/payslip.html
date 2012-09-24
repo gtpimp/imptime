@@ -5,9 +5,12 @@
 
 {% block content %}
 
+
 <div class="row-fluid">
 
   <h2>Payslip for {{user.username}}</h2>
+
+  {{ msg }}
 
   <div class="row-fluid">
     <div class="span12">
@@ -29,9 +32,11 @@
     </form>
   </div>
 
+  {% if salary %}
   <div>
-    <a href="{% url 'salary_payslip' user_id=user.id preview=1 %}">Generate</a>
+    <a href="{% url 'salary_payslip' salary_id=salary.id preview=1 %}">Generate</a>
   </div>
+  {% endif %}
 
 </div>
 

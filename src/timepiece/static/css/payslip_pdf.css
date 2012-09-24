@@ -1,0 +1,26 @@
+img.logo {
+    width: 300px;
+}
+
+table.calculations {
+    border: 1px solid #000000;
+    width: 80%;
+    padding: 5px;
+    vertical-align: center;
+}
+
+h3 {
+    text-decoration: underline;
+}
+
+td.money {
+    text-align: right;
+}
+
+tr.total {
+    text-decoration: underline
+}
+
+.separator td {
+    border-bottom: 1px solid #000000;
+}

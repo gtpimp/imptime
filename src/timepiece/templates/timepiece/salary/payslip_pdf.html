@@ -1,7 +1,101 @@
 {% load url from future %}
-Payslip for {{user.username}}
+{% load humanize %}
+<html>
 
-{% if preview %}
-<hr/>
-<a href="{% url 'salary_payslip' user_id=user.id preview=0 %}">Generate</a>
-{% endif %}
+  <head>
+
+    <link type="text/css" rel="stylesheet" href="{{ STATIC_URL }}css/payslip_pdf.css" />
+
+  </head>
+
+  <body>
+
+
+    <table>
+      <tr>
+	<td>
+	  <img class="logo" src="{{STATIC_URL}}images/implicitDesignLogo.jpg"/>
+	</td>
+	<td>
+	  <h1>PAYSLIP {{salary.date|date:"b Y"|upper}} </h1>
+	</td>
+      </tr>
+    </table>
+
+    <h2>{{user.username}}</h2>
+
+    <table class="calculations">
+
+      <tr>
+	<td colspan="5">
+	  <h3>Current Allowances {{salary.date|date:"b Y"}}</h3>
+	</td>
+      </tr>
+      <tr>
+	<td>Gross pay</td>
+	<td class="money">{{ salary.amount|floatformat:"2"|intcomma }}</td>
+      </tr>
+      <tr>
+	<td>Bonus</td>
+	<td class="money">{{ salary.bonus|floatformat:"2"|intcomma }}</td>
+      </tr>
+
+      <tr>
+	<td colspan="5">
+	  <h3>Current Deductions</h3>
+	</td>
+      </tr>
+      <tr>
+	<td>PAYE</td>
+	<td class="money">{{ salary.paye|floatformat:"2"|intcomma }}</td>
+      </tr>
+      <tr>
+	<td>UIF</td>
+	<td class="money">{{ salary.uif|floatformat:"2"|intcomma }}</td>
+      </tr>
+
+      <tr>
+	<td>
+	  <h3>Net Pay</h3> 
+	</td>
+	<td class="money">{{ salary.net_pay|floatformat:"2"|intcomma }}</td>
+      </tr>
+
+      <tr>
+	<td>
+	  <h3>Expenses</h3> 
+	</td>
+	<td class="money">{{ salary.expenses|floatformat:"2"|intcomma }}</td>
+      </tr>
+
+      <tr class="total">
+	<td>
+	  <h3>Total</h3> 
+	</td>
+	<td class="money">{{ salary.take_home_total|floatformat:"2"|intcomma }}</td>
+      </tr>
+
+      <tr class="separator"><td colspan="2"></td></tr>
+      
+      <tr>
+	<td colspan="5">
+	  <h3>Year to date</h3>
+	</td>
+      </tr>
+      <tr>
+	<td>Earnings</td>
+	<td class="money">{{ ytd.take_home_total|floatformat:"2"|intcomma }}</td>
+      </tr>
+      <tr>
+	<td>PAYE</td>
+	<td class="money">{{ ytd.paye|floatformat:"2"|intcomma }}</td>
+      </tr>
+
+    </table>
+
+    {% if preview %}
+    <hr/>
+    <a href="{% url 'salary_payslip' salary_id=salary.id preview=0 %}">Download pdf</a>
+    {% endif %}
+  </body>
+</html>

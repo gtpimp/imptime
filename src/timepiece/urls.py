@@ -247,7 +247,7 @@ urlpatterns = patterns('',
         name='salary_edit'
         ),
     url(
-        r'^salary/payslip/(?P<user_id>\d+)/(?P<preview>\d+)/$',
+        r'^salary/payslip/(?P<salary_id>\d+)/(?P<preview>\d+)$',
         views.salary_payslip,
         name='salary_payslip'
         ),

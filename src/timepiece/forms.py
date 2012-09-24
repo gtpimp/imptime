@@ -643,5 +643,4 @@ class ProjectHoursForm(forms.ModelForm):
 class SalaryForm(forms.ModelForm):
     class Meta:
         model = Salary
-        exclude="user"
-        fields=["date", "amount", "paye", "uif"]
+        exclude=["user", "date"]

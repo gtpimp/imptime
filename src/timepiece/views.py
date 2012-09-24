@@ -1914,39 +1914,38 @@ def salary_edit(request, user_id, template="timepiece/salary/payslip.html", cont
         from_date, dummy = date_form.save()
     context['date_form'] = date_form
 
+    context['msg'] = ''
     try:
         salary = timepiece.Salary.objects.get(user=user, date__year=from_date.year, date__month=from_date.month)
     except timepiece.Salary.DoesNotExist:
-        salary = timepiece.Salary.objects.create(user=user, date=from_date)
+        try:
+            previous_salary = timepiece.Salary.objects.filter(user=user, date__lt=from_date).order_by("-date")[0]
+            salary = previous_salary
+            salary.id = None
+            salary.date = from_date
+            salary.save()
+            context['msg'] = '(copied from %s)' % previous_salary.date.strftime('%b%Y')
+        except IndexError:
+            salary = timepiece.Salary.objects.create(user=user, date=from_date)
+            context['msg'] = '(created new blank salary)'
     
     salary_form = timepiece_forms.SalaryForm(request.POST or None, instance=salary)
     if salary_form.is_valid():
         salary_form.save()
         salary_form = timepiece_forms.SalaryForm(instance=salary)
     context['salary_form'] = salary_form
+    context['salary'] = salary
     return render_to_response(template, context, context_instance=RequestContext(request))
 
-def salary_payslip(request, user_id, preview=True, template="timepiece/salary/payslip_pdf.html", context=None):
+def salary_payslip(request, salary_id, preview=True, template="timepiece/salary/payslip_pdf.html", context=None):
     context = context or {}
-    user = User.objects.get(pk=user_id)
-    context.update( {'user':user} )
+    salary = timepiece.Salary.objects.get(pk=salary_id)
+    user = salary.user
+    context.update( {'salary':salary, 'user':user} )
 
     preview = preview == True or str(preview) == '1'
 
-    date = timezone.now() - relativedelta(months=1)
-    from_date = utils.get_month_start(date).date()
-    date_form = timepiece_forms.YearMonthForm(request.GET or None, 
-                                              initial={'month': from_date.month, 'year': from_date.year},
-                                              prefix='date_form')
-    if date_form.is_valid():
-        from_date, dummy = date_form.save()
-
-    try:
-        salary = timepiece.Salary.objects.get(user=user, date__year=from_date.year, date__month=from_date.month)
-    except timepiece.Salary.DoesNotExist:
-        raise Exception("Please create a salary entry first")
-    
-    context['salary'] = salary
+    context['ytd'] = salary.ytd()
 
     context['preview'] = preview
     response = render_to_response(template, context, context_instance=RequestContext(request))
@@ -1954,6 +1953,6 @@ def salary_payslip(request, user_id, preview=True, template="timepiece/salary/pa
         html = response.content
         html += "(pdf)"
         response = HttpResponse(render_to_pdf(html), mimetype='application/pdf')
-        filename = "payslip_%s_%s.pdf" % (user.username, from_date.strftime("%b%Y"))
+        filename = "payslip_%s_%s.pdf" % (salary.user.username, salary.date.strftime("%b%Y"))
         response['Content-Disposition'] = 'attachment; filename="%s"' % filename
     return response

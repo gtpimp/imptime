@@ -1161,6 +1161,27 @@ class Salary(models.Model):
     user = models.ForeignKey(User)
     amount = models.DecimalField(max_digits=8,decimal_places=0,default=0)
     date = models.DateField(verbose_name='month')
-    paye = models.DecimalField(max_digits=8,decimal_places=0,default=0)
-    uif = models.DecimalField(max_digits=8,decimal_places=0,default=0)
+    paye = models.DecimalField(max_digits=8,decimal_places=2,default=0)
+    uif = models.DecimalField(max_digits=8,decimal_places=2,default=0)
+    bonus = models.DecimalField(max_digits=8,decimal_places=2,default=0)
+    expenses = models.DecimalField(max_digits=8,decimal_places=2,default=0)
 
+    @property
+    def net_pay(self):
+        return self.amount - self.paye - self.uif
+
+    @property
+    def take_home_total(self):
+        return self.net_pay - self.expenses
+        
+    def ytd(self):
+        tax_year_start = datetime.datetime(self.date.year, 3, 1)
+        if self.date.month < 3:
+            tax_year_start = datetime.datetime(tax_year_start.year-1, tax_year_start.month, tax_year_start.date)
+        ytd = Salary.objects.filter(date__gte=tax_year_start).values('user') \
+            .annotate(ytd_amount=Sum('amount'), ytd_paye=Sum('paye'), ytd_uif=Sum('uif'), ytd_expenses=Sum('expenses'))[0]
+
+        return {'take_home_total': ytd['ytd_amount'] - ytd['ytd_paye'] - ytd['ytd_uif'] - ytd['ytd_expenses'],
+                'paye': ytd['ytd_paye']}
+
+    
