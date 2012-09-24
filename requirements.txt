@@ -15,7 +15,6 @@ django-filebrowser==3.5.0
 django-grappelli==2.4.0
 django-pagination==1.0.7
 django-selectable==0.4.1
--e git+https://github.com/gtp/django-timepiece.git#egg=django_timepiece-dev
 kombu==2.3.2
 psycopg2==2.4.1
 python-dateutil==1.5

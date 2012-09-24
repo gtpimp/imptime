@@ -1,4 +1,5 @@
 venv
+*#
 *pyc
 *~
 src/*.pid
@@ -6,3 +7,4 @@ src/*.pid
 logs
 src/implicitdesign/local_settings.py
 src/implicitdesign/static/admin
+src/static_collected
