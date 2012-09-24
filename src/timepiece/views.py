@@ -1923,6 +1923,8 @@ def salary_edit(request, user_id, template="timepiece/salary/payslip.html", cont
             salary = previous_salary
             salary.id = None
             salary.leave_taken = 0
+            salary.bonus = 0
+            salary.expenses = 0
             salary.date = from_date
             salary.save()
             context['msg'] = '(copied from %s)' % previous_salary.date.strftime('%b%Y')
