@@ -1191,7 +1191,8 @@ class Salary(models.Model):
     @property
     def leave_summary(self):
         # Since start of employment
-        total_leave = Salary.objects.filter(user=self.user).values('user').annotate(total_leave_accrued=Sum('leave_accrued'), total_leave_taken=Sum('leave_taken'))[0]
+        total_leave = Salary.objects.filter(user=self.user,date__lte=self.date).values('user') \
+            .annotate(total_leave_accrued=Sum('leave_accrued'), total_leave_taken=Sum('leave_taken'))[0]
         return { 'total_leave_accrued':total_leave['total_leave_accrued'],
                  'total_leave_taken':total_leave['total_leave_taken'],
                  'total_leave_due':total_leave['total_leave_accrued']-total_leave['total_leave_taken'],
