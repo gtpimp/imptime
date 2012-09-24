@@ -1185,7 +1185,7 @@ class Salary(models.Model):
         ytd = Salary.objects.filter(user=self.user, date__gte=tax_year_start).values('user') \
             .annotate(ytd_amount=Sum('amount'), ytd_paye=Sum('paye'), ytd_uif=Sum('uif'), ytd_expenses=Sum('expenses'))[0]
 
-        return {'take_home_total': ytd['ytd_amount'] - ytd['ytd_paye'] - ytd['ytd_uif'] - ytd['ytd_expenses'],
+        return {'take_home_total': ytd['ytd_amount'],
                 'paye': ytd['ytd_paye']}
 
     @property
