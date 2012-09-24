@@ -10,6 +10,10 @@
 
   <body>
 
+    {% if preview %}
+    <hr/>
+    <a href="{% url 'salary_payslip' salary_id=salary.id preview=0 %}">Download pdf</a>
+    {% endif %}
 
     <table class="heading">
       <tr>
@@ -132,9 +136,6 @@
 
     </table>
 
-    {% if preview %}
-    <hr/>
-    <a href="{% url 'salary_payslip' salary_id=salary.id preview=0 %}">Download pdf</a>
-    {% endif %}
+
   </body>
 </html>
