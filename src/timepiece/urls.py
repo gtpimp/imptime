@@ -234,4 +234,21 @@ urlpatterns = patterns('',
         views.ProjectHoursDetailView.as_view(),
         name='project_hours_detail_view',
     ),
+    
+    # salary views
+    url(
+        r'^salary/list',
+        views.SalaryView.as_view(),
+        name='salary_view'
+        ),
+    url(
+        r'^salary/edit/(?P<user_id>\d+)/$',
+        views.salary_edit,
+        name='salary_edit'
+        ),
+    url(
+        r'^salary/payslip/(?P<user_id>\d+)/(?P<preview>\d+)/$',
+        views.salary_payslip,
+        name='salary_payslip'
+        ),
 )

@@ -1,0 +1,7 @@
+{% load url from future %}
+Payslip for {{user.username}}
+
+{% if preview %}
+<hr/>
+<a href="{% url 'salary_payslip' user_id=user.id preview=0 %}">Generate</a>
+{% endif %}

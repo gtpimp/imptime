@@ -1,6 +1,9 @@
 import calendar
 import csv
+from xhtml2pdf import pisa  
+from pdf import render_to_pdf
 import datetime
+from django.template import Template
 import math
 import urllib
 import json
@@ -1885,3 +1888,72 @@ class ProjectHoursDetailView(ProjectHoursMixin, View):
                 return HttpResponse('ok', mimetype='text/plain')
 
         return HttpResponse('', status=500)
+
+class SalaryView(TemplateView):
+    template_name = 'timepiece/salary/index.html'
+    permissions = ('timepiece.salaries',)
+
+    def get_context_data(self, **kwargs):
+        context = super(SalaryView, self).get_context_data(**kwargs)
+        context.update({
+                'users': User.objects.all()
+                })
+        return context
+
+def salary_edit(request, user_id, template="timepiece/salary/payslip.html", context=None):
+    context = context or {}
+    user = User.objects.get(pk=user_id)
+    context.update( {'user':user} )
+
+    date = timezone.now() - relativedelta(months=1)
+    from_date = utils.get_month_start(date).date()
+    date_form = timepiece_forms.YearMonthForm(request.GET or None, 
+                                              initial={'month': from_date.month, 'year': from_date.year},
+                                              prefix='date_form')
+    if date_form.is_valid():
+        from_date, dummy = date_form.save()
+    context['date_form'] = date_form
+
+    try:
+        salary = timepiece.Salary.objects.get(user=user, date__year=from_date.year, date__month=from_date.month)
+    except timepiece.Salary.DoesNotExist:
+        salary = timepiece.Salary.objects.create(user=user, date=from_date)
+    
+    salary_form = timepiece_forms.SalaryForm(request.POST or None, instance=salary)
+    if salary_form.is_valid():
+        salary_form.save()
+        salary_form = timepiece_forms.SalaryForm(instance=salary)
+    context['salary_form'] = salary_form
+    return render_to_response(template, context, context_instance=RequestContext(request))
+
+def salary_payslip(request, user_id, preview=True, template="timepiece/salary/payslip_pdf.html", context=None):
+    context = context or {}
+    user = User.objects.get(pk=user_id)
+    context.update( {'user':user} )
+
+    preview = preview == True or str(preview) == '1'
+
+    date = timezone.now() - relativedelta(months=1)
+    from_date = utils.get_month_start(date).date()
+    date_form = timepiece_forms.YearMonthForm(request.GET or None, 
+                                              initial={'month': from_date.month, 'year': from_date.year},
+                                              prefix='date_form')
+    if date_form.is_valid():
+        from_date, dummy = date_form.save()
+
+    try:
+        salary = timepiece.Salary.objects.get(user=user, date__year=from_date.year, date__month=from_date.month)
+    except timepiece.Salary.DoesNotExist:
+        raise Exception("Please create a salary entry first")
+    
+    context['salary'] = salary
+
+    context['preview'] = preview
+    response = render_to_response(template, context, context_instance=RequestContext(request))
+    if not preview:
+        html = response.content
+        html += "(pdf)"
+        response = HttpResponse(render_to_pdf(html), mimetype='application/pdf')
+        filename = "payslip_%s_%s.pdf" % (user.username, from_date.strftime("%b%Y"))
+        response['Content-Disposition'] = 'attachment; filename="%s"' % filename
+    return response

@@ -18,7 +18,7 @@ from timepiece.lookups import ProjectLookup, QuickLookup
 from timepiece.lookups import UserLookup, BusinessLookup
 
 from timepiece.models import Project, Entry, Activity, UserProfile, Attribute
-from timepiece.models import ProjectHours
+from timepiece.models import ProjectHours, Salary
 from timepiece.fields import UserModelChoiceField
 from timepiece import models as timepiece
 from timepiece import utils
@@ -639,3 +639,9 @@ class ProjectHoursForm(forms.ModelForm):
 
     class Meta:
         model = ProjectHours
+
+class SalaryForm(forms.ModelForm):
+    class Meta:
+        model = Salary
+        exclude="user"
+        fields=["date", "amount", "paye", "uif"]

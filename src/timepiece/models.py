@@ -1156,3 +1156,11 @@ class ProjectHours(models.Model):
         verbose_name = 'project hours entry'
         verbose_name_plural = 'project hours entries'
         unique_together = ('week_start', 'project', 'user')
+
+class Salary(models.Model):
+    user = models.ForeignKey(User)
+    amount = models.DecimalField(max_digits=8,decimal_places=0,default=0)
+    date = models.DateField(verbose_name='month')
+    paye = models.DecimalField(max_digits=8,decimal_places=0,default=0)
+    uif = models.DecimalField(max_digits=8,decimal_places=0,default=0)
+
