@@ -24,7 +24,7 @@ PROJECT_HOME= os.path.join(os.path.dirname(os.path.realpath(__file__)), "..", ".
 VENV_HOME = os.path.join(PROJECT_HOME, "venv")
 SRC_HOME = os.path.join(PROJECT_HOME, "src")
 sys.path.append(SRC_HOME)
-sys.path.append(VENV_HOME + '/src/django-timepiece')
+sys.path.append(VENV_HOME + '/src/xhtml2pdf')
 sys.path.append(VENV_HOME + '/src/django-pipeline')
 sys.path.insert(0, VENV_HOME + '/lib/python2.6/site-packages')
 
