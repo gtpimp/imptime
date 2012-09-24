@@ -8,7 +8,7 @@ def render_to_pdf(html):
     def fetch_resources(uri, rel):
         """pisa doesn't handle links to non-physical objects well,
         this function is a hook which returns a physical entity."""
-        path = os.path.join(settings.MEDIA_ROOT, uri.replace(settings.MEDIA_URL, "")).replace("//", "/")
+        path = os.path.join(settings.STATIC_ROOT, uri.replace(settings.STATIC_URL, "")).replace("//", "/")
         return path
 
     result = StringIO.StringIO()

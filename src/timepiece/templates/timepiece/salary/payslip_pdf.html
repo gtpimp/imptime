@@ -11,24 +11,27 @@
   <body>
 
 
-    <table>
+    <table class="heading">
       <tr>
 	<td>
 	  <img class="logo" src="{{STATIC_URL}}images/implicitDesignLogo.jpg"/>
 	</td>
 	<td>
-	  <h1>PAYSLIP {{salary.date|date:"b Y"|upper}} </h1>
+	  <div class="heading-user">
+	    <h1>PAYSLIP {{salary.date|date:"b Y"|upper}} </h1>
+	    <br/>
+	    <h1>{{user.first_name}} {{user.last_name}}</h1>
+	  </div>
 	</td>
       </tr>
     </table>
 
-    <h2>{{user.username}}</h2>
 
     <table class="calculations">
 
       <tr>
 	<td colspan="5">
-	  <h3>Current Allowances {{salary.date|date:"b Y"}}</h3>
+	  <h3>Current Allowances {{salary.date|date:"b Y"|capfirst}}</h3>
 	</td>
       </tr>
       <tr>
@@ -75,7 +78,7 @@
 	<td class="money">{{ salary.take_home_total|floatformat:"2"|intcomma }}</td>
       </tr>
 
-      <tr class="separator"><td colspan="2"></td></tr>
+      <tr class="separator"><td colspan="3"><hr/></td></tr>
       
       <tr>
 	<td colspan="5">
@@ -89,6 +92,42 @@
       <tr>
 	<td>PAYE</td>
 	<td class="money">{{ ytd.paye|floatformat:"2"|intcomma }}</td>
+      </tr>
+
+      <tr class="separator"><td colspan="3"><hr/></td></tr>
+      
+      <tr>
+	<td colspan="5">
+	  <h3>Leave</h3>
+	</td>
+      </tr>
+      <tr>
+	<td>Leave accumulated</td>
+	<td class="money">{{ leave.total_leave_accrued|floatformat:"2" }} days</td>
+	{% comment %} <td class="money">({{ leave.leave_accured_this_month|floatformat:"2" }} days this month)</td>{% endcomment %}
+      </tr>
+      <tr>
+	<td>Leave taken</td>
+	<td class="money">{{ leave.total_leave_taken|floatformat:"2" }} days</td>
+	{% comment %}<td class="money">({{ leave.leave_taken_this_month|floatformat:"2" }} days this month)</td>{% endcomment %}
+      </tr>
+      <tr>
+	<td>Leave due</td>
+	<td class="money">{{ leave.total_leave_due|floatformat:"2" }} days</td>
+      </tr>
+
+    </table>
+
+    <table class="footer">
+      
+      <tr>
+	<td>t: +27 (0) 21 448 9660</td>
+	<td>f: +27 (0) 21 685 8402</td>
+	<td>w: www.implicitdesign.co.za</td>
+	<td>e: info@implicitdesign.co.za</td>
+      </tr>
+      <tr>
+	<td colspan="4">a: 4 tramber place, blake street, observatory, cape town</td>
       </tr>
 
     </table>

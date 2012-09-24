@@ -76,4 +76,8 @@ if [ $? != 0 ]; then
 fi
 cd -
 
+echo "collecting static files"
+python manage.py collectstatic --noinput --verbosity=0
+cd -
+
 echo "Deploy local complete"

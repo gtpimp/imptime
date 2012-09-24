@@ -1165,6 +1165,9 @@ class Salary(models.Model):
     uif = models.DecimalField(max_digits=8,decimal_places=2,default=0)
     bonus = models.DecimalField(max_digits=8,decimal_places=2,default=0)
     expenses = models.DecimalField(max_digits=8,decimal_places=2,default=0)
+    leave_accrued = models.DecimalField(max_digits=8,default=0,decimal_places=2, verbose_name="Leave accrued this month")
+    leave_taken = models.DecimalField(max_digits=8,default=0,decimal_places=2, verbose_name="Leave taken this month")
+    sick_days = models.DecimalField(max_digits=8,default=0,decimal_places=2, verbose_name="Sick days taken this month")
 
     @property
     def net_pay(self):
@@ -1175,13 +1178,23 @@ class Salary(models.Model):
         return self.net_pay - self.expenses
         
     def ytd(self):
+        # From start of current tax year
         tax_year_start = datetime.datetime(self.date.year, 3, 1)
         if self.date.month < 3:
             tax_year_start = datetime.datetime(tax_year_start.year-1, tax_year_start.month, tax_year_start.date)
-        ytd = Salary.objects.filter(date__gte=tax_year_start).values('user') \
+        ytd = Salary.objects.filter(user=self.user, date__gte=tax_year_start).values('user') \
             .annotate(ytd_amount=Sum('amount'), ytd_paye=Sum('paye'), ytd_uif=Sum('uif'), ytd_expenses=Sum('expenses'))[0]
 
         return {'take_home_total': ytd['ytd_amount'] - ytd['ytd_paye'] - ytd['ytd_uif'] - ytd['ytd_expenses'],
                 'paye': ytd['ytd_paye']}
 
-    
+    @property
+    def leave_summary(self):
+        # Since start of employment
+        total_leave = Salary.objects.filter(user=self.user).values('user').annotate(total_leave_accrued=Sum('leave_accrued'), total_leave_taken=Sum('leave_taken'))[0]
+        return { 'total_leave_accrued':total_leave['total_leave_accrued'],
+                 'total_leave_taken':total_leave['total_leave_taken'],
+                 'total_leave_due':total_leave['total_leave_accrued']-total_leave['total_leave_taken'],
+                 'leave_accured_this_month':self.leave_accrued,
+                 'leave_taken_this_month':self.leave_taken }
+        

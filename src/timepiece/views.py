@@ -1922,6 +1922,7 @@ def salary_edit(request, user_id, template="timepiece/salary/payslip.html", cont
             previous_salary = timepiece.Salary.objects.filter(user=user, date__lt=from_date).order_by("-date")[0]
             salary = previous_salary
             salary.id = None
+            salary.leave_taken = 0
             salary.date = from_date
             salary.save()
             context['msg'] = '(copied from %s)' % previous_salary.date.strftime('%b%Y')
@@ -1946,13 +1947,13 @@ def salary_payslip(request, salary_id, preview=True, template="timepiece/salary/
     preview = preview == True or str(preview) == '1'
 
     context['ytd'] = salary.ytd()
-
+    context['leave'] = salary.leave_summary
     context['preview'] = preview
     response = render_to_response(template, context, context_instance=RequestContext(request))
     if not preview:
         html = response.content
-        html += "(pdf)"
         response = HttpResponse(render_to_pdf(html), mimetype='application/pdf')
         filename = "payslip_%s_%s.pdf" % (salary.user.username, salary.date.strftime("%b%Y"))
         response['Content-Disposition'] = 'attachment; filename="%s"' % filename
+
     return response
