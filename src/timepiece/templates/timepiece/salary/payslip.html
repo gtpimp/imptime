@@ -3,6 +3,10 @@
 {% block title %}Payslip{% endblock %}
 {% load bootstrap_toolkit %}
 
+{% block extracss %}
+  <link type="text/css" rel="stylesheet" href="{{ STATIC_URL }}css/payslip_pdf.css" />
+{% endblock %}
+
 {% block content %}
 
 
@@ -16,8 +20,8 @@
     <div class="span12">
       <form class="form-inline" method="get" action="" id="date-filter" accept-charset="utf-8">
 	{{ date_form|as_bootstrap:"inline" }}
-	<input class="btn" type="submit" name="submit" value="Update" id="id_date_form_submit_btn"/>
-	<input class="btn" type="button" name="clear" value="Clear" id="id_date_form_clear_btn"/>
+	<input class="btn" type="submit" name="submit" value="Search" id="id_date_form_submit_btn"/>
+	{%comment%} <input class="btn" type="button" name="clear" value="Clear" id="id_date_form_clear_btn"/> {%endcomment%}
       </form>
     </div>
   </div>
@@ -36,7 +40,7 @@
 	{{ salary_form.as_table }}
       </table>
  
-      <input type="submit" value="update">
+      <input type="submit" value="Save">
 
     </form>
   </div>

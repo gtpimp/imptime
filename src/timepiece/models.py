@@ -1181,8 +1181,8 @@ class Salary(models.Model):
         # From start of current tax year
         tax_year_start = datetime.datetime(self.date.year, 3, 1)
         if self.date.month < 3:
-            tax_year_start = datetime.datetime(tax_year_start.year-1, tax_year_start.month, tax_year_start.date)
-        ytd = Salary.objects.filter(user=self.user, date__gte=tax_year_start).values('user') \
+            tax_year_start = datetime.datetime(tax_year_start.year-1, tax_year_start.month, tax_year_start.day)
+        ytd = Salary.objects.filter(user=self.user, date__gte=tax_year_start, date__lte=self.date).values('user') \
             .annotate(ytd_amount=Sum('amount'), ytd_paye=Sum('paye'), ytd_uif=Sum('uif'), ytd_expenses=Sum('expenses'))[0]
 
         #return {'take_home_total': ytd['ytd_amount'] - ytd['ytd_paye'] - ytd['ytd_uif'] - ytd['ytd_expenses'],
