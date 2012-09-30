@@ -1927,9 +1927,9 @@ def salary_edit(request, user_id, template="timepiece/salary/payslip.html", cont
                 salary = timepiece.Salary.objects.create(user=user, date=from_date)
                 context['msg'] = '(created new blank salary)'
         else:
-            salary = None
+            salary = timepiece.Salary.objects.create(user=user,date=from_date)
     
-    if salary is not None and 'copy_from_previous' in request.POST:
+    if request.POST and 'copy_from_previous' in request.POST:
         salary.copy_from_previous()
         salary_form = timepiece_forms.SalaryForm(instance=salary)
     else:
@@ -1937,7 +1937,7 @@ def salary_edit(request, user_id, template="timepiece/salary/payslip.html", cont
 
     user_form = timepiece_forms.QuickEditPersonForm(request.POST or None, instance=salary.user, prefix="user_form")
 
-    if user_form.is_valid() and salary_form.is_valid():
+    if request.POST and user_form.is_valid() and salary_form.is_valid():
         salary_form.save()
         user_form.save()
         user_form = timepiece_forms.QuickEditPersonForm(request.POST or None, instance=salary.user, prefix="user_form")
