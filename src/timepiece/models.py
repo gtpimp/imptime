@@ -1176,6 +1176,18 @@ class Salary(models.Model):
     @property
     def take_home_total(self):
         return self.net_pay - self.expenses
+
+    def copy_from_previous(self):
+        previous = Salary.objects.filter(user=self.user, date__lt=self.date).order_by("-date")[0]
+        self.amount = previous.amount
+        self.uif = previous.uif
+        self.paye = previous.paye
+        self.leave_accrued = previous.leave_accrued
+        self.leave_taken = 0
+        self.bonus = 0
+        self.expenses = 0
+        self.save()
+        return previous
         
     def ytd(self):
         # From start of current tax year

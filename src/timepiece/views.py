@@ -1918,31 +1918,32 @@ def salary_edit(request, user_id, template="timepiece/salary/payslip.html", cont
     try:
         salary = timepiece.Salary.objects.get(user=user, date__year=from_date.year, date__month=from_date.month)
     except timepiece.Salary.DoesNotExist:
-        try:
-            previous_salary = timepiece.Salary.objects.filter(user=user, date__lt=from_date).order_by("-date")[0]
-            salary = previous_salary
-            salary.id = None
-            salary.leave_taken = 0
-            salary.bonus = 0
-            salary.expenses = 0
-            salary.date = from_date
-            salary.save()
-            context['msg'] = '(copied from %s)' % previous_salary.date.strftime('%b%Y')
-        except IndexError:
-            salary = timepiece.Salary.objects.create(user=user, date=from_date)
-            context['msg'] = '(created new blank salary)'
+        if request.POST:
+            try:
+                salary = timepiece.Salary.objects.create(user=user, date=from_date)
+                previous_salary = salary.copy_from_previous()
+                context['msg'] = '(copied from %s)' % previous_salary.date.strftime('%b%Y')
+            except IndexError:
+                salary = timepiece.Salary.objects.create(user=user, date=from_date)
+                context['msg'] = '(created new blank salary)'
+        else:
+            salary = None
     
-    salary_form = timepiece_forms.SalaryForm(request.POST or None, instance=salary)
-    if salary_form.is_valid():
-        salary_form.save()
+    if salary is not None and 'copy_from_previous' in request.POST:
+        salary.copy_from_previous()
         salary_form = timepiece_forms.SalaryForm(instance=salary)
+    else:
+        salary_form = timepiece_forms.SalaryForm(request.POST or None, instance=salary)
 
     user_form = timepiece_forms.QuickEditPersonForm(request.POST or None, instance=salary.user, prefix="user_form")
-    if user_form.is_valid():
-        user_form.save()
-        user_form = timepiece_forms.QuickEditPersonForm(instance=salary.user, prefix="user_form")
-    context['user_form'] = user_form
 
+    if user_form.is_valid() and salary_form.is_valid():
+        salary_form.save()
+        user_form.save()
+        user_form = timepiece_forms.QuickEditPersonForm(request.POST or None, instance=salary.user, prefix="user_form")
+        salary_form = timepiece_forms.SalaryForm(request.POST or None, instance=salary)
+        
+    context['user_form'] = user_form
     context['salary_form'] = salary_form
     context['salary'] = salary
     if salary:
