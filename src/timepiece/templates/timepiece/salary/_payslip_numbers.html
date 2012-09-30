@@ -1,0 +1,92 @@
+{% load humanize %}
+
+<table class="calculations">
+
+      <tr>
+	<td colspan="5">
+	  <h3>Current Allowances {{salary.date|date:"b Y"|capfirst}}</h3>
+	</td>
+      </tr>
+      <tr>
+	<td>Gross pay</td>
+	<td class="money">{{ salary.amount|floatformat:"2"|intcomma }}</td>
+      </tr>
+      <tr>
+	<td>Bonus</td>
+	<td class="money">{{ salary.bonus|floatformat:"2"|intcomma }}</td>
+      </tr>
+
+      <tr>
+	<td colspan="5">
+	  <h3>Current Deductions</h3>
+	</td>
+      </tr>
+      <tr>
+	<td>PAYE</td>
+	<td class="money">{{ salary.paye|floatformat:"2"|intcomma }}</td>
+      </tr>
+      <tr>
+	<td>UIF</td>
+	<td class="money">{{ salary.uif|floatformat:"2"|intcomma }}</td>
+      </tr>
+
+      <tr>
+	<td>
+	  <h3>Net Pay</h3> 
+	</td>
+	<td class="money">{{ salary.net_pay|floatformat:"2"|intcomma }}</td>
+      </tr>
+
+      <tr>
+	<td>
+	  <h3>Expenses</h3> 
+	</td>
+	<td class="money">{{ salary.expenses|floatformat:"2"|intcomma }}</td>
+      </tr>
+
+      <tr class="total">
+	<td>
+	  <h3>Total</h3> 
+	</td>
+	<td class="money">{{ salary.take_home_total|floatformat:"2"|intcomma }}</td>
+      </tr>
+
+      <tr class="separator"><td colspan="3"><hr/></td></tr>
+      
+      <tr>
+	<td colspan="5">
+	  <h3>Year to date</h3>
+	</td>
+      </tr>
+      <tr>
+	<td>Earnings</td>
+	<td class="money">{{ ytd.take_home_total|floatformat:"2"|intcomma }}</td>
+      </tr>
+      <tr>
+	<td>PAYE</td>
+	<td class="money">{{ ytd.paye|floatformat:"2"|intcomma }}</td>
+      </tr>
+
+      <tr class="separator"><td colspan="3"><hr/></td></tr>
+      
+      <tr>
+	<td colspan="5">
+	  <h3>Leave</h3>
+	</td>
+      </tr>
+      <tr>
+	<td>Leave accumulated</td>
+	<td class="money">{{ leave.total_leave_accrued|floatformat:"2" }} days</td>
+	{% comment %} <td class="money">({{ leave.leave_accured_this_month|floatformat:"2" }} days this month)</td>{% endcomment %}
+      </tr>
+      <tr>
+	<td>Leave taken</td>
+	<td class="money">{{ leave.total_leave_taken|floatformat:"2" }} days</td>
+	{% comment %}<td class="money">({{ leave.leave_taken_this_month|floatformat:"2" }} days this month)</td>{% endcomment %}
+      </tr>
+      <tr>
+	<td>Leave due</td>
+	<td class="money">{{ leave.total_leave_due|floatformat:"2" }} days</td>
+      </tr>
+
+    </table>

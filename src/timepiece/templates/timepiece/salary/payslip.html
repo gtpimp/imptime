@@ -3,10 +3,6 @@
 {% block title %}Payslip{% endblock %}
 {% load bootstrap_toolkit %}
 
-{% block extracss %}
-  <link type="text/css" rel="stylesheet" href="{{ STATIC_URL }}css/payslip_pdf.css" />
-{% endblock %}
-
 {% block content %}
 
 
@@ -46,9 +42,15 @@
   </div>
 
   {% if salary %}
+
+<hr/>
+
   <div>
-    <a href="{% url 'salary_payslip' salary_id=salary.id preview=1 %}">Generate</a>
+    <a href="{% url 'salary_payslip' salary_id=salary.id preview=0 %}">Download as pdf</a>
   </div>
+
+  {% include "timepiece/salary/_payslip_numbers.html" %}
+  
   {% endif %}
 
 </div>

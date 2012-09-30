@@ -1945,6 +1945,9 @@ def salary_edit(request, user_id, template="timepiece/salary/payslip.html", cont
 
     context['salary_form'] = salary_form
     context['salary'] = salary
+    if salary:
+        context['ytd'] = salary.ytd()
+        context['leave'] = salary.leave_summary
     return render_to_response(template, context, context_instance=RequestContext(request))
 
 def salary_payslip(request, salary_id, preview=True, template="timepiece/salary/payslip_pdf.html", context=None):
