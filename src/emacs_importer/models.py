@@ -31,7 +31,13 @@ def redmine_db(username, business):
     return redmine_mapping(username, business)['db']
 
 def redmine_mappings_for_username(username):
-    return [ x for x in settings.REDMINE_DB_MAPPING if x['username'] == username ]
+    mappings = []
+    for x in settings.REDMINE_DB_MAPPING:
+        if x['username'] == username:
+            if 'mapped_username' not in x:
+                x['mapped_username'] = username
+            mappings.append(x)
+    return mappings
 
 class RedmineEnumeration(models.Model):
     class Meta:
