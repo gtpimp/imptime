@@ -270,7 +270,7 @@ class Processor(object):
         username = self.user
         business_name = fname.replace(".org", "").replace("id-", "")
         for clocktable_entry in clocktable_entries:
-            issue_id = 1 # FOR TESTING
+            issue_id = 34 # FOR TESTING
             time_entry = RedmineTimeEntry.create(business=business_name, issue_id=issue_id, username=username, 
                                                  start_time=clocktable_entry['started'],
                                                  end_time=clocktable_entry['ended'])
