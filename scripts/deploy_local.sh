@@ -74,7 +74,6 @@ if [ $? != 0 ]; then
     echo "empty_starting_db.sql has the problematic migrations applied manually)"
     exit 1
 fi
-cd -
 
 echo "collecting static files"
 python manage.py collectstatic --noinput --verbosity=0
