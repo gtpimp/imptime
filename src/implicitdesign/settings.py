@@ -14,6 +14,11 @@ ADMINS = (
 
 MANAGERS = ADMINS
 
+REDMINE_DB_MAPPING = [ { 'username' : 'test',
+                         'business' : 'projects', 
+                         'db' : 'redmine_projects' }
+                       ]
+
 # This setting is intentionally left invalid
 DATABASES = {
     'default': {
@@ -23,7 +28,16 @@ DATABASES = {
         'PASSWORD': '',                  # Not used with sqlite3.
         'HOST': '',                      # Set to empty string for localhost. Not used with sqlite3.
         'PORT': '',                      # Set to empty string for default. Not used with sqlite3.
-    }
+    },
+    'redmine_projects': {
+        'ENGINE': 'django.db.backends.', # Add 'postgresql_psycopg2', 'postgresql', 'mysql', 'sqlite3' or 'oracle'.
+        'NAME': '',                      # Or path to database file if using sqlite3.
+        
+        'USER': '',                      # Not used with sqlite3.
+        'PASSWORD': '',                  # Not used with sqlite3.
+        'HOST': '',                      # Set to empty string for localhost. Not used with sqlite3.
+        'PORT': '',                      # Set to empty string for default. Not used with sqlite3.
+        }
 }
 
 # Local time zone for this installation. Choices can be found here:

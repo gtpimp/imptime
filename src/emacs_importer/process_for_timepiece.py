@@ -13,6 +13,7 @@ import calendar
 import csv
 import subprocess
 import smtplib
+from models import RedmineTimeEntry
 from email.MIMEMultipart import MIMEMultipart
 from email.MIMEBase import MIMEBase
 from email.mime.image import MIMEImage
@@ -67,6 +68,7 @@ class Processor(object):
         self.status = { 'from': tstart.strftime("%Y-%m-%d %a"),
                         'to': tend.strftime("%Y-%m-%d %a"),
                         'num_entries_created' : 0,
+                        'num_redmine_entries_created' : 0,
                         'num_entries_deleted' : 0,
                         'num_entries_updated' : 0,
                         'num_entries_unchanged' : 0 }
@@ -121,7 +123,8 @@ class Processor(object):
         self.create_clocktable(self.temp_filename)
         if import_clocktable_entries:
             clocktable_entries = self.extract_clocktable_entries(self.temp_filename)
-            self.import_clocktable_entries(fname, clocktable_entries)
+            self.import_clocktable_entries_for_timepiece(fname, clocktable_entries)
+            self.import_clocktable_entries_for_redmine(fname, clocktable_entries)
         return self.temp_filename
         
     def create_clocktable_file(self, input_file, output_file, tstart, tend):
@@ -153,6 +156,7 @@ class Processor(object):
 
     def clean_clocktable_entries(self, user, tstart, tend):
         Entry.objects.all().filter(user__username=user).filter(start_time__gte=tstart).filter(end_time__lte=tend).delete()
+        RedmineTimeEntry.delete_for_user_and_daterange(username=user, start_time=tstart, end_time=tend)
         logger.debug("Wiping for %s from %s to %s" % (user, tstart, tend))
 
     def extract_clocktable_entries_raw(self, input_file):
@@ -215,7 +219,7 @@ class Processor(object):
         raise Exception("Shouldn't get here")
 
 
-    def import_clocktable_entries(self, fname, clocktable_entries):
+    def import_clocktable_entries_for_timepiece(self, fname, clocktable_entries):
         point_person = User.objects.get_or_create(username=self.pointperson_username)[0]
         activity = Activity.objects.get_or_create(code='dev')[0]
         business_name = fname.replace(".org", "").replace("id-", "")
@@ -260,6 +264,21 @@ class Processor(object):
             logger.debug("Created new entry: %s %s %s %s : %s" % (business, project, clocktable_entry['started'], 
                                                                   clocktable_entry['ended'], entry))
             
+
+    def import_clocktable_entries_for_redmine(self, fname, clocktable_entries):
+
+        username = self.user
+        business_name = fname.replace(".org", "").replace("id-", "")
+        for clocktable_entry in clocktable_entries:
+            issue_id = 1 # FOR TESTING
+            time_entry = RedmineTimeEntry.create(business=business_name, issue_id=issue_id, username=username, 
+                                                 start_time=clocktable_entry['started'],
+                                                 end_time=clocktable_entry['ended'])
+            self.status['num_redmine_entries_created'] += 1
+            logger.debug("Created new redmine entry id=%d: %s %s %s" % (time_entry.id, business_name, clocktable_entry['started'], 
+                                                                        clocktable_entry['ended']))
+            
+
 
 if __name__== "__main__":
     
