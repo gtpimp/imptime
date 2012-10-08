@@ -215,6 +215,7 @@ class Processor(object):
                     issue_time = time_parts[5].strip()
                     started, ended = get_start_end_for_clocktable_line(issue_time)
                     issue_clocktable_entries.append( {'sprint': current_sprint_name,
+                                                      'input_file': input_file,
                                                       'issue': description,
                                                       'started': started,
                                                       'ended': ended } )
@@ -275,11 +276,12 @@ class Processor(object):
 
         def log_unknown_issue(clocktable_entry):
             logger.debug("Unknown issue: %s" % clocktable_entry['issue'])
-            self.status['unknown_redmine_entries'].append("%s,%s,%s,%s,%s" % (self.user, 
-                                                                              clocktable_entry['started'].strftime("%Y-%m-%d"), 
-                                                                              clocktable_entry['ended'].strftime("%Y-%m-%d"), 
-                                                                              float((clocktable_entry['ended']-clocktable_entry['started']).seconds)/(60*60),
-                                                                              clocktable_entry['issue']))
+            self.status['unknown_redmine_entries'].append("%s,%s,%s,%s,%s,%s,%s" % (self.user, business_name,
+                                                                                    clocktable_entry['sprint'],
+                                                                                    clocktable_entry['started'].strftime("%Y-%m-%d"), 
+                                                                                    clocktable_entry['ended'].strftime("%Y-%m-%d"), 
+                                                                                    float((clocktable_entry['ended']-clocktable_entry['started']).seconds)/(60*60),
+                                                                                    clocktable_entry['issue']))
 
         
 
