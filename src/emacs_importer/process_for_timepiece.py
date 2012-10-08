@@ -82,7 +82,7 @@ class Processor(object):
             only_include_rated_files = True
 
             is_valid_timesheet_file = fname[-4:] == ".org" and fname[0] != "." and fname[0] != "#" and \
-                ( not only_include_rated_files or fname in self.user_rates.keys()) and \
+                ( not only_include_rated_files or fname in self.user_rates.keys()) and self.user_rates[fname] is not None and \
                 (only_these_files is None or fname in only_these_files)
 
             if is_valid_timesheet_file:
