@@ -12,7 +12,7 @@ ROOT=~/impwebsite
 
 echo "Updating from git"
 cd ${ROOT}
-#git reset --hard HEAD
+git reset --hard HEAD
 git pull origin master
 
 echo "Running deploy_local"
