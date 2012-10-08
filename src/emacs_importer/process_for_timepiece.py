@@ -273,6 +273,16 @@ class Processor(object):
         username = self.user
         business_name = fname.replace(".org", "").replace("id-", "")
 
+        def log_unknown_issue(clocktable_entry):
+            logger.debug("Unknown issue: %s" % clocktable_entry['issue'])
+            self.status['unknown_redmine_entries'].append("%s,%s,%s,%s,%s" % (self.user, 
+                                                                              clocktable_entry['started'].strftime("%Y-%m-%d"), 
+                                                                              clocktable_entry['ended'].strftime("%Y-%m-%d"), 
+                                                                              float((clocktable_entry['ended']-clocktable_entry['started']).seconds)/(60*60),
+                                                                              clocktable_entry['issue']))
+
+        
+
         if redmine_mapping(username, business_name)['db'] is None:
             logger.warning("Skipping %s %s" % (username, business_name))
             return
@@ -281,21 +291,22 @@ class Processor(object):
 
             issue_id = self.get_issue_id(clocktable_entry)
             if issue_id is not None:
-                time_entry = RedmineTimeEntry.create(business=business_name, issue_id=issue_id, username=username, 
-                                                     start_time=clocktable_entry['started'],
-                                                     end_time=clocktable_entry['ended'])
-                self.status['num_redmine_entries_created'] += 1
-                logger.debug("Created new redmine entry id=%d: %s %s %s" % (time_entry.id, business_name, clocktable_entry['started'], 
-                                                                            clocktable_entry['ended']))
+                try:
+                    time_entry = RedmineTimeEntry.create(business=business_name, issue_id=issue_id, username=username, 
+                                                         start_time=clocktable_entry['started'],
+                                                         end_time=clocktable_entry['ended'])
+                except RedmineIssue.DoesNotExist:
+                    logger.debug("Unknown issue number: %s" % issue_id)
+                    log_unknown_issue(clocktable_entry)
+                else:
+                    self.status['num_redmine_entries_created'] += 1
+                    logger.debug("Created new redmine time entry id=%d: %s %s %s" % (time_entry.id, business_name, clocktable_entry['started'], 
+                                                                                     clocktable_entry['ended']))
+            else:
+                 log_unknown_issue(clocktable_entry)
 
     def get_issue_id(self, clocktable_entry):
         raw_issue = clocktable_entry['issue']
-        self.status['unknown_redmine_entries'].append("%s,%s,%s,%s,%s" % (self.user, 
-                                                                          clocktable_entry['started'].strftime("%Y-%m-%d"), 
-                                                                          clocktable_entry['ended'].strftime("%Y-%m-%d"), 
-                                                                          float((clocktable_entry['ended']-clocktable_entry['started']).seconds)/(60*60),
-                                                                          clocktable_entry['issue']))
-
         issue_id = None
         for regex in [ "issue([^ ])+", "issue *#([^ ]+)" ]:
             match_object = re.compile(regex).search(raw_issue)
