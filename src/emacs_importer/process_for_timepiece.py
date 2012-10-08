@@ -13,7 +13,7 @@ import calendar
 import csv
 import subprocess
 import smtplib
-from models import RedmineTimeEntry, redmine_mapping
+from models import RedmineTimeEntry, redmine_mapping, RedmineIssue
 from email.MIMEMultipart import MIMEMultipart
 from email.MIMEBase import MIMEBase
 from email.mime.image import MIMEImage
