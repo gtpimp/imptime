@@ -310,7 +310,7 @@ class Processor(object):
     def get_issue_id(self, clocktable_entry):
         raw_issue = clocktable_entry['issue']
         issue_id = None
-        for regex in [ "[iI]ssue([^ :]+)", "[iI]ssue *#([^ ]+)", "[iI]ssue (\d+)" ]:
+        for regex in [ "[iI]ssue(\d+)", "[iI]ssue *#(\d+)", "[iI]ssue (\d+)" ]:
             match_object = re.compile(regex).search(raw_issue)
             if match_object and match_object.groups() != 0:
                 try:
