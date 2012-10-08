@@ -13,7 +13,7 @@ import calendar
 import csv
 import subprocess
 import smtplib
-from models import RedmineTimeEntry
+from models import RedmineTimeEntry, redmine_mapping
 from email.MIMEMultipart import MIMEMultipart
 from email.MIMEBase import MIMEBase
 from email.mime.image import MIMEImage
@@ -272,6 +272,11 @@ class Processor(object):
 
         username = self.user
         business_name = fname.replace(".org", "").replace("id-", "")
+
+        if redmine_mapping(username, business_name)['db'] is None:
+            logger.warning("Skipping %s %s" % (username, business_name))
+            return
+
         for clocktable_entry in clocktable_entries:
 
             issue_id = self.get_issue_id(clocktable_entry)

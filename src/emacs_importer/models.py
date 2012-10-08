@@ -96,9 +96,10 @@ class RedmineTimeEntry(models.Model):
 
         for mapping in redmine_mappings_for_username(username):
             db = mapping['db']
-            mapped_username = mapping['mapped_username']
-            user = RedmineUser.get_for_mapped_username(db, mapped_username)
-            RedmineTimeEntry.objects.using(db).filter(user=user).filter(spent_on__gte=start_time).filter(spent_on__lte=end_time).delete()
+            if db is not None:
+                mapped_username = mapping['mapped_username']
+                user = RedmineUser.get_for_mapped_username(db, mapped_username)
+                RedmineTimeEntry.objects.using(db).filter(user=user).filter(spent_on__gte=start_time).filter(spent_on__lte=end_time).delete()
 
     @classmethod
     def create(self, business, issue_id, username, start_time, end_time, comment='auto_created'):
