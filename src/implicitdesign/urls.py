@@ -1,6 +1,9 @@
 from django.conf.urls import patterns, include, url
 from filebrowser import sites as filebrowser
+from django.contrib.staticfiles.urls import staticfiles_urlpatterns
 from django.contrib import admin
+from django.conf.urls.static import static
+import settings
 admin.autodiscover()
 
 import views
@@ -29,3 +32,6 @@ urlpatterns = patterns('',
                        
 
 )
+
+urlpatterns += staticfiles_urlpatterns()
+urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

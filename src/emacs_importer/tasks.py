@@ -22,5 +22,7 @@ def import_timesheets_from_emacs():
                              #'ref_current_date': datetime(2011, 8, 30)
                              }
 
-        status[user] = Processor(user, user_email, **processor_kwargs).process()
+        processor = Processor(user, user_email, **processor_kwargs)
+        status[user] = { 'status' : processor.process() }
+                         
     return status

@@ -71,7 +71,8 @@ class Processor(object):
                         'num_redmine_entries_created' : 0,
                         'num_entries_deleted' : 0,
                         'num_entries_updated' : 0,
-                        'num_entries_unchanged' : 0 }
+                        'num_entries_unchanged' : 0,
+                        'unknown_redmine_entries' : [] }
 
         self.update_input_folder()
         
@@ -270,15 +271,29 @@ class Processor(object):
         username = self.user
         business_name = fname.replace(".org", "").replace("id-", "")
         for clocktable_entry in clocktable_entries:
-            issue_id = 34 # FOR TESTING
-            time_entry = RedmineTimeEntry.create(business=business_name, issue_id=issue_id, username=username, 
-                                                 start_time=clocktable_entry['started'],
-                                                 end_time=clocktable_entry['ended'])
-            self.status['num_redmine_entries_created'] += 1
-            logger.debug("Created new redmine entry id=%d: %s %s %s" % (time_entry.id, business_name, clocktable_entry['started'], 
-                                                                        clocktable_entry['ended']))
-            
 
+            issue_id = self.get_issue_id(clocktable_entry)
+            if issue_id is not None:
+                time_entry = RedmineTimeEntry.create(business=business_name, issue_id=issue_id, username=username, 
+                                                     start_time=clocktable_entry['started'],
+                                                     end_time=clocktable_entry['ended'])
+                self.status['num_redmine_entries_created'] += 1
+                logger.debug("Created new redmine entry id=%d: %s %s %s" % (time_entry.id, business_name, clocktable_entry['started'], 
+                                                                            clocktable_entry['ended']))
+
+    def get_issue_id(self, clocktable_entry):
+        raw_issue = clocktable_entry['issue']
+        self.status['unknown_redmine_entries'].append("%s,%s,%s,%s,%s" % (self.user, 
+                                                                          clocktable_entry['started'].strftime("%Y-%m-%d"), 
+                                                                          clocktable_entry['ended'].strftime("%Y-%m-%d"), 
+                                                                          float((clocktable_entry['ended']-clocktable_entry['started']).seconds)/(60*60),
+                                                                          clocktable_entry['issue']))
+        regex = ".*(issue[^ ]*) .*"
+        match_object = re.compile(regex).search(raw_issue)
+        if not match_object or match_object.groups() == 0:
+            return None
+        issue_id = int(match_object.group(1))
+        return issue_id
 
 if __name__== "__main__":
     

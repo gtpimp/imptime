@@ -8,3 +8,4 @@ logs
 src/implicitdesign/local_settings.py
 src/implicitdesign/static/admin
 src/static_collected
+src/implicitdesign/media/unknown_redmine_entries.csv
