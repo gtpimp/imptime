@@ -299,7 +299,11 @@ class Processor(object):
         match_object = re.compile(regex).search(raw_issue)
         if not match_object or match_object.groups() == 0:
             return None
-        issue_id = int(match_object.group(1))
+        try:
+            issue_id = int(match_object.group(1))
+        except Exception, ex:
+            logger.exception(ex)
+            raise Exception("Failed to parse issue_id from %s : (%s)." % (match_object.group(1), raw_issue))
         return issue_id
 
 if __name__== "__main__":
