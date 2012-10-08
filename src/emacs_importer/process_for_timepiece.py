@@ -295,15 +295,16 @@ class Processor(object):
                                                                           clocktable_entry['ended'].strftime("%Y-%m-%d"), 
                                                                           float((clocktable_entry['ended']-clocktable_entry['started']).seconds)/(60*60),
                                                                           clocktable_entry['issue']))
-        regex = ".*issue([^ ])* .*"
-        match_object = re.compile(regex).search(raw_issue)
-        if not match_object or match_object.groups() == 0:
-            return None
-        try:
-            issue_id = int(match_object.group(1))
-        except Exception, ex:
-            logger.exception(ex)
-            raise Exception("Failed to parse issue_id from %s : (%s)." % (match_object.group(1), raw_issue))
+
+        issue_id = None
+        for regex in [ "issue([^ ])+", "issue *#([^ ]+)" ]:
+            match_object = re.compile(regex).search(raw_issue)
+            if match_object and match_object.groups() != 0:
+                try:
+                    issue_id = int(match_object.group(1))
+                except Exception:
+                    pass
+
         return issue_id
 
 if __name__== "__main__":
