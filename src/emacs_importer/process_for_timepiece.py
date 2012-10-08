@@ -36,7 +36,7 @@ class Processor(object):
                  rates_info = {'test':{}},
                  ref_current_date = None,
                  step = ":step day",
-                 maxlevel = 2):
+                 maxlevel = 3):
         self.user = user
         self.user_email = user_email
         self.root_folder = root_folder
@@ -123,9 +123,9 @@ class Processor(object):
         self.create_clocktable_file(filepath, self.temp_filename, tstart, tend)
         self.create_clocktable(self.temp_filename)
         if import_clocktable_entries:
-            clocktable_entries = self.extract_clocktable_entries(self.temp_filename)
+            clocktable_entries, issue_clocktable_entries = self.extract_clocktable_entries(self.temp_filename)
             self.import_clocktable_entries_for_timepiece(fname, clocktable_entries)
-            self.import_clocktable_entries_for_redmine(fname, clocktable_entries)
+            self.import_clocktable_entries_for_redmine(fname, issue_clocktable_entries)
         return self.temp_filename
         
     def create_clocktable_file(self, input_file, output_file, tstart, tend):
@@ -175,8 +175,16 @@ class Processor(object):
         f = open(input_file)
         f.readline() 
         clocktable_entries = []
+        issue_clocktable_entries = []
 
         current_sprint_name = None
+
+        def get_start_end_for_clocktable_line(time_part):
+            hours, minutes = sprint_time.split(":")
+            minutes = 60*int(hours) + int(minutes)
+            started = start_date
+            ended = started + timedelta(minutes=minutes)
+            return started, ended
 
         for line in f:
             time_parts = line.split("|")
@@ -188,34 +196,28 @@ class Processor(object):
                 start_date = datetime(start_date.year, start_date.month, start_date.day, 3, 0)
 
             elif "#+END" in line:
-                return clocktable_entries
+                return clocktable_entries, issue_clocktable_entries
             elif len(time_parts)<2 or time_parts[1].strip() == 'L' or '*Total time*' in line:
                 continue
             elif len(time_parts) >= 6:
+                level = int(time_parts[1].strip())
                 description = time_parts[2].strip()
-                sprint_time = time_parts[4].strip()
-                #issue_time = time_parts[5].strip()
-                current_sprint_name = description.replace("INVOICED","").replace("INVOICE","").replace("TODO","").replace("STARTED","").replace("WAITING","").replace("PAID","")
-                if len(sprint_time)>0:
-
-                    hours, minutes = sprint_time.split(":")
-                    minutes = 60*int(hours) + int(minutes)
-                    started = start_date
-                    ended = started + timedelta(minutes=minutes)
-                    clocktable_entries.append( {'sprint': current_sprint_name,
-                                                'issue': "daily dev",
-                                                'started': started,
-                                                'ended': ended } )
-
-                # elif len(issue_time)>0:
-                #     hours, minutes = issue_time.split(":")
-                #     minutes = 60*int(hours) + int(minutes)
-                #     started = start_date
-                #     ended = started + timedelta(minutes=minutes)
-                #     clocktable_entries.append( {'sprint': current_sprint_name,
-                #                                 'issue': description,
-                #                                 'started': started,
-                #                                 'ended': ended } )
+                if level == 2:
+                    sprint_time = time_parts[4].strip()
+                    current_sprint_name = description.replace("INVOICED","").replace("INVOICE","").replace("TODO","").replace("STARTED","").replace("WAITING","").replace("PAID","")
+                    if len(sprint_time)>0:
+                        started, ended = get_start_end_for_clocktable_line(sprint_time)
+                        clocktable_entries.append( {'sprint': current_sprint_name,
+                                                    'issue': "daily dev",
+                                                    'started': started,
+                                                    'ended': ended } )
+                elif level == 3:
+                    issue_time = time_parts[5].strip()
+                    started, ended = get_start_end_for_clocktable_line(issue_time)
+                    issue_clocktable_entries.append( {'sprint': current_sprint_name,
+                                                      'issue': description,
+                                                      'started': started,
+                                                      'ended': ended } )
             
         raise Exception("Shouldn't get here")
 
@@ -288,7 +290,7 @@ class Processor(object):
                                                                           clocktable_entry['ended'].strftime("%Y-%m-%d"), 
                                                                           float((clocktable_entry['ended']-clocktable_entry['started']).seconds)/(60*60),
                                                                           clocktable_entry['issue']))
-        regex = ".*(issue[^ ]*) .*"
+        regex = ".*issue([^ ])* .*"
         match_object = re.compile(regex).search(raw_issue)
         if not match_object or match_object.groups() == 0:
             return None
