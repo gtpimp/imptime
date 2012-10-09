@@ -1,6 +1,7 @@
 from fabric.api import local, settings, abort, run, cd, env, prefix
 from fabric.operations import get
-import os
+import os, errno
+import shutil
 from fabric.contrib.console import confirm
 import datetime
 
@@ -45,6 +46,21 @@ def import_timesheet(users=''):
         with prefix(imp_remote_venv_command):
             run("python manage.py import_timesheet %s" % users)
             
-            local_download_path = os.path.join(local_code_dir,"..", "temp/unknown_redmine_entries.csv")
-            get(imp_remote_media_dir + "/unknown_redmine_entries.csv", local_download_path)
+            local_download_path = os.path.join(local_code_dir,"..", "temp/unknown_redmine_entries")
+            
+            try:
+                os.makedirs(local_download_path)
+            except OSError as exc:
+                if exc.errno == errno.EEXIST:
+                    pass
+                else: 
+                    raise
+
+            for root, dirs, files in os.walk(local_download_path):
+                for f in files:
+                    os.unlink(os.path.join(root, f))
+                for d in dirs:
+                    shutil.rmtree(os.path.join(root, d))
+            
+            get(imp_remote_media_dir+"/unknown_redmine_entries/*", local_download_path)
             print("Downloaded unknown entries to : %s" % local_download_path)
