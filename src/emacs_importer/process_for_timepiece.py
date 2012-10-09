@@ -180,7 +180,7 @@ class Processor(object):
         current_sprint_name = None
 
         def get_start_end_for_clocktable_line(time_part):
-            hours, minutes = sprint_time.split(":")
+            hours, minutes = time_part.split(":")
             minutes = 60*int(hours) + int(minutes)
             started = start_date
             ended = started + timedelta(minutes=minutes)
@@ -213,6 +213,7 @@ class Processor(object):
                                                     'ended': ended } )
                 elif level == 3:
                     issue_time = time_parts[5].strip()
+
                     started, ended = get_start_end_for_clocktable_line(issue_time)
                     issue_clocktable_entries.append( {'sprint': current_sprint_name,
                                                       'input_file': input_file,
