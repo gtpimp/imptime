@@ -2,7 +2,7 @@ from django.core.management.base import BaseCommand, CommandError
 from emacs_importer.tasks import import_timesheets_from_emacs
 from django.utils import simplejson
 import os
-import settings
+from implicitdesign import settings
 
 class Command(BaseCommand):
     args = 'users'
