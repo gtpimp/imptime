@@ -13,12 +13,6 @@ def do_import(request, template="import.html", context=None):
     if 'immediate' in request.GET:
         status = import_timesheets_from_emacs()
         context['status_msg'] = simplejson.dumps(status, sort_keys=True, indent=2)
-
-        with open(os.path.join(settings.MEDIA_ROOT, 'unknown_redmine_entries.csv'), 'w') as f:
-            for user_status in status.values():
-                f.write("\n".join(user_status['status']['unknown_redmine_entries']))
-
-        context['unknown_redmine_entries_file'] = 'unknown_redmine_entries.csv'
         context['msg'] = 'import task run'
     else:
         task = import_timesheets_from_emacs_task.delay()

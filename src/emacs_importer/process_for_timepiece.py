@@ -1,5 +1,6 @@
 import sys
-import os
+import os, errno
+import csv
 import fnmatch, re
 import json
 import copy
@@ -52,6 +53,22 @@ class Processor(object):
 
         self.load_rates(rates_info)
 
+    def save_unknown_redmine_entries_to_csvs(self, output_folder):
+        try:
+            os.makedirs(output_folder)
+        except OSError as exc:
+            if exc.errno == errno.EEXIST:
+                pass
+            else: 
+                raise
+
+        output_csvs = {}
+        for entry in self.status['unknown_redmine_entries']:
+            business_name = entry[1]
+            if business_name not in output_csvs:
+                output_csvs[business_name] = csv.writer(open(os.path.join(output_folder, "%s_%s.csv"%(business_name,self.user)), "w"))
+            output_csvs[business_name].writerow(entry)
+
     def load_rates(self, rates_info):
         self.user_rates = rates_info[self.user]
 
@@ -101,6 +118,7 @@ class Processor(object):
                 for f in fnmatch.filter(files, pat):
                     handle_file(root, f)
 
+        self.save_unknown_redmine_entries_to_csvs(os.path.join(settings.MEDIA_ROOT, "unknown_redmine_entries"))
         logger.debug( "Import process complete")
         return self.status
 
@@ -277,12 +295,12 @@ class Processor(object):
 
         def log_unknown_issue(clocktable_entry):
             logger.debug("Unknown issue: %s" % clocktable_entry['issue'])
-            self.status['unknown_redmine_entries'].append("%s,%s,%s,%s,%s,%s,%s" % (self.user, business_name,
-                                                                                    clocktable_entry['sprint'],
-                                                                                    clocktable_entry['started'].strftime("%Y-%m-%d"), 
-                                                                                    clocktable_entry['ended'].strftime("%Y-%m-%d"), 
-                                                                                    float((clocktable_entry['ended']-clocktable_entry['started']).seconds)/(60*60),
-                                                                                    clocktable_entry['issue']))
+            self.status['unknown_redmine_entries'].append( (self.user, business_name,
+                                                            clocktable_entry['sprint'],
+                                                            clocktable_entry['started'].strftime("%Y-%m-%d"), 
+                                                            clocktable_entry['ended'].strftime("%Y-%m-%d"), 
+                                                            float((clocktable_entry['ended']-clocktable_entry['started']).seconds)/(60*60),
+                                                            clocktable_entry['issue']) )
 
         
 

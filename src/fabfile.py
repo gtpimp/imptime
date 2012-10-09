@@ -45,5 +45,6 @@ def import_timesheet(users=''):
         with prefix(imp_remote_venv_command):
             run("python manage.py import_timesheet %s" % users)
             
-            get(imp_remote_media_dir + "/unknown_redmine_entries.csv", local_code_dir + "../temp")
-            print("Downloaded unknown entries to : %s" % (local_code_dir + "../temp/unknown_redmine_entries.csv"))
+            local_download_path = os.path.join(local_code_dir,"..", "temp/unknown_redmine_entries.csv")
+            get(imp_remote_media_dir + "/unknown_redmine_entries.csv", local_download_path)
+            print("Downloaded unknown entries to : %s" % local_download_path)

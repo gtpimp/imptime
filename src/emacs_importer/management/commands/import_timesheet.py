@@ -16,10 +16,6 @@ class Command(BaseCommand):
             users = users.split(",")
         status = import_timesheets_from_emacs(users=users)
 
-        filename = os.path.join(settings.MEDIA_ROOT, 'unknown_redmine_entries.csv')
-        with open(filename, 'w') as f:
-            for user_status in status.values():
-                f.write("\n".join(user_status['status']['unknown_redmine_entries']))
         print("Import complete")
-        print("Unknown entries saved to : %s" % filename)
+        print("Unknown entries saved to : %s" % os.path.join(settings.MEDIA_ROOT,"unknown_redmine_entries"))
 
