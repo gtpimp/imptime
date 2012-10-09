@@ -7,12 +7,13 @@ from datetime import datetime
 def import_timesheets_from_emacs_task():
     import_timesheets_from_emacs()
 
-def import_timesheets_from_emacs():
+def import_timesheets_from_emacs(users=None):
 
     user_email = "gtp@implicitdesign.co.za"
 
     status = {}
-    for user in settings.EMACS_USERS_TO_PROCESS:
+    users = users or settings.EMACS_USERS_TO_PROCESS
+    for user in users:
 
         processor_kwargs = { 'root_folder': settings.EMACSIMPORTER_TIMESHEET_ROOT_FOLDER,
                              'email_from': settings.EMACSIMPORTER_EMAIL_FROM,
