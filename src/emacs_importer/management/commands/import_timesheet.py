@@ -1,5 +1,8 @@
 from django.core.management.base import BaseCommand, CommandError
 from emacs_importer.tasks import import_timesheets_from_emacs
+from django.utils import simplejson
+import os
+import settings
 
 class Command(BaseCommand):
     args = 'users'
@@ -11,4 +14,12 @@ class Command(BaseCommand):
     def handle(self, users=None, *args, **options):
         if users is not None:
             users = users.split(",")
-        import_timesheets_from_emacs(users=users)
+        status = import_timesheets_from_emacs(users=users)
+
+        filename = os.path.join(settings.MEDIA_ROOT, 'unknown_redmine_entries.csv')
+        with open(filename, 'w') as f:
+            for user_status in status.values():
+                f.write("\n".join(user_status['status']['unknown_redmine_entries']))
+        print("Import complete")
+        print("Unknown entries saved to : %s" % filename)
+

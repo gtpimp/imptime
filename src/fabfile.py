@@ -1,4 +1,5 @@
 from fabric.api import local, settings, abort, run, cd, env, prefix
+from fabric.operations import get
 import os
 from fabric.contrib.console import confirm
 import datetime
@@ -8,6 +9,7 @@ imp_remote_code_dir = "/home/website"
 imp_remote_venv_dir = imp_remote_code_dir + "/impwebsite/venv"
 imp_remote_managepy_dir = imp_remote_code_dir + "/impwebsite/src"
 imp_remote_venv_command = "source %s/bin/activate" % imp_remote_venv_dir
+imp_remote_media_dir = imp_remote_code_dir + "/impwebsite/media"
 
 # ===== Usage =====
 
@@ -39,12 +41,9 @@ def deploy_prod():
         run("./deploy_production.sh")
 
 def import_timesheet(users=''):
-    print imp_remote_managepy_dir
     with cd(imp_remote_managepy_dir):
         with prefix(imp_remote_venv_command):
             run("python manage.py import_timesheet %s" % users)
-
-# ===== internal commands =======
-def venv():
-    with cd(imp_remote_venv_dir):
-        run(". ./bin/activate")
+            
+            get(imp_remote_media_dir + "/unknown_redmine_entries.csv", local_code_dir + "../temp")
+            print("Downloaded unknown entries to : %s" % (local_code_dir + "../temp/unknown_redmine_entries.csv"))
