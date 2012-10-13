@@ -1,6 +1,7 @@
 from django.shortcuts import render_to_response, get_object_or_404
 from django.http import HttpResponse
 from django.core.cache import get_cache as django_get_cache
+from operator import itemgetter
 from django import template
 import os
 import csv
@@ -147,7 +148,11 @@ def _generate_issues_clocktable_common(processor):
     context['heading'] = ['business', 'sprint', 'issue_category', 'issue_id', 'username', 'date', 'hours', 'description']
     context['rows'] = []
     total_hours = 0
-    for entry in processor.status['issue_clocktable_entries']:
+
+    entries = processor.status['issue_clocktable_entries']
+    entries = sorted(entries, key=itemgetter('sprint'))
+
+    for entry in entries:
         values = [ entry[x] for x in context['heading'] ]
         context['rows'].append(values)
         total_hours += entry['hours']
