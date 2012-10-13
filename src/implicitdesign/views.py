@@ -42,8 +42,6 @@ def generate_incremental_timesheet(request, template="generate_incremental_times
             context['email_to'] = email_to
             context['email_subject'] = email_subject
 
-            raise Exception("blah")
-
             if timesheet_type == 'issues':
                 day_step = True
             elif timesheet_type == 'org':
