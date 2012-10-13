@@ -360,7 +360,7 @@ class Processor(object):
 
     def get_issue_category(self, clocktable_entry):
         raw_issue = clocktable_entry['issue']
-        match_object = re.compile('\(([^ )]*)\)').search(raw_issue)
+        match_object = re.compile('\(([^)]*)\)').search(raw_issue)
         issue_category = ""
         if match_object and match_object.groups() != 0:
             issue_category = match_object.group(1)
