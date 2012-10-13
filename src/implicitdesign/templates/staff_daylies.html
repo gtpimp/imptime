@@ -1,0 +1,29 @@
+{% extends "home.html" %}
+
+{% block content %}
+
+<h2>Staff daylies</h2>
+
+{% for username, entries in daylies.items %}
+
+<h3>{{ username }}</h3>
+
+<table class="issues_clocktable">
+<thead>
+  <th>Date</th>
+  <th>Hours</th>
+</thead>
+<tbody>
+  {% for date, hours in entries.items %}
+  <tr>
+    <td>{{date|date:"Y-m-d"}}</td>
+    <td>{{hours|floatformat}}</td>
+  </tr>
+  {% endfor %}
+</tbody>
+</table>
+  
+<hr/>
+{% endfor %}
+
+{% endblock %}

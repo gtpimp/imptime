@@ -77,6 +77,44 @@ class Processor(object):
         tend = self.ref_current_date
         return self.generate_incremental(from_date=tstart, to_date=tend)
 
+    def generate_staff_daylies(self):
+
+        tstart = self.ref_current_date - timedelta(days=self.num_historical_days) 
+        tend = self.ref_current_date
+        self.clocktable_raws = []
+
+        by_date = {}
+
+        def increment_by_date(entries, by_date=by_date):
+            for k, v in entries.items():
+                if k not in by_date:
+                    by_date[k] = 0
+                by_date[k] += v
+
+        def handle_file(dirname, fname):
+            is_valid_timesheet_file = fname[-4:] == ".org" and fname[0] != "." and fname[0] != "#" and \
+                fname in self.user_rates.keys() and self.user_rates[fname] is not None
+            if is_valid_timesheet_file:
+
+                filepath = os.path.join(dirname, fname)
+                self.output_path = settings.EMACSIMPORTER_TEMP_DIR
+                self.temp_filename = os.path.join(self.output_path, "temp.org")
+                self.create_clocktable_file(filepath, self.temp_filename, tstart, tend)
+                self.create_clocktable(self.temp_filename)
+                entries_raw = self.convert_clocktable_raw_to_lists(self.extract_clocktable_entries_raw(self.temp_filename))
+                entries_by_date = self.convert_entries_to_dates(entries_raw)
+                increment_by_date(entries_by_date)
+
+        includes = ["*.org",]
+        excludes = [".git",]
+        for root, dirs, files in os.walk(self.input_path, topdown=True):
+            dirs[:] = [d for d in dirs if d not in excludes] 
+            for pat in includes:
+                for f in fnmatch.filter(files, pat):
+                    handle_file(root, f)
+
+        return by_date
+
     def generate_incremental(self, from_date, to_date=None, only_these_files=None, import_clocktable_entries=True):
         tstart = from_date
         tend = to_date or datetime.today()
@@ -191,6 +229,23 @@ class Processor(object):
                 return "".join(output)
             output.append(line)
         raise Exception("Shouldn't get here")
+
+    def convert_clocktable_raw_to_lists(self, clocktable):
+        rows = clocktable.split("\n")
+        return rows
+
+    def convert_entries_to_dates(self, clocktable_entries):
+        by_date = {}
+        for line in clocktable_entries:
+            if 'Daily report' in line:
+                start_date = datetime.strptime(line.split("[")[1][0:10], "%Y-%m-%d")
+                start_date = datetime(start_date.year, start_date.month, start_date.day, 0, 0)
+            if 'Total time' in line:
+                raw_time = line.split("|")[3].replace("*", "").strip()
+                hours, minutes = raw_time.split(":")
+                minutes = 60*int(hours) + int(minutes)
+                by_date[start_date] = float(minutes)/60
+        return by_date
 
     def extract_clocktable_entries(self, input_file):
         f = open(input_file)

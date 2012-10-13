@@ -22,6 +22,23 @@ def home(request, template="home.html", context=None):
 def timesheet_graphs(request):
     pass
 
+def staff_daylies(request, template="staff_daylies.html", context=None):
+    context = context or {}
+
+    daylies = {}
+    for username in settings.EMACS_USERS_TO_PROCESS:
+        processor_kwargs = { 'user': username,
+                             'root_folder': settings.EMACSIMPORTER_TIMESHEET_ROOT_FOLDER,
+                             'num_historical_days': 7,
+                             'pointperson_username': settings.EMACSIMPORTER_POINTPERSON_USERNAME,
+                             'rates_info': settings.EMACSIMPORTER_RATES,
+                             'day_step':True,
+                             'maxlevel':1 }
+        processor = Processor(**processor_kwargs)
+        daylies[username] = processor.generate_staff_daylies()
+    context['daylies'] = daylies
+    return render_to_response(template, context, context_instance=RequestContext(request))
+
 def generate_incremental_timesheet(request, template="generate_incremental_timesheet.html", context=None):
     context = context or {}
 
@@ -159,3 +176,4 @@ def _generate_issues_clocktable_common(processor):
     context['footer'] = ['', '', '', '', '', '', total_hours, 'TOTAL HOURS']
 
     return context
+

@@ -27,8 +27,9 @@ urlpatterns = patterns('',
                        url(r'^accounts/password-reset/done/$', 'django.contrib.auth.views.password_reset_done'),
                        url(r'^accounts/reset/(?P<uidb36>[0-9A-Za-z]+)-(?P<token>.+)/$', 'django.contrib.auth.views.password_reset_confirm'),
                        url(r'^accounts/reset/done/$', 'django.contrib.auth.views.password_reset_complete'),
-
+                       
                        url(r'^generate_incremental_timesheet', views.generate_incremental_timesheet, name='generate_incremental_timesheet'),
+                       url(r'^staff_daylies', views.staff_daylies, name='staff_daylies'),
                        
 
 )
