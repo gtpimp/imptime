@@ -35,7 +35,7 @@ class Processor(object):
                  pointperson_username='test',
                  rates_info = {'test':{}},
                  ref_current_date = None,
-                 step = ":step day",
+                 day_step = True,
                  maxlevel = 3):
         self.user = user
         self.user_email = user_email
@@ -44,7 +44,8 @@ class Processor(object):
         self.num_historical_days = num_historical_days
         self.pointperson_username = pointperson_username
         self.ref_current_date = ref_current_date or datetime.today()
-        self.step = step
+        self.day_step = day_step
+        self.step = ":step day" if self.day_step else ""
         self.maxlevel = maxlevel
 
         if not os.path.exists(self.input_path):
@@ -140,8 +141,9 @@ class Processor(object):
 
         self.create_clocktable_file(filepath, self.temp_filename, tstart, tend)
         self.create_clocktable(self.temp_filename)
-        clocktable_entries, issue_clocktable_entries = self.extract_clocktable_entries(self.temp_filename)
-        self.create_issue_clocktable_entries(fname, issue_clocktable_entries)
+        if self.day_step:
+            clocktable_entries, issue_clocktable_entries = self.extract_clocktable_entries(self.temp_filename)
+            self.create_issue_clocktable_entries(fname, issue_clocktable_entries)
         if import_clocktable_entries:
             self.import_clocktable_entries_for_timepiece(fname, clocktable_entries)
             self.import_clocktable_entries_for_redmine(fname, issue_clocktable_entries)

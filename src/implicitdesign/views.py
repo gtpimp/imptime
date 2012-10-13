@@ -40,9 +40,9 @@ def generate_incremental_timesheet(request, template="generate_incremental_times
         context['email_subject'] = email_subject
 
         if timesheet_type == 'issues':
-            step = ":step day"
+            day_step = True
         elif timesheet_type == 'org':
-            step = ""
+            day_step = False
         else:
             raise Exception("Unknown timesheet_type: %s" % timesheet_type)
 
@@ -53,7 +53,7 @@ def generate_incremental_timesheet(request, template="generate_incremental_times
                              'num_historical_days': settings.EMACSIMPORTER_NUM_HISTORICAL_DAYS,
                              'pointperson_username': settings.EMACSIMPORTER_POINTPERSON_USERNAME,
                              'rates_info': settings.EMACSIMPORTER_RATES,
-                             'step':step,
+                             'day_step':day_step,
                              'maxlevel':4
                              }
         processor = Processor(**processor_kwargs)
