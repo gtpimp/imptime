@@ -193,6 +193,7 @@ INSTALLED_APPS = (
     'timepiece',
     'south',
     'emacs_importer',
+    'implicitdesign'
 
 )
 

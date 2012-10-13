@@ -1,0 +1,10 @@
+TEST
+
+Staff daylies
+=============
+{% for username, entries in daylies.items %}
+{{ username }}
+--------------
+{% for date, hours in entries.items %}
+{{date|date:"Y-m-d D"}}   {{hours|floatformat}}{% endfor %}
+{% endfor %}

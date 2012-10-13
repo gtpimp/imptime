@@ -16,7 +16,7 @@
 <tbody>
   {% for date, hours in entries.items %}
   <tr>
-    <td>{{date|date:"Y-m-d"}}</td>
+    <td>{{date|date:"Y-m-d D"}}</td>
     <td>{{hours|floatformat}}</td>
   </tr>
   {% endfor %}

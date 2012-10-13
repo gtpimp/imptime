@@ -13,6 +13,7 @@ from django.template import RequestContext
 from emacs_importer.process_for_timepiece import Processor
 from datetime import datetime
 import logging
+from django.utils.datastructures import SortedDict
 logger = logging.getLogger(__name__)
 
 def home(request, template="home.html", context=None):
@@ -23,21 +24,34 @@ def timesheet_graphs(request):
     pass
 
 def staff_daylies(request, template="staff_daylies.html", context=None):
+    return render_staff_daylies(request=request, template=template, context=context)
+
+def render_staff_daylies(request=None, template="staff_daylies.html", context=None):
     context = context or {}
 
     daylies = {}
     for username in settings.EMACS_USERS_TO_PROCESS:
         processor_kwargs = { 'user': username,
                              'root_folder': settings.EMACSIMPORTER_TIMESHEET_ROOT_FOLDER,
-                             'num_historical_days': 7,
+                             'num_historical_days': 14,
                              'pointperson_username': settings.EMACSIMPORTER_POINTPERSON_USERNAME,
                              'rates_info': settings.EMACSIMPORTER_RATES,
                              'day_step':True,
                              'maxlevel':1 }
         processor = Processor(**processor_kwargs)
-        daylies[username] = processor.generate_staff_daylies()
+        user_daylies = processor.generate_staff_daylies()
+        dates = sorted(user_daylies.keys())
+        sorted_daylies = SortedDict()
+        for date in dates:
+            sorted_daylies[date] = user_daylies[date]
+        daylies[username] = sorted_daylies
+
     context['daylies'] = daylies
-    return render_to_response(template, context, context_instance=RequestContext(request))
+    if request is not None:
+        context_instance=RequestContext(request)
+    else:
+        context_instance = None
+    return render_to_response(template, context, context_instance=context_instance)
 
 def generate_incremental_timesheet(request, template="generate_incremental_timesheet.html", context=None):
     context = context or {}
