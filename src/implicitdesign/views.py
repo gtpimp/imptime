@@ -9,6 +9,8 @@ from zipfile import ZipFile
 from django.template import RequestContext
 from emacs_importer.process_for_timepiece import Processor
 from datetime import datetime
+import logging
+logger = logging.getLogger(__name__)
 
 def home(request, template="home.html", context=None):
     context = context or {}
@@ -20,89 +22,97 @@ def timesheet_graphs(request):
 def generate_incremental_timesheet(request, template="generate_incremental_timesheet.html", context=None):
     context = context or {}
 
-    if request.POST:
-        from_date = datetime.strptime(request.POST['date_from'], '%Y-%m-%d')
-        to_date = datetime.strptime(request.POST['date_to'], '%Y-%m-%d')
-        client = request.POST['client']
-        username = request.POST['username']
-        timesheet_type = request.POST['timesheet_type']
-        display_type = request.POST['display_type']
-        email_to = request.POST['email_to']
-        email_subject = request.POST['email_subject']
+    try:
+        if request.POST:
+            from_date = datetime.strptime(request.POST['date_from'], '%Y-%m-%d')
+            to_date = datetime.strptime(request.POST['date_to'], '%Y-%m-%d')
+            client = request.POST['client']
+            username = request.POST['username']
+            timesheet_type = request.POST['timesheet_type']
+            display_type = request.POST['display_type']
+            email_to = request.POST['email_to']
+            email_subject = request.POST['email_subject']
 
-        context['from_date'] = from_date
-        context['to_date'] = to_date
-        context['client'] = client
-        context['username'] = username
-        context['timesheet_type'] = timesheet_type
-        context['display_type'] = display_type
-        context['email_to'] = email_to
-        context['email_subject'] = email_subject
+            context['from_date'] = from_date
+            context['to_date'] = to_date
+            context['client'] = client
+            context['username'] = username
+            context['timesheet_type'] = timesheet_type
+            context['display_type'] = display_type
+            context['email_to'] = email_to
+            context['email_subject'] = email_subject
 
-        if timesheet_type == 'issues':
-            day_step = True
-        elif timesheet_type == 'org':
-            day_step = False
-        else:
-            raise Exception("Unknown timesheet_type: %s" % timesheet_type)
+            raise Exception("blah")
 
-        processor_kwargs = { 'user': username,
-                             'user_email': 'gtp@implicitdesign.co.za',
-                             'root_folder': settings.EMACSIMPORTER_TIMESHEET_ROOT_FOLDER,
-                             'email_from': settings.EMACSIMPORTER_EMAIL_FROM,
-                             'num_historical_days': settings.EMACSIMPORTER_NUM_HISTORICAL_DAYS,
-                             'pointperson_username': settings.EMACSIMPORTER_POINTPERSON_USERNAME,
-                             'rates_info': settings.EMACSIMPORTER_RATES,
-                             'day_step':day_step,
-                             'maxlevel':4
-                             }
-        processor = Processor(**processor_kwargs)
-        processor.generate_incremental(from_date=from_date,
-                                       to_date=to_date,
-                                       only_these_files=["%s.org" % client],
-                                       import_clocktable_entries=False)
-
-        try:
-            if timesheet_type == 'org':
-                clocktable_raw = _generate_org_clocktable(processor)
-            elif timesheet_type == 'issues':
-                clocktable_raw = _generate_issues_clocktable(processor)
+            if timesheet_type == 'issues':
+                day_step = True
+            elif timesheet_type == 'org':
+                day_step = False
             else:
                 raise Exception("Unknown timesheet_type: %s" % timesheet_type)
-        except IndexError:
-            return HttpResponse("Invalid username or clientname: %s" % username)
 
-        clocktable_raw = "User=%s\nClient=%s\nFrom=%s , To=%s\n%s" % (str(username), str(client), from_date.strftime("%Y-%m-%d"), to_date.strftime("%Y-%m-%d"), clocktable_raw.decode('ascii', 'ignore').encode('ascii', 'ignore'))
+            processor_kwargs = { 'user': username,
+                                 'user_email': 'gtp@implicitdesign.co.za',
+                                 'root_folder': settings.EMACSIMPORTER_TIMESHEET_ROOT_FOLDER,
+                                 'email_from': settings.EMACSIMPORTER_EMAIL_FROM,
+                                 'num_historical_days': settings.EMACSIMPORTER_NUM_HISTORICAL_DAYS,
+                                 'pointperson_username': settings.EMACSIMPORTER_POINTPERSON_USERNAME,
+                                 'rates_info': settings.EMACSIMPORTER_RATES,
+                                 'day_step':day_step,
+                                 'maxlevel':4
+                                 }
+
+            processor = Processor(**processor_kwargs)
+            processor.generate_incremental(from_date=from_date,
+                                           to_date=to_date,
+                                           only_these_files=["%s.org" % client],
+                                           import_clocktable_entries=False)
+
+            try:
+                if timesheet_type == 'org':
+                    clocktable_raw = _generate_org_clocktable(processor)
+                elif timesheet_type == 'issues':
+                    clocktable_raw = _generate_issues_clocktable(processor)
+                else:
+                    raise Exception("Unknown timesheet_type: %s" % timesheet_type)
+            except IndexError:
+                return HttpResponse("Invalid username or clientname: %s" % username)
+
+            clocktable_raw = "User=%s\nClient=%s\nFrom=%s , To=%s\n%s" % (str(username), str(client), from_date.strftime("%Y-%m-%d"), to_date.strftime("%Y-%m-%d"), clocktable_raw.decode('ascii', 'ignore').encode('ascii', 'ignore'))
 
 
-        if display_type == 'download':
-            response = HttpResponse(clocktable_raw)
-            filename = "%s_%s.csv" % (username, client)
-            response['Content-Disposition'] = 'attachment; filename="%s"' % filename
-        elif display_type == 'screen':
-            context['timesheet_entries'] = clocktable_raw
-            response = render_to_response(template, context, context_instance=RequestContext(request))
+            if display_type == 'download':
+                response = HttpResponse(clocktable_raw)
+                filename = "%s_%s.csv" % (username, client)
+                response['Content-Disposition'] = 'attachment; filename="%s"' % filename
+            elif display_type == 'screen':
+                context['timesheet_entries'] = clocktable_raw
+                response = render_to_response(template, context, context_instance=RequestContext(request))
 
-        if len(email_to.strip())>0:
-            email = EmailMessage('%s: %s %s. %s -> %s' % (email_subject, username, client, from_date.strftime("%Y-%m-%d"), to_date.strftime("%Y-%m-%d")),
-                                 'Attached', 'gtp@implicitdesign.co.za',
-                                 email_to.split(","), [],
-                                 headers = {'Reply-To': 'gtp@implicitdesign.co.za'})
-            email.attach(filename, clocktable_raw)
+            if len(email_to.strip())>0:
+                email = EmailMessage('%s: %s %s. %s -> %s' % (email_subject, username, client, from_date.strftime("%Y-%m-%d"), to_date.strftime("%Y-%m-%d")),
+                                     'Attached', 'gtp@implicitdesign.co.za',
+                                     email_to.split(","), [],
+                                     headers = {'Reply-To': 'gtp@implicitdesign.co.za'})
+                email.attach(filename, clocktable_raw)
 
-            clocktable_file = os.path.join(settings.EMACSIMPORTER_TEMP_DIR, filename)
-            with open(clocktable_file, "w") as f:
-                f.write(clocktable_raw)
-            zip_file = os.path.join(settings.EMACSIMPORTER_TEMP_DIR, filename) + ".zip"
-            z = ZipFile(zip_file, 'w')
-            z.write(clocktable_file)
-            z.close()
-            email.attach(filename + ".zip", open(zip_file).read())
+                clocktable_file = os.path.join(settings.EMACSIMPORTER_TEMP_DIR, filename)
+                with open(clocktable_file, "w") as f:
+                    f.write(clocktable_raw)
+                zip_file = os.path.join(settings.EMACSIMPORTER_TEMP_DIR, filename) + ".zip"
+                z = ZipFile(zip_file, 'w')
+                z.write(clocktable_file)
+                z.close()
+                email.attach(filename + ".zip", open(zip_file).read())
 
-            email.send()
+                email.send()
 
-        return response
-    else:
+            return response
+        else:
+            return render_to_response(template, context, context_instance=RequestContext(request))
+    except Exception, ex:
+        logger.exception(ex)
+        context['error'] = str(ex)
         return render_to_response(template, context, context_instance=RequestContext(request))
 
 def _generate_org_clocktable(processor):

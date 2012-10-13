@@ -4,6 +4,10 @@
 
 <h2>Generation of incremental timesheets</h2>
 
+{% if error %}
+<div class="error">{{error}}</div>
+{% endif %}
+
 <form action="{% url generate_incremental_timesheet %}" method="POST">
   {% csrf_token %}
   <table>
