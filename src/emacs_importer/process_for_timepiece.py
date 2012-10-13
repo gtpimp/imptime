@@ -11,7 +11,6 @@ from timepiece.models import Business, Project, Activity, Entry, Location, Attri
 from datetime import *
 from dateutil.relativedelta import relativedelta
 import calendar
-import csv
 import subprocess
 import smtplib
 from models import RedmineTimeEntry, redmine_mapping, RedmineIssue
@@ -89,7 +88,8 @@ class Processor(object):
                         'num_entries_deleted' : 0,
                         'num_entries_updated' : 0,
                         'num_entries_unchanged' : 0,
-                        'unknown_redmine_entries' : [] }
+                        'unknown_redmine_entries' : [],
+                        'issue_clocktable_entries' : [] }
 
         self.update_input_folder()
         
@@ -140,8 +140,9 @@ class Processor(object):
 
         self.create_clocktable_file(filepath, self.temp_filename, tstart, tend)
         self.create_clocktable(self.temp_filename)
+        clocktable_entries, issue_clocktable_entries = self.extract_clocktable_entries(self.temp_filename)
+        self.create_issue_clocktable_entries(fname, issue_clocktable_entries)
         if import_clocktable_entries:
-            clocktable_entries, issue_clocktable_entries = self.extract_clocktable_entries(self.temp_filename)
             self.import_clocktable_entries_for_timepiece(fname, clocktable_entries)
             self.import_clocktable_entries_for_redmine(fname, issue_clocktable_entries)
         return self.temp_filename
@@ -241,6 +242,22 @@ class Processor(object):
             
         raise Exception("Shouldn't get here")
 
+    def create_issue_clocktable_entries(self, fname, issue_clocktable_entries):
+        username = self.user
+        business_name = fname.replace(".org", "").replace("id-", "")
+        for clocktable_entry in issue_clocktable_entries:
+            issue_id = self.get_issue_id(clocktable_entry)
+            issue_category = self.get_issue_category(clocktable_entry)
+            self.status['issue_clocktable_entries'].append( { 'business':business_name, 
+                                                              'description':clocktable_entry['issue'],
+                                                              'issue_id':issue_id, 
+                                                              'issue_category':issue_category,
+                                                              'username':username, 
+                                                              'start_time':clocktable_entry['started'],
+                                                              'end_time':clocktable_entry['ended'],
+                                                              'date':clocktable_entry['started'],
+                                                              'hours':float((clocktable_entry['ended']-clocktable_entry['started']).seconds)/(60*60) } )
+        
 
     def import_clocktable_entries_for_timepiece(self, fname, clocktable_entries):
         point_person = User.objects.get_or_create(username=self.pointperson_username)[0]
@@ -338,6 +355,14 @@ class Processor(object):
                     pass
 
         return issue_id
+
+    def get_issue_category(self, clocktable_entry):
+        raw_issue = clocktable_entry['issue']
+        match_object = re.compile('\(([^ )]*)\)').search(raw_issue)
+        issue_category = ""
+        if match_object and match_object.groups() != 0:
+            issue_category = match_object.group(1)
+        return issue_category
 
 if __name__== "__main__":
     

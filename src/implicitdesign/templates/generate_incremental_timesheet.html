@@ -8,22 +8,40 @@
   {% csrf_token %}
   <table>
     <tr>
-      <td>Developer username: </td><td><input type="text" name="username" value=""/></td>
+      <td>Developer username: </td><td><input type="text" name="username" value="{{username}}"/></td>
     </tr>
     <tr>
-      <td>Date from: </td><td><input type="text" name="date_from" value=""/></td><td>(yyyy-mm-dd)</td>
+      <td>Date from: </td><td><input type="text" name="date_from" value="{{from_date|date:'Y-m-d'}}"/></td><td>(yyyy-mm-dd)</td>
     </tr>
     <tr>
-      <td>Date to: </td><td><input type="text" name="date_to" value=""/></td><td>(yyyy-mm-dd)</td>
+      <td>Date to: </td><td><input type="text" name="date_to" value="{{to_date|date:'Y-m-d'}}"/></td><td>(yyyy-mm-dd)</td>
     </tr>
     <tr>
-      <td>Client: </td><td><input type="text" name="client" value=""/></td><td>(name of the client without the .org extension)</td>
+      <td>Client: </td><td><input type="text" name="client" value="{{client}}"/></td><td>(name of the client without the .org extension)</td>
     </tr>
     <tr>
-      <td>Email to: </td><td><input type="text" name="email_to" value=""/></td><td>(separate muliple addresses with comma)</td>
+      <td>Type: </td>
+      <td>
+	<select name="timesheet_type">
+	  <option value='issues' {%ifequal timesheet_type 'issues'%}selected="1"{%endifequal%}>By issue</option>
+	  <option value='org' {%ifequal timesheet_type 'org'%}selected="1"{%endifequal%}>Org mode</option>
+	</select>
+      </td>
     </tr>
     <tr>
-      <td>Email subject: </td><td><input type="text" name="email_subject" value="Incremental timesheet"/></td>
+      <td>Email to: </td><td><input type="text" name="email_to" value="{{email_to}}"/></td><td>(separate muliple addresses with comma)</td>
+    </tr>
+    <tr>
+      <td>Email subject: </td><td><input type="text" name="email_subject" value="{{email_subject}}"/></td>
+    </tr>
+    <tr>
+      <td>Display type</td>
+      <td>
+	<select name="display_type">
+	  <option value='screen' {%ifequal display_type 'screen'%}selected="1"{%endifequal%}>Display</option>
+	  <option value='download' {%ifequal timesheet_type 'download'%}selected="1"{%endifequal%}>Download as CSV</option>
+	</select>
+      </td>
     </tr>
     <tr>
       <td colspan="2"><input type="submit" value="Generate"/></td>
@@ -31,5 +49,11 @@
   </table>
 
 </form>
+
+{% if timesheet_entries %}
+<pre>
+{{ timesheet_entries }}
+</pre>
+{% endif %}
 
 {% endblock %}

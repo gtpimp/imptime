@@ -1,7 +1,9 @@
 from django.shortcuts import render_to_response, get_object_or_404
 from django.http import HttpResponse
 import os
+import csv
 from django.core.mail import EmailMessage
+import StringIO
 import settings
 from zipfile import ZipFile
 from django.template import RequestContext
@@ -14,7 +16,7 @@ def home(request, template="home.html", context=None):
 
 def timesheet_graphs(request):
     pass
-    
+
 def generate_incremental_timesheet(request, template="generate_incremental_timesheet.html", context=None):
     context = context or {}
 
@@ -23,8 +25,26 @@ def generate_incremental_timesheet(request, template="generate_incremental_times
         to_date = datetime.strptime(request.POST['date_to'], '%Y-%m-%d')
         client = request.POST['client']
         username = request.POST['username']
+        timesheet_type = request.POST['timesheet_type']
+        display_type = request.POST['display_type']
         email_to = request.POST['email_to']
         email_subject = request.POST['email_subject']
+
+        context['from_date'] = from_date
+        context['to_date'] = to_date
+        context['client'] = client
+        context['username'] = username
+        context['timesheet_type'] = timesheet_type
+        context['display_type'] = display_type
+        context['email_to'] = email_to
+        context['email_subject'] = email_subject
+
+        if timesheet_type == 'issues':
+            step = ":step day"
+        elif timesheet_type == 'org':
+            step = ""
+        else:
+            raise Exception("Unknown timesheet_type: %s" % timesheet_type)
 
         processor_kwargs = { 'user': username,
                              'user_email': 'gtp@implicitdesign.co.za',
@@ -33,28 +53,38 @@ def generate_incremental_timesheet(request, template="generate_incremental_times
                              'num_historical_days': settings.EMACSIMPORTER_NUM_HISTORICAL_DAYS,
                              'pointperson_username': settings.EMACSIMPORTER_POINTPERSON_USERNAME,
                              'rates_info': settings.EMACSIMPORTER_RATES,
-                             'step':"",
+                             'step':step,
                              'maxlevel':4
                              }
         processor = Processor(**processor_kwargs)
-        processor.generate_incremental(from_date=from_date, 
+        processor.generate_incremental(from_date=from_date,
                                        to_date=to_date,
-                                       only_these_files=["%s.org" % client], 
+                                       only_these_files=["%s.org" % client],
                                        import_clocktable_entries=False)
+
         try:
-            clocktable_raw = processor.clocktable_raws[0]
+            if timesheet_type == 'org':
+                clocktable_raw = _generate_org_clocktable(processor)
+            elif timesheet_type == 'issues':
+                clocktable_raw = _generate_issues_clocktable(processor)
+            else:
+                raise Exception("Unknown timesheet_type: %s" % timesheet_type)
         except IndexError:
             return HttpResponse("Invalid username or clientname: %s" % username)
 
-        clocktable_raw = clocktable_raw.replace(","," ").replace("|",",") #make friendly for csv
         clocktable_raw = "User=%s\nClient=%s\nFrom=%s , To=%s\n%s" % (str(username), str(client), from_date.strftime("%Y-%m-%d"), to_date.strftime("%Y-%m-%d"), clocktable_raw.decode('ascii', 'ignore').encode('ascii', 'ignore'))
 
-        response = HttpResponse(clocktable_raw)
-        filename = "%s_%s.csv" % (username, client)
-        response['Content-Disposition'] = 'attachment; filename="%s"' % filename
+
+        if display_type == 'download':
+            response = HttpResponse(clocktable_raw)
+            filename = "%s_%s.csv" % (username, client)
+            response['Content-Disposition'] = 'attachment; filename="%s"' % filename
+        elif display_type == 'screen':
+            context['timesheet_entries'] = clocktable_raw
+            response = render_to_response(template, context, context_instance=RequestContext(request))
 
         if len(email_to.strip())>0:
-            email = EmailMessage('%s: %s %s. %s -> %s' % (email_subject, username, client, from_date.strftime("%Y-%m-%d"), to_date.strftime("%Y-%m-%d")), 
+            email = EmailMessage('%s: %s %s. %s -> %s' % (email_subject, username, client, from_date.strftime("%Y-%m-%d"), to_date.strftime("%Y-%m-%d")),
                                  'Attached', 'gtp@implicitdesign.co.za',
                                  email_to.split(","), [],
                                  headers = {'Reply-To': 'gtp@implicitdesign.co.za'})
@@ -74,3 +104,24 @@ def generate_incremental_timesheet(request, template="generate_incremental_times
         return response
     else:
         return render_to_response(template, context, context_instance=RequestContext(request))
+
+def _generate_org_clocktable(processor):
+    clocktable_raw = processor.clocktable_raws[0]
+    clocktable_raw = clocktable_raw.replace(","," ").replace("|",",") #make friendly for csv
+    return clocktable_raw
+
+
+def _generate_issues_clocktable(processor):
+    s = StringIO.StringIO()
+    c = csv.writer(s)
+    heading = ['business', 'issue_category', 'issue_id', 'username', 'date', 'hours', 'description']
+    c.writerow(heading)
+    total_hours = 0
+    for entry in processor.status['issue_clocktable_entries']:
+        values = [ entry[x] for x in heading ]
+        c.writerow(values)
+        total_hours += entry['hours']
+
+    c.writerow( [] )
+    c.writerow( ['', '', '', '', '', total_hours, 'TOTAL HOURS'] )
+    return s.getvalue()
