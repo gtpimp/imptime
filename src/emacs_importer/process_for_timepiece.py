@@ -251,6 +251,7 @@ class Processor(object):
             issue_id = self.get_issue_id(clocktable_entry)
             issue_category = self.get_issue_category(clocktable_entry)
             self.status['issue_clocktable_entries'].append( { 'business':business_name, 
+                                                              'sprint':clocktable_entry['sprint'],
                                                               'description':clocktable_entry['issue'],
                                                               'issue_id':issue_id, 
                                                               'issue_category':issue_category,

@@ -1,5 +1,7 @@
 from django.shortcuts import render_to_response, get_object_or_404
 from django.http import HttpResponse
+from django.core.cache import get_cache as django_get_cache
+from django import template
 import os
 import csv
 from django.core.mail import EmailMessage
@@ -70,7 +72,12 @@ def generate_incremental_timesheet(request, template="generate_incremental_times
                 if timesheet_type == 'org':
                     clocktable_raw = _generate_org_clocktable(processor)
                 elif timesheet_type == 'issues':
-                    clocktable_raw = _generate_issues_clocktable(processor)
+                    if display_type == 'screen':
+                        clocktable_raw = _generate_issues_clocktable_html(processor)
+                    elif display_type == 'download':
+                        clocktable_raw = _generate_issues_clocktable_csv(processor)
+                    else:
+                        raise Exception("Unknown display_type: %s" % display_type)
                 else:
                     raise Exception("Unknown timesheet_type: %s" % timesheet_type)
             except IndexError:
@@ -119,17 +126,31 @@ def _generate_org_clocktable(processor):
     return clocktable_raw
 
 
-def _generate_issues_clocktable(processor):
+def _generate_issues_clocktable_csv(processor):
     s = StringIO.StringIO()
     c = csv.writer(s)
-    heading = ['business', 'issue_category', 'issue_id', 'username', 'date', 'hours', 'description']
-    c.writerow(heading)
+    context = _generate_issues_clocktable_common(processor)
+    c.writerow(context['heading'])
+    for row in context['rows']:
+        c.writerow(row)
+    c.writerow( [] )
+    c.writerow( context['footer'] )
+    return s.getvalue()
+
+def _generate_issues_clocktable_html(processor):
+    context = _generate_issues_clocktable_common(processor)
+    t = template.loader.get_template("issues_clocktable.html")
+    return t.render(template.Context(context)).encode('ascii', 'ignore')
+
+def _generate_issues_clocktable_common(processor):
+    context = {}
+    context['heading'] = ['business', 'sprint', 'issue_category', 'issue_id', 'username', 'date', 'hours', 'description']
+    context['rows'] = []
     total_hours = 0
     for entry in processor.status['issue_clocktable_entries']:
-        values = [ entry[x] for x in heading ]
-        c.writerow(values)
+        values = [ entry[x] for x in context['heading'] ]
+        context['rows'].append(values)
         total_hours += entry['hours']
+    context['footer'] = ['', '', '', '', '', '', total_hours, 'TOTAL HOURS']
 
-    c.writerow( [] )
-    c.writerow( ['', '', '', '', '', total_hours, 'TOTAL HOURS'] )
-    return s.getvalue()
+    return context

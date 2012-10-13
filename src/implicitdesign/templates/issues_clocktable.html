@@ -1,0 +1,31 @@
+
+<table class="issues_clocktable">
+  
+  <thead>
+    {% for h in heading %}
+    <th>{{h}}</th>
+    {% endfor %}
+  </thead>
+  <tbody>
+    {% for r in rows %}
+    <tr>
+      {% for v in r %}
+      <td>{{v}}</td>
+      {% endfor %}
+    </tr>
+    {% endfor %}
+
+    <tr>
+      <td colspan="100">
+	<hr/>
+      </td>
+    <tr>
+      {% for v in footer %}
+      <td>{{v}}</td>
+      {% endfor %}
+    </tr>
+
+  </tbody>
+
+
+</table>

@@ -66,3 +66,15 @@ input {
 .content {
     clear: both;
 }
+
+.timesheet_entries {
+    border: 1px solid #bbbbbb;
+}
+
+table.issues_clocktable {
+}
+
+.issues_clocktable td, .issues_clocktable th {
+    border-left: 1px solid #bbbbbb;
+    padding-left: 5px;
+}

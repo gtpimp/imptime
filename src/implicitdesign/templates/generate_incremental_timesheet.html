@@ -55,9 +55,9 @@
 </form>
 
 {% if timesheet_entries %}
-<pre>
-{{ timesheet_entries }}
-</pre>
+<div class="timesheet_entries">
+  {{ timesheet_entries|safe }}
+</div>
 {% endif %}
 
 {% endblock %}
