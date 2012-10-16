@@ -118,9 +118,9 @@ def generate_incremental_timesheet(request, template="generate_incremental_times
             clocktable_raw = "User=%s\nClient=%s\nFrom=%s , To=%s\n%s" % (str(username), str(client), from_date.strftime("%Y-%m-%d"), to_date.strftime("%Y-%m-%d"), clocktable_raw.decode('ascii', 'ignore').encode('ascii', 'ignore'))
 
 
+            filename = "%s_%s.csv" % (username, client)
             if display_type == 'download':
                 response = HttpResponse(clocktable_raw)
-                filename = "%s_%s.csv" % (username, client)
                 response['Content-Disposition'] = 'attachment; filename="%s"' % filename
             elif display_type == 'screen':
                 context['timesheet_entries'] = clocktable_raw

@@ -26,6 +26,11 @@ To import timesheets on implicitdesign.co.za
   
   > fab host_imp import_timesheet
 
+To view staff daylies
+---------------------
+
+  > fab host_imp daylies
+
 """
 def help():
     print usage
@@ -64,3 +69,9 @@ def import_timesheet(users=''):
             
             get(imp_remote_media_dir+"/unknown_redmine_entries/*", local_download_path)
             print("Downloaded unknown entries to : %s" % local_download_path)
+
+def daylies():
+    with cd(imp_remote_managepy_dir):
+        with prefix(imp_remote_venv_command):
+            run("python manage.py daylies")
+
