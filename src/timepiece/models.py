@@ -79,6 +79,7 @@ class Project(models.Model):
         Business,
         related_name='new_business_projects',
     )
+    billable = models.BooleanField(default=False)
     point_person = models.ForeignKey(User, limit_choices_to={'is_staff': True})
     users = models.ManyToManyField(
         User,
@@ -702,27 +703,34 @@ class Entry(models.Model):
             'invoiced': Decimal('0'), 'uninvoiced': Decimal('0'),
             'total': Decimal('0')
             }
-        invoiced = entries.filter(
-            status='invoiced').aggregate(i=Sum('hours'))['i']
-        uninvoiced = entries.exclude(
-            status='invoiced').aggregate(uninv=Sum('hours'))['uninv']
+
+
+        uninvoiced = entries.exclude(status='invoiced').aggregate(uninv=Sum('hours'))['uninv']
+        invoiced = entries.filter(status='invoiced').filter(project__billable=True).aggregate(total=Sum('hours'))['total']
+        unbillable = entries.filter(status='invoiced').exclude(project__billable=True).aggregate(total=Sum('hours'))['total']
+        
+        # invoiced = entries.filter(
+        #     status='invoiced').aggregate(i=Sum('hours'))['i']
+        # uninvoiced = entries.exclude(
+        #     status='invoiced').aggregate(uninv=Sum('hours'))['uninv']
         total = entries.aggregate(s=Sum('hours'))['s']
         if invoiced:
             data['invoiced'] = invoiced
         if uninvoiced:
             data['uninvoiced'] = uninvoiced
+        if unbillable:
+            data['unbillable'] = unbillable
         if total:
             data['total'] = total
-        billable = entries.exclude(project__in=projects.values())
-        billable = billable.values(
-            'billable',
-        ).annotate(s=Sum('hours'))
-        for row in billable:
-            if row['billable']:
-                data['billable'] += row['s']
-            else:
-                data['non_billable'] += row['s']
-        data['total_worked'] = data['billable'] + data['non_billable']
+        # billable = entries.exclude(project__in=projects.values())
+        # billable = billable.values(
+        #     'billable',
+        # ).annotate(s=Sum('hours'))
+        # for row in billable:
+        #     if row['billable']:
+        #         data['billable'] += row['s']
+        #     else:
+        #         data['non_billable'] += row['s']
         data['paid_leave'] = {}
         for name, pk in projects.iteritems():
             qs = entries.filter(project=projects[name])

@@ -79,6 +79,16 @@ urlpatterns = patterns('',
         name='close_project',
     ),
     url(
+        r'^project/(?P<project_id>\d+)/invoiced/$',
+        views.invoiced_project,
+        name='invoiced_project',
+    ),
+    url(
+        r'^project/(?P<project_id>\d+)/unbillable/$',
+        views.unbillable_project,
+        name='unbillable_project',
+    ),
+    url(
         r'^project/(?P<project_id>\d+)/user/add/$',
         views.add_user_to_project,
         name='add_user_to_project',

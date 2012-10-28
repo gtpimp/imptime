@@ -1095,13 +1095,13 @@ def list_projects(request):
         projects = timepiece.Project.objects.filter(
             Q(name__icontains=search) | Q(description__icontains=search))
         projects = projects.filter(status=status) if status else projects
-        if projects.count() == 1:
-            url_kwargs = {
-                'project_id': projects[0].id,
-            }
-            return HttpResponseRedirect(
-                reverse('view_project', kwargs=url_kwargs)
-            )
+        # if projects.count() == 1:
+        #     url_kwargs = {
+        #         'project_id': projects[0].id,
+        #     }
+        #     return HttpResponseRedirect(
+        #         reverse('view_project', kwargs=url_kwargs)
+        #     )
     else:
         projects = timepiece.Project.objects.filter(status='open')
 
@@ -1217,6 +1217,26 @@ def create_close_project(request, project_id=None):
     project = get_object_or_404(timepiece.Project, pk=project_id)
     project.status = timepiece.Attribute.objects.get(label='closed', type='project-status')
     project.save()
+    return HttpResponseRedirect(reverse('list_projects'))
+
+@permission_required('timepiece.add_project')
+@permission_required('timepiece.invoiced_project')
+def invoiced_project(request, project_id=None):
+    project = get_object_or_404(timepiece.Project, pk=project_id)
+    project.status = timepiece.Attribute.objects.get(label='closed', type='project-status')
+    project.billable = True
+    project.save()
+    timepiece.Entry.objects.filter(project=project).update(status='invoiced')
+    return HttpResponseRedirect(reverse('list_projects'))
+
+@permission_required('timepiece.add_project')
+@permission_required('timepiece.unbillable_project')
+def unbillable_project(request, project_id=None):
+    project = get_object_or_404(timepiece.Project, pk=project_id)
+    project.status = timepiece.Attribute.objects.get(label='closed', type='project-status')
+    project.billable = False
+    project.save()
+    timepiece.Entry.objects.filter(project=project).update(status='invoiced')
     return HttpResponseRedirect(reverse('list_projects'))
 
 @permission_required('timepiece.add_project')

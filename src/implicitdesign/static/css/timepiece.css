@@ -212,7 +212,7 @@ a:hover {
 /* (~".offset@{index}") { .offset(@index); }*/
 /* (~".offset@{index}") { .offset(@index); }*/
 .row-fluid {
-  width: 100%;
+  width: 90%;
   *zoom: 1;
   *zoom: 1;
   *zoom: 1;
@@ -312,7 +312,7 @@ a:hover {
 }
 .row-fluid [class*="span"] {
   display: block;
-  width: 100%;
+  width: 90%;
   min-height: 28px;
   -webkit-box-sizing: border-box;
   -moz-box-sizing: border-box;
@@ -327,35 +327,6 @@ a:hover {
   -ms-box-sizing: border-box;
   box-sizing: border-box;
   display: block;
-  width: 100%;
-  min-height: 28px;
-  -webkit-box-sizing: border-box;
-  -moz-box-sizing: border-box;
-  -ms-box-sizing: border-box;
-  box-sizing: border-box;
-  -webkit-box-sizing: border-box;
-  -moz-box-sizing: border-box;
-  -ms-box-sizing: border-box;
-  box-sizing: border-box;
-  -webkit-box-sizing: border-box;
-  -moz-box-sizing: border-box;
-  -ms-box-sizing: border-box;
-  box-sizing: border-box;
-  display: block;
-  width: 100%;
-  min-height: 28px;
-  -webkit-box-sizing: border-box;
-  -moz-box-sizing: border-box;
-  -ms-box-sizing: border-box;
-  box-sizing: border-box;
-  -webkit-box-sizing: border-box;
-  -moz-box-sizing: border-box;
-  -ms-box-sizing: border-box;
-  box-sizing: border-box;
-  -webkit-box-sizing: border-box;
-  -moz-box-sizing: border-box;
-  -ms-box-sizing: border-box;
-  box-sizing: border-box;
   float: left;
   margin-left: 2.127659574%;
   *margin-left: 2.0744680846382977%;
@@ -1722,13 +1693,13 @@ legend + .control-group {
   padding-left: 160px;
 }
 table {
-  max-width: 100%;
+  max-width: 90%;
   background-color: transparent;
   border-collapse: collapse;
   border-spacing: 0;
 }
 .table {
-  width: 100%;
+  width: 90%;
   margin-bottom: 18px;
 }
 .table th, .table td {
@@ -8704,37 +8675,7 @@ a.label:hover, a.badge:hover {
   }
   .row-fluid [class*="span"] {
     display: block;
-    width: 100%;
-    min-height: 28px;
-    -webkit-box-sizing: border-box;
-    -moz-box-sizing: border-box;
-    -ms-box-sizing: border-box;
-    box-sizing: border-box;
-    -webkit-box-sizing: border-box;
-    -moz-box-sizing: border-box;
-    -ms-box-sizing: border-box;
-    box-sizing: border-box;
-    -webkit-box-sizing: border-box;
-    -moz-box-sizing: border-box;
-    -ms-box-sizing: border-box;
-    box-sizing: border-box;
-    display: block;
-    width: 100%;
-    min-height: 28px;
-    -webkit-box-sizing: border-box;
-    -moz-box-sizing: border-box;
-    -ms-box-sizing: border-box;
-    box-sizing: border-box;
-    -webkit-box-sizing: border-box;
-    -moz-box-sizing: border-box;
-    -ms-box-sizing: border-box;
-    box-sizing: border-box;
-    -webkit-box-sizing: border-box;
-    -moz-box-sizing: border-box;
-    -ms-box-sizing: border-box;
-    box-sizing: border-box;
-    display: block;
-    width: 100%;
+    width: 90%;
     min-height: 28px;
     -webkit-box-sizing: border-box;
     -moz-box-sizing: border-box;
@@ -9303,11 +9244,11 @@ body #content .totals td:last-child {
   border-right: 1px solid #DDD;
 }
 body #content #full-timesheet {
-  width: 100%;
+  width: 90%;
   min-width: 800px;
 }
 body #content #full-timesheet table {
-  width: 100%;
+  width: 90%;
   table-layout: fixed;
 }
 body #content #full-timesheet table th, body #content #full-timesheet table td {
@@ -9333,7 +9274,7 @@ body #content #full-timesheet table th.activity, body #content #full-timesheet t
   width: 15%;
 }
 body #content #hourly-summary table {
-  width: 100%;
+  width: 90%;
   table-layout: fixed;
 }
 body #content #hourly-summary table th.billable,

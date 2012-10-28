@@ -104,16 +104,18 @@
                                     </thead>
                                     <tbody>
                                         <tr>
+                                            <td>Pending</td><td class="hours">{{summary.uninvoiced|floatformat:2 }}</td>
+                                        </tr>
+					{% comment %}
+                                        <tr>
                                             <td>Billable</td><td class="hours">{{summary.billable|floatformat:2 }}</td>
                                         </tr>
+					{% endcomment %}
                                         <tr>
-                                           <td>Non-billable</td><td class="hours">{{summary.non_billable|floatformat:2 }}</td>
+                                           <td>Non-billable</td><td class="hours">{{summary.unbillable|floatformat:2 }}</td>
                                         </tr>
                                         <tr>
-                                            <td>Invoiced</td><td class="hours">{{summary.invoiced|floatformat:2 }}</td>
-                                        </tr>
-                                        <tr>
-                                            <td>Uninvoiced</td><td class="hours">{{summary.uninvoiced|floatformat:2 }}</td>
+					  <td>Invoiced</td><td class="hours">{{summary.invoiced|floatformat:2 }}</td>
                                         </tr>
                                     </tbody>
                                 </table>
