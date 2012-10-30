@@ -2017,6 +2017,6 @@ def set_project_rate(request, context=None):
     project = timepiece.Project.objects.get(pk=project_id)
     user = timepiece.User.objects.get(username=user_name)
     rate = timepiece.Rate.objects.get_or_create(project=project, user=user)[0]
-    rate.amount = new_amount
+    rate.amount = str(new_amount)
     rate.save()
     return HttpResponse("")
