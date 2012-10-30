@@ -1107,9 +1107,22 @@ def list_projects(request):
 
     projects = projects.order_by("business__name", "description")
 
+    total_outstanding_amount = 0
+    total_outstanding_amounts_per_project = {}
+    for project in projects:
+        for user, hours_info in project.users_and_hours.items():
+            revenue = float(hours_info['rate'].amount) * float(hours_info['hours'])
+            total_outstanding_amount += revenue
+
+            if project not in total_outstanding_amounts_per_project.keys():
+                total_outstanding_amounts_per_project[project] = 0
+            total_outstanding_amounts_per_project[project] += revenue
+
     context = {
         'form': form,
         'projects': projects.select_related('business'),
+        'total_outstanding_amount':total_outstanding_amount,
+        'total_outstanding_amounts_per_project':total_outstanding_amounts_per_project
     }
     return context
 

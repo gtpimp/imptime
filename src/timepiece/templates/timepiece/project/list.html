@@ -31,6 +31,24 @@
     <div class="row-fluid">
         <div class="span12">
             <h2>Projects</h2>
+
+	    <fieldset>
+	      <legend>Outstanding to be invoiced</legend>
+	      <table>
+		{% for project, amount in total_outstanding_amounts_per_project.items %}
+	        {% if amount > 0 %}
+		<tr>
+	          <th>{{ project.long_name }}</td><td>{{ amount }}</th>
+		</tr>
+		{% endif %}
+		{% endfor %}
+		<tr>
+		  <th>Total:</th>
+		  <th>R{{total_outstanding_amount}}</th>
+		</tr>
+	      </table>
+	    </fieldset>
+	    <hr/>
             <ul class="unstyled subnav">
             {% if perms.timepiece.add_project %}
                 <li><a href='{% url 'create_project' %}'>Create Project</a></li>
