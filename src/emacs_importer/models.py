@@ -64,15 +64,55 @@ class RedmineProject(models.Model):
     class Meta:
         db_table = "projects"
 
+class RedmineTracker(models.Model):
+    class Meta:
+        db_table = 'trackers'
+    name = models.CharField(max_length=255)
+
 class RedmineIssue(models.Model):
     class Meta:
         db_table = 'issues'
 
     project = models.ForeignKey(RedmineProject)
+    description = models.TextField()
+    subject = models.TextField()
+    tracker = models.ForeignKey(RedmineTracker)
+
+    def get_custom_value(self, value_name):
+        try:
+            custom_field = RedmineCustomField.objects.using(self.redmine_db).get(name=value_name)
+        except RedmineCustomField.DoesNotExist:
+            return None
+        try:
+            value = RedmineCustomValue.objects.using(self.redmine_db).get(customized_id=self.id, customized_type='Issue', custom_field=custom_field)
+        except RedmineCustomValue.DoesNotExist:
+            return None
+        return value.value
 
     @classmethod
     def get_for_issue_id(self, db, issue_id):
-        return RedmineIssue.objects.using(db).get(pk=int(issue_id))
+        issue = RedmineIssue.objects.using(db).get(pk=int(issue_id))
+        issue.redmine_db = db
+        return issue
+
+class RedmineCustomField(models.Model):
+    class Meta:
+        db_table = 'custom_fields'
+    name = models.CharField(max_length=255)
+    
+class RedmineCustomFieldsTracker(models.Model):
+    class Meta:
+        db_table = "custom_fields_trackers"
+    custom_field = models.ForeignKey(RedmineCustomField)
+    tracker = models.ForeignKey(RedmineTracker)
+
+class RedmineCustomValue(models.Model):
+    class Meta:
+        db_table = "custom_values"
+    custom_field = models.ForeignKey(RedmineCustomField)
+    value = models.TextField()
+    customized_type = models.CharField(max_length=30)
+    customized_id = models.IntegerField()
 
 class RedmineTimeEntry(models.Model):
     class Meta:

@@ -2,6 +2,7 @@ from timepiece import models as timepiece
 import re
 import StringIO
 import csv
+from models import redmine_mapping, RedmineIssue
 
 def incremental_timesheets_by_project(project):
 
@@ -10,22 +11,24 @@ def incremental_timesheets_by_project(project):
                  'username', 'date', 'hours', 'time log description', 'cost', 'bill' ]
     rows = [headings,]
 
-    entries = timepiece.Entry.objects.filter(project=project).order_by("user", "start_time")
+    entries = timepiece.Entry.objects.filter(project=project).order_by("user", "comments")
     for entry in entries:
+        issue_number = _get_issue_number(entry)
         try:
             rate = timepiece.Rate.objects.get(project=project, user=entry.user)
             rate_amount = rate.amount
         except timepiece.Rate.DoesNotExist:
             rate_amount = 0
+        redmine_issue = _get_redmine_issue(entry, issue_number)
         row_dict = {
             'business': project.business.name,
             'project': project.business.name,
             'sprint': project.name,
             'type': 'Time log',
-            'issue nr': _get_issue_number(entry),
-            'cat1': None,
-            'cat2': None,
-            'redmine description': None,
+            'issue nr': issue_number,
+            'cat1': redmine_issue.get_custom_value('Cat1') or "" if redmine_issue is not None else "",
+            'cat2': redmine_issue.get_custom_value('Cat2') or "" if redmine_issue is not None else "",
+            'redmine description': redmine_issue.subject if redmine_issue is not None else "",
             'full issue description': None,
             'story points': None,
             'cost est': None,
@@ -72,4 +75,14 @@ def _get_issue_category(entry):
         issue_category = match_object.group(1)
     return issue_category
 
-    
+def _get_redmine_issue(entry, issue_number):
+    if issue_number is None:
+        return None
+    business = entry.project.business.name
+    username = entry.user.username
+    mapping = redmine_mapping(username, business)
+    db = mapping['db']
+    try:
+        return RedmineIssue.get_for_issue_id(db, issue_number)
+    except RedmineIssue.DoesNotExist:
+        return None
