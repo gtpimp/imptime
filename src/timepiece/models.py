@@ -144,6 +144,9 @@ class Project(models.Model):
     def __unicode__(self):
         return self.name
 
+    def long_name(self):
+        return "%s - %s" % (self.business.name, self.name)
+
     def trac_url(self):
         return settings.TRAC_URL % self.tracker_url
 

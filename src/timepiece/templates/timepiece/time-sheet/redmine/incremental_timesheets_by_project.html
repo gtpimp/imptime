@@ -21,7 +21,9 @@
 
     {% if report %}
       <pre>
-	{{ report|safe }}
+	{% for line in report %}
+	  {{ line }}
+	{% endfor %}
       </pre>
     {% endif %}
 

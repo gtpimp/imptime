@@ -1998,6 +1998,11 @@ def incremental_timesheets_by_project(request, template="timepiece/time-sheet/re
         report_args = form.save()
         report = report_helper.incremental_timesheets_by_project(**report_args)
         context['report'] = report
+        csv_report = report_helper.convert_report_to_csv(report)
+        response = HttpResponse(csv_report, mimetype="text/csv")
+        response['Content-Disposition'] = 'attachment; filename="%s.csv"'%report_args['project'].name
+        return response
+            
     context['form'] = form
     return render_to_response(template, context, context_instance=RequestContext(request))
 
@@ -2005,11 +2010,11 @@ def incremental_timesheets_by_project(request, template="timepiece/time-sheet/re
 @permission_required('timepiece.change_project')
 @transaction.commit_on_success
 def set_project_rate(request, context=None):
-    project_name = request.POST['project_name']
+    project_id = request.POST['project_id']
     user_name = request.POST['user_name']
     new_amount = float(request.POST['amount'])
     
-    project = timepiece.Project.objects.get(name=project_name)
+    project = timepiece.Project.objects.get(pk=project_id)
     user = timepiece.User.objects.get(username=user_name)
     rate = timepiece.Rate.objects.get_or_create(project=project, user=user)[0]
     rate.amount = new_amount

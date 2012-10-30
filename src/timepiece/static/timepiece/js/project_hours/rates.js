@@ -4,6 +4,7 @@ var TP_rates = function() {
     var trigger = null;
     var post_url = null;
     var project_name = null;
+    var project_id = null;
     var user_name = null;
 
     var get_popup_node = function() {
@@ -19,17 +20,18 @@ var TP_rates = function() {
 
     var do_save_post = function(new_amount) {
 	$.post(post_url,
-	       {project_name:project_name,
+	       {project_id:project_id,
 		user_name:user_name,
 		amount:new_amount},
 	       on_save_done);
     };
 
     return {
-	show_editor : function(p_trigger, p_project_name, p_user_name, current_rate, p_post_url) {
+	show_editor : function(p_trigger, p_project_id, p_project_name, p_user_name, current_rate, p_post_url) {
 	    var node = get_popup_node();
 	    trigger = p_trigger;
 	    post_url = p_post_url;
+	    project_id = p_project_id;
 	    project_name = p_project_name;
 	    user_name = p_user_name;
 	    node.find(".rate_username").html(user_name);

@@ -87,15 +87,15 @@ def makelist(filename):
           bodytext = ""
           tag1 = ""
           alltags = []       # list of all tags in headline
-          tagsrch = re.search('(.*?)\s*:(.*?):(.*?)$',heading)
-          if tagsrch:
-              heading = tagsrch.group(1)
-              tag1 = tagsrch.group(2)
-              alltags.append(tag1)
-              tag2 = tagsrch.group(3)
-              if tag2:
-                 for t in tag2.split(':'):
-                    if t != '': alltags.append(t)
+          # tagsrch = re.search('(.*?)\s*:(.*?):(.*?)$',heading)
+          # if tagsrch:
+          #     heading = tagsrch.group(1)
+          #     tag1 = tagsrch.group(2)
+          #     alltags.append(tag1)
+          #     tag2 = tagsrch.group(3)
+          #     if tag2:
+          #        for t in tag2.split(':'):
+          #           if t != '': alltags.append(t)
        else:      # we are processing a non-heading line
            if line[:10] == '#+SEQ_TODO':
               kwlist = re.findall('([A-Z]+)\(', line)
@@ -157,17 +157,17 @@ def makelist(filename):
               
    # using the list of TODO keywords found in the file
    # process the headings searching for TODO keywords
-   for n in nodelist:
-       h = n.Heading()
-       todoSrch = re.search('([A-Z]+)\s(.*?)$', h)
-       if todoSrch:
-           if todos.has_key( todoSrch.group(1) ):
-               n.setHeading( todoSrch.group(2) )
-               n.setTodo ( todoSrch.group(1) )
-       prtysrch = re.search('^\[\#(A|B|C)\] (.*?)$', n.Heading())
-       if prtysrch:
-          n.setPriority(prtysrch.group(1))
-          n.setHeading(prtysrch.group(2))
+   # for n in nodelist:
+   #     h = n.Heading()
+   #     todoSrch = re.search('([A-Z]+)\s(.*?)$', h)
+   #     if todoSrch:
+   #         if todos.has_key( todoSrch.group(1) ):
+   #             n.setHeading( todoSrch.group(2) )
+   #             n.setTodo ( todoSrch.group(1) )
+   #     prtysrch = re.search('^\[\#(A|B|C)\] (.*?)$', n.Heading())
+   #     if prtysrch:
+   #        n.setPriority(prtysrch.group(1))
+   #        n.setHeading(prtysrch.group(2))
                             
    return nodelist
 

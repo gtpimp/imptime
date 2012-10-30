@@ -650,10 +650,16 @@ class SalaryForm(forms.ModelForm):
         model = Salary
         exclude=["user", "date"]
 
+
+
 class AggregatedTimesheetFormByProject(forms.Form):
 
     project = forms.ModelChoiceField(label='Project:', 
-                                     queryset=Project.objects.order_by("name"))
+                                     queryset=Project.objects.order_by("business__name", "name"))
+
+    def __init__(self, *args, **kwargs):
+        super(AggregatedTimesheetFormByProject, self).__init__(*args, **kwargs)
+        self.fields['project'].label_from_instance = lambda obj: format(obj.long_name())
 
     def save(self):
         return { 'project': self.cleaned_data['project'] }

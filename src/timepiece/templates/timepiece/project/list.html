@@ -54,7 +54,7 @@
         <div class="span12">
             {% autopaginate projects 30 %}
             {% paginate %}
-            <table class='table table-striped table-bordered table-condensed'>
+            <table class='table table-striped table-bordered table-condensed project_list'>
                 <thead>
                     <tr>
                         <th>Business</th>
@@ -75,14 +75,14 @@
 			    <td>
 			      <table>
 			      {% for username,hours in project.users_and_hours.items %}
-			      <tr>
-				<td>{{ username }}</td>
-				<td>{{ hours.amount }} hours</td>
-				<td>
-				  rate R<span class="rate_amount">{{ hours.rate.amount }}</span>
-				  <a href="#" onclick="return TP_rates.show_editor(this, '{{project.name}}', '{{username}}', {{hours.rate.amount}}, '{% url 'set_project_rate' %}')">edit</a>
-				</td>
-			      </tr>
+				<tr>
+				  <td>{{ username }}</td>
+				  <td>{{ hours.hours }} hours</td>
+				  <td>
+				    rate R<span class="rate_amount">{{ hours.rate.amount }}</span>
+				    <a href="#" onclick="return TP_rates.show_editor(this, {{project.id}}, '{{project.name}}', '{{username}}', {{hours.rate.amount}}, '{% url 'set_project_rate' %}')">edit</a>
+				  </td>
+				</tr>
 			      {% endfor %}
 			      </table>
 			    </td>

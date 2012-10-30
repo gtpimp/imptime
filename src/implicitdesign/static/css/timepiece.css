@@ -9305,3 +9305,8 @@ body #content ul.parent ul {
     background:#dfdfdf;
     padding: 15px;
 }
+
+table.project_list  {
+    white-space: nowrap;
+}
+ 

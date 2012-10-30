@@ -88,4 +88,4 @@ class Extractor(object):
                                          status='approved',
                                          comments=orgnode.Heading())
             self.status['num_entries_created'] += 1
-            logger.debug("Created new entry: %s %s %s %s : %s" % (business, project, clock['from'], clock['to'], entry))
+            #logger.debug("Created new entry: %s %s %s %s : %s" % (business, project, clock['from'], clock['to'], entry))
