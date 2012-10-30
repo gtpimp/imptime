@@ -49,7 +49,7 @@ from timepiece import utils
 from timepiece import forms as timepiece_forms
 from timepiece.templatetags.timepiece_tags import seconds_to_hours
 from timepiece.templatetags.timepiece_tags import get_active_hours
-
+from emacs_importer import report_helper
 
 @login_required
 def quick_search(request):
@@ -1990,3 +1990,13 @@ def salary_payslip(request, salary_id, preview=True, template="timepiece/salary/
         response['Content-Disposition'] = 'attachment; filename="%s"' % filename
 
     return response
+
+def incremental_timesheets_by_project(request, template="timepiece/time-sheet/redmine/incremental_timesheets_by_project.html", context=None):
+    context = context or {}
+    form = timepiece_forms.AggregatedTimesheetFormByProject(request.GET or None)
+    if form.is_valid():
+        report_args = form.save()
+        report = report_helper.incremental_timesheets_by_project(**report_args)
+        context['report'] = report
+    context['form'] = form
+    return render_to_response(template, context, context_instance=RequestContext(request))

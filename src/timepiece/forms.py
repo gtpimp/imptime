@@ -649,3 +649,11 @@ class SalaryForm(forms.ModelForm):
     class Meta:
         model = Salary
         exclude=["user", "date"]
+
+class AggregatedTimesheetFormByProject(forms.Form):
+
+    project = forms.ModelChoiceField(label='Project:', 
+                                     queryset=Project.objects.order_by("name"))
+
+    def save(self):
+        return { 'project': self.cleaned_data['project'] }

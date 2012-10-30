@@ -261,4 +261,12 @@ urlpatterns = patterns('',
         views.salary_payslip,
         name='salary_payslip'
         ),
+
+    # Timesheet views
+    url(
+        r'^incremental_timesheets_by_project$',
+        views.incremental_timesheets_by_project,
+        name='incremental_timesheets_by_project'
+        ),
+                       
 )

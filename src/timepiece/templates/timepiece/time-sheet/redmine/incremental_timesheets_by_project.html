@@ -1,0 +1,28 @@
+{% extends 'timepiece/time-sheet/base.html' %}
+{% load timepiece_tags %}
+{% load bootstrap_toolkit %}
+
+{% block title %}Aggregated and redmine timesheets{% endblock %}
+
+{% block content %}
+
+    <h2>Redmine timesheets</h2>
+
+    {% if error %}
+      <div class="error">{{error}}</div>
+    {% endif %}
+
+    <form method="get" action="{% url incremental_timesheets_by_project %}">
+      {% csrf_token %}
+      {{ form|as_bootstrap }}
+
+      <input type="submit" value="generate"/>
+    </form>
+
+    {% if report %}
+      <pre>
+	{{ report|safe }}
+      </pre>
+    {% endif %}
+
+{% endblock %}
