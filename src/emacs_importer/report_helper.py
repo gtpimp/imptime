@@ -16,7 +16,7 @@ def incremental_timesheets_by_project(project):
         issue_number = _get_issue_number(entry)
         try:
             rate = timepiece.Rate.objects.get(project=project, user=entry.user)
-            rate_amount = rate.amount
+            rate_amount = float(rate.amount)
         except timepiece.Rate.DoesNotExist:
             rate_amount = 0
         redmine_issue = _get_redmine_issue(entry, issue_number)
@@ -30,10 +30,10 @@ def incremental_timesheets_by_project(project):
             'cat2': redmine_issue.get_custom_value('Cat2') or "" if redmine_issue is not None else "",
             'redmine description': redmine_issue.subject if redmine_issue is not None else "",
             'full issue description': None,
-            'story points': None,
-            'cost est': None,
+            'story points': redmine_issue.story_points or 0 if redmine_issue is not None else 0,
+            'cost est': (redmine_issue.story_points or 0 if redmine_issue is not None else 0) * rate_amount,
             'bill est': None,
-            'story status': None,
+            'story status': redmine_issue.status.name if redmine_issue is not None else "",
             'time log category': _get_issue_category(entry),
             'username': entry.user.username,
             'date': entry.start_time.strftime("%Y-%m-%d"),

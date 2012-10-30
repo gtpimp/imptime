@@ -69,6 +69,11 @@ class RedmineTracker(models.Model):
         db_table = 'trackers'
     name = models.CharField(max_length=255)
 
+class RedmineIssueStatus(models.Model):
+    class Meta:
+        db_table = 'issue_statuses'
+    name = models.CharField(max_length=255)
+
 class RedmineIssue(models.Model):
     class Meta:
         db_table = 'issues'
@@ -77,6 +82,10 @@ class RedmineIssue(models.Model):
     description = models.TextField()
     subject = models.TextField()
     tracker = models.ForeignKey(RedmineTracker)
+    story_points = models.FloatField()
+    estimated_hours = models.FloatField()
+    done_ratio = models.IntegerField()
+    status = models.ForeignKey(RedmineIssueStatus)
 
     def get_custom_value(self, value_name):
         try:
