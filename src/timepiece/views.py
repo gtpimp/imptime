@@ -2000,3 +2000,18 @@ def incremental_timesheets_by_project(request, template="timepiece/time-sheet/re
         context['report'] = report
     context['form'] = form
     return render_to_response(template, context, context_instance=RequestContext(request))
+
+@csrf_exempt
+@permission_required('timepiece.change_project')
+@transaction.commit_on_success
+def set_project_rate(request, context=None):
+    project_name = request.POST['project_name']
+    user_name = request.POST['user_name']
+    new_amount = float(request.POST['amount'])
+    
+    project = timepiece.Project.objects.get(name=project_name)
+    user = timepiece.User.objects.get(username=user_name)
+    rate = timepiece.Rate.objects.get_or_create(project=project, user=user)[0]
+    rate.amount = new_amount
+    rate.save()
+    return HttpResponse("")

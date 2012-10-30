@@ -244,6 +244,12 @@ urlpatterns = patterns('',
         views.ProjectHoursDetailView.as_view(),
         name='project_hours_detail_view',
     ),
+
+    url(
+        r'^ajax/set_project_rate$',
+        views.set_project_rate,
+        name='set_project_rate',
+        ),
     
     # salary views
     url(
@@ -267,6 +273,6 @@ urlpatterns = patterns('',
         r'^incremental_timesheets_by_project$',
         views.incremental_timesheets_by_project,
         name='incremental_timesheets_by_project'
-        ),
+        )
                        
 )

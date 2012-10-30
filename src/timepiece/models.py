@@ -70,7 +70,6 @@ class Business(models.Model):
     class Meta:
         ordering = ('name',)
 
-
 class Project(models.Model):
     name = models.CharField(max_length=255)
     tracker_url = models.CharField(max_length=255, blank=True, null=False,
@@ -124,19 +123,13 @@ class Project(models.Model):
         user_totals = entries_qs.values("user").annotate(hours=Sum('hours'))
         res = {}
         for user_total in user_totals:
-            res[User.objects.get(pk=user_total['user']).username] = user_total['hours']
+            user = User.objects.get(pk=user_total['user'])
+            try:
+                rate = Rate.objects.get(project=self, user=user)
+            except Rate.DoesNotExist:
+                rate = Rate.objects.create(project=self, user=user, amount=0)
+            res[User.objects.get(pk=user_total['user']).username] = { 'hours':user_total['hours'], 'rate':rate }
         return res
-
-    @property
-    def hardest_working_users(self):
-        entries_qs = Entry.objects.filter(project=self)
-        def key(x):
-            return x['count']
-
-        user_totals = entries_qs.values("user").annotate(num_entries=Count('user')).order_by('-num_entries')[:2]
-        for user_total in user_totals:
-            user_total['username'] = User.objects.get(pk=user_total['user']).username
-        return [ x['username'] for x in user_totals ]
 
     class Meta:
         ordering = ('name', 'status', 'type',)
@@ -1219,4 +1212,8 @@ class Salary(models.Model):
                  'total_leave_due':total_leave['total_leave_accrued']-total_leave['total_leave_taken'],
                  'leave_accured_this_month':self.leave_accrued,
                  'leave_taken_this_month':self.leave_taken }
-        
+
+class Rate(models.Model):
+    project = models.ForeignKey(Project)
+    user = models.ForeignKey(User)
+    amount = models.DecimalField(max_digits=8, decimal_places=2, default=0)
