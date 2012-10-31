@@ -1,0 +1,26 @@
+{% extends "timepiece/base.html" %}
+{% load timepiece_tags bootstrap_toolkit %}
+
+{% block title %}Revenue{% endblock title %}
+
+{% block content %}
+
+<div class="row-fluid">
+  
+  <h2>Revenue</h2>
+
+  <div class="row-fluid">
+    <div class="span12">
+      {% date_filters "months years" %}
+    </div>
+  </div>
+
+  <div class="span9">
+    <div id="chart" class="chart"></div>
+  </div>
+
+</div>
+
+<script type="text/javascript" src="{{ STATIC_URL }}timepiece/js/chart/chart.js" data-hours="{{ data }}" data-dates="{{ dates }}"></script>
+
+{% endblock content %}

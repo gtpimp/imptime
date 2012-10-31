@@ -1,6 +1,7 @@
 import calendar
 import csv
 from xhtml2pdf import pisa  
+from django.db import connection
 from pdf import render_to_pdf
 import datetime
 from django.template import Template
@@ -2033,3 +2034,35 @@ def set_project_rate(request, context=None):
     rate.amount = str(new_amount)
     rate.save()
     return HttpResponse("")
+
+@permission_required('timepiece.view_entry_summary')
+def revenue(request, template="timepiece/time-sheet/reports/revenue.html", context=None):
+    context = context or {}
+
+    from_date, to_date = _get_filter_dates(request)
+
+    entries = timepiece.Entry.objects.all()
+    dates = Q()
+    if from_date:
+        dates &= Q(start_time__gte=from_date)
+    if to_date:
+        dates &= Q(end_time__lte=to_date)
+    entries = entries.filter(dates)
+
+    truncate_date = connection.ops.date_trunc_sql('month','start_time')
+    entries = entries.extra({'month':truncate_date})
+    entries = entries.values('month', 'project', 'user').annotate(Sum('hours')).order_by('month')
+    context['entries'] = entries
+
+    return render_to_response(template, context, context_instance=RequestContext(request))
+    
+def _get_filter_dates(request):
+    from_date = None
+    to_date = utils.get_month_start(datetime.datetime.today()).date()
+    defaults = {'to_date': to_date}
+    date_form = timepiece_forms.DateForm(request.GET or defaults)
+    if request.GET and date_form.is_valid():
+        from_date, to_date = date_form.save()
+    return from_date, to_date
+    
+    

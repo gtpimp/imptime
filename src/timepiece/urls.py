@@ -273,6 +273,12 @@ urlpatterns = patterns('',
         r'^incremental_timesheets_by_project$',
         views.incremental_timesheets_by_project,
         name='incremental_timesheets_by_project'
+        ),
+
+    url(
+        r'^revenue$',
+        views.revenue,
+        name='revenue'
         )
                        
 )
