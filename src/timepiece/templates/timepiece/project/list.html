@@ -92,7 +92,7 @@
 			    <td>{{ project.total_hours }}</td>
 			    <td>
 			      <table>
-			      {% for username,hours in project.users_and_hours.items %}
+			      {% for username,hours in project.users_and_hours.users.items %}
 				<tr>
 				  <td>{{ username }}</td>
 				  <td>{{ hours.hours }} hours</td>

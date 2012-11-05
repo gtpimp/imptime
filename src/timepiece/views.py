@@ -1111,7 +1111,7 @@ def list_projects(request):
     total_outstanding_amount = 0
     total_outstanding_amounts_per_project = {}
     for project in projects:
-        for user, hours_info in project.users_and_hours.items():
+        for user, hours_info in project.users_and_hours['users'].items():
             revenue = float(hours_info['rate'].amount) * float(hours_info['hours'])
             total_outstanding_amount += revenue
 

@@ -124,7 +124,7 @@ class Project(models.Model):
             entries_qs = entries_qs.filter(additional_entry_filter)
 
         user_totals = entries_qs.values("user").annotate(hours=Sum('hours'))
-        res = {}
+        res = {'users':{}, 'totals':{}}
         total_hours = 0
         total_revenue = 0
         for user_total in user_totals:
@@ -133,11 +133,11 @@ class Project(models.Model):
                 rate = Rate.objects.get(project=self, user=user)
             except Rate.DoesNotExist:
                 rate = Rate.objects.create(project=self, user=user, amount=0)
-            res[User.objects.get(pk=user_total['user']).username] = { 'hours':user_total['hours'], 'rate':rate, 'revenue': float(user_total['hours'])*float(rate.amount) }
+            res['users'][User.objects.get(pk=user_total['user']).username] = { 'hours':user_total['hours'], 'rate':rate, 'revenue': float(user_total['hours'])*float(rate.amount) }
             total_hours += user_total['hours']
             total_revenue += float(user_total['hours'])*float(rate.amount)
-        res['total_hours'] = total_hours
-        res['total_revenue'] = total_revenue
+        res['totals']['hours'] = total_hours
+        res['totals']['revenue'] = total_revenue
         return res
 
     class Meta:
