@@ -38,7 +38,7 @@ def help():
 # ===== hosts =====
 def host_imp():
     env.user = "website"
-    env.hosts = ['implicitdesign.co.za']
+    env.hosts = ['dev.implicitdesign.co.za']
 
 # ===== top level commands ======
 
