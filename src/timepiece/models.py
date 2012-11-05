@@ -133,9 +133,9 @@ class Project(models.Model):
                 rate = Rate.objects.get(project=self, user=user)
             except Rate.DoesNotExist:
                 rate = Rate.objects.create(project=self, user=user, amount=0)
-            res[User.objects.get(pk=user_total['user']).username] = { 'hours':user_total['hours'], 'rate':rate, 'revenue': float(user_total['hours'])*float(rate) }
+            res[User.objects.get(pk=user_total['user']).username] = { 'hours':user_total['hours'], 'rate':rate, 'revenue': float(user_total['hours'])*float(rate.amount) }
             total_hours += user_total['hours']
-            total_revenue += float(user_total['hours'])*float(rate)
+            total_revenue += float(user_total['hours'])*float(rate.amount)
         res['total_hours'] = total_hours
         res['total_revenue'] = total_revenue
         return res
