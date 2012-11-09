@@ -6,8 +6,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
 
     {% block javascript %}
-        <script src="//ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
-        <script src="//ajax.googleapis.com/ajax/libs/jqueryui/1.8.18/jquery-ui.min.js"></script>
+        <script src="{{STATIC_URL}}js/jquery.min.js"></script>
+        <script src="{{STATIC_URL}}js/jquery-ui.min.js"></script>
         <script src="{{ STATIC_URL }}timepiece/js/widgets.js"></script>
         <script src="{{ STATIC_URL }}bootstrap/js/bootstrap-dropdown.js"></script>
         {% if perms.timepiece.view_business %}
@@ -24,7 +24,7 @@
     {% endblock extrajs %}
 
     {% block css %}
-        <link type="text/css" rel="stylesheet" href="//ajax.googleapis.com/ajax/libs/jqueryui/1.8/themes/smoothness/jquery-ui.css" />
+        <link type="text/css" rel="stylesheet" href="{{ STATIC_URL }}/css/jquery-ui.css" />
 	<link type="text/css" rel="stylesheet" media="screen" href="{{ STATIC_URL }}css/books.css" />
 	<link type="text/css" rel="stylesheet" href="{{ STATIC_URL }}css/timepiece.css" />
     {% endblock %}

@@ -1,0 +1,23 @@
+{% extends "timepiece/graphs/base.html" %}
+{% load timepiece_tags bootstrap_toolkit %}
+{% block content %}
+
+<script>
+  var imp = imp || {};
+  imp.data = [ {% for entry in entries %} {'date':'{{entry.start_time|date:"Ymd"}}', 'hours':{{entry.hours}} }, {% endfor %} ];
+</script>
+
+<h2>Graphs</h2>
+
+<div class="row-fluid">
+  <div class="span12">
+    {% date_filters %}
+  </div>
+</div>
+
+from <strong>{{from_date}}</strong> to <strong>{{to_date}}</strong>
+
+<div class="graph"></div>
+
+{% endblock %}
+

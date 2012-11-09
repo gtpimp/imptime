@@ -1,13 +1,14 @@
 import calendar
 import csv
 from xhtml2pdf import pisa  
+import json
+import jsonpickle
 from django.db import connection
 from pdf import render_to_pdf
 import datetime
 from django.template import Template
 import math
 import urllib
-import json
 import urlparse
 from copy import deepcopy
 
@@ -2056,13 +2057,34 @@ def revenue(request, template="timepiece/time-sheet/reports/revenue.html", conte
 
     return render_to_response(template, context, context_instance=RequestContext(request))
     
-def _get_filter_dates(request):
+@permission_required('timepiece.view_entry_summary')
+def graphs(request, template="timepiece/graphs/graph.html", context=None):
+    context = context or {}
+
+    from_date, to_date = _get_filter_dates(request, context)
+
+    entries = timepiece.Entry.objects.all()
+    dates = Q()
+    if from_date:
+        dates &= Q(start_time__gte=from_date)
+    if to_date:
+        dates &= Q(end_time__lte=to_date)
+    entries = entries.filter(dates)
+    context['entries'] = entries
+    
+    return render_to_response(template, context, context_instance=RequestContext(request))
+
+def _get_filter_dates(request, context=None):
     from_date = None
     to_date = utils.get_month_start(datetime.datetime.today()).date()
     defaults = {'to_date': to_date}
     date_form = timepiece_forms.DateForm(request.GET or defaults)
     if request.GET and date_form.is_valid():
         from_date, to_date = date_form.save()
+
+    if context is not None:
+        context['from_date'] = from_date
+        context['to_date'] = to_date
+
     return from_date, to_date
-    
     

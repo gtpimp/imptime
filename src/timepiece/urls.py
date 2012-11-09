@@ -279,6 +279,12 @@ urlpatterns = patterns('',
         r'^revenue$',
         views.revenue,
         name='revenue'
+        ),
+
+    url(
+        r'^graphs$',
+        views.graphs,
+        name='graphs'
         )
                        
 )
