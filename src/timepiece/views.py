@@ -2070,7 +2070,14 @@ def graphs(request, template="timepiece/graphs/graph.html", context=None):
     if to_date:
         dates &= Q(end_time__lte=to_date)
     entries = entries.filter(dates)
-    context['entries'] = entries
+    entries = entries.order_by("start_time")
+
+    cumulative = 0;
+    for entry in entries:
+        cumulative += entry.hours
+        entry.hours = cumulative
+
+    context['series'] = [ { "label": "hours", "entries":entries } ]
     
     return render_to_response(template, context, context_instance=RequestContext(request))
 

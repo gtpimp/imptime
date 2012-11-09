@@ -27,6 +27,16 @@ register = template.Library()
 def seconds_to_hours(seconds):
     return round(seconds / 3600.0, 2)
 
+@register.filter
+def seconds_to_hours(seconds):
+    return round(seconds / 3600.0, 2)
+
+@register.filter
+def epoch(value):
+    try:
+        return int(time.mktime(value.timetuple())*1000)
+    except AttributeError:
+        return ''
 
 @register.inclusion_tag('timepiece/time-sheet/bar_graph.html',
                         takes_context=True)
