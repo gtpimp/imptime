@@ -146,7 +146,6 @@ def get_month_start(from_day=None):
     from_day = add_timezone(from_day)
     return from_day.replace(day=1)
 
-
 def get_week_start(day=None):
     if not day:
         day = datetime.date.today()

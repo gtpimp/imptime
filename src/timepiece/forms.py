@@ -390,9 +390,9 @@ class DateForm(forms.Form):
 
     def clean(self):
         data = self.cleaned_data
-        from_date = data.get('from_date', None)
-        to_date = data.get('to_date', None)
-        if from_date and to_date and from_date > to_date:
+        data['from_date'] = data.get('from_date', None)
+        data['to_date'] = data.get('to_date', None)
+        if data['from_date'] and data['to_date'] and data['from_date'] > data['to_date']:
             err_msg = 'The ending date must exceed the beginning date'
             raise ValidationError(err_msg)
         return data
@@ -663,3 +663,19 @@ class AggregatedTimesheetFormByProject(forms.Form):
 
     def save(self):
         return { 'project': self.cleaned_data['project'] }
+
+class GraphFilterForm(forms.Form):
+    
+    project = forms.ModelChoiceField(required=False, label='Project:', 
+                                     queryset=Project.objects.order_by("business__name", "name"))
+    user = forms.ModelChoiceField(required=False, label='User:', 
+                                  queryset=auth_models.User.objects.order_by("username"))
+
+    def __init__(self, *args, **kwargs):
+        super(GraphFilterForm, self).__init__(*args, **kwargs)
+        self.fields['project'].label_from_instance = lambda obj: format(obj.long_name())
+
+    def save(self):
+        return { 'project': self.cleaned_data['project'],
+                 'user': self.cleaned_data['user']}
+

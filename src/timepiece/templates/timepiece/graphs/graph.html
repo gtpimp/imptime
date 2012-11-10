@@ -1,21 +1,60 @@
 {% extends "timepiece/graphs/base.html" %}
-{% load timepiece_tags bootstrap_toolkit %}
+{% load timepiece_tags %}
+{% load bootstrap_toolkit %}
 {% block content %}
 
 <script>
   var imp = imp || {};
-  imp.data = [ {% for serie in series %} { label:"{{serie.label}}", data: [ {% for entry in serie.entries %} [{{entry.start_time|epoch}}, {{entry.hours}}], {% endfor %} ] } {% endfor %} ] ;
+  imp.data = [ {%spaceless%} 
+                 {% for serie in series %} 
+		   { label:"{{serie.label}}", 
+		     data: [ {% for entry in serie.entries %} 
+		             [ {{entry.start_time|epoch}}, 
+			       {{entry.graph_value}},
+			     ], {% endfor %} 
+			   ],
+	             yaxis: {{serie.yaxis}}
+	           },
+		 {% endfor %} 
+	       {%endspaceless%}
+	     ];
+  imp.options = { xaxis: {
+		    mode: "time",
+		    {% if from_date %}
+		      min: {{from_date|epoch}},
+                    {% endif %}
+		    {% if to_date %}
+		      max: {{to_date|epoch}},
+                    {% endif %}
+		    timeformat: "%d %b %y %h:%m"
+		},
+		yaxes: [
+		    { }, 
+		    { position: "right" }
+		    ]
+	      };
+
 </script>
 
-<h2>Graphs</h2>
+<h2>
+  Graphs
+  {% include "timepiece/graphs/_date_filter_msg.html" %}
+</h2>
 
 <div class="row-fluid">
   <div class="span12">
-    {% date_filters %}
+    {% comment %}{% date_filters %}{% endcomment %}
   </div>
 </div>
 
-from <strong>{{from_date}}</strong> to <strong>{{to_date}}</strong>
+
+<form method="GET" action="{% url graphs %}">
+  {% csrf_token %}
+  {{ date_form.as_p }}
+  {{ search_filter_form|as_bootstrap:"horizontal" }}
+  <input type="submit" value="generate"/>
+</form>
+
 
 <div id="graph" style="width:100%;height:300px"></div>
 

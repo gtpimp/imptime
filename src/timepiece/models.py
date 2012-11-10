@@ -426,6 +426,18 @@ class Entry(models.Model):
     worked = EntryWorkedManager()
     no_join = models.Manager()
 
+    @property
+    def atrate(self):
+        return self.hours * self.rate
+
+    @property
+    def rate(self):
+        try:
+            return self._rate
+        except AttributeError:
+            self._rate = Rate.objects.filter(project=self.project, user=self.user)[0].amount
+            return self._rate
+
     def check_overlap(self, entry_b, **kwargs):
         """
         Given two entries, return True if they overlap, otherwise return False

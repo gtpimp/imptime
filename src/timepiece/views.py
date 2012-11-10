@@ -2040,15 +2040,10 @@ def set_project_rate(request, context=None):
 def revenue(request, template="timepiece/time-sheet/reports/revenue.html", context=None):
     context = context or {}
 
-    from_date, to_date = _get_filter_dates(request)
+    from_date, to_date = _get_filter_dates(request, context)
 
-    entries = timepiece.Entry.objects.all()
-    dates = Q()
-    if from_date:
-        dates &= Q(start_time__gte=from_date)
-    if to_date:
-        dates &= Q(end_time__lte=to_date)
-    entries = entries.filter(dates)
+    entries = timepiece.Entry.objects.all().filter(status='approved')
+    entries = _apply_date_filter(request, entries, context)
 
     truncate_date = connection.ops.date_trunc_sql('month','start_time')
     entries = entries.extra({'month':truncate_date})
@@ -2061,9 +2056,61 @@ def revenue(request, template="timepiece/time-sheet/reports/revenue.html", conte
 def graphs(request, template="timepiece/graphs/graph.html", context=None):
     context = context or {}
 
-    from_date, to_date = _get_filter_dates(request, context)
+    entries = timepiece.Entry.objects.all().filter(status='approved').order_by("start_time")
+    entries = _apply_search_filter_on_entries(request, entries, context)
+    
+    series = []
+    series.append(_create_hours_series_for_graphs(request, entries, context))
+    #series.append(_create_atrate_series_for_graphs(request, entries, context))
 
-    entries = timepiece.Entry.objects.all()
+    context['series'] = series
+
+    return render_to_response(template, context, context_instance=RequestContext(request))
+
+def _create_hours_series_for_graphs(request, entries, context):
+    cumulative = _get_cumulative_starting_hours(request, entries, context)
+    entries = _apply_date_filter(request, entries, context)
+    for entry in entries:
+        cumulative += entry.hours
+        entry.graph_value = cumulative
+    return { "label": "hours", "entries":entries, "yaxis":1 }
+
+def _create_atrate_series_for_graphs(request, entries, context):
+    cumulative = _get_cumulative_starting_atrate(request, entries, context)
+    entries = _apply_date_filter(request, entries, context)
+    for entry in entries:
+        cumulative += entry.atrate
+        entry.graph_value = cumulative
+    return { "label": "atrate", "entries":entries, "yaxis":2 }
+
+def _get_cumulative_starting_hours(request, entries, context):
+    entries = _get_cumulative_common_entries(request, entries, context)
+    entries_annotated = entries.aggregate(sum=Sum('hours'))
+    return entries_annotated['sum'] or 0
+
+def _get_cumulative_starting_atrate(request, entries, context):
+    entries = _get_cumulative_common_entries(request, entries, context)
+    entries_annotated = entries.aggregate(sum=Sum('hours'),)
+    return entries_annotated['sum']
+
+def _get_cumulative_common_entries(request, entries, context):
+    """ returns entries older than from_date """
+    from_date, to_date = _get_filter_dates(request)
+    if from_date is not None:
+        entries = entries.filter(end_time__lte=from_date, status='approved')
+    return entries
+
+def _apply_search_filter_on_entries(request, entries, context):
+    """ Note: excludes dates filters """
+    form = timepiece_forms.GraphFilterForm(request.GET or None)
+    if form.is_valid():
+        form_args = form.save()
+        entries = entries.filter(**form_args)
+    context['search_filter_form'] = form
+    return entries
+
+def _apply_date_filter(request, entries, context):
+    from_date, to_date = _get_filter_dates(request, context)
     dates = Q()
     if from_date:
         dates &= Q(start_time__gte=from_date)
@@ -2071,27 +2118,22 @@ def graphs(request, template="timepiece/graphs/graph.html", context=None):
         dates &= Q(end_time__lte=to_date)
     entries = entries.filter(dates)
     entries = entries.order_by("start_time")
-
-    cumulative = 0;
-    for entry in entries:
-        cumulative += entry.hours
-        entry.hours = cumulative
-
-    context['series'] = [ { "label": "hours", "entries":entries } ]
-    
-    return render_to_response(template, context, context_instance=RequestContext(request))
+    return entries
 
 def _get_filter_dates(request, context=None):
-    from_date = None
-    to_date = utils.get_month_start(datetime.datetime.today()).date()
-    defaults = {'to_date': to_date}
-    date_form = timepiece_forms.DateForm(request.GET or defaults)
+    from_date = datetime.datetime.today().date().replace(month=1,day=1)
+    to_date = datetime.datetime.today().date().replace(month=1,day=1) + relativedelta(years=1)
+    initial = {'to_date': to_date, 'from_date': from_date}
+    date_form = timepiece_forms.DateForm(request.GET, initial=initial)
     if request.GET and date_form.is_valid():
         from_date, to_date = date_form.save()
+        #if to_date is not None:
+            #to_date = to_date - relativedelta(days=1)
 
     if context is not None:
         context['from_date'] = from_date
         context['to_date'] = to_date
+        context['date_form'] = date_form
 
     return from_date, to_date
     
