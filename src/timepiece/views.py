@@ -2066,6 +2066,7 @@ def graphs(request, template="timepiece/graphs/graph.html", context=None):
     series = []
     series.append(_create_hours_series_for_graphs(request, entries, context))
     series.append(_create_atrate_series_for_graphs(request, entries, context))
+    series.append(_create_salary_series_for_graphs(request, entries, context))
 
     context['series'] = series
 
@@ -2080,23 +2081,35 @@ def _create_hours_series_for_graphs(request, entries, context):
     return { "label": "hours", "entries":entries, "yaxis":1 }
 
 def _create_atrate_series_for_graphs(request, entries, context):
-    cumulative = _get_cumulative_starting_atrate(request, entries, context)
+    cumulative = 0
     entries = _apply_date_filter(request, entries, context)
     for entry in entries:
         cumulative += entry.atrate
         entry.graph_value = cumulative
     return { "label": "atrate", "entries":entries, "yaxis":2 }
 
+def _create_salary_series_for_graphs(request, entries, context):
+    cumulative = 0
+    from_date, to_date = _get_filter_dates(request, context)
+    salaries = timepiece.Salary.objects.all()
+    salaries = salaries.filter(date__gte=from_date, date__lte=to_date)
+
+    form = timepiece_forms.SalaryFilterForm(request.GET or None)
+    if form.is_valid():
+        form_args = form.save()
+        salaries = salaries.filter(**form_args)
+
+    for salary in salaries:
+        salary.start_time = salary.date
+        cumulative += salary.amount
+        salary.graph_value = cumulative
+        
+    return { "label": "salaries", "entries":salaries, "yaxis":2 }
+
 def _get_cumulative_starting_hours(request, entries, context):
     entries = _get_cumulative_common_entries(request, entries, context)
     entries_annotated = entries.aggregate(sum_hours=Sum('hours'))
     return entries_annotated['sum_hours'] or 0
-
-def _get_cumulative_starting_atrate(request, entries, context):
-    return 0
-    #entries = _get_cumulative_common_entries(request, entries, context)
-    #entries_annotated = entries.aggregate(sum_hours=Sum('hours'),sum_rate=Sum('project__rate__amount'))
-    #return entries_annotated['sum'] or 0
 
 def _get_cumulative_common_entries(request, entries, context):
     """ returns entries older than from_date """

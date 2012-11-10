@@ -682,3 +682,13 @@ class GraphFilterForm(forms.Form):
         if self.cleaned_data['user'] is not None:
             v['user'] = self.cleaned_data['user']
         return v
+
+class SalaryFilterForm(forms.Form):
+    user = forms.ModelChoiceField(required=False, label='User:', 
+                                  queryset=auth_models.User.objects.order_by("username"))
+
+    def save(self):
+        v = {}
+        if self.cleaned_data['user'] is not None:
+            v['user'] = self.cleaned_data['user']
+        return v
