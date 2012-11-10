@@ -435,7 +435,10 @@ class Entry(models.Model):
         try:
             return self._rate
         except AttributeError:
-            self._rate = Rate.objects.filter(project=self.project, user=self.user)[0].amount
+            if self.project.rate.get_query_set().count()>0:
+                self._rate = self.project.rate.get_query_set()[0].amount
+            else:
+                self._rate = 0
             return self._rate
 
     def check_overlap(self, entry_b, **kwargs):
@@ -1238,6 +1241,6 @@ class Salary(models.Model):
                  'leave_taken_this_month':self.leave_taken }
 
 class Rate(models.Model):
-    project = models.ForeignKey(Project)
+    project = models.ForeignKey(Project, related_name="rate")
     user = models.ForeignKey(User)
     amount = models.DecimalField(max_digits=8, decimal_places=2, default=0)

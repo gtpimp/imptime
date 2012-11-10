@@ -676,6 +676,9 @@ class GraphFilterForm(forms.Form):
         self.fields['project'].label_from_instance = lambda obj: format(obj.long_name())
 
     def save(self):
-        return { 'project': self.cleaned_data['project'],
-                 'user': self.cleaned_data['user']}
-
+        v = {}
+        if self.cleaned_data['project'] is not None:
+            v['project'] = self.cleaned_data['project']
+        if self.cleaned_data['user'] is not None:
+            v['user'] = self.cleaned_data['user']
+        return v

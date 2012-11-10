@@ -2056,12 +2056,16 @@ def revenue(request, template="timepiece/time-sheet/reports/revenue.html", conte
 def graphs(request, template="timepiece/graphs/graph.html", context=None):
     context = context or {}
 
-    entries = timepiece.Entry.objects.all().filter(status='approved').order_by("start_time")
+    if request.GET:
+        entries = timepiece.Entry.objects.all().filter(status='approved').order_by("start_time")
+    else:
+        entries = timepiece.Entry.objects.none()
+
     entries = _apply_search_filter_on_entries(request, entries, context)
-    
+
     series = []
     series.append(_create_hours_series_for_graphs(request, entries, context))
-    #series.append(_create_atrate_series_for_graphs(request, entries, context))
+    series.append(_create_atrate_series_for_graphs(request, entries, context))
 
     context['series'] = series
 
@@ -2085,13 +2089,14 @@ def _create_atrate_series_for_graphs(request, entries, context):
 
 def _get_cumulative_starting_hours(request, entries, context):
     entries = _get_cumulative_common_entries(request, entries, context)
-    entries_annotated = entries.aggregate(sum=Sum('hours'))
-    return entries_annotated['sum'] or 0
+    entries_annotated = entries.aggregate(sum_hours=Sum('hours'))
+    return entries_annotated['sum_hours'] or 0
 
 def _get_cumulative_starting_atrate(request, entries, context):
-    entries = _get_cumulative_common_entries(request, entries, context)
-    entries_annotated = entries.aggregate(sum=Sum('hours'),)
-    return entries_annotated['sum']
+    return 0
+    #entries = _get_cumulative_common_entries(request, entries, context)
+    #entries_annotated = entries.aggregate(sum_hours=Sum('hours'),sum_rate=Sum('project__rate__amount'))
+    #return entries_annotated['sum'] or 0
 
 def _get_cumulative_common_entries(request, entries, context):
     """ returns entries older than from_date """
@@ -2127,8 +2132,6 @@ def _get_filter_dates(request, context=None):
     date_form = timepiece_forms.DateForm(request.GET, initial=initial)
     if request.GET and date_form.is_valid():
         from_date, to_date = date_form.save()
-        #if to_date is not None:
-            #to_date = to_date - relativedelta(days=1)
 
     if context is not None:
         context['from_date'] = from_date

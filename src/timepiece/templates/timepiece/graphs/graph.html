@@ -26,11 +26,15 @@
 		    {% if to_date %}
 		      max: {{to_date|epoch}},
                     {% endif %}
-		    timeformat: "%d %b %y %h:%m"
+		    timeformat: "%d %b %y",
+
 		},
 		yaxes: [
 		    { }, 
-		    { position: "right" }
+		    { position: "right",
+		      tickFormatter: function formatter(val, axis) {
+		                       return "R" + val.toFixed(axis.tickDecimals)
+			             }}
 		    ]
 	      };
 
