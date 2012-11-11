@@ -2169,6 +2169,9 @@ def _get_filter_dates(request, context=None):
     if request.GET and date_form.is_valid():
         from_date, to_date = date_form.save()
 
+    from_date = from_date or initial['from_date']
+    to_date = to_date or initial['to_date'] - relativedelta(days=1)
+
     if context is not None:
         context['from_date'] = from_date
         context['to_date'] = to_date
