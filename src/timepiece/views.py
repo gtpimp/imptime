@@ -2101,7 +2101,7 @@ def _create_atrate_series_for_graphs(request, entries, context):
 def _create_salary_series_for_graphs(request, entries, context):
     cumulative = 0
     from_date, to_date = _get_filter_dates(request, context)
-    salaries = timepiece.Salary.objects.all()
+    salaries = timepiece.Salary.objects.all().order_by("date")
     salaries = salaries.filter(date__gte=from_date, date__lte=to_date)
 
     form = timepiece_forms.SalaryFilterForm(request.GET or None)
