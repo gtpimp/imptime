@@ -667,10 +667,10 @@ class AggregatedTimesheetFormByProject(forms.Form):
 
 class GraphFilterForm(forms.Form):
     
-    project = forms.ModelChoiceField(required=False, label='Project:', 
-                                     queryset=Project.objects.order_by("business__name", "name"))
     business = forms.ModelChoiceField(required=False, label='Business:', 
                                       queryset=timepiece.Business.objects.order_by("name", "name"))
+    project = forms.ModelChoiceField(required=False, label='Project:', 
+                                     queryset=Project.objects.order_by("business__name", "name"))
     user = forms.ModelChoiceField(required=False, label='User:', 
                                   queryset=auth_models.User.objects.order_by("username"))
 

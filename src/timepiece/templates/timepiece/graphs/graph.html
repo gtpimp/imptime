@@ -54,20 +54,26 @@
 
 <div class="row-fluid">
   <div class="span12">
-    {% comment %}{% date_filters %}{% endcomment %}
+    {% date_filters %}
   </div>
 </div>
 
+<table width="100%">
+  <tr>
+    <td>
 
-<form method="GET" action="{% url graphs %}">
-  {% csrf_token %}
-  {{ date_form.as_p }}
-  {{ search_filter_form|as_bootstrap:"horizontal" }}
-  <input type="submit" value="generate"/>
-</form>
-
-
-<div id="graph" style="width:100%;height:300px"></div>
+      <form method="GET" action="{% url graphs %}">
+	{% csrf_token %}
+	{{ date_form.as_p }}
+	{{ search_filter_form|as_bootstrap:"horizontal" }}
+	<input type="submit" value="generate"/>
+      </form>
+    </td>
+    <td width="100%">
+      <div id="graph" style="width:100%;height:300px"></div>
+    </td>
+  </tr>
+</table>
 
 {% endblock %}
 
