@@ -2,6 +2,7 @@ import calendar
 import csv
 from xhtml2pdf import pisa  
 import operator
+from dateutil.rrule import DAILY, WDAYMASK, rrule
 import json
 import jsonpickle
 from django.db import connection
@@ -15,7 +16,6 @@ from copy import deepcopy
 
 from decimal import Decimal
 from dateutil.relativedelta import relativedelta
-from dateutil import rrule
 from itertools import groupby
 
 from django.contrib import messages
@@ -2061,7 +2061,7 @@ def graphs(request, template="timepiece/graphs/graph.html", context=None):
     context = context or {}
 
     if request.GET:
-        entries = timepiece.Entry.objects.all().filter(status='approved').order_by("start_time")
+        entries = timepiece.Entry.objects.all().filter(status='approved')
     else:
         entries = timepiece.Entry.objects.none()
 
@@ -2072,6 +2072,8 @@ def graphs(request, template="timepiece/graphs/graph.html", context=None):
         series.append(_create_hours_series_for_graphs(request, entries, context))
     if form.is_valid() and 'billable_hours' in form.cleaned_data['enabled_series']:
         series.append(_create_billable_hours_series_for_graphs(request, entries, context))
+    if form.is_valid() and 'expected_hours' in form.cleaned_data['enabled_series']:
+        series.append(_create_expected_hours_series_for_graphs(request, entries, context))
     if form.is_valid() and 'atrate' in form.cleaned_data['enabled_series']:
         series.append(_create_atrate_series_for_graphs(request, entries, context))
     if form.is_valid() and 'salaries' in form.cleaned_data['enabled_series']:
@@ -2090,6 +2092,7 @@ def graphs(request, template="timepiece/graphs/graph.html", context=None):
     return render_to_response(template, context, context_instance=RequestContext(request))
 
 def _create_hours_series_for_graphs(request, entries, context):
+    entries = entries.order_by("start_time")
     cumulative = _get_cumulative_starting_hours(request, entries, context)
     entries = _apply_date_filter(request, entries, context)
     for entry in entries:
@@ -2098,6 +2101,7 @@ def _create_hours_series_for_graphs(request, entries, context):
     return { "label": "all hours (%s)" % cumulative, "entries":entries, "yaxis":1 }
 
 def _create_billable_hours_series_for_graphs(request, entries, context):
+    entries = entries.order_by("start_time")
     cumulative = _get_cumulative_starting_hours(request, entries, context)
     entries = _apply_date_filter(request, entries, context)
     entries = entries.filter(project__billable=True)
@@ -2107,7 +2111,23 @@ def _create_billable_hours_series_for_graphs(request, entries, context):
         entry.graph_value = cumulative
     return { "label": "billable hours (%s)" % cumulative, "entries":entries, "yaxis":1 }
 
+def _create_expected_hours_series_for_graphs(request, entries, context):
+    cumulative = 0
+    def daterange(from_date, to_date):
+        return rrule(DAILY, dtstart=from_date, until=to_date, byweekday=WDAYMASK)
+
+    users = entries.values("user").annotate(usercount=Sum("user"))
+    entries = []
+    from_date, to_date = _get_filter_dates(request, context)
+    for date in daterange(from_date, to_date):
+        for user in users:
+            cumulative += 8
+            entries.append( { "start_time":date,
+                              "graph_value": cumulative })
+    return { "label": "business hours (%s)" % cumulative, "entries":entries, "yaxis":1 }
+
 def _create_atrate_series_for_graphs(request, entries, context):
+    entries = entries.order_by("start_time")
     cumulative = 0
     entries = _apply_date_filter(request, entries, context)
     for entry in entries:
@@ -2116,6 +2136,7 @@ def _create_atrate_series_for_graphs(request, entries, context):
     return { "label": "atrate (%s)" % cumulative, "entries":entries, "yaxis":2 }
 
 def _create_salary_series_for_graphs(request, entries, context):
+    entries = entries.order_by("start_time")
     cumulative = 0
     from_date, to_date = _get_filter_dates(request, context)
     salaries = timepiece.Salary.objects.all().order_by("date")
@@ -2134,9 +2155,7 @@ def _create_salary_series_for_graphs(request, entries, context):
     return { "label": "salaries (%s)" % cumulative, "entries":salaries, "yaxis":2 }
 
 def _create_expenses_series_for_graphs(request, entries, context):
-
     salaries = _create_salary_series_for_graphs(request, entries, context)['entries']
-    
     from_date, to_date = _get_filter_dates(request, context)
     expenses = timepiece.Expense.objects.all().order_by("date")
     expenses = expenses.filter(date__gte=from_date, date__lte=to_date)

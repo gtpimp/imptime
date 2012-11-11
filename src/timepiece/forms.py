@@ -675,7 +675,8 @@ class GraphFilterForm(forms.Form):
                                   queryset=auth_models.User.objects.order_by("username"))
 
     enabled_series = forms.MultipleChoiceField(required=False, label="Graphs",
-                                               choices = ( ("all_hours", "all hours"), ("billable_hours", "billable hours"), ("atrate","atrate"), 
+                                               choices = ( ("all_hours", "all hours"), ("billable_hours", "billable hours"), 
+                                                           ("expected_hours", "expected hours"), ("atrate","atrate"), 
                                                            ("salaries", "salaries"), ("invoices","invoices"), ("expenses","expenses&salaries") ),
                                                widget = CheckboxSelectMultiple)
 
