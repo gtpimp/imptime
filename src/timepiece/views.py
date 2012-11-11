@@ -2130,9 +2130,10 @@ def _create_invoice_series_for_graphs(request, entries, context):
     return { "label": "invoices", "entries":invoices, "yaxis":2 }
 
 def _get_cumulative_starting_hours(request, entries, context):
-    entries = _get_cumulative_common_entries(request, entries, context)
-    entries_annotated = entries.aggregate(sum_hours=Sum('hours'))
-    return entries_annotated['sum_hours'] or 0
+    return 0
+    # entries = _get_cumulative_common_entries(request, entries, context)
+    # entries_annotated = entries.aggregate(sum_hours=Sum('hours'))
+    # return entries_annotated['sum_hours'] or 0
 
 def _get_cumulative_common_entries(request, entries, context):
     """ returns entries older than from_date """

@@ -669,6 +669,8 @@ class GraphFilterForm(forms.Form):
     
     project = forms.ModelChoiceField(required=False, label='Project:', 
                                      queryset=Project.objects.order_by("business__name", "name"))
+    business = forms.ModelChoiceField(required=False, label='Business:', 
+                                      queryset=timepiece.Business.objects.order_by("name", "name"))
     user = forms.ModelChoiceField(required=False, label='User:', 
                                   queryset=auth_models.User.objects.order_by("username"))
 
@@ -687,6 +689,8 @@ class GraphFilterForm(forms.Form):
             v['project'] = self.cleaned_data['project']
         if self.cleaned_data['user'] is not None:
             v['user'] = self.cleaned_data['user']
+        if self.cleaned_data['business'] is not None:
+            v['project__business'] = self.cleaned_data['business']
         return v
 
 class SalaryFilterForm(forms.Form):

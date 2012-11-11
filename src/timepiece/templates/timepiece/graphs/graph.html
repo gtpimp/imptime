@@ -33,7 +33,14 @@
 		    { }, 
 		    { position: "right",
 		      tickFormatter: function formatter(val, axis) {
-		                       return "R" + val.toFixed(axis.tickDecimals)
+
+		                        if (val > 1000000)
+					  return "R" (val / 1000000).toFixed(axis.tickDecimals) + " Mil";
+					else if (val > 1000)
+					  return "R" + (val / 1000).toFixed(axis.tickDecimals) + " thousand";
+					else
+					  return "R" + val.toFixed(axis.tickDecimals);
+
 			             }}
 		    ]
 	      };
