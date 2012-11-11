@@ -2066,8 +2066,10 @@ def graphs(request, template="timepiece/graphs/graph.html", context=None):
     entries, form = _apply_search_filter_on_entries(request, entries, context)
 
     series = []
-    if form.is_valid() and 'hours' in form.cleaned_data['enabled_series']:
+    if form.is_valid() and 'all_hours' in form.cleaned_data['enabled_series']:
         series.append(_create_hours_series_for_graphs(request, entries, context))
+    if form.is_valid() and 'billable_hours' in form.cleaned_data['enabled_series']:
+        series.append(_create_billable_hours_series_for_graphs(request, entries, context))
     if form.is_valid() and 'atrate' in form.cleaned_data['enabled_series']:
         series.append(_create_atrate_series_for_graphs(request, entries, context))
     if form.is_valid() and 'salaries' in form.cleaned_data['enabled_series']:
@@ -2091,7 +2093,17 @@ def _create_hours_series_for_graphs(request, entries, context):
     for entry in entries:
         cumulative += entry.hours
         entry.graph_value = cumulative
-    return { "label": "hours", "entries":entries, "yaxis":1 }
+    return { "label": "all hours", "entries":entries, "yaxis":1 }
+
+def _create_billable_hours_series_for_graphs(request, entries, context):
+    cumulative = _get_cumulative_starting_hours(request, entries, context)
+    entries = _apply_date_filter(request, entries, context)
+    entries = entries.filter(project__billable=True)
+    
+    for entry in entries:
+        cumulative += entry.hours
+        entry.graph_value = cumulative
+    return { "label": "billable hours", "entries":entries, "yaxis":1 }
 
 def _create_atrate_series_for_graphs(request, entries, context):
     cumulative = 0
