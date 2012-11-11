@@ -14,14 +14,31 @@
 
 
 <div class="row-fluid">
+  <div class="span12">
 
   <form method="POST" action="{% url 'expense_list' %}">
     {% csrf_token %}
     {{ expense_formset.management_form }}
-    {% for form in expense_formset.forms %}
-      {{ form|as_bootstrap:"horizontal" }}
-      <hr/>
-    {% endfor %}
+
+    <table class='table table-striped table-bordered table-condensed'>
+      <thead>
+	<th>Date</th>
+	<th>Amount</th>
+	<th>Description</th>
+	<th>Delete</th>
+      </thead>
+      <tbody>
+
+	{% for form in expense_formset.forms %}
+	<tr>
+	  <td>{{form.id}}{{form.date}}</td>
+	  <td>R{{form.amount}}</td>
+	  <td>{{form.description}}</td>
+	  <td>{{form.DELETE}}</td>
+	</tr>
+	{% endfor %}
+      </tbody>
+    </table>
     <input type="submit" value="save"/>
   </form>
 
