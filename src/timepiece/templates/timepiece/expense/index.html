@@ -6,6 +6,11 @@
 
 {% block content %}
 
+<h2>
+  Expenses
+  {% include "timepiece/graphs/_date_filter_msg.html" %}
+</h2>
+
 <div class="row-fluid">
   <div class="span12">
     {% date_filters %}
@@ -37,6 +42,11 @@
 	  <td>{{form.DELETE}}</td>
 	</tr>
 	{% endfor %}
+
+	<tr>
+	  <th>Total</th>
+	  <th>R{{total}}</th>
+	</tr>
       </tbody>
     </table>
     <input type="submit" value="save"/>

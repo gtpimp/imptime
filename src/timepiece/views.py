@@ -2208,13 +2208,15 @@ def expense_list(request, template='timepiece/expense/index.html', context=None)
     context = context or {}
 
     from_date, to_date = _get_filter_dates(request, context)
+    queryset = timepiece.Expense.objects.filter(date__gte=from_date, date__lte=to_date)
     expense_formset = timepiece_forms.expense_formset(request.POST or None,
-                                                      queryset = timepiece.Expense.objects.filter(date__gte=from_date, date__lte=to_date).order_by("date"))
+                                                      queryset = queryset.order_by("date"))
     if expense_formset.is_valid():
         expense_formset.save()
 
     context['expense_formset'] = expense_formset
-    
+    context['total'] = queryset.aggregate(total=Sum('amount'))['total']
+
     return render_to_response(template, context, context_instance=RequestContext(request))
 
     
