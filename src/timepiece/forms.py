@@ -7,6 +7,8 @@ from dateutil.relativedelta import relativedelta
 from django import forms
 from django.db.models import Q
 from django.conf import settings
+from django.forms.models import inlineformset_factory, modelformset_factory
+
 from django.contrib.auth import models as auth_models
 from django.contrib.auth import forms as auth_forms
 from django.core.urlresolvers import reverse
@@ -651,8 +653,6 @@ class SalaryForm(forms.ModelForm):
         model = Salary
         exclude=["user", "date"]
 
-
-
 class AggregatedTimesheetFormByProject(forms.Form):
 
     project = forms.ModelChoiceField(label='Project:', 
@@ -676,7 +676,7 @@ class GraphFilterForm(forms.Form):
 
     enabled_series = forms.MultipleChoiceField(required=False, label="Graphs",
                                                choices = ( ("hours", "hours"), ("atrate","atrate"), 
-                                                           ("salaries", "salaries"), ("invoices","invoices") ),
+                                                           ("salaries", "salaries"), ("invoices","invoices"), ("expenses","expenses&salaries") ),
                                                widget = CheckboxSelectMultiple)
 
     def __init__(self, *args, **kwargs):
@@ -702,3 +702,5 @@ class SalaryFilterForm(forms.Form):
         if self.cleaned_data['user'] is not None:
             v['user'] = self.cleaned_data['user']
         return v
+
+expense_formset = modelformset_factory(timepiece.Expense, can_delete=True, extra=2)

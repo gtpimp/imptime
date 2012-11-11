@@ -1,6 +1,7 @@
 import calendar
 import csv
 from xhtml2pdf import pisa  
+import operator
 import json
 import jsonpickle
 from django.db import connection
@@ -2071,6 +2072,8 @@ def graphs(request, template="timepiece/graphs/graph.html", context=None):
         series.append(_create_atrate_series_for_graphs(request, entries, context))
     if form.is_valid() and 'salaries' in form.cleaned_data['enabled_series']:
         series.append(_create_salary_series_for_graphs(request, entries, context))
+    if form.is_valid() and 'expenses' in form.cleaned_data['enabled_series']:
+        series.append(_create_expenses_series_for_graphs(request, entries, context))
     if form.is_valid() and 'invoices' in form.cleaned_data['enabled_series']:
         series.append(_create_invoice_series_for_graphs(request, entries, context))
 
@@ -2115,6 +2118,25 @@ def _create_salary_series_for_graphs(request, entries, context):
         salary.graph_value = cumulative
         
     return { "label": "salaries", "entries":salaries, "yaxis":2 }
+
+def _create_expenses_series_for_graphs(request, entries, context):
+
+    salaries = _create_salary_series_for_graphs(request, entries, context)['entries']
+    
+    from_date, to_date = _get_filter_dates(request, context)
+    expenses = timepiece.Expense.objects.all().order_by("date")
+    expenses = expenses.filter(date__gte=from_date, date__lte=to_date)
+
+    expenses = list(expenses) + list(salaries)
+    expenses.sort(key = operator.attrgetter('date'))
+
+    cumulative = 0
+    for expense in expenses:
+        expense.start_time = expense.date
+        cumulative += expense.amount
+        expense.graph_value = cumulative
+        
+    return { "label": "expenses", "entries":expenses, "yaxis":2 }
 
 def _create_invoice_series_for_graphs(request, entries, context):
     cumulative = 0
@@ -2179,4 +2201,20 @@ def _get_filter_dates(request, context=None):
         context['date_form'] = date_form
 
     return from_date, to_date
+
+@permission_required('timepiece.expenses')
+def expense_list(request, template='timepiece/expense/index.html', context=None):
+    
+    context = context or {}
+
+    from_date, to_date = _get_filter_dates(request, context)
+    expense_formset = timepiece_forms.expense_formset(request.POST or None,
+                                                      queryset = timepiece.Expense.objects.filter(date__gte=from_date, date__lte=to_date).order_by("date"))
+    if expense_formset.is_valid():
+        expense_formset.save()
+
+    context['expense_formset'] = expense_formset
+    
+    return render_to_response(template, context, context_instance=RequestContext(request))
+
     

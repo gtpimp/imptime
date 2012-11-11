@@ -268,6 +268,13 @@ urlpatterns = patterns('',
         name='salary_payslip'
         ),
 
+    # Expenses views
+    url(
+        r'^expense/list',
+        views.expense_list,
+        name='expense_list'
+        ),
+
     # Timesheet views
     url(
         r'^incremental_timesheets_by_project$',

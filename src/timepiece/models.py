@@ -1244,3 +1244,11 @@ class Rate(models.Model):
     project = models.ForeignKey(Project, related_name="rate")
     user = models.ForeignKey(User)
     amount = models.DecimalField(max_digits=8, decimal_places=2, default=0)
+
+class Expense(models.Model):
+    date = models.DateField()
+    amount = models.DecimalField(max_digits=8,decimal_places=0,default=0)
+
+class Income(models.Model):
+    date = models.DateField()
+    amount = models.DecimalField(max_digits=8,decimal_places=0,default=0)
