@@ -76,6 +76,7 @@ class Extractor(object):
             project = Project.objects.create(name=sprint_name, business=business, 
                                              point_person=point_person,
                                              status=project_status, type=project_type,
+                                             billable=True,
                                              description=sprint_name + " (auto_created)")
 
         for clock in orgnode.getClocks():

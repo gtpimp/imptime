@@ -1109,6 +1109,8 @@ def list_projects(request):
     else:
         projects = timepiece.Project.objects.filter(status='open')
 
+    projects.update(billable=True)
+
     projects = projects.order_by("business__name", "description")
 
     total_outstanding_amount = 0
@@ -2093,7 +2095,7 @@ def _create_hours_series_for_graphs(request, entries, context):
     for entry in entries:
         cumulative += entry.hours
         entry.graph_value = cumulative
-    return { "label": "all hours", "entries":entries, "yaxis":1 }
+    return { "label": "all hours (%s)" % cumulative, "entries":entries, "yaxis":1 }
 
 def _create_billable_hours_series_for_graphs(request, entries, context):
     cumulative = _get_cumulative_starting_hours(request, entries, context)
@@ -2103,7 +2105,7 @@ def _create_billable_hours_series_for_graphs(request, entries, context):
     for entry in entries:
         cumulative += entry.hours
         entry.graph_value = cumulative
-    return { "label": "billable hours", "entries":entries, "yaxis":1 }
+    return { "label": "billable hours (%s)" % cumulative, "entries":entries, "yaxis":1 }
 
 def _create_atrate_series_for_graphs(request, entries, context):
     cumulative = 0
@@ -2111,7 +2113,7 @@ def _create_atrate_series_for_graphs(request, entries, context):
     for entry in entries:
         cumulative += entry.atrate
         entry.graph_value = cumulative
-    return { "label": "atrate", "entries":entries, "yaxis":2 }
+    return { "label": "atrate (%s)" % cumulative, "entries":entries, "yaxis":2 }
 
 def _create_salary_series_for_graphs(request, entries, context):
     cumulative = 0
@@ -2129,7 +2131,7 @@ def _create_salary_series_for_graphs(request, entries, context):
         cumulative += salary.amount
         salary.graph_value = cumulative
         
-    return { "label": "salaries", "entries":salaries, "yaxis":2 }
+    return { "label": "salaries (%s)" % cumulative, "entries":salaries, "yaxis":2 }
 
 def _create_expenses_series_for_graphs(request, entries, context):
 
@@ -2148,7 +2150,7 @@ def _create_expenses_series_for_graphs(request, entries, context):
         cumulative += expense.amount
         expense.graph_value = cumulative
         
-    return { "label": "expenses", "entries":expenses, "yaxis":2 }
+    return { "label": "expenses (%s)" % cumulative, "entries":expenses, "yaxis":2 }
 
 def _create_invoice_series_for_graphs(request, entries, context):
     cumulative = 0
@@ -2161,7 +2163,7 @@ def _create_invoice_series_for_graphs(request, entries, context):
         cumulative += invoice.total_ex_vat
         invoice.graph_value = cumulative
         
-    return { "label": "invoices", "entries":invoices, "yaxis":2 }
+    return { "label": "invoices (%s)" % cumulative, "entries":invoices, "yaxis":2 }
 
 def _get_cumulative_starting_hours(request, entries, context):
     return 0
