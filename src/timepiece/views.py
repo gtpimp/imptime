@@ -2065,13 +2065,13 @@ def graphs(request, template="timepiece/graphs/graph.html", context=None):
     entries, form = _apply_search_filter_on_entries(request, entries, context)
 
     series = []
-    if 'hours' in form.cleaned_data['enabled_series']:
+    if form.is_valid() and 'hours' in form.cleaned_data['enabled_series']:
         series.append(_create_hours_series_for_graphs(request, entries, context))
-    if 'atrate' in form.cleaned_data['enabled_series']:
+    if form.is_valid() and 'atrate' in form.cleaned_data['enabled_series']:
         series.append(_create_atrate_series_for_graphs(request, entries, context))
-    if 'salaries' in form.cleaned_data['enabled_series']:
+    if form.is_valid() and 'salaries' in form.cleaned_data['enabled_series']:
         series.append(_create_salary_series_for_graphs(request, entries, context))
-    if 'invoices' in form.cleaned_data['enabled_series']:
+    if form.is_valid() and 'invoices' in form.cleaned_data['enabled_series']:
         series.append(_create_invoice_series_for_graphs(request, entries, context))
 
     context['series'] = series
