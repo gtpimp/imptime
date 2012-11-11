@@ -1248,6 +1248,7 @@ class Rate(models.Model):
 class Expense(models.Model):
     date = models.DateField()
     amount = models.DecimalField(max_digits=8,decimal_places=0,default=0)
+    description = models.CharField(max_length=255, blank=True, null=True)
 
 class Income(models.Model):
     date = models.DateField()
