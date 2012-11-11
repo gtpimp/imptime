@@ -677,6 +677,9 @@ class GraphFilterForm(forms.Form):
     enabled_series = forms.MultipleChoiceField(required=False, label="Graphs",
                                                choices = ( ("all_hours", "all hours"), ("billable_hours", "billable hours"), 
                                                            ("expected_hours", "expected hours"), ("atrate","atrate"), 
+                                                           ("cash_flow_atrate", "cash flow atrate"), 
+                                                           ("cash_flow_atrate_with_expenses", "cash flow atrate with expenses"), 
+                                                           ("cash_flow_invoiced", "cash flow invoiced"),
                                                            ("salaries", "salaries"), ("invoices","invoices"), ("expenses","expenses&salaries") ),
                                                widget = CheckboxSelectMultiple)
 

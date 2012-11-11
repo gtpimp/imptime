@@ -12,7 +12,7 @@ from django.template import Template
 import math
 import urllib
 import urlparse
-from copy import deepcopy
+from copy import deepcopy, copy
 
 from decimal import Decimal
 from dateutil.relativedelta import relativedelta
@@ -2082,6 +2082,13 @@ def graphs(request, template="timepiece/graphs/graph.html", context=None):
         series.append(_create_expenses_series_for_graphs(request, entries, context))
     if form.is_valid() and 'invoices' in form.cleaned_data['enabled_series']:
         series.append(_create_invoice_series_for_graphs(request, entries, context))
+    if form.is_valid() and 'cash_flow_atrate_with_expenses' in form.cleaned_data['enabled_series']:
+        series.append(_create_cash_flow_atrate_with_expenses_series_for_graphs(request, entries, context))
+    if form.is_valid() and 'cash_flow_atrate' in form.cleaned_data['enabled_series']:
+        series.append(_create_cash_flow_atrate_series_for_graphs(request, entries, context))
+    if form.is_valid() and 'cash_flow_invoiced' in form.cleaned_data['enabled_series']:
+        series.append(_create_cash_flow_invoiced_series_for_graphs(request, entries, context))
+    
 
     if 'from_date' not in context:
         # Ensure that the date filer form exists
@@ -2127,17 +2134,30 @@ def _create_expected_hours_series_for_graphs(request, entries, context):
     return { "label": "business hours (%s)" % cumulative, "entries":entries, "yaxis":1 }
 
 def _create_atrate_series_for_graphs(request, entries, context):
-    entries = entries.order_by("start_time")
+    entries = _get_atrate_entries_for_series(request, entries, context)
     cumulative = 0
-    entries = _apply_date_filter(request, entries, context)
     for entry in entries:
         cumulative += entry.atrate
         entry.graph_value = cumulative
-    return { "label": "atrate (%s)" % cumulative, "entries":entries, "yaxis":2 }
+    return { "label": "atrate (R%s)" % cumulative, "entries":entries, "yaxis":2 }
+
+def _get_atrate_entries_for_series(request, entries, context):
+    entries = entries.order_by("start_time")
+    entries = _apply_date_filter(request, entries, context)
+    return entries
 
 def _create_salary_series_for_graphs(request, entries, context):
-    entries = entries.order_by("start_time")
+    salaries =_get_salaries_for_graphs(request, entries, context)
     cumulative = 0
+    for salary in salaries:
+        salary.start_time = salary.date
+        cumulative += salary.amount
+        salary.graph_value = cumulative
+        
+    return { "label": "salaries (R%s)" % cumulative, "entries":salaries, "yaxis":2 }
+
+def _get_salaries_for_graphs(request, entries, context):
+    entries = entries.order_by("start_time")
     from_date, to_date = _get_filter_dates(request, context)
     salaries = timepiece.Salary.objects.all().order_by("date")
     salaries = salaries.filter(date__gte=from_date, date__lte=to_date)
@@ -2146,43 +2166,102 @@ def _create_salary_series_for_graphs(request, entries, context):
     if form.is_valid():
         form_args = form.save()
         salaries = salaries.filter(**form_args)
-
-    for salary in salaries:
-        salary.start_time = salary.date
-        cumulative += salary.amount
-        salary.graph_value = cumulative
-        
-    return { "label": "salaries (%s)" % cumulative, "entries":salaries, "yaxis":2 }
+    return salaries
 
 def _create_expenses_series_for_graphs(request, entries, context):
-    salaries = _create_salary_series_for_graphs(request, entries, context)['entries']
-    from_date, to_date = _get_filter_dates(request, context)
-    expenses = timepiece.Expense.objects.all().order_by("date")
-    expenses = expenses.filter(date__gte=from_date, date__lte=to_date)
-
-    expenses = list(expenses) + list(salaries)
+    expenses = _get_expenses_for_series(request, entries, context)
     expenses.sort(key = operator.attrgetter('date'))
-
     cumulative = 0
     for expense in expenses:
         expense.start_time = expense.date
         cumulative += expense.amount
         expense.graph_value = cumulative
         
-    return { "label": "expenses (%s)" % cumulative, "entries":expenses, "yaxis":2 }
+    return { "label": "expenses (R%s)" % cumulative, "entries":expenses, "yaxis":2 }
+
+def _get_expenses_for_series(request, entries, context):
+    from_date, to_date = _get_filter_dates(request, context)
+    expenses = timepiece.Expense.objects.all().order_by("date")
+    expenses = expenses.filter(date__gte=from_date, date__lte=to_date)
+    salaries = _get_salaries_for_graphs(request, entries, context)
+    return list(expenses) + list(salaries)
 
 def _create_invoice_series_for_graphs(request, entries, context):
     cumulative = 0
-    from_date, to_date = _get_filter_dates(request, context)
-    invoices = bamboo_models.BambooInvoice.objects.using('bamboo').order_by("dateIssued")
-    invoices = invoices.filter(dateIssued__gte=from_date, dateIssued__lte=to_date)
-
+    invoices = _get_invoices_for_graphs(request, entries, context)
     for invoice in invoices:
         invoice.start_time = invoice.dateIssued
         cumulative += invoice.total_ex_vat
         invoice.graph_value = cumulative
         
-    return { "label": "invoices (%s)" % cumulative, "entries":invoices, "yaxis":2 }
+    return { "label": "invoices (R%s)" % cumulative, "entries":invoices, "yaxis":2 }
+
+def _get_invoices_for_graphs(request, entries, context):
+    from_date, to_date = _get_filter_dates(request, context)
+    invoices = bamboo_models.BambooInvoice.objects.using('bamboo').order_by("dateIssued")
+    invoices = invoices.filter(dateIssued__gte=from_date, dateIssued__lte=to_date)
+    return invoices
+
+def _create_cash_flow_atrate_with_expenses_series_for_graphs(request, entries, context):
+    cumulative = 0
+    from_date, to_date = _get_filter_dates(request, context)
+
+    entries = list(_get_expenses_for_series(request, entries, context)) + \
+              list(_get_atrate_entries_for_series(request, entries, context))
+    entries.sort(key = lambda x: x.start_time if isinstance(x,timepiece.Entry) else datetime.datetime(x.date.year, x.date.month, x.date.day)  )
+    for entry in entries:
+        if isinstance(entry, timepiece.Expense):
+            cumulative -= entry.amount
+        elif isinstance(entry, timepiece.Salary):
+            cumulative -= entry.amount
+        elif isinstance(entry, timepiece.Entry):
+            cumulative += entry.atrate
+        else:
+            raise Exception("Unexpected cashflow model: %s" % entry)
+        entry.graph_value = cumulative
+
+    return { "label": "Cashflow atrate (R%s)" % cumulative, "entries":entries, "yaxis":2 }
+
+def _create_cash_flow_atrate_series_for_graphs(request, entries, context):
+    cumulative = 0
+    from_date, to_date = _get_filter_dates(request, context)
+
+    entries = list(_get_salaries_for_graphs(request, entries, context)) + \
+              list(_get_atrate_entries_for_series(request, entries, context))
+    entries.sort(key = lambda x: x.start_time if isinstance(x,timepiece.Entry) else datetime.datetime(x.date.year, x.date.month, x.date.day)  )
+    for entry in entries:
+        if isinstance(entry, timepiece.Salary):
+            cumulative -= entry.amount
+        elif isinstance(entry, timepiece.Entry):
+            cumulative += entry.atrate
+        else:
+            raise Exception("Unexpected cashflow model: %s" % entry)
+        entry.graph_value = cumulative
+
+    return { "label": "Cashflow atrate (R%s)" % cumulative, "entries":entries, "yaxis":2 }
+
+def _create_cash_flow_invoiced_series_for_graphs(request, entries, context):
+    from_date, to_date = _get_filter_dates(request, context)
+
+    entries = list(_get_expenses_for_series(request, entries, context)) + \
+              list(_get_invoices_for_graphs(request, entries, context))
+    entries.sort(key = lambda x: x.dateIssued if isinstance(x,bamboo_models.BambooInvoice) else x.date )
+    cumulative = 0
+    for entry in entries:
+        if isinstance(entry, bamboo_models.BambooInvoice):
+            cumulative += float(entry.total_ex_vat)
+            entry.start_time = datetime.datetime(entry.dateIssued.year, entry.dateIssued.month, entry.dateIssued.day)
+        elif isinstance(entry, timepiece.Salary):
+            cumulative -= float(entry.amount)
+            entry.start_time = datetime.datetime(entry.date.year, entry.date.month, entry.date.day)
+        elif isinstance(entry, timepiece.Expense):
+            cumulative -= float(entry.amount)
+            entry.start_time = datetime.datetime(entry.date.year, entry.date.month, entry.date.day)
+        else:
+            raise Exception("Unexpected cashflow model: %s" % entry)
+        entry.graph_value = cumulative
+
+    return { "label": "Cashflow invoiced (R%s)" % cumulative, "entries":entries, "yaxis":2 }
 
 def _get_cumulative_starting_hours(request, entries, context):
     return 0
