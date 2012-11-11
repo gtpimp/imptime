@@ -1,5 +1,6 @@
 from decimal import Decimal
 import time
+from django.forms.widgets import CheckboxSelectMultiple
 from datetime import datetime, timedelta
 from dateutil.relativedelta import relativedelta
 
@@ -670,6 +671,11 @@ class GraphFilterForm(forms.Form):
                                      queryset=Project.objects.order_by("business__name", "name"))
     user = forms.ModelChoiceField(required=False, label='User:', 
                                   queryset=auth_models.User.objects.order_by("username"))
+
+    enabled_series = forms.MultipleChoiceField(required=False, label="Graphs",
+                                               choices = ( ("hours", "hours"), ("atrate","atrate"), 
+                                                           ("salaries", "salaries"), ("invoices","invoices") ),
+                                               widget = CheckboxSelectMultiple)
 
     def __init__(self, *args, **kwargs):
         super(GraphFilterForm, self).__init__(*args, **kwargs)

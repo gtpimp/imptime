@@ -52,6 +52,7 @@ from timepiece import forms as timepiece_forms
 from timepiece.templatetags.timepiece_tags import seconds_to_hours
 from timepiece.templatetags.timepiece_tags import get_active_hours
 from emacs_importer import report_helper
+from emacs_importer import models as bamboo_models
 
 @login_required
 def quick_search(request):
@@ -2061,12 +2062,17 @@ def graphs(request, template="timepiece/graphs/graph.html", context=None):
     else:
         entries = timepiece.Entry.objects.none()
 
-    entries = _apply_search_filter_on_entries(request, entries, context)
+    entries, form = _apply_search_filter_on_entries(request, entries, context)
 
     series = []
-    series.append(_create_hours_series_for_graphs(request, entries, context))
-    series.append(_create_atrate_series_for_graphs(request, entries, context))
-    series.append(_create_salary_series_for_graphs(request, entries, context))
+    if 'hours' in form.cleaned_data['enabled_series']:
+        series.append(_create_hours_series_for_graphs(request, entries, context))
+    if 'atrate' in form.cleaned_data['enabled_series']:
+        series.append(_create_atrate_series_for_graphs(request, entries, context))
+    if 'salaries' in form.cleaned_data['enabled_series']:
+        series.append(_create_salary_series_for_graphs(request, entries, context))
+    if 'invoices' in form.cleaned_data['enabled_series']:
+        series.append(_create_invoice_series_for_graphs(request, entries, context))
 
     context['series'] = series
 
@@ -2106,6 +2112,19 @@ def _create_salary_series_for_graphs(request, entries, context):
         
     return { "label": "salaries", "entries":salaries, "yaxis":2 }
 
+def _create_invoice_series_for_graphs(request, entries, context):
+    cumulative = 0
+    from_date, to_date = _get_filter_dates(request, context)
+    invoices = bamboo_models.BambooInvoice.objects.using('bamboo').order_by("dateIssued")
+    invoices = invoices.filter(dateIssued__gte=from_date, dateIssued__lte=to_date)
+
+    for invoice in invoices:
+        invoice.start_time = invoice.dateIssued
+        cumulative += invoice.total_ex_vat
+        invoice.graph_value = cumulative
+        
+    return { "label": "invoices", "entries":invoices, "yaxis":2 }
+
 def _get_cumulative_starting_hours(request, entries, context):
     entries = _get_cumulative_common_entries(request, entries, context)
     entries_annotated = entries.aggregate(sum_hours=Sum('hours'))
@@ -2125,7 +2144,7 @@ def _apply_search_filter_on_entries(request, entries, context):
         form_args = form.save()
         entries = entries.filter(**form_args)
     context['search_filter_form'] = form
-    return entries
+    return entries, form
 
 def _apply_date_filter(request, entries, context):
     from_date, to_date = _get_filter_dates(request, context)

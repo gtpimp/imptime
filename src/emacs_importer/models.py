@@ -166,3 +166,29 @@ class RedmineTimeEntry(models.Model):
         time_entry.save(using=db)
         return time_entry
 
+class BambooInvoice(models.Model):
+    dateIssued = models.DateField(blank=True,null=True)
+
+    class Meta:
+        db_table = 'bamboo_invoices'
+
+    @property
+    def total_ex_vat(self):
+        total = 0.0
+        for i in self.invoice_items.get_query_set():
+            total += float(i.total_ex_vat)
+        return total
+    
+class BambooInvoiceItems(models.Model):
+
+    class Meta:
+        db_table = 'bamboo_invoice_items'
+
+    amount = models.FloatField(blank=True,null=True)
+    quantity = models.FloatField(blank=True,null=True)
+    invoice = models.ForeignKey(BambooInvoice, related_name='invoice_items')
+    
+    @property
+    def total_ex_vat(self):
+        return self.amount * self.quantity
+
