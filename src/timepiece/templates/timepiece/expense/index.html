@@ -1,6 +1,7 @@
 {% extends "timepiece/project/base.html" %}
 {% load url from future %}
 {% load timepiece_tags %}
+{% load humanize %}
 {% load bootstrap_toolkit %}
 {% block title %}Expenses{% endblock %}
 
@@ -45,7 +46,7 @@
 
 	<tr>
 	  <th>Total</th>
-	  <th>R{{total}}</th>
+	  <th>R{{total|intcomma}}</th>
 	</tr>
       </tbody>
     </table>
