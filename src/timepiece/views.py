@@ -2074,6 +2074,10 @@ def graphs(request, template="timepiece/graphs/graph.html", context=None):
     if form.is_valid() and 'invoices' in form.cleaned_data['enabled_series']:
         series.append(_create_invoice_series_for_graphs(request, entries, context))
 
+    if 'from_date' not in context:
+        # Ensure that the date filer form exists
+        _get_filter_dates(request, context)
+
     context['series'] = series
 
     return render_to_response(template, context, context_instance=RequestContext(request))
