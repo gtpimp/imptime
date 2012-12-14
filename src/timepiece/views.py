@@ -2,7 +2,7 @@ import calendar
 import csv
 from xhtml2pdf import pisa  
 import operator
-from dateutil.rrule import DAILY, WDAYMASK, rrule
+from dateutil.rrule import DAILY, WDAYMASK, rrule, MO,TU,WE,TH,FR
 import json
 import jsonpickle
 from django.db import connection
@@ -2105,6 +2105,7 @@ def _create_hours_series_for_graphs(request, entries, context):
     for entry in entries:
         cumulative += entry.hours
         entry.graph_value = cumulative
+        entry.bar_value = entry.hours
     return { "label": "all hours (%s)" % cumulative, "entries":entries, "yaxis":1 }
 
 def _create_billable_hours_series_for_graphs(request, entries, context):
@@ -2116,21 +2117,23 @@ def _create_billable_hours_series_for_graphs(request, entries, context):
     for entry in entries:
         cumulative += entry.hours
         entry.graph_value = cumulative
+        entry.bar_value = entry.hours
     return { "label": "billable hours (%s)" % cumulative, "entries":entries, "yaxis":1 }
 
 def _create_expected_hours_series_for_graphs(request, entries, context):
     cumulative = 0
     def daterange(from_date, to_date):
-        return rrule(DAILY, dtstart=from_date, until=to_date, byweekday=WDAYMASK)
+        return rrule(DAILY, dtstart=from_date, until=to_date, byweekday=(MO,TU,WE,TH,FR))
 
     users = entries.values("user").annotate(usercount=Sum("user"))
     entries = []
     from_date, to_date = _get_filter_dates(request, context)
     for date in daterange(from_date, to_date):
         for user in users:
-            cumulative += 8
-            entries.append( { "start_time":date,
-                              "graph_value": cumulative })
+            if user['usercount']>0:
+                cumulative += 8
+                entries.append( { "start_time":date,
+                                  "graph_value": cumulative })
     return { "label": "business hours (%s)" % cumulative, "entries":entries, "yaxis":1 }
 
 def _create_atrate_series_for_graphs(request, entries, context):
@@ -2139,6 +2142,7 @@ def _create_atrate_series_for_graphs(request, entries, context):
     for entry in entries:
         cumulative += entry.atrate
         entry.graph_value = cumulative
+        entry.bar_value = entry.atrate
     return { "label": "atrate (R%s)" % cumulative, "entries":entries, "yaxis":2 }
 
 def _get_atrate_entries_for_series(request, entries, context):
@@ -2212,10 +2216,13 @@ def _create_cash_flow_atrate_with_expenses_series_for_graphs(request, entries, c
     for entry in entries:
         if isinstance(entry, timepiece.Expense):
             cumulative -= entry.amount
+            entry.bar_value = -entry.amount
         elif isinstance(entry, timepiece.Salary):
             cumulative -= entry.amount
+            entry.bar_value = -entry.amount
         elif isinstance(entry, timepiece.Entry):
             cumulative += entry.atrate
+            entry.bar_value = entry.atrate
         else:
             raise Exception("Unexpected cashflow model: %s" % entry)
         entry.graph_value = cumulative
@@ -2232,8 +2239,10 @@ def _create_cash_flow_atrate_series_for_graphs(request, entries, context):
     for entry in entries:
         if isinstance(entry, timepiece.Salary):
             cumulative -= entry.amount
+            entry.bar_value = -entry.amount
         elif isinstance(entry, timepiece.Entry):
             cumulative += entry.atrate
+            entry.bar_value = entry.atrate
         else:
             raise Exception("Unexpected cashflow model: %s" % entry)
         entry.graph_value = cumulative
@@ -2250,12 +2259,15 @@ def _create_cash_flow_invoiced_series_for_graphs(request, entries, context):
     for entry in entries:
         if isinstance(entry, bamboo_models.BambooInvoice):
             cumulative += float(entry.total_ex_vat)
+            entry.bar_value = float(entry.total_ex_vat)
             entry.start_time = datetime.datetime(entry.dateIssued.year, entry.dateIssued.month, entry.dateIssued.day)
         elif isinstance(entry, timepiece.Salary):
             cumulative -= float(entry.amount)
+            entry.bar_value = -float(entry.amount)
             entry.start_time = datetime.datetime(entry.date.year, entry.date.month, entry.date.day)
         elif isinstance(entry, timepiece.Expense):
             cumulative -= float(entry.amount)
+            entry.bar_value = -float(entry.amount)
             entry.start_time = datetime.datetime(entry.date.year, entry.date.month, entry.date.day)
         else:
             raise Exception("Unexpected cashflow model: %s" % entry)
@@ -2303,6 +2315,7 @@ def _get_filter_dates(request, context=None):
     date_form = timepiece_forms.DateForm(request.GET, initial=initial)
     if request.GET and date_form.is_valid():
         from_date, to_date = date_form.save()
+        to_date -= relativedelta(days=1)
 
     from_date = from_date or initial['from_date']
     to_date = to_date or initial['to_date'] - relativedelta(days=1)

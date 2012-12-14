@@ -46,6 +46,51 @@
 		legend: { position: "se" }
 	      };
 
+  imp.bar_data = [ {%spaceless%} 
+		     {% for serie in series %} 
+		       { label:"{{serie.label}}", 
+			 data: [ {% for entry in serie.entries %} 
+				 [ {{entry.start_time|epoch}}, 
+				   {{entry.bar_value}},
+				 ], {% endfor %} 
+			       ],
+			 yaxis: {{serie.yaxis}}
+		       },
+		     {% endfor %} 
+		   {%endspaceless%}
+		 ];
+  imp.bar_options = { xaxis: {
+			mode: "time",
+			{% if from_date %}
+			  min: {{from_date|epoch}},
+			{% endif %}
+			{% if to_date %}
+			  max: {{to_date|epoch}},
+			{% endif %}
+			timeformat: "%d %b %y",
+
+		    },
+		    yaxes: [
+			{ }, 
+			{ position: "right",
+			  tickFormatter: function formatter(val, axis) {
+
+					    if (Math.abs(val) >= 1000000)
+					      return "R" + (val / 1000000).toFixed(axis.tickDecimals) + " Mil";
+					    else if (Math.abs(val) >= 1000)
+					      return "R" + (val / 1000).toFixed(axis.tickDecimals) + " thousand";
+					    else
+					      return "R" + val.toFixed(axis.tickDecimals);
+
+					 }}
+			],
+		    legend: { position: "se" },
+		    bars: {
+		        show: true
+		    }
+		  };
+
+		  
 </script>
 
 <h2>
@@ -71,7 +116,17 @@
       </form>
     </td>
     <td width="100%">
-      <div id="graph" style="width:100%;height:300px"></div>
+      <table>
+	<tr>
+	  <td>
+	    <div id="graph" style="width:100%;height:300px"></div>
+	  </td>
+	</tr>
+	<!-- <tr> -->
+	<!--   <td> -->
+	<!--     <div id="bar_graph" style="width:100%;height:300px"></div> -->
+	<!--   </td> -->
+	<!-- </tr> -->
     </td>
   </tr>
 </table>
