@@ -163,7 +163,7 @@
                                 {% else %}
                                 <td></td>
                                 {% endifchanged %}
-                                <td class="project">{{ entry.project__name }}</td>
+				<td class="project">{{entry.project__business__name}} - {{ entry.project__name }}</td>
                                 <td class="activity">{{ entry.activity__name }}</td>
                                 <td>{{ entry.location__name }}</td>
                                 <td>{{ entry.status|title }}</td>

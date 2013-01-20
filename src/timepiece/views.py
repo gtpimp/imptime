@@ -147,7 +147,7 @@ def view_entries(request):
         project__in=allocated_projects,
         end_time__isnull=True
     ).values(
-        'project__name', 'project__pk'
+        'project__name', 'project__pk', 'project__business__name'
     ).annotate(sum=Sum('hours')).order_by('project__name')
     schedule = timepiece.PersonSchedule.objects.filter(
                                     user=request.user)
@@ -413,10 +413,12 @@ def summary(request, username=None):
     entries = timepiece.Entry.no_join.values(
         'project__id',
         'project__business__id',
+        'project__business__name',
         'project__name',
     ).order_by(
         'project__id',
         'project__business__id',
+        'project__business__name',
         'project__name',
     )
     dates = Q()
@@ -584,7 +586,7 @@ def view_person_time_sheet(request, user_id):
     entries_qs = timepiece.Entry.objects.filter(user=user)
     month_qs = entries_qs.timespan(from_date, span='month')
     extra_values = ('start_time', 'end_time', 'comments', 'seconds_paused',
-            'id', 'location__name', 'project__name', 'activity__name',
+            'id', 'location__name', 'project__name', 'activity__name', 'project__business__name',
             'status')
     month_entries = month_qs.date_trunc('month', extra_values)
     # For grouped entries, back date up to the start of the week.
@@ -601,7 +603,7 @@ def view_person_time_sheet(request, user_id):
         grouped_qs = entries_qs.timespan(from_date, to_date=to_date)
     grouped_totals = utils.grouped_totals(grouped_qs) if month_entries else ''
     project_entries = month_qs.order_by().values(
-        'project__name').annotate(sum=Sum('hours')).order_by('-sum')
+        'project__name', 'project__business__name').annotate(sum=Sum('hours')).order_by('-sum')
     summary = timepiece.Entry.summary(user, from_date, to_date)
     show_approve = show_verify = False
     if request.user.has_perm('timepiece.change_entry') or \
@@ -775,7 +777,7 @@ def invoice_projects(request):
     project_totals = entries.filter(status='approved',
         project__type__billable=True, project__status__billable=True).values(
         'project__type__pk', 'project__type__label', 'project__name', 'hours',
-        'project__pk', 'status', 'project__status__label', 'project__business__name'
+        'project__pk', 'status', 'project__status__label', 'project__business__name',
     ).annotate(s=Sum('hours')).order_by('project__type__label',
                                         'project__name', 'status')
     return render_to_response(

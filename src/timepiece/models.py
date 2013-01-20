@@ -695,7 +695,9 @@ class Entry(models.Model):
                 self.start_time = timezone.now()
 
     def __is_editable(self):
-        return self.status == 'unverified'
+        #return self.status == 'unverified'
+        return self.project.is_open
+
     is_editable = property(__is_editable)
 
     def __delete_key(self):

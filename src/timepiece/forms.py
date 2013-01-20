@@ -321,6 +321,7 @@ class AddUpdateEntryForm(forms.Form):
     project = forms.ChoiceField()
     date = forms.DateField(required=True)
     hours = forms.CharField(required=True)
+    comments = forms.CharField(max_length=1000, required=False, widget=forms.Textarea)
 
     class Meta:
         model = Entry
@@ -343,10 +344,7 @@ class AddUpdateEntryForm(forms.Form):
         self.fields['hours'].initial = self.instance.hours if self.instance else None
 
     def clean(self):
-        """
-        Verify that the entry doesn't conflict with or come after the current
-        entry, and that the times are valid for model clean
-        """
+
         cleaned_data = self.cleaned_data
 
         start_date = cleaned_data.get('date', None)
@@ -364,17 +362,17 @@ class AddUpdateEntryForm(forms.Form):
             raise forms.ValidationError(
                 'Please enter a valid date/time.')
         #Obtain all current entries, except the one being edited
-        times = [start, end] if end else [start]
-        query = reduce(lambda q, time: q | Q(start_time__lte=time), times, Q())
-        entries = self.user.timepiece_entries.filter(
-            query, end_time__isnull=True
-            ).exclude(id=self.instance.id if self.instance else None)
-        for entry in entries:
-            output = 'The times below conflict with the current entry: ' + \
-            '%s - %s starting at %s' % \
-            (entry.project, entry.activity,
-                entry.start_time.strftime('%H:%M:%S'))
-            raise forms.ValidationError(output)
+        # times = [start, end] if end else [start]
+        # query = reduce(lambda q, time: q | Q(start_time__lte=time), times, Q())
+        # entries = self.user.timepiece_entries.filter(
+        #     query, end_time__isnull=True
+        #     ).exclude(id=self.instance.id if self.instance else None)
+        # for entry in entries:
+        #     output = 'The times below conflict with the current entry: ' + \
+        #     '%s - %s starting at %s' % \
+        #     (entry.project, entry.activity,
+        #         entry.start_time.strftime('%H:%M:%S'))
+        #     raise forms.ValidationError(output)
         return self.cleaned_data
 
     def save(self, commit=True):
@@ -391,6 +389,7 @@ class AddUpdateEntryForm(forms.Form):
         self.instance.status = 'approved'
         self.instance.seconds_paused = 0
         self.instance.pause_time = None
+        self.instance.comments = self.cleaned_data['comments']
         self.instance.save()
         return self.instance
 
