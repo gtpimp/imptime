@@ -228,7 +228,7 @@ EMACS_ADMIN_USER_EMAILS = ["gtp@implicitdesign.co.za",]
 # # These urls may need to be specified on a production server when the site it not hosted at the root domain.
 #LOGIN_URL=
 #LOGOUT_URL=
-
+LOGIN_REDIRECT_URL = "/"
 
 # A sample logging configuration. The only tangible logging
 # performed by this configuration is to send an email to

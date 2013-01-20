@@ -1,5 +1,6 @@
 from decimal import Decimal
 import time
+import math
 from django.forms.widgets import CheckboxSelectMultiple
 from datetime import datetime, timedelta
 from dateutil.relativedelta import relativedelta
@@ -20,7 +21,7 @@ from selectable import forms as selectable_forms
 from timepiece.lookups import ProjectLookup, QuickLookup
 from timepiece.lookups import UserLookup, BusinessLookup
 
-from timepiece.models import Project, Entry, Activity, UserProfile, Attribute
+from timepiece.models import Project, Entry, Activity, UserProfile, Attribute, Location, Activity
 from timepiece.models import ProjectHours, Salary
 from timepiece.fields import UserModelChoiceField
 from timepiece import models as timepiece
@@ -298,41 +299,48 @@ class ClockOutForm(forms.ModelForm):
         return entry
 
 
-class AddUpdateEntryForm(forms.ModelForm):
+class AddUpdateEntryForm(forms.Form):
     """
     This form will provide a way for users to add missed log entries and to
     update existing log entries.
     """
 
-    start_time = forms.DateTimeField(
-        widget=forms.SplitDateTimeWidget(
-            attrs={'class': 'timepiece-time'},
-            date_format='%m/%d/%Y',
-        )
-    )
-    end_time = forms.DateTimeField(
-        widget=forms.SplitDateTimeWidget(
-            attrs={'class': 'timepiece-time'},
-            date_format='%m/%d/%Y',
-        )
-    )
+    # start_time = forms.DateTimeField(
+    #     widget=forms.SplitDateTimeWidget(
+    #         attrs={'class': 'timepiece-time'},
+    #         date_format='%m/%d/%Y',
+    #     )
+    # )
+    # end_time = forms.DateTimeField(
+    #     widget=forms.SplitDateTimeWidget(
+    #         attrs={'class': 'timepiece-time'},
+    #         date_format='%m/%d/%Y',
+    #     )
+    # )
+
+    project = forms.ChoiceField()
+    date = forms.DateField(required=True)
+    hours = forms.CharField(required=True)
 
     class Meta:
         model = Entry
-        exclude = ('user', 'pause_time', 'site', 'hours', 'status',
+        exclude = ('user', 'pause_time', 'site', 'hours', 'status', 'activity', 'location', 'start_time', 'end_time', 'seconds_paused', 'comments',
                    'entry_group')
 
     def __init__(self, *args, **kwargs):
+        self.instance = kwargs.pop('instance')
         self.user = kwargs.pop('user')
         super(AddUpdateEntryForm, self).__init__(*args, **kwargs)
-        self.fields['project'].queryset = timepiece.Project.objects.filter(
+        self.fields['project'].choices = ( (p.id, p.long_name()) for p in timepiece.Project.objects.filter(
             users=self.user, status__enable_timetracking=True,
-            type__enable_timetracking=True
-        )
+            type__enable_timetracking=True).filter(Q(status__label="open")|Q(status__label="reopened")) )
+
         #if editing a current entry, remove the end time field
-        if self.instance.start_time and not self.instance.end_time:
-            self.fields.pop('end_time')
-        self.instance.user = self.user
+        #if self.instance is not NOneself.instance.start_time and not self.instance.end_time:
+        #    self.fields.pop('end_time')
+
+        self.fields['date'].initial = self.instance.start_time if self.instance else None
+        self.fields['hours'].initial = self.instance.hours if self.instance else None
 
     def clean(self):
         """
@@ -340,8 +348,18 @@ class AddUpdateEntryForm(forms.ModelForm):
         entry, and that the times are valid for model clean
         """
         cleaned_data = self.cleaned_data
-        start = cleaned_data.get('start_time', None)
-        end = cleaned_data.get('end_time', None)
+
+        start_date = cleaned_data.get('date', None)
+        hours_remainder, hours = math.modf(float(cleaned_data.get('hours', 0.0)))
+        minutes = hours_remainder*60
+        start = datetime(start_date.year, start_date.month, start_date.day)
+        end = datetime(start.year, start.month, start.day, int(start.hour+hours), int(start.minute+minutes))
+
+        cleaned_data['start_time'] = start
+        cleaned_data['end_time'] = end
+
+        #start = cleaned_data.get('start_time', None)
+        #end = cleaned_data.get('end_time', None)
         if not start:
             raise forms.ValidationError(
                 'Please enter a valid date/time.')
@@ -350,7 +368,7 @@ class AddUpdateEntryForm(forms.ModelForm):
         query = reduce(lambda q, time: q | Q(start_time__lte=time), times, Q())
         entries = self.user.timepiece_entries.filter(
             query, end_time__isnull=True
-            ).exclude(id=self.instance.id)
+            ).exclude(id=self.instance.id if self.instance else None)
         for entry in entries:
             output = 'The times below conflict with the current entry: ' + \
             '%s - %s starting at %s' % \
@@ -360,11 +378,21 @@ class AddUpdateEntryForm(forms.ModelForm):
         return self.cleaned_data
 
     def save(self, commit=True):
-        entry = super(AddUpdateEntryForm, self).save(commit=False)
-        entry.user = self.user
-        if commit:
-            entry.save()
-        return entry
+
+        if self.instance is None:
+            self.instance = Entry()
+
+        self.instance.start_time = self.cleaned_data['start_time']
+        self.instance.end_time = self.cleaned_data['end_time']
+        self.instance.project = Project.objects.get(pk=int(self.cleaned_data['project']))
+        self.instance.user = self.user
+        self.instance.activity = Activity.objects.get_or_create(code='dev')[0]
+        self.instance.location = Location.objects.get_or_create(name='office')[0]
+        self.instance.status = 'approved'
+        self.instance.seconds_paused = 0
+        self.instance.pause_time = None
+        self.instance.save()
+        return self.instance
 
 
 STATUS_CHOICES = [('', '---------'), ]
