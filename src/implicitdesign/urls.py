@@ -19,6 +19,8 @@ urlpatterns = patterns('',
                        url(r'^timepiece/', include('timepiece.urls'), name='timepiece'),
                        url(r'^selectable/', include('selectable.urls'), name='selectable'),
                        url(r'^timesheetfiles/', include(filebrowser.site.urls)),
+
+                       url(r'^us/', views.us),
                        
                        url(r'^accounts/login/$', 'django.contrib.auth.views.login', name='auth_login'),
                        url(r'^accounts/logout/$', 'django.contrib.auth.views.logout_then_login', name='auth_logout'),

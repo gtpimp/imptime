@@ -1,6 +1,8 @@
 from django.shortcuts import render_to_response, get_object_or_404
-from django.http import HttpResponse
+from django.http import HttpResponse, HttpResponseRedirect
+from django.core.urlresolvers import reverse, resolve
 from django.core.cache import get_cache as django_get_cache
+from django.contrib.auth.decorators import user_passes_test
 from operator import itemgetter
 from django import template
 import os
@@ -17,15 +19,21 @@ from django.utils.datastructures import SortedDict
 logger = logging.getLogger(__name__)
 
 def home(request, template="home.html", context=None):
+    return HttpResponseRedirect(reverse("timepiece-entries"))
+
+@user_passes_test(lambda u: u.is_superuser)
+def us(request, template="home.html", context=None):
     context = context or {}
     return render_to_response(template, context, context_instance=RequestContext(request))
 
 def timesheet_graphs(request):
     pass
 
+@user_passes_test(lambda u: u.is_superuser)
 def staff_daylies(request, template="staff_daylies.html", context=None):
     return render_staff_daylies(request=request, template=template, context=context)
 
+@user_passes_test(lambda u: u.is_superuser)
 def render_staff_daylies(request=None, template="staff_daylies.html", context=None):
     context = context or {}
 
@@ -53,6 +61,7 @@ def render_staff_daylies(request=None, template="staff_daylies.html", context=No
         context_instance = None
     return render_to_response(template, context, context_instance=context_instance)
 
+@user_passes_test(lambda u: u.is_superuser)
 def generate_incremental_timesheet(request, template="generate_incremental_timesheet.html", context=None):
     context = context or {}
 

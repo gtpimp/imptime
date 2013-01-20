@@ -6,8 +6,10 @@ from implicitdesign import settings
 from django.contrib.auth.decorators import login_required, permission_required
 from tasks import import_timesheets_from_emacs_task, import_timesheets_from_emacs
 from django.utils import simplejson
+from django.contrib.auth.decorators import user_passes_test
 
 @login_required
+@user_passes_test(lambda u: u.is_superuser)
 def do_import(request, template="import.html", context=None):
     context = context or {}
 
