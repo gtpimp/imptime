@@ -1,12 +1,17 @@
 {% extends "base.html" %}
 
-{{ msg }}
+{% block content %}
+    {{ msg }}
 
-<hr/>
-<a href="{{ MEDIA_URL }}/unknown_redmine_entries">Unknown redmine entries</a>
-<hr/>
+    <hr/>
+    {% comment %}
+    <a href="{{ MEDIA_URL }}/unknown_redmine_entries">Unknown redmine entries</a>
+    {% endcomment %}
+    <hr/>
 
-{{ status_msg|safe }}
+    {{ status_msg|safe }}
 
-<hr/>
+    <hr/>
 
+
+{% endblock %}

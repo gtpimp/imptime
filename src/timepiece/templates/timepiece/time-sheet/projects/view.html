@@ -68,6 +68,7 @@
             {% if entries %}
                 <table class="table table-bordered table-striped">
                     <tr>
+		        <th>id</th>
                         <th>Date</th>
                         <th>Person</th>
                         <th>Activity</th>
@@ -80,6 +81,7 @@
                     </tr>
                     {% for entry in entries %}
                     <tr{% if entry.comments %} title='{{ entry.comments }}'{% endif %}>
+		        <td>{{ entry.id }}</td>
                         <td>{{ entry.start_time|date:"m/d/Y (D)" }}</td>
                         <td>{{ entry.user__first_name }} {{ entry.user__last_name }}</td>
                         <td>{{ entry.activity__name }}</td>

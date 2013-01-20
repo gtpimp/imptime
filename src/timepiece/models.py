@@ -106,11 +106,18 @@ class Project(models.Model):
 
     @property
     def is_open(self):
-        return self.status.label == 'open'
+        return self.status.label == 'open' or self.status.label == "reopened"
 
     @property
     def total_hours(self):
+        return self.total_hours_for_user(user=None)
+
+    def total_hours_for_user(self, user=None):
         entries_qs = Entry.objects.filter(project=self)
+
+        if user is not None:
+            entries_qs = entries_qs.filter(user=user)
+
         total = entries_qs.aggregate(hours=Sum('hours'))['hours']
         return total
 

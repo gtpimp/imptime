@@ -16,7 +16,15 @@ class Extractor(object):
         self.status = {'errors':[],
                        'num_entries_created':0}
 
+    def get_project_timings_for_user(self):
+        timesheet_user = User.objects.get(username=self.username)
+        timings = {}
+        for p in Project.objects.all():
+            timings[p.id] = p.total_hours_for_user(user=timesheet_user)
+        return timings
+
     def extract(self):
+        self.timings_before = self.get_project_timings_for_user()
         self._clean_clocktable_entries()
         includes = ["*.org",]
         excludes = [".git",]
@@ -25,6 +33,23 @@ class Extractor(object):
             for pat in includes:
                 for f in fnmatch.filter(files, pat):
                     self._handle_file(root, f)
+        self.timings_after = self.get_project_timings_for_user()
+        self.reopen_changed_projects()
+
+    def reopen_changed_projects(self):
+        try:
+            reopened_status = Attribute.objects.get(type='project-status', label='reopened')
+        except: 
+            reopened_status = Attribute.objects.create(type='project-status', label='reopened', billable=True, enable_timetracking=True)
+
+        for p_id, hours_before in self.timings_before.items():
+            hours_after = self.timings_after[p_id]
+            if hours_before != hours_after:
+                project = Project.objects.get(pk=p_id)
+                if not project.is_open:
+                    logger.debug("reopening project %s" % project)
+                    project.status = reopened_status
+                    project.save()
 
     def _handle_file(self, dirname, fname):
         is_valid_timesheet_file = fname[-4:] == ".org" and fname[0] != "." and fname[0] != "#"

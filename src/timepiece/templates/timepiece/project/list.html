@@ -76,6 +76,7 @@
                 <thead>
                     <tr>
                         <th>Business</th>
+			<th>State</th>
                         <th>Name</th>
 			<td>Hours</td>
 			<td>Users</td>
@@ -88,6 +89,7 @@
                     {% for project in projects %}
                         <tr>
                             <td>{{ project.business }}</td>
+			    <td>{{ project.status.label }}</td>
                             <td><a href="{% url 'view_project' project_id=project.id %}">{{ project.name }}</a></td>
 			    <td>{{ project.total_hours }}</td>
 			    <td>
