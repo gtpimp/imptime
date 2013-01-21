@@ -273,18 +273,6 @@ LOGGING = {
         }
     }
 
-if os.path.exists(os.path.join(PROJECT_HOME,"local_settings.py")):
-    from local_settings import *
-
-if os.path.exists(os.path.join(PROJECT_HOME,"version_number.py")):
-    from version_number import *
-else:
-    VERSION_NUMBER="dev"
-
-#check that required settings are set
-if DATABASES['default']['ENGINE'] == 'django.db.backends.':
-    raise Exception("Unconfigured databases setting, please correct in local_settings.py")
-
 #EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 EMAIL_USE_TLS = True
 #EMAIL_HOST = 'mail.implicitdesign.co.za'
@@ -299,3 +287,15 @@ EMAIL_HOST_PASSWORD = 'WRONG'
 # DON'T PUT ANY MORE SETTINGS AFTER THIS POINT, OTHERWISE local_settings.py CAN'T OVERRIDE THEM
 #
 #
+if os.path.exists(os.path.join(PROJECT_HOME,"local_settings.py")):
+    from local_settings import *
+
+if os.path.exists(os.path.join(PROJECT_HOME,"version_number.py")):
+    from version_number import *
+else:
+    VERSION_NUMBER="dev"
+
+#check that required settings are set
+if DATABASES['default']['ENGINE'] == 'django.db.backends.':
+    raise Exception("Unconfigured databases setting, please correct in local_settings.py")
+
