@@ -180,6 +180,12 @@
                                             <a href="{% url "timepiece-reject-entry" entry.id %}?next={{ request.get_full_path|urlencode }}#full-timesheet">Reject</a>
                                         {% endif %}
                                     {% endif %}
+				    {% if perms.timepiece.can_clock_in %}
+				      {% if entry.project__status__label == "open" or entry.project__status__label == "reopened" %}
+				        <a target="_blank" href="{% url 'timepiece-update' entry.id %}">Change</a>
+				        <a target="_blank" href="{% url 'timepiece-delete' entry.id %}">Remove</a>
+				      {% endif %}
+				    {% endif %}
                                 </td>
                             </tr>
                             {# Close the last table #}
