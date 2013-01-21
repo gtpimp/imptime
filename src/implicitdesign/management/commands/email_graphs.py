@@ -17,10 +17,14 @@ class Command(BaseCommand):
         make_option('--username',
                     dest='username',
                     default=None,
-            help='Username to generate the graph for'), )
+            help='Username to generate the graph for'), 
+        make_option('--test',
+                    dest='test',
+                    default=None,
+            help='If 1, then don''t send to the user, only the admin users'), )
 
     def handle(self, *args, **kwargs):
         username = kwargs.get("username")
         to_date = datetime.date.today()
         from_date = to_date-relativedelta(days=30)
-        graphs.daily_graph(username=username, from_date=from_date, to_date=to_date)
+        graphs.daily_graph(username=username, from_date=from_date, to_date=to_date, test=(int(kwargs.get('test'))==1))

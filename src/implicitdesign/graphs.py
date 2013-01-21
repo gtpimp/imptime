@@ -15,7 +15,7 @@ from email.MIMEText import MIMEText
 from email.Utils import COMMASPACE, formatdate
 from email import Encoders
 
-def daily_graph(username, from_date, to_date):
+def daily_graph(username, from_date, to_date, test=False):
 
     filename = "%s.png" % username
     graph_file = os.path.join(settings.EMACSIMPORTER_TEMP_DIR, filename)
@@ -40,7 +40,11 @@ def daily_graph(username, from_date, to_date):
         running_date += relativedelta(days=1)
     _plot(points_x, points_y, label="Daily graph for %s" % username, output_file=graph_file)
 
-    to = list(set(settings.EMACS_ADMIN_USER_EMAILS + [user.email]))
+    if test:
+        print("As test")
+        to = ["gtp@implicitdesign.co.za"]
+    else:
+        to = list(set(settings.EMACS_ADMIN_USER_EMAILS + [user.email]))
     _send_mail(attachments=[graph_file,], text='Daily graph for %s' % username, 
                email_to=to, content_type="image/png", title="Daily graph for %s" % username)
     
