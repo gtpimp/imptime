@@ -11,7 +11,8 @@ function update_git {
 function graph {
   USER=$1
   echo "graphing $USER..."
-  python manage.py email_graphs --username $USER --test 1
+  #python manage.py email_graphs --username $USER --test 1
+  python manage.py email_graphs --username $USER
 }
 
 update_git alec
