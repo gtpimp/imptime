@@ -285,10 +285,13 @@ else:
 if DATABASES['default']['ENGINE'] == 'django.db.backends.':
     raise Exception("Unconfigured databases setting, please correct in local_settings.py")
 
-if DATABASES['default']['ENGINE'] == 'django.db.backends.mysql':
-    #ensure we're using innodb during table creation
-    if 'migrate' in sys.argv or 'syncdb' in sys.argv:
-        DATABASES['default']['OPTIONS'] = { 'init_command' : 'SET storage_engine=INNODB', }
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_USE_TLS = True
+#EMAIL_HOST = 'mail.implicitdesign.co.za'
+EMAIL_HOST = 'localhost'
+EMAIL_HOST_USER = 'timesheet@implicitdesign.co.za'
+EMAIL_HOST_PASSWORD = 'WRONG'
+    # EMAIL_PORT = 587
 
 
 #################

@@ -26,9 +26,6 @@ def us(request, template="home.html", context=None):
     context = context or {}
     return render_to_response(template, context, context_instance=RequestContext(request))
 
-def timesheet_graphs(request):
-    pass
-
 @user_passes_test(lambda u: u.is_superuser)
 def staff_daylies(request, template="staff_daylies.html", context=None):
     return render_staff_daylies(request=request, template=template, context=context)
