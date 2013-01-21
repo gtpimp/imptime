@@ -21,8 +21,8 @@ django-selectable==0.4.1
 html5lib==0.95
 jsonpickle==0.4.0
 kombu==2.3.2
-matplotlib==1.2.0
 numpy==1.6.2
+matplotlib==1.2.0
 psycopg2==2.4.1
 pyPdf==1.13
 pycrypto==2.6
