@@ -1,9 +1,9 @@
 import settings
 import os
 from dateutil.relativedelta import relativedelta
-import matplotlib.pyplot as plt
 import matplotlib
 matplotlib.use('Agg')
+import matplotlib.pyplot as plt
 from timepiece.models import Entry
 from django.contrib.auth.models import User
 import smtplib

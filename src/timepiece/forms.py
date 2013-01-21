@@ -356,7 +356,7 @@ class AddUpdateEntryForm(forms.Form):
             minutes = int(minutes)
         else:
             hours_remainder, hours = math.modf(float(hours_raw))
-            minutes = hours_remainder*60
+            minutes = float(hours_remainder)*60
         start = datetime(start_date.year, start_date.month, start_date.day)
         end = datetime(start.year, start.month, start.day, int(start.hour+hours), int(start.minute+minutes))
 
