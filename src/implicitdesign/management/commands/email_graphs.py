@@ -27,4 +27,4 @@ class Command(BaseCommand):
         username = kwargs.get("username")
         to_date = datetime.date.today()
         from_date = to_date-relativedelta(days=30)
-        graphs.daily_graph(username=username, from_date=from_date, to_date=to_date, test=(int(kwargs.get('test'))==1))
+        graphs.daily_graph(username=username, from_date=from_date, to_date=to_date, test=(int(kwargs.get('test') or 0)==1))
