@@ -285,7 +285,7 @@ else:
 if DATABASES['default']['ENGINE'] == 'django.db.backends.':
     raise Exception("Unconfigured databases setting, please correct in local_settings.py")
 
-EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+#EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 EMAIL_USE_TLS = True
 #EMAIL_HOST = 'mail.implicitdesign.co.za'
 EMAIL_HOST = 'localhost'
