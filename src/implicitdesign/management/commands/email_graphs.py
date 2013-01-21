@@ -22,5 +22,5 @@ class Command(BaseCommand):
     def handle(self, *args, **kwargs):
         username = kwargs.get("username")
         to_date = datetime.date.today()
-        from_date = to_date-relativedelta(days=14)
+        from_date = to_date-relativedelta(days=30)
         graphs.daily_graph(username=username, from_date=from_date, to_date=to_date)
