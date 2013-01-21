@@ -40,8 +40,7 @@ def daily_graph(username, from_date, to_date):
         running_date += relativedelta(days=1)
     _plot(points_x, points_y, label="Daily graph for %s" % username, output_file=graph_file)
 
-    to = [ "gtp@implicitdesign.co.za", ]
-    #to = ["gtp@implicitdesign.co.za", "laila@implicitdesing.co.za", user.email]
+    to = settings.EMACS_ADMIN_USER_EMAILS + [user.email]
     _send_mail(attachments=[graph_file,], text='Daily graph for %s' % username, 
                email_to=to, content_type="image/png", title="Daily graph for %s" % username)
     
