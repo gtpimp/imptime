@@ -148,7 +148,7 @@ def view_entries(request):
         end_time__isnull=True
     ).values(
         'project__name', 'project__pk', 'project__business__name'
-    ).annotate(sum=Sum('hours')).order_by('project__name')
+    ).annotate(sum=Sum('hours'))
     schedule = timepiece.PersonSchedule.objects.filter(
                                     user=request.user)
     this_weeks_entries = entries.order_by('-start_time'). \

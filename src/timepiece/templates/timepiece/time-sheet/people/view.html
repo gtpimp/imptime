@@ -84,7 +84,7 @@
                                     <tbody>
                                         {% for entry in project_entries %}
                                             <tr>
-                                                <td>{{ entry.project__name}} </td>
+                                                <td>{{entry.project__business__name}} - {{ entry.project__name}} </td>
                                                 <td class="hours">{{ entry.sum|floatformat:2 }}</td>
                                             </tr>
                                         {% endfor %}
