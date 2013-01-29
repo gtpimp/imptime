@@ -358,8 +358,14 @@ class AddUpdateEntryForm(forms.Form):
             hours = int(hours)
             minutes = int(minutes)
         else:
-            hours_remainder, hours = math.modf(float(hours_raw))
-            minutes = float(hours_remainder)*60
+            if "." not in hours_raw:
+                hours = int(hours_raw)
+                minutes = 0
+            else:
+                hours_raw, minutes_raw = hours_raw.split(".")
+                hours = int(hours_raw)
+                minutes = math.ceil(float((int(minutes_raw)*60))/100)
+            
         start = datetime(start_date.year, start_date.month, start_date.day)
         end = datetime(start.year, start.month, start.day, int(round(start.hour+hours)), int(round(start.minute+minutes)))
 
