@@ -437,12 +437,15 @@ def summary(request, username=None):
     people_totals = people_totals.order_by('user__last_name').filter(dates)
     people_totals = people_totals.annotate(total_hours=Sum('hours'))
 
-    business_per_person_totals = entries.filter(dates).values('project__business__name', 'user__username').annotate(total_hours=Sum('hours'))
+    #business_per_person_totals = entries.filter(dates).values('user__username', 'project__business__name').annotate(total_hours=Sum('hours'))
+    business_per_person_totals = entries.filter(dates).values('user__username', 'project__business__name').annotate(total_hours=Sum('hours')).order_by('project__business__name')
+    business_per_project_per_person_totals = entries.filter(dates).values('user__username', 'project__name', 'project__business__name').annotate(total_hours=Sum('hours')).order_by('project__name')
 
     context = {
         'form': form,
         'project_totals': project_totals,
         'business_per_person_totals' : business_per_person_totals,
+        'business_per_project_per_person_totals': business_per_project_per_person_totals,
         'total_hours': total_hours,
         'people_totals': people_totals,
         'from_date': from_date

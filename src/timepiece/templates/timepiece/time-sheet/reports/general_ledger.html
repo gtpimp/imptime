@@ -70,6 +70,29 @@
 
     <div class="row-fluid">
         <div class="span6">
+            <h3>Hours by Business per Project per Person</h3>
+            <table class="table table-bordered table-striped table-condensed">
+                <tbody>
+                    {% for entry in business_per_project_per_person_totals %}
+                        <tr>
+                            <td>{{ entry.project__business__name }}</td>
+			    <td>{{ entry.project__name }}</td>
+			    <td>{{ entry.user__username }}</td>
+                            <td class="hours">{{ entry.total_hours|floatformat:2 }}</td>
+                        </tr>
+                    {% endfor %}
+                    <tr>
+                        <th colspan="2">&nbsp;</th>
+                    </tr>
+                    
+                </tbody>
+            </table>
+        </div>
+    </div>
+    <hr/>
+
+    <div class="row-fluid">
+        <div class="span6">
             <h3>Hours by Project</h3>
             <table class="table table-bordered table-striped table-condensed">
                 <tbody>
