@@ -19,6 +19,10 @@
 
             <br style="clear: both;" />
 
+	      Note that hours will be rounded to the nearest actual minute.<br/>
+	      Hours can be entered as float or time, ie these are equivalent: 1.15, or 1:9 
+	      <br/><br/>
+
             <form class="form-horizontal" action="" method="post" accept-charset="utf-8">
                 {% csrf_token %}
                 {{ form|as_bootstrap:"horizontal" }}
