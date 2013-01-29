@@ -1115,6 +1115,9 @@ def list_projects(request):
 
     projects = projects.order_by("business__name", "description")
 
+    if not request.user.is_superuser:
+        projects = projects.filter(users=User.objects.get(pk=request.user.id))
+
     total_outstanding_amount = 0
     total_outstanding_amounts_per_project = {}
     for project in projects:
@@ -1797,6 +1800,8 @@ class ProjectHoursAjaxView(ProjectHoursMixin, View):
         inner_qs = project_hours.values_list('project', flat=True)
         projects = timepiece.Project.objects.filter(pk__in=inner_qs).values() \
             .order_by('name')
+        if not request.user.is_superuser:
+            projects = projects.filter(users=User.objects.get(pk=request.user.id))
         all_projects = timepiece.Project.objects.values('id', 'name')
         all_users = auth_models.User.objects.filter(groups__permissions=perm) \
             .values('id', 'first_name', 'last_name')

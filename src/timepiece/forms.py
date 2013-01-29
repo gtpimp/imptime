@@ -215,10 +215,13 @@ class ClockInForm(forms.ModelForm):
             attrs={'class': 'timepiece-time'},
             date_format='%m/%d/%Y',
         )
-        self.fields['project'].queryset = timepiece.Project.objects.filter(
+        projects = timepiece.Project.objects.filter(
             users=self.user, status__enable_timetracking=True,
             type__enable_timetracking=True
-        )
+            )
+        if not self.user.is_superuser:
+            projects = projects.filter(users=self.user)
+        self.fields['project'].queryset = projects
         if not self.active:
             self.fields.pop('active_comment')
         else:

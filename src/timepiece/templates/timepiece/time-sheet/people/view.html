@@ -141,12 +141,6 @@
                                         <tr>
                                             <th>Date</th>
                                             <th class="project">Project</th>
-                                            <th class="activity">Activity</th>
-                                            <th>Location</th>
-                                            <th>Status</th>
-                                            <th class="time">Time In</th>
-                                            <th class="time">Time Out</th>
-                                            <th class="time">Breaks</th>
                                             <th class="time">Hours</th>
                                             <th class="comments">Comments</th>
                                             <th class="aux"></th>
@@ -164,12 +158,7 @@
                                 <td></td>
                                 {% endifchanged %}
 				<td class="project">{{entry.project__business__name}} - {{ entry.project__name }}</td>
-                                <td class="activity">{{ entry.activity__name }}</td>
-                                <td>{{ entry.location__name }}</td>
-                                <td>{{ entry.status|title }}</td>
-                                <td class="time break">{{ entry.start_time|date:"P" }}</td>
-                                <td class="time break">{{ entry.end_time|date:"P" }}</td>
-                                <td class="hours time">{{ entry.seconds_paused|seconds_to_hours|floatformat:2 }}</td>
+                                
                                 <td class="hours time">{{ entry.hours|floatformat:2 }}</td>
                                 <td class="comments" title="{{entry.comments}}">{{ entry.comments|truncatewords:12|urlizetrunc:25|safe }}</td>
                                 <td class="aux">
