@@ -438,13 +438,28 @@ class Entry(models.Model):
         return self.hours * self.rate
 
     @property
+    def atbillablerate(self):
+        return self.hours * self.billable_rate
+
+    @property
+    def billable_rate(self):
+        try:
+            return self._billable_rate
+        except AttributeError:
+            try:
+                self._billable_rate = Rate.objects.filter(project=self.project, user=self.user, charge_type="billable").billable_rate
+            except:
+                self._billable_rate = 0
+            return self._billable_rate
+
+    @property
     def rate(self):
         try:
             return self._rate
         except AttributeError:
-            if self.project.rate.get_query_set().count()>0:
-                self._rate = self.project.rate.get_query_set()[0].amount
-            else:
+            try:
+                self._rate = Rate.objects.filter(project=self.project, user=self.user, charge_type="cost_to_company").rate
+            except:
                 self._rate = 0
             return self._rate
 
@@ -1254,6 +1269,7 @@ class Rate(models.Model):
     project = models.ForeignKey(Project, related_name="rate")
     user = models.ForeignKey(User)
     amount = models.DecimalField(max_digits=8, decimal_places=2, default=0)
+    billable_amount = models.DecimalField(max_digits=8, decimal_places=2, default=0)
 
 class Expense(models.Model):
     date = models.DateField()

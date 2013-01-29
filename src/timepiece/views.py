@@ -2039,11 +2039,13 @@ def set_project_rate(request, context=None):
     project_id = request.POST['project_id']
     user_name = request.POST['user_name']
     new_amount = float(request.POST['amount'])
+    new_billable_amount = float(request.POST['billable_amount'])
     
     project = timepiece.Project.objects.get(pk=project_id)
     user = timepiece.User.objects.get(username=user_name)
     rate = timepiece.Rate.objects.get_or_create(project=project, user=user)[0]
     rate.amount = str(new_amount)
+    rate.billable_amount = str(new_billable_amount)
     rate.save()
     return HttpResponse("")
 

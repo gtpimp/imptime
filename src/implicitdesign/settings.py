@@ -208,6 +208,8 @@ INSTALLED_APPS = (
 
 )
 
+PAGINATION_DEFAULT_PAGINATION=50
+
 import djcelery
 djcelery.setup_loader()
 CELERYBEAT_CHDIR=PROJECT_HOME

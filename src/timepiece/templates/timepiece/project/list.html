@@ -19,7 +19,10 @@
       <td>Project</td><td><span class="rate_projectname"></span></td>
     </tr>
     <tr>
-      <td>Rate</td><td><input type="text" class="rate_rate" name="rate_rate" value=""/></td>
+      <td>Cost to company rate</td><td><input type="text" class="rate_rate" name="rate_rate" value=""/></td>
+    </tr>
+    <tr>
+      <td>Billable rate</td><td><input type="text" class="rate_billable_rate" name="rate_billable_rate" value=""/></td>
     </tr>
     <tr>
       <td><button onclick="TP_rates.save();">Update</button></td>
@@ -99,9 +102,16 @@
 				  <td>{{ username }}</td>
 				  <td>{{ hours.hours }} hours</td>
 				  <td>
-				    rate R<span class="rate_amount">{{ hours.rate.amount }}</span>
-				    <a href="#" onclick="return TP_rates.show_editor(this, {{project.id}}, '{{project.name}}', '{{username}}', {{hours.rate.amount}}, '{% url 'set_project_rate' %}')">edit</a>
+				    rate ctc R<span class="rate_amount">{{ hours.rate.amount }}</span>
 				  </td>
+				  <td>
+				    rate billable R<span class="billable_rate_amount">{{ hours.rate.billable_amount }}</span>
+				  </td>
+				  {% if perms.timepiece.change_rate %}
+				  <td>
+				    <a href="#" onclick="return TP_rates.show_editor(this, {{project.id}}, '{{project.name}}', '{{username}}', {{hours.rate.amount}}, {{hours.rate.billable_amount}}, '{% url 'set_project_rate' %}')">edit</a>
+				  </td>
+				  {% endif %}
 				</tr>
 			      {% endfor %}
 			      </table>
