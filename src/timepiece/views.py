@@ -410,7 +410,7 @@ def summary(request, username=None):
     if form.is_valid():
         from_date, to_date = form.save()
 
-    entries = timepiece.Entry.no_join.filter_on_user(request.user).values(
+    entries = timepiece.Entry.no_join.filter_by_logged_in_user(request.user).values(
         'project__id',
         'project__business__id',
         'project__business__name',
@@ -429,10 +429,10 @@ def summary(request, username=None):
         dates &= Q(end_time__lte=to_date)
     project_totals = entries.filter(dates).annotate(total_hours=Sum('hours'))
     project_totals = project_totals.order_by('project__name')
-    total_hours = timepiece.Entry.objects.filter_on_user(request.user).filter(dates).aggregate(
+    total_hours = timepiece.Entry.objects.filter_by_logged_in_user(request.user).filter(dates).aggregate(
         hours=Sum('hours')
     )['hours']
-    people_totals = timepiece.Entry.no_join.filter_on_user(request.user).values('user', 'user__first_name',
+    people_totals = timepiece.Entry.no_join.filter_by_logged_in_user(request.user).values('user', 'user__first_name',
                                                                                        'user__last_name')
     people_totals = people_totals.order_by('user__last_name').filter(dates)
     people_totals = people_totals.annotate(total_hours=Sum('hours'))
@@ -486,7 +486,7 @@ class ProjectTimesheet(DetailView):
             entries_qs = timepiece.Entry.objects
             entries_qs = entries_qs.timespan(from_date, span='month')
 
-        entries_qs = entries_qs.filter_on_user(self.request.user).filter(project=project)
+        entries_qs = entries_qs.filter_by_logged_in_user(self.request.user).filter(project=project)
 
         extra_values = ('start_time', 'end_time', 'comments', 'seconds_paused',
                 'id', 'location__name', 'project__name', 'activity__name',
@@ -739,11 +739,11 @@ def confirm_invoice_project(request, project_id, to_date, from_date=None):
                                                initial=initial)
     if request.POST and invoice_form.is_valid():
         invoice = invoice_form.save()
-        entries = timepiece.Entry.no_join.filter_on_user(request.user).filter(**entries_query)
+        entries = timepiece.Entry.no_join.filter_by_logged_in_user(request.user).filter(**entries_query)
         entries.update(status=invoice.status, entry_group=invoice)
         return HttpResponseRedirect(reverse('view_invoice', args=[invoice.pk]))
     else:
-        entries = timepiece.Entry.objects.filter_on_user(request.user).filter(**entries_query)
+        entries = timepiece.Entry.objects.filter_by_logged_in_user(request.user).filter(**entries_query)
         entries = entries.order_by('start_time')
         if not entries:
             raise Http404
@@ -774,7 +774,7 @@ def invoice_projects(request):
     datesQ = Q()
     datesQ &= Q(end_time__gte=from_date)  if from_date else Q()
     datesQ &= Q(end_time__lt=to_date)  if to_date else Q()
-    entries = timepiece.Entry.objects.filter_on_user(request.user).filter(datesQ)
+    entries = timepiece.Entry.objects.filter_by_logged_in_user(request.user).filter(datesQ)
     project_totals = entries.filter(status='approved',
         project__type__billable=True, project__status__billable=True).values(
         'project__type__pk', 'project__type__label', 'project__name', 'hours',
@@ -1101,7 +1101,7 @@ def list_projects(request):
             status = ''
         projects = timepiece.Project.objects.filter(
             Q(name__icontains=search) | Q(description__icontains=search))
-        projects = projects.filter_on_user(request.user).filter(status=status) if status else projects
+        projects = projects.filter_by_logged_in_user(request.user).filter(status=status) if status else projects
         # if projects.count() == 1:
         #     url_kwargs = {
         #         'project_id': projects[0].id,
@@ -1110,7 +1110,7 @@ def list_projects(request):
         #         reverse('view_project', kwargs=url_kwargs)
         #     )
     else:
-        projects = timepiece.Project.objects.filter_on_user(request.user).filter(status='open')
+        projects = timepiece.Project.objects.filter_by_logged_in_user(request.user).filter(status='open')
 
     projects.update(billable=True)
 
@@ -1248,7 +1248,7 @@ def invoiced_project(request, project_id=None):
     project.status = timepiece.Attribute.objects.get(label='closed', type='project-status')
     project.billable = True
     project.save()
-    timepiece.Entry.objects.filter_on_user(request.user).filter(project=project).update(status='invoiced')
+    timepiece.Entry.objects.filter_by_logged_in_user(request.user).filter(project=project).update(status='invoiced')
     return HttpResponseRedirect(reverse('list_projects'))
 
 @permission_required('timepiece.add_project')
@@ -1258,7 +1258,7 @@ def unbillable_project(request, project_id=None):
     project.status = timepiece.Attribute.objects.get(label='closed', type='project-status')
     project.billable = False
     project.save()
-    timepiece.Entry.objects.filter_on_user(request.user).filter(project=project).update(status='invoiced')
+    timepiece.Entry.objects.filter_by_logged_in_user(request.user).filter(project=project).update(status='invoiced')
     return HttpResponseRedirect(reverse('list_projects'))
 
 @permission_required('timepiece.add_project')
@@ -1303,20 +1303,20 @@ def payroll_summary(request):
     workQ = ~Q(project__in=projects.values())
     statusQ = Q(status='invoiced') | Q(status='approved')
     # Weekly totals
-    week_entries = timepiece.Entry.objects.filter_on_user(request.user).date_trunc('week')
+    week_entries = timepiece.Entry.objects.filter_by_logged_in_user(request.user).date_trunc('week')
     week_entries = week_entries.filter(weekQ, statusQ, workQ)
     date_headers = utils.generate_dates(from_date, last_billable, by='week')
     weekly_totals = list(utils.project_totals(week_entries, date_headers,
                                               'total', overtime=True))
     # Monthly totals
-    leave = timepiece.Entry.objects.filter_on_user(request.user).filter(monthQ, ~workQ
+    leave = timepiece.Entry.objects.filter_by_logged_in_user(request.user).filter(monthQ, ~workQ
                                   ).values('user', 'hours', 'project__name')
     extra_values = ('project__type__label',)
-    month_entries = timepiece.Entry.objects.filter_on_user(request.user).date_trunc('month', extra_values)
+    month_entries = timepiece.Entry.objects.filter_by_logged_in_user(request.user).date_trunc('month', extra_values)
     month_entries_valid = month_entries.filter(monthQ, statusQ, workQ)
     labels, monthly_totals = utils.payroll_totals(month_entries_valid, leave)
     # Unapproved and unverified hours
-    entries = timepiece.Entry.objects.filter_on_user(request.user).filter(monthQ)
+    entries = timepiece.Entry.objects.filter_by_logged_in_user(request.user).filter(monthQ)
     user_values = ['user__pk', 'user__first_name', 'user__last_name']
     unverified = entries.filter(monthQ, status='unverified',
                                 user__is_active=True)
@@ -1512,7 +1512,7 @@ class ReportMixin(object):
             if project_form.cleaned_data['pj_select']:
                 query &= Q(project__in=project_form.cleaned_data['pj_select'])
 
-        entries = timepiece.Entry.objects.filter_on_user(user).date_trunc(trunc,
+        entries = timepiece.Entry.objects.filter_by_logged_in_user(user).date_trunc(trunc,
             extra_values=('activity', 'project__status')).filter(query)
         date_headers = utils.generate_dates(from_date, header_to, by=trunc)
 
@@ -1798,7 +1798,7 @@ class ProjectHoursAjaxView(ProjectHoursMixin, View):
         ).order_by('-project__type__billable', 'project__name',
             'user__first_name', 'user__last_name')
         inner_qs = project_hours.values_list('project', flat=True)
-        projects = timepiece.Project.objects.filter_by_user(request.user).filter(pk__in=inner_qs).values() \
+        projects = timepiece.Project.objects.filter_by_logged_in_user(request.user).filter(pk__in=inner_qs).values() \
             .order_by('name')
         if not request.user.is_superuser:
             projects = projects.filter(users=User.objects.get(pk=request.user.id))
@@ -2058,7 +2058,7 @@ def revenue(request, template="timepiece/time-sheet/reports/revenue.html", conte
 
     from_date, to_date = _get_filter_dates(request, context)
 
-    entries = timepiece.Entry.objects.filter_by_user(request.user).filter(status='approved')
+    entries = timepiece.Entry.objects.filter_by_logged_in_user(request.user).filter(status='approved')
     entries = _apply_date_filter(request, entries, context)
 
     truncate_date = connection.ops.date_trunc_sql('month','start_time')
@@ -2073,7 +2073,7 @@ def graphs(request, template="timepiece/graphs/graph.html", context=None):
     context = context or {}
 
     if request.GET:
-        entries = timepiece.Entry.objects.filter_by_user(request.user).filter(status='approved').filter(project__users=request.user)
+        entries = timepiece.Entry.objects.filter_by_logged_in_user(request.user).filter(status='approved').filter(project__users=request.user)
     else:
         entries = timepiece.Entry.objects.none()
 

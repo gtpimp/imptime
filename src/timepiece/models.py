@@ -73,7 +73,7 @@ class Business(models.Model):
         ordering = ('name',)
 
 class ProjectQuerySet(QuerySet):
-    def filter_on_user(self, user):
+    def filter_by_logged_in_user(self, user):
         """ restricts entries to those belonging to projects the given
         user (typically the logged in user) is assigned to """
         if user.is_superuser:
@@ -333,7 +333,7 @@ ENTRY_STATUS = (
 )
 
 class EntriesQuerySet(QuerySet):
-    def filter_on_user(self, user):
+    def filter_by_logged_in_user(self, user):
         """ restricts entries to those belonging to projects the given
         user (typically the logged in user) is assigned to """
         if user.is_superuser:
