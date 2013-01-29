@@ -1,7 +1,9 @@
 import datetime
 import logging
 from decimal import Decimal
+from model_managers import QuerySetManager
 from django.db.models import Count
+from django.db.models.query import QuerySet
 from django.conf import settings
 from django.contrib.auth.models import User
 from django.core.exceptions import ValidationError, NON_FIELD_ERRORS
@@ -70,6 +72,14 @@ class Business(models.Model):
     class Meta:
         ordering = ('name',)
 
+class ProjectQuerySet(QuerySet):
+    def filter_on_user(self, user):
+        """ restricts entries to those belonging to projects the given
+        user (typically the logged in user) is assigned to """
+        if user.is_superuser:
+            return self
+        return self.filter(users=user)
+
 class Project(models.Model):
     name = models.CharField(max_length=255)
     tracker_url = models.CharField(max_length=255, blank=True, null=False,
@@ -103,6 +113,8 @@ class Project(models.Model):
         related_name='projects_with_status',
     )
     description = models.TextField()
+
+    objects = QuerySetManager(ProjectQuerySet)
 
     @property
     def is_open(self):
@@ -320,8 +332,15 @@ ENTRY_STATUS = (
     ('not-invoiced', 'Not Invoiced',),
 )
 
+class EntriesQuerySet(QuerySet):
+    def filter_on_user(self, user):
+        """ restricts entries to those belonging to projects the given
+        user (typically the logged in user) is assigned to """
+        if user.is_superuser:
+            return self
+        return self.filter(project__users=user)
 
-class EntryQuerySet(models.query.QuerySet):
+class EntryQuerySet(EntriesQuerySet):
     """QuerySet extension to provide filtering by billable status"""
 
     def date_trunc(self, key='month', extra_values=None):
@@ -361,8 +380,17 @@ class EntryQuerySet(models.query.QuerySet):
         datesQ &= Q(end_time__lt=to_date) if to_date else Q()
         return self.filter(datesQ)
 
+class EntryManagerBase(QuerySetManager):
+    def __init__(self):
+        super(EntryManagerBase, self).__init__(EntryQuerySet)
 
-class EntryManager(models.Manager):
+    def date_trunc(self, key='month', extra_values=()):
+        return self.get_query_set().date_trunc(key, extra_values)
+
+    def timespan(self, from_date, to_date=None, span='month'):
+        return self.get_query_set().timespan(from_date, to_date, span)
+
+class EntryManager(EntryManagerBase):
 
     def get_query_set(self):
         qs = EntryQuerySet(self.model)
@@ -378,14 +406,8 @@ class EntryManager(models.Manager):
                                    'timepiece_attribute.billable'})
         return qs
 
-    def date_trunc(self, key='month', extra_values=()):
-        return self.get_query_set().date_trunc(key, extra_values)
 
-    def timespan(self, from_date, to_date=None, span='month'):
-        return self.get_query_set().timespan(from_date, to_date, span)
-
-
-class EntryWorkedManager(models.Manager):
+class EntryWorkedManager(EntryManager):
 
     def get_query_set(self):
         qs = EntryQuerySet(self.model)
@@ -431,7 +453,7 @@ class Entry(models.Model):
 
     objects = EntryManager()
     worked = EntryWorkedManager()
-    no_join = models.Manager()
+    no_join = EntryManagerBase()
 
     @property
     def atrate(self):
@@ -1224,7 +1246,7 @@ class Salary(models.Model):
 
     @property
     def net_pay(self):
-        return self.amount - self.paye - self.uif
+        return self.amount + self.bonus - self.paye - self.uif
 
     @property
     def take_home_total(self):
@@ -1248,10 +1270,10 @@ class Salary(models.Model):
         if self.date.month < 3:
             tax_year_start = datetime.datetime(tax_year_start.year-1, tax_year_start.month, tax_year_start.day)
         ytd = Salary.objects.filter(user=self.user, date__gte=tax_year_start, date__lte=self.date).values('user') \
-            .annotate(ytd_amount=Sum('amount'), ytd_paye=Sum('paye'), ytd_uif=Sum('uif'), ytd_expenses=Sum('expenses'))[0]
+            .annotate(ytd_amount=Sum('amount'), ytd_bonus=Sum('bonus'), ytd_paye=Sum('paye'), ytd_uif=Sum('uif'), ytd_expenses=Sum('expenses'))[0]
 
         #return {'take_home_total': ytd['ytd_amount'] - ytd['ytd_paye'] - ytd['ytd_uif'] - ytd['ytd_expenses'],
-        return {'take_home_total': ytd['ytd_amount'],
+        return {'take_home_total': ytd['ytd_amount']+ytd['ytd_bonus'], 
                 'paye': ytd['ytd_paye']}
 
     @property

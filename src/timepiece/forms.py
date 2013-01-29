@@ -21,7 +21,7 @@ from selectable import forms as selectable_forms
 from timepiece.lookups import ProjectLookup, QuickLookup
 from timepiece.lookups import UserLookup, BusinessLookup
 
-from timepiece.models import Project, Entry, Activity, UserProfile, Attribute, Location, Activity
+from timepiece.models import Project, Business, Entry, Activity, UserProfile, Attribute, Location, Activity
 from timepiece.models import ProjectHours, Salary
 from timepiece.fields import UserModelChoiceField
 from timepiece import models as timepiece
@@ -695,9 +695,10 @@ class AggregatedTimesheetFormByProject(forms.Form):
     project = forms.ModelChoiceField(label='Project:', 
                                      queryset=Project.objects.order_by("business__name", "name"))
 
-    def __init__(self, *args, **kwargs):
+    def __init__(self, user, *args, **kwargs):
         super(AggregatedTimesheetFormByProject, self).__init__(*args, **kwargs)
         self.fields['project'].label_from_instance = lambda obj: format(obj.long_name())
+        self.fields['project'].queryset = Project.objects.filter(users=user).order_by("business__name", "name")
 
     def save(self):
         return { 'project': self.cleaned_data['project'] }
@@ -720,9 +721,12 @@ class GraphFilterForm(forms.Form):
                                                            ("salaries", "salaries"), ("invoices","invoices"), ("expenses","expenses&salaries") ),
                                                widget = CheckboxSelectMultiple)
 
-    def __init__(self, *args, **kwargs):
+    def __init__(self, user, *args, **kwargs):
         super(GraphFilterForm, self).__init__(*args, **kwargs)
         self.fields['project'].label_from_instance = lambda obj: format(obj.long_name())
+        self.fields['project'].queryset = Project.objects.filter(users=user).order_by("business__name", "name")
+        self.fields['business'].queryset = timepiece.Business.objects.filter(new_business_projects__users=user).order_by("name", "name")
+
 
     def save(self):
         v = {}
