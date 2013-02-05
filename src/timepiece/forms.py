@@ -329,6 +329,7 @@ class ImportEntriesForm(forms.Form):
             count += 1
             
             try:
+                raw_entry = raw_entry.replace("|", "\t")
                 raw_date, raw_business, raw_project, raw_description, raw_hours = raw_entry.split("\t")
             except ValueError, ex:
                 errors.append( {'line':raw_entry,
