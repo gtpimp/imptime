@@ -197,3 +197,13 @@ caption {
 .vg { color: #d07000; font-weight: bold } /* Name.Variable.Global */
 .vi { color: #3030B0 } /* Name.Variable.Instance */
 .il { color: #0000D0; font-weight: bold } /* Literal.Number.Integer.Long */
+
+
+div.error {
+    border: 1px solid #ff2222;
+    color: #993333;
+}
+
+div.infobox {
+    border: 1px solid #2222ff;
+}

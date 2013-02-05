@@ -1,0 +1,114 @@
+{% extends 'timepiece/time-sheet/base.html' %}
+{% load bootstrap_toolkit %}
+
+{% block title %}Import Entries{% endblock %}
+
+{% block crumbs %}
+    {{ block.super }}
+    {% if entry %}
+        <li><span class="divider">/</span> <a href="{% url timepiece-update entry.pk %}">Import Entries</a></li>
+    {% endif %}
+{% endblock crumbs %}
+
+{% block content %}
+    <div class="row-fluid">
+        <div class="span12">
+            <h2>Entries</h2>
+
+	    {% if imported %}
+	    <h3>Out of {{count}} lines, {{num_entries_created}} entries were created and {{num_entries_updated}} existing entries were refreshed.</h3>
+	    <br/>
+		{% if errors %}
+		<div class="error" >
+		  There were {{errors|length}} errors, these entries were ignored.
+		  <br/>
+		  <div id='errors_heading_open' style="cursor:pointer" 
+		       onclick="document.getElementById('errors_list').style.display='block'; document.getElementById('errors_heading_open').style.display='none'; document.getElementById('errors_heading_close').style.display='block'">
+		    Click to show errors
+		  </div>
+		  <div id='errors_heading_close' style="cursor:pointer;display:none" 
+		       onclick="document.getElementById('errors_list').style.display='none'; document.getElementById('errors_heading_open').style.display='block'; document.getElementById('errors_heading_close').style.display='none'">
+		    Click to hide errors
+		  </div>
+		</div>
+		{% endif %}
+	    {% endif %}
+
+	    <div id="errors_list" style="display:none">
+	      {% for error in errors %}
+		<div class="error">
+		  Line {{ error.line_number }}<br/>
+		  {{ error.error }}<br/>
+		  {{ error.msg }}
+		  <pre>
+		    {{ error.line }}
+		  </pre>
+		</div>
+	      {% endfor %}
+	    </div>
+
+
+	    {% if entries %}
+	    <div class="scroll infobox">
+	      <br/>
+	      Total hours added (including updated entries): {{ total_hours }}
+	      <div id="entries_list_open_heading" style="cursor:pointer"
+		   onclick="document.getElementById('entries_list').style.display='block'; document.getElementById('entries_list_open_heading').style.display='none'; document.getElementById('entries_list_close_heading').style.display='block'" >
+		Click to show entries
+	      </div>
+	      <div id="entries_list_close_heading" class="infobox" style="cursor:pointer; display:none" 
+		   onclick="document.getElementById('entries_list').style.display='none'; document.getElementById('entries_list_open_heading').style.display='block'; document.getElementById('entries_list_close_heading').style.display='none'">
+		Click to hide entries
+	      </div>
+	      <div id="entries_list" style="display:none">
+		{% include "timepiece/time-sheet/_entry_list.html" with active="True" %}
+	      </div>
+	    </div>
+	    {% endif %}
+
+	    <br/>
+	    <hr/>
+
+            <br style="clear: both;" />
+
+	    <br/>
+	    <h2>Import hours</h2>
+	    Paste in multiple time entries, with an entry per line. Each line should be tab separated with fields in this order:
+	    <table border="1">
+	      <thead>
+		<th>date</th>
+		<th>project or business</th>
+		<th>sprint name</th>
+		<th>description</th>
+		<th>hours</th>
+	      </thead>
+	    </table>
+	    <br/>
+
+	      Hours will be rounded to the nearest actual minute.<br/>
+	      Hours can be entered as float or time, ie these are equivalent: 1.15 or 1,15 or 1:9 
+
+	      <br/>
+	      Entries are considered duplicate if these fields are
+	      identical: project, sprint, hours. 
+	      <br/>
+	      It is safe to save this page multiple times in order to
+	      change the description or while fixing errors. But
+	      changing the duration of an entry will cause a duplicate
+	      to be created, since the system doesn't know if you
+	      intended to have multiple entries on a single day.
+	      <br/><br/>
+
+            <form class="form-horizontal" action="" method="post" accept-charset="utf-8">
+                {% csrf_token %}
+                {{ form|as_bootstrap:"horizontal" }}
+                <div class="form-actions">
+                    <input class="btn btn-primary" type='submit' name='submit' value='Save' />
+                    <input class="btn" type='button' value='Cancel' onclick="window.location='{% url timepiece-entries %}'" />
+                </div>
+            </form>
+
+
+        </div>
+    </div>
+{% endblock %}

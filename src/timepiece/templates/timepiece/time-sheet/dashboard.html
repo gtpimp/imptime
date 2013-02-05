@@ -13,6 +13,7 @@
                 <ul class="unstyled subnav">
                     {% comment %}<li><a href="{% url timepiece-clock-in %}">Clock In</a></li>{% endcomment %}
                     <li><a href="{% url timepiece-add %}">Add Entry</a></li>
+		    <li><a href="{% url timepiece-import %}">Add multiple entries</a></li>
                 </ul>
             </div>
         </div>
@@ -68,6 +69,7 @@
                                         <td>
                                             <ul class="actions">
                                                 <li><a href="{% url timepiece-add %}?project={{ assignment.contract.project.pk }}">Add Entry</a></li>
+						<li><a href="{% url timepiece-import %}">Add multiple entries</a></li>
                                                 {% if perms.timepiece.view_entry_summary %}
                                                     <li><a href="{% url view_contract assignment.contract.pk %}">Report</a></li>
                                                 {% endif %}

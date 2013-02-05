@@ -277,6 +277,18 @@ def toggle_paused(request, entry_id):
     # redirect to the log entry list
     return HttpResponseRedirect(reverse('timepiece-entries'))
 
+@render_with('timepiece/time-sheet/entry/import_entries.html')
+def import_entries(request):
+    form = timepiece_forms.ImportEntriesForm(request.user, request.POST)
+
+    context = {}
+
+    if request.POST and form.is_valid():
+        context.update(form.save())
+        context['imported'] = True
+        
+    context['form'] = form
+    return context
 
 @permission_required('timepiece.change_entry')
 @render_with('timepiece/time-sheet/entry/add_update_entry.html')

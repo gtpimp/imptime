@@ -6,6 +6,7 @@
             <th>Project</th>
             <th>Hours</th>
             <th>Actions</th>
+	    <th>Comment</th>
         </tr>
     </thead>
     <tbody>
@@ -28,6 +29,9 @@
 		    {% endif %}
                 </ul>
             </td>
+	    <td>
+	      {{ entry.comments|slice:":80" }}
+	    </td>
         </tr>
         {% empty %}
             <tr><td colspan='9'>You have no time logged for this period.</td></tr>

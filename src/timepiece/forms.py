@@ -1,5 +1,7 @@
 from decimal import Decimal
 import time
+from time import mktime
+from datetime import datetime
 import math
 from django.forms.widgets import CheckboxSelectMultiple
 from datetime import datetime, timedelta
@@ -301,7 +303,101 @@ class ClockOutForm(forms.ModelForm):
             entry.save()
         return entry
 
+class ImportEntriesForm(forms.Form):
+    raw_entries = forms.CharField(max_length=50000, required=False, widget=forms.Textarea)
 
+    def __init__(self, user, *args, **kwargs):
+        super(ImportEntriesForm, self).__init__(*args, **kwargs)
+        self.user = user
+
+    def save(self):
+        raw_entries = self.cleaned_data['raw_entries'].replace("\r\n", "\n")
+        entries = []
+
+        errors = []
+
+        count = 0
+        num_entries_updated = 0
+        num_entries_created = 0
+        line_number = 0
+        total_hours = 0
+        for raw_entry in raw_entries.split("\n"):
+            line_number += 1
+            if len(raw_entry.strip())==0:
+                continue
+
+            count += 1
+            
+            try:
+                raw_date, raw_business, raw_project, raw_description, raw_hours = raw_entry.split("\t")
+            except ValueError, ex:
+                errors.append( {'line':raw_entry,
+                                'line_number':line_number,
+                                'error':"Invalid line format: %s",
+                                'msg': str(ex)} )
+                continue
+            try:
+                date = datetime.fromtimestamp(mktime(time.strptime(raw_date, "%d-%b-%y")))
+            except ValueError:
+                errors.append( {'line':raw_entry,
+                                'line_number':line_number,
+                                'error':"Invalid date format for %s" % raw_date,
+                                'msg': "Should be in format Day-MonthName-Year, eg 31-Jan-13"} )
+                continue
+            try:
+                business = Business.objects.get(name=raw_business)
+            except Business.DoesNotExist, ex:
+                try:
+                    business = Business.objects.get(name__iexact=raw_business)
+                except:
+                    allowed_businesses = Business.objects.filter(new_business_projects__users=self.user)
+                    errors.append( {'line':raw_entry,
+                                    'line_number':line_number,
+                                    'error':"Invalid business name %s" % raw_business,
+                                    'msg': "Are you assigned to this business? Possible businesses are: %s" % (", ".join([b.name for b in allowed_businesses]))
+                                    } )
+                    continue
+
+            try:
+                project = Project.objects.filter(business=business).filter_by_logged_in_user(self.user).get(name=raw_project)
+            except Project.DoesNotExist, ex:
+                try:
+                    project = Project.objects.filter(business=business).filter_by_logged_in_user(self.user).get(name__iexact=raw_project)
+                except:
+                    allowed_projects = Project.objects.filter(business=business).filter_by_logged_in_user(self.user)
+                    errors.append( {'line':raw_entry,
+                                    'line_number':line_number,
+                                    'error':"Invalid sprint name %s" % raw_project,
+                                    'msg': "Are you assigned to this sprint? Possible sprints are: %s" % (", ".join([p.name for p in allowed_projects]))
+                                    } )
+                    continue
+
+            description = raw_description
+            hours, minutes = parse_hours_raw(raw_hours)
+
+            start_time = datetime(date.year, date.month, date.day)
+            end_time = datetime(start_time.year, start_time.month, start_time.day, int(round(start_time.hour+hours)), int(round(start_time.minute+minutes)))
+
+            total_hours += hours + float(minutes)/60
+
+            try:
+                entry = Entry.objects.get(user=self.user, project=project, start_time=start_time, end_time=end_time)
+                num_entries_updated += 1
+            except Entry.DoesNotExist:
+                entry = Entry(user=self.user, project=project, start_time=start_time, end_time=end_time)
+                num_entries_created += 1
+            entry.comments = description
+            tidy_entry(entry)
+            entry.save()
+            entries.append(entry)
+            
+        return {'entries':entries, 
+                'errors': errors,
+                'count': count,
+                'total_hours':total_hours,
+                'num_entries_updated': num_entries_updated,
+                'num_entries_created': num_entries_created}
+    
 class AddUpdateEntryForm(forms.Form):
     """
     This form will provide a way for users to add missed log entries and to
@@ -353,21 +449,7 @@ class AddUpdateEntryForm(forms.Form):
         start_date = cleaned_data.get('date', None)
 
         hours_raw = cleaned_data.get('hours', "0")
-        if ':' in hours_raw:
-            hours,minutes = hours_raw.split(":")
-            hours = int(hours)
-            minutes = int(minutes)
-        else:
-            hours_raw = hours_raw.replace(",",".")
-            if "." not in hours_raw:
-                hours = int(hours_raw)
-                minutes = 0
-            else:
-                total_hours = float(hours_raw)
-                total_minutes = total_hours*60
-                minutes = total_minutes%60
-                hours = (total_minutes-minutes)/60
-            
+        hours, minutes = parse_hours_raw(hours_raw)
         start = datetime(start_date.year, start_date.month, start_date.day)
         end = datetime(start.year, start.month, start.day, int(round(start.hour+hours)), int(round(start.minute+minutes)))
 
@@ -402,15 +484,17 @@ class AddUpdateEntryForm(forms.Form):
         self.instance.end_time = self.cleaned_data['end_time']
         self.instance.project = Project.objects.get(pk=int(self.cleaned_data['project']))
         self.instance.user = self.user
-        self.instance.activity = Activity.objects.get_or_create(code='dev')[0]
-        self.instance.location = Location.objects.get_or_create(name='office')[0]
-        self.instance.status = 'approved'
-        self.instance.seconds_paused = 0
-        self.instance.pause_time = None
         self.instance.comments = self.cleaned_data['comments']
+        tidy_entry(self.instance)
         self.instance.save()
         return self.instance
 
+def tidy_entry(entry):
+    entry.activity = Activity.objects.get_or_create(code='dev')[0]
+    entry.location = Location.objects.get_or_create(name='office')[0]
+    entry.status = 'approved'
+    entry.seconds_paused = 0
+    entry.pause_time = None
 
 STATUS_CHOICES = [('', '---------'), ]
 STATUS_CHOICES.extend(timepiece.ENTRY_STATUS)
@@ -755,5 +839,23 @@ class SalaryFilterForm(forms.Form):
         if self.cleaned_data['user'] is not None:
             v['user'] = self.cleaned_data['user']
         return v
+
+def parse_hours_raw(hours_raw):
+    if ':' in hours_raw:
+        hours,minutes = hours_raw.split(":")
+        hours = int(hours)
+        minutes = int(minutes)
+    else:
+        hours_raw = hours_raw.replace(",",".")
+        if "." not in hours_raw:
+            hours = int(hours_raw)
+            minutes = 0
+        else:
+            total_hours = float(hours_raw)
+            total_minutes = total_hours*60
+            minutes = total_minutes%60
+            hours = (total_minutes-minutes)/60
+    return hours, minutes
+
 
 expense_formset = modelformset_factory(timepiece.Expense, can_delete=True, extra=2)
