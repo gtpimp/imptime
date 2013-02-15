@@ -2087,8 +2087,11 @@ def revenue(request, template="timepiece/time-sheet/reports/revenue.html", conte
 
     return render_to_response(template, context, context_instance=RequestContext(request))
     
-@permission_required('timepiece.view_entry_summary')
 def graphs(request, template="timepiece/graphs/graph.html", context=None):
+
+    if not request.user.is_superuser:
+        return HttpResponse("")
+
     context = context or {}
 
     if request.GET:
