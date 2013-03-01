@@ -8,7 +8,7 @@ fi
 #force a sudo early
 sudo ls > /dev/null
 
-ROOT=~/impwebsite
+ROOT=/home/timesheet
 
 echo "Updating from git"
 cd ${ROOT}
