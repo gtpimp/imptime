@@ -12,7 +12,7 @@ function graph {
   USER=$1
   echo "graphing $USER..."
   #python manage.py email_graphs --username $USER --test 1
-  python manage.py email_graphs --username $USER --settings "management_settings"
+  python manage.py email_graphs --username $USER --settings "implicitdesign.management_settings"
 }
 
 update_git alec
@@ -25,7 +25,7 @@ cd /home/timesheet
 cd src
 
 echo "importing timesheet..."
-python manage.py --settings "management_settings" import_timesheet 
+python manage.py --settings "implicitdesign.management_settings" import_timesheet 
 
 graph alec
 graph gtp
