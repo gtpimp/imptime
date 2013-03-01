@@ -25,7 +25,7 @@ cd /home/timesheet
 cd src
 
 echo "importing timesheet..."
-python manage.py --settings "implicitdesign.management_settings" import_timesheet 
+python manage.py import_timesheet --settings "implicitdesign.management_settings" 
 
 graph alec
 graph gtp
