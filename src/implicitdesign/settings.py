@@ -260,6 +260,14 @@ LOGGING = {
             'formatter': 'verbose',
             'maxBytes':604800, 
             'backupCount':50
+            },
+        'emacs_importer_handler':{
+            'level':'DEBUG',
+            'class':'logging.handlers.RotatingFileHandler',
+            'filename':os.path.join(LOG_FOLDER, 'emacs_importer.log'),
+            'formatter': 'verbose',
+            'maxBytes':604800, 
+            'backupCount':50
             }
         },
     'loggers': {
@@ -268,11 +276,17 @@ LOGGING = {
             'propagate': True,
             'level':'DEBUG',
             },
+        'emacs_importer.management.commands':{
+            'handlers': ['emacs_importer_handler',],
+            'propagate': False,
+            'level': 'DEBUG'
+            },
         '': {
             'handlers': ['file',],
+            'propagate': True,
             'level': 'DEBUG'
             }
-        }
+        },
     }
 
 #EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
