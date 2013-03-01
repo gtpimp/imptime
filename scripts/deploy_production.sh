@@ -1,7 +1,7 @@
 #!/bin/bash
 
-if [ `whoami` != 'website' ]; then
-    echo "Please run as user 'website'"
+if [ `whoami` != 'gtp' ]; then
+    echo "Please run as user 'gtp'"
     exit 1
 fi
 
