@@ -38,7 +38,7 @@ def help():
 # ===== hosts =====
 def host_imp():
     env.user = "gtp"
-    env.hosts = ['implicit.implicitdesign.co.za']
+    env.hosts = ['timesheet.implicitdesign.co.za']
 
 # ===== top level commands ======
 
