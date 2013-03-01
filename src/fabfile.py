@@ -6,11 +6,11 @@ from fabric.contrib.console import confirm
 import datetime
 
 local_code_dir = os.path.dirname(os.path.realpath(__file__))
-imp_remote_code_dir = "/home/website"
-imp_remote_venv_dir = imp_remote_code_dir + "/impwebsite/venv"
-imp_remote_managepy_dir = imp_remote_code_dir + "/impwebsite/src"
+imp_remote_code_dir = "/home/timesheet"
+imp_remote_venv_dir = imp_remote_code_dir + "/venv"
+imp_remote_managepy_dir = imp_remote_code_dir + "/src"
 imp_remote_venv_command = "source %s/bin/activate" % imp_remote_venv_dir
-imp_remote_media_dir = imp_remote_code_dir + "/impwebsite/media"
+imp_remote_media_dir = imp_remote_code_dir + "/media"
 
 # ===== Usage =====
 
