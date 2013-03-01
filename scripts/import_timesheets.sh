@@ -3,7 +3,7 @@
 function update_git {
   USER=$1
   echo "update_git on $USER..."
-  cd /home/timesheets/input/$USER
+  cd /home/timesheet_input/$USER
   git reset --hard HEAD
   git pull origin master
 }
@@ -20,10 +20,7 @@ update_git david
 update_git gtp
 update_git stephan
 
-cd /home/timesheets/input/alec
-git reset --hard HEAD
-
-cd /home/website/impwebsite
+cd /home/timesheet
 . ./venv/bin/activate
 cd src
 

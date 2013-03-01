@@ -26,13 +26,13 @@ SRC_HOME = os.path.join(PROJECT_HOME, "src")
 sys.path.append(SRC_HOME)
 sys.path.append(VENV_HOME + '/src/xhtml2pdf')
 sys.path.append(VENV_HOME + '/src/django-pipeline')
-sys.path.insert(0, VENV_HOME + '/lib/python2.6/site-packages')
+sys.path.insert(0, VENV_HOME + '/lib/python2.7/site-packages')
 
 sys.stdout = sys.stderr
 
 # Setup celery (cron jobs)
-import djcelery
-djcelery.setup_loader()
+#import djcelery
+#djcelery.setup_loader()
 
 # This application object is used by any WSGI server configured to use this
 # file. This includes Django's development server, if the WSGI_APPLICATION

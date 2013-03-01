@@ -12,7 +12,7 @@ class Extractor(object):
     def __init__(self, username, root_input_folder, pointperson_username):
         self.username = username
         self.pointperson_username = pointperson_username
-        self.input_path = os.path.join(root_input_folder, "input", self.username)
+        self.input_path = os.path.join(root_input_folder, self.username)
         self.status = {'errors':[],
                        'num_entries_created':0}
 

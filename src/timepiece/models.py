@@ -116,6 +116,14 @@ class Project(models.Model):
 
     objects = QuerySetManager(ProjectQuerySet)
 
+    def save(self, *args, **kwargs):
+        super(Project, self).save(*args, **kwargs)
+        
+        # Add all users from other projects in this business
+        users = User.objects.filter(user_projects__business=self.business).distinct()
+        self.users = users
+        self.save()
+    
     @property
     def is_open(self):
         return self.status.label == 'open' or self.status.label == "reopened"
