@@ -276,7 +276,7 @@ LOGGING = {
             'propagate': True,
             'level':'DEBUG',
             },
-        'emacs_importer.management.commands':{
+        'emacs_importer':{
             'handlers': ['emacs_importer_handler',],
             'propagate': False,
             'level': 'DEBUG'
