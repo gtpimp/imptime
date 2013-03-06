@@ -569,7 +569,6 @@ class Entry(models.Model):
             return None
 
     def clean(self):
-        import pdb; pdb.set_trace()
         if not self.user_id:
             raise ValidationError('An unexpected error has occured')
         if not self.start_time:
