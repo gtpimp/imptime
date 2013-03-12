@@ -19,6 +19,7 @@ update_git alec
 update_git david
 update_git gtp
 update_git stephan
+update_git keith
 
 cd /home/timesheet
 . ./venv/bin/activate
@@ -34,4 +35,4 @@ graph stephan
 graph mitzie
 graph ben
 graph etienne
-
+graph keith
