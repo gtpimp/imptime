@@ -15,7 +15,7 @@
 {% block content %}
     <div class="row-fluid">
         <div class="span12">
-            <h2>{{project.business.name}} - {{ project }}</h2>
+            <h2>{{project.business.name}} - {{ project } and stuff}</h2>
             <ul class="unstyled subnav">
                 {% if perms.timepiece.change_project %}
                     <li><a href='{% url edit_project project_id=project.id %}'>Edit project</a></li>
@@ -24,6 +24,7 @@
                 {% if perms.timepiece.view_businesses %}
                     <li><a href='{% url view_business business=project.business.id %}'>Return to {{ project.business.name }}</a></li>
                 {% endif %}
+		
                 {% if perms.timepiece.view_project_time_sheet %}
                     <li><a href='{% url project_time_sheet project.id %}'>Project Time Sheet</a></li>
                 {% endif %}

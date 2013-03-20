@@ -402,8 +402,10 @@ class EntryQuerySet(EntriesQuerySet):
                 to_date = from_date + diff
 
         datesQ = Q()
-        datesQ &= Q(end_time__gte=from_date)
-        datesQ &= Q(end_time__lt=to_date) if to_date else Q()
+        if from_date:
+            datesQ &= Q(end_time__gte=from_date)
+        if to_date:
+            datesQ &= Q(end_time__lt=to_date) if to_date else Q()
         return self.filter(datesQ)
 
 class EntryManagerBase(QuerySetManager):

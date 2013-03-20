@@ -488,24 +488,12 @@ class ProjectTimesheet(DetailView):
     def get_context_data(self, **kwargs):
         context = super(ProjectTimesheet, self).get_context_data(**kwargs)
         project = self.object
-        year_month_form = timepiece_forms.YearMonthForm(self.request.GET or
-                                                        None, allow_any=True)
-        entries_qs = None
-        if self.request.GET and year_month_form.is_valid():
-            from_date, to_date = year_month_form.save()
-            if from_date is None and to_date is None:
-                entries_qs = timepiece.Entry.objects
-                from_date = datetime.datetime(2010,1,1)
-                to_date = datetime.datetime.today()
-        else:
-            date = utils.add_timezone(datetime.datetime.today())
-            from_date = utils.get_month_start(date).date()
-            to_date = from_date + relativedelta(months=1)
-
-        if entries_qs is None:
-            entries_qs = timepiece.Entry.objects
-            entries_qs = entries_qs.timespan(from_date, span='month')
-
+        date_form = timepiece_forms.DateOnlyForm(self.request.GET)
+        from_date, to_date = _get_filter_dates_only(self.request, context)
+        entries_qs = timepiece.Entry.objects
+        if from_date or to_date:
+            entries_qs = entries_qs.timespan(from_date, to_date, span='month')
+            
         entries_qs = entries_qs.filter_by_logged_in_user(self.request.user).filter(project=project)
 
         extra_values = ('start_time', 'end_time', 'comments', 'seconds_paused',
@@ -524,13 +512,13 @@ class ProjectTimesheet(DetailView):
         )
         return {
             'project': project,
-            'year_month_form': year_month_form,
             'from_date': from_date,
-            'to_date': to_date - datetime.timedelta(days=1),
+            'to_date': to_date - datetime.timedelta(days=1) if to_date else None,
             'entries': month_entries,
             'total': total,
             'user_entries': user_entries,
             'activity_entries': activity_entries,
+            'date_form': date_form,
         }
 
 
@@ -538,7 +526,13 @@ class ProjectTimesheetCSV(CSVMixin, ProjectTimesheet):
 
     def get_filename(self, context):
         project = self.object.name
-        to_date_str = context['to_date'].strftime("%m-%d-%Y")
+        if context['to_date']:
+            if isinstance(context['to_date'], basestring):
+                to_date_str = context['to_date'].replace(u'/', u'-')
+            else:
+                to_date_str = context['to_date'].strftime('%m-%d-%Y')
+        else:
+            to_date_str = 'All Entries'
         return "Project_timesheet {0} {1}".format(project, to_date_str)
 
     def convert_context_to_csv(self, context):
@@ -2393,8 +2387,6 @@ def _get_filter_dates_only(request, context=None):
     date_form = timepiece_forms.DateOnlyForm(request.GET)
     if request.GET and date_form.is_valid():
         from_date, to_date = date_form.save()
-        if to_date:        
-            to_date -= relativedelta(days=1)
     else:
         from_date = None
         to_date = None

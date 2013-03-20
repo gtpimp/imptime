@@ -13,7 +13,12 @@
 {% block content %}
     <div class="row-fluid">
         <div class="span12">
-            <h2>[ {{ project }} ] Time Sheet ({{ from_date|date:"j N Y" }} &mdash; {{ to_date|date:"j N Y" }})</h2>
+            <h2>[ {{ project }} ] Time Sheet (
+	    {% if from_date or to_date %} 
+	         {{ from_date|date:"j N Y" }} &mdash; {{ to_date|date:"j N Y" }}
+	    {% else %}
+	        All Entries
+	    {% endif %})</h2>
             <ul class="unstyled subnav">
                 <li><a href='{% url 'view_project' project.id %}'>Project Information</a></li>
             </ul>
@@ -23,7 +28,7 @@
     <div class="row-fluid">
         <div class="span12">
             <form class="form-inline" method="get" action="" id="date-filter" accept-charset="utf-8">
-                {{ year_month_form }}
+		{{ date_form }}
                 <input class="btn" type='submit' name='yearmonth' value="Update" id='yearmonth'/>
                 {% if perms.timepiece.export_project_time_sheet %}
                     <button class="btn" type='submit' name='csv' value="csv" id='csv'>Download CSV</button>

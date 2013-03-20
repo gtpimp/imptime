@@ -119,7 +119,7 @@
 				/ <a href='{% url 'unbillable_project' project_id=project.id %}'>notbillable</a>
 			      {% endif %}
 			    </td>
-                            <td><a href="{% url 'project_time_sheet' project.id %}">Timesheet</a></td>
+                            <td><a href="{% url 'project_time_sheet' project.id %}?from_date={{ date_form.from_date.value|force_escape|urlencode:"" }}&to_date={{ date_form.to_date.value|force_escape|urlencode:"" }}">Timesheet</a></td>
 			 </tr>
 			    {% if project.total_hours > 0 %}
 			      {% for username,hours in project.users_and_hours.users.items %}
