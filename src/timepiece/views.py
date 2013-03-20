@@ -13,6 +13,7 @@ import math
 import urllib
 import urlparse
 from copy import deepcopy, copy
+from collections import defaultdict
 
 from decimal import Decimal
 from dateutil.relativedelta import relativedelta
@@ -1107,7 +1108,6 @@ def create_edit_person(request, person_id=None):
     }
     return context
 
-
 @permission_required('timepiece.view_project')
 @render_with('timepiece/project/list.html')
 def list_projects(request):
@@ -1131,13 +1131,31 @@ def list_projects(request):
     else:
         projects = timepiece.Project.objects.filter_by_logged_in_user(request.user).filter(status='open')
 
+    context = {}
+    from_date, to_date = _get_filter_dates_only(request, context)
+
+    if request.GET:
+        if from_date and to_date:
+            projects = projects.filter(entries__start_time__range=(from_date, to_date)).distinct()
+        elif from_date:
+            projects = projects.filter(entries__start_time__gte=from_date).distinct()
+        elif to_date:
+            projects = projects.filter(entries__start_time__lte=to_date).distinct()
+    else:
+        projects = projects.distinct()
+
     projects.update(billable=True)
 
     projects = projects.order_by("business__name", "description")
 
     total_outstanding_amount = 0
     total_outstanding_amounts_per_project = {}
+
+    businesses = defaultdict(lambda: [])
+    
     for project in projects:
+        business = project.business.name
+        businesses[business].append(project)
         for user, hours_info in project.users_and_hours['users'].items():
             revenue = float(hours_info['rate'].amount) * float(hours_info['hours'])
             total_outstanding_amount += revenue
@@ -1146,12 +1164,13 @@ def list_projects(request):
                 total_outstanding_amounts_per_project[project] = 0
             total_outstanding_amounts_per_project[project] += revenue
 
-    context = {
+    context.update({
         'form': form,
+        'businesses': sorted(businesses.iteritems()),
         'projects': projects.select_related('business'),
         'total_outstanding_amount':total_outstanding_amount,
         'total_outstanding_amounts_per_project':total_outstanding_amounts_per_project
-    }
+    })
     return context
 
 
@@ -2353,6 +2372,32 @@ def _get_filter_dates(request, context=None):
 
     from_date = from_date or initial['from_date']
     to_date = to_date or initial['to_date'] - relativedelta(days=1)
+
+    if context is not None:
+        context['from_date'] = from_date
+        context['to_date'] = to_date
+        context['date_form'] = date_form
+
+    return from_date, to_date
+
+def _get_filter_dates_only(request, context=None):
+    """Retrieves from_date and to_date from request.
+
+    Differs from _get_filter_dates by returning DateOnlyForm
+    instead of DateForm and returning None for from_date and
+    to_date if no value specified for the respective arg."""
+
+    from_date = datetime.datetime.today().date().replace(month=1,day=1)
+    to_date = datetime.datetime.today().date().replace(month=1,day=1) + relativedelta(years=10)
+    initial = {'to_date': to_date, 'from_date': from_date}
+    date_form = timepiece_forms.DateOnlyForm(request.GET)
+    if request.GET and date_form.is_valid():
+        from_date, to_date = date_form.save()
+        if to_date:        
+            to_date -= relativedelta(days=1)
+    else:
+        from_date = None
+        to_date = None
 
     if context is not None:
         context['from_date'] = from_date

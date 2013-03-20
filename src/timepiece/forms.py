@@ -1,4 +1,5 @@
 from decimal import Decimal
+import re
 import time
 from time import mktime
 from datetime import datetime
@@ -360,21 +361,29 @@ class ImportEntriesForm(forms.Form):
                     continue
 
             try:
-                project = Project.objects.filter(business=business).filter_by_logged_in_user(self.user).get(name=raw_project)
+                allowed_projects = Project.objects.filter(business=business).filter_by_logged_in_user(self.user)
+                project = allowed_projects.get(name=raw_project)
             except Project.DoesNotExist, ex:
                 try:
-                    project = Project.objects.filter(business=business).filter_by_logged_in_user(self.user).get(name__iexact=raw_project)
-                except:
-                    allowed_projects = Project.objects.filter(business=business).filter_by_logged_in_user(self.user)
+                    project = allowed_projects.get(name=lookup_project(raw_project, (p.name for p in allowed_projects)))
+                except LookupError, ex:
                     errors.append( {'line':raw_entry,
                                     'line_number':line_number,
                                     'error':"Invalid sprint name %s" % raw_project,
                                     'msg': "Are you assigned to this sprint? Possible sprints are: %s" % (", ".join([p.name for p in allowed_projects]))
-                                    } )
+                                    })
                     continue
 
             description = raw_description
-            hours, minutes = parse_hours_raw(raw_hours)
+            try:
+                hours, minutes = parse_hours_raw(raw_hours)
+            except ValueError:
+                errors.append( {'line':raw_entry,
+                                'line_number':line_number,
+                                'error':"Invalid hours value %s for sprint name %s." % (raw_hours, raw_project),
+                                'msg':"Invalid hours value '%s' for sprint name %s. Please check the value." % (raw_hours, raw_project)
+                                })
+                continue
 
             start_time = datetime(date.year, date.month, date.day)
             end_time = datetime(start_time.year, start_time.month, start_time.day, int(round(start_time.hour+hours)), int(round(start_time.minute+minutes)))
@@ -500,7 +509,6 @@ def tidy_entry(entry):
 STATUS_CHOICES = [('', '---------'), ]
 STATUS_CHOICES.extend(timepiece.ENTRY_STATUS)
 
-
 class DateForm(forms.Form):
     DATE_FORMAT = '%m/%d/%Y'
 
@@ -508,25 +516,55 @@ class DateForm(forms.Form):
         input_formats=(DATE_FORMAT,),
         widget=forms.DateInput(format=DATE_FORMAT))
     to_date = forms.DateField(label="To", required=False,
-        input_formats=(DATE_FORMAT,),
-        widget=forms.DateInput(format=DATE_FORMAT))
+         input_formats=(DATE_FORMAT,),
+         widget=forms.DateInput(format=DATE_FORMAT))
     status = forms.ChoiceField(choices=STATUS_CHOICES,
-        widget=forms.HiddenInput(), required=False)
+         widget=forms.HiddenInput(), required=False)
     activity = forms.ModelChoiceField(
-        queryset=timepiece.Activity.objects.all(),
-        widget=forms.HiddenInput(), required=False,
-    )
+         queryset=timepiece.Activity.objects.all(),
+         widget=forms.HiddenInput(), required=False,
+     )
     project = forms.ModelChoiceField(
-        queryset=timepiece.Project.objects.all(),
-        widget=forms.HiddenInput(), required=False,
-    )
+         queryset=timepiece.Project.objects.all(),
+         widget=forms.HiddenInput(), required=False,
+    ) 
 
     def clean(self):
+        cleaned_data = super(DateForm, self).clean()
         data = self.cleaned_data
         data['from_date'] = data.get('from_date', None)
         data['to_date'] = data.get('to_date', None)
         if data['from_date'] and data['to_date'] and data['from_date'] > data['to_date']:
-            err_msg = 'The ending date must exceed the beginning date'
+            err_msg = 'The ending date must exceed the beginning date.'
+            raise ValidationError(err_msg)
+        return data
+
+    def save(self):
+        from_date = self.cleaned_data.get('from_date', '')
+        to_date = self.cleaned_data.get('to_date', '')
+
+        if to_date:
+            to_date += timedelta(days=1)
+        return (from_date, to_date)
+
+
+class DateOnlyForm(forms.Form):
+    DATE_FORMAT = '%m/%d/%Y'
+
+    from_date = forms.DateField(label="From", required=False,
+        input_formats=(DATE_FORMAT,),
+        widget=forms.DateInput(format=DATE_FORMAT))
+    to_date = forms.DateField(label="To", required=False,
+         input_formats=(DATE_FORMAT,),
+         widget=forms.DateInput(format=DATE_FORMAT))
+
+    def clean(self):
+        cleaned_data = super(DateOnlyForm, self).clean()
+        data = self.cleaned_data
+        data['from_date'] = data.get('from_date', None)
+        data['to_date'] = data.get('to_date', None)
+        if data['from_date'] and data['to_date'] and data['from_date'] > data['to_date']:
+            err_msg = 'The ending date must exceed the beginning date.'
             raise ValidationError(err_msg)
         return data
 
@@ -858,5 +896,15 @@ def parse_hours_raw(hours_raw):
             hours = (total_minutes-minutes)/60
     return hours, minutes
 
+def lookup_project(name, projects):
+
+    rxp = re.compile('[^0-9a-zA-Z]', flags=re.I)
+    convert_name = lambda n: rxp.sub('', n).lower()
+
+    lookup_name = convert_name(name)
+    for project in projects:
+        if lookup_name == convert_name(project):
+            return project
+    raise LookupError("Project %s does not exist" % name)
 
 expense_formset = modelformset_factory(timepiece.Expense, can_delete=True, extra=2)
