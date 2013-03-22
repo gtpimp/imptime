@@ -2102,13 +2102,32 @@ def revenue(request, template="timepiece/time-sheet/reports/revenue.html", conte
 
     return render_to_response(template, context, context_instance=RequestContext(request))
     
-def graphs(request, template="timepiece/graphs/graph.html", context=None):
+def daily_graph(request, template="timepiece/graphs/daily_graph.html", context=None):
 
     if not request.user.is_superuser:
         return HttpResponse("")
 
     context = context or {}
 
+    from_date, to_date =  _get_filter_dates_only(request, context)
+
+    daily_hours = {}
+    for user in User.objects.all():
+        daily_hours[user.username] = _get_daily_hours(timepiece.Entry.objects.filter(user=user), from_date, to_date)
+    
+    context['daily_hours'] = sorted((k,sorted(v.iteritems())) for k,v in daily_hours.iteritems() if v)
+    context['from_date'] = from_date
+    context['to_date'] = to_date
+
+    return render_to_response(template, context, context_instance=RequestContext(request))
+
+def graphs(request, template="timepiece/graphs/graph.html", context=None):
+ 
+    if not request.user.is_superuser:
+        return HttpResponse("")
+ 
+    context = context or {}
+ 
     if request.GET:
         entries = timepiece.Entry.objects.filter_by_logged_in_user(request.user).filter(status='approved').filter(project__users=request.user)
     else:
@@ -2120,7 +2139,7 @@ def graphs(request, template="timepiece/graphs/graph.html", context=None):
     if form.is_valid() and 'all_hours' in form.cleaned_data['enabled_series']:
         series.append(_create_hours_series_for_graphs(request, entries, context))
     if form.is_valid() and 'billable_hours' in form.cleaned_data['enabled_series']:
-        series.append(_create_billable_hours_series_for_graphs(request, entries, context))
+       series.append(_create_billable_hours_series_for_graphs(request, entries, context))
     if form.is_valid() and 'expected_hours' in form.cleaned_data['enabled_series']:
         series.append(_create_expected_hours_series_for_graphs(request, entries, context))
     if form.is_valid() and 'atrate' in form.cleaned_data['enabled_series']:
@@ -2137,8 +2156,7 @@ def graphs(request, template="timepiece/graphs/graph.html", context=None):
         series.append(_create_cash_flow_atrate_series_for_graphs(request, entries, context))
     if form.is_valid() and 'cash_flow_invoiced' in form.cleaned_data['enabled_series']:
         series.append(_create_cash_flow_invoiced_series_for_graphs(request, entries, context))
-    
-
+   
     if 'from_date' not in context:
         # Ensure that the date filer form exists
         _get_filter_dates(request, context)
@@ -2146,6 +2164,22 @@ def graphs(request, template="timepiece/graphs/graph.html", context=None):
     context['series'] = series
 
     return render_to_response(template, context, context_instance=RequestContext(request))
+
+def _get_daily_hours(entries, from_date=None, to_date=None):
+    hours = {}
+    for entry in entries:
+        d = datetime.date(year=entry.start_time.year, month=entry.start_time.month, day=entry.start_time.day)
+        if from_date and to_date:
+            if not( from_date < d < to_date): continue
+        elif from_date:
+            if d < from_date: continue
+        elif to_date:
+            if d > to_date: continue
+        if d not in hours:
+            hours[d] = entry.hours
+        else:
+            hours[d] += entry.hours
+    return hours
 
 def _create_hours_series_for_graphs(request, entries, context):
     entries = entries.order_by("start_time")
@@ -2364,7 +2398,8 @@ def _get_filter_dates(request, context=None):
     date_form = timepiece_forms.DateForm(request.GET, initial=initial)
     if request.GET and date_form.is_valid():
         from_date, to_date = date_form.save()
-        to_date -= relativedelta(days=1)
+        if to_date:
+            to_date -= relativedelta(days=1)
 
     from_date = from_date or initial['from_date']
     to_date = to_date or initial['to_date'] - relativedelta(days=1)

@@ -4,8 +4,10 @@
 {% block content %}
 
 <script>
-  var imp = imp || {};
-  imp.data = [ {%spaceless%} 
+  plot_charts = [
+  {
+  divid: "#graph",
+  data : [ {%spaceless%} 
                  {% for serie in series %} 
 		   { label:"{{serie.label}}", 
 		     data: [ {% for entry in serie.entries %} 
@@ -17,8 +19,8 @@
 	           },
 		 {% endfor %} 
 	       {%endspaceless%}
-	     ];
-  imp.options = { xaxis: {
+	     ],
+  options : { xaxis: {
 		    mode: "time",
 		    {% if from_date %}
 		      min: {{from_date|epoch}},
@@ -44,9 +46,9 @@
 			             }}
 		    ],
 		legend: { position: "se" }
-	      };
+	      },
 
-  imp.bar_data = [ {%spaceless%} 
+  bar_data : [ {%spaceless%} 
 		     {% for serie in series %} 
 		       { label:"{{serie.label}}", 
 			 data: [ {% for entry in serie.entries %} 
@@ -58,8 +60,8 @@
 		       },
 		     {% endfor %} 
 		   {%endspaceless%}
-		 ];
-  imp.bar_options = { xaxis: {
+		 ],
+  bar_options : { xaxis: {
 			mode: "time",
 			{% if from_date %}
 			  min: {{from_date|epoch}},
@@ -88,7 +90,7 @@
 		    bars: {
 		        show: true
 		    }
-		  };
+		  },}]
 
 		  
 </script>

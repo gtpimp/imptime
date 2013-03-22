@@ -92,6 +92,9 @@
                                     <li><a href="{% url 'project_hours' %}">Weekly Schedule</a></li>
                                 {% endif %}
 				{% endcomment %}
+				{% if perms.timpeiece.daily_graph %}
+				    <li><a href="{% url 'daily_graph' %}">Daily Graph</a></li>
+				{% endif %}
                             </ul>
                         </li>
                     {% endif %}

@@ -293,6 +293,11 @@ urlpatterns = patterns('',
         r'^graphs$',
         views.graphs,
         name='graphs'
+        ),
+    url(
+        r'^daily_graph$',
+        views.daily_graph,
+        name='daily_graph'
         )
                        
 )
