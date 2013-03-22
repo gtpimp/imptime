@@ -1108,9 +1108,7 @@ def list_projects(request):
     form = timepiece_forms.ProjectSearchForm(request.GET)
     if form.is_valid():
         search, status = form.save()
-        if len(status) == 0:
-            status = timepiece.Attribute.objects.get(label='open')
-        elif status == 'any':
+        if status == 'any':
             status = ''
         projects = timepiece.Project.objects.filter(
             Q(name__icontains=search) | Q(description__icontains=search))
@@ -1120,7 +1118,7 @@ def list_projects(request):
 
     context = {}
     from_date, to_date = _get_filter_dates_only(request, context)
-    projects = projects.annotate(end_time=Max('entries__end_time')).distinct()
+    projects = projects.annotate(end_time=Max('entries__end_time'))
 
     if request.GET:
         if from_date and to_date:
