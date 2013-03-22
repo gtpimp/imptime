@@ -167,8 +167,8 @@ class Project(models.Model):
 
         if additional_entry_filter is not None:
             entries_qs = entries_qs.filter(additional_entry_filter)
-
-        user_totals = entries_qs.values("user").annotate(hours=Sum('hours'))
+        
+        user_totals = entries_qs.values("user").annotate(hours=Sum('hours'), end_time=Max("end_time"))
         res = {'users':{}, 'totals':{}}
         total_hours = 0
         total_revenue = 0
@@ -178,7 +178,9 @@ class Project(models.Model):
                 rate = Rate.objects.get(project=self, user=user)
             except Rate.DoesNotExist:
                 rate = Rate.objects.create(project=self, user=user, amount=0)
-            res['users'][User.objects.get(pk=user_total['user']).username] = { 'hours':user_total['hours'], 'rate':rate, 'revenue': float(user_total['hours'])*float(rate.amount) }
+            res['users'][User.objects.get(pk=user_total['user']).username] = { 'hours':user_total['hours'], 'rate':rate, 
+                                                                               'revenue': float(user_total['hours'])*float(rate.amount), 
+                                                                               'end_time': user_total['end_time']}
             total_hours += user_total['hours']
             total_revenue += float(user_total['hours'])*float(rate.amount)
         res['totals']['hours'] = total_hours

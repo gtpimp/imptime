@@ -29,7 +29,7 @@ from django.http import  Http404, HttpResponseForbidden
 from django.contrib.auth.decorators import login_required, permission_required
 from django.contrib.auth.models import User
 from django.contrib.auth import models as auth_models
-from django.db.models import Sum, Count, Q, F
+from django.db.models import Sum, Count, Q, F, Max
 from django.db import transaction
 from django.db import DatabaseError
 from django.conf import settings
@@ -1115,18 +1115,12 @@ def list_projects(request):
         projects = timepiece.Project.objects.filter(
             Q(name__icontains=search) | Q(description__icontains=search))
         projects = projects.filter_by_logged_in_user(request.user).filter(status=status) if status else projects
-        # if projects.count() == 1:
-        #     url_kwargs = {
-        #         'project_id': projects[0].id,
-        #     }
-        #     return HttpResponseRedirect(
-        #         reverse('view_project', kwargs=url_kwargs)
-        #     )
     else:
         projects = timepiece.Project.objects.filter_by_logged_in_user(request.user).filter(status='open')
 
     context = {}
     from_date, to_date = _get_filter_dates_only(request, context)
+    projects = projects.annotate(end_time=Max('entries__end_time')).distinct()
 
     if request.GET:
         if from_date and to_date:
@@ -1137,8 +1131,8 @@ def list_projects(request):
             projects = projects.filter(entries__start_time__lte=to_date).distinct()
     else:
         projects = projects.distinct()
-
-    projects.update(billable=True)
+    
+#    projects.update(billable=True)
 
     projects = projects.order_by("business__name", "description")
 
@@ -1147,10 +1141,13 @@ def list_projects(request):
 
     businesses = defaultdict(lambda: [])
     
+    usernames = set()
+
     for project in projects:
         business = project.business.name
         businesses[business].append(project)
         for user, hours_info in project.users_and_hours['users'].items():
+            usernames.add(user)
             revenue = float(hours_info['rate'].amount) * float(hours_info['hours'])
             total_outstanding_amount += revenue
 
@@ -1158,8 +1155,15 @@ def list_projects(request):
                 total_outstanding_amounts_per_project[project] = 0
             total_outstanding_amounts_per_project[project] += revenue
 
+    last_active = {}
+
+    entries = timepiece.Entry.objects.filter_by_logged_in_user(request.user)
+    for user in usernames:
+        last_active[user] = entries.filter(user__username=user).aggregate(end_time=Max('end_time'))['end_time']
+    
     context.update({
         'form': form,
+        'last_active': last_active,
         'businesses': sorted(businesses.iteritems()),
         'projects': projects.select_related('business'),
         'total_outstanding_amount':total_outstanding_amount,
