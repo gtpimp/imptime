@@ -2109,7 +2109,9 @@ def daily_graph(request, template="timepiece/graphs/daily_graph.html", context=N
 
     context = context or {}
 
-    from_date, to_date =  _get_filter_dates_only(request, context)
+    today = datetime.datetime.today().date()
+
+    from_date, to_date =  _get_filter_dates_only(request, context, (today - relativedelta(months=1), today))
 
     daily_hours = {}
     for user in User.objects.all():
@@ -2170,11 +2172,11 @@ def _get_daily_hours(entries, from_date=None, to_date=None):
     for entry in entries:
         d = datetime.date(year=entry.start_time.year, month=entry.start_time.month, day=entry.start_time.day)
         if from_date and to_date:
-            if not( from_date < d < to_date): continue
+            if from_date > d or to_date < d: continue
         elif from_date:
-            if d < from_date: continue
+            if from_date > d: continue
         elif to_date:
-            if d > to_date: continue
+            if to_date < d: continue
         if d not in hours:
             hours[d] = entry.hours
         else:
@@ -2411,7 +2413,7 @@ def _get_filter_dates(request, context=None):
 
     return from_date, to_date
 
-def _get_filter_dates_only(request, context=None):
+def _get_filter_dates_only(request, context=None, default=None):
     """Retrieves from_date and to_date from request.
 
     Differs from _get_filter_dates by returning DateOnlyForm
@@ -2425,8 +2427,14 @@ def _get_filter_dates_only(request, context=None):
     if request.GET and date_form.is_valid():
         from_date, to_date = date_form.save()
     else:
-        from_date = None
-        to_date = None
+        if default:
+            from_date = default[0]
+            to_date = default[1]
+            date_form = timepiece_forms.DateOnlyForm({'to_date': to_date,
+                                                     'from_date': from_date})
+                                                     
+        else:
+            from_date, to_date = (None, None)
 
     if context is not None:
         context['from_date'] = from_date

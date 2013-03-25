@@ -98,7 +98,8 @@ def seconds_to_hours(seconds):
 @register.filter
 def epoch(value):
     try:
-        return int(time.mktime(value.timetuple())*1000)
+        return int(calendar.timegm(value.timetuple()) * 1000)
+        #return int(time.mktime(value.timetuple())*1000)
     except AttributeError:
         return ''
 
