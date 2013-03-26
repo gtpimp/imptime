@@ -22,36 +22,6 @@ from timepiece.utils import get_total_time, get_week_start, get_month_start
 
 register = template.Library()
 
-def rate_wrapper(func):
-    def amount(projects, username=None):
-        total = 0
-        if not hasattr(projects, '__iter__'):
-            projects = [projects]
-
-        for project in projects:
-            for user, hours_info in project.users_and_hours['users'].iteritems():
-                if not username:
-                    total += func(user, hours_info)
-                elif username and user == username:
-                    total += func(user, hours_info)
-        return total if total else u""
-    return amount
-
-@register.filter(name='billed')
-@rate_wrapper
-def billed(user, hours_info):
-    return float(hours_info['rate'].billable_amount) * float(hours_info['hours'])
-
-@register.filter(name='ctc')
-@rate_wrapper
-def ctc(user, hours_info):
-    return float(hours_info['rate'].amount) * float(hours_info['hours'])
-
-@register.filter(name='rate_ctc')
-@rate_wrapper
-def rate_ctc(user, hours_info):
-    return float(hours_info['rate'].amount)
-
 @register.filter
 def currency(value):
     if value:
@@ -61,31 +31,6 @@ def currency(value):
             return u''
     else:
         return u''
-
-@register.filter
-def projects_rate(projects, rate='ctc'):
-    total = 0
-    num_rates = 0
-    if not hasattr(projects, '__iter__'):
-        projects = [projects]
-    for project in projects:
-        for user, hours_info in project.users_and_hours['users'].items():
-            if rate == 'ctc':
-                total += float(hours_info['rate'].amount)
-            else:
-                total += float(hours_info['rate'].billable_amount)
-            num_rates += 1
-    return total / num_rates if num_rates else u""
-
-@register.filter(name='rate_billed')
-@rate_wrapper
-def rate_billed(user, hours_info):
-    return float(hours_info['hours'])
-
-@register.filter(name='total_hours')
-@rate_wrapper
-def total_hours(user, hours_info):
-    return float(hours_info['hours'])
 
 @register.filter
 def seconds_to_hours(seconds):

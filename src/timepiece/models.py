@@ -159,32 +159,45 @@ class Project(models.Model):
         total = entries_qs.aggregate(hours=Sum('hours'))['hours']
         return total
 
-    @property
-    def users_and_hours(self, additional_entry_filter=None):
+    def users_and_hours(self, **entry_filter):
         entries_qs = Entry.objects.filter(project=self)
         def key(x):
             return x['count']
 
-        if additional_entry_filter is not None:
-            entries_qs = entries_qs.filter(additional_entry_filter)
+        if entry_filter:
+            entries_qs = entries_qs.filter(**entry_filter)
         
         user_totals = entries_qs.values("user").annotate(hours=Sum('hours'), end_time=Max("end_time"))
         res = {'users':{}, 'totals':{}}
         total_hours = 0
         total_revenue = 0
+        total_billed = 0
+        ctc_rate = 0
+        billed_rate = 0
         for user_total in user_totals:
             user = User.objects.get(pk=user_total['user'])
             try:
                 rate = Rate.objects.get(project=self, user=user)
             except Rate.DoesNotExist:
                 rate = Rate.objects.create(project=self, user=user, amount=0)
-            res['users'][User.objects.get(pk=user_total['user']).username] = { 'hours':user_total['hours'], 'rate':rate, 
-                                                                               'revenue': float(user_total['hours'])*float(rate.amount), 
-                                                                               'end_time': user_total['end_time']}
+            res['users'][user.username] = {'hours':user_total['hours'], 'rate':rate, 
+                                           'revenue': float(user_total['hours'])*float(rate.amount), 
+                                           'end_time': user_total['end_time'],
+                                           'billed': float(user_total['hours']) * float(rate.billable_amount)}
+            user_info = res['users'][user.username]
+            user_info['profit'] = user_info['billed'] - user_info['revenue']
+            
             total_hours += user_total['hours']
             total_revenue += float(user_total['hours'])*float(rate.amount)
+            total_billed += float(rate.billable_amount) * float(user_total['hours'])
+            ctc_rate += float(rate.amount)
+            billed_rate += float(rate.billable_amount)
         res['totals']['hours'] = total_hours
         res['totals']['revenue'] = total_revenue
+        res['totals']['billed'] = total_billed
+        res['totals']['ctc_rate'] = ctc_rate / user_totals.count() if user_totals.count() else 0
+        res['totals']['billed_rate'] = billed_rate / user_totals.count() if user_totals.count() else 0
+        res['totals']['profit'] = total_billed - total_revenue
         return res
 
     class Meta:

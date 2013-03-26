@@ -1,3 +1,50 @@
+import hotshot
+import os
+import time
+import implicitdesign.settings as settings
+import tempfile
+
+try:
+    PROFILE_LOG_BASE = settings.PROFILE_LOG_BASE
+except:
+    PROFILE_LOG_BASE = tempfile.gettempdir()
+
+
+def profile(log_file):
+    """Profile some callable.
+
+    This decorator uses the hotshot profiler to profile some callable (like
+    a view function or method) and dumps the profile data somewhere sensible
+    for later processing and examination.
+
+    It takes one argument, the profile log name. If it's a relative path, it
+    places it under the PROFILE_LOG_BASE. It also inserts a time stamp into the 
+    file name, such that 'my_view.prof' become 'my_view-20100211T170321.prof', 
+    where the time stamp is in UTC. This makes it easy to run and compare 
+    multiple trials.     
+    """
+
+    if not os.path.isabs(log_file):
+        log_file = os.path.join(PROFILE_LOG_BASE, log_file)
+
+    def _outer(f):
+        def _inner(*args, **kwargs):
+            # Add a timestamp to the profile output when the callable
+            # is actually called.
+            (base, ext) = os.path.splitext(log_file)
+            base = base + "-" + time.strftime("%Y%m%dT%H%M%S", time.gmtime())
+            final_log_file = base + ext
+
+            prof = hotshot.Profile(final_log_file)
+            try:
+                ret = prof.runcall(f, *args, **kwargs)
+            finally:
+                prof.close()
+            return ret
+
+        return _inner
+    return _outer
+
 import calendar
 import csv
 from xhtml2pdf import pisa  
@@ -29,7 +76,7 @@ from django.http import  Http404, HttpResponseForbidden
 from django.contrib.auth.decorators import login_required, permission_required
 from django.contrib.auth.models import User
 from django.contrib.auth import models as auth_models
-from django.db.models import Sum, Count, Q, F, Max
+from django.db.models import Sum, Count, Q, F, Max, Min
 from django.db import transaction
 from django.db import DatabaseError
 from django.conf import settings
@@ -1102,6 +1149,7 @@ def create_edit_person(request, person_id=None):
     }
     return context
 
+@profile('list_projects')
 @permission_required('timepiece.view_project')
 @render_with('timepiece/project/list.html')
 def list_projects(request):
@@ -1118,7 +1166,6 @@ def list_projects(request):
 
     context = {}
     from_date, to_date = _get_filter_dates_only(request, context)
-    projects = projects.annotate(end_time=Max('entries__end_time'))
 
     if request.GET:
         if from_date and to_date:
@@ -1129,35 +1176,24 @@ def list_projects(request):
             projects = projects.filter(entries__start_time__lte=to_date).distinct()
     else:
         projects = projects.distinct()
+
+    projects = projects.annotate(end_time=Max('entries__end_time'), start_time=Min('entries__start_time'))
     
-#    projects.update(billable=True)
-
-    projects = projects.order_by("business__name", "description")
-
     total_outstanding_amount = 0
     total_outstanding_amounts_per_project = {}
 
     businesses = defaultdict(lambda: [])
-    
-    usernames = set()
 
     for project in projects:
-        business = project.business.name
-        businesses[business].append(project)
-        for user, hours_info in project.users_and_hours['users'].items():
-            usernames.add(user)
-            revenue = float(hours_info['rate'].amount) * float(hours_info['hours'])
-            total_outstanding_amount += revenue
+        businesses[project.business.name].append(project)
 
-            if project not in total_outstanding_amounts_per_project.keys():
-                total_outstanding_amounts_per_project[project] = 0
-            total_outstanding_amounts_per_project[project] += revenue
+    businesses = dict((b, business_total(p, from_date, to_date)) for b, p in businesses.iteritems())
 
     last_active = {}
 
     entries = timepiece.Entry.objects.filter_by_logged_in_user(request.user)
-    for user in usernames:
-        last_active[user] = entries.filter(user__username=user).aggregate(end_time=Max('end_time'))['end_time']
+    for user in User.objects.all().distinct():
+        last_active[user.username] = entries.filter(user=user).aggregate(end_time=Max('end_time'))['end_time']
     
     context.update({
         'form': form,
@@ -1169,7 +1205,36 @@ def list_projects(request):
     })
     return context
 
+def business_total(projects, start_time=None, end_time=None):
+    entry_filter = [('start_time__gte', start_time), ('end_time__lte', end_time)]
+    entry_filter = dict((k,v) for k,v in entry_filter if v)
+    billed = 0
+    ctc = 0
+    ctc_rate = 0
+    profit = 0
+    billed_rate = 0
+    hours = 0
+    users_and_hours = {}
+    for project in projects:
+        users_and_hours[project] = project.users_and_hours(**entry_filter)
+        totals = users_and_hours[project]['totals']
+        billed += totals['billed']
+        billed_rate += totals['billed_rate']
+        profit += totals['profit']
+        ctc_rate += totals['ctc_rate']
+        ctc += totals['revenue']
+        hours += float(totals['hours'])
 
+    return {'ctc_rate': ctc / hours if hours > 0 else 0,
+            'ctc': ctc ,
+            'billed_rate': billed / hours if hours > 0 else 0,
+            'billed': billed,
+            'profit': profit,
+            'projects': projects,
+            'hours': hours,
+            'users_and_hours': users_and_hours
+            }
+              
 @permission_required('timepiece.view_project')
 @transaction.commit_on_success
 @render_with('timepiece/project/view.html')

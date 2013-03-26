@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 venv
 *#
 *pyc
@@ -9,3 +10,18 @@ src/implicitdesign/local_settings.py
 src/static_collected
 src/implicitdesign/media/unknown_redmine_entries
 temp
+=======
+.project
+.pydevproject
+*.pyc
+data.db
+dev.db
+.settings
+app/.sass-cache
+.sass-cache/
+django_central_station.egg-info
+dist
+.idea
+reports/coverage_html
+.coverage
+>>>>>>> c931958150aa3cf10e97793a77efae23df2ec0d2

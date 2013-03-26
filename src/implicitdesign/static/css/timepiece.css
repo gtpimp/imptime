@@ -1793,6 +1793,12 @@ table {
 .table tbody tr:hover td, .table tbody tr:hover th {
   background-color: #a0a0a0;
 }
+
+}
+.table-striped tbody tr:nth-child(odd) td, .table-striped tbody tr:nth-child(odd) th {
+  background-color: #e6e6e6;
+}
+
 table .span1 {
   float: none;
   width: 44px;
@@ -9310,3 +9316,19 @@ table.project_list  {
     white-space: nowrap;
 }
  
+
+.project_list tbody tr:nth-child(odd) td, .project_list tbody tr:nth-child(odd) th {
+  background-color: #ffffff;
+}
+
+.project_list thead tr {
+    background-color: #e6e6e6;
+}
+
+.project_list tbody td:nth-child(-n+9), .project_list tbody th:nth-child(-n+9) {
+    text-align:right;
+}
+
+.project_list tbody td:nth-child(-n+3) {
+    text-align:left;
+}

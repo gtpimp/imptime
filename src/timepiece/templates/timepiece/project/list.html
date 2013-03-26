@@ -47,7 +47,6 @@
 	 </div>
      </div>
 
-     {# load pagination_tags #}
 
     <div class="row-fluid">
        <div class="span12">
@@ -55,7 +54,6 @@
        </div>
      </div>
 
-     {# load pagination_tags #}
     <div class="row-fluid">
         <div class="span12">
             <h2>Last Active</h2>
@@ -63,9 +61,11 @@
            <fieldset>
              <table>
               {% for user,end_time in last_active.items %}
+	       {% if end_time  %}
                <tr>
                  <th>{{ user }}</td><td>{{ end_time|timesince }}</th>
                </tr>
+	       {% endif %}
                {% endfor %}
              </table>
            </fieldset>
@@ -73,24 +73,21 @@
         </div>
     </div>
 
-
      <div class="row-fluid">
 	 <div class="span12">
-	     {# autopaginate projects 30 #}
-	     {# paginate #}
-	     {% for business, projects in businesses %}
+	     {% for business, business_totals in businesses %}
+	     {% with projects=business_totals.projects %}
 	     <table class='table table-striped table-bordered table-condensed project_list'>
 		 <thead>
 		     <tr>
-		       <th>{{ business }}</th>
+		       <th colspan="13">{{ business }}</th>
 		     </tr>
 		     <tr>
-			 {# <th>Business</th> #}
 			 <th>Name</th>
 			 <th>State</th>
-			 {# <th>Total Hours</th> #}
 			 <th>User</th>
 			 <th>User Hours</th>
+			 <th>Profit</th>
 			 <th>CTC</th>
 			 <th>Billed</th>
 			 <th>Rate CTC</th>
@@ -102,28 +99,28 @@
 		     </tr>
 		 </thead>
 		 <tbody>
-		     {# for business, projects in businesses #}
 		     <tr>     
-		       <th colspan="3"> {# business #} </th>
-		       <th> {% if projects|total_hours > 0 %} {{ projects|total_hours }} hours {% endif %}</th>
-		       <th> {{ projects|ctc|currency }} </th>
-		       <th> {{ projects|billed|currency }} </th>
-		       <th> {{ projects|projects_rate:"ctc"|currency }} </th>
-		       <th> {{ projects|projects_rate:"billed"|currency }} </th>
+		       <th colspan="3"> </th>
+		       <th> {% if business_totals.hours > 0 %} {{ business_totals.hours }} {% endif %}</th>
+		       <th> {{ business_totals.profit|currency }} </th>
+		       <th> {{ business_totals.ctc|currency }} </th>
+		       <th> {{ business_totals.billed|currency }} </th>
+		       <th> {{ business_totals.ctc_rate|currency }} </th>
+		       <th> {{ business_totals.billed_rate|currency }} </th>
 		       <th colspan="4" />
 		     </tr>
-		     {% for project in projects %}
+		     {% for project,temp in business_totals.users_and_hours.items %}
+		     {% with project_totals=temp.totals project_users=temp.users %}
 			 <tr>
-			   {# <td></td> #}
-                            {# <td>{{ project.business }}</td> #}
                             <td><a href="{% url 'view_project' project_id=project.id %}">{{ project.name }}</a></td>
 			    <td>{{ project.status.label }}</td>			   
 			    <td />
-			    <td>{% if project.total_hours > 0 %}{{ project.total_hours }} hours{% endif %}</td>
-			    <td>{{ project|ctc|currency }}</td>
-			    <td>{{ project|billed|currency }}</td>
-			    <td>{{ project|projects_rate:"ctc"|currency }}</td>
-			    <td>{{ project|projects_rate:"billed"|currency }}</td> 
+			    <td>{% if project_totals.hours > 0 %}{{ project_totals.hours }}{% endif %}</td>
+			    <td>{{ project_totals.profit|currency }} </td>
+			    <td>{{ project_totals.revenue|currency }}</td>
+			    <td>{{ project_totals.billed|currency }}</td>
+			    <td>{{ project_totals.ctc_rate|currency }}</td>
+			    <td>{{ project_totals.billed_rate|currency }}</td> 
 			    <td>{{ project.description|truncatewords:8 }}</td>
 			    <td>
 			      {% if perms.timepiece.change_project %}
@@ -136,28 +133,30 @@
                             <td><a href="{% url 'project_time_sheet' project.id %}?from_date={{ date_form.from_date.value|force_escape|urlencode:"" }}&to_date={{ date_form.to_date.value|force_escape|urlencode:"" }}">Timesheet</a></td>
 			    <td> {% if project.end_time %} {{ project.end_time|timesince }} ago {% endif %} </td>
 			 </tr>
-			    {% if project.total_hours > 0 %}
-			      {% for username,hours in project.users_and_hours.users.items %}
+			    {% if project_totals.hours > 0 %}
+			      {% for username,user in project_users.items %}
  			          <tr>
-				  {# <td></td> #}
 				  <td></td>
 				  <td></td>
 				  <td>{{ username }} {% if perms.timepiece.change_rate %}<a href="#" onclick="return TP_rates.show_editor(this, {{project.id}}, '{{project.name}}', '{{username}}', {{hours.rate.amount}}, {{hours.rate.billable_amount}}, '{% url 'set_project_rate' %}')">[edit]</a> {% endif %}</td>
-				  <td>{{ hours.hours }} hours</td>
-				  <td>{{ project|ctc:username|currency }}</td>
-				  <td>{{ project|billed:username|currency }}</td>
+				  <td align="right">{{ user.hours }}</td>
+				  <td>{{ user.profit|currency }}</td>
+				  <td>{{ user.revenue|currency }}</td>
+				  <td>{{ user.billed|currency }}</td>
 				  <td>
-				    <span class="rate_amount">{{ hours.rate.amount|currency }}</span>
+				    <span class="rate_amount">{{ user.rate.amount|currency }}</span>
 				  </td>
 				  <td>
-				    <span class="billable_rate_amount">{{ hours.rate.billable_amount|currency }}</span>
+				    <span class="billable_rate_amount">{{ user.rate.billable_amount|currency }}</span>
 				  </td>
 				  <td colspan="3" />
-				  <td> {{ hours.end_time|timesince }} ago </td>
+				  <td> {{ user.end_time|timesince }} ago </td>
 				  </tr>
 			      {% endfor %}
-			      {% endif %}
+			      {% endif %}		    
+			      {% endwith %}
                     {% endfor %}
+		    {% endwith %}
 		    {% endfor %}
                 </tbody>
             </table>
