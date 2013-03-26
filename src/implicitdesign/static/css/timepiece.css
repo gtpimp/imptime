@@ -9325,6 +9325,10 @@ table.project_list  {
     background-color: #e6e6e6;
 }
 
+.proect_list tbody tr:hover {
+    background-color: #e6e6e6; !important
+}
+
 .project_list tbody td:nth-child(-n+9), .project_list tbody th:nth-child(-n+9) {
     text-align:right;
 }
