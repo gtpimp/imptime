@@ -2,7 +2,7 @@ from fabric.api import local, settings, abort, run, cd, env, prefix
 from fabric.operations import get
 import os, errno
 import shutil
-from fabric.contrib.console import confirm
+from fabric.contrib.console import confirm, prompt
 import datetime
 
 local_code_dir = os.path.dirname(os.path.realpath(__file__))
@@ -43,8 +43,9 @@ def host_imp():
 # ===== top level commands ======
 
 def deploy_prod():
+    branch = prompt("Which branch?")
     with cd(imp_remote_code_dir):
-        run("./deploy_production.sh")
+        run("./deploy_production.sh %s" % branch)
 
 def import_timesheet(users=''):
     with cd(imp_remote_managepy_dir):

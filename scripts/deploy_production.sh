@@ -5,6 +5,12 @@ if [ `whoami` != 'gtp' ]; then
     exit 1
 fi
 
+BRANCH=$1
+if [ -z "${BRANCH}" ]; then
+    echo "please specify which branch"
+    exit
+fi
+
 #force a sudo early
 sudo ls > /dev/null
 
@@ -13,7 +19,7 @@ ROOT=/home/timesheet
 echo "Updating from git"
 cd ${ROOT}
 git reset --hard HEAD
-git pull origin master
+git pull origin ${BRANCH}
 
 echo "Running deploy_local"
 cd ${ROOT}
