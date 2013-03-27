@@ -6,6 +6,7 @@
 
 {% block extrajs %}
   <script type="text/javascript" src="{{ STATIC_URL }}timepiece/js/project_hours/rates.js"></script>
+  <script type="text/javascript" src="{{ STATIC_URL }}timepiece/js/project_hours/expenses.js"></script>
  {% endblock extrajs %}
 
  {% block content %}
@@ -91,7 +92,16 @@ function expand_collapse_sprints(business_id)
 
 </script>
 
- <div style="display:none" class="rates_editor_popup">
+<div style="display:none" class="rates_editor_popup" id="expense_editor_popup">
+   <h2 name="expense_title" class="expense_title">Edit Expenses (Sprint)</h2>
+        {{ expense_form }}
+	<p id='expense_error_message'></p>
+       <button onclick="TP_expenses.save();">Save</button>
+       <button onclick="TP_expenses.cancel();">Cancel</button>
+   <img style="display:none" class="loading" src="{{STATIC_URL}}/images/icons/loadingAnimation.gif"/>
+ </div>
+
+<div style="display:none" class="rates_editor_popup" id="rates_editor_popup">
    <h2>Edit rate</h2>
    <table>
      <tr>
@@ -112,21 +122,22 @@ function expand_collapse_sprints(business_id)
    </table>
    <img style="display:none" class="loading" src="{{STATIC_URL}}/images/icons/loadingAnimation.gif"/>
  </div>
-      <div class="row-fluid">
-	  <div class="span12">
-	      <form class='form-inline' accept-charset='UTF-8' method='get' action=''>
-		  {% if date_form.errors %}
-		     {% for e in date_form.errors.values %} 
-			{{ e }}
-		     {% endfor %}
-		  {% endif %}
-	         {{ date_form.from_date.label }}: {{ date_form.from_date }}
-		 {{ date_form.to_date.label }}: {{ date_form.to_date }}<br /><br />
-		 {{ form|as_bootstrap:"inline" }}
-		 <button type='submit' class="btn" name='submit'>Search</button>
-	     </form>
-	 </div>
-     </div>
+
+ <div class="row-fluid">
+   <div class="span12">
+     <form class='form-inline' accept-charset='UTF-8' method='get' action=''>
+       {% if date_form.errors %}
+           {% for e in date_form.errors.values %} 
+	       {{ e }}
+	   {% endfor %}
+       {% endif %}
+       {{ date_form.from_date.label }}: {{ date_form.from_date }}
+       {{ date_form.to_date.label }}: {{ date_form.to_date }}<br /><br />
+       {{ form|as_bootstrap:"inline" }}
+       <button type='submit' class="btn" name='submit'>Search</button>
+    </form>
+   </div>
+ </div>
 
 
     <div class="row-fluid">
@@ -154,9 +165,6 @@ function expand_collapse_sprints(business_id)
         </div>
     </div>
 
-<script>
-	
-</script>
      <div class="row-fluid">
 	 <div class="span12">
 	     {% for business, business_totals in businesses %}
@@ -199,8 +207,10 @@ function expand_collapse_sprints(business_id)
 		     {% for project,temp in business_totals.users_and_hours.items %}
 		     {% with project_totals=temp.totals project_users=temp.users %}
 			 <tr>
-                            <td><a href="{% url 'view_project' project_id=project.id %}">{{ project.name }}</a> <a id="a_b{{forloop.parentloop.counter}}p{{ forloop.counter }}" href="javascript:void(0);" 
-		           onclick="expand_collapse_sprint('b{{ forloop.parentloop.counter }}p{{ forloop.counter }}')" class="expanded">[-]</a></td>
+                            <td><a href="{% url 'view_project' project_id=project.id %}">{{ project.name }}</a> 
+			        <a href="javascript:void(0)" onclick="return TP_expenses.show_editor(this, '{{ project.id }}', '{{project.name }}', '{% url 'create_expense' %}')">[add expense]</a>
+			        <a id="a_b{{forloop.parentloop.counter}}p{{ forloop.counter }}" href="javascript:void(0);" 
+				   onclick="expand_collapse_sprint('b{{ forloop.parentloop.counter }}p{{ forloop.counter }}')" class="expanded">[-]</a></td>
 			    <td>{{ project.status.label }}</td>			   
 			    <td />
 			    <td>{% if project_totals.hours > 0 %}{{ project_totals.hours }}{% endif %}</td>
@@ -226,7 +236,7 @@ function expand_collapse_sprints(business_id)
  			          <tr class="b{{ forloop.parentloop.parentloop.counter}}p{{forloop.parentloop.counter}}">
 				  <td></td>
 				  <td></td>
-				  <td>{{ username }} {% if perms.timepiece.change_rate %}<a href="#" onclick="return TP_rates.show_editor(this, {{project.id}}, '{{project.name}}', '{{username}}', {{hours.rate.amount}}, {{hours.rate.billable_amount}}, '{% url 'set_project_rate' %}')">[edit]</a> {% endif %}</td>
+				  <td>{{ username }} {% if perms.timepiece.change_rate %}<a href="#" onclick="return TP_rates.show_editor(this, {{project.id}}, '{{project.name}}', '{{username}}', {{user.rate.amount}}, {{user.rate.billable_amount}}, '{% url 'set_project_rate' %}')">[edit]</a> {% endif %}</td>
 				  <td align="right">{{ user.hours }}</td>
 				  <td>{{ user.profit|currency }}</td>
 				  <td>{{ user.revenue|currency }}</td>

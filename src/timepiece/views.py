@@ -1149,6 +1149,7 @@ def list_projects(request):
     
     context.update({
         'form': form,
+        'expense_form': timepiece_forms.ExpenseForm(),
         'last_active': last_active,
         'businesses': sorted(businesses.iteritems()),
         'projects': projects.select_related('business'),
@@ -2477,4 +2478,17 @@ def expense_list(request, template='timepiece/expense/index.html', context=None)
 
     return render_to_response(template, context, context_instance=RequestContext(request))
 
+@csrf_exempt
+@permission_required('timepiece.change_project')
+@transaction.commit_on_success
+def create_expense(request, context=None):
+    project_id = float(request.POST['project_id'])
+    amount = float(request.POST['amount'])
+    description = request.POST['description']
+    date = request.POST['date']
+    date = datetime.datetime.strptime(date, "%m/%d/%Y").date()
     
+    project = timepiece.Project.objects.get(pk=project_id)
+    expense = timepiece.Expense.objects.create(project=project, amount=str(amount), description=description, date=date)
+    expense.save()
+    return HttpResponse("")

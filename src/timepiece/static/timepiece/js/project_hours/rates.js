@@ -1,4 +1,3 @@
-
 var TP_rates = function() {
 
     var trigger = null;
@@ -8,7 +7,7 @@ var TP_rates = function() {
     var user_name = null;
 
     var get_popup_node = function() {
-	return $(".rates_editor_popup");
+	return $("#rates_editor_popup");
     };
 
     var on_save_done = function() {

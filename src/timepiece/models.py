@@ -1339,6 +1339,7 @@ class Expense(models.Model):
     date = models.DateField()
     amount = models.DecimalField(max_digits=8,decimal_places=0,default=0)
     description = models.CharField(max_length=255, blank=True, null=True)
+    project = models.ForeignKey(Project, related_name='expense', null=True)
 
 class Income(models.Model):
     date = models.DateField()
