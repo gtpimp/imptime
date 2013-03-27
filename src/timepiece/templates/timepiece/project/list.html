@@ -11,36 +11,84 @@
  {% block content %}
 
 <script>
-function collapse_children (elem_id, anchor_id)
+function expand_collapse_business (elem_id, anchor_id)
 {
   if ($(elem_id).css("display")=="none")
   {
      $(elem_id).show();
-     $(anchor_id).text("[-]");   
+     $(anchor_id).text("[collapse project]");   
   }
   else
   {
      $(elem_id).hide();
-     $(anchor_id).text("[+]");
+     $(anchor_id).text("[expand project]");
   }
 }
 
-function collapse_project(elem_id, anchor_id)
+function expand_collapse_sprint(sprint_class)
 {
-   if ($(elem_id).css("display")=="none")
+    var anchor = $("#a_" + sprint_class)
+    if (anchor.attr('class') == "expanded")
+    {
+        collapse_sprint(sprint_class);
+    }
+    else
+    {
+        expand_sprint(sprint_class);
+    }
+}
+
+function expand_sprint(elem_class)
+{
+    $('.' + elem_class).show();
+    $('#a_' + elem_class).text('[-]');
+    $('#a_' + elem_class).attr("class", "expanded");
+}
+
+function collapse_sprint(elem_class)
+{
+    var rows = $('.' + elem_class)
+    if (rows.length <= 0)
+    {
+        return false;
+    }
+    rows.hide();
+    $('#a_' + elem_class).text('[+]')
+    $('#a_' + elem_class).attr("class", "collapsed");
+}
+
+function expand_collapse_sprints(business_id)
+{
+
+   var anchor = $('#a_sprint_collapse_' + business_id);
+   if (anchor.attr('class') == "collapsed")
    {
-      $(elem_id).show();
-      $(anchor_id).text("[-]");
+        anchor.text('[collapse sprints]');
+	anchor.attr('class', 'expanded');
+	collapse = false;
    }
    else
    {
-      if( $(elem_id).length > 0)
+        anchor.text('[expand sprints]');
+	anchor.attr('class', 'collapsed');
+	collapse = true;
+   }
+
+   var rows = $('tr[class^="' + business_id + '"]')
+   
+   for (i=0; i < rows.length; i++)
+   {
+      if (collapse)
       {
-          $(elem_id).hide();
-          $(anchor_id).text("[+]");
+         collapse_sprint(rows[i].className)
+      }
+      else
+      {
+         expand_sprint(rows[i].className)
       }
    }
 }
+
 </script>
 
  <div style="display:none" class="rates_editor_popup">
@@ -116,8 +164,10 @@ function collapse_project(elem_id, anchor_id)
 	     <table class='table table-striped table-bordered table-condensed project_list'>
 		 <thead>
 		     <tr>
-		       <th colspan="13">{{ business }} <a id="a_business_{{ forloop.counter }}" href="javascript:void(0);" 
-		           onclick="collapse_children('#Business{{forloop.counter}}', '#a_business_{{ forloop.counter }}')">[-]</a></th>
+		       <th colspan="13">{{ business }} <a id="a_b{{ forloop.counter }}_collapse_business" href="javascript:void(0);" 
+		           onclick="expand_collapse_business('#Business{{forloop.counter}}', '#a_b{{ forloop.counter }}_collapse_business')">[collapse project]</a>
+		           <a href="javascript:void(0)" id="a_sprint_collapse_b{{ forloop.counter }}" onclick="expand_collapse_sprints('b{{forloop.counter}}')" class="expanded">[collapse sprints]</a>
+		       </th>
 		     </tr>
 		     <tr>
 			 <th>Name</th>
@@ -150,7 +200,7 @@ function collapse_project(elem_id, anchor_id)
 		     {% with project_totals=temp.totals project_users=temp.users %}
 			 <tr>
                             <td><a href="{% url 'view_project' project_id=project.id %}">{{ project.name }}</a> <a id="a_b{{forloop.parentloop.counter}}p{{ forloop.counter }}" href="javascript:void(0);" 
-		           onclick="collapse_project('.b_{{ forloop.parentloop.counter }}p_{{ forloop.counter }}', '#a_b{{forloop.parentloop.counter}}p{{ forloop.counter }}')">[-]</a></td>
+		           onclick="expand_collapse_sprint('b{{ forloop.parentloop.counter }}p{{ forloop.counter }}')" class="expanded">[-]</a></td>
 			    <td>{{ project.status.label }}</td>			   
 			    <td />
 			    <td>{% if project_totals.hours > 0 %}{{ project_totals.hours }}{% endif %}</td>
@@ -173,7 +223,7 @@ function collapse_project(elem_id, anchor_id)
 			 </tr>
 			    {% if project_totals.hours > 0 %}
 			      {% for username,user in project_users.items %}
- 			          <tr class="b_{{ forloop.parentloop.parentloop.counter}}p_{{forloop.parentloop.counter}}">
+ 			          <tr class="b{{ forloop.parentloop.parentloop.counter}}p{{forloop.parentloop.counter}}">
 				  <td></td>
 				  <td></td>
 				  <td>{{ username }} {% if perms.timepiece.change_rate %}<a href="#" onclick="return TP_rates.show_editor(this, {{project.id}}, '{{project.name}}', '{{username}}', {{hours.rate.amount}}, {{hours.rate.billable_amount}}, '{% url 'set_project_rate' %}')">[edit]</a> {% endif %}</td>
