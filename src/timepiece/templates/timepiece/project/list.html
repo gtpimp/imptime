@@ -12,8 +12,10 @@
  {% block content %}
 
 <script>
-function expand_collapse_business (elem_id, anchor_id)
+function expand_collapse_business (elem_id)
 {
+  anchor_id = "#a_" + elem_id + "_collapse_business";
+  elem_id = '#' + elem_id;
   if ($(elem_id).css("display")=="none")
   {
      $(elem_id).show();
@@ -54,7 +56,7 @@ function collapse_sprint(elem_class)
         return false;
     }
     rows.hide();
-    $('#a_' + elem_class).text('[+]')
+    $('#a_' + elem_class).text('[+]');
     $('#a_' + elem_class).attr("class", "collapsed");
 }
 
@@ -81,15 +83,21 @@ function expand_collapse_sprints(business_id)
    {
       if (collapse)
       {
-         collapse_sprint(rows[i].className)
+         collapse_sprint(rows[i].className);
       }
       else
       {
-         expand_sprint(rows[i].className)
+         expand_sprint(rows[i].className);
       }
    }
 }
 
+$(document).ready(function(){
+    {% for business, business_totals in businesses %}
+    expand_collapse_business("b{{ forloop.counter }}");
+    expand_collapse_sprints("b{{forloop.counter }}");
+    {% endfor %}
+});
 </script>
 
 <div style="display:none" class="rates_editor_popup" id="expense_editor_popup">
@@ -168,12 +176,12 @@ function expand_collapse_sprints(business_id)
      <div class="row-fluid">
 	 <div class="span12">
 	     {% for business, business_totals in businesses %}
-	     {% with projects=business_totals.projects %}
+	     {% with projects=business_totals.projects.0 expenses=business_totals.projects.expenses %}
 	     <table class='table table-striped table-bordered table-condensed project_list'>
 		 <thead>
 		     <tr>
 		       <th colspan="13">{{ business }} <a id="a_b{{ forloop.counter }}_collapse_business" href="javascript:void(0);" 
-		           onclick="expand_collapse_business('#Business{{forloop.counter}}', '#a_b{{ forloop.counter }}_collapse_business')">[collapse project]</a>
+		           onclick="expand_collapse_business('b{{forloop.counter}}')">[collapse project]</a>
 		           <a href="javascript:void(0)" id="a_sprint_collapse_b{{ forloop.counter }}" onclick="expand_collapse_sprints('b{{forloop.counter}}')" class="expanded">[collapse sprints]</a>
 		       </th>
 		     </tr>
@@ -187,7 +195,7 @@ function expand_collapse_sprints(business_id)
 			 <th>Billed</th>
 			 <th>Rate CTC</th>
 			 <th>Rate Billed</th>
-			 <th>Description</th>
+			 <th>Expenses</th>
 			 <th>Edit</th>
 			 <th>Timesheet</th>
 			 <th>Updated</th>
@@ -200,15 +208,15 @@ function expand_collapse_sprints(business_id)
 		       <th> {{ business_totals.billed|currency }} </th>
 		       <th> {{ business_totals.ctc_rate|currency }} </th>
 		       <th> {{ business_totals.billed_rate|currency }} </th>
-		       <th colspan="4" />
+		       <th> {{ business_totals.expenses|currency }} </th>
+		       <th colspan="3" />
 		     </tr>
 		 </thead>
-		 <tbody id="Business{{ forloop.counter }}">
+		 <tbody id="b{{ forloop.counter }}">
 		     {% for project,temp in business_totals.users_and_hours.items %}
 		     {% with project_totals=temp.totals project_users=temp.users %}
 			 <tr>
-                            <td><a href="{% url 'view_project' project_id=project.id %}">{{ project.name }}</a> 
-			        <a href="javascript:void(0)" onclick="return TP_expenses.show_editor(this, '{{ project.id }}', '{{project.name }}', '{% url 'create_expense' %}')">[add expense]</a>
+                            <td><a href="{% url 'view_project' project_id=project.id %}" title="{{ project.description }}">{{ project.name }}</a> 
 			        <a id="a_b{{forloop.parentloop.counter}}p{{ forloop.counter }}" href="javascript:void(0);" 
 				   onclick="expand_collapse_sprint('b{{ forloop.parentloop.counter }}p{{ forloop.counter }}')" class="expanded">[-]</a></td>
 			    <td>{{ project.status.label }}</td>			   
@@ -219,7 +227,9 @@ function expand_collapse_sprints(business_id)
 			    <td>{{ project_totals.billed|currency }}</td>
 			    <td>{{ project_totals.ctc_rate|currency }}</td>
 			    <td>{{ project_totals.billed_rate|currency }}</td> 
-			    <td>{{ project.description|truncatewords:8 }}</td>
+			    <td>{{ project_totals.expenses|currency }}
+			        <a href="{% url 'expense_list' %}?project_id={{project.id}}">[view]</a>
+			         <a href="javascript:void(0)" onclick="return TP_expenses.show_editor(this, '{{ project.id }}', '{{project.name }}', '{% url 'create_expense' %}')">[add]</a></td>
 			    <td>
 			      {% if perms.timepiece.change_project %}
 			        <a href='{% url 'edit_project' project_id=project.id %}'>edit</a>

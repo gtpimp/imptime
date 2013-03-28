@@ -1114,7 +1114,7 @@ def list_projects(request):
             Q(name__icontains=search) | Q(description__icontains=search))
         projects = projects.filter_by_logged_in_user(request.user).filter(status=status) if status else projects
     else:
-        projects = timepiece.Project.objects.filter_by_logged_in_user(request.user).filter(status='open')
+        projects = timepiece.Project.objects.filter_by_logged_in_user(request.user).filter(status__label='open')
 
     context = {}
     from_date, to_date = _get_filter_dates_only(request, context)
@@ -1168,6 +1168,9 @@ def business_total(projects, start_time=None, end_time=None):
     billed_rate = 0
     hours = 0
     users_and_hours = {}
+    expenses = []
+    expense_objects = timepiece.Expense.objects.all()
+
     for project in projects:
         users_and_hours[project] = project.users_and_hours(**entry_filter)
         totals = users_and_hours[project]['totals']
@@ -1177,6 +1180,10 @@ def business_total(projects, start_time=None, end_time=None):
         ctc_rate += totals['ctc_rate']
         ctc += totals['revenue']
         hours += float(totals['hours'])
+        expense = expense_objects.filter(project=project).aggregate(amount=Sum('amount'))
+        expense_amount = expense['amount']  if expense and expense['amount'] else 0
+        users_and_hours[project]['totals']['expenses'] = expense_amount
+        expenses.append(expense_amount)        
 
     return {'ctc_rate': ctc / hours if hours > 0 else 0,
             'ctc': ctc ,
@@ -1185,7 +1192,8 @@ def business_total(projects, start_time=None, end_time=None):
             'profit': profit,
             'projects': projects,
             'hours': hours,
-            'users_and_hours': users_and_hours
+            'users_and_hours': users_and_hours,
+            'expenses': sum(expenses) if expenses else 0
             }
               
 @permission_required('timepiece.view_project')
@@ -2468,6 +2476,10 @@ def expense_list(request, template='timepiece/expense/index.html', context=None)
 
     from_date, to_date = _get_filter_dates(request, context)
     queryset = timepiece.Expense.objects.filter(date__gte=from_date, date__lte=to_date)
+    project = request.GET.get('project_id')
+    if project:
+        queryset = queryset.filter(project__id=project)
+
     expense_formset = timepiece_forms.expense_formset(request.POST or None,
                                                       queryset = queryset.order_by("date"))
     if expense_formset.is_valid():

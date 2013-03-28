@@ -741,13 +741,24 @@ class ProjectSearchForm(forms.Form):
     def __init__(self, *args, **kwargs):
         super(ProjectSearchForm, self).__init__(*args, **kwargs)
         PROJ_STATUS_CHOICES = [('any', 'Any Status')]
-        PROJ_STATUS_CHOICES.extend([(a.pk, a.label) for a
-                in Attribute.objects.all().filter(type="project-status")])
+        PROJ_STATUS_CHOICES.extend((a.pk, a.label) for a
+                in Attribute.objects.all().filter(type="project-status"))
         self.fields['status'].choices = PROJ_STATUS_CHOICES
 
     def save(self):
         search = self.cleaned_data.get('search', '')
         status = self.cleaned_data.get('status', '')
+        if not status:
+            status = Attribute.objects.get(label='open')
+        else:
+            try:
+                status = int(status)
+                status = Attribute.objects.get(pk=status)
+            except (TypeError, ValueError):
+                try:
+                    status = Attribute.objects.get(label=status)
+                except Attribute.DoesNotExist:
+                    "Just return the value as is."
         return (search, status)
 
 
@@ -900,7 +911,7 @@ def lookup_project(name, projects):
 
     rxp = re.compile('[^0-9a-zA-Z]', flags=re.I)
     convert_name = lambda n: rxp.sub('', n).lower()
-
+    
     lookup_name = convert_name(name)
     for project in projects:
         if lookup_name == convert_name(project):

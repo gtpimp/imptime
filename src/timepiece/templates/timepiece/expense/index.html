@@ -28,6 +28,7 @@
 
     <table class='table table-striped table-bordered table-condensed'>
       <thead>
+	<td>Sprint</th>
 	<th>Date</th>
 	<th>Amount</th>
 	<th>Description</th>
@@ -37,6 +38,7 @@
 
 	{% for form in expense_formset.forms %}
 	<tr>
+	  <td>{{form.project}}</td>
 	  <td>{{form.id}}{{form.date}}</td>
 	  <td>R{{form.amount}}</td>
 	  <td>{{form.description}}</td>
