@@ -925,4 +925,11 @@ class ExpenseForm(forms.Form):
     amount = forms.FloatField(required=True)
     description = forms.CharField()
 
-    
+class InvoiceForm(forms.Form):
+    invoice_number = forms.IntegerField(required=True)
+    amount = forms.FloatField(required=True)
+    date_sent = forms.FloatField(required=True)
+    date_paid = forms.DateField()
+    description = forms.CharField()
+
+invoice_formset = modelformset_factory(timepiece.Invoice, can_delete=True, extra=2)

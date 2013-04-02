@@ -9329,9 +9329,14 @@ table.project_list  {
     background-color: #e6e6e6; !important
 }
 
-.project_list tbody td:nth-child(-n+10), .project_list tbody th:nth-child(-n+9) {
-    text-align:right;
+.project_list tbody td:nth-child(-n+11), .project_list tbody th:nth-child(-n+11) {
+   text-align:right;
 }
+
+/*
+.project_list thead tr:nth-child(3) th {
+   text-align:right;
+}*/
 
 .project_list tbody td:nth-child(-n+3) {
     text-align:left;
