@@ -1111,10 +1111,10 @@ def list_projects(request):
         if status == 'any':
             status = ''
         projects = timepiece.Project.objects.filter(
-            Q(name__icontains=search) | Q(description__icontains=search))
-        projects = projects.filter_by_logged_in_user(request.user).filter(status=status) if status else projects
+            Q(name__icontains=search) | Q(description__icontains=search)).filter_by_logged_in_user(request.user)
+        projects = projects.filter(status=status) if status else projects
     else:
-        projects = timepiece.Project.objects.filter_by_logged_in_user(request.user).filter(status='open')
+        projects = timepiece.Project.objects.filter_by_logged_in_user(request.user).filter(status__label='open')
 
     context = {}
     from_date, to_date = _get_filter_dates_only(request, context)
@@ -1149,6 +1149,8 @@ def list_projects(request):
     
     context.update({
         'form': form,
+        'expense_form': timepiece_forms.ExpenseForm(),
+        'invoice_form': timepiece_forms.InvoiceForm(),
         'last_active': last_active,
         'businesses': sorted(businesses.iteritems()),
         'projects': projects.select_related('business'),
@@ -1167,6 +1169,11 @@ def business_total(projects, start_time=None, end_time=None):
     billed_rate = 0
     hours = 0
     users_and_hours = {}
+    expenses = 0
+    invoices = 0
+    expense_objects = timepiece.Expense.objects.all()
+    invoice_objects = timepiece.Invoice.objects.all()
+
     for project in projects:
         users_and_hours[project] = project.users_and_hours(**entry_filter)
         totals = users_and_hours[project]['totals']
@@ -1176,6 +1183,16 @@ def business_total(projects, start_time=None, end_time=None):
         ctc_rate += totals['ctc_rate']
         ctc += totals['revenue']
         hours += float(totals['hours'])
+        expense = expense_objects.filter(project=project).aggregate(amount=Sum('amount'))
+        expense_amount = expense['amount']  if expense and expense['amount'] else 0
+
+        invoice = invoice_objects.filter(project=project).aggregate(amount=Sum('amount'))
+        invoice_amount = invoice['amount']  if invoice and invoice['amount'] else 0
+        
+        users_and_hours[project]['totals']['expenses'] = expense_amount
+        users_and_hours[project]['totals']['invoices'] = invoice_amount
+        expenses += expense_amount
+        invoices += invoice_amount
 
     return {'ctc_rate': ctc / hours if hours > 0 else 0,
             'ctc': ctc ,
@@ -1184,7 +1201,9 @@ def business_total(projects, start_time=None, end_time=None):
             'profit': profit,
             'projects': projects,
             'hours': hours,
-            'users_and_hours': users_and_hours
+            'users_and_hours': users_and_hours,
+            'expenses': expenses,
+            'invoices': invoices,
             }
               
 @permission_required('timepiece.view_project')
@@ -2467,6 +2486,10 @@ def expense_list(request, template='timepiece/expense/index.html', context=None)
 
     from_date, to_date = _get_filter_dates(request, context)
     queryset = timepiece.Expense.objects.filter(date__gte=from_date, date__lte=to_date)
+    project = request.GET.get('project_id')
+    if project:
+        queryset = queryset.filter(project__id=project)
+
     expense_formset = timepiece_forms.expense_formset(request.POST or None,
                                                       queryset = queryset.order_by("date"))
     if expense_formset.is_valid():
@@ -2477,4 +2500,77 @@ def expense_list(request, template='timepiece/expense/index.html', context=None)
 
     return render_to_response(template, context, context_instance=RequestContext(request))
 
+@permission_required('timepiece.invoices')
+def invoice_list(request, template='timepiece/invoice/index.html', context=None):
     
+    context = context or {}
+    
+    from_date, to_date = _get_filter_dates_only(request, context)
+
+    query = Q()
+    if from_date:
+        query = Q(date_sent__gte=from_date)
+
+    if to_date:
+        query = query & Q(date_sent__lte=to_date)
+    
+    if from_date or to_date:
+        query = query | Q(date_sent__isnull=True)
+
+    queryset = timepiece.Invoice.objects.filter(query)
+    project = request.GET.get('project_id')
+    if project:
+        queryset = queryset.filter(project__id=project)
+
+    invoice_formset = timepiece_forms.invoice_formset(request.POST or None,
+                                                      queryset = queryset.order_by("date_sent"))
+    if invoice_formset.is_valid():
+        invoice_formset.save()
+
+    context['invoice_formset'] = invoice_formset
+    context['total'] = queryset.aggregate(total=Sum('amount'))['total']
+
+    return render_to_response(template, context, context_instance=RequestContext(request))
+
+@csrf_exempt
+@permission_required('timepiece.change_project')
+@transaction.commit_on_success
+def create_expense(request, context=None):
+    project_id = float(request.POST['project_id'])
+    amount = float(request.POST['amount'])
+    description = request.POST['description']
+    date = request.POST['date']
+    date = datetime.datetime.strptime(date, "%m/%d/%Y").date()
+    
+    project = timepiece.Project.objects.get(pk=project_id)
+    expense = timepiece.Expense.objects.create(project=project, amount=str(amount), description=description, date=date)
+    expense.save()
+    return HttpResponse("")
+
+@csrf_exempt
+@permission_required('timepiece.change_project')
+@transaction.commit_on_success
+def create_invoice(request, context=None):
+    project_id = float(request.POST['project_id'])
+    date_sent = request.POST['date_sent']
+    date_paid = request.POST['date_paid']
+    description = request.POST['description']
+    amount = request.POST['amount']
+    invoice_number = request.POST['invoice_number']
+
+    if date_paid:
+        date_paid = datetime.datetime.strptime(date_paid, "%m/%d/%Y").date()
+    else:
+        date_paid = None
+
+    if date_sent:
+        date_sent = datetime.datetime.strptime(date_sent, "%m/%d/%Y").date()
+    else:
+        date_sent = None
+
+    project = timepiece.Project.objects.get(pk=project_id)
+    invoice = timepiece.Invoice.objects.create(project=project, 
+         date_paid=date_paid, date_sent=date_sent, description=description, 
+         amount=amount, invoice_number=invoice_number)
+    invoice.save()
+    return HttpResponse(json.dumps({'one': 'two'}))

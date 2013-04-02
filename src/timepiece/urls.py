@@ -251,6 +251,11 @@ urlpatterns = patterns('',
         views.set_project_rate,
         name='set_project_rate',
         ),
+    url(
+        r'^ajax/create_expense$',
+        views.create_expense,
+        name='create_expense'
+        ),
     
     # salary views
     url(
@@ -298,6 +303,16 @@ urlpatterns = patterns('',
         r'^daily_graph$',
         views.daily_graph,
         name='daily_graph'
-        )
-                       
+        ),
+
+     url(
+         r'^invoice/list',
+         views.invoice_list,
+         name='invoice_list'
+         ),  
+    url(
+        r'^ajax/create_invoice$',
+        views.create_invoice,
+        name='create_invoice'
+        ),
 )

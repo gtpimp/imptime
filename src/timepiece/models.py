@@ -1339,7 +1339,16 @@ class Expense(models.Model):
     date = models.DateField()
     amount = models.DecimalField(max_digits=8,decimal_places=0,default=0)
     description = models.CharField(max_length=255, blank=True, null=True)
+    project = models.ForeignKey(Project, related_name='expense', null=True, blank=True)
 
 class Income(models.Model):
     date = models.DateField()
     amount = models.DecimalField(max_digits=8,decimal_places=0,default=0)
+
+class Invoice(models.Model):
+    description = models.CharField(max_length=255, blank=True, null=True)
+    date_sent = models.DateField(blank=True,null=True)
+    date_paid = models.DateField(blank=True,null=True)
+    amount = models.DecimalField(max_digits=8,decimal_places=0,default=0)
+    project = models.ForeignKey(Project, related_name='invoices', null=True, blank=True)
+    invoice_number = models.DecimalField(max_digits=8, decimal_places=0,default=0)
