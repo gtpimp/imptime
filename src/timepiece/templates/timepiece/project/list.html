@@ -218,8 +218,8 @@ $(document).ready(function(){
 		       <th> {{ business_totals.billed|currency }} </th>
 		       <th> {{ business_totals.ctc_rate|currency }} </th>
 		       <th> {{ business_totals.billed_rate|currency }} </th>
-		       <th> {{ business_totals.expenses|currency }} </th>
-		       <th> {{ business_totals.invoices|currency }} </th>
+		       <th> {% if perms.timepiece.change_project %} {{ business_totals.expenses|currency }} {% endif %}</th>
+		       <th> {% if perms.timepiece.change_project %} {{ business_totals.invoices|currency }} {% endif %}</th>
 		       <th colspan="3" />
 		     </tr>
 		 </thead>

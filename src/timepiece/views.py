@@ -1111,8 +1111,8 @@ def list_projects(request):
         if status == 'any':
             status = ''
         projects = timepiece.Project.objects.filter(
-            Q(name__icontains=search) | Q(description__icontains=search))
-        projects = projects.filter_by_logged_in_user(request.user).filter(status=status) if status else projects
+            Q(name__icontains=search) | Q(description__icontains=search)).filter_by_logged_in_user(request.user)
+        projects = projects.filter(status=status) if status else projects
     else:
         projects = timepiece.Project.objects.filter_by_logged_in_user(request.user).filter(status__label='open')
 
