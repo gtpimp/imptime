@@ -14,6 +14,7 @@ import urllib
 import urlparse
 from copy import deepcopy, copy
 from collections import defaultdict
+import time
 
 from decimal import Decimal
 from dateutil.relativedelta import relativedelta
@@ -1105,7 +1106,10 @@ def create_edit_person(request, person_id=None):
 @permission_required('timepiece.view_project')
 @render_with('timepiece/project/list.html')
 def list_projects(request):
-    form = timepiece_forms.ProjectSearchForm(request.GET)
+    if request.GET:
+        form = timepiece_forms.ProjectSearchForm(request.GET)
+    else:
+        form = timepiece_forms.ProjectSearchForm({'status': u'5'})
     if form.is_valid():
         search, status = form.save()
         if status == 'any':
@@ -1202,7 +1206,7 @@ def business_total(projects, start_time=None, end_time=None):
             'profit': profit,
             'projects': projects,
             'hours': hours,
-            'users_and_hours': users_and_hours,
+            'users_and_hours': sorted(users_and_hours.iteritems(), key=lambda p: -time.mktime(p[0].end_time.timetuple()) if p[0].end_time is not None else 0),
             'expenses': expenses,
             'invoices': invoices,
             }
