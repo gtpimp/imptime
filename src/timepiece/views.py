@@ -1146,6 +1146,7 @@ def list_projects(request):
     entries = timepiece.Entry.objects.filter_by_logged_in_user(request.user)
     for user in User.objects.all().distinct():
         last_active[user.username] = entries.filter(user=user).aggregate(end_time=Max('end_time'))['end_time']
+
     
     context.update({
         'form': form,
