@@ -1340,6 +1340,11 @@ class Expense(models.Model):
     amount = models.DecimalField(max_digits=8,decimal_places=0,default=0)
     description = models.CharField(max_length=255, blank=True, null=True)
     project = models.ForeignKey(Project, related_name='expense', null=True, blank=True)
+    paid = models.BooleanField()
+    class Meta:
+        permissions = (
+            ('view_expense', 'Can view expenses.'),
+        )
 
 class Income(models.Model):
     date = models.DateField()
@@ -1352,3 +1357,9 @@ class Invoice(models.Model):
     amount = models.DecimalField(max_digits=8,decimal_places=0,default=0)
     project = models.ForeignKey(Project, related_name='invoices', null=True, blank=True)
     invoice_number = models.DecimalField(max_digits=8, decimal_places=0,default=0)
+    paid = models.BooleanField()
+
+    class Meta:
+        permissions = (
+            ('view_invoice', 'Can view invoices.'),
+        )
