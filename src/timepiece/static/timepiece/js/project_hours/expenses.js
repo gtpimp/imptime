@@ -61,7 +61,7 @@ var TP_expenses = function() {
 	node.css("display", "none");
     };
 
-    var do_save_post = function(date, amount, description) {
+    var do_save_post = function(date, amount, description, paid) {
 	var functions = [[validate_date, date], [validate_amount, amount], [validate_description, description]]
 	var errors = {}
 	for (i=0; i < functions.length; i++)
@@ -79,6 +79,7 @@ var TP_expenses = function() {
 	 	date:date,
 	 	amount:amount,
 	 	description: description,
+		paid: Boolean(paid),
 	       },
 	       on_save_done);
 	return true;
@@ -101,20 +102,24 @@ var TP_expenses = function() {
 	    date = node.find('#id_date')[0];
 	    amount = node.find('#id_amount')[0];
 	    description = node.find('#id_description')[0];
-	    if (do_save_post(date.value, amount.value, description.value.trim()))
+	    paid = node.find('#id_paid')[0]
+	    if (do_save_post(date.value, amount.value, description.value.trim(), paid.value))
 	    {
 		date.value = ""
 		amount.value = ""
 		description.value = ""
+		paid.value = false;
 		$("#expense_error_message").html("");
 	    }
 	},
 
 	cancel: function(){
 	    var node = get_popup_node();
-	    date = node.find('#id_date')[0].value = "";
-	    amount = node.find('#id_amount')[0].value = "";
-	    description = node.find('#id_description')[0].value = "";
+	    node.find('#id_date')[0].value = "";
+	    node.find('#id_amount')[0].value = "";
+	    node.find('#id_description')[0].value = "";
+	    node.find('#id_paid')[0].value = false;
+
 	    $("#expense_error_message").html("");
 	    node.css("display", "none");
 	}
@@ -139,7 +144,7 @@ var TP_invoices = function() {
 	node.css("display", "none");
     };
 
-    var do_save_post = function(amount, date_paid, date_sent, description, invoice_number) {
+    var do_save_post = function(amount, date_paid, date_sent, description, invoice_number, paid) {
 	var functions = [[validate_amount, amount], [validate_description, description], 
 			 [validate_invoice_number, invoice_number]]
 	if (date_paid) //Dates can be empty.
@@ -169,6 +174,7 @@ var TP_invoices = function() {
 	 	description: description,
 		amount: amount,
 		invoice_number: invoice_number,
+		paid: Boolean(paid),
 	       },
 	       on_save_done);
 	return true;
@@ -193,13 +199,15 @@ var TP_invoices = function() {
 	    description = node.find('#id_description')[0];
 	    amount = node.find('#id_amount')[0];
 	    invoice_number = node.find('#id_invoice_number')[0];
-	    if (do_save_post(amount.value, date_paid.value, date_sent.value, description.value.trim(), invoice_number.value))
+	    paid = node.find('#id_paid')[0];
+	    if (do_save_post(amount.value, date_paid.value, date_sent.value, description.value.trim(), invoice_number.value, paid.value))
 	    {
 		amount.value = ""
 		date_sent.value = ""
 		date_paid.value = ""
 		description.value = ""
 		invoice_number.value = ""
+		paid.value = false;
 		$("#invoice_error_message").html("");
 	    }
 	},
@@ -211,6 +219,7 @@ var TP_invoices = function() {
 	    node.find('#id_description')[0].value = "";
 	    node.find('#id_invoice_number')[0].value = "";
 	    node.find('#id_amount')[0].value = "";
+	    node.find('#id_paid')[0].value = false;
 	    $("#invoice_error_message").html("");
 	    node.css("display", "none");
 	}

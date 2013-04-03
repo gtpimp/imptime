@@ -2542,9 +2542,10 @@ def create_expense(request, context=None):
     description = request.POST['description']
     date = request.POST['date']
     date = datetime.datetime.strptime(date, "%m/%d/%Y").date()
+    paid = request.POST['paid'] == u'true'
     
     project = timepiece.Project.objects.get(pk=project_id)
-    expense = timepiece.Expense.objects.create(project=project, amount=str(amount), description=description, date=date)
+    expense = timepiece.Expense.objects.create(project=project, amount=str(amount), description=description, date=date, paid=paid)
     expense.save()
     return HttpResponse("")
 
@@ -2558,6 +2559,7 @@ def create_invoice(request, context=None):
     description = request.POST['description']
     amount = request.POST['amount']
     invoice_number = request.POST['invoice_number']
+    paid = request.POST['paid'] == u'true'
 
     if date_paid:
         date_paid = datetime.datetime.strptime(date_paid, "%m/%d/%Y").date()
@@ -2572,6 +2574,6 @@ def create_invoice(request, context=None):
     project = timepiece.Project.objects.get(pk=project_id)
     invoice = timepiece.Invoice.objects.create(project=project, 
          date_paid=date_paid, date_sent=date_sent, description=description, 
-         amount=amount, invoice_number=invoice_number)
+         amount=amount, invoice_number=invoice_number, paid=paid)
     invoice.save()
     return HttpResponse(json.dumps({'one': 'two'}))
