@@ -224,7 +224,7 @@ $(document).ready(function(){
 		     </tr>
 		 </thead>
 		 <tbody id="b{{ forloop.counter }}">
-		     {% for project,temp in business_totals.users_and_hours.items %}
+		     {% for project,temp in business_totals.users_and_hours %}
 		     {% with project_totals=temp.totals project_users=temp.users %}
 			 <tr>
                             <td><a href="{% url 'view_project' project_id=project.id %}" title="{{ project.description }}">{{ project.name }}</a> 
