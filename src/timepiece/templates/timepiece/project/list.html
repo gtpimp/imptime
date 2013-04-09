@@ -92,7 +92,30 @@ function expand_collapse_sprints(business_id)
    }
 }
 
+function expand_collapse_totals()
+{
+   var anchor = $('#a_expand_collapse_totals');
+
+   var table = $('#table_amounts_billed')
+   if (table.hasClass('expanded'))
+   {
+       table.removeClass('expanded');
+       table.addClass('collapsed')
+       table.hide();
+       anchor.html('[show]');
+   }
+   else
+   {
+       table.removeClass('collapsed');
+       table.addClass('expanded')
+       table.show();
+       anchor.html('[hide]');
+   }
+   
+}
+
 $(document).ready(function(){
+    expand_collapse_totals();
     {% for business, business_totals in businesses %}
     expand_collapse_business("b{{ forloop.counter }}");
     expand_collapse_sprints("b{{forloop.counter }}");
@@ -164,7 +187,41 @@ $(document).ready(function(){
      </div>
 
     <div class="row-fluid">
-        <div class="span12">
+        <div class="expanded" id='amounts_billed'>
+	  <h2>Amounts Billed<a id="a_expand_collapse_totals" href="javascript:void(0)" onclick="expand_collapse_totals()">[+]</a></h2>
+	  <table class="table table-bordered table-striped table-condensed project_list table-amounts expanded" id="table_amounts_billed">
+	    <thead>
+	      <tr>
+	        <th>Project/Sprint</th>
+	        <th>CTC</th>
+	        <th>Billed</th>
+	      </tr>
+	    </thead>
+	    <tbody>
+	      {% for business, business_totals in businesses %}
+	      <tr>
+	        <td><b>{{ business }}</b></td>
+	        <td><b>{{ business_totals.ctc|currency }}</b></td>
+	        <td><b>{{ business_totals.billed|currency }}</b></td>
+	      </tr>
+	      {% with projects=business_totals.projects.0 expenses=business_totals.projects.expenses %}
+	      {% for project,temp in business_totals.users_and_hours %}
+	      {% with project_totals=temp.totals project_users=temp.users %}
+	      <tr>
+		<td>{{ project.name }}</td>
+		<td>{{ project_totals.revenue|currency }}</td>
+		<td>{{ project_totals.billed|currency }}</td>
+	      </tr>
+	      {% endwith %}
+	      {% endfor %}
+	      {% endwith %}
+	      {% endfor %}
+	    </tbody>
+	  </table>
+	</div>
+		
+	  
+        <div>
             <h2>Last Active</h2>
 
            <fieldset>
