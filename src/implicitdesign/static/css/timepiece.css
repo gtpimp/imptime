@@ -9346,6 +9346,11 @@ table.project_list  {
     width: auto;
 }
 
-.table-amounts tbody td:nth-child(n+2) {
+.table-amounts tbody td:nth-child(n+3) {
     text-align:right;
+}
+
+.table-amounts tbody th {
+    background-color: #e6e6e6 !important;
+    text-align:left !important;
 }
