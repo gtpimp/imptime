@@ -9346,6 +9346,6 @@ table.project_list  {
     width: auto;
 }
 
-.table-amounts tbody td:nth-child(n+1) {
+.table-amounts tbody td:nth-child(n+2) {
     text-align:right;
 }
