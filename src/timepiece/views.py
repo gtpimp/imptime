@@ -1144,6 +1144,9 @@ def list_projects(request):
         businesses[project.business.name].append(project)
 
     businesses = dict((b, business_total(p, from_date, to_date)) for b, p in businesses.iteritems())
+    user_totals = {}
+    for b in businesses.values():
+        sum_user_totals(b['users_and_hours'], user_totals)
 
     last_active = {}
 
@@ -1151,7 +1154,8 @@ def list_projects(request):
     for user in User.objects.all().distinct():
         last_active[user.username] = entries.filter(user=user).aggregate(end_time=Max('end_time'))['end_time']
 
-    
+    print user_totals
+
     context.update({
         'form': form,
         'expense_form': timepiece_forms.ExpenseForm(),
@@ -1160,10 +1164,47 @@ def list_projects(request):
         'businesses': sorted(businesses.iteritems()),
         'projects': projects.select_related('business'),
         'total_outstanding_amount':total_outstanding_amount,
-        'total_outstanding_amounts_per_project':total_outstanding_amounts_per_project
+        'total_outstanding_amounts_per_project':total_outstanding_amounts_per_project,
+        'user_totals': user_totals,
     })
     return context
 
+def sum_user_totals(users_and_hours, totals=None):
+    if totals is None:
+        totals = {}
+
+    def add_total(key):
+        if key in business_totals:
+            business_totals[key] += project_totals[key]
+        else:
+            business_totals[key] = project_totals[key]
+    
+    for project, users in users_and_hours:
+        for username, project_totals in users['users'].iteritems():
+            if username not in totals:
+                totals[username] = {}
+
+            user = totals[username]
+            business = project.business.name
+
+            if business not in user:
+                totals[username][business] = {'totals': {}}
+
+            if 'projects' not in user[business]:
+                user[business]['projects'] = {}             
+
+            user[business]['projects'][project.name] = project_totals
+            
+            business_totals = user[business]['totals']
+
+            add_total('hours')
+            add_total('revenue')
+            add_total('billed')
+            
+            business_totals['ctc_rate'] = float(business_totals['revenue']) / float(business_totals['hours'])
+            business_totals['billed_rate'] = float(business_totals['billed'])  / float(business_totals['hours'])
+    return totals
+            
 def business_total(projects, start_time=None, end_time=None):
     entry_filter = [('start_time__gte', start_time), ('end_time__lte', end_time)]
     entry_filter = dict((k,v) for k,v in entry_filter if v)
@@ -1198,7 +1239,7 @@ def business_total(projects, start_time=None, end_time=None):
         users_and_hours[project]['totals']['invoices'] = invoice_amount
         expenses += expense_amount
         invoices += invoice_amount
-
+    
     return {'ctc_rate': ctc / hours if hours > 0 else 0,
             'ctc': ctc ,
             'billed_rate': billed / hours if hours > 0 else 0,
