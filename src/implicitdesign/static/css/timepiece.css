@@ -9341,3 +9341,11 @@ table.project_list  {
 .project_list tbody td:nth-child(-n+3) {
     text-align:left;
 }
+
+.table-amounts {
+    width: auto;
+}
+
+.table-amounts tbody td:nth-child(n+1) {
+    text-align:right;
+}
