@@ -280,6 +280,7 @@ def toggle_paused(request, entry_id):
     return HttpResponseRedirect(reverse('timepiece-entries'))
 
 @render_with('timepiece/time-sheet/entry/import_entries.html')
+@permission_required('timepiece.can_clock_in')
 def import_entries(request):
     form = timepiece_forms.ImportEntriesForm(request.user, request.POST)
 
