@@ -136,6 +136,11 @@ urlpatterns = patterns('',
         name='view_person_time_sheet',
     ),
     url(
+        r'time-sheet-download/people/(?P<user_id>\d+)/$',
+        views.time_sheet_download,
+        name='time_sheet_download',
+    ),
+    url(
         r'^time-sheet/(?P<action>verify|approve)/(?P<user_id>\d+)/' +
         r'(?P<from_date>\d\d\d\d-\d\d-\d\d)/$',
         views.change_person_time_sheet,

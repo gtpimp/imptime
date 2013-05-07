@@ -2623,3 +2623,20 @@ def create_invoice(request, context=None):
          amount=amount, invoice_number=invoice_number, paid=paid)
     invoice.save()
     return HttpResponse(json.dumps({'one': 'two'}))
+
+def time_sheet_download(request, user_id, context=None):
+    context = context or {}
+    to_date = datetime.datetime.strptime(request.GET['to_date'], "%Y%m%d").date()
+    from_date = datetime.datetime.strptime(request.GET['from_date'], "%Y%m%d").date()
+    entries = timepiece.Entry.objects.filter_by_logged_in_user(request.user).filter(start_time__gte=from_date).filter(end_time__lte=to_date).order_by('start_time')
+
+    if int(user_id) > 0:
+        entries = entries.filter(user__id=int(user_id))
+    
+    response = HttpResponse(content_type='text/csv')
+    response['Content-Disposition'] = 'attachment; filename=entries_%s_%s.csv' % (request.GET['from_date'], request.GET['to_date'])
+    writer = csv.writer(response)
+    for entry in entries:
+        writer.writerow( [ entry.user.username, entry.project.business.name, entry.project.name, entry.hours ] )
+
+    return response
