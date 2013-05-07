@@ -24,11 +24,14 @@
 			      {% if perms.timepiece.view_project or perms.auth.view_user or perms.timepiece.view_business %}
    				<li><a href="{% url 'list_projects' %}">Uninvoiced Sprints</a></li>
 				{% endif %}
+                                {% comment %}
 				{% if perms.auth.view_user %}
                                     <li><a href="{% url 'list_people' %}">Monthly timesheet breakdown</a></li>
-                                {% endif %}
+                                {% endif %}{% endcomment %}
 
+                                    {% comment %}
                                 <li><a href="{% url 'timepiece-entries' %}">Time Tracking</a></li>
+                                {% endcomment %}
 			        <li><a href="{% url 'view_person_time_sheet' request.user.pk %}">My Ledger</a></li>
                             </ul>
                         </li>

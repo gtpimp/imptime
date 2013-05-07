@@ -66,7 +66,7 @@
             <ul class="nav nav-tabs">
                 <li class="active"><a href="#overview" data-toggle="tab">Overview</a></li>
                 <li><a href="#full-timesheet" data-toggle="tab">Full Timesheet</a></li>
-                <li><a href="#hourly-summary" data-toggle="tab">Hourly Summary</a></li>
+                {% comment  %}<li><a href="#hourly-summary" data-toggle="tab">Hourly Summary</a></li>{% endcomment %}
                 <li><a href="{% url 'time_sheet_download' timesheet_user.id %}?from_date={{ from_date|date:"Ymd" }}&to_date={{to_date|date:"Ymd"}}">Download</a></li>
                 <li><a href="{% url 'time_sheet_download' '0' %}?from_date={{ from_date|date:"Ymd" }}&to_date={{to_date|date:"Ymd"}}">Download for all users</a></li>
 
@@ -213,6 +213,7 @@
                         <p>No entries exist for this time sheet.</p>
                     {% endif %}
                 </div>
+                {% comment %}
                 <div class="tab-pane" id="hourly-summary">
                     {% if grouped_totals %}
                         {% for week, week_totals, days in grouped_totals %}
@@ -274,6 +275,7 @@
                         <p>No entries exist for this time sheet.</p>
                     {% endif %}
                 </div>
+                {% endcomment %}
             </div>
         </div>
     </div>
