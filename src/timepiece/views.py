@@ -2628,10 +2628,12 @@ def time_sheet_download(request, user_id, context=None):
     context = context or {}
     to_date = datetime.datetime.strptime(request.GET['to_date'], "%Y%m%d").date()
     from_date = datetime.datetime.strptime(request.GET['from_date'], "%Y%m%d").date()
-    entries = timepiece.Entry.objects.filter_by_logged_in_user(request.user).filter(start_time__gte=from_date).filter(end_time__lte=to_date).order_by('start_time')
+    entries = timepiece.Entry.objects.filter_by_logged_in_user(request.user).filter(start_time__gte=from_date).filter(end_time__lte=to_date)
 
     if int(user_id) > 0:
         entries = entries.filter(user__id=int(user_id))
+
+    entries = entries.order_by("user__username").order_by("project__name").order_by("start_time")
     
     response = HttpResponse(content_type='text/csv')
     response['Content-Disposition'] = 'attachment; filename=entries_%s_%s.csv' % (request.GET['from_date'], request.GET['to_date'])
