@@ -2639,6 +2639,6 @@ def time_sheet_download(request, user_id, context=None):
     response['Content-Disposition'] = 'attachment; filename=entries_%s_%s.csv' % (request.GET['from_date'], request.GET['to_date'])
     writer = csv.writer(response)
     for entry in entries:
-        writer.writerow( [ entry.user.username, entry.project.business.name, entry.project.name, entry.hours ] )
+        writer.writerow( [ entry.user.username, entry.project.business.name, entry.project.name, entry.start_time.strftime("%Y-%m-%d"), entry.hours ] )
 
     return response
