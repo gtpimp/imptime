@@ -1276,7 +1276,7 @@ class ProjectHours(models.Model):
 
 class Salary(models.Model):
     user = models.ForeignKey(User)
-    amount = models.DecimalField(max_digits=8,decimal_places=0,default=0)
+    amount = models.DecimalField(max_digits=8,decimal_places=2,default=0)
     date = models.DateField(verbose_name='month')
     paye = models.DecimalField(max_digits=8,decimal_places=2,default=0)
     uif = models.DecimalField(max_digits=8,decimal_places=2,default=0)
@@ -1295,16 +1295,18 @@ class Salary(models.Model):
         return self.net_pay - self.expenses
 
     def copy_from_previous(self):
-        previous = Salary.objects.filter(user=self.user, date__lt=self.date).order_by("-date")[0]
-        self.amount = previous.amount
-        self.uif = previous.uif
-        self.paye = previous.paye
-        self.leave_accrued = previous.leave_accrued
-        self.leave_taken = 0
-        self.bonus = 0
-        self.expenses = 0
-        self.save()
-        return previous
+        previous = Salary.objects.filter(user=self.user, date__lt=self.date).order_by("-date")
+        if len(previous)>0:
+            previous = previous[0]
+            self.amount = previous.amount if previous else None
+            self.uif = previous.uif
+            self.paye = previous.paye
+            self.leave_accrued = previous.leave_accrued
+            self.leave_taken = 0
+            self.bonus = 0
+            self.expenses = 0
+            self.save()
+            return previous
         
     def ytd(self):
         # From start of current tax year
