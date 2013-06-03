@@ -65,6 +65,11 @@ urlpatterns = patterns('',
         name='view_project',
     ),
     url(
+        r'^project_detail/(?P<business_id>\d+)/$',
+        views.project_detail,
+        name='project_detail',
+    ),
+    url(
         r'^project/create/$',
         views.create_edit_project,
         name='create_project',

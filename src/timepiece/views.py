@@ -1105,6 +1105,74 @@ def create_edit_person(request, person_id=None):
     return context
 
 @permission_required('timepiece.view_project')
+@render_with('timepiece/project/detail.html')
+def project_detail(request, business_id):
+    if request.GET:
+        form = timepiece_forms.ProjectSearchForm(request.GET)
+    else:
+        form = timepiece_forms.ProjectSearchForm({'status': u'5'})
+
+    projects = timepiece.Project.objects.filter(business__id=business_id)
+
+    if form.is_valid():
+        search, status = form.save()
+        if status == 'any':
+            status = ''
+        projects = projects.filter(
+            Q(name__icontains=search) | Q(description__icontains=search)).filter_by_logged_in_user(request.user)
+        projects = projects.filter(status=status) if status else projects
+    else:
+        projects = timepiece.Project.objects.filter_by_logged_in_user(request.user).filter(status__label='open')
+
+    context = {}
+    from_date, to_date = _get_filter_dates_only(request, context)
+
+    if request.GET:
+        if from_date and to_date:
+            projects = projects.filter(entries__start_time__range=(from_date, to_date)).distinct()
+        elif from_date:
+            projects = projects.filter(entries__start_time__gte=from_date).distinct()
+        elif to_date:
+            projects = projects.filter(entries__start_time__lte=to_date).distinct()
+    else:
+        projects = projects.distinct()
+
+    projects = projects.annotate(end_time=Max('entries__end_time'), start_time=Min('entries__start_time'))
+    
+    total_outstanding_amount = 0
+    total_outstanding_amounts_per_project = {}
+
+    businesses = defaultdict(lambda: [])
+    for project in projects:
+        businesses[project.business.name].append(project)
+    businesses = dict((b, business_total(p, from_date, to_date)) for b, p in businesses.iteritems())
+    user_totals = {}
+    for b in businesses.values():
+        sum_user_totals(b['users_and_hours'], user_totals)
+
+    last_active = {}
+
+    entries = timepiece.Entry.objects.filter_by_logged_in_user(request.user)
+    for user in User.objects.all().distinct():
+        last_active[user.username] = entries.filter(user=user).aggregate(end_time=Max('end_time'))['end_time']
+
+    print user_totals
+
+    context.update({
+        'form': form,
+        'expense_form': timepiece_forms.ExpenseForm(),
+        'invoice_form': timepiece_forms.InvoiceForm(),
+        'last_active': last_active,
+        'businesses': sorted(businesses.iteritems()),
+        'projects': projects.select_related('business'),
+        'total_outstanding_amount':total_outstanding_amount,
+        'total_outstanding_amounts_per_project':total_outstanding_amounts_per_project,
+        'user_totals': user_totals,
+    })
+    return context
+    
+
+@permission_required('timepiece.view_project')
 @render_with('timepiece/project/list.html')
 def list_projects(request):
     if request.GET:
@@ -1220,8 +1288,10 @@ def business_total(projects, start_time=None, end_time=None):
     invoices = 0
     expense_objects = timepiece.Expense.objects.all()
     invoice_objects = timepiece.Invoice.objects.all()
+    business_id = None
 
     for project in projects:
+        business_id = project.business.id
         users_and_hours[project] = project.users_and_hours(**entry_filter)
         totals = users_and_hours[project]['totals']
         billed += totals['billed']
@@ -1241,7 +1311,8 @@ def business_total(projects, start_time=None, end_time=None):
         expenses += expense_amount
         invoices += invoice_amount
     
-    return {'ctc_rate': ctc / hours if hours > 0 else 0,
+    return {'business_id': business_id,
+            'ctc_rate': ctc / hours if hours > 0 else 0,
             'ctc': ctc ,
             'billed_rate': billed / hours if hours > 0 else 0,
             'billed': billed,
