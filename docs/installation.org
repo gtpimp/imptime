@@ -2,7 +2,7 @@
 
 ** dependencies (ubuntu)
 
-sudo apt-get install postgresql rabbitmq-server
+sudo apt-get install postgresql rabbitmq-server postgresql-server-dev-X.Y (X and Y being major and minor versions)
 
 ** setup postgres
 You must use postgres because of some raw SQL commands in the timepiece app.
@@ -87,7 +87,7 @@ problems in the timepiece migrations. If it doesn't stop the deploy,
 don't worry about it)
 
 ** setup apache
-
+   
 *** alias and directory config
 add a file to /etc/apache2/sites-enabled/000-default, with an entry something like this:
 
@@ -143,7 +143,15 @@ Start postgresql:
 - sudo to the postgres user (eg sudo su - postgres)
 - psql
 
+import database:
+From the command line:
 
+psql -f 1.sql
+psql -f 2.sql
+From the psql prompt:
+
+\i 1.sql
+\i 2.sql
 
 mysql: USE database
 postgresql: \c database

@@ -1,4 +1,4 @@
-from celery import task
+from celery.task import task
 from implicitdesign import settings
 from process_for_timepiece import Processor
 from datetime import datetime
