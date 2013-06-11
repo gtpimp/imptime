@@ -311,6 +311,23 @@ class ImportEntriesForm(forms.Form):
         super(ImportEntriesForm, self).__init__(*args, **kwargs)
         self.user = user
 
+    def _ignore_project(self, entry):
+        ignore_projects = []
+        try:
+            ignore_projects = self.user.profile.project_names_to_ignore
+            ignore_projects = ignore_projects.split(',')
+        except auth_models.User.DoesNotExist:
+            # If no user profile, then nothing to ignore.
+            return False
+
+        entry_list = entry.split('\t')
+        
+        project_name = entry_list[1] if len(entry_list) > 1 else None
+        if project_name in ignore_projects:
+            return True
+            
+        return False
+
     def save(self):
         raw_entries = self.cleaned_data['raw_entries'].replace("\r\n", "\n")
         entries = []
@@ -322,10 +339,14 @@ class ImportEntriesForm(forms.Form):
         num_entries_created = 0
         line_number = 0
         total_hours = 0
+
         for raw_entry in raw_entries.split("\n"):
             line_number += 1
             if len(raw_entry.strip())==0:
                 continue
+            
+            if self._ignore_project(raw_entry):
+                continue;
 
             count += 1
             
