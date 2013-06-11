@@ -141,6 +141,11 @@ urlpatterns = patterns('',
         name='view_person_time_sheet',
     ),
     url(
+        r'time-sheet/summary/(?P<user_id>\d+)/$',
+        views.view_summary,
+        name='view_summary',
+    ),
+    url(
         r'time-sheet-download/people/(?P<user_id>\d+)/$',
         views.time_sheet_download,
         name='time_sheet_download',

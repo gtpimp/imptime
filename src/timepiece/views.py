@@ -568,6 +568,14 @@ class ProjectTimesheetCSV(CSVMixin, ProjectTimesheet):
 
 
 @login_required
+def view_summary(request, user_id):
+    return HttpResponse("BLA!!!")
+    # return render_to_response('timepiece/time-sheet/people/view.html',
+    #     context, context_instance=RequestContext(request))
+    
+
+
+@login_required
 def view_person_time_sheet(request, user_id):
     user = get_object_or_404(User, pk=user_id)
     if not (request.user.has_perm('timepiece.view_entry_summary') or \
