@@ -569,9 +569,9 @@ class ProjectTimesheetCSV(CSVMixin, ProjectTimesheet):
 
 @login_required
 def view_summary(request, user_id):
-    return HttpResponse("BLA!!!")
-    # return render_to_response('timepiece/time-sheet/people/view.html',
-    #     context, context_instance=RequestContext(request))
+    context = {}
+    return render_to_response('timepiece/time-sheet/people/projects.html',
+                              context, context_instance=RequestContext(request))
     
 
 
