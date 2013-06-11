@@ -570,28 +570,19 @@ class ProjectTimesheetCSV(CSVMixin, ProjectTimesheet):
 def _get_most_recent_project(project_query):
     pass
 
-# @login_required
-# def view_summary(request, user_id):
-#     all_businesses = timepiece.Business.objects.all()
-#     for business in all_businesses:
-#         all_projects = business.new_business_projects.all().filter
-#         #get most recent
-#         most_recent_project = _get_most_recent_project(all_projects)
-#         #timepiece.Entry.objects.
-
-#     # get the most recent PROJECT(aka sprint) for this BUSINESS(aka Project)
-        
-#     # context = { 'businesses' :  }
-#     context = {}
-#     return render_to_response('timepiece/time-sheet/people/projects.html',
-#                               context, context_instance=RequestContext(request))
-# #return HttpResponse()
 
 @login_required
 def view_summary(request,user_id):
-    #import pdb; pdb.set_trace()
     all_businesses = timepiece.Business.objects.all()
-    context = { 'businesses':all_businesses }
+    bus_info = []
+    for business in all_businesses:
+        
+        latest_bus_entries = timepiece.Entry.objects.filter(project__business=business).order_by('-date_updated')
+        if latest_bus_entries.count() > 0:
+            latest_bus_entries = latest_bus_entries[0]
+            bus_info.append({ 'name': business.name, 'latest_project':latest_bus_entries.project  })
+        
+    context = { 'businesses':bus_info }
     return render_to_response('timepiece/time-sheet/people/projects.html',
                               context, context_instance=RequestContext(request))
 
