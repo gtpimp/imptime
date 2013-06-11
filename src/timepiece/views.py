@@ -1109,6 +1109,8 @@ def create_edit_person(request, person_id=None):
             return HttpResponseRedirect(
                 reverse('view_person', args=(person.id,))
             )
+        timepiece.UserProfile.objects.get_or_create(user=person)
+        person.save()
     else:
         if person:
             person_form = timepiece_forms.EditPersonForm(
@@ -1116,7 +1118,7 @@ def create_edit_person(request, person_id=None):
             )
         else:
             person_form = timepiece_forms.CreatePersonForm()
-
+            
     context = {
         'person': person,
         'person_form': person_form,

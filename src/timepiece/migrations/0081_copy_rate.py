@@ -12,20 +12,28 @@ class Migration(DataMigration):
         current_users = [entry.user for entry in orm['timepiece.Entry'].objects.all().distinct('user')]
 
         for user in current_users:
-            #latest_update = orm['timepiece.Entry'].objects.filter(user=user).order_by('-date_updated')[0]
-            #for i in current_users: print '..',i,[(r.user,r.project) for r in Entry.objects.filter(user=i).order_by('-date_updated')[0].project.rate.filter(user=i)]
             if not hasattr(user,'profile'):
                 orm['timepiece.UserProfile'].objects.create(user=user)                
                 user.save()
                 
         for user in current_users:
             latest_rate_for_user = orm['timepiece.Entry'].objects.filter(user=user).order_by('-date_updated')[0].project.rate.filter(user=user)[0]
-            #for i in current_users: print '..',i,[(type(r),r.user,r.user.profile if hasattr(r.user,'profile') else "NOTHING",r.project,r.amount,r.billable_amount) for r in Entry.objects.filter(user=i).order_by('-date_updated')[0].project.rate.filter(user=i)]
             cur_user_profile = orm['timepiece.UserProfile'].objects.get(user=user)
             cur_user_profile.amount = latest_rate_for_user.amount
             cur_user_profile.billable_amount = latest_rate_for_user.billable_amount
             cur_user_profile.save()
-
+        for sprint in orm['timepiece.Project'].objects.all():
+            if sprint.users.count() == 0:
+                continue
+            for user in sprint.users.all():
+                rate,created = orm['timepiece.Rate'].objects.get_or_create(user=user, project=sprint)
+                profile,created = orm['timepiece.UserProfile'].objects.get_or_create(user=user)
+                if created:
+                    user.save()
+                if created:
+                    rate.amount = user.profile.amount
+                    rate.billable_amount = user.profile.billable_amount
+                    rate.save()
 
     def backwards(self, orm):
         "Write your backwards methods here."

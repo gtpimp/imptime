@@ -123,24 +123,15 @@ class Project(models.Model):
         users = User.objects.filter(user_projects__business=self.business).distinct()
         for user in users:
             ProjectRelationship.objects.get_or_create(user=user, project=self)
+            UserProfile.objects.get_or_create(user=user)
+            user.save()
 
-        # Copy all rates across from the previous project
-        try:
-            prev_project = Project.objects.filter(business=self.business).filter(id__lt=self.id).order_by("-id")[0]
-        except IndexError:
-            pass
-        else:
-            for user in prev_project.users.get_query_set():
-                try:
-                    old_rate = Rate.objects.get(project=prev_project, user=user)
-                except Rate.DoesNotExist:
-                    pass
-                else:
-                    new_rate, new_created = Rate.objects.get_or_create(project=self, user=user)
-                    if new_created:
-                        new_rate.amount = old_rate.amount
-                        new_rate.billable_amount = old_rate.billable_amount
-                        new_rate.save()
+
+        for user in users:
+            rate,newly_created = Rate.objects.get_or_create(project=self, user=user)
+            rate.amount = user.userprofile.amount
+            rate.billable_amount = user.userprofile.billable_amount
+            rate.save()
     
     @property
     def is_open(self):
