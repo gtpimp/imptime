@@ -146,6 +146,11 @@ urlpatterns = patterns('',
         name='view_summary',
     ),
     url(
+        r'time-sheet/get_project_card/(?P<business_id>\d+)/(?P<index>\d*)$',
+        views.get_project_card,
+        name='get_project_card',
+    ),
+    url(
         r'time-sheet-download/people/(?P<user_id>\d+)/$',
         views.time_sheet_download,
         name='time_sheet_download',

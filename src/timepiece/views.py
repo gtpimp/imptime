@@ -586,6 +586,16 @@ def view_summary(request,user_id):
     return render_to_response('timepiece/time-sheet/people/projects.html',
                               context, context_instance=RequestContext(request))
 
+@login_required
+def get_project_card(request,business_id,index=0):
+    return HttpResponse("hello"+" "+str(business_id)+" "+str(index))
+    # bus_info = []
+    # latest_bus_entries = timepiece.Entry.objects.filter(project__business_id=business_id).order_by('-date_updated')
+    # if latest_bus_entries.count() >= index+1:
+    #     latest_bus_entries = latest_bus_entries[index]
+    #     bus_info.append({ 'name': business.name, 'latest_project':latest_bus_entries.project  })
+    # return render_to_response('timepiece/time-sheet/people/card.html',
+    #                           context, context_instance=RequestContext(request))
 
 @login_required
 def view_person_time_sheet(request, user_id):
