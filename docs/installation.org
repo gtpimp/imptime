@@ -12,6 +12,7 @@ You must use postgres because of some raw SQL commands in the timepiece app.
     $ sudo su - postgres
     $ createuser
     Enter name of user to add: imp
+
     Shall the new user be allowed to create databases? (y/n) n
     Shall the new user be allowed to create more new users? (y/n) n
 
@@ -20,6 +21,12 @@ You must use postgres because of some raw SQL commands in the timepiece app.
     > exit
 
     $ createdb -O imp implicitdesign   (note that -O is a capital o, not a zero)
+    
+    Provided a databases can be imported after previous step with:
+        
+    $ psql
+    > \c implicitdesign
+    > \i /tmp/timesheet.sql
 
 *** fixing login permissions
 
