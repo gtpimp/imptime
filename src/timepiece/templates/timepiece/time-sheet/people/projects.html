@@ -23,12 +23,30 @@
  
 {% block content %}
 
+ 
     {% for business in businesses %}
-     <div class='breadcrumb' style="float:left"> 
-       {{ business.name }}:
-       {{ business.latest_project.name}}
+     {% if business.id %}
+     <div class='breadcrumb' style="float:left" id="b_card_{{business.id}}"> 
+       {% comment  %}{% url 'timepiece:get_project_card'  business_id=business.id %} {% endcomment %}
+       {% comment %}<a href="{% url 'get_project_card'  business_id=business.id index=0 %}">Bid:{{ business.id }}</a> {% endcomment %}
+       
+       <!-- {{ business.name }}: -->
+       <!-- {{ business.latest_project.name}} -->
      </div>
+     {% endif %}
+
      {% endfor %}  
 
+
+     <script>
+    {% for business in businesses %}
+     {% if business.id %}
+
+       $("#b_card_{{business.id}}").load("{% url 'get_project_card'  business_id=business.id index=0 %}")
+     {% endif %}
+
+     {% endfor %}  
+       
+     </script>
 
 {% endblock %}
