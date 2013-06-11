@@ -39,6 +39,8 @@
                         <th>Last Name</th>
                         <th>Email</th>
                         <th>Timesheet</th>
+                        <th>Default CTC</th>
+                        <th>Default Billable Amount</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -48,8 +50,9 @@
                             <td>{{ person.first_name }}</td>
                             <td>{{ person.last_name }}</td>
                             <td>{{ person.email }}</td>
-
                             <td><a href="{% url 'view_person_time_sheet' person.pk %}">View Timesheet</a></td>
+			    <td>{{ person.profile.amount }}</td>
+			    <td>{{ person.profile.billable_amount }}</td>
                         </tr>
                     {% endfor %}
                 </tbody>
