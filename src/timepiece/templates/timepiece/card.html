@@ -1,0 +1,7 @@
+{% for business in businesses %}
+    <div class='breadcrumb' style="float:left"> 
+       {{ business.name }}:
+       {{ business.latest_project.name}}
+     </div>
+{% endfor %}  
+     
