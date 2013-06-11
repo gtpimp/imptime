@@ -567,12 +567,33 @@ class ProjectTimesheetCSV(CSVMixin, ProjectTimesheet):
         return rows
 
 
+def _get_most_recent_project(project_query):
+    pass
+
+# @login_required
+# def view_summary(request, user_id):
+#     all_businesses = timepiece.Business.objects.all()
+#     for business in all_businesses:
+#         all_projects = business.new_business_projects.all().filter
+#         #get most recent
+#         most_recent_project = _get_most_recent_project(all_projects)
+#         #timepiece.Entry.objects.
+
+#     # get the most recent PROJECT(aka sprint) for this BUSINESS(aka Project)
+        
+#     # context = { 'businesses' :  }
+#     context = {}
+#     return render_to_response('timepiece/time-sheet/people/projects.html',
+#                               context, context_instance=RequestContext(request))
+# #return HttpResponse()
+
 @login_required
-def view_summary(request, user_id):
-    context = {}
+def view_summary(request,user_id):
+    #import pdb; pdb.set_trace()
+    all_businesses = timepiece.Business.objects.all()
+    context = { 'businesses':all_businesses }
     return render_to_response('timepiece/time-sheet/people/projects.html',
                               context, context_instance=RequestContext(request))
-    
 
 
 @login_required
