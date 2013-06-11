@@ -5,6 +5,7 @@
 {% block title %}People{% endblock %}
 
 {% block content %}
+
     <div class="row-fluid">
         <div class="span12">
             <h2>People</h2>
@@ -26,6 +27,7 @@
     </div>
 
     <div class="row-fluid">
+
         <div class="span12">
             {% load pagination_tags %}
             {% autopaginate people %}
@@ -51,8 +53,18 @@
                             <td>{{ person.last_name }}</td>
                             <td>{{ person.email }}</td>
                             <td><a href="{% url 'view_person_time_sheet' person.pk %}">View Timesheet</a></td>
-			    <td>{{ person.profile.amount }}</td>
-			    <td>{{ person.profile.billable_amount }}</td>
+			    <td>
+			      <form class='form-inline' accept-charset='UTF-8' method='post' action=''> {% csrf_token %}
+				<input type="text" name="person_ctc_{{person.pk}}" id="person_ctc_{{person.pk}}" value={{ person.profile.amount }}> </input>
+				<button type='submit' name='submit' class="btn">Submit</button>
+			      </form>
+			    </td>
+			    <td>
+			      <form class='form-inline' accept-charset='UTF-8' method='post' action=''> {% csrf_token %}
+				<input type="text" name="person_amount_{{person.pk}}" id="person_amount_{{person.pk}}" value={{ person.profile.billable_amount }}> </input>
+				<button type='submit' name='submit' class="btn">Submit</button>
+			      </form>
+			    </td>
                         </tr>
                     {% endfor %}
                 </tbody>

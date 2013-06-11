@@ -1040,6 +1040,25 @@ def list_people(request):
     else:
         people = auth_models.User.objects.all().order_by('last_name')
 
+    for person in people:
+        key = "person_ctc_"+str(person.id)
+        if key in request.POST.keys():
+            timepiece.UserProfile.objects.get_or_create(user=person)
+            person.save()
+            person.profile.amount = float(request.POST[key])
+            person.profile.save()
+            break;
+
+    for person in people:
+        key = "person_amount_"+str(person.id)
+        if key in request.POST.keys():
+            timepiece.UserProfile.objects.get_or_create(user=person)
+            person.save()
+            person.profile.billable_amount = float(request.POST[key])
+            person.profile.save()
+            break;
+
+
     context = {
         'form': form,
         'people': people.select_related(),
