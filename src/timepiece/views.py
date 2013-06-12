@@ -613,6 +613,7 @@ def get_project_card(request,business_id,index=0):
     except timepiece.Business.DoesNotExist:
         business = None
 
+    
     latest_bus_entries = timepiece.Entry.objects.filter(project__business_id=str(business_id)).order_by('-date_updated').distinct()
 
     paginator = Paginator(latest_bus_entries,1)

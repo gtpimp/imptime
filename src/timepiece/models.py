@@ -9,6 +9,7 @@ from django.contrib.auth.models import User
 from django.core.exceptions import ValidationError, NON_FIELD_ERRORS
 from django.db import models
 from django.db.models import Q, Avg, Sum, Max, Min
+from django.utils.datastructures import SortedDict
 
 try:
     from django.utils import timezone
@@ -132,6 +133,15 @@ class Project(models.Model):
             rate.amount = user.userprofile.amount
             rate.billable_amount = user.userprofile.billable_amount
             rate.save()
+
+    @classmethod
+    def projects_in_desc_order_of_use(self, business_id):
+        entries = Entry.objects.filter(project__business_id=business_id).order_by('-date_updated').values('project_id')
+        p = SortedDict()
+        for entry in entries:
+            if entry['project_id'] not in p:
+                p[entry['project_id']] = Project.objects.get(pk=entry['project_id'])
+        return p.values()
     
     @property
     def is_open(self):
