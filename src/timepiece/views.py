@@ -57,6 +57,10 @@ from timepiece.templatetags.timepiece_tags import get_active_hours
 from emacs_importer import report_helper
 from emacs_importer import models as bamboo_models
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
+import logging
+
+logger = logging.getLogger('timepiece_view')
+
 
 @login_required
 def quick_search(request):
@@ -604,7 +608,16 @@ def get_project_card(request,business_id,index=0):
     except EmptyPage:
         bus_entry_to_show = paginator.page(paginator.num_pages)
 
-    context = { 'business':business, 'project_entries' : bus_entry_to_show}
+    ctc = "unspecified"
+    billed = "unspecified"
+
+    proj_entries = timepiece.Entry.objects.filter(project__business_id=business_id).order_by('-date_updated').values('project_id')
+    project = timepiece.Project.objects.filter(id__in=proj_entries).annotate(end_time=Max('entries__end_time'), start_time=Min('entries__start_time'))
+    totals = business_total(project)
+    logger.debug("CHECK HERE"+str(totals.keys())+" "+str(totals['ctc'])+str(totals['billed'])+" "+str(totals['projects']))
+    ctc,billed = totals['ctc'],totals['billed']
+
+    context = { 'business':business, 'project_entries' : bus_entry_to_show, 'ctc':ctc, 'billed':billed}
     return render_to_response('timepiece/card.html',
                               context, context_instance=RequestContext(request))
 

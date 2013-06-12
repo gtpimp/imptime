@@ -4,6 +4,8 @@
   {% for project in project_entries %}
        {{ project.name }}
   {% endfor %}     
+     CTC {{ ctc }}
+     Billed {{ billed }}
   </div>
 
   <a href="#" onclick="$('#b_card_{{business.id}}').load('{% url get_project_card_indexed  business_id=business.id index=project_entries.next_page_number %}')">next</a>
