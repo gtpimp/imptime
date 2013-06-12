@@ -609,62 +609,18 @@ def get_project_card(request,business_id,index=0):
     ctc = "unspecified"
     billed = "unspecified"
 
-    project = bus_entry_to_show.object_list[0]
-    entries = timepiece.Entry.objects.filter(project=project)
-    ctc = 0
-    billed = 0
-    for entry in entries:
-        ctc += entry.atrate
-        billed += entry.atbillablerate
-
-    last_active = {}
-
-    entries = timepiece.Entry.objects.filter_by_logged_in_user(request.user)
-    for user in User.objects.all().distinct():
-        last_active[user.username] = entries.filter(user=user).aggregate(end_time=Max('end_time'))['end_time']
-
+    project = bus_entry_to_show.object_list[0] if len(bus_entry_to_show.object_list) > 0 else None
+    if project:
+        entries = timepiece.Entry.objects.filter(project=project)
+        ctc = 0
+        billed = 0
+        for entry in entries:
+            ctc += entry.atrate
+            billed += entry.atbillablerate
+        
     context = { 'business':business, 'project_entries' : bus_entry_to_show, 'ctc':ctc, 'billed':billed}
     return render_to_response('timepiece/card.html',
                               context, context_instance=RequestContext(request))
-
-
-
-# @login_required
-# def get_project_card(request,business_id,index=0):
-    
-#     try:
-#         page = int(index)
-#     except:
-#         page = 0
-
-#     bus_info = []
-#     try:
-#         business = timepiece.Business.objects.get(id = business_id)
-#     except timepiece.Business.DoesNotExist:
-#         business = None   
-    
-#     paginator = Paginator(timepiece.Project.projects_in_desc_order_of_use(int(business_id)),1)
-
-#     try:
-#         bus_entry_to_show = paginator.page(page)
-#     except PageNotAnInteger:
-#         bus_entry_to_show = paginator.page(1)
-#     except EmptyPage:
-#         bus_entry_to_show = paginator.page(paginator.num_pages)
-
-#     ctc = "unspecified"
-#     billed = "unspecified"
-
-#     proj_entries = timepiece.Entry.objects.filter(project__business_id=business_id).order_by('-date_updated').values('project_id')
-#     project = timepiece.Project.objects.filter(id__in=proj_entries).annotate(end_time=Max('entries__end_time'), start_time=Min('entries__start_time'))
-#     totals = business_total(project)
-#     logger.debug("CHECK HERE"+str(totals.keys())+" "+str(totals['ctc'])+str(totals['billed'])+" "+str(totals['projects']))
-#     ctc,billed = totals['ctc'],totals['billed']
-
-#     context = { 'business':business, 'project_entries' : bus_entry_to_show, 'ctc':ctc, 'billed':billed}
-#     return render_to_response('timepiece/card.html',
-#                               context, context_instance=RequestContext(request))
-
 
 
 @login_required
