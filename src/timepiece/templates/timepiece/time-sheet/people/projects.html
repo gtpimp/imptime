@@ -26,12 +26,7 @@
  
     {% for business in businesses %}
      {% if business.id %}
-     <div class='breadcrumb' style="float:left" id="b_card_{{business.id}}"> 
-       {% comment  %}{% url 'timepiece:get_project_card'  business_id=business.id %} {% endcomment %}
-       {% comment %}<a href="{% url 'get_project_card'  business_id=business.id index=0 %}">Bid:{{ business.id }}</a> {% endcomment %}
-       
-       <!-- {{ business.name }}: -->
-       <!-- {{ business.latest_project.name}} -->
+     <div class='breadcrumb' style="float:left" id="b_card_{{business.id}}">        
      </div>
      {% endif %}
 
@@ -42,7 +37,7 @@
     {% for business in businesses %}
      {% if business.id %}
 
-       $("#b_card_{{business.id}}").load("{% url 'get_project_card'  business_id=business.id index=0 %}")
+       $("#b_card_{{business.id}}").load("{% url 'get_project_card'  business_id=business.id  %}")
      {% endif %}
 
      {% endfor %}  
