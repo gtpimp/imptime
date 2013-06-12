@@ -1,12 +1,12 @@
 <div class='breadcrumb' style="float:left"> 
   {{ business.name }} :
   <div class="pagination">
-  {% for b in business_entries %}
-       {{ b.project.name }}
+  {% for project in project_entries %}
+       {{ project.name }}
   {% endfor %}     
   </div>
 
-  <a href="#" onclick="$('#b_card_{{business.id}}').load('{% url get_project_card_indexed  business_id=business.id index=business_entries.next_page_number %}')">next</a>
-  <a href="#" onclick="$('#b_card_{{business.id}}').load('{% url get_project_card_indexed  business_id=business.id index=business_entries.previous_page_number %}')">previous</a>
+  <a href="#" onclick="$('#b_card_{{business.id}}').load('{% url get_project_card_indexed  business_id=business.id index=project_entries.next_page_number %}')">next</a>
+  <a href="#" onclick="$('#b_card_{{business.id}}').load('{% url get_project_card_indexed  business_id=business.id index=project_entries.previous_page_number %}')">previous</a>
 
 </div>

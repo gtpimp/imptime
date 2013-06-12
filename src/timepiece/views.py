@@ -568,32 +568,14 @@ class ProjectTimesheetCSV(CSVMixin, ProjectTimesheet):
         return rows
 
 
-# @login_required
-# def view_summary(request,user_id):
-#     all_businesses = timepiece.Business.objects.all()
-#     bus_info = []
-#     for business in all_businesses:
-        
-#         latest_bus_entries = timepiece.Entry.objects.filter(project__business=business).order_by('-date_updated')
-#         if latest_bus_entries.count() > 0:
-#             latest_bus_entries = latest_bus_entries[0]
-#             bus_info.append({ 'name': business.name, 'latest_project':latest_bus_entries.project  })
-        
-#     context = { 'businesses':bus_info }
-#     return render_to_response('timepiece/time-sheet/people/projects.html',
-#                               context, context_instance=RequestContext(request))
-
-
 @login_required
 def view_summary(request,user_id):
     all_businesses = timepiece.Business.objects.all()
     bus_info = []
     for business in all_businesses:
         
-        latest_bus_entries = timepiece.Entry.objects.filter(project__business=business).order_by('-date_updated').distinct()
-        if latest_bus_entries.count() > 0:
-            latest_bus_entries = latest_bus_entries[0]
-            bus_info.append({'id': business.id, 'name': business.name, 'latest_project':latest_bus_entries.project  })
+        if business:
+            bus_info.append({'id': business.id, 'name': business.name })
         
     context = { 'businesses':bus_info }
     return render_to_response('timepiece/time-sheet/people/projects.html',
@@ -611,12 +593,9 @@ def get_project_card(request,business_id,index=0):
     try:
         business = timepiece.Business.objects.get(id = business_id)
     except timepiece.Business.DoesNotExist:
-        business = None
-
+        business = None   
     
-    latest_bus_entries = timepiece.Entry.objects.filter(project__business_id=str(business_id)).order_by('-date_updated').distinct()
-
-    paginator = Paginator(latest_bus_entries,1)
+    paginator = Paginator(timepiece.Project.projects_in_desc_order_of_use(int(business_id)),1)
 
     try:
         bus_entry_to_show = paginator.page(page)
@@ -625,7 +604,7 @@ def get_project_card(request,business_id,index=0):
     except EmptyPage:
         bus_entry_to_show = paginator.page(paginator.num_pages)
 
-    context = { 'business':business, 'business_entries' : bus_entry_to_show}
+    context = { 'business':business, 'project_entries' : bus_entry_to_show}
     return render_to_response('timepiece/card.html',
                               context, context_instance=RequestContext(request))
 
