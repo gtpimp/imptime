@@ -8,7 +8,7 @@
          Budget: {{project.budget}}
          
 	 
-	 Invoiced: <input type="checkbox" id="check_project_id_{{project.id}}" {% if invoiced %} checked {% endif %} >
+	 Invoiced: <input disabled type="checkbox" id="check_project_id_{{project.id}}" {% if invoiced %} checked {% endif %} >
 	 
      </div>         
     {% endfor %}     
