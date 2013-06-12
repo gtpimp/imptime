@@ -14,8 +14,23 @@
   </div>
 
   <div>
-     CTC {{ ctc }}
+     CTC {{ ctc }}     
      Billed {{ billed }}
+    {% if percentage_spent < 70 %}
+     <span style="border: 1px solid yellow; background-color:green">
+      {{percentage_spent}}
+     </span>
+    {% endif %}
+    {% if percentage_spent > 70 and  percentage_spent < 80 %} 
+     <span style="border: 1px solid yellow; background-color:yellow">
+      {{percentage_spent}}
+     </span>
+    {% endif %}
+    {% if percentage_spent > 90 %}
+     <span style="border: 1px solid yellow; background-color:red">
+      {{percentage_spent}}
+     </span>
+    {% endif %}
   </div>
 
   <a href="{% url project_detail business.id %}">view</a>         
