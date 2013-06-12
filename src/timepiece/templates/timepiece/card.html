@@ -5,7 +5,8 @@
        {{ b.project.name }}
   {% endfor %}     
   </div>
-  <a href="?page={{ business_entries.next_page_number }}">next</a>
-  <a href="?page={{ business_entries.previous_page_number }}">previous</a>
+
+  <a href="#" onclick="$('#b_card_{{business.id}}').load('{% url get_project_card_indexed  business_id=business.id index=business_entries.next_page_number %}')">next</a>
+  <a href="#" onclick="$('#b_card_{{business.id}}').load('{% url get_project_card_indexed  business_id=business.id index=business_entries.previous_page_number %}')">previous</a>
 
 </div>

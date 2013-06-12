@@ -152,9 +152,9 @@ urlpatterns = patterns('',
         name='get_project_card',
     ),
     url(
-        r'time-sheet/get_project_card/(?P<business_id>\d+)/(?P<index>\d*)/$',
+        r'time-sheet/get_project_card/(?P<business_id>\d+)/(?P<index>\d+)/$',
         views.get_project_card,
-        name='get_project_card',
+        name='get_project_card_indexed',
     ),
     url(
         r'time-sheet-download/people/(?P<user_id>\d+)/$',

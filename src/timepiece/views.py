@@ -590,7 +590,7 @@ def view_summary(request,user_id):
     bus_info = []
     for business in all_businesses:
         
-        latest_bus_entries = timepiece.Entry.objects.filter(project__business=business).order_by('-date_updated')
+        latest_bus_entries = timepiece.Entry.objects.filter(project__business=business).order_by('-date_updated').distinct()
         if latest_bus_entries.count() > 0:
             latest_bus_entries = latest_bus_entries[0]
             bus_info.append({'id': business.id, 'name': business.name, 'latest_project':latest_bus_entries.project  })
@@ -603,23 +603,20 @@ def view_summary(request,user_id):
 def get_project_card(request,business_id,index=0):
     
     try:
-        index = int(index)
+        page = int(index)
     except:
-        index = 0
+        page = 0
 
-    #return HttpResponse("hello"+" "+str(business_id)+" "+str(index))
-    #import pdb; pdb.set_trace()
     bus_info = []
     try:
         business = timepiece.Business.objects.get(id = business_id)
     except timepiece.Business.DoesNotExist:
         business = None
 
-    latest_bus_entries = timepiece.Entry.objects.filter(project__business_id=str(business_id)).order_by('-date_updated')
+    latest_bus_entries = timepiece.Entry.objects.filter(project__business_id=str(business_id)).order_by('-date_updated').distinct()
 
     paginator = Paginator(latest_bus_entries,1)
-    page = request.POST.get('page',0)
-    print page,'...................'
+
     try:
         bus_entry_to_show = paginator.page(page)
     except PageNotAnInteger:
@@ -1268,7 +1265,7 @@ def project_detail(request, business_id):
     for user in User.objects.all().distinct():
         last_active[user.username] = entries.filter(user=user).aggregate(end_time=Max('end_time'))['end_time']
 
-    print user_totals
+    #print user_totals
 
     context.update({
         'form': form,
@@ -1335,7 +1332,7 @@ def list_projects(request):
     for user in User.objects.all().distinct():
         last_active[user.username] = entries.filter(user=user).aggregate(end_time=Max('end_time'))['end_time']
 
-    print user_totals
+    #print user_totals
 
     context.update({
         'form': form,
