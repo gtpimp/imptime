@@ -1319,6 +1319,74 @@ def list_projects(request):
     })
     return context
 
+
+# @permission_required('timepiece.view_project')
+# @render_with('timepiece/project/list_old.html')
+# def list_projects(request):
+#     if request.GET:
+#         form = timepiece_forms.ProjectSearchForm(request.GET)
+#     else:
+#         form = timepiece_forms.ProjectSearchForm({'status': u'5'})
+#     if form.is_valid():
+#         search, status = form.save()
+#         if status == 'any':
+#             status = ''
+#         projects = timepiece.Project.objects.filter(
+#             Q(name__icontains=search) | Q(description__icontains=search)).filter_by_logged_in_user(request.user)
+#         projects = projects.filter(status=status) if status else projects
+#     else:
+#         projects = timepiece.Project.objects.filter_by_logged_in_user(request.user).filter(status__label='open')
+
+#     context = {}
+#     from_date, to_date = _get_filter_dates_only(request, context)
+
+#     if request.GET:
+#         if from_date and to_date:
+#             projects = projects.filter(entries__start_time__range=(from_date, to_date)).distinct()
+#         elif from_date:
+#             projects = projects.filter(entries__start_time__gte=from_date).distinct()
+#         elif to_date:
+#             projects = projects.filter(entries__start_time__lte=to_date).distinct()
+#     else:
+#         projects = projects.distinct()
+
+#     projects = projects.annotate(end_time=Max('entries__end_time'), start_time=Min('entries__start_time'))
+    
+#     total_outstanding_amount = 0
+#     total_outstanding_amounts_per_project = {}
+
+#     businesses = defaultdict(lambda: [])
+
+#     for project in projects:
+#         businesses[project.business.name].append(project)
+
+#     businesses = dict((b, business_total(p, from_date, to_date)) for b, p in businesses.iteritems())
+#     user_totals = {}
+#     for b in businesses.values():
+#         sum_user_totals(b['users_and_hours'], user_totals)
+
+#     last_active = {}
+
+#     entries = timepiece.Entry.objects.filter_by_logged_in_user(request.user)
+#     for user in User.objects.all().distinct():
+#         last_active[user.username] = entries.filter(user=user).aggregate(end_time=Max('end_time'))['end_time']
+
+#     #print user_totals
+
+#     context.update({
+#         'form': form,
+#         'expense_form': timepiece_forms.ExpenseForm(),
+#         'invoice_form': timepiece_forms.InvoiceForm(),
+#         'last_active': last_active,
+#         'businesses': sorted(businesses.iteritems()),
+#         'projects': projects.select_related('business'),
+#         'total_outstanding_amount':total_outstanding_amount,
+#         'total_outstanding_amounts_per_project':total_outstanding_amounts_per_project,
+#         'user_totals': user_totals,
+#     })
+#     return context
+
+
 def sum_user_totals(users_and_hours, totals=None):
     if totals is None:
         totals = {}
