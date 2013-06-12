@@ -18,17 +18,17 @@
      Billed {{ billed }}
     {% if percentage_spent < 70 %}
      <span style="border: 1px solid yellow; background-color:green">
-      {{percentage_spent}}
+      {{difference}}
      </span>
     {% endif %}
     {% if percentage_spent > 70 and  percentage_spent < 80 %} 
      <span style="border: 1px solid yellow; background-color:yellow">
-      {{percentage_spent}}
+      {{difference}}
      </span>
     {% endif %}
     {% if percentage_spent > 90 %}
      <span style="border: 1px solid yellow; background-color:red">
-      {{percentage_spent}}
+      {{difference}}
      </span>
     {% endif %}
   </div>
