@@ -593,49 +593,35 @@ def get_project_card(request,business_id,index=0):
     except:
         page = 0
 
-    bus_info = []
     try:
         business = timepiece.Business.objects.get(id = business_id)
     except timepiece.Business.DoesNotExist:
         business = None   
-    
+        
     paginator = Paginator(timepiece.Project.projects_in_desc_order_of_use(int(business_id)),1)
 
-    try:
-        bus_entry_to_show = paginator.page(page)
-    except PageNotAnInteger:
-        bus_entry_to_show = paginator.page(1)
-    except EmptyPage:
-        bus_entry_to_show = paginator.page(paginator.num_pages)
-
+    if page > paginator.num_pages:
+        page = paginator.num_pages
+    if page < 1:
+        page = 1
+    bus_entry_to_show = paginator.page(page)
+    
     ctc = "unspecified"
     billed = "unspecified"
 
-    proj_entries = timepiece.Entry.objects.filter(project__business_id=business_id).order_by('-date_updated').values('project_id')
-    projects = timepiece.Project.objects.filter(id__in=proj_entries).annotate(end_time=Max('entries__end_time'), start_time=Min('entries__start_time'))
-    # totals = business_total(project)
-    # logger.debug("CHECK HERE"+str(totals.keys())+" "+str(totals['ctc'])+str(totals['billed'])+" "+str(totals['projects']))
-    # ctc,billed = totals['ctc'],totals['billed']
-
-    businesses = defaultdict(lambda: [])
-
-    for project in projects:
-        businesses[project.business.name].append(project)
-
-    from_date,to_date = None,None
-    businesses = dict((b, business_total(p, from_date, to_date)) for b, p in businesses.iteritems())
-    user_totals = {}
-    for b in businesses.values():
-        sum_user_totals(b['users_and_hours'], user_totals)
+    project = bus_entry_to_show.object_list[0]
+    entries = timepiece.Entry.objects.filter(project=project)
+    ctc = 0
+    billed = 0
+    for entry in entries:
+        ctc += entry.atrate
+        billed += entry.atbillablerate
 
     last_active = {}
 
     entries = timepiece.Entry.objects.filter_by_logged_in_user(request.user)
     for user in User.objects.all().distinct():
         last_active[user.username] = entries.filter(user=user).aggregate(end_time=Max('end_time'))['end_time']
-
-    for user,stuff in user_totals.items():
-        print user,stuff.keys(),stuff.values()[0]
 
     context = { 'business':business, 'project_entries' : bus_entry_to_show, 'ctc':ctc, 'billed':billed}
     return render_to_response('timepiece/card.html',
