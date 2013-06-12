@@ -619,6 +619,7 @@ def get_project_card(request,business_id,index=0):
 
     paginator = Paginator(latest_bus_entries,1)
     page = request.POST.get('page',0)
+    print page,'...................'
     try:
         bus_entry_to_show = paginator.page(page)
     except PageNotAnInteger:
@@ -626,10 +627,7 @@ def get_project_card(request,business_id,index=0):
     except EmptyPage:
         bus_entry_to_show = paginator.page(paginator.num_pages)
 
-    if business:        
-        bus_info.append({ 'name': business.name, 'latest_project':bus_entry_to_show  })
-    print bus_info
-    context = { 'businesses' : bus_info}
+    context = { 'business':business, 'business_entries' : bus_entry_to_show}
     return render_to_response('timepiece/card.html',
                               context, context_instance=RequestContext(request))
 
