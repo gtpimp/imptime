@@ -83,6 +83,7 @@ class ProjectQuerySet(QuerySet):
 
 class Project(models.Model):
     name = models.CharField(max_length=255)
+    budget = models.DecimalField(max_digits=8, decimal_places=2, default=0)
     tracker_url = models.CharField(max_length=255, blank=True, null=False,
         default="")
     business = models.ForeignKey(

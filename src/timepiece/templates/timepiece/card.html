@@ -1,14 +1,16 @@
 <div class='breadcrumb' style="float:left"> 
-  {{ business.name }} :
+  Project Name:{{ business.name }}
   <div class="pagination">
   {% for project in project_entries %}
-       {{ project.name }}
+       Sprint name: {{ project.name }}
   {% endfor %}     
+  </div>
+  <div>
      CTC {{ ctc }}
      Billed {{ billed }}
   </div>
 
-  <a href="#" onclick="$('#b_card_{{business.id}}').load('{% url get_project_card_indexed  business_id=business.id index=project_entries.next_page_number %}'); return false;">next</a>
   <a href="#" onclick="$('#b_card_{{business.id}}').load('{% url get_project_card_indexed  business_id=business.id index=project_entries.previous_page_number %}'); return false;">previous</a>
+  <a href="#" onclick="$('#b_card_{{business.id}}').load('{% url get_project_card_indexed  business_id=business.id index=project_entries.next_page_number %}'); return false;">next</a>
 
 </div>
