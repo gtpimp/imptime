@@ -5,8 +5,7 @@
      <div id="project_id_{{project.id}}">
          Sprint name: {{ project.name }}
          <p/>
-         Budget: {{project.budget}}
-         
+         Budget: {{project.budget}}          
 	 
 	 Invoiced: <input disabled type="checkbox" id="check_project_id_{{project.id}}" {% if invoiced %} checked {% endif %} >
 	 
@@ -19,6 +18,7 @@
      Billed {{ billed }}
   </div>
 
+  <a href="{% url project_detail business.id %}">view</a>         
   <a href="#" onclick="$('#b_card_{{business.id}}').load('{% url get_project_card_indexed  business_id=business.id index=project_entries.previous_page_number %}'); return false;">previous</a>
   <a href="#" onclick="$('#b_card_{{business.id}}').load('{% url get_project_card_indexed  business_id=business.id index=project_entries.next_page_number %}'); return false;">next</a>
 
