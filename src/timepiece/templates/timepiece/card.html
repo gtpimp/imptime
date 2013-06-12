@@ -1,8 +1,10 @@
 <div class='breadcrumb' style="float:left"> 
-  Project Name:{{ business.name }}
+  {{ business.name }}
   <div class="pagination">
   {% for project in project_entries %}
        Sprint name: {{ project.name }}
+       <p/>
+       Budget: {{project.budget}}
   {% endfor %}     
   </div>
   <div>

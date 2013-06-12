@@ -682,6 +682,7 @@ class ProjectForm(forms.ModelForm):
             'status',
             'activity_group',
             'description',
+            'budget',
         )
 
     business = selectable_forms.AutoCompleteSelectField(
