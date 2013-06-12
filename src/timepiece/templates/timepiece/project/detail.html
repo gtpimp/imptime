@@ -328,7 +328,9 @@ $(document).ready(function(){
 			    <td>
 			      {% if perms.timepiece.change_project %}
 			        <a href='{% url 'edit_project' project_id=project.id %}'>edit</a>
-				/ <a href='{% url 'unbillable_project' project_id=project.id %}'>notbillable</a>
+				/ <a href='{% url 'invoiced_project' project_id=project.id %}'>invoiced</a>
+
+				/ <a href='{% url 'unbillable_project' project_id=project.id %}'>unbillable</a>
 			      {% endif %}
 			    </td>
                             <td><a href="{% url 'project_time_sheet' project.id %}?from_date={{ date_form.from_date.value|force_escape|urlencode:"" }}&to_date={{ date_form.to_date.value|force_escape|urlencode:"" }}">Timesheet</a></td>
