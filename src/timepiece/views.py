@@ -56,6 +56,7 @@ from timepiece.templatetags.timepiece_tags import seconds_to_hours
 from timepiece.templatetags.timepiece_tags import get_active_hours
 from emacs_importer import report_helper
 from emacs_importer import models as bamboo_models
+from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 
 @login_required
 def quick_search(request):
@@ -600,6 +601,7 @@ def view_summary(request,user_id):
 
 @login_required
 def get_project_card(request,business_id,index=0):
+    
     try:
         index = int(index)
     except:
@@ -612,13 +614,51 @@ def get_project_card(request,business_id,index=0):
         business = timepiece.Business.objects.get(id = business_id)
     except timepiece.Business.DoesNotExist:
         business = None
+
     latest_bus_entries = timepiece.Entry.objects.filter(project__business_id=str(business_id)).order_by('-date_updated')
-    if business and latest_bus_entries.count() >= index+1:
-        latest_bus_entries = latest_bus_entries[index]
-        bus_info.append({ 'name': business.name, 'latest_project':latest_bus_entries.project  })
+
+    paginator = Paginator(latest_bus_entries,1)
+    page = request.POST.get('page',0)
+    try:
+        bus_entry_to_show = paginator.page(page)
+    except PageNotAnInteger:
+        bus_entry_to_show = paginator.page(1)
+    except EmptyPage:
+        bus_entry_to_show = paginator.page(paginator.num_pages)
+
+    if business:        
+        bus_info.append({ 'name': business.name, 'latest_project':bus_entry_to_show  })
+    print bus_info
     context = { 'businesses' : bus_info}
     return render_to_response('timepiece/card.html',
                               context, context_instance=RequestContext(request))
+
+
+
+# @login_required
+# def get_project_card(request,business_id,index=0):
+    
+#     try:
+#         index = int(index)
+#     except:
+#         index = 0
+
+#     #return HttpResponse("hello"+" "+str(business_id)+" "+str(index))
+#     #import pdb; pdb.set_trace()
+#     bus_info = []
+#     try:
+#         business = timepiece.Business.objects.get(id = business_id)
+#     except timepiece.Business.DoesNotExist:
+#         business = None
+#     latest_bus_entries = timepiece.Entry.objects.filter(project__business_id=str(business_id)).order_by('-date_updated')
+#     if business and latest_bus_entries.count() >= index+1:
+#         latest_bus_entries = latest_bus_entries[index]
+#         bus_info.append({ 'name': business.name, 'latest_project':latest_bus_entries.project  })
+#     context = { 'businesses' : bus_info}
+#     return render_to_response('timepiece/card.html',
+#                               context, context_instance=RequestContext(request))
+
+
 
 @login_required
 def view_person_time_sheet(request, user_id):
