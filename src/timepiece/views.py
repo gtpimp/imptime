@@ -608,8 +608,8 @@ def get_project_card(request,business_id,index=0):
     
     ctc = "unspecified"
     billed = "unspecified"
-
     project = bus_entry_to_show.object_list[0] if len(bus_entry_to_show.object_list) > 0 else None
+    invoiced = False
     if project:
         entries = timepiece.Entry.objects.filter(project=project)
         ctc = 0
@@ -617,8 +617,12 @@ def get_project_card(request,business_id,index=0):
         for entry in entries:
             ctc += entry.atrate
             billed += entry.atbillablerate
-        
-    context = { 'business':business, 'project_entries' : bus_entry_to_show, 'ctc':ctc, 'billed':billed}
+        invoiced = True if entries.exclude(status='invoiced').count() > 0 else False
+
+    #timepiece.Entry.objects.filter_by_logged_in_user(request.user).filter(project=project).update(status='invoiced')
+
+    logger.debug(invoiced)
+    context = { 'business':business, 'project_entries' : bus_entry_to_show, 'ctc':ctc, 'billed':billed, 'invoiced':invoiced }
     return render_to_response('timepiece/card.html',
                               context, context_instance=RequestContext(request))
 

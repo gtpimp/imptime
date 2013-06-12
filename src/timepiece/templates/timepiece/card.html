@@ -1,12 +1,19 @@
 <div class='breadcrumb' style="float:left"> 
   {{ business.name }}
   <div class="pagination">
-  {% for project in project_entries %}
-       Sprint name: {{ project.name }}
-       <p/>
-       Budget: {{project.budget}}
-  {% endfor %}     
+    {% for project in project_entries %}
+     <div id="project_id_{{project.id}}">
+         Sprint name: {{ project.name }}
+         <p/>
+         Budget: {{project.budget}}
+         
+	 
+	 Invoiced: <input type="checkbox" id="check_project_id_{{project.id}}" {% if invoiced %} checked {% endif %} >
+	 
+     </div>         
+    {% endfor %}     
   </div>
+
   <div>
      CTC {{ ctc }}
      Billed {{ billed }}

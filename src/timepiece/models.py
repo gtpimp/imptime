@@ -130,9 +130,13 @@ class Project(models.Model):
 
 
         for user in users:
+            # UserProfile.objects.get_or_create(user=user)
+            # user.save()
+
             rate,newly_created = Rate.objects.get_or_create(project=self, user=user)
-            rate.amount = user.userprofile.amount
-            rate.billable_amount = user.userprofile.billable_amount
+            rate.amount = user.profile.amount
+
+            rate.billable_amount = user.profile.billable_amount
             rate.save()
 
     @classmethod
