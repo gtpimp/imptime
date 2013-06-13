@@ -10,6 +10,8 @@ from django.core.exceptions import ValidationError, NON_FIELD_ERRORS
 from django.db import models
 from django.db.models import Q, Avg, Sum, Max, Min
 from django.utils.datastructures import SortedDict
+from re import sub as re_sub
+from re import UNICODE as re_UNICODE
 
 try:
     from django.utils import timezone
@@ -82,6 +84,7 @@ class ProjectQuerySet(QuerySet):
         return self.filter(users=user)
 
 class Project(models.Model):
+    code = models.CharField(max_length=255,blank=True,null=True)        
     name = models.CharField(max_length=255)
     budget = models.DecimalField(max_digits=8, decimal_places=2, default=0)
     tracker_url = models.CharField(max_length=255, blank=True, null=False,
@@ -117,6 +120,15 @@ class Project(models.Model):
     description = models.TextField()
 
     objects = QuerySetManager(ProjectQuerySet)
+
+
+    @classmethod
+    def get_code_from_name(cls, name):
+        new_name = "".join(name.split())
+        new_name = new_name.lower()
+        replacement = lambda matches: "".join(['_' for i in matches.groups()])
+        new_name = re_sub(r"(\W{1})", replacement, new_name)
+        return new_name
 
     def save(self, *args, **kwargs):
         super(Project, self).save(*args, **kwargs)
