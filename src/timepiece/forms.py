@@ -312,20 +312,23 @@ class ImportEntriesForm(forms.Form):
         self.user = user
 
     def _ignore_project(self, entry):
-        ignore_projects = []
+        ignore_projects_names = []
         try:
-            ignore_projects = self.user.profile.project_names_to_ignore
-            ignore_projects = ignore_projects.split(',')
+            ignore_projects_names = self.user.profile.project_names_to_ignore
+            ignore_projects_names = ignore_projects_names.split(',')
         except auth_models.User.DoesNotExist:
             # If no user profile, then nothing to ignore.
             return False
 
-        entry_list = entry.split('\t')
-        
+
+        entry_list = entry.split('\t')        
         project_name = entry_list[1] if len(entry_list) > 1 else None
-        if project_name in ignore_projects:
+        project_code = Project.get_code_from_name(project_name)
+
+        ignore_projects_codes = [ Project.get_code_from_name(name) for name in ignore_projects_names ]
+        if project_code in ignore_projects_codes:
             return True
-            
+
         return False
 
     def save(self):
