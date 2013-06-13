@@ -585,9 +585,15 @@ def view_summary(request,user_id):
     return render_to_response('timepiece/time-sheet/people/projects.html',
                               context, context_instance=RequestContext(request))
 
+
+
 @login_required
 def get_project_card(request,business_id,index=0):
-    
+
+    number_dev_done = lambda issues_qs : 1.0*sum([ ii for ii in  [i[0] for i in issues_qs.filter(status__icontains='dev done').values_list('story_points')] if ii])
+    number_tested = lambda issues_qs : 1.0*sum([ ii for ii in  [i[0] for i in issues_qs.filter(status__icontains='tested').values_list('story_points')] if ii])
+    number_total = lambda issues_qs : 1.0*sum([ ii for ii in  [i[0] for i in issues_qs.values_list('story_points')] if ii])
+
     try:
         page = int(index)
     except:
@@ -606,6 +612,8 @@ def get_project_card(request,business_id,index=0):
         page = 1
     bus_entry_to_show = paginator.page(page)
     
+    percent_done = 0.0
+    percent_tested = 0.0
     budget = 0
     percentage_spent = 0.0
     difference = 0.0
@@ -621,14 +629,23 @@ def get_project_card(request,business_id,index=0):
             ctc += entry.atrate
             billed += entry.atbillablerate
         budget = project.budget
-        percentage_spent = float(billed)/float(budget) * 100 if budget > 0 else 0.0
+        percentage_spent = 100 * float(billed)/float(budget) if budget > 0 else 100.0
         difference = billed - budget
-        invoiced = True if entries.exclude(status='invoiced').count() > 0 else False
-
-    #timepiece.Entry.objects.filter_by_logged_in_user(request.user).filter(project=project).update(status='invoiced')
-
-    logger.debug(invoiced)
-    context = { 'business':business, 'cur_project': project, 'project_entries' : bus_entry_to_show, 'ctc':ctc, 'billed':billed, 'invoiced':invoiced, 'percentage_spent':percentage_spent, 'difference':difference}
+        invoiced = True if entries.exclude(status='invoiced').count() > 0 else False     
+        total_issue_points = number_total(project.issues)
+        percent_done = 100 * number_dev_done(project.issues)/total_issue_points if total_issue_points > 0 else 0.0
+        percent_tested = 100* number_tested(project.issues)/total_issue_points if total_issue_points > 0  else 0.0
+               
+    context = { 'business':business, 
+                'dev_done':percent_done,
+                'tested':percent_tested, 
+                'cur_project': project, 
+                'project_entries' : bus_entry_to_show,
+                'ctc':ctc, 
+                'billed':billed,
+                'invoiced':invoiced, 
+                'percentage_spent':percentage_spent,
+                'difference':difference }
     return render_to_response('timepiece/card.html',
                               context, context_instance=RequestContext(request))
 
