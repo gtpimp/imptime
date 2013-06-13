@@ -34,18 +34,23 @@ class Command(BaseCommand):
         print("making connection to %s" % settings.DATABASES[redmine_db_name])
         redmine_issues = list(redmine_models.RedmineIssue.objects.using(redmine_db_name).all())
         print("%d issues fetches" % len(redmine_issues))
+        created_list = []
         for redmine_issue in redmine_issues:
 
             try:
                 project_name = "%s - %s" % (redmine_issue.project.name, redmine_issue.fixed_version.name if (redmine_issue.fixed_version_id>0 and redmine_issue.fixed_version is not None) else '')
+                project_code = models.Project.get_code_from_name(project_name)
             except Exception:
                 raise Exception("Invalid issue configuration for %d: version_id=%s" % (redmine_issue.id, redmine_issue.fixed_version_id))
             try:
-                project = models.Project.objects.get(business=business, 
-                                                     name=project_name)
+                # project = models.Project.objects.get(business=business, 
+                #                                      name=project_name)
+                project = models.Project.objects.get(business=business,
+                                                     code= project_code)
             except models.Project.DoesNotExist:
                 print("Creating project for : %s" % project_name)
                 project = models.Project(business=business, name=project_name)
+                created_list.append((project,project.id,project.name, project.code, project_code))
 
             project.point_person_id=point_person.id
             project.status=project_status
@@ -60,4 +65,6 @@ class Command(BaseCommand):
             num_created += 1
             if num_created % 50 == 0:
                 print("%d issues left to import" % (len(redmine_issues)-num_created))
-        print("created %d issues" % num_created)
+        print("created %d issues.." % num_created)
+        for creation in created_list:
+            print "%s: id: %s, name: %s code:%s expectedcode:%s"%tuple([str(i) for i in creation])
