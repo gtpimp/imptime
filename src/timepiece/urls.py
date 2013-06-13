@@ -58,7 +58,10 @@ urlpatterns = patterns('',
         views.create_edit_business,
         name='edit_business',
     ),
-    url(r'^project/list/$', views.list_projects, name='list_projects'),
+    url(r'^project/list/$',
+        views.list_projects, 
+        name='list_projects'
+    ),
     url(
         r'^project/(?P<project_id>\d+)/$',
         views.view_project,
