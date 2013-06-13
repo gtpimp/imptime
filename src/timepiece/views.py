@@ -2869,3 +2869,11 @@ def time_sheet_download(request, user_id, context=None):
                            entry.start_time.strftime("%Y-%m-%d"), entry.hours, entry.comments.encode("utf8") ] )
 
     return response
+
+def project_issues(request, pk, template="timepiece/project/issues.html", context=None):
+    context = context or {}
+    context['project'] = timepiece.Project.objects.get(pk=pk)
+    context['issues'] = timepiece.Issue.objects.filter(project=context['project']).order_by("id")
+    return render_to_response(template, context, context_instance=RequestContext(request))
+
+    

@@ -174,6 +174,11 @@ urlpatterns = patterns('',
         name='project_time_sheet',
     ),
     url(
+        r'^time-sheet/project_issues/(?P<pk>\d+)/$',
+        views.project_issues,
+        name='project_issues',
+    ),
+    url(
         r'^time-sheet/project/(?P<pk>\d+)/csv/$',
         views.ProjectTimesheetCSV.as_view(),
         name='export_project_time_sheet',

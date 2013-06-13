@@ -503,6 +503,7 @@ class Entry(models.Model):
     objects = EntryManager()
     worked = EntryWorkedManager()
     no_join = EntryManagerBase()
+    issue = models.ForeignKey('Issue', blank=True, null=True)
 
     @property
     def atrate(self):
@@ -1375,3 +1376,11 @@ class Invoice(models.Model):
         permissions = (
             ('view_invoice', 'Can view invoices.'),
         )
+
+class Issue(models.Model):
+    status = models.CharField(max_length=255)
+    project = models.ForeignKey(Project, related_name='issues')
+    subject = models.TextField()
+    description = models.TextField(blank=True)
+    story_points = models.FloatField(null=True,blank=True)
+    
