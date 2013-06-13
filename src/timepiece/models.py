@@ -131,8 +131,11 @@ class Project(models.Model):
         return new_name
 
     def save(self, *args, **kwargs):
+
+        self.code = Project.get_code_from_name(self.name)
         super(Project, self).save(*args, **kwargs)
-        
+
+
         # Add all users from other projects in this business
         users = User.objects.filter(user_projects__business=self.business).distinct()
         for user in users:
