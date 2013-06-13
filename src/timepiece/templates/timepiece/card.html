@@ -3,7 +3,7 @@
   <div class="pagination">
     {% for project in project_entries %}
      <div id="project_id_{{project.id}}">
-         Sprint name: {{ project.name }}
+         Sprint name:   {{ project.name }} 
          <p/>
          Budget: {{project.budget}}          
 	 
@@ -33,8 +33,11 @@
     {% endif %}
   </div>
 
+
+
   <a href="{% url project_detail business.id %}">view</a>         
   <a href="#" onclick="$('#b_card_{{business.id}}').load('{% url get_project_card_indexed  business_id=business.id index=project_entries.previous_page_number %}'); return false;">previous</a>
   <a href="#" onclick="$('#b_card_{{business.id}}').load('{% url get_project_card_indexed  business_id=business.id index=project_entries.next_page_number %}'); return false;">next</a>
+  <a href="{% url project_issues cur_project.id %}">{{ cur_project.issues.count }} issues </a>
 
 </div>

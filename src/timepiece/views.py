@@ -628,7 +628,7 @@ def get_project_card(request,business_id,index=0):
     #timepiece.Entry.objects.filter_by_logged_in_user(request.user).filter(project=project).update(status='invoiced')
 
     logger.debug(invoiced)
-    context = { 'business':business, 'project_entries' : bus_entry_to_show, 'ctc':ctc, 'billed':billed, 'invoiced':invoiced, 'percentage_spent':percentage_spent, 'difference':difference}
+    context = { 'business':business, 'cur_project': project, 'project_entries' : bus_entry_to_show, 'ctc':ctc, 'billed':billed, 'invoiced':invoiced, 'percentage_spent':percentage_spent, 'difference':difference}
     return render_to_response('timepiece/card.html',
                               context, context_instance=RequestContext(request))
 

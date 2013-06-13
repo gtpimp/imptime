@@ -10,7 +10,9 @@ class Command(BaseCommand):
     help = "Import all redmine issues into the timesheet system"
 
     def handle(self, *args, **kwargs):
-        self._handle('redmine_impact', 'impact-spii')
+        #self._handle('redmine_impact', 'impact-spii')
+        #self._handle('redmine_projects', 'impact-spii')
+        self._handle('redmine_unionswiss', 'unionswiss')
 
     def _handle(self, redmine_db_name, business_name):
         try:
@@ -36,21 +38,22 @@ class Command(BaseCommand):
         print("%d issues fetches" % len(redmine_issues))
         created_list = []
         for redmine_issue in redmine_issues:
-
+            project_code = ""
             try:
                 project_name = "%s - %s" % (redmine_issue.project.name, redmine_issue.fixed_version.name if (redmine_issue.fixed_version_id>0 and redmine_issue.fixed_version is not None) else '')
                 project_code = models.Project.get_code_from_name(project_name)
             except Exception:
                 raise Exception("Invalid issue configuration for %d: version_id=%s" % (redmine_issue.id, redmine_issue.fixed_version_id))
             try:
-                # project = models.Project.objects.get(business=business, 
-                #                                      name=project_name)
                 project = models.Project.objects.get(business=business,
                                                      code= project_code)
             except models.Project.DoesNotExist:
                 print("Creating project for : %s" % project_name)
                 project = models.Project(business=business, name=project_name)
                 created_list.append((project,project.id,project.name, project.code, project_code))
+            except models.Project.MultipleObjectsReturned:
+                print("%d objects found with business '%s' and name '%s' code '%s'"%(models.Project.objects.filter(business=business,code = project_code).count(),business.name,project_name,project_code))
+                raise
 
             project.point_person_id=point_person.id
             project.status=project_status
