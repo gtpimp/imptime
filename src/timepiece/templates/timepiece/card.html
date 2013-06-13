@@ -3,7 +3,7 @@
   <div class="pagination">
     {% for project in project_entries %}
      <div id="project_id_{{project.id}}">
-         Sprint name:   {{ project.name }} 
+         Sprint name:   {{ project.name }} ({{project.id}})
          <p/>
          Budget: {{project.budget}}          
 	 
@@ -16,27 +16,63 @@
   <div>
      CTC {{ ctc }}     
      Billed {{ billed }}
-    {% if percentage_spent < 70 %}
-     <span style="border: 1px solid yellow; background-color:green">
-      {{difference}}
-     </span>
-    {% endif %}
-    {% if percentage_spent > 70 and  percentage_spent < 80 %} 
-     <span style="border: 1px solid yellow; background-color:yellow">
-      {{difference}}
-     </span>
-    {% endif %}
-    {% if percentage_spent > 90 %}
-     <span style="border: 1px solid yellow; background-color:red">
-      {{difference}}
-     </span>
-    {% endif %}
+     <div style="background-color:gray">
+       <div style="width:{{percentage_spent}}%;
+	 {% if percentage_spent < 70 %}
+              background-color:green
+         {% endif %}
+         {% if percentage_spent > 70 and  percentage_spent < 80 %} 
+              background-color:yellow
+         {% endif %}
+         {% if percentage_spent > 90 %}
+              background-color:red
+         {% endif %}
+    ">
+           R{{difference}} left
+      
+       </div>
+     </div>
   </div>
 
-  <div>
-    % dev done : {{ dev_done}}
-    % tested :  {{ tested }}
-  </div>
+  <div style="float:none">
+     <div style="float:left;width:50%;background-color:gray">
+       <div style="width:{{ dev_done}}%;
+	 {% if dev_done < 70 %}
+              background-color:green;
+         {% endif %}
+         {% if dev_done > 70 and  dev_done < 80 %} 
+              background-color:yellow;
+         {% endif %}
+         {% if dev_done > 90 %}
+              background-color:red;
+         {% endif %}
+    ">
+      
+       </div>
+
+          {{dev_done}}% dev
+
+     </div>
+
+     <div style="float:right;width:50%;background-color:gray">
+       <div style="width:{{tested}}%;
+	 {% if tested < 70 %}
+              background-color:green;
+         {% endif %}
+         {% if tested > 70 and  tested < 80 %} 
+              background-color:yellow;
+         {% endif %}
+         {% if tested > 90 %}
+              background-color:red;
+         {% endif %}
+    ">
+      
+       </div>
+
+           {{tested}}% tested
+
+     </div>
+</div>
 
   <a href="{% url project_detail business.id %}">view</a>         
   <a href="#" onclick="$('#b_card_{{business.id}}').load('{% url get_project_card_indexed  business_id=business.id index=project_entries.previous_page_number %}'); return false;">previous</a>

@@ -23,15 +23,13 @@
  
 {% block content %}
 
- 
     {% for business in businesses %}
      {% if business.id %}
-     <div class='breadcrumb' style="float:left" id="b_card_{{business.id}}">        
+     <div  style="float:left" id="b_card_{{business.id}}">        
      </div>
      {% endif %}
 
      {% endfor %}  
-
 
      <script>
     {% for business in businesses %}

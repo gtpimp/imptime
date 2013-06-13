@@ -630,15 +630,15 @@ def get_project_card(request,business_id,index=0):
             billed += entry.atbillablerate
         budget = project.budget
         percentage_spent = 100 * float(billed)/float(budget) if budget > 0 else 100.0
-        difference = billed - budget
+        difference = budget - billed
         invoiced = True if entries.exclude(status='invoiced').count() > 0 else False     
         total_issue_points = number_total(project.issues)
         percent_done = 100 * number_dev_done(project.issues)/total_issue_points if total_issue_points > 0 else 0.0
         percent_tested = 100* number_tested(project.issues)/total_issue_points if total_issue_points > 0  else 0.0
                
     context = { 'business':business, 
-                'dev_done':percent_done,
-                'tested':percent_tested, 
+                'dev_done':int(percent_done),
+                'tested':int(percent_tested), 
                 'cur_project': project, 
                 'project_entries' : bus_entry_to_show,
                 'ctc':ctc, 
