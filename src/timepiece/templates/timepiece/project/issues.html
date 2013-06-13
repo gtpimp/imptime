@@ -35,6 +35,7 @@
         <table>
 
           <thead>
+	    <th>#</th>
             <th>Status</th>
             <th>Points</th>
             <th>Subject</th>
@@ -45,6 +46,7 @@
             {% for issue in issues %}
 
             <tr>
+	      <td>{{issue.number}}</td>
               <td>{{issue.status}}</td>
               <td>{{issue.story_points|default_if_none:"-"}}</td>
               <td>{{issue.subject}}</td>

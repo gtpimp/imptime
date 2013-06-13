@@ -61,6 +61,7 @@ class Command(BaseCommand):
             project.save()
                 
             models.Issue.objects.create(project=project, 
+                                        number=redmine_issue.id,
                                         status=redmine_issue.status.name,
                                         subject=redmine_issue.subject or '',
                                         description=redmine_issue.description or '',

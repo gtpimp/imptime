@@ -1394,6 +1394,7 @@ class Invoice(models.Model):
 
 class Issue(models.Model):
     status = models.CharField(max_length=255)
+    number = models.IntegerField(null=True,blank=True)
     project = models.ForeignKey(Project, related_name='issues')
     subject = models.TextField()
     description = models.TextField(blank=True)

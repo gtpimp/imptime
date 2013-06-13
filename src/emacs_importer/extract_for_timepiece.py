@@ -96,13 +96,15 @@ class Extractor(object):
                                                description="(auto_created from timesheets")
 
         try:
-            project = Project.objects.get(name=sprint_name, business=business)
+            code = Project.get_code_from_name(sprint_name)
+            project = Project.objects.get(code=code, business=business)
         except Project.DoesNotExist:
             project = Project.objects.create(name=sprint_name, business=business, 
                                              point_person=point_person,
                                              status=project_status, type=project_type,
                                              billable=True,
-                                             description=sprint_name + " (auto_created)")
+                                             description=sprint_name + " (auto_created)",
+                                             code=code)
 
         for clock in orgnode.getClocks():
             
