@@ -1,19 +1,42 @@
+<script>
+  var imp = imp || {};
+  imp.project_card_thinking = function(el) {
+    $(el).parents(".project_card").find(".loading").show();
+  }
+</script>
+
 <div class="project_card">
 
+  <img style="display:none" class="loading" src="{{STATIC_URL}}/images/icons/loadingAnimation.gif"/>
   <h1>{{ business.name }}</h1>
 
   {% include "timepiece/_card_project.html" %}
 
-  {% if older_open_projects %}
+  {% if older_projects %}
+    <div class="toggle_title secret_link" onclick="$(this).parent().find('.toggle_content').toggle();">toggle older sprints</div>
     <div class="toggle_section">
-      <div class="toggle_title secret_link" onclick="$(this).parent().find('.toggle_content').toggle();">older sprints</div>
-      <div class="toggle_content" style="display:none">
-        {% for project in older_open_projects %}
+      <div class="toggle_content" {% if not expand_older %}style="display:none"{% endif %}>
+        {% if older_projects.has_previous %}
+          <a href="#" onclick="imp.project_card_thinking(this);$('#b_card_{{business.id}}').load('{% url get_project_card_indexed business_id=business.id index=older_projects.previous_page_number %}'); return false;">previous</a>
+        {% endif %}
+        {% if older_projects.has_next %}
+          <a href="#" onclick="imp.project_card_thinking(this);$('#b_card_{{business.id}}').load('{% url get_project_card_indexed business_id=business.id index=older_projects.next_page_number %}'); return false;">next</a>
+        {% endif %}
+        Showing {{older_projects.start_index}} to {{older_projects.end_index}}
+        <div style="clear:both"></div>
+
+        {% for project in older_projects %}
           <div class="nested_card">
             {% include "timepiece/_card_project.html" %}
           </div>
         {% endfor %}
+        <div style="clear:both"></div>
       </div>
     </div>
+  {% else %}
+    <div class="secret_link">
+      <a href="#" onclick="imp.project_card_thinking(this);$('#b_card_{{business.id}}').load('{% url get_project_card_indexed business_id=business.id index=1 %}'); return false;">older sprints</a>
+    </div>
   {% endif %}
+
 </div>

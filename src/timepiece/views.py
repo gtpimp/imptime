@@ -588,30 +588,33 @@ def view_summary(request,user_id):
 
 
 @login_required
-def get_project_card(request,business_id,index=0):
+def get_project_card(request,business_id,index=None):
 
-    try:
-        page = int(index)
-    except:
-        page = 0
+    if index is None:
+        page_start = 1
+        num_per_page = 1
+    else:
+        page_start = int(index)
+        num_per_page = 4
 
     try:
         business = timepiece.Business.objects.get(id = business_id)
     except timepiece.Business.DoesNotExist:
         business = None   
-        
-    projects = timepiece.Project.projects_in_desc_order_of_use(int(business_id))
-    if len(projects)>0:
-        project = projects[0]
-    else:
-        project = None
     
-    max_older_projects = 5
-    older_open_projects = [p for p in projects[:max_older_projects] if (p.is_open and p!=project) ]
+    projects = timepiece.Project.projects_in_desc_order_of_use(int(business_id))
+    project = projects[0] if len(projects)>0 else None
+    if project:
+        projects = projects[1:]
+    if index is not None:
+        older_projects = Paginator(projects, num_per_page).page(page_start)
+    else:
+        older_projects = None
 
     context = { 'business':business, 
                 'project':project,
-                'older_open_projects':older_open_projects }
+                'older_projects':older_projects,
+                'expand_older':index is not None}
     return render_to_response('timepiece/card.html',
                               context, context_instance=RequestContext(request))
 

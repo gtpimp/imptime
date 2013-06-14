@@ -151,7 +151,7 @@ urlpatterns = patterns('',
     url(
         r'time-sheet/get_project_card/(?P<business_id>\d+)/$',
         views.get_project_card,
-        {'index':0},
+        {'index':None},
         name='get_project_card',
     ),
     url(

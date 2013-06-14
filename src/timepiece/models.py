@@ -74,7 +74,7 @@ class Business(models.Model):
 
     @classmethod
     def businesses_in_desc_order_of_use(self):
-        return [ Business.objects.get(pk=4) ]
+        #return [ Business.objects.get(pk=4) ]
 
         entries = Entry.objects.filter().order_by('-date_updated').values('project__business__id')
         p = SortedDict()
@@ -158,6 +158,11 @@ class Project(models.Model):
         new_name = new_name.lower()
         replacement = lambda matches: "".join(['_' for i in matches.groups()])
         new_name = re_sub(r"(\W{1})", replacement, new_name)
+        new_name = new_name.replace(":NEXT:","")
+        new_name = new_name.replace("STARTED","")
+        new_name = new_name.replace("DONE","")
+        new_name = new_name.replace("DONE","")
+        new_name = new_name.replace("INVOICED","")
         return new_name
 
     def save(self, *args, **kwargs):
@@ -195,7 +200,13 @@ class Project(models.Model):
     
     @property
     def is_open(self):
-        return self.status.label == 'open' or self.status.label == "reopened"
+        manually_closed = not(self.status.label == 'open' or self.status.label == "reopened")
+        if manually_closed:
+            return False
+        closed_because_paid = self.has_invoices and self.all_invoices_paid
+        if closed_because_paid:
+            return False
+        return True
 
     @property
     def stats(self):

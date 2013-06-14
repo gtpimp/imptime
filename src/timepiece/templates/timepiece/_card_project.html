@@ -1,6 +1,6 @@
 <div id="project_id_{{project.id}}">
    <a href="#" class="secret_link" onclick="window.open('{%url project_detail project.business.id%}')">
-     <div class="sprint_name">Sprint name:   {{ project.name }} ({{project.id}})</div>
+     <div class="sprint_name">{{ project.name }} ({{project.id}})</div>
    </a>
    <a href="#" class="secret_link" onclick="window.open('{% url project_issues project.id %}')">
      {{ project.issues.count }} issues

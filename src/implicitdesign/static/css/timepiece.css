@@ -9405,11 +9405,30 @@ table.project_list  {
 
 .project_card .nested_card {
     border-top: 1px solid #232323;
-    padding:2px;
+    padding:4px;
+    margin:10px;
     padding-top: 10px;
-    clear:both;
+    float:left;
+    min-width: 200px;
+    background: #efefef;
 }
 
 .project_card .sprint_name {
     font-style: italic;
+}
+
+.project_card .toggle_section {
+    position:absolute;
+    width:100%;
+    background:white;
+}
+
+.project_card .toggle_content {
+    border: 1px solid #dedede;
+    padding: 5px;
+    background-color:#bbbbbb;
+}
+
+.project_card .loading {
+    position: absolute;
 }
