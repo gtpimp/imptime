@@ -9360,9 +9360,9 @@ table.project_list  {
     font-size:10px;
     border:1px solid #000;
     padding:10px;
-    -moz-box-shadow:    3px 3px 5px 6px #ccc;
-    -webkit-box-shadow: 3px 3px 5px 6px #ccc;
-    box-shadow:         3px 3px 5px 6px #ccc;
+    -moz-box-shadow:    6px 6px 0px 0px #ccc;
+    -webkit-box-shadow: 6px 6px 0px 0px #ccc;
+    box-shadow:         6px 6px 0px 0px #ccc;
     margin:15px;
     min-width:230px;
 }
@@ -9385,6 +9385,7 @@ table.project_list  {
 }
 .project_card  .traffic_yellow {
     background-color:yellow;
+    color:#000000;
 }
 
 .project_card  .traffic_neutral {

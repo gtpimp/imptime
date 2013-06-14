@@ -101,6 +101,7 @@ class ProjectQuerySet(QuerySet):
         return self.filter(users=user)
 
 class Project(models.Model):
+
     code = models.CharField(max_length=255,blank=True,null=True)        
     name = models.CharField(max_length=255)
     budget = models.DecimalField(max_digits=8, decimal_places=2, default=0)
@@ -160,19 +161,26 @@ class Project(models.Model):
     @classmethod
     def get_code_from_name(cls, name):
         new_name = "".join(name.split())
-        new_name = new_name.lower()
-        replacement = lambda matches: "".join(['_' for i in matches.groups()])
-        new_name = re_sub(r"(\W{1})", replacement, new_name)
         new_name = new_name.replace(":NEXT:","")
         new_name = new_name.replace("STARTED","")
         new_name = new_name.replace("DONE","")
-        new_name = new_name.replace("DONE","")
+        new_name = new_name.replace("OPEN","")
+        new_name = new_name.replace("PAID","")
+        new_name = new_name.replace("INVOICE","")
         new_name = new_name.replace("INVOICED","")
+        new_name = new_name.lower()
+
+        replacement = lambda matches: "".join(['_' for i in matches.groups()])
+        new_name = re_sub(r"(\W{1})", replacement, new_name)
         return new_name
 
     def save(self, *args, **kwargs):
 
         self.code = Project.get_code_from_name(self.name)
+
+        if not self.id and Project.objects.filter(code=self.code,business=self.business).count()>0:
+            raise Exception("A Project with code %s already exists" % self.code)
+
         super(Project, self).save(*args, **kwargs)
 
 
@@ -252,12 +260,12 @@ class Project(models.Model):
         stats['percent_tested_traffic_class'] = get_css_class_for_level(stats['percent_tested'], reverse_colours=True)
         stats['ctc'] = ctc
         stats['billed'] = billed
-        stats['end_time'] = self.end_time
+        stats['end_time'] = self._last_entry_end_time
         self._stats = stats
         return stats
 
     @property
-    def end_time(self):
+    def _last_entry_end_time(self):
         entries = Entry.objects.filter(project=self).order_by("-end_time")
         if len(entries)>0:
             return entries[0].end_time
@@ -1496,3 +1504,27 @@ class Issue(models.Model):
     subject = models.TextField()
     description = models.TextField(blank=True)
     story_points = models.FloatField(null=True,blank=True)
+
+class RedmineToTimepieceBusinessMapping(models.Model):
+    redmine_business_name = models.CharField(max_length=255)
+    timepiece_business_name = models.CharField(max_length=255)
+
+    @classmethod
+    def find_from_redmine(self, redmine_business_name):
+        try:
+            return RedmineToTimepieceBusinessMapping.objects.get(redmine_business_name=redmine_business_name).timepiece_business_name
+        except RedmineToTimepieceBusinessMapping.DoesNotExist:
+            return redmine_business_name
+
+class RedmineToTimepieceProjectMapping(models.Model):
+    timepiece_business_name = models.CharField(max_length=255)
+    redmine_project_code = models.CharField(max_length=255)
+    timepiece_project_code = models.CharField(max_length=255)
+
+    @classmethod
+    def find_from_redmine(self, timepiece_business_name, redmine_project_name):
+        redmine_project_code = Project.get_code_from_name(redmine_project_name)
+        try:
+            return RedmineToTimepieceProjectMapping.objects.get(timepiece_business_name=timepiece_business_name, redmine_project_code=redmine_project_code).timepiece_project_code
+        except RedmineToTimepieceProjectMapping.DoesNotExist:
+            return redmine_project_code

@@ -1,3 +1,5 @@
+{% load humanize %}
+
 <div id="project_id_{{project.id}}">
    <a href="#" class="secret_link" onclick="window.open('{%url project_detail project.business.id%}')">
      <div class="sprint_name">{{ project.name }} ({{project.id}})</div>
@@ -12,7 +14,7 @@
 
   <br/>
        <a href="#" class="secret_link" onclick="window.open('{%url edit_project project.id%}')">
-         Budget: R{{project.budget|floatformat:"0"}}          
+         Budget: R{{project.budget|floatformat:"0"|intcomma}}          
        </a>
   <br/>
        {% if perms.timepiece.view_invoice %}
@@ -28,23 +30,23 @@
 </div>         
 
 <p>
-   CTC R{{ project.stats.ctc|floatformat:"0" }}
+   CTC R{{ project.stats.ctc|floatformat:"0"|intcomma }}
    /
-   Billed R{{ project.stats.billed|floatformat:"0" }}
+   Billed R{{ project.stats.billed|floatformat:"0"|intcomma }}
 </p>
 
 {% if project.has_budget %}
 <div class="traffic_bar">
   <div style="width:{{project.stats.percentage_spent}}%" class="{{project.stats.budget_traffic_class}}">
     {% if project.stats.amount_under_budget > 0 %}
-         R{{project.stats.amount_under_budget|floatformat:"0"}}&nbsp;left
+         R{{project.stats.amount_under_budget|floatformat:"0"|intcomma}}&nbsp;left
     {% else %}
-         R{{project.stats.amount_over_budget|floatformat:"0"}}&nbsp;over
+         R{{project.stats.amount_over_budget|floatformat:"0"|intcomma}}&nbsp;over
     {% endif %}
   </div>
 </div>
 {% else %}
-<div style="color:red">No budget given</div>
+<div style="color:red">No budget</div>
 {% endif %}
 
 <div style="clear:left;" class="traffic_bar">

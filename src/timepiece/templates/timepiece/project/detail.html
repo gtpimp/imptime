@@ -264,6 +264,7 @@ $(document).ready(function(){
 		       <th colspan="14">{{ business }} <a id="a_b{{ forloop.counter }}_collapse_business" href="javascript:void(0);" 
 		           onclick="expand_collapse_business('b{{forloop.counter}}')">[collapse project]</a>
 		           <a href="javascript:void(0)" id="a_sprint_collapse_b{{ forloop.counter }}" onclick="expand_collapse_sprints('b{{forloop.counter}}')" class="expanded">[collapse sprints]</a>
+                           <a href="{% url 'create_project' %}">new sprint</a>
 		       </th>
 		     </tr>
 		     <tr>

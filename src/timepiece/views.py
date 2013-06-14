@@ -591,6 +591,11 @@ def view_summary(request,user_id, include_older_businesses=False):
     if not include_older_businesses:
         old_businesses = None
 
+    # ##
+    #current_businesses = [timepiece.Business.objects.get(pk=4)]
+    #old_businesses = None
+    # ##
+
     context = { 'current_businesses':current_businesses,
                 'old_businesses':old_businesses }
     return render_to_response('timepiece/time-sheet/people/projects.html',
