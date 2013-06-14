@@ -19,7 +19,7 @@ class Command(BaseCommand):
             if force:
                 models.Project.objects.create(name=timepiece_project_name, business=business, code=timepiece_project_code)
             else:
-                raise Exception("Invalid timepiece_project_name: %s (%s)" % (timepiece_project_name, redmine_project_code))
+                raise Exception("Invalid timepiece_project_name: %s (%s)" % (timepiece_project_name,timepiece_project_code))
         models.RedmineToTimepieceProjectMapping.objects.get_or_create(timepiece_business_name=business.name,
                                                                       redmine_project_code=redmine_project_code,
                                                                       timepiece_project_code=timepiece_project_code)

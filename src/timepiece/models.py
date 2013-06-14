@@ -161,6 +161,7 @@ class Project(models.Model):
     @classmethod
     def get_code_from_name(self, name):
         new_name = "".join(name.split())
+        new_name = new_name.strip()
         new_name = new_name.replace(":NEXT:","")
         new_name = new_name.replace("STARTED","")
         new_name = new_name.replace("DONE","")
