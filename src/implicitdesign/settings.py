@@ -19,6 +19,9 @@ REDMINE_DB_MAPPING = [ { 'username' : 'test',
                          'db' : 'redmine_projects' }
                        ]
 
+TRAFFIC_LEVEL_YELLOW = 70
+TRAFFIC_LEVEL_RED = 90
+
 # This setting is intentionally left invalid
 DATABASES = {
     'default': {

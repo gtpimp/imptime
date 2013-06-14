@@ -54,6 +54,9 @@ class Attribute(models.Model):
 
 
 class Business(models.Model):
+    class Meta:
+        ordering = ('name',)
+
     name = models.CharField(max_length=255, blank=True)
     slug = models.SlugField(max_length=255, unique=True, blank=True)
     email = models.EmailField(blank=True)
@@ -69,11 +72,20 @@ class Business(models.Model):
             self.slug = utils.slugify_uniquely(self.name, queryset, 'slug')
         super(Business, self).save(*args, **kwargs)
 
+    @classmethod
+    def businesses_in_desc_order_of_use(self):
+        return [ Business.objects.get(pk=4) ]
+
+        entries = Entry.objects.filter().order_by('-date_updated').values('project__business__id')
+        p = SortedDict()
+        for entry in entries:
+            if entry['project__business__id'] not in p:
+                p[entry['project__business__id']] = Business.objects.get(pk=entry['project__business__id'])
+        return p.values()
+
     def __unicode__(self):
         return self.name
 
-    class Meta:
-        ordering = ('name',)
 
 class ProjectQuerySet(QuerySet):
     def filter_by_logged_in_user(self, user):
@@ -121,7 +133,10 @@ class Project(models.Model):
 
     objects = QuerySetManager(ProjectQuerySet)
 
-
+    @property
+    def has_budget(self):
+        return self.budget>0
+    
     @classmethod
     def get_code_from_name(cls, name):
         new_name = "".join(name.split())

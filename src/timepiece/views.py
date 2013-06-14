@@ -574,7 +574,7 @@ class ProjectTimesheetCSV(CSVMixin, ProjectTimesheet):
 
 @login_required
 def view_summary(request,user_id):
-    all_businesses = timepiece.Business.objects.all()
+    all_businesses = timepiece.Business.businesses_in_desc_order_of_use()
     bus_info = []
     for business in all_businesses:
         
@@ -617,10 +617,17 @@ def get_project_card(request,business_id,index=0):
     budget = 0
     percentage_spent = 0.0
     difference = 0.0
-    ctc = "unspecified"
-    billed = "unspecified"
     project = bus_entry_to_show.object_list[0] if len(bus_entry_to_show.object_list) > 0 else None
     invoiced = False
+
+    def get_css_class_for_level(level):
+        if level < settings.TRAFFIC_LEVEL_YELLOW:
+            return 'traffic_green'
+        elif level < settings.TRAFFIC_LEVEL_RED:
+            return "traffic_yellow"
+        else:
+            return "traffic_red"
+
     if project:
         entries = timepiece.Entry.objects.filter(project=project)
         ctc = 0
@@ -630,21 +637,28 @@ def get_project_card(request,business_id,index=0):
             billed += entry.atbillablerate
         budget = project.budget
         percentage_spent = 100 * float(billed)/float(budget) if budget > 0 else 100.0
+        budget_traffic_class = get_css_class_for_level(percentage_spent)
         difference = budget - billed
         invoiced = True if entries.exclude(status='invoiced').count() > 0 else False     
         total_issue_points = number_total(project.issues)
         percent_done = 100 * number_dev_done(project.issues)/total_issue_points if total_issue_points > 0 else 0.0
         percent_tested = 100* number_tested(project.issues)/total_issue_points if total_issue_points > 0  else 0.0
+        percent_done_traffic_class = get_css_class_for_level(percent_done)
+        percent_tested_traffic_class = get_css_class_for_level(percent_tested)
                
     context = { 'business':business, 
+                'project':project,
                 'dev_done':int(percent_done),
+                'percent_done_traffic_class':percent_done_traffic_class,
                 'tested':int(percent_tested), 
+                'percent_tested_traffic_class':percent_tested_traffic_class,
                 'cur_project': project, 
                 'project_entries' : bus_entry_to_show,
                 'ctc':ctc, 
                 'billed':billed,
                 'invoiced':invoiced, 
                 'percentage_spent':percentage_spent,
+                'budget_traffic_class':budget_traffic_class,
                 'difference':difference }
     return render_to_response('timepiece/card.html',
                               context, context_instance=RequestContext(request))

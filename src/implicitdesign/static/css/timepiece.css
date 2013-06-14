@@ -9354,3 +9354,39 @@ table.project_list  {
     background-color: #e6e6e6 !important;
     text-align:left !important;
 }
+
+.project_card {
+    float:left;
+    font-size:10px;
+    border:1px solid #000;
+    padding:10px;
+    -moz-box-shadow:    3px 3px 5px 6px #ccc;
+    -webkit-box-shadow: 3px 3px 5px 6px #ccc;
+    box-shadow:         3px 3px 5px 6px #ccc;
+}
+
+.project_card h1{
+    font-size:12px;
+    font-weight:bold;
+}
+
+.project_card .traffic_bar {
+    clear:left;
+    background-color:white;
+    border:1px solid #ababab;
+    float:left;
+    width:100%;
+}
+.project_card .traffic_green {
+    background-color:green;
+}
+.project_card  .traffic_yellow {
+    background-color:yellow;
+}
+.project_card .traffic_red {
+    background-color:red;
+}
+
+.project_card .nav {
+    clear:left;
+}
