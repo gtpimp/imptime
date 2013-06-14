@@ -159,7 +159,7 @@ class Project(models.Model):
         return Invoice.objects.filter(project=self).count()>0
     
     @classmethod
-    def get_code_from_name(cls, name):
+    def get_code_from_name(self, name):
         new_name = "".join(name.split())
         new_name = new_name.replace(":NEXT:","")
         new_name = new_name.replace("STARTED","")
@@ -168,11 +168,11 @@ class Project(models.Model):
         new_name = new_name.replace("PAID","")
         new_name = new_name.replace("INVOICE","")
         new_name = new_name.replace("INVOICED","")
-        new_name = new_name.replace("_","")
         new_name = new_name.lower()
 
         replacement = lambda matches: "".join(['_' for i in matches.groups()])
         new_name = re_sub(r"(\W{1})", replacement, new_name)
+        new_name = new_name.replace("_","")
         return new_name
 
     def save(self, *args, **kwargs):
