@@ -168,6 +168,7 @@ class Project(models.Model):
         new_name = new_name.replace("PAID","")
         new_name = new_name.replace("INVOICE","")
         new_name = new_name.replace("INVOICED","")
+        new_name = new_name.replace("_","")
         new_name = new_name.lower()
 
         replacement = lambda matches: "".join(['_' for i in matches.groups()])
