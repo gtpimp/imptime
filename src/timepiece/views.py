@@ -590,10 +590,6 @@ def view_summary(request,user_id):
 @login_required
 def get_project_card(request,business_id,index=0):
 
-    number_dev_done = lambda issues_qs : 1.0*sum([ ii for ii in  [i[0] for i in issues_qs.filter(status__icontains='dev done').values_list('story_points')] if ii])
-    number_tested = lambda issues_qs : 1.0*sum([ ii for ii in  [i[0] for i in issues_qs.filter(status__icontains='tested').values_list('story_points')] if ii])
-    number_total = lambda issues_qs : 1.0*sum([ ii for ii in  [i[0] for i in issues_qs.values_list('story_points')] if ii])
-
     try:
         page = int(index)
     except:
@@ -604,64 +600,18 @@ def get_project_card(request,business_id,index=0):
     except timepiece.Business.DoesNotExist:
         business = None   
         
-    paginator = Paginator(timepiece.Project.projects_in_desc_order_of_use(int(business_id)),1)
-
-    if page > paginator.num_pages:
-        page = paginator.num_pages
-    if page < 1:
-        page = 1
-    bus_entry_to_show = paginator.page(page)
+    projects = timepiece.Project.projects_in_desc_order_of_use(int(business_id))
+    if len(projects)>0:
+        project = projects[0]
+    else:
+        project = None
     
-    percent_done = 0.0
-    percent_tested = 0.0
-    budget = 0
-    percentage_spent = 0.0
-    difference = 0.0
-    project = bus_entry_to_show.object_list[0] if len(bus_entry_to_show.object_list) > 0 else None
-    invoiced = False
+    max_older_projects = 5
+    older_open_projects = [p for p in projects[:max_older_projects] if (p.is_open and p!=project) ]
 
-    def get_css_class_for_level(level):
-        if level < settings.TRAFFIC_LEVEL_YELLOW:
-            return 'traffic_green'
-        elif level < settings.TRAFFIC_LEVEL_RED:
-            return "traffic_yellow"
-        else:
-            return "traffic_red"
-
-    if project:
-        entries = timepiece.Entry.objects.filter(project=project)
-        ctc = 0
-        billed = 0
-        for entry in entries:
-            ctc += entry.atrate
-            billed += entry.atbillablerate
-        budget = project.budget
-        percentage_spent = 100 * float(billed)/float(budget) if budget > 0 else 100.0
-        budget_traffic_class = get_css_class_for_level(percentage_spent)
-        difference = budget - billed
-        invoiced = project.has_invoices
-        paid = project.has_invoices and project.all_invoices_paid
-        total_issue_points = number_total(project.issues)
-        percent_done = 100 * number_dev_done(project.issues)/total_issue_points if total_issue_points > 0 else 0.0
-        percent_tested = 100* number_tested(project.issues)/total_issue_points if total_issue_points > 0  else 0.0
-        percent_done_traffic_class = get_css_class_for_level(percent_done)
-        percent_tested_traffic_class = get_css_class_for_level(percent_tested)
-               
     context = { 'business':business, 
                 'project':project,
-                'dev_done':int(percent_done),
-                'percent_done_traffic_class':percent_done_traffic_class,
-                'tested':int(percent_tested), 
-                'percent_tested_traffic_class':percent_tested_traffic_class,
-                'cur_project': project, 
-                'project_entries' : bus_entry_to_show,
-                'ctc':ctc, 
-                'billed':billed,
-                'invoiced':invoiced, 
-                'paid':paid,
-                'percentage_spent':percentage_spent,
-                'budget_traffic_class':budget_traffic_class,
-                'difference':difference }
+                'older_open_projects':older_open_projects }
     return render_to_response('timepiece/card.html',
                               context, context_instance=RequestContext(request))
 

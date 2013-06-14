@@ -74,7 +74,7 @@ class Business(models.Model):
 
     @classmethod
     def businesses_in_desc_order_of_use(self):
-        #return [ Business.objects.get(pk=4) ]
+        return [ Business.objects.get(pk=4) ]
 
         entries = Entry.objects.filter().order_by('-date_updated').values('project__business__id')
         p = SortedDict()
@@ -132,6 +132,10 @@ class Project(models.Model):
     description = models.TextField()
 
     objects = QuerySetManager(ProjectQuerySet)
+
+    def __init__(self, *args, **kwargs):
+        super(Project, self).__init__(*args, **kwargs)
+        self._stats = None
 
     @property
     def has_budget(self):
@@ -192,6 +196,43 @@ class Project(models.Model):
     @property
     def is_open(self):
         return self.status.label == 'open' or self.status.label == "reopened"
+
+    @property
+    def stats(self):
+        if self._stats is not None:
+            return self._stats
+        stats = {}
+        entries = Entry.objects.filter(project=self)
+        ctc = 0
+        billed = 0
+
+        number_dev_done = lambda issues_qs : 1.0*sum([ ii for ii in  [i[0] for i in issues_qs.filter(status__icontains='dev done').values_list('story_points')] if ii])
+        number_tested = lambda issues_qs : 1.0*sum([ ii for ii in  [i[0] for i in issues_qs.filter(status__icontains='tested').values_list('story_points')] if ii])
+        number_total = lambda issues_qs : 1.0*sum([ ii for ii in  [i[0] for i in issues_qs.values_list('story_points')] if ii])
+
+        def get_css_class_for_level(level):
+            if level < settings.TRAFFIC_LEVEL_YELLOW:
+                return 'traffic_green'
+            elif level < settings.TRAFFIC_LEVEL_RED:
+                return "traffic_yellow"
+            else:
+                return "traffic_red"
+
+        for entry in entries:
+            ctc += entry.atrate
+            billed += entry.atbillablerate
+        stats['percentage_spent'] = 100 * float(billed)/float(self.budget) if self.budget > 0 else 100.0
+        stats['budget_traffic_class'] = get_css_class_for_level(stats['percentage_spent'])
+        stats['difference'] = self.budget - billed
+        stats['invoiced'] = self.has_invoices
+        stats['paid'] = self.has_invoices and self.all_invoices_paid
+        stats['total_issue_points'] = number_total(self.issues)
+        stats['percent_done'] = 100 * number_dev_done(self.issues)/stats['total_issue_points'] if stats['total_issue_points'] > 0 else 0.0
+        stats['percent_tested'] = 100* number_tested(self.issues)/stats['total_issue_points'] if stats['total_issue_points'] > 0 else 0.0
+        stats['percent_done_traffic_class'] = get_css_class_for_level(stats['percent_done'])
+        stats['percent_tested_traffic_class'] = get_css_class_for_level(stats['percent_tested'])
+        self._stats = stats
+        return stats
 
     @property
     def total_hours(self):
