@@ -14,12 +14,10 @@ class Command(BaseCommand):
     custom_business_names = ['impact-spii', 'unionswiss', 'impact']
 
     def handle(self, *args, **kwargs):
-        #self._handle('redmine_impact', 'impact-spii')
-        #self._handle('redmine_projects', 'impact-spii')
-        #self._handle('redmine_unionswiss', 'unionswiss')
-        #self._handle('redmine_hfm', 'impact')
-        self._handle('redmine_hfm', None)
-
+        self._handle('redmine_impact', 'impact')
+        self._handle('redmine_projects', 'impact-spii')
+        self._handle('redmine_unionswiss', 'unionswiss')
+        self._handle('redmine_hfm', 'koen')
 
     def _handle(self, redmine_db_name, given_business_name=None):
 
