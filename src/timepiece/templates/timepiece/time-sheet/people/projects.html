@@ -23,21 +23,28 @@
  
 {% block content %}
 
-    {% for business in businesses %}
-     {% if business.id %}
-     <div  id="b_card_{{business.id}}">        
-     </div>
-     {% endif %}
+    {% for business in current_businesses %}
+      <div  id="b_card_{{business.id}}"></div>
+    {% endfor %}
 
-     {% endfor %}  
+    <div style="clear:both"></div>
+    {% if old_businesses %}
+      <hr/>
+      {% for business in old_businesses %}
+        <div  id="b_card_{{business.id}}"></div>
+      {% endfor %}
+    {% else %}
+        <a href="{% url 'view_older_summary' request.user.pk %}">Show older projects</a>
+    {% endif %}
 
-     <script>
-    {% for business in businesses %}
-     {% if business.id %}
-       $("#b_card_{{business.id}}").load("{% url 'get_project_card'  business_id=business.id  %}")
-     {% endif %}
+    <script>
+    {% for business in current_businesses %}
+      $("#b_card_{{business.id}}").load("{% url 'get_project_card'  business_id=business.id  %}")
+    {% endfor %}  
 
-     {% endfor %}  
+    {% for business in old_businesses %}
+      $("#b_card_{{business.id}}").load("{% url 'get_project_card'  business_id=business.id  %}")
+    {% endfor %}  
        
      </script>
 

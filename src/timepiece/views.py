@@ -573,15 +573,26 @@ class ProjectTimesheetCSV(CSVMixin, ProjectTimesheet):
 
 
 @login_required
-def view_summary(request,user_id):
+def view_summary(request,user_id, include_older_businesses=False):
     all_businesses = timepiece.Business.businesses_in_desc_order_of_use()
     bus_info = []
+
+    current_businesses = []
+    old_businesses = []
+
+    current_old_threshold = timezone.now() - relativedelta(months=3)
     for business in all_businesses:
-        
-        if business:
-            bus_info.append({'id': business.id, 'name': business.name })
-        
-    context = { 'businesses':bus_info }
+        bus_info = {'id': business.id, 'name': business.name }
+        if business.end_time > current_old_threshold:
+            current_businesses.append(bus_info)
+        else:
+            old_businesses.append(bus_info)
+
+    if not include_older_businesses:
+        old_businesses = None
+
+    context = { 'current_businesses':current_businesses,
+                'old_businesses':old_businesses }
     return render_to_response('timepiece/time-sheet/people/projects.html',
                               context, context_instance=RequestContext(request))
 

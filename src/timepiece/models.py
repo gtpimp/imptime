@@ -74,9 +74,9 @@ class Business(models.Model):
 
     @classmethod
     def businesses_in_desc_order_of_use(self):
-        return [ Business.objects.get(pk=4) ]
+        #return [ Business.objects.get(pk=4) ]
 
-        entries = Entry.objects.filter().order_by('-date_updated').values('project__business__id')
+        entries = Entry.objects.filter().order_by('-end_time').values('project__business__id')
         p = SortedDict()
         for entry in entries:
             if entry['project__business__id'] not in p:
@@ -86,6 +86,13 @@ class Business(models.Model):
     def __unicode__(self):
         return self.name
 
+    @property
+    def end_time(self):
+        entries = Entry.objects.filter(project__business=self).order_by("-end_time")
+        if len(entries)>0:
+            return entries[0].end_time
+        else:
+            return None
 
 class ProjectQuerySet(QuerySet):
     def filter_by_logged_in_user(self, user):
