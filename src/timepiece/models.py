@@ -74,8 +74,6 @@ class Business(models.Model):
 
     @classmethod
     def businesses_in_desc_order_of_use(self):
-        #return [ Business.objects.get(pk=4) ]
-
         entries = Entry.objects.filter().order_by('-end_time').values('project__business__id')
         p = SortedDict()
         for entry in entries:

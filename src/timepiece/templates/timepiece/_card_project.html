@@ -3,7 +3,9 @@
      <div class="sprint_name">{{ project.name }} ({{project.id}})</div>
    </a>
    <a href="#" class="secret_link" onclick="window.open('{% url project_issues project.id %}')">
-     {{ project.issues.count }} issues
+     <div {% if project.issues %}style="color:red"{% endif %}>
+       {{ project.issues.count }} issues
+     </div>
    </a> 
    <br/>
    Last modified {% if project.stats.end_time %} {{ project.stats.end_time|timesince }} ago {% endif %}

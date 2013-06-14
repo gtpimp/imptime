@@ -9,19 +9,37 @@ class Command(BaseCommand):
     args = "No options"
     help = "Import all redmine issues into the timesheet system"
 
+    # Business which have their own redmine installation
+    custom_business_names = ['impact-spii', 'unionswiss', 'impact']
+
     def handle(self, *args, **kwargs):
         #self._handle('redmine_impact', 'impact-spii')
         #self._handle('redmine_projects', 'impact-spii')
         #self._handle('redmine_unionswiss', 'unionswiss')
-        self._handle('redmine_hfm', 'unionswiss')
+        #self._handle('redmine_hfm', 'unionswiss')
+        self._handle('redmine_hfm', None)
 
 
-    def _handle(self, redmine_db_name, business_name):
-        try:
-            business = models.Business.objects.get(name=business_name)
-        except models.Business.DoesNotExist:
-            raise Exception("No business with name : %s" % business_name)
-        models.Issue.objects.filter(project__business=business).delete()
+    def _handle(self, redmine_db_name, business_name=None):
+
+        print("making connection to %s" % settings.DATABASES[redmine_db_name])
+        redmine_issues_qs = redmine_models.RedmineIssue.objects.using(redmine_db_name).all()
+        redmine_issues = list(redmine_issues_qs)
+        print("%d issues fetches" % len(redmine_issues))
+
+        if business_name is not None:
+            try:
+                business = models.Business.objects.get(name=business_name)
+            except models.Business.DoesNotExist:
+                raise Exception("No business with name : %s" % business_name)
+            models.Issue.objects.filter(project__business=business).delete()
+        else:
+            qs = models.Issue.objects
+            for custom_business_name in self.custom_business_names:
+                qs = qs.exclude(project__business__name=custom_business_name)
+            qs.delete()
+            business = None
+
         point_person = User.objects.get_or_create(username='us')[0]
 
         try:
@@ -35,20 +53,23 @@ class Command(BaseCommand):
             project_type = models.Attribute.objects.create(type='project-type', label='default', billable=True, enable_timetracking=True)
 
         num_created = 0
-        print("making connection to %s" % settings.DATABASES[redmine_db_name])
-        redmine_issues = list(redmine_models.RedmineIssue.objects.using(redmine_db_name).all())
-        print("%d issues fetches" % len(redmine_issues))
         created_list = []
         for redmine_issue in redmine_issues:
             project_code = ""
             try:
-                project_name = "%s - %s" % (redmine_issue.project.name, redmine_issue.fixed_version.name if (redmine_issue.fixed_version_id>0 and redmine_issue.fixed_version is not None) else '')
-                project_code = models.Project.get_code_from_name(project_name)
+                project_name = redmine_issue.fixed_version.name if (redmine_issue.fixed_version_id>0 and redmine_issue.fixed_version is not None) else ''
             except Exception:
                 raise Exception("Invalid issue configuration for %d: version_id=%s" % (redmine_issue.id, redmine_issue.fixed_version_id))
+            if business is None:
+                business = models.Business.objects.get_or_create(name=redmine_issue.project.name)[0]
+            else:
+                # Projects like this have sub-projects, so add them to the sprint name
+                project_name = "%s - %s" % (redmine_issue.project.name, project_name)
+
+            project_code = models.Project.get_code_from_name(project_name)
             try:
                 project = models.Project.objects.get(business=business,
-                                                     code= project_code)
+                                                     code=project_code)
             except models.Project.DoesNotExist:
                 print("Creating project for : %s" % project_name)
                 project = models.Project(business=business, name=project_name)

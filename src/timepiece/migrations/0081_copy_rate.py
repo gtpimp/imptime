@@ -17,7 +17,13 @@ class Migration(DataMigration):
                 user.save()
                 
         for user in current_users:
-            latest_rate_for_user = orm['timepiece.Entry'].objects.filter(user=user).order_by('-date_updated')[0].project.rate.filter(user=user)[0]
+            entries = orm['timepiece.Entry'].objects.filter(user=user).order_by('-date_updated')
+            if len(entries)==0:
+                continue
+            previous_rates = entries[0].project.rate.filter(user=user)
+            if len(previous_rates)==0:
+                continue
+            latest_rate_for_user = previous_rates[0]
             cur_user_profile = orm['timepiece.UserProfile'].objects.get(user=user)
             cur_user_profile.amount = latest_rate_for_user.amount
             cur_user_profile.billable_amount = latest_rate_for_user.billable_amount
