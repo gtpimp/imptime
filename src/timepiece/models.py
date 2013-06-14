@@ -240,8 +240,11 @@ class Project(models.Model):
             ctc += entry.atrate
             billed += entry.atbillablerate
         stats['percentage_spent'] = 100 * float(billed)/float(self.budget) if self.budget > 0 else 100.0
+        if stats['percentage_spent']>100:
+            stats['percentage_spent']=100
         stats['budget_traffic_class'] = get_css_class_for_level(stats['percentage_spent'])
-        stats['difference'] = self.budget - billed
+        stats['amount_under_budget'] = self.budget - billed
+        stats['amount_over_budget'] = billed-self.budget
         stats['invoiced'] = self.has_invoices
         stats['paid'] = self.has_invoices and self.all_invoices_paid
         stats['total_issue_points'] = number_total(self.issues)

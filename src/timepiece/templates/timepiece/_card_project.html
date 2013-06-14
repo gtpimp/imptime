@@ -34,7 +34,11 @@
 {% if project.has_budget %}
 <div class="traffic_bar">
   <div style="width:{{project.stats.percentage_spent}}%" class="{{project.stats.budget_traffic_class}}">
-         R{{project.stats.difference|floatformat:"0"}}&nbsp;left
+    {% if project.stats.amount_under_budget > 0 %}
+         R{{project.stats.amount_under_budget|floatformat:"0"}}&nbsp;left
+    {% else %}
+         R{{project.stats.amount_over_budget|floatformat:"0"}}&nbsp;over
+    {% endif %}
   </div>
 </div>
 {% else %}
