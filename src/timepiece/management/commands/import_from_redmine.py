@@ -24,7 +24,7 @@ class Command(BaseCommand):
         missing_projects = set()
         missing_businesses = set()
 
-        print("making connection to %s" % settings.DATABASES[redmine_db_name])
+        print("making connection to %s" % settings.DATABASES[redmine_db_name]['NAME'])
         redmine_issues_qs = redmine_models.RedmineIssue.objects.using(redmine_db_name).all()
         redmine_issues = list(redmine_issues_qs)
         print("%d issues fetched" % len(redmine_issues))
