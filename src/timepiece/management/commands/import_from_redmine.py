@@ -13,7 +13,7 @@ class Command(BaseCommand):
         #self._handle('redmine_impact', 'impact-spii')
         #self._handle('redmine_projects', 'impact-spii')
         #self._handle('redmine_unionswiss', 'unionswiss')
-        self._handle('redmine_hfm', 'unionswiss')
+        self._handle('redmine_hfm', 'koen')
 
 
     def _handle(self, redmine_db_name, business_name):
