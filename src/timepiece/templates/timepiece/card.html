@@ -2,11 +2,27 @@
 
   <h1>{{ business.name }}</h1>
   <div id="project_id_{{project.id}}">
-         Sprint name:   {{ project.name }} ({{project.id}})
+         <a href="#" class="secret_link" onclick="window.open('{%url project_detail project.business.id%}')">
+           Sprint name:   {{ project.name }} ({{project.id}})
+         </a>
+         <br/>
+         <a href="#" class="secret_link" onclick="window.open('{% url project_issues cur_project.id %}')">
+           {{ cur_project.issues.count }} issues
+         </a> 
+
     <br/>
-         Budget: R{{project.budget|floatformat:"0"}}          
+         <a href="#" class="secret_link" onclick="window.open('{%url edit_project project.id%}')">
+           Budget: R{{project.budget|floatformat:"0"}}          
+         </a>
     <br/>
-	 Invoiced: <input disabled type="checkbox" id="check_project_id_{{project.id}}" {% if invoiced %} checked {% endif %} >
+         {% if perms.timepiece.view_invoice %}
+           <a href="#" class="secret_link" onclick="window.open('{% url invoice_list %}?project_id={{project.id}}')">
+         {% endif %}
+	     Invoiced: <input disabled type="checkbox" id="check_project_id_{{project.id}}" {% if invoiced %} checked {% endif %} >
+             Paid: <input disabled type="checkbox" {% if paid %} checked {% endif %} >
+         {% if perms.timepiece.view_invoice %}
+           </a>
+         {% endif %}
     <br/>
     
   </div>         
@@ -20,7 +36,7 @@
   {% if project.has_budget %}
   <div class="traffic_bar">
     <div style="width:{{percentage_spent}}%" class="{{budget_traffic_class}}">
-           R{{difference|floatformat:"0"}} left
+           R{{difference|floatformat:"0"}}&nbsp;left
     </div>
   </div>
   {% else %}
@@ -29,19 +45,16 @@
 
   <div class="traffic_bar">
     <div style="width:{{ dev_done}}%;" class={{percent_done_traffic_class}}"></div>
-    {{dev_done}}% dev
+    {{dev_done}}% points dev_done
   </div>
   <div style="clear:left;" class="traffic_bar">
     <div style="width:{{tested}}%;" class="{{percent_tested_traffic_class}}"></div>
-    {{tested}}% tested
+    {{tested}}% points tested
   </div>
 
   <div class="nav">
       <a href="{% url project_detail business.id %}">view</a>         
       <a href="#" onclick="$('#b_card_{{business.id}}').load('{% url get_project_card_indexed  business_id=business.id index=project_entries.previous_page_number %}'); return false;">previous</a>
       <a href="#" onclick="$('#b_card_{{business.id}}').load('{% url get_project_card_indexed  business_id=business.id index=project_entries.next_page_number %}'); return false;">next</a>
-      {% if cur_project %}
-      <a href="{% url project_issues cur_project.id %}">{{ cur_project.issues.count }} issues </a> 
-      {% endif %}
   </div>
 </div>

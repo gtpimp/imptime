@@ -74,7 +74,7 @@ class Business(models.Model):
 
     @classmethod
     def businesses_in_desc_order_of_use(self):
-        return [ Business.objects.get(pk=4) ]
+        #return [ Business.objects.get(pk=4) ]
 
         entries = Entry.objects.filter().order_by('-date_updated').values('project__business__id')
         p = SortedDict()
@@ -136,6 +136,17 @@ class Project(models.Model):
     @property
     def has_budget(self):
         return self.budget>0
+
+    @property
+    def all_invoices_paid(self):
+        for invoice in Invoice.objects.filter(project=self):
+            if not invoice.paid:
+                return False
+        return True
+
+    @property
+    def has_invoices(self):
+        return Invoice.objects.filter(project=self).count()>0
     
     @classmethod
     def get_code_from_name(cls, name):

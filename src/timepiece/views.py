@@ -639,7 +639,8 @@ def get_project_card(request,business_id,index=0):
         percentage_spent = 100 * float(billed)/float(budget) if budget > 0 else 100.0
         budget_traffic_class = get_css_class_for_level(percentage_spent)
         difference = budget - billed
-        invoiced = True if entries.exclude(status='invoiced').count() > 0 else False     
+        invoiced = project.has_invoices
+        paid = project.has_invoices and project.all_invoices_paid
         total_issue_points = number_total(project.issues)
         percent_done = 100 * number_dev_done(project.issues)/total_issue_points if total_issue_points > 0 else 0.0
         percent_tested = 100* number_tested(project.issues)/total_issue_points if total_issue_points > 0  else 0.0
@@ -657,6 +658,7 @@ def get_project_card(request,business_id,index=0):
                 'ctc':ctc, 
                 'billed':billed,
                 'invoiced':invoiced, 
+                'paid':paid,
                 'percentage_spent':percentage_spent,
                 'budget_traffic_class':budget_traffic_class,
                 'difference':difference }
@@ -2822,19 +2824,30 @@ def invoice_list(request, template='timepiece/invoice/index.html', context=None)
         query = query | Q(date_sent__isnull=True)
 
     queryset = timepiece.Invoice.objects.filter(query)
-    project = request.GET.get('project_id')
-    if project:
-        queryset = queryset.filter(project__id=project)
+    project_id = request.GET.get('project_id')
+    if project_id:
+        queryset = queryset.filter(project__id=project_id)
+        context['project'] = timepiece.Project.objects.get(pk=project_id)
 
     invoice_formset = timepiece_forms.invoice_formset(request.POST or None,
                                                       queryset = queryset.order_by("date_sent"))
     if invoice_formset.is_valid():
-        invoice_formset.save()
+        if project_id:
+            for model in invoice_formset.save(commit=False):
+                model.project = context['project']
+                model.save()
+            invoice_formset.save_m2m()
+        else:
+            invoice_formset.save()
+
+        return HttpResponseRedirect(reverse('invoice_list')+"?project_id=%s"%project_id)
 
     context['invoice_formset'] = invoice_formset
     context['total'] = queryset.aggregate(total=Sum('amount'))['total']
-
+    context['project_id'] = project_id
+    
     return render_to_response(template, context, context_instance=RequestContext(request))
+
 
 @csrf_exempt
 @permission_required('timepiece.change_project')

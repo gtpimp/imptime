@@ -9363,6 +9363,8 @@ table.project_list  {
     -moz-box-shadow:    3px 3px 5px 6px #ccc;
     -webkit-box-shadow: 3px 3px 5px 6px #ccc;
     box-shadow:         3px 3px 5px 6px #ccc;
+    margin:15px;
+    min-width:230px;
 }
 
 .project_card h1{
@@ -9389,4 +9391,13 @@ table.project_list  {
 
 .project_card .nav {
     clear:left;
+}
+
+.project_card .secret_link {
+    color: black;
+}
+
+.project_card .secret_link:hover {
+    color: blue;
+    text-decoration: none;
 }
