@@ -15,9 +15,9 @@ class Command(BaseCommand):
 
     def handle(self, *args, **kwargs):
         self._handle('redmine_impact', 'impact')
-        self._handle('redmine_projects', 'impact-spii')
         self._handle('redmine_unionswiss', 'unionswiss')
         self._handle('redmine_hfm', 'koen')
+        self._handle('redmine_projects', None)
 
     def _handle(self, redmine_db_name, given_business_name=None):
 
