@@ -619,7 +619,7 @@ def get_project_card(request,business_id,index=None):
         business = None   
     
     projects = timepiece.Project.projects_in_desc_order_of_use(int(business_id))
-    projects = projects.filter_by_logged_in_user(request.user)
+    projects = [p for p in projects if (request.user.is_superuser or request.user in p.users.all())]
     #projects = timepiece.Project.objects.filter(pk=955)
     project = projects[0] if len(projects)>0 else None
     if project:
