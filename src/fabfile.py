@@ -16,8 +16,8 @@ imp_remote_media_dir = imp_remote_code_dir + "/media"
 
 usage = """
 
-To deploy staging on implicitdesign.co.za
------------------------------------------
+To deploy live to implicitdesign.co.za
+--------------------------------------
 
   > fab host_imp deploy_prod
 
