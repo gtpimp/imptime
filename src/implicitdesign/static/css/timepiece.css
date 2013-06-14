@@ -9374,16 +9374,21 @@ table.project_list  {
 
 .project_card .traffic_bar {
     clear:left;
-    background-color:white;
+    background-color:#cccccc;
     border:1px solid #ababab;
     float:left;
     width:100%;
+    color:#ffffff;
 }
 .project_card .traffic_green {
     background-color:green;
 }
 .project_card  .traffic_yellow {
     background-color:yellow;
+}
+
+.project_card  .traffic_neutral {
+    background-color:#aaaaff;
 }
 .project_card .traffic_red {
     background-color:red;

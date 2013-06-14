@@ -74,7 +74,7 @@ class Business(models.Model):
 
     @classmethod
     def businesses_in_desc_order_of_use(self):
-        #return [ Business.objects.get(pk=4) ]
+        return [ Business.objects.get(pk=4) ]
 
         entries = Entry.objects.filter().order_by('-date_updated').values('project__business__id')
         p = SortedDict()
@@ -221,13 +221,13 @@ class Project(models.Model):
         number_tested = lambda issues_qs : 1.0*sum([ ii for ii in  [i[0] for i in issues_qs.filter(status__icontains='tested').values_list('story_points')] if ii])
         number_total = lambda issues_qs : 1.0*sum([ ii for ii in  [i[0] for i in issues_qs.values_list('story_points')] if ii])
 
-        def get_css_class_for_level(level):
+        def get_css_class_for_level(level, reverse_colours=False):
             if level < settings.TRAFFIC_LEVEL_YELLOW:
-                return 'traffic_green'
+                return 'traffic_green'  if not reverse_colours else "traffic_red"
             elif level < settings.TRAFFIC_LEVEL_RED:
                 return "traffic_yellow"
             else:
-                return "traffic_red"
+                return "traffic_red" if not reverse_colours else "traffic_green"
 
         for entry in entries:
             ctc += entry.atrate
@@ -238,10 +238,12 @@ class Project(models.Model):
         stats['invoiced'] = self.has_invoices
         stats['paid'] = self.has_invoices and self.all_invoices_paid
         stats['total_issue_points'] = number_total(self.issues)
-        stats['percent_done'] = 100 * number_dev_done(self.issues)/stats['total_issue_points'] if stats['total_issue_points'] > 0 else 0.0
-        stats['percent_tested'] = 100* number_tested(self.issues)/stats['total_issue_points'] if stats['total_issue_points'] > 0 else 0.0
-        stats['percent_done_traffic_class'] = get_css_class_for_level(stats['percent_done'])
-        stats['percent_tested_traffic_class'] = get_css_class_for_level(stats['percent_tested'])
+        stats['percent_tested'] = 100* (number_tested(self.issues)/stats['total_issue_points'] if stats['total_issue_points'] > 0 else 1)
+        stats['percent_dev_done'] = stats['percent_tested'] + 100 * (number_dev_done(self.issues)/stats['total_issue_points'] if stats['total_issue_points'] > 0 else 0)
+        stats['percent_dev_done_traffic_class'] = get_css_class_for_level(stats['percent_dev_done'], reverse_colours=True)
+        stats['percent_tested_traffic_class'] = get_css_class_for_level(stats['percent_tested'], reverse_colours=True)
+        stats['ctc'] = ctc
+        stats['billed'] = billed
         self._stats = stats
         return stats
 
@@ -1477,4 +1479,3 @@ class Issue(models.Model):
     subject = models.TextField()
     description = models.TextField(blank=True)
     story_points = models.FloatField(null=True,blank=True)
-    

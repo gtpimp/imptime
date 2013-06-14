@@ -32,20 +32,22 @@
 {% if project.has_budget %}
 <div class="traffic_bar">
   <div style="width:{{project.stats.percentage_spent}}%" class="{{project.stats.budget_traffic_class}}">
-         R{{difference|floatformat:"0"}}&nbsp;left
+         R{{project.stats.difference|floatformat:"0"}}&nbsp;left
   </div>
 </div>
 {% else %}
 <div style="color:red">No budget given</div>
 {% endif %}
 
-<div class="traffic_bar">
-  <div style="width:{{project.stats.dev_done}}%;" class={{project.stats.percent_done_traffic_class}}"></div>
-  {{project.stats.dev_done}}% points dev_done
+<div style="clear:left;" class="traffic_bar">
+  <div style="width:{{project.stats.percent_dev_done}}%;" class="{{project.stats.percent_dev_done_traffic_class}}">
+    {{project.stats.percent_dev_done}}%&nbsp;points&nbsp;dev_done
+  </div>
 </div>
 <div style="clear:left;" class="traffic_bar">
-  <div style="width:{{project.stats.tested}}%;" class="{{project.stats.percent_tested_traffic_class}}"></div>
-  {{project.stats.tested}}% points tested
+  <div style="width:{{project.stats.percent_tested}}%;" class="{{project.stats.percent_tested_traffic_class}}">
+    {{project.stats.percent_tested}}%&nbsp;points&nbsp;tested
+  </div>
 </div>
 
 <div style="clear:both"></div>
