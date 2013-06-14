@@ -595,7 +595,7 @@ def get_project_card(request,business_id,index=None):
         num_per_page = 1
     else:
         page_start = int(index)
-        num_per_page = 4
+        num_per_page = 8
 
     try:
         business = timepiece.Business.objects.get(id = business_id)

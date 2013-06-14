@@ -17,10 +17,10 @@
     <div class="toggle_section">
       <div class="toggle_content" {% if not expand_older %}style="display:none"{% endif %}>
         {% if older_projects.has_previous %}
-          <a href="#" onclick="imp.project_card_thinking(this);$('#b_card_{{business.id}}').load('{% url get_project_card_indexed business_id=business.id index=older_projects.previous_page_number %}'); return false;">previous</a>
+          <a href="#" onclick="imp.project_card_thinking(this);$('#b_card_{{business.id}}').load('{% url get_project_card_indexed business_id=business.id index=older_projects.previous_page_number %}'); return false;">newer</a>
         {% endif %}
         {% if older_projects.has_next %}
-          <a href="#" onclick="imp.project_card_thinking(this);$('#b_card_{{business.id}}').load('{% url get_project_card_indexed business_id=business.id index=older_projects.next_page_number %}'); return false;">next</a>
+          <a href="#" onclick="imp.project_card_thinking(this);$('#b_card_{{business.id}}').load('{% url get_project_card_indexed business_id=business.id index=older_projects.next_page_number %}'); return false;">older</a>
         {% endif %}
         Showing {{older_projects.start_index}} to {{older_projects.end_index}}
         <div style="clear:both"></div>

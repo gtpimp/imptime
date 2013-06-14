@@ -191,7 +191,7 @@ class Project(models.Model):
 
     @classmethod
     def projects_in_desc_order_of_use(self, business_id):
-        entries = Entry.objects.filter(project__business_id=business_id).order_by('-date_updated').values('project_id')
+        entries = Entry.objects.filter(project__business_id=business_id).order_by('-end_time').values('project_id')
         p = SortedDict()
         for entry in entries:
             if entry['project_id'] not in p:
@@ -244,8 +244,17 @@ class Project(models.Model):
         stats['percent_tested_traffic_class'] = get_css_class_for_level(stats['percent_tested'], reverse_colours=True)
         stats['ctc'] = ctc
         stats['billed'] = billed
+        stats['end_time'] = self.end_time
         self._stats = stats
         return stats
+
+    @property
+    def end_time(self):
+        entries = Entry.objects.filter(project=self).order_by("-end_time")
+        if len(entries)>0:
+            return entries[0].end_time
+        else:
+            return None
 
     @property
     def total_hours(self):
