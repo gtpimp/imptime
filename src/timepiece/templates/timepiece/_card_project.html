@@ -1,10 +1,14 @@
 {% load humanize %}
+{% load url from future %}
 
 <div id="project_id_{{project.id}}">
-   <a href="#" class="secret_link" onclick="window.open('{%url project_detail project.business.id%}')">
+   <a href="#" class="secret_link" onclick="window.open('{%url 'project_detail' project.business.id%}')">
      <div class="sprint_name">{{ project.name }} ({{project.id}})</div>
    </a>
-   <a href="#" class="secret_link" onclick="window.open('{% url project_issues project.id %}')">
+   
+   <a href="#" onclick="imp.project_card_thinking(this); $('#b_card_{{project.business.id}}').load('{% url 'get_project_card'  business_id=project.business.id  %}');return false;">refresh</a>
+   
+   <a href="#" class="secret_link" onclick="window.open('{% url 'project_issues' project.id %}')">
      <div {% if project.issues %}style="color:red"{% endif %}>
        {{ project.issues.count }} issues
      </div>
@@ -13,12 +17,12 @@
    Last modified {% if project.stats.end_time %} {{ project.stats.end_time|timesince }} ago {% endif %}
 
   <br/>
-       <a href="#" class="secret_link" onclick="window.open('{%url edit_project project.id%}')">
+       <a href="#" class="secret_link" onclick="window.open('{%url 'edit_project' project.id%}')">
          Budget: R{{project.budget|floatformat:"0"|intcomma}}          
        </a>
   <br/>
        {% if perms.timepiece.view_invoice %}
-         <a href="#" class="secret_link" onclick="window.open('{% url invoice_list %}?project_id={{project.id}}')">
+         <a href="#" class="secret_link" onclick="window.open('{% url 'invoice_list' %}?project_id={{project.id}}')">
        {% endif %}
            Invoiced: <input disabled type="checkbox" id="check_project_id_{{project.id}}" {% if project.stats.invoiced %} checked {% endif %} >
            Paid: <input disabled type="checkbox" {% if project.stats.paid %} checked {% endif %} >
@@ -30,9 +34,11 @@
 </div>         
 
 <p>
-   CTC R{{ project.stats.ctc|floatformat:"0"|intcomma }}
-   /
-   Billed R{{ project.stats.billed|floatformat:"0"|intcomma }}
+  <a href="#" class="secret_link" onclick="imp.popup_page('{% url 'view_project_rates' project.id %}'); return false;">
+     CTC R{{ project.stats.ctc|floatformat:"0"|intcomma }}
+     /
+     Billed R{{ project.stats.billed|floatformat:"0"|intcomma }}
+  </a>
 </p>
 
 {% if project.has_budget %}
@@ -50,13 +56,13 @@
 {% endif %}
 
 <div style="clear:left;" class="traffic_bar">
-  <div style="width:{{project.stats.percent_dev_done}}%;" class="{{project.stats.percent_dev_done_traffic_class}}">
-    {{project.stats.percent_dev_done}}%&nbsp;points&nbsp;dev_done
+  <div style="width:{{project.stats.percent_dev_done|floatformat:"0"}}%;" class="{{project.stats.percent_dev_done_traffic_class}}">
+    {{project.stats.percent_dev_done|floatformat:"0"}}%&nbsp;points&nbsp;dev_done
   </div>
 </div>
 <div style="clear:left;" class="traffic_bar">
-  <div style="width:{{project.stats.percent_tested}}%;" class="{{project.stats.percent_tested_traffic_class}}">
-    {{project.stats.percent_tested}}%&nbsp;points&nbsp;tested
+  <div style="width:{{project.stats.percent_tested|floatformat:"0"}}%;" class="{{project.stats.percent_tested_traffic_class}}">
+    {{project.stats.percent_tested|floatformat:"0"}}%&nbsp;points&nbsp;tested
   </div>
 </div>
 

@@ -232,9 +232,10 @@ class Project(models.Model):
         ctc = 0
         billed = 0
 
-        number_dev_done = lambda issues_qs : 1.0*sum([ ii for ii in  [i[0] for i in issues_qs.filter(status__icontains='dev done').values_list('story_points')] if ii])
-        number_tested = lambda issues_qs : 1.0*sum([ ii for ii in  [i[0] for i in issues_qs.filter(status__icontains='tested').values_list('story_points')] if ii])
-        number_total = lambda issues_qs : 1.0*sum([ ii for ii in  [i[0] for i in issues_qs.values_list('story_points')] if ii])
+        # The 'or 1' clause is so that if the project has no estimates, the ratios still have some meaning.
+        number_dev_done = lambda issues_qs : 1.0*sum([ (ii or 1) for ii in  [i[0] for i in issues_qs.filter(Q(status__icontains='dev done')|Q(status__icontains="cannot reproduce")).values_list('story_points')]])
+        number_tested = lambda issues_qs : 1.0*sum([ (ii or 1) for ii in  [i[0] for i in issues_qs.filter(status__icontains='tested').values_list('story_points')]])
+        number_total = lambda issues_qs : 1.0*sum([ (ii or 1) for ii in  [i[0] for i in issues_qs.values_list('story_points')]])
 
         def get_css_class_for_level(level, reverse_colours=False):
             if level < settings.TRAFFIC_LEVEL_YELLOW:

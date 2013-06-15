@@ -1,9 +1,6 @@
-<script>
-  var imp = imp || {};
-  imp.project_card_thinking = function(el) {
-    $(el).parents(".project_card").find(".loading").show();
-  }
-</script>
+{% load url from future %}
+
+<script src="{{STATIC_URL}}timepiece/js/card.js"></script>
 
 <div class="project_card">
 
@@ -21,10 +18,10 @@
     <div class="toggle_section">
       <div class="toggle_content" {% if not expand_older %}style="display:none"{% endif %}>
         {% if older_projects.has_previous %}
-          <a href="#" onclick="imp.project_card_thinking(this);$('#b_card_{{business.id}}').load('{% url get_project_card_indexed business_id=business.id index=older_projects.previous_page_number %}'); return false;">newer</a>
+          <a href="#" onclick="imp.project_card_thinking(this);$('#b_card_{{business.id}}').load('{% url 'get_project_card_indexed' business_id=business.id index=older_projects.previous_page_number %}'); return false;">newer</a>
         {% endif %}
         {% if older_projects.has_next %}
-          <a href="#" onclick="imp.project_card_thinking(this);$('#b_card_{{business.id}}').load('{% url get_project_card_indexed business_id=business.id index=older_projects.next_page_number %}'); return false;">older</a>
+          <a href="#" onclick="imp.project_card_thinking(this);$('#b_card_{{business.id}}').load('{% url 'get_project_card_indexed' business_id=business.id index=older_projects.next_page_number %}'); return false;">older</a>
         {% endif %}
         Showing {{older_projects.start_index}} to {{older_projects.end_index}}
         <div style="clear:both"></div>
@@ -39,8 +36,15 @@
     </div>
   {% else %}
     <div class="secret_link">
-      <a href="#" onclick="imp.project_card_thinking(this);$('#b_card_{{business.id}}').load('{% url get_project_card_indexed business_id=business.id index=1 %}'); return false;">older sprints</a>
+      <a href="#" onclick="imp.project_card_thinking(this);$('#b_card_{{business.id}}').load('{% url 'get_project_card_indexed' business_id=business.id index=1 %}'); return false;">older sprints</a>
     </div>
   {% endif %}
 
 </div>
+
+<div style="display:none">
+  <div class="project_card_dialog_container">
+    <div class="dialog_content"></div>
+  </div>
+</div>
+

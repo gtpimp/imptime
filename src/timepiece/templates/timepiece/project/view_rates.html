@@ -1,0 +1,68 @@
+
+<div class="rate_info">
+  <h1>{{project.name}}</h1>
+
+  <table>
+
+    <thead>
+      <tr>
+        <th>username</th>
+        <th>hours</th>
+        <th>ctc</th>
+        <th>billed</th>
+        <th>profit</th>
+        <th>ctc rate</th>
+        <th>billed rate</th>
+      </tr>
+    </thead>
+
+    <tbody>
+      {% for user_name,rate_info in users_and_hours.users.items %}
+      <tr>
+        <td>{{user_name}}</td>
+        <td>{{rate_info.hours}}</td>
+        <td>R{{rate_info.revenue}}</td>
+        <td>R{{rate_info.billed}}</td>
+        <td>R{{rate_info.profit}}</td>
+        <td>
+          <div class="rate_info_amount_{{user_name}}">R{{rate_info.rate.amount}}</div>
+        </td>
+        <td>
+          <div class="rate_info_billable_amount_{{user_name}}">R{{rate_info.rate.billable_amount}}</div>
+        </td>
+      </tr>
+      {% endfor %}
+
+      <tr>
+        <th></th>
+        <th>{{users_and_hours.totals.hours}}</th>
+        <th>R{{users_and_hours.totals.revenue}}</th>
+        <th>R{{users_and_hours.totals.billed}}</th>
+        <th>R{{users_and_hours.totals.profit}}</th>
+      </tr>
+
+    </tbody>
+
+  </table>
+
+  <a href="#" class="secret_link" onclick="$(this).parents('.project_card_dialog_container').find('.dialog_content').load('{{recalculate_url}}');">
+      recalculate
+  </a>
+
+</div>
+
+<script>
+
+  var imp = imp || {};
+  imp.make_editable_rate = function(clazz, user_name, field_name) {
+    var el = $(".rate_info");
+    el.find("."+clazz).editInPlace({url: "{% url edit_project_rate project.id %}",
+                                params: "field_name="+field_name+"&user_name="+user_name});
+  }
+
+  {% for user_name,rate_info in users_and_hours.users.items %}
+    imp.make_editable_rate("rate_info_amount_{{user_name}}","{{user_name}}","amount");
+    imp.make_editable_rate("rate_info_billable_amount_{{user_name}}","{{user_name}}","billable_amount");
+  {% endfor %}
+
+</script>

@@ -286,6 +286,9 @@ urlpatterns = patterns('',
         name='project_hours_detail_view',
     ),
 
+    url(r'^view_project_rates/(?P<project_id>\d+)$', views.view_project_rates, name='view_project_rates'),
+    url(r'^ajax/edit_project_rate/(?P<project_id>\d+)$', views.edit_project_rate, name='edit_project_rate'),
+
     url(
         r'^ajax/set_project_rate$',
         views.set_project_rate,

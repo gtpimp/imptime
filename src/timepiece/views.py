@@ -592,8 +592,8 @@ def view_summary(request,user_id, include_older_businesses=False):
         old_businesses = None
 
     # ##
-    #current_businesses = [timepiece.Business.objects.get(pk=4)]
-    #old_businesses = None
+    current_businesses = [timepiece.Business.objects.get(pk=29)]
+    old_businesses = None
     # ##
 
     context = { 'current_businesses':current_businesses,
@@ -620,7 +620,9 @@ def get_project_card(request,business_id,index=None):
     
     projects = timepiece.Project.projects_in_desc_order_of_use(int(business_id))
     projects = [p for p in projects if (request.user.is_superuser or request.user in p.users.all())]
-    #projects = timepiece.Project.objects.filter(pk=955)
+    # ##
+    projects = timepiece.Project.objects.filter(pk=1099)
+    # ##
     project = projects[0] if len(projects)>0 else None
     if project:
         projects = projects[1:]
@@ -2891,4 +2893,33 @@ def project_issues(request, pk, template="timepiece/project/issues.html", contex
     context['issues'] = timepiece.Issue.objects.filter(project=context['project']).order_by("id")
     return render_to_response(template, context, context_instance=RequestContext(request))
 
+def view_project_rates(request, project_id, template="timepiece/project/view_rates.html", context=None):
+    context = context or {}
+    project = timepiece.Project.objects.filter(pk=project_id).filter_by_logged_in_user(request.user)[0]
+    context['project'] = project
+    context['users_and_hours'] = project.users_and_hours()
+    context['recalculate_url'] = reverse(view_project_rates, args=[project_id])
+    return render_to_response(template, context, context_instance=RequestContext(request))
+
+@csrf_exempt
+@permission_required('timepiece.change_project')
+def edit_project_rate(request, project_id):
+    project = timepiece.Project.objects.filter(pk=project_id).filter_by_logged_in_user(request.user)[0]
+    user_name = request.POST['user_name']
+    new_value = request.POST['update_value']
+    field_name = request.POST['field_name']
+    rate = timepiece.Rate.objects.get_or_create(project=project,user__username=user_name)[0]
     
+    ret_val = None
+    if field_name == 'amount':
+        rate.amount = float(new_value)
+        rate.save()
+        ret_val = "R%s" % rate.amount
+    elif field_name == "billable_amount":
+        rate.billable_amount = float(new_value)
+        rate.save()
+        ret_val = "R%s" % rate.billable_amount
+    else:
+        ret_val = "Unsupported field"
+        
+    return HttpResponse(ret_val)

@@ -10,6 +10,7 @@
         <script src="{{STATIC_URL}}js/jquery-ui.min.js"></script>
         <script src="{{ STATIC_URL }}timepiece/js/widgets.js"></script>
         <script src="{{ STATIC_URL }}bootstrap/js/bootstrap-dropdown.js"></script>
+        <script src="{{STATIC_URL}}js/jquery.editinplace.js"></script>
         {% if perms.timepiece.view_business %}
             {{ quick_search_form.media.js }}
             <script type="text/javascript" src="{{ STATIC_URL }}js/jquery.quicksearch.js"></script>
