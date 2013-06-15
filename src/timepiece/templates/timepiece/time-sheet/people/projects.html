@@ -24,28 +24,40 @@
 {% block content %}
 
     {% for business in current_businesses %}
-      <div  id="b_card_{{business.id}}"></div>
+      <div  id="b_card_{{business.id}}">
+        <img class="loading" src="{{STATIC_URL}}/images/icons/loadingAnimation.gif"/>
+      </div>
     {% endfor %}
 
     <div style="clear:both"></div>
     {% if old_businesses %}
       <hr/>
       {% for business in old_businesses %}
-        <div  id="b_card_{{business.id}}"></div>
+        <div  id="b_card_{{business.id}}">
+          <img class="loading" src="{{STATIC_URL}}/images/icons/loadingAnimation.gif"/>
+        </div>
       {% endfor %}
     {% else %}
         <a href="{% url 'view_older_summary' request.user.pk %}">Show older projects</a>
     {% endif %}
 
     <script>
+    setTimeout(function() {
     {% for business in current_businesses %}
-      $("#b_card_{{business.id}}").load("{% url 'get_project_card'  business_id=business.id  %}")
-    {% endfor %}  
+          $("#b_card_{{business.id}}").load("{% url 'get_project_card'  business_id=business.id  %}")
+        {% endfor %}  
 
-    {% for business in old_businesses %}
-      $("#b_card_{{business.id}}").load("{% url 'get_project_card'  business_id=business.id  %}")
-    {% endfor %}  
-       
+        {% for business in old_businesses %}
+          $("#b_card_{{business.id}}").load("{% url 'get_project_card'  business_id=business.id  %}")
+        {% endfor %}  
+    }, 100);
      </script>
+
+    <div style="display:none">
+      <div class="project_card_dialog_container">
+        <div class="dialog_content"></div>
+      </div>
+    </div>
+
 
 {% endblock %}

@@ -9440,8 +9440,10 @@ table.project_list  {
 
 .project_card_dialog_container {
     font-size:10px;
-    width:50%;
     text-align: right;
+}
+
+.project_card_dialog_container .dialog_content {
 }
 
 .project_card_dialog_container h1 {
