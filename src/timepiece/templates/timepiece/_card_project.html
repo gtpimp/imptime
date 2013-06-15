@@ -38,7 +38,7 @@
     <a href="#" class="secret_link" onclick="imp.popup_page('{% url 'view_project_rates' project.id %}'); return false;">
        CTC R{{ project.stats.ctc|floatformat:"0"|intcomma }}
        /
-       Billed R{{ project.stats.billed|floatformat:"0"|intcomma }}
+       Billable R{{ project.stats.billed|floatformat:"0"|intcomma }}
     </a>
   {% endif %}
 </p>
