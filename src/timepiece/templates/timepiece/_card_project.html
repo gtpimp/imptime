@@ -9,7 +9,7 @@
    <a href="#" onclick="imp.project_card_thinking(this); $('#b_card_{{project.business.id}}').load('{% url 'get_project_card'  business_id=project.business.id  %}');return false;">refresh</a>
    
    <a href="#" class="secret_link" onclick="window.open('{% url 'project_issues' project.id %}')">
-     <div {% if project.issues %}style="color:red"{% endif %}>
+     <div {% ifequal 0 project.issues|length %}style="color:red"{% endifequal %}>
        {{ project.issues.count }} issues
      </div>
    </a> 
@@ -17,16 +17,16 @@
    Last modified {% if project.stats.end_time %} {{ project.stats.end_time|timesince }} ago {% endif %}
 
   <br/>
-       <a href="#" class="secret_link" onclick="window.open('{%url 'edit_project' project.id%}')">
-         Budget: R{{project.budget|floatformat:"0"|intcomma}}          
-       </a>
-  <br/>
-       {% if perms.timepiece.view_invoice %}
-         <a href="#" class="secret_link" onclick="window.open('{% url 'invoice_list' %}?project_id={{project.id}}')">
+       {% if perms.timepiece.change_project %}
+         <a href="#" class="secret_link" onclick="window.open('{%url 'edit_project' project.id%}')">
+           Budget: R{{project.budget|floatformat:"0"|intcomma}}          
+         </a>
        {% endif %}
+  <br/>
+       {% if perms.timepiece.invoices %}
+         <a href="#" class="secret_link" onclick="window.open('{% url 'invoice_list' %}?project_id={{project.id}}')">
            Invoiced: <input disabled type="checkbox" id="check_project_id_{{project.id}}" {% if project.stats.invoiced %} checked {% endif %} >
            Paid: <input disabled type="checkbox" {% if project.stats.paid %} checked {% endif %} >
-       {% if perms.timepiece.view_invoice %}
          </a>
        {% endif %}
   <br/>
@@ -34,25 +34,29 @@
 </div>         
 
 <p>
-  <a href="#" class="secret_link" onclick="imp.popup_page('{% url 'view_project_rates' project.id %}'); return false;">
-     CTC R{{ project.stats.ctc|floatformat:"0"|intcomma }}
-     /
-     Billed R{{ project.stats.billed|floatformat:"0"|intcomma }}
-  </a>
+  {% if perms.timepiece.change_project %}
+    <a href="#" class="secret_link" onclick="imp.popup_page('{% url 'view_project_rates' project.id %}'); return false;">
+       CTC R{{ project.stats.ctc|floatformat:"0"|intcomma }}
+       /
+       Billed R{{ project.stats.billed|floatformat:"0"|intcomma }}
+    </a>
+  {% endif %}
 </p>
 
-{% if project.has_budget %}
-<div class="traffic_bar">
-  <div style="width:{{project.stats.percentage_spent}}%" class="{{project.stats.budget_traffic_class}}">
-    {% if project.stats.amount_under_budget > 0 %}
-         R{{project.stats.amount_under_budget|floatformat:"0"|intcomma}}&nbsp;left
-    {% else %}
-         R{{project.stats.amount_over_budget|floatformat:"0"|intcomma}}&nbsp;over
-    {% endif %}
+{% if perms.timepiece.change_project %}
+  {% if project.has_budget %}
+  <div class="traffic_bar">
+    <div style="width:{{project.stats.percentage_spent}}%" class="{{project.stats.budget_traffic_class}}">
+      {% if project.stats.amount_under_budget > 0 %}
+           R{{project.stats.amount_under_budget|floatformat:"0"|intcomma}}&nbsp;left
+      {% else %}
+           R{{project.stats.amount_over_budget|floatformat:"0"|intcomma}}&nbsp;over
+      {% endif %}
+    </div>
   </div>
-</div>
-{% else %}
-<div style="color:red">No budget</div>
+  {% else %}
+  <div style="color:red">No budget</div>
+  {% endif %}
 {% endif %}
 
 <div style="clear:left;" class="traffic_bar">

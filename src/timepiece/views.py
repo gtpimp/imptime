@@ -592,8 +592,8 @@ def view_summary(request,user_id, include_older_businesses=False):
         old_businesses = None
 
     # ##
-    current_businesses = [timepiece.Business.objects.get(pk=29)]
-    old_businesses = None
+    #current_businesses = [timepiece.Business.objects.get(pk=29)]
+    #old_businesses = None
     # ##
 
     context = { 'current_businesses':current_businesses,
@@ -621,7 +621,7 @@ def get_project_card(request,business_id,index=None):
     projects = timepiece.Project.projects_in_desc_order_of_use(int(business_id))
     projects = [p for p in projects if (request.user.is_superuser or request.user in p.users.all())]
     # ##
-    projects = timepiece.Project.objects.filter(pk=1099)
+    #projects = timepiece.Project.objects.filter(pk=1099)
     # ##
     project = projects[0] if len(projects)>0 else None
     if project:
