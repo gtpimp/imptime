@@ -10,6 +10,9 @@ class Command(BaseCommand):
     help = "Associate a redmine business name with timepiece business name. If timepiece_business_name does not exist and force=True then it will be created."
     
     def handle(self, redmine_business_name, timepiece_business_name, force=False, **kwargs):
+
+        if force == 'True':
+            force = True
         
         try:
             models.Business.objects.get(name=timepiece_business_name)
