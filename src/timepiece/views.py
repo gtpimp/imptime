@@ -583,7 +583,8 @@ def view_summary(request,user_id, include_older_businesses=False):
     current_old_threshold = timezone.now() - relativedelta(months=3)
     for business in all_businesses:
         bus_info = {'id': business.id, 'name': business.name }
-        if business.end_time > current_old_threshold:
+        end_time = business.end_time
+        if end_time is not None and end_time > current_old_threshold:
             current_businesses.append(bus_info)
         else:
             old_businesses.append(bus_info)

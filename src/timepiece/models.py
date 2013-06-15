@@ -79,6 +79,8 @@ class Business(models.Model):
         for entry in entries:
             if entry['project__business__id'] not in p:
                 p[entry['project__business__id']] = Business.objects.get(pk=entry['project__business__id'])
+        for b in Business.objects.exclude(pk__in=p.keys()):
+            p[b.id] = b
         return p.values()
 
     def __unicode__(self):
