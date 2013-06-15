@@ -755,7 +755,7 @@ class UserProfileForm(forms.ModelForm):
 
     class Meta:
         model = timepiece.UserProfile
-        exclude = ('user',)
+        exclude = ('user','amount','billable_amount')
 
 
 class ProjectSearchForm(forms.Form):
@@ -960,3 +960,11 @@ class InvoiceForm(forms.Form):
     paid = forms.BooleanField()
 
 invoice_formset = modelformset_factory(timepiece.Invoice, can_delete=True, extra=2)
+
+class RateForm(forms.ModelForm):
+    class Meta:
+        model = UserProfile
+        fields = ('billable_amount', 'amount')
+        
+
+rate_formset = modelformset_factory(timepiece.UserProfile, form=RateForm, can_delete=False, extra=0)

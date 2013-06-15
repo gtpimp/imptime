@@ -2923,3 +2923,43 @@ def edit_project_rate(request, project_id):
         ret_val = "Unsupported field"
         
     return HttpResponse(ret_val)
+
+@login_required
+def edit_default_user_rates(request, template="timepiece/person/edit_default_user_rates.html", context=None):
+    if not request.user.is_superuser:
+        return HttpResponse("")
+    context = context or {}
+    context['users'] = User.objects.all()
+    formset = timepiece_forms.rate_formset(request.POST or None, queryset = timepiece.UserProfile.objects.all().order_by("user__username"))
+    if formset.is_valid():
+        formset.save()
+        _update_all_project_users()
+        _update_all_project_rates()
+        return HttpResponseRedirect(reverse('edit_default_user_rates'))
+    context['formset'] = formset
+    return render_to_response(template, context, context_instance=RequestContext(request))
+
+def _update_all_project_rates():
+    """ set all missing projects rates with the user's default
+    rate. Note projects that already have rates are not updated."""
+    for profile in timepiece.UserProfile.objects.all():
+        for project in timepiece.Project.objects.filter(users=profile.user):
+            try:
+                rate = timepiece.Rate.objects.get(project=project,user=profile.user)
+                if rate.amount == 0 and rate.billable_amount == 0:
+                    rate.amount = profile.amount
+                    rate.billable_amount = profile.billable_amount
+                    rate.save()
+            except:
+                rate = timepiece.Rate(project=project,user=profile.user)
+                rate.amount = profile.amount
+                rate.billable_amount = profile.billable_amount
+                rate.save()
+
+def _update_all_project_users():
+    """Make sure all users with entries against a project do belong to
+    that project (can be missing for emacs users)"""
+    for profile in timepiece.UserProfile.objects.all():
+        for project in timepiece.Project.objects.exclude(users=profile.user):
+            if timepiece.Entry.objects.filter(user=profile.user,project=project).count()>0:
+                timepiece.ProjectRelationship.objects.get_or_create(user=profile.user, project=project)

@@ -171,6 +171,7 @@
                             <ul class="dropdown-menu">
                                 {% if user.is_staff %}
                                     <li><a href="{% url 'admin:index' %}">Admin</a></li>
+                                    <li><a href="{% url 'edit_default_user_rates' %}">Edit default rates</a></li>
                                 {% endif %}
                                 <li><a href="{% url 'edit_settings' %}">Settings</a></li>
                                 <li><a href="{% url 'change_password' %}">Change Password</a></li>

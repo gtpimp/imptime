@@ -1378,10 +1378,9 @@ class PersonSchedule(models.Model):
 
 class UserProfile(models.Model):
     user = models.OneToOneField(User, unique=True, related_name='profile')
-    #default_rate = models.ForeignKey("timepiece.Rate", null=True, blank=True)
     amount = models.DecimalField(max_digits=8, decimal_places=2, default=0)
     billable_amount = models.DecimalField(max_digits=8, decimal_places=2, default=0)
-    project_names_to_ignore = models.TextField(blank=True) # projects not sprints (Business)
+    project_names_to_ignore = models.TextField(blank=True)
 
     def __unicode__(self):
         return unicode(self.user)

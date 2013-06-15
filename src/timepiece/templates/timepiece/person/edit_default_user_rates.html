@@ -1,0 +1,30 @@
+{% extends "timepiece/person/base.html" %}
+{% load url from future %}
+{% load bootstrap_toolkit %}
+
+{% block title %}Default rates{% endblock %}
+
+{% block content %}
+
+  <form method="POST" action="{% url 'edit_default_user_rates' %}">
+    {% csrf_token %}
+    {{ formset.management_form }}
+    <input type="submit" value="save"/>
+    <div class="row-fluid">
+        <div class="span12">
+          <table>
+
+            {% for form in formset  %}
+            <tr>
+              <td>{{form.instance}}</td>
+              <td><table>{{form.as_table}}</table></td>
+            </tr>
+            <tr><td colspan="5"><hr/></td></tr>
+            {% endfor %}
+
+          </table>
+        </div>
+    </div>
+    <input type="submit" value="save"/>
+  </form>
+{% endblock %}
