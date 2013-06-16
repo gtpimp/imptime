@@ -9458,21 +9458,26 @@ table.project_list  {
 }
 
 .issues .issues_list {
-    width:45%;
+    height:600px;
     overflow:auto;
+}
+
+.issues .issues_list{
+    width:45%;
     float:left;
 }
 
-.issues .issues_list .dev_done td {
-    background-color:yellow;
+.issues .issues_list table .dev_done td {
+    background-color:#cccccc;
 }
 
-.issues .issues_list .tested {
-    background-color:gray;
+.issues .issues_list table .tested {
+    background-color:#cccccc;
+    text-decoration: line-through;
 }
 
-.issues .issues_list .open {
-    background-color:white;
+.issues .issues_list table .open {
+    background-color:#eeeeee;
 }
 
 .issues .issue_detail {

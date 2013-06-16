@@ -37,45 +37,47 @@
         {% if issues %}
 
         <div class="issues">
-          <table class="issues_list">
+          <div class="issues_list">
+            <table>
 
-            <thead>
-              <th>#</th>
-              <th>Status</th>
-              <th>Points</th>
-              <th>Subject</th>
-            </thead>
+              <thead>
+                <th>#</th>
+                <th>Status</th>
+                <th>Points</th>
+                <th>Subject</th>
+              </thead>
 
-            <tbody>
+              <tbody>
 
-              {% for issue in issues %}
+                {% for issue in issues %}
 
-              <tr class="{{issue.css_class}}">
-                <td>
-                  <div class="secret_link" onclick="imp.show_issue_detail('{% url 'issue_detail' issue.id %}');">
-                    {{issue.number}}
-                  </div>
-                </td>
-                <td>
-                  <div class="secret_link" onclick="imp.show_issue_detail('{% url 'issue_detail' issue.id %}');">
-                    {{issue.status}}
-                  </div>
-                </td>
-                <td>
-                  <div class="secret_link" onclick="imp.show_issue_detail('{% url 'issue_detail' issue.id %}');">
-                    {{issue.story_points|default_if_none:"-"}}
-                  </div>
-                </td>
-                <td>
-                  <div class="secret_link" onclick="imp.show_issue_detail('{% url 'issue_detail' issue.id %}');">
-                    {{issue.subject}}
-                  </div>
-                </td>
-              </tr>
+                <tr class="{{issue.css_class}}">
+                  <td>
+                    <div class="secret_link" onclick="imp.show_issue_detail('{% url 'issue_detail' issue.id %}');">
+                      {{issue.number}}
+                    </div>
+                  </td>
+                  <td>
+                    <div class="secret_link" onclick="imp.show_issue_detail('{% url 'issue_detail' issue.id %}');">
+                      {{issue.status}}
+                    </div>
+                  </td>
+                  <td>
+                    <div class="secret_link" onclick="imp.show_issue_detail('{% url 'issue_detail' issue.id %}');">
+                      {{issue.story_points|default_if_none:"-"}}
+                    </div>
+                  </td>
+                  <td>
+                    <div class="secret_link" onclick="imp.show_issue_detail('{% url 'issue_detail' issue.id %}');">
+                      {{issue.subject}}
+                    </div>
+                  </td>
+                </tr>
 
-              {% endfor %}
-            </tbody>
-          </table>
+                {% endfor %}
+              </tbody>
+            </table>
+          </div>
 
           <div class="issue_pane">
             <div class="issue_detail">
