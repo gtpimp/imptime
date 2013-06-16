@@ -1546,6 +1546,14 @@ class Issue(models.Model):
         self._entries = entries
         return entries
 
+    @classmethod
+    def get_unassigned_timesheet_entries(self, project):
+        entries = []
+        for entry in project.entries.all():
+            if entry.try_get_issue_id() is None:
+                entries.append(entry)
+        return entries
+
 class RedmineToTimepieceBusinessMapping(models.Model):
     redmine_business_name = models.CharField(max_length=255)
     timepiece_business_name = models.CharField(max_length=255)

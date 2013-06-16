@@ -2899,6 +2899,14 @@ def issue_detail(request, issue_id, template="timepiece/project/issue_detail.htm
     context['issue'] = timepiece.Issue.objects.get(pk=issue_id)
     return render_to_response(template, context, context_instance=RequestContext(request))
 
+def unassigned_timesheet_entries(request, project_id, template="timepiece/project/issue_detail.html", context=None):
+    context = context or {}
+    project = timepiece.Project.objects.get(pk=project_id)
+    context['issue'] = {'id':'na',
+                        'description':'unassigned timesheet entries',
+                        'related_entries':timepiece.Issue.get_unassigned_timesheet_entries(project=project)}
+    return render_to_response(template, context, context_instance=RequestContext(request))
+
 def view_project_rates(request, project_id, template="timepiece/project/view_rates.html", context=None):
     context = context or {}
     project = timepiece.Project.objects.filter(pk=project_id).filter_by_logged_in_user(request.user)[0]

@@ -75,6 +75,22 @@
                 </tr>
 
                 {% endfor %}
+
+                <tr>
+                  
+                    <td>
+                      <div class="secret_link" onclick="imp.show_issue_detail('{% url 'unassigned_timesheet_entries' project.id %}');">
+                        na
+                      </div>
+                    </td>
+                    <td></td>
+                    <td></td>
+                    <td>
+                      <div class="secret_link" onclick="imp.show_issue_detail('{% url 'unassigned_timesheet_entries' project.id %}');">
+                        unassigned timesheet entries
+                      </div>
+                    </td>
+                  </div>
               </tbody>
             </table>
           </div>

@@ -192,6 +192,9 @@ urlpatterns = patterns('',
         r'^time-sheet/issue_detail/(?P<issue_id>\d+)/$', views.issue_detail, name='issue_detail',
     ),
     url(
+        r'^time-sheet/unassigned_timesheet_entries/(?P<project_id>\d+)/$', views.unassigned_timesheet_entries, name='unassigned_timesheet_entries',
+    ),
+    url(
         r'^time-sheet/project/(?P<pk>\d+)/csv/$',
         views.ProjectTimesheetCSV.as_view(),
         name='export_project_time_sheet',
