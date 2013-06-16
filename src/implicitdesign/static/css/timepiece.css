@@ -9514,3 +9514,7 @@ table.project_list  {
     border-left: 1px solid #dfdfdf;
     border-bottom: 1px solid #dfdfdf;
 }
+
+.issues .issue_detail .extended_comments {
+    font-family: "Courier New", Courier, monospace;
+}

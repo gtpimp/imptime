@@ -14,9 +14,10 @@
   {% endif %}
 
   {% if older_projects %}
-    <div class="toggle_title secret_link" onclick="$(this).parent().find('.toggle_content').toggle();">toggle older sprints</div>
+    <div class="toggle_title secret_link" onclick="$(this).parent().find('.toggle_content').toggle();">toggle all sprints</div>
     <div class="toggle_section">
       <div class="toggle_content" {% if not expand_older %}style="display:none"{% endif %}>
+        <h1>{{ business.name }} ({{business.id}})</h1>
         {% if older_projects.has_previous %}
           <a href="#" onclick="imp.project_card_thinking(this);$('#b_card_{{business.id}}').load('{% url 'get_project_card_indexed' business_id=business.id index=older_projects.previous_page_number %}'); return false;">newer</a>
         {% endif %}
@@ -36,7 +37,7 @@
     </div>
   {% else %}
     <div class="secret_link">
-      <a href="#" onclick="imp.project_card_thinking(this);$('#b_card_{{business.id}}').load('{% url 'get_project_card_indexed' business_id=business.id index=1 %}'); return false;">older sprints</a>
+      <a href="#" onclick="imp.project_card_thinking(this);$('#b_card_{{business.id}}').load('{% url 'get_project_card_indexed' business_id=business.id index=1 %}'); return false;">show all sprints</a>
     </div>
   {% endif %}
 

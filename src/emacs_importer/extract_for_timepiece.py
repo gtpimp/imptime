@@ -108,12 +108,12 @@ class Extractor(object):
 
         for clock in orgnode.getClocks():
             
-            entry = Entry.objects.create(user=timesheet_user, 
-                                         start_time=clock['from'], end_time=clock['to'],
-                                         activity=activity,
-                                         location=location,
-                                         project=project,
-                                         status='approved',
-                                         comments=orgnode.Heading())
+            Entry.objects.create(user=timesheet_user, 
+                                 start_time=clock['from'], end_time=clock['to'],
+                                 activity=activity,
+                                 location=location,
+                                 project=project,
+                                 status='approved',
+                                 comments=orgnode.Heading(),
+                                 extended_comments=orgnode.CleanBody())
             self.status['num_entries_created'] += 1
-            #logger.debug("Created new entry: %s %s %s %s : %s" % (business, project, clock['from'], clock['to'], entry))

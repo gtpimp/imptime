@@ -20,3 +20,18 @@ imp.popup_page = function(url) {
 						  
 };
 
+imp.popup_text = function(text) {
+
+    if (imp.popup_dialog) {
+	$(".project_card_dialog_container").find(".dialog_content")[0].innerHTML=text;
+    } else {
+	$(".project_card_dialog_container").dialog( { width: 600,
+						      height: 400,
+						      open: function(event, ui) {
+							  $(".project_card_dialog_container").find(".dialog_content")[0].innerHTML=text;
+						      }
+						    });
+    }
+						  
+};
+

@@ -625,8 +625,8 @@ def get_project_card(request,business_id,index=None):
     #projects = timepiece.Project.objects.filter(pk=1099)
     # ##
     project = projects[0] if len(projects)>0 else None
-    if project:
-        projects = projects[1:]
+    #if project:
+    #    projects = projects[1:]
     if index is not None:
         older_projects = Paginator(projects, num_per_page).page(page_start)
     else:

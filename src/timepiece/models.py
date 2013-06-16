@@ -634,6 +634,7 @@ class Entry(models.Model):
     seconds_paused = models.PositiveIntegerField(default=0)
     pause_time = models.DateTimeField(blank=True, null=True)
     comments = models.TextField(blank=True)
+    extended_comments = models.TextField(blank=True)
     date_updated = models.DateTimeField(auto_now=True)
 
     hours = models.DecimalField(max_digits=8, decimal_places=2, default=0)

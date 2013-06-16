@@ -18,7 +18,18 @@
           <td>{{entry.user}}</td>
           <td>{{entry.start_time|date:'Y-m-d (D)'}}</td>
           <td>{{entry.hours}}</td>
-          <td>{{entry.comments}}</td>
+          <td>
+            {% ifequal 0 entry.extended_comments|length %}
+              {{entry.comments}}
+            {% else %}
+              <div class="secret_link" onclick="$(this).parent().find('.extended_comments').toggle()">
+                {{entry.comments}}
+              </div>
+              <div class="extended_comments" style="display:none">
+                {{entry.extended_comments|linebreaks}}
+              </div>
+            {% endifequal %}
+          </td>
         </tr>
         {% endfor %}
       </tbody>

@@ -58,6 +58,7 @@ def makelist(filename):
    level         = []
    heading       = ""
    bodytext      = ""
+   cleanbodytext = ""
    tag1          = ""      # The first tag enclosed in ::
    alltags       = []      # list of all tags in headline
    sched_date    = ''
@@ -71,7 +72,7 @@ def makelist(filename):
        hdng = re.search('^(\*+)\s(.*?)\s*$', line)
        if hdng:
           if heading:  # we are processing a heading line
-             thisNode = Orgnode(level, heading, bodytext, tag1, alltags, clocks)
+             thisNode = Orgnode(level, heading, bodytext, cleanbodytext, tag1, alltags, clocks)
              if sched_date:
                 thisNode.setScheduled(sched_date)
                 sched_date = ""
@@ -101,28 +102,35 @@ def makelist(filename):
               kwlist = re.findall('([A-Z]+)\(', line)
               for kw in kwlist: todos[kw] = ""
 
+           unclean_body_line = False
            if line[:1] != '#':
-               bodytext = bodytext + line
+              bodytext = bodytext + line
+           else:
+              unclean_body_line = True
 
            if re.search(':PROPERTIES:', line): continue
            if re.search(':END:', line): continue
            prop_srch = re.search('^\s*:(.*?):\s*(.*?)\s*$', line)
            if prop_srch:
+              unclean_body_line = True
               propdict[prop_srch.group(1)] = prop_srch.group(2)
               continue
            sd_re = re.search('SCHEDULED:\s+<([0-9]+)\-([0-9]+)\-([0-9]+)', line)
            if sd_re:
+              unclean_body_line = True
               sched_date = datetime.date(int(sd_re.group(1)),
                                          int(sd_re.group(2)),
                                          int(sd_re.group(3)) )
            dd_re = re.search('DEADLINE:\s*<(\d+)\-(\d+)\-(\d+)', line)
            if dd_re:
+              unclean_body_line = True
               deadline_date = datetime.date(int(dd_re.group(1)),
                                             int(dd_re.group(2)),
                                             int(dd_re.group(3)) )
 
            cc_re = re.search('CLOCK:(.*)', line)
            if cc_re:
+               unclean_body_line = True
                cc_re = re.search('CLOCK:\s*\[(\d+)\-(\d+)\-(\d+).....(\d+):(\d+)\]--?\[(\d+)\-(\d+)\-(\d+).....(\d+):(\d+)\]', line)
                if cc_re:
                    try:
@@ -146,8 +154,11 @@ def makelist(filename):
                    else:
                        raise Exception("Invalid CLOCK tag: %s" % line)
 
+           if not unclean_body_line:
+              cleanbodytext += line
+
    # write out last node              
-   thisNode = Orgnode(level, heading, bodytext, tag1, alltags, clocks)
+   thisNode = Orgnode(level, heading, bodytext, cleanbodytext, tag1, alltags, clocks)
    thisNode.setProperties(propdict)   
    if sched_date:
       thisNode.setScheduled(sched_date)
@@ -177,7 +188,7 @@ class Orgnode(object):
     Orgnode class represents a headline, tags and text associated
     with the headline.
     """
-    def __init__(self, level, headline, body, tag, alltags, clocks):
+    def __init__(self, level, headline, body, cleanbody, tag, alltags, clocks):
         """
         Create an Orgnode object given the parameters of level (as the
         raw asterisks), headline text (including the TODO tag), and
@@ -187,6 +198,7 @@ class Orgnode(object):
         self.level = len(level)
         self.headline = headline
         self.body = body
+        self.cleanbody = cleanbody
         self.tag = tag            # The first tag in the list
         self.tags = dict()        # All tags in the headline
         self.todo = ""
@@ -218,6 +230,9 @@ class Orgnode(object):
         Property Drawer
         """
         return self.body
+
+    def CleanBody(self):
+       return self.cleanbody
 
     def Level(self):
         """
