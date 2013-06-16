@@ -68,12 +68,12 @@
                   </td>
                   <td class="number">
                     <div class="secret_link" onclick="imp.show_issue_detail('{% url 'unassigned_timesheet_entries' project.id %}');">
-                      R{{unassigned_timesheet_entries_ctc}}
+                      R{{unassigned_timesheet_entries_ctc|intcomma}}
                     </div>
                   </td>
                   <td class="number">
                     <div class="secret_link" onclick="imp.show_issue_detail('{% url 'unassigned_timesheet_entries' project.id %}');">
-                      R{{unassigned_timesheet_entries_billable}}
+                      R{{unassigned_timesheet_entries_billable|intcomma}}
                     </div>
                   </td>
                   <td>
