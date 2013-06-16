@@ -6,6 +6,10 @@
 
 {% block content %}
 
+<script src="{{STATIC_URL}}timepiece/js/issues.js"></script>
+
+<img style="display:none" class="loading" src="{{STATIC_URL}}/images/icons/loadingAnimation.gif"/>
+
 <div class="row-fluid">
     <div class="span12">
         <h2>{{project.business.name}} - {{ project }}</h2>
@@ -32,32 +36,53 @@
 
         {% if issues %}
 
-        <table>
+        <div class="issues">
+          <table class="issues_list">
 
-          <thead>
-	    <th>#</th>
-            <th>Status</th>
-            <th>Points</th>
-            <th>Subject</th>
-          </thead>
+            <thead>
+              <th>#</th>
+              <th>Status</th>
+              <th>Points</th>
+              <th>Subject</th>
+            </thead>
 
-          <tbody>
+            <tbody>
 
-            {% for issue in issues %}
+              {% for issue in issues %}
 
-            <tr>
-	      <td>{{issue.number}}</td>
-              <td>{{issue.status}}</td>
-              <td>{{issue.story_points|default_if_none:"-"}}</td>
-              <td>{{issue.subject}}</td>
+              <tr class="{{issue.css_class}}">
+                <td>
+                  <div class="secret_link" onclick="imp.show_issue_detail('{% url 'issue_detail' issue.id %}');">
+                    {{issue.number}}
+                  </div>
+                </td>
+                <td>
+                  <div class="secret_link" onclick="imp.show_issue_detail('{% url 'issue_detail' issue.id %}');">
+                    {{issue.status}}
+                  </div>
+                </td>
+                <td>
+                  <div class="secret_link" onclick="imp.show_issue_detail('{% url 'issue_detail' issue.id %}');">
+                    {{issue.story_points|default_if_none:"-"}}
+                  </div>
+                </td>
+                <td>
+                  <div class="secret_link" onclick="imp.show_issue_detail('{% url 'issue_detail' issue.id %}');">
+                    {{issue.subject}}
+                  </div>
+                </td>
+              </tr>
 
-            </tr>
+              {% endfor %}
+            </tbody>
+          </table>
 
-            {% endfor %}
+          <div class="issue_pane">
+            <div class="issue_detail">
+            </div>
+          </div>
 
-          </tbody>
-
-        </table>
+        </div>
 
         {% else %}
         No issues

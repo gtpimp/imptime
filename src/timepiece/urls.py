@@ -187,6 +187,10 @@ urlpatterns = patterns('',
         views.project_issues,
         name='project_issues',
     ),
+
+    url(
+        r'^time-sheet/issue_detail/(?P<issue_id>\d+)/$', views.issue_detail, name='issue_detail',
+    ),
     url(
         r'^time-sheet/project/(?P<pk>\d+)/csv/$',
         views.ProjectTimesheetCSV.as_view(),

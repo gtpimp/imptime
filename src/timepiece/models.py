@@ -1509,6 +1509,16 @@ class Issue(models.Model):
     description = models.TextField(blank=True)
     story_points = models.FloatField(null=True,blank=True)
 
+    @property
+    def css_class(self):
+        status = self.status.replace(" ","").lower()
+        if status == 'devdone':
+            return "dev_done"
+        elif status == 'tested':
+            return "tested"
+        else:
+            return "open"
+
 class RedmineToTimepieceBusinessMapping(models.Model):
     redmine_business_name = models.CharField(max_length=255)
     timepiece_business_name = models.CharField(max_length=255)

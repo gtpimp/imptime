@@ -9399,12 +9399,12 @@ table.project_list  {
     clear:left;
 }
 
-.project_card .secret_link {
+.secret_link {
     color: black;
     cursor: pointer;
 }
 
-.project_card .secret_link:hover {
+.secret_link:hover {
     color: blue;
     text-decoration: none;
 }
@@ -9457,4 +9457,41 @@ table.project_list  {
     border-bottom: 1px solid #dfdfdf;
 }
 
+.issues .issues_list {
+    width:45%;
+    overflow:auto;
+    float:left;
+}
+
+.issues .issues_list .dev_done td {
+    background-color:yellow;
+}
+
+.issues .issues_list .tested {
+    background-color:gray;
+}
+
+.issues .issues_list .open {
+    background-color:white;
+}
+
+.issues .issue_detail {
+    float:right;
+    width:45%;
+    overflow:auto;
+    -moz-box-shadow:    6px 6px 0px 0px #ccc;
+    -webkit-box-shadow: 6px 6px 0px 0px #ccc;
+    box-shadow:         6px 6px 0px 0px #ccc;
+    border:1px solid #000;
+    padding:10px;
+}
+
+.issues .issue_detail {
+    float:left;
+    width:45%;
+}
+
+.issues .issue_detail .issue_status {
+    font-style: italic;
+}
 
