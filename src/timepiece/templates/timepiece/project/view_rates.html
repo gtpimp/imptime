@@ -9,11 +9,11 @@
       <tr>
         <th>username</th>
         <th>hours</th>
+        <th>ctc rate</th>
+        <th>billed rate</th>
         <th>ctc</th>
         <th>billed</th>
         <th>profit</th>
-        <th>ctc rate</th>
-        <th>billed rate</th>
       </tr>
     </thead>
 
@@ -22,21 +22,23 @@
       <tr>
         <td>{{user_name}}</td>
         <td>{{rate_info.hours}}</td>
-        <td>R{{rate_info.revenue}}</td>
-        <td>R{{rate_info.billed}}</td>
-        <td>R{{rate_info.profit}}</td>
         <td>
           <div class="rate_info_amount_{{user_name}}">R{{rate_info.rate.amount}}</div>
         </td>
         <td>
           <div class="rate_info_billable_amount_{{user_name}}">R{{rate_info.rate.billable_amount}}</div>
         </td>
+        <td>R{{rate_info.revenue}}</td>
+        <td>R{{rate_info.billed}}</td>
+        <td>R{{rate_info.profit}}</td>
       </tr>
       {% endfor %}
 
       <tr>
         <th></th>
         <th>{{users_and_hours.totals.hours}}</th>
+        <th></th>
+        <th></th>
         <th>R{{users_and_hours.totals.revenue}}</th>
         <th>R{{users_and_hours.totals.billed}}</th>
         <th>R{{users_and_hours.totals.profit}}</th>
