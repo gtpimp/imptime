@@ -53,6 +53,13 @@ class Attribute(models.Model):
     def __unicode__(self):
         return self.label
 
+class BusinessQuerySet(QuerySet):
+    def filter_by_logged_in_user(self, user):
+        """ restricts entries to those belonging to projects the given
+        user (typically the logged in user) is assigned to """
+        if user.is_superuser:
+            return self
+        return self.filter(new_business_projects__users=user)
 
 class Business(models.Model):
     class Meta:
@@ -65,6 +72,8 @@ class Business(models.Model):
     notes = models.TextField(blank=True)
     external_id = models.CharField(max_length=32, blank=True)
 
+    objects = QuerySetManager(BusinessQuerySet)
+
     def save(self, *args, **kwargs):
         queryset = Business.objects.all()
         if not self.slug:
@@ -74,15 +83,18 @@ class Business(models.Model):
         super(Business, self).save(*args, **kwargs)
 
     @classmethod
-    def businesses_in_desc_order_of_use(self):
-        entries = Entry.objects.filter().order_by('-end_time').values('project__business__id')
-        p = SortedDict()
-        for entry in entries:
-            if entry['project__business__id'] not in p:
-                p[entry['project__business__id']] = Business.objects.get(pk=entry['project__business__id'])
-        for b in Business.objects.exclude(pk__in=p.keys()):
-            p[b.id] = b
-        return p.values()
+    def businesses_in_desc_order_of_use(self, user):
+        return Business.objects.filter_by_logged_in_user(user).annotate(models.Min("new_business_projects__entries__end_time")).order_by("-new_business_projects__entries__end_time__min")
+        # for business in businesses:
+            
+        # entries = Entry.objects.filter().annotate(models.Min("end_time")).order_by('-end_time__min') #.values('project__business__id')
+        # p = SortedDict()
+        # for entry in entries:
+        #     if entry['project__business__id'] not in p:
+        #         p[entry['project__business__id']] = Business.objects.get(pk=entry['project__business__id'])
+        # for b in Business.objects.exclude(pk__in=p.keys()):
+        #     p[b.id] = b
+        # return p.values()
 
     def __unicode__(self):
         return self.name

@@ -574,7 +574,7 @@ class ProjectTimesheetCSV(CSVMixin, ProjectTimesheet):
 
 @login_required
 def view_summary(request,user_id, include_older_businesses=False):
-    all_businesses = timepiece.Business.businesses_in_desc_order_of_use()
+    all_businesses = timepiece.Business.businesses_in_desc_order_of_use(request.user)
     bus_info = []
 
     current_businesses = []
