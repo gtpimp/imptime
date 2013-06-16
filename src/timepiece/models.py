@@ -1,4 +1,5 @@
 import datetime
+import re
 import logging
 from decimal import Decimal
 from model_managers import QuerySetManager
@@ -993,7 +994,18 @@ class Entry(models.Model):
             ('view_entry_summary', 'Can view entry summary page'),
             ('view_payroll_summary', 'Can view payroll summary page'),
         )
-
+    
+    def try_get_issue_id(self):
+        """ Make a best attempt to identify what the issue number. """
+        issue_id = None
+        for regex in [ "[iI]ssue(\d+)", "[iI]ssue *#(\d+)", "[iI]ssue (\d+)" ]:
+            match_object = re.compile(regex).search(self.comments)
+            if match_object and match_object.groups() != 0:
+                try:
+                    issue_id = int(match_object.group(1))
+                except Exception:
+                    pass
+        return issue_id
 
 class EntryGroup(models.Model):
     VALID_STATUS = ('invoiced', 'not-invoiced')
@@ -1509,6 +1521,10 @@ class Issue(models.Model):
     description = models.TextField(blank=True)
     story_points = models.FloatField(null=True,blank=True)
 
+    def __init__(self, *args, **kwargs):
+        super(Issue, self).__init__(*args, **kwargs)
+        self._entries = None
+
     @property
     def css_class(self):
         status = self.status.replace(" ","").lower()
@@ -1518,6 +1534,17 @@ class Issue(models.Model):
             return "tested"
         else:
             return "open"
+
+    @property
+    def related_entries(self):
+        if self._entries is not None:
+            return self._entries
+        entries = []
+        for entry in self.project.entries.all():
+            if entry.try_get_issue_id()==self.number:
+                entries.append(entry)
+        self._entries = entries
+        return entries
 
 class RedmineToTimepieceBusinessMapping(models.Model):
     redmine_business_name = models.CharField(max_length=255)

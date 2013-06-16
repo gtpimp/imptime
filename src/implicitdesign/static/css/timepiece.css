@@ -9495,3 +9495,8 @@ table.project_list  {
     font-style: italic;
 }
 
+.issues .issue_detail .issue_entries table td {
+    padding:10px;
+    border-left: 1px solid #dfdfdf;
+    border-bottom: 1px solid #dfdfdf;
+}

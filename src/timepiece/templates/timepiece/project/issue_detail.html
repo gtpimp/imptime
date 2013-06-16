@@ -6,3 +6,22 @@
 {{issue.description}}
 </pre>
 
+{% ifequal 0 issue.related_entries|length %}
+  No timesheet entries
+{% else %}
+  <div class="issue_entries">
+    <h2>Timesheet entries</h2>
+    <table>
+      <tbody>
+        {% for entry in issue.related_entries %}
+        <tr>
+          <td>{{entry.user}}</td>
+          <td>{{entry.start_time|date:'Y-m-d (D)'}}</td>
+          <td>{{entry.hours}}</td>
+          <td>{{entry.comments}}</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+{% endifequal %}
