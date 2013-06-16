@@ -39,6 +39,7 @@
 
         <div class="issues">
           <div class="issues_list">
+            
             <table>
 
               <thead>
@@ -55,9 +56,33 @@
 
                 <tr>
                   <td>
-                    <div class="secret_link" onclick="imp.show_issue_detail('{% url 'unassigned_timesheet_entries' project.id %}');">
-                      na
+                  </td>
+                  <td></td>
+                  <td class="number">-</td>
+                  <td class="number">
+                    <div class="secret_link" onclick="imp.show_issue_detail('{% url 'all_timesheet_entries' project.id %}');">
+                      <i>{{total_hours|floatformat:"0"|intcomma}}</i>
                     </div>
+                  </td>
+                  <td class="number">
+                    <div class="secret_link" onclick="imp.show_issue_detail('{% url 'all_timesheet_entries' project.id %}');">
+                      <i>R{{total_ctc|floatformat:"0"|intcomma}}</i>
+                    </div>
+                  </td>
+                  <td class="number">
+                    <div class="secret_link" onclick="imp.show_issue_detail('{% url 'all_timesheet_entries' project.id %}');">
+                      <i>R{{total_billable|floatformat:"0"|intcomma}}</i>
+                    </div>
+                  </td>
+                  <td>
+                    <div class="secret_link" onclick="imp.show_issue_detail('{% url 'all_timesheet_entries' project.id %}');">
+                      <i>all timesheet entries for this sprint</i>
+                    </div>
+                  </td>
+                </tr>
+
+                <tr>
+                  <td>
                   </td>
                   <td></td>
                   <td class="number">-</td>
@@ -78,10 +103,11 @@
                   </td>
                   <td>
                     <div class="secret_link" onclick="imp.show_issue_detail('{% url 'unassigned_timesheet_entries' project.id %}');">
-                      unassigned timesheet entries
+                      <i>unassigned timesheet entries for this sprint</i>
                     </div>
                   </td>
                 </tr>
+
                 {% for issue in issues %}
 
                 <tr class="{{issue.css_class}}">

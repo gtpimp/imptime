@@ -9457,12 +9457,9 @@ table.project_list  {
     border-bottom: 1px solid #dfdfdf;
 }
 
-.issues .issues_list {
+.issues .issues_list{
     height:600px;
     overflow:auto;
-}
-
-.issues .issues_list{
     width:45%;
     float:left;
 }
@@ -9492,8 +9489,10 @@ table.project_list  {
 
 .issues .issue_detail {
     float:right;
+    margin-left:10px;
     width:45%;
     overflow:auto;
+    height:600px;
     -moz-box-shadow:    6px 6px 0px 0px #ccc;
     -webkit-box-shadow: 6px 6px 0px 0px #ccc;
     box-shadow:         6px 6px 0px 0px #ccc;

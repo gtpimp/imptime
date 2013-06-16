@@ -2894,11 +2894,24 @@ def time_sheet_download(request, user_id, context=None):
 @permission_required('timepiece.change_project')
 def project_issues(request, pk, template="timepiece/project/issues.html", context=None):
     context = context or {}
-    context['project'] = timepiece.Project.objects.get(pk=pk)
+    context['project'] = timepiece.Project.objects.filter(pk=pk).filter_by_logged_in_user(request.user)[0]
     context['issues'] = timepiece.Issue.objects.filter(project=context['project']).order_by("id")
     context['unassigned_timesheet_entries_hours'] = timepiece.Issue.get_unassigned_timesheet_entries_hours(context['project'])
     context['unassigned_timesheet_entries_ctc'] = timepiece.Issue.get_unassigned_timesheet_entries_ctc(context['project'])
     context['unassigned_timesheet_entries_billable'] = timepiece.Issue.get_unassigned_timesheet_entries_billable(context['project'])
+
+    all_entries = context['project'].entries.all().order_by("start_time")
+    hours = 0
+    ctc = 0
+    billable = 0
+    for entry in all_entries:
+        hours += entry.hours
+        ctc += entry.atrate
+        billable += entry.atbillablerate
+    context['total_hours'] = hours
+    context['total_ctc'] = ctc
+    context['total_billable'] = billable
+
     return render_to_response(template, context, context_instance=RequestContext(request))
 
 @csrf_exempt
@@ -2912,10 +2925,21 @@ def issue_detail(request, issue_id, template="timepiece/project/issue_detail.htm
 @permission_required('timepiece.change_project')
 def unassigned_timesheet_entries(request, project_id, template="timepiece/project/issue_detail.html", context=None):
     context = context or {}
-    project = timepiece.Project.objects.get(pk=project_id)
+    project = timepiece.Project.objects.filter(pk=project_id).filter_by_logged_in_user(request.user)[0]
     context['issue'] = {'id':'na',
                         'description':'unassigned timesheet entries',
                         'related_entries':timepiece.Issue.get_unassigned_timesheet_entries(project=project)}
+    return render_to_response(template, context, context_instance=RequestContext(request))
+
+@csrf_exempt
+@permission_required('timepiece.change_project')
+def all_timesheet_entries(request, project_id, template="timepiece/project/issue_detail.html", context=None):
+    context = context or {}
+    project = timepiece.Project.objects.filter(pk=project_id).filter_by_logged_in_user(request.user)[0]
+    entries = project.entries.all().order_by("start_time")
+    context['issue'] = {'id':'na',
+                        'description':'all timesheet entries',
+                        'related_entries':entries}
     return render_to_response(template, context, context_instance=RequestContext(request))
 
 @csrf_exempt
@@ -2991,3 +3015,4 @@ def _update_all_project_users():
         for project in timepiece.Project.objects.exclude(users=profile.user):
             if timepiece.Entry.objects.filter(user=profile.user,project=project).count()>0:
                 timepiece.ProjectRelationship.objects.get_or_create(user=profile.user, project=project)
+
