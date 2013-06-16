@@ -9462,6 +9462,11 @@ table.project_list  {
     overflow:auto;
     width:45%;
     float:left;
+    font-size:10px;
+}
+
+.issues .issues_list .issue_subject {
+    font-size:12px;
 }
 
 .issues .issues_list td.number {
