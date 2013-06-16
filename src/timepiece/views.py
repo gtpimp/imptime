@@ -2892,6 +2892,7 @@ def project_issues(request, pk, template="timepiece/project/issues.html", contex
     context = context or {}
     context['project'] = timepiece.Project.objects.get(pk=pk)
     context['issues'] = timepiece.Issue.objects.filter(project=context['project']).order_by("id")
+    context['unassigned_timesheet_entries_hours'] = timepiece.Issue.unassigned_timesheet_entries_hours(context['project'])
     return render_to_response(template, context, context_instance=RequestContext(request))
 
 def issue_detail(request, issue_id, template="timepiece/project/issue_detail.html", context=None):

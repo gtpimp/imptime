@@ -9467,6 +9467,16 @@ table.project_list  {
     float:left;
 }
 
+.issues .issues_list td.number {
+    text-align:right;
+}
+
+.issues .issues_list table td {
+    padding:10px;
+    border-left: 1px solid #dfdfdf;
+    border-bottom: 1px solid #dfdfdf;
+}
+
 .issues .issues_list table .dev_done td {
     background-color:#cccccc;
 }

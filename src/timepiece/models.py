@@ -1546,10 +1546,24 @@ class Issue(models.Model):
         self._entries = entries
         return entries
 
+    @property
+    def hours(self):
+        total = 0
+        for entry in self.related_entries:
+            total += entry.hours
+        return total
+
+    @classmethod
+    def unassigned_timesheet_entries_hours(self, project):
+        total = 0
+        for entry in self.get_unassigned_timesheet_entries(project):
+            total += entry.hours
+        return total
+
     @classmethod
     def get_unassigned_timesheet_entries(self, project):
         entries = []
-        for entry in project.entries.all():
+        for entry in project.entries.all().order_by("start_time"):
             if entry.try_get_issue_id() is None:
                 entries.append(entry)
         return entries

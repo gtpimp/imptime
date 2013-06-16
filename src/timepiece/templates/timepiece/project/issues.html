@@ -44,11 +44,31 @@
                 <th>#</th>
                 <th>Status</th>
                 <th>Points</th>
+                <th>Hours</th>
                 <th>Subject</th>
               </thead>
 
               <tbody>
 
+                <tr>
+                  <td>
+                    <div class="secret_link" onclick="imp.show_issue_detail('{% url 'unassigned_timesheet_entries' project.id %}');">
+                      na
+                    </div>
+                  </td>
+                  <td></td>
+                  <td class="number">-</td>
+                  <td class="number">
+                    <div class="secret_link" onclick="imp.show_issue_detail('{% url 'unassigned_timesheet_entries' project.id %}');">
+                      {{unassigned_timesheet_entries_hours}}
+                    </div>
+                  </td>
+                  <td>
+                    <div class="secret_link" onclick="imp.show_issue_detail('{% url 'unassigned_timesheet_entries' project.id %}');">
+                      unassigned timesheet entries
+                    </div>
+                  </td>
+                </tr>
                 {% for issue in issues %}
 
                 <tr class="{{issue.css_class}}">
@@ -62,9 +82,14 @@
                       {{issue.status}}
                     </div>
                   </td>
-                  <td>
+                  <td class="number">
                     <div class="secret_link" onclick="imp.show_issue_detail('{% url 'issue_detail' issue.id %}');">
                       {{issue.story_points|default_if_none:"-"}}
+                    </div>
+                  </td>
+                  <td class="number">
+                    <div class="secret_link" onclick="imp.show_issue_detail('{% url 'issue_detail' issue.id %}');">
+                      {{issue.hours|default_if_none:"-"}}
                     </div>
                   </td>
                   <td>
@@ -76,21 +101,6 @@
 
                 {% endfor %}
 
-                <tr>
-                  
-                    <td>
-                      <div class="secret_link" onclick="imp.show_issue_detail('{% url 'unassigned_timesheet_entries' project.id %}');">
-                        na
-                      </div>
-                    </td>
-                    <td></td>
-                    <td></td>
-                    <td>
-                      <div class="secret_link" onclick="imp.show_issue_detail('{% url 'unassigned_timesheet_entries' project.id %}');">
-                        unassigned timesheet entries
-                      </div>
-                    </td>
-                  </div>
               </tbody>
             </table>
           </div>
