@@ -86,17 +86,17 @@
                   <td class="number">-</td>
                   <td class="number">
                     <div class="secret_link" onclick="imp.show_issue_detail('{% url 'unassigned_timesheet_entries' project.id %}');">
-                      {{unassigned_timesheet_entries_hours}}
+                      {{unassigned_timesheet_entries_hours|floatformat:"0"|intcomma}}
                     </div>
                   </td>
                   <td class="number">
                     <div class="secret_link" onclick="imp.show_issue_detail('{% url 'unassigned_timesheet_entries' project.id %}');">
-                      R{{unassigned_timesheet_entries_ctc|intcomma}}
+                      R{{unassigned_timesheet_entries_ctc|floatformat:"0"|intcomma}}
                     </div>
                   </td>
                   <td class="number">
                     <div class="secret_link" onclick="imp.show_issue_detail('{% url 'unassigned_timesheet_entries' project.id %}');">
-                      R{{unassigned_timesheet_entries_billable|intcomma}}
+                      R{{unassigned_timesheet_entries_billable|floatformat:"0"|intcomma}}
                     </div>
                   </td>
                   <td>
