@@ -1,5 +1,6 @@
 {% extends "timepiece/project/base.html" %}
 {% load url from future %}
+{% load humanize %}
 {% block title %}Project Issues{% endblock %}
 {% load bootstrap_toolkit %}
 {% load timepiece_tags %}
@@ -45,6 +46,8 @@
                 <th>Status</th>
                 <th>Points</th>
                 <th>Hours</th>
+                <th>ctc</th>
+                <th>billable</th>
                 <th>Subject</th>
               </thead>
 
@@ -61,6 +64,16 @@
                   <td class="number">
                     <div class="secret_link" onclick="imp.show_issue_detail('{% url 'unassigned_timesheet_entries' project.id %}');">
                       {{unassigned_timesheet_entries_hours}}
+                    </div>
+                  </td>
+                  <td class="number">
+                    <div class="secret_link" onclick="imp.show_issue_detail('{% url 'unassigned_timesheet_entries' project.id %}');">
+                      R{{unassigned_timesheet_entries_ctc}}
+                    </div>
+                  </td>
+                  <td class="number">
+                    <div class="secret_link" onclick="imp.show_issue_detail('{% url 'unassigned_timesheet_entries' project.id %}');">
+                      R{{unassigned_timesheet_entries_billable}}
                     </div>
                   </td>
                   <td>
@@ -90,6 +103,16 @@
                   <td class="number">
                     <div class="secret_link" onclick="imp.show_issue_detail('{% url 'issue_detail' issue.id %}');">
                       {{issue.hours|default_if_none:"-"}}
+                    </div>
+                  </td>
+                  <td class="number">
+                    <div class="secret_link" onclick="imp.show_issue_detail('{% url 'issue_detail' issue.id %}');">
+                      R{{issue.ctc|floatformat:"0"|intcomma}}
+                    </div>
+                  </td>
+                  <td class="number">
+                    <div class="secret_link" onclick="imp.show_issue_detail('{% url 'issue_detail' issue.id %}');">
+                      R{{issue.billable|floatformat:"0"|intcomma}}
                     </div>
                   </td>
                   <td>

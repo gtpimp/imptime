@@ -1553,8 +1553,22 @@ class Issue(models.Model):
             total += entry.hours
         return total
 
+    @property
+    def ctc(self):
+        cost = 0
+        for entry in self.related_entries:
+            cost += entry.atrate
+        return cost
+
+    @property
+    def billable(self):
+        cost = 0
+        for entry in self.related_entries:
+            cost += entry.atbillablerate
+        return cost
+
     @classmethod
-    def unassigned_timesheet_entries_hours(self, project):
+    def get_unassigned_timesheet_entries_hours(self, project):
         total = 0
         for entry in self.get_unassigned_timesheet_entries(project):
             total += entry.hours
@@ -1567,6 +1581,22 @@ class Issue(models.Model):
             if entry.try_get_issue_id() is None:
                 entries.append(entry)
         return entries
+
+    @classmethod
+    def get_unassigned_timesheet_entries_ctc(self, project):
+        cost = 0
+        for entry in project.entries.all().order_by("start_time"):
+            if entry.try_get_issue_id() is None:
+                cost += entry.atrate
+        return cost
+
+    @classmethod
+    def get_unassigned_timesheet_entries_billable(self, project):
+        cost = 0
+        for entry in project.entries.all().order_by("start_time"):
+            if entry.try_get_issue_id() is None:
+                cost += entry.atbillablerate
+        return cost
 
 class RedmineToTimepieceBusinessMapping(models.Model):
     redmine_business_name = models.CharField(max_length=255)

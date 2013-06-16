@@ -2868,6 +2868,8 @@ def create_invoice(request, context=None):
     invoice.save()
     return HttpResponse(json.dumps({'one': 'two'}))
 
+@csrf_exempt
+@permission_required('timepiece.change_project')
 def time_sheet_download(request, user_id, context=None):
     context = context or {}
     to_date = datetime.datetime.strptime(request.GET['to_date'], "%Y%m%d").date()
@@ -2888,18 +2890,26 @@ def time_sheet_download(request, user_id, context=None):
 
     return response
 
+@csrf_exempt
+@permission_required('timepiece.change_project')
 def project_issues(request, pk, template="timepiece/project/issues.html", context=None):
     context = context or {}
     context['project'] = timepiece.Project.objects.get(pk=pk)
     context['issues'] = timepiece.Issue.objects.filter(project=context['project']).order_by("id")
-    context['unassigned_timesheet_entries_hours'] = timepiece.Issue.unassigned_timesheet_entries_hours(context['project'])
+    context['unassigned_timesheet_entries_hours'] = timepiece.Issue.get_unassigned_timesheet_entries_hours(context['project'])
+    context['unassigned_timesheet_entries_ctc'] = timepiece.Issue.get_unassigned_timesheet_entries_ctc(context['project'])
+    context['unassigned_timesheet_entries_billable'] = timepiece.Issue.get_unassigned_timesheet_entries_billable(context['project'])
     return render_to_response(template, context, context_instance=RequestContext(request))
 
+@csrf_exempt
+@permission_required('timepiece.change_project')
 def issue_detail(request, issue_id, template="timepiece/project/issue_detail.html", context=None):
     context = context or {}
     context['issue'] = timepiece.Issue.objects.get(pk=issue_id)
     return render_to_response(template, context, context_instance=RequestContext(request))
 
+@csrf_exempt
+@permission_required('timepiece.change_project')
 def unassigned_timesheet_entries(request, project_id, template="timepiece/project/issue_detail.html", context=None):
     context = context or {}
     project = timepiece.Project.objects.get(pk=project_id)
@@ -2908,6 +2918,8 @@ def unassigned_timesheet_entries(request, project_id, template="timepiece/projec
                         'related_entries':timepiece.Issue.get_unassigned_timesheet_entries(project=project)}
     return render_to_response(template, context, context_instance=RequestContext(request))
 
+@csrf_exempt
+@permission_required('timepiece.change_project')
 def view_project_rates(request, project_id, template="timepiece/project/view_rates.html", context=None):
     context = context or {}
     project = timepiece.Project.objects.filter(pk=project_id).filter_by_logged_in_user(request.user)[0]
@@ -2940,6 +2952,7 @@ def edit_project_rate(request, project_id):
     return HttpResponse(ret_val)
 
 @login_required
+@permission_required('timepiece.change_project')
 def edit_default_user_rates(request, template="timepiece/person/edit_default_user_rates.html", context=None):
     if not request.user.is_superuser:
         return HttpResponse("")
