@@ -9524,8 +9524,18 @@ table.project_list  {
     font-family: "Courier New", Courier, monospace;
 }
 
-.income_summary table {
+.income_summary .tabular {
     float:left;
+    width:30%;
+}
+
+.income_summary .tabular_item {
+    -moz-box-shadow:    6px 6px 0px 0px #ccc;
+    -webkit-box-shadow: 6px 6px 0px 0px #ccc;
+    box-shadow:         6px 6px 0px 0px #ccc;
+    border:1px solid #000;
+    margin:10px;
+    padding:30px;
 }
 
 .income_summary table td {
@@ -9536,8 +9546,7 @@ table.project_list  {
 }
 
 .income_summary .graphs {
-    float:right;
-    width:75%;
+    float:left;
 }
 
 .income_summary .graphs h1 {

@@ -3051,4 +3051,16 @@ def income_summary(request, template="timepiece/graphs/income_summary.html", con
     context['billable_total'] = billable_total
     context['per_user'] = per_user
 
+    context['invoices_sent'] = timepiece.Invoice.objects.filter(Q(date_sent__gte=from_date)&Q(date_sent__lte=from_date))
+    invoices_sent_total = 0
+    for invoice in context['invoices_sent']:
+        invoices_sent_total += invoice.amount
+    context['invoices_sent_total'] = invoices_sent_total
+
+    context['invoices_paid'] = timepiece.Invoice.objects.filter(Q(date_sent__gte=from_date)&Q(date_sent__lte=from_date))
+    invoices_paid_total = 0
+    for invoice in context['invoices_paid']:
+        invoices_paid_total += invoice.amount
+    context['invoices_paid_total'] = invoices_paid_total
+
     return render_to_response(template, context, context_instance=RequestContext(request))

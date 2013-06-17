@@ -30,30 +30,69 @@
   </div>
 
   <div class="income_summary">
-    <table>
-      <thead>
-        <th></th>
-        <th>ctc</th>
-        <th>billable</th>
-      </thead>
-      <tbody>
 
-        {% for username, amounts in per_user.items %}
-        <tr>
-          <td>{{username}}</td>
-          <td>R{{amounts.ctc|floatformat:"0"|intcomma}}</td>
-          <td>R{{amounts.billable|floatformat:"0"|intcomma}}</td>
-        </tr>
-        {% endfor %}
+    <div class="tabular">
 
-        <tr>
-          <th>Total</th>
-          <th>R{{ctc_total|floatformat:"0"|intcomma}}</th>
-          <th>R{{billable_total|floatformat:"0"|intcomma}}</th>
-        </tr>
-        
-      </tbody>
-    </table>
+      <div class="tabular_item">
+      <h1>Income based on hours</h1>
+        <table>
+          <thead>
+            <th></th>
+            <th>ctc</th>
+            <th>billable</th>
+          </thead>
+          <tbody>
+
+            {% for username, amounts in per_user.items %}
+            <tr>
+              <td>{{username}}</td>
+              <td>R{{amounts.ctc|floatformat:"0"|intcomma}}</td>
+              <td>R{{amounts.billable|floatformat:"0"|intcomma}}</td>
+            </tr>
+            {% endfor %}
+
+            <tr>
+              <th>Total</th>
+              <th>R{{ctc_total|floatformat:"0"|intcomma}}</th>
+              <th>R{{billable_total|floatformat:"0"|intcomma}}</th>
+            </tr>
+
+          </tbody>
+        </table>
+      </div>
+      <div class="tabular_item">
+        <div style="clear:both"></div>
+        <h1>Income based on invoices sent</h1>
+        <table>
+          <thead>
+            <th>#</th>
+            <th>date</th>
+            <th>amount</th>
+            <th></th>
+          </thead>
+          <tbody>
+
+            {% for invoice in invoices_sent %}
+            <tr>
+              <td>{{invoice.invoice_number}}</td>
+              <td>{{invoice.date_sent}}</td>
+              <td>R{{invoice.amount|floatformat:"0"|intcomma}}</td>
+              <td>{{invoice.description}}</td>
+            </tr>
+            {% endfor %}
+
+            <tr>
+              <th>Total</th>
+              <th></th>
+              <th></th>
+              <th>{{invoices_sent_total}}</th>
+              <th></th>
+            </tr>
+
+          </tbody>
+        </table>
+      </div>
+    </div>
 
     <div class="graphs">
       <div class="graph">
