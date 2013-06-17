@@ -34,7 +34,7 @@
     <div class="tabular">
 
       <div class="tabular_item">
-      <h1>Income based on hours worked per user</h1>
+        <h1>Income based on hours worked per user</h1>
         <table>
           <thead>
             <th></th>
@@ -78,6 +78,37 @@
             {% for business_name, amounts in per_business.items %}
             <tr>
               <td>{{business_name}}</td>
+              <td>{{amounts.hours|floatformat:"0"|intcomma}}</td>
+              <td>R{{amounts.ctc|floatformat:"0"|intcomma}}</td>
+              <td>R{{amounts.billable|floatformat:"0"|intcomma}}</td>
+            </tr>
+            {% endfor %}
+
+            <tr>
+              <th>Total</th>
+              <th></th>
+              <th>R{{ctc_total|floatformat:"0"|intcomma}}</th>
+              <th>R{{billable_total|floatformat:"0"|intcomma}}</th>
+            </tr>
+
+          </tbody>
+        </table>
+      </div>
+
+      <div class="tabular_item">
+        <h1>Income based on hours worked per user broken down by business</h1>
+        <table>
+          <thead>
+            <th></th>
+            <th>hours</th>
+            <th>ctc</th>
+            <th>billable</th>
+          </thead>
+          <tbody>
+
+            {% for key, amounts in per_user_per_business.items %}
+            <tr>
+              <td>{{key}}</td>
               <td>{{amounts.hours|floatformat:"0"|intcomma}}</td>
               <td>R{{amounts.ctc|floatformat:"0"|intcomma}}</td>
               <td>R{{amounts.billable|floatformat:"0"|intcomma}}</td>

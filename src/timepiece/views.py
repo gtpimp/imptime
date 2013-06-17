@@ -3032,6 +3032,7 @@ def income_summary(request, template="timepiece/graphs/income_summary.html", con
     entries = _apply_date_filter(request, entries, context)
 
     per_user = {}
+    per_user_per_business = {}
     per_business = {}
     ctc_total = 0
     billable_total = 0
@@ -3049,11 +3050,18 @@ def income_summary(request, template="timepiece/graphs/income_summary.html", con
         per_business[entry.project.business.name]['ctc'] += entry.atrate
         per_business[entry.project.business.name]['billable'] += entry.atbillablerate
         per_business[entry.project.business.name]['hours'] += entry.hours
+
+        key = "%s:%s" % (entry.user.username,entry.project.business.name)
+        per_user_per_business.setdefault(key, {'ctc':0,'billable':0,'hours':0})
+        per_user_per_business[key]['ctc'] += entry.atrate
+        per_user_per_business[key]['billable'] += entry.atbillablerate
+        per_user_per_business[key]['hours'] += entry.hours
         
     context['ctc_total'] = ctc_total
     context['billable_total'] = billable_total
     context['per_user'] = per_user
     context['per_business'] = per_business
+    context['per_user_per_business'] = per_user_per_business
 
     context['invoices_sent'] = timepiece.Invoice.objects.filter(Q(date_sent__gte=from_date)&Q(date_sent__lte=to_date))
     invoices_sent_total = 0
