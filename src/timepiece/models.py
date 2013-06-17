@@ -102,7 +102,7 @@ class Business(models.Model):
     @property
     def end_time(self):
         entries = Entry.objects.filter(project__business=self).order_by("-end_time")
-        if len(entries)>0:
+        if entries.count()>0:
             return entries[0].end_time
         else:
             return None
@@ -285,7 +285,7 @@ class Project(models.Model):
     @property
     def _last_entry_end_time(self):
         entries = Entry.objects.filter(project=self).order_by("-end_time")
-        if len(entries)>0:
+        if entries.count()>0:
             return entries[0].end_time
         else:
             return None
@@ -1456,7 +1456,7 @@ class Salary(models.Model):
 
     def copy_from_previous(self):
         previous = Salary.objects.filter(user=self.user, date__lt=self.date).order_by("-date")
-        if len(previous)>0:
+        if previous.count()>0:
             previous = previous[0]
             self.amount = previous.amount if previous else None
             self.uif = previous.uif
