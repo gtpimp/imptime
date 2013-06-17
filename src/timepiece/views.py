@@ -3042,13 +3042,15 @@ def income_summary(request, template="timepiece/graphs/income_summary.html", con
         ctc_total += entry.atrate
         billable_total += entry.atbillablerate
 
-        per_user.setdefault(entry.user.username, {'ctc':0,'billable':0})
+        per_user.setdefault(entry.user.username, {'ctc':0,'billable':0, 'hours':0})
         per_user[entry.user.username]['ctc'] += entry.atrate
         per_user[entry.user.username]['billable'] += entry.atrate
+        per_user[entry.user.username]['hours'] += entry.hours
 
-        per_business.setdefault(entry.project.business.name, {'ctc':0,'billable':0})
+        per_business.setdefault(entry.project.business.name, {'ctc':0,'billable':0,'hours':0})
         per_business[entry.project.business.name]['ctc'] += entry.atrate
         per_business[entry.project.business.name]['billable'] += entry.atrate
+        per_business[entry.project.business.name]['hours'] += entry.hours
         
     context['ctc_total'] = ctc_total
     context['billable_total'] = billable_total
