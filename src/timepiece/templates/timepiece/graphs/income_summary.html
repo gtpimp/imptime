@@ -95,36 +95,38 @@
         </table>
       </div>
 
+      {% for username, businesses in per_user_per_business.items %}
       <div class="tabular_item">
-        <h1>Income based on hours worked per user broken down by business</h1>
+        <h1>{{username}}</h1> (breakdown by business)
         <table>
           <thead>
-            <th></th>
+            <th>business</th>
             <th>hours</th>
             <th>ctc</th>
             <th>billable</th>
           </thead>
           <tbody>
 
-            {% for key, amounts in per_user_per_business.items %}
+          {% for business_name, amounts in businesses.items %}
             <tr>
-              <td>{{key}}</td>
+              <td>{{business_name}}</td>
               <td>{{amounts.hours|floatformat:"0"|intcomma}}</td>
               <td>R{{amounts.ctc|floatformat:"0"|intcomma}}</td>
               <td>R{{amounts.billable|floatformat:"0"|intcomma}}</td>
             </tr>
-            {% endfor %}
+          {% endfor %}
 
-            <tr>
-              <th>Total</th>
-              <th></th>
-              <th>R{{ctc_total|floatformat:"0"|intcomma}}</th>
-              <th>R{{billable_total|floatformat:"0"|intcomma}}</th>
-            </tr>
+          <tr>
+            <th>Total</th>
+            <th></th>
+            <th>R{{per_user|keyvalue:username|keyvalue:'ctc'|floatformat:"0"|intcomma}}</th>
+            <th>R{{per_user|keyvalue:username|keyvalue:'billable'|floatformat:"0"|intcomma}}</th>
+          </tr>
 
           </tbody>
         </table>
       </div>
+      {% endfor %}
 
       <div class="tabular_item">
         <div style="clear:both"></div>

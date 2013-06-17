@@ -255,3 +255,7 @@ def timesheet_url(type, pk, date):
     }
 
     return '?'.join((url, urllib.urlencode(params),))
+
+@register.filter
+def keyvalue(dict, key):    
+    return dict[key]
