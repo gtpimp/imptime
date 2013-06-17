@@ -219,6 +219,15 @@
         <div id="billable_per_business_graph" style="height:300px;width:300px;"></div>
         <div style="clear:both"></div>
       </div>
+
+      {% for username, businesses in per_user_per_business.items %}
+      <div class="graph">
+        <h1>{{username}}</h1>
+        <div id="billable_user_{{username}}" style="height:300px;width:300px;"></div>
+        <div style="clear:both"></div>
+      </div>
+      {% endfor %}
+
     </div>
   </div>
 
@@ -273,6 +282,19 @@
          { series: { pie: { show: true } },
            legend: { show: false} } );
 
+  {% for username, businesses in per_user_per_business.items %}
+    $.plot("#billable_user_{{username}}",
+         [ {%spaceless%} 
+             {% for business_name,amounts in businesses.items %} 
+               { label:"{{business_name}}", 
+                 data: {{amounts.billable}}
+               },
+             {% endfor %} 
+           {%endspaceless%}
+         ],
+         { series: { pie: { show: true } },
+           legend: { show: false} } );
+   {% endfor %}
 
   </script>
 
