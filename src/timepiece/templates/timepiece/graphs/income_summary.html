@@ -200,26 +200,16 @@
 
     <div class="graphs">
       <div class="graph">
-        <h1>ctc per user</h1>
+        <h1>per user</h1>
         <div id="ctc_per_user_graph" style="height:300px;width:300px;"></div>
         <div style="clear:both"></div>
       </div>
       <div class="graph">
-        <h1>billable per user</h1>
-        <div id="billable_per_user_graph" style="height:300px;width:300px;"></div>
-        <div style="clear:both"></div>
-      </div>
-      <div class="graph">
-        <h1>ctc per business</h1>
+        <h1>per business</h1>
         <div id="ctc_per_business_graph" style="height:300px;width:300px;"></div>
         <div style="clear:both"></div>
       </div>
-      <div class="graph">
-        <h1>billable per business</h1>
-        <div id="billable_per_business_graph" style="height:300px;width:300px;"></div>
-        <div style="clear:both"></div>
-      </div>
-
+      
       {% for username, businesses in per_user_per_business.items %}
       <div class="graph">
         <h1>{{username}}</h1>
@@ -246,35 +236,11 @@
          { series: { pie: { show: true } },
            legend: { show: false} } );
 
-  $.plot("#billable_per_user_graph",
-         [ {%spaceless%} 
-             {% for username,amounts in per_user.items %} 
-               { label:"{{username}}", 
-                 data: {{amounts.billable}}
-               },
-             {% endfor %} 
-           {%endspaceless%}
-         ],
-         { series: { pie: { show: true } },
-           legend: { show: false} } );
-
   $.plot("#ctc_per_business_graph",
          [ {%spaceless%} 
              {% for business_name,amounts in per_business.items %} 
                { label:"{{business_name}}", 
                  data: {{amounts.ctc}}
-               },
-             {% endfor %} 
-           {%endspaceless%}
-         ],
-         { series: { pie: { show: true } },
-           legend: { show: false} } );
-
-  $.plot("#billable_per_business_graph",
-         [ {%spaceless%} 
-             {% for business_name,amounts in per_business.items %} 
-               { label:"{{business_name}}", 
-                 data: {{amounts.billable}}
                },
              {% endfor %} 
            {%endspaceless%}
