@@ -3034,10 +3034,9 @@ def income_summary(request, template="timepiece/graphs/income_summary.html", con
     entries = _get_atrate_entries_for_series(request, entries, context)
 
     per_user = {}
+    per_business = {}
     ctc_total = 0
     billable_total = 0
-
-    entries = entries[1:100]
 
     for entry in entries:
         ctc_total += entry.atrate
@@ -3046,18 +3045,23 @@ def income_summary(request, template="timepiece/graphs/income_summary.html", con
         per_user.setdefault(entry.user.username, {'ctc':0,'billable':0})
         per_user[entry.user.username]['ctc'] += entry.atrate
         per_user[entry.user.username]['billable'] += entry.atrate
+
+        per_business.setdefault(entry.project.business.name, {'ctc':0,'billable':0})
+        per_business[entry.project.business.name]['ctc'] += entry.atrate
+        per_business[entry.project.business.name]['billable'] += entry.atrate
         
     context['ctc_total'] = ctc_total
     context['billable_total'] = billable_total
     context['per_user'] = per_user
+    context['per_business'] = per_business
 
-    context['invoices_sent'] = timepiece.Invoice.objects.filter(Q(date_sent__gte=from_date)&Q(date_sent__lte=from_date))
+    context['invoices_sent'] = timepiece.Invoice.objects.filter(Q(date_sent__gte=from_date)&Q(date_sent__lte=to_date))
     invoices_sent_total = 0
     for invoice in context['invoices_sent']:
         invoices_sent_total += invoice.amount
     context['invoices_sent_total'] = invoices_sent_total
 
-    context['invoices_paid'] = timepiece.Invoice.objects.filter(Q(date_sent__gte=from_date)&Q(date_sent__lte=from_date))
+    context['invoices_paid'] = timepiece.Invoice.objects.filter(Q(date_sent__gte=from_date)&Q(date_sent__lte=to_date))
     invoices_paid_total = 0
     for invoice in context['invoices_paid']:
         invoices_paid_total += invoice.amount

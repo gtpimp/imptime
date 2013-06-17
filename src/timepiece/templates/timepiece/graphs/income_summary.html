@@ -34,7 +34,7 @@
     <div class="tabular">
 
       <div class="tabular_item">
-      <h1>Income based on hours</h1>
+      <h1>Income based on hours worked per user</h1>
         <table>
           <thead>
             <th></th>
@@ -60,12 +60,42 @@
           </tbody>
         </table>
       </div>
+
+      <div class="tabular_item">
+      <h1>Income based on hours worked per business</h1>
+        <table>
+          <thead>
+            <th></th>
+            <th>ctc</th>
+            <th>billable</th>
+          </thead>
+          <tbody>
+
+            {% for business_name, amounts in per_business.items %}
+            <tr>
+              <td>{{business_name}}</td>
+              <td>R{{amounts.ctc|floatformat:"0"|intcomma}}</td>
+              <td>R{{amounts.billable|floatformat:"0"|intcomma}}</td>
+            </tr>
+            {% endfor %}
+
+            <tr>
+              <th>Total</th>
+              <th>R{{ctc_total|floatformat:"0"|intcomma}}</th>
+              <th>R{{billable_total|floatformat:"0"|intcomma}}</th>
+            </tr>
+
+          </tbody>
+        </table>
+      </div>
+
       <div class="tabular_item">
         <div style="clear:both"></div>
         <h1>Income based on invoices sent</h1>
         <table>
           <thead>
             <th>#</th>
+            <th>project</th>
             <th>date</th>
             <th>amount</th>
             <th></th>
@@ -75,6 +105,7 @@
             {% for invoice in invoices_sent %}
             <tr>
               <td>{{invoice.invoice_number}}</td>
+              <td>{{invoice.project.business}} - {{invoice.project}}</td>
               <td>{{invoice.date_sent}}</td>
               <td>R{{invoice.amount|floatformat:"0"|intcomma}}</td>
               <td>{{invoice.description}}</td>
@@ -85,7 +116,41 @@
               <th>Total</th>
               <th></th>
               <th></th>
-              <th>{{invoices_sent_total}}</th>
+              <th>R{{invoices_sent_total|floatformat:"0"|intcomma}}</th>
+              <th></th>
+            </tr>
+
+          </tbody>
+        </table>
+      </div>
+      <div class="tabular_item">
+        <div style="clear:both"></div>
+        <h1>Income based on invoices paid</h1>
+        <table>
+          <thead>
+            <th>#</th>
+            <th>project</th>
+            <th>date</th>
+            <th>amount</th>
+            <th></th>
+          </thead>
+          <tbody>
+
+            {% for invoice in invoices_paid %}
+            <tr>
+              <td>{{invoice.invoice_number}}</td>
+              <td>{{invoice.project.business}} - {{invoice.project}}</td>
+              <td>{{invoice.date_sent}}</td>
+              <td>R{{invoice.amount|floatformat:"0"|intcomma}}</td>
+              <td>{{invoice.description}}</td>
+            </tr>
+            {% endfor %}
+
+            <tr>
+              <th>Total</th>
+              <th></th>
+              <th></th>
+              <th>R{{invoices_paid_total|floatformat:"0"|intcomma}}</th>
               <th></th>
             </tr>
 
@@ -105,10 +170,17 @@
         <div id="billable_per_user_graph" style="height:300px;width:300px;"></div>
         <div style="clear:both"></div>
       </div>
+      <div class="graph">
+        <h1>ctc per business</h1>
+        <div id="ctc_per_business_graph" style="height:300px;width:300px;"></div>
+        <div style="clear:both"></div>
+      </div>
+      <div class="graph">
+        <h1>billable per business</h1>
+        <div id="billable_per_business_graph" style="height:300px;width:300px;"></div>
+        <div style="clear:both"></div>
+      </div>
     </div>
-
-
-
   </div>
 
   <script>
@@ -137,6 +209,31 @@
          ],
          { series: { pie: { show: true } },
            legend: { show: false} } );
+
+  $.plot("#ctc_per_business_graph",
+         [ {%spaceless%} 
+             {% for business_name,amounts in per_business.items %} 
+               { label:"{{business_name}}", 
+                 data: {{amounts.ctc}}
+               },
+             {% endfor %} 
+           {%endspaceless%}
+         ],
+         { series: { pie: { show: true } },
+           legend: { show: false} } );
+
+  $.plot("#billable_per_business_graph",
+         [ {%spaceless%} 
+             {% for business_name,amounts in per_business.items %} 
+               { label:"{{business_name}}", 
+                 data: {{amounts.billable}}
+               },
+             {% endfor %} 
+           {%endspaceless%}
+         ],
+         { series: { pie: { show: true } },
+           legend: { show: false} } );
+
 
   </script>
 

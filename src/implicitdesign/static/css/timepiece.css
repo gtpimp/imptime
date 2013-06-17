@@ -9547,6 +9547,7 @@ table.project_list  {
 
 .income_summary .graphs {
     float:left;
+    max-width:50%;
 }
 
 .income_summary .graphs h1 {
@@ -9562,6 +9563,7 @@ table.project_list  {
     box-shadow:         6px 6px 0px 0px #ccc;
     border:1px solid #000;
     margin:10px;
+    padding:15px;
 }
 
 .income_summary .graph h1 {
