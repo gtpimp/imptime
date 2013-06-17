@@ -3037,6 +3037,8 @@ def income_summary(request, template="timepiece/graphs/income_summary.html", con
     ctc_total = 0
     billable_total = 0
 
+    entries = entries[1:100]
+
     for entry in entries:
         ctc_total += entry.atrate
         billable_total += entry.atbillablerate

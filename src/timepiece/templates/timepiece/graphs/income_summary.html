@@ -1,4 +1,4 @@
-{% extends "timepiece/project/base.html" %}
+{% extends "timepiece/graphs/base.html" %}
 {% load url from future %}
 {% block title %}Income{% endblock %}
 {% load bootstrap_toolkit %}
@@ -55,7 +55,51 @@
       </tbody>
     </table>
 
+    <div class="graphs">
+      <div class="graph">
+        <h1>ctc per user</h1>
+        <div id="ctc_per_user_graph" style="height:300px;width:300px;"></div>
+        <div style="clear:both"></div>
+      </div>
+      <div class="graph">
+        <h1>billable per user</h1>
+        <div id="billable_per_user_graph" style="height:300px;width:300px;"></div>
+        <div style="clear:both"></div>
+      </div>
+    </div>
+
+
+
   </div>
+
+  <script>
+
+  plot_charts = null;
+  $.plot("#ctc_per_user_graph",
+         [ {%spaceless%} 
+             {% for username,amounts in per_user.items %} 
+               { label:"{{username}}", 
+                 data: {{amounts.ctc}}
+               },
+             {% endfor %} 
+           {%endspaceless%}
+         ],
+         { series: { pie: { show: true } },
+           legend: { show: false} } );
+
+  $.plot("#billable_per_user_graph",
+         [ {%spaceless%} 
+             {% for username,amounts in per_user.items %} 
+               { label:"{{username}}", 
+                 data: {{amounts.billable}}
+               },
+             {% endfor %} 
+           {%endspaceless%}
+         ],
+         { series: { pie: { show: true } },
+           legend: { show: false} } );
+
+  </script>
 
 
 {% endblock %}
