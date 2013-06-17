@@ -1,0 +1,61 @@
+{% extends "timepiece/project/base.html" %}
+{% load url from future %}
+{% block title %}Income{% endblock %}
+{% load bootstrap_toolkit %}
+{% load timepiece_tags %}
+{% load humanize %}
+
+{% block content %}
+
+<h2>
+  Income summary
+  {% include "timepiece/graphs/_date_filter_msg.html" %}
+</h2>
+
+<form class="form-inline" accept-charset='UTF-8' method='get' action='{% url 'daily_graph' %}'>
+	  {% if date_form.errors %}
+	   {% for e in date_form.errors.values %} 
+	    {{ e }}
+	   {% endfor %}
+	  {% endif %}
+	  {{ date_form.from_date.label }}: {{ date_form.from_date }}
+	  {{ date_form.to_date.label }}: {{ date_form.to_date }}
+	  <button type='submit' class="btn" name='submit'>Filter Dates</button>
+    </form>
+
+  <div class="row-fluid">
+    <div class="span12">
+      {% date_filters %}
+     </div>
+  </div>
+
+  <div class="income_summary">
+    <table>
+      <thead>
+        <th></th>
+        <th>ctc</th>
+        <th>billable</th>
+      </thead>
+      <tbody>
+
+        {% for username, amounts in per_user.items %}
+        <tr>
+          <td>{{username}}</td>
+          <td>R{{amounts.ctc|floatformat:"0"|intcomma}}</td>
+          <td>R{{amounts.billable|floatformat:"0"|intcomma}}</td>
+        </tr>
+        {% endfor %}
+
+        <tr>
+          <th>Total</th>
+          <th>R{{ctc_total|floatformat:"0"|intcomma}}</th>
+          <th>R{{billable_total|floatformat:"0"|intcomma}}</th>
+        </tr>
+        
+      </tbody>
+    </table>
+
+  </div>
+
+
+{% endblock %}

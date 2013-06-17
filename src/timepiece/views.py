@@ -2544,7 +2544,7 @@ def _create_atrate_series_for_graphs(request, entries, context):
         cumulative += entry.atrate
         entry.graph_value = cumulative
         entry.bar_value = entry.atrate
-    return { "label": "atrate (R%s)" % cumulative, "entries":entries, "yaxis":2 }
+    return { "label": "atrate (R%s)" % cumulative, "cumulative": cumulative, "entries":entries, "yaxis":2 }
 
 def _get_atrate_entries_for_series(request, entries, context):
     entries = entries.order_by("start_time")
@@ -2738,7 +2738,6 @@ def _get_filter_dates_only(request, context=None, default=None):
 
     from_date = datetime.datetime.today().date().replace(month=1,day=1)
     to_date = datetime.datetime.today().date().replace(month=1,day=1) + relativedelta(years=10)
-    initial = {'to_date': to_date, 'from_date': from_date}
     date_form = timepiece_forms.DateOnlyForm(request.GET)
     if request.GET and date_form.is_valid():
         from_date, to_date = date_form.save()
@@ -3016,3 +3015,38 @@ def _update_all_project_users():
             if timepiece.Entry.objects.filter(user=profile.user,project=project).count()>0:
                 timepiece.ProjectRelationship.objects.get_or_create(user=profile.user, project=project)
 
+def income_summary(request, template="timepiece/graphs/income_summary.html", context=None):
+    context = context or {}
+    if not request.user.is_superuser:
+        return HttpResponse("")
+    today = datetime.datetime.today().date()
+    from_date, to_date =  _get_filter_dates_only(request, context, (today - relativedelta(months=1), today))
+
+    date_form = timepiece_forms.DateOnlyForm(request.GET)
+    context['date_form'] = date_form
+
+    if request.GET:
+        entries = timepiece.Entry.objects.filter_by_logged_in_user(request.user)
+    else:
+        entries = timepiece.Entry.objects.none()
+    entries = _apply_date_filter(request, entries, context)
+
+    entries = _get_atrate_entries_for_series(request, entries, context)
+
+    per_user = {}
+    ctc_total = 0
+    billable_total = 0
+
+    for entry in entries:
+        ctc_total += entry.atrate
+        billable_total += entry.atbillablerate
+
+        per_user.setdefault(entry.user.username, {'ctc':0,'billable':0})
+        per_user[entry.user.username]['ctc'] += entry.atrate
+        per_user[entry.user.username]['billable'] += entry.atrate
+        
+    context['ctc_total'] = ctc_total
+    context['billable_total'] = billable_total
+    context['per_user'] = per_user
+
+    return render_to_response(template, context, context_instance=RequestContext(request))

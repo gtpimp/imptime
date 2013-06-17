@@ -9523,3 +9523,11 @@ table.project_list  {
 .issues .issue_detail .extended_comments {
     font-family: "Courier New", Courier, monospace;
 }
+
+.income_summary table td {
+    text-align:right;
+    padding:10px;
+    border-left: 1px solid #dfdfdf;
+    border-bottom: 1px solid #dfdfdf;
+}
+

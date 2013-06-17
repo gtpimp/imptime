@@ -148,6 +148,9 @@ urlpatterns = patterns('',
         views.view_summary,
         name='view_summary',
     ),
+
+    url(r'income_summary',views.income_summary,name='income_summary'),
+
     url(
         r'time-sheet/older_summary/(?P<user_id>\d+)/$',
         views.view_summary,

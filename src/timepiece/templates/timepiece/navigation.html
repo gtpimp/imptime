@@ -36,6 +36,9 @@
 
 			        <li><a href="{% url 'view_person_time_sheet' request.user.pk %}">My Ledger</a></li>
 			        <li><a href="{% url 'view_summary' request.user.pk %}">Summary</a></li>
+                                {% if perms.timepiece.view_payroll_summary %}
+                                  <li><a href="{% url 'income_summary' %}">Income Summary</a></li>
+                                {% endif %}
                             </ul>
                         </li>
                     {% endif %}
