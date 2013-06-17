@@ -9503,6 +9503,11 @@ table.project_list  {
     box-shadow:         6px 6px 0px 0px #ccc;
     border:1px solid #000;
     padding:10px;
+    font-size:10px;
+}
+
+.issues .issue_detail .issue_subject {
+    font-size:12px;
 }
 
 .issues .issue_detail {
