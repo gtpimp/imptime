@@ -86,6 +86,7 @@ def makelist(filename):
           level = hdng.group(1)
           heading =  hdng.group(2)
           bodytext = ""
+          cleanbodytext = ""
           tag1 = ""
           alltags = []       # list of all tags in headline
           # tagsrch = re.search('(.*?)\s*:(.*?):(.*?)$',heading)
