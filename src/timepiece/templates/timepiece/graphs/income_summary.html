@@ -118,7 +118,7 @@
 
           <tr>
             <th>Total</th>
-            <th></th>
+            <th>{{per_user|keyvalue:username|keyvalue:'hours'|floatformat:"0"|intcomma}}</th>
             <th>R{{per_user|keyvalue:username|keyvalue:'ctc'|floatformat:"0"|intcomma}}</th>
             <th>R{{per_user|keyvalue:username|keyvalue:'billable'|floatformat:"0"|intcomma}}</th>
           </tr>
