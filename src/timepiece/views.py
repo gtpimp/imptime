@@ -3031,8 +3031,6 @@ def income_summary(request, template="timepiece/graphs/income_summary.html", con
         entries = timepiece.Entry.objects.none()
     entries = _apply_date_filter(request, entries, context)
 
-    entries = entries[:20]
-
     per_user = {}
     per_user_per_business = {}
     per_business = {}
