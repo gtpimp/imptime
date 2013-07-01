@@ -1,5 +1,11 @@
 {% load url from future %}
 
+{% block javascript %}
+  <script src="{{ STATIC_URL }}js/flot/jquery.flot.js" type="text/javascript"></script>
+  <script src="{{ STATIC_URL }}js/flot/jquery.flot.pie.js" type="text/javascript"></script>
+  <link type="text/css" rel="stylesheet" href="{{ STATIC_URL }}timepiece/css/graph.css"></link>
+{% endblock %}
+
 <script src="{{STATIC_URL}}timepiece/js/card.js"></script>
 
 <div class="project_card">

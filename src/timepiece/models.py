@@ -157,6 +157,7 @@ class Project(models.Model):
     def __init__(self, *args, **kwargs):
         super(Project, self).__init__(*args, **kwargs)
         self._stats = None
+        self._users_and_hours = None
 
     @property
     def has_budget(self):
@@ -304,6 +305,10 @@ class Project(models.Model):
         return total
 
     def users_and_hours(self, **entry_filter):
+
+        if self._users_and_hours is not None:
+            return self._users_and_hours
+
         entries_qs = Entry.objects.filter(project=self)
         def key(x):
             return x['count']
@@ -342,6 +347,8 @@ class Project(models.Model):
         res['totals']['ctc_rate'] = ctc_rate / user_totals.count() if user_totals.count() else 0
         res['totals']['billed_rate'] = billed_rate / user_totals.count() if user_totals.count() else 0
         res['totals']['profit'] = total_billed - total_revenue
+
+        self._users_and_hours = res
         return res
 
     class Meta:
