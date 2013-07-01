@@ -1788,7 +1788,7 @@ table {
   -moz-border-radius-bottomright: 4px;
 }
 .table-striped tbody tr:nth-child(odd) td, .table-striped tbody tr:nth-child(odd) th {
-  background-color: #e6e6e6;
+  /*background-color: #e6e6e6;*/
 }
 .table tbody tr:hover td, .table tbody tr:hover th {
   background-color: #a0a0a0;
@@ -1796,7 +1796,7 @@ table {
 
 }
 .table-striped tbody tr:nth-child(odd) td, .table-striped tbody tr:nth-child(odd) th {
-  background-color: #e6e6e6;
+  /*background-color: #e6e6e6;*/
 }
 
 table .span1 {
@@ -9318,7 +9318,7 @@ table.project_list  {
  
 
 .project_list tbody tr:nth-child(odd) td, .project_list tbody tr:nth-child(odd) th {
-  background-color: #ffffff;
+  /*background-color: #ffffff;*/
 }
 
 .project_list thead tr {
