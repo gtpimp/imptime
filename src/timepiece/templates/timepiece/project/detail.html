@@ -286,11 +286,11 @@ $(document).ready(function(){
 		     <tr>     
 		       <th colspan="3"> </th>
 		       <th> {% if business_totals.hours > 0 %} {{ business_totals.hours }} {% endif %}</th>
-		       <th> {{ business_totals.profit|currency }} </th>
-		       <th> {{ business_totals.ctc|currency }} </th>
-		       <th> {{ business_totals.billed|currency }} </th>
-		       <th> {{ business_totals.ctc_rate|currency }} </th>
-		       <th> {{ business_totals.billed_rate|currency }} </th>
+		       <th>{{ business_totals.ctc|currency }} </th>
+		       <th>{{ business_totals.billed|currency }} </th>
+		       <th>{{ business_totals.profit|currency }} </th>
+		       <th>{{ business_totals.ctc_rate|currency }} </th>
+		       <th>{{ business_totals.billed_rate|currency }} </th>
 		       <th> {% if perms.timepiece.view_expense %} {{ business_totals.expenses|currency }} {% endif %}</th>
 		       <th> {% if perms.timepiece.view_invoice %} {{ business_totals.invoices|currency }} {% endif %}</th>
 		       <th colspan="3" />
@@ -344,9 +344,9 @@ $(document).ready(function(){
 				  <td></td>
 				  <td>{{ username }} {% if perms.timepiece.change_rate %}<a href="#" onclick="return TP_rates.show_editor(this, {{project.id}}, '{{project.name}}', '{{username}}', {{user.rate.amount}}, {{user.rate.billable_amount}}, '{% url 'set_project_rate' %}')">[edit]</a> {% endif %}</td>
 				  <td align="right">{{ user.hours }}</td>
-				  <td>{{ user.profit|currency }}</td>
 				  <td>{{ user.revenue|currency }}</td>
 				  <td>{{ user.billed|currency }}</td>
+				  <td>{{ user.profit|currency }}</td>
 				  <td>
 				    <span class="rate_amount">{{ user.rate.amount|currency }}</span>
 				  </td>
