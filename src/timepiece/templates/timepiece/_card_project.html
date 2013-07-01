@@ -74,19 +74,19 @@
 <div class="toggle_graphs_section" style="display:none">
   <div class="graph">
     <h1>hours by user</h1>
-    <div id="{{project.id}}_graph_hours_by_user" style="height:200px;width:200px;"></div>
+    <div class="{{project.id}}_graph_hours_by_user" style="height:200px;width:200px;"></div>
     <div style="clear:both"></div>
   </div>
   <div style="clear:both"></div>
   <div class="graph">
     <h1>ctc per user</h1>
-    <div id="{{project.id}}_graph_ctc_by_user" style="height:200px;width:200px;"></div>
+    <div class="{{project.id}}_graph_ctc_by_user" style="height:200px;width:200px;"></div>
     <div style="clear:both"></div>
   </div>
   <div style="clear:both"></div>
   <div class="graph">
     <h1>billable per user</h1>
-    <div id="{{project.id}}_graph_billable_by_user" style="height:200px;width:200px;"></div>
+    <div class="{{project.id}}_graph_billable_by_user" style="height:200px;width:200px;"></div>
     <div style="clear:both"></div>
   </div>
   <div style="clear:both"></div>
@@ -94,7 +94,7 @@
 
 <script>
   var plot_charts = null;
-  $.plot("#{{project.id}}_graph_hours_by_user",
+  $.plot(".{{project.id}}_graph_hours_by_user",
          [ {%spaceless%} 
              {% for username,amounts in project.users_and_hours.users.items %} 
                { label:"{{username}}", 
@@ -105,7 +105,7 @@
          ],
          { series: { pie: { show: true } },
            legend: { show: false} } );
-  $.plot("#{{project.id}}_graph_ctc_by_user",
+  $.plot(".{{project.id}}_graph_ctc_by_user",
          [ {%spaceless%} 
              {% for username,amounts in project.users_and_hours.users.items %} 
                { label:"{{username}}", 
@@ -116,7 +116,7 @@
          ],
          { series: { pie: { show: true } },
            legend: { show: false} } );
-  $.plot("#{{project.id}}_graph_billable_by_user",
+  $.plot(".{{project.id}}_graph_billable_by_user",
            [ {%spaceless%} 
                {% for username,amounts in project.users_and_hours.users.items %} 
                  { label:"{{username}}", 
