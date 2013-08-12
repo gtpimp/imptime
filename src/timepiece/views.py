@@ -3099,7 +3099,7 @@ def show_timeline(request, project_id):
     #   daily_hours[user.username] = _get_daily_hours(timepiece.Entry.objects.filter(user=user), from_date, to_date)
     dhours = []
     for d in range(1,13):
-        d = datetime.date(year=2013, month = d, day=1)
+         #d = #datetime.date(year=2013, month = d, day=1)
         #dhours[d] = dhours.get(d,0) + random.randint(0,10)
         dhours += [(d, random.randint(0,10) )]
         

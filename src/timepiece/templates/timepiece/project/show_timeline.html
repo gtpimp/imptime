@@ -13,37 +13,35 @@
 {% endblock crumbs %}
 
 {% block content %}
-Insert graph here
 
-
-<script>
-  plot_charts = [
-  {data: [ {%spaceless%} 
-		   { label:"sprint_name", 
-		     data: [ {% for date, hours in daily_hours %} 
-		                [ {{date|epoch}},{{hours}}], {% endfor %} ],
-		     lines: {show: true, steps:true},
-		     {# points: {show: true}, #}
-	           },
-	       {%endspaceless%}
-	     ],
-  options: {xaxis: {mode: "time",
-                    {% if from_date %}
-                     min: {{from_date|epoch}},
-                    {% endif %}
-                   {% if to_date %}
-                     max: {{to_date|epoch}},
-                    {% endif %}
-                   timeformat: "%d %b %y",
-		   },
-	    grid: {markings: [{yaxis: {from: 8, to:8}, color: "#adff2f"}]}},
-   divid: "#sprint_name",
-   },
-
-   ];
-
-</script>
 <div style="width:100%">
   <div id="sprint_name" style="width:100%;height:300px"></div><br /><br />
 </div>
+
+<script>
+  var dataset = [ [[1,20],[2,9],[3,11],[4,12]], [[1,2],[2,5],[3,10],[4,1]] ]
+  var options = { 
+                 series: {
+                           stack: true,
+			   bars:{show: true}
+                          },
+                 grid: {
+                           hoverable: true,
+                           borderWidth: 2,
+                           // backgroundColor: { colors: ["#ED0000", "#00ff00"] }
+   		        },
+                xaxis: {
+                           mode: "time",
+                           tickSize: [3, "day"],
+                           tickLength: 10,
+                           color: "black",
+                           axisLabel: "Date",
+                           axisLabelUseCanvas: true,
+                           axisLabelFontSizePixels: 12,
+                           axisLabelFontFamily: 'Verdana, Arial',
+                           axisLabelPadding: 10
+                       }, 
+                };
+  $.plot ( $("#sprint_name"),dataset, options);
+</script>
 {% endblock %}
