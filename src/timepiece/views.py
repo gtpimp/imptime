@@ -3079,10 +3079,19 @@ def income_summary(request, template="timepiece/graphs/income_summary.html", con
 
 @render_with('timepiece/project/show_timeline.html')
 def show_timeline(request, project_id):
-    import pdb; pdb.set_trace()
+    # import pdb; pdb.set_trace()
     project = get_object_or_404(timepiece.Project, pk=project_id)
     add_user_form = timepiece_forms.AddUserToProjectForm()
+
     context = {
         'project': project,
         'add_user_form': add_user_form,
+        # 'series':series
     }
+
+    # some entrries...
+    entries = timepiece.Entry.objects.filter_by_logged_in_user(request.user).filter(status='approved').filter(project__users=request.user)
+    series = []
+    series.append(_create_atrate_series_for_graphs(request, entries, context))
+    context['series'] = series
+    return context

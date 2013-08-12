@@ -1,5 +1,6 @@
-{% extends "timepiece/project/base.html" %}
+{% extends "timepiece/graphs/base.html" %}
 {% load bootstrap_toolkit %}
+{% load timepiece_tags %}
 
 {% block extramedia %}
 {{ add_user_form.media }}
@@ -12,7 +13,29 @@
     <li><span class="divider">/</span> <a href="{% url view_project project.pk %}">Project Detail</a></li>
 {% endblock crumbs %}
 
-TIMELINE !!!!
-
 {% block content %}
+Insert graph here
+
+
+<div class="graph">
+  <h1>hours by user {{project.id}}</h1>
+  <div class="{{project.id}}_graph_hours_by_user" style="height:200px;width:200px;"></div>
+  <div style="clear:both"></div>
+</div>
+
+<script>
+  var plot_charts = null;
+  $.plot(".{{project.id}}_graph_hours_by_user",
+         [ {%spaceless%} 
+             {% for username,amounts in project.users_and_hours.users.items %} 
+               { label:"{{username}}", 
+                 data: {{amounts.hours}}
+               },
+             {% endfor %} 
+           {%endspaceless%}
+         ],
+         { series: { pie: { show: true } },
+           legend: { show: false} } );
+</script>
+
 {% endblock %}
