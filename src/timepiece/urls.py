@@ -373,4 +373,9 @@ urlpatterns = patterns('',
         views.create_invoice,
         name='create_invoice'
         ),
+    url(
+        r'^show_timeline/(?P<project_id>\d+)$',
+        views.show_timeline,
+        name='show_timeline'
+      ),
 )

@@ -3076,3 +3076,13 @@ def income_summary(request, template="timepiece/graphs/income_summary.html", con
     context['invoices_paid_total'] = invoices_paid_total
 
     return render_to_response(template, context, context_instance=RequestContext(request))
+
+@render_with('timepiece/project/show_timeline.html')
+def show_timeline(request, project_id):
+    import pdb; pdb.set_trace()
+    project = get_object_or_404(timepiece.Project, pk=project_id)
+    add_user_form = timepiece_forms.AddUserToProjectForm()
+    context = {
+        'project': project,
+        'add_user_form': add_user_form,
+    }

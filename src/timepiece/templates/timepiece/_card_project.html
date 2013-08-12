@@ -29,6 +29,12 @@
            Paid: <input disabled type="checkbox" {% if project.stats.paid %} checked {% endif %} >
          </a>
        {% endif %}
+       
+  <br/>
+       <a href="#" class="secret_link" onclick="window.open('{% url 'show_timeline' project.id %}')">
+	 show timeline
+       </a>
+
   <br/>
 
 </div>         
