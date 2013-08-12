@@ -1,3 +1,4 @@
+import random
 import calendar
 import csv
 from xhtml2pdf import pisa  
@@ -3079,19 +3080,40 @@ def income_summary(request, template="timepiece/graphs/income_summary.html", con
 
 @render_with('timepiece/project/show_timeline.html')
 def show_timeline(request, project_id):
-    # import pdb; pdb.set_trace()
-    project = get_object_or_404(timepiece.Project, pk=project_id)
-    add_user_form = timepiece_forms.AddUserToProjectForm()
+    if not request.user.is_superuser:
+        return HttpResponse("")
 
-    context = {
-        'project': project,
-        'add_user_form': add_user_form,
-        # 'series':series
-    }
+    context = {}
 
-    # some entrries...
-    entries = timepiece.Entry.objects.filter_by_logged_in_user(request.user).filter(status='approved').filter(project__users=request.user)
-    series = []
-    series.append(_create_atrate_series_for_graphs(request, entries, context))
-    context['series'] = series
+    today = datetime.datetime.today().date()
+    
+    #current_sprint = timepiece.Project.objects.get(id=project_id)
+    
+    current_sprint = timepiece.Project.objects.get(id=816)
+    #from_date, to_date =  _get_filter_dates_only(request, context, (today - relativedelta(months=1), today))
+    #from_date, to_date = 
+    from_date = datetime.date(2013,1,1)
+    to_date = datetime.date(2013,12,1)
+    daily_hours = {}
+    # for user in User.objects.all():    
+    #   daily_hours[user.username] = _get_daily_hours(timepiece.Entry.objects.filter(user=user), from_date, to_date)
+    for users in range(10):
+        dhours = {}
+        for d in range(1,12):
+            d = datetime.date(year=2013, month = d, day=1)
+            dhours[d] = dhours.get(d,0) + random.randint(0,10)
+
+        daily_hours["user_username"] = dhours
+        
+        # new_value = [(d, random.randint(0,10)) for d in range(10)]
+        # daily_hours["user.username"] = daily_hours.get("user.username", 0)
+        # daily_hours["user.username"] += new_value
+    #import pdb; pdb.set_trace()        
+        
+    context['daily_hours'] = sorted((k,sorted(v.iteritems())) for k,v in daily_hours.iteritems() if v)
+    context['from_date'] = from_date
+    context['to_date'] = to_date
+
+    #return render_to_response(template, context, context_instance=RequestContext(request))
+
     return context
