@@ -3097,20 +3097,20 @@ def show_timeline(request, project_id):
     daily_hours = {}
     # for user in User.objects.all():    
     #   daily_hours[user.username] = _get_daily_hours(timepiece.Entry.objects.filter(user=user), from_date, to_date)
-    for users in range(10):
-        dhours = {}
-        for d in range(1,12):
-            d = datetime.date(year=2013, month = d, day=1)
-            dhours[d] = dhours.get(d,0) + random.randint(0,10)
-
-        daily_hours["user_username"] = dhours
+    dhours = []
+    for d in range(1,13):
+        d = datetime.date(year=2013, month = d, day=1)
+        #dhours[d] = dhours.get(d,0) + random.randint(0,10)
+        dhours += [(d, random.randint(0,10) )]
+        
+    daily_hours = dhours #.items()
         
         # new_value = [(d, random.randint(0,10)) for d in range(10)]
         # daily_hours["user.username"] = daily_hours.get("user.username", 0)
         # daily_hours["user.username"] += new_value
     #import pdb; pdb.set_trace()        
         
-    context['daily_hours'] = sorted((k,sorted(v.iteritems())) for k,v in daily_hours.iteritems() if v)
+    context['daily_hours'] = daily_hours # sorted((k,sorted(v.iteritems())) for k,v in daily_hours.iteritems() if v)
     context['from_date'] = from_date
     context['to_date'] = to_date
 

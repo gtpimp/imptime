@@ -18,10 +18,9 @@ Insert graph here
 
 <script>
   plot_charts = [
-  {% for user,days_hours in daily_hours %} 
   {data: [ {%spaceless%} 
-		   { label:"{{user}}", 
-		     data: [ {% for date, hours in days_hours %} 
+		   { label:"sprint_name", 
+		     data: [ {% for date, hours in daily_hours %} 
 		                [ {{date|epoch}},{{hours}}], {% endfor %} ],
 		     lines: {show: true, steps:true},
 		     {# points: {show: true}, #}
@@ -38,14 +37,13 @@ Insert graph here
                    timeformat: "%d %b %y",
 		   },
 	    grid: {markings: [{yaxis: {from: 8, to:8}, color: "#adff2f"}]}},
-   divid: "#graph{{user}}",
+   divid: "#sprint_name",
    },
 
-   {% endfor %}
    ];
 
 </script>
 <div style="width:100%">
-  <div id="graphuser_username" style="width:100%;height:300px"></div><br /><br />
+  <div id="sprint_name" style="width:100%;height:300px"></div><br /><br />
 </div>
 {% endblock %}
