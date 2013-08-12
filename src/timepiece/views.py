@@ -3090,30 +3090,20 @@ def show_timeline(request, project_id):
     #current_sprint = timepiece.Project.objects.get(id=project_id)
     
     current_sprint = timepiece.Project.objects.get(id=816)
-    #from_date, to_date =  _get_filter_dates_only(request, context, (today - relativedelta(months=1), today))
-    #from_date, to_date = 
-    from_date = datetime.date(2013,1,1)
-    to_date = datetime.date(2013,12,1)
+
+    from_date = 1 # datetime.date(2013,1,1)
+    to_date = 12 # datetime.date(2013,12,1)
     daily_hours = {}
-    # for user in User.objects.all():    
-    #   daily_hours[user.username] = _get_daily_hours(timepiece.Entry.objects.filter(user=user), from_date, to_date)
+
     dhours = []
     for d in range(1,13):
-         #d = #datetime.date(year=2013, month = d, day=1)
-        #dhours[d] = dhours.get(d,0) + random.randint(0,10)
-        dhours += [(d, random.randint(0,10) )]
+        dhours += [ (d, random.randint(0,10) ) ]
         
-    daily_hours = dhours #.items()
+    daily_hours = dhours
         
-        # new_value = [(d, random.randint(0,10)) for d in range(10)]
-        # daily_hours["user.username"] = daily_hours.get("user.username", 0)
-        # daily_hours["user.username"] += new_value
-    #import pdb; pdb.set_trace()        
         
-    context['daily_hours'] = daily_hours # sorted((k,sorted(v.iteritems())) for k,v in daily_hours.iteritems() if v)
+    context['daily_hours'] = daily_hours
     context['from_date'] = from_date
     context['to_date'] = to_date
-
-    #return render_to_response(template, context, context_instance=RequestContext(request))
 
     return context

@@ -19,7 +19,7 @@
 </div>
 
 <script>
-  var dataset = [ [[1,20],[2,9],[3,11],[4,12]], [[1,2],[2,5],[3,10],[4,1]] ]
+ var dataset = [ [{% spaceless %}{% for day, hours in daily_hours %} [ {{day}},{{hours}} ], {% endfor %} {% endspaceless %}] ] 
   var options = { 
                  series: {
                            stack: true,
@@ -28,19 +28,15 @@
                  grid: {
                            hoverable: true,
                            borderWidth: 2,
-                           // backgroundColor: { colors: ["#ED0000", "#00ff00"] }
    		        },
                 xaxis: {
-                           mode: "time",
-                           tickSize: [3, "day"],
-                           tickLength: 10,
+		           mode: "time",
+                           min: {{from_date}},
+			   max: {{ to_date }},
                            color: "black",
-                           axisLabel: "Date",
-                           axisLabelUseCanvas: true,
-                           axisLabelFontSizePixels: 12,
-                           axisLabelFontFamily: 'Verdana, Arial',
-                           axisLabelPadding: 10
+                           timeformat: "%d %b %y"
                        }, 
+                 grid: {markings: [{yaxis: {from: 8, to:8}, color: "#adff2f"}]},
                 };
   $.plot ( $("#sprint_name"),dataset, options);
 </script>
