@@ -3087,14 +3087,41 @@ def show_timeline(request, project_id):
 
     today = datetime.datetime.today().date()
     
-    #current_sprint = timepiece.Project.objects.get(id=project_id)
     
-    current_sprint = timepiece.Project.objects.get(id=816)
 
-    from_date = 1 # datetime.date(2013,1,1)
-    to_date = 12 # datetime.date(2013,12,1)
+    ##-----
+
+    # context['project'] = timepiece.Project.objects.filter(pk=pk).filter_by_logged_in_user(request.user)[0]
+    # context['issues'] = timepiece.Issue.objects.filter(project=context['project']).order_by("id")
+    # context['unassigned_timesheet_entries_hours'] = timepiece.Issue.get_unassigned_timesheet_entries_hours(context['project'])
+    # context['unassigned_timesheet_entries_ctc'] = timepiece.Issue.get_unassigned_timesheet_entries_ctc(context['project'])
+    # context['unassigned_timesheet_entries_billable'] = timepiece.Issue.get_unassigned_timesheet_entries_billable(context['project'])
+
+    # all_entries = context['project'].entries.all().order_by("start_time")
+    # hours = 0
+    # ctc = 0
+    # billable = 0
+    # for entry in all_entries:
+    #     hours += entry.hours
+    #     ctc += entry.atrate
+    #     billable += entry.atbillablerate
+    # context['total_hours'] = hours
+    # context['total_ctc'] = ctc
+    # context['total_billable'] = billable
+
+    # get project
+    # project.issues
+    # for each issue : issue.hours (property) OR issue.related_entries (property) 
+    # put each entry into start_date bucket 
+    # for each bucket print entry 
+    ##-----
+    
+
+    # datetime.date(2013,1,1)
+    from_date = 1 
+    to_date = 12 
     daily_hours = {}
-
+        
     dhours = []
     for d in range(1,13):
         dhours += [ (d, random.randint(0,10) ) ]
