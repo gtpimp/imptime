@@ -3098,7 +3098,6 @@ def show_timeline(request, project_id):
         if issue_entries.count() == 0:
             continue
         
-        #day_total_hours = 0
         issuedict[issue.subject] = issuedict.get(issue.subject,{})
         for entry in issue_entries:
             issue_total_hours_for_day = issuedict[issue.subject].get(entry.start_time,0)
@@ -3109,17 +3108,31 @@ def show_timeline(request, project_id):
 
             if not maxdate or maxdate < entry.end_time:
                  maxdate = entry.end_time
-    
-            # if not global_max_total_hours or global_max_total_hours < day_total_hours:
-            #     global_max_total_hours = day_total_hours
 
-            if longest_issue_of_day.has_key(entry.start_time.date()):                
-                if longest_issue_of_day[entry.start_time.date()][-1] < issuedict[issue.subject][entry.start_time.date()]:
-                    longest_issue_of_day[entry.start_time.date()]  = ( issue.subject, issuedict[issue.subject][entry.start_time.date()])
-            else:
-                longest_issue_of_day[entry.start_time.date()] = ( issue.subject, issuedict[issue.subject][entry.start_time.date()] )
-    from_date = mindate
-    to_date = maxdate
+                 
+    day_dict = {}
+    hours_of_max_day = None
+    for issue in project.issues.all():
+        issue_entries = issue.entry_set.all()
+
+        if issue_entries.count() == 0:
+            continue
+
+        for entry in issue_entries:
+            #day_dict[entry.start_time] = day_dict.get(entry.start_time,0) + float(entry.hours)
+            day_dict[entry.start_time] = day_dict.get(entry.start_time,{}) 
+            day_dict[entry.start_time][issue.subject] = day_dict[entry.start_time].get(issue.subject,0) +  float(entry.hours)
+            
+    hours_of_max_day = max([j for i,j in day_dict.items()])
+
+    biggest_issue_of_day = {}
+    for date,issues in sorted(day_dict.iteritems()):
+        for issue, hours in issues.iteritems():
+            biggest_issue_of_day[date] = biggest_issue_of_day.get(date,None)
+            if hours > biggest_issue_of_day[date]:
+                biggest_issue_of_day[date] = hours
+
+    import pdb; pdb.set_trace()
 
     context['issue_entry'] = []
     for i,j in  sorted(issuedict.items()):
@@ -3133,8 +3146,7 @@ def show_timeline(request, project_id):
             element.append(max_elem)
         context['issue_entry'].append(element)
      
-    context['longest_issues']= [j[0] for i,j in sorted(longest_issue_of_day.iteritems())]
-    context['from_date'] = from_date
-    context['to_date'] = to_date
+    context['from_date'] = mindate
+    context['to_date'] = maxdate
 
     return context
