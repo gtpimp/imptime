@@ -3115,22 +3115,51 @@ def show_timeline(request, project_id):
     # put each entry into start_date bucket 
     # for each bucket print entry 
     ##-----
-    
 
-    # datetime.date(2013,1,1)
-    from_date = 1 
-    to_date = 12 
-    daily_hours = {}
+    # datedict = {}
+    # for issue in project.issues.all():
+    #     issue_entries = issue.entry_set.all()
+    #     if issue_entries.count() > 0:
+    #         for entry in issue_entries:
+    #             datedict[entry.start_time] = datedict.get(entry.start_time,{})
+    #             datedict[entry.start_time][issue.subject] = datedict[entry.start_time].get(issue.subject,[]) + [float(entry.hours)]
+                
+    # datedict = [i.date(), issuetimes for i,issuetimes in sorted(datedict.iteritems())]
+    project = timepiece.Project.objects.get(id=1013)
+    #import pdb; pdb.set_trace()
+    issuedict = {}
+    mindate = None
+    maxdate = None
+    for issue in project.issues.all():
+        issue_entries = issue.entry_set.all()
+
+        if issue_entries.count() == 0:
+            continue
+
+        issuedict[issue.subject] = issuedict.get(issue.subject,{})
+        for entry in issue_entries:
+            issuedict[issue.subject][entry.start_time.date()] = issuedict[issue.subject].get(entry.start_time,0) +  float(entry.hours)
+            if not mindate or mindate > entry.start_time:
+                 mindate = entry.start_time
+
+            if not maxdate or maxdate < entry.end_time:
+                 maxdate = entry.start_time
         
-    dhours = []
-    for d in range(1,13):
-        dhours += [ (d, random.randint(0,10) ) ]
-        
-    daily_hours = dhours
-        
-        
-    context['daily_hours'] = daily_hours
+
+    from_date = mindate
+    to_date = maxdate
+    import pdb; pdb.set_trace()        
+    context['daily_hours'] = sorted(issuedict.items()[0][-1].iteritems())
     context['from_date'] = from_date
     context['to_date'] = to_date
+
+        
+    # dhours = []
+    # for d in range(1,13):
+    #     dhours += [ (d, random.randint(0,10) ) ]       
+    # daily_hours = dhours
+    # context['daily_hours'] = daily_hours
+    # context['from_date'] = from_date
+    # context['to_date'] = to_date
 
     return context

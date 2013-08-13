@@ -19,24 +19,22 @@
 </div>
 
 <script>
- var dataset = [ [{% spaceless %}{% for day, hours in daily_hours %} [ {{day}},{{hours}} ], {% endfor %} {% endspaceless %}] ] 
+ var dataset = [  [{% spaceless %}{% for day, hours in daily_hours %} [ {{day|epoch}},{{hours}} ], {% endfor %} {% endspaceless %}] ] 
   var options = { 
                  series: {
                            stack: true,
-			   bars:{show: true}
+			   bars:{show: true, barWidth: 24*60*60*1000 },
+                           lines:{show:false, steps: false}
                           },
-                 grid: {
-                           hoverable: true,
-                           borderWidth: 2,
-   		        },
-                xaxis: {
+                xaxis: { 
 		           mode: "time",
-                           min: {{from_date}},
-			   max: {{ to_date }},
+                           tickSize: [1,"day"],
+                           min: {{from_date|epoch}},
+			   max: {{ to_date|epoch }},
                            color: "black",
                            timeformat: "%d %b %y"
                        }, 
-                 grid: {markings: [{yaxis: {from: 8, to:8}, color: "#adff2f"}]},
+
                 };
   $.plot ( $("#sprint_name"),dataset, options);
 </script>
