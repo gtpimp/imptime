@@ -3128,6 +3128,7 @@ def show_timeline(request, project_id):
     project = timepiece.Project.objects.get(id=1013)
     #import pdb; pdb.set_trace()
     issuedict = {}
+    longest_issue_of_day = {}
     mindate = None
     maxdate = None
     for issue in project.issues.all():
@@ -3143,13 +3144,19 @@ def show_timeline(request, project_id):
                  mindate = entry.start_time
 
             if not maxdate or maxdate < entry.end_time:
-                 maxdate = entry.start_time
-        
+                 maxdate = entry.end_time
+                 
+            if longest_issue_of_day.has_key(entry.start_time.date()):                
+                if longest_issue_of_day[entry.start_time.date()][-1] < issuedict[issue.subject][entry.start_time.date()]:
+                    longest_issue_of_day[entry.start_time.date()]  = ( issue.subject, issuedict[issue.subject][entry.start_time.date()])
+            else:
+                longest_issue_of_day[entry.start_time.date()] = ( issue.subject, issuedict[issue.subject][entry.start_time.date()] )
 
     from_date = mindate
     to_date = maxdate
     import pdb; pdb.set_trace()        
     context['daily_hours'] = sorted(issuedict.items()[0][-1].iteritems())
+    context['issue_entry'] = [(i,sorted(j.iteritems())) for i,j in  sorted(issuedict.items())]
     context['from_date'] = from_date
     context['to_date'] = to_date
 

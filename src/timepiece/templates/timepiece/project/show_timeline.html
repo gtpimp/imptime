@@ -19,7 +19,11 @@
 </div>
 
 <script>
- var dataset = [  [{% spaceless %}{% for day, hours in daily_hours %} [ {{day|epoch}},{{hours}} ], {% endfor %} {% endspaceless %}] ] 
+ var dataset = [
+{% for issue, issue_hours in issue_entry %}
+  [{% spaceless %}{% for day, hours in issue_hours %} [ {{day|epoch}},{{hours}} ], {% endfor %} {% endspaceless %}],
+{% endfor %}
+]
   var options = { 
                  series: {
                            stack: true,
