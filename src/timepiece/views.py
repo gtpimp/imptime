@@ -3086,88 +3086,55 @@ def show_timeline(request, project_id):
     context = {}
 
     today = datetime.datetime.today().date()
-    
-    
-
-    ##-----
-
-    # context['project'] = timepiece.Project.objects.filter(pk=pk).filter_by_logged_in_user(request.user)[0]
-    # context['issues'] = timepiece.Issue.objects.filter(project=context['project']).order_by("id")
-    # context['unassigned_timesheet_entries_hours'] = timepiece.Issue.get_unassigned_timesheet_entries_hours(context['project'])
-    # context['unassigned_timesheet_entries_ctc'] = timepiece.Issue.get_unassigned_timesheet_entries_ctc(context['project'])
-    # context['unassigned_timesheet_entries_billable'] = timepiece.Issue.get_unassigned_timesheet_entries_billable(context['project'])
-
-    # all_entries = context['project'].entries.all().order_by("start_time")
-    # hours = 0
-    # ctc = 0
-    # billable = 0
-    # for entry in all_entries:
-    #     hours += entry.hours
-    #     ctc += entry.atrate
-    #     billable += entry.atbillablerate
-    # context['total_hours'] = hours
-    # context['total_ctc'] = ctc
-    # context['total_billable'] = billable
-
-    # get project
-    # project.issues
-    # for each issue : issue.hours (property) OR issue.related_entries (property) 
-    # put each entry into start_date bucket 
-    # for each bucket print entry 
-    ##-----
-
-    # datedict = {}
-    # for issue in project.issues.all():
-    #     issue_entries = issue.entry_set.all()
-    #     if issue_entries.count() > 0:
-    #         for entry in issue_entries:
-    #             datedict[entry.start_time] = datedict.get(entry.start_time,{})
-    #             datedict[entry.start_time][issue.subject] = datedict[entry.start_time].get(issue.subject,[]) + [float(entry.hours)]
-                
-    # datedict = [i.date(), issuetimes for i,issuetimes in sorted(datedict.iteritems())]
     project = timepiece.Project.objects.get(id=1013)
-    #import pdb; pdb.set_trace()
     issuedict = {}
     longest_issue_of_day = {}
-    #longest_issue = []
     mindate = None
     maxdate = None
+    global_max_total_hours = None
     for issue in project.issues.all():
         issue_entries = issue.entry_set.all()
 
         if issue_entries.count() == 0:
             continue
-
+        
+        #day_total_hours = 0
         issuedict[issue.subject] = issuedict.get(issue.subject,{})
         for entry in issue_entries:
-            issuedict[issue.subject][entry.start_time.date()] = issuedict[issue.subject].get(entry.start_time,0) +  float(entry.hours)
+            issue_total_hours_for_day = issuedict[issue.subject].get(entry.start_time,0)
+            issuedict[issue.subject][entry.start_time.date()] = issue_total_hours_for_day +  float(entry.hours)
+
             if not mindate or mindate > entry.start_time:
                  mindate = entry.start_time
 
             if not maxdate or maxdate < entry.end_time:
                  maxdate = entry.end_time
     
+            # if not global_max_total_hours or global_max_total_hours < day_total_hours:
+            #     global_max_total_hours = day_total_hours
+
             if longest_issue_of_day.has_key(entry.start_time.date()):                
                 if longest_issue_of_day[entry.start_time.date()][-1] < issuedict[issue.subject][entry.start_time.date()]:
                     longest_issue_of_day[entry.start_time.date()]  = ( issue.subject, issuedict[issue.subject][entry.start_time.date()])
             else:
                 longest_issue_of_day[entry.start_time.date()] = ( issue.subject, issuedict[issue.subject][entry.start_time.date()] )
-
     from_date = mindate
     to_date = maxdate
-    #import pdb; pdb.set_trace()        
-    context['issue_entry'] = [(i,sorted(j.iteritems())) for i,j in  sorted(issuedict.items())]
+
+    context['issue_entry'] = []
+    for i,j in  sorted(issuedict.items()):
+        sorted_items = sorted(j.iteritems())
+        element = [i,sorted_items ]
+        max_elem = None
+        for item in sorted_items:
+            if not max_elem or max_elem[-1] < item[-1]:
+                max_elem = item
+        if max_elem is not None:
+            element.append(max_elem)
+        context['issue_entry'].append(element)
+     
     context['longest_issues']= [j[0] for i,j in sorted(longest_issue_of_day.iteritems())]
     context['from_date'] = from_date
     context['to_date'] = to_date
-
-        
-    # dhours = []
-    # for d in range(1,13):
-    #     dhours += [ (d, random.randint(0,10) ) ]       
-    # daily_hours = dhours
-    # context['daily_hours'] = daily_hours
-    # context['from_date'] = from_date
-    # context['to_date'] = to_date
 
     return context
