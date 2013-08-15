@@ -3098,18 +3098,20 @@ def show_timeline(request, project_id):
         if issue_entries.count() == 0:
             continue
         
+
         issuedict[issue.subject] = issuedict.get(issue.subject,{})
         for entry in issue_entries:
             issue_total_hours_for_day = issuedict[issue.subject].get(entry.start_time,0)
             issuedict[issue.subject][entry.start_time.date()] = issue_total_hours_for_day +  float(entry.hours)
-
+            
             if not mindate or mindate > entry.start_time:
                  mindate = entry.start_time
 
             if not maxdate or maxdate < entry.end_time:
                  maxdate = entry.end_time
 
-                 
+        
+    day_biggest_issue_dict  = {}                 
     day_dict = {}
     hours_of_max_day = None
     for issue in project.issues.all():
@@ -3118,34 +3120,34 @@ def show_timeline(request, project_id):
         if issue_entries.count() == 0:
             continue
 
+        # get time for each issue
         for entry in issue_entries:
-            #day_dict[entry.start_time] = day_dict.get(entry.start_time,0) + float(entry.hours)
+
             day_dict[entry.start_time] = day_dict.get(entry.start_time,{}) 
             day_dict[entry.start_time][issue.subject] = day_dict[entry.start_time].get(issue.subject,0) +  float(entry.hours)
             
+    for day_start, daily_issue_info in day_dict.iteritems():
+        cur_max = 0
+        for issue, duration in daily_issue_info.iteritems():
+            if duration > cur_max:
+                day_biggest_issue_dict[day_start] = issue
+                cur_max = duration
+
     hours_of_max_day = max([j for i,j in day_dict.items()])
 
-    biggest_issue_of_day = {}
-    for date,issues in sorted(day_dict.iteritems()):
-        for issue, hours in issues.iteritems():
-            biggest_issue_of_day[date] = biggest_issue_of_day.get(date,None)
-            if hours > biggest_issue_of_day[date]:
-                biggest_issue_of_day[date] = hours
-
-    import pdb; pdb.set_trace()
-
     context['issue_entry'] = []
-    for i,j in  sorted(issuedict.items()):
-        sorted_items = sorted(j.iteritems())
-        element = [i,sorted_items ]
+    for issue_subject,day_entry in  sorted(issuedict.items()):
+        sorted_day_entry_items = sorted(day_entry.iteritems())
+        element = [ issue_subject, sorted_day_entry_items ]
         max_elem = None
-        for item in sorted_items:
+        for item in sorted_day_entry_items:
             if not max_elem or max_elem[-1] < item[-1]:
                 max_elem = item
         if max_elem is not None:
             element.append(max_elem)
         context['issue_entry'].append(element)
      
+    context['issue_labels'] = [ (day-datetime.timedelta(hours=12),name) for day, name in sorted(day_biggest_issue_dict.iteritems())] 
     context['from_date'] = mindate
     context['to_date'] = maxdate
 

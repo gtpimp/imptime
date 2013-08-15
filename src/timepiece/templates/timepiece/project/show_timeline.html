@@ -65,17 +65,11 @@
                 };
   var graph = $.plot ( $("#sprint_name"),dataset, options);
 
-    o = graph.pointOffset({ x: {{ from_date|epoch}}, y: 20});
-    $("#sprint_name").append('<div style="transform:rotate(90def);-webkit-transform:rotate(90deg);position:absolute;left:' + (o.left + 4) + 'px;top:' + o.top + 'px;color:#666;font-size:smaller">0</div>');
 
-
-    {% for issue, issue_hours, max_val in issue_entry %}
-      {% for day, hours in issue_hours %} 
-         o = graph.pointOffset({ x: {{ day|epoch}}, y: {{ 50 }} });
-         $("#sprint_name").append('<div style="transform:rotate(90def);-webkit-transform:rotate(90deg);position:absolute;left:' + (o.left) + 'px;top:' + o.top + 'px;color:#666;font-size:smaller"> {{ issue }}</div>');
-      {% endfor  %}
-    {% endfor %}
-
+{% for day, issue_label in issue_labels %}
+      o = graph.pointOffset({ x: {{ day|epoch}}, y: {{ 50 }} });
+      $("#sprint_name").append('<div style="transform:rotate(90def);-webkit-transform:rotate(90deg);position:absolute;left:' + (o.left) + 'px;top:' + o.top + 'px;color:#666;font-size:smaller"> {{ issue_label|safe }}</div>');
+{% endfor %}
 
 </script>
 {% endblock %}
