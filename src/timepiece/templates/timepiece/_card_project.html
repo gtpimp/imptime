@@ -31,11 +31,6 @@
        {% endif %}
        
   <br/>
-       <a href="#" class="secret_link" onclick="window.open('{% url 'show_timeline' project.id %}')">
-	 show timeline
-       </a>
-
-  <br/>
 
 </div>         
 
@@ -77,6 +72,10 @@
 </div>
 
 <div class="toggle_title secret_link" onclick="$(this).parent().find('.toggle_graphs_section').toggle();">toggle graphs</div>
+<a href="#" class="secret_link" onclick="window.open('{% url 'show_timeline' project.id %}')">
+ show timeline
+</a> 
+
 <div class="toggle_graphs_section" style="display:none">
   <div class="graph">
     <h1>hours by user</h1>
