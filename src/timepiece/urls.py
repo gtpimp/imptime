@@ -381,4 +381,9 @@ urlpatterns = patterns('',
         views.show_timeline,
         name='show_timeline'
       ),
+    url(
+        r'^show_permissions/(?P<business_id>\d+)$',
+        views.show_permissions,
+        name='show_permissions'
+      ),
 )

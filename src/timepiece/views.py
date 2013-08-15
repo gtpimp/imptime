@@ -3163,3 +3163,21 @@ def show_timeline(request, project_id):
     context['to_date'] = maxdate
 
     return context
+
+
+@render_with('timepiece/project/show_permissions.html')
+def show_permissions(request, business_id):
+    if not request.user.is_superuser:
+        return HttpResponse("")
+    #import pdb; pdb.set_trace()
+    business = timepiece.Business.objects.get(pk=business_id)
+
+    users = []
+    if business is not None:
+        users = business.users 
+
+    context = {}
+    context['permission_user_list'] = users
+
+    return context
+

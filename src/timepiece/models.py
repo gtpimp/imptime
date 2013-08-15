@@ -64,15 +64,24 @@ class BusinessQuerySet(QuerySet):
 class Business(models.Model):
     class Meta:
         ordering = ('name',)
-
+        
     name = models.CharField(max_length=255, blank=True)
     slug = models.SlugField(max_length=255, unique=True, blank=True)
     email = models.EmailField(blank=True)
     description = models.TextField(blank=True)
     notes = models.TextField(blank=True)
     external_id = models.CharField(max_length=32, blank=True)
-
+    
     objects = QuerySetManager(BusinessQuerySet)
+    
+    @property
+    def users(self):
+        user_ids =  Project.objects.filter(business__id = self.id).values_list("users", flat=True)
+        return_users = []
+        for user_id in user_ids:
+            if user_id is not None:
+                return_users.append(User.objects.get(id=user_id))
+        return return_users
 
     def save(self, *args, **kwargs):
         queryset = Business.objects.all()
@@ -115,6 +124,14 @@ class ProjectQuerySet(QuerySet):
             return self
         return self.filter(users=user)
 
+class BusinessPermissions(models.Model):
+    business = models.ForeignKey(
+        Business,
+        related_name='business_permissions',
+    )
+    users = models.ForeignKey(User)
+    can_edit_permissions = models.BooleanField(default=False)
+
 class Project(models.Model):
 
     code = models.CharField(max_length=255,blank=True,null=True)        
@@ -123,7 +140,7 @@ class Project(models.Model):
     tracker_url = models.CharField(max_length=255, blank=True, null=False,
         default="")
     business = models.ForeignKey(
-        Business,
+        "Business",
         related_name='new_business_projects',
     )
     billable = models.BooleanField(default=False)
