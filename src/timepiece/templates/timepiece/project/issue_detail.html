@@ -56,9 +56,8 @@ $('.edit_description').click(function() {
                 button.data('textContent', this.value);
                 $(this).data($(this).val());
                 button.html(button.data('textContent'));
-		var return_url = '{% url issue_detail_update %}'
                 $.ajax({type:"POST",
-                        url: return_url,
+                        url: '{% url issue_detail_update %}',
                         data : { issue_id: {{ issue.id }}, new_description: button.data('textContent') },
                         dataType:"json"});
                 $(this).remove();
