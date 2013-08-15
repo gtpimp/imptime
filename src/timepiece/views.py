@@ -3086,7 +3086,7 @@ def show_timeline(request, project_id):
     context = {}
 
     today = datetime.datetime.today().date()
-    project = timepiece.Project.objects.get(id=1013)
+    project = timepiece.Project.objects.get(id=project_id)
     issuedict = {}
     longest_issue_of_day = {}
     mindate = None
@@ -3113,16 +3113,13 @@ def show_timeline(request, project_id):
         
     day_biggest_issue_dict  = {}                 
     day_dict = {}
-    hours_of_max_day = None
     for issue in project.issues.all():
         issue_entries = issue.entry_set.all()
 
         if issue_entries.count() == 0:
             continue
 
-        # get time for each issue
         for entry in issue_entries:
-
             day_dict[entry.start_time] = day_dict.get(entry.start_time,{}) 
             day_dict[entry.start_time][issue.subject] = day_dict[entry.start_time].get(issue.subject,0) +  float(entry.hours)
             
@@ -3132,8 +3129,6 @@ def show_timeline(request, project_id):
             if duration > cur_max:
                 day_biggest_issue_dict[day_start] = issue
                 cur_max = duration
-
-    hours_of_max_day = max([j for i,j in day_dict.items()])
 
     context['issue_entry'] = []
     for issue_subject,day_entry in  sorted(issuedict.items()):
@@ -3147,7 +3142,8 @@ def show_timeline(request, project_id):
             element.append(max_elem)
         context['issue_entry'].append(element)
      
-    context['issue_labels'] = [ (day-datetime.timedelta(hours=12),name) for day, name in sorted(day_biggest_issue_dict.iteritems())] 
+    offset = datetime.timedelta(hours=12)
+    context['issue_labels'] = [ (day-offset,name) for day, name in sorted(day_biggest_issue_dict.iteritems())] 
     context['from_date'] = mindate
     context['to_date'] = maxdate
 
