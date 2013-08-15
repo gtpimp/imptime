@@ -2923,6 +2923,21 @@ def issue_detail(request, issue_id, template="timepiece/project/issue_detail.htm
 
 @csrf_exempt
 @permission_required('timepiece.change_project')
+def issue_detail_update(request,  template="timepiece/project/issue_detail.html", context=None):
+    edited_issue = None
+    issue_id = request.POST.get("issue_id",None)
+    if issue_id is not None:
+        edited_issue = timepiece.Issue.objects.get(pk=issue_id)
+        
+    if edited_issue is not None:
+        new_description = request.POST.get("new_description",None)
+        edited_issue.description = new_description
+        edited_issue.save()
+    
+    return HttpResponse("")
+
+@csrf_exempt
+@permission_required('timepiece.change_project')
 def unassigned_timesheet_entries(request, project_id, template="timepiece/project/issue_detail.html", context=None):
     context = context or {}
     project = timepiece.Project.objects.filter(pk=project_id).filter_by_logged_in_user(request.user)[0]

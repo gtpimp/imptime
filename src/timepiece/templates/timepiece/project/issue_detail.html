@@ -1,10 +1,8 @@
 <h2>#{{issue.id}} {{issue.subject}}</h2>
 
 <div class="issue_status">{{issue.status}}</div>
+<div class="edit_description" > {{issue.description}} </div>
 
-<pre>
-{{issue.description}}
-</pre>
 
 {% ifequal 0 issue.related_entries|length %}
   No timesheet entries
@@ -36,3 +34,39 @@
     </table>
   </div>
 {% endifequal %}
+
+
+<script>
+imp.call_server = function(issue_id, subject) {
+}
+
+$('.edit_description').click(function() {
+    var button = $(this),
+        commentField = $('<textarea/>');
+    
+    commentField
+    .css({
+            position: 'absolute',
+            width: 200,
+            height: 100,
+            left: button.offset().left + (button.outerWidth() / 2), //- 100,
+             top: button.offset().top + (button.outerHeight() / 2) //- 50
+        })    
+        .val(button.data('textContent') || button.html() )
+        .keypress(function(e) {
+            if (e.which === 13) {
+                e.preventDefault();
+                button.data('textContent', this.value);
+                $(this).data($(this).val());
+                button.html(button.data('textContent'));
+		var return_url = '{% url issue_detail_update %}'
+                $.ajax({type:"POST",
+                        url: return_url,
+                        data : { issue_id: {{ issue.id }}, new_description: button.data('textContent') },
+                        dataType:"json"});
+                $(this).remove();
+            }
+        })
+        .appendTo(document.body);
+});
+</script>
