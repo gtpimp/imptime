@@ -77,10 +77,11 @@ class Business(models.Model):
     @property
     def users(self):
         user_ids =  Project.objects.filter(business__id = self.id).values_list("users", flat=True)
+        user_ids = [user_id for user_id in user_ids if user_id is not None]
+        user_ids = list(set(user_ids))
         return_users = []
         for user_id in user_ids:
-            if user_id is not None:
-                return_users.append(User.objects.get(id=user_id))
+            return_users.append(User.objects.get(id=user_id))
         return return_users
 
     def save(self, *args, **kwargs):
