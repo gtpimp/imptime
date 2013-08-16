@@ -3190,19 +3190,23 @@ def show_timeline(request, project_id):
 def show_permissions(request, business_id):
     if not request.user.is_superuser:
         return HttpResponse("")
-
-    business = timepiece.Business.objects.get(pk=business_id)
+    
+    context = {}
+    try:
+        business = timepiece.Business.objects.get(pk=business_id)
+    except timepiece.Business.DoesNotExist:
+        business = None
     
     add_user_form = timepiece_forms.AddUserToProjectForm()
-    context = { 'add_user_form' : add_user_form , 'business':business }
-    
-    last_project = timepiece.Project.most_recent_project(business.id)
 
-    users = []
-    if business is not None:
-        users = business.users 
-        
+    context['add_user_form']= add_user_form 
+
+    context['business'] = business 
+   
+    users = [] if business is None else business.users
+
     context['permission_user_list'] = users
-    context['last_project'] = last_project
+    context['last_project'] = timepiece.Project.most_recent_project(business.id)
+    
     return context
 
