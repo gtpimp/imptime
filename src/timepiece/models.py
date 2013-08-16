@@ -132,6 +132,20 @@ class BusinessPermissions(models.Model):
     )
     users = models.ForeignKey(User)
     can_edit_permissions = models.BooleanField(default=False)
+    can_edit_project_detail = models.BooleanField(default=False)
+    can_edit_issues = models.BooleanField(default=False)
+    
+    can_edit_budget = models.BooleanField(default=False)
+    can_view_budget = models.BooleanField(default=False)
+    
+    can_edit_invoices = models.BooleanField(default=False)
+    can_view_invoices = models.BooleanField(default=False)
+    
+    can_edit_ctc_billable_rates = models.BooleanField(default=False)
+    can_view_ctc_billable_rates = models.BooleanField(default=False)
+
+    can_toggle_graphs = models.BooleanField(default=False)
+
 
 class Project(models.Model):
 
