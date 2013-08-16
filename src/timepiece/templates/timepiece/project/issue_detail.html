@@ -1,7 +1,9 @@
 <h2>#{{issue.id}} {{issue.subject}}</h2>
 
+<script src="{{STATIC_URL}}timepiece/js/issues.js"></script>
+
 <div class="issue_status">{{issue.status}}</div>
-<div class="edit_description" > {{issue.description}} </div>
+<div class="edit_description" onclick="imp.clickable_text_box(this, '{% url issue_detail_update %}',{{ issue.id }})" > {{issue.description}} </div>
 
 
 {% ifequal 0 issue.related_entries|length %}
@@ -36,33 +38,3 @@
 {% endifequal %}
 
 
-<script>
-$('.edit_description').click(function() {
-    var button = $(this),
-        commentField = $('<textarea/>');
-    
-    commentField
-    .css({
-            position: 'absolute',
-            width: 200,
-            height: 100,
-            left: button.offset().left, 
-             top: button.offset().top 
-        })    
-        .val(button.data('textContent') || button.html() )
-        .keypress(function(e) {
-            if (e.which === 13) {
-                e.preventDefault();
-                button.data('textContent', this.value);
-                $(this).data($(this).val());
-                button.html(button.data('textContent'));
-                $.ajax({type:"POST",
-                        url: '{% url issue_detail_update %}',
-                        data : { issue_id: {{ issue.id }}, new_description: button.data('textContent') },
-                        dataType:"json"});
-                $(this).remove();
-            }
-        })
-        .appendTo(document.body);
-});
-</script>
