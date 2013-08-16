@@ -389,4 +389,10 @@ urlpatterns = patterns('',
         views.show_permissions,
         name='show_permissions'
       ),
+    # Expenses views
+    url(
+        r'^update_permissions/list',
+        views.update_permissions_list,
+        name='update_permissions_list'
+        ),
 )

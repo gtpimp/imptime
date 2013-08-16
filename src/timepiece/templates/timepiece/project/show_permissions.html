@@ -58,6 +58,48 @@
                 </tbody>
             </table>
 
+	    <form method="POST" action="{% url 'update_permissions_list' %}">
+	      {% csrf_token %}
+	      {{ permission_forms.management_form }}
+	      
+	      <table class='table table-striped table-bordered table-condensed'>
+		<thead>
+		  <td>User </td>
+		  <td>can edit permission</td>
+		  <td>can_edit_project_detail</td>
+		  <td>can_edit_issues</td>		  
+		  <td>can_edit_budget</td>
+		  <td>can_view_budget</td>
+		  <td>can_edit_invoices</td>
+		  <td>can_view_invoices</td>
+		  <td>can_edit_ctc_billable_rates</td>
+		  <td>can_view_ctc_billable_rates</td>
+		  <td>can_toggle_graphs</td>
+		</thead>
+
+		<tbody>
+		  {% for form in permission_forms.forms %}
+		    <td>{{ form.instance.user.username}} </td>
+		    <td>{{form.can_edit_permissions}}</td>
+		    <td>{{form.can_edit_project_detail}}</td>
+		    <td>{{form.can_edit_issues}}</td>		  
+		    <td>{{form.can_edit_budget}}</td>
+		    <td>{{form.can_view_budget}}</td>
+		    <td>{{form.can_edit_invoices}}</td>
+		    <td>{{form.can_view_invoices}}</td>
+		    <td>{{form.can_edit_ctc_billable_rates}}</td>
+		    <td>{{form.can_view_ctc_billable_rates}}</td>
+		    <td>{{form.can_toggle_graphs}}</td>		    
+		  </tr>
+		  {% endfor %}
+		  
+		</tbody>
+	      </table>
+	      
+	      <input type="submit" value="save"/>
+	    </form>
+	    
+		
             {% if perms.timepiece.add_projectrelationship %}
 	    <form class="form-inline" action="{% url 'add_user_to_project' project_id=last_project.id %}?next={% url 'show_permissions' business_id=business.id %}" method="post" accept-charset="utf-8">
                 {% csrf_token %}

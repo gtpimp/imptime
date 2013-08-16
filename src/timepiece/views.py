@@ -3198,15 +3198,54 @@ def show_permissions(request, business_id):
         business = None
     
     add_user_form = timepiece_forms.AddUserToProjectForm()
-
+    
     context['add_user_form']= add_user_form 
 
     context['business'] = business 
    
     users = [] if business is None else business.users
 
+    user_ids = [user.id for user in users ]
+
+    for user in users:
+        try:
+            permissions = timepiece.BusinessPermissions.objects.get(business = business, user = user.id)
+        except timepiece.BusinessPermissions.DoesNotExist:
+            permissions = timepiece.BusinessPermissions.objects.create(business = business, user= user)
+
+    permissions_set = timepiece.BusinessPermissions.objects.filter(business__id = business.id )
+
+    permission_forms = timepiece_forms.permissions_formset(request.POST or None,
+                                                            queryset = permissions_set)
+
+    context['permission_forms'] = permission_forms
+
     context['permission_user_list'] = users
     context['last_project'] = timepiece.Project.most_recent_project(business.id)
     
     return context
 
+
+
+@permission_required('timepiece.expenses')
+@render_with('timepiece/project/show_permissions.html')
+def update_permissions_list(request, template = 'timepiece/project/show_permissions.html', context=None):
+    #import pdb; pdb.set_trace()
+    context = context or {}
+
+    #permission_forms = timepiece_forme
+    # from_date, to_date = _get_filter_dates(request, context)
+    # queryset = timepiece.Expense.objects.filter(date__gte=from_date, date__lte=to_date)
+    # project = request.GET.get('project_id')
+    # if project:
+    #     queryset = queryset.filter(project__id=project)
+
+    # expense_formset = timepiece_forms.expense_formset(request.POST or None,
+    #                                                   queryset = queryset.order_by("date"))
+    # if expense_formset.is_valid():
+    #     expense_formset.save()
+
+    # context['expense_formset'] = expense_formset
+    # context['total'] = queryset.aggregate(total=Sum('amount'))['total']
+
+    return HttpResponse("") #render_to_response(template, context, context_instance=RequestContext(request))

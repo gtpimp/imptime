@@ -119,6 +119,12 @@ class EditPersonForm(auth_forms.UserChangeForm):
         fields = ('username', 'first_name', 'last_name', 'email', 'is_active',
                 'is_staff')
 
+class EditPersonPermission(forms.ModelForm):
+    class Meta:
+        model = timepiece.BusinessPermissions
+        fields = ( 'can_edit_permissions', 'can_edit_project_detail',  'can_edit_issues',   
+                   'can_edit_budget',   'can_view_budget', 'can_edit_invoices', 'can_view_invoices',
+                   'can_edit_ctc_billable_rates', 'can_view_ctc_billable_rates', 'can_toggle_graphs')
 
 class QuickEditPersonForm(forms.ModelForm):
     class Meta:
@@ -944,6 +950,7 @@ def lookup_project(name, projects):
     raise LookupError("Project %s does not exist" % name)
 
 expense_formset = modelformset_factory(timepiece.Expense, can_delete=True, extra=2)
+permissions_formset = modelformset_factory(timepiece.BusinessPermissions, form=EditPersonPermission, can_delete=True, extra=2)
 
 class ExpenseForm(forms.Form):
     date = forms.DateField(required=True)

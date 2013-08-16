@@ -126,11 +126,11 @@ class ProjectQuerySet(QuerySet):
         return self.filter(users=user)
 
 class BusinessPermissions(models.Model):
-    business = models.ForeignKey(
-        Business,
-        related_name='business_permissions',
-    )
-    users = models.ForeignKey(User)
+    business = models.ForeignKey( Business,
+                                  related_name='business_permissions' )
+    user = models.ForeignKey( User,
+                               related_name='business_permissions' )
+
     can_edit_permissions = models.BooleanField(default=False)
     can_edit_project_detail = models.BooleanField(default=False)
     can_edit_issues = models.BooleanField(default=False)
