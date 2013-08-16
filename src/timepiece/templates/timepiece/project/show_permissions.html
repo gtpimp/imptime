@@ -2,6 +2,10 @@
 {% load url from future %}
 {% load bootstrap_toolkit %}
 
+{% block extramedia %}
+{{ add_user_form.media }}
+{% endblock %}
+
 {% block title %}Permissions{% endblock %}
 
 {% block content %}
@@ -55,7 +59,7 @@
             </table>
 
             {% if perms.timepiece.add_projectrelationship %}
-	    <form class="form-inline" action="{% url 'add_user_to_project' project_id=last_project.id %}?next={% url 'view_project' project_id=last_project.id %}" method="post" accept-charset="utf-8">
+	    <form class="form-inline" action="{% url 'add_user_to_project' project_id=last_project.id %}?next={% url 'show_permissions' business_id=business.id %}" method="post" accept-charset="utf-8">
                 {% csrf_token %}
                 {{ add_user_form|as_bootstrap:"inline" }}
                 <input class="btn" type="submit" name="submit" id="submit" value="Add" />
