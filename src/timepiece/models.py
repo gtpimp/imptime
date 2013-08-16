@@ -246,7 +246,23 @@ class Project(models.Model):
             if entry['project_id'] not in p:
                 p[entry['project_id']] = Project.objects.get(pk=entry['project_id'])
         return p.values()
-    
+
+    @classmethod
+    def most_recent_project(self, business_id):
+        entries_per_business_ids = Entry.objects.filter(project__business_id=business_id).order_by('-end_time').values('project_id') 
+        project_returned = None
+        
+        if len(entries_per_business_ids) != 0:
+            project_id = entries_per_business_ids[0]['project_id']
+            
+            try:
+                project_returned = Project.objects.get(pk=project_id)            
+            except Project.DoesNotExist:
+                project_returned = None
+                
+        return project_returned
+
+
     @property
     def is_open(self):
         manually_closed = not(self.status.label == 'open' or self.status.label == "reopened")

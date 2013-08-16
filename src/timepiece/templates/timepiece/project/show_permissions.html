@@ -53,6 +53,15 @@
                     {% endfor %}
                 </tbody>
             </table>
+
+            {% if perms.timepiece.add_projectrelationship %}
+	    <form class="form-inline" action="{% url 'add_user_to_project' project_id=last_project.id %}?next={% url 'view_project' project_id=last_project.id %}" method="post" accept-charset="utf-8">
+                {% csrf_token %}
+                {{ add_user_form|as_bootstrap:"inline" }}
+                <input class="btn" type="submit" name="submit" id="submit" value="Add" />
+            </form>
+            {% endif %}
+
         </div>
     </div>
 {% endblock %}

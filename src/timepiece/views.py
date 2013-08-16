@@ -3169,8 +3169,10 @@ def show_timeline(request, project_id):
 def show_permissions(request, business_id):
     if not request.user.is_superuser:
         return HttpResponse("")
-    #import pdb; pdb.set_trace()
+
     business = timepiece.Business.objects.get(pk=business_id)
+    
+    last_project = timepiece.Project.most_recent_project(business.id)
 
     users = []
     if business is not None:
@@ -3178,6 +3180,6 @@ def show_permissions(request, business_id):
 
     context = {}
     context['permission_user_list'] = users
-
+    context['last_project'] = last_project
     return context
 
