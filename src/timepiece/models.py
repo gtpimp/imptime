@@ -147,6 +147,60 @@ class BusinessPermissions(models.Model):
     can_toggle_graphs = models.BooleanField(default=False)
     can_edit_issue_states = models.BooleanField(default=False)
 
+    can_see_other_user_points = models.BooleanField(default=False)
+    is_primary_points_user = models.BooleanField(default=False)
+
+    @property
+    def has_edit_permissions():
+        return self.can_edit_permissions
+
+    @property
+    def has_edit_project_detail():
+        return self.can_edit_project_detail
+
+    @property
+    def has_edit_issues():
+        return self.can_edit_issues
+    
+    @property
+    def has_edit_budget():
+        return self.can_edit_budget
+    @property
+    def has_view_budget():
+        return self.can_view_budget
+    
+    @property
+    def has_edit_invoices():
+        return self.can_edit_invoices
+
+    @property
+    def has_view_invoices():
+        return self.can_view_invoices
+    
+    @property
+    def has_edit_ctc_billable_rates():
+        return self.can_edit_ctc_billable_rates
+
+    @property
+    def has_view_ctc_billable_rates():
+        return self.can_view_ctc_billable_rates
+
+    @property
+    def has_toggle_graphs():
+        return self.can_toggle_graphs
+
+    @property
+    def has_edit_issue_states():
+        return self.can_edit_issue_states
+
+    @property
+    def has_see_other_user_points():
+        return self.can_see_other_user_points
+
+    @property
+    def primary_points_user():
+        return self.is_primary_points_user
+
 class Project(models.Model):
 
     code = models.CharField(max_length=255,blank=True,null=True)        
