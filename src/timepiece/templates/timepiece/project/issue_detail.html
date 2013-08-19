@@ -1,10 +1,10 @@
 <h2>#{{issue.id}} {{issue.subject}}</h2>
 
-<div class="issue_status">{{issue.status}}</div>
+<script src="{{STATIC_URL}}timepiece/js/issues.js"></script>
 
-<pre>
-{{issue.description}}
-</pre>
+<div class="issue_status">{{issue.status}}</div>
+<div class="edit_description" onclick="imp.clickable_text_box(this, '{% url issue_detail_update %}',{{ issue.id }})" > {{issue.description}} </div>
+
 
 {% ifequal 0 issue.related_entries|length %}
   No timesheet entries
@@ -37,3 +37,5 @@
     </table>
   </div>
 {% endifequal %}
+
+

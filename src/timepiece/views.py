@@ -632,8 +632,14 @@ def get_project_card(request,business_id,index=None):
         older_projects = Paginator(projects, num_per_page).page(page_start)
     else:
         older_projects = None
-
+        
+    try:
+        business_permissions = timepiece.BusinessPermissions.objects.get(business = business, user = request.user)
+    except timepiece.BusinessPermissions.DoesNotExist:
+        business_permissions = None
+    
     context = { 'business':business, 
+                'permissions': business_permissions,
                 'project':project,
                 'older_projects':older_projects,
                 'expand_older':index is not None}
@@ -1618,13 +1624,27 @@ def unbillable_project(request, project_id=None):
 def create_edit_project(request, project_id=None):
     project = get_object_or_404(timepiece.Project, pk=project_id) \
         if project_id else None
-    form = timepiece_forms.ProjectForm(request.POST or None, instance=project)
-    if request.POST and form.is_valid():
-        project = form.save()
-        project.save()
-        return HttpResponseRedirect(
-            reverse('view_project', args=(project.id,))
-        )
+
+    business_id = project.business.id
+    try:
+        business = timepiece.Business.objects.get(pk=business_id)
+    except timepiece.Business.DoesNotExist:
+        business = None
+
+    try:
+        business_permissions = timepiece.BusinessPermissions.objects.get(business = business, user = request.user)
+    except timepiece.BusinessPermissions.DoesNotExist:
+        business_permissions = None
+
+    form = timepiece_forms.ProjectForm(request.POST or None, instance=project)    
+    if business_permissions and business_permissions.can_edit_budget:
+        if request.POST and form.is_valid():
+            project = form.save()
+            project.save()
+            return HttpResponseRedirect(
+                reverse('view_project', args=(project.id,))
+                )
+
     context = {
         'project': project,
         'project_form': form,
@@ -2923,6 +2943,40 @@ def issue_detail(request, issue_id, template="timepiece/project/issue_detail.htm
 
 @csrf_exempt
 @permission_required('timepiece.change_project')
+def issue_detail_update(request,  template="timepiece/project/issue_detail.html", context=None):
+
+    try:
+        edited_issue = timepiece.Issue.objects.get(pk=request.POST['issue_id'])
+    except KeyError:
+        edited_issue = None
+
+    try:
+        edited_issue.description = request.POST["new_description"]
+        edited_issue.save()
+    except KeyError:
+        pass
+                                                
+    return HttpResponse("")
+
+@csrf_exempt
+@permission_required('timepiece.change_project')
+def issue_subject_update(request,  template="timepiece/project/issue_detail.html", context=None):
+    try:
+        edited_issue = timepiece.Issue.objects.get(pk=request.POST['issue_id'])
+    except KeyError:
+        edited_issue = None
+
+    try:
+        edited_issue.subject = request.POST["new_description"]
+        edited_issue.save()
+    except KeyError:
+        pass
+    
+    return HttpResponse("")
+
+
+@csrf_exempt
+@permission_required('timepiece.change_project')
 def unassigned_timesheet_entries(request, project_id, template="timepiece/project/issue_detail.html", context=None):
     context = context or {}
     project = timepiece.Project.objects.filter(pk=project_id).filter_by_logged_in_user(request.user)[0]
@@ -3153,3 +3207,51 @@ def show_timeline(request, project_id):
     context['to_date'] = maxdate
 
     return context
+
+
+@permission_required('timepiece.view_project')
+@transaction.commit_on_success
+@render_with('timepiece/project/show_permissions.html')
+def show_permissions(request, business_id):
+    if not request.user.is_superuser:
+        return HttpResponse("")
+
+    context = {}
+    try:
+        business = timepiece.Business.objects.get(pk=business_id)
+    except timepiece.Business.DoesNotExist:
+        business = None
+    
+    add_user_form = timepiece_forms.AddUserToProjectForm()
+    
+    context['add_user_form']= add_user_form 
+
+    context['business'] = business 
+   
+    users = [] if business is None else business.users
+
+    user_ids = [user.id for user in users ]
+
+    for user in users:
+        try:
+            permissions = timepiece.BusinessPermissions.objects.get(business = business, user = user)
+        except timepiece.BusinessPermissions.DoesNotExist:
+            permissions = timepiece.BusinessPermissions.objects.create(business = business, user= user)
+
+    permissions_set = timepiece.BusinessPermissions.objects.filter(business__id = business.id )
+
+    permission_forms = timepiece_forms.permissions_formset(request.POST or None,
+                                                            queryset = permissions_set)
+
+    if permission_forms.is_valid():
+        permission_forms.save()
+
+    context['permission_forms'] = permission_forms
+
+    context['permission_user_list'] = users
+    context['last_project'] = timepiece.Project.most_recent_project(business.id)
+    
+    return context
+
+
+

@@ -195,6 +195,12 @@ urlpatterns = patterns('',
         r'^time-sheet/issue_detail/(?P<issue_id>\d+)/$', views.issue_detail, name='issue_detail',
     ),
     url(
+        r'^time-sheet/issue_detail_update/$', views.issue_detail_update, name='issue_detail_update',
+    ),
+    url(
+        r'^time-sheet/issue_subject_update/$', views.issue_subject_update, name='issue_subject_update',
+    ),
+    url(
         r'^time-sheet/unassigned_timesheet_entries/(?P<project_id>\d+)/$', views.unassigned_timesheet_entries, name='unassigned_timesheet_entries',
     ),
     url(
@@ -377,5 +383,10 @@ urlpatterns = patterns('',
         r'^show_timeline/(?P<project_id>\d+)$',
         views.show_timeline,
         name='show_timeline'
+      ),
+    url(
+        r'^show_permissions/(?P<business_id>\d+)$',
+        views.show_permissions,
+        name='show_permissions'
       ),
 )

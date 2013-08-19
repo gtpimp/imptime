@@ -64,15 +64,25 @@ class BusinessQuerySet(QuerySet):
 class Business(models.Model):
     class Meta:
         ordering = ('name',)
-
+        
     name = models.CharField(max_length=255, blank=True)
     slug = models.SlugField(max_length=255, unique=True, blank=True)
     email = models.EmailField(blank=True)
     description = models.TextField(blank=True)
     notes = models.TextField(blank=True)
     external_id = models.CharField(max_length=32, blank=True)
-
+    
     objects = QuerySetManager(BusinessQuerySet)
+    
+    @property
+    def users(self):
+        user_ids =  Project.objects.filter(business__id = self.id).values_list("users", flat=True)
+        user_ids = [user_id for user_id in user_ids if user_id is not None]
+        user_ids = list(set(user_ids))
+        return_users = []
+        for user_id in user_ids:
+            return_users.append(User.objects.get(id=user_id))
+        return return_users
 
     def save(self, *args, **kwargs):
         queryset = Business.objects.all()
@@ -115,6 +125,28 @@ class ProjectQuerySet(QuerySet):
             return self
         return self.filter(users=user)
 
+class BusinessPermissions(models.Model):
+    business = models.ForeignKey( Business,
+                                  related_name='business_permissions' )
+    user = models.ForeignKey( User,
+                               related_name='business_permissions' )
+
+    can_edit_permissions = models.BooleanField(default=False)
+    can_edit_project_detail = models.BooleanField(default=False)
+    can_edit_issues = models.BooleanField(default=False)
+    
+    can_edit_budget = models.BooleanField(default=False)
+    can_view_budget = models.BooleanField(default=False)
+    
+    can_edit_invoices = models.BooleanField(default=False)
+    can_view_invoices = models.BooleanField(default=False)
+    
+    can_edit_ctc_billable_rates = models.BooleanField(default=False)
+    can_view_ctc_billable_rates = models.BooleanField(default=False)
+
+    can_toggle_graphs = models.BooleanField(default=False)
+
+
 class Project(models.Model):
 
     code = models.CharField(max_length=255,blank=True,null=True)        
@@ -123,7 +155,7 @@ class Project(models.Model):
     tracker_url = models.CharField(max_length=255, blank=True, null=False,
         default="")
     business = models.ForeignKey(
-        Business,
+        "Business",
         related_name='new_business_projects',
     )
     billable = models.BooleanField(default=False)
@@ -228,7 +260,23 @@ class Project(models.Model):
             if entry['project_id'] not in p:
                 p[entry['project_id']] = Project.objects.get(pk=entry['project_id'])
         return p.values()
-    
+
+    @classmethod
+    def most_recent_project(self, business_id):
+        entries_per_business_ids = Entry.objects.filter(project__business_id=business_id).order_by('-end_time').values('project_id') 
+        project_returned = None
+        
+        if len(entries_per_business_ids) != 0:
+            project_id = entries_per_business_ids[0]['project_id']
+            
+            try:
+                project_returned = Project.objects.get(pk=project_id)            
+            except Project.DoesNotExist:
+                project_returned = None
+                
+        return project_returned
+
+
     @property
     def is_open(self):
         manually_closed = not(self.status.label == 'open' or self.status.label == "reopened")
