@@ -145,7 +145,7 @@ class BusinessPermissions(models.Model):
     can_view_ctc_billable_rates = models.BooleanField(default=False)
 
     can_toggle_graphs = models.BooleanField(default=False)
-
+    can_edit_issue_states = models.BooleanField(default=False)
 
 class Project(models.Model):
 
