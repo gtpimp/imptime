@@ -2,10 +2,14 @@
 {% load url from future %}
 
 <div id="project_id_{{project.id}}">
+
+  {% if permissions and  permissions.can_edit_project_detail %}
    <a href="#" class="secret_link" onclick="window.open('{%url 'project_detail' project.business.id%}')">
      <div class="sprint_name">{{ project.name }} ({{project.id}})</div>
    </a>
+  {% endif %}
    
+  {% if permissions and permissions.can_edit_project_detail %}
    <a href="#" onclick="imp.project_card_thinking(this); $('#b_card_{{project.business.id}}').load('{% url 'get_project_card'  business_id=project.business.id  %}');return false;">refresh</a>
    
    <a href="#" class="secret_link" onclick="window.open('{% url 'project_issues' project.id %}')">
@@ -14,26 +18,40 @@
      </div>
    </a> 
    <br/>
+   {% endif %}
    Last modified {% if project.stats.end_time %} {{ project.stats.end_time|timesince }} ago {% endif %}
-
   <br/>
+
+  {% if permissions and permissions.can_edit_budget %}
        {% if perms.timepiece.change_project %}
          <a href="#" class="secret_link" onclick="window.open('{%url 'edit_project' project.id%}')">
            Budget: R{{project.budget|floatformat:"0"|intcomma}}          
          </a>
        {% endif %}
+  {% endif %}
+
+  {% if permissions and permissions.can_view_budget %}
+   <div> Budget: R{{project.budget|floatformat:"0"|intcomma}} </div>
+  {% endif %}
+
   <br/>
+    {% if permissions and permissions.can_edit_invoices %}
        {% if perms.timepiece.invoices %}
          <a href="#" class="secret_link" onclick="window.open('{% url 'invoice_list' %}?project_id={{project.id}}')">
            Invoiced: <input disabled type="checkbox" id="check_project_id_{{project.id}}" {% if project.stats.invoiced %} checked {% endif %} >
            Paid: <input disabled type="checkbox" {% if project.stats.paid %} checked {% endif %} >
          </a>
        {% endif %}
-       
+    {% endif %}
+    {% if permissions and permissions.can_view_invoices %}
+        Invoiced: <input disabled type="checkbox" id="check_project_id_{{project.id}}" {% if project.stats.invoiced %} checked {% endif %} >
+        Paid: <input disabled type="checkbox" {% if project.stats.paid %} checked {% endif %} >
+    {% endif %}  
   <br/>
 
 </div>         
 
+{% if permissions and permissions.can_edit_ctc_billable_rates %}
 <p>
   {% if perms.timepiece.change_project %}
     <a href="#" class="secret_link" onclick="imp.popup_page('{% url 'view_project_rates' project.id %}'); return false;">
@@ -43,6 +61,13 @@
     </a>
   {% endif %}
 </p>
+{% endif %}
+
+{% if permissions and permissions.can_view_ctc_billable_rates %}
+       CTC R{{ project.stats.ctc|floatformat:"0"|intcomma }}
+       /
+       Billable R{{ project.stats.billed|floatformat:"0"|intcomma }}
+{% endif %}
 
 {% if perms.timepiece.change_project %}
   {% if project.has_budget %}
@@ -70,14 +95,20 @@
     {{project.stats.percent_tested|floatformat:"0"}}%&nbsp;points&nbsp;tested
   </div>
 </div>
-
+ 
+{% if permissions and permissions.can_toggle_graphs %}
 <div class="toggle_title secret_link" onclick="$(this).parent().find('.toggle_graphs_section').toggle();">toggle graphs</div>
 <a href="#" class="secret_link" onclick="window.open('{% url 'show_timeline' project.id %}')">
  show timeline
 </a> 
+<br />
+{% endif %}
+
+{% if permissions and permissions.can_edit_permissions %}
 <a href="#" class="secret_link" onclick="window.open('{% url 'show_permissions' project.business.id %}')">
  permissions
 </a> 
+{% endif %}
 
 <div class="toggle_graphs_section" style="display:none">
   <div class="graph">

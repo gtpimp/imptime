@@ -37,26 +37,6 @@
     <div class="row-fluid">
 
         <div class="span12">
-            <table class='table table-bordered table-striped table-condensed'>
-                <thead>
-                    <tr>
-                        <th>Username</th>
-                        <th>First Name</th>
-                        <th>Last Name</th>
-                        <th>Can Edit ?</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {% for person in permission_user_list %}
-                        <tr>
-                            <td>{{ person.username }}</td>
-                            <td>{{ person.first_name }}</td>
-                            <td>{{ person.last_name }}</td>
-                            <td>{{ person.email }}</td>
-                        </tr>
-                    {% endfor %}
-                </tbody>
-            </table>
 
 	    <form method="POST" action="{% url 'show_permissions' business_id=business.id %}">
 	      {% csrf_token %}

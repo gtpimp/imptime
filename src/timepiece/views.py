@@ -632,8 +632,14 @@ def get_project_card(request,business_id,index=None):
         older_projects = Paginator(projects, num_per_page).page(page_start)
     else:
         older_projects = None
-
+        
+    try:
+        business_permissions = timepiece.BusinessPermissions.objects.get(business = business, user = request.user)
+    except timepiece.BusinessPermissions.DoesNotExist:
+        business_permissions = None
+    
     context = { 'business':business, 
+                'permissions': business_permissions,
                 'project':project,
                 'older_projects':older_projects,
                 'expand_older':index is not None}
@@ -1618,13 +1624,27 @@ def unbillable_project(request, project_id=None):
 def create_edit_project(request, project_id=None):
     project = get_object_or_404(timepiece.Project, pk=project_id) \
         if project_id else None
-    form = timepiece_forms.ProjectForm(request.POST or None, instance=project)
-    if request.POST and form.is_valid():
-        project = form.save()
-        project.save()
-        return HttpResponseRedirect(
-            reverse('view_project', args=(project.id,))
-        )
+
+    business_id = project.business.id
+    try:
+        business = timepiece.Business.objects.get(pk=business_id)
+    except timepiece.Business.DoesNotExist:
+        business = None
+
+    try:
+        business_permissions = timepiece.BusinessPermissions.objects.get(business = business, user = request.user)
+    except timepiece.BusinessPermissions.DoesNotExist:
+        business_permissions = None
+
+    form = timepiece_forms.ProjectForm(request.POST or None, instance=project)    
+    if business_permissions and business_permissions.can_edit_budget:
+        if request.POST and form.is_valid():
+            project = form.save()
+            project.save()
+            return HttpResponseRedirect(
+                reverse('view_project', args=(project.id,))
+                )
+
     context = {
         'project': project,
         'project_form': form,
@@ -3209,7 +3229,7 @@ def show_permissions(request, business_id):
 
     for user in users:
         try:
-            permissions = timepiece.BusinessPermissions.objects.get(business = business, user = user.id)
+            permissions = timepiece.BusinessPermissions.objects.get(business = business, user = user)
         except timepiece.BusinessPermissions.DoesNotExist:
             permissions = timepiece.BusinessPermissions.objects.create(business = business, user= user)
 
