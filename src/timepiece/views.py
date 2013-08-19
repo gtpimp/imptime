@@ -3089,34 +3089,39 @@ def show_timeline(request, project_id):
     project = timepiece.Project.objects.get(id=project_id)
     issuedict = {}
     longest_issue_of_day = {}
+
     mindate = None
     maxdate = None
     global_max_total_hours = None
     for issue in project.issues.all():
-        issue_entries = issue.entry_set.all()
+        issue_entries = issue.related_entries
 
-        if issue_entries.count() == 0:
+        if len(issue_entries) == 0:
             continue
-        
 
         issuedict[issue.subject] = issuedict.get(issue.subject,{})
         for entry in issue_entries:
             issue_total_hours_for_day = issuedict[issue.subject].get(entry.start_time,0)
             issuedict[issue.subject][entry.start_time.date()] = issue_total_hours_for_day +  float(entry.hours)
             
-            if not mindate or mindate > entry.start_time:
+            if mindate is None or mindate > entry.start_time:
                  mindate = entry.start_time
 
-            if not maxdate or maxdate < entry.end_time:
+            if maxdate is None or maxdate < entry.end_time:
                  maxdate = entry.end_time
+    
 
-        
+    if mindate is None:
+        mindate = today
+    if maxdate is None:
+        maxdate = today
+    
     day_biggest_issue_dict  = {}                 
     day_dict = {}
     for issue in project.issues.all():
-        issue_entries = issue.entry_set.all()
+        issue_entries = issue.related_entries
 
-        if issue_entries.count() == 0:
+        if len(issue_entries) == 0:
             continue
 
         for entry in issue_entries:
