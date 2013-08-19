@@ -1626,6 +1626,27 @@ def create_edit_project(request, project_id=None):
         if project_id else None
 
     business_id = project.business.id
+
+    form = timepiece_forms.ProjectForm(request.POST or None, instance=project)    
+    if request.POST and form.is_valid():
+        project = form.save()
+        project.save()
+        return HttpResponseRedirect(
+            reverse('view_project', args=(project.id,))
+            )
+
+    context = {
+        'project': project,
+        'project_form': form,
+    }
+    return context
+
+@render_with('timepiece/project/edit_project_budget.html')
+def edit_project_budget(request, project_id=None):
+    project = get_object_or_404(timepiece.Project, pk=project_id) \
+        if project_id else None
+
+    business_id = project.business.id
     try:
         business = timepiece.Business.objects.get(pk=business_id)
     except timepiece.Business.DoesNotExist:
@@ -1636,7 +1657,7 @@ def create_edit_project(request, project_id=None):
     except timepiece.BusinessPermissions.DoesNotExist:
         business_permissions = None
 
-    form = timepiece_forms.ProjectForm(request.POST or None, instance=project)    
+    form = timepiece_forms.ProjectBudgetForm(request.POST or None, instance=project)    
     if business_permissions and business_permissions.can_edit_budget:
         if request.POST and form.is_valid():
             project = form.save()
@@ -3233,7 +3254,7 @@ def show_permissions(request, business_id):
         except timepiece.BusinessPermissions.DoesNotExist:
             permissions = timepiece.BusinessPermissions.objects.create(business = business, user= user)
 
-    permissions_set = timepiece.BusinessPermissions.objects.filter(business__id = business.id )
+    permissions_set = timepiece.BusinessPermissions.objects.filter(business__id = business.id ).order_by("user__username")
 
     permission_forms = timepiece_forms.permissions_formset(request.POST or None,
                                                             queryset = permissions_set)

@@ -709,6 +709,12 @@ class ProjectForm(forms.ModelForm):
         instance.save()
         return instance
 
+class ProjectBudgetForm(forms.ModelForm):
+    class Meta:
+        model = timepiece.Project
+        fields = (
+            'budget',
+        )
 
 class ProjectRelationshipForm(forms.ModelForm):
     class Meta:
