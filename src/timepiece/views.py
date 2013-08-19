@@ -3190,7 +3190,7 @@ def show_timeline(request, project_id):
 def show_permissions(request, business_id):
     if not request.user.is_superuser:
         return HttpResponse("")
-    
+
     context = {}
     try:
         business = timepiece.Business.objects.get(pk=business_id)
@@ -3218,6 +3218,9 @@ def show_permissions(request, business_id):
     permission_forms = timepiece_forms.permissions_formset(request.POST or None,
                                                             queryset = permissions_set)
 
+    if permission_forms.is_valid():
+        permission_forms.save()
+
     context['permission_forms'] = permission_forms
 
     context['permission_user_list'] = users
@@ -3227,25 +3230,3 @@ def show_permissions(request, business_id):
 
 
 
-@permission_required('timepiece.expenses')
-@render_with('timepiece/project/show_permissions.html')
-def update_permissions_list(request, template = 'timepiece/project/show_permissions.html', context=None):
-    #import pdb; pdb.set_trace()
-    context = context or {}
-
-    #permission_forms = timepiece_forme
-    # from_date, to_date = _get_filter_dates(request, context)
-    # queryset = timepiece.Expense.objects.filter(date__gte=from_date, date__lte=to_date)
-    # project = request.GET.get('project_id')
-    # if project:
-    #     queryset = queryset.filter(project__id=project)
-
-    # expense_formset = timepiece_forms.expense_formset(request.POST or None,
-    #                                                   queryset = queryset.order_by("date"))
-    # if expense_formset.is_valid():
-    #     expense_formset.save()
-
-    # context['expense_formset'] = expense_formset
-    # context['total'] = queryset.aggregate(total=Sum('amount'))['total']
-
-    return HttpResponse("") #render_to_response(template, context, context_instance=RequestContext(request))

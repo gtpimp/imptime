@@ -58,7 +58,7 @@
                 </tbody>
             </table>
 
-	    <form method="POST" action="{% url 'update_permissions_list' %}">
+	    <form method="POST" action="{% url 'show_permissions' business_id=business.id %}">
 	      {% csrf_token %}
 	      {{ permission_forms.management_form }}
 	      
@@ -79,7 +79,7 @@
 
 		<tbody>
 		  {% for form in permission_forms.forms %}
-		    <td>{{ form.instance.user.username}} </td>
+		    <td>{{ form.id }}{{ form.instance.user.username}} </td>
 		    <td>{{form.can_edit_permissions}}</td>
 		    <td>{{form.can_edit_project_detail}}</td>
 		    <td>{{form.can_edit_issues}}</td>		  
