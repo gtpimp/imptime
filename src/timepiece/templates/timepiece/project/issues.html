@@ -108,7 +108,7 @@
 
   	        <form method="POST" action="">
 		{{ issues_forms.management_form }}
-		{% for form in issues_forms %}
+		{% for form in issues_forms.forms %}
                  <tr >                    
 		   <td> 
 		     <div class="secret_link" onclick="imp.show_issue_detail('{% url 'issue_detail' form.instance.pk %}');">

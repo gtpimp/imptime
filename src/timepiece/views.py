@@ -2939,13 +2939,12 @@ def project_issues(request, pk, template="timepiece/project/issues.html", contex
     context = context or {}
     context['project'] = timepiece.Project.objects.filter(pk=pk).filter_by_logged_in_user(request.user)[0]
     context['issues'] = timepiece.Issue.objects.filter(project=context['project']).order_by("id")
-
     issues_forms = timepiece_forms.issue_formset(request.POST or None, 
                                                             queryset=timepiece.Issue.objects.filter(project=context['project']).order_by("id"))
     
-    if issues_forms.is_valid():
-        issues_forms.save()
-    
+    for form in issues_forms.forms:
+        if form.is_valid():
+            form.save()
     
     context['unassigned_timesheet_entries_hours'] = timepiece.Issue.get_unassigned_timesheet_entries_hours(context['project'])
     context['unassigned_timesheet_entries_ctc'] = timepiece.Issue.get_unassigned_timesheet_entries_ctc(context['project'])
