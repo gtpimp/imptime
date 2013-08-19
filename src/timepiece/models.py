@@ -1655,11 +1655,28 @@ class Issue(models.Model):
     project = models.ForeignKey(Project, related_name='issues')
     subject = models.TextField()
     description = models.TextField(blank=True)
-    story_points = models.FloatField(null=True,blank=True)
-
+    story_points = models.FloatField(null=True,blank=True)    
+    
     def __init__(self, *args, **kwargs):
         super(Issue, self).__init__(*args, **kwargs)
         self._entries = None
+
+    def set_points(self, user, points):
+        business = self.project.business
+        try:
+            user_permissions = user.business_permissions.get(business = business)
+        except BusinessPermissions.DoesNotExist:
+            user_permissions = None
+
+        if user_permissions and user_permissions.primary_points_user:
+            self.points = points
+            self.save()
+        else:
+            try:
+                self.user_points.get(user=user)
+            except IssuePoints.DoesNotExist:
+                self.user_points.create(user=user,points=points)
+
 
     @property
     def css_class(self):
@@ -1757,3 +1774,8 @@ class RedmineToTimepieceProjectMapping(models.Model):
             return RedmineToTimepieceProjectMapping.objects.get(timepiece_business_name=timepiece_business_name, redmine_project_code=redmine_project_code).timepiece_project_code
         except RedmineToTimepieceProjectMapping.DoesNotExist:
             return redmine_project_code
+
+class IssuePoints(models.Model):
+    user = models.ForeignKey(User)
+    points = models.FloatField(null=True,blank=True)
+    issue = models.ForeignKey(Issue, related_name="user_points")
