@@ -5,6 +5,12 @@ imp.show_issue_detail = function(url, issue_id) {
     $(".issue_detail").load(url, function() {$("loading").hide();});
 };
 
+imp.toggle_form_show  = function(element) {
+    var button = $(element);
+    button.find(".to_click").hide()
+    button.find(".to_edit").show()
+};
+
 imp.clickable_text_box = function(element, url, issue_id) {
     var button = $(element),
         commentField = $('<textarea/>');
@@ -33,5 +39,7 @@ imp.clickable_text_box = function(element, url, issue_id) {
         })
         .appendTo(document.body);
 };
+
+
 
 

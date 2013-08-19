@@ -106,47 +106,51 @@
                   </td>
                 </tr>
 
-                {% for issue in issues %}
-
-                <tr class="{{issue.css_class}}">
-                  <td>
-                    <div class="secret_link" onclick="imp.show_issue_detail('{% url 'issue_detail' issue.id %}');">
-                      {{issue.number}}
-                    </div>
-                  </td>
-                  <td>
-                    <div class="secret_link" onclick="imp.show_issue_detail('{% url 'issue_detail' issue.id %}');">
-                      {{issue.status}}
-                    </div>
-                  </td>
-                  <td class="number">
-                    <div class="secret_link" onclick="imp.show_issue_detail('{% url 'issue_detail' issue.id %}');">
-                      {{issue.story_points|default_if_none:"-"}}
-                    </div>
-                  </td>
-                  <td class="number">
-                    <div class="secret_link" onclick="imp.show_issue_detail('{% url 'issue_detail' issue.id %}');">
-                      {{issue.hours|default_if_none:"-"}}
-                    </div>
-                  </td>
-                  <td class="number">
-                    <div class="secret_link" onclick="imp.show_issue_detail('{% url 'issue_detail' issue.id %}');">
-                      R{{issue.ctc|floatformat:"0"|intcomma}}
+  	        <form method="POST" action="">
+		{{ issues_forms.management_form }}
+		{% for form in issues_forms %}
+                 <tr >                    
+		   <td> 
+		     <div class="secret_link" onclick="imp.show_issue_detail('{% url 'issue_detail' form.instance.pk %}');">
+		       {{form.instance.number}}
+		     </div>
+		  </td> 
+                      <td onclick="imp.toggle_form_show(this)"> 
+                        <div class="to_click" style="display:block">
+			  {{ form.instance.status }}
+			</div>
+			<div class="to_edit" style="display:none" >
+			  {{form.id}}{{ form.status }}
+			</div>
+                      </td>
+                  <td class="number">                    
+                    <div class="secret_link"  onclick="imp.show_issue_detail('{% url 'issue_detail' form.instance.pk %}');">
+                      {{form.instance.story_points|default_if_none:"-"}}
                     </div>
                   </td>
                   <td class="number">
-                    <div class="secret_link" onclick="imp.show_issue_detail('{% url 'issue_detail' issue.id %}');">
-                      R{{issue.billable|floatformat:"0"|intcomma}}
+                    <div class="secret_link"  onclick="imp.show_issue_detail('{% url 'issue_detail' form.instance.pk %}');">
+                      {{form.instance.hours|default_if_none:"-"}}
+                    </div>
+                  </td>
+                  <td class="number">
+                    <div class="secret_link"  onclick="imp.show_issue_detail('{% url 'issue_detail' form.instance.pk %}');">
+                      R{{form.instance.ctc|floatformat:"0"|intcomma}}
+                    </div>
+                  </td>
+                  <td class="number">
+                    <div class="secret_link"  onclick="imp.show_issue_detail('{% url 'issue_detail' form.instance.pk %}');">
+                      R{{form.instance.billable|floatformat:"0"|intcomma}}
                     </div>
                   </td>
                   <td class="issue_subject">
-                    <div class="edit_issue_subject" onclick="imp.clickable_text_box(this, '{% url 'issue_subject_update' %}',{{ issue.id }})" >
-                      {{issue.subject}}
+                    <div class="edit_issue_subject">
+                      {{form.instance.subject}}
                     </div>
                   </td>
-                </tr>
-
-                {% endfor %}
+                 </tr>
+		{% endfor %}
+		</form>
 
               </tbody>
             </table>

@@ -1582,7 +1582,21 @@ class Invoice(models.Model):
         )
 
 class Issue(models.Model):
-    status = models.CharField(max_length=255)
+    ISSUE_STATUS_CHOICES = (
+           ( 'new', 'new'),
+           ( 'reopened', 'reopened'),
+           ( 'devdone', 'dev_done'),
+           ( 'tested', 'tested'),
+           ( 'bug', 'bug'),
+           ( 'to be designed', 'to be designed'),
+           ( 'duplicate', 'duplicate'),
+           ( 'in testing', 'in testing'),
+           ( 'tested', 'tested'),
+           ( 'task done', 'task done'),
+           ( 'dev unclear', 'dev unclear'),
+        )
+
+    status = models.CharField(max_length=255, choices = ISSUE_STATUS_CHOICES)
     number = models.IntegerField(null=True,blank=True)
     project = models.ForeignKey(Project, related_name='issues')
     subject = models.TextField()
