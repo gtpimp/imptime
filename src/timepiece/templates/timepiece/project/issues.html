@@ -38,12 +38,24 @@
         <div class="issues">
           <div class="issues_list">
             
+	    <form method="POST" action="">
+		{{ issues_forms.management_form }}
             <table>
 
               <thead>
                 <th>#</th>
                 <th>Status</th>
-                <th>Points</th>
+
+                <th><div>Points {{ project.business.primary_points_users|first}}</div></th>
+		<th>
+		  {% if permissions.has_see_other_user_points %}
+		  <div>
+		    {% for user in project.business.users %} 		       
+		    <span>{{ user.username }}</span>
+		    {% endfor %} 
+		  </div>
+		  {% endif %}
+                </th>
                 <th>Hours</th>
                 <th>ctc</th>
                 <th>billable</th>
@@ -106,8 +118,6 @@
                   </td>
                 </tr>
 
-  	        <form method="POST" action="">
-		{{ issues_forms.management_form }}
 		{% for form in issues_forms.forms %}
                  <tr >                    
 		   <td> 
@@ -123,10 +133,19 @@
 			  {{form.id}}{{ form.status }}
 			</div>
                       </td>
+                  <td class="number">                    	    
+		    <span class="secret_link">
+		      {{ form.instance.story_points }}
+		    </span>
+                  </td>
                   <td class="number">                    
-                    <div class="secret_link"  onclick="imp.show_issue_detail('{% url 'issue_detail' form.instance.pk %}');">
-                      {{form.instance.story_points|default_if_none:"-"}}
-                    </div>
+		    {% if permissions.has_see_other_user_points %}
+		    {% for issue_points in form.instance.get_points %}
+		    <span class="secret_link">
+		      {{ issue_points.points }}
+		    </span>
+		    {% endfor %}
+		    {% endif %}
                   </td>
                   <td class="number">
                     <div class="secret_link"  onclick="imp.show_issue_detail('{% url 'issue_detail' form.instance.pk %}');">
@@ -144,16 +163,17 @@
                     </div>
                   </td>
                   <td class="issue_subject">
-                    <div class="edit_issue_subject">
+		    <div class="edit_issue_subject" onclick="imp.clickable_text_box(this, '{% url 'issue_subject_update' %}',{{ issue.id }})" >                    
+
                       {{form.instance.subject}}
                     </div>
                   </td>
                  </tr>
 		{% endfor %}
-		</form>
 
               </tbody>
             </table>
+	  </form>
           </div>
 
           <div class="issue_pane">

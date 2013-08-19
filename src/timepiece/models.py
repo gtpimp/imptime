@@ -84,6 +84,11 @@ class Business(models.Model):
             return_users.append(User.objects.get(id=user_id))
         return return_users
 
+    @property
+    def primary_points_users(self):
+        users_qs = User.objects.filter(id__in = [ user.id for user in self.users])
+        return users_qs.order_by("username").filter(business_permissions__is_primary_points_user=True)
+
     def save(self, *args, **kwargs):
         queryset = Business.objects.all()
         if not self.slug:
@@ -131,74 +136,101 @@ class BusinessPermissions(models.Model):
     user = models.ForeignKey( User,
                                related_name='business_permissions' )
 
-    can_edit_permissions = models.BooleanField(default=False)
-    can_edit_project_detail = models.BooleanField(default=False)
-    can_edit_issues = models.BooleanField(default=False)
+    can_edit_permissions = models.BooleanField(default=False, verbose_name="Can Edit Permissions")
+    can_edit_project_detail = models.BooleanField(default=False, verbose_name="Can Edit Project_detail")
+    can_edit_issues = models.BooleanField(default=False, verbose_name="Can Edit Issues")
     
-    can_edit_budget = models.BooleanField(default=False)
-    can_view_budget = models.BooleanField(default=False)
+    can_edit_budget = models.BooleanField(default=False,verbose_name = "Can Edit Budget ")
+    can_view_budget = models.BooleanField(default=False, verbose_name="Can View Budget")
     
-    can_edit_invoices = models.BooleanField(default=False)
-    can_view_invoices = models.BooleanField(default=False)
+    can_edit_invoices = models.BooleanField(default=False, verbose_name="Can Edit Invoices")
+    can_view_invoices = models.BooleanField(default=False, verbose_name="Can View Invoices")
     
-    can_edit_ctc_billable_rates = models.BooleanField(default=False)
-    can_view_ctc_billable_rates = models.BooleanField(default=False)
+    can_edit_ctc_billable_rates = models.BooleanField(default=False, verbose_name="Can Edit Ctc Billable")
+    can_view_ctc_billable_rates = models.BooleanField(default=False, verbose_name="Can View Ctc Billable")
 
-    can_toggle_graphs = models.BooleanField(default=False)
-    can_edit_issue_states = models.BooleanField(default=False)
+    can_toggle_graphs = models.BooleanField(default=False, verbose_name="can toggle graphs = models")
+    can_edit_issue_states = models.BooleanField(default=False, verbose_name="can edit issue states")
 
-    can_see_other_user_points = models.BooleanField(default=False)
-    is_primary_points_user = models.BooleanField(default=False)
+    can_see_other_user_points = models.BooleanField(default=False, verbose_name="can see other user's points")
+    is_primary_points_user = models.BooleanField(default=False, verbose_name="is primary points user")
 
     @property
-    def has_edit_permissions():
+    def has_edit_permissions(self):
+        if self.user.is_superuser:
+            return True
         return self.can_edit_permissions
 
     @property
-    def has_edit_project_detail():
+    def has_edit_project_detail(self):
+        if self.user.is_superuser:
+            return True
         return self.can_edit_project_detail
 
     @property
-    def has_edit_issues():
+    def has_edit_issues(self):
+        if self.user.is_superuser:
+            return True
         return self.can_edit_issues
     
     @property
-    def has_edit_budget():
+    def has_edit_budget(self):
+        if self.user.is_superuser:
+            return True
         return self.can_edit_budget
+
     @property
-    def has_view_budget():
+    def has_view_budget(self):
+        if self.user.is_superuser:
+            return True
         return self.can_view_budget
     
     @property
-    def has_edit_invoices():
+    def has_edit_invoices(self):
+        if self.user.is_superuser:
+            return True
         return self.can_edit_invoices
 
     @property
-    def has_view_invoices():
+    def has_view_invoices(self):
+        if self.user.is_superuser:
+            return True
         return self.can_view_invoices
     
     @property
-    def has_edit_ctc_billable_rates():
+    def has_edit_ctc_billable_rates(self):
+        if self.user.is_superuser:
+            return True
         return self.can_edit_ctc_billable_rates
 
     @property
-    def has_view_ctc_billable_rates():
+    def has_view_ctc_billable_rates(self):
+        if self.user.is_superuser:
+            return True
         return self.can_view_ctc_billable_rates
 
     @property
-    def has_toggle_graphs():
+    def has_toggle_graphs(self):
+        if self.user.is_superuser:
+            return True
         return self.can_toggle_graphs
 
     @property
-    def has_edit_issue_states():
+    def has_edit_issue_states(self):
+        if self.user.is_superuser:
+            return True
         return self.can_edit_issue_states
 
     @property
-    def has_see_other_user_points():
+    def has_see_other_user_points(self):
+        if self.user.is_superuser:
+            return True
         return self.can_see_other_user_points
 
     @property
-    def primary_points_user():
+    def primary_points_user(self):
+        if self.user.is_superuser:
+            return True
         return self.is_primary_points_user
 
 class Project(models.Model):
@@ -1660,6 +1692,15 @@ class Issue(models.Model):
     def __init__(self, *args, **kwargs):
         super(Issue, self).__init__(*args, **kwargs)
         self._entries = None
+        
+    def get_points(self):
+        for user in self.project.business.users:
+            try:
+                self.user_points.get(user=user)
+            except IssuePoints.DoesNotExist:
+                self.user_points.create(user=user,points=0)
+
+        return self.user_points.filter(user__id__in=[i.id for i in self.project.business.users]).order_by("user")
 
     def set_points(self, user, points):
         business = self.project.business
@@ -1776,6 +1817,7 @@ class RedmineToTimepieceProjectMapping(models.Model):
             return redmine_project_code
 
 class IssuePoints(models.Model):
-    user = models.ForeignKey(User)
+    user = models.ForeignKey(User,related_name="issue_points")
     points = models.FloatField(null=True,blank=True)
     issue = models.ForeignKey(Issue, related_name="user_points")
+

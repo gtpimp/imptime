@@ -2934,10 +2934,19 @@ def time_sheet_download(request, user_id, context=None):
     return response
 
 @csrf_exempt
-@permission_required('timepiece.change_project')
 def project_issues(request, pk, template="timepiece/project/issues.html", context=None):
     context = context or {}
-    context['project'] = timepiece.Project.objects.filter(pk=pk).filter_by_logged_in_user(request.user)[0]
+    project = timepiece.Project.objects.filter(pk=pk).filter_by_logged_in_user(request.user)[0]
+    business = project.business
+    context['project'] = project
+
+    try:
+        business_permissions = timepiece.BusinessPermissions.objects.get(business = business, user = request.user)
+    except timepiece.BusinessPermissions.DoesNotExist:
+        business_permissions = None
+
+    context['permissions'] = business_permissions
+
     context['issues'] = timepiece.Issue.objects.filter(project=context['project']).order_by("id")
     issues_forms = timepiece_forms.issue_formset(request.POST or None, 
                                                             queryset=timepiece.Issue.objects.filter(project=context['project']).order_by("id"))
@@ -2945,7 +2954,7 @@ def project_issues(request, pk, template="timepiece/project/issues.html", contex
     for form in issues_forms.forms:
         if form.is_valid():
             form.save()
-    
+
     context['unassigned_timesheet_entries_hours'] = timepiece.Issue.get_unassigned_timesheet_entries_hours(context['project'])
     context['unassigned_timesheet_entries_ctc'] = timepiece.Issue.get_unassigned_timesheet_entries_ctc(context['project'])
     context['unassigned_timesheet_entries_billable'] = timepiece.Issue.get_unassigned_timesheet_entries_billable(context['project'])
@@ -3268,6 +3277,7 @@ def show_permissions(request, business_id):
 
     permission_forms = timepiece_forms.permissions_formset(request.POST or None,
                                                             queryset = permissions_set)
+
 
     if permission_forms.is_valid():
         permission_forms.save()

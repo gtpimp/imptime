@@ -124,7 +124,8 @@ class EditPersonPermission(forms.ModelForm):
         model = timepiece.BusinessPermissions
         fields = ( 'can_edit_permissions', 'can_edit_project_detail',  'can_edit_issues',   
                    'can_edit_budget',   'can_view_budget', 'can_edit_invoices', 'can_view_invoices',
-                   'can_edit_ctc_billable_rates', 'can_view_ctc_billable_rates', 'can_toggle_graphs')
+                   'can_edit_ctc_billable_rates', 'can_view_ctc_billable_rates', 'can_toggle_graphs',
+                   'can_edit_issue_states','can_see_other_user_points','is_primary_points_user')
 
 class QuickEditPersonForm(forms.ModelForm):
     class Meta:
@@ -969,7 +970,7 @@ def lookup_project(name, projects):
 
 issue_formset = modelformset_factory(timepiece.Issue, form=IssueStatusForm,extra=0 )
 expense_formset = modelformset_factory(timepiece.Expense, can_delete=True, extra=2)
-permissions_formset = modelformset_factory(timepiece.BusinessPermissions, form=EditPersonPermission )
+permissions_formset = modelformset_factory(timepiece.BusinessPermissions, form=EditPersonPermission,extra=0 )
 
 class ExpenseForm(forms.Form):
     date = forms.DateField(required=True)

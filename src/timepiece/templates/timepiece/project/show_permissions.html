@@ -12,7 +12,7 @@
 
     <div class="row-fluid">
         <div class="span12">
-            <h2>People</h2>
+            <h2>People - {{last_project.name}}</h2>
 {% comment %}
             <ul class="unstyled subnav">
                 {% if perms.auth.add_user %}
@@ -55,6 +55,9 @@
 		  <td>can_edit_ctc_billable_rates</td>
 		  <td>can_view_ctc_billable_rates</td>
 		  <td>can_toggle_graphs</td>
+		  <td>can edit issue states</td>		    
+		  <td>can see other user points</td>		    
+		  <td>is primary points user</td>		    
 		</thead>
 
 		<tbody>
@@ -70,6 +73,9 @@
 		    <td>{{form.can_edit_ctc_billable_rates}}</td>
 		    <td>{{form.can_view_ctc_billable_rates}}</td>
 		    <td>{{form.can_toggle_graphs}}</td>		    
+		    <td>{{form.can_edit_issue_states}}</td>		    
+		    <td>{{form.can_see_other_user_points}}</td>		    
+		    <td>{{form.is_primary_points_user}}</td>		    
 		  </tr>
 		  {% endfor %}
 		  
