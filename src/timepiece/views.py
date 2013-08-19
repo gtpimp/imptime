@@ -25,6 +25,7 @@ from django.contrib import messages
 from django.template import RequestContext
 from django.shortcuts import (render_to_response, get_object_or_404, redirect,
                               render)
+from django.core.exceptions import PermissionDenied
 from django.core.urlresolvers import reverse, resolve
 from django.http import HttpResponse, HttpResponseRedirect
 from django.http import  Http404, HttpResponseForbidden
@@ -1658,13 +1659,14 @@ def edit_project_budget(request, project_id=None):
         business_permissions = None
 
     form = timepiece_forms.ProjectBudgetForm(request.POST or None, instance=project)    
-    if business_permissions and business_permissions.can_edit_budget:
-        if request.POST and form.is_valid():
-            project = form.save()
-            project.save()
-            return HttpResponseRedirect(
-                reverse('view_project', args=(project.id,))
-                )
+    if not business_permissions or not business_permissions.can_edit_budget:
+        raise PermissionDenied
+    if request.POST and form.is_valid():
+        project = form.save()
+        project.save()
+        return HttpResponseRedirect(
+            reverse('view_project', args=(project.id,))
+            )
 
     context = {
         'project': project,
