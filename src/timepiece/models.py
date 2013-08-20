@@ -100,8 +100,8 @@ class Business(models.Model):
 
     @classmethod
     def businesses_in_desc_order_of_use(self, user):
-        return Business.objects.filter_by_logged_in_user(user).annotate(models.Min("new_business_projects__entries__end_time")).order_by("-new_business_projects__entries__end_time__min")
-        # for business in businesses:
+        return Business.objects.filter(business_permissions__user = user).annotate(models.Min("new_business_projects__entries__end_time")).order_by("-new_business_projects__entries__end_time__min")
+
             
         # entries = Entry.objects.filter().annotate(models.Min("end_time")).order_by('-end_time__min') #.values('project__business__id')
         # p = SortedDict()
