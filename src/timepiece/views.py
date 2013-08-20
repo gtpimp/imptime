@@ -2937,15 +2937,47 @@ def add_issue(request, project_id, template="", context=None):
     context = context or {}
     project = timepiece.Project.objects.filter(pk=project_id).filter_by_logged_in_user(request.user)[0]
 
-    business = project.business
+    current_business = project.business
     context['project'] = project
 
-    new_issue_form = timepiece_forms.IssueForm(request.POST or None)
-    if new_issue_form.is_valid():        
-        issue = new_issue_form.save(commit=False)
-        issue.project = project
-        issue.save()
+    current_user = request.user
+    
+    try:
+        can_create_issue = timepiece.BusinessPermissions.objects.get(user=current_user, business=current_business).has_add_issue
+    except timepiece.BusinessPermissions.DoesNotExist:
+        can_create_issue = False
 
+    if can_create_issue:
+        new_issue_form = timepiece_forms.IssueForm(request.POST or None)
+        if new_issue_form.is_valid():        
+            issue = new_issue_form.save(commit=False)
+            issue.project = project
+            issue.save()
+
+    return HttpResponse("") 
+
+@csrf_exempt
+def delete_issue(request, project_id, template="", context=None):
+    context = context or {}
+    project = timepiece.Project.objects.filter(pk=project_id).filter_by_logged_in_user(request.user)[0]
+    current_business = project.business
+    context['project'] = project
+
+    current_user = request.user
+    
+    try:
+        can_delete_issue = timepiece.BusinessPermissions.objects.get(user=current_user, business=current_business).has_delete_issue
+    except timepiece.BusinessPermissions.DoesNotExist:
+        can_delete_issue = False
+        
+    if can_delete_issue:
+        try:
+            edited_issue = timepiece.Issue.objects.get(pk=request.POST['item_id'])
+            edited_issue.delete()
+        except KeyError:
+            edited_issue = None
+            
+            
     return HttpResponse("") 
 
 
@@ -3047,7 +3079,7 @@ def issue_points_update(request,  template="timepiece/project/issue_detail.html"
     these_are_the_current_user_points = (request.user.id == edited_issue_points.user.id)
     current_business = edited_issue_points.issue.project.business
     try:
-        can_view_other_user_points = timepiece.BusinessPermissions.objects.get(user=current_user, business=current_business)
+        can_view_other_user_points = timepiece.BusinessPermissions.objects.get(user=current_user, business=current_business).has_see_other_user_points
     except timepiece.BusinessPermissions.DoesNotExist:
         can_view_other_user_points = False
 

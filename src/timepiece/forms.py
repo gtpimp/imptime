@@ -125,7 +125,8 @@ class EditPersonPermission(forms.ModelForm):
         fields = ( 'can_edit_permissions', 'can_edit_project_detail',  'can_edit_issues',   
                    'can_edit_budget',   'can_view_budget', 'can_edit_invoices', 'can_view_invoices',
                    'can_edit_ctc_billable_rates', 'can_view_ctc_billable_rates', 'can_toggle_graphs',
-                   'can_edit_issue_states','can_see_other_user_points','is_primary_points_user')
+                   'can_edit_issue_states','can_see_other_user_points','is_primary_points_user',
+                   'can_add_issue', 'can_delete_issue')
 
 class QuickEditPersonForm(forms.ModelForm):
     class Meta:
@@ -977,7 +978,7 @@ def lookup_project(name, projects):
             return project
     raise LookupError("Project %s does not exist" % name)
 
-issue_status_formset = modelformset_factory(timepiece.Issue, form=IssueStatusForm,extra=0 )
+issue_status_formset = modelformset_factory(timepiece.Issue, form=IssueStatusForm,extra=0 ,can_delete=True)
 expense_formset = modelformset_factory(timepiece.Expense, can_delete=True, extra=2)
 permissions_formset = modelformset_factory(timepiece.BusinessPermissions, form=EditPersonPermission,extra=0 )
 

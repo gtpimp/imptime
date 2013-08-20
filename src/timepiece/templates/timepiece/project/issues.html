@@ -62,6 +62,9 @@
                 <th>billable</th>
 		{% endif %}
                 <th>Subject</th>
+		{% if permissions.has_delete_issue %}
+		<th>Delete</th>
+		{% endif %}
               </thead>
 
               <tbody>
@@ -176,7 +179,15 @@
                       {{form.instance.subject}}
                     </div>
                   </td>
+		  {% if permissions.has_delete_issue %}
+                  <td class="issue_subject" onclick="imp.ajax_call(this, '{% url 'delete_issue' project.id %}' , {{ form.instance.pk}} )">
+		    
+		      X
+                    
+                  </td>
+		  {% endif %}
                  </tr>
+		 
 		{% endfor %}
 
               </tbody>

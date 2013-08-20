@@ -11,6 +11,15 @@ imp.toggle_form_show  = function(element) {
     button.find(".to_edit").show()
 };
 
+imp.ajax_call = function(element, url, item_id) {
+    var button = $(element)
+    $.ajax({type:"POST",
+            url: url,
+            data : { item_id: item_id },
+            dataType:"json"});
+    
+};
+
 imp.clickable_text_box = function(element, url, item_id) {
     var button = $(element),
         commentField = $('<textarea/>');
