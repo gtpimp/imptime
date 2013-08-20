@@ -3030,7 +3030,7 @@ def issue_points_update(request,  template="timepiece/project/issue_detail.html"
     except timepiece.BusinessPermissions.DoesNotExist:
         can_view_other_user_points = False
 
-    edit_is_allowed = True if these_are_the_current_user_points or user_has_permission else False
+    edit_is_allowed = True if these_are_the_current_user_points or can_view_other_user_points else False
     if edit_is_allowed:
         try:
             edited_issue_points.points = request.POST["new_value"]
