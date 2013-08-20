@@ -3005,7 +3005,7 @@ def issue_subject_update(request,  template="timepiece/project/issue_detail.html
         edited_issue = timepiece.Issue.objects.get(pk=request.POST['item_id'])
     except KeyError:
         edited_issue = None
-
+    
     try:
         edited_issue.subject = request.POST["new_value"]
         edited_issue.save()
@@ -3022,12 +3022,15 @@ def issue_points_update(request,  template="timepiece/project/issue_detail.html"
         edited_issue_points = timepiece.IssuePoints.objects.get(pk=request.POST['item_id'])
     except KeyError:
         edited_issue_points = None
+        
+    edit_is_allowed = request.user.business_permissions.can_see_other_user_points or (request.user.id == edited_issue_points.user.id)
 
-    try:
-        edited_issue_points.points = request.POST["new_value"]
-        edited_issue_points.save()
-    except KeyError:
-        pass
+    if edit_is_allowed:
+        try:
+            edited_issue_points.points = request.POST["new_value"]
+            edited_issue_points.save()
+        except KeyError:
+            pass
     
     return HttpResponse("")
 
