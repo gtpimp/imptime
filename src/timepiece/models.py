@@ -154,12 +154,21 @@ class BusinessPermissions(models.Model):
 
     can_see_other_user_points = models.BooleanField(default=False, verbose_name="Can See Other User's Points")
     is_primary_points_user = models.BooleanField(default=False, verbose_name="Is Primary Points User")
+    
+    can_add_issue = models.BooleanField(default=False, verbose_name="Can Add Issue")
+    can_delete_issue = models.BooleanField(default=False, verbose_name="Can Delete Issue")
 
     @property
-    def has_edit_permissions(self):
+    def has_add_issue(self):
         if self.user.is_superuser:
             return True
-        return self.can_edit_permissions
+        return self.can_add_issue
+
+    @property
+    def has_delete_issue(self):
+        if self.user.is_superuser:
+            return True
+        return self.can_delete_issue
 
     @property
     def has_edit_project_detail(self):
