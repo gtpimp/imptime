@@ -57,8 +57,10 @@
 		  {% endif %}
                 </th>
                 <th>Hours</th>
+		{% if permissions.has_view_ctc_billable_rates %}
                 <th>ctc</th>
                 <th>billable</th>
+		{% endif %}
                 <th>Subject</th>
               </thead>
 
@@ -74,6 +76,7 @@
                       <i>{{total_hours|floatformat:"0"|intcomma}}</i>
                     </div>
                   </td>
+		  {% if permissions.has_view_ctc_billable_rates %}
                   <td class="number">
                     <div class="secret_link" onclick="imp.show_issue_detail('{% url 'all_timesheet_entries' project.id %}');">
                       <i>R{{total_ctc|floatformat:"0"|intcomma}}</i>
@@ -89,6 +92,7 @@
                       <i>all timesheet entries for this sprint</i>
                     </div>
                   </td>
+		  {% endif %}
                 </tr>
 
                 <tr>
@@ -101,6 +105,7 @@
                       {{unassigned_timesheet_entries_hours|floatformat:"0"|intcomma}}
                     </div>
                   </td>
+		  {% if permissions.has_view_ctc_billable_rates %}
                   <td class="number">
                     <div class="secret_link" onclick="imp.show_issue_detail('{% url 'unassigned_timesheet_entries' project.id %}');">
                       R{{unassigned_timesheet_entries_ctc|floatformat:"0"|intcomma}}
@@ -116,6 +121,7 @@
                       <i>unassigned timesheet entries for this sprint</i>
                     </div>
                   </td>
+		  {% endif %}
                 </tr>
 
 		{% for form in issues_forms.forms %}
@@ -152,6 +158,7 @@
                       {{form.instance.hours|default_if_none:"-"}}
                     </div>
                   </td>
+		  {% if permissions.has_view_ctc_billable_rates %}
                   <td class="number">
                     <div class="secret_link"  onclick="imp.show_issue_detail('{% url 'issue_detail' form.instance.pk %}');">
                       R{{form.instance.ctc|floatformat:"0"|intcomma}}
@@ -162,6 +169,7 @@
                       R{{form.instance.billable|floatformat:"0"|intcomma}}
                     </div>
                   </td>
+		  {% endif %}
                   <td class="issue_subject">
 		    <div class="edit_issue_subject" onclick="imp.clickable_text_box(this, '{% url 'issue_subject_update' %}',{{ issue.id }})" >                    
 

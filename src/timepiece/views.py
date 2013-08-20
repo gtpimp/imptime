@@ -2947,9 +2947,10 @@ def project_issues(request, pk, template="timepiece/project/issues.html", contex
 
     context['permissions'] = business_permissions
 
-    context['issues'] = timepiece.Issue.objects.filter(project=context['project']).order_by("id")
+    queryset = timepiece.Issue.objects.filter(project=context['project']).order_by("id")
+    context['issues'] = queryset
     issues_forms = timepiece_forms.issue_formset(request.POST or None, 
-                                                            queryset=timepiece.Issue.objects.filter(project=context['project']).order_by("id"))
+                                                 queryset=queryset)
     
     for form in issues_forms.forms:
         if form.is_valid():
