@@ -140,11 +140,11 @@
                   </td>
                   <td class="number">                    
 		    {% if permissions.has_see_other_user_points %}
-		    {% for issue_points in form.instance.get_points %}
-		    <span class="secret_link">
-		      {{ issue_points.points }}
-		    </span>
-		    {% endfor %}
+		     {% for issue_points in form.instance.get_points %}
+		      <span class="secret_link">
+		        {{ issue_points.points }}
+		      </span>
+		      {% endfor %}
 		    {% endif %}
                   </td>
                   <td class="number">

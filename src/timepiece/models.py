@@ -149,11 +149,11 @@ class BusinessPermissions(models.Model):
     can_edit_ctc_billable_rates = models.BooleanField(default=False, verbose_name="Can Edit Ctc Billable")
     can_view_ctc_billable_rates = models.BooleanField(default=False, verbose_name="Can View Ctc Billable")
 
-    can_toggle_graphs = models.BooleanField(default=False, verbose_name="can toggle graphs = models")
-    can_edit_issue_states = models.BooleanField(default=False, verbose_name="can edit issue states")
+    can_toggle_graphs = models.BooleanField(default=False, verbose_name="Can Toggle Graphs")
+    can_edit_issue_states = models.BooleanField(default=False, verbose_name="Can Edit Issue States")
 
-    can_see_other_user_points = models.BooleanField(default=False, verbose_name="can see other user's points")
-    is_primary_points_user = models.BooleanField(default=False, verbose_name="is primary points user")
+    can_see_other_user_points = models.BooleanField(default=False, verbose_name="Can See Other User's Points")
+    is_primary_points_user = models.BooleanField(default=False, verbose_name="Is Primary Points User")
 
     @property
     def has_edit_permissions(self):
