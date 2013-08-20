@@ -3016,15 +3016,21 @@ def issue_subject_update(request,  template="timepiece/project/issue_detail.html
 
 
 @csrf_exempt
-@permission_required('timepiece.change_project')
 def issue_points_update(request,  template="timepiece/project/issue_detail.html", context=None):
     try:
         edited_issue_points = timepiece.IssuePoints.objects.get(pk=request.POST['item_id'])
     except KeyError:
         edited_issue_points = None
         
-    edit_is_allowed = request.user.business_permissions.can_see_other_user_points or (request.user.id == edited_issue_points.user.id)
+    current_user = request.user
+    these_are_the_current_user_points = (request.user.id == edited_issue_points.user.id)
+    current_business = edited_issue_points.issue.project.business
+    try:
+        can_view_other_user_points = timepiece.BusinessPermissions.objects.get(user=current_user, business=current_business)
+    except timepiece.BusinessPermissions.DoesNotExist:
+        can_view_other_user_points = False
 
+    edit_is_allowed = True if these_are_the_current_user_points or user_has_permission else False
     if edit_is_allowed:
         try:
             edited_issue_points.points = request.POST["new_value"]
