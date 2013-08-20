@@ -11,7 +11,7 @@ imp.toggle_form_show  = function(element) {
     button.find(".to_edit").show()
 };
 
-imp.clickable_text_box = function(element, url, issue_id) {
+imp.clickable_text_box = function(element, url, item_id) {
     var button = $(element),
         commentField = $('<textarea/>');
     
@@ -32,7 +32,7 @@ imp.clickable_text_box = function(element, url, issue_id) {
                 button.html(button.data('textContent'));
                 $.ajax({type:"POST",
                         url: url,
-                        data : { issue_id: issue_id, new_description: button.data('textContent') },
+                        data : { item_id: item_id, new_value: button.data('textContent') },
                         dataType:"json"});
                 $(this).remove();
             }

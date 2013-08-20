@@ -2986,12 +2986,12 @@ def issue_detail(request, issue_id, template="timepiece/project/issue_detail.htm
 def issue_detail_update(request,  template="timepiece/project/issue_detail.html", context=None):
 
     try:
-        edited_issue = timepiece.Issue.objects.get(pk=request.POST['issue_id'])
+        edited_issue = timepiece.Issue.objects.get(pk=request.POST['item_id'])
     except KeyError:
         edited_issue = None
 
     try:
-        edited_issue.description = request.POST["new_description"]
+        edited_issue.description = request.POST["new_value"]
         edited_issue.save()
     except KeyError:
         pass
@@ -3002,18 +3002,34 @@ def issue_detail_update(request,  template="timepiece/project/issue_detail.html"
 @permission_required('timepiece.change_project')
 def issue_subject_update(request,  template="timepiece/project/issue_detail.html", context=None):
     try:
-        edited_issue = timepiece.Issue.objects.get(pk=request.POST['issue_id'])
+        edited_issue = timepiece.Issue.objects.get(pk=request.POST['item_id'])
     except KeyError:
         edited_issue = None
 
     try:
-        edited_issue.subject = request.POST["new_description"]
+        edited_issue.subject = request.POST["new_value"]
         edited_issue.save()
     except KeyError:
         pass
     
     return HttpResponse("")
 
+
+@csrf_exempt
+@permission_required('timepiece.change_project')
+def issue_points_update(request,  template="timepiece/project/issue_detail.html", context=None):
+    try:
+        edited_issue_points = timepiece.IssuePoints.objects.get(pk=request.POST['item_id'])
+    except KeyError:
+        edited_issue_points = None
+
+    try:
+        edited_issue_points.points = request.POST["new_value"]
+        edited_issue_points.save()
+    except KeyError:
+        pass
+    
+    return HttpResponse("")
 
 @csrf_exempt
 @permission_required('timepiece.change_project')
