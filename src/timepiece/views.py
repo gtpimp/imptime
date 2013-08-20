@@ -2933,6 +2933,22 @@ def time_sheet_download(request, user_id, context=None):
 
     return response
 
+def add_issue(request, project_id, template="", context=None):
+    context = context or {}
+    project = timepiece.Project.objects.filter(pk=project_id).filter_by_logged_in_user(request.user)[0]
+
+    business = project.business
+    context['project'] = project
+
+    new_issue_form = timepiece_forms.IssueForm(request.POST or None)
+    if new_issue_form.is_valid():        
+        issue = new_issue_form.save(commit=False)
+        issue.project = project
+        issue.save()
+
+    return HttpResponse("") 
+
+
 @csrf_exempt
 def project_issues(request, pk, template="timepiece/project/issues.html", context=None):
     context = context or {}
@@ -2949,12 +2965,16 @@ def project_issues(request, pk, template="timepiece/project/issues.html", contex
 
     queryset = timepiece.Issue.objects.filter(project=context['project']).order_by("id")
     context['issues'] = queryset
-    issues_forms = timepiece_forms.issue_formset(request.POST or None, 
-                                                 queryset=queryset)
+    issues_forms = timepiece_forms.issue_status_formset(request.POST or None, 
+                                                        queryset=queryset)
     
     for form in issues_forms.forms:
         if form.is_valid():
             form.save()
+
+
+    new_issue_form = timepiece_forms.IssueForm()
+    context['new_issue_form'] = new_issue_form
 
     context['unassigned_timesheet_entries_hours'] = timepiece.Issue.get_unassigned_timesheet_entries_hours(context['project'])
     context['unassigned_timesheet_entries_ctc'] = timepiece.Issue.get_unassigned_timesheet_entries_ctc(context['project'])

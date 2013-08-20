@@ -397,4 +397,10 @@ urlpatterns = patterns('',
         views.show_permissions,
         name='show_permissions'
       ),
+    url(
+        r'^add_issue/(?P<project_id>\d+)$',
+        views.add_issue,
+        name='add_issue'
+      ),
+
 )

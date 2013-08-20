@@ -181,16 +181,26 @@
 
               </tbody>
             </table>
-	  </form>
-          </div>
+	  </form>	    
 
+          </div>
           <div class="issue_pane">
             <div class="issue_detail">
             </div>
           </div>
-
+          <div class="btn" onclick="imp.toggle_form_show(this)">
+	    <div class="to_click" style="display:block">
+	      Add Issue
+	    </div>
+	    <div class="to_edit" style="display:none">
+	      <form method="POST" action='{% url "add_issue" project.id %}'>
+		{% csrf_token %}
+		{{ new_issue_form|as_bootstrap:"inline" }}
+		<input class="btn" type="submit" name="submit" id="submit" value="Add" />
+	      </form>
+	    </div>
+          </div>
         </div>
-        
     </div>
 </div>
 

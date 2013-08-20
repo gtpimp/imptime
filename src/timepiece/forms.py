@@ -728,6 +728,15 @@ class IssueStatusForm(forms.ModelForm):
         super(IssueStatusForm, self).__init__(*args, **kwargs)
         self.fields['status'].widget.attrs["onchange"] = "this.form.submit()"
 
+class IssueForm(forms.ModelForm):
+    class Meta:
+        model = timepiece.Issue
+        fields = ( 
+            'description', 
+            'number',
+            'status',
+            'story_points',
+            )
 
 class ProjectRelationshipForm(forms.ModelForm):
     class Meta:
@@ -968,7 +977,7 @@ def lookup_project(name, projects):
             return project
     raise LookupError("Project %s does not exist" % name)
 
-issue_formset = modelformset_factory(timepiece.Issue, form=IssueStatusForm,extra=0 )
+issue_status_formset = modelformset_factory(timepiece.Issue, form=IssueStatusForm,extra=0 )
 expense_formset = modelformset_factory(timepiece.Expense, can_delete=True, extra=2)
 permissions_formset = modelformset_factory(timepiece.BusinessPermissions, form=EditPersonPermission,extra=0 )
 
