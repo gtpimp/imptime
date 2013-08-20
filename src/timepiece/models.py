@@ -1703,6 +1703,7 @@ class Issue(models.Model):
         return self.user_points.filter(user__id__in=[i.id for i in self.project.business.users]).order_by("user")
 
     def set_points(self, user, points):
+
         business = self.project.business
         try:
             user_permissions = user.business_permissions.get(business = business)
@@ -1714,7 +1715,9 @@ class Issue(models.Model):
             self.save()
         else:
             try:
-                self.user_points.get(user=user)
+                issue_points = self.user_points.get(user=user)
+                issue_points.points = points
+                issue_points.save()
             except IssuePoints.DoesNotExist:
                 self.user_points.create(user=user,points=points)
 
