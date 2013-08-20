@@ -172,18 +172,15 @@
                       R{{form.instance.billable|floatformat:"0"|intcomma}}
                     </div>
                   </td>
-		  {% endif %}
+		  {% endif %}		  
                   <td class="issue_subject">
-		    <div class="edit_issue_subject" onclick="imp.clickable_text_box(this, '{% url 'issue_subject_update' %}',{{ issue.id }})" >                    
-
+		    <div class="edit_issue_subject"  {% if permissions.has_edit_subject %} onclick="imp.clickable_text_box(this, '{% url 'issue_subject_update' %}',{{ form.instance.pk }})" {% endif %} >
                       {{form.instance.subject}}
                     </div>
                   </td>
 		  {% if permissions.has_delete_issue %}
-                  <td class="issue_subject" onclick="imp.ajax_call(this, '{% url 'delete_issue' project.id %}' , {{ form.instance.pk}} )">
-		    
+                  <td class="issue_subject" onclick="imp.ajax_call(this, '{% url 'delete_issue' project.id %}' , {{ form.instance.pk}} )">		    
 		      X
-                    
                   </td>
 		  {% endif %}
                  </tr>

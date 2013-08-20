@@ -3031,39 +3031,74 @@ def project_issues(request, pk, template="timepiece/project/issues.html", contex
 @permission_required('timepiece.change_project')
 def issue_detail(request, issue_id, template="timepiece/project/issue_detail.html", context=None):
     context = context or {}
-    context['issue'] = timepiece.Issue.objects.get(pk=issue_id)
+    issue =  timepiece.Issue.objects.get(pk=issue_id)
+    context['issue'] = issue
+
+    project = issue.project
+    current_business = project.business
+    context['project'] = project
+
+    try:
+        business_permissions = timepiece.BusinessPermissions.objects.get(business = current_business, user = request.user)
+    except timepiece.BusinessPermissions.DoesNotExist:
+        business_permissions = None
+
+    context['permissions'] = business_permissions
+
     return render_to_response(template, context, context_instance=RequestContext(request))
 
 @csrf_exempt
 @permission_required('timepiece.change_project')
 def issue_detail_update(request,  template="timepiece/project/issue_detail.html", context=None):
-
+    context = context or {}
     try:
         edited_issue = timepiece.Issue.objects.get(pk=request.POST['item_id'])
     except KeyError:
         edited_issue = None
 
+    project = edited_issue.project
+    business = project.business
+    context['project'] = project
+
     try:
-        edited_issue.description = request.POST["new_value"]
-        edited_issue.save()
-    except KeyError:
-        pass
+        business_permissions = timepiece.BusinessPermissions.objects.get(business = business, user = request.user)
+    except timepiece.BusinessPermissions.DoesNotExist:
+        business_permissions = None
+
+    if business_permissions.has_edit_description:
+        try:
+            edited_issue.description = request.POST["new_value"]
+            edited_issue.save()
+        except KeyError:
+            pass
                                                 
     return HttpResponse("")
 
 @csrf_exempt
 @permission_required('timepiece.change_project')
 def issue_subject_update(request,  template="timepiece/project/issue_detail.html", context=None):
+    context = context or {}
+        
     try:
         edited_issue = timepiece.Issue.objects.get(pk=request.POST['item_id'])
     except KeyError:
         edited_issue = None
-    
+
+    project = edited_issue.project
+    business = project.business
+    context['project'] = project
+
     try:
-        edited_issue.subject = request.POST["new_value"]
-        edited_issue.save()
-    except KeyError:
-        pass
+        business_permissions = timepiece.BusinessPermissions.objects.get(business = business, user = request.user)
+    except timepiece.BusinessPermissions.DoesNotExist:
+        business_permissions = None
+
+    if business_permissions.has_edit_subject:
+        try:
+            edited_issue.subject = request.POST["new_value"]
+            edited_issue.save()
+        except KeyError:
+            pass
     
     return HttpResponse("")
 

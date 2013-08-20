@@ -1,3 +1,4 @@
+
 import datetime
 import re
 import logging
@@ -157,6 +158,22 @@ class BusinessPermissions(models.Model):
     
     can_add_issue = models.BooleanField(default=False, verbose_name="Can Add Issue")
     can_delete_issue = models.BooleanField(default=False, verbose_name="Can Delete Issue")
+
+    can_edit_description = models.BooleanField(default=False, verbose_name="Can Edit Subject")
+    can_edit_subject = models.BooleanField(default=False, verbose_name="Can Edit Subject")
+
+    @property
+    def has_edit_description(self):
+        if self.user.is_superuser:
+            return True
+        return self.can_edit_description
+
+    @property
+    def has_edit_subject(self):
+        if self.user.is_superuser:
+            return True
+        return self.can_edit_subject
+
 
     @property
     def has_add_issue(self):

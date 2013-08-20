@@ -3,7 +3,9 @@
 <script src="{{STATIC_URL}}timepiece/js/issues.js"></script>
 
 <div class="issue_status">{{issue.status}}</div>
-<div class="edit_description" onclick="imp.clickable_text_box(this, '{% url issue_detail_update %}',{{ issue.id }})" > {{issue.description}} </div>
+<div class="edit_description"  {% if permissions.has_edit_description %} onclick="imp.clickable_text_box(this, '{% url issue_detail_update %}',{{ issue.id }})" {% endif %} >
+  {{issue.description}} 
+</div>
 
 
 {% ifequal 0 issue.related_entries|length %}

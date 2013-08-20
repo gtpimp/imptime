@@ -126,7 +126,8 @@ class EditPersonPermission(forms.ModelForm):
                    'can_edit_budget',   'can_view_budget', 'can_edit_invoices', 'can_view_invoices',
                    'can_edit_ctc_billable_rates', 'can_view_ctc_billable_rates', 'can_toggle_graphs',
                    'can_edit_issue_states','can_see_other_user_points','is_primary_points_user',
-                   'can_add_issue', 'can_delete_issue')
+                   'can_add_issue', 'can_delete_issue',
+                   'can_edit_description', 'can_edit_subject')
 
 class QuickEditPersonForm(forms.ModelForm):
     class Meta:
