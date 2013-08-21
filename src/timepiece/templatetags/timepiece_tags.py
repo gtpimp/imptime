@@ -57,7 +57,27 @@ def current_user_issue_cost(context, issue_cost):
 
     return rate*issue_cost
     
+@register.simple_tag(takes_context=True)
+def get_points_current_user(context, issue_id):
+    user = context['current_user']
+    issue = timepiece.Issue.objects.get(pk=issue_id)
+    try:
+        issue_points = timepiece.IssuePoints.objects.get(user=user,issue = issue)
+    except timepiece.IssuePoints.DoesNotExist:
+        issue_points = None
+    return issue_points.points
 
+@register.simple_tag(takes_context=True)
+def get_points_current_user_id(context, issue_id):
+    user = context['current_user']
+    issue = timepiece.Issue.objects.get(pk=issue_id)
+    try:
+        issue_points = timepiece.IssuePoints.objects.get(user=user,issue = issue)
+    except timepiece.IssuePoints.DoesNotExist:
+        issue_points = None
+    return issue_points.id if issue_points else None
+    
+        
 @register.inclusion_tag('timepiece/time-sheet/bar_graph.html',
                         takes_context=True)
 def bar_graph(context, name, worked, total, width=None, suffix=None):

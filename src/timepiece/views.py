@@ -2984,6 +2984,7 @@ def delete_issue(request, project_id, template="", context=None):
 @csrf_exempt
 def project_issues(request, pk, template="timepiece/project/issues.html", context=None):
     context = context or {}
+    context['current_user'] = request.user
     project = timepiece.Project.objects.filter(pk=pk).filter_by_logged_in_user(request.user)[0]
     business = project.business
     context['project'] = project

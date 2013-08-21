@@ -54,6 +54,8 @@
 		    <span>{{ user.username }}</span>
 		    {% endfor %} 
 		  </div>
+		  {% else %}
+  		    <span>{{ current_user.username }} </span>
 		  {% endif %}
                 </th>
                 <th>Hours</th>
@@ -154,9 +156,13 @@
 		    {% if permissions.has_see_other_user_points %}
 		     {% for issue_points in form.instance.get_points %}
 		      <span class="secret_link" onclick="imp.clickable_text_box(this, '{% url 'issue_points_update' %}',{{ issue_points.id }})" > 
-		        {{ issue_points.points }} 
+		        {{ issue_points.points|default_if_none:"-" }} 
 		      </span>
 		      {% endfor %}
+		    {% else %}
+		      <span class="secret_link" onclick="imp.clickable_text_box(this, '{% url 'issue_points_update' %}','{% get_points_current_user_id form.instance.pk %}')" > 
+			{% get_points_current_user form.instance.pk %}
+		      </span>		    
 		    {% endif %}
                   </td>
                   <td class="number">

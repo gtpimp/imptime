@@ -155,7 +155,7 @@ class BusinessPermissions(models.Model):
     can_add_issue = models.BooleanField(default=False, verbose_name="Can Add Issue")
     can_delete_issue = models.BooleanField(default=False, verbose_name="Can Delete Issue")
 
-    can_edit_description = models.BooleanField(default=False, verbose_name="Can Edit Subject")
+    can_edit_description = models.BooleanField(default=False, verbose_name="Can Edit Description")
     can_edit_subject = models.BooleanField(default=False, verbose_name="Can Edit Subject")
 
     @property
@@ -1724,9 +1724,9 @@ class Issue(models.Model):
     def get_points(self):
         for user in self.project.business.users:
             try:
-                self.user_points.get(user=user)
+                IssuePoints.objects.get(user=user, issue=self)
             except IssuePoints.DoesNotExist:
-                self.user_points.create(user=user,points=0)
+                IssuePoints.objects.create(user=user,issue=self)
 
         return self.user_points.filter(user__id__in=[i.id for i in self.project.business.users]).order_by("user")
 
@@ -1743,11 +1743,11 @@ class Issue(models.Model):
             self.save()
         else:
             try:
-                issue_points = self.user_points.get(user=user)
+                issue_points = self.user_points.get(user=user,issue=self)
                 issue_points.points = points
                 issue_points.save()
             except IssuePoints.DoesNotExist:
-                self.user_points.create(user=user,points=points)
+                self.user_points.create(user=user,points=points, issue=self)
 
 
     @property
@@ -1848,6 +1848,7 @@ class RedmineToTimepieceProjectMapping(models.Model):
             return redmine_project_code
 
 class IssuePoints(models.Model):
+    unique_together = (('user','issue'),)
     user = models.ForeignKey(User,related_name="issue_points")
     points = models.FloatField(null=True,blank=True)
     issue = models.ForeignKey(Issue, related_name="user_points")
