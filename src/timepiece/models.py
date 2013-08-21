@@ -100,17 +100,12 @@ class Business(models.Model):
 
     @classmethod
     def businesses_in_desc_order_of_use(self, user):
-        return Business.objects.filter(business_permissions__user = user).annotate(models.Min("new_business_projects__entries__end_time")).order_by("-new_business_projects__entries__end_time__min")
-
-            
-        # entries = Entry.objects.filter().annotate(models.Min("end_time")).order_by('-end_time__min') #.values('project__business__id')
-        # p = SortedDict()
-        # for entry in entries:
-        #     if entry['project__business__id'] not in p:
-        #         p[entry['project__business__id']] = Business.objects.get(pk=entry['project__business__id'])
-        # for b in Business.objects.exclude(pk__in=p.keys()):
-        #     p[b.id] = b
-        # return p.values()
+        ret = []
+        businesses = Business.objects.filter(Q(business_permissions__user = user)).annotate(models.Min("new_business_projects__entries__end_time")).order_by("-new_business_projects__entries__end_time__min")
+        if user.is_superuser:
+            return businesses
+        else:
+            return businesses.filter(business_permissions__can_view_project_card=True)
 
     def __unicode__(self):
         return self.name
@@ -137,6 +132,7 @@ class BusinessPermissions(models.Model):
     user = models.ForeignKey( User,
                                related_name='business_permissions' )
 
+    can_view_project_card = models.BooleanField(default=False, verbose_name="Can View Project Card")
     can_edit_permissions = models.BooleanField(default=False, verbose_name="Can Edit Permissions")
     can_edit_project_detail = models.BooleanField(default=False, verbose_name="Can Edit Project_detail")
     can_edit_issues = models.BooleanField(default=False, verbose_name="Can Edit Issues")
@@ -162,6 +158,12 @@ class BusinessPermissions(models.Model):
     can_edit_description = models.BooleanField(default=False, verbose_name="Can Edit Subject")
     can_edit_subject = models.BooleanField(default=False, verbose_name="Can Edit Subject")
 
+    @property
+    def has_can_view_project_card(self):
+        if self.user.is_superuser:
+            return True
+        return self.can_view_project_card
+        
     @property
     def has_edit_description(self):
         if self.user.is_superuser:
