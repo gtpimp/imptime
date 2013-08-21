@@ -48,6 +48,16 @@ def epoch(value):
     except AttributeError:
         return ''
 
+@register.simple_tag(takes_context=True)
+def current_user_issue_cost(context, issue_cost):
+    try:
+        rate = context['user_rate']
+    except:
+        rate = 0
+
+    return rate*issue_cost
+    
+
 @register.inclusion_tag('timepiece/time-sheet/bar_graph.html',
                         takes_context=True)
 def bar_graph(context, name, worked, total, width=None, suffix=None):

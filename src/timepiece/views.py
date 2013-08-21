@@ -3004,6 +3004,12 @@ def project_issues(request, pk, template="timepiece/project/issues.html", contex
         if form.is_valid():
             form.save()
 
+    try:
+        rate = timepiece.Rate.objects.get(user = request.user, project = project)
+    except timepiece.Rate.DoesNotExist:
+        rate = timepiece.Rate.objects.create(user = request.user, project = project)
+
+    context['user_rate'] = float(rate.amount)
 
     new_issue_form = timepiece_forms.IssueForm()
     context['new_issue_form'] = new_issue_form

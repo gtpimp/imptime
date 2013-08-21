@@ -145,13 +145,16 @@
                   <td class="number">                    	    
 		    <span class="secret_link">
 		      {{ form.instance.story_points }}
+		      {% if permissions.has_view_ctc_billable_rates %}
+		       ({% current_user_issue_cost form.instance.story_points %})
+		      {% endif %}
 		    </span>
                   </td>
                   <td class="number">                    
 		    {% if permissions.has_see_other_user_points %}
 		     {% for issue_points in form.instance.get_points %}
 		      <span class="secret_link" onclick="imp.clickable_text_box(this, '{% url 'issue_points_update' %}',{{ issue_points.id }})" > 
-		        {{ issue_points.points }}
+		        {{ issue_points.points }} 
 		      </span>
 		      {% endfor %}
 		    {% endif %}
