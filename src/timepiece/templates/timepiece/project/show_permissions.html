@@ -44,25 +44,12 @@
 	      
 	      <table class='table table-striped table-bordered table-condensed'>
 		<thead>
-		  <td>User </td>
-		  <td>can edit permission</td>
-		  <td>can_edit_project_detail</td>
-		  <td>can_edit_issues</td>		  
-		  <td>can_edit_budget</td>
-		  <td>can_view_budget</td>
-		  <td>can_edit_invoices</td>
-		  <td>can_view_invoices</td>
-		  <td>can_edit_ctc_billable_rates</td>
-		  <td>can_view_ctc_billable_rates</td>
-		  <td>can_toggle_graphs</td>
-		  <td>can edit issue states</td>		    
-		  <td>can see other user points</td>		    
-		  <td>is primary points user</td>		    
-		  <td>Can Add Issue</td>		    
-		  <td>Can Delete Issue</td>		    
-		  <td>Can Edit Description</td>		    
-		  <td>Can Edit Subject</td>		    
-		</thead>
+		{% for field in permission_forms.forms.0 %}
+     		  {% if not field.is_hidden %}
+		    <th>{{ field.label }}</th>
+	 	  {% endif %}
+		{% endfor %} 
+	      </thead>
 
 		<tbody>
 		  {% for form in permission_forms.forms %}
