@@ -62,6 +62,7 @@
 		{% if permissions.has_view_ctc_billable_rates %}
                 <th>ctc</th>
                 <th>billable</th>
+                <th>% complete</th>
 		{% endif %}
                 <th>Subject</th>
 		{% if permissions.has_delete_issue %}
@@ -92,11 +93,20 @@
                       <i>R{{total_billable|floatformat:"0"|intcomma}}</i>
                     </div>
                   </td>
+
+
                   <td>
                     <div class="secret_link" onclick="imp.show_issue_detail('{% url 'all_timesheet_entries' project.id %}');">
                       <i>all timesheet entries for this sprint</i>
                     </div>
                   </td>
+
+                  <td class="number">
+                    <div class="secret_link" onclick="imp.show_issue_detail('{% url 'all_timesheet_entries' project.id %}');">
+                      <i>HERE I AM!!!</i>
+                    </div>
+                  </td>
+
 		  {% endif %}
                 </tr>
 
@@ -121,11 +131,20 @@
                       R{{unassigned_timesheet_entries_billable|floatformat:"0"|intcomma}}
                     </div>
                   </td>
+
                   <td>
                     <div class="secret_link" onclick="imp.show_issue_detail('{% url 'unassigned_timesheet_entries' project.id %}');">
                       <i>unassigned timesheet entries for this sprint</i>
                     </div>
                   </td>
+
+                  <td class="number">
+                    <div class="secret_link">
+		      BLA
+                    </div>
+                  </td>
+
+
 		  {% endif %}
                 </tr>
 
@@ -143,14 +162,18 @@
 			<div class="to_edit" style="display:none" >
 			  {{form.id}}{{ form.status }}
 			</div>
-                      </td>
+                      </td>		      
                   <td class="number">                    	    
 		    <span class="secret_link">
-		      {{ form.instance.story_points }}
-		      {% if permissions.has_view_ctc_billable_rates %}
-		       ({% current_user_issue_cost form.instance.story_points %})
-		      {% endif %}
+		    {{ form.instance.story_points }}
 		    </span>
+		    {% if permissions.has_view_ctc_billable_rates %}		    		    
+		    <p>
+		    <span class="secret_link">
+		       (R {% current_user_issue_cost form.instance.story_points %})
+		    </span>
+		    </p>
+		    {% endif %}
                   </td>
                   <td class="number">                    
 		    {% if permissions.has_see_other_user_points %}
@@ -181,6 +204,18 @@
                       R{{form.instance.billable|floatformat:"0"|intcomma}}
                     </div>
                   </td>
+
+                  <td class="issue_billable">
+		    <div>
+		      {{ form.instance.display_value }}
+		    </div>
+		    <div style="clear:left;" class="traffic_bar">			
+		      <div style="width:{{ form.instance.completion }}%;" class="{{ form.instance.bar_color }}">  
+			&nbsp;
+		      </div>
+		    </div>
+                  </td>
+
 		  {% endif %}		  
                   <td class="issue_subject">
 		    <div class="edit_issue_subject"  {% if permissions.has_edit_subject %} onclick="imp.clickable_text_box(this, '{% url 'issue_subject_update' %}',{{ form.instance.pk }})" {% endif %} >

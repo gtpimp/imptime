@@ -51,7 +51,7 @@ def epoch(value):
 @register.simple_tag(takes_context=True)
 def current_user_issue_cost(context, issue_points):
     try:
-        rate = context['user_rate']
+        rate = context['current_user_rate']
     except:
         rate = 0
 

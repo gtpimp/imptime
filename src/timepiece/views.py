@@ -622,10 +622,12 @@ def get_project_card(request,business_id,index=None):
         business = None   
     
     projects = timepiece.Project.projects_in_desc_order_of_use(int(business_id))
-    projects = [p for p in projects if (request.user.is_superuser or request.user in p.users.all())]
+    #projects = [p for p in projects if (request.user.is_superuser or request.user in p.users.all())]  #-- not in p.users
+        
     # ##
     #projects = timepiece.Project.objects.filter(pk=1099)
     # ##
+    #import pdb; pdb.set_trace()
     project = projects[0] if len(projects)>0 else None
     #if project:
     #    projects = projects[1:]
@@ -2981,45 +2983,63 @@ def delete_issue(request, project_id, template="", context=None):
     return HttpResponse("") 
 
 
+def _get_current_user_rate(user,project):
+    try:
+        rate = timepiece.Rate.objects.get(user = user, project = project)
+    except timepiece.Rate.DoesNotExist:
+        rate = timepiece.Rate.objects.create(user = user, project = project)
+    return float(rate.amount)
+
+def _get_business_permissions(user, business):
+    try:
+        business_permissions = timepiece.BusinessPermissions.objects.get(business = business, user = user)
+    except timepiece.BusinessPermissions.DoesNotExist:
+        business_permissions = None
+    return business_permissions
+
+def _augment_issue_data(issue):
+
+    primary_user_rate = 5.0
+    story_points = float(issue.story_points)
+    actual_billable_cost_of_issue = float(issue.billable)
+    completion =  (story_points * float(primary_user_rate)/ actual_billable_cost_of_issue) if actual_billable_cost_of_issue > 0 else 0.0
+    #budget_left = (completion * actual_billable_cost_of_issue)
+    budget_left = (1-completion) * actual_billable_cost_of_issue
+    issue.completion = completion *100
+    issue.display_value = "R %.1f under"% budget_left
+    if issue.completion >= 100:
+        issue.bar_color = "traffic_red"
+        issue.display_value = "R %.1f over"% budget_left
+    elif issue.completion < 75:
+        issue.bar_color = "traffic_green"
+    else:
+        issue.bar_color = "traffic_yellow"
+
+def _get_primary_points_user(project):
+    ##
+    pass
+
 @csrf_exempt
 def project_issues(request, pk, template="timepiece/project/issues.html", context=None):
     context = context or {}
-    context['current_user'] = request.user
     project = timepiece.Project.objects.filter(pk=pk).filter_by_logged_in_user(request.user)[0]
     business = project.business
-    context['project'] = project
-
-    try:
-        business_permissions = timepiece.BusinessPermissions.objects.get(business = business, user = request.user)
-    except timepiece.BusinessPermissions.DoesNotExist:
-        business_permissions = None
-
-    context['permissions'] = business_permissions
-
-    queryset = timepiece.Issue.objects.filter(project=context['project']).order_by("id")
-    context['issues'] = queryset
-    issues_forms = timepiece_forms.issue_status_formset(request.POST or None, 
-                                                        queryset=queryset)
     
+    business_permissions = _get_business_permissions(request.user,business)
+
+    queryset = timepiece.Issue.objects.filter(project=project).order_by("id")
+
+    primary_points_user = _get_primary_points_user(project)
+    issues_forms = timepiece_forms.issue_status_formset(request.POST or None, 
+                                                        queryset=queryset)    
     for form in issues_forms.forms:
+        _augment_issue_data(form.instance)
         if form.is_valid():
             form.save()
 
-    try:
-        rate = timepiece.Rate.objects.get(user = request.user, project = project)
-    except timepiece.Rate.DoesNotExist:
-        rate = timepiece.Rate.objects.create(user = request.user, project = project)
-
-    context['user_rate'] = float(rate.amount)
-
     new_issue_form = timepiece_forms.IssueForm()
-    context['new_issue_form'] = new_issue_form
 
-    context['unassigned_timesheet_entries_hours'] = timepiece.Issue.get_unassigned_timesheet_entries_hours(context['project'])
-    context['unassigned_timesheet_entries_ctc'] = timepiece.Issue.get_unassigned_timesheet_entries_ctc(context['project'])
-    context['unassigned_timesheet_entries_billable'] = timepiece.Issue.get_unassigned_timesheet_entries_billable(context['project'])
-
-    all_entries = context['project'].entries.all().order_by("start_time")
+    all_entries = project.entries.all().order_by("start_time")
     hours = 0
     ctc = 0
     billable = 0
@@ -3027,6 +3047,15 @@ def project_issues(request, pk, template="timepiece/project/issues.html", contex
         hours += entry.hours
         ctc += entry.atrate
         billable += entry.atbillablerate
+
+    context['current_user_rate'] = _get_current_user_rate(request.user,project)
+    context['permissions'] = business_permissions
+    context['new_issue_form'] = new_issue_form
+    context['current_user'] = request.user
+    context['project'] = project
+    context['unassigned_timesheet_entries_hours'] = timepiece.Issue.get_unassigned_timesheet_entries_hours(context['project'])
+    context['unassigned_timesheet_entries_ctc'] = timepiece.Issue.get_unassigned_timesheet_entries_ctc(context['project'])
+    context['unassigned_timesheet_entries_billable'] = timepiece.Issue.get_unassigned_timesheet_entries_billable(context['project'])
 
     context['issues_forms'] = issues_forms
     context['total_hours'] = hours
@@ -3054,9 +3083,9 @@ def issue_detail(request, issue_id, template="timepiece/project/issue_detail.htm
     return render_to_response(template, context, context_instance=RequestContext(request))
 
 @csrf_exempt
-@permission_required('timepiece.change_project')
 def issue_detail_update(request,  template="timepiece/project/issue_detail.html", context=None):
     context = context or {}
+
     try:
         edited_issue = timepiece.Issue.objects.get(pk=request.POST['item_id'])
     except KeyError:
@@ -3081,10 +3110,9 @@ def issue_detail_update(request,  template="timepiece/project/issue_detail.html"
     return HttpResponse("")
 
 @csrf_exempt
-@permission_required('timepiece.change_project')
 def issue_subject_update(request,  template="timepiece/project/issue_detail.html", context=None):
     context = context or {}
-        
+
     try:
         edited_issue = timepiece.Issue.objects.get(pk=request.POST['item_id'])
     except KeyError:
@@ -3293,9 +3321,7 @@ def income_summary(request, template="timepiece/graphs/income_summary.html", con
 
 @render_with('timepiece/project/show_timeline.html')
 def show_timeline(request, project_id):
-    if not request.user.is_superuser:
-        return HttpResponse("")
-
+    
     context = {}
 
     today = datetime.datetime.today().date()
@@ -3359,7 +3385,7 @@ def show_timeline(request, project_id):
         if max_elem is not None:
             element.append(max_elem)
         context['issue_entry'].append(element)
-     
+
     offset = datetime.timedelta(hours=12)
     context['issue_labels'] = [ (day-offset,name) for day, name in sorted(day_biggest_issue_dict.iteritems())] 
     context['from_date'] = mindate
@@ -3368,12 +3394,9 @@ def show_timeline(request, project_id):
     return context
 
 
-@permission_required('timepiece.view_project')
 @transaction.commit_on_success
 @render_with('timepiece/project/show_permissions.html')
 def show_permissions(request, business_id):
-    if not request.user.is_superuser:
-        return HttpResponse("")
 
     context = {}
     try:

@@ -9380,10 +9380,30 @@ table.project_list  {
     width:100%;
     color:#ffffff;
 }
-.project_card .traffic_green {
+
+.issue_billable {
+    font-size:10px;
+    min-width:230px;
+
+}
+
+.issue_billable .traffic_bar {
+}
+
+.issue_billable .traffic_blue {
     background-color:green;
 }
-.project_card  .traffic_yellow {
+.issue_billable .traffic_red {
+    background-color:red;
+}
+.issue_billable .traffic_yellow {
+    background-color:yellow;
+}
+
+.traffic_bar .traffic_green {
+    background-color:green;
+}
+.traffic_bar .traffic_yellow {
     background-color:yellow;
     color:#000000;
 }
