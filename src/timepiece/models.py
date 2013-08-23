@@ -100,12 +100,10 @@ class Business(models.Model):
 
     @classmethod
     def businesses_in_desc_order_of_use(self, user):
-        ret = []
         businesses = Business.objects.filter(Q(business_permissions__user = user)).annotate(models.Min("new_business_projects__entries__end_time")).order_by("-new_business_projects__entries__end_time__min")
-        if user.is_superuser:
-            return businesses
-        else:
-            return businesses.filter(business_permissions__can_view_project_card=True)
+        if not user.is_superuser:
+            businesses =  businesses.filter(business_permissions__can_view_project_card=True) #-- 
+        return businesses
 
     def __unicode__(self):
         return self.name
@@ -257,8 +255,6 @@ class BusinessPermissions(models.Model):
 
     @property
     def primary_points_user(self):
-        if self.user.is_superuser:
-            return True
         return self.is_primary_points_user
 
 class Project(models.Model):

@@ -49,13 +49,13 @@ def epoch(value):
         return ''
 
 @register.simple_tag(takes_context=True)
-def current_user_issue_cost(context, issue_cost):
+def current_user_issue_cost(context, issue_points):
     try:
         rate = context['user_rate']
     except:
         rate = 0
 
-    return rate*issue_cost
+    return rate*issue_points
     
 @register.simple_tag(takes_context=True)
 def get_points_current_user(context, issue_id):
@@ -65,7 +65,7 @@ def get_points_current_user(context, issue_id):
         issue_points = timepiece.IssuePoints.objects.get(user=user,issue = issue)
     except timepiece.IssuePoints.DoesNotExist:
         issue_points = None
-    return issue_points.points
+    return issue_points.points if issue_points else None
 
 @register.simple_tag(takes_context=True)
 def get_points_current_user_id(context, issue_id):

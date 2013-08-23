@@ -3035,7 +3035,6 @@ def project_issues(request, pk, template="timepiece/project/issues.html", contex
     return render_to_response(template, context, context_instance=RequestContext(request))
 
 @csrf_exempt
-@permission_required('timepiece.change_project')
 def issue_detail(request, issue_id, template="timepiece/project/issue_detail.html", context=None):
     context = context or {}
     issue =  timepiece.Issue.objects.get(pk=issue_id)
