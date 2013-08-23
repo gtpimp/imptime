@@ -10,9 +10,9 @@ class Migration(DataMigration):
     def forwards(self, orm):
         "Write your forwards methods here."
         # Note: Remember to use orm['appname.ModelName'] rather than "from appname.models..."
-        gtp = User.objects.get(username="gtp")
-        for buz in Business.objects.all():
-            permission,created = BusinessPermissions.objects.get_or_create(user=gtp, business=buz)
+        gtp = orm['auth.User'].objects.get(username="gtp")
+        for buz in orm['timepiece.Business'].objects.all():
+            permission,created = orm['timepiece.BusinessPermissions'].objects.get_or_create(user=gtp, business=buz)
             permission.is_primary_points_user = True
             permission.save()
         
