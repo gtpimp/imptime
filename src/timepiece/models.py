@@ -78,22 +78,22 @@ class Business(models.Model):
     def get_permissions(self,user=None):
         if user is not None:
             try:
-                return timepiece.BusinessPermissions.get(user=user, business=self)
-            except timepiece.BusinessPermissions.DoesNotExist:            
+                return BusinessPermissions.objects.get(user=user, business=self)
+            except BusinessPermissions.DoesNotExist:            
                 if user in business.users:
-                    return timepiece.BusinessPermissions.objects.create(user=user, business=self)
+                    return BusinessPermissions.objects.create(user=user, business=self)
                 return None 
     
         business_users = self.users
         user_ids = [u.id for u in business_users]
-        permission_set = timepiece.BusinessPermissions.objects.filter(user__id__in = user_ids)
+        permission_set = BusinessPermissions.objects.filter(user__id__in = user_ids)
         if len(permission_set) != len(business_users):
             for user in business_users:
                 try:
-                    user_perm = timepiece.BusinessPermissions.objects.get(user=user, business=self)
-                except timepiece.BusinessPermissions.DoesNotExist:
-                    user_perm = timepiece.BusinessPermissions.objects.create(user=user, business=self)
-        return timepiece.BusinessPermissions.objects.filter(user__id__in = user_ids)
+                    user_perm = BusinessPermissions.objects.get(user=user, business=self)
+                except BusinessPermissions.DoesNotExist:
+                    user_perm = BusinessPermissions.objects.create(user=user, business=self)
+        return BusinessPermissions.objects.filter(user__id__in = user_ids)
 
     @property
     def users(self):

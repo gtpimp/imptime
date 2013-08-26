@@ -636,8 +636,7 @@ def get_project_card(request,business_id,index=None):
     else:
         older_projects = None
        
-    business_permissions = _get_business_permissions(project.business, user=request.user) if project is not None else None
-    #business_permissions = project.business.get_permissions(request.user)
+    business_permissions = project.business.get_permissions(request.user) if project is not None else None
     context = { 'business':business, 
                 'permissions': business_permissions,
                 'project':project,
@@ -1652,8 +1651,7 @@ def edit_project_budget(request, project_id=None):
     except timepiece.Business.DoesNotExist:
         business = None
 
-    #business_permissions = business.get_permissions(request.user)
-    business_permissions = _get_business_permissions(business, request.user)
+    business_permissions = business.get_permissions(request.user)
     if not business_permissions or not business_permissions.can_edit_budget:
         raise PermissionDenied
         
@@ -2939,8 +2937,7 @@ def add_issue(request, project_id, template="", context=None):
 
     current_user = request.user
     
-    permissions = _get_business_permissions(current_business, current_user)
-    #permissions = current_business.get_permissions(current_user)
+    permissions = current_business.get_permissions(current_user)
     can_create_issue = permissions.has_add_issue
 
     if can_create_issue:
@@ -2961,8 +2958,7 @@ def delete_issue(request, project_id, template="", context=None):
 
     current_user = request.user
     
-    permissions = _get_business_permissions(current_business, current_user)
-    #permissions = current_business.get_permissions( current_user)
+    permissions = current_business.get_permissions( current_user)
     can_delete_issue = permissions.has_delete_issue
 
     if can_delete_issue:
@@ -3005,29 +3001,9 @@ def _augment_issue_data(issue, primary_user_rate):
     issue.completion /= 2
     issue.remainder = 100  - issue.completion
 
-def _get_business_permissions(business, user=None):
-    if user is not None:
-        try:
-            return timepiece.BusinessPermissions.objects.get(user=user, business=business)
-        except timepiece.BusinessPermissions.DoesNotExist:            
-            if user in business.users:
-                return timepiece.BusinessPermissions.objects.create(user=user, business=business)
-            return None 
-    
-    business_users = business.users
-    user_ids = [u.id for u in business_users]
-    permission_set = timepiece.BusinessPermissions.objects.filter(user__id__in = user_ids)
-    if len(permission_set) != len(business_users):
-        for user in business_users:
-            try:
-                user_perm = timepiece.BusinessPermissions.objects.get(user=user, business=business)
-            except timepiece.BusinessPermissions.DoesNotExist:
-                user_perm = timepiece.BusinessPermissions.objects.create(user=user, business=business)
-    return timepiece.BusinessPermissions.objects.filter(user__id__in = user_ids)
-
 def _get_primary_points_user(project):
-    permissions = _get_business_permissions(project.business)
-    #permissions = project.business.get_permissions()
+    
+    permissions = project.business.get_permissions()
 
     try:
         primary_permissions = permissions.get(is_primary_points_user = True)
@@ -3053,8 +3029,7 @@ def project_issues(request, pk, template="timepiece/project/issues.html", contex
     project = timepiece.Project.objects.filter(pk=pk).filter_by_logged_in_user(request.user)[0]
     business = project.business
     
-    business_permissions = _get_business_permissions(business,request.user)
-    #business_permissions = business.get_permissions(request.user)
+    business_permissions = business.get_permissions(request.user)
     queryset = timepiece.Issue.objects.filter(project=project).order_by("id")
 
     primary_points_user = _get_primary_points_user(project)
@@ -3101,8 +3076,7 @@ def issue_detail(request, issue_id, template="timepiece/project/issue_detail.htm
     project = issue.project
     context['project'] = project
 
-    business_permissions = _get_business_permissions(project.business, request.user)
-    #business_permissions = project.business.get_permissions(request.user)
+    business_permissions = project.business.get_permissions(request.user)
     context['permissions'] = business_permissions
 
     return render_to_response(template, context, context_instance=RequestContext(request))
@@ -3118,8 +3092,8 @@ def issue_detail_update(request,  template="timepiece/project/issue_detail.html"
 
     project = edited_issue.project
     context['project'] = project
-    business_permissions = _get_business_permissions(project.business, request.user)
-    #business_permissions = project.business.get_permissions(request.user)
+
+    business_permissions = project.business.get_permissions(request.user)
     if business_permissions.has_edit_description:
         try:
             edited_issue.description = request.POST["new_value"]
@@ -3141,8 +3115,7 @@ def issue_subject_update(request,  template="timepiece/project/issue_detail.html
     project = edited_issue.project
     context['project'] = project
 
-    business_permissions = _get_business_permissions(project.business,user)
-    #business_permissions =project.business.get_permissions(user)
+    business_permissions =project.business.get_permissions(user)
     if business_permissions.has_edit_subject:
         try:
             edited_issue.subject = request.POST["new_value"]
@@ -3163,8 +3136,8 @@ def issue_points_update(request,  template="timepiece/project/issue_detail.html"
     current_user = request.user
     these_are_the_current_user_points = (request.user.id == edited_issue_points.user.id)
     current_project = edited_issue_points.issue.project
-    business_permissions = _get_business_permissions(current_project.business, current_user)
-    #business_permissions = current_project.business.get_permissions(current_user)
+
+    business_permissions = current_project.business.get_permissions(current_user)
     can_view_other_user_points = business_permissions.has_see_other_user_points
 
     edit_is_allowed = True if these_are_the_current_user_points or can_view_other_user_points else False
@@ -3426,8 +3399,8 @@ def show_permissions(request, business_id):
     context['business'] = business 
    
     users = [] if business is None else business.users
-    permissions_set = _get_business_permissions(business)
-    #permissions_set = business.get_permissions()
+     
+    permissions_set = business.get_permissions()
     permissions_set = permissions_set.order_by("user__username")
     permission_forms = timepiece_forms.permissions_formset(request.POST or None,
                                                             queryset = permissions_set)
