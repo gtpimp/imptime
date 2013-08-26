@@ -2989,12 +2989,13 @@ def _augment_issue_data(issue, primary_user_rate):
     actual_billable_cost_of_issue = float(issue.billable)
 
     completion =  (story_points * primary_user_rate/ actual_billable_cost_of_issue) if actual_billable_cost_of_issue > 0 else 0.0
-
     budget_left = (1-completion) * actual_billable_cost_of_issue
+
     issue.completion = completion *100
     issue.display_value = "R %.1f under"% budget_left
     if issue.completion >= 100:
         issue.bar_color = "traffic_red"
+        issue.completion = 100
         issue.display_value = "R %.1f over"% budget_left
     elif issue.completion < 75:
         issue.bar_color = "traffic_green"
@@ -3003,7 +3004,6 @@ def _augment_issue_data(issue, primary_user_rate):
 
 
 def _get_business_permissions(business, user=None):
-    #business = project.business
     if user is not None:
         try:
             return timepiece.BusinessPermissions.objects.get(user=user, business=business)
