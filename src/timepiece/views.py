@@ -3003,6 +3003,7 @@ def _augment_issue_data(issue, primary_user_rate):
         issue.bar_color = "traffic_yellow"
         
     issue.completion /= 2
+    issue.remainder = 100  - issue.completion
 
 def _get_business_permissions(business, user=None):
     if user is not None:

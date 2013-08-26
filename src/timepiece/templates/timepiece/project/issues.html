@@ -205,13 +205,15 @@
                     </div>
                   </td>
 
-                  <td class="issue_billable">
+                  <td >
 		    <div>
 		      {{ form.instance.display_value }}
 		    </div>
-		    <div style="clear:left;" class="traffic_bar">			
-		      <div style="width:{{ form.instance.completion }}%;" class="{{ form.instance.bar_color }}">  
-			&nbsp;
+		    <div class="short_traffic">
+		      <div style="clear:left;" class="traffic_bar">			
+			<div style="width:{{ form.instance.completion }}%;" class={{form.instance.bar_color}}>  
+			  &nbsp;
+			</div>
 		      </div>
 		    </div>
                   </td>

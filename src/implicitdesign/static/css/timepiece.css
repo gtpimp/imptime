@@ -9381,25 +9381,6 @@ table.project_list  {
     color:#ffffff;
 }
 
-.issue_billable {
-    font-size:10px;
-    min-width:230px;
-
-}
-
-.issue_billable .traffic_bar {
-}
-
-.issue_billable .traffic_blue {
-    background-color:green;
-}
-.issue_billable .traffic_red {
-    background-color:red;
-}
-.issue_billable .traffic_yellow {
-    background-color:yellow;
-}
-
 .traffic_bar .traffic_green {
     background-color:green;
 }
@@ -9407,17 +9388,34 @@ table.project_list  {
     background-color:yellow;
     color:#000000;
 }
+.traffic_bar .traffic_red {
+    background-color:red;
+}
 
 .project_card  .traffic_neutral {
     background-color:#aaaaff;
-}
-.project_card .traffic_red {
-    background-color:red;
 }
 
 .project_card .nav {
     clear:left;
 }
+
+
+.short_traffic {
+    float:left;
+    font-size:10px;
+    min-width:100px;
+}
+
+.short_traffic .traffic_bar {
+    clear:left;
+    background-color:#cccccc;
+    border:1px solid #ababab;
+    float:left;
+    width:100%;
+    color:#ffffff;
+}
+
 
 .secret_link {
     color: black;
