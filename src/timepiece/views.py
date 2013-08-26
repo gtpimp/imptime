@@ -3332,7 +3332,6 @@ def income_summary(request, template="timepiece/graphs/income_summary.html", con
 
 @render_with('timepiece/project/show_timeline.html')
 def show_timeline(request, project_id):
-    
     context = {}
 
     today = datetime.datetime.today().date()
@@ -3370,13 +3369,13 @@ def show_timeline(request, project_id):
     day_dict = {}
     for issue in project.issues.all():
         issue_entries = issue.related_entries
-
+        issue_subject = issue.subject.replace("\n","").strip()
         if len(issue_entries) == 0:
             continue
 
         for entry in issue_entries:
             day_dict[entry.start_time] = day_dict.get(entry.start_time,{}) 
-            day_dict[entry.start_time][issue.subject] = day_dict[entry.start_time].get(issue.subject,0) +  float(entry.hours)
+            day_dict[entry.start_time][issue_subject] = day_dict[entry.start_time].get(issue_subject,0) +  float(entry.hours)
             
     for day_start, daily_issue_info in day_dict.iteritems():
         cur_max = 0
@@ -3384,9 +3383,10 @@ def show_timeline(request, project_id):
             if duration > cur_max:
                 day_biggest_issue_dict[day_start] = issue
                 cur_max = duration
-
+                
     context['issue_entry'] = []
     for issue_subject,day_entry in  sorted(issuedict.items()):
+        issue_subject = issue_subject.replace("\n","").strip()
         sorted_day_entry_items = sorted(day_entry.iteritems())
         element = [ issue_subject, sorted_day_entry_items ]
         max_elem = None
