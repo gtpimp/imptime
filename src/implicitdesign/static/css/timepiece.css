@@ -9404,7 +9404,7 @@ table.project_list  {
 .short_traffic {
     float:left;
     font-size:10px;
-    min-width:100px;
+    min-width:50px;
 }
 
 .short_traffic .traffic_bar {
