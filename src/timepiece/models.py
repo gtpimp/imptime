@@ -75,6 +75,26 @@ class Business(models.Model):
     
     objects = QuerySetManager(BusinessQuerySet)
     
+    def get_permissions(self,user=None):
+        if user is not None:
+            try:
+                return timepiece.BusinessPermissions.get(user=user, business=self)
+            except timepiece.BusinessPermissions.DoesNotExist:            
+                if user in business.users:
+                    return timepiece.BusinessPermissions.objects.create(user=user, business=self)
+                return None 
+    
+        business_users = self.users
+        user_ids = [u.id for u in business_users]
+        permission_set = timepiece.BusinessPermissions.objects.filter(user__id__in = user_ids)
+        if len(permission_set) != len(business_users):
+            for user in business_users:
+                try:
+                    user_perm = timepiece.BusinessPermissions.objects.get(user=user, business=self)
+                except timepiece.BusinessPermissions.DoesNotExist:
+                    user_perm = timepiece.BusinessPermissions.objects.create(user=user, business=self)
+        return timepiece.BusinessPermissions.objects.filter(user__id__in = user_ids)
+
     @property
     def users(self):
         user_ids =  Project.objects.filter(business__id = self.id).values_list("users", flat=True)
@@ -125,6 +145,10 @@ class ProjectQuerySet(QuerySet):
         return self.filter(users=user)
 
 class BusinessPermissions(models.Model):
+
+    class Meta:
+        unique_together = (('user','business'),)
+
     business = models.ForeignKey( Business,
                                   related_name='business_permissions' )
     user = models.ForeignKey( User,
@@ -1844,7 +1868,10 @@ class RedmineToTimepieceProjectMapping(models.Model):
             return redmine_project_code
 
 class IssuePoints(models.Model):
-    unique_together = (('user','issue'),)
+
+    class Meta:
+        unique_together = (('user','issue'),)
+
     user = models.ForeignKey(User,related_name="issue_points")
     points = models.FloatField(null=True,blank=True)
     issue = models.ForeignKey(Issue, related_name="user_points")

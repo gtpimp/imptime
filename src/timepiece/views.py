@@ -635,12 +635,9 @@ def get_project_card(request,business_id,index=None):
         older_projects = Paginator(projects, num_per_page).page(page_start)
     else:
         older_projects = None
-        
-    try:
-        business_permissions = timepiece.BusinessPermissions.objects.get(business = business, user = request.user)
-    except timepiece.BusinessPermissions.DoesNotExist:
-        business_permissions = None
-    
+       
+    business_permissions = _get_business_permissions(project.business, user=request.user)
+    #business_permissions = project.business.get_permissions(request.user)
     context = { 'business':business, 
                 'permissions': business_permissions,
                 'project':project,
@@ -1655,14 +1652,12 @@ def edit_project_budget(request, project_id=None):
     except timepiece.Business.DoesNotExist:
         business = None
 
-    try:
-        business_permissions = timepiece.BusinessPermissions.objects.get(business = business, user = request.user)
-    except timepiece.BusinessPermissions.DoesNotExist:
-        business_permissions = None
-
-    form = timepiece_forms.ProjectBudgetForm(request.POST or None, instance=project)    
+    #business_permissions = business.get_permissions(request.user)
+    business_permissions = _get_business_permissions(business, request.user)
     if not business_permissions or not business_permissions.can_edit_budget:
         raise PermissionDenied
+        
+    form = timepiece_forms.ProjectBudgetForm(request.POST or None, instance=project)    
     if request.POST and form.is_valid():
         project = form.save()
         project.save()
@@ -2944,10 +2939,9 @@ def add_issue(request, project_id, template="", context=None):
 
     current_user = request.user
     
-    try:
-        can_create_issue = timepiece.BusinessPermissions.objects.get(user=current_user, business=current_business).has_add_issue
-    except timepiece.BusinessPermissions.DoesNotExist:
-        can_create_issue = False
+    permissions = _get_business_permissions(current_business, current_user)
+    #permissions = current_business.get_permissions(current_user)
+    can_create_issue = permissions.has_add_issue
 
     if can_create_issue:
         new_issue_form = timepiece_forms.IssueForm(request.POST or None)
@@ -2967,11 +2961,10 @@ def delete_issue(request, project_id, template="", context=None):
 
     current_user = request.user
     
-    try:
-        can_delete_issue = timepiece.BusinessPermissions.objects.get(user=current_user, business=current_business).has_delete_issue
-    except timepiece.BusinessPermissions.DoesNotExist:
-        can_delete_issue = False
-        
+    permissions = _get_business_permissions(current_business, current_user)
+    #permissions = current_business.get_permissions( current_user)
+    can_delete_issue = permissions.has_delete_issue
+
     if can_delete_issue:
         try:
             edited_issue = timepiece.Issue.objects.get(pk=request.POST['item_id'])
@@ -2990,16 +2983,7 @@ def _get_current_user_rate(user,project):
         rate = timepiece.Rate.objects.create(user = user, project = project)
     return float(rate.amount)
 
-def _get_business_permissions(user, business):
-    try:
-        business_permissions = timepiece.BusinessPermissions.objects.get(business = business, user = user)
-    except timepiece.BusinessPermissions.DoesNotExist:
-        business_permissions = None
-    return business_permissions
-
-def _augment_issue_data(issue):
-
-    primary_user_rate = 5.0
+def _augment_issue_data(issue, primary_user_rate):
     story_points = float(issue.story_points)
     actual_billable_cost_of_issue = float(issue.billable)
     completion =  (story_points * float(primary_user_rate)/ actual_billable_cost_of_issue) if actual_billable_cost_of_issue > 0 else 0.0
@@ -3015,9 +2999,49 @@ def _augment_issue_data(issue):
     else:
         issue.bar_color = "traffic_yellow"
 
+
+def _get_business_permissions(business, user=None)
+    #business = project.business
+    if user is not None:
+        try:
+            return timepiece.BusinessPermissions.get(user=user, business=business)
+        except timepiece.BusinessPermissions.DoesNotExist:            
+            if user in business.users:
+                return timepiece.BusinessPermissions.objects.create(user=user, business=business)
+            return None 
+    
+    business_users = business.users
+    user_ids = [u.id for u in business_users]
+    permission_set = timepiece.BusinessPermissions.objects.filter(user__id__in = user_ids)
+    if len(permission_set) != len(business_users):
+        for user in business_users:
+            try:
+                user_perm = timepiece.BusinessPermissions.objects.get(user=user, business=business)
+            except timepiece.BusinessPermissions.DoesNotExist:
+                user_perm = timepiece.BusinessPermissions.objects.create(user=user, business=business)
+    return timepiece.BusinessPermissions.objects.filter(user__id__in = user_ids)
+
 def _get_primary_points_user(project):
-    ##
-    pass
+    permissions = _get_business_permissions(project.business)
+    #permissions = project.business.get_permissions()
+
+    try:
+        primary_permissions = permissions.get(is_primary_points_user = True)
+        return primary_permissions.user
+    except timepiece.BusinessPermissions.DoesNotExist:
+        return None
+    except timepiece.BusinessPermissions.MultipleObjectsReturned:
+        primary_permissions = permissions.filter(is_primary_points_user = True).order_by("user__id")[0]
+        return primary_permissions.user
+
+def _get_user_rate(project, user):
+    try:
+        return timepiece.Rate.objects.get(project=project, user=user)
+    except timepiece.Rate.DoesNotExist:
+        return timepiece.Rate.objects.create(project=project, user=user)
+    except timepiece.Rate.MultipleObjectsReturned:
+        rate = timepiece.Rate.objects.filter(project=project, user=user).order_by("user__id")[0]
+        return rate
 
 @csrf_exempt
 def project_issues(request, pk, template="timepiece/project/issues.html", context=None):
@@ -3025,15 +3049,16 @@ def project_issues(request, pk, template="timepiece/project/issues.html", contex
     project = timepiece.Project.objects.filter(pk=pk).filter_by_logged_in_user(request.user)[0]
     business = project.business
     
-    business_permissions = _get_business_permissions(request.user,business)
-
+    business_permissions = _get_business_permissions(business,request.user)
+    #business_permissions = business.get_permissions(request.user)
     queryset = timepiece.Issue.objects.filter(project=project).order_by("id")
 
     primary_points_user = _get_primary_points_user(project)
+    primary_points_rate = _get_user_rate(project, primary_points_user)
     issues_forms = timepiece_forms.issue_status_formset(request.POST or None, 
                                                         queryset=queryset)    
     for form in issues_forms.forms:
-        _augment_issue_data(form.instance)
+        _augment_issue_data(form.instance, primary_points_rate)
         if form.is_valid():
             form.save()
 
@@ -3070,14 +3095,10 @@ def issue_detail(request, issue_id, template="timepiece/project/issue_detail.htm
     context['issue'] = issue
 
     project = issue.project
-    current_business = project.business
     context['project'] = project
 
-    try:
-        business_permissions = timepiece.BusinessPermissions.objects.get(business = current_business, user = request.user)
-    except timepiece.BusinessPermissions.DoesNotExist:
-        business_permissions = None
-
+    business_permissions = _get_business_permissions(project.business, request.user)
+    #business_permissions = project.business.get_permissions(request.user)
     context['permissions'] = business_permissions
 
     return render_to_response(template, context, context_instance=RequestContext(request))
@@ -3092,14 +3113,9 @@ def issue_detail_update(request,  template="timepiece/project/issue_detail.html"
         edited_issue = None
 
     project = edited_issue.project
-    business = project.business
     context['project'] = project
-
-    try:
-        business_permissions = timepiece.BusinessPermissions.objects.get(business = business, user = request.user)
-    except timepiece.BusinessPermissions.DoesNotExist:
-        business_permissions = None
-
+    business_permissions = _get_business_permissions(project.business, request.user)
+    #business_permissions = project.business.get_permissions(request.user)
     if business_permissions.has_edit_description:
         try:
             edited_issue.description = request.POST["new_value"]
@@ -3119,14 +3135,10 @@ def issue_subject_update(request,  template="timepiece/project/issue_detail.html
         edited_issue = None
 
     project = edited_issue.project
-    business = project.business
     context['project'] = project
 
-    try:
-        business_permissions = timepiece.BusinessPermissions.objects.get(business = business, user = request.user)
-    except timepiece.BusinessPermissions.DoesNotExist:
-        business_permissions = None
-
+    business_permissions = _get_business_permissions(project.business,user)
+    #business_permissions =project.business.get_permissions(user)
     if business_permissions.has_edit_subject:
         try:
             edited_issue.subject = request.POST["new_value"]
@@ -3146,11 +3158,10 @@ def issue_points_update(request,  template="timepiece/project/issue_detail.html"
         
     current_user = request.user
     these_are_the_current_user_points = (request.user.id == edited_issue_points.user.id)
-    current_business = edited_issue_points.issue.project.business
-    try:
-        can_view_other_user_points = timepiece.BusinessPermissions.objects.get(user=current_user, business=current_business).has_see_other_user_points
-    except timepiece.BusinessPermissions.DoesNotExist:
-        can_view_other_user_points = False
+    current_project = edited_issue_points.issue.project
+    business_permissions = _get_business_permissions(current_project.business, current_user)
+    #business_permissions = current_project.business.get_permissions(current_user)
+    can_view_other_user_points = business_permissions.has_see_other_user_points
 
     edit_is_allowed = True if these_are_the_current_user_points or can_view_other_user_points else False
     if edit_is_allowed:
@@ -3411,17 +3422,9 @@ def show_permissions(request, business_id):
     context['business'] = business 
    
     users = [] if business is None else business.users
-
-    user_ids = [user.id for user in users ]
-
-    for user in users:
-        try:
-            permissions = timepiece.BusinessPermissions.objects.get(business = business, user = user)
-        except timepiece.BusinessPermissions.DoesNotExist:
-            permissions = timepiece.BusinessPermissions.objects.create(business = business, user= user)
-
-    permissions_set = timepiece.BusinessPermissions.objects.filter(business__id = business.id ).order_by("user__username")
-
+    permissions_set = _get_business_permissions(business)
+    #permissions_set = business.get_permissions()
+    permissions_set = permissions_set.order_by("user__username")
     permission_forms = timepiece_forms.permissions_formset(request.POST or None,
                                                             queryset = permissions_set)
 
