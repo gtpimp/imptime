@@ -2984,10 +2984,12 @@ def _get_current_user_rate(user,project):
     return float(rate.amount)
 
 def _augment_issue_data(issue, primary_user_rate):
+    primary_user_rate = float(primary_user_rate.amount) or 0.0
     story_points = float(issue.story_points)
     actual_billable_cost_of_issue = float(issue.billable)
-    completion =  (story_points * float(primary_user_rate)/ actual_billable_cost_of_issue) if actual_billable_cost_of_issue > 0 else 0.0
-    #budget_left = (completion * actual_billable_cost_of_issue)
+
+    completion =  (story_points * primary_user_rate/ actual_billable_cost_of_issue) if actual_billable_cost_of_issue > 0 else 0.0
+
     budget_left = (1-completion) * actual_billable_cost_of_issue
     issue.completion = completion *100
     issue.display_value = "R %.1f under"% budget_left
