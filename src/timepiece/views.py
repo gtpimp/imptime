@@ -2434,8 +2434,7 @@ def set_project_rate(request, context=None):
     new_billable_amount = float(request.POST['billable_amount'])
     
     project = timepiece.Project.objects.get(pk=project_id)
-    user = timepiece.User.objects.get(username=user_name)
-    rate = timepiece.Rate.objects.get_or_create(project=project, user=user)[0]
+    rate = project.get_user_rate(user_name)
     rate.amount = str(new_amount)
     rate.billable_amount = str(new_billable_amount)
     rate.save()
@@ -2972,13 +2971,6 @@ def delete_issue(request, project_id, template="", context=None):
     return HttpResponse("") 
 
 
-def _get_current_user_rate(user,project):
-    try:
-        rate = timepiece.Rate.objects.get(user = user, project = project)
-    except timepiece.Rate.DoesNotExist:
-        rate = timepiece.Rate.objects.create(user = user, project = project)
-    return float(rate.amount)
-
 def _augment_issue_data(issue, primary_user_rate):
     primary_user_rate = float(primary_user_rate.amount) or 0.0
     story_points = float(issue.story_points)
@@ -3001,28 +2993,6 @@ def _augment_issue_data(issue, primary_user_rate):
     issue.completion /= 2
     issue.remainder = 100  - issue.completion
 
-def _get_primary_points_user(project):
-    
-    permissions = project.business.get_permissions()
-
-    try:
-        primary_permissions = permissions.get(is_primary_points_user = True)
-        return primary_permissions.user
-    except timepiece.BusinessPermissions.DoesNotExist:
-        return None
-    except timepiece.BusinessPermissions.MultipleObjectsReturned:
-        primary_permissions = permissions.filter(is_primary_points_user = True).order_by("user__id")[0]
-        return primary_permissions.user
-
-def _get_user_rate(project, user):
-    try:
-        return timepiece.Rate.objects.get(project=project, user=user)
-    except timepiece.Rate.DoesNotExist:
-        return timepiece.Rate.objects.create(project=project, user=user)
-    except timepiece.Rate.MultipleObjectsReturned:
-        rate = timepiece.Rate.objects.filter(project=project, user=user).order_by("user__id")[0]
-        return rate
-
 @csrf_exempt
 def project_issues(request, pk, template="timepiece/project/issues.html", context=None):
     context = context or {}
@@ -3032,8 +3002,8 @@ def project_issues(request, pk, template="timepiece/project/issues.html", contex
     business_permissions = business.get_permissions(request.user)
     queryset = timepiece.Issue.objects.filter(project=project).order_by("id")
 
-    primary_points_user = _get_primary_points_user(project)
-    primary_points_rate = _get_user_rate(project, primary_points_user)
+    primary_points_user = project.business.primary_points_user
+    primary_points_rate = project.get_user_rate(primary_points_user)
     issues_forms = timepiece_forms.issue_status_formset(request.POST or None, 
                                                         queryset=queryset)    
     for form in issues_forms.forms:
@@ -3052,7 +3022,7 @@ def project_issues(request, pk, template="timepiece/project/issues.html", contex
         ctc += entry.atrate
         billable += entry.atbillablerate
 
-    context['current_user_rate'] = _get_current_user_rate(request.user,project)
+    context['current_user_rate'] = float(project.get_user_rate(request.user).amount)
     context['permissions'] = business_permissions
     context['new_issue_form'] = new_issue_form
     context['current_user'] = request.user
@@ -3188,8 +3158,9 @@ def edit_project_rate(request, project_id):
     user_name = request.POST['user_name']
     new_value = request.POST['update_value']
     field_name = request.POST['field_name']
-    rate = timepiece.Rate.objects.get_or_create(project=project,user__username=user_name)[0]
-    
+
+    rate = project.get_user_rate(user_name)
+
     ret_val = None
     if field_name == 'amount':
         rate.amount = float(new_value)
@@ -3225,14 +3196,8 @@ def _update_all_project_rates():
     rate. Note projects that already have rates are not updated."""
     for profile in timepiece.UserProfile.objects.all():
         for project in timepiece.Project.objects.filter(users=profile.user):
-            try:
-                rate = timepiece.Rate.objects.get(project=project,user=profile.user)
-                if rate.amount == 0 and rate.billable_amount == 0:
-                    rate.amount = profile.amount
-                    rate.billable_amount = profile.billable_amount
-                    rate.save()
-            except:
-                rate = timepiece.Rate(project=project,user=profile.user)
+            rate = project.get_user_rate(profile.user)
+            if rate.amount == 0 and rate.billable_amount == 0:
                 rate.amount = profile.amount
                 rate.billable_amount = profile.billable_amount
                 rate.save()

@@ -94,7 +94,20 @@ class Business(models.Model):
                 except BusinessPermissions.DoesNotExist:
                     user_perm = BusinessPermissions.objects.create(user=user, business=self)
         return BusinessPermissions.objects.filter(user__id__in = user_ids)
+    
+    @property
+    def primary_points_user(self):
+        permissions = self.get_permissions()
+        try:
+            primary_permissions = permissions.get(is_primary_points_user = True)
+            return primary_permissions.user
+        except timepiece.BusinessPermissions.DoesNotExist:
+            return None
+        except timepiece.BusinessPermissions.MultipleObjectsReturned:
+            primary_permissions = permissions.filter(is_primary_points_user = True).order_by("user__id")[0]
+            return primary_permissions.user
 
+    
     @property
     def users(self):
         user_ids =  Project.objects.filter(business__id = self.id).values_list("users", flat=True)
@@ -319,6 +332,22 @@ class Project(models.Model):
     description = models.TextField()
 
     objects = QuerySetManager(ProjectQuerySet)
+
+    def get_user_rate(self, user):
+
+        if isinstance(user,str):
+            user = User.objects.get(username=user)
+        
+        try:
+            return Rate.objects.get(project=self, user=user)
+        except Rate.DoesNotExist:
+            if user in self.users.all():
+                return Rate.objects.create(project=self, user=user)
+            return None
+        except Rate.MultipleObjectsReturned:
+            rate = Rate.objects.filter(project=self, user=user).order_by("user__id")[0]
+            return rate
+
 
     def __init__(self, *args, **kwargs):
         super(Project, self).__init__(*args, **kwargs)
@@ -1742,32 +1771,47 @@ class Issue(models.Model):
         self._entries = None
         
     def get_points(self):
-        for user in self.project.business.users:
+        business_users = self.project.business.users
+        for user in business_users:
             try:
                 IssuePoints.objects.get(user=user, issue=self)
             except IssuePoints.DoesNotExist:
                 IssuePoints.objects.create(user=user,issue=self)
 
-        return self.user_points.filter(user__id__in=[i.id for i in self.project.business.users]).order_by("user")
+        return self.user_points.filter(user__id__in=[i.id for i in business_users]).order_by("user")
 
     def set_points(self, user, points):
-
+          
         business = self.project.business
-        try:
-            user_permissions = user.business_permissions.get(business = business)
-        except BusinessPermissions.DoesNotExist:
-            user_permissions = None
-
-        if user_permissions and user_permissions.primary_points_user:
-            self.points = points
+        if user == business.primary_points_user:
+            self.story_points = points
             self.save()
         else:
             try:
-                issue_points = self.user_points.get(user=user,issue=self)
-                issue_points.points = points
-                issue_points.save()
+                issue_points = IssuePoints.objects.get(user=user, issue=self)
             except IssuePoints.DoesNotExist:
-                self.user_points.create(user=user,points=points, issue=self)
+                issue_points = IssuePoints.objects.create(user=user, issue=self)
+
+            issue_points.points = points 
+            issue_points.save()
+
+        # business = self.project.business
+        
+        # try:
+        #     user_permissions = user.business_permissions.get(business = business)
+        # except BusinessPermissions.DoesNotExist:
+        #     user_permissions = None
+
+        # if user_permissions and user_permissions.primary_points_user:
+        #     self.points = points
+        #     self.save()
+        # else:
+        #     try:
+        #         issue_points = self.user_points.get(user=user,issue=self)
+        #         issue_points.points = points
+        #         issue_points.save()
+        #     except IssuePoints.DoesNotExist:
+        #         self.user_points.create(user=user,points=points, issue=self)
 
 
     @property
