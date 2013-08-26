@@ -636,7 +636,7 @@ def get_project_card(request,business_id,index=None):
     else:
         older_projects = None
        
-    business_permissions = _get_business_permissions(project.business, user=request.user)
+    business_permissions = _get_business_permissions(project.business, user=request.user) if project is not None else None
     #business_permissions = project.business.get_permissions(request.user)
     context = { 'business':business, 
                 'permissions': business_permissions,
@@ -3000,11 +3000,11 @@ def _augment_issue_data(issue, primary_user_rate):
         issue.bar_color = "traffic_yellow"
 
 
-def _get_business_permissions(business, user=None)
+def _get_business_permissions(business, user=None):
     #business = project.business
     if user is not None:
         try:
-            return timepiece.BusinessPermissions.get(user=user, business=business)
+            return timepiece.BusinessPermissions.objects.get(user=user, business=business)
         except timepiece.BusinessPermissions.DoesNotExist:            
             if user in business.users:
                 return timepiece.BusinessPermissions.objects.create(user=user, business=business)
