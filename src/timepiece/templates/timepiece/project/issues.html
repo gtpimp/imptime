@@ -154,8 +154,10 @@
 		       {{form.instance.number}}
 		     </div>
 		  </td> 
-		  <td onclick="imp.status_toggle_form_show(this,{{form.instance.pk}}, {{form.instance.options}}, '{% url 'issue_status_update' %}');"> 
-		    {{ form.instance.status }}
+		  <td>
+		    <div class="selectme {{form.instance.status_appearance}}" onclick="imp.status_toggle_form_show(this,{{form.instance.pk}}, {{form.instance.options}}, '{% url 'issue_status_update' %}');"> 
+		      {{ form.instance.status }}
+		    </div>
 		  </td>
 		  {% comment %}
 		  <td onclick="imp.status_toggle_form_show(this)"> 

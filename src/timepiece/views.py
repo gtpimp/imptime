@@ -2993,12 +2993,11 @@ def _augment_issue_data(issue, primary_user_rate):
     issue.completion /= 2
     issue.remainder = 100  - issue.completion
 
-    if issue.status in ['devdone','tested','task done']:
-        issue.status_appearance = "light_priority"
-    else:
-        issue.status_appearance = "dark_priority"
-    issue.options = "[%s]"%",".join(["'%s'"%i[0] for i in timepiece.Issue.ISSUE_STATUS_CHOICES])
-
+    _set_colour = lambda option: [option,'light_priority'] if option in  ['devdone','tested','task done'] else [option,'dark_priority']
+    options = map(_set_colour, [i[0] for i in timepiece.Issue.ISSUE_STATUS_CHOICES])
+    issue.options = "[%s]"%",".join(["%s"%str(i) for i in options])
+    issue.status_appearance = _set_colour(issue.status)[-1]
+    
 @csrf_exempt
 def project_issues(request, pk, template="timepiece/project/issues.html", context=None):
     context = context or {}
