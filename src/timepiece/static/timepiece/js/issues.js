@@ -24,8 +24,6 @@ imp.status_toggle_form_show = function(element,item_id,options,url) {
     if (selectme.children('select').length == 0) {
 	
 	var str = "";
-	
-	
 	current_value = $.trim(selectme[0].innerHTML)
 	for(i=0; i<arr.length; i++) {
 	    if (arr[i][0] == current_value) 
