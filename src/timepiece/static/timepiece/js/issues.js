@@ -29,9 +29,9 @@ imp.status_toggle_form_show = function(element,item_id,options,url) {
 	current_value = $.trim(selectme[0].innerHTML)
 	for(i=0; i<arr.length; i++) {
 	    if (arr[i][0] == current_value) 
-		str += "<option style='background-color:blue' selected id='"+i+"' value='"+i+"'>"+arr[i][0]+"</option>";
+		str += "<option  selected id='"+i+"' value='"+i+"'>"+arr[i][0]+"</option>";
 	    else
-		str += "<option style='background-color:red' value='"+i+"' id='"+i+"'>"+arr[i][0]+"</option>";
+		str += "<option  value='"+i+"' id='"+i+"'>"+arr[i][0]+"</option>";
 	}
 	
 	str = "<select class='selectbox "+lookup[current_value]+"'>"+str+"</select>";

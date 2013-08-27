@@ -155,23 +155,12 @@
 		     </div>
 		  </td> 
 		  <td>
-		    <div class="selectme {{form.instance.status_appearance}}" onclick="imp.status_toggle_form_show(this,{{form.instance.pk}}, {{form.instance.options}}, '{% url 'issue_status_update' %}');"> 
-		      {{ form.instance.status }}
-		    </div>
-		  </td>
-		  {% comment %}
-		  <td onclick="imp.status_toggle_form_show(this)"> 
-		    
-		    <div class="to_click" style="display:block">
-		      <div class="form_instance_status {{form.instance.status_appearance}}">
+		    <div class="styled-select">
+		      <div class="selectme {{form.instance.status_appearance}}" onclick="imp.status_toggle_form_show(this,{{form.instance.pk}}, {{form.instance.options}}, '{% url 'issue_status_update' %}');"> 
 			{{ form.instance.status }}
 		      </div>
 		    </div>
-		    <div class="to_edit" style="display:none" >
-		      {{form.id}}{{ form.status }}
-		    </div>
-		  </td>	
-		  {% endcomment %}
+		  </td>
                   <td class="number">                    	    
 		    <span class="secret_link">
 		    {{ form.instance.story_points }}
