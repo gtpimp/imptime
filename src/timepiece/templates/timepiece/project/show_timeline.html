@@ -60,7 +60,7 @@
 
 {% for day, issue_label in issue_labels %}
       o = graph.pointOffset({ x: {{ day|epoch}}, y: {{ 50 }} });
-      var style_string = "transform:rotate(90def);-webkit-transform:rotate(90deg);position:absolute;left:' + (o.left) + 'px;top:' + o.top + 'px;color:#666;font-size:smaller"
+      var style_string = "transform:rotate(90def);-webkit-transform:rotate(90deg);position:absolute;left:" + (o.left) + "px;top:" + o.top + "px;color:#666;font-size:smaller"
       $("#sprint_name").append('<div style='+style_string+'> {{ issue_label }}</div>');
 {% endfor %}
 
