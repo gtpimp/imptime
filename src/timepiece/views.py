@@ -3113,7 +3113,7 @@ def issue_subject_update(request,  template="timepiece/project/issue_detail.html
     project = edited_issue.project
     context['project'] = project
 
-    business_permissions =project.business.get_permissions(user)
+    business_permissions =project.business.get_permissions(request.user)
     if business_permissions.has_edit_subject:
         try:
             edited_issue.subject = request.POST["new_value"]
