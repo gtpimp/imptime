@@ -9400,6 +9400,13 @@ table.project_list  {
     clear:left;
 }
 
+.dark_priority{
+    background-color:#adadad;
+}
+
+.light_priority{
+    background-color:#cfcfcf;
+}
 
 .short_traffic {
     float:left;

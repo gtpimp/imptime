@@ -2993,6 +2993,12 @@ def _augment_issue_data(issue, primary_user_rate):
     issue.completion /= 2
     issue.remainder = 100  - issue.completion
 
+    if issue.status in ['devdone','tested','task done']:
+        issue.status_appearance = "light_priority"
+    else:
+        issue.status_appearance = "dark_priority"
+    
+
 @csrf_exempt
 def project_issues(request, pk, template="timepiece/project/issues.html", context=None):
     context = context or {}

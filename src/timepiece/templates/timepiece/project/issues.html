@@ -156,7 +156,9 @@
 		  </td> 
                       <td onclick="imp.toggle_form_show(this)"> 
                         <div class="to_click" style="display:block">
+			  <div class="form_instance_status {{form.instance.status_appearance}}">
 			  {{ form.instance.status }}
+			  </div>
 			</div>
 			<div class="to_edit" style="display:none" >
 			  {{form.id}}{{ form.status }}
