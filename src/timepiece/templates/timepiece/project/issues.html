@@ -205,13 +205,10 @@
                   </td>
 
                   <td >
-		    <div>
-		      {{ form.instance.display_value }}
-		    </div>
 		    <div class="short_traffic">
 		      <div style="clear:left;" class="traffic_bar">			
 			<div style="width:{{ form.instance.completion }}%;" class={{form.instance.bar_color}}>  
-			  &nbsp;
+			  {{ form.instance.display_value }}
 			</div>
 		      </div>
 		    </div>
