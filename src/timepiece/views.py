@@ -2997,7 +2997,7 @@ def _augment_issue_data(issue, primary_user_rate):
         issue.status_appearance = "light_priority"
     else:
         issue.status_appearance = "dark_priority"
-    
+    issue.options = "[%s]"%",".join(["'%s'"%i[0] for i in timepiece.Issue.ISSUE_STATUS_CHOICES])
 
 @csrf_exempt
 def project_issues(request, pk, template="timepiece/project/issues.html", context=None):
@@ -3078,6 +3078,29 @@ def issue_detail_update(request,  template="timepiece/project/issue_detail.html"
             pass
                                                 
     return HttpResponse("")
+
+@csrf_exempt
+def issue_status_update(request,  template="timepiece/project/issue_detail.html", context=None):
+    context = context or {}
+
+    try:
+        edited_issue = timepiece.Issue.objects.get(pk=request.POST['item_id'])
+    except KeyError:
+        edited_issue = None
+
+    project = edited_issue.project
+    context['project'] = project
+
+    business_permissions = project.business.get_permissions(request.user)
+    if business_permissions.has_edit_description:
+        try:
+            edited_issue.status = request.POST["new_value"]
+            edited_issue.save()
+        except KeyError:
+            pass
+                                                
+    return HttpResponse("")
+
 
 @csrf_exempt
 def issue_subject_update(request,  template="timepiece/project/issue_detail.html", context=None):

@@ -729,7 +729,6 @@ class IssueStatusForm(forms.ModelForm):
 
     def __init__(self, *args, **kwargs):
         super(IssueStatusForm, self).__init__(*args, **kwargs)
-        self.fields['status'].widget.attrs["onchange"] = "this.form.submit()"
 
 class IssueForm(forms.ModelForm):
     class Meta:

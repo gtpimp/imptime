@@ -11,6 +11,53 @@ imp.toggle_form_show  = function(element) {
     button.find(".to_edit").show()
 };
 
+imp.status_toggle_form_show = function(element,item_id,options,url) {
+    var selectme = $(element);
+    var id = null;
+    
+    if (selectme.children('select').length == 0) {
+	
+	var str = "";
+	
+	var arr = new Array();
+	for(i =0; i< options.length; i++) {
+	    arr.push(options[i])
+	}
+	
+	current_value = $.trim(selectme[0].innerHTML)
+	for(i=0; i<arr.length; i++) {
+	    if (arr[i] == current_value) 
+		str += "<option selected id='"+i+"' value='"+i+"'>"+arr[i]+"</option>";
+	    else
+		str += "<option value='"+i+"' id='"+i+"'>"+arr[i]+"</option>";
+	}
+	
+	str = "<select class='selectbox'>"+str+"</select>";
+	
+	selectme.html(str);
+	
+	$("select.selectbox").focus();
+	$("select.selectbox").blur(function() {
+	    var value = $(this).val();
+	    
+	    var valuetext = $(this).children('option#opt-'+value).text();
+	    
+	    $("div.selectme").attr({'id': "selectme-"+value});
+	    
+	    $(".selectme").text(valuetext);
+	});
+    }else {
+	selected = selectme.find("option:selected")
+	value = selected[0].innerHTML
+	$.ajax({type:"POST",
+		url: url,
+		data : { item_id: item_id , new_value:value },
+		dataType:"json"});
+
+	selectme.html('<div class="selectme">'+value+'</div>')
+    }
+};
+
 imp.ajax_call = function(element, url, item_id) {
     var button = $(element)
     $.ajax({type:"POST",
