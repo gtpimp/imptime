@@ -75,24 +75,38 @@ class Business(models.Model):
     
     objects = QuerySetManager(BusinessQuerySet)
     
-    def get_permissions_dict(self,user):
-        is_superuser = user.is_superuser        
-        try:
-            permissions = BusinessPermissions.objects.get(user=user, business=self)
-        except BusinessPermissions.DoesNotExist:            
-            if is_superuser or user in self.users:
-                permissions = BusinessPermissions.objects.create(user=user, business=self)
-            else:
-                return None
+    # def has_edit_permissions(self, user):
+    #     return BusinessPermissions.has_edit_permissions(self, user)
 
-        permdict = {}
-        for field in permissions._meta.fields:
-            if field.name.startswith("can_") or field.name.startswith("is_"):
-                value = True if is_superuser else getattr(permissions, field.name)
-                key = field.name.replace("can_","has_")
-                permdict.update({key : value})
-                permdict.update({field.name : value})
-        return permdict
+    # def get_permissions_dict(self,user):
+    #     is_superuser = user.is_superuser        
+    #     try:
+    #         permissions = BusinessPermissions.objects.get(user=user, business=self)            
+    #     except BusinessPermissions.DoesNotExist:            
+    #         if is_superuser or user in self.users:
+    #             permissions = BusinessPermissions.objects.create(user=user, business=self)
+    #         else:
+    #             return None
+
+    #     return permissions.get_permissions_dict(user)
+
+    #     # is_superuser = user.is_superuser        
+    #     # try:
+    #     #     permissions = BusinessPermissions.objects.get(user=user, business=self)
+    #     # except BusinessPermissions.DoesNotExist:            
+    #     #     if is_superuser or user in self.users:
+    #     #         permissions = BusinessPermissions.objects.create(user=user, business=self)
+    #     #     else:
+    #     #         return None
+
+    #     # permdict = {}
+    #     # for field in permissions._meta.fields:
+    #     #     if field.name.startswith("can_") or field.name.startswith("is_"):
+    #     #         value = True if is_superuser else getattr(permissions, field.name)
+    #     #         key = field.name.replace("can_","has_")
+    #     #         permdict.update({key : value})
+    #     #         permdict.update({field.name : value})
+    #     # return permdict
 
 
     def get_all_business_permissions(self,user=None):
@@ -159,8 +173,7 @@ class Business(models.Model):
         businesses = Business.objects.annotate(models.Min("new_business_projects__entries__end_time")).order_by("-new_business_projects__entries__end_time__min")
         business_ids = []
         for business in businesses:
-            permissions = business.get_permissions_dict(user)
-            if permissions and permissions["has_view_project_card"]:
+            if BusinessPermissions.has_view_project_card(business,user):
                 business_ids.append(business.id)
         businesses = businesses.filter(id__in=business_ids)
         return businesses
@@ -220,14 +233,20 @@ class BusinessPermissions(models.Model):
     can_edit_description = models.BooleanField(default=False, verbose_name="Can Edit Description")
     can_edit_subject = models.BooleanField(default=False, verbose_name="Can Edit Subject")
 
+    # @classmethod
+    # def get_permission_object(self, business, user):
+    #     try:
+    #         return BusinessPermissions.objects.get(business, user)
+    #     except BusinessPermissions.DoesNotExist:
+    #         return BusinessPermissions
 
     @classmethod
     def has_edit_permissions(self, business, user):
         if user.is_superuser:
             return True
         try:
-            return BusinessPermission.objects.get(business=business, user=user).can_edit_permissions
-        except BusinessPermission.DoesNotExist:
+            return BusinessPermissions.objects.get(business=business, user=user).can_edit_permissions
+        except BusinessPermissions.DoesNotExist:
             return False
     
     @classmethod
@@ -235,8 +254,8 @@ class BusinessPermissions(models.Model):
         if user.is_superuser:
             return True
         try:
-            return BusinessPermission.objects.get(business=business, user=user).can_view_project_card
-        except BusinessPermission.DoesNotExist:
+            return BusinessPermissions.objects.get(business=business, user=user).can_view_project_card
+        except BusinessPermissions.DoesNotExist:
             return False
         
     @classmethod
@@ -244,8 +263,8 @@ class BusinessPermissions(models.Model):
         if user.is_superuser:
             return True       
         try:
-            return BusinessPermission.objects.get(business=business, user=user).can_edit_description
-        except BusinessPermission.DoesNotExist:
+            return BusinessPermissions.objects.get(business=business, user=user).can_edit_description
+        except BusinessPermissions.DoesNotExist:
             return False
 
     @classmethod
@@ -253,8 +272,8 @@ class BusinessPermissions(models.Model):
         if user.is_superuser:
             return True        
         try:
-            return BusinessPermission.objects.get(business=business,user=user).can_edit_subject
-        except BusinessPermission.DoesNotExist:
+            return BusinessPermissions.objects.get(business=business,user=user).can_edit_subject
+        except BusinessPermissions.DoesNotExist:
             return False
 
 
@@ -263,8 +282,8 @@ class BusinessPermissions(models.Model):
         if user.is_superuser:
             return True
         try:
-            return BusinessPermission.objects.get(business=business,user=user).can_add_issue
-        except BusinessPermission.DoesNotExist:
+            return BusinessPermissions.objects.get(business=business,user=user).can_add_issue
+        except BusinessPermissions.DoesNotExist:
             return False
 
 
@@ -273,8 +292,8 @@ class BusinessPermissions(models.Model):
         if user.is_superuser:
             return True
         try:
-            return BusinessPermission.objects.get(business=business,user=user).can_delete_issue
-        except BusinessPermission.DoesNotExist:
+            return BusinessPermissions.objects.get(business=business,user=user).can_delete_issue
+        except BusinessPermissions.DoesNotExist:
             return False
 
 
@@ -283,8 +302,8 @@ class BusinessPermissions(models.Model):
         if user.is_superuser:
             return True
         try:
-            return BusinessPermission.objects.get(business=business,user=user).can_edit_project_detail
-        except BusinessPermission.DoesNotExist:
+            return BusinessPermissions.objects.get(business=business,user=user).can_edit_project_detail
+        except BusinessPermissions.DoesNotExist:
             return False
 
 
@@ -293,8 +312,8 @@ class BusinessPermissions(models.Model):
         if user.is_superuser:
             return True
         try:
-            return BusinessPermission.objects.get(business=business,user=user).can_edit_issues
-        except BusinessPermission.DoesNotExist:
+            return BusinessPermissions.objects.get(business=business,user=user).can_edit_issues
+        except BusinessPermissions.DoesNotExist:
             return False
 
     
@@ -303,8 +322,8 @@ class BusinessPermissions(models.Model):
         if user.is_superuser:
             return True
         try:
-            return BusinessPermission.objects.get(business=business,user=user).can_edit_budget
-        except BusinessPermission.DoesNotExist:
+            return BusinessPermissions.objects.get(business=business,user=user).can_edit_budget
+        except BusinessPermissions.DoesNotExist:
             return False
 
 
@@ -313,8 +332,8 @@ class BusinessPermissions(models.Model):
         if user.is_superuser:
             return True
         try:
-            return BusinessPermission.objects.get(business=business,user=user).can_view_budget
-        except BusinessPermission.DoesNotExist:
+            return BusinessPermissions.objects.get(business=business,user=user).can_view_budget
+        except BusinessPermissions.DoesNotExist:
             return False
 
     
@@ -323,8 +342,8 @@ class BusinessPermissions(models.Model):
         if user.is_superuser:
             return True
         try:
-            return BusinessPermission.objects.get(business=business,user=user).can_edit_invoices
-        except BusinessPermission.DoesNotExist:
+            return BusinessPermissions.objects.get(business=business,user=user).can_edit_invoices
+        except BusinessPermissions.DoesNotExist:
             return False
 
 
@@ -333,8 +352,8 @@ class BusinessPermissions(models.Model):
         if user.is_superuser:
             return True
         try:
-            return BusinessPermission.objects.get(business=business,user=user).can_view_invoices
-        except BusinessPermission.DoesNotExist:
+            return BusinessPermissions.objects.get(business=business,user=user).can_view_invoices
+        except BusinessPermissions.DoesNotExist:
             return False
 
     
@@ -343,8 +362,8 @@ class BusinessPermissions(models.Model):
         if user.is_superuser:
             return True
         try:
-            return BusinessPermission.objects.get(business=business,user=user).can_edit_ctc_billable_rates
-        except BusinessPermission.DoesNotExist:
+            return BusinessPermissions.objects.get(business=business,user=user).can_edit_ctc_billable_rates
+        except BusinessPermissions.DoesNotExist:
             return False
 
 
@@ -353,8 +372,8 @@ class BusinessPermissions(models.Model):
         if user.is_superuser:
             return True
         try:
-            return BusinessPermission.objects.get(business=business,user=user).can_view_ctc_billable_rates
-        except BusinessPermission.DoesNotExist:
+            return BusinessPermissions.objects.get(business=business,user=user).can_view_ctc_billable_rates
+        except BusinessPermissions.DoesNotExist:
             return False
 
 
@@ -363,8 +382,8 @@ class BusinessPermissions(models.Model):
         if user.is_superuser:
             return True
         try:
-            return BusinessPermission.objects.get(business=business,user=user).can_toggle_graphs
-        except BusinessPermission.DoesNotExist:
+            return BusinessPermissions.objects.get(business=business,user=user).can_toggle_graphs
+        except BusinessPermissions.DoesNotExist:
             return False
 
 
@@ -373,8 +392,8 @@ class BusinessPermissions(models.Model):
         if user.is_superuser:
             return True
         try:
-            return BusinessPermission.objects.get(business=business,user=user).can_edit_issue_states
-        except BusinessPermission.DoesNotExist:
+            return BusinessPermissions.objects.get(business=business,user=user).can_edit_issue_states
+        except BusinessPermissions.DoesNotExist:
             return False
 
 
@@ -383,8 +402,8 @@ class BusinessPermissions(models.Model):
         if user.is_superuser:
             return True
         try:
-            return BusinessPermission.objects.get(business=business,user=user).can_see_other_user_points
-        except BusinessPermission.DoesNotExist:
+            return BusinessPermissions.objects.get(business=business,user=user).can_see_other_user_points
+        except BusinessPermissions.DoesNotExist:
             return False
 
 

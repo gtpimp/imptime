@@ -1,3 +1,5 @@
+{% load timepiece_tags %}
+
 {% load url from future %}
 
 {% block javascript %}
@@ -49,11 +51,12 @@
   {% endif %}
 
 <p>
-{% if  permissions.has_edit_permissions %}
+
+{%  has_permission has_edit_permissions  business  %}
 <a href="#" class="secret_link" onclick="window.open('{% url 'show_permissions' business.id %}')">
  permissions
 </a> 
-{% endif %}
+{% end_permission %}
 </p>
 </div>
 

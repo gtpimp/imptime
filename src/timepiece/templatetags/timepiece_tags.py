@@ -56,6 +56,29 @@ def current_user_issue_cost(context, issue_points):
         rate = 0
 
     return rate*issue_points
+
+def do_has_permission(parser, token):
+    nodelist = parser.parse(('end_permission',))
+    parser.delete_first_token()
+    tag_name, perm_name,business = token.contents.split(None)
+    business = parser.compile_filter(business)
+    return HasPermissionNode(nodelist, perm_name, business )
+
+class HasPermissionNode(template.Node):
+    def __init__(self, nodelist,perm_name, business):
+        self.nodelist = nodelist
+        self.perm_func = getattr(timepiece.BusinessPermissions, perm_name)
+        self.business = business
+        
+    def render(self,context):
+        output = self.nodelist.render(context)
+        resolved_business = self.business.resolve(context,True)
+        if self.perm_func(resolved_business, context['current_user']):
+            return output        
+        return ""
+        
+register.tag('has_permission', do_has_permission)
+
     
 @register.simple_tag(takes_context=True)
 def get_points_current_user(context, issue_id):
@@ -181,7 +204,6 @@ def invoice_subheaders(context, current):
         'current': current,
         'invoice': context['invoice'],
     }
-
 
 @register.simple_tag
 def hours_for_assignment(assignment, date):

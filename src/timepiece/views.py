@@ -636,11 +636,10 @@ def get_project_card(request,business_id,index=None):
     else:
         older_projects = None
        
-    business_permissions = business.get_permissions_dict(request.user)
-    
 
     context = { 'business':business, 
-                'permissions': business_permissions,
+                'current_business':business, 
+                'current_user':request.user,
                 'project':project,
                 'older_projects':older_projects,
                 'expand_older':index is not None}
@@ -1647,14 +1646,8 @@ def edit_project_budget(request, project_id=None):
     project = get_object_or_404(timepiece.Project, pk=project_id) \
         if project_id else None
 
-    business_id = project.business.id
-    try:
-        business = timepiece.Business.objects.get(pk=business_id)
-    except timepiece.Business.DoesNotExist:
-        business = None
-
-    business_permissions = business.get_permissions_dict(request.user)
-    if not business_permissions or not business_permissions["has_edit_budget"]:
+    has_edit_budget = BusinessPermissions.has_edit_budget(project.business,request.user)
+    if not has_edit_budget:
         raise PermissionDenied
         
     form = timepiece_forms.ProjectBudgetForm(request.POST or None, instance=project)    
@@ -1668,6 +1661,9 @@ def edit_project_budget(request, project_id=None):
     context = {
         'project': project,
         'project_form': form,
+        'business': business,
+        'current_business': business,
+        'current_user': request.user,
     }
     return context
 
@@ -2938,9 +2934,7 @@ def add_issue(request, project_id, template="", context=None):
 
     current_user = request.user
     
-    permissions = current_business.get_permissions_dict(current_user)
-    can_create_issue = permissions["has_add_issue"]
-
+    can_create_issue = BusinessPermissions.has_add_issue(current_business, current_user)    
     if can_create_issue:
         new_issue_form = timepiece_forms.IssueForm(request.POST or None)
         if new_issue_form.is_valid():        
@@ -2959,9 +2953,7 @@ def delete_issue(request, project_id, template="", context=None):
 
     current_user = request.user
     
-    permissions = current_business.get_permissions_dict( current_user)
-    can_delete_issue = permissions["has_delete_issue"]
-
+    can_delete_issue = BusinessPermissions.has_delete_issue(current_business, current_user)
     if can_delete_issue:
         try:
             edited_issue = timepiece.Issue.objects.get(pk=request.POST['item_id'])
@@ -3006,7 +2998,6 @@ def project_issues(request, pk, template="timepiece/project/issues.html", contex
     project = timepiece.Project.objects.filter(pk=pk).filter_by_logged_in_user(request.user)[0]
     business = project.business
     
-    business_permissions = business.get_permissions_dict(request.user)
     queryset = timepiece.Issue.objects.filter(project=project).order_by("id")
 
     primary_points_user = project.business.primary_points_user
@@ -3030,7 +3021,7 @@ def project_issues(request, pk, template="timepiece/project/issues.html", contex
         billable += entry.atbillablerate
 
     context['current_user_rate'] = float(project.get_user_rate(request.user).amount)
-    context['permissions'] = business_permissions
+    context['business'] = business
     context['new_issue_form'] = new_issue_form
     context['current_user'] = request.user
     context['project'] = project
@@ -3053,8 +3044,7 @@ def issue_detail(request, issue_id, template="timepiece/project/issue_detail.htm
     project = issue.project
     context['project'] = project
 
-    business_permissions = project.business.get_permissions_dict(request.user)
-    context['permissions'] = business_permissions
+    context['business'] = project.business
 
     return render_to_response(template, context, context_instance=RequestContext(request))
 
@@ -3070,8 +3060,8 @@ def issue_detail_update(request,  template="timepiece/project/issue_detail.html"
     project = edited_issue.project
     context['project'] = project
 
-    business_permissions = project.business.get_permissions_dict(request.user)
-    if business_permissions["has_edit_description"]:
+    has_edit_description = BusinessPermissions.has_edit_description(project.business, request.user)
+    if has_edit_description:
         try:
             edited_issue.description = request.POST["new_value"]
             edited_issue.save()
@@ -3092,8 +3082,8 @@ def issue_status_update(request,  template="timepiece/project/issue_detail.html"
     project = edited_issue.project
     context['project'] = project
 
-    business_permissions = project.business.get_permissions_dict(request.user)
-    if business_permissions["has_edit_description"]:
+    has_edit_description = BusinessPermissions.has_edit_description(project.business, request.user)
+    if has_edit_description:
         try:
             edited_issue.status = request.POST["new_value"]
             edited_issue.save()
@@ -3115,8 +3105,8 @@ def issue_subject_update(request,  template="timepiece/project/issue_detail.html
     project = edited_issue.project
     context['project'] = project
 
-    business_permissions =project.business.get_permissions_dict(request.user)
-    if business_permissions["has_edit_subject"]:
+    has_edit_subject = BusinessPermissions.has_edit_subject(project.business, request.user)
+    if has_edit_subject:
         try:
             edited_issue.subject = request.POST["new_value"]
             edited_issue.save()
@@ -3137,9 +3127,7 @@ def issue_points_update(request,  template="timepiece/project/issue_detail.html"
     these_are_the_current_user_points = (request.user.id == edited_issue_points.user.id)
     current_project = edited_issue_points.issue.project
 
-    business_permissions = current_project.business.get_permissions_dict(current_user)
-    can_view_other_user_points = business_permissions["has_see_other_user_points"]
-
+    can_view_other_user_points = BusinessPermissions.has_see_other_user_points(current_project.business,current_user)     
     edit_is_allowed = True if these_are_the_current_user_points or can_view_other_user_points else False
     if edit_is_allowed:
         try:
