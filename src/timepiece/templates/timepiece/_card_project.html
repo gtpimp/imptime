@@ -9,7 +9,7 @@
    </a>
   {% endif %}
    
-  {% if permissions.can_edit_project_detail %}
+  {% if permissions.has_edit_project_detail %}
    <a href="#" onclick="imp.project_card_thinking(this); $('#b_card_{{project.business.id}}').load('{% url 'get_project_card'  business_id=project.business.id  %}');return false;">refresh</a>
    
    <a href="#" class="secret_link" onclick="window.open('{% url 'project_issues' project.id %}')">
@@ -98,12 +98,6 @@
  show timeline
 </a> 
 <br />
-{% endif %}
-
-{% if  permissions.can_edit_permissions %}
-<a href="#" class="secret_link" onclick="window.open('{% url 'show_permissions' project.business.id %}')">
- permissions
-</a> 
 {% endif %}
 
 <div class="toggle_graphs_section" style="display:none">

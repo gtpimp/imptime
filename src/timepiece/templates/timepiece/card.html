@@ -48,5 +48,12 @@
     No sprints
   {% endif %}
 
+<p>
+{% if  permissions.has_edit_permissions %}
+<a href="#" class="secret_link" onclick="window.open('{% url 'show_permissions' business.id %}')">
+ permissions
+</a> 
+{% endif %}
+</p>
 </div>
 
