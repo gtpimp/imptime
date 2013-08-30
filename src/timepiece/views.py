@@ -577,6 +577,7 @@ class ProjectTimesheetCSV(CSVMixin, ProjectTimesheet):
 @login_required
 def view_summary(request,user_id, include_older_businesses=False):
     all_businesses = timepiece.Business.businesses_in_desc_order_of_use(request.user)
+
     bus_info = []
 
     current_businesses = []
@@ -3449,7 +3450,9 @@ def show_permissions(request, business_id):
     context['permission_forms'] = permission_forms
 
     context['permission_user_list'] = users
+
     context['last_project'] = timepiece.Project.most_recent_project(business.id)
+
     context['current_user']= request.user
     return context
 

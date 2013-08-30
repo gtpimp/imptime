@@ -512,7 +512,11 @@ class Project(models.Model):
                 project_returned = Project.objects.get(pk=project_id)            
             except Project.DoesNotExist:
                 project_returned = None
-                
+
+        if not project_returned: 
+            qs = Project.objects.filter(business__id=business_id).order_by("-id")
+            project_returned = qs[0] if len(qs) > 0 else None
+
         return project_returned
 
 
