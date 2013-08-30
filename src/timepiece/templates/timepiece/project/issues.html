@@ -156,8 +156,9 @@
 		     </div>
 		  </td> 
 		  <td>
-		    <div class="styled-select">
-		      <div class="selectme {{form.instance.status_appearance}}" onclick="imp.status_toggle_form_show(this,{{form.instance.pk}}, {{form.instance.options}}, '{% url 'issue_status_update' %}');"> 
+		    <div class="styled-select">		     
+		      <div class="selectme {{form.instance.status_appearance}}"  {% has_permission has_edit_issue_states project.business %} onclick="imp.status_toggle_form_show(this,{{form.instance.pk}}, {{form.instance.options}}, '{% url 'issue_status_update' %}');" {% end_permission %} > 
+		      
 			{{ form.instance.status }}
 		      </div>
 		    </div>

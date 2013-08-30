@@ -199,13 +199,6 @@ class BusinessPermissions(models.Model):
     can_edit_description = models.BooleanField(default=False, verbose_name="Can Edit Description")
     can_edit_subject = models.BooleanField(default=False, verbose_name="Can Edit Subject")
 
-    # @classmethod
-    # def get_permission_object(self, business, user):
-    #     try:
-    #         return BusinessPermissions.objects.get(business, user)
-    #     except BusinessPermissions.DoesNotExist:
-    #         return BusinessPermissions
-
     @classmethod
     def has_edit_permissions(self, business, user):
         if user.is_superuser:

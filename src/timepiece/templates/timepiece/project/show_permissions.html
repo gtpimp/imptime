@@ -1,7 +1,7 @@
 {% extends "timepiece/person/base.html" %}
 {% load url from future %}
 {% load bootstrap_toolkit %}
-
+{% load timepiece_tags %}
 {% block extramedia %}
 {{ add_user_form.media }}
 {% endblock %}
@@ -20,7 +20,7 @@
         <div class="span12">
         </div>
     </div>
-
+    {% has_permission has_edit_permissions last_project.business %}
     <div class="row-fluid">
 
         <div class="span12">
@@ -69,4 +69,8 @@
 	    {% endif %}
         </div>
     </div>
+    {% end_permission %}
+    {% has_not_permission has_edit_permissions last_project.business %}
+    You do not have permission to update permissions
+    {% end_permission %}
 {% endblock %}

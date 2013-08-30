@@ -3078,12 +3078,14 @@ def issue_detail_update(request,  template="timepiece/project/issue_detail.html"
     context['project'] = project
 
     has_edit_description = timepiece.BusinessPermissions.has_edit_description(project.business, request.user)
-    if has_edit_description:
-        try:
-            edited_issue.description = request.POST["new_value"]
-            edited_issue.save()
-        except KeyError:
-            pass
+    if not has_edit_description:
+        raise PermissionDenied
+
+    try:
+        edited_issue.description = request.POST["new_value"]
+        edited_issue.save()
+    except KeyError:
+        pass
                                                 
     return HttpResponse("")
 
@@ -3099,13 +3101,15 @@ def issue_status_update(request,  template="timepiece/project/issue_detail.html"
     project = edited_issue.project
     context['project'] = project
 
-    has_edit_description = timepiece.BusinessPermissions.has_edit_description(project.business, request.user)
-    if has_edit_description:
-        try:
-            edited_issue.status = request.POST["new_value"]
-            edited_issue.save()
-        except KeyError:
-            pass
+    has_edit_status = timepiece.BusinessPermissions.has_edit_issue_states(project.business, request.user)
+    if not has_edit_status:
+        raise PermissionDenied
+
+    try:
+        edited_issue.status = request.POST["new_value"]
+        edited_issue.save()
+    except KeyError:
+        pass
                                                 
     return HttpResponse("")
 
@@ -3123,12 +3127,13 @@ def issue_subject_update(request,  template="timepiece/project/issue_detail.html
     context['project'] = project
 
     has_edit_subject = timepiece.BusinessPermissions.has_edit_subject(project.business, request.user)
-    if has_edit_subject:
-        try:
-            edited_issue.subject = request.POST["new_value"]
-            edited_issue.save()
-        except KeyError:
-            pass
+    if not has_edit_subject:
+        raise PermissionDenied
+    try:
+        edited_issue.subject = request.POST["new_value"]
+        edited_issue.save()
+    except KeyError:
+        pass
     
     return HttpResponse("")
 
@@ -3146,12 +3151,13 @@ def issue_points_update(request,  template="timepiece/project/issue_detail.html"
 
     can_view_other_user_points = timepiece.BusinessPermissions.has_see_other_user_points(current_project.business,current_user)     
     edit_is_allowed = True if these_are_the_current_user_points or can_view_other_user_points else False
-    if edit_is_allowed:
-        try:
-            edited_issue_points.points = request.POST["new_value"]
-            edited_issue_points.save()
-        except KeyError:
-            pass
+    if not edit_is_allowed:
+        raise PermissionDenied
+    try:
+        edited_issue_points.points = request.POST["new_value"]
+        edited_issue_points.save()
+    except KeyError:
+        pass
     
     return HttpResponse("")
 
@@ -3406,15 +3412,20 @@ def show_permissions(request, business_id):
     permission_forms = timepiece_forms.permissions_formset(request.POST or None,
                                                             queryset = permissions_set)
 
-
+    
+    
     if permission_forms.is_valid():
+        has_edit_permissions = timepiece.BusinessPermissions.has_edit_permissions(business,request.user)
+        if not has_edit_permissions:
+            raise PermissionDenied
+
         permission_forms.save()
 
     context['permission_forms'] = permission_forms
 
     context['permission_user_list'] = users
     context['last_project'] = timepiece.Project.most_recent_project(business.id)
-    
+    context['current_user']= request.user
     return context
 
 
