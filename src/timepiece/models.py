@@ -74,40 +74,6 @@ class Business(models.Model):
     external_id = models.CharField(max_length=32, blank=True)
     
     objects = QuerySetManager(BusinessQuerySet)
-    
-    # def has_edit_permissions(self, user):
-    #     return BusinessPermissions.has_edit_permissions(self, user)
-
-    # def get_permissions_dict(self,user):
-    #     is_superuser = user.is_superuser        
-    #     try:
-    #         permissions = BusinessPermissions.objects.get(user=user, business=self)            
-    #     except BusinessPermissions.DoesNotExist:            
-    #         if is_superuser or user in self.users:
-    #             permissions = BusinessPermissions.objects.create(user=user, business=self)
-    #         else:
-    #             return None
-
-    #     return permissions.get_permissions_dict(user)
-
-    #     # is_superuser = user.is_superuser        
-    #     # try:
-    #     #     permissions = BusinessPermissions.objects.get(user=user, business=self)
-    #     # except BusinessPermissions.DoesNotExist:            
-    #     #     if is_superuser or user in self.users:
-    #     #         permissions = BusinessPermissions.objects.create(user=user, business=self)
-    #     #     else:
-    #     #         return None
-
-    #     # permdict = {}
-    #     # for field in permissions._meta.fields:
-    #     #     if field.name.startswith("can_") or field.name.startswith("is_"):
-    #     #         value = True if is_superuser else getattr(permissions, field.name)
-    #     #         key = field.name.replace("can_","has_")
-    #     #         permdict.update({key : value})
-    #     #         permdict.update({field.name : value})
-    #     # return permdict
-
 
     def get_all_business_permissions(self,user=None):
         permissions_qs = BusinessPermissions.objects.filter(business=self)        
