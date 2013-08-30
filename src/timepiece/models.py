@@ -209,7 +209,7 @@ class BusinessPermissions(models.Model):
 
     can_view_project_card = models.BooleanField(default=False, verbose_name="Can View Project Card")
     can_edit_permissions = models.BooleanField(default=False, verbose_name="Can Edit Permissions")
-    can_edit_project_detail = models.BooleanField(default=False, verbose_name="Can Edit Project_detail")
+    can_edit_project_detail = models.BooleanField(default=False, verbose_name="Can Edit Project Detail")
     can_edit_issues = models.BooleanField(default=False, verbose_name="Can Edit Issues")
     
     can_edit_budget = models.BooleanField(default=False,verbose_name = "Can Edit Budget ")
