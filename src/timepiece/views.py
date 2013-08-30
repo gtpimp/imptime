@@ -1248,7 +1248,7 @@ def project_detail(request, business_id):
 
     businesses = defaultdict(lambda: [])
     for project in projects:
-        businesses[project.business.name].append(project)
+        businesses[project.business].append(project)
     businesses = dict((b, business_total(p, from_date, to_date)) for b, p in businesses.iteritems())
     user_totals = {}
     for b in businesses.values():
@@ -1624,6 +1624,8 @@ def unbillable_project(request, project_id=None):
     project.save()
     timepiece.Entry.objects.filter_by_logged_in_user(request.user).filter(project=project).update(status='invoiced')
     return HttpResponseRedirect(reverse('list_projects'))
+
+
 
 @permission_required('timepiece.add_project')
 @permission_required('timepiece.change_project')
@@ -2985,24 +2987,24 @@ def _augment_issue_data(issue, primary_user_rate):
     completion =  (story_points * primary_user_rate/ actual_billable_cost_of_issue) if actual_billable_cost_of_issue > 0 else 0.0
     budget_left = (1-completion) * actual_billable_cost_of_issue
 
-    issue.completion = completion * 100
-    issue.display_value = "R%.1f"% budget_left
-    if issue.completion >= 100:
-        issue.bar_color = "traffic_red"
-        issue.completion = 200 if issue.completion > 200 else issue.completion
-        issue.display_value = "R%.1f"% budget_left
-    elif issue.completion < 75:
-        issue.bar_color = "traffic_green"
+    issue.representation.completion = completion * 100
+    issue.representation.display_value = "R%.1f"% budget_left
+    if issue.representation.completion >= 100:
+        issue.representation.bar_color = "traffic_red"
+        issue.representation.completion = 200 if issue.representation.completion > 200 else issue.representation.completion
+        issue.representation.display_value = "R%.1f"% budget_left
+    elif issue.representation.completion < 75:
+        issue.representation.bar_color = "traffic_green"
     else:
-        issue.bar_color = "traffic_yellow"
+        issue.representation.bar_color = "traffic_yellow"
         
-    issue.completion /= 2
-    issue.remainder = 100  - issue.completion
+    issue.representation.completion /= 2
+    issue.representation.remainder = 100  - issue.representation.completion
 
     _set_colour = lambda option: [option,'light_priority'] if option in  ['devdone','tested','task done'] else [option,'dark_priority']
     options = map(_set_colour, [i[0] for i in timepiece.Issue.ISSUE_STATUS_CHOICES])
-    issue.options = "[%s]"%",".join(["%s"%str(i) for i in options])
-    issue.status_appearance = _set_colour(issue.status)[-1]
+    issue.representation.options = "[%s]"%",".join(["%s"%str(i) for i in options])
+    issue.representation.status_appearance = _set_colour(issue.status)[-1]
     
 @csrf_exempt
 def project_issues(request, pk, template="timepiece/project/issues.html", context=None):
@@ -3019,8 +3021,6 @@ def project_issues(request, pk, template="timepiece/project/issues.html", contex
                                                         queryset=queryset)    
     for form in issues_forms.forms:
         _augment_issue_data(form.instance, primary_points_user_rate)
-        if form.is_valid():
-            form.save()
 
     new_issue_form = timepiece_forms.IssueForm()
 

@@ -209,7 +209,7 @@ $(document).ready(function(){
 	      {% for business, temp_totals in businesses.items %}
 	      {% with totals=temp_totals.totals user_projects=temp_totals.projects %}
 	      <tr>
-		<td><b>{{ business }}</b></td>
+		<td><b>{{ business.name }}</b></td>
 		<td />
 		<td><b>{{ totals.hours}}</b></td>
 		<td><b>{{ totals.ctc_rate|currency }}</b></td>
@@ -261,10 +261,10 @@ $(document).ready(function(){
 	     <table class='table table-striped table-bordered table-condensed project_list'>
 		 <thead>
 		     <tr>
-		       <th colspan="14">{{ business }} <a id="a_b{{ forloop.counter }}_collapse_business" href="javascript:void(0);" 
+		       <th colspan="14">{{ business.name }} <a id="a_b{{ forloop.counter }}_collapse_business" href="javascript:void(0);" 
 		           onclick="expand_collapse_business('b{{forloop.counter}}')">[collapse project]</a>
 		           <a href="javascript:void(0)" id="a_sprint_collapse_b{{ forloop.counter }}" onclick="expand_collapse_sprints('b{{forloop.counter}}')" class="expanded">[collapse sprints]</a>
-                           <a href="{% url 'create_project' %}">new sprint</a>
+                           <a href="{% url 'create_project' %}?business_id={{ business.id }}">new sprint</a>
 		       </th>
 		     </tr>
 		     <tr>
