@@ -157,7 +157,7 @@
 		  </td> 
 		  <td>
 		    <div class="styled-select">		     
-		      <div class="selectme {{form.instance.status_appearance}}"  {% has_permission has_edit_issue_states project.business %} onclick="imp.status_toggle_form_show(this,{{form.instance.pk}}, {{form.instance.options}}, '{% url 'issue_status_update' %}');" {% end_permission %} > 
+		      <div class="selectme {{form.instance.representation.status_appearance}}"  {% has_permission has_edit_issue_states project.business %} onclick="imp.status_toggle_form_show(this,{{form.instance.pk}}, {{form.instance.representation.options}}, '{% url 'issue_status_update' %}');" {% end_permission %} > 
 		      
 			{{ form.instance.status }}
 		      </div>
@@ -209,8 +209,8 @@
                   <td >
 		    <div class="short_traffic">
 		      <div style="clear:left;" class="traffic_bar">			
-			<div style="width:{{ form.instance.completion }}%;" class={{form.instance.bar_color}}>  
-			  {{ form.instance.display_value }}
+			<div style="width:{{ form.instance.representation.completion }}%;" class={{form.instance.representation.bar_color}}>  
+			  {{ form.instance.representation.display_value }}
 			</div>
 		      </div>
 		    </div>

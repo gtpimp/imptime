@@ -1820,6 +1820,9 @@ class Invoice(models.Model):
             ('view_invoice', 'Can view invoices.'),
         )
 
+class IssueRepresentation(object):
+    pass
+
 class Issue(models.Model):
     ISSUE_STATUS_CHOICES = (
            ( 'new', 'new'),
@@ -1845,7 +1848,8 @@ class Issue(models.Model):
     def __init__(self, *args, **kwargs):
         super(Issue, self).__init__(*args, **kwargs)
         self._entries = None
-        
+        self.representation = IssueRepresentation()
+
     def get_points(self):
         business_users = self.project.business.users
         for user in business_users:

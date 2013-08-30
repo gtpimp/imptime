@@ -11,7 +11,6 @@
   {% end_permission %}
    
   {% has_permission has_edit_project_detail project.business %}
-   <a href="#" onclick="imp.project_card_thinking(this); $('#b_card_{{project.business.id}}').load('{% url 'get_project_card'  business_id=project.business.id  %}');return false;">refresh</a>
    
    <a href="#" class="secret_link" onclick="window.open('{% url 'project_issues' project.id %}')">
      <div {% ifequal 0 project.issues|length %}style="color:red"{% endifequal %}>
