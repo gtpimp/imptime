@@ -138,9 +138,9 @@ class Business(models.Model):
         try:
             primary_permissions = permissions.get(is_primary_points_user = True)
             return primary_permissions.user
-        except timepiece.BusinessPermissions.DoesNotExist:
+        except BusinessPermissions.DoesNotExist:
             return None
-        except timepiece.BusinessPermissions.MultipleObjectsReturned:
+        except BusinessPermissions.MultipleObjectsReturned:
             primary_permissions = permissions.filter(is_primary_points_user = True).order_by("user__id")[0]
             return primary_permissions.user
 

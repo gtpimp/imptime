@@ -623,7 +623,6 @@ def get_project_card(request,business_id,index=None):
     
     projects = timepiece.Project.projects_in_desc_order_of_use(int(business_id))
     #projects = [p for p in projects if (request.user.is_superuser or request.user in p.users.all())]  #-- not in p.users
-        
     # ##
     #projects = timepiece.Project.objects.filter(pk=1099)
     # ##
@@ -1646,7 +1645,7 @@ def edit_project_budget(request, project_id=None):
     project = get_object_or_404(timepiece.Project, pk=project_id) \
         if project_id else None
 
-    has_edit_budget = BusinessPermissions.has_edit_budget(project.business,request.user)
+    has_edit_budget = timepiece.BusinessPermissions.has_edit_budget(project.business,request.user)
     if not has_edit_budget:
         raise PermissionDenied
         
@@ -2934,7 +2933,7 @@ def add_issue(request, project_id, template="", context=None):
 
     current_user = request.user
     
-    can_create_issue = BusinessPermissions.has_add_issue(current_business, current_user)    
+    can_create_issue = timepiece.BusinessPermissions.has_add_issue(current_business, current_user)    
     if can_create_issue:
         new_issue_form = timepiece_forms.IssueForm(request.POST or None)
         if new_issue_form.is_valid():        
@@ -2953,7 +2952,7 @@ def delete_issue(request, project_id, template="", context=None):
 
     current_user = request.user
     
-    can_delete_issue = BusinessPermissions.has_delete_issue(current_business, current_user)
+    can_delete_issue = timepiece.BusinessPermissions.has_delete_issue(current_business, current_user)
     if can_delete_issue:
         try:
             edited_issue = timepiece.Issue.objects.get(pk=request.POST['item_id'])
@@ -3001,11 +3000,12 @@ def project_issues(request, pk, template="timepiece/project/issues.html", contex
     queryset = timepiece.Issue.objects.filter(project=project).order_by("id")
 
     primary_points_user = project.business.primary_points_user
-    primary_points_rate = project.get_user_rate(primary_points_user)
+
+    primary_points_user_rate = project.get_user_rate(primary_points_user)
     issues_forms = timepiece_forms.issue_status_formset(request.POST or None, 
                                                         queryset=queryset)    
     for form in issues_forms.forms:
-        _augment_issue_data(form.instance, primary_points_rate)
+        _augment_issue_data(form.instance, primary_points_user_rate)
         if form.is_valid():
             form.save()
 
@@ -3019,8 +3019,9 @@ def project_issues(request, pk, template="timepiece/project/issues.html", contex
         hours += entry.hours
         ctc += entry.atrate
         billable += entry.atbillablerate
-
-    context['current_user_rate'] = float(project.get_user_rate(request.user).amount)
+        
+    rate = project.get_user_rate(request.user)
+    context['current_user_rate'] = float(rate.amount) if rate else 0.0
     context['business'] = business
     context['new_issue_form'] = new_issue_form
     context['current_user'] = request.user
@@ -3045,7 +3046,7 @@ def issue_detail(request, issue_id, template="timepiece/project/issue_detail.htm
     context['project'] = project
 
     context['business'] = project.business
-
+    context['current_user'] = request.user
     return render_to_response(template, context, context_instance=RequestContext(request))
 
 @csrf_exempt
@@ -3060,7 +3061,7 @@ def issue_detail_update(request,  template="timepiece/project/issue_detail.html"
     project = edited_issue.project
     context['project'] = project
 
-    has_edit_description = BusinessPermissions.has_edit_description(project.business, request.user)
+    has_edit_description = timepiece.BusinessPermissions.has_edit_description(project.business, request.user)
     if has_edit_description:
         try:
             edited_issue.description = request.POST["new_value"]
@@ -3082,7 +3083,7 @@ def issue_status_update(request,  template="timepiece/project/issue_detail.html"
     project = edited_issue.project
     context['project'] = project
 
-    has_edit_description = BusinessPermissions.has_edit_description(project.business, request.user)
+    has_edit_description = timepiece.BusinessPermissions.has_edit_description(project.business, request.user)
     if has_edit_description:
         try:
             edited_issue.status = request.POST["new_value"]
@@ -3105,7 +3106,7 @@ def issue_subject_update(request,  template="timepiece/project/issue_detail.html
     project = edited_issue.project
     context['project'] = project
 
-    has_edit_subject = BusinessPermissions.has_edit_subject(project.business, request.user)
+    has_edit_subject = timepiece.BusinessPermissions.has_edit_subject(project.business, request.user)
     if has_edit_subject:
         try:
             edited_issue.subject = request.POST["new_value"]
@@ -3127,7 +3128,7 @@ def issue_points_update(request,  template="timepiece/project/issue_detail.html"
     these_are_the_current_user_points = (request.user.id == edited_issue_points.user.id)
     current_project = edited_issue_points.issue.project
 
-    can_view_other_user_points = BusinessPermissions.has_see_other_user_points(current_project.business,current_user)     
+    can_view_other_user_points = timepiece.BusinessPermissions.has_see_other_user_points(current_project.business,current_user)     
     edit_is_allowed = True if these_are_the_current_user_points or can_view_other_user_points else False
     if edit_is_allowed:
         try:

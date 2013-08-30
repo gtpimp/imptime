@@ -64,20 +64,33 @@ def do_has_permission(parser, token):
     business = parser.compile_filter(business)
     return HasPermissionNode(nodelist, perm_name, business )
 
+def do_has_not_permission(parser, token):
+    nodelist = parser.parse(('end_permission',))
+    parser.delete_first_token()
+    tag_name, perm_name,business = token.contents.split(None)
+    business = parser.compile_filter(business)
+    return HasPermissionNode(nodelist, perm_name, business, opposite=True)
+
+register.tag('has_permission', do_has_permission)
+register.tag('has_not_permission', do_has_not_permission)
+
 class HasPermissionNode(template.Node):
-    def __init__(self, nodelist,perm_name, business):
+    def __init__(self, nodelist,perm_name, business,opposite=False):
         self.nodelist = nodelist
         self.perm_func = getattr(timepiece.BusinessPermissions, perm_name)
         self.business = business
+        self.opposite = opposite
         
     def render(self,context):
         output = self.nodelist.render(context)
         resolved_business = self.business.resolve(context,True)
-        if self.perm_func(resolved_business, context['current_user']):
+        has_permission = self.perm_func(resolved_business, context['current_user'])
+        if not self.opposite and has_permission:
             return output        
+        if self.opposite and not has_permission:
+            return output
         return ""
         
-register.tag('has_permission', do_has_permission)
 
     
 @register.simple_tag(takes_context=True)

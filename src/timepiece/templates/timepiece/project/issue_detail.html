@@ -1,9 +1,10 @@
+{% load timepiece_tags %}
 <h2>#{{issue.id}} {{issue.subject}}</h2>
 
 <script src="{{STATIC_URL}}timepiece/js/issues.js"></script>
 
 <div class="issue_status">{{issue.status}}</div>
-<div class="edit_description"  {% if permissions.has_edit_description %} onclick="imp.clickable_text_box(this, '{% url issue_detail_update %}',{{ issue.id }})" {% endif %} >
+<div class="edit_description"  {% has_permission has_edit_description issue.project.business %} onclick="imp.clickable_text_box(this, '{% url issue_detail_update %}',{{ issue.id }})" {% end_permission %} >
   {{issue.description}} 
 </div>
 
