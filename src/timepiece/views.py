@@ -1627,10 +1627,9 @@ def unbillable_project(request, project_id=None):
 
 
 
-@permission_required('timepiece.add_project')
 @permission_required('timepiece.change_project')
 @render_with('timepiece/project/create_edit.html')
-def create_edit_project(request, project_id=None):
+def update_project(request, project_id=None):
     project = get_object_or_404(timepiece.Project, pk=project_id) \
         if project_id else None
 
@@ -1649,6 +1648,35 @@ def create_edit_project(request, project_id=None):
         'project_form': form,
     }
     return context
+
+@permission_required('timepiece.add_project')
+@render_with('timepiece/project/create_edit.html')
+def create_project(request):
+
+    business_id = request.GET['business_id']
+    business = timepiece.Business.objects.get(pk=business_id)
+    project = timepiece.Project(  business = business,
+                                  point_person = request.user,
+                                  type = timepiece.Attribute.objects.get(label="default"),
+                                  status = timepiece.Attribute.objects.get(label="open"),
+                                  )
+                                  
+    
+    form = timepiece_forms.NewProjectForm(request.POST or None, instance=project)    
+    if form.is_valid():
+        project = form.save()
+        project.save()
+        return HttpResponseRedirect(
+            reverse('view_project', args=(project.id,))
+            )
+
+    context = {
+        'business':business,
+        'project': project,
+        'project_form': form,
+    }
+    return context
+
 
 @render_with('timepiece/project/edit_project_budget.html')
 def edit_project_budget(request, project_id=None):

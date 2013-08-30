@@ -74,7 +74,7 @@ urlpatterns = patterns('',
     ),
     url(
         r'^project/create/$',
-        views.create_edit_project,
+        views.create_project,
         name='create_project',
     ),
     url(
@@ -84,7 +84,7 @@ urlpatterns = patterns('',
     ),
     url(
         r'^project/(?P<project_id>\d+)/edit/$',
-        views.create_edit_project,
+        views.update_project,
         name='edit_project',
     ),
     url(

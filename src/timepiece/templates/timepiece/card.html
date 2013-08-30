@@ -16,7 +16,10 @@
   <h1>{{ business.name }} ({{business.id}})</h1>
 
   <p>
-   <a href="#" onclick="imp.project_card_thinking(this); $('#b_card_{{project.business.id}}').load('{% url 'get_project_card'  business_id=business.id  %}');return false;">refresh</a>
+   <a href="#" onclick="window.open('{% url 'get_project_card'  business_id=business.id  %}');return false;">refresh</a>
+</p>
+  <p>
+    <a href="#" onclick="window.open('{% url 'create_project' %}?business_id={{ business.id }}');return false;">create sprint</a>
 </p>
 
   {% if project %}

@@ -689,11 +689,6 @@ class ProjectForm(forms.ModelForm):
         fields = (
             'name',
             'business',
-            'tracker_url',
-            'point_person',
-            'type',
-            'status',
-            'activity_group',
             'description',
             'budget',
         )
@@ -710,6 +705,24 @@ class ProjectForm(forms.ModelForm):
 
     def save(self):
         instance = super(ProjectForm, self).save(commit=False)
+        instance.save()
+        return instance
+
+
+class NewProjectForm(forms.ModelForm):
+    class Meta:
+        model = timepiece.Project
+        fields = (
+            'name',
+            'description',
+            'budget',
+        )
+
+    def __init__(self, *args, **kwargs):
+        super(NewProjectForm, self).__init__(*args, **kwargs)
+
+    def save(self):
+        instance = super(NewProjectForm, self).save(commit=False)
         instance.save()
         return instance
 
