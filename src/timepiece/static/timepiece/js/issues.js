@@ -112,14 +112,14 @@ imp.clickable_description_box = function(element, url, item_id) {
     commentField.append(textField);
     
     submitButton.click(function(e) {  
-    	form_parent = $(this).parent();
-    	div_parent = form_parent.parent();
+    	form_parent = $(this).parent().parent();
+    	div_parent = form_parent.find(".static_div");
     	text_sibling = form_parent.find('textarea');
     	hidden_sibling = form_parent.find('input:hidden');
-    	item_id = hidden_sibling.val()
+    	item_id = hidden_sibling.val();
     	new_value = text_sibling.val();
-    	form_parent.remove();
-    	div_parent.html(new_value);
+	$(this).parent().remove();
+    	div_parent.text(new_value);
     	div_parent.show();
         $.ajax({type:"POST",
                 url: url,
