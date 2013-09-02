@@ -68,33 +68,88 @@ imp.ajax_call = function(element, url, item_id) {
 };
 
 imp.clickable_text_box = function(element, url, item_id) {
-    var button = $(element),
-        commentField = $('<textarea/>');
+    var textbox = $(element),
+    commentField = $('<form/>');
     
-    commentField
-    .css({
-            position: 'absolute',
-            width: 200,
-            height: 100,
-            left: button.offset().left, 
-             top: button.offset().top 
-        })    
-        .val(button.data('textContent') || button.html() )
-        .keypress(function(e) {
-            if (e.which === 13) {
-                e.preventDefault();
-                button.data('textContent', this.value);
-                $(this).data($(this).val());
-                button.html(button.data('textContent'));
-                $.ajax({type:"POST",
-                        url: url,
-                        data : { item_id: item_id, new_value: button.data('textContent') },
-                        dataType:"json"});
-                $(this).remove();
-            }
-        })
-        .appendTo(document.body);
+    commentField = commentField.attr('action',url).attr('method','post');
+    textField =$("<input/>").attr('type','text').attr('name','new_value').attr('value',textbox.html());
+    textbox.hide();
+    itemField =$("<input/>").attr('type','hidden').attr('value', item_id).attr('name','item_id');
+    submitButton = $("<input/>").attr('type','button').attr('value','Submit');
+    commentField.append(itemField);
+    commentField.append(textField);
+    commentField.append(submitButton);
+    textbox.parent().append(commentField)    
+    submitButton.click(function(e) {  
+	form_parent = $(this).parent();
+	div_parent = form_parent.parent().find('.edit_issue_subject');	
+	text_sibling = form_parent.find('input:text');
+	hidden_sibling = form_parent.find('input:hidden');
+	item_id = hidden_sibling.val()
+	new_value = text_sibling.val();
+	form_parent.remove();
+	div_parent.html(new_value);
+	div_parent.show();
+        $.ajax({type:"POST",
+                url: url,
+                data : { item_id: item_id, new_value: new_value },
+                dataType:"json"});
+    });
+
 };
+
+
+imp.clickable_description_box = function(element, url, item_id) {
+    var textbox = $(element),
+    commentField = $('<form/>');
+
+    commentField = commentField.attr('action',url).attr('method','post');
+    textField =$("<textarea/>").attr('name','new_value').attr('value',textbox.html());
+    textbox.hide();
+    itemField =$("<input/>").attr('type','hidden').attr('value', item_id).attr('name','item_id');
+    submitButton = $("<input/>").attr('type','button').attr('value','Submit');
+    commentField.append(itemField);
+    commentField.append(textField);
+    commentField.append(submitButton);
+    textbox.parent().append(commentField)    
+    submitButton.click(function(e) {  
+	form_parent = $(this).parent();
+	div_parent = form_parent.parent().find('.edit_issue_subject');	
+	text_sibling = form_parent.find('textarea');
+	hidden_sibling = form_parent.find('input:hidden');
+	item_id = hidden_sibling.val()
+	new_value = text_sibling.val();
+	form_parent.remove();
+	div_parent.html(new_value);
+	div_parent.show();
+        $.ajax({type:"POST",
+                url: url,
+                data : { item_id: item_id, new_value: new_value },
+                dataType:"json"});
+    });
+    
+};
+
+
+
+imp.clickable_subject_box = function(element, url, item_id) {
+    var textbox = $(element),
+    commentTextArea = $("<input/>")
+    commentTextArea.attr("type","text").attr("value",textbox.html());
+    textbox.parent().append(commentTextArea);
+    textbox.hide();
+    commentTextArea.keypress(function(e) {
+	if (e.which === 13) {
+	    parent = $(this).parent();
+	    //parent.html($(this).val());
+	    div_sibling = parent.find('.edit_issue_subject');		    
+	    div_sibling.html($(this).val());
+	    $(this).remove();
+	    div_sibling.show();
+	}
+    });
+};
+
 
 
 
