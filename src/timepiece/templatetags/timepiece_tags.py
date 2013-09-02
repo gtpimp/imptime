@@ -55,7 +55,7 @@ def current_user_issue_cost(context, issue_points):
     except:
         rate = 0
 
-    return rate*issue_points
+    return rate*(issue_points or 0)
 
 def do_has_permission(parser, token):
     nodelist = parser.parse(('end_permission',))

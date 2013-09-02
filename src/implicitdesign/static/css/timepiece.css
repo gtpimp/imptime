@@ -9493,12 +9493,25 @@ table.project_list  {
     border-bottom: 1px solid #dfdfdf;
 }
 
+.new_issue_form {
+    position: fixed;
+    background: #eeeeee;
+    width: 25%;
+    padding: 10px;
+    border: 1px solid #111111;
+}
+
 .issues .issues_list{
     height:600px;
     overflow:auto;
-    width:45%;
+    width:65%;
     float:left;
     font-size:10px;
+}
+
+.issues .issue_pane {
+    float:right;
+    width: 35%;
 }
 
 .issues .issues_list .issue_subject {
@@ -9531,7 +9544,6 @@ table.project_list  {
 .issues .issue_detail {
     float:right;
     margin-left:10px;
-    width:45%;
     overflow:auto;
     height:600px;
     -moz-box-shadow:    6px 6px 0px 0px #ccc;
@@ -9548,7 +9560,6 @@ table.project_list  {
 
 .issues .issue_detail {
     float:left;
-    width:45%;
 }
 
 .issues .issue_detail .issue_status {

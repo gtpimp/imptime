@@ -3009,8 +3009,8 @@ def delete_issue(request, project_id, template="", context=None):
 
 
 def _augment_issue_data(issue, primary_user_rate):
-    primary_user_rate = float(primary_user_rate.amount) or 0.0
-    story_points = float(issue.story_points)
+    primary_user_rate = float(primary_user_rate.amount)
+    story_points = issue.story_points or 0
     actual_billable_cost_of_issue = float(issue.billable)
 
     completion =  (story_points * primary_user_rate/ actual_billable_cost_of_issue) if actual_billable_cost_of_issue > 0 else 0.0
@@ -3089,6 +3089,7 @@ def issue_detail(request, issue_id, template="timepiece/project/issue_detail.htm
 
     context['business'] = project.business
     context['current_user'] = request.user
+
     return render_to_response(template, context, context_instance=RequestContext(request))
 
 @csrf_exempt

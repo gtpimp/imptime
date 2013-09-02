@@ -28,6 +28,23 @@
             {% endif %}
 
             <li><a href='{% url 'project_issues' project.id %}'>Issues</a></li>
+
+            <li>
+              {% has_permission has_add_issue project.business %}
+              <div class="btn" onclick="imp.toggle_form_show(this)">
+                <div class="to_click" style="display:block">
+                  Add Issue
+                </div>
+                <div class="new_issue_form to_edit" style="display:none">
+                  <form method="POST" action='{% url "add_issue" project.id %}'>
+                    {% csrf_token %}
+                    {{ new_issue_form|as_bootstrap:"inline" }}
+                    <input class="btn" type="submit" name="submit" id="submit" value="Add" />
+                  </form>
+                </div>	    
+              </div>
+              {% end_permission %}
+            </li>
         </ul>
     </div>
 </div>
@@ -240,20 +257,7 @@
             <div class="issue_detail">
             </div>
           </div>
-	  {% has_permission has_add_issue project.business %}
-          <div class="btn" onclick="imp.toggle_form_show(this)">
-	    <div class="to_click" style="display:block">
-	      Add Issue
-	    </div>
-	    <div class="to_edit" style="display:none">
-	      <form method="POST" action='{% url "add_issue" project.id %}'>
-		{% csrf_token %}
-		{{ new_issue_form|as_bootstrap:"inline" }}
-		<input class="btn" type="submit" name="submit" id="submit" value="Add" />
-	      </form>
-	    </div>	    
-          </div>
-	  {% end_permission %}
+	  
         </div>
     </div>
 </div>

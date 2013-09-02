@@ -5,7 +5,7 @@
 
 <div class="issue_status">{{issue.status}}</div>
 <div class="edit_description"  {% has_permission has_edit_description issue.project.business %} onclick="imp.clickable_text_box(this, '{% url issue_detail_update %}',{{ issue.id }})" {% end_permission %} >
-  {{issue.description}} 
+  {{issue.description|linebreaksbr}} 
 </div>
 
 
