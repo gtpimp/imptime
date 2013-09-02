@@ -107,27 +107,27 @@ imp.clickable_description_box = function(element, url, item_id) {
     textField =$("<textarea/>").attr('name','new_value').attr('value',textbox.html());
     textbox.hide();
     itemField =$("<input/>").attr('type','hidden').attr('value', item_id).attr('name','item_id');
-    submitButton = $("<input/>").attr('type','button').attr('value','Submit');
+    submitButton = $("<input/>").attr('type','button').attr('value','Modify');
     commentField.append(itemField);
     commentField.append(textField);
-    commentField.append(submitButton);
-    textbox.parent().append(commentField)    
+    
     submitButton.click(function(e) {  
-	form_parent = $(this).parent();
-	div_parent = form_parent.parent().find('.edit_issue_subject');	
-	text_sibling = form_parent.find('textarea');
-	hidden_sibling = form_parent.find('input:hidden');
-	item_id = hidden_sibling.val()
-	new_value = text_sibling.val();
-	form_parent.remove();
-	div_parent.html(new_value);
-	div_parent.show();
+    	form_parent = $(this).parent();
+    	div_parent = form_parent.parent();
+    	text_sibling = form_parent.find('textarea');
+    	hidden_sibling = form_parent.find('input:hidden');
+    	item_id = hidden_sibling.val()
+    	new_value = text_sibling.val();
+    	form_parent.remove();
+    	div_parent.html(new_value);
+    	div_parent.show();
         $.ajax({type:"POST",
                 url: url,
                 data : { item_id: item_id, new_value: new_value },
                 dataType:"json"});
     });
-    
+    commentField.append(submitButton);
+    textbox.parent().append(commentField)    
 };
 
 
