@@ -141,11 +141,16 @@ imp.clickable_subject_box = function(element, url, item_id) {
     commentTextArea.keypress(function(e) {
 	if (e.which === 13) {
 	    parent = $(this).parent();
-	    //parent.html($(this).val());
 	    div_sibling = parent.find('.edit_issue_subject');		    
-	    div_sibling.html($(this).val());
+	    new_value = $(this).val();
+	    div_sibling.html(new_value);
 	    $(this).remove();
 	    div_sibling.show();
+            $.ajax({type:"POST",
+                    url: url,
+                    data : { item_id: item_id, new_value: new_value },
+                    dataType:"json"});
+
 	}
     });
 };
