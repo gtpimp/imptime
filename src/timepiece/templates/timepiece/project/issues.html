@@ -64,7 +64,6 @@
                 <th>Status</th>
 
                 <th><div>Points {{ project.business.primary_points_user }} </div></th>
-<!-- -->
 		{% has_permission has_see_other_user_points project.business %}
 		{% for user,points in project.get_points %} 		       
 		<th>
@@ -77,20 +76,6 @@
   		<span>{{ current_user.username }} </span>
 		</th>
 		{% end_permission %}
-{% comment %}
-		<th>
-		  <div>
-		    {% has_permission has_see_other_user_points project.business %}
-		    {% for user,points in project.get_points %} 		       
-		    <span>{{ user.username }}</span>
-		    {% endfor %} 
-		    {% end_permission %}
-		  </div>
-  		  {% has_not_permission has_see_other_user_points project.business %}
-  		    <span>{{ current_user.username }} </span>
-		  {% end_permission %}
-                </th>
-{% endcomment %}
                 <th>Hours</th>
 		{% has_permission has_view_ctc_billable_rates  project.business %}
                 <th>ctc</th>
@@ -207,13 +192,24 @@
 		    </p>
 		    {% end_permission %}
                   </td>
-<!-- -->
                   {% has_permission has_see_other_user_points project.business %}
                   {% for issue_points in form.instance.get_points %}
-                   <td class="number">                    
-		      <span class="edit_issue_subject" onclick="imp.clickable_subject_box(this, '{% url 'issue_points_update' %}',{{ issue_points.id }})" > 
+                   <td style="width:12%">
+		     <div>
+		      <div style="float:left" class="edit_issue_subject" onclick="imp.clickable_subject_box(this, '{% url 'issue_points_update' %}',{{ issue_points.id }})" > 
 		        {{ issue_points.points|default_if_none:"-" }} 
-		      </span>
+		      </div>
+		     </div>		     
+
+		    <div style="float:left" class="short_traffic">
+		      <div  class="traffic_bar">			
+			<div style="width:{{ form.instance.representation.completion }}%;" class={{form.instance.representation.bar_color}}>  
+			  {{ form.instance.representation.display_value }}
+			</div>
+		      </div>
+		    </div>
+
+
 		   </td>
   	          {% endfor %}
 		  {% end_permission %}
@@ -224,22 +220,6 @@
 		      </span>		    
 		   </td>		   
   	          {% end_permission %}
-{% comment %}
-                  <td class="number">                    
-		    {% has_permission has_see_other_user_points project.business %}
-		     {% for issue_points in form.instance.get_points %}
-		      <span class="edit_issue_subject" onclick="imp.clickable_subject_box(this, '{% url 'issue_points_update' %}',{{ issue_points.id }})" > 
-		        {{ issue_points.points|default_if_none:"-" }} 
-		      </span>
-		      {% endfor %}
-		    {% end_permission %}
-		    {% has_not_permission has_see_other_user_points project.business  %}
-		      <span class="edit_issue_subject" onclick="imp.clickable_subject_box(this, '{% url 'issue_points_update' %}','{% get_points_current_user_id form.instance.pk %}')" > 
-			{% get_points_current_user form.instance.pk %}
-		      </span>		    
-		    {% end_permission %}
-                  </td>
-{% endcomment %}
                   <td class="number">
                     <div class="secret_link"  onclick="imp.show_issue_detail('{% url 'issue_detail' form.instance.pk %}');">
                       {{form.instance.hours|default_if_none:"-"}}

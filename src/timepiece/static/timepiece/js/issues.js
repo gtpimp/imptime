@@ -149,6 +149,8 @@ imp.clickable_subject_box = function(element, url, item_id) {
     commentTextArea = commentTextArea.attr("type","text").attr("value",textbox.html());
     textbox.parent().append(commentTextArea);
     textbox.hide();
+    // commentTextArea = commentTextArea.css({ width: textbox.width(), 
+    // 					    height: textbox.width(), });
     commentTextArea = commentTextArea.keypress(function(e) {
 	if (e.which === 13) {
 	    parent = $(this).parent();
