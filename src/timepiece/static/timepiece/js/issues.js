@@ -105,6 +105,16 @@ imp.clickable_description_box = function(element, url, item_id) {
 
     commentField = commentField.attr('action',url).attr('method','post');
     textField =$("<textarea/>").attr('name','new_value').attr('value',textbox.html());
+    textField.keyup(function(e) {
+            if(e.which === 27) {    
+              form_parent = $(this).parent().parent();
+              div_parent = form_parent.find(".static_div");
+              text_sibling = form_parent.find('textarea');      
+              new_value = text_sibling.val();
+              $(this).parent().remove();
+              div_parent.show();        
+          }
+    });
     textbox.hide();
     itemField =$("<input/>").attr('type','hidden').attr('value', item_id).attr('name','item_id');
     submitButton = $("<input/>").attr('type','button').attr('value','Modify');
@@ -135,10 +145,10 @@ imp.clickable_description_box = function(element, url, item_id) {
 imp.clickable_subject_box = function(element, url, item_id) {
     var textbox = $(element),
     commentTextArea = $("<input/>")
-    commentTextArea.attr("type","text").attr("value",textbox.html());
+    commentTextArea = commentTextArea.attr("type","text").attr("value",textbox.html());
     textbox.parent().append(commentTextArea);
     textbox.hide();
-    commentTextArea.keypress(function(e) {
+    commentTextArea = commentTextArea.keypress(function(e) {
 	if (e.which === 13) {
 	    parent = $(this).parent();
 	    div_sibling = parent.find('.edit_issue_subject');		    
@@ -151,6 +161,14 @@ imp.clickable_subject_box = function(element, url, item_id) {
                     data : { item_id: item_id, new_value: new_value },
                     dataType:"json"});
 
+	}
+    });
+    commentTextArea = commentTextArea.keyup(function(e) {
+	if(e.which === 27) {
+	    parent = $(this).parent();
+	    div_sibling = parent.find('.edit_issue_subject');		    
+	    $(this).remove();
+	    div_sibling.show();          
 	}
     });
 };
