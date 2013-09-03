@@ -59,36 +59,38 @@
 		{{ issues_forms.management_form }}
             <table>
 
-              <thead>
-                <th>#</th>
-                <th>Status</th>
+              <thead class="fixedHeader">
+		<tr>
+                <th class="th1">#</th>
+                <th class="th2">Status</th>
 
-                <th><div>Points {{ project.business.primary_points_user }} </div></th>
+                <th class="th3"><div>Points {{ project.business.primary_points_user }} </div></th>
 		{% has_permission has_see_other_user_points project.business %}
 		{% for user,points in project.get_points %} 		       
-		<th>
+		<th class="th4">
 		  {{ user.username }}
 		</th>
 		{% endfor %} 
 		{% end_permission %}
   		{% has_not_permission has_see_other_user_points project.business %}
-		<th>				  
+		<th class="th5">				  
   		<span>{{ current_user.username }} </span>
 		</th>
 		{% end_permission %}
-                <th>Hours</th>
+                <th class="th6">Hours</th>
 		{% has_permission has_view_ctc_billable_rates  project.business %}
-                <th>ctc</th>
-                <th>billable</th>
-                <th>% complete</th>
+                <th class="th7">ctc</th>
+                <th class="th8">billable</th>
+                <th class="th9">% complete</th>
 		{% end_permission %}
-                <th>Subject</th>
+                <th class="th10">Subject</th>
 		{% has_permission has_delete_issue project.business %}
-		<th>Delete</th>
+		<th class="th11">Delete</th>
 		{% end_permission %}
+		</tr>
               </thead>
 
-              <tbody>
+              <tbody class="scrollContent">
 
                 <tr>
                   <td>
