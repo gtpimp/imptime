@@ -66,11 +66,20 @@
 
                 <th class="th3"><div>Points {{ project.business.primary_points_user }} </div></th>
 		{% has_permission has_see_other_user_points project.business %}
+		{% with issues_forms.forms|first as first_form %}
+		{% for user, per_user in first_form.instance.representation.per_user %}
+  	        <th class="th4">
+		  {{ user.username }}
+		</th>
+		{% endfor %}
+		{% endwith %}
+		{% comment %}
 		{% for user,points in project.get_points %} 		       
 		<th class="th4">
 		  {{ user.username }}
 		</th>
 		{% endfor %} 
+		{% endcomment %}
 		{% end_permission %}
   		{% has_not_permission has_see_other_user_points project.business %}
 		<th class="th5">				  
@@ -195,6 +204,26 @@
 		    {% end_permission %}
                   </td>
                   {% has_permission has_see_other_user_points project.business %}
+		  {% for user,per_user in form.instance.representation.per_user %}
+                   <td style="width:12%">
+		     <div>
+		      <div style="float:left" class="edit_issue_subject" onclick="imp.clickable_subject_box(this, '{% url 'issue_points_update' %}',{{ per_user.issue_points.id }})" > 
+		        {{ per_user.issue_points.points|default_if_none:"-" }}
+		      </div>
+		     </div>		     
+
+		    <div style="float:left" class="short_traffic">
+		      <div  class="traffic_bar">			
+			<div style="width:{{ per_user.completion }}%;" class={{per_user.bar_color}}>  
+			  {{ per_user.display_value }}
+			</div>
+		      </div>
+		    </div>
+
+		   </td>
+
+		  {% endfor %}
+		  {% comment %}
                   {% for issue_points in form.instance.get_points %}
                    <td style="width:12%">
 		     <div>
@@ -211,9 +240,9 @@
 		      </div>
 		    </div>
 
-
 		   </td>
   	          {% endfor %}
+  	          {% endcommment %}
 		  {% end_permission %}
                   {% has_not_permission has_see_other_user_points project.business %}
                    <td class="number">                    
@@ -242,9 +271,11 @@
                   <td >
 		    <div class="short_traffic">
 		      <div style="clear:left;" class="traffic_bar">			
+			{% comment %}
 			<div style="width:{{ form.instance.representation.completion }}%;" class={{form.instance.representation.bar_color}}>  
 			  {{ form.instance.representation.display_value }}
 			</div>
+			{% endcomment %}
 		      </div>
 		    </div>
                   </td>

@@ -1873,6 +1873,22 @@ class Issue(models.Model):
 
         return self.user_points.filter(user__id__in=[i.id for i in business_users]).order_by("user")
 
+    def get_user_issue_points(self, user):
+
+        if isinstance(user,str):
+            user = User.objects.get(username=user)        
+
+        business_users = [u.id for u in self.project.business.users]
+        try:
+            return IssuePoints.objects.get(user=user, issue=self)
+        except IssuePoints.DoesNotExist:
+            if user.id in business_users:
+                return IssuePoints.objects.create(user=user,issue=self)
+            return None
+        except IssuePoints.MultipleObjectsReturned:
+            return IssuePoints.objects.filter(user=user,issue=self).order_by("user__id")[0]
+        #return self.user_points.filter(user__id__in=business_users).order_by("user")
+
     def set_points(self, user, points):
           
         business = self.project.business
