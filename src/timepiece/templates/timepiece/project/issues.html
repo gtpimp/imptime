@@ -63,18 +63,18 @@
                 <th>#</th>
                 <th>Status</th>
 
-                <th><div>Points {{ project.business.primary_points_users|first}}</div></th>
+                <th><div>Points {{ project.business.primary_points_user }} </div></th>
 		<th>
-		  {% has_permission has_see_other_user_points project.business %}
 		  <div>
-		    {% for user in project.business.users %} 		       
+		    {% has_permission has_see_other_user_points project.business %}
+		    {% for user,points in project.get_points %} 		       
 		    <span>{{ user.username }}</span>
 		    {% endfor %} 
+		    {% end_permission %}
 		  </div>
-		  {% end_permission %}
-		  {% has_not_permission has_see_other_user_points project.business %}
+  		    {% has_not_permission has_see_other_user_points project.business %}
   		    <span>{{ current_user.username }} </span>
-		  {% end_permission %}
+		    {% end_permission %}
                 </th>
                 <th>Hours</th>
 		{% has_permission has_view_ctc_billable_rates  project.business %}

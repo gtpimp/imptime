@@ -121,11 +121,6 @@ class Business(models.Model):
             return_users.append(User.objects.get(id=user_id))
         return return_users
 
-    @property
-    def primary_points_users(self):
-        users_qs = User.objects.filter(id__in = [ user.id for user in self.users])
-        return users_qs.order_by("username").filter(business_permissions__is_primary_points_user=True)
-
     def save(self, *args, **kwargs):
         queryset = Business.objects.all()
         if not self.slug:
@@ -408,6 +403,20 @@ class Project(models.Model):
     description = models.TextField()
 
     objects = QuerySetManager(ProjectQuerySet)
+
+    def get_points(self):
+        user_ids = [user.id for user in self.business.users]
+        users = User.objects.filter(id__in = user_ids)
+        for issue in self.issues.all():
+            for user in users:
+                try:
+                    IssuePoints.objects.get(user=user,issue=issue)
+                except IssuePoints.DoesNotExist:
+                    IssuePoints.objects.create(user=user, issue=issue)
+
+        distinct_user_qs = IssuePoints.objects.filter(user__id__in = user_ids).values_list("user").distinct()
+        return [ (User.objects.get(pk=qs[0]), IssuePoints.objects.filter(user__id = qs[0]).order_by("issue")) for qs in distinct_user_qs]
+
 
     def get_user_rate(self, user):
 
