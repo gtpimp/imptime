@@ -104,19 +104,19 @@
                   <td>
                   </td>
                   <td></td>
-                  <td class="number">-</td>
-                  <td class="number">
+                  <td class="">-</td>
+                  <td class="">
                     <div class="secret_link" onclick="imp.show_issue_detail('{% url 'all_timesheet_entries' project.id %}');">
                       <i>{{total_hours|floatformat:"0"|intcomma}}</i>
                     </div>
                   </td>
 		  {% has_permission has_view_ctc_billable_rates project.business %}
-                  <td class="number">
+                  <td class="">
                     <div class="secret_link" onclick="imp.show_issue_detail('{% url 'all_timesheet_entries' project.id %}');">
                       <i>R{{total_ctc|floatformat:"0"|intcomma}}</i>
                     </div>
                   </td>
-                  <td class="number">
+                  <td class="">
                     <div class="secret_link" onclick="imp.show_issue_detail('{% url 'all_timesheet_entries' project.id %}');">
                       <i>R{{total_billable|floatformat:"0"|intcomma}}</i>
                     </div>
@@ -129,7 +129,7 @@
                     </div>
                   </td>
 
-                  <td class="number">
+                  <td class="">
                     <div class="secret_link" onclick="imp.show_issue_detail('{% url 'all_timesheet_entries' project.id %}');">
 
                     </div>
@@ -142,19 +142,19 @@
                   <td>
                   </td>
                   <td></td>
-                  <td class="number">-</td>
-                  <td class="number">
+                  <td class="">-</td>
+                  <td class="">
                     <div class="secret_link" onclick="imp.show_issue_detail('{% url 'unassigned_timesheet_entries' project.id %}');">
                       {{unassigned_timesheet_entries_hours|floatformat:"0"|intcomma}}
                     </div>
                   </td>
 		  {% has_permission has_view_ctc_billable_rates project.business %}
-                  <td class="number">
+                  <td class="">
                     <div class="secret_link" onclick="imp.show_issue_detail('{% url 'unassigned_timesheet_entries' project.id %}');">
                       R{{unassigned_timesheet_entries_ctc|floatformat:"0"|intcomma}}
                     </div>
                   </td>
-                  <td class="number">
+                  <td class="">
                     <div class="secret_link" onclick="imp.show_issue_detail('{% url 'unassigned_timesheet_entries' project.id %}');">
                       R{{unassigned_timesheet_entries_billable|floatformat:"0"|intcomma}}
                     </div>
@@ -166,7 +166,7 @@
                     </div>
                   </td>
 
-                  <td class="number">
+                  <td class="">
                     <div class="secret_link">
                     </div>
                   </td>
@@ -190,7 +190,7 @@
 		      </div>
 		    </div>
 		  </td>
-                  <td class="number">                    	    
+                  <td class="">                    	    
 		    <span class="secret_link">
 		    {{ form.instance.story_points }}
 		    </span>
@@ -223,24 +223,24 @@
 		  {% endfor %}
 		  {% end_permission %}
                   {% has_not_permission has_see_other_user_points project.business %}
-                   <td class="number">                    
+                   <td class="">                    
 		      <span class="edit_issue_subject" onclick="imp.clickable_subject_box(this, '{% url 'issue_points_update' %}','{% get_points_current_user_id form.instance.pk %}')" > 
 			{% get_points_current_user form.instance.pk %}
 		      </span>		    
 		   </td>		   
   	          {% end_permission %}
-                  <td class="number">
+                  <td class="">
                     <div class="secret_link"  onclick="imp.show_issue_detail('{% url 'issue_detail' form.instance.pk %}');">
                       {{form.instance.hours|default_if_none:"-"}}
                     </div>
                   </td>
 		  {% has_permission has_view_ctc_billable_rates project.business  %}
-                  <td class="number">
+                  <td class="">
                     <div class="secret_link"  onclick="imp.show_issue_detail('{% url 'issue_detail' form.instance.pk %}');">
                       R{{form.instance.ctc|floatformat:"0"|intcomma}}
                     </div>
                   </td>
-                  <td class="number">
+                  <td class="">
                     <div class="secret_link"  onclick="imp.show_issue_detail('{% url 'issue_detail' form.instance.pk %}');">
                       R{{form.instance.billable|floatformat:"0"|intcomma}}
                     </div>

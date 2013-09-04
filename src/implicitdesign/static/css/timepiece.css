@@ -9646,7 +9646,7 @@ thead.fixedHeader th {
  html>body thead.fixedHeader th {
   
 }
-th.th1{
+/*th.th1{
     width:30px;
 }
 th.th2{
@@ -9681,7 +9681,7 @@ th.th11{
 }
 th.th12{
     width:60px;
-}
+}*/
 
  html>body tbody.scrollContent {
     display: block;

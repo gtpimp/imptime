@@ -151,6 +151,7 @@ imp.clickable_subject_box = function(element, url, item_id) {
     textbox.hide();
     // commentTextArea = commentTextArea.css({ width: textbox.width(), 
     // 					    height: textbox.width(), });
+    imp.update_header_rows();
     commentTextArea = commentTextArea.keypress(function(e) {
 	if (e.which === 13) {
 	    parent = $(this).parent();
@@ -177,6 +178,71 @@ imp.clickable_subject_box = function(element, url, item_id) {
 };
 
 
+imp.clickable_point_box = function(element, url, item_id) {
+    var textbox = $(element),
+    commentTextArea = $("<input/>")
+    commentTextArea = commentTextArea.attr("type","text").attr("value",textbox.html());
+    textbox.parent().append(commentTextArea);
+    textbox.hide();
 
+    commentTextArea = commentTextArea.keypress(function(e) {
+	if (e.which === 13) {
+	    parent = $(this).parent();
+	    div_sibling = parent.find('.edit_issue_points');
+	    new_value = $(this).val();
+	    div_sibling.html(new_value);
+	    $(this).remove();
+	    div_sibling.show();
+            $.ajax({type:"POST",
+                    url: url,
+                    data : { item_id: item_id, new_value: new_value },
+                    dataType:"json"});
 
+	}
+    });
+    commentTextArea = commentTextArea.keyup(function(e) {
+	if(e.which === 27) {
+	    parent = $(this).parent();
+	    div_sibling = parent.find('.edit_issue_points');		    
+	    $(this).remove();
+	    div_sibling.show();          
+	}
+    });
+};
 
+imp.update_header_rows = function() {
+    table = $("table");
+    content = $(".scrollContent");
+    content_row = $(".scrollContent tr:last").find("td");
+    // $($(".scrollContent tr:first").find("td")[3]).width()    
+    specs = [];
+    for (i =0 ; i < content_row.length; i++) {
+	column = $(content_row[i]);
+	specs.push({'width':column.width(),
+		    'padding-top':column.css("padding-top"),
+		    'padding-left':column.css("padding-left"),
+		    'padding-right':column.css("padding-right"),
+		    'padding-bottom':column.css("padding-bottom"),
+		   });
+    }
+    header_row = $(".fixedHeader tr:first").find("th");
+    for (i =0 ; i < specs.length; i++) {
+	header_column = $(header_row[i])
+	new_width = specs[i]['width']
+	new_padding_top = specs[i]['padding-top']
+	new_padding_left = specs[i]['padding-left']
+	new_padding_right = specs[i]['padding-right']
+	new_padding_bottom = specs[i]['padding-bottom']
+	header_column = header_column.css("width",new_width);
+	header_column = header_column.css("padding-top",new_padding_top);
+	header_column = header_column.css("padding-left",new_padding_left);
+	header_column = header_column.css("padding-right",new_padding_right);
+	header_column = header_column.css("padding-bottom",new_padding_bottom);
+
+	
+			     
+    }
+
+};
+
+$(document).ready(imp.update_header_rows);
