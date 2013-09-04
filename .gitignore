@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 venv
 *#
 *pyc
@@ -10,7 +9,6 @@ src/implicitdesign/local_settings.py
 src/static_collected
 src/implicitdesign/media/unknown_redmine_entries
 temp
-=======
 .project
 .pydevproject
 *.pyc
@@ -24,4 +22,4 @@ dist
 .idea
 reports/coverage_html
 .coverage
->>>>>>> c931958150aa3cf10e97793a77efae23df2ec0d2
+db_backups

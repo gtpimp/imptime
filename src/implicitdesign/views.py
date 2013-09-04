@@ -19,7 +19,7 @@ from django.utils.datastructures import SortedDict
 logger = logging.getLogger(__name__)
 
 def home(request, template="home.html", context=None):
-    return HttpResponseRedirect(reverse("timepiece-entries"))
+    return HttpResponseRedirect(reverse("landing_page"))
 
 @user_passes_test(lambda u: u.is_superuser)
 def us(request, template="home.html", context=None):

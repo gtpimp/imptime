@@ -9690,3 +9690,23 @@ th.th12{
     width: 100%
 }
 /*8*******/
+
+.landing_page ul.large_menu {
+    list-style: none outside none;
+    width: 25%;
+    text-align: center;
+}
+
+.landing_page .large_menu li {
+
+    padding:10px;
+    margin:20px;
+    
+    -moz-box-shadow:    6px 6px 0px 0px #ccc;
+    -webkit-box-shadow: 6px 6px 0px 0px #ccc;
+    box-shadow:         6px 6px 0px 0px #ccc;
+    border:1px solid #000;
+
+    width: auto;
+    
+}

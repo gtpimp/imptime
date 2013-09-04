@@ -95,6 +95,10 @@ class CSVMixin(object):
         "Convert the context dictionary into a CSV file"
         raise NotImplemented("You must implement this in the subclass")
 
+@login_required
+@render_with('timepiece/landing_page.html')
+def landing_page(request):
+    return {}
 
 @login_required
 @render_with('timepiece/time-sheet/dashboard.html')
