@@ -3007,11 +3007,16 @@ def delete_issue(request, project_id, template="", context=None):
             
     return HttpResponse("") 
 
-def _augment_issue_data(issue):
+def _augment_issue_data(issue,current_user):
     business_users = [user.id for user in issue.project.business.users]
     story_points = float(issue.story_points) or 0.0
     actual_billable_cost_of_issue = float(issue.billable)
-    users = timepiece.User.objects.filter(id__in = business_users)
+    can_view_other_user_points = timepiece.BusinessPermissions.has_see_other_user_points(issue.project.business, current_user)     
+    if can_view_other_user_points:
+        users = timepiece.User.objects.filter(id__in = business_users)
+    else:
+        users = timepiece.User.objects.filter(id__in = [current_user.id])
+
     for user in users:
         per_user_issue_data = {}
         user_rate = issue.project.get_user_rate(user)
@@ -3063,7 +3068,7 @@ def project_issues(request, pk, template="timepiece/project/issues.html", contex
     issues_forms = timepiece_forms.issue_status_formset(request.POST or None, 
                                                         queryset=queryset)    
     for form in issues_forms.forms:
-        _augment_issue_data(form.instance)
+        _augment_issue_data(form.instance,request.user)
 
     new_issue_form = timepiece_forms.IssueForm()
 

@@ -166,6 +166,7 @@ imp.clickable_subject_box = function(element, url, item_id) {
                     url: url,
                     data : { item_id: item_id, new_value: new_value },
                     dataType:"json"});
+	    imp.update_header_rows();
 
 	}
     });
@@ -175,6 +176,7 @@ imp.clickable_subject_box = function(element, url, item_id) {
 	    div_sibling = parent.find('.edit_issue_subject');		    
 	    $(this).remove();
 	    div_sibling.show();          
+	    imp.update_header_rows();
 	}
     });
 };
@@ -216,7 +218,7 @@ imp.update_header_rows = function() {
     table = $("table");
     content = $(".scrollContent");
     content_row = $(".scrollContent tr:last").find("td");
-    // $($(".scrollContent tr:first").find("td")[3]).width()    
+
     specs = [];
     for (i =0 ; i < content_row.length; i++) {
 	column = $(content_row[i]);
