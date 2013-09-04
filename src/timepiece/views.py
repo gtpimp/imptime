@@ -3018,43 +3018,36 @@ def _augment_issue_data(issue):
         user_rate = float(user_rate.amount) if user_rate else 0.0
 
         user_points = issue.get_user_issue_points(user)
+        user_points_float = float(user_points.points) if user_points and user_points.points else 0.0
         per_user_issue_data["issue_points"] = user_points
 
-        completion =  (story_points * primary_user_rate/ actual_billable_cost_of_issue) if actual_billable_cost_of_issue > 0 else 0.0
+        #completion =  (story_points * user_rate/ actual_billable_cost_of_issue) if actual_billable_cost_of_issue > 0 else 0.0
+        completion =  (user_points_float * user_rate/ actual_billable_cost_of_issue) if actual_billable_cost_of_issue > 0 else 0.0
         budget_left = (1-completion) * actual_billable_cost_of_issue
     
-        
-        
         per_user_issue_data["completion"] = completion * 100
-        issue.representation.completion = completion * 100
         per_user_issue_data["display_value"] = "R%.1f"% budget_left
-        issue.representation.display_value = "R%.1f"% budget_left
-        if issue.representation.completion >= 100:
+        if per_user_issue_data["completion"] >= 100:
             per_user_issue_data["bar_color"]= "traffic_red"
-            issue.representation.bar_color = "traffic_red"
             per_user_issue_data["completion"] = 200 if per_user_issue_data["completion"] > 200 else per_user_issue_data["completion"] 
-            issue.representation.completion = 200 if issue.representation.completion > 200 else issue.representation.completion
             per_user_issue_data["display_value"] = "R%.1f"% budget_left
-            issue.representation.display_value = "R%.1f"% budget_left
-        elif issue.representation.completion < 75:
+        elif per_user_issue_data["completion"] < 75:
             per_user_issue_data["bar_color"] = "traffic_green"
-            issue.representation.bar_color = "traffic_green"
         else:
             per_user_issue_data["bar_color"] = "traffic_yellow"
-            issue.representation.bar_color = "traffic_yellow"
-        per_user_issue_data["completion"] /= 2
-        issue.representation.completion /= 2
-        per_user_issue_data["remainder"] = 100 - per_user_issue_data["completion"]
-        issue.representation.remainder = 100  - issue.representation.completion
 
-        _set_colour = lambda option: [option,'light_priority'] if option in  ['devdone','tested','task done'] else [option,'dark_priority']
-        options = map(_set_colour, [i[0] for i in timepiece.Issue.ISSUE_STATUS_CHOICES])
-        issue.representation.options = "[%s]"%",".join(["%s"%str(i) for i in options])
-        issue.representation.status_appearance = _set_colour(issue.status)[-1]
+        per_user_issue_data["completion"] /= 2
+        per_user_issue_data["remainder"] = 100 - per_user_issue_data["completion"]
 
         if not hasattr(issue.representation ,"per_user"):
             issue.representation.per_user = []
         issue.representation.per_user.append((user,per_user_issue_data))
+
+    _set_colour = lambda option: [option,'light_priority'] if option in  ['devdone','tested','task done'] else [option,'dark_priority']
+    options = map(_set_colour, [i[0] for i in timepiece.Issue.ISSUE_STATUS_CHOICES])
+    issue.representation.options = "[%s]"%",".join(["%s"%str(i) for i in options])
+    issue.representation.status_appearance = _set_colour(issue.status)[-1]
+
     
 @csrf_exempt
 def project_issues(request, pk, template="timepiece/project/issues.html", context=None):
