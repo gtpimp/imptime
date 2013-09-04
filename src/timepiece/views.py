@@ -3212,6 +3212,7 @@ def issue_points_update(request,  template="timepiece/project/issue_detail.html"
 def unassigned_timesheet_entries(request, project_id, template="timepiece/project/issue_detail.html", context=None):
     context = context or {}
     project = timepiece.Project.objects.filter(pk=project_id).filter_by_logged_in_user(request.user)[0]
+    context['current_user'] = request.user
     context['issue'] = {'id':'na',
                         'description':'unassigned timesheet entries',
                         'related_entries':timepiece.Issue.get_unassigned_timesheet_entries(project=project)}
@@ -3223,6 +3224,7 @@ def all_timesheet_entries(request, project_id, template="timepiece/project/issue
     context = context or {}
     project = timepiece.Project.objects.filter(pk=project_id).filter_by_logged_in_user(request.user)[0]
     entries = project.entries.all().order_by("start_time")
+    context['current_user'] = request.user
     context['issue'] = {'id':'na',
                         'description':'all timesheet entries',
                         'related_entries':entries}
