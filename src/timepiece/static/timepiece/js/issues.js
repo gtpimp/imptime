@@ -46,6 +46,7 @@ imp.status_toggle_form_show = function(element,item_id,options,url) {
 	    
 	    $(".selectme").text(valuetext);
 	});
+    
     }else {
 	selected = selectme.find("option:selected")
 	value = selected[0].innerHTML
@@ -56,6 +57,7 @@ imp.status_toggle_form_show = function(element,item_id,options,url) {
 
 	selectme.html('<div class="selectme '+lookup[value]+'">'+value+'</div>')
     }
+    imp.update_header_rows();
 };
 
 imp.ajax_call = function(element, url, item_id) {
