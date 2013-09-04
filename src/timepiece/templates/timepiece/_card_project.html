@@ -4,6 +4,18 @@
 
 <div id="project_id_{{project.id}}">
 
+  <div class="card_menu">
+    <div class="title" onclick="$(this).parent().find('.menu_items').toggle()">
+      Menu
+    </div>
+    <div class="menu_items" style="display:none">
+      <ul>
+        <li>A</li>
+        <li>B</li>
+      </ul>
+    </div>
+  </div>
+
   {% has_permission has_edit_project_detail project.business %}
    <a href="#" class="secret_link" onclick="window.open('{%url 'project_detail' project.business.id%}')">
      <div class="sprint_name">{{ project.name }} ({{project.id}})</div>
