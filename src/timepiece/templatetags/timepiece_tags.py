@@ -75,7 +75,7 @@ register.tag('has_permission', do_has_permission)
 register.tag('has_not_permission', do_has_not_permission)
 
 class HasPermissionNode(template.Node):
-    def __init__(self, nodelist,perm_name, business,opposite=False):
+    def __init__(self, nodelist, perm_name, business,opposite=False):
         self.nodelist = nodelist
         self.perm_func = getattr(timepiece.BusinessPermissions, perm_name)
         self.business = business
@@ -90,8 +90,29 @@ class HasPermissionNode(template.Node):
         if self.opposite and not has_permission:
             return output
         return ""
-        
 
+def user_can_estimate_own_points(parser, token):
+    nodelist = parser.parse(('end_can_estimate',))
+    parser.delete_first_token()
+    tag_name, user, business = token.contents.split(None)
+    user = parser.compile_filter(user)
+    business = parser.compile_filter(business)
+    return CanEstimateOwnPointsNode(nodelist, user, business )
+
+class CanEstimateOwnPointsNode(template.Node):
+    def __init__(self, nodelist, user, business):
+        self.nodelist = nodelist
+        self.user = user
+        self.business = business
+        
+    def render(self,context):
+        output = self.nodelist.render(context)
+        resolved_business = self.business.resolve(context,True)
+        resolved_user = self.user.resolve(context,True)
+        if timepiece.BusinessPermissions.has_estimate_own_points(resolved_business, resolved_user):
+            return output        
+        return ""
+register.tag('user_can_estimate_own_points', user_can_estimate_own_points)
     
 @register.simple_tag(takes_context=True)
 def get_points_current_user(context, issue_id):

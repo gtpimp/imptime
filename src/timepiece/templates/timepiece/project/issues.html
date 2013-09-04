@@ -65,24 +65,34 @@
                 <th class="th2">Status</th>
    
 		{% has_permission has_see_other_user_points project.business %}
-		{% with issues_forms.forms|first as first_form %}
-		{% for user, per_user in first_form.instance.representation.per_user %}
-  	        <th class="th4">
-		  {{ user.username }}
-		</th>
-		{% endfor %}
-		{% endwith %}
+		  {% with issues_forms.forms|first as first_form %}
+		    {% for user, per_user in first_form.instance.representation.per_user %}
+                      {% user_can_estimate_own_points user project.business %}
+  	                <th class="th4">
+		          {{ user.username }}
+		        </th>
+                      {% end_can_estimate %}
+		    {% endfor %}
+		  {% endwith %}
 		{% end_permission %}
+
   		{% has_not_permission has_see_other_user_points project.business %}
-		<th class="th5">				  
-  		{{ current_user.username }} 
-		</th>
+                  {% user_can_estimate_own_points current_user project.business %}
+                    <th class="th5">				  
+                      {{ current_user.username }}'s estimate
+                    </th>
+                  {% end_can_estimate %}
 		{% end_permission %}
-                <th class="th6">Hours</th>
+
+                {% has_permission has_view_actual_hours  project.business %} 
+                  <th class="th6">Actual Hours</th>
+                {% end_permission %}
+
 		{% has_permission has_view_ctc_billable_rates  project.business %}
-                <th class="th7">ctc</th>
-                <th class="th8">billable</th>
+                  <th class="th7">Actual ctc</th>
+                  <th class="th8">Actual billable</th>
 		{% end_permission %}
+
                 <th class="th10">Subject</th>
 		{% has_permission has_delete_issue project.business %}
 		<th class="th11">Delete</th>
@@ -97,22 +107,30 @@
                   </td>
                   <td></td>
 		  {% has_permission has_see_other_user_points project.business %}
-		  {% with issues_forms.forms|first as first_form %}
-		  {% for user, per_user in first_form.instance.representation.per_user %}
-		  <td>-</td>
-		  {% endfor %}
-		  {% endwith %}
+		    {% with issues_forms.forms|first as first_form %}
+		      {% for user, per_user in first_form.instance.representation.per_user %}
+                        {% user_can_estimate_own_points user project.business %}
+		          <td>-</td>
+                        {% end_can_estimate %}
+		      {% endfor %}
+		    {% endwith %}
 		  {% end_permission %}
+
 		  {% has_not_permission has_see_other_user_points project.business %}
-		  <td>-</td>
+                    {% user_can_estimate_own_points current_user project.business %}
+		      <td>-</td>
+                    {% end_can_estimate %}
 		  {% end_permission %}
 
 
-                  <td class="">
-                    <div class="secret_link" onclick="imp.show_issue_detail('{% url 'all_timesheet_entries' project.id %}');">
-                      <i>{{total_hours|floatformat:"0"|intcomma}}</i>
-                    </div>
-                  </td>
+                  {% has_permission has_view_actual_hours  project.business %} 
+                    <td class="">
+                      <div class="secret_link" onclick="imp.show_issue_detail('{% url 'all_timesheet_entries' project.id %}');">
+                        <i>{{total_hours|floatformat:"0"|intcomma}}</i>
+                      </div>
+                    </td>
+                  {% end_permission %}
+
 		  {% has_permission has_view_ctc_billable_rates project.business %}
                   <td class="">
                     <div class="secret_link" onclick="imp.show_issue_detail('{% url 'all_timesheet_entries' project.id %}');">
@@ -146,21 +164,29 @@
                   </td>
                   <td></td>
 		  {% has_permission has_see_other_user_points project.business %}
-		  {% with issues_forms.forms|first as first_form %}
-		  {% for user, per_user in first_form.instance.representation.per_user %}
-		  <td>-</td>
-		  {% endfor %}
-		  {% endwith %}
-		  {% end_permission %}
-		  {% has_not_permission has_see_other_user_points project.business %}
-		  <td>-</td>
+		    {% with issues_forms.forms|first as first_form %}
+		      {% for user, per_user in first_form.instance.representation.per_user %}
+                        {% user_can_estimate_own_points user project.business %}
+		          <td>-</td>
+                        {% end_can_estimate %}
+		      {% endfor %}
+		    {% endwith %}
 		  {% end_permission %}
 
-                  <td class="">
-                    <div class="secret_link" onclick="imp.show_issue_detail('{% url 'unassigned_timesheet_entries' project.id %}');">
-                      {{unassigned_timesheet_entries_hours|floatformat:"0"|intcomma}}
-                    </div>
-                  </td>
+		  {% has_not_permission has_see_other_user_points project.business %}
+                    {% user_can_estimate_own_points current_user project.business %}
+		      <td>-</td>
+                    {% end_can_estimate %}
+		  {% end_permission %}
+
+                  {% has_permission has_view_actual_hours  project.business %} 
+                    <td class="">
+                      <div class="secret_link" onclick="imp.show_issue_detail('{% url 'unassigned_timesheet_entries' project.id %}');">
+                        {{unassigned_timesheet_entries_hours|floatformat:"0"|intcomma}}
+                      </div>
+                    </td>
+                  {% end_permission %}
+
 		  {% has_permission has_view_ctc_billable_rates project.business %}
                   <td class="">
                     <div class="secret_link" onclick="imp.show_issue_detail('{% url 'unassigned_timesheet_entries' project.id %}');">
@@ -204,48 +230,59 @@
 		    </div>
 		  </td>
                   {% has_permission has_see_other_user_points project.business %}
-		  {% for user,per_user in form.instance.representation.per_user %}
-                   <td style="width:12%">
-		     <div>
-		      <div style="float:left" class="edit_issue_subject" onclick="imp.clickable_subject_box(this, '{% url 'issue_points_update' %}',{{ per_user.issue_points.id }})" > 
-		        {{ per_user.issue_points.points|default_if_none:"-" }}
-		      </div>
-		     </div>		     
+		    {% for user,per_user in form.instance.representation.per_user %}
+                      {% user_can_estimate_own_points user project.business %}
+                        <td style="width:12%">
+                         <div>
+                          <div style="float:left" class="edit_issue_subject" onclick="imp.clickable_subject_box(this, '{% url 'issue_points_update' %}',{{ per_user.issue_points.id }})" > 
+                            {{ per_user.issue_points.points|default_if_none:"-" }}
+                          </div>
+                         </div>		     
 
-		    <div style="float:left" class="short_traffic">
-		      <div class="traffic_bar">			
-			<div style="width:{{ per_user.completion }}%;" class={{per_user.bar_color}}>  
-			  {{ per_user.display_value }}
-			</div>
-		      </div>
-		    </div>
-		   </td>
-		  {% endfor %}
+                         <div style="float:left" class="short_traffic">
+                           <div class="traffic_bar">			
+                             <div style="width:{{ per_user.completion }}%;" class={{per_user.bar_color}}>  
+                               {{ per_user.display_value }}
+                             </div>
+                           </div>
+                         </div>
+                        </td>
+                      {% end_can_estimate %}
+		    {% endfor %}
 		  {% end_permission %}
-                  {% has_not_permission has_see_other_user_points project.business %}
-		  {% for user,per_user in form.instance.representation.per_user %}
-                   <td style="width:12%">
-		     <div>
-		      <div style="float:left" class="edit_issue_subject" onclick="imp.clickable_subject_box(this, '{% url 'issue_points_update' %}',{{ per_user.issue_points.id }})" > 
-		        {{ per_user.issue_points.points|default_if_none:"-" }}
-		      </div>
-		     </div>		     
 
-		    <div style="float:left" class="short_traffic">
-		      <div class="traffic_bar">			
-			<div style="width:{{ per_user.completion }}%;" class={{per_user.bar_color}}>  
-			  {{ per_user.display_value }}
-			</div>
-		      </div>
-		    </div>
-		   </td>
-		  {% endfor %}
+                  {% has_not_permission has_see_other_user_points project.business %}
+		    {% for user,per_user in form.instance.representation.per_user %}
+                      {% user_can_estimate_own_points user project.business %}
+                        <td style="width:12%">
+                          <div>
+                           <div style="float:left" class="edit_issue_subject" onclick="imp.clickable_subject_box(this, '{% url 'issue_points_update' %}',{{ per_user.issue_points.id }})" > 
+                             {{ per_user.issue_points.points|default_if_none:"-" }}
+                           </div>
+                          </div>		     
+
+                          {% has_permission has_view_ctc_billable_rates project.business %}
+                            <div style="float:left" class="short_traffic">
+                              <div class="traffic_bar">			
+                                <div style="width:{{ per_user.completion }}%;" class={{per_user.bar_color}}>  
+                                  {{ per_user.display_value }}
+                                </div>
+                              </div>
+                            </div>
+                          {% end_permission %}
+		        </td>
+                      {% end_can_estimate %}
+		    {% endfor %}
   	          {% end_permission %}
-                  <td class="">
-                    <div class="secret_link"  onclick="imp.show_issue_detail('{% url 'issue_detail' form.instance.pk %}');">
-                      {{form.instance.hours|default_if_none:"-"}}
-                    </div>
-                  </td>
+
+                  {% has_permission has_view_actual_hours  project.business %} 
+                    <td class="">
+                      <div class="secret_link"  onclick="imp.show_issue_detail('{% url 'issue_detail' form.instance.pk %}');">
+                        {{form.instance.hours|default_if_none:"-"}}
+                      </div>
+                    </td>
+                  {% end_permission %}
+
 		  {% has_permission has_view_ctc_billable_rates project.business  %}
                   <td class="">
                     <div class="secret_link"  onclick="imp.show_issue_detail('{% url 'issue_detail' form.instance.pk %}');">

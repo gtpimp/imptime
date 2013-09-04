@@ -9584,6 +9584,7 @@ table.project_list  {
     border:1px solid #000;
     padding:10px;
     font-size:10px;
+    width:30%;
 }
 
 .issues .issue_detail .issue_subject {

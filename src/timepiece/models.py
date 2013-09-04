@@ -172,6 +172,7 @@ class BusinessPermissions(models.Model):
     can_edit_permissions = models.BooleanField(default=False, verbose_name="Can Edit Permissions")
     can_edit_project_detail = models.BooleanField(default=False, verbose_name="Can Edit Project Detail")
     can_edit_issues = models.BooleanField(default=False, verbose_name="Can Edit Issues")
+    can_view_issues = models.BooleanField(default=False, verbose_name="Can View Issues")
     
     can_edit_budget = models.BooleanField(default=False,verbose_name = "Can Edit Budget ")
     can_view_budget = models.BooleanField(default=False, verbose_name="Can View Budget")
@@ -182,11 +183,14 @@ class BusinessPermissions(models.Model):
     can_edit_ctc_billable_rates = models.BooleanField(default=False, verbose_name="Can Edit Ctc Billable")
     can_view_ctc_billable_rates = models.BooleanField(default=False, verbose_name="Can View Ctc Billable")
 
+    can_view_actual_hours = models.BooleanField(default=False, verbose_name="Can View Actual Hours")
+
     can_toggle_graphs = models.BooleanField(default=False, verbose_name="Can Toggle Graphs")
     can_edit_issue_states = models.BooleanField(default=False, verbose_name="Can Edit Issue States")
 
     can_see_other_user_points = models.BooleanField(default=False, verbose_name="Can See Other User's Points")
     is_primary_points_user = models.BooleanField(default=False, verbose_name="Is Primary Points User")
+    can_estimate_own_points = models.BooleanField(default=False, verbose_name="Can Estimate Own Points")
     
     can_add_issue = models.BooleanField(default=False, verbose_name="Can Add Issue")
     can_delete_issue = models.BooleanField(default=False, verbose_name="Can Delete Issue")
@@ -195,175 +199,102 @@ class BusinessPermissions(models.Model):
     can_edit_subject = models.BooleanField(default=False, verbose_name="Can Edit Subject")
 
     @classmethod
-    def has_edit_permissions(self, business, user):
+    def _has(self, business, user, perm_func_name):
         if user.is_superuser:
             return True
         try:
-            return BusinessPermissions.objects.get(business=business, user=user).can_edit_permissions
+            bp = BusinessPermissions.objects.get(business=business, user=user)
         except BusinessPermissions.DoesNotExist:
             return False
-    
+        try:
+            return getattr(bp, perm_func_name)
+        except AttributeError:
+            raise Exception("Invalid perm name: %s" % perm_func_name)
+
+    @classmethod
+    def has_edit_permissions(self, business, user):
+        return self._has(business, user, 'can_edit_permissions')
+        
     @classmethod
     def has_view_project_card(self, business, user):
-        if user.is_superuser:
-            return True
-        try:
-            return BusinessPermissions.objects.get(business=business, user=user).can_view_project_card
-        except BusinessPermissions.DoesNotExist:
-            return False
+        return self._has(business, user, 'can_view_project_card')
         
     @classmethod
     def has_edit_description(self, business, user):
-        if user.is_superuser:
-            return True       
-        try:
-            return BusinessPermissions.objects.get(business=business, user=user).can_edit_description
-        except BusinessPermissions.DoesNotExist:
-            return False
+        return self._has(business, user, 'can_edit_description')
 
     @classmethod
     def has_edit_subject(self,business,user):
-        if user.is_superuser:
-            return True        
-        try:
-            return BusinessPermissions.objects.get(business=business,user=user).can_edit_subject
-        except BusinessPermissions.DoesNotExist:
-            return False
-
+        return self._has(business, user, 'can_edit_subject')
 
     @classmethod
     def has_add_issue(self,business,user):
-        if user.is_superuser:
-            return True
-        try:
-            return BusinessPermissions.objects.get(business=business,user=user).can_add_issue
-        except BusinessPermissions.DoesNotExist:
-            return False
-
+        return self._has(business, user, 'can_add_issue')
 
     @classmethod
     def has_delete_issue(self,business,user):
-        if user.is_superuser:
-            return True
-        try:
-            return BusinessPermissions.objects.get(business=business,user=user).can_delete_issue
-        except BusinessPermissions.DoesNotExist:
-            return False
-
+        return self._has(business, user, 'can_delete_issue')
 
     @classmethod
     def has_edit_project_detail(self,business,user):
-        if user.is_superuser:
-            return True
-        try:
-            return BusinessPermissions.objects.get(business=business,user=user).can_edit_project_detail
-        except BusinessPermissions.DoesNotExist:
-            return False
-
+        return self._has(business, user, 'can_edit_project_detail')
 
     @classmethod
     def has_edit_issues(self,business,user):
-        if user.is_superuser:
-            return True
-        try:
-            return BusinessPermissions.objects.get(business=business,user=user).can_edit_issues
-        except BusinessPermissions.DoesNotExist:
-            return False
-
+        return self._has(business, user, 'can_edit_issues')
+    
+    @classmethod
+    def has_view_issues(self,business,user):
+        return self._has(business, user, 'can_view_issues')
     
     @classmethod
     def has_edit_budget(self,business,user):
-        if user.is_superuser:
-            return True
-        try:
-            return BusinessPermissions.objects.get(business=business,user=user).can_edit_budget
-        except BusinessPermissions.DoesNotExist:
-            return False
-
+        return self._has(business, user, 'can_edit_budget')
 
     @classmethod
     def has_view_budget(self,business,user):
-        if user.is_superuser:
-            return True
-        try:
-            return BusinessPermissions.objects.get(business=business,user=user).can_view_budget
-        except BusinessPermissions.DoesNotExist:
-            return False
-
+        return self._has(business, user, 'can_view_budget')
     
     @classmethod
     def has_edit_invoices(self,business,user):
-        if user.is_superuser:
-            return True
-        try:
-            return BusinessPermissions.objects.get(business=business,user=user).can_edit_invoices
-        except BusinessPermissions.DoesNotExist:
-            return False
-
+        return self._has(business, user, 'can_edit_invoices')
 
     @classmethod
     def has_view_invoices(self,business,user):
-        if user.is_superuser:
-            return True
-        try:
-            return BusinessPermissions.objects.get(business=business,user=user).can_view_invoices
-        except BusinessPermissions.DoesNotExist:
-            return False
-
+        return self._has(business, user, 'can_view_invoices')
     
     @classmethod
     def has_edit_ctc_billable_rates(self,business,user):
-        if user.is_superuser:
-            return True
-        try:
-            return BusinessPermissions.objects.get(business=business,user=user).can_edit_ctc_billable_rates
-        except BusinessPermissions.DoesNotExist:
-            return False
-
+        return self._has(business, user, 'can_edit_ctc_billable_rates')
 
     @classmethod
     def has_view_ctc_billable_rates(self,business,user):
-        if user.is_superuser:
-            return True
-        try:
-            return BusinessPermissions.objects.get(business=business,user=user).can_view_ctc_billable_rates
-        except BusinessPermissions.DoesNotExist:
-            return False
-
+        return self._has(business, user, 'can_view_ctc_billable_rates')
 
     @classmethod
     def has_toggle_graphs(self,business,user):
-        if user.is_superuser:
-            return True
-        try:
-            return BusinessPermissions.objects.get(business=business,user=user).can_toggle_graphs
-        except BusinessPermissions.DoesNotExist:
-            return False
-
+        return self._has(business, user, 'can_toggle_graphs')
 
     @classmethod
     def has_edit_issue_states(self,business,user):
-        if user.is_superuser:
-            return True
-        try:
-            return BusinessPermissions.objects.get(business=business,user=user).can_edit_issue_states
-        except BusinessPermissions.DoesNotExist:
-            return False
-
+        return self._has(business, user, 'can_edit_issue_states')
 
     @classmethod
     def has_see_other_user_points(self,business,user):
-        if user.is_superuser:
-            return True
-        try:
-            return BusinessPermissions.objects.get(business=business,user=user).can_see_other_user_points
-        except BusinessPermissions.DoesNotExist:
-            return False
+        return self._has(business, user, 'can_see_other_user_points')
 
+    @classmethod
+    def has_estimate_own_points(self, business, user):
+        return self._has(business, user, 'can_estimate_own_points')
 
+    @classmethod
+    def has_view_actual_hours(self, business, user):
+        return self._has(business, user, 'can_view_actual_hours')
+    
     @property
     def primary_points_user(self):
         return self.is_primary_points_user
+
 
 class Project(models.Model):
 

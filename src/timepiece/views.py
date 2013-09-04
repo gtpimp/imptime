@@ -3472,6 +3472,7 @@ def show_permissions(request, business_id):
             raise PermissionDenied
 
         permission_forms.save()
+        return HttpResponseRedirect(reverse('show_permissions', args=[business_id]))
 
     context['permission_forms'] = permission_forms
 

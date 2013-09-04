@@ -122,13 +122,7 @@ class EditPersonForm(auth_forms.UserChangeForm):
 class EditPersonPermission(forms.ModelForm):
     class Meta:
         model = timepiece.BusinessPermissions
-        fields = ( 'can_view_project_card',
-                   'can_edit_permissions', 'can_edit_project_detail',  'can_edit_issues',   
-                   'can_edit_budget',   'can_view_budget', 'can_edit_invoices', 'can_view_invoices',
-                   'can_edit_ctc_billable_rates', 'can_view_ctc_billable_rates', 'can_toggle_graphs',
-                   'can_edit_issue_states','can_see_other_user_points','is_primary_points_user',
-                   'can_add_issue', 'can_delete_issue',
-                   'can_edit_description', 'can_edit_subject')
+        exclude = ( 'user', 'business' )
 
 class QuickEditPersonForm(forms.ModelForm):
     class Meta:

@@ -10,7 +10,7 @@
 
     <div class="sprint_name">{{ project.name }} ({{project.id}})</div>
 
-    {% has_permission has_edit_project_detail project.business %}
+    {% has_permission has_view_issues project.business %}
        <div {% ifequal 0 project.issues|length %}style="color:red"{% endifequal %}>
          {{ project.issues.count }} issues
        </div>

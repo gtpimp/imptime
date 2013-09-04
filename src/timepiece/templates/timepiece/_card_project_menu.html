@@ -27,7 +27,7 @@
         </a>
       </li>
 
-      {% has_permission has_edit_project_detail project.business %}
+      {% has_permission has_view_issues project.business %}
       <li>
         <a href="#" onclick="window.open('{% url 'project_issues' project.id %}')">
           Issues
