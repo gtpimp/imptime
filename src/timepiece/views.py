@@ -3013,7 +3013,7 @@ def delete_issue(request, project_id, template="", context=None):
 
 def _augment_issue_data(issue,current_user):
     business_users = [user.id for user in issue.project.business.users]
-    story_points = float(issue.story_points) or 0.0
+    #story_points = float(issue.story_points) or 0.0
     actual_billable_cost_of_issue = float(issue.billable)
     can_view_other_user_points = timepiece.BusinessPermissions.has_see_other_user_points(issue.project.business, current_user)     
     if can_view_other_user_points:

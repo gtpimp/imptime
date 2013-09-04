@@ -15,11 +15,6 @@
   <img style="display:none" class="loading" src="{{STATIC_URL}}/images/icons/loadingAnimation.gif"/>
   <h1>{{ business.name }} ({{business.id}})</h1>
 
-  <p>
-    <a href="#" onclick="$('#b_card_{{business.id}}').load('{% url 'get_project_card'  business_id=business.id  %}');return false;">refresh</a>
-    <a href="#" onclick="window.open('{% url 'create_project' %}?business_id={{ business.id }}');return false;">create sprint</a>
-  </p>
-
   {% if project %}
     {% include "timepiece/_card_project.html" %}
     {% if older_projects %}
@@ -44,24 +39,17 @@
           <div style="clear:both"></div>
         </div>
       </div>
-    {% else %}
-      {% if project %}
-        <div class="secret_link">
-          <a href="#" onclick="imp.project_card_thinking(this);$('#b_card_{{business.id}}').load('{% url 'get_project_card_indexed' business_id=business.id index=1 %}'); return false;">show all sprints</a>
-        </div>
-      {% endif %}
     {% endif %}
   {% else %}
     No sprints
+
+        {%  has_permission has_edit_permissions  business  %}
+        <a href="#" class="secret_link" onclick="window.open('{% url 'show_permissions' business.id %}')">
+          permissions
+        </a> 
+        {% end_permission %}
+
   {% endif %}
 
-<p>
-
-{%  has_permission has_edit_permissions  business  %}
-<a href="#" class="secret_link" onclick="window.open('{% url 'show_permissions' business.id %}')">
- permissions
-</a> 
-{% end_permission %}
-</p>
 </div>
 

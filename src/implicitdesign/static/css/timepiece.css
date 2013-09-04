@@ -9501,10 +9501,36 @@ table.project_list  {
     border: 1px solid #111111;
 }
 
-.issues .card_menu {
+.card_menu {
     float:right;
-    position:absolute;
     background-color: #dddddd;
+    padding:5px;
+}
+
+.card_menu .title:hover {
+    cursor: pointer;
+    background-color: #aaaaaa;
+}
+
+.card_menu .menu_items {
+    padding:5px;
+    position:absolute;
+    background:#ffffff;
+    border: 1px solid #aaaaaa;
+}
+
+.card_menu ul {
+    list-style: none outside none;
+}
+
+.card_menu ul a {
+    color: #000000;
+    text-decoration: none;
+    width: 100%;
+}
+
+.card_menu ul a:hover {
+    border-bottom: 1px solid #bbbbbb;
 }
 
 .issues .issues_list{
