@@ -600,8 +600,8 @@ def view_summary(request,user_id, include_older_businesses=False):
         old_businesses = None
 
     # ##
-    #current_businesses = [timepiece.Business.objects.get(pk=29)]
-    #old_businesses = None
+    current_businesses = [timepiece.Business.objects.get(pk=29)]
+    old_businesses = None
     # ##
 
     context = { 'current_businesses':current_businesses,

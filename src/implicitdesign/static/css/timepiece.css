@@ -9501,6 +9501,12 @@ table.project_list  {
     border: 1px solid #111111;
 }
 
+.issues .card_menu {
+    float:right;
+    position:absolute;
+    background-color: #dddddd;
+}
+
 .issues .issues_list{
     height:600px;
     /* overflow:auto; */
