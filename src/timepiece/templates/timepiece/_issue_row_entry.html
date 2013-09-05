@@ -1,0 +1,95 @@
+{% load timepiece_tags %}
+{% load humanize %}
+{% load url from future %}
+
+                 <tr >                    
+		   <td> 
+		     <div class="secret_link" onclick="imp.show_issue_detail('{% url 'issue_detail' issue.pk %}');">
+		       {{issue.number}}
+		     </div>
+		  </td> 
+		  <td>
+		    <div class="styled-select">		     
+		      <div class="selectme {{issue.representation.status_appearance}}"  {% has_permission has_edit_issue_states project.business %} onclick="imp.status_toggle_form_show(this,{{issue.pk}}, {{issue.representation.options}}, '{% url 'issue_status_update' %}');" {% end_permission %} > 
+		      
+			{{ issue.status }}
+		      </div>
+		    </div>
+		  </td>
+                  {% has_permission has_see_other_user_points project.business %}
+		    {% for user,per_user in issue.representation.per_user %}
+                      {% user_can_estimate_own_points user project.business %}
+                        <td >
+                         <div>
+                          <div style="float:left" class="edit_issue_subject" onclick="imp.clickable_subject_box(this, '{% url 'issue_points_update' %}',{{ per_user.issue_points.id }})" > 
+                            {{ per_user.issue_points.points|default_if_none:"-" }}
+                          </div>
+                         </div>		     
+
+                         <div style="float:left" class="short_traffic">
+                           <div class="traffic_bar">			
+                             <div style="width:{{ per_user.completion }}%;" class={{per_user.bar_color}}>  
+                               {{ per_user.display_value }}
+                             </div>
+                           </div>
+                         </div>
+                        </td>
+                      {% end_can_estimate %}
+		    {% endfor %}
+		  {% end_permission %}
+
+                  {% has_not_permission has_see_other_user_points project.business %}
+		    {% for user,per_user in issue.representation.per_user %}
+                      {% user_can_estimate_own_points user project.business %}
+                        <td >
+                          <div>
+                           <div style="float:left" class="edit_issue_subject" onclick="imp.clickable_subject_box(this, '{% url 'issue_points_update' %}',{{ per_user.issue_points.id }})" > 
+                             {{ per_user.issue_points.points|default_if_none:"-" }}
+                           </div>
+                          </div>		     
+
+                          {% has_permission has_view_ctc_billable_rates project.business %}
+                            <div style="float:left" class="short_traffic">
+                              <div class="traffic_bar">			
+                                <div style="width:{{ per_user.completion }}%;" class={{per_user.bar_color}}>  
+                                  {{ per_user.display_value }}
+                                </div>
+                              </div>
+                            </div>
+                          {% end_permission %}
+		        </td>
+                      {% end_can_estimate %}
+		    {% endfor %}
+  	          {% end_permission %}
+
+                  {% has_permission has_view_actual_hours  project.business %} 
+                    <td class="">
+                      <div class="secret_link"  onclick="imp.show_issue_detail('{% url 'issue_detail' issue.pk %}');">
+                        {{issue.hours|default_if_none:"-"}}
+                      </div>
+                    </td>
+                  {% end_permission %}
+
+		  {% has_permission has_view_ctc_billable_rates project.business  %}
+                  <td class="">
+                    <div class="secret_link"  onclick="imp.show_issue_detail('{% url 'issue_detail' issue.pk %}');">
+                      R{{issue.ctc|floatformat:"0"|intcomma}}
+                    </div>
+                  </td>
+                  <td class="">
+                    <div class="secret_link"  onclick="imp.show_issue_detail('{% url 'issue_detail' issue.pk %}');">
+                      R{{issue.billable|floatformat:"0"|intcomma}}
+                    </div>
+                  </td>
+		  {% end_permission %}		  
+                  <td class="issue_subject">
+		    <div class="edit_issue_subject"  {% has_permission has_edit_subject project.business %} onclick="imp.clickable_subject_box(this, '{% url 'issue_subject_update' %}',{{ issue.pk }})" {% end_permission %} >
+                      {{issue.subject}}
+                    </div>
+                  </td>
+		  {% has_permission has_delete_issue project.business %}
+                  <td class="issue_subject" onclick="imp.ajax_call(this, '{% url 'delete_issue' project.id %}' , {{ issue.pk}} )">		    
+		      X
+                  </td>
+		  {% end_permission  %}
+                 </tr>
