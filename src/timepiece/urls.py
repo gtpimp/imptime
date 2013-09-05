@@ -410,5 +410,10 @@ urlpatterns = patterns('',
         views.delete_issue,
         name='delete_issue'
       ),
+    url(
+        r'time-sheet/get_issue_row/(?P<issue_id>\d+)$',
+        views.get_issue_row,
+        name='get_issue_row',
+    ),
 
 )

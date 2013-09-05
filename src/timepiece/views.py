@@ -3013,7 +3013,7 @@ def delete_issue(request, project_id, template="", context=None):
 
 def _augment_issue_data(issue,current_user):
     business_users = [user.id for user in issue.project.business.users]
-    #story_points = float(issue.story_points) or 0.0
+
     actual_billable_cost_of_issue = float(issue.billable)
     can_view_other_user_points = timepiece.BusinessPermissions.has_see_other_user_points(issue.project.business, current_user)     
     if can_view_other_user_points:
@@ -3485,3 +3485,48 @@ def show_permissions(request, business_id):
 
 
 
+@csrf_exempt
+@login_required
+@transaction.commit_on_success
+def get_issue_row(request,issue_id):
+    context = {}
+    
+    queryset = timepiece.Issue.objects.filter(pk=issue_id)
+    project = queryset[0].project
+    business = project.business
+
+    
+    # issues_forms = timepiece_forms.issue_status_formset(request.POST or None, 
+    #                                                    queryset=queryset)    
+    issue = queryset[0]
+    _augment_issue_data(issue,request.user)
+
+    new_issue_form = timepiece_forms.IssueForm()
+
+    all_entries = project.entries.all().order_by("start_time")
+    hours = 0
+    ctc = 0
+    billable = 0
+    for entry in all_entries:
+        hours += entry.hours
+        ctc += entry.atrate
+        billable += entry.atbillablerate
+        
+    rate = project.get_user_rate(request.user)
+    context['current_user_rate'] = float(rate.amount) if rate else 0.0
+    context['business'] = business
+    context['new_issue_form'] = new_issue_form
+    context['current_user'] = request.user
+    context['project'] = project
+    context['unassigned_timesheet_entries_hours'] = timepiece.Issue.get_unassigned_timesheet_entries_hours(context['project'])
+    context['unassigned_timesheet_entries_ctc'] = timepiece.Issue.get_unassigned_timesheet_entries_ctc(context['project'])
+    context['unassigned_timesheet_entries_billable'] = timepiece.Issue.get_unassigned_timesheet_entries_billable(context['project'])
+    context['total_hours'] = hours
+    context['total_ctc'] = ctc
+    context['total_billable'] = billable
+    refresh_issue =timepiece.Issue.objects.get(id=issue.id)
+    refresh_issue.representation = issue.representation
+    context['issue'] = refresh_issue
+    r = render_to_response('timepiece/_issue_entry_row.html',
+                           context, context_instance=RequestContext(request))
+    return r

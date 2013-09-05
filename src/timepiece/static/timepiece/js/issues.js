@@ -151,14 +151,14 @@ imp.clickable_subject_box = function(element, url, item_id) {
     commentTextArea = commentTextArea.attr("type","text").attr("value",textbox.html());
     textbox.parent().append(commentTextArea);
     textbox.hide();
-    // commentTextArea = commentTextArea.css({ width: textbox.width(), 
-    // 					    height: textbox.width(), });
     imp.update_header_rows();
     commentTextArea = commentTextArea.keypress(function(e) {
+	parent = $(this).parent();
+	div_sibling = parent.find('.edit_issue_subject');		    
+	new_value = $(this).val();
+
 	if (e.which === 13) {
-	    parent = $(this).parent();
-	    div_sibling = parent.find('.edit_issue_subject');		    
-	    new_value = $(this).val();
+	    imp.refresh_closest_issue_parent_row(div_sibling);
 	    div_sibling.html(new_value);
 	    $(this).remove();
 	    div_sibling.show();
@@ -166,9 +166,9 @@ imp.clickable_subject_box = function(element, url, item_id) {
                     url: url,
                     data : { item_id: item_id, new_value: new_value },
                     dataType:"json"});
-	    imp.update_header_rows();
-
+	    imp.update_header_rows();                
 	}
+	
     });
     commentTextArea = commentTextArea.keyup(function(e) {
 	if(e.which === 27) {
@@ -247,4 +247,19 @@ imp.update_header_rows = function() {
     });
 };
 
-$(document).ready(imp.update_header_rows);
+imp.refresh_closest_issue_parent_row = function(element) {
+    what = $(element);
+    closest_row = what.closest(".issue_instance_row");
+    url = closest_row.attr("refresh_url");
+     $.ajax({type:"GET",
+             url: url,
+             success: function(data) {
+		 $(closest_row).html($(data).html())
+           }
+         });
+};
+
+imp.on_document_ready = function() {
+    imp.update_header_rows();
+}
+$(document).ready(imp.on_document_ready);

@@ -2,7 +2,7 @@
 {% load humanize %}
 {% load url from future %}
 
-                 <tr >                    
+                 <tr class="issue_instance_row" id="{{issue.pk}}" refresh_url="{% url 'get_issue_row' issue.pk %}">                    
 		   <td> 
 		     <div class="secret_link" onclick="imp.show_issue_detail('{% url 'issue_detail' issue.pk %}');">
 		       {{issue.number}}
@@ -10,7 +10,7 @@
 		  </td> 
 		  <td>
 		    <div class="styled-select">		     
-		      <div class="selectme {{issue.representation.status_appearance}}"  {% has_permission has_edit_issue_states project.business %} onclick="imp.status_toggle_form_show(this,{{issue.pk}}, {{issue.representation.options}}, '{% url 'issue_status_update' %}');" {% end_permission %} > 
+		      <div class="selectme {{issue.representation.status_appearance}}"  {% has_permission has_edit_issue_states project.business %} onclick="imp.status_toggle_form_show(this,{{issue.pk}}, {{issue.representation.options|safe}}, '{% url 'issue_status_update' %}');" {% end_permission %} > 
 		      
 			{{ issue.status }}
 		      </div>
