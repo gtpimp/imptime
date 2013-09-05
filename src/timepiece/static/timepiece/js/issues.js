@@ -106,7 +106,8 @@ imp.clickable_description_box = function(element, url, item_id) {
     commentField = $('<form/>');
 
     commentField = commentField.attr('action',url).attr('method','post');
-    value = textbox.val("value")[0].innerText
+    value = textbox.html()
+    value = value.replace(/<br>/g,"\n")
     textField =$("<textarea/>").attr('name','new_value').attr('value',value);
     textField.keyup(function(e) {
             if(e.which === 27) {    
@@ -130,9 +131,10 @@ imp.clickable_description_box = function(element, url, item_id) {
     	text_sibling = form_parent.find('textarea');
     	hidden_sibling = form_parent.find('input:hidden');
     	item_id = hidden_sibling.val();
-    	new_value = text_sibling.val();
+    	new_value = $(text_sibling).val();
 	$(this).parent().remove();
-	div_parent[0].innerText =new_value;
+	display_value = new_value.replace(/\n/g,"<br>")
+	$(div_parent[0]).html(display_value);
     	div_parent.show();
         $.ajax({type:"POST",
                 url: url,
