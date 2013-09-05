@@ -296,9 +296,33 @@ imp.on_sortable_changed = function(event, ui) {
 	indexes.push(elem.attr("id"));
     });
 };
+
+imp.on_sortable_changed_for_url = function(sortable_url) {
+    var sortable_update_url = sortable_url;
+    function ret_func(event, ui) {	
+	var url = sortable_update_url;
+	rows = ui.item.parent().find("tr")
+	indexes = []
+	rows.each(function(index, row) {
+	    elem = $(row)
+	    indexes.push(elem.attr("id"));
+	});	
+	indexes = indexes.join(',')
+	$.ajax({type:"POST",
+		url: url,
+		data : { indexes: indexes },
+		dataType:"json"});
+
+    };
+    return ret_func;
+}
+
 imp.on_document_ready = function() {
     imp.update_header_rows();
-    $(".scrollContent").sortable({ stop: imp.on_sortable_changed });
+    var url = $(".scrollContent").attr("update_order_url");
+    
+    $(".scrollContent").sortable({ stop: imp.on_sortable_changed_for_url(url) });
+    //$(".scrollContent").sortable({ stop: imp.on_sortable_changed });
     //$(".scrollContent").disableSelection();
 }
 $(document).ready(imp.on_document_ready);

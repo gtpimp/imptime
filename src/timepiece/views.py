@@ -3530,3 +3530,13 @@ def get_issue_row(request,issue_id):
     r = render_to_response('timepiece/_issue_entry_row.html',
                            context, context_instance=RequestContext(request))
     return r
+
+@csrf_exempt
+@login_required
+def sortable_update(request):
+    
+    context = {}
+    indexes = request.POST['indexes'].split(",")
+    
+    
+    return HttpResponse("")

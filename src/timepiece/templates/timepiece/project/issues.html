@@ -214,7 +214,7 @@
 		  {% end_permission %}
                 </tr>
 	      </thead>
-	      <tbody class="scrollContent">
+	      <tbody class="scrollContent" update_order_url="{% url 'sortable_update'  %}">
 
 		{% for form in issues_forms.forms %}
 		{% with form.instance as issue %}
