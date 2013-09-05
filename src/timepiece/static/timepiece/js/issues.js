@@ -286,9 +286,19 @@ imp.refresh_closest_issue_parent_row = function(element) {
          });
 };
 
+
+imp.on_sortable_changed = function(event, ui) {
+    x=123;
+    rows = ui.item.parent().find("tr")
+    indexes = []
+    rows.each(function(index, row) {
+	elem = $(row)
+	indexes.push(elem.attr("id"));
+    });
+};
 imp.on_document_ready = function() {
     imp.update_header_rows();
-    $(".scrollContent").sortable();
+    $(".scrollContent").sortable({ stop: imp.on_sortable_changed });
     //$(".scrollContent").disableSelection();
 }
 $(document).ready(imp.on_document_ready);
