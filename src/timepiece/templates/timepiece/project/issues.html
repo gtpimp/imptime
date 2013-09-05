@@ -100,17 +100,17 @@
 		</tr>
               </thead>
 
-              <tbody class="scrollContent">
+              <thead class="fixedHeader">
 
                 <tr>
-                  <td>
-                  </td>
-                  <td></td>
+                  <th>
+                  </th>
+                  <th></th>
 		  {% has_permission has_see_other_user_points project.business %}
 		    {% with issues_forms.forms|first as first_form %}
 		      {% for user, per_user in first_form.instance.representation.per_user %}
                         {% user_can_estimate_own_points user project.business %}
-		          <td>-</td>
+		          <th>-</th>
                         {% end_can_estimate %}
 		      {% endfor %}
 		    {% endwith %}
@@ -118,56 +118,56 @@
 
 		  {% has_not_permission has_see_other_user_points project.business %}
                     {% user_can_estimate_own_points current_user project.business %}
-		      <td>-</td>
+		      <th>-</th>
                     {% end_can_estimate %}
 		  {% end_permission %}
 
 
                   {% has_permission has_view_actual_hours  project.business %} 
-                    <td class="">
+                    <th class="">
                       <div class="secret_link" onclick="imp.show_issue_detail('{% url 'all_timesheet_entries' project.id %}');">
                         <i>{{total_hours|floatformat:"0"|intcomma}}</i>
                       </div>
-                    </td>
+                    </th>
                   {% end_permission %}
 
 		  {% has_permission has_view_ctc_billable_rates project.business %}
-                  <td class="">
+                  <th class="">
                     <div class="secret_link" onclick="imp.show_issue_detail('{% url 'all_timesheet_entries' project.id %}');">
                       <i>R{{total_ctc|floatformat:"0"|intcomma}}</i>
                     </div>
-                  </td>
-                  <td class="">
+                  </th>
+                  <th class="">
                     <div class="secret_link" onclick="imp.show_issue_detail('{% url 'all_timesheet_entries' project.id %}');">
                       <i>R{{total_billable|floatformat:"0"|intcomma}}</i>
                     </div>
-                  </td>
+                  </th>
 
 
-                  <td>
+                  <th>
                     <div class="secret_link" onclick="imp.show_issue_detail('{% url 'all_timesheet_entries' project.id %}');">
                       <i>all timesheet entries for this sprint</i>
                     </div>
-                  </td>
+                  </th>
 
-                  <td class="">
+                  <th class="">
                     <div class="secret_link" onclick="imp.show_issue_detail('{% url 'all_timesheet_entries' project.id %}');">
 
                     </div>
-                  </td>
+                  </th>
 
 		  {% end_permission %}
                 </tr>
 
                 <tr>
-                  <td>
-                  </td>
-                  <td></td>
+                  <th>
+                  </th>
+                  <th></th>
 		  {% has_permission has_see_other_user_points project.business %}
 		    {% with issues_forms.forms|first as first_form %}
 		      {% for user, per_user in first_form.instance.representation.per_user %}
                         {% user_can_estimate_own_points user project.business %}
-		          <td>-</td>
+		          <th>-</th>
                         {% end_can_estimate %}
 		      {% endfor %}
 		    {% endwith %}
@@ -175,45 +175,47 @@
 
 		  {% has_not_permission has_see_other_user_points project.business %}
                     {% user_can_estimate_own_points current_user project.business %}
-		      <td>-</td>
+		      <th>-</th>
                     {% end_can_estimate %}
 		  {% end_permission %}
 
                   {% has_permission has_view_actual_hours  project.business %} 
-                    <td class="">
+                    <th class="">
                       <div class="secret_link" onclick="imp.show_issue_detail('{% url 'unassigned_timesheet_entries' project.id %}');">
                         {{unassigned_timesheet_entries_hours|floatformat:"0"|intcomma}}
                       </div>
-                    </td>
+                    </th>
                   {% end_permission %}
 
 		  {% has_permission has_view_ctc_billable_rates project.business %}
-                  <td class="">
+                  <th class="">
                     <div class="secret_link" onclick="imp.show_issue_detail('{% url 'unassigned_timesheet_entries' project.id %}');">
                       R{{unassigned_timesheet_entries_ctc|floatformat:"0"|intcomma}}
                     </div>
-                  </td>
-                  <td class="">
+                  </th>
+                  <th class="">
                     <div class="secret_link" onclick="imp.show_issue_detail('{% url 'unassigned_timesheet_entries' project.id %}');">
                       R{{unassigned_timesheet_entries_billable|floatformat:"0"|intcomma}}
                     </div>
-                  </td>
+                  </th>
 
-                  <td>
+                  <th>
                     <div class="secret_link" onclick="imp.show_issue_detail('{% url 'unassigned_timesheet_entries' project.id %}');">
                       <i>unassigned timesheet entries for this sprint</i>
                     </div>
-                  </td>
+                  </th>
 
-                  <td class="">
+                  <th class="">
                     <div class="secret_link">
                     </div>
-                  </td>
+                  </th>
 
 
 		  {% end_permission %}
                 </tr>
-		
+	      </thead>
+	      <tbody class="scrollContent">
+
 		{% for form in issues_forms.forms %}
 		{% with form.instance as issue %}
 		{% include "timepiece/_issue_entry_row.html" %}
