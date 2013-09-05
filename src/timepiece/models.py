@@ -1788,6 +1788,7 @@ class Issue(models.Model):
     subject = models.TextField()
     description = models.TextField(blank=True)
     story_points = models.FloatField(null=True,blank=True)    
+    order = models.IntegerField(null=True,blank=True)
     
     def __init__(self, *args, **kwargs):
         super(Issue, self).__init__(*args, **kwargs)
