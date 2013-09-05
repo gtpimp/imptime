@@ -147,10 +147,12 @@ imp.clickable_description_box = function(element, url, item_id) {
 
 
 
-imp.clickable_subject_box = function(element, url, item_id) {
+imp.clickable_subject_box = function(element, url, item_id,size) {
     var textbox = $(element),
     commentTextArea = $("<input/>")
-    commentTextArea = commentTextArea.attr("type","text").attr("value",textbox.html());
+    value = $.trim(textbox.html()); 
+    size = size || value.length;
+    commentTextArea = commentTextArea.attr("type","text").attr("value",value).attr("size",size).css("width","auto");
     textbox.parent().append(commentTextArea);
     textbox.hide();
     imp.update_header_rows();
