@@ -61,14 +61,14 @@
 
               <thead class="fixedHeader">
 		<tr>
-                <th class="th1">#</th>
-                <th class="th2">Status</th>
+                <th >#</th>
+                <th >Status</th>
    
 		{% has_permission has_see_other_user_points project.business %}
 		  {% with issues_forms.forms|first as first_form %}
 		    {% for user, per_user in first_form.instance.representation.per_user %}
                       {% user_can_estimate_own_points user project.business %}
-  	                <th class="th4">
+  	                <th >
 		          {{ user.username }}
 		        </th>
                       {% end_can_estimate %}
@@ -78,24 +78,24 @@
 
   		{% has_not_permission has_see_other_user_points project.business %}
                   {% user_can_estimate_own_points current_user project.business %}
-                    <th class="th5">				  
+                    <th >				  
                       {{ current_user.username }}'s estimate
                     </th>
                   {% end_can_estimate %}
 		{% end_permission %}
 
                 {% has_permission has_view_actual_hours  project.business %} 
-                  <th class="th6">Actual Hours</th>
+                  <th >Actual Hours</th>
                 {% end_permission %}
 
 		{% has_permission has_view_ctc_billable_rates  project.business %}
-                  <th class="th7">Actual ctc</th>
-                  <th class="th8">Actual billable</th>
+                  <th >Actual ctc</th>
+                  <th >Actual billable</th>
 		{% end_permission %}
 
-                <th class="th10">Subject</th>
+                <th >Subject</th>
 		{% has_permission has_delete_issue project.business %}
-		<th class="th11">Delete</th>
+		<th >Delete</th>
 		{% end_permission %}
 		</tr>
               </thead>
@@ -232,7 +232,7 @@
                   {% has_permission has_see_other_user_points project.business %}
 		    {% for user,per_user in form.instance.representation.per_user %}
                       {% user_can_estimate_own_points user project.business %}
-                        <td style="width:12%">
+                        <td >
                          <div>
                           <div style="float:left" class="edit_issue_subject" onclick="imp.clickable_subject_box(this, '{% url 'issue_points_update' %}',{{ per_user.issue_points.id }})" > 
                             {{ per_user.issue_points.points|default_if_none:"-" }}
@@ -254,7 +254,7 @@
                   {% has_not_permission has_see_other_user_points project.business %}
 		    {% for user,per_user in form.instance.representation.per_user %}
                       {% user_can_estimate_own_points user project.business %}
-                        <td style="width:12%">
+                        <td >
                           <div>
                            <div style="float:left" class="edit_issue_subject" onclick="imp.clickable_subject_box(this, '{% url 'issue_points_update' %}',{{ per_user.issue_points.id }})" > 
                              {{ per_user.issue_points.points|default_if_none:"-" }}

@@ -220,33 +220,31 @@ imp.update_header_rows = function() {
     content_row = $(".scrollContent tr:last").find("td");
 
     specs = [];
-    for (i =0 ; i < content_row.length; i++) {
-	column = $(content_row[i]);
-	specs.push({'width':column.width(),
-		    'padding-top':column.css("padding-top"),
-		    'padding-left':column.css("padding-left"),
-		    'padding-right':column.css("padding-right"),
-		    'padding-bottom':column.css("padding-bottom"),
-		   });
-    }
+    content_row.each(function(index, element) {        
+  	column = $(element);
+    	specs.push({'width':column.css("width"),
+    		    'padding-top':column.css("padding-top"),
+    		    'padding-left':column.css("padding-left"),
+    		    'padding-right':column.css("padding-right"),
+    		    'padding-bottom':column.css("padding-bottom"),
+    		   });
+
+    });
+
     header_row = $(".fixedHeader tr:first").find("th");
-    for (i =0 ; i < specs.length; i++) {
-	header_column = $(header_row[i])
-	new_width = specs[i]['width']
-	new_padding_top = specs[i]['padding-top']
-	new_padding_left = specs[i]['padding-left']
-	new_padding_right = specs[i]['padding-right']
-	new_padding_bottom = specs[i]['padding-bottom']
-	header_column = header_column.css("width",new_width);
-	header_column = header_column.css("padding-top",new_padding_top);
-	header_column = header_column.css("padding-left",new_padding_left);
-	header_column = header_column.css("padding-right",new_padding_right);
-	header_column = header_column.css("padding-bottom",new_padding_bottom);
-
-	
-			     
-    }
-
+    header_row.each(function(index, element) {
+	elem = $(element)
+    	new_width = specs[elem.index()]['width']
+    	new_padding_top = specs[elem.index()]['padding-top']
+    	new_padding_left = specs[elem.index()]['padding-left']
+    	new_padding_right = specs[elem.index()]['padding-right']
+    	new_padding_bottom = specs[elem.index()]['padding-bottom']
+    	elem = elem.css("width",new_width);
+    	elem = elem.css("padding-top",new_padding_top);
+    	elem = elem.css("padding-left",new_padding_left);
+    	elem = elem.css("padding-right",new_padding_right);
+    	elem = elem.css("padding-bottom",new_padding_bottom);
+    });
 };
 
 $(document).ready(imp.update_header_rows);
