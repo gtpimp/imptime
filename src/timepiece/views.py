@@ -3529,19 +3529,18 @@ def get_issue_row(request,issue_id):
 
 @csrf_exempt
 @login_required
+@transaction.commit_on_success
 def sortable_update(request):
     context = {}
-    indexes = [ int(index) for index in request.POST['indexes'].split(",")]
+
+    ordered_issue_ids = [ int(index) for index in request.POST['ordered_ids'].split(",")]
     project_id = request.POST['project_id']
     issue_query_set = timepiece.Issue.objects.filter(project__id = project_id).order_by("order")
 
-    current_order_issue_lookup = dict([(issue.order, issue) for issue in issue_query_set])
-    issues = []
-    for item_order_count, index in enumerate(indexes):
-        next_issue_to_insert = current_order_issue_lookup[index]
-        next_issue_to_insert.order = item_order_count
-        next_issue_to_insert.save()
-        issues.append(next_issue_to_insert)
+    for item_order_count, issue_id in enumerate(ordered_issue_ids):
+        issue = timepiece.Issue.objects.get(pk=issue_id)
+        issue.order = item_order_count
+        issue.save()
     
     return HttpResponse("")
 

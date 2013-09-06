@@ -303,31 +303,22 @@ imp.refresh_closest_issue_parent_row = function(element) {
          });
 };
 
-
-imp.on_sortable_changed = function(event, ui) {
-    rows = ui.item.parent().find("tr")
-    indexes = []
-    rows.each(function(index, row) {
-	elem = $(row)
-	indexes.push(elem.attr("id"));
-    });
-};
-
 imp.on_sortable_changed_for_url = function(sortable_url) {
     var sortable_update_url = sortable_url;
     function ret_func(event, ui) {	
 	var url = sortable_update_url;
 	rows = ui.item.parent().find("tr")
-	indexes = []
+
 	project_id = $(rows[0]).attr("project_id")
+	ordered_ids = []
 	rows.each(function(index, row) {
 	    elem = $(row)
-	    indexes.push(elem.attr("id"));
+	    ordered_ids.push(elem.attr("id"));
 	});	
-	indexes = indexes.join(',')
+	ordered_ids = ordered_ids.join(',')
 	$.ajax({type:"POST",
 		url: url,
-		data : { indexes: indexes, project_id: project_id },
+		data: { ordered_ids:ordered_ids , project_id:project_id },
 		dataType:"json"});
 	imp.update_body_rows();
     };
