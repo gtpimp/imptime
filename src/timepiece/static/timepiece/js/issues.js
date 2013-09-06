@@ -306,20 +306,37 @@ imp.refresh_closest_issue_parent_row = function(element) {
 imp.on_sortable_changed_for_url = function(sortable_url) {
     var sortable_update_url = sortable_url;
     function ret_func(event, ui) {	
+
 	var url = sortable_update_url;
 	rows = ui.item.parent().find("tr")
 
 	project_id = $(rows[0]).attr("project_id")
 	ordered_ids = []
 	rows.each(function(index, row) {
-	    elem = $(row)
-	    ordered_ids.push(elem.attr("id"));
+	    elem = $(row);
+	    var issue_id = elem.attr("id");
+	    ordered_ids.push(issue_id);
+	    $(".loading_issue_"+issue_id).show();
 	});	
-	ordered_ids = ordered_ids.join(',')
+
+	var loading_el = null;
+	if (ordered_ids.length>0) {
+	    loading_el = $(".loading_issue_"+ordered_ids[0]);
+	    loading_el.show();
+	}
+
+	joined_ordered_ids = ordered_ids.join(',')
 	$.ajax({type:"POST",
 		url: url,
-		data: { ordered_ids:ordered_ids , project_id:project_id },
-		dataType:"json"});
+		data: { ordered_ids:joined_ordered_ids , project_id:project_id },
+		dataType:"json",
+	        success: function() { 
+
+		    for( issue_id in ordered_ids ) {
+			$(".loading_issue_"+issue_id).hide();
+		    };
+		}
+	       });
 	imp.update_body_rows();
     };
     return ret_func;
