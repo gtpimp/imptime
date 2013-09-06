@@ -601,7 +601,64 @@ class Project(models.Model):
     def trac_url(self):
         return settings.TRAC_URL % self.tracker_url
 
+    def get_ordered_issues(self):
+        all_project_issues = Issue.objects.filter(project=self)
+        
+        orderless_issues = all_project_issues.filter(order__isnull=True).order_by('id')
+        ordered_issues = all_project_issues.exclude(order__isnull=True).order_by('order')
+        
+        if len(orderless_issues) == 0:
+            # import pdb; pdb.set_trace()
+            return all_project_issues.order_by('order')
 
+        all_issues = [ issue for issue in ordered_issues ] + [ issue for issue in orderless_issues ]
+        last_index = 0
+        for index,issue in enumerate(all_issues):
+            issue.order = index            
+            issue.save()
+            last_index = index
+            
+        return Issue.objects.filter(project=self).order_by("order")
+
+        # # last_index = 0
+        # # for index,issue in enumerate(ordered_issues):
+        # #     issue.order = index            
+        # #     issue.save()
+        # #     last_index = index
+            
+        # # index = last_index+1
+        # # for issue in orderless_issues:
+        # #     issue.order = index
+        # #     issue.save()
+        # #     index += 1
+        
+    # def get_ordered_issues(self):
+    #     project_issues = Issue.objects.filter(project = self)
+        
+    #     order_bounds = project_issues.aggregate(max_order=Max('order'), min_order=Min('order'))
+
+    #     min_order_num = order_bounds['min_order'] or 0
+    #     max_order_num = order_bounds['max_order'] or 0
+        
+    #     orderless_issues = project_issues.filter(order__isnull=True)
+
+    #     if len(orderless_issues) == 0:
+    #         return project_issues.order_by("order");
+
+        
+    #     for index,issue in enumerate(project_issues.order_by("order")):
+            
+    #     # for issue in orderless_issues:
+    #     #     try:
+    #     #         issue.order = order_index
+    #     #         issue.save()            
+    #     #     except Issue.IntegrityError:
+    #     #         continue
+
+    #         order_index += 1
+
+    #     return Issue.objects.filter(project = self).order_by("order")
+            
 class RelationshipType(models.Model):
     name = models.CharField(max_length=255, unique=True)
     slug = models.CharField(max_length=255, unique=True, editable=False)
@@ -1781,6 +1838,9 @@ class Issue(models.Model):
            ( 'task done', 'task done'),
            ( 'dev unclear', 'dev unclear'),
         )
+    
+    # class Meta:
+    #     unique_together = (('project', 'order'),)
 
     status = models.CharField(max_length=255, choices = ISSUE_STATUS_CHOICES)
     number = models.IntegerField(null=True,blank=True)
@@ -1804,6 +1864,16 @@ class Issue(models.Model):
                 IssuePoints.objects.create(user=user,issue=self)
 
         return self.user_points.filter(user__id__in=[i.id for i in business_users]).order_by("user")
+
+    def set_order(self):
+        if self.order is not None:
+            return self
+        project_issue_order = Issue.objects.filter(project = self.project).aggregate(max_order=Max('order'))
+        current_order = project_issue_order['max_order'] or 0
+        new_order = current_order + 1
+        self.order = new_order
+        self.save()
+        return self
 
     def get_user_issue_points(self, user):
 

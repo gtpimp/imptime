@@ -2,7 +2,7 @@
 {% load humanize %}
 {% load url from future %}
 
-                 <tr class="issue_instance_row" id="{{issue.pk}}" refresh_url="{% url 'get_issue_row' issue.pk %}">                    
+                 <tr class="issue_instance_row" project_id="{{issue.project.id}}" id="{{issue.order}}" refresh_url="{% url 'get_issue_row' issue.pk %}">                    
 		   <td> 
 		     <div class="secret_link" onclick="imp.show_issue_detail('{% url 'issue_detail' issue.pk %}');">
 		       {{issue.number}}

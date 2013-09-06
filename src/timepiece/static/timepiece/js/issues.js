@@ -288,7 +288,6 @@ imp.refresh_closest_issue_parent_row = function(element) {
 
 
 imp.on_sortable_changed = function(event, ui) {
-    x=123;
     rows = ui.item.parent().find("tr")
     indexes = []
     rows.each(function(index, row) {
@@ -303,6 +302,7 @@ imp.on_sortable_changed_for_url = function(sortable_url) {
 	var url = sortable_update_url;
 	rows = ui.item.parent().find("tr")
 	indexes = []
+	project_id = $(rows[0]).attr("project_id")
 	rows.each(function(index, row) {
 	    elem = $(row)
 	    indexes.push(elem.attr("id"));
@@ -310,7 +310,7 @@ imp.on_sortable_changed_for_url = function(sortable_url) {
 	indexes = indexes.join(',')
 	$.ajax({type:"POST",
 		url: url,
-		data : { indexes: indexes },
+		data : { indexes: indexes, project_id: project_id },
 		dataType:"json"});
 
     };
