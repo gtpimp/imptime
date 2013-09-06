@@ -240,21 +240,6 @@ imp.update_header_rows = function() {
 
     });
 
-    // header_cells = $(".fixedHeader tr:first").find("th");
-    // header_cells.each(function(index, element) {
-    // 	elem = $(element)
-    // 	new_width = specs[elem.index()]['width']
-    // 	new_padding_top = specs[elem.index()]['padding-top']
-    // 	new_padding_left = specs[elem.index()]['padding-left']
-    // 	new_padding_right = specs[elem.index()]['padding-right']
-    // 	new_padding_bottom = specs[elem.index()]['padding-bottom']
-    // 	elem = elem.css("width",new_width);
-    // 	elem = elem.css("padding-top",new_padding_top);
-    // 	elem = elem.css("padding-left",new_padding_left);
-    // 	elem = elem.css("padding-right",new_padding_right);
-    // 	elem = elem.css("padding-bottom",new_padding_bottom);
-    // });
-
     header_rows =  $(".fixedHeader tr");
     header_rows.each(function(index, header_row){
 	header_cells = $(header_row).find("th");
@@ -273,6 +258,42 @@ imp.update_header_rows = function() {
 	});
     });
 };
+
+imp.update_body_rows = function() {
+   table = $("table");
+    content = $(".fixedHeader");
+    content_row = $(".fixedHeader tr:first").find("th");
+
+    specs = [];
+    content_row.each(function(index, element) {        
+  	column = $(element);
+    	specs.push({'width':column.css("width"),
+    		    'padding-top':column.css("padding-top"),
+    		    'padding-left':column.css("padding-left"),
+    		    'padding-right':column.css("padding-right"),
+    		    'padding-bottom':column.css("padding-bottom"),
+    		   });
+
+    });
+
+    body_rows =  $(".scrollContent tr");
+    body_rows.each(function(index, header_row){
+	header_cells = $(header_row).find("td");
+	header_cells.each(function(index, cell) {
+	    elem = $(cell);
+    	    new_width = specs[elem.index()]['width']
+    	    new_padding_top = specs[elem.index()]['padding-top']
+    	    new_padding_left = specs[elem.index()]['padding-left']
+    	    new_padding_right = specs[elem.index()]['padding-right']
+    	    new_padding_bottom = specs[elem.index()]['padding-bottom']
+    	    elem = elem.css("width",new_width);
+    	    elem = elem.css("padding-top",new_padding_top);
+    	    elem = elem.css("padding-left",new_padding_left);
+    	    elem = elem.css("padding-right",new_padding_right);
+    	    elem = elem.css("padding-bottom",new_padding_bottom);	    
+	});
+    }); 
+}
 
 imp.refresh_closest_issue_parent_row = function(element) {
     what = $(element);
@@ -312,7 +333,7 @@ imp.on_sortable_changed_for_url = function(sortable_url) {
 		url: url,
 		data : { indexes: indexes, project_id: project_id },
 		dataType:"json"});
-
+	imp.update_body_rows();
     };
     return ret_func;
 }
@@ -322,7 +343,5 @@ imp.on_document_ready = function() {
     var url = $(".scrollContent").attr("update_order_url");
     
     $(".scrollContent").sortable({ stop: imp.on_sortable_changed_for_url(url) });
-    //$(".scrollContent").sortable({ stop: imp.on_sortable_changed });
-    //$(".scrollContent").disableSelection();
 }
 $(document).ready(imp.on_document_ready);
