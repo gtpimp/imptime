@@ -156,8 +156,6 @@ imp.clickable_subject_box = function(element, url, item_id,size) {
     textbox.parent().append(commentTextArea);
     textbox.hide();
     imp.update_header_rows();
-    // closest_sortable = textbox.closest(".scrollContent");
-    // $(closest_sortable).sortable("option","disabled",true);
     commentTextArea = commentTextArea.keypress(function(e) {
 	
 	parent = $(this).parent();
@@ -174,8 +172,6 @@ imp.clickable_subject_box = function(element, url, item_id,size) {
                     data : { item_id: item_id, new_value: new_value },
                     dataType:"json"});
 	    imp.update_header_rows();                
-	    //	    $(closest_sortable).sortable({disabled:false});
-	    
 	}
 	
     });
