@@ -334,6 +334,7 @@ class Project(models.Model):
     description = models.TextField()
 
     objects = QuerySetManager(ProjectQuerySet)
+         
 
     def get_points(self):
         user_ids = [user.id for user in self.business.users]
@@ -1808,7 +1809,17 @@ class Issue(models.Model):
     description = models.TextField(blank=True)
     story_points = models.FloatField(null=True,blank=True)    
     order = models.IntegerField(null=True,blank=True)
-    
+
+    @classmethod
+    def get_last_issue_number(self):
+        largest_number =  Issue.objects.filter(number__isnull=False).aggregate(largest_number=Max("number"))['largest_number']
+         
+        return largest_number or 0
+
+    @classmethod
+    def get_next_issue_number(self):
+        return Issue.get_last_issue_number() +1 
+
     def __init__(self, *args, **kwargs):
         super(Issue, self).__init__(*args, **kwargs)
         self._entries = None

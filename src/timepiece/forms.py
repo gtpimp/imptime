@@ -742,7 +742,7 @@ class IssueForm(forms.ModelForm):
         model = timepiece.Issue
         fields = ( 
             'description', 
-            'number',
+            # 'number',
             'status',
             'story_points',
             )

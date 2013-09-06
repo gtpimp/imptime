@@ -30,20 +30,34 @@
             <li><a href='{% url 'project_issues' project.id %}'>Issues</a></li>
 
             <li>
+
+	      {% has_permission has_add_issue project.business %}
+	      <div class="btn" onclick="imp.load_add_form(this)">
+		<div class="to_click" style="display:block" url="{% url 'add_issue' project.id %}">
+		  Add Issue
+		</div>
+	      </div>
+	      {% end_permission %}
+
+	      <!-- !!!!!!!!   -->
+	      {% comment %}
               {% has_permission has_add_issue project.business %}
               <div class="btn" onclick="imp.toggle_form_show(this)">
                 <div class="to_click" style="display:block">
                   Add Issue
                 </div>
                 <div class="new_issue_form to_edit" style="display:none">
-                  <form method="POST" action='{% url "add_issue" project.id %}'>
+	      	  Issue: {{ next_issue_number }}
+                  <form method="POST" action=''>
                     {% csrf_token %}
                     {{ new_issue_form|as_bootstrap:"inline" }}
-                    <input class="btn" type="submit" name="submit" id="submit" value="Add" />
+                    <input class="btn" value="Add" onclick="imp.add_issue(this, {% url 'add_issue' project.id %});"/>
                   </form>
-                </div>	    
+                </div>
               </div>
               {% end_permission %}
+	      {% endcomment %}
+	      <!-- !!!!!!!!   -->
             </li>
         </ul>
     </div>

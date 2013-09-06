@@ -7,10 +7,30 @@ imp.show_issue_detail = function(url, issue_id) {
 
 imp.toggle_form_show  = function(element) {
     var button = $(element);
-    button.find(".to_click").hide()
-    button.find(".to_edit").show()
+    to_click = $(button.find(".to_click"));
+    to_edit = $(button.find(".to_edit"));
+    to_click.hide()
+    to_edit.show()
+    to_edit.css("z-index",200);
 };
 
+imp.load_add_form = function(element) {
+    what = $(element);
+    to_click = what.find(".to_click");
+    url = to_click.attr("url");
+    $.ajax({type:"GET",
+             url: url,
+             success: function(data) {
+		 $(element).html($(data).html())
+           }
+         });
+};
+
+imp.add_issue = function(element, url) {
+    var button = $(element);
+    form = button.closest("form");
+};
+ 
 imp.status_toggle_form_show = function(element,item_id,options,url) {
     var selectme = $(element);
     var id = null;

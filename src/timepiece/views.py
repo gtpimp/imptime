@@ -2972,11 +2972,13 @@ def time_sheet_download(request, user_id, context=None):
 
     return response
 
-def add_issue(request, project_id, template="", context=None):
+def add_issue(request, project_id, template="timepiece/_add_issue_form.html", context=None):
     context = context or {}
     project = timepiece.Project.objects.filter(pk=project_id).filter_by_logged_in_user(request.user)[0]
 
     current_business = project.business
+
+    context['next_issue_number'] = next_issue_number = timepiece.Issue.get_next_issue_number()
     context['project'] = project
 
     current_user = request.user
@@ -2986,10 +2988,12 @@ def add_issue(request, project_id, template="", context=None):
         new_issue_form = timepiece_forms.IssueForm(request.POST or None)
         if new_issue_form.is_valid():        
             issue = new_issue_form.save(commit=False)
+            issue.number = next_issue_number
             issue.project = project            
             issue.save()
-
-    return HttpResponse("") 
+    context['new_issue_form'] = new_issue_form;
+            #return HttpResponse("") 
+    return render_to_response(template, context, context_instance=RequestContext(request))
 
 @csrf_exempt
 def delete_issue(request, project_id, template="", context=None):
@@ -3071,7 +3075,7 @@ def project_issues(request, pk, template="timepiece/project/issues.html", contex
         _augment_issue_data(form.instance,request.user)
 
     new_issue_form = timepiece_forms.IssueForm()
-
+    
     all_entries = project.entries.all().order_by("start_time")
     hours = 0
     ctc = 0
@@ -3082,6 +3086,7 @@ def project_issues(request, pk, template="timepiece/project/issues.html", contex
         billable += entry.atbillablerate
         
     rate = project.get_user_rate(request.user)
+    context['next_issue_number']  = timepiece.Issue.get_next_issue_number()
     context['current_user_rate'] = float(rate.amount) if rate else 0.0
     context['business'] = business
     context['new_issue_form'] = new_issue_form
