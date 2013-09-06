@@ -608,56 +608,15 @@ class Project(models.Model):
         ordered_issues = all_project_issues.exclude(order__isnull=True).order_by('order')
         
         if len(orderless_issues) == 0:
-            # import pdb; pdb.set_trace()
             return all_project_issues.order_by('order')
 
         all_issues = [ issue for issue in ordered_issues ] + [ issue for issue in orderless_issues ]
-        last_index = 0
         for index,issue in enumerate(all_issues):
             issue.order = index            
             issue.save()
-            last_index = index
             
         return Issue.objects.filter(project=self).order_by("order")
 
-        # # last_index = 0
-        # # for index,issue in enumerate(ordered_issues):
-        # #     issue.order = index            
-        # #     issue.save()
-        # #     last_index = index
-            
-        # # index = last_index+1
-        # # for issue in orderless_issues:
-        # #     issue.order = index
-        # #     issue.save()
-        # #     index += 1
-        
-    # def get_ordered_issues(self):
-    #     project_issues = Issue.objects.filter(project = self)
-        
-    #     order_bounds = project_issues.aggregate(max_order=Max('order'), min_order=Min('order'))
-
-    #     min_order_num = order_bounds['min_order'] or 0
-    #     max_order_num = order_bounds['max_order'] or 0
-        
-    #     orderless_issues = project_issues.filter(order__isnull=True)
-
-    #     if len(orderless_issues) == 0:
-    #         return project_issues.order_by("order");
-
-        
-    #     for index,issue in enumerate(project_issues.order_by("order")):
-            
-    #     # for issue in orderless_issues:
-    #     #     try:
-    #     #         issue.order = order_index
-    #     #         issue.save()            
-    #     #     except Issue.IntegrityError:
-    #     #         continue
-
-    #         order_index += 1
-
-    #     return Issue.objects.filter(project = self).order_by("order")
             
 class RelationshipType(models.Model):
     name = models.CharField(max_length=255, unique=True)
@@ -1889,7 +1848,6 @@ class Issue(models.Model):
             return None
         except IssuePoints.MultipleObjectsReturned:
             return IssuePoints.objects.filter(user=user,issue=self).order_by("user__id")[0]
-        #return self.user_points.filter(user__id__in=business_users).order_by("user")
 
     def set_points(self, user, points):
           
@@ -1905,25 +1863,6 @@ class Issue(models.Model):
 
             issue_points.points = points 
             issue_points.save()
-
-        # business = self.project.business
-        
-        # try:
-        #     user_permissions = user.business_permissions.get(business = business)
-        # except BusinessPermissions.DoesNotExist:
-        #     user_permissions = None
-
-        # if user_permissions and user_permissions.primary_points_user:
-        #     self.points = points
-        #     self.save()
-        # else:
-        #     try:
-        #         issue_points = self.user_points.get(user=user,issue=self)
-        #         issue_points.points = points
-        #         issue_points.save()
-        #     except IssuePoints.DoesNotExist:
-        #         self.user_points.create(user=user,points=points, issue=self)
-
 
     @property
     def css_class(self):

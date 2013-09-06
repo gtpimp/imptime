@@ -3064,13 +3064,7 @@ def project_issues(request, pk, template="timepiece/project/issues.html", contex
     project = timepiece.Project.objects.filter(pk=pk).filter_by_logged_in_user(request.user)[0]
     business = project.business
     
-    #queryset = timepiece.Issue.objects.filter(project=project).order_by("id")
     queryset = project.get_ordered_issues()
-    #queryset = timepiece.Issue.objects.filter(project=project).order_by("order")
-
-    # primary_points_user = project.business.primary_points_user
-
-    # primary_points_user_rate = project.get_user_rate(primary_points_user)
     issues_forms = timepiece_forms.issue_status_formset(request.POST or None, 
                                                         queryset=queryset)    
     for form in issues_forms.forms:
@@ -3540,70 +3534,14 @@ def sortable_update(request):
     indexes = [ int(index) for index in request.POST['indexes'].split(",")]
     project_id = request.POST['project_id']
     issue_query_set = timepiece.Issue.objects.filter(project__id = project_id).order_by("order")
-       
-    current_state_lookup = dict([(issue.order, issue) for issue in issue_query_set])
 
+    current_order_issue_lookup = dict([(issue.order, issue) for issue in issue_query_set])
     issues = []
     for item_order_count, index in enumerate(indexes):
-        issues.append(current_state_lookup[index])
-        issues[-1].order = item_order_count
-        issues[-1].save()
-    # dest_issue_lookup =  dict(zip(indexes,issue_query_set))
-    # import pdb; pdb.set_trace()
-    # for expected_index,issue in dest_issue_lookup.iteritems():
-    #     if issue.order != expected_index:            
-    #         dest_issue_lookup[issue.order].order = expected_index
-            
-    # import pdb; pdb.set_trace()
-    # for expected_index,issue in dest_issue_lookup.iteritems():
-    #     issue.save()
-
-            # issue_to_replace = dest_issue_lookup[expected_index]
-            # issue_to_replace.order = None
-            # issue_to_replace.save()
-            
-            # old_order = issue.order
-            # issue.order = expected_index
-            # issue.save()
-            # issue_to_replace.order = old_order
-            # issue_to_replace.save()
-
-            # import pdb; pdb.set_trace()
-            # current_order = issue.order 
-            # other_issue = dest_issue_lookup[current_order]
-            # other_issue.order = None
-            # other_issue.save()
-            # issue.order = expected_index
-            # issue.save()
-            # other_issue.order = current_order
-            # other_issue.save()
-        
-    # for index_key in current_state_lookup.keys():
-    #     pass
+        next_issue_to_insert = current_order_issue_lookup[index]
+        next_issue_to_insert.order = item_order_count
+        next_issue_to_insert.save()
+        issues.append(next_issue_to_insert)
     
     return HttpResponse("")
-
-    #after_query = timepiece.Issue.objects.filter(project__id = project_id).order_by("order").values_list("number","order")
-        
-    # import pdb; pdb.set_trace()    
-    # for index, issue in zip(indexes, queryset):        
-    #     if issue.order != index:
-    #         issue.order = index
-    #         issue.save()
-    
-    
-    # for idx, index in enumerate(indexes):        
-    #     issue = queryset[idx]
-    #     if issue.order != index:
-    #         import pdb; pdb.set_trace()
-    #         issue.order = index
-    #         issue.save()
-
-
-
-
-
-
-
-
 
