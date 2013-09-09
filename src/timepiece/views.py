@@ -3196,6 +3196,7 @@ def issue_subject_update(request,  template="timepiece/project/issue_detail.html
 
 
 @csrf_exempt
+@transaction.commit_on_success
 def issue_points_update(request,  template="timepiece/project/issue_detail.html", context=None):
     try:
         edited_issue_points = timepiece.IssuePoints.objects.get(pk=request.POST['item_id'])
