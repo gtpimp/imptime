@@ -5,15 +5,6 @@ imp.show_issue_detail = function(url, issue_id) {
     $(".issue_detail").load(url, function() {$("loading").hide();});
 };
 
-// imp.do_form_show  = function(element) {
-//     var button = $(element);
-//     to_click = $(button.find(".to_click"));
-//     to_edit = $(button.find(".to_edit"));
-//     to_click.hide()
-//     to_edit.show()
-//     to_edit.css("z-index",200);
-// };
-
 imp.do_form_show  = function(element, url) {
     var button = $(element);
     to_click = $(button.find(".to_click"));
@@ -39,7 +30,8 @@ imp.do_form_remove  = function(element) {
     to_edit = $(button.find(".to_edit"));
     if (to_click.css("display") == 'none') {
 	to_click.show()
-	$(to_edit.find("form").parent()).remove()
+	//$(to_edit.find("form").parent()).remove()	
+	$(button.find(".new_issue_form_container")).remove()
 	to_edit.hide()
     } 
 };
