@@ -2972,7 +2972,7 @@ def time_sheet_download(request, user_id, context=None):
 
     return response
 
-def add_issue(request, project_id, template="timepiece/_add_issue_form.html", context=None):
+def add_issue(request, project_id, template="timepiece/project/_add_issue_form.html", context=None):
     context = context or {}
     project = timepiece.Project.objects.filter(pk=project_id).filter_by_logged_in_user(request.user)[0]
     
@@ -3528,7 +3528,7 @@ def get_issue_row(request,issue_id):
     refresh_issue =timepiece.Issue.objects.get(id=issue.id)
     refresh_issue.representation = issue.representation
     context['issue'] = refresh_issue
-    r = render_to_response('timepiece/_issue_entry_row.html',
+    r = render_to_response('timepiece/project/_issue_entry_row.html',
                            context, context_instance=RequestContext(request))
     return r
 
