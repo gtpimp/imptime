@@ -19,9 +19,14 @@ imp.do_form_show  = function(element, url) {
                     to_edit.append($(data))
                 }
                });
-
+        
         to_edit.show()
         to_edit.css("z-index",200);
+        to_edit.keyup(function(e) {
+            if(e.which === 27) {    
+                imp.do_form_remove();
+            }
+        });
     } 
 };
 
