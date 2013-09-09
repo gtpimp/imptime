@@ -245,7 +245,7 @@ imp.clickable_subject_box = function(element, url, item_id, size) {
                     url: url,
                     data : { item_id: item_id, new_value: new_value },
                     dataType:"json"});
-	    imp.update_header_rows();
+	    
             imp.showing_clickable_popup = false;
 	}
 	
@@ -256,7 +256,7 @@ imp.clickable_subject_box = function(element, url, item_id, size) {
 	    var div_sibling = parent.find('.edit_issue_subject');		    
 	    $(this).remove();
 	    div_sibling.show();          
-	    imp.update_header_rows();
+
 	    imp.showing_clickable_popup = false;
 	}
     });
