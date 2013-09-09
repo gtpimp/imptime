@@ -7,8 +7,8 @@ imp.show_issue_detail = function(url, issue_id) {
 
 imp.do_form_show  = function(element, url) {
     var button = $(element);
-    to_click = $(button.find(".to_click"));
-    to_edit = $(button.find(".to_edit"));
+    var to_click = $(button.find(".to_click"));
+    var to_edit = $(button.find(".to_edit"));
     if (to_click.css("display") != 'none') {
         to_click.hide()
         
@@ -26,8 +26,8 @@ imp.do_form_show  = function(element, url) {
 
 imp.do_form_remove  = function(element) {
     var button = $(element);
-    to_click = $(button.find(".to_click"));
-    to_edit = $(button.find(".to_edit"));
+    var to_click = $(button.find(".to_click"));
+    var to_edit = $(button.find(".to_edit"));
     if (to_click.css("display") == 'none') {
         to_click.show()
         $(button.find(".new_issue_form_container")).remove()
@@ -57,7 +57,7 @@ imp.status_toggle_form_show = function(element,item_id,options,url) {
     var selectme = $(element);
     var id = null;
     var arr = new Array();
-    lookup = {}
+    var lookup = {}
     for(i =0; i< options.length; i++) {
         arr.push(options[i])
         lookup[options[i][0]] = options[i][1]
@@ -103,11 +103,27 @@ imp.status_toggle_form_show = function(element,item_id,options,url) {
 };
 
 imp.ajax_call = function(element, url, item_id) {
-    var button = $(element)
+    var button = $(element);
     $.ajax({type:"POST",
             url: url,
             data : { item_id: item_id },
             dataType:"json"});
+    
+};
+
+imp.delete_issue_from_issues_list = function(element, url, item_id) {
+    var button = $(element);
+    var closest_row = button.closest(".issue_instance_row");
+    var loading_el = $(".loading_issue_"+item_id);
+    loading_el.show();
+    $.ajax({type:"POST",
+            url: url,
+            data : { item_id: item_id },
+            dataType:"json",
+	    success: function() {
+		loading_el.hide();
+		closest_row.remove();
+	    }});
     
 };
 
@@ -145,9 +161,9 @@ imp.clickable_text_box = function(element, url, item_id) {
 
 imp.clickable_description_box = function(element, url, item_id) {
     var textbox = $(element),
-    commentField = $('<form/>');
+    var commentField = $('<form/>');
 
-    commentField = commentField.attr('action',url).attr('method','post');
+    var commentField = commentField.attr('action',url).attr('method','post');
     value = textbox.html()
     value = value.replace(/<br>/g,"\n")
     textField =$("<textarea/>").attr('name','new_value').attr('value',value);
@@ -191,8 +207,8 @@ imp.clickable_description_box = function(element, url, item_id) {
 
 imp.clickable_subject_box = function(element, url, item_id,size) {
     var textbox = $(element),
-    commentTextArea = $("<input/>")
-    value = $.trim(textbox.html()); 
+    var commentTextArea = $("<input/>")
+    var value = $.trim(textbox.html()); 
     size = size || value.length;
     commentTextArea = commentTextArea.attr("type","text").attr("value",value).attr("size",size).css("width","auto");
     textbox.parent().append(commentTextArea);
@@ -231,7 +247,7 @@ imp.clickable_subject_box = function(element, url, item_id,size) {
 
 imp.clickable_point_box = function(element, url, item_id) {
     var textbox = $(element),
-    commentTextArea = $("<input/>")
+    var commentTextArea = $("<input/>")
     commentTextArea = commentTextArea.attr("type","text").attr("value",textbox.html());
     textbox.parent().append(commentTextArea);
     textbox.hide();
@@ -262,11 +278,11 @@ imp.clickable_point_box = function(element, url, item_id) {
 };
 
 imp.update_header_rows = function() {
-    table = $("table");
-    content = $(".scrollContent");
-    content_row = $(".scrollContent tr:last").find("td");
+    var table = $("table");
+    var content = $(".scrollContent");
+    var content_row = $(".scrollContent tr:last").find("td");
 
-    specs = [];
+    var specs = [];
     content_row.each(function(index, element) {        
         column = $(element);
         specs.push({'width':column.css("width"),
@@ -278,7 +294,7 @@ imp.update_header_rows = function() {
 
     });
 
-    header_rows =  $(".fixedHeader tr");
+    var header_rows =  $(".fixedHeader tr");
     header_rows.each(function(index, header_row){
         header_cells = $(header_row).find("th");
         header_cells.each(function(index, cell) {
@@ -298,11 +314,11 @@ imp.update_header_rows = function() {
 };
 
 imp.update_body_rows = function() {
-    table = $("table");
-    content = $(".fixedHeader");
-    content_row = $(".fixedHeader tr:first").find("th");
+    var table = $("table");
+    var content = $(".fixedHeader");
+    var content_row = $(".fixedHeader tr:first").find("th");
 
-    specs = [];
+    var specs = [];
     content_row.each(function(index, element) {        
         column = $(element);
         specs.push({'width':column.css("width"),
@@ -314,7 +330,7 @@ imp.update_body_rows = function() {
 
     });
 
-    body_rows =  $(".scrollContent tr");
+    var body_rows =  $(".scrollContent tr");
     body_rows.each(function(index, header_row){
         header_cells = $(header_row).find("td");
         header_cells.each(function(index, cell) {
@@ -334,52 +350,52 @@ imp.update_body_rows = function() {
 }
 
 imp.refresh_closest_issue_parent_row = function(element) {
-    what = $(element);
-    closest_row = what.closest(".issue_instance_row");
-    url = closest_row.attr("refresh_url");
-    $.ajax({type:"GET",
-            url: url,
-            success: function(data) {
-                $(closest_row).html($(data).html())
-            }
-           });
+    var what = $(element);
+    var closest_row = what.closest(".issue_instance_row");
+    var url = closest_row.attr("refresh_url");
+     $.ajax({type:"GET",
+             url: url,
+             success: function(data) {
+		 $(closest_row).html($(data).html())
+           }
+         });
 };
 
 imp.on_sortable_changed_for_url = function(sortable_url) {
     var sortable_update_url = sortable_url;
-    function ret_func(event, ui) {         
+    function ret_func(event, ui) {	
 
-        var url = sortable_update_url;
-        rows = ui.item.parent().find("tr")
+	var url = sortable_update_url;
+	var rows = ui.item.parent().find("tr");
 
-        project_id = $(rows[0]).attr("project_id")
-        ordered_ids = []
-        rows.each(function(index, row) {
-            elem = $(row);
-            var issue_id = elem.attr("id");
-            ordered_ids.push(issue_id);
-            $(".loading_issue_"+issue_id).show();
-        });         
+	var project_id = $(rows[0]).attr("project_id");
+	var ordered_ids = [];
+	rows.each(function(index, row) {
+	    var elem = $(row);
+	    var issue_id = elem.attr("id");
+	    ordered_ids.push(issue_id);
+	    $(".loading_issue_"+issue_id).show();
+	});	
 
-        var loading_el = null;
-        if (ordered_ids.length>0) {
-            loading_el = $(".loading_issue_"+ordered_ids[0]);
-            loading_el.show();
-        }
+	var loading_el = null;
+	if (ordered_ids.length>0) {
+	    loading_el = $(".loading_issue_"+ordered_ids[0]);
+	    loading_el.show();
+	}
 
-        joined_ordered_ids = ordered_ids.join(',')
-        $.ajax({type:"POST",
-                url: url,
-                data: { ordered_ids:joined_ordered_ids , project_id:project_id },
-                dataType:"json",
-                success: function() { 
+	var joined_ordered_ids = ordered_ids.join(',');
+	$.ajax({type:"POST",
+		url: url,
+		data: { ordered_ids:joined_ordered_ids , project_id:project_id },
+		dataType:"json",
+	        success: function() { 
 
-                    for( issue_id in ordered_ids ) {
-                        $(".loading_issue_"+issue_id).hide();
-                    };
-                }
-               });
-        imp.update_body_rows();
+		    for( issue_id in ordered_ids ) {
+			$(".loading_issue_"+issue_id).hide();
+		    };
+		}
+	       });
+	imp.update_body_rows();
     };
     return ret_func;
 }

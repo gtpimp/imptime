@@ -3,7 +3,7 @@ import fnmatch
 from implicitdesign import settings
 from orgnode import makelist
 from django.contrib.auth.models import User
-from timepiece.models import Business, Project, Activity, Entry, Location, Attribute
+from timepiece.models import Business, Project, Activity, Entry, Location, Attribute, Issue
 import logging
 logger = logging.getLogger(__name__)
 
@@ -108,12 +108,23 @@ class Extractor(object):
 
         for clock in orgnode.getClocks():
             
-            Entry.objects.create(user=timesheet_user, 
-                                 start_time=clock['from'], end_time=clock['to'],
-                                 activity=activity,
-                                 location=location,
-                                 project=project,
-                                 status='approved',
-                                 comments=orgnode.Heading(),
-                                 extended_comments=orgnode.CleanBody())
+            entry = Entry.objects.create(user=timesheet_user, 
+                                         start_time=clock['from'], end_time=clock['to'],
+                                         activity=activity,
+                                         location=location,
+                                         project=project,
+                                         status='approved',
+                                         comments=orgnode.Heading(),
+                                         extended_comments=orgnode.CleanBody())
+
+            issue_id = entry.try_get_issue_id()
+            if issue_id is not None:
+                try:
+                    issue = Issue.objects.get(pk=issue_id)
+                    entry.issue = issue
+                    entry.save()
+                except Issue.DoesNotExist:
+                    pass
+                    
+
             self.status['num_entries_created'] += 1

@@ -9400,8 +9400,12 @@ table.project_list  {
     clear:left;
 }
 
-.dark_priority{
-    background-color:#adadad;
+.issue_instance_row.status_dev_done .issue_subject {
+    color: #559955;
+}
+
+.issue_instance_row.status_tested .issue_subject {
+    color: #55bb55;
 }
 
 .light_priority{
@@ -9541,6 +9545,11 @@ table.project_list  {
     font-size:10px;
 }
 
+.issues .issues_list th {
+    border-left: 1px solid #dfdfdf;
+
+}
+
 .issues .issue_pane {
     /* float:right; */
     /* width: 35%; */
@@ -9550,8 +9559,17 @@ table.project_list  {
     /* font-size:12px; */
 }
 
-.issues .issues_list td.number {
-    /* text-align:right; */
+.issues .issues_list .issue_delete {
+    cursor: pointer;
+}
+
+.issues .issues_list .issue_number {
+    background: -moz-linear-gradient(center top , #EEEEEE, #CCCCCC) repeat scroll 0 0 transparent;
+    border: 1px solid #AAAAAA;
+    border-radius: 4px 4px 4px 4px;
+    color: #cc0000;
+    padding-left: 2px;
+    padding-right: 2px;
 }
 
 .issues .issues_list table td {
@@ -9560,7 +9578,12 @@ table.project_list  {
     padding-top:5px;
     padding-bottom:5px;
     border-left: 1px solid #dfdfdf;
-    border-bottom: 1px solid #dfdfdf;
+    border-bottom: 1px solid #AAAAAA;
+    background: -moz-linear-gradient(center top , #EEEEEE, #E0E3FA) repeat scroll 0 0 #E0E3FA;
+    background: -webkit-gradient(linear, 0,0,0 100%, from(#EEEEEE), to(#E0E3FA));
+    background: -webkit-linear-gradient(top, #EEEEEE, #E0E3FA);
+    background: -o-linear-gradient(top, #EEEEEE, #E0E3FA);
+    background: linear-gradient(to bottom, #EEEEEE, #E0E3FA);
 }
 
 .issues .issues_list table .dev_done td {
@@ -9589,6 +9612,8 @@ table.project_list  {
     font-size:10px;
     width:30%;
 }
+
+
 
 .issues .issue_detail .issue_subject {
     font-size:12px;
