@@ -1,6 +1,7 @@
 import random
 import calendar
 import csv
+import timings
 from xhtml2pdf import pisa  
 import operator
 from dateutil.rrule import DAILY, WDAYMASK, rrule, MO,TU,WE,TH,FR
@@ -3019,9 +3020,15 @@ def _augment_issue_data(issue,current_user):
     if can_view_other_user_points:
         users = timepiece.User.objects.filter(id__in = business_users)
     else:
-        users = timepiece.User.objects.filter(id__in = [current_user.id])
-
+        if timepiece.BusinessPermissions.can_estimate_own_points(issue.project.business, current_user):
+            users = timepiece.User.objects.filter(id__in = [current_user.id])
+        else:
+            users = None
+            
     for user in users:
+
+        end = timings.start('user loop')
+        
         per_user_issue_data = {}
         user_rate = issue.project.get_user_rate(user)
         user_rate = float(user_rate.amount) if user_rate else 0.0
@@ -3052,24 +3059,20 @@ def _augment_issue_data(issue,current_user):
             issue.representation.per_user = []
         issue.representation.per_user.append((user,per_user_issue_data))
 
-    _set_colour = lambda option: [option,'light_priority'] if option in  ['devdone','tested','task done'] else [option,'dark_priority']
-    options = map(_set_colour, [i[0] for i in timepiece.Issue.ISSUE_STATUS_CHOICES])
-    issue.representation.options = "[%s]"%",".join(["%s"%str(i) for i in options])
-    issue.representation.status_appearance = _set_colour(issue.status)[-1]
-
+        end()
     
 @csrf_exempt
 def project_issues(request, pk, template="timepiece/project/issues.html", context=None):
     context = context or {}
     project = timepiece.Project.objects.filter(pk=pk).filter_by_logged_in_user(request.user)[0]
     business = project.business
-    
+
     queryset = project.get_ordered_issues()
     issues_forms = timepiece_forms.issue_status_formset(request.POST or None, 
                                                         queryset=queryset)    
     for form in issues_forms.forms:
         _augment_issue_data(form.instance,request.user)
-
+    
     new_issue_form = timepiece_forms.IssueForm()
 
     all_entries = project.entries.all().order_by("start_time")
@@ -3095,6 +3098,8 @@ def project_issues(request, pk, template="timepiece/project/issues.html", contex
     context['total_hours'] = hours
     context['total_ctc'] = ctc
     context['total_billable'] = billable
+
+    timings.results()
     return render_to_response(template, context, context_instance=RequestContext(request))
 
 @csrf_exempt

@@ -896,7 +896,7 @@ class Entry(models.Model):
     objects = EntryManager()
     worked = EntryWorkedManager()
     no_join = EntryManagerBase()
-    issue = models.ForeignKey('Issue', blank=True, null=True)
+    issue = models.ForeignKey('Issue', blank=True, null=True, related_name='entries')
 
     @property
     def atrate(self):
@@ -1814,6 +1814,9 @@ class Issue(models.Model):
         self._entries = None
         self.representation = IssueRepresentation()
 
+    def status_as_class(self):
+        return 'status_%s' % self.status.replace(" ","_").lower()
+
     def get_points(self):
         business_users = self.project.business.users
         for user in business_users:
@@ -1839,11 +1842,11 @@ class Issue(models.Model):
         if isinstance(user,str):
             user = User.objects.get(username=user)        
 
-        business_users = [u.id for u in self.project.business.users]
         try:
             return IssuePoints.objects.get(user=user, issue=self)
         except IssuePoints.DoesNotExist:
-            if user.id in business_users:
+            business_users = [u.id for u in self.project.business.users]
+            if user in business_users:
                 return IssuePoints.objects.create(user=user,issue=self)
             return None
         except IssuePoints.MultipleObjectsReturned:
@@ -1876,14 +1879,15 @@ class Issue(models.Model):
 
     @property
     def related_entries(self):
-        if self._entries is not None:
-            return self._entries
-        entries = []
-        for entry in self.project.entries.all():
-            if entry.try_get_issue_id()==self.number:
-                entries.append(entry)
-        self._entries = entries
-        return entries
+        return self.entries.all()
+        # if self._entries is not None:
+        #     return self._entries
+        # entries = []
+        # for entry in self.project.entries.all():
+        #     if entry.try_get_issue_id()==self.number:
+        #         entries.append(entry)
+        # self._entries = entries
+        # return entries
 
     @property
     def hours(self):
@@ -1915,26 +1919,22 @@ class Issue(models.Model):
 
     @classmethod
     def get_unassigned_timesheet_entries(self, project):
-        entries = []
-        for entry in project.entries.all().order_by("start_time"):
-            if entry.try_get_issue_id() is None:
-                entries.append(entry)
-        return entries
+        return project.entries.filter(issue__isnull=True).order_by("start_time")
 
     @classmethod
     def get_unassigned_timesheet_entries_ctc(self, project):
         cost = 0
-        for entry in project.entries.all().order_by("start_time"):
-            if entry.try_get_issue_id() is None:
-                cost += entry.atrate
+        entries = project.entries.filter(issue__isnull=True)
+        for entry in entries:
+            cost += entry.atrate
         return cost
 
     @classmethod
     def get_unassigned_timesheet_entries_billable(self, project):
         cost = 0
-        for entry in project.entries.all().order_by("start_time"):
-            if entry.try_get_issue_id() is None:
-                cost += entry.atbillablerate
+        entries = project.entries.filter(issue__isnull=True)
+        for entry in entries:
+            cost += entry.atbillablerate
         return cost
 
 class RedmineToTimepieceBusinessMapping(models.Model):

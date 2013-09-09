@@ -61,11 +61,27 @@ imp.status_toggle_form_show = function(element,item_id,options,url) {
 };
 
 imp.ajax_call = function(element, url, item_id) {
-    var button = $(element)
+    var button = $(element);
     $.ajax({type:"POST",
             url: url,
             data : { item_id: item_id },
             dataType:"json"});
+    
+};
+
+imp.delete_issue_from_issues_list = function(element, url, item_id) {
+    var button = $(element);
+    var closest_row = button.closest(".issue_instance_row");
+    var loading_el = $(".loading_issue_"+item_id);
+    loading_el.show();
+    $.ajax({type:"POST",
+            url: url,
+            data : { item_id: item_id },
+            dataType:"json",
+	    success: function() {
+		loading_el.hide();
+		closest_row.remove();
+	    }});
     
 };
 
@@ -292,9 +308,9 @@ imp.update_body_rows = function() {
 }
 
 imp.refresh_closest_issue_parent_row = function(element) {
-    what = $(element);
-    closest_row = what.closest(".issue_instance_row");
-    url = closest_row.attr("refresh_url");
+    var what = $(element);
+    var closest_row = what.closest(".issue_instance_row");
+    var url = closest_row.attr("refresh_url");
      $.ajax({type:"GET",
              url: url,
              success: function(data) {
@@ -308,12 +324,12 @@ imp.on_sortable_changed_for_url = function(sortable_url) {
     function ret_func(event, ui) {	
 
 	var url = sortable_update_url;
-	rows = ui.item.parent().find("tr")
+	var rows = ui.item.parent().find("tr");
 
-	project_id = $(rows[0]).attr("project_id")
-	ordered_ids = []
+	var project_id = $(rows[0]).attr("project_id");
+	var ordered_ids = [];
 	rows.each(function(index, row) {
-	    elem = $(row);
+	    var elem = $(row);
 	    var issue_id = elem.attr("id");
 	    ordered_ids.push(issue_id);
 	    $(".loading_issue_"+issue_id).show();
@@ -325,7 +341,7 @@ imp.on_sortable_changed_for_url = function(sortable_url) {
 	    loading_el.show();
 	}
 
-	joined_ordered_ids = ordered_ids.join(',')
+	var joined_ordered_ids = ordered_ids.join(',');
 	$.ajax({type:"POST",
 		url: url,
 		data: { ordered_ids:joined_ordered_ids , project_id:project_id },
