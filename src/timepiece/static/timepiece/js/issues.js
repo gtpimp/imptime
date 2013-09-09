@@ -30,7 +30,6 @@ imp.do_form_remove  = function(element) {
     to_edit = $(button.find(".to_edit"));
     if (to_click.css("display") == 'none') {
 	to_click.show()
-	//$(to_edit.find("form").parent()).remove()	
 	$(button.find(".new_issue_form_container")).remove()
 	to_edit.hide()
     } 

@@ -1,0 +1,14 @@
+{% load timepiece_tags %}
+{% load humanize %}
+{% load url from future %}
+{% load bootstrap_toolkit %}
+
+<div class="new_issue_form_container">
+Issue: {{ next_issue_number }}
+
+<form method="POST" action="" onsubmit="return imp.on_form_submit(this,'{% url 'add_issue' project.id %}');" >
+  {% csrf_token %}    
+  {{ new_issue_form|as_bootstrap:"inline" }}
+  <button class="btn" value="Add New Issue" > Add New Issue </button>
+</form>
+</div>
