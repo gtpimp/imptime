@@ -106,6 +106,7 @@ imp.status_toggle_form_show = function(element,item_id,options,url) {
                 dataType:"json"});
 
         selectme.html('<div class="selectme '+lookup[value]+'">'+value+'</div>')
+	imp.refresh_closest_issue_parent_row(selectme);
     }
 
 };
@@ -303,7 +304,8 @@ imp.refresh_closest_issue_parent_row = function(element) {
      $.ajax({type:"GET",
              url: url,
              success: function(data) {
-		 $(closest_row).html($(data).html())
+		 //$(closest_row).html($(data).html())
+                 $(closest_row)[0].outerHTML = $(data)[0].outerHTML;
            }
          });
 };
