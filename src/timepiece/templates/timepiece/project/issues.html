@@ -30,33 +30,19 @@
             <li><a href='{% url 'project_issues' project.id %}'>Issues</a></li>
 
             <li>
+	      {% comment %}
 
 	      {% has_permission has_add_issue project.business %}
-	      <div class="btn" onclick="imp.load_add_form(this)">
+	      <div class="btn" onclick="return imp.load_add_form(this)">
 		<div class="to_click" style="display:block" url="{% url 'add_issue' project.id %}">
 		  Add Issue
 		</div>
 	      </div>
 	      {% end_permission %}
+	      {% endcomment %}
 
 	      <!-- !!!!!!!!   -->
-	      {% comment %}
-              {% has_permission has_add_issue project.business %}
-              <div class="btn" onclick="imp.toggle_form_show(this)">
-                <div class="to_click" style="display:block">
-                  Add Issue
-                </div>
-                <div class="new_issue_form to_edit" style="display:none">
-	      	  Issue: {{ next_issue_number }}
-                  <form method="POST" action=''>
-                    {% csrf_token %}
-                    {{ new_issue_form|as_bootstrap:"inline" }}
-                    <input class="btn" value="Add" onclick="imp.add_issue(this, {% url 'add_issue' project.id %});"/>
-                  </form>
-                </div>
-              </div>
-              {% end_permission %}
-	      {% endcomment %}
+	      {% include "timepiece/_add_issue_form.html" %}
 	      <!-- !!!!!!!!   -->
             </li>
         </ul>

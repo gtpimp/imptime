@@ -2975,14 +2975,14 @@ def time_sheet_download(request, user_id, context=None):
 def add_issue(request, project_id, template="timepiece/_add_issue_form.html", context=None):
     context = context or {}
     project = timepiece.Project.objects.filter(pk=project_id).filter_by_logged_in_user(request.user)[0]
-
+    
     current_business = project.business
-
+    
     context['next_issue_number'] = next_issue_number = timepiece.Issue.get_next_issue_number()
     context['project'] = project
-
+    context['current_user'] = request.user
     current_user = request.user
-    
+
     can_create_issue = timepiece.BusinessPermissions.has_add_issue(current_business, current_user)    
     if can_create_issue:
         new_issue_form = timepiece_forms.IssueForm(request.POST or None)
@@ -3067,7 +3067,7 @@ def project_issues(request, pk, template="timepiece/project/issues.html", contex
     context = context or {}
     project = timepiece.Project.objects.filter(pk=pk).filter_by_logged_in_user(request.user)[0]
     business = project.business
-    
+
     queryset = project.get_ordered_issues()
     issues_forms = timepiece_forms.issue_status_formset(request.POST or None, 
                                                         queryset=queryset)    

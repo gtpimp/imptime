@@ -16,19 +16,35 @@ imp.toggle_form_show  = function(element) {
 
 imp.load_add_form = function(element) {
     what = $(element);
-    to_click = what.find(".to_click");
-    url = to_click.attr("url");
-    $.ajax({type:"GET",
-             url: url,
-             success: function(data) {
-		 $(element).html($(data).html())
-           }
-         });
+    if (what.find("form").length <= 0) {
+	to_click = what.find(".to_click");
+	url = to_click.attr("url");
+	$.ajax({type:"GET",
+		url: url,
+		success: function(data) {
+		    $(element).html($(data).html())
+		}
+               });
+    };
+    return false;
 };
 
 imp.add_issue = function(element, url) {
     var button = $(element);
     form = button.closest("form");
+    $.ajax({type:"POST",
+	    url: url,
+	    data: form.serialize() });
+    return false;
+};
+
+imp.on_form_submit = function(element, url) {
+    var button = $(element);
+    form = button.closest("form");
+    $.ajax({type:"POST",
+	    url: url,
+	    data: form.serialize() });
+    return false;
 };
  
 imp.status_toggle_form_show = function(element,item_id,options,url) {
