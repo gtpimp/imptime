@@ -741,11 +741,15 @@ class IssueForm(forms.ModelForm):
     class Meta:
         model = timepiece.Issue
         fields = ( 
+            'subject',
             'description', 
-            # 'number',
             'status',
             'story_points',
             )
+        
+    def __init__ (self, *args, **kwargs):
+        super(IssueForm,self).__init__(*args, **kwargs)
+        self.fields['subject'].widget = forms.TextInput()
 
 class ProjectRelationshipForm(forms.ModelForm):
     class Meta:

@@ -1799,9 +1799,6 @@ class Issue(models.Model):
            ( 'dev unclear', 'dev unclear'),
         )
     
-    # class Meta:
-    #     unique_together = (('project', 'order'),)
-
     status = models.CharField(max_length=255, choices = ISSUE_STATUS_CHOICES)
     number = models.IntegerField(null=True,blank=True)
     project = models.ForeignKey(Project, related_name='issues')
