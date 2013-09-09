@@ -2975,7 +2975,7 @@ def time_sheet_download(request, user_id, context=None):
 def add_issue(request, project_id, template="timepiece/project/_add_issue_form.html", context=None):
     context = context or {}
     project = timepiece.Project.objects.filter(pk=project_id).filter_by_logged_in_user(request.user)[0]
-    
+
     current_business = project.business
     
     context['next_issue_number'] = next_issue_number = timepiece.Issue.get_next_issue_number()
@@ -2991,8 +2991,9 @@ def add_issue(request, project_id, template="timepiece/project/_add_issue_form.h
             issue.number = next_issue_number
             issue.project = project            
             issue.save()
+            return get_issue_row(request, issue.id)
+
     context['new_issue_form'] = new_issue_form;
-            #return HttpResponse("") 
     return render_to_response(template, context, context_instance=RequestContext(request))
 
 @csrf_exempt
@@ -3496,9 +3497,6 @@ def get_issue_row(request,issue_id):
     project = queryset[0].project
     business = project.business
 
-    
-    # issues_forms = timepiece_forms.issue_status_formset(request.POST or None, 
-    #                                                    queryset=queryset)    
     issue = queryset[0].set_order()
     _augment_issue_data(issue,request.user)
 

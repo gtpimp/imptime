@@ -40,9 +40,16 @@ imp.on_form_submit = function(element, url) {
     var mform = $(element);
     $.ajax({type:"POST",
             url: url,
-            data: mform.serialize() });
+            data: mform.serialize(),
+            success:function(data) {
+                var table_body = $(document).find(".scrollContent");
+                if(table_body.length > 0) {
+                    table_body.append(data);
+                }
+            },
+           });
     var button = mform.parent().parent().parent()
-    imp.do_form_remove(button);
+    imp.do_form_remove(button);    
     return false;
 };
 
