@@ -743,7 +743,7 @@ class IssueForm(forms.ModelForm):
         fields = ( 
             'subject',
             'story_points',
-            'status',
+            # 'status',
             'description', 
             )
         

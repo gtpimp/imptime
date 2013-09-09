@@ -2991,6 +2991,7 @@ def add_issue(request, project_id, template="timepiece/project/_add_issue_form.h
             issue = new_issue_form.save(commit=False)
             issue.number = next_issue_number
             issue.project = project            
+            issue.status = 'new'
             issue.save()
             return get_issue_row(request, issue.id)
 

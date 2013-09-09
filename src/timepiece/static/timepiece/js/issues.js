@@ -7,7 +7,7 @@ imp.show_issue_detail = function(url, issue_id) {
 
 imp.do_form_show  = function(element, url) {
     var button = $(element);
-    var parent = button.parent();
+    var parent = button.parent().parent();
     var to_click = $(parent.find(".to_click"));
     var to_edit = $(parent.find(".to_edit"));
     if (to_click.css("display") != 'none') {
