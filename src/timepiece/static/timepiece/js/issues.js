@@ -142,14 +142,14 @@ imp.clickable_description_box = function(element, url, item_id) {
     commentField.append(textField);
     
     submitButton.click(function(e) {  
-    	form_parent = $(this).parent().parent();
-    	div_parent = form_parent.find(".static_div");
-    	text_sibling = form_parent.find('textarea');
-    	hidden_sibling = form_parent.find('input:hidden');
+    	var form_parent = $(this).parent().parent();
+    	var div_parent = form_parent.find(".static_div");
+    	var text_sibling = form_parent.find('textarea');
+    	var hidden_sibling = form_parent.find('input:hidden');
     	item_id = hidden_sibling.val();
-    	new_value = $(text_sibling).val();
+    	varnew_value = $(text_sibling).val();
 	$(this).parent().remove();
-	display_value = new_value.replace(/\n/g,"<br>")
+	var display_value = new_value.replace(/\n/g,"<br>");
 	$(div_parent[0]).html(display_value);
     	div_parent.show();
         $.ajax({type:"POST",
@@ -158,25 +158,35 @@ imp.clickable_description_box = function(element, url, item_id) {
                 dataType:"json"});
     });
     commentField.append(submitButton);
-    textbox.parent().append(commentField)    
+    textbox.parent().append(commentField);
 };
 
 
+imp.clickable_time_estimate = function(element, url, item_id, size) {
+    element = $(element).find(".edit_issue_subject");
+    return imp.clickable_subject_box(element, url, item_id, size);
+};
 
-imp.clickable_subject_box = function(element, url, item_id,size) {
+imp.clickable_subject_box = function(element, url, item_id, size) {
+
+    if ( imp.showing_clickable_popup ) {
+	return;
+    }
+    imp.showing_clickable_popup = true;
+
     var textbox = $(element),
-    commentTextArea = $("<input/>")
-    value = $.trim(textbox.html()); 
+        commentTextArea = $("<input/>");
+    var value = $.trim(textbox.html()); 
     size = size || value.length;
-    commentTextArea = commentTextArea.attr("type","text").attr("value",value).attr("size",size).css("width","auto");
+    commentTextArea = commentTextArea.attr("type","text").attr("value",value).attr("size",size).css("width","auto").css("position","absolute").css("overflow","visible");
     textbox.parent().append(commentTextArea);
     textbox.hide();
     imp.update_header_rows();
     commentTextArea = commentTextArea.keypress(function(e) {
 	
-	parent = $(this).parent();
-	div_sibling = parent.find('.edit_issue_subject');		    
-	new_value = $(this).val();
+	var parent = $(this).parent();
+	var div_sibling = parent.find('.edit_issue_subject');		    
+	var new_value = $(this).val();
 
 	if (e.which === 13) {
 	    imp.refresh_closest_issue_parent_row(div_sibling);
@@ -187,17 +197,19 @@ imp.clickable_subject_box = function(element, url, item_id,size) {
                     url: url,
                     data : { item_id: item_id, new_value: new_value },
                     dataType:"json"});
-	    imp.update_header_rows();                
+	    imp.update_header_rows();
+            imp.showing_clickable_popup = false;
 	}
 	
     });
     commentTextArea = commentTextArea.keyup(function(e) {
 	if(e.which === 27) {
-	    parent = $(this).parent();
-	    div_sibling = parent.find('.edit_issue_subject');		    
+	    var parent = $(this).parent();
+	    var div_sibling = parent.find('.edit_issue_subject');		    
 	    $(this).remove();
 	    div_sibling.show();          
 	    imp.update_header_rows();
+	    imp.showing_clickable_popup = false;
 	}
     });
 };
@@ -205,7 +217,7 @@ imp.clickable_subject_box = function(element, url, item_id,size) {
 
 imp.clickable_point_box = function(element, url, item_id) {
     var textbox = $(element),
-    commentTextArea = $("<input/>")
+        commentTextArea = $("<input/>");
     commentTextArea = commentTextArea.attr("type","text").attr("value",textbox.html());
     textbox.parent().append(commentTextArea);
     textbox.hide();

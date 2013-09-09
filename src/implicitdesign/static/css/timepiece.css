@@ -9381,6 +9381,12 @@ table.project_list  {
     color:#ffffff;
 }
 
+.traffic_bar .traffic_bar_text {
+    position: absolute;
+    float: left;
+    color: #000000;
+}
+
 .traffic_bar .traffic_green {
     background-color:green;
 }

@@ -13,7 +13,6 @@ class Command(BaseCommand):
         entries = models.Entry.objects.filter(issue__isnull=True)
         count = entries.count()
         for entry in entries:
-
             issue_id = entry.try_get_issue_id()
             if issue_id is not None:
                 try:
