@@ -9422,6 +9422,7 @@ table.project_list  {
     float:left;
     font-size:10px;
     min-width:50px;
+    width:100%;
 }
 
 .short_traffic .traffic_bar {

@@ -3026,10 +3026,10 @@ def _augment_issue_data(issue,current_user):
     if can_view_other_user_points:
         users = timepiece.User.objects.filter(id__in = business_users)
     else:
-        if timepiece.BusinessPermissions.can_estimate_own_points(issue.project.business, current_user):
+        if timepiece.BusinessPermissions.has_estimate_own_points(issue.project.business, current_user):
             users = timepiece.User.objects.filter(id__in = [current_user.id])
         else:
-            users = None
+            users = []
             
     for user in users:
 
@@ -3041,6 +3041,7 @@ def _augment_issue_data(issue,current_user):
 
         user_points = issue.get_user_issue_points(user)
         user_points_float = float(user_points.points) if user_points and user_points.points else 0.0
+
         per_user_issue_data["issue_points"] = user_points
 
         estimated_cost = user_points_float * user_rate
@@ -3057,7 +3058,6 @@ def _augment_issue_data(issue,current_user):
         else:
             per_user_issue_data["bar_color"] = "traffic_yellow"
 
-        #per_user_issue_data["completion_width"] /= 2
         per_user_issue_data["has_estimate"] = per_user_issue_data["completion"]>0
 
         if not hasattr(issue.representation ,"per_user"):

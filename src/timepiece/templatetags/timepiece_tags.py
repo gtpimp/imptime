@@ -114,6 +114,29 @@ class CanEstimateOwnPointsNode(template.Node):
         return ""
 register.tag('user_can_estimate_own_points', user_can_estimate_own_points)
     
+def is_same_user(parser, token):
+    nodelist = parser.parse(('end_is_same_user',))
+    parser.delete_first_token()
+    tag_name, user1, user2 = token.contents.split(None)
+    user1 = parser.compile_filter(user1)
+    user2 = parser.compile_filter(user2)
+    return IsSameUser(nodelist, user1, user2 )
+
+class IsSameUser(template.Node):
+    def __init__(self, nodelist, user1, user2):
+        self.nodelist = nodelist
+        self.user1 = user1
+        self.user2 = user2
+        
+    def render(self,context):
+        output = self.nodelist.render(context)
+        resolved_user1 = self.user1.resolve(context,True)
+        resolved_user2 = self.user2.resolve(context,True)
+        if resolved_user1.id == resolved_user2.id:
+            return output        
+        return ""
+register.tag('is_same_user', is_same_user)
+    
 @register.simple_tag(takes_context=True)
 def get_points_current_user(context, issue_id):
     user = context['current_user']
