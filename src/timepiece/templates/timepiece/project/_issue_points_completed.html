@@ -1,0 +1,32 @@
+{% load timepiece_tags %}
+{% load url from future %}
+
+<td >
+  <div onclick="imp.clickable_time_estimate(this, '{% url 'issue_points_update' %}',{{ per_user.issue_points.id }})" >
+    
+    {% has_permission has_view_ctc_billable_rates project.business %}
+    <div style="float:left" class="short_traffic">
+      {% if per_user.has_estimate %}
+        <div class="traffic_bar">			
+          <div class="traffic_bar_text">
+            <span class="edit_issue_subject">{{ per_user.issue_points.points|default_if_none:"-" }}</span> hrs
+            / 
+            {{ per_user.completion|floatformat:"0"}}%
+          </div>
+          <div style="width:{{ per_user.completion_width }}%;" class={{per_user.bar_color}}>  
+            &nbsp;
+          </div>
+        </div>
+      {% endif %}
+      </div>
+    {% end_permission %}
+
+    {% has_not_permission has_view_ctc_billable_rates project.business %}
+      <div class="edit_issue_subject" > 
+        {{ per_user.issue_points.points|default_if_none:"-" }}
+      </div>
+    {% end_permission %}
+
+  </div>		     
+
+</td>

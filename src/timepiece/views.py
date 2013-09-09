@@ -3042,23 +3042,22 @@ def _augment_issue_data(issue,current_user):
         user_points_float = float(user_points.points) if user_points and user_points.points else 0.0
         per_user_issue_data["issue_points"] = user_points
 
-        #completion =  (story_points * user_rate/ actual_billable_cost_of_issue) if actual_billable_cost_of_issue > 0 else 0.0
-        completion =  (user_points_float * user_rate/ actual_billable_cost_of_issue) if actual_billable_cost_of_issue > 0 else 0.0
-        budget_left = (1-completion) * actual_billable_cost_of_issue
-    
-        per_user_issue_data["completion"] = completion * 100
-        per_user_issue_data["display_value"] = "R%.1f"% budget_left
-        if per_user_issue_data["completion"] >= 100:
+        estimated_cost = user_points_float * user_rate
+        completion = ((actual_billable_cost_of_issue / estimated_cost)*100) if estimated_cost>0 else 0.0
+
+        per_user_issue_data["completion"] = completion
+        per_user_issue_data["completion_width"] = completion
+        if per_user_issue_data["completion_width"] >= 100:
+            per_user_issue_data["completion_width"] = 100
             per_user_issue_data["bar_color"]= "traffic_red"
             per_user_issue_data["completion"] = 200 if per_user_issue_data["completion"] > 200 else per_user_issue_data["completion"] 
-            per_user_issue_data["display_value"] = "R%.1f"% budget_left
         elif per_user_issue_data["completion"] < 75:
             per_user_issue_data["bar_color"] = "traffic_green"
         else:
             per_user_issue_data["bar_color"] = "traffic_yellow"
 
-        per_user_issue_data["completion"] /= 2
-        per_user_issue_data["remainder"] = 100 - per_user_issue_data["completion"]
+        #per_user_issue_data["completion_width"] /= 2
+        per_user_issue_data["has_estimate"] = per_user_issue_data["completion"]>0
 
         if not hasattr(issue.representation ,"per_user"):
             issue.representation.per_user = []
