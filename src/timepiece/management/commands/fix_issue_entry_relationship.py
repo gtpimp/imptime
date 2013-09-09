@@ -13,10 +13,11 @@ class Command(BaseCommand):
         entries = models.Entry.objects.filter(issue__isnull=True)
         count = entries.count()
         for entry in entries:
+
             issue_id = entry.try_get_issue_id()
             if issue_id is not None:
                 try:
-                    issue = models.Issue.objects.get(pk=issue_id)
+                    issue = models.Issue.objects.filter(project=entry.project).get(number=issue_id)
                     entry.issue = issue
                     entry.save()
                 except models.Issue.DoesNotExist:

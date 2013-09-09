@@ -70,7 +70,7 @@
 		    {% for user, per_user in first_form.instance.representation.per_user %}
                       {% user_can_estimate_own_points user project.business %}
   	                <th >
-		          {{ user.username }}
+		          {{ user.username }}'s estimate
 		        </th>
                       {% end_can_estimate %}
 		    {% endfor %}
