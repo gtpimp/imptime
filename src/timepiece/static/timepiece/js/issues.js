@@ -99,7 +99,7 @@ imp.status_toggle_form_show = function(element,item_id,options,url) {
 
         selectme.html('<div class="selectme '+lookup[value]+'">'+value+'</div>')
     }
-    imp.update_header_rows();
+    //imp.update_header_rows();
 };
 
 imp.ajax_call = function(element, url, item_id) {
@@ -213,7 +213,7 @@ imp.clickable_subject_box = function(element, url, item_id,size) {
     commentTextArea = commentTextArea.attr("type","text").attr("value",value).attr("size",size).css("width","auto");
     textbox.parent().append(commentTextArea);
     textbox.hide();
-    imp.update_header_rows();
+    //imp.update_header_rows();
     commentTextArea = commentTextArea.keypress(function(e) {
         
         parent = $(this).parent();
@@ -229,7 +229,7 @@ imp.clickable_subject_box = function(element, url, item_id,size) {
                     url: url,
                     data : { item_id: item_id, new_value: new_value },
                     dataType:"json"});
-            imp.update_header_rows();                
+            //imp.update_header_rows();                
         }
         
     });
@@ -239,7 +239,7 @@ imp.clickable_subject_box = function(element, url, item_id,size) {
             div_sibling = parent.find('.edit_issue_subject');                      
             $(this).remove();
             div_sibling.show();          
-            imp.update_header_rows();
+            //imp.update_header_rows();
         }
     });
 };
@@ -277,77 +277,77 @@ imp.clickable_point_box = function(element, url, item_id) {
     });
 };
 
-imp.update_header_rows = function() {
-    var table = $("table");
-    var content = $(".issue_list_body");
-    var content_row = $(".issue_list_body tr:last").find("td");
+// imp.update_header_rows = function() {
+//     var table = $("table");
+//     var content = $(".issue_list_body");
+//     var content_row = $(".issue_list_body tr:last").find("td");
 
-    var specs = [];
-    content_row.each(function(index, element) {        
-        column = $(element);
-        specs.push({'width':column.css("width"),
-                    'padding-top':column.css("padding-top"),
-                    'padding-left':column.css("padding-left"),
-                    'padding-right':column.css("padding-right"),
-                    'padding-bottom':column.css("padding-bottom"),
-                   });
+//     var specs = [];
+//     content_row.each(function(index, element) {        
+//         column = $(element);
+//         specs.push({'width':column.css("width"),
+//                     'padding-top':column.css("padding-top"),
+//                     'padding-left':column.css("padding-left"),
+//                     'padding-right':column.css("padding-right"),
+//                     'padding-bottom':column.css("padding-bottom"),
+//                    });
 
-    });
+//     });
 
-    var header_rows =  $(".fixedHeader tr");
-    header_rows.each(function(index, header_row){
-        header_cells = $(header_row).find("th");
-        header_cells.each(function(index, cell) {
-            elem = $(cell);
-            new_width = specs[elem.index()]['width']
-            new_padding_top = specs[elem.index()]['padding-top']
-            new_padding_left = specs[elem.index()]['padding-left']
-            new_padding_right = specs[elem.index()]['padding-right']
-            new_padding_bottom = specs[elem.index()]['padding-bottom']
-            elem = elem.css("width",new_width);
-            elem = elem.css("padding-top",new_padding_top);
-            elem = elem.css("padding-left",new_padding_left);
-            elem = elem.css("padding-right",new_padding_right);
-            elem = elem.css("padding-bottom",new_padding_bottom);             
-        });
-    });
-};
+//     var header_rows =  $(".fixedHeader tr");
+//     header_rows.each(function(index, header_row){
+//         header_cells = $(header_row).find("th");
+//         header_cells.each(function(index, cell) {
+//             elem = $(cell);
+//             new_width = specs[elem.index()]['width']
+//             new_padding_top = specs[elem.index()]['padding-top']
+//             new_padding_left = specs[elem.index()]['padding-left']
+//             new_padding_right = specs[elem.index()]['padding-right']
+//             new_padding_bottom = specs[elem.index()]['padding-bottom']
+//             elem = elem.css("width",new_width);
+//             elem = elem.css("padding-top",new_padding_top);
+//             elem = elem.css("padding-left",new_padding_left);
+//             elem = elem.css("padding-right",new_padding_right);
+//             elem = elem.css("padding-bottom",new_padding_bottom);             
+//         });
+//     });
+// };
 
-imp.update_body_rows = function() {
-    var table = $("table");
-    var content = $(".fixedHeader");
-    var content_row = $(".fixedHeader tr:first").find("th");
+// imp.update_body_rows = function() {
+//     var table = $("table");
+//     var content = $(".fixedHeader");
+//     var content_row = $(".fixedHeader tr:first").find("th");
 
-    var specs = [];
-    content_row.each(function(index, element) {        
-        column = $(element);
-        specs.push({'width':column.css("width"),
-                    'padding-top':column.css("padding-top"),
-                    'padding-left':column.css("padding-left"),
-                    'padding-right':column.css("padding-right"),
-                    'padding-bottom':column.css("padding-bottom"),
-                   });
+//     var specs = [];
+//     content_row.each(function(index, element) {        
+//         column = $(element);
+//         specs.push({'width':column.css("width"),
+//                     'padding-top':column.css("padding-top"),
+//                     'padding-left':column.css("padding-left"),
+//                     'padding-right':column.css("padding-right"),
+//                     'padding-bottom':column.css("padding-bottom"),
+//                    });
 
-    });
+//     });
 
-    var body_rows =  $(".issue_list_body tr");
-    body_rows.each(function(index, header_row){
-        header_cells = $(header_row).find("td");
-        header_cells.each(function(index, cell) {
-            elem = $(cell);
-            new_width = specs[elem.index()]['width']
-            new_padding_top = specs[elem.index()]['padding-top']
-            new_padding_left = specs[elem.index()]['padding-left']
-            new_padding_right = specs[elem.index()]['padding-right']
-            new_padding_bottom = specs[elem.index()]['padding-bottom']
-            elem = elem.css("width",new_width);
-            elem = elem.css("padding-top",new_padding_top);
-            elem = elem.css("padding-left",new_padding_left);
-            elem = elem.css("padding-right",new_padding_right);
-            elem = elem.css("padding-bottom",new_padding_bottom);             
-        });
-    }); 
-}
+//     var body_rows =  $(".issue_list_body tr");
+//     body_rows.each(function(index, header_row){
+//         header_cells = $(header_row).find("td");
+//         header_cells.each(function(index, cell) {
+//             elem = $(cell);
+//             new_width = specs[elem.index()]['width']
+//             new_padding_top = specs[elem.index()]['padding-top']
+//             new_padding_left = specs[elem.index()]['padding-left']
+//             new_padding_right = specs[elem.index()]['padding-right']
+//             new_padding_bottom = specs[elem.index()]['padding-bottom']
+//             elem = elem.css("width",new_width);
+//             elem = elem.css("padding-top",new_padding_top);
+//             elem = elem.css("padding-left",new_padding_left);
+//             elem = elem.css("padding-right",new_padding_right);
+//             elem = elem.css("padding-bottom",new_padding_bottom);             
+//         });
+//     }); 
+// }
 
 imp.refresh_closest_issue_parent_row = function(element) {
     var what = $(element);
@@ -395,15 +395,15 @@ imp.on_sortable_changed_for_url = function(sortable_url) {
 		    };
 		}
 	       });
-	imp.update_body_rows();
+	//imp.update_body_rows();
     };
     return ret_func;
 }
 
 imp.on_document_ready = function() {
-    imp.update_header_rows();
+    //imp.update_header_rows();
     var url = $(".issue_list_body").attr("update_order_url");
     
-    $(".issue_list_bodyt").sortable({ stop: imp.on_sortable_changed_for_url(url) });
+    $(".issue_list_body").sortable({ stop: imp.on_sortable_changed_for_url(url) });
 }
 $(document).ready(imp.on_document_ready);
