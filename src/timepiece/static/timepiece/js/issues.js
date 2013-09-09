@@ -42,7 +42,7 @@ imp.on_form_submit = function(element, url) {
             url: url,
             data: mform.serialize(),
             success:function(data) {
-                var table_body = $(document).find(".scrollContent");
+                var table_body = $(document).find(".issue_list_body");
                 if(table_body.length > 0) {
                     table_body.append(data);
                 }
@@ -161,7 +161,7 @@ imp.clickable_text_box = function(element, url, item_id) {
 
 imp.clickable_description_box = function(element, url, item_id) {
     var textbox = $(element),
-    var commentField = $('<form/>');
+    commentField = $('<form/>');
 
     var commentField = commentField.attr('action',url).attr('method','post');
     value = textbox.html()
@@ -207,7 +207,7 @@ imp.clickable_description_box = function(element, url, item_id) {
 
 imp.clickable_subject_box = function(element, url, item_id,size) {
     var textbox = $(element),
-    var commentTextArea = $("<input/>")
+    commentTextArea = $("<input/>")
     var value = $.trim(textbox.html()); 
     size = size || value.length;
     commentTextArea = commentTextArea.attr("type","text").attr("value",value).attr("size",size).css("width","auto");
@@ -247,7 +247,7 @@ imp.clickable_subject_box = function(element, url, item_id,size) {
 
 imp.clickable_point_box = function(element, url, item_id) {
     var textbox = $(element),
-    var commentTextArea = $("<input/>")
+    commentTextArea = $("<input/>")
     commentTextArea = commentTextArea.attr("type","text").attr("value",textbox.html());
     textbox.parent().append(commentTextArea);
     textbox.hide();
@@ -279,8 +279,8 @@ imp.clickable_point_box = function(element, url, item_id) {
 
 imp.update_header_rows = function() {
     var table = $("table");
-    var content = $(".scrollContent");
-    var content_row = $(".scrollContent tr:last").find("td");
+    var content = $(".issue_list_body");
+    var content_row = $(".issue_list_body tr:last").find("td");
 
     var specs = [];
     content_row.each(function(index, element) {        
@@ -330,7 +330,7 @@ imp.update_body_rows = function() {
 
     });
 
-    var body_rows =  $(".scrollContent tr");
+    var body_rows =  $(".issue_list_body tr");
     body_rows.each(function(index, header_row){
         header_cells = $(header_row).find("td");
         header_cells.each(function(index, cell) {
@@ -402,8 +402,8 @@ imp.on_sortable_changed_for_url = function(sortable_url) {
 
 imp.on_document_ready = function() {
     imp.update_header_rows();
-    var url = $(".scrollContent").attr("update_order_url");
+    var url = $(".issue_list_body").attr("update_order_url");
     
-    $(".scrollContent").sortable({ stop: imp.on_sortable_changed_for_url(url) });
+    $(".issue_list_bodyt").sortable({ stop: imp.on_sortable_changed_for_url(url) });
 }
 $(document).ready(imp.on_document_ready);
