@@ -5,45 +5,53 @@ imp.show_issue_detail = function(url, issue_id) {
     $(".issue_detail").load(url, function() {$("loading").hide();});
 };
 
-imp.toggle_form_show  = function(element) {
+// imp.do_form_show  = function(element) {
+//     var button = $(element);
+//     to_click = $(button.find(".to_click"));
+//     to_edit = $(button.find(".to_edit"));
+//     to_click.hide()
+//     to_edit.show()
+//     to_edit.css("z-index",200);
+// };
+
+imp.do_form_show  = function(element, url) {
     var button = $(element);
     to_click = $(button.find(".to_click"));
     to_edit = $(button.find(".to_edit"));
-    to_click.hide()
-    to_edit.show()
-    to_edit.css("z-index",200);
-};
-
-imp.load_add_form = function(element) {
-    what = $(element);
-    if (what.find("form").length <= 0) {
-	to_click = what.find(".to_click");
-	url = to_click.attr("url");
+    if (to_click.css("display") != 'none') {
+	to_click.hide()
+	
 	$.ajax({type:"GET",
 		url: url,
 		success: function(data) {
-		    $(element).html($(data).html())
+		    to_edit.append($(data))
 		}
-               });
-    };
-    return false;
+         });
+
+	to_edit.show()
+	to_edit.css("z-index",200);
+    } 
 };
 
-imp.add_issue = function(element, url) {
+imp.do_form_remove  = function(element) {
     var button = $(element);
-    form = button.closest("form");
-    $.ajax({type:"POST",
-	    url: url,
-	    data: form.serialize() });
-    return false;
+    to_click = $(button.find(".to_click"));
+    to_edit = $(button.find(".to_edit"));
+    if (to_click.css("display") == 'none') {
+	to_click.show()
+	$(to_edit.find("form").parent()).remove()
+	to_edit.hide()
+    } 
 };
+
 
 imp.on_form_submit = function(element, url) {
-    var button = $(element);
-    form = button.closest("form");
+    var mform = $(element);
     $.ajax({type:"POST",
 	    url: url,
-	    data: form.serialize() });
+	    data: mform.serialize() });
+    var button = mform.parent().parent().parent()
+    imp.do_form_remove(button);
     return false;
 };
  

@@ -30,20 +30,18 @@
             <li><a href='{% url 'project_issues' project.id %}'>Issues</a></li>
 
             <li>
-	      {% comment %}
-
 	      {% has_permission has_add_issue project.business %}
-	      <div class="btn" onclick="return imp.load_add_form(this)">
-		<div class="to_click" style="display:block" url="{% url 'add_issue' project.id %}">
+
+	      <div class="btn" onclick="imp.do_form_show(this , '{% url 'add_issue' project.id %}' )">
+		<div class="to_click" style="display:block">
 		  Add Issue
+		</div>		  
+		<div class="new_issue_form to_edit" style="display:none;position:absolute;z-index:100">		  
 		</div>
 	      </div>
-	      {% end_permission %}
-	      {% endcomment %}
 
-	      <!-- !!!!!!!!   -->
-	      {% include "timepiece/_add_issue_form.html" %}
-	      <!-- !!!!!!!!   -->
+	      {% end_permission %}
+
             </li>
         </ul>
     </div>
