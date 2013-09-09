@@ -197,7 +197,7 @@ imp.clickable_description_box = function(element, url, item_id) {
     	var text_sibling = form_parent.find('textarea');
     	var hidden_sibling = form_parent.find('input:hidden');
     	item_id = hidden_sibling.val();
-    	varnew_value = $(text_sibling).val();
+    	var new_value = $(text_sibling).val();
 	$(this).parent().remove();
 	var display_value = new_value.replace(/\n/g,"<br>");
 	$(div_parent[0]).html(display_value);

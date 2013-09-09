@@ -3541,7 +3541,14 @@ def get_issue_row(request,issue_id):
 def sortable_update(request):
     context = {}
 
-    ordered_issue_ids = [ int(index) for index in request.POST['ordered_ids'].split(",")]
+    ordered_issue_ids = []
+    for index in request.POST['ordered_ids'].split(","):
+        try:
+            int_index = int(index)
+            ordered_issue_ids.append(int_index)
+        except ValueError:
+            continue
+
     project_id = request.POST['project_id']
     issue_query_set = timepiece.Issue.objects.filter(project__id = project_id).order_by("order")
 
