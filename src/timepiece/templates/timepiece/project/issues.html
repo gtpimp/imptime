@@ -32,8 +32,8 @@
             <li>
 	      {% has_permission has_add_issue project.business %}
 
-	      <div class="btn" onclick="imp.do_form_show(this , '{% url 'add_issue' project.id %}' )">
-		<div class="to_click" style="display:block">
+	      <div class="btn">
+		<div class="to_click" style="display:block"  onclick="imp.do_form_show(this , '{% url 'add_issue' project.id %}' )">
 		  Add Issue
 		</div>		  
 		<div class="new_issue_form to_edit" style="display:none;position:absolute;z-index:100">		  

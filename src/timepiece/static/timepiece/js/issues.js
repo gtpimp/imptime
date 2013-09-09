@@ -7,8 +7,9 @@ imp.show_issue_detail = function(url, issue_id) {
 
 imp.do_form_show  = function(element, url) {
     var button = $(element);
-    var to_click = $(button.find(".to_click"));
-    var to_edit = $(button.find(".to_edit"));
+    var parent = button.parent();
+    var to_click = $(parent.find(".to_click"));
+    var to_edit = $(parent.find(".to_edit"));
     if (to_click.css("display") != 'none') {
         to_click.hide()
         
@@ -24,7 +25,8 @@ imp.do_form_show  = function(element, url) {
     } 
 };
 
-imp.do_form_remove  = function(element) {
+imp.do_form_remove  = function() {
+    var element = $(document)
     var button = $(element);
     var to_click = $(button.find(".to_click"));
     var to_edit = $(button.find(".to_edit"));
@@ -33,6 +35,7 @@ imp.do_form_remove  = function(element) {
         $(button.find(".new_issue_form_container")).remove()
         to_edit.hide()
     } 
+    return false;
 };
 
 
@@ -49,7 +52,7 @@ imp.on_form_submit = function(element, url) {
             },
            });
     var button = mform.parent().parent().parent()
-    imp.do_form_remove(button);    
+    imp.do_form_remove();    
     return false;
 };
 
@@ -99,7 +102,7 @@ imp.status_toggle_form_show = function(element,item_id,options,url) {
 
         selectme.html('<div class="selectme '+lookup[value]+'">'+value+'</div>')
     }
-    //imp.update_header_rows();
+
 };
 
 imp.ajax_call = function(element, url, item_id) {
@@ -223,7 +226,6 @@ imp.clickable_subject_box = function(element, url, item_id, size) {
     commentTextArea = commentTextArea.attr("type","text").attr("value",value).attr("size",size).css("width","auto").css("position","absolute").css("overflow","visible");
     textbox.parent().append(commentTextArea);
     textbox.hide();
-    //imp.update_header_rows();
     commentTextArea = commentTextArea.keypress(function(e) {
 	var parent = $(this).parent();
 	var div_sibling = parent.find('.edit_issue_subject');		    
@@ -288,77 +290,6 @@ imp.clickable_point_box = function(element, url, item_id) {
     });
 };
 
-// imp.update_header_rows = function() {
-//     var table = $("table");
-//     var content = $(".issue_list_body");
-//     var content_row = $(".issue_list_body tr:last").find("td");
-
-//     var specs = [];
-//     content_row.each(function(index, element) {        
-//         column = $(element);
-//         specs.push({'width':column.css("width"),
-//                     'padding-top':column.css("padding-top"),
-//                     'padding-left':column.css("padding-left"),
-//                     'padding-right':column.css("padding-right"),
-//                     'padding-bottom':column.css("padding-bottom"),
-//                    });
-
-//     });
-
-//     var header_rows =  $(".fixedHeader tr");
-//     header_rows.each(function(index, header_row){
-//         header_cells = $(header_row).find("th");
-//         header_cells.each(function(index, cell) {
-//             elem = $(cell);
-//             new_width = specs[elem.index()]['width']
-//             new_padding_top = specs[elem.index()]['padding-top']
-//             new_padding_left = specs[elem.index()]['padding-left']
-//             new_padding_right = specs[elem.index()]['padding-right']
-//             new_padding_bottom = specs[elem.index()]['padding-bottom']
-//             elem = elem.css("width",new_width);
-//             elem = elem.css("padding-top",new_padding_top);
-//             elem = elem.css("padding-left",new_padding_left);
-//             elem = elem.css("padding-right",new_padding_right);
-//             elem = elem.css("padding-bottom",new_padding_bottom);             
-//         });
-//     });
-// };
-
-// imp.update_body_rows = function() {
-//     var table = $("table");
-//     var content = $(".fixedHeader");
-//     var content_row = $(".fixedHeader tr:first").find("th");
-
-//     var specs = [];
-//     content_row.each(function(index, element) {        
-//         column = $(element);
-//         specs.push({'width':column.css("width"),
-//                     'padding-top':column.css("padding-top"),
-//                     'padding-left':column.css("padding-left"),
-//                     'padding-right':column.css("padding-right"),
-//                     'padding-bottom':column.css("padding-bottom"),
-//                    });
-
-//     });
-
-//     var body_rows =  $(".issue_list_body tr");
-//     body_rows.each(function(index, header_row){
-//         header_cells = $(header_row).find("td");
-//         header_cells.each(function(index, cell) {
-//             elem = $(cell);
-//             new_width = specs[elem.index()]['width']
-//             new_padding_top = specs[elem.index()]['padding-top']
-//             new_padding_left = specs[elem.index()]['padding-left']
-//             new_padding_right = specs[elem.index()]['padding-right']
-//             new_padding_bottom = specs[elem.index()]['padding-bottom']
-//             elem = elem.css("width",new_width);
-//             elem = elem.css("padding-top",new_padding_top);
-//             elem = elem.css("padding-left",new_padding_left);
-//             elem = elem.css("padding-right",new_padding_right);
-//             elem = elem.css("padding-bottom",new_padding_bottom);             
-//         });
-//     }); 
-// }
 
 imp.refresh_closest_issue_parent_row = function(element) {
     var what = $(element);
@@ -406,13 +337,11 @@ imp.on_sortable_changed_for_url = function(sortable_url) {
 		    };
 		}
 	       });
-	//imp.update_body_rows();
     };
     return ret_func;
 }
 
 imp.on_document_ready = function() {
-    //imp.update_header_rows();
     var url = $(".issue_list_body").attr("update_order_url");
     
     $(".issue_list_body").sortable({ stop: imp.on_sortable_changed_for_url(url) });
