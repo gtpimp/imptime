@@ -3064,10 +3064,6 @@ def _augment_issue_data(issue,current_user):
             issue.representation.per_user = []
         issue.representation.per_user.append((user,per_user_issue_data))
 
-        #_set_colour = lambda option: [option,'light_priority'] if option in  ['devdone','tested','task done'] else [option,'dark_priority']
-        #options = map(_set_colour, [i[0] for i in timepiece.Issue.ISSUE_STATUS_CHOICES])
-        #issue.representation.options = "[%s]"%",".join(["%s"%str(i) for i in options])
-        #issue.representation.status_appearance = _set_colour(issue.status)[-1]
         options = [i[0] for i in timepiece.Issue.ISSUE_STATUS_CHOICES]
         issue.representation.options = "[%s]"%",".join(["'%s'"%str(i) for i in options])
         end()

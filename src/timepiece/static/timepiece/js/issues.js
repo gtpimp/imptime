@@ -8,8 +8,8 @@ imp.show_issue_detail = function(url, issue_id) {
 imp.do_form_show  = function(element, url) {
     var button = $(element);
     var parent = button.parent().parent();
-    var to_click = $(parent.find(".to_click"));
-    var to_edit = $(parent.find(".to_edit"));
+    var to_click = $(parent.find(".to_expand_form_on_click"));
+    var to_edit = $(parent.find(".to_edit_expanded_form"));
     if (to_click.css("display") != 'none') {
         to_click.hide()
         
@@ -33,8 +33,8 @@ imp.do_form_show  = function(element, url) {
 imp.do_form_remove  = function() {
     var element = $(document)
     var button = $(element);
-    var to_click = $(button.find(".to_click"));
-    var to_edit = $(button.find(".to_edit"));
+    var to_click = $(button.find(".to_expand_form_on_click"));
+    var to_edit = $(button.find(".to_edit_expanded_form"));
     if (to_click.css("display") == 'none') {
         to_click.show()
         $(button.find(".new_issue_form_container")).remove()
