@@ -1,7 +1,45 @@
 var imp = imp || {};
 imp.projects = imp.projects || {}
 
-imp.projects.expand_issues = function(element, expand_url) {
+imp.projects.on_sortable_changed_for_url = function(sortable_url) {
+    var sortable_update_url = sortable_url;
+    function ret_func(event, ui) {        
+
+        var url = sortable_update_url;
+        var rows = ui.item.parent().find("tr");
+
+        var project_id = $(rows[0]).attr("project_id");
+        var ordered_ids = [];
+        rows.each(function(index, row) {
+            var elem = $(row);
+            var issue_id = elem.attr("id");
+            ordered_ids.push(issue_id);
+            $(".loading_issue_"+issue_id).show();
+        });        
+
+        var loading_el = null;
+        if (ordered_ids.length>0) {
+            loading_el = $(".loading_issue_"+ordered_ids[0]);
+            loading_el.show();
+        }
+
+        var joined_ordered_ids = ordered_ids.join(',');
+        $.ajax({type:"POST",
+                url: url,
+                data: { ordered_ids:joined_ordered_ids , project_id:project_id },
+                dataType:"json",
+                success: function() { 
+
+                    for( issue_id in ordered_ids ) {
+                        $(".loading_issue_"+issue_id).hide();
+                    };
+                }
+               });
+    };
+    return ret_func;
+}
+
+imp.projects.expand_issues = function(element, expand_url, sortable_url) {
     var current_row = $(element);
     var parent_table = $(current_row.closest(".project_table"));
     var project_contents = parent_table.find(".project_contents");
@@ -9,10 +47,17 @@ imp.projects.expand_issues = function(element, expand_url) {
     var loading = area_to_insert.find(".loading")
     if (area_to_insert.find(".project_detail").length == 0) {
         loading.show();
-        $.ajax({type:"GET",
-                url: expand_url,
-                success: function(data) { area_to_insert.append($(data)); loading.hide(); }
-               });
+        var response = $.ajax({type:"GET",
+			       url: expand_url,
+			       success: function(data) { area_to_insert.append($(data)); loading.hide(); }
+			      });
+	response.done(function (data) {
+	    var project_detail = area_to_insert.find(".project_detail");
+	    var sortable = $(area_to_insert.find(".issue_list_body"));
+	    sortable.sortable( {stop: imp.projects.on_sortable_changed_for_url(sortable_url) } );
+	});
+
+	
 
     } else {
         area_to_insert.find(".project_detail").remove();
