@@ -10,15 +10,15 @@
 
 <div class="projects">
   {% for project in projects %}    
-  <div class="project_table">    
+  <div class="project_table project_table_appearance">    
     <div class="project_table_row project_coloured_row">
-      <div class="project_table_cell project_expand" onclick="imp.projects.expand_issues(this, '{% url 'get_project_detail' project.id %}')"> <img style="display:block" class="loading" src="{{STATIC_URL}}/images/icons/bullet_arrow_down.png"/> </div> <div  class="project_table_cell"> {{project.name}} </div>       
+      <div class="project_table_cell project_expand" onclick="imp.projects.expand_issues(this, '{% url 'get_project_detail' project.id %}')"> <div style="float:left"> <img style="float:left" class="loading" src="{{STATIC_URL}}/images/icons/bullet_arrow_down.png"/> {{project.name}} </div> </div>       <div  class="project_table_cell"></div> 
     </div>
     <div class="project_table_row project_contents">
-      <div class="project_table_cell"><!-- spacer cell --> </div>
       <div class="project_table_cell information">
         <img style="display:none" class="loading" src="{{STATIC_URL}}/images/icons/loadingAnimation.gif"/>
       </div>
+      <div class="project_table_cell" ><!-- spacer cell --> </div>
     </div>
   </div>
   {% endfor %}
