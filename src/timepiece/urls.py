@@ -420,7 +420,7 @@ urlpatterns = patterns('',
         name='sortable_update'
         ),
     url(
-        r'^time-sheet/project_list/(?P<pk>\d+)/$',
+        r'^time-sheet/project_list/(?P<project_id>\d+)/$',
         views.project_list,
         name='project_list',
     ),

@@ -3158,11 +3158,14 @@ def get_project_detail(request, project_id, template="timepiece/project/_project
 def project_list(request, project_id=None, template="timepiece/project/project_list.html", context=None):
     context = context or {}
     
-    projects = timepiece.Project.objects.all()
+
     expanded_project = None
     if project_id is not None:
         expanded_project = timepiece.Project.objects.filter(pk=project_id).filter_by_logged_in_user(request.user)[0]
-        
+        projects = timepiece.Project.objects.filter(business = expanded_project.business)
+    else:
+        projects = timepiece.Project.objects.all()
+
     context['current_user'] = request.user
     context['expanded_project'] = expanded_project
     context['projects'] = projects
