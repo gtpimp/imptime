@@ -352,7 +352,7 @@ class Project(models.Model):
 
     def get_user_rate(self, user):
 
-        if isinstance(user,str):
+        if isinstance(user, basestring):
             user = User.objects.get(username=user)
         
         try:
@@ -1847,7 +1847,7 @@ class Issue(models.Model):
 
     def get_user_issue_points(self, user):
 
-        if isinstance(user,str):
+        if isinstance(user,basestring):
             user = User.objects.get(username=user)        
 
         try:
