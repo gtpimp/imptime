@@ -3113,6 +3113,10 @@ def project_issues(request, pk, template="timepiece/project/issues.html", contex
 @csrf_exempt
 def get_project_detail(request, project_id, template="timepiece/project/_project_detail.html", context=None):
     context = context or {}
+
+    project = timepiece.Project.objects.filter(pk=project_id).filter_by_logged_in_user(request.user)[0]
+    context['project'] = project 
+
     return render_to_response(template, context, context_instance=RequestContext(request))
 
 @csrf_exempt
