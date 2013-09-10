@@ -9625,8 +9625,7 @@ table.project_list  {
     display:table;
     /* border:1px solid #ff0000; */
     width:50%;
-    padding: 10px;
-    border-radius: 15px;
+    margin: 10px;
 }
 
 .project_table_row {

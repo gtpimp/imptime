@@ -8,16 +8,24 @@
 <img style="display:none" class="loading" src="{{STATIC_URL}}/images/icons/loadingAnimation.gif"/>
 <script src="{{STATIC_URL}}timepiece/js/issues.js"></script>
 
-<!-- partial that will show issue info -->
-<h4> {{ project.name }} expanded </h4>
- <table>
-   <tbody class="issue_list_body" update_order_url="{% url 'sortable_update'  %}">
-     {% for form in issues_forms.forms %}
-     {% with form.instance as issue %}
-     {% include "timepiece/project/_issue_entry_row.html" %}
-     {% endwith %}
-     {% endfor %}
-   </tbody>
- </table>
+{% if issues_forms.forms %}
+  <!-- partial that will show issue info -->
+  <h4> {{ project.name }} expanded </h4>
+  
+   <table>
+     <tbody class="issue_list_body" update_order_url="{% url 'sortable_update'  %}">
+       {% for form in issues_forms.forms %}
+        {% with form.instance as issue %}
+         {% include "timepiece/project/_issue_entry_row.html" %}
+        {% endwith %}
+       {% endfor %}
+     </tbody>
+   </table>
+{% else %}
+
+  No issues
+
+{% endif %}
+
 </div>
 
