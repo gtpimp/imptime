@@ -9,11 +9,22 @@
 <script src="{{STATIC_URL}}timepiece/js/projects.js"></script>
 <img style="display:none" class="loading" src="{{STATIC_URL}}/images/icons/loadingAnimation.gif"/>
 
-<div>
-<ul>
-{% for project in projects %}
-<li>{{ project.name }} </li>
-{% endfor %}
-{% endblock %}
-</ul>
+<div class="projects">
+  <div class="projects_list">
+
+    <table>
+      <thead>
+      </thead>
+      
+      <tbody>
+        {% for project in projects %}
+        <tr>
+          <td>V</td> <td> {{project.name}} </td> 
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
 </div>
+
+      {% endblock %}

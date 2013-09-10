@@ -3111,6 +3111,11 @@ def project_issues(request, pk, template="timepiece/project/issues.html", contex
     return render_to_response(template, context, context_instance=RequestContext(request))
 
 @csrf_exempt
+def get_project_detail(request, project_id, template="timepiece/project/_project_detail.html", context=None):
+    context = context or {}
+    return render_to_response(template, context, context_instance=RequestContext(request))
+
+@csrf_exempt
 def project_list(request, project_id=None, template="timepiece/project/project_list.html", context=None):
     context = context or {}
     

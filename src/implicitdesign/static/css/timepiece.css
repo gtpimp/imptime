@@ -9593,6 +9593,21 @@ table.project_list  {
     background: linear-gradient(to bottom, #EEEEEE, #E0E3FA);
 }
 
+.projects .projects_list table td {
+    padding-left:10px;
+    padding-right:10px;
+    padding-top:5px;
+    padding-bottom:5px;
+    border-left: 1px solid #dfdfdf;
+    border-bottom: 1px solid #AAAAAA;
+    background: -moz-linear-gradient(center top , #EEEEEE, #E0E3FA) repeat scroll 0 0 #E0E3FA;
+    background: -webkit-gradient(linear, 0,0,0 100%, from(#EEEEEE), to(#E0E3FA));
+    background: -webkit-linear-gradient(top, #EEEEEE, #E0E3FA);
+    background: -o-linear-gradient(top, #EEEEEE, #E0E3FA);
+    background: linear-gradient(to bottom, #EEEEEE, #E0E3FA);
+}
+
+
 .issues .issues_list table .dev_done td {
     background-color:#cccccc;
 }
