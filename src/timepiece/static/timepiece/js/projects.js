@@ -7,11 +7,11 @@ imp.projects.expand_issues = function(element, expand_url) {
     var project_contents = parent_table.find(".project_contents");
     var area_to_insert = project_contents.find(".information");
     var loading = area_to_insert.find(".loading")
-    loading.show()
     if (area_to_insert.find(".project_detail").length == 0) {
+        loading.show();
         $.ajax({type:"GET",
                 url: expand_url,
-                success: function(data) { area_to_insert.append($(data)); loading.hide() }
+                success: function(data) { area_to_insert.append($(data)); loading.hide(); }
                });
 
     } else {
