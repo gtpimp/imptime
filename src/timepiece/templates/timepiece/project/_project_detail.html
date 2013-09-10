@@ -8,10 +8,10 @@
 <img style="display:none" class="loading" src="{{STATIC_URL}}/images/icons/loadingAnimation.gif"/>
 <script src="{{STATIC_URL}}timepiece/js/issues.js"></script>
 
-<div class="issues">
-  <div class="issues_list">
 
 {% if issues_forms.forms %}
+<div class="issues">
+  <div class="issues_list">
 
    <table>
      <tbody class="issue_list_body" update_order_url="{% url 'sortable_update'  %}">
@@ -22,13 +22,13 @@
        {% endfor %}
      </tbody>
    </table>
+  </div>
+</div>
 
 {% else %}
 
   No issues
 
 {% endif %}
-  </div>
-</div>
 </div>
 

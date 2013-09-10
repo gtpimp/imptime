@@ -68,7 +68,6 @@ imp.status_toggle_form_show = function(element,item_id,options,url) {
 
     for(i =0; i< options.length; i++) {
         arr.push(options[i])
-        // lookup[options[i][0]] = options[i][1]
     }
     
     if (selectme.children('select').length == 0) {
