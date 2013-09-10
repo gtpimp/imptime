@@ -129,10 +129,10 @@ imp.delete_issue_from_issues_list = function(element, url, item_id) {
             url: url,
             data : { item_id: item_id },
             dataType:"json",
-	    success: function() {
-		loading_el.hide();
-		closest_row.remove();
-	    }});
+            success: function() {
+                loading_el.hide();
+                closest_row.remove();
+            }});
     
 };
 
@@ -193,16 +193,16 @@ imp.clickable_description_box = function(element, url, item_id) {
     commentField.append(textField);
     
     submitButton.click(function(e) {  
-    	var form_parent = $(this).parent().parent();
-    	var div_parent = form_parent.find(".static_div");
-    	var text_sibling = form_parent.find('textarea');
-    	var hidden_sibling = form_parent.find('input:hidden');
-    	item_id = hidden_sibling.val();
-    	var new_value = $(text_sibling).val();
-	$(this).parent().remove();
-	var display_value = new_value.replace(/\n/g,"<br>");
-	$(div_parent[0]).html(display_value);
-    	div_parent.show();
+            var form_parent = $(this).parent().parent();
+            var div_parent = form_parent.find(".static_div");
+            var text_sibling = form_parent.find('textarea');
+            var hidden_sibling = form_parent.find('input:hidden');
+            item_id = hidden_sibling.val();
+            var new_value = $(text_sibling).val();
+        $(this).parent().remove();
+        var display_value = new_value.replace(/\n/g,"<br>");
+        $(div_parent[0]).html(display_value);
+            div_parent.show();
         $.ajax({type:"POST",
                 url: url,
                 data : { item_id: item_id, new_value: new_value },
@@ -221,7 +221,7 @@ imp.clickable_time_estimate = function(element, url, item_id, size) {
 imp.clickable_subject_box = function(element, url, item_id, size) {
 
     if ( imp.showing_clickable_popup ) {
-	return;
+        return;
     }
     imp.showing_clickable_popup = true;
 
@@ -233,33 +233,33 @@ imp.clickable_subject_box = function(element, url, item_id, size) {
     textbox.parent().append(commentTextArea);
     textbox.hide();
     commentTextArea = commentTextArea.keypress(function(e) {
-	var parent = $(this).parent();
-	var div_sibling = parent.find('.edit_issue_subject');		    
-	var new_value = $(this).val();
+        var parent = $(this).parent();
+        var div_sibling = parent.find('.edit_issue_subject');                    
+        var new_value = $(this).val();
 
-	if (e.which === 13) {
-	    imp.refresh_closest_issue_parent_row(div_sibling);
-	    div_sibling.html(new_value);
-	    $(this).remove();
-	    div_sibling.show();
+        if (e.which === 13) {
+            imp.refresh_closest_issue_parent_row(div_sibling);
+            div_sibling.html(new_value);
+            $(this).remove();
+            div_sibling.show();
             $.ajax({type:"POST",
                     url: url,
                     data : { item_id: item_id, new_value: new_value },
                     dataType:"json"});
-	    
+            
             imp.showing_clickable_popup = false;
-	}
-	
+        }
+        
     });
     commentTextArea = commentTextArea.keyup(function(e) {
-	if(e.which === 27) {
-	    var parent = $(this).parent();
-	    var div_sibling = parent.find('.edit_issue_subject');		    
-	    $(this).remove();
-	    div_sibling.show();          
+        if(e.which === 27) {
+            var parent = $(this).parent();
+            var div_sibling = parent.find('.edit_issue_subject');                    
+            $(this).remove();
+            div_sibling.show();          
 
-	    imp.showing_clickable_popup = false;
-	}
+            imp.showing_clickable_popup = false;
+        }
     });
 };
 
@@ -304,7 +304,7 @@ imp.refresh_closest_issue_parent_row = function(element) {
      $.ajax({type:"GET",
              url: url,
              success: function(data) {
-		 //$(closest_row).html($(data).html())
+                 //$(closest_row).html($(data).html())
                  $(closest_row)[0].outerHTML = $(data)[0].outerHTML;
            }
          });
@@ -312,45 +312,51 @@ imp.refresh_closest_issue_parent_row = function(element) {
 
 imp.on_sortable_changed_for_url = function(sortable_url) {
     var sortable_update_url = sortable_url;
-    function ret_func(event, ui) {	
+    function ret_func(event, ui) {        
 
-	var url = sortable_update_url;
-	var rows = ui.item.parent().find("tr");
+        var url = sortable_update_url;
+        var rows = ui.item.parent().find("tr");
 
-	var project_id = $(rows[0]).attr("project_id");
-	var ordered_ids = [];
-	rows.each(function(index, row) {
-	    var elem = $(row);
-	    var issue_id = elem.attr("id");
-	    ordered_ids.push(issue_id);
-	    $(".loading_issue_"+issue_id).show();
-	});	
+        var project_id = $(rows[0]).attr("project_id");
+        var ordered_ids = [];
+        rows.each(function(index, row) {
+            var elem = $(row);
+            var issue_id = elem.attr("id");
+            ordered_ids.push(issue_id);
+            $(".loading_issue_"+issue_id).show();
+        });        
 
-	var loading_el = null;
-	if (ordered_ids.length>0) {
-	    loading_el = $(".loading_issue_"+ordered_ids[0]);
-	    loading_el.show();
-	}
+        var loading_el = null;
+        if (ordered_ids.length>0) {
+            loading_el = $(".loading_issue_"+ordered_ids[0]);
+            loading_el.show();
+        }
 
-	var joined_ordered_ids = ordered_ids.join(',');
-	$.ajax({type:"POST",
-		url: url,
-		data: { ordered_ids:joined_ordered_ids , project_id:project_id },
-		dataType:"json",
-	        success: function() { 
+        var joined_ordered_ids = ordered_ids.join(',');
+        $.ajax({type:"POST",
+                url: url,
+                data: { ordered_ids:joined_ordered_ids , project_id:project_id },
+                dataType:"json",
+                success: function() { 
 
-		    for( issue_id in ordered_ids ) {
-			$(".loading_issue_"+issue_id).hide();
-		    };
-		}
-	       });
+                    for( issue_id in ordered_ids ) {
+                        $(".loading_issue_"+issue_id).hide();
+                    };
+                }
+               });
     };
     return ret_func;
 }
 
 imp.on_document_ready = function() {
-    var url = $(".issue_list_body").attr("update_order_url");
-    
-    $(".issue_list_body").sortable({ stop: imp.on_sortable_changed_for_url(url) });
+    // var url = $(".issue_list_body").attr("update_order_url");
+    // $(".issue_list_body").sortable({ stop: imp.on_sortable_changed_for_url(url) });
+    // sortables = $(document).find(".issue_list_body");
+    // sortables.each( function (index, elem) {
+    //     var elem = $(elem);
+    //     var project_id = elem.attr("id")
+    //     var url = elem.attr("update_order_url");
+    //     elem.sortable( {stop: imp.on_sortable_changed_for_url(url) });
+    // });
 }
 $(document).ready(imp.on_document_ready);

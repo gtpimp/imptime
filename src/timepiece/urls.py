@@ -415,7 +415,7 @@ urlpatterns = patterns('',
         name='get_issue_row',
     ),
     url(
-        r'^sortable_update$',
+        r'^sortable_update/(?P<project_id>\d+)/$',
         views.sortable_update,
         name='sortable_update'
         ),
