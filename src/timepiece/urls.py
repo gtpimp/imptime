@@ -430,7 +430,7 @@ urlpatterns = patterns('',
         name='project_list',
     ),
     url(
-        r'^time-sheet/project_detail$',
+        r'^time-sheet/project_detail/(?P<project_id>\d+)/$',
         views.get_project_detail,
         name='get_project_detail',
     ),

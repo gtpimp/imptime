@@ -9624,7 +9624,7 @@ table.project_list  {
 .project_table {
     display:table;
     /* border:1px solid #ff0000; */
-    /* width:100%; */
+    width:50%;
 }
 
 .project_table_row {
@@ -9648,6 +9648,7 @@ table.project_list  {
 
 .project_table_cell.project_expand {
     /* border : 1px solid cyan; */
+    width:10%;
     padding-left:10px;
     padding-right:10px;
     padding-top:10px;
