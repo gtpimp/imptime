@@ -9636,6 +9636,9 @@ table.project_list  {
     /* padding-bottom:10px; */
     /* border-left: 1px solid #dfdfdf; */
     /* border-bottom: 1px solid #AAAAAA; */
+}
+
+.project_table_row.project_coloured_row {
     background: -moz-linear-gradient(center top , #EEEEEE, #E0E3FA) repeat scroll 0 0 #E0E3FA;
     background: -webkit-gradient(linear, 0,0,0 100%, from(#EEEEEE), to(#E0E3FA));
     background: -webkit-linear-gradient(top, #EEEEEE, #E0E3FA);
@@ -9654,7 +9657,6 @@ table.project_list  {
     padding-right:10px;
     padding-top:10px;
     padding-bottom:10px;
-
 }
 
 .issues .issues_list table .dev_done td {
