@@ -9,9 +9,7 @@
 <script src="{{STATIC_URL}}timepiece/js/issues.js"></script>
 
 {% if issues_forms.forms %}
-  <!-- partial that will show issue info -->
-  <h4> {{ project.name }} expanded </h4>
-  
+
    <table>
      <tbody class="issue_list_body" update_order_url="{% url 'sortable_update'  %}">
        {% for form in issues_forms.forms %}
@@ -21,6 +19,7 @@
        {% endfor %}
      </tbody>
    </table>
+
 {% else %}
 
   No issues

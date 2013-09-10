@@ -9624,7 +9624,7 @@ table.project_list  {
 .project_table {
     display:table;
     /* border:1px solid #ff0000; */
-    width:50%;
+    width:60%;
     margin: 10px;
 }
 

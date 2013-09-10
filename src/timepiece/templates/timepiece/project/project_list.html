@@ -7,15 +7,12 @@
 
 {% block content %}
 <script src="{{STATIC_URL}}timepiece/js/projects.js"></script>
-<div style="display:none">
-
-</div>
 
 <div class="projects">
   {% for project in projects %}    
   <div class="project_table">    
     <div class="project_table_row">
-      <div class="project_table_cell project_expand" onclick="imp.projects.expand_issues(this, '{% url 'get_project_detail' project.id %}')">V</div> <div  class="project_table_cell"> {{project.name}} </div>       
+      <div class="project_table_cell project_expand" onclick="imp.projects.expand_issues(this, '{% url 'get_project_detail' project.id %}')"> <img style="display:block" class="loading" src="{{STATIC_URL}}/images/icons/bullet_arrow_down.png"/> </div> <div  class="project_table_cell"> {{project.name}} </div>       
     </div>
     <div class="project_table_row project_contents">
       <div class="project_table_cell"><!-- spacer cell --> </div>

@@ -3161,8 +3161,8 @@ def project_list(request, project_id=None, template="timepiece/project/project_l
     projects = timepiece.Project.objects.all()
     expanded_project = None
     if project_id is not None:
-        expanded_project = timepiece.Project.objects.filter(pk=pk).filter_by_logged_in_user(request.user)[0]
-
+        expanded_project = timepiece.Project.objects.filter(pk=project_id).filter_by_logged_in_user(request.user)[0]
+        
     context['current_user'] = request.user
     context['expanded_project'] = expanded_project
     context['projects'] = projects
