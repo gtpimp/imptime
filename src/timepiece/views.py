@@ -3117,6 +3117,41 @@ def get_project_detail(request, project_id, template="timepiece/project/_project
     project = timepiece.Project.objects.filter(pk=project_id).filter_by_logged_in_user(request.user)[0]
     context['project'] = project 
 
+    business = project.business
+
+    queryset = project.get_ordered_issues()
+    issues_forms = timepiece_forms.issue_status_formset(request.POST or None, 
+                                                        queryset=queryset)    
+    for form in issues_forms.forms:
+        _augment_issue_data(form.instance,request.user)
+    
+    new_issue_form = timepiece_forms.IssueForm()
+    
+    all_entries = project.entries.all().order_by("start_time")
+    hours = 0
+    ctc = 0
+    billable = 0
+    for entry in all_entries:
+        hours += entry.hours
+        ctc += entry.atrate
+        billable += entry.atbillablerate
+        
+    rate = project.get_user_rate(request.user)
+    context['next_issue_number']  = timepiece.Issue.get_next_issue_number()
+    context['current_user_rate'] = float(rate.amount) if rate else 0.0
+    context['business'] = business
+    context['new_issue_form'] = new_issue_form
+    context['current_user'] = request.user
+    context['project'] = project
+    context['unassigned_timesheet_entries_hours'] = timepiece.Issue.get_unassigned_timesheet_entries_hours(context['project'])
+    context['unassigned_timesheet_entries_ctc'] = timepiece.Issue.get_unassigned_timesheet_entries_ctc(context['project'])
+    context['unassigned_timesheet_entries_billable'] = timepiece.Issue.get_unassigned_timesheet_entries_billable(context['project'])
+
+    context['issues_forms'] = issues_forms
+    context['total_hours'] = hours
+    context['total_ctc'] = ctc
+    context['total_billable'] = billable
+
     return render_to_response(template, context, context_instance=RequestContext(request))
 
 @csrf_exempt
