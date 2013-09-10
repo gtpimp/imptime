@@ -212,7 +212,7 @@
 		  {% end_permission %}
                 </tr>
 	      </thead>
-	      <tbody class="issue_list_body" update_order_url="{% url 'sortable_update'  %}">
+	      <tbody class="issue_list_body" update_order_url="{% url 'sortable_update' project.id %}">
 
 		{% for form in issues_forms.forms %}
 		{% with form.instance as issue %}
