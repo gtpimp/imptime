@@ -10,21 +10,30 @@
 
 
 {% if issues_forms.forms %}
-<div class="issues">
-  <div class="issues_list">
+<div class="row-fluid">
+  <div class="issues">
+    <div class="issues_list">
+      
+      <form method="POST" action="">
+        <table>
+          <tbody class="issue_list_body" update_order_url="{% url 'sortable_update'  %}">
+            {% for form in issues_forms.forms %}
+            {% with form.instance as issue %}
+            {% include "timepiece/project/_issue_entry_row.html" %}
+            {% endwith %}
+            {% endfor %}
+          </tbody>
+        </table>
+      </form>      
+    </div>
 
-   <table>
-     <tbody class="issue_list_body" update_order_url="{% url 'sortable_update'  %}">
-       {% for form in issues_forms.forms %}
-        {% with form.instance as issue %}
-         {% include "timepiece/project/_issue_entry_row.html" %}
-        {% endwith %}
-       {% endfor %}
-     </tbody>
-   </table>
+    <div class="issue_pane">
+      <div class="issue_detail">
+      </div>
+    </div>
+
   </div>
 </div>
-
 {% else %}
 
   No issues

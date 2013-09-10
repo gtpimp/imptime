@@ -1,9 +1,10 @@
 var imp = imp || {};
 
-imp.show_issue_detail = function(url, issue_id) {
+imp.show_issue_detail = function(element, url, issue_id) {    
     $("loading").show();
-    $(".issue_detail").load(url, function() {$("loading").hide();});
-};
+    var closest_issue_detail_for_this_table = $(element).closest(".row-fluid").find(".issue_pane .issue_detail");
+    closest_issue_detail_for_this_table.load(url, function() {$("loading").hide();});
+ };
 
 imp.do_form_show  = function(element, url) {
     var button = $(element);
