@@ -3067,7 +3067,7 @@ def _augment_issue_data(issue,current_user):
         options = [i[0] for i in timepiece.Issue.ISSUE_STATUS_CHOICES]
         issue.representation.options = "[%s]"%",".join(["'%s'"%str(i) for i in options])
         end()
-    
+
 @csrf_exempt
 def project_issues(request, pk, template="timepiece/project/issues.html", context=None):
     context = context or {}
@@ -3110,6 +3110,21 @@ def project_issues(request, pk, template="timepiece/project/issues.html", contex
     timings.results()
     return render_to_response(template, context, context_instance=RequestContext(request))
 
+@csrf_exempt
+def project_list(request, project_id=None, template="timepiece/project/project_list.html", context=None):
+    context = context or {}
+    
+    projects = timepiece.Project.objects.all()
+    expanded_project = None
+    if project_id is not None:
+        expanded_project = timepiece.Project.objects.filter(pk=pk).filter_by_logged_in_user(request.user)[0]
+
+    context['current_user'] = request.user
+    context['expanded_project'] = expanded_project
+    context['projects'] = projects
+    return render_to_response(template, context, context_instance=RequestContext(request))
+        
+        
 @csrf_exempt
 def issue_detail(request, issue_id, template="timepiece/project/issue_detail.html", context=None):
     context = context or {}
