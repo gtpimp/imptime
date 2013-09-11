@@ -3160,11 +3160,16 @@ def get_project_detail(request, project_id, template="timepiece/project/_project
 def project_list(request, project_id=None, template="timepiece/project/project_list.html", context=None):
     context = context or {}
     
-
     expanded_project = None
     if project_id is not None:
         expanded_project = timepiece.Project.objects.filter(pk=project_id).filter_by_logged_in_user(request.user)[0]
         projects = expanded_project.business.get_ordered_projects() 
+        project_list = []        
+        for project in projects:
+            if project.id == int(project_id):
+                project.is_preloaded = "true"
+            project_list.append(project)
+        projects =project_list
     else:
         projects = timepiece.Project.objects.all()
 

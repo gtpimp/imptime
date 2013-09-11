@@ -55,14 +55,17 @@ imp.projects.load_or_display_issues = function(element, expand_url, sortable_url
         //already expanded
         return;
     }
-    imp.projects.already_loaded_sprints[expand_url] = true;
     
     var loading = area_to_insert.find(".loading")
     if (area_to_insert.find(".project_detail").length == 0) {
         loading.show();
         var response = $.ajax({type:"GET",
                                url: expand_url,
-                               success: function(data) { area_to_insert.append($(data)); loading.hide(); }
+                               success: function(data) { 
+                                   area_to_insert.append($(data)); 
+                                   loading.hide(); 
+                                   imp.projects.already_loaded_sprints[expand_url] = true;
+                               }
                               });
         response.done(function (data) {
             var project_detail = area_to_insert.find(".project_detail");
@@ -100,5 +103,14 @@ imp.projects.on_project_sorting_change_for_url = function ( project_sorting_url)
 imp.on_document_ready = function() {
     var project_sort_url = $(".project_list").attr("project_sort_url");
     $(".project_list").sortable( { stop : imp.projects.on_project_sorting_change_for_url(project_sort_url) });
+    var project_li_row = $(".project_li");
+    project_li_row.each(function(item, project_row) {
+        elem = $(project_row);
+        expanded_row = elem.find(".project_table_cell.project_expand");
+        var preloaded = expanded_row.attr("preloaded") == "true";            
+        if (preloaded) {
+            expanded_row.trigger('click');
+        }
+    });
 }
 $(document).ready(imp.on_document_ready);
