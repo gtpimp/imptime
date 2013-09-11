@@ -92,21 +92,12 @@ imp.projects.on_project_sorting_change_for_url = function ( project_sorting_url)
                 url: url,
                 data: { ordered_ids:joined_ordered_ids },
                 dataType:"json",
-                // success: function() { 
-
-                //     for( issue_id in ordered_ids ) {
-                //         $(".loading_issue_"+issue_id).hide();
-                //     };
-                // }
                });
 
     };
 }
 
 imp.on_document_ready = function() {
-    // var url = $(".issue_list_body").attr("update_order_url");
-    // $(".issue_list_body").sortable({ stop: imp.on_sortable_changed_for_url(url) });
-    // var url = $(".project_list").attr
     var project_sort_url = $(".project_list").attr("project_sort_url");
     $(".project_list").sortable( { stop : imp.projects.on_project_sorting_change_for_url(project_sort_url) });
 }
