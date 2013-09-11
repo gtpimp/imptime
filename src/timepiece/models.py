@@ -74,7 +74,7 @@ class Business(models.Model):
     external_id = models.CharField(max_length=32, blank=True)
     
     objects = QuerySetManager(BusinessQuerySet)
-
+    
     def get_all_business_permissions(self,user=None):
         permissions_qs = BusinessPermissions.objects.filter(business=self)        
         if user is not None:
@@ -121,6 +121,16 @@ class Business(models.Model):
             return_users.append(User.objects.get(id=user_id))
         return return_users
 
+    def ensure_single_sprint(self, **kwargs):
+        kwargs = kwargs or {}
+        kwargs.update({"name":"Sprint0",
+                       "business":self ,
+                   #    "type"
+                   })
+
+        if len(Project.objects.filter(business = self)) == 0:
+            return Project.objects.create(**kwargs);
+
     def save(self, *args, **kwargs):
         queryset = Business.objects.all()
         if not self.slug:
@@ -128,7 +138,7 @@ class Business(models.Model):
                 queryset = queryset.exclude(id__exact=self.id)
             self.slug = utils.slugify_uniquely(self.name, queryset, 'slug')
         super(Business, self).save(*args, **kwargs)
-
+        
     @classmethod
     def businesses_in_desc_order_of_use(self, user):
         businesses = Business.objects.annotate(models.Min("new_business_projects__entries__end_time")).order_by("-new_business_projects__entries__end_time__min")
