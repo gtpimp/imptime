@@ -8,7 +8,7 @@ imp.show_issue_detail = function(element, url, issue_id) {
 
 imp.do_form_show  = function(element, url) {
     var button = $(element);
-    var parent = button.parent().parent();
+    var parent = button.parent().parent(); // button.closest(".parent_li_of_form_on_click");
     var to_click = $(parent.find(".to_expand_form_on_click"));
     var to_edit = $(parent.find(".to_edit_expanded_form"));
     if (to_click.css("display") != 'none') {
@@ -23,16 +23,19 @@ imp.do_form_show  = function(element, url) {
         
         to_edit.show()
         to_edit.css("z-index",200);
-        to_edit.keyup(function(e) {
-            if(e.which === 27) {    
-                imp.do_form_remove();
-            }
-        });
+        function key_up_for_form(form) {
+           var current_form = form;
+           return function(event) {
+               if(event.which === 27) {    
+                   imp.do_form_remove(current_form);
+               }
+           }
+        };
+        to_edit.keyup( key_up_for_form(parent) );
     } 
 };
 
-imp.do_form_remove  = function() {
-    var element = $(document)
+imp.do_form_remove  = function(element) {
     var button = $(element);
     var to_click = $(button.find(".to_expand_form_on_click"));
     var to_edit = $(button.find(".to_edit_expanded_form"));
@@ -47,18 +50,31 @@ imp.do_form_remove  = function() {
 
 imp.on_form_submit = function(element, url) {
     var mform = $(element);
-    $.ajax({type:"POST",
-            url: url,
-            data: mform.serialize(),
-            success:function(data) {
-                var table_body = $(document).find(".issue_list_body");
+    function handle_success_for_form(form) {
+          var a_form = form;
+          return function(data) {
+                //var table_body = $(document).find(".issue_list_body");
+                //var table_body = $(a_form).closest(".issue_list_body");
+                var table_body =  a_form.closest(".project_detail").find(".issue_list_body")
                 if(table_body.length > 0) {
                     table_body.append(data);
                 }
-            },
+             
+          }
+    }
+    $.ajax({type:"POST",
+            url: url,
+            data: mform.serialize(),
+	    success: handle_success_for_form(mform),
+            // success:function(data) {
+            //     var table_body = $(document).find(".issue_list_body");
+            //     if(table_body.length > 0) {
+            //         table_body.append(data);
+            //     }
+            // },
            });
     var button = mform.parent().parent().parent()
-    imp.do_form_remove();    
+    imp.do_form_remove(button);    
     return false;
 };
 
@@ -310,43 +326,43 @@ imp.refresh_closest_issue_parent_row = function(element) {
          });
 };
 
-imp.on_sortable_changed_for_url = function(sortable_url) {
-    var sortable_update_url = sortable_url;
-    function ret_func(event, ui) {        
+// imp.on_sortable_changed_for_url = function(sortable_url) {
+//     var sortable_update_url = sortable_url;
+//     function ret_func(event, ui) {        
 
-        var url = sortable_update_url;
-        var rows = ui.item.parent().find("tr");
+//         var url = sortable_update_url;
+//         var rows = ui.item.parent().find("tr");
 
-        var project_id = $(rows[0]).attr("project_id");
-        var ordered_ids = [];
-        rows.each(function(index, row) {
-            var elem = $(row);
-            var issue_id = elem.attr("id");
-            ordered_ids.push(issue_id);
-            $(".loading_issue_"+issue_id).show();
-        });        
+//         var project_id = $(rows[0]).attr("project_id");
+//         var ordered_ids = [];
+//         rows.each(function(index, row) {
+//             var elem = $(row);
+//             var issue_id = elem.attr("id");
+//             ordered_ids.push(issue_id);
+//             $(".loading_issue_"+issue_id).show();
+//         });        
 
-        var loading_el = null;
-        if (ordered_ids.length>0) {
-            loading_el = $(".loading_issue_"+ordered_ids[0]);
-            loading_el.show();
-        }
+//         var loading_el = null;
+//         if (ordered_ids.length>0) {
+//             loading_el = $(".loading_issue_"+ordered_ids[0]);
+//             loading_el.show();
+//         }
 
-        var joined_ordered_ids = ordered_ids.join(',');
-        $.ajax({type:"POST",
-                url: url,
-                data: { ordered_ids:joined_ordered_ids , project_id:project_id },
-                dataType:"json",
-                success: function() { 
+//         var joined_ordered_ids = ordered_ids.join(',');
+//         $.ajax({type:"POST",
+//                 url: url,
+//                 data: { ordered_ids:joined_ordered_ids , project_id:project_id },
+//                 dataType:"json",
+//                 success: function() { 
 
-                    for( issue_id in ordered_ids ) {
-                        $(".loading_issue_"+issue_id).hide();
-                    };
-                }
-               });
-    };
-    return ret_func;
-}
+//                     for( issue_id in ordered_ids ) {
+//                         $(".loading_issue_"+issue_id).hide();
+//                     };
+//                 }
+//                });
+//     };
+//     return ret_func;
+// }
 
 imp.on_document_ready = function() {
     // var url = $(".issue_list_body").attr("update_order_url");
