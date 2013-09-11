@@ -51,7 +51,7 @@
       
       <form method="POST" action="">
         <table>
-          <tbody class="issue_list_body" id="{{project_id}}" update_order_url="{% url 'sortable_update' project.id  %}" >
+          <tbody class="issue_list_body" id="{{project_id}}" update_order_url="{% url 'sortable_issue_update' project.id  %}" >
             {% for form in issues_forms.forms %}
             {% with form.instance as issue %}
             {% include "timepiece/project/_issue_entry_row.html" %}

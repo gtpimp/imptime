@@ -3164,7 +3164,8 @@ def project_list(request, project_id=None, template="timepiece/project/project_l
     expanded_project = None
     if project_id is not None:
         expanded_project = timepiece.Project.objects.filter(pk=project_id).filter_by_logged_in_user(request.user)[0]
-        projects = timepiece.Project.objects.filter(business = expanded_project.business)
+        projects = expanded_project.business.get_ordered_projects() 
+        #timepiece.Project.objects.filter(business = expanded_project.business)
     else:
         projects = timepiece.Project.objects.all()
 
@@ -3605,7 +3606,7 @@ def get_issue_row(request,issue_id):
 @csrf_exempt
 @login_required
 @transaction.commit_on_success
-def sortable_update(request, project_id):
+def sortable_issue_update(request, project_id):
     context = {}
 
     ordered_issue_ids = []
@@ -3623,6 +3624,41 @@ def sortable_update(request, project_id):
         issue = timepiece.Issue.objects.get(pk=issue_id)
         issue.order = item_order_count
         issue.save()
+    
+    return HttpResponse("")
+
+
+@csrf_exempt
+@login_required
+@transaction.commit_on_success
+def sortable_project_update(request):
+    context = {}
+
+    ordered_project_ids = []
+    for index in request.POST['ordered_ids'].split(","):
+        try:
+            int_index = int(index)
+            ordered_project_ids.append(int_index)
+        except ValueError:
+            continue
+
+    first_project = timepiece.Project.objects.get(id=ordered_project_ids[0])
+
+    ordered_projects = first_project.business.get_ordered_projects() 
+    #import pdb; pdb.set_trace()
+    for item_order_count, project_id in enumerate(ordered_project_ids):
+        #project_id = project.id
+        project= timepiece.Project.objects.get(pk=project_id)
+        project.order = item_order_count
+        project.save()
+    #import pdb; pdb.set_trace()
+    # project_id = request.POST['project_id']
+    # issue_query_set = timepiece.Issue.objects.filter(project__id = project_id).order_by("order")
+
+    # for item_order_count, issue_id in enumerate(ordered_project_ids):
+    #     issue = timepiece.Issue.objects.get(pk=issue_id)
+    #     issue.order = item_order_count
+    #     issue.save()
     
     return HttpResponse("")
 

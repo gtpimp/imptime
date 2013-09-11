@@ -9,11 +9,12 @@
 <script src="{{STATIC_URL}}timepiece/js/projects.js"></script>
 <script src="{{STATIC_URL}}timepiece/js/issues.js"></script>
 
-<div class="projects">
-  {% for project in projects %}    
+<ul class="project_list" project_sort_url="{% url 'sortable_project_update' %}" style="list-style-type:none;">
+  {% for project in projects %} 
+  <li class="project_li" list_project_id="{{ project.id }}" >
   <div class="project_table project_table_appearance">    
     <div class="project_table_row project_coloured_row">
-      <div class="project_table_cell project_expand" onclick="imp.projects.expand_issues(this, '{% url 'get_project_detail' project.id %}', '{% url 'sortable_update' project.id  %}')"  >  <img style="float:left" class="loading" src="{{STATIC_URL}}/images/icons/bullet_arrow_down.png"/> {{project.name}}  
+      <div class="project_table_cell project_expand" onclick="imp.projects.load_or_display_issues(this, '{% url 'get_project_detail' project.id %}', '{% url 'sortable_issue_update' project.id  %}')"  >  <img style="float:left" class="loading" src="{{STATIC_URL}}/images/icons/bullet_arrow_down.png"/> {{project.name}}  
       </div> 
     </div>
     <div class="project_table_row project_contents">
@@ -25,7 +26,8 @@
 
     </div>
   </div>
+  </li>
   {% endfor %}
-</div>
+</ul>
 
 {% endblock %}

@@ -74,6 +74,22 @@ class Business(models.Model):
     external_id = models.CharField(max_length=32, blank=True)
     
     objects = QuerySetManager(BusinessQuerySet)
+
+    def get_ordered_projects(self):
+        all_business_projects = Project.objects.filter(business=self)
+        
+        orderless_projects = all_business_projects.filter(order__isnull=True).order_by("id")
+        ordered_projects = all_business_projects.exclude(order__isnull=True).order_by("order")
+        
+        if len(orderless_projects) == 0:
+            return all_business_projects.order_by('order')
+        
+        all_projects = [project for project in ordered_projects] + [ project for project in orderless_projects ] 
+        for index, project in enumerate(all_projects):
+            project.order = index
+            project.save()
+
+        return Project.objects.filter(business=self).order_by("order")
     
     def get_all_business_permissions(self,user=None):
         permissions_qs = BusinessPermissions.objects.filter(business=self)        
@@ -343,9 +359,10 @@ class Project(models.Model):
     )
     description = models.TextField()
 
+    order = models.IntegerField(null=True,blank=True)
+
     objects = QuerySetManager(ProjectQuerySet)
          
-
     def get_points(self):
         user_ids = [user.id for user in self.business.users]
         users = User.objects.filter(id__in = user_ids)

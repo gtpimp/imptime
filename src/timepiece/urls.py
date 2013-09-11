@@ -415,9 +415,14 @@ urlpatterns = patterns('',
         name='get_issue_row',
     ),
     url(
-        r'^sortable_update/(?P<project_id>\d+)/$',
-        views.sortable_update,
-        name='sortable_update'
+        r'^sortable_issue_update/(?P<project_id>\d+)/$',
+        views.sortable_issue_update,
+        name='sortable_issue_update'
+        ),
+    url(
+        r'^sortable_project_update$',
+        views.sortable_project_update,
+        name='sortable_project_update'
         ),
     url(
         r'^time-sheet/project_list/(?P<project_id>\d+)/$',
