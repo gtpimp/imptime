@@ -66,22 +66,22 @@ imp.on_form_submit = function(element, url) {
                 if(table_body.length > 0) {
                     table_body.append(data);
                 }
-             
+              var button = a_form.parent().parent().parent()
+              imp.do_form_remove(button);    
           }
     }
-    $.ajax({type:"POST",
-            url: url,
-            data: mform.serialize(),
-	    success: handle_success_for_form(mform),
-            // success:function(data) {
-            //     var table_body = $(document).find(".issue_list_body");
-            //     if(table_body.length > 0) {
-            //         table_body.append(data);
-            //     }
-            // },
-           });
-    var button = mform.parent().parent().parent()
-    imp.do_form_remove(button);    
+    var response = $.ajax({type:"POST",
+                           url: url,
+                           data: mform.serialize(),
+	                   // success: handle_success_for_form(mform),
+                           // success:function(data) {
+                           //     var table_body = $(document).find(".issue_list_body");
+                           //     if(table_body.length > 0) {
+                           //         table_body.append(data);
+                           //     }
+                           // },
+                          });
+    response.done( handle_success_for_form(mform) );
     return false;
 };
 
