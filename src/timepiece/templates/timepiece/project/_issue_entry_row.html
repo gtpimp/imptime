@@ -17,7 +17,7 @@
                      </div>
                    </td>
                      <td class="issue_feature">
-		     <div class="edit_issue_feature"  {% has_permission has_edit_subject project.business %} {% end_permission %} >
+		     <div class="edit_issue_feature"  onclick="imp.select_business_feature(this, '{% url 'business_features' project.business.id %}')" >
                       {{issue.feature.name}}
                      </div>
                    </td>

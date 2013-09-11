@@ -323,3 +323,13 @@ imp.refresh_closest_issue_parent_row = function(element) {
          });
 };
 
+
+imp.select_business_feature = function(element, url) {
+    $.ajax({type:"GET",
+            url: url,
+            success: function(data) {
+		// x = 123
+            }
+           });
+    // y = 1232;
+};

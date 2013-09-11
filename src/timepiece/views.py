@@ -3073,7 +3073,7 @@ def _augment_issue_data(issue,current_user):
 def business_features(self,business_id):
     
     business = timepiece.Business.objects.get(pk=business_id)
-    data = [ (feature.id, feature.name) for feature in business.features.all()a]
+    data = [ (feature.id, feature.name) for feature in business.features.all() ]
     return HttpResponse(json.dumps(data),
                         mimetype='application/json')
 
