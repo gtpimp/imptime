@@ -1,5 +1,7 @@
 var imp = imp || {};
-imp.projects = imp.projects || {}
+imp.projects = imp.projects || {};
+
+imp.projects.already_loaded_sprints = {};
 
 imp.projects.on_sortable_changed_for_url = function(sortable_url) {
     var sortable_update_url = sortable_url;
@@ -40,10 +42,21 @@ imp.projects.on_sortable_changed_for_url = function(sortable_url) {
 }
 
 imp.projects.expand_issues = function(element, expand_url, sortable_url) {
+
     var current_row = $(element);
     var parent_table = $(current_row.closest(".project_table"));
     var project_contents = parent_table.find(".project_contents");
     var area_to_insert = project_contents.find(".information");
+    if (area_to_insert.find(".project_detail").length > 0) {
+        area_to_insert.find(".project_detail").toggle();
+    }
+
+    if ( imp.projects.already_loaded_sprints[expand_url] ) {
+        //already expanded
+        return;
+    }
+    imp.projects.already_loaded_sprints[expand_url] = true;
+    
     var loading = area_to_insert.find(".loading")
     if (area_to_insert.find(".project_detail").length == 0) {
         loading.show();
@@ -59,8 +72,6 @@ imp.projects.expand_issues = function(element, expand_url, sortable_url) {
 
 	
 
-    } else {
-        area_to_insert.find(".project_detail").remove();
     }
 
 };
