@@ -4,11 +4,8 @@
 {% load bootstrap_toolkit %}
 
 <div class="new_issue_form_container">
-<h3>Issue: {{ next_issue_number }} </h3>
+<h3>Issue: {{ next_issue_number }} <img src="{{STATIC_URL}}/images/timepiece/icons/delete.png" onclick="return imp.close_add_issue(this);"/> </h3>
 
-{% comment %}
-<img src="{{STATIC_URL}}/images/timepiece/icons/delete.png" onclick="return imp.do_form_remove();"/>
-{% endcomment %}
 
 <form method="POST" action="" onsubmit="return imp.on_form_submit(this,'{% url 'add_issue' project.id %}');" >
   {% csrf_token %}    

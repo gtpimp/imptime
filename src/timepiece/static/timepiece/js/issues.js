@@ -35,6 +35,13 @@ imp.do_form_show  = function(element, url) {
     } 
 };
 
+
+imp.close_add_issue = function (element) {
+    var parent_form = $(element).closest(".parent_li_of_form_on_click");
+    imp.do_form_remove(parent_form);
+    return false;
+}
+
 imp.do_form_remove  = function(element) {
     var button = $(element);
     var to_click = $(button.find(".to_expand_form_on_click"));
