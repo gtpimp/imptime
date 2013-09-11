@@ -29,7 +29,8 @@
 
       {% has_permission has_view_issues project.business %}
       <li>
-        <a href="#" onclick="window.open('{% url 'project_issues' project.id %}')">
+        {% comment %} <a href="#" onclick="window.open('{% url 'project_issues' project.id %}')"> {% endcomment %}
+        <a href="#" onclick="window.open('{% url 'project_list' project.id %}')"> 
           Issues
         </a>
       </li>
