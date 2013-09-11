@@ -16,6 +16,11 @@
                       {{issue.subject}}
                      </div>
                    </td>
+                     <td class="issue_feature">
+		     <div class="edit_issue_feature"  {% has_permission has_edit_subject project.business %} {% end_permission %} >
+                      {{issue.feature.name}}
+                     </div>
+                   </td>
 
 		  <td>
 		    <div class="styled-select">		     
