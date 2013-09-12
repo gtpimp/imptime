@@ -76,54 +76,54 @@ imp.on_form_submit = function(element, url) {
     return false;
 };
 
-imp.dynamic_selection = function(element,item_id,options,url) {
-    var selectme = $(element);
-    var id = null;
-    var arr = new Array();
+// imp.dynamic_selection = function(element,item_id,options,url) {
+//     var selectme = $(element);
+//     var id = null;
+//     var arr = new Array();
 
-    for(i =0; i< options.length; i++) {
-        arr.push(options[i])
-    }
+//     for(i =0; i< options.length; i++) {
+//         arr.push(options[i])
+//     }
     
-    if (selectme.children('select').length == 0) {
+//     if (selectme.children('select').length == 0) {
         
-        var str = "";
-        current_value = $.trim(selectme[0].innerHTML)
-        for(i=0; i<arr.length; i++) {
-            if (arr[i] == current_value) 
-                str += "<option  selected id='"+i+"' value='"+i+"'>"+arr[i]+"</option>";
-            else
-                str += "<option  value='"+i+"' id='"+i+"'>"+arr[i]+"</option>";
-        }
+//         var str = "";
+//         current_value = $.trim(selectme[0].innerHTML)
+//         for(i=0; i<arr.length; i++) {
+//             if (arr[i] == current_value) 
+//                 str += "<option  selected id='"+i+"' value='"+i+"'>"+arr[i]+"</option>";
+//             else
+//                 str += "<option  value='"+i+"' id='"+i+"'>"+arr[i]+"</option>";
+//         }
         
-        str = "<select class='selectbox'>"+str+"</select>";
+//         str = "<select class='selectbox'>"+str+"</select>";
         
-        selectme.html(str);
+//         selectme.html(str);
         
-        $("select.selectbox").focus();
-        $("select.selectbox").blur(function() {
-            var value = $(this).val();
+//         $("select.selectbox").focus();
+//         $("select.selectbox").blur(function() {
+//             var value = $(this).val();
             
-            var valuetext = $(this).children('option#opt-'+value).text();
+//             var valuetext = $(this).children('option#opt-'+value).text();
             
-            $("div.selectme").attr({'id': "selectme-"+value});
+//             $("div.selectme").attr({'id': "selectme-"+value});
             
-            $(".selectme").text(valuetext);
-        });
+//             $(".selectme").text(valuetext);
+//         });
         
-    }else {
-        selected = selectme.find("option:selected")
-        value = selected[0].innerHTML
-        $.ajax({type:"POST",
-                url: url,
-                data : { item_id: item_id , new_value:value },
-                dataType:"json"});
+//     }else {
+//         selected = selectme.find("option:selected")
+//         value = selected[0].innerHTML
+//         $.ajax({type:"POST",
+//                 url: url,
+//                 data : { item_id: item_id , new_value:value },
+//                 dataType:"json"});
 
-        selectme.html('<div class="selectme">'+value+'</div>')
-	imp.refresh_closest_issue_parent_row(selectme);
-    }
+//         selectme.html('<div class="selectme">'+value+'</div>')
+// 	imp.refresh_closest_issue_parent_row(selectme);
+//     }
 
-};
+// };
 
 imp.ajax_call = function(element, url, item_id) {
     var button = $(element);
@@ -341,11 +341,6 @@ imp.ajax_selection = function(element, url, update_url) {
              selection_val= data[0][0]
             }
             imp.dynamic_option_selection(_element, item_id, data, update_url);
-            // var update_data = { "selection": selection_val }
-            // var response = $.ajax({ type:"POST",
-            //                         url: _update_url,
-            //                         data : update_data
-            //                       });
         }
         return new_data_handler;
     };
