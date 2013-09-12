@@ -76,55 +76,6 @@ imp.on_form_submit = function(element, url) {
     return false;
 };
 
-imp.status_toggle_form_show = function(element,item_id,options,url) {
-    var selectme = $(element);
-    var id = null;
-    var arr = new Array();
-
-    for(i =0; i< options.length; i++) {
-        arr.push(options[i])
-    }
-    
-    if (selectme.children('select').length == 0) {
-        
-        var str = "";
-        current_value = $.trim(selectme[0].innerHTML)
-        for(i=0; i<arr.length; i++) {
-            if (arr[i] == current_value) 
-                str += "<option  selected id='"+i+"' value='"+i+"'>"+arr[i]+"</option>";
-            else
-                str += "<option  value='"+i+"' id='"+i+"'>"+arr[i]+"</option>";
-        }
-        
-        str = "<select class='selectbox'>"+str+"</select>";
-        
-        selectme.html(str);
-        
-        $("select.selectbox").focus();
-        $("select.selectbox").blur(function() {
-            var value = $(this).val();
-            
-            var valuetext = $(this).children('option#opt-'+value).text();
-            
-            $("div.selectme").attr({'id': "selectme-"+value});
-            
-            $(".selectme").text(valuetext);
-        });
-        
-    }else {
-        selected = selectme.find("option:selected")
-        value = selected[0].innerHTML
-        $.ajax({type:"POST",
-                url: url,
-                data : { item_id: item_id , new_value:value },
-                dataType:"json"});
-
-        selectme.html('<div class="selectme">'+value+'</div>')
-	imp.refresh_closest_issue_parent_row(selectme);
-    }
-
-};
-
 imp.ajax_call = function(element, url, item_id) {
     var button = $(element);
     $.ajax({type:"POST",
@@ -321,5 +272,101 @@ imp.refresh_closest_issue_parent_row = function(element) {
                  $(closest_row)[0].outerHTML = $(data)[0].outerHTML;
            }
          });
+};
+
+
+imp.ask_for_business_features = function (url) {
+    return 
+};
+
+
+imp.ajax_selection = function(element, url, update_url) {
+
+    var handle_ajax_data_given = function (element , update_url) {
+        var _update_url = update_url;
+        var _element = element;
+        var item_id = $(element).attr("id");
+        function new_data_handler (data) {
+            var selection_val ="nothing";
+            if (data.length) {
+             selection_val= data[0][0]
+            }
+            imp.dynamic_option_selection(_element, item_id, data, update_url);
+        }
+        return new_data_handler;
+    };
+
+    var response = $.ajax({ type:"GET",
+                            url: url,
+                          });
+
+    response.done( handle_ajax_data_given (element, update_url) );
+
+};
+
+
+imp.select_business_feature = function(element, item_id, request_url, update_url) {
+
+    var response = $.ajax( { type: "GET",
+                             url : request_url,
+                           });
+    
+    var create_widget_at_done = function (element, item_id, update_url) {
+        var _element = element;
+        var _update_url = update_url;
+        var _item_id = item_id;
+        return function (data) {
+            imp.dynamic_option_selection(_element, item_id, data, update_url);
+        }
+    };
+    response.done( create_widget_at_done(element, item_id,  update_url) );
+  
+};
+
+imp.dynamic_option_selection = function(element, item_id, options , update_url) {
+    var selectme = $(element);
+    var id = null;
+    var d_options = {}
+    
+    for(i = 0; i < options.length; i++) {
+        d_options[options[i][0]] = options[i][1];
+    }
+    
+    if (selectme.children('select').length == 0) {
+        var str ="";
+        current_value = $.trim(selectme[0].innerHTML)
+        new_select = $("<select/>").attr("class", "transient_selection");
+        new_select.css("width","auto");
+        for (item in d_options)  {
+            new_option  = $("<option/>");
+            new_option.attr("id", item);
+            new_option.text(d_options[item]);
+            if (current_value == d_options[item]) {
+                new_option.attr("selected",true);               
+            }
+            new_select.append(new_option);
+        }
+        selectme.html("");
+        selectme.append(new_select);
+        
+        $("select.selectbox").focus();
+        $("select.selectbox").blur(function() {
+            var value = $(this).val();            
+            var valuetext = $(this).children('option#opt-'+value).text();            
+            $("div.selectme").attr({'id': "selectme-"+value});            
+            $(".selectme").text(valuetext);
+        });
+        
+    }else {
+        selected = selectme.find("option:selected")
+        value = selected[0].innerHTML
+        $.ajax({type:"POST",
+                url: update_url,
+                data : { item_id: item_id , new_value:value, index: selected.attr("id") },
+                dataType:"json"});
+
+        selectme.html('<div class="selectme">'+value+'</div>')
+        imp.refresh_closest_issue_parent_row(selectme);
+    }
 };
 

@@ -176,6 +176,11 @@ class Business(models.Model):
         else:
             return None
 
+
+class Feature(models.Model):
+    name = models.CharField(max_length=255, blank=True, null=True)
+    business = models.ForeignKey(Business,related_name='features')
+
 class ProjectQuerySet(QuerySet):
     def filter_by_logged_in_user(self, user):
         """ restricts entries to those belonging to projects the given
@@ -1833,6 +1838,7 @@ class Issue(models.Model):
     description = models.TextField(blank=True)
     story_points = models.FloatField(null=True,blank=True)    
     order = models.IntegerField(null=True,blank=True)
+    feature = models.ForeignKey("Feature",blank=True,null=True,related_name='issues')
 
     @classmethod
     def get_last_issue_number(self):
