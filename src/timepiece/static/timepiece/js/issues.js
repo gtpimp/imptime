@@ -399,7 +399,7 @@ imp.dynamic_option_selection = function(element, item_id, options , update_url) 
             }
             new_select.append(new_option);
         }
-        
+        selectme.html("");
         selectme.append(new_select);
         
         $("select.selectbox").focus();

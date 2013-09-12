@@ -24,7 +24,7 @@
 
 		  <td>
 		    <div class="styled-select">		     
-		      <div class="selectme"  {% has_permission has_edit_issue_states project.business %} onclick="imp.dynamic_selection(this,{{issue.pk}}, {{issue.representation.options|safe}}, '{% url 'issue_status_update' %}');" {% end_permission %} > 
+		      <div class="selectme"  {% has_permission has_edit_issue_states project.business %} onclick="imp.dynamic_option_selection(this,{{issue.pk}}, {{issue.representation.options|safe}}, '{% url 'issue_status_update' %}');" {% end_permission %} > 
 		      
 			{{ issue.status }}
 		      </div>

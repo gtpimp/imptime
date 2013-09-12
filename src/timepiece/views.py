@@ -3066,8 +3066,12 @@ def _augment_issue_data(issue,current_user):
             issue.representation.per_user = []
         issue.representation.per_user.append((user,per_user_issue_data))
 
-        options = [i[0] for i in timepiece.Issue.ISSUE_STATUS_CHOICES]
-        issue.representation.options = "[%s]"%",".join(["'%s'"%str(i) for i in options])
+        # options = [i[0] for i in timepiece.Issue.ISSUE_STATUS_CHOICES]
+        # issue.representation.options = "[%s]"%",".join(["'%s'"%str(i) for i in options])
+
+        options = timepiece.Issue.ISSUE_STATUS_CHOICES
+        issue.representation.options =  str([ list(pair) for pair in options ]) #"[%s]"%",".join(["'%s'"%str(i) for i in options])
+
         end()
 
 def business_features(request, business_id):
@@ -3081,10 +3085,6 @@ def business_features(request, business_id):
 def update_issue_with_feature(request,issue_id):
     
     issue = timepiece.Issue.objects.get(pk=issue_id)
-    # data = [ (feature.id, feature.name) for feature in business.features.all() ]
-    # return HttpResponse(json.dumps(data),
-    #                     mimetype='application/json')
-    # import pdb; pdb.set_trace()
     try:
         selection = int(request.POST["index"])
     except (KeyError, ValueError):
