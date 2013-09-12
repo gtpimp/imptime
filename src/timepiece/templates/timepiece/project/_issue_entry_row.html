@@ -16,21 +16,20 @@
                       {{issue.subject}}
                      </div>
                    </td>
-                     <td class="styled-select">
-                       <div class="selectme" id="{{issue.pk}}"  onclick="imp.select_business_feature(this, {{ issue.pk }}, '{% url 'business_features' project.business.id %}', '{% url 'update_issue_with_feature' issue.pk %}' )" >
-                      {{issue.feature.name}}
+                   <td class="styled-select">
+                     <div class="selectme" id="{{issue.pk}}"  onclick="imp.select_business_feature(this, {{ issue.pk }}, '{% url 'business_features' project.business.id %}', '{% url 'update_issue_with_feature' issue.pk %}', 'blaaaaa' )" >
+                       {{issue.feature.name}}
                      </div>
                    </td>
-
-		  <td>
-		    <div class="styled-select">		     
-		      <div class="selectme"  {% has_permission has_edit_issue_states project.business %} onclick="imp.dynamic_option_selection(this,{{issue.pk}}, {{issue.representation.options|safe}}, '{% url 'issue_status_update' %}');" {% end_permission %} > 
-		      
-			{{ issue.status }}
-		      </div>
-		    </div>
-		  </td>
-                  {% has_permission has_see_other_user_points project.business %}
+                   <td>
+                     <div class="styled-select">		     
+                       <div class="selectme"  {% has_permission has_edit_issue_states project.business %} onclick="imp.dynamic_option_selection(this,{{issue.pk}}, {{issue.representation.options|safe}}, '{% url 'issue_status_update' %}');" {% end_permission %} > 
+                         
+                         {{ issue.status }}
+                       </div>
+                     </div>
+                   </td>
+                   {% has_permission has_see_other_user_points project.business %}
 		    {% for user,per_user in issue.representation.per_user %}
                       {% user_can_estimate_own_points user project.business %}
                         {% include "timepiece/project/_issue_points_completed.html" %}

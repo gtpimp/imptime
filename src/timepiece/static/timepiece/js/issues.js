@@ -101,37 +101,6 @@ imp.delete_issue_from_issues_list = function(element, url, item_id) {
     
 };
 
-imp.clickable_text_box = function(element, url, item_id) {
-    var textbox = $(element),
-    commentField = $('<form/>');
-    
-    commentField = commentField.attr('action',url).attr('method','post');
-    textField =$("<input/>").attr('type','text').attr('name','new_value').attr('value',textbox.html());
-    textbox.hide();
-    itemField =$("<input/>").attr('type','hidden').attr('value', item_id).attr('name','item_id');
-    submitButton = $("<input/>").attr('type','button').attr('value','Submit');
-    commentField.append(itemField);
-    commentField.append(textField);
-    commentField.append(submitButton);
-    textbox.parent().append(commentField)    
-    submitButton.click(function(e) {  
-        form_parent = $(this).parent();
-        div_parent = form_parent.parent().find('.edit_issue_subject');         
-        text_sibling = form_parent.find('input:text');
-        hidden_sibling = form_parent.find('input:hidden');
-        item_id = hidden_sibling.val()
-        new_value = text_sibling.val();
-        form_parent.remove();
-        div_parent.html(new_value);
-        div_parent.show();
-        $.ajax({type:"POST",
-                url: url,
-                data : { item_id: item_id, new_value: new_value },
-                dataType:"json"});
-    });
-
-};
-
 
 imp.clickable_description_box = function(element, url, item_id) {
     var textbox = $(element),
@@ -304,8 +273,32 @@ imp.ajax_selection = function(element, url, update_url) {
 
 };
 
+imp.clickable_feature_name = function (element, url, item_id) {
+    return imp.clickable_subject_box(element, url, item_id);
+};
 
-imp.select_business_feature = function(element, item_id, request_url, update_url) {
+imp.dynamic_option_addition = function (element, item_id, update_url) {
+    option_addition_button = $("<input/>").attr("type", "button").attr('value','');
+    option_addition_button.attr("class","option_addition");
+
+
+    var handle_click_for = function (element, item_id, update_url) {
+        var _element = element;
+        var _item_id = item_id;
+        var _update_url = update_url;
+        return function (event) {
+            var element = _element;
+            var item_id = _item_id;
+            var url = _update_url;
+            imp.clickable_feature_name(element, url, item_id);
+        };
+    };
+
+    option_addition_button.click( handle_click_for (element, item_id, update_url) );
+    $(element).append(option_addition_button);
+};
+
+imp.select_business_feature = function(element, item_id, request_url, update_url , new_url) {
 
     var response = $.ajax( { type: "GET",
                              url : request_url,
@@ -317,6 +310,7 @@ imp.select_business_feature = function(element, item_id, request_url, update_url
         var _item_id = item_id;
         return function (data) {
             imp.dynamic_option_selection(_element, item_id, data, update_url);
+            imp.dynamic_option_addition(_element, item_id, new_url);
         }
     };
     response.done( create_widget_at_done(element, item_id,  update_url) );

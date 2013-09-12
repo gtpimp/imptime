@@ -8986,6 +8986,12 @@ body ul.subnav li:first-child {
   padding-left: 0px;
   border-left: 0px;
 }
+
+input.option_addition {
+  background: url('../images/timepiece/icons/add.png') no-repeat;
+  padding-left: 20px;
+}
+
 body span.individual {
   background: url('../images/timepiece/icons/user.png') no-repeat;
   padding-left: 20px;
