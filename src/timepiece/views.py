@@ -3073,6 +3073,24 @@ def _augment_issue_data(issue,current_user):
 
         end()
 
+@csrf_exempt
+def add_feature(request, business_id):
+    
+    
+    business = timepiece.Business.objects.get(pk=business_id)
+    try:
+        new_name = request.POST['new_value']
+        current_issue = int(request.POST['item_id'])
+        issue = timepiece.Issue.objects.get(pk=current_issue)
+        feature = timepiece.Feature.objects.create(name=new_name, business=business)        
+        issue.feature = feature
+        issue.save()
+    except (KeyError, ValueError):
+        pass
+
+    return HttpResponse("")
+
+
 def business_features(request, business_id):
     
     business = timepiece.Business.objects.get(pk=business_id)

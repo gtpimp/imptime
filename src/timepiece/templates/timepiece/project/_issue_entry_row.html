@@ -17,7 +17,7 @@
                      </div>
                    </td>
                    <td class="styled-select">
-                     <div class="selectme" id="{{issue.pk}}"  onclick="imp.select_business_feature(this, {{ issue.pk }}, '{% url 'business_features' project.business.id %}', '{% url 'update_issue_with_feature' issue.pk %}', 'blaaaaa' )" >
+                     <div class="edit_issue_subject selectme" id="{{issue.pk}}"  onclick="imp.select_business_feature(this, {{ issue.pk }}, '{% url 'business_features' project.business.id %}', '{% url 'update_issue_with_feature' issue.pk %}', '{% url 'add_feature' project.business.id %}' )" >
                        {{issue.feature.name}}
                      </div>
                    </td>
