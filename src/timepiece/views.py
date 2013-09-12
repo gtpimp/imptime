@@ -3084,19 +3084,18 @@ def update_issue_with_feature(request,issue_id):
     # data = [ (feature.id, feature.name) for feature in business.features.all() ]
     # return HttpResponse(json.dumps(data),
     #                     mimetype='application/json')
-    
+    # import pdb; pdb.set_trace()
     try:
-        selection = int(request.POST["selection"])
+        selection = int(request.POST["index"])
     except (KeyError, ValueError):
         selection = None
-        
-    if selection:
-        try:
-            feature = timepiece.Feature.objects.get(id=selection, business=issue.project.business)
-            issue.feature = feature;
-            issue.save()
-        except timepiece.Feature.DoesNotExist:
-            pass
+    
+    try:
+        feature = timepiece.Feature.objects.get(pk=selection, business=issue.project.business)
+        issue.feature = feature;
+        issue.save()
+    except timepiece.Feature.DoesNotExist:
+        pass
 
     return HttpResponse("");
     
