@@ -324,12 +324,29 @@ imp.refresh_closest_issue_parent_row = function(element) {
 };
 
 
-imp.select_business_feature = function(element, url) {
-    $.ajax({type:"GET",
-            url: url,
-            success: function(data) {
-		// x = 123
-            }
-           });
-    // y = 1232;
+imp.ask_for_business_features = function (url) {
+    return 
+};
+
+imp.select_business_feature = function(element, url, update_url) {
+    // var  handle_business_feature_list = function(data) { 
+    //     x= 123;
+    // };
+
+    var handle_business_feature_list_with = function (element , update_url) {
+        var _update_url = update_url;
+        var _element = element;
+        return function(data) {
+            x=123;
+            x2 = _element;
+            x3 = _update_url;
+        }
+    };
+
+    var response = $.ajax({ type:"GET",
+                            url: url,
+                            // success: handle_business_feature_list
+                          });
+    response.done(handle_business_feature_list_with(element, update_url));
+
 };

@@ -3070,7 +3070,15 @@ def _augment_issue_data(issue,current_user):
         issue.representation.options = "[%s]"%",".join(["'%s'"%str(i) for i in options])
         end()
 
-def business_features(self,business_id):
+def business_features(request, business_id):
+    
+    business = timepiece.Business.objects.get(pk=business_id)
+    data = [ (feature.id, feature.name) for feature in business.features.all() ]
+    return HttpResponse(json.dumps(data),
+                        mimetype='application/json')
+
+
+def update_business_features(request,business_id):
     
     business = timepiece.Business.objects.get(pk=business_id)
     data = [ (feature.id, feature.name) for feature in business.features.all() ]
