@@ -76,55 +76,6 @@ imp.on_form_submit = function(element, url) {
     return false;
 };
 
-// imp.dynamic_selection = function(element,item_id,options,url) {
-//     var selectme = $(element);
-//     var id = null;
-//     var arr = new Array();
-
-//     for(i =0; i< options.length; i++) {
-//         arr.push(options[i])
-//     }
-    
-//     if (selectme.children('select').length == 0) {
-        
-//         var str = "";
-//         current_value = $.trim(selectme[0].innerHTML)
-//         for(i=0; i<arr.length; i++) {
-//             if (arr[i] == current_value) 
-//                 str += "<option  selected id='"+i+"' value='"+i+"'>"+arr[i]+"</option>";
-//             else
-//                 str += "<option  value='"+i+"' id='"+i+"'>"+arr[i]+"</option>";
-//         }
-        
-//         str = "<select class='selectbox'>"+str+"</select>";
-        
-//         selectme.html(str);
-        
-//         $("select.selectbox").focus();
-//         $("select.selectbox").blur(function() {
-//             var value = $(this).val();
-            
-//             var valuetext = $(this).children('option#opt-'+value).text();
-            
-//             $("div.selectme").attr({'id': "selectme-"+value});
-            
-//             $(".selectme").text(valuetext);
-//         });
-        
-//     }else {
-//         selected = selectme.find("option:selected")
-//         value = selected[0].innerHTML
-//         $.ajax({type:"POST",
-//                 url: url,
-//                 data : { item_id: item_id , new_value:value },
-//                 dataType:"json"});
-
-//         selectme.html('<div class="selectme">'+value+'</div>')
-// 	imp.refresh_closest_issue_parent_row(selectme);
-//     }
-
-// };
-
 imp.ajax_call = function(element, url, item_id) {
     var button = $(element);
     $.ajax({type:"POST",
@@ -385,6 +336,7 @@ imp.dynamic_option_selection = function(element, item_id, options , update_url) 
         var str ="";
         current_value = $.trim(selectme[0].innerHTML)
         new_select = $("<select/>").attr("class", "transient_selection");
+        new_select.css("width","auto");
         for (item in d_options)  {
             new_option  = $("<option/>");
             new_option.attr("id", item);
