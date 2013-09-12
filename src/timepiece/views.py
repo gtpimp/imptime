@@ -3077,14 +3077,29 @@ def business_features(request, business_id):
     return HttpResponse(json.dumps(data),
                         mimetype='application/json')
 
-
-def update_business_features(request,business_id):
+@csrf_exempt
+def update_issue_with_feature(request,issue_id):
     
-    business = timepiece.Business.objects.get(pk=business_id)
-    data = [ (feature.id, feature.name) for feature in business.features.all() ]
-    return HttpResponse(json.dumps(data),
-                        mimetype='application/json')
+    issue = timepiece.Issue.objects.get(pk=issue_id)
+    # data = [ (feature.id, feature.name) for feature in business.features.all() ]
+    # return HttpResponse(json.dumps(data),
+    #                     mimetype='application/json')
+    #import pdb; pdb.set_trace()
+    
+    try:
+        selection = int(request.POST["selection"])
+    except (KeyError, ValueError):
+        selection = None
+        
+    if selection:
+        try:
+            feature = timepiece.Feature.objects.get(id=selection, business=issue.project.business)
+            issue.feature = feature;
+            issue.save()
+        except timepiece.Feature.DoesNotExist:
+            pass
 
+    return HttpResponse("");
     
 
 @csrf_exempt

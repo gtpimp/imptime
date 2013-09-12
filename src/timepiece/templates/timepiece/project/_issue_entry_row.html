@@ -17,7 +17,7 @@
                      </div>
                    </td>
                      <td class="issue_feature">
-                       <div class="edit_issue_feature"  onclick="imp.select_business_feature(this, '{% url 'business_features' project.business.id %}', '{% url 'update_business_features' project.business.id %}' )" >
+                       <div class="edit_issue_feature"  onclick="imp.select_business_feature(this, '{% url 'business_features' project.business.id %}', '{% url 'update_issue_with_feature' issue.pk %}' )" >
                       {{issue.feature.name}}
                      </div>
                    </td>

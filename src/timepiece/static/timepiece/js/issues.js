@@ -328,25 +328,43 @@ imp.ask_for_business_features = function (url) {
     return 
 };
 
-imp.select_business_feature = function(element, url, update_url) {
-    // var  handle_business_feature_list = function(data) { 
-    //     x= 123;
-    // };
 
-    var handle_business_feature_list_with = function (element , update_url) {
+imp.ajax_selection = function(element, url, update_url) {
+
+    var handle_ajax_data_given = function (element , update_url) {
         var _update_url = update_url;
         var _element = element;
-        return function(data) {
-            x=123;
-            x2 = _element;
-            x3 = _update_url;
+        function new_data_handler (data) {
+            var selection_val ="nothing";
+            if (data.length) {
+             selection_val= data[0][0]
+            }
+            // x=124;
+            // x2 = _element;
+            // x3 = _update_url;
+            /*
+              create some widget.
+             */
+            /* when widget select */
+            // return;
+            var update_data = { "selection": selection_val }
+            var response = $.ajax({ type:"POST",
+                                    url: _update_url,
+                                    data : update_data
+                                  });
         }
+        return new_data_handler;
     };
 
     var response = $.ajax({ type:"GET",
                             url: url,
-                            // success: handle_business_feature_list
                           });
-    response.done(handle_business_feature_list_with(element, update_url));
 
+    response.done( handle_ajax_data_given (element, update_url) );
+
+};
+
+
+imp.select_business_feature = function(element, url, update_url) {
+    imp.ajax_selection(element, url, update_url);
 };

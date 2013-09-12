@@ -445,8 +445,8 @@ urlpatterns = patterns('',
         name='business_features',
         ),  
    url(
-        r'^time-sheet/update_business_features/(?P<business_id>\d+)/$',
-        views.update_business_features,
-        name='update_business_features',
+        r'^time-sheet/update_issue_with_feature/(?P<issue_id>\d+)/$',
+        views.update_issue_with_feature,
+        name='update_issue_with_feature',
   	),                         
 )
