@@ -1088,7 +1088,7 @@ def create_edit_business(request, business=None):
         if business_form.is_valid():
             business = business_form.save()
             business.ensure_single_sprint(point_person=request.user);
-            import pdb; pdb.set_trace()
+
             return HttpResponseRedirect(
                 reverse('view_business', args=(business.pk,))
             )
@@ -3084,7 +3084,6 @@ def update_issue_with_feature(request,issue_id):
     # data = [ (feature.id, feature.name) for feature in business.features.all() ]
     # return HttpResponse(json.dumps(data),
     #                     mimetype='application/json')
-    #import pdb; pdb.set_trace()
     
     try:
         selection = int(request.POST["selection"])
