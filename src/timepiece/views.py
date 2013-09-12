@@ -1088,7 +1088,6 @@ def create_edit_business(request, business=None):
         if business_form.is_valid():
             business = business_form.save()
             business.ensure_single_sprint(point_person=request.user);
-            import pdb; pdb.set_trace()
             return HttpResponseRedirect(
                 reverse('view_business', args=(business.pk,))
             )
