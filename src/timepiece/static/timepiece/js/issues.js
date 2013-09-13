@@ -48,14 +48,14 @@ imp.do_form_remove  = function(element) {
     var to_edit = $(button.find(".to_edit_expanded_form"));
     if (to_click.css("display") == 'none') {
         to_click.show()
-        $(button.find(".new_issue_form_container")).remove()
+        $(button.find(".new_dyn_form_container")).remove()
         to_edit.hide()
     } 
     return false;
 };
 
 
-imp.on_form_submit = function(element, url) {
+imp.on_issue_form_submit = function(element, url) {
     var mform = $(element);
     function handle_success_for_form(form) {
           var a_form = form;
@@ -66,6 +66,30 @@ imp.on_form_submit = function(element, url) {
                 }
               var button = a_form.parent().parent().parent()
               imp.do_form_remove(button);    
+          }
+    }
+    var response = $.ajax({type:"POST",
+                           url: url,
+                           data: mform.serialize(),
+                          });
+    response.done( handle_success_for_form(mform) );
+    return false;
+};
+
+
+imp.on_project_form_submit = function(element, url) {
+    var mform = $(element);
+    function handle_success_for_form(form) {
+          var a_form = form;
+          return function(data) {
+              // x = 123;
+              var form = a_form; 
+              //   var table_body =  a_form.closest(".project_detail").find(".issue_list_body")
+              //   if(table_body.length > 0) {
+              //       table_body.append(data);
+              //   }
+              // var button = a_form.parent().parent().parent()
+              // imp.do_form_remove(button);    
           }
     }
     var response = $.ajax({type:"POST",

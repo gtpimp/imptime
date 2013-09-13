@@ -9,6 +9,20 @@
 <script src="{{STATIC_URL}}timepiece/js/projects.js"></script>
 <script src="{{STATIC_URL}}timepiece/js/issues.js"></script>
 
+{% if business %}
+<div class="parent_li_of_form_on_click">
+  
+  <div class="btn">
+    <div class="to_expand_form_on_click" style="display:block"  onclick="imp.do_form_show(this , '{% url 'add_project' business.id %}' )">
+      Add Project
+    </div>	
+  </div>
+  <div class="new_issue_form to_edit_expanded_form" style="display:none;position:absolute;z-index:100">		  
+  </div>
+  
+</div>
+{% endif %}
+
 <ul class="project_list" project_sort_url="{% url 'sortable_project_update' %}" style="list-style-type:none;">
   {% for project in projects %} 
   <li class="project_li" list_project_id="{{ project.id }}" >

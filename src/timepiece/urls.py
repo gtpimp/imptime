@@ -405,6 +405,11 @@ urlpatterns = patterns('',
         name='add_issue'
       ),
     url(
+        r'^add_project/(?P<business_id>\d+)$',
+        views.add_project,
+        name='add_project'
+      ),
+    url(
         r'^delete_issue/(?P<project_id>\d+)$',
         views.delete_issue,
         name='delete_issue'

@@ -2974,6 +2974,28 @@ def time_sheet_download(request, user_id, context=None):
 
     return response
 
+
+
+def add_project(request, business_id , template="timepiece/project/_create_edit_project_form.html", context=None):
+    context = context or {}
+    business = timepiece.Business.objects.get(pk=business_id)
+    project = timepiece.Project(  business = business,
+                                  point_person = request.user,
+                                  type = timepiece.Attribute.objects.get(label="default"),
+                                  status = timepiece.Attribute.objects.get(label="open"),
+                                  )
+
+    form = timepiece_forms.NewProjectForm(request.POST or None, instance=project)    
+    if form.is_valid():
+        project= form.save()
+        project.save()
+        return get_project_detail(request, project.id, context=context);
+
+    context['business'] = business
+    context['project'] = project
+    context['project_form'] =form;
+    return render_to_response(template, context, context_instance=RequestContext(request))
+
 def add_issue(request, project_id, template="timepiece/project/_add_issue_form.html", context=None):
     context = context or {}
     project = timepiece.Project.objects.filter(pk=project_id).filter_by_logged_in_user(request.user)[0]
@@ -3169,10 +3191,12 @@ def get_project_detail(request, project_id, template="timepiece/project/_project
     business = project.business
 
     queryset = project.get_ordered_issues()
-    issues_forms = timepiece_forms.issue_status_formset(request.POST or None, 
-                                                        queryset=queryset)    
-    for form in issues_forms.forms:
-        _augment_issue_data(form.instance,request.user)
+    issues_forms = None
+    if len(queryset) :
+        issues_forms = timepiece_forms.issue_status_formset(request.POST or None, 
+                                                            queryset=queryset)    
+        for form in issues_forms.forms:
+            _augment_issue_data(form.instance,request.user)
     
     new_issue_form = timepiece_forms.IssueForm()
     
@@ -3207,9 +3231,11 @@ def get_project_detail(request, project_id, template="timepiece/project/_project
 def project_list(request, project_id=None, template="timepiece/project/project_list.html", context=None):
     context = context or {}
     
+    business = None
     expanded_project = None
     if project_id is not None:
         expanded_project = timepiece.Project.objects.filter(pk=project_id).filter_by_logged_in_user(request.user)[0]
+        business = expanded_project.business
         projects = expanded_project.business.get_ordered_projects() 
         project_list = []        
         for project in projects:
@@ -3223,6 +3249,7 @@ def project_list(request, project_id=None, template="timepiece/project/project_l
     context['current_user'] = request.user
     context['expanded_project'] = expanded_project
     context['projects'] = projects
+    context['business'] = business
     return render_to_response(template, context, context_instance=RequestContext(request))
         
         
