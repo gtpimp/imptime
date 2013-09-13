@@ -9666,12 +9666,22 @@ table.project_list  {
     
 }
 
+
+.edit_issue_subject {
+    cursor:pointer;
+}
+
+.selectme {
+    cursor:pointer;
+}
+
 .project_table_cell {
     display:table-cell;
 }
 
 .project_table_cell.project_expand {
     /* border : 1px solid cyan; */
+    cursor:default;
     width:16px;
     padding-left:10px;
     padding-right:10px;
