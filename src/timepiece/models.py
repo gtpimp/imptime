@@ -181,6 +181,9 @@ class Feature(models.Model):
     name = models.CharField(max_length=255, blank=True, null=True)
     business = models.ForeignKey(Business,related_name='features')
 
+    class Meta:
+        unique_together = (('name', 'business'), )
+
 class ProjectQuerySet(QuerySet):
     def filter_by_logged_in_user(self, user):
         """ restricts entries to those belonging to projects the given
