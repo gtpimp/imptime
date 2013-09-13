@@ -82,14 +82,10 @@ imp.on_project_form_submit = function(element, url) {
     function handle_success_for_form(form) {
           var a_form = form;
           return function(data) {
-              // x = 123;
               var form = a_form; 
-              //   var table_body =  a_form.closest(".project_detail").find(".issue_list_body")
-              //   if(table_body.length > 0) {
-              //       table_body.append(data);
-              //   }
-              // var button = a_form.parent().parent().parent()
-              // imp.do_form_remove(button);    
+              var button = a_form.parent().parent().parent()
+              $(document).find(".project_list").append(data)
+              imp.do_form_remove(button);    
           }
     }
     var response = $.ajax({type:"POST",

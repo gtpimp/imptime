@@ -2989,7 +2989,7 @@ def add_project(request, business_id , template="timepiece/project/_create_edit_
     if form.is_valid():
         project= form.save()
         project.save()
-        return get_project_detail(request, project.id, context=context);
+        return get_project_row(request, project.id);
 
     context['business'] = business
     context['project'] = project
@@ -3637,7 +3637,20 @@ def show_permissions(request, business_id):
     return context
 
 
+@csrf_exempt
+@login_required
+@transaction.commit_on_success
+def get_project_row(request,project_id, context= None):
+    context = context or {}
+    
+    project  = timepiece.Project.objects.get(pk = project_id)
 
+    context['project'] = project
+    r = render_to_response('timepiece/project/_project_list_item.html',
+                           context, context_instance=RequestContext(request))
+    return r
+    
+    
 @csrf_exempt
 @login_required
 @transaction.commit_on_success

@@ -420,6 +420,11 @@ urlpatterns = patterns('',
         name='get_issue_row',
     ),
     url(
+        r'time-sheet/get_project_row/(?P<project_id>\d+)$',
+        views.get_project_row,
+        name='get_project_row',
+    ),
+    url(
         r'^sortable_issue_update/(?P<project_id>\d+)/$',
         views.sortable_issue_update,
         name='sortable_issue_update'
