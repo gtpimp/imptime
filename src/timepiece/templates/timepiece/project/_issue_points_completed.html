@@ -27,25 +27,6 @@
         <span class="edit_issue_subject">{{ per_user.issue_points.points|default_if_none:"-" }}</span>
       {% endif %}
 
-      {% comment %}
-      <!-------------------------->
-        {% if per_user.has_estimate %}
-        <div class="traffic_bar">			
-          <div class="traffic_bar_text">
-            <span class="edit_issue_subject">{{ per_user.issue_points.points|default_if_none:"-" }}</span> hrs
-            / 
-            {{ per_user.completion|floatformat:"0"}}%
-          </div>
-          <div style="width:{{ per_user.completion_width }}%;" class={{per_user.bar_color}}>  
-            &nbsp;
-          </div>
-        </div>
-      {% else %}
-        <span class="edit_issue_subject">{{ per_user.issue_points.points|default_if_none:"-" }}</span>
-      {% endif %}
-      <!-------------------------->
-      {% endcomment %}
-      
       </div>
     {% end_permission %}
 
