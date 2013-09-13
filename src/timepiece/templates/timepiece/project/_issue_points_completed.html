@@ -10,7 +10,35 @@
     
     {% has_permission has_view_ctc_billable_rates project.business %}
       <div style="float:left" class="short_traffic">
-      {% if per_user.has_estimate %}
+
+        {% if per_user.has_estimate %}
+        <!-- <div class="traffic_bar">			 -->
+
+        <!--   <div class=""> -->
+        <!--     <span class="edit_issue_subject">{{ per_user.issue_points.points|default_if_none:"-" }}</span> hrs -->
+        <!--     / -->
+        <!--     {{ per_user.completion|floatformat:"0"}}% -->
+        <!--   </div> -->
+          
+        <!-- </div> -->
+        <div class="xx_container">
+          <div class="xx_colourbar {{per_user.bar_color}}" style="width:{{ per_user.completion_width }}%;" >
+          &nbsp;
+          </div>
+          <div class="xx_text">
+            <span class="edit_issue_subject">{{ per_user.issue_points.points|default_if_none:"-" }}</span> hrs
+            / 
+            {{ per_user.completion|floatformat:"0"}}%
+
+          </div>
+        </div>
+      {% else %}
+        <span class="edit_issue_subject">{{ per_user.issue_points.points|default_if_none:"-" }}</span>
+      {% endif %}
+
+      {% comment %}
+      <!-------------------------->
+        {% if per_user.has_estimate %}
         <div class="traffic_bar">			
           <div class="traffic_bar_text">
             <span class="edit_issue_subject">{{ per_user.issue_points.points|default_if_none:"-" }}</span> hrs
@@ -24,6 +52,9 @@
       {% else %}
         <span class="edit_issue_subject">{{ per_user.issue_points.points|default_if_none:"-" }}</span>
       {% endif %}
+      <!-------------------------->
+      {% endcomment %}
+      
       </div>
     {% end_permission %}
 

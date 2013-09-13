@@ -9393,6 +9393,40 @@ table.project_list  {
     color: #000000;
 }
 
+.xx_container{
+    width: 960px;
+    /*margin: 0 auto;*/
+    position: relative;
+    background-color:gray;
+    width:auto;
+}
+
+.xx_colourbar{
+    position: absolute; 
+    left: 0;
+    z-index: 0;
+    /*background-color:red;  */
+    width:10px;
+}
+
+.xx_colourbar.traffic_green {
+    background-color:green;
+}
+.xx_colourbar.traffic_yellow {
+    background-color:yellow;
+    color:#000000;
+}
+.xx_colourbar.traffic_red {
+    background-color:red;
+}
+
+
+.xx_text{
+   position: relative;
+    z-index: 10;
+    color:black;
+}
+
 .traffic_bar .traffic_green {
     background-color:green;
 }

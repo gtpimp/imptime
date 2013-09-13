@@ -13,8 +13,8 @@
 		  {% with issues_forms.forms|first as first_form %}
 		    {% for user, per_user in first_form.instance.representation.per_user %}
                       {% user_can_estimate_own_points user project.business %}
-  	                <th >		          
-                           {{ user.username }}'s estimate 
+  	                <th >
+                          {% comment %} {{ user.username }}'s estimate {% endcomment %}		          
 		        </th>
                       {% end_can_estimate %}
 		    {% endfor %}
