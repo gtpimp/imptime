@@ -9713,7 +9713,7 @@ table.project_list  {
 
 .project_table_cell.project_expand {
     /* border : 1px solid cyan; */
-    cursor:default;
+    cursor:pointer;
     width:16px;
     padding-left:10px;
     padding-right:10px;
