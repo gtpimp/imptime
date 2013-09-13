@@ -12,20 +12,11 @@
       <div style="float:left" class="short_traffic">
 
         {% if per_user.has_estimate %}
-        <!-- <div class="traffic_bar">			 -->
-
-        <!--   <div class=""> -->
-        <!--     <span class="edit_issue_subject">{{ per_user.issue_points.points|default_if_none:"-" }}</span> hrs -->
-        <!--     / -->
-        <!--     {{ per_user.completion|floatformat:"0"}}% -->
-        <!--   </div> -->
-          
-        <!-- </div> -->
-        <div class="xx_container">
-          <div class="xx_colourbar {{per_user.bar_color}}" style="width:{{ per_user.completion_width }}%;" >
+        <div class="special_traffic_container">
+          <div class="special_traffic_colourbar {{per_user.bar_color}}" style="width:{{ per_user.completion_width }}%;" >
           &nbsp;
           </div>
-          <div class="xx_text">
+          <div class="special_traffic_text">
             <span class="edit_issue_subject">{{ per_user.issue_points.points|default_if_none:"-" }}</span> hrs
             / 
             {{ per_user.completion|floatformat:"0"}}%
