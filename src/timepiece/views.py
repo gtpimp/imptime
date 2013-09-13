@@ -2989,7 +2989,7 @@ def add_project(request, business_id , template="timepiece/project/_create_edit_
     if form.is_valid():
         project= form.save()
         project.save()
-        return get_project_row(request, project.id);
+        return get_project_row(request, project.id)
 
     context['business'] = business
     context['project'] = project
