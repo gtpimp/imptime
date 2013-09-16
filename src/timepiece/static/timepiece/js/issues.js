@@ -4,6 +4,10 @@ imp.show_issue_detail = function(element, url, issue_id) {
     $("loading").show();
     var closest_issue_detail_for_this_table = $(element).closest(".row-fluid").find(".issue_pane .issue_detail");
     closest_issue_detail_for_this_table.load(url, function() {$("loading").hide();});
+    closest_issue_detail_for_this_table.position( { of: $(".issues_list"),
+						    my: "left top",
+						    at: "left top",
+						    collision: "flip flip" });
  };
 
 imp.do_form_show  = function(element, url) {
