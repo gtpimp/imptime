@@ -202,9 +202,9 @@ class BusinessPermissions(models.Model):
     user = models.ForeignKey( User,
                                related_name='business_permissions' )
 
-    can_view_project_card = models.BooleanField(default=False, verbose_name="Can View Project Card")
+    can_view_project_card = models.BooleanField(default=False, verbose_name="Can View Sprint Card")
     can_edit_permissions = models.BooleanField(default=False, verbose_name="Can Edit Permissions")
-    can_edit_project_detail = models.BooleanField(default=False, verbose_name="Can Edit Project Detail")
+    can_edit_project_detail = models.BooleanField(default=False, verbose_name="Can Edit Sprint Detail")
     can_edit_issues = models.BooleanField(default=False, verbose_name="Can Edit Issues")
     can_view_issues = models.BooleanField(default=False, verbose_name="Can View Issues")
     
@@ -231,6 +231,8 @@ class BusinessPermissions(models.Model):
 
     can_edit_description = models.BooleanField(default=False, verbose_name="Can Edit Description")
     can_edit_subject = models.BooleanField(default=False, verbose_name="Can Edit Subject")
+
+    can_edit_feature = models.BooleanField(default=False, verbose_name="Can Edit Feature")
 
     @classmethod
     def _has(self, business, user, perm_func_name):
