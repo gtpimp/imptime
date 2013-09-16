@@ -248,6 +248,11 @@ class BusinessPermissions(models.Model):
             raise Exception("Invalid perm name: %s" % perm_func_name)
 
     @classmethod
+    def has_edit_feature(self, business, user):
+        return self._has(business, user, 'can_edit_permissions')
+
+
+    @classmethod
     def has_edit_permissions(self, business, user):
         return self._has(business, user, 'can_edit_permissions')
         

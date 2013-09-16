@@ -2994,6 +2994,7 @@ def add_project(request, business_id , template="timepiece/project/_create_edit_
     context['business'] = business
     context['project'] = project
     context['project_form'] =form;
+    context['current_user'] =request.user
     return render_to_response(template, context, context_instance=RequestContext(request))
 
 def add_issue(request, project_id, template="timepiece/project/_add_issue_form.html", context=None):
