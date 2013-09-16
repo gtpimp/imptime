@@ -24,7 +24,7 @@
             {% endif %}
 
             {% if perms.timepiece.view_project_time_sheet %}
-                <li><a href='{% url 'project_time_sheet' project.id %}'>Project Time Sheet</a></li>
+                <li><a href='{% url 'project_time_sheet' project.id %}'>Sprint Time Sheet</a></li>
             {% endif %}
 
             <li><a href='{% url 'project_issues' project.id %}'>Issues</a></li>
