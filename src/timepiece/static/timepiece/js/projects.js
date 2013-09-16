@@ -31,7 +31,6 @@ imp.projects.on_sortable_changed_for_url = function(sortable_url) {
                 data: { ordered_ids:joined_ordered_ids , project_id:project_id },
                 dataType:"json",
                 success: function() { 
-
                     for( issue_id in ordered_ids ) {
                         $(".loading_issue_"+issue_id).hide();
                     };
@@ -70,7 +69,8 @@ imp.projects.load_or_display_issues = function(element, expand_url, sortable_url
         response.done(function (data) {
             var project_detail = area_to_insert.find(".project_detail");
             var sortable = $(area_to_insert.find(".issue_list_body"));
-            sortable.sortable( {stop: imp.projects.on_sortable_changed_for_url(sortable_url) } );
+            sortable.sortable( {stop: imp.projects.on_sortable_changed_for_url(sortable_url),
+				connectWith: ".issue_list_body" } );
         });
 	
 

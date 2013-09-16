@@ -3196,7 +3196,7 @@ def get_project_detail(request, project_id, template="timepiece/project/_project
         issues_forms = timepiece_forms.issue_status_formset(request.POST or None, 
                                                             queryset=queryset)    
         for form in issues_forms.forms:
-            _augment_issue_data(form.instance,request.user)
+            _augment_issue_data(form.instance, request.user)
     
     new_issue_form = timepiece_forms.IssueForm()
     
@@ -3707,12 +3707,13 @@ def sortable_issue_update(request, project_id):
             ordered_issue_ids.append(int_index)
         except ValueError:
             continue
-
+    
     project_id = request.POST['project_id']
     issue_query_set = timepiece.Issue.objects.filter(project__id = project_id).order_by("order")
-
+    project = timepiece.Project.objects.get(pk=project_id)
     for item_order_count, issue_id in enumerate(ordered_issue_ids):
         issue = timepiece.Issue.objects.get(pk=issue_id)
+        issue.project = project
         issue.order = item_order_count
         issue.save()
     
