@@ -170,10 +170,10 @@ imp.clickable_description_box = function(element, url, item_id) {
 
 imp.clickable_time_estimate = function(element, url, item_id, size) {
     element = $(element).find(".edit_issue_subject");
-    return imp.clickable_subject_box(element, url, item_id, size);
+    return imp.clickable_subject_box(element, url, item_id, size, "auto");
 };
 
-imp.clickable_subject_box = function(element, url, item_id, size) {
+imp.clickable_subject_box = function(element, url, item_id, size, width) {
 
     if ( imp.showing_clickable_popup ) {
         return;
@@ -184,7 +184,8 @@ imp.clickable_subject_box = function(element, url, item_id, size) {
         commentTextArea = $("<input/>");
     var value = $.trim(textbox.html()); 
     size = size || value.length;
-    commentTextArea = commentTextArea.attr("type","text").attr("value",value).attr("size",size).css("width","auto").css("position","absolute").css("overflow","visible");
+    width = width || "200px"
+    commentTextArea = commentTextArea.attr("type","text").attr("value",value).attr("size",size).css("width",width).css("position","absolute").css("overflow","visible");
     textbox.parent().append(commentTextArea);
     textbox.hide();
     commentTextArea = commentTextArea.keypress(function(e) {
