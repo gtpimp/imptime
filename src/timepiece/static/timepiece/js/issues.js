@@ -2,9 +2,7 @@ var imp = imp || {};
 
 imp.show_issue_detail = function(element, url, issue_id) {    
     $("loading").show();
-    //var parent_element = $(element).closest(".row-fluid").find(".issues");
-    var parent_element = $(element).closest(".project_detail");
-    var issue_detail = $(parent_element).find(".issue_detail");
+    var issue_detail = $(document).find(".issue_detail");
     issue_detail.load(url, function() { $("loading").hide(); });
     
  };

@@ -22,11 +22,16 @@
   
 </div>
 {% endif %}
-
-<ul class="project_list" project_sort_url="{% url 'sortable_project_update' %}" style="list-style-type:none;">
-  {% for project in projects %} 
-  {% include "timepiece/project/_project_list_item.html" %}
-  {% endfor %}
-</ul>
+<div class="row-fluid" style="float:left;width:60%">
+  <ul class="project_list" project_sort_url="{% url 'sortable_project_update' %}" style="list-style-type:none;">
+    {% for project in projects %} 
+    {% include "timepiece/project/_project_list_item.html" %}
+    {% endfor %}
+  </ul>
+</div>
+<div class="issue_pane right_hover">
+  <div class="issue_detail">
+  </div>
+</div>
 
 {% endblock %}
