@@ -2,12 +2,21 @@ var imp = imp || {};
 
 imp.show_issue_detail = function(element, url, issue_id) {    
     $("loading").show();
-    var closest_issue_detail_for_this_table = $(element).closest(".row-fluid").find(".issue_pane .issue_detail");
-    closest_issue_detail_for_this_table.load(url, function() {$("loading").hide();});
-    closest_issue_detail_for_this_table.position( { of: $(".issues_list"),
-						    my: "left top",
-						    at: "left top",
-						    collision: "flip flip" });
+    var parent_element = $(element).closest(".row-fluid").find(".issues");
+    var issue_detail = $(parent_element).find(".issue_detail");
+    issue_detail.load(url, function() { $("loading").hide(); });
+
+    // var closest_issue_detail_for_this_table = $(element).closest(".row-fluid").find(".issue_pane .issue_detail");
+    // closest_issue_detail_for_this_table.load(url, function() { $("loading").hide(); });
+    
+    // closest_issue_detail_for_this_table.position( { my: "right top",
+    //     					    at: "right top",
+    //                                                 of:  $(element).closest(".issues")[0],
+    //     					    collision: "fit fit" } );
+    //closest_issue_detail_for_this_table.css("position", "absolute");
+    
+    
+    
  };
 
 imp.do_form_show  = function(element, url) {
