@@ -184,7 +184,7 @@ imp.clickable_subject_box = function(element, url, item_id, size, width) {
         commentTextArea = $("<input/>");
     var value = $.trim(textbox.html()); 
     size = size || value.length;
-    width = width || "200px"
+    width = width || "200px";
     commentTextArea = commentTextArea.attr("type","text").attr("value",value).attr("size",size).css("width",width).css("position","absolute").css("overflow","visible");
     textbox.parent().append(commentTextArea);
     textbox.hide();
