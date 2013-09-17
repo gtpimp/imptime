@@ -9318,10 +9318,26 @@ body #content ul.parent ul {
     padding: 15px;
 }
 
+ul.project_list {
+    width:50%;
+}
 table.project_list  {
     white-space: nowrap;
 }
- 
+
+.issue_pane.right_hover{ 
+    position:fixed;    
+    margin-left:10px;
+    overflow:auto;
+    height:600px;
+    -moz-box-shadow:    6px 6px 0px 0px #ccc;
+    -webkit-box-shadow: 6px 6px 0px 0px #ccc;
+    box-shadow:         6px 6px 0px 0px #ccc;
+    border:1px solid #000;
+    padding:10px;
+    font-size:10px;
+    left:60%
+}
 
 .project_list tbody tr:nth-child(odd) td, .project_list tbody tr:nth-child(odd) th {
   /*background-color: #ffffff;*/
