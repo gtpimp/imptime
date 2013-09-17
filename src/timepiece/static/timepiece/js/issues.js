@@ -266,11 +266,6 @@ imp.refresh_closest_issue_parent_row = function(element) {
 };
 
 
-imp.ask_for_business_features = function (url) {
-    return 
-};
-
-
 imp.ajax_selection = function(element, url, update_url) {
 
     var handle_ajax_data_given = function (element , update_url) {

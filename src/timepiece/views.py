@@ -3699,12 +3699,13 @@ def get_issue_row(request,issue_id):
 @transaction.commit_on_success
 def sortable_issue_update(request, project_id):
     context = {}
-
+    #import pdb; pdb.set_trace()
     ordered_issue_ids = []
     for index in request.POST['ordered_ids'].split(","):
         try:
             int_index = int(index)
-            ordered_issue_ids.append(int_index)
+            if int_index > 0:
+                ordered_issue_ids.append(int_index)
         except ValueError:
             continue
     

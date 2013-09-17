@@ -47,21 +47,30 @@
   <div class="row-fluid" style="float:left">
     <div class="issues">
       <div class="issues_list" style="display:table">  <!-- overlflow:auto -->
+
 	
 	<form method="POST" action="">
           <table>
             <thead>
               {% include "timepiece/project/_issue_table_header.html" %}
             </thead>
+
             <tbody class="issue_list_body" id="{{project_id}}" update_order_url="{% url 'sortable_issue_update' project.id  %}" >
-              {% for form in issues_forms.forms %}
-              {% with form.instance as issue %}
-              {% include "timepiece/project/_issue_entry_row.html" %}
-              {% endwith %}
-              {% endfor %}
+              {% if issues_forms.forms %}
+                {% for form in issues_forms.forms %}
+                  {% with form.instance as issue %}
+                    {% include "timepiece/project/_issue_entry_row.html" %}
+                  {% endwith %}
+                {% endfor %}
+              {% else %}
+                {% include "timepiece/project/_issue_blank_row.html" %}   
+              {% endif %}
+
             </tbody>
           </table>
 	</form>      
+
+        
       </div>
       
 
