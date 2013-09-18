@@ -9331,6 +9331,8 @@ table.project_list  {
     overflow:auto;
     height:600px;
     width: 30%;
+    background-color:whitesmoke;
+    z-index: 100;
     -moz-box-shadow:    6px 6px 0px 0px #ccc;
     -webkit-box-shadow: 6px 6px 0px 0px #ccc;
     box-shadow:         6px 6px 0px 0px #ccc;

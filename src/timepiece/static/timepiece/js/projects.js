@@ -132,5 +132,6 @@ imp.on_document_ready = function() {
             expanded_row.trigger('click');
         }
     });
+    $(".issue_pane").draggable();
 }
 $(document).ready(imp.on_document_ready);
