@@ -19,12 +19,12 @@ function expand_collapse_business (elem_id)
   if ($(elem_id).css("display")=="none")
   {
      $(elem_id).show();
-     $(anchor_id).text("[collapse project]");   
+     $(anchor_id).text("[collapse sprint]");   
   }
   else
   {
      $(elem_id).hide();
-     $(anchor_id).text("[expand project]");
+     $(anchor_id).text("[expand sprint]");
   }
 }
 
@@ -148,7 +148,7 @@ $(document).ready(function(){
        <td>User</td><td><span class="rate_username"></span></td>
      </tr>
      <tr>
-       <td>Project</td><td><span class="rate_projectname"></span></td>
+       <td>Sprint</td><td><span class="rate_projectname"></span></td>
      </tr>
      <tr>
        <td>Cost to company rate</td><td><input type="text" class="rate_rate" name="rate_rate" value=""/></td>
@@ -193,7 +193,7 @@ $(document).ready(function(){
 	    <thead>
 	      <tr>
 	        <th>User/Business</th>
-		<th>Project</th>
+		<th>Sprint</th>
 		<th>Hours</th>
 		<th>Rate CTC</th>
 		<th>Rate Billed</th>
