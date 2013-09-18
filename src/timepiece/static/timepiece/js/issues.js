@@ -184,8 +184,9 @@ imp.clickable_subject_box = function(element, url, item_id, size, width) {
         commentTextArea = $("<input/>");
     var value = $.trim(textbox.html()); 
     size = size || value.length;
-    width = width || "200px";
-    commentTextArea = commentTextArea.attr("type","text").attr("value",value).attr("size",size).css("width",width).css("position","absolute").css("overflow","visible");
+    width = width || "80%";
+    
+    commentTextArea = commentTextArea.attr("type","text").attr("value",value).attr("size",size).css("width",width).css("position","absolute").css("overflow","visible").css("z-index",200);
     textbox.parent().append(commentTextArea);
     textbox.hide();
     commentTextArea = commentTextArea.keypress(function(e) {
