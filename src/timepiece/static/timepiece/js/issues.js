@@ -295,13 +295,13 @@ imp.ajax_selection = function(element, url, update_url) {
 imp.clickable_feature_name = function (element, url, item_id) {
     // clear the parent of select boxes...
     $(element).html("");
-    return imp.clickable_subject_box(element, url, item_id);
+    return imp.clickable_subject_box(element, url, item_id, "200px", "200px");
 };
 
 imp.dynamic_option_addition = function (element, item_id, update_url) {
     option_addition_button = $("<input/>").attr("type", "button").attr('value','');
     option_addition_button.attr("class","option_addition");
-
+    option_addition_button.css("border","none");
 
     var handle_click_for = function (element, item_id, update_url) {
         var _element = element;
