@@ -4,10 +4,14 @@
 <script src="{{STATIC_URL}}js/jquery.min.js"></script>
 <script src="{{STATIC_URL}}timepiece/js/issues.js"></script>
 
-<div class="issue_status">{{issue.status}}</div>
+<div class="issue_status" style="float:left;margin-bottom:10px">{{issue.status}}</div> 
+
 <div class="edit_description" >
+
   <div class="static_div" {% has_permission has_edit_description issue.project.business %} onclick="imp.clickable_description_box(this, '{% url issue_detail_update %}',{{ issue.id }})" {% end_permission %} >
-    {{issue.description|linebreaksbr}} 
+    {% if issue.description %} {{issue.description|linebreaksbr}} 
+    {% else %} No issue detail
+    {% endif %}
   </div>
 </div>
 

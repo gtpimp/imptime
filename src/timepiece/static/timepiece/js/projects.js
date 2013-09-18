@@ -4,79 +4,99 @@ imp.projects = imp.projects || {};
 imp.projects.already_loaded_sprints = {};
 
 imp.projects.on_sortable_changed_for_url = function(sortable_url) {
-    var sortable_update_url = sortable_url;
+    var _sortable_url = sortable_url;
     function ret_func(event, ui) {        
-
-        var url = sortable_update_url;
+        var url = _sortable_url;
         var rows = ui.item.parent().find("tr");
-
-        var project_id = $(rows[0]).attr("project_id");
+        var project_id = ui.item.parent().attr('id');
         var ordered_ids = [];
         rows.each(function(index, row) {
             var elem = $(row);
             var issue_id = elem.attr("id");
             ordered_ids.push(issue_id);
-            $(".loading_issue_"+issue_id).show();
         });        
-
-        var loading_el = null;
-        if (ordered_ids.length>0) {
-            loading_el = $(".loading_issue_"+ordered_ids[0]);
-            loading_el.show();
-        }
-
+        
+        var loading_indicators = ui.item.parent().find(".loading_issue_indicator");
+        loading_indicators.each ( function (item, elem) {
+            $elem = $(elem)
+            $elem.show();
+        });
+        
         var joined_ordered_ids = ordered_ids.join(',');
-        $.ajax({type:"POST",
-                url: url,
-                data: { ordered_ids:joined_ordered_ids , project_id:project_id },
-                dataType:"json",
-                success: function() { 
-
-                    for( issue_id in ordered_ids ) {
-                        $(".loading_issue_"+issue_id).hide();
-                    };
-                }
-               });
+        var response = $.ajax({type:"POST",
+                               url: url,
+                               data: { ordered_ids:joined_ordered_ids, project_id:project_id },
+                               dataType:"json",
+                               success : function () {
+                                   loading_indicators.each ( function (index, elem) {
+                                       $elem = $(elem);
+                                       $elem.hide();
+                                   });
+                               }
+                              });        
     };
     return ret_func;
 }
 
-imp.projects.load_or_display_issues = function(element, expand_url, sortable_url) {
-
-    var current_row = $(element);
-    var parent_table = $(current_row.closest(".project_table"));
-    var project_contents = parent_table.find(".project_contents");
-    var area_to_insert = project_contents.find(".information");
-    if (area_to_insert.find(".project_detail").length > 0) {
-        area_to_insert.find(".project_detail").toggle();
-    }
-
-    if ( imp.projects.already_loaded_sprints[expand_url] ) {
-        //already expanded
-        return;
-    }
-    
-    var loading = area_to_insert.find(".loading")
-    if (area_to_insert.find(".project_detail").length == 0) {
-        loading.show();
-        var response = $.ajax({type:"GET",
-                               url: expand_url,
-                               success: function(data) { 
-                                   area_to_insert.append($(data)); 
-                                   loading.hide(); 
-                                   imp.projects.already_loaded_sprints[expand_url] = true;
-                               }
-                              });
-        response.done(function (data) {
-            var project_detail = area_to_insert.find(".project_detail");
-            var sortable = $(area_to_insert.find(".issue_list_body"));
-            sortable.sortable( {stop: imp.projects.on_sortable_changed_for_url(sortable_url) } );
-        });
-	
-
-    }
-
+imp.projects._make_load_for_data = function ( done_data_function_handler ) {
+    var _done_data_function_handler = done_data_function_handler;
+    return function(element, expand_url) {
+        var done_data_function_handler = _done_data_function_handler;
+        var current_row = $(element);
+        var parent_table = $(current_row.closest(".project_table"));
+        var project_contents = parent_table.find(".project_contents");
+        var area_to_insert = project_contents.find(".information");
+        if (area_to_insert.find(".project_detail").length > 0) {
+            area_to_insert.find(".project_detail").toggle();
+        }
+        
+        if ( imp.projects.already_loaded_sprints[expand_url] ) {
+            return;
+        }
+        
+        var loading = area_to_insert.find(".loading")
+        if (area_to_insert.find(".project_detail").length == 0) {
+            loading.show();
+            var response = $.ajax({ type:"GET",
+                                    url: expand_url,
+                                    success: function(data) { 
+                                        area_to_insert.append($(data)); 
+                                        loading.hide(); 
+                                        imp.projects.already_loaded_sprints[expand_url] = true;
+                                    }
+                                  });
+            
+            
+            if (done_data_function_handler) {
+                response.done( done_data_function_handler(element) );                
+            }
+            
+        }
+        
+    };
 };
+
+
+function make_data_done_function_for_element(element) {
+    var _element = element;
+    return function (data) {
+        var element = _element;
+        var current_row = $(element);
+        var parent_table = $(current_row.closest(".project_table"));
+        var project_contents = parent_table.find(".project_contents");
+        var area_to_insert = project_contents.find(".information");
+        var sortable = $(area_to_insert.find(".issue_list_body"));
+        var sortable_url = $(sortable).attr("update_order_url");
+
+        sortable.sortable({ connectWith: ".issue_list_body",
+                            stop: imp.projects.on_sortable_changed_for_url(sortable_url),
+                            receive: imp.projects.on_sortable_changed_for_url(sortable_url),
+                           });
+    };
+};
+
+imp.projects.load_or_display_issues = imp.projects._make_load_for_data( make_data_done_function_for_element );
+
 
 imp.projects.on_project_sorting_change_for_url = function ( project_sorting_url) {
     var url_to_call_when_projects_were_resorted = project_sorting_url;
@@ -112,5 +132,6 @@ imp.on_document_ready = function() {
             expanded_row.trigger('click');
         }
     });
+    $(".issue_pane").draggable();
 }
 $(document).ready(imp.on_document_ready);

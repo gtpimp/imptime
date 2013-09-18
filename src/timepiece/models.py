@@ -141,8 +141,9 @@ class Business(models.Model):
         kwargs = kwargs or {}
         kwargs.update({"name":"Sprint0",
                        "business":self ,
-                   #    "type"
-                   })
+                       "type":Attribute.objects.get(label="default"),
+                       "status":Attribute.objects.get(label="open"),
+                       })
 
         if len(Project.objects.filter(business = self)) == 0:
             return Project.objects.create(**kwargs);
@@ -233,6 +234,7 @@ class BusinessPermissions(models.Model):
     can_edit_subject = models.BooleanField(default=False, verbose_name="Can Edit Subject")
 
     can_edit_feature = models.BooleanField(default=False, verbose_name="Can Edit Feature")
+    can_create_sprint = models.BooleanField(default=False, verbose_name="Can Create Sprint")
 
     @classmethod
     def _has(self, business, user, perm_func_name):
@@ -249,8 +251,11 @@ class BusinessPermissions(models.Model):
 
     @classmethod
     def has_edit_feature(self, business, user):
-        return self._has(business, user, 'can_edit_permissions')
+        return self._has(business, user, 'can_edit_feature')
 
+    @classmethod
+    def has_create_sprint(self, business, user):
+        return self._has(business, user, 'can_create_sprint')
 
     @classmethod
     def has_edit_permissions(self, business, user):

@@ -628,9 +628,9 @@ def get_project_card(request,business_id,index=None):
         business = None   
     
     projects = timepiece.Project.projects_in_desc_order_of_use(int(business_id))
-
     if len(projects)==0:
-        projects = timepiece.Project.objects.filter(business=business)
+        projects = timepiece.Project.objects.filter(business=business).order_by("-id")
+
     project = projects[0] if len(projects)>0 else None
 
     if index is not None:
@@ -1085,6 +1085,7 @@ def create_edit_business(request, business=None):
             request.POST,
             instance=business,
         )
+
         if business_form.is_valid():
             business = business_form.save()
             business.ensure_single_sprint(point_person=request.user);
@@ -2985,6 +2986,10 @@ def add_project(request, business_id , template="timepiece/project/_create_edit_
                                   status = timepiece.Attribute.objects.get(label="open"),
                                   )
 
+    has_create_sprint = timepiece.BusinessPermissions.has_create_sprint(business, request.user)
+    if not has_create_sprint:
+        raise PermissionDenied
+
     form = timepiece_forms.NewProjectForm(request.POST or None, instance=project)    
     if form.is_valid():
         project= form.save()
@@ -3197,7 +3202,7 @@ def get_project_detail(request, project_id, template="timepiece/project/_project
         issues_forms = timepiece_forms.issue_status_formset(request.POST or None, 
                                                             queryset=queryset)    
         for form in issues_forms.forms:
-            _augment_issue_data(form.instance,request.user)
+            _augment_issue_data(form.instance, request.user)
     
     new_issue_form = timepiece_forms.IssueForm()
     
@@ -3246,6 +3251,10 @@ def project_list(request, project_id=None, template="timepiece/project/project_l
         projects =project_list
     else:
         projects = timepiece.Project.objects.all()
+
+    has_view_issues = timepiece.BusinessPermissions.has_view_issues(business, request.user)
+    if not has_view_issues:
+        raise PermissionDenied
 
     context['current_user'] = request.user
     context['expanded_project'] = expanded_project
@@ -3700,22 +3709,26 @@ def get_issue_row(request,issue_id):
 @transaction.commit_on_success
 def sortable_issue_update(request, project_id):
     context = {}
-
+       
     ordered_issue_ids = []
     for index in request.POST['ordered_ids'].split(","):
         try:
             int_index = int(index)
-            ordered_issue_ids.append(int_index)
+            if int_index > 0:
+                ordered_issue_ids.append(int_index)
         except ValueError:
             continue
-
-    project_id = request.POST['project_id']
-    issue_query_set = timepiece.Issue.objects.filter(project__id = project_id).order_by("order")
-
+    
+    new_project_id = request.POST['project_id']
+    
+    new_project = timepiece.Project.objects.get(pk=new_project_id)
     for item_order_count, issue_id in enumerate(ordered_issue_ids):
         issue = timepiece.Issue.objects.get(pk=issue_id)
+        issue.project = new_project
         issue.order = item_order_count
         issue.save()
+
+    
     
     return HttpResponse("")
 

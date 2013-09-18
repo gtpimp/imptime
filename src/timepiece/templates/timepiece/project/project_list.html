@@ -12,21 +12,29 @@
 {% if business %}
 <div class="parent_li_of_form_on_click">
   
+  {% has_permission has_create_sprint business %}  
   <div class="btn">
     <div class="to_expand_form_on_click" style="display:block"  onclick="imp.do_form_show(this , '{% url 'add_project' business.id %}' )">
       Add Sprint
     </div>	
   </div>
+
   <div class="new_issue_form to_edit_expanded_form" style="display:none;position:absolute;z-index:100">		  
   </div>
+  {% end_permission %}
   
 </div>
 {% endif %}
-
-<ul class="project_list" project_sort_url="{% url 'sortable_project_update' %}" style="list-style-type:none;">
-  {% for project in projects %} 
-  {% include "timepiece/project/_project_list_item.html" %}
-  {% endfor %}
-</ul>
+<div class="row-fluid" style="float:left;width:60%">
+  <ul class="project_list" project_sort_url="{% url 'sortable_project_update' %}" style="list-style-type:none;">
+    {% for project in projects %} 
+    {% include "timepiece/project/_project_list_item.html" %}
+    {% endfor %}
+  </ul>
+</div>
+<div class="issue_pane right_hover">
+  <div class="issue_detail">
+  </div>
+</div>
 
 {% endblock %}

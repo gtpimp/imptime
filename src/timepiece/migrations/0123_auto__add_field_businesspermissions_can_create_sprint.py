@@ -8,15 +8,15 @@ from django.db import models
 class Migration(SchemaMigration):
 
     def forwards(self, orm):
-        # Adding field 'BusinessPermissions.can_edit_feature'
-        db.add_column('timepiece_businesspermissions', 'can_edit_feature',
+        # Adding field 'BusinessPermissions.can_create_sprint'
+        db.add_column('timepiece_businesspermissions', 'can_create_sprint',
                       self.gf('django.db.models.fields.BooleanField')(default=False),
                       keep_default=False)
 
 
     def backwards(self, orm):
-        # Deleting field 'BusinessPermissions.can_edit_feature'
-        db.delete_column('timepiece_businesspermissions', 'can_edit_feature')
+        # Deleting field 'BusinessPermissions.can_create_sprint'
+        db.delete_column('timepiece_businesspermissions', 'can_create_sprint')
 
 
     models = {
@@ -99,11 +99,11 @@ class Migration(SchemaMigration):
             'Meta': {'unique_together': "(('user', 'business'),)", 'object_name': 'BusinessPermissions'},
             'business': ('django.db.models.fields.related.ForeignKey', [], {'related_name': "'business_permissions'", 'to': "orm['timepiece.Business']"}),
             'can_add_issue': ('django.db.models.fields.BooleanField', [], {'default': 'False'}),
+            'can_create_sprint': ('django.db.models.fields.BooleanField', [], {'default': 'False'}),
             'can_delete_issue': ('django.db.models.fields.BooleanField', [], {'default': 'False'}),
             'can_edit_budget': ('django.db.models.fields.BooleanField', [], {'default': 'False'}),
             'can_edit_ctc_billable_rates': ('django.db.models.fields.BooleanField', [], {'default': 'False'}),
             'can_edit_description': ('django.db.models.fields.BooleanField', [], {'default': 'False'}),
-            'can_edit_feature': ('django.db.models.fields.BooleanField', [], {'default': 'False'}),
             'can_edit_invoices': ('django.db.models.fields.BooleanField', [], {'default': 'False'}),
             'can_edit_issue_states': ('django.db.models.fields.BooleanField', [], {'default': 'False'}),
             'can_edit_issues': ('django.db.models.fields.BooleanField', [], {'default': 'False'}),

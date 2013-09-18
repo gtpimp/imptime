@@ -2,8 +2,9 @@ var imp = imp || {};
 
 imp.show_issue_detail = function(element, url, issue_id) {    
     $("loading").show();
-    var closest_issue_detail_for_this_table = $(element).closest(".row-fluid").find(".issue_pane .issue_detail");
-    closest_issue_detail_for_this_table.load(url, function() {$("loading").hide();});
+    var issue_detail = $(document).find(".issue_detail");
+    issue_detail.load(url, function() { $("loading").hide(); });
+    
  };
 
 imp.do_form_show  = function(element, url) {
@@ -169,10 +170,10 @@ imp.clickable_description_box = function(element, url, item_id) {
 
 imp.clickable_time_estimate = function(element, url, item_id, size) {
     element = $(element).find(".edit_issue_subject");
-    return imp.clickable_subject_box(element, url, item_id, size);
+    return imp.clickable_subject_box(element, url, item_id, size, "auto");
 };
 
-imp.clickable_subject_box = function(element, url, item_id, size) {
+imp.clickable_subject_box = function(element, url, item_id, size, width) {
 
     if ( imp.showing_clickable_popup ) {
         return;
@@ -183,7 +184,9 @@ imp.clickable_subject_box = function(element, url, item_id, size) {
         commentTextArea = $("<input/>");
     var value = $.trim(textbox.html()); 
     size = size || value.length;
-    commentTextArea = commentTextArea.attr("type","text").attr("value",value).attr("size",size).css("width","auto").css("position","absolute").css("overflow","visible");
+    width = width || "80%";
+    
+    commentTextArea = commentTextArea.attr("type","text").attr("value",value).attr("size",size).css("width",width).css("position","absolute").css("overflow","visible").css("z-index",200);
     textbox.parent().append(commentTextArea);
     textbox.hide();
     commentTextArea = commentTextArea.keypress(function(e) {
@@ -192,15 +195,15 @@ imp.clickable_subject_box = function(element, url, item_id, size) {
         var new_value = $(this).val();
 
         if (e.which === 13) {
-            imp.refresh_closest_issue_parent_row(div_sibling);
+
             div_sibling.html(new_value);
             $(this).remove();
             div_sibling.show();
-            $.ajax({type:"POST",
-                    url: url,
-                    data : { item_id: item_id, new_value: new_value },
-                    dataType:"json"});
-            
+            var response = $.ajax({type:"POST",
+                                   url: url,
+                                   data : { item_id: item_id, new_value: new_value },
+                                   dataType:"json"});
+            response.done( function() { imp.refresh_closest_issue_parent_row(div_sibling) } );
             imp.showing_clickable_popup = false;
         }
         
@@ -233,10 +236,11 @@ imp.clickable_point_box = function(element, url, item_id) {
             div_sibling.html(new_value);
             $(this).remove();
             div_sibling.show();
-            $.ajax({type:"POST",
-                    url: url,
-                    data : { item_id: item_id, new_value: new_value },
-                    dataType:"json"});
+            var response = $.ajax({type:"POST",
+                                   url: url,
+                                   data : { item_id: item_id, new_value: new_value },
+                                   dataType:"json"});
+            response.done( function() { imp.refresh_closest_issue_parent_row(div_sibling) } );
 
         }
     });
@@ -261,11 +265,6 @@ imp.refresh_closest_issue_parent_row = function(element) {
                  $(closest_row)[0].outerHTML = $(data)[0].outerHTML;
            }
          });
-};
-
-
-imp.ask_for_business_features = function (url) {
-    return 
 };
 
 
@@ -376,13 +375,13 @@ imp.dynamic_option_selection = function(element, item_id, options , update_url) 
     }else {
         selected = selectme.find("option:selected")
         value = selected[0].innerHTML
-        $.ajax({type:"POST",
-                url: update_url,
-                data : { item_id: item_id , new_value:value, index: selected.attr("id") },
-                dataType:"json"});
+        var response = $.ajax({type:"POST",
+                               url: update_url,
+                               data : { item_id: item_id , new_value:value, index: selected.attr("id") },
+                               dataType:"json"});
 
         selectme.html('<div class="selectme">'+value+'</div>')
-        imp.refresh_closest_issue_parent_row(selectme);
+        response.done( function() { imp.refresh_closest_issue_parent_row(selectme) } );
     }
 };
 
