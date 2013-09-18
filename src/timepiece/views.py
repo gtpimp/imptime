@@ -3699,7 +3699,7 @@ def get_issue_row(request,issue_id):
 @transaction.commit_on_success
 def sortable_issue_update(request, project_id):
     context = {}
-    #import pdb; pdb.set_trace()
+       
     ordered_issue_ids = []
     for index in request.POST['ordered_ids'].split(","):
         try:
@@ -3709,14 +3709,16 @@ def sortable_issue_update(request, project_id):
         except ValueError:
             continue
     
-    project_id = request.POST['project_id']
-    issue_query_set = timepiece.Issue.objects.filter(project__id = project_id).order_by("order")
-    project = timepiece.Project.objects.get(pk=project_id)
+    new_project_id = request.POST['project_id']
+    
+    new_project = timepiece.Project.objects.get(pk=new_project_id)
     for item_order_count, issue_id in enumerate(ordered_issue_ids):
         issue = timepiece.Issue.objects.get(pk=issue_id)
-        issue.project = project
+        issue.project = new_project
         issue.order = item_order_count
         issue.save()
+
+    
     
     return HttpResponse("")
 

@@ -2,7 +2,7 @@
 {% load humanize %}
 {% load url from future %}
 
-                 <tr class="issue_instance_row {{issue.status_as_class}}" project_id="{{issue.project.id}}" id="{{issue.pk}}" refresh_url="{% url 'get_issue_row' issue.pk %}">                    
+                 <tr class="issue_instance_row {{issue.status_as_class}}" id="{{issue.pk}}" refresh_url="{% url 'get_issue_row' issue.pk %}">                    
 		   <td> 
 		     <div style="position:relative">
 		       <img style="display:none" style="position:absolute" class="loading_issue_{{issue.id}}" src="{{STATIC_URL}}/images/icons/loadingAnimation.gif"/>

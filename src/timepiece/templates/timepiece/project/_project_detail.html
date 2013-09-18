@@ -55,7 +55,7 @@
               {% include "timepiece/project/_issue_table_header.html" %}
             </thead>
 
-            <tbody class="issue_list_body" id="{{project_id}}" update_order_url="{% url 'sortable_issue_update' project.id  %}" >
+            <tbody class="issue_list_body" id="{{project.id}}" update_order_url="{% url 'sortable_issue_update' project.id  %}" >
               {% if issues_forms.forms %}
                 {% for form in issues_forms.forms %}
                   {% with form.instance as issue %}
@@ -63,9 +63,9 @@
                   {% endwith %}
                 {% endfor %}
               {% else %}
-                {% include "timepiece/project/_issue_blank_row.html" %}   
+              
               {% endif %}
-
+              {% include "timepiece/project/_issue_blank_row.html" %}   
             </tbody>
           </table>
 	</form>      
