@@ -628,9 +628,9 @@ def get_project_card(request,business_id,index=None):
         business = None   
     
     projects = timepiece.Project.projects_in_desc_order_of_use(int(business_id))
-
     if len(projects)==0:
-        projects = timepiece.Project.objects.filter(business=business)
+        projects = timepiece.Project.objects.filter(business=business).order_by("-id")
+
     project = projects[0] if len(projects)>0 else None
 
     if index is not None:
