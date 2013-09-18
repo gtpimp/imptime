@@ -194,15 +194,15 @@ imp.clickable_subject_box = function(element, url, item_id, size, width) {
         var new_value = $(this).val();
 
         if (e.which === 13) {
-            imp.refresh_closest_issue_parent_row(div_sibling);
+
             div_sibling.html(new_value);
             $(this).remove();
             div_sibling.show();
-            $.ajax({type:"POST",
-                    url: url,
-                    data : { item_id: item_id, new_value: new_value },
-                    dataType:"json"});
-            
+            var response = $.ajax({type:"POST",
+                                   url: url,
+                                   data : { item_id: item_id, new_value: new_value },
+                                   dataType:"json"});
+            response.done( function() { imp.refresh_closest_issue_parent_row(div_sibling) } );
             imp.showing_clickable_popup = false;
         }
         
@@ -235,10 +235,11 @@ imp.clickable_point_box = function(element, url, item_id) {
             div_sibling.html(new_value);
             $(this).remove();
             div_sibling.show();
-            $.ajax({type:"POST",
-                    url: url,
-                    data : { item_id: item_id, new_value: new_value },
-                    dataType:"json"});
+            var response = $.ajax({type:"POST",
+                                   url: url,
+                                   data : { item_id: item_id, new_value: new_value },
+                                   dataType:"json"});
+            response.done( function() { imp.refresh_closest_issue_parent_row(div_sibling) } );
 
         }
     });
@@ -373,13 +374,13 @@ imp.dynamic_option_selection = function(element, item_id, options , update_url) 
     }else {
         selected = selectme.find("option:selected")
         value = selected[0].innerHTML
-        $.ajax({type:"POST",
-                url: update_url,
-                data : { item_id: item_id , new_value:value, index: selected.attr("id") },
-                dataType:"json"});
+        var response = $.ajax({type:"POST",
+                               url: update_url,
+                               data : { item_id: item_id , new_value:value, index: selected.attr("id") },
+                               dataType:"json"});
 
         selectme.html('<div class="selectme">'+value+'</div>')
-        imp.refresh_closest_issue_parent_row(selectme);
+        response.done( function() { imp.refresh_closest_issue_parent_row(selectme) } );
     }
 };
 
