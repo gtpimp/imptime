@@ -2986,6 +2986,10 @@ def add_project(request, business_id , template="timepiece/project/_create_edit_
                                   status = timepiece.Attribute.objects.get(label="open"),
                                   )
 
+    has_create_sprint = timepiece.BusinessPermissions.has_create_sprint(business, request.user)
+    if not has_create_sprint:
+        raise PermissionDenied
+
     form = timepiece_forms.NewProjectForm(request.POST or None, instance=project)    
     if form.is_valid():
         project= form.save()

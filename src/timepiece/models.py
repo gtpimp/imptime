@@ -249,7 +249,7 @@ class BusinessPermissions(models.Model):
             raise Exception("Invalid perm name: %s" % perm_func_name)
 
     @classmethod
-    def has_create_sprint_permissions(self, business, user):
+    def has_create_sprint(self, business, user):
         return self._has(business, user, 'can_create_sprint')
 
     @classmethod
