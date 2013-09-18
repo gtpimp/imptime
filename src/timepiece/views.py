@@ -1271,6 +1271,7 @@ def project_detail(request, business_id):
     #print user_totals
 
     context.update({
+        'current_user':request.user,
         'form': form,
         'expense_form': timepiece_forms.ExpenseForm(),
         'invoice_form': timepiece_forms.InvoiceForm(),
