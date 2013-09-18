@@ -3233,6 +3233,7 @@ def get_project_detail(request, project_id, template="timepiece/project/_project
 
     return render_to_response(template, context, context_instance=RequestContext(request))
 
+@login_required
 @csrf_exempt
 def project_list(request, project_id=None, template="timepiece/project/project_list.html", context=None):
     context = context or {}

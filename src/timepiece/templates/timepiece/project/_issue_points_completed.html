@@ -23,9 +23,9 @@
 
           </div>
         </div>
-      {% else %}
+        {% else %}
         <span class="edit_issue_subject">{{ per_user.issue_points.points|default_if_none:"-" }}</span>
-      {% endif %}
+        {% endif %}
 
       </div>
     {% end_permission %}
