@@ -141,8 +141,9 @@ class Business(models.Model):
         kwargs = kwargs or {}
         kwargs.update({"name":"Sprint0",
                        "business":self ,
-                   #    "type"
-                   })
+                       "type":Attribute.objects.get(label="default"),
+                       "status":Attribute.objects.get(label="open"),
+                       })
 
         if len(Project.objects.filter(business = self)) == 0:
             return Project.objects.create(**kwargs);

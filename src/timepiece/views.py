@@ -1085,6 +1085,7 @@ def create_edit_business(request, business=None):
             request.POST,
             instance=business,
         )
+
         if business_form.is_valid():
             business = business_form.save()
             business.ensure_single_sprint(point_person=request.user);
