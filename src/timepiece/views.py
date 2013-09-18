@@ -3383,7 +3383,7 @@ def issue_points_update(request,  template="timepiece/project/issue_detail.html"
     return HttpResponse("")
 
 @csrf_exempt
-@permission_required('timepiece.change_project')
+# @permission_required('timepiece.change_project')
 def unassigned_timesheet_entries(request, project_id, template="timepiece/project/issue_detail.html", context=None):
     context = context or {}
     project = timepiece.Project.objects.filter(pk=project_id).filter_by_logged_in_user(request.user)[0]
@@ -3394,7 +3394,7 @@ def unassigned_timesheet_entries(request, project_id, template="timepiece/projec
     return render_to_response(template, context, context_instance=RequestContext(request))
 
 @csrf_exempt
-@permission_required('timepiece.change_project')
+# @permission_required('timepiece.change_project')
 def all_timesheet_entries(request, project_id, template="timepiece/project/issue_detail.html", context=None):
     context = context or {}
     project = timepiece.Project.objects.filter(pk=project_id).filter_by_logged_in_user(request.user)[0]

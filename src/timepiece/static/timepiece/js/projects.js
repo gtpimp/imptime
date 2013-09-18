@@ -43,8 +43,12 @@ imp.projects.show_project_card_as_popup = function(destination_dom_tag, project_
     var response = $.ajax({ type:"GET",
                             url: project_card_url,
                             success: function(data) { 
+                                if ($(document).find(".project_card_top_level").length != 0) {
+                                    $(document).find(".project_card_top_level").parent().remove();
+                                }
                                 destination.append($(data)); 
                                 destination.css("background-color","whitesmoke");
+                                destination.css("position","fixed");
                                 destination.css("z-index","300");
                             }
                           });
