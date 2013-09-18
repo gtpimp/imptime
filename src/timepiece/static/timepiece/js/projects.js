@@ -14,26 +14,26 @@ imp.projects.on_sortable_changed_for_url = function(sortable_url) {
             var elem = $(row);
             var issue_id = elem.attr("id");
             ordered_ids.push(issue_id);
-            $(".loading_issue_"+issue_id).show();
         });        
-
-        var loading_el = null;
-        if (ordered_ids.length>0) {
-            loading_el = $(".loading_issue_"+ordered_ids[0]);
-            loading_el.show();
-        }
-
+        
+        var loading_indicators = ui.item.parent().find(".loading_issue_indicator");
+        loading_indicators.each ( function (item, elem) {
+            $elem = $(elem)
+            $elem.show();
+        });
+        
         var joined_ordered_ids = ordered_ids.join(',');
-        $.ajax({type:"POST",
-                url: url,
-                data: { ordered_ids:joined_ordered_ids, project_id:project_id },
-                dataType:"json",
-                success: function() { 
-                    for( issue_id in ordered_ids ) {
-                        $(".loading_issue_"+issue_id).hide();
-                    };
-                }
-               });
+        var response = $.ajax({type:"POST",
+                               url: url,
+                               data: { ordered_ids:joined_ordered_ids, project_id:project_id },
+                               dataType:"json",
+                               success : function () {
+                                   loading_indicators.each ( function (index, elem) {
+                                       $elem = $(elem);
+                                       $elem.hide();
+                                   });
+                               }
+                              });        
     };
     return ret_func;
 }
@@ -51,7 +51,6 @@ imp.projects._make_load_for_data = function ( done_data_function_handler ) {
         }
         
         if ( imp.projects.already_loaded_sprints[expand_url] ) {
-            //already expanded
             return;
         }
         
