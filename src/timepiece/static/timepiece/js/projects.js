@@ -36,7 +36,22 @@ imp.projects.on_sortable_changed_for_url = function(sortable_url) {
                               });        
     };
     return ret_func;
-}
+};
+
+imp.projects.show_project_card_as_popup = function(destination_dom_tag, project_card_url) {
+    var destination = $(destination_dom_tag);
+    var response = $.ajax({ type:"GET",
+                            url: project_card_url,
+                            success: function(data) { 
+                                destination.append($(data)); 
+                                destination.css("background-color","whitesmoke");
+                                destination.css("z-index","300");
+                            }
+                          });
+    response.done( function () {
+        destination.draggable();
+    });
+};
 
 imp.projects._make_load_for_data = function ( done_data_function_handler ) {
     var _done_data_function_handler = done_data_function_handler;
