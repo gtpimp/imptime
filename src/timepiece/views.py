@@ -3093,19 +3093,19 @@ def _augment_issue_data(issue,current_user):
             issue.representation.per_user = []
         issue.representation.per_user.append((user,per_user_issue_data))
 
-        # options = [i[0] for i in timepiece.Issue.ISSUE_STATUS_CHOICES]
-        # issue.representation.options = "[%s]"%",".join(["'%s'"%str(i) for i in options])
-
         options = timepiece.Issue.ISSUE_STATUS_CHOICES
-        issue.representation.options =  str([ list(pair) for pair in options ]) #"[%s]"%",".join(["'%s'"%str(i) for i in options])
+        issue.representation.options =  str([ list(pair) for pair in options ]) 
 
         end()
 
 @csrf_exempt
 def add_feature(request, business_id):
     
-    
     business = timepiece.Business.objects.get(pk=business_id)
+    has_edit_feature = timepiece.BusinessPermissions.has_edit_feature(business, request.user)
+    if not has_edit_feature:
+        raise PermissionDenied
+
     try:
         new_name = request.POST['new_value']
         current_issue = int(request.POST['item_id'])
@@ -3129,14 +3129,21 @@ def business_features(request, business_id):
 @csrf_exempt
 def update_issue_with_feature(request,issue_id):
     
+
     issue = timepiece.Issue.objects.get(pk=issue_id)
     try:
         selection = int(request.POST["index"])
     except (KeyError, ValueError):
         selection = None
+
+    business = issue.project.business
+
+    has_edit_feature = timepiece.BusinessPermissions.has_edit_feature(business, request.user)
+    if not has_edit_feature:
+        raise PermissionDenied
     
     try:
-        feature = timepiece.Feature.objects.get(pk=selection, business=issue.project.business)
+        feature = timepiece.Feature.objects.get(pk=selection, business=business)
         issue.feature = feature;
         issue.save()
     except timepiece.Feature.DoesNotExist:
