@@ -3604,10 +3604,11 @@ def show_timeline(request, project_id):
     return context
 
 
+@login_required
 @transaction.commit_on_success
 @render_with('timepiece/project/show_permissions.html')
 def show_permissions(request, business_id):
-
+        
     context = {}
     try:
         business = timepiece.Business.objects.get(pk=business_id)
