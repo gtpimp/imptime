@@ -12,7 +12,7 @@
 {% if business %}
 <div class="parent_li_of_form_on_click">
   
-  {% has_permission has_create_sprint  project.business %}  
+  {% has_permission has_create_sprint business %}  
   <div class="btn">
     <div class="to_expand_form_on_click" style="display:block"  onclick="imp.do_form_show(this , '{% url 'add_project' business.id %}' )">
       Add Sprint

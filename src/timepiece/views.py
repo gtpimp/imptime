@@ -3251,6 +3251,10 @@ def project_list(request, project_id=None, template="timepiece/project/project_l
     else:
         projects = timepiece.Project.objects.all()
 
+    has_view_issues = timepiece.BusinessPermissions.has_view_issues(business, request.user)
+    if not has_view_issues:
+        raise PermissionDenied
+
     context['current_user'] = request.user
     context['expanded_project'] = expanded_project
     context['projects'] = projects
