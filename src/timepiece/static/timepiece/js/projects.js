@@ -5,15 +5,10 @@ imp.projects.already_loaded_sprints = {};
 
 imp.projects.on_sortable_changed_for_url = function(sortable_url) {
     var _sortable_url = sortable_url;
-    //var _recipient_project_id = recipient_project_id;
     function ret_func(event, ui) {        
-
         var url = _sortable_url;
         var rows = ui.item.parent().find("tr");
-
-        //var project_id = $(rows[0]).attr("project_id");
-        var project_id = ui.item.parent().attr('id') 
-        // recipient_project_id //$(receiving_list).closest("li").attr("list_project_id");        
+        var project_id = ui.item.parent().attr('id');
         var ordered_ids = [];
         rows.each(function(index, row) {
             var elem = $(row);
@@ -42,54 +37,6 @@ imp.projects.on_sortable_changed_for_url = function(sortable_url) {
     };
     return ret_func;
 }
-
-// imp.projects.load_or_display_issues = function(element, expand_url, sortable_url) {
-
-//     var current_row = $(element);
-//     var parent_table = $(current_row.closest(".project_table"));
-//     var project_contents = parent_table.find(".project_contents");
-//     var area_to_insert = project_contents.find(".information");
-//     if (area_to_insert.find(".project_detail").length > 0) {
-//         area_to_insert.find(".project_detail").toggle();
-//     }
-
-//     if ( imp.projects.already_loaded_sprints[expand_url] ) {
-//         //already expanded
-//         return;
-//     }
-    
-//     var loading = area_to_insert.find(".loading")
-//     if (area_to_insert.find(".project_detail").length == 0) {
-//         loading.show();
-//         var response = $.ajax({ type:"GET",
-//                                 url: expand_url,
-//                                 success: function(data) { 
-//                                          area_to_insert.append($(data)); 
-//                                          loading.hide(); 
-//                                          imp.projects.already_loaded_sprints[expand_url] = true;
-//                                   }
-//                               });
-
-        
-//         function create_ajax_done_handler(item) {
-//             var itemx = item;
-
-//             return function (data) {
-//                 var _item = itemx;
-//                 var project_detail = area_to_insert.find(".project_detail");
-//                 var sortable = $(area_to_insert.find(".issue_list_body"));
-//                 sortable.sortable( { receive: imp.projects.on_sortable_changed_for_url(sortable_url, _item),
-//                                      stop: imp.projects.on_sortable_changed_for_url(sortable_url, _item),                                     
-// 				     connectWith: ".issue_list_body",     } );
-//             }
-//         }
-
-//         response.done( create_ajax_done_handler(element) );
-
-//     }
-
-// };
-
 
 imp.projects._make_load_for_data = function ( done_data_function_handler ) {
     var _done_data_function_handler = done_data_function_handler;
@@ -131,23 +78,6 @@ imp.projects._make_load_for_data = function ( done_data_function_handler ) {
 };
 
 
-// function create_ajax_done_handler(item, area_to_insert, sortable_url) {
-//     var _item = item;
-//     var _area_to_insert = area_to_insert;
-//     var _sortable_url = sortable_url
-//     return function (data) {
-//         var item = item;
-//         var area_to_insert = _area_to_insert;
-//         var sortable_url = _sortable_url;
-//         var project_detail = area_to_insert.find(".project_detail");
-//         var sortable = $(area_to_insert.find(".issue_list_body"));
-//         sortable.sortable( { connectWith: ".issue_list_body" });
-//         // sortable.sortable( { receive: imp.projects.on_sortable_changed_for_url(sortable_url, item),
-//         //                      stop: imp.projects.on_sortable_changed_for_url(sortable_url, item),                                     
-// 	// 		     connectWith: ".issue_list_body",     } );
-//     }
-// };
-
 function make_data_done_function_for_element(element) {
     var _element = element;
     return function (data) {
@@ -159,17 +89,9 @@ function make_data_done_function_for_element(element) {
         var sortable = $(area_to_insert.find(".issue_list_body"));
         var sortable_url = $(sortable).attr("update_order_url");
 
-        function list_stop_function (event, ui) {
-            var x = 123;
-        };
-
-        function list_receive_function(event, ui) {
-            var y = 123;
-        };
-
-        sortable.sortable({connectWith: ".issue_list_body",
-                           stop: imp.projects.on_sortable_changed_for_url(sortable_url),
-                           receive: imp.projects.on_sortable_changed_for_url(sortable_url),
+        sortable.sortable({ connectWith: ".issue_list_body",
+                            stop: imp.projects.on_sortable_changed_for_url(sortable_url),
+                            receive: imp.projects.on_sortable_changed_for_url(sortable_url),
                            });
     };
 };
