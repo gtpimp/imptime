@@ -233,6 +233,8 @@ class BusinessPermissions(models.Model):
     can_edit_description = models.BooleanField(default=False, verbose_name="Can Edit Description")
     can_edit_subject = models.BooleanField(default=False, verbose_name="Can Edit Subject")
 
+    can_create_sprint = models.BooleanField(default=False, verbose_name="Can Create Sprint")
+
     @classmethod
     def _has(self, business, user, perm_func_name):
         if user.is_superuser:
@@ -245,6 +247,10 @@ class BusinessPermissions(models.Model):
             return getattr(bp, perm_func_name)
         except AttributeError:
             raise Exception("Invalid perm name: %s" % perm_func_name)
+
+    @classmethod
+    def has_create_sprint_permissions(self, business, user):
+        return self._has(business, user, 'can_create_sprint')
 
     @classmethod
     def has_edit_permissions(self, business, user):
