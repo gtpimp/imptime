@@ -1,0 +1,66 @@
+{% load timepiece_tags %}
+{% load humanize %}
+{% load url from future %}
+
+                 <tr class="issue_instance_row" project_id="{{project.id}}" id="-1" >                    
+		   <td> 
+		     <div style="position:relative">
+		       <img style="display:none" style="position:absolute" />
+		     </div>
+		     <div class="secret_link issue_number">
+
+		     </div>
+		   </td> 
+                   <td class="issue_subject">
+		     <div class="edit_issue_subject"  >
+
+                     </div>
+                   </td>
+                   <td class="styled-select">
+                     <div class="edit_issue_subject selectme"  >
+                     </div>
+                   </td>
+                   <td>
+                     <div class="styled-select">		     
+                       <div class="selectme"  >                          
+
+                       </div>
+                     </div>
+                   </td>
+                   {% has_permission has_see_other_user_points project.business %}
+                      {% user_can_estimate_own_points user project.business %}
+                      <td> </td>
+                      {% end_can_estimate %}
+		  {% end_permission %}
+
+                  {% has_not_permission has_see_other_user_points project.business %}
+                      {% user_can_estimate_own_points user project.business %}
+                      <td> </td>
+                      {% end_can_estimate %}
+  	          {% end_permission %}
+
+                  {% has_permission has_view_actual_hours  project.business %} 
+                    <td class="">
+                      <div class="secret_link"  >
+
+                      </div>
+                    </td>
+                  {% end_permission %}
+
+		  {% has_permission has_view_ctc_billable_rates project.business  %}
+                  <td class="">
+                    <div class="secret_link">
+
+                    </div>
+                  </td>
+                  <td class="">
+                    <div class="secret_link">
+                      
+                    </div>
+                  </td>
+		  {% end_permission %}		  
+		  {% has_permission has_delete_issue project.business %}
+                  <td class="issue_delete">		    
+                  </td>
+		  {% end_permission  %}
+                 </tr>
