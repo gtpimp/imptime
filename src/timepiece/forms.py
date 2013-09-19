@@ -704,6 +704,7 @@ class ProjectForm(forms.ModelForm):
 
 
 class NewProjectForm(forms.ModelForm):
+    budget = forms.FloatField(required=False)
     class Meta:
         model = timepiece.Project
         fields = (
@@ -715,9 +716,8 @@ class NewProjectForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         super(NewProjectForm, self).__init__(*args, **kwargs)
 
-    def save(self):
-        instance = super(NewProjectForm, self).save(commit=False)
-        instance.save()
+    def save(self, commit=False):
+        instance = super(NewProjectForm, self).save(commit=commit)
         return instance
 
 class ProjectBudgetForm(forms.ModelForm):

@@ -3000,6 +3000,8 @@ def time_sheet_download(request, user_id, context=None):
 def add_project(request, business_id , template="timepiece/project/_create_edit_project_form.html", context=None):
     context = context or {}
     business = timepiece.Business.objects.get(pk=business_id)
+    context['business'] = business
+    context['current_user'] =request.user
     project = timepiece.Project(  business = business,
                                   point_person = request.user,
                                   type = timepiece.Attribute.objects.get(label="default"),
@@ -3010,16 +3012,19 @@ def add_project(request, business_id , template="timepiece/project/_create_edit_
     if not has_create_sprint:
         raise PermissionDenied
 
+    has_edit_budget = timepiece.BusinessPermissions.has_edit_budget(business, request.user)
+    
     form = timepiece_forms.NewProjectForm(request.POST or None, instance=project)    
+    context['project_form'] =form;
     if form.is_valid():
         project= form.save()
+        if not has_edit_budget: 
+            project.budget = 0
         project.save()
-        return get_project_row(request, project.id)
+        context['project'] = project
+        return get_project_row(request, project.id, context= context)
 
-    context['business'] = business
     context['project'] = project
-    context['project_form'] =form;
-    context['current_user'] =request.user
     return render_to_response(template, context, context_instance=RequestContext(request))
 
 def add_issue(request, project_id, template="timepiece/project/_add_issue_form.html", context=None):

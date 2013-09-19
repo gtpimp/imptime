@@ -18,7 +18,7 @@
     {{ project_form.description.label }} {{ project_form.description }}
   </div>
 
-  {% has_permission has_edit_ctc_billable_rates project.business %}
+  {% has_permission has_edit_budget project.business %}
   <div class="project_form_budget_class">
     {{ project_form.budget.label }} {{ project_form.budget }}
   </div>
