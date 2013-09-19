@@ -32,7 +32,9 @@
                    </td>
                    {% has_permission has_see_other_user_points project.business %}
 		    {% for user,per_user in issue.representation.per_user %}
+                      {% user_can_estimate_own_points user project.business %}
                         {% include "timepiece/project/_issue_points_completed.html" %}
+                      {% end_can_estimate %}
 		    {% endfor %}
 		  {% end_permission %}
 
