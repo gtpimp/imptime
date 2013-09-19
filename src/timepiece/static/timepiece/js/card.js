@@ -1,6 +1,15 @@
 
 var imp = imp || {};
 
+imp.toggle_card_menu = function (event) {
+    var current_element = $(event.currentTarget);
+    var menu_items = current_element.parent().find(".menu_items");
+    menu_items.toggle();
+    event.stopPropagation();
+    return false;
+};
+
+
 imp.project_card_thinking = function(el) {
   $(el).parents(".project_card").find(".loading").show();
 };

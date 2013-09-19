@@ -4,7 +4,7 @@
 
                  <tr class="issue_instance_row {{issue.status_as_class}}" id="{{issue.pk}}" refresh_url="{% url 'get_issue_row' issue.pk %}">                    
 		   <td> 
-                     <img  style="float:left" src="{{STATIC_URL}}/images/icons/arrow_inout.png"/> 
+                     <img  style="float:left" src="{{STATIC_URL}}/images/icons/drag.png"/> 
 		     <div style="position:relative">
 		       <img style="display:none" style="position:absolute" class="loading_issue_indicator" id="loading_issue_{{issue.id}}" src="{{STATIC_URL}}/images/icons/loadingAnimation.gif"/>
 		     </div>
