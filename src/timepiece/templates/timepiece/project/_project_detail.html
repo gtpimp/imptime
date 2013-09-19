@@ -38,14 +38,16 @@
 
 	  {% end_permission %}
 
-          <div class="btn">
-            <div class="to_expand_form_on_click" style="display:block"  onclick="imp.projects.show_project_card_as_popup('#b_card_{{business.id}}', '{% url 'get_project_card'  business_id=business.id  %}');return false; "> 
+          {% comment %}
+         <div class="btn">
+            <div class="to_expand_form_on_click" style="display:block"  onclick="imp.projects.show_project_card_as_popup('#b_card_{{business.id}}', '{% url 'get_project_card_for_business'  business_id=business.id project_id=project.id  %}', '{{ business.id }}', '{{ project.id }}' );return false; "> 
 	      Show Project Card
 	    </div>	
           </div>
+ 
 	  <div class="" id="b_card_{{business.id}}"  style="position:absolute;z-index:100">		  
 	  </div>
-
+          {% endcomment %}
         </li>
       </ul>
     </div>

@@ -11,7 +11,19 @@
         <div class="draggable">
           <img src="{{STATIC_URL}}/images/icons/drag.png"/> 
         </div>
-        {{project.name}}  
+        <div style="float:left;margin-right:10px">
+          {{project.name}}  
+        </div>
+        <div class="btn" >
+          {% comment %}
+          <div class="to_expand_form_on_click" style="display:block"  onclick="imp.projects.show_project_card_as_popup(this,'#b_card_{{business.id}}', '{% url 'get_project_card_for_business'  business_id=business.id project_id=project.id  %}', '{{ business.id }}', '{{ project.id }}' ); "> 
+            {% endcomment %}
+            <div class="to_expand_form_on_click" style="display:block;"  onclick="imp.projects.show_project_card_as_popup(event);return false" target_id="#b_card_{{business.id}}" project_card_url="{% url 'get_project_card_for_business'  business_id=business.id project_id=project.id  %}" business_id="{{ business.id }}" project_id="{{ project.id }}"> 
+            Show Project Card
+          </div>	
+        </div> 
+        <div id="b_card_{{business.id}}">
+        </div>
       </div> 
     </div>
     <div class="project_table_row project_contents">

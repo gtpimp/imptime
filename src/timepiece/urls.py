@@ -169,6 +169,11 @@ urlpatterns = patterns('',
         name='get_project_card',
     ),
     url(
+        r'time-sheet/get_project_card_for_business/(?P<business_id>\d+)/(?P<project_id>\d+)/$',
+        views.get_project_card_for_business,
+        name='get_project_card_for_business',
+    ),
+    url(
         r'time-sheet/get_project_card/(?P<business_id>\d+)/(?P<index>\d+)/$',
         views.get_project_card,
         name='get_project_card_indexed',

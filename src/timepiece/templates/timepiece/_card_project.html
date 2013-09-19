@@ -2,7 +2,7 @@
 {% load humanize %}
 {% load url from future %}
 
-<div class="project_card_top_level">
+<div class="project_card_top_level" business_id="{{ project.business.id }}" project_id="{{ project.id }}">
 
   <div id="project_id_{{project.id}}">
 

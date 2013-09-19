@@ -38,20 +38,36 @@ imp.projects.on_sortable_changed_for_url = function(sortable_url) {
     return ret_func;
 };
 
-imp.projects.show_project_card_as_popup = function(destination_dom_tag, project_card_url) {
+imp.projects.show_project_card_as_popup = function (event) {
+    var current_element = $(event.currentTarget);
+    var destination_dom_tag = current_element.attr("target_id");
+    var project_card_url = current_element.attr("project_card_url");
+    var business_id= current_element.attr("business_id");
+    var project_id = current_element.attr("project_id");
     var destination = $(destination_dom_tag);
     var response = $.ajax({ type:"GET",
                             url: project_card_url,                            
                           });
     var for_data_of_response = function (destination_tag) {
-
+        
+        var _bus_id = business_id;
+        var _proj_id = project_id;
         var _dest_tag = destination_tag;
-
+        
         return function(data) { 
+            var project_id = _proj_id;
+            var business_id = _bus_id;
             var destination = $(_dest_tag);
-            if ($(document).find(".project_card_top_level").length != 0) {
-                $(document).find(".project_card_top_level").parent().remove();
+            var project_card_top_level = $(document).find(".project_card_top_level");
+            if (project_card_top_level.length != 0) {
+                var current_project_id = project_card_top_level.attr('project_id');
+                var current_business_id = project_card_top_level.attr('business_id');
+                project_card_top_level.parent().remove();                
+                if ((project_id ===current_project_id) && (business_id === current_business_id)){
+                    return false;
+                }
             }
+            
             destination.append($(data)); 
             destination.css("background-color","whitesmoke");
             destination.css("position","fixed");
@@ -59,9 +75,48 @@ imp.projects.show_project_card_as_popup = function(destination_dom_tag, project_
             destination.draggable();
         }
     };
-
+        
     response.done(  for_data_of_response(destination_dom_tag)  );
+    event.stopPropagation();
+    return false;
 };
+
+// imp.projects.show_project_card_as_popup = function(current_element, destination_dom_tag, project_card_url, business_id, project_id) {
+//     var destination = $(destination_dom_tag);
+//     var response = $.ajax({ type:"GET",
+//                             url: project_card_url,                            
+//                           });
+//     var for_data_of_response = function (destination_tag) {
+
+//        var _bus_id = business_id;
+//         var _proj_id = project_id;
+//         var _dest_tag = destination_tag;
+
+//         return function(data) { 
+//             var project_id = _proj_id;
+//             var business_id = _bus_id;
+//             var destination = $(_dest_tag);
+//             var project_card_top_level = $(document).find(".project_card_top_level");
+//             if (project_card_top_level.length != 0) {
+//                 var current_project_id = project_card_top_level.attr('project_id');
+//                 var current_business_id = project_card_top_level.attr('business_id');
+//                 project_card_top_level.parent().remove();                
+//                 if ((project_id ===current_project_id) && (business_id === current_business_id)){
+//                     return false;
+//                 }
+//             }
+
+//             destination.append($(data)); 
+//             destination.css("background-color","whitesmoke");
+//             destination.css("position","fixed");
+//             destination.css("z-index","300");
+//             destination.draggable();
+//         }
+//     };
+
+//     response.done(  for_data_of_response(destination_dom_tag)  );
+//     return false;
+// };
 
 imp.projects._make_load_for_data = function ( done_data_function_handler ) {
     var _done_data_function_handler = done_data_function_handler;

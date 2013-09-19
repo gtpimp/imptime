@@ -613,6 +613,25 @@ def view_summary(request,user_id, include_older_businesses=False):
 
 
 @login_required
+def get_project_card_for_business(request,business_id, project_id):
+
+    try:
+        business = timepiece.Business.objects.get(id = business_id)
+    except timepiece.Business.DoesNotExist:
+        business = None   
+    
+    project = timepiece.Project.objects.get(pk = project_id)
+    
+
+    context = { 'business':business, 
+                'current_business':business, 
+                'current_user':request.user,
+                'project':project }
+    return render_to_response('timepiece/card.html',
+                              context, context_instance=RequestContext(request))
+
+
+@login_required
 def get_project_card(request,business_id,index=None):
 
     if index is None:
