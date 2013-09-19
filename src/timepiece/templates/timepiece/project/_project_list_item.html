@@ -7,7 +7,11 @@
   <li class="project_li" list_project_id="{{ project.id }}" >
   <div class="project_table project_table_appearance">    
     <div class="project_table_row project_coloured_row">
-      <div class="project_table_cell project_expand" preloaded="{{ project.is_preloaded }}" onclick="imp.projects.load_or_display_issues(this, '{% url 'get_project_detail' project.id %}')"  >  <img style="float:left;margin-right:10px" class="loading" src="{{STATIC_URL}}/images/icons/arrow_inout.png"/> {{project.name}}  
+      <div class="project_table_cell project_expand" preloaded="{{ project.is_preloaded }}" onclick="imp.projects.load_or_display_issues(this, '{% url 'get_project_detail' project.id %}')"  >  
+        <div class="draggable">
+          <img src="{{STATIC_URL}}/images/icons/drag.png"/> 
+        </div>
+        {{project.name}}  
       </div> 
     </div>
     <div class="project_table_row project_contents">

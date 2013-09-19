@@ -9838,3 +9838,9 @@ table.project_list  {
     text-align:center;
 }
 
+.draggable {
+    position: relative;
+    cursor: grab;
+    float: left;
+    margin-right:2px;
+}
