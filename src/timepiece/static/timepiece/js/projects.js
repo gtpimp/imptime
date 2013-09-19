@@ -41,20 +41,26 @@ imp.projects.on_sortable_changed_for_url = function(sortable_url) {
 imp.projects.show_project_card_as_popup = function(destination_dom_tag, project_card_url) {
     var destination = $(destination_dom_tag);
     var response = $.ajax({ type:"GET",
-                            url: project_card_url,
-                            success: function(data) { 
-                                if ($(document).find(".project_card_top_level").length != 0) {
-                                    $(document).find(".project_card_top_level").parent().remove();
-                                }
-                                destination.append($(data)); 
-                                destination.css("background-color","whitesmoke");
-                                destination.css("position","fixed");
-                                destination.css("z-index","300");
-                            }
+                            url: project_card_url,                            
                           });
-    response.done( function () {
-        destination.draggable();
-    });
+    var for_data_of_response = function (destination_tag) {
+
+        var _dest_tag = destination_tag;
+
+        return function(data) { 
+            var destination = $(_dest_tag);
+            if ($(document).find(".project_card_top_level").length != 0) {
+                $(document).find(".project_card_top_level").parent().remove();
+            }
+            destination.append($(data)); 
+            destination.css("background-color","whitesmoke");
+            destination.css("position","fixed");
+            destination.css("z-index","300");
+            destination.draggable();
+        }
+    };
+
+    response.done(  for_data_of_response(destination_dom_tag)  );
 };
 
 imp.projects._make_load_for_data = function ( done_data_function_handler ) {
