@@ -2,7 +2,7 @@
 {% load url from future %}
 
 <div class="card_menu">
-  <div class="title" onclick="$(this).parent().find('.menu_items').toggle(); return false;">
+  <div class="title" onclick="imp.toggle_card_menu(event);return false;">
     Menu
   </div>
   <div class="menu_items" style="display:none">

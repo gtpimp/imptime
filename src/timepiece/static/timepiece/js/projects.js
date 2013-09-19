@@ -2,6 +2,13 @@ var imp = imp || {};
 imp.projects = imp.projects || {};
 
 imp.projects.already_loaded_sprints = {};
+imp.toggle_card_menu = function (event) {
+    var current_element = $(event.currentTarget);
+    var menu_items = current_element.parent().find(".menu_items");
+    menu_items.toggle();
+    event.stopPropagation();
+    return false;
+};
 
 imp.projects.on_sortable_changed_for_url = function(sortable_url) {
     var _sortable_url = sortable_url;
