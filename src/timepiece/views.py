@@ -3797,94 +3797,89 @@ class CSVSprintExport(CSVMixin):
         super(CSVSprintExport, self).__init__()
         self.project = timepiece.Project.objects.get(pk=project_id)
         self.request = request
+        self.current_user = timepiece.User.objects.get(pk=request.user.id)
 
     def get_filename(self,context):
         clean_name = self.project.name.replace(" ","_")
         return "export_of_%s.csv"%clean_name
-    
-
-    def _can_view_issue_number(self,*args,**kwargs):        
-        has_permission = True
-        if has_permission:
-            def _get_issue_number(issue):
-                return issue.number
-            return _get_issue_number
-        else:
-            return None
-
-    def _can_view_ctc(self,*args,**kwargs):
-        user = timepiece.User.objects.get(pk=self.request.user.id)
-        has_permission = timepiece.BusinessPermissions.has_view_ctc_billable_rates(business= self.project.business, user=user)
-        if has_permission : 
-            def _get_ctc(issue):
-                return issue.ctc
-            return _get_ctc
-        else:
-            return None
-
-    def _can_view_billable(self,*args,**kwargs):
-        user = timepiece.User.objects.get(pk=self.request.user.id)
-        has_permission = timepiece.BusinessPermissions.has_view_ctc_billable_rates(business= self.project.business, user=user)
-        if has_permission :
-            def _get_billable(issue):
-                return issue.billable
-            return _get_billable
-        else:
-            return None
-            
-    
-    _columns = { "issue number" : _can_view_issue_number,
-                 "ctc" : _can_view_ctc,
-                 "billable" : _can_view_billable }
-    
 
     def convert_context_to_csv(self, context):
-        result = []       
-        data = {}
-        columns = []
-        column_names = self._get_column_names()
-        columns.append(column_names)
-        for issue in self.project.issues.all():
-            row = []
-            for column_name in column_names:
-                get_column = self._columns[column_name]
-                issue_value_calculation = get_column(self)
-                if issue_value_calculation:
-                    row.append(issue_value_calculation(issue))
-            columns.append(row)
-
-        return columns
-
-            
-    def _get_column_names(self):
-        users_and_hours = self.project.users_and_hours()
-        def _can_view_project_hours_for(self,user):
-            current_user = user
-            def _can_view_project_hours(self=self):
-                user = timepiece.User.objects.get(pk=self.request.user.id)
-                has_permission = timepiece.BusinessPermissions.has_see_other_user_points(business= self.project.business, user=user)
-                if has_permission:
-                    def _get_hours_project(*args, **kwargs):
-                        try:
-                            hours =  users_and_hours['users'][current_user.username]['hours']
-                        except KeyError:
-                            hours = 0
-                        return hours
-                    return _get_hours_project
-                else:
-                    return None
-            return _can_view_project_hours
-
+        current_user = self.current_user
+        business = self.project.business
         business_users = [user for user in self.project.business.users]
-        for user in business_users:
-            self._columns.update({ "Total Hours For %s" % user.username : _can_view_project_hours_for(self,user) })
+        business_users_names = [user.username for user in business_users]
+        can_see_other_points = timepiece.BusinessPermissions.has_see_other_user_points(business=business, user=current_user)
+        can_see_ctc_billable = timepiece.BusinessPermissions.has_view_ctc_billable_rates(business=business, user=current_user)
 
-        names = []
-        for name, can_view_test in self._columns.iteritems():
-            if can_view_test(self):
-                names.append(name)
+        header_row = []
+        if can_see_other_points:
+            header_row.append('issue number')
+            
+            if can_see_ctc_billable:
+                header_row.append("ctc")
+                header_row.append("billable")
 
-        return names
+            for username in business_users_names:
+                header_row.append("Hours for %s"%username)
+                
+            total = [header_row]
+            for issue in self.project.issues.all():                
+                user_hours_for_issue = self.project.users_and_hours(issue__id=issue.id)
+
+                data_row = [issue.id]
+                if can_see_ctc_billable:
+                    data_row.append(issue.ctc)
+                    data_row.append(issue.billable)
+
+                for username in business_users_names:
+                    try:
+                        value = user_hours_for_issue['users'][username]['hours']
+                    except KeyError:
+                        value = 0
+                    data_row.append(value)
+                total.append(data_row)
+        import pdb; pdb.set_trace()
+        return HttpResponse(">>")
+    
+    # def _get_issue_number(self, issue):
+    #     return issue.number
+    
+    # def _get_ctc(self, issue):
+    #     return issue.ctc
+
+    # def _get_billable(self, issue):
+    #     return issue.billable
+
+    # _columns = { "issue number" : (_get_issue_number, None),
+    #              "ctc" : (_get_ctc, "has_view_ctc_billable_rates"),
+    #              "billable" : (_get_billable, "has_view_ctc_billable_rates"),
+    #              }
+    
+    # def _get_column_names(self):        
+    #     user = timepiece.User.objects.get(pk=self.request.user.id)
+    #     business = self.project.business
+    #     names = []
+    #     for column_name, get_permission_info in self._columns.iteritems():
+    #         get_func, permission_name = get_permission_info
+    #         has_permission = True
+    #         if permission_name:
+    #             try:
+    #                 permission = getattr(timepiece.BusinessPermissions, permission_name)
+    #                 has_permission = permission(business=business, user=user)
+    #             except AttributeError:
+    #                 has_permission = False
+
+    #         if has_permission:
+    #             names.append(column_name)
+
+    #     return names
+
+    # def convert_context_to_csv(self, context):
+    #     names = self._get_column_names()
+    #     import pdb; pdb.set_trace()
+    #     return HttpResponse("?")
+    
+            
 
  
 def sprint_export(request, project_id , context=None):
