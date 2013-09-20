@@ -469,4 +469,15 @@ urlpatterns = patterns('',
         views.update_issue_with_feature,
         name='update_issue_with_feature',
   	),                         
+   url(
+        r'^time-sheet/sprint_export/(?P<project_id>\d+)/$',
+        views.sprint_export,
+        name='sprint_export',
+  	),                         
+    # url(
+    #     r'^project/(?P<pk>\d+)/delete/$',
+    #     views.DeleteProjectView.as_view(),
+    #     name='delete_project',
+    # ),
+
 )

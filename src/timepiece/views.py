@@ -3792,4 +3792,102 @@ def sortable_project_update(request):
     return HttpResponse("")
 
 
+class CSVSprintExport(CSVMixin):
+    def __init__(self, project_id , request):
+        super(CSVSprintExport, self).__init__()
+        self.project = timepiece.Project.objects.get(pk=project_id)
+        self.request = request
+
+    def get_filename(self,context):
+        clean_name = self.project.name.replace(" ","_")
+        return "export_of_%s.csv"%clean_name
+
+        
+    def _can_view_issue_number(self,*args,**kwargs):        
+        has_permission = True
+        if has_permission:
+            def _get_issue_number(issue):
+                return issue.number
+            return _get_issue_number
+        else:
+            return None
+
+    def _can_view_ctc(self,*args,**kwargs):
+        has_permission = True
+        if has_permission : 
+            def _get_ctc(issue):
+                return issue.ctc
+            return _get_ctc
+        else:
+            return None
+
+    def _can_view_billable(self,*args,**kwargs):
+        has_permission = True
+        if has_permission :
+            def _get_billable(issue):
+                return issue.billable
+            return _get_billable
+        else:
+            return None
+            
+    
+    _columns = { "issue number" : _can_view_issue_number,
+                 "ctc" : _can_view_ctc,
+                 "billable" : _can_view_billable }
+    
+
+    def convert_context_to_csv(self, context):
+        result = []       
+        data = {}
+        columns = []
+        column_names = self._get_column_names()
+        columns.append(column_names)
+        for issue in self.project.issues.all():
+            row = []
+            for column_name in column_names:
+                get_column = self._columns[column_name]
+                issue_value_calculation = get_column(self)
+                if issue_value_calculation:
+                    row.append(issue_value_calculation(issue))
+            columns.append(row)
+
+        return columns
+
+            
+    def _get_column_names(self):
+        users_and_hours = self.project.users_and_hours()
+        def _can_view_project_hours_for(self,user):
+            current_user = user
+            def _can_view_project_hours(self=self):
+                has_permission = True
+                if has_permission:
+                    def _get_hours_project(*args, **kwargs):
+                        try:
+                            hours =  users_and_hours['users'][current_user.username]['hours']
+                        except KeyError:
+                            hours = 0
+                        return hours
+                    return _get_hours_project
+                else:
+                    return None
+            return _can_view_project_hours
+
+        business_users = [user for user in self.project.business.users]
+        for user in business_users:
+            self._columns.update({ "Total Hours For %s" % user.username : _can_view_project_hours_for(self,user) })
+
+        import pdb; pdb.set_trace()
+        names = []
+        for name, can_view_test in self._columns.iteritems():
+            if can_view_test(self):
+                names.append(name)
+
+        return names
+
+ 
+def sprint_export(request, project_id , context=None):
+    context = context or {}
+    exporter = CSVSprintExport(project_id, request)
+    return exporter.render_to_response(context)
+
 
