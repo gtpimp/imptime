@@ -3801,8 +3801,8 @@ class CSVSprintExport(CSVMixin):
     def get_filename(self,context):
         clean_name = self.project.name.replace(" ","_")
         return "export_of_%s.csv"%clean_name
+    
 
-        
     def _can_view_issue_number(self,*args,**kwargs):        
         has_permission = True
         if has_permission:
@@ -3813,7 +3813,8 @@ class CSVSprintExport(CSVMixin):
             return None
 
     def _can_view_ctc(self,*args,**kwargs):
-        has_permission = True
+        user = timepiece.User.objects.get(pk=self.request.user.id)
+        has_permission = timepiece.BusinessPermissions.has_view_ctc_billable_rates(business= self.project.business, user=user)
         if has_permission : 
             def _get_ctc(issue):
                 return issue.ctc
@@ -3822,7 +3823,8 @@ class CSVSprintExport(CSVMixin):
             return None
 
     def _can_view_billable(self,*args,**kwargs):
-        has_permission = True
+        user = timepiece.User.objects.get(pk=self.request.user.id)
+        has_permission = timepiece.BusinessPermissions.has_view_ctc_billable_rates(business= self.project.business, user=user)
         if has_permission :
             def _get_billable(issue):
                 return issue.billable
@@ -3859,7 +3861,8 @@ class CSVSprintExport(CSVMixin):
         def _can_view_project_hours_for(self,user):
             current_user = user
             def _can_view_project_hours(self=self):
-                has_permission = True
+                user = timepiece.User.objects.get(pk=self.request.user.id)
+                has_permission = timepiece.BusinessPermissions.has_see_other_user_points(business= self.project.business, user=user)
                 if has_permission:
                     def _get_hours_project(*args, **kwargs):
                         try:
@@ -3876,7 +3879,6 @@ class CSVSprintExport(CSVMixin):
         for user in business_users:
             self._columns.update({ "Total Hours For %s" % user.username : _can_view_project_hours_for(self,user) })
 
-        import pdb; pdb.set_trace()
         names = []
         for name, can_view_test in self._columns.iteritems():
             if can_view_test(self):
