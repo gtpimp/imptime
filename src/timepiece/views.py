@@ -3840,15 +3840,15 @@ class CSVSprintExport(CSVMixin):
                 data_row.append(issue.ctc)
                 data_row.append(issue.billable)                
                 
-            if can_see_hours:
-                for username,user in business_users_and_names:
+
+            for username,user in business_users_and_names:
+                if can_see_hours:
                     try:
                         value = user_hours_for_issue['users'][username]['hours']
                     except KeyError:
                         value = 0
                     data_row.append(value)
 
-            for username, user in business_users_and_names:
                 if can_see_other_points:
                     try:
                         issue_point = timepiece.IssuePoints.objects.get(user=user, issue=issue)
