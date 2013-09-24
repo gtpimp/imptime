@@ -3,6 +3,7 @@ from emacs_importer.tasks import import_timesheets_from_emacs
 from django.utils import simplejson
 import os
 from implicitdesign import settings
+from django.core.mail import send_mail
 
 class Command(BaseCommand):
 
@@ -10,5 +11,14 @@ class Command(BaseCommand):
     website. '''
 
     def handle(self, *args, **options):
-        import_timesheets_from_emacs()
+        try:
+            import_timesheets_from_emacs()
+        except Exception, ex:
+            send_mail(subject="Problems importing timesheets",
+                      message=str(ex),
+                      from_email="info@implicitdesign.co.za",
+                      recipient_list=["gtp@implicitdesign.co.za",],
+                      fail_silently=True)
+            raise ex
+
         print("Import complete")
