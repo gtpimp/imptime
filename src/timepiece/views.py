@@ -184,6 +184,7 @@ def view_entries(request):
 
 @permission_required('timepiece.can_clock_in')
 @transaction.commit_on_success
+@login_required
 def clock_in(request):
     """For clocking the user into a project"""
     active_entry = timepiece.Entry.no_join.filter(user=request.user,
@@ -212,6 +213,7 @@ def clock_in(request):
 
 
 @permission_required('timepiece.can_clock_out')
+@login_required
 def clock_out(request, entry_id):
     entry = get_object_or_404(
         timepiece.Entry,
@@ -243,6 +245,7 @@ def clock_out(request, entry_id):
 
 
 @permission_required('timepiece.can_pause')
+@login_required
 def toggle_paused(request, entry_id):
     """
     Allow the user to pause and unpause their open entries.  If this method is
@@ -293,6 +296,7 @@ def toggle_paused(request, entry_id):
 
 @render_with('timepiece/time-sheet/entry/import_entries.html')
 @permission_required('timepiece.can_clock_in')
+@login_required
 def import_entries(request):
     form = timepiece_forms.ImportEntriesForm(request.user, request.POST)
 
@@ -307,6 +311,7 @@ def import_entries(request):
 
 @permission_required('timepiece.change_entry')
 @render_with('timepiece/time-sheet/entry/add_update_entry.html')
+@login_required
 def create_edit_entry(request, entry_id=None):
     if entry_id:
         try:
@@ -355,6 +360,7 @@ def create_edit_entry(request, entry_id=None):
 
 
 @permission_required('timepiece.view_payroll_summary')
+@login_required
 def reject_entry(request, entry_id):
     """
     Admins can reject an entry that has been verified or approved but not
@@ -388,6 +394,7 @@ def reject_entry(request, entry_id):
 
 
 @permission_required('timepiece.delete_entry')
+@login_required
 def delete_entry(request, entry_id):
     """
     Give the user the ability to delete a log entry, with a confirmation
@@ -424,6 +431,7 @@ def delete_entry(request, entry_id):
 
 @permission_required('timepiece.view_entry_summary')
 @render_with('timepiece/time-sheet/reports/general_ledger.html')
+@login_required
 def summary(request, username=None):
     date = timezone.now() - relativedelta(months=1)
     from_date = utils.get_month_start(date).date()
@@ -626,7 +634,9 @@ def get_project_card_for_business(request,business_id, project_id):
     context = { 'business':business, 
                 'current_business':business, 
                 'current_user':request.user,
-                'project':project }
+                'project':project,
+                'business_permissions_by_user':timepiece.BusinessPermissions.by_user(business)
+                }
     return render_to_response('timepiece/card.html',
                               context, context_instance=RequestContext(request))
 
@@ -663,7 +673,9 @@ def get_project_card(request,business_id,index=None):
                 'current_user':request.user,
                 'project':project,
                 'older_projects':older_projects,
-                'expand_older':index is not None}
+                'expand_older':index is not None,
+                'business_permissions_by_user':timepiece.BusinessPermissions.by_user(business)
+                }
     return render_to_response('timepiece/card.html',
                               context, context_instance=RequestContext(request))
 
@@ -878,6 +890,7 @@ def confirm_invoice_project(request, project_id, to_date, from_date=None):
 
 
 @permission_required('timepiece.change_entrygroup')
+@login_required
 def invoice_projects(request):
     date = utils.add_timezone(datetime.datetime.today())
     to_date = utils.get_month_start(date).date()
@@ -1036,6 +1049,7 @@ class InvoiceDelete(InvoiceDetail):
 
 
 @permission_required('timepiece.change_entrygroup')
+@login_required
 def remove_invoice_entry(request, invoice_id, entry_id):
     invoice = get_object_or_404(timepiece.EntryGroup, pk=invoice_id)
     entry = get_object_or_404(timepiece.Entry, pk=entry_id)
@@ -1059,6 +1073,7 @@ def remove_invoice_entry(request, invoice_id, entry_id):
 
 @permission_required('timepiece.view_business')
 @render_with('timepiece/business/list.html')
+@login_required
 def list_businesses(request):
     form = timepiece_forms.SearchForm(request.GET)
     if form.is_valid() and 'search' in request.GET:
@@ -1086,6 +1101,7 @@ def list_businesses(request):
 
 @permission_required('timepiece.view_business')
 @render_with('timepiece/business/view.html')
+@login_required
 def view_business(request, business):
     business = get_object_or_404(timepiece.Business, pk=business)
     context = {
@@ -1096,6 +1112,7 @@ def view_business(request, business):
 
 @permission_required('timepiece.add_business')
 @render_with('timepiece/business/create_edit.html')
+@login_required
 def create_edit_business(request, business=None):
     if business:
         business = get_object_or_404(timepiece.Business, pk=business)
@@ -1124,6 +1141,7 @@ def create_edit_business(request, business=None):
 
 @permission_required('auth.view_user')
 @render_with('timepiece/person/list.html')
+@login_required
 def list_people(request):
     form = timepiece_forms.SearchForm(request.GET)
     if form.is_valid() and 'search' in request.GET:
@@ -1172,6 +1190,7 @@ def list_people(request):
 @permission_required('auth.view_user')
 @transaction.commit_on_success
 @render_with('timepiece/person/view.html')
+@login_required
 def view_person(request, person_id):
     person = get_object_or_404(auth_models.User, pk=person_id)
     add_user_form = timepiece_forms.AddUserToProjectForm()
@@ -1194,6 +1213,7 @@ def view_person(request, person_id):
 @permission_required('auth.add_user')
 @permission_required('auth.change_user')
 @render_with('timepiece/person/create_edit.html')
+@login_required
 def create_edit_person(request, person_id=None):
     if person_id:
         person = get_object_or_404(auth_models.User, pk=person_id)
@@ -1229,6 +1249,7 @@ def create_edit_person(request, person_id=None):
     return context
 
 @render_with('timepiece/project/detail.html')
+@login_required
 def project_detail(request, business_id):
     if request.GET:
         form = timepiece_forms.ProjectSearchForm(request.GET)
@@ -1238,10 +1259,10 @@ def project_detail(request, business_id):
     projects = timepiece.Project.objects.filter(business__id=business_id)
     try:
         business = timepiece.Business.objects.get(pk = business_id)
-    except timepice.Business.DoesNotExist:
+    except timepiece.Business.DoesNotExist:
         raise PermissionDenied
     
-    has_edit_project_detail = timepiece.BusinessPermissions.has_edit_project_detail(business,request.user)
+    has_edit_project_detail = timepiece.BusinessPermissions.objects.get_or_create(business=business, user=request.user)[0].has_edit_project_detail
     if not has_edit_project_detail:
         raise PermissionDenied
 
@@ -1306,6 +1327,7 @@ def project_detail(request, business_id):
 
 @permission_required('timepiece.view_project')
 @render_with('timepiece/project/list.html')
+@login_required
 def list_projects(request):
     if request.GET:
         form = timepiece_forms.ProjectSearchForm(request.GET)
@@ -1438,9 +1460,11 @@ def list_projects(request):
 #     return context
 
 
+@login_required
 def sum_user_totals(users_and_hours, totals=None):
     if totals is None:
         totals = {}
+
 
     def add_total(key):
         if key in business_totals:
@@ -1474,6 +1498,7 @@ def sum_user_totals(users_and_hours, totals=None):
             business_totals['billed_rate'] = float(business_totals['billed'])  / float(business_totals['hours'])
     return totals
             
+@login_required
 def business_total(projects, start_time=None, end_time=None):
     entry_filter = [('start_time__gte', start_time), ('end_time__lte', end_time)]
     entry_filter = dict((k,v) for k,v in entry_filter if v)
@@ -1526,10 +1551,11 @@ def business_total(projects, start_time=None, end_time=None):
               
 @transaction.commit_on_success
 @render_with('timepiece/project/view.html')
+@login_required
 def view_project(request, project_id):
     project = get_object_or_404(timepiece.Project, pk=project_id)
 
-    has_edit_project_detail = timepiece.BusinessPermissions.has_edit_project_detail(project.business,request.user)
+    has_edit_project_detail = timepiece.BusinessPermissions.objects.get_or_create(business=project.business, user=request.user)[0].has_edit_project_detail
     if not has_edit_project_detail:
         raise PermissionDenied
 
@@ -1554,6 +1580,7 @@ def view_project(request, project_id):
 @csrf_exempt
 @permission_required('timepiece.change_project')
 @transaction.commit_on_success
+@login_required
 def add_user_to_project(request, project_id):
     project = get_object_or_404(timepiece.Project, pk=project_id)
     if request.POST:
@@ -1575,6 +1602,7 @@ def add_user_to_project(request, project_id):
 @csrf_exempt
 @permission_required('timepiece.change_project')
 @transaction.commit_on_success
+@login_required
 def remove_user_from_project(request, project_id, user_id):
     project = get_object_or_404(timepiece.Project, pk=project_id)
     try:
@@ -1596,6 +1624,7 @@ def remove_user_from_project(request, project_id, user_id):
 @permission_required('timepiece.change_project')
 @transaction.commit_on_success
 @render_with('timepiece/project/relationship.html')
+@login_required
 def edit_project_relationship(request, project_id, user_id):
     project = get_object_or_404(timepiece.Project, pk=project_id)
     try:
@@ -1627,6 +1656,7 @@ def edit_project_relationship(request, project_id, user_id):
 
 @permission_required('timepiece.add_project')
 @permission_required('timepiece.change_project')
+@login_required
 def create_close_project(request, project_id=None):
     project = get_object_or_404(timepiece.Project, pk=project_id)
     project.status = timepiece.Attribute.objects.get(label='closed', type='project-status')
@@ -1635,6 +1665,7 @@ def create_close_project(request, project_id=None):
 
 @permission_required('timepiece.add_project')
 @permission_required('timepiece.invoiced_project')
+@login_required
 def invoiced_project(request, project_id=None):
     project = get_object_or_404(timepiece.Project, pk=project_id)
     project.status = timepiece.Attribute.objects.get(label='closed', type='project-status')
@@ -1645,6 +1676,7 @@ def invoiced_project(request, project_id=None):
 
 @permission_required('timepiece.add_project')
 @permission_required('timepiece.unbillable_project')
+@login_required
 def unbillable_project(request, project_id=None):
     project = get_object_or_404(timepiece.Project, pk=project_id)
     project.status = timepiece.Attribute.objects.get(label='closed', type='project-status')
@@ -1657,6 +1689,7 @@ def unbillable_project(request, project_id=None):
 
 @permission_required('timepiece.change_project')
 @render_with('timepiece/project/create_edit.html')
+@login_required
 def update_project(request, project_id=None):
     project = get_object_or_404(timepiece.Project, pk=project_id) \
         if project_id else None
@@ -1679,6 +1712,7 @@ def update_project(request, project_id=None):
 
 @permission_required('timepiece.add_project')
 @render_with('timepiece/project/create_edit.html')
+@login_required
 def create_project(request):
 
     business_id = request.GET['business_id']
@@ -1707,11 +1741,12 @@ def create_project(request):
 
 
 @render_with('timepiece/project/edit_project_budget.html')
+@login_required
 def edit_project_budget(request, project_id=None):
     project = get_object_or_404(timepiece.Project, pk=project_id) \
         if project_id else None
 
-    has_edit_budget = timepiece.BusinessPermissions.has_edit_budget(project.business,request.user)
+    has_edit_budget = timepiece.BusinessPermissions.objects.get_or_create(business=project.business, user=request.user)[0].has_edit_budget
     if not has_edit_budget:
         raise PermissionDenied
         
@@ -1735,6 +1770,7 @@ def edit_project_budget(request, project_id=None):
 
 @permission_required('timepiece.view_payroll_summary')
 @render_with('timepiece/time-sheet/reports/summary.html')
+@login_required
 def payroll_summary(request):
     date = timezone.now() - relativedelta(months=1)
     from_date = utils.get_month_start(date).date()
@@ -1788,6 +1824,7 @@ def payroll_summary(request):
 @permission_required('timepiece.view_projection_summary')
 @render_with('timepiece/time-sheet/projection/projection.html')
 @utils.date_filter
+@login_required
 def projection_summary(request, form, from_date, to_date, status, activity):
     if not (from_date and to_date):
         today = datetime.date.today()
@@ -2399,6 +2436,7 @@ class SalaryView(TemplateView):
         return context
 
 @permission_required('timepiece.can_change_salary')
+@login_required
 def salary_edit(request, user_id, template="timepiece/salary/payslip.html", context=None):
     context = context or {}
     user = User.objects.get(pk=user_id)
@@ -2451,6 +2489,7 @@ def salary_edit(request, user_id, template="timepiece/salary/payslip.html", cont
     return render_to_response(template, context, context_instance=RequestContext(request))
 
 @permission_required('timepiece.can_change_salary')
+@login_required
 def salary_payslip(request, salary_id, preview=True, template="timepiece/salary/payslip_pdf.html", context=None):
     context = context or {}
     salary = timepiece.Salary.objects.get(pk=salary_id)
@@ -2472,6 +2511,7 @@ def salary_payslip(request, salary_id, preview=True, template="timepiece/salary/
     return response
 
 @permission_required('timepiece.view_entry_summary')
+@login_required
 def incremental_timesheets_by_project(request, template="timepiece/time-sheet/redmine/incremental_timesheets_by_project.html", context=None):
     context = context or {}
     form = timepiece_forms.AggregatedTimesheetFormByProject(request.user, request.GET or None)
@@ -2490,6 +2530,7 @@ def incremental_timesheets_by_project(request, template="timepiece/time-sheet/re
 @csrf_exempt
 @permission_required('timepiece.change_project')
 @transaction.commit_on_success
+@login_required
 def set_project_rate(request, context=None):
     project_id = request.POST['project_id']
     user_name = request.POST['user_name']
@@ -2504,6 +2545,7 @@ def set_project_rate(request, context=None):
     return HttpResponse("")
 
 @permission_required('timepiece.view_entry_summary')
+@login_required
 def revenue(request, template="timepiece/time-sheet/reports/revenue.html", context=None):
     context = context or {}
 
@@ -2519,6 +2561,7 @@ def revenue(request, template="timepiece/time-sheet/reports/revenue.html", conte
 
     return render_to_response(template, context, context_instance=RequestContext(request))
     
+@login_required
 def daily_graph(request, template="timepiece/graphs/daily_graph.html", context=None):
 
     if not request.user.is_superuser:
@@ -2540,6 +2583,7 @@ def daily_graph(request, template="timepiece/graphs/daily_graph.html", context=N
 
     return render_to_response(template, context, context_instance=RequestContext(request))
 
+@login_required
 def graphs(request, template="timepiece/graphs/graph.html", context=None):
  
     if not request.user.is_superuser:
@@ -2860,6 +2904,7 @@ def _get_filter_dates_only(request, context=None, default=None):
     return from_date, to_date
 
 @permission_required('timepiece.expenses')
+@login_required
 def expense_list(request, template='timepiece/expense/index.html', context=None):
     
     context = context or {}
@@ -2880,13 +2925,14 @@ def expense_list(request, template='timepiece/expense/index.html', context=None)
 
     return render_to_response(template, context, context_instance=RequestContext(request))
 
+@login_required
 def invoice_list(request, template='timepiece/invoice/index.html', context=None):
     
     context = context or {}
 
     project_id = request.GET.get('project_id')
     context['project'] = timepiece.Project.objects.get(pk=project_id)
-    has_view_invoices = timepiece.BusinessPermissions.has_edit_invoices(context['project'].business,request.user)
+    has_view_invoices = timepiece.BusinessPermissions.objects.get_or_create(business=context['project'].business, user=request.user)[0].has_edit_invoices
     if not has_view_invoices:
         raise PermissionDenied
           
@@ -2931,6 +2977,7 @@ def invoice_list(request, template='timepiece/invoice/index.html', context=None)
 @csrf_exempt
 @permission_required('timepiece.change_project')
 @transaction.commit_on_success
+@login_required
 def create_expense(request, context=None):
     project_id = float(request.POST['project_id'])
     amount = float(request.POST['amount'])
@@ -2947,6 +2994,7 @@ def create_expense(request, context=None):
 @csrf_exempt
 @permission_required('timepiece.change_project')
 @transaction.commit_on_success
+@login_required
 def create_invoice(request, context=None):
     project_id = float(request.POST['project_id'])
     date_sent = request.POST['date_sent']
@@ -2975,6 +3023,7 @@ def create_invoice(request, context=None):
 
 @csrf_exempt
 @permission_required('timepiece.change_project')
+@login_required
 def time_sheet_download(request, user_id, context=None):
     context = context or {}
     to_date = datetime.datetime.strptime(request.GET['to_date'], "%Y%m%d").date()
@@ -2997,6 +3046,7 @@ def time_sheet_download(request, user_id, context=None):
 
 
 
+@login_required
 def add_project(request, business_id , template="timepiece/project/_create_edit_project_form.html", context=None):
     context = context or {}
     business = timepiece.Business.objects.get(pk=business_id)
@@ -3008,11 +3058,11 @@ def add_project(request, business_id , template="timepiece/project/_create_edit_
                                   status = timepiece.Attribute.objects.get(label="open"),
                                   )
 
-    has_create_sprint = timepiece.BusinessPermissions.has_create_sprint(business, request.user)
+    has_create_sprint = timepiece.BusinessPermissions.objects.get_or_create(business=business, user=request.user)[0].has_create_sprint
     if not has_create_sprint:
         raise PermissionDenied
 
-    has_edit_budget = timepiece.BusinessPermissions.has_edit_budget(business, request.user)
+    has_edit_budget = timepiece.BusinessPermissions.objects.get_or_create(business=business, user=request.user)[0].has_edit_budget
     
     form = timepiece_forms.NewProjectForm(request.POST or None, instance=project)    
     context['project_form'] =form;
@@ -3027,6 +3077,7 @@ def add_project(request, business_id , template="timepiece/project/_create_edit_
     context['project'] = project
     return render_to_response(template, context, context_instance=RequestContext(request))
 
+@login_required
 def add_issue(request, project_id, template="timepiece/project/_add_issue_form.html", context=None):
     context = context or {}
     project = timepiece.Project.objects.filter(pk=project_id).filter_by_logged_in_user(request.user)[0]
@@ -3038,7 +3089,7 @@ def add_issue(request, project_id, template="timepiece/project/_add_issue_form.h
     context['current_user'] = request.user
     current_user = request.user
 
-    can_create_issue = timepiece.BusinessPermissions.has_add_issue(current_business, current_user)    
+    can_create_issue = timepiece.BusinessPermissions.objects.get_or_create(business=current_business, user=current_user)[0].has_add_issue    
     if can_create_issue:
         new_issue_form = timepiece_forms.IssueForm(request.POST or None)
         if new_issue_form.is_valid():        
@@ -3053,6 +3104,7 @@ def add_issue(request, project_id, template="timepiece/project/_add_issue_form.h
     return render_to_response(template, context, context_instance=RequestContext(request))
 
 @csrf_exempt
+@login_required
 def delete_issue(request, project_id, template="", context=None):
     context = context or {}
     project = timepiece.Project.objects.filter(pk=project_id).filter_by_logged_in_user(request.user)[0]
@@ -3061,7 +3113,7 @@ def delete_issue(request, project_id, template="", context=None):
 
     current_user = request.user
     
-    can_delete_issue = timepiece.BusinessPermissions.has_delete_issue(current_business, current_user)
+    can_delete_issue = timepiece.BusinessPermissions.objects.get_or_create(business=current_business, user=current_user)[0].has_delete_issue
     if can_delete_issue:
         try:
             edited_issue = timepiece.Issue.objects.get(pk=request.POST['item_id'])
@@ -3075,12 +3127,14 @@ def delete_issue(request, project_id, template="", context=None):
 def _augment_issue_data(issue,current_user):
     business_users = [user.id for user in issue.project.business.users]
 
+    bp = timepiece.BusinessPermissions.objects.get_or_create(business=issue.project.business,user=current_user)[0]
+
     actual_billable_cost_of_issue = float(issue.billable)
-    can_view_other_user_points = timepiece.BusinessPermissions.has_see_other_user_points(issue.project.business, current_user)     
+    can_view_other_user_points = bp.can_see_other_user_points
     if can_view_other_user_points:
         users = timepiece.User.objects.filter(id__in = business_users)
     else:
-        if timepiece.BusinessPermissions.has_estimate_own_points(issue.project.business, current_user):
+        if bp.can_estimate_own_points:
             users = timepiece.User.objects.filter(id__in = [current_user.id])
         else:
             users = []
@@ -3124,10 +3178,11 @@ def _augment_issue_data(issue,current_user):
         end()
 
 @csrf_exempt
+@login_required
 def add_feature(request, business_id):
     
     business = timepiece.Business.objects.get(pk=business_id)
-    has_edit_feature = timepiece.BusinessPermissions.has_edit_feature(business, request.user)
+    has_edit_feature = timepiece.BusinessPermissions.objects.get_or_create(business=business, user=request.user)[0].has_edit_feature
     if not has_edit_feature:
         raise PermissionDenied
 
@@ -3144,6 +3199,7 @@ def add_feature(request, business_id):
     return HttpResponse("")
 
 
+@login_required
 def business_features(request, business_id):
     
     business = timepiece.Business.objects.get(pk=business_id)
@@ -3152,6 +3208,7 @@ def business_features(request, business_id):
                         mimetype='application/json')
 
 @csrf_exempt
+@login_required
 def update_issue_with_feature(request,issue_id):
     
 
@@ -3163,7 +3220,7 @@ def update_issue_with_feature(request,issue_id):
 
     business = issue.project.business
 
-    has_edit_feature = timepiece.BusinessPermissions.has_edit_feature(business, request.user)
+    has_edit_feature = timepiece.BusinessPermissions.objects.get_or_create(business=business, user=request.user)[0].has_edit_feature
     if not has_edit_feature:
         raise PermissionDenied
     
@@ -3178,6 +3235,7 @@ def update_issue_with_feature(request,issue_id):
     
 
 @csrf_exempt
+@login_required
 def project_issues(request, pk, template="timepiece/project/issues.html", context=None):
     context = context or {}
     project = timepiece.Project.objects.filter(pk=pk).filter_by_logged_in_user(request.user)[0]
@@ -3220,8 +3278,11 @@ def project_issues(request, pk, template="timepiece/project/issues.html", contex
     return render_to_response(template, context, context_instance=RequestContext(request))
 
 @csrf_exempt
+@login_required
 def get_project_detail(request, project_id, template="timepiece/project/_project_detail.html", context=None):
     context = context or {}
+
+    end_timing_get_project_detail = timings.start("get_project_detail")
 
     project = timepiece.Project.objects.filter(pk=project_id).filter_by_logged_in_user(request.user)[0]
     context['project'] = project 
@@ -3239,13 +3300,16 @@ def get_project_detail(request, project_id, template="timepiece/project/_project
     new_issue_form = timepiece_forms.IssueForm()
     
     all_entries = project.entries.all().order_by("start_time")
-    hours = 0
-    ctc = 0
-    billable = 0
-    for entry in all_entries:
-        hours += entry.hours
-        ctc += entry.atrate
-        billable += entry.atbillablerate
+    # hours = 0
+    # ctc = 0
+    # billable = 0
+
+    cost_totals = all_entries.cost_totals_for_project(project)
+
+    # for entry in all_entries:
+    #     hours += entry.hours
+    #     ctc += entry.atrate
+    #     billable += entry.atbillablerate
         
     rate = project.get_user_rate(request.user)
     context['next_issue_number']  = timepiece.Issue.get_next_issue_number()
@@ -3259,14 +3323,19 @@ def get_project_detail(request, project_id, template="timepiece/project/_project
     context['unassigned_timesheet_entries_billable'] = timepiece.Issue.get_unassigned_timesheet_entries_billable(context['project'])
 
     context['issues_forms'] = issues_forms
-    context['total_hours'] = hours
-    context['total_ctc'] = ctc
-    context['total_billable'] = billable
+    context['total_hours'] = cost_totals['hours']
+    context['total_ctc'] = cost_totals['ctc']
+    context['total_billable'] = cost_totals['billable']
+    context['business_permissions_by_user'] = timepiece.BusinessPermissions.by_user(business)
+
+    end_timing_get_project_detail()
+    context['timings'] = timings.results()
 
     return render_to_response(template, context, context_instance=RequestContext(request))
 
 @login_required
 @csrf_exempt
+@login_required
 def project_list(request, project_id=None, template="timepiece/project/project_list.html", context=None):
     context = context or {}
     
@@ -3285,7 +3354,7 @@ def project_list(request, project_id=None, template="timepiece/project/project_l
     else:
         projects = timepiece.Project.objects.all()
 
-    has_view_issues = timepiece.BusinessPermissions.has_view_issues(business, request.user)
+    has_view_issues = timepiece.BusinessPermissions.objects.get_or_create(business=business, user=request.user)[0].has_view_issues
     if not has_view_issues:
         raise PermissionDenied
 
@@ -3293,10 +3362,12 @@ def project_list(request, project_id=None, template="timepiece/project/project_l
     context['expanded_project'] = expanded_project
     context['projects'] = projects
     context['business'] = business
+    context['business_permissions_by_user'] = timepiece.BusinessPermissions.by_user(business)
     return render_to_response(template, context, context_instance=RequestContext(request))
         
         
 @csrf_exempt
+@login_required
 def issue_detail(request, issue_id, template="timepiece/project/issue_detail.html", context=None):
     context = context or {}
     issue =  timepiece.Issue.objects.get(pk=issue_id)
@@ -3307,10 +3378,12 @@ def issue_detail(request, issue_id, template="timepiece/project/issue_detail.htm
 
     context['business'] = project.business
     context['current_user'] = request.user
+    context['business_permissions_by_user'] = timepiece.BusinessPermissions.by_user(project.business)
 
     return render_to_response(template, context, context_instance=RequestContext(request))
 
 @csrf_exempt
+@login_required
 def issue_detail_update(request,  template="timepiece/project/issue_detail.html", context=None):
     context = context or {}
 
@@ -3322,7 +3395,7 @@ def issue_detail_update(request,  template="timepiece/project/issue_detail.html"
     project = edited_issue.project
     context['project'] = project
 
-    has_edit_description = timepiece.BusinessPermissions.has_edit_description(project.business, request.user)
+    has_edit_description = timepiece.BusinessPermissions.objects.get_or_create(business=project.business, user=request.user)[0].has_edit_description
     if not has_edit_description:
         raise PermissionDenied
 
@@ -3335,6 +3408,7 @@ def issue_detail_update(request,  template="timepiece/project/issue_detail.html"
     return HttpResponse("")
 
 @csrf_exempt
+@login_required
 def issue_status_update(request,  template="timepiece/project/issue_detail.html", context=None):
     context = context or {}
 
@@ -3346,7 +3420,7 @@ def issue_status_update(request,  template="timepiece/project/issue_detail.html"
     project = edited_issue.project
     context['project'] = project
 
-    has_edit_status = timepiece.BusinessPermissions.has_edit_issue_states(project.business, request.user)
+    has_edit_status = timepiece.BusinessPermissions.objects.get_or_create(business=project.business, user=request.user)[0].has_edit_issue_states
     if not has_edit_status:
         raise PermissionDenied
 
@@ -3360,6 +3434,7 @@ def issue_status_update(request,  template="timepiece/project/issue_detail.html"
 
 
 @csrf_exempt
+@login_required
 def issue_subject_update(request,  template="timepiece/project/issue_detail.html", context=None):
     context = context or {}
 
@@ -3371,7 +3446,7 @@ def issue_subject_update(request,  template="timepiece/project/issue_detail.html
     project = edited_issue.project
     context['project'] = project
 
-    has_edit_subject = timepiece.BusinessPermissions.has_edit_subject(project.business, request.user)
+    has_edit_subject = timepiece.BusinessPermissions.objects.get_or_create(business=project.business, user=request.user)[0].has_edit_subject
     if not has_edit_subject:
         raise PermissionDenied
     try:
@@ -3385,6 +3460,7 @@ def issue_subject_update(request,  template="timepiece/project/issue_detail.html
 
 @csrf_exempt
 @transaction.commit_on_success
+@login_required
 def issue_points_update(request,  template="timepiece/project/issue_detail.html", context=None):
     try:
         edited_issue_points = timepiece.IssuePoints.objects.get(pk=request.POST['item_id'])
@@ -3395,7 +3471,7 @@ def issue_points_update(request,  template="timepiece/project/issue_detail.html"
     these_are_the_current_user_points = (request.user.id == edited_issue_points.user.id)
     current_project = edited_issue_points.issue.project
 
-    can_view_other_user_points = timepiece.BusinessPermissions.has_see_other_user_points(current_project.business,current_user)     
+    can_view_other_user_points = timepiece.BusinessPermissions.objects.get_or_create(business=current_project.business, user=current_user)[0].has_see_other_user_points     
     edit_is_allowed = True if these_are_the_current_user_points or can_view_other_user_points else False
     if not edit_is_allowed:
         raise PermissionDenied
@@ -3409,6 +3485,7 @@ def issue_points_update(request,  template="timepiece/project/issue_detail.html"
 
 @csrf_exempt
 # @permission_required('timepiece.change_project')
+@login_required
 def unassigned_timesheet_entries(request, project_id, template="timepiece/project/issue_detail.html", context=None):
     context = context or {}
     project = timepiece.Project.objects.filter(pk=project_id).filter_by_logged_in_user(request.user)[0]
@@ -3420,6 +3497,7 @@ def unassigned_timesheet_entries(request, project_id, template="timepiece/projec
 
 @csrf_exempt
 # @permission_required('timepiece.change_project')
+@login_required
 def all_timesheet_entries(request, project_id, template="timepiece/project/issue_detail.html", context=None):
     context = context or {}
     project = timepiece.Project.objects.filter(pk=project_id).filter_by_logged_in_user(request.user)[0]
@@ -3431,10 +3509,11 @@ def all_timesheet_entries(request, project_id, template="timepiece/project/issue
     return render_to_response(template, context, context_instance=RequestContext(request))
 
 @csrf_exempt
+@login_required
 def view_project_rates(request, project_id, template="timepiece/project/view_rates.html", context=None):
     context = context or {}
     project = timepiece.Project.objects.filter(pk=project_id).filter_by_logged_in_user(request.user)[0]
-    has_view_ctc_billable_rates = timepiece.BusinessPermissions.has_view_ctc_billable_rates(project.business,request.user)
+    has_view_ctc_billable_rates = timepiece.BusinessPermissions.objects.get_or_create(business=project.business, user=request.user)[0].has_view_ctc_billable_rates
     if not has_view_ctc_billable_rates:
         raise PermissionDenied
 
@@ -3445,6 +3524,7 @@ def view_project_rates(request, project_id, template="timepiece/project/view_rat
 
 @csrf_exempt
 @permission_required('timepiece.change_project')
+@login_required
 def edit_project_rate(request, project_id):
     project = timepiece.Project.objects.filter(pk=project_id).filter_by_logged_in_user(request.user)[0]
     user_name = request.POST['user_name']
@@ -3469,6 +3549,7 @@ def edit_project_rate(request, project_id):
 
 @login_required
 @permission_required('timepiece.change_project')
+@login_required
 def edit_default_user_rates(request, template="timepiece/person/edit_default_user_rates.html", context=None):
     if not request.user.is_superuser:
         return HttpResponse("")
@@ -3502,6 +3583,7 @@ def _update_all_project_users():
             if timepiece.Entry.objects.filter(user=profile.user,project=project).count()>0:
                 timepiece.ProjectRelationship.objects.get_or_create(user=profile.user, project=project)
 
+@login_required
 def income_summary(request, template="timepiece/graphs/income_summary.html", context=None):
     context = context or {}
     if not request.user.is_superuser:
@@ -3565,6 +3647,7 @@ def income_summary(request, template="timepiece/graphs/income_summary.html", con
     return render_to_response(template, context, context_instance=RequestContext(request))
 
 @render_with('timepiece/project/show_timeline.html')
+@login_required
 def show_timeline(request, project_id):
     context = {}
 
@@ -3664,7 +3747,7 @@ def show_permissions(request, business_id):
     
     
     if permission_forms.is_valid():
-        has_edit_permissions = timepiece.BusinessPermissions.has_edit_permissions(business,request.user)
+        has_edit_permissions = timepiece.BusinessPermissions.objects.get_or_create(business=business, user=request.user)[0].has_edit_permissions
         if not has_edit_permissions:
             raise PermissionDenied
 
@@ -3809,9 +3892,9 @@ class CSVSprintExport(CSVMixin):
         business_users = [user for user in self.project.business.users]
         business_users_and_names = [(user.username,user) for user in business_users]
 
-        can_see_other_points = timepiece.BusinessPermissions.has_see_other_user_points(business=business, user=current_user)
-        can_see_ctc_billable_rates = timepiece.BusinessPermissions.has_view_ctc_billable_rates(business=business, user=current_user)
-        can_see_hours = timepiece.BusinessPermissions.has_view_actual_hours(business=business, user=current_user)
+        can_see_other_points = timepiece.BusinessPermissions.objects.get_or_create(business=business, user=current_user)[0].has_see_other_user_points
+        can_see_ctc_billable_rates = timepiece.BusinessPermissions.objects.get_or_create(business=business, user=current_user)[0].has_view_ctc_billable_rates
+        can_see_hours = timepiece.BusinessPermissions.objects.get_or_create(business, user=current_user)[0].has_view_actual_hours
 
         header_row = []
         header_row.append('issue number')

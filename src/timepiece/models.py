@@ -161,7 +161,7 @@ class Business(models.Model):
         businesses = Business.objects.annotate(models.Min("new_business_projects__entries__end_time")).order_by("-new_business_projects__entries__end_time__min")
         business_ids = []
         for business in businesses:
-            if BusinessPermissions.has_view_project_card(business,user):
+            if BusinessPermissions.objects.get_or_create(business=business,user=user)[0].has_view_project_card:
                 business_ids.append(business.id)
         businesses = businesses.filter(id__in=business_ids)
         return businesses
@@ -237,110 +237,92 @@ class BusinessPermissions(models.Model):
     can_create_sprint = models.BooleanField(default=False, verbose_name="Can Create Sprint")
 
     @classmethod
-    def _has(self, business, user, perm_func_name):
-        if user.is_superuser:
-            return True
-        try:
-            bp = BusinessPermissions.objects.get(business=business, user=user)
-        except BusinessPermissions.DoesNotExist:
-            return False
-        try:
-            return getattr(bp, perm_func_name)
-        except AttributeError:
-            raise Exception("Invalid perm name: %s" % perm_func_name)
+    def by_user(self, business):
+        bps = BusinessPermissions.objects.filter(business=business)
+        return dict( [ (bp.user.id, bp) for bp in bps ] )
 
-    @classmethod
-    def has_edit_feature(self, business, user):
-        return self._has(business, user, 'can_edit_feature')
+    @property
+    def has_view_project_card(self):
+        return self.user.is_superuser or self.can_view_project_card
 
-    @classmethod
-    def has_create_sprint(self, business, user):
-        return self._has(business, user, 'can_create_sprint')
+    @property
+    def has_edit_permissions(self):
+        return self.user.is_superuser or self.can_edit_permissions
 
-    @classmethod
-    def has_edit_permissions(self, business, user):
-        return self._has(business, user, 'can_edit_permissions')
-        
-    @classmethod
-    def has_view_project_card(self, business, user):
-        return self._has(business, user, 'can_view_project_card')
-        
-    @classmethod
-    def has_edit_description(self, business, user):
-        return self._has(business, user, 'can_edit_description')
+    @property
+    def has_edit_project_detail(self):
+        return self.user.is_superuser or self.can_edit_project_detail
 
-    @classmethod
-    def has_edit_subject(self,business,user):
-        return self._has(business, user, 'can_edit_subject')
-
-    @classmethod
-    def has_add_issue(self,business,user):
-        return self._has(business, user, 'can_add_issue')
-
-    @classmethod
-    def has_delete_issue(self,business,user):
-        return self._has(business, user, 'can_delete_issue')
-
-    @classmethod
-    def has_edit_project_detail(self,business,user):
-        return self._has(business, user, 'can_edit_project_detail')
-
-    @classmethod
-    def has_edit_issues(self,business,user):
-        return self._has(business, user, 'can_edit_issues')
-    
-    @classmethod
-    def has_view_issues(self,business,user):
-        return self._has(business, user, 'can_view_issues')
-    
-    @classmethod
-    def has_edit_budget(self,business,user):
-        return self._has(business, user, 'can_edit_budget')
-
-    @classmethod
-    def has_view_budget(self,business,user):
-        return self._has(business, user, 'can_view_budget')
-    
-    @classmethod
-    def has_edit_invoices(self,business,user):
-        return self._has(business, user, 'can_edit_invoices')
-
-    @classmethod
-    def has_view_invoices(self,business,user):
-        return self._has(business, user, 'can_view_invoices')
-    
-    @classmethod
-    def has_edit_ctc_billable_rates(self,business,user):
-        return self._has(business, user, 'can_edit_ctc_billable_rates')
-
-    @classmethod
-    def has_view_ctc_billable_rates(self,business,user):
-        return self._has(business, user, 'can_view_ctc_billable_rates')
-
-    @classmethod
-    def has_toggle_graphs(self,business,user):
-        return self._has(business, user, 'can_toggle_graphs')
-
-    @classmethod
-    def has_edit_issue_states(self,business,user):
-        return self._has(business, user, 'can_edit_issue_states')
-
-    @classmethod
-    def has_see_other_user_points(self,business,user):
-        return self._has(business, user, 'can_see_other_user_points')
-
-    @classmethod
-    def has_estimate_own_points(self, business, user):
-        return self._has(business, user, 'can_estimate_own_points')
-
-    @classmethod
-    def has_view_actual_hours(self, business, user):
-        return self._has(business, user, 'can_view_actual_hours')
+    @property
+    def has_edit_issues(self):
+        return self.user.is_superuser or self.can_edit_issues
+    @property
+    def has_view_issues(self):
+        return self.user.is_superuser or self.can_view_issues
     
     @property
-    def primary_points_user(self):
-        return self.is_primary_points_user
+    def has_edit_budget(self):
+        return self.user.is_superuser or self.can_edit_budget
+    @property
+    def has_view_budget(self):
+        return self.user.is_superuser or self.can_view_budget
+    
+    @property
+    def has_edit_invoices(self):
+        return self.user.is_superuser or self.can_edit_invoices
+    @property
+    def has_view_invoices(self):
+        return self.user.is_superuser or self.can_view_invoices
+    
+    @property
+    def has_edit_ctc_billable_rates(self):
+        return self.user.is_superuser or self.can_edit_ctc_billable_rates
+    @property
+    def has_view_ctc_billable_rates(self):
+        return self.user.is_superuser or self.can_view_ctc_billable_rates
 
+    @property
+    def has_view_actual_hours(self):
+        return self.user.is_superuser or self.can_view_actual_hours
+
+    @property
+    def has_toggle_graphs(self):
+        return self.user.is_superuser or self.can_toggle_graphs
+    @property
+    def has_edit_issue_states(self):
+        return self.user.is_superuser or self.can_edit_issue_states
+
+    @property
+    def has_see_other_user_points(self):
+        return self.user.is_superuser or self.can_see_other_user_points
+    @property
+    def hasprimary_points_user(self):
+        return self.user.is_superuser or self.is_primary_points_user
+    @property
+    def has_estimate_own_points(self):
+        return self.user.is_superuser or self.can_estimate_own_points
+    
+    @property
+    def has_add_issue(self):
+        return self.user.is_superuser or self.can_add_issue
+    @property
+    def has_delete_issue(self):
+        return self.user.is_superuser or self.can_delete_issue
+
+    @property
+    def has_edit_description(self):
+        return self.user.is_superuser or self.can_edit_descripion
+
+    @property
+    def has_edit_subject(self):
+        return self.user.is_superuser or self.can_edit_subject
+
+    @property
+    def has_edit_feature(self):
+        return self.user.is_superuser or self.can_edit_feature
+    @property
+    def has_create_sprint(self):
+        return self.user.is_superuser or self.can_create_sprint
 
 class Project(models.Model):
 
@@ -660,11 +642,11 @@ class Project(models.Model):
 
         all_issues = [ issue for issue in ordered_issues ] + [ issue for issue in orderless_issues ]
         for index,issue in enumerate(all_issues):
-            issue.order = index            
-            issue.save()
+            if issue.order != index:
+                issue.order = index            
+                issue.save()
             
         return Issue.objects.filter(project=self).order_by("order")
-
             
 class RelationshipType(models.Model):
     name = models.CharField(max_length=255, unique=True)
@@ -826,6 +808,29 @@ class EntriesQuerySet(QuerySet):
         if user.is_superuser:
             return self
         return self.filter(project__users=user)
+
+    def cost_totals_for_project(self, project):
+        """ this function assumes that all entries in the queryset
+        belong to the same project, and so passing in the project is
+        simply to enforce this from the calling side. """
+
+        hours = 0
+        ctc = 0
+        billable = 0
+        hours_per_users = self.order_by("user").values('user').annotate(user_hours=Sum('hours'))
+        for hours_per_user in hours_per_users:
+            try:
+                rate = Rate.objects.filter(user_id=3, project_id=1246).values('amount', 'billable_amount')[0]
+            except IndexError:
+                rate = {'billable_amount':0, 'amount':0}
+
+            hours += hours_per_user['user_hours']
+            ctc += hours_per_user['user_hours'] * rate['amount']
+            billable += hours_per_user['user_hours'] * rate['billable_amount']
+
+        return { 'hours': hours,
+                 'ctc': ctc,
+                 'billable': billable }
 
 class EntryQuerySet(EntriesQuerySet):
     """QuerySet extension to provide filtering by billable status"""

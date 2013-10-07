@@ -20,7 +20,7 @@
         <div class="span12">
         </div>
     </div>
-    {% has_permission has_edit_permissions last_project.business %}
+    {% has_permission has_edit_permissions %}
     <div class="row-fluid">
 
         <div class="span12">
@@ -72,7 +72,7 @@
         </div>
     </div>
     {% end_permission %}
-    {% has_not_permission has_edit_permissions last_project.business %}
+    {% has_not_permission can_edit_permissions last_project.business %}
     You do not have permission to update permissions
     {% end_permission %}
 {% endblock %}

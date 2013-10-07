@@ -30,7 +30,7 @@
       </div>
     {% end_permission %}
 
-    {% has_not_permission has_view_ctc_billable_rates project.business %}
+    {% has_not_permission can_view_ctc_billable_rates project.business %}
       <div class="edit_issue_subject" > 
         {{ per_user.issue_points.points|default_if_none:"-" }}
       </div>

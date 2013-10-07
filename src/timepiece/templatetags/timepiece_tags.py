@@ -60,31 +60,35 @@ def current_user_issue_cost(context, issue_points):
 def do_has_permission(parser, token):
     nodelist = parser.parse(('end_permission',))
     parser.delete_first_token()
-    tag_name, perm_name,business = token.contents.split(None)
-    business = parser.compile_filter(business)
-    return HasPermissionNode(nodelist, perm_name, business )
+    tag_name, perm_name, business = token.contents.split(None)
+    return HasPermissionNode(nodelist, perm_name )
 
 def do_has_not_permission(parser, token):
     nodelist = parser.parse(('end_permission',))
     parser.delete_first_token()
-    tag_name, perm_name,business = token.contents.split(None)
-    business = parser.compile_filter(business)
-    return HasPermissionNode(nodelist, perm_name, business, opposite=True)
+    tag_name, perm_name, business = token.contents.split(None)
+    return HasPermissionNode(nodelist, perm_name, opposite=True)
 
 register.tag('has_permission', do_has_permission)
 register.tag('has_not_permission', do_has_not_permission)
 
 class HasPermissionNode(template.Node):
-    def __init__(self, nodelist, perm_name, business,opposite=False):
+    def __init__(self, nodelist, perm_name, opposite=False):
         self.nodelist = nodelist
-        self.perm_func = getattr(timepiece.BusinessPermissions, perm_name)
-        self.business = business
+        self.perm_name = perm_name
         self.opposite = opposite
         
     def render(self,context):
+
+        if 'business_permissions_by_user' not in context:
+            raise Exception("Invalid context, requires property business_permissions_by_user")
+
         output = self.nodelist.render(context)
-        resolved_business = self.business.resolve(context,True)
-        has_permission = self.perm_func(resolved_business, context['current_user'])
+        if context['current_user'].is_superuser:
+            return output
+
+        bp = context['business_permissions_by_user'][context['current_user'].id]
+        has_permission = getattr(bp, self.perm_name)
         if not self.opposite and has_permission:
             return output        
         if self.opposite and not has_permission:
@@ -96,20 +100,23 @@ def user_can_estimate_own_points(parser, token):
     parser.delete_first_token()
     tag_name, user, business = token.contents.split(None)
     user = parser.compile_filter(user)
-    business = parser.compile_filter(business)
-    return CanEstimateOwnPointsNode(nodelist, user, business )
+    return CanEstimateOwnPointsNode(nodelist, user )
 
 class CanEstimateOwnPointsNode(template.Node):
-    def __init__(self, nodelist, user, business):
+    def __init__(self, nodelist, user):
         self.nodelist = nodelist
         self.user = user
-        self.business = business
         
     def render(self,context):
+        if 'business_permissions_by_user' not in context:
+            raise Exception("Invalid context, requires property business_permissions_by_user")
         output = self.nodelist.render(context)
-        resolved_business = self.business.resolve(context,True)
         resolved_user = self.user.resolve(context,True)
-        if timepiece.BusinessPermissions.has_estimate_own_points(resolved_business, resolved_user):
+
+        if resolved_user.is_superuser:
+            return output
+
+        if context['business_permissions_by_user'][resolved_user.id].can_estimate_own_points:
             return output        
         return ""
 register.tag('user_can_estimate_own_points', user_can_estimate_own_points)

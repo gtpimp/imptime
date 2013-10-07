@@ -20,6 +20,7 @@ def results():
     msg = []
     for name, total in totals.items():
         msg.append( "%s took %f" % (name, total))
-    logger.debug("\n".join(msg))
+    logger.info("\n".join(msg))
+    return "<br/>".join(msg)
 
     
