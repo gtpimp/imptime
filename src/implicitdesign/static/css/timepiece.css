@@ -9527,10 +9527,16 @@ table.project_list  {
 }
 
 .card_menu {
-    /*float:right;*/
-    background-color: #dddddd;
     padding:5px;
     font-size: 10px;
+    zoom: 1;
+    filter: alpha(opacity=30);
+    opacity: 0.3;
+}
+
+.card_menu:hover {
+    filter: alpha(opacity=100);
+    opacity: 1.0;
 }
 
 .card_menu .title:hover {
