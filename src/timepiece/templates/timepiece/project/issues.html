@@ -13,12 +13,17 @@
 
 <div class="row-fluid">
     <div class="span12">
-        <h2>{{project.business.name}} - {{ project }}</h2>
         <ul class="unstyled subnav">
+
+            <li>
+              <a onclick="imp.projects.show_project_card_as_popup(event);return false" href='#'>Summary</a>
+            </li>
+
             {% if perms.timepiece.change_project %}
                 <li><a href='{% url 'edit_project' project_id=project.id %}'>Edit project</a></li>
                 <li><a href="{% url 'delete_project' project.id %}">Delete project</a></li>
             {% endif %}
+
             {% if perms.timepiece.view_businesses %}
                 <li><a href='{% url 'view_business' business=project.business.id %}'>Return to {{ project.business.name }}</a></li>
             {% endif %}

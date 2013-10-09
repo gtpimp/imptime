@@ -7,14 +7,20 @@
 <div class="project_detail">
   <img style="display:none" class="loading" src="{{STATIC_URL}}/images/icons/loadingAnimation.gif"/>
 
+  {% comment %}
   <div class="note">
     Timing: {{ timings|safe }}
   </div>
+  {% endcomment %}
 
   <div class="row-fluid">
     <div class="span12">
-      <h2>{{project.business.name}} - {{ project }}</h2>
       <ul class="unstyled subnav">
+
+        {% include "timepiece/project/_card_project_menu.html" %}
+
+
+        {% comment %}
         {% if perms.timepiece.change_project %}
         <li><a href='{% url 'edit_project' project_id=project.id %}'>Edit sprint</a></li>
         <li><a href="{% url 'delete_project' project.id %}">Delete sprint</a></li>
@@ -28,31 +34,9 @@
         {% endif %}
 
         <li><a href='{% url 'project_issues' project.id %}'>Issues</a></li>
+        {% endcomment %}
 
-        <li class="parent_li_of_form_on_click">
-	  {% has_permission has_add_issue project.business %}
-
-          <div class="btn">
-	    <div class="to_expand_form_on_click" style="display:block"  onclick="imp.do_form_show(this , '{% url 'add_issue' project.id %}' )">
-	      Add Issue
-	    </div>	
-          </div>
-	  <div class="new_issue_form to_edit_expanded_form" style="display:none;position:absolute;z-index:100">		  
-	  </div>
-
-	  {% end_permission %}
-
-          {% comment %}
-         <div class="btn">
-            <div class="to_expand_form_on_click" style="display:block"  onclick="imp.projects.show_project_card_as_popup('#b_card_{{business.id}}', '{% url 'get_project_card_for_business'  business_id=business.id project_id=project.id  %}', '{{ business.id }}', '{{ project.id }}' );return false; "> 
-	      Show Project Card
-	    </div>	
-          </div>
- 
-	  <div class="" id="b_card_{{business.id}}"  style="position:absolute;z-index:100">		  
-	  </div>
-          {% endcomment %}
-        </li>
+        
       </ul>
     </div>
   </div>

@@ -10,20 +10,20 @@
     <li>
         <span class="divider">/</span>
         {% if not project.pk %}
-            <a href="{% url create_project %}">Create Project</a>
+            <a href="{% url create_project %}">Create Sprint</a>
         {% else %}
-            <a href="{% url edit_project project.pk %}">Edit Project</a>
+            <a href="{% url edit_project project.pk %}">Edit Sprint</a>
         {% endif %}
     </li>
 {% endblock crumbs %}
 
-{% block title %}{% if not project %}Create Project{% else %}Edit {{ project }}{% endif %}{% endblock %}
+{% block title %}{% if not project %}Create Sprint{% else %}Edit {{ project }}{% endif %}{% endblock %}
 
 {% block content %}
 
     <div class="row-fluid">
         <div class="span12">
-            <h2>{% if not project.pk %}Create Project{% if business %} for {{ business }}{% endif %}{% else %}Edit {{ project }}{% endif %}
+            <h2>{% if not project.pk %}Create Sprint{% if business %} for {{ business }}{% endif %}{% else %}Edit {{ project }}{% endif %}
 </h2>
 
             <br style="clear: both;" />

@@ -5,7 +5,7 @@ imp.projects.already_loaded_sprints = {};
 
 imp.projects.on_sortable_changed_for_url = function(sortable_url) {
     var _sortable_url = sortable_url;
-    function ret_func(event, ui) {        
+    function ret_func(event, ui) {
         var url = _sortable_url;
         var rows = ui.item.parent().find("tr");
         var project_id = ui.item.parent().attr('id');
@@ -14,14 +14,13 @@ imp.projects.on_sortable_changed_for_url = function(sortable_url) {
             var elem = $(row);
             var issue_id = elem.attr("id");
             ordered_ids.push(issue_id);
-        });        
-        
+        });
+
         var loading_indicators = ui.item.parent().find(".loading_issue_indicator");
         loading_indicators.each ( function (item, elem) {
-            $elem = $(elem)
-            $elem.show();
+            $(elem).show();
         });
-        
+
         var joined_ordered_ids = ordered_ids.join(',');
         var response = $.ajax({type:"POST",
                                url: url,
@@ -29,11 +28,10 @@ imp.projects.on_sortable_changed_for_url = function(sortable_url) {
                                dataType:"json",
                                success : function () {
                                    loading_indicators.each ( function (index, elem) {
-                                       $elem = $(elem);
-                                       $elem.hide();
+                                       $(elem).hide();
                                    });
                                }
-                              });        
+                              });
     };
     return ret_func;
 };
@@ -46,36 +44,28 @@ imp.projects.show_project_card_as_popup = function (event) {
     var project_id = current_element.attr("project_id");
     var destination = $(destination_dom_tag);
     var response = $.ajax({ type:"GET",
-                            url: project_card_url,                            
+                            url: project_card_url
                           });
     var for_data_of_response = function (destination_tag) {
-        
+
         var _bus_id = business_id;
         var _proj_id = project_id;
         var _dest_tag = destination_tag;
-        
-        return function(data) { 
-            var project_id = _proj_id;
-            var business_id = _bus_id;
+
+        return function(data) {
+            //var project_id = _proj_id;
+            //var business_id = _bus_id;
             var destination = $(_dest_tag);
-            var project_card_top_level = $(document).find(".project_card_top_level");
-            if (project_card_top_level.length != 0) {
-                var current_project_id = project_card_top_level.attr('project_id');
-                var current_business_id = project_card_top_level.attr('business_id');
-                project_card_top_level.parent().remove();                
-                if ((project_id === current_project_id) && (business_id === current_business_id)){
-                    return false;
-                }
-            }
-            
-            destination.append($(data)); 
-            destination.css("background-color","whitesmoke");
-            destination.css("position","fixed");
-            destination.css("z-index","300");
-            destination.draggable();
-        }
+            //var project_card_top_level = $(document).find(".project_card_top_level");
+            destination.html("");
+            destination.append($(data));
+            //destination.css("background-color","whitesmoke");
+            //destination.css("position","fixed");
+            //destination.css("z-index","300");
+            //destination.draggable();
+        };
     };
-        
+
     response.done(  for_data_of_response(destination_dom_tag)  );
     event.stopPropagation();
     return false;
@@ -83,6 +73,7 @@ imp.projects.show_project_card_as_popup = function (event) {
 
 imp.projects._make_load_for_data = function ( done_data_function_handler ) {
     var _done_data_function_handler = done_data_function_handler;
+
     return function(element, expand_url) {
         var done_data_function_handler = _done_data_function_handler;
         var current_row = $(element);
@@ -92,30 +83,31 @@ imp.projects._make_load_for_data = function ( done_data_function_handler ) {
         if (area_to_insert.find(".project_detail").length > 0) {
             area_to_insert.find(".project_detail").toggle();
         }
-        
+
         if ( imp.projects.already_loaded_sprints[expand_url] ) {
             return;
         }
-        
-        var loading = area_to_insert.find(".loading")
+
+        var loading = area_to_insert.find(".loading");
         if (area_to_insert.find(".project_detail").length == 0) {
             loading.show();
             var response = $.ajax({ type:"GET",
                                     url: expand_url,
-                                    success: function(data) { 
-                                        area_to_insert.append($(data)); 
-                                        loading.hide(); 
+                                    success: function(data) {
+                                        area_to_insert.append($(data));
+                                        loading.hide();
                                         imp.projects.already_loaded_sprints[expand_url] = true;
+					imp.on_issue_rows_loaded(area_to_insert);
                                     }
                                   });
-            
-            
+
+
             if (done_data_function_handler) {
-                response.done( done_data_function_handler(element) );                
+                response.done( done_data_function_handler(element) );
             }
-            
+
         }
-        
+
     };
 };
 
@@ -133,7 +125,7 @@ function make_data_done_function_for_element(element) {
 
         sortable.sortable({ connectWith: ".issue_list_body",
                             stop: imp.projects.on_sortable_changed_for_url(sortable_url),
-                            receive: imp.projects.on_sortable_changed_for_url(sortable_url),
+                            receive: imp.projects.on_sortable_changed_for_url(sortable_url)
                            });
     };
 };
@@ -145,38 +137,64 @@ imp.projects.on_project_sorting_change_for_url = function ( project_sorting_url)
     var url_to_call_when_projects_were_resorted = project_sorting_url;
     return function(event,ui) {
         var url = url_to_call_when_projects_were_resorted;
-        var ul_element = ui.item.parent()
+        var ul_element = ui.item.parent();
         var li_elements = ul_element.find(".project_li");
-        var ordered_proj_ids = []
+        var ordered_proj_ids = [];
         li_elements.each(function(index, elem) {
-            project_id = $(elem).attr("list_project_id");
-            ordered_proj_ids.push(project_id)
+            var project_id = $(elem).attr("list_project_id");
+            ordered_proj_ids.push(project_id);
         });
-        
+
         var joined_ordered_ids = ordered_proj_ids.join(',');
         $.ajax({type:"POST",
                 url: url,
                 data: { ordered_ids:joined_ordered_ids },
-                dataType:"json",
+                dataType:"json"
                });
 
     };
-}
+};
+
+imp.attach_sprint_headings = function(sprint_heading_container) {
+    $("li.project_li .project_expand").hover( function() {
+				  $(this).find('img.drag_img').show();
+			      },
+			      function() {
+				  $(this).find('.drag_img').hide();
+			      });
+};
+
+imp.on_issue_rows_loaded = function(issue_row_container) {
+    $(issue_row_container).find(".drag_img").parents("tr").hover( function() {
+								      $(this).find('.drag_img').show();
+								  },
+								  function() {
+								      $(this).find('.drag_img').hide();
+								  });
+};
 
 imp.on_document_ready = function() {
+
     var project_sort_url = $(".project_list").attr("project_sort_url");
     $(".project_list").sortable( { stop : imp.projects.on_project_sorting_change_for_url(project_sort_url) });
     var project_li_row = $(".project_li");
     project_li_row.each(function(item, project_row) {
-        elem = $(project_row);
-        expanded_row = elem.find(".project_table_cell.project_expand");
-        var preloaded = expanded_row.attr("preloaded") == "true";            
+        var elem = $(project_row);
+        var expanded_row = elem.find(".project_table_cell.project_expand");
+        var preloaded = expanded_row.attr("preloaded") == "true";
         if (preloaded) {
             expanded_row.trigger('click');
         }
     });
+
+
+
     var issue_pane = $(".issue_pane");
     issue_pane.draggable();
     issue_pane.resizable();
-}
+
+    imp.attach_sprint_headings();
+};
+
 $(document).ready(imp.on_document_ready);
+

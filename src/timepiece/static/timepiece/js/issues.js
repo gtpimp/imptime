@@ -13,7 +13,7 @@ imp.do_form_show  = function(element, url) {
     var to_click = $(parent.find(".to_expand_form_on_click"));
     var to_edit = $(parent.find(".to_edit_expanded_form"));
     if (to_click.css("display") != 'none') {
-        to_click.hide()
+        to_click.hide();
         
         $.ajax({type:"GET",
                 url: url,
@@ -22,7 +22,7 @@ imp.do_form_show  = function(element, url) {
                 }
                });
         
-        to_edit.show()
+        to_edit.show();
         to_edit.css("z-index",200);
         function key_up_for_form(form) {
            var current_form = form;
@@ -30,7 +30,7 @@ imp.do_form_show  = function(element, url) {
                if(event.which === 27) {    
                    imp.do_form_remove(current_form);
                }
-           }
+           };
         };
         to_edit.keyup( key_up_for_form(parent) );
     } 
@@ -41,16 +41,16 @@ imp.close_add_issue = function (element) {
     var parent_form = $(element).closest(".parent_li_of_form_on_click");
     imp.do_form_remove(parent_form);
     return false;
-}
+};
 
 imp.do_form_remove  = function(element) {
     var button = $(element);
     var to_click = $(button.find(".to_expand_form_on_click"));
     var to_edit = $(button.find(".to_edit_expanded_form"));
     if (to_click.css("display") == 'none') {
-        to_click.show()
-        $(button.find(".new_dyn_form_container")).remove()
-        to_edit.hide()
+        to_click.show();
+        $(button.find(".new_dyn_form_container")).remove();
+        to_edit.hide();
     } 
     return false;
 };
@@ -61,17 +61,17 @@ imp.on_issue_form_submit = function(element, url) {
     function handle_success_for_form(form) {
           var a_form = form;
           return function(data) {
-                var table_body =  a_form.closest(".project_detail").find(".issue_list_body")
+                var table_body =  a_form.closest(".project_detail").find(".issue_list_body");
                 if(table_body.length > 0) {
                     table_body.append(data);
                 }
-              var button = a_form.parent().parent().parent()
+              var button = a_form.parent().parent().parent();
               imp.do_form_remove(button);    
-          }
+          };
     }
     var response = $.ajax({type:"POST",
                            url: url,
-                           data: mform.serialize(),
+                           data: mform.serialize()
                           });
     response.done( handle_success_for_form(mform) );
     return false;
@@ -84,14 +84,14 @@ imp.on_project_form_submit = function(element, url) {
           var a_form = form;
           return function(data) {
               var form = a_form; 
-              var button = a_form.parent().parent().parent()
-              $(document).find(".project_list").append(data)
+              var button = a_form.parent().parent().parent();
+              $(document).find(".project_list").append(data);
               imp.do_form_remove(button);    
-          }
+          };
     }
     var response = $.ajax({type:"POST",
                            url: url,
-                           data: mform.serialize(),
+                           data: mform.serialize()
                           });
     response.done( handle_success_for_form(mform) );
     return false;
@@ -124,26 +124,24 @@ imp.delete_issue_from_issues_list = function(element, url, item_id) {
 
 
 imp.clickable_description_box = function(element, url, item_id) {
-    var textbox = $(element),
-    commentField = $('<form/>');
-
+    var textbox = $(element);
     var commentField = commentField.attr('action',url).attr('method','post');
-    value = textbox.html()
-    value = value.replace(/<br>/g,"\n")
-    textField =$("<textarea/>").attr('name','new_value').attr('value',value);
+    var value = textbox.html();
+    value = value.replace(/<br>/g,"\n");
+    var textField =$("<textarea/>").attr('name','new_value').attr('value',value);
     textField.keyup(function(e) {
         if(e.which === 27) {    
-            form_parent = $(this).parent().parent();
-            div_parent = form_parent.find(".static_div");
-            text_sibling = form_parent.find('textarea');      
-            new_value = text_sibling.val();
+            var form_parent = $(this).parent().parent();
+            var div_parent = form_parent.find(".static_div");
+            var text_sibling = form_parent.find('textarea');      
+            var new_value = text_sibling.val();
             $(this).parent().remove();
             div_parent.show();        
         }
     });
     textbox.hide();
-    itemField =$("<input/>").attr('type','hidden').attr('value', item_id).attr('name','item_id');
-    submitButton = $("<input/>").attr('type','button').attr('value','Modify');
+    var itemField =$("<input/>").attr('type','hidden').attr('value', item_id).attr('name','item_id');
+    var submitButton = $("<input/>").attr('type','button').attr('value','Modify');
     commentField.append(itemField);
     commentField.append(textField);
     

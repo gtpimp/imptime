@@ -83,17 +83,21 @@ class HasPermissionNode(template.Node):
         if 'business_permissions_by_user' not in context:
             raise Exception("Invalid context, requires property business_permissions_by_user")
 
-        output = self.nodelist.render(context)
+        has = False
         if context['current_user'].is_superuser:
-            return output
+            has = True
+        else:
+            bp = context['business_permissions_by_user'][context['current_user'].id]
+            has_permission = getattr(bp, self.perm_name)
+            if has_permission:
+                has = True
 
-        bp = context['business_permissions_by_user'][context['current_user'].id]
-        has_permission = getattr(bp, self.perm_name)
-        if not self.opposite and has_permission:
-            return output        
-        if self.opposite and not has_permission:
-            return output
-        return ""
+        if self.opposite:
+            has = not has
+        if has:
+            return self.nodelist.render(context)
+        else:
+            return ""
 
 def user_can_estimate_own_points(parser, token):
     nodelist = parser.parse(('end_can_estimate',))

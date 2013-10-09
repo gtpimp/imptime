@@ -637,7 +637,7 @@ def get_project_card_for_business(request,business_id, project_id):
                 'project':project,
                 'business_permissions_by_user':timepiece.BusinessPermissions.by_user(business)
                 }
-    return render_to_response('timepiece/card.html',
+    return render_to_response('timepiece/project/card.html',
                               context, context_instance=RequestContext(request))
 
 
@@ -676,7 +676,7 @@ def get_project_card(request,business_id,index=None):
                 'expand_older':index is not None,
                 'business_permissions_by_user':timepiece.BusinessPermissions.by_user(business)
                 }
-    return render_to_response('timepiece/card.html',
+    return render_to_response('timepiece/project/card.html',
                               context, context_instance=RequestContext(request))
 
 
@@ -3515,6 +3515,7 @@ def unassigned_timesheet_entries(request, project_id, template="timepiece/projec
     context['issue'] = {'id':'na',
                         'description':'unassigned timesheet entries',
                         'related_entries':timepiece.Issue.get_unassigned_timesheet_entries(project=project)}
+    context['business_permissions_by_user'] = timepiece.BusinessPermissions.by_user(project.business)
     return render_to_response(template, context, context_instance=RequestContext(request))
 
 @csrf_exempt
@@ -3528,6 +3529,7 @@ def all_timesheet_entries(request, project_id, template="timepiece/project/issue
     context['issue'] = {'id':'na',
                         'description':'all timesheet entries',
                         'related_entries':entries}
+    context['business_permissions_by_user'] = timepiece.BusinessPermissions.by_user(project.business)
     return render_to_response(template, context, context_instance=RequestContext(request))
 
 @csrf_exempt
@@ -3783,6 +3785,7 @@ def show_permissions(request, business_id):
     context['last_project'] = timepiece.Project.most_recent_project(business.id)
 
     context['current_user']= request.user
+    context['business_permissions_by_user'] = timepiece.BusinessPermissions.by_user(business)
     return context
 
 
