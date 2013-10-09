@@ -53,7 +53,7 @@
                     all timesheet entries for this sprint
                   </td>
                   <td></td>
-                  <th></th>
+                  <td></td>
                   
 		  {% has_permission has_see_other_user_points project.business %}
 		    {% with issues_forms.forms|first as first_form %}
@@ -113,7 +113,7 @@
                       unassigned timesheet entries for this sprint
                   </td>
                   <td></td>
-                  <th></th>
+                  <td></td>
 
 		  {% has_permission has_see_other_user_points project.business %}
 		    {% with issues_forms.forms|first as first_form %}
