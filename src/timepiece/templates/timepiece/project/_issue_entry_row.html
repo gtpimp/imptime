@@ -4,12 +4,19 @@
 
 
                  <tr class="issue_instance_row {{issue.status_as_class}}" id="{{issue.pk}}" refresh_url="{% url 'get_issue_row' issue.pk %}">                    
-		   <td class="issue_number"> 
-                     <img class="drag_img" style="display:none" src="{{STATIC_URL}}/images/icons/drag.png"/> 
-		     <img style="display:none" style="position:absolute" class="loading_issue_indicator" id="loading_issue_{{issue.id}}" src="{{STATIC_URL}}/images/icons/loadingAnimation.gif"/>
-		     <div class="secret_link issue_number" onclick="imp.show_issue_detail(this, '{% url 'issue_detail' issue.pk %}');">
+		   <td class="issue_number_cell"> 
+
+                     <div style="width:100%;position:relative">
+                       <div class="drag_img_container">
+                         <img class="drag_img" src="{{STATIC_URL}}/images/icons/drag.png"/> 
+                       </div>
+                       <div style="float:left">
+		         <img style="display:none" style="position:absolute" class="loading_issue_indicator" id="loading_issue_{{issue.id}}" src="{{STATIC_URL}}/images/icons/loadingAnimation.gif"/>
+                       </div>
+		       <div class="secret_link issue_number" onclick="imp.show_issue_detail(this, '{% url 'issue_detail' issue.pk %}');">
 		       {{issue.number}}
-		     </div> 
+		       </div> 
+                     </div>
 		   </td> 
                    <td class="issue_subject">
 		     <div class="edit_issue_subject"  {% has_permission has_edit_subject project.business %} onclick="imp.clickable_subject_box(this, '{% url 'issue_subject_update' %}',{{ issue.pk }})" {% end_permission %} >

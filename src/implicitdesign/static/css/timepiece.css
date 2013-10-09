@@ -9604,10 +9604,14 @@ table.project_list  {
     border: 1px solid #AAAAAA;
     border-radius: 4px 4px 4px 4px;
     color: #cc0000;
-    /*padding-left: 2px;*/
-    /*padding-right: 2px;*/
-    width: 30px;
+    padding-left: 4px;
+    padding-right: 4px;
     text-align: center;
+    float: left;
+}
+
+.drag_img_container {
+    float: left;
 }
 
 .issues .issues_list table td {
@@ -9727,8 +9731,8 @@ table.project_list  {
     background-color:#cccccc;
 }
 
-.issues .issue_number {
-    min-width: 30px;
+.issues .issue_number_cell {
+    width: 50px;
 }
 
 .issues .issues_list table .tested {
@@ -9834,7 +9838,6 @@ table.project_list  {
 }
 
 .drag_img {
-    position: absolute;
     cursor:grabbing;
     cursor:-moz-grabbing;
     cursor:-webkit-grabbing;

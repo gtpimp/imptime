@@ -90,7 +90,20 @@ class Business(models.Model):
             project.save()
 
         return Project.objects.filter(business=self).order_by("order")
-    
+
+    def get_users_allowed_to_estimate_on_business(self, current_user):
+        business_users = [user.id for user in self.users]
+        bp = BusinessPermissions.objects.get_or_create(business=self,user=current_user)[0]
+        can_view_other_user_points = bp.can_see_other_user_points
+        if can_view_other_user_points:
+            users = User.objects.filter(id__in = business_users)
+        else:
+            if bp.can_estimate_own_points:
+                users = User.objects.filter(id__in = [current_user.id])
+            else:
+                users = []
+        return users
+
     def get_all_business_permissions(self,user=None):
         permissions_qs = BusinessPermissions.objects.filter(business=self)        
         if user is not None:
@@ -1972,31 +1985,8 @@ class Issue(models.Model):
         return cost
 
     @classmethod
-    def get_unassigned_timesheet_entries_hours(self, project):
-        total = 0
-        for entry in self.get_unassigned_timesheet_entries(project):
-            total += entry.hours
-        return total
-
-    @classmethod
     def get_unassigned_timesheet_entries(self, project):
         return project.entries.filter(issue__isnull=True).order_by("start_time")
-
-    @classmethod
-    def get_unassigned_timesheet_entries_ctc(self, project):
-        cost = 0
-        entries = project.entries.filter(issue__isnull=True)
-        for entry in entries:
-            cost += entry.atrate
-        return cost
-
-    @classmethod
-    def get_unassigned_timesheet_entries_billable(self, project):
-        cost = 0
-        entries = project.entries.filter(issue__isnull=True)
-        for entry in entries:
-            cost += entry.atbillablerate
-        return cost
 
 class RedmineToTimepieceBusinessMapping(models.Model):
     redmine_business_name = models.CharField(max_length=255)

@@ -7,35 +7,11 @@
 <div class="project_detail">
   <img style="display:none" class="loading" src="{{STATIC_URL}}/images/icons/loadingAnimation.gif"/>
 
-  {% comment %}
-  <div class="note">
-    Timing: {{ timings|safe }}
-  </div>
-  {% endcomment %}
-
   <div class="row-fluid">
     <div class="span12">
       <ul class="unstyled subnav">
 
         {% include "timepiece/project/_card_project_menu.html" %}
-
-
-        {% comment %}
-        {% if perms.timepiece.change_project %}
-        <li><a href='{% url 'edit_project' project_id=project.id %}'>Edit sprint</a></li>
-        <li><a href="{% url 'delete_project' project.id %}">Delete sprint</a></li>
-        {% endif %}
-        {% if perms.timepiece.view_businesses %}
-        <li><a href='{% url 'view_business' business=project.business.id %}'>Return to {{ project.business.name }}</a></li>
-        {% endif %}
-
-        {% if perms.timepiece.view_project_time_sheet %}
-        <li><a href='{% url 'project_time_sheet' project.id %}'>Project Time Sheet</a></li>
-        {% endif %}
-
-        <li><a href='{% url 'project_issues' project.id %}'>Issues</a></li>
-        {% endcomment %}
-
         
       </ul>
     </div>

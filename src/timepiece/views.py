@@ -3137,21 +3137,12 @@ def delete_issue(request, project_id, template="", context=None):
             
     return HttpResponse("") 
 
-def _augment_issue_data(issue,current_user):
-    business_users = [user.id for user in issue.project.business.users]
 
-    bp = timepiece.BusinessPermissions.objects.get_or_create(business=issue.project.business,user=current_user)[0]
+def _augment_issue_data(issue, current_user, users_allowed_to_estimate_on_business):
+    
+    users = users_allowed_to_estimate_on_business
 
     actual_billable_cost_of_issue = float(issue.billable)
-    can_view_other_user_points = bp.can_see_other_user_points
-    if can_view_other_user_points:
-        users = timepiece.User.objects.filter(id__in = business_users)
-    else:
-        if bp.can_estimate_own_points:
-            users = timepiece.User.objects.filter(id__in = [current_user.id])
-        else:
-            users = []
-            
     for user in users:
 
         end = timings.start('user loop')
@@ -3266,19 +3257,16 @@ def project_issues(request, pk, template="timepiece/project/issues.html", contex
     queryset = project.get_ordered_issues()
     issues_forms = timepiece_forms.issue_status_formset(request.POST or None, 
                                                         queryset=queryset)    
+    users_allowed_to_estimate_on_business=business.get_users_allowed_to_estimate_on_business(request.user)
     for form in issues_forms.forms:
-        _augment_issue_data(form.instance,request.user)
+        _augment_issue_data(form.instance,request.user, 
+                            users_allowed_to_estimate_on_business=users_allowed_to_estimate_on_business)
     
     new_issue_form = timepiece_forms.IssueForm()
     
     all_entries = project.entries.all().order_by("start_time")
-    hours = 0
-    ctc = 0
-    billable = 0
-    for entry in all_entries:
-        hours += entry.hours
-        ctc += entry.atrate
-        billable += entry.atbillablerate
+    cost_totals = all_entries.cost_totals_for_project(project)
+    unassigned_cost_totals = timepiece.Issue.get_unassigned_timesheet_entries().cost_totals_for_project(project)
         
     rate = project.get_user_rate(request.user)
     context['next_issue_number']  = timepiece.Issue.get_next_issue_number()
@@ -3287,13 +3275,14 @@ def project_issues(request, pk, template="timepiece/project/issues.html", contex
     context['new_issue_form'] = new_issue_form
     context['current_user'] = request.user
     context['project'] = project
-    context['unassigned_timesheet_entries_hours'] = timepiece.Issue.get_unassigned_timesheet_entries_hours(context['project'])
-    context['unassigned_timesheet_entries_ctc'] = timepiece.Issue.get_unassigned_timesheet_entries_ctc(context['project'])
-    context['unassigned_timesheet_entries_billable'] = timepiece.Issue.get_unassigned_timesheet_entries_billable(context['project'])
+
+    context['total_hours'] = cost_totals['hours']
+    context['total_ctc'] = cost_totals['ctc']
+    context['total_billable'] = cost_totals['billable']
+    context['unassigned_timesheet_entries_hours'] = unassigned_cost_totals['hours']
+    context['unassigned_timesheet_entries_ctc'] = unassigned_cost_totals['ctc']
+    context['unassigned_timesheet_entries_billable'] = unassigned_cost_totals['billable']
     context['issues_forms'] = issues_forms
-    context['total_hours'] = hours
-    context['total_ctc'] = ctc
-    context['total_billable'] = billable
     context['business_permissions_by_user'] = timepiece.BusinessPermissions.by_user(business)
 
     timings.results()
@@ -3316,23 +3305,18 @@ def get_project_detail(request, project_id, template="timepiece/project/_project
     if len(queryset) :
         issues_forms = timepiece_forms.issue_status_formset(request.POST or None, 
                                                             queryset=queryset)    
+        users_allowed_to_estimate_on_business=business.get_users_allowed_to_estimate_on_business(request.user)
         for form in issues_forms.forms:
-            _augment_issue_data(form.instance, request.user)
+            _augment_issue_data(form.instance, request.user, 
+                                users_allowed_to_estimate_on_business=users_allowed_to_estimate_on_business)
     
     new_issue_form = timepiece_forms.IssueForm()
     
     all_entries = project.entries.all().order_by("start_time")
-    # hours = 0
-    # ctc = 0
-    # billable = 0
 
     cost_totals = all_entries.cost_totals_for_project(project)
+    unassigned_cost_totals = timepiece.Issue.get_unassigned_timesheet_entries(context['project']).cost_totals_for_project(context['project'])
 
-    # for entry in all_entries:
-    #     hours += entry.hours
-    #     ctc += entry.atrate
-    #     billable += entry.atbillablerate
-        
     rate = project.get_user_rate(request.user)
     context['next_issue_number']  = timepiece.Issue.get_next_issue_number()
     context['current_user_rate'] = float(rate.amount) if rate else 0.0
@@ -3340,10 +3324,10 @@ def get_project_detail(request, project_id, template="timepiece/project/_project
     context['new_issue_form'] = new_issue_form
     context['current_user'] = request.user
     context['project'] = project
-    context['unassigned_timesheet_entries_hours'] = timepiece.Issue.get_unassigned_timesheet_entries_hours(context['project'])
-    context['unassigned_timesheet_entries_ctc'] = timepiece.Issue.get_unassigned_timesheet_entries_ctc(context['project'])
-    context['unassigned_timesheet_entries_billable'] = timepiece.Issue.get_unassigned_timesheet_entries_billable(context['project'])
-
+    context['unassigned_timesheet_entries_hours'] = unassigned_cost_totals['hours']
+    context['unassigned_timesheet_entries_ctc'] = unassigned_cost_totals['ctc']
+    context['unassigned_timesheet_entries_billable'] = unassigned_cost_totals['billable']
+    
     context['issues_forms'] = issues_forms
     context['total_hours'] = cost_totals['hours']
     context['total_ctc'] = cost_totals['ctc']
@@ -3814,18 +3798,15 @@ def get_issue_row(request,issue_id):
     business = project.business
 
     issue = queryset[0].set_order()
-    _augment_issue_data(issue,request.user)
+    users_allowed_to_estimate_on_business=business.get_users_allowed_to_estimate_on_business(request.user)
+    _augment_issue_data(issue,request.user, 
+                        users_allowed_to_estimate_on_business=users_allowed_to_estimate_on_business)
 
     new_issue_form = timepiece_forms.IssueForm()
 
     all_entries = project.entries.all().order_by("start_time")
-    hours = 0
-    ctc = 0
-    billable = 0
-    for entry in all_entries:
-        hours += entry.hours
-        ctc += entry.atrate
-        billable += entry.atbillablerate
+    cost_totals = all_entries.cost_totals_for_project(project)
+    unassigned_cost_totals = all_entries.get_unassigned_timesheet_entries(project).cost_totals_for_project(project)
         
     rate = project.get_user_rate(request.user)
     context['current_user_rate'] = float(rate.amount) if rate else 0.0
@@ -3833,12 +3814,14 @@ def get_issue_row(request,issue_id):
     context['new_issue_form'] = new_issue_form
     context['current_user'] = request.user
     context['project'] = project
-    context['unassigned_timesheet_entries_hours'] = timepiece.Issue.get_unassigned_timesheet_entries_hours(context['project'])
-    context['unassigned_timesheet_entries_ctc'] = timepiece.Issue.get_unassigned_timesheet_entries_ctc(context['project'])
-    context['unassigned_timesheet_entries_billable'] = timepiece.Issue.get_unassigned_timesheet_entries_billable(context['project'])
-    context['total_hours'] = hours
-    context['total_ctc'] = ctc
-    context['total_billable'] = billable
+
+    context['total_hours'] = cost_totals['hours']
+    context['total_ctc'] = cost_totals['ctc']
+    context['total_billable'] = cost_totals['billable']
+    context['unassigned_timesheet_entries_hours'] = unassigned_cost_totals['hours']
+    context['unassigned_timesheet_entries_ctc'] = unassigned_cost_totals['ctc']
+    context['unassigned_timesheet_entries_billable'] = unassigned_cost_totals['billable']
+    
     refresh_issue =timepiece.Issue.objects.get(id=issue.id)
     refresh_issue.representation = issue.representation
     context['issue'] = refresh_issue
@@ -3909,7 +3892,7 @@ class CSVSprintExport(CSVMixin):
 
     def get_filename(self,context):
         clean_name = self.project.name.replace(" ","_")
-        return "export_of_%s.csv"%clean_name
+        return "export_of_%s"%clean_name
 
     def convert_context_to_csv(self, context):
         current_user = self.current_user
@@ -3919,7 +3902,7 @@ class CSVSprintExport(CSVMixin):
 
         can_see_other_points = timepiece.BusinessPermissions.objects.get_or_create(business=business, user=current_user)[0].has_see_other_user_points
         can_see_ctc_billable_rates = timepiece.BusinessPermissions.objects.get_or_create(business=business, user=current_user)[0].has_view_ctc_billable_rates
-        can_see_hours = timepiece.BusinessPermissions.objects.get_or_create(business, user=current_user)[0].has_view_actual_hours
+        can_see_hours = timepiece.BusinessPermissions.objects.get_or_create(business=business, user=current_user)[0].has_view_actual_hours
 
         header_row = []
         header_row.append('issue number')

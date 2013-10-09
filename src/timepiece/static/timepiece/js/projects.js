@@ -164,6 +164,7 @@ imp.attach_sprint_headings = function(sprint_heading_container) {
 };
 
 imp.on_issue_rows_loaded = function(issue_row_container) {
+    return;
     $(issue_row_container).find(".drag_img").parents("tr").hover( function() {
 								      $(this).find('.drag_img').show();
 								  },
@@ -186,8 +187,6 @@ imp.project_card_thinking = function(el) {
 };
 
 imp.popup_page = function(url) {
-
-    project_card_dialog_container
 
     if (imp.popup_dialog) {
 	$(".project_card_dialog_container").find(".dialog_content").load(url);
