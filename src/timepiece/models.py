@@ -324,7 +324,7 @@ class BusinessPermissions(models.Model):
 
     @property
     def has_edit_description(self):
-        return self.user.is_superuser or self.can_edit_descripion
+        return self.user.is_superuser or self.can_edit_description
 
     @property
     def has_edit_subject(self):
@@ -1847,7 +1847,11 @@ class Invoice(models.Model):
         )
 
 class IssueRepresentation(object):
-    pass
+    """ object used to map helper data when rendering issues that doesn't belong in the database """
+
+    @property
+    def options(self):
+        return str([ list(pair) for pair in Issue.ISSUE_STATUS_CHOICES ]) 
 
 class Issue(models.Model):
     ISSUE_STATUS_CHOICES = (
@@ -1887,6 +1891,7 @@ class Issue(models.Model):
         super(Issue, self).__init__(*args, **kwargs)
         self._entries = None
         self.representation = IssueRepresentation()
+        self.representation.per_user = []
 
     def status_as_class(self):
         return 'status_%s' % self.status.replace(" ","_").lower()
@@ -1950,6 +1955,9 @@ class Issue(models.Model):
             return "tested"
         else:
             return "open"
+
+    def add_user_to_representation(self, user, per_user_issue_data):
+        self.representation.per_user.append((user,per_user_issue_data))
 
     @property
     def related_entries(self):

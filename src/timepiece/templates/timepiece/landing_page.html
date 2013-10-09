@@ -13,17 +13,7 @@
 
   <ul class="large_menu">
 
-    <li><a href="{% url 'timepiece-add' %}">Add Entry</a></li>
-    <li><a href="{% url 'timepiece-import' %}">Import Entries</a></li>
-
-    {% if perms.timepiece.view_project or perms.auth.view_user or perms.timepiece.view_business %}
-      <li><a href="{% url 'view_summary' request.user.pk %}">Project cards</a></li>  
-    {% endif %}
-
-    {% if perms.timepiece.view_project or perms.auth.view_user or perms.timepiece.view_business %}
-      <li><a href="{% url 'list_projects' %}">Project list</a></li>
-    {% endif %}
-
+    
   </ul>
 
 

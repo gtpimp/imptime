@@ -1,9 +1,11 @@
 var imp = imp || {};
 
-imp.show_issue_detail = function(element, url, issue_id) {    
+imp.show_issue_detail = function(url) {    
     $("loading").show();
-    var issue_detail = $(document).find(".issue_detail");
-    issue_detail.load(url, function() { $("loading").hide(); });
+    $(".issue_detail").load(url, 
+			    function() { 
+				$("loading").hide(); 
+			    });
     
  };
 

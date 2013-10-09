@@ -35,37 +35,8 @@ imp.projects.on_sortable_changed_for_url = function(sortable_url) {
     return ret_func;
 };
 
-imp.projects.show_project_card_as_popup = function (event) {
-    var current_element = $(event.currentTarget);
-    var destination_dom_tag = current_element.attr("target_id");
-    var project_card_url = current_element.attr("project_card_url");
-    var business_id= current_element.attr("business_id");
-    var project_id = current_element.attr("project_id");
-    var destination = $(destination_dom_tag);
-    var response = $.ajax({ type:"GET",
-                            url: project_card_url
-                          });
-    var for_data_of_response = function (destination_tag) {
-
-        var _bus_id = business_id;
-        var _proj_id = project_id;
-        var _dest_tag = destination_tag;
-
-        return function(data) {
-            //var project_id = _proj_id;
-            //var business_id = _bus_id;
-            var destination = $(_dest_tag);
-            //var project_card_top_level = $(document).find(".project_card_top_level");
-            destination.html("");
-            destination.append($(data));
-            //destination.css("background-color","whitesmoke");
-            //destination.css("position","fixed");
-            //destination.css("z-index","300");
-            //destination.draggable();
-        };
-    };
-
-    response.done(  for_data_of_response(destination_dom_tag)  );
+imp.projects.show_project_card_as_popup = function (event, project_card_url) {
+    imp.show_issue_detail(project_card_url)
     event.stopPropagation();
     return false;
 };
@@ -130,7 +101,6 @@ function make_data_done_function_for_element(element) {
 };
 
 imp.projects.load_or_display_issues = imp.projects._make_load_for_data( make_data_done_function_for_element );
-
 
 imp.projects.on_project_sorting_change_for_url = function ( project_sorting_url) {
     var url_to_call_when_projects_were_resorted = project_sorting_url;
@@ -242,9 +212,11 @@ imp.on_document_ready = function() {
 
 
 
-    var issue_pane = $(".issue_pane");
-    issue_pane.draggable();
-    issue_pane.resizable();
+    //$('div.split-pane').splitPane();
+
+    // var issue_pane = $(".split-paneissue_pane");
+    // issue_pane.draggable();
+    // issue_pane.resizable();
 
     imp.attach_sprint_headings();
 };

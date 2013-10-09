@@ -27,10 +27,17 @@ audio, canvas, video {
 audio:not([controls]) {
   display: none;
 }
+body {
+    height:100%;
+    width:100%;
+}
+
 html {
   font-size: 100%;
   -webkit-text-size-adjust: 100%;
   -ms-text-size-adjust: 100%;
+  height:100%;
+  width:100%;
 }
 a:focus {
   outline: thin dotted #333;
@@ -142,7 +149,7 @@ body {
   font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
   font-size: 13px;
   line-height: 18px;
-  color: #333333;
+  color: #4c4c4c;
   background-color: #ffffff;
 }
 a {
@@ -187,6 +194,11 @@ a:hover {
 .container, .navbar-fixed-top .container, .navbar-fixed-bottom .container {
   width: 940px;
 }
+
+.content {
+    width: 100%;
+}
+
 /* (~".span@{index}") { .span(@index); } */
 /* (~".span@{index}") { .span(@index); } */
 /* (~".span@{index}") { .span(@index); } */
@@ -9013,6 +9025,7 @@ body table.table-striped-vertical th:nth-child(even), body table.table-striped-v
 body #content.container-fluid {
   width: 92%;
   margin: 60px auto;
+  height: 100%;
 }
 @media (max-width: 979px) {
   margin: 20px auto;
@@ -9282,22 +9295,22 @@ table.project_list  {
     white-space: nowrap;
 }
 
-.issue_pane.right_hover{ 
-    position:fixed;    
-    margin-left:10px;
-    overflow:auto;
-    height:600px;
-    width: 30%;
-    background-color:whitesmoke;
-    z-index: 100;
-    -moz-box-shadow:    6px 6px 0px 0px #ccc;
-    -webkit-box-shadow: 6px 6px 0px 0px #ccc;
-    box-shadow:         6px 6px 0px 0px #ccc;
-    border:1px solid #000;
-    padding:10px;
-    font-size:10px;
-    left:60%
-}
+/* .issue_pane.right_hover{  */
+/*     position:fixed;     */
+/*     margin-left:10px; */
+/*     overflow:auto; */
+/*     height:600px; */
+/*     width: 30%; */
+/*     background-color:whitesmoke; */
+/*     z-index: 100; */
+/*     -moz-box-shadow:    6px 6px 0px 0px #ccc; */
+/*     -webkit-box-shadow: 6px 6px 0px 0px #ccc; */
+/*     box-shadow:         6px 6px 0px 0px #ccc; */
+/*     border:1px solid #000; */
+/*     padding:10px; */
+/*     font-size:10px; */
+/*     left:60% */
+/* } */
 
 .project_list tbody tr:nth-child(odd) td, .project_list tbody tr:nth-child(odd) th {
   /*background-color: #ffffff;*/
@@ -9577,7 +9590,7 @@ table.project_list  {
     /*height:600px;*/
     /* overflow:auto; */
     /* width:65%; */
-    float:left;
+    /*float:left;*/
     font-size:10px;
     width: 100%;
 }
@@ -9752,19 +9765,19 @@ table.project_list  {
     background-color:#eeeeee;
 }
 
-.issues .issue_detail {
-    float:right;
-    margin-left:10px;
-    overflow:auto;
-    height:600px;
-    -moz-box-shadow:    6px 6px 0px 0px #ccc;
-    -webkit-box-shadow: 6px 6px 0px 0px #ccc;
-    box-shadow:         6px 6px 0px 0px #ccc;
-    border:1px solid #000;
-    padding:10px;
-    font-size:10px;
-    width:30%;
-}
+/* .issues .issue_detail { */
+/*     float:right; */
+/*     margin-left:10px; */
+/*     overflow:auto; */
+/*     height:600px; */
+/*     -moz-box-shadow:    6px 6px 0px 0px #ccc; */
+/*     -webkit-box-shadow: 6px 6px 0px 0px #ccc; */
+/*     box-shadow:         6px 6px 0px 0px #ccc; */
+/*     border:1px solid #000; */
+/*     padding:10px; */
+/*     font-size:10px; */
+/*     width:30%; */
+/* } */
 
 
 
@@ -9772,9 +9785,9 @@ table.project_list  {
     font-size:12px;
 }
 
-.issues .issue_detail {
-    float:left;
-}
+/* .issues .issue_detail { */
+/*     float:left; */
+/* } */
 
 .issues .issue_detail .issue_status {
     font-style: italic;
@@ -9786,8 +9799,16 @@ table.project_list  {
     border-bottom: 1px solid #dfdfdf;
 }
 
-.issues .issue_detail .extended_comments {
+.issues .issue_detail {
     font-family: "Courier New", Courier, monospace;
+}
+
+.issues .issue_detail {
+    width: 100%;
+}
+
+.issues .issue_pane {
+    width: 100%;
 }
 
 .income_summary .tabular {

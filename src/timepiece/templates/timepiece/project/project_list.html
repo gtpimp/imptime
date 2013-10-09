@@ -5,12 +5,21 @@
 {% load bootstrap_toolkit %}
 {% load timepiece_tags %}
 
+{% block extracss %}
+  <link rel="stylesheet" href="{{STATIC_URL}}timepiece/css/split-pane.css" />
+
+{% endblock %}
+
 {% block crumbs %}
 {% endblock %}
 
-{% block content %}
+{% block extrajs %}
+<script src="{{STATIC_URL}}timepiece/js/split-pane.js"></script>
 <script src="{{STATIC_URL}}timepiece/js/projects.js"></script>
 <script src="{{STATIC_URL}}timepiece/js/issues.js"></script>
+{% endblock extrajs %}
+
+{% block content %}
 
 {% if business %}
 <div class="parent_li_of_form_on_click">
@@ -29,15 +38,30 @@
   
 </div>
 {% endif %}
-<div class="row-fluid" style="float:left;width:60%">
-  <ul class="project_list" project_sort_url="{% url 'sortable_project_update' %}" style="list-style-type:none;">
-    {% for project in projects %} 
-    {% include "timepiece/project/_project_list_item.html" %}
-    {% endfor %}
-  </ul>
-</div>
-<div class="issue_pane right_hover">
-  <div class="issue_detail">
+
+<div class="split-pane-frame">
+  <div class="split-pane fixed-left">
+    <div class="split-pane-component" id="left-component">
+
+      <div class="decoration">
+
+        <ul class="project_list" project_sort_url="{% url 'sortable_project_update' %}" style="list-style-type:none;">
+          {% for project in projects %} 
+            {% include "timepiece/project/_project_list_item.html" %}
+           {% endfor %}
+        </ul>
+      </div>
+    </div>
+
+    <div class="split-pane-divider" id="my-divider"></div>
+
+    <div class="split-pane-component" id="right-component">
+      <div class="decoration"><!-- This div is added for styling purposes only. It's not part of the split-pane plugin. -->
+        <div class="issue_detail">
+        </div>
+      </div>
+    </div>
+
   </div>
 </div>
 

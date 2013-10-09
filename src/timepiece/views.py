@@ -1402,7 +1402,7 @@ def list_projects(request):
     for user in User.objects.all().distinct():
         last_active[user.username] = entries.filter(user=user).aggregate(end_time=Max('end_time'))['end_time']
 
-    businesses = timepiece.Business.objects.all().filter_by_logged_in_user(request.user).order_by("name")
+    businesses = timepiece.Business.objects.all().filter_by_logged_in_user(request.user).order_by("name").distinct()
 
     context = {'businesses': businesses,
                'last_active': last_active}
@@ -3171,14 +3171,8 @@ def _augment_issue_data(issue, current_user, users_allowed_to_estimate_on_busine
             per_user_issue_data["bar_color"] = "traffic_yellow"
 
         per_user_issue_data["has_estimate"] = per_user_issue_data["completion"]>0
-
-        if not hasattr(issue.representation ,"per_user"):
-            issue.representation.per_user = []
-        issue.representation.per_user.append((user,per_user_issue_data))
-
-        options = timepiece.Issue.ISSUE_STATUS_CHOICES
-        issue.representation.options =  str([ list(pair) for pair in options ]) 
-
+        issue.add_user_to_representation(user, per_user_issue_data)
+        
         end()
 
 @csrf_exempt
