@@ -9712,6 +9712,11 @@ table.project_list  {
     padding-left: 30px;
 }
 
+.project_table_cell .project_title a {
+    font-size: 10px;
+    float: right;
+}
+
 .issues .issues_list table .dev_done td {
     background-color:#cccccc;
 }
@@ -9815,14 +9820,18 @@ table.project_list  {
 
 .draggable {
     position: relative;
-    cursor: grab;
+    cursor: grabbing;
+    cursor:-moz-grabbing;
+    cursor:-webkit-grabbing;
     float: left;
-    margin-right:2px;
+    margin-right:20px;
 }
 
 .drag_img {
     position: absolute;
-    cursor: grab;
+    cursor:grabbing;
+    cursor:-moz-grabbing;
+    cursor:-webkit-grabbing;
 }
 
 .loading_issue_indicator {

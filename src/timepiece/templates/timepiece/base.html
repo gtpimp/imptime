@@ -5,6 +5,8 @@
     <link rel="icon" type="image/png" href="{{ STATIC_URL }}images/icons/clock.png">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
 
+    <script>var imp = {};</script>
+
     {% block javascript %}
         <script src="{{STATIC_URL}}js/jquery.min.js"></script>
         <script src="{{STATIC_URL}}js/jquery-ui.min.js"></script>
@@ -35,6 +37,8 @@
 
     {% block extramedia %}
     {% endblock %}
+
+
 </head>
 
 <body id="{% block bodyid %}{% endblock bodyid %}">

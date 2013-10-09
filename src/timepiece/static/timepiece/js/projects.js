@@ -1,4 +1,3 @@
-var imp = imp || {};
 imp.projects = imp.projects || {};
 
 imp.projects.already_loaded_sprints = {};
@@ -171,6 +170,61 @@ imp.on_issue_rows_loaded = function(issue_row_container) {
 								  function() {
 								      $(this).find('.drag_img').hide();
 								  });
+};
+
+imp.toggle_card_menu = function (event) {
+    var current_element = $(event.currentTarget);
+    var menu_items = current_element.parent().find(".menu_items");
+    menu_items.toggle();
+    event.stopPropagation();
+    return false;
+};
+
+
+imp.project_card_thinking = function(el) {
+    $(el).parents(".project_card").find(".loading").show();
+};
+
+imp.popup_page = function(url) {
+
+    project_card_dialog_container
+
+    if (imp.popup_dialog) {
+	$(".project_card_dialog_container").find(".dialog_content").load(url);
+    } else {
+	$(".project_card_dialog_container").dialog( { width: 600,
+						      height: 400,
+						      open: function(event, ui) {
+							  $(".project_card_dialog_container").find(".dialog_content").load(url);
+						      }
+						    });
+    }
+    
+};
+
+imp.popup_text = function(text) {
+
+    if (imp.popup_dialog) {
+	$(".project_card_dialog_container").find(".dialog_content")[0].innerHTML=text;
+    } else {
+	$(".project_card_dialog_container").dialog( { width: 600,
+						      height: 400,
+						      open: function(event, ui) {
+							  $(".project_card_dialog_container").find(".dialog_content")[0].innerHTML=text;
+						      }
+						    });
+    }
+    
+};
+
+imp.create_chart = function(chart_info) {
+
+    // imp.data and imp.options are defined in graph.html
+    //$.plot($("#graph"), imp.data, imp.options);
+    //$.plot($("#bar_graph"), imp.bar_data, imp.bar_options);
+    for (var i = 0; i < chart_info.length; i++) {
+        $.plot($(chart_info[i].divid), chart_info[i].data, chart_info[i].options);
+    }
 };
 
 imp.on_document_ready = function() {

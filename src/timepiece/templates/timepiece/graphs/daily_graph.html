@@ -4,37 +4,6 @@
 {% load bootstrap_toolkit %}
 {% block content %}
 
-<script>
-  plot_charts = [
-  {% for user,days_hours in daily_hours %} 
-  {data: [ {%spaceless%} 
-		   { label:"{{user}}", 
-		     data: [ {% for date, hours in days_hours %} 
-		                [ {{date|epoch}},{{hours}}], {% endfor %} ],
-		     lines: {show: true, steps:true},
-		     {# points: {show: true}, #}
-	           },
-	       {%endspaceless%}
-	     ],
-  options: {xaxis: {mode: "time",
-                    {% if from_date %}
-                     min: {{from_date|epoch}},
-                    {% endif %}
-                   {% if to_date %}
-                     max: {{to_date|epoch}},
-                    {% endif %}
-                   timeformat: "%d %b %y",
-		   },
-            grid: {markings: [{yaxis: {from: 8, to:8}, color: "#adff2f"}]}},
-	    series:{stack:true, bars:{show:true}}
-   divid: "#graph{{user}}",
-   },
-
-   {% endfor %}
-   ];
-
-</script>
-
 <h2>
   Graphs
   {% include "timepiece/graphs/_date_filter_msg.html" %}
@@ -93,6 +62,39 @@
 
 
   {% endfor %}
+
+<script>
+  $(document).ready( 
+               function() {
+                  imp.create_chart([
+                      {% for user,days_hours in daily_hours %} 
+                      {divid: "#graph{{user}}",
+                       data: [ {%spaceless%} 
+                                       { label:"{{user}}", 
+                                         data: [ {% for date, hours in days_hours %} 
+                                                    [ {{date|epoch}},{{hours}}], {% endfor %} ],
+                                         lines: {show: true, steps:true},
+                                         {# points: {show: true}, #}
+                                       },
+                                   {%endspaceless%}
+                                 ],
+                      options: {xaxis: {mode: "time",
+                                        {% if from_date %}
+                                         min: {{from_date|epoch}},
+                                        {% endif %}
+                                       {% if to_date %}
+                                         max: {{to_date|epoch}},
+                                        {% endif %}
+                                       timeformat: "%d %b %y",
+                                       },
+                                grid: {markings: [{yaxis: {from: 8, to:8}, color: "#adff2f"}]}},
+                                series:{stack:true, bars:{show:true}},
+                       },
+
+                       {% endfor %}
+                       ]);
+                  });
+</script>
 
 {% endblock %}
 
