@@ -1297,10 +1297,10 @@ def project_detail(request, business_id):
     businesses = defaultdict(lambda: [])
     for project in projects:
         businesses[project.business].append(project)
-    businesses = dict((b, business_total(p, from_date, to_date)) for b, p in businesses.iteritems())
+    businesses = dict((b, _business_total(p, from_date, to_date)) for b, p in businesses.iteritems())
     user_totals = {}
     for b in businesses.values():
-        sum_user_totals(b['users_and_hours'], user_totals)
+        _sum_user_totals(b['users_and_hours'], user_totals)
 
     last_active = {}
 
@@ -1326,9 +1326,9 @@ def project_detail(request, business_id):
     
 
 @permission_required('timepiece.view_project')
-@render_with('timepiece/project/list.html')
 @login_required
-def list_projects(request):
+@render_with('timepiece/project/amounts_billed.html')
+def amounts_billed(request):
     if request.GET:
         form = timepiece_forms.ProjectSearchForm(request.GET)
     else:
@@ -1366,10 +1366,10 @@ def list_projects(request):
     for project in projects:
         businesses[project.business.name].append(project)
 
-    businesses = dict((b, business_total(p, from_date, to_date)) for b, p in businesses.iteritems())
+    businesses = dict((b, _business_total(p, from_date, to_date)) for b, p in businesses.iteritems())
     user_totals = {}
     for b in businesses.values():
-        sum_user_totals(b['users_and_hours'], user_totals)
+        _sum_user_totals(b['users_and_hours'], user_totals)
 
     last_active = {}
 
@@ -1392,6 +1392,21 @@ def list_projects(request):
     })
     return context
 
+@permission_required('timepiece.view_project')
+@render_with('timepiece/project/list.html')
+@login_required
+def list_projects(request):
+    
+    last_active = {}
+    entries = timepiece.Entry.objects.filter_by_logged_in_user(request.user)
+    for user in User.objects.all().distinct():
+        last_active[user.username] = entries.filter(user=user).aggregate(end_time=Max('end_time'))['end_time']
+
+    businesses = timepiece.Business.objects.all().filter_by_logged_in_user(request.user).order_by("name")
+
+    context = {'businesses': businesses,
+               'last_active': last_active}
+    return context
 
 # @permission_required('timepiece.view_project')
 # @render_with('timepiece/project/list_old.html')
@@ -1433,10 +1448,10 @@ def list_projects(request):
 #     for project in projects:
 #         businesses[project.business.name].append(project)
 
-#     businesses = dict((b, business_total(p, from_date, to_date)) for b, p in businesses.iteritems())
+#     businesses = dict((b, _business_total(p, from_date, to_date)) for b, p in businesses.iteritems())
 #     user_totals = {}
 #     for b in businesses.values():
-#         sum_user_totals(b['users_and_hours'], user_totals)
+#         _sum_user_totals(b['users_and_hours'], user_totals)
 
 #     last_active = {}
 
@@ -1460,17 +1475,16 @@ def list_projects(request):
 #     return context
 
 
-@login_required
-def sum_user_totals(users_and_hours, totals=None):
+def _sum_user_totals(users_and_hours, totals=None):
     if totals is None:
         totals = {}
 
 
     def add_total(key):
-        if key in business_totals:
-            business_totals[key] += project_totals[key]
+        if key in _business_totals:
+            _business_totals[key] += project_totals[key]
         else:
-            business_totals[key] = project_totals[key]
+            _business_totals[key] = project_totals[key]
     
     for project, users in users_and_hours:
         for username, project_totals in users['users'].iteritems():
@@ -1488,18 +1502,17 @@ def sum_user_totals(users_and_hours, totals=None):
 
             user[business]['projects'][project.name] = project_totals
             
-            business_totals = user[business]['totals']
+            _business_totals = user[business]['totals']
 
             add_total('hours')
             add_total('revenue')
             add_total('billed')
             
-            business_totals['ctc_rate'] = float(business_totals['revenue']) / float(business_totals['hours'])
-            business_totals['billed_rate'] = float(business_totals['billed'])  / float(business_totals['hours'])
+            _business_totals['ctc_rate'] = float(_business_totals['revenue']) / float(_business_totals['hours'])
+            _business_totals['billed_rate'] = float(_business_totals['billed'])  / float(_business_totals['hours'])
     return totals
             
-@login_required
-def business_total(projects, start_time=None, end_time=None):
+def _business_total(projects, start_time=None, end_time=None):
     entry_filter = [('start_time__gte', start_time), ('end_time__lte', end_time)]
     entry_filter = dict((k,v) for k,v in entry_filter if v)
     billed = 0
@@ -3233,6 +3246,15 @@ def update_issue_with_feature(request,issue_id):
 
     return HttpResponse("");
     
+@csrf_exempt
+@login_required
+def business_issues(request, pk):
+    try:
+        recent_project_id = timepiece.Business.objects.get(pk=pk).get_ordered_projects()[0].id
+    except IndexError:
+        recent_project_id=None
+
+    return HttpResponseRedirect(reverse('project_list', kwargs={'project_id': recent_project_id}))
 
 @csrf_exempt
 @login_required
@@ -3268,11 +3290,11 @@ def project_issues(request, pk, template="timepiece/project/issues.html", contex
     context['unassigned_timesheet_entries_hours'] = timepiece.Issue.get_unassigned_timesheet_entries_hours(context['project'])
     context['unassigned_timesheet_entries_ctc'] = timepiece.Issue.get_unassigned_timesheet_entries_ctc(context['project'])
     context['unassigned_timesheet_entries_billable'] = timepiece.Issue.get_unassigned_timesheet_entries_billable(context['project'])
-
     context['issues_forms'] = issues_forms
     context['total_hours'] = hours
     context['total_ctc'] = ctc
     context['total_billable'] = billable
+    context['business_permissions_by_user'] = timepiece.BusinessPermissions.by_user(business)
 
     timings.results()
     return render_to_response(template, context, context_instance=RequestContext(request))

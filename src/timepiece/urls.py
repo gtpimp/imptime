@@ -62,6 +62,12 @@ urlpatterns = patterns('',
         views.list_projects, 
         name='list_projects'
     ),
+
+    url(r'^project/amounts_billed/$',
+        views.amounts_billed, 
+        name='amounts_billed'
+    ),
+
     url(
         r'^project/(?P<project_id>\d+)/$',
         views.view_project,
@@ -199,6 +205,11 @@ urlpatterns = patterns('',
         r'^time-sheet/project_issues/(?P<pk>\d+)/$',
         views.project_issues,
         name='project_issues',
+    ),
+    url(
+        r'^time-sheet/business_issues/(?P<pk>\d+)/$',
+        views.business_issues,
+        name='business_issues',
     ),
     url(
         r'^time-sheet/issue_detail/(?P<issue_id>\d+)/$', views.issue_detail, name='issue_detail',

@@ -1,0 +1,59 @@
+{% extends "timepiece/project/base.html" %}
+
+{% block title %}Amounts Billed{% endblock %}
+{% load url from future %}
+{% load bootstrap_toolkit %}
+{% load timepiece_tags %}
+
+{% block content %}
+
+  <div class="expanded" id='amounts_billed'>
+    <h2>Amounts Billed</h2>
+    <table class="table table-bordered table-striped table-condensed project_list table-amounts expanded" id="table_amounts_billed">
+      <thead>
+	<tr>
+	  <th>User/Business</th>
+	  <th>Sprint</th>
+	  <th>Hours</th>
+	  <th>Rate CTC</th>
+	  <th>Rate Billed</th>
+	  <th>CTC</th>
+	  <th>Billed</th>
+	</tr>
+      </thead>
+      <tbody>
+	      {% for user, businesses in user_totals.items %}
+	<tr>
+	  <th colspan ="7">{{ user }}</th>
+	</tr>
+	      {% for business, temp_totals in businesses.items %}
+	      {% with totals=temp_totals.totals user_projects=temp_totals.projects %}
+	<tr>
+	  <td><b>{{ business }}</b></td>
+	  <td />
+	  <td><b>{{ totals.hours}}</b></td>
+	  <td><b>{{ totals.ctc_rate|currency }}</b></td>
+	  <td><b>{{ totals.billed_rate|currency }}</b></td>
+	  <td><b>{{ totals.revenue|currency }}</b></td>
+	  <td><b>{{ totals.billed|currency }}</b></td>
+	</tr>
+	      {% for project, user_totals in user_projects.items %}
+	<tr>
+	  <td />
+	  <td>{{ project }}</td>
+	  <td>{{ user_totals.hours }}</td>
+	  <td>{{ user_totals.rate.amount|currency }}</td>
+	  <td>{{ user_totals.rate.billable_amount|currency }} </td>
+	  <td>{{ user_totals.revenue|currency }} </td>
+	  <td>{{ user_totals.billed|currency }} </td>
+	</tr>
+	      {% endfor %}
+	      {% endwith %}
+	      {% endfor %}
+	      {% endfor %}
+      </tbody>
+    </table>
+  </div>
+  
+  
+{% endblock %}
