@@ -1,0 +1,117 @@
+{% load timepiece_tags %}
+{% load url from future %}
+
+<div class="card_menu">
+  
+  <div class="title" >
+    <ul>
+      <li style="display:none">
+        <a onclick="$(this).parents('.card_menu').find('.menu_items').toggle(); return false;">Menu</a>
+      </li>
+    </ul>
+  </div>
+  <div class="menu_items">
+    <ul>
+
+      {% has_permission has_add_issue project.business %}
+      <li class="parent_li_of_form_on_click">
+
+        <a href="#" class="to_expand_form_on_click" onclick="imp.do_form_show(this , '{% url 'add_issue' project.id %}' )">
+            Add Issue
+        </a>
+        <div class="new_issue_form to_edit_expanded_form" style="display:none;position:absolute;z-index:100">		  
+      </div>
+      {% end_permission %}
+
+      
+
+      <li>
+        <a href="{% url 'project_list' project.id %}">
+          Refresh
+        </a>
+      </li>
+
+      <li>
+        <a href="{% url 'sprint_export' project.id %}">export as csv</a>
+      </li>
+
+      {% has_permission has_edit_project_detail project.business %}
+      <li>
+        <a href="#" onclick="window.open('{%url 'project_detail' project.business.id%}')">
+          Business detail
+        </a>
+      </li>
+      {% end_permission %}
+
+      {% has_permission has_edit_budget project.business %}
+      <li>
+        <a href="#" onclick="window.open('{%url 'edit_project_budget' project.id%}')">
+          Budget
+        </a>
+      </li>
+      {% end_permission %}
+
+      {% has_permission has_edit_invoices project.business %}
+      <li>
+        <a href="#" onclick="window.open('{% url 'invoice_list' %}?project_id={{project.id}}')">
+        Invoices
+        </a>
+      </li>
+      {% end_permission %}
+
+      {% has_permission has_edit_ctc_billable_rates project.business %}
+      <li>
+        <a href="#" onclick="imp.popup_page('{% url 'view_project_rates' project.id %}'); return false;">
+          Rates
+        </a>
+      </li>
+      {% end_permission %}
+
+      {% has_permission has_toggle_graphs  project.business %}
+      <li>
+        <a href="#" onclick="window.open('{% url 'show_timeline' project.id %}')">
+          Timeline
+        </a>
+      </li>
+      {% end_permission %}
+
+      {% comment %}
+      <li>
+        <a href="#" onclick="window.open('{% url 'create_project' %}?business_id={{ business.id }}');return false;">New sprint</a>
+      </li>
+      {% endcomment %}
+
+      {%  has_permission has_edit_permissions business  %}
+      <li>
+        <a href="#" onclick="window.open('{% url 'show_permissions' business.id %}')">
+          Permissions
+        </a> 
+      </li>
+      {% end_permission %}
+
+      {% comment %}
+     <div class="btn">
+        <div class="to_expand_form_on_click" style="display:block"  onclick="imp.projects.show_project_card_as_popup(this, '{% url 'get_project_card_for_business'  business_id=business.id project_id=project.id  %}');return false; "> 
+          Show Project Card
+        </div>	
+      </div>
+
+      <div class="" id="b_card_{{business.id}}"  style="position:absolute;z-index:100">		  
+      </div>
+      {% endcomment %}
+
+      {% comment %}
+      <li>
+        <a href="#" onclick="imp.project_card_thinking(this);$('#b_card_{{business.id}}').load('{% url 'get_project_card_indexed' business_id=business.id index=1 %}'); return false;">
+          All sprints
+        </a>
+      </li>
+      {% endcomment %}
+
+
+    </li>
+
+    </ul>
+  </div>
+</div>
+

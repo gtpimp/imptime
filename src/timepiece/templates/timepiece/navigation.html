@@ -33,9 +33,6 @@
 			      {% if perms.timepiece.view_project or perms.auth.view_user or perms.timepiece.view_business %}
    				<li><a href="{% url 'list_projects' %}">List of projects</a></li>
 				{% endif %}
-                                {% if perms.timepiece.view_business %}
-                                    <li><a href="{% url 'list_businesses' %}">List of businesses</a></li>
-                                {% endif %}
 
                                 {% comment %}
 				{% if perms.auth.view_user %}
