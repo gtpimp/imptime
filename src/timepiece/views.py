@@ -1683,11 +1683,11 @@ def edit_project_relationship(request, project_id, user_id):
 @permission_required('timepiece.add_project')
 @permission_required('timepiece.change_project')
 @login_required
+@csrf_exempt
 def create_close_project(request, project_id=None):
     project = get_object_or_404(timepiece.Project, pk=project_id)
-    project.status = timepiece.Attribute.objects.get(label='closed', type='project-status')
-    project.save()
-    return HttpResponseRedirect(reverse('list_projects'))
+    project.close();
+    return HttpResponse("ok");
 
 @permission_required('timepiece.add_project')
 @permission_required('timepiece.invoiced_project')
@@ -3392,6 +3392,7 @@ def project_list(request, project_id=None, template="timepiece/project/project_l
     context['current_user'] = request.user
     context['expanded_project'] = expanded_project
     context['projects'] = projects
+    context['has_closed_projects'] = len( list([ p for p in projects if p.is_open ]) ) > 0
     context['business'] = business
     context['business_permissions_by_user'] = timepiece.BusinessPermissions.by_user(business)
     return render_to_response(template, context, context_instance=RequestContext(request))
@@ -3403,7 +3404,8 @@ def issue_detail(request, issue_id, template="timepiece/project/issue_detail.htm
     context = context or {}
     issue =  timepiece.Issue.objects.get(pk=issue_id)
     context['issue'] = issue
-
+    
+    context['supports_description'] = True
     project = issue.project
     context['project'] = project
 
@@ -3425,6 +3427,7 @@ def issue_detail_update(request,  template="timepiece/project/issue_detail.html"
 
     project = edited_issue.project
     context['project'] = project
+    context['supports_description'] = True
 
     has_edit_description = timepiece.BusinessPermissions.objects.get_or_create(business=project.business, user=request.user)[0].has_edit_description
     if not has_edit_description:
@@ -3450,6 +3453,7 @@ def issue_status_update(request,  template="timepiece/project/issue_detail.html"
 
     project = edited_issue.project
     context['project'] = project
+    context['supports_description'] = True
 
     has_edit_status = timepiece.BusinessPermissions.objects.get_or_create(business=project.business, user=request.user)[0].has_edit_issue_states
     if not has_edit_status:
@@ -3476,6 +3480,7 @@ def issue_subject_update(request,  template="timepiece/project/issue_detail.html
 
     project = edited_issue.project
     context['project'] = project
+    context['supports_description'] = True
 
     has_edit_subject = timepiece.BusinessPermissions.objects.get_or_create(business=project.business, user=request.user)[0].has_edit_subject
     if not has_edit_subject:
@@ -3520,6 +3525,7 @@ def issue_points_update(request,  template="timepiece/project/issue_detail.html"
 def unassigned_timesheet_entries(request, project_id, template="timepiece/project/issue_detail.html", context=None):
     context = context or {}
     project = timepiece.Project.objects.filter(pk=project_id).filter_by_logged_in_user(request.user)[0]
+    context['supports_description'] = False
     context['current_user'] = request.user
     context['issue'] = {'id':'na',
                         'description':'unassigned timesheet entries',
@@ -3534,6 +3540,7 @@ def all_timesheet_entries(request, project_id, template="timepiece/project/issue
     context = context or {}
     project = timepiece.Project.objects.filter(pk=project_id).filter_by_logged_in_user(request.user)[0]
     entries = project.entries.all().order_by("start_time")
+    context['supports_description'] = False
     context['current_user'] = request.user
     context['issue'] = {'id':'na',
                         'description':'all timesheet entries',

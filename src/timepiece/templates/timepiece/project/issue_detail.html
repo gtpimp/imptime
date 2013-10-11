@@ -3,16 +3,20 @@
 
 <div class="issue_status" style="margin-bottom:10px"><h3>{{issue.status}}</h3></div> 
 
-<div class="edit_description" >
+{% if supports_description %}
+<div>
+  <div class="edit_description" >
 
-  <div class="static_div" {% has_permission has_edit_description issue.project.business %} onclick="imp.clickable_description_box(this, '{% url issue_detail_update %}',{{ issue.id }})" {% end_permission %} >
-    {% has_permission has_edit_description issue.project.business %}
-      <div style="cursor:pointer"><img src="{{STATIC_URL}}/images/timepiece/icons/pencil.png" /></div>
-    {% end_permission %}
-      <div class="content">{% if issue.description %} {{issue.description|linebreaksbr}}</div>
-    {% else %}No issue detail{% endif %}
+    <div class="static_div" {% has_permission has_edit_description issue.project.business %} onclick="imp.clickable_description_box(this, '{% url issue_detail_update %}',{{ issue.id }})" {% end_permission %} >
+      {% has_permission has_edit_description issue.project.business %}
+        <div style="cursor:pointer"><img src="{{STATIC_URL}}/images/timepiece/icons/pencil.png" /></div>
+      {% end_permission %}
+        <div class="content">{% if issue.description %} {{issue.description|linebreaksbr}}</div>
+      {% else %}No issue detail{% endif %}
+    </div>
   </div>
 </div>
+{% endif %}
 
 <hr/>
 {% ifequal 0 issue.related_entries|length %}

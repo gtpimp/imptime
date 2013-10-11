@@ -489,6 +489,9 @@ class Project(models.Model):
 
         return project_returned
 
+    def close(self):
+        self.status = Attribute.objects.get(label='closed', type='project-status')
+        self.save()
 
     @property
     def is_open(self):

@@ -185,6 +185,9 @@ imp.clickable_description_box = function(element, url, item_id) {
     });
     commentField.append(submitButton);
     textbox.parent().append(commentField);
+    //textField.select();
+    textField.focus();
+    textField.value = textField.value;
 };
 
 

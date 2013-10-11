@@ -16,9 +16,7 @@ imp.projects.on_sortable_changed_for_url = function(sortable_url) {
         });
 
         var loading_indicators = ui.item.parent().find(".loading_issue_indicator");
-        loading_indicators.each ( function (item, elem) {
-            $(elem).show();
-        });
+        loading_indicators.show();
 
         var joined_ordered_ids = ordered_ids.join(',');
         var response = $.ajax({type:"POST",
@@ -26,9 +24,7 @@ imp.projects.on_sortable_changed_for_url = function(sortable_url) {
                                data: { ordered_ids:joined_ordered_ids, project_id:project_id },
                                dataType:"json",
                                success : function () {
-                                   loading_indicators.each ( function (index, elem) {
-                                       $(elem).hide();
-                                   });
+                                   loading_indicators.hide();
                                }
                               });
     };
@@ -151,6 +147,18 @@ imp.toggle_card_menu = function (event) {
     return false;
 };
 
+imp.close_sprint = function(el, sprint_name, url) {
+    if ( ! confirm("Close "+sprint_name+"?") ) {
+	return false;
+    }
+    var on_done = imp.loading("Closing sprint");
+    var response = $.ajax({type:"GET",
+                           url: url,
+                           success: function(data) {
+			       on_done();
+                           }
+                          });
+};
 
 imp.project_card_thinking = function(el) {
     $(el).parents(".project_card").find(".loading").show();
