@@ -1,5 +1,15 @@
 var imp = imp || {};
 
+imp.issue_loading = function(item_id) {
+    var loading_el = $("#loading_issue_"+item_id);
+    loading_el.show();
+
+    var on_done = function() {
+	loading_el.fadeOut();
+    }
+    return on_done;
+};
+
 imp.show_issue_detail = function(url) {    
     var on_done = imp.loading("loading issue detail");
     $(".issue_detail").load(url, 
@@ -58,8 +68,9 @@ imp.do_form_remove  = function(element) {
 };
 
 
-imp.on_issue_form_submit = function(element, url) {
+imp.on_issue_form_submit = function(element, item_id, url) {
     var mform = $(element);
+    var on_done = imp.issue_loading(item_id)
     function handle_success_for_form(form) {
           var a_form = form;
           return function(data) {
@@ -69,13 +80,17 @@ imp.on_issue_form_submit = function(element, url) {
                 }
               var button = a_form.parent().parent().parent();
               imp.do_form_remove(button);    
+	      on_done();
           };
     }
+
     var response = $.ajax({type:"POST",
                            url: url,
                            data: mform.serialize()
                           });
-    response.done( handle_success_for_form(mform) );
+    response.done( function() {
+	handle_success_for_form(mform);
+    });
     return false;
 };
 
@@ -99,27 +114,17 @@ imp.on_project_form_submit = function(element, url) {
     return false;
 };
 
-imp.ajax_call = function(element, url, item_id) {
-    var button = $(element);
-    $.ajax({type:"POST",
-            url: url,
-            data : { item_id: item_id },
-            dataType:"json"});
-    
-};
-
 imp.delete_issue_from_issues_list = function(element, url, item_id) {
     var button = $(element);
     var closest_row = button.closest(".issue_instance_row");
-    var loading_el = $(".loading_issue_"+item_id);
-    loading_el.show();
+    var on_done = imp.issue_loading(item_id);
     $.ajax({type:"POST",
             url: url,
             data : { item_id: item_id },
             dataType:"json",
             success: function() {
-                loading_el.hide();
                 closest_row.remove();
+		on_done();
             }});
     
 };
@@ -158,10 +163,14 @@ imp.clickable_description_box = function(element, url, item_id) {
         var display_value = new_value.replace(/\n/g,"<br>");
         $(div_parent[0]).html(display_value);
             div_parent.show();
-        $.ajax({type:"POST",
+	var on_done = imp.issue_loading(item_id);
+        var response = $.ajax({type:"POST",
                 url: url,
                 data : { item_id: item_id, new_value: new_value },
                 dataType:"json"});
+	response.done( function() {
+	    on_done();
+	});
     });
     commentField.append(submitButton);
     textbox.parent().append(commentField);
@@ -199,11 +208,15 @@ imp.clickable_subject_box = function(element, url, item_id, size, width) {
             div_sibling.html(new_value);
             $(this).remove();
             div_sibling.show();
+	    var on_done = imp.issue_loading(item_id);
             var response = $.ajax({type:"POST",
                                    url: url,
                                    data : { item_id: item_id, new_value: new_value },
                                    dataType:"json"});
-            response.done( function() { imp.refresh_closest_issue_parent_row(div_sibling) } );
+            response.done( function() { 
+		imp.refresh_closest_issue_parent_row(div_sibling);
+		on_done();
+	    } );
             imp.showing_clickable_popup = false;
         }
         
@@ -236,11 +249,15 @@ imp.clickable_point_box = function(element, url, item_id) {
             div_sibling.html(new_value);
             $(this).remove();
             div_sibling.show();
+	    var on_done = imp.issue_loading(item_id);
             var response = $.ajax({type:"POST",
                                    url: url,
                                    data : { item_id: item_id, new_value: new_value },
                                    dataType:"json"});
-            response.done( function() { imp.refresh_closest_issue_parent_row(div_sibling) } );
+            response.done( function() { 
+		imp.refresh_closest_issue_parent_row(div_sibling);
+		on_done();
+	    } );
 
         }
     });
