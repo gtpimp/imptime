@@ -6,7 +6,7 @@
 {% load timepiece_tags %}
 
 {% block extracss %}
-  <link rel="stylesheet" href="{{STATIC_URL}}timepiece/css/split-pane.css" />
+  <link rel="stylesheet" href="{{STATIC_URL}}timepiece/css/splitter.css" />
 
 {% endblock %}
 
@@ -14,7 +14,7 @@
 {% endblock %}
 
 {% block extrajs %}
-<script src="{{STATIC_URL}}timepiece/js/split-pane.js"></script>
+<script src="{{STATIC_URL}}timepiece/js/splitter.js"></script>
 <script src="{{STATIC_URL}}timepiece/js/projects.js"></script>
 <script src="{{STATIC_URL}}timepiece/js/issues.js"></script>
 {% endblock extrajs %}
@@ -39,29 +39,18 @@
 </div>
 {% endif %}
 
-<div class="split-pane-frame">
-  <div class="split-pane fixed-left">
-    <div class="split-pane-component" id="left-component">
-
-      <div class="decoration">
+<div class="splitter">
+  <div class="splitter-left">
 
         <ul class="project_list" project_sort_url="{% url 'sortable_project_update' %}" style="list-style-type:none;">
           {% for project in projects %} 
             {% include "timepiece/project/_project_list_item.html" %}
            {% endfor %}
         </ul>
-      </div>
+  </div>
+  <div class="splitter-right">
+    <div class="issue_detail">
     </div>
-
-    <div class="split-pane-divider" id="my-divider"></div>
-
-    <div class="split-pane-component" id="right-component">
-      <div class="decoration"><!-- This div is added for styling purposes only. It's not part of the split-pane plugin. -->
-        <div class="issue_detail">
-        </div>
-      </div>
-    </div>
-
   </div>
 </div>
 

@@ -196,6 +196,11 @@ imp.create_chart = function(chart_info) {
     }
 };
 
+imp.create_splitter = function() {
+    $(".splitter").css({height:$(window).height()*0.9+"px"});
+    $(".splitter").splitter();
+};
+
 (function() {
   var loading_counter = 0
   imp.loading = function(msg) {
@@ -231,14 +236,7 @@ imp.on_document_ready = function() {
         }
     });
 
-
-
-    //$('div.split-pane').splitPane();
-
-    // var issue_pane = $(".split-paneissue_pane");
-    // issue_pane.draggable();
-    // issue_pane.resizable();
-
+    imp.create_splitter();
     imp.attach_sprint_headings();
 };
 
