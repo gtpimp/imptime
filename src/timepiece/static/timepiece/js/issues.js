@@ -71,29 +71,25 @@ imp.do_form_remove  = function(element) {
 };
 
 
-imp.on_issue_form_submit = function(element, item_id, url) {
-    var mform = $(element);
-    var on_done = imp.issue_loading(item_id);
-    function handle_success_for_form(form) {
-          var a_form = form;
-          return function(data) {
-                var table_body =  a_form.closest(".project_detail").find(".issue_list_body");
-                if(table_body.length > 0) {
-                    table_body.append(data);
-                }
-              var button = a_form.parent().parent().parent();
-              imp.do_form_remove(button);    
-	      on_done();
-          };
-    }
+imp.on_issue_form_submit = function(element, url) {
+    var mform = $(element).parents("form");
+    var on_done = imp.issue_loading("Creating issue");
 
-    var response = $.ajax({type:"POST",
-                           url: url,
-                           data: mform.serialize()
-                          });
-    response.done( function() {
-	handle_success_for_form(mform);
-    });
+    var handle_success_for_form = function(data) {
+        var table_body =  mform.closest(".project_detail").find(".issue_list_body");
+        if(table_body.length > 0) {
+            table_body.append(data);
+        }
+        var button = mform.parent().parent().parent();
+        imp.do_form_remove(button);    
+	on_done();
+    };
+
+    $.ajax({type:"POST",
+            url: url,
+            data: mform.serialize(),
+	    success: handle_success_for_form
+           });
     return false;
 };
 
