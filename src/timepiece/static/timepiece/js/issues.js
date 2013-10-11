@@ -179,7 +179,7 @@ imp.clickable_description_box = function(element, url, item_id) {
 
 imp.clickable_time_estimate = function(element, url, item_id, issue_id) {
     element = $(element).find(".edit_issue_subject")
-    var initial_value = element.find(".estimated_hours").html();
+    var initial_value = element.find(".estimated_hours").html() || "0";
     return imp.clickable_subject_box(element, url, item_id, null, "auto", issue_id, initial_value=initial_value);
 };
 

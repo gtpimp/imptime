@@ -3179,14 +3179,20 @@ def _augment_issue_data(issue, current_user, users_allowed_to_estimate_on_busine
         per_user_issue_data["hours"] = hours
         per_user_issue_data["has_hours"] = per_user_issue_data["hours"]>0
         per_user_issue_data["completion_width"] = completion_against_estimated_hours
-        if per_user_issue_data["completion_width"] >= 100:
+        if per_user_issue_data["completion_width"] > 100:
             per_user_issue_data["completion_width"] = 100
             per_user_issue_data["bar_color"]= "traffic_red"
             per_user_issue_data["completion"] = 200 if per_user_issue_data["completion"] > 200 else per_user_issue_data["completion"] 
-        elif per_user_issue_data["completion"] < 80:
-            per_user_issue_data["bar_color"] = "traffic_green"
         else:
-            per_user_issue_data["bar_color"] = "traffic_yellow"
+            if issue.is_closed():
+                # closed and within budget, so green
+                per_user_issue_data["bar_color"] = "traffic_green"
+            else:
+                if per_user_issue_data["completion"] > 80:
+                    # not closed and getting close to budget, so yellow
+                    per_user_issue_data["bar_color"] = "traffic_yellow"
+                else:
+                    per_user_issue_data["bar_color"] = "traffic_green"
 
         per_user_issue_data["has_estimate"] =  per_user_issue_data["issue_points"].points>0 or per_user_issue_data["completion"]>0
         issue.add_user_to_representation(user, per_user_issue_data)

@@ -1930,6 +1930,9 @@ class Issue(models.Model):
         else:
             return "open"
 
+    def is_closed(self):
+        return self.status.replace(" ","").lower() == 'tested'
+
     def add_user_to_representation(self, user, per_user_issue_data):
         self.representation.per_user[user] = per_user_issue_data
 
