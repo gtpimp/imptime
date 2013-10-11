@@ -215,7 +215,7 @@ imp.create_splitter = function() {
       var on_done = function() {
 	  if (loading_counter == local_loading_counter) {
 	      el.find(".title").html();
-	      el.fadeOut();
+	      el.fadeOut({duration:1000});
 	  }
       }
       return on_done;

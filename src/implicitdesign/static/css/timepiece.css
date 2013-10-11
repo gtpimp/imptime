@@ -9605,6 +9605,11 @@ table.project_list  {
     cursor: pointer;
 }
 
+.issues .issues_list .money_cell {
+    text-align: right;
+    padding-right:2px;
+}
+
 .issues .issues_list .issue_number {
     background: -moz-linear-gradient(center top , #EEEEEE, #CCCCCC) repeat scroll 0 0 transparent;
     border: 1px solid #AAAAAA;

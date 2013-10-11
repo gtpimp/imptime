@@ -4,8 +4,11 @@ imp.issue_loading = function(item_id) {
     var loading_el = $("#loading_issue_"+item_id);
     loading_el.show();
 
+    var on_global_loading_done = imp.loading("loading "+item_id)
+
     var on_done = function() {
 	loading_el.fadeOut();
+	on_global_loading_done();
     }
     return on_done;
 };
@@ -70,7 +73,7 @@ imp.do_form_remove  = function(element) {
 
 imp.on_issue_form_submit = function(element, item_id, url) {
     var mform = $(element);
-    var on_done = imp.issue_loading(item_id)
+    var on_done = imp.issue_loading(item_id);
     function handle_success_for_form(form) {
           var a_form = form;
           return function(data) {
@@ -97,7 +100,7 @@ imp.on_issue_form_submit = function(element, item_id, url) {
 
 imp.on_project_form_submit = function(element, url) {
     var mform = $(element);
-    function handle_success_for_form(form) {
+    var handle_success_for_form = function(form) {
           var a_form = form;
           return function(data) {
               var form = a_form; 
@@ -105,7 +108,7 @@ imp.on_project_form_submit = function(element, url) {
               $(document).find(".project_list").append(data);
               imp.do_form_remove(button);    
           };
-    }
+    };
     var response = $.ajax({type:"POST",
                            url: url,
                            data: mform.serialize()
@@ -131,11 +134,19 @@ imp.delete_issue_from_issues_list = function(element, url, item_id) {
 
 
 imp.clickable_description_box = function(element, url, item_id) {
+
+    // dev note: most of this function should be replaced with a
+    // hidden snippet in one of the template files, which gets
+    // displayed on demand. eg see how the rates popup works.
+
     var textbox = $(element);
+        commentField = $("<form/>");
     var commentField = commentField.attr('action',url).attr('method','post');
-    var value = textbox.html();
+    var value = textbox.find(".content").html();
     value = value.replace(/<br>/g,"\n");
-    var textField =$("<textarea/>").attr('name','new_value').attr('value',value);
+    var textField =$("<textarea/>").attr('name','new_value');
+    textField.css({height:"400px"});
+    textField.html(value);
     textField.keyup(function(e) {
         if(e.which === 27) {    
             var form_parent = $(this).parent().parent();
@@ -153,16 +164,16 @@ imp.clickable_description_box = function(element, url, item_id) {
     commentField.append(textField);
     
     submitButton.click(function(e) {  
-            var form_parent = $(this).parent().parent();
-            var div_parent = form_parent.find(".static_div");
-            var text_sibling = form_parent.find('textarea');
-            var hidden_sibling = form_parent.find('input:hidden');
-            item_id = hidden_sibling.val();
-            var new_value = $(text_sibling).val();
+	var form_parent = $(this).parent().parent();
+	var div_parent = form_parent.find(".static_div");
+	var text_sibling = form_parent.find('textarea');
+	var hidden_sibling = form_parent.find('input:hidden');
+	item_id = hidden_sibling.val();
+	var new_value = $(text_sibling).val();
         $(this).parent().remove();
         var display_value = new_value.replace(/\n/g,"<br>");
-        $(div_parent[0]).html(display_value);
-            div_parent.show();
+        div_parent.find(".content").html(display_value);
+        div_parent.show();
 	var on_done = imp.issue_loading(item_id);
         var response = $.ajax({type:"POST",
                 url: url,
@@ -178,13 +189,15 @@ imp.clickable_description_box = function(element, url, item_id) {
 
 
 imp.clickable_time_estimate = function(element, url, item_id, issue_id) {
-    element = $(element).find(".edit_issue_subject")
+    element = $(element).find(".edit_issue_subject");
     var initial_value = element.find(".estimated_hours").html() || "0";
     return imp.clickable_subject_box(element, url, item_id, null, "auto", issue_id, initial_value=initial_value);
 };
 
 imp.clickable_subject_box = function(element, url, item_id, size, width, issue_id, initial_value) {
 
+    // This 'imp.showing_clickable_popup' stuff can probably be removed, look for and delete all references if reading after 11Nov2013
+    // 
     // if ( imp.showing_clickable_popup ) {
     //     return;
     // }
