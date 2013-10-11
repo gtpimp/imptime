@@ -3153,12 +3153,8 @@ def delete_issue(request, project_id, template="", context=None):
 
 def _augment_issue_data(issue, current_user, users_allowed_to_estimate_on_business):
     
-    users = users_allowed_to_estimate_on_business
-
-    actual_billable_cost_of_issue = float(issue.billable)
-    for user in users:
-
-        end = timings.start('user loop')
+    #actual_billable_cost_of_issue = float(issue.billable)
+    for user in users_allowed_to_estimate_on_business:
         
         per_user_issue_data = {}
         user_rate = issue.project.get_user_rate(user)
@@ -3195,9 +3191,17 @@ def _augment_issue_data(issue, current_user, users_allowed_to_estimate_on_busine
                     per_user_issue_data["bar_color"] = "traffic_green"
 
         per_user_issue_data["has_estimate"] =  per_user_issue_data["issue_points"].points>0 or per_user_issue_data["completion"]>0
+        per_user_issue_data["can_estimate"] = True
         issue.add_user_to_representation(user, per_user_issue_data)
-        
-        end()
+
+    # for user, hours in issue.hours_for_users():
+    #     if user not in users_allowed_to_estimate_on_business:
+    #         # users with hours but without estimates need a column too
+    #         per_user_issue_data["hours"] = hours
+    #         per_user_issue_data["has_hours"] = True
+    #         per_user_issue_data["has_estimate"] = False
+    #         per_user_issue_data["can_estimate"] = False
+    #         issue.add_user_to_representation(user, per_user_issue_data)
 
 @csrf_exempt
 @login_required
@@ -3320,6 +3324,9 @@ def get_project_detail(request, project_id, template="timepiece/project/_project
 
     queryset = project.get_ordered_issues()
     issues_forms = None
+
+    context['users_with_time_but_no_estimates_in_this_project'] = project.get_users_with_time_but_no_estimates_in_this_project()
+
     if len(queryset) :
         issues_forms = timepiece_forms.issue_status_formset(request.POST or None, 
                                                             queryset=queryset)    
@@ -3829,6 +3836,7 @@ def get_issue_row(request,issue_id):
     context['current_user'] = request.user
     context['project'] = project
     context['business_permissions_by_user'] = timepiece.BusinessPermissions.by_user(business)
+    context['users_with_time_but_no_estimates_in_this_project'] = project.get_users_with_time_but_no_estimates_in_this_project()
     
     refresh_issue =timepiece.Issue.objects.get(id=issue.id)
     refresh_issue.representation = issue.representation

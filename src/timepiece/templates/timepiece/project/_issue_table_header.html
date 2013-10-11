@@ -10,28 +10,33 @@
                 <th>Status</th>
    
 		{% has_permission has_see_other_user_points project.business %}
-		  {% with issues_forms.forms|first as first_form %}
+                  {% with issues_forms.forms|first as first_form %}
 		    {% for user, per_user in first_form.instance.representation.per_user.items %}
-                      {% user_can_estimate_own_points user project.business %}
   	                <th >
-                         {{ user.username }}'s estimate 
+                         {{ user.username }}
 		        </th>
-                      {% end_can_estimate %}
 		    {% endfor %}
 		  {% endwith %}
+
+                  {% for user in users_with_time_but_no_estimates_in_this_project %}
+                    <th>{{ user }}</th>
+                  {% endfor %}
+		  
 		{% end_permission %}
 
   		{% has_not_permission can_see_other_user_points project.business %}
                   {% user_can_estimate_own_points current_user project.business %}
                     <th >				  
-                      {{ current_user.username }}'s estimate
+                      {{ current_user.username }}
                     </th>
                   {% end_can_estimate %}
 		{% end_permission %}
 
+                    {% comment %}
                 {% has_permission has_view_actual_hours  project.business %} 
                   <th >Hours</th>
                 {% end_permission %}
+                  {% endcomment %}
 
 		{% has_permission has_view_ctc_billable_rates  project.business %}
                   <th >ctc</th>
@@ -59,9 +64,12 @@
 		    {% with issues_forms.forms|first as first_form %}
 		      {% for user, per_user in first_form.instance.representation.per_user.items %}
                         {% user_can_estimate_own_points user project.business %}
-		          <th>-</th>
+		          <th></th>
                         {% end_can_estimate %}
 		      {% endfor %}
+                      {% for user in users_with_time_but_no_estimates_in_this_project %}
+                        <th></th>
+                      {% endfor %}
 		    {% endwith %}
 		  {% end_permission %}
 
@@ -72,6 +80,7 @@
 		  {% end_permission %}
 
 
+                      {% comment %}
                   {% has_permission has_view_actual_hours  project.business %} 
                     <th class="">
                       <div class="secret_link" onclick="imp.show_issue_detail('{% url 'all_timesheet_entries' project.id %}');">
@@ -79,6 +88,7 @@
                       </div>
                     </th>
                   {% end_permission %}
+                    {% endcomment %}
 
 		  {% has_permission has_view_ctc_billable_rates project.business %}
                   <th class="">
@@ -119,9 +129,12 @@
 		    {% with issues_forms.forms|first as first_form %}
 		      {% for user, per_user in first_form.instance.representation.per_user.items %}
                         {% user_can_estimate_own_points user project.business %}
-		          <th>-</th>
+		          <th></th>
                         {% end_can_estimate %}
 		      {% endfor %}
+                      {% for user in users_with_time_but_no_estimates_in_this_project %}
+                        <th></th>
+                      {% endfor %}
 		    {% endwith %}
 		  {% end_permission %}
 
@@ -131,6 +144,7 @@
                     {% end_can_estimate %}
 		  {% end_permission %}
 
+                      {% comment %}
                   {% has_permission has_view_actual_hours  project.business %} 
                     <th class="">
                       <div class="secret_link" onclick="imp.show_issue_detail('{% url 'unassigned_timesheet_entries' project.id %}');">
@@ -138,6 +152,7 @@
                       </div>
                     </th>
                   {% end_permission %}
+                    {% endcomment %}
 
 		  {% has_permission has_view_ctc_billable_rates project.business %}
                   <th class="">

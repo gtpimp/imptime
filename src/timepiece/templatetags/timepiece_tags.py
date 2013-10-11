@@ -167,7 +167,13 @@ def get_points_current_user_id(context, issue_id):
     except timepiece.IssuePoints.DoesNotExist:
         issue_points = None
     return issue_points.id if issue_points else None
-    
+
+@register.simple_tag(takes_context=True)
+def get_hours_for_issue(context, user, issue):
+    hours = issue.hours_for_user(user)
+    if hours == 0:
+        return ""
+    return "(done %.1f)" % hours
         
 @register.inclusion_tag('timepiece/time-sheet/bar_graph.html',
                         takes_context=True)

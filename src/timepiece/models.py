@@ -239,6 +239,10 @@ class BusinessPermissions(models.Model):
         bps = BusinessPermissions.objects.filter(business=business)
         return dict( [ (bp.user.id, bp) for bp in bps ] )
 
+    @classmethod
+    def for_user(self, user, business):
+        return BusinessPermissions.objects.get_or_create(business=business,user=user)[0]
+
     @property
     def has_view_project_card(self):
         return self.user.is_superuser or self.can_view_project_card
@@ -561,8 +565,11 @@ class Project(models.Model):
         total = entries_qs.aggregate(hours=Sum('hours'))['hours']
         return total
 
-    def users_and_hours(self, **entry_filter):
+    def get_users_with_time_but_no_estimates_in_this_project(self):
+        users = [ User.objects.get(pk=x['entries__user']) for x in self.issues.all().filter(entries__hours__gt=0).values("entries__user").order_by("entries__user").annotate(hours=Sum('entries__hours')) ]
+        return [ user for user in users if not BusinessPermissions.for_user(user, self.business).has_estimate_own_points ]
 
+    def users_and_hours(self, **entry_filter):
         if self._users_and_hours is not None:
             return self._users_and_hours
 
@@ -1871,7 +1878,7 @@ class Issue(models.Model):
         super(Issue, self).__init__(*args, **kwargs)
         self._entries = None
         self.representation = IssueRepresentation()
-        self.representation.per_user = {}
+        self.representation.per_user = SortedDict()
 
     def status_as_class(self):
         return 'status_%s' % self.status.replace(" ","_").lower()
@@ -1954,6 +1961,9 @@ class Issue(models.Model):
 
     def hours_for_user(self, user):
         return self.related_entries.all().filter(user=user).aggregate(total_hours=Sum('hours'))['total_hours'] or 0
+
+    def hours_for_users(self):
+        return [ (User.objects.get(pk=x['user']), x['hours']) for x in self.related_entries.all().filter(hours__gt=0).values("user").order_by("user").annotate(hours=Sum('hours')) ]
 
     @property
     def ctc(self):
