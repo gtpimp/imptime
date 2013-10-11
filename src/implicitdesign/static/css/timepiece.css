@@ -9537,7 +9537,7 @@ ul.project_list {
     position: relative;
 }
 
-.new_dyn_form_container input {
+.new_dyn_form_container input[type="text"] {
     width: 90%;
 }
 
@@ -9546,11 +9546,11 @@ ul.project_list {
     height: 300px;
 }
 
-.new_issue_form {
+.new_issue_form, .new_sprint_form {
     position: absolute;
     background: #eeeeee;
     width: 80%;
-    left: 10%
+    left: 10%;
     padding: 10px;
     border: 1px solid #111111;
 }

@@ -17,6 +17,7 @@ imp.show_issue_detail = function(url) {
     var on_done = imp.loading("loading issue detail");
     $(".issue_detail").load(url, 
 			    function() { 
+				$(".issue_detail .subject_class input").focus();
 				on_done();
 			    });
     
@@ -24,64 +25,54 @@ imp.show_issue_detail = function(url) {
 
 imp.do_form_show  = function(element, url) {
     var button = $(element);
-    var parent = button.parent().parent(); 
-    var to_click = $(parent.find(".to_expand_form_on_click"));
-    var to_edit = $(parent.find(".to_edit_expanded_form"));
-    if (to_click.css("display") != 'none') {
-        to_click.hide();
+    var parent = button.parents(".to_expand_form_on_click").parent(); 
+    var to_edit = $(".to_edit_expanded_form");
         
-        $.ajax({type:"GET",
-                url: url,
-                success: function(data) {
-                    to_edit.append($(data))
-                }
-               });
-        
-        to_edit.show();
-        to_edit.css("z-index",200);
-        function key_up_for_form(form) {
-           var current_form = form;
-           return function(event) {
-               if(event.which === 27) {    
-                   imp.do_form_remove(current_form);
-               }
-           };
-        };
-        to_edit.keyup( key_up_for_form(parent) );
+    $.ajax({type:"GET",
+	    url: url,
+	    success: function(data) {
+		to_edit.append($(data));
+	    }
+	   });
+
+    to_edit.show();
+    to_edit.css("z-index",200);
+    function key_up_for_form(form) {
+       var current_form = form;
+       return function(event) {
+	   if(event.which === 27) {    
+	       imp.do_form_remove(current_form);
+	   }
+       };
+       to_edit.keyup( key_up_for_form(parent) );
     } 
 };
 
 
 imp.close_add_issue = function (element) {
-    var parent_form = $(element).closest(".parent_li_of_form_on_click");
-    imp.do_form_remove(parent_form);
+    imp.do_form_remove();
     return false;
 };
 
-imp.do_form_remove  = function(element) {
-    var button = $(element);
-    var to_click = $(button.find(".to_expand_form_on_click"));
-    var to_edit = $(button.find(".to_edit_expanded_form"));
-    if (to_click.css("display") == 'none') {
-        to_click.show();
-        $(button.find(".new_dyn_form_container")).remove();
-        to_edit.hide();
-    } 
+imp.do_form_remove  = function() {
+    var to_edit = $(".to_edit_expanded_form");
+    to_edit.find(".new_dyn_form_container").remove();
+    to_edit.hide();
     return false;
 };
 
 
-imp.on_issue_form_submit = function(element, url) {
+imp.on_issue_form_submit = function(element, sprint_id, url) {
     var mform = $(element).parents("form");
     var on_done = imp.issue_loading("Creating issue");
+    var sprint_el = $(".project_li[list_project_id="+sprint_id+"]");
 
     var handle_success_for_form = function(data) {
-        var table_body =  mform.closest(".project_detail").find(".issue_list_body");
+        var table_body =  sprint_el.find(".issue_list_body");
         if(table_body.length > 0) {
             table_body.append(data);
         }
-        var button = mform.parent().parent().parent();
-        imp.do_form_remove(button);    
+        imp.do_form_remove();
 	on_done();
     };
 
@@ -94,6 +85,10 @@ imp.on_issue_form_submit = function(element, url) {
 };
 
 
+imp.on_project_form_cancel = function(element) {
+    imp.do_form_remove();
+};
+
 imp.on_project_form_submit = function(element, url) {
     var mform = $(element);
     var handle_success_for_form = function(form) {
@@ -101,7 +96,7 @@ imp.on_project_form_submit = function(element, url) {
           return function(data) {
               var form = a_form; 
               var button = a_form.parent().parent().parent();
-              $(document).find(".project_list").append(data);
+              $(document).find(".project_list").prepend(data);
               imp.do_form_remove(button);    
           };
     };
@@ -283,7 +278,7 @@ imp.ajax_selection = function(element, url, update_url) {
         function new_data_handler (data) {
             var selection_val ="nothing";
             if (data.length) {
-             selection_val= data[0][0]
+             selection_val= data[0][0];
             }
             imp.dynamic_option_selection(_element, item_id, data, update_url);
         }
@@ -291,7 +286,7 @@ imp.ajax_selection = function(element, url, update_url) {
     };
 
     var response = $.ajax({ type:"GET",
-                            url: url,
+                            url: url
                           });
 
     response.done( handle_ajax_data_given (element, update_url) );
@@ -338,7 +333,7 @@ imp.select_business_feature = function(element, item_id, request_url, update_url
         return function (data) {
             imp.dynamic_option_selection(_element, item_id, data, update_url);
             imp.dynamic_option_addition(_element, item_id, new_url);
-        }
+        };
     };
     response.done( create_widget_at_done(element, item_id,  update_url) );
   
@@ -347,7 +342,8 @@ imp.select_business_feature = function(element, item_id, request_url, update_url
 imp.dynamic_option_selection = function(element, item_id, options , update_url) {
     var selectme = $(element);
     var id = null;
-    var d_options = {}
+    var d_options = {};
+    var i;
     
     for(i = 0; i < options.length; i++) {
         d_options[options[i][0]] = options[i][1];
@@ -355,8 +351,9 @@ imp.dynamic_option_selection = function(element, item_id, options , update_url) 
     
     if (selectme.children('select').length == 0) {
         var str ="";
-        current_value = $.trim(selectme[0].innerHTML)
-        new_select = $("<select/>").attr("class", "transient_selection");
+        var current_value = $.trim(selectme[0].innerHTML);
+        var new_select = $("<select/>").attr("class", "transient_selection");
+	var new_option;
         new_select.css("width","auto");
         for (item in d_options)  {
             new_option  = $("<option/>");
@@ -379,15 +376,15 @@ imp.dynamic_option_selection = function(element, item_id, options , update_url) 
         });
         
     }else {
-        selected = selectme.find("option:selected")
-        value = selected[0].innerHTML
+        var selected = selectme.find("option:selected");
+        var value = selected[0].innerHTML;
         var response = $.ajax({type:"POST",
                                url: update_url,
                                data : { item_id: item_id , new_value:value, index: selected.attr("id") },
                                dataType:"json"});
 
-        selectme.html('<div class="selectme">'+value+'</div>')
-        response.done( function() { imp.refresh_closest_issue_parent_row(selectme) } );
+        selectme.html('<div class="selectme">'+value+'</div>');
+        response.done( function() { imp.refresh_closest_issue_parent_row(selectme); } );
     }
 };
 

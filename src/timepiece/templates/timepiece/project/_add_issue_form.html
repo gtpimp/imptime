@@ -17,6 +17,6 @@
       {{ new_issue_form.description.label }} {{ new_issue_form.description }} 
     </div>
     <br />
-    <input type="submit" class="btn" onclick="return imp.on_issue_form_submit(this,'{% url 'add_issue' project.id %}');" value="Create"/>
+    <input type="submit" class="btn" onclick="return imp.on_issue_form_submit(this, {{project.id}}, '{% url 'add_issue' project.id %}');" value="Create"/>
   </form>
 </div>

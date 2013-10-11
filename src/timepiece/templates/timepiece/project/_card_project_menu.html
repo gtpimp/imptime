@@ -19,10 +19,16 @@
         <a href="#" class="to_expand_form_on_click" onclick="imp.do_form_show(this , '{% url 'add_issue' project.id %}' )">
             Add Issue
         </a>
-        <div class="new_issue_form to_edit_expanded_form" style="display:none;position:absolute;z-index:100">		  
-      </div>
+      </li>
       {% end_permission %}
 
+      {% has_permission has_create_sprint business %}  
+      <li>
+        <a href="#"  onclick="imp.do_form_show(this , '{% url 'add_project' business.id %}' ); return false;">
+          Add Sprint
+        </a>	
+      </li>
+      {% end_permission %}
       
 
       <li>

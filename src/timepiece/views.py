@@ -3101,6 +3101,7 @@ def add_project(request, business_id , template="timepiece/project/_create_edit_
         return get_project_row(request, project.id, context= context)
 
     context['project'] = project
+    context['business_permissions_by_user'] = timepiece.BusinessPermissions.by_user(business)
     return render_to_response(template, context, context_instance=RequestContext(request))
 
 @login_required
