@@ -20,23 +20,24 @@
             </div>
             <div class="special_traffic_text">
               <span class="edit_issue_subject">
-                <span class="estimated_hours">{{ per_user.issue_points.points|default_if_none:"&nbsp;"|default:"&nbsp;" }}</span> 
 
                 {% if per_user.has_hours %}
-                  (done {{ per_user.hours }})
+                  {{ per_user.hours }} of
                 {% endif %}
+                <span class="estimated_hours">{{ per_user.issue_points.points|default_if_none:"&nbsp;"|default:"&nbsp;" }}</span> 
+                
               </span>
             </div>
           </div>
           {% else %}
             <span class="edit_issue_subject">
-              <span class="estimated_hours">{{ per_user.issue_points.points|default_if_none:"&nbsp;"|default:"&nbsp;" }}</span> 
+              ? of <span class="estimated_hours">{{ per_user.issue_points.points|default_if_none:"&nbsp;"|default:"&nbsp;" }}</span> 
             </span>
           {% endif %}
         {% else %}
           {% if per_user.has_hours %}
             <span class="edit_issue_subject">
-              (done {{ per_user.hours }})
+              {{ per_user.hours }} of ?
             </span>
           {% else %}
             <span class="edit_issue_subject">&nbsp;</span>
