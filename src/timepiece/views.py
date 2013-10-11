@@ -3165,20 +3165,25 @@ def _augment_issue_data(issue, current_user, users_allowed_to_estimate_on_busine
         user_rate = float(user_rate.amount) if user_rate else 0.0
 
         user_points = issue.get_user_issue_points(user)
-        user_points_float = float(user_points.points) if user_points and user_points.points else 0.0
+        #user_points_float = float(user_points.points) if user_points and user_points.points else 0.0
 
         per_user_issue_data["issue_points"] = user_points
 
-        estimated_cost = user_points_float * user_rate
-        completion = ((actual_billable_cost_of_issue / estimated_cost)*100) if estimated_cost>0 else 0.0
+        hours = float(issue.hours_for_user(user))
+        #estimated_cost = user_points_float * user_rate
+        #completion_against_estimated_cost = ((actual_billable_cost_of_issue / estimated_cost)*100) if estimated_cost>0 else 0.0
 
-        per_user_issue_data["completion"] = completion
-        per_user_issue_data["completion_width"] = completion
+        completion_against_estimated_hours = ((hours/user_points.points)*100) if user_points.points>0 else 0.0
+
+        per_user_issue_data["completion"] = completion_against_estimated_hours
+        per_user_issue_data["hours"] = hours
+        per_user_issue_data["has_hours"] = per_user_issue_data["hours"]>0
+        per_user_issue_data["completion_width"] = completion_against_estimated_hours
         if per_user_issue_data["completion_width"] >= 100:
             per_user_issue_data["completion_width"] = 100
             per_user_issue_data["bar_color"]= "traffic_red"
             per_user_issue_data["completion"] = 200 if per_user_issue_data["completion"] > 200 else per_user_issue_data["completion"] 
-        elif per_user_issue_data["completion"] < 75:
+        elif per_user_issue_data["completion"] < 80:
             per_user_issue_data["bar_color"] = "traffic_green"
         else:
             per_user_issue_data["bar_color"] = "traffic_yellow"

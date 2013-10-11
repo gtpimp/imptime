@@ -1947,10 +1947,10 @@ class Issue(models.Model):
 
     @property
     def hours(self):
-        total = 0
-        for entry in self.related_entries:
-            total += entry.hours
-        return total
+        return self.related_entries.all().aggregate(total_hours=Sum('hours'))['total_hours']
+
+    def hours_for_user(self, user):
+        return self.related_entries.all().filter(user=user).aggregate(total_hours=Sum('hours'))['total_hours'] or 0
 
     @property
     def ctc(self):

@@ -178,15 +178,16 @@ imp.clickable_description_box = function(element, url, item_id) {
 
 
 imp.clickable_time_estimate = function(element, url, item_id, issue_id) {
-    element = $(element).find(".edit_issue_subject");
-    return imp.clickable_subject_box(element, url, item_id, null, "auto", issue_id);
+    element = $(element).find(".edit_issue_subject")
+    var initial_value = element.find(".estimated_hours").html();
+    return imp.clickable_subject_box(element, url, item_id, null, "auto", issue_id, initial_value=initial_value);
 };
 
-imp.clickable_subject_box = function(element, url, item_id, size, width, issue_id) {
+imp.clickable_subject_box = function(element, url, item_id, size, width, issue_id, initial_value) {
 
-    if ( imp.showing_clickable_popup ) {
-        return;
-    }
+    // if ( imp.showing_clickable_popup ) {
+    //     return;
+    // }
     imp.showing_clickable_popup = true;
 
     if (!issue_id) {
@@ -195,7 +196,12 @@ imp.clickable_subject_box = function(element, url, item_id, size, width, issue_i
 
     var textbox = $(element),
         commentTextArea = $("<input/>");
-    var value = $.trim(textbox.html()); 
+    var value;
+    if ( initial_value ) {
+	value = initial_value;
+    } else {
+	value = $.trim(textbox.html()); 
+    }
     size = size || value.length;
     width = width || "80%";
     
@@ -238,44 +244,6 @@ imp.clickable_subject_box = function(element, url, item_id, size, width, issue_i
             div_sibling.show();          
 
             imp.showing_clickable_popup = false;
-        }
-    });
-};
-
-
-imp.clickable_point_box = function(element, url, item_id) {
-    var textbox = $(element),
-        commentTextArea = $("<input/>");
-    commentTextArea = commentTextArea.attr("type","text").attr("value",textbox.html());
-    textbox.parent().append(commentTextArea);
-    textbox.hide();
-
-    commentTextArea = commentTextArea.keypress(function(e) {
-        if (e.which === 13) {
-            parent = $(this).parent();
-            div_sibling = parent.find('.edit_issue_points');
-            new_value = $(this).val();
-            div_sibling.html(new_value);
-            $(this).remove();
-            div_sibling.show();
-	    var on_done = imp.issue_loading(item_id);
-            var response = $.ajax({type:"POST",
-                                   url: url,
-                                   data : { item_id: item_id, new_value: new_value },
-                                   dataType:"json"});
-            response.done( function() { 
-		imp.refresh_closest_issue_parent_row(div_sibling);
-		on_done();
-	    } );
-
-        }
-    });
-    commentTextArea = commentTextArea.keyup(function(e) {
-        if(e.which === 27) {
-            parent = $(this).parent();
-            div_sibling = parent.find('.edit_issue_points');                      
-            $(this).remove();
-            div_sibling.show();          
         }
     });
 };
