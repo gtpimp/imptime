@@ -177,17 +177,21 @@ imp.clickable_description_box = function(element, url, item_id) {
 };
 
 
-imp.clickable_time_estimate = function(element, url, item_id, size) {
+imp.clickable_time_estimate = function(element, url, item_id, issue_id) {
     element = $(element).find(".edit_issue_subject");
-    return imp.clickable_subject_box(element, url, item_id, size, "auto");
+    return imp.clickable_subject_box(element, url, item_id, null, "auto", issue_id);
 };
 
-imp.clickable_subject_box = function(element, url, item_id, size, width) {
+imp.clickable_subject_box = function(element, url, item_id, size, width, issue_id) {
 
     if ( imp.showing_clickable_popup ) {
         return;
     }
     imp.showing_clickable_popup = true;
+
+    if (!issue_id) {
+	issue_id = item_id;
+    }
 
     var textbox = $(element),
         commentTextArea = $("<input/>");
@@ -195,9 +199,14 @@ imp.clickable_subject_box = function(element, url, item_id, size, width) {
     size = size || value.length;
     width = width || "80%";
     
+    if ( value == "&nbsp;" ) {
+	value = "0"
+    }
+
     commentTextArea = commentTextArea.attr("type","text").attr("value",value).attr("size",size).css("width",width).css("position","absolute").css("overflow","visible").css("z-index",200);
     textbox.parent().append(commentTextArea);
     textbox.hide();
+    commentTextArea.select();
     commentTextArea = commentTextArea.keypress(function(e) {
         var parent = $(this).parent();
         var div_sibling = parent.find('.edit_issue_subject');                    
@@ -208,7 +217,7 @@ imp.clickable_subject_box = function(element, url, item_id, size, width) {
             div_sibling.html(new_value);
             $(this).remove();
             div_sibling.show();
-	    var on_done = imp.issue_loading(item_id);
+	    var on_done = imp.issue_loading(issue_id);
             var response = $.ajax({type:"POST",
                                    url: url,
                                    data : { item_id: item_id, new_value: new_value },

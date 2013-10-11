@@ -4,7 +4,7 @@
 <td >
   {% user_can_estimate_own_points user project.business %}
     {% is_same_user user current_user%}
-      <div onclick="imp.clickable_time_estimate(this, '{% url 'issue_points_update' %}',{{ per_user.issue_points.id }})" >
+      <div onclick="imp.clickable_time_estimate(this, '{% url 'issue_points_update' %}',{{ per_user.issue_points.id }}, {{issue.id}})" >
     {% end_is_same_user %}
   {% end_can_estimate %}
     
@@ -17,14 +17,14 @@
           &nbsp;
           </div>
           <div class="special_traffic_text">
-            <span class="edit_issue_subject">{{ per_user.issue_points.points|default_if_none:"-" }}</span> hrs
+            <span class="edit_issue_subject">{{ per_user.issue_points.points|default_if_none:"&nbsp;" }}</span> hrs
             / 
             {{ per_user.completion|floatformat:"0"}}%
 
           </div>
         </div>
         {% else %}
-        <span class="edit_issue_subject">{{ per_user.issue_points.points|default_if_none:"-" }}</span>
+        <span class="edit_issue_subject">{{ per_user.issue_points.points|default_if_none:"&nbsp;" }}</span>
         {% endif %}
 
       </div>
@@ -32,7 +32,7 @@
 
     {% has_not_permission can_view_ctc_billable_rates project.business %}
       <div class="edit_issue_subject" > 
-        {{ per_user.issue_points.points|default_if_none:"-" }}
+        {{ per_user.issue_points.points|default_if_none:"&nbsp;" }}
       </div>
     {% end_permission %}
 

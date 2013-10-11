@@ -36,26 +36,19 @@
                        </div>
                      </div>
                    </td>
+                   
                    {% has_permission has_see_other_user_points project.business %}
-		    {% for user,per_user in issue.representation.per_user %}
+		    {% for user, per_user in issue.representation.per_user.items %}
                       {% user_can_estimate_own_points user project.business %}
                         {% include "timepiece/project/_issue_points_completed.html" %}
                       {% end_can_estimate %}
 		    {% endfor %}
 		  {% end_permission %}
 
-                  {% has_not_permission can_see_other_user_points project.business %}
-		    {% for user,per_user in issue.representation.per_user %}
-                      {% user_can_estimate_own_points user project.business %}
-                        {% include "timepiece/project/_issue_points_completed.html" %}                        
-                      {% end_can_estimate %}
-		    {% endfor %}
-  	          {% end_permission %}
-
                   {% has_permission has_view_actual_hours  project.business %} 
                     <td class="">
                       <div class="secret_link"  onclick="imp.show_issue_detail('{% url 'issue_detail' issue.pk %}');">
-                        {{issue.hours|default_if_none:"-"}}
+                        {{issue.hours|default_if_none:""}}
                       </div>
                     </td>
                   {% end_permission %}

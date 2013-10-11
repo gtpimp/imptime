@@ -90,13 +90,14 @@ class Business(models.Model):
         return Project.objects.filter(business=self).order_by("order")
 
     def get_users_allowed_to_estimate_on_business(self, current_user):
-        business_users = [user.id for user in self.users]
+        business_permissions_by_user = BusinessPermissions.by_user(self)
         bp = BusinessPermissions.objects.get_or_create(business=self,user=current_user)[0]
-        can_view_other_user_points = bp.can_see_other_user_points
+        can_view_other_user_points = BusinessPermissions.has_see_other_user_points
         if can_view_other_user_points:
-            users = User.objects.filter(id__in = business_users)
+            users = User.objects.filter(id__in = business_permissions_by_user.keys())
+            users = [user for user in users if business_permissions_by_user[user.id].has_estimate_own_points]
         else:
-            if bp.can_estimate_own_points:
+            if bp.has_estimate_own_points:
                 users = User.objects.filter(id__in = [current_user.id])
             else:
                 users = []
@@ -123,19 +124,6 @@ class Business(models.Model):
                 except BusinessPermissions.DoesNotExist:
                     user_perm = BusinessPermissions.objects.create(user=user, business=self)
         return BusinessPermissions.objects.filter(Q(business = self) & Q(user__id__in = user_ids) )
-
-    
-    @property
-    def primary_points_user(self):
-        permissions = self.get_all_business_permissions()
-        try:
-            primary_permissions = permissions.get(is_primary_points_user = True)
-            return primary_permissions.user
-        except BusinessPermissions.DoesNotExist:
-            return None
-        except BusinessPermissions.MultipleObjectsReturned:
-            primary_permissions = permissions.filter(is_primary_points_user = True).order_by("user__id")[0]
-            return primary_permissions.user
 
     
     @property
@@ -235,7 +223,6 @@ class BusinessPermissions(models.Model):
     can_edit_issue_states = models.BooleanField(default=False, verbose_name="Can Edit Issue States")
 
     can_see_other_user_points = models.BooleanField(default=False, verbose_name="Can See Other User's Points")
-    is_primary_points_user = models.BooleanField(default=False, verbose_name="Is Primary Points User")
     can_estimate_own_points = models.BooleanField(default=False, verbose_name="Can Estimate Own Points")
     
     can_add_issue = models.BooleanField(default=False, verbose_name="Can Add Issue")
@@ -306,12 +293,10 @@ class BusinessPermissions(models.Model):
     @property
     def has_see_other_user_points(self):
         return self.user.is_superuser or self.can_see_other_user_points
-    @property
-    def hasprimary_points_user(self):
-        return self.user.is_superuser or self.is_primary_points_user
+    
     @property
     def has_estimate_own_points(self):
-        return self.user.is_superuser or self.can_estimate_own_points
+        return self.can_estimate_own_points
     
     @property
     def has_add_issue(self):
@@ -1886,7 +1871,7 @@ class Issue(models.Model):
         super(Issue, self).__init__(*args, **kwargs)
         self._entries = None
         self.representation = IssueRepresentation()
-        self.representation.per_user = []
+        self.representation.per_user = {}
 
     def status_as_class(self):
         return 'status_%s' % self.status.replace(" ","_").lower()
@@ -1927,19 +1912,13 @@ class Issue(models.Model):
             return IssuePoints.objects.filter(user=user,issue=self).order_by("user__id")[0]
 
     def set_points(self, user, points):
-          
-        business = self.project.business
-        if user == business.primary_points_user:
-            self.story_points = points
-            self.save()
-        else:
-            try:
-                issue_points = IssuePoints.objects.get(user=user, issue=self)
-            except IssuePoints.DoesNotExist:
-                issue_points = IssuePoints.objects.create(user=user, issue=self)
+        try:
+            issue_points = IssuePoints.objects.get(user=user, issue=self)
+        except IssuePoints.DoesNotExist:
+            issue_points = IssuePoints.objects.create(user=user, issue=self)
 
-            issue_points.points = points 
-            issue_points.save()
+        issue_points.points = points 
+        issue_points.save()
 
     @property
     def css_class(self):
@@ -1952,7 +1931,7 @@ class Issue(models.Model):
             return "open"
 
     def add_user_to_representation(self, user, per_user_issue_data):
-        self.representation.per_user.append((user,per_user_issue_data))
+        self.representation.per_user[user] = per_user_issue_data
 
     @property
     def related_entries(self):
