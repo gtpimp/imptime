@@ -42,13 +42,13 @@
                       {% include "timepiece/project/_issue_points_completed.html" %}
 		    {% endfor %}
                     {% for user in users_with_time_but_no_estimates_in_this_project %}
-                     <td>{% get_hours_for_issue user issue %}</td>
+                     <td class="money_cell">{% get_hours_for_issue user issue %}</td>
                     {% endfor %}
 		  {% end_permission %}
 
                      {% comment %}
                   {% has_permission has_view_actual_hours  project.business %} 
-                    <td class="">
+                    <td  class="money_cell">
                       <div class="secret_link"  onclick="imp.show_issue_detail('{% url 'issue_detail' issue.pk %}');">
                         {{issue.hours|default_if_none:""}}
                       </div>
@@ -57,12 +57,12 @@
                     {% endcomment %}
 
 		  {% has_permission has_view_ctc_billable_rates project.business  %}
-                  <td class="">
+                  <td  class="money_cell">
                     <div class="secret_link"  onclick="imp.show_issue_detail('{% url 'issue_detail' issue.pk %}');">
                       R{{issue.ctc|floatformat:"0"|intcomma}}
                     </div>
                   </td>
-                  <td class="">
+                  <td  class="money_cell">
                     <div class="secret_link"  onclick="imp.show_issue_detail('{% url 'issue_detail' issue.pk %}');">
                       R{{issue.billable|floatformat:"0"|intcomma}}
                     </div>

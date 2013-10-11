@@ -565,8 +565,19 @@ class Project(models.Model):
         total = entries_qs.aggregate(hours=Sum('hours'))['hours']
         return total
 
+    def total_unassigned_hours_for_user(self, user):
+        entries_qs = Entry.objects.filter(project=self, user=user).filter(issue__isnull=True)
+        total = entries_qs.aggregate(hours=Sum('hours'))['hours']
+        return total
+
+    def total_points_for_user(self, user):
+        entries_qs = IssuePoints.objects.filter(issue__project=self, user=user)
+        total = entries_qs.aggregate(points=Sum('points'))['points']
+        return total
+
     def get_users_with_time_but_no_estimates_in_this_project(self):
         users = [ User.objects.get(pk=x['entries__user']) for x in self.issues.all().filter(entries__hours__gt=0).values("entries__user").order_by("entries__user").annotate(hours=Sum('entries__hours')) ]
+        #users = [ User.objects.get(pk=x['issues__entries__user']) for x in Project.objects.all().filter(issues__entries__hours__gt=0).values("issues__entries__user").order_by("issues__entries__user").annotate(hours=Sum('issues__entries__hours')) ]
         return [ user for user in users if not BusinessPermissions.for_user(user, self.business).has_estimate_own_points ]
 
     def users_and_hours(self, **entry_filter):

@@ -171,9 +171,30 @@ def get_points_current_user_id(context, issue_id):
 @register.simple_tag(takes_context=True)
 def get_hours_for_issue(context, user, issue):
     hours = issue.hours_for_user(user)
-    if hours == 0:
+    if not hours:
         return ""
-    return "(done %.1f)" % hours
+    return "done %.1f" % float(hours)
+
+@register.simple_tag(takes_context=True)
+def get_unassigned_hours_for_project(context, user, project):
+    hours = project.total_unassigned_hours_for_user(user)
+    if not hours:
+        return ""
+    return "done %.1f" % float(hours)
+
+@register.simple_tag(takes_context=True)
+def get_all_hours_for_project(context, user, project):
+    hours = project.total_hours_for_user(user)
+    if not hours:
+        return "?"
+    return "%.1f" % float(hours)
+
+@register.simple_tag(takes_context=True)
+def get_all_points_for_project(context, user, project):
+    hours = project.total_points_for_user(user)
+    if not hours:
+        return "?"
+    return "%.1f" % float(hours)
         
 @register.inclusion_tag('timepiece/time-sheet/bar_graph.html',
                         takes_context=True)

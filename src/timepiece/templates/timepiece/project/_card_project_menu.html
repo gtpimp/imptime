@@ -33,7 +33,7 @@
 
       {% has_permission has_view_ctc_billable_rates project.business %}
       <li>
-        <a href="{% url 'sprint_export' project.id %}">export as csv</a>
+        <a href="{% url 'sprint_export' project.id %}">Export</a>
       </li>
       {% end_permission %}
 
@@ -78,6 +78,10 @@
       </li>
       {% end_permission %}
       {% endcomment %}
+
+      <li>
+        <a href="#" onclick="$('.money_cell').toggle();return false;">Numbers</a>
+      </li>
 
       {% comment %}
       <li>
