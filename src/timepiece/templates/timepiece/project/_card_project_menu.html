@@ -31,9 +31,11 @@
         </a>
       </li>
 
+      {% has_permission has_view_ctc_billable_rates project.business %}
       <li>
         <a href="{% url 'sprint_export' project.id %}">export as csv</a>
       </li>
+      {% end_permission %}
 
       {% has_permission has_edit_project_detail project.business %}
       <li>
@@ -67,6 +69,7 @@
       </li>
       {% end_permission %}
 
+      {% comment %}
       {% has_permission has_toggle_graphs  project.business %}
       <li>
         <a href="#" onclick="window.open('{% url 'show_timeline' project.id %}')">
@@ -74,6 +77,7 @@
         </a>
       </li>
       {% end_permission %}
+      {% endcomment %}
 
       {% comment %}
       <li>

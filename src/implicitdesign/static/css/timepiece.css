@@ -9777,8 +9777,11 @@ table.project_list  {
 /* } */
 
 
+.issue_detail {
+    padding-left: 10px;
+}
 
-.issues .issue_detail .issue_subject {
+.issue_detail .issue_subject {
     font-size:12px;
 }
 
@@ -9786,26 +9789,19 @@ table.project_list  {
 /*     float:left; */
 /* } */
 
-.issues .issue_detail .issue_status {
+.issue_detail .issue_status {
     font-style: italic;
 }
 
-.issues .issue_detail .issue_entries table td {
-    padding:10px;
+.issue_detail .issue_entries table td {
+    padding:4px;
     border-left: 1px solid #dfdfdf;
     border-bottom: 1px solid #dfdfdf;
 }
 
-.issues .issue_detail {
+.issue_detail .issue_entries {
     font-family: "Courier New", Courier, monospace;
-}
-
-.issues .issue_detail {
-    width: 100%;
-}
-
-.issues .issue_pane {
-    width: 100%;
+    font-size:8px;
 }
 
 .income_summary .tabular {

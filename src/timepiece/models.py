@@ -78,16 +78,14 @@ class Business(models.Model):
     def get_ordered_projects(self):
         all_business_projects = Project.objects.filter(business=self)
         
-        orderless_projects = all_business_projects.filter(order__isnull=True).order_by("id")
+        orderless_projects = all_business_projects.filter(order__isnull=True).order_by("-id")
         ordered_projects = all_business_projects.exclude(order__isnull=True).order_by("order")
         
-        if len(orderless_projects) == 0:
-            return all_business_projects.order_by('order')
-        
-        all_projects = [project for project in ordered_projects] + [ project for project in orderless_projects ] 
-        for index, project in enumerate(all_projects):
-            project.order = index
-            project.save()
+        if len(orderless_projects) > 0:
+            all_projects = [ project for project in orderless_projects ] + [project for project in ordered_projects]
+            for index, project in enumerate(all_projects):
+                project.order = index
+                project.save()
 
         return Project.objects.filter(business=self).order_by("order")
 
@@ -647,18 +645,15 @@ class Project(models.Model):
     def get_ordered_issues(self):
         all_project_issues = Issue.objects.filter(project=self)
         
-        orderless_issues = all_project_issues.filter(order__isnull=True).order_by('id')
+        orderless_issues = all_project_issues.filter(order__isnull=True).order_by('-id')
         ordered_issues = all_project_issues.exclude(order__isnull=True).order_by('order')
         
-        if len(orderless_issues) == 0:
-            return all_project_issues.order_by('order')
-
-        all_issues = [ issue for issue in ordered_issues ] + [ issue for issue in orderless_issues ]
-        for index,issue in enumerate(all_issues):
-            if issue.order != index:
-                issue.order = index            
-                issue.save()
-            
+        if len(orderless_issues) > 0:
+            all_issues = [ issue for issue in orderless_issues ] + [ issue for issue in ordered_issues ]
+            for index,issue in enumerate(all_issues):
+                if issue.order != index:
+                    issue.order = index            
+                    issue.save()
         return Issue.objects.filter(project=self).order_by("order")
             
 class RelationshipType(models.Model):

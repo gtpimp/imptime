@@ -183,6 +183,12 @@ $(document).ready(function(){
                      <td>
  		       <a href="{% url 'project_detail' business.id %}">Breakdown</a>
 		     </td>
+
+                     {% if user.is_superuser %}
+                     <td>
+ 		       <a href="{% url 'show_permissions' business.id %}">Permissions</a>
+		     </td>
+                     {% endif %}
                    </tr>
 	         {% endfor %}
                  </tbody>

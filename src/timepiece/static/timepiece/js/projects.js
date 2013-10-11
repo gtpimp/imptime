@@ -198,7 +198,7 @@ imp.create_chart = function(chart_info) {
 
 imp.create_splitter = function() {
     $(".splitter").css({height:$(window).height()*0.9+"px"});
-    $(".splitter").splitter();
+    $(".splitter").splitter({sizeRight: $(window).width()*0.25});
 };
 
 (function() {
