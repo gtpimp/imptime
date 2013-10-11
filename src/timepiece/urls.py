@@ -68,6 +68,11 @@ urlpatterns = patterns('',
         name='amounts_billed'
     ),
 
+    url(r'^project/users_last_active/$',
+        views.users_last_active, 
+        name='users_last_active'
+    ),
+
     url(
         r'^project/(?P<project_id>\d+)/$',
         views.view_project,

@@ -48,11 +48,16 @@
     {% endblock navigation %}
 
     <div id="content" class="container-fluid">
+
+      {% include "timepiece/loading.html" %}
+
         {% block messages %}
             {% include "timepiece/messages.html" %}
         {% endblock messages %}
 
         {% if user.is_authenticated %}
+      
+          <div style="display:none"
             {% block breadcrumb %}
                 <ul class="breadcrumb">
                     {% block crumbs %}
@@ -60,6 +65,7 @@
                     {% endblock crumbs %}
                 </ul>
             {% endblock breadcrumb %}
+          </div>
         {% endif %}
 
         {% block content %}

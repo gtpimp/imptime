@@ -1,10 +1,10 @@
 var imp = imp || {};
 
 imp.show_issue_detail = function(url) {    
-    $("loading").show();
+    var on_done = imp.loading("loading issue detail");
     $(".issue_detail").load(url, 
 			    function() { 
-				$("loading").hide(); 
+				on_done();
 			    });
     
  };

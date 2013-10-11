@@ -1327,6 +1327,19 @@ def project_detail(request, business_id):
 
 @permission_required('timepiece.view_project')
 @login_required
+@render_with('timepiece/project/users_last_active.html')
+def users_last_active(request, context=None):
+    context = context or {}
+    last_active = {}
+
+    entries = timepiece.Entry.objects.filter_by_logged_in_user(request.user)
+    for user in User.objects.all().distinct():
+        last_active[user.username] = entries.filter(user=user).aggregate(end_time=Max('end_time'))['end_time']
+    context['last_active'] = last_active
+    return context
+
+@permission_required('timepiece.view_project')
+@login_required
 @render_with('timepiece/project/amounts_billed.html')
 def amounts_billed(request):
     if request.GET:

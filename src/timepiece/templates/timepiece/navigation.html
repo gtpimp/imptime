@@ -66,8 +66,11 @@
                                     {% if perms.timepiece.view_entry_summary %}
                                     <li><a href="{% url 'timepiece-summary' %}">Monthly times pivoted</a></li>
                                 {% endif %}
-				
 
+                                    {% if perms.timepiece.view_project or perms.auth.view_user or perms.timepiece.view_business %}
+   				  <li><a href="{% url 'amounts_billed' %}">Amounts billed across projects</a></li>
+				{% endif %}
+                                
                                     
                                     {% comment %}
 				    <li><a href="{% url 'graphs' %}">Graphs</a></li>
@@ -118,6 +121,9 @@
                                 {% endif %}
                                 {% if perms.timpeiece.daily_graph %}
 				    <li><a href="{% url 'daily_graph' %}">Daily hours for all users</a></li>
+				{% endif %}
+                                {% if perms.timpeiece.view_user %}
+				    <li><a href="{% url 'users_last_active' %}">Recent user activity</a></li>
 				{% endif %}
                             </ul>
                         </li>

@@ -28,16 +28,7 @@
     <li>
         Hourly
     </li>
-    <li>
-        {% if perms.timepiece.view_entry_summary %}
-            <a href='{% url timepiece-summary %}'>General Ledger</a>
-        {% endif %}
-    </li>
-    <li>
-        {% if perms.timepiece.view_payroll_summary %}
-            <a href='{% url payroll_summary %}'>Payroll Report</a>
-        {% endif %}
-    </li>
+
 </ul>
 
 {% date_filters %}

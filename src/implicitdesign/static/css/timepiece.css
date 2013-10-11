@@ -7976,10 +7976,6 @@ a.label:hover, a.badge:hover {
   text-decoration: none;
   opacity: 0.9;
   filter: alpha(opacity=90);
-  opacity: 0.9;
-  filter: alpha(opacity=90);
-  opacity: 0.9;
-  filter: alpha(opacity=90);
 }
 .carousel-caption {
   position: absolute;
@@ -9874,4 +9870,15 @@ table.project_list  {
 
 .loading_issue_indicator {
     position: absolute;
+}
+
+.top_level_loading {
+    position: fixed;
+    top: 10px;
+    right: 10px;
+    border: 2px solid #000000;
+    z-index:9999;
+    color: #4c4c4c;
+    background-color: #ffffff;
+    padding: 2px;
 }

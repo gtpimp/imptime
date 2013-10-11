@@ -9,26 +9,7 @@
     <div class="row-fluid">
         <div class="span12">
             <h2>Reports</h2>
-            <ul class="nav nav-pills">
-                <li>
-                    {% if perms.timepiece.view_entry_summary %}
-                        <a href="{% url hourly_report %}">Hourly</a>
-                    {% endif %}
-                </li>
-                <li class="active">
-                    <a href="#">Billable Hours</a>
-                </li>
-                <li>
-                    {% if perms.timepiece.view_entry_summary %}
-                        <a href="{% url timepiece-summary %}">General Ledger</a>
-                    {% endif %}
-                </li>
-                <li>
-                    {% if perms.timepiece.view_payroll_summary %}
-                        <a href="{% url payroll_summary %}">Payroll Report</a>
-                    {% endif %}
-                </li>
-            </ul>
+            
         </div>
     </div>
 

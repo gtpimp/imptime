@@ -164,24 +164,7 @@ $(document).ready(function(){
  </div>
 
  <div class="row-fluid">
-   <a href="{% url 'amounts_billed' %}">amounts billed</a>
 
-        <div>
-            <h2>Last Active</h2>
-
-           <fieldset>
-             <table>
-              {% for user,end_time in last_active.items %}
-	       {% if end_time  %}
-               <tr>
-                 <th>{{ user }}</td><td>{{ end_time|timesince }}</th>
-               </tr>
-	       {% endif %}
-               {% endfor %}
-             </table>
-           </fieldset>
-           <hr/>
-        </div>
     </div>
 
      <div class="row-fluid">
@@ -195,10 +178,10 @@ $(document).ready(function(){
  		       {{ business }}
 		     </td>
                      <td>
- 		       <a href="{% url 'project_detail' business.id %}">Summary</a>
+ 		       <a href="{% url 'business_issues' business.id %}">Issues</a>
 		     </td>
                      <td>
- 		       <a href="{% url 'business_issues' business.id %}">Issues</a>
+ 		       <a href="{% url 'project_detail' business.id %}">Breakdown by numbers</a>
 		     </td>
                    </tr>
 	         {% endfor %}

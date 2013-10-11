@@ -1,0 +1,27 @@
+{% extends "timepiece/project/base.html" %}
+
+{% block title %}Amounts Billed{% endblock %}
+{% load url from future %}
+{% load bootstrap_toolkit %}
+{% load timepiece_tags %}
+
+{% block content %}
+
+<div>
+    <h2>Last Active</h2>
+
+   <fieldset>
+     <table>
+      {% for user,end_time in last_active.items %}
+       {% if end_time  %}
+       <tr>
+         <th>{{ user }}</td><td>{{ end_time|timesince }}</th>
+       </tr>
+       {% endif %}
+       {% endfor %}
+     </table>
+   </fieldset>
+   <hr/>
+</div>
+
+{% endblock %}
