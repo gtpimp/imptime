@@ -9435,6 +9435,7 @@ table.project_list  {
 
 .issue_instance_row.status_tested .issue_subject {
     color: #55bb55;
+    text-decoration: line-through;
 }
 
 .light_priority{
