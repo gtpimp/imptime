@@ -3811,23 +3811,13 @@ def get_issue_row(request,issue_id):
 
     new_issue_form = timepiece_forms.IssueForm()
 
-    all_entries = project.entries.all().order_by("start_time")
-    cost_totals = all_entries.cost_totals_for_project(project)
-    unassigned_cost_totals = all_entries.get_unassigned_timesheet_entries(project).cost_totals_for_project(project)
-        
     rate = project.get_user_rate(request.user)
     context['current_user_rate'] = float(rate.amount) if rate else 0.0
     context['business'] = business
     context['new_issue_form'] = new_issue_form
     context['current_user'] = request.user
     context['project'] = project
-
-    context['total_hours'] = cost_totals['hours']
-    context['total_ctc'] = cost_totals['ctc']
-    context['total_billable'] = cost_totals['billable']
-    context['unassigned_timesheet_entries_hours'] = unassigned_cost_totals['hours']
-    context['unassigned_timesheet_entries_ctc'] = unassigned_cost_totals['ctc']
-    context['unassigned_timesheet_entries_billable'] = unassigned_cost_totals['billable']
+    context['business_permissions_by_user'] = timepiece.BusinessPermissions.by_user(business)
     
     refresh_issue =timepiece.Issue.objects.get(id=issue.id)
     refresh_issue.representation = issue.representation
