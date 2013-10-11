@@ -833,7 +833,7 @@ class EntriesQuerySet(QuerySet):
         hours_per_users = self.order_by("user").values('user').annotate(user_hours=Sum('hours'))
         for hours_per_user in hours_per_users:
             try:
-                rate = Rate.objects.filter(user_id=3, project_id=1246).values('amount', 'billable_amount')[0]
+                rate = Rate.objects.filter(user_id=hours_per_user['user'], project_id=project.id).values('amount', 'billable_amount')[0]
             except IndexError:
                 rate = {'billable_amount':0, 'amount':0}
 
