@@ -23,11 +23,24 @@
                       {{issue.subject}}
                      </div>
                    </td>
-                   <td class="styled-select">
-                     <div class="edit_issue_subject selectme" id="{{issue.pk}}"  {% has_permission has_edit_feature project.business %}  onclick="imp.select_business_feature(this, {{ issue.pk }}, '{% url 'business_features' project.business.id %}', '{% url 'update_issue_with_feature' issue.pk %}', '{% url 'add_feature' project.business.id %}' )" {% end_permission %} >
-                       {{issue.feature.name}}
+                   <td {% has_permission has_edit_issue_feature project.business %} onclick="imp.show_inline_editor(this);"{% end_permission %} url_for_update="{% url 'update_issue_with_feature' %}" issue_id="{{issue.id}}" url_for_options="{% url 'business_features' business.id %}" selected_value="{{issue.feature.id}}" >
+
+                     <div class="styled-select">		     
+                       <div class="readonly_value"> 
+                         {{ issue.feature|default_if_none:"" }}
+                       </div>
+                       {% has_permission has_edit_issue_feature project.business %}
+                       <div class="inline_editor" style="display:none">
+                         <select class='transient_selection' width="100%">
+                         </select>
+                         <br/>
+                         Add new feature: <input type="text" name="new_feature"/>
+                       </div>
+                       {% end_permission %}
                      </div>
+                     
                    </td>
+
                    <td {% has_permission has_edit_issue_states project.business %} onclick="imp.show_inline_editor(this);"{% end_permission %} url_for_update="{% url 'issue_status_update' %}" issue_id="{{issue.id}}">
                      <div class="styled-select">		     
                        <div class="readonly_value"> 

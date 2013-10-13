@@ -230,6 +230,11 @@ urlpatterns = patterns('',
     url(
         r'^time-sheet/issue_status_update/$', views.issue_status_update, name='issue_status_update',
     ),
+
+    url(
+        r'^time-sheet/update_issue_with_feature$', views.update_issue_with_feature, name='update_issue_with_feature',
+    ),                         
+
     url(
         r'^time-sheet/issue_subject_update/$', views.issue_subject_update, name='issue_subject_update',
     ),
@@ -485,11 +490,6 @@ urlpatterns = patterns('',
         views.business_features,
         name='business_features',
         ),  
-   url(
-        r'^time-sheet/update_issue_with_feature/(?P<issue_id>\d+)/$',
-        views.update_issue_with_feature,
-        name='update_issue_with_feature',
-  	),                         
    url(
         r'^time-sheet/sprint_export/(?P<project_id>\d+)/$',
         views.sprint_export,

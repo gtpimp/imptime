@@ -3245,32 +3245,6 @@ def business_features(request, business_id):
 
 @csrf_exempt
 @login_required
-def update_issue_with_feature(request,issue_id):
-    
-
-    issue = timepiece.Issue.objects.get(pk=issue_id)
-    try:
-        selection = int(request.POST["index"])
-    except (KeyError, ValueError):
-        selection = None
-
-    business = issue.project.business
-
-    has_edit_feature = timepiece.BusinessPermissions.objects.get_or_create(business=business, user=request.user)[0].has_edit_feature
-    if not has_edit_feature:
-        raise PermissionDenied
-    
-    try:
-        feature = timepiece.Feature.objects.get(pk=selection, business=business)
-        issue.feature = feature;
-        issue.save()
-    except timepiece.Feature.DoesNotExist:
-        pass
-
-    return HttpResponse("");
-    
-@csrf_exempt
-@login_required
 def business_issues(request, pk):
     try:
         recent_project_id = timepiece.Business.objects.get(pk=pk).get_ordered_projects()[0].id
@@ -3465,10 +3439,34 @@ def issue_status_update(request,  template="timepiece/project/issue_detail.html"
     context['project'] = project
     context['supports_description'] = True
     
-    edited_issue.status = request.POST["new_value"]
+    edited_issue.status = request.POST["selected_value"]
     edited_issue.save()
                                                 
-    return HttpResponse("")
+    return HttpResponse()
+
+@csrf_exempt
+@login_required
+def update_issue_with_feature(request):
+
+    issue = timepiece.Issue.objects.get(pk=request.POST['issue_id'])
+    selected_value = request.POST['selected_value']
+    created_value = request.POST['created_value']
+    
+    business = issue.project.business
+
+    has_edit_feature = timepiece.BusinessPermissions.objects.get_or_create(business=business, user=request.user)[0].has_edit_feature
+    if not has_edit_feature:
+        raise PermissionDenied
+    
+    if created_value and len(created_value)>0:
+        new_feature = timepiece.Feature.objects.get_or_create(business=business, name=created_value)[0]
+        issue.feature = new_feature;
+    else:
+        feature = timepiece.Feature.objects.get(name=selected_value, business=business)
+        issue.feature = feature;
+    issue.save()
+
+    return HttpResponse();
 
 @csrf_exempt
 @login_required
@@ -3846,6 +3844,7 @@ def get_issue_row(request,issue_id):
     context['project'] = project
     context['business_permissions_by_user'] = timepiece.BusinessPermissions.by_user(business)
     context['users_with_time_but_no_estimates_in_this_project'] = project.get_users_with_time_but_no_estimates_in_this_project()
+    context['features'] = ( (f.id, f.name) for f in timepiece.Feature.objects.filter(business=business) )
     
     refresh_issue =timepiece.Issue.objects.get(id=issue.id)
     refresh_issue.representation = issue.representation

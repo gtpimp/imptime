@@ -187,6 +187,9 @@ class Feature(models.Model):
     class Meta:
         unique_together = (('name', 'business'), )
 
+    def __unicode__(self):
+        return self.name
+
 class ProjectQuerySet(QuerySet):
     def filter_by_logged_in_user(self, user):
         """ restricts entries to those belonging to projects the given
