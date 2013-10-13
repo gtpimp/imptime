@@ -3313,7 +3313,7 @@ def project_issues(request, pk, template="timepiece/project/issues.html", contex
 
 @csrf_exempt
 @login_required
-def get_project_detail(request, project_id, template="timepiece/project/_project_detail.html", context=None):
+def get_project_detail(request, project_id, template="timepiece/project/project_detail.html", context=None):
     context = context or {}
 
     end_timing_get_project_detail = timings.start("get_project_detail")
