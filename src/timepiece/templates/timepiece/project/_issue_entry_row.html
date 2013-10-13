@@ -28,12 +28,20 @@
                        {{issue.feature.name}}
                      </div>
                    </td>
-                   <td>
+                   <td {% has_permission has_edit_issue_states project.business %} onclick="imp.show_inline_editor(this);"{% end_permission %} url_for_update="{% url 'issue_status_update' %}" issue_id="{{issue.id}}">
                      <div class="styled-select">		     
-                       <div class="selectme"  {% has_permission has_edit_issue_states project.business %} onclick="imp.dynamic_option_selection(this,{{issue.pk}}, {{issue.representation.options|safe}}, '{% url 'issue_status_update' %}');" {% end_permission %} > 
-                         
+                       <div class="readonly_value"> 
                          {{ issue.status }}
                        </div>
+                       {% has_permission has_edit_issue_states project.business %}
+                       <div class="inline_editor" style="display:none">
+                         <select class='transient_selection'>
+                           {% for option_value, option_name in issue.ISSUE_STATUS_CHOICES %}
+                             <option value="{{option_value}}" {% ifequal issue.status option_value %}selected{% endifequal %} >{{option_name}}</option>
+                           {% endfor %}
+                         </select>
+                       </div>
+                       {% end_permission %}
                      </div>
                    </td>
                    

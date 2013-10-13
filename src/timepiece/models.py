@@ -1862,17 +1862,17 @@ class IssueRepresentation(object):
 
 class Issue(models.Model):
     ISSUE_STATUS_CHOICES = (
-           ( 'new', 'new'),
-           ( 'reopened', 'reopened'),
-           ( 'devdone', 'dev_done'),
-           ( 'tested', 'tested'),
            ( 'bug', 'bug'),
-           ( 'to be designed', 'to be designed'),
+           ( 'devdone', 'dev_done'),
+           ( 'dev unclear', 'dev unclear'),
            ( 'duplicate', 'duplicate'),
            ( 'in testing', 'in testing'),
+           ( 'new', 'new'),
+           ( 'reopened', 'reopened'),
            ( 'tested', 'tested'),
            ( 'task done', 'task done'),
-           ( 'dev unclear', 'dev unclear'),
+           ( 'tested', 'tested'),
+           ( 'to be designed', 'to be designed'),
         )
     
     status = models.CharField(max_length=255, choices = ISSUE_STATUS_CHOICES)

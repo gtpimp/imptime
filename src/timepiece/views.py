@@ -3456,27 +3456,19 @@ def issue_detail_update(request,  template="timepiece/project/issue_detail.html"
 def issue_status_update(request,  template="timepiece/project/issue_detail.html", context=None):
     context = context or {}
 
-    try:
-        edited_issue = timepiece.Issue.objects.get(pk=request.POST['item_id'])
-    except KeyError:
-        edited_issue = None
-
+    edited_issue = timepiece.Issue.objects.get(pk=request.POST['issue_id'])
     project = edited_issue.project
-    context['project'] = project
-    context['supports_description'] = True
-
     has_edit_status = timepiece.BusinessPermissions.objects.get_or_create(business=project.business, user=request.user)[0].has_edit_issue_states
     if not has_edit_status:
         raise PermissionDenied
 
-    try:
-        edited_issue.status = request.POST["new_value"]
-        edited_issue.save()
-    except KeyError:
-        pass
+    context['project'] = project
+    context['supports_description'] = True
+    
+    edited_issue.status = request.POST["new_value"]
+    edited_issue.save()
                                                 
     return HttpResponse("")
-
 
 @csrf_exempt
 @login_required

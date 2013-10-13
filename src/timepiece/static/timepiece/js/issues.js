@@ -4,12 +4,12 @@ imp.issue_loading = function(item_id) {
     var loading_el = $("#loading_issue_"+item_id);
     loading_el.show();
 
-    var on_global_loading_done = imp.loading("loading "+item_id)
+    var on_global_loading_done = imp.loading("loading "+item_id);
 
     var on_done = function() {
 	loading_el.fadeOut();
 	on_global_loading_done();
-    }
+    };
     return on_done;
 };
 
@@ -123,7 +123,6 @@ imp.delete_issue_from_issues_list = function(element, url, item_id) {
     
 };
 
-
 imp.clickable_description_box = function(element, url, item_id) {
 
     // dev note: most of this function should be replaced with a
@@ -176,7 +175,6 @@ imp.clickable_description_box = function(element, url, item_id) {
     });
     commentField.append(submitButton);
     textbox.parent().append(commentField);
-    //textField.select();
     textField.focus();
     textField.value = textField.value;
 };
@@ -213,7 +211,7 @@ imp.clickable_subject_box = function(element, url, item_id, size, width, issue_i
     width = width || "80%";
     
     if ( value == "&nbsp;" ) {
-	value = "0"
+	value = "0";
     }
 
     commentTextArea = commentTextArea.attr("type","text").attr("value",value).attr("size",size).css("width",width).css("position","absolute").css("overflow","visible").css("z-index",200);
@@ -258,7 +256,7 @@ imp.clickable_subject_box = function(element, url, item_id, size, width, issue_i
 
 imp.refresh_closest_issue_parent_row = function(element) {
     var what = $(element);
-    var closest_row = what.closest(".issue_instance_row");
+    var closest_row = what.parents(".issue_instance_row");
     var url = closest_row.attr("refresh_url");
      $.ajax({type:"GET",
              url: url,
@@ -269,29 +267,29 @@ imp.refresh_closest_issue_parent_row = function(element) {
 };
 
 
-imp.ajax_selection = function(element, url, update_url) {
+// imp.ajax_selection = function(element, url, update_url) {
 
-    var handle_ajax_data_given = function (element , update_url) {
-        var _update_url = update_url;
-        var _element = element;
-        var item_id = $(element).attr("id");
-        function new_data_handler (data) {
-            var selection_val ="nothing";
-            if (data.length) {
-             selection_val= data[0][0];
-            }
-            imp.dynamic_option_selection(_element, item_id, data, update_url);
-        }
-        return new_data_handler;
-    };
+//     var handle_ajax_data_given = function (element , update_url) {
+//         var _update_url = update_url;
+//         var _element = element;
+//         var item_id = $(element).attr("id");
+//         function new_data_handler (data) {
+//             var selection_val ="nothing";
+//             if (data.length) {
+//              selection_val= data[0][0];
+//             }
+//             imp.dynamic_option_selection(_element, item_id, data, update_url);
+//         }
+//         return new_data_handler;
+//     };
 
-    var response = $.ajax({ type:"GET",
-                            url: url
-                          });
+//     var response = $.ajax({ type:"GET",
+//                             url: url
+//                           });
 
-    response.done( handle_ajax_data_given (element, update_url) );
+//     response.done( handle_ajax_data_given (element, update_url) );
 
-};
+// };
 
 imp.clickable_feature_name = function (element, url, item_id) {
     // clear the parent of select boxes...
@@ -323,7 +321,7 @@ imp.dynamic_option_addition = function (element, item_id, update_url) {
 imp.select_business_feature = function(element, item_id, request_url, update_url , new_url) {
 
     var response = $.ajax( { type: "GET",
-                             url : request_url,
+                             url : request_url
                            });
     
     var create_widget_at_done = function (element, item_id, update_url) {
@@ -339,52 +337,88 @@ imp.select_business_feature = function(element, item_id, request_url, update_url
   
 };
 
-imp.dynamic_option_selection = function(element, item_id, options , update_url) {
-    var selectme = $(element);
-    var id = null;
-    var d_options = {};
-    var i;
-    
-    for(i = 0; i < options.length; i++) {
-        d_options[options[i][0]] = options[i][1];
-    }
-    
-    if (selectme.children('select').length == 0) {
-        var str ="";
-        var current_value = $.trim(selectme[0].innerHTML);
-        var new_select = $("<select/>").attr("class", "transient_selection");
-	var new_option;
-        new_select.css("width","auto");
-        for (item in d_options)  {
-            new_option  = $("<option/>");
-            new_option.attr("id", item);
-            new_option.text(d_options[item]);
-            if (current_value == d_options[item]) {
-                new_option.attr("selected",true);               
-            }
-            new_select.append(new_option);
-        }
-        selectme.html("");
-        selectme.append(new_select);
-        
-        $("select.selectbox").focus();
-        $("select.selectbox").blur(function() {
-            var value = $(this).val();            
-            var valuetext = $(this).children('option#opt-'+value).text();            
-            $("div.selectme").attr({'id': "selectme-"+value});            
-            $(".selectme").text(valuetext);
-        });
-        
-    }else {
-        var selected = selectme.find("option:selected");
-        var value = selected[0].innerHTML;
-        var response = $.ajax({type:"POST",
-                               url: update_url,
-                               data : { item_id: item_id , new_value:value, index: selected.attr("id") },
-                               dataType:"json"});
+imp.show_inline_editor = function(el) {
+    var td = $(el);
+    var readonly_value = td.find(".readonly_value");
+    var editor = td.find(".inline_editor");
+    var url_for_update = td.attr("url_for_update");
+    var issue_id = td.attr("issue_id");
+    var old_value = editor.find("select").val();
+    editor.change( function(d) { 
+	editor.hide();
+	var on_done = imp.issue_loading("saving issue");
+	var value = editor.find("select").val();
+	var response = $.ajax({type:"POST",
+			       url: url_for_update,
+			       data : { issue_id: issue_id , new_value:value },
+			       dataType:"json",
+			       success: function() {
+				   readonly_value.show();
+				   editor.hide();
+				   imp.refresh_closest_issue_parent_row(td);
+				   on_done();
+			       }
+			      });
+    });
 
-        selectme.html('<div class="selectme">'+value+'</div>');
-        response.done( function() { imp.refresh_closest_issue_parent_row(selectme); } );
-    }
+    editor.blur( function() {
+	editor.val(old_value);
+	editor.hide();
+	readonly_value.show();
+    });
+    readonly_value.hide();
+    editor.show();
+    editor.attr("size", "10");
 };
+
+// imp.dynamic_option_selection = function(element, item_id, options , update_url) {
+//     var selectme = $(element);
+//     var id = null;
+//     var d_options = {};
+//     var i;
+
+//     var editor = $(element).parents("td").find(".inline_editor").show();
+    
+//     for(i = 0; i < options.length; i++) {
+//         d_options[options[i][0]] = options[i][1];
+//     }
+    
+//     if (selectme.children('select').length == 0) {
+//         var str ="";
+//         var current_value = $.trim(selectme[0].innerHTML);
+//         var new_select = $("<select/>").attr("class", "transient_selection");
+// 	var new_option;
+//         new_select.css("width","auto");
+//         for (item in d_options)  {
+//             new_option  = $("<option/>");
+//             new_option.attr("id", item);
+//             new_option.text(d_options[item]);
+//             if (current_value == d_options[item]) {
+//                 new_option.attr("selected",true);               
+//             }
+//             new_select.append(new_option);
+//         }
+//         selectme.html("");
+//         selectme.append(new_select);
+        
+//         $("select.selectbox").focus();
+//         $("select.selectbox").blur(function() {
+//             var value = $(this).val();            
+//             var valuetext = $(this).children('option#opt-'+value).text();            
+//             $("div.selectme").attr({'id': "selectme-"+value});            
+//             $(".selectme").text(valuetext);
+//         });
+        
+//     }else {
+//         var selected = selectme.find("option:selected");
+//         var value = selected[0].innerHTML;
+//         var response = $.ajax({type:"POST",
+//                                url: update_url,
+//                                data : { item_id: item_id , new_value:value, index: selected.attr("id") },
+//                                dataType:"json"});
+
+//         selectme.html('<div class="selectme">'+value+'</div>');
+//         response.done( function() { imp.refresh_closest_issue_parent_row(selectme); } );
+//     }
+// };
 
