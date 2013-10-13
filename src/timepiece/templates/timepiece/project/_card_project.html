@@ -69,22 +69,63 @@
   </div>
 
   </div>
+
+  {% has_permission has_view_ctc_billable_rates project.business %}
+
+    <br/>
+    <hr/>
+    <br/>
+    <h1>Features</h1>
+    <table>
+      <thead>
+        <th></th>
+        <th>ctc</th>
+        <th>billable</th>
+      </thead>
+      <tbody>
+          {% for data in project.costs_by_feature.values %} 
+        <tr>
+          <th>{{data.name}}</th>
+          <td>R{{data.ctc|floatformat:"0"|intcomma}}</td>
+          <td>R{{data.billable|floatformat:"0"|intcomma}}</td>
+        </tr>
+          {% endfor %}
+      </tbody>
+    </table>
+
+
+  {% end_permission %}
+
+
+  <hr/>
   <div class="toggle_graphs_section">
     <div class="graph">
       <h1>hours by user</h1>
-      <div class="{{project.id}}_graph_hours_by_user" style="height:200px;width:200px;"></div>
+      <div class="{{project.id}}_graph_hours_by_user" style="height:300px;width:300px;"></div>
       <div style="clear:both"></div>
     </div>
     <div style="clear:both"></div>
     <div class="graph">
       <h1>ctc per user</h1>
-      <div class="{{project.id}}_graph_ctc_by_user" style="height:200px;width:200px;"></div>
+      <div class="{{project.id}}_graph_ctc_by_user" style="height:300px;width:300px;"></div>
       <div style="clear:both"></div>
     </div>
     <div style="clear:both"></div>
     <div class="graph">
       <h1>billable per user</h1>
-      <div class="{{project.id}}_graph_billable_by_user" style="height:200px;width:200px;"></div>
+      <div class="{{project.id}}_graph_billable_by_user" style="height:300px;width:300px;"></div>
+      <div style="clear:both"></div>
+    </div>
+    <div style="clear:both"></div>
+    <div class="graph">
+      <h1>ctc per feature</h1>
+      <div class="{{project.id}}_graph_ctc_by_feature" style="height:300px;width:300px;"></div>
+      <div style="clear:both"></div>
+    </div>
+    <div style="clear:both"></div>
+    <div class="graph">
+      <h1>billable per feature</h1>
+      <div class="{{project.id}}_graph_billable_by_feature" style="height:300px;width:300px;"></div>
       <div style="clear:both"></div>
     </div>
     <div style="clear:both"></div>
@@ -118,6 +159,28 @@
                    {% for username,amounts in project.users_and_hours.users.items %} 
                      { label:"{{username}}", 
                        data: {{amounts.billed}}
+                     },
+                   {% endfor %} 
+                 {%endspaceless%}
+               ],
+               { series: { pie: { show: true } },
+                 legend: { show: false} } );
+      $.plot(".{{project.id}}_graph_ctc_by_feature",
+               [ {%spaceless%} 
+                   {% for data in project.costs_by_feature.values %} 
+                     { label:"{{data.name}}", 
+                       data: {{data.ctc}}
+                     },
+                   {% endfor %} 
+                 {%endspaceless%}
+               ],
+               { series: { pie: { show: true } },
+                 legend: { show: false} } );
+      $.plot(".{{project.id}}_graph_billable_by_feature",
+               [ {%spaceless%} 
+                   {% for data in project.costs_by_feature.values %} 
+                     { label:"{{data.name}}", 
+                       data: {{data.billable}}
                      },
                    {% endfor %} 
                  {%endspaceless%}

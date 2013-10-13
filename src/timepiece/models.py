@@ -476,6 +476,35 @@ class Project(models.Model):
                 p[entry['project_id']] = Project.objects.get(pk=entry['project_id'])
         return p.values()
 
+    def costs_by_feature(self):
+        
+        if hasattr(self, '_cached_billable_by_feature'):
+            return self._cached_billable_by_feature
+
+        costs_per_feature = {}
+        features_in_project = self.issues.all().order_by('feature').values('feature').annotate(x=Count('feature'))
+        for feature in features_in_project:
+            entries_qs = Entry.objects.all().filter(project=self)
+            if feature['feature'] is None:
+                cost_per_feature = costs_per_feature.setdefault('none', {'name':'No feature', 'ctc':0,'billable':0})
+                entries_qs = entries_qs.filter(Q(issue__isnull=True)|Q(issue__feature__isnull=True))
+            else:
+                cost_per_feature = costs_per_feature.setdefault(feature['feature'], {'name':Feature.objects.get(pk=feature['feature']), 'ctc':0,'billable':0})
+                entries_qs = entries_qs.filter(issue__feature_id=feature['feature'])
+
+            user_totals = entries_qs.values("user").annotate(hours=Sum('hours'))
+            for user_total in user_totals:
+                user = User.objects.get(pk=user_total['user'])
+                try:
+                    rate = Rate.objects.get(project=self, user=user)
+                except Rate.DoesNotExist:
+                    rate = Rate.objects.create(project=self, user=user, amount=0)
+                cost_per_feature['ctc'] += float(user_total['hours'])*float(rate.amount)
+                cost_per_feature['billable'] += float(rate.billable_amount) * float(user_total['hours'])
+
+        self._cached_billable_by_feature = costs_per_feature
+        return self._cached_billable_by_feature
+
     @classmethod
     def most_recent_project(self, business_id):
         entries_per_business_ids = Entry.objects.filter(project__business_id=business_id).order_by('-end_time').values('project_id') 
