@@ -104,6 +104,11 @@ urlpatterns = patterns('',
         name='close_project',
     ),
     url(
+        r'^project/(?P<project_id>\d+)/open/$',
+        views.create_open_project,
+        name='open_project',
+    ),
+    url(
         r'^project/(?P<project_id>\d+)/invoiced/$',
         views.invoiced_project,
         name='invoiced_project',

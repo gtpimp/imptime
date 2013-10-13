@@ -148,13 +148,26 @@ imp.toggle_card_menu = function (event) {
 };
 
 imp.close_sprint = function(el, sprint_name, url) {
-    if ( ! confirm("Close "+sprint_name+"?") ) {
-	return false;
-    }
     var on_done = imp.loading("Closing sprint");
     var response = $.ajax({type:"GET",
                            url: url,
                            success: function(data) {
+			       $(el).parents(".project_li").addClass("closed_project").removeClass("open_project");
+			       $(el).parents("li").find(".menu_close_sprint").hide();
+			       $(el).parents("li").find(".menu_reopen_sprint").show();
+			       on_done();
+                           }
+                          });
+};
+
+imp.reopen_sprint = function(el, sprint_name, url) {
+    var on_done = imp.loading("Re-opening sprint");
+    var response = $.ajax({type:"GET",
+                           url: url,
+                           success: function(data) {
+			       $(el).parents(".project_li").addClass("open_project").removeClass("closed_project");
+			       $(el).parents("li").find(".menu_close_sprint").show();
+			       $(el).parents("li").find(".menu_reopen_sprint").hide();
 			       on_done();
                            }
                           });

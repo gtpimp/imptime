@@ -9764,6 +9764,10 @@ ul.project_list {
     padding-left: 30px;
 }
 
+.closed_project .project_table_cell .project_title {
+    text-decoration: line-through;
+}
+
 .project_table_cell .project_title a {
     font-size: 10px;
     float: right;

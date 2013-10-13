@@ -4,7 +4,7 @@
 {% load bootstrap_toolkit %}
 {% load timepiece_tags %}
 
-  <li class="project_li" list_project_id="{{ project.id }}" >
+<li class="project_li {% if project.is_open %}open_project{%else%}closed_project{% endif %}" list_project_id="{{ project.id }}" {% if not project.is_open%}style="display:none"{% endif %} >
   <div class="project_table project_table_appearance">    
     <div class="project_table_row project_coloured_row">
       <div class="project_table_cell project_expand" preloaded="{{ project.is_preloaded }}" onclick="imp.projects.load_or_display_issues(this, '{% url 'get_project_detail' project.id %}')"  >  
@@ -34,4 +34,4 @@
       </div>
     </div>
   </div>
-  </li>
+</li>

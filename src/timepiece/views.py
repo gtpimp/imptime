@@ -1690,6 +1690,15 @@ def create_close_project(request, project_id=None):
     return HttpResponse("ok");
 
 @permission_required('timepiece.add_project')
+@permission_required('timepiece.change_project')
+@login_required
+@csrf_exempt
+def create_open_project(request, project_id=None):
+    project = get_object_or_404(timepiece.Project, pk=project_id)
+    project.open();
+    return HttpResponse("ok");
+
+@permission_required('timepiece.add_project')
 @permission_required('timepiece.invoiced_project')
 @login_required
 def invoiced_project(request, project_id=None):
@@ -3359,6 +3368,7 @@ def get_project_detail(request, project_id, template="timepiece/project/project_
     context['total_ctc'] = cost_totals['ctc']
     context['total_billable'] = cost_totals['billable']
     context['business_permissions_by_user'] = timepiece.BusinessPermissions.by_user(business)
+    context['has_closed_sprints'] = business.has_closed_sprints()
 
     end_timing_get_project_detail()
     context['timings'] = timings.results()
@@ -3393,11 +3403,10 @@ def project_list(request, project_id=None, template="timepiece/project/project_l
     context['current_user'] = request.user
     context['expanded_project'] = expanded_project
     context['projects'] = projects
-    context['has_closed_projects'] = len( list([ p for p in projects if p.is_open ]) ) > 0
+
     context['business'] = business
     context['business_permissions_by_user'] = timepiece.BusinessPermissions.by_user(business)
     return render_to_response(template, context, context_instance=RequestContext(request))
-        
         
 @csrf_exempt
 @login_required

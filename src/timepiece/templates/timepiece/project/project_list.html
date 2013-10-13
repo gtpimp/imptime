@@ -36,21 +36,11 @@
 <div class="splitter">
   <div class="splitter-left">
 
-        <ul class="project_list open" project_sort_url="{% url 'sortable_project_update' %}">
-          {% for project in projects %} 
-            {% if project.is_open %}
-              {% include "timepiece/project/_project_list_item.html" %}
-            {% endif %}
-          {% endfor %}
-        </ul>
-
-        <ul class="project_list closed" style="display:none" project_sort_url="{% url 'sortable_project_update' %}" style="list-style-type:none;">
-          {% for project in projects %} 
-            {% if not project.is_open %}
-              {% include "timepiece/project/_project_list_item.html" %}
-            {% endif %}
-          {% endfor %}
-        </ul>
+    <ul class="project_list open" project_sort_url="{% url 'sortable_project_update' %}">
+      {% for project in projects %} 
+        {% include "timepiece/project/_project_list_item.html" %}
+      {% endfor %}
+    </ul>
         
   </div>
   <div class="splitter-right">

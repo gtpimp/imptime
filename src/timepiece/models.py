@@ -125,6 +125,9 @@ class Business(models.Model):
                     user_perm = BusinessPermissions.objects.create(user=user, business=self)
         return BusinessPermissions.objects.filter(Q(business = self) & Q(user__id__in = user_ids) )
 
+    def has_closed_sprints(self):
+        projects = Project.objects.filter(business=self)
+        return len([ p for p in projects if not p.is_open ]) > 0
     
     @property
     def users(self):
@@ -491,6 +494,10 @@ class Project(models.Model):
 
     def close(self):
         self.status = Attribute.objects.get(label='closed', type='project-status')
+        self.save()
+
+    def open(self):
+        self.status = Attribute.objects.get(label='open', type='project-status')
         self.save()
 
     @property
