@@ -378,8 +378,8 @@ imp.show_inline_editor = function(el) {
 				   success: function() {
 				       readonly_value.show();
 				       editor_container.hide();
-				       imp.refresh_closest_issue_parent_row(td);
 				       deactivate_select();
+				       imp.refresh_closest_issue_parent_row(td);
 				       on_done();
 				   }
 				  });
@@ -420,7 +420,7 @@ imp.show_inline_editor = function(el) {
 			new_option = $("<option/>");
 			new_option.attr("id", value[0]);
 			new_option.text(value[1]);
-			if (old_value == value[1]) {
+			if (old_value == value[0]) {
 			    new_option.attr("selected",true);
 			}
 			editor.append(new_option);
