@@ -64,11 +64,11 @@
 		    {% with issues_forms.forms|first as first_form %}
 		      {% for user, per_user in first_form.instance.representation.per_user.items %}
                         {% user_can_estimate_own_points user project.business %}
-		          <th class="money_cell">{% get_all_hours_for_project user project %} of {% get_all_points_for_project user project %}</th>
+		          <th class="money_cell">{% get_all_hours_for_project user project %} / {% get_all_points_for_project user project %}</th>
                         {% end_can_estimate %}
 		      {% endfor %}
                       {% for user in users_with_time_but_no_estimates_in_this_project %}
-                        <th class="money_cell">done {% get_all_hours_for_project user project %} of {% get_all_points_for_project user project %}</th>
+                        <th class="money_cell">{% get_all_hours_for_project user project %} / {% get_all_points_for_project user project %}</th>
                       {% endfor %}
 		    {% endwith %}
 		  {% end_permission %}

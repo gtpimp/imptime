@@ -22,7 +22,7 @@
               <span class="edit_issue_subject">
 
                 {% if per_user.has_hours %}
-                  {{ per_user.hours }} of
+                  {{ per_user.hours }} /
                 {% endif %}
                 <span class="estimated_hours">{{ per_user.issue_points.points|default_if_none:"&nbsp;"|default:"&nbsp;" }}</span> 
                 
@@ -31,13 +31,13 @@
           </div>
           {% else %}
             <span class="edit_issue_subject">
-              ? of <span class="estimated_hours">{{ per_user.issue_points.points|default_if_none:"&nbsp;"|default:"&nbsp;" }}</span> 
+              / <span class="estimated_hours">{{ per_user.issue_points.points|default_if_none:"&nbsp;"|default:"&nbsp;" }}</span> 
             </span>
           {% endif %}
         {% else %}
           {% if per_user.has_hours %}
             <span class="edit_issue_subject">
-              {{ per_user.hours }} of ?
+              {{ per_user.hours }} /
             </span>
           {% else %}
             <span class="edit_issue_subject">&nbsp;</span>

@@ -579,9 +579,8 @@ class Project(models.Model):
         return total
 
     def get_users_with_time_but_no_estimates_in_this_project(self):
-        users = [ User.objects.get(pk=x['entries__user']) for x in self.issues.all().filter(entries__hours__gt=0).values("entries__user").order_by("entries__user").annotate(hours=Sum('entries__hours')) ]
-        #users = [ User.objects.get(pk=x['issues__entries__user']) for x in Project.objects.all().filter(issues__entries__hours__gt=0).values("issues__entries__user").order_by("issues__entries__user").annotate(hours=Sum('issues__entries__hours')) ]
-        return [ user for user in users if not BusinessPermissions.for_user(user, self.business).has_estimate_own_points ]
+        users = [ User.objects.get(pk=user['user']) for user in Entry.objects.all().filter(project=self).filter(hours__gt=0).exclude(issue__isnull=False).order_by('user').values('user').annotate(Count('user'))]
+        return [ user for user in users if not BusinessPermissions.for_user(user, self.business).has_estimate_own_points ] 
 
     def users_and_hours(self, **entry_filter):
         if self._users_and_hours is not None:
