@@ -324,7 +324,7 @@ class BusinessPermissions(models.Model):
         return self.user.is_superuser or self.can_edit_subject
 
     @property
-    def has_edit_feature(self):
+    def has_edit_issue_feature(self):
         return self.user.is_superuser or self.can_edit_feature
     @property
     def has_create_sprint(self):
