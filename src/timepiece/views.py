@@ -3311,7 +3311,7 @@ def get_project_detail(request, project_id, template="timepiece/project/project_
 
     business = project.business
     if not timepiece.BusinessPermissions.for_user(request.user, business).has_edit_project_detail:
-        raise 
+        raise PermissionDenied
 
     queryset = project.get_ordered_issues()
     issues_forms = None
