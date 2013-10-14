@@ -42,6 +42,7 @@ imp.do_form_show  = function(element, url) {
     function key_up_for_form(form) {
        var current_form = form;
        return function(event) {
+	   event.stopImmediatePropagation();
 	   if(event.which === 27) {
 	       imp.do_form_remove(current_form);
 	   }
@@ -140,14 +141,15 @@ imp.clickable_description_box = function(element, url, item_id) {
     textField.css({height:"400px"});
     textField.html(value);
     textField.keyup(function(e) {
-        if(e.which === 27) {
-            var form_parent = $(this).parent().parent();
-            var div_parent = form_parent.find(".static_div");
-            var text_sibling = form_parent.find('textarea');
-            var new_value = text_sibling.val();
-            $(this).parent().remove();
-            div_parent.show();
-        }
+			e.stopImmediatePropagation();
+			if(e.which === 27) {
+			    var form_parent = $(this).parent().parent();
+			    var div_parent = form_parent.find(".static_div");
+			    var text_sibling = form_parent.find('textarea');
+			    var new_value = text_sibling.val();
+			    $(this).parent().remove();
+			    div_parent.show();
+			}
     });
     textbox.hide();
     var itemField =$("<input/>").attr('type','hidden').attr('value', item_id).attr('name','item_id');
@@ -244,15 +246,16 @@ imp.clickable_subject_box = function(element, url, item_id, size, width, issue_i
 
     });
     commentTextArea = commentTextArea.keyup(function(e) {
-        if(e.which === 27) {
-            var parent = $(this).parent();
-            var div_sibling = parent.find('.edit_issue_subject');
-            $(this).remove();
-            div_sibling.show();
+						e.stopImmediatePropagation();
+						if(e.which === 27) {
+						    var parent = $(this).parent();
+						    var div_sibling = parent.find('.edit_issue_subject');
+						    $(this).remove();
+						    div_sibling.show();
 
-            imp.showing_clickable_popup = false;
-        }
-    });
+						    imp.showing_clickable_popup = false;
+						}
+					    });
 };
 
 
@@ -388,6 +391,7 @@ imp.show_inline_editor = function(el) {
 	editor.change( on_changed );
 
 	created_value_editor.keyup( function(event) {
+					event.stopImmediatePropagation();
 					if(event.which === 27) {
 					    editor.val(old_value);
 					    deactivate_select();
@@ -395,8 +399,10 @@ imp.show_inline_editor = function(el) {
 					if(event.which === 13) {
 					    on_changed();
 					}
+					return false;
 				    });
 	editor.keyup( function(event) {
+			  event.stopImmediatePropagation();
 			  if(event.which === 27) {
 			      editor.val(old_value);
 			      deactivate_select();
@@ -404,6 +410,7 @@ imp.show_inline_editor = function(el) {
 			  if(event.which === 13) {
 			      on_changed();
 			  }
+			  return false;
 		      });
 	readonly_value.hide();
 	editor_container.show();
