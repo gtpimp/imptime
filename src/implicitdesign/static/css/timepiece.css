@@ -6990,10 +6990,6 @@ button.btn.btn-mini, input[type="submit"].btn.btn-mini {
   font-size: 11px;
   opacity: 0;
   filter: alpha(opacity=0);
-  opacity: 0;
-  filter: alpha(opacity=0);
-  opacity: 0;
-  filter: alpha(opacity=0);
 }
 .tooltip.in {
   opacity: 0.8;
@@ -9762,6 +9758,10 @@ ul.project_list {
 
 .project_table_cell .project_title {
     padding-left: 30px;
+}
+
+.project_table_cell .project_title .project_number {
+    font-size: 9px;
 }
 
 .closed_project .project_table_cell .project_title {

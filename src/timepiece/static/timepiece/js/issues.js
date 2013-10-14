@@ -132,9 +132,9 @@ imp.clickable_description_box = function(element, url, item_id) {
     // hidden snippet in one of the template files, which gets
     // displayed on demand. eg see how the rates popup works.
 
-    var textbox = $(element);
+    var textbox = $(element),
         commentField = $("<form/>");
-    var commentField = commentField.attr('action',url).attr('method','post');
+    commentField = commentField.attr('action',url).attr('method','post');
     var value = textbox.find(".content").html();
     value = value.replace(/<br>/g,"\n");
     var textField =$("<textarea/>").attr('name','new_value');

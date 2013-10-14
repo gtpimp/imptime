@@ -370,7 +370,7 @@ class Project(models.Model):
     order = models.IntegerField(null=True,blank=True)
 
     objects = QuerySetManager(ProjectQuerySet)
-         
+
     def get_points(self):
         user_ids = [user.id for user in self.business.users]
         users = User.objects.filter(id__in = user_ids)
@@ -437,6 +437,14 @@ class Project(models.Model):
         replacement = lambda matches: "".join(['_' for i in matches.groups()])
         new_name = re_sub(r"(\W{1})", replacement, new_name)
         new_name = new_name.replace("_","")
+
+        """ Try to use the project id """
+        project_id = None
+        match_object = re.compile(".*#(\d+).*").search(new_name)
+        if match_object and match_object.groups() != 0:
+            project_id = int(match_object.group(1))
+            return Project.objects.get(pk=project_id).code
+
         return new_name
 
     def save(self, *args, **kwargs):
