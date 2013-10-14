@@ -9317,18 +9317,10 @@ table.project_list  {
     background-color: #e6e6e6; !important
 }
 
-.project_list tbody td:nth-child(-n+11), .project_list tbody th:nth-child(-n+11) {
-   text-align:right;
-}
-
 /*
 .project_list thead tr:nth-child(3) th {
    text-align:right;
 }*/
-
-.project_list tbody td:nth-child(-n+3) {
-    text-align:left;
-}
 
 ul.project_list {
  list-style-type:none;
@@ -9812,6 +9804,10 @@ ul.project_list {
 
 .issue_detail .issue_subject {
     font-size:12px;
+}
+
+.issues_list .feature_col, .issues_list .status_col {
+    text-align: right;
 }
 
 /* .issues .issue_detail { */
