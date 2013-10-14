@@ -3218,8 +3218,8 @@ def _augment_issue_data(issue, current_user, users_allowed_to_estimate_on_busine
 def add_feature(request, business_id):
     
     business = timepiece.Business.objects.get(pk=business_id)
-    has_edit_feature = timepiece.BusinessPermissions.objects.get_or_create(business=business, user=request.user)[0].has_edit_feature
-    if not has_edit_feature:
+    has_edit_issue_feature = timepiece.BusinessPermissions.objects.get_or_create(business=business, user=request.user)[0].has_edit_issue_feature
+    if not has_edit_issue_feature:
         raise PermissionDenied
 
     try:
@@ -3454,8 +3454,8 @@ def update_issue_with_feature(request):
     
     business = issue.project.business
 
-    has_edit_feature = timepiece.BusinessPermissions.objects.get_or_create(business=business, user=request.user)[0].has_edit_feature
-    if not has_edit_feature:
+    has_edit_issue_feature = timepiece.BusinessPermissions.objects.get_or_create(business=business, user=request.user)[0].has_edit_issue_feature
+    if not has_edit_issue_feature:
         raise PermissionDenied
     
     if created_value and len(created_value)>0:
