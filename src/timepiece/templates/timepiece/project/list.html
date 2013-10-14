@@ -180,9 +180,11 @@ $(document).ready(function(){
                      <td>
  		       <a href="{% url 'business_issues' business.id %}">Issues</a>
 		     </td>
+                     {% has_permission has_edit_project_detail business %}
                      <td>
  		       <a href="{% url 'project_detail' business.id %}">Breakdown</a>
 		     </td>
+                     {% end_permission %}
 
                      {% if user.is_superuser %}
                      <td>

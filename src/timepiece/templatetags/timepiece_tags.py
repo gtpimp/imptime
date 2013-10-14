@@ -61,36 +61,44 @@ def do_has_permission(parser, token):
     nodelist = parser.parse(('end_permission',))
     parser.delete_first_token()
     tag_name, perm_name, business = token.contents.split(None)
-    return HasPermissionNode(nodelist, perm_name )
+    return HasPermissionNode(nodelist, perm_name, business )
 
 def do_has_not_permission(parser, token):
     nodelist = parser.parse(('end_permission',))
     parser.delete_first_token()
     tag_name, perm_name, business = token.contents.split(None)
-    return HasPermissionNode(nodelist, perm_name, opposite=True)
+    return HasPermissionNode(nodelist, perm_name, business, opposite=True)
 
 register.tag('has_permission', do_has_permission)
 register.tag('has_not_permission', do_has_not_permission)
 
 class HasPermissionNode(template.Node):
-    def __init__(self, nodelist, perm_name, opposite=False):
+    def __init__(self, nodelist, perm_name, business, opposite=False):
         self.nodelist = nodelist
         self.perm_name = perm_name
         self.opposite = opposite
+        self.business = business
         
     def render(self,context):
 
         if 'business_permissions_by_user' not in context:
-            raise Exception("Invalid context, requires property business_permissions_by_user")
+            business = context[self.business]
+            business_permissions_by_user = timepiece.BusinessPermissions.by_user(business)
+        else:
+            business_permissions_by_user = context['business_permissions_by_user']
 
         has = False
         if context['current_user'].is_superuser:
             has = True
         else:
-            bp = context['business_permissions_by_user'][context['current_user'].id]
-            has_permission = getattr(bp, self.perm_name)
-            if has_permission:
-                has = True
+            try:
+                bp = business_permissions_by_user[context['current_user'].id]
+            except KeyError:
+                has = False
+            else:
+                has_permission = getattr(bp, self.perm_name)
+                if has_permission:
+                    has = True
 
         if self.opposite:
             has = not has

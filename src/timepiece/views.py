@@ -1419,7 +1419,8 @@ def list_projects(request):
     businesses = timepiece.Business.objects.all().filter_by_logged_in_user(request.user).order_by("name").distinct()
 
     context = {'businesses': businesses,
-               'last_active': last_active}
+               'last_active': last_active,
+               'current_user': request.user}
     return context
 
 # @permission_required('timepiece.view_project')
