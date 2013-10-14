@@ -9744,6 +9744,7 @@ ul.project_list {
 
 .project_table_cell {
     display:table-cell;
+    padding-right:3px;
 }
 
 .project_table_cell.project_expand {
