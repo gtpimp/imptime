@@ -49,6 +49,11 @@
 
     {% has_not_permission can_view_ctc_billable_rates project.business %}
       <div class="edit_issue_subject" > 
+        {% if per_user.has_hours %}
+            <span class="edit_issue_subject">
+              {{ per_user.hours }} /
+            </span>
+        {% endif %}
         {{ per_user.issue_points.points|default_if_none:"&nbsp;"|default:"&nbsp;" }}
       </div>
     {% end_permission %}

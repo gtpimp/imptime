@@ -3204,6 +3204,9 @@ def _augment_issue_data(issue, current_user, users_allowed_to_estimate_on_busine
         per_user_issue_data["can_estimate"] = True
         issue.add_user_to_representation(user, per_user_issue_data)
 
+        if current_user.id == user.id:
+            issue.representation.current_user_issue_data = per_user_issue_data
+
     # for user, hours in issue.hours_for_users():
     #     if user not in users_allowed_to_estimate_on_business:
     #         # users with hours but without estimates need a column too
@@ -3828,7 +3831,7 @@ def get_issue_row(request,issue_id):
     queryset = timepiece.Issue.objects.filter(pk=issue_id)
     project = queryset[0].project
     business = project.business
-
+    
     issue = queryset[0].set_order()
     users_allowed_to_estimate_on_business=business.get_users_allowed_to_estimate_on_business(request.user)
     _augment_issue_data(issue,request.user, 

@@ -75,7 +75,7 @@
 
 		  {% has_not_permission can_see_other_user_points project.business %}
                     {% user_can_estimate_own_points current_user project.business %}
-		      <th class="money_cell">-</th>
+		      <th class="money_cell">{% get_all_hours_for_project current_user project %} / {% get_all_points_for_project current_user project %}</th>
                     {% end_can_estimate %}
 		  {% end_permission %}
 
@@ -138,7 +138,7 @@
 
 		  {% has_not_permission can_see_other_user_points project.business %}
                     {% user_can_estimate_own_points current_user project.business %}
-		      <td class="money_cell"></td>
+		      <td class="money_cell">{% get_unassigned_hours_for_project current_user project %} / </td>
                     {% end_can_estimate %}
 		  {% end_permission %}
 

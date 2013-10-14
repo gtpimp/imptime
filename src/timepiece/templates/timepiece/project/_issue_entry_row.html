@@ -67,6 +67,12 @@
                     {% endfor %}
 		  {% end_permission %}
 
+                  {% has_not_permission can_see_other_user_points project.business %}
+                    {% user_can_estimate_own_points current_user project.business %}
+                     {% include "timepiece/project/_issue_points_completed.html" with per_user=issue.representation.current_user_issue_data %}
+                    {% end_can_estimate %}
+		  {% end_permission %}
+
                      {% comment %}
                   {% has_permission has_view_actual_hours  project.business %} 
                     <td  class="money_cell">
