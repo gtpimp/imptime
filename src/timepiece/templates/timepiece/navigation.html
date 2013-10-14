@@ -64,12 +64,12 @@
 				    {% endcomment %}
 
                                     {% if perms.timepiece.view_entry_summary %}
-                                    <li><a href="{% url 'timepiece-summary' %}">Monthly times pivoted</a></li>
-                                {% endif %}
+                                      <li><a href="{% url 'timepiece-summary' %}">Monthly times pivoted</a></li>
+                                    {% endif %}
 
-                                    {% if perms.timepiece.view_project or perms.auth.view_user or perms.timepiece.view_business %}
-   				  <li><a href="{% url 'amounts_billed' %}">Amounts billed across projects</a></li>
-				{% endif %}
+                                    {% if perms.timepiece.view_project %}
+                                      <li><a href="{% url 'amounts_billed' %}">Amounts billed across projects</a></li>
+				    {% endif %}
                                 
                                     
                                     {% comment %}

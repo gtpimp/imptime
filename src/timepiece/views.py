@@ -1342,6 +1342,7 @@ def users_last_active(request, context=None):
 @login_required
 @render_with('timepiece/project/amounts_billed.html')
 def amounts_billed(request):
+
     if request.GET:
         form = timepiece_forms.ProjectSearchForm(request.GET)
     else:
