@@ -64,7 +64,7 @@ if [ $? != 0 ]; then
     echo "syncdb failed: ABORTING"
     exit 1
 fi
-python manage.py migrate
+python manage.py migrate --delete-ghost-migrations
 if [ $? != 0 ]; then
     echo "db migrate failed: ABORTING"
     echo "If you are running this on an empty database and the error is "

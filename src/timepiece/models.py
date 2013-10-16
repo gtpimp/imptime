@@ -365,7 +365,7 @@ class Project(models.Model):
         limit_choices_to={'type': 'project-status'},
         related_name='projects_with_status',
     )
-    description = models.TextField()
+    description = models.TextField(blank=True, null=True)
 
     order = models.IntegerField(null=True,blank=True)
 
