@@ -371,6 +371,8 @@ class Project(models.Model):
 
     objects = QuerySetManager(ProjectQuerySet)
 
+    work_ratio = models.ForeignKey('ProjectWorkRatio', null=True, blank=True)
+
     def get_points(self):
         user_ids = [user.id for user in self.business.users]
         users = User.objects.filter(id__in = user_ids)
@@ -383,7 +385,29 @@ class Project(models.Model):
 
         distinct_user_qs = IssuePoints.objects.filter(user__id__in = user_ids).values_list("user").distinct()
         return [ (User.objects.get(pk=qs[0]), IssuePoints.objects.filter(user__id = qs[0]).order_by("issue")) for qs in distinct_user_qs]
+    
+    def get_points_total(self):
+        ret = {}
+        for user in self.users.all(): 
+            total = user.issue_points.filter(issue__project=self).aggregate(Sum("points"))
+            ret[user] = total['points__sum'] if total['points__sum'] else 0
+        return ret
 
+    def cost_per_developer(self):
+        if self.work_ratio:
+            ratio = self.work_ratio.development
+        #elif self.business.ratio:
+        #    ratio = self.business_ration.development
+        else:
+            ratio = 0
+        
+        ret = {}
+        for user, points in self.get_points_total().items():
+            if not points:
+                continue
+            rate = self.get_user_rate(user)
+            ret[user] = points * ratio * float(rate.billable_amount)
+        return ret
 
     def get_user_rate(self, user):
 
@@ -419,7 +443,7 @@ class Project(models.Model):
 
     @property
     def has_invoices(self):
-        return Invoice.objects.filter(project=self).count()>0
+        return Invoice.objects.filter(project=self).count() > 0
     
     @classmethod
     def get_code_from_name(self, name):
@@ -2076,3 +2100,14 @@ class IssuePoints(models.Model):
     points = models.FloatField(null=True,blank=True)
     issue = models.ForeignKey(Issue, related_name="user_points")
 
+    def __unicode__(self):
+        return u'%s:%s - %s points' % (self.issue.subject, self.user.username, self.points)
+
+
+class ProjectWorkRatio(models.Model):
+    development = models.FloatField(default=0)
+    testing = models.FloatField(default=0)
+    management = models.FloatField(default=0)
+
+    def display(self):
+        return 'Dev: %.2f%%, Test: %.2f%%, Man %.2f%%' % (self.development, self.testing, self.management)

@@ -7,12 +7,10 @@
       <div onclick="imp.clickable_time_estimate(this, '{% url 'issue_points_update' %}',{{ per_user.issue_points.id }}, {{issue.id}})" >
     {% end_is_same_user %}
   {% end_can_estimate %}
-    
+
     {% has_permission has_view_ctc_billable_rates project.business %}
       <div style="float:left" class="short_traffic">
-
         {% if per_user.has_estimate %}
-
           {% if per_user.has_hours %}
           <div class="special_traffic_container">
             <div class="special_traffic_colourbar {{per_user.bar_color}}" style="width:{{ per_user.completion_width }}%;" >
@@ -20,12 +18,10 @@
             </div>
             <div class="special_traffic_text">
               <span class="edit_issue_subject">
-
                 {% if per_user.has_hours %}
                   {{ per_user.hours }} /
                 {% endif %}
                 <span class="estimated_hours">{{ per_user.issue_points.points|default_if_none:"&nbsp;"|default:"&nbsp;" }}</span> 
-                
               </span>
             </div>
           </div>
@@ -43,7 +39,6 @@
             <span class="edit_issue_subject">&nbsp;</span>
           {% endif %}
         {% endif %}
-
       </div>
     {% end_permission %}
 
@@ -57,7 +52,6 @@
         {{ per_user.issue_points.points|default_if_none:"&nbsp;"|default:"&nbsp;" }}
       </div>
     {% end_permission %}
-
   </div>		     
 
   {% user_can_estimate_own_points user project.business %}

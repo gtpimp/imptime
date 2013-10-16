@@ -6,7 +6,6 @@
 
 <div class="project_detail">
   <img style="display:none" class="loading" src="{{STATIC_URL}}/images/icons/loadingAnimation.gif"/>
-
   <div class="row-fluid">
     <div class="span12">
       <ul class="unstyled subnav">
@@ -17,6 +16,17 @@
     </div>
   </div>
 
+  <div class="row-fluid">
+    <div class="span12">
+      <div class='menu-items'>
+	<ul class="unstyled subnav">
+	  {% for user,cost in project.cost_per_developer.items %}
+	  <li>{{ user.username }}: {{cost|floatformat:-2}}</li>
+	  {% endfor %}
+	</ul>
+      </div>
+    </div>
+  </div>
 
   <div class="row-fluid" style="float:left">
     <div class="issues">
