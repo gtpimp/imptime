@@ -1,4 +1,5 @@
 {% load humanize %}
+{% load timepiece_tags %}
 
 <div class="rate_info">
   <h1>{{project.business.name}} - {{project.name}}</h1>
@@ -8,13 +9,15 @@
 
     <thead>
       <tr>
-        <th>username</th>
-        <th>hours</th>
-        <th>ctc rate</th>
-        <th>billed rate</th>
-        <th>ctc</th>
-        <th>billed</th>
-        <th>profit</th>
+        <th>Username</th>
+        <th>Hours</th>
+        <th>CTC Rate</th>
+        <th>Billed Rate</th>
+	<th>Work Ratio</th>
+	<th>Velocity</th>
+        <th>CTC</th>
+        <th>Billed</th>
+        <th>Profit</th>
       </tr>
     </thead>
 
@@ -24,14 +27,20 @@
         <td>{{user_name}}</td>
         <td>{{rate_info.hours}}</td>
         <td>
-          <div class="rate_info_amount_{{user_name}}">R{{rate_info.rate.amount|floatformat:"0"|intcomma}}</div>
+          <div class="editable_rate rate_info_amount_{{user_name}}">R{{rate_info.rate.amount|floatformat:"0"|intcomma}}</div>
         </td>
         <td>
-          <div class="rate_info_billable_amount_{{user_name}}">R{{rate_info.rate.billable_amount|floatformat:"0"|intcomma}}</div>
+          <div class="editable_rate rate_info_billable_amount_{{user_name}}">R{{rate_info.rate.billable_amount|floatformat:"0"|intcomma}}</div>
         </td>
+	<td>
+	  <div class="editable_rate rate_info_work_ratio_{{user_name}}">{{rate_info.work_ratio|percentage}}</div>
+	</td>
+	<td>
+	  <div class="editable_rate rate_info_velocity_{{user_name}}">{{rate_info.velocity|floatformat:"1"|intcomma}}</div>
+	</td>
         <td>R{{rate_info.revenue|floatformat:"0"|intcomma}}</td>
         <td>R{{rate_info.billed|floatformat:"0"|intcomma}}</td>
-        <td>R{{rate_info.profit|floatformat:"0"|intcomma}}</td>
+        <td>R{{rate_info.profit|floatformat:"0"|intcomma}}</td>p
       </tr>
       {% endfor %}
 
@@ -40,6 +49,8 @@
         <th>{{users_and_hours.totals.hours}}</th>
         <th></th>
         <th></th>
+	<th></th>
+	<th</th>
         <th>R{{users_and_hours.totals.revenue|floatformat:"0"|intcomma}}</th>
         <th>R{{users_and_hours.totals.billed|floatformat:"0"|intcomma}}</th>
         <th>R{{users_and_hours.totals.profit|floatformat:"0"|intcomma}}</th>
@@ -67,6 +78,8 @@
   {% for user_name,rate_info in users_and_hours.users.items %}
     imp.make_editable_rate("rate_info_amount_{{user_name}}","{{user_name}}","amount");
     imp.make_editable_rate("rate_info_billable_amount_{{user_name}}","{{user_name}}","billable_amount");
+    imp.make_editable_rate("rate_info_work_ratio_{{user_name}}","{{user_name}}","work_ratio");
+    imp.make_editable_rate("rate_info_velocity_{{user_name}}","{{user_name}}","velocity");
   {% endfor %}
 
 </script>

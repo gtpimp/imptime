@@ -497,3 +497,11 @@ def process_dates(dates, start=None, end=None):
         if to_date else end
 
     return from_date, to_date
+
+def percentage(value):
+    try:
+        value = float(value) * 100
+    except (ValueError, TypeError):
+        return u'0.00%'
+    
+    return u'%.2f%%' % value

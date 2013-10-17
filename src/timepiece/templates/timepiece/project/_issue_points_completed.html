@@ -10,35 +10,20 @@
 
     {% has_permission has_view_ctc_billable_rates project.business %}
       <div style="float:left" class="short_traffic">
-        {% if per_user.has_estimate %}
           {% if per_user.has_hours %}
           <div class="special_traffic_container">
             <div class="special_traffic_colourbar {{per_user.bar_color}}" style="width:{{ per_user.completion_width }}%;" >
-            &nbsp;
+              &nbsp;
             </div>
             <div class="special_traffic_text">
+	      {% endif %}
               <span class="edit_issue_subject">
-                {% if per_user.has_hours %}
-                  {{ per_user.hours }} /
-                {% endif %}
-                <span class="estimated_hours">{{ per_user.issue_points.points|default_if_none:"&nbsp;"|default:"&nbsp;" }}</span> 
+		{{ per_user|points_and_stuff }}
               </span>
+	      {% if per_user.has_hours %}
             </div>
           </div>
-          {% else %}
-            <span class="edit_issue_subject">
-              / <span class="estimated_hours">{{ per_user.issue_points.points|default_if_none:"&nbsp;"|default:"&nbsp;" }}</span> 
-            </span>
-          {% endif %}
-        {% else %}
-          {% if per_user.has_hours %}
-            <span class="edit_issue_subject">
-              {{ per_user.hours }} /
-            </span>
-          {% else %}
-            <span class="edit_issue_subject">&nbsp;</span>
-          {% endif %}
-        {% endif %}
+	  {% endif %}
       </div>
     {% end_permission %}
 

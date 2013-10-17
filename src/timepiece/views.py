@@ -50,7 +50,7 @@ try:
 except ImportError:
     from timepiece import timezone
 
-from timepiece.utils import render_with, reverse_lazy, get_week_start
+from timepiece.utils import render_with, reverse_lazy, get_week_start, percentage
 
 from timepiece import models as timepiece
 from timepiece import utils
@@ -3088,7 +3088,7 @@ def add_project(request, business_id , template="timepiece/project/_create_edit_
     context = context or {}
     business = timepiece.Business.objects.get(pk=business_id)
     context['business'] = business
-    context['current_user'] =request.user
+    context['current_user'] = request.user
     project = timepiece.Project(  business = business,
                                   point_person = request.user,
                                   type = timepiece.Attribute.objects.get(label="default"),
@@ -3178,7 +3178,7 @@ def _augment_issue_data(issue, current_user, users_allowed_to_estimate_on_busine
         per_user_issue_data["issue_points"] = user_points
 
         hours = float(issue.hours_for_user(user))
-        #estimated_cost = user_points_float * user_rate
+
         #completion_against_estimated_cost = ((actual_billable_cost_of_issue / estimated_cost)*100) if estimated_cost>0 else 0.0
 
         completion_against_estimated_hours = ((hours/user_points.points)*100) if user_points.points>0 else 0.0
@@ -3572,21 +3572,49 @@ def view_project_rates(request, project_id, template="timepiece/project/view_rat
 @login_required
 def edit_project_rate(request, project_id):
     project = timepiece.Project.objects.filter(pk=project_id).filter_by_logged_in_user(request.user)[0]
-    user_name = request.POST['user_name']
-    new_value = request.POST['update_value']
-    field_name = request.POST['field_name']
 
+    user_name = request.POST['user_name']
+    field_name = request.POST['field_name']
+    new_value = request.POST['update_value']
+
+    if 'amount' in field_name:
+        if new_value.lower().startswith('r'):
+            new_value = new_value[1:]
+            try:
+                new_value = float(new_value)
+            except (ValueError, TypeError):
+                return HttpResponse(request.POST['original_value'])
+    
     rate = project.get_user_rate(user_name)
 
     ret_val = None
     if field_name == 'amount':
-        rate.amount = float(new_value)
+        rate.amount = new_value
         rate.save()
         ret_val = "R%s" % rate.amount
     elif field_name == "billable_amount":
-        rate.billable_amount = float(new_value)
+        rate.billable_amount = new_value
         rate.save()
         ret_val = "R%s" % rate.billable_amount
+    elif field_name == 'velocity':
+        try:
+            new_value = float(new_value)
+        except (ValueError, TypeError):
+            return HttpResponse(request.POST['original_value'])
+        rate.velocity = new_value
+        rate.save()
+        return HttpResponse(new_value)
+    elif field_name == 'work_ratio':
+        if new_value.endswith('%'):
+            new_value = new_value[:-1]
+
+        try:
+            new_value = float(new_value) / 100.0
+        except (ValueError, TypeError):
+            return HttpResponse(request.POST['original_value'])
+        rate.work_ratio = new_value
+        rate.save()
+        return HttpResponse(percentage(new_value))
     else:
         ret_val = "Unsupported field"
         
@@ -3934,27 +3962,28 @@ class CSVSprintExport(CSVMixin):
         can_see_hours = timepiece.BusinessPermissions.objects.get_or_create(business=business, user=current_user)[0].has_view_actual_hours
 
         header_row = []
-        header_row.append('issue number')
+        header_row.append('Issue Number')
+        header_row.append('Issue Description')
             
         if can_see_ctc_billable_rates:
-            header_row.append("ctc")
-            header_row.append("billable")
+            header_row.append("CTC")
+            header_row.append("Billable")
 
         for username,user in business_users_and_names:
             if can_see_hours:
-                header_row.append("Hours for %s"%username)
+                header_row.append("Hours for %s"%user.get_full_name())
 
             if can_see_other_points:
-                header_row.append("Points for %s"%username)
+                header_row.append("Estimated Hours for %s"%user.get_full_name())
 
             if can_see_ctc_billable_rates:
-                header_row.append("Rate for %s"%username)
+                header_row.append("Rate for %s"%user.get_full_name())
                 
         total = [header_row]
-        for issue in self.project.issues.all():                
-            user_hours_for_issue = self.project.users_and_hours(issue__id=issue.id)
+        for issue in self.project.issues.all():    
+            user_hours_for_issue = self.project.users_and_hours(issue__id=issue.id, cache=False)
 
-            data_row = [issue.id]
+            data_row = [issue.number, issue.subject]
 
             if can_see_ctc_billable_rates:
                 data_row.append(issue.ctc)

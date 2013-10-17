@@ -71,6 +71,50 @@
   </div>
 
   {% has_permission has_view_ctc_billable_rates project.business %}
+  
+  <br />
+  <hr />
+  <h1>Estimated Total Sprint Cost</h1>
+  <table>
+    <thead>
+      <th>User</th>
+      <th>Points</th>
+      <th>Ratio</th>
+      <th>Velocity</th>
+      <th>Total CTC</th>
+      <th>Total Billed</th>
+    </thead>
+    <tbody>
+      {% for user, estimate in project.cost_per_developer.items %}
+      <tr>
+	<td>{{ user.username }}</td>
+	<td>{{ estimate.points }}</td>
+	<td>{{ estimate.rate.work_ratio|floatformat:"1"|intcomma }}</td>
+	<td>{{ estimate.rate.velocity|floatformat:"1"|intcomma }}</td>
+	<td>R{{ estimate.total_ctc|floatformat:"0"|intcomma }}</td>
+	<td>R{{ estimate.total_billed|floatformat:"0"|intcomma }}</td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+
+  <h1>Current Sprint Details</h1>
+  <table>
+    <thead>
+      <th>User</th>
+      <th>Velocity</th>
+      <th>Ratio</th>
+    </thead>
+    <tbody>
+      {% for user, estimate in project.cost_per_developer.items %}
+      <tr>
+	<td>{{ user.username }}</td>
+	<td>{{ estimate.velocity|floatformat:"1"|intcomma }}</td>
+	<td>{{ estimate.work_ratio|floatformat:"1"|intcomma }}</td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
 
     <br/>
     <hr/>
@@ -83,17 +127,15 @@
         <th>billable</th>
       </thead>
       <tbody>
-          {% for data in project.costs_by_feature.values %} 
+        {% for data in project.costs_by_feature.values %} 
         <tr>
           <th>{{data.name}}</th>
           <td>R{{data.ctc|floatformat:"0"|intcomma}}</td>
           <td>R{{data.billable|floatformat:"0"|intcomma}}</td>
         </tr>
-          {% endfor %}
+        {% endfor %}
       </tbody>
     </table>
-
-
   {% end_permission %}
 
 

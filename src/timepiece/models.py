@@ -366,12 +366,8 @@ class Project(models.Model):
         related_name='projects_with_status',
     )
     description = models.TextField(blank=True, null=True)
-
     order = models.IntegerField(null=True,blank=True)
-
     objects = QuerySetManager(ProjectQuerySet)
-
-    work_ratio = models.ForeignKey('ProjectWorkRatio', null=True, blank=True)
 
     def get_points(self):
         user_ids = [user.id for user in self.business.users]
@@ -394,19 +390,29 @@ class Project(models.Model):
         return ret
 
     def cost_per_developer(self):
-        if self.work_ratio:
-            ratio = self.work_ratio.development
-        #elif self.business.ratio:
-        #    ratio = self.business_ration.development
-        else:
-            ratio = 0
-        
+        if hasattr(self, '_cost_per_developer_cache'):
+            return self._cost_per_developer_cache
         ret = {}
+        
+        users_and_hours = self.users_and_hours()
+        total_hours = users_and_hours['totals']['hours']
+
         for user, points in self.get_points_total().items():
             if not points:
                 continue
-            rate = self.get_user_rate(user)
-            ret[user] = points * ratio * float(rate.billable_amount)
+            rate = users_and_hours['users'][user.username]['rate']
+            velocity = rate.velocity
+            user_hours = users_and_hours['users'][user.username]['hours']
+            
+            ret[user] = {
+                'points': points, 
+                'total_billed': points * (1 / rate.work_ratio) * float(rate.billable_amount) * velocity,
+                'total_ctc': points * (1 / rate.work_ratio) * float(rate.amount) * velocity,
+                'rate': rate,
+                'velocity': points / float(user_hours),
+                'work_ratio': user_hours / total_hours
+            }
+        self._cost_per_developer_cache = ret
         return ret
 
     def get_user_rate(self, user):
@@ -472,14 +478,13 @@ class Project(models.Model):
         return new_name
 
     def save(self, *args, **kwargs):
-
+        
         self.code = Project.get_code_from_name(self.name)
 
         if not self.id and Project.objects.filter(code=self.code,business=self.business).count()>0:
             raise Exception("A Project with code %s already exists" % self.code)
 
         super(Project, self).save(*args, **kwargs)
-
 
         # Add all users from other projects in this business
         users = User.objects.filter(user_projects__business=self.business).distinct()
@@ -488,16 +493,25 @@ class Project(models.Model):
             UserProfile.objects.get_or_create(user=user)
             user.save()
 
+        projects = Project.objects.filter(business=self.business).order_by('pk')
+        if projects:
+            last_project = projects[projects.count() - 2] #last project is this one
 
         for user in users:
-            # UserProfile.objects.get_or_create(user=user)
-            # user.save()
-
-            rate,newly_created = Rate.objects.get_or_create(project=self, user=user)
-            rate.amount = user.profile.amount
-
-            rate.billable_amount = user.profile.billable_amount
-            rate.save()
+            last_rate = None
+            if projects:
+                try:
+                    last_rate = Rate.objects.get(project=last_project, user=user).work_ratio
+                except Rate.DoesNotExist:
+                    pass
+                    
+            rate, newly_created = Rate.objects.get_or_create(project=self, user=user)
+            if newly_created:
+                rate.amount = last_rate.amount if last_rate else user.profile.amount
+                rate.billable_amount = last_rate.billable_amount if last_rate else user.profile.billable_amount
+                rate.work_ratio = last_rate.work_ratio if last_rate else 0
+                rate.velocity = last_rate.velocity if last_rate else 0
+                rate.save()
 
     @classmethod
     def projects_in_desc_order_of_use(self, business_id):
@@ -654,7 +668,13 @@ class Project(models.Model):
         return [ user for user in users if not BusinessPermissions.for_user(user, self.business).has_estimate_own_points ] 
 
     def users_and_hours(self, **entry_filter):
-        if self._users_and_hours is not None:
+        
+        cache = True
+        if 'cache' in entry_filter:
+            cache = entry_filter['cache']
+            del(entry_filter['cache'])
+        
+        if self._users_and_hours is not None and cache:
             return self._users_and_hours
 
         entries_qs = Entry.objects.filter(project=self)
@@ -677,12 +697,16 @@ class Project(models.Model):
                 rate = Rate.objects.get(project=self, user=user)
             except Rate.DoesNotExist:
                 rate = Rate.objects.create(project=self, user=user, amount=0)
-            res['users'][user.username] = {'hours':user_total['hours'], 'rate':rate, 
-                                           'revenue': float(user_total['hours'])*float(rate.amount), 
-                                           'end_time': user_total['end_time'],
-                                           'billed': float(user_total['hours']) * float(rate.billable_amount)}
+            res['users'][user.username] = {
+                'hours':user_total['hours'], 'rate':rate, 
+                'revenue': float(user_total['hours'])*float(rate.amount), 
+                'end_time': user_total['end_time'],
+                'billed': float(user_total['hours']) * float(rate.billable_amount)
+                }
             user_info = res['users'][user.username]
             user_info['profit'] = user_info['billed'] - user_info['revenue']
+            user_info['work_ratio'] = rate.work_ratio
+            user_info['velocity'] = rate.velocity
             
             total_hours += user_total['hours']
             total_revenue += float(user_total['hours'])*float(rate.amount)
@@ -1887,6 +1911,8 @@ class Rate(models.Model):
     user = models.ForeignKey(User)
     amount = models.DecimalField(max_digits=8, decimal_places=2, default=0)
     billable_amount = models.DecimalField(max_digits=8, decimal_places=2, default=0)
+    work_ratio = models.FloatField(default=0)
+    velocity = models.FloatField(default=1)
 
 class Expense(models.Model):
     date = models.DateField()
@@ -2102,12 +2128,3 @@ class IssuePoints(models.Model):
 
     def __unicode__(self):
         return u'%s:%s - %s points' % (self.issue.subject, self.user.username, self.points)
-
-
-class ProjectWorkRatio(models.Model):
-    development = models.FloatField(default=0)
-    testing = models.FloatField(default=0)
-    management = models.FloatField(default=0)
-
-    def display(self):
-        return 'Dev: %.2f%%, Test: %.2f%%, Man %.2f%%' % (self.development, self.testing, self.management)

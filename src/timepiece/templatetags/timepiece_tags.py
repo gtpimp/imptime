@@ -15,12 +15,15 @@ except ImportError:
 
 from dateutil.relativedelta import relativedelta
 from dateutil import rrule
+from django.utils.safestring import mark_safe
 
 import timepiece.models as timepiece
-from timepiece.utils import get_total_time, get_week_start, get_month_start
+from timepiece.utils import get_total_time, get_week_start, get_month_start, percentage
 
 
 register = template.Library()
+
+percentage = register.filter(percentage)
 
 @register.filter
 def currency(value):
@@ -414,3 +417,20 @@ def timesheet_url(type, pk, date):
 @register.filter
 def keyvalue(dict, key):    
     return dict[key]
+
+@register.filter(is_safe=True)
+def points_and_stuff(per_user):
+    points = per_user['issue_points']
+    points = points.points if points else '&nbsp;'
+    points = '<span class="estimated_hours">%s</span>' % points
+    
+    if per_user['has_estimate'] and per_user['has_hours']:
+        if per_user['has_hours']:
+            return mark_safe(u'%s / %s' % (per_user['hours'], points))
+        else:
+            return mark_safe(u' / %s' % points)
+    else:
+        if per_user['has_hours']:
+            return mark_safe(u'%s / ' % per_user['hours'])
+        else:
+            return mark_safe('&nbsp;')

@@ -9920,3 +9920,11 @@ label {
     display: block;
     font-weight: bold;
 }
+
+.editable_rate input {
+    font-size: 10px;
+    height: 9px;
+    margin: 0px;
+    text-align: right;
+    width: 90px;
+}
