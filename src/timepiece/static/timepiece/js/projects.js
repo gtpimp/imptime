@@ -158,6 +158,7 @@ imp.close_sprint = function(el, sprint_name, url) {
 			       on_done();
                            }
                           });
+    return false;
 };
 
 imp.reopen_sprint = function(el, sprint_name, url) {
@@ -171,6 +172,7 @@ imp.reopen_sprint = function(el, sprint_name, url) {
 			       on_done();
                            }
                           });
+    return false;
 };
 
 imp.project_card_thinking = function(el) {

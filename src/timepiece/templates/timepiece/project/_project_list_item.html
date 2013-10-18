@@ -8,14 +8,33 @@
   <div class="project_table project_table_appearance">    
     <div class="project_table_row project_coloured_row">
       <div class="project_table_cell project_expand" preloaded="{{ project.is_preloaded }}" onclick="imp.projects.load_or_display_issues(this, '{% url 'get_project_detail' project.id %}')"  >  
-        <div class="draggable">
-          <img class="drag_img" style="display:none" src="{{STATIC_URL}}/images/icons/drag.png"/> 
-        </div>
         <div class="project_title">
+          <div class="draggable" style="float:left">
+            <img class="drag_img" style="display:none" src="{{STATIC_URL}}/images/icons/drag.png"/> 
+          </div>
           <span class="project_number">#{{project.id}}</span> - {{project.business.name}} - {{ project }}{% if project.work_ratio %}) ({{ project.work_ratio.display }}){% endif %}
-            <a onclick="imp.projects.show_project_card_as_popup(event,'{% url 'get_project_card_for_business'  business_id=project.business.id project_id=project.id %}');return false" href='#' target_id=".issue_detail" project_card_url="{% url 'get_project_card_for_business'  business_id=business.id project_id=project.id  %}" business_id="{{ business.id }}" project_id="{{ project.id }}">
+
+            <div class="project_title_menu">
+
+              {% comment %}
+              {%  has_permission has_create_sprint business  %}
+                    <a href="#" class="menu_close_sprint" {% if not project.is_open %}style="display:none"{% endif %} onclick="return imp.close_sprint(this, '{{project}}', '{% url 'close_project' project.id %}')">
+                      Close
+                    </a> 
+                    <a href="#" class="menu_reopen_sprint" {% if project.is_open %}style="display:none"{% endif %} onclick="return imp.reopen_sprint(this, '{{project}}', '{% url 'open_project' project.id %}')">
+                      Reopen
+                    </a>
+                     &nbsp; / &nbsp;
+              {% end_permission %}
+                    {% endcomment %}
+
+
+              <a onclick="imp.projects.show_project_card_as_popup(event,'{% url 'get_project_card_for_business'  business_id=project.business.id project_id=project.id %}');return false" href='#' target_id=".issue_detail" project_card_url="{% url 'get_project_card_for_business'  business_id=business.id project_id=project.id  %}" business_id="{{ business.id }}" project_id="{{ project.id }}">
           Card
-            </a>
+              </a>
+
+                          </div>
+
         </div>
         <div id="b_card_{{business.id}}">
         </div>       

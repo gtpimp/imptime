@@ -9758,13 +9758,12 @@ ul.project_list {
     font-size: 9px;
 }
 
-.closed_project .project_table_cell .project_title {
-    text-decoration: line-through;
-}
-
-.project_table_cell .project_title a {
+.project_table_cell .project_title .project_title_menu {
     font-size: 10px;
     float: right;
+
+.closed_project .project_table_cell .project_title {
+    text-decoration: line-through;
 }
 
 .issues .issues_list table .dev_done td {
