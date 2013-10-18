@@ -32,7 +32,7 @@
       
       {% if perms.timepiece.change_project %}
       <li>
-        <a href='{% url 'edit_project' project_id=project.id %}'>Edit</a>
+        <a target="_blank" href='{% url 'edit_project' project_id=project.id %}'>Edit</a>
       </li>
       {% endif %}
 
