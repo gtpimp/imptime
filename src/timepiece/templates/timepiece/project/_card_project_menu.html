@@ -30,6 +30,11 @@
       </li>
       {% end_permission %}
       
+      {% if perms.timepiece.change_project %}
+      <li>
+        <a href='{% url 'edit_project' project_id=project.id %}'>Edit</a>
+      </li>
+      {% endif %}
 
       <li>
         <a href="{% url 'project_list' project.id %}">
