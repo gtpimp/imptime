@@ -2,6 +2,8 @@ imp.projects = imp.projects || {};
 
 imp.projects.already_loaded_sprints = {};
 
+imp.show_money_on = true;
+
 imp.projects.on_sortable_changed_for_url = function(sortable_url) {
     var _sortable_url = sortable_url;
     function ret_func(event, ui) {
@@ -138,6 +140,7 @@ imp.on_issue_rows_loaded = function(issue_row_container) {
 								      $(this).find('.drag_img').hide();
 								      $(this).removeClass("hovered");
 								  });
+    imp.refresh_show_money();
 };
 
 imp.toggle_card_menu = function (event) {
@@ -225,8 +228,21 @@ imp.create_splitter = function() {
     $(".splitter").splitter({sizeRight: $(window).width()*0.25});
 };
 
+imp.toggle_show_money = function() {
+    imp.show_money_on = ! imp.show_money_on;
+    imp.refresh_show_money();
+};
+
+imp.refresh_show_money = function() {
+    if ( imp.show_money_on ) {
+	$('.money_cell').show();
+    } else {
+	$('.money_cell').hide();
+    }
+};
+
 (function() {
-  var loading_counter = 0
+  var loading_counter = 0;
   imp.loading = function(msg) {
 
       loading_counter += 1;

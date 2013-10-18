@@ -20,6 +20,7 @@ imp.show_issue_detail = function(url) {
     $(".issue_detail").load(url,
 			    function() {
 				$(".issue_detail .subject_class input").focus();
+				imp.refresh_show_money();
 				on_done();
 			    });
 
@@ -81,6 +82,7 @@ imp.on_issue_form_submit = function(element, sprint_id, url, on_success) {
         var table_body =  sprint_el.find(".issue_list_body");
         if(table_body.length > 0) {
             table_body.append(data);
+	    imp.on_issue_rows_loaded();
         }
         imp.do_form_remove();
 	on_done();
