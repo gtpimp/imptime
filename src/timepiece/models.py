@@ -494,12 +494,14 @@ class Project(models.Model):
             user.save()
 
         projects = Project.objects.filter(business=self.business).order_by('pk')
-        if projects:
+        if projects and projects.count() > 1:
             last_project = projects[projects.count() - 2] #last project is this one
+        else:
+            last_project = None
 
         for user in users:
             last_rate = None
-            if projects:
+            if last_project:
                 try:
                     last_rate = Rate.objects.get(project=last_project, user=user).work_ratio
                 except Rate.DoesNotExist:
