@@ -9423,11 +9423,11 @@ ul.project_list {
 }
 
 .issue_instance_row.status_dev_done .issue_subject {
-    color: #559955;
+    color: #225522;
 }
 
 .issue_instance_row.status_tested .issue_subject {
-    color: #55bb55;
+    color: #225522;
     text-decoration: line-through;
 }
 
@@ -9597,6 +9597,7 @@ ul.project_list {
     /*float:left;*/
     font-size:10px;
     width: 100%;
+    color: #000000;
 }
 
 .issues .issue_pane {
