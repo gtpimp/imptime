@@ -16,7 +16,7 @@ class Command(BaseCommand):
     def handle(self, *args, **kwargs):
         models.Issue.objects.all().delete()
         self._handle('redmine_impact', 'impact')
-        self._handle('redmine_unionswiss', 'unionswiss')
+        #self._handle('redmine_unionswiss', 'unionswiss')
         self._handle('redmine_hfm', 'koen')
         self._handle('redmine_projects', None)
 
