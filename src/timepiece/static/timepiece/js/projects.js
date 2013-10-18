@@ -130,12 +130,13 @@ imp.attach_sprint_headings = function(sprint_heading_container) {
 };
 
 imp.on_issue_rows_loaded = function(issue_row_container) {
-    return;
     $(issue_row_container).find(".drag_img").parents("tr").hover( function() {
 								      $(this).find('.drag_img').show();
+								      $(this).addClass("hovered");
 								  },
 								  function() {
 								      $(this).find('.drag_img').hide();
+								      $(this).removeClass("hovered");
 								  });
 };
 

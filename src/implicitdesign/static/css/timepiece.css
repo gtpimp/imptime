@@ -9629,10 +9629,6 @@ ul.project_list {
     float: left;
 }
 
-.drag_img_container {
-    float: left;
-}
-
 .issues .issues_list table {
     width: 100%;
 }
@@ -9651,12 +9647,20 @@ ul.project_list {
 }
 
 .issues .issues_list table td {
-    padding-left:10px;
-    padding-right:10px;
-    padding-top:5px;
-    padding-bottom:5px;
+    padding-left:3px;
+    padding-right:2px;
+    padding-top:3px;
+    padding-bottom:3px;
     border-left: 1px solid #dfdfdf;
     border-bottom: 1px solid #AAAAAA;
+}
+
+.issues .issues_list .hovered td {
+    background: -moz-linear-gradient(center top , #DDDDDD, #D0D3FA) repeat scroll 0 0 #D0D3FA;
+    background: -webkit-gradient(linear, 0,0,0 100%, from(#DDDDDD), to(#D0D3FA));
+    background: -webkit-linear-gradient(top, #DDDDDD, #D0D3FA);
+    background: -o-linear-gradient(top, #DDDDDD, #D0D3FA);
+    background: linear-gradient(to bottom, #DDDDDD, #D0D3FA);
 }
 
 .projects .projects_list table td {
@@ -9751,7 +9755,6 @@ ul.project_list {
 }
 
 .project_table_cell .project_title {
-    padding-left: 30px;
 }
 
 .project_table_cell .project_title .project_number {
@@ -9778,7 +9781,7 @@ ul.project_list {
 }
 
 .issues .issue_number_cell {
-    width: 50px;
+    width: 58px;
 }
 
 .issues .issues_list table .tested {
@@ -9893,6 +9896,11 @@ ul.project_list {
     cursor:-webkit-grabbing;
     float: left;
     margin-right:20px;
+}
+
+.drag_img_container {
+    width: 30px;
+    float: left;
 }
 
 .drag_img {
