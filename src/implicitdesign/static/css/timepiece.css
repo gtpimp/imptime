@@ -9929,3 +9929,22 @@ label {
     text-align: right;
     width: 90px;
 }
+
+#branding {
+    background-color: #4c4c4c;
+    color: #ffffff;
+}
+
+#branding .branding_title {
+    position: relative;
+}
+
+#branding .logo {
+    float: right;
+}
+
+#branding #site-name {
+    font-size: 14px;
+    float: left;
+    padding-left: 10px;
+}

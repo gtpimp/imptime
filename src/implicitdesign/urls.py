@@ -5,6 +5,9 @@ from django.contrib import admin
 from django.conf.urls.static import static
 import settings
 admin.autodiscover()
+from django.contrib.auth.decorators import login_required
+
+admin.site.login = login_required(admin.site.login)
 
 import views
 
@@ -22,7 +25,7 @@ urlpatterns = patterns('',
 
                        url(r'^us/', views.us),
                        
-                       url(r'^accounts/login/$', 'django.contrib.auth.views.login', name='auth_login'),
+                       url(r'^accounts/login/$', 'django.contrib.auth.views.login', {'template_name': 'admin/login.html'}, name='auth_login'),
                        url(r'^accounts/logout/$', 'django.contrib.auth.views.logout_then_login', name='auth_logout'),
                        url(r'^accounts/password-change/$', 'django.contrib.auth.views.password_change', name='change_password'),
                        url(r'^accounts/password-change/done/$', 'django.contrib.auth.views.password_change_done'),
