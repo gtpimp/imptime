@@ -65,7 +65,14 @@ imp.do_form_remove  = function() {
 };
 
 
-imp.on_issue_form_submit = function(element, sprint_id, url) {
+imp.create_issue_and_add_another = function(element, sprint_id, url) {
+    imp.on_issue_form_submit(element, sprint_id, url, function() {
+				 imp.do_form_show(element , url);
+			     });
+    return false;
+};
+
+imp.on_issue_form_submit = function(element, sprint_id, url, on_success) {
     var mform = $(element).parents("form");
     var on_done = imp.issue_loading("Creating issue");
     var sprint_el = $(".project_li[list_project_id="+sprint_id+"]");
@@ -77,6 +84,9 @@ imp.on_issue_form_submit = function(element, sprint_id, url) {
         }
         imp.do_form_remove();
 	on_done();
+	if ( on_success ) {
+	    on_success();
+	}
     };
 
     $.ajax({type:"POST",

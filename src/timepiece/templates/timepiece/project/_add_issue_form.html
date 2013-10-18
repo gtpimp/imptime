@@ -18,5 +18,6 @@
     </div>
     <br />
     <input type="submit" class="btn" onclick="return imp.on_issue_form_submit(this, {{project.id}}, '{% url 'add_issue' project.id %}');" value="Create"/>
+    <input type="submit" class="btn" onclick="return imp.create_issue_and_add_another(this, {{project.id}}, '{% url 'add_issue' project.id %}');" value="Create and add another"/>
   </form>
 </div>
