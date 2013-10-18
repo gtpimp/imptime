@@ -16,7 +16,6 @@
             </div>
           </div>
           <span class="project_number">#{{project.id}}</span> - {{project.business.name}} - {{ project }}{% if project.work_ratio %}) ({{ project.work_ratio.display }}){% endif %}
-
             <div class="project_title_menu">
 
               {% comment %}
@@ -37,6 +36,9 @@
               </a>
 
                           </div>
+                          <span class="project_description">{{ project.description }}</span>
+
+            
 
         </div>
         <div id="b_card_{{business.id}}">
