@@ -14,7 +14,7 @@ class Command(BaseCommand):
     custom_business_names = ['impact-spii', 'unionswiss', 'impact']
 
     def handle(self, *args, **kwargs):
-        models.Issue.objects.all().delete()
+        models.Issue.objects.all().exclude(project__business__name="unionswiss").delete()
         self._handle('redmine_impact', 'impact')
         #self._handle('redmine_unionswiss', 'unionswiss')
         self._handle('redmine_hfm', 'koen')
