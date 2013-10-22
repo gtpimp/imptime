@@ -453,6 +453,14 @@ class Project(models.Model):
     
     @classmethod
     def get_code_from_name(self, name):
+
+        """ Try to use the project id """
+        project_id = None
+        match_object = re.compile(".*#(\d+).*").search(name)
+        if match_object and match_object.groups() != 0:
+            project_id = int(match_object.group(1))
+            return Project.objects.get(pk=project_id).code
+
         new_name = "".join(name.split())
         new_name = new_name.strip()
         new_name = new_name.replace(":NEXT:","")
@@ -467,13 +475,6 @@ class Project(models.Model):
         replacement = lambda matches: "".join(['_' for i in matches.groups()])
         new_name = re_sub(r"(\W{1})", replacement, new_name)
         new_name = new_name.replace("_","")
-
-        """ Try to use the project id """
-        project_id = None
-        match_object = re.compile(".*#(\d+).*").search(new_name)
-        if match_object and match_object.groups() != 0:
-            project_id = int(match_object.group(1))
-            return Project.objects.get(pk=project_id).code
 
         return new_name
 

@@ -62,7 +62,8 @@ class Extractor(object):
             if hours_before != hours_after:
                 project = Project.objects.get(pk=p_id)
                 if not project.is_open:
-                    raise Exception("Trying to add entries to a closed project [%s - %s]" % (project.business.name, project))
+                    pass
+                    #raise Exception("Trying to add entries to a closed project [%s - %s]" % (project.business.name, project))
 
     def _handle_file(self, dirname, fname):
         is_valid_timesheet_file = fname[-4:] == ".org" and fname[0] != "." and fname[0] != "#"
