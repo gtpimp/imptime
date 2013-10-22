@@ -12,15 +12,13 @@ class Command(BaseCommand):
 
     def handle(self, *args, **kwargs):
 
-        models.Issue.objects.all().exclude(project__business__name="koen").exclude(project__business__name="unionswiss").exclude(project__business__name="impact").delete()
+        models.Issue.objects.all().filter(project__business__name="impact").delete()
+        self._handle('redmine_impact', 'impact')
 
-        #models.Issue.objects.all().filter(project__business__name="impact").delete()
-        #self._handle('redmine_impact', 'impact')
+        models.Issue.objects.all().filter(project__business__name="koen").delete()
+        self._handle('redmine_hfm', 'koen')
 
-        #models.Issue.objects.all().filter(project__business__name="koen").delete()
-        #self._handle('redmine_hfm', 'koen')
-
-        self._handle('redmine_projects', None)
+        #self._handle('redmine_projects', None)
         #self._handle('redmine_unionswiss', 'unionswiss')
 
     def _handle(self, redmine_db_name, given_business_name=None):
