@@ -404,10 +404,14 @@ class Project(models.Model):
             velocity = rate.velocity
             user_hours = users_and_hours['users'][user.username]['hours']
             
+            total_billed = points * (1 / rate.work_ratio) * float(rate.billable_amount) * velocity
+            total_ctc = points * (1 / rate.work_ratio) * float(rate.amount) * velocity
+
             ret[user] = {
                 'points': points, 
-                'total_billed': points * (1 / rate.work_ratio) * float(rate.billable_amount) * velocity,
-                'total_ctc': points * (1 / rate.work_ratio) * float(rate.amount) * velocity,
+                'total_billed': total_billed,
+                'total_ctc': total_ctc,
+                'total_profit': total_billed - total_ctc,
                 'rate': rate,
                 'velocity': points / float(user_hours),
                 'work_ratio': user_hours / total_hours
@@ -700,11 +704,14 @@ class Project(models.Model):
                 rate = Rate.objects.get(project=self, user=user)
             except Rate.DoesNotExist:
                 rate = Rate.objects.create(project=self, user=user, amount=0)
+
+            billed = float(user_total['hours']) * float(rate.billable_amount)
+
             res['users'][user.username] = {
                 'hours':user_total['hours'], 'rate':rate, 
                 'revenue': float(user_total['hours'])*float(rate.amount), 
                 'end_time': user_total['end_time'],
-                'billed': float(user_total['hours']) * float(rate.billable_amount)
+                'billed': billed
                 }
             user_info = res['users'][user.username]
             user_info['profit'] = user_info['billed'] - user_info['revenue']
