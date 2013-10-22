@@ -10,15 +10,15 @@ class Command(BaseCommand):
     args = "No options"
     help = "Import all redmine issues into the timesheet system"
 
-    # Business which have their own redmine installation
-    custom_business_names = ['impact-spii', 'unionswiss', 'impact']
-
     def handle(self, *args, **kwargs):
-        models.Issue.objects.all().exclude(project__business__name="unionswiss").delete()
+        models.Issue.objects.all().filter(project__business__name="impact").delete()
         self._handle('redmine_impact', 'impact')
-        #self._handle('redmine_unionswiss', 'unionswiss')
+
+        models.Issue.objects.all().filter(project__business__name="koen").delete()
         self._handle('redmine_hfm', 'koen')
-        self._handle('redmine_projects', None)
+
+        #self._handle('redmine_projects', None)
+        #self._handle('redmine_unionswiss', 'unionswiss')
 
     def _handle(self, redmine_db_name, given_business_name=None):
 
@@ -35,12 +35,7 @@ class Command(BaseCommand):
                 business = models.Business.objects.get(name=given_business_name)
             except models.Business.DoesNotExist:
                 raise Exception("No business with name : %s" % given_business_name)
-            #models.Issue.objects.filter(project__business=business).delete()
         else:
-            #qs = models.Issue.objects
-            #for custom_business_name in self.custom_business_names:
-            #    qs = qs.exclude(project__business__name=custom_business_name)
-            #qs.delete()
             business = None
 
         point_person = User.objects.get_or_create(username='us')[0]
