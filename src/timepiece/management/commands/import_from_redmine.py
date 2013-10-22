@@ -61,12 +61,13 @@ class Command(BaseCommand):
             project_code = ""
 
             if redmine_issue.fixed_version_id==0 or redmine_issue.fixed_version is None:
-                continue
+                project_name = "backlog"
+            else:
+                try:
+                    project_name = redmine_issue.fixed_version.name
+                except Exception:
+                    raise Exception("Invalid issue configuration for %d: version_id=%s" % (redmine_issue.id, redmine_issue.fixed_version_id))
 
-            try:
-                project_name = redmine_issue.fixed_version.name
-            except Exception:
-                raise Exception("Invalid issue configuration for %d: version_id=%s" % (redmine_issue.id, redmine_issue.fixed_version_id))
             if business is None:
                 business_name = models.RedmineToTimepieceBusinessMapping.find_from_redmine(redmine_issue.project.name)
                 try:
