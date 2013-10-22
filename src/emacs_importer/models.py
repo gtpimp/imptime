@@ -200,4 +200,3 @@ class BambooInvoiceItems(models.Model):
     @property
     def total_ex_vat(self):
         return self.amount * self.quantity
-

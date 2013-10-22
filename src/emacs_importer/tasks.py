@@ -1,16 +1,15 @@
 from celery.task import task
 from implicitdesign import settings
-from process_for_timepiece import Processor
 from datetime import datetime
 from extract_for_timepiece import Extractor
 
 @task()
 def import_timesheets_from_emacs_task():
-    import_timesheets_from_emacs()
+    return import_timesheets_from_emacs()
 
 def import_timesheets_from_emacs(users=None):
 
-    status = {}
+    status = {'errors':[]}
     users = users or settings.EMACS_USERS_TO_PROCESS
     for username in users:
 
@@ -20,27 +19,8 @@ def import_timesheets_from_emacs(users=None):
                    }
 
         extractor = Extractor(**kwargs)
-        status[username] = { 'status' : extractor.extract() }
-                         
-    return status
-
-def import_timesheets_from_emacs_OLD(users=None):
-
-    user_email = "gtp@implicitdesign.co.za"
-
-    status = {}
-    users = users or settings.EMACS_USERS_TO_PROCESS
-    for user in users:
-
-        processor_kwargs = { 'root_folder': settings.EMACSIMPORTER_TIMESHEET_ROOT_FOLDER,
-                             'email_from': settings.EMACSIMPORTER_EMAIL_FROM,
-                             'num_historical_days': settings.EMACSIMPORTER_NUM_HISTORICAL_DAYS,
-                             'pointperson_username': settings.EMACSIMPORTER_POINTPERSON_USERNAME,
-                             'rates_info': settings.EMACSIMPORTER_RATES,
-                             #'ref_current_date': datetime(2011, 8, 30)
-                             }
-
-        processor = Processor(user, user_email, **processor_kwargs)
-        status[user] = { 'status' : processor.process() }
+        extract_result = extractor.extract()
+        status[username] = { 'status' : extract_result }
+        status['errors'].extend(extract_result['errors'])
                          
     return status

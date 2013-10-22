@@ -12,7 +12,7 @@ class Command(BaseCommand):
 
     def handle(self, *args, **options):
         try:
-            import_timesheets_from_emacs()
+            status = import_timesheets_from_emacs()
         except Exception, ex:
             send_mail(subject="Problems importing timesheets",
                       message=str(ex),
@@ -21,4 +21,15 @@ class Command(BaseCommand):
                       fail_silently=True)
             raise ex
 
-        print("Import complete")
+        if len(status['errors'])>0:
+            send_mail(subject="Problems importing timesheets",
+                      message="\n".join(status['errors']),
+                      from_email="info@implicitdesign.co.za",
+                      recipient_list=["gtp@implicitdesign.co.za",],
+                      fail_silently=False)
+            
+            print("Some errors during import:")
+            print "\n".join(status['errors'])
+            print("Import failed")
+        else:
+            print("Import complete")

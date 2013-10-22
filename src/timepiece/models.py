@@ -1428,11 +1428,13 @@ class Entry(models.Model):
     def try_get_issue_id(self):
         """ Make a best attempt to identify what the issue number. """
         issue_id = None
-        for regex in [ "[iI]ssue(\d+)", "[iI]ssue *#(\d+)", "[iI]ssue (\d+)" ]:
+
+        for regex in [ "[iI]ssue *#(\d+)", "[iI]ssue(\d+)", "[iI]ssue (\d+)" ]:
             match_object = re.compile(regex).search(self.comments)
             if match_object and match_object.groups() != 0:
                 try:
                     issue_id = int(match_object.group(1))
+                    return issue_id
                 except Exception:
                     pass
         return issue_id
