@@ -131,7 +131,6 @@ class EditPersonPermission(forms.ModelForm):
         self.fields['can_view_project_card'].widget.attrs['class'] = 'safe'
         self.fields['can_edit_issues'].widget.attrs['class'] = 'safe'
         self.fields['can_view_issues'].widget.attrs['class'] = 'safe'
-        self.fields['can_toggle_graphs'].widget.attrs['class'] = 'safe'
         self.fields['can_add_issue'].widget.attrs['class'] = 'safe'
         self.fields['can_delete_issue'].widget.attrs['class'] = 'safe'
         self.fields['can_edit_description'].widget.attrs['class'] = 'safe'
@@ -145,6 +144,7 @@ class EditPersonPermission(forms.ModelForm):
         self.fields['can_see_other_user_points'].widget.attrs['class'] = 'medium-safe'
 
         self.fields['can_edit_permissions'].widget.attrs['class'] = 'unsafe'
+        self.fields['can_toggle_graphs'].widget.attrs['class'] = 'unsafe'
         self.fields['can_edit_project_detail'].widget.attrs['class'] = 'unsafe'
         self.fields['can_edit_budget'].widget.attrs['class'] = 'unsafe'
         self.fields['can_view_budget'].widget.attrs['class'] = 'unsafe'

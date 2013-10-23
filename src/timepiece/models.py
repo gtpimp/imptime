@@ -211,7 +211,6 @@ class BusinessPermissions(models.Model):
     can_view_project_card = models.BooleanField(default=False, verbose_name="Can View Sprint Card")
     can_edit_issues = models.BooleanField(default=False, verbose_name="Can Edit Issues")
     can_view_issues = models.BooleanField(default=False, verbose_name="Can View Issues")
-    can_toggle_graphs = models.BooleanField(default=False, verbose_name="Can Toggle Graphs")
     can_edit_issue_states = models.BooleanField(default=False, verbose_name="Can Edit Issue States")
     can_add_issue = models.BooleanField(default=False, verbose_name="Can Add Issue")
     can_delete_issue = models.BooleanField(default=False, verbose_name="Can Delete Issue")
@@ -225,6 +224,7 @@ class BusinessPermissions(models.Model):
     can_estimate_own_points = models.BooleanField(default=False, verbose_name="Can Estimate Own Points")
 
     can_edit_permissions = models.BooleanField(default=False, verbose_name="Can Edit Permissions")
+    can_toggle_graphs = models.BooleanField(default=False, verbose_name="Can Toggle Graphs")
     can_edit_project_detail = models.BooleanField(default=False, verbose_name="Can Edit Sprint Detail")
     can_edit_budget = models.BooleanField(default=False,verbose_name = "Can Edit Budget ")
     can_view_budget = models.BooleanField(default=False, verbose_name="Can View Budget")
