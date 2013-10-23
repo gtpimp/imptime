@@ -429,8 +429,10 @@ def points_and_stuff(per_user):
             return mark_safe(u'%s / %s' % (per_user['hours'], points))
         else:
             return mark_safe(u' / %s' % points)
+    elif per_user['has_hours']:
+        return mark_safe(u'%s / ' % per_user['hours'])
+    elif per_user['has_estimate']:
+        return mark_safe(u' / %s' % points)
     else:
-        if per_user['has_hours']:
-            return mark_safe(u'%s / ' % per_user['hours'])
-        else:
-            return mark_safe('&nbsp;')
+        return mark_safe('&nbsp;')
+        

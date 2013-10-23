@@ -11,18 +11,19 @@
     {% has_permission has_view_ctc_billable_rates project.business %}
       <div style="float:left" class="short_traffic">
           {% if per_user.has_hours %}
-          <div class="special_traffic_container">
-            <div class="special_traffic_colourbar {{per_user.bar_color}}" style="width:{{ per_user.completion_width }}%;" >
-              &nbsp;
+            <div class="special_traffic_container">
+              <div class="special_traffic_colourbar {{per_user.bar_color}}" style="width:{{ per_user.completion_width }}%;" >
+                &nbsp;
+              </div>
+              <div class="special_traffic_text">
+	  {% endif %}
+
+                <span class="edit_issue_subject">
+                  {{ per_user|points_and_stuff }}
+                </span>
+	  {% if per_user.has_hours %}
+              </div>
             </div>
-            <div class="special_traffic_text">
-	      {% endif %}
-              <span class="edit_issue_subject">
-		{{ per_user|points_and_stuff }}
-              </span>
-	      {% if per_user.has_hours %}
-            </div>
-          </div>
 	  {% endif %}
       </div>
     {% end_permission %}

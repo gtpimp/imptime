@@ -3508,19 +3508,16 @@ def issue_points_update(request,  template="timepiece/project/issue_detail.html"
     except KeyError:
         edited_issue_points = None
         
-    current_user = request.user
-    these_are_the_current_user_points = (request.user.id == edited_issue_points.user.id)
     current_project = edited_issue_points.issue.project
 
-    can_view_other_user_points = timepiece.BusinessPermissions.objects.get_or_create(business=current_project.business, user=current_user)[0].has_see_other_user_points     
-    edit_is_allowed = True if these_are_the_current_user_points or can_view_other_user_points else False
-    if not edit_is_allowed:
+    bp = timepiece.BusinessPermissions.for_user(request.user, current_project.business)
+    can_edit_points = bp.has_estimate_own_points and request.user.id == edited_issue_points.user.id
+    
+    if not can_edit_points:
         raise PermissionDenied
-    try:
-        edited_issue_points.points = request.POST["new_value"]
-        edited_issue_points.save()
-    except KeyError:
-        pass
+
+    edited_issue_points.points = request.POST["new_value"]
+    edited_issue_points.save()
     
     return HttpResponse("")
 
