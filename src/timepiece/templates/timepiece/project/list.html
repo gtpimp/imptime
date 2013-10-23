@@ -173,25 +173,27 @@ $(document).ready(function(){
 	     <table class='table table-striped table-bordered table-condensed project_list'>
                  <tbody>
 	         {% for business in businesses %}
-                   <tr>
-                     <td>
- 		       {{ business }}
-		     </td>
-                     <td>
- 		       <a href="{% url 'business_issues' business.id %}">Issues</a>
-		     </td>
-                     {% has_permission has_view_ctc_billable_rates business %}
-                     <td>
- 		       <a href="{% url 'project_detail' business.id %}">Breakdown</a>
-		     </td>
-                     {% end_permission %}
+                   {% has_permission has_view_project_card business %}
+                     <tr>
+                       <td>
+                         {{ business }}
+                       </td>
+                       <td>
+                         <a href="{% url 'business_issues' business.id %}">Issues</a>
+                       </td>
+                       {% has_permission has_view_ctc_billable_rates business %}
+                       <td>
+                         <a href="{% url 'project_detail' business.id %}">Breakdown</a>
+                       </td>
+                       {% end_permission %}
 
-                     {% if user.is_superuser %}
-                     <td>
- 		       <a href="{% url 'show_permissions' business.id %}">Permissions</a>
-		     </td>
-                     {% endif %}
-                   </tr>
+                       {% if user.is_superuser %}
+                       <td>
+                         <a href="{% url 'show_permissions' business.id %}">Permissions</a>
+                       </td>
+                       {% endif %}
+                     </tr>
+                   {% end_permission %}
 	         {% endfor %}
                  </tbody>
             </table>
