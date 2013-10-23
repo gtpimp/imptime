@@ -9969,3 +9969,12 @@ label {
     float: left;
     padding-left: 10px;
 }
+
+.permissions_list .unsafe {
+    outline: thin solid #ff0000;
+}
+
+.permissions_list .medium-safe {
+    outline: thin solid #aaaa00;
+}
+

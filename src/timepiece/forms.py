@@ -124,6 +124,35 @@ class EditPersonPermission(forms.ModelForm):
         model = timepiece.BusinessPermissions
         exclude = ( 'user', 'business' )
 
+    def __init__(self, *args, **kwargs):
+        super(EditPersonPermission, self).__init__(*args, **kwargs)
+
+
+        self.fields['can_view_project_card'].widget.attrs['class'] = 'safe'
+        self.fields['can_edit_issues'].widget.attrs['class'] = 'safe'
+        self.fields['can_view_issues'].widget.attrs['class'] = 'safe'
+        self.fields['can_toggle_graphs'].widget.attrs['class'] = 'safe'
+        self.fields['can_add_issue'].widget.attrs['class'] = 'safe'
+        self.fields['can_delete_issue'].widget.attrs['class'] = 'safe'
+        self.fields['can_edit_description'].widget.attrs['class'] = 'safe'
+        self.fields['can_edit_subject'].widget.attrs['class'] = 'safe'
+        self.fields['can_edit_feature'].widget.attrs['class'] = 'safe'
+        self.fields['can_create_sprint'].widget.attrs['class'] = 'safe'
+        self.fields['can_edit_issue_states'].widget.attrs['class'] = 'safe'
+
+        self.fields['can_view_actual_hours'].widget.attrs['class'] = 'safe'
+        self.fields['can_estimate_own_points'].widget.attrs['class'] = 'medium-safe'
+        self.fields['can_see_other_user_points'].widget.attrs['class'] = 'medium-safe'
+
+        self.fields['can_edit_permissions'].widget.attrs['class'] = 'unsafe'
+        self.fields['can_edit_project_detail'].widget.attrs['class'] = 'unsafe'
+        self.fields['can_edit_budget'].widget.attrs['class'] = 'unsafe'
+        self.fields['can_view_budget'].widget.attrs['class'] = 'unsafe'
+        self.fields['can_edit_invoices'].widget.attrs['class'] = 'unsafe'
+        self.fields['can_view_invoices'].widget.attrs['class'] = 'unsafe'
+        self.fields['can_edit_ctc_billable_rates'].widget.attrs['class'] = 'unsafe'
+        self.fields['can_view_ctc_billable_rates'].widget.attrs['class'] = 'unsafe'
+
 class QuickEditPersonForm(forms.ModelForm):
     class Meta:
         model = auth_models.User
