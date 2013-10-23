@@ -1,4 +1,6 @@
 {% load timepiece_tags %}
+{% load url from future %}
+
 <h2>#{{issue.number}} {{issue.subject}}</h2>
 
 <div class="issue_status" style="margin-bottom:10px"><h3>{{issue.status}}</h3></div> 
@@ -7,7 +9,7 @@
 <div>
   <div class="edit_description" >
 
-    <div class="static_div" {% has_permission has_edit_description issue.project.business %} onclick="imp.clickable_description_box(this, '{% url issue_detail_update %}',{{ issue.id }})" {% end_permission %} >
+    <div class="static_div" {% has_permission has_edit_description issue.project.business %} onclick="imp.clickable_description_box(this, '{% url 'issue_detail_update' %}',{{ issue.id }})" {% end_permission %} >
       {% has_permission has_edit_description issue.project.business %}
         <div style="cursor:pointer"><img src="{{STATIC_URL}}/images/timepiece/icons/pencil.png" /></div>
       {% end_permission %}
@@ -17,6 +19,25 @@
   </div>
 </div>
 {% endif %}
+
+{% has_permission has_edit_description issue.project.business %}
+  <hr/>
+  {% for attachment in issue.attachments.all %}
+    <ul class="unstyled">
+      <li>
+        <a target="_blank" href={{ attachment.attachment.url }}>{{attachment.name}}</a>
+        <img class="secret_link" onclick="return imp.delete_issue_attachment('{% url 'delete_issue_attachment' attachment.id %}');" src="{{STATIC_URL}}/images/timepiece/icons/delete.png"/>
+      </li>
+    </ul>
+  {% endfor %}
+
+  <div>
+    <a href="#" class="btn" onclick="return imp.attach_upload_issue_attachment($(this));">add attachment</a>
+    <div class="new_attachment" style="display:none">
+      <input type="file" name="attachment" data-url="{% url 'add_issue_attachment' issue.pk %}"/>
+    </div>
+  <div>
+{% end_permission %}
 
 <hr/>
 {% ifequal 0 issue.related_entries|length %}

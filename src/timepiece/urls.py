@@ -465,6 +465,19 @@ urlpatterns = patterns('',
         views.sortable_project_update,
         name='sortable_project_update'
         ),
+
+     url(
+        r'^add_issue_attachment/(?P<issue_id>\d+)/$',
+        views.add_issue_attachment,
+        name='add_issue_attachment'
+        ),
+
+     url(
+        r'^delete_issue_attachment/(?P<attachment_id>\d+)/$',
+        views.delete_issue_attachment,
+        name='delete_issue_attachment'
+        ),
+
     url(
         r'^time-sheet/project_list/(?P<project_id>\d+)/$',
         views.project_list,

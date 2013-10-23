@@ -1,6 +1,7 @@
 var imp = imp || {};
 
 imp.inline_editor_active = false;
+imp.current_issue_detail_url = null;
 
 imp.issue_loading = function(item_id) {
     var loading_el = $("#loading_issue_"+item_id);
@@ -17,14 +18,21 @@ imp.issue_loading = function(item_id) {
 
 imp.show_issue_detail = function(url) {
     var on_done = imp.loading("loading issue detail");
+
     $(".issue_detail").load(url,
 			    function() {
 				$(".issue_detail .subject_class input").focus();
 				imp.refresh_show_money();
+				imp.current_issue_detail_url = url;
 				on_done();
 			    });
 
  };
+
+imp.refresh_issue_detail = function() {
+
+    imp.show_issue_detail(imp.current_issue_detail_url);
+};
 
 imp.do_form_show  = function(element, url) {
     var button = $(element);
@@ -102,6 +110,38 @@ imp.on_issue_form_submit = function(element, sprint_id, url, on_success) {
 
 imp.on_project_form_cancel = function(element) {
     imp.do_form_remove();
+};
+
+imp.delete_issue_attachment = function(url) {
+    if ( ! confirm("Are you sure you want to delete this file?") ) {
+	return false;
+    }
+    var on_global_loading_done = imp.loading("deleting");
+    $.ajax({type:"GET",
+	    url: url,
+	    success: function(data) {
+		on_global_loading_done();
+		imp.refresh_issue_detail();
+	    }
+	   });
+    return false;
+};
+
+imp.attach_upload_issue_attachment = function(el) {
+
+    var container = el.parent();
+    var input_el = container.find("input");
+    container.find('.new_attachment').show();
+    el.hide(); 
+
+    input_el.fileupload({
+		      type: "POST",
+		      done: function (e, data) {
+			  imp.refresh_issue_detail();
+		      }
+		  });
+
+    return false;
 };
 
 imp.on_project_form_submit = function(element, url) {

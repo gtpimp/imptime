@@ -2105,6 +2105,11 @@ class Issue(models.Model):
     def get_unassigned_timesheet_entries(self, project):
         return project.entries.filter(issue__isnull=True).order_by("start_time")
 
+class IssueAttachment(models.Model):
+    issue = models.ForeignKey(Issue, blank=False, null=False, related_name='attachments')
+    attachment = models.FileField(upload_to="issue_attachments", null=False, blank=False)
+    name = models.CharField(max_length=255)
+
 class RedmineToTimepieceBusinessMapping(models.Model):
     redmine_business_name = models.CharField(max_length=255)
     timepiece_business_name = models.CharField(max_length=255)

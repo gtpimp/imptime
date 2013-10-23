@@ -3886,6 +3886,36 @@ def get_issue_row(request,issue_id):
 @csrf_exempt
 @login_required
 @transaction.commit_on_success
+def add_issue_attachment(request, issue_id):
+
+    issue = timepiece.Issue.objects.get(pk=issue_id)
+    business = issue.project.business
+    bp = timepiece.BusinessPermissions.for_user(request.user, business)
+
+    if not bp.has_edit_description:
+        raise PermissionDenied
+    
+    f = request.FILES['attachment']
+    timepiece.IssueAttachment.objects.create(issue=issue, attachment=f, name=f.name)
+    return HttpResponse("ok")
+
+@csrf_exempt
+@login_required
+@transaction.commit_on_success
+def delete_issue_attachment(request, attachment_id):
+    attachment = timepiece.IssueAttachment.objects.get(pk=attachment_id)
+    issue = attachment.issue
+    business = issue.project.business
+    bp = timepiece.BusinessPermissions.for_user(request.user, business)
+    if not bp.has_edit_description:
+        raise PermissionDenied
+    
+    attachment.delete()
+    return HttpResponse("ok")
+
+@csrf_exempt
+@login_required
+@transaction.commit_on_success
 def sortable_issue_update(request, project_id):
     context = {}
        
