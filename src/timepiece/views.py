@@ -3343,6 +3343,7 @@ def get_project_detail(request, project_id, template="timepiece/project/project_
     context['total_billable'] = cost_totals['billable']
     context['business_permissions_by_user'] = timepiece.BusinessPermissions.by_user(business)
     context['has_closed_sprints'] = business.has_closed_sprints()
+    context['has_open_sprints'] = business.has_open_sprints()
 
     end_timing_get_project_detail()
     context['timings'] = timings.results()
@@ -3385,6 +3386,10 @@ def project_list(request, project_id=None, business_id=None, template="timepiece
 
     context['business'] = business
     context['business_permissions_by_user'] = timepiece.BusinessPermissions.by_user(business)
+
+    context['has_closed_sprints'] = business.has_closed_sprints()
+    context['has_open_sprints'] = business.has_open_sprints()
+
     return render_to_response(template, context, context_instance=RequestContext(request))
         
 @csrf_exempt

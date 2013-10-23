@@ -127,7 +127,19 @@ class Business(models.Model):
 
     def has_closed_sprints(self):
         projects = Project.objects.filter(business=self)
-        return len([ p for p in projects if not p.is_open ]) > 0
+        try:
+            [ p for p in projects if not p.is_open ][0]
+            return True
+        except IndexError:
+            return False
+
+    def has_open_sprints(self):
+        projects = Project.objects.filter(business=self)
+        try:
+            [ p for p in projects if p.is_open ][0]
+            return True
+        except IndexError:
+            return False
     
     @property
     def users(self):
