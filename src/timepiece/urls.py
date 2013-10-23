@@ -468,12 +468,14 @@ urlpatterns = patterns('',
     url(
         r'^time-sheet/project_list/(?P<project_id>\d+)/$',
         views.project_list,
+        {'business_id':None},
         name='project_list',
     ),
     url(
-        r'^time-sheet/project_list$',
+        r'^time-sheet/closed_project_list/(?P<business_id>\d+)/$',
         views.project_list,
-        name='project_list',
+        {'project_id':None},
+        name='closed_project_list',
     ),
     url(
         r'^time-sheet/project_detail/(?P<project_id>\d+)/$',

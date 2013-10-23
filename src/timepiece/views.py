@@ -3251,12 +3251,7 @@ def business_features(request, business_id):
 @csrf_exempt
 @login_required
 def business_issues(request, pk):
-    try:
-        recent_project_id = timepiece.Business.objects.get(pk=pk).get_ordered_projects()[0].id
-    except IndexError:
-        recent_project_id=None
-
-    return HttpResponseRedirect(reverse('project_list', kwargs={'project_id': recent_project_id}))
+    return HttpResponseRedirect(reverse('closed_project_list', args=[pk]))
 
 @csrf_exempt
 @login_required
@@ -3357,31 +3352,36 @@ def get_project_detail(request, project_id, template="timepiece/project/project_
 @login_required
 @csrf_exempt
 @login_required
-def project_list(request, project_id=None, template="timepiece/project/project_list.html", context=None):
+def project_list(request, project_id=None, business_id=None, template="timepiece/project/project_list.html", context=None):
+    """ Displays all projects in the same business as project_id or
+    business_id. If project_id is not None, then that project is
+    expanded. """
+
     context = context or {}
     
-    business = None
     expanded_project = None
+    business = None
+    
     if project_id is not None:
         expanded_project = timepiece.Project.objects.filter(pk=project_id).filter_by_logged_in_user(request.user)[0]
         business = expanded_project.business
-        projects = expanded_project.business.get_ordered_projects() 
-        project_list = []        
-        for project in projects:
-            if project.id == int(project_id):
-                project.is_preloaded = "true"
-            project_list.append(project)
-        projects =project_list
     else:
-        projects = timepiece.Project.objects.all()
+        business = timepiece.Business.objects.get(pk=business_id)
 
     has_view_issues = timepiece.BusinessPermissions.objects.get_or_create(business=business, user=request.user)[0].has_view_issues
     if not has_view_issues:
         raise PermissionDenied
 
+    projects = business.get_ordered_projects() 
+    project_list = []        
+    for project in projects:
+        if project_id is not None and project.id == int(project_id):
+            project.is_preloaded = "true"
+        project_list.append(project)
+
     context['current_user'] = request.user
     context['expanded_project'] = expanded_project
-    context['projects'] = projects
+    context['projects'] = project_list
 
     context['business'] = business
     context['business_permissions_by_user'] = timepiece.BusinessPermissions.by_user(business)
