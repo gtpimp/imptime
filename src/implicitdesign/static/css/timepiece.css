@@ -9473,6 +9473,10 @@ ul.project_list {
     text-decoration: none;
 }
 
+.ui-dialog {
+    z-index: 200;
+}
+
 .project_card .nested_card {
     border-top: 1px solid #232323;
     padding:4px;
