@@ -3535,6 +3535,7 @@ def unassigned_timesheet_entries(request, project_id, template="timepiece/projec
     context['supports_description'] = False
     context['current_user'] = request.user
     context['issue'] = {'id':'na',
+                        'project':project,
                         'description':'unassigned timesheet entries',
                         'related_entries':timepiece.Issue.get_unassigned_timesheet_entries(project=project)}
     context['business_permissions_by_user'] = timepiece.BusinessPermissions.by_user(project.business)
@@ -3550,6 +3551,7 @@ def all_timesheet_entries(request, project_id, template="timepiece/project/issue
     context['supports_description'] = False
     context['current_user'] = request.user
     context['issue'] = {'id':'na',
+                        'project':project,
                         'description':'all timesheet entries',
                         'related_entries':entries}
     context['business_permissions_by_user'] = timepiece.BusinessPermissions.by_user(project.business)
