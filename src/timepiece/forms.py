@@ -711,17 +711,15 @@ class ProjectForm(forms.ModelForm):
         model = timepiece.Project
         fields = (
             'name',
-            'business',
-            'description',
-            'budget',
+            'description'
         )
 
-    business = selectable_forms.AutoCompleteSelectField(
-        BusinessLookup,
-        label='Business',
-        required=True
-    )
-    business.widget.attrs['placeholder'] = 'Search'
+    # business = selectable_forms.AutoCompleteSelectField(
+    #     BusinessLookup,
+    #     label='Business',
+    #     required=True
+    # )
+    # business.widget.attrs['placeholder'] = 'Search'
 
     def __init__(self, *args, **kwargs):
         super(ProjectForm, self).__init__(*args, **kwargs)

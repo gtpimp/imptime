@@ -1731,14 +1731,12 @@ def update_project(request, project_id=None):
     project = get_object_or_404(timepiece.Project, pk=project_id) \
         if project_id else None
 
-    business_id = project.business.id
-
     form = timepiece_forms.ProjectForm(request.POST or None, instance=project)    
     if request.POST and form.is_valid():
         project = form.save()
         project.save()
         return HttpResponseRedirect(
-            reverse('view_project', args=(project.id,))
+            reverse('edit_project', args=(project.id,))
             )
 
     context = {
