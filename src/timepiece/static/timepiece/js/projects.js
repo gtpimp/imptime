@@ -124,20 +124,29 @@ imp.projects.on_project_sorting_change_for_url = function ( project_sorting_url)
 
 imp.attach_sprint_headings = function(sprint_heading_container) {
     $("li.project_li .project_expand").hover( function() {
-				  $(this).find('img.drag_img').show();
-			      },
-			      function() {
-				  $(this).find('.drag_img').hide();
-			      });
+						  $(this).find('img.drag_img').show();
+						  $(this).find('.emacs_copy_img').show();
+					      },
+					      function() {
+						  $(this).find('.drag_img').hide();
+						  $(this).find('.emacs_copy_img').hide();
+					      });
+};
+
+imp.select_text_for_emacs = function(text) {
+    window.prompt("Press Ctrl+C then Enter, then paste into emacs:", text);
+    return false;
 };
 
 imp.on_issue_rows_loaded = function(issue_row_container) {
     $(issue_row_container).find(".drag_img").parents("tr").hover( function() {
 								      $(this).find('.drag_img').show();
+								      $(this).find('.emacs_copy_img').show();
 								      $(this).addClass("hovered");
 								  },
 								  function() {
 								      $(this).find('.drag_img').hide();
+								      $(this).find('.emacs_copy_img').hide();
 								      $(this).removeClass("hovered");
 								  });
     imp.refresh_show_money();

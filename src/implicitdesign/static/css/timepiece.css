@@ -9792,7 +9792,7 @@ ul.project_list {
 }
 
 .issues .issue_number_cell {
-    width: 65px;
+    width: 80px;
 }
 
 .issues .issues_list table .tested {
@@ -9910,8 +9910,14 @@ ul.project_list {
 }
 
 .drag_img_container {
+    width: 20px;
+    float: left;
+}
+
+.emacs_copy_container {
     width: 30px;
     float: left;
+    cursor: pointer;
 }
 
 .drag_img {
