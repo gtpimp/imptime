@@ -409,14 +409,14 @@ class Project(models.Model):
             velocity = rate.velocity
             user_hours = users_and_hours['users'][user.username]['hours']
             
-            total_billed = points * (1 / rate.work_ratio) * float(rate.billable_amount) * velocity
-            total_ctc = points * (1 / rate.work_ratio) * float(rate.amount) * velocity
+            total_adjustedd_billed = points * (1 / (rate.work_ratio or 1)) * float(rate.billable_amount) * velocity
+            total_adjustedd_ctc = points * (1 / (rate.work_ratio or 1)) * float(rate.amount) * velocity
 
             ret[user] = {
                 'points': points, 
-                'total_billed': total_billed,
-                'total_ctc': total_ctc,
-                'total_profit': total_billed - total_ctc,
+                'total_adjusted_billed': total_adjustedd_billed,
+                'total_adjusted_ctc': total_adjustedd_ctc,
+                'total_adjusted_profit': total_adjustedd_billed - total_adjustedd_ctc,
                 'rate': rate,
                 'velocity': points / float(user_hours),
                 'work_ratio': user_hours / total_hours
