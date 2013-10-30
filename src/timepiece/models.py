@@ -465,7 +465,7 @@ class Project(models.Model):
 
         """ Try to use the project id """
         project_id = None
-        match_object = re.compile("sprint#(\d+).*").search(name)
+        match_object = re.compile("[sS]print#(\d+).*").search(name)
         if match_object and match_object.groups() != 0:
             project_id = int(match_object.group(1))
             return Project.objects.get(pk=project_id).code
