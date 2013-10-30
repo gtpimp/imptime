@@ -3299,7 +3299,11 @@ def get_project_detail(request, project_id, template="timepiece/project/project_
 
     end_timing_get_project_detail = timings.start("get_project_detail")
 
-    project = timepiece.Project.objects.filter(pk=project_id).filter_by_logged_in_user(request.user)[0]
+    try:
+        project = timepiece.Project.objects.filter(pk=project_id)[0]
+    except IndexError, ex:
+        logger.exception(ex)
+        raise Exception("No permission to view this project: %s" % project.name)
     context['project'] = project 
 
     business = project.business
