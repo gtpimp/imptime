@@ -670,8 +670,11 @@ class Project(models.Model):
         total = entries_qs.aggregate(hours=Sum('hours'))['hours']
         return total
 
-    def total_points_for_user(self, user):
+    def total_points_for_user(self, user, issue_status=None):
         entries_qs = IssuePoints.objects.filter(issue__project=self, user=user)
+        if issue_status is not None:
+            entries_qs = entries_qs.filter(issue__status=issue_status)
+            
         total = entries_qs.aggregate(points=Sum('points'))['points']
         return total
 

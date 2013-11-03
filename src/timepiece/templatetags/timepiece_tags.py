@@ -206,6 +206,13 @@ def get_all_points_for_project(context, user, project):
     if not hours:
         return ""
     return "%.1f" % float(hours)
+
+@register.simple_tag(takes_context=True)
+def get_all_devdone_points_for_project(context, user, project):
+    hours = project.total_points_for_user(user, issue_status='devdone')
+    if not hours:
+        return ""
+    return "%.1f" % float(hours)
         
 @register.inclusion_tag('timepiece/time-sheet/bar_graph.html',
                         takes_context=True)
