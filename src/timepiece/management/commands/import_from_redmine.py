@@ -40,11 +40,6 @@ class Command(BaseCommand):
             business = None
 
         point_person = User.objects.get_or_create(username='us')[0]
-
-        try:
-            project_status = models.Attribute.objects.get(type='project-status', label='open')
-        except: 
-            project_status = models.Attribute.objects.create(type='project-status', label='open', billable=True, enable_timetracking=True)
         
         try:
             project_type = models.Attribute.objects.get(type='project-type', label='default')
@@ -83,7 +78,6 @@ class Command(BaseCommand):
                 project = models.Project.objects.get(business=business,
                                                      code=project_code)
                 project.point_person_id=point_person.id
-                project.status=project_status
                 project.type=project_type
                 project.save()
             except models.Project.DoesNotExist:
