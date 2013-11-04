@@ -610,7 +610,7 @@ class Project(models.Model):
         billed = 0
 
         # The 'or 1' clause is so that if the project has no estimates, the ratios still have some meaning.
-        number_dev_done = lambda issues_qs : 1.0*sum([ (ii or 1) for ii in  [i[0] for i in issues_qs.filter(Q(status__icontains='dev done')|Q(status__icontains="cannot reproduce")).values_list('story_points')]])
+        number_dev_done = lambda issues_qs : 1.0*sum([ (ii or 1) for ii in  [i[0] for i in issues_qs.filter(Q(status__icontains='dev done')|Q(status__icontains='devdone')|Q(status__icontains="cannot reproduce")).values_list('story_points')]])
         number_tested = lambda issues_qs : 1.0*sum([ (ii or 1) for ii in  [i[0] for i in issues_qs.filter(status__icontains='tested').values_list('story_points')]])
         number_total = lambda issues_qs : 1.0*sum([ (ii or 1) for ii in  [i[0] for i in issues_qs.values_list('story_points')]])
 
@@ -2059,9 +2059,9 @@ class Issue(models.Model):
 
     @property
     def css_class(self):
-        status = self.status.replace(" ","").lower()
+        status = self.status.replace(" ","").replace("_","").lower()
         if status == 'devdone':
-            return "dev_done"
+            return "devdone"
         elif status == 'tested':
             return "tested"
         else:

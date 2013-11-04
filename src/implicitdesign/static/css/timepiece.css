@@ -9422,7 +9422,7 @@ ul.project_list {
     clear:left;
 }
 
-.issue_instance_row.status_dev_done .issue_subject {
+.issue_instance_row.status_devdone .issue_subject {
     color: #225522;
 }
 
@@ -9787,7 +9787,7 @@ ul.project_list {
     text-decoration: line-through;
 }
 
-.issues .issues_list table .dev_done td {
+.issues .issues_list table .devdone td {
     background-color:#cccccc;
 }
 
