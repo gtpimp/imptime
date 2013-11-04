@@ -3755,6 +3755,12 @@ def income_summary(request, template="timepiece/graphs/income_summary.html", con
 
     return render_to_response(template, context, context_instance=RequestContext(request))
 
+@csrf_exempt
+@login_required
+def issue_search(request, template="timepiece/project/issue_search_results.html", context=None):
+    context = context or {}
+    return render_to_response(template, context, context_instance=RequestContext(request))
+
 @render_with('timepiece/project/show_timeline.html')
 @login_required
 def show_timeline(request, project_id):

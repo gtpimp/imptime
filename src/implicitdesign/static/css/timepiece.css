@@ -195,6 +195,17 @@ a:hover {
   width: 940px;
 }
 
+.navbar .issue_search {
+    margin-top: 5px;
+    margin-right: 20px;
+}
+
+.navbar .issue_search input.search_by_number {
+    width: 75px;
+    font-size: 11px;
+    height: 15px;
+}
+
 .content {
     width: 100%;
 }
