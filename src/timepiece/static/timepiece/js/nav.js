@@ -1,11 +1,5 @@
 imp.nav = imp.nav || {};
 
-imp.nav.show_issue_search_results = function() {
-
-    alert("done");
-
-};
-
 imp.nav.hookup_search_form = function() {
     var form = $(".issue_search form");
     form.submit(function(event) {

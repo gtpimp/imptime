@@ -35,6 +35,7 @@ imp.highlight_issue = function(issue_id) {
     }
     imp.highlight_issue_id = issue_id;
     $("#"+issue_id).addClass("highlight");
+    $("#"+issue_id).scrollintoview();
 };
 
 imp.show_issue_detail = function(url) {
