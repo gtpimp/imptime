@@ -35,8 +35,6 @@ imp.highlight_issue = function(issue_id) {
     }
     imp.highlight_issue_id = issue_id;
 
-    $("#"+issue_id).parents("li.project_li").show();
-
     $("#"+issue_id).addClass("highlight");
     $("#"+issue_id).scrollintoview();
 };
