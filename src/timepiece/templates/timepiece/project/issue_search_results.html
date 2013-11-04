@@ -6,7 +6,7 @@
   {% for issue in issues %}
 
     <tr onclick="imp.nav.show_issue({{issue.id}}, {{issue.project.id}}, '{% url 'highlighted_project_list' issue.project.id issue.id %}' );">
-      <td>
+      <td class="number">
         {{issue.number}}
       </td>
       <td>

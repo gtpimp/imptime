@@ -10018,6 +10018,11 @@ table.search_results td, table.search_results th {
  padding-left: 5px;
  padding-right: 5px;
  margin-bottom: 3px;
+ font-size:12px;
+}
+
+table.search_results td.number {
+    text-align: right;
 }
 
 table.search_results tr:hover {

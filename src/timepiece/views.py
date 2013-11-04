@@ -3760,6 +3760,7 @@ def issue_search(request, template="timepiece/project/issue_search_results.html"
     context = context or {}
     search_term = request.GET['search_term']
     issues = timepiece.Issue.objects.filter(Q(number__icontains=search_term)|Q(subject__icontains=search_term))
+    issues = issues.order_by("project__business__name", "project__name", "subject")
     issues = [ x for x in issues if x.project.can_view_by_user(request.user) ]
     context['issues'] = issues
     return render_to_response(template, context, context_instance=RequestContext(request))
