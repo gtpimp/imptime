@@ -242,6 +242,9 @@ urlpatterns = patterns('',
         r'^time-sheet/issue_search/$', views.issue_search, name='issue_search',
     ),
 
+    url(
+        r'^time-sheet/show_issue/(?P<issue_id>\d+)$', views.show_issue, name='show_issue',
+    ),
 
     url(
         r'^time-sheet/issue_assigned_to_update/$', views.issue_assigned_to_update, name='issue_assigned_to_update',
@@ -490,9 +493,17 @@ urlpatterns = patterns('',
     url(
         r'^time-sheet/project_list/(?P<project_id>\d+)/$',
         views.project_list,
-        {'business_id':None},
+        {'business_id':None, 'highlight_issue_id':None},
         name='project_list',
     ),
+
+    url(
+        r'^time-sheet/highlighted_project_list/(?P<project_id>\d+)/(?P<highlight_issue_id>\d+)$',
+        views.project_list,
+        {'business_id':None},
+        name='highlighted_project_list',
+    ),
+
     url(
         r'^time-sheet/closed_project_list/(?P<business_id>\d+)/$',
         views.project_list,

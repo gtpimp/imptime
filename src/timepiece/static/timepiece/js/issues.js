@@ -20,6 +20,23 @@ imp.issue_loading = function(item_id, msg) {
     return on_done;
 };
 
+imp.highlight_issue = function(issue_id) {
+    // highlight the given issue or the default issue
+
+    if ( imp.highlight_issue_id ) {
+	$("#"+imp.highlight_issue_id).removeClass("highlight");
+    }
+
+    if (!issue_id) {
+	issue_id = imp.highlight_issue_id;
+    }
+    if (!issue_id) {
+	return;
+    }
+    imp.highlight_issue_id = issue_id;
+    $("#"+issue_id).addClass("highlight");
+};
+
 imp.show_issue_detail = function(url) {
     var on_done = imp.loading("loading issue detail");
 

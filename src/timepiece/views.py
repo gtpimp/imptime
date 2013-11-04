@@ -3357,7 +3357,7 @@ def get_project_detail(request, project_id, template="timepiece/project/project_
 @login_required
 @csrf_exempt
 @login_required
-def project_list(request, project_id=None, business_id=None, template="timepiece/project/project_list.html", context=None):
+def project_list(request, project_id=None, highlight_issue_id=None, business_id=None, template="timepiece/project/project_list.html", context=None):
     """ Displays all projects in the same business as project_id or
     business_id. If project_id is not None, then that project is
     expanded. """
@@ -3387,10 +3387,9 @@ def project_list(request, project_id=None, business_id=None, template="timepiece
     context['current_user'] = request.user
     context['expanded_project'] = expanded_project
     context['projects'] = project_list
-
     context['business'] = business
     context['business_permissions_by_user'] = timepiece.BusinessPermissions.by_user(business)
-
+    context['highlight_issue_id'] = highlight_issue_id
     context['has_closed_sprints'] = business.has_closed_sprints()
     context['has_open_sprints'] = business.has_open_sprints()
 
@@ -3759,6 +3758,10 @@ def income_summary(request, template="timepiece/graphs/income_summary.html", con
 @login_required
 def issue_search(request, template="timepiece/project/issue_search_results.html", context=None):
     context = context or {}
+    search_term = request.GET['search_term']
+    issues = timepiece.Issue.objects.filter(Q(number__icontains=search_term)|Q(subject__icontains=search_term))
+    issues = [ x for x in issues if x.project.can_view_by_user(request.user) ]
+    context['issues'] = issues
     return render_to_response(template, context, context_instance=RequestContext(request))
 
 @render_with('timepiece/project/show_timeline.html')
@@ -3893,6 +3896,13 @@ def get_project_row(request,project_id, context= None):
                            context, context_instance=RequestContext(request))
     return r
     
+@csrf_exempt
+@login_required
+def show_issue(request, issue_id, context=None):
+    issue = timepiece.Issue.objects.get(pk=issue_id)
+    if not issue.project.can_view_by_user(request.user):
+        raise PermissionDenied
+    return reverse('highlighted_project_list', args=[issue.project.id, issue.id])
     
 @csrf_exempt
 @login_required

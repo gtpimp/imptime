@@ -665,6 +665,9 @@ class Project(models.Model):
     def total_hours(self):
         return self.total_hours_for_user(user=None)
 
+    def can_view_by_user(self, user):
+        return user.is_superuser or (user in self.users.all())
+
     def total_hours_for_user(self, user=None):
         entries_qs = Entry.objects.filter(project=self)
 
@@ -1995,9 +1998,9 @@ class Issue(models.Model):
         )
     
     status = models.CharField(max_length=255, choices = ISSUE_STATUS_CHOICES)
-    number = models.IntegerField(null=True,blank=True)
+    number = models.IntegerField(null=True,blank=True, db_index=True)
     project = models.ForeignKey(Project, related_name='issues')
-    subject = models.TextField()
+    subject = models.TextField(db_index=True)
     description = models.TextField(blank=True)
     story_points = models.FloatField(null=True,blank=True)    
     order = models.IntegerField(null=True,blank=True)

@@ -200,7 +200,7 @@ a:hover {
     margin-right: 20px;
 }
 
-.navbar .issue_search input.search_by_number {
+.navbar .issue_search input.search_term {
     width: 75px;
     font-size: 11px;
     height: 15px;
@@ -9442,6 +9442,10 @@ ul.project_list {
     text-decoration: line-through;
 }
 
+.issue_instance_row.highlight td {
+    background-color: #6A9AFD;
+}
+
 .light_priority{
     background-color:#cfcfcf;
 }
@@ -10009,3 +10013,18 @@ label {
     outline: thin solid #aaaa00;
 }
 
+table.search_results td, table.search_results th {
+ border-left: 1px solid #dfdfdf;   
+ padding-left: 5px;
+ padding-right: 5px;
+ margin-bottom: 3px;
+}
+
+table.search_results tr:hover {
+    background: -moz-linear-gradient(center top , #DDDDDD, #D0D3FA) repeat scroll 0 0 #D0D3FA;
+    background: -webkit-gradient(linear, 0,0,0 100%, from(#DDDDDD), to(#D0D3FA));
+    background: -webkit-linear-gradient(top, #DDDDDD, #D0D3FA);
+    background: -o-linear-gradient(top, #DDDDDD, #D0D3FA);
+    background: linear-gradient(to bottom, #DDDDDD, #D0D3FA);
+    cursor: pointer;
+}

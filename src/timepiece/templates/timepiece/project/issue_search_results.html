@@ -1,3 +1,26 @@
-These are your results:
+{% load url from future %}
 
-blahblah
+<h1>Search results</h1>
+
+<table class="search_results">
+  {% for issue in issues %}
+
+    <tr onclick="imp.nav.show_issue({{issue.id}}, {{issue.project.id}}, '{% url 'highlighted_project_list' issue.project.id issue.id %}' );">
+      <td>
+        {{issue.number}}
+      </td>
+      <td>
+        {{issue.project.business.name }} - {{issue.project.name }}
+      </td>
+      <td>
+        {{issue.subject|slice:":100"}}
+      </td>
+    </tr>
+  {% empty %}
+  <tr>
+    <td>
+      No results found
+    </td>
+  </tr>
+  {% endfor %}
+</table>

@@ -150,6 +150,7 @@ imp.on_issue_rows_loaded = function(issue_row_container) {
 								      $(this).removeClass("hovered");
 								  });
     imp.refresh_show_money();
+    imp.highlight_issue();
 };
 
 imp.toggle_card_menu = function (event) {

@@ -211,7 +211,7 @@
                       <li>
                         <div class='issue_search'>
                           <form method="GET" action='{% url 'issue_search' %}'>
-                            Find: <input type="text" class="search_by_number"/>
+                            Find: <input type="text" name='search_term' class="search_term"/>
                           </form>
 
                           <div class="issue_search_results" style="display:none">
