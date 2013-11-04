@@ -11,13 +11,19 @@
       <tr>
         <th>Username</th>
         <th>Hours</th>
+        {% has_permission has_view_ctc_rates project.business %}
         <th>CTC Rate</th>
+        {% end_permission %}
         <th>Billed Rate</th>
 	<th>Work Ratio</th>
 	<th>Velocity</th>
+        {% has_permission has_view_ctc_rates project.business %}
         <th>CTC</th>
+        {% end_permission %}
         <th>Billed</th>
+        {% has_permission has_view_ctc_rates project.business %}
         <th>Profit</th>
+        {% end_permission %}
       </tr>
     </thead>
 
@@ -26,9 +32,11 @@
       <tr>
         <td>{{user_name}}</td>
         <td>{{rate_info.hours}}</td>
+        {% has_permission has_view_ctc_rates project.business %}
         <td>
           <div class="editable_rate rate_info_amount_{{user_name}}">R{{rate_info.rate.amount|floatformat:"0"|intcomma}}</div>
         </td>
+        {% end_permission %}
         <td>
           <div class="editable_rate rate_info_billable_amount_{{user_name}}">R{{rate_info.rate.billable_amount|floatformat:"0"|intcomma}}</div>
         </td>
@@ -38,22 +46,33 @@
 	<td>
 	  <div class="editable_rate rate_info_velocity_{{user_name}}">{{rate_info.velocity|floatformat:"1"|intcomma}}</div>
 	</td>
+        {% has_permission has_view_ctc_rates project.business %}
         <td>R{{rate_info.revenue|floatformat:"0"|intcomma}}</td>
+        {% end_permission %}
         <td>R{{rate_info.billed|floatformat:"0"|intcomma}}</td>
-        <td>R{{rate_info.profit|floatformat:"0"|intcomma}}</td>p
+        {% has_permission has_view_ctc_rates project.business %}
+        <td>R{{rate_info.profit|floatformat:"0"|intcomma}}</td>
+        {% end_permission %}
       </tr>
       {% endfor %}
 
       <tr>
         <th></th>
         <th>{{users_and_hours.totals.hours}}</th>
+        {% has_permission has_view_ctc_rates project.business %}
         <th></th>
+        {% end_permission %}
         <th></th>
 	<th></th>
+        <th></th>
 	<th</th>
+        {% has_permission has_view_ctc_rates project.business %}
         <th>R{{users_and_hours.totals.revenue|floatformat:"0"|intcomma}}</th>
+        {% end_permission %}
         <th>R{{users_and_hours.totals.billed|floatformat:"0"|intcomma}}</th>
+        {% has_permission has_view_ctc_rates project.business %}
         <th>R{{users_and_hours.totals.profit|floatformat:"0"|intcomma}}</th>
+        {% end_permission %}
       </tr>
 
     </tbody>

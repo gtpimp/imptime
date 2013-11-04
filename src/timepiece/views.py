@@ -3598,6 +3598,7 @@ def view_project_rates(request, project_id, template="timepiece/project/view_rat
         raise PermissionDenied
 
     context['project'] = project
+    context['current_user'] = request.user
     context['users_and_hours'] = project.users_and_hours()
     context['recalculate_url'] = reverse(view_project_rates, args=[project_id])
     return render_to_response(template, context, context_instance=RequestContext(request))

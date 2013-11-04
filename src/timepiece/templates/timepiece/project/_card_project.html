@@ -32,8 +32,8 @@
 
   {% has_permission has_view_ctc_billable_rates project.business %}
   <p>
-         CTC R{{ project.stats.ctc|floatformat:"0"|intcomma }}
-         /
+         {% has_permission has_view_ctc_rates project.business %}CTC R{{ project.stats.ctc|floatformat:"0"|intcomma }}
+         /{% end_permission %}
          Billable R{{ project.stats.billed|floatformat:"0"|intcomma }}
   </p>
 
@@ -81,7 +81,9 @@
       <th>Points</th>
       <th>Ratio</th>
       <th>Velocity</th>
+      {% has_permission has_view_ctc_rates project.business %}
       <th>Total CTC</th>
+      {% end_permission %}
       <th>Total Billed</th>
     </thead>
     <tbody>
@@ -91,7 +93,9 @@
 	<td>{{ estimate.points }}</td>
 	<td>{{ estimate.rate.work_ratio|floatformat:"1"|intcomma }}</td>
 	<td>{{ estimate.rate.velocity|floatformat:"1"|intcomma }}</td>
+        {% has_permission has_view_ctc_rates project.business %}
 	<td>R{{ estimate.total_adjusted_ctc|floatformat:"0"|intcomma }}</td>
+        {% end_permission %}
 	<td>R{{ estimate.total_adjusted_billed|floatformat:"0"|intcomma }}</td>
       </tr>
       {% endfor %}
@@ -124,14 +128,18 @@
     <table>
       <thead>
         <th></th>
+        {% has_permission has_view_ctc_rates project.business %}
         <th>ctc</th>
+        {% end_permission %}
         <th>billable</th>
       </thead>
       <tbody>
         {% for data in project.costs_by_feature.values %} 
         <tr>
           <th>{{data.name}}</th>
+          {% has_permission has_view_ctc_rates project.business %}
           <td>R{{data.ctc|floatformat:"0"|intcomma}}</td>
+          {% end_permission %}
           <td>R{{data.billable|floatformat:"0"|intcomma}}</td>
         </tr>
         {% endfor %}
@@ -151,6 +159,8 @@
     <div style="clear:both"></div>
 
     {% has_permission has_view_ctc_billable_rates project.business %}
+    
+        {% has_permission has_view_ctc_rates project.business %}
         <div class="graph">
           <h1>ctc per user</h1>
           <div class="{{project.id}}_graph_ctc_by_user" style="height:300px;width:300px;"></div>
@@ -158,12 +168,14 @@
           <hr/>
         </div>
         <div style="clear:both"></div>
+        {% end_permission %}
         <div class="graph">
           <h1>billable per user</h1>
           <div class="{{project.id}}_graph_billable_by_user" style="height:300px;width:300px;"></div>
           <div style="clear:both"></div>
           <hr/>
         </div>
+        {% has_permission has_view_ctc_rates project.business %}
         <div class="graph">
           <h1>profit per user</h1>
           <div class="{{project.id}}_graph_profit_by_user" style="height:300px;width:300px;"></div>
@@ -171,12 +183,15 @@
           <hr/>
         </div>
         <div style="clear:both"></div>
+        {% end_permission %}
+        {% has_permission has_view_ctc_rates project.business %}
         <div class="graph">
           <h1>ctc per feature</h1>
           <div class="{{project.id}}_graph_ctc_by_feature" style="height:300px;width:300px;"></div>
           <div style="clear:both"></div>
           <hr/>
         </div>
+        {% end_permission %}
         <div style="clear:both"></div>
         <div class="graph">
           <h1>billable per feature</h1>
@@ -203,6 +218,7 @@
 
     {% has_permission has_view_ctc_billable_rates project.business %}
 
+    {% has_permission has_view_ctc_rates project.business %}
     $.plot(".{{project.id}}_graph_ctc_by_user",
            [ {%spaceless%} 
                {% for username,amounts in project.users_and_hours.users.items %} 
@@ -214,6 +230,7 @@
              ],
              { series: { pie: { show: true } },
                legend: { show: false} } );
+    {% end_permission %}
       $.plot(".{{project.id}}_graph_billable_by_user",
                [ {%spaceless%} 
                    {% for username,amounts in project.users_and_hours.users.items %} 
@@ -225,6 +242,8 @@
                ],
                { series: { pie: { show: true } },
                  legend: { show: false} } );
+
+      {% has_permission has_view_ctc_rates project.business %}
       $.plot(".{{project.id}}_graph_profit_by_user",
                [ {%spaceless%} 
                    {% for username,amounts in project.users_and_hours.users.items %} 
@@ -246,6 +265,7 @@
                ],
                { series: { pie: { show: true } },
                  legend: { show: false} } );
+      {% end_permission %}
       $.plot(".{{project.id}}_graph_billable_by_feature",
                [ {%spaceless%} 
                    {% for data in project.costs_by_feature.values %} 

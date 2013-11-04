@@ -96,11 +96,15 @@
   {% endcomment %}
 
   {% has_permission has_view_ctc_billable_rates project.business  %}
+
+  {% has_permission has_view_ctc_rates project.business %}
   <td  class="money_cell">
     <div class="secret_link"  onclick="imp.show_issue_detail('{% url 'issue_detail' issue.pk %}');">
       R{{issue.ctc|floatformat:"0"|intcomma}}
     </div>
   </td>
+{% end_permission %}
+
   <td  class="money_cell">
     <div class="secret_link"  onclick="imp.show_issue_detail('{% url 'issue_detail' issue.pk %}');">
       R{{issue.billable|floatformat:"0"|intcomma}}

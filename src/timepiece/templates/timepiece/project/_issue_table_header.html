@@ -40,7 +40,9 @@
                   {% endcomment %}
 
 		{% has_permission has_view_ctc_billable_rates  project.business %}
+                  {% has_permission has_view_ctc_rates project.business %}
                   <th class="money_cell">ctc</th>
+                  {% end_permission %}
                   <th class="money_cell">billable</th>
 		{% end_permission %}
 
@@ -97,11 +99,15 @@
                     {% endcomment %}
 
 		  {% has_permission has_view_ctc_billable_rates project.business %}
+
+                  {% has_permission has_view_ctc_rates project.business %}
                   <th class="money_cell">
                     <div class="secret_link" onclick="imp.show_issue_detail('{% url 'all_timesheet_entries' project.id %}');">
                       <i>R{{total_ctc|floatformat:"0"|intcomma}}</i>
                     </div>
                   </th>
+                  {% end_permission %}
+
                   <th class="money_cell">
                     <div class="secret_link" onclick="imp.show_issue_detail('{% url 'all_timesheet_entries' project.id %}');">
                       <i>R{{total_billable|floatformat:"0"|intcomma}}</i>
@@ -160,11 +166,15 @@
                     {% endcomment %}
 
 		  {% has_permission has_view_ctc_billable_rates project.business %}
+
+                  {% has_permission has_view_ctc_rates project.business %}
                   <td class="money_cell">
                     <div class="secret_link" onclick="imp.show_issue_detail('{% url 'unassigned_timesheet_entries' project.id %}');">
                       R{{unassigned_timesheet_entries_ctc|floatformat:"0"|intcomma}}
                     </div>
                   </td>
+                  {% end_permission %}
+
                   <td class="money_cell">
                     <div class="secret_link" onclick="imp.show_issue_detail('{% url 'unassigned_timesheet_entries' project.id %}');">
                       R{{unassigned_timesheet_entries_billable|floatformat:"0"|intcomma}}

@@ -80,12 +80,12 @@ class HasPermissionNode(template.Node):
         self.nodelist = nodelist
         self.perm_name = perm_name
         self.opposite = opposite
-        self.business = business
+        self.business = template.Variable(business)
         
     def render(self,context):
 
+        business = self.business.resolve(context)
         if 'business_permissions_by_user' not in context:
-            business = context[self.business]
             business_permissions_by_user = timepiece.BusinessPermissions.by_user(business)
         else:
             business_permissions_by_user = context['business_permissions_by_user']

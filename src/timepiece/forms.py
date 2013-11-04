@@ -153,6 +153,7 @@ class EditPersonPermission(forms.ModelForm):
         self.fields['can_view_invoices'].widget.attrs['class'] = 'unsafe'
         self.fields['can_edit_ctc_billable_rates'].widget.attrs['class'] = 'unsafe'
         self.fields['can_view_ctc_billable_rates'].widget.attrs['class'] = 'unsafe'
+        self.fields['can_view_ctc_rates'].widget.attrs['class'] = 'unsafe'
 
 class QuickEditPersonForm(forms.ModelForm):
     class Meta:

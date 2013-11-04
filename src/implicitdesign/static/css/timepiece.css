@@ -9525,6 +9525,11 @@ ul.project_list {
     border-bottom: 1px solid #dfdfdf;
 }
 
+.project_card_dialog_container table th {
+    border-left: 1px solid #dfdfdf;
+    border-bottom: 1px solid #dfdfdf;
+}
+
 .new_dyn_form_container {
     position: relative;
 }

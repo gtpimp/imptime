@@ -243,6 +243,7 @@ class BusinessPermissions(models.Model):
     can_view_invoices = models.BooleanField(default=False, verbose_name="Can View Invoices")
     can_edit_ctc_billable_rates = models.BooleanField(default=False, verbose_name="Can Edit Ctc Billable")
     can_view_ctc_billable_rates = models.BooleanField(default=False, verbose_name="Can View Ctc Billable")
+    can_view_ctc_rates = models.BooleanField(default=False, verbose_name="Can View Ctc") # a subpermission of can_view_ctc_billable_rates, used for clients who shouldn't see our internal costing.
     
     @classmethod
     def by_user(self, business):
@@ -292,6 +293,10 @@ class BusinessPermissions(models.Model):
     @property
     def has_view_ctc_billable_rates(self):
         return self.user.is_superuser or self.can_view_ctc_billable_rates
+
+    @property
+    def has_view_ctc_rates(self):
+        return self.user.is_superuser or self.can_view_ctc_rates
 
     @property
     def has_view_actual_hours(self):
