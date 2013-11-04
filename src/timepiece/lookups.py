@@ -20,7 +20,8 @@ class BusinessLookup(ModelLookup):
     search_fields = ('name__icontains',)
 
     def get_item_label(self, business):
-        return '<span class="business">%s</span>' % business.name
+        return business.name
+        #return '<span class="business">%s</span>' % business.name
 
 registry.register(BusinessLookup)
 
@@ -39,8 +40,9 @@ class UserLookup(ModelLookup):
         a more verbose display, used in the search results display.
         may contain html and multi-lines
         """
-        return u"<span class='%s'>%s</span>" % ('individual',
-            user.get_full_name())
+        return user.get_full_name()
+        # return u"<span class='%s'>%s</span>" % ('individual',
+        #     user.get_full_name())
 
     def get_item_label(self, user):
         return self.format_result(user)

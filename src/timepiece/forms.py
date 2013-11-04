@@ -138,6 +138,7 @@ class EditPersonPermission(forms.ModelForm):
         self.fields['can_edit_feature'].widget.attrs['class'] = 'safe'
         self.fields['can_create_sprint'].widget.attrs['class'] = 'safe'
         self.fields['can_edit_issue_states'].widget.attrs['class'] = 'safe'
+        self.fields['can_assign_user'].widget.attrs['class'] = 'safe'
 
         self.fields['can_view_actual_hours'].widget.attrs['class'] = 'safe'
         self.fields['can_estimate_own_points'].widget.attrs['class'] = 'medium-safe'
@@ -208,6 +209,12 @@ class AddUserToProjectForm(forms.Form):
     def save(self):
         return self.cleaned_data['user']
 
+class AssignUserToIssueForm(forms.Form):
+    user = selectable_forms.AutoCompleteSelectField(UserLookup, label="")
+    user.widget.attrs['placeholder'] = 'Add User'
+
+    def save(self):
+        return self.cleaned_data['user']
 
 class ClockInForm(forms.ModelForm):
     active_comment = forms.CharField(label='Notes for the active entry',

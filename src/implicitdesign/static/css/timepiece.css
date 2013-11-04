@@ -9613,6 +9613,11 @@ ul.project_list {
     /* font-size:12px; */
 }
 
+.issues .issues_list .assigned_col {
+    text-align: right;
+    padding-right: 5px;
+}
+
 .issues .issues_list .issue_delete {
     cursor: pointer;
 }

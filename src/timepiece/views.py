@@ -3280,6 +3280,7 @@ def project_issues(request, pk, template="timepiece/project/issues.html", contex
     context['current_user'] = request.user
     context['project'] = project
 
+    context['assign_user_form'] = timepiece_forms.AssignUserToIssueForm()
     context['total_hours'] = cost_totals['hours']
     context['total_ctc'] = cost_totals['ctc']
     context['total_billable'] = cost_totals['billable']
@@ -3338,7 +3339,8 @@ def get_project_detail(request, project_id, template="timepiece/project/project_
     context['unassigned_timesheet_entries_hours'] = unassigned_cost_totals['hours']
     context['unassigned_timesheet_entries_ctc'] = unassigned_cost_totals['ctc']
     context['unassigned_timesheet_entries_billable'] = unassigned_cost_totals['billable']
-    
+
+    context['assign_user_form'] = timepiece_forms.AssignUserToIssueForm()
     context['issues_forms'] = issues_forms
     context['total_hours'] = cost_totals['hours']
     context['total_ctc'] = cost_totals['ctc']
@@ -3482,6 +3484,29 @@ def update_issue_with_feature(request):
 
 @csrf_exempt
 @login_required
+def issue_assigned_to_update(request,  template="timepiece/project/issue_detail.html", context=None):
+    context = context or {}
+
+    issue = timepiece.Issue.objects.get(pk=request.POST['issue_id'])
+    user = User.objects.get(pk=request.POST['user_id'])
+
+    project = issue.project
+    context['project'] = project
+    context['supports_description'] = True
+
+    has_assign_user = timepiece.BusinessPermissions.objects.get_or_create(business=project.business, user=request.user)[0].has_assign_user
+    if not has_assign_user:
+        raise PermissionDenied
+    try:
+        issue.assigned_to = user
+        issue.save()
+    except KeyError:
+        pass
+    
+    return HttpResponse()
+
+@csrf_exempt
+@login_required
 def issue_subject_update(request,  template="timepiece/project/issue_detail.html", context=None):
     context = context or {}
 
@@ -3537,6 +3562,8 @@ def unassigned_timesheet_entries(request, project_id, template="timepiece/projec
     context['supports_description'] = False
     context['current_user'] = request.user
     context['issue'] = {'id':'na',
+                        'subject':'Unassigned timesheet entries',
+                        'auto_expand_timesheet_entries':True,
                         'project':project,
                         'description':'unassigned timesheet entries',
                         'related_entries':timepiece.Issue.get_unassigned_timesheet_entries(project=project)}
@@ -3553,6 +3580,8 @@ def all_timesheet_entries(request, project_id, template="timepiece/project/issue
     context['supports_description'] = False
     context['current_user'] = request.user
     context['issue'] = {'id':'na',
+                        'subject':'All timesheet entries',
+                        'auto_expand_timesheet_entries':True,
                         'project':project,
                         'description':'all timesheet entries',
                         'related_entries':entries}
@@ -3885,11 +3914,14 @@ def get_issue_row(request,issue_id):
     context['users_with_time_but_no_estimates_in_this_project'] = project.get_users_with_time_but_no_estimates_in_this_project()
     context['features'] = ( (f.id, f.name) for f in timepiece.Feature.objects.filter(business=business) )
     
+    context['assign_user_form'] = timepiece_forms.AssignUserToIssueForm()
+
     refresh_issue =timepiece.Issue.objects.get(id=issue.id)
     refresh_issue.representation = issue.representation
     context['issue'] = refresh_issue
     r = render_to_response('timepiece/project/_issue_entry_row.html',
                            context, context_instance=RequestContext(request))
+    
     return r
 
 @csrf_exempt

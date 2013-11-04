@@ -4,6 +4,9 @@
 {% block title %}Project Issues{% endblock %}
 {% load bootstrap_toolkit %}
 {% load timepiece_tags %}
+{% block extramedia %}
+  {{ assign_user_form.media }}
+{% endblock %}
 
 {% block content %}
 

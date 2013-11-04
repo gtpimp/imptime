@@ -46,7 +46,7 @@
   <a href="#" onclick="$(this).parent().find('.timesheet_entries').toggle(); return false;">
     <img src="{{STATIC_URL}}images/icons/clock.png"/>
   </a>
-  <div class="timesheet_entries" style="display:none">
+  <div class="timesheet_entries" {% if not issue.auto_expand_timesheet_entries %}style="display:none"{% endif %}>
     <h3>Timesheet entries</h3>
     {% ifequal 0 issue.related_entries|length %}
       No timesheet entries

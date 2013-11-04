@@ -1,7 +1,7 @@
 {% load timepiece_tags %}
 {% load humanize %}
 {% load url from future %}
-
+{% load bootstrap_toolkit %}
 
 <tr class="issue_instance_row {{issue.status_as_class}}" id="{{issue.pk}}" refresh_url="{% url 'get_issue_row' issue.pk %}">                    
   <td class="issue_number_cell"> 
@@ -27,6 +27,15 @@
       {{issue.subject}}
     </div>
   </td>
+
+  <td class="assigned_col" {% has_permission has_assign_user project.business %} onclick="return imp.clickable_assign_user_box(this, '{% url 'issue_assigned_to_update' %}', {{issue.pk}})"{% end_permission %}>
+    <span class='existing_assign'>{{issue.assigned_to.get_full_name}}</span>
+    <span class='assign_user_form' style="display:none">
+      {{ assign_user_form|as_bootstrap:"inline" }}
+      <input class="btn assign_button" type="submit" name="submit" id="submit" value="Set" />
+    </span>
+  </td>
+
   <td class="feature_col" {% has_permission has_edit_issue_feature project.business %} onclick="return imp.show_inline_editor(this);"{% end_permission %} url_for_update="{% url 'update_issue_with_feature' %}" issue_id="{{issue.id}}" url_for_options="{% url 'business_features' business.id %}" selected_value="{{issue.feature.id}}" >
 
     <div class="styled-select">		     

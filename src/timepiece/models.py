@@ -215,21 +215,20 @@ class BusinessPermissions(models.Model):
     class Meta:
         unique_together = (('user','business'),)
 
-    business = models.ForeignKey( Business,
-                                  related_name='business_permissions' )
-    user = models.ForeignKey( User,
-                               related_name='business_permissions' )
+    business = models.ForeignKey(Business, related_name='business_permissions')
+    user = models.ForeignKey(User, related_name='business_permissions')
 
-    can_view_project_card = models.BooleanField(default=False, verbose_name="Can View Sprint Card")
-    can_edit_issues = models.BooleanField(default=False, verbose_name="Can Edit Issues")
-    can_view_issues = models.BooleanField(default=False, verbose_name="Can View Issues")
-    can_edit_issue_states = models.BooleanField(default=False, verbose_name="Can Edit Issue States")
-    can_add_issue = models.BooleanField(default=False, verbose_name="Can Add Issue")
-    can_delete_issue = models.BooleanField(default=False, verbose_name="Can Delete Issue")
-    can_edit_description = models.BooleanField(default=False, verbose_name="Can Edit Description")
-    can_edit_subject = models.BooleanField(default=False, verbose_name="Can Edit Subject")
-    can_edit_feature = models.BooleanField(default=False, verbose_name="Can Edit Feature")
-    can_create_sprint = models.BooleanField(default=False, verbose_name="Can Create Sprint")
+    can_view_project_card = models.BooleanField(default=True, verbose_name="Can View Sprint Card")
+    can_edit_issues = models.BooleanField(default=True, verbose_name="Can Edit Issues")
+    can_view_issues = models.BooleanField(default=True, verbose_name="Can View Issues")
+    can_edit_issue_states = models.BooleanField(default=True, verbose_name="Can Edit Issue States")
+    can_add_issue = models.BooleanField(default=True, verbose_name="Can Add Issue")
+    can_delete_issue = models.BooleanField(default=True, verbose_name="Can Delete Issue")
+    can_edit_description = models.BooleanField(default=True, verbose_name="Can Edit Description")
+    can_edit_subject = models.BooleanField(default=True, verbose_name="Can Edit Subject")
+    can_edit_feature = models.BooleanField(default=True, verbose_name="Can Edit Feature")
+    can_create_sprint = models.BooleanField(default=True, verbose_name="Can Create Sprint")
+    can_assign_user = models.BooleanField(default=True, verbose_name="Can Assign User")
 
     can_view_actual_hours = models.BooleanField(default=False, verbose_name="Can View Actual Hours")
     can_see_other_user_points = models.BooleanField(default=False, verbose_name="Can See Other User's Points")
@@ -331,9 +330,14 @@ class BusinessPermissions(models.Model):
     @property
     def has_edit_issue_feature(self):
         return self.user.is_superuser or self.can_edit_feature
+
     @property
     def has_create_sprint(self):
         return self.user.is_superuser or self.can_create_sprint
+
+    @property
+    def has_assign_user(self):
+        return self.user.is_superuser or self.can_assign_user
 
 class Project(models.Model):
 
@@ -1993,6 +1997,7 @@ class Issue(models.Model):
     story_points = models.FloatField(null=True,blank=True)    
     order = models.IntegerField(null=True,blank=True)
     feature = models.ForeignKey("Feature",blank=True,null=True,related_name='issues')
+    assigned_to = models.ForeignKey(User, related_name='assigned_issues', blank=True,null=True)
 
     @classmethod
     def get_last_issue_number(self):

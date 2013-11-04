@@ -3,11 +3,15 @@ var imp = imp || {};
 imp.inline_editor_active = false;
 imp.current_issue_detail_url = null;
 
-imp.issue_loading = function(item_id) {
+imp.issue_loading = function(item_id, msg) {
     var loading_el = $("#loading_issue_"+item_id);
     loading_el.show();
 
-    var on_global_loading_done = imp.loading("loading "+item_id);
+    if ( ! msg ) {
+	msg = "loading";
+    }
+
+    var on_global_loading_done = imp.loading(msg + " " + item_id);
 
     var on_done = function() {
 	loading_el.fadeOut();
@@ -166,7 +170,7 @@ imp.on_project_form_submit = function(element, url) {
 imp.delete_issue_from_issues_list = function(element, url, item_id) {
     var button = $(element);
     var closest_row = button.closest(".issue_instance_row");
-    var on_done = imp.issue_loading(item_id);
+    var on_done = imp.issue_loading(item_id, "deleting");
     $.ajax({type:"POST",
             url: url,
             data : { item_id: item_id },
@@ -220,7 +224,7 @@ imp.clickable_description_box = function(element, url, item_id) {
         var display_value = new_value.replace(/\n/g,"<br>");
         div_parent.find(".content").html(display_value);
         div_parent.show();
-	var on_done = imp.issue_loading(item_id);
+	var on_done = imp.issue_loading(item_id, "editing");
         var response = $.ajax({type:"POST",
                 url: url,
                 data : { item_id: item_id, new_value: new_value },
@@ -284,7 +288,7 @@ imp.clickable_subject_box = function(element, url, item_id, size, width, issue_i
             div_sibling.html(new_value);
             $(this).remove();
             div_sibling.show();
-	    var on_done = imp.issue_loading(issue_id);
+	    var on_done = imp.issue_loading(issue_id, "editing");
             var response = $.ajax({type:"POST",
                                    url: url,
                                    data : { item_id: item_id, new_value: new_value },
@@ -392,6 +396,30 @@ imp.select_business_feature = function(element, issue_id, request_url, update_ur
     };
     response.done( create_widget_at_done(element, issue_id,  update_url) );
 
+};
+
+imp.clickable_assign_user_box = function(element, update_url, issue_id) {
+    var el = $(element);
+    el.find(".existing_assign").hide();
+    var form = el.find(".assign_user_form");
+    form.show();
+
+    form.find(".assign_button").click(function(event) {
+					  event.stopImmediatePropagation();
+					  var on_done = imp.issue_loading(issue_id, "assigning");
+					  var value = form.find("[name='user_1']").val();
+
+					  $.ajax({type:"POST",
+						  url: update_url,
+						  data : { issue_id: issue_id, user_id: value },
+						  dataType:"json",
+						  success: function() {
+						      imp.refresh_closest_issue_parent_row(el);
+						      on_done();
+						  }});
+				      });
+
+    return false;
 };
 
 imp.show_inline_editor = function(el) {

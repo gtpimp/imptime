@@ -238,6 +238,11 @@ urlpatterns = patterns('',
     url(
         r'^time-sheet/issue_subject_update/$', views.issue_subject_update, name='issue_subject_update',
     ),
+
+    url(
+        r'^time-sheet/issue_assigned_to_update/$', views.issue_assigned_to_update, name='issue_assigned_to_update',
+    ),
+
     url(
         r'^time-sheet/issue_points_update/$', views.issue_points_update, name='issue_points_update',
     ),
