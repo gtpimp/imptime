@@ -4,7 +4,7 @@ except ImportError:
     from django.conf.urls.defaults import patterns, include, url
 
 from timepiece.models import Entry
-from timepiece import views
+from timepiece import views, exporter
 
 urlpatterns = patterns('',
     url(r'^$', views.list_projects, name='landing_page'),
@@ -208,7 +208,7 @@ urlpatterns = patterns('',
     # Projects
     url(
         r'^time-sheet/project/(?P<pk>\d+)/$',
-        views.ProjectTimesheet.as_view(),
+        exporter.ProjectTimesheet.as_view(),
         name='project_time_sheet',
     ),
     url(
@@ -262,7 +262,7 @@ urlpatterns = patterns('',
                        
     url(
         r'^time-sheet/project/(?P<pk>\d+)/csv/$',
-        views.ProjectTimesheetCSV.as_view(),
+        exporter.ProjectTimesheetCSV.as_view(),
         name='export_project_time_sheet',
     ),
     url(
