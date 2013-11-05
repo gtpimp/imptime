@@ -3566,6 +3566,8 @@ def unassigned_timesheet_entries(request, project_id, template="timepiece/projec
                         'project':project,
                         'description':'unassigned timesheet entries',
                         'related_entries':timepiece.Issue.get_unassigned_timesheet_entries(project=project)}
+    context['business'] = project.business
+    context['project'] = project
     context['business_permissions_by_user'] = timepiece.BusinessPermissions.by_user(project.business)
     return render_to_response(template, context, context_instance=RequestContext(request))
 
@@ -3584,6 +3586,8 @@ def all_timesheet_entries(request, project_id, template="timepiece/project/issue
                         'project':project,
                         'description':'all timesheet entries',
                         'related_entries':entries}
+    context['business'] = project.business
+    context['project'] = project
     context['business_permissions_by_user'] = timepiece.BusinessPermissions.by_user(project.business)
     return render_to_response(template, context, context_instance=RequestContext(request))
 
