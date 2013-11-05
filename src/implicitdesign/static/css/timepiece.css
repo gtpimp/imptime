@@ -204,6 +204,8 @@ a:hover {
     width: 75px;
     font-size: 11px;
     height: 15px;
+    background-color: #eeeeee;
+    margin-top: 2px;
 }
 
 .content {

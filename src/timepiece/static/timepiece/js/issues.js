@@ -99,7 +99,7 @@ imp.do_form_remove  = function() {
 
 imp.create_issue_and_add_another = function(element, sprint_id, url) {
     imp.on_issue_form_submit(element, sprint_id, url, function() {
-				 imp.do_form_show(element , url);
+				 imp.do_form_show(element, url);
 			     });
     return false;
 };
@@ -113,7 +113,7 @@ imp.on_issue_form_submit = function(element, sprint_id, url, on_success) {
         var table_body =  sprint_el.find(".issue_list_body");
         if(table_body.length > 0) {
             table_body.append(data);
-	    imp.on_issue_rows_loaded();
+	    imp.on_issue_rows_loaded(table_body);
         }
         imp.do_form_remove();
 	on_done();
@@ -267,13 +267,6 @@ imp.clickable_time_estimate = function(element, url, item_id, issue_id) {
 
 imp.clickable_subject_box = function(element, url, item_id, size, width, issue_id, initial_value) {
 
-    // This 'imp.showing_clickable_popup' stuff can probably be removed, look for and delete all references if reading after 11Nov2013
-    //
-    // if ( imp.showing_clickable_popup ) {
-    //     return;
-    // }
-    imp.showing_clickable_popup = true;
-
     if (!issue_id) {
 	issue_id = item_id;
     }
@@ -316,7 +309,6 @@ imp.clickable_subject_box = function(element, url, item_id, size, width, issue_i
 		imp.refresh_closest_issue_parent_row(div_sibling);
 		on_done();
 	    } );
-            imp.showing_clickable_popup = false;
         }
 
     });
@@ -327,21 +319,20 @@ imp.clickable_subject_box = function(element, url, item_id, size, width, issue_i
 						    var div_sibling = parent.find('.edit_issue_subject');
 						    $(this).remove();
 						    div_sibling.show();
-
-						    imp.showing_clickable_popup = false;
 						}
 					    });
 };
 
 
 imp.refresh_closest_issue_parent_row = function(element) {
-    var what = $(element);
-    var closest_row = what.parents(".issue_instance_row");
+    element = $(element);
+    var closest_row = element.parents(".issue_instance_row");
     var url = closest_row.attr("refresh_url");
      $.ajax({type:"GET",
              url: url,
              success: function(data) {
                  $(closest_row)[0].outerHTML = $(data)[0].outerHTML;
+		 imp.on_issue_rows_loaded($(".issue_instance_row"));
            }
          });
 };
@@ -419,24 +410,43 @@ imp.select_business_feature = function(element, issue_id, request_url, update_ur
 
 imp.clickable_assign_user_box = function(element, update_url, issue_id) {
     var el = $(element);
-    el.find(".existing_assign").hide();
     var form = el.find(".assign_user_form");
+
+    el.find(".existing_assign").hide();
     form.show();
+
+    var cancel = function() {
+	el.find(".existing_assign").show();
+	form.hide();
+    };
+
+    var save = function() {
+	var on_done = imp.issue_loading(issue_id, "assigning");
+	var value = form.find("[name='user_1']").val();
+
+	$.ajax({type:"POST",
+		url: update_url,
+		data : { issue_id: issue_id, user_id: value },
+		dataType:"json",
+		success: function() {
+		    el.find(".existing_assign").show();
+		    imp.refresh_closest_issue_parent_row(el);
+		    on_done();
+		}});
+    };
 
     form.find(".assign_button").click(function(event) {
 					  event.stopImmediatePropagation();
-					  var on_done = imp.issue_loading(issue_id, "assigning");
-					  var value = form.find("[name='user_1']").val();
-
-					  $.ajax({type:"POST",
-						  url: update_url,
-						  data : { issue_id: issue_id, user_id: value },
-						  dataType:"json",
-						  success: function() {
-						      imp.refresh_closest_issue_parent_row(el);
-						      on_done();
-						  }});
+					  save();
 				      });
+
+    form.keyup( function(event) {
+		    event.stopImmediatePropagation();
+		    if(event.which === 27) {
+			cancel();
+		    }
+		    return false;
+		});
 
     return false;
 };
