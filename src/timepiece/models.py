@@ -414,7 +414,10 @@ class Project(models.Model):
         for user, points in self.get_points_total().items():
             if not points:
                 continue
-            rate = users_and_hours['users'][user.username]['rate']
+            try:
+                rate = users_and_hours['users'][user.username]['rate']
+            except KeyError:
+                continue
             velocity = rate.velocity
             user_hours = users_and_hours['users'][user.username]['hours']
             

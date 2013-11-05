@@ -9397,14 +9397,14 @@ ul.project_list {
 }
 
 .special_traffic_colourbar.traffic_green {
-    background-color:green;
+    background-color:#97CAAE;
 }
 .special_traffic_colourbar.traffic_yellow {
-    background-color:yellow;
+    background-color:#EDEC96;
     color:#000000;
 }
 .special_traffic_colourbar.traffic_red {
-    background-color:red;
+    background-color:#E59999;
 }
 
 
