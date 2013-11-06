@@ -146,64 +146,62 @@ class CSVSprintExport(CSVMixin):
         if bp.has_view_ctc_billable_rates:
 
             if bp.has_view_ctc_rates:
-                header_row.append("cost to company")
-            header_row.append("Billable")
+                header_row.append("ctc")
+            header_row.append("billable")
 
         for username,user in business_users_and_names:
             if bp.has_view_actual_hours:
-                header_row.append("Hours for %s"%user.get_full_name())
+                header_row.append("%s hours"%user.get_full_name())
 
             if bp.has_see_other_user_points:
-                header_row.append("Estimated Hours for %s"%user.get_full_name())
+                header_row.append("%s estimated"%user.get_full_name())
 
             if bp.has_view_ctc_billable_rates:
                 if bp.has_view_ctc_rates:
-                    header_row.append("ctc rate for %s"%user.get_full_name())
-                header_row.append("Billable rate for %s"%user.get_full_name())
+                    header_row.append("%s ctc rate"%user.get_full_name())
+                header_row.append("%s billable rate"%user.get_full_name())
 
         total = [header_row]
-        for issue in self.project.issues.all():
-            user_hours_for_issue = self.project.users_and_hours(issue__id=issue.id, cache=False)
 
-            data_row = [issue.number, issue.subject]
-
+        def add_user_hours_to_data_row(data_row, user_hours, issue=None):
             if bp.has_view_ctc_billable_rates:
                 if bp.has_view_ctc_rates:
-                    data_row.append(issue.ctc)
-                data_row.append(issue.billable)
+                    data_row.append(user_hours['totals']['revenue'])
+                data_row.append(user_hours['totals']['billed'])
 
             for username,user in business_users_and_names:
                 if bp.has_view_actual_hours:
                     try:
-                        value = user_hours_for_issue['users'][username]['hours']
+                        value = user_hours['users'][username]['hours']
                     except KeyError:
                         value = 0
                     data_row.append(value)
 
-                if bp.has_see_other_user_points:
-                    try:
-                        issue_point = timepiece.IssuePoints.objects.get(user=user, issue=issue)
-                        points = float(issue_point.points) if issue_point.points else 0.0
-                    except timepiece.IssuePoints.DoesNotExist:
-                        points = 0.0
-                    data_row.append(points)
+                if issue is not None:
+                    if bp.has_see_other_user_points:
+                        try:
+                            issue_point = timepiece.IssuePoints.objects.get(user=user, issue=issue)
+                            points = float(issue_point.points) if issue_point.points else 0.0
+                        except timepiece.IssuePoints.DoesNotExist:
+                            points = 0.0
+                        data_row.append(points)
+                else:
+                    data_row.append(0)
 
                 if bp.has_view_ctc_billable_rates:
-
                     if bp.has_view_ctc_rates:
-                        try:
-                            user_rate = timepiece.Rate.objects.get(user=user, project=issue.project)
-                            rate = float(user_rate.amount)
-                        except timepiece.IssuePoints.DoesNotExist:
-                            rate = 0.0
-                        data_row.append(rate)
-                    try:
-                        user_rate = timepiece.Rate.objects.get(user=user, project=issue.project)
-                        rate = float(user_rate.billable_amount)
-                    except timepiece.IssuePoints.DoesNotExist:
-                        rate = 0.0
-                    data_row.append(rate)
+                        data_row.append( user_hours['users'][username]['rate'].amount )
+                    data_row.append(float(user_hours['users'][username]['rate'].billable_amount))
 
+        user_hours_for_issue = self.project.users_and_hours(issue__isnull=True, cache=False)
+        data_row = ['unassigned', 'na']
+        add_user_hours_to_data_row(data_row, user_hours_for_issue)
+        total.append(data_row)
+
+        for issue in self.project.issues.all():
+            user_hours_for_issue = self.project.users_and_hours(issue__id=issue.id, cache=False)
+            data_row = [issue.number, issue.subject]
+            add_user_hours_to_data_row(data_row, user_hours_for_issue, issue=issue)
             total.append(data_row)
 
         return total

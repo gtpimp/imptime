@@ -731,7 +731,8 @@ class Project(models.Model):
             billed = float(user_total['hours']) * float(rate.billable_amount)
 
             res['users'][user.username] = {
-                'hours':user_total['hours'], 'rate':rate, 
+                'hours':user_total['hours'], 
+                'rate':rate, 
                 'revenue': float(user_total['hours'])*float(rate.amount), 
                 'end_time': user_total['end_time'],
                 'billed': billed
