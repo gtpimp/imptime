@@ -121,6 +121,11 @@ imp.on_issue_form_submit = function(element, sprint_id, url, on_success) {
 	    imp.on_issue_rows_loaded(table_body);
         }
         imp.do_form_remove();
+
+	var issue_id = $(data).attr("id");
+	$(document).find(".issue_instance_row[id='"+issue_id+"']").find(".issue_number").click();
+	imp.highlight_issue(issue_id);
+
 	on_done();
 	if ( on_success ) {
 	    on_success();
