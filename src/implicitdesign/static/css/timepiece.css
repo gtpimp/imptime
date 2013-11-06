@@ -9863,6 +9863,10 @@ ul.project_list {
     color: #000000;
 }
 
+.project_card {
+    color: #000000;
+}
+
 .issue_detail h2 {
     border-bottom: none;
 }
