@@ -213,9 +213,9 @@ a:hover {
 }
 
 .edit_description .content {
-    background-color: #efefef;
+    background-color: rgb(250,250,255);
     padding: 3px;
-    border: 1px solid #aaaaaa;
+    /*border: 1px solid #cccccc;*/
     width: 96%;
     min-height: 300px;
 }
@@ -9856,6 +9856,19 @@ ul.project_list {
 
 .issue_detail {
     padding-left: 10px;
+    color: #bbbbbb;
+}
+
+.issue_detail .content {
+    color: #000000;
+}
+
+.issue_detail h2 {
+    border-bottom: none;
+}
+
+.issue_detail .timesheet_entries {
+    color: #000000;
 }
 
 .issue_detail .issue_subject {

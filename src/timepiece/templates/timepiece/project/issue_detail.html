@@ -4,7 +4,9 @@
 
 <h2>#{{issue.number}} {{issue.subject}}</h2>
 
+{% comment %}
 <div class="issue_status" style="margin-bottom:10px"><h3>{{issue.status}}</h3></div> 
+{% endcomment %}
 
 {% if supports_description %}
 <div>
