@@ -3,6 +3,7 @@ import datetime
 import time
 import calendar
 from decimal import Decimal
+import markdown
 
 from django import template
 from django.db.models import Sum
@@ -158,6 +159,10 @@ class IsSameUser(template.Node):
             return output        
         return ""
 register.tag('is_same_user', is_same_user)
+
+@register.filter
+def asmarkdown(content):
+    return markdown.markdown(content)
     
 @register.simple_tag(takes_context=True)
 def get_points_current_user(context, issue_id):

@@ -212,6 +212,14 @@ a:hover {
     width: 100%;
 }
 
+.edit_description .content {
+    background-color: #efefef;
+    padding: 3px;
+    border: 1px solid #aaaaaa;
+    width: 96%;
+    min-height: 300px;
+}
+
 /* (~".span@{index}") { .span(@index); } */
 /* (~".span@{index}") { .span(@index); } */
 /* (~".span@{index}") { .span(@index); } */
@@ -9874,6 +9882,7 @@ ul.project_list {
 
 .edit_description textarea {
     width: 95%;
+    height: 300px;
 }
 
 .issue_detail .issue_entries {

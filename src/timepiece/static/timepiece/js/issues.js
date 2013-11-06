@@ -210,52 +210,53 @@ imp.clickable_description_box = function(element, url, item_id) {
     var textbox = $(element),
         commentField = $("<form/>");
     commentField = commentField.attr('action',url).attr('method','post');
-    var value = textbox.find(".content").html();
-    value = value.replace(/<br>/g,"\n");
+    var value = textbox.find(".markdown_content").html();
     var textField =$("<textarea/>").attr('name','new_value');
-    textField.css({height:"400px"});
-    textField.html(value);
+    textbox.find(".markdown_help").show();
+
+    var cancel = function() {
+	textbox.show();
+	submitButton.remove();
+	textField.remove();
+	textbox.find(".markdown_help").hide();
+	imp.refresh_issue_detail();
+    };
+
     textField.keyup(function(e) {
 			e.stopImmediatePropagation();
 			if(e.which === 27) {
-			    var form_parent = $(this).parent().parent();
-			    var div_parent = form_parent.find(".static_div");
-			    var text_sibling = form_parent.find('textarea');
-			    var new_value = text_sibling.val();
-			    $(this).parent().remove();
-			    div_parent.show();
+			    cancel();
 			}
     });
     textbox.hide();
     var itemField =$("<input/>").attr('type','hidden').attr('value', item_id).attr('name','item_id');
-    var submitButton = $("<input/>").attr('type','button').attr('value','Modify');
+    var submitButton = $("<input/>").attr('type','button').attr('value','Save').addClass("btn");
+    var cancelButton = $("<input/>").attr('type','button').attr('value','Cancel').addClass("btn");
     commentField.append(itemField);
     commentField.append(textField);
 
     submitButton.click(function(e) {
-	var form_parent = $(this).parent().parent();
-	var div_parent = form_parent.find(".static_div");
-	var text_sibling = form_parent.find('textarea');
-	var hidden_sibling = form_parent.find('input:hidden');
-	item_id = hidden_sibling.val();
-	var new_value = $(text_sibling).val();
-        $(this).parent().remove();
-        var display_value = new_value.replace(/\n/g,"<br>");
-        div_parent.find(".content").html(display_value);
-        div_parent.show();
-	var on_done = imp.issue_loading(item_id, "editing");
-        var response = $.ajax({type:"POST",
-                url: url,
-                data : { item_id: item_id, new_value: new_value },
-                dataType:"json"});
-	response.done( function() {
-	    on_done();
-	});
-    });
+			   var new_value = textField.val();
+			   var on_done = imp.issue_loading(item_id, "Saving");
+			   var response = $.ajax({type:"POST",
+						  url: url,
+						  data : { item_id: item_id, new_value: new_value },
+						  dataType:"json"});
+			   response.done( function() {
+					      imp.refresh_issue_detail();
+					      on_done();
+					  });
+		       });
     commentField.append(submitButton);
+    commentField.append(cancelButton);
     textbox.parent().append(commentField);
     textField.focus();
-    textField.value = textField.value;
+    textField.value = value;
+    textField.html(value);
+
+    cancelButton.click(cancel);
+
+    textField.markItUp(markdown_settings);
 };
 
 

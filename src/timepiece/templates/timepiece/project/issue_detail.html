@@ -1,5 +1,6 @@
 {% load timepiece_tags %}
 {% load url from future %}
+{% load timepiece_tags %}
 
 <h2>#{{issue.number}} {{issue.subject}}</h2>
 
@@ -11,11 +12,16 @@
 
     <div class="static_div" {% has_permission has_edit_description issue.project.business %} onclick="imp.clickable_description_box(this, '{% url 'issue_detail_update' %}',{{ issue.id }})" {% end_permission %} >
       {% has_permission has_edit_description issue.project.business %}
+        {% comment %}
         <div style="cursor:pointer"><img src="{{STATIC_URL}}/images/timepiece/icons/pencil.png" /></div>
+        {% endcomment %}
       {% end_permission %}
-        <div class="content">{% if issue.description %} {{issue.description|linebreaksbr}}</div>
+        <div class="markdown_content" style="display:none">{{issue.description}}</div>
+        <div class="content">{% if issue.description %} {{issue.description|asmarkdown|safe}}</div>
       {% else %}No issue detail{% endif %}
+
     </div>
+    <a href="http://daringfireball.net/projects/markdown/syntax" class="markdown_help" target="_blank" style="display:none">markdown syntax</a>
   </div>
 </div>
 {% endif %}
