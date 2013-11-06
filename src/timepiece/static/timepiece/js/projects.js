@@ -251,27 +251,6 @@ imp.refresh_show_money = function() {
     }
 };
 
-(function() {
-  var loading_counter = 0;
-  imp.loading = function(msg) {
-
-      loading_counter += 1;
-      var local_loading_counter = loading_counter;
-
-      var el = $(".top_level_loading")
-      el.find(".title").html(msg);
-      el.show();
-
-      var on_done = function() {
-	  if (loading_counter == local_loading_counter) {
-	      el.find(".title").html();
-	      el.fadeOut({duration:1000});
-	  }
-      }
-      return on_done;
-  };
-}());
-
 imp.on_document_ready = function() {
 
     var project_sort_url = $(".project_list").attr("project_sort_url");

@@ -3,23 +3,6 @@ var imp = imp || {};
 imp.inline_editor_active = false;
 imp.current_issue_detail_url = null;
 
-imp.issue_loading = function(item_id, msg) {
-    var loading_el = $("#loading_issue_"+item_id);
-    loading_el.show();
-
-    if ( ! msg ) {
-	msg = "loading";
-    }
-
-    var on_global_loading_done = imp.loading(msg + " " + item_id);
-
-    var on_done = function() {
-	loading_el.fadeOut();
-	on_global_loading_done();
-    };
-    return on_done;
-};
-
 imp.highlight_issue = function(issue_id) {
     // highlight the given issue or the default issue
 

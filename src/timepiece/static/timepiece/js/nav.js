@@ -1,5 +1,44 @@
 imp.nav = imp.nav || {};
 
+(function() {
+  var loading_counter = 0;
+  imp.loading = function(msg) {
+
+      loading_counter += 1;
+      var local_loading_counter = loading_counter;
+
+      var el = $(".top_level_loading")
+      el.find(".title").html(msg);
+      el.show();
+
+      var on_done = function() {
+	  if (loading_counter == local_loading_counter) {
+	      el.find(".title").html();
+	      el.fadeOut({duration:1000});
+	  }
+      }
+      return on_done;
+  };
+}());
+
+imp.issue_loading = function(item_id, msg) {
+    var loading_el = $("#loading_issue_"+item_id);
+    loading_el.show();
+
+    if ( ! msg ) {
+	msg = "loading";
+    }
+
+    var on_global_loading_done = imp.loading(msg + " " + item_id);
+
+    var on_done = function() {
+	loading_el.fadeOut();
+	on_global_loading_done();
+    };
+    return on_done;
+};
+
+
 imp.nav.hookup_search_form = function() {
     var form = $(".issue_search form");
     form.submit(function(event) {
