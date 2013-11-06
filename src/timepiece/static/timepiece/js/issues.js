@@ -71,6 +71,11 @@ imp.do_form_show  = function(element, url) {
 
     to_edit.show();
     to_edit.css("z-index",200);
+
+    setTimeout(function() {
+		   to_edit.find("textarea").markItUp(markdown_settings);
+	       }, 100);
+
     function key_up_for_form(form) {
        var current_form = form;
        return function(event) {
