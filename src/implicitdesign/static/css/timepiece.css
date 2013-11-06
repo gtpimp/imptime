@@ -10037,7 +10037,16 @@ label {
     outline: thin solid #aaaa00;
 }
 
+.search_results_contains h1 {
+    font-size: 13px;
+}
+
+.search_results_container h2 {
+    font-size: 12px;
+}
+
 table.search_results td, table.search_results th {
+ font-size:10px;
  border-left: 1px solid #dfdfdf;   
  padding-left: 5px;
  padding-right: 5px;

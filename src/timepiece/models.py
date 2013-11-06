@@ -202,14 +202,6 @@ class Feature(models.Model):
     def __unicode__(self):
         return self.name
 
-class ProjectQuerySet(QuerySet):
-    def filter_by_logged_in_user(self, user):
-        """ restricts entries to those belonging to projects the given
-        user (typically the logged in user) is assigned to """
-        if user.is_superuser:
-            return self
-        return self.filter(users=user)
-
 class BusinessPermissions(models.Model):
 
     class Meta:
@@ -344,10 +336,18 @@ class BusinessPermissions(models.Model):
     def has_assign_user(self):
         return self.user.is_superuser or self.can_assign_user
 
+class ProjectQuerySet(QuerySet):
+    def filter_by_logged_in_user(self, user):
+        """ restricts entries to those belonging to projects the given
+        user (typically the logged in user) is assigned to """
+        if user.is_superuser:
+            return self
+        return self.filter(users=user)
+
 class Project(models.Model):
 
     code = models.CharField(max_length=255,blank=True,null=True)        
-    name = models.CharField(max_length=255)
+    name = models.CharField(max_length=255, db_index=True)
     budget = models.DecimalField(max_digits=8, decimal_places=2, default=0)
     tracker_url = models.CharField(max_length=255, blank=True, null=False,
         default="")
@@ -379,7 +379,7 @@ class Project(models.Model):
         limit_choices_to={'type': 'project-status'},
         related_name='projects_with_status',
     )
-    description = models.TextField(blank=True, null=True)
+    description = models.TextField(blank=True, null=True, db_index=True)
     order = models.IntegerField(null=True,blank=True)
     objects = QuerySetManager(ProjectQuerySet)
 

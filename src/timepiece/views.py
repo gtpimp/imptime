@@ -3651,6 +3651,17 @@ def issue_search(request, template="timepiece/project/issue_search_results.html"
     issues = timepiece.Issue.objects.filter(Q(number__icontains=search_term)|Q(subject__icontains=search_term))
     issues = issues.order_by("project__business__name", "project__name", "subject")
     issues = [ x for x in issues if x.project.can_view_by_user(request.user) ]
+
+    sprints = timepiece.Project.objects.filter(Q(name__icontains=search_term)|Q(id__icontains=search_term)|Q(description__icontains=search_term))
+    sprints = sprints.order_by("business__name", "name")
+    sprints = sprints.filter_by_logged_in_user(request.user)
+
+    businesses = timepiece.Business.objects.filter(Q(name__icontains=search_term)|Q(description__icontains=search_term))
+    businesses = businesses.order_by("name")
+    businesses = businesses.filter_by_logged_in_user(request.user)
+
+    context['businesses'] = businesses
+    context['sprints'] = sprints
     context['issues'] = issues
     return render_to_response(template, context, context_instance=RequestContext(request))
 

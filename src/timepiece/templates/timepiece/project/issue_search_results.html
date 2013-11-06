@@ -1,26 +1,82 @@
 {% load url from future %}
 
-<h1>Search results</h1>
+<div class="search_results_container">
 
-<table class="search_results">
-  {% for issue in issues %}
+  <h1>Search results</h1>
 
-    <tr onclick="imp.nav.show_issue({{issue.id}}, {{issue.project.id}}, '{% url 'highlighted_project_list' issue.project.id issue.id %}' );">
-      <td class="number">
-        {{issue.number}}
-      </td>
+  {% if businesses %}
+    <h2>Businesses</h2>
+    <table class="search_results">
+      {% for business in businesses %}
+
+        <tr onclick="imp.nav.show_business({{business.id}}, '{% url 'closed_project_list' business.id %}')">
+          <td class="number">
+            {{business.name}}
+          </td>
+          <td>
+          </td>
+          <td>
+            {{business.description|slice:":100"}}
+          </td>
+        </tr>
+      {% empty %}
+      <tr>
+        <td>
+          No businesses found
+        </td>
+      </tr>
+      {% endfor %}
+    </table>
+  {% endif %}
+
+  {% if sprints %}
+    <h2>Sprints</h2>
+    <table class="search_results">
+      {% for sprint in sprints %}
+
+        <tr onclick="imp.nav.show_sprint({{sprint.id}}, '{% url 'project_list' sprint.id %}' );">
+          <td class="number">
+            {{sprint.id}}
+          </td>
+          <td>
+            {{sprint.business.name }} - {{sprint.name }}
+          </td>
+          <td>
+            {{sprint.description|slice:":100"}}
+          </td>
+        </tr>
+      {% empty %}
+      <tr>
+        <td>
+          No results found
+        </td>
+      </tr>
+      {% endfor %}
+    </table>
+  {% endif %}
+
+  <h2>Issues</h2>
+  <table class="search_results">
+    {% for issue in issues %}
+
+      <tr onclick="imp.nav.show_issue({{issue.id}}, {{issue.project.id}}, '{% url 'highlighted_project_list' issue.project.id issue.id %}' );">
+        <td class="number">
+          {{issue.number}}
+        </td>
+        <td>
+          {{issue.project.business.name }} - {{issue.project.name }}
+        </td>
+        <td>
+          {{issue.subject|slice:":100"}}
+        </td>
+      </tr>
+    {% empty %}
+    <tr>
       <td>
-        {{issue.project.business.name }} - {{issue.project.name }}
-      </td>
-      <td>
-        {{issue.subject|slice:":100"}}
+        No results found
       </td>
     </tr>
-  {% empty %}
-  <tr>
-    <td>
-      No results found
-    </td>
-  </tr>
-  {% endfor %}
-</table>
+    {% endfor %}
+  </table>
+
+</div>
