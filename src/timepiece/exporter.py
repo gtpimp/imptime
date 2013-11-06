@@ -190,8 +190,14 @@ class CSVSprintExport(CSVMixin):
 
                 if bp.has_view_ctc_billable_rates:
                     if bp.has_view_ctc_rates:
-                        data_row.append( user_hours['users'][username]['rate'].amount )
-                    data_row.append(float(user_hours['users'][username]['rate'].billable_amount))
+                        if username in user_hours['users']:
+                            data_row.append( user_hours['users'][username]['rate'].amount )
+                        else:
+                            data_row.append('')
+                    if username in user_hours['users']:
+                        data_row.append(float(user_hours['users'][username]['rate'].billable_amount))
+                    else:
+                        data_row.append('')
 
         user_hours_for_issue = self.project.users_and_hours(issue__isnull=True, cache=False)
         data_row = ['unassigned', 'na']
