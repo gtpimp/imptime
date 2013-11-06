@@ -188,12 +188,12 @@ $(document).ready(function(){
 			 <th>State</th>
 			 <th>User</th>
 			 <th>User Hours</th>
-                         {% has_permission has_view_ctc_rates project.business %}
+                         {% has_permission has_view_ctc_rates business %}
 			 <th>CTC</th>
                          {% end_permission %}
 			 <th>Billed</th>
 			 <th>Profit</th>
-                         {% has_permission has_view_ctc_rates project.business %}
+                         {% has_permission has_view_ctc_rates business %}
 			 <th>Rate CTC</th>
                          {% end_permission %}
 			 <th>Rate Billed</th>
@@ -206,12 +206,12 @@ $(document).ready(function(){
 		     <tr>     
 		       <th colspan="3"> </th>
 		       <th> {% if business_totals.hours > 0 %} {{ business_totals.hours }} {% endif %}</th>
-                       {% has_permission has_view_ctc_rates project.business %}
+                       {% has_permission has_view_ctc_rates business %}
 		       <th>{{ business_totals.ctc|currency }} </th>
                        {% end_permission %}
 		       <th>{{ business_totals.billed|currency }} </th>
 		       <th>{{ business_totals.profit|currency }} </th>
-                       {% has_permission has_view_ctc_rates project.business %}
+                       {% has_permission has_view_ctc_rates business %}
 		       <th>{{ business_totals.ctc_rate|currency }} </th>
                        {% end_permission %}
 		       <th>{{ business_totals.billed_rate|currency }} </th>
@@ -233,7 +233,7 @@ $(document).ready(function(){
 			    <td>{{ project_totals.revenue|currency }}</td>
 			    <td>{{ project_totals.billed|currency }}</td>
 			    <td>{{ project_totals.profit|currency }} </td>
-                            {% has_permission has_view_ctc_rates project.business %}
+                            {% has_permission has_view_ctc_rates business %}
 			    <td>{{ project_totals.ctc_rate|currency }}</td>
                             {% end_permission %}
 			    <td>{{ project_totals.billed_rate|currency }}</td> 
