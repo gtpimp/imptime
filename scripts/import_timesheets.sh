@@ -18,7 +18,6 @@ function graph {
 update_git alec
 update_git david
 update_git gtp
-update_git stephan
 update_git keith
 
 cd /home/timesheet
@@ -31,7 +30,6 @@ python manage.py import_timesheet --settings "implicitdesign.management_settings
 graph alec
 graph gtp
 graph david
-graph stephan
 graph mitzie
 graph ben
 graph etienne
