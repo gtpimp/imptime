@@ -206,6 +206,7 @@ imp.clickable_description_box = function(element, url, item_id) {
     var value = textbox.find(".markdown_content").html();
     var textField =$("<textarea/>").attr('name','new_value');
     textbox.find(".markdown_help").show();
+    var attachments = textbox.parents(".issue_detail").find(".attachment_section");
 
     var cancel = function() {
 	textbox.show();
@@ -213,6 +214,7 @@ imp.clickable_description_box = function(element, url, item_id) {
 	textField.remove();
 	textbox.find(".markdown_help").hide();
 	imp.refresh_issue_detail();
+	attachments.show();
     };
 
     textField.keyup(function(e) {
@@ -222,6 +224,7 @@ imp.clickable_description_box = function(element, url, item_id) {
 			}
     });
     textbox.hide();
+    attachments.hide();
     var itemField =$("<input/>").attr('type','hidden').attr('value', item_id).attr('name','item_id');
     var submitButton = $("<input/>").attr('type','button').attr('value','Save').addClass("btn");
     var cancelButton = $("<input/>").attr('type','button').attr('value','Cancel').addClass("btn");
@@ -237,6 +240,7 @@ imp.clickable_description_box = function(element, url, item_id) {
 						  dataType:"json"});
 			   response.done( function() {
 					      imp.refresh_issue_detail();
+					      attachments.show();
 					      on_done();
 					  });
 		       });

@@ -2,89 +2,92 @@
 {% load url from future %}
 {% load timepiece_tags %}
 
-<h2>#{{issue.number}} {{issue.subject}}</h2>
+<div class="issue_detail_container">
 
-{% comment %}
-<div class="issue_status" style="margin-bottom:10px"><h3>{{issue.status}}</h3></div> 
-{% endcomment %}
+  <h2>#{{issue.number}} {{issue.subject}}</h2>
 
-{% if supports_description %}
-<div>
-  <div class="edit_description" >
+  {% comment %}
+  <div class="issue_status" style="margin-bottom:10px"><h3>{{issue.status}}</h3></div> 
+  {% endcomment %}
 
-    <div class="static_div" {% has_permission has_edit_description issue.project.business %} onclick="imp.clickable_description_box(this, '{% url 'issue_detail_update' %}',{{ issue.id }})" {% end_permission %} >
-      {% has_permission has_edit_description issue.project.business %}
-        {% comment %}
-        <div style="cursor:pointer"><img src="{{STATIC_URL}}/images/timepiece/icons/pencil.png" /></div>
-        {% endcomment %}
-      {% end_permission %}
-        <div class="markdown_content" style="display:none">{{issue.description}}</div>
-        <div class="content">{% if issue.description %} {{issue.description|asmarkdown|safe}}</div>
-      {% else %}No issue detail{% endif %}
+  {% if supports_description %}
+  <div>
+    <div class="edit_description" >
 
+      <div class="static_div" {% has_permission has_edit_description issue.project.business %} onclick="imp.clickable_description_box(this, '{% url 'issue_detail_update' %}',{{ issue.id }})" {% end_permission %} >
+        {% has_permission has_edit_description issue.project.business %}
+          {% comment %}
+          <div style="cursor:pointer"><img src="{{STATIC_URL}}/images/timepiece/icons/pencil.png" /></div>
+          {% endcomment %}
+        {% end_permission %}
+          <div class="markdown_content" style="display:none">{{issue.description}}</div>
+          <div class="content">{% if issue.description %} {{issue.description|asmarkdown|safe}}</div>
+        {% else %}No issue detail{% endif %}
+
+      </div>
+      <a href="http://daringfireball.net/projects/markdown/syntax" class="markdown_help" target="_blank" style="display:none">markdown syntax</a>
     </div>
-    <a href="http://daringfireball.net/projects/markdown/syntax" class="markdown_help" target="_blank" style="display:none">markdown syntax</a>
   </div>
-</div>
-{% endif %}
+  {% endif %}
 
-{% if issue.pk %}
-  {% has_permission has_edit_description issue.project.business %}
-    <hr/>
-    {% for attachment in issue.attachments.all %}
-      <ul class="unstyled">
-	<li>
-	  <a target="_blank" href={{ attachment.attachment.url }}>{{attachment.name}}</a>
-	  <img class="secret_link" onclick="return imp.delete_issue_attachment('{% url 'delete_issue_attachment' attachment.id %}');" src="{{STATIC_URL}}/images/timepiece/icons/delete.png"/>
-	</li>
-      </ul>
-    {% endfor %}
+  {% if issue.pk %}
+    {% has_permission has_edit_description issue.project.business %}
+      <hr/>
+      {% for attachment in issue.attachments.all %}
+        <ul class="unstyled">
+          <li>
+            <a target="_blank" href={{ attachment.attachment.url }}>{{attachment.name}}</a>
+            <img class="secret_link" onclick="return imp.delete_issue_attachment('{% url 'delete_issue_attachment' attachment.id %}');" src="{{STATIC_URL}}/images/timepiece/icons/delete.png"/>
+          </li>
+        </ul>
+      {% endfor %}
 
-    <div>
-      <a href="#" class="btn" onclick="return imp.attach_upload_issue_attachment($(this));">add attachment</a>
-      <div class="new_attachment" style="display:none">
-	<input type="file" name="attachment" data-url="{% url 'add_issue_attachment' issue.pk %}"/>
-      </div>
-    <div>
+      <div class="attachment_section">
+        <a href="#" class="btn" onclick="return imp.attach_upload_issue_attachment($(this));">add attachment</a>
+        <div class="new_attachment" style="display:none">
+          <input type="file" name="attachment" data-url="{% url 'add_issue_attachment' issue.pk %}"/>
+        </div>
+      <div>
+    {% end_permission %}
+   {% endif %}
+  <hr/>
+
+  {% has_permission has_view_actual_hours project.business %} 
+    <a href="#" onclick="$(this).parent().find('.timesheet_entries').toggle(); return false;">
+      <img src="{{STATIC_URL}}images/icons/clock.png"/>
+    </a>
+    <div class="timesheet_entries" {% if not issue.auto_expand_timesheet_entries %}style="display:none"{% endif %}>
+      <h3>Timesheet entries</h3>
+      {% ifequal 0 issue.related_entries|length %}
+        No timesheet entries
+      {% else %}
+        <div class="issue_entries">
+          <table>
+            <tbody>
+              {% for entry in issue.related_entries %}
+              <tr>
+                <td>#{{entry.id}}</td>
+                <td>{{entry.user}}</td>
+                <td>{{entry.start_time|date:'Y-m-d (D)'}}</td>
+                <td>{{entry.hours}}</td>
+                <td class="issue_subject">
+                  {% ifequal 0 entry.extended_comments|length %}
+                    {{entry.comments}}
+                  {% else %}
+                    <div class="secret_link" onclick="$(this).parent().find('.extended_comments').toggle()">
+                      {{entry.comments}}
+                    </div>
+                    <div class="extended_comments" style="display:none">
+                      {{entry.extended_comments|linebreaks}}
+                    </div>
+                  {% endifequal %}
+                </td>
+              </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+      {% endifequal %}
+    </div>
   {% end_permission %}
- {% endif %}
-<hr/>
-
-{% has_permission has_view_actual_hours project.business %} 
-  <a href="#" onclick="$(this).parent().find('.timesheet_entries').toggle(); return false;">
-    <img src="{{STATIC_URL}}images/icons/clock.png"/>
-  </a>
-  <div class="timesheet_entries" {% if not issue.auto_expand_timesheet_entries %}style="display:none"{% endif %}>
-    <h3>Timesheet entries</h3>
-    {% ifequal 0 issue.related_entries|length %}
-      No timesheet entries
-    {% else %}
-      <div class="issue_entries">
-	<table>
-	  <tbody>
-	    {% for entry in issue.related_entries %}
-	    <tr>
-	      <td>#{{entry.id}}</td>
-	      <td>{{entry.user}}</td>
-	      <td>{{entry.start_time|date:'Y-m-d (D)'}}</td>
-	      <td>{{entry.hours}}</td>
-	      <td class="issue_subject">
-		{% ifequal 0 entry.extended_comments|length %}
-		  {{entry.comments}}
-		{% else %}
-		  <div class="secret_link" onclick="$(this).parent().find('.extended_comments').toggle()">
-		    {{entry.comments}}
-		  </div>
-		  <div class="extended_comments" style="display:none">
-		    {{entry.extended_comments|linebreaks}}
-		  </div>
-		{% endifequal %}
-	      </td>
-	    </tr>
-	    {% endfor %}
-	  </tbody>
-	</table>
-      </div>
-    {% endifequal %}
-  </div>
-{% end_permission %}
+</div>
