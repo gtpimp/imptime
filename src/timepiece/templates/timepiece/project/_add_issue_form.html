@@ -17,6 +17,13 @@
       {{ new_issue_form.description.label }} {{ new_issue_form.description }} 
     </div>
 
+    <div class="description_class">
+      {{ new_issue_form.status.label }} {{ new_issue_form.status }} 
+    </div>
+    <div class="description_class">
+      {{ new_issue_form.feature.label }} {{ new_issue_form.feature }} 
+    </div>
+
     <br />
 
     <input type="submit" class="btn" onclick="return imp.on_issue_form_submit(this, {{project.id}}, '{% url 'add_issue' project.id %}');" value="Create"/>

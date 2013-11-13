@@ -2001,7 +2001,7 @@ class Issue(models.Model):
            ( 'to be designed', 'to be designed'),
         )
     
-    status = models.CharField(max_length=255, choices = ISSUE_STATUS_CHOICES)
+    status = models.CharField(max_length=255, choices = ISSUE_STATUS_CHOICES, blank=False)
     number = models.IntegerField(null=True,blank=True, db_index=True)
     project = models.ForeignKey(Project, related_name='issues')
     subject = models.TextField(db_index=True)

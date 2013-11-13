@@ -24,7 +24,7 @@ from selectable import forms as selectable_forms
 from timepiece.lookups import ProjectLookup, QuickLookup
 from timepiece.lookups import UserLookup, BusinessLookup
 
-from timepiece.models import Project, Business, Entry, Activity, UserProfile, Attribute, Location, Activity
+from timepiece.models import Project, Business, Entry, Activity, UserProfile, Attribute, Location, Activity, Feature, Issue
 from timepiece.models import ProjectHours, Salary
 from timepiece.fields import UserModelChoiceField
 from timepiece import models as timepiece
@@ -777,12 +777,25 @@ class IssueForm(forms.ModelForm):
         model = timepiece.Issue
         fields = ( 
             'subject',
-            'description', 
+            'description',
+            'status',
+            'feature'
             )
         
     def __init__ (self, *args, **kwargs):
+        if 'business' in kwargs:
+            business = kwargs.pop('business')
+        else:
+            business = None
         super(IssueForm,self).__init__(*args, **kwargs)
         self.fields['subject'].widget = forms.TextInput()
+
+        if business is not None:
+            self.fields['feature'].widget.choices = [ (None, '') ] + list( (x.id, x.name) for x in Feature.objects.filter(business=business) )
+
+        self.fields['status'].widget.choices = Issue.ISSUE_STATUS_CHOICES
+        self.fields['status'].initial = 'new'
+        
 
 class ProjectRelationshipForm(forms.ModelForm):
     class Meta:

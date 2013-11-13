@@ -3012,12 +3012,11 @@ def add_issue(request, project_id, template="timepiece/project/_add_issue_form.h
 
     can_create_issue = timepiece.BusinessPermissions.objects.get_or_create(business=current_business, user=current_user)[0].has_add_issue    
     if can_create_issue:
-        new_issue_form = timepiece_forms.IssueForm(request.POST or None)
+        new_issue_form = timepiece_forms.IssueForm(request.POST or None, business=current_business)
         if new_issue_form.is_valid():        
             issue = new_issue_form.save(commit=False)
             issue.number = next_issue_number
             issue.project = project            
-            issue.status = 'new'
             issue.save()
             return get_issue_row(request, issue.id)
 
