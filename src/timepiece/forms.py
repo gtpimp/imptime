@@ -211,9 +211,20 @@ class AddUserToProjectForm(forms.Form):
         return self.cleaned_data['user']
 
 class AssignUserToIssueForm(forms.Form):
-    user = selectable_forms.AutoCompleteSelectField(UserLookup, label="")
+    user = forms.ModelChoiceField(required=False, label='User:', 
+                                  queryset=auth_models.User.objects.order_by("username"))
     user.widget.attrs['placeholder'] = 'Add User'
 
+    def __init__(self, *args, **kwargs):
+        if 'business' in kwargs:
+            business = kwargs.pop('business')
+        else:
+            business = None
+        super(AssignUserToIssueForm, self).__init__(*args, **kwargs)
+        
+        if business is not None:
+            self.fields['user'].widget.choices = [ ('', '') ] + [ (x.id, str(x)) for x in business.users.order_by("username") ]
+    
     def save(self):
         return self.cleaned_data['user']
 
@@ -773,13 +784,17 @@ class IssueStatusForm(forms.ModelForm):
         super(IssueStatusForm, self).__init__(*args, **kwargs)
 
 class IssueForm(forms.ModelForm):
+
+    estimated_hours = forms.IntegerField(required=False)
+
     class Meta:
         model = timepiece.Issue
         fields = ( 
             'subject',
             'description',
             'status',
-            'feature'
+            'feature',
+            'assigned_to'
             )
         
     def __init__ (self, *args, **kwargs):
@@ -791,10 +806,13 @@ class IssueForm(forms.ModelForm):
         self.fields['subject'].widget = forms.TextInput()
 
         if business is not None:
-            self.fields['feature'].widget.choices = [ (None, '') ] + list( (x.id, x.name) for x in Feature.objects.filter(business=business) )
+            self.fields['feature'].widget.choices = [ ('', '') ] + list( (x.id, x.name) for x in Feature.objects.filter(business=business) )
 
         self.fields['status'].widget.choices = Issue.ISSUE_STATUS_CHOICES
         self.fields['status'].initial = 'new'
+
+        if business is not None:
+            self.fields['assigned_to'].widget.choices = [ ('', '') ] + [ (x.id, str(x)) for x in business.users ]
         
 
 class ProjectRelationshipForm(forms.ModelForm):

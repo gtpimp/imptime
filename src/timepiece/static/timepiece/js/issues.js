@@ -529,10 +529,17 @@ imp.show_inline_editor = function(el) {
 		success: function(data) {
 		    var new_option;
 		    editor.html("");
+
+		    new_option = $("<option/>");
+		    new_option.attr("value", '');
+		    new_option.text('');
+		    editor.append(new_option);
+
 		    $.each(data, function( index, value ) {
 			       
 			new_option = $("<option/>");
 			new_option.attr("id", value[0]);
+			new_option.attr("value", value[0]);
 			new_option.text(value[1]);
 			if (old_value == value[0]) {
 			    new_option.attr("selected",true);

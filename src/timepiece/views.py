@@ -3010,16 +3010,23 @@ def add_issue(request, project_id, template="timepiece/project/_add_issue_form.h
     context['current_user'] = request.user
     current_user = request.user
 
-    can_create_issue = timepiece.BusinessPermissions.objects.get_or_create(business=current_business, user=current_user)[0].has_add_issue    
-    if can_create_issue:
+    bp = timepiece.BusinessPermissions.for_user(current_user, current_business)
+    if bp.has_add_issue:
         new_issue_form = timepiece_forms.IssueForm(request.POST or None, business=current_business)
         if new_issue_form.is_valid():        
             issue = new_issue_form.save(commit=False)
             issue.number = next_issue_number
             issue.project = project            
             issue.save()
+
+            if bp.has_estimate_own_points:
+                estimated_hours = new_issue_form.cleaned_data['estimated_hours']
+                if estimated_hours > 0:
+                    timepiece.IssuePoints.objects.create(user=current_user, issue=issue, points=estimated_hours)
+                
             return get_issue_row(request, issue.id)
 
+    context['business'] = current_business
     context['new_issue_form'] = new_issue_form;
     return render_to_response(template, context, context_instance=RequestContext(request))
 
@@ -3124,9 +3131,15 @@ def add_feature(request, business_id):
 
 @login_required
 def business_features(request, business_id):
-    
     business = timepiece.Business.objects.get(pk=business_id)
     data = [ (feature.id, feature.name) for feature in business.features.all() ]
+    return HttpResponse(json.dumps(data),
+                        mimetype='application/json')
+
+@login_required
+def business_users(request, business_id):
+    business = timepiece.Business.objects.get(pk=business_id)
+    data = [ (user.id, user.get_full_name()) for user in business.users ]
     return HttpResponse(json.dumps(data),
                         mimetype='application/json')
 
@@ -3164,7 +3177,7 @@ def project_issues(request, pk, template="timepiece/project/issues.html", contex
     context['current_user'] = request.user
     context['project'] = project
 
-    context['assign_user_form'] = timepiece_forms.AssignUserToIssueForm()
+    context['assign_user_form'] = timepiece_forms.AssignUserToIssueForm(business=business)
     context['total_hours'] = cost_totals['hours']
     context['total_ctc'] = cost_totals['ctc']
     context['total_billable'] = cost_totals['billable']
@@ -3346,7 +3359,7 @@ def issue_status_update(request,  template="timepiece/project/issue_detail.html"
 def update_issue_with_feature(request):
 
     issue = timepiece.Issue.objects.get(pk=request.POST['issue_id'])
-    selected_value = request.POST['selected_value']
+    feature_id = request.POST['selected_value']
     created_value = request.POST['created_value']
     
     business = issue.project.business
@@ -3359,7 +3372,12 @@ def update_issue_with_feature(request):
         new_feature = timepiece.Feature.objects.get_or_create(business=business, name=created_value)[0]
         issue.feature = new_feature;
     else:
-        feature = timepiece.Feature.objects.get(name=selected_value, business=business)
+        try:
+            feature = timepiece.Feature.objects.get(pk=feature_id, business=business)
+        except timepiece.Feature.DoesNotExist:
+            feature = None
+        except ValueError:
+            feature = None
         issue.feature = feature;
     issue.save()
 
@@ -3371,7 +3389,12 @@ def issue_assigned_to_update(request,  template="timepiece/project/issue_detail.
     context = context or {}
 
     issue = timepiece.Issue.objects.get(pk=request.POST['issue_id'])
-    user = User.objects.get(pk=request.POST['user_id'])
+    try:
+        user = User.objects.get(pk=request.POST['selected_value'])
+    except User.DoesNotExist:
+        user = None
+    except ValueError:
+        user = None
 
     project = issue.project
     context['project'] = project

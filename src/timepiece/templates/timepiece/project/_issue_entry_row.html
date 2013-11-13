@@ -29,12 +29,21 @@
     </div>
   </td>
 
-  <td class="assigned_col" {% has_permission has_assign_user project.business %} onclick="return imp.clickable_assign_user_box(this, '{% url 'issue_assigned_to_update' %}', {{issue.pk}})"{% end_permission %}>
-    <span class='existing_assign'>{{issue.assigned_to.get_full_name}}</span>
-    <span class='assign_user_form' style="display:none">
-      {{ assign_user_form|as_bootstrap:"inline" }}
-      <input class="btn assign_button" type="submit" name="submit" id="submit" value="Set" />
-    </span>
+  <td class="assigned_col" {% has_permission has_assign_user project.business %} onclick="return imp.show_inline_editor(this);"{% end_permission %} url_for_update="{% url 'issue_assigned_to_update' %}" issue_id="{{issue.id}}" url_for_options="{% url 'business_users' business.id %}" selected_value="{{issue.assigned_to.id}}">
+
+
+    <div class="styled-select">		     
+      <div class="readonly_value"> 
+        {{ issue.assigned_to.get_full_name }}
+      </div>
+      {% has_permission has_assign_user project.business %}
+      <div class="inline_editor" style="display:none">
+        <select class='transient_selection' width="100%">
+        </select>
+      </div>
+      {% end_permission %}
+    </div>
+    
   </td>
 
   <td class="feature_col" {% has_permission has_edit_issue_feature project.business %} onclick="return imp.show_inline_editor(this);"{% end_permission %} url_for_update="{% url 'update_issue_with_feature' %}" issue_id="{{issue.id}}" url_for_options="{% url 'business_features' business.id %}" selected_value="{{issue.feature.id}}" >

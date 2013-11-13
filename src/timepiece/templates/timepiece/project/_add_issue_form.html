@@ -17,12 +17,26 @@
       {{ new_issue_form.description.label }} {{ new_issue_form.description }} 
     </div>
 
-    <div class="description_class">
-      {{ new_issue_form.status.label }} {{ new_issue_form.status }} 
-    </div>
-    <div class="description_class">
-      {{ new_issue_form.feature.label }} {{ new_issue_form.feature }} 
-    </div>
+    {% has_permission can_edit_issue_states business %}
+      <div class="description_class">
+        {{ new_issue_form.status.label }} {{ new_issue_form.status }} 
+      </div>
+    {% end_permission %}
+    {% has_permission has_edit_issue_feature business %}
+      <div class="description_class">
+        {{ new_issue_form.feature.label }} {{ new_issue_form.feature }} 
+      </div>
+    {% end_permission %}
+    {% has_permission has_assign_user business %}
+      <div class="description_class">
+        {{ new_issue_form.assigned_to.label }} {{ new_issue_form.assigned_to }} 
+      </div>
+    {% end_permission %}
+    {%  has_permission has_estimate_own_points business  %}
+      <div class="description_class">
+        {{ new_issue_form.estimated_hours.label }} {{ new_issue_form.estimated_hours }} 
+      </div>
+    {% end_permission %}
 
     <br />
 
