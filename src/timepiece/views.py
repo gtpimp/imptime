@@ -3254,7 +3254,8 @@ def get_project_detail(request, project_id, template="timepiece/project/project_
 @login_required
 @csrf_exempt
 @login_required
-def project_list(request, project_id=None, highlight_issue_id=None, business_id=None, template="timepiece/project/project_list.html", context=None):
+def project_list(request, project_id=None, highlight_issue_id=None, business_id=None, 
+                 template="timepiece/project/project_list.html", context=None):
     """ Displays all projects in the same business as project_id or
     business_id. If project_id is not None, then that project is
     expanded. """
