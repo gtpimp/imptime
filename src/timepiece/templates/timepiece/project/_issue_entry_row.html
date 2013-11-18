@@ -18,7 +18,7 @@
       <div style="float:left">
 	<img style="display:none" style="position:absolute" class="loading_issue_indicator" id="loading_issue_{{issue.id}}" src="{{STATIC_URL}}/images/icons/loadingAnimation.gif"/>
       </div>
-      <div class="secret_link issue_number" onclick="imp.show_issue_detail('{% url 'issue_detail' issue.pk %}');">
+      <div class="secret_link issue_number" onclick="imp.show_issue_detail({{issue.pk}}, '{% url 'issue_detail' issue.pk %}');">
 	{{issue.number}}
       </div> 
     </div>
@@ -98,7 +98,7 @@
   {% comment %}
   {% has_permission has_view_actual_hours  project.business %} 
   <td  class="money_cell">
-    <div class="secret_link"  onclick="imp.show_issue_detail('{% url 'issue_detail' issue.pk %}');">
+    <div class="secret_link"  onclick="imp.show_issue_detail({{issue.pk}}, '{% url 'issue_detail' issue.pk %}');">
       {{issue.hours|default_if_none:""}}
     </div>
   </td>
@@ -109,14 +109,14 @@
 
   {% has_permission has_view_ctc_rates project.business %}
   <td  class="money_cell">
-    <div class="secret_link"  onclick="imp.show_issue_detail('{% url 'issue_detail' issue.pk %}');">
+    <div class="secret_link"  onclick="imp.show_issue_detail({{issue.pk}}, '{% url 'issue_detail' issue.pk %}');">
       R{{issue.ctc|floatformat:"0"|intcomma}}
     </div>
   </td>
 {% end_permission %}
 
   <td  class="money_cell">
-    <div class="secret_link"  onclick="imp.show_issue_detail('{% url 'issue_detail' issue.pk %}');">
+    <div class="secret_link"  onclick="imp.show_issue_detail({{issue.pk}}, '{% url 'issue_detail' issue.pk %}');">
       R{{issue.billable|floatformat:"0"|intcomma}}
     </div>
   </td>

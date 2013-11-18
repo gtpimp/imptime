@@ -22,7 +22,7 @@ imp.highlight_issue = function(issue_id) {
     $("#"+issue_id).scrollintoview();
 };
 
-imp.show_issue_detail = function(url) {
+imp.show_issue_detail = function(issue_id, url) {
     var on_done = imp.loading("loading issue detail");
 
     $(".issue_detail").load(url,
@@ -30,6 +30,9 @@ imp.show_issue_detail = function(url) {
 				$(".issue_detail .subject_class input").focus();
 				imp.refresh_show_money();
 				imp.current_issue_detail_url = url;
+				if ( issue_id ) {
+				    imp.highlight_issue(issue_id);
+				}
 				on_done();
 			    });
 
@@ -37,7 +40,7 @@ imp.show_issue_detail = function(url) {
 
 imp.refresh_issue_detail = function() {
 
-    imp.show_issue_detail(imp.current_issue_detail_url);
+    imp.show_issue_detail(null, imp.current_issue_detail_url);
 };
 
 imp.do_form_show  = function(element, url) {

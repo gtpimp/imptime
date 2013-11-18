@@ -107,7 +107,7 @@
 
                 <tr>
                   <td>
-                    <div class="secret_link issue_number" onclick="imp.show_issue_detail('{% url 'all_timesheet_entries' project.id %}');">
+                    <div class="secret_link issue_number" onclick="imp.show_issue_detail(null, '{% url 'all_timesheet_entries' project.id %}');">
                       show
                     </div>
                   </td>
@@ -137,7 +137,7 @@
 
                   {% has_permission has_view_actual_hours  project.business %} 
                     <th class="">
-                      <div class="secret_link" onclick="imp.show_issue_detail('{% url 'all_timesheet_entries' project.id %}');">
+                      <div class="secret_link" onclick="imp.show_issue_detail(null, '{% url 'all_timesheet_entries' project.id %}');">
                         <i>{{total_hours|floatformat:"0"|intcomma}}</i>
                       </div>
                     </th>
@@ -147,20 +147,20 @@
 
                   {% has_permission has_view_ctc_rates project.business %}
                   <th class="">
-                    <div class="secret_link" onclick="imp.show_issue_detail('{% url 'all_timesheet_entries' project.id %}');">
+                    <div class="secret_link" onclick="imp.show_issue_detail(null, '{% url 'all_timesheet_entries' project.id %}');">
                       <i>R{{total_ctc|floatformat:"0"|intcomma}}</i>
                     </div>
                   </th>
                   {% end_permission %}
                   <th class="">
-                    <div class="secret_link" onclick="imp.show_issue_detail('{% url 'all_timesheet_entries' project.id %}');">
+                    <div class="secret_link" onclick="imp.show_issue_detail(null, '{% url 'all_timesheet_entries' project.id %}');">
                       <i>R{{total_billable|floatformat:"0"|intcomma}}</i>
                     </div>
                   </th>
 
 
                   <th class="">
-                    <div class="secret_link" onclick="imp.show_issue_detail('{% url 'all_timesheet_entries' project.id %}');">
+                    <div class="secret_link" onclick="imp.show_issue_detail(null, '{% url 'all_timesheet_entries' project.id %}');">
 
                     </div>
                   </th>
@@ -170,7 +170,7 @@
 
                 <tr>
                   <td>
-                    <div class="secret_link issue_number" onclick="imp.show_issue_detail('{% url 'unassigned_timesheet_entries' project.id %}');">
+                    <div class="secret_link issue_number" onclick="imp.show_issue_detail(null, '{% url 'unassigned_timesheet_entries' project.id %}');">
                       show
                     </div>
                   </td>
@@ -197,7 +197,7 @@
 
                   {% has_permission has_view_actual_hours  project.business %} 
                     <th class="">
-                      <div class="secret_link" onclick="imp.show_issue_detail('{% url 'unassigned_timesheet_entries' project.id %}');">
+                      <div class="secret_link" onclick="imp.show_issue_detail(null, '{% url 'unassigned_timesheet_entries' project.id %}');">
                         {{unassigned_timesheet_entries_hours|floatformat:"0"|intcomma}}
                       </div>
                     </th>
@@ -207,13 +207,13 @@
 
                   {% has_permission has_view_ctc_rates project.business %}
                   <th class="">
-                    <div class="secret_link" onclick="imp.show_issue_detail('{% url 'unassigned_timesheet_entries' project.id %}');">
+                    <div class="secret_link" onclick="imp.show_issue_detail(null, '{% url 'unassigned_timesheet_entries' project.id %}');">
                       R{{unassigned_timesheet_entries_ctc|floatformat:"0"|intcomma}}
                     </div>
                   </th>
                   {% end_permission %}
                   <th class="">
-                    <div class="secret_link" onclick="imp.show_issue_detail('{% url 'unassigned_timesheet_entries' project.id %}');">
+                    <div class="secret_link" onclick="imp.show_issue_detail(null, '{% url 'unassigned_timesheet_entries' project.id %}');">
                       R{{unassigned_timesheet_entries_billable|floatformat:"0"|intcomma}}
                     </div>
                   </th>
