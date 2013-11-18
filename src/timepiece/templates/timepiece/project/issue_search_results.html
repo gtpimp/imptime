@@ -4,6 +4,84 @@
 
   <h1>Search results</h1>
 
+  {% if active_business %}
+    <h2>Sprints in {{active_business.name}}</h2>
+    <table class="search_results">
+      {% for sprint in active_sprints %}
+
+        <tr onclick="imp.nav.show_sprint({{sprint.id}}, '{% url 'project_list' sprint.id %}' );">
+          <td class="number">
+                {{sprint.id}}
+          </td>
+          <td>
+                {{sprint.business.name }} - {{sprint.name }}
+          </td>
+          <td>
+                {{sprint.description|slice:":100"}}
+          </td>
+        </tr>
+          {% empty %}
+        <tr>
+          <td>
+              No results found
+          </td>
+        </tr>
+      {% endfor %}
+    </table>
+
+    <h2>Issues in {{active_business.name}}</h2>
+    <table class="search_results">
+      {% for issue in active_issues %}
+
+        <tr onclick="imp.nav.show_issue({{issue.id}}, {{issue.project.id}}, '{% url 'highlighted_project_list' issue.project.id issue.id %}' );">
+          <td class="number">
+            {{issue.number}}
+          </td>
+          <td>
+            {{issue.project.business.name }} - {{issue.project.name }}
+          </td>
+          <td>
+            {{issue.subject|slice:":100"}}
+          </td>
+        </tr>
+      {% empty %}
+      <tr>
+        <td>
+          No results found
+        </td>
+      </tr>
+      {% endfor %}
+    </table>
+
+
+  {% endif %}
+
+  {% if active_project %}
+    <h2>Issues in {{active_project.long_name}}</h2>
+    <table class="search_results">
+      {% for issue in active_issues %}
+
+        <tr onclick="imp.nav.show_issue({{issue.id}}, {{issue.project.id}}, '{% url 'highlighted_project_list' issue.project.id issue.id %}' );">
+          <td class="number">
+            {{issue.number}}
+          </td>
+          <td>
+            {{issue.project.business.name }} - {{issue.project.name }}
+          </td>
+          <td>
+            {{issue.subject|slice:":100"}}
+          </td>
+        </tr>
+      {% empty %}
+      <tr>
+        <td>
+          No results found
+        </td>
+      </tr>
+      {% endfor %}
+    </table>
+  {% endif %}
+
   {% if businesses %}
     <h2>Projects</h2>
     <table class="search_results">

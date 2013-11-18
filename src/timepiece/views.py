@@ -3668,9 +3668,30 @@ def income_summary(request, template="timepiece/graphs/income_summary.html", con
 
 @csrf_exempt
 @login_required
-def issue_search(request, template="timepiece/project/issue_search_results.html", context=None):
+def issue_search(request, active_project_id=None, active_business_id=None, template="timepiece/project/issue_search_results.html", context=None):
     context = context or {}
+
+    active_project = timepiece.Project.objects.get(pk=active_project_id) if active_project_id else None
+    active_business = timepiece.Business.objects.get(pk=active_business_id) if active_business_id else None
+    active_issues = None
+    active_sprints = None
+
     search_term = request.GET['search_term']
+
+    if active_project is not None:
+        active_issues = timepiece.Issue.objects.filter(project__id=active_project.id).filter(Q(number__icontains=search_term)|Q(subject__icontains=search_term))
+        active_issues = active_issues.order_by("project__business__name", "project__name", "subject")
+        active_issues = [ x for x in active_issues if x.project.can_view_by_user(request.user) ]
+        active_business = None
+
+    elif active_business is not None:
+        active_issues = timepiece.Issue.objects.filter(project__business__id=active_business.id).filter(Q(number__icontains=search_term)|Q(subject__icontains=search_term))
+        active_issues = active_issues.order_by("project__business__name", "project__name", "subject")
+        active_issues = [ x for x in active_issues if x.project.can_view_by_user(request.user) ]
+
+        active_sprints = timepiece.Project.objects.filter(business__id=active_business.id).filter(Q(name__icontains=search_term)|Q(id__icontains=search_term)|Q(description__icontains=search_term))
+        active_sprints = active_sprints.filter_by_logged_in_user(request.user)
+
     issues = timepiece.Issue.objects.filter(Q(number__icontains=search_term)|Q(subject__icontains=search_term))
     issues = issues.order_by("project__business__name", "project__name", "subject")
     issues = [ x for x in issues if x.project.can_view_by_user(request.user) ]
@@ -3686,6 +3707,10 @@ def issue_search(request, template="timepiece/project/issue_search_results.html"
     context['businesses'] = businesses
     context['sprints'] = sprints
     context['issues'] = issues
+    context['active_business'] = active_business
+    context['active_project'] = active_project
+    context['active_issues'] = active_issues
+    context['active_sprints'] = active_sprints
     return render_to_response(template, context, context_instance=RequestContext(request))
 
 @render_with('timepiece/project/show_timeline.html')

@@ -210,7 +210,7 @@
 
                       <li>
                         <div class='issue_search'>
-                          <form method="GET" action='{% url 'issue_search' %}'>
+                          <form method="GET" action='{% url 'issue_search' project.id business.id %}'>
                             Find: <input type="text" name='search_term' class="search_term"/>
                           </form>
 
