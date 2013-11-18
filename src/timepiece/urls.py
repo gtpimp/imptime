@@ -239,7 +239,7 @@ urlpatterns = patterns('',
         r'^time-sheet/issue_subject_update/$', views.issue_subject_update, name='issue_subject_update',
     ),
     url(
-        r'^time-sheet/issue_search/(?P<active_project_id>\d*)/(?P<active_business_id>\d*) $', views.issue_search, name='issue_search',
+        r'^time-sheet/issue_search/(?P<active_project_id>\d*)/(?P<active_business_id>\d*)$', views.issue_search, name='issue_search',
     ),
 
     url(
