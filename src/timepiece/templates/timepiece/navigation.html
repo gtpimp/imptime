@@ -210,7 +210,13 @@
 
                       <li>
                         <div class='issue_search'>
-                          <form method="GET" action='{% url 'issue_search' project.id business.id %}'>
+                          {% if project %}
+                            <form method="GET" action='{% url 'issue_search_active_project' project.id %}'>
+                          {% elif business %}
+                            <form method="GET" action='{% url 'issue_search_active_business' business.id %}'>
+                          {% else %}
+                            <form method="GET" action='{% url 'issue_search' %}'>
+                          {% endif %}
                             Find: <input type="text" name='search_term' class="search_term"/>
                           </form>
 

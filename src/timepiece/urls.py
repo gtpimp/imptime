@@ -239,8 +239,8 @@ urlpatterns = patterns('',
         r'^time-sheet/issue_subject_update/$', views.issue_subject_update, name='issue_subject_update',
     ),
     url(r'^time-sheet/issue_search$', views.issue_search, {'active_project_id':None,'active_business_id':None}, name='issue_search',),
-    url(r'^time-sheet/issue_search/(?P<active_project_id>\d*)$', views.issue_search, {'active_business_id':None}, name='issue_search',),
-    url(r'^time-sheet/issue_search/(?P<active_project_id>\d*)/(?P<active_business_id>\d*)$', views.issue_search, name='issue_search',),
+    url(r'^time-sheet/issue_search_active_project/(?P<active_project_id>\d+)$', views.issue_search, {'active_business_id':None}, name='issue_search_active_project',),
+    url(r'^time-sheet/issue_search_active_business/(?P<active_business_id>\d+)$', views.issue_search, {'active_project_id':None}, name='issue_search_active_business',),
 
     url(
         r'^time-sheet/show_issue/(?P<issue_id>\d+)$', views.show_issue, name='show_issue',
