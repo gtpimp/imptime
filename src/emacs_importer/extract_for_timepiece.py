@@ -15,6 +15,7 @@ class Extractor(object):
         self.pointperson_username = pointperson_username
         self.input_path = os.path.join(root_input_folder, self.username)
         self.status = {'errors':[],
+                       'infos':[],
                        'num_entries_created':0}
 
     def get_project_timings_for_user(self):
@@ -62,7 +63,7 @@ class Extractor(object):
             if hours_before != hours_after:
                 project = Project.objects.get(pk=p_id)
                 if not project.is_open:
-                    self.status['errors'].append("Adding entries to a closed project [%s - %s]. Expected %s hours, but trying to add %s hours." % (project.business.name, project, hours_before, hours_after))
+                    self.status['infos'].append("Adding entries to a closed project [%s - %s]. Expected %s hours, but trying to add %s hours." % (project.business.name, project, hours_before, hours_after))
 
     def _handle_file(self, dirname, fname):
         is_valid_timesheet_file = fname[-4:] == ".org" and fname[0] != "." and fname[0] != "#"

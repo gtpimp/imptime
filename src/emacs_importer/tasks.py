@@ -9,7 +9,7 @@ def import_timesheets_from_emacs_task():
 
 def import_timesheets_from_emacs(users=None):
 
-    status = {'errors':[]}
+    status = {'errors':[], 'infos':[]}
     users = users or settings.EMACS_USERS_TO_PROCESS
     for username in users:
 
@@ -22,5 +22,6 @@ def import_timesheets_from_emacs(users=None):
         extract_result = extractor.extract()
         status[username] = { 'status' : extract_result }
         status['errors'].extend(extract_result['errors'])
+        status['infos'].extend(extract_result['infos'])
                          
     return status
