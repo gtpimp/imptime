@@ -14,7 +14,7 @@
   <div>
     <div class="edit_description" >
 
-      <div class="static_div" {% has_permission has_edit_description issue.project.business %} onclick="imp.clickable_description_box(this, '{% url 'issue_detail_update' %}',{{ issue.id }})" {% end_permission %} >
+      <div class="static_div" >
         {% has_permission has_edit_description issue.project.business %}
           {% comment %}
           <div style="cursor:pointer"><img src="{{STATIC_URL}}/images/timepiece/icons/pencil.png" /></div>
