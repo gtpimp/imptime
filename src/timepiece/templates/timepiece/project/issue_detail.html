@@ -16,7 +16,7 @@
 
       <div class="static_div">
         {% has_permission has_edit_description issue.project.business %}
-          <div onclick="imp.clickable_description_box(this, '{% url 'issue_detail_update' %}',{{ issue.id }})" style="cursor:pointer"><img src="{{STATIC_URL}}/images/timepiece/icons/pencil.png" /></div>
+	  <div onclick="imp.clickable_description_box(this.parent(), '{% url 'issue_detail_update' %}',{{ issue.id }})" style="cursor:pointer"><img src="{{STATIC_URL}}/images/timepiece/icons/pencil.png" /></div>
         {% end_permission %}
           <div class="markdown_content" style="display:none">{{issue.description}}</div>
           <div class="content">{% if issue.description %} {{issue.description|asmarkdown|safe}}</div>
