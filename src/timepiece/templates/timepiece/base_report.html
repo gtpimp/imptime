@@ -1,0 +1,35 @@
+<!doctype html>
+<html>
+<head>
+    <title>imptime - {% block title %}{% endblock %}</title>
+    <link rel="icon" type="image/png" href="{{ STATIC_URL }}images/icons/implicit_icon.png">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+
+    <script>var imp = {};</script>
+
+    {% block css %}
+        <link type="text/css" rel="stylesheet" href="{{ STATIC_URL }}/css/jquery-ui.css" />
+	<link type="text/css" rel="stylesheet" media="screen" href="{{ STATIC_URL }}css/books.css" />
+	<link type="text/css" rel="stylesheet" href="{{ STATIC_URL }}css/timepiece.css" />
+	<link type="text/css" rel="stylesheet" href="{{ STATIC_URL }}css/timepiece_report.css" />
+    {% endblock %}
+
+    {% block extracss %}
+    {% endblock %}
+
+    {% block extramedia %}
+    {% endblock %}
+
+
+</head>
+
+<body id="{% block bodyid %}{% endblock bodyid %}">
+
+    <div id="content" class="container-fluid">
+        {% block content %}
+        {% endblock content %}
+    </div>
+    
+</body>
+
+</html>

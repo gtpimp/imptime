@@ -1078,6 +1078,18 @@ class RateForm(forms.ModelForm):
     class Meta:
         model = UserProfile
         fields = ('billable_amount', 'amount')
-        
-
 rate_formset = modelformset_factory(timepiece.UserProfile, form=RateForm, can_delete=False, extra=0)
+
+class SprintReportSettingsForm(forms.Form):
+
+    ctc = forms.BooleanField(initial=True, required=False)
+    billable = forms.BooleanField(initial=True, required=False)
+
+    def __init__(self, bp, *args, **kwargs):
+        super(SprintReportSettingsForm, self).__init__(*args, **kwargs)
+        self.bp = bp
+        if not self.bp.has_view_ctc_billable_rates:
+            del self.fields['ctc']
+            del self.fields['billable']
+        if not self.bp.has_view_ctc_rates:
+            del self.fields['ctc']

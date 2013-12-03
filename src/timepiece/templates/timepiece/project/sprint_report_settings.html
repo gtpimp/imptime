@@ -1,0 +1,17 @@
+{% load humanize %}
+{% load timepiece_tags %}
+{% load bootstrap_toolkit %}
+{% load url from future %}
+
+<div>
+  <h1>{{project.business.name}} - {{project.name}}</h1>
+  <h2>Report Settings</h2>
+
+  <form method="GET" action="{% url 'sprint_report' project.id %}">
+    {{ form|as_bootstrap:"horizontal" }}
+
+    <input type="submit" value="Generate"/>
+
+  </form>
+
+</div>

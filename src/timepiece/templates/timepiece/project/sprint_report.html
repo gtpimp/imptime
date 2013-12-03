@@ -1,0 +1,50 @@
+{% extends "timepiece/base_report.html" %}
+{% load humanize %}
+{% load timepiece_tags %}
+{% load bootstrap_toolkit %}
+{% load url from future %}
+
+{{ form.errors }}
+
+{% block content %}
+
+<div class="sprint_report">
+  <h1>{{project.business.name}} - {{project.name}}</h1>
+  <h2>Report</h2>
+
+  <table>
+
+    <thead>
+      <th>#</th>
+      <th>Subject</th>
+      <th>Assigned</th>
+      <th>Feature</th>
+      <th>Status</th>
+    </thead>
+
+    <tbody>
+      {% for issue in issues %}
+      <tr>
+	<td> <a href="#issue_description_{{issue.id}}">{{issue.number}}</a> </td>
+	<td> {{issue.subject}} </td>
+	<td> {{issue.assigned_to.get_full_name|default_if_none:""}} </td>
+	<td> {{issue.feature|default_if_none:""}}</td>
+	<td> {{ issue.status }}</td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+
+  <hr/>
+  
+  <div class="issue_descriptions">
+    {% for issue in issues %}
+    <h3 id="issue_description_{{issue.id}}"/>{{issue.number}} - {{issue.title}}</h2>
+      {{issue.description|asmarkdown|safe}}
+    {% endfor %}
+
+  </div>
+
+</div>
+
+{% endblock %}

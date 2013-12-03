@@ -535,6 +535,19 @@ urlpatterns = patterns('',
         views.sprint_export,
         name='sprint_export',
   	),                         
+
+                       
+   url(
+        r'^time-sheet/sprint_report_settings/(?P<project_id>\d+)/$',
+        views.sprint_report_settings,
+        name='sprint_report_settings',
+  	),                         
+
+   url(
+        r'^time-sheet/sprint_report/(?P<project_id>\d+)/$',
+        views.sprint_report,
+        name='sprint_report',
+  	),                         
     # url(
     #     r'^project/(?P<pk>\d+)/delete/$',
     #     views.DeleteProjectView.as_view(),

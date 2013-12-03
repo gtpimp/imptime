@@ -1,0 +1,10 @@
+.sprint_report table td {
+    margin-left: 5px;
+    text-align: left;
+    padding-right: 10px;
+}
+
+.sprint_report table th {
+    text-align: left;
+}
+

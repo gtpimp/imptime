@@ -3979,4 +3979,29 @@ def sprint_export(request, project_id , context=None):
     exporter = CSVSprintExport(project_id, request)
     return exporter.render_to_response(context)
 
+def sprint_report_settings(request, project_id, context=None):
+    context = context or {}
+    project = timepiece.Project.objects.get(pk=project_id)
+    business = project.business
+    bp = timepiece.BusinessPermissions.for_user(request.user, business)
+    if not bp.can_view_project_card:
+        raise Exception("No permission")
 
+    context['form'] = timepiece_forms.SprintReportSettingsForm(bp)
+    context['project'] = project
+    return render_to_response('timepiece/project/sprint_report_settings.html',
+                              context, context_instance=RequestContext(request))
+
+def sprint_report(request, project_id, context=None):
+    context = context or {}
+    project = timepiece.Project.objects.get(pk=project_id)
+    business = project.business
+    bp = timepiece.BusinessPermissions.for_user(request.user, business)
+    form = timepiece_forms.SprintReportSettingsForm(bp, request.POST)
+    if form.is_valid():
+        context['settings'] = form.cleaned_data
+    context['form'] = form
+    context['project'] = project
+    context['issues'] = project.issues.order_by("order")
+    return render_to_response('timepiece/project/sprint_report.html',
+                              context, context_instance=RequestContext(request))
