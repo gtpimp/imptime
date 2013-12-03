@@ -4003,6 +4003,6 @@ def sprint_report(request, project_id, context=None):
     context['form'] = form
     context['project'] = project
     context['issues'] = project.issues.order_by("order")
-    context['date_created'] =  datetime.datetime.now().strftime("%Y %m %d - %H:%M")
+    context['date_created'] =  datetime.datetime.now().strftime("%d %b %Y %H:%M")
     return render_to_response('timepiece/project/sprint_report.html',
                               context, context_instance=RequestContext(request))

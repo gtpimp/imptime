@@ -426,6 +426,9 @@ class Project(models.Model):
 
             ret[user] = {
                 'points': points, 
+                'hours':user_hours,
+                'ctc':rate.amount*user_hours,
+                'billable':rate.billable_amount*user_hours,
                 'total_adjusted_billed': total_adjustedd_billed,
                 'total_adjusted_ctc': total_adjustedd_ctc,
                 'total_adjusted_profit': total_adjustedd_billed - total_adjustedd_ctc,

@@ -10,7 +10,6 @@
 
 <div class="sprint_report">
   
-
   Last modified {% if project.stats.end_time %} {{ project.stats.end_time|timesince }} ago {% endif %}
 
   <table>
@@ -55,10 +54,6 @@
 
   <hr/>
   
-  <div class="card">
-
-    <div class="project_card_top_level">
-
       <p>
 	<h3>
       {% if settings.billable %}
@@ -68,25 +63,39 @@
       {% endif %}
 	</h3>
       </p>
-      <hr/>
 
-      {% if settings.view_budget %}
-	{% if project.has_budget %}
-
-	Budget: R{{project.budget|floatformat:"0"|intcomma}}          
-	<div class="traffic_bar">
-	  <div style="width:{{project.stats.percentage_spent}}%" class="{{project.stats.budget_traffic_class}}">
-	    {% if project.stats.amount_under_budget > 0 %}
-		 R{{project.stats.amount_under_budget|floatformat:"0"|intcomma}}&nbsp;left
-	    {% else %}
-		 R{{project.stats.amount_over_budget|floatformat:"0"|intcomma}}&nbsp;over
+      <table>
+	<thead>
+	  <th>User</th>
+	  {% if settings.view_actual_hours %}
+	  <th>Hours</th>
+	  {% endif %}
+	  {% if settings.ctc %}
+	  <th>ctc</th>
+	  {% endif %}
+	  {% if settings.billable %}
+	  <th>billable</th>
+	  {% endif %}
+	</thead>
+	<tbody>
+	  {% for user, costs in project.cost_per_developer.items %}
+	  <tr>
+	    <td>{{ user.username }}</td>
+	    {% if settings.view_actual_hours %}
+	    <td>{{ costs.hours }}</td>
 	    {% endif %}
-	  </div>
-	</div>
-	{% else %}
-	<div style="color:red">No budget</div>
-	{% endif %}
-      {% endif %}
+	    {% if settings.ctc %}
+	    <td>R{{ costs.ctc|floatformat:"1"|intcomma }}</td>
+	    {% endif %}
+	    {% if settings.billable %}
+	    <td>R{{ costs.billable|floatformat:"1"|intcomma }}</td>
+	    {% endif %}
+	  </tr>
+	  {% endfor %}
+	</tbody>
+      </table>
+
+      <hr/>
 
       <h3>Features</h3>
       <table>
@@ -247,10 +256,6 @@
 
 	</script>
 
-    </div>
-
-
-  </div>
 
   <div class="issue_descriptions">
     <h2>Issue descriptions</h2>
