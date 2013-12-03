@@ -9,61 +9,25 @@
 {% block content %}
 
 <div class="sprint_report">
+
+  <input style="float:right" class="btn" type="button" value="Print" onClick="window.print()">
+  <div class="clear:both"/>
+  <br/>
   
-  Last modified {% if project.stats.end_time %} {{ project.stats.end_time|timesince }} ago {% endif %}
-
-  <table>
-    <thead>
-      <th>#</th>
-      <th>Subject</th>
-      <th>Assigned</th>
-      <th>Feature</th>
-      <th>Status</th>
-      {% if settings.view_actual_hours %}
-      <th>Hours</th>
-      {% endif %}
-      {% if settings.ctc %}
-      <th>Ctc</th>
-      {% endif %}
+  <p class="executive_summary">
       {% if settings.billable %}
-      <th>Billable</th>
+      {% if settings.ctc %}Cost to company: R{{ project.stats.ctc|floatformat:"0"|intcomma }}	<br/>
       {% endif %}
-    </thead>
-
-    <tbody>
-      {% for issue in issues %}
-      <tr>
-	<td> <a href="#issue_description_{{issue.id}}">{{issue.number}}</a> </td>
-	<td> {{issue.subject}} </td>
-	<td> {{issue.assigned_to.get_full_name|default_if_none:""}} </td>
-	<td> {{issue.feature|default_if_none:""}}</td>
-	<td> {{ issue.status }}</td>
-	{% if settings.view_actual_hours %}
-	<td> {{issue.hours|default_if_none:""}} </td>
-	{% endif %}
-	{% if settings.ctc %}
-	<td>R{{issue.ctc|floatformat:"0"|intcomma}}</td>
-	{% endif %}
-	{% if settings.billable %}
-	<td>R{{issue.billable|floatformat:"0"|intcomma}}</td>
-	{% endif %}
-      </tr>
-      {% endfor %}
-    </tbody>
-  </table>
-
-  <hr/>
-  
-      <p>
-	<h3>
-      {% if settings.billable %}
-        {% if settings.ctc %}Cost to company: R{{ project.stats.ctc|floatformat:"0"|intcomma }}	<br/>
-	{% endif %}
-	Billable: R{{ project.stats.billed|floatformat:"0"|intcomma }}
+      Billable: R{{ project.stats.billed|floatformat:"0"|intcomma }}
       {% endif %}
-	</h3>
-      </p>
+  </p>
 
+  <br/>
+      {% if project.stats.end_time %}This sprint was last worked on {{ project.stats.end_time|timesince }} ago {% endif %}
+<br/>
+<br/>
+
+<h3>Costs per person</h3>
       <table>
 	<thead>
 	  <th>User</th>
@@ -125,6 +89,52 @@
 
 
       <hr/>
+
+      <h3>Issues</h3>
+  <table>
+    <thead>
+      <th>#</th>
+      <th>Subject</th>
+      <th>Assigned</th>
+      <th>Feature</th>
+      <th>Status</th>
+      {% if settings.view_actual_hours %}
+      <th>Hours</th>
+      {% endif %}
+      {% if settings.ctc %}
+      <th>Ctc</th>
+      {% endif %}
+      {% if settings.billable %}
+      <th>Billable</th>
+      {% endif %}
+    </thead>
+
+    <tbody>
+      {% for issue in issues %}
+      <tr>
+	<td> <a href="#issue_description_{{issue.id}}">{{issue.number}}</a> </td>
+	<td> {{issue.subject}} </td>
+	<td> {{issue.assigned_to.get_full_name|default_if_none:""}} </td>
+	<td> {{issue.feature|default_if_none:""}}</td>
+	<td> {{ issue.status }}</td>
+	{% if settings.view_actual_hours %}
+	<td> {{issue.hours|default_if_none:""}} </td>
+	{% endif %}
+	{% if settings.ctc %}
+	<td>R{{issue.ctc|floatformat:"0"|intcomma}}</td>
+	{% endif %}
+	{% if settings.billable %}
+	<td>R{{issue.billable|floatformat:"0"|intcomma}}</td>
+	{% endif %}
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+
+  <hr/>
+  
+  
+
 
       <div class="toggle_graphs_section">
 	{% if settings.view_actual_hours %}
@@ -258,7 +268,7 @@
 
 
   <div class="issue_descriptions">
-    <h2>Issue descriptions</h2>
+    <h3>Issue descriptions</h3>
     {% for issue in issues %}
     <h3 id="issue_description_{{issue.id}}"/>{{issue.number}} - {{issue.title}}</h2>
     {{issue.description|asmarkdown|safe}}
