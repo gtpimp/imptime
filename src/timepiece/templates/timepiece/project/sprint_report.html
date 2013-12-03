@@ -9,17 +9,26 @@
 {% block content %}
 
 <div class="sprint_report">
-  <h1>{{project.business.name}} - {{project.name}}</h1>
-  <h2>Report</h2>
+  
+
+  Last modified {% if project.stats.end_time %} {{ project.stats.end_time|timesince }} ago {% endif %}
 
   <table>
-
     <thead>
       <th>#</th>
       <th>Subject</th>
       <th>Assigned</th>
       <th>Feature</th>
       <th>Status</th>
+      {% if settings.view_actual_hours %}
+      <th>Hours</th>
+      {% endif %}
+      {% if settings.ctc %}
+      <th>Ctc</th>
+      {% endif %}
+      {% if settings.billable %}
+      <th>Billable</th>
+      {% endif %}
     </thead>
 
     <tbody>
@@ -30,6 +39,15 @@
 	<td> {{issue.assigned_to.get_full_name|default_if_none:""}} </td>
 	<td> {{issue.feature|default_if_none:""}}</td>
 	<td> {{ issue.status }}</td>
+	{% if settings.view_actual_hours %}
+	<td> {{issue.hours|default_if_none:""}} </td>
+	{% endif %}
+	{% if settings.ctc %}
+	<td>R{{issue.ctc|floatformat:"0"|intcomma}}</td>
+	{% endif %}
+	{% if settings.billable %}
+	<td>R{{issue.billable|floatformat:"0"|intcomma}}</td>
+	{% endif %}
       </tr>
       {% endfor %}
     </tbody>
@@ -37,13 +55,213 @@
 
   <hr/>
   
+  <div class="card">
+
+    <div class="project_card_top_level">
+
+      <p>
+	<h3>
+      {% if settings.billable %}
+        {% if settings.ctc %}Cost to company: R{{ project.stats.ctc|floatformat:"0"|intcomma }}	<br/>
+	{% endif %}
+	Billable: R{{ project.stats.billed|floatformat:"0"|intcomma }}
+      {% endif %}
+	</h3>
+      </p>
+      <hr/>
+
+      {% if settings.view_budget %}
+	{% if project.has_budget %}
+
+	Budget: R{{project.budget|floatformat:"0"|intcomma}}          
+	<div class="traffic_bar">
+	  <div style="width:{{project.stats.percentage_spent}}%" class="{{project.stats.budget_traffic_class}}">
+	    {% if project.stats.amount_under_budget > 0 %}
+		 R{{project.stats.amount_under_budget|floatformat:"0"|intcomma}}&nbsp;left
+	    {% else %}
+		 R{{project.stats.amount_over_budget|floatformat:"0"|intcomma}}&nbsp;over
+	    {% endif %}
+	  </div>
+	</div>
+	{% else %}
+	<div style="color:red">No budget</div>
+	{% endif %}
+      {% endif %}
+
+      <h3>Features</h3>
+      <table>
+	<thead>
+	  <th></th>
+	  {% if settings.ctc %}
+	  <th>ctc</th>
+	  {% endif %}
+	  {% if settings.billable %}
+	  <th>billable</th>
+	  {% endif %}
+	</thead>
+	<tbody>
+	  {% for data in project.costs_by_feature.values %} 
+	  <tr>
+	    <th>{{data.name}}</th>
+	    {% if settings.ctc %}
+	    <td>R{{data.ctc|floatformat:"0"|intcomma}}</td>
+	    {% endif %}
+	    {% if settings.billable %}
+	    <td>R{{data.billable|floatformat:"0"|intcomma}}</td>
+	    {% endif %}
+	  </tr>
+	  {% endfor %}
+	</tbody>
+      </table>
+
+
+      <hr/>
+
+      <div class="toggle_graphs_section">
+	{% if settings.view_actual_hours %}
+	  <div class="graph" style="float:left">
+	    <h3 style="text-align:center">hours by user</h3>
+	    <div class="{{project.id}}_graph_hours_by_user" style="height:300px;width:300px;"></div>
+	  </div>
+	{% endif %}
+	
+	{% if settings.ctc %}
+	  <div class="graph" style="float:left">
+	    <h3 style="text-align:center">ctc per user</h3>
+	    <div class="{{project.id}}_graph_ctc_by_user" style="height:300px;width:300px;"></div>
+	    <hr/>
+	  </div>
+	  {% endif %}
+	  {% if settings.billable %}
+	  <div class="graph" style="float:left">
+	    <h3 style="text-align:center">billable per user</h3>
+	    <div class="{{project.id}}_graph_billable_by_user" style="height:300px;width:300px;"></div>
+	  </div>
+	  {% endif %}
+	  {% if settings.ctc and settings.billable %}
+	  <div class="graph" style="float:left">
+	    <h3 style="text-align:center">profit per user</h3>
+	    <div class="{{project.id}}_graph_profit_by_user" style="height:300px;width:300px;"></div>
+	    <hr/>
+	  </div>
+	{% endif %}
+
+	<div style="clear:both"></div>
+	<hr/>
+
+
+	{% if settings.ctc %}
+	  <div class="graph" style="float:left">
+	    <h3 style="text-align:center">ctc per feature</h3>
+	    <div class="{{project.id}}_graph_ctc_by_feature" style="height:300px;width:300px;"></div>
+	    <hr/>
+	  </div>
+	{% endif %}
+	{% if settings.billable %}
+	  <div class="graph" style="float:left">
+	    <h3 style="text-align:center">billable per feature</h3>
+	    <div class="{{project.id}}_graph_billable_by_feature" style="height:300px;width:300px;"></div>
+	  </div>
+	{% endif %}
+        <div style="clear:both"></div>
+	<hr/>
+      </div>
+
+      <script>
+	$.plot(".{{project.id}}_graph_hours_by_user",
+	       [ {%spaceless%} 
+		   {% for username,amounts in project.users_and_hours.users.items %} 
+		     { label:"{{username}}", 
+		       data: {{amounts.hours}}
+		     },
+		   {% endfor %} 
+		 {%endspaceless%}
+	       ],
+	       { series: { pie: { show: true } },
+		 legend: { show: false} } );
+
+	{% if settings.ctc %}
+	$.plot(".{{project.id}}_graph_ctc_by_user",
+	       [ {%spaceless%} 
+		   {% for username,amounts in project.users_and_hours.users.items %} 
+		     { label:"{{username}}", 
+			 data: {{amounts.revenue}}
+		       },
+		     {% endfor %} 
+		   {%endspaceless%}
+		 ],
+		 { series: { pie: { show: true } },
+		   legend: { show: false} } );
+	{% endif %}
+	{% if settings.billable %}
+	  $.plot(".{{project.id}}_graph_billable_by_user",
+		   [ {%spaceless%} 
+		       {% for username,amounts in project.users_and_hours.users.items %} 
+			 { label:"{{username}}", 
+			   data: {{amounts.billed}}
+			 },
+		       {% endfor %} 
+		     {%endspaceless%}
+		   ],
+		   { series: { pie: { show: true } },
+		     legend: { show: false} } );
+
+          {% endif %}
+	  {% if settings.ctc %}
+	  $.plot(".{{project.id}}_graph_profit_by_user",
+		   [ {%spaceless%} 
+		       {% for username,amounts in project.users_and_hours.users.items %} 
+			 { label:"{{username}}", 
+			   data: {{amounts.profit}}
+			 },
+		       {% endfor %} 
+		     {%endspaceless%}
+		   ],
+		   { series: { pie: { show: true } },
+		     legend: { show: false} } );      $.plot(".{{project.id}}_graph_ctc_by_feature",
+		   [ {%spaceless%} 
+		       {% for data in project.costs_by_feature.values %} 
+			 { label:"{{data.name}}", 
+			   data: {{data.ctc}}
+			 },
+		       {% endfor %} 
+		     {%endspaceless%}
+		   ],
+		   { series: { pie: { show: true } },
+		     legend: { show: false} } );
+	  {% endif %}
+	  {% if settings.billable %}
+	  $.plot(".{{project.id}}_graph_billable_by_feature",
+		   [ {%spaceless%} 
+		       {% for data in project.costs_by_feature.values %} 
+			 { label:"{{data.name}}", 
+			   data: {{data.billable}}
+			 },
+		       {% endfor %} 
+		     {%endspaceless%}
+		   ],
+		   { series: { pie: { show: true } },
+		     legend: { show: false} } );
+
+	  {% endif %}
+
+	</script>
+
+    </div>
+
+
+  </div>
+
   <div class="issue_descriptions">
+    <h2>Issue descriptions</h2>
     {% for issue in issues %}
     <h3 id="issue_description_{{issue.id}}"/>{{issue.number}} - {{issue.title}}</h2>
-      {{issue.description|asmarkdown|safe}}
+    {{issue.description|asmarkdown|safe}}
     {% endfor %}
 
   </div>
+
+
 
 </div>
 
