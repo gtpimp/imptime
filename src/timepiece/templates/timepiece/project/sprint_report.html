@@ -59,7 +59,7 @@
 	</tbody>
       </table>
 
-      <hr/>
+      
 
       <h3>Features</h3>
       <table>
@@ -88,7 +88,7 @@
       </table>
 
 
-      <hr/>
+      
 
       <h3>Issues</h3>
   <table>
@@ -131,7 +131,7 @@
     </tbody>
   </table>
 
-  <hr/>
+  
   
   
 
@@ -148,7 +148,7 @@
 	  <div class="graph" style="float:left">
 	    <h3 style="text-align:center">ctc per user</h3>
 	    <div class="{{project.id}}_graph_ctc_by_user" style="height:300px;width:300px;"></div>
-	    <hr/>
+	    
 	  </div>
 	  {% endif %}
 	  {% if settings.billable %}
@@ -161,19 +161,19 @@
 	  <div class="graph" style="float:left">
 	    <h3 style="text-align:center">profit per user</h3>
 	    <div class="{{project.id}}_graph_profit_by_user" style="height:300px;width:300px;"></div>
-	    <hr/>
+	    
 	  </div>
 	{% endif %}
 
 	<div style="clear:both"></div>
-	<hr/>
+	
 
 
 	{% if settings.ctc %}
 	  <div class="graph" style="float:left">
 	    <h3 style="text-align:center">ctc per feature</h3>
 	    <div class="{{project.id}}_graph_ctc_by_feature" style="height:300px;width:300px;"></div>
-	    <hr/>
+	    
 	  </div>
 	{% endif %}
 	{% if settings.billable %}
@@ -183,7 +183,7 @@
 	  </div>
 	{% endif %}
         <div style="clear:both"></div>
-	<hr/>
+	
       </div>
 
       <script>
@@ -270,7 +270,7 @@
   <div class="issue_descriptions">
     <h3>Issue descriptions</h3>
     {% for issue in issues %}
-    <h3 id="issue_description_{{issue.id}}"/>{{issue.number}} - {{issue.title}}</h2>
+    <h4 id="issue_description_{{issue.id}}">{{issue.number}} - {{issue.subject}}</h4>
     {{issue.description|asmarkdown|safe}}
     {% endfor %}
 
