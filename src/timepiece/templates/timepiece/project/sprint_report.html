@@ -10,11 +10,18 @@
 
 <div class="sprint_report">
 
-  <input style="float:right" class="btn" type="button" value="Print" onClick="$(this).hide(); window.print(); ">
+  <input style="position: fixed; right:100px; top: 100px;" class="btn" type="button" value="Print" onClick="$(this).hide(); window.print(); ">
   <div class="clear:both"/>
-  <br/>
+
+     <h4><b><i>{{ project.description }}</i></b></h4>
+     <br/>
+     <br/>
+
+
   
   <p class="executive_summary">
+
+
       {% if settings.billable %}
       {% if settings.ctc %}Cost to company: R{{ project.stats.ctc|floatformat:"0"|intcomma }}	<br/>
       {% endif %}
@@ -23,9 +30,9 @@
   </p>
 
   <br/>
-      {% if project.stats.start_time %}The first recorded time entry for this sprint was on the {{ project.stats.start_time|date:"d F Y H:m" }} at {{ project.stats.start_time|date:"H:m" }}  {% endif %}
+      {% if project.stats.start_time %}Started on the {{ project.stats.start_time|date:"d F Y H:m" }} at {{ project.stats.start_time|date:"H:m" }}  {% endif %}
       <br/>
-      {% if project.stats.end_time %}The last recorded time entry for this sprint was on the {{ project.stats.end_time|date:"d F Y H:m" }} at {{ project.stats.end_time|date:"H:m" }}  {% endif %}
+      {% if project.stats.end_time %}Finished on the {{ project.stats.end_time|date:"d F Y H:m" }} at {{ project.stats.end_time|date:"H:m" }}  {% endif %}
 <br/>
 <br/>
 
