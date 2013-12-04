@@ -17,6 +17,7 @@
      <br/>
      <br/>
   
+{% if settings.billable or settings.ctc %}
   <p class="executive_summary">
 
 
@@ -26,6 +27,7 @@
       Billable: R{{ project.stats.billed|floatformat:"0"|intcomma }}
       {% endif %}
   </p>
+{% endif %}
 
   <br/>
       {% if project.stats.start_time %}Started on the {{ project.stats.start_time|date:"d F Y H:m" }} at {{ project.stats.start_time|date:"H:m" }}  {% endif %}
@@ -34,6 +36,7 @@
 <br/>
 <br/>
 
+{% if settings.billable or settings.ctc %}
 <h3>Costs per person</h3>
       <table>
 	<thead>
@@ -65,7 +68,7 @@
 	  {% endfor %}
 	</tbody>
       </table>
-
+{% endif %}
       
 
       <h3>Features</h3>
