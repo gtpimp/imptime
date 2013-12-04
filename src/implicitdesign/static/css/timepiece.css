@@ -10070,3 +10070,21 @@ table.search_results tr:hover {
     background: linear-gradient(to bottom, #DDDDDD, #D0D3FA);
     cursor: pointer;
 }
+
+.floating_project {
+    z-index: 999;   
+    display:none;
+}
+
+.floating_project .project_table_appearance {
+    border: 1px solid #ababab;
+    -moz-box-shadow:    6px 6px 0px 0px #ccc;
+    -webkit-box-shadow: 6px 6px 0px 0px #ccc;
+    box-shadow:         6px 6px 0px 0px #ccc;
+}
+
+.floating_project .project_title {
+    cursor:grabbing;
+    cursor:-moz-grabbing;
+    cursor:-webkit-grabbing;
+}

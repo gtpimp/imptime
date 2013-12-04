@@ -554,12 +554,12 @@ class Project(models.Model):
         if hasattr(self, '_cached_billable_by_feature'):
             return self._cached_billable_by_feature
 
-        costs_per_feature = {}
-        features_in_project = self.issues.all().order_by('feature').values('feature').annotate(x=Count('feature'))
+        costs_per_feature = SortedDict()
+        features_in_project = list(self.issues.all().order_by('feature').values('feature').annotate(x=Count('feature'))) + [{'feature':None,'x':0}]
         for feature in features_in_project:
             entries_qs = Entry.objects.all().filter(project=self)
             if feature['feature'] is None:
-                cost_per_feature = costs_per_feature.setdefault('none', {'name':'No feature', 'ctc':0,'billable':0})
+                cost_per_feature = costs_per_feature.setdefault('none', {'name':'na', 'ctc':0,'billable':0})
                 entries_qs = entries_qs.filter(Q(issue__isnull=True)|Q(issue__feature__isnull=True))
             else:
                 cost_per_feature = costs_per_feature.setdefault(feature['feature'], {'name':Feature.objects.get(pk=feature['feature']), 'ctc':0,'billable':0})

@@ -51,11 +51,12 @@
 		{% end_permission %}
 		</tr>
 
+		{% if project.id %}
                 <tr>
                   <td>
-                    <div class="secret_link issue_number" onclick="imp.show_issue_detail(null, '{% url 'all_timesheet_entries' project.id %}');">
-                      show
-                    </div>
+                      <div class="secret_link issue_number" onclick="imp.show_issue_detail(null, '{% url 'all_timesheet_entries' project.id %}');">
+                        show
+                      </div>
                   </td>
                   <td>
                     all timesheet entries for this sprint
@@ -123,7 +124,9 @@
 
 		  {% end_permission %}
                 </tr>
+		{% endif %}
 
+		{% if project.id %}
                 <tr>
                   <td>
                     <div class="secret_link issue_number" onclick="imp.show_issue_detail(null, '{% url 'unassigned_timesheet_entries' project.id %}');">
@@ -166,7 +169,6 @@
                     {% endcomment %}
 
 		  {% has_permission has_view_ctc_billable_rates project.business %}
-
                   {% has_permission has_view_ctc_rates project.business %}
                   <td class="money_cell">
                     <div class="secret_link" onclick="imp.show_issue_detail(null, '{% url 'unassigned_timesheet_entries' project.id %}');">
@@ -174,9 +176,9 @@
                     </div>
                   </td>
                   {% end_permission %}
-
+		  
                   <td class="money_cell">
-                    <div class="secret_link" onclick="imp.show_issue_detail(null, '{% url 'unassigned_timesheet_entries' project.id %}');">
+		    <div class="secret_link" onclick="imp.show_issue_detail(null, '{% url 'unassigned_timesheet_entries' project.id %}');">
                       R{{unassigned_timesheet_entries_billable|floatformat:"0"|intcomma}}
                     </div>
                   </td>
@@ -188,4 +190,6 @@
 
 
 		  {% end_permission %}
+
                 </tr>
+		{% endif %}

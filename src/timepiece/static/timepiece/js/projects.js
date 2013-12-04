@@ -91,11 +91,25 @@ function make_data_done_function_for_element(element) {
         var sortable = $(area_to_insert.find(".issue_list_body"));
         var sortable_url = $(sortable).attr("update_order_url");
 
-        sortable.sortable({ connectWith: ".issue_list_body",
+	imp.projects.attach_sortable( sortable, sortable_url );
+    };
+};
+
+imp.projects.init_floating_sprint = function() {
+    imp.projects.attach_sortable($(".floating_project .issue_list_body"));
+    $(".floating_project").draggable();
+};
+
+imp.projects.attach_sortable = function(sortable, sortable_url) {
+
+    if ( sortable_url ) {
+	sortable.sortable({ connectWith: ".issue_list_body",
                             stop: imp.projects.on_sortable_changed_for_url(sortable_url),
                             receive: imp.projects.on_sortable_changed_for_url(sortable_url)
-                           });
-    };
+			  });
+    } else {
+	sortable.sortable({ connectWith: ".issue_list_body" });
+    }
 };
 
 imp.projects.load_or_display_issues = imp.projects._make_load_for_data( make_data_done_function_for_element );
@@ -267,6 +281,7 @@ imp.on_document_ready = function() {
 
     imp.create_splitter();
     imp.attach_sprint_headings();
+    imp.projects.init_floating_sprint();
 };
 
 $(document).ready(imp.on_document_ready);

@@ -61,6 +61,9 @@
       {% for project in projects %} 
         {% include "timepiece/project/_project_list_item.html" %}
       {% endfor %}
+
+      {% include "timepiece/project/floating_project_detail.html" with project=floating_project %}
+
     </ul>
         
   </div>

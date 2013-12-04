@@ -3290,6 +3290,7 @@ def project_list(request, project_id=None, highlight_issue_id=None, business_id=
     context['highlight_issue_id'] = highlight_issue_id
     context['has_closed_sprints'] = business.has_closed_sprints()
     context['has_open_sprints'] = business.has_open_sprints()
+    context['floating_project'] = timepiece.Project(name='floating project', description="temporary")
 
     return render_to_response(template, context, context_instance=RequestContext(request))
         
