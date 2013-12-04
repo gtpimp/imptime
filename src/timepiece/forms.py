@@ -1086,6 +1086,8 @@ class SprintReportSettingsForm(forms.Form):
     billable = forms.BooleanField(initial=True, required=False)
     view_actual_hours = forms.BooleanField(initial=True, required=False)
     view_budget = forms.BooleanField(initial=True, required=False)
+    issue_assignee = forms.BooleanField(initial=False, required=False)
+    issue_status = forms.BooleanField(initial=False, required=False)
 
     def __init__(self, bp, *args, **kwargs):
         super(SprintReportSettingsForm, self).__init__(*args, **kwargs)

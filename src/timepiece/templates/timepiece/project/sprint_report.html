@@ -232,14 +232,19 @@
 	</script>
 
 	<br style="page-break-before: always;" clear="all" /> 
+
       <h3>Issues</h3>
   <table>
     <thead>
       <th>#</th>
       <th>Subject</th>
+      {% if settings.issue_assignee %}
       <th>Assigned</th>
+      {% endif %}
       <th>Feature</th>
+      {% if settings.issue_status %}
       <th>Status</th>
+      {% endif %}
       {% if settings.view_actual_hours %}
       <th>Hours</th>
       {% endif %}
@@ -256,9 +261,13 @@
       <tr>
 	<td> <a href="#issue_description_{{issue.id}}">{{issue.number}}</a> </td>
 	<td> {{issue.subject}} </td>
-	<td> {{issue.assigned_to.get_full_name|default_if_none:""}} </td>
+	{% if settings.issue_assignee %}
+	  <td> {{issue.assigned_to.get_full_name|default_if_none:""}} </td>
+	{% endif %}
 	<td> {{issue.feature|default_if_none:""}}</td>
-	<td> {{ issue.status }}</td>
+	{% if settings.issue_status %}
+	  <td> {{ issue.status }}</td>
+	{% endif %}
 	{% if settings.view_actual_hours %}
 	<td> {{issue.hours|default_if_none:""}} </td>
 	{% endif %}
