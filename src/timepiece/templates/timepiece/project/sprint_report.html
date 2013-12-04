@@ -16,8 +16,6 @@
      <h4><b><i>{{ project.description }}</i></b></h4>
      <br/>
      <br/>
-
-
   
   <p class="executive_summary">
 
@@ -98,52 +96,6 @@
 
 
       
-
-      <h3>Issues</h3>
-  <table>
-    <thead>
-      <th>#</th>
-      <th>Subject</th>
-      <th>Assigned</th>
-      <th>Feature</th>
-      <th>Status</th>
-      {% if settings.view_actual_hours %}
-      <th>Hours</th>
-      {% endif %}
-      {% if settings.ctc %}
-      <th>Ctc</th>
-      {% endif %}
-      {% if settings.billable %}
-      <th>Billable</th>
-      {% endif %}
-    </thead>
-
-    <tbody>
-      {% for issue in issues %}
-      <tr>
-	<td> <a href="#issue_description_{{issue.id}}">{{issue.number}}</a> </td>
-	<td> {{issue.subject}} </td>
-	<td> {{issue.assigned_to.get_full_name|default_if_none:""}} </td>
-	<td> {{issue.feature|default_if_none:""}}</td>
-	<td> {{ issue.status }}</td>
-	{% if settings.view_actual_hours %}
-	<td> {{issue.hours|default_if_none:""}} </td>
-	{% endif %}
-	{% if settings.ctc %}
-	<td>R{{issue.ctc|floatformat:"0"|intcomma}}</td>
-	{% endif %}
-	{% if settings.billable %}
-	<td>R{{issue.billable|floatformat:"0"|intcomma}}</td>
-	{% endif %}
-      </tr>
-      {% endfor %}
-    </tbody>
-  </table>
-
-  
-  
-  
-
 
       <div class="toggle_graphs_section">
 	{% if settings.view_actual_hours %}
@@ -274,6 +226,47 @@
 	  {% endif %}
 
 	</script>
+
+      <h3>Issues</h3>
+  <table>
+    <thead>
+      <th>#</th>
+      <th>Subject</th>
+      <th>Assigned</th>
+      <th>Feature</th>
+      <th>Status</th>
+      {% if settings.view_actual_hours %}
+      <th>Hours</th>
+      {% endif %}
+      {% if settings.ctc %}
+      <th>Ctc</th>
+      {% endif %}
+      {% if settings.billable %}
+      <th>Billable</th>
+      {% endif %}
+    </thead>
+
+    <tbody>
+      {% for issue in issues %}
+      <tr>
+	<td> <a href="#issue_description_{{issue.id}}">{{issue.number}}</a> </td>
+	<td> {{issue.subject}} </td>
+	<td> {{issue.assigned_to.get_full_name|default_if_none:""}} </td>
+	<td> {{issue.feature|default_if_none:""}}</td>
+	<td> {{ issue.status }}</td>
+	{% if settings.view_actual_hours %}
+	<td> {{issue.hours|default_if_none:""}} </td>
+	{% endif %}
+	{% if settings.ctc %}
+	<td>R{{issue.ctc|floatformat:"0"|intcomma}}</td>
+	{% endif %}
+	{% if settings.billable %}
+	<td>R{{issue.billable|floatformat:"0"|intcomma}}</td>
+	{% endif %}
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
 
 
   <div class="issue_descriptions">
