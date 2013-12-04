@@ -655,6 +655,7 @@ class Project(models.Model):
         stats['percent_tested_traffic_class'] = get_css_class_for_level(stats['percent_tested'], reverse_colours=True)
         stats['ctc'] = ctc
         stats['billed'] = billed
+        stats['start_time'] = self._first_entry_start_time
         stats['end_time'] = self._last_entry_end_time
         self._stats = stats
         return stats
@@ -664,6 +665,14 @@ class Project(models.Model):
         entries = Entry.objects.filter(project=self).order_by("-end_time")
         if entries.count()>0:
             return entries[0].end_time
+        else:
+            return None
+
+    @property
+    def _first_entry_start_time(self):
+        entries = Entry.objects.filter(project=self).order_by("start_time")
+        if entries.count()>0:
+            return entries[0].start_time
         else:
             return None
 
