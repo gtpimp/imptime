@@ -23,7 +23,7 @@
   </p>
 
   <br/>
-      {% if project.stats.end_time %}This sprint was last worked on {{ project.stats.end_time|timesince }} ago {% endif %}
+      {% if project.stats.end_time %}The last recorded time entry for this sprint was on the {{ project.stats.end_time|date:"d F Y H:m" }}  {% endif %}
 <br/>
 <br/>
 
