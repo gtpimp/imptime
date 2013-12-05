@@ -727,14 +727,26 @@ class Project(models.Model):
             entries_qs = entries_qs.filter(**entry_filter)
         
         user_totals = entries_qs.values("user").annotate(hours=Sum('hours'), end_time=Max("end_time"))
+        user_totals = dict( (x['user'], x) for x in user_totals )
+        
         res = {'users':{}, 'totals':{}}
         total_hours = 0
         total_revenue = 0
         total_billed = 0
         ctc_rate = 0
         billed_rate = 0
-        for user_total in user_totals:
-            user = User.objects.get(pk=user_total['user'])
+
+        business_users = BusinessPermissions.by_user(self.business)
+        for user_id, bp in business_users.items():
+            if not bp.can_view_project_card:
+                continue
+
+            if user_id not in user_totals:
+                user_total = {'user':user_id, 'hours':0, 'end_time':datetime.datetime.today()}
+            else:
+                user_total = user_totals[user_id]
+
+            user = User.objects.get(pk=user_id)
             try:
                 rate = Rate.objects.get(project=self, user=user)
             except Rate.DoesNotExist:
@@ -762,8 +774,8 @@ class Project(models.Model):
         res['totals']['hours'] = total_hours
         res['totals']['revenue'] = total_revenue
         res['totals']['billed'] = total_billed
-        res['totals']['ctc_rate'] = ctc_rate / user_totals.count() if user_totals.count() else 0
-        res['totals']['billed_rate'] = billed_rate / user_totals.count() if user_totals.count() else 0
+        res['totals']['ctc_rate'] = ctc_rate / len(user_totals) if len(user_totals)>0 else 0
+        res['totals']['billed_rate'] = billed_rate / len(user_totals) if len(user_totals)>0 else 0
         res['totals']['profit'] = total_billed - total_revenue
 
         self._users_and_hours = res
@@ -985,6 +997,9 @@ class EntriesQuerySet(QuerySet):
         return { 'hours': hours,
                  'ctc': ctc,
                  'billable': billable }
+
+    def get_aggregated_info(self):
+        return self.order_by('comments').values('comments').annotate(x=Count('comments'), hours=Sum('hours'))
 
 class EntryQuerySet(EntriesQuerySet):
     """QuerySet extension to provide filtering by billable status"""

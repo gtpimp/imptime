@@ -3167,7 +3167,7 @@ def project_issues(request, pk, template="timepiece/project/issues.html", contex
     
     all_entries = project.entries.all().order_by("start_time")
     cost_totals = all_entries.cost_totals_for_project(project)
-    unassigned_cost_totals = timepiece.Issue.get_unassigned_timesheet_entries().cost_totals_for_project(project)
+    unassigned_cost_totals = timepiece.Issue.get_unassigned_timesheet_entries(project=project).cost_totals_for_project(project)
         
     rate = project.get_user_rate(request.user)
     context['next_issue_number']  = timepiece.Issue.get_next_issue_number()
@@ -4004,6 +4004,10 @@ def sprint_report(request, project_id, context=None):
     context['form'] = form
     context['project'] = project
     context['issues'] = project.issues.order_by("order")
+
+    unassigned = timepiece.Issue.get_unassigned_timesheet_entries(project)
+    context['unassigned'] = unassigned.cost_totals_for_project(project)
+    context['unassigned']['comments'] = unassigned.get_aggregated_info()
     context['date_created'] =  datetime.datetime.now().strftime("%d %b %Y %H:%M")
     return render_to_response('timepiece/project/sprint_report.html',
                               context, context_instance=RequestContext(request))

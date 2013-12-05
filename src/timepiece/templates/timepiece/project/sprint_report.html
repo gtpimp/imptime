@@ -279,6 +279,20 @@
 	{% endif %}
       </tr>
       {% endfor %}
+      <tr>
+	<td></td>
+	<td><i>non-issue time</i></td>
+	<td></td>
+	{% if settings.view_actual_hours %}
+	<td><i>{{unassigned.hours|floatformat:"0"|intcomma}}</i></td>
+	{% endif %}
+	{% if settings.ctc %}
+	<td><i>R{{unassigned.ctc|floatformat:"0"|intcomma}}</i></td>
+	{% endif %}
+	{% if settings.billable %}
+	<td><i>R{{unassigned.billable|floatformat:"0"|intcomma}}</i></td>
+	{% endif %}
+      </tr>
     </tbody>
   </table>
 
@@ -286,10 +300,18 @@
   <br style="page-break-before: always;" clear="all" /> 
   <div class="issue_descriptions">
     <h3>Issue descriptions</h3>
+
     {% for issue in issues %}
     <h4 id="issue_description_{{issue.id}}">{{issue.number}} - {{issue.subject}}</h4>
     {{issue.description|asmarkdown|safe}}
     {% endfor %}
+
+    <h4 id="issue_description_unassigned">unassigned</h4>
+    <ul>
+      {% for comment in unassigned.comments %}
+      <li>{{comment.comments|safe}}</li>
+      {% endfor %}
+    </ul>
 
   </div>
 
