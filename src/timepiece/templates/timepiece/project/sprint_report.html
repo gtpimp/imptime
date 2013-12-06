@@ -106,27 +106,27 @@
 	{% if settings.view_actual_hours %}
 	  <div class="graph" style="float:left">
 	    <h3 style="text-align:center">hours by user</h3>
-	    <div class="{{project.id}}_graph_hours_by_user" style="height:300px;width:300px;"></div>
+	    <div class="{{project.id}}_graph_hours_by_user" style="height:200px;width:200px;"></div>
 	  </div>
 	{% endif %}
 	
 	{% if settings.ctc %}
 	  <div class="graph" style="float:left">
 	    <h3 style="text-align:center">ctc per user</h3>
-	    <div class="{{project.id}}_graph_ctc_by_user" style="height:300px;width:300px;"></div>
+	    <div class="{{project.id}}_graph_ctc_by_user" style="height:200px;width:200px;"></div>
 	    
 	  </div>
 	  {% endif %}
 	  {% if settings.billable %}
 	  <div class="graph" style="float:left">
 	    <h3 style="text-align:center">billable per user</h3>
-	    <div class="{{project.id}}_graph_billable_by_user" style="height:300px;width:300px;"></div>
+	    <div class="{{project.id}}_graph_billable_by_user" style="height:200px;width:200px;"></div>
 	  </div>
 	  {% endif %}
 	  {% if settings.ctc and settings.billable %}
 	  <div class="graph" style="float:left">
 	    <h3 style="text-align:center">profit per user</h3>
-	    <div class="{{project.id}}_graph_profit_by_user" style="height:300px;width:300px;"></div>
+	    <div class="{{project.id}}_graph_profit_by_user" style="height:200px;width:200px;"></div>
 	    
 	  </div>
 	{% endif %}
@@ -138,14 +138,14 @@
 	{% if settings.ctc %}
 	  <div class="graph" style="float:left">
 	    <h3 style="text-align:center">ctc per feature</h3>
-	    <div class="{{project.id}}_graph_ctc_by_feature" style="height:300px;width:300px;"></div>
+	    <div class="{{project.id}}_graph_ctc_by_feature" style="height:200px;width:200px;"></div>
 	    
 	  </div>
 	{% endif %}
 	{% if settings.billable %}
 	  <div class="graph" style="float:left">
 	    <h3 style="text-align:center">billable per feature</h3>
-	    <div class="{{project.id}}_graph_billable_by_feature" style="height:300px;width:300px;"></div>
+	    <div class="{{project.id}}_graph_billable_by_feature" style="height:200px;width:200px;"></div>
 	  </div>
 	{% endif %}
         <div style="clear:both"></div>
