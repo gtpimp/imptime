@@ -433,8 +433,8 @@ class Project(models.Model):
                 'total_adjusted_ctc': total_adjustedd_ctc,
                 'total_adjusted_profit': total_adjustedd_billed - total_adjustedd_ctc,
                 'rate': rate,
-                'velocity': points / float(user_hours),
-                'work_ratio': user_hours / total_hours
+                'velocity': (points/float(user_hours)) if float(user_hours)>0 else 0,
+                'work_ratio': (user_hours/total_hours) if total_hours>0 else 0
             }
         self._cost_per_developer_cache = ret
         return ret
