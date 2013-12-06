@@ -3985,8 +3985,8 @@ def sprint_report_settings(request, project_id, context=None):
     project = timepiece.Project.objects.get(pk=project_id)
     business = project.business
     bp = timepiece.BusinessPermissions.for_user(request.user, business)
-    if not bp.can_view_project_card:
-        raise Exception("No permission")
+    if not bp.has_view_project_card:
+        return HttpResponse("Sorry, you don't have permission to view the report")
 
     context['form'] = timepiece_forms.SprintReportSettingsForm(bp)
     context['project'] = project

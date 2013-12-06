@@ -48,11 +48,13 @@
       </li>
       {% end_permission %}
 
+      {% has_permission has_view_project_card project.business %}
       <li>
 	<a href="#" onclick="imp.popup_page('{% url 'sprint_report_settings' project.id %}'); return false;">
 	  Report
 	</a>
       </li>
+      {% end_permission %}
       
       {% has_permission has_edit_project_detail project.business %}
       <li>
