@@ -1082,6 +1082,7 @@ rate_formset = modelformset_factory(timepiece.UserProfile, form=RateForm, can_de
 
 class SprintReportSettingsForm(forms.Form):
 
+    start_end_time = forms.BooleanField(initial=True, required=False)
     ctc = forms.BooleanField(initial=False, required=False)
     billable = forms.BooleanField(initial=True, required=False)
     view_actual_hours = forms.BooleanField(initial=True, required=False)
@@ -1099,6 +1100,7 @@ class SprintReportSettingsForm(forms.Form):
             del self.fields['ctc']
         if not bp.has_view_actual_hours:
             del self.fields['view_actual_hours']
+            del self.fields['start_end_time']
         if not bp.has_view_budget:
             del self.fields['view_budget']
 

@@ -13,9 +13,12 @@
   <input style="position: fixed; right:100px; top: 100px;" class="btn" type="button" value="Print" onClick="$(this).hide(); window.print(); ">
   <div class="clear:both"/>
 
-     <h4><b><i>{{ project.description }}</i></b></h4>
+  <div style="text-align:center" >
+  <h4>{{project.business.name}} - {{project.name}}</h4>
+     <h5><b><i>{{ project.description }}</i></b></h5>
+     <hr/>
      <br/>
-     <br/>
+   </div>
   
 {% if settings.billable or settings.ctc %}
   <p class="executive_summary">
@@ -29,11 +32,13 @@
   </p>
 {% endif %}
 
+{% if settings.start_end_time %}
   <br/>
       {% if project.stats.start_time %}Started on the {{ project.stats.start_time|date:"d F Y H:m" }} at {{ project.stats.start_time|date:"H:m" }}  {% endif %}
       <br/>
       {% if project.stats.end_time %}Finished on the {{ project.stats.end_time|date:"d F Y H:m" }} at {{ project.stats.end_time|date:"H:m" }}  {% endif %}
 <br/>
+{% endif %}
 <br/>
 
 {% if project.cost_per_developer.items|length > 0 %}
