@@ -559,7 +559,7 @@ class Project(models.Model):
         for feature in features_in_project:
             entries_qs = Entry.objects.all().filter(project=self)
             if feature['feature'] is None:
-                cost_per_feature = costs_per_feature.setdefault('none', {'name':'other', 'ctc':0,'billable':0})
+                cost_per_feature = costs_per_feature.setdefault('none', {'name':'no feature', 'ctc':0,'billable':0})
                 entries_qs = entries_qs.filter(Q(issue__isnull=True)|Q(issue__feature__isnull=True))
             else:
                 cost_per_feature = costs_per_feature.setdefault(feature['feature'], {'name':Feature.objects.get(pk=feature['feature']), 'ctc':0,'billable':0})

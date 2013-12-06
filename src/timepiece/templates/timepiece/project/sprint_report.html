@@ -279,6 +279,7 @@
 	{% endif %}
       </tr>
       {% endfor %}
+      {% if unassigned.hours > 0 %}
       <tr>
 	<td></td>
 	<td><i>non-issue time</i></td>
@@ -293,6 +294,7 @@
 	<td><i>R{{unassigned.billable|floatformat:"0"|intcomma}}</i></td>
 	{% endif %}
       </tr>
+      {% endif %}
     </tbody>
   </table>
 
@@ -306,12 +308,14 @@
     {{issue.description|asmarkdown|safe}}
     {% endfor %}
 
+    {% if unassigned.comments|length > 0 %}
     <h4 id="issue_description_unassigned">non-issue time</h4>
     <ul>
       {% for comment in unassigned.comments %}
       <li>{{comment.comments|safe}}</li>
       {% endfor %}
     </ul>
+    {% endif %}
 
   </div>
 
