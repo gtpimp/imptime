@@ -72,6 +72,7 @@
 
   {% has_permission has_view_ctc_billable_rates project.business %}
   
+  {% comment %}
   <br />
   <hr />
   <h1>Estimated Total Sprint Cost</h1>
@@ -102,7 +103,9 @@
     </tbody>
   </table>
   <hr/>
+  {% endcomment %}
 
+  {% comment %}
   <h1>Current Sprint Details</h1>
   <table>
     <thead>
@@ -120,6 +123,7 @@
       {% endfor %}
     </tbody>
   </table>
+  {% endcomment %}
 
     <br/>
     <hr/>

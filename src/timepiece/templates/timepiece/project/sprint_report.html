@@ -36,40 +36,41 @@
 <br/>
 <br/>
 
-{% if settings.billable or settings.ctc %}
-<h3>Costs per person</h3>
-      <table>
-	<thead>
-	  <th>User</th>
-	  {% if settings.view_actual_hours %}
-	  <th>Hours</th>
-	  {% endif %}
-	  {% if settings.ctc %}
-	  <th>ctc</th>
-	  {% endif %}
-	  {% if settings.billable %}
-	  <th>billable</th>
-	  {% endif %}
-	</thead>
-	<tbody>
-	  {% for user, costs in project.cost_per_developer.items %}
-	  <tr>
-	    <td>{{ user.username }}</td>
+{% if project.cost_per_developer.items|length > 0 %}
+  {% if settings.billable or settings.ctc %}
+  <h3>Costs per person</h3>
+	<table>
+	  <thead>
+	    <th>User</th>
 	    {% if settings.view_actual_hours %}
-	    <td>{{ costs.hours }}</td>
+	    <th>Hours</th>
 	    {% endif %}
 	    {% if settings.ctc %}
-	    <td>R{{ costs.ctc|floatformat:"1"|intcomma }}</td>
+	    <th>ctc</th>
 	    {% endif %}
 	    {% if settings.billable %}
-	    <td>R{{ costs.billable|floatformat:"1"|intcomma }}</td>
+	    <th>billable</th>
 	    {% endif %}
-	  </tr>
-	  {% endfor %}
-	</tbody>
-      </table>
-{% endif %}
-      
+	  </thead>
+	  <tbody>
+	    {% for user, costs in project.cost_per_developer.items %}
+	    <tr>
+	      <td>{{ user.username }}</td>
+	      {% if settings.view_actual_hours %}
+	      <td>{{ costs.hours }}</td>
+	      {% endif %}
+	      {% if settings.ctc %}
+	      <td>R{{ costs.ctc|floatformat:"1"|intcomma }}</td>
+	      {% endif %}
+	      {% if settings.billable %}
+	      <td>R{{ costs.billable|floatformat:"1"|intcomma }}</td>
+	      {% endif %}
+	    </tr>
+	    {% endfor %}
+	  </tbody>
+	</table>
+  {% endif %}
+{% endif %}      
 
       <h3>Features</h3>
       <table>

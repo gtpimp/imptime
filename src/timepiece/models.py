@@ -412,14 +412,16 @@ class Project(models.Model):
         total_hours = users_and_hours['totals']['hours']
 
         for user, points in self.get_points_total().items():
-            if not points:
+            user_info = users_and_hours['users'][user.username]
+            if int(user_info['hours']) == 0:
                 continue
+
             try:
-                rate = users_and_hours['users'][user.username]['rate']
+                rate = user_info['rate']
             except KeyError:
                 continue
             velocity = rate.velocity
-            user_hours = users_and_hours['users'][user.username]['hours']
+            user_hours = user_info['hours']
             
             total_adjustedd_billed = points * (1 / (rate.work_ratio or 1)) * float(rate.billable_amount) * velocity
             total_adjustedd_ctc = points * (1 / (rate.work_ratio or 1)) * float(rate.amount) * velocity
@@ -433,8 +435,8 @@ class Project(models.Model):
                 'total_adjusted_ctc': total_adjustedd_ctc,
                 'total_adjusted_profit': total_adjustedd_billed - total_adjustedd_ctc,
                 'rate': rate,
-                'velocity': (points/float(user_hours)) if float(user_hours)>0 else 0,
-                'work_ratio': (user_hours/total_hours) if total_hours>0 else 0
+                'velocity': (points/float(user_hours)) if float(user_hours)>0 else 1,
+                'work_ratio': (user_hours/total_hours) if total_hours>0 else 1
             }
         self._cost_per_developer_cache = ret
         return ret
@@ -555,7 +557,7 @@ class Project(models.Model):
             return self._cached_billable_by_feature
 
         costs_per_feature = SortedDict()
-        features_in_project = list(self.issues.all().order_by('feature').values('feature').annotate(x=Count('feature'))) + [{'feature':None,'x':0}]
+        features_in_project = list(self.issues.all().filter(feature__isnull=False).order_by('feature').values('feature').annotate(x=Count('feature'))) + [{'feature':None,'x':0}]
         for feature in features_in_project:
             entries_qs = Entry.objects.all().filter(project=self)
             if feature['feature'] is None:
