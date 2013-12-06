@@ -413,18 +413,19 @@ class Project(models.Model):
 
         for user, points in self.get_points_total().items():
             user_info = users_and_hours['users'][user.username]
-            if int(user_info['hours']) == 0:
+            if int(user_info['hours']) == 0 and points == 0:
                 continue
 
             try:
                 rate = user_info['rate']
             except KeyError:
                 continue
-            velocity = rate.velocity
+            velocity = rate.velocity or 1
+            ratio = rate.work_ratio or 1
             user_hours = user_info['hours']
             
-            total_adjustedd_billed = points * (1 / (rate.work_ratio or 1)) * float(rate.billable_amount) * velocity
-            total_adjustedd_ctc = points * (1 / (rate.work_ratio or 1)) * float(rate.amount) * velocity
+            total_adjustedd_billed = points * (1/ratio) * float(rate.billable_amount) * velocity
+            total_adjustedd_ctc = points * (1/ratio) * float(rate.amount) * velocity
 
             ret[user] = {
                 'points': points, 
