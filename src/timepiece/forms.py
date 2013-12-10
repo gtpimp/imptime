@@ -785,7 +785,7 @@ class IssueStatusForm(forms.ModelForm):
 
 class IssueForm(forms.ModelForm):
 
-    estimated_hours = forms.IntegerField(required=False)
+    estimated_hours = forms.IntegerField(required=False, initial=1)
 
     class Meta:
         model = timepiece.Issue
