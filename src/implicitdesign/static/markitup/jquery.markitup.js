@@ -286,10 +286,10 @@
 
 			// build block to insert
 			function build(string) {
-				var openWith 			= prepare(clicked.openWith);
-				var placeHolder 		= prepare(clicked.placeHolder);
+				var openWith 			= prepare(clicked.openWith());
+			        var placeHolder 		= prepare(clicked.placeHolder());
 				var replaceWith 		= prepare(clicked.replaceWith);
-				var closeWith 			= prepare(clicked.closeWith);
+				var closeWith 			= prepare(clicked.closeWith());
 				var openBlockWith 		= prepare(clicked.openBlockWith);
 				var closeBlockWith 		= prepare(clicked.closeBlockWith);
 				var multiline 			= clicked.multiline;
@@ -297,7 +297,7 @@
 				if (replaceWith !== "") {
 					block = openWith + replaceWith + closeWith;
 				} else if (selection === '' && placeHolder !== '') {
-					block = openWith + placeHolder + closeWith;
+				    block = openWith + placeHolder + closeWith;
 				} else {
 					string = string || selection;
 

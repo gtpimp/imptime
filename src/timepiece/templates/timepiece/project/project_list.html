@@ -42,20 +42,9 @@
 <div class="splitter">
   <div class="splitter-left">
 
-    {% if not has_open_sprints %}
-    <li>
-      <a class="btn" href="#" onclick="$('.project_li.closed_project').show(); $(this).hide(); return false;">
-          Show closed sprints
-      </a>
-    </li>
-      {% has_permission has_create_sprint business %}  
-      <li>
-        <a class="btn" href="#"  onclick="imp.do_form_show(this , '{% url 'add_project' business.id %}' ); return false;">
-          Add Sprint
-        </a>	
-      </li>
-      {% end_permission %}
-    {% endif %}
+    <ul class="business_menu_on_project_page">
+      
+    </ul>
 
     <ul class="project_list open" project_sort_url="{% url 'sortable_project_update' %}">
       {% for project in projects %} 

@@ -9304,9 +9304,19 @@ body #content ul.parent ul {
 
 ul.project_list {
     /* width:50%; */
+    clear: both;
 }
 table.project_list  {
     white-space: nowrap;
+}
+
+ul.business_menu_on_project_page {
+    list-style: none;
+}
+
+ul.business_menu_on_project_page li {
+    float: left;
+    margin-bottom: 20px;
 }
 
 /* .issue_pane.right_hover{  */

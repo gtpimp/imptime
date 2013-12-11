@@ -234,7 +234,8 @@ INSTALLED_APPS = (
     'timepiece',
     'south',
     'emacs_importer',
-    'implicitdesign'
+    'implicitdesign',
+    'jira_interface',
 
 )
 

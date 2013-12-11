@@ -2,6 +2,10 @@
 {% load url from future %}
 {% load timepiece_tags %}
 
+<script>
+  imp.loggedin_username="{{current_user.username}}";
+</script>
+
 <div class="issue_detail_container">
 
   <h2>#{{issue.number}} {{issue.subject}}</h2>

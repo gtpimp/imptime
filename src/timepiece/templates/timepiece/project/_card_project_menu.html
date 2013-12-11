@@ -22,14 +22,6 @@
       </li>
       {% end_permission %}
 
-      {% has_permission has_create_sprint business %}  
-      <li>
-        <a href="#"  onclick="imp.do_form_show(this , '{% url 'add_project' business.id %}' ); return false;">
-          Add Sprint
-        </a>	
-      </li>
-      {% end_permission %}
-      
       {% if perms.timepiece.change_project %}
       <li>
         <a target="_blank" href='{% url 'edit_project' project_id=project.id %}'>Edit</a>
@@ -126,14 +118,6 @@
           </a>
       </li>
       {% end_permission %}
-
-      {% if has_closed_sprints %}
-        <li>
-          <a href="#" onclick="$('.project_li.closed_project').show(); $(this).hide(); return false;">
-            Show closed sprints
-          </a>
-        </li>
-      {% endif %}
 
       {% comment %}
      <div class="btn">
