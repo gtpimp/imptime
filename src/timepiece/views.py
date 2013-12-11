@@ -3354,7 +3354,7 @@ def issue_status_update(request,  template="timepiece/project/issue_detail.html"
     
     edited_issue.status = request.POST["selected_value"]
     edited_issue.save()
-                                                
+                 
     return HttpResponse()
 
 @csrf_exempt
@@ -3909,7 +3909,7 @@ def add_issue_comment(request, issue_id):
                                                         author=request.user,
                                                         created=datetime.datetime.today())
 
-    get_interface_plugin(business).add_comment(new_comment)
+    get_interface_plugin(business).add_issue_comment(new_comment)
 
     return HttpResponse("ok")
 

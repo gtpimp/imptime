@@ -3,8 +3,11 @@ import logging
 logger = logging.getLogger(__name__)
 
 class DefaultInterfacePlugin(object):
-    def add_comment(self, *args, **kwargs):
+    def add_issue_comment(self, *args, **kwargs):
         return
+    def update_issue_status(self, *args, **kwargs):
+        return
+
 default_interface_plugin = DefaultInterfacePlugin
 
 def get_interface_plugin(business):

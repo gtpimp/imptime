@@ -65,7 +65,7 @@ class JiraSync(object):
         jira_issue = self.jira.issue(gh_issue.key)
         state = gh_issue.statusName
         
-        order = jira_issue.fields.customfield_10006
+        order = getattr(jira_issue.fields, self.settings.custom_field_name_for_issue_order)
 
         try:
             timepiece_issue = timepiece_project.issues.get_query_set().filter(subject__icontains=jira_issue.key+" ")[0]
@@ -121,11 +121,17 @@ class JiraSync(object):
             timepiece.UserProfile.objects.create(user=user, jira_user_name=jira_username)
             return user
 
-    def add_comment(self, timepiece_comment):
+    def add_issue_comment(self, timepiece_comment):
         if not self._connect():
             return
         jira_issue = self._get_jira_issue(timepiece_comment.issue)
         self.jira.add_comment(jira_issue, timepiece_comment.comment)
+
+    def update_issue_status(self, timepiece_issue):
+        return
+        # if not self._connect():
+        #     return
+        # jira_issue = self._get_jira_issue(timepiece_issue)
 
     def _get_jira_issue(self, timepiece_issue):
         return self.jira.issue(timepiece_issue.interface_plugin_number)

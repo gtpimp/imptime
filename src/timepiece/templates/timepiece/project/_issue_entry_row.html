@@ -71,7 +71,7 @@
       {% has_permission has_edit_issue_states project.business %}
       <div class="inline_editor" style="display:none">
         <select class='transient_selection'>
-          {% for option_value, option_name in issue.ISSUE_STATUS_CHOICES %}
+          {% for option_value, option_name in issue.allowed_stati %}
           <option value="{{option_value}}" {% ifequal issue.status option_value %}selected{% endifequal %} >{{option_name}}</option>
           {% endfor %}
         </select>
