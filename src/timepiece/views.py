@@ -3905,7 +3905,8 @@ def add_issue_comment(request, issue_id):
     comment = request.POST['comment']
     timepiece.IssueComment.objects.create(comment=comment,
                                           issue=issue,
-                                          author=request.user)
+                                          author=request.user,
+                                          created=datetime.datetime.today())
     return HttpResponse("ok")
 
 @csrf_exempt

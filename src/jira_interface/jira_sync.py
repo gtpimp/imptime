@@ -3,6 +3,7 @@ import timepiece.models as timepiece
 from django.contrib.auth.models import User
 from django.conf import settings
 from django.db.models import Q
+from dateutil import parser as dateparser
 import logging
 logger = logging.getLogger(__name__)
 
@@ -55,24 +56,52 @@ class JiraSync(object):
         jira_issue = self.jira.issue(jira_issue.key)
         
         try:
-            timepiece_issue = timepiece_project.issues.get_query_set().filter(subject__icontains=jira_issue.summary)[0]
-            timepiece_issue.state = state
-            timepiece_issue.number = jira_issue.key
+            timepiece_issue = timepiece_project.issues.get_query_set().filter(subject__icontains=jira_issue.key+" ")[0]
+
+            if timepiece_issue.status != state:
+                timepiece_issue.status = state
+                timepiece_issue.save()
+                
+            if timepiece_issue.number != jira_issue.id:
+                timepiece_issue.number = jira_issue.id
+                timepiece_issue.save()
+
         except IndexError:
             timepiece_issue = timepiece.Issue(project=timepiece_project,
-                                              subject=jira_issue.summary,
+                                              subject="%s %s" % (jira_issue.key, jira_issue.fields.summary),
                                               status=state,
-                                              number=jira_issue.key)
+                                              number=jira_issue.id)
 
         if hasattr(jira_issue, 'assignee') and jira_issue.assignee:
-            try:
-                timepiece_assigned_user = User.objects.get(Q(profile__jira_user_name=jira_issue.assignee)|Q(username=jira_issue.assignee))
-            except User.DoesNotExist:
-                logger.warning("Auto creating a limited-privileges user who is assigned to a jira issue")
-                timepiece_assigned_user = User.objects.create(username=jira_issue.assignee)
-                profile = timepiece.UserProfile.objects.create(user=timepiece_assigned_user, jira_user_name=jira_issue.assignee)
-            timepiece_issue.assigned_to = timepiece_assigned_user
+            timepiece_assigned_user = self._get_or_create_timepiece_equivalent_of_jira_user(jira_issue.assignee)
+            if timepiece_issue.assigned_to != timepiece_assigned_user:
+                timepiece_issue.assigned_to = timepiece_assigned_user
+                timepiece_issue.save()
 
-        timepiece_issue.save()
+        if hasattr(jira_issue.fields, 'comment') and jira_issue.fields.comment.comments:
+            if not timepiece_issue.id:
+                timepiece_issue.save()
+
+            for jira_comment in jira_issue.fields.comment.comments:
+                try:
+                    timepiece.IssueComment.objects.get(issue=timepiece_issue, comment__icontains=jira_comment.body)
+                except timepiece.IssueComment.DoesNotExist:
+                    author = self._get_or_create_timepiece_equivalent_of_jira_user(jira_comment.author)
+                    created = dateparser.parse(jira_comment.created)
+                    timepiece.IssueComment.objects.create(issue_id=timepiece_issue.id, comment=jira_comment.body, 
+                                                          author=author,
+                                                          created=created)
+                    
                                                              
-                                                             
+    def _get_or_create_timepiece_equivalent_of_jira_user(self, jira_username):
+        try:
+            return User.objects.get(Q(profile__jira_user_name=jira_username)|Q(username=jira_username))
+        except User.DoesNotExist:
+            logger.warning("Auto creating a limited-privileges user who is assigned to a jira issue")
+            user = User.objects.create(username=jira_username)
+            timepiece.UserProfile.objects.create(user=user, jira_user_name=jira_username)
+            return user
+
+
+
+    

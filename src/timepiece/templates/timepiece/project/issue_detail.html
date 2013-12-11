@@ -20,8 +20,10 @@
 
       <div class="static_div">
         {% has_permission has_edit_description issue.project.business %}
-	<div onclick="imp.clickable_description_box($(this).parent(), '{% url 'issue_detail_update' %}',{{ issue.id }})" style="cursor:pointer"><img src="{{STATIC_URL}}/images/timepiece/icons/pencil.png" /></div>
-        {% end_permission %}
+	<div class="btn" onclick="imp.clickable_description_box($(this).parent(), '{% url 'issue_detail_update' %}',{{ issue.id }})">
+	  Edit
+	</div>
+	{% end_permission %}
           <div class="markdown_content" style="display:none">{{issue.description}}</div>
           <div class="content">{% if issue.description %} {{issue.description|asmarkdown|safe}}</div>
         {% else %}No issue detail{% endif %}
@@ -34,18 +36,7 @@
 
   {% if issue.pk %}
     {% has_permission has_edit_description issue.project.business %}
-      <hr/>
-      <div class="issue_comments">
-        {% for comment in issue.comments.all %}
-          <div class="creation_details">
-	    {{comment.created}}
-	    {{comment.author}}
-	    <hr/>
-	  </div>
-          <div class="markdown_content">{{comment.comment|asmarkdown|safe}}</div>
-        {% endfor %}
-      </div>
-      <hr/>
+      <br/>
       {% for attachment in issue.attachments.all %}
         <ul class="unstyled">
           <li>
@@ -55,6 +46,25 @@
         </ul>
       {% endfor %}
 
+      <div class="attachment_section">
+        <a href="#" class="btn" onclick="return imp.attach_upload_issue_attachment($(this));">add attachment</a>
+        <div class="new_attachment" style="display:none">
+          <input type="file" name="attachment" data-url="{% url 'add_issue_attachment' issue.pk %}"/>
+        </div>
+      <div>
+
+      <div class="issue_comments">
+	<br/>
+        {% for comment in issue.comments_in_order %}
+          <div class="creation_details">
+	    {{comment.created}}
+	    {{comment.author}}
+	  </div>
+          <div class="markdown_content">{{comment.comment|asmarkdown|safe}}</div>
+	  <hr/>
+        {% endfor %}
+      </div>
+      
       <div class="comment_section">
 	<a class="new_comment_button btn" href="#" class="btn" onclick="$(this).parent().find('.new_comment').show(); $(this).hide(); return false;">add comment</a>
         <div class="new_comment" style="display:none">
@@ -64,12 +74,7 @@
         </div>
       </div>
 
-      <div class="attachment_section">
-        <a href="#" class="btn" onclick="return imp.attach_upload_issue_attachment($(this));">add attachment</a>
-        <div class="new_attachment" style="display:none">
-          <input type="file" name="attachment" data-url="{% url 'add_issue_attachment' issue.pk %}"/>
-        </div>
-      <div>
+      
     {% end_permission %}
    {% endif %}
   <hr/>

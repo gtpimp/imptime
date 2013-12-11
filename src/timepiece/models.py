@@ -2188,12 +2188,15 @@ class Issue(models.Model):
     def get_unassigned_timesheet_entries(self, project):
         return project.entries.filter(issue__isnull=True).order_by("start_time")
 
+    def comments_in_order(self):
+        return self.comments.get_query_set().order_by("created")
+
 class IssueComment(models.Model):
     issue = models.ForeignKey(Issue, blank=False, null=False, related_name='comments')
     comment = models.TextField(blank=True)
     author = models.ForeignKey(User, related_name='issue_comments', blank=False, null=False)
-    created = models.DateTimeField(auto_now_add=True)
-
+    created = models.DateTimeField()
+    
 class IssueAttachment(models.Model):
     issue = models.ForeignKey(Issue, blank=False, null=False, related_name='attachments')
     attachment = models.FileField(upload_to="issue_attachments", null=False, blank=False)
