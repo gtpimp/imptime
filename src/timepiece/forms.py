@@ -722,8 +722,7 @@ class ProjectionForm(DateForm):
 class BusinessForm(forms.ModelForm):
     class Meta:
         model = timepiece.Business
-        fields = ('name', 'email', 'description', 'notes',)
-
+        fields = ('name', 'email', 'description', 'notes', 'sync_with')
 
 class ProjectForm(forms.ModelForm):
     class Meta:

@@ -5,6 +5,7 @@ except ImportError:
 
 from timepiece.models import Entry
 from timepiece import views, exporter
+import jira_interface
 
 urlpatterns = patterns('',
     url(r'^$', views.list_projects, name='landing_page'),
@@ -553,5 +554,7 @@ urlpatterns = patterns('',
     #     views.DeleteProjectView.as_view(),
     #     name='delete_project',
     # ),
+
+    url(r'^jira/', include('jira_interface.urls', namespace="jira"), {}, "jira")
 
 )

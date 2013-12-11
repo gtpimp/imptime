@@ -4,15 +4,17 @@ from django.utils import simplejson
 import os
 from implicitdesign import settings
 from django.core.mail import send_mail
-from jira.client import JIRA
+from jira_interface.jira_sync import JiraSync
+import timepiece.models as timepiece
 
 class Command(BaseCommand):
 
-    help = '''Fetches changes from Jira and pushes changes to Jira '''
+    help = '''Fetches changes from Jira and pushes changes to Jira. Pass in the business_id to be synced '''
 
-    def handle(self, *args, **options):
+    def handle(self, business_id, *args, **options):
 
-        server = "https://clevva.atlassian.net"
-        options = { 'server': server }
-        jira = JIRA(options, basic_auth=('admin', 'admin'))
+        business_id = int(business_id)
+        syncer = JiraSync(business_id)
+        syncer.sync()
+        
         

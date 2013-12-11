@@ -73,6 +73,7 @@ class Business(models.Model):
     notes = models.TextField(blank=True)
     external_id = models.CharField(max_length=32, blank=True)
     objects = QuerySetManager(BusinessQuerySet)
+    sync_with = models.CharField( max_length=100, blank=True, null=True, choices=( ("jira", "Jira"), ) )
 
     def get_ordered_projects(self):
         all_business_projects = Project.objects.filter(business=self)
@@ -2199,11 +2200,3 @@ class IssuePoints(models.Model):
 
     def __unicode__(self):
         return u'%s:%s - %s points' % (self.issue.subject, self.user.username, self.points)
-
-class Jira(models.Model):
-    """ model which associates a business with a jira installation """
-
-    business = models.ForeignKey(Business, related_name='jira', blank=False, null=False)
-    username = models.CharField(max_length=255, blank=False, null=False)
-    password = models.CharField(max_length=255, blank=False, null=False)
-    host = models.CharField(max_length=255, blank=False, null=False)

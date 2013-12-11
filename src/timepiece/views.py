@@ -1011,7 +1011,7 @@ def create_edit_business(request, business=None):
             business = business_form.save()
             business.ensure_single_sprint(point_person=request.user);
             return HttpResponseRedirect(
-                reverse('view_business', args=(business.pk,))
+                reverse('edit_business', args=(business.pk,))
             )
     else:
         business_form = timepiece_forms.BusinessForm(

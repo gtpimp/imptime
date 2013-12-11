@@ -1,4 +1,5 @@
 {% extends "timepiece/business/base.html" %}
+{% load url from future %}
 {% block title %}{% if not business %}Create Business{% else %}Edit {{ business }}{% endif %}{% endblock %}
 {% load bootstrap_toolkit %}
 
@@ -7,9 +8,9 @@
     <li>
         <span class="divider">/</span>
         {% if not business %}
-            <a href="{% url create_business %}">Create Business</a>
+            <a href="{% url 'create_business' %}">Create Business</a>
         {% else %}
-            <a href="{% url edit_business business.pk %}">Edit Business</a>
+            <a href="{% url 'edit_business' business.pk %}">Edit Business</a>
         {% endif %}
     </li>
 {% endblock crumbs %}
@@ -27,8 +28,14 @@
                 <div class="form-actions">
                     <input class="btn btn-primary" type="submit" value="Save" name="submit">
                     <input class="btn" type="button" onclick="history.go(-1)" value="Cancel">
+		    {% ifequal business.sync_with 'jira' %}
+		      <a class="btn" href="{% url 'jira:settings' business.id %}"/>Jira settings</a>
+		    {% endifequal %}
                 </div>
             </form>
+
+	    
+
         </div>
     </div>
 {% endblock %}
