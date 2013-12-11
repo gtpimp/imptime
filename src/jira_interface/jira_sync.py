@@ -11,25 +11,33 @@ class JiraSync(object):
 
     def __init__(self, timepiece_business_id):
         self.timepiece_business = timepiece.Business.objects.get(pk=timepiece_business_id)
+        self.jira = None
+        self.gh = None
 
-    def sync(self):
+    def _connect(self):
+        if self.jira is not None:
+            return True
         
         if self.timepiece_business.sync_with != "jira":
             logger.debug("Business %s is not configured to sync with jira" % self.timepiece_business.name)
-            return
+            return False
 
         try:
             self.settings = self.timepiece_business.jira.get_query_set().all()[0]
         except IndexError:
             raise Exception("No jira configuration for this business")
 
-        #server = "https://clevva.atlassian.net"
-        options = { 'server': self.settings.host.strip() }
+        kwargs = {'options':{ 'server': self.settings.host.strip() },
+                  'basic_auth':(self.settings.username.strip(), self.settings.password.strip())}
+        self.jira = JIRA(**kwargs)
+        self.gh = GreenHopper(**kwargs)
+        return True
 
-        self.jira = JIRA(options, basic_auth=(self.settings.username.strip(), self.settings.password.strip()))
+    def sync(self):
+        
+        if not self._connect():
+            return
 
-        # greenhopper is the agile plugin running on jira which knows about sprints
-        self.gh = GreenHopper(options, basic_auth=(self.settings.username.strip(), self.settings.password.strip()))
         jira_sprints = self.gh.sprints(self.settings.board_id.strip())
         for jira_sprint in jira_sprints:
             self._sync_sprint(jira_sprint)
@@ -71,12 +79,16 @@ class JiraSync(object):
             if timepiece_issue.order != order:
                 timepiece_issue.order = order
 
+            if timepiece_issue.interface_plugin_number != jira_issue.key:
+                timepiece_issue.interface_plugin_number = jira_issue.key
+
         except IndexError:
             timepiece_issue = timepiece.Issue(project=timepiece_project,
                                               subject="%s %s" % (jira_issue.key, jira_issue.fields.summary),
                                               status=state,
                                               order=order,
-                                              number=jira_issue.id)
+                                              number=jira_issue.id,
+                                              interface_plugin_number=jira_issue.key)
 
         if hasattr(gh_issue, 'assignee') and gh_issue.assignee:
             timepiece_assigned_user = self._get_or_create_timepiece_equivalent_of_jira_user(gh_issue.assignee)
@@ -109,6 +121,13 @@ class JiraSync(object):
             timepiece.UserProfile.objects.create(user=user, jira_user_name=jira_username)
             return user
 
+    def add_comment(self, timepiece_comment):
+        if not self._connect():
+            return
+        jira_issue = self._get_jira_issue(timepiece_comment.issue)
+        self.jira.add_comment(jira_issue, timepiece_comment.comment)
 
+    def _get_jira_issue(self, timepiece_issue):
+        return self.jira.issue(timepiece_issue.interface_plugin_number)
 
     

@@ -2,6 +2,7 @@ import random
 import calendar
 import csv
 from exporter import CSVMixin, CSVSprintExport
+from interface_plugin import get_interface_plugin
 import timings
 from xhtml2pdf import pisa  
 import operator
@@ -3902,11 +3903,14 @@ def add_issue_comment(request, issue_id):
     if not bp.has_add_issue_comment:
         raise PermissionDenied
     
-    comment = request.POST['comment']
-    timepiece.IssueComment.objects.create(comment=comment,
-                                          issue=issue,
-                                          author=request.user,
-                                          created=datetime.datetime.today())
+    text = request.POST['comment']
+    new_comment = timepiece.IssueComment.objects.create(comment=text,
+                                                        issue=issue,
+                                                        author=request.user,
+                                                        created=datetime.datetime.today())
+
+    get_interface_plugin(business).add_comment(new_comment)
+
     return HttpResponse("ok")
 
 @csrf_exempt

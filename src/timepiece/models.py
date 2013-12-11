@@ -2068,6 +2068,7 @@ class Issue(models.Model):
     order = models.IntegerField(null=True,blank=True)
     feature = models.ForeignKey("Feature",blank=True,null=True,related_name='issues')
     assigned_to = models.ForeignKey(User, related_name='assigned_issues', blank=True,null=True)
+    interface_plugin_number = models.CharField(max_length=255, null=True, blank=True) #eg jira
 
     @classmethod
     def get_last_issue_number(self):
