@@ -383,6 +383,28 @@ class Project(models.Model):
     order = models.IntegerField(null=True,blank=True)
     objects = QuerySetManager(ProjectQuerySet)
 
+    @classmethod
+    def get_or_create_project(self, business, project_name, description=None):
+        description = "%s %s" % (project_name, (description or ""))
+        point_person = User.objects.get_or_create(username="auto")[0]
+        try:
+            project_status = Attribute.objects.get(type='project-status', label='open')
+        except: 
+            project_status = Attribute.objects.create(type='project-status', label='open', billable=True, enable_timetracking=True)
+        try:
+            project_type = Attribute.objects.get(type='project-type', label='default')
+        except:
+            project_type = Attribute.objects.create(type='project-type', label='default', billable=True, enable_timetracking=True)
+
+        try:
+            project = Project.objects.get(name=project_name, business=business)
+        except Project.DoesNotExist:
+            project = Project.objects.create(name=project_name, business=business, 
+                                             point_person=point_person,
+                                             status=project_status, type=project_type,
+                                             description=description)
+        return project
+
     def get_points(self):
         user_ids = [user.id for user in self.business.users]
         users = User.objects.filter(id__in = user_ids)
@@ -1889,6 +1911,7 @@ class UserProfile(models.Model):
     amount = models.DecimalField(max_digits=8, decimal_places=2, default=0)
     billable_amount = models.DecimalField(max_digits=8, decimal_places=2, default=0)
     project_names_to_ignore = models.TextField(blank=True)
+    jira_user_name = models.CharField(max_length=100, blank=True, null=True, help_text="Username used when synching with jira")
 
     def __unicode__(self):
         return unicode(self.user)

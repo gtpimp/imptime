@@ -1,46 +1,78 @@
 from jira.client import JIRA, GreenHopper
 import timepiece.models as timepiece
+from django.contrib.auth.models import User
+from django.conf import settings
+from django.db.models import Q
 import logging
 logger = logging.getLogger(__name__)
 
 class JiraSync(object):
 
     def __init__(self, timepiece_business_id):
-        self.business = timepiece.Business.objects.get(pk=timepiece_business_id)
+        self.timepiece_business = timepiece.Business.objects.get(pk=timepiece_business_id)
 
     def sync(self):
         
-        if self.business.sync_with != "jira":
-            logger.debug("Business %s is not configured to sync with jira" % self.business.name)
+        if self.timepiece_business.sync_with != "jira":
+            logger.debug("Business %s is not configured to sync with jira" % self.timepiece_business.name)
             return
 
         try:
-            settings = self.business.jira.get_query_set().all()[0]
+            self.settings = self.timepiece_business.jira.get_query_set().all()[0]
         except IndexError:
             raise Exception("No jira configuration for this business")
 
         #server = "https://clevva.atlassian.net"
-        options = { 'server': settings.host.strip() }
+        options = { 'server': self.settings.host.strip() }
+
+        self.jira = JIRA(options, basic_auth=(self.settings.username.strip(), self.settings.password.strip()))
 
         # greenhopper is the agile plugin running on jira which knows about sprints
-        gh=GreenHopper(options, basic_auth=(settings.username.strip(), settings.password.strip()))
-        jira_sprints = gh.sprints(settings.board_id.strip())
+        self.gh = GreenHopper(options, basic_auth=(self.settings.username.strip(), self.settings.password.strip()))
+        jira_sprints = self.gh.sprints(self.settings.board_id.strip())
         for jira_sprint in jira_sprints:
             self._sync_sprint(jira_sprint)
 
     def _sync_sprint(self, jira_sprint):
         logger.debug("syncing sprint %s" % jira_sprint.name)
 
-# (Pdb) gh.sprints(3)
-# [<JIRA Sprint: name=u'Nov-21 - Nov-29 Sprint 17', id=3>, <JIRA Sprint: name=u'Sprint 18', id=4>]
-# (Pdb) x=gh.sprints(3)[1]
-# (Pdb) x.issues
-# --- AttributeError: 'Sprint' object has no attribute 'issues'
-# (Pdb) gh.issues(sprint)
-# --- AttributeError: 'GreenHopper' object has no attribute 'issues'
-# (Pdb) gh.incompleted_issues(3, 4)
-# [<JIRA Issue: key=u'CLVUSRPERM-3', id=10204>, <JIRA Issue: key=u'CLVUSRPERM-4', id=10220>, <JIRA Issue: key=u'CLVUSRPERM-5', id=10221>, <JIRA Issue: key=u'CLVUSRPERM-6', id=10223>, <JIRA Issue: key=u'CLVUSRPERM-7', id=10224>, <JIRA Issue: key=u'CLVUSRPERM-8', id=10226>, <JIRA Issue: key=u'CLVUSRPERM-9', id=10228>, <JIRA Issue: key=u'CLVWEBFRNT-6', id=10225>, <JIRA Issue: key=u'CLVWEBFRNT-7', id=10227>, <JIRA Issue: key=u'GAAPCLSA-1', id=10028>, <JIRA Issue: key=u'GAAPCLSA-2', id=10029>, <JIRA Issue: key=u'GAAPCLSA-3', id=10030>, <JIRA Issue: key=u'GAAPCLSA-4', id=10031>, <JIRA Issue: key=u'GAAPCLSA-5', id=10033>, <JIRA Issue: key=u'GAAPCLSA-6', id=10034>, <JIRA Issue: key=u'GAAPCLSA-7', id=10035>, <JIRA Issue: key=u'GAAPCLSA-8', id=10037>, <JIRA Issue: key=u'MAP-1', id=10000>, <JIRA Issue: key=u'MAP-2', id=10001>, <JIRA Issue: key=u'MAP-3', id=10002>, <JIRA Issue: key=u'MAP-4', id=10003>, <JIRA Issue: key=u'MAP-5', id=10004>, <JIRA Issue: key=u'MAP-8', id=10007>, <JIRA Issue: key=u'MAP-9', id=10008>, <JIRA Issue: key=u'MAP-13', id=10012>, <JIRA Issue: key=u'SBSAPOC-2', id=10020>, <JIRA Issue: key=u'SBSAPOC-4', id=10022>, <JIRA Issue: key=u'SWAWEBFRNT-1', id=10014>, <JIRA Issue: key=u'SWAWEBFRNT-2', id=10015>]
-# (Pdb) 
+        timepiece_project_name = timepiece.Project.get_code_from_name(jira_sprint.name)
+        try:
+            timepiece_project = timepiece.Project.objects.get(business=self.timepiece_business, name=timepiece_project_name)
+        except timepiece.Project.DoesNotExist:
+            timepiece_project = timepiece.Project.get_or_create_project(business=self.timepiece_business, project_name=timepiece_project_name,
+                                                                        description=" (from jira)")
+        
+        for jira_issue in self.gh.completed_issues(self.settings.board_id.strip(), jira_sprint.id):
+            self._sync_issue(jira_sprint, jira_issue, timepiece_project, suggested_state="devdone")
+        for jira_issue in self.gh.incompleted_issues(self.settings.board_id.strip(), jira_sprint.id):
+            self._sync_issue(jira_sprint, jira_issue, timepiece_project, suggested_state="new")
 
+    def _sync_issue(self, jira_sprint, jira_issue, timepiece_project, suggested_state="devdone"):
+        logger.debug("syncing sprint %s" % jira_sprint.name)
+        state = suggested_state
 
-    
+        jira_issue = self.jira.issue(jira_issue.key)
+        
+        try:
+            timepiece_issue = timepiece_project.issues.get_query_set().filter(subject__icontains=jira_issue.summary)[0]
+            timepiece_issue.state = state
+            timepiece_issue.number = jira_issue.key
+        except IndexError:
+            timepiece_issue = timepiece.Issue(project=timepiece_project,
+                                              subject=jira_issue.summary,
+                                              status=state,
+                                              number=jira_issue.key)
+
+        if hasattr(jira_issue, 'assignee') and jira_issue.assignee:
+            try:
+                timepiece_assigned_user = User.objects.get(Q(profile__jira_user_name=jira_issue.assignee)|Q(username=jira_issue.assignee))
+            except User.DoesNotExist:
+                logger.warning("Auto creating a limited-privileges user who is assigned to a jira issue")
+                timepiece_assigned_user = User.objects.create(username=jira_issue.assignee)
+                profile = timepiece.UserProfile.objects.create(user=timepiece_assigned_user, jira_user_name=jira_issue.assignee)
+            timepiece_issue.assigned_to = timepiece_assigned_user
+
+        timepiece_issue.save()
+                                                             
+                                                             
