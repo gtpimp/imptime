@@ -22,8 +22,9 @@ imp.highlight_issue = function(issue_id) {
     $("#"+issue_id).scrollintoview();
 };
 
-imp.show_issue_detail = function(issue_id, url) {
-    var on_done = imp.loading("loading issue detail");
+imp.show_issue_detail = function(issue_id, url, msg) {
+    msg = msg || "loading issue detail";
+    var on_done = imp.loading(msg);
 
     $(".issue_detail").load(url,
 			    function() {

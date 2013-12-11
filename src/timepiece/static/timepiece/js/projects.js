@@ -33,8 +33,8 @@ imp.projects.on_sortable_changed_for_url = function(sortable_url) {
     return ret_func;
 };
 
-imp.projects.show_project_card_as_popup = function (event, project_card_url) {
-    imp.show_issue_detail(null, project_card_url)
+imp.projects.show_project_card_as_popup = function (event, project_card_url, msg) {
+    imp.show_issue_detail(null, project_card_url, msg)
     event.stopPropagation();
     return false;
 };

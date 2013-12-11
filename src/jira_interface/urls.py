@@ -7,5 +7,6 @@ import views
 urlpatterns = patterns('',
 
                        (r'^settings/(?P<business_id>\d+)$', views.edit_settings, {}, "settings"),
+                       (r'^sync_busines/(?P<business_id>\d+)$', views.sync_business, {}, "sync_business"),
 
 )

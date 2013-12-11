@@ -44,44 +44,51 @@ class JiraSync(object):
             timepiece_project = timepiece.Project.get_or_create_project(business=self.timepiece_business, project_name=timepiece_project_name,
                                                                         description=" (from jira)")
         
-        for jira_issue in self.gh.completed_issues(self.settings.board_id.strip(), jira_sprint.id):
-            self._sync_issue(jira_sprint, jira_issue, timepiece_project, suggested_state="devdone")
-        for jira_issue in self.gh.incompleted_issues(self.settings.board_id.strip(), jira_sprint.id):
-            self._sync_issue(jira_sprint, jira_issue, timepiece_project, suggested_state="new")
+        order = 1
+        for gh_issue in self.gh.completed_issues(self.settings.board_id.strip(), jira_sprint.id):
+            self._sync_issue(jira_sprint, gh_issue, timepiece_project, order=order)
+            order += 1
+        for gh_issue in self.gh.incompleted_issues(self.settings.board_id.strip(), jira_sprint.id):
+            self._sync_issue(jira_sprint, gh_issue, timepiece_project, order=order)
+            order += 1
 
-    def _sync_issue(self, jira_sprint, jira_issue, timepiece_project, suggested_state="devdone"):
+    def _sync_issue(self, jira_sprint, gh_issue, timepiece_project, order):
         logger.debug("syncing sprint %s" % jira_sprint.name)
-        state = suggested_state
-
-        jira_issue = self.jira.issue(jira_issue.key)
+        jira_issue = self.jira.issue(gh_issue.key)
+        state = gh_issue.statusName
         
+        order = jira_issue.fields.customfield_10006
+
         try:
             timepiece_issue = timepiece_project.issues.get_query_set().filter(subject__icontains=jira_issue.key+" ")[0]
 
             if timepiece_issue.status != state:
                 timepiece_issue.status = state
-                timepiece_issue.save()
                 
             if timepiece_issue.number != jira_issue.id:
                 timepiece_issue.number = jira_issue.id
-                timepiece_issue.save()
+
+            if timepiece_issue.order != order:
+                timepiece_issue.order = order
 
         except IndexError:
             timepiece_issue = timepiece.Issue(project=timepiece_project,
                                               subject="%s %s" % (jira_issue.key, jira_issue.fields.summary),
                                               status=state,
+                                              order=order,
                                               number=jira_issue.id)
 
-        if hasattr(jira_issue, 'assignee') and jira_issue.assignee:
-            timepiece_assigned_user = self._get_or_create_timepiece_equivalent_of_jira_user(jira_issue.assignee)
+        if hasattr(gh_issue, 'assignee') and gh_issue.assignee:
+            timepiece_assigned_user = self._get_or_create_timepiece_equivalent_of_jira_user(gh_issue.assignee)
             if timepiece_issue.assigned_to != timepiece_assigned_user:
                 timepiece_issue.assigned_to = timepiece_assigned_user
-                timepiece_issue.save()
+
+        if timepiece_issue.story_points != jira_issue.fields.timeestimate:
+            timepiece_issue.story_points = jira_issue.fields.timeestimate
+            
+        timepiece_issue.save()
 
         if hasattr(jira_issue.fields, 'comment') and jira_issue.fields.comment.comments:
-            if not timepiece_issue.id:
-                timepiece_issue.save()
-
             for jira_comment in jira_issue.fields.comment.comments:
                 try:
                     timepiece.IssueComment.objects.get(issue=timepiece_issue, comment__icontains=jira_comment.body)

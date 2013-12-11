@@ -217,7 +217,7 @@ a:hover {
     padding: 3px;
     /*border: 1px solid #cccccc;*/
     width: 96%;
-    min-height: 300px;
+    /*min-height: 300px;*/
 }
 
 /* (~".span@{index}") { .span(@index); } */

@@ -7,6 +7,7 @@ from django.http import  Http404, HttpResponseForbidden
 from models import Jira
 from forms import JiraSettingsForm
 from django.shortcuts import render_to_response, get_object_or_404, redirect, render
+from jira_sync import JiraSync
 
 @permission_required('timepiece.add_business')
 def edit_settings(request, business_id, template="jira/edit_settings.html", context=None):
@@ -27,3 +28,12 @@ def edit_settings(request, business_id, template="jira/edit_settings.html", cont
     context['business'] = business
 
     return render_to_response(template, context, context_instance=RequestContext(request))
+
+@permission_required('timepiece.view_business')
+def sync_business(request, business_id, context=None):
+    context = context or {}
+    try:
+        JiraSync(business_id).sync()
+        return HttpResponse("synched")
+    except Exception, ex:
+        return HttpResponse("Sync failed: %s" % ex)
