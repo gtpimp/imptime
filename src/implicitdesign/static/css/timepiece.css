@@ -10102,3 +10102,7 @@ table.search_results tr:hover {
     cursor:-moz-grabbing;
     cursor:-webkit-grabbing;
 }
+
+.issue_comments .creation_details {
+    font-size:8px;
+}

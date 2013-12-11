@@ -35,6 +35,17 @@
   {% if issue.pk %}
     {% has_permission has_edit_description issue.project.business %}
       <hr/>
+      <div class="issue_comments">
+        {% for comment in issue.comments.all %}
+          <div class="creation_details">
+	    {{comment.created}}
+	    {{comment.author}}
+	    <hr/>
+	  </div>
+          <div class="markdown_content">{{comment.comment|asmarkdown|safe}}</div>
+        {% endfor %}
+      </div>
+      <hr/>
       {% for attachment in issue.attachments.all %}
         <ul class="unstyled">
           <li>
@@ -43,6 +54,15 @@
           </li>
         </ul>
       {% endfor %}
+
+      <div class="comment_section">
+	<a class="new_comment_button btn" href="#" class="btn" onclick="$(this).parent().find('.new_comment').show(); $(this).hide(); return false;">add comment</a>
+        <div class="new_comment" style="display:none">
+          <textarea name="comment" data-url="{% url 'add_issue_comment' issue.pk %}"></textarea>
+	  <input type="button" class="btn" onclick="imp.on_add_issue_comment($(this), '{% url 'add_issue_comment' issue.id %}');" value="save"/>
+	  <input type="button" class="btn" onclick="$(this).parents('.comment_section').find('.new_comment_button').show(); $(this).parents('.new_comment').hide(); return false;" value="cancel"/>
+        </div>
+      </div>
 
       <div class="attachment_section">
         <a href="#" class="btn" onclick="return imp.attach_upload_issue_attachment($(this));">add attachment</a>

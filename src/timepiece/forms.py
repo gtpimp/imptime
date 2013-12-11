@@ -134,6 +134,7 @@ class EditPersonPermission(forms.ModelForm):
         self.fields['can_add_issue'].widget.attrs['class'] = 'safe'
         self.fields['can_delete_issue'].widget.attrs['class'] = 'safe'
         self.fields['can_edit_description'].widget.attrs['class'] = 'safe'
+        self.fields['can_add_issue_comment'].widget.attrs['class'] = 'safe'
         self.fields['can_edit_subject'].widget.attrs['class'] = 'safe'
         self.fields['can_edit_feature'].widget.attrs['class'] = 'safe'
         self.fields['can_create_sprint'].widget.attrs['class'] = 'safe'

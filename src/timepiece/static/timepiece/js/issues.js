@@ -161,6 +161,20 @@ imp.attach_upload_issue_attachment = function(el) {
 		  });
 
     return false;
+}
+
+imp.on_add_issue_comment = function(el, url) {
+
+    var container = el.parent();
+    var input_el = container.find("textarea");
+    container.find('.new_comment').show();
+    el.hide(); 
+
+    var response = $.ajax({type:"POST",
+                           url: url,
+                           data: {'comment':input_el.val()}
+                          });
+    response.done( imp.refresh_issue_detail );
 };
 
 imp.on_project_form_submit = function(element, url) {

@@ -217,6 +217,7 @@ class BusinessPermissions(models.Model):
     can_add_issue = models.BooleanField(default=True, verbose_name="Can Add Issue")
     can_delete_issue = models.BooleanField(default=True, verbose_name="Can Delete Issue")
     can_edit_description = models.BooleanField(default=True, verbose_name="Can Edit Description")
+    can_add_issue_comment = models.BooleanField(default=True, verbose_name="Can Add Issue Comment")
     can_edit_subject = models.BooleanField(default=True, verbose_name="Can Edit Subject")
     can_edit_feature = models.BooleanField(default=True, verbose_name="Can Edit Feature")
     can_create_sprint = models.BooleanField(default=True, verbose_name="Can Create Sprint")
@@ -319,6 +320,10 @@ class BusinessPermissions(models.Model):
     @property
     def has_edit_description(self):
         return self.user.is_superuser or self.can_edit_description
+
+    @property
+    def has_add_issue_comment(self):
+        return self.user.is_superuser or self.can_add_issue_comment
 
     @property
     def has_edit_subject(self):
@@ -2182,6 +2187,12 @@ class Issue(models.Model):
     @classmethod
     def get_unassigned_timesheet_entries(self, project):
         return project.entries.filter(issue__isnull=True).order_by("start_time")
+
+class IssueComment(models.Model):
+    issue = models.ForeignKey(Issue, blank=False, null=False, related_name='comments')
+    comment = models.TextField(blank=True)
+    author = models.ForeignKey(User, related_name='issue_comments', blank=False, null=False)
+    created = models.DateTimeField(auto_now_add=True)
 
 class IssueAttachment(models.Model):
     issue = models.ForeignKey(Issue, blank=False, null=False, related_name='attachments')
