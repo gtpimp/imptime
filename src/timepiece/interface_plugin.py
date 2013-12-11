@@ -1,14 +1,15 @@
-from jira_interface.jira_sync import JiraSync
 import logging
 logger = logging.getLogger(__name__)
 
 class DefaultInterfacePlugin(object):
-    def add_issue_comment(self, *args, **kwargs):
+    def add_issue_comment(self, timepiece_comment, *args, **kwargs):
         return
-    def update_issue_status(self, *args, **kwargs):
+    def update_issue_status(self, timepiece_issue, *args, **kwargs):
         return
+    def get_allowed_stati(self, timepiece_issue, *args, **kwargs):
+        return None
 
-default_interface_plugin = DefaultInterfacePlugin
+default_interface_plugin = DefaultInterfacePlugin()
 
 def get_interface_plugin(business):
     global default_interface_plugin
@@ -16,6 +17,7 @@ def get_interface_plugin(business):
         return default_interface_plugin
     
     if business.sync_with == 'jira':
+        from jira_interface.jira_sync import JiraSync
         return JiraSync(business.id)
 
     logger.error("Unknown interface plugin name [%s] for business %s" % (business.sync_with, business))

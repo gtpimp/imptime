@@ -128,10 +128,23 @@ class JiraSync(object):
         self.jira.add_comment(jira_issue, timepiece_comment.comment)
 
     def update_issue_status(self, timepiece_issue):
-        return
-        # if not self._connect():
-        #     return
-        # jira_issue = self._get_jira_issue(timepiece_issue)
+        if not self._connect():
+            return
+        jira_issue = self._get_jira_issue(timepiece_issue)
+        transitions = self.jira.transitions(jira_issue)
+
+        transition = [ t for t in transitions if t['id'] == timepiece_issue.status ][0]
+        self.jira.transition_issue(jira_issue, transitionId=transition['id'])
+
+        timepiece_issue.status = transition['name']
+        timepiece_issue.save()
+
+    def get_allowed_stati(self, timepiece_issue, *args, **kwargs):
+        if not self._connect():
+            return
+        jira_issue = self._get_jira_issue(timepiece_issue)
+        transitions=self.jira.transitions(jira_issue)
+        return tuple( [ (t['id'], t['name']) for t in transitions ] )
 
     def _get_jira_issue(self, timepiece_issue):
         return self.jira.issue(timepiece_issue.interface_plugin_number)

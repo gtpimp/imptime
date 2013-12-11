@@ -63,7 +63,7 @@
     </div>
   </td>
 
-  <td class="status_col" {% has_permission has_edit_issue_states project.business %} onclick="return imp.show_inline_editor(this);"{% end_permission %} url_for_update="{% url 'issue_status_update' %}" issue_id="{{issue.id}}">
+  <td class="status_col" {% has_permission has_edit_issue_states project.business %} onclick="return imp.show_inline_editor(this);"{% end_permission %} url_for_update="{% url 'issue_status_update' %}" issue_id="{{issue.id}}" url_for_options="{% url 'allowed_issue_stati' issue.id %}" selected_value="{{issue.status" >
     <div class="styled-select">		     
       <div class="readonly_value"> 
         {{ issue.status }}
@@ -71,9 +71,11 @@
       {% has_permission has_edit_issue_states project.business %}
       <div class="inline_editor" style="display:none">
         <select class='transient_selection'>
-          {% for option_value, option_name in issue.allowed_stati %}
-          <option value="{{option_value}}" {% ifequal issue.status option_value %}selected{% endifequal %} >{{option_name}}</option>
-          {% endfor %}
+	  {% comment %}
+            {% for option_value, option_name in issue.all_stati %}
+            <option value="{{option_value}}" {% ifequal issue.status option_value %}selected{% endifequal %} >{{option_name}}</option>
+            {% endfor %}
+	  {% endcomment %}
         </select>
       </div>
       {% end_permission %}

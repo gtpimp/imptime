@@ -1,5 +1,6 @@
 
 import datetime
+from interface_plugin import get_interface_plugin
 import re
 import logging
 from decimal import Decimal
@@ -2191,14 +2192,6 @@ class Issue(models.Model):
 
     def comments_in_order(self):
         return self.comments.get_query_set().order_by("created")
-
-    def allowed_stati(self):
-        default_stati_keys = [ x[0] for x in Issue.ISSUE_STATUS_CHOICES ]
-        extra_stati = Issue.objects.filter(project=self.project).exclude(status__in=default_stati_keys).values('status').annotate(Count('status')).order_by('status')
-        stati = Issue.ISSUE_STATUS_CHOICES
-        if len(extra_stati)>0:
-            stati += ( ("",""), ) + tuple([(x['status'], x['status']) for x in extra_stati])
-        return stati
 
 class IssueStatus(models.Model):
     name = models.CharField(max_length=255, blank=True, null=True)

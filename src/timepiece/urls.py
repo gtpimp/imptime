@@ -533,6 +533,11 @@ urlpatterns = patterns('',
         name='business_features',
         ),  
    url(
+        r'^time-sheet/allowed_issue_stati/(?P<issue_id>\d+)/$',
+        views.allowed_issue_stati,
+        name='allowed_issue_stati',
+        ),  
+   url(
         r'^time-sheet/business_users/(?P<business_id>\d+)/$',
         views.business_users,
         name='business_users',

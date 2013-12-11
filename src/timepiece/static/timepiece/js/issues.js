@@ -474,6 +474,8 @@ imp.show_inline_editor = function(el) {
     }
     imp.inline_editor_active = true;
 
+    var on_done = imp.loading("fetching options...");
+
     var td = $(el);
     var readonly_value = td.find(".readonly_value");
     var editor_container = td.find(".inline_editor");
@@ -565,10 +567,12 @@ imp.show_inline_editor = function(el) {
 			editor.append(new_option);
 		    });
 		    activate_select();
+		    on_done();
 		}
 	       });
     } else {
 	activate_select();
+	on_done();
     }
 
 };

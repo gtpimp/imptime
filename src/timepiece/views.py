@@ -3138,6 +3138,14 @@ def business_features(request, business_id):
                         mimetype='application/json')
 
 @login_required
+def allowed_issue_stati(request, issue_id):
+    issue = timepiece.Issue.objects.get(pk=issue_id)
+    stati = get_interface_plugin(issue.project.business).get_allowed_stati(issue)
+    if stati is None:
+        stati = timepiece.Issue.ISSUE_STATUS_CHOICES
+    return HttpResponse(json.dumps(stati), mimetype='application/json')
+
+@login_required
 def business_users(request, business_id):
     business = timepiece.Business.objects.get(pk=business_id)
     data = [ (user.id, user.get_full_name()) for user in business.users ]
@@ -3354,6 +3362,8 @@ def issue_status_update(request,  template="timepiece/project/issue_detail.html"
     
     edited_issue.status = request.POST["selected_value"]
     edited_issue.save()
+
+    get_interface_plugin(project.business).update_issue_status(edited_issue)
                  
     return HttpResponse()
 
