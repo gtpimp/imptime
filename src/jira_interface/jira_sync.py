@@ -1,4 +1,4 @@
-from jira.client import JIRA, GreenHopper
+from jira_interface.jira_python.jira.client import JIRA, GreenHopper
 import timepiece.models as timepiece
 from django.contrib.auth.models import User
 from django.conf import settings

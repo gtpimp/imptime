@@ -46,7 +46,6 @@ gitdb==0.5.4
 hadrian==1.1.4
 html5lib==1.0b1
 ipython==1.1.0
--e git+git@bitbucket.org:thedustycowboy/jira-python.git@bcef5436b2ecd7f937d4edfdcd56d71b440964b1#egg=jira_python-dev
 jsonpickle==0.4.0
 kombu==2.1.8
 matplotlib==1.2.0
