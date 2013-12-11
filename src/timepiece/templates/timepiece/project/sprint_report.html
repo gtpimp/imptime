@@ -312,6 +312,19 @@
     {% for issue in issues %}
     <h4 id="issue_description_{{issue.id}}">{{issue.number}} - {{issue.subject}}</h4>
     {{issue.description|asmarkdown|safe}}
+
+    <div class="issue_comments">
+      <br/>
+      {% for comment in issue.comments_in_order %}
+      <div class="creation_details">
+	{{comment.created}}
+	{{comment.author}}
+      </div>
+      <div class="markdown_content">{{comment.comment|asmarkdown|safe}}</div>
+      <hr/>
+      {% endfor %}
+    </div>
+
     {% endfor %}
 
     {% if unassigned.comments|length > 0 %}

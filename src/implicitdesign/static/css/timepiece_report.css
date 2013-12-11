@@ -63,3 +63,8 @@ body h4 {
 table.issues {
     width: 100%;
 }
+
+.issue_comments .creation_details {
+    font-size:9px;
+    font-style:italic;
+}
