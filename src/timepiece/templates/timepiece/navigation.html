@@ -75,12 +75,21 @@
 			      </li>
 			    {% endif %}
 			    {% has_permission has_create_sprint business %}  
-			    <li>
+			      <li>
 				<a href="#"  onclick="imp.do_form_show(this , '{% url 'add_project' business.id %}' ); return false;">
 				  Create sprint in {{business.name}}
 				</a>	
 			      </li>
-			      {% end_permission %}
+
+			      {% ifequal business.sync_with "jira" %}
+			      <li>
+				  <a href="#" onclick="imp.projects.show_project_card_as_popup(this, '{% url 'jira:sync_business' business.id %}', 'Synching...'); return false;">
+				    Sync with Jira
+				  </a>
+			      </li>
+			      {% endifequal %}
+
+			    {% end_permission %}
 			  </ul>
 		      </li>
 		      

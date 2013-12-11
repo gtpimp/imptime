@@ -119,14 +119,6 @@
       </li>
       {% end_permission %}
 
-      {% ifequal business.sync_with "jira" %}
-      <li>
-	  <a href="#" onclick="imp.projects.show_project_card_as_popup(this, '{% url 'jira:sync_business' business.id %}', 'Synching...'); return false;">
-            Sync with Jira
-          </a>
-      </li>
-      {% endifequal %}
-
       {% comment %}
      <div class="btn">
         <div class="to_expand_form_on_click" style="display:block"  onclick="imp.projects.show_project_card_as_popup(this, '{% url 'get_project_card_for_business'  business_id=business.id project_id=project.id  %}');return false; "> 
