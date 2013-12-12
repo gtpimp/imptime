@@ -388,6 +388,7 @@ class Project(models.Model):
     description = models.TextField(blank=True, null=True, db_index=True)
     order = models.IntegerField(null=True,blank=True)
     objects = QuerySetManager(ProjectQuerySet)
+    interface_plugin_number = models.CharField(max_length=255, null=True, blank=True) #eg jira
 
     @classmethod
     def get_or_create_project(self, business, project_name, description=None):

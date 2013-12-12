@@ -46,13 +46,19 @@ class JiraSync(object):
     def _sync_sprint(self, jira_sprint):
         logger.debug("syncing sprint %s" % jira_sprint.name)
 
-        timepiece_project_name = timepiece.Project.get_code_from_name(jira_sprint.name)
         try:
-            timepiece_project = timepiece.Project.objects.get(business=self.timepiece_business, name=timepiece_project_name)
+            timepiece_project = timepiece.Project.objects.get(business=self.timepiece_business, interface_plugin_number=jira_sprint.id)
         except timepiece.Project.DoesNotExist:
-            timepiece_project = timepiece.Project.get_or_create_project(business=self.timepiece_business, project_name=timepiece_project_name,
-                                                                        description=" (from jira)")
-        
+            timepiece_project_name = timepiece.Project.get_code_from_name(jira_sprint.name)
+            try:
+                timepiece_project = timepiece.Project.objects.get(business=self.timepiece_business, name=timepiece_project_name)
+            except timepiece.Project.DoesNotExist:
+                timepiece_project = timepiece.Project.get_or_create_project(business=self.timepiece_business, project_name=timepiece_project_name,
+                                                                            description=" (from jira)")
+            if timepiece_project.interface_plugin_number != jira_sprint.id:
+                timepiece_project.interface_plugin_number = jira_sprint.id
+                timepiece_project.save()
+
         order = 1
         for gh_issue in self.gh.completed_issues(self.settings.board_id.strip(), jira_sprint.id):
             self._sync_issue(jira_sprint, gh_issue, timepiece_project, order=order)
@@ -167,6 +173,8 @@ class JiraSync(object):
         jira_issue = self.jira.create_issue(project={'key': jira_project_key}, summary=timepiece_issue.subject,
                                             description=timepiece_issue.description, issuetype={'name': jira_issue_type_name},
                                             assignee={'name':jira_assignee})
+        # if timepiece_issue.project.interface_plugin_number is not None:
+        #     self.gh.add_issues_to_sprint(timepiece_issue.project.interface_plugin_number, [jira_issue.key])
         timepiece_issue.interface_plugin_number = jira_issue.key
         timepiece_issue.save()
         logger.debug("Created jira_issue with key: %s" % jira_issue.key)
