@@ -543,6 +543,11 @@ urlpatterns = patterns('',
         name='business_users',
         ),  
    url(
+        r'^time-sheet/issue_users/(?P<issue_id>\d+)/$',
+        views.issue_users,
+        name='issue_users',
+        ),  
+   url(
         r'^time-sheet/sprint_export/(?P<project_id>\d+)/$',
         views.sprint_export,
         name='sprint_export',

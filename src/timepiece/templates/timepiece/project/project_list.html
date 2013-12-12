@@ -47,9 +47,11 @@
 	  Jira is enabled for this project. Support is limited to:
 	  <ul>
 	    <li>Adds a 'sync jira' menu option to the Sprints main menu. This fetches all latest issues and sprints and imports them. Over-writes any local settings, except for time entries</li>
+	    <li>New issues are correctly created  (note there are two assigned user fields, the jira user will override the default user)</li>
 	    <li>State changes in imptime are correctly sent to Jira</li>
 	    <li>Comments added in imptime are correctly sent to Jira</li>
-	    <li>Updates to subject, description and assignee and any other fields not mentioned above are NOT sent to Jira</li>
+	    <li>The assigned user is correctly sent to Jira</li>
+	    <li>Updates to subject, description and any other fields not mentioned above are NOT sent to Jira</li>
 	  </ul>
 	  <div style="clear:both"></div>
 	</div>

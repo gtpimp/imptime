@@ -29,7 +29,7 @@
     </div>
   </td>
 
-  <td class="assigned_col" {% has_permission has_assign_user project.business %} onclick="return imp.show_inline_editor(this);"{% end_permission %} url_for_update="{% url 'issue_assigned_to_update' %}" issue_id="{{issue.id}}" url_for_options="{% url 'business_users' business.id %}" selected_value="{{issue.assigned_to.id}}">
+  <td class="assigned_col" {% has_permission has_assign_user project.business %} onclick="return imp.show_inline_editor(this);"{% end_permission %} url_for_update="{% url 'issue_assigned_to_update' %}" issue_id="{{issue.id}}" url_for_options="{% url 'issue_users' issue.id %}" selected_value="{{issue.assigned_to.id}}">
 
 
     <div class="styled-select">		     

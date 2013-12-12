@@ -140,15 +140,35 @@ class JiraSync(object):
         timepiece_issue.status = transition['name']
         timepiece_issue.save()
 
+    def update_issue_assigned_to(self, timepiece_issue, username, *args, **kwargs):
+        if not self._connect():
+            return
+        if timepiece_issue.interface_plugin_number is None:
+            return
+        jira_issue = self._get_jira_issue(timepiece_issue)
+        
+        if timepiece_issue.assigned_to is None:
+            try:
+                timepiece_issue.assigned_to = User.objects.get(profile__jira_user_name=username)
+                timepiece_issue.save()
+            except User.DoesNotExist:
+                return
+
+        self.jira.assign_issue(jira_issue, timepiece_issue.assigned_to.profile.jira_user_name)
+
     def create_issue(self, timepiece_issue, jira_create_issue_form):
         if not self._connect():
             return
 
         jira_project_key = jira_create_issue_form.cleaned_data['project']
         jira_issue_type_name = jira_create_issue_form.cleaned_data['issue_type']
+        jira_assignee = jira_create_issue_form.cleaned_data['assigned_to']
 
         jira_issue = self.jira.create_issue(project={'key': jira_project_key}, summary=timepiece_issue.subject,
-                                            description=timepiece_issue.description, issuetype={'name': jira_issue_type_name})
+                                            description=timepiece_issue.description, issuetype={'name': jira_issue_type_name},
+                                            assignee={'name':jira_assignee})
+        timepiece_issue.interface_plugin_number = jira_issue.key
+        timepiece_issue.save()
         logger.debug("Created jira_issue with key: %s" % jira_issue.key)
 
     def get_create_issue_form(self, post_data=None):
@@ -156,7 +176,8 @@ class JiraSync(object):
             return
         jira_projects = self.gh.projects()
         jira_issue_types = self.gh.issue_types()
-        return JiraCreateIssueForm(jira_projects, jira_issue_types, post_data)
+        jira_users = self.gh.search_assignable_users_for_projects("", [x.key for x in jira_projects])
+        return JiraCreateIssueForm(jira_projects, jira_issue_types, jira_users, post_data, prefix='jira_form')
         
     def get_allowed_stati(self, timepiece_issue, *args, **kwargs):
         if not self._connect():
@@ -164,6 +185,14 @@ class JiraSync(object):
         jira_issue = self._get_jira_issue(timepiece_issue)
         transitions=self.jira.transitions(jira_issue)
         return tuple( [ (t['id'], t['name']) for t in transitions ] )
+
+    def get_assignable_users(self, timepiece_issue, *args, **kwargs):
+        if not self._connect():
+            return None
+        if timepiece_issue.interface_plugin_number is None:
+            return None
+        jira_users = self.gh.search_assignable_users_for_issues("", issueKey = timepiece_issue.interface_plugin_number)
+        return [ (x.name, x.name) for x in jira_users ]
 
     def _get_jira_issue(self, timepiece_issue):
         return self.jira.issue(timepiece_issue.interface_plugin_number)

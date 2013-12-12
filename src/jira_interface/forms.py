@@ -15,10 +15,12 @@ class JiraCreateIssueForm(forms.Form):
     
     project = forms.ChoiceField()
     issue_type = forms.ChoiceField()
+    assigned_to = forms.ChoiceField()
 
-    def __init__(self, jira_projects, jira_issue_types, *args, **kwargs):
+    def __init__(self, jira_projects, jira_issue_types, jira_users, *args, **kwargs):
         super(JiraCreateIssueForm, self).__init__(*args, **kwargs)
         self.fields['project'].choices = [ (p.key, "%s %s" % (p.key,p.name)) for p in jira_projects ]
         self.fields['issue_type'].choices = [ (p.name, p.name) for p in jira_issue_types ]
+        self.fields['assigned_to'].choices = [ (p.name, p.name) for p in jira_users ]
 
         

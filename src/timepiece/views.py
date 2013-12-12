@@ -3015,6 +3015,7 @@ def add_issue(request, project_id, template="timepiece/project/_add_issue_form.h
     if bp.has_add_issue:
         new_issue_form = timepiece_forms.IssueForm(request.POST or None, business=current_business)
         plugin_form = get_interface_plugin(project.business).get_create_issue_form(request.POST or None)
+        
         if new_issue_form.is_valid() and plugin_form.is_valid():
             issue = new_issue_form.save(commit=False)
             issue.number = next_issue_number
@@ -3152,10 +3153,20 @@ def allowed_issue_stati(request, issue_id):
     return HttpResponse(json.dumps(stati), mimetype='application/json')
 
 @login_required
-def business_users(request, business_id):
+def business_users(request, business_id, issue_id):
     business = timepiece.Business.objects.get(pk=business_id)
-    data = [ (user.id, user.get_full_name()) for user in business.users ]
-    return HttpResponse(json.dumps(data),
+    users = [ (user.id, user.get_full_name()) for user in business.users ]
+    return HttpResponse(json.dumps(users),
+                        mimetype='application/json')
+
+@login_required
+def issue_users(request, issue_id):
+    issue = timepiece.Issue.objects.get(pk=issue_id)
+    business = issue.project.business
+    users = get_interface_plugin(business).get_assignable_users(issue)
+    if users is None:
+        users = [ (user.id, user.get_full_name()) for user in business.users ]
+    return HttpResponse(json.dumps(users),
                         mimetype='application/json')
 
 @csrf_exempt
@@ -3408,8 +3419,9 @@ def issue_assigned_to_update(request,  template="timepiece/project/issue_detail.
     context = context or {}
 
     issue = timepiece.Issue.objects.get(pk=request.POST['issue_id'])
+    username = request.POST['selected_value']
     try:
-        user = User.objects.get(pk=request.POST['selected_value'])
+        user = User.objects.get(pk=username)
     except User.DoesNotExist:
         user = None
     except ValueError:
@@ -3427,6 +3439,8 @@ def issue_assigned_to_update(request,  template="timepiece/project/issue_detail.
         issue.save()
     except KeyError:
         pass
+
+    get_interface_plugin(project.business).update_issue_assigned_to(issue, username)
 
     return HttpResponse()
 

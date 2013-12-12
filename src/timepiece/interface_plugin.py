@@ -10,6 +10,10 @@ class DefaultInterfacePlugin(object):
         return None
     def get_create_issue_form(self, *args, **kwargs):
         return None
+    def get_assignable_users(self, timepiece_issue, *args, **kwargs):
+        return None
+    def update_issue_assigned_to(self, timepiece_issue, username, *args, **kwargs):
+        return None
 
 default_interface_plugin = DefaultInterfacePlugin()
 
