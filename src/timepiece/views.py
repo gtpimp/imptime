@@ -3016,7 +3016,7 @@ def add_issue(request, project_id, template="timepiece/project/_add_issue_form.h
         new_issue_form = timepiece_forms.IssueForm(request.POST or None, business=current_business)
         plugin_form = get_interface_plugin(project.business).get_create_issue_form(request.POST or None)
         
-        if new_issue_form.is_valid() and (plugin_form is not None and plugin_form.is_valid()):
+        if new_issue_form.is_valid() and (plugin_form is None or plugin_form.is_valid()):
             issue = new_issue_form.save(commit=False)
             issue.number = next_issue_number
             issue.project = project
