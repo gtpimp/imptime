@@ -176,6 +176,7 @@ class JiraSync(object):
         # if timepiece_issue.project.interface_plugin_number is not None:
         #     self.gh.add_issues_to_sprint(timepiece_issue.project.interface_plugin_number, [jira_issue.key])
         timepiece_issue.interface_plugin_number = jira_issue.key
+        timepiece_issue.subject="%s %s" % (jira_issue.key, jira_issue.fields.summary)
         timepiece_issue.save()
         logger.debug("Created jira_issue with key: %s" % jira_issue.key)
 
