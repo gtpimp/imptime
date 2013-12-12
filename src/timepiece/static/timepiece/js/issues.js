@@ -151,12 +151,14 @@ imp.attach_upload_issue_attachment = function(el) {
 
     var container = el.parent();
     var input_el = container.find("input");
+    var on_done = imp.issue_loading("Uploading attachment");
     container.find('.new_attachment').show();
     el.hide(); 
 
     input_el.fileupload({
 		      type: "POST",
 		      done: function (e, data) {
+			  on_done();
 			  imp.refresh_issue_detail();
 		      }
 		  });
@@ -167,6 +169,7 @@ imp.attach_upload_issue_attachment = function(el) {
 imp.on_add_issue_comment = function(el, url) {
 
     var container = el.parent();
+    var on_done = imp.issue_loading("Creating comment");
     var input_el = container.find("textarea");
     container.find('.new_comment').show();
     el.hide(); 
@@ -175,7 +178,10 @@ imp.on_add_issue_comment = function(el, url) {
                            url: url,
                            data: {'comment':input_el.val()}
                           });
-    response.done( imp.refresh_issue_detail );
+    response.done( function() {
+	on_done();
+	imp.refresh_issue_detail();
+    } );
 };
 
 imp.on_project_form_submit = function(element, url) {
