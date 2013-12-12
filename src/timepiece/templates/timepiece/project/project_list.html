@@ -42,10 +42,19 @@
 <div class="splitter">
   <div class="splitter-left">
 
-    <ul class="business_menu_on_project_page">
+      {% ifequal business.sync_with "jira" %}
+	<div class="jira_info">
+	  Jira is enabled for this project. Support is limited to:
+	  <ul>
+	    <li>Adds a 'sync jira' menu option to the Sprints main menu. This fetches all latest issues and sprints and imports them. Over-writes any local settings, except for time entries</li>
+	    <li>State changes in imptime are correctly sent to Jira</li>
+	    <li>Comments added in imptime are correctly sent to Jira</li>
+	    <li>Updates to subject, description and assignee and any other fields not mentioned above are NOT sent to Jira</li>
+	  </ul>
+	  <div style="clear:both"></div>
+	</div>
+      {% endifequal %}
       
-    </ul>
-
     <ul class="project_list open" project_sort_url="{% url 'sortable_project_update' %}">
       {% for project in projects %} 
         {% include "timepiece/project/_project_list_item.html" %}
