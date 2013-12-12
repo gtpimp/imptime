@@ -34,7 +34,7 @@
 
     <div class="styled-select">		     
       <div class="readonly_value"> 
-        {{ issue.assigned_to.get_full_name }}
+        {{ issue.assigned_to.username }}
       </div>
       {% has_permission has_assign_user project.business %}
       <div class="inline_editor" style="display:none">
