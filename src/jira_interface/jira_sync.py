@@ -3,6 +3,7 @@ import timepiece.models as timepiece
 from django.contrib.auth.models import User
 from django.conf import settings
 from django.db.models import Q
+from forms import JiraCreateIssueForm
 from dateutil import parser as dateparser
 import logging
 logger = logging.getLogger(__name__)
@@ -139,6 +140,24 @@ class JiraSync(object):
         timepiece_issue.status = transition['name']
         timepiece_issue.save()
 
+    def create_issue(self, timepiece_issue, jira_create_issue_form):
+        if not self._connect():
+            return
+
+        jira_project_key = jira_create_issue_form.cleaned_data['project']
+        jira_issue_type_name = jira_create_issue_form.cleaned_data['issue_type']
+
+        jira_issue = self.jira.create_issue(project={'key': jira_project_key}, summary=timepiece_issue.subject,
+                                            description=timepiece_issue.description, issuetype={'name': jira_issue_type_name})
+        logger.debug("Created jira_issue with key: %s" % jira_issue.key)
+
+    def get_create_issue_form(self, post_data=None):
+        if not self._connect():
+            return
+        jira_projects = self.gh.projects()
+        jira_issue_types = self.gh.issue_types()
+        return JiraCreateIssueForm(jira_projects, jira_issue_types, post_data)
+        
     def get_allowed_stati(self, timepiece_issue, *args, **kwargs):
         if not self._connect():
             return
@@ -149,4 +168,3 @@ class JiraSync(object):
     def _get_jira_issue(self, timepiece_issue):
         return self.jira.issue(timepiece_issue.interface_plugin_number)
 
-    

@@ -8,6 +8,8 @@ class DefaultInterfacePlugin(object):
         return
     def get_allowed_stati(self, timepiece_issue, *args, **kwargs):
         return None
+    def get_create_issue_form(self, *args, **kwargs):
+        return None
 
 default_interface_plugin = DefaultInterfacePlugin()
 

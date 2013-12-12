@@ -38,6 +38,12 @@
       </div>
     {% end_permission %}
 
+
+    {% if plugin_form %}
+    <h3>Settings for {{business.sync_with}}</h3>
+    {{ plugin_form }}
+    {% endif %}
+
     <br />
 
     <input type="submit" class="btn" onclick="return imp.on_issue_form_submit(this, {{project.id}}, '{% url 'add_issue' project.id %}');" value="Create"/>
