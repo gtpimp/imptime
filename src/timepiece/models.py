@@ -560,7 +560,7 @@ class Project(models.Model):
             last_rate = None
             if last_project:
                 try:
-                    last_rate = Rate.objects.get(project=last_project, user=user).work_ratio
+                    last_rate = Rate.objects.get(project=last_project, user=user)
                 except Rate.DoesNotExist:
                     pass
                     
