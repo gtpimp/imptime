@@ -441,6 +441,8 @@ class Project(models.Model):
         total_hours = users_and_hours['totals']['hours']
 
         for user, points in self.get_points_total().items():
+            if user.username not in users_and_hours['users']:
+                continue
             user_info = users_and_hours['users'][user.username]
             if int(user_info['hours']) == 0 and points == 0:
                 continue

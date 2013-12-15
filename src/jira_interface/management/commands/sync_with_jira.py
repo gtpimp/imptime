@@ -12,9 +12,6 @@ class Command(BaseCommand):
     help = '''Fetches changes from Jira and pushes changes to Jira. Pass in the business_id to be synced '''
 
     def handle(self, business_id, *args, **options):
-
         business_id = int(business_id)
         syncer = JiraSync(business_id)
         syncer.sync()
-        
-        
