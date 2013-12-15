@@ -248,8 +248,10 @@ imp.create_chart = function(chart_info) {
 };
 
 imp.create_splitter = function() {
-    $(".splitter").css({height:$(window).height()*0.9+"px"});
-    $(".splitter").splitter({sizeRight: $(window).width()*0.25});
+    if ( $(".splitter").splitter ) {
+	$(".splitter").css({height:$(window).height()*0.9+"px"});
+	$(".splitter").splitter({sizeRight: $(window).width()*0.25});
+    }
 };
 
 imp.toggle_show_money = function() {
