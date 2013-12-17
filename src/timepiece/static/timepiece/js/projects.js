@@ -2,7 +2,9 @@ imp.projects = imp.projects || {};
 
 imp.projects.already_loaded_sprints = {};
 
-imp.show_money_on = true;
+
+var numbers_state = { 'all':0, 'no money':1, 'no money and no estimates':2 };
+imp.show_numbers_state = numbers_state['all'];
 
 imp.projects.on_sortable_changed_for_url = function(sortable_url) {
     var _sortable_url = sortable_url;
@@ -163,7 +165,7 @@ imp.on_issue_rows_loaded = function(issue_row_container) {
 								      $(this).find('.emacs_copy_img').hide();
 								      $(this).removeClass("hovered");
 								  });
-    imp.refresh_show_money();
+    imp.refresh_show_numbers();
     imp.highlight_issue();
 };
 
@@ -254,16 +256,25 @@ imp.create_splitter = function() {
     }
 };
 
-imp.toggle_show_money = function() {
-    imp.show_money_on = ! imp.show_money_on;
-    imp.refresh_show_money();
+imp.toggle_show_numbers = function() {
+
+    imp.show_numbers_state += 1;
+    if ( imp.show_numbers_state >= Object.keys(numbers_state).length ) {
+	imp.show_numbers_state = numbers_state['all'];
+    }
+    imp.refresh_show_numbers();
 };
 
-imp.refresh_show_money = function() {
-    if ( imp.show_money_on ) {
-	$('.money_cell').show();
-    } else {
-	$('.money_cell').hide();
+imp.refresh_show_numbers = function() {
+    if ( imp.show_numbers_state == numbers_state['all'] ) {
+	$(".money_cell").show();
+	$(".estimates_cell").show();
+    } else if ( imp.show_numbers_state == numbers_state['no money'] ) {
+	$(".money_cell").hide();
+	$(".estimates_cell").show();
+    } else if ( imp.show_numbers_state == numbers_state['no money and no estimates'] ) {
+	$(".money_cell").hide();
+	$(".estimates_cell").hide();
     }
 };
 

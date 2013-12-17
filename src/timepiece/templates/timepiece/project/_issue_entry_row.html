@@ -87,7 +87,7 @@
   {% include "timepiece/project/_issue_points_completed.html" %}
   {% endfor %}
   {% for user in users_with_time_but_no_estimates_in_this_project %}
-  <td class="money_cell">{% get_hours_for_issue user issue %}</td>
+  <td class="estimates_cell">{% get_hours_for_issue user issue %}</td>
   {% endfor %}
   {% end_permission %}
 
@@ -99,7 +99,7 @@
 
   {% comment %}
   {% has_permission has_view_actual_hours  project.business %} 
-  <td  class="money_cell">
+  <td  class="estimates_cell">
     <div class="secret_link"  onclick="imp.show_issue_detail({{issue.pk}}, '{% url 'issue_detail' issue.pk %}');">
       {{issue.hours|default_if_none:""}}
     </div>

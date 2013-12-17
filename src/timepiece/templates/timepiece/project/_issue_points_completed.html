@@ -1,7 +1,7 @@
 {% load timepiece_tags %}
 {% load url from future %}
 
-<td class="money_cell">
+<td class="estimates_cell">
   {% user_can_estimate_own_points user project.business %}
     {% is_same_user user current_user%}
       <div onclick="imp.clickable_time_estimate(this, '{% url 'issue_points_update' %}',{{ per_user.issue_points.id }}, {{issue.id}})" >

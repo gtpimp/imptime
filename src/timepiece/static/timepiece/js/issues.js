@@ -29,7 +29,7 @@ imp.show_issue_detail = function(issue_id, url, msg) {
     $(".issue_detail").load(url,
 			    function() {
 				$(".issue_detail .subject_class input").focus();
-				imp.refresh_show_money();
+				imp.refresh_show_numbers();
 				imp.current_issue_detail_url = url;
 				if ( issue_id ) {
 				    imp.highlight_issue(issue_id);

@@ -13,14 +13,14 @@
 		{% has_permission has_see_other_user_points project.business %}
                   {% with issues_forms.forms|first as first_form %}
 		    {% for user, per_user in first_form.instance.representation.per_user.items %}
-  	                <th class="money_cell">
+  	                <th class="estimates_cell">
                          {{ user.username }}
 		        </th>
 		    {% endfor %}
 		  {% endwith %}
 
                   {% for user in users_with_time_but_no_estimates_in_this_project %}
-                    <th  class="money_cell">{{ user }}</th>
+                    <th  class="estimates_cell">{{ user }}</th>
                   {% endfor %}
 		  
 		{% end_permission %}
@@ -35,7 +35,7 @@
 
                     {% comment %}
                 {% has_permission has_view_actual_hours  project.business %} 
-                  <th class="money_cell">Hours</th>
+                  <th class="estimates_cell">Hours</th>
                 {% end_permission %}
                   {% endcomment %}
 
@@ -69,7 +69,7 @@
 		    {% with issues_forms.forms|first as first_form %}
 		      {% for user, per_user in first_form.instance.representation.per_user.items %}
                         {% user_can_estimate_own_points user project.business %}
-		          <th class="money_cell">
+		          <th class="estimates_cell">
                             {% get_all_hours_for_project user project %} / {% get_all_points_for_project user project %}
                             <br/>
                             (devdone: {% get_all_hours_for_project user project %} / {% get_all_devdone_points_for_project user project %})
@@ -77,21 +77,21 @@
                         {% end_can_estimate %}
 		      {% endfor %}
                       {% for user in users_with_time_but_no_estimates_in_this_project %}
-                        <th class="money_cell">{% get_all_hours_for_project user project %} / {% get_all_points_for_project user project %}</th>
+                        <th class="estimates_cell">{% get_all_hours_for_project user project %} / {% get_all_points_for_project user project %}</th>
                       {% endfor %}
 		    {% endwith %}
 		  {% end_permission %}
 
 		  {% has_not_permission can_see_other_user_points project.business %}
                     {% user_can_estimate_own_points current_user project.business %}
-		      <th class="money_cell">{% get_all_hours_for_project current_user project %} / {% get_all_points_for_project current_user project %}</th>
+		      <th class="estimates_cell">{% get_all_hours_for_project current_user project %} / {% get_all_points_for_project current_user project %}</th>
                     {% end_can_estimate %}
 		  {% end_permission %}
 
 
                       {% comment %}
                   {% has_permission has_view_actual_hours  project.business %} 
-                    <th class="money_cell">
+                    <th class="estimates_cell">
                       <div class="secret_link" onclick="imp.show_issue_detail(null, '{% url 'all_timesheet_entries' project.id %}');">
                         <i>{{total_hours|floatformat:"0"|intcomma}}</i>
                       </div>
@@ -144,23 +144,23 @@
 		  {% has_permission has_see_other_user_points project.business %}
 		    {% with issues_forms.forms|first as first_form %}
 		      {% for user, per_user in first_form.instance.representation.per_user.items %}
-		          <td class="money_cell">{% get_unassigned_hours_for_project user project %}</td>
+		          <td class="estimates_cell">{% get_unassigned_hours_for_project user project %}</td>
 		      {% endfor %}
                       {% for user in users_with_time_but_no_estimates_in_this_project %}
-                        <td class="money_cell">{% get_unassigned_hours_for_project user project %}</td>
+                        <td class="estimates_cell">{% get_unassigned_hours_for_project user project %}</td>
                       {% endfor %}
 		    {% endwith %}
 		  {% end_permission %}
 
 		  {% has_not_permission can_see_other_user_points project.business %}
                     {% user_can_estimate_own_points current_user project.business %}
-		      <td class="money_cell">{% get_unassigned_hours_for_project current_user project %} / </td>
+		      <td class="estimates_cell">{% get_unassigned_hours_for_project current_user project %} / </td>
                     {% end_can_estimate %}
 		  {% end_permission %}
 
                       {% comment %}
                   {% has_permission has_view_actual_hours  project.business %} 
-                    <td class="money_cell">
+                    <td class="esimates_cell">
                       <div class="secret_link" onclick="imp.show_issue_detail(null, '{% url 'unassigned_timesheet_entries' project.id %}');">
                         {{unassigned_timesheet_entries_hours|floatformat:"0"|intcomma}}
                       </div>
