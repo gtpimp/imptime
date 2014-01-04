@@ -1089,13 +1089,14 @@ class SprintReportSettingsForm(forms.Form):
     view_budget = forms.BooleanField(initial=True, required=False)
     issue_assignee = forms.BooleanField(initial=False, required=False)
     issue_status = forms.BooleanField(initial=False, required=False)
-    only_these_statuses = forms.MultipleChoiceField( label="Only include these statuses", choices=(('all', 'Any status'),) + Issue.ISSUE_STATUS_CHOICES, 
+    only_these_statuses = forms.MultipleChoiceField( label="Only include these statuses", 
                                                      required=True, initial=('all',),
                                                      widget = CheckboxSelectMultiple)
 
-    def __init__(self, bp, *args, **kwargs):
+    def __init__(self, project, bp, *args, **kwargs):
         super(SprintReportSettingsForm, self).__init__(*args, **kwargs)
         self.bp = bp
+        self.project = project
         if not self.bp.has_view_ctc_billable_rates:
             del self.fields['ctc']
             del self.fields['billable']
@@ -1106,4 +1107,6 @@ class SprintReportSettingsForm(forms.Form):
             del self.fields['start_end_time']
         if not bp.has_view_budget:
             del self.fields['view_budget']
+
+        self.fields['only_these_statuses'].choices = [('all', 'Any status'),] + list( [ (x['status'],x['status']) for x in project.issues.values('status').distinct()] )
         
