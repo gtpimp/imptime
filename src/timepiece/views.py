@@ -4051,11 +4051,19 @@ def sprint_report(request, project_id, context=None):
     business = project.business
     bp = timepiece.BusinessPermissions.for_user(request.user, business)
     form = timepiece_forms.SprintReportSettingsForm(bp, request.GET)
+
+    issues = project.issues.order_by("order")
+
     if form.is_valid():
         context['settings'] = form.cleaned_data
+        
+        statuses = form.cleaned_data['only_these_statuses']
+        if 'all' not in statuses:
+            issues = issues.filter(status__in=statuses)
+        
+    context['issues'] = issues
     context['form'] = form
     context['project'] = project
-    context['issues'] = project.issues.order_by("order")
 
     unassigned = timepiece.Issue.get_unassigned_timesheet_entries(project)
     context['unassigned'] = unassigned.cost_totals_for_project(project)
