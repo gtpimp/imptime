@@ -4060,6 +4060,10 @@ def sprint_report(request, project_id, context=None):
         statuses = form.cleaned_data['only_these_statuses']
         if 'all' not in statuses:
             issues = issues.filter(status__in=statuses)
+            
+        assigned_to = form.cleaned_data['only_assigned_to']
+        if 'all' not in assigned_to:
+            issues = issues.filter(assigned_to__username__in=assigned_to)
         
     context['issues'] = issues
     context['form'] = form

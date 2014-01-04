@@ -1092,6 +1092,9 @@ class SprintReportSettingsForm(forms.Form):
     only_these_statuses = forms.MultipleChoiceField( label="Only include these statuses", 
                                                      required=True, initial=('all',),
                                                      widget = CheckboxSelectMultiple)
+    only_assigned_to = forms.MultipleChoiceField(label="Only assigned to these users",
+                                                 initial=('all',), required=False,
+                                                 widget = CheckboxSelectMultiple)
 
     def __init__(self, project, bp, *args, **kwargs):
         super(SprintReportSettingsForm, self).__init__(*args, **kwargs)
@@ -1109,4 +1112,5 @@ class SprintReportSettingsForm(forms.Form):
             del self.fields['view_budget']
 
         self.fields['only_these_statuses'].choices = [('all', 'Any status'),] + list( [ (x['status'],x['status']) for x in project.issues.values('status').distinct()] )
+        self.fields['only_assigned_to'].choices = [('all', 'Any user'),] + list( [ (x['assigned_to__username'],x['assigned_to__username']) for x in project.issues.exclude(assigned_to__isnull=True).values('assigned_to__username').distinct()] )
         
