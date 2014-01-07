@@ -3006,7 +3006,7 @@ def add_issue(request, project_id, template="timepiece/project/_add_issue_form.h
 
     current_business = project.business
 
-    context['next_issue_number'] = next_issue_number = timepiece.Issue.get_next_issue_number()
+    context['next_issue_number'] = next_issue_number = timepiece.Issue.get_next_issue_number(current_business)
     context['project'] = project
     context['current_user'] = request.user
     current_user = request.user
@@ -3196,7 +3196,7 @@ def project_issues(request, pk, template="timepiece/project/issues.html", contex
     unassigned_cost_totals = timepiece.Issue.get_unassigned_timesheet_entries(project=project).cost_totals_for_project(project)
 
     rate = project.get_user_rate(request.user)
-    context['next_issue_number']  = timepiece.Issue.get_next_issue_number()
+    context['next_issue_number']  = timepiece.Issue.get_next_issue_number(project.business)
     context['current_user_rate'] = float(rate.amount) if rate else 0.0
     context['business'] = business
     context['new_issue_form'] = new_issue_form
@@ -3253,7 +3253,7 @@ def get_project_detail(request, project_id, template="timepiece/project/project_
     unassigned_cost_totals = timepiece.Issue.get_unassigned_timesheet_entries(context['project']).cost_totals_for_project(context['project'])
 
     rate = project.get_user_rate(request.user)
-    context['next_issue_number']  = timepiece.Issue.get_next_issue_number()
+    context['next_issue_number']  = timepiece.Issue.get_next_issue_number(project.business)
     context['current_user_rate'] = float(rate.amount) if rate else 0.0
     context['business'] = business
     context['new_issue_form'] = new_issue_form

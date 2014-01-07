@@ -1089,6 +1089,7 @@ class SprintReportSettingsForm(forms.Form):
     view_budget = forms.BooleanField(initial=True, required=False)
     issue_assignee = forms.BooleanField(initial=False, required=False)
     issue_status = forms.BooleanField(initial=False, required=False)
+    #only_issues_with_time = forms.BooleanField(initial=False, required=False)
     only_these_statuses = forms.MultipleChoiceField( label="Only include these statuses", 
                                                      required=True, initial=('all',),
                                                      widget = CheckboxSelectMultiple)

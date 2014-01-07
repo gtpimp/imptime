@@ -2075,14 +2075,14 @@ class Issue(models.Model):
     interface_plugin_number = models.CharField(max_length=255, null=True, blank=True) #eg jira
 
     @classmethod
-    def get_last_issue_number(self):
-        largest_number =  Issue.objects.filter(number__isnull=False).aggregate(largest_number=Max("number"))['largest_number']
+    def get_last_issue_number(self, business):
+        largest_number =  Issue.objects.filter(project__business=business).filter(number__isnull=False).aggregate(largest_number=Max("number"))['largest_number']
          
         return largest_number or 0
 
     @classmethod
-    def get_next_issue_number(self):
-        return Issue.get_last_issue_number() +1 
+    def get_next_issue_number(self, business):
+        return Issue.get_last_issue_number(business) +1 
 
     def __init__(self, *args, **kwargs):
         super(Issue, self).__init__(*args, **kwargs)
