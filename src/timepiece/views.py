@@ -4069,6 +4069,8 @@ def sprint_report(request, project_id, context=None):
             pass
         except Exception:
             return HttpResponse("Not authenticated")
+    else:
+        user = request.user
 
     context = context or {}
     project = timepiece.Project.objects.get(pk=project_id)
@@ -4083,7 +4085,7 @@ def sprint_report(request, project_id, context=None):
         return rendered
         
     business = project.business
-    bp = timepiece.BusinessPermissions.for_user(request.user, business)
+    bp = timepiece.BusinessPermissions.for_user(user, business)
     quote_form = timepiece_forms.SprintQuoteReportSettingsForm(project, bp, request.GET)
     invoice_form = timepiece_forms.SprintInvoiceReportSettingsForm(project, bp, request.GET)
 
@@ -4123,7 +4125,7 @@ def sprint_report(request, project_id, context=None):
     else:
         context['output_format'] = 'html'
     
-    context['user'] = request.user
+    context['user'] = user
 
     unassigned = timepiece.Issue.get_unassigned_timesheet_entries(project)
     context['unassigned'] = unassigned.cost_totals_for_project(project)
