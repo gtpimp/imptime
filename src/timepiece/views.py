@@ -4117,6 +4117,11 @@ def sprint_report(request, project_id, context=None):
     context['issues'] = issues
     context['form'] = form
     context['project'] = project
+
+    if 'output_format' in request.GET and request.GET['output_format'] == 'pdf':
+        context['output_format'] = 'pdf'
+    else:
+        context['output_format'] = 'html'
     
     context['user'] = request.user
 

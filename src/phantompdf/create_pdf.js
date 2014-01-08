@@ -14,7 +14,7 @@ url = system.args[1];
 output = system.args[2];
 
 //url = "http://localhost:8005/timepiece/time-sheet/sprint_report/1301/?estimated=on&only_these_statuses=all&billable=on&preferred_user_for_estimates=3&preamble_type=billable&report_type=Quote&output_format=pdf&authenticate_token=6c1540ded7824130acb27a79af7c327e&authenticate_username=gtp";
-//output = "/home/gtp/temp/blah.pdf";
+//output = "/home/gtp/temp/blah2.pdf";
 
 // Set the page size and orientation
 page.paperSize = {
