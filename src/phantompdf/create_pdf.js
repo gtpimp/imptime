@@ -19,7 +19,21 @@ output = system.args[2];
 // Set the page size and orientation
 page.paperSize = {
     format: 'A4',
-    orientation: 'portrait'};
+    margin: '0px',
+    orientation: 'portrait',
+    header: {
+	height: "1cm",
+	contents: phantom.callback(function(pageNum, numPages) {
+	    return '<div style="width:100%;height:60px;background-color: #4C4C4C; font-size:14px;color:#ffffff" class="header"><div style="margin-left:20px;">0ImplicitDesign</div></div>';
+	})
+    },
+    footer: {
+	height: "1cm",
+	contents: phantom.callback(function(pageNum, numPages) {
+	    return '<div style="margin-top:10px; width:100%;height:60px;background-color: #4C4C4C; font-size:10px;color:#ffffff" class="header"><div style="float:right;">info@implicitdesign.co.za</div></div>';
+	})
+    }
+};
 
 // Now we have everything settled, let's render the page
 page.open(url, function (status) {
