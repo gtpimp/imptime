@@ -7,23 +7,14 @@ var page, system, fs, info, csrftoken, sessionid, categories,notification, data,
 page = require('webpage').create();
 
 // Require the system module so I can read the command line arguments
-//system = require('system');
-
-// Require the FileSystem module, so I can read the cookie file
-fs = require('fs');
-
-// Read the cookie file and split it by spaces
-// Because the way I constructed this file, separate each field using spaces
-// info = fs.read('/tmp/cookies.txt').split(' ');
-// csrftoken = info[0];
-// sessionid = info[1];
-
+system = require('system');
 
 // Read the url and output file location from the command line argument
-//url = system.args[1];
-//output = system.args[2];
-url = "http://localhost:8004";
-output = "/home/gtp/temp/blah.pdf";
+url = system.args[1];
+output = system.args[2];
+
+//url = "http://localhost:8005/timepiece/time-sheet/sprint_report/1301/?estimated=on&only_these_statuses=all&billable=on&preferred_user_for_estimates=3&preamble_type=billable&report_type=Quote&output_format=pdf&authenticate_token=6c1540ded7824130acb27a79af7c327e&authenticate_username=gtp";
+//output = "/home/gtp/temp/blah.pdf";
 
 // Set the page size and orientation
 page.paperSize = {
@@ -41,7 +32,6 @@ page.open(url, function (status) {
         // Notice I am passing the data into the function, so I can use
         // them on the page
         page.evaluate(function(data) {
-            $('body').css('background', 'none');
         }, data);
 
         // Now create the output file and exit PhantomJS

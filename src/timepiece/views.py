@@ -1,6 +1,6 @@
 import random
 import calendar
-from django.contrib.auth import login as django_login
+from django.contrib.auth import login as django_login, load_backend
 import csv
 from exporter import CSVMixin, CSVSprintExport
 from interface_plugin import get_interface_plugin
@@ -4050,13 +4050,25 @@ def sprint_report_settings(request, project_id, context=None):
 def sprint_report(request, project_id, context=None):
 
     if 'authenticate_token' in request.GET and 'authenticate_username' in request.GET:
+
+        def override_login(request, user):
+            if not hasattr(user, 'backend'):
+                for backend in settings.AUTHENTICATION_BACKENDS:
+                    if user == load_backend(backend).get_user(user.pk):
+                        user.backend = backend
+                        break
+            if hasattr(user, 'backend'):
+                return django_login(request, user)
+
         authenticate_token = request.GET['authenticate_token']
         username = request.GET['authenticate_username']
         try:
-            user = timepiece.UserProfile.objects.get(authenticate_token=authenticate_token, user__username=username)
-            django_login(request, user)
+            user = timepiece.UserProfile.objects.get(authenticate_token=authenticate_token, user__username=username).user
+            override_login(request, user)
         except timepiece.UserProfile.DoesNotExist:
             pass
+        except Exception:
+            return HttpResponse("Not authenticated")
 
     context = context or {}
     project = timepiece.Project.objects.get(pk=project_id)
