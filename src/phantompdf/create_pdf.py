@@ -1,12 +1,13 @@
 from django.conf import settings
 import os
+import uuid
 import time
 import tempfile
 import subprocess
 
 def create_pdf(url):
-    (fd, filename) = tempfile.mkstemp()
     try:
+        filename = os.path.join(settings.PDF_TEMP_FOLDER, str(uuid.uuid4())+".pdf")
         res = subprocess.call([os.path.join("phantomjs", "bin", "phantomjs"), "create_pdf.js", url, filename],
                               cwd=os.path.dirname(os.path.realpath(__file__)),
                               stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
