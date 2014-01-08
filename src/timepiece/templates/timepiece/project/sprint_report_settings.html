@@ -3,12 +3,30 @@
 {% load bootstrap_toolkit %}
 {% load url from future %}
 
-<div>
+<div class="report_settings">
   <h1>{{project.business.name}} - {{project.name}}</h1>
-  <h2>Report Settings</h2>
 
   <form target="_blank" method="GET" action="{% url 'sprint_report' project.id %}">
-    {{ form|as_bootstrap:"horizontal" }}
+
+    <p>
+    <h3>Report type</h3>
+      Quote: <input type="radio" name="report_type" value="Quote" onclick="$('.report_type_quote').show(); $('.report_type_invoice').hide();"/>
+      <br/>
+      Invoice: <input type="radio" name="report_type" value="Invoice" onclick="$('.report_type_invoice').show(); $('.report_type_quote').hide();"/>
+      <br/>
+    </p>
+
+    <div class="report_type_quote" style="display:none">
+      <h3>Quote settings</h3>
+      {{ quote_form|as_bootstrap:"horizontal" }}
+    </div>
+
+    <div class="report_type_invoice" style="display:none">
+      <h3>Invoice settings</h3>
+      {{ invoice_form|as_bootstrap:"horizontal" }}
+    </div>
+
+    <hr/>
 
     <input type="submit" value="Generate"/>
 

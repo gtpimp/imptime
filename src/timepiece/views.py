@@ -4040,7 +4040,8 @@ def sprint_report_settings(request, project_id, context=None):
     if not bp.has_view_project_card:
         return HttpResponse("Sorry, you don't have permission to view the report")
 
-    context['form'] = timepiece_forms.SprintReportSettingsForm(project, bp)
+    context['quote_form'] = timepiece_forms.SprintQuoteReportSettingsForm(project, bp)
+    context['invoice_form'] = timepiece_forms.SprintInvoiceReportSettingsForm(project, bp)
     context['project'] = project
     return render_to_response('timepiece/project/sprint_report_settings.html',
                               context, context_instance=RequestContext(request))
@@ -4050,20 +4051,35 @@ def sprint_report(request, project_id, context=None):
     project = timepiece.Project.objects.get(pk=project_id)
     business = project.business
     bp = timepiece.BusinessPermissions.for_user(request.user, business)
-    form = timepiece_forms.SprintReportSettingsForm(project, bp, request.GET)
+    quote_form = timepiece_forms.SprintQuoteReportSettingsForm(project, bp, request.GET)
+    invoice_form = timepiece_forms.SprintInvoiceReportSettingsForm(project, bp, request.GET)
 
     issues = project.issues.order_by("order")
+
+    if request.GET['report_type'] == 'Quote' and quote_form.is_valid():
+        if not bp.has_view_ctc_billable_rates:
+            return HttpResponse("No permission to generate quotes")
+
+        form = quote_form
+        template = 'timepiece/project/sprint_quote_report.html'
+        context['estimate_stats'] = project.estimate_stats(issues, preferred_user_id=quote_form.cleaned_data['preferred_user_for_estimates'])
+
+    elif request.GET['report_type'] == 'Invoice' and invoice_form.is_valid():
+        form = invoice_form
+        template = 'timepiece/project/sprint_invoice_report.html'
 
     if form.is_valid():
         context['settings'] = form.cleaned_data
         
-        statuses = form.cleaned_data['only_these_statuses']
-        if 'all' not in statuses:
-            issues = issues.filter(status__in=statuses)
+        if 'only_these_statuses' in form.cleaned_data:
+            statuses = form.cleaned_data['only_these_statuses']
+            if 'all' not in statuses:
+                issues = issues.filter(status__in=statuses)
             
-        assigned_to = form.cleaned_data['only_assigned_to']
-        if 'all' not in assigned_to:
-            issues = issues.filter(assigned_to__username__in=assigned_to)
+        if 'only_assigned_to' in form.cleaned_data:
+            assigned_to = form.cleaned_data['only_assigned_to']
+            if 'all' not in assigned_to:
+                issues = issues.filter(assigned_to__username__in=assigned_to)
         
     context['issues'] = issues
     context['form'] = form
@@ -4073,5 +4089,6 @@ def sprint_report(request, project_id, context=None):
     context['unassigned'] = unassigned.cost_totals_for_project(project)
     context['unassigned']['comments'] = unassigned.get_aggregated_info()
     context['date_created'] =  datetime.datetime.now().strftime("%d %b %Y %H:%M")
-    return render_to_response('timepiece/project/sprint_report.html',
-                              context, context_instance=RequestContext(request))
+
+
+    return render_to_response(template, context, context_instance=RequestContext(request))

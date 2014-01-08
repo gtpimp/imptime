@@ -24,7 +24,7 @@ from selectable import forms as selectable_forms
 from timepiece.lookups import ProjectLookup, QuickLookup
 from timepiece.lookups import UserLookup, BusinessLookup
 
-from timepiece.models import Project, Business, Entry, Activity, UserProfile, Attribute, Location, Activity, Feature, Issue
+from timepiece.models import Project, Business, Entry, Activity, UserProfile, Attribute, Location, Activity, Feature, Issue, BusinessPermissions
 from timepiece.models import ProjectHours, Salary
 from timepiece.fields import UserModelChoiceField
 from timepiece import models as timepiece
@@ -1080,7 +1080,7 @@ class RateForm(forms.ModelForm):
         fields = ('billable_amount', 'amount')
 rate_formset = modelformset_factory(timepiece.UserProfile, form=RateForm, can_delete=False, extra=0)
 
-class SprintReportSettingsForm(forms.Form):
+class SprintInvoiceReportSettingsForm(forms.Form):
 
     start_end_time = forms.BooleanField(initial=True, required=False)
     ctc = forms.BooleanField(initial=False, required=False)
@@ -1089,7 +1089,7 @@ class SprintReportSettingsForm(forms.Form):
     view_budget = forms.BooleanField(initial=True, required=False)
     issue_assignee = forms.BooleanField(initial=False, required=False)
     issue_status = forms.BooleanField(initial=False, required=False)
-    #only_issues_with_time = forms.BooleanField(initial=False, required=False)
+    only_issues_with_time = forms.BooleanField(initial=False, required=False)
     only_these_statuses = forms.MultipleChoiceField( label="Only include these statuses", 
                                                      required=True, initial=('all',),
                                                      widget = CheckboxSelectMultiple)
@@ -1098,7 +1098,7 @@ class SprintReportSettingsForm(forms.Form):
                                                  widget = CheckboxSelectMultiple)
 
     def __init__(self, project, bp, *args, **kwargs):
-        super(SprintReportSettingsForm, self).__init__(*args, **kwargs)
+        super(SprintInvoiceReportSettingsForm, self).__init__(*args, **kwargs)
         self.bp = bp
         self.project = project
         if not self.bp.has_view_ctc_billable_rates:
@@ -1115,3 +1115,28 @@ class SprintReportSettingsForm(forms.Form):
         self.fields['only_these_statuses'].choices = [('all', 'Any status'),] + list( [ (x['status'],x['status']) for x in project.issues.values('status').distinct()] )
         self.fields['only_assigned_to'].choices = [('all', 'Any user'),] + list( [ (x['assigned_to__username'],x['assigned_to__username']) for x in project.issues.exclude(assigned_to__isnull=True).values('assigned_to__username').distinct()] )
         
+class SprintQuoteReportSettingsForm(forms.Form):
+
+    estimated = forms.BooleanField(initial=True, required=False)
+    only_these_statuses = forms.MultipleChoiceField( label="Only include these statuses", 
+                                                     required=True, initial=('New',),
+                                                     widget = CheckboxSelectMultiple)
+    ctc = forms.BooleanField(initial=False, required=False)
+    billable = forms.BooleanField(initial=True, required=False)
+    preferred_user_for_estimates = forms.ChoiceField( label="User's estimates to use where conflicts",
+                                                      required=False )
+
+    preamble_type = forms.ChoiceField( label="Preamble type",
+                                       required=False,
+                                       choices = ( ("billable", "Billable hours"),
+                                                   ("quote", "Quote range") ) )
+
+    def __init__(self, project, bp, *args, **kwargs):
+        super(SprintQuoteReportSettingsForm, self).__init__(*args, **kwargs)
+        self.bp = bp
+        self.project = project
+        if not self.bp.has_view_ctc_billable_rates or not self.bp.has_view_ctc_rates:
+            del self.fields['estimated']
+        
+        self.fields['only_these_statuses'].choices = [('all', 'Any status'),] + list( [ (x['status'],x['status']) for x in project.issues.values('status').distinct()] )
+        self.fields['preferred_user_for_estimates'].choices = [ (x.user.id, x.user) for x in BusinessPermissions.by_user(project.business).values() if x.has_estimate_own_points ]

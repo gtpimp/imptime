@@ -492,6 +492,7 @@ class Project(models.Model):
     def __init__(self, *args, **kwargs):
         super(Project, self).__init__(*args, **kwargs)
         self._stats = None
+        self._estimate_stats = None
         self._users_and_hours = None
 
     @property
@@ -649,6 +650,56 @@ class Project(models.Model):
             return False
         return True
 
+    def estimate_stats(self, issues, preferred_user_id):
+        if self._estimate_stats is not None:
+            return self._estimate_stats
+        stats = {'issues':[], 'users':{}}
+        self._estimate_stats = stats
+
+        estimate_cost = 0
+        for issue in issues:
+            points = issue.issue_points.get_query_set().all().filter(user__id=preferred_user_id).values('points', 'user')
+            if len(points) == 0 or points[0]['points'] is None:
+                points = issue.issue_points.get_query_set().all().values('points', 'user')
+            if len(points) == 0 or points[0]['points'] is None:
+                points = 0
+                user_id = None
+            else:
+                user_id = points[0]['user']
+                points = points[0]['points']
+
+            if user_id is not None:
+                try:
+                    rate = Rate.objects.get(project=self, user_id=user_id)
+                except Rate.DoesNotExist:
+                    rate = Rate.objects.create(project=self, user_id=user_id, amount=0)
+            else:
+                rate = Rate(velocity=0, work_ratio=0, amount=0)
+
+            points = points * rate.velocity
+            points = points * rate.work_ratio
+
+            min_cost = float(points)*float(rate.amount)
+
+            stats['issues'].append( { 'issue':issue,
+                                      'points':points,
+                                      'user_id':user_id,
+                                      'min_cost':min_cost} )
+
+            if user_id is not None and user_id not in stats['users']:
+                user = User.objects.get(pk=user_id)
+                stats['users'][user_id] = {'user':user,
+                                           'rate':rate.amount,
+                                           'velocity_adjusted_rate':float(rate.velocity)*float(rate.amount),
+                                           'work_ratio':rate.work_ratio}
+
+            estimate_cost += min_cost
+
+        stats['total_estimate_min'] = estimate_cost
+        stats['total_estimate_max'] = estimate_cost * (1+self.slack_percentage)
+        stats['slack_percentage'] = self.slack_percentage*100
+        return stats
+
     @property
     def stats(self):
         if self._stats is not None:
@@ -674,6 +725,7 @@ class Project(models.Model):
         for entry in entries:
             ctc += entry.atrate
             billed += entry.atbillablerate
+
         stats['percentage_spent'] = 100 * float(billed)/float(self.budget) if self.budget > 0 else 100.0
         if stats['percentage_spent']>100:
             stats['percentage_spent']=100
@@ -693,6 +745,10 @@ class Project(models.Model):
         stats['end_time'] = self._last_entry_end_time
         self._stats = stats
         return stats
+
+    @property
+    def slack_percentage(self):
+        return 0.25
 
     @property
     def _last_entry_end_time(self):
@@ -2246,9 +2302,9 @@ class IssuePoints(models.Model):
     class Meta:
         unique_together = (('user','issue'),)
 
-    user = models.ForeignKey(User,related_name="issue_points")
+    user = models.ForeignKey(User,related_name="user_points")
     points = models.FloatField(null=True,blank=True)
-    issue = models.ForeignKey(Issue, related_name="user_points")
+    issue = models.ForeignKey(Issue, related_name="issue_points")
 
     def __unicode__(self):
         return u'%s:%s - %s points' % (self.issue.subject, self.user.username, self.points)

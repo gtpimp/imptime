@@ -10122,3 +10122,12 @@ table.search_results tr:hover {
   padding:5px;
   width:90%;
 }
+
+.report_settings .radio input[type="radio"], .checkbox input[type="checkbox"] {
+    text-align: left;
+    float: none;
+}
+
+.project_card_dialog_container .report_settings {
+    text-align: left;
+}
