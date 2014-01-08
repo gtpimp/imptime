@@ -12,8 +12,21 @@
 
 <div class="sprint_report">
 
+  <form method="GET" action="{% url 'sprint_report' project.id %}">
+    <div style="display:none">
+      {{ form }}
+      <input type="hidden" name="report_type" value="Quote"/>
+      <input type="hidden" name="output_format" value="pdf"/>
+      <input type="hidden" name="authenticate_token" value="{{user.profile.authenticate_token}}"/>
+      <input type="hidden" name="authenticate_username" value="{{user.username}}"/>
+    </div>
+    <input type="submit" value="Print"/>
+  </form>
+  {% comment %}
+  <a href="{% url sprint_report %}"
   <input style="position: fixed; right:100px; top: 100px;" class="btn" type="button" value="Print" onClick="$(this).hide(); window.print(); ">
   <div class="clear:both"/>
+  {% endcomment %}
 
   <div style="text-align:center" >
     Proposal for

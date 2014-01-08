@@ -24,6 +24,16 @@ if [ $? != 0 ]; then
 fi
 cd -
 
+cd ${SRC}/phantompdf
+if [ ! -d "phantomjs" ]; then
+    echo "installing phantomjs"
+    mkdir "phantomjs"
+    git clone git://github.com/ariya/phantomjs.git phantomjs
+    cd phantomjs
+    git checkout 1.9
+    ./build.sh
+fi
+
 echo "deleting python compiled files"
 cd ${SRC}/implicitdesign
 sudo rm -f `find . -iname "*.pyc"`

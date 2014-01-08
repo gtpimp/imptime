@@ -1,5 +1,6 @@
 
 import datetime
+import uuid
 from interface_plugin import get_interface_plugin
 import re
 import logging
@@ -1977,10 +1978,15 @@ class UserProfile(models.Model):
     billable_amount = models.DecimalField(max_digits=8, decimal_places=2, default=0)
     project_names_to_ignore = models.TextField(blank=True)
     jira_user_name = models.CharField(max_length=100, blank=True, null=True, help_text="Username used when synching with jira")
+    authenticate_token = models.CharField(max_length=100, blank=True, null=True, help_text="Authentication token remote connections")
 
     def __unicode__(self):
         return unicode(self.user)
 
+    def save(self, *args, **kwargs):
+        if self.authenticate_token is None:
+            self.authenticate_token = str(uuid.uuid4()).replace("-","")
+        super(UserProfile, self).save(*args, **kwargs)
 
 class ProjectHours(models.Model):
     week_start = models.DateField(verbose_name='start of week')

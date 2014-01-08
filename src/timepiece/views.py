@@ -1,5 +1,6 @@
 import random
 import calendar
+from django.contrib.auth import login as django_login
 import csv
 from exporter import CSVMixin, CSVSprintExport
 from interface_plugin import get_interface_plugin
@@ -4047,8 +4048,28 @@ def sprint_report_settings(request, project_id, context=None):
                               context, context_instance=RequestContext(request))
 
 def sprint_report(request, project_id, context=None):
+
+    if 'authenticate_token' in request.GET and 'authenticate_username' in request.GET:
+        authenticate_token = request.GET['authenticate_token']
+        username = request.GET['authenticate_username']
+        try:
+            user = timepiece.UserProfile.objects.get(authenticate_token=authenticate_token, user__username=username)
+            django_login(request, user)
+        except timepiece.UserProfile.DoesNotExist:
+            pass
+
     context = context or {}
     project = timepiece.Project.objects.get(pk=project_id)
+
+    if 'output_format' in request.GET and request.GET['output_format'] == "pdf" and 'HTTP_REFERER' in request.META:
+        url = request.META['HTTP_REFERER']
+        from phantompdf.create_pdf import create_pdf
+        as_pdf = create_pdf(url)
+        filename = request.GET['report_type'] + "_implicitdesign_" + project.long_name().replace(" ","") + "_" + datetime.datetime.today().strftime("%d%m%Y") + ".pdf"
+        rendered = HttpResponse(as_pdf, mimetype='application/pdf')
+        rendered['Content-Disposition'] = 'attachment; filename="%s"' % filename
+        return rendered
+        
     business = project.business
     bp = timepiece.BusinessPermissions.for_user(request.user, business)
     quote_form = timepiece_forms.SprintQuoteReportSettingsForm(project, bp, request.GET)
@@ -4084,11 +4105,12 @@ def sprint_report(request, project_id, context=None):
     context['issues'] = issues
     context['form'] = form
     context['project'] = project
+    
+    context['user'] = request.user
 
     unassigned = timepiece.Issue.get_unassigned_timesheet_entries(project)
     context['unassigned'] = unassigned.cost_totals_for_project(project)
     context['unassigned']['comments'] = unassigned.get_aggregated_info()
     context['date_created'] =  datetime.datetime.now().strftime("%d %b %Y %H:%M")
-
 
     return render_to_response(template, context, context_instance=RequestContext(request))

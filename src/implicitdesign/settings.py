@@ -258,6 +258,8 @@ EMACSIMPORTER_TEMP_DIR = "/tmp"
 EMACS_USERS_TO_PROCESS = ["test", ]
 EMACS_ADMIN_USER_EMAILS = ["gtp@implicitdesign.co.za",]
 
+PDF_TEMP_FOLDER = "/tmp"
+
 # # These urls may need to be specified on a production server when the site it not hosted at the root domain.
 #LOGIN_URL=
 #LOGOUT_URL=
