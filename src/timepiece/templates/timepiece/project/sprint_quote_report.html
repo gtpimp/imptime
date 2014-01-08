@@ -22,6 +22,19 @@
      <br/>
    </div>
 
+{% if not settings.is_final %}
+<h2>This is a provisional proposal</h2>
+It is intended for discussion and refinement before generating the
+final proposal.
+
+{% ifequal settings.preamble_type "quote" %}
+<p>
+A final quote will be delivered on commencement of the project.
+</p>
+{% endifequal %}
+
+{% endif %}
+
 <h3>Project description</h3>
 {{project.description}}
 <br/><br/><br/><br/>

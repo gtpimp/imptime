@@ -1130,6 +1130,8 @@ class SprintQuoteReportSettingsForm(forms.Form):
                                        required=False,
                                        choices = ( ("billable", "Billable hours"),
                                                    ("quote", "Quote range") ) )
+    is_final = forms.BooleanField(label="Tick for final, untick for provisional", 
+                                  initial=False, required=False)
 
     def __init__(self, project, bp, *args, **kwargs):
         super(SprintQuoteReportSettingsForm, self).__init__(*args, **kwargs)
