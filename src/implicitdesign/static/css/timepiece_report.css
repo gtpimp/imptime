@@ -1,7 +1,6 @@
 .sprint_report table td {
     margin-left: 5px;
-    text-align: left;
-    padding-right: 30px;
+    text-align: center;
 }
 
 .sprint_report table th {
@@ -67,4 +66,9 @@ table.issues {
 .issue_comments .creation_details {
     font-size:9px;
     font-style:italic;
+}
+
+.page_break {
+    page-break-before:always;
+    clear:all;
 }

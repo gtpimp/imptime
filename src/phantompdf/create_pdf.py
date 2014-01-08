@@ -8,7 +8,6 @@ import subprocess
 
 def create_pdf(url):
     try:
-        import pdb; pdb.set_trace()
         filename = os.path.join(settings.PDF_TEMP_FOLDER, str(uuid.uuid4())+".pdf")
         with transaction.commit_manually():
             transaction.commit()
