@@ -4076,7 +4076,7 @@ def sprint_report(request, project_id, context=None):
     project = timepiece.Project.objects.get(pk=project_id)
 
     if 'output_format' in request.GET and request.GET['output_format'] == "pdf" and 'HTTP_REFERER' in request.META:
-        url = "%s&authenticate_token=%s&authenticate_username=%s" % (request.META['HTTP_REFERER'], user.profile.authenticate_token, user.username)
+        url = "%s&output_format=pdf&authenticate_token=%s&authenticate_username=%s" % (request.META['HTTP_REFERER'], user.profile.authenticate_token, user.username)
         from phantompdf.create_pdf import create_pdf
         as_pdf = create_pdf(url)
         filename = request.GET['report_type'] + "_implicitdesign_" + project.long_name().replace(" ","") + "_" + datetime.datetime.today().strftime("%d%m%Y") + ".pdf"
