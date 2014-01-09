@@ -12,6 +12,7 @@ system = require('system');
 // Read the url and output file location from the command line argument
 url = system.args[1];
 output = system.args[2];
+static_url = system.args[3];
 
 //url = "http://localhost:8005/timepiece/time-sheet/sprint_report/1301/?estimated=on&only_these_statuses=all&billable=on&preferred_user_for_estimates=3&preamble_type=billable&report_type=Quote&output_format=pdf&authenticate_token=6c1540ded7824130acb27a79af7c327e&authenticate_username=gtp";
 //output = "/home/gtp/temp/blah2.pdf";
@@ -29,7 +30,7 @@ page.paperSize = {
 		return "";
 	    }
 
-	    return '<div style="width:100%;height:60px;background-color: #4C4C4C; font-size:14px;color:#ffffff" class="header"><div style="margin-left:20px;">imptime <img width="75px" src="{{STATIC_URL}}images/implicitDesignLogo.jpg"/></div></div>';
+	    return '<div style="width:100%;height:60px;background-color: #4C4C4C; font-size:14px;color:#ffffff" class="header"><div style="margin-left:20px;">imptime <img width="75px" src="'+static_url+'images/implicitDesignLogo.jpg"/></div></div>';
 	})
     },
     footer: {

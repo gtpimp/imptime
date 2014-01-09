@@ -387,6 +387,7 @@ class Project(models.Model):
         related_name='projects_with_status',
     )
     description = models.TextField(blank=True, null=True, db_index=True)
+    short_description = models.CharField(max_length=50, blank=True, null=True, db_index=True)
     order = models.IntegerField(null=True,blank=True)
     objects = QuerySetManager(ProjectQuerySet)
     interface_plugin_number = models.CharField(max_length=255, null=True, blank=True) #eg jira

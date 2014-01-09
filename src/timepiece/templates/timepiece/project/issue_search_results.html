@@ -17,7 +17,7 @@
                 {{sprint.business.name }} - {{sprint.name }}
           </td>
           <td>
-                {{sprint.description|slice:":100"}}
+                {{sprint.short_description|slice:":100"}}
           </td>
         </tr>
           {% empty %}
@@ -120,7 +120,7 @@
             {{sprint.business.name }} - {{sprint.name }}
           </td>
           <td>
-            {{sprint.description|slice:":100"}}
+            {{sprint.short_description|slice:":100"}}
           </td>
         </tr>
       {% empty %}

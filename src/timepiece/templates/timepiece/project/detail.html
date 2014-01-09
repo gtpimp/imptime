@@ -224,7 +224,7 @@ $(document).ready(function(){
 		     {% for project,temp in business_totals.users_and_hours %}
 		     {% with project_totals=temp.totals project_users=temp.users %}
 			 <tr>
-                            <td><a href="{% url 'view_project' project_id=project.id %}" title="{{ project.description }}">{{ project.name }}</a> 
+                            <td><a href="{% url 'view_project' project_id=project.id %}" title="{{ project.short_description }}">{{ project.name }}</a> 
 			        <a id="a_b{{forloop.parentloop.counter}}p{{ forloop.counter }}" href="javascript:void(0);" 
 				   onclick="expand_collapse_sprint('b{{ forloop.parentloop.counter }}p{{ forloop.counter }}')" class="expanded">[-]</a></td>
 			    <td>{{ project.status.label }}</td>			   

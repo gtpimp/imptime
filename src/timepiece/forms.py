@@ -730,7 +730,8 @@ class ProjectForm(forms.ModelForm):
         model = timepiece.Project
         fields = (
             'name',
-            'description'
+            'short_description',
+            'description',
         )
 
     # business = selectable_forms.AutoCompleteSelectField(

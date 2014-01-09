@@ -11,7 +11,7 @@ def create_pdf(url):
         filename = os.path.join(settings.PDF_TEMP_FOLDER, str(uuid.uuid4())+".pdf")
         with transaction.commit_manually():
             transaction.commit()
-        res = subprocess.call([os.path.join("phantomjs", "bin", "phantomjs"), "create_pdf.js", url, filename],
+        res = subprocess.call([os.path.join("phantomjs", "bin", "phantomjs"), "create_pdf.js", url, filename, settings.STATIC_URL],
                               cwd=os.path.dirname(os.path.realpath(__file__)),
                               stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
         if res != 0:
