@@ -123,13 +123,9 @@ rate gives the base costing.
 The upper budget range is then calculated by adding a variance of {{estimate_stats.slack_percentage}}%
 </p>
 
-{% ifequal settings.preamble_type "billable" %}
-<p>
-This list is flexible to on-going change, and the final cost will be
-invoiced as the actual billable time taken, which may be less than the
-minimum or more than the maximum.
-</p>
 
+
+{% ifequal settings.preamble_type "billable" %}
 <p>
       <b>Estimated minimum cost</b> R{{ estimate_stats.total_estimate_min|floatformat:"0"|intcomma }}
 <br/>
@@ -138,14 +134,9 @@ minimum or more than the maximum.
 
 {% endifequal %}
 
-{% ifequal settings.preamble_type "quote" %}
-<p>
-This list represents the work agreed to be done in the costing range
-given. If changes to the list of issues is requested, the budget may
-need to be revised, or alternatively existing issues can be removed or
-made smaller.
-</p>
 
+
+{% ifequal settings.preamble_type "quote" %}
 <p>
       <b>Quoted minimum cost</b> R{{ estimate_stats.total_estimate_min|floatformat:"0"|intcomma }}
 <br/>
@@ -159,6 +150,24 @@ made smaller.
 <div class="page_break""></div>
 
   <h3>Issues</h3>
+
+{% ifequal settings.preamble_type "billable" %}
+<p>
+This list is flexible to on-going change, and the final cost will be
+invoiced as the actual billable time taken, which may be less than the
+minimum or more than the maximum.
+</p>
+{% endifequal %}
+
+{% ifequal settings.preamble_type "quote" %}
+<p>
+This list represents the work agreed to be done in the costing range
+given above. If changes to the list of issues is requested, the budget may
+need to be revised, or alternatively existing issues can be removed or
+made smaller.
+</p>
+{% endifequal %}
+
   <table class="issues">
     <thead>
       <th>#</th>
