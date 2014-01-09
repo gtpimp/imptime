@@ -679,9 +679,9 @@ class Project(models.Model):
                 rate = Rate(velocity=0, work_ratio=0, amount=0)
 
             points = points * rate.velocity
-            points = points * rate.work_ratio
+            points = points / (rate.work_ratio or 1)
 
-            min_cost = float(points)*float(rate.amount)
+            min_cost = float(points)*float(rate.billable_amount)
 
             stats['issues'].append( { 'issue':issue,
                                       'points':points,
@@ -691,8 +691,8 @@ class Project(models.Model):
             if user_id is not None and user_id not in stats['users']:
                 user = User.objects.get(pk=user_id)
                 stats['users'][user_id] = {'user':user,
-                                           'rate':rate.amount,
-                                           'velocity_adjusted_rate':float(rate.velocity)*float(rate.amount),
+                                           'rate':rate.billable_amount,
+                                           'velocity_adjusted_rate':float(rate.velocity)*float(rate.billable_amount),
                                            'work_ratio':rate.work_ratio}
 
             estimate_cost += min_cost
