@@ -430,7 +430,7 @@ class Project(models.Model):
     def get_points_total(self):
         ret = {}
         for user in self.users.all(): 
-            total = user.issue_points.filter(issue__project=self).aggregate(Sum("points"))
+            total = user.user_points.filter(issue__project=self).aggregate(Sum("points"))
             ret[user] = total['points__sum'] if total['points__sum'] else 0
         return ret
 
