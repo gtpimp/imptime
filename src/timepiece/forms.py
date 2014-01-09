@@ -756,8 +756,8 @@ class NewProjectForm(forms.ModelForm):
         model = timepiece.Project
         fields = (
             'name',
-            'description',
-            'budget',
+            'short_description',
+            'description'
         )
 
     def __init__(self, *args, **kwargs):
