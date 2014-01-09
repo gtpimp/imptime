@@ -3729,7 +3729,7 @@ def issue_search(request, active_project_id=None, active_business_id=None, templ
     issues = issues.order_by("project__business__name", "project__name", "subject")
     issues = [ x for x in issues if x.project.can_view_by_user(request.user) ]
 
-    sprints = timepiece.Project.objects.filter(Q(name__icontains=search_term)|Q(id__icontains=search_term)|Q(description__icontains=search_term|Q(short_description__icontains=search_term)))
+    sprints = timepiece.Project.objects.filter(Q(name__icontains=search_term)|Q(id__icontains=search_term)|Q(description__icontains=search_term)|Q(short_description__icontains=search_term))
     sprints = sprints.order_by("business__name", "name")
     sprints = sprints.filter_by_logged_in_user(request.user)
 
