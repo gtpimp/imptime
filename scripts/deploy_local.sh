@@ -31,6 +31,11 @@ if [ ! -d "phantomjs" ]; then
     git clone git://github.com/ariya/phantomjs.git phantomjs
     cd phantomjs
     git checkout 1.9
+    git config --add remote.origin.fetch "+refs/pull/*/head:refs/remotes/origin/pr/*"
+    git fetch
+    git checkout pr/359
+    git checkout master
+    git merge pr/359
     ./build.sh
 fi
 

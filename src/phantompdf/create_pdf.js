@@ -29,13 +29,13 @@ page.paperSize = {
 		return "";
 	    }
 
-	    return '<div style="width:100%;height:60px;background-color: #4C4C4C; font-size:14px;color:#ffffff" class="header"><div style="margin-left:20px;">ImplicitDesign</div></div>';
+	    return '<div style="width:100%;height:60px;background-color: #4C4C4C; font-size:14px;color:#ffffff" class="header"><div style="margin-left:20px;">imptime <img width="75px" src="{{STATIC_URL}}images/implicitDesignLogo.jpg"/></div></div>';
 	})
     },
     footer: {
 	height: "1cm",
 	contents: phantom.callback(function(pageNum, numPages) {
-	    return '<div style="margin-top:10px; width:100%;height:60px;background-color: #4C4C4C; font-size:10px;color:#ffffff" class="header"><div style="float:right;">info@implicitdesign.co.za  '+pageNum+'/'+numPages+'&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div></div>';
+	    return '<div style="margin-top:10px; width:100%;height:60px;background-color: #4C4C4C; font-size:10px;color:#ffffff" class="header"><div style="float:left;">ImplicitDesign</div><div style="float:right;">info@implicitdesign.co.za  '+pageNum+'/'+numPages+'&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div></div>';
 	})
     }
 };
