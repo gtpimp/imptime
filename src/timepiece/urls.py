@@ -571,6 +571,8 @@ urlpatterns = patterns('',
     #     name='delete_project',
     # ),
 
-    url(r'^jira/', include('jira_interface.urls', namespace="jira"), {}, "jira")
+    url(r'^jira/', include('jira_interface.urls', namespace="jira"), {}, "jira"),
+
+    url(r'^planner/', include('planner.urls', namespace="planner"), {}, "planner"),
 
 )

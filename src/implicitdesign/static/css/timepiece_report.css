@@ -73,3 +73,7 @@ table.issues {
     page-break-before:always;
     clear:all;
 }
+
+p {
+    max-width: 50%;
+}

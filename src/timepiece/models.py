@@ -655,7 +655,7 @@ class Project(models.Model):
     def estimate_stats(self, issues, preferred_user_id):
         if self._estimate_stats is not None:
             return self._estimate_stats
-        stats = {'issues':[], 'users':{}}
+        stats = {'issues':[], 'users':{}, 'features':{}}
         self._estimate_stats = stats
 
         estimate_cost = 0
@@ -694,6 +694,13 @@ class Project(models.Model):
                                            'rate':rate.billable_amount,
                                            'velocity_adjusted_rate':float(rate.velocity)*float(rate.billable_amount),
                                            'work_ratio':rate.work_ratio}
+
+            feature = issue.feature
+            if feature is None:
+                feature = "na"
+            if feature not in stats['features']:
+                stats['features'][feature] = 0
+            stats['features'][feature] += min_cost
 
             estimate_cost += min_cost
 

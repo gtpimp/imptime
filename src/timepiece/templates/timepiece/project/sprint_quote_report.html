@@ -68,7 +68,7 @@ streamlined.
 </p>
 
 <p>
-We prefer to bill by the hour, for a number of reasons:
+We bill by the hour, for a number of reasons:
   <ul>
     <li> it allows the final cost of the project to match exactly the effort
   involved, ie no quote padding is required
@@ -109,15 +109,14 @@ expected maximum cost is shown which should be budgeted for.
 <h3>Costing</h3>  
 
 <p>
-The following costing is based on the list of issues given in this
-document. 
+The following costing is based on the list of issues given later in
+this document. Please read that section to understand how these costs
+are derived.
 </p>
 
 <p>
 The upper budget range is then calculated by adding a variance of {{estimate_stats.slack_percentage}}%
 </p>
-
-
 
 {% ifequal settings.preamble_type "billable" %}
 <p>
@@ -137,8 +136,30 @@ The upper budget range is then calculated by adding a variance of {{estimate_sta
       <b>Quoted maximum cost</b> R{{ estimate_stats.total_estimate_max|floatformat:"0"|intcomma }}
 </p>
 
-
 {% endifequal %}
+
+{% if settings.include_features %}
+
+  <div class="graph" style="float:left">
+    <h3 style="text-align:center">Breakdown by feature</h3>
+    <div class="graph_estimate_by_feature" style="height:250px;width:250px;"></div>
+  </div>
+
+  <script>
+  $.plot(".graph_estimate_by_feature",
+		   [ {%spaceless%} 
+		       {% for feature_name, feature_min_cost in estimate_stats.features.items %} 
+			 { label:"{{feature_name}}", 
+			   data: {{feature_min_cost}}
+			 },
+		       {% endfor %} 
+		     {%endspaceless%}
+		   ],
+		   { series: { pie: { show: true } },
+		     legend: { show: false} } );
+  </script>
+
+{% endif %}
 
 
 <div class="page_break""></div>
@@ -147,10 +168,34 @@ The upper budget range is then calculated by adding a variance of {{estimate_sta
 
 {% ifequal settings.preamble_type "billable" %}
 <p>
-This list is flexible to on-going change, and the final cost will be
-invoiced as the actual billable time taken, which may be less than the
-minimum or more than the maximum.
+The following list of issues represents the work agreed to be done in
+the costing range given above. This list is flexible to on-going
+change as determined through feedback with the client.
 </p>
+
+<p>
+Each issue is assigned an expected duration to complete, typically in
+the range of a few hours. By estimating at such a granular
+resolution we find that complexities inherent in the project are
+identified in the specification phase which greatly reduces risk.
+</p>
+
+<p>
+Our estimates are usually slightly high. Usually this is balanced out
+by smaller tweaks or adjustments that are identified during
+testing. In general these estimates are a realistic reflection of the
+cost to deliver the requirements, rather than optimistic or
+pessimistic.
+</p>
+
+<p>
+The final cost will be invoiced as the actual billable time taken,
+which may be less than the minimum estimate or more than the maximum
+estimate. To manage the budget expectations and overruns, the client
+can request to be notified at certain budget milestones, for example
+half-way through the sprint budget.
+</p>
+
 {% endifequal %}
 
 {% ifequal settings.preamble_type "quote" %}
@@ -160,7 +205,6 @@ given above. If changes to the list of issues is requested, the budget may
 need to be revised, or alternatively existing issues can be removed or
 made smaller.
 </p>
-{% endifequal %}
 
 <p>
 Each issue is assigned an expected duration to complete, typically in
@@ -169,12 +213,19 @@ resolution we find that complexities inherent in the project are
 identified in the specification phase which greatly reduces risk.
 </p>
 
+{% endifequal %}
+
+
+
   <table class="issues">
     <thead>
       <th>#</th>
       <th style="min-width:50%">Subject</th>
       {% if settings.issue_assignee %}
       <th>Assigned</th>
+      {% endif %}
+      {% if settings.include_features %}
+      <th>Feature</th>
       {% endif %}
       {% if settings.issue_status %}
       <th>Status</th>
@@ -189,6 +240,9 @@ identified in the specification phase which greatly reduces risk.
 	<td> {{estimate.issue.subject}} </td>
 	{% if settings.issue_assignee %}
 	  <td> {{estimate.issue.assigned_to.get_full_name|default_if_none:""}} </td>
+	{% endif %}
+	{% if settings.include_features %}
+	<td>{{estimate.issue.feature|default_if_none:""}}</td>
 	{% endif %}
 	{% if settings.issue_status %}
 	  <td> {{ estimate.issue.status }}</td>

@@ -1118,19 +1118,20 @@ class SprintInvoiceReportSettingsForm(forms.Form):
         
 class SprintQuoteReportSettingsForm(forms.Form):
 
-    estimated = forms.BooleanField(initial=True, required=False)
-    only_these_statuses = forms.MultipleChoiceField( label="Only include these statuses", 
-                                                     required=True, initial=('New',),
-                                                     widget = CheckboxSelectMultiple)
-    ctc = forms.BooleanField(initial=False, required=False)
-    billable = forms.BooleanField(initial=True, required=False)
-    preferred_user_for_estimates = forms.ChoiceField( label="User's estimates to use where conflicts",
-                                                      required=False )
-
     preamble_type = forms.ChoiceField( label="Preamble type",
                                        required=False,
                                        choices = ( ("billable", "Billable hours"),
                                                    ("quote", "Quote range") ) )
+
+    only_these_statuses = forms.MultipleChoiceField( label="Only include these statuses", 
+                                                     required=True, initial=('New',),
+                                                     widget = CheckboxSelectMultiple)
+
+    include_features = forms.BooleanField(label="Tick to include features", initial=False, required=False)
+
+    preferred_user_for_estimates = forms.ChoiceField( label="User's estimates to use where conflicts",
+                                                      required=False )
+
     is_final = forms.BooleanField(label="Tick for final, untick for provisional", 
                                   initial=False, required=False)
 
