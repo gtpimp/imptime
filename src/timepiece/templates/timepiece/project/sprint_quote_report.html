@@ -162,7 +162,11 @@ The upper budget range is then calculated by adding a variance of {{estimate_sta
 			label: {
 			  show: true,
 			  formatter: function(label, series){
-			      return '<div style="font-size:8pt;text-align:center;padding:2px;color:white;">'+label+'<br/>'+Math.round(series.percent)+'%</div>';
+                              var l = label;
+                              if ( l.length > 15 ) {
+				  l = l.substring(0,15)+"...";
+			      }
+			      return '<div style="font-size:8pt;text-align:center;padding:2px;color:white;">'+l+'<br/>'+Math.round(series.percent)+'%</div>';
 			  },
 			  background: { opacity: 0.8 }
 		       }
