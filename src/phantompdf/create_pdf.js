@@ -30,7 +30,7 @@ page.paperSize = {
 		return "";
 	    }
 
-	    return '<div style="width:100%;height:60px;background-color: #4C4C4C; font-size:14px;color:#ffffff" class="header"><div style="margin-left:20px;">imptime <img width="75px" src="'+static_url+'images/implicitDesignLogo.jpg"/></div></div>';
+	    return '<div style="width:100%;height:60px;background-color: #4C4C4C; font-size:14px;color:#ffffff" class="header"><div style="margin-left:20px;">ImplicitDesign<img width="75px" src="'+static_url+'images/implicitDesignLogo.jpg"/></div></div>';
 	})
     },
     footer: {
