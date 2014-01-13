@@ -2126,6 +2126,7 @@ class Issue(models.Model):
            ( 'duplicate', 'duplicate'),
            ( 'in testing', 'in testing'),
            ( 'new', 'new'),
+           ( 'onhold', 'on hold'),
            ( 'reopened', 'reopened'),
            ( 'tested', 'tested'),
            ( 'task done', 'task done'),
