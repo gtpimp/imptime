@@ -19,6 +19,7 @@ update_git alec
 update_git david
 update_git gtp
 update_git keith
+update_git etienne
 
 cd /home/timesheet
 . ./venv/bin/activate
