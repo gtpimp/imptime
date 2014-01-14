@@ -1128,6 +1128,7 @@ class SprintQuoteReportSettingsForm(forms.Form):
                                                      widget = CheckboxSelectMultiple)
 
     include_features = forms.BooleanField(label="Tick to include features", initial=False, required=False)
+    include_rates = forms.BooleanField(label="Tick to include rates", initial=False, required=False)
 
     preferred_user_for_estimates = forms.ChoiceField( label="User's estimates to use where conflicts",
                                                       required=False )

@@ -74,3 +74,6 @@ table.issues {
     clear:all;
 }
 
+.mini_heading {
+    float: left;
+}

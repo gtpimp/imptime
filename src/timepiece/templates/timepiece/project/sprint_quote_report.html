@@ -147,6 +147,27 @@ half-way through the sprint budget.
 
 {% endifequal %}
 
+{% if settings.include_rates %}
+<h3 class="mini_heading" style="text-align:center">Rates</h3>
+<div style="clear:both"/>
+<table>
+
+  <thead>
+    <th>Developer</th>
+    <th>Rate</th>
+  </thead>
+  <tbody>
+    {% for user_info in estimate_stats.users.values %}
+    <tr>
+      <td>{{user_info.user.first_name}}</td>
+      <td>R{{user_info.rate}}</td>
+    {% endfor %}
+  </tbody>
+  
+</table>
+
+{% endif %}
+
 {% if settings.include_features %}
 
   <div class="graph" style="float:left">
