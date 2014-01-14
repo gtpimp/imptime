@@ -65,17 +65,19 @@
         {% endfor %}
       </div>
       
-      <div class="comment_section">
-	<a class="new_comment_button btn" href="#" class="btn" onclick="$(this).parent().find('.new_comment').show(); $(this).hide(); return false;">add comment</a>
-        <div class="new_comment" style="display:none">
-          <textarea name="comment" data-url="{% url 'add_issue_comment' issue.pk %}"></textarea>
-	  <input type="button" class="btn" onclick="imp.on_add_issue_comment($(this), '{% url 'add_issue_comment' issue.id %}');" value="save"/>
-	  <input type="button" class="btn" onclick="$(this).parents('.comment_section').find('.new_comment_button').show(); $(this).parents('.new_comment').hide(); return false;" value="cancel"/>
-        </div>
+    {% end_permission %}
+
+    {% has_permission has_add_issue_comment issue.project.business %}
+    <div class="comment_section">
+      <a class="new_comment_button btn" href="#" class="btn" onclick="$(this).parent().find('.new_comment').show(); $(this).hide(); return false;">add comment</a>
+      <div class="new_comment" style="display:none">
+	<textarea name="comment" data-url="{% url 'add_issue_comment' issue.pk %}"></textarea>
+	<input type="button" class="btn" onclick="imp.on_add_issue_comment($(this), '{% url 'add_issue_comment' issue.id %}');" value="save"/>
+	<input type="button" class="btn" onclick="$(this).parents('.comment_section').find('.new_comment_button').show(); $(this).parents('.new_comment').hide(); return false;" value="cancel"/>
       </div>
+    </div>
 
       
-    {% end_permission %}
    {% endif %}
   <hr/>
 
