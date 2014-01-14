@@ -9803,6 +9803,11 @@ ul.project_list {
     padding-bottom:10px;
 }
 
+.project_table_cell.project_expand:hover {
+    border: 1px solid #ababab;
+    border-radius: 10px;
+}
+
 .project_table_cell .project_title {
 }
 
