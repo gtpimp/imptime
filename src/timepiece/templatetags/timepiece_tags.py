@@ -434,6 +434,8 @@ def keyvalue(dict, key):
 
 @register.filter(is_safe=True)
 def points_and_stuff(per_user):
+    if not per_user:
+        return mark_safe('&nbsp;')
     points = per_user['issue_points']
     points = points.points if points else '&nbsp;'
     points = '<span class="estimated_hours">%s</span>' % points
