@@ -653,6 +653,7 @@ class Project(models.Model):
         return True
 
     def estimate_stats(self, issues, preferred_user_id):
+
         if self._estimate_stats is not None:
             return self._estimate_stats
         stats = {'issues':[], 'users':{}, 'features':{}}
@@ -678,7 +679,7 @@ class Project(models.Model):
             else:
                 rate = Rate(velocity=0, work_ratio=0, amount=0)
 
-            points = points * rate.velocity
+            points = points * (rate.velocity or 1)
             points = points / (rate.work_ratio or 1)
 
             min_cost = float(points)*float(rate.billable_amount)
