@@ -3293,7 +3293,10 @@ def project_list(request, project_id=None, highlight_issue_id=None, business_id=
     business = None
 
     if project_id is not None:
-        expanded_project = timepiece.Project.objects.filter(pk=project_id).filter_by_logged_in_user(request.user)[0]
+        try:
+            expanded_project = timepiece.Project.objects.filter(pk=project_id).filter_by_logged_in_user(request.user)[0]
+        except IndexError:
+            raise PermissionDenied
         business = expanded_project.business
     else:
         business = timepiece.Business.objects.get(pk=business_id)

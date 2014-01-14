@@ -349,7 +349,7 @@ class ProjectQuerySet(QuerySet):
         user (typically the logged in user) is assigned to """
         if user.is_superuser:
             return self
-        return self.filter(users=user)
+        return self.filter(business__business_permissions__user=user, business__business_permissions__can_view_project_card=True)
 
 class Project(models.Model):
 
