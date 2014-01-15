@@ -393,7 +393,7 @@ class Project(models.Model):
     interface_plugin_number = models.CharField(max_length=255, null=True, blank=True) #eg jira
 
     @classmethod
-    def get_or_create_project(self, business, project_name, description=None):
+    def get_or_create_project(self, business, project_name, description=None, short_description=None):
         description = "%s %s" % (project_name, (description or ""))
         point_person = User.objects.get_or_create(username="auto")[0]
         try:
@@ -411,7 +411,8 @@ class Project(models.Model):
             project = Project.objects.create(name=project_name, business=business, 
                                              point_person=point_person,
                                              status=project_status, type=project_type,
-                                             description=description)
+                                             description=description,
+                                             short_description=short_description)
         return project
 
     def get_points(self):
