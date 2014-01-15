@@ -204,6 +204,18 @@ class JiraSync(object):
         jira_users = self.gh.search_assignable_users_for_issues("", issueKey = timepiece_issue.interface_plugin_number)
         return [ (x.name, x.name) for x in jira_users ]
 
+    def issue_moved_projects(self, timepiece_issue, old_timepiece_project, new_timepiece_project, *args, **kwargs):
+        if not self._connect():
+            return None
+        if timepiece_issue.interface_plugin_number is None and new_timepiece_project.interface_plugin_number is not None:
+            # Moving an non-jira-issue into a jira project means we will create the issue in jira
+            jira_issue_type_name = self.gh.issue_types()[0].name # pick a default issue type
+
+            self.jira.create_issue(project={'key': new_timepiece_project.interface_plugin_number}, 
+                                   summary=timepiece_issue.subject,
+                                   description=timepiece_issue.description, issuetype={'name': jira_issue_type_name})
+
+
     def _get_jira_issue(self, timepiece_issue):
         return self.jira.issue(timepiece_issue.interface_plugin_number)
 

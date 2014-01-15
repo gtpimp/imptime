@@ -16,6 +16,8 @@ class DefaultInterfacePlugin(object):
         return None
     def update_issue_assigned_to(self, timepiece_issue, username, *args, **kwargs):
         return None
+    def issue_moved_projects(self, timepiece_issue, old_timepiece_project, new_timepiece_project, *args, **kwargs):
+        return None
 
 default_interface_plugin = DefaultInterfacePlugin()
 

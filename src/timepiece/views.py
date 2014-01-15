@@ -3997,11 +3997,13 @@ def sortable_issue_update(request, project_id):
     new_project = timepiece.Project.objects.get(pk=new_project_id)
     for item_order_count, issue_id in enumerate(ordered_issue_ids):
         issue = timepiece.Issue.objects.get(pk=issue_id)
+        old_project = issue.project
         issue.project = new_project
         issue.order = item_order_count
         issue.save()
 
-
+        if old_project != new_project:
+            get_interface_plugin(business).issue_moved_projects(issue, old_project, new_project)
 
     return HttpResponse("")
 
