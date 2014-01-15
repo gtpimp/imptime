@@ -205,20 +205,30 @@ class JiraSync(object):
         return [ (x.name, x.name) for x in jira_users ]
 
     def issue_moved_projects(self, timepiece_issue, old_timepiece_project, new_timepiece_project, *args, **kwargs):
-        if not self._connect():
-            return None
-        if timepiece_issue.interface_plugin_number is None and new_timepiece_project.interface_plugin_number is not None:
-            # Moving an non-jira-issue into a jira project means we will create the issue in jira
-            jira_issue_type_name = self.gh.issue_types()[0].name # pick a default issue type
+        """ Moving an non-jira-issue into a jira project means we will
+        create the issue in jira. Partial broken implementation
+        commented out because we also need to ask the user what jira
+        project to use (which isn't the same as a jira sprint)"""
 
-            jira_issue = self.jira.create_issue(project={'key': new_timepiece_project.interface_plugin_number}, 
-                                   summary=timepiece_issue.subject,
-                                   description=timepiece_issue.description, issuetype={'name': jira_issue_type_name})
-            timepiece_issue.interface_plugin_number = jira_issue.key
-            timepiece_issue.subject="%s %s" % (jira_issue.key, jira_issue.fields.summary)
-            timepiece_issue.save()
-            logger.debug("By moving the issue, we created a jira_issue with key: %s" % jira_issue.key)
+        return None
+        # if not self._connect():
+        #     return None
+        # if timepiece_issue.interface_plugin_number is None and new_timepiece_project.interface_plugin_number is not None:
+        #     
+        #     jira_issue_type_name = self.gh.issue_types()[0].name # pick a default issue type
+
+        #     new_jira_project = self._get_jira_project(new_timepiece_project)
+        #     jira_issue = self.jira.create_issue(project={'key': new_jira_project.key}, 
+        #                                         summary=timepiece_issue.subject,
+        #                                         description=timepiece_issue.description, issuetype={'name': jira_issue_type_name})
+        #     timepiece_issue.interface_plugin_number = jira_issue.key
+        #     timepiece_issue.subject="%s %s" % (jira_issue.key, jira_issue.fields.summary)
+        #     timepiece_issue.save()
+        #     logger.debug("By moving the issue, we created a jira_issue with key: %s" % jira_issue.key)
 
     def _get_jira_issue(self, timepiece_issue):
         return self.jira.issue(timepiece_issue.interface_plugin_number)
 
+    def _get_jira_project(self, timepiece_project):
+        matching_sprints = [x for x in self.gh.sprints(self.settings.board_id.strip()) if x.id==int(timepiece_project.interface_plugin_number)]
+        return matching_sprints[0]
