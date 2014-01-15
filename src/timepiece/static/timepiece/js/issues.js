@@ -22,12 +22,19 @@ imp.highlight_issue = function(issue_id) {
     $("#"+issue_id).scrollintoview();
 };
 
-imp.show_issue_detail = function(issue_id, url, msg) {
+imp.show_issue_detail = function(issue_id, url, msg, args) {
     msg = msg || "loading issue detail";
     var on_done = imp.loading(msg);
 
     $(".issue_detail").load(url,
 			    function() {
+
+				if (args && args.reload_on_done) {
+				    window.location=args.reload_on_done;
+				    return;
+				}
+				
+
 				$(".issue_detail .subject_class input").focus();
 				imp.refresh_show_numbers();
 				imp.current_issue_detail_url = url;

@@ -83,7 +83,7 @@
 
 			      {% ifequal business.sync_with "jira" %}
 			      <li>
-				  <a href="#" onclick="imp.projects.show_project_card_as_popup(this, '{% url 'jira:sync_business' business.id %}', 'Synching...'); return false;">
+				<a href="#" onclick="imp.projects.show_project_card_as_popup(this, '{% url 'jira:sync_business' business.id %}', 'Synching...', {'reload_on_done':'{% url 'closed_project_list' business.id %}'}); return false;">
 				    Sync with Jira
 				  </a>
 			      </li>
