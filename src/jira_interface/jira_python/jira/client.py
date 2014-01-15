@@ -1845,16 +1845,21 @@ class GreenHopper(JIRA):
         boards = [Board(self._options, self._session, raw_res_json) for raw_res_json in r_json['views']]
         return boards
 
-    def sprints(self, id):
+    def sprints(self, id, includeFutureSprints=True):
         '''
         Return the Sprints that appear with the given board id
 
         Example: rest/greenhopper/1.0/sprintquery/2
         '''
         # this fix is to handle the new API
+
+        filter_args = ""
+        if includeFutureSprints:
+            filter_args += "includeFutureSprints=true"
+
         r_json = {}
         try:
-            r_json = self._gh_get_json('sprintquery/%s' % id)
+            r_json = self._gh_get_json('sprintquery/%s?%s' % (id, filter_args))
         except:
             r_json = self._gh_get_json('sprints/%s' % id)
 
