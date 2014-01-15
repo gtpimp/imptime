@@ -4003,7 +4003,7 @@ def sortable_issue_update(request, project_id):
         issue.save()
 
         if old_project != new_project:
-            get_interface_plugin(business).issue_moved_projects(issue, old_project, new_project)
+            get_interface_plugin(new_project.business).issue_moved_projects(issue, old_project, new_project)
 
     return HttpResponse("")
 
