@@ -81,9 +81,6 @@ class JiraSync(object):
             if timepiece_issue.status != state:
                 timepiece_issue.status = state
                 
-            if timepiece_issue.number != jira_issue.id:
-                timepiece_issue.number = jira_issue.id
-
             if timepiece_issue.order != order:
                 timepiece_issue.order = order
 
@@ -97,6 +94,7 @@ class JiraSync(object):
                                               order=order,
                                               number=jira_issue.id,
                                               interface_plugin_number=jira_issue.key)
+            timepiece_issue.number = timepiece.Issue.get_last_issue_number(timepiece_project.business)
 
         if hasattr(gh_issue, 'assignee') and gh_issue.assignee:
             timepiece_assigned_user = self._get_or_create_timepiece_equivalent_of_jira_user(gh_issue.assignee)
