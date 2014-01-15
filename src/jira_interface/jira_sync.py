@@ -54,7 +54,8 @@ class JiraSync(object):
                 timepiece_project = timepiece.Project.objects.get(business=self.timepiece_business, name=timepiece_project_name)
             except timepiece.Project.DoesNotExist:
                 timepiece_project = timepiece.Project.get_or_create_project(business=self.timepiece_business, project_name=timepiece_project_name,
-                                                                            description=" (from jira)")
+                                                                            description=" (from jira)",
+                                                                            short_description=" (from jira)")
             if timepiece_project.interface_plugin_number != jira_sprint.id:
                 timepiece_project.interface_plugin_number = jira_sprint.id
                 timepiece_project.save()

@@ -1875,16 +1875,28 @@ class GreenHopper(JIRA):
         # issueKeysAddedDuringSprint used to mark some with a * ?
         # puntedIssues are for scope change?
 
-        r_json = self._gh_get_json('rapid/charts/sprintreport?rapidViewId=%s&sprintId=%s' % (board_id, sprint_id))
-        issues = [Issue(self._options, self._session, raw_res_json) for raw_res_json in r_json['contents']['completedIssues']]
+        try:
+            r_json = self._gh_get_json('rapid/charts/sprintreport?rapidViewId=%s&sprintId=%s' % (board_id, sprint_id))
+            issues = [Issue(self._options, self._session, raw_res_json) for raw_res_json in r_json['contents']['completedIssues']]
+        except Exception, ex:
+            if "No issues present" in str(ex):
+                issues = []
+            else:
+                raise
         return issues
 
     def incompleted_issues(self, board_id, sprint_id):
         '''
         Return the completed issues for the given board id and sprint id
         '''
-        r_json = self._gh_get_json('rapid/charts/sprintreport?rapidViewId=%s&sprintId=%s' % (board_id, sprint_id))
-        issues = [Issue(self._options, self._session, raw_res_json) for raw_res_json in r_json['contents']['incompletedIssues']]
+        try:
+            r_json = self._gh_get_json('rapid/charts/sprintreport?rapidViewId=%s&sprintId=%s' % (board_id, sprint_id))
+            issues = [Issue(self._options, self._session, raw_res_json) for raw_res_json in r_json['contents']['incompletedIssues']]
+        except Exception, ex:
+            if "No issues present" in str(ex):
+                issues = []
+            else:
+                raise
         return issues
 
     def sprint_info(self, board_id, sprint_id):
