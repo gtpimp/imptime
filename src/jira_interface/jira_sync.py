@@ -211,10 +211,13 @@ class JiraSync(object):
             # Moving an non-jira-issue into a jira project means we will create the issue in jira
             jira_issue_type_name = self.gh.issue_types()[0].name # pick a default issue type
 
-            self.jira.create_issue(project={'key': new_timepiece_project.interface_plugin_number}, 
+            jira_issue = self.jira.create_issue(project={'key': new_timepiece_project.interface_plugin_number}, 
                                    summary=timepiece_issue.subject,
                                    description=timepiece_issue.description, issuetype={'name': jira_issue_type_name})
-
+            timepiece_issue.interface_plugin_number = jira_issue.key
+            timepiece_issue.subject="%s %s" % (jira_issue.key, jira_issue.fields.summary)
+            timepiece_issue.save()
+            logger.debug("By moving the issue, we created a jira_issue with key: %s" % jira_issue.key)
 
     def _get_jira_issue(self, timepiece_issue):
         return self.jira.issue(timepiece_issue.interface_plugin_number)
