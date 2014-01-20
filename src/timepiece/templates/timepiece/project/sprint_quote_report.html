@@ -313,15 +313,6 @@ identified in the specification phase which greatly reduces risk.
 
     {% endfor %}
 
-    {% if unassigned.comments|length > 0 %}
-    <h4 id="issue_description_unassigned">non-issue time</h4>
-    <ul>
-      {% for comment in unassigned.comments %}
-      <li>{{comment.comments|safe}}</li>
-      {% endfor %}
-    </ul>
-    {% endif %}
-
   </div>
 
 
