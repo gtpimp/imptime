@@ -53,19 +53,19 @@
         </div>
       <div>
 
-      <div class="issue_comments">
-	<br/>
-        {% for comment in issue.comments_in_order %}
-          <div class="creation_details">
-	    {{comment.created}}
-	    {{comment.author}}
-	  </div>
-          <div class="markdown_content">{{comment.comment|asmarkdown|safe}}</div>
-	  <hr/>
-        {% endfor %}
-      </div>
-      
     {% end_permission %}
+
+    <div class="issue_comments">
+      <br/>
+      {% for comment in issue.comments_in_order %}
+	<div class="creation_details">
+	  {{comment.created}}
+	  {{comment.author}}
+	</div>
+	<div class="markdown_content">{{comment.comment|asmarkdown|safe}}</div>
+	<hr/>
+      {% endfor %}
+    </div>
 
     {% has_permission has_add_issue_comment issue.project.business %}
     <div class="comment_section">
