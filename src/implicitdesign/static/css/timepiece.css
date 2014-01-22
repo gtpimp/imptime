@@ -9428,10 +9428,12 @@ ul.project_list {
 }
 
 
-.special_traffic_text{
+.special_traffic_text {
    position: relative;
     z-index: 10;
     color:black;
+    font-weight: normal;
+    font-size:9px;
 }
 
 .traffic_bar .traffic_green {

@@ -3100,6 +3100,9 @@ def _augment_issue_data(issue, current_user, users_allowed_to_estimate_on_busine
                 else:
                     per_user_issue_data["bar_color"] = "traffic_green"
 
+        if per_user_issue_data["completion_width"]>100:
+            per_user_issue_data["completion_width"] = 100
+
         per_user_issue_data["has_estimate"] =  per_user_issue_data["issue_points"].points>0 or per_user_issue_data["completion"]>0
         per_user_issue_data["can_estimate"] = True
         issue.add_user_to_representation(user, per_user_issue_data)

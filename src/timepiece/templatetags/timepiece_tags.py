@@ -220,7 +220,41 @@ def get_all_devdone_points_for_project(context, user, project):
     if not hours:
         return ""
     return "%.1f" % float(hours)
-        
+
+
+# The first argument *must* be called "context" here.
+@register.inclusion_tag('timepiece/traffic_bar.html',
+                        takes_context=True)
+def running_progress_for_user_in_sprint(context, user, project):
+    actual = project.total_hours_for_user(user) or None
+    total = project.total_points_for_user_for_issues_with_entries(user) or None
+    return _create_traffic_data(actual, total)
+    
+def _create_traffic_data(actual, total):
+
+    if total is None or actual is None:
+        return {'actual':'',
+                'total':'',
+                'width_percent':0,
+                'colour':'',
+                'message':''}
+
+    actual_original = actual
+    if float(actual)/total > 1.2:
+        colour = "traffic_red"
+    elif float(actual)/total > 1:
+        colour = "traffic_yellow"
+    else:
+        colour = "traffic_green"
+    if actual > total:
+        actual = total
+
+    return {'actual':actual,
+            'total':total,
+            'width_percent':100.0 * float(actual)/total,
+            'colour':colour,
+            'message': "%.1f / %.1f" % (actual_original, total)}
+
 @register.inclusion_tag('timepiece/time-sheet/bar_graph.html',
                         takes_context=True)
 def bar_graph(context, name, worked, total, width=None, suffix=None):

@@ -809,6 +809,13 @@ class Project(models.Model):
         total = entries_qs.aggregate(points=Sum('points'))['points']
         return total
 
+    def total_points_for_user_for_issues_with_entries(self, user):
+        """ returns the sum of all estimates for the given user, for
+        issues where the given user has done at least some work """
+        issues_with_entries = Issue.objects.filter(id__in=Entry.objects.filter(issue__project=self).filter(user=user).filter(issue__isnull=False).values('issue'))
+        total_points = IssuePoints.objects.filter(issue__in=issues_with_entries).filter(user=user).aggregate(points=Sum('points'))
+        return total_points['points']
+
     def get_users_with_time_but_no_estimates_in_this_project(self):
         users = [ User.objects.get(pk=user['user']) for user in Entry.objects.all().filter(project=self).filter(hours__gt=0).exclude(issue__isnull=False).order_by('user').values('user').annotate(Count('user'))]
         return [ user for user in users if not BusinessPermissions.for_user(user, self.business).has_estimate_own_points ] 
