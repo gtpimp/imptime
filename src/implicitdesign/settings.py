@@ -230,6 +230,7 @@ INSTALLED_APPS = (
     'pipeline',
     'dateutil',
     'djcelery',
+    'colorful',
 
     'timepiece',
     'planner',

@@ -1,6 +1,7 @@
 
 import datetime
 import uuid
+from colorful.fields import RGBColorField
 from interface_plugin import get_interface_plugin
 import re
 import logging
@@ -391,6 +392,8 @@ class Project(models.Model):
     order = models.IntegerField(null=True,blank=True)
     objects = QuerySetManager(ProjectQuerySet)
     interface_plugin_number = models.CharField(max_length=255, null=True, blank=True) #eg jira
+
+    colour = RGBColorField()
 
     @classmethod
     def get_or_create_project(self, business, project_name, description=None, short_description=None):

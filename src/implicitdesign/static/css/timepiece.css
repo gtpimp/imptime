@@ -9801,11 +9801,11 @@ ul.project_list {
     padding-right:10px;
     padding-top:10px;
     padding-bottom:10px;
+    border-radius: 10px;
 }
 
 .project_table_cell.project_expand:hover {
     border: 1px solid #ababab;
-    border-radius: 10px;
 }
 
 .project_table_cell .project_title {

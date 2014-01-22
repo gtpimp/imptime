@@ -7,7 +7,7 @@
 <li class="project_li {% if project.is_open %}open_project{%else%}closed_project{% endif %}" list_project_id="{{ project.id }}" {% if not project.is_preloaded and not project.is_open%}style="display:none"{% endif %} >
   <div class="project_table project_table_appearance">    
     <div class="project_table_row project_coloured_row">
-      <div class="project_table_cell project_expand" preloaded="{{ project.is_preloaded }}" onclick="imp.projects.load_or_display_issues(this, '{% url 'get_project_detail' project.id %}')"  >  
+      <div class="project_table_cell project_expand" style="border:1px solid {{project.colour}}" preloaded="{{ project.is_preloaded }}" onclick="imp.projects.load_or_display_issues(this, '{% url 'get_project_detail' project.id %}')"  >  
         <div class="project_title">
           <div class="emacs_copy_container">
               &nbsp;

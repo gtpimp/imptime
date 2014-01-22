@@ -732,6 +732,7 @@ class ProjectForm(forms.ModelForm):
             'name',
             'short_description',
             'description',
+            'colour'
         )
 
     # business = selectable_forms.AutoCompleteSelectField(
