@@ -27,6 +27,7 @@ sys.path.append(SRC_HOME)
 sys.path.append(VENV_HOME + '/src/xhtml2pdf')
 sys.path.append(VENV_HOME + '/src/django-pipeline')
 sys.path.append(VENV_HOME + '/src/unicodecsv')
+sys.path.append(VENV_HOME + '/src/django-colorful')
 sys.path.insert(0, VENV_HOME + '/lib/python2.7/site-packages')
 
 sys.stdout = sys.stderr
