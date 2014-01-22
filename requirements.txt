@@ -24,6 +24,7 @@ django-api-docs==1.1.1
 django-appconf==0.5
 django-bootstrap-toolkit==2.12.1
 django-celery==2.5.5
+-e git+https://github.com/charettes/django-colorful.git@e885fcccd89b997d5e6d3b7436be39c5516f85f1#egg=django_colorful-dev
 django-compressor==1.1.2
 django-crispy-forms==1.1.4
 django-debug-toolbar==0.9.4
