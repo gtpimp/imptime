@@ -9822,6 +9822,13 @@ ul.project_list {
     float: right;
 }
 
+.project_table_cell .project_title .project_colour_square {
+    float: right;
+    width: 15px;
+    height: 15px;
+    margin-right: 5px;
+}
+
 .project_table_cell .project_title .project_description {
     font-size: 10px;
     font-style: italic;
