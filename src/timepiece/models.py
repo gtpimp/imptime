@@ -518,7 +518,7 @@ class Project(models.Model):
 
     @property
     def next_issue_number(self):
-        return self.issues.aggregate(n=Max('number'))['n']+1
+        return Issue.objects.filter(project__business=self.business).aggregate(n=Max('number'))['n']+1
     
     @classmethod
     def get_code_from_name(self, name):
