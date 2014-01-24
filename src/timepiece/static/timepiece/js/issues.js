@@ -51,6 +51,20 @@ imp.refresh_issue_detail = function() {
     imp.show_issue_detail(null, imp.current_issue_detail_url);
 };
 
+imp.post_issue_number_form = function(form_child_el, issue_id) {
+    form = $(form_child_el).parents("form")
+    $.ajax({type:"POST",
+	    url: form.attr('action'),
+	    data: form.serialize(),
+	    success: function(data) {
+		var issue_number = data;
+		imp.refresh_issue_detail();
+		$(document).find(".issue_instance_row[id='"+issue_id+"']").find(".issue_number").html(issue_number);
+	    }
+	   });
+    return false;
+}
+
 imp.do_form_show  = function(element, url) {
     var button = $(element);
     var parent = button.parents(".to_expand_form_on_click").parent();

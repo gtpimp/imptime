@@ -3341,6 +3341,7 @@ def issue_detail(request, issue_id, template="timepiece/project/issue_detail.htm
     context['business'] = project.business
     context['current_user'] = request.user
     context['business_permissions_by_user'] = timepiece.BusinessPermissions.by_user(project.business)
+    context['issue_number_form'] = timepiece_forms.IssueNumberForm(instance=issue)
 
     return render_to_response(template, context, context_instance=RequestContext(request))
 
@@ -3357,6 +3358,7 @@ def issue_detail_update(request,  template="timepiece/project/issue_detail.html"
     project = edited_issue.project
     context['project'] = project
     context['supports_description'] = True
+    context['issue_number_form'] = timepiece_forms.IssueNumberForm(instance=edited_issue)
 
     has_edit_description = timepiece.BusinessPermissions.objects.get_or_create(business=project.business, user=request.user)[0].has_edit_description
     if not has_edit_description:
@@ -3383,6 +3385,7 @@ def issue_status_update(request,  template="timepiece/project/issue_detail.html"
 
     context['project'] = project
     context['supports_description'] = True
+    context['issue_number_form'] = timepiece_forms.IssueNumberForm(instance=edited_issue)
 
     edited_issue.status = request.POST["selected_value"]
     edited_issue.save()
@@ -3437,6 +3440,7 @@ def issue_assigned_to_update(request,  template="timepiece/project/issue_detail.
     project = issue.project
     context['project'] = project
     context['supports_description'] = True
+    context['issue_number_form'] = timepiece_forms.IssueNumberForm(instance=issue)
 
     has_assign_user = timepiece.BusinessPermissions.objects.get_or_create(business=project.business, user=request.user)[0].has_assign_user
     if not has_assign_user:
@@ -3464,6 +3468,7 @@ def issue_subject_update(request,  template="timepiece/project/issue_detail.html
     project = edited_issue.project
     context['project'] = project
     context['supports_description'] = True
+    context['issue_number_form'] = timepiece_forms.IssueNumberForm(instance=edited_issue)
 
     has_edit_subject = timepiece.BusinessPermissions.objects.get_or_create(business=project.business, user=request.user)[0].has_edit_subject
     if not has_edit_subject:
@@ -3496,6 +3501,8 @@ def issue_points_update(request,  template="timepiece/project/issue_detail.html"
 
     edited_issue_points.points = request.POST["new_value"]
     edited_issue_points.save()
+
+    context['issue_number_form'] = timepiece_forms.IssueNumberForm(instance=edited_issue_points.issue)
 
     return HttpResponse("")
 
@@ -3608,7 +3615,6 @@ def edit_project_rate(request, project_id):
 
 @login_required
 @permission_required('timepiece.change_project')
-@login_required
 def edit_default_user_rates(request, template="timepiece/person/edit_default_user_rates.html", context=None):
     if not request.user.is_superuser:
         return HttpResponse("")
@@ -4141,3 +4147,17 @@ def sprint_report(request, project_id, context=None):
     context['date_created'] =  datetime.datetime.now().strftime("%d %b %Y %H:%M")
 
     return render_to_response(template, context, context_instance=RequestContext(request))
+
+@login_required
+def edit_issue_number(request, issue_id, context=None):
+    context = context or {}
+    if not request.user.is_superuser:
+        return HttpResponseForbidden("Not allowed")
+    issue = timepiece.Issue.objects.get(pk=issue_id)
+
+    form = timepiece_forms.IssueNumberForm(request.POST or None, instance=issue)
+    if form.is_valid():
+        form.save()
+        return HttpResponse(issue.number)
+    return Http404("Couldn't not edit issue number : %s", form.errors)
+    

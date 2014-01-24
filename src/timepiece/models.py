@@ -515,6 +515,10 @@ class Project(models.Model):
     @property
     def has_invoices(self):
         return Invoice.objects.filter(project=self).count() > 0
+
+    @property
+    def next_issue_number(self):
+        return self.issues.aggregate(n=Max('number'))['n']+1
     
     @classmethod
     def get_code_from_name(self, name):

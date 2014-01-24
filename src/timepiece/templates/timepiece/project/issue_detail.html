@@ -9,6 +9,14 @@
 <div class="issue_detail_container">
 
   <h2>#{{issue.number}} {{issue.subject}}</h2>
+  {% if user.is_superuser %}
+  <form method="POST" action="{% url 'edit_issue_number' issue.id %}">
+    {% csrf_token %}
+    {{ issue_number_form }}
+    (next issue number is {{project.next_issue_number}})
+    <button class="btn" onclick="return imp.post_issue_number_form(this, {{issue.id}});">save</button>
+  </form>
+  {% endif %}
 
   {% comment %}
   <div class="issue_status" style="margin-bottom:10px"><h3>{{issue.status}}</h3></div> 

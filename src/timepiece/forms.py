@@ -785,6 +785,11 @@ class IssueStatusForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         super(IssueStatusForm, self).__init__(*args, **kwargs)
 
+class IssueNumberForm(forms.ModelForm):
+    class Meta:
+        model = timepiece.Issue
+        fields = ('number',)
+
 class IssueForm(forms.ModelForm):
 
     estimated_hours = forms.FloatField(required=False, initial=1)

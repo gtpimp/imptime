@@ -463,6 +463,13 @@ urlpatterns = patterns('',
         views.get_issue_row,
         name='get_issue_row',
     ),
+
+    url(
+        r'^edit_issue_number/(?P<issue_id>\d+)$',
+        views.edit_issue_number,
+        name='edit_issue_number'
+      ),
+
     url(
         r'time-sheet/get_project_row/(?P<project_id>\d+)$',
         views.get_project_row,
