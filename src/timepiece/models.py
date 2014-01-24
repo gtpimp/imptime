@@ -2225,6 +2225,13 @@ class Issue(models.Model):
         issue_points.save()
 
     @property
+    def issue_number_duplicates_in_business(self):
+        return Issue.objects.filter(project__business=self.project.business).filter(number=self.number).exclude(pk=self.id)
+        if duplicates.count()>0:
+            return duplicates
+        return []
+
+    @property
     def css_class(self):
         status = self.status.replace(" ","").replace("_","").lower()
         if status == 'devdone':

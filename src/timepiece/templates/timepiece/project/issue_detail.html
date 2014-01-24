@@ -10,12 +10,21 @@
 
   <h2>#{{issue.number}} {{issue.subject}}</h2>
   {% if user.is_superuser %}
-  <form method="POST" action="{% url 'edit_issue_number' issue.id %}">
-    {% csrf_token %}
-    {{ issue_number_form }}
-    (next issue number is {{project.next_issue_number}})
-    <button class="btn" onclick="return imp.post_issue_number_form(this, {{issue.id}});">save</button>
-  </form>
+    {% for dup in issue.issue_number_duplicates_in_business %}
+    <div>
+      Warning: has duplicate: 
+      <span class="secret_link issue_number" onclick="imp.show_issue_detail({{dup.pk}}, '{% url 'issue_detail' dup.pk %}');">{{issue.number}}</span>
+      {{dup.subject}}
+    </div>
+    {% endfor %}
+
+    <form method="POST" action="{% url 'edit_issue_number' issue.id %}">
+      {% csrf_token %}
+      {{ issue_number_form }}
+      (next issue number is {{project.next_issue_number}})
+      <button class="btn" onclick="return imp.post_issue_number_form(this, {{issue.id}});">save</button>
+
+    </form>
   {% endif %}
 
   {% comment %}
