@@ -76,7 +76,7 @@ class JiraSync(object):
         fixed_subject="%s %s" % (jira_issue.key, jira_issue.fields.summary)
 
         try:
-            timepiece_issue = timepiece_project.issues.get_query_set().get(interface_plugin_number=jira_issue.key)[0]
+            timepiece_issue = timepiece_project.issues.get_query_set().get(interface_plugin_number=jira_issue.key)
 
             if timepiece_issue.status != state:
                 timepiece_issue.status = state
@@ -93,7 +93,7 @@ class JiraSync(object):
             if timepiece_issue.description != jira_issue.fields.description:
                 timepiece_issue.description = jira_issue.fields.description or ""
 
-        except IndexError:
+        except timepiece.Issue.DoesNotExist:
             timepiece_issue = timepiece.Issue(project=timepiece_project,
                                               subject=fixed_subject,
                                               description=jira_issue.fields.description or "",
