@@ -73,10 +73,10 @@ class JiraSync(object):
         
         order = getattr(jira_issue.fields, self.settings.custom_field_name_for_issue_order)
 
-        fixed_subject="%s %s" % (jira_issue.key, jira_issue.fields.summary),
+        fixed_subject="%s %s" % (jira_issue.key, jira_issue.fields.summary)
 
         try:
-            timepiece_issue = timepiece_project.issues.get_query_set().filter(subject__icontains=jira_issue.key+" ")[0]
+            timepiece_issue = timepiece_project.issues.get_query_set().get(interface_plugin_number=jira_issue.key)[0]
 
             if timepiece_issue.status != state:
                 timepiece_issue.status = state
