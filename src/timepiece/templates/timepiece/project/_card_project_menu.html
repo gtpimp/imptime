@@ -34,11 +34,13 @@
         </a>
       </li>
 
+      {% comment %}
       {% has_permission has_view_ctc_billable_rates project.business %}
       <li>
         <a href="{% url 'sprint_export' project.id %}">Export</a>
       </li>
       {% end_permission %}
+      {% endcomment %}
 
       {% has_permission has_view_project_card project.business %}
       <li>

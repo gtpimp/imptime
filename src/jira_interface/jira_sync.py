@@ -35,7 +35,7 @@ class JiraSync(object):
         return True
 
     def sync(self):
-        
+
         if not self._connect():
             return
 
@@ -49,7 +49,7 @@ class JiraSync(object):
         try:
             timepiece_project = timepiece.Project.objects.get(business=self.timepiece_business, interface_plugin_number=jira_sprint.id)
         except timepiece.Project.DoesNotExist:
-            timepiece_project_name = timepiece.Project.get_code_from_name(jira_sprint.name)
+            timepiece_project_name = timepiece.Project.get_code_from_name(jira_sprint.name) + "jira"
             try:
                 timepiece_project = timepiece.Project.objects.get(business=self.timepiece_business, name=timepiece_project_name)
             except timepiece.Project.DoesNotExist:
