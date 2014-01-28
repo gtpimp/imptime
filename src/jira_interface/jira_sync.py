@@ -144,7 +144,11 @@ class JiraSync(object):
         if not self._connect():
             return
         jira_issue = self._get_jira_issue(timepiece_issue)
-        jira_issue.update(summary=timepiece_issue.subject)
+
+        # remove the initial tag from the issue name
+        subject = " ".join(timepiece_issue.subject.split(" ")[1:])
+
+        jira_issue.update(summary=subject)
 
     def update_issue_description(self, timepiece_issue):
         if not self._connect():
