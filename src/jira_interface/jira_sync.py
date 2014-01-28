@@ -73,6 +73,8 @@ class JiraSync(object):
         
         order = getattr(jira_issue.fields, self.settings.custom_field_name_for_issue_order)
 
+        fixed_subject="%s %s" % (jira_issue.key, jira_issue.fields.summary),
+
         try:
             timepiece_issue = timepiece_project.issues.get_query_set().filter(subject__icontains=jira_issue.key+" ")[0]
 
@@ -85,15 +87,15 @@ class JiraSync(object):
             if timepiece_issue.interface_plugin_number != jira_issue.key:
                 timepiece_issue.interface_plugin_number = jira_issue.key
 
-            if timepiece_issue.subject != jira_issue.fields.summary:
-                timepiece_issue.subject = jira_issue.fields.summary
+            if timepiece_issue.subject != fixed_subject:
+                timepiece_issue.subject = fixed_subject
                 
             if timepiece_issue.description != jira_issue.fields.description:
                 timepiece_issue.description = jira_issue.fields.description or ""
 
         except IndexError:
             timepiece_issue = timepiece.Issue(project=timepiece_project,
-                                              subject="%s %s" % (jira_issue.key, jira_issue.fields.summary),
+                                              subject=fixed_subject,
                                               description=jira_issue.fields.description or "",
                                               status=state,
                                               order=order,
