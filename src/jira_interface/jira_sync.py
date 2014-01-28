@@ -35,10 +35,8 @@ class JiraSync(object):
         return True
 
     def sync(self):
-
         if not self._connect():
             return
-
         jira_sprints = self.gh.sprints(self.settings.board_id.strip())
         for jira_sprint in jira_sprints:
             self._sync_sprint(jira_sprint)
@@ -87,9 +85,16 @@ class JiraSync(object):
             if timepiece_issue.interface_plugin_number != jira_issue.key:
                 timepiece_issue.interface_plugin_number = jira_issue.key
 
+            if timepiece_issue.subject != jira_issue.fields.summary:
+                timepiece_issue.subject = jira_issue.fields.summary
+                
+            if timepiece_issue.description != jira_issue.fields.description:
+                timepiece_issue.description = jira_issue.fields.description or ""
+
         except IndexError:
             timepiece_issue = timepiece.Issue(project=timepiece_project,
                                               subject="%s %s" % (jira_issue.key, jira_issue.fields.summary),
+                                              description=jira_issue.fields.description or "",
                                               status=state,
                                               order=order,
                                               number=jira_issue.id,
