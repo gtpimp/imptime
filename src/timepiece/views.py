@@ -3370,6 +3370,8 @@ def issue_detail_update(request,  template="timepiece/project/issue_detail.html"
     except KeyError:
         pass
 
+    get_interface_plugin(project.business).update_issue_description(edited_issue)
+
     return HttpResponse("")
 
 @csrf_exempt
@@ -3479,6 +3481,8 @@ def issue_subject_update(request,  template="timepiece/project/issue_detail.html
     except KeyError:
         pass
 
+    get_interface_plugin(project.business).update_issue_subject(edited_issue)
+    
     return HttpResponse("")
 
 
@@ -3486,6 +3490,7 @@ def issue_subject_update(request,  template="timepiece/project/issue_detail.html
 @transaction.commit_on_success
 @login_required
 def issue_points_update(request,  template="timepiece/project/issue_detail.html", context=None):
+    context = context or {}
     try:
         edited_issue_points = timepiece.IssuePoints.objects.get(pk=request.POST['item_id'])
     except KeyError:
