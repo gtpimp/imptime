@@ -3519,7 +3519,7 @@ def unassigned_timesheet_entries(request, project_id, template="timepiece/projec
     project = timepiece.Project.objects.filter(pk=project_id).filter_by_logged_in_user(request.user)[0]
     context['supports_description'] = False
     context['current_user'] = request.user
-    context['issue'] = {'id':'na',
+    context['issue'] = {'id':None,
                         'subject':'Unassigned timesheet entries',
                         'auto_expand_timesheet_entries':True,
                         'project':project,
@@ -3539,7 +3539,7 @@ def all_timesheet_entries(request, project_id, template="timepiece/project/issue
     entries = project.entries.all().order_by("start_time")
     context['supports_description'] = False
     context['current_user'] = request.user
-    context['issue'] = {'id':'na',
+    context['issue'] = {'id':None,
                         'subject':'All timesheet entries',
                         'auto_expand_timesheet_entries':True,
                         'project':project,
