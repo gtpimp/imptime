@@ -2,7 +2,7 @@ import random
 import calendar
 from django.contrib.auth import login as django_login, load_backend
 import csv
-from exporter import CSVMixin, CSVSprintExport
+from exporter import CSVMixin, CSVSprintExport, CSVTimesheetExport
 from interface_plugin import get_interface_plugin
 import timings
 from xhtml2pdf import pisa
@@ -3343,6 +3343,10 @@ def issue_detail(request, issue_id, template="timepiece/project/issue_detail.htm
     context['business_permissions_by_user'] = timepiece.BusinessPermissions.by_user(project.business)
     context['issue_number_form'] = timepiece_forms.IssueNumberForm(instance=issue)
 
+    context['timesheet_export_url'] = reverse('issue_detail', args=[issue.id]) + "?timesheet_as_csv=1"
+    if 'timesheet_as_csv' in request.GET and request.GET['timesheet_as_csv'] == "1":
+        return CSVTimesheetExport(name='issue%d'%issue.number, project=project, timesheet_entries=issue.related_entries, request=request).render_to_response(context)
+
     return render_to_response(template, context, context_instance=RequestContext(request))
 
 @csrf_exempt
@@ -3528,6 +3532,11 @@ def unassigned_timesheet_entries(request, project_id, template="timepiece/projec
     context['business'] = project.business
     context['project'] = project
     context['business_permissions_by_user'] = timepiece.BusinessPermissions.by_user(project.business)
+
+    context['timesheet_export_url'] = reverse('unassigned_timesheet_entries', args=[project.id]) + "?timesheet_as_csv=1"
+    if 'timesheet_as_csv' in request.GET and request.GET['timesheet_as_csv'] == "1":
+        return CSVTimesheetExport(name='noissue', project=project, timesheet_entries=context['issue']['related_entries'], request=request).render_to_response(context)
+
     return render_to_response(template, context, context_instance=RequestContext(request))
 
 @csrf_exempt
@@ -3547,7 +3556,13 @@ def all_timesheet_entries(request, project_id, template="timepiece/project/issue
                         'related_entries':entries}
     context['business'] = project.business
     context['project'] = project
+
     context['business_permissions_by_user'] = timepiece.BusinessPermissions.by_user(project.business)
+
+    context['timesheet_export_url'] = reverse('all_timesheet_entries', args=[project.id]) + "?timesheet_as_csv=1"
+    if 'timesheet_as_csv' in request.GET and request.GET['timesheet_as_csv'] == "1":
+        return CSVTimesheetExport(name='all', project=project, timesheet_entries=context['issue']['related_entries'], request=request).render_to_response(context)
+
     return render_to_response(template, context, context_instance=RequestContext(request))
 
 @csrf_exempt
@@ -3562,7 +3577,7 @@ def view_project_rates(request, project_id, template="timepiece/project/view_rat
     context['project'] = project
     context['current_user'] = request.user
     context['users_and_hours'] = project.users_and_hours()
-    context['recalculate_url'] = reverse(view_project_rates, args=[project_id])
+    context['recalculate_url'] = reverse('view_project_rates', args=[project_id])
     return render_to_response(template, context, context_instance=RequestContext(request))
 
 @csrf_exempt

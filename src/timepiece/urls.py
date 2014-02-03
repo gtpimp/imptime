@@ -228,6 +228,7 @@ urlpatterns = patterns('',
     url(
         r'^time-sheet/issue_detail_update/$', views.issue_detail_update, name='issue_detail_update',
     ),
+
     url(
         r'^time-sheet/issue_status_update/$', views.issue_status_update, name='issue_status_update',
     ),

@@ -211,3 +211,35 @@ class CSVSprintExport(CSVMixin):
             total.append(data_row)
 
         return total
+
+class CSVTimesheetExport(CSVMixin):
+    def __init__(self, name, project, timesheet_entries, request):
+        super(CSVTimesheetExport, self).__init__()
+        self.name = name
+        self.project = project
+        self.timesheet_entries = timesheet_entries
+        self.request = timesheet_entries
+        self.current_user = request.user
+
+    def get_filename(self,context):
+        clean_name = self.project.name.replace(" ","_")
+        return self.name + "_for_" + clean_name
+
+    def convert_context_to_csv(self, context):
+        
+        rows = []
+        header_row = ["id", "username", "date", "hours", "subject"]
+        
+        rows.append(header_row)
+        
+        for entry in self.timesheet_entries:
+            rows.append( [entry.id, 
+                          entry.user, 
+                          entry.start_time.strftime('%Y-%b-%d (%a)'),
+                          entry.hours,
+                          entry.comments] )
+        return rows
+
+
+
+    
