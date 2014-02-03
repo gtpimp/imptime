@@ -8,13 +8,6 @@ function update_git {
   git pull origin master
 }
 
-function graph {
-  USER=$1
-  echo "graphing $USER..."
-  #python manage.py email_graphs --username $USER --test 1
-  python manage.py email_graphs --username $USER --settings "implicitdesign.management_settings"
-}
-
 update_git alec
 update_git david
 update_git gtp
@@ -27,11 +20,3 @@ cd src
 
 echo "importing timesheet..."
 python manage.py import_timesheet --settings "implicitdesign.management_settings" 
-
-graph alec
-graph gtp
-graph david
-graph mitzie
-graph ben
-graph etienne
-graph keith
