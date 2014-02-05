@@ -54,9 +54,9 @@ daily by each individualy working on the project.
 
 
       {% if settings.billable %}
-      {% if settings.ctc %}Cost to company: R{{ project.stats.ctc|floatformat:"0"|intcomma }}	<br/>
+      {% if settings.ctc %}Cost to company: R{{ project.stats.ctc|floatformat:2|intcomma }}	<br/>
       {% endif %}
-      Billable: R{{ project.stats.billed|floatformat:"0"|intcomma }}
+      Billable: R{{ project.stats.billed|floatformat:2|intcomma }}
       {% endif %}
   </p>
 {% endif %}
@@ -85,10 +85,10 @@ daily by each individualy working on the project.
 	      <td>{{ costs.hours }}</td>
 	      {% endif %}
 	      {% if settings.ctc %}
-	      <td>R{{ costs.ctc|floatformat:"1"|intcomma }}</td>
+	      <td>R{{ costs.ctc|floatformat:2|intcomma }}</td>
 	      {% endif %}
 	      {% if settings.billable %}
-	      <td>R{{ costs.billable|floatformat:"1"|intcomma }}</td>
+	      <td>R{{ costs.billable|floatformat:2|intcomma }}</td>
 	      {% endif %}
 	    </tr>
 	    {% endfor %}
@@ -114,10 +114,10 @@ daily by each individualy working on the project.
 	  <tr>
 	    <th>{{data.name}}</th>
 	    {% if settings.ctc %}
-	    <td>R{{data.ctc|floatformat:"0"|intcomma}}</td>
+	    <td>R{{data.ctc|floatformat:2|intcomma}}</td>
 	    {% endif %}
 	    {% if settings.billable %}
-	    <td>R{{data.billable|floatformat:"0"|intcomma}}</td>
+	    <td>R{{data.billable|floatformat:2|intcomma}}</td>
 	    {% endif %}
 	  </tr>
 	  {% endfor %}
@@ -331,13 +331,13 @@ daily by each individualy working on the project.
 	<td></td>
 	{% endif %}
 	{% if settings.view_actual_hours %}
-	<td>{{unassigned.hours|floatformat:"0"|intcomma}}</td>
+	<td>{{unassigned.hours|floatformat:2|intcomma}}</td>
 	{% endif %}
 	{% if settings.ctc %}
-	<td>R{{unassigned.ctc|floatformat:"0"|intcomma}}</td>
+	<td>R{{unassigned.ctc|floatformat:2|intcomma}}</td>
 	{% endif %}
 	{% if settings.billable %}
-	<td>R{{unassigned.billable|floatformat:"0"|intcomma}}</td>
+	<td>R{{unassigned.billable|floatformat:2|intcomma}}</td>
 	{% endif %}
       </tr>
       {% endif %}
