@@ -87,6 +87,7 @@
   {% endif %}
 {% endif %}      
 
+{% if settings.include_features %}
       <h3>Features</h3>
       <table>
 	<thead>
@@ -112,76 +113,80 @@
 	  {% endfor %}
 	</tbody>
       </table>
-
+{% endif %}
 
       
 
-      <br style="page-break-before: always;" clear="all" /> 
+<div class="page_break"></div>
+
       <div class="toggle_graphs_section">
 	{% if settings.view_actual_hours %}
 	  <div class="graph" style="float:left">
 	    <h3 style="text-align:center">hours by user</h3>
-	    <div class="{{project.id}}_graph_hours_by_user" style="height:250px;width:250px;"></div>
+	    <div class="graph_hours_by_user" style="height:250px;width:250px;"></div>
 	  </div>
 	{% endif %}
 	
 	{% if settings.ctc %}
 	  <div class="graph" style="float:left">
 	    <h3 style="text-align:center">ctc per user</h3>
-	    <div class="{{project.id}}_graph_ctc_by_user" style="height:250px;width:250px;"></div>
+	    <div class="graph_ctc_by_user" style="height:250px;width:250px;"></div>
 	    
 	  </div>
 	  {% endif %}
 	  {% if settings.billable %}
 	  <div class="graph" style="float:left">
 	    <h3 style="text-align:center">billable per user</h3>
-	    <div class="{{project.id}}_graph_billable_by_user" style="height:250px;width:250px;"></div>
+	    <div class="graph_billable_by_user" style="height:250px;width:250px;"></div>
 	  </div>
 	  {% endif %}
 	  {% if settings.ctc and settings.billable %}
 	  <div class="graph" style="float:left">
 	    <h3 style="text-align:center">profit per user</h3>
-	    <div class="{{project.id}}_graph_profit_by_user" style="height:250px;width:250px;"></div>
+	    <div class="graph_profit_by_user" style="height:250px;width:250px;"></div>
 	    
 	  </div>
 	{% endif %}
 
+{% if settings.include_features %}
 	<div style="clear:both"></div>
-	
-
-
 	{% if settings.ctc %}
 	  <div class="graph" style="float:left">
 	    <h3 style="text-align:center">ctc per feature</h3>
-	    <div class="{{project.id}}_graph_ctc_by_feature" style="height:250px;width:250px;"></div>
+	    <div class="graph_ctc_by_feature" style="height:250px;width:250px;"></div>
 	    
 	  </div>
 	{% endif %}
 	{% if settings.billable %}
 	  <div class="graph" style="float:left">
 	    <h3 style="text-align:center">billable per feature</h3>
-	    <div class="{{project.id}}_graph_billable_by_feature" style="height:250px;width:250px;"></div>
+	    <div class="graph_billable_by_feature" style="height:250px;width:250px;"></div>
 	  </div>
 	{% endif %}
         <div style="clear:both"></div>
 	
       </div>
+{% endif %}
 
       <script>
-	$.plot(".{{project.id}}_graph_hours_by_user",
-	       [ {%spaceless%} 
-		   {% for username,amounts in project.users_and_hours.users.items %} 
-		     { label:"{{username}}", 
-		       data: {{amounts.hours}}
-		     },
-		   {% endfor %} 
-		 {%endspaceless%}
-	       ],
-	       { series: { pie: { show: true } },
-		 legend: { show: false} } );
+
+	{% if settings.view_actual_hours %}
+
+	  $.plot(".graph_hours_by_user",
+		 [ {%spaceless%} 
+		     {% for username,amounts in project.users_and_hours.users.items %} 
+		       { label:"{{username}}", 
+			 data: {{amounts.hours}}
+		       },
+		     {% endfor %} 
+		   {%endspaceless%}
+		 ],
+		 { series: { pie: { show: true } },
+		   legend: { show: false} } );
+        {% endif %}
 
 	{% if settings.ctc %}
-	$.plot(".{{project.id}}_graph_ctc_by_user",
+	$.plot(".graph_ctc_by_user",
 	       [ {%spaceless%} 
 		   {% for username,amounts in project.users_and_hours.users.items %} 
 		     { label:"{{username}}", 
@@ -193,8 +198,9 @@
 		 { series: { pie: { show: true } },
 		   legend: { show: false} } );
 	{% endif %}
+	
 	{% if settings.billable %}
-	  $.plot(".{{project.id}}_graph_billable_by_user",
+	  $.plot(".graph_billable_by_user",
 		   [ {%spaceless%} 
 		       {% for username,amounts in project.users_and_hours.users.items %} 
 			 { label:"{{username}}", 
@@ -206,42 +212,47 @@
 		   { series: { pie: { show: true } },
 		     legend: { show: false} } );
 
-          {% endif %}
+        {% endif %}
+
+	{% if settings.include_features %}
+
 	  {% if settings.ctc %}
-	  $.plot(".{{project.id}}_graph_profit_by_user",
-		   [ {%spaceless%} 
-		       {% for username,amounts in project.users_and_hours.users.items %} 
-			 { label:"{{username}}", 
-			   data: {{amounts.profit}}
-			 },
-		       {% endfor %} 
-		     {%endspaceless%}
-		   ],
-		   { series: { pie: { show: true } },
-		     legend: { show: false} } );      $.plot(".{{project.id}}_graph_ctc_by_feature",
-		   [ {%spaceless%} 
-		       {% for data in project.costs_by_feature.values %} 
-			 { label:"{{data.name}}", 
-			   data: {{data.ctc}}
-			 },
-		       {% endfor %} 
-		     {%endspaceless%}
-		   ],
-		   { series: { pie: { show: true } },
-		     legend: { show: false} } );
+	    $.plot(".graph_profit_by_user",
+		     [ {%spaceless%} 
+			 {% for username,amounts in project.users_and_hours.users.items %} 
+			   { label:"{{username}}", 
+			     data: {{amounts.profit}}
+			   },
+			 {% endfor %} 
+		       {%endspaceless%}
+		     ],
+		     { series: { pie: { show: true } },
+		       legend: { show: false} } );      $.plot(".graph_ctc_by_feature",
+		     [ {%spaceless%} 
+			 {% for data in project.costs_by_feature.values %} 
+			   { label:"{{data.name}}", 
+			     data: {{data.ctc}}
+			   },
+			 {% endfor %} 
+		       {%endspaceless%}
+		     ],
+		     { series: { pie: { show: true } },
+		       legend: { show: false} } );
 	  {% endif %}
 	  {% if settings.billable %}
-	  $.plot(".{{project.id}}_graph_billable_by_feature",
-		   [ {%spaceless%} 
-		       {% for data in project.costs_by_feature.values %} 
-			 { label:"{{data.name}}", 
-			   data: {{data.billable}}
-			 },
-		       {% endfor %} 
-		     {%endspaceless%}
-		   ],
-		   { series: { pie: { show: true } },
-		     legend: { show: false} } );
+	    $.plot(".graph_billable_by_feature",
+		     [ {%spaceless%} 
+			 {% for data in project.costs_by_feature.values %} 
+			   { label:"{{data.name}}", 
+			     data: {{data.billable}}
+			   },
+			 {% endfor %} 
+		       {%endspaceless%}
+		     ],
+		     { series: { pie: { show: true } },
+		       legend: { show: false} } );
+
+	    {% endif %}
 
 	  {% endif %}
 
@@ -257,7 +268,9 @@
       {% if settings.issue_assignee %}
       <th>Assigned</th>
       {% endif %}
+      {% if settings.include_features %} 
       <th>Feature</th>
+      {% endif %}
       {% if settings.issue_status %}
       <th>Status</th>
       {% endif %}
@@ -274,31 +287,37 @@
 
     <tbody>
       {% for issue in issues %}
-      <tr>
-	<td> <a href="#issue_description_{{issue.id}}">{{issue.number}}</a> </td>
-	<td> {{issue.subject}} </td>
-	{% if settings.issue_assignee %}
-	  <td> {{issue.assigned_to.get_full_name|default_if_none:""}} </td>
+
+	{% if not settings.only_issues_with_time or issue.hours %}
+
+	<tr>
+	  <td> <a href="#issue_description_{{issue.id}}">{{issue.number}}</a> </td>
+	  <td> {{issue.subject}} </td>
+	  {% if settings.issue_assignee %}
+	    <td> {{issue.assigned_to.get_full_name|default_if_none:""}} </td>
+	  {% endif %}
+	  {% if settings.include_features %}
+	  <td> {{issue.feature|default_if_none:""}}</td>
+	  {% endif %}
+	  {% if settings.issue_status %}
+	    <td> {{ issue.status }}</td>
+	  {% endif %}
+	  {% if settings.view_actual_hours %}
+	  <td> {{issue.hours|default_if_none:""}} </td>
+	  {% endif %}
+	  {% if settings.ctc %}
+	  <td>R{{issue.ctc|floatformat:"0"|intcomma}}</td>
+	  {% endif %}
+	  {% if settings.billable %}
+	  <td>R{{issue.billable|floatformat:"0"|intcomma}}</td>
+	  {% endif %}
+	</tr>
 	{% endif %}
-	<td> {{issue.feature|default_if_none:""}}</td>
-	{% if settings.issue_status %}
-	  <td> {{ issue.status }}</td>
-	{% endif %}
-	{% if settings.view_actual_hours %}
-	<td> {{issue.hours|default_if_none:""}} </td>
-	{% endif %}
-	{% if settings.ctc %}
-	<td>R{{issue.ctc|floatformat:"0"|intcomma}}</td>
-	{% endif %}
-	{% if settings.billable %}
-	<td>R{{issue.billable|floatformat:"0"|intcomma}}</td>
-	{% endif %}
-      </tr>
       {% endfor %}
       {% if unassigned.hours > 0 %}
       <tr>
 	<td></td>
-	<td><i>non-issue time</i></td>
+	<td><i>non specific time</i></td>
 	<td></td>
 	{% if settings.view_actual_hours %}
 	<td><i>{{unassigned.hours|floatformat:"0"|intcomma}}</i></td>
@@ -338,7 +357,7 @@
     {% endfor %}
 
     {% if unassigned.comments|length > 0 %}
-    <h4 id="issue_description_unassigned">non-issue time</h4>
+    <h4 id="issue_description_unassigned">non specific time</h4>
     <ul>
       {% for comment in unassigned.comments %}
       <li>{{comment.comments|safe}}</li>

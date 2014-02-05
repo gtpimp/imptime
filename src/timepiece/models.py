@@ -30,6 +30,7 @@ from dateutil import rrule
 
 from datetime import timedelta
 
+ISSUE_DEV_COMPLETED_STATES = ["devdone", "dev done", "tested"]
 
 class Attribute(models.Model):
     ATTRIBUTE_TYPES = (
