@@ -315,10 +315,10 @@ daily by each individualy working on the project.
 	  <td> {{issue.hours|default_if_none:""}} </td>
 	  {% endif %}
 	  {% if settings.ctc %}
-	  <td>R{{issue.ctc|floatformat:"0"|intcomma}}</td>
+	  <td>R{{issue.ctc|floatformat:2|intcomma}}</td>
 	  {% endif %}
 	  {% if settings.billable %}
-	  <td>R{{issue.billable|floatformat:"0"|intcomma}}</td>
+	  <td>R{{issue.billable|floatformat:2|intcomma}}</td>
 	  {% endif %}
 	</tr>
 	{% endif %}
@@ -326,16 +326,18 @@ daily by each individualy working on the project.
       {% if unassigned.hours > 0 %}
       <tr>
 	<td></td>
-	<td><i>non specific time</i></td>
+	<td>non specific time</td>
+	{% if settings.include_features %}
 	<td></td>
+	{% endif %}
 	{% if settings.view_actual_hours %}
-	<td><i>{{unassigned.hours|floatformat:"0"|intcomma}}</i></td>
+	<td>{{unassigned.hours|floatformat:"0"|intcomma}}</td>
 	{% endif %}
 	{% if settings.ctc %}
-	<td><i>R{{unassigned.ctc|floatformat:"0"|intcomma}}</i></td>
+	<td>R{{unassigned.ctc|floatformat:"0"|intcomma}}</td>
 	{% endif %}
 	{% if settings.billable %}
-	<td><i>R{{unassigned.billable|floatformat:"0"|intcomma}}</i></td>
+	<td>R{{unassigned.billable|floatformat:"0"|intcomma}}</td>
 	{% endif %}
       </tr>
       {% endif %}
