@@ -522,6 +522,17 @@ class Project(models.Model):
         return Issue.objects.filter(project__business=self.business).aggregate(n=Max('number'))['n']+1
     
     @classmethod
+    def get_project_from_name(self, name):
+        project_id = None
+        match_object = re.compile("[sS]print#(\d+).*").search(name)
+        if match_object and match_object.groups() != 0:
+            project_id = int(match_object.group(1))
+            return Project.objects.get(pk=project_id)
+        else:
+            code = Project.get_code_from_name(name)
+            return Project.objects.get(code=code)
+
+    @classmethod
     def get_code_from_name(self, name):
 
         """ Try to use the project id """

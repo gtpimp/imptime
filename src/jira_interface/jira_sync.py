@@ -16,6 +16,7 @@ class JiraSync(object):
         self.gh = None
 
     def _connect(self):
+
         if self.jira is not None:
             return True
         
