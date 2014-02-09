@@ -107,7 +107,7 @@ class Extractor(object):
             raise Exception("No project found with name: %s" % business_name) #sic, businesses are called projects
 
         try:
-            project = Project.get_project_from_name(sprint_name)
+            project = Project.get_project_from_name(name=sprint_name, business=business)
         except Project.DoesNotExist:
             raise Exception("No sprint found for [%s] in business %s" % (sprint_name, business.name)) #sic, sprints are called projects
 
