@@ -37,7 +37,7 @@
                                 {% if perms.timepiece.add_business %}
                                   <li><a href="{% url 'create_business' %}">New project</a></li>
 				  {% if business.id %}
-				    <li><a href="{% url 'edit_business' business.id %}">Edit {{business.name}}</a></li>
+				    <li><a target="_blank" href="{% url 'edit_business' business.id %}">Edit {{business.name}}</a></li>
 				  {% endif %}
                                 {% endif %}
 

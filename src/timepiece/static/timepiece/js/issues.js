@@ -305,6 +305,8 @@ imp.clickable_description_box = function(element, url, item_id) {
 imp.clickable_time_estimate = function(element, url, item_id, issue_id) {
     element = $(element).find("span.edit_issue_subject");
     var initial_value = element.find(".estimated_hours").html() || "0";
+
+    imp.highlight_issue(issue_id);
     return imp.clickable_subject_box(element, url, item_id, null, "auto", issue_id, initial_value=initial_value);
 };
 
@@ -328,6 +330,8 @@ imp.clickable_subject_box = function(element, url, item_id, size, width, issue_i
     if ( value == "&nbsp;" ) {
 	value = "0";
     }
+
+    imp.highlight_issue(issue_id);
 
     commentTextArea = commentTextArea.attr("type","text").attr("value",value).attr("size",size).css("width",width).css("position","absolute").css("overflow","visible").css("z-index",200);
     textbox.parent().append(commentTextArea);
@@ -438,6 +442,8 @@ imp.select_business_feature = function(element, issue_id, request_url, update_ur
                              url : request_url
                            });
 
+    imp.highlight_issue(issue_id);
+
     var create_widget_at_done = function (element, issue_id, update_url) {
         var _element = element;
         var _update_url = update_url;
@@ -457,6 +463,8 @@ imp.clickable_assign_user_box = function(element, update_url, issue_id) {
 
     el.find(".existing_assign").hide();
     form.show();
+
+    imp.highlight_issue(issue_id);
 
     var cancel = function() {
 	el.find(".existing_assign").show();
@@ -515,6 +523,10 @@ imp.show_inline_editor = function(el) {
 	old_value = td.attr("selected_value");
     }
 
+    var issue_id = td.attr("issue_id");
+
+    imp.highlight_issue(issue_id);
+
     var deactivate_select = function() {
 	imp.inline_editor_active = false;
 	editor_container.hide();
@@ -522,8 +534,6 @@ imp.show_inline_editor = function(el) {
     };
 
     var activate_select = function() {
-	var issue_id = td.attr("issue_id");
-
 	var on_changed = function() {
 	    editor_container.hide();
 	    var on_done = imp.issue_loading("saving issue");
