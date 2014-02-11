@@ -366,6 +366,7 @@ class Project(models.Model):
     )
     billable = models.BooleanField(default=False)
     point_person = models.ForeignKey(User, limit_choices_to={'is_staff': True})
+    quote_uncertainty = models.FloatField(null=True, blank=True, default=0.25)
     users = models.ManyToManyField(
         User,
         related_name='user_projects',
@@ -394,7 +395,7 @@ class Project(models.Model):
     objects = QuerySetManager(ProjectQuerySet)
     interface_plugin_number = models.CharField(max_length=255, null=True, blank=True) #eg jira
 
-    colour = RGBColorField()
+    colour = RGBColorField(null=True, blank=True)
 
     @classmethod
     def get_or_create_project(self, business, project_name, description=None, short_description=None):
@@ -778,7 +779,7 @@ class Project(models.Model):
 
     @property
     def slack_percentage(self):
-        return 0.25
+        return self.quote_uncertainty or 0.25
 
     @property
     def _last_entry_end_time(self):

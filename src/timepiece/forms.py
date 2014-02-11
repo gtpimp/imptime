@@ -732,7 +732,8 @@ class ProjectForm(forms.ModelForm):
             'name',
             'short_description',
             'description',
-            'colour'
+            'colour',
+            'quote_uncertainty'
         )
 
     # business = selectable_forms.AutoCompleteSelectField(
@@ -758,7 +759,8 @@ class NewProjectForm(forms.ModelForm):
         fields = (
             'name',
             'short_description',
-            'description'
+            'description',
+            'quote_uncertainty'
         )
 
     def __init__(self, *args, **kwargs):
