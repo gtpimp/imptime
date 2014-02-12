@@ -226,8 +226,9 @@ def get_all_devdone_points_for_project(context, user, project):
 @register.inclusion_tag('timepiece/traffic_bar.html',
                         takes_context=True)
 def running_progress_for_user_in_sprint(context, user, project):
+
     actual = project.total_hours_for_user(user) or None
-    total = project.total_points_for_user_for_issues_with_entries(user) or None
+    total = project.total_points_for_user_for_issues_with_entries(user) or 0
     return _create_traffic_data(actual, total)
     
 def _create_traffic_data(actual, total):
@@ -239,21 +240,27 @@ def _create_traffic_data(actual, total):
                 'colour':'',
                 'message':''}
 
+    if total == 0:
+        total = actual
+        valid_total = False
+    else:
+        valid_total = True
+
     actual_original = actual
-    if float(actual)/total > 1.2:
+    if float(actual)/float(total) > 1.2:
         colour = "traffic_red"
-    elif float(actual)/total > 1:
+    elif float(actual)/float(total) > 1:
         colour = "traffic_yellow"
     else:
         colour = "traffic_green"
     if actual > total:
         actual = total
 
-    return {'actual':actual,
+    return {'actual':actual if valid_total else 0,
             'total':total,
-            'width_percent':100.0 * float(actual)/total,
+            'width_percent':100.0 * float(actual)/float(total) if valid_total else 0,
             'colour':colour,
-            'message': "%.1f / %.1f" % (actual_original, total)}
+            'message': ("%.1f / %.1f" % (actual_original, total)) if valid_total else actual_original}
 
 @register.inclusion_tag('timepiece/time-sheet/bar_graph.html',
                         takes_context=True)

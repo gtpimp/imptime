@@ -71,11 +71,6 @@
                         {% user_can_estimate_own_points user project.business %}
 		          <th class="estimates_cell">
 			    {% running_progress_for_user_in_sprint user project %}
-			    {% comment %}
-                            {% get_all_hours_for_project user project %} / {% get_all_points_for_project user project %}
-                            <br/>
-                            (devdone: {% get_all_hours_for_project user project %} / {% total_points_for_user_for_issues_with_entries user project %})
-			    {% endcomment %}
                           </th>
                         {% end_can_estimate %}
 		      {% endfor %}
