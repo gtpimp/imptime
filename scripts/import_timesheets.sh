@@ -13,6 +13,7 @@ update_git david
 update_git gtp
 update_git keith
 update_git etienne
+update_git gassan
 
 cd /home/timesheet
 . ./venv/bin/activate
@@ -20,3 +21,4 @@ cd src
 
 echo "importing timesheet..."
 python manage.py import_timesheet --settings "implicitdesign.management_settings" 
+
