@@ -23,5 +23,5 @@ dist
 reports/coverage_html
 .coverage
 db_backups
-src/implicitdesign/media/issue_attachments
-src/phantompdf/phantomjs
+*flymake*
+*\#*
