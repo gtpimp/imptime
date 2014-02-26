@@ -104,7 +104,7 @@ class Business(models.Model):
             if bp.has_estimate_own_points:
                 users = User.objects.filter(id__in = [current_user.id])
             else:
-                users = []
+                users = User.objects.none()
         return users
 
     def get_all_business_permissions(self,user=None):

@@ -19,7 +19,7 @@ def edit_settings(request, business_id, template="jira/edit_settings.html", cont
     else:
         settings = business.jira.get_query_set().all()[0]
 
-    form = JiraSettingsForm(request.POST or None, instance=settings)
+    form = JiraSettingsForm(request.user, request.POST or None, instance=settings)
     if form.is_valid():
         form.save()
 
@@ -29,7 +29,7 @@ def edit_settings(request, business_id, template="jira/edit_settings.html", cont
 
     return render_to_response(template, context, context_instance=RequestContext(request))
 
-@permission_required('timepiece.view_business')
+@login_required
 def sync_business(request, business_id, context=None):
     context = context or {}
     try:
