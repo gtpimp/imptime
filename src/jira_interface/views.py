@@ -13,8 +13,8 @@ from jira_sync import JiraSync
 def edit_settings(request, business_id, template="jira/edit_settings.html", context=None):
     context = context or {}
     business = timepiece.Business.objects.get(pk=business_id)
-    
-    if business.jira.get_query_set().count()==0:
+
+    if business.jira.count()==0:
         settings = Jira.objects.create(business=business, username=' ', password=' ', host=' ', board_id=' ')
     else:
         settings = business.jira.get_query_set().all()[0]
