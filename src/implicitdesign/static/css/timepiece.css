@@ -9680,6 +9680,10 @@ ul.project_list {
     float: left;
 }
 
+.issues .issues_list .jira_issue_number {
+    background: #47C3E1;
+}
+
 .issues .issues_list table {
     width: 100%;
 }
