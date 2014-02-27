@@ -2172,6 +2172,8 @@ class Issue(models.Model):
     feature = models.ForeignKey("Feature",blank=True,null=True,related_name='issues')
     assigned_to = models.ForeignKey(User, related_name='assigned_issues', blank=True,null=True)
     interface_plugin_number = models.CharField(max_length=255, null=True, blank=True) #eg jira
+    created = models.DateTimeField(auto_now_add=True)
+    modified = models.DateTimeField(auto_now=True)
 
     @classmethod
     def get_last_issue_number(self, business):

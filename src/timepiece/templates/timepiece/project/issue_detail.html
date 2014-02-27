@@ -9,6 +9,14 @@
 <div class="issue_detail_container">
 
   <h2>#{{issue.number}} {{issue.subject}}</h2>
+  {% if issue.interface_plugin_number %}
+  <div class="issue_details_sub_heading">
+    <p>
+      created: {{ issue.created|date:'Y-m-d H:i:s' }} <br />
+      modified: {{ issue.modified|date:'Y-m-d H:i:s' }}
+    </p>
+  </div>
+  {% endif %}
   {% if user.is_superuser %}
     {% for dup in issue.issue_number_duplicates_in_business %}
     <div>
