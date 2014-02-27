@@ -3968,10 +3968,11 @@ def add_issue_comment(request, issue_id):
         raise PermissionDenied
 
     text = request.POST['comment']
-    new_comment = timepiece.IssueComment.objects.create(comment=text,
-                                                        issue=issue,
-                                                        author=request.user,
-                                                        created=datetime.datetime.today())
+    new_comment = timepiece.IssueComment.objects.create(
+        comment=text,
+        issue=issue,
+        author=request.user,
+        created=datetime.datetime.today())
 
     get_interface_plugin(business).add_issue_comment(new_comment)
 
