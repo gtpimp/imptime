@@ -37,3 +37,16 @@ def sync_business(request, business_id, context=None):
         return HttpResponse("synched")
     except Exception, ex:
         return HttpResponse("Sync failed: %s" % ex)
+
+
+@login_required
+def sync_business(request, business_id, context=None):
+    context = context or {}
+    try:
+        JiraSync(business_id).sync_to_jira()
+        return HttpResponse("synched")
+    except Exception, ex:
+        return HttpResponse("Sync failed: %s" % ex)
+
+def sync_business_to_jira(request):
+    return

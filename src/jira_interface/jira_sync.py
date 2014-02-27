@@ -35,6 +35,37 @@ class JiraSync(object):
         self.gh = GreenHopper(**kwargs)
         return True
 
+    def sync_issues_to_jira(self, project):
+        if not self._connect():
+            return
+
+        timepiece_issues = timepiece.models.Issue.objects.filter(project=project, interface_plugin_number__isnull=True)
+        jira_project_id = project.interface_plugin_number
+        jira_assignee = self.timepiece_business.primary_user.profile.jira_user_name
+
+        for timepiece_issue in timepiece_issues:
+            jira_issue = self.jira.create_issue(project={'id': jira_project_id}, summary=timepiece_issue.subject,
+                                            description=timepiece_issue.description, issuetype={'name': 'Story'},
+                                            assignee={'name':jira_assignee})
+            timepiece_issue.interface_plugin_number = jira_issue.key
+            timepiece_issue.subject="%s %s" % (jira_issue.key, jira_issue.fields.summary)
+            timepiece_issue.save()
+            logger.debug("Created jira_issue with key: %s" % jira_issue.key)
+
+
+    def sync_to_jira(self):
+        if not self._connect():
+            return
+
+        business = self.timepiece_business
+        projects = timepiece.models.Project.objects.filter(business=business)
+        for project in projects:
+            if project.interface_plugin_number is None:
+                jira_project = self.gh.create_sprint(project.name, self.settings.board_id.strip())
+                project.interface_plugin_number = jira_project.id
+                project.save();
+            self.sync_project_issues_to_jira(project)
+
     def sync(self):
         if not self._connect():
             return
