@@ -88,8 +88,8 @@
 				  </a>
 			      </li>
 			      <li>
-				<a href="#" onclick="imp.projects.show_project_card_as_popup(this, '{% url 'jira:sync_business_to_jira' business.id %}', 'Synching...', {'reload_on_done':'{% url 'closed_project_list' business.id %}'}); return false;">
-				    Sync from Jira
+				<a href="#" onclick="imp.do_form_show(this, '{% url 'jira:sync_business_to_jira' business.id %}'); return false;">
+				    Sync to Jira
 				  </a>
 			      </li>
 			      {% endifequal %}
