@@ -22,7 +22,7 @@ class DefaultInterfacePlugin(object):
         return None
     def update_issue_description(self, timepiece_issue, *args, **kwargs):
         return None
-    def update_issue_points(self, timepiece_issue, points, *args, **kwargs):
+    def update_issue_points(self, issue_points, *args, **kwargs):
         return None
 
 default_interface_plugin = DefaultInterfacePlugin()

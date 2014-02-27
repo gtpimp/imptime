@@ -169,17 +169,16 @@ class JiraSync(object):
         timepiece_issue.status = transition['name']
         timepiece_issue.save()
 
-    def update_issue_points(self, timepiece_issue, points):
+    def update_issue_points(self, issue_points):
         if not self._connect():
-            return None
-        primary_user = timepiece_issue.project.business.primary_user
-        if not primary_user or user.id != primary_user.id:
-            return None
+            return
+        primary_user = self.settings.primary_user
+        if not primary_user or issue_points.user.pk != primary_user.pk:
+            return
         
-        jira_issue = self._get_jira_issue(timepiece_issue)
-        estimate = u'%dm' % int(points * 60)
-        # jira_issue.update(timetracking={'originalEstimate': estimate})
-        print 'estimate', estimate
+        jira_issue = self._get_jira_issue(issue_points.issue)
+        estimate = u'%dm' % (float(issue_points.points) * 60)
+        jira_issue.update(timetracking={'originalEstimate': estimate})
         
 
     def update_issue_assigned_to(self, timepiece_issue, username, *args, **kwargs):

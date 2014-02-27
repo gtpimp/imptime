@@ -3512,9 +3512,7 @@ def issue_points_update(request,  template="timepiece/project/issue_detail.html"
     edited_issue_points.save()
 
     context['issue_number_form'] = timepiece_forms.IssueNumberForm(instance=edited_issue_points.issue)
-    update_issue_points = get_interface_plugin(project.business).update_issue_points
-    if request.user == project.business.primary_user:
-        update_issue_points(edited_issue_points.issue, edited_issue_points.points)
+    get_interface_plugin(current_project.business).update_issue_points(edited_issue_points)
 
     return HttpResponse("")
 
