@@ -65,7 +65,7 @@ class JiraSync(object):
                 project.save();
             self.sync_project_issues_to_jira(project, project_key, jira_assignee, issue_type_name)
 
-    def sync(self):
+    def sync_from_jira(self):
         if not self._connect():
             return
         jira_sprints = self.gh.sprints(self.settings.board_id.strip())
@@ -90,12 +90,18 @@ class JiraSync(object):
                 timepiece_project.save()
 
         order = 1
+        issues_synced = []
         for gh_issue in self.gh.completed_issues(self.settings.board_id.strip(), jira_sprint.id):
-            self._sync_issue(jira_sprint, gh_issue, timepiece_project, order=order)
+            issues_synced.append(self._sync_issue(jira_sprint, gh_issue, timepiece_project, order=order))
             order += 1
         for gh_issue in self.gh.incompleted_issues(self.settings.board_id.strip(), jira_sprint.id):
-            self._sync_issue(jira_sprint, gh_issue, timepiece_project, order=order)
+            issues_synced.append(self._sync_issue(jira_sprint, gh_issue, timepiece_project, order=order))
             order += 1
+
+        # For any issue not in the jira sprint anymore, we reset the
+        # plugin number, but we don't delete the issue because we want
+        # traceability.
+        timepiece_project.issues.exclude(pk__in=[i.id for i in issues_synced]).update(interface_plugin_number=None)
 
     def _sync_issue(self, jira_sprint, gh_issue, timepiece_project, order):
         logger.debug("syncing sprint %s" % jira_sprint.name)
@@ -154,6 +160,7 @@ class JiraSync(object):
                     timepiece.IssueComment.objects.create(issue_id=timepiece_issue.id, comment=jira_comment.body, 
                                                           author=author,
                                                           created=created)
+        return timepiece_issue
                     
                                                              
     def _get_or_create_timepiece_equivalent_of_jira_user(self, jira_username):

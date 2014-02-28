@@ -30,23 +30,14 @@ def edit_settings(request, business_id, template="jira/edit_settings.html", cont
     return render_to_response(template, context, context_instance=RequestContext(request))
 
 @login_required
-def sync_business(request, business_id, context=None):
+def sync_business_from_jira(request, business_id, context=None):
     context = context or {}
     try:
-        JiraSync(business_id).sync()
+        JiraSync(business_id).sync_from_jira()
         return HttpResponse("synched")
     except Exception, ex:
         return HttpResponse("Sync failed: %s" % ex)
 
-
-@login_required
-def sync_business(request, business_id, context=None):
-    context = context or {}
-    try:
-        JiraSync(business_id).sync_to_jira()
-        return HttpResponse("synched")
-    except Exception, ex:
-        return HttpResponse("Sync failed: %s" % ex)
 
 @login_required
 def sync_business_to_jira(request, business_id):

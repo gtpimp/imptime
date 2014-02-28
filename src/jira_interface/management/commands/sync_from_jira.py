@@ -14,4 +14,4 @@ class Command(BaseCommand):
     def handle(self, business_id, *args, **options):
         business_id = int(business_id)
         syncer = JiraSync(business_id)
-        syncer.sync()
+        syncer.sync_from_jira()
