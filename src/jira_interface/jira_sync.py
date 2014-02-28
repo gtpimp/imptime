@@ -1,7 +1,6 @@
 from jira_interface.jira_python.jira.client import JIRA, GreenHopper
 import timepiece.models as timepiece
 from django.contrib.auth.models import User
-from django.conf import settings
 from django.db.models import Q
 from forms import JiraCreateIssueForm
 from dateutil import parser as dateparser
@@ -28,12 +27,43 @@ class JiraSync(object):
             self.settings = self.timepiece_business.jira.get_query_set().all()[0]
         except IndexError:
             raise Exception("No jira configuration for this business")
-
         kwargs = {'options':{ 'server': self.settings.host.strip() },
                   'basic_auth':(self.settings.username.strip(), self.settings.password.strip())}
         self.jira = JIRA(**kwargs)
         self.gh = GreenHopper(**kwargs)
         return True
+
+    def sync_project_issues_to_jira(self, project, jira_project_key, jira_assignee, issue_type_name):
+        if not self._connect():
+            return
+
+        timepiece_issues = timepiece.Issue.objects.filter(project=project,interface_plugin_number__isnull=True)
+        jira_assignee = self.settings.primary_user.profile.jira_user_name
+        jira_issues = []
+        for timepiece_issue in timepiece_issues:
+            jira_issue = self.jira.create_issue(project={'key': jira_project_key}, summary='test: ' + timepiece_issue.subject,
+                                            description=timepiece_issue.description, issuetype={'name': issue_type_name}, 
+                                            assignee={'name':jira_assignee})
+            timepiece_issue.interface_plugin_number = jira_issue.key
+            timepiece_issue.subject="%s %s" % (jira_issue.key, jira_issue.fields.summary)
+            timepiece_issue.save()
+            logger.debug("Created jira_issue with key: %s" % jira_issue.key)
+            jira_issues.append(jira_issue)
+            
+        if jira_issues:
+            self.gh.add_issues_to_sprint(project.jira_inferface_number, [z.key for z in jira_issues])
+
+    def sync_to_jira(self, project_key, jira_assignee, issue_type_name):
+        if not self._connect():
+            return
+        business = self.timepiece_business
+        projects = timepiece.Project.objects.filter(business=business)
+        for project in projects:
+            if project.interface_plugin_number is None:
+                jira_project = self.gh.create_sprint(project.name, self.settings.board_id.strip())
+                project.interface_plugin_number = jira_project.id
+                project.save();
+            self.sync_project_issues_to_jira(project, project_key, jira_assignee, issue_type_name)
 
     def sync(self):
         if not self._connect():
@@ -168,6 +198,18 @@ class JiraSync(object):
 
         timepiece_issue.status = transition['name']
         timepiece_issue.save()
+
+    def update_issue_points(self, issue_points):
+        if not self._connect():
+            return
+        primary_user = self.settings.primary_user
+        if not primary_user or issue_points.user.pk != primary_user.pk:
+            return
+        
+        jira_issue = self._get_jira_issue(issue_points.issue)
+        estimate = u'%dm' % (float(issue_points.points) * 60)
+        jira_issue.update(timetracking={'originalEstimate': estimate})
+        
 
     def update_issue_assigned_to(self, timepiece_issue, username, *args, **kwargs):
         if not self._connect():

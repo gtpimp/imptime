@@ -1,0 +1,10 @@
+{% load url from future %}
+<div class="new_dyn_form_container">
+  <form class="add_issue_form" method="POST" action="">
+    {% csrf_token %}    
+    <h3>Sync {{business.sync_with}}</h3>
+    {{ plugin_form }}
+    <br />
+    <input type="submit" class="btn" onclick="return imp.on_issue_form_submit(this, {{project.id}}, '{% url 'jira:sync_business_to_jira' business.id %}');" value="Submit"/>
+  </form>
+</div>

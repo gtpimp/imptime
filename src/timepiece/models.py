@@ -104,7 +104,7 @@ class Business(models.Model):
             if bp.has_estimate_own_points:
                 users = User.objects.filter(id__in = [current_user.id])
             else:
-                users = []
+                users = User.objects.none()
         return users
 
     def get_all_business_permissions(self,user=None):
@@ -2173,6 +2173,8 @@ class Issue(models.Model):
     feature = models.ForeignKey("Feature",blank=True,null=True,related_name='issues')
     assigned_to = models.ForeignKey(User, related_name='assigned_issues', blank=True,null=True)
     interface_plugin_number = models.CharField(max_length=255, null=True, blank=True) #eg jira
+    created = models.DateTimeField(auto_now_add=True)
+    modified = models.DateTimeField(auto_now=True)
 
     @classmethod
     def get_last_issue_number(self, business):

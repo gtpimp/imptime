@@ -40,7 +40,11 @@ class UserLookup(ModelLookup):
         a more verbose display, used in the search results display.
         may contain html and multi-lines
         """
-        return user.get_full_name()
+        name = user.get_full_name();
+        if name:
+            return name
+        else:
+            return user.username
         # return u"<span class='%s'>%s</span>" % ('individual',
         #     user.get_full_name())
 
@@ -51,7 +55,7 @@ class UserLookup(ModelLookup):
         return user.pk
 
     def get_item_value(self, user):
-        return user.get_full_name()
+        return self.format_result(user)
 
 registry.register(UserLookup)
 

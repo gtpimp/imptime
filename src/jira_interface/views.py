@@ -13,13 +13,13 @@ from jira_sync import JiraSync
 def edit_settings(request, business_id, template="jira/edit_settings.html", context=None):
     context = context or {}
     business = timepiece.Business.objects.get(pk=business_id)
-    
-    if business.jira.get_query_set().count()==0:
+
+    if business.jira.count()==0:
         settings = Jira.objects.create(business=business, username=' ', password=' ', host=' ', board_id=' ')
     else:
         settings = business.jira.get_query_set().all()[0]
 
-    form = JiraSettingsForm(request.POST or None, instance=settings)
+    form = JiraSettingsForm(request.user, request.POST or None, instance=settings)
     if form.is_valid():
         form.save()
 
@@ -29,7 +29,7 @@ def edit_settings(request, business_id, template="jira/edit_settings.html", cont
 
     return render_to_response(template, context, context_instance=RequestContext(request))
 
-@permission_required('timepiece.view_business')
+@login_required
 def sync_business(request, business_id, context=None):
     context = context or {}
     try:
@@ -37,3 +37,33 @@ def sync_business(request, business_id, context=None):
         return HttpResponse("synched")
     except Exception, ex:
         return HttpResponse("Sync failed: %s" % ex)
+
+
+@login_required
+def sync_business(request, business_id, context=None):
+    context = context or {}
+    try:
+        JiraSync(business_id).sync_to_jira()
+        return HttpResponse("synched")
+    except Exception, ex:
+        return HttpResponse("Sync failed: %s" % ex)
+
+@login_required
+def sync_business_to_jira(request, business_id):
+    jira = JiraSync(business_id)
+    if request.POST:
+        form = jira.get_create_issue_form(request.POST)
+        if form.is_valid():
+            project_key = form.cleaned_data['project']
+            assigned_to = form.cleaned_data['assigned_to']
+            issue_type_name = form.cleaned_data['issue_type']
+            try:
+                jira.sync_to_jira(project_key, assigned_to, issue_type_name)
+                return HttpResponse("synched")
+            except Exception, ex:
+                return HttpResponse("Sync failed: %s" % ex)
+    else:
+        form = jira.get_create_issue_form()
+    return render(request, 'jira/sync_to_jira.html', {'form': form, 'business': jira.timepiece_business})
+
+

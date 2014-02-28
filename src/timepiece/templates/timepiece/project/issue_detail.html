@@ -9,6 +9,14 @@
 <div class="issue_detail_container">
 
   <h2>#{{issue.number}} {{issue.subject}}</h2>
+  {% if issue.interface_plugin_number %}
+  <div class="issue_details_sub_heading">
+    <p>
+      created: {{ issue.created|date:'Y-m-d H:i:s' }} <br />
+      modified: {{ issue.modified|date:'Y-m-d H:i:s' }}
+    </p>
+  </div>
+  {% endif %}
   {% if user.is_superuser %}
     {% for dup in issue.issue_number_duplicates_in_business %}
     <div>
@@ -81,7 +89,19 @@
 	  {{comment.created}}
 	  {{comment.author}}
 	</div>
-	<div class="markdown_content">{{comment.comment|asmarkdown|safe}}</div>
+
+	<div class="markdown_content">
+	  {{comment.comment|asmarkdown|safe}}
+	  <div class="comment_section">
+	    <div class="edit_comment" style="display:none">
+	      <textarea name="comment" data-url="{% url 'edit_issue_comment' comment.pk %}"></textarea>
+	      <input type="button" class="btn" onclick="imp.on_edit_issue_comment($(this), '{% url 'edit_issue_comment' comment.id %}');" value="save"/>
+	      <input type="button" class="btn" onclick="$(this).parents('.comment_section').find('.edit_comment_button').show(); $(this).parents('.edit_comment').hide(); return false;" value="cancel"/>
+	    </div>
+	  </div>
+
+	  <div class="btn" onclick="imp.clickable_description_box($(this).parent(), '{% url 'issue_detail_update' %}',{{ issue.id }})">Edit</div>
+	</div>
 	<hr/>
       {% endfor %}
     </div>
