@@ -88,6 +88,8 @@ class JiraSync(object):
             if timepiece_project.interface_plugin_number != jira_sprint.id:
                 timepiece_project.interface_plugin_number = jira_sprint.id
                 timepiece_project.save()
+        except timepiece.Project.MultipleObjectsReturned:
+            logger.error("Multiple projects with interface plugin number %s in %s" % jira_sprint.id, self.timepiece_business)
 
         order = 1
         issues_synced = []
@@ -114,22 +116,6 @@ class JiraSync(object):
 
         try:
             timepiece_issue = timepiece_project.issues.get_query_set().get(interface_plugin_number=jira_issue.key)
-
-            if timepiece_issue.status != state:
-                timepiece_issue.status = state
-                
-            if timepiece_issue.order != order:
-                timepiece_issue.order = order
-
-            if timepiece_issue.interface_plugin_number != jira_issue.key:
-                timepiece_issue.interface_plugin_number = jira_issue.key
-
-            if timepiece_issue.subject != fixed_subject:
-                timepiece_issue.subject = fixed_subject
-                
-            if timepiece_issue.description != jira_issue.fields.description:
-                timepiece_issue.description = jira_issue.fields.description or ""
-
         except timepiece.Issue.DoesNotExist:
             timepiece_issue = timepiece.Issue(project=timepiece_project,
                                               subject=fixed_subject,
@@ -139,6 +125,24 @@ class JiraSync(object):
                                               number=jira_issue.id,
                                               interface_plugin_number=jira_issue.key)
             timepiece_issue.number = timepiece.Issue.get_last_issue_number(timepiece_project.business)+1
+        except timepiece.Issue.MultipleObjectsReturned:
+            timepiece_issue = timepiece_project.issues.get_query_set().filter(interface_plugin_number=jira_issue.key)[0]
+
+        if timepiece_issue.status != state:
+            timepiece_issue.status = state
+
+        if timepiece_issue.order != order:
+            timepiece_issue.order = order
+
+        if timepiece_issue.interface_plugin_number != jira_issue.key:
+            timepiece_issue.interface_plugin_number = jira_issue.key
+
+        if timepiece_issue.subject != fixed_subject:
+            timepiece_issue.subject = fixed_subject
+
+        if timepiece_issue.description != jira_issue.fields.description:
+            timepiece_issue.description = jira_issue.fields.description or ""
+
 
         if hasattr(gh_issue, 'assignee') and gh_issue.assignee:
             timepiece_assigned_user = self._get_or_create_timepiece_equivalent_of_jira_user(gh_issue.assignee)
@@ -160,6 +164,8 @@ class JiraSync(object):
                     timepiece.IssueComment.objects.create(issue_id=timepiece_issue.id, comment=jira_comment.body, 
                                                           author=author,
                                                           created=created)
+                except timepiece.IssueComment.MultipleObjectsReturned:
+                    pass
         return timepiece_issue
                     
                                                              
