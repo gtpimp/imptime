@@ -500,6 +500,12 @@ urlpatterns = patterns('',
         ),
 
      url(
+        r'^edit_issue_comment/(?P<comment_id>\d+)/$',
+        views.edit_issue_comment,
+        name='edit_issue_comment'
+        ),
+
+     url(
         r'^delete_issue_attachment/(?P<attachment_id>\d+)/$',
         views.delete_issue_attachment,
         name='delete_issue_attachment'

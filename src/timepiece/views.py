@@ -3981,6 +3981,25 @@ def add_issue_comment(request, issue_id):
 @csrf_exempt
 @login_required
 @transaction.commit_on_success
+def edit_issue_comment(request, comment_id):
+    comment = timepiece.Comment.objects.get(pk=comment_id)
+    issue = comment.issue
+    business = issue.project.business
+    bp = timepiece.BusinessPermissions.for_user(request.user, business)
+
+    if not bp.has_add_issue_comment:
+        raise PermissionDenied
+
+    text = request.POST['comment']
+    comment.text = text
+    comment.author = request.user,
+    comment.created = datetime.datetime.today()
+    get_interface_plugin(business).edit_issue_comment(new_comment)
+    return HttpResponse("ok")
+
+@csrf_exempt
+@login_required
+@transaction.commit_on_success
 def add_issue_attachment(request, issue_id):
 
     issue = timepiece.Issue.objects.get(pk=issue_id)

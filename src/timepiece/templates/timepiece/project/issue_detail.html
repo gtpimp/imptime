@@ -9,14 +9,26 @@
 <div class="issue_detail_container">
 
   <h2>#{{issue.number}} {{issue.subject}}</h2>
-  {% if issue.interface_plugin_number %}
+
+  {% if issue.id %}
+    <div class="change_issue_number">
+      <div class="btn title" onclick="$(this).parents('.change_issue_number').find('.content').toggle(); return false;">Change number</div>
+      <div class="content" style="display:none">
+        <form method="POST" action="{% url 'edit_issue_number' issue.id %}">
+          {% csrf_token %}
+          {{ issue_number_form }}
+          (next issue number is {{project.next_issue_number}})
+          <button class="btn" onclick="return imp.post_issue_number_form(this, {{issue.id}});">save</button>
+        </form>
+      </div>
+    {% endif %}
+
   <div class="issue_details_sub_heading">
     <p>
-      created: {{ issue.created|date:'Y-m-d H:i:s' }} <br />
-      modified: {{ issue.modified|date:'Y-m-d H:i:s' }}
+      Created on: {{ issue.created|date:'D d-M-Y H:i:s' }} <br />
+      Modified: {{ issue.modified|date:'D d-M-Y H:i:s' }}
     </p>
   </div>
-  {% endif %}
   {% if user.is_superuser %}
     {% for dup in issue.issue_number_duplicates_in_business %}
     <div>
@@ -26,15 +38,7 @@
     </div>
     {% endfor %}
     
-    {% if issue.id %}
-    <form method="POST" action="{% url 'edit_issue_number' issue.id %}">
-      {% csrf_token %}
-      {{ issue_number_form }}
-      (next issue number is {{project.next_issue_number}})
-      <button class="btn" onclick="return imp.post_issue_number_form(this, {{issue.id}});">save</button>
-
-    </form>
-    {% endif %}
+    
   {% endif %}
 
   {% comment %}
@@ -92,6 +96,8 @@
 
 	<div class="markdown_content">
 	  {{comment.comment|asmarkdown|safe}}
+
+          {% comment %}
 	  <div class="comment_section">
 	    <div class="edit_comment" style="display:none">
 	      <textarea name="comment" data-url="{% url 'edit_issue_comment' comment.pk %}"></textarea>
@@ -100,7 +106,8 @@
 	    </div>
 	  </div>
 
-	  <div class="btn" onclick="imp.clickable_description_box($(this).parent(), '{% url 'issue_detail_update' %}',{{ issue.id }})">Edit</div>
+	  <div class="btn" onclick="imp.clickable_description_box($(this).parent(), '{% url 'edit_issue_comment' %}',{{ comment.id }})">Edit</div>
+          {% endcomment %}
 	</div>
 	<hr/>
       {% endfor %}
