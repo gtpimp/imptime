@@ -180,7 +180,7 @@ half-way through the sprint budget.
     {% for feature_name, feature_min_cost in estimate_stats.features.items %} 
       <tr>
         <th>{{feature_name}}</th>
-        <td>{{feature_min_cost}}</td>
+        <td>R{{feature.min_cost|floatformat:"0"|intcomma}}</td>
       </tr>
     {% endfor %}
     </table>
