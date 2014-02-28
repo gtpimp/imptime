@@ -170,21 +170,22 @@ half-way through the sprint budget.
 
 {% if settings.include_features %}
 
-  <div class="graph" style="float:left">
-    <h3 style="text-align:center">Breakdown by feature</h3>
-    <div class="graph_estimate_by_feature" style="height:250px;width:250px;"></div>
-  </div>
-
   <div style="clear:both">
     <table>
     {% for feature_name, feature_min_cost in estimate_stats.features.items %} 
       <tr>
         <th>{{feature_name}}</th>
-        <td>R{{feature.min_cost|floatformat:"0"|intcomma}}</td>
+        <td>R{{feature_min_cost|floatformat:"0"|intcomma}}</td>
       </tr>
     {% endfor %}
     </table>
   </div>
+
+  <div class="graph" style="float:left">
+    <h3 style="text-align:center">Breakdown by feature</h3>
+    <div class="graph_estimate_by_feature" style="height:250px;width:250px;"></div>
+  </div>
+
 
   <script>
   $.plot(".graph_estimate_by_feature",
