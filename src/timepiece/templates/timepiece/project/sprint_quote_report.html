@@ -175,6 +175,14 @@ half-way through the sprint budget.
     <div class="graph_estimate_by_feature" style="height:250px;width:250px;"></div>
   </div>
 
+  <table>
+    {% for feature_name, feature_min_cost in estimate_stats.features.items %} 
+    <th>{{feature_name}}</th>
+    <th>{{feature_min_cost}}</th>
+    {% endfor %}
+  </table>
+
+
   <script>
   $.plot(".graph_estimate_by_feature",
 		   [ {%spaceless%} 
