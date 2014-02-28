@@ -10,6 +10,7 @@ src/static_collected
 src/implicitdesign/media/unknown_redmine_entries
 src/implicitdesign/media/issue_attachments
 temp
+src/phantompdf/phantomjs
 .project
 .pydevproject
 *.pyc
