@@ -1145,7 +1145,10 @@ class SprintQuoteReportSettingsForm(forms.Form):
     is_final = forms.BooleanField(label="Tick for final, untick for provisional", 
                                   initial=False, required=False)
 
-    def __init__(self, project, bp, *args, **kwargs):
+    only_these_issue_numbers = forms.MultipleChoiceField(required=False,
+                                                     widget=CheckboxSelectMultiple)
+
+    def __init__(self, project, bp, only_these_issues=None, *args, **kwargs):
         super(SprintQuoteReportSettingsForm, self).__init__(*args, **kwargs)
         self.bp = bp
         self.project = project
@@ -1154,3 +1157,8 @@ class SprintQuoteReportSettingsForm(forms.Form):
         
         self.fields['only_these_statuses'].choices = [('all', 'Any status'),] + list( [ (x['status'],x['status']) for x in project.issues.values('status').distinct()] )
         self.fields['preferred_user_for_estimates'].choices = [ (x.user.id, x.user) for x in BusinessPermissions.by_user(project.business).values() if x.has_estimate_own_points ]
+        
+        if only_these_issues is None:
+            only_these_issues = project.issues.all()
+        self.fields['only_these_issue_numbers'].choices = [ (issue.number, issue.number) for issue in only_these_issues ] 
+        self.fields['only_these_issue_numbers'].initial = [ issue.number for issue in only_these_issues ] 

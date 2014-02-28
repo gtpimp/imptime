@@ -5,6 +5,12 @@
 
 <tr class="issue_instance_row {{issue.status_as_class}}" id="{{issue.pk}}" refresh_url="{% url 'get_issue_row' issue.pk %}">                    
 
+  <td>
+    <div class="issue_checkbox_cell" style="width:100%;display:none;">
+      <input type="checkbox" name="issue_checked_{{issue.pk}}"/>
+    </div>
+  </td>
+
   <td class="issue_number_cell"> 
     <div style="width:100%;position:relative">
       <div class="emacs_copy_container">

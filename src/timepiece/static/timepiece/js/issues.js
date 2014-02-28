@@ -185,7 +185,25 @@ imp.attach_upload_issue_attachment = function(el) {
 		  });
 
     return false;
-}
+};
+
+imp.hide_issue_checkboxes = function(el) {
+    $(".issue_checkbox_cell").hide();
+    $(el).parents(".issue_checkbox_cell_toggle").find(".hide").hide();
+    $(el).parents(".issue_checkbox_cell_toggle").find(".show").show();
+};
+imp.show_issue_checkboxes = function(el) {
+    $(".issue_checkbox_cell").show();
+    $(el).parents(".issue_checkbox_cell_toggle").find(".hide").show();
+    $(el).parents(".issue_checkbox_cell_toggle").find(".show").hide();
+};
+imp.get_selected_issue_ids_for_get = function(el) {
+    var selected_issue_checkboxes = "";
+    $(".issue_checkbox_cell input:checked").each( function() {
+						      selected_issue_checkboxes += $(this).parents(".issue_instance_row").attr("id")+",";
+    });
+    return selected_issue_checkboxes;
+};
 
 imp.on_add_issue_comment = function(el, url) {
 

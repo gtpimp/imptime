@@ -4075,7 +4075,11 @@ def sprint_report_settings(request, project_id, context=None):
     if not bp.has_view_project_card:
         return HttpResponse("Sorry, you don't have permission to view the report")
 
-    context['quote_form'] = timepiece_forms.SprintQuoteReportSettingsForm(project, bp)
+    if 'only_these_issues' in request.GET and request.GET['only_these_issues']:
+        only_these_issues = [ timepiece.Issue.objects.get(pk=issue_id) for issue_id in request.GET['only_these_issues'].split(",") if issue_id ]
+    else:
+        only_these_issues = None
+    context['quote_form'] = timepiece_forms.SprintQuoteReportSettingsForm(project, bp, only_these_issues)
     context['invoice_form'] = timepiece_forms.SprintInvoiceReportSettingsForm(project, bp)
     context['project'] = project
     return render_to_response('timepiece/project/sprint_report_settings.html',
@@ -4119,11 +4123,11 @@ def sprint_report(request, project_id, context=None):
         return rendered
         
     business = project.business
-    bp = timepiece.BusinessPermissions.for_user(user, business)
-    quote_form = timepiece_forms.SprintQuoteReportSettingsForm(project, bp, request.GET)
-    invoice_form = timepiece_forms.SprintInvoiceReportSettingsForm(project, bp, request.GET)
-
     issues = project.issues.order_by("order")
+
+    bp = timepiece.BusinessPermissions.for_user(user, business)
+    quote_form = timepiece_forms.SprintQuoteReportSettingsForm(project, bp, issues, request.GET)
+    invoice_form = timepiece_forms.SprintInvoiceReportSettingsForm(project, bp, request.GET)
 
     if request.GET['report_type'] == 'Quote' and quote_form.is_valid():
         if not bp.has_view_ctc_billable_rates:
@@ -4131,7 +4135,6 @@ def sprint_report(request, project_id, context=None):
 
         form = quote_form
         template = 'timepiece/project/sprint_quote_report.html'
-        context['estimate_stats'] = project.estimate_stats(issues, preferred_user_id=quote_form.cleaned_data['preferred_user_for_estimates'])
 
     elif request.GET['report_type'] == 'Invoice' and invoice_form.is_valid():
         form = invoice_form
@@ -4149,7 +4152,11 @@ def sprint_report(request, project_id, context=None):
             assigned_to = form.cleaned_data['only_assigned_to']
             if 'all' not in assigned_to:
                 issues = issues.filter(assigned_to__username__in=assigned_to)
-        
+
+        if 'only_these_issue_numbers' in form.cleaned_data:
+            issues = issues.filter(number__in=form.cleaned_data['only_these_issue_numbers'])
+
+    context['estimate_stats'] = project.estimate_stats(issues, preferred_user_id=quote_form.cleaned_data['preferred_user_for_estimates'])
     context['issues'] = issues
     context['form'] = form
     context['project'] = project

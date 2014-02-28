@@ -8,6 +8,10 @@
 
   <form target="_blank" method="GET" action="{% url 'sprint_report' project.id %}">
 
+    {% if issue_ids %}
+      <input type="hidden" name="issues" value="{{issue_ids}}"/>
+    {% endif %}
+
     <p>
     <h3>Report type</h3>
       Quote: <input type="radio" name="report_type" value="Quote" onclick="$('.report_type_quote').show(); $('.report_type_invoice').hide();"/>
