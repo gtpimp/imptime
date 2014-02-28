@@ -9468,6 +9468,12 @@ ul.project_list {
     background-color: #6A9AFD;
 }
 
+.sprint_highlighted_menu_item {
+    background-color: #ababab;
+    border: 1px solid #aaaaaa;
+    padding: 5px;
+}
+
 .light_priority{
     background-color:#cfcfcf;
 }
