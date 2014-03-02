@@ -4177,7 +4177,8 @@ def sprint_report(request, project_id, context=None):
         if 'only_these_issue_numbers' in form.cleaned_data:
             issues = issues.filter(number__in=form.cleaned_data['only_these_issue_numbers'])
 
-    context['estimate_stats'] = project.estimate_stats(issues, preferred_user_id=quote_form.cleaned_data['preferred_user_for_estimates'])
+    if form == quote_form:
+        context['estimate_stats'] = project.estimate_stats(issues, preferred_user_id=form.cleaned_data['preferred_user_for_estimates'])
     context['issues'] = issues
     context['form'] = form
     context['project'] = project
