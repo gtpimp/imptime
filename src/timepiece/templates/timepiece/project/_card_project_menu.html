@@ -53,8 +53,7 @@
 	</a>
       </li>
       {% end_permission %}
-
-      {% comment %}
+      
       {% has_permission has_edit_project_detail project.business %}
       <li>
         <a href="#" onclick="window.open('{%url 'project_detail' project.business.id%}')">
@@ -62,7 +61,6 @@
         </a>
       </li>
       {% end_permission %}
-      {% endcomment %}
 
       {% has_permission has_edit_budget project.business %}
       <li>
