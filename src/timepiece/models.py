@@ -703,7 +703,7 @@ class Project(models.Model):
             issues_with_time_entries = issues.filter(entries__in=entries).distinct()
             issues = issues_with_time_entries
         else:
-            issues_with_time_entries = issues
+            issues_with_time_entries = issues.all()
 
         ctc = 0
         billed = 0
