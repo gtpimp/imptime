@@ -181,7 +181,7 @@ $(document).ready(function(){
                        <td>
                          <a href="{% url 'business_issues' business.id %}">Issues</a>
                        </td>
-                       {% has_permission has_view_ctc_billable_rates business %}
+                       {% has_permission has_edit_project_detail project.business %}
                        <td>
                          <a href="{% url 'project_detail' business.id %}">Breakdown</a>
                        </td>
