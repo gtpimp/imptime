@@ -109,17 +109,68 @@
       <th>User</th>
       <th>Velocity</th>
       <th>Ratio</th>
+      <th>Hours</th>
+      {% has_permission has_view_ctc_rates project.business %}
+      <th>Ctc</th>
+      {% end_permission %}
+      {% has_permission has_view_ctc_billable_rates project.business %}
+      <th>Billable</th>
+      {% end_permission %}
     </thead>
     <tbody>
-      {% for user, estimate in project.cost_per_developer.items %}
+      {% for user, detail in project.stats.cost_per_developer.items %}
       <tr>
 	<td>{{ user.username }}</td>
-	<td>{{ estimate.velocity|floatformat:"1"|intcomma }}</td>
-	<td>{{ estimate.work_ratio|floatformat:"1"|intcomma }}</td>
+	<td>{{ detail.velocity|floatformat:"1"|intcomma }}</td>
+	<td>{{ detail.work_ratio|floatformat:"1"|intcomma }}</td>
+        <td>{{ detail.hours|floatformat:"1"|intcomma }}</td>
+        {% has_permission has_view_ctc_rates project.business %}
+        <td>R{{ detail.ctc|floatformat:"0"|intcomma }}</td>
+        {% end_permission %}
+        {% has_permission has_view_ctc_billable_rates project.business %}
+        <td>R{{ detail.billable|floatformat:"0"|intcomma }}</td>
+        {% end_permission %}
       </tr>
       {% endfor %}
     </tbody>
   </table>
+
+  {% comment %}
+  <table>
+    <thead>
+      <th>Issue state</th>
+      <th>Actual hours</th>
+      <th>Estimated hours</th>
+    </thead>
+    <tbody>
+      {% for issue_status_info in project.stats.issues_by_status %}
+      <tr>
+        <td>{{issue_info.status}}</td>
+        <td>{{issue_info.hours}}</td>
+        
+        <td>
+          
+          <table>
+            <thead>
+              <th>User</th>
+              <th>Estimate</th>
+              <th>Actual</th>
+            </thead>
+            <tbody>
+              {% for user_info in issue_status_info.hours_by_user %}
+                <tr>
+                  <td>{{user_info.user.username}}</td>
+                  <td>{{user_info.estimate}}</td>
+                </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+  {% endcomment %}
 
     <br/>
     <hr/>

@@ -697,8 +697,13 @@ class Project(models.Model):
         stats = {}
         entries = Entry.objects.filter(project=self)
 
+        issues = self.issues
         if start is not None:
             entries = entries.filter(start_time__gte=start).filter(end_time__lte=end)
+            issues_with_time_entries = issues.filter(entries__in=entries).distinct()
+            issues = issues_with_time_entries
+        else:
+            issues_with_time_entries = issues
 
         ctc = 0
         billed = 0
@@ -728,9 +733,9 @@ class Project(models.Model):
         stats['amount_over_budget'] = billed-self.budget
         stats['invoiced'] = self.has_invoices
         stats['paid'] = self.has_invoices and self.all_invoices_paid
-        stats['total_issue_points'] = number_total(self.issues)
-        stats['percent_tested'] = 100* (number_tested(self.issues)/stats['total_issue_points'] if stats['total_issue_points'] > 0 else 1)
-        stats['percent_dev_done'] = stats['percent_tested'] + 100 * (number_dev_done(self.issues)/stats['total_issue_points'] if stats['total_issue_points'] > 0 else 0)
+        stats['total_issue_points'] = number_total(issues)
+        stats['percent_tested'] = 100* (number_tested(issues)/stats['total_issue_points'] if stats['total_issue_points'] > 0 else 1)
+        stats['percent_dev_done'] = stats['percent_tested'] + 100 * (number_dev_done(issues)/stats['total_issue_points'] if stats['total_issue_points'] > 0 else 0)
         stats['percent_dev_done_traffic_class'] = get_css_class_for_level(stats['percent_dev_done'], reverse_colours=True)
         stats['percent_tested_traffic_class'] = get_css_class_for_level(stats['percent_tested'], reverse_colours=True)
         stats['ctc'] = ctc
@@ -738,7 +743,7 @@ class Project(models.Model):
         stats['start_time'] = self._first_entry_start_time
         stats['end_time'] = self._last_entry_end_time
         stats['entries'] = entries
-        stats['issues_with_time_entries'] = self.issues.filter(entries__in=entries).distinct()
+        stats['issues_with_time_entries'] = issues_with_time_entries
         
         stats['users_and_hours'] = self._get_users_and_hours(stats)
         stats['cost_per_developer'] = self._get_cost_per_developer(stats)
