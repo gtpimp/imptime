@@ -4162,7 +4162,7 @@ def sprint_report(request, project_id, context=None):
         template = 'timepiece/project/sprint_invoice_report.html'
 
     else:
-        raise Exception("%s %s" % (request.GET['report_type'], str(form.errors)))
+        raise Exception("%s %s %s" % (request.GET['report_type'], str(invoice_form.errors), str(quote_form.errors)))
 
     if form.is_valid():
         context['settings'] = form.cleaned_data
