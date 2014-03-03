@@ -4101,7 +4101,7 @@ def sprint_report_settings(request, project_id, context=None):
     else:
         only_these_issues = None
     context['quote_form'] = timepiece_forms.SprintQuoteReportSettingsForm(project, bp, only_these_issues)
-    context['invoice_form'] = timepiece_forms.SprintInvoiceReportSettingsForm(project, bp)
+    context['invoice_form'] = timepiece_forms.SprintInvoiceReportSettingsForm(project, bp, only_these_issues)
     context['project'] = project
     return render_to_response('timepiece/project/sprint_report_settings.html',
                               context, context_instance=RequestContext(request))
@@ -4148,7 +4148,7 @@ def sprint_report(request, project_id, context=None):
 
     bp = timepiece.BusinessPermissions.for_user(user, business)
     quote_form = timepiece_forms.SprintQuoteReportSettingsForm(project, bp, issues, request.GET)
-    invoice_form = timepiece_forms.SprintInvoiceReportSettingsForm(project, bp, request.GET)
+    invoice_form = timepiece_forms.SprintInvoiceReportSettingsForm(project, bp, issues, request.GET)
 
     if request.GET['report_type'] == 'Quote' and quote_form.is_valid():
         if not bp.has_view_ctc_billable_rates:
