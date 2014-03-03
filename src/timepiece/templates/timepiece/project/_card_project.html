@@ -87,7 +87,7 @@
       <th>Total Billed</th>
     </thead>
     <tbody>
-      {% for user, estimate in project.cost_per_developer.items %}
+      {% for user, estimate in project.stats.cost_per_developer.items %}
       <tr>
 	<td>{{ user.username }}</td>
 	<td>{{ estimate.points }}</td>

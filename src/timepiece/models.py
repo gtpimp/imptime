@@ -440,47 +440,6 @@ class Project(models.Model):
             ret[user] = total['points__sum'] if total['points__sum'] else 0
         return ret
 
-    def cost_per_developer(self):
-        if hasattr(self, '_cost_per_developer_cache'):
-            return self._cost_per_developer_cache
-        ret = {}
-        
-        users_and_hours = self.users_and_hours()
-        total_hours = users_and_hours['totals']['hours']
-
-        for user, points in self.get_points_total().items():
-            if user.username not in users_and_hours['users']:
-                continue
-            user_info = users_and_hours['users'][user.username]
-            if int(user_info['hours']) == 0 and points == 0:
-                continue
-
-            try:
-                rate = user_info['rate']
-            except KeyError:
-                continue
-            velocity = rate.velocity or 1
-            ratio = rate.work_ratio or 1
-            user_hours = user_info['hours']
-            
-            total_adjustedd_billed = points * (1/ratio) * float(rate.billable_amount) * velocity
-            total_adjustedd_ctc = points * (1/ratio) * float(rate.amount) * velocity
-
-            ret[user] = {
-                'points': points, 
-                'hours':user_hours,
-                'ctc':rate.amount*user_hours,
-                'billable':rate.billable_amount*user_hours,
-                'total_adjusted_billed': total_adjustedd_billed,
-                'total_adjusted_ctc': total_adjustedd_ctc,
-                'total_adjusted_profit': total_adjustedd_billed - total_adjustedd_ctc,
-                'rate': rate,
-                'velocity': (points/float(user_hours)) if float(user_hours)>0 else 1,
-                'work_ratio': (user_hours/total_hours) if total_hours>0 else 1
-            }
-        self._cost_per_developer_cache = ret
-        return ret
-
     def get_user_rate(self, user):
 
         if isinstance(user, basestring):
@@ -731,12 +690,16 @@ class Project(models.Model):
         stats['slack_percentage'] = self.slack_percentage*100
         return stats
 
-    @property
-    def stats(self):
-        if self._stats is not None:
-            return self._stats
+    def users_and_hours(self):
+        return self._get_users_and_hours({'entries':Entry.objects.filter(project=self)})
+
+    def cache_stats(self, start=None, end=None):
         stats = {}
         entries = Entry.objects.filter(project=self)
+
+        if start is not None:
+            entries = entries.filter(start_time__gte=start).filter(end_time__lte=end)
+
         ctc = 0
         billed = 0
 
@@ -774,8 +737,119 @@ class Project(models.Model):
         stats['billed'] = billed
         stats['start_time'] = self._first_entry_start_time
         stats['end_time'] = self._last_entry_end_time
+        stats['entries'] = entries
+        stats['issues_with_time_entries'] = self.issues.filter(entries__in=entries).distinct()
+        
+        stats['users_and_hours'] = self._get_users_and_hours(stats)
+        stats['cost_per_developer'] = self._get_cost_per_developer(stats)
+
+        unassigned_entries = entries.filter(issue__isnull=True).order_by("start_time")
+        stats['unassigned'] = {'entries':unassigned_entries,
+                               'costs':unassigned_entries.cost_totals_for_project(self),
+                               'comments':unassigned_entries.get_aggregated_info()}
+
         self._stats = stats
         return stats
+
+    def _get_users_and_hours(self, stats):
+
+        user_totals = stats['entries'].values("user").annotate(hours=Sum('hours'), end_time=Max("end_time"))
+        user_totals = dict( (x['user'], x) for x in user_totals )
+
+        users_and_hours = {'users':{}, 'totals':{}}
+        total_hours = 0
+        total_revenue = 0
+        total_billed = 0
+        ctc_rate = 0
+        billed_rate = 0
+
+        business_users = BusinessPermissions.by_user(self.business)
+        for user_id, bp in business_users.items():
+            if not bp.can_view_project_card:
+                continue
+
+            if user_id not in user_totals:
+                user_total = {'user':user_id, 'hours':0, 'end_time':datetime.datetime.today()}
+            else:
+                user_total = user_totals[user_id]
+
+            user = User.objects.get(pk=user_id)
+            try:
+                rate = Rate.objects.get(project=self, user=user)
+            except Rate.DoesNotExist:
+                rate = Rate.objects.create(project=self, user=user, amount=0)
+
+            billed = float(user_total['hours']) * float(rate.billable_amount)
+
+            users_and_hours['users'][user.username] = {
+                'hours':user_total['hours'], 
+                'rate':rate, 
+                'revenue': float(user_total['hours'])*float(rate.amount), 
+                'end_time': user_total['end_time'],
+                'billed': billed
+                }
+            user_info = users_and_hours['users'][user.username]
+            user_info['profit'] = user_info['billed'] - user_info['revenue']
+            user_info['work_ratio'] = rate.work_ratio
+            user_info['velocity'] = rate.velocity
+            
+            total_hours += user_total['hours']
+            total_revenue += float(user_total['hours'])*float(rate.amount)
+            total_billed += float(rate.billable_amount) * float(user_total['hours'])
+            ctc_rate += float(rate.amount)
+            billed_rate += float(rate.billable_amount)
+        users_and_hours['totals']['hours'] = total_hours
+        users_and_hours['totals']['revenue'] = total_revenue
+        users_and_hours['totals']['billed'] = total_billed
+        users_and_hours['totals']['ctc_rate'] = ctc_rate / len(user_totals) if len(user_totals)>0 else 0
+        users_and_hours['totals']['billed_rate'] = billed_rate / len(user_totals) if len(user_totals)>0 else 0
+        users_and_hours['totals']['profit'] = total_billed - total_revenue
+        return users_and_hours
+
+    def _get_cost_per_developer(self, stats):
+        ret = {}
+        
+        users_and_hours = stats['users_and_hours']
+        total_hours = users_and_hours['totals']['hours']
+
+        for user, points in self.get_points_total().items():
+            if user.username not in users_and_hours['users']:
+                continue
+            user_info = users_and_hours['users'][user.username]
+            if int(user_info['hours']) == 0 and points == 0:
+                continue
+
+            try:
+                rate = user_info['rate']
+            except KeyError:
+                continue
+            velocity = rate.velocity or 1
+            ratio = rate.work_ratio or 1
+            user_hours = user_info['hours']
+            
+            total_adjustedd_billed = points * (1/ratio) * float(rate.billable_amount) * velocity
+            total_adjustedd_ctc = points * (1/ratio) * float(rate.amount) * velocity
+
+            ret[user] = {
+                'points': points, 
+                'hours':user_hours,
+                'ctc':rate.amount*user_hours,
+                'billable':rate.billable_amount*user_hours,
+                'total_adjusted_billed': total_adjustedd_billed,
+                'total_adjusted_ctc': total_adjustedd_ctc,
+                'total_adjusted_profit': total_adjustedd_billed - total_adjustedd_ctc,
+                'rate': rate,
+                'velocity': (points/float(user_hours)) if float(user_hours)>0 else 1,
+                'work_ratio': (user_hours/total_hours) if total_hours>0 else 1
+            }
+        return ret
+
+    @property
+    def stats(self):
+        if self._stats is not None:
+            return self._stats
+        self.cache_stats()
+        return self._stats
 
     @property
     def slack_percentage(self):
@@ -837,77 +911,78 @@ class Project(models.Model):
         users = [ User.objects.get(pk=user['user']) for user in Entry.objects.all().filter(project=self).filter(hours__gt=0).exclude(issue__isnull=False).order_by('user').values('user').annotate(Count('user'))]
         return [ user for user in users if not BusinessPermissions.for_user(user, self.business).has_estimate_own_points ] 
 
-    def users_and_hours(self, **entry_filter):
+    # def users_and_hours(self, **entry_filter):
+    #     """ deprecated, use the stats property instead """
         
-        cache = True
-        if 'cache' in entry_filter:
-            cache = entry_filter['cache']
-            del(entry_filter['cache'])
+    #     cache = True
+    #     if 'cache' in entry_filter:
+    #         cache = entry_filter['cache']
+    #         del(entry_filter['cache'])
         
-        if self._users_and_hours is not None and cache:
-            return self._users_and_hours
+    #     if self._users_and_hours is not None and cache:
+    #         return self._users_and_hours
 
-        entries_qs = Entry.objects.filter(project=self)
-        def key(x):
-            return x['count']
+    #     entries_qs = Entry.objects.filter(project=self)
+    #     def key(x):
+    #         return x['count']
 
-        if entry_filter:
-            entries_qs = entries_qs.filter(**entry_filter)
+    #     if entry_filter:
+    #         entries_qs = entries_qs.filter(**entry_filter)
         
-        user_totals = entries_qs.values("user").annotate(hours=Sum('hours'), end_time=Max("end_time"))
-        user_totals = dict( (x['user'], x) for x in user_totals )
+    #     user_totals = entries_qs.values("user").annotate(hours=Sum('hours'), end_time=Max("end_time"))
+    #     user_totals = dict( (x['user'], x) for x in user_totals )
         
-        res = {'users':{}, 'totals':{}}
-        total_hours = 0
-        total_revenue = 0
-        total_billed = 0
-        ctc_rate = 0
-        billed_rate = 0
+    #     res = {'users':{}, 'totals':{}}
+    #     total_hours = 0
+    #     total_revenue = 0
+    #     total_billed = 0
+    #     ctc_rate = 0
+    #     billed_rate = 0
 
-        business_users = BusinessPermissions.by_user(self.business)
-        for user_id, bp in business_users.items():
-            if not bp.can_view_project_card:
-                continue
+    #     business_users = BusinessPermissions.by_user(self.business)
+    #     for user_id, bp in business_users.items():
+    #         if not bp.can_view_project_card:
+    #             continue
 
-            if user_id not in user_totals:
-                user_total = {'user':user_id, 'hours':0, 'end_time':datetime.datetime.today()}
-            else:
-                user_total = user_totals[user_id]
+    #         if user_id not in user_totals:
+    #             user_total = {'user':user_id, 'hours':0, 'end_time':datetime.datetime.today()}
+    #         else:
+    #             user_total = user_totals[user_id]
 
-            user = User.objects.get(pk=user_id)
-            try:
-                rate = Rate.objects.get(project=self, user=user)
-            except Rate.DoesNotExist:
-                rate = Rate.objects.create(project=self, user=user, amount=0)
+    #         user = User.objects.get(pk=user_id)
+    #         try:
+    #             rate = Rate.objects.get(project=self, user=user)
+    #         except Rate.DoesNotExist:
+    #             rate = Rate.objects.create(project=self, user=user, amount=0)
 
-            billed = float(user_total['hours']) * float(rate.billable_amount)
+    #         billed = float(user_total['hours']) * float(rate.billable_amount)
 
-            res['users'][user.username] = {
-                'hours':user_total['hours'], 
-                'rate':rate, 
-                'revenue': float(user_total['hours'])*float(rate.amount), 
-                'end_time': user_total['end_time'],
-                'billed': billed
-                }
-            user_info = res['users'][user.username]
-            user_info['profit'] = user_info['billed'] - user_info['revenue']
-            user_info['work_ratio'] = rate.work_ratio
-            user_info['velocity'] = rate.velocity
+    #         res['users'][user.username] = {
+    #             'hours':user_total['hours'], 
+    #             'rate':rate, 
+    #             'revenue': float(user_total['hours'])*float(rate.amount), 
+    #             'end_time': user_total['end_time'],
+    #             'billed': billed
+    #             }
+    #         user_info = res['users'][user.username]
+    #         user_info['profit'] = user_info['billed'] - user_info['revenue']
+    #         user_info['work_ratio'] = rate.work_ratio
+    #         user_info['velocity'] = rate.velocity
             
-            total_hours += user_total['hours']
-            total_revenue += float(user_total['hours'])*float(rate.amount)
-            total_billed += float(rate.billable_amount) * float(user_total['hours'])
-            ctc_rate += float(rate.amount)
-            billed_rate += float(rate.billable_amount)
-        res['totals']['hours'] = total_hours
-        res['totals']['revenue'] = total_revenue
-        res['totals']['billed'] = total_billed
-        res['totals']['ctc_rate'] = ctc_rate / len(user_totals) if len(user_totals)>0 else 0
-        res['totals']['billed_rate'] = billed_rate / len(user_totals) if len(user_totals)>0 else 0
-        res['totals']['profit'] = total_billed - total_revenue
+    #         total_hours += user_total['hours']
+    #         total_revenue += float(user_total['hours'])*float(rate.amount)
+    #         total_billed += float(rate.billable_amount) * float(user_total['hours'])
+    #         ctc_rate += float(rate.amount)
+    #         billed_rate += float(rate.billable_amount)
+    #     res['totals']['hours'] = total_hours
+    #     res['totals']['revenue'] = total_revenue
+    #     res['totals']['billed'] = total_billed
+    #     res['totals']['ctc_rate'] = ctc_rate / len(user_totals) if len(user_totals)>0 else 0
+    #     res['totals']['billed_rate'] = billed_rate / len(user_totals) if len(user_totals)>0 else 0
+    #     res['totals']['profit'] = total_billed - total_revenue
 
-        self._users_and_hours = res
-        return res
+    #     self._users_and_hours = res
+    #     return res
 
     class Meta:
         ordering = ('name', 'status', 'type',)

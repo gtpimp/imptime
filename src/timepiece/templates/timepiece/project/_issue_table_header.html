@@ -45,12 +45,6 @@
                   {% end_can_estimate %}
 		{% end_permission %}
 
-                    {% comment %}
-                {% has_permission has_view_actual_hours  project.business %} 
-                  <th class="estimates_cell">Hours</th>
-                {% end_permission %}
-                  {% endcomment %}
-
 		{% has_permission has_view_ctc_billable_rates  project.business %}
                   {% has_permission has_view_ctc_rates project.business %}
                   <th class="money_cell">ctc</th>
@@ -98,17 +92,6 @@
 		      <th class="estimates_cell">{% get_all_hours_for_project current_user project %} / {% get_all_points_for_project current_user project %}</th>
                     {% end_can_estimate %}
 		  {% end_permission %}
-
-
-                      {% comment %}
-                  {% has_permission has_view_actual_hours  project.business %} 
-                    <th class="estimates_cell">
-                      <div class="secret_link" onclick="imp.show_issue_detail(null, '{% url 'all_timesheet_entries' project.id %}');">
-                        <i>{{total_hours|floatformat:"0"|intcomma}}</i>
-                      </div>
-                    </th>
-                  {% end_permission %}
-                    {% endcomment %}
 
 		  {% has_permission has_view_ctc_billable_rates project.business %}
 

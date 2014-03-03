@@ -1099,6 +1099,9 @@ class SprintInvoiceReportSettingsForm(forms.Form):
     issue_assignee = forms.BooleanField(initial=False, required=False)
     issue_status = forms.BooleanField(initial=False, required=False)
     only_issues_with_time = forms.BooleanField(initial=False, required=False)
+    start = forms.DateField(initial=None, required=False)
+    end = forms.DateField(initial=None, required=False)
+
     include_features = forms.BooleanField(label="Tick to include features", initial=False, required=False)
     only_these_statuses = forms.MultipleChoiceField( label="Only include these statuses", 
                                                      required=True, initial=('all',),

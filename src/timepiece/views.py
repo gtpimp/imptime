@@ -4183,16 +4183,16 @@ def sprint_report(request, project_id, context=None):
     context['form'] = form
     context['project'] = project
 
+    if 'start' in context['settings']:
+        stats = project.cache_stats(start=context['settings']['start'], end=context['settings']['end'])
+        context['issues'] = stats['issues_with_time_entries']
+
     if 'output_format' in request.GET and request.GET['output_format'] == 'pdf':
         context['output_format'] = 'pdf'
     else:
         context['output_format'] = 'html'
     
     context['user'] = user
-
-    unassigned = timepiece.Issue.get_unassigned_timesheet_entries(project)
-    context['unassigned'] = unassigned.cost_totals_for_project(project)
-    context['unassigned']['comments'] = unassigned.get_aggregated_info()
     context['date_created'] =  datetime.datetime.now().strftime("%d %b %Y %H:%M")
 
     return render_to_response(template, context, context_instance=RequestContext(request))

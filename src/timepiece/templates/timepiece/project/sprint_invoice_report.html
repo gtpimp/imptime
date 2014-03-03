@@ -32,11 +32,18 @@
    </div>
 
 {% if settings.start_end_time %}
-  <br/>
-      {% if project.stats.start_time %}Started on the {{ project.stats.start_time|date:"d F Y H:m" }} at {{ project.stats.start_time|date:"H:m" }}  {% endif %}
+  {% if settings.start %}
+    This summary is for the following date range only, which might not
+    include all work in the sprint.
+
+    From {{ settings.start }} to {{ settings.end }}
+  {% else %}
+    <br/>
+    {% if project.stats.start_time %}Started on the {{ project.stats.start_time|date:"d F Y H:m" }} at {{ project.stats.start_time|date:"H:m" }}  {% endif %}
       <br/>
       {% if project.stats.end_time %}Finished on the {{ project.stats.end_time|date:"d F Y H:m" }} at {{ project.stats.end_time|date:"H:m" }}  {% endif %}
-<br/>
+    <br/>
+  {% endif %}
 {% endif %}
 <br/>
 
@@ -182,7 +189,7 @@ daily by each individual working on the project.
 
 	  $.plot(".graph_hours_by_user",
 		 [ {%spaceless%} 
-		     {% for username,amounts in project.users_and_hours.users.items %} 
+		     {% for username,amounts in project.stats.users_and_hours.users.items %} 
 		       { label:"{{username}}", 
 			 data: {{amounts.hours}}
 		       },
@@ -196,7 +203,7 @@ daily by each individual working on the project.
 	{% if settings.ctc %}
 	$.plot(".graph_ctc_by_user",
 	       [ {%spaceless%} 
-		   {% for username,amounts in project.users_and_hours.users.items %} 
+		   {% for username,amounts in project.stats.users_and_hours.users.items %} 
 		     { label:"{{username}}", 
 			 data: {{amounts.revenue}}
 		       },
@@ -210,7 +217,7 @@ daily by each individual working on the project.
 	{% if settings.billable %}
 	  $.plot(".graph_billable_by_user",
 		   [ {%spaceless%} 
-		       {% for username,amounts in project.users_and_hours.users.items %} 
+		       {% for username,amounts in project.stats.users_and_hours.users.items %} 
 			 { label:"{{username}}", 
 			   data: {{amounts.billed}}
 			 },
@@ -227,7 +234,7 @@ daily by each individual working on the project.
 	  {% if settings.ctc %}
 	    $.plot(".graph_profit_by_user",
 		     [ {%spaceless%} 
-			 {% for username,amounts in project.users_and_hours.users.items %} 
+			 {% for username,amounts in project.stats.users_and_hours.users.items %} 
 			   { label:"{{username}}", 
 			     data: {{amounts.profit}}
 			   },
@@ -323,7 +330,7 @@ daily by each individual working on the project.
 	</tr>
 	{% endif %}
       {% endfor %}
-      {% if unassigned.hours > 0 %}
+      {% if project.stats.unassigned.costs.hours > 0 %}
       <tr>
 	<td></td>
 	<td>non specific time</td>
@@ -331,13 +338,13 @@ daily by each individual working on the project.
 	<td></td>
 	{% endif %}
 	{% if settings.view_actual_hours %}
-	<td>{{unassigned.hours|floatformat:2|intcomma}}</td>
+	<td>{{project.stats.unassigned.costs.hours|floatformat:2|intcomma}}</td>
 	{% endif %}
 	{% if settings.ctc %}
-	<td>R{{unassigned.ctc|floatformat:2|intcomma}}</td>
+	<td>R{{project.stats.unassigned.costs.ctc|floatformat:2|intcomma}}</td>
 	{% endif %}
 	{% if settings.billable %}
-	<td>R{{unassigned.billable|floatformat:2|intcomma}}</td>
+	<td>R{{project.stats.unassigned.costs.billable|floatformat:2|intcomma}}</td>
 	{% endif %}
       </tr>
       {% endif %}
@@ -372,10 +379,10 @@ daily by each individual working on the project.
 
     {% endfor %}
 
-    {% if unassigned.comments|length > 0 %}
+    {% if project.stats.unassigned.comments|length > 0 %}
     <h4 id="issue_description_unassigned">non specific time</h4>
     <ul>
-      {% for comment in unassigned.comments %}
+      {% for comment in project.stats.unassigned.comments %}
       <li>{{comment.comments|safe}}</li>
       {% endfor %}
     </ul>
