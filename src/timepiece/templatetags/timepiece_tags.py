@@ -164,9 +164,6 @@ register.tag('is_same_user', is_same_user)
 
 @register.filter
 def asmarkdown(content):
-
-    extensions=[MyExtension(), 'path.to.my.ext', 'extra']
-
     return markdown.markdown(content)
     
 @register.simple_tag(takes_context=True)
