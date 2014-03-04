@@ -9893,6 +9893,16 @@ ul.project_list {
     color: #121212;
 }
 
+.issue_detail h1 {
+    font-size:12px;
+}
+
+.issue_detail h2 {
+    font-size:11px;
+    font-weight: normal;
+}
+
+
 .issue_detail .content {
     color: #000000;
 }
