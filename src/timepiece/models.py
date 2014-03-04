@@ -548,6 +548,9 @@ class Project(models.Model):
                     last_rate = Rate.objects.get(project=last_project, user=user)
                 except Rate.DoesNotExist:
                     pass
+                except Rate.MultipleObjectsReturned:
+                    last_rate = Rate.objects.filter(project=last_project, user=user)[0]
+                    Rate.objects.filter(project=last_project, user=user).exclude(pk=last_rate.id).delete()
                     
             rate, newly_created = Rate.objects.get_or_create(project=self, user=user)
             if newly_created:
