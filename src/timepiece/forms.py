@@ -1165,7 +1165,8 @@ class SprintQuoteReportSettingsForm(forms.Form):
         self.bp = bp
         self.project = project
         if not self.bp.has_view_ctc_billable_rates or not self.bp.has_view_ctc_rates:
-            del self.fields['estimated']
+            #del self.fields['estimated']
+            pass
         
         self.fields['only_these_statuses'].choices = [('all', 'Any status'),] + list( [ (x['status'],x['status']) for x in project.issues.values('status').distinct()] )
         self.fields['preferred_user_for_estimates'].choices = [ (x.user.id, x.user) for x in BusinessPermissions.by_user(project.business).values() if x.has_estimate_own_points ]
