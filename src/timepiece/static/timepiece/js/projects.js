@@ -36,7 +36,7 @@ imp.projects.on_sortable_changed_for_url = function(sortable_url) {
 };
 
 imp.projects.show_project_card_as_popup = function (event, project_card_url, msg, args) {
-    imp.show_issue_detail(null, project_card_url, msg, args)
+    imp.show_issue_detail(null, project_card_url, msg, args);
     event.stopPropagation();
     return false;
 };
@@ -106,7 +106,7 @@ imp.projects.attach_sortable = function(sortable, sortable_url) {
 
     if ( sortable_url ) {
 	sortable.sortable({ connectWith: ".issue_list_body",
-                            stop: imp.projects.on_sortable_changed_for_url(sortable_url),
+                            update: imp.projects.on_sortable_changed_for_url(sortable_url),
                             receive: imp.projects.on_sortable_changed_for_url(sortable_url)
 			  });
     } else {
@@ -119,7 +119,7 @@ imp.projects.load_or_display_issues = imp.projects._make_load_for_data( make_dat
 imp.projects.on_project_sorting_change_for_url = function ( project_sorting_url) {
     var url_to_call_when_projects_were_resorted = project_sorting_url;
     return function(event,ui) {
-        var url = url_to_call_when_projects_were_resorted;
+	var url = url_to_call_when_projects_were_resorted;
         var ul_element = ui.item.parent();
         var li_elements = ul_element.find(".project_li");
         var ordered_proj_ids = [];
@@ -281,7 +281,7 @@ imp.refresh_show_numbers = function() {
 imp.on_document_ready = function() {
 
     var project_sort_url = $(".project_list").attr("project_sort_url");
-    $(".project_list").sortable( { stop : imp.projects.on_project_sorting_change_for_url(project_sort_url) });
+    $(".project_list").sortable( { update : imp.projects.on_project_sorting_change_for_url(project_sort_url) });
     var project_li_row = $(".project_li");
     project_li_row.each(function(item, project_row) {
         var elem = $(project_row);

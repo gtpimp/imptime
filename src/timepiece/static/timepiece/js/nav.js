@@ -7,7 +7,7 @@ imp.nav = imp.nav || {};
       loading_counter += 1;
       var local_loading_counter = loading_counter;
 
-      var el = $(".top_level_loading")
+      var el = $(".top_level_loading");
       el.find(".title").html(msg);
       el.show();
 
@@ -16,7 +16,7 @@ imp.nav = imp.nav || {};
 	      el.find(".title").html();
 	      el.fadeOut({duration:1000});
 	  }
-      }
+      };
       return on_done;
   };
 }());
