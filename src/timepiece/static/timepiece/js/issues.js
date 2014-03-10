@@ -42,12 +42,12 @@ imp.show_issue_detail = function(issue_id, url, msg, args) {
 				    imp.highlight_issue(issue_id);
 				}
 
-				$(".issue_detail .edit_comment_section").hover(function() {
-										   $(this).find(".edit_comment_button").show();
-									       },
-									       function() {
-										   $(this).find(".edit_comment_button").hide();
-									       });
+				// $(".issue_detail .edit_comment_section").hover(function() {
+				// 						   $(this).find(".edit_comment_button").show();
+				// 					       },
+				// 					       function() {
+				// 						   $(this).find(".edit_comment_button").hide();
+				// 					       });
 
 				on_done();
 			    });
@@ -661,6 +661,22 @@ imp.show_inline_editor = function(el) {
     }
 
 };
+
+imp.show_issue_history = function(url) {
+
+    if (imp.popup_dialog) {
+	$(".project_card_dialog_container").find(".dialog_content").load(url);
+    } else {
+	$(".project_card_dialog_container").dialog( { width: 600,
+						      height: 400,
+						      open: function(event, ui) {
+							  $(".project_card_dialog_container").find(".dialog_content").load(url);
+						      }
+						    });
+    }
+
+};
+
 
 // imp.dynamic_option_selection = function(element, item_id, options , update_url) {
 //     var selectme = $(element);

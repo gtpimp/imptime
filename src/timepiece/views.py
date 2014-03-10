@@ -3028,6 +3028,8 @@ def add_issue(request, project_id, template="timepiece/project/_add_issue_form.h
                 if estimated_hours > 0:
                     timepiece.IssuePoints.objects.create(user=current_user, issue=issue, points=estimated_hours)
 
+            timepiece.IssueHistory.add_history(request.user, issue, "created", "", issue.number)
+
             get_interface_plugin(project.business).create_issue(issue, plugin_form)
 
             return get_issue_row(request, issue.id)
@@ -3053,6 +3055,8 @@ def delete_issue(request, project_id, template="", context=None):
     if can_delete_issue:
         try:
             edited_issue = timepiece.Issue.objects.get(pk=request.POST['item_id'])
+            old_id = edited_issue.id
+            timepiece.IssueHistory.add_history(request.user, edited_issue, "deleted", old_id, "")
             edited_issue.delete()
         except KeyError:
             edited_issue = None
@@ -3369,8 +3373,10 @@ def issue_detail_update(request,  template="timepiece/project/issue_detail.html"
         raise PermissionDenied
 
     try:
+        old_description = edited_issue.description
         edited_issue.description = request.POST["new_value"]
         edited_issue.save()
+        timepiece.IssueHistory.add_history(request.user, edited_issue, "changed description", old_description, edited_issue.description)
     except KeyError:
         pass
 
@@ -3393,8 +3399,11 @@ def issue_status_update(request,  template="timepiece/project/issue_detail.html"
     context['supports_description'] = True
     context['issue_number_form'] = timepiece_forms.IssueNumberForm(instance=edited_issue)
 
+    old_status = edited_issue.status
     edited_issue.status = request.POST["selected_value"]
     edited_issue.save()
+
+    timepiece.IssueHistory.add_history(request.user, edited_issue, "changed status", old_status, edited_issue.status)
 
     get_interface_plugin(project.business).update_issue_status(edited_issue)
 
@@ -3414,6 +3423,7 @@ def update_issue_with_feature(request):
     if not has_edit_issue_feature:
         raise PermissionDenied
 
+    old_feature = issue.feature
     if created_value and len(created_value)>0:
         new_feature = timepiece.Feature.objects.get_or_create(business=business, name=created_value)[0]
         issue.feature = new_feature;
@@ -3425,7 +3435,10 @@ def update_issue_with_feature(request):
         except ValueError:
             feature = None
         issue.feature = feature;
+
     issue.save()
+
+    timepiece.IssueHistory.add_history(request.user, issue, "changed feature", old_feature, issue.feature)
 
     return HttpResponse();
 
@@ -3451,11 +3464,11 @@ def issue_assigned_to_update(request,  template="timepiece/project/issue_detail.
     has_assign_user = timepiece.BusinessPermissions.objects.get_or_create(business=project.business, user=request.user)[0].has_assign_user
     if not has_assign_user:
         raise PermissionDenied
-    try:
-        issue.assigned_to = user
-        issue.save()
-    except KeyError:
-        pass
+
+    old_assigned = issue.assigned_to
+    issue.assigned_to = user
+    issue.save()
+    timepiece.IssueHistory.add_history(request.user, issue, "assigned user", old_assigned, issue.assigned_to)
 
     get_interface_plugin(project.business).update_issue_assigned_to(issue, username)
 
@@ -3480,15 +3493,15 @@ def issue_subject_update(request,  template="timepiece/project/issue_detail.html
     if not has_edit_subject:
         raise PermissionDenied
     try:
+        old_subject = edited_issue.subject
         edited_issue.subject = request.POST["new_value"]
         edited_issue.save()
+        timepiece.IssueHistory.add_history(request.user, edited_issue, "changed subject", old_subject, edited_issue.subject)
+        get_interface_plugin(project.business).update_issue_subject(edited_issue)
     except KeyError:
         pass
-
-    get_interface_plugin(project.business).update_issue_subject(edited_issue)
     
     return HttpResponse("")
-
 
 @csrf_exempt
 @transaction.commit_on_success
@@ -3508,10 +3521,14 @@ def issue_points_update(request,  template="timepiece/project/issue_detail.html"
     if not can_edit_points:
         raise PermissionDenied
 
+    old_points = edited_issue_points.points
     edited_issue_points.points = request.POST["new_value"]
     edited_issue_points.save()
 
     context['issue_number_form'] = timepiece_forms.IssueNumberForm(instance=edited_issue_points.issue)
+
+    timepiece.IssueHistory.add_history(request.user, edited_issue_points.issue, "changed estimate for "%edited_issue_points.user, old_points, edited_issue_points.points)
+
     get_interface_plugin(current_project.business).update_issue_points(edited_issue_points)
 
     return HttpResponse("")
@@ -3973,6 +3990,7 @@ def add_issue_comment(request, issue_id):
         issue=issue,
         author=request.user,
         created=datetime.datetime.today())
+    timepiece.IssueHistory.add_history(request.user, issue, "added comment %s"%new_comment.id, "", new_comment.comment)
 
     get_interface_plugin(business).add_issue_comment(new_comment)
 
@@ -3991,12 +4009,14 @@ def edit_issue_comment(request, comment_id):
         raise PermissionDenied
 
     text = request.POST['comment']
+    old_comment = comment.comment
     comment.comment = text
     comment.author = request.user
     comment.modified = datetime.datetime.today()
     comment.save()
 
     get_interface_plugin(business).edit_issue_comment(comment)
+    timepiece.IssueHistory.add_history(request.user, issue, "edited comment %s"%comment.id, old_comment, comment.comment)
     return HttpResponse("ok")
 
 @csrf_exempt
@@ -4013,6 +4033,7 @@ def add_issue_attachment(request, issue_id):
 
     f = request.FILES['attachment']
     timepiece.IssueAttachment.objects.create(issue=issue, attachment=f, name=f.name)
+    timepiece.IssueHistory.add_history(request.user, issue, "added attachment", "", f.name)
     return HttpResponse("ok")
 
 @csrf_exempt
@@ -4027,6 +4048,7 @@ def delete_issue_attachment(request, attachment_id):
         raise PermissionDenied
 
     attachment.delete()
+    timepiece.IssueHistory.add_history(request.user, issue, "deleted attachment", attachment.name, "")
     return HttpResponse("ok")
 
 @csrf_exempt
@@ -4051,8 +4073,11 @@ def sortable_issue_update(request, project_id):
         issue = timepiece.Issue.objects.get(pk=issue_id)
         old_project = issue.project
         issue.project = new_project
-        issue.order = item_order_count
-        issue.save()
+        old_order = issue.order
+        if old_order != item_order_count:
+            issue.order = item_order_count
+            issue.save()
+            timepiece.IssueHistory.add_history(request.user, issue, "order", old_order, issue.order)
 
         if old_project != new_project:
             get_interface_plugin(new_project.business).issue_moved_projects(issue, old_project, new_project)
@@ -4208,10 +4233,25 @@ def edit_issue_number(request, issue_id, context=None):
     if not request.user.is_superuser:
         return HttpResponseForbidden("Not allowed")
     issue = timepiece.Issue.objects.get(pk=issue_id)
+    old_number = issue.number
 
     form = timepiece_forms.IssueNumberForm(request.POST or None, instance=issue)
     if form.is_valid():
         form.save()
+        timepiece.IssueHistory.add_history(request.user, issue, "issue number", old_number, issue.number)
         return HttpResponse(issue.number)
     return Http404("Couldn't not edit issue number : %s", form.errors)
     
+@login_required
+def show_issue_history(request, issue_id, template="timepiece/project/issue_history.html", context=None):
+    context = context or {}
+    issue = timepiece.Issue.objects.get(pk=issue_id)
+    project = issue.project
+    business = project.business
+    bp = timepiece.BusinessPermissions.for_user(request.user, business)
+    if not bp.has_view_issues:
+        return HttpResponse("Sorry, you don't have permission to view the issue")
+
+    context['issue'] = issue
+    context['history'] = timepiece.IssueHistory.for_issue(issue)
+    return render_to_response(template, context, context_instance=RequestContext(request))

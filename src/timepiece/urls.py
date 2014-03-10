@@ -589,4 +589,6 @@ urlpatterns = patterns('',
 
     url(r'^planner/', include('planner.urls', namespace="planner"), {}, "planner"),
 
+    url(r'^time-sheet/show_issue_history/(?P<issue_id>\d+)/$', views.show_issue_history, name="show_issue_history"),
+
 )

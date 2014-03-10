@@ -170,4 +170,9 @@
       {% endifequal %}
     </div>
   {% end_permission %}
+
+    <a href="#" class"btn" onclick="return imp.show_issue_history('{% url 'show_issue_history' issue.pk %}')">
+      <img src="{{STATIC_URL}}/images/icons/report.png"/>
+    </a>
+
 </div>

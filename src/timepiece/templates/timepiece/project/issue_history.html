@@ -1,0 +1,31 @@
+<h1>History of {{issue.number}} {{issue.subject}}</h1>
+
+<table>
+
+  <thead>
+    <tr>
+      <th>Who</th>
+      <th>When</th>
+      <th>What</th>
+      <th>Before</th>
+      <th>After</th>
+    </tr>
+  </thead>
+
+  <tbody>
+
+  {% for item in history %}
+
+  <tr>
+    <td>{{item.created_by}}</td>
+    <td>{{item.created_at}}</td>
+    <td>{{item.description}}</td>
+    <td>{{item.before}}</td>
+    <td>{{item.after}}</td>
+  </tr>
+
+  {% endfor %}
+
+  </tbody>
+
+</table>

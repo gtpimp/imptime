@@ -2445,3 +2445,21 @@ class IssuePoints(models.Model):
 
     def __unicode__(self):
         return u'%s:%s - %s points' % (self.issue.subject, self.user.username, self.points)
+
+class IssueHistory(models.Model):
+    
+    issue_id = models.IntegerField(blank=False, null=False, db_index=True)
+    created_by = models.ForeignKey(User, blank=False, null=False)
+    created_at = models.DateTimeField(auto_now_add=True)
+    description = models.CharField(max_length=255, blank=False, null=False)
+    before = models.TextField(blank=True, null=True)
+    after = models.TextField(blank=True, null=True)
+
+    @classmethod
+    def add_history(self, user, issue, description, before, after):
+        IssueHistory.objects.create(created_by=user, issue_id=issue.id, description=description,
+                                    before=before, after=after)
+        
+    @classmethod
+    def for_issue(self, issue):
+        return IssueHistory.objects.filter(issue_id=issue.id).order_by("-created_at")
