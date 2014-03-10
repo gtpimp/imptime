@@ -41,7 +41,7 @@ def daily_graph(username, from_date, to_date, test=False):
     _plot(points_x, points_y, label="Daily graph for %s" % username, output_file=graph_file)
 
     if test:
-        print("As test")
+        print("As test : %s" % graph_file)
         to = ["gtp@implicitdesign.co.za"]
     else:
         to = list(set(settings.EMACS_ADMIN_USER_EMAILS + [user.email]))
@@ -62,11 +62,12 @@ def _plot(points_x, points_y, label, output_file):
     plt.plot_date(points_x, points_y, label=label, linewidth=1, linestyle='-', drawstyle='steps-mid', marker='None', fillstyle='full')
 
     if len(points_x) > 0:
-        tstart = datetime.fromordinal(points_x[0])
-        tend = datetime.fromordinal(points_x[-1])
-        if tstart.month == tend.month and tstart.year == tend.year:
-            plt.gca().xaxis.set_major_formatter(matplotlib.dates.DateFormatter('%a %d'))
-            plt.gca().xaxis.set_major_locator(matplotlib.dates.DayLocator())
+        #tstart = datetime.fromordinal(points_x[0])
+        #tend = datetime.fromordinal(points_x[-1])
+        #if tstart.month == tend.month and tstart.year == tend.year:
+        plt.gca().xaxis.set_major_formatter(matplotlib.dates.DateFormatter('%a %d %b'))
+        plt.gca().xaxis.set_major_locator(matplotlib.dates.WeekdayLocator(byweekday=matplotlib.dates.MO))
+        plt.gca().xaxis.set_major_locator(matplotlib.dates.DayLocator())
 
         for label in plt.gca().get_xticklabels():
             label.set_fontsize(6)
@@ -74,7 +75,7 @@ def _plot(points_x, points_y, label, output_file):
             label.set_fontsize(6)
 
         plt.subplots_adjust(bottom=0.2)
-        plt.xticks( rotation=45 )
+        plt.xticks( rotation=90 )
         plt.title(os.path.basename(output_file))
         plt.xlabel('days')
         plt.ylabel('hours')
