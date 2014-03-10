@@ -4,6 +4,8 @@ logger = logging.getLogger(__name__)
 class DefaultInterfacePlugin(object):
     def add_issue_comment(self, timepiece_comment, *args, **kwargs):
         return
+    def edit_issue_comment(self, timepiece_comment, *args, **kwargs):
+        return
     def update_issue_status(self, timepiece_issue, *args, **kwargs):
         return
     def get_allowed_stati(self, timepiece_issue, *args, **kwargs):

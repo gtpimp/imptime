@@ -2402,7 +2402,8 @@ class IssueComment(models.Model):
     issue = models.ForeignKey(Issue, blank=False, null=False, related_name='comments')
     comment = models.TextField(blank=True)
     author = models.ForeignKey(User, related_name='issue_comments', blank=False, null=False)
-    created = models.DateTimeField()
+    created = models.DateTimeField(auto_now_add=True)
+    modified = models.DateTimeField(auto_now=True)
     
 class IssueAttachment(models.Model):
     issue = models.ForeignKey(Issue, blank=False, null=False, related_name='attachments')

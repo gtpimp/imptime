@@ -52,7 +52,7 @@
       <div class="static_div">
         {% has_permission has_edit_description issue.project.business %}
 	<div class="btn" onclick="imp.clickable_description_box($(this).parent(), '{% url 'issue_detail_update' %}',{{ issue.id }})">
-	  Edit
+	  Edit description
 	</div>
 	{% end_permission %}
           <div class="markdown_content" style="display:none">{{issue.description}}</div>
@@ -90,24 +90,24 @@
       <br/>
       {% for comment in issue.comments_in_order %}
 	<div class="creation_details">
-	  {{comment.created}}
+	  {{comment.modified}}
 	  {{comment.author}}
 	</div>
 
-	<div class="markdown_content">
-	  {{comment.comment|asmarkdown|safe}}
+        <div class="comment_section">
+	  <div class="markdown_content">
+	    {{comment.comment|asmarkdown|safe}}
+          </div>
 
-          {% comment %}
-	  <div class="comment_section">
-	    <div class="edit_comment" style="display:none">
-	      <textarea name="comment" data-url="{% url 'edit_issue_comment' comment.pk %}"></textarea>
-	      <input type="button" class="btn" onclick="imp.on_edit_issue_comment($(this), '{% url 'edit_issue_comment' comment.id %}');" value="save"/>
-	      <input type="button" class="btn" onclick="$(this).parents('.comment_section').find('.edit_comment_button').show(); $(this).parents('.edit_comment').hide(); return false;" value="cancel"/>
-	    </div>
-	  </div>
-
-	  <div class="btn" onclick="imp.clickable_description_box($(this).parent(), '{% url 'edit_issue_comment' %}',{{ comment.id }})">Edit</div>
-          {% endcomment %}
+          {% has_permission has_add_issue_comment issue.project.business %}
+            <div class="edit_comment" style="display:none">
+              <textarea name="comment" data-url="{% url 'edit_issue_comment' comment.pk %}">{{comment.comment}}</textarea>
+              <input type="button" class="btn" onclick="imp.on_edit_issue_comment($(this), '{% url 'edit_issue_comment' comment.pk %}');" value="save"/>
+              <input type="button" class="btn" onclick="$(this).parents('.comment_section').find('.edit_comment_button').show(); $(this).parents('.comment_section').find('.markdown_content').show(); $(this).parents('.edit_comment').hide(); return false;" value="cancel"/>
+            </div>
+            <a class="edit_comment_button btn" href="#" class="btn" onclick="$(this).parent().find('.edit_comment').show(); $(this).hide(); $(this).parents('.comment_section').find('.markdown_content').hide(); return false;">Edit comment</a>
+          {% end_permission %}
+          </div>
 	</div>
 	<hr/>
       {% endfor %}

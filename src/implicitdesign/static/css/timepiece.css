@@ -10149,7 +10149,7 @@ table.search_results tr:hover {
     font-size:8px;
 }
 
-.issue_comments .creation_details:hover, .issue_detail .creation_details {
+.issue_comments .creation_details:hover, .issue_detail .creation_details:hover {
     font-size:12px;
 }
 

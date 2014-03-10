@@ -184,6 +184,12 @@ class JiraSync(object):
         jira_issue = self._get_jira_issue(timepiece_comment.issue)
         self.jira.add_comment(jira_issue, timepiece_comment.comment)
 
+    def edit_issue_comment(self, timepiece_comment):
+        if not self._connect():
+            return
+        jira_issue = self._get_jira_issue(timepiece_comment.issue)
+        self.jira.edit_comment(jira_issue, timepiece_comment.comment)
+
     def update_issue_subject(self, timepiece_issue):
         if not self._connect():
             return

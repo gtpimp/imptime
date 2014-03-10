@@ -228,6 +228,23 @@ imp.on_add_issue_comment = function(el, url) {
     } );
 };
 
+imp.on_edit_issue_comment = function(el, url) {
+
+    var container = el.parent();
+    var on_done = imp.issue_loading("Saving comment");
+    var input_el = container.find("textarea");
+    el.hide(); 
+
+    var response = $.ajax({type:"POST",
+                           url: url,
+                           data: {'comment':input_el.val()}
+                          });
+    response.done( function() {
+	on_done();
+	imp.refresh_issue_detail();
+    } );
+};
+
 imp.on_project_form_submit = function(element, url) {
     var mform = $(element);
     var handle_success_for_form = function(form) {

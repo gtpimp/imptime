@@ -3982,7 +3982,7 @@ def add_issue_comment(request, issue_id):
 @login_required
 @transaction.commit_on_success
 def edit_issue_comment(request, comment_id):
-    comment = timepiece.Comment.objects.get(pk=comment_id)
+    comment = timepiece.IssueComment.objects.get(pk=comment_id)
     issue = comment.issue
     business = issue.project.business
     bp = timepiece.BusinessPermissions.for_user(request.user, business)
@@ -3991,10 +3991,12 @@ def edit_issue_comment(request, comment_id):
         raise PermissionDenied
 
     text = request.POST['comment']
-    comment.text = text
-    comment.author = request.user,
-    comment.created = datetime.datetime.today()
-    get_interface_plugin(business).edit_issue_comment(new_comment)
+    comment.comment = text
+    comment.author = request.user
+    comment.modified = datetime.datetime.today()
+    comment.save()
+
+    get_interface_plugin(business).edit_issue_comment(comment)
     return HttpResponse("ok")
 
 @csrf_exempt
