@@ -41,6 +41,14 @@ imp.show_issue_detail = function(issue_id, url, msg, args) {
 				if ( issue_id ) {
 				    imp.highlight_issue(issue_id);
 				}
+
+				$(".issue_detail .edit_comment_section").hover(function() {
+										   $(this).find(".edit_comment_button").show();
+									       },
+									       function() {
+										   $(this).find(".edit_comment_button").hide();
+									       });
+
 				on_done();
 			    });
 
