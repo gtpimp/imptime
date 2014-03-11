@@ -107,7 +107,7 @@
               <input type="button" class="btn" onclick="imp.on_edit_issue_comment($(this), '{% url 'edit_issue_comment' comment.pk %}');" value="save"/>
               <input type="button" class="btn" onclick="$(this).parents('.comment_section').find('.edit_comment_button').show(); $(this).parents('.comment_section').find('.markdown_content').show(); $(this).parents('.edit_comment').hide(); return false;" value="cancel"/>
             </div>
-            <a class="edit_comment_button btn" style="display:none" href="#" class="btn" onclick="$(this).parent().find('.edit_comment').show(); $(this).hide(); $(this).parents('.comment_section').find('.markdown_content').hide(); return false;">Edit comment</a>
+            <a class="edit_comment_button btn" href="#" class="btn" onclick="$(this).parent().find('.edit_comment').show(); $(this).hide(); $(this).parents('.comment_section').find('.markdown_content').hide(); return false;">Edit comment</a>
           {% end_permission %}
           </div>
 	</div>
