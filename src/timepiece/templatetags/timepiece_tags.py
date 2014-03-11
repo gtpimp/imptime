@@ -8,6 +8,7 @@ import markdown
 from django import template
 from django.db.models import Sum
 from django.core.urlresolvers import reverse
+import re
 
 try:
     from django.utils import timezone
@@ -165,6 +166,10 @@ register.tag('is_same_user', is_same_user)
 @register.filter
 def asmarkdown(content):
     return markdown.markdown(content)
+
+@register.filter
+def with_issue_links(content):
+    return re.sub("issue(\d+)", r"<a href='#' onclick='imp.search_on_issue_number(\1)'>issue\1</a>", content)
     
 @register.simple_tag(takes_context=True)
 def get_points_current_user(context, issue_id):

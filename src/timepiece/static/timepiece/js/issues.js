@@ -22,6 +22,11 @@ imp.highlight_issue = function(issue_id) {
     $("#"+issue_id).scrollintoview();
 };
 
+imp.search_on_issue_number = function(issue_number) {
+    $(".issue_search .search_term").val(issue_number);
+    $(".issue_search .search_term").parents("form").submit();
+};
+
 imp.show_issue_detail = function(issue_id, url, msg, args) {
     msg = msg || "loading issue detail";
     var on_done = imp.loading(msg);

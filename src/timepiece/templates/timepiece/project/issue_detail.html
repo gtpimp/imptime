@@ -56,7 +56,7 @@
 	</div>
 	{% end_permission %}
           <div class="markdown_content" style="display:none">{{issue.description}}</div>
-          <div class="content">{% if issue.description %} {{issue.description|asmarkdown|safe}}</div>
+          <div class="content">{% if issue.description %} {{issue.description|asmarkdown|with_issue_links|safe}}</div>
         {% else %}No issue detail{% endif %}
 
       </div>
@@ -98,7 +98,7 @@
 	  </div>
 
 	  <div class="markdown_content">
-	    {{comment.comment|asmarkdown|safe}}
+	    {{comment.comment|asmarkdown|with_issue_links|safe}}
           </div>
 
           {% has_permission has_add_issue_comment issue.project.business %}
