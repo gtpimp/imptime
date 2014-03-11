@@ -499,11 +499,8 @@ urlpatterns = patterns('',
         name='add_issue_comment'
         ),
 
-     url(
-        r'^edit_issue_comment/(?P<comment_id>\d+)/$',
-        views.edit_issue_comment,
-        name='edit_issue_comment'
-        ),
+     url(r'^edit_issue_comment/(?P<comment_id>\d+)/$', views.edit_issue_comment, name='edit_issue_comment'),
+     url(r'^delete_issue_comment/(?P<comment_id>\d+)/$', views.delete_issue_comment, name='delete_issue_comment'),
 
      url(
         r'^delete_issue_attachment/(?P<attachment_id>\d+)/$',

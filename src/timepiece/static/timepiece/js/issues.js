@@ -253,6 +253,22 @@ imp.on_edit_issue_comment = function(el, url) {
     } );
 };
 
+imp.delete_issue_comment = function(url) {
+    if ( ! confirm('Are you sure you want to delete this comment?') ) { 
+	return false; 
+    };
+    var on_done = imp.issue_loading("Deleting comment");
+
+    var response = $.ajax({type:"POST",
+                           url: url
+                          });
+    response.done( function() {
+		       on_done();
+		       imp.refresh_issue_detail();
+		   });
+    return false;
+};
+
 imp.on_project_form_submit = function(element, url) {
     var mform = $(element);
     var handle_success_for_form = function(form) {

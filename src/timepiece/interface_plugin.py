@@ -6,6 +6,8 @@ class DefaultInterfacePlugin(object):
         return
     def edit_issue_comment(self, timepiece_comment, *args, **kwargs):
         return
+    def delete_issue_comment(self, timepiece_comment, *args, **kwargs):
+        return
     def update_issue_status(self, timepiece_issue, *args, **kwargs):
         return
     def get_allowed_stati(self, timepiece_issue, *args, **kwargs):

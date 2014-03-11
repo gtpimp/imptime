@@ -189,7 +189,12 @@ class JiraSync(object):
             return
         jira_issue = self._get_jira_issue(timepiece_comment.issue)
         
+        # TODO: implement this properly
         self.jira.add_comment(jira_issue, "(Edit of previous comment)\n" + timepiece_comment.comment)
+
+    def delete_issue_comment(self, timepiece_comment):
+        # TODO: implement this
+        pass
 
     def update_issue_subject(self, timepiece_issue):
         if not self._connect():

@@ -4022,6 +4022,26 @@ def edit_issue_comment(request, comment_id):
 @csrf_exempt
 @login_required
 @transaction.commit_on_success
+def delete_issue_comment(request, comment_id):
+    comment = timepiece.IssueComment.objects.get(pk=comment_id)
+    issue = comment.issue
+    business = issue.project.business
+    bp = timepiece.BusinessPermissions.for_user(request.user, business)
+
+    if not bp.has_add_issue_comment:
+        raise PermissionDenied
+
+    old_comment_text = comment.comment
+    old_comment_id = comment.id
+    comment.delete()
+    
+    get_interface_plugin(business).delete_issue_comment(comment)
+    timepiece.IssueHistory.add_history(request.user, issue, "deleted comment %s"%old_comment_id, old_comment_text, "")
+    return HttpResponse("ok")
+
+@csrf_exempt
+@login_required
+@transaction.commit_on_success
 def add_issue_attachment(request, issue_id):
 
     issue = timepiece.Issue.objects.get(pk=issue_id)
