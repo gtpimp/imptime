@@ -1180,7 +1180,7 @@ class SprintQuoteReportSettingsForm(forms.Form):
 class NewBusinessDocumentForm(forms.ModelForm):
     class Meta:
         model = timepiece.BusinessDocument
-        exclude = ( 'filename', 'business', 'created_by', 'created_at', 'deleted', 'token', 'mime_type' )
+        exclude = ( 'filename', 'business', 'created_by', 'created_at', 'deleted', 'token', 'mime_type', 'modified_by', 'modified_at' )
         
 class EditBusinessDocumentForm(forms.ModelForm):
     class Meta:
