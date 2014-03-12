@@ -3015,7 +3015,7 @@ def add_issue(request, project_id, template="timepiece/project/_add_issue_form.h
     bp = timepiece.BusinessPermissions.for_user(current_user, current_business)
     if bp.has_add_issue:
         new_issue_form = timepiece_forms.IssueForm(request.POST or None, business=current_business)
-        plugin_form = get_interface_plugin(project.business).get_create_issue_form(request.POST or None)
+        plugin_form = get_interface_plugin(request, project.business).get_create_issue_form(request.POST or None)
         
         if new_issue_form.is_valid() and (plugin_form is None or plugin_form.is_valid()):
             issue = new_issue_form.save(commit=False)
@@ -3030,11 +3030,11 @@ def add_issue(request, project_id, template="timepiece/project/_add_issue_form.h
 
             timepiece.IssueHistory.add_history(request.user, issue, "created", "", issue.number)
 
-            get_interface_plugin(project.business).create_issue(issue, plugin_form)
+            get_interface_plugin(request, project.business).create_issue(issue, plugin_form)
 
             return get_issue_row(request, issue.id)
     else:
-        plugin_form = get_interface_plugin(project.business).get_create_issue_form()
+        plugin_form = get_interface_plugin(request, project.business).get_create_issue_form()
 
     context['plugin_form'] = plugin_form
     context['business'] = current_business
@@ -3155,7 +3155,7 @@ def business_features(request, business_id):
 @login_required
 def allowed_issue_stati(request, issue_id):
     issue = timepiece.Issue.objects.get(pk=issue_id)
-    stati = get_interface_plugin(issue.project.business).get_allowed_stati(issue)
+    stati = get_interface_plugin(request, issue.project.business).get_allowed_stati(issue)
     if stati is None:
         stati = timepiece.Issue.ISSUE_STATUS_CHOICES
     return HttpResponse(json.dumps(stati), mimetype='application/json')
@@ -3171,7 +3171,7 @@ def business_users(request, business_id, issue_id):
 def issue_users(request, issue_id):
     issue = timepiece.Issue.objects.get(pk=issue_id)
     business = issue.project.business
-    users = get_interface_plugin(business).get_assignable_users(issue)
+    users = get_interface_plugin(request, business).get_assignable_users(issue)
     if users is None:
         users = [ (user.id, user.get_full_name()) for user in business.users ]
     return HttpResponse(json.dumps(users),
@@ -3380,7 +3380,7 @@ def issue_detail_update(request,  template="timepiece/project/issue_detail.html"
     except KeyError:
         pass
 
-    get_interface_plugin(project.business).update_issue_description(edited_issue)
+    get_interface_plugin(request, project.business).update_issue_description(edited_issue)
 
     return HttpResponse("")
 
@@ -3405,7 +3405,7 @@ def issue_status_update(request,  template="timepiece/project/issue_detail.html"
 
     timepiece.IssueHistory.add_history(request.user, edited_issue, "changed status", old_status, edited_issue.status)
 
-    get_interface_plugin(project.business).update_issue_status(edited_issue)
+    get_interface_plugin(request, project.business).update_issue_status(edited_issue)
 
     return HttpResponse()
 
@@ -3470,7 +3470,7 @@ def issue_assigned_to_update(request,  template="timepiece/project/issue_detail.
     issue.save()
     timepiece.IssueHistory.add_history(request.user, issue, "assigned user", old_assigned, issue.assigned_to)
 
-    get_interface_plugin(project.business).update_issue_assigned_to(issue, username)
+    get_interface_plugin(request, project.business).update_issue_assigned_to(issue, username)
 
     return HttpResponse()
 
@@ -3497,7 +3497,7 @@ def issue_subject_update(request,  template="timepiece/project/issue_detail.html
         edited_issue.subject = request.POST["new_value"]
         edited_issue.save()
         timepiece.IssueHistory.add_history(request.user, edited_issue, "changed subject", old_subject, edited_issue.subject)
-        get_interface_plugin(project.business).update_issue_subject(edited_issue)
+        get_interface_plugin(request, project.business).update_issue_subject(edited_issue)
     except KeyError:
         pass
     
@@ -3529,7 +3529,7 @@ def issue_points_update(request,  template="timepiece/project/issue_detail.html"
 
     timepiece.IssueHistory.add_history(request.user, edited_issue_points.issue, "changed estimate for "%edited_issue_points.user, old_points, edited_issue_points.points)
 
-    get_interface_plugin(current_project.business).update_issue_points(edited_issue_points)
+    get_interface_plugin(request, current_project.business).update_issue_points(edited_issue_points)
 
     return HttpResponse("")
 
@@ -3992,7 +3992,7 @@ def add_issue_comment(request, issue_id):
         created=datetime.datetime.today())
     timepiece.IssueHistory.add_history(request.user, issue, "added comment %s"%new_comment.id, "", new_comment.comment)
 
-    get_interface_plugin(business).add_issue_comment(new_comment)
+    get_interface_plugin(request, business).add_issue_comment(new_comment)
 
     return HttpResponse("ok")
 
@@ -4015,7 +4015,7 @@ def edit_issue_comment(request, comment_id):
     comment.modified = datetime.datetime.today()
     comment.save()
 
-    get_interface_plugin(business).edit_issue_comment(comment)
+    get_interface_plugin(request, business).edit_issue_comment(comment)
     timepiece.IssueHistory.add_history(request.user, issue, "edited comment %s"%comment.id, old_comment, comment.comment)
     return HttpResponse("ok")
 
@@ -4035,7 +4035,7 @@ def delete_issue_comment(request, comment_id):
     old_comment_id = comment.id
     comment.delete()
     
-    get_interface_plugin(business).delete_issue_comment(comment)
+    get_interface_plugin(request, business).delete_issue_comment(comment)
     timepiece.IssueHistory.add_history(request.user, issue, "deleted comment %s"%old_comment_id, old_comment_text, "")
     return HttpResponse("ok")
 
@@ -4100,7 +4100,7 @@ def sortable_issue_update(request, project_id):
             timepiece.IssueHistory.add_history(request.user, issue, "order", old_order, issue.order)
 
         if old_project != new_project:
-            get_interface_plugin(new_project.business).issue_moved_projects(issue, old_project, new_project)
+            get_interface_plugin(request, new_project.business).issue_moved_projects(issue, old_project, new_project)
 
     return HttpResponse("")
 

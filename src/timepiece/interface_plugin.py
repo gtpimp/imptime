@@ -31,14 +31,14 @@ class DefaultInterfacePlugin(object):
 
 default_interface_plugin = DefaultInterfacePlugin()
 
-def get_interface_plugin(business):
+def get_interface_plugin(request, business):
     global default_interface_plugin
     if not business.sync_with:
         return default_interface_plugin
     
     if business.sync_with == 'jira':
         from jira_interface.jira_sync import JiraSync
-        return JiraSync(business.id)
+        return JiraSync(request, business.id)
 
     logger.error("Unknown interface plugin name [%s] for business %s" % (business.sync_with, business))
     return default_interface_plugin
