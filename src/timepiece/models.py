@@ -2484,9 +2484,12 @@ class BusinessDocument(models.Model):
     mime_type = models.CharField(max_length=50, null=False, blank=False)
     token = models.CharField(max_length=255, null=False, blank=False, db_index=True)
     comments = models.TextField(null=True, blank=True)
-    created_by = models.ForeignKey(User, null=False, blank=False)
-    created_at = models.DateTimeField(auto_now_add=True)
     deleted = models.BooleanField(default=False, blank=True)
+
+    created_by = models.ForeignKey(User, null=False, blank=False, related_name='business_document_created_by')
+    created_at = models.DateTimeField(auto_now_add=True)
+    modified_at = models.DateTimeField(auto_now_add=True)
+    modified_by = models.ForeignKey(User, null=False, blank=False, related_name='business_document_modified_by')
 
     def save(self, *args, **kwargs):
         if not self.token:

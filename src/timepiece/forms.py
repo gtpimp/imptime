@@ -1182,6 +1182,11 @@ class NewBusinessDocumentForm(forms.ModelForm):
         model = timepiece.BusinessDocument
         exclude = ( 'filename', 'business', 'created_by', 'created_at', 'deleted', 'token', 'mime_type' )
         
+class EditBusinessDocumentForm(forms.ModelForm):
+    class Meta:
+        model = timepiece.BusinessDocument
+        field = ( 'doc_type', 'comments' )
+
 class GenerateBusinessDocumentForm(forms.Form):
 
     title = forms.CharField(required=True, max_length=255)

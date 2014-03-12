@@ -1,5 +1,6 @@
 import random
 import calendar
+import markdown
 from django.contrib.auth import login as django_login, load_backend
 from django.core.files.base import ContentFile
 import csv
@@ -4343,6 +4344,28 @@ def download_business_document(request, document_token, template="timepiece/proj
     return rendered
 
 @login_required
+def edit_business_document(request, document_token, template="timepiece/project/edit_business_document.html", context=None):
+    context = context or {}
+    document = timepiece.BusinessDocument.objects.get(token=document_token)
+    business = document.business
+    bp = timepiece.BusinessPermissions.for_user(request.user, business)
+    if not bp.has_view_documents:
+        return HttpResponse("Sorry, you don't have permission to view this business document")
+
+    form = timepiece_forms.EditBusinessDocumentForm(request.POST or None, instance=document)
+    if form.is_valid():
+        document = form.save(commit=False)
+        document.modified_by = request.user
+        document.save()
+        form.save_m2m()
+        messages.info(request, "Document %s edited" % document.filename)
+        return HttpResponseRedirect(reverse('view_business_documents', args=[business.id]))
+
+    context['form'] = form
+    context['document'] = document
+    return render_to_response(template, context, context_instance=RequestContext(request))
+
+@login_required
 def delete_business_document(request, document_token, template="timepiece/project/business_documents.html", context=None):
     context = context or {}
     document = timepiece.BusinessDocument.objects.get(token=document_token)
@@ -4387,18 +4410,18 @@ def generate_preview_business_document(request, business_id, template="timepiece
     if not bp.has_view_documents:
         return HttpResponse("Sorry, you don't have permission to create business documents")
 
-    def markup(content):
-        # content = re.sub(r"\*\*\*\*(.*)", r"<h4>\1</h4>", content)
-        # content = re.sub(r"\*\*\*(.*)", r"<h3>\1</h3>", content)
-        # content = re.sub(r"\*\*(.*)", r"<h2>\1</h2>", content)
-        content = re.sub(r"\*(.*)", r"<h3>\1</h3>", content)
-        return content
+    # def markup(content):
+    #     # content = re.sub(r"\*\*\*\*(.*)", r"<h4>\1</h4>", content)
+    #     # content = re.sub(r"\*\*\*(.*)", r"<h3>\1</h3>", content)
+    #     content = re.sub(r"\*\*(.*)", r"<h2>\1</h2>", content)
+    #     content = re.sub(r"\*(.*)", r"<h3>\1</h3>", content)
+    #     return content
 
     form = timepiece_forms.GenerateBusinessDocumentForm(request.POST or request.GET or None)
     if form.is_valid():
         content = form.cleaned_data['content']
-        content = markup(content)
-        context['pages'] = content.split("//page")
+        content = markdown.markdown(content)
+        context['pages'] = content.split("\pagebreak")
         context['title'] = form.cleaned_data['title']
 
         if 'render_mode' in request.POST and request.POST['render_mode'] == 'generate' and 'HTTP_REFERER' in request.META:
@@ -4410,7 +4433,7 @@ def generate_preview_business_document(request, business_id, template="timepiece
             post_data['output_format'] = 'pdf'
             post_data['authenticate_token'] = request.user.profile.authenticate_token
             post_data['authenticate_username'] = request.user.username
-            as_pdf = create_pdf(url+"?"+"&".join( list( "%s=%s"%(x,y) for x,y in post_data.items() ) ) )
+            as_pdf = create_pdf(url+"?"+urllib.urlencode(post_data))
             
             filename = form.cleaned_data['filename'] + "_" + datetime.datetime.today().strftime("%d%m%Y") + ".pdf"
             rendered = HttpResponse(as_pdf, mimetype='application/pdf')
@@ -4422,7 +4445,8 @@ def generate_preview_business_document(request, business_id, template="timepiece
                                                                  doc_type=form.cleaned_data['doc_type'],
                                                                  mime_type='application/pdf',
                                                                  comments='auto created\n%s'%url.replace("authenticate_token","xx"),
-                                                                 created_by_id=request.user.id)
+                                                                 created_by_id=request.user.id,
+                                                                 modified_by_id=request.user.id)
             document.doc.save(filename, f)
 
             return rendered
