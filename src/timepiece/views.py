@@ -13,6 +13,7 @@ import json
 import jsonpickle
 from django.db import connection
 from pdf import render_to_pdf
+import re
 import datetime
 from django.template import Template
 import math
@@ -4320,6 +4321,7 @@ def view_business_documents(request, business_id, template="timepiece/project/bu
         return HttpResponseRedirect(reverse('view_business_documents', args=[business_id]))
 
     context['new_doc_form'] = form
+    context['generate_doc_form'] = timepiece_forms.GenerateBusinessDocumentForm(request.POST or None)
     context['business'] = business
     context['documents'] = business.documents.all().filter(deleted=False).order_by("-created_at")
     return render_to_response(template, context, context_instance=RequestContext(request))
@@ -4354,3 +4356,110 @@ def delete_business_document(request, document_token, template="timepiece/projec
     document.save()
     messages.info(request, "Document %s deleted" % filename)
     return HttpResponseRedirect(reverse('view_business_documents', args=[business.id]))
+
+@csrf_exempt
+def generate_preview_business_document(request, business_id, template="timepiece/project/generate_business_document_preview.html", context=None):
+    context = context or {}
+    business = timepiece.Business.objects.get(pk=business_id)
+
+    user = request.user
+    if 'authenticate_token' in request.GET and 'authenticate_username' in request.GET:
+        def override_login(request, user):
+            if not hasattr(user, 'backend'):
+                for backend in settings.AUTHENTICATION_BACKENDS:
+                    if user == load_backend(backend).get_user(user.pk):
+                        user.backend = backend
+                        break
+            if hasattr(user, 'backend'):
+                return django_login(request, user)
+
+        authenticate_token = request.GET['authenticate_token']
+        username = request.GET['authenticate_username']
+        try:
+            user = timepiece.UserProfile.objects.get(authenticate_token=authenticate_token, user__username=username).user
+            override_login(request, user)
+        except timepiece.UserProfile.DoesNotExist:
+            pass
+        except Exception:
+            return HttpResponse("Not authenticated")
+
+    bp = timepiece.BusinessPermissions.for_user(user, business)
+    if not bp.has_view_documents:
+        return HttpResponse("Sorry, you don't have permission to create business documents")
+
+    def markup(content):
+        # content = re.sub(r"\*\*\*\*(.*)", r"<h4>\1</h4>", content)
+        # content = re.sub(r"\*\*\*(.*)", r"<h3>\1</h3>", content)
+        # content = re.sub(r"\*\*(.*)", r"<h2>\1</h2>", content)
+        content = re.sub(r"\*(.*)", r"<h3>\1</h3>", content)
+        return content
+
+    form = timepiece_forms.GenerateBusinessDocumentForm(request.POST or request.GET or None)
+    if form.is_valid():
+        content = form.cleaned_data['content']
+        content = markup(content)
+        context['pages'] = content.split("//page")
+        context['title'] = form.cleaned_data['title']
+
+        if 'render_mode' in request.POST and request.POST['render_mode'] == 'generate' and 'HTTP_REFERER' in request.META:
+            url = (request.META['HTTP_REFERER'])
+            from phantompdf.create_pdf import create_pdf
+
+            post_data = {}
+            post_data.update(form.cleaned_data)
+            post_data['output_format'] = 'pdf'
+            post_data['authenticate_token'] = request.user.profile.authenticate_token
+            post_data['authenticate_username'] = request.user.username
+            as_pdf = create_pdf(url+"?"+"&".join( list( "%s=%s"%(x,y) for x,y in post_data.items() ) ) )
+            
+            filename = form.cleaned_data['filename'] + "_" + datetime.datetime.today().strftime("%d%m%Y") + ".pdf"
+            rendered = HttpResponse(as_pdf, mimetype='application/pdf')
+            rendered['Content-Disposition'] = 'attachment; filename="%s"' % filename
+
+            f = ContentFile(as_pdf)
+            document = timepiece.BusinessDocument.objects.create(business=business,
+                                                                 filename=filename,
+                                                                 doc_type=form.cleaned_data['doc_type'],
+                                                                 mime_type='application/pdf',
+                                                                 comments='auto created\n%s'%url.replace("authenticate_token","xx"),
+                                                                 created_by_id=request.user.id)
+            document.doc.save(filename, f)
+
+            return rendered
+
+    context['form'] = form
+    context['business'] = business
+    context['date_created'] = datetime.datetime.now()
+
+    if 'output_format' in request.GET:
+        context['output_format'] = request.GET['output_format']
+    else:
+        context['output_format'] = 'html'
+    return render_to_response(template, context, context_instance=RequestContext(request))
+
+@login_required
+def generate_business_document(request, business_id, context=None):
+    context = context or {}
+    business = timepiece.Business.objects.get(pk=business_id)
+    bp = timepiece.BusinessPermissions.for_user(request.user, business)
+    if not bp.has_view_documents:
+        return HttpResponse("Sorry, you don't have permission to create business documents")
+
+    form = timepiece_forms.GenerateBusinessDocumentForm(request.POST or None)
+    if form.is_valid():
+
+        document = form.save(commit=False)
+        document.business = business
+        document.created_by_id = request.user.id
+        document.mime_type = form.cleaned_data['doc'].content_type
+        document.filename = form.cleaned_data['doc'].name
+        document.save()
+        form.save_m2m()
+        messages.info(request, "Document %s uploaded" % document.filename)
+        return HttpResponseRedirect(reverse('view_business_documents', args=[business_id]))
+
+    context['new_doc_form'] = form
+    context['business'] = business
+    context['documents'] = business.documents.all().filter(deleted=False).order_by("-created_at")
+    return render_to_response(template, context, context_instance=RequestContext(request))
+

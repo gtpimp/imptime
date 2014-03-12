@@ -1,0 +1,43 @@
+{% extends "timepiece/base_report.html" %}
+{% load humanize %}
+{% load timepiece_tags %}
+{% load bootstrap_toolkit %}
+{% load url from future %}
+
+{% block report_heading_outer %}{{title}}{% endblock %}
+
+{% block content %}
+
+{% ifequal "html" output_format %}
+  <hr/>
+  <form method="POST" action="{% url 'generate_preview_business_document' business.id %}">
+    {% csrf_token %}
+    <pre>
+      In the content, paste any text content.
+      Separate pages with //page
+      Make headings with an asterisk
+    </pre>
+    {{ form|as_bootstrap:"horizontal" }}
+    <input class="btn" type="submit" value="preview" name="render_mode"/>
+    <input class="btn" type="submit" value="generate" name="render_mode"/>
+  </form>
+  <hr/>
+
+{% endifequal %}
+
+<div class="sprint_report">
+
+  <div style="text-align:center" >
+    <h3>{{ title }}</h3>
+     <hr/>
+     <br/>
+   </div>
+
+{% for page in pages %}
+  {{ page|safe }}
+  <div class="page_break""></div>   
+{% endfor %}
+
+</div>
+
+{% endblock %}

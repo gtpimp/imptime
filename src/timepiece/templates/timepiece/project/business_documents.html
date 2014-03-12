@@ -37,7 +37,24 @@ Comments:
     <form method="POST" action="{% url 'view_business_documents' business.id %}" enctype="multipart/form-data">
       {% csrf_token %}
       {{ new_doc_form|as_bootstrap:"horizontal" }}
-      <input class="btn" type="submit" name="upload"/>
+      <input class="btn" type="submit" value="upload"/>
+    </form>
+  </div>
+</div>
+
+<div class="generate_document">
+  <button class="btn" onclick="$(this).parent().find('.new_document_container').show(); $(this).hide(); return false">Generate document</button>
+  <div style="display:none" class="new_document_container">
+    <h3>New document</h3>
+    <form method="POST" action="{% url 'generate_preview_business_document' business.id %}">
+      {% csrf_token %}
+      <pre>
+        In the content, paste any text content.
+        Separate pages with //page
+        Make headings with an asterisk
+      </pre>
+      {{ generate_doc_form|as_bootstrap:"horizontal" }}
+      <input class="btn" type="submit" value="preview" name="preview"/>
     </form>
   </div>
 </div>

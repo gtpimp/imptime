@@ -590,6 +590,8 @@ urlpatterns = patterns('',
                        url(r'^time-sheet/view_business_documents/(?P<business_id>\d+)/$', views.view_business_documents, name="view_business_documents"),
                        url(r'^time-sheet/download_business_document/(?P<document_token>.*)/$', views.download_business_document, name="download_business_document"),
                        url(r'^time-sheet/delete_business_document/(?P<document_token>.*)/$', views.delete_business_document, name="delete_business_document"),
+                       url(r'^time-sheet/generate_business_document/(?P<business_id>.*)/$', views.generate_business_document, name="generate_business_document"),
+                       url(r'^time-sheet/generate_preview_business_document/(?P<business_id>.*)/$', views.generate_preview_business_document, name="generate_preview_business_document"),
                        
 
 )

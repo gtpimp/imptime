@@ -2472,13 +2472,15 @@ class IssueHistory(models.Model):
 
 class BusinessDocument(models.Model):
     
+    DOC_TYPE_CHOICES = ( ('invoice', 'Invoice'), ('summary', 'Sprint summary'),
+                         ('proposal', 'Sprint proposal'), ('contract', 'Contract'),
+                         ('other', 'Other') )
+
     business = models.ForeignKey(Business, null=False, blank=False, related_name='documents', db_index=True)
     filename = models.CharField(max_length=255, null=False, blank=False)
     doc = models.FileField(upload_to="project_documents", null=False, blank=False)
     doc_type = models.CharField(max_length=100, null=False, blank=False, 
-                                choices = ( ('invoice', 'Invoice'), ('summary', 'Sprint summary'),
-                                            ('proposal', 'Sprint proposal'), ('contract', 'Contract'),
-                                            ('other', 'Other') ) )
+                                choices = DOC_TYPE_CHOICES )
     mime_type = models.CharField(max_length=50, null=False, blank=False)
     token = models.CharField(max_length=255, null=False, blank=False, db_index=True)
     comments = models.TextField(null=True, blank=True)

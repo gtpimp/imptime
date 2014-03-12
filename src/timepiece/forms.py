@@ -1182,3 +1182,9 @@ class NewBusinessDocumentForm(forms.ModelForm):
         model = timepiece.BusinessDocument
         exclude = ( 'filename', 'business', 'created_by', 'created_at', 'deleted', 'token', 'mime_type' )
         
+class GenerateBusinessDocumentForm(forms.Form):
+
+    title = forms.CharField(required=True, max_length=255)
+    filename = forms.CharField(required=True, max_length=255)
+    doc_type = forms.ChoiceField(required=True, choices=timepiece.BusinessDocument.DOC_TYPE_CHOICES)
+    content = forms.CharField(widget=forms.Textarea, required=True)
