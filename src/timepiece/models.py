@@ -241,6 +241,7 @@ class BusinessPermissions(models.Model):
     can_edit_ctc_billable_rates = models.BooleanField(default=False, verbose_name="Can Edit Ctc Billable")
     can_view_ctc_billable_rates = models.BooleanField(default=False, verbose_name="Can View Ctc Billable")
     can_view_ctc_rates = models.BooleanField(default=False, verbose_name="Can View Ctc") # a subpermission of can_view_ctc_billable_rates, used for clients who shouldn't see our internal costing.
+    can_view_documents = models.BooleanField(default=False, verbose_name="Can View Docs") # quotes and summaries, usually contains costs and rates
     
     @classmethod
     def by_user(self, business):
@@ -344,6 +345,11 @@ class BusinessPermissions(models.Model):
     @property
     def has_assign_user(self):
         return self.user.is_superuser or self.can_assign_user
+
+    @property
+    def has_view_documents(self):
+        return self.user.is_superuser or self.can_view_documents
+
 
 class ProjectQuerySet(QuerySet):
     def filter_by_logged_in_user(self, user):
@@ -2463,3 +2469,27 @@ class IssueHistory(models.Model):
     @classmethod
     def for_issue(self, issue):
         return IssueHistory.objects.filter(issue_id=issue.id).order_by("-created_at")
+
+class BusinessDocument(models.Model):
+    
+    business = models.ForeignKey(Business, null=False, blank=False, related_name='documents', db_index=True)
+    filename = models.CharField(max_length=255, null=False, blank=False)
+    doc = models.FileField(upload_to="project_documents", null=False, blank=False)
+    doc_type = models.CharField(max_length=100, null=False, blank=False, 
+                                choices = ( ('invoice', 'Invoice'), ('summary', 'Sprint summary'),
+                                            ('proposal', 'Sprint proposal'), ('contract', 'Contract'),
+                                            ('other', 'Other') ) )
+    mime_type = models.CharField(max_length=50, null=False, blank=False)
+    token = models.CharField(max_length=255, null=False, blank=False, db_index=True)
+    comments = models.TextField(null=True, blank=True)
+    created_by = models.ForeignKey(User, null=False, blank=False)
+    created_at = models.DateTimeField(auto_now_add=True)
+    deleted = models.BooleanField(default=False, blank=True)
+
+    def save(self, *args, **kwargs):
+        if not self.token:
+            self.token = str(uuid.uuid4()).replace("-","")
+        super(BusinessDocument, self).save(*args, **kwargs)
+
+    def __unicode__(self):
+        return self.filename

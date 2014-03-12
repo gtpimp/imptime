@@ -155,6 +155,7 @@ class EditPersonPermission(forms.ModelForm):
         self.fields['can_edit_ctc_billable_rates'].widget.attrs['class'] = 'unsafe'
         self.fields['can_view_ctc_billable_rates'].widget.attrs['class'] = 'unsafe'
         self.fields['can_view_ctc_rates'].widget.attrs['class'] = 'unsafe'
+        self.fields['can_view_documents'].widget.attrs['class'] = 'unsafe'
 
 class QuickEditPersonForm(forms.ModelForm):
     class Meta:
@@ -1175,3 +1176,9 @@ class SprintQuoteReportSettingsForm(forms.Form):
             only_these_issues = project.issues.all()
         self.fields['only_these_issue_numbers'].choices = [ (issue.number, issue.number) for issue in only_these_issues ] 
         self.fields['only_these_issue_numbers'].initial = [ issue.number for issue in only_these_issues ] 
+
+class NewBusinessDocumentForm(forms.ModelForm):
+    class Meta:
+        model = timepiece.BusinessDocument
+        exclude = ( 'filename', 'business', 'created_by', 'created_at', 'deleted', 'token', 'mime_type' )
+        

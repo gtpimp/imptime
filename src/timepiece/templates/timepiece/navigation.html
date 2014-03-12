@@ -41,18 +41,11 @@
 				  {% endif %}
                                 {% endif %}
 
-				{% comment %}
-				{% if perms.auth.view_user %}
-                                    <li><a href="{% url 'list_people' %}">Monthly timesheet breakdown</a></li>
-                                {% endif %}{% endcomment %}
-                                    {% comment %}
-                                <li><a href="{% url 'timepiece-entries' %}">Time Tracking</a></li>
-                                {% endcomment %}
-
-
-                                {% comment %}
-			        <li><a href="{% url 'view_summary' request.user.pk %}">Project cards</a></li>
-                                {% endcomment %}
+                                {% if business %}
+                                  {% has_permission has_view_documents business %} 
+                                    <li><a href="{% url 'view_business_documents' business.id %}">Business documents</a></li>
+                                  {% end_permission %}
+                                {% endif %}
 
                             </ul>
                         </li>

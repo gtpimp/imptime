@@ -1,6 +1,7 @@
 import random
 import calendar
 from django.contrib.auth import login as django_login, load_backend
+from django.core.files.base import ContentFile
 import csv
 from exporter import CSVMixin, CSVSprintExport, CSVTimesheetExport
 from interface_plugin import get_interface_plugin
@@ -4185,9 +4186,31 @@ def sprint_report(request, project_id, context=None):
         url = "%s&output_format=pdf&authenticate_token=%s&authenticate_username=%s" % (request.META['HTTP_REFERER'], user.profile.authenticate_token, user.username)
         from phantompdf.create_pdf import create_pdf
         as_pdf = create_pdf(url)
-        filename = request.GET['report_type'] + "_implicitdesign_" + project.long_name().replace(" ","") + "_" + datetime.datetime.today().strftime("%d%m%Y") + ".pdf"
+
+        prefix = request.GET['report_type']
+        if request.GET['report_type'] == 'Quote':
+            prefix = "Proposal"
+
+        filename = prefix + "_implicitdesign_" + project.long_name().replace(" ","") + "_" + datetime.datetime.today().strftime("%d%m%Y") + ".pdf"
         rendered = HttpResponse(as_pdf, mimetype='application/pdf')
         rendered['Content-Disposition'] = 'attachment; filename="%s"' % filename
+
+        if request.GET['report_type'] == 'Quote':
+            doc_type = 'quote'
+        elif request.GET['report_type'] == 'Invoice':
+            doc_type = 'invoice'
+        else:
+            doc_type = 'other'
+        
+        f = ContentFile(as_pdf)
+        document = timepiece.BusinessDocument.objects.create(business=project.business,
+                                                             filename=filename,
+                                                             doc_type=doc_type,
+                                                             mime_type='application/pdf',
+                                                             comments='auto created\n%s'%url.replace("authenticate_token","xx"),
+                                                             created_by_id=request.user.id)
+        document.doc.save(filename, f)
+
         return rendered
         
     business = project.business
@@ -4275,3 +4298,59 @@ def show_issue_history(request, issue_id, template="timepiece/project/issue_hist
     context['issue'] = issue
     context['history'] = timepiece.IssueHistory.for_issue(issue)
     return render_to_response(template, context, context_instance=RequestContext(request))
+
+@login_required
+def view_business_documents(request, business_id, template="timepiece/project/business_documents.html", context=None):
+    context = context or {}
+    business = timepiece.Business.objects.get(pk=business_id)
+    bp = timepiece.BusinessPermissions.for_user(request.user, business)
+    if not bp.has_view_documents:
+        return HttpResponse("Sorry, you don't have permission to view business documents")
+
+    form = timepiece_forms.NewBusinessDocumentForm(request.POST or None, request.FILES or None)
+    if form.is_valid():
+        document = form.save(commit=False)
+        document.business = business
+        document.created_by_id = request.user.id
+        document.mime_type = form.cleaned_data['doc'].content_type
+        document.filename = form.cleaned_data['doc'].name
+        document.save()
+        form.save_m2m()
+        messages.info(request, "Document %s uploaded" % document.filename)
+        return HttpResponseRedirect(reverse('view_business_documents', args=[business_id]))
+
+    context['new_doc_form'] = form
+    context['business'] = business
+    context['documents'] = business.documents.all().filter(deleted=False).order_by("-created_at")
+    return render_to_response(template, context, context_instance=RequestContext(request))
+
+@login_required
+def download_business_document(request, document_token, template="timepiece/project/business_documents.html", context=None):
+    context = context or {}
+    document = timepiece.BusinessDocument.objects.get(token=document_token)
+    business = document.business
+    bp = timepiece.BusinessPermissions.for_user(request.user, business)
+    if not bp.has_view_documents:
+        return HttpResponse("Sorry, you don't have permission to view this business document")
+
+    context['business'] = business
+    context['documents'] = business.documents.all().order_by("-created_at")
+
+    rendered = HttpResponse(document.doc, mimetype=document.mime_type)
+    rendered['Content-Disposition'] = 'attachment; filename="%s"' % document.filename
+    return rendered
+
+@login_required
+def delete_business_document(request, document_token, template="timepiece/project/business_documents.html", context=None):
+    context = context or {}
+    document = timepiece.BusinessDocument.objects.get(token=document_token)
+    business = document.business
+    bp = timepiece.BusinessPermissions.for_user(request.user, business)
+    if not bp.has_view_documents:
+        return HttpResponse("Sorry, you don't have permission to view this business document")
+
+    filename = document.filename
+    document.deleted = True
+    document.save()
+    messages.info(request, "Document %s deleted" % filename)
+    return HttpResponseRedirect(reverse('view_business_documents', args=[business.id]))

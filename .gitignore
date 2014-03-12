@@ -27,3 +27,4 @@ reports/coverage_html
 db_backups
 *flymake*
 *\#*
+src/implicitdesign/media/project_documents
