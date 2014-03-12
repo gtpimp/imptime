@@ -77,3 +77,19 @@ table.issues {
 .mini_heading {
     float: left;
 }
+
+.generated_report table {
+    border: 1px solid #cecece;
+    padding: 15px;
+    margin: 20px;
+}
+
+.generated_report table td {
+    padding: 4px;
+    padding-left: 20px;
+}
+
+.generated_report table th {
+    background-color: #cecece;
+    text-align: center;
+}

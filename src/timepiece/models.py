@@ -2485,6 +2485,7 @@ class BusinessDocument(models.Model):
     token = models.CharField(max_length=255, null=False, blank=False, db_index=True)
     comments = models.TextField(null=True, blank=True)
     deleted = models.BooleanField(default=False, blank=True)
+    original_content = models.TextField(null=True, blank=True)
 
     created_by = models.ForeignKey(User, null=False, blank=False, related_name='business_document_created_by')
     created_at = models.DateTimeField(auto_now_add=True)

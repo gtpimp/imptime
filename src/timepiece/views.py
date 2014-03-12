@@ -4420,7 +4420,7 @@ def generate_preview_business_document(request, business_id, template="timepiece
     form = timepiece_forms.GenerateBusinessDocumentForm(request.POST or request.GET or None)
     if form.is_valid():
         content = form.cleaned_data['content']
-        content = markdown.markdown(content)
+        content = markdown.markdown(content, extensions=['tables'])
         context['pages'] = content.split("\pagebreak")
         context['title'] = form.cleaned_data['title']
 
@@ -4445,6 +4445,7 @@ def generate_preview_business_document(request, business_id, template="timepiece
                                                                  doc_type=form.cleaned_data['doc_type'],
                                                                  mime_type='application/pdf',
                                                                  comments='auto created\n%s'%url.replace("authenticate_token","xx"),
+                                                                 original_content=content,
                                                                  created_by_id=request.user.id,
                                                                  modified_by_id=request.user.id)
             document.doc.save(filename, f)
