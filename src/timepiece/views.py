@@ -4210,6 +4210,7 @@ def sprint_report(request, project_id, context=None):
                                                              doc_type=doc_type,
                                                              mime_type='application/pdf',
                                                              comments='auto created\n%s'%url.replace("authenticate_token","xx"),
+                                                             modified_by_id=request.user.id,
                                                              created_by_id=request.user.id)
         document.doc.save(filename, f)
 
@@ -4314,6 +4315,7 @@ def view_business_documents(request, business_id, template="timepiece/project/bu
         document = form.save(commit=False)
         document.business = business
         document.created_by_id = request.user.id
+        document.modified_by_id = request.user.id
         document.mime_type = form.cleaned_data['doc'].content_type
         document.filename = form.cleaned_data['doc'].name
         document.save()
@@ -4475,6 +4477,7 @@ def generate_business_document(request, business_id, context=None):
 
         document = form.save(commit=False)
         document.business = business
+        document.modified_by_id = request.user.id
         document.created_by_id = request.user.id
         document.mime_type = form.cleaned_data['doc'].content_type
         document.filename = form.cleaned_data['doc'].name
