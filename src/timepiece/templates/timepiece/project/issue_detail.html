@@ -23,12 +23,14 @@
       </div>
     {% endif %}
 
+  {% if issue.id %}
   <div class="issue_details_sub_heading creation_details">
     <p>
       Created on: {{ issue.created|date:'D d-M-Y H:i:s' }} <br />
       Modified: {{ issue.modified|date:'D d-M-Y H:i:s' }}
     </p>
   </div>
+  {% endif %}
   {% if user.is_superuser %}
     {% for dup in issue.issue_number_duplicates_in_business %}
     <div>
@@ -172,8 +174,10 @@
     </div>
   {% end_permission %}
 
+    {% if issue.pk %}
     <a href="#" class"btn" onclick="return imp.show_issue_history('{% url 'show_issue_history' issue.pk %}')">
       <img src="{{STATIC_URL}}/images/icons/report.png"/>
     </a>
+    {% endif %}
 
 </div>
