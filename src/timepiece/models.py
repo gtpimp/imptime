@@ -2114,6 +2114,10 @@ class UserProfile(models.Model):
             self.authenticate_token = str(uuid.uuid4()).replace("-","")
         super(UserProfile, self).save(*args, **kwargs)
 
+    @property
+    def businesses(self):
+        return Business.objects.all().filter_by_logged_in_user(self.user).order_by("name").distinct()
+
 class ProjectHours(models.Model):
     week_start = models.DateField(verbose_name='start of week')
     project = models.ForeignKey(Project)
