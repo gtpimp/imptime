@@ -213,7 +213,9 @@ a:hover {
 }
 
 .edit_description .content {
-    background-color: rgb(250,250,255);
+    background-color: #cdcdcd;
+    margin-top: 10px;
+    margin-bottom: 10px;
     padding: 3px;
     /*border: 1px solid #cccccc;*/
     width: 96%;
@@ -9891,6 +9893,7 @@ ul.project_list {
 .issue_detail {
     padding-left: 10px;
     color: #121212;
+    font-family: "Dura Sans", Arial, sans-serif;
 }
 
 .issue_detail h1 {
@@ -10172,4 +10175,9 @@ table.search_results tr:hover {
 
 .project_card_dialog_container .report_settings {
     text-align: left;
+}
+
+div.small_button, a.small_button, button.small_button {
+    font-size:10px;
+    height: 15px;
 }

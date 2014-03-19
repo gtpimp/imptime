@@ -2392,7 +2392,7 @@ class Issue(models.Model):
         return project.entries.filter(issue__isnull=True).order_by("start_time")
 
     def comments_in_order(self):
-        return self.comments.get_query_set().order_by("created")
+        return self.comments.get_query_set().order_by("-created")
 
 class IssueStatus(models.Model):
     name = models.CharField(max_length=255, blank=True, null=True)
