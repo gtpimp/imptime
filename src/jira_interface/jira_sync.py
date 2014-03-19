@@ -1,5 +1,6 @@
 from jira_interface.jira_python.jira.client import JIRA, GreenHopper
 import timepiece.models as timepiece
+from jira_interface.models import JiraSyncStatus
 from django.contrib.auth.models import User
 from django.contrib import messages
 from django.db.models import Q
@@ -89,6 +90,10 @@ class JiraSync(object):
             jira_sprints = self.gh.sprints(self.settings.board_id.strip())
             for jira_sprint in jira_sprints:
                 self._sync_sprint(jira_sprint)
+
+            JiraSyncStatus.set_most_recent_updated_at(self.timepiece_business)
+            self._sync_sprint(jira_sprint)
+
             messages.info(self.request, "Sync from jira complete")
         except Exception, ex:
             self._on_error(ex)
@@ -112,6 +117,9 @@ class JiraSync(object):
         except timepiece.Project.MultipleObjectsReturned:
             logger.error("Multiple projects with interface plugin number %s in %s" % jira_sprint.id, self.timepiece_business)
 
+        if not timepiece_project.is_open():
+            return
+
         order = 1
         issues_synced = []
         for gh_issue in self.gh.completed_issues(self.settings.board_id.strip(), jira_sprint.id):
@@ -128,7 +136,7 @@ class JiraSync(object):
 
     def _sync_issue(self, jira_sprint, gh_issue, timepiece_project, order):
 
-        logger.debug("syncing sprint %s" % jira_sprint.name)
+        logger.debug("syncing issue %s" % gh_issue.key)
         jira_issue = self.jira.issue(gh_issue.key)
         state = gh_issue.statusName
         

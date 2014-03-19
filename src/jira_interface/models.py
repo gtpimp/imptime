@@ -1,5 +1,6 @@
 from django.db import models
 import timepiece.models as timepiece
+import datetime
 
 class Jira(models.Model):
     """ model which associates a business with a jira installation """
@@ -18,3 +19,20 @@ class Jira(models.Model):
         help_text="the name of the field used to hold the issue sorting value ")
     primary_user = models.ForeignKey(
         timepiece.User, related_name='primary_user', blank=True, null=True)
+
+class JiraSyncStatus(models.Model):
+    
+    jira = models.ForeignKey(Jira, blank=False, null=False)
+    updated_at = models.DateTimeField(blank=True, null=True)
+
+    @classmethod
+    def get_most_recent_updated_at(self, business):
+        try:
+            status = JiraSyncStatus.objects.filter(jira__business=business).order_by("-updated_at")[0]
+        except JiraSyncStatus.DoesNotExist:
+            status = JiraSyncStatus.objects.create(jira__business=business, updated_at=datetime.datetime.today())
+        return status
+
+    @classmethod
+    def set_most_recent_updated_at(self, business):
+        JiraSyncStatus.objects.create(jira__business=business, updated_at=datetime.datetime.today())
