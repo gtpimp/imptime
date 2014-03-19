@@ -117,7 +117,7 @@ class JiraSync(object):
         except timepiece.Project.MultipleObjectsReturned:
             logger.error("Multiple projects with interface plugin number %s in %s" % jira_sprint.id, self.timepiece_business)
 
-        if not timepiece_project.is_open():
+        if not timepiece_project.is_open:
             return
 
         order = 1
