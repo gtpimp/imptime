@@ -98,6 +98,21 @@ class JiraSync(object):
         except Exception, ex:
             self._on_error(ex)
 
+    def sync_sprint_from_jira(self, timepiece_sprint):
+        try:
+            num_synced = 0
+            if not self._connect():
+                return
+            jira_sprints = self.gh.sprints(self.settings.board_id.strip())
+            for jira_sprint in jira_sprints:
+                if unicode(jira_sprint.id) == timepiece_sprint.interface_plugin_number:
+                    num_synced = self._sync_sprint(jira_sprint)
+                    break;
+            
+            messages.info(self.request, "Sync of %s from jira complete, %d issues" % (timepiece_sprint, num_synced))
+        except Exception, ex:
+            self._on_error(ex)
+
     def _sync_sprint(self, jira_sprint):
         logger.debug("syncing sprint %s" % jira_sprint.name)
 
@@ -133,6 +148,7 @@ class JiraSync(object):
         # plugin number, but we don't delete the issue because we want
         # traceability.
         timepiece_project.issues.exclude(pk__in=[i.id for i in issues_synced]).update(interface_plugin_number=None)
+        return order
 
     def _sync_issue(self, jira_sprint, gh_issue, timepiece_project, order):
 

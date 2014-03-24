@@ -36,3 +36,4 @@ class JiraSyncStatus(models.Model):
     @classmethod
     def set_most_recent_updated_at(self, business):
         JiraSyncStatus.objects.create(jira__business=business, updated_at=datetime.datetime.today())
+

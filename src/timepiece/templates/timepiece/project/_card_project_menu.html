@@ -38,6 +38,14 @@
         </a>
       </li>
 
+      {% ifequal project.business.sync_with "jira" %}
+      <li>
+	<a href="#" onclick="imp.projects.show_project_card_as_popup(this, '{% url 'jira:sync_project_from_jira' project.id %}', 'Synching...', {'reload_on_done':'{% url 'project_list' project.id %}'}); return false;">
+				    Sync from Jira
+	</a>
+      </li>
+      {% endifequal %}
+
       {% comment %}
       {% has_permission has_view_ctc_billable_rates project.business %}
       <li>

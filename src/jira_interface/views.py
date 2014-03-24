@@ -1,5 +1,6 @@
 
 from django.contrib.auth.decorators import login_required, permission_required
+from django.contrib import messages
 from django.template import RequestContext
 from timepiece import models as timepiece
 from django.http import HttpResponse, HttpResponseRedirect
@@ -63,5 +64,15 @@ def sync_business_to_jira(request, business_id):
         logger.exception(ex)
         return HttpResponse("Sync failed: %s" % ex)
 
-
- 
+@login_required
+def sync_project_from_jira(request, project_id, context=None):
+    context = context or {}
+    project = timepiece.Project.objects.get(pk=project_id)
+    try:
+        jira_sync = JiraSync(request, project.business.id)
+        jira_sync.sync_sprint_from_jira(timepiece_sprint=project)
+        return HttpResponse("synched")
+    except Exception, ex:
+        logger.exception(ex)
+        messages.error(request, "Sync of %s from jira failed : " % (project, ex))
+        return HttpResponse("Sync failed: %s" % ex)
