@@ -114,11 +114,11 @@ this document. Please read that section to understand how these costs
 are derived.
 </p>
 
+{% ifequal settings.preamble_type "billable" %}
+
 <p>
 The upper budget range is calculated by adding a variance of {{estimate_stats.slack_percentage}}%
 </p>
-
-{% ifequal settings.preamble_type "billable" %}
 
 <p>
 The final cost will be invoiced as the actual billable time taken,
@@ -136,9 +136,16 @@ half-way through the sprint budget.
 
 {% endifequal %}
 
-
-
 {% ifequal settings.preamble_type "quote" %}
+
+<p>
+The upper budget range is calculated by adding a variance of {{estimate_stats.slack_percentage}}%. This
+upper range represents a tolerance for tweaks or changes which are too
+small to require a re-quote. We request that the client budget for the
+upper amount, but if there no changes to this quote during development
+then the lower amount will be invoiced.
+</p>
+
 <p>
       <b>Quoted minimum cost</b> R{{ estimate_stats.total_estimate_min|floatformat:"0"|intcomma }}
 <br/>
