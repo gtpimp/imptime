@@ -123,7 +123,7 @@ class JiraSync(object):
     def _sync_sprint(self, jira_sprint, timepiece_project=None):
         logger.debug("syncing sprint %s" % jira_sprint.name)
 
-        timepiece_project_name = timepiece.Project.get_code_from_name(jira_sprint.name) + " ."
+        timepiece_project_name = timepiece.Project.get_code_from_name(jira_sprint.name)
         if timepiece_project is None:
             try:
                 timepiece_project = timepiece.Project.objects.get(business=self.timepiece_business, interface_plugin_number=jira_sprint.id)

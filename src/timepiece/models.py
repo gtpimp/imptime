@@ -2331,7 +2331,7 @@ class Issue(models.Model):
                 return IssuePoints.objects.create(user=user,issue=self)
             return None
         except IssuePoints.MultipleObjectsReturned:
-            return IssuePoints.objects.filter(user=user,issue=self).order_by("user__id")[0]
+            return IssuePoints.objects.filter(user=user,issue=self).order_by("id")[0]
 
     def set_points(self, user, points):
         try:
@@ -2345,9 +2345,6 @@ class Issue(models.Model):
     @property
     def issue_number_duplicates_in_business(self):
         return Issue.objects.filter(project__business=self.project.business).filter(number=self.number).exclude(pk=self.id)
-        if duplicates.count()>0:
-            return duplicates
-        return []
 
     @property
     def css_class(self):
@@ -2368,14 +2365,6 @@ class Issue(models.Model):
     @property
     def related_entries(self):
         return self.entries.all()
-        # if self._entries is not None:
-        #     return self._entries
-        # entries = []
-        # for entry in self.project.entries.all():
-        #     if entry.try_get_issue_id()==self.number:
-        #         entries.append(entry)
-        # self._entries = entries
-        # return entries
 
     @property
     def hours(self):
@@ -2386,6 +2375,23 @@ class Issue(models.Model):
 
     def hours_for_users(self):
         return [ (User.objects.get(pk=x['user']), x['hours']) for x in self.related_entries.all().filter(hours__gt=0).values("user").order_by("user").annotate(hours=Sum('hours')) ]
+
+    @property
+    def best_hours_estimate(self):
+        """ 'best' means for the either the assigned user or the user who has put time against the issue. """
+        
+        if self.assigned_to:
+            user_issue_points = self.get_user_issue_points(self.assigned_to)
+            if user_issue_points and user_issue_points.points:
+                return user_issue_points.points, self.assigned_to
+
+        for user_id, bp in BusinessPermissions.by_user(self.project.business).items():
+            if bp.has_estimate_own_points:
+                user = User.objects.get(pk=user_id)
+                user_issue_points = self.get_user_issue_points(user)
+                if user_issue_points and user_issue_points.points:
+                    return user_issue_points.points, user
+        return 0, None
 
     @property
     def ctc(self):
