@@ -4483,7 +4483,7 @@ def generate_business_document(request, business_id, context=None):
         document.save()
         form.save_m2m()
         messages.info(request, "Document %s uploaded" % document.filename)
-        return HttpResponseRedirect(reverse('view_business_documents', args=[business_id]))
+        
     return view_business_documents(request, business_id)
     
 @login_required
@@ -4498,10 +4498,36 @@ def issue_checkbox_context_menu(request, template="timepiece/project/issue_check
         return HttpResponse("No issues selected")
 
     from_project = timepiece.Issue.objects.get(pk=checked_issue_ids[0]).project
+
+    bp = timepiece.BusinessPermissions.for_user(request.user, from_project.business)
+    if not bp.has_add_issue:
+        return HttpResponse("No permission")
+
     other_projects = [p for p in timepiece.Project.objects.filter(business=from_project.business).exclude(pk=from_project.id) if p.is_open]
 
     context['other_projects'] = other_projects
     context['issues'] = checked_issue_ids
     context['num_issues'] = len(checked_issue_ids)
+
+    # easier to store the issue ids than to pass them through with every context menu option
+    request.session['selected_issue_ids_for_context_menu'] = checked_issue_ids
+
     return render_to_response(template, context, context_instance=RequestContext(request))
+
+@login_required
+def bulk_move_issues_to_project(request, dest_project_id, context=None):
+    selected_issue_ids = request.session['selected_issue_ids_for_context_menu']
+    
+    dest_project = timepiece.Project.objects.get(pk=dest_project_id)
+    for selected_issue_id in selected_issue_ids:
+        issue = timepiece.Issue.objects.get(pk=selected_issue_id)
+        old_project = issue.project
+        issue.project = dest_project
+        issue.order = 9999
+        issue.save()
+        timepiece.IssueHistory.add_history(request.user, issue, "moved project", unicode(old_project), unicode(dest_project))
+    messages.info(request, "%d issues moved to %s" % (len(selected_issue_ids), dest_project))
+
+    return HttpResponseRedirect(reverse('project_list', args=[dest_project.id]))
+
 
