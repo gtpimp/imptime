@@ -1193,3 +1193,33 @@ class GenerateBusinessDocumentForm(forms.Form):
     filename = forms.CharField(required=True, max_length=255)
     doc_type = forms.ChoiceField(required=True, choices=timepiece.BusinessDocument.DOC_TYPE_CHOICES)
     content = forms.CharField(widget=forms.Textarea, required=True)
+
+class IssueCheckboxContextMenuChangeStateForm(forms.Form):
+    
+    status = forms.ChoiceField( label="New status", 
+                                required=True, initial=('New',) )
+
+    def __init__(self, project, *args, **kwargs):
+        super(IssueCheckboxContextMenuChangeStateForm, self).__init__(*args, **kwargs)
+        self.fields['status'].choices = [('na', ''),] + list( [ (x['status'],x['status']) for x in Issue.objects.filter(project__business=project.business).values('status').distinct()] )
+        self.fields['status'].widget.attrs['onchange'] = "this.form.submit();"
+
+class IssueCheckboxContextMenuChangeFeatureForm(forms.Form):
+    
+    feature = forms.ChoiceField( label="New feature", 
+                                required=True, initial=('New',) )
+
+    def __init__(self, project, *args, **kwargs):
+        super(IssueCheckboxContextMenuChangeFeatureForm, self).__init__(*args, **kwargs)
+        self.fields['feature'].choices = [('na', ''),] + list( [ (x.id,x.name) for x in Feature.objects.filter(business=project.business) ] )
+        self.fields['feature'].widget.attrs['onchange'] = "this.form.submit();"
+
+class IssueCheckboxContextMenuChangeAssigneeForm(forms.Form):
+    
+    assignee = forms.ChoiceField( label="New assignee", 
+                                required=True, initial=('New',) )
+
+    def __init__(self, project, *args, **kwargs):
+        super(IssueCheckboxContextMenuChangeAssigneeForm, self).__init__(*args, **kwargs)
+        self.fields['assignee'].choices = [ ('', '') ] + [ (x.id, str(x)) for x in project.business.users ]
+        self.fields['assignee'].widget.attrs['onchange'] = "this.form.submit();"

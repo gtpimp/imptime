@@ -4509,8 +4509,13 @@ def issue_checkbox_context_menu(request, template="timepiece/project/issue_check
     context['issues'] = checked_issue_ids
     context['num_issues'] = len(checked_issue_ids)
 
+    context['state_change_form'] = timepiece_forms.IssueCheckboxContextMenuChangeStateForm(from_project)
+    context['feature_change_form'] = timepiece_forms.IssueCheckboxContextMenuChangeFeatureForm(from_project)
+    context['assignee_change_form'] = timepiece_forms.IssueCheckboxContextMenuChangeAssigneeForm(from_project)
+
     # easier to store the issue ids than to pass them through with every context menu option
     request.session['selected_issue_ids_for_context_menu'] = checked_issue_ids
+    request.session['selected_issue_project'] = from_project
 
     return render_to_response(template, context, context_instance=RequestContext(request))
 
@@ -4523,11 +4528,76 @@ def bulk_move_issues_to_project(request, dest_project_id, context=None):
         issue = timepiece.Issue.objects.get(pk=selected_issue_id)
         old_project = issue.project
         issue.project = dest_project
-        issue.order = 9999
+        issue.order += 9999
         issue.save()
         timepiece.IssueHistory.add_history(request.user, issue, "moved project", unicode(old_project), unicode(dest_project))
+
+    dest_project.refresh_issues_numbers()
     messages.info(request, "%d issues moved to %s" % (len(selected_issue_ids), dest_project))
 
     return HttpResponseRedirect(reverse('project_list', args=[dest_project.id]))
 
 
+@login_required
+@csrf_exempt
+def bulk_change_issue_state(request, context=None):
+    selected_issue_ids = request.session['selected_issue_ids_for_context_menu']
+    selected_project = request.session['selected_issue_project']
+    
+    form = timepiece_forms.IssueCheckboxContextMenuChangeStateForm(selected_project, request.GET or None)
+    if not form.is_valid():
+        return HttpResponse("No state chosen: %s" % form.errors)
+
+    new_status = form.cleaned_data['status']
+    for selected_issue_id in selected_issue_ids:
+        issue = timepiece.Issue.objects.get(pk=selected_issue_id)
+        if new_status != issue.status:
+            old_status = issue.status
+            issue.status = new_status
+            issue.save()
+            timepiece.IssueHistory.add_history(request.user, issue, "changed status", old_status, new_status)
+    messages.info(request, "%d issues changed state to %s" % (len(selected_issue_ids), new_status))
+    return HttpResponseRedirect(reverse('project_list', args=[selected_project.id]))
+
+
+@login_required
+@csrf_exempt
+def bulk_change_issue_feature(request, context=None):
+    selected_issue_ids = request.session['selected_issue_ids_for_context_menu']
+    selected_project = request.session['selected_issue_project']
+    
+    form = timepiece_forms.IssueCheckboxContextMenuChangeFeatureForm(selected_project, request.GET or None)
+    if not form.is_valid():
+        return HttpResponse("No feature chosen: %s" % form.errors)
+
+    new_feature = timepiece.Feature.objects.get(pk=form.cleaned_data['feature'])
+    for selected_issue_id in selected_issue_ids:
+        issue = timepiece.Issue.objects.get(pk=selected_issue_id)
+        if new_feature != issue.feature:
+            old_feature = issue.feature
+            issue.feature = new_feature
+            issue.save()
+            timepiece.IssueHistory.add_history(request.user, issue, "changed feature", old_feature, new_feature)
+    messages.info(request, "%d issues changed feature to %s" % (len(selected_issue_ids), new_feature))
+    return HttpResponseRedirect(reverse('project_list', args=[selected_project.id]))
+
+@login_required
+@csrf_exempt
+def bulk_change_issue_assignee(request, context=None):
+    selected_issue_ids = request.session['selected_issue_ids_for_context_menu']
+    selected_project = request.session['selected_issue_project']
+    
+    form = timepiece_forms.IssueCheckboxContextMenuChangeAssigneeForm(selected_project, request.GET or None)
+    if not form.is_valid():
+        return HttpResponse("No assignee chosen: %s" % form.errors)
+
+    new_assignee = auth_models.User.objects.get(pk=form.cleaned_data['assignee'])
+    for selected_issue_id in selected_issue_ids:
+        issue = timepiece.Issue.objects.get(pk=selected_issue_id)
+        if new_assignee != issue.assigned_to:
+            old_assignee = issue.assigned_to
+            issue.assigned_to = new_assignee
+            issue.save()
+            timepiece.IssueHistory.add_history(request.user, issue, "changed assigned user", old_assignee, new_assignee)
+    messages.info(request, "%d issues changed assigned user to %s" % (len(selected_issue_ids), new_assignee))
+    return HttpResponseRedirect(reverse('project_list', args=[selected_project.id]))

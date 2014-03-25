@@ -10,4 +10,25 @@
 
   <li class="divider"></li>
 
+  <li> 
+    <form method="GET" action='{% url bulk_change_issue_state %}'>
+      {{state_change_form.as_p}}
+    </form>
+  </li>
+
+  <li> 
+    <form method="GET" action='{% url bulk_change_issue_feature %}'>
+      {{feature_change_form.as_p}}
+    </form>
+  </li>
+
+  <li> 
+    <form method="GET" action='{% url bulk_change_issue_assignee %}'>
+      {{assignee_change_form.as_p}}
+    </form>
+  </li>
+
+
+  <li class="divider"></li>
+
 </ul>

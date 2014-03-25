@@ -597,5 +597,8 @@ urlpatterns = patterns('',
 
                        url(r'^issue_checkbox_context_menu$', views.issue_checkbox_context_menu, {}, 'issue_checkbox_context_menu'),
                        url(r'^bulk_move_issues_to_project/(?P<dest_project_id>.*)/$', views.bulk_move_issues_to_project, {}, 'bulk_move_issues_to_project'),
+                       url(r'^bulk_change_issue_state/$', views.bulk_change_issue_state, {}, 'bulk_change_issue_state'),
+                       url(r'^bulk_change_issue_feature/$', views.bulk_change_issue_feature, {}, 'bulk_change_issue_feature'),
+                       url(r'^bulk_change_issue_assignee/$', views.bulk_change_issue_assignee, {}, 'bulk_change_issue_assignee'),
 
 )

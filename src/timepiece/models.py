@@ -446,6 +446,16 @@ class Project(models.Model):
             ret[user] = total['points__sum'] if total['points__sum'] else 0
         return ret
 
+    def refresh_issues_numbers(self):
+        """ Doesn't re-sort, just makes the numbers sequential """
+        order = 1
+        for issue in self.issues.all().order_by("order"):
+            old_order = issue.order
+            if old_order != order:
+                issue.order = order
+                issue.save()
+            order += 1
+        
     def get_user_rate(self, user):
 
         if isinstance(user, basestring):
