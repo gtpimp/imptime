@@ -1,5 +1,6 @@
 
 import datetime
+from dateutil.relativedelta import relativedelta
 import uuid
 from colorful.fields import RGBColorField
 from interface_plugin import get_interface_plugin
@@ -1347,6 +1348,24 @@ class Entry(models.Model):
     no_join = EntryManagerBase()
     issue = models.ForeignKey('Issue', blank=True, null=True, related_name='entries')
 
+    @classmethod
+    def quick_create(self, user, hours, issue, comments="auto created"):
+        start_time = datetime.datetime.today()
+        end_time = start_time + timedelta(hours=hours)
+
+        activity = Activity.objects.get_or_create(code='dev')[0]
+        location = Location.objects.get_or_create(name='office')[0]
+        entry = Entry.objects.create(user=user, 
+                                     start_time=start_time, 
+                                     end_time=end_time,
+                                     activity=activity,
+                                     location=location,
+                                     issue=issue,
+                                     project=issue.project,
+                                     status='approved',
+                                     comments=comments)
+        return entry
+
     @property
     def atrate(self):
         return self.hours * self.rate
@@ -1376,6 +1395,13 @@ class Entry(models.Model):
             except Rate.DoesNotExist:
                 self._rate = 0
             return self._rate
+
+    @classmethod
+    def set_hours_for_user(self, user, issue, new_hours):
+        qs = Entry.objects.filter(user=user, issue=issue)
+        if qs.aggregate(total_hours=Sum('hours'))['total_hours'] != new_hours:
+            qs.delete()
+            Entry.quick_create(user=user, hours=new_hours, issue=issue, comments='set manually')
 
     def check_overlap(self, entry_b, **kwargs):
         """

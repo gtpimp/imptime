@@ -308,19 +308,34 @@ class JiraSync(object):
         if not self._connect():
             return
 
-        primary_user = self.settings.primary_user
-        if not primary_user or issue_points.user.pk != primary_user.pk:
+        if issue_points.issue.assigned_to != self.request.user:
             return
 
         jira_issue = self._get_jira_issue(issue_points.issue)
-        estimate = u'%dm' % (float(issue_points.points) * 60)
-        if int(issue_points.points*60*60) != jira_issue.fields.timeestimate:
+        timepiece_estimated_seconds = int(issue_points.points*60*60)
+
+        if timepiece_estimated_seconds != jira_issue.fields.timeestimate:
+            jira_estimate_pattern = u'%dm' % (float(issue_points.points)*60)
             try:
-                jira_issue.update(timetracking={'originalEstimate': estimate})
+                jira_issue.update(timetracking={'originalEstimate': jira_estimate_pattern})
             except Exception, ex:
                 self._on_error(ex)
                 raise
-        
+        self.update_issue_actual_hours(issue_points.issue)
+
+    def update_issue_actual_hours(self, issue):
+        if not self._connect():
+            return
+
+        return
+
+        jira_issue = self._get_jira_issue(issue)
+        timepiece_actual_seconds = int((issue.hours or 0)*60*60)
+        if timepiece_actual_seconds > jira_issue.fields.timespent:
+            timepiece_actual_seconds_offset = timepiece_actual_seconds - (jira_issue.fields.timespent or 0)
+            jira_hours_pattern = u'%dm' % (float(timepiece_actual_seconds_offset)*60)
+            self.jira.add_worklog(jira_issue, timeSpent=jira_hours_pattern)
+
     def update_issue_assigned_to(self, timepiece_issue, username, *args, **kwargs):
         if not self._connect():
             return

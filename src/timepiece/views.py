@@ -3525,13 +3525,18 @@ def issue_points_update(request,  template="timepiece/project/issue_detail.html"
         raise PermissionDenied
 
     old_points = edited_issue_points.points
-    edited_issue_points.points = float(request.POST["new_value"])
+
+    if '/' in request.POST["new_value"]:
+        new_actual, new_estimate = request.POST["new_value"].split("/")
+        if len(new_actual.strip()) > 0:
+            timepiece.Entry.set_hours_for_user(user=request.user, issue=edited_issue_points.issue, new_hours=float(new_actual))
+    else:
+        new_estimate = request.POST["new_value"]
+    
+    edited_issue_points.points = float(new_estimate)
     edited_issue_points.save()
-
     context['issue_number_form'] = timepiece_forms.IssueNumberForm(instance=edited_issue_points.issue)
-
     timepiece.IssueHistory.add_history(request.user, edited_issue_points.issue, "changed estimate for "%edited_issue_points.user, old_points, edited_issue_points.points)
-
     get_interface_plugin(request, current_project.business).update_issue_points(edited_issue_points)
 
     return HttpResponse("")
