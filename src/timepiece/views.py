@@ -4694,7 +4694,7 @@ def bulk_move_issue_below_issue(request, context=None):
 
     selected_project.refresh_issues_numbers()
 
-    selected_issues = selected_project.issues.all().filter(pk__in=selected_issue_ids).order_by("-order")
+    selected_issues = selected_project.issues.all().filter(pk__in=selected_issue_ids).order_by("order")
     num_moved = 0
     for issue in selected_issues:
         if issue.order <= focus_issue.order:

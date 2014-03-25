@@ -190,9 +190,13 @@ class JiraSync(object):
 
     def _sync_issue(self, gh_issue, timepiece_project):
 
+        if not hasattr(gh_issue, 'fields'):
+            jira_issue = self.jira.issue(str(gh_issue.id))
+        else:
+            jira_issue = gh_issue
+
         logger.debug("syncing issue")
-        jira_issue = self.jira.issue(gh_issue.key)
-        state = gh_issue.fields.status.name
+        state = jira_issue.fields.status.name
         order = getattr(jira_issue.fields, self.settings.custom_field_name_for_issue_order)
         fixed_subject="%s %s" % (jira_issue.key, jira_issue.fields.summary)
         time_estimate = float(jira_issue.fields.timeestimate or 0) / (60*60) # cos everybody knows you should estimate to accuracy in seconds
@@ -234,8 +238,8 @@ class JiraSync(object):
             timepiece.IssueHistory.add_history(self.active_user, timepiece_issue, "Description change during jira import", timepiece_issue.description, jira_issue.fields.description or "")
             timepiece_issue.description = jira_issue.fields.description or ""
 
-        if hasattr(gh_issue.fields, 'assignee') and gh_issue.fields.assignee:
-            timepiece_assigned_user = self._get_or_create_timepiece_equivalent_of_jira_user(gh_issue.fields.assignee)
+        if hasattr(jira_issue.fields, 'assignee') and jira_issue.fields.assignee:
+            timepiece_assigned_user = self._get_or_create_timepiece_equivalent_of_jira_user(jira_issue.fields.assignee)
             if timepiece_issue.assigned_to != timepiece_assigned_user:
                 timepiece.IssueHistory.add_history(self.active_user, timepiece_issue, "Assignee change during jira import", timepiece_issue.assigned_to, timepiece_assigned_user)
                 timepiece_issue.assigned_to = timepiece_assigned_user
@@ -248,7 +252,7 @@ class JiraSync(object):
             timepiece.IssueHistory.add_history(self.active_user, timepiece_issue, "Points change during jira import", timepiece_issue.story_points, jira_issue.fields.timeestimate)
             timepiece_issue.story_points = jira_issue.fields.timeestimate
             
-        if hasattr(jira_issue.fields, 'duedate'):
+        if hasattr(jira_issue.fields, 'duedate') and jira_issue.fields.duedate:
             jira_due_date = datetime.strptime(jira_issue.fields.duedate, "%Y-%m-%d")
             if timepiece_issue.due_date != jira_due_date:
                 timepiece.IssueHistory.add_history(self.active_user, timepiece_issue, "Due date changed", timepiece_issue.due_date, jira_issue.fields.duedate)
