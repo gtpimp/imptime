@@ -1,5 +1,6 @@
 from jira_interface.jira_python.jira.client import JIRA, GreenHopper
 import timepiece.models as timepiece
+from django.db.models import Sum, Count, Q, F, Max, Min
 from jira_interface.models import JiraSyncStatus
 from django.contrib.auth.models import User
 from django.contrib import messages
@@ -101,54 +102,70 @@ class JiraSync(object):
     def sync_sprint_from_jira(self, timepiece_sprint):
         try:
             num_synced = 0
+            num_deleted = 0
             if not self._connect():
                 return
             jira_sprints = self.gh.sprints(self.settings.board_id.strip())
+            found = False
             for jira_sprint in jira_sprints:
                 if unicode(jira_sprint.id) == timepiece_sprint.interface_plugin_number:
-                    num_synced = self._sync_sprint(jira_sprint)
+                    num_synced, num_deleted = self._sync_sprint(jira_sprint, timepiece_project=timepiece_sprint)
+                    found = True
                     break;
+
+            if not found:
+                messages.error(self.request, "No jira sprint found matching this project. Expected %s" % timepiece_sprint.interface_plugin_number)
             
-            messages.info(self.request, "Sync of %s from jira complete, %d issues" % (timepiece_sprint, num_synced))
+            messages.info(self.request, "Sync of %s from jira complete, %d issues synced, %d issues deleted" % (timepiece_sprint, num_synced, num_deleted))
         except Exception, ex:
             self._on_error(ex)
 
-    def _sync_sprint(self, jira_sprint):
+    def _sync_sprint(self, jira_sprint, timepiece_project=None):
         logger.debug("syncing sprint %s" % jira_sprint.name)
 
-        try:
-            timepiece_project = timepiece.Project.objects.get(business=self.timepiece_business, interface_plugin_number=jira_sprint.id)
-        except timepiece.Project.DoesNotExist:
-            timepiece_project_name = timepiece.Project.get_code_from_name(jira_sprint.name) + "jira"
+        timepiece_project_name = timepiece.Project.get_code_from_name(jira_sprint.name) + " ."
+        if timepiece_project is None:
             try:
-                timepiece_project = timepiece.Project.objects.get(business=self.timepiece_business, name=timepiece_project_name)
+                timepiece_project = timepiece.Project.objects.get(business=self.timepiece_business, interface_plugin_number=jira_sprint.id)
             except timepiece.Project.DoesNotExist:
-                timepiece_project = timepiece.Project.get_or_create_project(business=self.timepiece_business, project_name=timepiece_project_name,
-                                                                            description=" (from jira)",
-                                                                            short_description=" (from jira)")
-            if timepiece_project.interface_plugin_number != jira_sprint.id:
-                timepiece_project.interface_plugin_number = jira_sprint.id
+                try:
+                    timepiece_project = timepiece.Project.objects.get(business=self.timepiece_business, name=timepiece_project_name)
+                except timepiece.Project.DoesNotExist:
+                    timepiece_project = timepiece.Project.get_or_create_project(business=self.timepiece_business, project_name=timepiece_project_name,
+                                                                                description=" (from jira)",
+                                                                                short_description=" (from jira)")
+                if timepiece_project.interface_plugin_number != jira_sprint.id:
+                    timepiece_project.interface_plugin_number = jira_sprint.id
+                    timepiece_project.save()
+            except timepiece.Project.MultipleObjectsReturned:
+                logger.error("Multiple projects with interface plugin number %s in %s" % (jira_sprint.id, self.timepiece_business))
+
+            if not timepiece_project.is_open:
+                return None, None
+        else:
+            if timepiece_project.name != timepiece_project_name:
+                timepiece_project.name = timepiece_project_name
                 timepiece_project.save()
-        except timepiece.Project.MultipleObjectsReturned:
-            logger.error("Multiple projects with interface plugin number %s in %s" % jira_sprint.id, self.timepiece_business)
 
-        if not timepiece_project.is_open:
-            return
-
-        order = 1
+        num_synced = 1
         issues_synced = []
         for gh_issue in self.gh.completed_issues(self.settings.board_id.strip(), jira_sprint.id):
-            issues_synced.append(self._sync_issue(jira_sprint, gh_issue, timepiece_project, order=order))
-            order += 1
+            issues_synced.append(self._sync_issue(jira_sprint, gh_issue, timepiece_project, order=num_synced))
+            num_synced += 1
         for gh_issue in self.gh.incompleted_issues(self.settings.board_id.strip(), jira_sprint.id):
-            issues_synced.append(self._sync_issue(jira_sprint, gh_issue, timepiece_project, order=order))
-            order += 1
+            issues_synced.append(self._sync_issue(jira_sprint, gh_issue, timepiece_project, order=num_synced))
+            num_synced += 1
 
-        # For any issue not in the jira sprint anymore, we reset the
-        # plugin number, but we don't delete the issue because we want
-        # traceability.
-        timepiece_project.issues.exclude(pk__in=[i.id for i in issues_synced]).update(interface_plugin_number=None)
-        return order
+        timepiece_missing_issues = timepiece_project.issues.exclude(pk__in=[i.id for i in issues_synced])
+        timepiece_missing_issues.update(interface_plugin_number=None)
+
+        num_deleted = 0
+        timepiece_missing_issues_without_time = timepiece_missing_issues.values('id').annotate(hours=Count('entries')).filter(hours__eq=0)
+        for missing_issue in timepiece_missing_issues_without_time:
+            timepiece_project.issues.all().filter(pk=missing_issue['id']).delete()
+            num_deleted += 1
+
+        return num_synced, num_deleted
 
     def _sync_issue(self, jira_sprint, gh_issue, timepiece_project, order):
 
