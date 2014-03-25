@@ -3525,7 +3525,7 @@ def issue_points_update(request,  template="timepiece/project/issue_detail.html"
         raise PermissionDenied
 
     old_points = edited_issue_points.points
-    edited_issue_points.points = request.POST["new_value"]
+    edited_issue_points.points = float(request.POST["new_value"])
     edited_issue_points.save()
 
     context['issue_number_form'] = timepiece_forms.IssueNumberForm(instance=edited_issue_points.issue)

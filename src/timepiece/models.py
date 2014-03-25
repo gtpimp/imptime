@@ -2376,6 +2376,23 @@ class Issue(models.Model):
     def hours_for_users(self):
         return [ (User.objects.get(pk=x['user']), x['hours']) for x in self.related_entries.all().filter(hours__gt=0).values("user").order_by("user").annotate(hours=Sum('hours')) ]
 
+    def get_assigned_hours_estimate(self):
+        if not self.assigned_to:
+            return 0, None
+        if not BusinessPermissions.for_user(self.assigned_to, self.project.business).has_estimate_own_points:
+            return 0, None
+        user_issue_points = self.get_user_issue_points(self.assigned_to)
+        if not user_issue_points or not user_issue_points.points:
+            return 0, self.assigned_to
+        return user_issue_points.points, self.assigned_to
+
+    def set_assigned_hours_estimate(self, hours):
+        if not self.assigned_to:
+            return
+        if not BusinessPermissions.for_user(self.assigned_to, self.project.business).has_estimate_own_points:
+            return
+        self.set_points(self.assigned_to, hours)
+
     @property
     def best_hours_estimate(self):
         """ 'best' means for the either the assigned user or the user who has put time against the issue. """

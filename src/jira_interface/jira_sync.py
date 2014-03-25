@@ -84,18 +84,23 @@ class JiraSync(object):
             self._on_error(ex)
 
     def sync_from_jira(self):
+        try:
+            self._sync_sprint_names_from_jira()
+        except Exception, ex:
+            self._on_error(ex)
 
+    def _sync_sprint_names_from_jira(self):
+        """ makes sure there is a timepiece sprint for every jira sprint, but doesn't sync their issues """
         try:
             if not self._connect():
                 return
             jira_sprints = self.gh.sprints(self.settings.board_id.strip())
+            num_projects_synced = 0
             for jira_sprint in jira_sprints:
-                self._sync_sprint(jira_sprint)
+                self._get_or_create_timepiece_sprint_for_jira_sprint(jira_sprint)
+                num_projects_synced += 1
 
-            JiraSyncStatus.set_most_recent_updated_at(self.timepiece_business)
-            self._sync_sprint(jira_sprint)
-
-            messages.info(self.request, "Sync from jira complete")
+            messages.info(self.request, "Fetched %d projects from jira" % num_projects_synced)
         except Exception, ex:
             self._on_error(ex)
 
@@ -109,7 +114,7 @@ class JiraSync(object):
             found = False
             for jira_sprint in jira_sprints:
                 if unicode(jira_sprint.id) == timepiece_sprint.interface_plugin_number:
-                    num_synced, num_deleted = self._sync_sprint(jira_sprint, timepiece_project=timepiece_sprint)
+                    num_synced, num_deleted = self._sync_sprint_from_jira(jira_sprint, timepiece_project=timepiece_sprint)
                     found = True
                     break;
 
@@ -120,32 +125,31 @@ class JiraSync(object):
         except Exception, ex:
             self._on_error(ex)
 
-    def _sync_sprint(self, jira_sprint, timepiece_project=None):
-        logger.debug("syncing sprint %s" % jira_sprint.name)
-
+    def _get_or_create_timepiece_sprint_for_jira_sprint(self, jira_sprint):
         timepiece_project_name = timepiece.Project.get_code_from_name(jira_sprint.name)
-        if timepiece_project is None:
+        try:
+            timepiece_project = timepiece.Project.objects.get(business=self.timepiece_business, interface_plugin_number=jira_sprint.id)
+        except timepiece.Project.DoesNotExist:
             try:
-                timepiece_project = timepiece.Project.objects.get(business=self.timepiece_business, interface_plugin_number=jira_sprint.id)
+                timepiece_project = timepiece.Project.objects.get(business=self.timepiece_business, name=timepiece_project_name)
             except timepiece.Project.DoesNotExist:
-                try:
-                    timepiece_project = timepiece.Project.objects.get(business=self.timepiece_business, name=timepiece_project_name)
-                except timepiece.Project.DoesNotExist:
-                    timepiece_project = timepiece.Project.get_or_create_project(business=self.timepiece_business, project_name=timepiece_project_name,
-                                                                                description=" (from jira)",
-                                                                                short_description=" (from jira)")
-                if timepiece_project.interface_plugin_number != jira_sprint.id:
-                    timepiece_project.interface_plugin_number = jira_sprint.id
-                    timepiece_project.save()
-            except timepiece.Project.MultipleObjectsReturned:
-                logger.error("Multiple projects with interface plugin number %s in %s" % (jira_sprint.id, self.timepiece_business))
-
-            if not timepiece_project.is_open:
-                return None, None
-        else:
-            if timepiece_project.name != timepiece_project_name:
-                timepiece_project.name = timepiece_project_name
+                timepiece_project = timepiece.Project.get_or_create_project(business=self.timepiece_business, project_name=timepiece_project_name,
+                                                                            description=" (from jira)",
+                                                                            short_description=" (from jira)")
+            if timepiece_project.interface_plugin_number != jira_sprint.id:
+                timepiece_project.interface_plugin_number = jira_sprint.id
                 timepiece_project.save()
+        except timepiece.Project.MultipleObjectsReturned:
+            logger.error("Multiple projects with interface plugin number %s in %s" % (jira_sprint.id, self.timepiece_business))
+
+        if timepiece_project.name != timepiece_project_name:
+            timepiece_project.name = timepiece_project_name
+            timepiece_project.save()
+
+        return timepiece_project
+
+    def _sync_sprint_from_jira(self, jira_sprint, timepiece_project):
+        logger.debug("syncing sprint %s" % jira_sprint.name)
 
         num_synced = 1
         issues_synced = []
@@ -172,10 +176,10 @@ class JiraSync(object):
         logger.debug("syncing issue %s" % gh_issue.key)
         jira_issue = self.jira.issue(gh_issue.key)
         state = gh_issue.statusName
-        
         order = getattr(jira_issue.fields, self.settings.custom_field_name_for_issue_order)
-
         fixed_subject="%s %s" % (jira_issue.key, jira_issue.fields.summary)
+        time_estimate = float(jira_issue.fields.timeestimate or 0) / (60*60) # cos everybody knows you should estimate to accuracy in seconds
+        time_estimate = float(int(time_estimate*100))/100
 
         try:
             timepiece_issue = timepiece_project.issues.get_query_set().get(interface_plugin_number=jira_issue.key)
@@ -218,6 +222,10 @@ class JiraSync(object):
             if timepiece_issue.assigned_to != timepiece_assigned_user:
                 timepiece.IssueHistory.add_history(self.active_user, timepiece_issue, "Assignee change during jira import", timepiece_issue.assigned_to, timepiece_assigned_user)
                 timepiece_issue.assigned_to = timepiece_assigned_user
+
+            if timepiece_issue.get_assigned_hours_estimate()[0] != time_estimate:
+                timepiece.IssueHistory.add_history(self.active_user, timepiece_issue, "Time estimate changed during jira import", timepiece_issue.get_assigned_hours_estimate()[0], time_estimate)
+                timepiece_issue.set_assigned_hours_estimate(time_estimate)
 
         if timepiece_issue.story_points != jira_issue.fields.timeestimate:
             timepiece.IssueHistory.add_history(self.active_user, timepiece_issue, "Points change during jira import", timepiece_issue.story_points, jira_issue.fields.timeestimate)
@@ -299,15 +307,20 @@ class JiraSync(object):
     def update_issue_points(self, issue_points):
         if not self._connect():
             return
+
         primary_user = self.settings.primary_user
         if not primary_user or issue_points.user.pk != primary_user.pk:
             return
-        
+
         jira_issue = self._get_jira_issue(issue_points.issue)
         estimate = u'%dm' % (float(issue_points.points) * 60)
-        jira_issue.update(timetracking={'originalEstimate': estimate})
+        if int(issue_points.points*60*60) != jira_issue.fields.timeestimate:
+            try:
+                jira_issue.update(timetracking={'originalEstimate': estimate})
+            except Exception, ex:
+                self._on_error(ex)
+                raise
         
-
     def update_issue_assigned_to(self, timepiece_issue, username, *args, **kwargs):
         if not self._connect():
             return
