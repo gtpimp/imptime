@@ -1,6 +1,7 @@
 import os
 import fnmatch
 from implicitdesign import settings
+from timepiece.interface_plugin import get_interface_plugin
 from orgnode import makelist
 from django.db import transaction
 from django.contrib.auth.models import User
@@ -78,13 +79,18 @@ class Extractor(object):
         orgnodes = makelist(filepath)
         sprint_name = None
         business_name = fname.replace(".org", "").replace("id-", "")
+
+        issues_processed = set()
         for orgnode in orgnodes:
             if orgnode.Level() == 2:
                 sprint_name = orgnode.Heading()
             if orgnode.Level() >= 3 and len(orgnode.getClocks())>0 and sprint_name is not None:
-                self._process_orgnode(business_name, sprint_name, orgnode)
+                self._process_orgnode(business_name, sprint_name, orgnode, issues_processed)
 
-    def _process_orgnode(self, business_name, sprint_name, orgnode):
+        for issue in issues_processed:
+            get_interface_plugin(request=None, timepiece_business_id=issue.project.business.id).update_issue_actual_hours(timepiece_issue=issue)
+
+    def _process_orgnode(self, business_name, sprint_name, orgnode, issues_processed):
         point_person = User.objects.get_or_create(username=self.pointperson_username)[0]
         activity = Activity.objects.get_or_create(code='dev')[0]
         try:
@@ -128,8 +134,8 @@ class Extractor(object):
                     issue = Issue.objects.get(number=issue_id, project=project)
                     entry.issue = issue
                     entry.save()
+                    issues_processed.add(issue)
                 except Issue.DoesNotExist:
                     pass
-                    
 
             self.status['num_entries_created'] += 1

@@ -3527,9 +3527,11 @@ def issue_points_update(request,  template="timepiece/project/issue_detail.html"
     old_points = edited_issue_points.points
 
     if '/' in request.POST["new_value"]:
+        """ shorthand way to add actual hours to a user """
         new_actual, new_estimate = request.POST["new_value"].split("/")
         if len(new_actual.strip()) > 0:
             timepiece.Entry.set_hours_for_user(user=request.user, issue=edited_issue_points.issue, new_hours=float(new_actual))
+            get_interface_plugin(request, current_project.business).update_issue_actual_hours(edited_issue_points.issue)
     else:
         new_estimate = request.POST["new_value"]
     

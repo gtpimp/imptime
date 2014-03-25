@@ -25,7 +25,8 @@ class JiraSync(object):
         else:
             logger.error(err_obj)
         self.errors.append(str(err_obj))
-        messages.error(self.request, str(err_obj))
+        if self.request:
+            messages.error(self.request, str(err_obj))
 
     def _connect(self):
 
@@ -79,7 +80,8 @@ class JiraSync(object):
                     project.interface_plugin_number = jira_project.id
                     project.save();
                 self.sync_project_issues_to_jira(project, project_key, jira_assignee, issue_type_name)
-                messages.info(self.request, "Sync to jira complete")
+                if self.request:
+                    messages.info(self.request, "Sync to jira complete")
         except Exception, ex:
             self._on_error(ex)
 
@@ -100,7 +102,8 @@ class JiraSync(object):
                 self._get_or_create_timepiece_sprint_for_jira_sprint(jira_sprint)
                 num_projects_synced += 1
 
-            messages.info(self.request, "Fetched %d projects from jira" % num_projects_synced)
+            if self.request:
+                messages.info(self.request, "Fetched %d projects from jira" % num_projects_synced)
         except Exception, ex:
             self._on_error(ex)
 
@@ -119,9 +122,11 @@ class JiraSync(object):
                     break;
 
             if not found:
-                messages.error(self.request, "No jira sprint found matching this project. Expected %s" % timepiece_sprint.interface_plugin_number)
+                if self.request:
+                    messages.error(self.request, "No jira sprint found matching this project. Expected %s" % timepiece_sprint.interface_plugin_number)
             
-            messages.info(self.request, "Sync of %s from jira complete, %d issues synced, %d issues deleted" % (timepiece_sprint, num_synced, num_deleted))
+            if self.request:
+                messages.info(self.request, "Sync of %s from jira complete, %d issues synced, %d issues deleted" % (timepiece_sprint, num_synced, num_deleted))
         except Exception, ex:
             self._on_error(ex)
 
@@ -308,7 +313,7 @@ class JiraSync(object):
         if not self._connect():
             return
 
-        if issue_points.issue.assigned_to != self.request.user:
+        if not self.request or issue_points.issue.assigned_to != self.request.user:
             return
 
         jira_issue = self._get_jira_issue(issue_points.issue)
@@ -321,20 +326,18 @@ class JiraSync(object):
             except Exception, ex:
                 self._on_error(ex)
                 raise
-        self.update_issue_actual_hours(issue_points.issue)
 
-    def update_issue_actual_hours(self, issue):
+    def update_issue_actual_hours(self, timepiece_issue, jira_issue=None):
         if not self._connect():
             return
 
-        return
-
-        jira_issue = self._get_jira_issue(issue)
-        timepiece_actual_seconds = int((issue.hours or 0)*60*60)
-        if timepiece_actual_seconds > jira_issue.fields.timespent:
+        jira_issue = jira_issue or self._get_jira_issue(timepiece_issue)
+        timepiece_actual_seconds = int((timepiece_issue.hours or 0)*60*60)
+        if timepiece_actual_seconds > (jira_issue.fields.timespent or 0):
             timepiece_actual_seconds_offset = timepiece_actual_seconds - (jira_issue.fields.timespent or 0)
-            jira_hours_pattern = u'%dm' % (float(timepiece_actual_seconds_offset)*60)
-            self.jira.add_worklog(jira_issue, timeSpent=jira_hours_pattern)
+            if timepiece_actual_seconds_offset > 0:
+                jira_hours_pattern = u'%fm' % (float(timepiece_actual_seconds_offset)/60)
+                self.jira.add_worklog(jira_issue, timeSpent=jira_hours_pattern)
 
     def update_issue_assigned_to(self, timepiece_issue, username, *args, **kwargs):
         if not self._connect():
