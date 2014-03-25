@@ -454,7 +454,7 @@ class Project(models.Model):
             if old_order != order:
                 issue.order = order
                 issue.save()
-            order += 1
+            order += 2 # sort with a number in between to make moving easier
         
     def get_user_rate(self, user):
 

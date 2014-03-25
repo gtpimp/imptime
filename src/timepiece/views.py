@@ -4512,6 +4512,8 @@ def issue_checkbox_context_menu(request, template="timepiece/project/issue_check
     context['state_change_form'] = timepiece_forms.IssueCheckboxContextMenuChangeStateForm(from_project)
     context['feature_change_form'] = timepiece_forms.IssueCheckboxContextMenuChangeFeatureForm(from_project)
     context['assignee_change_form'] = timepiece_forms.IssueCheckboxContextMenuChangeAssigneeForm(from_project)
+    context['move_above_issue_form'] = timepiece_forms.IssueCheckboxContextMenuActiveIssueForm(from_project, "Move above")
+    context['move_below_issue_form'] = timepiece_forms.IssueCheckboxContextMenuActiveIssueForm(from_project, "Move below")
 
     # easier to store the issue ids than to pass them through with every context menu option
     request.session['selected_issue_ids_for_context_menu'] = checked_issue_ids
@@ -4635,4 +4637,66 @@ def bulk_delete_issues(request, context=None):
         issue.delete()
         
     messages.info(request, "%d issues deleted" % (len(selected_issue_ids)))
+    return HttpResponseRedirect(reverse('project_list', args=[selected_project.id]))
+
+@login_required
+@csrf_exempt
+def bulk_move_issue_above_issue(request, context=None):
+    selected_issue_ids = request.session['selected_issue_ids_for_context_menu']
+    selected_project = request.session['selected_issue_project']
+
+    bp = timepiece.BusinessPermissions.for_user(request.user, selected_project.business)
+    if not bp.has_edit_issues:
+        return HttpResponse("No permission")
+
+    form = timepiece_forms.IssueCheckboxContextMenuActiveIssueForm(selected_project, "", request.GET or None)
+    if not form.is_valid():
+        return HttpResponse("No issue chosen: %s" % form.errors)
+    focus_issue = timepiece.Issue.objects.filter(project=selected_project).get(pk=form.cleaned_data['focus_issue'])
+
+    selected_project.refresh_issues_numbers()
+
+    selected_issues = selected_project.issues.all().filter(pk__in=selected_issue_ids).order_by("-order")
+    num_moved = 0
+    for issue in selected_issues:
+        if issue.order >= focus_issue.order:
+            old_order = issue.order
+            issue.order = focus_issue.order-1
+            issue.save()
+            timepiece.IssueHistory.add_history(request.user, issue, "order changed", old_order, issue.order)
+            num_moved += 1
+            selected_project.refresh_issues_numbers()
+    
+    messages.info(request, "%d issues moved above %s %s" % (num_moved, focus_issue.number, focus_issue.subject))
+    return HttpResponseRedirect(reverse('project_list', args=[selected_project.id]))
+
+@login_required
+@csrf_exempt
+def bulk_move_issue_below_issue(request, context=None):
+    selected_issue_ids = request.session['selected_issue_ids_for_context_menu']
+    selected_project = request.session['selected_issue_project']
+
+    bp = timepiece.BusinessPermissions.for_user(request.user, selected_project.business)
+    if not bp.has_edit_issues:
+        return HttpResponse("No permission")
+
+    form = timepiece_forms.IssueCheckboxContextMenuActiveIssueForm(selected_project, "", request.GET or None)
+    if not form.is_valid():
+        return HttpResponse("No issue chosen: %s" % form.errors)
+    focus_issue = timepiece.Issue.objects.filter(project=selected_project).get(pk=form.cleaned_data['focus_issue'])
+
+    selected_project.refresh_issues_numbers()
+
+    selected_issues = selected_project.issues.all().filter(pk__in=selected_issue_ids).order_by("-order")
+    num_moved = 0
+    for issue in selected_issues:
+        if issue.order <= focus_issue.order:
+            old_order = issue.order
+            issue.order = focus_issue.order+1
+            issue.save()
+            timepiece.IssueHistory.add_history(request.user, issue, "order changed", old_order, issue.order)
+            num_moved += 1
+            selected_project.refresh_issues_numbers()
+    
+    messages.info(request, "%d issues moved below %s %s" % (num_moved, focus_issue.number, focus_issue.subject))
     return HttpResponseRedirect(reverse('project_list', args=[selected_project.id]))

@@ -8,15 +8,17 @@
     <li> <a href="{% url bulk_move_issues_to_project other_project.id %}">Move to {{other_project}}</a> </li>
   {% endfor %}
 
-  <li> <a href="{% url bulk_delete_issues %}">Delete</a> </li>
-
   <li class="divider"></li>
+
+  <li> <a href="{% url bulk_delete_issues %}">Delete</a> </li>
 
   <li> 
     <form method="GET" action='{% url bulk_change_issue_state %}'>
       {{state_change_form.as_p}}
     </form>
   </li>
+
+  <li class="divider"></li>
 
   <li> 
     <form method="GET" action='{% url bulk_change_issue_feature %}'>
@@ -30,6 +32,21 @@
     </form>
   </li>
 
+  <li class="divider"></li>
+
+  <li>
+    <form method="GET" action='{% url bulk_move_issue_above_issue %}'>
+      {{move_above_issue_form.as_p}}
+    </form>
+    
+  </li>
+
+  <li>
+    <form method="GET" action='{% url bulk_move_issue_below_issue %}'>
+      {{move_below_issue_form.as_p}}
+    </form>
+    
+  </li>
 
   <li class="divider"></li>
 

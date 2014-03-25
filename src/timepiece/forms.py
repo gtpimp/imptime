@@ -1223,3 +1223,13 @@ class IssueCheckboxContextMenuChangeAssigneeForm(forms.Form):
         super(IssueCheckboxContextMenuChangeAssigneeForm, self).__init__(*args, **kwargs)
         self.fields['assignee'].choices = [ ('', '') ] + [ (x.id, str(x)) for x in project.business.users ]
         self.fields['assignee'].widget.attrs['onchange'] = "this.form.submit();"
+
+class IssueCheckboxContextMenuActiveIssueForm(forms.Form):
+    
+    focus_issue = forms.ChoiceField(required=True)
+    
+    def __init__(self, project, label, *args, **kwargs):
+        super(IssueCheckboxContextMenuActiveIssueForm, self).__init__(*args, **kwargs)
+        self.fields['focus_issue'].choices = [ ('', '') ] + [ (x.id, "%s %s" % (x.number, x.subject)) for x in project.issues.all().order_by("order") ]
+        self.fields['focus_issue'].label = label
+        self.fields['focus_issue'].widget.attrs['onchange'] = "this.form.submit();"
