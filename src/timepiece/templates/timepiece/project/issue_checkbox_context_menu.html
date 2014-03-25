@@ -1,0 +1,13 @@
+<ul class="contextMenuPlugin">
+  <div class="gutterLine"></div>
+
+  <li class="header">Issues Bulk Operation</li>
+  <li class="header">({{num_issues}} issues)</li>
+
+  {% for other_project in other_projects %}
+    <li> <a href="#">Move to {{other_project}}</a> </li>
+  {% endfor %}
+
+  <li class="divider"></li>
+
+</ul>

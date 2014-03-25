@@ -167,6 +167,8 @@ imp.on_issue_rows_loaded = function(issue_row_container) {
 								  });
     imp.refresh_show_numbers();
     imp.highlight_issue();
+    
+    imp.set_issue_checkbox_hooks(issue_row_container);
 };
 
 imp.toggle_card_menu = function (event) {

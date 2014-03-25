@@ -4474,7 +4474,6 @@ def generate_business_document(request, business_id, context=None):
 
     form = timepiece_forms.GenerateBusinessDocumentForm(request.POST or None)
     if form.is_valid():
-
         document = form.save(commit=False)
         document.business = business
         document.modified_by_id = request.user.id
@@ -4485,9 +4484,24 @@ def generate_business_document(request, business_id, context=None):
         form.save_m2m()
         messages.info(request, "Document %s uploaded" % document.filename)
         return HttpResponseRedirect(reverse('view_business_documents', args=[business_id]))
+    return view_business_documents(request, business_id)
+    
+@login_required
+def issue_checkbox_context_menu(request, template="timepiece/project/issue_checkbox_context_menu.html", context=None):
+    context = context or {}
 
-    context['new_doc_form'] = form
-    context['business'] = business
-    context['documents'] = business.documents.all().filter(deleted=False).order_by("-created_at")
+    raw_checked_issue_numbers = request.GET['checked_issue_numbers'].strip()
+    if len(raw_checked_issue_numbers) == 0:
+        return HttpResponse("No issues selected")
+    checked_issue_ids = [x for x in raw_checked_issue_numbers.split(",") if len(x.strip())>0]
+    if len(checked_issue_ids) == 0:
+        return HttpResponse("No issues selected")
+
+    from_project = timepiece.Issue.objects.get(pk=checked_issue_ids[0]).project
+    other_projects = [p for p in timepiece.Project.objects.filter(business=from_project.business).exclude(pk=from_project.id) if p.is_open]
+
+    context['other_projects'] = other_projects
+    context['issues'] = checked_issue_ids
+    context['num_issues'] = len(checked_issue_ids)
     return render_to_response(template, context, context_instance=RequestContext(request))
 

@@ -5,7 +5,10 @@
     <link rel="icon" type="image/png" href="{{ STATIC_URL }}images/icons/implicit_icon.png">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
 
-    <script>var imp = {};</script>
+    <script>
+      var imp = { config: {} };
+      imp.config.issue_checkbox_context_menu_url = "{% url issue_checkbox_context_menu %}";
+    </script>
 
     {% block javascript %}
         <script src="{{STATIC_URL}}js/jquery.min.js"></script>
@@ -36,6 +39,7 @@
         <link type="text/css" rel="stylesheet" href="{{ STATIC_URL }}/css/jquery-ui.css" />
 	<link type="text/css" rel="stylesheet" media="screen" href="{{ STATIC_URL }}css/books.css" />
 	<link type="text/css" rel="stylesheet" href="{{ STATIC_URL }}css/timepiece.css" />
+        <link type="text/css" rel="stylesheet" href="{{ STATIC_URL }}timepiece/css/jquery.contextmenu.css" />
         <link href='{{STATIC_URL}}font/durasans.font' rel='stylesheet' type='text/css'>
     {% endblock %}
 

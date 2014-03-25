@@ -65,7 +65,7 @@ imp.refresh_issue_detail = function() {
 };
 
 imp.post_issue_number_form = function(form_child_el, issue_id) {
-    form = $(form_child_el).parents("form")
+    var form = $(form_child_el).parents("form");
     $.ajax({type:"POST",
 	    url: form.attr('action'),
 	    data: form.serialize(),
@@ -210,12 +210,72 @@ imp.show_issue_checkboxes = function(el) {
     $(el).parents(".issue_checkbox_cell_toggle").find(".hide").show();
     $(el).parents(".issue_checkbox_cell_toggle").find(".show").hide();
 };
-imp.get_selected_issue_ids_for_get = function(el) {
+
+imp.get_selected_issue_ids_for_get = function(issue_row_container) {
     var selected_issue_checkboxes = "";
-    $(".issue_checkbox_cell input:checked").each( function() {
-						      selected_issue_checkboxes += $(this).parents(".issue_instance_row").attr("id")+",";
+    issue_row_container.find(".issue_checkbox_cell input:checked").each( function() {
+									     selected_issue_checkboxes += $(this).parents(".issue_instance_row").attr("id")+",";
     });
     return selected_issue_checkboxes;
+};
+
+imp.set_issue_checkbox_hooks = function(issue_row_container) {
+
+    var fetch_menu_html = function(e, callback) {
+	var on_done = imp.loading("Loading context menu");
+	var selected_issue_ids = imp.get_selected_issue_ids_for_get(issue_row_container);
+	var response = $.ajax({type:"GET",
+                               url: imp.config.issue_checkbox_context_menu_url,
+			       data: {checked_issue_numbers: selected_issue_ids},
+                               success: function(data) {
+				   on_done();
+				   var menu = $(data);
+				   menu.appendTo(document.body);
+				   callback(e, menu);
+                               }
+                              });
+    };
+
+    var display_menu = function(e, menu) {
+	menu.show();
+
+	var left = e.pageX + 5, /* nudge to the right, so the pointer is covering the title */
+	top = e.pageY;
+	if (top + menu.height() >= $(window).height()) {
+	    top -= menu.height();
+	}
+	if (left + menu.width() >= $(window).width()) {
+	    left -= menu.width();
+	}
+
+	// Create and show menu
+	menu.css({zIndex:1000001, left:left, top:top})
+	    .bind('contextmenu', function() { return false; });
+
+	// Cover rest of page with invisible div that when clicked will cancel the popup.
+	var bg = $('<div></div>')
+	    .css({left:0, top:0, width:'100%', height:'100%', position:'absolute', zIndex:1000000})
+	    .appendTo(document.body)
+	    .bind('contextmenu click', function() {
+		      // If click or right click anywhere else on page: remove clean up.
+		      bg.remove();
+		      menu.remove();
+		      return false;
+		  });
+
+	// When clicking on a link in menu: clean up (in addition to handlers on link already)
+	menu.find('a').click(function() {
+				 bg.remove();
+				 menu.remove();
+			     });
+    };
+
+    // On contextmenu event (right click)
+    issue_row_container.find(".issue_checkbox_cell").bind('contextmenu', function(e) {
+							      fetch_menu_html( e, display_menu );
+							      return false;
+							  });
+
 };
 
 imp.toggle_show_my_issues = function(menu_el, logged_in_username) {

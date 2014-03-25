@@ -595,4 +595,6 @@ urlpatterns = patterns('',
                        url(r'^time-sheet/generate_preview_business_document/(?P<business_id>.*)/$', views.generate_preview_business_document, name="generate_preview_business_document"),
                        
 
+    url(r'^issue_checkbox_context_menu$', views.issue_checkbox_context_menu, {}, 'issue_checkbox_context_menu'),
+
 )
