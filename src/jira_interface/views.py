@@ -76,3 +76,16 @@ def sync_project_from_jira(request, project_id, context=None):
         logger.exception(ex)
         messages.error(request, "Sync of %s from jira failed : " % (project, ex))
         return HttpResponse("Sync failed: %s" % ex)
+
+@login_required
+def sync_issue_from_jira(request, issue_id, context=None):
+    context = context or {}
+    issue = timepiece.Issue.objects.get(pk=issue_id)
+    try:
+        jira_sync = JiraSync(request, issue.project.business.id)
+        jira_sync.sync_issue_from_jira(timepiece_issue=issue)
+        return HttpResponse("synched")
+    except Exception, ex:
+        logger.exception(ex)
+        messages.error(request, "Sync of issue %s from jira failed : %s" % (issue, ex))
+        return HttpResponse("Sync failed: %s" % ex)

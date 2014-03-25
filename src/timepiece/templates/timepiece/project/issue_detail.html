@@ -23,12 +23,20 @@
       </div>
     {% endif %}
 
+  {% if issue.interface_plugin_number %}
+      <div class="small_button btn title" onclick="imp.sync_from_remote({{issue.id}}, '{% url 'jira:sync_issue_from_jira' issue.id %}')">Sync fetch</div>
+  {% endif %}
+
   {% if issue.id %}
   <div class="issue_details_sub_heading creation_details">
     <p>
       Created on: {{ issue.created|date:'D d-M-Y H:i:s' }} <br />
       Modified: {{ issue.modified|date:'D d-M-Y H:i:s' }} <br/>
       Likely estimate: {{ issue.best_hours_estimate.0 }} hours by {{issue.best_hours_estimate.1}} <br/>
+
+      {% if issue.due_date %}
+        Due date: {{ issue.due_date|date:'D d-M-Y' }} <br/>
+      {% endif %}
     </p>
   </div>
   {% endif %}

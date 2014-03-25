@@ -439,6 +439,18 @@ imp.clickable_time_estimate = function(element, url, item_id, issue_id) {
     return imp.clickable_subject_box(element, url, item_id, null, "auto", issue_id, initial_value=initial_value);
 };
 
+imp.sync_from_remote = function(issue_id, url) {
+    var on_done = imp.issue_loading(issue_id, "synching issue " + issue_id);
+    var response = $.ajax({type:"GET",
+                           url: url,
+                           data : { issue_id: issue_id },
+                           success: function(data) {
+			       on_done();
+			       imp.refresh_issue_detail();
+			   }
+			  });
+};
+
 imp.clickable_subject_box = function(element, url, item_id, size, width, issue_id, initial_value) {
 
     if (!issue_id) {

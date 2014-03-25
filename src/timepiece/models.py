@@ -2304,6 +2304,7 @@ class Issue(models.Model):
     interface_plugin_number = models.CharField(max_length=255, null=True, blank=True) #eg jira
     created = models.DateTimeField(auto_now_add=True)
     modified = models.DateTimeField(auto_now=True)
+    due_date = models.DateTimeField(default=None, null=True, blank=True)
 
     @classmethod
     def get_last_issue_number(self, business):

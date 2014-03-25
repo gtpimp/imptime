@@ -1,5 +1,6 @@
 from jira_interface.jira_python.jira.client import JIRA, GreenHopper
 import timepiece.models as timepiece
+from datetime import datetime
 from django.db.models import Sum, Count, Q, F, Max, Min
 from jira_interface.models import JiraSyncStatus
 from django.contrib.auth.models import User
@@ -107,6 +108,17 @@ class JiraSync(object):
         except Exception, ex:
             self._on_error(ex)
 
+    def sync_issue_from_jira(self, timepiece_issue):
+        try:
+            if not self._connect():
+                return
+        except Exception, ex:
+            self._on_error(ex)
+
+        if timepiece_issue.interface_plugin_number:
+            jira_issue = self.jira.issue(timepiece_issue.interface_plugin_number)
+            self._sync_issue(jira_issue, timepiece_issue.project)
+
     def sync_sprint_from_jira(self, timepiece_sprint):
         try:
             num_synced = 0
@@ -159,10 +171,10 @@ class JiraSync(object):
         num_synced = 1
         issues_synced = []
         for gh_issue in self.gh.completed_issues(self.settings.board_id.strip(), jira_sprint.id):
-            issues_synced.append(self._sync_issue(jira_sprint, gh_issue, timepiece_project, order=num_synced))
+            issues_synced.append(self._sync_issue(gh_issue, timepiece_project))
             num_synced += 1
         for gh_issue in self.gh.incompleted_issues(self.settings.board_id.strip(), jira_sprint.id):
-            issues_synced.append(self._sync_issue(jira_sprint, gh_issue, timepiece_project, order=num_synced))
+            issues_synced.append(self._sync_issue(gh_issue, timepiece_project))
             num_synced += 1
 
         timepiece_missing_issues = timepiece_project.issues.exclude(pk__in=[i.id for i in issues_synced])
@@ -176,11 +188,11 @@ class JiraSync(object):
 
         return num_synced, num_deleted
 
-    def _sync_issue(self, jira_sprint, gh_issue, timepiece_project, order):
+    def _sync_issue(self, gh_issue, timepiece_project):
 
-        logger.debug("syncing issue %s" % gh_issue.key)
+        logger.debug("syncing issue")
         jira_issue = self.jira.issue(gh_issue.key)
-        state = gh_issue.statusName
+        state = gh_issue.fields.status.name
         order = getattr(jira_issue.fields, self.settings.custom_field_name_for_issue_order)
         fixed_subject="%s %s" % (jira_issue.key, jira_issue.fields.summary)
         time_estimate = float(jira_issue.fields.timeestimate or 0) / (60*60) # cos everybody knows you should estimate to accuracy in seconds
@@ -206,7 +218,7 @@ class JiraSync(object):
             timepiece.IssueHistory.add_history(self.active_user, timepiece_issue, "State change during jira import", timepiece_issue.status, state)
             timepiece_issue.status = state
 
-        if timepiece_issue.order != order:
+        if int(timepiece_issue.order) != int(order):
             timepiece.IssueHistory.add_history(self.active_user, timepiece_issue, "Order change during jira import", timepiece_issue.order, order)
             timepiece_issue.order = order
 
@@ -222,8 +234,8 @@ class JiraSync(object):
             timepiece.IssueHistory.add_history(self.active_user, timepiece_issue, "Description change during jira import", timepiece_issue.description, jira_issue.fields.description or "")
             timepiece_issue.description = jira_issue.fields.description or ""
 
-        if hasattr(gh_issue, 'assignee') and gh_issue.assignee:
-            timepiece_assigned_user = self._get_or_create_timepiece_equivalent_of_jira_user(gh_issue.assignee)
+        if hasattr(gh_issue.fields, 'assignee') and gh_issue.fields.assignee:
+            timepiece_assigned_user = self._get_or_create_timepiece_equivalent_of_jira_user(gh_issue.fields.assignee)
             if timepiece_issue.assigned_to != timepiece_assigned_user:
                 timepiece.IssueHistory.add_history(self.active_user, timepiece_issue, "Assignee change during jira import", timepiece_issue.assigned_to, timepiece_assigned_user)
                 timepiece_issue.assigned_to = timepiece_assigned_user
@@ -236,6 +248,12 @@ class JiraSync(object):
             timepiece.IssueHistory.add_history(self.active_user, timepiece_issue, "Points change during jira import", timepiece_issue.story_points, jira_issue.fields.timeestimate)
             timepiece_issue.story_points = jira_issue.fields.timeestimate
             
+        if hasattr(jira_issue.fields, 'duedate'):
+            jira_due_date = datetime.strptime(jira_issue.fields.duedate, "%Y-%m-%d")
+            if timepiece_issue.due_date != jira_due_date:
+                timepiece.IssueHistory.add_history(self.active_user, timepiece_issue, "Due date changed", timepiece_issue.due_date, jira_issue.fields.duedate)
+                timepiece_issue.due_date = jira_issue.fields.duedate
+
         timepiece_issue.save()
 
         if hasattr(jira_issue.fields, 'comment') and jira_issue.fields.comment.comments:
