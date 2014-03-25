@@ -330,6 +330,8 @@ class JiraSync(object):
     def update_issue_actual_hours(self, timepiece_issue, jira_issue=None):
         if not self._connect():
             return
+        if not self.settings.sync_actual_times:
+            return
 
         jira_issue = jira_issue or self._get_jira_issue(timepiece_issue)
         timepiece_actual_seconds = int((timepiece_issue.hours or 0)*60*60)

@@ -20,6 +20,8 @@ class Jira(models.Model):
     primary_user = models.ForeignKey(
         timepiece.User, related_name='primary_user', blank=True, null=True)
 
+    sync_actual_times = models.BooleanField(default=False, blank=True)
+
 class JiraSyncStatus(models.Model):
     
     jira = models.ForeignKey(Jira, blank=False, null=False)
