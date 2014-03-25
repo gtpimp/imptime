@@ -600,5 +600,6 @@ urlpatterns = patterns('',
                        url(r'^bulk_change_issue_state/$', views.bulk_change_issue_state, {}, 'bulk_change_issue_state'),
                        url(r'^bulk_change_issue_feature/$', views.bulk_change_issue_feature, {}, 'bulk_change_issue_feature'),
                        url(r'^bulk_change_issue_assignee/$', views.bulk_change_issue_assignee, {}, 'bulk_change_issue_assignee'),
+                       url(r'^bulk_delete_issues/$', views.bulk_delete_issues, {}, 'bulk_delete_issues'),
 
 )

@@ -4524,6 +4524,11 @@ def bulk_move_issues_to_project(request, dest_project_id, context=None):
     selected_issue_ids = request.session['selected_issue_ids_for_context_menu']
     
     dest_project = timepiece.Project.objects.get(pk=dest_project_id)
+    
+    bp = timepiece.BusinessPermissions.for_user(request.user, dest_project.business)
+    if not bp.has_edit_issues:
+        return HttpResponse("No permission")
+
     for selected_issue_id in selected_issue_ids:
         issue = timepiece.Issue.objects.get(pk=selected_issue_id)
         old_project = issue.project
@@ -4548,6 +4553,10 @@ def bulk_change_issue_state(request, context=None):
     if not form.is_valid():
         return HttpResponse("No state chosen: %s" % form.errors)
 
+    bp = timepiece.BusinessPermissions.for_user(request.user, selected_project.business)
+    if not bp.has_edit_issue_states:
+        return HttpResponse("No permission")
+
     new_status = form.cleaned_data['status']
     for selected_issue_id in selected_issue_ids:
         issue = timepiece.Issue.objects.get(pk=selected_issue_id)
@@ -4570,6 +4579,10 @@ def bulk_change_issue_feature(request, context=None):
     if not form.is_valid():
         return HttpResponse("No feature chosen: %s" % form.errors)
 
+    bp = timepiece.BusinessPermissions.for_user(request.user, selected_project.business)
+    if not bp.has_edit_feature:
+        return HttpResponse("No permission")
+
     new_feature = timepiece.Feature.objects.get(pk=form.cleaned_data['feature'])
     for selected_issue_id in selected_issue_ids:
         issue = timepiece.Issue.objects.get(pk=selected_issue_id)
@@ -4591,6 +4604,10 @@ def bulk_change_issue_assignee(request, context=None):
     if not form.is_valid():
         return HttpResponse("No assignee chosen: %s" % form.errors)
 
+    bp = timepiece.BusinessPermissions.for_user(request.user, selected_project.business)
+    if not bp.has_assign_user:
+        return HttpResponse("No permission")
+
     new_assignee = auth_models.User.objects.get(pk=form.cleaned_data['assignee'])
     for selected_issue_id in selected_issue_ids:
         issue = timepiece.Issue.objects.get(pk=selected_issue_id)
@@ -4600,4 +4617,22 @@ def bulk_change_issue_assignee(request, context=None):
             issue.save()
             timepiece.IssueHistory.add_history(request.user, issue, "changed assigned user", old_assignee, new_assignee)
     messages.info(request, "%d issues changed assigned user to %s" % (len(selected_issue_ids), new_assignee))
+    return HttpResponseRedirect(reverse('project_list', args=[selected_project.id]))
+
+@login_required
+@csrf_exempt
+def bulk_delete_issues(request, context=None):
+    selected_issue_ids = request.session['selected_issue_ids_for_context_menu']
+    selected_project = request.session['selected_issue_project']
+
+    bp = timepiece.BusinessPermissions.for_user(request.user, selected_project.business)
+    if not bp.has_delete_issue:
+        return HttpResponse("No permission")
+
+    for selected_issue_id in selected_issue_ids:
+        issue = timepiece.Issue.objects.get(pk=selected_issue_id)
+        timepiece.IssueHistory.add_history(request.user, issue, "deleted", issue.id, "")
+        issue.delete()
+        
+    messages.info(request, "%d issues deleted" % (len(selected_issue_ids)))
     return HttpResponseRedirect(reverse('project_list', args=[selected_project.id]))

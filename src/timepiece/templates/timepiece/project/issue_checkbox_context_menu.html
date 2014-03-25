@@ -8,6 +8,8 @@
     <li> <a href="{% url bulk_move_issues_to_project other_project.id %}">Move to {{other_project}}</a> </li>
   {% endfor %}
 
+  <li> <a href="{% url bulk_delete_issues %}">Delete</a> </li>
+
   <li class="divider"></li>
 
   <li> 
