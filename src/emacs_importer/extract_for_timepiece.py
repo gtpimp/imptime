@@ -88,7 +88,10 @@ class Extractor(object):
                 self._process_orgnode(business_name, sprint_name, orgnode, issues_processed)
 
         for issue in issues_processed:
-            get_interface_plugin(request=None, business=issue.project.business).update_issue_actual_hours(timepiece_issue=issue)
+            try:
+                get_interface_plugin(request=None, business=issue.project.business).update_issue_actual_hours(timepiece_issue=issue)
+            except Exception, ex:
+                self.status['infos'].append("Couldn't update actual time in the interface because: %s" % ex)
 
     def _process_orgnode(self, business_name, sprint_name, orgnode, issues_processed):
         #point_person = User.objects.get_or_create(username=self.pointperson_username)[0]
@@ -98,14 +101,14 @@ class Extractor(object):
         except User.DoesNotExist:
             timesheet_user = User.objects.create(username=self.username, first_name=self.username)
         location = Location.objects.get_or_create(name='office')[0]
-        try:
-            project_status = Attribute.objects.get(type='project-status', label='open')
-        except: 
-            project_status = Attribute.objects.create(type='project-status', label='open', billable=True, enable_timetracking=True)
-        try:
-            project_type = Attribute.objects.get(type='project-type', label='default')
-        except:
-            project_type = Attribute.objects.create(type='project-type', label='default', billable=True, enable_timetracking=True)
+        # try:
+        #     project_status = Attribute.objects.get(type='project-status', label='open')
+        # except: 
+        #     project_status = Attribute.objects.create(type='project-status', label='open', billable=True, enable_timetracking=True)
+        # try:
+        #     project_type = Attribute.objects.get(type='project-type', label='default')
+        # except:
+        #     project_type = Attribute.objects.create(type='project-type', label='default', billable=True, enable_timetracking=True)
         
         try:
             business = Business.objects.get(name=business_name)
