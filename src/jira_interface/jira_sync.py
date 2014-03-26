@@ -53,6 +53,13 @@ class JiraSync(object):
         if not self._connect():
             return
 
+        # The primary_user and jira_assignee bit needs reworking, as
+        # it stands I think it will wrongly set the assigned to user
+        # to the timepiece project jira user, and not the issue
+        # assignee.
+        logger.error("Sync to jira disabled")
+        return
+
         timepiece_issues = timepiece.Issue.objects.filter(project=project,interface_plugin_number__isnull=True)
         jira_assignee = self.settings.primary_user.profile.jira_user_name
         jira_issues = []
@@ -267,22 +274,23 @@ class JiraSync(object):
                 except timepiece.IssueComment.DoesNotExist:
                     author = self._get_or_create_timepiece_equivalent_of_jira_user(jira_comment.author)
                     created = dateparser.parse(jira_comment.created)
-                    timepiece.IssueComment.objects.create(issue_id=timepiece_issue.id, comment=jira_comment.body, 
-                                                          author=author,
-                                                          created=created)
+                    new_comment = timepiece.IssueComment.objects.create(issue_id=timepiece_issue.id, 
+                                                                        comment=jira_comment.body, 
+                                                                        author=author)
+                    timepiece.IssueComment.objects.filter(pk=new_comment.id).update(created=created)
                     timepiece.IssueHistory.add_history(self.active_user, timepiece_issue, "Comment added during jira import", "", jira_comment.body)
                 except timepiece.IssueComment.MultipleObjectsReturned:
                     pass
         return timepiece_issue
-                    
                                                              
     def _get_or_create_timepiece_equivalent_of_jira_user(self, jira_username):
         try:
-            return User.objects.get(Q(profile__jira_user_name=jira_username)|Q(username=jira_username))
+            return User.objects.get(Q(profile__jira_user_name=jira_username))
         except User.DoesNotExist:
             logger.warning("Auto creating a limited-privileges user who is assigned to a jira issue")
             user = User.objects.create(username=jira_username)
             timepiece.UserProfile.objects.create(user=user, jira_user_name=jira_username)
+            messages.info(self.request, "Auto created user %s (id=%d)" % (user, user.id))
             return user
 
     def add_issue_comment(self, timepiece_comment):
@@ -444,15 +452,22 @@ class JiraSync(object):
             try:
                 timepiece_issue_moved_before_key = timepiece_issue.project.issues.all().filter(order__gte=timepiece_issue.order).order_by("order")[0].interface_plugin_number
             except IndexError:
+                # Means there's only one issue in the sprint
                 return
 
-        self.gh.move_issue(sprint_id=timepiece_issue.project.interface_plugin_number, 
-                           issue_key=timepiece_issue.interface_plugin_number,
-                           move_after_issue_key=timepiece_issue_moved_after_key,
-                           move_before_issue_key=timepiece_issue_moved_before_key,
-                           rankFieldId=self.settings.custom_field_name_for_issue_order)
+        try:
+            self.gh.move_issue(sprint_id=timepiece_issue.project.interface_plugin_number, 
+                               issue_key=timepiece_issue.interface_plugin_number,
+                               move_after_issue_key=timepiece_issue_moved_after_key,
+                               move_before_issue_key=timepiece_issue_moved_before_key,
+                               rankFieldId=self.settings.custom_field_name_for_issue_order)
+        except Exception, ex:
+            # most likely reason is
+            #  JIRAError: HTTP 400: "This issue cannot be edited because of its workflow status."
+            logger.exception(ex)
+            return
 
-    def issue_moved_projects(self, timepiece_issue, old_timepiece_project, new_timepiece_project, *args, **kwargs):
+    def issue_moved_projects(self, timepiece_issue, *args, **kwargs):
         """ Moving an non-jira-issue into a jira project means we will
         create the issue in jira. Partial broken implementation
         commented out because we also need to ask the user what jira

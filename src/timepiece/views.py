@@ -1109,32 +1109,43 @@ def create_edit_person(request, person_id=None):
         person = get_object_or_404(auth_models.User, pk=person_id)
     else:
         person = None
+
+
     if request.POST:
         if person:
+            profile_form = timepiece_forms.UserProfileForm(request.POST, instance=person.profile, prefix='profile')
             person_form = timepiece_forms.EditPersonForm(
                 request.POST,
                 instance=person,
             )
         else:
             person_form = timepiece_forms.CreatePersonForm(request.POST,)
-        if person_form.is_valid():
-            person = person_form.save()
+            profile_form = timepiece_forms.UserProfileForm(request.POST, prefix='profile')
+        if person_form.is_valid() and profile_form.is_valid():
+            person = person_form.save(commit=False)
+            profile = profile_form.save(commit=False)
+            profile.user = person
+            person.save()
+            profile.save()
+            person_form.save_m2m()
+            profile_form.save_m2m()
             return HttpResponseRedirect(
                 reverse('view_person', args=(person.id,))
             )
-        timepiece.UserProfile.objects.get_or_create(user=person)
-        person.save()
+        #timepiece.UserProfile.objects.get_or_create(user=person)
+        #person.save()
     else:
         if person:
-            person_form = timepiece_forms.EditPersonForm(
-                instance=person,
-            )
+            profile_form = timepiece_forms.UserProfileForm(request.POST, instance=person.profile, prefix='profile')
+            person_form = timepiece_forms.EditPersonForm(instance=person)
         else:
+            profile_form = timepiece_forms.UserProfileForm(request.POST, prefix='profile')
             person_form = timepiece_forms.CreatePersonForm()
 
     context = {
         'person': person,
         'person_form': person_form,
+        'profile_form': profile_form
     }
     return context
 
@@ -4108,10 +4119,9 @@ def sortable_issue_update(request, project_id):
             issue.order = item_order_count
             issue.save()
             timepiece.IssueHistory.add_history(request.user, issue, "order", old_order, issue.order)
+            
+        if old_project != new_project or old_order != item_order_count:
             get_interface_plugin(request, new_project.business).move_issue(issue)
-
-        if old_project != new_project:
-            get_interface_plugin(request, new_project.business).issue_moved_projects(issue, old_project, new_project)
 
     return HttpResponse("")
 
@@ -4546,6 +4556,7 @@ def bulk_move_issues_to_project(request, dest_project_id, context=None):
         issue.order += 9999
         issue.save()
         timepiece.IssueHistory.add_history(request.user, issue, "moved project", unicode(old_project), unicode(dest_project))
+        get_interface_plugin(request, dest_project.business).move_issue(issue)
 
     dest_project.refresh_issues_numbers()
     messages.info(request, "%d issues moved to %s" % (len(selected_issue_ids), dest_project))
@@ -4577,7 +4588,6 @@ def bulk_change_issue_state(request, context=None):
             timepiece.IssueHistory.add_history(request.user, issue, "changed status", old_status, new_status)
     messages.info(request, "%d issues changed state to %s" % (len(selected_issue_ids), new_status))
     return HttpResponseRedirect(reverse('project_list', args=[selected_project.id]))
-
 
 @login_required
 @csrf_exempt
