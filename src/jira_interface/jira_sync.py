@@ -429,6 +429,29 @@ class JiraSync(object):
         jira_users = self.gh.search_assignable_users_for_issues("", issueKey = timepiece_issue.interface_plugin_number)
         return [ (x.name, x.name) for x in jira_users ]
 
+    def move_issue(self, timepiece_issue):
+
+        if not self._connect():
+            return None
+        if timepiece_issue.interface_plugin_number is None:
+            return
+
+        try:
+            timepiece_issue_moved_after_key = timepiece_issue.project.issues.all().filter(order__lt=timepiece_issue.order).order_by("-order")[0].interface_plugin_number
+            timepiece_issue_moved_before_key = None
+        except IndexError:
+            timepiece_issue_moved_after_key = None
+            try:
+                timepiece_issue_moved_before_key = timepiece_issue.project.issues.all().filter(order__gte=timepiece_issue.order).order_by("order")[0].interface_plugin_number
+            except IndexError:
+                return
+
+        self.gh.move_issue(sprint_id=timepiece_issue.project.interface_plugin_number, 
+                           issue_key=timepiece_issue.interface_plugin_number,
+                           move_after_issue_key=timepiece_issue_moved_after_key,
+                           move_before_issue_key=timepiece_issue_moved_before_key,
+                           rankFieldId=self.settings.custom_field_name_for_issue_order)
+
     def issue_moved_projects(self, timepiece_issue, old_timepiece_project, new_timepiece_project, *args, **kwargs):
         """ Moving an non-jira-issue into a jira project means we will
         create the issue in jira. Partial broken implementation

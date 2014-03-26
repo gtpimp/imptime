@@ -22,6 +22,8 @@ class DefaultInterfacePlugin(object):
         return None
     def issue_moved_projects(self, timepiece_issue, old_timepiece_project, new_timepiece_project, *args, **kwargs):
         return None
+    def move_issue(self, timepiece_issue, timepiece_issue_moved_after, *args, **kwargs):
+        return None
     def update_issue_subject(self, timepiece_issue, *args, **kwargs):
         return None
     def update_issue_description(self, timepiece_issue, *args, **kwargs):

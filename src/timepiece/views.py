@@ -4108,6 +4108,7 @@ def sortable_issue_update(request, project_id):
             issue.order = item_order_count
             issue.save()
             timepiece.IssueHistory.add_history(request.user, issue, "order", old_order, issue.order)
+            get_interface_plugin(request, new_project.business).move_issue(issue)
 
         if old_project != new_project:
             get_interface_plugin(request, new_project.business).issue_moved_projects(issue, old_project, new_project)

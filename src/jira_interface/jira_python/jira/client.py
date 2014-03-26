@@ -2001,23 +2001,30 @@ class GreenHopper(JIRA):
         data['idOrKeys'] = issue_keys
         data['sprintId'] = sprint_id
         data['addToBacklog'] = False
-        data['customFieldId'] = rankFieldId
+        data['customFieldId'] = self._get_custom_id(rankFieldId)
 
         url = self._gh_get_url('sprint/rank')
         r = self._session.put(url, data=json.dumps(data), headers={'Content-Type': 'application/json'})
         raise_on_error(r)
 
-    def move_issue(self, sprint_id, issue_key, move_after_issue_key, rankFieldId):
+    def move_issue(self, sprint_id, issue_key, move_after_issue_key, rankFieldId, move_before_issue_key=None):
         data = {}
         data['idOrKeys'] = [issue_key]
         data['sprintId'] = sprint_id
         data['addToBacklog'] = False
-        data['customFieldId'] = rankFieldId
-        data['idOrKeyAfter'] = move_after_issue_key
+        data['customFieldId'] = self._get_custom_id(rankFieldId)
+
+        if move_after_issue_key is not None:
+            data['idOrKeyAfter'] = move_after_issue_key
+        else:
+            data['idOrKeyBefore'] = move_before_issue_key
 
         url = self._gh_get_url('sprint/rank')
         r = self._session.put(url, data=json.dumps(data), headers={'Content-Type': 'application/json'})
         raise_on_error(r)
+
+    def _get_custom_id(self, custom_field_name):
+        return int(custom_field_name.split("_")[1])
 
     def add_issues_to_epic(self, epic_id, issue_keys, ignore_epics=True):
         data = {}
