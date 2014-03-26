@@ -88,10 +88,10 @@ class Extractor(object):
                 self._process_orgnode(business_name, sprint_name, orgnode, issues_processed)
 
         for issue in issues_processed:
-            get_interface_plugin(request=None, timepiece_business_id=issue.project.business.id).update_issue_actual_hours(timepiece_issue=issue)
+            get_interface_plugin(request=None, business=issue.project.business).update_issue_actual_hours(timepiece_issue=issue)
 
     def _process_orgnode(self, business_name, sprint_name, orgnode, issues_processed):
-        point_person = User.objects.get_or_create(username=self.pointperson_username)[0]
+        #point_person = User.objects.get_or_create(username=self.pointperson_username)[0]
         activity = Activity.objects.get_or_create(code='dev')[0]
         try:
             timesheet_user = User.objects.get(username=self.username)
