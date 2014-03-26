@@ -1967,7 +1967,7 @@ class GreenHopper(JIRA):
         result = r.json
         return result
 
-    def add_issues_to_sprint(self, sprint_id, issue_keys):
+    def add_issues_to_sprint(self, sprint_id, issue_keys, rankFieldId):
         '''
         Add the issues in the array of issue keys to the given started
         but not completed sprint. Idempotent.
@@ -1987,10 +1987,36 @@ class GreenHopper(JIRA):
         {"issueKeys":["TS-3"]}   (paste this into textarea, not as a custom parameter)
         When this is working in the rest browser must check in Chrome to see if put or post. Post gave 405 Method Not Allowed
         '''
+
+        #jira_issue = self.issue(issue_keys[0])
+
+        #Example URL: http://jira:8080/rest/greenhopper/1.0/sprint/rank
+        #Example JSON data: {"idOrKeys":["DEMO-1"],"customFieldId":10002,"sprintId":40,"addToBacklog":false}
+
+        # Api changed, see https://confluence.atlassian.com/pages/viewpage.action?pageId=395707016
+        #url = self._gh_get_url('sprint/%s/issues/add' % (sprint_id))
+        #data['issueKeys'] = issue_keys
+
         data = {}
-        data['issueKeys'] = issue_keys
-        url = self._gh_get_url('sprint/%s/issues/add' % (sprint_id))
-        r = self._session.put(url, data=json.dumps(data))
+        data['idOrKeys'] = issue_keys
+        data['sprintId'] = sprint_id
+        data['addToBacklog'] = False
+        data['customFieldId'] = rankFieldId
+
+        url = self._gh_get_url('sprint/rank')
+        r = self._session.put(url, data=json.dumps(data), headers={'Content-Type': 'application/json'})
+        raise_on_error(r)
+
+    def move_issue(self, sprint_id, issue_key, move_after_issue_key, rankFieldId):
+        data = {}
+        data['idOrKeys'] = [issue_key]
+        data['sprintId'] = sprint_id
+        data['addToBacklog'] = False
+        data['customFieldId'] = rankFieldId
+        data['idOrKeyAfter'] = move_after_issue_key
+
+        url = self._gh_get_url('sprint/rank')
+        r = self._session.put(url, data=json.dumps(data), headers={'Content-Type': 'application/json'})
         raise_on_error(r)
 
     def add_issues_to_epic(self, epic_id, issue_keys, ignore_epics=True):

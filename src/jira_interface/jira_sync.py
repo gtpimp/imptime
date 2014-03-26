@@ -382,6 +382,7 @@ class JiraSync(object):
         self.jira.assign_issue(jira_issue, timepiece_issue.assigned_to.profile.jira_user_name)
 
     def create_issue(self, timepiece_issue, jira_create_issue_form):
+        import pdb; pdb.set_trace()
         if not self._connect():
             return
 
@@ -392,11 +393,17 @@ class JiraSync(object):
         jira_issue = self.jira.create_issue(project={'key': jira_project_key}, summary=timepiece_issue.subject,
                                             description=timepiece_issue.description, issuetype={'name': jira_issue_type_name},
                                             assignee={'name':jira_assignee})
-        # if timepiece_issue.project.interface_plugin_number is not None:
-        #     self.gh.add_issues_to_sprint(timepiece_issue.project.interface_plugin_number, [jira_issue.key])
         timepiece_issue.interface_plugin_number = jira_issue.key
         timepiece_issue.subject="%s %s" % (jira_issue.key, jira_issue.fields.summary)
         timepiece_issue.save()
+
+        try:
+            self.gh.add_issues_to_sprint(timepiece_issue.project.interface_plugin_number, [jira_issue.key], 
+                                         rankFieldId=self.settings.custom_field_name_for_issue_order)
+        except Exception, ex:
+            logger.exception(ex)
+            logger.info("Couldn't add the issue to the sprint, probably because the sprint is closed: %s" % ex)
+
         logger.debug("Created jira_issue with key: %s" % jira_issue.key)
 
     def get_create_issue_form(self, post_data=None):
