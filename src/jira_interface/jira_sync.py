@@ -354,6 +354,8 @@ class JiraSync(object):
             return
         if not self.settings.sync_actual_times:
             return
+        if not timepiece_issue.interface_plugin_number:
+            return
 
         jira_issue = jira_issue or self._get_jira_issue(timepiece_issue)
         timepiece_actual_seconds = int((timepiece_issue.hours or 0)*60*60)
