@@ -390,7 +390,6 @@ class JiraSync(object):
         self.jira.assign_issue(jira_issue, timepiece_issue.assigned_to.profile.jira_user_name)
 
     def create_issue(self, timepiece_issue, jira_create_issue_form):
-        import pdb; pdb.set_trace()
         if not self._connect():
             return
 
