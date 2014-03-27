@@ -4684,6 +4684,7 @@ def bulk_move_issue_above_issue(request, context=None):
             timepiece.IssueHistory.add_history(request.user, issue, "order changed", old_order, issue.order)
             num_moved += 1
             selected_project.refresh_issues_numbers()
+            get_interface_plugin(request, selected_project.business).move_issue(issue)
     
     messages.info(request, "%d issues moved above %s %s" % (num_moved, focus_issue.number, focus_issue.subject))
     return HttpResponseRedirect(reverse('project_list', args=[selected_project.id]))
@@ -4715,6 +4716,7 @@ def bulk_move_issue_below_issue(request, context=None):
             timepiece.IssueHistory.add_history(request.user, issue, "order changed", old_order, issue.order)
             num_moved += 1
             selected_project.refresh_issues_numbers()
+            get_interface_plugin(request, selected_project.business).move_issue(issue)
     
     messages.info(request, "%d issues moved below %s %s" % (num_moved, focus_issue.number, focus_issue.subject))
     return HttpResponseRedirect(reverse('project_list', args=[selected_project.id]))
