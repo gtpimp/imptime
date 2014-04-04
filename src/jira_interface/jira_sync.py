@@ -9,6 +9,7 @@ from django.db.models import Q
 from forms import JiraCreateIssueForm
 from dateutil import parser as dateparser
 import logging
+import sys
 logger = logging.getLogger(__name__)
 
 class JiraSync(object):
@@ -23,6 +24,7 @@ class JiraSync(object):
     def _on_error(self, err_obj):
         if type(err_obj) == Exception:
             logger.exception(err_obj)
+            traceback.print_exc()
         else:
             logger.error(err_obj)
         self.errors.append(str(err_obj))
@@ -272,7 +274,7 @@ class JiraSync(object):
                 try:
                     timepiece.IssueComment.objects.get(issue=timepiece_issue, comment__icontains=jira_comment.body)
                 except timepiece.IssueComment.DoesNotExist:
-                    author = self._get_or_create_timepiece_equivalent_of_jira_user(jira_comment.author)
+                    author = self._get_or_create_timepiece_equivalent_of_jira_user(jira_comment.author.name)
                     created = dateparser.parse(jira_comment.created)
                     new_comment = timepiece.IssueComment.objects.create(issue_id=timepiece_issue.id, 
                                                                         comment=jira_comment.body, 
