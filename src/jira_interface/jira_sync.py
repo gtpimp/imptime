@@ -246,7 +246,7 @@ class JiraSync(object):
             timepiece_issue.description = jira_issue.fields.description or ""
 
         if hasattr(jira_issue.fields, 'assignee') and jira_issue.fields.assignee:
-            timepiece_assigned_user = self._get_or_create_timepiece_equivalent_of_jira_user(jira_issue.fields.assignee)
+            timepiece_assigned_user = self._get_or_create_timepiece_equivalent_of_jira_user(jira_issue.fields.assignee.name)
             if timepiece_issue.assigned_to != timepiece_assigned_user:
                 timepiece.IssueHistory.add_history(self.active_user, timepiece_issue, "Assignee change during jira import", timepiece_issue.assigned_to, timepiece_assigned_user)
                 timepiece_issue.assigned_to = timepiece_assigned_user
@@ -290,7 +290,7 @@ class JiraSync(object):
             logger.warning("Auto creating a limited-privileges user who is assigned to a jira issue")
             user = User.objects.create(username=jira_username)
             timepiece.UserProfile.objects.create(user=user, jira_user_name=jira_username)
-            messages.info(self.request, "Auto created user %s (id=%d)" % (user, user.id))
+            messages.info(self.request, "Auto created user %s (id=%d)" % (user.username, user.id))
             return user
 
     def add_issue_comment(self, timepiece_comment):
