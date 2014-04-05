@@ -175,6 +175,11 @@ class Business(models.Model):
             self.slug = utils.slugify_uniquely(self.name, queryset, 'slug')
         super(Business, self).save(*args, **kwargs)
         
+    def autocreate_all_status_colours(self):
+        # incomplete
+        for status in Issue.objects.filter(project__business=self).values('status').distinct():
+            pass
+
     @classmethod
     def businesses_in_desc_order_of_use(self, user):
         businesses = Business.objects.annotate(models.Min("new_business_projects__entries__end_time")).order_by("-new_business_projects__entries__end_time__min")
@@ -841,7 +846,7 @@ class Project(models.Model):
             if user.username not in users_and_hours['users']:
                 continue
             user_info = users_and_hours['users'][user.username]
-            if int(user_info['hours']) == 0 and points == 0:
+            if user_info['hours'] == 0 and points == 0:
                 continue
 
             try:
@@ -2563,3 +2568,9 @@ class BusinessDocument(models.Model):
 
     def __unicode__(self):
         return self.filename
+
+class BusinessStateColour(models.Model):
+    
+    status = models.CharField(max_length=255, choices = Issue.ISSUE_STATUS_CHOICES, blank=False)
+    colour = RGBColorField(null=True, blank=True)
+    business = models.ForeignKey(Business,related_name='state_colours')

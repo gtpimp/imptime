@@ -726,6 +726,11 @@ class BusinessForm(forms.ModelForm):
         model = timepiece.Business
         fields = ('name', 'email', 'description', 'notes', 'sync_with')
 
+class BusinessStateColourForm(forms.ModelForm):
+    class Meta:
+        model = timepiece.BusinessStateColour
+        fields = [ "colour" ]
+
 class ProjectForm(forms.ModelForm):
     class Meta:
         model = timepiece.Project
@@ -1233,3 +1238,4 @@ class IssueCheckboxContextMenuActiveIssueForm(forms.Form):
         self.fields['focus_issue'].choices = [ ('', '') ] + [ (x.id, "%s %s" % (x.number, x.subject)) for x in project.issues.all().order_by("order") ]
         self.fields['focus_issue'].label = label
         self.fields['focus_issue'].widget.attrs['onchange'] = "this.form.submit();"
+
