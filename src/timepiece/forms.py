@@ -506,6 +506,7 @@ class AddUpdateEntryForm(forms.Form):
     # )
 
     project = forms.ChoiceField()
+    issue_number = forms.CharField(required=False)
     date = forms.DateField(required=True)
     hours = forms.CharField(required=True)
     comments = forms.CharField(max_length=1000, required=False, widget=forms.Textarea)
@@ -521,7 +522,12 @@ class AddUpdateEntryForm(forms.Form):
         super(AddUpdateEntryForm, self).__init__(*args, **kwargs)
         self.fields['project'].choices = ( (p.id, p.long_name()) for p in timepiece.Project.objects.filter(
             users=self.user, status__enable_timetracking=True,
-            type__enable_timetracking=True).filter(Q(status__label="open")|Q(status__label="reopened")) )
+            type__enable_timetracking=True).filter(Q(status__label="open")|Q(status__label="reopened")).order_by("business__name", "name") )
+
+        if self.instance:
+            self.fields['comments'].initial = self.instance.comments
+            self.fields['issue_number'].initial = self.instance.issue.number
+            self.fields['project'].initial = self.instance.project.id
 
         #if editing a current entry, remove the end time field
         #if self.instance is not NOneself.instance.start_time and not self.instance.end_time:
@@ -561,6 +567,15 @@ class AddUpdateEntryForm(forms.Form):
         #     (entry.project, entry.activity,
         #         entry.start_time.strftime('%H:%M:%S'))
         #     raise forms.ValidationError(output)
+
+        project = timepiece.Project.objects.get(pk=cleaned_data['project'])
+        issue_number = self.cleaned_data['issue_number']
+        if issue_number.strip():
+            try:
+                project.issues.get(number=issue_number.strip())
+            except timepiece.Issue.DoesNotExist:
+                raise forms.ValidationError('Please enter a valid issue number', code="issue_number")
+
         return self.cleaned_data
 
     def save(self, commit=True):
@@ -573,6 +588,9 @@ class AddUpdateEntryForm(forms.Form):
         self.instance.project = Project.objects.get(pk=int(self.cleaned_data['project']))
         self.instance.user = self.user
         self.instance.comments = self.cleaned_data['comments']
+        if self.cleaned_data['issue_number'].strip():
+            self.instance.issue = self.instance.project.issues.get(number=self.cleaned_data['issue_number'].strip())
+            
         tidy_entry(self.instance)
         self.instance.save()
         return self.instance
