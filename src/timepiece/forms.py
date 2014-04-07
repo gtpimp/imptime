@@ -377,6 +377,8 @@ class ImportEntriesForm(forms.Form):
 
         entry_list = entry.split('\t')        
         project_name = entry_list[1] if len(entry_list) > 1 else None
+        if project_name is None:
+            return False
         project_code = Project.get_code_from_name(project_name)
 
         ignore_projects_codes = [ Project.get_code_from_name(name) for name in ignore_projects_names ]
@@ -409,7 +411,7 @@ class ImportEntriesForm(forms.Form):
             
             try:
                 raw_entry = raw_entry.replace("|", "\t")
-                raw_date, raw_business, raw_project, raw_description, raw_hours = raw_entry.split("\t")
+                raw_date, raw_business, raw_project, raw_issue_number, raw_description, raw_hours = raw_entry.split("\t")
             except ValueError, ex:
                 errors.append( {'line':raw_entry,
                                 'line_number':line_number,
@@ -452,6 +454,19 @@ class ImportEntriesForm(forms.Form):
                                     })
                     continue
 
+            if raw_issue_number.strip():
+                try:
+                    issue = project.issues.get(number=raw_issue_number)
+                except Issue.DoesNotExist:
+                    errors.append( {'line':raw_entry,
+                                    'line_number':line_number,
+                                    'error':"Invalid issue number %s" % raw_issue_number,
+                                    'msg': "Possible issue numbers are: %s" % (", ".join([str(i.number) for i in project.issues.all().order_by("order")]))
+                                    })
+                    continue
+            else:
+                issue = None
+
             description = raw_description
             try:
                 hours, minutes = parse_hours_raw(raw_hours)
@@ -475,6 +490,7 @@ class ImportEntriesForm(forms.Form):
                 entry = Entry(user=self.user, project=project, start_time=start_time, end_time=end_time)
                 num_entries_created += 1
             entry.comments = description
+            entry.issue = issue
             tidy_entry(entry)
             entry.save()
             entries.append(entry)
