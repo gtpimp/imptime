@@ -228,7 +228,7 @@ class JiraSync(object):
         if timepiece_issue.status != state:
             timepiece.IssueHistory.add_history(self.active_user, timepiece_issue, "State change during jira import", timepiece_issue.status, state)
             timepiece_issue.status = state
-
+            
         if int(timepiece_issue.order) != int(order) and self.settings.sync_issue_ordering:
             timepiece.IssueHistory.add_history(self.active_user, timepiece_issue, "Order change during jira import", timepiece_issue.order, order)
             timepiece_issue.order = order
