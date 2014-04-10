@@ -10025,6 +10025,12 @@ ul.project_list {
     margin-right:20px;
 }
 
+.sortable {
+    cursor: grabbing;
+    cursor:-moz-grabbing;
+    cursor:-webkit-grabbing;
+}
+
 .drag_img_container {
     width: 20px;
     float: left;

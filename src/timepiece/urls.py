@@ -605,6 +605,8 @@ urlpatterns = patterns('',
                        url(r'^bulk_clear_selected_issues/$', views.bulk_clear_selected_issues, {}, 'bulk_clear_selected_issues'),
                        url(r'^bulk_select_by_issue_state/(?P<project_id>.*)/$', views.bulk_select_by_issue_state, {}, 'bulk_select_by_issue_state'),
                        
+                       url(r'^auto_issue_sort/(?P<project_id>.*)/$', views.auto_issue_sort, {}, 'auto_issue_sort'),
+                       
                        
 
 )

@@ -1,0 +1,22 @@
+{% load humanize %}
+{% load timepiece_tags %}
+
+<div class="issue_order_info">
+  <h1>{{project.business.name}} - {{project.name}}</h1>
+  <h2>Sort Issues</h2>
+
+  <div class="sort_issues_by_state">
+    <ul class="sortable" style="float:left">
+      {% for state in states %}
+      <li state_name="{{state}}">{{state}}</li>
+      {% endfor %}
+    </ul>
+  </div>
+
+  <button onclick="imp.sort_issues_by_state(this, '{% url auto_issue_sort project.id %}'); return false;">Sort issues</button>
+
+</div>
+
+<script>
+  $(".issue_order_info .sortable").sortable();
+</script>

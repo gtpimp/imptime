@@ -368,6 +368,28 @@ imp.delete_issue_from_issues_list = function(element, url, item_id) {
 
 };
 
+imp.sort_issues_by_state = function(el, sort_url) {
+    var on_done = imp.issue_loading("Sorting");
+    var issue_list_el = $(el).parents(".issue_order_info").find(".sort_issues_by_state");
+    var state_els = issue_list_el.find("li");
+    var ordered_states = [];
+    state_els.each(function(index, row) {
+		       var elem = $(row);
+		       var state_name = elem.attr("state_name");
+		       ordered_states.push(state_name);
+		   });
+    var joined_ordered_states = ordered_states.join(',');
+    var response = $.ajax({type:"POST",
+                           url: sort_url,
+                           data: { ordered_states:joined_ordered_states },
+                           dataType:"json",
+                           success : function (data) {
+			       on_done();
+			       window.location = data.redirect_url;
+                           }
+                          });
+};
+
 imp.clickable_description_box = function(element, url, item_id) {
 
     // dev note: most of this function should be replaced with a
