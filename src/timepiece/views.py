@@ -4121,7 +4121,7 @@ def sortable_issue_update(request, project_id):
             timepiece.IssueHistory.add_history(request.user, issue, "order", old_order, issue.order)
             
         if old_project != new_project or old_order != item_order_count:
-            get_interface_plugin(request, new_project.business).move_issue(issue)
+            get_interface_plugin(request, new_project.business).move_issue(issue, old_project=old_project)
 
     return HttpResponse("")
 
@@ -4209,7 +4209,7 @@ def sprint_report(request, project_id, context=None):
 
         prefix = request.GET['report_type']
         if request.GET['report_type'] == 'Quote':
-            prefix = "Proposal"
+            prefix = "Quote"
 
         filename = prefix + "_implicitdesign_" + project.long_name().replace(" ","") + "_" + datetime.datetime.today().strftime("%d%m%Y") + ".pdf"
         rendered = HttpResponse(as_pdf, mimetype='application/pdf')
@@ -4556,7 +4556,7 @@ def bulk_move_issues_to_project(request, dest_project_id, context=None):
         issue.order += 9999
         issue.save()
         timepiece.IssueHistory.add_history(request.user, issue, "moved project", unicode(old_project), unicode(dest_project))
-        get_interface_plugin(request, dest_project.business).move_issue(issue)
+        get_interface_plugin(request, dest_project.business).move_issue(issue, old_project=old_project)
 
     dest_project.refresh_issues_numbers()
     messages.info(request, "%d issues moved to %s" % (len(selected_issue_ids), dest_project))
@@ -4684,7 +4684,7 @@ def bulk_move_issue_above_issue(request, context=None):
             timepiece.IssueHistory.add_history(request.user, issue, "order changed", old_order, issue.order)
             num_moved += 1
             selected_project.refresh_issues_numbers()
-            get_interface_plugin(request, selected_project.business).move_issue(issue)
+            get_interface_plugin(request, selected_project.business).move_issue(issue, old_project=selected_project)
     
     messages.info(request, "%d issues moved above %s %s" % (num_moved, focus_issue.number, focus_issue.subject))
     return HttpResponseRedirect(reverse('project_list', args=[selected_project.id]))
@@ -4716,7 +4716,7 @@ def bulk_move_issue_below_issue(request, context=None):
             timepiece.IssueHistory.add_history(request.user, issue, "order changed", old_order, issue.order)
             num_moved += 1
             selected_project.refresh_issues_numbers()
-            get_interface_plugin(request, selected_project.business).move_issue(issue)
+            get_interface_plugin(request, selected_project.business).move_issue(issue, old_project=selected_project)
     
     messages.info(request, "%d issues moved below %s %s" % (num_moved, focus_issue.number, focus_issue.subject))
     return HttpResponseRedirect(reverse('project_list', args=[selected_project.id]))
