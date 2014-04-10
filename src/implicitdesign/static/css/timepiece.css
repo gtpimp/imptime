@@ -9834,6 +9834,14 @@ ul.project_list {
     float: right;
 }
 
+.issue_colour_square {
+    float: left;
+    width: 15px;
+    height: 15px;
+    margin-right: 5px;
+    filter: alpha(opacity=30);
+}
+
 .project_table_cell .project_title .project_colour_square {
     float: right;
     width: 15px;

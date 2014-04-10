@@ -760,11 +760,6 @@ class BusinessForm(forms.ModelForm):
         model = timepiece.Business
         fields = ('name', 'email', 'description', 'notes', 'sync_with')
 
-class BusinessStateColourForm(forms.ModelForm):
-    class Meta:
-        model = timepiece.BusinessStateColour
-        fields = [ "colour" ]
-
 class ProjectForm(forms.ModelForm):
     class Meta:
         model = timepiece.Project

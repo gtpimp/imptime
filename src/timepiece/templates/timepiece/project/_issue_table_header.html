@@ -47,7 +47,7 @@
 
 		{% has_permission has_view_ctc_billable_rates  project.business %}
                   {% has_permission has_view_ctc_rates project.business %}
-                  <th class="money_cell">ctc</th>
+                  <th class="money_cell money_ctc">ctc</th>
                   {% end_permission %}
                   <th class="money_cell">billable</th>
 		{% end_permission %}
@@ -96,7 +96,7 @@
 		  {% has_permission has_view_ctc_billable_rates project.business %}
 
                   {% has_permission has_view_ctc_rates project.business %}
-                  <th class="money_cell">
+                  <th class="money_cell money_ctc">
                     <div class="secret_link" onclick="imp.show_issue_detail(null, '{% url 'all_timesheet_entries' project.id %}');">
                       <i>R{{total_ctc|floatformat:"0"|intcomma}}</i>
                     </div>
@@ -165,7 +165,7 @@
 
 		  {% has_permission has_view_ctc_billable_rates project.business %}
                   {% has_permission has_view_ctc_rates project.business %}
-                  <td class="money_cell">
+                  <td class="money_cell money_ctc">
                     <div class="secret_link" onclick="imp.show_issue_detail(null, '{% url 'unassigned_timesheet_entries' project.id %}');">
                       R{{unassigned_timesheet_entries_ctc|floatformat:"0"|intcomma}}
                     </div>

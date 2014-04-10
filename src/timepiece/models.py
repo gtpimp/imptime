@@ -68,6 +68,11 @@ class BusinessQuerySet(QuerySet):
         return self.filter(new_business_projects__users=user)
 
 class Business(models.Model):
+    
+    DEFAULT_STATUS_COLOURS = ( "#00FFFF", "#FFEBCD", "#6495ED", "#B8860B", "#FAFAD2", "#9ACD32", "#FF6347", "#FAF0E6", "#FFB6C1", "#ADD8E6",
+                               "#66CDAA", "#7B68EE", "#F0FFF0", "#DCDCDC", "#00CED1", "#800080", "#2E8B57", "#BC8F8F" )
+
+
     class Meta:
         ordering = ('name',)
         
@@ -155,6 +160,12 @@ class Business(models.Model):
         for user_id in user_ids:
             return_users.append(User.objects.get(id=user_id))
         return return_users
+
+    def get_colour_for_status(self, status_name):
+        possible_states = [x['status'] for x in Issue.objects.filter(project__business=self).values('status').order_by("status").distinct()]
+        index = possible_states.index(status_name)
+        index = index % len(Business.DEFAULT_STATUS_COLOURS)
+        return Business.DEFAULT_STATUS_COLOURS[index]
 
     def ensure_single_sprint(self, **kwargs):
         kwargs = kwargs or {}
@@ -2282,6 +2293,7 @@ class IssueRepresentation(object):
         return str([ list(pair) for pair in Issue.ISSUE_STATUS_CHOICES ]) 
 
 class Issue(models.Model):
+
     ISSUE_STATUS_CHOICES = (
            ( 'bug', 'bug'),
            ( 'devdone', 'dev_done'),
@@ -2397,6 +2409,10 @@ class Issue(models.Model):
     @property
     def related_entries(self):
         return self.entries.all()
+
+    @property
+    def colour(self):
+        return self.project.business.get_colour_for_status(self.status)
 
     @property
     def hours(self):
@@ -2569,8 +2585,3 @@ class BusinessDocument(models.Model):
     def __unicode__(self):
         return self.filename
 
-class BusinessStateColour(models.Model):
-    
-    status = models.CharField(max_length=255, choices = Issue.ISSUE_STATUS_CHOICES, blank=False)
-    colour = RGBColorField(null=True, blank=True)
-    business = models.ForeignKey(Business,related_name='state_colours')
