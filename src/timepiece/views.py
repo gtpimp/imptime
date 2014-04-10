@@ -4787,6 +4787,6 @@ def auto_issue_sort(request, project_id, template="timepiece/project/auto_issue_
     
         return HttpResponse(json.dumps({'redirect_url':reverse('project_list', args=[project.id])}))
     else:
-        context['states'] = [x['status'] for x in project.issues.order_by("order").values("status").distinct()]
+        context['states'] = [x['status'] for x in project.issues.order_by("status").values("status").distinct()]
         context['project'] = project
         return render_to_response(template, context, context_instance=RequestContext(request))
