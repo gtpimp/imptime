@@ -593,9 +593,8 @@ urlpatterns = patterns('',
                        url(r'^time-sheet/delete_business_document/(?P<document_token>.*)/$', views.delete_business_document, name="delete_business_document"),
                        url(r'^time-sheet/generate_business_document/(?P<business_id>.*)/$', views.generate_business_document, name="generate_business_document"),
                        url(r'^time-sheet/generate_preview_business_document/(?P<business_id>.*)/$', views.generate_preview_business_document, name="generate_preview_business_document"),
-                       
 
-                       url(r'^issue_checkbox_context_menu$', views.issue_checkbox_context_menu, {}, 'issue_checkbox_context_menu'),
+                       url(r'^issue_checkbox_context_menu/(?P<project_id>.*)/$', views.issue_checkbox_context_menu, {}, 'issue_checkbox_context_menu'),
                        url(r'^bulk_move_issues_to_project/(?P<dest_project_id>.*)/$', views.bulk_move_issues_to_project, {}, 'bulk_move_issues_to_project'),
                        url(r'^bulk_change_issue_state/$', views.bulk_change_issue_state, {}, 'bulk_change_issue_state'),
                        url(r'^bulk_change_issue_feature/$', views.bulk_change_issue_feature, {}, 'bulk_change_issue_feature'),
@@ -604,6 +603,7 @@ urlpatterns = patterns('',
                        url(r'^bulk_move_issue_above_issue/$', views.bulk_move_issue_above_issue, {}, 'bulk_move_issue_above_issue'),
                        url(r'^bulk_move_issue_below_issue/$', views.bulk_move_issue_below_issue, {}, 'bulk_move_issue_below_issue'),
                        url(r'^bulk_clear_selected_issues/$', views.bulk_clear_selected_issues, {}, 'bulk_clear_selected_issues'),
+                       url(r'^bulk_select_by_issue_state/(?P<project_id>.*)/$', views.bulk_select_by_issue_state, {}, 'bulk_select_by_issue_state'),
                        
                        
 

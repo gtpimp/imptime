@@ -1238,6 +1238,16 @@ class IssueCheckboxContextMenuChangeStateForm(forms.Form):
         self.fields['status'].choices = [('na', ''),] + list( [ (x['status'],x['status']) for x in Issue.objects.filter(project__business=project.business).values('status').distinct()] )
         self.fields['status'].widget.attrs['onchange'] = "this.form.submit();"
 
+class IssueCheckboxContextMenuSelectByStateForm(forms.Form):
+    
+    status = forms.ChoiceField( label="Status to select", 
+                                required=True, initial=('New',) )
+
+    def __init__(self, project, *args, **kwargs):
+        super(IssueCheckboxContextMenuSelectByStateForm, self).__init__(*args, **kwargs)
+        self.fields['status'].choices = [('na', ''),] + list( [ (x['status'],x['status']) for x in Issue.objects.filter(project__business=project.business).values('status').distinct()] )
+        self.fields['status'].widget.attrs['onchange'] = "this.form.submit();"
+
 class IssueCheckboxContextMenuChangeFeatureForm(forms.Form):
     
     feature = forms.ChoiceField( label="New feature", 

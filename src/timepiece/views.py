@@ -4516,28 +4516,27 @@ def generate_business_document(request, business_id, context=None):
     return view_business_documents(request, business_id)
     
 @login_required
-def issue_checkbox_context_menu(request, template="timepiece/project/issue_checkbox_context_menu.html", context=None):
+def issue_checkbox_context_menu(request, project_id, template="timepiece/project/issue_checkbox_context_menu.html", context=None):
     context = context or {}
 
     raw_checked_issue_numbers = request.GET['checked_issue_numbers'].strip()
     if len(raw_checked_issue_numbers) == 0:
-        return HttpResponse("No issues selected")
+        raw_checked_issue_numbers = ""
     checked_issue_ids = [x for x in raw_checked_issue_numbers.split(",") if len(x.strip())>0]
-    if len(checked_issue_ids) == 0:
-        return HttpResponse("No issues selected")
-
-    from_project = timepiece.Issue.objects.get(pk=checked_issue_ids[0]).project
-
+    
+    from_project = timepiece.Project.objects.get(pk=project_id)
     bp = timepiece.BusinessPermissions.for_user(request.user, from_project.business)
     if not bp.has_add_issue:
         return HttpResponse("No permission")
 
     other_projects = [p for p in timepiece.Project.objects.filter(business=from_project.business).exclude(pk=from_project.id) if p.is_open]
-
     context['other_projects'] = other_projects
+
     context['issues'] = checked_issue_ids
     context['num_issues'] = len(checked_issue_ids)
+    context['project'] = from_project
 
+    context['state_select_form'] = timepiece_forms.IssueCheckboxContextMenuSelectByStateForm(from_project)
     context['state_change_form'] = timepiece_forms.IssueCheckboxContextMenuChangeStateForm(from_project)
     context['feature_change_form'] = timepiece_forms.IssueCheckboxContextMenuChangeFeatureForm(from_project)
     context['assignee_change_form'] = timepiece_forms.IssueCheckboxContextMenuChangeAssigneeForm(from_project)
@@ -4737,4 +4736,24 @@ def bulk_move_issue_below_issue(request, context=None):
 def bulk_clear_selected_issues(request, context=None):
     del request.session['selected_issue_ids_for_context_menu']
     selected_project = request.session['selected_issue_project']
+    return HttpResponseRedirect(reverse('project_list', args=[selected_project.id]))
+
+@login_required
+@csrf_exempt
+def bulk_select_by_issue_state(request, project_id, context=None):
+    selected_project = timepiece.Project.objects.get(pk=project_id)
+    request.session['selected_issue_project'] = selected_project
+
+    if 'selected_issue_ids_for_context_menu' in request.session:
+        del request.session['selected_issue_ids_for_context_menu']
+
+    form = timepiece_forms.IssueCheckboxContextMenuSelectByStateForm(selected_project, request.GET or None)
+
+    if form.is_valid():
+        state = form.cleaned_data['status']
+        selected_issues = selected_project.issues.filter(status=state)
+        request.session['selected_issue_ids_for_context_menu'] = [x.id for x in selected_issues]
+        messages.info(request, "%d issues selected for state %s" % (selected_issues.count(), state))
+    else:
+        messages.info(request, "Failure: %s" % form.errors)
     return HttpResponseRedirect(reverse('project_list', args=[selected_project.id]))

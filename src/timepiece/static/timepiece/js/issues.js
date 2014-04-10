@@ -225,7 +225,7 @@ imp.set_issue_checkbox_hooks = function(issue_row_container) {
 	var on_done = imp.loading("Loading context menu");
 	var selected_issue_ids = imp.get_selected_issue_ids_for_get(issue_row_container);
 	var response = $.ajax({type:"GET",
-                               url: imp.config.issue_checkbox_context_menu_url,
+                               url: imp.config.issue_checkbox_context_menu_url.replace("999999", issue_row_container.attr("project_id")),
 			       data: {checked_issue_numbers: selected_issue_ids},
                                success: function(data) {
 				   on_done();
