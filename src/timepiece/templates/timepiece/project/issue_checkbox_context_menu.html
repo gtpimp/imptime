@@ -10,9 +10,9 @@
 
   <li class="divider"></li>
 
-  <li> <a onclick="if ( ! confirm('Unselect all checkboxes?') {return false;}" href="{% url bulk_clear_selected_issues %}">Clear all checkboxes</a> </li>
+  <li> <a onclick="if ( ! confirm('Unselect all checkboxes?') ) {return false;}" href="{% url bulk_clear_selected_issues %}">Clear all checkboxes</a> </li>
 
-  <li> <a onclick="if ( ! confirm('Delete all selected issues?') { return false; }" href="{% url bulk_delete_issues %}">Delete</a> </li>
+  <li> <a onclick="if ( ! confirm('Delete all selected issues?') ) { return false; }" href="{% url bulk_delete_issues %}">Delete</a> </li>
 
   <li class="divider"></li>
 
