@@ -603,6 +603,8 @@ urlpatterns = patterns('',
                        url(r'^bulk_delete_issues/$', views.bulk_delete_issues, {}, 'bulk_delete_issues'),
                        url(r'^bulk_move_issue_above_issue/$', views.bulk_move_issue_above_issue, {}, 'bulk_move_issue_above_issue'),
                        url(r'^bulk_move_issue_below_issue/$', views.bulk_move_issue_below_issue, {}, 'bulk_move_issue_below_issue'),
+                       url(r'^bulk_clear_selected_issues/$', views.bulk_clear_selected_issues, {}, 'bulk_clear_selected_issues'),
+                       
                        
 
 )

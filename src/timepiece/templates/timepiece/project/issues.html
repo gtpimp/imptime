@@ -231,6 +231,7 @@
 
 		{% for form in issues_forms.forms %}
 		  {% with form.instance as issue %}
+
 		    {% include "timepiece/project/_issue_entry_row.html" %}
 		  {% endwith %}
 		{% endfor %}

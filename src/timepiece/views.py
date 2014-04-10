@@ -1152,6 +1152,7 @@ def create_edit_person(request, person_id=None):
 @render_with('timepiece/project/detail.html')
 @login_required
 def project_detail(request, business_id):
+
     if request.GET:
         form = timepiece_forms.ProjectSearchForm(request.GET)
     else:
@@ -1221,8 +1222,12 @@ def project_detail(request, business_id):
         'projects': projects.select_related('business'),
         'total_outstanding_amount':total_outstanding_amount,
         'total_outstanding_amounts_per_project':total_outstanding_amounts_per_project,
-        'user_totals': user_totals,
+        'user_totals': user_totals
     })
+
+    if 'selected_issue_ids_for_context_menu' in request.session:
+        context['selected_issue_ids'] = [int(x) for x in request.session['selected_issue_ids_for_context_menu']]
+
     return context
 
 
@@ -3294,6 +3299,9 @@ def get_project_detail(request, project_id, template="timepiece/project/project_
     context['has_closed_sprints'] = business.has_closed_sprints()
     context['has_open_sprints'] = business.has_open_sprints()
 
+    if 'selected_issue_ids_for_context_menu' in request.session:
+        context['selected_issue_ids'] = [int(x) for x in request.session['selected_issue_ids_for_context_menu']]
+
     end_timing_get_project_detail()
     context['timings'] = timings.results()
 
@@ -3342,6 +3350,9 @@ def project_list(request, project_id=None, highlight_issue_id=None, business_id=
     context['has_closed_sprints'] = business.has_closed_sprints()
     context['has_open_sprints'] = business.has_open_sprints()
     context['floating_project'] = timepiece.Project(name='floating project', description="temporary")
+
+    if 'selected_issue_ids_for_context_menu' in request.session:
+        context['selected_issue_ids'] = [int(x) for x in request.session['selected_issue_ids_for_context_menu']]
 
     return render_to_response(template, context, context_instance=RequestContext(request))
 
@@ -4719,4 +4730,11 @@ def bulk_move_issue_below_issue(request, context=None):
             get_interface_plugin(request, selected_project.business).move_issue(issue, old_project=selected_project)
     
     messages.info(request, "%d issues moved below %s %s" % (num_moved, focus_issue.number, focus_issue.subject))
+    return HttpResponseRedirect(reverse('project_list', args=[selected_project.id]))
+
+@login_required
+@csrf_exempt
+def bulk_clear_selected_issues(request, context=None):
+    del request.session['selected_issue_ids_for_context_menu']
+    selected_project = request.session['selected_issue_project']
     return HttpResponseRedirect(reverse('project_list', args=[selected_project.id]))
