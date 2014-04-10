@@ -4596,6 +4596,8 @@ def bulk_change_issue_state(request, context=None):
             issue.status = new_status
             issue.save()
             timepiece.IssueHistory.add_history(request.user, issue, "changed status", old_status, new_status)
+            get_interface_plugin(request, selected_project.business).update_issue_status(issue)
+            
     messages.info(request, "%d issues changed state to %s" % (len(selected_issue_ids), new_status))
     return HttpResponseRedirect(reverse('project_list', args=[selected_project.id]))
 
