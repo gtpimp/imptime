@@ -76,7 +76,25 @@ imp.post_issue_number_form = function(form_child_el, issue_id) {
 	    }
 	   });
     return false;
-}
+};
+
+imp.bulk_clear_selected_issues = function(clear_url) {
+
+    if ( ! confirm('Unselect all checkboxes?') ) {
+	return false;
+    } 
+
+    var on_done = imp.loading("unchecking");
+    $.ajax({type:"GET",
+	    url: clear_url,
+	    success: function(data) {
+		$(".issue_checkbox_cell input[type='checkbox']").attr("checked", false);
+		on_done();
+	    }
+	   });
+    return false;
+
+};
 
 imp.do_form_show  = function(element, url) {
     var button = $(element);
