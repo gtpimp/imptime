@@ -97,11 +97,6 @@ function make_data_done_function_for_element(element) {
     };
 };
 
-imp.projects.init_floating_sprint = function() {
-    imp.projects.attach_sortable($(".floating_project .issue_list_body"));
-    $(".floating_project").draggable();
-};
-
 imp.projects.attach_sortable = function(sortable, sortable_url) {
 
     if ( sortable_url ) {
@@ -303,7 +298,6 @@ imp.on_document_ready = function() {
 
     imp.create_splitter();
     imp.attach_sprint_headings();
-    imp.projects.init_floating_sprint();
 };
 
 $(document).ready(imp.on_document_ready);

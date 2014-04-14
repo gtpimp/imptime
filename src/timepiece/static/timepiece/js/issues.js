@@ -220,13 +220,17 @@ imp.attach_upload_issue_attachment = function(el) {
 
 imp.hide_issue_checkboxes = function(el) {
     $(".issue_checkbox_cell").hide();
-    $(el).parents(".issue_checkbox_cell_toggle").find(".hide").hide();
-    $(el).parents(".issue_checkbox_cell_toggle").find(".show").show();
+    $(el).parents("table").find(".issue_checkbox_cell_toggle").find(".hide").hide();
+    $(el).parents("table").find(".issue_checkbox_cell_toggle").find(".show").show();
 };
 imp.show_issue_checkboxes = function(el) {
     $(".issue_checkbox_cell").show();
-    $(el).parents(".issue_checkbox_cell_toggle").find(".hide").show();
-    $(el).parents(".issue_checkbox_cell_toggle").find(".show").hide();
+    $(el).parents("table").find(".issue_checkbox_cell_toggle").find(".hide").show();
+    $(el).parents("table").find(".issue_checkbox_cell_toggle").find(".show").hide();
+};
+
+imp.are_issue_checkboxes_visible = function(el) {
+    return $(el).parents("table").find(".issue_checkbox_cell_toggle").find(".hide").is(":visible");
 };
 
 imp.get_selected_issue_ids_for_get = function(issue_row_container) {
@@ -293,6 +297,23 @@ imp.set_issue_checkbox_hooks = function(issue_row_container) {
 							      fetch_menu_html( e, display_menu );
 							      return false;
 							  });
+
+    // If an issue checkbox is ticked, then show all issue checkboxes
+    issue_row_container.find(".issue_checkbox_cell input").click(function(e) {
+								     if ( $(this).attr("checked") ) {
+									 imp.show_issue_checkboxes($(this));
+								     }
+								 });
+
+    // If an issue checkbox is hidden, show on hover and hide on unhover
+    issue_row_container.find(".issue_checkbox_td").hover(function() {
+							     var el = $(this).find(".issue_checkbox_cell").show();
+							 },
+							 function() {
+							     if ( ! imp.are_issue_checkboxes_visible($(this)) ) {
+								 var el = $(this).find(".issue_checkbox_cell").hide();
+							     }
+							 });
 
 };
 

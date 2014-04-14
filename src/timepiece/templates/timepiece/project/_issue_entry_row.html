@@ -5,8 +5,8 @@
 
 <tr class="issue_instance_row {{issue.status_as_class}}" assigned_to="{{issue.assigned_to.username}}"  id="{{issue.pk}}" refresh_url="{% url 'get_issue_row' issue.pk %}">                    
 
-  <td>
-    <div class="issue_checkbox_cell" style="width:100%;display:none;">
+  <td class="issue_checkbox_td">
+    <div class="issue_checkbox_cell" style="width:100%; display:none;">
       <input type="checkbox" name="issue_checked_{{issue.pk}}" {% if issue.pk in selected_issue_ids %}checked="checked"{% endif %} />
     </div>
   </td>
