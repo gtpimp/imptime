@@ -2,7 +2,7 @@
   <div class="gutterLine"></div>
 
   <li class="header">Issues Bulk Operation</li>
-  <li class="header">({{num_issues}} issues)</li>
+  <li class="header">({{num_issues}} issues selected)</li>
 
   {% for other_project in other_projects %}
     <li> <a href="{% url bulk_move_issues_to_project other_project.id %}">Move to {{other_project}}</a> </li>

@@ -100,6 +100,6 @@
 }
 
 .contextMenuPlugin li div, .contextMenuPlugin li p, .contextMenuPlugin li label {
-    float:left;
-    display:inline;
+    /*float:left;*/
+    /*display:inline;*/
 }

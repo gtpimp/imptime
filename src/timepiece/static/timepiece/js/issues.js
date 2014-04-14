@@ -271,7 +271,7 @@ imp.set_issue_checkbox_hooks = function(issue_row_container) {
 	}
 
 	// Create and show menu
-	menu.css({zIndex:1000001, overflow:"auto", height:"400px"/*left:left, top:top*/})
+	menu.css({zIndex:1000001, overflow:"auto", height:"50%", width: "300px" /*left:left, top:top*/})
 	    .bind('contextmenu', function() { return false; });
 
 	// Cover rest of page with invisible div that when clicked will cancel the popup.
