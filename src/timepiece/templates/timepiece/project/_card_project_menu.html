@@ -100,15 +100,13 @@
       </li>
       {% end_permission %}
 
-      {% comment %}
-      {% has_permission has_toggle_graphs project.business %}
+      {% has_permission has_view_actual_hours project.business %}
       <li>
         <a href="#" onclick="window.open('{% url 'show_timeline' project.id %}')">
           Timeline
         </a>
       </li>
       {% end_permission %}
-      {% endcomment %}
 
       <li>
         <a href="#" onclick="imp.toggle_show_numbers();return false;">Numbers</a>

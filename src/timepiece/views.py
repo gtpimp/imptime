@@ -3837,67 +3837,84 @@ def show_timeline(request, project_id):
         return issue_subject.replace("\n","").strip()
 
     project = timepiece.Project.objects.get(id=project_id)
-    issuedict = {}
-    longest_issue_of_day = {}
 
-    mindate = None
-    maxdate = None
-    global_max_total_hours = None
-    for issue in project.issues.all():
-        issue_entries = issue.related_entries
+    bp = timepiece.BusinessPermissions.for_user(request.user, project.business)
+    if not bp.has_view_actual_hours:
+        raise PermissionDenied
 
-        if len(issue_entries) == 0:
-            continue
+    today = datetime.datetime.today().date()
+    from_date, to_date =  _get_filter_dates_only(request, context, (today - relativedelta(months=1), today))
+    date_form = timepiece_forms.DateOnlyForm(request.GET)
+    context['date_form'] = date_form
 
-        issue_subject = _clean_subject_name(issue.subject)
-        issuedict[issue_subject] = issuedict.get(issue_subject,{})
-        for entry in issue_entries:
-            issue_total_hours_for_day = issuedict[issue_subject].get(entry.start_time,0)
-            issuedict[issue_subject][entry.start_time.date()] = issue_total_hours_for_day +  float(entry.hours)
+    entries_qs = timepiece.Entry.objects.filter(project__business=project.business).order_by("start_time")
+    entries_qs = _apply_date_filter(request, entries_qs, context)
 
-            if mindate is None or mindate > entry.start_time:
-                 mindate = entry.start_time
+    graph_data = []
+    for user_id, bp in timepiece.BusinessPermissions.by_user(project.business).items():
+        graph_user_data = { 'user': User.objects.get(pk=user_id),
+                            'entries': entries_qs.filter(user_id=user_id) }
+        graph_data.append(graph_user_data)
+    context['from_date'] = from_date
+    context['to_date'] = to_date
+    context['graph_data'] = graph_data
+    context['project'] = project
 
-            if maxdate is None or maxdate < entry.end_time:
-                 maxdate = entry.end_time
+    # for issue in project.issues.all():
+    #     issue_entries = issue.related_entries
 
+    #     if len(issue_entries) == 0:
+    #         continue
 
-    day_biggest_issue_dict  = {}
-    day_dict = {}
-    for issue in project.issues.all():
-        issue_entries = issue.related_entries
-        issue_subject = _clean_subject_name(issue.subject)
-        if len(issue_entries) == 0:
-            continue
+    #     issue_subject = _clean_subject_name(issue.subject)
+    #     issuedict[issue_subject] = issuedict.get(issue_subject,{})
+    #     for entry in issue_entries:
+    #         issue_total_hours_for_day = issuedict[issue_subject].get(entry.start_time,0)
+    #         issuedict[issue_subject][entry.start_time.date()] = issue_total_hours_for_day +  float(entry.hours)
 
-        for entry in issue_entries:
-            day_dict[entry.start_time] = day_dict.get(entry.start_time,{})
-            day_dict[entry.start_time][issue_subject] = day_dict[entry.start_time].get(issue_subject,0) +  float(entry.hours)
+    #         if mindate is None or mindate > entry.start_time:
+    #              mindate = entry.start_time
 
-    for day_start, daily_issue_info in sorted(day_dict.iteritems()):
-        cur_max = 0
-        for issue, duration in daily_issue_info.iteritems():
-            if duration > cur_max:
-                day_biggest_issue_dict[day_start] = issue
-                cur_max = duration
+    #         if maxdate is None or maxdate < entry.end_time:
+    #              maxdate = entry.end_time
 
 
-    context['issue_entry'] = []
-    for issue_subject,day_entry in  sorted(issuedict.items()):
-        sorted_day_entry_items = sorted(day_entry.iteritems())
-        element = [ issue_subject, sorted_day_entry_items ]
-        max_elem = None
-        for item in sorted_day_entry_items:
-            if not max_elem or max_elem[-1] < item[-1]:
-                max_elem = item
-        if max_elem is not None:
-            element.append(max_elem)
-        context['issue_entry'].append(element)
+    # day_biggest_issue_dict  = {}
+    # day_dict = {}
+    # for issue in project.issues.all():
+    #     issue_entries = issue.related_entries
+    #     issue_subject = _clean_subject_name(issue.subject)
+    #     if len(issue_entries) == 0:
+    #         continue
 
-    offset = datetime.timedelta(hours=24)
-    context['issue_labels'] = [ (day-offset,name) for day, name in sorted(day_biggest_issue_dict.iteritems())]
-    context['from_date'] = mindate
-    context['to_date'] = maxdate
+    #     for entry in issue_entries:
+    #         day_dict[entry.start_time] = day_dict.get(entry.start_time,{})
+    #         day_dict[entry.start_time][issue_subject] = day_dict[entry.start_time].get(issue_subject,0) +  float(entry.hours)
+
+    # for day_start, daily_issue_info in sorted(day_dict.iteritems()):
+    #     cur_max = 0
+    #     for issue, duration in daily_issue_info.iteritems():
+    #         if duration > cur_max:
+    #             day_biggest_issue_dict[day_start] = issue
+    #             cur_max = duration
+
+
+    # context['issue_entry'] = []
+    # for issue_subject,day_entry in  sorted(issuedict.items()):
+    #     sorted_day_entry_items = sorted(day_entry.iteritems())
+    #     element = [ issue_subject, sorted_day_entry_items ]
+    #     max_elem = None
+    #     for item in sorted_day_entry_items:
+    #         if not max_elem or max_elem[-1] < item[-1]:
+    #             max_elem = item
+    #     if max_elem is not None:
+    #         element.append(max_elem)
+    #     context['issue_entry'].append(element)
+
+    # offset = datetime.timedelta(hours=24)
+    # context['issue_labels'] = [ (day-offset,name) for day, name in sorted(day_biggest_issue_dict.iteritems())]
+    # context['from_date'] = mindate
+    # context['to_date'] = maxdate
 
     return context
 

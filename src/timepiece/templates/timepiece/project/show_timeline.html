@@ -1,6 +1,7 @@
 {% extends "timepiece/graphs/base.html" %}
 {% load bootstrap_toolkit %}
 {% load timepiece_tags %}
+{% load url from future %}
 
 {% block extramedia %}
 {{ add_user_form.media }}
@@ -14,55 +15,73 @@
 
 {% block content %}
 
-<div style="width:100%">
-  <div id="sprint_name" style="width:100%;height:300px"></div><br /><br />
-</div>
+<h2>
+  Graphs
+  {% include "timepiece/graphs/_date_filter_msg.html" %}
+</h2>
+
+<form class="form-inline" accept-charset='UTF-8' method='get' action='{% url 'show_timeline' project.id %}'>
+	  {% if date_form.errors %}
+	   {% for e in date_form.errors.values %} 
+	    {{ e }}
+	   {% endfor %}
+	  {% endif %}
+	  {{ date_form.from_date.label }}: {{ date_form.from_date }}
+	  {{ date_form.to_date.label }}: {{ date_form.to_date }}
+	  <button type='submit' class="btn" name='submit'>Filter Dates</button>
+</form>
+
+<div class="row-fluid">
+    <div class="span12">
+      {% date_filters %}
+     </div>
+  </div>
+
+{% for user_info in graph_data %}
+  <div style="width:100%; border: 1px solid #000000" >
+    <div class="user_graph" id="{{user_info.user.id}}" style="width:100%;height:300px"></div><br /><br />
+  </div>
+{% endfor %}
 
 <script>
- var dataset = [
-{% for issue, issue_hours in issue_entry %}
-  {
-      data: [ {% spaceless %}
-                {% for day, hours in issue_hours %} 
-                   [ {{day|epoch}},{{hours}} ], 
-                {% endfor %} 
-              {% endspaceless %} ],
+  $(document).ready( 
+               function() {
+                  imp.create_chart([
+                      {% for user_info in graph_data %}
+                      {divid: "#{{user_info.user.id}}",
+                       data: [ {%spaceless%} 
+                                       { label:"{{user_info.user}}", 
+                                         data: [ {% for entry in user_info.entries %} 
+                                                    [ {{entry.start_time|epoch}},{{entry.hours}}], {% endfor %} ],
+                                         lines: {show: true, steps:true},
+                                       },
+                                   {%endspaceless%}
+                                 ],
+                      options: {xaxis: {mode: "time",
+                                        {% if from_date %}
+                                         min: {{ from_date|epoch }},
+                                        {% endif %}
+                                       {% if to_date %}
+                                         max: {{ to_date|epoch }},
+                                        {% endif %}
+                                       timeformat: "%d %b %y",
+                                       },
+                                grid: {markings: [{yaxis: {from: 8, to:8}, color: "#adff2f"}]}},
+                                series:{stack:true, bars:{show:true}},
+                       },
 
-  },
-   
-{% endfor %}
-]
+                       {% endfor %}
+                       ]);
+                  });
+</script>
 
-  
-  var options = { 
-                 series: {
-                           stack: true,
-			   bars:{show: true, barWidth: 24*60*60*1000 },
-                           lines:{show:false, steps: false}
-                          },
-                xaxis: { 
-		           mode: "time",
-                           tickSize: [1,"day"],
-                           min: {{from_date|epoch}},
-			   max: {{ to_date|epoch }},
-                           color: "black",
-                           timeformat: "%d %b %y"
-                       }, 
-               yaxis: { 		
-                           min: 0,
-			   max: 60,
-                       }, 
- 
-
-                };
-  var graph = $.plot ( $("#sprint_name"),dataset, options);
-
-
-{% for day, issue_label in issue_labels %}
-      o = graph.pointOffset({ x: {{ day|epoch}}, y: {{ 50 }} });
-      var style_string = "transform:rotate(90def);-webkit-transform:rotate(90deg);position:absolute;left:" + (o.left) + "px;top:" + o.top + "px;color:#666;font-size:smaller"
-      $("#sprint_name").append('<div style='+style_string+'> {{ issue_label }}</div>');
-{% endfor %}
+{% comment %}
+  {% for day, issue_label in issue_labels %}
+        o = graph.pointOffset({ x: {{ day|epoch}}, y: {{ 50 }} });
+        var style_string = "transform:rotate(90def);-webkit-transform:rotate(90deg);position:absolute;left:" + (o.left) + "px;top:" + o.top + "px;color:#666;font-size:smaller"
+        $("#sprint_name").append('<div style='+style_string+'> {{ issue_label }}</div>');
+  {% endfor %}
+{% endcomment %}
 
 </script>
 {% endblock %}
