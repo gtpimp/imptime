@@ -32,7 +32,10 @@
     <p>
       Created on: {{ issue.created|date:'D d-M-Y H:i:s' }} <br />
       Modified: {{ issue.modified|date:'D d-M-Y H:i:s' }} <br/>
-      Likely estimate: {{ issue.best_hours_estimate.0 }} hours by {{issue.best_hours_estimate.1}} <br/>
+      Cc: Gareth Priede <gtp@implicitdesign.co.za>
+      {% has_permission has_view_actual_hours project.business %}
+        Likely estimate: {{ issue.best_hours_estimate.0 }} hours by {{issue.best_hours_estimate.1}} <br/>
+      {% end_permission %}
 
       {% if issue.due_date %}
         Due date: {{ issue.due_date|date:'D d-M-Y' }} <br/>
@@ -143,7 +146,7 @@
    {% endif %}
   <hr/>
 
-  {% has_permission has_view_actual_hours project.business %} 
+  {% has_permission has_view_actual_hours project.business %}
     <a href="#" onclick="$(this).parent().find('.timesheet_entries').toggle(); return false;">
       <img src="{{STATIC_URL}}images/icons/clock.png"/>
     </a>
