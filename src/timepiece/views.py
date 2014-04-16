@@ -4141,13 +4141,17 @@ def sortable_issue_update(request, project_id):
     for item_order_count, issue_id in enumerate(ordered_issue_ids):
         issue = timepiece.Issue.objects.get(pk=issue_id)
         old_project = issue.project
-        issue.project = new_project
         old_order = issue.order
+        if old_project != new_project:
+            issue.project = new_project
+            issue.save()
+            timepiece.IssueHistory.add_history(request.user, issue, "changed sprint", old_project, new_project)
+
         if old_order != item_order_count:
             issue.order = item_order_count
             issue.save()
             timepiece.IssueHistory.add_history(request.user, issue, "order", old_order, issue.order)
-    
+        
         if old_project != new_project or old_order != item_order_count:
             get_interface_plugin(request, new_project.business).move_issue(issue, old_project=old_project)
 

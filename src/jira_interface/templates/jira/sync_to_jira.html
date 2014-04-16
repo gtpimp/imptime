@@ -1,11 +1,11 @@
 {% load url from future %}
 {% load bootstrap_toolkit %}
 <div class="new_dyn_form_container">
-    <h3>Synchronise issues to business: {{ business.name }} <img src="{{STATIC_URL}}/images/timepiece/icons/bin_closed.png" alt="cancel" onclick="return imp.close_add_issue(this);"/> </h3>
+    <h3>Synchronise issues to project: {{ project }} <img src="{{STATIC_URL}}/images/timepiece/icons/bin_closed.png" alt="cancel" onclick="return imp.close_add_issue(this);"/> </h3>
   <form class="add_issue_form" method="POST" action="">
     {% csrf_token %}
     {{ form }}
     <br />
-    <input type="submit" class="btn" onclick="return imp.on_issue_form_submit(this, {{project.id}}, '{% url 'jira:sync_business_to_jira' business.id %}');" value="Submit"/>
+    <input type="submit" class="btn" onclick="return imp.on_issue_form_submit(this, {{project.id}}, '{% url 'jira:sync_project_to_jira' project.id %}');" value="Submit"/>
   </form>
 </div>

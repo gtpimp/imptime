@@ -79,7 +79,15 @@
 				  Create sprint in {{business.name}}
 				</a>	
 			      </li>
-			      
+
+			      {% ifequal business.sync_with "jira" %}
+			      <li>
+				<a href="#" onclick="imp.projects.show_project_card_as_popup(this, '{% url 'jira:sync_business_from_jira' business.id %}', 'Synching...', {'reload_on_done':'{% url 'closed_project_list' business.id %}'}); return false;">
+				    Sync sprint names from Jira
+				  </a>
+			      </li>
+			      {% endifequal %}
+
 			    {% end_permission %}
 			  </ul>
 		      </li>
