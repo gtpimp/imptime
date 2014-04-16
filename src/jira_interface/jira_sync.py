@@ -84,9 +84,10 @@ class JiraSync(object):
             projects = timepiece.Project.objects.filter(business=business)
             for project in projects:
                 if project.interface_plugin_number is None:
-                    jira_project = self.gh.create_sprint(project.name, self.settings.board_id.strip())
-                    project.interface_plugin_number = jira_project.id
-                    project.save();
+                    continue
+                    # jira_project = self.gh.create_sprint(project.name, self.settings.board_id.strip())
+                    # project.interface_plugin_number = jira_project.id
+                    # project.save();
                 self.sync_project_issues_to_jira(project, project_key, jira_assignee, issue_type_name)
                 if self.request:
                     messages.info(self.request, "Sync to jira complete")
