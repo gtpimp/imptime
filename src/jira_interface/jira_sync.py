@@ -91,7 +91,7 @@ class JiraSync(object):
             jira_issues.append(jira_issue)
             
         if jira_issues:
-            self.gh.add_issues_to_sprint(timepiece_project.jira_interface_number, [z.key for z in jira_issues])
+            self.gh.add_issues_to_sprint(timepiece_project.interface_plugin_number, [z.key for z in jira_issues])
 
     def sync_from_jira(self):
         try:
