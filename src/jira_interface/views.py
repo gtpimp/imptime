@@ -57,6 +57,9 @@ def sync_business_to_jira(request, business_id):
                     return HttpResponse("synched")
                 except Exception, ex:
                     return HttpResponse("Sync failed: %s" % ex)
+            else:
+                logger.debug("Form errors: %s" % form.errors)
+                messages.info(request, "Form errors: %s" % form.errors)
         else:
             form = jira.get_create_issue_form()
         return render(request, 'jira/sync_to_jira.html', {'form': form, 'business': jira.timepiece_business})
