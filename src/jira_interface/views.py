@@ -43,19 +43,23 @@ def sync_business_from_jira(request, business_id, context=None):
         return HttpResponse("Sync failed: %s" % ex)
 
 @login_required
-def sync_business_to_jira(request, business_id):
+def sync_project_to_jira(request, timepiece_project_id):
     try:
-        jira = JiraSync(request, business_id)
+        timepiece_project = timepiece.Project.objects.get(pk=timepiece_project_id)
+        jira = JiraSync(request, timepiece_project.business.id)
         if request.POST:
             form = jira.get_create_issue_form(request.POST)
             if form.is_valid():
-                project_key = form.cleaned_data['project']
-                assigned_to = form.cleaned_data['assigned_to']
-                issue_type_name = form.cleaned_data['issue_type']
+                jira_project_key = form.cleaned_data['project']
+                jira_assigned_to = form.cleaned_data['assigned_to']
+                jira_issue_type_name = form.cleaned_data['issue_type']
                 try:
-                    jira.sync_to_jira(project_key, assigned_to, issue_type_name)
-                    return HttpResponse("synched")
+                    jira.sync_project_to_jira(timepiece_project_id, jira_project_key, jira_assigned_to, jira_issue_type_name)
+                    messages.info(request, "Synced %s to jira" % timepiece_project)
+                    return HttpResponse("Synched")
                 except Exception, ex:
+                    logger.exception(ex)
+                    messages.error(request, "Failed to sync %s to jira : %s" % (timepiece_project, ex))
                     return HttpResponse("Sync failed: %s" % ex)
             else:
                 logger.debug("Form errors: %s" % form.errors)
@@ -68,16 +72,16 @@ def sync_business_to_jira(request, business_id):
         return HttpResponse("Sync failed: %s" % ex)
 
 @login_required
-def sync_project_from_jira(request, project_id, context=None):
+def sync_project_from_jira(request, timepiece_project_id, context=None):
     context = context or {}
-    project = timepiece.Project.objects.get(pk=project_id)
+    timepiece_project = timepiece.Project.objects.get(pk=timepiece_project_id)
     try:
-        jira_sync = JiraSync(request, project.business.id)
-        jira_sync.sync_sprint_from_jira(timepiece_sprint=project)
+        jira_sync = JiraSync(request, timepiece_project.business.id)
+        jira_sync.sync_sprint_from_jira(timepiece_sprint=timepiece_project)
         return HttpResponse("synched")
     except Exception, ex:
         logger.exception(ex)
-        messages.error(request, "Sync of %s from jira failed : " % (project, ex))
+        messages.error(request, "Sync of %s from jira failed : " % (timepiece_project, ex))
         return HttpResponse("Sync failed: %s" % ex)
 
 @login_required

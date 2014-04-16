@@ -49,7 +49,7 @@ class JiraSync(object):
         self.gh = GreenHopper(**kwargs)
         return True
 
-    def sync_project_issues_to_jira(self, project, jira_project_key, jira_assignee, issue_type_name):
+    def sync_project_issues_to_jira(self, timepiece_project, jira_project_key, jira_assignee, issue_type_name):
         if not self._connect():
             return
 
@@ -57,10 +57,10 @@ class JiraSync(object):
         # it stands I think it will wrongly set the assigned to user
         # to the timepiece project jira user, and not the issue
         # assignee.
-        logger.error("Sync to jira disabled")
-        return
+        #logger.error("Sync to jira disabled")
+        #return
 
-        timepiece_issues = timepiece.Issue.objects.filter(project=project,interface_plugin_number__isnull=True)
+        timepiece_issues = timepiece.Issue.objects.filter(project=timepiece_project,interface_plugin_number__isnull=True)
         jira_assignee = self.settings.primary_user.profile.jira_user_name
         jira_issues = []
         for timepiece_issue in timepiece_issues:
@@ -74,23 +74,22 @@ class JiraSync(object):
             jira_issues.append(jira_issue)
             
         if jira_issues:
-            self.gh.add_issues_to_sprint(project.jira_inferface_number, [z.key for z in jira_issues])
+            self.gh.add_issues_to_sprint(timepiece_project.jira_inferface_number, [z.key for z in jira_issues])
 
-    def sync_to_jira(self, project_key, jira_assignee, issue_type_name):
+    def sync_project_to_jira(self, timepiece_project_id, jira_project_key, jira_assignee, jira_issue_type_name):
         try:
             if not self._connect():
                 return
-            business = self.timepiece_business
-            projects = timepiece.Project.objects.filter(business=business)
-            for project in projects:
-                if project.interface_plugin_number is None:
-                    continue
-                    # jira_project = self.gh.create_sprint(project.name, self.settings.board_id.strip())
-                    # project.interface_plugin_number = jira_project.id
-                    # project.save();
-                self.sync_project_issues_to_jira(project, project_key, jira_assignee, issue_type_name)
-                if self.request:
-                    messages.info(self.request, "Sync to jira complete")
+            timepiece_project = timepiece.Project.objects.get(pk=timepiece_project_id)
+            if timepiece_project.interface_plugin_number is None:
+                messages.info(self.request, "Not a jira sprint")
+                return
+                # jira_project = self.gh.create_sprint(project.name, self.settings.board_id.strip())
+                # project.interface_plugin_number = jira_project.id
+                # project.save();
+            self.sync_project_issues_to_jira(timepiece_project, project_key, jira_assignee, issue_type_name)
+            if self.request:
+                messages.info(self.request, "Sync to jira complete")
         except Exception, ex:
             self._on_error(ex)
 

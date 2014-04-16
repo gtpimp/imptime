@@ -5,6 +5,6 @@
     <h3>Sync {{business.sync_with}}</h3>
     {{ plugin_form }}
     <br />
-    <input type="submit" class="btn" onclick="return imp.on_issue_form_submit(this, {{project.id}}, '{% url 'jira:sync_business_to_jira' business.id %}');" value="Submit"/>
+    <input type="submit" class="btn" onclick="return imp.on_issue_form_submit(this, {{project.id}}, '{% url 'jira:sync_project_to_jira' project.id %}');" value="Submit"/>
   </form>
 </div>
