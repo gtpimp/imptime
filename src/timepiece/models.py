@@ -677,7 +677,12 @@ class Project(models.Model):
 
         estimate_cost = 0
         for issue in issues:
-            points = issue.issue_points.get_query_set().all().filter(user__id=preferred_user_id).values('points', 'user')
+
+            points = []
+            if issue.assigned_to:
+                points = issue.issue_points.get_query_set().all().filter(user=issue.assigned_to).values('points', 'user')
+            if len(points) == 0 or points[0]['points'] is None:
+                points = issue.issue_points.get_query_set().all().filter(user__id=preferred_user_id).values('points', 'user')
             if len(points) == 0 or points[0]['points'] is None:
                 points = issue.issue_points.get_query_set().all().values('points', 'user')
             if len(points) == 0 or points[0]['points'] is None:
