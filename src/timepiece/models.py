@@ -2302,6 +2302,7 @@ class Issue(models.Model):
     ISSUE_STATUS_CHOICES = (
            ( 'bug', 'bug'),
            ( 'devdone', 'dev_done'),
+           ( 'needscodereview', 'needs code review'),
            ( 'dev unclear', 'dev unclear'),
            ( 'duplicate', 'duplicate'),
            ( 'in testing', 'in testing'),

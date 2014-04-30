@@ -81,7 +81,7 @@ class JiraSync(object):
         #jira_assignee = self.settings.primary_user.profile.jira_user_name
         jira_issues = []
         for timepiece_issue in timepiece_issues:
-            jira_issue = self.jira.create_issue(project={'key': jira_project_key}, summary='test: ' + timepiece_issue.subject,
+            jira_issue = self.jira.create_issue(project={'key': jira_project_key}, summary=timepiece_issue.subject,
                                             description=timepiece_issue.description, issuetype={'name': issue_type_name}, 
                                             assignee={'name':jira_assignee})
             timepiece_issue.interface_plugin_number = jira_issue.key
