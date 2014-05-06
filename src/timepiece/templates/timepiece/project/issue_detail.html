@@ -33,7 +33,7 @@
       Created on: {{ issue.created|date:'D d-M-Y H:i:s' }} <br />
       Modified: {{ issue.modified|date:'D d-M-Y H:i:s' }} <br/>
       {% has_permission has_view_actual_hours project.business %}
-        {% has_permission has_see_other_user_points %}
+        {% has_permission has_see_other_user_points project.business %}
           Likely estimate: {{ issue.best_hours_estimate.0 }} hours by {{issue.best_hours_estimate.1}} <br/>
         {% end_permission %}
       {% end_permission %}
