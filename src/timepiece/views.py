@@ -4241,7 +4241,7 @@ def sprint_report(request, project_id, context=None):
 
         prefix = request.GET['report_type']
         if request.GET['report_type'] == 'Quote':
-            prefix = "Quote"
+            prefix = "Proposal"
 
         filename = prefix + "_implicitdesign_" + project.long_name().replace(" ","") + "_" + datetime.datetime.today().strftime("%d%m%Y") + ".pdf"
         rendered = HttpResponse(as_pdf, mimetype='application/pdf')
