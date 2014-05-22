@@ -233,12 +233,10 @@ INSTALLED_APPS = (
     'colorful',
 
     'timepiece',
-    'planner',
     'south',
     'emacs_importer',
     'implicitdesign',
     'jira_interface',
-    'planner',
 
 )
 
