@@ -9,20 +9,11 @@
 {% block content %}
  <div id="calendar">
    Calendar
+
+   {{ dev_calendar|safe }}
+
  </div>
 
-<script>
-
- $(document).ready(function() {
-
-  // page is now ready, initialize the calendar...
-    $('#calendar').fullCalendar({
-        // put your options and callbacks here
-     // events: '/schedule/api/occurrences?calendar_slug=example'
-    })
 
 
- });
-
-</script>
 {% endblock %}

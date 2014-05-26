@@ -1,6 +1,6 @@
 import random
-import calendar
 import markdown
+import dev_calendar
 from django.contrib.auth import login as django_login, load_backend
 from django.core.files.base import ContentFile
 import csv
@@ -4815,4 +4815,5 @@ def auto_issue_sort(request, project_id, template="timepiece/project/auto_issue_
 
 def calendar(request, template="timepiece/calendar/calendar.html", context=None):
     context = context or {}
+    context['dev_calendar'] = dev_calendar.render_dev_calendar(request)
     return render_to_response(template, context, context_instance=RequestContext(request))

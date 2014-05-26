@@ -237,7 +237,6 @@ INSTALLED_APPS = (
     'emacs_importer',
     'implicitdesign',
     'jira_interface',
-    'schedule',
 
 )
 
