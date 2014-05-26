@@ -9,7 +9,7 @@
     {{ block.super }}
     <li>
         <span class="divider">/</span>
-	<a href="{% url edit_project project.pk %}">Edit Sprint Budget</a>
+	<a href="{% url 'edit_project' project.pk %}">Edit Sprint Budget</a>
     </li>
 {% endblock crumbs %}
 

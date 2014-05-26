@@ -602,5 +602,6 @@ urlpatterns = patterns('',
                        url(r'^auto_issue_sort/(?P<project_id>.*)/$', views.auto_issue_sort, {}, 'auto_issue_sort'),
                        
                        
+  url(r'^calendar/$', views.calendar, {}, name='calendar'),                       
 
 )

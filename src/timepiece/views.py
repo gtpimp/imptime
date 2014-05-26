@@ -3307,7 +3307,6 @@ def get_project_detail(request, project_id, template="timepiece/project/project_
 
     return render_to_response(template, context, context_instance=RequestContext(request))
 
-@login_required
 @csrf_exempt
 @login_required
 def project_list(request, project_id=None, highlight_issue_id=None, business_id=None,
@@ -4813,3 +4812,7 @@ def auto_issue_sort(request, project_id, template="timepiece/project/auto_issue_
         context['states'] = [x['status'] for x in project.issues.order_by("status").values("status").distinct()]
         context['project'] = project
         return render_to_response(template, context, context_instance=RequestContext(request))
+
+def calendar(request, template="timepiece/calendar/calendar.html", context=None):
+    context = context or {}
+    return render_to_response(template, context, context_instance=RequestContext(request))

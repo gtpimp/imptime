@@ -10,9 +10,9 @@
     <li>
         <span class="divider">/</span>
         {% if not project.pk %}
-            <a href="{% url create_project %}">Create Sprint</a>
+            <a href="{% url 'create_project' %}">Create Sprint</a>
         {% else %}
-            <a href="{% url edit_project project.pk %}">Edit Sprint</a>
+            <a href="{% url 'edit_project' project.pk %}">Edit Sprint</a>
         {% endif %}
     </li>
 {% endblock crumbs %}

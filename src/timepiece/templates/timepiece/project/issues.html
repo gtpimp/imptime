@@ -1,5 +1,4 @@
 {% extends "timepiece/project/base.html" %}
-{% load url from future %}
 {% load humanize %}
 {% block title %}Project Issues{% endblock %}
 {% load bootstrap_toolkit %}
@@ -21,19 +20,19 @@
             </li>
 
             {% if perms.timepiece.change_project %}
-                <li><a href='{% url 'edit_project' project_id=project.id %}'>Edit project</a></li>
+                <li><a href="{% url 'edit_project' project_id=project.id %}">Edit project</a></li>
                 <li><a href="{% url 'delete_project' project.id %}">Delete project</a></li>
             {% endif %}
 
             {% if perms.timepiece.view_businesses %}
-                <li><a href='{% url 'view_business' business=project.business.id %}'>Return to {{ project.business.name }}</a></li>
+                <li><a href="{% url 'view_business' business=project.business.id %}">Return to {{ project.business.name }}</a></li>
             {% endif %}
 
             {% if perms.timepiece.view_project_time_sheet %}
-                <li><a href='{% url 'project_time_sheet' project.id %}'>Sprint Time Sheet</a></li>
+                <li><a href="{% url 'project_time_sheet' project.id %}">Sprint Time Sheet</a></li>
             {% endif %}
 
-            <li><a href='{% url 'project_issues' project.id %}'>Issues</a></li>
+            <li><a href="{% url 'project_issues' project.id %}">Issues</a></li>
 
             <li>
 	      {% has_permission has_add_issue project.business %}

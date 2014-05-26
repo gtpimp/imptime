@@ -1,0 +1,14 @@
+
+.splitter {
+	height: 500px;
+	width: 100%;
+	/*border: 5px solid #aaa;*/
+}
+.splitter .splitter-left, .splitter .splitter-right {
+	overflow: auto;
+}
+.vsplitbar {
+	width: 5px;
+	background: #aaa;
+	border: 1px solid #000000;
+}

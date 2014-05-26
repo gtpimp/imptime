@@ -110,7 +110,7 @@
   <tr>
     <td>
 
-      <form method="GET" action="{% url graphs %}">
+      <form method="GET" action="{% url 'graphs' %}">
 	{% csrf_token %}
 	{{ date_form.as_p }}
 	{{ search_filter_form|as_bootstrap:"horizontal" }}

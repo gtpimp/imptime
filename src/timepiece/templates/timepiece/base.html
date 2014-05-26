@@ -7,7 +7,7 @@
 
     <script>
       var imp = { config: {} };
-      imp.config.issue_checkbox_context_menu_url = "{% url issue_checkbox_context_menu 999999 %}";
+      imp.config.issue_checkbox_context_menu_url = "{% url 'issue_checkbox_context_menu' 999999 %}";
     </script>
 
     {% block javascript %}
@@ -72,7 +72,7 @@
             {% block breadcrumb %}
                 <ul class="breadcrumb">
                     {% block crumbs %}
-                        <li><a href="{% url landing_page %}">Home</a></li>
+                        <li><a href="{% url 'landing_page' %}">Home</a></li>
                     {% endblock crumbs %}
                 </ul>
             {% endblock breadcrumb %}
