@@ -229,7 +229,7 @@ class JiraSync(object):
             timepiece.IssueHistory.add_history(self.active_user, timepiece_issue, "State change during jira import", timepiece_issue.status, state)
             timepiece_issue.status = state
             
-        if int(timepiece_issue.order) != int(order) and self.settings.sync_issue_ordering:
+        if int(timepiece_issue.order) != int(order) and self.settings.sync_issue_ordering_from_jira:
             timepiece.IssueHistory.add_history(self.active_user, timepiece_issue, "Order change during jira import", timepiece_issue.order, order)
             timepiece_issue.order = order
 
@@ -443,7 +443,7 @@ class JiraSync(object):
         if timepiece_issue.interface_plugin_number is None:
             return
 
-        if old_project == timepiece_issue.project and not self.settings.sync_issue_ordering:
+        if old_project == timepiece_issue.project and not self.settings.sync_issue_ordering_to_jira:
             # Synching of reorders within a sprint aren't sent to jira
             return
 

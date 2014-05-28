@@ -21,7 +21,8 @@ class Jira(models.Model):
         timepiece.User, related_name='primary_user', blank=True, null=True)
 
     sync_actual_times = models.BooleanField(default=False, blank=True)
-    sync_issue_ordering = models.BooleanField(default=True, blank=True)
+    sync_issue_ordering_to_jira = models.BooleanField(default=False, blank=True)
+    sync_issue_ordering_from_jira = models.BooleanField(default=True, blank=True)
 
 class JiraSyncStatus(models.Model):
     
