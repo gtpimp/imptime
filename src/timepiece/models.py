@@ -414,7 +414,7 @@ class Project(models.Model):
     )
     description = models.TextField(blank=True, null=True, db_index=True)
     short_description = models.CharField(max_length=50, blank=True, null=True, db_index=True)
-    order = models.IntegerField(null=True,blank=True)
+    order = models.BigIntegerField(null=True,blank=True)
     objects = QuerySetManager(ProjectQuerySet)
     interface_plugin_number = models.CharField(max_length=255, null=True, blank=True) #eg jira
 
@@ -2321,7 +2321,7 @@ class Issue(models.Model):
     subject = models.TextField(db_index=True)
     description = models.TextField(blank=True)
     story_points = models.FloatField(null=True,blank=True)    
-    order = models.IntegerField(null=True,blank=True)
+    order = models.BigIntegerField(null=True,blank=True)
     feature = models.ForeignKey("Feature",blank=True,null=True,related_name='issues')
     assigned_to = models.ForeignKey(User, related_name='assigned_issues', blank=True,null=True)
     interface_plugin_number = models.CharField(max_length=255, null=True, blank=True) #eg jira

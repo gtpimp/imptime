@@ -21,7 +21,7 @@ class JiraSync(object):
         self.errors = []
 
     def _on_error(self, err_obj):
-        if type(err_obj) == Exception:
+        if isinstance(err_obj, Exception):
             logger.exception(err_obj)
         else:
             logger.error(err_obj)
@@ -197,92 +197,100 @@ class JiraSync(object):
 
     def _sync_issue(self, gh_issue, timepiece_project):
 
-        if not hasattr(gh_issue, 'fields'):
-            jira_issue = self.jira.issue(str(gh_issue.id))
-        else:
-            jira_issue = gh_issue
-
-        logger.debug("syncing issue")
-        state = jira_issue.fields.status.name
-        order = getattr(jira_issue.fields, self.settings.custom_field_name_for_issue_order)
-        fixed_subject="%s %s" % (jira_issue.key, jira_issue.fields.summary)
-        time_estimate = float(jira_issue.fields.timeestimate or 0) / (60*60) # cos everybody knows you should estimate to accuracy in seconds
-        time_estimate = float(int(time_estimate*100))/100
-
         try:
-            timepiece_issue = timepiece_project.issues.get_query_set().get(interface_plugin_number=jira_issue.key)
-        except timepiece.Issue.DoesNotExist:
-            timepiece_issue = timepiece.Issue(project=timepiece_project,
-                                              subject=fixed_subject,
-                                              description=jira_issue.fields.description or "",
-                                              status=state,
-                                              order=order,
-                                              number=jira_issue.id,
-                                              interface_plugin_number=jira_issue.key)
-            timepiece_issue.number = timepiece.Issue.get_last_issue_number(timepiece_project.business)+1
+
+            if not hasattr(gh_issue, 'fields'):
+                jira_issue = self.jira.issue(str(gh_issue.id))
+            else:
+                jira_issue = gh_issue
+
+            logger.debug("syncing issue")
+            state = jira_issue.fields.status.name
+            order = getattr(jira_issue.fields, self.settings.custom_field_name_for_issue_order)
+            fixed_subject="%s %s" % (jira_issue.key, jira_issue.fields.summary)
+            time_estimate = float(jira_issue.fields.timeestimate or 0) / (60*60) # cos everybody knows you should estimate to accuracy in seconds
+            time_estimate = float(int(time_estimate*100))/100
+
+            try:
+                timepiece_issue = timepiece_project.issues.get_query_set().get(interface_plugin_number=jira_issue.key)
+            except timepiece.Issue.DoesNotExist:
+                timepiece_issue = timepiece.Issue(project=timepiece_project,
+                                                  subject=fixed_subject,
+                                                  description=jira_issue.fields.description or "",
+                                                  status=state,
+                                                  order=order,
+                                                  number=jira_issue.id,
+                                                  interface_plugin_number=jira_issue.key)
+                timepiece_issue.number = timepiece.Issue.get_last_issue_number(timepiece_project.business)+1
+                timepiece_issue.save()
+                timepiece.IssueHistory.add_history(self.active_user, timepiece_issue, "Imported from jira", "", timepiece_issue.subject)
+            except timepiece.Issue.MultipleObjectsReturned:
+                timepiece_issue = timepiece_project.issues.get_query_set().filter(interface_plugin_number=jira_issue.key)[0]
+
+            if timepiece_issue.status != state:
+                timepiece.IssueHistory.add_history(self.active_user, timepiece_issue, "State change during jira import", timepiece_issue.status, state)
+                timepiece_issue.status = state
+
+            if int(timepiece_issue.order) != int(order) and self.settings.sync_issue_ordering_from_jira:
+                timepiece.IssueHistory.add_history(self.active_user, timepiece_issue, "Order change during jira import", timepiece_issue.order, order)
+                timepiece_issue.order = order
+
+            if timepiece_issue.interface_plugin_number != jira_issue.key:
+                timepiece.IssueHistory.add_history(self.active_user, timepiece_issue, "Key change during jira import", timepiece_issue.interface_plugin_number, jira_issue.key)
+                timepiece_issue.interface_plugin_number = jira_issue.key
+
+            if timepiece_issue.subject != fixed_subject:
+                timepiece.IssueHistory.add_history(self.active_user, timepiece_issue, "Subject change during jira import", timepiece_issue.subject, fixed_subject)
+                timepiece_issue.subject = fixed_subject
+
+            if timepiece_issue.description != jira_issue.fields.description:
+                timepiece.IssueHistory.add_history(self.active_user, timepiece_issue, "Description change during jira import", timepiece_issue.description, jira_issue.fields.description or "")
+                timepiece_issue.description = jira_issue.fields.description or ""
+
+            if hasattr(jira_issue.fields, 'assignee') and jira_issue.fields.assignee:
+                timepiece_assigned_user = self._get_or_create_timepiece_equivalent_of_jira_user(jira_issue.fields.assignee)
+                if timepiece_issue.assigned_to != timepiece_assigned_user:
+                    timepiece.IssueHistory.add_history(self.active_user, timepiece_issue, "Assignee change during jira import", timepiece_issue.assigned_to, timepiece_assigned_user)
+                    timepiece_issue.assigned_to = timepiece_assigned_user
+
+                if timepiece_issue.get_assigned_hours_estimate()[0] != time_estimate:
+                    timepiece.IssueHistory.add_history(self.active_user, timepiece_issue, "Time estimate changed during jira import", timepiece_issue.get_assigned_hours_estimate()[0], time_estimate)
+                    timepiece_issue.set_assigned_hours_estimate(time_estimate)
+
+            if timepiece_issue.story_points != jira_issue.fields.timeestimate:
+                timepiece.IssueHistory.add_history(self.active_user, timepiece_issue, "Points change during jira import", timepiece_issue.story_points, jira_issue.fields.timeestimate)
+                timepiece_issue.story_points = jira_issue.fields.timeestimate
+
+            if hasattr(jira_issue.fields, 'duedate') and jira_issue.fields.duedate:
+                jira_due_date = datetime.strptime(jira_issue.fields.duedate, "%Y-%m-%d")
+                if timepiece_issue.due_date != jira_due_date:
+                    timepiece.IssueHistory.add_history(self.active_user, timepiece_issue, "Due date changed", timepiece_issue.due_date, jira_issue.fields.duedate)
+                    timepiece_issue.due_date = jira_issue.fields.duedate
+
             timepiece_issue.save()
-            timepiece.IssueHistory.add_history(self.active_user, timepiece_issue, "Imported from jira", "", timepiece_issue.subject)
-        except timepiece.Issue.MultipleObjectsReturned:
-            timepiece_issue = timepiece_project.issues.get_query_set().filter(interface_plugin_number=jira_issue.key)[0]
 
-        if timepiece_issue.status != state:
-            timepiece.IssueHistory.add_history(self.active_user, timepiece_issue, "State change during jira import", timepiece_issue.status, state)
-            timepiece_issue.status = state
-            
-        if int(timepiece_issue.order) != int(order) and self.settings.sync_issue_ordering_from_jira:
-            timepiece.IssueHistory.add_history(self.active_user, timepiece_issue, "Order change during jira import", timepiece_issue.order, order)
-            timepiece_issue.order = order
+            if hasattr(jira_issue.fields, 'comment') and jira_issue.fields.comment.comments:
+                for jira_comment in jira_issue.fields.comment.comments:
+                    try:
+                        timepiece.IssueComment.objects.get(issue=timepiece_issue, comment__icontains=jira_comment.body)
+                    except timepiece.IssueComment.DoesNotExist:
+                        author = self._get_or_create_timepiece_equivalent_of_jira_user(jira_comment.author)
+                        created = dateparser.parse(jira_comment.created)
+                        new_comment = timepiece.IssueComment.objects.create(issue_id=timepiece_issue.id, 
+                                                                            comment=jira_comment.body, 
+                                                                            author=author)
+                        timepiece.IssueComment.objects.filter(pk=new_comment.id).update(created=created)
+                        timepiece.IssueHistory.add_history(self.active_user, timepiece_issue, "Comment added during jira import", "", jira_comment.body)
+                    except timepiece.IssueComment.MultipleObjectsReturned:
+                        pass
+            return timepiece_issue
 
-        if timepiece_issue.interface_plugin_number != jira_issue.key:
-            timepiece.IssueHistory.add_history(self.active_user, timepiece_issue, "Key change during jira import", timepiece_issue.interface_plugin_number, jira_issue.key)
-            timepiece_issue.interface_plugin_number = jira_issue.key
+        except Exception, ex:
+            self._on_error(ex)
+            import pdb; pdb.set_trace()
+            raise
 
-        if timepiece_issue.subject != fixed_subject:
-            timepiece.IssueHistory.add_history(self.active_user, timepiece_issue, "Subject change during jira import", timepiece_issue.subject, fixed_subject)
-            timepiece_issue.subject = fixed_subject
 
-        if timepiece_issue.description != jira_issue.fields.description:
-            timepiece.IssueHistory.add_history(self.active_user, timepiece_issue, "Description change during jira import", timepiece_issue.description, jira_issue.fields.description or "")
-            timepiece_issue.description = jira_issue.fields.description or ""
-
-        if hasattr(jira_issue.fields, 'assignee') and jira_issue.fields.assignee:
-            timepiece_assigned_user = self._get_or_create_timepiece_equivalent_of_jira_user(jira_issue.fields.assignee)
-            if timepiece_issue.assigned_to != timepiece_assigned_user:
-                timepiece.IssueHistory.add_history(self.active_user, timepiece_issue, "Assignee change during jira import", timepiece_issue.assigned_to, timepiece_assigned_user)
-                timepiece_issue.assigned_to = timepiece_assigned_user
-
-            if timepiece_issue.get_assigned_hours_estimate()[0] != time_estimate:
-                timepiece.IssueHistory.add_history(self.active_user, timepiece_issue, "Time estimate changed during jira import", timepiece_issue.get_assigned_hours_estimate()[0], time_estimate)
-                timepiece_issue.set_assigned_hours_estimate(time_estimate)
-
-        if timepiece_issue.story_points != jira_issue.fields.timeestimate:
-            timepiece.IssueHistory.add_history(self.active_user, timepiece_issue, "Points change during jira import", timepiece_issue.story_points, jira_issue.fields.timeestimate)
-            timepiece_issue.story_points = jira_issue.fields.timeestimate
-            
-        if hasattr(jira_issue.fields, 'duedate') and jira_issue.fields.duedate:
-            jira_due_date = datetime.strptime(jira_issue.fields.duedate, "%Y-%m-%d")
-            if timepiece_issue.due_date != jira_due_date:
-                timepiece.IssueHistory.add_history(self.active_user, timepiece_issue, "Due date changed", timepiece_issue.due_date, jira_issue.fields.duedate)
-                timepiece_issue.due_date = jira_issue.fields.duedate
-
-        timepiece_issue.save()
-
-        if hasattr(jira_issue.fields, 'comment') and jira_issue.fields.comment.comments:
-            for jira_comment in jira_issue.fields.comment.comments:
-                try:
-                    timepiece.IssueComment.objects.get(issue=timepiece_issue, comment__icontains=jira_comment.body)
-                except timepiece.IssueComment.DoesNotExist:
-                    author = self._get_or_create_timepiece_equivalent_of_jira_user(jira_comment.author)
-                    created = dateparser.parse(jira_comment.created)
-                    new_comment = timepiece.IssueComment.objects.create(issue_id=timepiece_issue.id, 
-                                                                        comment=jira_comment.body, 
-                                                                        author=author)
-                    timepiece.IssueComment.objects.filter(pk=new_comment.id).update(created=created)
-                    timepiece.IssueHistory.add_history(self.active_user, timepiece_issue, "Comment added during jira import", "", jira_comment.body)
-                except timepiece.IssueComment.MultipleObjectsReturned:
-                    pass
-        return timepiece_issue
-                                                             
     def _get_or_create_timepiece_equivalent_of_jira_user(self, jira_username):
         try:
             return User.objects.get(Q(profile__jira_user_name=jira_username))
@@ -292,7 +300,7 @@ class JiraSync(object):
             timepiece.UserProfile.objects.create(user=user, jira_user_name=jira_username)
             messages.info(self.request, "Auto created user %s (id=%d)" % (user, user.id))
             return user
-
+            
     def add_issue_comment(self, timepiece_comment):
         if not self._connect():
             return
