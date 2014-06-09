@@ -1,19 +1,149 @@
 {% extends "timepiece/base.html" %}
 
-{% block title %}Calendar{% endblock %}
-{% block extra_head %}
-<%-- <link rel='stylesheet' type='text/css' href="//cdnjs.cloudflare.com/ajax/libs/fullcalendar/1.6.4/fullcalendar.css" /> --%>
-<script type='text/javascript' src="//cdnjs.cloudflare.com/ajax/libs/fullcalendar/1.6.4/fullcalendar.min.js"></script>
+{% block css %}
+<link type="text/css" rel="stylesheet" href="{{ STATIC_URL }}/css/jquery-ui.css" />
+<link type="text/css" rel="stylesheet" href="{{ STATIC_URL }}css/timepiece.css" />
+
+<style type="text/css" media="screen,print">
+  table {
+    border: 1px solid #999;
+    border-collapse: collapse;
+    font-family: Georgia, Times, serif;
+    width:100%;
+  }
+  th {
+    border: 1px solid #999;
+    font-size: 70%;
+    text-transform: uppercase;
+  }
+  td {
+    border: 1px solid #999;
+    height: 5em;
+    width:5em;
+    padding: 5px;
+    vertical-align: top;
+  }
+  caption {
+    font-size: 300%;
+    font-style: italic;
+  }
+  .day {
+    text-align: right;
+  }
+  .calendarform {
+    display:inline-block;
+    width:80%; 
+    position:absolute;
+    margin-left:0.5%;
+  }
+  .projectselect {
+    width: 100%;
+  }
+  .weekend {
+    background-color: #F3F3F3;
+  }
+</style>
+
 {% endblock %}
 
+{% block title %}Calendar{% endblock %}
+
+
 {% block content %}
- <div id="calendar">
-   Calendar
+<div class="span12">
+   <h2> {{ dev_calendar.monthStr|safe }} </h2>
+</div>
+<br/>
 
-   {{ dev_calendar|safe }}
+<div class="calendar">
+  <div class="projectselect" align="right">
+    <select class="business">
+        <option value="0">Select a project</option>
+      {% for business in  dev_calendar.business_list %}
+      
+          {% if dev_calendar.selectedBusiness|add:0 == business.id %}      
+              <option value="{{ business.id }}" selected="selected">{{ business.name }}</option>
+          {% else %}    
+          <option value="{{ business.id }}" >{{ business.name }}</option>
+          {% endif %}
+      {% endfor %}
+    </select> 
+  </div>
+  <div>
+    <select class="userselect" multiple="true" >
+      {% for user in dev_calendar.user_list %}
+          
+        {% for userID in dev_calendar.selectedUsers %}
+          {% if userID|add:0 == user.id %}
+            <option value="{{ user.id }}" selected="selected">{{ user }}</option>
+          {% else %}
+            <option value="{{ user.id }}">{{ user }}</option>
+          {% endif %}
+        {% endfor %}
 
- </div>
+      {% endfor %}
+    </select>
+    <form class="calendarform" method="GET" action="{% url 'calendar'%}">
+      <input id="business_id" type="hidden" name="business_id" value=""/>
+      <input id="user_ids" type="hidden" name="user_ids" value=""/>
+      <table class="tbody">
+        <thead>
+          <tr>
+            {% for day in dev_calendar.weekdays %}
+            <th>{{day}}</th>
+            {% endfor  %}
+
+        </thead>
+        <tbody>
+          {% for week in dev_calendar.month %}
+          <tr> 
+            {% for day, users in week %}
+	    <td>
+              {% if day != 0 %}
+	      {{ day }}
+              <br/>
+              {% for user in users %}
+              <ul>
+                <li> 
+                  {{ user }}
+                </li>
+              </ul>
+              {% endfor %}
+              {% endif %}
+
+	    </td>
+            {% endfor %}
+         
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </form>
+  </div>
+</div>
+
+<script>
+  $(document).ready(function() { 
+    
+    $(".business").on("change", function(){
+
+      console.log($(this).val());
+      $('#business_id').val($(this).val());
+    
+      $('.calendarform').submit();
+    
+    });
+
+    $(".userselect").on("change", function(){
+      $('#user_ids').val($(this).val());
+      $('#business_id').val($(".business").val());
+      console.log($("#business_id").val());
+      console.log($('#user_ids').val());
+    
+      $('.calendarform').submit();
+    });
+  });
 
 
-
+</script>
 {% endblock %}

@@ -4814,6 +4814,36 @@ def auto_issue_sort(request, project_id, template="timepiece/project/auto_issue_
         return render_to_response(template, context, context_instance=RequestContext(request))
 
 def calendar(request, template="timepiece/calendar/calendar.html", context=None):
+    business_id = request.REQUEST.get("business_id") 
+    if not (request.REQUEST.get("user_ids") == ""):
+        user_ids = request.REQUEST.get("user_ids")
+    else:
+        user_ids = None
+
+    if not (business_id is None): 
+        business_users = list( [business, timepiece.BusinessPermissions.objects.filter(business=business)] for business in timepiece.Business.objects.filter(pk=business_id).order_by("name"))
+    else:
+        business_users = list( [business, timepiece.BusinessPermissions.objects.filter(business=business)] for business in timepiece.Business.objects.all().order_by("name"))
+
+    business = list( timepiece.Business.objects.all().order_by("name") )
+
     context = context or {}
-    context['dev_calendar'] = dev_calendar.render_dev_calendar(request)
+    context['dev_calendar'] = dev_calendar.render_dev_calendar(business_id, business_users, business, user_ids)
     return render_to_response(template, context, context_instance=RequestContext(request))
+
+def createCalendarEvent(request):
+    user_id = request.GET['user_id']
+    project_id = request.GET['project_id']
+    project = timepiece.Project.objects.get(pk=project_id)
+    user = timepiece.Project.objects.get(pk=project_id)
+
+
+    form = timepiece_forms.NewProjectForm(request.POST or None, instance=project)
+    if form.is_valid():
+        project = form.save()
+        project.save()
+        return HttpResponseRedirect(
+            reverse('view_project', args=(project.id,))
+            )
+    
+
