@@ -160,31 +160,31 @@ daily by each individual working on the project.
             {% endif %}
             {% if settings.ctc and settings.billable %}
               <div class="graph" style="float:left">
-                <h3 style="text-align:center">profit per user</h3>
+                <h3 style="text-align:center">Profit per user</h3>
                 <div class="graph_profit_by_user" style="height:250px;width:250px;"></div>
               </div>
             {% endif %}
           {% endif %}
 
-{% if settings.include_features %}
-	<div style="clear:both"></div>
-	{% if settings.ctc %}
-	  <div class="graph" style="float:left">
-	    <h3 style="text-align:center">ctc per feature</h3>
-	    <div class="graph_ctc_by_feature" style="height:250px;width:250px;"></div>
-	    
-	  </div>
-	{% endif %}
-	{% if settings.billable %}
-	  <div class="graph" style="float:left">
-	    <h3 style="text-align:center">billable per feature</h3>
-	    <div class="graph_billable_by_feature" style="height:250px;width:250px;"></div>
-	  </div>
-	{% endif %}
-        <div style="clear:both"></div>
-	
-      </div>
-{% endif %}
+        {% if settings.include_features %}
+          <div style="clear:both"></div>
+          {% if settings.ctc %}
+            <div class="graph" style="float:left">
+              <h3 style="text-align:center">Ctc per feature</h3>
+              <div class="graph_ctc_by_feature" style="height:250px;width:250px;"></div>
+
+            </div>
+          {% endif %}
+          {% if settings.billable %}
+            <div class="graph" style="float:left">
+              <h3 style="text-align:center">Billable per feature</h3>
+              <div class="graph_billable_by_feature" style="height:250px;width:250px;"></div>
+            </div>
+          {% endif %}
+          <div style="clear:both"></div>
+
+          </div>
+        {% endif %}
 
       <script>
 
@@ -217,7 +217,7 @@ daily by each individual working on the project.
 		   legend: { show: false} } );
 	{% endif %}
 	
-	{% if settings.billable %}
+	{% if settings.billable and settings.include_billable_per_user %}
 	  $.plot(".graph_billable_by_user",
 		   [ {%spaceless%} 
 		       {% for username,amounts in project.stats.users_and_hours.users.items %} 
@@ -233,7 +233,7 @@ daily by each individual working on the project.
         {% endif %}
 
 	{% if settings.include_features %}
-
+      
 	  {% if settings.ctc %}
 	    $.plot(".graph_profit_by_user",
 		     [ {%spaceless%} 
