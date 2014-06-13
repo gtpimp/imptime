@@ -1138,6 +1138,7 @@ class SprintInvoiceReportSettingsForm(forms.Form):
     end = forms.DateField(initial=None, required=False)
 
     include_features = forms.BooleanField(label="Tick to include features", initial=False, required=False)
+    include_billable_per_user = forms.BooleanField(label="Tick to include billable per user", initial=True, required=False)
     only_these_statuses = forms.MultipleChoiceField( label="Only include these statuses", 
                                                      required=True, initial=('all',),
                                                      widget = CheckboxSelectMultiple)
@@ -1156,6 +1157,7 @@ class SprintInvoiceReportSettingsForm(forms.Form):
         if not self.bp.has_view_ctc_billable_rates:
             del self.fields['ctc']
             del self.fields['billable']
+            del self.fields['include_billable_per_user']
         if not self.bp.has_view_ctc_rates:
             del self.fields['ctc']
         if not bp.has_view_actual_hours:

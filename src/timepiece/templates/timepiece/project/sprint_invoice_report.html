@@ -69,40 +69,42 @@ daily by each individual working on the project.
 {% endif %}
 
 
-{% if project.stats.cost_per_developer.items|length > 0 %}
-  {% if settings.billable or settings.ctc %}
-	<table>
-	  <thead>
-	    <th>User</th>
-	    {% if settings.view_actual_hours %}
-	    <th>Hours</th>
-	    {% endif %}
-	    {% if settings.ctc %}
-	    <th>Ctc</th>
-	    {% endif %}
-	    {% if settings.billable %}
-	    <th>Billable</th>
-	    {% endif %}
-	  </thead>
-	  <tbody>
-	    {% for user, costs in project.stats.cost_per_developer.items %}
-	    <tr>
-	      <td>{{ user.username }}</td>
-	      {% if settings.view_actual_hours %}
-	      <td>{{ costs.hours }}</td>
-	      {% endif %}
-	      {% if settings.ctc %}
-	      <td>R{{ costs.ctc|floatformat:2|intcomma }}</td>
-	      {% endif %}
-	      {% if settings.billable %}
-	      <td>R{{ costs.billable|floatformat:2|intcomma }}</td>
-	      {% endif %}
-	    </tr>
-	    {% endfor %}
-	  </tbody>
-	</table>
-  {% endif %}
-{% endif %}      
+{% if settings.include_billable_per_user %}
+  {% if project.stats.cost_per_developer.items|length > 0 %}
+    {% if settings.billable or settings.ctc %}
+          <table>
+            <thead>
+              <th>User</th>
+              {% if settings.view_actual_hours %}
+              <th>Hours</th>
+              {% endif %}
+              {% if settings.ctc %}
+              <th>Ctc</th>
+              {% endif %}
+              {% if settings.billable %}
+              <th>Billable</th>
+              {% endif %}
+            </thead>
+            <tbody>
+              {% for user, costs in project.stats.cost_per_developer.items %}
+              <tr>
+                <td>{{ user.username }}</td>
+                {% if settings.view_actual_hours %}
+                <td>{{ costs.hours }}</td>
+                {% endif %}
+                {% if settings.ctc %}
+                <td>R{{ costs.ctc|floatformat:2|intcomma }}</td>
+                {% endif %}
+                {% if settings.billable %}
+                <td>R{{ costs.billable|floatformat:2|intcomma }}</td>
+                {% endif %}
+              </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+    {% endif %}
+  {% endif %}      
+{% endif %}
 
 {% if settings.include_features %}
       <h3>Features</h3>
@@ -149,7 +151,7 @@ daily by each individual working on the project.
 	    
 	  </div>
 	  {% endif %}
-          {% if project.stats.users_and_hours.users|length > 0 %}
+          {% if settings.include_billable_per_user %}
 	    {% if settings.billable %}
 	      <div class="graph" style="float:left">
 	        <h3 style="text-align:center">Billable per user</h3>
