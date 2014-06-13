@@ -8,21 +8,23 @@ class Jira(models.Model):
     business = models.ForeignKey(
         timepiece.Business, 
         related_name='jira', blank=False, null=False)
-    username = models.CharField(max_length=255, blank=False, null=False)
-    password = models.CharField(max_length=255, blank=False, null=False)
-    host = models.CharField(max_length=255, blank=False, null=False)
+    host = models.CharField(max_length=255, blank=False, null=False) #jira host
     board_id = models.CharField(
         max_length=20, blank=False, null=False, 
         help_text="this is the rapidView id in the jira url")
     custom_field_name_for_issue_order = models.CharField(
         max_length=20, blank=False, null=False, default="customfield_10006", 
         help_text="the name of the field used to hold the issue sorting value ")
-    primary_user = models.ForeignKey(
-        timepiece.User, related_name='primary_user', blank=True, null=True)
 
     sync_actual_times = models.BooleanField(default=False, blank=True)
     sync_issue_ordering_to_jira = models.BooleanField(default=False, blank=True)
     sync_issue_ordering_from_jira = models.BooleanField(default=True, blank=True)
+
+class JiraUser(models.Model):
+    jira = models.ForeignKey(Jira, blank=False, null=False)
+    timepiece_user = models.ForeignKey(timepiece.User, related_name='jira_user', blank=False, null=False)
+    jira_username = models.CharField(max_length=255, blank=False, null=False)
+    jira_password = models.CharField(max_length=255, blank=False, null=False)
 
 class JiraSyncStatus(models.Model):
     

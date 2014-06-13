@@ -1,0 +1,12 @@
+{% load url from future %}
+
+<li>
+  <a href="#" onclick="imp.projects.show_project_card_as_popup(this, '{% url 'jira:sync_project_from_jira' project.id %}', 'Synching...', {'reload_on_done':'{% url 'project_list' project.id %}'}); return false;">
+                              Sync from Jira
+  </a>
+</li>
+<li>
+  <a href="#" onclick="if ( ! confirm('Are you sure you want to resend sprint information to jira?')) { return false; }; imp.projects.show_project_card_as_popup(this, '{% url 'jira:sync_project_to_jira' project.id %}', 'Synching to jira...'); return false;">
+                              Sync to Jira
+  </a>
+</li>
