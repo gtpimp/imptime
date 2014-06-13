@@ -149,19 +149,20 @@ daily by each individual working on the project.
 	    
 	  </div>
 	  {% endif %}
-	  {% if settings.billable %}
-	  <div class="graph" style="float:left">
-	    <h3 style="text-align:center">Billable per user</h3>
-	    <div class="graph_billable_by_user" style="height:250px;width:250px;"></div>
-	  </div>
-	  {% endif %}
-	  {% if settings.ctc and settings.billable %}
-	  <div class="graph" style="float:left">
-	    <h3 style="text-align:center">profit per user</h3>
-	    <div class="graph_profit_by_user" style="height:250px;width:250px;"></div>
-	    
-	  </div>
-	{% endif %}
+          {% if project.stats.users_and_hours.users|length > 0 %}
+	    {% if settings.billable %}
+	      <div class="graph" style="float:left">
+	        <h3 style="text-align:center">Billable per user</h3>
+	        <div class="graph_billable_by_user" style="height:250px;width:250px;"></div>
+	      </div>
+            {% endif %}
+            {% if settings.ctc and settings.billable %}
+              <div class="graph" style="float:left">
+                <h3 style="text-align:center">profit per user</h3>
+                <div class="graph_profit_by_user" style="height:250px;width:250px;"></div>
+              </div>
+            {% endif %}
+          {% endif %}
 
 {% if settings.include_features %}
 	<div style="clear:both"></div>
