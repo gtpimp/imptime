@@ -297,7 +297,7 @@ class JiraSync(object):
             return JiraUser.objects.get(jira=self.jira_settings, jira_username=jira_username).timepiece_user
         except JiraUser.DoesNotExist:
             logger.warning("Auto creating a limited-privileges user who is assigned to a jira issue")
-            jira_internal_timepiece_username = "from_jira_" + jira_username
+            jira_internal_timepiece_username = "from_jira_%s" % jira_username
             try:
                 user = User.objects.get(username=jira_internal_timepiece_username)
             except User.DoesNotExist:
