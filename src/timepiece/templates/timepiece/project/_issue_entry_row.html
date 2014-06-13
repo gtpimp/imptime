@@ -1,6 +1,5 @@
 {% load timepiece_tags %}
 {% load humanize %}
-{% load url from future %}
 {% load bootstrap_toolkit %}
 
 <tr class="issue_instance_row {{issue.status_as_class}}" assigned_to="{{issue.assigned_to.username}}"  id="{{issue.pk}}" refresh_url="{% url 'get_issue_row' issue.pk %}">                    
