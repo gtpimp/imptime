@@ -303,7 +303,7 @@ class JiraSync(object):
             except User.DoesNotExist:
                 user = User.objects.create(username=jira_internal_timepiece_username)
                 timepiece.UserProfile.objects.create(user=user)
-            messages.info(self.request, "Auto created user %s (id=%d)" % (user, user.id))
+                messages.info(self.request, "Auto created user %s (id=%d)" % (user, user.id))
             return user
             
     def add_issue_comment(self, timepiece_comment):
