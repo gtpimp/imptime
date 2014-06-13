@@ -2160,11 +2160,10 @@ class UserProfile(models.Model):
     amount = models.DecimalField(max_digits=8, decimal_places=2, default=0)
     billable_amount = models.DecimalField(max_digits=8, decimal_places=2, default=0)
     project_names_to_ignore = models.TextField(blank=True)
-    jira_user_name = models.CharField(max_length=100, blank=True, null=True, help_text="Username used when synching with jira")
     authenticate_token = models.CharField(max_length=100, blank=True, null=True, help_text="Authentication token remote connections")
 
     def __unicode__(self):
-        return unicode(self.user)
+        return unicode(self.user.username)
 
     def save(self, *args, **kwargs):
         if self.authenticate_token is None:

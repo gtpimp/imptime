@@ -1,12 +1,14 @@
 
 from django.contrib.auth.decorators import login_required, permission_required
+from django.core.urlresolvers import reverse
+from django.core.exceptions import PermissionDenied
 from django.contrib import messages
 from django.template import RequestContext
 from timepiece import models as timepiece
 from django.http import HttpResponse, HttpResponseRedirect
 from django.http import  Http404, HttpResponseForbidden
-from models import Jira
-from forms import JiraSettingsForm
+from models import Jira, JiraUser
+from forms import JiraSettingsForm, JiraUserForm
 from django.shortcuts import render_to_response, get_object_or_404, redirect, render
 from jira_sync import JiraSync
 import logging
@@ -18,7 +20,7 @@ def edit_settings(request, business_id, template="jira/edit_settings.html", cont
     business = timepiece.Business.objects.get(pk=business_id)
 
     if business.jira.count()==0:
-        settings = Jira.objects.create(business=business, username=' ', password=' ', host=' ', board_id=' ')
+        settings = Jira.objects.create(business=business, host=' ', board_id=' ')
     else:
         settings = business.jira.get_query_set().all()[0]
 
@@ -29,6 +31,35 @@ def edit_settings(request, business_id, template="jira/edit_settings.html", cont
     context['settings'] = settings
     context['form'] = form
     context['business'] = business
+
+    return render_to_response(template, context, context_instance=RequestContext(request))
+
+def my_settings(request, business_id, template="jira/my_settings.html", context=None):
+    context = context or {}
+    business = timepiece.Business.objects.get(pk=business_id)
+
+    current_user = request.user
+    bp = timepiece.BusinessPermissions.for_user(current_user, business)
+    if not bp.has_view_issues:
+        raise PermissionDenied
+
+    settings = Jira.objects.get(business=business)
+    jira_user = JiraUser.objects.get_or_create(jira=settings, timepiece_user=current_user,
+                                               defaults={'jira_username':' ', 'jira_password':' '})[0]
+
+    form = JiraUserForm(request.POST or None, instance=jira_user)
+    if form.is_valid():
+        jira_user = form.save(commit=False)
+        jira_user.jira = settings
+        jira_user.save()
+        form.save_m2m()
+        messages.info(request, "Saved settings")
+        return HttpResponseRedirect(reverse('jira:my_settings', kwargs={'business_id':business.id}))
+
+    context['form'] = form
+    context['jira_settings'] = settings
+    context['business'] = business
+    context['user'] = current_user
 
     return render_to_response(template, context, context_instance=RequestContext(request))
 

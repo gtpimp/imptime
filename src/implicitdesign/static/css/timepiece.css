@@ -9644,6 +9644,13 @@ ul.project_list {
     background: none;
 }
 
+.card_menu ul.submenu {
+    position: fixed;
+    border: 1px solid #000000;
+    padding: 3px;
+    background-color: #efefef;
+}
+
 .issues .issues_list{
     /*height:600px;*/
     /* overflow:auto; */

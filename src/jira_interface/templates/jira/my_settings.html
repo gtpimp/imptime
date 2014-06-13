@@ -1,0 +1,27 @@
+{% extends "timepiece/business/base.html" %}
+{% load url from future %}
+{% block title %}Edit Jira Settings{% endblock %}
+{% load bootstrap_toolkit %}
+
+{% block crumbs %}
+{% endblock crumbs %}
+
+{% block content %}
+    <div class="row-fluid">
+        <div class="span12">
+            <h2>Edit {{business.name}} jira settings for {{user}}</h2>
+
+	    <br style="clear: both;" />
+
+            <form id="edit-jira-settings" class="form-horizontal" action="" method="post" accept-charset="utf-8">
+                {% csrf_token %}
+                {{ form|as_bootstrap:"horizontal" }}
+                <div class="form-actions">
+                  <input class="btn btn-primary" type="submit" value="Save" name="submit">
+                  <input onclick="window.close(); return false;" class="btn btn-secondary" type="submit" value="Close" name="submit">
+                </div>
+            </form>
+
+        </div>
+    </div>
+{% endblock %}

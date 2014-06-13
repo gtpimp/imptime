@@ -6,6 +6,7 @@ from jira_interface.models import JiraSyncStatus
 from django.contrib.auth.models import User
 from django.contrib import messages
 from django.db.models import Q
+from models import JiraUser, Jira
 from forms import JiraCreateIssueForm
 from dateutil import parser as dateparser
 import logging
@@ -17,6 +18,7 @@ class JiraSync(object):
         self.request = request
         self.timepiece_business = timepiece.Business.objects.get(pk=timepiece_business_id)
         self.jira = None
+        self.jira_settings = Jira.objects.get(business=self.timepiece_business)
         self.gh = None
         self.errors = []
 
@@ -42,9 +44,11 @@ class JiraSync(object):
             self.settings = self.timepiece_business.jira.get_query_set().all()[0]
         except IndexError:
             raise Exception("No jira configuration for this business")
+        self.user_settings = self.settings.get_user_settings(self.request)
+
         kwargs = {'options':{ 'server': self.settings.host.strip() },
-                  'basic_auth':(self.settings.username.strip(), self.settings.password.strip())}
-        self.active_user = self._get_or_create_timepiece_equivalent_of_jira_user(self.settings.username);
+                  'basic_auth':(self.user_settings.jira_username.strip(), self.user_settings.jira_password.strip())}
+        self.active_user = self.user_settings.timepiece_user
         self.jira = JIRA(**kwargs)
         self.gh = GreenHopper(**kwargs)
         return True
@@ -69,13 +73,6 @@ class JiraSync(object):
     def sync_project_issues_to_jira(self, timepiece_project, jira_project_key, jira_assignee, issue_type_name):
         if not self._connect():
             return
-
-        # The primary_user and jira_assignee bit needs reworking, as
-        # it stands I think it will wrongly set the assigned to user
-        # to the timepiece project jira user, and not the issue
-        # assignee.
-        #logger.error("Sync to jira disabled")
-        #return
 
         timepiece_issues = timepiece.Issue.objects.filter(project=timepiece_project,interface_plugin_number__isnull=True)
         #jira_assignee = self.settings.primary_user.profile.jira_user_name
@@ -261,6 +258,11 @@ class JiraSync(object):
                 timepiece.IssueHistory.add_history(self.active_user, timepiece_issue, "Points change during jira import", timepiece_issue.story_points, jira_issue.fields.timeestimate)
                 timepiece_issue.story_points = jira_issue.fields.timeestimate
 
+            # Jira doesn't distinguish between points per user, so set for all estimateable users
+            for bp in self.timepiece_business.get_all_business_permissions():
+                if bp.has_estimate_own_points:
+                    timepiece_issue.set_points(bp.user, time_estimate)
+
             if hasattr(jira_issue.fields, 'duedate') and jira_issue.fields.duedate:
                 jira_due_date = datetime.strptime(jira_issue.fields.duedate, "%Y-%m-%d")
                 if timepiece_issue.due_date != jira_due_date:
@@ -287,17 +289,21 @@ class JiraSync(object):
 
         except Exception, ex:
             self._on_error(ex)
-            import pdb; pdb.set_trace()
             raise
 
 
     def _get_or_create_timepiece_equivalent_of_jira_user(self, jira_username):
         try:
-            return User.objects.get(Q(profile__jira_user_name=jira_username))
-        except User.DoesNotExist:
+            return JiraUser.objects.get(jira=self.jira_settings, jira_username=jira_username).timepiece_user
+        except JiraUser.DoesNotExist:
             logger.warning("Auto creating a limited-privileges user who is assigned to a jira issue")
-            user = User.objects.create(username=jira_username)
-            timepiece.UserProfile.objects.create(user=user, jira_user_name=jira_username)
+            jira_internal_timepiece_username = "from_jira_" + jira_username
+            try:
+                user = User.objects.get(username=jira_internal_timepiece_username)
+            except User.DoesNotExist:
+                user = User.objects.create(username=jira_internal_timepiece_username)
+                timepiece.UserProfile.objects.create(user=user)
+            JiraUser.objects.create(jira=self.jira_settings, timepiece_user=user, jira_username=jira_username, jira_password=' ')
             messages.info(self.request, "Auto created user %s (id=%d)" % (user, user.id))
             return user
             

@@ -12,9 +12,9 @@ class JiraUserForm(forms.ModelForm):
         model = JiraUser
         exclude=['jira', 'timepiece_user']
 
-    def __init__(self, user, *args, **kwargs):
+    def __init__(self, *args, **kwargs):
         super(JiraUserForm, self).__init__(*args, **kwargs)
-        self.fields['password'].widget=forms.PasswordInput()
+        self.fields['jira_password'].widget=forms.PasswordInput()
 
 class JiraCreateIssueForm(forms.Form):
     

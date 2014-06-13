@@ -1,12 +1,26 @@
 {% load url from future %}
 
 <li>
-  <a href="#" onclick="imp.projects.show_project_card_as_popup(this, '{% url 'jira:sync_project_from_jira' project.id %}', 'Synching...', {'reload_on_done':'{% url 'project_list' project.id %}'}); return false;">
-                              Sync from Jira
-  </a>
+  <a href="#" onclick="$(this).parent().find('ul').toggle(); return false">Jira</a>
+  <ul style="display:none" class="submenu">
+
+    <li>
+      <a href="#" onclick="imp.projects.show_project_card_as_popup(this, '{% url 'jira:sync_project_from_jira' project.id %}', 'Synching...', {'reload_on_done':'{% url 'project_list' project.id %}'}); return false;">
+                                  Sync from Jira
+      </a>
+    </li>
+    <li>
+      <a href="#" onclick="if ( ! confirm('Are you sure you want to resend sprint information to jira?')) { return false; }; imp.projects.show_project_card_as_popup(this, '{% url 'jira:sync_project_to_jira' project.id %}', 'Synching to jira...'); return false;">
+                                  Sync to Jira
+      </a>
+    </li>
+
+    <li>
+      <a href="{% url 'jira:my_settings' project.business.id %}" target="_blank">
+                                  My jira settings
+      </a>
+    </li>
+
+  </ul>
 </li>
-<li>
-  <a href="#" onclick="if ( ! confirm('Are you sure you want to resend sprint information to jira?')) { return false; }; imp.projects.show_project_card_as_popup(this, '{% url 'jira:sync_project_to_jira' project.id %}', 'Synching to jira...'); return false;">
-                              Sync to Jira
-  </a>
-</li>
+
