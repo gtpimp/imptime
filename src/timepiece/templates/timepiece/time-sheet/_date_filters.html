@@ -3,7 +3,7 @@
 		<li>
 			<ul>
 				<li class='label'>{{ filter_category }}</li>
-				{% for label, url in filter_list %}
+				{% for label, url in 'filter_list' %}
 					<li><a href='{{ url }}'>{{ label }}</a></li>
 				{% endfor %}
 			</ul>

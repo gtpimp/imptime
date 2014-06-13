@@ -12,7 +12,7 @@
       <div class="error">{{error}}</div>
     {% endif %}
 
-    <form method="get" action="{% url incremental_timesheets_by_project %}">
+    <form method="get" action="{% url 'incremental_timesheets_by_project' %}">
       {% csrf_token %}
       {{ form|as_bootstrap }}
 

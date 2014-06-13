@@ -1,5 +1,4 @@
 {% load timepiece_tags %}
-{% load url from future %}
 
 <div class="card_menu">
   
@@ -34,7 +33,7 @@
 
       {% if perms.timepiece.change_project %}
       <li>
-        <a target="_blank" href='{% url 'edit_project' project_id=project.id %}'>Edit</a>
+        <a target="_blank" href="{% url 'edit_project' project_id=project.id %}">Edit</a>
       </li>
       {% endif %}
 

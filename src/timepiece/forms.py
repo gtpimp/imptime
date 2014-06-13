@@ -1280,3 +1280,13 @@ class IssueCheckboxContextMenuActiveIssueForm(forms.Form):
         self.fields['focus_issue'].label = label
         self.fields['focus_issue'].widget.attrs['onchange'] = "this.form.submit();"
 
+
+class NewCalendarEventForm(forms.ModelForm):
+    class Meta:
+        model = timepiece.CalendarEvent
+        fields = (
+            'user',
+            'project',
+            'hours_planned',
+            'date'
+        )

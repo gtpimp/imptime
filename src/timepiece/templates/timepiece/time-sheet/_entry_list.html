@@ -15,7 +15,7 @@
             <td>{{ entry.start_time|date:"m/d | D" }}</td>
             <td>
                 {% if perms.timepiece.view_project %}
-                    <a href='{% url view_project project_id=entry.project.id %}'>{{entry.project.business}} - {{ entry.project }}</a>
+                    <a href='{% url 'view_project' project_id=entry.project.id %}'>{{entry.project.business}} - {{ entry.project }}</a>
                 {% else %}
                     {{entry.project.business}} - {{ entry.project }}
                 {% endif %}
@@ -24,8 +24,8 @@
             <td>
                 <ul class='actions'>
 		    {% if entry.is_editable %}
-                    <li><a target="_blank" href="{% url timepiece-update entry.id %}">Change</a></li>
-                    <li><a target="_blank" href="{% url timepiece-delete entry.id %}">Remove</a></li>
+                    <li><a target="_blank" href="{% url 'timepiece-update' entry.id %}">Change</a></li>
+                    <li><a target="_blank" href="{% url 'timepiece-delete' entry.id %}">Remove</a></li>
 		    {% endif %}
                 </ul>
             </td>

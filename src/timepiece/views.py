@@ -1,6 +1,6 @@
 import random
-import calendar
 import markdown
+import dev_calendar
 from django.contrib.auth import login as django_login, load_backend
 from django.core.files.base import ContentFile
 import csv
@@ -3307,7 +3307,6 @@ def get_project_detail(request, project_id, template="timepiece/project/project_
 
     return render_to_response(template, context, context_instance=RequestContext(request))
 
-@login_required
 @csrf_exempt
 @login_required
 def project_list(request, project_id=None, highlight_issue_id=None, business_id=None,
@@ -4813,3 +4812,38 @@ def auto_issue_sort(request, project_id, template="timepiece/project/auto_issue_
         context['states'] = [x['status'] for x in project.issues.order_by("status").values("status").distinct()]
         context['project'] = project
         return render_to_response(template, context, context_instance=RequestContext(request))
+
+def calendar(request, template="timepiece/calendar/calendar.html", context=None):
+    business_id = request.REQUEST.get("business_id") 
+    if not (request.REQUEST.get("user_ids") == ""):
+        user_ids = request.REQUEST.get("user_ids")
+    else:
+        user_ids = None
+
+    if not (business_id is None): 
+        business_users = list( [business, timepiece.BusinessPermissions.objects.filter(business=business)] for business in timepiece.Business.objects.filter(pk=business_id).order_by("name"))
+    else:
+        business_users = list( [business, timepiece.BusinessPermissions.objects.filter(business=business)] for business in timepiece.Business.objects.all().order_by("name"))
+
+    business = list( timepiece.Business.objects.all().order_by("name") )
+
+    context = context or {}
+    context['dev_calendar'] = dev_calendar.render_dev_calendar(business_id, business_users, business, user_ids)
+    return render_to_response(template, context, context_instance=RequestContext(request))
+
+def createCalendarEvent(request):
+    user_id = request.GET['user_id']
+    project_id = request.GET['project_id']
+    project = timepiece.Project.objects.get(pk=project_id)
+    user = timepiece.Project.objects.get(pk=project_id)
+
+
+    form = timepiece_forms.NewProjectForm(request.POST or None, instance=project)
+    if form.is_valid():
+        project = form.save()
+        project.save()
+        return HttpResponseRedirect(
+            reverse('view_project', args=(project.id,))
+            )
+    
+

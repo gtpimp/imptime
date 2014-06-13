@@ -90,7 +90,7 @@
   var imp = imp || {};
   imp.make_editable_rate = function(clazz, user_name, field_name) {
     var el = $(".rate_info");
-    el.find("."+clazz).editInPlace({url: "{% url edit_project_rate project.id %}",
+    el.find("."+clazz).editInPlace({url: "{% url 'edit_project_rate' project.id %}",
                                 params: "field_name="+field_name+"&user_name="+user_name});
   }
 

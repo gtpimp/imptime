@@ -1,0 +1,52 @@
+table {
+    width: 80%;
+    border: 0px;
+    margin-bottom: 20px;
+    display: block;
+    border-color: #ffffff;
+}
+
+td {
+    border: 0px;
+    display:block;
+    border-color: #ffffff;
+}
+
+tr {
+    border: 0px;
+    display:block;
+    border-color: #ffffff;
+}
+
+.heading-user {
+    text-align: right;
+}
+
+img.logo {
+    width: 400px;
+}
+
+table.calculations {
+    border: 1px solid #000000;
+    width: 80%;
+    padding: 5px;
+    vertical-align: center;
+}
+
+h3 {
+    text-decoration: underline;
+}
+
+td.money {
+    text-align: right;
+}
+
+tr.total {
+    text-decoration: underline
+}
+
+table.footer {
+    width: 80%;
+    background-color: #bbbbbb;
+    font-size: 10px;
+}

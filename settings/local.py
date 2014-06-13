@@ -65,5 +65,6 @@ INSTALLED_APPS = (
     'downtime',
     'knowledge',
     'django_extensions',
+    'schedule',
 
 )

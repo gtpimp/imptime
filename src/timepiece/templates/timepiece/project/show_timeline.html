@@ -1,7 +1,6 @@
 {% extends "timepiece/graphs/base.html" %}
 {% load bootstrap_toolkit %}
 {% load timepiece_tags %}
-{% load url from future %}
 
 {% block extramedia %}
 {{ add_user_form.media }}
@@ -20,7 +19,7 @@
   {% include "timepiece/graphs/_date_filter_msg.html" %}
 </h2>
 
-<form class="form-inline" accept-charset='UTF-8' method='get' action='{% url 'show_timeline' project.id %}'>
+<form class="form-inline" accept-charset='UTF-8' method='get' action="{% url 'show_timeline' project.id %}">
 	  {% if date_form.errors %}
 	   {% for e in date_form.errors.values %} 
 	    {{ e }}
