@@ -303,7 +303,6 @@ class JiraSync(object):
             except User.DoesNotExist:
                 user = User.objects.create(username=jira_internal_timepiece_username)
                 timepiece.UserProfile.objects.create(user=user)
-            JiraUser.objects.create(jira=self.jira_settings, timepiece_user=user, jira_username=jira_username.name, jira_password=' ')
             messages.info(self.request, "Auto created user %s (id=%d)" % (user, user.id))
             return user
             
