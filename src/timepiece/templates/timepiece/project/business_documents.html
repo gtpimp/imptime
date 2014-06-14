@@ -9,26 +9,38 @@
 
 <h1>Documents for {{business}}</h1>
 
-{% for doc in documents %}
-<p>
-<h2>{{doc.filename}}</h2>
-Last modified on {{doc.modified_at}} by {{doc.modified_by}}<br/>
-Type : {{doc.doc_type}}<br/>
-<a href="{% url 'download_business_document' doc.token %}">Download</a><br/>
-Comments:
-<pre>
-{{doc.comments}}
-</pre>
-<a class="btn" href="{% url 'edit_business_document' doc.token %}">Edit</a>
-<a class="btn" onclick="if ( ! confirm('Are you sure you want to delete this document?' ) ) { return false; }" href="{% url 'delete_business_document' doc.token %}">Delete</a>
+<table class="table table-striped">
+  <thead>
+    <th>filename</th>
+    <th>modified at</th>
+    <th>modified by</th>
+    <th>type</th>
+    <th>comments</th>
+    <th></th>
+    <th></th>
+  </thead>
+
+  <tbody>
+
+    {% for doc in documents %}
+    <tr>
+      <td><a href="{% url 'download_business_document' doc.token %}">{{doc.filename}}</a></td>
+      <td>{{doc.modified_at}}</td>
+      <td>{{doc.modified_by}}</td>
+      <td>{{doc.doc_type}}</td>
+      <td><pre>{{doc.comments|slice:":30"}}</pre></td>
+      <td><a class="btn" href="{% url 'edit_business_document' doc.token %}">Edit</a></td>
+      <td><a class="btn" onclick="if ( ! confirm('Are you sure you want to delete this document?' ) ) { return false; }" href="{% url 'delete_business_document' doc.token %}">Delete</a></td>
+    </tr>
+    {% empty %}
+    <tr>
+      <td colspan="999"><h2>No documents</h2></td>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
 
 <br/>
-
-</p>
-<hr/>
-{% empty %}
-<h2>No documents</h2>
-{% endfor %}
 
 <div class="new_document">
   <button class="btn" onclick="$(this).parent().find('.new_document_container').show(); $(this).hide(); return false">Upload new document</button>
