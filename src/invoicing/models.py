@@ -4,19 +4,19 @@ from django.db import models
 
 class ClientInvoiceDetails(models.Model):
     name = models.CharField(max_length=255, null=False, blank=False)
-    address1 = models.CharField(max_length=255, null=False, blank=False)
-    address2 = models.CharField(max_length=255, null=False, blank=False)
-    city = models.CharField(max_length=255, null=False, blank=False)
-    province = models.CharField(max_length=255, null=False, blank=False)
-    country = models.CharField(max_length=255, null=False, blank=False)
-    postal_code = models.CharField(max_length=255, null=False, blank=False)
+    address1 = models.CharField(max_length=255, null=True, blank=True)
+    address2 = models.CharField(max_length=255, null=True, blank=True)
+    city = models.CharField(max_length=255, null=True, blank=True)
+    province = models.CharField(max_length=255, null=True, blank=True)
+    country = models.CharField(max_length=255, null=True, blank=True)
+    postal_code = models.CharField(max_length=255, null=True, blank=True)
     taxable = models.BooleanField(default=True, blank=True)
 
-    contact_title = models.CharField(max_length=255, null=False, blank=False)
-    contact_first_name = models.CharField(max_length=255, null=False, blank=False)
-    contact_last_name = models.CharField(max_length=255, null=False, blank=False)
-    contact_email = models.CharField(max_length=255, null=False, blank=False)
-    contact_phone = models.CharField(max_length=255, null=False, blank=False)
+    contact_title = models.CharField(max_length=255, null=True, blank=True)
+    contact_first_name = models.CharField(max_length=255, null=True, blank=True)
+    contact_last_name = models.CharField(max_length=255, null=True, blank=True)
+    contact_email = models.CharField(max_length=255, null=True, blank=True)
+    contact_phone = models.CharField(max_length=255, null=True, blank=True)
 
 class Invoice(models.Model):
     client = models.ForeignKey(ClientInvoiceDetails, blank=False, null=False)

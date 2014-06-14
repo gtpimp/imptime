@@ -6,6 +6,8 @@ except ImportError:
 import views
 
 urlpatterns = patterns('',
-                       url(r'^$', views.clients, name='clients'),
-                       url(r'^$', views.invoices, name='invoices'),
+                       url(r'^clients$', views.clients, name='clients'),
+                       url(r'^invoices$', views.invoices, name='invoices'),
+                       url(r'^new_client$', views.new_client, name='new_client'),
+                       url(r'^edit_client/(?P<client_id>.*)$', views.edit_client, name='edit_client'),
 )

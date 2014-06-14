@@ -6,7 +6,7 @@
 
 {% block content %}
 
-<table>
+<table class="table table-striped">
   <thead>
     <th>Name</th>
     <th></th>
@@ -16,12 +16,14 @@
     {% for client in clients %}
     <tr>
       <td>{{client.name}}</td>
-      <td><a href="{% url 'invoicing:edit_client' %}">edit</a></td>
+      <td><a href="{% url 'invoicing:edit_client' client.id %}">edit</a></td>
     </tr>
     {% empty %}
     <tr><td colspan="20">No clients</td></tr>
     {% endfor %}
   </tbody>
 </table>
+
+<a class="btn" href="{% url 'invoicing:new_client' %}">New client</a>
 
 {% endblock %}

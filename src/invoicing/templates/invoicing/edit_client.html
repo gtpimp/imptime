@@ -1,0 +1,15 @@
+{% extends "invoicing/base.html" %}
+
+{% load bootstrap_toolkit %}
+
+{% block title %}Edit client{% endblock %}
+
+{% block content %}
+
+<h1>Edit client {{client.name}}</h1>
+
+<form method="POST" action="{% url 'invoicing:edit_client' client.id %}">
+  {% include "invoicing/_client_form.html" %}
+</form>
+
+{% endblock %}

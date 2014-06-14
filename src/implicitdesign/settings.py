@@ -225,6 +225,7 @@ INSTALLED_APPS = (
     # 'django.contrib.admindocs',
     
     'bootstrap_toolkit',
+    'bootstrap3',
     'pagination',
     'selectable',
     'pipeline',

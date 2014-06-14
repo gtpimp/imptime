@@ -72,3 +72,4 @@ tlslite==0.4.6
 vobject==0.8.1c
 wsgiref==0.1.2
 xhtml2pdf==0.0.5
+django-bootstrap3==2.5.6
