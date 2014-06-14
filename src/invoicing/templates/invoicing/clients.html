@@ -1,0 +1,27 @@
+{% extends "invoicing/base.html" %}
+
+{% load bootstrap_toolkit %}
+
+{% block title %}Invoice clients{% endblock %}
+
+{% block content %}
+
+<table>
+  <thead>
+    <th>Name</th>
+    <th></th>
+  </thead>
+
+  <tbody>
+    {% for client in clients %}
+    <tr>
+      <td>{{client.name}}</td>
+      <td><a href="{% url 'invoicing:edit_client' %}">edit</a></td>
+    </tr>
+    {% empty %}
+    <tr><td colspan="20">No clients</td></tr>
+    {% endfor %}
+  </tbody>
+</table>
+
+{% endblock %}

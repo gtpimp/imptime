@@ -60,17 +60,17 @@ urlpatterns = patterns('',
         name='edit_business',
     ),
     url(r'^project/list/$',
-        views.list_projects, 
+        views.list_projects,
         name='list_projects'
     ),
 
     url(r'^project/amounts_billed/$',
-        views.amounts_billed, 
+        views.amounts_billed,
         name='amounts_billed'
     ),
 
     url(r'^project/users_last_active/$',
-        views.users_last_active, 
+        views.users_last_active,
         name='users_last_active'
     ),
 
@@ -235,7 +235,7 @@ urlpatterns = patterns('',
 
     url(
         r'^time-sheet/update_issue_with_feature$', views.update_issue_with_feature, name='update_issue_with_feature',
-    ),                         
+    ),
 
     url(
         r'^time-sheet/issue_subject_update/$', views.issue_subject_update, name='issue_subject_update',
@@ -261,7 +261,7 @@ urlpatterns = patterns('',
     url(
         r'^time-sheet/all_timesheet_entries/(?P<project_id>\d+)/$', views.all_timesheet_entries, name='all_timesheet_entries',
     ),
-                       
+
     url(
         r'^time-sheet/project/(?P<pk>\d+)/csv/$',
         exporter.ProjectTimesheetCSV.as_view(),
@@ -375,7 +375,7 @@ urlpatterns = patterns('',
         views.create_expense,
         name='create_expense'
         ),
-    
+
     # salary views
     url(
         r'^salary/list',
@@ -428,7 +428,7 @@ urlpatterns = patterns('',
          r'^invoice/list',
          views.invoice_list,
          name='invoice_list'
-         ),  
+         ),
     url(
         r'^ajax/create_invoice$',
         views.create_invoice,
@@ -533,45 +533,45 @@ urlpatterns = patterns('',
         r'^time-sheet/add_feature/(?P<business_id>\d+)/$',
         views.add_feature,
         name='add_feature',
-        ),  
+        ),
    url(
         r'^time-sheet/business_features/(?P<business_id>\d+)/$',
         views.business_features,
         name='business_features',
-        ),  
+        ),
    url(
         r'^time-sheet/allowed_issue_stati/(?P<issue_id>\d+)/$',
         views.allowed_issue_stati,
         name='allowed_issue_stati',
-        ),  
+        ),
    url(
         r'^time-sheet/business_users/(?P<business_id>\d+)/$',
         views.business_users,
         name='business_users',
-        ),  
+        ),
    url(
         r'^time-sheet/issue_users/(?P<issue_id>\d+)/$',
         views.issue_users,
         name='issue_users',
-        ),  
+        ),
    url(
         r'^time-sheet/sprint_export/(?P<project_id>\d+)/$',
         views.sprint_export,
         name='sprint_export',
-  	),                         
+  	),
 
-                       
+
    url(
         r'^time-sheet/sprint_report_settings/(?P<project_id>\d+)/$',
         views.sprint_report_settings,
         name='sprint_report_settings',
-  	),                         
+  	),
 
    url(
         r'^time-sheet/sprint_report/(?P<project_id>\d+)/$',
         views.sprint_report,
         name='sprint_report',
-  	),                         
+  	),
     # url(
     #     r'^project/(?P<pk>\d+)/delete/$',
     #     views.DeleteProjectView.as_view(),
@@ -598,10 +598,11 @@ urlpatterns = patterns('',
                        url(r'^bulk_move_issue_below_issue/$', views.bulk_move_issue_below_issue, {}, 'bulk_move_issue_below_issue'),
                        url(r'^bulk_clear_selected_issues/$', views.bulk_clear_selected_issues, {}, 'bulk_clear_selected_issues'),
                        url(r'^bulk_select_by_issue_state/(?P<project_id>.*)/$', views.bulk_select_by_issue_state, {}, 'bulk_select_by_issue_state'),
-                       
+
                        url(r'^auto_issue_sort/(?P<project_id>.*)/$', views.auto_issue_sort, {}, 'auto_issue_sort'),
-                       
-                       
-  url(r'^calendar/$', views.calendar, {}, name='calendar'),                       
+
+
+                       url(r'^calendar/$', views.calendar, {}, name='calendar'),
+                       url(r'^invoicing/', include('invoicing.urls', namespace="invoicing"), {}, "invoicing"),
 
 )

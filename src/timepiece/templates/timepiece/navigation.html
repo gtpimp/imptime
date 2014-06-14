@@ -186,8 +186,10 @@
                             <a href="#" class="dropdown-toggle" data-toggle="dropdown">Expenses/Incomes <b class="caret"></b></a>
                             <ul class="dropdown-menu">
 			      <li><a href="{% url 'salary_view' %}">Salaries & Payslips</a></li>
-                              <li><a target="_blank" href="http://invoice.implicitdesign.co.za">Goto invoice system</a></li>
+                              <li><a target="_blank" href="http://invoice.implicitdesign.co.za">Old invoice system</a></li>
                               <li class="divider"></li>
+                              {% include "invoicing/navigation.html" %}
+			      <li class="divider"></li>
 			      <li><a href="{% url 'expense_list' %}">Expenses</a></li>
 			      {% if perms.timepiece.view_payroll_summary %}
                               <li><a href="{% url 'income_summary' %}">Income Summary</a></li>
