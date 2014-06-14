@@ -2,10 +2,30 @@
 
 {% load bootstrap_toolkit %}
 
-{% block title %}Invoices{% endblock %}
+{% block title %}Invoice clients{% endblock %}
 
 {% block content %}
 
-Invoicing
+<table class="table table-striped">
+  <thead>
+    <th>Client</th>
+    <th>#</th>
+    <th></th>
+  </thead>
+
+  <tbody>
+    {% for invoice in invoices %}
+    <tr>
+      <td>{{invoice.client.name}}</td>
+      <td>{{invoice.invoice_number}}</td>
+      <td><a href="{% url 'invoicing:edit_invoice' invoice.id %}">edit</a></td>
+    </tr>
+    {% empty %}
+    <tr><td colspan="20">No invoices</td></tr>
+    {% endfor %}
+  </tbody>
+</table>
+
+<a class="btn" href="{% url 'invoicing:new_invoice' %}">New invoice</a>
 
 {% endblock %}

@@ -1,0 +1,15 @@
+{% extends "invoicing/base.html" %}
+
+{% load bootstrap_toolkit %}
+
+{% block title %}Edit invoice{% endblock %}
+
+{% block content %}
+
+<h1>Edit invoice {{invoice.name}}</h1>
+
+<form method="POST" action="{% url 'invoicing:edit_invoice' invoice.id %}">
+  {% include "invoicing/_invoice_form.html" %}
+</form>
+
+{% endblock %}

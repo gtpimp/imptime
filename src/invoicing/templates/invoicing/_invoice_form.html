@@ -1,0 +1,47 @@
+{% load bootstrap3 %}
+{% load add_class %}
+
+{% csrf_token %}
+
+{% bootstrap_form form %}
+
+<table class='table-striped table-bordered table-hover table-condensed'>
+  <thead>
+    <th>Num units</th>
+    <th>Cost per unit</th>
+    <th>Description</th>
+    <th>Delete?</th>
+  </thead>
+  <tbody>
+      {% bootstrap_form items_formset.management_form %}
+      {% for itemform in items_formset %}
+        <tr>
+          <td>
+            <div class='form-group{% if itemform.errors.num_units%} has-error{%endif%}'>
+                {{ itemform.num_units|add_class:'form-control' }}
+            </div>
+          </td>
+          <td>
+            <div class='form-group{% if itemform.errors.unit_cost %} has-error{%endif%}'>
+                {{  itemform.unit_cost|add_class:'form-control' }}
+            </div>
+          </td>
+          <td>
+            <div class='form-group{% if itemform.errors.description %} has-error{%endif%}'>
+                {{ itemform.description|add_class:'form-control' }}
+            </div>
+          </td>
+          <td>
+            <div class='form-group'>
+                {{ itemform.id}}
+                {{ itemform.DELETE|add_class:'form-control' }}
+            </div>
+          </td>
+        </tr>
+      {% endfor %}
+  </tbody>
+</table>
+
+
+<input class="btn" type="submit" value="save"/>
+
