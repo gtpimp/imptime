@@ -35,7 +35,7 @@
       <td>Cost (with VAT if any)</td><td style="text-align:right">{{invoice.currency_symbol}} {{invoice.cost_with_vat|currency}}</td>
     </tr>
     <tr>
-      <td>Paid</td><td style="text-align:right">{{invoice.currency_symbol}} {{invoice.amount_paid|currency}}</td>
+      <td>Paid</td><td style="text-align:right">{{invoice.currency_symbol}} {{invoice.amount_paid|currency|default:"0"}}</td>
     </tr>
     <tr>
       <td>Owing</td><td style="text-align:right">{{invoice.currency_symbol}} {{invoice.amount_owed|currency}}</td>

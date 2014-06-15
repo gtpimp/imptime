@@ -10368,3 +10368,7 @@ div.small_button, a.small_button, button.small_button {
 .col-md-offset-0 {
   margin-left: 0%;
 }
+
+.filter select, .filter input {
+  width: auto;
+}

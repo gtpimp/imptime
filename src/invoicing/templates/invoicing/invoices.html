@@ -3,26 +3,61 @@
 {% load currency %}
 {% load bootstrap_toolkit %}
 {% load endless %}
+{% load add_class %}
 
 {% block title %}Invoice clients{% endblock %}
 
 {% block content %}
 
+
+<form class="filter" method="GET" action="{% url 'invoicing:invoices' %}">
+
 {% paginate invoices %}
+
+<h3>Invoices</h3>
+<a class="btn btn-primary" href="{% url 'invoicing:new_invoice' %}">New invoice</a>
+<input class="btn btn-primary" type="submit" value="Apply Filter"/>
+<br/><br/>
 
 {% show_pages %}
 <table class="table table-striped">
   <thead>
-    <th>Client</th>
-    <th>#</th>
-    <th>Status</th>
-    <th>Due date</th>
-    <th></th>
-    <th>Amount invoiced (without vat if any)</th>
-    <th>Amount invoiced (with vat if any)</th>
-    <th>Amount paid</th>
-    <th>Amount owed</th>
-    <th></th>
+    <tr style="background-color: #efefef">
+      <td>{{ filter_form.client|add_class:'form-control' }}</td>
+      <td>{{ filter_form.invoice_number|add_class:'form-control' }}</td>
+      <td>{{ filter_form.status|add_class:'form-control' }}</td>
+      <td>
+        <table>
+          <tr><td>From</td><td>{{ filter_form.issued_from }}</td></tr>
+          <tr><td>To</td><td>{{ filter_form.issued_to }}</td></tr>
+        </table>
+      </td>
+      <td>
+        <table>
+          <tr><td>From</td><td>{{ filter_form.payment_due_from }}</td></tr>
+          <tr><td>To</td><td>{{ filter_form.payment_due_to }}</td></tr>
+        </table>
+      </td>
+      <td>{{ filter_form.overdue|add_class:'form-control' }}</td>
+      <td></td>
+      <td></td>
+      <td></td>
+      <td></td>
+      <td></td>
+    </tr>
+    <tr style="background-color: #adadad">
+      <th>Client</th>
+      <th>#</th>
+      <th>Status</th>
+      <th>Issued</th>
+      <th>Due date</th>
+      <th></th>
+      <th>Amount invoiced (without vat if any)</th>
+      <th>Amount invoiced (with vat if any)</th>
+      <th>Amount paid</th>
+      <th>Amount owed</th>
+      <th></th>
+    </tr>
   </thead>
 
   <tbody>
@@ -32,6 +67,9 @@
       <td>{{invoice.invoice_number}}</td>
       <td>
         {{invoice.status}}
+      </td>
+      <td>
+        {{invoice.issued_at|date:"d M Y"}}
       </td>
       <td>
         {{invoice.payment_due|date:"d M Y"}}
@@ -53,22 +91,24 @@
     <tr><td colspan="20">No invoices</td></tr>
     {% endfor %}
 
-    <tr>
+    <tr style="background-color: #adadad">
       <th></th>
       <th></th>
       <th></th>
       <th></th>
       <th></th>
-      <th>{{totals.currency_symbol}} {{totals.cost|currency}}</th>
-      <th>{{totals.currency_symbol}} {{totals.cost_with_vat|currency}}</th>
-      <th>{{totals.currency_symbol}} {{totals.amount_paid|currency}}</th>
-      <th>{{totals.currency_symbol}} {{totals.amount_owed|currency}}</th>
+      <th>{{totals.currency_symbol}} {{totals.cost|currency|default:"0"}}</th>
+      <th>{{totals.currency_symbol}} {{totals.cost_with_vat|currency|default:"0"}}</th>
+      <th>{{totals.currency_symbol}} {{totals.amount_paid|currency|default:"0"}}</th>
+      <th>{{totals.currency_symbol}} {{totals.amount_owed|currency|default:"0"}}</th>
+      <th></th>
+      <th></th>
     </tr>
 
   </tbody>
 
 </table>
 
-<a class="btn" href="{% url 'invoicing:new_invoice' %}">New invoice</a>
+</form>
 
 {% endblock %}

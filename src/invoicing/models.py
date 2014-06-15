@@ -46,6 +46,8 @@ class InvoiceQuerySet(QuerySet):
 
 class Invoice(models.Model):
 
+    INVOICE_STATUSES = (('open', 'Open'), ('paid', 'Paid'), ('cancelled', 'Cancelled'))
+
     objects = QuerySetManager(InvoiceQuerySet)
 
     client = models.ForeignKey(ClientInvoiceDetails, blank=False, null=False)
@@ -57,12 +59,12 @@ class Invoice(models.Model):
     created = models.DateTimeField(auto_now_add=True)
     modified = models.DateTimeField(auto_now=True)
     invoice_note = models.CharField(max_length=255, null=True, blank=True)
+    issued_at = models.DateField()
     payment_due = models.DateField()
     currency_symbol = models.CharField(max_length=3, blank=False, null=False, default="R", 
                                        choices=( ("R", "R"), ("£","£"), ("€","€") ))
     footer_terms = models.TextField(null=True, blank=True)
-    status = models.CharField(max_length=20, default='open', blank=False, null=False,
-                              choices=( ('open', 'Open'), ('paid', 'Paid'), ('cancelled', 'Cancelled') ))
+    status = models.CharField(max_length=20, default='open', blank=False, null=False, choices=INVOICE_STATUSES)
 
     @classmethod
     def next_invoice_number(self):

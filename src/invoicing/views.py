@@ -24,8 +24,14 @@ def invoices(request, template="invoicing/invoices.html", context=None):
     if not bp.has_view_invoices:
         raise PermissionDenied
 
-    context['invoices'] = models.Invoice.objects.all().order_by("-created")
+    invoices = models.Invoice.objects.all().order_by("-created")
+    filter_form = InvoiceFilterForm(request.GET or None)
+    if filter_form.is_valid():
+        invoices = filter_form.filter(invoices)
+
+    context['invoices'] = invoices
     context['totals'] = context['invoices']
+    context['filter_form'] = filter_form
     return render_to_response(template, context, context_instance=RequestContext(request))
 
 @login_required
@@ -33,7 +39,7 @@ def new_client(request, template="invoicing/new_client.html", context=None):
     context = context or {}
     form = ClientInvoiceDetailsForm(request.POST or None)
 
-    bp = timepiece.BusinessPermissions.for_user(request.user, timepice.Business.objects.all()[0])
+    bp = timepiece.BusinessPermissions.for_user(request.user, timepiece.Business.objects.all()[0])
     if not bp.has_edit_invoices:
         raise PermissionDenied
 
@@ -73,7 +79,7 @@ def new_invoice(request, template="invoicing/new_invoice.html", context=None):
         raise PermissionDenied
 
     form = InvoiceForm(request.POST or None)
-    items_formset = invoice_item_formset(request.POST or None, prefix='items')
+    items_formset = invoice_item_formset(request.POST or None, prefix='items', queryset=models.InvoiceItem.objects.none())
     if form.is_valid() and items_formset.is_valid():
         invoice = form.save()
         items = items_formset.save(commit=False)
