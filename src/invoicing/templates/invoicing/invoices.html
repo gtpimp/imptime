@@ -1,11 +1,15 @@
 {% extends "invoicing/base.html" %}
 
 {% load bootstrap_toolkit %}
+{% load endless %}
 
 {% block title %}Invoice clients{% endblock %}
 
 {% block content %}
 
+{% paginate invoices %}
+
+{% show_pages %}
 <table class="table table-striped">
   <thead>
     <th>Client</th>

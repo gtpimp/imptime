@@ -43,7 +43,7 @@
 
 <form method="POST" action="{% url 'invoicing:edit_invoice' invoice.id %}">
   <input class="btn btn-primary" type="submit" value="Save"/>
-  <a class="btn btn-primary" target="_blank" href="{% url 'invoicing:preview_invoice' invoice.id %}">Preview</a>
+  <a class="btn btn-primary" target="_blank" href="{% url 'invoicing:preview_invoice' invoice.id %}">Preview / Print</a>
   {% if payments_formset %}
     <a class="btn btn-secondary" href="#" onclick="$(this).parents().parents().find('.payments').toggle(); return false">Payments</a>
   {% endif %}

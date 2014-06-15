@@ -7,6 +7,7 @@
 {% if items_formset.errors %}<div class="error">{{items_formset.errors}}</div>{% endif %}
 {% if payments_formset.errors %}<div class="error">{{payments_formset.errors}}</div>{% endif %}
 
+<h3>Invoice details</h3>
 <div class="col-md-4">
 
   <div class='form-group{% if form.errors.invoice_number%} has-error{%endif%}'>
@@ -93,8 +94,9 @@
 </div>
 
 <div style="clear:both"></div>
-<hr/>
 
+<br/><br/><br/>
+<h3>Line items</h3>
 <table class='table-striped table-bordered table-hover table-condensed'>
   <thead>
     <th>Num units</th>
@@ -132,6 +134,8 @@
   </tbody>
 </table>
 
+<br/><br/>
+<h3>Extra info</h3>
 <div class='form-group{% if form.errors.footer_terms%} has-error{%endif%}'>
   <div class="col-md-6">
     Footer terms

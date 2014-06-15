@@ -232,6 +232,7 @@ INSTALLED_APPS = (
     'dateutil',
     'djcelery',
     'colorful',
+    'endless_pagination',
 
     'timepiece',
     'south',
@@ -243,6 +244,8 @@ INSTALLED_APPS = (
 )
 
 PAGINATION_DEFAULT_PAGINATION=50
+ENDLESS_PAGINATION_PER_PAGE=PAGINATION_DEFAULT_PAGINATION
+ENDLESS_PAGINATION_ADD_NOFOLLOW=True #from endless docs: Set to True if your SEO alchemist wants search engines not to follow pagination links.
 
 INVOICE_PAYMENT_DAYS=30
 
