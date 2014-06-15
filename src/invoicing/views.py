@@ -72,7 +72,7 @@ def new_invoice(request, template="invoicing/new_invoice.html", context=None):
         raise PermissionDenied
 
     form = InvoiceForm(request.POST or None)
-    items_formset = invoice_item_formset(request.POST or None)
+    items_formset = invoice_item_formset(request.POST or None, prefix='items')
     if form.is_valid() and items_formset.is_valid():
         invoice = form.save()
         items = items_formset.save(commit=False)
@@ -97,19 +97,26 @@ def edit_invoice(request, invoice_id, template="invoicing/edit_invoice.html", co
         raise PermissionDenied
 
     form = InvoiceForm(request.POST or None, instance=invoice)
-    items_formset = invoice_item_formset(request.POST or None, queryset = invoice.items.all().order_by("pk"))
-    if form.is_valid() and items_formset.is_valid():
+    items_formset = invoice_item_formset(request.POST or None, queryset = invoice.items.all().order_by("pk"), prefix='items')
+    payments_formset = invoice_payment_formset(request.POST or None, queryset = invoice.payments.all().order_by("paid_at"), prefix='payments')
+    if form.is_valid() and items_formset.is_valid() and payments_formset.is_valid():
         invoice = form.save()
         items = items_formset.save(commit=False)
         for item in items:
             item.invoice = invoice
             item.save()
+        payments = payments_formset.save(commit=False)
         items_formset.save_m2m()
-        messages.info(request, "Invoice created")
+        for payment in payments:
+            payment.invoice = invoice
+            payment.save()
+        payments_formset.save_m2m()
+        messages.info(request, "Invoice updated")
         return HttpResponseRedirect(reverse('invoicing:edit_invoice', kwargs={'invoice_id':invoice.id}))
 
     context['form'] = form
     context['items_formset'] = items_formset
+    context['payments_formset'] = payments_formset
     context['invoice'] = invoice
     return render_to_response(template, context, context_instance=RequestContext(request))
 

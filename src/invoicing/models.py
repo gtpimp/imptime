@@ -46,11 +46,15 @@ class Invoice(models.Model):
 
     @property
     def is_overdue(self):
-        return date.today() > self.payment_due
+        return self.status == 'open' and date.today() > self.payment_due
 
     @property
     def days_till_due(self):
         return (self.payment_due - date.today()).days
+
+    @property
+    def days_overdue(self):
+        return -self.days_till_due
 
     @property
     def items_in_order(self):
@@ -71,6 +75,15 @@ class Invoice(models.Model):
     def cost_with_vat(self):
         return self.cost + self.vat
 
+    @property
+    def amount_paid(self):
+        return self.payments.all().aggregate(Sum('amount'))['amount__sum'] or 0
+
+    @property
+    def amount_owed(self):
+        return self.cost_with_vat - self.amount_paid
+    
+
 class InvoiceItem(models.Model):
     invoice = models.ForeignKey(Invoice, blank=False, null=False, related_name='items')
     num_units = models.FloatField(blank=False, null=False)
@@ -82,6 +95,8 @@ class InvoiceItem(models.Model):
         return self.num_units * self.unit_cost
 
 class InvoicePayment(models.Model):
-    invoice = models.ForeignKey(Invoice, blank=False, null=False)
+    invoice = models.ForeignKey(Invoice, blank=False, null=False, related_name='payments')
     amount = models.FloatField(null=False, blank=False)
-    paid_at = models.DateTimeField(auto_now_add=True)
+    paid_at = models.DateField(null=False, blank=False)
+    description = models.CharField(max_length=255, null=True, blank=True)
+

@@ -31,3 +31,14 @@ class InvoiceItemForm(forms.ModelForm):
         fields = [ 'num_units', 'unit_cost', 'description' ]
 
 invoice_item_formset = modelformset_factory(models.InvoiceItem, form=InvoiceItemForm, can_delete=True, extra=5)
+
+class InvoicePaymentForm(forms.ModelForm):
+    class Meta:
+        model = models.InvoicePayment
+        fields = [ 'amount', 'paid_at', 'description' ]
+
+    def __init__(self, *args, **kwargs):
+        super(InvoicePaymentForm, self).__init__(*args, **kwargs)
+        self.fields['paid_at'].widget.attrs['class'] = 'date_field'
+
+invoice_payment_formset = modelformset_factory(models.InvoicePayment, form=InvoicePaymentForm, can_delete=True, extra=1)

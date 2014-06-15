@@ -1,5 +1,7 @@
 {% extends "invoicing/base.html" %}
 
+{% load add_class %}
+{% load currency %}
 {% load bootstrap_toolkit %}
 
 {% block title %}Edit invoice{% endblock %}
@@ -15,16 +17,82 @@
 
 <br/><br/>
 
-{% if invoice.is_overdue %}
-<div class="error"><h3>Overdue by {{invoice.days_till_due}} days</h3></div>
-{% else %}
-<div class="info">Due in {{invoice.days_till_due}} days</div>
-{% endif %}
+<div class="{% if invoice.is_overdue %}alert-error{% else %}alert-info{% endif %}">
+  <h3>{{invoice.status}}</h3>
+  <table>
+    <tr>
+      <td colspan="3">
+        {% if invoice.is_overdue %}
+          <div class="error"><h3>Overdue by {{invoice.days_till_due}} days</h3></div>
+        {% else %}
+          <div class="info">Due in {{invoice.days_till_due}} days</div>
+        {% endif %}
+      </td>
+    <tr>
+      <td>Cost (with VAT if any)</td><td style="text-align:right">{{invoice.currency_symbol}} {{invoice.cost_with_vat|currency}}</td>
+    </tr>
+    <tr>
+      <td>Paid</td><td style="text-align:right">{{invoice.currency_symbol}} {{invoice.amount_paid|currency}}</td>
+    </tr>
+    <tr>
+      <td>Owing</td><td style="text-align:right">{{invoice.currency_symbol}} {{invoice.amount_owed|currency}}</td>
+    </tr>
+  </table>
+</div>
+<br/><br/>
 
 <form method="POST" action="{% url 'invoicing:edit_invoice' invoice.id %}">
   <input class="btn btn-primary" type="submit" value="Save"/>
   <a class="btn btn-primary" target="_blank" href="{% url 'invoicing:preview_invoice' invoice.id %}">Preview</a>
+  {% if payments_formset %}
+    <a class="btn btn-secondary" href="#" onclick="$(this).parents().parents().find('.payments').toggle(); return false">Payments</a>
+  {% endif %}
   <br/><br/><br/>
+
+  {% if payments_formset %}
+    <div class="payments" style="display:none">
+      <hr/>
+      <h3>Payments</h3>
+      <table class='table-striped table-bordered table-hover table-condensed'>
+        <thead>
+          <th>Amount</th>
+          <th>Paid at</th>
+          <th>Description</th>
+          <th>Delete?</th>
+        </thead>
+        <tbody>
+            {% bootstrap_form payments_formset.management_form %}
+            {% for itemform in payments_formset %}
+              <tr>
+                <td>
+                  <div class='form-group{% if itemform.errors.amount%} has-error{%endif%}'>
+                      {{ itemform.amount|add_class:'form-control' }}
+                  </div>
+                </td>
+                <td>
+                  <div class='form-group{% if itemform.errors.paid_at %} has-error{%endif%}'>
+                      {{  itemform.paid_at }}
+                  </div>
+                </td>
+                <td>
+                  <div class='form-group{% if itemform.errors.description %} has-error{%endif%}'>
+                      {{ itemform.description|add_class:'form-control' }}
+                  </div>
+                </td>
+                <td>
+                  <div class='form-group'>
+                      {{ itemform.id}}
+                      {{ itemform.DELETE|add_class:'form-control' }}
+                  </div>
+                </td>
+              </tr>
+            {% endfor %}
+        </tbody>
+      </table>
+      <hr/>
+    </div>
+  {% endif %}
+
   {% include "invoicing/_invoice_form.html" %}
   
   <input class="btn btn-primary" type="submit" value="save"/>
