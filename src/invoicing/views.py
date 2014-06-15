@@ -1,24 +1,41 @@
 from invoicing import models
+from timepiece import models as timepiece
+from django.core.files.base import ContentFile
+from django.contrib.auth import login as django_login, load_backend
 from django.shortcuts import render_to_response, get_object_or_404, redirect, render
+from django.contrib.auth.decorators import login_required, permission_required
 from django.http import HttpResponse, HttpResponseRedirect
 from django.core.urlresolvers import reverse, resolve
 from django.template import RequestContext
 from django.contrib import messages
 from forms import *
 
+@login_required
 def clients(request, template="invoicing/clients.html", context=None):
     context = context or {}
     context['clients'] = models.ClientInvoiceDetails.objects.all().order_by("name")
     return render_to_response(template, context, context_instance=RequestContext(request))
 
+@login_required
 def invoices(request, template="invoicing/invoices.html", context=None):
     context = context or {}
+    
+    bp = timepiece.BusinessPermissions.for_user(request.user, timepiece.Business.objects.all()[0])
+    if not bp.has_view_invoices:
+        raise PermissionDenied
+
     context['invoices'] = models.Invoice.objects.all().order_by("-created")
     return render_to_response(template, context, context_instance=RequestContext(request))
 
+@login_required
 def new_client(request, template="invoicing/new_client.html", context=None):
     context = context or {}
     form = ClientInvoiceDetailsForm(request.POST or None)
+
+    bp = timepiece.BusinessPermissions.for_user(request.user, timepice.Business.objects.all()[0])
+    if not bp.has_edit_invoices:
+        raise PermissionDenied
+
     if form.is_valid():
         client = form.save()
         messages.info(request, "Client created")
@@ -27,10 +44,16 @@ def new_client(request, template="invoicing/new_client.html", context=None):
     context['form'] = form
     return render_to_response(template, context, context_instance=RequestContext(request))
 
+@login_required
 def edit_client(request, client_id, template="invoicing/edit_client.html", context=None):
     context = context or {}
     client = models.ClientInvoiceDetails.objects.get(pk=client_id)
     form = ClientInvoiceDetailsForm(request.POST or None, instance=client)
+
+    bp = timepiece.BusinessPermissions.for_user(request.user, timepiece.Business.objects.all()[0])
+    if not bp.has_edit_invoices:
+        raise PermissionDenied
+
     if form.is_valid():
         client = form.save()
         messages.info(request, "Client saved")
@@ -40,8 +63,14 @@ def edit_client(request, client_id, template="invoicing/edit_client.html", conte
     context['client'] = client
     return render_to_response(template, context, context_instance=RequestContext(request))
 
+@login_required
 def new_invoice(request, template="invoicing/new_invoice.html", context=None):
     context = context or {}
+
+    bp = timepiece.BusinessPermissions.for_user(request.user, timepiece.Business.objects.all()[0])
+    if not bp.has_edit_invoices:
+        raise PermissionDenied
+
     form = InvoiceForm(request.POST or None)
     items_formset = invoice_item_formset(request.POST or None)
     if form.is_valid() and items_formset.is_valid():
@@ -57,9 +86,15 @@ def new_invoice(request, template="invoicing/new_invoice.html", context=None):
     context['form'] = form
     return render_to_response(template, context, context_instance=RequestContext(request))
 
+@login_required
 def edit_invoice(request, invoice_id, template="invoicing/edit_invoice.html", context=None):
     context = context or {}
     invoice = models.Invoice.objects.get(pk=invoice_id)
+
+    bp = timepiece.BusinessPermissions.for_user(request.user, timepiece.Business.objects.all()[0])
+    if not bp.has_edit_invoices:
+        raise PermissionDenied
+
     form = InvoiceForm(request.POST or None, instance=invoice)
     items_formset = invoice_item_formset(request.POST or None, queryset = invoice.items.all().order_by("pk"))
     if form.is_valid() and items_formset.is_valid():
@@ -77,8 +112,75 @@ def edit_invoice(request, invoice_id, template="invoicing/edit_invoice.html", co
     context['invoice'] = invoice
     return render_to_response(template, context, context_instance=RequestContext(request))
 
+@login_required
 def preview_invoice(request, invoice_id, template="invoicing/preview_invoice.html", context=None):
+
+    invoice = models.Invoice.objects.get(pk=invoice_id)
+    bp = timepiece.BusinessPermissions.for_user(request.user, invoice.project.business)
+    if not bp.has_view_invoices:
+        raise PermissionDenied
+
     context = context or {}
-    context['invoice'] = models.Invoice.objects.get(pk=invoice_id)
+    context['invoice'] = invoice
     context['local_company_details'] = settings.INVOICE_DETAILS
+    return render_to_response(template, context, context_instance=RequestContext(request))
+
+@login_required
+def generate_invoice(request, invoice_id, context=None):
+
+    invoice = models.Invoice.objects.get(pk=invoice_id)
+    bp = timepiece.BusinessPermissions.for_user(request.user, invoice.project.business)
+    if not bp.has_view_invoices:
+        raise PermissionDenied
+
+    url = request.build_absolute_uri(reverse('invoicing:print_invoice_from_phantomjs',
+                                             kwargs={'invoice_id':invoice.id,
+                                                     'username':request.user.username,
+                                                     'token':request.user.profile.authenticate_token}))
+    from phantompdf.create_pdf import create_pdf
+    as_pdf = create_pdf(url)
+    rendered = HttpResponse(as_pdf, mimetype='application/pdf')
+    filename = "%s_%s_invoice%s.pdf" % (invoice.client.name.lower().replace(" ",""),
+                                        settings.INVOICE_DETAILS['name'].lower().replace(" ",""), 
+                                        invoice.invoice_number)
+    rendered = HttpResponse(as_pdf, mimetype='application/pdf')
+    rendered['Content-Disposition'] = 'attachment; filename="%s"' % filename
+
+    f = ContentFile(as_pdf)
+    document = timepiece.BusinessDocument.objects.create(business=invoice.project.business,
+                                                         project=invoice.project,
+                                                         filename=filename,
+                                                         doc_type='invoice',
+                                                         mime_type='application/pdf',
+                                                         comments='auto created\n%s'%url.replace("token","xx"),
+                                                         original_content=' ',
+                                                         created_by_id=request.user.id,
+                                                         modified_by_id=request.user.id)
+    document.doc.save(filename, f)
+
+    return rendered
+
+def print_invoice_from_phantomjs(request, invoice_id, username, token, template="invoicing/print_invoice.html", context=None):
+    context = context or {}
+
+    def override_login(request, user):
+        if not hasattr(user, 'backend'):
+            for backend in settings.AUTHENTICATION_BACKENDS:
+                if user == load_backend(backend).get_user(user.pk):
+                    user.backend = backend
+                    break
+        if hasattr(user, 'backend'):
+            return django_login(request, user)
+        
+    user = timepiece.UserProfile.objects.get(authenticate_token=token, user__username=username).user
+    override_login(request, user)
+
+    invoice = models.Invoice.objects.get(pk=invoice_id)
+    bp = timepiece.BusinessPermissions.for_user(user, invoice.project.business)
+    if not bp.has_view_invoices:
+        raise PermissionDenied
+
+    context['invoice'] = invoice
+    context['local_company_details'] = settings.INVOICE_DETAILS
+
     return render_to_response(template, context, context_instance=RequestContext(request))

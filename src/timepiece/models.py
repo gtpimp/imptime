@@ -374,6 +374,9 @@ class ProjectQuerySet(QuerySet):
         if user.is_superuser:
             return self
         return self.filter(business__business_permissions__user=user, business__business_permissions__can_view_project_card=True)
+    
+    def filter_open(self):
+        return self.filter(status__label='open', status__type='project-status')
 
 class Project(models.Model):
 
@@ -2566,6 +2569,7 @@ class BusinessDocument(models.Model):
                          ('other', 'Other') )
 
     business = models.ForeignKey(Business, null=False, blank=False, related_name='documents', db_index=True)
+    project = models.ForeignKey(Project, null=True, blank=True, related_name='documents', db_index=True)
     filename = models.CharField(max_length=255, null=False, blank=False)
     doc = models.FileField(upload_to="project_documents", null=False, blank=False)
     doc_type = models.CharField(max_length=100, null=False, blank=False, 

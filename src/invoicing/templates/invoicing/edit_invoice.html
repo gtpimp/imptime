@@ -6,7 +6,11 @@
 
 {% block content %}
 
-<h1>Edit invoice {{invoice.name}}</h1>
+<h1>Edit invoice {{invoice.client.name}} 
+{% if invoice.project %}
+  : {{invoice.project.business}} - {{invoice.project}}
+{% endif %}
+</h1>
 
 <a class="btn btn-primary" target="_blank" href="{% url 'invoicing:preview_invoice' invoice.id %}">Preview</a>
 <br/><br/>
@@ -15,6 +19,10 @@
 <div class="error"><h3>Overdue by {{invoice.days_till_due}} days</h3></div>
 {% else %}
 <div class="info">Due in {{invoice.days_till_due}} days</div>
+{% endif %}
+
+{% if invoice.project %}
+ {{invoice.project.business}} - {{invoice.project}}
 {% endif %}
 
 <form method="POST" action="{% url 'invoicing:edit_invoice' invoice.id %}">

@@ -15,4 +15,6 @@ urlpatterns = patterns('',
                        url(r'^edit_invoice/(?P<invoice_id>.*)$', views.edit_invoice, name='edit_invoice'),
 
                        url(r'^preview_invoice/(?P<invoice_id>.*)$', views.preview_invoice, name='preview_invoice'),
+                       url(r'^generate_invoice/(?P<invoice_id>.*)$', views.generate_invoice, name='generate_invoice'),
+                       url(r'^print_invoice_from_phantomjs/(?P<invoice_id>.*)/(?P<username>.*)/(?P<token>.*)$', views.print_invoice_from_phantomjs, name='print_invoice_from_phantomjs'),
 )

@@ -1,0 +1,271 @@
+{% load humanize %}
+{% load currency %}
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<title>{{title}}</title>
+<meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
+<style type="text/css">
+  body {
+          margin: 0.5in;
+  }
+  h1, h2, h3, h4, h5, h6, li, blockquote, p, th, td {
+          font-family: Helvetica, Arial, Verdana, sans-serif; /*Trebuchet MS,*/
+  }
+  h1, h2, h3, h4 {
+          color: #5E88B6;
+          font-weight: normal;
+  }
+  h4, h5, h6 {
+          color: #5E88B6;
+  }
+  h2 {
+          margin: 0 auto auto auto;
+          font-size: x-large;
+  }
+  h2 span {
+          text-transform: uppercase;
+  }
+  li, blockquote, p, th, td {
+          font-size: 12px;
+  }
+  ul {
+          list-style: url(img/bullet.gif) none;
+  }
+  table {
+          width: 100%;
+  }
+  td p {
+          font-size: small;
+          margin: 0;
+  }
+  th {
+          color: #000000;
+          text-align: left;
+          background-color:#A0A0A0;
+          font-weight: bold;
+          border: 1px solid #cccccc;
+  }
+  .money { text-align: right },
+  .bamboo_invoice_bam {
+          color: #5E88B6;
+          font-weight: bold;
+          text-transform: capitalize;
+  }
+  .bamboo_invoice_inv {
+          font-weight: bold;
+          font-variant: small-caps;
+          color: #333;
+  }
+  #footer {
+          border-top: 1px solid #CCC;
+          text-align: right;
+          font-size: 6pt;
+          color: #999999;
+  }
+  #footer a {
+          color: #999999;
+          text-decoration: none;
+  }
+
+  .footer_terms {
+                font-weight: bold;
+                color: #E23A3A;
+  }
+
+  table.stripe {
+          border-collapse: collapse;
+          page-break-after: auto;
+  }
+  table.stripe td {
+          /*border-bottom: 1pt solid black;*/
+  }
+
+  table.stripe td.separator {
+        border-bottom: 1px solid #cccccc;
+  }
+
+  table.contact_details {
+    padding-bottom: 20px;
+    padding-top: 20px;
+  }
+
+  table.contact_details td {
+    padding: 0px;
+    margin: 0px;
+  }
+
+  .invoice_note {
+    font-weight: bold;
+    padding-left: 10px;
+    padding-bottom: 5px;
+  }
+
+</style>
+</head>
+<body>
+
+    <table>
+	<tr>
+	    <td width="60%">
+		<img width="200px" src="{{STATIC_URL}}images/implicitDesignLogo.jpg"/><br/>
+	    </td>
+	    <td>
+		<h2>
+		    TAX INVOICE
+		</h2>
+		<p>
+		    <strong>
+			<table>
+			    <tr>
+				<td  style="font-size:16px">Tax Invoice #</td>
+                                <td  style="font-size:16px">{{invoice.invoice_number}}</td>
+			    </tr>
+			    {% if invoice.client_order_number %}
+			    <tr>
+				<td>{{invoice.client_order_name}}</td>
+				<td>{{invoice.client_order_number}}</td>
+			    </tr>
+			    {% endif %}
+			    <tr>
+				<td>Tax Invoice Date </td><td>{{invoice.modified|date:"d M Y"}}</td>
+			    </tr>
+			    <tr>
+				<td>Please pay by </td><td>{{invoice.payment_due|date:"d M Y"}}</td>
+			    </tr>
+			</table>
+			
+		    </strong>
+		</p>
+	    </td>
+	</tr>
+    </table>
+
+    <table class="contact_details">
+	<tr>
+	    <td width="10%"  style="vertical-align:top">
+		<p>
+		    Bill To: 
+		</p>
+	    </td>
+	    <td style="vertical-align:top">
+		<p>
+		    <h3>
+			{{invoice.client.name}}
+		    </h3>
+		    {% if invoice.client.address1 %}{{invoice.client.address1}}<br/>{% endif %}
+		    {% if invoice.client.address2 %}{{invoice.client.address2}}<br/>{% endif %}
+		    {% if invoice.client.city %}{{invoice.client.city}}<br/>{% endif %}
+		    {% if invoice.client.postal_code %}{{invoice.client.postal_code}}<br/>{% endif %}
+		    {% if invoice.client.country %}{{invoice.client.country}}<br/>{% endif %}
+		    {% if invoice.client.vat_number %}VAT no. {{invoice.client.vat_number}}<br/>{% endif %}
+		</p>
+	    </td>
+	    <td width="10%"  style="vertical-align:top">
+		<p>From:</p>
+	    </td>
+	    <td style="vertical-align:top">
+		<p>
+		    <h3>{{local_company_details.name}}</h3><br/>
+		    {{local_company_details.address1}}<br/>
+		    {{local_company_details.address2}}<br/>
+		    {{local_company_details.city}}<br/>
+		    {{local_company_details.postal_code}}<br/>
+		    {{local_company_details.country}}<br/>
+		    (reg {{local_company_details.company_reg}})<br/>
+		    VAT no. {{local_company_details.company_vat_nr}})<br/>
+		    <br/>
+		</p>      
+	    </td>
+
+	</tr>
+	<tr><td></td><td></td></tr>
+	<tr>
+	    <td></td>
+	    <td>
+		<table>
+		    <tr><td>Attn: </td><td>{{invoice.client.contact_first_name}} {{invoice.client.contact_last_name}}</td></tr>
+		    <tr><td>Phone: </td><td>{{invoice.client.contact_email}}</td></tr>
+		    <tr><td>Email: </td><td>{{invoice.client.contact_phone}}</td></tr>
+		</table>
+	    </td>
+	    <td></td>
+	    <td>
+		<table>
+		    <tr><td>Attn: </td><td>{{local_company_details.contact_name}}</td></tr>
+		    <tr><td>Phone: </td><td>{{local_company_details.contact_phone}}</td></tr>
+		    <tr><td>Email: </td><td>{{local_company_details.contact_email}}</td></tr>
+		</table>
+	    </td>
+	</tr>
+    </table>
+
+    <table class="invoice_items stripe">
+	<tr>
+	    <th>Work Description</th>
+	    <th>Quantity</th>
+	    <th>Unit Price</th>
+	    <th>Amount</th>
+	</tr>
+	<tr>
+	    <td><div class="invoice_note">{{invoice.invoice_note}}</div></td>
+	</tr>
+	
+	{% for item in invoice.items_in_order %}
+	<tr valign="top">
+	    <td>{{item.description}}</td>
+	    <td><p>{{item.num_units}}</p></td>
+	    <td><p>{{invoice.currency_symbol}} {{item.unit_cost|currency}}</p></td>
+	    <td><p>{{invoice.currency_symbol}} {{item.cost|currency}}</p></td>
+	</tr>
+	{% endfor %}
+
+	<tr><td colspan="4" class='separator'></tr>
+	{% if invoice.client.taxable %}
+	  <tr>
+	      <td></td>
+	      <td></td>
+	      <td>Subtotal (ex VAT)</td>
+	      <td>{{invoice.currency_symbol}} {{invoice.cost|currency}}</td>
+	  </tr>
+	  <tr>
+	      <td></td>
+	      <td></td>
+	      <td>VAT {{local_company_details.vat_rate_percentage}}%</td>
+	      <td>{{invoice.currency_symbol}} {{invoice.vat|currency}}</td>
+	  </tr>
+	  <tr>
+	      <td></td>
+	      <td></td>
+	      <td>Grand Total</td>
+	      <td><strong>{{invoice.currency_symbol}} {{invoice.cost_with_vat|currency}}</strong></td>
+	  </tr>
+	{% else %}
+	  <tr>
+	      <td></td>
+	      <td></td>
+	      <td>Grand Total (not taxable)</td>
+	      <td"><strong>{{invoice.currency_symbol}} {{invoice.cost|currency}}</strong></td>
+	  </tr>
+	{% endif %}
+	<tr><td colspan="4" class='separator'></tr>
+
+	</table>
+	    <p></p>
+
+	    {% if invoice.footer_terms|length > 0 %}
+	    <p class="footer_terms">
+		{{invoice.footer_terms}}
+	    </p>
+	    {% endif %}
+
+	    <p>
+		<strong>Please make payment by Bank Transfer to:</strong><br/>
+		{{local_company_details.bank_company_name}},<br/>
+		{{local_company_details.bank_name}} {{local_company_details.bank_account_number}},<br/>
+		Branch code {{local_company_details.bank_branch_code}} ({{local_company_details.bank_branch_name}})<br/>
+		Swift {{local_company_details.bank_swift_code}}
+	    </p>
+
+	</body>
+    </html>
