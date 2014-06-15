@@ -1,6 +1,8 @@
 #-*- coding: utf-8 -*-
 from django.conf import settings
+from django.db.models.query import QuerySet
 from django.contrib.auth.models import User
+from timepiece.model_managers import QuerySetManager
 from django.db.models import Sum, Count, Q, F, Max, Min
 from django.db import models
 from datetime import datetime, date
@@ -23,7 +25,29 @@ class ClientInvoiceDetails(models.Model):
     def __unicode__(self):
         return self.name
 
+class InvoiceQuerySet(QuerySet):
+    def cost_with_vat(self):
+        return self.aggregate(Sum('items__total_cost'))['items__total_cost__sum'] * (1+settings.INVOICE_DETAILS['vat_rate'])
+
+    def cost(self):
+        return self.aggregate(Sum('items__total_cost'))['items__total_cost__sum']
+
+    def amount_paid(self):
+        return self.aggregate(Sum('payments__amount'))['payments__amount__sum']
+
+    def amount_owed(self):
+        return self.cost_with_vat()-self.amount_paid()
+
+    def currency_symbol(self):
+        if self.count()>0:
+            return self[0].currency_symbol
+        else:
+            return ''
+
 class Invoice(models.Model):
+
+    objects = QuerySetManager(InvoiceQuerySet)
+
     client = models.ForeignKey(ClientInvoiceDetails, blank=False, null=False)
     internal_comment = models.TextField(blank=True, null=True, verbose_name="Comment (doesn't appear on the invoice")
     project = models.ForeignKey("timepiece.Project", blank=False, null=False)
@@ -62,10 +86,7 @@ class Invoice(models.Model):
 
     @property
     def cost(self):
-        total = 0
-        for item in self.items.all():
-            total += item.unit_cost*item.num_units
-        return total
+        return self.items.all().aggregate(Sum('total_cost'))['total_cost__sum']
 
     @property
     def vat(self):
@@ -88,12 +109,13 @@ class InvoiceItem(models.Model):
     invoice = models.ForeignKey(Invoice, blank=False, null=False, related_name='items')
     num_units = models.FloatField(blank=False, null=False)
     unit_cost = models.FloatField(null=False, blank=False)
+    total_cost = models.FloatField(null=False, blank=False)
     description = models.CharField(max_length=255, null=False, blank=False)
 
-    @property
-    def cost(self):
-        return self.num_units * self.unit_cost
-
+    def save(self, *args, **kwargs):
+        self.total_cost = (self.unit_cost or 0) * (self.num_units or 0)
+        super(InvoiceItem, self).save(*args, **kwargs)
+    
 class InvoicePayment(models.Model):
     invoice = models.ForeignKey(Invoice, blank=False, null=False, related_name='payments')
     amount = models.FloatField(null=False, blank=False)

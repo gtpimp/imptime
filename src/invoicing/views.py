@@ -25,6 +25,7 @@ def invoices(request, template="invoicing/invoices.html", context=None):
         raise PermissionDenied
 
     context['invoices'] = models.Invoice.objects.all().order_by("-created")
+    context['totals'] = context['invoices']
     return render_to_response(template, context, context_instance=RequestContext(request))
 
 @login_required

@@ -1,5 +1,6 @@
 {% extends "invoicing/base.html" %}
 
+{% load currency %}
 {% load bootstrap_toolkit %}
 {% load endless %}
 
@@ -17,6 +18,7 @@
     <th>Status</th>
     <th>Due date</th>
     <th></th>
+    <th>Amount invoiced (without vat if any)</th>
     <th>Amount invoiced (with vat if any)</th>
     <th>Amount paid</th>
     <th>Amount owed</th>
@@ -41,15 +43,30 @@
           <span class="alert-info">Due in {{invoice.days_till_due}} days</span>
         {% endif %}
       </td>
-      <td>{{invoice.currency_symbol}} {{invoice.cost_with_vat}}</td>
-      <td>{{invoice.currency_symbol}} {{invoice.amount_paid}}</td>
-      <td>{{invoice.currency_symbol}} {{invoice.amount_owed}}</td>
+      <td>{{invoice.currency_symbol}} {{invoice.cost|currency|default:"0"}}</td>
+      <td>{{invoice.currency_symbol}} {{invoice.cost_with_vat|currency|default:"0"}}</td>
+      <td>{{invoice.currency_symbol}} {{invoice.amount_paid|currency|default:"0"}}</td>
+      <td>{{invoice.currency_symbol}} {{invoice.amount_owed|currency|default:"0"}}</td>
       <td><a href="{% url 'invoicing:edit_invoice' invoice.id %}">edit</a></td>
     </tr>
     {% empty %}
     <tr><td colspan="20">No invoices</td></tr>
     {% endfor %}
+
+    <tr>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th>{{totals.currency_symbol}} {{totals.cost|currency}}</th>
+      <th>{{totals.currency_symbol}} {{totals.cost_with_vat|currency}}</th>
+      <th>{{totals.currency_symbol}} {{totals.amount_paid|currency}}</th>
+      <th>{{totals.currency_symbol}} {{totals.amount_owed|currency}}</th>
+    </tr>
+
   </tbody>
+
 </table>
 
 <a class="btn" href="{% url 'invoicing:new_invoice' %}">New invoice</a>

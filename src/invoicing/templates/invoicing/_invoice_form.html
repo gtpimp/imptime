@@ -1,5 +1,6 @@
 {% load bootstrap3 %}
 {% load add_class %}
+{% load currency %}
 
 {% csrf_token %}
 
@@ -97,11 +98,12 @@
 
 <br/><br/><br/>
 <h3>Line items</h3>
-<table class='table-striped table-bordered table-hover table-condensed'>
+<table class='table table-striped'>
   <thead>
     <th>Num units</th>
     <th>Cost per unit</th>
     <th>Description</th>
+    <th>Cost</th>
     <th>Delete?</th>
   </thead>
   <tbody>
@@ -124,6 +126,11 @@
             </div>
           </td>
           <td>
+            {% if itemform.instance %}
+              {{invoice.currency_symbol}} {{itemform.instance.total_cost|currency}}
+            {% endif %}
+          </td>
+          <td>
             <div class='form-group'>
                 {{ itemform.id}}
                 {{ itemform.DELETE|add_class:'form-control' }}
@@ -131,6 +138,12 @@
           </td>
         </tr>
       {% endfor %}
+      <tr>
+        <th></th>
+        <th></th>
+        <th></th>
+        <th style="text-align:right">{{invoice.currency_symbol}} {{invoice.cost|currency}}</th>
+      </tr>
   </tbody>
 </table>
 

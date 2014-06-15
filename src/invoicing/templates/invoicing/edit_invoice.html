@@ -29,6 +29,9 @@
         {% endif %}
       </td>
     <tr>
+      <td>Cost (without VAT if any)</td><td style="text-align:right">{{invoice.currency_symbol}} {{invoice.cost|currency}}</td>
+    </tr>
+    <tr>
       <td>Cost (with VAT if any)</td><td style="text-align:right">{{invoice.currency_symbol}} {{invoice.cost_with_vat|currency}}</td>
     </tr>
     <tr>
