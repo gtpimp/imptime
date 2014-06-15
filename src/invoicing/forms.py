@@ -13,7 +13,7 @@ class ClientInvoiceDetailsForm(forms.ModelForm):
 class InvoiceForm(forms.ModelForm):
     class Meta:
         model = models.Invoice
-        fields = [ 'client', 'invoice_number', 'status', 'payment_due', 'invoice_note', 'footer_terms' ]
+        fields = [ 'client', 'invoice_number', 'client_order_name', 'client_order_number', 'status', 'payment_due', 'invoice_note', 'footer_terms' ]
 
     def __init__(self, *args, **kwargs):
         super(InvoiceForm, self).__init__(*args, **kwargs)

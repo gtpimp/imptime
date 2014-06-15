@@ -76,3 +76,9 @@ def edit_invoice(request, invoice_id, template="invoicing/edit_invoice.html", co
     context['items_formset'] = items_formset
     context['invoice'] = invoice
     return render_to_response(template, context, context_instance=RequestContext(request))
+
+def preview_invoice(request, invoice_id, template="invoicing/preview_invoice.html", context=None):
+    context = context or {}
+    context['invoice'] = models.Invoice.objects.get(pk=invoice_id)
+    context['local_company_details'] = settings.INVOICE_DETAILS
+    return render_to_response(template, context, context_instance=RequestContext(request))

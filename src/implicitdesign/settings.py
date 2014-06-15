@@ -265,6 +265,28 @@ EMACS_ADMIN_USER_EMAILS = ["gtp@implicitdesign.co.za",]
 
 PDF_TEMP_FOLDER = "/tmp"
 
+INVOICE_DETAILS={'name':'ImplicitDesign',
+                 'address1':'Unit 4, Tramber Place',
+                 'address2':'Blake Street',
+                 'city':'Cape Town',
+                 'postal_code':'7700',
+                 'country':'South Africa',
+                 'company_reg':'2009/200508/23',
+                 'company_vat_nr':'4330258874',
+                 'contact_name':'Gareth Priede',
+                 'contact_phone':'+27 21 448 7424 / +27 72 679 1763',
+                 'contact_email':'gtp@implicitdesign.co.za',
+                 'vat_rate':0.14,
+                 'vat_rate_percentage':14,
+                 
+                 'bank_company_name':'IMPLICITDESIGN CC',
+                 'bank_name':'Standard Bank',
+                 'bank_account_number':'07-310-446-9',
+                 'bank_branch_code':'025009',
+                 'bank_branch_name':'Rondebosch',
+                 'bank_swift_code':'SBZAZAJJ'}
+
+
 # # These urls may need to be specified on a production server when the site it not hosted at the root domain.
 #LOGIN_URL=
 #LOGOUT_URL=

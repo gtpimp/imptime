@@ -8,6 +8,15 @@
 
 <h1>Edit invoice {{invoice.name}}</h1>
 
+<a class="btn btn-primary" target="_blank" href="{% url 'invoicing:preview_invoice' invoice.id %}">Preview</a>
+<br/><br/>
+
+{% if invoice.is_overdue %}
+<div class="error"><h3>Overdue by {{invoice.days_till_due}} days</h3></div>
+{% else %}
+<div class="info">Due in {{invoice.days_till_due}} days</div>
+{% endif %}
+
 <form method="POST" action="{% url 'invoicing:edit_invoice' invoice.id %}">
   {% include "invoicing/_invoice_form.html" %}
 </form>
