@@ -14,8 +14,9 @@ class ClientInvoiceDetails(models.Model):
     city = models.CharField(max_length=255, null=True, blank=True)
     country = models.CharField(max_length=255, null=True, blank=True)
     postal_code = models.CharField(max_length=255, null=True, blank=True)
-    vat_number = models.CharField(max_length=30, default=True, blank=True)
+    vat_number = models.CharField(max_length=30, null=True, blank=True)
     taxable = models.BooleanField(default=True, blank=True)
+    filename_prefix = models.CharField(max_length=30, null=False, blank=False)
 
     contact_first_name = models.CharField(max_length=255, null=True, blank=True)
     contact_last_name = models.CharField(max_length=255, null=True, blank=True)
