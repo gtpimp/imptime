@@ -84,6 +84,7 @@ def new_invoice(request, template="invoicing/new_invoice.html", context=None):
         return HttpResponseRedirect(reverse('invoicing:edit_invoice', kwargs={'invoice_id':invoice.id}))
 
     context['form'] = form
+    context['items_formset'] = items_formset
     return render_to_response(template, context, context_instance=RequestContext(request))
 
 @login_required

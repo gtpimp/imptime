@@ -3,9 +3,94 @@
 
 {% csrf_token %}
 
-<input class="btn" type="submit" value="save"/>
+<div class="col-md-4">
 
-{% bootstrap_form form %}
+  <div class='form-group{% if form.errors.invoice_number%} has-error{%endif%}'>
+    <div class="col-md-6">
+      Invoice Number
+    </div>
+    <div class="col-md-6">
+      {{ form.invoice_number|add_class:'form-control' }}
+    </div>
+  </div>
+
+  <div class='form-group{% if form.errors.client%} has-error{%endif%}'>
+    <div class="col-md-6">
+      Client
+    </div>
+    <div class="col-md-6">
+      {{ form.client|add_class:'form-control' }}
+    </div>
+  </div>
+
+  <div class='form-group{% if form.errors.project%} has-error{%endif%}'>
+    <div class="col-md-6">
+      Project
+    </div>
+    <div class="col-md-6">
+      {{ form.project|add_class:'form-control' }}
+    </div>
+  </div>
+
+  <div class='form-group{% if form.errors.status%} has-error{%endif%}'>
+    <div class="col-md-6">
+      Status
+    </div>
+    <div class="col-md-6">
+      {{ form.status|add_class:'form-control' }}
+    </div>
+  </div>
+  <div class='form-group{% if form.errors.payment_due%} has-error{%endif%}'>
+    <div class="col-md-6">
+      Payment due
+    </div>
+    <div class="col-md-6">
+      {{ form.payment_due }}
+    </div>
+  </div>
+
+  <div class='form-group{% if form.errors.invoice_note%} has-error{%endif%}'>
+    <div class="col-md-6">
+      Invoice note
+    </div>
+    <div class="col-md-6">
+      {{ form.invoice_note|add_class:'form-control' }}
+    </div>
+  </div>
+
+</div>
+
+<div class="col-md-6">
+
+  <div class='form-group{% if form.errors.internal_comment%} has-error{%endif%}'>
+    <div class="col-md-6">
+      Internal Comment (not shown on the invoice)
+    </div>
+    <div class="col-md-6">
+      {{ form.internal_comment|add_class:'form-control' }}
+    </div>
+  </div>
+  <div class='form-group{% if form.errors.client_order_name%} has-error{%endif%}'>
+    <div class="col-md-6">
+      Order name (optional)
+    </div>
+    <div class="col-md-6">
+      {{ form.client_order_name|add_class:'form-control' }}
+    </div>
+  </div>
+  <div class='form-group{% if form.errors.client_order_number%} has-error{%endif%}'>
+    <div class="col-md-6">
+      Order number (optional)
+    </div>
+    <div class="col-md-6">
+      {{ form.client_order_number|add_class:'form-control' }}
+    </div>
+  </div>
+
+</div>
+
+<div style="clear:both"></div>
+<hr/>
 
 <table class='table-striped table-bordered table-hover table-condensed'>
   <thead>
@@ -44,6 +129,13 @@
   </tbody>
 </table>
 
+  <div class='form-group{% if form.errors.footer_terms%} has-error{%endif%}'>
+    <div class="col-md-6">
+      Footer terms
+    </div>
+    <div class="col-md-6">
+      {{ form.footer_terms|add_class:'form-control' }}
+    </div>
+  </div>
 
-<input class="btn" type="submit" value="save"/>
-
+<div style="clear:both"></div>

@@ -6,6 +6,7 @@
 <title>{{title}}</title>
 <meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
 <style type="text/css">
+<style type="text/css">
   body {
           margin: 0.5in;
   }
@@ -237,14 +238,14 @@
 	  <tr>
 	      <td></td>
 	      <td></td>
-	      <td>Grand Total</td>
+	      <td><strong>Grand Total</strong></td>
 	      <td><strong>{{invoice.currency_symbol}} {{invoice.cost_with_vat|currency}}</strong></td>
 	  </tr>
 	{% else %}
 	  <tr>
 	      <td></td>
 	      <td></td>
-	      <td>Grand Total (not taxable)</td>
+	      <td><strong>Grand Total (not taxable)</strong></td>
 	      <td"><strong>{{invoice.currency_symbol}} {{invoice.cost|currency}}</strong></td>
 	  </tr>
 	{% endif %}

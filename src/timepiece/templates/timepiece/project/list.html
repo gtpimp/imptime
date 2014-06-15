@@ -186,6 +186,12 @@ $(document).ready(function(){
                        </td>
                        {% end_permission %}
 
+                       {% has_permission has_edit_project_detail business %}
+                       <td>
+                         <a href="{% url 'view_business_documents' business.id %}">Documents</a>
+                       </td>
+                       {% end_permission %}
+
                        {% if user.is_superuser %}
                        <td>
                          <a href="{% url 'show_permissions' business.id %}">Permissions</a>

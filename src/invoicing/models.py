@@ -25,6 +25,7 @@ class ClientInvoiceDetails(models.Model):
 
 class Invoice(models.Model):
     client = models.ForeignKey(ClientInvoiceDetails, blank=False, null=False)
+    internal_comment = models.TextField(blank=True, null=True, verbose_name="Comment (doesn't appear on the invoice")
     project = models.ForeignKey("timepiece.Project", blank=False, null=False)
     invoice_number = models.IntegerField(default=0, null=False, blank=False)
     client_order_name = models.CharField(max_length=50, null=True, blank=True, verbose_name="Optional client order name")

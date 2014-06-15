@@ -12,7 +12,7 @@
 {% endif %}
 </h1>
 
-<a class="btn btn-primary" target="_blank" href="{% url 'invoicing:preview_invoice' invoice.id %}">Preview</a>
+
 <br/><br/>
 
 {% if invoice.is_overdue %}
@@ -21,12 +21,14 @@
 <div class="info">Due in {{invoice.days_till_due}} days</div>
 {% endif %}
 
-{% if invoice.project %}
- {{invoice.project.business}} - {{invoice.project}}
-{% endif %}
-
 <form method="POST" action="{% url 'invoicing:edit_invoice' invoice.id %}">
+  <input class="btn btn-primary" type="submit" value="Save"/>
+  <a class="btn btn-primary" target="_blank" href="{% url 'invoicing:preview_invoice' invoice.id %}">Preview</a>
+  <br/><br/><br/>
   {% include "invoicing/_invoice_form.html" %}
+  
+  <input class="btn btn-primary" type="submit" value="save"/>
 </form>
+
 
 {% endblock %}

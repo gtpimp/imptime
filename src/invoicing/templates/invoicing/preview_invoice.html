@@ -1,5 +1,6 @@
-<button  onclick="window.location='{% url 'invoicing:generate_invoice' invoice.id %}'; return false;" style="position:fixed;top:20px;right:20px;">
-  Print
-</button>
+<div style="position:fixed;top:20px;right:20px;">
+  <button  onclick="window.location='{% url 'invoicing:generate_invoice' invoice.id %}'; return false;" > Print </button>
+  <button  onclick="window.close(); return false"> Close </button>
+</div>
 
 {% include "invoicing/print_invoice.html" %}

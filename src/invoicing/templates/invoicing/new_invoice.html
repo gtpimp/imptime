@@ -9,7 +9,16 @@
 <h1>New invoice</h1>
 
 <form method="POST" action="{% url 'invoicing:new_invoice' %}">
+
+  <input class="btn btn-primary" type="submit" value="save"/>
+  <br/><br/><br/>
+
   {% include "invoicing/_invoice_form.html" %}
+
+  <input class="btn btn-primary" type="submit" value="save"/>
+
+
 </form>
+
 
 {% endblock %}

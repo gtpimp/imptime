@@ -11,6 +11,7 @@
 <table class="table table-striped">
   <thead>
     <th>filename</th>
+    <th>business - spriunt</th>
     <th>modified at</th>
     <th>modified by</th>
     <th>type</th>
@@ -24,6 +25,7 @@
     {% for doc in documents %}
     <tr>
       <td><a href="{% url 'download_business_document' doc.token %}">{{doc.filename}}</a></td>
+      <td>{{doc.project.business}} - {{doc.project}}</td>
       <td>{{doc.modified_at}}</td>
       <td>{{doc.modified_by}}</td>
       <td>{{doc.doc_type}}</td>
