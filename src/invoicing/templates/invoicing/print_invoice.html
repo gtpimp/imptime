@@ -217,7 +217,7 @@
 	    <td>{{item.description}}</td>
 	    <td><p>{{item.num_units}}</p></td>
 	    <td><p>{{invoice.currency_symbol}} {{item.unit_cost|currency}}</p></td>
-	    <td><p>{{invoice.currency_symbol}} {{item.cost|currency}}</p></td>
+	    <td><p>{{invoice.currency_symbol}} {{item.total_cost|currency}}</p></td>
 	</tr>
 	{% endfor %}
 
