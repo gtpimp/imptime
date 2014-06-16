@@ -162,16 +162,17 @@ def generate_invoice(request, invoice_id, context=None):
     rendered['Content-Disposition'] = 'attachment; filename="%s"' % filename
 
     f = ContentFile(as_pdf)
-    document = timepiece.BusinessDocument.objects.create(business=invoice.project.business if invoice.project else None,
-                                                         project=invoice.project,
-                                                         filename=filename,
-                                                         doc_type='invoice',
-                                                         mime_type='application/pdf',
-                                                         comments='auto created\n%s'%url.replace("token","xx"),
-                                                         original_content=' ',
-                                                         created_by_id=request.user.id,
-                                                         modified_by_id=request.user.id)
-    document.doc.save(filename, f)
+    if invoice.project:
+        document = timepiece.BusinessDocument.objects.create(business=invoice.project.business,
+                                                             project=invoice.project,
+                                                             filename=filename,
+                                                             doc_type='invoice',
+                                                             mime_type='application/pdf',
+                                                             comments='auto created\n%s'%url.replace("token","xx"),
+                                                             original_content=' ',
+                                                             created_by_id=request.user.id,
+                                                             modified_by_id=request.user.id)
+        document.doc.save(filename, f)
 
     return rendered
 
