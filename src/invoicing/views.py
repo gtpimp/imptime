@@ -32,6 +32,7 @@ def invoices(request, template="invoicing/invoices.html", context=None):
     context['invoices'] = invoices
     context['totals'] = context['invoices']
     context['filter_form'] = filter_form
+    context['bp'] = bp
     return render_to_response(template, context, context_instance=RequestContext(request))
 
 @login_required

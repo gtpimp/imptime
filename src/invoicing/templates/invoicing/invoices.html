@@ -113,7 +113,12 @@
       <td>{{invoice.currency_symbol}} {{invoice.amount_paid|currency|default:"0"}}</td>
       <td>{{invoice.currency_symbol}} {{invoice.amount_written_off|currency|default:"0"}}</td>
       <td>{{invoice.currency_symbol}} {{invoice.amount_owed|currency|default:"0"}}</td>
-      <td><a class="btn" href="{% url 'invoicing:edit_invoice' invoice.id %}">edit</a></td>
+      <td>
+        {% if bp.has_edit_invoices %}
+          <a class="btn" href="{% url 'invoicing:edit_invoice' invoice.id %}">edit</a>
+        {% endif %}
+        <a class="btn" target="_blank" href="{% url 'invoicing:preview_invoice' invoice.id %}">view</a>
+      </td>
     </tr>
     {% empty %}
     <tr><td colspan="20">No invoices</td></tr>
