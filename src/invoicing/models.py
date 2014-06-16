@@ -38,7 +38,7 @@ class InvoiceQuerySet(QuerySet):
         return self.aggregate(Sum('items__total_cost'))['items__total_cost__sum']
 
     def amount_paid(self):
-        return self.aggregate(Sum('payments__amount'))['payments__amount__sum']
+        return self.aggregate(Sum('payments__amount'))['payments__amount__sum'] or 0
 
     def amount_owed(self):
         return self.cost_with_vat()-self.amount_paid()
