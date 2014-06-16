@@ -18,11 +18,13 @@ class InvoiceForm(forms.ModelForm):
         fields = [ 'client', 'project', 'invoice_number', 'internal_comment', 'client_order_name', 'client_order_number', 'status', 
                    'issued_at', 'payment_due', 'invoice_note', 'footer_terms' ]
 
-    project = GroupedModelChoiceField('business', queryset=timepiece.Project.objects.all().filter_open().order_by("business__name", "name"))
+    project = GroupedModelChoiceField('business', required=False, queryset=timepiece.Project.objects.all().filter_open().order_by("business__name", "name"))
 
     def __init__(self, *args, **kwargs):
         super(InvoiceForm, self).__init__(*args, **kwargs)
         self.fields['invoice_number'].initial = models.Invoice.next_invoice_number()
+        self.fields['issued_at'].initial = datetime.today()
+        self.fields['issued_at'].widget.attrs['class'] = 'date_field'
         self.fields['payment_due'].initial = datetime.today() + relativedelta(days=settings.INVOICE_PAYMENT_DAYS)
         self.fields['payment_due'].widget.attrs['class'] = 'date_field'
         self.fields['issued_at'].initial = datetime.today()
@@ -48,7 +50,7 @@ invoice_payment_formset = modelformset_factory(models.InvoicePayment, form=Invoi
 class InvoiceFilterForm(forms.Form):
     
     client = forms.ModelChoiceField(required=False, queryset=models.ClientInvoiceDetails.objects.order_by("name"))
-    status = forms.ChoiceField(required=False, choices=( ('all', 'All'),) + models.Invoice.INVOICE_STATUSES)
+    status = forms.ChoiceField(required=False, choices=( ('all', 'All (except cancelled)'),) + models.Invoice.INVOICE_STATUSES)
     invoice_number = forms.IntegerField(required=False)
     overdue = forms.ChoiceField(required=False, choices=( ('all', 'All'), ('overdue', 'Overdue'), ('not_overdue', 'Not overdue')) )
     issued_from = forms.DateField(required=False)
@@ -69,10 +71,13 @@ class InvoiceFilterForm(forms.Form):
             qs = qs.filter(client=data['client'])
         if data['status'] and data['status'] != 'all':
             qs = qs.filter(status=data['status'])
+        else:
+            qs = qs.exclude(status='cancelled')
         if data['invoice_number']:
             qs = qs.filter(invoice_number=data['invoice_number'])
         if data['overdue']=='overdue':
             qs = qs.filter(payment_due__lte=datetime.today())
+            qs = qs.filter(status='open')
         elif data['overdue']=='not_overdue':
             qs = qs.filter(payment_due__gt=datetime.today())
         if data['issued_from']:

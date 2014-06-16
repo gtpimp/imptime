@@ -28,7 +28,11 @@ class ClientInvoiceDetails(models.Model):
 
 class InvoiceQuerySet(QuerySet):
     def cost_with_vat(self):
-        return self.aggregate(Sum('items__total_cost'))['items__total_cost__sum'] * (1+settings.INVOICE_DETAILS['vat_rate'])
+        return (self.filter(client__taxable=True).aggregate(Sum('items__total_cost'))['items__total_cost__sum'] or 0) * (1+settings.INVOICE_DETAILS['vat_rate']) + \
+               (self.filter(client__taxable=False).aggregate(Sum('items__total_cost'))['items__total_cost__sum'] or 0)
+
+    def vat(self):
+        return self.cost_with_vat - self.cost
 
     def cost(self):
         return self.aggregate(Sum('items__total_cost'))['items__total_cost__sum']
@@ -53,7 +57,7 @@ class Invoice(models.Model):
 
     client = models.ForeignKey(ClientInvoiceDetails, blank=False, null=False)
     internal_comment = models.TextField(blank=True, null=True, verbose_name="Comment (doesn't appear on the invoice")
-    project = models.ForeignKey("timepiece.Project", blank=False, null=False)
+    project = models.ForeignKey("timepiece.Project", blank=True, null=True)
     invoice_number = models.IntegerField(default=0, null=False, blank=False)
     client_order_name = models.CharField(max_length=50, null=True, blank=True, verbose_name="Optional client order name")
     client_order_number = models.CharField(max_length=50, null=True, blank=True, verbose_name="Optional client order number")
@@ -93,7 +97,10 @@ class Invoice(models.Model):
 
     @property
     def vat(self):
-        return self.cost * settings.INVOICE_DETAILS['vat_rate']
+        if self.client.taxable:
+            return self.cost * settings.INVOICE_DETAILS['vat_rate']
+        else:
+            return 0
 
     @property
     def cost_with_vat(self):
