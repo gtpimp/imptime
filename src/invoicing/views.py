@@ -155,7 +155,7 @@ def generate_invoice(request, invoice_id, context=None):
     from phantompdf.create_pdf import create_pdf
     as_pdf = create_pdf(url)
     rendered = HttpResponse(as_pdf, mimetype='application/pdf')
-    filename = "%s_%s_invoice%s.pdf" % (invoice.client.name.lower().replace(" ",""),
+    filename = "%s_%s_invoice%s.pdf" % (invoice.client.filename_prefix,
                                         settings.INVOICE_DETAILS['name'].lower().replace(" ",""), 
                                         invoice.invoice_number)
     rendered = HttpResponse(as_pdf, mimetype='application/pdf')
