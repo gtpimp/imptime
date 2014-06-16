@@ -10372,3 +10372,15 @@ div.small_button, a.small_button, button.small_button {
 .filter select, .filter input {
   width: auto;
 }
+
+.filter select {
+    max-width: 150px;
+}
+
+.filter input.invoice_number {
+    width: 50px;
+}
+
+.filter input.date_field {
+    width: 100px;
+}
