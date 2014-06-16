@@ -50,7 +50,7 @@ invoice_payment_formset = modelformset_factory(models.InvoicePayment, form=Invoi
 class InvoiceFilterForm(forms.Form):
     
     client = forms.ModelChoiceField(required=False, queryset=models.ClientInvoiceDetails.objects.order_by("name"))
-    status = forms.ChoiceField(required=False, choices=( ('all', 'All (except cancelled)'),) + models.Invoice.INVOICE_STATUSES)
+    status = forms.ChoiceField(required=False, choices=( ('all', 'All'),) + models.Invoice.INVOICE_STATUSES)
     invoice_number = forms.IntegerField(required=False)
     overdue = forms.ChoiceField(required=False, choices=( ('all', 'All'), ('overdue', 'Overdue'), ('not_overdue', 'Not overdue')) )
     issued_from = forms.DateField(required=False)
@@ -71,8 +71,6 @@ class InvoiceFilterForm(forms.Form):
             qs = qs.filter(client=data['client'])
         if data['status'] and data['status'] != 'all':
             qs = qs.filter(status=data['status'])
-        else:
-            qs = qs.exclude(status='cancelled')
         if data['invoice_number']:
             qs = qs.filter(invoice_number=data['invoice_number'])
         if data['overdue']=='overdue':

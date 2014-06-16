@@ -40,8 +40,11 @@ class InvoiceQuerySet(QuerySet):
     def amount_paid(self):
         return self.aggregate(Sum('payments__amount'))['payments__amount__sum'] or 0
 
+    def amount_written_off(self):
+        return self.filter(status='writtenoff').cost_with_vat()
+
     def amount_owed(self):
-        return self.cost_with_vat()-self.amount_paid()
+        return self.cost_with_vat()-self.amount_paid()-self.amount_written_off()
 
     def currency_symbol(self):
         if self.count()>0:
@@ -51,7 +54,7 @@ class InvoiceQuerySet(QuerySet):
 
 class Invoice(models.Model):
 
-    INVOICE_STATUSES = (('open', 'Open'), ('paid', 'Paid'), ('cancelled', 'Cancelled'))
+    INVOICE_STATUSES = (('open', 'Open'), ('paid', 'Paid'), ('writtenoff', 'Written Off'))
 
     objects = QuerySetManager(InvoiceQuerySet)
 
@@ -111,8 +114,22 @@ class Invoice(models.Model):
         return self.payments.all().aggregate(Sum('amount'))['amount__sum'] or 0
 
     @property
+    def amount_written_off(self):
+        if self.is_written_off:
+            return self.cost_with_vat
+        else:
+            return 0
+
+    @property
+    def is_written_off(self):
+        return self.status == 'writtenoff'
+    
+    @property
     def amount_owed(self):
-        return self.cost_with_vat - self.amount_paid
+        if self.is_written_off:
+            return 0
+        else:
+            return self.cost_with_vat - self.amount_paid
     
 
 class InvoiceItem(models.Model):

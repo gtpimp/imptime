@@ -52,11 +52,12 @@
       <th>Issued</th>
       <th>Due date</th>
       <th></th>
-      <th>Amount invoiced ex vat</th>
+      <th>Invoiced ex vat</th>
       <th>VAT</th>
-      <th>Amount invoiced incl vat</th>
-      <th>Amount paid</th>
-      <th>Amount owed</th>
+      <th>Invoiced incl vat</th>
+      <th>Paid</th>
+      <th>Written off</th>
+      <th>Owed</th>
       <th></th>
     </tr>
 
@@ -71,6 +72,7 @@
       <th>{{totals.currency_symbol}} {{totals.vat|currency|default:"0"}}</th>
       <th>{{totals.currency_symbol}} {{totals.cost_with_vat|currency|default:"0"}}</th>
       <th>{{totals.currency_symbol}} {{totals.amount_paid|currency|default:"0"}}</th>
+      <th>{{totals.currency_symbol}} {{totals.amount_written_off|currency|default:"0"}}</th>
       <th>{{totals.currency_symbol}} {{totals.amount_owed|currency|default:"0"}}</th>
       <th></th>
       <th></th>
@@ -102,6 +104,7 @@
       <td>{{invoice.currency_symbol}} {{invoice.vat|currency|default:"0"}}</td>
       <td>{{invoice.currency_symbol}} {{invoice.cost_with_vat|currency|default:"0"}}</td>
       <td>{{invoice.currency_symbol}} {{invoice.amount_paid|currency|default:"0"}}</td>
+      <td>{{invoice.currency_symbol}} {{invoice.amount_written_off|currency|default:"0"}}</td>
       <td>{{invoice.currency_symbol}} {{invoice.amount_owed|currency|default:"0"}}</td>
       <td><a href="{% url 'invoicing:edit_invoice' invoice.id %}">edit</a></td>
     </tr>
@@ -120,6 +123,7 @@
       <th>{{totals.currency_symbol}} {{totals.vat|currency|default:"0"}}</th>
       <th>{{totals.currency_symbol}} {{totals.cost_with_vat|currency|default:"0"}}</th>
       <th>{{totals.currency_symbol}} {{totals.amount_paid|currency|default:"0"}}</th>
+      <th>{{totals.currency_symbol}} {{totals.amount_written_off|currency|default:"0"}}</th>
       <th>{{totals.currency_symbol}} {{totals.amount_owed|currency|default:"0"}}</th>
       <th></th>
       <th></th>
