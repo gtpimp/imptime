@@ -20,7 +20,7 @@ def clients(request, template="invoicing/clients.html", context=None):
 def invoices(request, template="invoicing/invoices.html", context=None):
     context = context or {}
     
-    bp = timepiece.BusinessPermissions.for_user(request.user, timepiece.Business.objects.all()[0])
+    bp = _get_best_bp(request)
     if not bp.has_view_invoices:
         raise PermissionDenied
 
@@ -39,7 +39,7 @@ def new_client(request, template="invoicing/new_client.html", context=None):
     context = context or {}
     form = ClientInvoiceDetailsForm(request.POST or None)
 
-    bp = timepiece.BusinessPermissions.for_user(request.user, timepiece.Business.objects.all()[0])
+    bp = _get_best_bp(request)
     if not bp.has_edit_invoices:
         raise PermissionDenied
 
@@ -57,7 +57,7 @@ def edit_client(request, client_id, template="invoicing/edit_client.html", conte
     client = models.ClientInvoiceDetails.objects.get(pk=client_id)
     form = ClientInvoiceDetailsForm(request.POST or None, instance=client)
 
-    bp = timepiece.BusinessPermissions.for_user(request.user, timepiece.Business.objects.all()[0])
+    bp = _get_best_bp(request)
     if not bp.has_edit_invoices:
         raise PermissionDenied
 
@@ -74,7 +74,7 @@ def edit_client(request, client_id, template="invoicing/edit_client.html", conte
 def new_invoice(request, template="invoicing/new_invoice.html", context=None):
     context = context or {}
 
-    bp = timepiece.BusinessPermissions.for_user(request.user, timepiece.Business.objects.all()[0])
+    bp = _get_best_bp(request)
     if not bp.has_edit_invoices:
         raise PermissionDenied
 
@@ -99,7 +99,7 @@ def edit_invoice(request, invoice_id, template="invoicing/edit_invoice.html", co
     context = context or {}
     invoice = models.Invoice.objects.get(pk=invoice_id)
 
-    bp = timepiece.BusinessPermissions.for_user(request.user, timepiece.Business.objects.all()[0])
+    bp = _get_best_bp(request, invoice)
     if not bp.has_edit_invoices:
         raise PermissionDenied
 
@@ -131,7 +131,7 @@ def edit_invoice(request, invoice_id, template="invoicing/edit_invoice.html", co
 def preview_invoice(request, invoice_id, template="invoicing/preview_invoice.html", context=None):
 
     invoice = models.Invoice.objects.get(pk=invoice_id)
-    bp = timepiece.BusinessPermissions.for_user(request.user, invoice.project.business)
+    bp = _get_best_bp(request, invoice)
     if not bp.has_view_invoices:
         raise PermissionDenied
 
@@ -144,7 +144,7 @@ def preview_invoice(request, invoice_id, template="invoicing/preview_invoice.htm
 def generate_invoice(request, invoice_id, context=None):
 
     invoice = models.Invoice.objects.get(pk=invoice_id)
-    bp = timepiece.BusinessPermissions.for_user(request.user, invoice.project.business)
+    bp = _get_best_bp(request, invoice)
     if not bp.has_view_invoices:
         raise PermissionDenied
 
@@ -191,7 +191,7 @@ def print_invoice_from_phantomjs(request, invoice_id, username, token, template=
     override_login(request, user)
 
     invoice = models.Invoice.objects.get(pk=invoice_id)
-    bp = timepiece.BusinessPermissions.for_user(user, invoice.project.business)
+    bp = _get_best_bp(request, invoice)
     if not bp.has_view_invoices:
         raise PermissionDenied
 
@@ -199,3 +199,9 @@ def print_invoice_from_phantomjs(request, invoice_id, username, token, template=
     context['local_company_details'] = settings.INVOICE_DETAILS
 
     return render_to_response(template, context, context_instance=RequestContext(request))
+
+def _get_best_bp(request, invoice=None):
+    if invoice is None or invoice.project is None:
+        return timepiece.BusinessPermissions.for_user(request.user, timepiece.Business.objects.all()[0])
+    else:
+        return timepiece.BusinessPermissions.for_user(request.user, invoice.project.business)
