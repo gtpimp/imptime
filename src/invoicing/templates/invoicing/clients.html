@@ -21,7 +21,7 @@
   <tbody>
     {% for client in clients %}
     <tr>
-      <td>{{client.name}}</td>
+      <td><strong>{{client.name}}</strong></td>
       <td>{{client.country}}</td>
       <td>{% if client.taxable %}{{client.vat_number}}{% else %}n/a{% endif %}</td>
       <td>{{client.contact_first_name}} {{client.contact_last_name}}</td>
