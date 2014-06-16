@@ -9,6 +9,12 @@
 <table class="table table-striped">
   <thead>
     <th>Name</th>
+    <th>Country</th>
+    <th>VAT nr</th>
+    <th>Contact</th>
+    <th>Email</th>
+    <th>Phone</th>
+    <th>filename prefix</th>
     <th></th>
   </thead>
 
@@ -16,6 +22,12 @@
     {% for client in clients %}
     <tr>
       <td>{{client.name}}</td>
+      <td>{{client.country}}</td>
+      <td>{% if client.taxable %}{{client.vat_number}}{% else %}n/a{% endif %}</td>
+      <td>{{client.contact_first_name}} {{client.contact_last_name}}</td>
+      <td>{{client.contact_email}}</td>
+      <td>{{client.contact_phone}}</td>
+      <td>{{client.filename_prefix}}</td>
       <td><a href="{% url 'invoicing:edit_client' client.id %}">edit</a></td>
     </tr>
     {% empty %}
