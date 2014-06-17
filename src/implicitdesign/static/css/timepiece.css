@@ -9645,7 +9645,7 @@ ul.project_list {
 }
 
 .card_menu ul.submenu {
-    position: fixed;
+    position: absolute;
     border: 1px solid #000000;
     padding: 3px;
     background-color: #efefef;
