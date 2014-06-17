@@ -4625,7 +4625,7 @@ def bulk_change_issue_state(request, context=None):
 @csrf_exempt
 def bulk_change_issue_feature(request, context=None):
     selected_issue_ids = request.session['selected_issue_ids_for_context_menu']
-    selected_project = timepiece.Project.objects.get(request.session['selected_issue_project_id'])
+    selected_project = timepiece.Project.objects.get(pk=request.session['selected_issue_project_id'])
     
     form = timepiece_forms.IssueCheckboxContextMenuChangeFeatureForm(selected_project, request.GET or None)
     if not form.is_valid():
@@ -4650,7 +4650,7 @@ def bulk_change_issue_feature(request, context=None):
 @csrf_exempt
 def bulk_change_issue_assignee(request, context=None):
     selected_issue_ids = request.session['selected_issue_ids_for_context_menu']
-    selected_project = timepiece.Project.objects.get(request.session['selected_issue_project_id'])
+    selected_project = timepiece.Project.objects.get(pk=request.session['selected_issue_project_id'])
     
     form = timepiece_forms.IssueCheckboxContextMenuChangeAssigneeForm(selected_project, request.GET or None)
     if not form.is_valid():
@@ -4675,7 +4675,7 @@ def bulk_change_issue_assignee(request, context=None):
 @csrf_exempt
 def bulk_delete_issues(request, context=None):
     selected_issue_ids = request.session['selected_issue_ids_for_context_menu']
-    selected_project = timepiece.Project.objects.get(request.session['selected_issue_project_id'])
+    selected_project = timepiece.Project.objects.get(pk=request.session['selected_issue_project_id'])
 
     bp = timepiece.BusinessPermissions.for_user(request.user, selected_project.business)
     if not bp.has_delete_issue:
@@ -4693,7 +4693,7 @@ def bulk_delete_issues(request, context=None):
 @csrf_exempt
 def bulk_move_issue_above_issue(request, context=None):
     selected_issue_ids = request.session['selected_issue_ids_for_context_menu']
-    selected_project = timepiece.Project.objects.get(request.session['selected_issue_project_id'])
+    selected_project = timepiece.Project.objects.get(pk=request.session['selected_issue_project_id'])
 
     bp = timepiece.BusinessPermissions.for_user(request.user, selected_project.business)
     if not bp.has_edit_issues:
@@ -4725,7 +4725,7 @@ def bulk_move_issue_above_issue(request, context=None):
 @csrf_exempt
 def bulk_move_issue_below_issue(request, context=None):
     selected_issue_ids = request.session['selected_issue_ids_for_context_menu']
-    selected_project = timepiece.Project.objects.get(request.session['selected_issue_project_id'])
+    selected_project = timepiece.Project.objects.get(pk=request.session['selected_issue_project_id'])
 
     bp = timepiece.BusinessPermissions.for_user(request.user, selected_project.business)
     if not bp.has_edit_issues:
@@ -4757,7 +4757,7 @@ def bulk_move_issue_below_issue(request, context=None):
 @csrf_exempt
 def bulk_clear_selected_issues(request, context=None):
     del request.session['selected_issue_ids_for_context_menu']
-    selected_project = timepiece.Project.objects.get(request.session['selected_issue_project_id'])
+    selected_project = timepiece.Project.objects.get(pk=pk=request.session['selected_issue_project_id'])
     return HttpResponseRedirect(reverse('project_list', args=[selected_project.id]))
 
 @login_required
