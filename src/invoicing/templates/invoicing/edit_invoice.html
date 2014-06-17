@@ -14,7 +14,6 @@
 {% endif %}
 </h1>
 
-
 <br/><br/>
 
 <div class="{% if invoice.is_overdue %}alert-error{% else %}alert-info{% endif %}">
@@ -50,6 +49,7 @@
   {% if payments_formset %}
     <a class="btn btn-secondary" href="#" onclick="$(this).parents().parents().find('.payments').toggle(); return false">Payments</a>
   {% endif %}
+  <a class="btn btn-secondary" href="{% url 'invoicing:invoices' %}">Invoices</a>
   <br/><br/><br/>
 
   {% if payments_formset %}

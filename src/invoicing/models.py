@@ -83,6 +83,20 @@ class Invoice(models.Model):
         return self.status == 'open' and date.today() > self.payment_due
 
     @property
+    def days_paid_ago(self):
+        paid_at = self.paid_at
+        if paid_at is None:
+            return None
+        return (date.today() - self.payments.aggregate(Max("paid_at"))['paid_at__max']).days
+
+    @property
+    def paid_at(self):
+        if self.status != 'paid':
+            return None
+        else:
+            return self.payments.aggregate(Max("paid_at"))['paid_at__max']
+
+    @property
     def days_till_due(self):
         return (self.payment_due - date.today()).days
 

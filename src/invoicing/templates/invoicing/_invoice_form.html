@@ -22,7 +22,10 @@
 
   <div class='form-group{% if form.errors.client%} has-error{%endif%}'>
     <div class="col-md-6">
-      Client
+      Client 
+      {% if invoice.client.id %}
+        <a onclick="if (!confirm('Editing {{invoice.client.name}} \r\nmeans any changes to this invoice will be lost, continue?') ) return false;" href="{% url 'invoicing:edit_client' invoice.client.id %}">(edit)</a>
+      {% endif %}
     </div>
     <div class="col-md-6">
       {{ form.client|add_class:'form-control' }}
