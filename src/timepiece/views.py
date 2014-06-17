@@ -4757,7 +4757,7 @@ def bulk_move_issue_below_issue(request, context=None):
 @csrf_exempt
 def bulk_clear_selected_issues(request, context=None):
     del request.session['selected_issue_ids_for_context_menu']
-    selected_project = timepiece.Project.objects.get(pk=pk=request.session['selected_issue_project_id'])
+    selected_project = timepiece.Project.objects.get(pk=request.session['selected_issue_project_id'])
     return HttpResponseRedirect(reverse('project_list', args=[selected_project.id]))
 
 @login_required
