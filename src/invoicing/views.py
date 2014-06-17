@@ -1,4 +1,5 @@
 from invoicing import models
+from django.db.models import Sum, Count, Q, F, Max, Min
 from timepiece import models as timepiece
 from django.core.files.base import ContentFile
 from django.contrib.auth import login as django_login, load_backend
@@ -207,3 +208,22 @@ def _get_best_bp(request, invoice=None):
         return timepiece.BusinessPermissions.for_user(request.user, timepiece.Business.objects.all()[0])
     else:
         return timepiece.BusinessPermissions.for_user(request.user, invoice.project.business)
+
+def clone_invoice(request, invoice_id, template="invoicing/edit_invoice.html", context=None):
+    context = context or {}
+    invoice = models.Invoice.objects.get(pk=invoice_id)
+    items = invoice.items.all().order_by("pk")
+
+    invoice.invoice_number = models.Invoice.next_invoice_number()
+    invoice.pk = models.Invoice.objects.all().aggregate(Max('id'))['id__max']+1
+    invoice.save()
+
+    for item in items:
+        item.id = models.InvoiceItem.objects.all().aggregate(Max('id'))['id__max']+1
+        item.invoice_id = invoice.id
+        item.save()
+        
+    messages.info(request, "Invoice cloned")
+    return HttpResponseRedirect(reverse('invoicing:edit_invoice', kwargs={'invoice_id':invoice.id}))
+
+    
