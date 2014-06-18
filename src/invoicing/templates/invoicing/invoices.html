@@ -114,7 +114,7 @@
           <span class="alert-error">Overdue by {{invoice.days_overdue}} days</span>
         {% else %}
           {% if invoice.status == 'paid' %}
-            <span class="alert-info">Paid {{invoice.days_paid_ago}} days ago</span>
+            <span class="alert-success">Paid {{invoice.days_paid_ago}} days ago</span>
           {% else %}
             <span class="alert-info">Due in {{invoice.days_till_due}} days</span>
           {% endif %}
