@@ -1187,6 +1187,8 @@ class SprintQuoteReportSettingsForm(forms.Form):
 
     include_features = forms.BooleanField(label="Tick to include features", initial=False, required=False)
     include_rates = forms.BooleanField(label="Tick to include rates", initial=False, required=False)
+    show_hours = forms.BooleanField(label="Tick to show hours", initial=False, required=False)
+    show_billable = forms.BooleanField(label="Tick to show billable cost", initial=True, required=False)
 
     preferred_user_for_estimates = forms.ChoiceField( label="User's estimates to use where conflicts",
                                                       required=False )
@@ -1202,8 +1204,7 @@ class SprintQuoteReportSettingsForm(forms.Form):
         self.bp = bp
         self.project = project
         if not self.bp.has_view_ctc_billable_rates or not self.bp.has_view_ctc_rates:
-            #del self.fields['estimated']
-            pass
+            del self.fields['show_billable']
         
         self.fields['only_these_statuses'].choices = [('all', 'Any status'),] + list( [ (x['status'],x['status']) for x in project.issues.values('status').distinct()] )
         self.fields['preferred_user_for_estimates'].choices = [ (x.user.id, x.user) for x in BusinessPermissions.by_user(project.business).values() if x.has_estimate_own_points ]

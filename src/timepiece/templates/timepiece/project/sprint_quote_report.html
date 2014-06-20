@@ -115,44 +115,48 @@ are derived.
 
 {% ifequal settings.preamble_type "billable" %}
 
-<p>
-The upper budget range is calculated by adding a variance of {{estimate_stats.slack_percentage}}%
-</p>
+  {% if settings.show_billable %}
+  <p>
+  The upper budget range is calculated by adding a variance of {{estimate_stats.slack_percentage}}%
+  </p>
 
-<p>
-The final cost will be invoiced as the actual billable time taken,
-which may be less than the minimum estimate or more than the maximum
-estimate. To manage the budget expectations and overruns, the client
-can request to be notified at certain budget milestones, for example
-half-way through the sprint budget.
-</p>
+  <p>
+  The final cost will be invoiced as the actual billable time taken,
+  which may be less than the minimum estimate or more than the maximum
+  estimate. To manage the budget expectations and overruns, the client
+  can request to be notified at certain budget milestones, for example
+  half-way through the sprint budget.
+  </p>
 
-<p>
-      <b>Estimated minimum cost</b> R{{ estimate_stats.total_estimate_min|floatformat:"0"|intcomma }}
-<br/>
-      <b>Estimated maximum cost</b> R{{ estimate_stats.total_estimate_max|floatformat:"0"|intcomma }}
-</p>
+  <p>
+        <b>Estimated minimum cost</b> R{{ estimate_stats.total_estimate_min|floatformat:"0"|intcomma }}
+  <br/>
+        <b>Estimated maximum cost</b> R{{ estimate_stats.total_estimate_max|floatformat:"0"|intcomma }}
+  </p>
+  {% endif %}
 
 {% endifequal %}
 
 {% ifequal settings.preamble_type "quote" %}
 
-<p>
-The upper budget range is calculated by adding a variance of {{estimate_stats.slack_percentage}}%. This
-is the amount of scope creep that is reasonably expected, taking into
-account the uncertainty in the project scope.
+  {% if settings.show_billable %}
 
-We request that the client budget for the upper amount, but if there
-is no scope creep to this quote during development then the lower
-amount will be invoiced.
-</p>
+  <p>
+  The upper budget range is calculated by adding a variance of {{estimate_stats.slack_percentage}}%. This
+  is the amount of scope creep that is reasonably expected, taking into
+  account the uncertainty in the project scope.
 
-<p>
-      <b>Quoted minimum cost</b> R{{ estimate_stats.total_estimate_min|floatformat:"0"|intcomma }}
-<br/>
-      <b>Quoted maximum cost</b> R{{ estimate_stats.total_estimate_max|floatformat:"0"|intcomma }}
-</p>
+  We request that the client budget for the upper amount, but if there
+  is no scope creep to this quote during development then the lower
+  amount will be invoiced.
+  </p>
 
+  <p>
+        <b>Quoted minimum cost</b> R{{ estimate_stats.total_estimate_min|floatformat:"0"|intcomma }}
+  <br/>
+        <b>Quoted maximum cost</b> R{{ estimate_stats.total_estimate_max|floatformat:"0"|intcomma }}
+  </p>
+  {% endif %}
 {% endifequal %}
 
 {% if settings.include_rates %}
@@ -185,7 +189,9 @@ amount will be invoiced.
       {% for feature_name, feature_min_cost in estimate_stats.features.items %} 
         <tr>
           <th>{{feature_name}}</th>
-          <td>R{{feature_min_cost|floatformat:"0"|intcomma}}</td>
+          {% if settings.show_billable %}
+            <td>R{{feature_min_cost|floatformat:"0"|intcomma}}</td>
+          {% endif %}
         </tr>
       {% endfor %}
     </table>
@@ -287,7 +293,12 @@ identified in the specification phase which greatly reduces risk.
       {% if settings.issue_status %}
       <th>Status</th>
       {% endif %}
+      {% if settings.show_hours %}
+      <th>Hours</th>
+      {% endif %}
+      {% if settings.show_billable %}
       <th>Cost</th>
+      {% endif %}
     </thead>
 
     <tbody>
@@ -304,7 +315,12 @@ identified in the specification phase which greatly reduces risk.
 	{% if settings.issue_status %}
 	  <td> {{ estimate.issue.status }}</td>
 	{% endif %}
-	<td>R{{estimate.min_cost|floatformat:"0"|intcomma}}</td>
+        {% if settings.show_hours %}
+	  <td>{{estimate.points|floatformat:"0"|intcomma}} hour{% if estimate.points != 1 %}s{% endif %}</td>
+        {% endif %}
+        {% if settings.show_billable %}
+	  <td>R{{estimate.min_cost|floatformat:"0"|intcomma}}</td>
+        {% endif %}
       </tr>
       {% endfor %}
     </tbody>
