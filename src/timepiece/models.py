@@ -468,7 +468,7 @@ class Project(models.Model):
     def refresh_issues_order(self):
         """ Doesn't re-sort, just makes the numbers sequential """
         order = 1
-        for issue in self.issues.all().order_by("order"):
+        for issue in self.issues.all().order_by("order", "order2"):
             old_order = issue.order
             if old_order != order:
                 issue.order = order
@@ -1055,7 +1055,7 @@ class Project(models.Model):
         all_project_issues = Issue.objects.filter(project=self)
         
         orderless_issues = all_project_issues.filter(order__isnull=True).order_by('-id')
-        ordered_issues = all_project_issues.exclude(order__isnull=True).order_by('order')
+        ordered_issues = all_project_issues.exclude(order__isnull=True).order_by('order', 'order2')
         
         if len(orderless_issues) > 0:
             all_issues = [ issue for issue in orderless_issues ] + [ issue for issue in ordered_issues ]
@@ -1063,7 +1063,7 @@ class Project(models.Model):
                 if issue.order != index:
                     issue.order = index            
                     issue.save()
-        return Issue.objects.filter(project=self).order_by("order")
+        return Issue.objects.filter(project=self).order_by("order", "order2")
             
 class RelationshipType(models.Model):
     name = models.CharField(max_length=255, unique=True)
@@ -2323,6 +2323,7 @@ class Issue(models.Model):
     description = models.TextField(blank=True)
     story_points = models.FloatField(null=True,blank=True)    
     order = models.BigIntegerField(null=True,blank=True)
+    order2 = models.CharField(max_length=50, default=None, null=True,blank=True) #alternative means of ordering by string (used by eg jira)
     feature = models.ForeignKey("Feature",blank=True,null=True,related_name='issues')
     assigned_to = models.ForeignKey(User, related_name='assigned_issues', blank=True,null=True)
     interface_plugin_number = models.CharField(max_length=255, null=True, blank=True) #eg jira

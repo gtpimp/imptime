@@ -195,7 +195,6 @@ class JiraSync(object):
     def _sync_issue(self, gh_issue, timepiece_project):
 
         try:
-
             if not hasattr(gh_issue, 'fields'):
                 jira_issue = self.jira.issue(str(gh_issue.id))
             else:
@@ -203,8 +202,17 @@ class JiraSync(object):
 
             logger.debug("syncing issue")
             state = jira_issue.fields.status.name
-            order = getattr(jira_issue.fields, self.settings.custom_field_name_for_issue_order)
+            jira_order = getattr(jira_issue.fields, self.settings.custom_field_name_for_issue_order)
+            if isinstance(jira_order, basestring):
+                order2 = jira_order
+                order = 1
+            else:
+                order2 = None
+                order = int(jira_order)
+
             fixed_subject="%s %s" % (jira_issue.key, jira_issue.fields.summary)
+            logger.info("Sorting: %s = %s" % (str(jira_issue.fields.customfield_10300), fixed_subject))
+
             time_estimate = float(jira_issue.fields.timeestimate or 0) / (60*60) # cos everybody knows you should estimate to accuracy in seconds
             time_estimate = float(int(time_estimate*100))/100
 
@@ -216,6 +224,7 @@ class JiraSync(object):
                                                   description=jira_issue.fields.description or "",
                                                   status=state,
                                                   order=order,
+                                                  order2=order2,
                                                   number=jira_issue.id,
                                                   interface_plugin_number=jira_issue.key)
                 timepiece_issue.number = timepiece.Issue.get_last_issue_number(timepiece_project.business)+1
@@ -228,9 +237,10 @@ class JiraSync(object):
                 timepiece.IssueHistory.add_history(self.active_user, timepiece_issue, "State change during jira import", timepiece_issue.status, state)
                 timepiece_issue.status = state
 
-            if int(timepiece_issue.order) != int(order) and self.settings.sync_issue_ordering_from_jira:
+            if (timepiece_issue.order != order or timepiece_issue.order2 != order2) and self.settings.sync_issue_ordering_from_jira:
                 timepiece.IssueHistory.add_history(self.active_user, timepiece_issue, "Order change during jira import", timepiece_issue.order, order)
                 timepiece_issue.order = order
+                timepiece_issue.order2 = order2
 
             if timepiece_issue.interface_plugin_number != jira_issue.key:
                 timepiece.IssueHistory.add_history(self.active_user, timepiece_issue, "Key change during jira import", timepiece_issue.interface_plugin_number, jira_issue.key)
@@ -461,12 +471,14 @@ class JiraSync(object):
             return
 
         try:
-            timepiece_issue_moved_after_key = timepiece_issue.project.issues.all().filter(order__lt=timepiece_issue.order).order_by("-order")[0].interface_plugin_number
+            timepiece_issue_moved_after_key = timepiece_issue.project.issues.all().filter(Q(order__lt=timepiece_issue.order)|Q(order2__lt=timepiece_issue.order2)) \
+                                                                                              .order_by("-order", "-order2")[0].interface_plugin_number
             timepiece_issue_moved_before_key = None
         except IndexError:
             timepiece_issue_moved_after_key = None
             try:
-                timepiece_issue_moved_before_key = timepiece_issue.project.issues.all().filter(order__gte=timepiece_issue.order).order_by("order")[0].interface_plugin_number
+                timepiece_issue_moved_before_key = timepiece_issue.project.issues.all().filter(Q(order__gte=timepiece_issue.order)|Q(order2__gte=timepiece_issue.order))\
+                                                                                              .order_by("order", "order2")[0].interface_plugin_number
             except IndexError:
                 # Means there's only one issue in the sprint
                 return

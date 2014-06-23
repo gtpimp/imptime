@@ -4706,7 +4706,7 @@ def bulk_move_issue_above_issue(request, context=None):
 
     selected_project.refresh_issues_order()
 
-    selected_issues = selected_project.issues.all().filter(pk__in=selected_issue_ids).order_by("-order")
+    selected_issues = selected_project.issues.all().filter(pk__in=selected_issue_ids).order_by("-order", "-order2")
     num_moved = 0
     for issue in selected_issues:
         if issue.order >= focus_issue.order:
@@ -4738,7 +4738,7 @@ def bulk_move_issue_below_issue(request, context=None):
 
     selected_project.refresh_issues_order()
 
-    selected_issues = selected_project.issues.all().filter(pk__in=selected_issue_ids).order_by("order")
+    selected_issues = selected_project.issues.all().filter(pk__in=selected_issue_ids).order_by("order", "order2")
     num_moved = 0
     for issue in selected_issues:
         if issue.order <= focus_issue.order:
@@ -4788,7 +4788,7 @@ def auto_issue_sort(request, project_id, template="timepiece/project/auto_issue_
 
     if 'ordered_states' in request.POST:
         ordered_states = request.POST['ordered_states'].split(",")
-        issues = project.issues.order_by("order")
+        issues = project.issues.order_by("order", "order2")
         count = 1
 
         bp = timepiece.BusinessPermissions.for_user(request.user, project.business)
