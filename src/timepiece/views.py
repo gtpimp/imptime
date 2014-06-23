@@ -4632,7 +4632,7 @@ def bulk_change_issue_feature(request, context=None):
         return HttpResponse("No feature chosen: %s" % form.errors)
 
     bp = timepiece.BusinessPermissions.for_user(request.user, selected_project.business)
-    if not bp.has_edit_feature:
+    if not bp.has_edit_issue_feature:
         return HttpResponse("No permission")
 
     new_feature = timepiece.Feature.objects.get(pk=form.cleaned_data['feature'])
