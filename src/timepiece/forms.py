@@ -1299,14 +1299,12 @@ class CalendarFilterForm(forms.Form):
     users = forms.ModelMultipleChoiceField(required=False,
                                            queryset=User.objects.all(),
                                            widget=CheckboxSelectMultiple,
-                                           initial=User.objects.all())
+                                           initial=User.objects.none())
     projects = forms.ModelMultipleChoiceField(required=False,
                                               queryset=Project.objects.all(),
                                               widget=CheckboxSelectMultiple,
-                                              initial=Project.objects.all())
+                                              initial=Project.objects.none())
 
-    active_user = forms.ModelChoiceField(required=False, queryset=User.objects.all())
-    active_project = GroupedModelChoiceField("business", required=False, queryset=Project.objects.all())
     startParam = forms.DateField(initial=datetime.today(), required=False)
     endParam = forms.DateField(initial=datetime.today(), required=False)
 
@@ -1316,14 +1314,25 @@ class CalendarFilterForm(forms.Form):
         self.fields['users'].queryset = allowed_users
         self.fields['projects'].queryset = allowed_projects
 
-        self.fields['active_user'].queryset = allowed_users
-        self.fields['active_project'].queryset = allowed_projects
-
     def save(self, calendar_events):
-        calendar_events = calendar_events.filter(user__in=self.cleaned_data['users'])
-        calendar_events = calendar_events.filter(project__in=self.cleaned_data['projects'])
+        if len(self.cleaned_data['users'])>0:
+            calendar_events = calendar_events.filter(user__in=self.cleaned_data['users'])
+        if len(self.cleaned_data['projects'])>0:
+            calendar_events = calendar_events.filter(project__in=self.cleaned_data['projects'])
         if self.cleaned_data['startParam'] is not None:
             calendar_events = calendar_events.filter(start__gte=self.cleaned_data['startParam'])
         if self.cleaned_data['endParam'] is not None:
             calendar_events = calendar_events.filter(start__lte=self.cleaned_data['endParam'])
         return calendar_events
+
+class CalendarEventCreateForm(forms.ModelForm):
+
+    class Meta:
+        model = CalendarEvent
+    
+    def __init__(self, allowed_users, allowed_projects, *args, **kwargs):
+        super(CalendarEventCreateForm, self).__init__(*args, **kwargs)
+        self.fields['user'].queryset = allowed_users
+        self.fields['project'].queryset = allowed_projects
+        self.fields['start'].widget.attrs['class'] = 'datepicker'
+    

@@ -27,9 +27,61 @@
 
 {% block content %}
 
+<form class="filter_form" method="POST" action="{% url 'create_calendar_event'%}">
+  {% csrf_token %}
+
+  <div class='form-group{% if filter_form.errors.project %} has-error{%endif%}'>
+    <div class="col-md-6">
+          <h3>Sprint</h3>
+    </div>
+    <div class="col-md-6">
+          {{ form_new_event.project }}
+    </div>
+  </div>
+
+  <div class='form-group{% if form_new_event.errors.user%} has-error{%endif%}'>
+    <div class="col-md-6">
+          <h3>User</h3>
+    </div>
+    <div class="col-md-6">
+          {{ form_new_event.user }}
+    </div>
+  </div>
+
+  <div class='form-group{% if form_new_event.errors.start%} has-error{%endif%}'>
+    <div class="col-md-6">
+          <h3>Date</h3>
+    </div>
+    <div class="col-md-6">
+          {{ form_new_event.start }}
+    </div>
+  </div>
+
+  <div class='form-group{% if form_new_event.errors.hours%} has-error{%endif%}'>
+    <div class="col-md-6">
+          <h3>Hours</h3>
+    </div>
+    <div class="col-md-6">
+          {{ form_new_event.hours }}
+    </div>
+  </div>
+
+  <div class='form-group'>
+    <div class="col-md-6">
+      <input class="btn btn-primary" type="submit" value="Create"/>
+    </div>
+  </div>
+  
+
+</form>
+
+<hr/>
+
 <form class="filter_form" method="GET" action="{% url 'calendar'%}">
   
       {% csrf_token %}
+
+  <h2>Filter</h2>
 
   <div class='form-group{% if filter_form.errors.users%} has-error{%endif%}'>
     <div class="col-md-6">
@@ -46,24 +98,6 @@
     </div>
     <div class="col-md-6">
           {{ filter_form.projects }}
-    </div>
-  </div>
-
-  <div class='form-group{% if filter_form.errors.active_sprint%} has-error{%endif%}'>
-    <div class="col-md-6">
-          <h3>Active Sprint</h3>
-    </div>
-    <div class="col-md-6">
-          {{ filter_form.active_project }}
-    </div>
-  </div>
-
-  <div class='form-group{% if filter_form.errors.active_user%} has-error{%endif%}'>
-    <div class="col-md-6">
-          <h3>Active User</h3>
-    </div>
-    <div class="col-md-6">
-          {{ filter_form.active_user }}
     </div>
   </div>
 

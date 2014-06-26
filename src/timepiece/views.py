@@ -4818,6 +4818,7 @@ def calendar(request, template="timepiece/calendar/calendar.html", context=None)
 
     context = context or {}
     _populate_calendar_events(request, context)
+    context['form_new_event'] = timepiece_forms.CalendarEventCreateForm(context['users'], context['projects'], request.POST or None, prefix='create_event')
     return render_to_response(template, context, context_instance=RequestContext(request))
 
 @login_required
@@ -4828,8 +4829,8 @@ def calendar_events(request, context=None):
     formatted_events =  [ { 'id': event.id,
                             'title': "%s : %s" % (event.user.username, event.project.name),
                             'allDay': False,
-                            'start': event.start,
-                            'end': event.end
+                            'start': event.start.strftime("%Y-%m-%d"),
+                            'end': event.end.strftime("%Y-%m-%d")
                             } for event in context['events'] ]
     return HttpResponse(json.dumps(formatted_events))
 
@@ -4850,6 +4851,18 @@ def _populate_calendar_events(request, context):
     context['projects'] = projects
     context['events'] = events
     context['filter_form'] = filter_form
+
+@login_required
+def create_calendar_event(request, context=None):
+    context = context or {}
+    _populate_calendar_events(request, context)
+
+    form_new_event = timepiece_forms.CalendarEventCreateForm(context['users'], context['projects'], request.POST or None, prefix='create_event')
+    if form_new_event.is_valid():
+        form_new_event.save()
+        return HttpResponseRedirect(reverse('calendar'))
+
+    return HttpResponse("Save failed : %s" % form_new_event.errors)
 
 # def createCalendarEvent(request):
 #     user_id = request.GET['user_id']

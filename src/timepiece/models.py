@@ -2613,5 +2613,5 @@ class CalendarEvent(models.Model):
 
     @property
     def end(self):
-        return self.start + datetime.timedelta(hours=self.hours)
+        return self.start + datetime.timedelta(hours=int(self.hours))
 
