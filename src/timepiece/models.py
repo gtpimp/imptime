@@ -2608,6 +2608,10 @@ class BusinessDocument(models.Model):
 class CalendarEvent(models.Model):
     user = models.ForeignKey(User, blank=False, null=False)
     project = models.ForeignKey(Project, blank=False, null=False)
-    hours_planned = models.DecimalField(max_digits=8, decimal_places=2, default=0)
-    hours_worked = models.DecimalField(max_digits=8, decimal_places=2, default=0)
-    date = models.DateField(blank=False,null=False)
+    start = models.DateTimeField(blank=False,null=False)
+    hours = models.DecimalField(max_digits=4, decimal_places=0, default=2)
+
+    @property
+    def end(self):
+        return self.start + datetime.timedelta(hours=self.hours)
+

@@ -4817,36 +4817,53 @@ def auto_issue_sort(request, project_id, template="timepiece/project/auto_issue_
 def calendar(request, template="timepiece/calendar/calendar.html", context=None):
 
     context = context or {}
+    _populate_calendar_events(request, context)
+    return render_to_response(template, context, context_instance=RequestContext(request))
+
+@login_required
+def calendar_events(request, context=None):
+    context = context or {}
+    _populate_calendar_events(request, context)
+
+    formatted_events =  [ { 'id': event.id,
+                            'title': "%s : %s" % (event.user.username, event.project.name),
+                            'allDay': False,
+                            'start': event.start,
+                            'end': event.end
+                            } for event in context['events'] ]
+    return HttpResponse(json.dumps(formatted_events))
+
+def _populate_calendar_events(request, context):
     bps = timepiece.BusinessPermissions.objects.filter(can_view_calendar=True)
     users = timepiece.User.objects.filter(pk__in=[ x['user'] for x in bps.order_by("user__username").values("user") ])
     businesses = timepiece.Business.objects.filter(pk__in=[ x['business'] for x in bps.order_by("business__name").values("business") ])
     projects = timepiece.Project.objects.filter(business__in=businesses).distinct()
-    calendar_events = timepiece.CalendarEvent.objects.filter(user__in=users, project__business__in=businesses).distinct().order_by("date")
-    
-    filter_form = timepiece_forms.CalendarFilterForm(users, projects, request.POST or None)
+    events = timepiece.CalendarEvent.objects.filter(user__in=users, project__business__in=businesses).distinct().order_by("start")
+
+    filter_form = timepiece_forms.CalendarFilterForm(users, projects, request.GET or None)
     if filter_form.is_valid():
-        calendar_events = filter_form.save(calendar_events)
-    
-    context = context or {}
-    context['businesses'] = businesses
+        events = filter_form.save(events)
+
+    context['bps'] = bps
     context['users'] = users
-    context['dev_calendar'] = dev_calendar.render_dev_calendar(users, businesses)
+    context['businesses'] = businesses
+    context['projects'] = projects
+    context['events'] = events
     context['filter_form'] = filter_form
-    return render_to_response(template, context, context_instance=RequestContext(request))
 
-def createCalendarEvent(request):
-    user_id = request.GET['user_id']
-    project_id = request.GET['project_id']
-    project = timepiece.Project.objects.get(pk=project_id)
-    user = timepiece.Project.objects.get(pk=project_id)
+# def createCalendarEvent(request):
+#     user_id = request.GET['user_id']
+#     project_id = request.GET['project_id']
+#     project = timepiece.Project.objects.get(pk=project_id)
+#     user = timepiece.Project.objects.get(pk=project_id)
 
 
-    form = timepiece_forms.NewProjectForm(request.POST or None, instance=project)
-    if form.is_valid():
-        project = form.save()
-        project.save()
-        return HttpResponseRedirect(
-            reverse('view_project', args=(project.id,))
-            )
+#     form = timepiece_forms.NewProjectForm(request.POST or None, instance=project)
+#     if form.is_valid():
+#         project = form.save()
+#         project.save()
+#         return HttpResponseRedirect(
+#             reverse('view_project', args=(project.id,))
+#             )
     
 

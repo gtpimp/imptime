@@ -603,6 +603,8 @@ urlpatterns = patterns('',
 
 
                        url(r'^calendar/$', views.calendar, {}, name='calendar'),
+                       url(r'^calendar_events/$', views.calendar_events, {}, name='calendar_events'),
+
                        url(r'^invoicing/', include('invoicing.urls', namespace="invoicing"), {}, "invoicing"),
 
 )

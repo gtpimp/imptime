@@ -1285,25 +1285,30 @@ class IssueCheckboxContextMenuActiveIssueForm(forms.Form):
         self.fields['focus_issue'].widget.attrs['onchange'] = "this.form.submit();"
 
 
-class NewCalendarEventForm(forms.ModelForm):
-    class Meta:
-        model = timepiece.CalendarEvent
-        fields = (
-            'user',
-            'project',
-            'hours_planned',
-            'date'
-        )
+# class NewCalendarEventForm(forms.ModelForm):
+#     class Meta:
+#         model = timepiece.CalendarEvent
+#         fields = (
+#             'user',
+#             'project',
+#             'hours_planned',
+#             'date'
+#         )
 
 class CalendarFilterForm(forms.Form):
     users = forms.ModelMultipleChoiceField(required=False,
                                            queryset=User.objects.all(),
                                            widget=CheckboxSelectMultiple,
                                            initial=User.objects.all())
-    projects = forms.ModelChoiceField(required=False,
-                                      queryset=Project.objects.all(),
-                                      widget=CheckboxSelectMultiple,
-                                      initial=Project.objects.all())
+    projects = forms.ModelMultipleChoiceField(required=False,
+                                              queryset=Project.objects.all(),
+                                              widget=CheckboxSelectMultiple,
+                                              initial=Project.objects.all())
+
+    active_user = forms.ModelChoiceField(required=False, queryset=User.objects.all())
+    active_project = GroupedModelChoiceField("business", required=False, queryset=Project.objects.all())
+    startParam = forms.DateField(initial=datetime.today(), required=False)
+    endParam = forms.DateField(initial=datetime.today(), required=False)
 
     def __init__(self, allowed_users, allowed_projects, *args, **kwargs):
         super(CalendarFilterForm, self).__init__(*args, **kwargs)
@@ -1311,7 +1316,14 @@ class CalendarFilterForm(forms.Form):
         self.fields['users'].queryset = allowed_users
         self.fields['projects'].queryset = allowed_projects
 
+        self.fields['active_user'].queryset = allowed_users
+        self.fields['active_project'].queryset = allowed_projects
+
     def save(self, calendar_events):
         calendar_events = calendar_events.filter(user__in=self.cleaned_data['users'])
         calendar_events = calendar_events.filter(project__in=self.cleaned_data['projects'])
+        if self.cleaned_data['startParam'] is not None:
+            calendar_events = calendar_events.filter(start__gte=self.cleaned_data['startParam'])
+        if self.cleaned_data['endParam'] is not None:
+            calendar_events = calendar_events.filter(start__lte=self.cleaned_data['endParam'])
         return calendar_events
