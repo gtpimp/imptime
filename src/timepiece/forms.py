@@ -25,11 +25,12 @@ from timepiece.lookups import ProjectLookup, QuickLookup
 from timepiece.lookups import UserLookup, BusinessLookup
 
 from timepiece.models import Project, Business, Entry, Activity, UserProfile, Attribute, Location, Activity, Feature, Issue, BusinessPermissions
-from timepiece.models import ProjectHours, Salary
+from timepiece.models import ProjectHours, Salary, CalendarEvent
 from timepiece.fields import UserModelChoiceField
+from django.contrib.auth.models import User
 from timepiece import models as timepiece
 from timepiece import utils
-
+from invoicing.fields import GroupedModelChoiceField
 
 class ProjectFiltersForm(forms.Form):
     TRUNC_CHOICES = [
@@ -144,6 +145,7 @@ class EditPersonPermission(forms.ModelForm):
         self.fields['can_view_actual_hours'].widget.attrs['class'] = 'safe'
         self.fields['can_estimate_own_points'].widget.attrs['class'] = 'medium-safe'
         self.fields['can_see_other_user_points'].widget.attrs['class'] = 'medium-safe'
+        self.fields['can_view_calendar'].widget.attrs['class'] = 'medium-safe'
 
         self.fields['can_edit_permissions'].widget.attrs['class'] = 'unsafe'
         self.fields['can_toggle_graphs'].widget.attrs['class'] = 'unsafe'
@@ -156,6 +158,7 @@ class EditPersonPermission(forms.ModelForm):
         self.fields['can_view_ctc_billable_rates'].widget.attrs['class'] = 'unsafe'
         self.fields['can_view_ctc_rates'].widget.attrs['class'] = 'unsafe'
         self.fields['can_view_documents'].widget.attrs['class'] = 'unsafe'
+        self.fields['can_edit_calendar'].widget.attrs['class'] = 'unsafe'
 
 class QuickEditPersonForm(forms.ModelForm):
     class Meta:
@@ -1291,3 +1294,24 @@ class NewCalendarEventForm(forms.ModelForm):
             'hours_planned',
             'date'
         )
+
+class CalendarFilterForm(forms.Form):
+    users = forms.ModelMultipleChoiceField(required=False,
+                                           queryset=User.objects.all(),
+                                           widget=CheckboxSelectMultiple,
+                                           initial=User.objects.all())
+    projects = forms.ModelChoiceField(required=False,
+                                      queryset=Project.objects.all(),
+                                      widget=CheckboxSelectMultiple,
+                                      initial=Project.objects.all())
+
+    def __init__(self, allowed_users, allowed_projects, *args, **kwargs):
+        super(CalendarFilterForm, self).__init__(*args, **kwargs)
+
+        self.fields['users'].queryset = allowed_users
+        self.fields['projects'].queryset = allowed_projects
+
+    def save(self, calendar_events):
+        calendar_events = calendar_events.filter(user__in=self.cleaned_data['users'])
+        calendar_events = calendar_events.filter(project__in=self.cleaned_data['projects'])
+        return calendar_events

@@ -4813,22 +4813,25 @@ def auto_issue_sort(request, project_id, template="timepiece/project/auto_issue_
         context['project'] = project
         return render_to_response(template, context, context_instance=RequestContext(request))
 
+@login_required
 def calendar(request, template="timepiece/calendar/calendar.html", context=None):
-    business_id = request.REQUEST.get("business_id") 
-    if not (request.REQUEST.get("user_ids") == ""):
-        user_ids = request.REQUEST.get("user_ids")
-    else:
-        user_ids = None
-
-    if not (business_id is None): 
-        business_users = list( [business, timepiece.BusinessPermissions.objects.filter(business=business)] for business in timepiece.Business.objects.filter(pk=business_id).order_by("name"))
-    else:
-        business_users = list( [business, timepiece.BusinessPermissions.objects.filter(business=business)] for business in timepiece.Business.objects.all().order_by("name"))
-
-    business = list( timepiece.Business.objects.all().order_by("name") )
 
     context = context or {}
-    context['dev_calendar'] = dev_calendar.render_dev_calendar(business_id, business_users, business, user_ids)
+    bps = timepiece.BusinessPermissions.objects.filter(can_view_calendar=True)
+    users = timepiece.User.objects.filter(pk__in=[ x['user'] for x in bps.order_by("user__username").values("user") ])
+    businesses = timepiece.Business.objects.filter(pk__in=[ x['business'] for x in bps.order_by("business__name").values("business") ])
+    projects = timepiece.Project.objects.filter(business__in=businesses).distinct()
+    calendar_events = timepiece.CalendarEvent.objects.filter(user__in=users, project__business__in=businesses).distinct().order_by("date")
+    
+    filter_form = timepiece_forms.CalendarFilterForm(users, projects, request.POST or None)
+    if filter_form.is_valid():
+        calendar_events = filter_form.save(calendar_events)
+    
+    context = context or {}
+    context['businesses'] = businesses
+    context['users'] = users
+    context['dev_calendar'] = dev_calendar.render_dev_calendar(users, businesses)
+    context['filter_form'] = filter_form
     return render_to_response(template, context, context_instance=RequestContext(request))
 
 def createCalendarEvent(request):

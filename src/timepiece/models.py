@@ -258,6 +258,8 @@ class BusinessPermissions(models.Model):
     can_view_ctc_billable_rates = models.BooleanField(default=False, verbose_name="Can View Ctc Billable")
     can_view_ctc_rates = models.BooleanField(default=False, verbose_name="Can View Ctc") # a subpermission of can_view_ctc_billable_rates, used for clients who shouldn't see our internal costing.
     can_view_documents = models.BooleanField(default=False, verbose_name="Can View Docs") # quotes and summaries, usually contains costs and rates
+    can_view_calendar = models.BooleanField(default=False, verbose_name="Can View Calendar")
+    can_edit_calendar = models.BooleanField(default=False, verbose_name="Can Edit Calendar")
     
     @classmethod
     def by_user(self, business):
@@ -365,6 +367,14 @@ class BusinessPermissions(models.Model):
     @property
     def has_view_documents(self):
         return self.user.is_superuser or self.can_view_documents
+
+    @property
+    def has_view_calendar(self):
+        return self.user.is_superuser or self.can_view_calendar
+
+    @property
+    def has_edit_calendar(self):
+        return self.user.is_superuser or self.can_edit_calendar
 
 
 class ProjectQuerySet(QuerySet):
