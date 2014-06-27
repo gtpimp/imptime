@@ -494,6 +494,18 @@ class Project(models.Model):
                 issue.order = order
                 issue.save()
             order += 2 # sort with a number in between to make moving easier
+
+    def typical_estimate_hours(self):
+        return (float(self.estimate_stats()['total_estimate_max']) - self.estimate_stats()['total_estimate_min'])/2
+
+    def scheduled_hours(self):
+        return self.calendar_events.all().aggregate(hours=Sum('hours'))['hours']
+
+    def unscheduled_hours(self):
+        return float(self.typical_estimate_hours() or 0) - float(self.scheduled_hours() or 0)
+
+    def scheduled_hours_percentage(self):
+        return (float(self.scheduled_hours()) / (float(self.typical_estimate_hours()) or 1))/100
         
     def get_user_rate(self, user):
 
@@ -690,10 +702,12 @@ class Project(models.Model):
             return False
         return True
 
-    def estimate_stats(self, issues, preferred_user_id):
+    def estimate_stats(self, issues=None, preferred_user_id=None):
 
         if self._estimate_stats is not None:
             return self._estimate_stats
+        if issues is None:
+            issues = self.issues.all()
         stats = {'issues':[], 'users':{}, 'features':{}}
         self._estimate_stats = stats
 
@@ -2617,7 +2631,7 @@ class BusinessDocument(models.Model):
 
 class CalendarEvent(models.Model):
     user = models.ForeignKey(User, blank=False, null=False, db_index=True)
-    project = models.ForeignKey(Project, blank=False, null=False, db_index=True)
+    project = models.ForeignKey(Project, blank=False, null=False, db_index=True, related_name='calendar_events')
     start = models.DateTimeField(blank=False,null=False, db_index=True)
     hours = models.DecimalField(max_digits=4, decimal_places=2, default=2.0)
 

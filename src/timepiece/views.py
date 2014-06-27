@@ -4815,7 +4815,6 @@ def auto_issue_sort(request, project_id, template="timepiece/project/auto_issue_
 
 @login_required
 def calendar(request, template="timepiece/calendar/calendar.html", context=None):
-
     context = context or {}
     _populate_calendar_events(request, context)
     context['form_new_event'] = timepiece_forms.CalendarEventCreateForm(context['users'], context['projects'], request.POST or None)
@@ -4868,6 +4867,11 @@ def create_calendar_event(request, context=None):
 
     form_new_event = timepiece_forms.CalendarEventCreateForm(context['users'], context['projects'], request.POST or None)
     if form_new_event.is_valid():
+
+        bp = timepiece.BusinessPermissions.for_user(request.user, form_new_event.cleaned_data['project'].business)
+        if not bp.has_edit_calendar:
+            raise PermissionDenied
+
         event = form_new_event.save()
         return HttpResponse(json.dumps(_create_js_calendar_event(event)))
 
@@ -4879,6 +4883,10 @@ def update_calendar_event(request, event_id, context=None):
     context = context or {}
     _populate_calendar_events(request, context)
     calendar_event = context['events'].get(pk=event_id)
+
+    bp = timepiece.BusinessPermissions.for_user(request.user, calendar_event.project.business)
+    if not bp.has_edit_calendar:
+        raise PermissionDenied
 
     form = timepiece_forms.CalendarEventUpdateForm(context['users'], context['projects'], request.POST or None, instance=calendar_event)
     if form.is_valid():
@@ -4893,22 +4901,18 @@ def delete_calendar_event(request, event_id, context=None):
     context = context or {}
     _populate_calendar_events(request, context)
     calendar_event = context['events'].get(pk=event_id)
+
+    bp = timepiece.BusinessPermissions.for_user(request.user, calendar_event.project.business)
+    if not bp.has_edit_calendar:
+        raise PermissionDenied
+
     calendar_event.delete();
     return HttpResponse("Deleted")
 
-# def createCalendarEvent(request):
-#     user_id = request.GET['user_id']
-#     project_id = request.GET['project_id']
-#     project = timepiece.Project.objects.get(pk=project_id)
-#     user = timepiece.Project.objects.get(pk=project_id)
-
-
-#     form = timepiece_forms.NewProjectForm(request.POST or None, instance=project)
-#     if form.is_valid():
-#         project = form.save()
-#         project.save()
-#         return HttpResponseRedirect(
-#             reverse('view_project', args=(project.id,))
-#             )
-    
-
+@login_required
+@csrf_exempt
+def render_calendar_unscheduled_time(request, template="timepiece/calendar/_unscheduled_time.html", context=None):
+    context = context or {}
+    _populate_calendar_events(request, context)
+    context['projects_with_unscheduled_hours'] = [ p for p in context['projects'] if p.unscheduled_hours()>0 ]
+    return render_to_response(template, context, context_instance=RequestContext(request))

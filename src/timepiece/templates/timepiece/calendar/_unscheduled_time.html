@@ -1,0 +1,9 @@
+<ul>
+{% for p in projects_with_unscheduled_hours  %}
+  <li>
+    <a href="#" onclick="t_calendar.activate_project_for_scheduling({{p.id}}); return false">
+       {{ p.long_name }} : scheduled {{ p.scheduled_hours|default:0|floatformat:0 }} / {{p.typical_estimate_hours|floatformat:0}} hours ({{p.scheduled_hours_percentage|floatformat:0}}%)
+    </a>
+  </li>
+{% endfor %}
+</ul>

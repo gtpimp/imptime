@@ -7,7 +7,8 @@
     t_config = { 'calendar_events_url': "{% url 'calendar_events' %}",
                  'create_calendar_event_url': "{% url 'create_calendar_event' %}",
                  'update_calendar_event_url': "{% url 'update_calendar_event' 999999 %}",
-                 'delete_calendar_event_url': "{% url 'delete_calendar_event' 999999 %}"};
+                 'delete_calendar_event_url': "{% url 'delete_calendar_event' 999999 %}",
+                 'render_calendar_unscheduled_time_url': "{% url 'render_calendar_unscheduled_time' %}" };
   </script>
 
   <script src="{{STATIC_URL}}fullcalendar/lib/moment.min.js"></script>
@@ -32,117 +33,133 @@
 
 <div id='calendar'></div>
 
-<hr/>
-<form class="creation_form" method="POST" action="{% url 'create_calendar_event'%}">
-  {% csrf_token %}
+<div id='floating_menus'>
 
-  <h2>Active for new events</h2>
+  <form class="box creation_form" method="POST" action="{% url 'create_calendar_event'%}">
+    {% csrf_token %}
 
-  <div class='form-group{% if form_new_event.errors.project %} has-error{%endif%}'>
-    <div class="col-md-6">
-          <h3>Sprint</h3>
+    <h2>New event values</h2>
+
+    <div class='form-group{% if form_new_event.errors.project %} has-error{%endif%}'>
+      <div class="col-md-6">
+            <h3>Sprint</h3>
+      </div>
+      <div class="col-md-6">
+            {{ form_new_event.project }}
+      </div>
     </div>
-    <div class="col-md-6">
-          {{ form_new_event.project }}
+
+    <div class='form-group{% if form_new_event.errors.user%} has-error{%endif%}'>
+      <div class="col-md-6">
+            <h3>User</h3>
+      </div>
+      <div class="col-md-6">
+            {{ form_new_event.user }}
+      </div>
     </div>
+
+    <div class='form-group{% if form_new_event.errors.hours%} has-error{%endif%}'>
+      <div class="col-md-6">
+            <h3>Hours</h3>
+      </div>
+      <div class="col-md-6">
+            {{ form_new_event.hours }}
+      </div>
+    </div>
+
+    <div style="clear:both"></div>
+
+  </form>
+
+  <form class="box event_edit_form" method="POST" style="display:none" action="{% url 'update_calendar_event' 999999 %}">
+    {% csrf_token %}
+
+    <h2>Edit event</h2>
+
+    <input type="hidden" name="event_id"/>
+
+    <div class='form-group{% if update_form.errors.user%} has-error{%endif%}'>
+      <div class="col-md-6">
+            <h3>User</h3>
+      </div>
+      <div class="col-md-6">
+            {{ update_form.user }}
+      </div>
+    </div>
+
+    <div class='form-group{% if update_form.errors.project %} has-error{%endif%}'>
+      <div class="col-md-6">
+            <h3>Project</h3>
+      </div>
+      <div class="col-md-6">
+            {{ update_form.project }}
+      </div>
+    </div>
+
+    <div class='form-group{% if update_form.errors.hours %} has-error{%endif%}'>
+      <div class="col-md-6">
+            <h3>Hours</h3>
+      </div>
+      <div class="col-md-6">
+            {{ update_form.hours }}
+      </div>
+    </div>
+
+    <div class='form-group'>
+      <div class="col-md-12">
+        <input class="btn btn-primary" type="submit" value="Save" onclick="t_calendar.update_event(this); return false;" />
+        <input class="btn btn-secondary" type="submit" value="Cancel" onclick="$(this).parents('form').hide(); return false;" />
+        <input class="btn btn-warning" type="submit" value="Delete" onclick="t_calendar.delete_event(this); return false;" />
+      </div>
+    </div>
+
+    <div style="clear:both"></div>
+
+  </form>
+
+  <div class="box unscheduled_sprints_container">
+    <h2>Unscheduled Sprints</h2>
+    <div class="unscheduled_sprints">
+      Not loaded
+    </div>
+    <button class="btn btn-primary" onclick="t_calendar.refresh_unscheduled_time(); return false">Refresh</button>
+
+    <div style="clear:both"></div>
   </div>
 
-  <div class='form-group{% if form_new_event.errors.user%} has-error{%endif%}'>
-    <div class="col-md-6">
-          <h3>User</h3>
-    </div>
-    <div class="col-md-6">
-          {{ form_new_event.user }}
-    </div>
-  </div>
+  <form class="box filter_form" method="GET" action="{% url 'calendar'%}">
 
-  <div class='form-group{% if form_new_event.errors.hours%} has-error{%endif%}'>
-    <div class="col-md-6">
-          <h3>Hours</h3>
-    </div>
-    <div class="col-md-6">
-          {{ form_new_event.hours }}
-    </div>
-  </div>
-  
-</form>
+    {% csrf_token %}
 
-<hr/>
+    <h2>Filter</h2>
 
-<form class="event_edit_form" method="POST" style="display:none" action="{% url 'update_calendar_event' 999999 %}">
-  {% csrf_token %}
-  
-  <h2>Edit event</h2>
+    <div class='form-group{% if filter_form.errors.users%} has-error{%endif%}'>
+      <div class="col-md-6">
+            <h3>Users</h3>
+      </div>
+      <div class="col-md-6">
+            {{ filter_form.users }}
+      </div>
+    </div>
 
-  <input type="hidden" name="event_id"/>
-  
-  <div class='form-group{% if update_form.errors.user%} has-error{%endif%}'>
-    <div class="col-md-6">
-          <h3>User</h3>
+    <div class='form-group{% if filter_form.errors.businesses %} has-error{%endif%}'>
+      <div class="col-md-6">
+            <h3>Projects</h3>
+      </div>
+      <div class="col-md-6">
+            {{ filter_form.businesses }}
+      </div>
     </div>
-    <div class="col-md-6">
-          {{ update_form.user }}
-    </div>
-  </div>
 
-  <div class='form-group{% if update_form.errors.project %} has-error{%endif%}'>
-    <div class="col-md-6">
-          <h3>Project</h3>
+    <div class='form-group'>
+      <div class="col-md-6">
+        <input class="btn btn-primary" type="submit" value="Filter" onclick="t_calendar.refresh(); return false;" />
+      </div>
     </div>
-    <div class="col-md-6">
-          {{ update_form.project }}
-    </div>
-  </div>
 
-  <div class='form-group{% if update_form.errors.hours %} has-error{%endif%}'>
-    <div class="col-md-6">
-          <h3>Hours</h3>
-    </div>
-    <div class="col-md-6">
-          {{ update_form.hours }}
-    </div>
-  </div>
+    <div style="clear:both"></div>
 
-  <div class='form-group'>
-    <div class="col-md-12">
-      <input class="btn btn-primary" type="submit" value="Save" onclick="t_calendar.update_event(this); return false;" />
-      <input class="btn btn-secondary" type="submit" value="Cancel" onclick="$(this).parents('form').hide(); return false;" />
-      <input class="btn btn-warning" type="submit" value="Delete" onclick="t_calendar.delete_event(this); return false;" />
-    </div>
-  </div>
-
-</form>
-
-<form class="filter_form" method="GET" action="{% url 'calendar'%}">
-  
-  {% csrf_token %}
-
-  <h2>Filter</h2>
-
-  <div class='form-group{% if filter_form.errors.users%} has-error{%endif%}'>
-    <div class="col-md-6">
-          <h3>Users</h3>
-    </div>
-    <div class="col-md-6">
-          {{ filter_form.users }}
-    </div>
-  </div>
-
-  <div class='form-group{% if filter_form.errors.businesses %} has-error{%endif%}'>
-    <div class="col-md-6">
-          <h3>Projects</h3>
-    </div>
-    <div class="col-md-6">
-          {{ filter_form.businesses }}
-    </div>
-  </div>
-
-  <div class='form-group'>
-    <div class="col-md-6">
-      <input class="btn btn-primary" type="submit" value="Filter" onclick="t_calendar.refresh(); return false;" />
-    </div>
-  </div>
-  
-</form>
+  </form>
+</div>
 
 {% endblock %}

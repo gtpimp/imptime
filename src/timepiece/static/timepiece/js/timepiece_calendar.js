@@ -1,10 +1,33 @@
 
+jQuery.ajaxSettings.traditional = true;
+
 var t_calendar = ( function() {
 
 		       return {
 
 			   refresh: function() {
 			       $("#calendar").fullCalendar( 'refetchEvents' );
+			       t_calendar.refresh_unscheduled_time();
+			   },
+
+			   activate_project_for_scheduling: function(project_id) {
+			       $("#id_project").val(project_id);
+			   },
+
+			   refresh_unscheduled_time: function() {
+			       var on_done = imp.loading("calculating...");
+			       $(".unscheduled_sprints").html("...");
+			       $.ajax({type:"GET",
+				       url: t_config.render_calendar_unscheduled_time_url,
+				       success: function(data) {
+					   on_done();
+					   $(".unscheduled_sprints").html(data);
+				       },
+				       error: function(err) {
+					   on_done();
+					   alert("Fetch failed");
+				       }
+				      });
 			   },
 
 			   update_event: function(el) {
@@ -27,7 +50,6 @@ var t_calendar = ( function() {
 					   t_calendar.refresh();
 				       },
 				       error: function(err) {
-					   revertFunc();
 					   on_done();
 					   alert("Save failed");
 				       }
@@ -60,8 +82,10 @@ var t_calendar = ( function() {
 			       var d = form_el.serializeArray();
 			       var res = {};
 			       $.each( d, function(index, datum) {
-					   if (res[datum.name]) {
-					       res[datum.name] = [res[datum.name]];
+					   if (res[datum.name] ) {
+					       if ( ! $.isArray(res[datum.name]) ) {
+						   res[datum.name] = [res[datum.name]];
+					       }
 					       res[datum.name].push(datum.value);
 					   } else {
 					       res[datum.name] = datum.value;
@@ -103,6 +127,16 @@ $(document).ready(function() {
 
 			  var on_done = imp.loading("creating event...");
 			  var res = t_calendar.serialize_form($(".creation_form"));
+
+			  if ( ! res.user ) {
+			      alert("Select a user before trying to create events");
+			      return false;
+			  }
+			  if ( ! res.project ) {
+			      alert("Select a sprint before trying to create events");
+			      return false;
+			  }
+
 			  res.start = start.format('YYYY-MM-DD HH:mm:ss');
 			  res.end = end.format('YYYY-MM-DD HH:mm:ss');
 			  
@@ -115,11 +149,11 @@ $(document).ready(function() {
 				      $("#calendar").fullCalendar('renderEvent', data);
 				  },
 				  error: function(err) {
-				      revertFunc();
 				      on_done();
 				      alert("Create failed");
 				  }
 				 });
+			  return false;
 		      };
 
 		      var edit_event = function(calEvent, jsEvent, view) {
@@ -172,5 +206,7 @@ $(document).ready(function() {
 
 		      $('.datepicker').datepicker({dateFormat: 'yy-mm-dd'});
 		      $('.datetimepicker').datetimepicker({format: 'yyyy-mm-dd hh:ii'});
+
+		      t_calendar.refresh_unscheduled_time();
 		      
 		  });
