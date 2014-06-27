@@ -4864,6 +4864,20 @@ def create_calendar_event(request, context=None):
 
     return HttpResponse("Save failed : %s" % form_new_event.errors)
 
+@login_required
+@csrf_exempt
+def update_calendar_event(request, event_id, context=None):
+    context = context or {}
+    _populate_calendar_events(request, context)
+    calendar_event = context['events'].get(pk=event_id)
+
+    form = timepiece_forms.CalendarEventUpdateForm(request.POST or None, instance=calendar_event)
+    if form.is_valid():
+        form.save()
+        return HttpResponse("Save successful")
+
+    return HttpResponse("Save failed : %s" % form.errors)
+
 # def createCalendarEvent(request):
 #     user_id = request.GET['user_id']
 #     project_id = request.GET['project_id']

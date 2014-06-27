@@ -1337,3 +1337,33 @@ class CalendarEventCreateForm(forms.ModelForm):
         self.fields['project'].queryset = allowed_projects
         self.fields['start'].widget.attrs['class'] = 'datepicker'
     
+class CalendarEventUpdateForm(forms.ModelForm):
+
+    end = forms.DateTimeField()
+
+    class Meta:
+        model = CalendarEvent
+    
+    def __init__(self, *args, **kwargs):
+        super(CalendarEventUpdateForm, self).__init__(*args, **kwargs)
+        self.fields['project'].required = False
+        self.fields['user'].required = False
+        self.fields['start'].required = False
+        self.fields['hours'].required = False
+        self.fields['end'].required = False
+
+    def clean(self):
+        data = self.cleaned_data
+        if 'user' not in data or data['user'] is None:
+            data['user'] = self.instance.user
+        if 'project' not in data or data['project'] is None:
+            data['project'] = self.instance.project
+        if 'start' not in data or data['start'] is None:
+            data['start'] = self.instance.start
+        if 'hours' not in data or data['hours'] is None:
+            if 'end' in data and data['end'] is not None:
+                data['hours'] = ((self.instance.end - self.instance.start).seconds)/(60*60)
+            else:
+                data['hours'] = self.instance.hours
+        return data
+        

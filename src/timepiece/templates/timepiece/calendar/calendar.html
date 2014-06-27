@@ -4,7 +4,8 @@
 {% block extrajs %}
 
   <script>
-    t_config = { 'calendar_events_url': "{% url 'calendar_events' %}" };
+    t_config = { 'calendar_events_url': "{% url 'calendar_events' %}",
+                 'update_calendar_event_url': "{% url 'update_calendar_event' 999999 %}" };
   </script>
 
   <script src="{{STATIC_URL}}fullcalendar/lib/moment.min.js"></script>
@@ -105,7 +106,7 @@
 
   <div class='form-group'>
     <div class="col-md-6">
-      <input class="btn btn-primary" type="submit" value="Filter"/>
+      <input class="btn btn-primary" type="submit" value="Filter" onclick="t_calendar.refresh(); return false;" />
     </div>
   </div>
   
