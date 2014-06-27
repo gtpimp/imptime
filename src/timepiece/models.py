@@ -496,7 +496,7 @@ class Project(models.Model):
             order += 2 # sort with a number in between to make moving easier
 
     def typical_estimate_hours(self):
-        return (float(self.estimate_stats()['total_estimate_max']) - self.estimate_stats()['total_estimate_min'])/2
+        return self.estimate_stats()['total_estimate_hours_max']
 
     def scheduled_hours(self):
         return self.calendar_events.all().aggregate(hours=Sum('hours'))['hours']
@@ -712,8 +712,9 @@ class Project(models.Model):
         self._estimate_stats = stats
 
         estimate_cost = 0
+        estimate_hours = 0
         for issue in issues:
-
+            
             points = []
             if issue.assigned_to:
                 points = issue.issue_points.get_query_set().all().filter(user=issue.assigned_to).values('points', 'user')
@@ -761,9 +762,12 @@ class Project(models.Model):
             stats['features'][feature] += min_cost
 
             estimate_cost += min_cost
+            estimate_hours += points
 
         stats['total_estimate_min'] = estimate_cost
         stats['total_estimate_max'] = estimate_cost * (1+self.slack_percentage)
+        stats['total_estimate_hours_min'] = estimate_hours
+        stats['total_estimate_hours_max'] = estimate_hours * (1+self.slack_percentage)
         stats['slack_percentage'] = self.slack_percentage*100
         return stats
 
