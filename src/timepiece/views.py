@@ -4911,8 +4911,9 @@ def delete_calendar_event(request, event_id, context=None):
 
 @login_required
 @csrf_exempt
-def render_calendar_unscheduled_time(request, template="timepiece/calendar/_unscheduled_time.html", context=None):
+def render_calendar_scheduled_sprints(request, template="timepiece/calendar/_scheduled_sprints.html", context=None):
     context = context or {}
     _populate_calendar_events(request, context)
     context['projects_with_unscheduled_hours'] = [ p for p in context['projects'] if p.unscheduled_hours()>0 ]
+    context['projects_with_fully_scheduled_hours'] = [ p for p in context['projects'] if p.unscheduled_hours()<1 ]
     return render_to_response(template, context, context_instance=RequestContext(request))

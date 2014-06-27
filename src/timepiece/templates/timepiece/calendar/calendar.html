@@ -8,7 +8,7 @@
                  'create_calendar_event_url': "{% url 'create_calendar_event' %}",
                  'update_calendar_event_url': "{% url 'update_calendar_event' 999999 %}",
                  'delete_calendar_event_url': "{% url 'delete_calendar_event' 999999 %}",
-                 'render_calendar_unscheduled_time_url': "{% url 'render_calendar_unscheduled_time' %}" };
+                 'render_calendar_scheduled_sprints_url': "{% url 'render_calendar_scheduled_sprints' %}" };
   </script>
 
   <script src="{{STATIC_URL}}fullcalendar/lib/moment.min.js"></script>
@@ -117,12 +117,10 @@
 
   </form>
 
-  <div class="box unscheduled_sprints_container">
-    <h2>Unscheduled Sprints</h2>
-    <div class="unscheduled_sprints">
+  <div class="box sprint_schedules_container">
+    <div class="sprint_schedules">
       Not loaded
     </div>
-    <button class="btn btn-primary" onclick="t_calendar.refresh_unscheduled_time(); return false">Refresh</button>
 
     <div style="clear:both"></div>
   </div>

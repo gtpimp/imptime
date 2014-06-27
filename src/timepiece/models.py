@@ -495,6 +495,12 @@ class Project(models.Model):
                 issue.save()
             order += 2 # sort with a number in between to make moving easier
 
+    def min_estimate_hours(self):
+        return self.estimate_stats()['total_estimate_hours_min']
+
+    def max_estimate_hours(self):
+        return self.estimate_stats()['total_estimate_hours_max']
+
     def typical_estimate_hours(self):
         return self.estimate_stats()['total_estimate_hours_max']
 
@@ -502,10 +508,22 @@ class Project(models.Model):
         return self.calendar_events.all().aggregate(hours=Sum('hours'))['hours']
 
     def unscheduled_hours(self):
-        return float(self.typical_estimate_hours() or 0) - float(self.scheduled_hours() or 0)
+        return float(self.min_estimate_hours() or 0) - float(self.scheduled_hours() or 0)
 
     def scheduled_hours_percentage(self):
-        return (float(self.scheduled_hours()) / (float(self.typical_estimate_hours()) or 1))/100
+        return (float(self.scheduled_hours()) / (float(self.typical_estimate_hours()) or 1))*100
+
+    def scheduled_to_start_at(self):
+        try:
+            return self.calendar_events.all().order_by("start")[0].start
+        except IndexError:
+            return None
+
+    def scheduled_to_end_at(self):
+        try:
+            return self.calendar_events.all().order_by("-start")[0].start
+        except IndexError:
+            return None
         
     def get_user_rate(self, user):
 

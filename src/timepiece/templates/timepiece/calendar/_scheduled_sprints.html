@@ -1,0 +1,43 @@
+<h2>Unscheduled sprints</h2>
+<ul>
+{% for p in projects_with_unscheduled_hours  %}
+  <li class="project_unscheduled">
+    <a href="#" class="tooltip_anchor" onclick="t_calendar.activate_project_for_scheduling({{p.id}}); return false">
+        {{ p.long_name }} ({{p.scheduled_hours_percentage|default:0|floatformat:0}}% scheduled)
+    </a>
+    <div class="hover_tooltip unscheduled" style="display:none">
+       Sprint is estimated between {{p.min_estimate_hours|floatformat:0}} and {{p.max_estimate_hours|floatformat:0}} hours
+       <br/>
+       {{ p.scheduled_hours|default:0|floatformat:0 }} hours have been scheduled
+       <br/>
+       At least {{p.unscheduled_hours|default:0|floatformat:0}} hours still need to be scheduled
+       <br/>
+       First scheduled date at {{p.scheduled_to_start_at|date:"d-m-Y (D)"}}
+       <br/>
+       Last scheduled date at {{p.scheduled_to_end_at|date:"d-m-Y (D)"}}
+    </div>
+  </li>
+{% endfor %}
+</ul>
+
+<h2>Fully scheduled sprints</h2>
+<ul>
+{% for p in projects_with_fully_scheduled_hours  %}
+  <li>
+    <a class="tooltip_anchor" href="#" onclick="t_calendar.activate_project_for_scheduling({{p.id}}); return false">
+        {{ p.long_name }}
+    </a>
+    <div class="hover_tooltip" style="display:none">
+       Sprint is estimated between {{p.min_estimate_hours|floatformat:0}} and {{p.max_estimate_hours|floatformat:0}} hours
+       <br/>
+       {{ p.scheduled_hours|default:0|floatformat:0 }} hours have been scheduled
+       <br/>
+       First scheduled date at {{p.scheduled_to_start_at|date:"d-m-Y (D)"}}
+       <br/>
+       Last scheduled date at {{p.scheduled_to_end_at|date:"d-m-Y (D)"}}
+    </div>
+  </li>
+{% endfor %}
+</ul>
+
+<button class="btn btn-primary" onclick="t_calendar.refresh_sprint_schedules(); return false">Refresh schedules</button>

@@ -7,21 +7,29 @@ var t_calendar = ( function() {
 
 			   refresh: function() {
 			       $("#calendar").fullCalendar( 'refetchEvents' );
-			       t_calendar.refresh_unscheduled_time();
+			       t_calendar.refresh_sprint_schedules();
 			   },
 
 			   activate_project_for_scheduling: function(project_id) {
 			       $("#id_project").val(project_id);
 			   },
 
-			   refresh_unscheduled_time: function() {
+			   refresh_sprint_schedules: function() {
 			       var on_done = imp.loading("calculating...");
-			       $(".unscheduled_sprints").html("...");
+			       $(".sprint_schedules").html("...");
 			       $.ajax({type:"GET",
-				       url: t_config.render_calendar_unscheduled_time_url,
+				       url: t_config.render_calendar_scheduled_sprints_url,
 				       success: function(data) {
 					   on_done();
-					   $(".unscheduled_sprints").html(data);
+					   $(".sprint_schedules").html(data);
+					   
+					   $(".tooltip_anchor").hover(function() {
+									  $(this).parents("li").find(".hover_tooltip").show();
+								      },
+								      function() {
+									  $(this).parents("li").find(".hover_tooltip").hide();
+								      });
+
 				       },
 				       error: function(err) {
 					   on_done();
@@ -207,6 +215,6 @@ $(document).ready(function() {
 		      $('.datepicker').datepicker({dateFormat: 'yy-mm-dd'});
 		      $('.datetimepicker').datetimepicker({format: 'yyyy-mm-dd hh:ii'});
 
-		      t_calendar.refresh_unscheduled_time();
+		      t_calendar.refresh_sprint_schedules();
 		      
 		  });
