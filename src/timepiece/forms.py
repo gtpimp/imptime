@@ -1360,10 +1360,11 @@ class CalendarEventUpdateForm(forms.ModelForm):
             data['project'] = self.instance.project
         if 'start' not in data or data['start'] is None:
             data['start'] = self.instance.start
-        if 'hours' not in data or data['hours'] is None:
-            if 'end' in data and data['end'] is not None:
-                data['hours'] = ((self.instance.end - self.instance.start).seconds)/(60*60)
-            else:
-                data['hours'] = self.instance.hours
+        if 'end' in data and data['end'] is not None:
+            data['hours'] = ((self.instance.end - self.instance.start).seconds)/(60*60)
+        elif 'hours' in data and data['hours'] is not None:
+            data['hours'] = self.instance.hours
+        if data['hours'] == 0:
+            data['hours'] = 2 #default minimum
         return data
         

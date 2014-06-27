@@ -3,21 +3,6 @@ var t_calendar = ( function() {
 
 		       return {
 
-			   on_day_clicked : function() {
-
-			       $.ajax({type:"POST",
-				       url: form.attr('action'),
-				       data: form.serialize(),
-				       success: function(data) {
-					   var issue_number = data;
-					   imp.refresh_issue_detail();
-					   $(document).find(".issue_instance_row[id='"+issue_id+"']").find(".issue_number").html(issue_number);
-				       }
-				      });
-			       
-			       alert("hi");
-			   },
-
 			   refresh: function() {
 			       $("#calendar").fullCalendar( 'refetchEvents' );
 			   }
@@ -46,6 +31,37 @@ $(document).ready(function() {
 				  }
 				 });
 		      };
+
+		      var create_event = function(start, end, jsEvent, view) {
+
+			  var on_done = imp.loading("creating event...");
+			  var d = $(".creation_form").serializeArray();
+			  var res = {};
+			  $.each( d, function(index, datum) {
+				      if (res[datum.name]) {
+					  res[datum.name] = [res[datum.name]];
+					  res[datum.name].push(datum.value);
+				      } else {
+					  res[datum.name] = datum.value;
+				      }
+				  });
+			  res.start = start.format('YYYY-MM-DD HH:mm:ss');
+			  res.end = end.format('YYYY-MM-DD HH:mm:ss');
+			  
+			  $.ajax({type:"POST",
+				  url: t_config.create_calendar_event_url,
+				  data: res,
+				  success: function(data) {
+				      on_done();
+				      t_calendar.refresh();
+				  },
+				  error: function(err) {
+				      revertFunc();
+				      on_done();
+				      alert("Create failed");
+				  }
+				 });
+		      };
 		      
 		      $('#calendar').fullCalendar({
 						      header: {
@@ -54,7 +70,6 @@ $(document).ready(function() {
 							  right: 'month,agendaWeek,agendaDay'
 						      },
 						      defaultDate: '2014-06-12',
-						      dayClick: t_calendar.on_day_clicked,
 						      eventSources: [
 							  { url: t_config.calendar_events_url,
 							    color: 'lightblue',
@@ -82,19 +97,7 @@ $(document).ready(function() {
 						      eventResize: save_event,
 						      selectable: true,
 						      selectHelper: true,
-						      select: function(start, end) {
-							  var title = prompt('Event Title:');
-							  var eventData;
-							  if (title) {
-							      eventData = {
-								  title: title,
-								  start: start,
-								  end: end
-							      };
-							      $('#calendar').fullCalendar('renderEvent', eventData, true);
-							  }
-							  $('#calendar').fullCalendar('unselect');
-						      },
+						      select: create_event,
 						      loading: function(isLoading, view) {
 							  if ( isLoading ) {
 							      active_loading_func = imp.loading("calendar loading");
