@@ -4833,7 +4833,9 @@ def calendar_events(request, context=None):
                             'start': event.start.strftime("%Y-%m-%d %H:%M"),
                             'end': event.end.strftime("%Y-%m-%d %H:%M"),
                             'project_id': event.project.id,
-                            'user_id': event.user.id
+                            'user_id': event.user.id,
+                            'color': event.project.business.get_colour(),
+                            'borderColor': "#121212"
                             } for event in context['events'] ]
     return HttpResponse(json.dumps(formatted_events))
 
