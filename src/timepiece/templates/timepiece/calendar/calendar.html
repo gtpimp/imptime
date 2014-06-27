@@ -6,7 +6,8 @@
   <script>
     t_config = { 'calendar_events_url': "{% url 'calendar_events' %}",
                  'create_calendar_event_url': "{% url 'create_calendar_event' %}",
-                 'update_calendar_event_url': "{% url 'update_calendar_event' 999999 %}" };
+                 'update_calendar_event_url': "{% url 'update_calendar_event' 999999 %}",
+                 'delete_calendar_event_url': "{% url 'delete_calendar_event' 999999 %}"};
   </script>
 
   <script src="{{STATIC_URL}}fullcalendar/lib/moment.min.js"></script>
@@ -103,9 +104,10 @@
   </div>
 
   <div class='form-group'>
-    <div class="col-md-6">
+    <div class="col-md-12">
       <input class="btn btn-primary" type="submit" value="Save" onclick="t_calendar.update_event(this); return false;" />
       <input class="btn btn-secondary" type="submit" value="Cancel" onclick="$(this).parents('form').hide(); return false;" />
+      <input class="btn btn-warning" type="submit" value="Delete" onclick="t_calendar.delete_event(this); return false;" />
     </div>
   </div>
 

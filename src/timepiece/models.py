@@ -2606,9 +2606,9 @@ class BusinessDocument(models.Model):
 
 
 class CalendarEvent(models.Model):
-    user = models.ForeignKey(User, blank=False, null=False)
-    project = models.ForeignKey(Project, blank=False, null=False)
-    start = models.DateTimeField(blank=False,null=False)
+    user = models.ForeignKey(User, blank=False, null=False, db_index=True)
+    project = models.ForeignKey(Project, blank=False, null=False, db_index=True)
+    start = models.DateTimeField(blank=False,null=False, db_index=True)
     hours = models.DecimalField(max_digits=4, decimal_places=2, default=2.0)
 
     @property

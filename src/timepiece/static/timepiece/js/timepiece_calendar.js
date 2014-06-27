@@ -33,6 +33,28 @@ var t_calendar = ( function() {
 				      });
 			   },
 
+			   delete_event: function(el) {
+			       if ( ! confirm('Delete this event?') ) { 
+				   return false; 
+			       }; 
+			       var form = $(el).parents("form");
+			       var event_id = form.find("[name=event_id]").val();
+			       var on_done = imp.loading("deleting event");
+			       $.ajax({type:"POST",
+				       url: t_config.delete_calendar_event_url.replace("999999", event_id),
+				       success: function(data) {
+					   on_done();
+					   form.hide();
+					   t_calendar.refresh();
+				       },
+				       error: function(err) {
+					   on_done();
+					   alert("Delete failed");
+				       }
+				      });
+			       return false;
+			   },
+
 			   serialize_form: function(form_el) {
 			       var d = form_el.serializeArray();
 			       var res = {};

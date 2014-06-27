@@ -4881,6 +4881,15 @@ def update_calendar_event(request, event_id, context=None):
 
     return HttpResponse("Save failed : %s" % form.errors)
 
+@login_required
+@csrf_exempt
+def delete_calendar_event(request, event_id, context=None):
+    context = context or {}
+    _populate_calendar_events(request, context)
+    calendar_event = context['events'].get(pk=event_id)
+    calendar_event.delete();
+    return HttpResponse("Deleted")
+
 # def createCalendarEvent(request):
 #     user_id = request.GET['user_id']
 #     project_id = request.GET['project_id']

@@ -1353,6 +1353,7 @@ class CalendarEventCreateForm(forms.ModelForm):
 class CalendarEventUpdateForm(forms.ModelForm):
 
     end = forms.DateTimeField()
+    project = GroupedModelChoiceField("business", queryset=Project.objects.all(), required=True)
 
     class Meta:
         model = CalendarEvent
