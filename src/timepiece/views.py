@@ -4819,6 +4819,7 @@ def calendar(request, template="timepiece/calendar/calendar.html", context=None)
     context = context or {}
     _populate_calendar_events(request, context)
     context['form_new_event'] = timepiece_forms.CalendarEventCreateForm(context['users'], context['projects'], request.POST or None)
+    context['update_form'] = timepiece_forms.CalendarEventUpdateForm(context['users'], context['projects'])
     return render_to_response(template, context, context_instance=RequestContext(request))
 
 @login_required
@@ -4827,10 +4828,12 @@ def calendar_events(request, context=None):
     _populate_calendar_events(request, context)
 
     formatted_events =  [ { 'id': event.id,
-                            'title': "%s-%s (%s)" % (event.project.business.name, event.project.name, event.user.username),
+                            'title': "%s-%s (%s, %s hrs)" % (event.project.business.name, event.project.name, event.user.username, event.hours),
                             'allDay': False,
-                            'start': event.start.strftime("%Y-%m-%d"),
-                            'end': event.end.strftime("%Y-%m-%d")
+                            'start': event.start.strftime("%Y-%m-%d %H:%M"),
+                            'end': event.end.strftime("%Y-%m-%d %H:%M"),
+                            'project_id': event.project.id,
+                            'user_id': event.user.id
                             } for event in context['events'] ]
     return HttpResponse(json.dumps(formatted_events))
 
@@ -4871,7 +4874,7 @@ def update_calendar_event(request, event_id, context=None):
     _populate_calendar_events(request, context)
     calendar_event = context['events'].get(pk=event_id)
 
-    form = timepiece_forms.CalendarEventUpdateForm(request.POST or None, instance=calendar_event)
+    form = timepiece_forms.CalendarEventUpdateForm(context['users'], context['projects'], request.POST or None, instance=calendar_event)
     if form.is_valid():
         form.save()
         return HttpResponse("Save successful")

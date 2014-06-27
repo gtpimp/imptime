@@ -68,6 +68,49 @@
 
 <hr/>
 
+<form class="event_edit_form" method="POST" style="display:none" action="{% url 'update_calendar_event' 999999 %}">
+  {% csrf_token %}
+  
+  <h2>Edit event</h2>
+
+  <input type="hidden" name="event_id"/>
+  
+  <div class='form-group{% if update_form.errors.user%} has-error{%endif%}'>
+    <div class="col-md-6">
+          <h3>User</h3>
+    </div>
+    <div class="col-md-6">
+          {{ update_form.user }}
+    </div>
+  </div>
+
+  <div class='form-group{% if update_form.errors.project %} has-error{%endif%}'>
+    <div class="col-md-6">
+          <h3>Project</h3>
+    </div>
+    <div class="col-md-6">
+          {{ update_form.project }}
+    </div>
+  </div>
+
+  <div class='form-group{% if update_form.errors.hours %} has-error{%endif%}'>
+    <div class="col-md-6">
+          <h3>Hours</h3>
+    </div>
+    <div class="col-md-6">
+          {{ update_form.hours }}
+    </div>
+  </div>
+
+  <div class='form-group'>
+    <div class="col-md-6">
+      <input class="btn btn-primary" type="submit" value="Save" onclick="t_calendar.update_event(this); return false;" />
+      <input class="btn btn-secondary" type="submit" value="Cancel" onclick="$(this).parents('form').hide(); return false;" />
+    </div>
+  </div>
+
+</form>
+
 <form class="filter_form" method="GET" action="{% url 'calendar'%}">
   
   {% csrf_token %}

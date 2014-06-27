@@ -5,6 +5,46 @@ var t_calendar = ( function() {
 
 			   refresh: function() {
 			       $("#calendar").fullCalendar( 'refetchEvents' );
+			   },
+
+			   update_event: function(el) {
+			       var form = $(el).parents("form");
+			       var data = t_calendar.serialize_form(form);
+			       var on_done = (function() { 
+						  var loading_done = imp.loading("saving event...");
+						  return function() {
+						      loading_done();
+						      form.hide();
+						      t_calendar.refresh();
+						  };
+					      }());
+
+			       $.ajax({type:"POST",
+				       url: t_config.update_calendar_event_url.replace("999999", data.event_id),
+				       data: data,
+				       success: function(data) {
+					   on_done();
+				       },
+				       error: function(err) {
+					   revertFunc();
+					   on_done();
+					   alert("Save failed");
+				       }
+				      });
+			   },
+
+			   serialize_form: function(form_el) {
+			       var d = form_el.serializeArray();
+			       var res = {};
+			       $.each( d, function(index, datum) {
+					   if (res[datum.name]) {
+					       res[datum.name] = [res[datum.name]];
+					       res[datum.name].push(datum.value);
+					   } else {
+					       res[datum.name] = datum.value;
+					   }
+				       });
+			       return res;
 			   }
 
 		       };
@@ -23,6 +63,7 @@ $(document).ready(function() {
 					  end: event.end.format('YYYY-MM-DD HH:mm:ss') },
 				  success: function(data) {
 				      on_done();
+				      t_calendar.refresh();
 				  },
 				  error: function(err) {
 				      revertFunc();
@@ -35,16 +76,7 @@ $(document).ready(function() {
 		      var create_event = function(start, end, jsEvent, view) {
 
 			  var on_done = imp.loading("creating event...");
-			  var d = $(".creation_form").serializeArray();
-			  var res = {};
-			  $.each( d, function(index, datum) {
-				      if (res[datum.name]) {
-					  res[datum.name] = [res[datum.name]];
-					  res[datum.name].push(datum.value);
-				      } else {
-					  res[datum.name] = datum.value;
-				      }
-				  });
+			  var res = t_calendar.serialize_form($(".creation_form"));
 			  res.start = start.format('YYYY-MM-DD HH:mm:ss');
 			  res.end = end.format('YYYY-MM-DD HH:mm:ss');
 			  
@@ -62,6 +94,16 @@ $(document).ready(function() {
 				  }
 				 });
 		      };
+
+		      var edit_event = function(calEvent, jsEvent, view) {
+
+			  var form = $(".event_edit_form");
+			  form.find("[name=user]").val(calEvent.user_id);
+			  form.find("[name=project]").val(calEvent.project_id);
+			  form.find("[name=hours]").val((calEvent.end-calEvent.start)/(60*60*1000));
+			  form.find("[name=event_id]").val(calEvent.id);
+			  form.show();
+		      };
 		      
 		      $('#calendar').fullCalendar({
 						      header: {
@@ -75,17 +117,7 @@ $(document).ready(function() {
 							    color: 'lightblue',
 							    textColor: 'black',
 							    data: function() {
-								var d = $(".filter_form").serializeArray();
-								var res = {};
-								$.each( d, function(index, datum) {
-									    if (res[datum.name]) {
-										res[datum.name] = [res[datum.name]];
-										res[datum.name].push(datum.value);
-									    } else {
-										res[datum.name] = datum.value;
-									    }
-									});
-								return res;
+								return t_calendar.serialize_form($(".filter_form"));
 							    },
 							    error: function() {
 								alert("Failed to load calendar events");
@@ -98,6 +130,7 @@ $(document).ready(function() {
 						      selectable: true,
 						      selectHelper: true,
 						      select: create_event,
+						      eventClick: edit_event,
 						      loading: function(isLoading, view) {
 							  if ( isLoading ) {
 							      active_loading_func = imp.loading("calendar loading");
@@ -111,5 +144,6 @@ $(document).ready(function() {
 						  });
 
 		      $('.datepicker').datepicker({dateFormat: 'yy-mm-dd'});
+		      $('.datetimepicker').datetimepicker({format: 'yyyy-mm-dd hh:ii'});
 		      
 		  });

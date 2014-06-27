@@ -2609,8 +2609,9 @@ class CalendarEvent(models.Model):
     user = models.ForeignKey(User, blank=False, null=False)
     project = models.ForeignKey(Project, blank=False, null=False)
     start = models.DateTimeField(blank=False,null=False)
-    hours = models.DecimalField(max_digits=4, decimal_places=0, default=2)
+    hours = models.DecimalField(max_digits=4, decimal_places=2, default=2.0)
 
     @property
     def end(self):
-        return self.start + datetime.timedelta(hours=int(self.hours))
+        return self.start + datetime.timedelta(hours=float(self.hours))
+

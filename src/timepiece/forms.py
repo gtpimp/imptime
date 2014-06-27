@@ -1328,6 +1328,8 @@ class CalendarFilterForm(forms.Form):
 class CalendarEventCreateForm(forms.ModelForm):
 
     project = GroupedModelChoiceField("business", queryset=Project.objects.all(), required=True)
+    end = forms.DateTimeField(required=False)
+
     class Meta:
         model = CalendarEvent
     
@@ -1335,7 +1337,18 @@ class CalendarEventCreateForm(forms.ModelForm):
         super(CalendarEventCreateForm, self).__init__(*args, **kwargs)
         self.fields['user'].queryset = allowed_users
         self.fields['project'].queryset = allowed_projects
-        self.fields['start'].widget.attrs['class'] = 'datepicker'
+        self.fields['start'].widget.attrs['class'] = 'datetimepicker'
+        self.fields['hours'].required=False
+
+    def clean(self):
+        data = self.cleaned_data
+        if 'end' in data and data['end'] is not None:
+            data['hours'] = ((data['end'] - data['start']).seconds)/(60*60)
+        elif 'hours' not in data or data['hours'] is None:
+            data['hours'] = self.instance.hours
+        if data['hours'] == 0:
+            data['hours'] = 2 #default minimum
+        return data
     
 class CalendarEventUpdateForm(forms.ModelForm):
 
@@ -1344,13 +1357,17 @@ class CalendarEventUpdateForm(forms.ModelForm):
     class Meta:
         model = CalendarEvent
     
-    def __init__(self, *args, **kwargs):
+    def __init__(self, allowed_users, allowed_projects, *args, **kwargs):
         super(CalendarEventUpdateForm, self).__init__(*args, **kwargs)
         self.fields['project'].required = False
         self.fields['user'].required = False
         self.fields['start'].required = False
         self.fields['hours'].required = False
         self.fields['end'].required = False
+
+        self.fields['user'].queryset = allowed_users
+        self.fields['project'].queryset = allowed_projects
+        self.fields['start'].widget.attrs['class'] = 'datetimepicker'
 
     def clean(self):
         data = self.cleaned_data
@@ -1361,8 +1378,8 @@ class CalendarEventUpdateForm(forms.ModelForm):
         if 'start' not in data or data['start'] is None:
             data['start'] = self.instance.start
         if 'end' in data and data['end'] is not None:
-            data['hours'] = ((self.instance.end - self.instance.start).seconds)/(60*60)
-        elif 'hours' in data and data['hours'] is not None:
+            data['hours'] = ((data['end'] - data['start']).seconds)/(60*60)
+        elif 'hours' not in data or data['hours'] is None:
             data['hours'] = self.instance.hours
         if data['hours'] == 0:
             data['hours'] = 2 #default minimum

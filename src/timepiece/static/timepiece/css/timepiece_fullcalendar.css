@@ -1,10 +1,20 @@
 
 #calendar {
-    width: 70%;
+    width: 80%;
     float:left;
 }
 
 .filter_form, .creation_form {
     float:right;
     clear:right;
+}
+
+.event_edit_form {
+    position: fixed;
+    top: 30%;
+    left: 40%;
+    padding: 20px;
+    border: 1px solid #000000;
+    z-index:999;
+    background-color: #ffffff;
 }
