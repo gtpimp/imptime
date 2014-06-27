@@ -27,6 +27,8 @@
 
 {% block content %}
 
+<div id='calendar'></div>
+
 <form class="filter_form" method="POST" action="{% url 'create_calendar_event'%}">
   {% csrf_token %}
 
@@ -108,7 +110,5 @@
   </div>
   
 </form>
-
-<div id='calendar'></div>
 
 {% endblock %}

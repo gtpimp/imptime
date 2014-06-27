@@ -1327,6 +1327,8 @@ class CalendarFilterForm(forms.Form):
 
 class CalendarEventCreateForm(forms.ModelForm):
 
+    project = GroupedModelChoiceField("business", queryset=Project.objects.all(), required=True)
+
     class Meta:
         model = CalendarEvent
     
