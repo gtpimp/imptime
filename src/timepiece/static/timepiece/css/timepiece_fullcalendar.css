@@ -4,7 +4,7 @@
     float:left;
 }
 
-.filter_form {
+.filter_form, .creation_form {
     float:right;
     clear:right;
 }

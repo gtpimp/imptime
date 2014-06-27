@@ -32,8 +32,30 @@ $(document).ready(function() {
 						      },
 						      defaultDate: '2014-06-12',
 						      editable: true,
-						      events: t_config.calendar_events_url,
-						      dayClick: t_calendar.on_day_clicked
+						      dayClick: t_calendar.on_day_clicked,
+						      eventSources: [
+							  { url: t_config.calendar_events_url,
+							    color: 'lightblue',
+							    textColor: 'black',
+							    data: function() {
+								var d = $(".filter_form").serializeArray();
+								var res = {};
+								$.each( d, function(index, datum) {
+									    if (res[datum.name]) {
+										res[datum.name] = [res[datum.name]];
+										res[datum.name].push(datum.value);
+									    } else {
+										res[datum.name] = datum.value;
+									    }
+									});
+								return res;
+							    },
+							    error: function() {
+								alert("Failed to load calendar events");
+							    }
+							  }
+						      ]
+						      
 						  });
 
 		      $('.datepicker').datepicker({dateFormat: 'yy-mm-dd'});

@@ -4841,7 +4841,7 @@ def _populate_calendar_events(request, context):
     projects = timepiece.Project.objects.filter(business__in=businesses).filter_open().order_by("business__name", "name").distinct()
     events = timepiece.CalendarEvent.objects.filter(user__in=users, project__business__in=businesses).distinct().order_by("start")
 
-    filter_form = timepiece_forms.CalendarFilterForm(users, projects, request.GET or None)
+    filter_form = timepiece_forms.CalendarFilterForm(users, businesses, request.GET or None)
     if filter_form.is_valid():
         events = filter_form.save(events)
 

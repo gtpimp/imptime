@@ -1300,25 +1300,25 @@ class CalendarFilterForm(forms.Form):
                                            queryset=User.objects.all(),
                                            widget=CheckboxSelectMultiple,
                                            initial=User.objects.none())
-    projects = forms.ModelMultipleChoiceField(required=False,
-                                              queryset=Project.objects.all(),
-                                              widget=CheckboxSelectMultiple,
-                                              initial=Project.objects.none())
+    businesses = forms.ModelMultipleChoiceField(required=False,
+                                                queryset=Business.objects.all(),
+                                                widget=CheckboxSelectMultiple,
+                                                initial=Business.objects.none())
 
     startParam = forms.DateField(initial=datetime.today(), required=False)
     endParam = forms.DateField(initial=datetime.today(), required=False)
 
-    def __init__(self, allowed_users, allowed_projects, *args, **kwargs):
+    def __init__(self, allowed_users, allowed_businesses, *args, **kwargs):
         super(CalendarFilterForm, self).__init__(*args, **kwargs)
 
         self.fields['users'].queryset = allowed_users
-        self.fields['projects'].queryset = allowed_projects
+        self.fields['businesses'].queryset = allowed_businesses
 
     def save(self, calendar_events):
         if len(self.cleaned_data['users'])>0:
             calendar_events = calendar_events.filter(user__in=self.cleaned_data['users'])
-        if len(self.cleaned_data['projects'])>0:
-            calendar_events = calendar_events.filter(project__in=self.cleaned_data['projects'])
+        if len(self.cleaned_data['businesses'])>0:
+            calendar_events = calendar_events.filter(project__business__in=self.cleaned_data['businesses'])
         if self.cleaned_data['startParam'] is not None:
             calendar_events = calendar_events.filter(start__gte=self.cleaned_data['startParam'])
         if self.cleaned_data['endParam'] is not None:
@@ -1328,7 +1328,6 @@ class CalendarFilterForm(forms.Form):
 class CalendarEventCreateForm(forms.ModelForm):
 
     project = GroupedModelChoiceField("business", queryset=Project.objects.all(), required=True)
-
     class Meta:
         model = CalendarEvent
     
