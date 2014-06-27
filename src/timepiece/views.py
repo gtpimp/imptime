@@ -4827,17 +4827,21 @@ def calendar_events(request, context=None):
     context = context or {}
     _populate_calendar_events(request, context)
 
-    formatted_events =  [ { 'id': event.id,
-                            'title': "%s-%s (%s, %s hrs)" % (event.project.business.name, event.project.name, event.user.username, event.hours),
-                            'allDay': False,
-                            'start': event.start.strftime("%Y-%m-%d %H:%M"),
-                            'end': event.end.strftime("%Y-%m-%d %H:%M"),
-                            'project_id': event.project.id,
-                            'user_id': event.user.id,
-                            'color': event.project.business.get_colour(),
-                            'borderColor': "#121212"
-                            } for event in context['events'] ]
+    formatted_events =  [ _create_js_calendar_event(event) for event in context['events'] ]
     return HttpResponse(json.dumps(formatted_events))
+
+def _create_js_calendar_event(event):
+    return { 'id': event.id,
+             'title': "%s-%s (%s, %s hrs)" % (event.project.business.name, event.project.name, event.user.username, event.hours),
+             'allDay': False,
+             'start': event.start.strftime("%Y-%m-%d %H:%M"),
+             'end': event.end.strftime("%Y-%m-%d %H:%M"),
+             'project_id': event.project.id,
+             'user_id': event.user.id,
+             'color': event.project.business.get_colour(),
+             'textColor': "#121212",
+             'borderColor': "#121212"
+             }
 
 def _populate_calendar_events(request, context):
     bps = timepiece.BusinessPermissions.objects.filter(can_view_calendar=True)
@@ -4864,8 +4868,8 @@ def create_calendar_event(request, context=None):
 
     form_new_event = timepiece_forms.CalendarEventCreateForm(context['users'], context['projects'], request.POST or None)
     if form_new_event.is_valid():
-        form_new_event.save()
-        return HttpResponseRedirect(reverse('calendar'))
+        event = form_new_event.save()
+        return HttpResponse(json.dumps(_create_js_calendar_event(event)))
 
     return HttpResponse("Save failed : %s" % form_new_event.errors)
 
@@ -4878,8 +4882,8 @@ def update_calendar_event(request, event_id, context=None):
 
     form = timepiece_forms.CalendarEventUpdateForm(context['users'], context['projects'], request.POST or None, instance=calendar_event)
     if form.is_valid():
-        form.save()
-        return HttpResponse("Save successful")
+        calendar_event = form.save()
+        return HttpResponse(json.dumps(_create_js_calendar_event(calendar_event)))
 
     return HttpResponse("Save failed : %s" % form.errors)
 

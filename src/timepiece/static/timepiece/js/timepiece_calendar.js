@@ -15,15 +15,16 @@ var t_calendar = ( function() {
 						  return function() {
 						      loading_done();
 						      form.hide();
-						      t_calendar.refresh();
 						  };
 					      }());
 
 			       $.ajax({type:"POST",
 				       url: t_config.update_calendar_event_url.replace("999999", data.event_id),
 				       data: data,
+				       dataType:"json",
 				       success: function(data) {
 					   on_done();
+					   t_calendar.refresh();
 				       },
 				       error: function(err) {
 					   revertFunc();
@@ -77,15 +78,18 @@ $(document).ready(function() {
 
 		      var active_loading_func = null;
 
-		      var save_event = function(event, delta, revertFunc) {
+		      var save_event = function(event, delta, revertFunc, needs_refresh) {
 			  var on_done = imp.loading("saving event...");
 			  $.ajax({type:"POST",
 				  url: t_config.update_calendar_event_url.replace("999999", event.id),
 				  data: { start: event.start.format('YYYY-MM-DD HH:mm:ss'),
 					  end: event.end.format('YYYY-MM-DD HH:mm:ss') },
+				  dataType:"json",
 				  success: function(data) {
 				      on_done();
-				      t_calendar.refresh();
+				      if ( needs_refresh ) {
+					  t_calendar.refresh();
+				      }
 				  },
 				  error: function(err) {
 				      revertFunc();
@@ -105,9 +109,10 @@ $(document).ready(function() {
 			  $.ajax({type:"POST",
 				  url: t_config.create_calendar_event_url,
 				  data: res,
+				  dataType:"json",
 				  success: function(data) {
 				      on_done();
-				      t_calendar.refresh();
+				      $("#calendar").fullCalendar('renderEvent', data);
 				  },
 				  error: function(err) {
 				      revertFunc();
@@ -147,8 +152,8 @@ $(document).ready(function() {
 							  }
 						      ],
 						      editable: true,
-						      eventDrop: save_event,
-						      eventResize: save_event,
+						      eventDrop: function(event, delta, revertFunc) { save_event(event, delta, revertFunc, false); },
+						      eventResize: function(event, delta, revertFunc) { save_event(event, delta, revertFunc, true); },
 						      selectable: true,
 						      selectHelper: true,
 						      select: create_event,
