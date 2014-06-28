@@ -4920,7 +4920,7 @@ def create_calendar_event(request, context=None):
 def update_calendar_event(request, event_id, context=None):
     context = context or {}
     _populate_calendar_events(request, context)
-    calendar_event = context['events'].get(pk=event_id)
+    calendar_event = context['calendar_events'].get(pk=event_id)
 
     form = timepiece_forms.CalendarEventUpdateForm(context['users'], context['projects'], request.POST or None, instance=calendar_event)
     if form.is_valid():
@@ -4944,7 +4944,7 @@ def update_calendar_event(request, event_id, context=None):
 def delete_calendar_event(request, event_id, context=None):
     context = context or {}
     _populate_calendar_events(request, context)
-    calendar_event = context['events'].get(pk=event_id)
+    calendar_event = context['calendar_events'].get(pk=event_id)
 
     bp = timepiece.BusinessPermissions.for_user(request.user, calendar_event.project.business)
     if not bp.has_edit_calendar:

@@ -14,6 +14,12 @@ var t_calendar = ( function() {
 			       $("#id_project").val(project_id);
 			   },
 
+			   switch_to_day_view: function() {
+			       $("#calendar").fullCalendar('changeView', 'agendaDay');
+			       $(".event_create_form").hide();
+			       $(".event_edit_form").hide();
+			   },
+
 			   refresh_sprint_schedules: function() {
 			       var on_done = imp.loading("calculating...");
 			       $(".sprint_schedules").html("...");
@@ -45,6 +51,7 @@ var t_calendar = ( function() {
 						  return function() {
 						      loading_done();
 						      form.hide();
+						      active_form = null;
 						  };
 					      }());
 
@@ -78,6 +85,7 @@ var t_calendar = ( function() {
 						  return function() {
 						      loading_done();
 						      form.hide();
+						      active_form = null;
 						  };
 					      }());
 
@@ -172,6 +180,7 @@ $(document).ready(function() {
 		      };
 
 		      var new_event = function(start, end, jsEvent, view) {
+			  $("#calendar").fullCalendar('gotoDate', start);
 			  var form = $(".event_create_form");
 			  form.find("[name=start]").val(start.format('YYYY-MM-DD HH:mm:ss'));
 			  form.find("[name=end]").val(end.format('YYYY-MM-DD HH:mm:ss'));
@@ -179,7 +188,7 @@ $(document).ready(function() {
 		      };
 
 		      var edit_event = function(calEvent, jsEvent, view) {
-
+			  $("#calendar").fullCalendar('gotoDate', calEvent.start);
 			  var form = $(".event_edit_form");
 			  form.find("[name=user]").val(calEvent.user_id);
 			  form.find("[name=project]").val(calEvent.project_id);
