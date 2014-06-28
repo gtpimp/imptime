@@ -4871,7 +4871,7 @@ def _populate_calendar_events(request, context):
 
     bps = timepiece.BusinessPermissions.objects.filter(can_view_calendar=True)
     businesses = timepiece.Business.objects.filter(pk__in=[ x['business'] for x in bps.order_by("business__name").values("business") ])
-    projects = timepiece.Project.objects.filter(business__in=businesses).filter_open().order_by("business__name", "name").distinct()
+    projects = timepiece.Project.objects.filter(business__in=businesses).filter_in_dev().order_by("business__name", "name").distinct()
 
     calendar_events = timepiece.CalendarEvent.objects.filter(user__in=users).filter(Q(project__business__in=businesses)|Q(project__isnull=True)).distinct().order_by("start")
 
