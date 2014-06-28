@@ -146,11 +146,16 @@ $(document).ready(function() {
 
 		      var save_event = function(event, delta, revertFunc, needs_refresh) {
 			  var on_done = imp.loading("saving event...");
+
+			  var data = { start: event.start.format('YYYY-MM-DD HH:mm:ss'),
+				       end: event.end.format('YYYY-MM-DD HH:mm:ss') };
+			  if ( event.project_id ) {
+			      data.project = event.project_id;
+			  }
+
 			  $.ajax({type:"POST",
 				  url: t_config.update_calendar_event_url.replace("999999", event.id),
-				  data: { start: event.start.format('YYYY-MM-DD HH:mm:ss'),
-					  end: event.end.format('YYYY-MM-DD HH:mm:ss'),
-					  project: event.project_id },
+				  data: data,
 				  dataType:"json",
 				  success: function(data) {
 				      on_done();
