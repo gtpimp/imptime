@@ -3,17 +3,39 @@ Sprint is estimated between {{p.min_estimate_hours|floatformat:0}} and {{p.max_e
 {{ p.scheduled_hours|default:0|floatformat:0 }} hours have been scheduled
 <br/>
 At least {{p.min_unscheduled_hours|default:0|floatformat:0}} to {{p.max_unscheduled_hours|default:0|floatformat:0}} hours still need to be scheduled
-<br/>
-First scheduled date at {{p.scheduled_to_start_at|date:"d-M-Y (D)"}}
-<br/>
-Last scheduled date at {{p.scheduled_to_end_at|date:"d-M-Y (D)"}}
-<br/>
-<hr/>
-<table>
-{% for info in p.scheduled_hours_per_user %}
-<tr>
-  <td>{{info.user.username}}</td>
-  <td>{{info.hours|floatformat:0}} hours</td>
-</tr>
-{% endfor %}
-</table>
+
+{% if p.scheduled_hours > 0 %}
+  <br/>
+  First scheduled date at {{p.scheduled_to_start_at|date:"d-M-Y (D)"}}
+  <br/>
+  Last scheduled date at {{p.scheduled_to_end_at|date:"d-M-Y (D)"}}
+  <br/>
+
+
+  <hr/>
+  <h3>Hours scheduled per user</h3>
+  <table>
+  {% for info in p.scheduled_hours_per_user %}
+  <tr>
+    <td>{{info.user.username}}</td>
+    <td>{{info.hours|floatformat:0}} hours</td>
+  </tr>
+  {% endfor %}
+  </table>
+
+  <div class="scheduled_hours_per_user_{{p.id}}" style="height:100px;width:100px;"></div>
+
+  <script>
+  $.plot(".scheduled_hours_per_user_{{p.id}}",
+             [ {%spaceless%} 
+                 {% for info in p.scheduled_hours_per_user %} 
+                   { label:"{{info.user.username}}", 
+                     data: {{info.hours|floatformat:0}}
+                   },
+                 {% endfor %} 
+               {%endspaceless%}
+             ],
+             { series: { pie: { show: true } },
+               legend: { show: false} } );
+  </script>
+{% endif %}

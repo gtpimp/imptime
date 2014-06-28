@@ -4898,7 +4898,7 @@ def update_calendar_event(request, event_id, context=None):
     form = timepiece_forms.CalendarEventUpdateForm(context['users'], context['projects'], request.POST or None, instance=calendar_event)
     if form.is_valid():
 
-        if calendar_event.project.business is not None:
+        if calendar_event.project is not None:
             bp = timepiece.BusinessPermissions.for_user(request.user, calendar_event.project.business)
             if not bp.has_edit_calendar:
                 raise PermissionDenied

@@ -149,7 +149,8 @@ $(document).ready(function() {
 			  $.ajax({type:"POST",
 				  url: t_config.update_calendar_event_url.replace("999999", event.id),
 				  data: { start: event.start.format('YYYY-MM-DD HH:mm:ss'),
-					  end: event.end.format('YYYY-MM-DD HH:mm:ss') },
+					  end: event.end.format('YYYY-MM-DD HH:mm:ss'),
+					  project: event.project_id },
 				  dataType:"json",
 				  success: function(data) {
 				      on_done();

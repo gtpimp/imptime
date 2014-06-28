@@ -11,6 +11,8 @@
                  'render_calendar_scheduled_sprints_url': "{% url 'render_calendar_scheduled_sprints' %}" };
   </script>
 
+  {% include "timepiece/_graph_js_includes.html" %}
+
   <script src="{{STATIC_URL}}fullcalendar/lib/moment.min.js"></script>
   <script src="{{STATIC_URL}}fullcalendar/lib/jquery-ui.custom.min.js"></script>
   <script src="{{STATIC_URL}}fullcalendar/fullcalendar.min.js"></script>
