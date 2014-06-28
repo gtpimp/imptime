@@ -507,8 +507,11 @@ class Project(models.Model):
     def scheduled_hours(self):
         return self.calendar_events.all().aggregate(hours=Sum('hours'))['hours']
 
-    def unscheduled_hours(self):
+    def min_unscheduled_hours(self):
         return float(self.min_estimate_hours() or 0) - float(self.scheduled_hours() or 0)
+
+    def max_unscheduled_hours(self):
+        return float(self.max_estimate_hours() or 0) - float(self.scheduled_hours() or 0)
 
     def scheduled_hours_percentage(self):
         return (float(self.scheduled_hours()) / (float(self.typical_estimate_hours()) or 1))*100
@@ -2653,9 +2656,12 @@ class BusinessDocument(models.Model):
 
 class CalendarEvent(models.Model):
     user = models.ForeignKey(User, blank=False, null=False, db_index=True)
-    project = models.ForeignKey(Project, blank=False, null=False, db_index=True, related_name='calendar_events')
+    project = models.ForeignKey(Project, blank=True, null=True, db_index=True, related_name='calendar_events')
     start = models.DateTimeField(blank=False,null=False, db_index=True)
     hours = models.DecimalField(max_digits=4, decimal_places=2, default=2.0)
+    description = models.TextField(null=True, blank=True)
+    event_type = models.CharField( max_length=50, default='work', 
+                                   choices = ( ('work', 'Work'), ('meeting', 'Meeting') ) )
 
     @property
     def end(self):

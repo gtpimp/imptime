@@ -22,7 +22,6 @@ var t_calendar = ( function() {
 				       success: function(data) {
 					   on_done();
 					   $(".sprint_schedules").html(data);
-					   
 					   $(".tooltip_anchor").hover(function() {
 									  $(this).parents("li").find(".hover_tooltip").show();
 								      },
@@ -41,7 +40,7 @@ var t_calendar = ( function() {
 			   update_event: function(el) {
 			       var form = $(el).parents("form");
 			       var data = t_calendar.serialize_form(form);
-			       var on_done = (function() { 
+			       var on_done = (function() {
 						  var loading_done = imp.loading("saving event...");
 						  return function() {
 						      loading_done();
@@ -64,10 +63,45 @@ var t_calendar = ( function() {
 				      });
 			   },
 
+			   create_event: function(el) {
+
+			       var form = $(".event_create_form");
+			       var res = t_calendar.serialize_form(form);
+			       
+			       if ( ! res.user ) {
+				   alert("Select a user before trying to create events");
+				   return false;
+			       }
+
+			       var on_done = (function() {
+						  var loading_done = imp.loading("creating event...");
+						  return function() {
+						      loading_done();
+						      form.hide();
+						  };
+					      }());
+
+			       $.ajax({type:"POST",
+				       url: t_config.create_calendar_event_url,
+				       data: res,
+				       dataType:"json",
+				       success: function(data) {
+					   on_done();
+					   $("#calendar").fullCalendar('renderEvent', data);
+				       },
+				       error: function(err) {
+					   on_done();
+					   alert("Create failed");
+				       }
+				      });
+			       return false;
+
+			   },
+
 			   delete_event: function(el) {
-			       if ( ! confirm('Delete this event?') ) { 
-				   return false; 
-			       }; 
+			       if ( ! confirm('Delete this event?') ) {
+				   return false;
+			       };
 			       var form = $(el).parents("form");
 			       var event_id = form.find("[name=event_id]").val();
 			       var on_done = imp.loading("deleting event");
@@ -131,37 +165,11 @@ $(document).ready(function() {
 				 });
 		      };
 
-		      var create_event = function(start, end, jsEvent, view) {
-
-			  var on_done = imp.loading("creating event...");
-			  var res = t_calendar.serialize_form($(".creation_form"));
-
-			  if ( ! res.user ) {
-			      alert("Select a user before trying to create events");
-			      return false;
-			  }
-			  if ( ! res.project ) {
-			      alert("Select a sprint before trying to create events");
-			      return false;
-			  }
-
-			  res.start = start.format('YYYY-MM-DD HH:mm:ss');
-			  res.end = end.format('YYYY-MM-DD HH:mm:ss');
-			  
-			  $.ajax({type:"POST",
-				  url: t_config.create_calendar_event_url,
-				  data: res,
-				  dataType:"json",
-				  success: function(data) {
-				      on_done();
-				      $("#calendar").fullCalendar('renderEvent', data);
-				  },
-				  error: function(err) {
-				      on_done();
-				      alert("Create failed");
-				  }
-				 });
-			  return false;
+		      var new_event = function(start, end, jsEvent, view) {
+			  var form = $(".event_create_form");
+			  form.find("[name=start]").val(start.format('YYYY-MM-DD HH:mm:ss'));
+			  form.find("[name=end]").val(end.format('YYYY-MM-DD HH:mm:ss'));
+			  form.show();
 		      };
 
 		      var edit_event = function(calEvent, jsEvent, view) {
@@ -170,10 +178,13 @@ $(document).ready(function() {
 			  form.find("[name=user]").val(calEvent.user_id);
 			  form.find("[name=project]").val(calEvent.project_id);
 			  form.find("[name=hours]").val((calEvent.end-calEvent.start)/(60*60*1000));
+			  form.find("[name=description]").val(calEvent.description);
 			  form.find("[name=event_id]").val(calEvent.id);
+			  form.find("[name=start]").val(calEvent.start.format('YYYY-MM-DD HH:mm:ss'));
+			  form.find("[name=end]").val(calEvent.end.format('YYYY-MM-DD HH:mm:ss'));
 			  form.show();
 		      };
-		      
+
 		      $('#calendar').fullCalendar({
 						      header: {
 							  left: 'prev,next today',
@@ -198,7 +209,7 @@ $(document).ready(function() {
 						      eventResize: function(event, delta, revertFunc) { save_event(event, delta, revertFunc, true); },
 						      selectable: true,
 						      selectHelper: true,
-						      select: create_event,
+						      select: new_event,
 						      eventClick: edit_event,
 						      loading: function(isLoading, view) {
 							  if ( isLoading ) {
@@ -209,12 +220,12 @@ $(document).ready(function() {
 							      }
 							  }
 						      }
-						      
+
 						  });
 
 		      $('.datepicker').datepicker({dateFormat: 'yy-mm-dd'});
 		      $('.datetimepicker').datetimepicker({format: 'yyyy-mm-dd hh:ii'});
 
 		      t_calendar.refresh_sprint_schedules();
-		      
+
 		  });

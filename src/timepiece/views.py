@@ -4837,6 +4837,7 @@ def _create_js_calendar_event(event):
              'end': event.end.strftime("%Y-%m-%d %H:%M"),
              'project_id': event.project.id,
              'user_id': event.user.id,
+             'description': event.description,
              'color': event.project.business.get_colour(),
              'textColor': "#121212",
              'borderColor': "#121212"
@@ -4914,6 +4915,6 @@ def delete_calendar_event(request, event_id, context=None):
 def render_calendar_scheduled_sprints(request, template="timepiece/calendar/_scheduled_sprints.html", context=None):
     context = context or {}
     _populate_calendar_events(request, context)
-    context['projects_with_unscheduled_hours'] = [ p for p in context['projects'] if p.unscheduled_hours()>0 and p.min_estimate_hours()>0 ]
-    context['projects_with_fully_scheduled_hours'] = [ p for p in context['projects'] if p.unscheduled_hours()<1 and p.min_estimate_hours()>0 ]
+    context['projects_with_unscheduled_hours'] = [ p for p in context['projects'] if p.min_unscheduled_hours()>0 and p.min_estimate_hours()>0 ]
+    context['projects_with_fully_scheduled_hours'] = [ p for p in context['projects'] if p.min_unscheduled_hours()<1 and p.min_estimate_hours()>0 ]
     return render_to_response(template, context, context_instance=RequestContext(request))

@@ -1,0 +1,79 @@
+<form class="box event_create_form" method="POST" style="display:none" action="{% url 'create_calendar_event'%}">
+    {% csrf_token %}
+
+  <h2>Create event</h2>
+
+  <div class='form-group{% if form_new_event.errors.start %} has-error{%endif%}'>
+    <div class="col-md-6">
+      <h3>Start</h3>
+    </div>
+    <div class="col-md-6">
+            {{ form_new_event.start }}
+    </div>
+  </div>
+
+  <div class='form-group{% if form_new_event.errors.end %} has-error{%endif%}'>
+    <div class="col-md-6">
+      <h3>End</h3>
+    </div>
+    <div class="col-md-6">
+            {{ form_new_event.end }}
+    </div>
+  </div>
+
+  <div class='form-group{% if form_new_event.errors.project %} has-error{%endif%}'>
+    <div class="col-md-6">
+      <h3>Sprint</h3>
+    </div>
+    <div class="col-md-6">
+            {{ form_new_event.project }}
+    </div>
+  </div>
+
+  <div class='form-group{% if form_new_event.errors.user%} has-error{%endif%}'>
+    <div class="col-md-6">
+      <h3>User</h3>
+    </div>
+    <div class="col-md-6">
+            {{ form_new_event.user }}
+    </div>
+  </div>
+
+  <div class='form-group{% if update_form.errors.event_type %} has-error{%endif%}'>
+    <div class="col-md-6">
+      <h3>Type</h3>
+    </div>
+    <div class="col-md-6">
+            {{ update_form.event_type }}
+    </div>
+  </div>
+
+  <div class='form-group{% if form_new_event.errors.hours%} has-error{%endif%}'>
+    <div class="col-md-6">
+      <h3>Hours</h3>
+    </div>
+    <div class="col-md-6">
+            {{ form_new_event.hours }}
+    </div>
+  </div>
+
+  <div class='form-group{% if update_form.errors.description %} has-error{%endif%}'>
+    <div class="col-md-6">
+      <h3>Description</h3>
+    </div>
+    <div class="col-md-6">
+            {{ update_form.description }}
+    </div>
+  </div>
+
+  <div class='form-group'>
+    <div class="col-md-12">
+      <input class="btn btn-primary" type="submit" value="Save" onclick="t_calendar.create_event(this); return false;" />
+      <input class="btn btn-secondary" type="submit" value="Cancel" onclick="$(this).parents('form').hide(); return false;" />
+    </div>
+  </div>
+
+  <div style="clear:both"></div>
+
+</form>
+

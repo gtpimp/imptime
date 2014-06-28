@@ -10,11 +10,11 @@
        <br/>
        {{ p.scheduled_hours|default:0|floatformat:0 }} hours have been scheduled
        <br/>
-       At least {{p.unscheduled_hours|default:0|floatformat:0}} hours still need to be scheduled
+       At least {{p.min_unscheduled_hours|default:0|floatformat:0}} to {{p.max_unscheduled_hours|default:0|floatformat:0}} hours still need to be scheduled
        <br/>
-       First scheduled date at {{p.scheduled_to_start_at|date:"d-m-Y (D)"}}
+       First scheduled date at {{p.scheduled_to_start_at|date:"d-M-Y (D)"}}
        <br/>
-       Last scheduled date at {{p.scheduled_to_end_at|date:"d-m-Y (D)"}}
+       Last scheduled date at {{p.scheduled_to_end_at|date:"d-M-Y (D)"}}
     </div>
   </li>
 {% endfor %}
@@ -34,9 +34,9 @@
          <br/>
          {{ p.scheduled_hours|default:0|floatformat:0 }} hours have been scheduled
          <br/>
-         First scheduled date at {{p.scheduled_to_start_at|date:"d-m-Y (D)"}}
+         First scheduled date at {{p.scheduled_to_start_at|date:"d-M-Y (D)"}}
          <br/>
-         Last scheduled date at {{p.scheduled_to_end_at|date:"d-m-Y (D)"}}
+         Last scheduled date at {{p.scheduled_to_end_at|date:"d-M-Y (D)"}}
       </div>
     </li>
   {% endfor %}

@@ -1338,16 +1338,21 @@ class CalendarEventCreateForm(forms.ModelForm):
         self.fields['user'].queryset = allowed_users
         self.fields['project'].queryset = allowed_projects
         self.fields['start'].widget.attrs['class'] = 'datetimepicker'
+        self.fields['end'].widget.attrs['class'] = 'datetimepicker'
         self.fields['hours'].required=False
 
     def clean(self):
         data = self.cleaned_data
         if 'end' in data and data['end'] is not None:
-            data['hours'] = ((data['end'] - data['start']).seconds)/(60*60)
+            hours = ((data['end'] - data['start']).seconds)/(60*60)
         elif 'hours' not in data or data['hours'] is None:
-            data['hours'] = self.instance.hours
-        if data['hours'] == 0:
-            data['hours'] = 2 #default minimum
+            hours = self.instance.hours
+        if hours == 0:
+            if 'hours' in data:
+                hours = data['hours']
+            else:
+                hours = 2 #default min
+        data['hours'] = hours
         return data
     
 class CalendarEventUpdateForm(forms.ModelForm):
@@ -1365,10 +1370,12 @@ class CalendarEventUpdateForm(forms.ModelForm):
         self.fields['start'].required = False
         self.fields['hours'].required = False
         self.fields['end'].required = False
+        self.fields['event_type'].required = False
 
         self.fields['user'].queryset = allowed_users
         self.fields['project'].queryset = allowed_projects
         self.fields['start'].widget.attrs['class'] = 'datetimepicker'
+        self.fields['end'].widget.attrs['class'] = 'datetimepicker'
 
     def clean(self):
         data = self.cleaned_data
@@ -1378,11 +1385,11 @@ class CalendarEventUpdateForm(forms.ModelForm):
             data['project'] = self.instance.project
         if 'start' not in data or data['start'] is None:
             data['start'] = self.instance.start
+        if 'event_type' not in data or data['event_type'] is None:
+            data['event_type'] = self.instance.event_type
         if 'end' in data and data['end'] is not None:
             data['hours'] = ((data['end'] - data['start']).seconds)/(60*60)
         elif 'hours' not in data or data['hours'] is None:
             data['hours'] = self.instance.hours
-        if data['hours'] == 0:
-            data['hours'] = 2 #default minimum
         return data
         
