@@ -10,7 +10,7 @@ class Migration(SchemaMigration):
     def forwards(self, orm):
         # Adding field 'Project.status2'
         db.add_column(u'timepiece_project', 'status2',
-                      self.gf('django.db.models.fields.CharField')(default='in planning', max_length=100),
+                      self.gf('django.db.models.fields.CharField')(default='pending', max_length=100),
                       keep_default=False)
 
 
