@@ -504,8 +504,12 @@ class Project(models.Model):
     def typical_estimate_hours(self):
         return self.estimate_stats()['total_estimate_hours_max']
 
+    @property
+    def scheduled_events(self):
+        return self.calendar_events.all().filter(Q(event_type='planned')|Q(event_type='meeting'))
+
     def scheduled_hours(self):
-        return self.calendar_events.all().aggregate(hours=Sum('hours'))['hours']
+        return self.scheduled_events.aggregate(hours=Sum('hours'))['hours']
 
     def min_unscheduled_hours(self):
         return float(self.min_estimate_hours() or 0) - float(self.scheduled_hours() or 0)
@@ -516,15 +520,18 @@ class Project(models.Model):
     def scheduled_hours_percentage(self):
         return (float(self.scheduled_hours()) / (float(self.typical_estimate_hours()) or 1))*100
 
+    def scheduled_hours_per_user(self):
+        return [ { 'user': User.objects.get(pk=x['user']), 'hours': x['hours'] } for x in self.scheduled_events.values('user').annotate(hours=Sum('hours')) ]
+
     def scheduled_to_start_at(self):
         try:
-            return self.calendar_events.all().order_by("start")[0].start
+            return self.scheduled_events.order_by("start")[0].start
         except IndexError:
             return None
 
     def scheduled_to_end_at(self):
         try:
-            return self.calendar_events.all().order_by("-start")[0].start
+            return self.scheduled_events.order_by("-start")[0].start
         except IndexError:
             return None
         
@@ -2660,8 +2667,8 @@ class CalendarEvent(models.Model):
     start = models.DateTimeField(blank=False,null=False, db_index=True)
     hours = models.DecimalField(max_digits=4, decimal_places=2, default=2.0)
     description = models.TextField(null=True, blank=True)
-    event_type = models.CharField( max_length=50, default='work', 
-                                   choices = ( ('work', 'Work'), ('meeting', 'Meeting') ) )
+    event_type = models.CharField( max_length=50, default='planned', 
+                                   choices = ( ('planned', 'Planned'), ('actual', 'Actual'), ('meeting', 'Meeting') ) )
 
     @property
     def end(self):

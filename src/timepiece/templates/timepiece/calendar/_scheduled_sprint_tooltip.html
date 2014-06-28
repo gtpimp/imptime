@@ -1,0 +1,19 @@
+Sprint is estimated between {{p.min_estimate_hours|floatformat:0}} and {{p.max_estimate_hours|floatformat:0}} hours
+<br/>
+{{ p.scheduled_hours|default:0|floatformat:0 }} hours have been scheduled
+<br/>
+At least {{p.min_unscheduled_hours|default:0|floatformat:0}} to {{p.max_unscheduled_hours|default:0|floatformat:0}} hours still need to be scheduled
+<br/>
+First scheduled date at {{p.scheduled_to_start_at|date:"d-M-Y (D)"}}
+<br/>
+Last scheduled date at {{p.scheduled_to_end_at|date:"d-M-Y (D)"}}
+<br/>
+<hr/>
+<table>
+{% for info in p.scheduled_hours_per_user %}
+<tr>
+  <td>{{info.user.username}}</td>
+  <td>{{info.hours|floatformat:0}} hours</td>
+</tr>
+{% endfor %}
+</table>

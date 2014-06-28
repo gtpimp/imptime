@@ -4841,7 +4841,7 @@ def _create_js_calendar_event(event):
            'description': event.description,
            'event_type': event.event_type,
            'color': event.project.business.get_colour() if event.project else timepiece.COLOURS[0],
-           'textColor': "#121212" if event.event_type == "work" else "#000000",
+           'textColor': "#121212" if event.event_type == "meeting" else "#000000",
            'borderColor': "#121212"
            }
 

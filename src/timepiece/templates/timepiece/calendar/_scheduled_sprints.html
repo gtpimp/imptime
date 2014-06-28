@@ -5,16 +5,8 @@
     <a href="#" class="tooltip_anchor" onclick="t_calendar.activate_project_for_scheduling({{p.id}}); return false">
         {{ p.long_name }} ({{p.scheduled_hours_percentage|default:0|floatformat:0}}% scheduled)
     </a>
-    <div class="hover_tooltip unscheduled" style="display:none">
-       Sprint is estimated between {{p.min_estimate_hours|floatformat:0}} and {{p.max_estimate_hours|floatformat:0}} hours
-       <br/>
-       {{ p.scheduled_hours|default:0|floatformat:0 }} hours have been scheduled
-       <br/>
-       At least {{p.min_unscheduled_hours|default:0|floatformat:0}} to {{p.max_unscheduled_hours|default:0|floatformat:0}} hours still need to be scheduled
-       <br/>
-       First scheduled date at {{p.scheduled_to_start_at|date:"d-M-Y (D)"}}
-       <br/>
-       Last scheduled date at {{p.scheduled_to_end_at|date:"d-M-Y (D)"}}
+    <div class="hover_tooltip" style="display:none">
+      {% include "timepiece/calendar/_scheduled_sprint_tooltip.html" %}
     </div>
   </li>
 {% endfor %}
@@ -30,13 +22,7 @@
           {{ p.long_name }}
       </a>
       <div class="hover_tooltip" style="display:none">
-         Sprint is estimated between {{p.min_estimate_hours|floatformat:0}} and {{p.max_estimate_hours|floatformat:0}} hours
-         <br/>
-         {{ p.scheduled_hours|default:0|floatformat:0 }} hours have been scheduled
-         <br/>
-         First scheduled date at {{p.scheduled_to_start_at|date:"d-M-Y (D)"}}
-         <br/>
-         Last scheduled date at {{p.scheduled_to_end_at|date:"d-M-Y (D)"}}
+        {% include "timepiece/calendar/_scheduled_sprint_tooltip.html" %}
       </div>
     </li>
   {% endfor %}
