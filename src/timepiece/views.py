@@ -4826,45 +4826,72 @@ def calendar_events(request, context=None):
     context = context or {}
     _populate_calendar_events(request, context)
 
-    formatted_events =  [ _create_js_calendar_event(event) for event in context['events'] ]
-    return HttpResponse(json.dumps(formatted_events))
+    events = [ _create_js_calendar_event(event) for event in context['calendar_events'] ] + \
+             [ _create_js_entry_event(event) for event in context['entry_events'] ]
+
+    return HttpResponse(json.dumps(events))
+
+def _create_js_entry_event(entry):
+
+    return { 'id': entry.id,
+             'title': "A:%s-%s (%s, %s hrs)" % (entry.project.business.name, entry.project.name, entry.user.username, entry.hours),
+             'allDay': False,
+             'start': entry.start_time.strftime("%Y-%m-%d %H:%M"),
+             'end': entry.end_time.strftime("%Y-%m-%d %H:%M"),
+             'project_id': entry.project.id,
+             'user_id': entry.user.id,
+             'description': entry.comments + "\n\n" + entry.extended_comments,
+             'event_type': 'actual',
+             'color': entry.project.business.get_colour(),
+             'textColor': "#000000",
+             'borderColor': "#0000ff",
+             'editable': False,
+             }    
 
 def _create_js_calendar_event(event):
 
-    ev = { 'id': event.id,
-           'title': "%s%s-%s (%s, %s hrs)" % ("M:" if event.event_type=="meeting" else "", event.project.business.name if event.project else 'global', event.project.name if event.project else event.description[0:30], event.user.username, event.hours),
-           'allDay': False,
-           'start': event.start.strftime("%Y-%m-%d %H:%M"),
-           'end': event.end.strftime("%Y-%m-%d %H:%M"),
-           'project_id': event.project.id if event.project else None,
-           'user_id': event.user.id,
-           'description': event.description,
-           'event_type': event.event_type,
-           'color': event.project.business.get_colour() if event.project else timepiece.COLOURS[0],
-           'textColor': "#121212" if event.event_type == "meeting" else "#000000",
-           'borderColor': "#121212"
-           }
-
-    return ev
+    return { 'id': event.id,
+             'title': "%s%s-%s (%s, %s hrs)" % ("M:" if event.event_type=="meeting" else "", event.project.business.name if event.project else 'global', event.project.name if event.project else event.description[0:30], event.user.username, event.hours),
+             'allDay': False,
+             'start': event.start.strftime("%Y-%m-%d %H:%M"),
+             'end': event.end.strftime("%Y-%m-%d %H:%M"),
+             'project_id': event.project.id if event.project else None,
+             'user_id': event.user.id,
+             'description': event.description,
+             'event_type': event.event_type,
+             'color': event.project.business.get_colour() if event.project else timepiece.COLOURS[0],
+             'textColor': "#121212" if event.event_type == "meeting" else "#000000",
+             'borderColor': "#121212",
+             'editable': True,
+             }
 
 def _populate_calendar_events(request, context):
+    bps_for_scheduling = timepiece.BusinessPermissions.objects.filter(can_be_scheduled=True)
+    users = timepiece.User.objects.filter(pk__in=[ x['user'] for x in bps_for_scheduling.order_by("user__username").values("user") ])
+
     bps = timepiece.BusinessPermissions.objects.filter(can_view_calendar=True)
-    users = timepiece.User.objects.filter(pk__in=[ x['user'] for x in bps.order_by("user__username").values("user") ])
     businesses = timepiece.Business.objects.filter(pk__in=[ x['business'] for x in bps.order_by("business__name").values("business") ])
     projects = timepiece.Project.objects.filter(business__in=businesses).filter_open().order_by("business__name", "name").distinct()
 
-    events = timepiece.CalendarEvent.objects.filter(user__in=users).filter(Q(project__business__in=businesses)|Q(project__isnull=True)).distinct().order_by("start")
+    calendar_events = timepiece.CalendarEvent.objects.filter(user__in=users).filter(Q(project__business__in=businesses)|Q(project__isnull=True)).distinct().order_by("start")
+
+    entry_events = timepiece.Entry.objects.filter(project__business__in=businesses).filter(user__in=users)
 
     filter_form = timepiece_forms.CalendarFilterForm(users, businesses, request.GET or None)
     if filter_form.is_valid():
-        events = filter_form.save(events)
+        calendar_events, entry_events = filter_form.save(calendar_events, entry_events)
 
     context['bps'] = bps
     context['users'] = users
     context['businesses'] = businesses
     context['projects'] = projects
-    context['events'] = events
+    context['calendar_events'] = calendar_events
+    context['entry_events'] = entry_events
     context['filter_form'] = filter_form
+
+def _populate_actual_events(request, context):
+    """ assumes _populate_calendar_events has already been called on the context """
+    
 
 @login_required
 def create_calendar_event(request, context=None):

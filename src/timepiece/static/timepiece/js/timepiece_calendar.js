@@ -189,6 +189,15 @@ $(document).ready(function() {
 			  form.find("[name=event_id]").val(calEvent.id);
 			  form.find("[name=start]").val(calEvent.start.format('YYYY-MM-DD HH:mm:ss'));
 			  form.find("[name=end]").val(calEvent.end.format('YYYY-MM-DD HH:mm:ss'));
+
+			  if ( ! calEvent.editable ) {
+			      form.find(".event_edit_button").hide();
+			      form.find(".edit_msg").html("This event can't be updated");
+			  } else {
+			      form.find(".event_edit_button").show();
+			      form.find(".edit_msg").html("");
+			  }    
+
 			  form.show();
 		      };
 

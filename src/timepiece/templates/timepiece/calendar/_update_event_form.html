@@ -61,9 +61,10 @@
 
     <div class='form-group'>
       <div class="col-md-12">
-        <input class="btn btn-primary" type="submit" value="Save" onclick="t_calendar.update_event(this); return false;" />
+        <input class="btn btn-primary event_edit_button" type="submit" value="Save" onclick="t_calendar.update_event(this); return false;" />
         <input class="btn btn-secondary" type="submit" value="Cancel" onclick="$(this).parents('form').hide(); return false;" />
-        <input class="btn btn-warning" type="submit" value="Delete" onclick="t_calendar.delete_event(this); return false;" />
+        <input class="btn btn-warning event_edit_button" type="submit" value="Delete" onclick="t_calendar.delete_event(this); return false;" />
+        <div class="edit_msg tip"></div>
       </div>
     </div>
 

@@ -252,10 +252,12 @@ class BusinessPermissions(models.Model):
     can_edit_feature = models.BooleanField(default=True, verbose_name="Can Edit Feature")
     can_create_sprint = models.BooleanField(default=True, verbose_name="Can Create Sprint")
     can_assign_user = models.BooleanField(default=True, verbose_name="Can Assign User")
+    can_be_scheduled = models.BooleanField(default=False, verbose_name="Can Be Scheduled")
 
     can_view_actual_hours = models.BooleanField(default=False, verbose_name="Can View Actual Hours")
     can_see_other_user_points = models.BooleanField(default=False, verbose_name="Can See Other User's Points")
     can_estimate_own_points = models.BooleanField(default=False, verbose_name="Can Estimate Own Points")
+    can_view_calendar = models.BooleanField(default=False, verbose_name="Can View Calendar")
 
     can_edit_permissions = models.BooleanField(default=False, verbose_name="Can Edit Permissions")
     can_toggle_graphs = models.BooleanField(default=False, verbose_name="Can Toggle Graphs")
@@ -268,7 +270,6 @@ class BusinessPermissions(models.Model):
     can_view_ctc_billable_rates = models.BooleanField(default=False, verbose_name="Can View Ctc Billable")
     can_view_ctc_rates = models.BooleanField(default=False, verbose_name="Can View Ctc") # a subpermission of can_view_ctc_billable_rates, used for clients who shouldn't see our internal costing.
     can_view_documents = models.BooleanField(default=False, verbose_name="Can View Docs") # quotes and summaries, usually contains costs and rates
-    can_view_calendar = models.BooleanField(default=False, verbose_name="Can View Calendar")
     can_edit_calendar = models.BooleanField(default=False, verbose_name="Can Edit Calendar")
     
     @classmethod
@@ -386,6 +387,9 @@ class BusinessPermissions(models.Model):
     def has_edit_calendar(self):
         return self.user.is_superuser or self.can_edit_calendar
 
+    @property
+    def has_be_scheduled(self):
+        return self.user.is_superuser or self.can_be_scheduled
 
 class ProjectQuerySet(QuerySet):
     def filter_by_logged_in_user(self, user):
@@ -2682,13 +2686,16 @@ class BusinessDocument(models.Model):
 
 
 class CalendarEvent(models.Model):
+
+    EVENT_TYPES = ( ('planned', 'Planned'), ('meeting', 'Meeting') )
+
     user = models.ForeignKey(User, blank=False, null=False, db_index=True)
     project = models.ForeignKey(Project, blank=True, null=True, db_index=True, related_name='calendar_events')
     start = models.DateTimeField(blank=False,null=False, db_index=True)
     hours = models.DecimalField(max_digits=4, decimal_places=2, default=2.0)
     description = models.TextField(null=True, blank=True)
     event_type = models.CharField( max_length=50, default='planned', 
-                                   choices = ( ('planned', 'Planned'), ('actual', 'Actual'), ('meeting', 'Meeting') ) )
+                                   choices = EVENT_TYPES )
 
     @property
     def end(self):

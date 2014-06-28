@@ -141,6 +141,7 @@ class EditPersonPermission(forms.ModelForm):
         self.fields['can_create_sprint'].widget.attrs['class'] = 'safe'
         self.fields['can_edit_issue_states'].widget.attrs['class'] = 'safe'
         self.fields['can_assign_user'].widget.attrs['class'] = 'safe'
+        self.fields['can_be_scheduled'].widget.attrs['class'] = 'safe'
 
         self.fields['can_view_actual_hours'].widget.attrs['class'] = 'safe'
         self.fields['can_estimate_own_points'].widget.attrs['class'] = 'medium-safe'
@@ -1308,22 +1309,40 @@ class CalendarFilterForm(forms.Form):
     startParam = forms.DateField(initial=datetime.today(), required=False)
     endParam = forms.DateField(initial=datetime.today(), required=False)
 
+    event_types = forms.MultipleChoiceField(required=False,
+                                            choices = CalendarEvent.EVENT_TYPES + ( ("actual", "Actual"), ),
+                                            widget=CheckboxSelectMultiple)
+
     def __init__(self, allowed_users, allowed_businesses, *args, **kwargs):
         super(CalendarFilterForm, self).__init__(*args, **kwargs)
 
         self.fields['users'].queryset = allowed_users
         self.fields['businesses'].queryset = allowed_businesses
 
-    def save(self, calendar_events):
+    @property
+    def filter_includes_actual_events(self):
+        return 'actual' in self.cleaned_data['event_types']
+
+    def save(self, calendar_events, entry_events):
         if len(self.cleaned_data['users'])>0:
             calendar_events = calendar_events.filter(user__in=self.cleaned_data['users'])
+            entry_events = entry_events.filter(user__in=self.cleaned_data['users'])
         if len(self.cleaned_data['businesses'])>0:
             calendar_events = calendar_events.filter(Q(project__business__in=self.cleaned_data['businesses'])|Q(project__isnull=True))
+            entry_events = entry_events.filter(project__business__in=self.cleaned_data['businesses'])
         if self.cleaned_data['startParam'] is not None:
             calendar_events = calendar_events.filter(start__gte=self.cleaned_data['startParam'])
+            entry_events = entry_events.filter(start_time__gte=self.cleaned_data['startParam'])
         if self.cleaned_data['endParam'] is not None:
-            calendar_events = calendar_events.filter(start__lte=self.cleaned_data['endParam'])
-        return calendar_events
+            calendar_events = calendar_events.filter(end__lte=self.cleaned_data['endParam'])
+            entry_events = entry_events.filter(end_time__lte=self.cleaned_data['endParam'])
+        if self.cleaned_data['event_types'] is not None and len(self.cleaned_data['event_types'])>0:
+            calendar_events = calendar_events.filter(event_type__in=self.cleaned_data['event_types'])
+
+        if self.cleaned_data['event_types'] is None or 'actual' not in self.cleaned_data['event_types']:
+            entry_events = []
+
+        return calendar_events, entry_events
 
 class CalendarEventCreateForm(forms.ModelForm):
 
