@@ -1318,7 +1318,7 @@ class CalendarFilterForm(forms.Form):
         if len(self.cleaned_data['users'])>0:
             calendar_events = calendar_events.filter(user__in=self.cleaned_data['users'])
         if len(self.cleaned_data['businesses'])>0:
-            calendar_events = calendar_events.filter(project__business__in=self.cleaned_data['businesses'])
+            calendar_events = calendar_events.filter(Q(project__business__in=self.cleaned_data['businesses'])|Q(project__isnull=True))
         if self.cleaned_data['startParam'] is not None:
             calendar_events = calendar_events.filter(start__gte=self.cleaned_data['startParam'])
         if self.cleaned_data['endParam'] is not None:
@@ -1327,7 +1327,7 @@ class CalendarFilterForm(forms.Form):
 
 class CalendarEventCreateForm(forms.ModelForm):
 
-    project = GroupedModelChoiceField("business", queryset=Project.objects.all(), required=True)
+    project = GroupedModelChoiceField("business", queryset=Project.objects.all(), required=False)
     end = forms.DateTimeField(required=False)
 
     class Meta:
@@ -1381,8 +1381,6 @@ class CalendarEventUpdateForm(forms.ModelForm):
         data = self.cleaned_data
         if 'user' not in data or data['user'] is None:
             data['user'] = self.instance.user
-        if 'project' not in data or data['project'] is None:
-            data['project'] = self.instance.project
         if 'start' not in data or data['start'] is None:
             data['start'] = self.instance.start
         if 'event_type' not in data or data['event_type'] is None:
@@ -1392,4 +1390,3 @@ class CalendarEventUpdateForm(forms.ModelForm):
         elif 'hours' not in data or data['hours'] is None:
             data['hours'] = self.instance.hours
         return data
-        

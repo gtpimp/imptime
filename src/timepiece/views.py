@@ -4830,25 +4830,30 @@ def calendar_events(request, context=None):
     return HttpResponse(json.dumps(formatted_events))
 
 def _create_js_calendar_event(event):
-    return { 'id': event.id,
-             'title': "%s-%s (%s, %s hrs)" % (event.project.business.name, event.project.name, event.user.username, event.hours),
-             'allDay': False,
-             'start': event.start.strftime("%Y-%m-%d %H:%M"),
-             'end': event.end.strftime("%Y-%m-%d %H:%M"),
-             'project_id': event.project.id,
-             'user_id': event.user.id,
-             'description': event.description,
-             'color': event.project.business.get_colour(),
-             'textColor': "#121212",
-             'borderColor': "#121212"
-             }
+
+    ev = { 'id': event.id,
+           'title': "%s%s-%s (%s, %s hrs)" % ("M:" if event.event_type=="meeting" else "", event.project.business.name if event.project else 'global', event.project.name if event.project else event.description[0:30], event.user.username, event.hours),
+           'allDay': False,
+           'start': event.start.strftime("%Y-%m-%d %H:%M"),
+           'end': event.end.strftime("%Y-%m-%d %H:%M"),
+           'project_id': event.project.id if event.project else None,
+           'user_id': event.user.id,
+           'description': event.description,
+           'event_type': event.event_type,
+           'color': event.project.business.get_colour() if event.project else timepiece.COLOURS[0],
+           'textColor': "#121212" if event.event_type == "work" else "#000000",
+           'borderColor': "#121212"
+           }
+
+    return ev
 
 def _populate_calendar_events(request, context):
     bps = timepiece.BusinessPermissions.objects.filter(can_view_calendar=True)
     users = timepiece.User.objects.filter(pk__in=[ x['user'] for x in bps.order_by("user__username").values("user") ])
     businesses = timepiece.Business.objects.filter(pk__in=[ x['business'] for x in bps.order_by("business__name").values("business") ])
     projects = timepiece.Project.objects.filter(business__in=businesses).filter_open().order_by("business__name", "name").distinct()
-    events = timepiece.CalendarEvent.objects.filter(user__in=users, project__business__in=businesses).distinct().order_by("start")
+
+    events = timepiece.CalendarEvent.objects.filter(user__in=users).filter(Q(project__business__in=businesses)|Q(project__isnull=True)).distinct().order_by("start")
 
     filter_form = timepiece_forms.CalendarFilterForm(users, businesses, request.GET or None)
     if filter_form.is_valid():
@@ -4869,9 +4874,14 @@ def create_calendar_event(request, context=None):
     form_new_event = timepiece_forms.CalendarEventCreateForm(context['users'], context['projects'], request.POST or None)
     if form_new_event.is_valid():
 
-        bp = timepiece.BusinessPermissions.for_user(request.user, form_new_event.cleaned_data['project'].business)
-        if not bp.has_edit_calendar:
-            raise PermissionDenied
+        if form_new_event.cleaned_data['project'] is not None:
+            bp = timepiece.BusinessPermissions.for_user(request.user, form_new_event.cleaned_data['project'].business)
+            if not bp.has_edit_calendar:
+                raise PermissionDenied
+        else:
+            if not request.user.is_superuser and not request.user == form_new_event.cleaned_data['user']:
+                # Can't create events for other people unless you're the admin
+                raise PermissionDenied
 
         event = form_new_event.save()
         return HttpResponse(json.dumps(_create_js_calendar_event(event)))
@@ -4885,12 +4895,18 @@ def update_calendar_event(request, event_id, context=None):
     _populate_calendar_events(request, context)
     calendar_event = context['events'].get(pk=event_id)
 
-    bp = timepiece.BusinessPermissions.for_user(request.user, calendar_event.project.business)
-    if not bp.has_edit_calendar:
-        raise PermissionDenied
-
     form = timepiece_forms.CalendarEventUpdateForm(context['users'], context['projects'], request.POST or None, instance=calendar_event)
     if form.is_valid():
+
+        if calendar_event.project.business is not None:
+            bp = timepiece.BusinessPermissions.for_user(request.user, calendar_event.project.business)
+            if not bp.has_edit_calendar:
+                raise PermissionDenied
+        else:
+            if not request.user.is_superuser and (not request.user == calendar_event.user or not request.user == form.cleaned_data['user']):
+                # Can't create events for other people unless you're the admin
+                raise PermissionDenied
+
         calendar_event = form.save()
         return HttpResponse(json.dumps(_create_js_calendar_event(calendar_event)))
 

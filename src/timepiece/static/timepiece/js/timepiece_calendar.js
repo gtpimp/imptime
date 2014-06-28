@@ -179,6 +179,7 @@ $(document).ready(function() {
 			  form.find("[name=project]").val(calEvent.project_id);
 			  form.find("[name=hours]").val((calEvent.end-calEvent.start)/(60*60*1000));
 			  form.find("[name=description]").val(calEvent.description);
+			  form.find("[name=event_type]").val(calEvent.event_type);
 			  form.find("[name=event_id]").val(calEvent.id);
 			  form.find("[name=start]").val(calEvent.start.format('YYYY-MM-DD HH:mm:ss'));
 			  form.find("[name=end]").val(calEvent.end.format('YYYY-MM-DD HH:mm:ss'));
