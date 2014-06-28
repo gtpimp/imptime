@@ -1347,6 +1347,8 @@ class CalendarEventCreateForm(forms.ModelForm):
             hours = ((data['end'] - data['start']).seconds)/(60*60)
         elif 'hours' not in data or data['hours'] is None:
             hours = self.instance.hours
+        else:
+            hours = data['hours']
         if hours == 0:
             if 'hours' in data:
                 hours = data['hours']

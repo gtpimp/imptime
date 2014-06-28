@@ -398,7 +398,12 @@ class ProjectQuerySet(QuerySet):
     def filter_open(self):
         return self.filter(status__label='open', status__type='project-status')
 
+    def filter_in_dev(self):
+        return self.filter(status2='in dev')
+
 class Project(models.Model):
+
+    PROJECT_STATUSES = ( ('pending', 'pending'), ('in dev', 'in development'), ('closed', 'closed') )
 
     code = models.CharField(max_length=255,blank=True,null=True)        
     name = models.CharField(max_length=255, db_index=True)
@@ -429,11 +434,18 @@ class Project(models.Model):
         limit_choices_to={'type': 'project-type'},
         related_name='projects_with_type',
     )
+
+    # Deprecated. Still used in a few places, but needs to be removed completely.
     status = models.ForeignKey(
         Attribute,
         limit_choices_to={'type': 'project-status'},
         related_name='projects_with_status',
     )
+
+    # This status will replace the original status. All new
+    # functionality should hang of this field instead.
+    status2 = models.CharField(max_length=100, blank=False, null=False, default='pending', choices = PROJECT_STATUSES)
+
     description = models.TextField(blank=True, null=True, db_index=True)
     short_description = models.CharField(max_length=50, blank=True, null=True, db_index=True)
     order = models.BigIntegerField(null=True,blank=True)
@@ -714,20 +726,27 @@ class Project(models.Model):
 
     def close(self):
         self.status = Attribute.objects.get(label='closed', type='project-status')
+        self.status2 = 'closed'
         self.save()
 
     def open(self):
         self.status = Attribute.objects.get(label='open', type='project-status')
+        self.status2 = 'pending'
         self.save()
 
     @property
     def is_open(self):
+
+        if self.status2 == 'closed':
+            return False
+
         manually_closed = not(self.status.label == 'open' or self.status.label == "reopened")
         if manually_closed:
             return False
         closed_because_paid = self.has_invoices and self.all_invoices_paid
         if closed_because_paid:
             return False
+
         return True
 
     def estimate_stats(self, issues=None, preferred_user_id=None):
@@ -2367,18 +2386,19 @@ class IssueRepresentation(object):
 class Issue(models.Model):
 
     ISSUE_STATUS_CHOICES = (
-           ( 'bug', 'bug'),
+           ( 'new', 'new'),
            ( 'devdone', 'dev_done'),
+           ( 'in testing', 'in testing'),
+           ( 'tested', 'tested'),
+           ( 'reopened', 'reopened'),
+           ( 'onhold', 'on hold'),
+           ( 'to be estimated', 'to be estimated'),
            ( 'needscodereview', 'needs code review'),
            ( 'dev unclear', 'dev unclear'),
            ( 'duplicate', 'duplicate'),
-           ( 'in testing', 'in testing'),
-           ( 'new', 'new'),
-           ( 'onhold', 'on hold'),
-           ( 'reopened', 'reopened'),
            ( 'tested', 'tested'),
            ( 'task done', 'task done'),
-           ( 'tested', 'tested'),
+           ( 'bug', 'bug'),
            ( 'to be designed', 'to be designed'),
         )
     

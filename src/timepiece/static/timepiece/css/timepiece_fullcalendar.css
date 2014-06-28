@@ -53,3 +53,8 @@ li.project_unscheduled a {
   padding-left: 0px;
   padding-right: 0px;
 }
+
+.tip {
+    font-size: 9px;
+    font-style: italic;
+}

@@ -1,4 +1,5 @@
 <h2>Unscheduled sprints</h2>
+<div class='tip'>Only showing sprints in development</div>
 <ul>
 {% for p in projects_with_unscheduled_hours  %}
   <li class="project_unscheduled">
@@ -12,9 +13,10 @@
 {% endfor %}
 </ul>
 
+{% if projects_with_fully_scheduled_hours|length > 0 %}
 <div class="fully_scheduled_sprints" style="display:none">
   <h2>Fully scheduled sprints</h2>
-  <br/>
+  <div class='tip'>Only showing sprints in development</div>
   <ul>
   {% for p in projects_with_fully_scheduled_hours  %}
     <li>
@@ -28,6 +30,10 @@
   {% endfor %}
   </ul>
 </div>
+{% endif %}
 
 <button class="btn btn-primary" onclick="t_calendar.refresh_sprint_schedules(); return false">Refresh schedules</button>
+
+{% if projects_with_fully_scheduled_hours|length > 0 %}
 <a class="btn btn-secondary" href="#" onclick="$(this).parent().find('.fully_scheduled_sprints').toggle(); $(this).hide();">show fully scheduled sprints<br/></a>
+{% endif %}

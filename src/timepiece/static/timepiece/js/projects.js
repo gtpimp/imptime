@@ -41,6 +41,25 @@ imp.projects.show_project_card_as_popup = function (event, project_card_url, msg
     return false;
 };
 
+imp.projects.cycle_status = function(event, el, url) {
+    event.stopPropagation();
+    var on_done = imp.loading("updating status");
+    $.ajax({type:"POST",
+            url: url,
+            dataType:"json",
+            success : function (data) {
+		on_done();
+		$(el).html("("+data.new_status+")");
+
+		if ( data.is_open ) {
+		    $(el).parents(".project_li").addClass("open_project").removeClass("closed_project");
+		} else {
+		    $(el).parents(".project_li").addClass("closed_project").removeClass("open_project");
+		}
+            }
+           });
+};
+
 imp.projects._make_load_for_data = function ( done_data_function_handler ) {
     var _done_data_function_handler = done_data_function_handler;
 
