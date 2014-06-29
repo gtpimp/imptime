@@ -4834,7 +4834,7 @@ def calendar_events(request, context=None):
 def _create_js_entry_event(entry):
 
     return { 'id': entry.id,
-             'title': "A:%s-%s (%s, %s hrs)" % (entry.project.business.name, entry.project.name, entry.user.username, entry.hours),
+             'title': "A:%s (%s, %s hrs)" % (entry.project.business.name, entry.user.username, entry.hours),
              'allDay': False,
              'start': entry.start_time.strftime("%Y-%m-%d %H:%M"),
              'end': entry.end_time.strftime("%Y-%m-%d %H:%M"),
@@ -4850,8 +4850,7 @@ def _create_js_entry_event(entry):
 
 def _create_js_calendar_event(event):
 
-    return { 'id': event.id,
-             'title': "%s%s-%s (%s, %s hrs)" % ("M:" if event.event_type=="meeting" else "", event.project.business.name if event.project else 'global', event.project.name if event.project else event.description[0:30], event.user.username, event.hours),
+    res = { 'id': event.id,
              'allDay': False,
              'start': event.start.strftime("%Y-%m-%d %H:%M"),
              'end': event.end.strftime("%Y-%m-%d %H:%M"),
@@ -4864,6 +4863,16 @@ def _create_js_calendar_event(event):
              'borderColor': "#121212",
              'editable': True,
              }
+
+    if event.event_type == "meeting":
+        res['title'] = "M: %s" % event.description[0:30]
+    elif event.project is None:
+        res['title'] = "G: %s" % event.description[0:30]
+    else:
+        res['title'] = event.project.business.name
+    res['title'] += " (%s, %s hrs)" % (event.user.username, event.hours)
+    
+    return res
 
 def _populate_calendar_events(request, context):
     bps_for_scheduling = timepiece.BusinessPermissions.objects.filter(can_be_scheduled=True)
