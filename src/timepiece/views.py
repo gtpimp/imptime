@@ -4960,9 +4960,14 @@ def delete_calendar_event(request, event_id, context=None):
     _populate_calendar_events(request, context)
     calendar_event = context['calendar_events'].get(pk=event_id)
 
-    bp = timepiece.BusinessPermissions.for_user(request.user, calendar_event.project.business)
-    if not bp.has_edit_calendar:
-        raise PermissionDenied
+    if calendar_event.project is not None:
+        bp = timepiece.BusinessPermissions.for_user(request.user, calendar_event.project.business)
+        if not bp.has_edit_calendar:
+            raise PermissionDenied
+    else:
+        if not request.user.is_superuser and not request.user == calendar_event.user:
+            # Can't delete events for other people unless you're the admin
+            raise PermissionDenied
 
     calendar_event.delete();
     return HttpResponse("Deleted")
