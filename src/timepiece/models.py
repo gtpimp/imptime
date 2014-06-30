@@ -2688,6 +2688,7 @@ class BusinessDocument(models.Model):
 class CalendarEvent(models.Model):
 
     EVENT_TYPES = ( ('planned', 'Planned'), ('meeting', 'Meeting') )
+    EVENT_STATUSES = ( ('ready', 'Ready'), ('done', 'Done'), ('cancelled', 'Cancelled') )
 
     user = models.ForeignKey(User, blank=False, null=False, db_index=True)
     project = models.ForeignKey(Project, blank=True, null=True, db_index=True, related_name='calendar_events')
@@ -2696,8 +2697,13 @@ class CalendarEvent(models.Model):
     description = models.TextField(null=True, blank=True)
     event_type = models.CharField( max_length=50, default='planned', 
                                    choices = EVENT_TYPES )
+    status = models.CharField( null=False, blank=False, max_length=50, default='ready',
+                               choices = EVENT_STATUSES )
 
     @property
     def end(self):
         return self.start + datetime.timedelta(hours=float(self.hours))
 
+    @property
+    def is_done(self):
+        return self.status == 'done'

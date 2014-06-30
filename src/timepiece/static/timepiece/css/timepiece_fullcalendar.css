@@ -58,3 +58,13 @@ li.project_unscheduled a {
     font-size: 9px;
     font-style: italic;
 }
+
+.event_status_cancelled {
+    text-decoration: line-through
+}
+
+.event_status_done {
+    background-image: url('../../images/icons/tick.png');
+    background-repeat: no-repeat;
+    background-position: right;
+}

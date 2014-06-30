@@ -4862,6 +4862,7 @@ def _create_js_calendar_event(event):
              'textColor': "#121212" if event.event_type == "meeting" else "#000000",
              'borderColor': "#121212",
              'editable': True,
+             'status': event.status
              }
 
     if event.event_type == "meeting":
@@ -4870,6 +4871,7 @@ def _create_js_calendar_event(event):
         res['title'] = "G: %s" % event.description[0:30]
     else:
         res['title'] = event.project.business.name
+
     res['title'] += " (%s, %s hrs)" % (event.user.username, event.hours)
     
     return res

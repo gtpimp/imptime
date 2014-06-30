@@ -1406,6 +1406,8 @@ class CalendarEventUpdateForm(forms.ModelForm):
             data['start'] = self.instance.start
         if 'event_type' not in data or data['event_type'] is None:
             data['event_type'] = self.instance.event_type
+        if 'status' not in data or data['status'] is None:
+            data['status'] = self.instance.event
         if 'end' in data and data['end'] is not None:
             data['hours'] = ((data['end'] - data['start']).seconds)/(60*60)
         elif 'hours' not in data or data['hours'] is None:

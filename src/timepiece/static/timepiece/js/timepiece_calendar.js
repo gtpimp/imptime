@@ -195,6 +195,7 @@ $(document).ready(function() {
 			  form.find("[name=hours]").val((calEvent.end-calEvent.start)/(60*60*1000));
 			  form.find("[name=description]").val(calEvent.description);
 			  form.find("[name=event_type]").val(calEvent.event_type);
+			  form.find("[name=status]").val(calEvent.status);
 			  form.find("[name=event_id]").val(calEvent.id);
 			  form.find("[name=start]").val(calEvent.start.format('YYYY-MM-DD HH:mm:ss'));
 			  form.find("[name=end]").val(calEvent.end.format('YYYY-MM-DD HH:mm:ss'));
@@ -208,6 +209,10 @@ $(document).ready(function() {
 			  }    
 
 			  form.show();
+		      };
+
+		      var render_event = function(event, element) {
+			  $(element).addClass("event_status_" + event.status);
 		      };
 
 		      $('#calendar').fullCalendar({
@@ -236,6 +241,7 @@ $(document).ready(function() {
 						      selectHelper: true,
 						      select: new_event,
 						      eventClick: edit_event,
+						      eventRender: render_event,
 						      loading: function(isLoading, view) {
 							  if ( isLoading ) {
 							      active_loading_func = imp.loading("calendar loading");
