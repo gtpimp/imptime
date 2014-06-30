@@ -4878,8 +4878,14 @@ def _populate_calendar_events(request, context):
     bps_for_scheduling = timepiece.BusinessPermissions.objects.filter(can_be_scheduled=True)
     users = timepiece.User.objects.filter(pk__in=[ x['user'] for x in bps_for_scheduling.order_by("user__username").values("user") ])
 
-    bps = timepiece.BusinessPermissions.objects.filter(can_view_calendar=True)
-    businesses = timepiece.Business.objects.filter(pk__in=[ x['business'] for x in bps.order_by("business__name").values("business") ])
+    bps_logged_in_user_can_view = timepiece.BusinessPermissions.objects.filter(can_view_calendar=True, user=request.user)
+    bp_businesses_for_scheduling = [ x['business'] for x in bps_for_scheduling.order_by("business__name").values("business") ]
+    businesses = timepiece.Business.objects.filter(pk__in=bp_businesses_for_scheduling)
+
+    if not request.user.is_superuser:
+        bp_businesses_logged_in_user_can_view = [ x['business'] for x in bps_logged_in_user_can_view.order_by("business__name").values("business") ]
+        businesses = businesses.filter(pk__in=bp_businesses_logged_in_user_can_view)
+
     projects = timepiece.Project.objects.filter(business__in=businesses).filter_in_dev().order_by("business__name", "name").distinct()
 
     calendar_events = timepiece.CalendarEvent.objects.filter(user__in=users).filter(Q(project__business__in=businesses)|Q(project__isnull=True)).distinct().order_by("start")
@@ -4890,7 +4896,6 @@ def _populate_calendar_events(request, context):
     if filter_form.is_valid():
         calendar_events, entry_events = filter_form.save(calendar_events, entry_events)
 
-    context['bps'] = bps
     context['users'] = users
     context['businesses'] = businesses
     context['projects'] = projects
@@ -4967,6 +4972,7 @@ def delete_calendar_event(request, event_id, context=None):
 def render_calendar_scheduled_sprints(request, template="timepiece/calendar/_scheduled_sprints.html", context=None):
     context = context or {}
     _populate_calendar_events(request, context)
+    import pdb; pdb.set_trace()
     context['projects_with_unscheduled_hours'] = [ p for p in context['projects'].filter_in_dev() if p.min_unscheduled_hours()>0 and p.min_estimate_hours()>0 ]
     context['projects_with_fully_scheduled_hours'] = [ p for p in context['projects'].filter_in_dev() if p.min_unscheduled_hours()<1 and p.min_estimate_hours()>0 ]
     return render_to_response(template, context, context_instance=RequestContext(request))

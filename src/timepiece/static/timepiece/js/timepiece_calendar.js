@@ -22,7 +22,7 @@ var t_calendar = ( function() {
 
 			   refresh_sprint_schedules: function() {
 			       var on_done = imp.loading("calculating...");
-			       $(".sprint_schedules").html("...");
+			       $(".sprint_schedules").html("loading...");
 			       $.ajax({type:"GET",
 				       url: t_config.render_calendar_scheduled_sprints_url,
 				       success: function(data) {
