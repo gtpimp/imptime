@@ -4866,9 +4866,9 @@ def _create_js_calendar_event(event):
              }
 
     if event.event_type == "meeting":
-        res['title'] = "M: %s" % event.description[0:30]
+        res['title'] = "M: %s..." % event.description[0:30]
     elif event.project is None:
-        res['title'] = "G: %s" % event.description[0:30]
+        res['title'] = "G: %s..." % event.description[0:30]
     else:
         res['title'] = event.project.business.name
 
