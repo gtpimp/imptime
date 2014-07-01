@@ -1392,6 +1392,7 @@ class CalendarEventUpdateForm(forms.ModelForm):
         self.fields['hours'].required = False
         self.fields['end'].required = False
         self.fields['event_type'].required = False
+        self.fields['status'].required = False
 
         self.fields['user'].queryset = allowed_users
         self.fields['project'].queryset = allowed_projects
