@@ -1393,6 +1393,7 @@ class CalendarEventUpdateForm(forms.ModelForm):
         self.fields['end'].required = False
         self.fields['event_type'].required = False
         self.fields['status'].required = False
+        self.fields['description'].required = False
 
         self.fields['user'].queryset = allowed_users
         self.fields['project'].queryset = allowed_projects
@@ -1413,4 +1414,6 @@ class CalendarEventUpdateForm(forms.ModelForm):
             data['hours'] = ((data['end'] - data['start']).seconds)/(60*60)
         elif 'hours' not in data or data['hours'] is None:
             data['hours'] = self.instance.hours
+        if 'description' not in data or data['description'] is None or len(data['description'])==0:
+            data['description'] = self.instance.description
         return data
