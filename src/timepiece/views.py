@@ -4867,6 +4867,7 @@ def _create_js_calendar_event(event):
 
     if event.event_type == "meeting":
         res['title'] = "M: %s..." % event.description.strip()[0:30]
+        res['color'] = "#ff77ff";
     elif event.project is None:
         res['title'] = "G: %s..." % event.description.strip()[0:30]
     else:
@@ -4910,6 +4911,7 @@ def _populate_actual_events(request, context):
     
 
 @login_required
+@csrf_exempt
 def create_calendar_event(request, context=None):
     context = context or {}
     _populate_calendar_events(request, context)
