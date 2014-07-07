@@ -135,7 +135,9 @@ class Extractor(object):
             issue_id = entry.try_get_issue_id()
             if issue_id is not None:
                 try:
-                    issue = Issue.objects.get(number=issue_id)
+
+                    # this filter allows that issues could be in the wrong sprint, but they must be in the right business
+                    issue = Issue.objects.get(number=issue_id, project__business=project.business) 
                     entry.issue = issue
                     entry.project = issue.project
                     entry.save()
