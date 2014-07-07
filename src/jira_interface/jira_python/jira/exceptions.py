@@ -25,7 +25,11 @@ def raise_on_error(r):
         elif r.text:
             try:
                 response = json.loads(r.text)
-                if 'message' in response:
+                if 'errors' in response and len(response['errors']) > 0:
+                    # JIRA 6.x error messages are found in this array.
+                    error_list = response['errors'].values()
+                    error = ", ".join(error_list)
+                elif 'message' in response:
                     # JIRA 5.1 errors
                     error = response['message']
                 elif 'errorMessages' in response and len(response['errorMessages']) > 0:
@@ -36,10 +40,6 @@ def raise_on_error(r):
                         error = errorMessages[0]
                     else:
                         error = errorMessages
-                elif 'errors' in response and len(response['errors']) > 0:
-                    # JIRA 6.x error messages are found in this array.
-                    error_list = response['errors'].values()
-                    error = ", ".join(error_list)
                 else:
                     error = r.text
             except ValueError:

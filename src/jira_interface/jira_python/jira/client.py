@@ -791,6 +791,14 @@ class JIRA(object):
 
         return Worklog(self._options, self._session, json.loads(r.text))
 
+    @translate_resource_args
+    def delete_worklog(self, issue, worklog):
+        url = self._get_url('issue/%s/worklog/%s' % (issue, worklog.id))
+        data = {}
+        params = {}
+        r = self._session.delete(url, params=params, headers={'content-type': 'application/json'}, data=json.dumps(data))
+        raise_on_error(r)
+
 # Issue links
 
     @translate_resource_args

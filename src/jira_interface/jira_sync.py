@@ -14,13 +14,14 @@ logger = logging.getLogger(__name__)
 
 class JiraSync(object):
 
-    def __init__(self, request, timepiece_business_id):
+    def __init__(self, request, timepiece_business_id, user=None):
         self.request = request
         self.timepiece_business = timepiece.Business.objects.get(pk=timepiece_business_id)
         self.jira = None
         self.jira_settings = Jira.objects.get(business=self.timepiece_business)
         self.gh = None
         self.errors = []
+        self.user = user or self.request.user
 
     def _on_error(self, err_obj):
         if isinstance(err_obj, Exception):
@@ -32,26 +33,35 @@ class JiraSync(object):
             messages.error(self.request, str(err_obj))
 
     def _connect(self):
+        res = self._create_jira_connection_for_user(self.timepiece_business, self.user)
+        self.settings = res['settings']
+        self.active_user = res['active_user']
+        self.jira = res['jira']
+        self.gh = res['gh']
+        return True
 
-        if self.jira is not None:
-            return True
-        
-        if self.timepiece_business.sync_with != "jira":
-            logger.debug("Business %s is not configured to sync with jira" % self.timepiece_business.name)
+    @classmethod
+    def _create_jira_connection_for_user(self, business, user):
+        if business.sync_with != "jira":
+            logger.debug("Business %s is not configured to sync with jira" % business.name)
             return False
 
         try:
-            self.settings = self.timepiece_business.jira.get_query_set().all()[0]
+            settings = business.jira.get_query_set().all()[0]
         except IndexError:
             raise Exception("No jira configuration for this business")
-        self.user_settings = self.settings.get_user_settings(self.request)
+        user_settings = settings.get_user_settings(user)
 
-        kwargs = {'options':{ 'server': self.settings.host.strip() },
-                  'basic_auth':(self.user_settings.jira_username.strip(), self.user_settings.jira_password.strip())}
-        self.active_user = self.user_settings.timepiece_user
-        self.jira = JIRA(**kwargs)
-        self.gh = GreenHopper(**kwargs)
-        return True
+        kwargs = {'options':{ 'server': settings.host.strip() },
+                  'basic_auth':(user_settings.jira_username.strip(), user_settings.jira_password.strip())}
+        active_user = user_settings.timepiece_user
+        jira = JIRA(**kwargs)
+        gh = GreenHopper(**kwargs)
+        
+        return { 'active_user': active_user,
+                 'settings': settings,
+                 'jira': jira,
+                 'gh': gh }
 
     def sync_project_to_jira(self, timepiece_project_id, jira_project_key, jira_assignee, jira_issue_type_name):
         try:
@@ -175,10 +185,10 @@ class JiraSync(object):
         num_synced = 1
         issues_synced = []
         for gh_issue in self.gh.completed_issues(self.settings.board_id.strip(), jira_sprint.id):
-            issues_synced.append(self._sync_issue(gh_issue, timepiece_project))
+            issues_synced.append(self._sync_issue_from_jira(gh_issue, timepiece_project))
             num_synced += 1
         for gh_issue in self.gh.incompleted_issues(self.settings.board_id.strip(), jira_sprint.id):
-            issues_synced.append(self._sync_issue(gh_issue, timepiece_project))
+            issues_synced.append(self._sync_issue_from_jira(gh_issue, timepiece_project))
             num_synced += 1
 
         timepiece_missing_issues = timepiece_project.issues.exclude(pk__in=[i.id for i in issues_synced])
@@ -192,7 +202,7 @@ class JiraSync(object):
 
         return num_synced, num_deleted
 
-    def _sync_issue(self, gh_issue, timepiece_project):
+    def _sync_issue_from_jira(self, gh_issue, timepiece_project):
 
         try:
             if not hasattr(gh_issue, 'fields'):
@@ -208,7 +218,7 @@ class JiraSync(object):
                 order = 1
             else:
                 order2 = None
-                order = int(jira_order)
+                order = int(jira_order or 0)
 
             fixed_subject="%s %s" % (jira_issue.key, jira_issue.fields.summary)
             logger.info("Sorting: %s = %s" % (str(jira_issue.fields.customfield_10300), fixed_subject))
@@ -217,7 +227,7 @@ class JiraSync(object):
             time_estimate = float(int(time_estimate*100))/100
 
             try:
-                timepiece_issue = timepiece_project.issues.get_query_set().get(interface_plugin_number=jira_issue.key)
+                timepiece_issue = timepiece.Issue.objects.get(interface_plugin_number=jira_issue.key)
             except timepiece.Issue.DoesNotExist:
                 timepiece_issue = timepiece.Issue(project=timepiece_project,
                                                   subject=fixed_subject,
@@ -231,7 +241,12 @@ class JiraSync(object):
                 timepiece_issue.save()
                 timepiece.IssueHistory.add_history(self.active_user, timepiece_issue, "Imported from jira", "", timepiece_issue.subject)
             except timepiece.Issue.MultipleObjectsReturned:
-                timepiece_issue = timepiece_project.issues.get_query_set().filter(interface_plugin_number=jira_issue.key)[0]
+                timepiece_issue = timepiece.Issue.objects.filter(interface_plugin_number=jira_issue.key)[0]
+
+            if timepiece_issue.project != timepiece_project:
+                timepiece.IssueHistory.add_history(self.active_user, timepiece_issue, "Moved from sprint %s during jira import" % timepiece_issue.project.name, 
+                                                   timepiece_issue.status, state)
+                timepiece_issue.project = timepiece_project
 
             if timepiece_issue.status != state:
                 timepiece.IssueHistory.add_history(self.active_user, timepiece_issue, "State change during jira import", timepiece_issue.status, state)
@@ -366,7 +381,7 @@ class JiraSync(object):
         if not self._connect():
             return
 
-        if not self.request or issue_points.issue.assigned_to != self.request.user:
+        if not self.request or issue_points.issue.assigned_to != self.user:
             return
 
         jira_issue = self._get_jira_issue(issue_points.issue)
@@ -390,12 +405,43 @@ class JiraSync(object):
 
         jira_issue = jira_issue or self._get_jira_issue(timepiece_issue)
         timepiece_actual_seconds = int((timepiece_issue.hours or 0)*60*60)
-        if timepiece_actual_seconds > (jira_issue.fields.timespent or 0):
-            timepiece_actual_seconds_offset = timepiece_actual_seconds - (jira_issue.fields.timespent or 0)
-            if timepiece_actual_seconds_offset > 0:
-                jira_hours_pattern = u'%fm' % (float(timepiece_actual_seconds_offset)/60)
-                self.jira.add_worklog(jira_issue, timeSpent=jira_hours_pattern)
+        import pdb; pdb.set_trace()
+        if timepiece_actual_seconds != (jira_issue.fields.timespent or 0):
 
+            # compare each worklog with each timepiece-jira-enabled
+            # user that has entries for this issue, and create them.
+            worklogs = self.jira.worklogs(jira_issue)
+            
+            worklog_seconds_grouped_by_user = {}
+            for worklog in worklogs:
+                worklog_timepiece_user = self._get_or_create_timepiece_equivalent_of_jira_user(worklog.author)
+                worklog_seconds_grouped_by_user.setdefault(worklog_timepiece_user, 0)
+                worklog_seconds_grouped_by_user[worklog_timepiece_user] += worklog.timeSpentSeconds
+                
+            timepiece_entry_totals_by_user = timepiece_issue.entries.all().values("user").annotate(Sum("hours"))
+            for timepiece_entry_totals_for_user in timepiece_entry_totals_by_user:
+                timepiece_entry_user = User.objects.get(pk=timepiece_entry_totals_for_user['user'])
+                timepiece_seconds = float(timepiece_entry_totals_for_user['hours__sum'])*60*60
+
+                if timepiece_entry_user in worklog_seconds_grouped_by_user.keys():
+                    jira_seconds = worklog_seconds_grouped_by_user[timepiece_entry_user]
+                    if timepiece_seconds < jira_seconds:
+                        # Typically as a result of a timesheet correction in imptime, delete all jira worklogs in this case and start again.
+                        jira_for_user = self._create_jira_connection_for_user(timepiece_issue.project.business, timepiece_entry_user)['jira']
+                        for worklog in worklogs:
+                            if self._get_or_create_timepiece_equivalent_of_jira_user(worklog.author).id == timepiece_entry_user.id:
+                                jira_for_user.delete_worklog(jira_issue, worklog)
+                        missing_seconds = timepiece_seconds
+                    else:
+                        missing_seconds = timepiece_seconds - worklog_seconds_grouped_by_user[timepiece_entry_user]
+                else:
+                    missing_seconds = timepiece_seconds
+                
+                if missing_seconds > 0:
+                    jira_hours_pattern = u'%fm' % float(missing_seconds/60)
+                    jira_for_user = self._create_jira_connection_for_user(timepiece_issue.project.business, timepiece_entry_user)['jira']
+                    jira_for_user.add_worklog(jira_issue, timeSpent=jira_hours_pattern)
+            
     def update_issue_assigned_to(self, timepiece_issue, username, *args, **kwargs):
         if not self._connect():
             return

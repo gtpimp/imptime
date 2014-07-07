@@ -20,8 +20,8 @@ class Jira(models.Model):
     sync_issue_ordering_to_jira = models.BooleanField(default=False, blank=True)
     sync_issue_ordering_from_jira = models.BooleanField(default=True, blank=True)
 
-    def get_user_settings(self, request):
-        return JiraUser.objects.get_or_create(jira=self, timepiece_user=request.user)[0]
+    def get_user_settings(self, user):
+        return JiraUser.objects.get_or_create(jira=self, timepiece_user=user)[0]
 
 class JiraUser(models.Model):
     jira = models.ForeignKey(Jira, blank=False, null=False)
