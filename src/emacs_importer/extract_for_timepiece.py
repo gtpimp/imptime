@@ -135,8 +135,9 @@ class Extractor(object):
             issue_id = entry.try_get_issue_id()
             if issue_id is not None:
                 try:
-                    issue = Issue.objects.get(number=issue_id, project=project)
+                    issue = Issue.objects.get(number=issue_id)
                     entry.issue = issue
+                    entry.project = issue.project
                     entry.save()
                     issues_processed.add(issue)
                 except Issue.DoesNotExist:
