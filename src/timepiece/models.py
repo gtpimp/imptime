@@ -258,6 +258,7 @@ class BusinessPermissions(models.Model):
     can_see_other_user_points = models.BooleanField(default=False, verbose_name="Can See Other User's Points")
     can_estimate_own_points = models.BooleanField(default=False, verbose_name="Can Estimate Own Points")
     can_view_calendar = models.BooleanField(default=False, verbose_name="Can View Calendar")
+    can_import_actual_hours = models.BooleanField(default=False, verbose_name="Can Import Actual Hours")
 
     can_edit_permissions = models.BooleanField(default=False, verbose_name="Can Edit Permissions")
     can_toggle_graphs = models.BooleanField(default=False, verbose_name="Can Toggle Graphs")
@@ -382,6 +383,11 @@ class BusinessPermissions(models.Model):
     @property
     def has_view_calendar(self):
         return self.user.is_superuser or self.can_view_calendar
+
+    @property
+    def has_import_actual_hours(self):
+        # used to manage how imports are handled, so no is_superuser override
+        return self.can_import_actual_hours
 
     @property
     def has_edit_calendar(self):

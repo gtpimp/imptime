@@ -405,7 +405,6 @@ class JiraSync(object):
 
         jira_issue = jira_issue or self._get_jira_issue(timepiece_issue)
         timepiece_actual_seconds = int((timepiece_issue.hours or 0)*60*60)
-        import pdb; pdb.set_trace()
         if timepiece_actual_seconds != (jira_issue.fields.timespent or 0):
 
             # compare each worklog with each timepiece-jira-enabled
@@ -421,6 +420,9 @@ class JiraSync(object):
             timepiece_entry_totals_by_user = timepiece_issue.entries.all().values("user").annotate(Sum("hours"))
             for timepiece_entry_totals_for_user in timepiece_entry_totals_by_user:
                 timepiece_entry_user = User.objects.get(pk=timepiece_entry_totals_for_user['user'])
+                bp = timepiece.BusinessPermissions.for_user(timepiece_entry_user, timepiece_issue.project.business)
+                if not bp.has_import_actual_hours:
+                    continue
                 timepiece_seconds = float(timepiece_entry_totals_for_user['hours__sum'])*60*60
 
                 if timepiece_entry_user in worklog_seconds_grouped_by_user.keys():
@@ -430,6 +432,7 @@ class JiraSync(object):
                         jira_for_user = self._create_jira_connection_for_user(timepiece_issue.project.business, timepiece_entry_user)['jira']
                         for worklog in worklogs:
                             if self._get_or_create_timepiece_equivalent_of_jira_user(worklog.author).id == timepiece_entry_user.id:
+                                logger.info("Deleting worklog: name=%s, hours=%s, started=%s" % (worklog.author.name, worklog.timeSpentSeconds, worklog.started))
                                 jira_for_user.delete_worklog(jira_issue, worklog)
                         missing_seconds = timepiece_seconds
                     else:
