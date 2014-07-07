@@ -436,7 +436,7 @@ class JiraSync(object):
                                 jira_for_user.delete_worklog(jira_issue, worklog)
                         missing_seconds = timepiece_seconds
                     else:
-                        missing_seconds = timepiece_seconds - worklog_seconds_grouped_by_user[timepiece_entry_user]
+                        missing_seconds = timepiece_seconds - jira_seconds
                 else:
                     missing_seconds = timepiece_seconds
                 

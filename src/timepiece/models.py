@@ -2404,6 +2404,7 @@ class Issue(models.Model):
            ( 'onhold', 'on hold'),
            ( 'to be estimated', 'to be estimated'),
            ( 'needscodereview', 'needs code review'),
+           ( "can't reproduce", "can't reproduce"),
            ( 'dev unclear', 'dev unclear'),
            ( 'duplicate', 'duplicate'),
            ( 'tested', 'tested'),
