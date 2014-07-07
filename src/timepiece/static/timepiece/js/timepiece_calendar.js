@@ -221,7 +221,7 @@ $(document).ready(function() {
 							  center: 'title',
 							  right: 'month,agendaWeek,agendaDay'
 						      },
-						      defaultDate: '2014-06-12',
+						      //defaultDate: '2014-06-12',
 						      eventSources: [
 							  { url: t_config.calendar_events_url,
 							    color: 'lightblue',
