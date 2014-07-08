@@ -4309,7 +4309,7 @@ def sprint_report(request, project_id, context=None):
     context['project'] = project
 
     if 'start' in context['settings']:
-        stats = project.cache_stats(start=context['settings']['start'], end=context['settings']['end'])
+        stats = project.cache_stats(start=context['settings']['start'], end=context['settings']['end'], issues=context['issues'])
         context['issues'] = stats['issues_with_time_entries']
 
     if 'output_format' in request.GET and request.GET['output_format'] == 'pdf':

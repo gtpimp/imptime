@@ -831,11 +831,13 @@ class Project(models.Model):
     def users_and_hours(self):
         return self._get_users_and_hours({'entries':Entry.objects.filter(project=self)})
 
-    def cache_stats(self, start=None, end=None):
+    def cache_stats(self, start=None, end=None, issues=None):
         stats = {}
         entries = Entry.objects.filter(project=self)
+        
+        if issues is None:
+            issues = self.issues
 
-        issues = self.issues
         if start is not None:
             entries = entries.filter(start_time__gte=start).filter(end_time__lte=end)
             issues_with_time_entries = issues.filter(entries__in=entries).distinct()
