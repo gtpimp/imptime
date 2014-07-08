@@ -137,14 +137,18 @@ class Extractor(object):
             issue_id = entry.try_get_issue_id()
             if issue_id is not None:
                 try:
-
                     # this filter allows that issues could be in the wrong sprint, but they must be in the right business
                     issue = Issue.objects.get(number=issue_id, project__business=project.business) 
+                except Issue.DoesNotExist:
+                    issue = None
+                    pass
+                except Issue.MultipleObjectsReturned:
+                    issue = Issue.objects.filter(number=issue_id, project__business=project.business).order_by("-interface_plugin_number", "-id")[0]
+
+                if issue is not None:
                     entry.issue = issue
                     entry.project = issue.project
                     entry.save()
                     issues_processed.add(issue)
-                except Issue.DoesNotExist:
-                    pass
 
             self.status['num_entries_created'] += 1
