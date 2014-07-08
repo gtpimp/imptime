@@ -4874,7 +4874,10 @@ def _create_js_calendar_event(event):
         res['title'] = event.project.business.name
 
     res['title'] += " (%s, %s hrs)" % (event.user.username, event.hours)
-    
+
+    if event.is_open and event.start < datetime.datetime.today()-relativedelta(days=1):
+        res['is_overdue'] = True
+
     return res
 
 def _populate_calendar_events(request, context):

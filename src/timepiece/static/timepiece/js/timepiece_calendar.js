@@ -213,6 +213,9 @@ $(document).ready(function() {
 
 		      var render_event = function(event, element) {
 			  $(element).addClass("event_status_" + event.status);
+			  if ( event.is_overdue ) {
+			      $(element).addClass("event_overdue");
+			  }
 		      };
 
 		      $('#calendar').fullCalendar({

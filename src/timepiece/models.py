@@ -2714,5 +2714,5 @@ class CalendarEvent(models.Model):
         return self.start + datetime.timedelta(hours=float(self.hours))
 
     @property
-    def is_done(self):
-        return self.status == 'done'
+    def is_open(self):
+        return self.status == '' or self.status == 'ready'

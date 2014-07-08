@@ -68,3 +68,10 @@ li.project_unscheduled a {
     background-repeat: no-repeat;
     background-position: right;
 }
+
+.event_overdue {
+    background-image: url('../../images/icons/cross.png');
+    background-repeat: no-repeat;
+    background-position: right;
+
+}
