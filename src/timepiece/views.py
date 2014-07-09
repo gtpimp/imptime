@@ -4896,7 +4896,7 @@ def _populate_calendar_events(request, context):
 
     calendar_events = timepiece.CalendarEvent.objects.filter(user__in=users).filter(Q(project__business__in=businesses)|Q(project__isnull=True)).distinct().order_by("start")
 
-    entry_events = timepiece.Entry.objects.filter(project__business__in=businesses).filter(user__in=users)
+    entry_events = timepiece.Entry.objects.all()
 
     filter_form = timepiece_forms.CalendarFilterForm(users, businesses, request.GET or None)
     if filter_form.is_valid():
@@ -4908,10 +4908,6 @@ def _populate_calendar_events(request, context):
     context['calendar_events'] = calendar_events
     context['entry_events'] = entry_events
     context['filter_form'] = filter_form
-
-def _populate_actual_events(request, context):
-    """ assumes _populate_calendar_events has already been called on the context """
-    
 
 @login_required
 @csrf_exempt

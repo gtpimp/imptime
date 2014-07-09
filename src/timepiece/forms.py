@@ -1307,8 +1307,8 @@ class CalendarFilterForm(forms.Form):
                                                 widget=CheckboxSelectMultiple,
                                                 initial=Business.objects.none())
 
-    startParam = forms.DateField(initial=datetime.today(), required=False)
-    endParam = forms.DateField(initial=datetime.today(), required=False)
+    start = forms.DateField(initial=datetime.today(), required=False)
+    end = forms.DateField(initial=datetime.today(), required=False)
 
     event_types = forms.MultipleChoiceField(required=False,
                                             choices = CalendarEvent.EVENT_TYPES + ( ("actual", "Actual"), ),
@@ -1331,12 +1331,12 @@ class CalendarFilterForm(forms.Form):
         if len(self.cleaned_data['businesses'])>0:
             calendar_events = calendar_events.filter(Q(project__business__in=self.cleaned_data['businesses'])|Q(project__isnull=True))
             entry_events = entry_events.filter(project__business__in=self.cleaned_data['businesses'])
-        if self.cleaned_data['startParam'] is not None:
-            calendar_events = calendar_events.filter(start__gte=self.cleaned_data['startParam'])
-            entry_events = entry_events.filter(start_time__gte=self.cleaned_data['startParam'])
-        if self.cleaned_data['endParam'] is not None:
-            calendar_events = calendar_events.filter(end__lte=self.cleaned_data['endParam'])
-            entry_events = entry_events.filter(end_time__lte=self.cleaned_data['endParam'])
+        if self.cleaned_data['start'] is not None:
+            calendar_events = calendar_events.filter(start__gte=self.cleaned_data['start'])
+            entry_events = entry_events.filter(start_time__gte=self.cleaned_data['start'])
+        if self.cleaned_data['end'] is not None:
+            calendar_events = calendar_events.filter(start__lte=self.cleaned_data['end'])
+            entry_events = entry_events.filter(end_time__lte=self.cleaned_data['end'])
         if self.cleaned_data['event_types'] is not None and len(self.cleaned_data['event_types'])>0:
             calendar_events = calendar_events.filter(event_type__in=self.cleaned_data['event_types'])
 
@@ -1403,6 +1403,8 @@ class CalendarEventUpdateForm(forms.ModelForm):
 
     def clean(self):
         data = self.cleaned_data
+
+        import pdb; pdb.set_trace()
         if 'user' not in data or data['user'] is None:
             data['user'] = self.instance.user
         if 'start' not in data or data['start'] is None:
