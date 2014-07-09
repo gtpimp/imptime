@@ -10,6 +10,44 @@ var t_calendar = ( function() {
 			       t_calendar.refresh_sprint_schedules();
 			   },
 
+			   refresh_event: function(new_event_data) {
+			       var calendar_event = $("#calendar").fullCalendar('clientEvents', new_event_data.id)[0];
+			       calendar_event.start = new_event_data.start;
+			       calendar_event.end = new_event_data.end;
+			       calendar_event.title = new_event_data.title;
+			       calendar_event.description = new_event_data.description;
+			       calendar_event.project_id = new_event_data.project_id;
+			       calendar_event.user_id = new_event_data.user_id;
+			       calendar_event.event_type = new_event_data.event_type;
+			       calendar_event.color = new_event_data.color;
+			       calendar_event.textColor = new_event_data.textColor;
+			       calendar_event.borderColor = new_event_data.borderColor;
+			       calendar_event.editable = new_event_data.editable;
+			       calendar_event.status = new_event_data.status;
+			       calendar_event.is_overdue = new_event_data.is_overdue;
+			       $("#calendar").fullCalendar('updateEvent', calendar_event);
+			       t_calendar.on_render_event_element(calendar_event);
+			   },
+
+			   on_render_event_element: function(event, event_el /* optional */) {
+			       var event_widget_class_name = "fullcalendar_event_widget_id_" + event.id;
+			       if ( event_el == null ) {
+				   event_el = $("." + event_widget_class_name);
+			       }
+
+			       if ( event.id == 132 ) {
+				   var x = 5;
+			       }
+
+			       $(event_el).addClass("event_status_" + event.status);
+			       if ( event.is_overdue ) {
+				   $(event_el).addClass("event_overdue");
+			       } else {
+				   $(event_el).removeClass("event_overdue");
+			       }
+			       $(event_el).addClass(event_widget_class_name);
+			   },
+
 			   activate_project_for_scheduling: function(project_id) {
 			       $("#id_project").val(project_id);
 			   },
@@ -51,7 +89,6 @@ var t_calendar = ( function() {
 						  return function() {
 						      loading_done();
 						      form.hide();
-						      active_form = null;
 						  };
 					      }());
 
@@ -61,7 +98,7 @@ var t_calendar = ( function() {
 				       dataType:"json",
 				       success: function(data) {
 					   on_done();
-					   t_calendar.refresh();
+					   t_calendar.refresh_event(data);
 				       },
 				       error: function(err) {
 					   on_done();
@@ -85,7 +122,6 @@ var t_calendar = ( function() {
 						  return function() {
 						      loading_done();
 						      form.hide();
-						      active_form = null;
 						  };
 					      }());
 
@@ -118,7 +154,7 @@ var t_calendar = ( function() {
 				       success: function(data) {
 					   on_done();
 					   form.hide();
-					   t_calendar.refresh();
+					   $("#calendar").fullCalendar('removeEvents', event_id);
 				       },
 				       error: function(err) {
 					   on_done();
@@ -168,7 +204,7 @@ $(document).ready(function() {
 				  success: function(data) {
 				      on_done();
 				      if ( needs_refresh ) {
-					  t_calendar.refresh();
+					  t_calendar.refresh_event(data);
 				      }
 				  },
 				  error: function(err) {
@@ -211,13 +247,6 @@ $(document).ready(function() {
 			  form.show();
 		      };
 
-		      var render_event = function(event, element) {
-			  $(element).addClass("event_status_" + event.status);
-			  if ( event.is_overdue ) {
-			      $(element).addClass("event_overdue");
-			  }
-		      };
-
 		      $('#calendar').fullCalendar({
 						      header: {
 							  left: 'prev,next today',
@@ -238,13 +267,13 @@ $(document).ready(function() {
 							  }
 						      ],
 						      editable: true,
-						      eventDrop: function(event, delta, revertFunc) { save_event(event, delta, revertFunc, false); },
+						      eventDrop: function(event, delta, revertFunc) { save_event(event, delta, revertFunc, true); },
 						      eventResize: function(event, delta, revertFunc) { save_event(event, delta, revertFunc, true); },
 						      selectable: true,
 						      selectHelper: true,
 						      select: new_event,
 						      eventClick: edit_event,
-						      eventRender: render_event,
+						      eventRender: t_calendar.on_render_event_element,
 						      loading: function(isLoading, view) {
 							  if ( isLoading ) {
 							      active_loading_func = imp.loading("calendar loading");
