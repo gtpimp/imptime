@@ -258,7 +258,7 @@ $(document).ready(function() {
 						  });
 
 		      $('.datepicker').datepicker({dateFormat: 'yy-mm-dd'});
-		      $('.datetimepicker').datetimepicker({format: 'yyyy-mm-dd hh:ii'});
+		      $('.datetimepicker').datetimepicker({format: 'yyyy-mm-dd hh:ii', autoclose: true});
 
 		      t_calendar.refresh_sprint_schedules();
 
