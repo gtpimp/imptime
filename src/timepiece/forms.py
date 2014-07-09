@@ -1408,7 +1408,7 @@ class CalendarEventUpdateForm(forms.ModelForm):
             data['user'] = self.instance.user
         if 'start' not in data or data['start'] is None:
             data['start'] = self.instance.start
-        if 'event_type' not in data or data['event_type'] is None:
+        if 'event_type' not in data or data['event_type'] is None or len(data['event_type']) == 0:
             data['event_type'] = self.instance.event_type
         if 'status' not in data or data['status'] is None or len(data['status']) == 0:
             data['status'] = self.instance.status
