@@ -118,7 +118,18 @@ def edit_invoice(request, invoice_id, template="invoicing/edit_invoice.html", co
         items_formset.save_m2m()
         for payment in payments:
             payment.invoice = invoice
-            payment.save()
+            
+            fail_count = 0
+            while True:
+                try:
+                    payment.save()
+                    break
+                except Exception, ex:
+                    logger.warning("Getting integrity error during save, most likely a problem with sequences: %s" % ex)
+                    fail_count += 1
+                    if fail_count>200:
+                        raise
+                
         payments_formset.save_m2m()
         messages.info(request, "Invoice updated")
         return HttpResponseRedirect(reverse('invoicing:edit_invoice', kwargs={'invoice_id':invoice.id}))

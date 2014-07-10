@@ -1,6 +1,7 @@
 import random
 import markdown
 import dev_calendar
+from invoicing.models import Invoice
 from django.contrib.auth import login as django_login, load_backend
 from django.core.files.base import ContentFile
 import csv
@@ -1636,11 +1637,14 @@ def unbillable_project(request, project_id=None):
 
 
 @permission_required('timepiece.change_project')
-@render_with('timepiece/project/create_edit.html')
 @login_required
-def update_project(request, project_id=None):
-    project = get_object_or_404(timepiece.Project, pk=project_id) \
-        if project_id else None
+def update_project(request, project_id=None, template='timepiece/project/edit.html'):
+
+    if project_id is None:
+        template = 'timepiece/project/create.html'
+        project = None
+    else:
+        project = get_object_or_404(timepiece.Project, pk=project_id)
 
     form = timepiece_forms.ProjectForm(request.POST or None, instance=project)
     if request.POST and form.is_valid():
@@ -1652,9 +1656,11 @@ def update_project(request, project_id=None):
 
     context = {
         'project': project,
+        'business': project.business,
         'project_form': form,
     }
-    return context
+    
+    return render_to_response(template, context, context_instance=RequestContext(request))
 
 @permission_required('timepiece.add_project')
 @render_with('timepiece/project/create_edit.html')
@@ -5013,3 +5019,80 @@ def cycle_project_status(request, project_id, context=None):
     project.save()
     return HttpResponse(json.dumps({ 'new_status': new_status,
                                      'is_open': project.is_open }))
+
+@login_required
+def business_cost_summary(request, business_id, template="timepiece/project/business_cost_summary.html", context=None):
+    context = context or {}
+    business = timepiece.Business.objects.get(pk=business_id)
+    bp = timepiece.BusinessPermissions.objects.get_or_create(business=business, user=request.user)[0]
+    if not bp.has_view_invoices:
+        raise PermissionDenied
+    if not bp.has_view_ctc_billable_rates:
+        raise PermissionDenied
+
+    context['business'] = business
+
+    project_infos = []
+    
+    running_budget = 0
+    running_ctc = 0
+    running_billable = 0
+    running_amount_invoiced = 0
+    running_amount_paid = 0
+    running_amount_owed = 0
+    for project in timepiece.Project.objects.all().filter(business=business).filter_by_logged_in_user(request.user).order_by("order"):
+        stats = project.stats
+        project_info = { 'project': project,
+                         'status': project.status2,
+                         'budget': project.budget,
+                         'ctc': stats['ctc'],
+                         'billable': stats['billed']}
+        running_budget += project.budget
+        running_ctc += stats['ctc']
+        running_billable += stats['billed']
+        project_infos.append(project_info)
+
+        invoices = Invoice.objects.all().filter(project=project)
+        running_project_amount_invoiced = 0
+        running_project_amount_paid = 0
+        running_project_amount_owed = 0
+        for invoice in invoices:
+            running_project_amount_invoiced += invoice.cost_with_vat
+            running_project_amount_paid += invoice.amount_paid
+            running_project_amount_owed += invoice.amount_owed
+        project_info['invoiced'] = running_project_amount_invoiced
+        project_info['paid'] = running_project_amount_paid
+        project_info['owed'] = running_project_amount_owed
+
+        running_amount_invoiced += running_project_amount_invoiced
+        running_amount_paid += running_project_amount_paid
+        running_amount_owed += running_project_amount_owed
+
+    context['project_infos'] = project_infos
+
+    
+    sundry_invoiced = 0
+    sundry_paid = 0
+    sundry_owed = 0
+    for invoice in Invoice.objects.all().filter(business=business).filter(project__isnull=True):
+        sundry_invoiced += invoice.cost_with_vat
+        sundry_paid += invoice.amount_paid
+        sundry_owed += invoice.amount_owed
+    
+    running_amount_invoiced += sundry_invoiced
+    running_amount_paid += sundry_paid
+    running_amount_owed += sundry_owed
+
+    context['sundry_totals'] = { 'invoiced': sundry_invoiced,
+                                 'paid': sundry_paid,
+                                 'owed': sundry_owed }
+
+    context['project_totals'] = { 'budget': running_budget,
+                                  'ctc': running_ctc,
+                                  'billable': running_billable,
+                                  'invoiced': running_amount_invoiced,
+                                  'paid': running_amount_paid,
+                                  'owed': running_amount_owed }
+    context['bp'] = bp
+
+    return render_to_response(template, context, context_instance=RequestContext(request))

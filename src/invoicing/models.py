@@ -60,6 +60,7 @@ class Invoice(models.Model):
 
     client = models.ForeignKey(ClientInvoiceDetails, blank=False, null=False)
     internal_comment = models.TextField(blank=True, null=True, verbose_name="Comment (doesn't appear on the invoice")
+    business = models.ForeignKey("timepiece.Business", blank=True, null=True)
     project = models.ForeignKey("timepiece.Project", blank=True, null=True)
     invoice_number = models.IntegerField(default=0, null=False, blank=False)
     client_order_name = models.CharField(max_length=50, null=True, blank=True, verbose_name="Optional client order name")
@@ -74,6 +75,11 @@ class Invoice(models.Model):
     footer_terms = models.TextField(null=True, blank=True)
     status = models.CharField(max_length=20, default='open', blank=False, null=False, choices=INVOICE_STATUSES)
 
+    def save(self, *args, **kwargs):
+        if self.project is not None:
+            self.business = self.project.business
+        super(Invoice, self).save(*args, **kwargs)
+    
     @classmethod
     def next_invoice_number(self):
         return (Invoice.objects.all().aggregate(Max('invoice_number'))['invoice_number__max'] or 0)+1
@@ -144,7 +150,6 @@ class Invoice(models.Model):
             return 0
         else:
             return self.cost_with_vat - self.amount_paid
-    
 
 class InvoiceItem(models.Model):
     invoice = models.ForeignKey(Invoice, blank=False, null=False, related_name='items')

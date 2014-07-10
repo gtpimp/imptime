@@ -225,13 +225,13 @@ imp.project_card_thinking = function(el) {
     $(el).parents(".project_card").find(".loading").show();
 };
 
-imp.popup_page = function(url) {
+imp.popup_page = function(url, big) {
 
     if (imp.popup_dialog) {
 	$(".project_card_dialog_container").find(".dialog_content").load(url);
     } else {
 	$(".project_card_dialog_container").dialog( { width: 600,
-						      height: 400,
+						      height: $(window).height()*0.8,
 						      open: function(event, ui) {
 							  $(".project_card_dialog_container").find(".dialog_content").load(url);
 						      }
@@ -264,9 +264,11 @@ imp.submit_popup_form = function(el, callback) {
             data: form_el.serialize(),
             success : function (data) {
 		on_done();
-		if( callback ) {
-                    callback(data);
-		} else {
+		var auto_close = true;
+		if( callback && !callback(data) ) {
+		    auto_close = false;
+		}
+		if ( auto_close ) {
 		    $(".project_card_dialog_container").dialog('close');
 		}
             }

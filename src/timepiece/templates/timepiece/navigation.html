@@ -41,9 +41,23 @@
 
                                 {% if perms.timepiece.add_business %}
                                   <li><a href="{% url 'create_business' %}">New project</a></li>
+                                {% endif %}
+
+                                <li><hr/></li>
+                                {% if perms.timepiece.add_business %}
 				  {% if business.id %}
 				    <li><a target="_blank" href="{% url 'edit_business' business.id %}">Edit {{business.name}}</a></li>
 				  {% endif %}
+                                {% endif %}
+                                  
+                                {% if business %}
+                                  {% has_permission has_view_ctc_billable_rates business %}
+                                    {% has_permission has_view_invoices business %}
+                                      {% if business.id %}
+                                        <li><a target="_blank" href="{% url 'business_cost_summary' business.id %}">Cost summary</a></li>
+                                      {% endif %}
+                                    {% end_permission %}
+                                  {% end_permission %}
                                 {% endif %}
 
                                 {% if business %}

@@ -438,7 +438,7 @@ class Project(models.Model):
     )
     billable = models.BooleanField(default=False)
     point_person = models.ForeignKey(User, limit_choices_to={'is_staff': True})
-    quote_uncertainty = models.FloatField(null=True, blank=True, default=0.25)
+    quote_uncertainty = models.FloatField(null=True, blank=True, default=0.25, verbose_name="Uncertainty overhead as a decimal between 0 and 1")
     users = models.ManyToManyField(
         User,
         related_name='user_projects',
@@ -2726,7 +2726,7 @@ class CalendarEvent(models.Model):
     user = models.ForeignKey(User, blank=False, null=False, db_index=True)
     project = models.ForeignKey(Project, blank=True, null=True, db_index=True, related_name='calendar_events')
     start = models.DateTimeField(blank=False,null=False, db_index=True)
-    hours = models.DecimalField(max_digits=4, decimal_places=2, default=2.0)
+    hours = models.DecimalField(max_digits=4, decimal_places=2, default=2.0, db_index=True)
     description = models.TextField(null=True, blank=True)
     event_type = models.CharField( max_length=50, default='planned', 
                                    choices = EVENT_TYPES )

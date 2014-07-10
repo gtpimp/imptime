@@ -1,0 +1,23 @@
+{% load bootstrap_toolkit %}
+
+{% block content %}
+
+    <div class="row-fluid">
+        <div class="span12">
+            <h2>
+              Edit {{ project.business }} - {{ project }}
+            </h2>
+
+            <br style="clear: both;" />
+
+            <form id="create-edit-project" class="form-horizontal" action="{% url 'edit_project' project.id %}" method="post" accept-charset="utf-8">
+                {% csrf_token %}
+		{{ project_form.errors }}
+                {{ project_form|as_bootstrap:"horizontal" }}
+                <div class="form-actions">
+                  <input class="btn btn-primary" type='submit' name='submit' value='Save' onclick="imp.submit_popup_form(this, function() {window.location='{% url 'project_list' project.id %}';}); return false;" />
+                </div>
+            </form>
+        </div>
+    </div>
+{% endblock %}

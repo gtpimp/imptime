@@ -41,6 +41,15 @@
     </div>
   </div>
 
+  <div class='form-group{% if form.errors.business%} has-error{%endif%}'>
+    <div class="col-md-6">
+      Business (optional if project is specified)
+    </div>
+    <div class="col-md-6">
+      {{ form.business|add_class:'form-control' }}
+    </div>
+  </div>
+
   <div class='form-group{% if form.errors.status%} has-error{%endif%}'>
     <div class="col-md-6">
       Status

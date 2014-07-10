@@ -21,9 +21,11 @@
       </li>
       {% end_permission %}
 
+      {% comment %}
       <li>
         <a target="_blank" href='#' onclick="imp.toggle_show_my_issues(this, '{{current_user.username}}'); return false" >My issues</a>
       </li>
+      {% endcomment %}
 
       <li>
         <a href="#" onclick="imp.popup_page('{% url 'auto_issue_sort' project.id %}'); return false;">
@@ -33,7 +35,9 @@
 
       {% if perms.timepiece.change_project %}
       <li>
-        <a target="_blank" href="{% url 'edit_project' project_id=project.id %}">Edit</a>
+        <a href="#" onclick="imp.popup_page('{% url 'edit_project' project_id=project.id %}'); return false;">
+          Edit
+        </a>
       </li>
       {% endif %}
 
@@ -95,6 +99,7 @@
       </li>
       {% end_permission %}
 
+      {% comment %}
       {% has_permission has_view_actual_hours project.business %}
       <li>
         <a href="#" onclick="window.open('{% url 'show_timeline' project.id %}')">
@@ -102,6 +107,7 @@
         </a>
       </li>
       {% end_permission %}
+      {% endcomment %}
 
       <li>
         <a href="#" onclick="imp.toggle_show_numbers();return false;">Numbers</a>

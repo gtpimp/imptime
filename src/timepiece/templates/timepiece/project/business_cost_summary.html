@@ -1,0 +1,69 @@
+{% extends "timepiece/project/base.html" %}
+
+{% load humanize %}
+{% load bootstrap_toolkit %}
+{% load timepiece_tags %}
+
+{% block title %}Cost summary for {{business}}{% endblock %}
+
+{% block content %}
+
+<h1>Cost summary for {{business}}</h1>
+
+<table class="table">
+  <thead>
+    <th>Sprint</th>
+    <th>Status</th>
+    <th>Budget</th>
+    {% if bp.has_view_ctc_billable_rates %}
+      <th>ctc (based on hours)</th>
+    {% endif %}
+    <th>Billable (based on hours)</th>
+    <th>Invoiced</th>
+    <th>Paid</th>
+    <th>Owed</th>
+  </thead>
+  <tbody>
+  {% for project_info in project_infos %}
+    <tr>
+      <td>
+        <a href="{% url 'project_list' project_info.project.id %}">{{project_info.project}}</a>
+      </td>
+      <td>{{project_info.status}}</td>
+      <td>R{{project_info.budget|floatformat:"0"|intcomma}}</td>
+      {% if bp.has_view_ctc_billable_rates %}
+        <td>R{{project_info.ctc|floatformat:"0"|intcomma}}</td>
+      {% endif %}
+      <td>R{{project_info.billable|floatformat:"0"|intcomma}}</td>
+      <td>R{{project_info.invoiced|floatformat:"0"|intcomma}}</td>
+      <td>R{{project_info.paid|floatformat:"0"|intcomma}}</td>
+      <td>R{{project_info.owed|floatformat:"0"|intcomma}}</td>
+    </tr>
+  {% endfor %}
+
+    <tr>
+      <td>Unspecified</td>
+      <td></td>
+      <td></td>
+      <td></td>
+      <td></td>
+      <td>R{{sundry_totals.invoiced|floatformat:"0"|intcomma}}</td>
+      <td>R{{sundry_totals.paid|floatformat:"0"|intcomma}}</td>
+      <td>R{{sundry_totals.owed|floatformat:"0"|intcomma}}</td>
+    </tr>
+  </tbody>
+
+  <thead>
+    <th></th>
+    <th></th>
+    <th>R{{project_totals.budget|floatformat:"0"|intcomma}}</th>
+    <th>R{{project_totals.ctc|floatformat:"0"|intcomma}}</th>
+    <th>R{{project_totals.billable|floatformat:"0"|intcomma}}</th>
+    <th>R{{project_totals.invoiced|floatformat:"0"|intcomma}}</th>
+    <th>R{{project_totals.paid|floatformat:"0"|intcomma}}</th>
+    <th>R{{project_totals.owed|floatformat:"0"|intcomma}}</th>
+  </thead>
+</table>
+
+{% endblock %}
+
