@@ -1324,7 +1324,12 @@ def list_projects(request):
 
     businesses = timepiece.Business.objects.all().filter_by_logged_in_user(request.user).order_by("name").distinct()
 
-    context = {'businesses': businesses,
+    context = {'active_businesses': businesses.filter_has_any_active_projects(),
+               'pending_businesses': businesses.filter_has_only_pending_projects(),
+               'closed_businesses': businesses.filter_has_only_closed_projects(),
+               'active_project_states': ", ".join(timepiece.Project.active_states()),
+               'pending_project_states': ", ".join(timepiece.Project.pending_states()),
+               'closed_project_states': ", ".join(timepiece.Project.closed_states()),
                'last_active': last_active,
                'current_user': request.user}
     return context

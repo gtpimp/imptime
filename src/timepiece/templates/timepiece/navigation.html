@@ -31,7 +31,7 @@
 
 			        {% if perms.timepiece.view_project or perms.auth.view_user or perms.timepiece.view_business %}
 
-                                  {% for business in user.profile.businesses|slice:":10" %}
+                                  {% for business in user.profile.businesses.exclude_has_closed_projects|slice:":10" %}
                                     <li><a href="{% url 'business_issues' business.id %}">{{business.name}}</a></li>
                                   {% endfor %}
                                   <li><hr/></li>

@@ -1,0 +1,31 @@
+{% load bootstrap_toolkit %}
+{% load timepiece_tags %}
+
+{% for business in businesses %}
+  {% has_permission has_view_project_card business %}
+    <tr>
+      <td>
+        <a href="{% url 'business_issues' business.id %}">{{ business }}</a>
+      </td>
+      {% comment %}
+      {% has_permission has_edit_project_detail business %}
+      <td>
+        <a href="{% url 'project_detail' business.id %}">Breakdown</a>
+      </td>
+      {% end_permission %}
+      {% endcomment %}
+
+      {% has_permission has_edit_project_detail business %}
+      <td>
+        <a href="{% url 'view_business_documents' business.id %}">Documents</a>
+      </td>
+      {% end_permission %}
+
+      {% if user.is_superuser %}
+      <td>
+        <a href="{% url 'show_permissions' business.id %}">Permissions</a>
+      </td>
+      {% endif %}
+    </tr>
+  {% end_permission %}
+{% endfor %}
