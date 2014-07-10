@@ -3,8 +3,8 @@
 
 {% for business in businesses %}
   {% has_permission has_view_project_card business %}
-    <tr class='{{name}}_business_row' style="cursor:pointer;{% if expand == 0 %}display:none{%endif%}" onclick="window.location='{% url 'business_issues' business.id %}'; return false">
-      <td>
+    <tr class='{{name}}_business_row' style="{% if expand == 0 %}display:none{%endif%}">
+      <td style="cursor:pointer;" onclick="window.location='{% url 'business_issues' business.id %}'; return false">
         <a href="{% url 'business_issues' business.id %}">{{ business }}</a>
       </td>
       {% comment %}
@@ -14,6 +14,16 @@
       </td>
       {% end_permission %}
       {% endcomment %}
+
+      {% if business %}
+        {% has_permission has_view_ctc_billable_rates business %}
+          {% has_permission has_view_invoices business %}
+            <td>
+              <a target="_blank" href="{% url 'business_cost_summary' business.id %}">Cost summary</a>
+            </td>
+          {% end_permission %}
+        {% end_permission %}
+      {% endif %}
 
       {% has_permission has_edit_project_detail business %}
       <td>
