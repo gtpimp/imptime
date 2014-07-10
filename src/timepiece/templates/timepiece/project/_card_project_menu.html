@@ -73,7 +73,7 @@
 
       {% has_permission has_edit_budget project.business %}
       <li>
-        <a href="#" onclick="window.open('{%url 'edit_project_budget' project.id%}')">
+        <a href="#" onclick="imp.popup_page('{% url 'edit_project_budget' project.id %}'); return false;">
           Budget
         </a>
       </li>

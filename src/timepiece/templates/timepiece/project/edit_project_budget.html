@@ -1,37 +1,22 @@
-{% extends "timepiece/project/base.html" %}
 {% load bootstrap_toolkit %}
 
-{% block extramedia %}
-{{ project_form.media }}
-{% endblock %}
+<div class="edit_budget">
 
-{% block crumbs %}
-    {{ block.super }}
-    <li>
-        <span class="divider">/</span>
-	<a href="{% url 'edit_project' project.pk %}">Edit Sprint Budget</a>
-    </li>
-{% endblock crumbs %}
+  <h1>{{project.business.name}} - {{project.name}}</h1>
+  <h2>Edit Sprint Budget</h2>
 
-{% block title %}Edit Sprint Budget{% endblock %}
+  <div class="row-fluid">
+    <div class="span12">
 
-{% block content %}
+      <br style="clear: both;" />
 
-    <div class="row-fluid">
-        <div class="span12">
-            <h2>Edit sprint budget</h2>
-
-            <br style="clear: both;" />
-
-            <form id="create-edit-project" class="form-horizontal" action="" method="post" accept-charset="utf-8">
+      <form id="create-edit-project" class="form-horizontal" action="{% url 'edit_project_budget' project.id %}" method="post" accept-charset="utf-8">
                 {% csrf_token %}
 		{{ project_form.errors }}
                 {{ project_form|as_bootstrap:"horizontal" }}
-                <div class="form-actions">
-                    <input class="btn btn-primary" type='submit' name='submit' value='Save' />
-                    <input class="btn" type='button' value='Cancel' onclick='history.go(-1)' />
-                </div>
-            </form>
+        <div class="form-actions">
+          <input class="btn btn-primary" type='submit' name='submit' value='Save' onclick='imp.submit_popup_form(this); return false;' />
         </div>
+      </form>
     </div>
-{% endblock %}
+  </div>

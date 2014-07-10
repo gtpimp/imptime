@@ -73,12 +73,7 @@
             {% for user in project.users.select_related.all %}
                 <li>
                     {{ user.get_full_name }}
-                    {% if perms.timepiece.change_projectrelationship %}
-                        <a title="Edit {{ user.get_full_name }}'s relationship to {{ project }}" href='{% url 'edit_project_relationship' project_id=project.id,user_id=user.id %}?next={% url 'view_project' project_id=project.id %}'><img alt="Edit {{ user.get_full_name }}'s relationship to {{ project }}" src='{{ FAMFAMFAM_URL }}pencil.png' /></a>
-                    {% endif %}
-                    {% if perms.timepiece.delete_projectrelationship %}
-                        <a title='Remove {{ user.get_full_name }}' href='{% url 'remove_user_from_project' project_id=project.id,user_id=user.id %}?next={% url 'view_project' project_id=project.id %}'><img alt='Remove {{ user.get_full_name }}' src='{{ FAMFAMFAM_URL }}/delete.png' /></a>
-                    {% endif %}
+                    
                 </li>
             {% endfor %}
             {% endifnotequal %}

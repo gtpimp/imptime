@@ -1695,9 +1695,7 @@ def edit_project_budget(request, project_id=None):
     if request.POST and form.is_valid():
         project = form.save()
         project.save()
-        return HttpResponseRedirect(
-            reverse('view_project', args=(project.id,))
-            )
+        return HttpResponse("done")
 
     context = {
         'project': project,
@@ -4868,6 +4866,12 @@ def _create_js_calendar_event(event):
     if event.event_type == "meeting":
         res['title'] = "M: %s..." % event.description.strip()[0:30]
         res['color'] = "#ff77ff";
+    elif event.event_type == "sickday":
+        res['title'] = "S: %s..." % event.description.strip()[0:30]
+        res['color'] = "##F0AAEB";
+    elif event.event_type == "office_closed":
+        res['title'] = "X: %s..." % event.description.strip()[0:30]
+        res['color'] = "##F0AAEB";
     elif event.project is None:
         res['title'] = "G: %s..." % event.description.strip()[0:30]
     else:

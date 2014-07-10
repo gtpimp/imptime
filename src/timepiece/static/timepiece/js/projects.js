@@ -255,6 +255,25 @@ imp.popup_text = function(text) {
     
 };
 
+imp.submit_popup_form = function(el, callback) {
+    
+    var form_el = $(el).parents("form");
+    var on_done = imp.loading("saving");
+    $.ajax({type:"POST",
+            url: form_el.attr('action'),
+            data: form_el.serialize(),
+            success : function (data) {
+		on_done();
+		if( callback ) {
+                    callback(data);
+		} else {
+		    $(".project_card_dialog_container").dialog('close');
+		}
+            }
+           });
+
+};
+
 imp.create_chart = function(chart_info) {
 
     // imp.data and imp.options are defined in graph.html
