@@ -15,44 +15,66 @@
        <table class='table no_borders project_list'>
          <tbody>
 
+           {% if active_businesses|length > 0 %}
            <tr>
              <th colspan="9">
-               <h2>Active projects</h2>
+               <h2 style="cursor:pointer" onclick="$('.active_business_row').toggle(); return false;">Active projects ({{active_businesses|length}})</h2>
                <div class="tip">has at least one sprint in [{{active_project_states}}]</div>
              </th>
            </tr>
-             {% include "timepiece/project/_list_businesses.html" with businesses=active_businesses %}
+             {% include "timepiece/project/_list_businesses.html" with businesses=active_businesses name='active' %}
            <tr>
              <th colspan="9">
                &nbsp;
              </th>
            </tr>
+           {% endif %}
 
+           {% if pending_businesses|length > 0 %}
            <tr>
              <th colspan="9">
-               <h2>Pending projects</h2>
+               <h2 style="cursor:pointer" onclick="$('.pending_business_row').toggle(); return false;">Pending projects ({{pending_businesses|length}})</h2>
                <div class="tip">has at least one sprint in [{{pending_project_states}}] and has no active sprints</div>
              </th>
            </tr>
-             {% include "timepiece/project/_list_businesses.html" with businesses=pending_businesses %}
+             {% include "timepiece/project/_list_businesses.html" with businesses=pending_businesses name='pending' %}
            <tr>
              <th colspan="9">
                &nbsp;
              </th>
            </tr>
+           {% endif %}
 
+           {% if hopeful_businesses|length > 0 %}
            <tr>
              <th colspan="9">
-               <h2>Closed projects</h2>
+               <h2 style="cursor:pointer" onclick="$('.hopeful_business_row').toggle(); return false;">Hopeful projects ({{hopeful_businesses|length}})</h2>
+               <div class="tip">has at least one sprint in [{{hopeful_project_states}}]</div>
+               <div class="tip">these are potential leads to be followed up</div>
+             </th>
+           </tr>
+             {% include "timepiece/project/_list_businesses.html" with businesses=hopeful_businesses name='hopeful' %}
+           <tr>
+             <th colspan="9">
+               &nbsp;
+             </th>
+           </tr>
+           {% endif %}
+
+           {% if closed_businesses|length > 0 %}
+           <tr>
+             <th colspan="9">
+               <h2 style="cursor:pointer" onclick="$('.hopeful_business_row').toggle(); return false;">Closed projects ({{closed_businesses|length}})</h2>
                <div class="tip">has only sprints in state [{{closed_project_states}}]</div>
              </th>
            </tr>
-             {% include "timepiece/project/_list_businesses.html" with businesses=closed_businesses %}
+             {% include "timepiece/project/_list_businesses.html" with businesses=closed_businesses name='closed' %}
            <tr>
              <th colspan="9">
                &nbsp;
              </th>
            </tr>
+           {% endif %}
          </tbody>
        </table>
     </div>

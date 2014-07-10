@@ -3,7 +3,7 @@
 
 {% for business in businesses %}
   {% has_permission has_view_project_card business %}
-    <tr style="cursor:pointer" onclick="window.location='{% url 'business_issues' business.id %}'; return false">
+    <tr class='{{name}}_business_row' style="cursor:pointer;display:none" onclick="window.location='{% url 'business_issues' business.id %}'; return false">
       <td>
         <a href="{% url 'business_issues' business.id %}">{{ business }}</a>
       </td>

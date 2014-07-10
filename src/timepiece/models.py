@@ -77,6 +77,9 @@ class BusinessQuerySet(QuerySet):
     def filter_has_only_closed_projects(self):
         return self.exclude(new_business_projects__status2__in= Project.pending_states()+Project.active_states() )
 
+    def filter_has_hopeful_projects(self):
+        return self.filter(new_business_projects__status2__in=Project.hopeful_states())
+
     def exclude_has_closed_projects(self):
         return self.filter(new_business_projects__status2__in=Project.pending_states()+Project.active_states() )
 
@@ -425,7 +428,7 @@ class ProjectQuerySet(QuerySet):
 
 class Project(models.Model):
 
-    PROJECT_STATUSES = ( ('pending', 'pending'), ('in dev', 'in development'), ('waiting to close', 'waiting to close'), ('closed', 'closed') )
+    PROJECT_STATUSES = ( ('pending', 'pending'), ('in dev', 'in development'), ('waiting to close', 'waiting to close'), ('closed', 'closed'), ('hopeful', 'hopeful') )
 
     code = models.CharField(max_length=255,blank=True,null=True)        
     name = models.CharField(max_length=255, db_index=True)
@@ -767,6 +770,10 @@ class Project(models.Model):
     @classmethod
     def closed_states(self):
         return ( 'closed', )
+
+    @classmethod
+    def hopeful_states(self):
+        return ( 'hopeful', )
 
     @property
     def is_open(self):
