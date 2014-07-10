@@ -16,7 +16,7 @@
 
 <br/><br/>
 
-<div class="{% if invoice.is_overdue %}alert-error{% else %}alert-info{% endif %}">
+<div class="{% if invoice.is_overdue %}alert-error{% else %}{% if invoice.status == 'paid' %}alert-success{% else %}alert-info{% endif %}{% endif %}">
   <h3>{{invoice.status}}</h3>
   <table>
     <tr>
