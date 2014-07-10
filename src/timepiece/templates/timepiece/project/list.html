@@ -64,7 +64,7 @@
            {% if closed_businesses|length > 0 %}
            <tr>
              <th colspan="9">
-               <h2 style="cursor:pointer" onclick="$('.hopeful_business_row').toggle(); return false;">Closed projects ({{closed_businesses|length}})</h2>
+               <h2 style="cursor:pointer" onclick="$('.closed_business_row').toggle(); return false;">Closed projects ({{closed_businesses|length}})</h2>
                <div class="tip">has only sprints in state [{{closed_project_states}}]</div>
              </th>
            </tr>
