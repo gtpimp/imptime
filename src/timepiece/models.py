@@ -75,7 +75,7 @@ class BusinessQuerySet(QuerySet):
         return self.filter(new_business_projects__status2__in=Project.pending_states()).exclude(new_business_projects__status2__in=Project.active_states())
 
     def filter_has_only_closed_projects(self):
-        return self.exclude(new_business_projects__status2__in= Project.pending_states()+Project.active_states() )
+        return self.exclude(new_business_projects__status2__in= Project.pending_states()+Project.active_states()+Project.hopeful_states() )
 
     def filter_has_hopeful_projects(self):
         return self.filter(new_business_projects__status2__in=Project.hopeful_states())
