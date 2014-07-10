@@ -22,7 +22,7 @@
                <div class="tip">has at least one sprint in [{{active_project_states}}]</div>
              </th>
            </tr>
-             {% include "timepiece/project/_list_businesses.html" with businesses=active_businesses name='active' %}
+             {% include "timepiece/project/_list_businesses.html" with businesses=active_businesses name='active' expand=1 %}
            <tr>
              <th colspan="9">
                &nbsp;
@@ -37,7 +37,7 @@
                <div class="tip">has at least one sprint in [{{pending_project_states}}] and has no active sprints</div>
              </th>
            </tr>
-             {% include "timepiece/project/_list_businesses.html" with businesses=pending_businesses name='pending' %}
+             {% include "timepiece/project/_list_businesses.html" with businesses=pending_businesses name='pending' expand=0 %}
            <tr>
              <th colspan="9">
                &nbsp;
@@ -53,7 +53,7 @@
                <div class="tip">these are potential leads to be followed up</div>
              </th>
            </tr>
-             {% include "timepiece/project/_list_businesses.html" with businesses=hopeful_businesses name='hopeful' %}
+             {% include "timepiece/project/_list_businesses.html" with businesses=hopeful_businesses name='hopeful' expand=0 %}
            <tr>
              <th colspan="9">
                &nbsp;
@@ -68,7 +68,7 @@
                <div class="tip">has only sprints in state [{{closed_project_states}}]</div>
              </th>
            </tr>
-             {% include "timepiece/project/_list_businesses.html" with businesses=closed_businesses name='closed' %}
+             {% include "timepiece/project/_list_businesses.html" with businesses=closed_businesses name='closed' expand=0 %}
            <tr>
              <th colspan="9">
                &nbsp;
