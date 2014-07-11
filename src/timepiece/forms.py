@@ -1347,19 +1347,9 @@ class CalendarFilterForm(forms.Form):
             entry_events = []
         else:
             if 'actual_aggregated' in self.cleaned_data and self.cleaned_data['actual_aggregated']:
-                entry_events = entry_events.values('user', 'issue__project__business').annotate(Sum('hours')).annotate(Min('start_time'))
+                entry_events = entry_events.extra(select={'day': 'date( start_time )'}).values('user', 'project__business', 'day').annotate(Sum('hours'))
 
         return calendar_events, entry_events
-
-    def _convert_dictionary_entry_events_to_fake_events(self, entry_events):
-        events = []
-        for entry_event in entry_events:
-            events.append( Entry.create_virtual_event(user=User.objects.get(pk=entry_event['user']),
-                                                      hours=float(entry_event['hours__sum']),
-                                                      issue=Issue.objects.get(pk=entry_event['issue']),
-                                                      comments='aggregated time',
-                                                      start_time=entry_event['start_time__min']) )
-        return events
 
 class CalendarEventCreateForm(forms.ModelForm):
 

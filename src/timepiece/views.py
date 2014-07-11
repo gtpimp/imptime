@@ -4846,21 +4846,25 @@ def _create_js_entry_event(entry):
 
     if type(entry) == dict:
 
-        start_time = entry['start_time__min']
+        start_time = entry['day']
         hours = float(entry['hours__sum'])
         end_time = start_time + datetime.timedelta(hours=hours)
-        business = timepiece.Business.objects.get(pk=entry['issue__project__business'])
+        user = User.objects.get(pk=entry['user'])
+        try:
+            business = timepiece.Business.objects.get(pk=entry['project__business'])
+        except timepiece.Business.DoesNotExist:
+            business = None
 
         return { 'id': None,
-                 'title': "%s (%.2f hours)" % (business.name, hours),
+                 'title': "%s %s (%.2f hours)" % (user.username, business.name if business else 'none', hours),
                  'allDay': False,
                  'start': start_time.strftime("%Y-%m-%d %H:%M"),
                  'end': end_time.strftime("%Y-%m-%d %H:%M"),
                  'project_id': None,
-                 'user_id': entry['user'],
-                 'description': business.name,
+                 'user_id': user.id,
+                 'description': "%s (%.2f hours)" % (business.name if business else 'none', hours),
                  'event_type': 'actual',
-                 'color': business.get_colour(),
+                 'color': business.get_colour() if business else '#000000',
                  'textColor': "#000000",
                  'borderColor': "#0000ff",
                  'editable': False ,

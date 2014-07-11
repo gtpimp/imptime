@@ -1,5 +1,6 @@
 
 from timepiece.models import *
+from invoicing.models import InvoiceItem, InvoicePayment, Invoice
 Rate.objects.all().update(amount=5)
 Rate.objects.all().update(billable_amount=6)
 Invoice.objects.all().update(amount=20)
