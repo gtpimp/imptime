@@ -4844,20 +4844,43 @@ def calendar_events(request, context=None):
 
 def _create_js_entry_event(entry):
 
-    return { 'id': entry.id,
-             'title': "A:%s (%s, %s hrs)" % (entry.project.business.name, entry.user.username, entry.hours),
-             'allDay': False,
-             'start': entry.start_time.strftime("%Y-%m-%d %H:%M"),
-             'end': entry.end_time.strftime("%Y-%m-%d %H:%M"),
-             'project_id': entry.project.id,
-             'user_id': entry.user.id,
-             'description': entry.comments + "\n\n" + entry.extended_comments,
-             'event_type': 'actual',
-             'color': entry.project.business.get_colour(),
-             'textColor': "#000000",
-             'borderColor': "#0000ff",
-             'editable': False,
-             }    
+    if type(entry) == dict:
+
+        start_time = entry['start_time__min']
+        hours = float(entry['hours__sum'])
+        end_time = start_time + datetime.timedelta(hours=hours)
+        business = timepiece.Business.objects.get(pk=entry['issue__project__business'])
+
+        return { 'id': None,
+                 'title': "%s (%.2f hours)" % (business.name, hours),
+                 'allDay': False,
+                 'start': start_time.strftime("%Y-%m-%d %H:%M"),
+                 'end': end_time.strftime("%Y-%m-%d %H:%M"),
+                 'project_id': None,
+                 'user_id': entry['user'],
+                 'description': business.name,
+                 'event_type': 'actual',
+                 'color': business.get_colour(),
+                 'textColor': "#000000",
+                 'borderColor': "#0000ff",
+                 'editable': False ,
+                 }
+
+    else:
+        return { 'id': entry.id,
+                 'title': "A:%s (%s, %s hrs)" % (entry.project.business.name, entry.user.username, entry.hours),
+                 'allDay': False,
+                 'start': entry.start_time.strftime("%Y-%m-%d %H:%M"),
+                 'end': entry.end_time.strftime("%Y-%m-%d %H:%M"),
+                 'project_id': entry.project.id,
+                 'user_id': entry.user.id,
+                 'description': entry.comments + "\n\n" + entry.extended_comments,
+                 'event_type': 'actual',
+                 'color': entry.project.business.get_colour(),
+                 'textColor': "#000000",
+                 'borderColor': "#0000ff",
+                 'editable': False,
+                 }    
 
 def _create_js_calendar_event(event):
 

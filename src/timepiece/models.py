@@ -1501,20 +1501,27 @@ class Entry(models.Model):
 
     @classmethod
     def quick_create(self, user, hours, issue, comments="auto created"):
-        start_time = datetime.datetime.today()
+        entry = self.create_virtual_event(user, hours, issue.project, comments)
+        entry.save()
+        return entry
+
+    @classmethod
+    def create_virtual_event(self, user, hours, issue, comments="auto created", start_time=None):
+        if start_time is None:
+            start_time = datetime.datetime.today()
         end_time = start_time + timedelta(hours=hours)
 
         activity = Activity.objects.get_or_create(code='dev')[0]
         location = Location.objects.get_or_create(name='office')[0]
-        entry = Entry.objects.create(user=user, 
-                                     start_time=start_time, 
-                                     end_time=end_time,
-                                     activity=activity,
-                                     location=location,
-                                     issue=issue,
-                                     project=issue.project,
-                                     status='approved',
-                                     comments=comments)
+        entry = Entry(user=user, 
+                      start_time=start_time, 
+                      end_time=end_time,
+                      activity=activity,
+                      location=location,
+                      issue=issue,
+                      project=issue.project,
+                      status='approved',
+                      comments=comments)
         return entry
 
     @property

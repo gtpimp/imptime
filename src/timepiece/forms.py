@@ -1,5 +1,6 @@
 from decimal import Decimal
 import re
+from django.db.models import Sum, Count, Q, F, Max, Min
 import time
 from time import mktime
 from datetime import datetime
@@ -1313,12 +1314,14 @@ class CalendarFilterForm(forms.Form):
     event_types = forms.MultipleChoiceField(required=False,
                                             choices = CalendarEvent.EVENT_TYPES + ( ("actual", "Actual"), ),
                                             widget=CheckboxSelectMultiple)
+    actual_aggregated = forms.BooleanField(initial=True, required=False)
 
     def __init__(self, allowed_users, allowed_businesses, *args, **kwargs):
         super(CalendarFilterForm, self).__init__(*args, **kwargs)
 
         self.fields['users'].queryset = allowed_users
         self.fields['businesses'].queryset = allowed_businesses
+        self.fields['event_types'].widget.attrs['onclick'] = "if ( $('input[name=event_types][value=actual]').attr('checked') ) { $('input[name=actual_aggregated]').parent().show(); } else { $('input[name=actual_aggregated]').parent().hide(); };";
 
     @property
     def filter_includes_actual_events(self):
@@ -1342,8 +1345,21 @@ class CalendarFilterForm(forms.Form):
 
         if self.cleaned_data['event_types'] is None or 'actual' not in self.cleaned_data['event_types']:
             entry_events = []
+        else:
+            if 'actual_aggregated' in self.cleaned_data and self.cleaned_data['actual_aggregated']:
+                entry_events = entry_events.values('user', 'issue__project__business').annotate(Sum('hours')).annotate(Min('start_time'))
 
         return calendar_events, entry_events
+
+    def _convert_dictionary_entry_events_to_fake_events(self, entry_events):
+        events = []
+        for entry_event in entry_events:
+            events.append( Entry.create_virtual_event(user=User.objects.get(pk=entry_event['user']),
+                                                      hours=float(entry_event['hours__sum']),
+                                                      issue=Issue.objects.get(pk=entry_event['issue']),
+                                                      comments='aggregated time',
+                                                      start_time=entry_event['start_time__min']) )
+        return events
 
 class CalendarEventCreateForm(forms.ModelForm):
 
