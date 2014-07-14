@@ -469,7 +469,7 @@ class Project(models.Model):
 
     # This status will replace the original status. All new
     # functionality should hang of this field instead.
-    status2 = models.CharField(max_length=100, blank=False, null=False, default='pending', choices = PROJECT_STATUSES)
+    status2 = models.CharField(max_length=100, blank=False, null=False, default='pending', choices = PROJECT_STATUSES, db_index=True)
 
     description = models.TextField(blank=True, null=True, db_index=True)
     short_description = models.CharField(max_length=50, blank=True, null=True, db_index=True)

@@ -4851,12 +4851,15 @@ def _create_js_entry_event(entry):
         end_time = start_time + datetime.timedelta(hours=hours)
         user = User.objects.get(pk=entry['user'])
         try:
-            business = timepiece.Business.objects.get(pk=entry['project__business'])
+            if 'project__business' in entry:
+                business = timepiece.Business.objects.get(pk=entry['project__business'])
+            else:
+                business = None
         except timepiece.Business.DoesNotExist:
             business = None
 
         return { 'id': None,
-                 'title': "%s %s (%.2f hours)" % (user.username, business.name if business else 'none', hours),
+                 'title': "%s %s (%.2f hours)" % (user.username, business.name if business else 'all businesses', hours),
                  'allDay': False,
                  'start': start_time.strftime("%Y-%m-%d %H:%M"),
                  'end': end_time.strftime("%Y-%m-%d %H:%M"),
@@ -4864,7 +4867,7 @@ def _create_js_entry_event(entry):
                  'user_id': user.id,
                  'description': "%s (%.2f hours)" % (business.name if business else 'none', hours),
                  'event_type': 'actual',
-                 'color': business.get_colour() if business else '#000000',
+                 'color': business.get_colour() if business else '#ffffff',
                  'textColor': "#000000",
                  'borderColor': "#0000ff",
                  'editable': False ,

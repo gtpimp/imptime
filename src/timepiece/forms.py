@@ -1314,14 +1314,16 @@ class CalendarFilterForm(forms.Form):
     event_types = forms.MultipleChoiceField(required=False,
                                             choices = CalendarEvent.EVENT_TYPES + ( ("actual", "Actual"), ),
                                             widget=CheckboxSelectMultiple)
-    actual_aggregated = forms.BooleanField(initial=True, required=False)
+    actual_time_aggregation_mechanism = forms.ChoiceField(required=False,
+                                                          initial='none',
+                                                          choices=( ('none', 'individual events'), ('by_project', 'Total per project'),
+                                                                    ('by_user','Total per user') ) )
 
     def __init__(self, allowed_users, allowed_businesses, *args, **kwargs):
         super(CalendarFilterForm, self).__init__(*args, **kwargs)
 
         self.fields['users'].queryset = allowed_users
         self.fields['businesses'].queryset = allowed_businesses
-        self.fields['event_types'].widget.attrs['onclick'] = "if ( $('input[name=event_types][value=actual]').attr('checked') ) { $('input[name=actual_aggregated]').parent().show(); } else { $('input[name=actual_aggregated]').parent().hide(); };";
 
     @property
     def filter_includes_actual_events(self):
@@ -1346,8 +1348,11 @@ class CalendarFilterForm(forms.Form):
         if self.cleaned_data['event_types'] is None or 'actual' not in self.cleaned_data['event_types']:
             entry_events = []
         else:
-            if 'actual_aggregated' in self.cleaned_data and self.cleaned_data['actual_aggregated']:
+
+            if self.cleaned_data['actual_time_aggregation_mechanism'] == 'by_project':
                 entry_events = entry_events.extra(select={'day': 'date( start_time )'}).values('user', 'project__business', 'day').annotate(Sum('hours'))
+            elif self.cleaned_data['actual_time_aggregation_mechanism'] == 'by_user':
+                entry_events = entry_events.extra(select={'day': 'date( start_time )'}).values('user', 'day').annotate(Sum('hours'))
 
         return calendar_events, entry_events
 

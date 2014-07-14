@@ -16,7 +16,7 @@
         &nbsp;
       </div>
       <div style="display:none" class="col-md-6">
-        Show totals per day {{ filter_form.actual_aggregated }}
+        {{ filter_form.actual_time_aggregation_mechanism }}
         <br/><br/>
       </div>
     </div>
@@ -51,3 +51,29 @@
     <div style="clear:both"></div>
 
 </form>
+
+<script>
+
+  (function() {
+
+    var update_show_aggregation_mechanism = function() { 
+	var el = $('select[name=actual_time_aggregation_mechanism]').parent();
+	if ( $('input[name=event_types][value=actual]').attr('checked') ) { 
+	    el.show();
+	} else {
+	    el.hide();
+	}
+    };
+
+       $(document).ready( function() {
+
+			      $("#id_event_types input").click( function() {
+								    update_show_aggregation_mechanism();  
+								});
+
+			      update_show_aggregation_mechanism();
+			  });
+
+  }());
+  
+</script>
