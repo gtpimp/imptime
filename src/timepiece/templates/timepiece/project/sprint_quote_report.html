@@ -316,7 +316,7 @@ identified in the specification phase which greatly reduces risk.
 	  <td> {{ estimate.issue.status }}</td>
 	{% endif %}
         {% if settings.show_hours %}
-	  <td>{{estimate.points|floatformat:"0"|intcomma}} hour{% if estimate.points != 1 %}s{% endif %}</td>
+	  <td>{{estimate.points|floatformat:2}} hour{% if estimate.points != 1 %}s{% endif %}</td>
         {% endif %}
         {% if settings.show_billable %}
 	  <td>R{{estimate.min_cost|floatformat:"0"|intcomma}}</td>
