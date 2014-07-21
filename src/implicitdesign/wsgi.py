@@ -16,7 +16,7 @@ framework.
 import os
 import sys 
 
-os.environ.setdefault("DJANGO_SETTINGS_MODULE", "implicitdesign.settings")
+os.environ["DJANGO_SETTINGS_MODULE"] = "implicitdesign.settings"
 
 # Add extra imports, add more as needed, apache won't find anything in venv/src by default
 sys.stdout = sys.stderr

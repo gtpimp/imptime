@@ -738,7 +738,7 @@ imp.show_inline_editor = function(el) {
     var activate_select = function() {
 	var on_changed = function() {
 	    editor_container.hide();
-	    var on_done = imp.issue_loading("saving issue");
+	    var on_done = imp.issue_loading("saving");
 	    var value = editor.val();
 	    var response = $.ajax({type:"POST",
 				   url: url_for_update,
