@@ -773,7 +773,7 @@ class ProjectForm(forms.ModelForm):
             'name',
             'short_description',
             'description',
-            'colour',
+            #'colour',
             'quote_uncertainty'
         )
 
