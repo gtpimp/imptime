@@ -40,7 +40,7 @@ class UserLookup(ModelLookup):
         a more verbose display, used in the search results display.
         may contain html and multi-lines
         """
-        name = user.get_full_name();
+        name = "%s (%s)" % (user.username, user.get_full_name())
         if name:
             return name
         else:
