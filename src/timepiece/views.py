@@ -3203,7 +3203,7 @@ def issue_users(request, issue_id):
     business = issue.project.business
     users = get_interface_plugin(request, business).get_assignable_users(issue)
     if users is None:
-        users = [ (user.id, user.get_full_name()) for user in business.users ]
+        users = [ (user.id, "%s (%s)" % (user.username, user.get_full_name())) for user in business.users ]
     return HttpResponse(json.dumps(users),
                         mimetype='application/json')
 
@@ -3442,7 +3442,7 @@ def issue_status_update(request,  template="timepiece/project/issue_detail.html"
 
     get_interface_plugin(request, project.business).update_issue_status(edited_issue)
 
-    return HttpResponse()
+    return HttpResponse(json.dumps({ 'new_value': edited_issue.status }), mimetype='application/json')
 
 @csrf_exempt
 @login_required
@@ -3475,7 +3475,7 @@ def update_issue_with_feature(request):
 
     timepiece.IssueHistory.add_history(request.user, issue, "changed feature", old_feature, issue.feature)
 
-    return HttpResponse();
+    return HttpResponse(json.dumps({ 'new_value': issue.feature.name }), mimetype='application/json')
 
 @csrf_exempt
 @login_required
@@ -3507,7 +3507,7 @@ def issue_assigned_to_update(request,  template="timepiece/project/issue_detail.
 
     get_interface_plugin(request, project.business).update_issue_assigned_to(issue, username)
 
-    return HttpResponse()
+    return HttpResponse(json.dumps({ 'new_value': issue.assigned_to.username }), mimetype='application/json')
 
 @csrf_exempt
 @login_required
@@ -5128,3 +5128,18 @@ def business_cost_summary(request, business_id, template="timepiece/project/busi
     context['bp'] = bp
 
     return render_to_response(template, context, context_instance=RequestContext(request))
+
+@csrf_exempt
+@login_required
+def project_status_update(request, project_id):
+    project = timepiece.Project.objects.get(pk=project_id)
+    has_edit_status = timepiece.BusinessPermissions.objects.get_or_create(business=project.business, user=request.user)[0].has_edit_project_states
+    if not has_edit_status:
+        raise PermissionDenied
+    project.status2 = request.POST["selected_value"]
+    project.save()
+    return HttpResponse(json.dumps({ 'new_value': project.status2 }), mimetype='application/json')
+
+@login_required
+def allowed_project_stati(request, project_id):
+    return HttpResponse(json.dumps(timepiece.Project.PROJECT_STATUSES), mimetype='application/json')

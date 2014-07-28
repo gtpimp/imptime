@@ -33,7 +33,18 @@
                     {% endcomment %}
 
 
-              <a onclick="imp.projects.cycle_status(event, this, '{% url 'cycle_project_status' project.id %}'); return false;">({{project.status2}})</a>
+                    <a {% has_permission has_edit_project_states project.business %}onclick="return imp.edit_project_status(event, this);"{% end_permission %} url_for_update="{% url 'project_status_update' project.id %}" url_for_options="{% url 'allowed_project_stati' project.id %}" selected_value="{{project.status}}">
+                      <span class="readonly_value"> 
+                        ({{ project.status2 }})
+                      </span>
+
+                      {% has_permission has_edit_project_states project.business %}
+                      <div class="inline_editor" style="display:none">
+                        <select class='transient_selection'>
+                        </select>
+                      </div>
+                      {% end_permission %}
+                    </a>
 
               <a onclick="imp.projects.show_project_card_as_popup(event,'{% url 'get_project_card_for_business'  business_id=project.business.id project_id=project.id %}');return false" href='#' target_id=".issue_detail" project_card_url="{% url 'get_project_card_for_business'  business_id=business.id project_id=project.id  %}" business_id="{{ business.id }}" project_id="{{ project.id }}">
                 Card

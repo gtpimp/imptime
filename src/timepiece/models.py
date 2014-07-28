@@ -259,6 +259,7 @@ class BusinessPermissions(models.Model):
     can_edit_issues = models.BooleanField(default=True, verbose_name="Can Edit Issues")
     can_view_issues = models.BooleanField(default=True, verbose_name="Can View Issues")
     can_edit_issue_states = models.BooleanField(default=True, verbose_name="Can Edit Issue States")
+    can_edit_project_states = models.BooleanField(default=True, verbose_name="Can Edit Sprint States")
     can_add_issue = models.BooleanField(default=True, verbose_name="Can Add Issue")
     can_delete_issue = models.BooleanField(default=True, verbose_name="Can Delete Issue")
     can_edit_description = models.BooleanField(default=True, verbose_name="Can Edit Description")
@@ -348,9 +349,14 @@ class BusinessPermissions(models.Model):
     @property
     def has_toggle_graphs(self):
         return self.user.is_superuser or self.can_toggle_graphs
+
     @property
     def has_edit_issue_states(self):
         return self.user.is_superuser or self.can_edit_issue_states
+
+    @property
+    def has_edit_project_states(self):
+        return self.user.is_superuser or self.can_edit_project_states
 
     @property
     def has_see_other_user_points(self):

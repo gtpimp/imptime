@@ -613,5 +613,8 @@ urlpatterns = patterns('',
                        url(r'^invoicing/', include('invoicing.urls', namespace="invoicing"), {}, "invoicing"),
 
                        url(r'^business_cost_summary/(?P<business_id>.*)', views.business_cost_summary, {}, name="business_cost_summary"),
+                       url(r'^project_status_update/(?P<project_id>.*)', views.project_status_update, {}, name='project_status_update'),
+                       url(r'^allowed_project_stati/(?P<project_id>.*)', views.allowed_project_stati, {}, name='allowed_project_stati'),
+
 
 )

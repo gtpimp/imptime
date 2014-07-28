@@ -79,11 +79,6 @@
       {% has_permission has_edit_issue_states project.business %}
       <div class="inline_editor" style="display:none">
         <select class='transient_selection'>
-	  {% comment %}
-            {% for option_value, option_name in issue.all_stati %}
-            <option value="{{option_value}}" {% ifequal issue.status option_value %}selected{% endifequal %} >{{option_name}}</option>
-            {% endfor %}
-	  {% endcomment %}
         </select>
       </div>
       {% end_permission %}

@@ -306,6 +306,13 @@ imp.toggle_show_numbers = function() {
     imp.refresh_show_numbers();
 };
 
+imp.edit_project_status = function(event, el) {
+    event.stopPropagation();
+    var no_blank_entry=true;
+    imp.show_inline_editor(el, no_blank_entry);
+    return false;
+};
+
 imp.refresh_show_numbers = function() {
     if ( imp.show_numbers_state == numbers_state['all'] ) {
 	$(".money_cell").show();

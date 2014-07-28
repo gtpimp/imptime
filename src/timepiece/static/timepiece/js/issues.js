@@ -704,10 +704,10 @@ imp.clickable_assign_user_box = function(element, update_url, issue_id) {
     return false;
 };
 
-imp.show_inline_editor = function(el) {
+imp.show_inline_editor = function(el, no_blank_entry) {
 
     if ( imp.inline_editor_active ) {
-	return;
+	return false;
     }
     imp.inline_editor_active = true;
 
@@ -744,7 +744,8 @@ imp.show_inline_editor = function(el) {
 				   url: url_for_update,
 				   data : { issue_id: issue_id, selected_value:value, created_value:created_value_editor.val() },
 				   dataType:"json",
-				   success: function() {
+				   success: function(data) {
+				       readonly_value.html(data.new_value);
 				       readonly_value.show();
 				       editor_container.hide();
 				       deactivate_select();
@@ -789,10 +790,12 @@ imp.show_inline_editor = function(el) {
 		    var new_option;
 		    editor.html("");
 
-		    new_option = $("<option/>");
-		    new_option.attr("value", '');
-		    new_option.text('');
-		    editor.append(new_option);
+		    if ( ! no_blank_entry ) {
+			new_option = $("<option/>");
+			new_option.attr("value", '');
+			new_option.text('');
+			editor.append(new_option);
+		    }
 
 		    $.each(data, function( index, value ) {
 			       
@@ -813,6 +816,7 @@ imp.show_inline_editor = function(el) {
 	activate_select();
 	on_done();
     }
+    return false;
 
 };
 
