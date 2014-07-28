@@ -601,8 +601,6 @@ urlpatterns = patterns('',
 
                        url(r'^auto_issue_sort/(?P<project_id>.*)/$', views.auto_issue_sort, {}, 'auto_issue_sort'),
 
-                       url(r'^cycle_project_status/(?P<project_id>.*)/$', views.cycle_project_status, {}, 'cycle_project_status'),
-
                        url(r'^calendar/$', views.calendar, {}, name='calendar'),
                        url(r'^calendar_events/$', views.calendar_events, {}, name='calendar_events'),
                        url(r'^create_calendar_event/$', views.create_calendar_event, {}, name='create_calendar_event'),

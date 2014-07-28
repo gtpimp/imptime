@@ -704,12 +704,16 @@ imp.clickable_assign_user_box = function(element, update_url, issue_id) {
     return false;
 };
 
-imp.show_inline_editor = function(el, no_blank_entry) {
+imp.show_inline_editor = function(el, args) {
 
     if ( imp.inline_editor_active ) {
 	return false;
     }
     imp.inline_editor_active = true;
+
+    if ( ! args ) {
+	args = { blank_entry:true };
+    }
 
     var on_done = imp.loading("fetching options...");
 
@@ -751,6 +755,10 @@ imp.show_inline_editor = function(el, no_blank_entry) {
 				       deactivate_select();
 				       imp.refresh_closest_issue_parent_row(td);
 				       on_done();
+
+				       if ( args.callback ) {
+					   args.callback(data);
+				       }
 				   }
 				  });
 	};
@@ -790,7 +798,7 @@ imp.show_inline_editor = function(el, no_blank_entry) {
 		    var new_option;
 		    editor.html("");
 
-		    if ( ! no_blank_entry ) {
+		    if ( args.blank_entry ) {
 			new_option = $("<option/>");
 			new_option.attr("value", '');
 			new_option.text('');

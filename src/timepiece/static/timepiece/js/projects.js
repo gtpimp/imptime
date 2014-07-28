@@ -308,8 +308,18 @@ imp.toggle_show_numbers = function() {
 
 imp.edit_project_status = function(event, el) {
     event.stopPropagation();
-    var no_blank_entry=true;
-    imp.show_inline_editor(el, no_blank_entry);
+
+    var callback = function(data) {
+
+	if ( data.is_open ) {
+	    $(el).parents(".project_li").addClass("open_project").removeClass("closed_project");
+	} else {
+	    $(el).parents(".project_li").addClass("closed_project").removeClass("open_project");
+	}
+    };
+    
+    var args = { blank_entry: false, callback: callback };
+    imp.show_inline_editor(el, args);
     return false;
 };
 

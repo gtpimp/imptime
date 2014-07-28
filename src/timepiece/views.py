@@ -5032,27 +5032,6 @@ def render_calendar_scheduled_sprints(request, template="timepiece/calendar/_sch
     return render_to_response(template, context, context_instance=RequestContext(request))
 
 @login_required
-@csrf_exempt
-def cycle_project_status(request, project_id, context=None):
-    context = context or {}
-    project = timepiece.Project.objects.get(pk=project_id)
-    bp = timepiece.BusinessPermissions.objects.get_or_create(business=project.business, user=request.user)[0]
-    if not bp.has_create_sprint:
-        raise PermissionDenied
-    
-    flattened_statuses = [ x for x,y in timepiece.Project.PROJECT_STATUSES ]
-    try:
-        old_status_index = flattened_statuses.index(project.status2)
-    except ValueError:
-        old_status_index = -1
-    new_status =  flattened_statuses[ (old_status_index+1) % len(flattened_statuses) ]
-
-    project.status2 = new_status
-    project.save()
-    return HttpResponse(json.dumps({ 'new_status': new_status,
-                                     'is_open': project.is_open }))
-
-@login_required
 def business_cost_summary(request, business_id, template="timepiece/project/business_cost_summary.html", context=None):
     context = context or {}
     business = timepiece.Business.objects.get(pk=business_id)
@@ -5138,7 +5117,7 @@ def project_status_update(request, project_id):
         raise PermissionDenied
     project.status2 = request.POST["selected_value"]
     project.save()
-    return HttpResponse(json.dumps({ 'new_value': project.status2 }), mimetype='application/json')
+    return HttpResponse(json.dumps({ 'new_value': project.status2, 'is_open': project.is_open }), mimetype='application/json')
 
 @login_required
 def allowed_project_stati(request, project_id):
