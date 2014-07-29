@@ -43,13 +43,17 @@ imp.nav.hookup_search_form = function() {
     var form = $(".issue_search form");
     form.submit(function(event) {
 		    event.stopImmediatePropagation();
-		    
+		    var on_done = imp.loading("searching");
 		    $.ajax({type:"GET",
 			    url: form.attr('action'),
 			    data: form.serialize(),
 			    success: function(search_results) {
+				on_done();
 				$(".issue_search_results").html(search_results);
 				imp.issue_search_results_dialog = $(".issue_search_results").dialog( { width: '75%', height: 500 } );
+			    },
+			    error: function(err) {
+				on_done();
 			    }
 			   });
 
