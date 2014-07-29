@@ -743,8 +743,7 @@ class YearMonthForm(forms.Form):
 
 
 class UserYearMonthForm(YearMonthForm):
-    users = auth_models.User.objects.exclude(timepiece_entries=None) \
-        .order_by('first_name')
+    users = auth_models.User.objects.exclude(timepiece_entries=None).order_by('first_name')
     user = UserModelChoiceField(label='', queryset=users, required=False)
 
     def save(self):

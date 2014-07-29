@@ -62,7 +62,7 @@
 
                                 {% if business %}
                                   {% has_permission has_view_documents business %} 
-                                    <li><a href="{% url 'view_business_documents' business.id %}">Business documents</a></li>
+                                    <li><a href="{% url 'view_business_documents' business.id %}">Project documents</a></li>
                                   {% end_permission %}
                                 {% endif %}
 

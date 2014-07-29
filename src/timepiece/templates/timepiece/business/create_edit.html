@@ -1,5 +1,5 @@
 {% extends "timepiece/business/base.html" %}
-{% block title %}{% if not business %}Create Business{% else %}Edit {{ business }}{% endif %}{% endblock %}
+{% block title %}{% if not business %}Create Project{% else %}Edit {{ business }}{% endif %}{% endblock %}
 {% load bootstrap_toolkit %}
 
 {% block crumbs %}
@@ -7,9 +7,9 @@
     <li>
         <span class="divider">/</span>
         {% if not business %}
-            <a href="{% url 'create_business' %}">Create Business</a>
+            <a href="{% url 'create_business' %}">Create Project</a>
         {% else %}
-            <a href="{% url 'edit_business' business.pk %}">Edit Business</a>
+            <a href="{% url 'edit_business' business.pk %}">Edit Project</a>
         {% endif %}
     </li>
 {% endblock crumbs %}
@@ -17,7 +17,7 @@
 {% block content %}
     <div class="row-fluid">
         <div class="span12">
-            <h2>{% if not business %}Create Business{% else %}Edit {{ business.name }}{% endif %}</h2>
+            <h2>{% if not business %}Create Project{% else %}Edit {{ business.name }}{% endif %}</h2>
 
             <br style="clear: both;" />
 
