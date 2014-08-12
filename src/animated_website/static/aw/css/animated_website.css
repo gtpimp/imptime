@@ -1,19 +1,29 @@
 
-.product {
+.business_architecture, process_architecture {
+    clear:both;
+}
+
+.product, .process {
     float: left;
     padding: 50px;
     border: 1px solid #4c4c4c;
+    position: relative;
 }
 
-.product .product_title {
+.product .product_title, .process .process_title {
 }
 
-.product .product_content {
-    max-width: 200px;
+.product .product_content, .process .process_content {
+    width: 400px;
+    padding: 10px;
     display: none;
+    position: absolute;
+    background-color: #ffffff;
+    border: 1px solid #4c4c4c;
+    z-index:999999;
 }
 
-.product .product_title h1 {
+.product .product_title h1, .process .process_title h1 {
     font-size: 15px;
 }
 
