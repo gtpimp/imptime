@@ -85,7 +85,6 @@ class JiraSync(object):
             return
 
         timepiece_issues = timepiece.Issue.objects.filter(project=timepiece_project,interface_plugin_number__isnull=True)
-        #jira_assignee = self.settings.primary_user.profile.jira_user_name
         jira_issues = []
         for timepiece_issue in timepiece_issues:
             jira_issue = self.jira.create_issue(project={'key': jira_project_key}, summary=timepiece_issue.subject,
@@ -452,14 +451,22 @@ class JiraSync(object):
             return
         jira_issue = self._get_jira_issue(timepiece_issue)
         
+        business = timepiece_issue.project.business
+        try:
+            settings = business.jira.get_query_set().all()[0]
+        except IndexError:
+            raise Exception("No jira configuration for this business")
+        timepiece_user = User.objects.get(username=username)
+        user_settings = settings.get_user_settings(timepiece_user)
+
         if timepiece_issue.assigned_to is None:
             try:
-                timepiece_issue.assigned_to = User.objects.get(profile__jira_user_name=username)
+                timepiece_issue.assigned_to = timepiece_user
                 timepiece_issue.save()
             except User.DoesNotExist:
                 return
 
-        self.jira.assign_issue(jira_issue, timepiece_issue.assigned_to.profile.jira_user_name)
+        self.jira.assign_issue(jira_issue, user_settings.jira_username)
 
     def create_issue(self, timepiece_issue, jira_create_issue_form):
         if not self._connect():
