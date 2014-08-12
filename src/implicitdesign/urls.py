@@ -20,6 +20,7 @@ urlpatterns = patterns('',
                        url( r'^grappelli/', include('grappelli.urls') ),
                        url(r'^emacs_importer/', include('emacs_importer.urls', namespace='emacs_importer')),
                        url(r'^timepiece/', include('timepiece.urls'), name='timepiece'),
+                       url(r'^imp/', include('animated_website.urls'), name='animated_website'),
                        url(r'^selectable/', include('selectable.urls'), name='selectable'),
 #                       url(r'^timesheetfiles/', include(filebrowser.site.urls)),
 

@@ -1,0 +1,25 @@
+{% extends "timepiece/business/base.html" %}
+
+{% block extrajs %}
+
+<script>
+var aw = { config: {} };
+</script>
+<script type="text/javascript" src="{{ STATIC_URL }}aw/js/animated_website.js"></script>
+{% endblock extrajs %}
+
+{% block extracss %}
+  <link type="text/css" rel="stylesheet" href="{{ STATIC_URL }}aw/css/animated_website.css" />
+{% endblock %}
+
+{% block logotext %}ImplicitDesign{% endblock %}
+
+{% block extended_title %}ImplicitDesign{% endblock %}
+
+{% block content %}
+    <div class="row-fluid">
+      {% block inner_content %}
+      {% endblock inner_content %}
+    </div>
+{% endblock %}
+

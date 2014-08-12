@@ -240,6 +240,7 @@ INSTALLED_APPS = (
     'implicitdesign',
     'jira_interface',
     'invoicing',
+    'animated_website',
 
 )
 
