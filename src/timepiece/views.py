@@ -4942,8 +4942,11 @@ def _populate_calendar_events(request, context):
     projects = timepiece.Project.objects.filter(business__in=businesses).filter_in_dev().order_by("business__name", "name").distinct()
 
     calendar_events = timepiece.CalendarEvent.objects.filter(user__in=users).filter(Q(project__business__in=businesses)|Q(project__isnull=True)).distinct().order_by("start")
-
     entry_events = timepiece.Entry.objects.all()
+
+    if not request.user.is_superuser:
+        calendar_events = calendar_events.filter(user=request.user)
+        entry_events = entry_events.filter(user=request.user)
 
     filter_form = timepiece_forms.CalendarFilterForm(users, businesses, request.GET or None)
     if filter_form.is_valid():
