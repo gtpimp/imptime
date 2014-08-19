@@ -4947,6 +4947,7 @@ def _populate_calendar_events(request, context):
     if not request.user.is_superuser:
         calendar_events = calendar_events.filter(user=request.user)
         entry_events = entry_events.filter(user=request.user)
+        users = users.filter(pk=request.user.pk)
 
     filter_form = timepiece_forms.CalendarFilterForm(users, businesses, request.GET or None)
     if filter_form.is_valid():
