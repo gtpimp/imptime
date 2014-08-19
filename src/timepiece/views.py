@@ -5031,8 +5031,13 @@ def delete_calendar_event(request, event_id, context=None):
 def render_calendar_scheduled_sprints(request, template="timepiece/calendar/_scheduled_sprints.html", context=None):
     context = context or {}
     _populate_calendar_events(request, context)
-    context['projects_with_unscheduled_hours'] = [ p for p in context['projects'].filter_in_dev() if p.min_unscheduled_hours()>0 and p.min_estimate_hours()>0 ]
-    context['projects_with_fully_scheduled_hours'] = [ p for p in context['projects'].filter_in_dev() if p.min_unscheduled_hours()<1 and p.min_estimate_hours()>0 ]
+
+    if request.user.is_superuser:
+        context['projects_with_unscheduled_hours'] = [ p for p in context['projects'].filter_in_dev() if p.min_unscheduled_hours()>0 and p.min_estimate_hours()>0 ]
+        context['projects_with_fully_scheduled_hours'] = [ p for p in context['projects'].filter_in_dev() if p.min_unscheduled_hours()<1 and p.min_estimate_hours()>0 ]
+    else:
+        context['projects_with_unscheduled_hours'] = []
+        context['projects_with_fully_scheduled_hours'] = []
     return render_to_response(template, context, context_instance=RequestContext(request))
 
 @login_required
