@@ -141,6 +141,7 @@ class EditPersonPermission(forms.ModelForm):
         self.fields['can_edit_feature'].widget.attrs['class'] = 'safe'
         self.fields['can_create_sprint'].widget.attrs['class'] = 'safe'
         self.fields['can_edit_issue_states'].widget.attrs['class'] = 'safe'
+        self.fields['can_edit_project_states'].widget.attrs['class'] = 'safe'
         self.fields['can_assign_user'].widget.attrs['class'] = 'safe'
         self.fields['can_be_scheduled'].widget.attrs['class'] = 'safe'
 
