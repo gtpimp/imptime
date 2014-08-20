@@ -429,11 +429,7 @@ imp.sort_issues_by_state = function(el, sort_url) {
                           });
 };
 
-imp.clickable_description_box = function(element, url, item_id) {
-
-    // dev note: most of this function should be replaced with a
-    // hidden snippet in one of the template files, which gets
-    // displayed on demand. eg see how the rates popup works.
+imp.clickable_description_box = function(element, url, item_id, args) {
 
     var textbox = $(element),
         commentField = $("<form/>");
@@ -442,6 +438,8 @@ imp.clickable_description_box = function(element, url, item_id) {
     var textField =$("<textarea/>").attr('name','new_value');
     textbox.find(".markdown_help").show();
     var attachments = textbox.parents(".issue_detail").find(".attachment_section");
+
+    args = args || {};
 
     var cancel = function() {
 	textbox.show();
@@ -468,15 +466,19 @@ imp.clickable_description_box = function(element, url, item_id) {
 
     submitButton.click(function(e) {
 			   var new_value = textField.val();
-			   var on_done = imp.issue_loading(item_id, "Saving");
+			   var on_done = imp.loading("saving");
 			   var response = $.ajax({type:"POST",
 						  url: url,
 						  data : { item_id: item_id, new_value: new_value },
 						  dataType:"json"});
 			   response.done( function() {
-					      imp.refresh_issue_detail();
-					      attachments.show();
 					      on_done();
+					      if ( ! args.refresh_url ) {
+						  imp.refresh_issue_detail();
+					      } else {
+						  imp.show_issue_detail(null, args.refresh_url, "refreshing");
+					      }
+					      attachments.show();
 					  });
 		       });
     commentField.append(submitButton);

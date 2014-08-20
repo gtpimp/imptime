@@ -25,7 +25,7 @@ from selectable import forms as selectable_forms
 from timepiece.lookups import ProjectLookup, QuickLookup
 from timepiece.lookups import UserLookup, BusinessLookup
 
-from timepiece.models import Project, Business, Entry, Activity, UserProfile, Attribute, Location, Activity, Feature, Issue, BusinessPermissions
+from timepiece.models import Project, Business, Entry, Activity, UserProfile, Attribute, Location, Activity, Feature, Issue, BusinessPermissions, BusinessComment
 from timepiece.models import ProjectHours, Salary, CalendarEvent
 from timepiece.fields import UserModelChoiceField
 from django.contrib.auth.models import User
@@ -144,12 +144,14 @@ class EditPersonPermission(forms.ModelForm):
         self.fields['can_edit_project_states'].widget.attrs['class'] = 'safe'
         self.fields['can_assign_user'].widget.attrs['class'] = 'safe'
         self.fields['can_be_scheduled'].widget.attrs['class'] = 'safe'
+        self.fields['can_view_business_comments'].widget.attrs['class'] = 'safe'
 
         self.fields['can_view_actual_hours'].widget.attrs['class'] = 'safe'
         self.fields['can_estimate_own_points'].widget.attrs['class'] = 'medium-safe'
         self.fields['can_see_other_user_points'].widget.attrs['class'] = 'medium-safe'
         self.fields['can_view_calendar'].widget.attrs['class'] = 'medium-safe'
         self.fields['can_import_actual_hours'].widget.attrs['class'] = 'medium-safe'
+        self.fields['can_edit_business_comments'].widget.attrs['class'] = 'medium-safe'
 
         self.fields['can_edit_permissions'].widget.attrs['class'] = 'unsafe'
         self.fields['can_toggle_graphs'].widget.attrs['class'] = 'unsafe'
@@ -1429,4 +1431,19 @@ class CalendarEventUpdateForm(forms.ModelForm):
             data['hours'] = self.instance.hours
         if 'description' not in data or data['description'] is None or len(data['description'])==0:
             data['description'] = self.instance.description
+        return data
+
+class BusinessCommentForm(forms.ModelForm):
+
+    new_value = forms.CharField(widget=forms.Textarea, required=False)
+
+    class Meta:
+        model = BusinessComment
+        exclude = [ 'business', 'modified_at', 'modified_by']
+
+    def clean(self):
+        data = super(BusinessCommentForm, self).clean()
+        if 'new_value' in data:
+            data['comment'] = data['new_value']
+
         return data

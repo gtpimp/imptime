@@ -41,6 +41,27 @@ imp.projects.show_project_card_as_popup = function (event, project_card_url, msg
     return false;
 };
 
+imp.projects.show_business_comments = function (event, business_comments_url, args) {
+    imp.show_issue_detail(null, business_comments_url, "loading comments", args);
+    event.stopPropagation();
+    return false;
+};
+
+imp.show_business_history = function(url) {
+
+    if (imp.popup_dialog) {
+	$(".project_card_dialog_container").find(".dialog_content").load(url);
+    } else {
+	$(".project_card_dialog_container").dialog( { width: 600,
+						      height: 400,
+						      open: function(event, ui) {
+							  $(".project_card_dialog_container").find(".dialog_content").load(url);
+						      }
+						    });
+    }
+
+};
+
 imp.projects.cycle_status = function(event, el, url) {
     event.stopPropagation();
     var on_done = imp.loading("updating status");

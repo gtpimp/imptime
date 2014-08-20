@@ -614,5 +614,10 @@ urlpatterns = patterns('',
                        url(r'^project_status_update/(?P<project_id>.*)', views.project_status_update, {}, name='project_status_update'),
                        url(r'^allowed_project_stati/(?P<project_id>.*)', views.allowed_project_stati, {}, name='allowed_project_stati'),
 
+                       url(r'^business_comments/(?P<business_id>.*)', views.business_comments, {}, name='business_comments'),
+                       url(r'^show_business_history/(?P<business_id>.*)', views.show_business_history, {}, name='show_business_history'),
+
+                       
+
 
 )

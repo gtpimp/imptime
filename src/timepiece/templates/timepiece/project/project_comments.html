@@ -1,0 +1,45 @@
+{% load timepiece_tags %}
+
+<div class="issue_detail_container">
+
+  {% has_permission has_view_business_comment business %}
+    <div>
+      {% if comment %}
+      <div class="creation_details">
+        Modified at {{comment.modified_at}} by {{comment.modified_by.username}}
+      </div>
+      {% endif %}
+      <div class="edit_comment" >
+        <div class="static_div">
+            <br/><br/>
+            <div class="markdown_content" style="display:none">{{comment.comment}}</div>
+            <div class="content">
+              {% if comment.comment %} 
+                {{comment.comment|asmarkdown|with_issue_links|safe}}
+              {% else %}
+                No comment
+              {% endif %}
+            </div>
+
+            {% has_permission has_edit_business_comment business %}
+              <br/><br/>
+              <div class="small_button btn" onclick="imp.clickable_description_box($(this).parent(), '{% url 'business_comments' business.id %}',{{ business.id }}, { refresh_url:'{% url 'business_comments' business.id %}'})">
+                Edit
+              </div>
+            {% end_permission %}
+
+        </div>
+        <a href="http://daringfireball.net/projects/markdown/syntax" class="markdown_help" target="_blank" style="display:none">markdown syntax</a>
+      </div>
+    </div>
+
+  {% end_permission %}
+
+    {% has_permission has_edit_project_detail business %}
+      <a href="#" class"btn small_button" onclick="return imp.show_business_history('{% url 'show_business_history' business.pk %}')">
+        <img src="{{STATIC_URL}}/images/icons/report.png"/>
+      </a>
+    {% end_permission %}
+
+
+</div>

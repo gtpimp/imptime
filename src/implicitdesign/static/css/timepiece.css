@@ -9387,6 +9387,7 @@ ul.project_list {
     box-shadow:         6px 6px 0px 0px #ccc;
     margin:15px;
     min-width:230px;
+    /*width: 100%;*/
 }
 
 .project_card h1{
@@ -10174,11 +10175,11 @@ table.search_results tr:hover {
     cursor:-webkit-grabbing;
 }
 
-.issue_comments .creation_details, .issue_detail .creation_details {
+.creation_details {
     font-size:8px;
 }
 
-.issue_comments .creation_details:hover, .issue_detail .creation_details:hover {
+.creation_details:hover {
     font-size:12px;
 }
 
@@ -10397,4 +10398,11 @@ tr.clickable {
     font-size: 9px;
     font-style: italic;
     font-weight: normal;
+}
+
+.business_mini_menu {
+    font-size: 10px;
+    float:right; 
+    margin-right: 20px;
+    color: #121212;
 }

@@ -509,8 +509,6 @@ def view_summary(request,user_id, include_older_businesses=False):
     return render_to_response('timepiece/time-sheet/people/projects.html',
                               context, context_instance=RequestContext(request))
 
-
-
 @login_required
 def get_project_card_for_business(request,business_id, project_id):
 
@@ -4355,7 +4353,7 @@ def show_issue_history(request, issue_id, template="timepiece/project/issue_hist
     project = issue.project
     business = project.business
     bp = timepiece.BusinessPermissions.for_user(request.user, business)
-    if not bp.has_view_issues:
+    if not bp.has_edit_project_detail:
         return HttpResponse("Sorry, you don't have permission to view the issue")
 
     context['issue'] = issue
@@ -5131,3 +5129,52 @@ def project_status_update(request, project_id):
 @login_required
 def allowed_project_stati(request, project_id):
     return HttpResponse(json.dumps(timepiece.Project.PROJECT_STATUSES), mimetype='application/json')
+
+@login_required
+@csrf_exempt
+def business_comments(request, business_id):
+
+    try:
+        business = timepiece.Business.objects.get(id = business_id)
+    except timepiece.Business.DoesNotExist:
+        business = None
+
+    bp = timepiece.BusinessPermissions.objects.get_or_create(business=business, user=request.user)[0]
+    if not bp.has_view_business_comments:
+        raise PermissionDenied
+
+    form = None
+    if bp.has_edit_business_comments:
+        comment = timepiece.BusinessComment.objects.get_or_create(business=business, defaults={'modified_by':request.user})[0]
+        form = timepiece_forms.BusinessCommentForm(request.POST or None, instance=comment)
+        old_comment = comment.comment
+        if form.is_valid():
+            comment = form.save(commit=False)
+            comment.modified_by = request.user
+            comment.save()
+            form.save_m2m()
+            timepiece.BusinessHistory.add_history(request.user, business, "comment", old_comment, comment.comment)
+            return HttpResponse(json.dumps({ 'success':True }))
+    else:
+        comment = None
+    
+    context = { 'business':business,
+                'comment':comment,
+                'business_comment_form':form,
+                'current_user':request.user,
+                'business_permissions_by_user':timepiece.BusinessPermissions.by_user(business)
+                }
+    return render_to_response('timepiece/project/project_comments.html',
+                              context, context_instance=RequestContext(request))
+
+@login_required
+def show_business_history(request, business_id, template="timepiece/project/business_history.html", context=None):
+    context = context or {}
+    business = timepiece.Business.objects.get(pk=business_id)
+    bp = timepiece.BusinessPermissions.for_user(request.user, business)
+    if not bp.has_edit_project_detail:
+        return HttpResponse("Sorry, you don't have permission to view the business history")
+
+    context['business'] = business
+    context['history'] = timepiece.BusinessHistory.for_business(business)
+    return render_to_response(template, context, context_instance=RequestContext(request))

@@ -236,6 +236,16 @@ class Business(models.Model):
         else:
             return None
 
+class BusinessComment(models.Model):
+    business = models.ForeignKey(Business, null=False, blank=False, related_name='business_comments')
+    comment = models.TextField(null=True, blank=True)
+
+    created_at = models.DateTimeField(auto_now_add=True)
+    modified_at = models.DateTimeField(auto_now=True)
+    modified_by = models.ForeignKey(User, null=False, blank=False, related_name='business_comments_modified_by')
+
+    def __unicode__(self):
+        return self.comment
 
 class Feature(models.Model):
     name = models.CharField(max_length=255, blank=True, null=True)
@@ -269,12 +279,14 @@ class BusinessPermissions(models.Model):
     can_create_sprint = models.BooleanField(default=True, verbose_name="Can Create Sprint")
     can_assign_user = models.BooleanField(default=True, verbose_name="Can Assign User")
     can_be_scheduled = models.BooleanField(default=False, verbose_name="Can Be Scheduled")
+    can_view_business_comments = models.BooleanField(default=False, verbose_name="Can view project comments")
 
     can_view_actual_hours = models.BooleanField(default=False, verbose_name="Can View Actual Hours")
     can_see_other_user_points = models.BooleanField(default=False, verbose_name="Can See Other User's Points")
     can_estimate_own_points = models.BooleanField(default=False, verbose_name="Can Estimate Own Points")
     can_view_calendar = models.BooleanField(default=False, verbose_name="Can View Calendar")
     can_import_actual_hours = models.BooleanField(default=False, verbose_name="Can Import Actual Hours")
+    can_edit_business_comments = models.BooleanField(default=False, verbose_name="Can edit project comments")
 
     can_edit_permissions = models.BooleanField(default=False, verbose_name="Can Edit Permissions")
     can_toggle_graphs = models.BooleanField(default=False, verbose_name="Can Toggle Graphs")
@@ -396,6 +408,14 @@ class BusinessPermissions(models.Model):
     @property
     def has_assign_user(self):
         return self.user.is_superuser or self.can_assign_user
+
+    @property
+    def has_view_business_comments(self):
+        return self.user.is_superuser or self.can_view_business_comments
+
+    @property
+    def has_edit_business_comments(self):
+        return self.user.is_superuser or self.can_edit_business_comments
 
     @property
     def has_view_documents(self):
@@ -2706,6 +2726,25 @@ class IssueHistory(models.Model):
     def for_issue(self, issue):
         return IssueHistory.objects.filter(issue_id=issue.id).order_by("-created_at")
 
+class BusinessHistory(models.Model):
+    
+    business_id = models.IntegerField(blank=False, null=False, db_index=True)
+    created_by = models.ForeignKey(User, blank=False, null=False)
+    created_at = models.DateTimeField(auto_now_add=True)
+    description = models.CharField(max_length=255, blank=False, null=False)
+    before = models.TextField(blank=True, null=True)
+    after = models.TextField(blank=True, null=True)
+
+    @classmethod
+    def add_history(self, user, business, description, before, after):
+        BusinessHistory.objects.create(created_by=user, business_id=business.id, description=description,
+                                       before=before, after=after)
+        
+    @classmethod
+    def for_business(self, business):
+        return BusinessHistory.objects.filter(business_id=business.id).order_by("-created_at")
+
+
 class BusinessDocument(models.Model):
     
     DOC_TYPE_CHOICES = ( ('invoice', 'Invoice'), ('summary', 'Sprint summary'),
@@ -2726,7 +2765,7 @@ class BusinessDocument(models.Model):
 
     created_by = models.ForeignKey(User, null=False, blank=False, related_name='business_document_created_by')
     created_at = models.DateTimeField(auto_now_add=True)
-    modified_at = models.DateTimeField(auto_now_add=True)
+    modified_at = models.DateTimeField(auto_now=True)
     modified_by = models.ForeignKey(User, null=False, blank=False, related_name='business_document_modified_by')
 
     def save(self, *args, **kwargs):
