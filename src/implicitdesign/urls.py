@@ -15,7 +15,7 @@ urlpatterns = patterns('',
 
                        url(r'^admin/', include(admin.site.urls)),
 
-                       url(r'^$', views.home),
+                       url(r'^$', views.home, name='home'),
           
                        url( r'^grappelli/', include('grappelli.urls') ),
                        url(r'^emacs_importer/', include('emacs_importer.urls', namespace='emacs_importer')),
