@@ -493,12 +493,11 @@ class ImportEntriesForm(forms.Form):
             total_hours += hours + float(minutes)/60
 
             try:
-                entry = Entry.objects.get(user=self.user, project=project, start_time=start_time, end_time=end_time)
+                entry = Entry.objects.get(user=self.user, project=project, comments=description, start_time=start_time, end_time=end_time)
                 num_entries_updated += 1
             except Entry.DoesNotExist:
-                entry = Entry(user=self.user, project=project, start_time=start_time, end_time=end_time)
+                entry = Entry(user=self.user, project=project, comments=description, start_time=start_time, end_time=end_time)
                 num_entries_created += 1
-            entry.comments = description
             entry.issue = issue
             tidy_entry(entry)
             entry.save()
