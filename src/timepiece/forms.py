@@ -493,6 +493,11 @@ class ImportEntriesForm(forms.Form):
             total_hours += hours + float(minutes)/60
 
             try:
+                # Possible duplicate when an Entry is retrieved by only:
+                # (user=self.user, project=project, start_time=start_time, end_time=end_time)
+                # When adding new mulitple entries the 'get' should inlcude the Entry.comments. 
+                # When the comment for each Entry differs, new entries will be created for each raw_entry.
+
                 entry = Entry.objects.get(user=self.user, project=project, comments=description, start_time=start_time, end_time=end_time)
                 num_entries_updated += 1
             except Entry.DoesNotExist:
