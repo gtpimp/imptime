@@ -112,7 +112,7 @@ class Invoice(models.Model):
 
     @property
     def items_in_order(self):
-        return self.items.all().order_by("pk")
+        return self.items.all().order_by("order", "pk")
 
     @property
     def cost(self):
@@ -157,6 +157,7 @@ class InvoiceItem(models.Model):
     unit_cost = models.FloatField(null=False, blank=False)
     total_cost = models.FloatField(null=False, blank=False)
     description = models.CharField(max_length=255, null=False, blank=False)
+    order = models.IntegerField(default=0, null=True, blank=True)
 
     def save(self, *args, **kwargs):
         self.total_cost = (self.unit_cost or 0) * (self.num_units or 0)

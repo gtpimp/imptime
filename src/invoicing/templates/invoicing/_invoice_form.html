@@ -124,6 +124,7 @@
     <th>Cost per unit</th>
     <th>Description</th>
     <th>Cost</th>
+    <th>Order</th>
     <th>Delete?</th>
   </thead>
   <tbody>
@@ -149,6 +150,11 @@
             {% if itemform.instance %}
               {{invoice.currency_symbol}} {{itemform.instance.total_cost|currency}}
             {% endif %}
+          </td>
+          <td>
+            <div class='form-group{% if itemform.errors.order %} has-error{%endif%}'>
+                {{ itemform.order|add_class:'form-control' }}
+            </div>
           </td>
           <td>
             <div class='form-group'>

@@ -85,8 +85,12 @@ def new_invoice(request, template="invoicing/new_invoice.html", context=None):
     if form.is_valid() and items_formset.is_valid():
         invoice = form.save()
         items = items_formset.save(commit=False)
+        item_count = 1
         for item in items:
             item.invoice = invoice
+            if item.order == 0:
+                item.order = item_count
+                item_count += 1
             item.save()
         items_formset.save_m2m()
         messages.info(request, "Invoice created")
@@ -106,13 +110,17 @@ def edit_invoice(request, invoice_id, template="invoicing/edit_invoice.html", co
         raise PermissionDenied
 
     form = InvoiceForm(request.POST or None, instance=invoice)
-    items_formset = invoice_item_formset(request.POST or None, queryset = invoice.items.all().order_by("pk"), prefix='items')
+    items_formset = invoice_item_formset(request.POST or None, queryset = invoice.items_in_order, prefix='items')
     payments_formset = invoice_payment_formset(request.POST or None, queryset = invoice.payments.all().order_by("paid_at"), prefix='payments')
     if form.is_valid() and items_formset.is_valid() and payments_formset.is_valid():
         invoice = form.save()
         items = items_formset.save(commit=False)
+        item_count = 1
         for item in items:
             item.invoice = invoice
+            if item.order == 0:
+                item.order = item_count
+                item_count += 1
             item.save()
         payments = payments_formset.save(commit=False)
         items_formset.save_m2m()

@@ -30,9 +30,10 @@ class InvoiceForm(forms.ModelForm):
         self.fields['issued_at'].initial = datetime.today()
 
 class InvoiceItemForm(forms.ModelForm):
+
     class Meta:
         model = models.InvoiceItem
-        fields = [ 'num_units', 'unit_cost', 'description' ]
+        fields = [ 'num_units', 'unit_cost', 'description', 'order' ]
 
 invoice_item_formset = modelformset_factory(models.InvoiceItem, form=InvoiceItemForm, can_delete=True, extra=5)
 
