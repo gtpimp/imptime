@@ -454,7 +454,7 @@ class ProjectQuerySet(QuerySet):
 
 class Project(models.Model):
 
-    PROJECT_STATUSES = ( ('pending', 'pending'), ('in dev', 'in development'), ('waiting to close', 'waiting to close'), ('closed', 'closed'), ('hopeful', 'hopeful') )
+    PROJECT_STATUSES = ( ('pending', 'pending'), ('in dev', 'in development'), ('invoiced', 'invoiced'), ('waiting to close', 'waiting to close'), ('closed', 'closed'), ('hopeful', 'hopeful') )
 
     code = models.CharField(max_length=255,blank=True,null=True)        
     name = models.CharField(max_length=255, db_index=True)
