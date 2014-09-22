@@ -454,7 +454,7 @@ class ProjectQuerySet(QuerySet):
 
 class Project(models.Model):
 
-    PROJECT_STATUSES = ( ('pending', 'pending'), ('in dev', 'in development'), ('invoiced', 'invoiced'), ('waiting to close', 'waiting to close'), ('closed', 'closed'), ('hopeful', 'hopeful') )
+    PROJECT_STATUSES = ( ('pending', 'pending'), ('in dev', 'in development'), ('waiting_to_invoice', 'waiting to invoice'), ('invoiced', 'invoiced'), ('waiting to close', 'waiting to close'), ('closed', 'closed'), ('hopeful', 'hopeful') )
 
     code = models.CharField(max_length=255,blank=True,null=True)        
     name = models.CharField(max_length=255, db_index=True)
@@ -2278,7 +2278,6 @@ class AssignmentAllocation(models.Model):
 
     objects = AllocationManager()
 
-
 class PersonSchedule(models.Model):
     user = models.ForeignKey(
         User,
@@ -2471,6 +2470,7 @@ class Issue(models.Model):
            ( 'to be estimated', 'to be estimated'),
            ( 'needscodereview', 'needs code review'),
            ( "can't reproduce", "can't reproduce"),
+           ( "discuss with client", "discuss with client"),
            ( 'dev unclear', 'dev unclear'),
            ( 'duplicate', 'duplicate'),
            ( 'tested', 'tested'),
