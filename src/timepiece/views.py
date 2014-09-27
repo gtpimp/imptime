@@ -2426,7 +2426,7 @@ def salary_edit(request, user_id, template="timepiece/salary/payslip.html", cont
     user_form = timepiece_forms.QuickEditPersonForm(request.POST or None, instance=salary.user, prefix="user_form")
 
     if request.POST and was_locked:
-        messages.info(request, "Save failed, the payslip is locked")
+        messages.error(request, "Save failed, the payslip is locked")
         return HttpResponseRedirect(reverse('salary_edit', kwargs={'user_id':salary.user.id}))
 
     if request.POST and user_form.is_valid() and salary_form.is_valid():

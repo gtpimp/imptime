@@ -116,7 +116,7 @@ def edit_invoice(request, invoice_id, template="invoicing/edit_invoice.html", co
     payments_formset = invoice_payment_formset(request.POST or None, queryset = invoice.payments.all().order_by("paid_at"), prefix='payments')
 
     if request.POST and was_locked:
-        messages.info(request, "Save failed, the invoice is locked")
+        messages.error(request, "Save failed, the invoice is locked")
         return HttpResponseRedirect(reverse('invoicing:edit_invoice', kwargs={'invoice_id':invoice.id}))
 
     if not was_locked and form.is_valid() and items_formset.is_valid() and payments_formset.is_valid():
