@@ -1,10 +1,6 @@
 <div style="position:fixed;top:20px;right:20px;">
 
-  {% if not invoice.locked %}
-    <button  onclick="window.location='{% url 'invoicing:generate_invoice' invoice.id %}'; return false;" > Print </button>
-  {% else %}
-    <h2>This invoice is locked and cannot be printed</h2>
-  {% endif %}
+  <button  onclick="window.location='{% url 'invoicing:generate_invoice' invoice.id %}'; return false;" > Print </button>
   <button  onclick="window.close(); return false"> Close </button>
 </div>
 

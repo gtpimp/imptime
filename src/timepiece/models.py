@@ -2368,6 +2368,7 @@ class Salary(models.Model):
     leave_accrued = models.DecimalField(max_digits=8,default=0,decimal_places=2, verbose_name="Leave accrued this month")
     leave_taken = models.DecimalField(max_digits=8,default=0,decimal_places=2, verbose_name="Leave taken this month")
     sick_days = models.DecimalField(max_digits=8,default=0,decimal_places=2, verbose_name="Sick days taken this month")
+    locked = models.BooleanField(default=False)
 
     @property
     def net_pay(self):

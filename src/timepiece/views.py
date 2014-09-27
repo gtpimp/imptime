@@ -2415,6 +2415,7 @@ def salary_edit(request, user_id, template="timepiece/salary/payslip.html", cont
                 context['msg'] = '(created new blank salary)'
         else:
             salary = timepiece.Salary.objects.create(user=user,date=from_date)
+    was_locked = salary.locked
 
     if request.POST and 'copy_from_previous' in request.POST:
         salary.copy_from_previous()
@@ -2423,6 +2424,10 @@ def salary_edit(request, user_id, template="timepiece/salary/payslip.html", cont
         salary_form = timepiece_forms.SalaryForm(request.POST or None, instance=salary)
 
     user_form = timepiece_forms.QuickEditPersonForm(request.POST or None, instance=salary.user, prefix="user_form")
+
+    if request.POST and was_locked:
+        messages.info(request, "Save failed, the payslip is locked")
+        return HttpResponseRedirect(reverse('salary_edit', kwargs={'user_id':salary.user.id}))
 
     if request.POST and user_form.is_valid() and salary_form.is_valid():
         salary_form.save()
