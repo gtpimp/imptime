@@ -122,7 +122,7 @@
 				<td  style="font-size:16px">Tax Invoice #</td>
                                 <td  style="font-size:16px">{{invoice.invoice_number}}</td>
 			    </tr>
-			    {% if invoice.client_order_number %}
+			    {% if invoice.client_order_number and invoice.client_order_number != "NULL" %}
 			    <tr>
 				<td>{{invoice.client_order_name}}</td>
 				<td>{{invoice.client_order_number}}</td>

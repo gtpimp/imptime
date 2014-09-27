@@ -15,7 +15,7 @@ class InvoiceForm(forms.ModelForm):
 
     class Meta:
         model = models.Invoice
-        fields = [ 'client', 'project', 'business', 'invoice_number', 'internal_comment', 'client_order_name', 'client_order_number', 'status', 
+        fields = [ 'locked', 'client', 'project', 'business', 'invoice_number', 'internal_comment', 'client_order_name', 'client_order_number', 'status', 
                    'issued_at', 'payment_due', 'invoice_note', 'footer_terms' ]
 
     project = GroupedModelChoiceField('business', required=False, queryset=timepiece.Project.objects.all().filter_open().order_by("business__name", "name"))

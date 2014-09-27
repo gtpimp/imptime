@@ -105,6 +105,8 @@ def edit_invoice(request, invoice_id, template="invoicing/edit_invoice.html", co
     context = context or {}
     invoice = models.Invoice.objects.get(pk=invoice_id)
 
+    was_locked = invoice.locked
+
     bp = _get_best_bp(request, invoice)
     if not bp.has_edit_invoices:
         raise PermissionDenied
@@ -112,7 +114,11 @@ def edit_invoice(request, invoice_id, template="invoicing/edit_invoice.html", co
     form = InvoiceForm(request.POST or None, instance=invoice)
     items_formset = invoice_item_formset(request.POST or None, queryset = invoice.items_in_order, prefix='items')
     payments_formset = invoice_payment_formset(request.POST or None, queryset = invoice.payments.all().order_by("paid_at"), prefix='payments')
-    if form.is_valid() and items_formset.is_valid() and payments_formset.is_valid():
+
+    if request.POST and was_locked:
+        messages.info(request, "Save failed, the invoice is locked")
+
+    if not was_locked and form.is_valid() and items_formset.is_valid() and payments_formset.is_valid():
         invoice = form.save()
         items = items_formset.save(commit=False)
         item_count = 1

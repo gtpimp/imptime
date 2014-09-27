@@ -20,6 +20,15 @@
     </div>
   </div>
 
+  <div class='form-group{% if form.errors.locked%} has-error{%endif%}'>
+    <div class="col-md-6">
+      Invoice Locked (eg sent to client)
+    </div>
+    <div class="col-md-6">
+      {{ form.locked|add_class:'form-control' }}
+    </div>
+  </div>
+
   <div class='form-group{% if form.errors.client%} has-error{%endif%}'>
     <div class="col-md-6">
       Client 

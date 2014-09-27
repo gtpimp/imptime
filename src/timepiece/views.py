@@ -5075,7 +5075,7 @@ def business_cost_summary(request, business_id, template="timepiece/project/busi
         running_project_amount_paid = 0
         running_project_amount_owed = 0
         for invoice in invoices:
-            running_project_amount_invoiced += invoice.cost_with_vat
+            running_project_amount_invoiced += invoice.cost
             running_project_amount_paid += invoice.amount_paid
             running_project_amount_owed += invoice.amount_owed
         project_info['invoiced'] = running_project_amount_invoiced
@@ -5093,7 +5093,7 @@ def business_cost_summary(request, business_id, template="timepiece/project/busi
     sundry_paid = 0
     sundry_owed = 0
     for invoice in Invoice.objects.all().filter(business=business).filter(project__isnull=True):
-        sundry_invoiced += invoice.cost_with_vat
+        sundry_invoiced += invoice.cost
         sundry_paid += invoice.amount_paid
         sundry_owed += invoice.amount_owed
     

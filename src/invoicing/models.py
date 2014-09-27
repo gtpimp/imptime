@@ -74,6 +74,7 @@ class Invoice(models.Model):
                                        choices=( ("R", "R"), ("£","£"), ("€","€") ))
     footer_terms = models.TextField(null=True, blank=True)
     status = models.CharField(max_length=20, default='open', blank=False, null=False, choices=INVOICE_STATUSES)
+    locked = models.BooleanField(default=False)
 
     def save(self, *args, **kwargs):
         if self.project is not None:
