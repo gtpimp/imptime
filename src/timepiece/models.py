@@ -528,6 +528,10 @@ class Project(models.Model):
                                              short_description=short_description)
         return project
 
+    @property
+    def can_capture_time(self):
+        return self.status in ( 'pending', 'hopeful', 'in dev', 'waiting_to_invoice' )
+
     def get_points(self):
         user_ids = [user.id for user in self.business.users]
         users = User.objects.filter(id__in = user_ids)
@@ -2800,3 +2804,15 @@ class CalendarEvent(models.Model):
     @property
     def is_open(self):
         return self.status == '' or self.status == 'ready'
+
+    def get_colour(self):
+        index = self.user_id % len(COLOURS)
+        threshold = int("0x999999", 0)
+        c = COLOURS[index]
+        c_int = int("0x"+c[1:], 0)
+        if c_int < threshold:
+            c_int = c_int * 2
+            c = "#"+hex(c_int)[2:]
+        return c
+
+    

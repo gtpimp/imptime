@@ -4902,7 +4902,7 @@ def _create_js_calendar_event(event):
              'user_id': event.user.id,
              'description': event.description,
              'event_type': event.event_type,
-             'color': event.project.business.get_colour() if event.project else timepiece.COLOURS[0],
+             'color': event.get_colour(),
              'textColor': "#121212" if event.event_type == "meeting" else "#000000",
              'borderColor': "#121212",
              'editable': True,
@@ -4911,13 +4911,10 @@ def _create_js_calendar_event(event):
 
     if event.event_type == "meeting":
         res['title'] = "M: %s..." % event.description.strip()[0:30]
-        res['color'] = "#ff77ff";
     elif event.event_type == "sickday":
         res['title'] = "S: %s..." % event.description.strip()[0:30]
-        res['color'] = "##F0AAEB";
     elif event.event_type == "office_closed":
         res['title'] = "X: %s..." % event.description.strip()[0:30]
-        res['color'] = "##F0AAEB";
     elif event.project is None:
         res['title'] = "G: %s..." % event.description.strip()[0:30]
     else:
