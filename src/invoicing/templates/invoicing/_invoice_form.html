@@ -4,9 +4,9 @@
 
 {% csrf_token %}
 
-{% if form.errors %}<div class="error">{{form.errors}}</div>{% endif %}
-{% if items_formset.errors %}<div class="error">{{items_formset.errors}}</div>{% endif %}
-{% if payments_formset.errors %}<div class="error">{{payments_formset.errors}}</div>{% endif %}
+{% if not form.valid %}<div class="error">{{form.errors}}</div>{% endif %}
+{% if not items_formset.is_valid %}<div class="error">{{items_formset.errors}}</div>{% endif %}
+{% if not payments_formset.is_valid %}<div class="error">{{payments_formset.errors}}</div>{% endif %}
 
 <h3>Invoice details</h3>
 <div class="col-md-4">

@@ -64,7 +64,7 @@ class BusinessQuerySet(QuerySet):
     def filter_by_logged_in_user(self, user):
         """ restricts entries to those belonging to projects the given
         user (typically the logged in user) is assigned to """
-        if user.is_superuser:
+        if user.is_superuser or user.has_perm('timepiece.belongs_to_all_projects'):
             return self
         return self.filter(new_business_projects__users=user)
 
@@ -312,138 +312,139 @@ class BusinessPermissions(models.Model):
 
     @property
     def has_view_project_card(self):
-        return self.user.is_superuser or self.can_view_project_card
+        return self.user.is_superuser or self.can_view_project_card or self.user.has_perm('timepiece.belongs_to_all_projects')
 
     @property
     def has_edit_permissions(self):
-        return self.user.is_superuser or self.can_edit_permissions
+        return self.user.is_superuser or self.can_edit_permissions or self.user.has_perm('timepiece.belongs_to_all_projects')
 
     @property
     def has_edit_project_detail(self):
-        return self.user.is_superuser or self.can_edit_project_detail
+        return self.user.is_superuser or self.can_edit_project_detail or self.user.has_perm('timepiece.belongs_to_all_projects')
 
     @property
     def has_edit_issues(self):
-        return self.user.is_superuser or self.can_edit_issues
+        return self.user.is_superuser or self.can_edit_issues or self.user.has_perm('timepiece.belongs_to_all_projects')
     @property
     def has_view_issues(self):
-        return self.user.is_superuser or self.can_view_issues
+        return self.user.is_superuser or self.can_view_issues or self.user.has_perm('timepiece.belongs_to_all_projects')
     
     @property
     def has_edit_budget(self):
-        return self.user.is_superuser or self.can_edit_budget
+        return self.user.is_superuser or self.can_edit_budget or self.user.has_perm('timepiece.belongs_to_all_projects')
     @property
     def has_view_budget(self):
-        return self.user.is_superuser or self.can_view_budget
+        return self.user.is_superuser or self.can_view_budget or self.user.has_perm('timepiece.belongs_to_all_projects')
     
     @property
     def has_edit_invoices(self):
-        return self.user.is_superuser or self.can_edit_invoices
+        return self.user.is_superuser or self.can_edit_invoices or self.user.has_perm('timepiece.belongs_to_all_projects')
     @property
     def has_view_invoices(self):
-        return self.user.is_superuser or self.can_view_invoices
+        return self.user.is_superuser or self.can_view_invoices or self.user.has_perm('timepiece.belongs_to_all_projects')
     
     @property
     def has_edit_ctc_billable_rates(self):
-        return self.user.is_superuser or self.can_edit_ctc_billable_rates
+        return self.user.is_superuser or self.can_edit_ctc_billable_rates or self.user.has_perm('timepiece.belongs_to_all_projects')
     @property
     def has_view_ctc_billable_rates(self):
-        return self.user.is_superuser or self.can_view_ctc_billable_rates
+        return self.user.is_superuser or self.can_view_ctc_billable_rates or self.user.has_perm('timepiece.belongs_to_all_projects')
 
     @property
     def has_view_ctc_rates(self):
-        return self.user.is_superuser or self.can_view_ctc_rates
+        return self.user.is_superuser or self.can_view_ctc_rates or self.user.has_perm('timepiece.belongs_to_all_projects')
 
     @property
     def has_view_actual_hours(self):
-        return self.user.is_superuser or self.can_view_actual_hours
+        return self.user.is_superuser or self.can_view_actual_hours or self.user.has_perm('timepiece.belongs_to_all_projects')
 
     @property
     def has_toggle_graphs(self):
-        return self.user.is_superuser or self.can_toggle_graphs
+        return self.user.is_superuser or self.can_toggle_graphs or self.user.has_perm('timepiece.belongs_to_all_projects')
 
     @property
     def has_edit_issue_states(self):
-        return self.user.is_superuser or self.can_edit_issue_states
+        return self.user.is_superuser or self.can_edit_issue_states or self.user.has_perm('timepiece.belongs_to_all_projects')
 
     @property
     def has_edit_project_states(self):
-        return self.user.is_superuser or self.can_edit_project_states
+        return self.user.is_superuser or self.can_edit_project_states or self.user.has_perm('timepiece.belongs_to_all_projects')
 
     @property
     def has_see_other_user_points(self):
-        return self.user.is_superuser or self.can_see_other_user_points
+        return self.user.is_superuser or self.can_see_other_user_points or self.user.has_perm('timepiece.belongs_to_all_projects')
     
     @property
     def has_estimate_own_points(self):
-        return self.can_estimate_own_points
+        return self.can_estimate_own_points or self.user.has_perm('timepiece.belongs_to_all_projects')
     
     @property
     def has_add_issue(self):
-        return self.user.is_superuser or self.can_add_issue
+        return self.user.is_superuser or self.can_add_issue or self.user.has_perm('timepiece.belongs_to_all_projects')
     @property
     def has_delete_issue(self):
-        return self.user.is_superuser or self.can_delete_issue
+        return self.user.is_superuser or self.can_delete_issue or self.user.has_perm('timepiece.belongs_to_all_projects')
 
     @property
     def has_edit_description(self):
-        return self.user.is_superuser or self.can_edit_description
+        return self.user.is_superuser or self.can_edit_description or self.user.has_perm('timepiece.belongs_to_all_projects')
 
     @property
     def has_add_issue_comment(self):
-        return self.user.is_superuser or self.can_add_issue_comment
+        return self.user.is_superuser or self.can_add_issue_comment or self.user.has_perm('timepiece.belongs_to_all_projects')
 
     @property
     def has_edit_subject(self):
-        return self.user.is_superuser or self.can_edit_subject
+        return self.user.is_superuser or self.can_edit_subject or self.user.has_perm('timepiece.belongs_to_all_projects')
 
     @property
     def has_edit_issue_feature(self):
-        return self.user.is_superuser or self.can_edit_feature
+        return self.user.is_superuser or self.can_edit_feature or self.user.has_perm('timepiece.belongs_to_all_projects')
 
     @property
     def has_create_sprint(self):
-        return self.user.is_superuser or self.can_create_sprint
+        return self.user.is_superuser or self.can_create_sprint or self.user.has_perm('timepiece.belongs_to_all_projects')
 
     @property
     def has_assign_user(self):
-        return self.user.is_superuser or self.can_assign_user
+        return self.user.is_superuser or self.can_assign_user or self.user.has_perm('timepiece.belongs_to_all_projects')
 
     @property
     def has_view_business_comments(self):
-        return self.user.is_superuser or self.can_view_business_comments
+        return self.user.is_superuser or self.can_view_business_comments or self.user.has_perm('timepiece.belongs_to_all_projects')
 
     @property
     def has_edit_business_comments(self):
-        return self.user.is_superuser or self.can_edit_business_comments
+        return self.user.is_superuser or self.can_edit_business_comments or self.user.has_perm('timepiece.belongs_to_all_projects')
 
     @property
     def has_view_documents(self):
-        return self.user.is_superuser or self.can_view_documents
+        return self.user.is_superuser or self.can_view_documents or self.user.has_perm('timepiece.belongs_to_all_projects')
 
     @property
     def has_view_calendar(self):
-        return self.user.is_superuser or self.can_view_calendar
+        return self.user.is_superuser or self.can_view_calendar or self.user.has_perm('timepiece.belongs_to_all_projects')
 
     @property
     def has_import_actual_hours(self):
         # used to manage how imports are handled, so no is_superuser override
-        return self.can_import_actual_hours
+        return self.can_import_actual_hours or self.user.has_perm('timepiece.belongs_to_all_projects')
 
     @property
     def has_edit_calendar(self):
-        return self.user.is_superuser or self.can_edit_calendar
+        return self.user.is_superuser or self.can_edit_calendar or self.user.has_perm('timepiece.belongs_to_all_projects')
 
     @property
     def has_be_scheduled(self):
-        return self.user.is_superuser or self.can_be_scheduled
+        return self.user.is_superuser or self.can_be_scheduled or self.user.has_perm('timepiece.belongs_to_all_projects')
 
 class ProjectQuerySet(QuerySet):
     def filter_by_logged_in_user(self, user):
         """ restricts entries to those belonging to projects the given
         user (typically the logged in user) is assigned to """
-        if user.is_superuser:
+        if user.is_superuser or user.has_perm('timepiece.belongs_to_all_projects'):
             return self
+
         return self.filter(business__business_permissions__user=user, business__business_permissions__can_view_project_card=True)
     
     def filter_open(self):

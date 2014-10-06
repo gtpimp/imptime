@@ -95,7 +95,7 @@ class HasPermissionNode(template.Node):
         has = False
 
         if 'current_user' in context:
-            if context['current_user'].is_superuser:
+            if context['current_user'].is_superuser or context['current_user'].has_perm('timepiece.belongs_to_all_projects'):
                 has = True
             else:
                 try:
