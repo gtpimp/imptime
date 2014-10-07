@@ -376,7 +376,7 @@ class BusinessPermissions(models.Model):
     
     @property
     def has_estimate_own_points(self):
-        return self.can_estimate_own_points or self.user.has_perm('timepiece.belongs_to_all_projects')
+        return self.can_estimate_own_points
     
     @property
     def has_add_issue(self):
