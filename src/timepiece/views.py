@@ -3116,7 +3116,10 @@ def _augment_issue_data(issue, current_user, users_allowed_to_estimate_on_busine
 
         #completion_against_estimated_cost = ((actual_billable_cost_of_issue / estimated_cost)*100) if estimated_cost>0 else 0.0
 
-        completion_against_estimated_hours = ((hours/user_points.points)*100) if user_points.points>0 else 0.0
+        if user_points.points == 0:
+            completion_against_estimated_hours = 0
+        else:
+            completion_against_estimated_hours = ((hours/user_points.points)*100) if user_points.points>0 else 0.0
 
         per_user_issue_data["completion"] = completion_against_estimated_hours
         per_user_issue_data["hours"] = hours

@@ -115,7 +115,7 @@ def edit_invoice(request, invoice_id, template="invoicing/edit_invoice.html", co
     items_formset = invoice_item_formset(request.POST or None, queryset = invoice.items_in_order, prefix='items')
     payments_formset = invoice_payment_formset(request.POST or None, queryset = invoice.payments.all().order_by("paid_at"), prefix='payments')
 
-    if request.POST and was_locked and not request.user.has_perm('timepiece.can_unlock_invoices'):
+    if request.POST and was_locked and not request.user.has_perm('invoicing.can_unlock_invoices'):
         messages.error(request, "Save failed, the invoice is locked")
         return HttpResponseRedirect(reverse('invoicing:edit_invoice', kwargs={'invoice_id':invoice.id}))
 
