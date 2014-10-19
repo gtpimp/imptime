@@ -5226,4 +5226,18 @@ def dev_checklist(request, project_id, template="timepiece/project/dev_checklist
     if not bp.has_do_dev_checklist:
         return HttpResponse("Sorry, you don't have access to the dev checklist")
 
+    form = timepiece_forms.DevChecklistForm(request.POST or None)
+    if form.is_valid():
+        checklist = form.save(commit=False)
+        checklist.project = project
+        checklist.created_by=request.user
+        checklist.save()
+
+        # ajax call, don't redirect
+        form = timepiece_forms.DevChecklistForm()
+        context['msg'] = 'Saved'
+
+    context['form'] = form
+    context['project'] = project
+    context['previous_checklists'] = timepiece.DevChecklist.objects.all().filter(project__in=timepiece.Project.objects.filter(business=project.business)).order_by("-pk")[:5]
     return render_to_response(template, context, context_instance=RequestContext(request))

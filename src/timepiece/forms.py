@@ -26,7 +26,7 @@ from timepiece.lookups import ProjectLookup, QuickLookup
 from timepiece.lookups import UserLookup, BusinessLookup
 
 from timepiece.models import Project, Business, Entry, Activity, UserProfile, Attribute, Location, Activity, Feature, Issue, BusinessPermissions, BusinessComment
-from timepiece.models import ProjectHours, Salary, CalendarEvent, TrafficChecklist
+from timepiece.models import ProjectHours, Salary, CalendarEvent, TrafficChecklist, DevChecklist
 from timepiece.fields import UserModelChoiceField
 from django.contrib.auth.models import User
 from timepiece import models as timepiece
@@ -1450,4 +1450,10 @@ class TrafficChecklistForm(forms.ModelForm):
     class Meta:
         model = TrafficChecklist
         exclude = ['project', 'created_at', 'created_by', 'passed']
+
+class DevChecklistForm(forms.ModelForm):
+    class Meta:
+        model = DevChecklist
+        exclude = ['project', 'created_at', 'created_by', 'passed']
+
 

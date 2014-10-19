@@ -2835,7 +2835,6 @@ class CalendarEvent(models.Model):
             c_int = c_int * 2
             c = "#"+hex(c_int)[2:]
         return c
-
     
 class TrafficChecklist(models.Model):
     
@@ -2887,6 +2886,35 @@ class TrafficChecklist(models.Model):
         if self.passed != passed:
             self.passed = passed
         super(TrafficChecklist, self).save(*args, **kwargs)
+
+    def __unicode__(self):
+        return "%s %s" % (self.created_by, self.created_at)
+
+
+class DevChecklist(models.Model):
+    project = models.ForeignKey(Project, null=False, blank=True)
+
+    has_reviewed_previous_days_issues = models.BooleanField(default=False, blank=True, verbose_name="Were yesterday's issues reviewed?")
+    description_has_testable = models.BooleanField(default=False, blank=True, verbose_name="Does today's issues descriptions have testable steps?")
+    has_reviewed_description_for_todays_issues = models.BooleanField(default=False, blank=True, verbose_name="Have the descriptions for todays issues been reviewed with the developer?")
+    are_the_estimates_wildly_out = models.BooleanField(default=False, blank=True, verbose_name="Are the estimates for any developer wildly inaccurate based on actual time spent?")
+
+    comments = models.TextField(null=True, blank=True)
+    passed = models.BooleanField(default=False, blank=True)
+    created_by = models.ForeignKey(User, null=False, blank=False, related_name='dev_checklist_created_by')
+    created_at = models.DateTimeField(auto_now_add=True)
+
+
+    def save(self, *args, **kwargs):
+
+        failed_states = [ x for x in [ self.has_reviewed_previous_days_issues,
+                                       self.description_has_testable,
+                                       self.has_reviewed_description_for_todays_issues ] if not x ]
+
+        passed = len(failed_states)==0
+        if self.passed != passed:
+            self.passed = passed
+        super(DevChecklist, self).save(*args, **kwargs)
 
     def __unicode__(self):
         return "%s %s" % (self.created_by, self.created_at)

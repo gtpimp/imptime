@@ -1,2 +1,84 @@
-Dev Checklist
+{% load humanize %}
+{% load timepiece_tags %}
+{% load bootstrap_toolkit %}
 
+<div class="checklist">
+  <h1>{{project.business.name}} - {{project.name}}</h1>
+  <h2>Dev Checklist</h2>
+
+  {{msg}}
+
+  <form class="form-horizontal" action="{% url 'dev_checklist' project.id %}" method="post" accept-charset="utf-8">
+    {% csrf_token %}
+    {{ form.errors }}
+
+    <table>
+
+      <thead>
+	<tr>
+	  <th> </th>
+	  <th>today</th>
+	  {% for checklist in previous_checklists %}
+	  <th> {{checklist.created_at|date:"d M Y H:m"}} </th>
+	  {% endfor %}
+	</tr>
+	<tr>
+	  <th></th>
+	  <th>{{user}}</th>
+	  {% for checklist in previous_checklists %}
+	  <th> {{checklist.created_by}} </th>
+	{% endfor %}
+      </thead>
+
+      <tbody>
+	<tr>
+	  <td>Passed</td>
+	  <td></td>
+	  {% for checklist in previous_checklists %}
+	  <td><img src="{{STATIC_URL}}images/icons/{% if checklist.passed %}tick{% else %}cross{% endif %}.png"/>
+	  </td>
+	  {% endfor %}
+	</tr>
+	<tr>
+	  <td colspan="99"></td>
+	</tr>
+	<tr>
+	  <td>Were yesterday's issues reviewed?</td>
+	  <td>{{form.has_reviewed_previous_days_issues}}</td>
+	  {% for checklist in previous_checklists %}
+	  <td><img src="{{STATIC_URL}}images/icons/{% if checklist.has_reviewed_previous_days_issues %}tick{% else %}cross{% endif %}.png"/></td>
+	  {% endfor %}
+	</tr>
+	<tr>
+	  <td>Does today's issues descriptions have testable steps?</td>
+	  <td>{{form.description_has_testable}}</td>
+	  {% for checklist in previous_checklists %}
+	  <td><img src="{{STATIC_URL}}images/icons/{% if checklist.description_has_testable %}tick{% else %}cross{% endif %}.png"/></td>
+	  {% endfor %}
+	</tr>
+	<tr>
+	  <td>Have the descriptions for todays issues been reviewed with the developer?</td>
+	  <td>{{form.has_reviewed_description_for_todays_issues}}</td>
+	  {% for checklist in previous_checklists %}
+	  <td><img src="{{STATIC_URL}}images/icons/{% if checklist.has_reviewed_description_for_todays_issues %}tick{% else %}cross{% endif %}.png"/></td>
+	  {% endfor %}
+	</tr>
+	<tr>
+	  <td>Are the estimates for any developer wildly inaccurate based on actual time spent?</td>
+	  <td>{{form.are_the_estimates_wildly_out}}</td>
+	  {% for checklist in previous_checklists %}
+	  <td><img src="{{STATIC_URL}}images/icons/{% if checklist.are_the_estimates_wildly_out %}tick{% else %}cross{% endif %}.png"/></td>
+	  {% endfor %}
+	</tr>
+	
+	<tr>
+	  <td></td>
+	  <td>      
+            <input class="btn btn-primary" type='submit' name='submit' value='Save' onclick='imp.submit_popup_form(this); return false;' />
+	  </td>
+	</tr>
+
+      </tbody>
+    </table>
+
+</div>
