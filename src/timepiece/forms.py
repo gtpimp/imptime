@@ -26,7 +26,7 @@ from timepiece.lookups import ProjectLookup, QuickLookup
 from timepiece.lookups import UserLookup, BusinessLookup
 
 from timepiece.models import Project, Business, Entry, Activity, UserProfile, Attribute, Location, Activity, Feature, Issue, BusinessPermissions, BusinessComment
-from timepiece.models import ProjectHours, Salary, CalendarEvent
+from timepiece.models import ProjectHours, Salary, CalendarEvent, TrafficChecklist
 from timepiece.fields import UserModelChoiceField
 from django.contrib.auth.models import User
 from timepiece import models as timepiece
@@ -152,6 +152,9 @@ class EditPersonPermission(forms.ModelForm):
         self.fields['can_view_calendar'].widget.attrs['class'] = 'medium-safe'
         self.fields['can_import_actual_hours'].widget.attrs['class'] = 'medium-safe'
         self.fields['can_edit_business_comments'].widget.attrs['class'] = 'medium-safe'
+        self.fields['can_do_dev_checklist'].widget.attrs['class'] = 'medium-safe'
+        self.fields['can_do_traffic_checklist'].widget.attrs['class'] = 'medium-safe'
+        self.fields['can_do_finance_checklist'].widget.attrs['class'] = 'medium-safe'
 
         self.fields['can_edit_permissions'].widget.attrs['class'] = 'unsafe'
         self.fields['can_toggle_graphs'].widget.attrs['class'] = 'unsafe'
@@ -1442,3 +1445,9 @@ class BusinessCommentForm(forms.ModelForm):
             data['comment'] = data['new_value']
 
         return data
+
+class TrafficChecklistForm(forms.ModelForm):
+    class Meta:
+        model = TrafficChecklist
+        exclude = ['project', 'created_at', 'created_by', 'passed']
+

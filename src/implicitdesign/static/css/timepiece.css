@@ -10406,3 +10406,7 @@ tr.clickable {
     margin-right: 20px;
     color: #121212;
 }
+
+.checklist table td {
+    text-align:left;
+}

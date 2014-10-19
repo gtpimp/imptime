@@ -1,8 +1,0 @@
-Core Contributors
-
-* Derek Stegelman
-
-Contributors/Code Grabs
-
-* Scott Torborg - github.com/storborg
-* Twitter Boilerplate 2.0.2

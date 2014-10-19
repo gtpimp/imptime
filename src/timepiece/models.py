@@ -288,6 +288,10 @@ class BusinessPermissions(models.Model):
     can_import_actual_hours = models.BooleanField(default=False, verbose_name="Can Import Actual Hours")
     can_edit_business_comments = models.BooleanField(default=False, verbose_name="Can edit project comments")
 
+    can_do_dev_checklist = models.BooleanField(default=False, verbose_name="Do dev checklist")
+    can_do_traffic_checklist = models.BooleanField(default=False, verbose_name="Traffic checklist")
+    can_do_finance_checklist = models.BooleanField(default=False, verbose_name="Finance checklist")
+
     can_edit_permissions = models.BooleanField(default=False, verbose_name="Can Edit Permissions")
     can_toggle_graphs = models.BooleanField(default=False, verbose_name="Can Toggle Graphs")
     can_edit_project_detail = models.BooleanField(default=False, verbose_name="Can Edit Sprint Detail")
@@ -348,10 +352,14 @@ class BusinessPermissions(models.Model):
         return self.user.is_superuser or self.can_edit_ctc_billable_rates or self.user.has_perm('timepiece.belongs_to_all_projects')
     @property
     def has_view_ctc_billable_rates(self):
+        """ means the section containing costs like billable or ctc. 
+            Doesn't confer ctc viewing by itself, 
+            a users needs to have 'has_view_ctc_rates' too.  """
         return self.user.is_superuser or self.can_view_ctc_billable_rates or self.user.has_perm('timepiece.belongs_to_all_projects')
 
     @property
     def has_view_ctc_rates(self):
+        """ means specifically can view the ctc rates.  """
         return self.user.is_superuser or self.can_view_ctc_rates or self.user.has_perm('timepiece.belongs_to_all_projects')
 
     @property
@@ -416,6 +424,18 @@ class BusinessPermissions(models.Model):
     @property
     def has_edit_business_comments(self):
         return self.user.is_superuser or self.can_edit_business_comments or self.user.has_perm('timepiece.belongs_to_all_projects')
+
+    @property
+    def has_do_dev_checklist(self):
+        return self.user.is_superuser or self.can_do_dev_checklist or self.user.has_perm('timepiece.belongs_to_all_projects')
+
+    @property
+    def has_do_traffic_checklist(self):
+        return self.user.is_superuser or self.can_do_traffic_checklist or self.user.has_perm('timepiece.belongs_to_all_projects')
+
+    @property
+    def has_do_finance_checklist(self):
+        return self.user.is_superuser or self.can_do_finance_checklist or self.user.has_perm('timepiece.belongs_to_all_projects')
 
     @property
     def has_view_documents(self):
@@ -2817,3 +2837,56 @@ class CalendarEvent(models.Model):
         return c
 
     
+class TrafficChecklist(models.Model):
+    
+    project = models.ForeignKey(Project, null=False, blank=True)
+    have_made_new_staging_release_today = models.BooleanField(default=False, blank=True, verbose_name="has there been a new release to the client's staging server today?")
+    has_incoming_issues_created = models.BooleanField(default=False, blank=True, verbose_name="have issues been created for all client emails (for this project), and are they in the 'incoming' sprint?")
+    are_all_issues_estimated = models.BooleanField(default=False, blank=True, verbose_name="have all previous issues from the incoming sprint been estimated?")
+    have_incoming_issues_beenallocated = models.BooleanField(default=False, blank=True, verbose_name="have all previous issues from the incoming sprint been allocated to an actual sprint?")
+    is_requote_required = models.BooleanField(default=False, blank=True, verbose_name="have any changes to existing sprints, which may have caused a re-quote to be required, been reviewed?")
+    have_pending_requotes_been_sent = models.BooleanField(default=False, blank=True, verbose_name="have any pending re-quotes been sent?")
+    is_quote_required = models.BooleanField(default=False, blank=True, verbose_name="are there any quotes on this new sprint which need to be sent?")
+    have_all_new_quotes_been_sent = models.BooleanField(default=False, blank=True, verbose_name="have all quotes for new sprints been sent?")
+    has_existing_quotes_waiting_for_acceptance = models.BooleanField(default=False, blank=True, verbose_name="are there any existing quotes for this project which are waiting for acceptance?")
+    has_existing_quoted_accepted = models.BooleanField(default=False, blank=True, verbose_name="have all existing quotes for this project been accepted?")
+    has_sprints_to_invoice = models.BooleanField(default=False, blank=True, verbose_name="can any sprints be invoiced?")
+    has_issues_for_testing = models.BooleanField(default=False, blank=True, verbose_name="are there issues which can be tested?")
+    has_deadline_been_set = models.BooleanField(default=False, blank=True, verbose_name="is the deadline for handing this sprint for client testing set?")
+    is_deadline_clear_to_client = models.BooleanField(default=False, blank=True, verbose_name="is the deadline clear with the client?")
+    has_communicated_with_client_this_week = models.BooleanField(default=False, blank=True, verbose_name="has the client had any communication during this week?")
+    all_calendar_entries_assigned_per_developer = models.BooleanField(default=False, blank=True, verbose_name="is the total required time per developer assigned to the calendar for this sprint?")
+
+    comments = models.TextField(null=True, blank=True)
+
+    passed = models.BooleanField(default=False, blank=True)
+
+    created_by = models.ForeignKey(User, null=False, blank=False, related_name='traffic_checklist_created_by')
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    def save(self, *args, **kwargs):
+
+        failed_states = [ x for x in [ self.have_made_new_staging_release_today,
+                                       self.has_incoming_issues_created,
+                                       self.are_all_issues_estimated,
+                                       self.have_incoming_issues_beenallocated,
+                                       self.is_requote_required,
+                                       self.have_pending_requotes_been_sent,
+                                       self.is_quote_required,
+                                       self.have_all_new_quotes_been_sent,
+                                       self.has_existing_quotes_waiting_for_acceptance,
+                                       self.has_existing_quoted_accepted,
+                                       self.has_sprints_to_invoice,
+                                       self.has_issues_for_testing,
+                                       self.has_deadline_been_set,
+                                       self.is_deadline_clear_to_client,
+                                       self.has_communicated_with_client_this_week,
+                                       self.all_calendar_entries_assigned_per_developer ] if not x ]
+
+        passed = len(failed_states)==0
+        if self.passed != passed:
+            self.passed = passed
+        super(TrafficChecklist, self).save(*args, **kwargs)
+
+    def __unicode__(self):
+        return "%s %s" % (self.created_by, self.created_at)
