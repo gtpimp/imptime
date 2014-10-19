@@ -1,2 +1,84 @@
-Finance Checklist
+{% load humanize %}
+{% load timepiece_tags %}
+{% load bootstrap_toolkit %}
 
+<div class="checklist">
+  <h1>{{project.business.name}} - {{project.name}}</h1>
+  <h2>Finance Checklist</h2>
+
+  {{msg}}
+
+  <form class="form-horizontal" action="{% url 'finance_checklist' project.id %}" method="post" accept-charset="utf-8">
+    {% csrf_token %}
+    {{ form.errors }}
+
+    <table>
+
+      <thead>
+	<tr>
+	  <th> </th>
+	  <th>today</th>
+	  {% for checklist in previous_checklists %}
+	  <th> {{checklist.created_at|date:"d M Y H:m"}} </th>
+	  {% endfor %}
+	</tr>
+	<tr>
+	  <th></th>
+	  <th>{{user}}</th>
+	  {% for checklist in previous_checklists %}
+	  <th> {{checklist.created_by}} </th>
+	{% endfor %}
+      </thead>
+
+      <tbody>
+	<tr>
+	  <td>Passed</td>
+	  <td></td>
+	  {% for checklist in previous_checklists %}
+	  <td><img src="{{STATIC_URL}}images/icons/{% if checklist.passed %}tick{% else %}cross{% endif %}.png"/>
+	  </td>
+	  {% endfor %}
+	</tr>
+	<tr>
+	  <td colspan="99"></td>
+	</tr>
+	<tr>
+	  <td>Does the sprint have a valid budget? Current value is R{{project.budget}}</td>
+	  <td>{{form.has_valid_budget}}</td>
+	  {% for checklist in previous_checklists %}
+	  <td><img src="{{STATIC_URL}}images/icons/{% if checklist.has_valid_budget %}tick{% else %}cross{% endif %}.png"/></td>
+	  {% endfor %}
+	</tr>
+	<tr>
+	  <td>Does every user in the sprint have a valid and correct rate?</td>
+	  <td>{{form.are_rates_correct}}</td>
+	  {% for checklist in previous_checklists %}
+	  <td><img src="{{STATIC_URL}}images/icons/{% if checklist.are_rates_correct %}tick{% else %}cross{% endif %}.png"/></td>
+	  {% endfor %}
+	</tr>
+	<tr>
+	  <td>Is the sprint currently within budget?</td>
+	  <td>{{form.is_currently_under_budget}}</td>
+	  {% for checklist in previous_checklists %}
+	  <td><img src="{{STATIC_URL}}images/icons/{% if checklist.is_currently_under_budget %}tick{% else %}cross{% endif %}.png"/></td>
+	  {% endfor %}
+	</tr>
+	<tr>
+	  <td>is the projected cost within budget?</td>
+	  <td>{{form.is_projected_cost_in_budget}}</td>
+	  {% for checklist in previous_checklists %}
+	  <td><img src="{{STATIC_URL}}images/icons/{% if checklist.is_projected_cost_in_budget %}tick{% else %}cross{% endif %}.png"/></td>
+	  {% endfor %}
+	</tr>
+	
+	<tr>
+	  <td></td>
+	  <td>      
+            <input class="btn btn-primary" type='submit' name='submit' value='Save' onclick='imp.submit_popup_form(this); return false;' />
+	  </td>
+	</tr>
+
+      </tbody>
+    </table>
+
+</div>

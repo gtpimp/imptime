@@ -2918,3 +2918,31 @@ class DevChecklist(models.Model):
 
     def __unicode__(self):
         return "%s %s" % (self.created_by, self.created_at)
+
+class FinanceChecklist(models.Model):
+    project = models.ForeignKey(Project, null=False, blank=True)
+
+
+    has_valid_budget = models.BooleanField(default=False, blank=True, verbose_name="does the sprint have a valid budget?")
+    is_currently_under_budget = models.BooleanField(default=False, blank=True, verbose_name="is the sprint currently within budget?")
+    is_projected_cost_in_budget = models.BooleanField(default=False, blank=True, verbose_name="is the projected cost within budget?")
+    are_rates_correct = models.BooleanField(default=False, blank=True, verbose_name="does every user in the sprint have a valid and correct rate?")
+
+    comments = models.TextField(null=True, blank=True)
+    passed = models.BooleanField(default=False, blank=True)
+    created_by = models.ForeignKey(User, null=False, blank=False, related_name='finance_checklist_created_by')
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    def save(self, *args, **kwargs):
+
+        failed_states = [ x for x in [ self.does_have_budget,
+                                       self.is_currently_under_budget,
+                                       self.is_projected_cost_in_budget ] if not x ]
+
+        passed = len(failed_states)==0
+        if self.passed != passed:
+            self.passed = passed
+        super(DevChecklist, self).save(*args, **kwargs)
+
+    def __unicode__(self):
+        return "%s %s" % (self.created_by, self.created_at)
