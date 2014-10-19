@@ -3,7 +3,7 @@
 FILENAME="timesheet_`date +%Y%m%d`_0230.pgdump"
 ANONYMISED_FILENAME="timesheet_`date +%Y%m%d`_0230_anonymised.pgdump"
 
-LOCAL_BACKUP_PATH=/home/gtp/id/website/impwebsite/db_backups
+LOCAL_BACKUP_PATH=/home/gtp/id/imptime/db_backups
 DB_NAME="implicitdesign"
 
 echo "Fetching latest backup..."
@@ -17,7 +17,7 @@ echo "Importing db"
 sudo su - postgres -c "pg_restore -d ${DB_NAME} ${LOCAL_BACKUP_PATH}/${FILENAME}"
 
 echo "Sanitising db"
-cd ~/id/website/impwebsite/
+cd ~/id/imptime/
 . ./venv/bin/activate
 cd src
 python manage.py shell < /home/gtp/id/website/impwebsite/scripts/anonymise_rates.py

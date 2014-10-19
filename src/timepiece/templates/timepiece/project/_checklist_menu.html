@@ -1,0 +1,29 @@
+{% load timepiece_tags %}
+<li>
+  <a href="#" onclick="$(this).parent().find('ul').toggle(); return false">Checklists</a>
+  <ul style="display:none" class="submenu">
+
+    {% has_permission has_do_finance_checklist project.business %}
+    <li>
+      <a href="#" onclick="imp.popup_page('{% url 'finance_checklist' project.id %}'); return false;">
+	Finance
+      </a>
+    </li>
+    {% end_permission %}
+    {% has_permission has_do_dev_checklist project.business %}
+    <li>
+      <a href="#" onclick="imp.popup_page('{% url 'dev_checklist' project.id %}'); return false;">
+	Dev
+      </a>
+    </li>
+    {% end_permission %}
+    {% has_permission has_do_traffic_checklist project.business %}
+    <li>
+      <a href="#" onclick="imp.popup_page('{% url 'traffic_checklist' project.id %}'); return false;">
+	Traffic
+      </a>
+    </li>
+    {% end_permission %}
+  </ul>
+
+</li>

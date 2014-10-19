@@ -1435,8 +1435,8 @@ def _sum_user_totals(users_and_hours, totals=None):
             add_total('revenue')
             add_total('billed')
 
-            _business_totals['ctc_rate'] = float(_business_totals['revenue']) / float(_business_totals['hours'])
-            _business_totals['billed_rate'] = float(_business_totals['billed'])  / float(_business_totals['hours'])
+            _business_totals['ctc_rate'] = float(_business_totals['revenue']) / (float(_business_totals['hours']) or 1)
+            _business_totals['billed_rate'] = float(_business_totals['billed'])  / (float(_business_totals['hours']) or 1)
     return totals
 
 def _business_total(projects, start_time=None, end_time=None):
@@ -5182,4 +5182,34 @@ def show_business_history(request, business_id, template="timepiece/project/busi
 
     context['business'] = business
     context['history'] = timepiece.BusinessHistory.for_business(business)
+    return render_to_response(template, context, context_instance=RequestContext(request))
+
+@login_required
+def finance_checklist(request, project_id, template="timepiece/project/finance_checklist.html", context=None):
+    context = context or {}
+    project = timepiece.Project.objects.get(pk=project_id)
+    bp = timepiece.BusinessPermissions.for_user(request.user, project.business)
+    if not (bp.has_do_finance_checklist and bp.has_view_ctc_billable_rates and bp.has_view_ctc_rates):
+        return HttpResponse("Sorry, you don't have access to the finance checklist")
+
+    return render_to_response(template, context, context_instance=RequestContext(request))
+
+@login_required
+def traffic_checklist(request, project_id, template="timepiece/project/traffic_checklist.html", context=None):
+    context = context or {}
+    project = timepiece.Project.objects.get(pk=project_id)
+    bp = timepiece.BusinessPermissions.for_user(request.user, project.business)
+    if not bp.has_do_traffic_checklist:
+        return HttpResponse("Sorry, you don't have access to the traffic checklist")
+
+    return render_to_response(template, context, context_instance=RequestContext(request))
+
+@login_required
+def dev_checklist(request, project_id, template="timepiece/project/dev_checklist.html", context=None):
+    context = context or {}
+    project = timepiece.Project.objects.get(pk=project_id)
+    bp = timepiece.BusinessPermissions.for_user(request.user, project.business)
+    if not bp.has_do_dev_checklist:
+        return HttpResponse("Sorry, you don't have access to the dev checklist")
+
     return render_to_response(template, context, context_instance=RequestContext(request))
