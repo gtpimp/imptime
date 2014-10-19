@@ -23,7 +23,7 @@ django-appconf==0.5
 django-bootstrap-toolkit==2.12.1
 django-bootstrap3==2.5.6
 django-celery==2.5.5
--e git+https://github.com/charettes/django-colorful.git@e885fcccd89b997d5e6d3b7436be39c5516f85f1#egg=django_colorful-dev
+-e git+https://github.com/charettes/django-colorful.git#egg=django_colorful-dev
 django-compressor==1.1.2
 django-crispy-forms==1.1.4
 django-debug-toolbar==0.9.4
@@ -70,7 +70,7 @@ smmap==0.8.2
 sorl-thumbnail==11.12
 ssh==1.8.0
 tlslite==0.4.6
--e git+https://github.com/jdunck/python-unicodecsv.git@c5d8ae68758dd48d8a776214080caa88bc036644#egg=unicodecsv-0.9.4
+-e git+https://github.com/jdunck/python-unicodecsv.git#egg=unicodecsv-0.9.4
 vobject==0.8.1c
 wsgiref==0.1.2
 xhtml2pdf==0.0.5
