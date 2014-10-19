@@ -2499,6 +2499,7 @@ class Issue(models.Model):
            ( "discuss with client", "discuss with client"),
            ( 'dev unclear', 'dev unclear'),
            ( 'duplicate', 'duplicate'),
+           ( "internal_qa_done", "internal_qa_done"),
            ( 'tested', 'tested'),
            ( 'task done', 'task done'),
            ( 'bug', 'bug'),

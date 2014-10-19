@@ -105,7 +105,8 @@ def edit_invoice(request, invoice_id, template="invoicing/edit_invoice.html", co
     context = context or {}
     invoice = models.Invoice.objects.get(pk=invoice_id)
 
-    was_locked = invoice.locked
+    #was_locked = invoice.locked
+    was_locked = False
 
     bp = _get_best_bp(request, invoice)
     if not bp.has_edit_invoices:
@@ -115,9 +116,9 @@ def edit_invoice(request, invoice_id, template="invoicing/edit_invoice.html", co
     items_formset = invoice_item_formset(request.POST or None, queryset = invoice.items_in_order, prefix='items')
     payments_formset = invoice_payment_formset(request.POST or None, queryset = invoice.payments.all().order_by("paid_at"), prefix='payments')
 
-    if request.POST and was_locked and not request.user.has_perm('invoicing.can_unlock_invoices'):
-        messages.error(request, "Save failed, the invoice is locked")
-        return HttpResponseRedirect(reverse('invoicing:edit_invoice', kwargs={'invoice_id':invoice.id}))
+    # if request.POST and was_locked and not request.user.has_perm('invoicing.can_unlock_invoices'):
+    #     messages.error(request, "Save failed, the invoice is locked")
+    #     return HttpResponseRedirect(reverse('invoicing:edit_invoice', kwargs={'invoice_id':invoice.id}))
 
     if not was_locked and form.is_valid() and items_formset.is_valid() and payments_formset.is_valid():
         invoice = form.save()
