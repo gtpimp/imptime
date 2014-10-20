@@ -34,9 +34,9 @@
 
 
 		    {% has_permission has_do_traffic_checklist project.business %}
-		    {% if not project.has_recent_traffic_checklist %}
+		    {% if not project.business.has_recent_traffic_checklist %}
 		    <img src="{{STATIC_URL}}images/timepiece/icons/bullet_red.png"/>
-		    {% elif project.has_recent_passed_traffic_checklist %}
+		    {% elif project.business.has_recent_passed_traffic_checklist %}
 		    <img src="{{STATIC_URL}}images/timepiece/icons/bullet_green.png"/>
 		    {% else %}
 		    <img src="{{STATIC_URL}}images/timepiece/icons/bullet_orange.png"/>
@@ -44,9 +44,9 @@
 		    {% end_permission %}
 
 		    {% has_permission has_do_dev_checklist project.business %}
-		    {% if not project.has_recent_dev_checklist %}
+		    {% if not project.business.has_recent_dev_checklist %}
 		    <img src="{{STATIC_URL}}images/timepiece/icons/bullet_red.png"/>
-		    {% elif not project.has_recent_passed_dev_checklist %}
+		    {% elif not project.business.has_recent_passed_dev_checklist %}
 		    <img src="{{STATIC_URL}}images/timepiece/icons/bullet_orange.png"/>
 		    {% else %}
 		    <img src="{{STATIC_URL}}images/timepiece/icons/bullet_green.png"/>
@@ -54,9 +54,9 @@
 		    {% end_permission %}
 
 		    {% has_permission has_do_finance_checklist project.business %}
-		    {% if not project.has_recent_finance_checklist %}
+		    {% if not project.business.has_recent_finance_checklist %}
 		    <img src="{{STATIC_URL}}images/timepiece/icons/bullet_red.png"/>
-		    {% elif not project.has_recent_passed_finance_checklist %}
+		    {% elif not project.business.has_recent_passed_finance_checklist %}
 		    <img src="{{STATIC_URL}}images/timepiece/icons/bullet_orange.png"/>
 		    {% else %}
 		    <img src="{{STATIC_URL}}images/timepiece/icons/bullet_green.png"/>

@@ -99,44 +99,26 @@ class Business(models.Model):
     objects = QuerySetManager(BusinessQuerySet)
     sync_with = models.CharField( max_length=100, blank=True, null=True, choices=( ("jira", "Jira"), ) )
 
-    def projects_requiring_checklists(self):
-        return Project.objects.filter(business=self, status2__in=(Project.active_states()+Project.pending_states()+Project.hopeful_states()))
-
     def has_recent_passed_traffic_checklist(self):
-        for project in self.projects_requiring_checklists():
-            if not project.has_recent_passed_traffic_checklist:
-                return False
-        return True
+        cl = TrafficChecklist.objects.filter(project__business=self).order_by("-pk").first()
+        return cl is not None and cl.passed
 
     def has_recent_traffic_checklist(self):
-        for project in self.projects_requiring_checklists:
-            if not project.has_recent_traffic_checklist:
-                return False
-        return True
-
-    def has_recent_passed_dev_checklist(self):
-        for project in self.projects_requiring_checklists():
-            if not project.has_recent_passed_dev_checklist:
-                return False
-        return True
+        return TrafficChecklist.objects.filter(project__business=self).filter(created_at__gte=datetime.datetime.today()-timedelta(days=settings.NUM_DAYS_FOR_SPRINT_CHECKLISTS)).count() > 0
 
     def has_recent_dev_checklist(self):
-        for project in self.projects_requiring_checklists:
-            if not project.has_recent_dev_checklist:
-                return False
-        return True
+        return DevChecklist.objects.filter(project__business=self).filter(created_at__gte=datetime.datetime.today()-timedelta(days=settings.NUM_DAYS_FOR_SPRINT_CHECKLISTS)).count() > 0
 
-    def has_recent_passed_finance_checklist(self):
-        for project in self.projects_requiring_checklists():
-            if not project.has_recent_passed_finance_checklist:
-                return False
-        return True
+    def has_recent_passed_dev_checklist(self):
+        cl = DevChecklist.objects.filter(project__business=self).order_by("-pk").first()
+        return cl is not None and cl.passed
 
     def has_recent_finance_checklist(self):
-        for project in self.projects_requiring_checklists:
-            if not project.has_recent_finance_checklist:
-                return False
-        return True
+        return FinanceChecklist.objects.filter(project__business=self).filter(created_at__gte=datetime.datetime.today()-timedelta(days=settings.NUM_DAYS_FOR_SPRINT_CHECKLISTS)).count() > 0
+
+    def has_recent_passed_finance_checklist(self):
+        cl = FinanceChecklist.objects.filter(project__business=self).order_by("-pk").first()
+        return cl is not None and cl.passed
 
     def get_ordered_projects(self):
         all_business_projects = Project.objects.filter(business=self)

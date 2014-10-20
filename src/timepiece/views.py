@@ -5205,7 +5205,7 @@ def finance_checklist(request, project_id, template="timepiece/project/finance_c
 
     context['form'] = form
     context['project'] = project
-    context['previous_checklists'] = timepiece.FinanceChecklist.objects.all().filter(project=project).order_by("-pk")[:5]
+    context['previous_checklists'] = timepiece.FinanceChecklist.objects.all().filter(project__business=project.business).order_by("-pk")[:5]
     return render_to_response(template, context, context_instance=RequestContext(request))
 
 
@@ -5230,7 +5230,7 @@ def traffic_checklist(request, project_id, template="timepiece/project/traffic_c
 
     context['form'] = form
     context['project'] = project
-    context['previous_checklists'] = timepiece.TrafficChecklist.objects.all().filter(project=project).order_by("-pk")[:5]
+    context['previous_checklists'] = timepiece.TrafficChecklist.objects.all().filter(project__business=project.business).order_by("-pk")[:5]
     return render_to_response(template, context, context_instance=RequestContext(request))
 
 @login_required
@@ -5254,5 +5254,5 @@ def dev_checklist(request, project_id, template="timepiece/project/dev_checklist
 
     context['form'] = form
     context['project'] = project
-    context['previous_checklists'] = timepiece.DevChecklist.objects.all().filter(project=project).order_by("-pk")[:5]
+    context['previous_checklists'] = timepiece.DevChecklist.objects.all().filter(project__business=project.business).order_by("-pk")[:5]
     return render_to_response(template, context, context_instance=RequestContext(request))
