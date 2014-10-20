@@ -1462,16 +1462,16 @@ class BusinessCommentForm(forms.ModelForm):
 class TrafficChecklistForm(forms.ModelForm):
     class Meta:
         model = TrafficChecklist
-        exclude = ['project', 'created_at', 'created_by', 'passed']
+        exclude = ['business', 'created_at', 'created_by', 'passed']
 
 class DevChecklistForm(forms.ModelForm):
     class Meta:
         model = DevChecklist
-        exclude = ['project', 'created_at', 'created_by', 'passed']
+        exclude = ['business', 'created_at', 'created_by', 'passed']
 
 
 class FinanceChecklistForm(forms.ModelForm):
     class Meta:
         model = FinanceChecklist
-        exclude = ['project', 'created_at', 'created_by', 'passed']
+        exclude = ['business', 'created_at', 'created_by', 'passed']
     

@@ -276,7 +276,7 @@ imp.popup_text = function(text) {
     
 };
 
-imp.submit_popup_form = function(el, callback) {
+imp.submit_popup_form = function(el, callback, args) {
     
     var form_el = $(el).parents("form");
     var on_done = imp.loading("saving");
@@ -289,6 +289,11 @@ imp.submit_popup_form = function(el, callback) {
 		if( callback && !callback(data) ) {
 		    auto_close = false;
 		}
+		if ( args && args.display_results ) {
+		    auto_close = false;
+		    $(".project_card_dialog_container").find(".dialog_content")[0].innerHTML=data;
+		}
+
 		if ( auto_close ) {
 		    $(".project_card_dialog_container").dialog('close');
 		}

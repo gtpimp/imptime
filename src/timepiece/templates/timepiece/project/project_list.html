@@ -41,10 +41,6 @@
 <div class="splitter">
   <div class="splitter-left">
 
-    <a class="business_mini_menu card_menu" onclick="imp.projects.show_business_comments(event,'{% url 'business_comments' business_id=business.id %}');return false" href='#' target_id=".issue_detail" business_id="{{ business.id }}">
-                Project comments
-    </a>
-
       {% ifequal business.sync_with "jira" %}
 	<div class="jira_info">
 	  Jira is enabled for this project. Support is limited to:

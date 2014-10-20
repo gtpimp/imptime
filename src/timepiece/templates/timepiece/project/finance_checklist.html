@@ -3,12 +3,12 @@
 {% load bootstrap_toolkit %}
 
 <div class="checklist">
-  <h1>{{project.business.name}} - {{project.name}}</h1>
+  <h1>{{business.name}}</h1>
   <h2>Finance Checklist</h2>
 
   {{msg}}
 
-  <form class="form-horizontal" action="{% url 'finance_checklist' project.id %}" method="post" accept-charset="utf-8">
+  <form class="form-horizontal" action="{% url 'finance_checklist' business.id %}" method="post" accept-charset="utf-8">
     {% csrf_token %}
     {{ form.errors }}
 
@@ -43,7 +43,7 @@
 	  <td colspan="99"></td>
 	</tr>
 	<tr>
-	  <td>Does the sprint have a valid budget? Current value is R{{project.budget}}</td>
+	  <td>Does each open sprint have a valid budget?</td>
 	  <td>{{form.has_valid_budget}}</td>
 	  {% for checklist in previous_checklists %}
 	  <td><img src="{{STATIC_URL}}images/icons/{% if checklist.has_valid_budget %}tick{% else %}cross{% endif %}.png"/></td>
@@ -74,7 +74,7 @@
 	<tr>
 	  <td></td>
 	  <td>      
-            <input class="btn btn-primary" type='submit' name='submit' value='Create' onclick='imp.submit_popup_form(this); return false;' />
+            <input class="btn btn-primary" type='submit' name='submit' value='Create' onclick='imp.submit_popup_form(this, null, {display_results:true}); return false;' />
 	  </td>
 	</tr>
 

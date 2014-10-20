@@ -33,38 +33,7 @@
                     {% endcomment %}
 
 
-		    {% has_permission has_do_traffic_checklist project.business %}
-		    {% if not project.business.has_recent_traffic_checklist %}
-		    <img src="{{STATIC_URL}}images/timepiece/icons/bullet_red.png"/>
-		    {% elif project.business.has_recent_passed_traffic_checklist %}
-		    <img src="{{STATIC_URL}}images/timepiece/icons/bullet_green.png"/>
-		    {% else %}
-		    <img src="{{STATIC_URL}}images/timepiece/icons/bullet_orange.png"/>
-		    {% endif %}
-		    {% end_permission %}
-
-		    {% has_permission has_do_dev_checklist project.business %}
-		    {% if not project.business.has_recent_dev_checklist %}
-		    <img src="{{STATIC_URL}}images/timepiece/icons/bullet_red.png"/>
-		    {% elif not project.business.has_recent_passed_dev_checklist %}
-		    <img src="{{STATIC_URL}}images/timepiece/icons/bullet_orange.png"/>
-		    {% else %}
-		    <img src="{{STATIC_URL}}images/timepiece/icons/bullet_green.png"/>
-		    {% endif %}
-		    {% end_permission %}
-
-		    {% has_permission has_do_finance_checklist project.business %}
-		    {% if not project.business.has_recent_finance_checklist %}
-		    <img src="{{STATIC_URL}}images/timepiece/icons/bullet_red.png"/>
-		    {% elif not project.business.has_recent_passed_finance_checklist %}
-		    <img src="{{STATIC_URL}}images/timepiece/icons/bullet_orange.png"/>
-		    {% else %}
-		    <img src="{{STATIC_URL}}images/timepiece/icons/bullet_green.png"/>
-		    {% endif %}
-		    {% end_permission %}
-
-
-                    <a {% has_permission has_edit_project_states project.business %}onclick="return imp.edit_project_status(event, this);"{% end_permission %} url_for_update="{% url 'project_status_update' project.id %}" url_for_options="{% url 'allowed_project_stati' project.id %}" selected_value="{{project.status}}">
+		    <a {% has_permission has_edit_project_states project.business %}onclick="return imp.edit_project_status(event, this);"{% end_permission %} url_for_update="{% url 'project_status_update' project.id %}" url_for_options="{% url 'allowed_project_stati' project.id %}" selected_value="{{project.status}}">
                       <span class="readonly_value"> 
                         ({{ project.status2 }})
                       </span>

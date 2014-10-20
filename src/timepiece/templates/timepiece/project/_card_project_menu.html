@@ -77,7 +77,6 @@
       {% end_permission %}
       {% endcomment %}
 
-      {% include "timepiece/project/_checklist_menu.html" %}
       {% has_permission has_edit_budget project.business %}
       <li>
         <a href="#" onclick="imp.popup_page('{% url 'edit_project_budget' project.id %}'); return false;">

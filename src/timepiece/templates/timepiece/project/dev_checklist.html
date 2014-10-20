@@ -3,12 +3,12 @@
 {% load bootstrap_toolkit %}
 
 <div class="checklist">
-  <h1>{{project.business.name}} - {{project.name}}</h1>
+  <h1>{{business.name}}</h1>
   <h2>Dev Checklist</h2>
 
   {{msg}}
 
-  <form class="form-horizontal" action="{% url 'dev_checklist' project.id %}" method="post" accept-charset="utf-8">
+  <form class="form-horizontal" action="{% url 'dev_checklist' business.id %}" method="post" accept-charset="utf-8">
     {% csrf_token %}
     {{ form.errors }}
 
@@ -74,7 +74,7 @@
 	<tr>
 	  <td></td>
 	  <td>      
-            <input class="btn btn-primary" type='submit' name='submit' value='Create' onclick='imp.submit_popup_form(this); return false;' />
+            <input class="btn btn-primary" type='submit' name='submit' value='Create' onclick='imp.submit_popup_form(this, null, {display_results:true}); return false;' />
 	  </td>
 	</tr>
 

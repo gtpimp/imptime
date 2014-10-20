@@ -5210,42 +5210,17 @@ def show_business_history(request, business_id, template="timepiece/project/busi
     return render_to_response(template, context, context_instance=RequestContext(request))
 
 @login_required
-def finance_checklist(request, project_id, template="timepiece/project/finance_checklist.html", context=None):
+def traffic_checklist(request, business_id, template="timepiece/project/traffic_checklist.html", context=None):
     context = context or {}
-    project = timepiece.Project.objects.get(pk=project_id)
-    bp = timepiece.BusinessPermissions.for_user(request.user, project.business)
-    if not (bp.has_do_finance_checklist and bp.has_view_ctc_billable_rates and bp.has_view_ctc_rates):
-        return HttpResponse("Sorry, you don't have access to the finance checklist")
-
-    form = timepiece_forms.FinanceChecklistForm(request.POST or None)
-    if form.is_valid():
-        checklist = form.save(commit=False)
-        checklist.project = project
-        checklist.created_by=request.user
-        checklist.save()
-
-        # ajax call, don't redirect
-        form = timepiece_forms.FinanceChecklistForm()
-        context['msg'] = 'Saved'
-
-    context['form'] = form
-    context['project'] = project
-    context['previous_checklists'] = timepiece.FinanceChecklist.objects.all().filter(project__business=project.business).order_by("-pk")[:5]
-    return render_to_response(template, context, context_instance=RequestContext(request))
-
-
-@login_required
-def traffic_checklist(request, project_id, template="timepiece/project/traffic_checklist.html", context=None):
-    context = context or {}
-    project = timepiece.Project.objects.get(pk=project_id)
-    bp = timepiece.BusinessPermissions.for_user(request.user, project.business)
+    business = timepiece.Business.objects.get(pk=business_id)
+    bp = timepiece.BusinessPermissions.for_user(request.user, business)
     if not bp.has_do_traffic_checklist:
         return HttpResponse("Sorry, you don't have access to the traffic checklist")
 
     form = timepiece_forms.TrafficChecklistForm(request.POST or None)
     if form.is_valid():
         checklist = form.save(commit=False)
-        checklist.project = project
+        checklist.business = business
         checklist.created_by=request.user
         checklist.save()
 
@@ -5254,22 +5229,22 @@ def traffic_checklist(request, project_id, template="timepiece/project/traffic_c
         context['msg'] = 'Saved'
 
     context['form'] = form
-    context['project'] = project
-    context['previous_checklists'] = timepiece.TrafficChecklist.objects.all().filter(project__business=project.business).order_by("-pk")[:5]
+    context['business'] = business
+    context['previous_checklists'] = timepiece.TrafficChecklist.objects.all().filter(business=business).order_by("-pk")[:5]
     return render_to_response(template, context, context_instance=RequestContext(request))
 
 @login_required
-def dev_checklist(request, project_id, template="timepiece/project/dev_checklist.html", context=None):
+def dev_checklist(request, business_id, template="timepiece/project/dev_checklist.html", context=None):
     context = context or {}
-    project = timepiece.Project.objects.get(pk=project_id)
-    bp = timepiece.BusinessPermissions.for_user(request.user, project.business)
+    business = timepiece.Business.objects.get(pk=business_id)
+    bp = timepiece.BusinessPermissions.for_user(request.user, business)
     if not bp.has_do_dev_checklist:
         return HttpResponse("Sorry, you don't have access to the dev checklist")
 
     form = timepiece_forms.DevChecklistForm(request.POST or None)
     if form.is_valid():
         checklist = form.save(commit=False)
-        checklist.project = project
+        checklist.business = business
         checklist.created_by=request.user
         checklist.save()
 
@@ -5278,7 +5253,31 @@ def dev_checklist(request, project_id, template="timepiece/project/dev_checklist
         context['msg'] = 'Saved'
 
     context['form'] = form
-    context['project'] = project
-    context['previous_checklists'] = timepiece.DevChecklist.objects.all().filter(project__business=project.business).order_by("-pk")[:5]
+    context['business'] = business
+    context['previous_checklists'] = timepiece.DevChecklist.objects.all().filter(business=business).order_by("-pk")[:5]
+    return render_to_response(template, context, context_instance=RequestContext(request))
+
+@login_required
+def finance_checklist(request, business_id, template="timepiece/project/finance_checklist.html", context=None):
+    context = context or {}
+    business = timepiece.Business.objects.get(pk=business_id)
+    bp = timepiece.BusinessPermissions.for_user(request.user, business)
+    if not (bp.has_do_finance_checklist and bp.has_view_ctc_billable_rates and bp.has_view_ctc_rates):
+        return HttpResponse("Sorry, you don't have access to the finance checklist")
+
+    form = timepiece_forms.FinanceChecklistForm(request.POST or None)
+    if form.is_valid():
+        checklist = form.save(commit=False)
+        checklist.business = business
+        checklist.created_by=request.user
+        checklist.save()
+
+        # ajax call, don't redirect
+        form = timepiece_forms.FinanceChecklistForm()
+        context['msg'] = 'Saved'
+
+    context['form'] = form
+    context['business'] = business
+    context['previous_checklists'] = timepiece.FinanceChecklist.objects.all().filter(business=business).order_by("-pk")[:5]
     return render_to_response(template, context, context_instance=RequestContext(request))
 

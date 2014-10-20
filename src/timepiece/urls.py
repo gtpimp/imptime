@@ -617,9 +617,9 @@ urlpatterns = patterns('',
                        url(r'^business_comments/(?P<business_id>.*)', views.business_comments, {}, name='business_comments'),
                        url(r'^show_business_history/(?P<business_id>.*)', views.show_business_history, {}, name='show_business_history'),
 
-                       url(r'^checklist/finance/(?P<project_id>.*)', views.finance_checklist, {}, name='finance_checklist'),
-                       url(r'^checklist/dev/(?P<project_id>.*)', views.dev_checklist, {}, name='dev_checklist'),
-                       url(r'^checklist/traffic/(?P<project_id>.*)', views.traffic_checklist, {}, name='traffic_checklist'),
+                       url(r'^checklist/finance/(?P<business_id>.*)', views.finance_checklist, {}, name='finance_checklist'),
+                       url(r'^checklist/dev/(?P<business_id>.*)', views.dev_checklist, {}, name='dev_checklist'),
+                       url(r'^checklist/traffic/(?P<business_id>.*)', views.traffic_checklist, {}, name='traffic_checklist'),
 
                        url(r'^project/(?P<project_id>\d+)/edit_project_deadlines/$', views.edit_project_deadlines, {}, name='edit_project_deadlines'),
 

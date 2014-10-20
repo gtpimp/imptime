@@ -100,24 +100,24 @@ class Business(models.Model):
     sync_with = models.CharField( max_length=100, blank=True, null=True, choices=( ("jira", "Jira"), ) )
 
     def has_recent_passed_traffic_checklist(self):
-        cl = TrafficChecklist.objects.filter(project__business=self).order_by("-pk").first()
+        cl = TrafficChecklist.objects.filter(business=self).order_by("-pk").first()
         return cl is not None and cl.passed
 
     def has_recent_traffic_checklist(self):
-        return TrafficChecklist.objects.filter(project__business=self).filter(created_at__gte=datetime.datetime.today()-timedelta(days=settings.NUM_DAYS_FOR_SPRINT_CHECKLISTS)).count() > 0
+        return TrafficChecklist.objects.filter(business=self).filter(created_at__gte=datetime.datetime.today()-timedelta(days=settings.NUM_DAYS_FOR_SPRINT_CHECKLISTS)).count() > 0
 
     def has_recent_dev_checklist(self):
-        return DevChecklist.objects.filter(project__business=self).filter(created_at__gte=datetime.datetime.today()-timedelta(days=settings.NUM_DAYS_FOR_SPRINT_CHECKLISTS)).count() > 0
+        return DevChecklist.objects.filter(business=self).filter(created_at__gte=datetime.datetime.today()-timedelta(days=settings.NUM_DAYS_FOR_SPRINT_CHECKLISTS)).count() > 0
 
     def has_recent_passed_dev_checklist(self):
-        cl = DevChecklist.objects.filter(project__business=self).order_by("-pk").first()
+        cl = DevChecklist.objects.filter(business=self).order_by("-pk").first()
         return cl is not None and cl.passed
 
     def has_recent_finance_checklist(self):
-        return FinanceChecklist.objects.filter(project__business=self).filter(created_at__gte=datetime.datetime.today()-timedelta(days=settings.NUM_DAYS_FOR_SPRINT_CHECKLISTS)).count() > 0
+        return FinanceChecklist.objects.filter(business=self).filter(created_at__gte=datetime.datetime.today()-timedelta(days=settings.NUM_DAYS_FOR_SPRINT_CHECKLISTS)).count() > 0
 
     def has_recent_passed_finance_checklist(self):
-        cl = FinanceChecklist.objects.filter(project__business=self).order_by("-pk").first()
+        cl = FinanceChecklist.objects.filter(business=self).order_by("-pk").first()
         return cl is not None and cl.passed
 
     def get_ordered_projects(self):
@@ -681,27 +681,6 @@ class Project(models.Model):
         except Rate.MultipleObjectsReturned:
             rate = Rate.objects.filter(project=self, user=user).order_by("user__id")[0]
             return rate
-
-    def has_recent_passed_traffic_checklist(self):
-        cl = TrafficChecklist.objects.filter(project=self).order_by("-pk").first()
-        return cl is not None and cl.passed
-
-    def has_recent_traffic_checklist(self):
-        return TrafficChecklist.objects.filter(project=self).filter(created_at__gte=datetime.datetime.today()-timedelta(days=settings.NUM_DAYS_FOR_SPRINT_CHECKLISTS)).count() > 0
-
-    def has_recent_passed_dev_checklist(self):
-        cl = DevChecklist.objects.filter(project=self).order_by("-pk").first()
-        return cl is not None and cl.passed
-
-    def has_recent_dev_checklist(self):
-        return DevChecklist.objects.filter(project=self).filter(created_at__gte=datetime.datetime.today()-timedelta(days=settings.NUM_DAYS_FOR_SPRINT_CHECKLISTS)).count() > 0
-
-    def has_recent_passed_finance_checklist(self):
-        cl = FinanceChecklist.objects.filter(project=self).order_by("-pk").first()
-        return cl is not None and cl.passed
-
-    def has_recent_finance_checklist(self):
-        return FinanceChecklist.objects.filter(project=self).filter(created_at__gte=datetime.datetime.today()-timedelta(days=settings.NUM_DAYS_FOR_SPRINT_CHECKLISTS)).count() > 0
 
     def __init__(self, *args, **kwargs):
         super(Project, self).__init__(*args, **kwargs)
@@ -2903,7 +2882,7 @@ class CalendarEvent(models.Model):
     
 class TrafficChecklist(models.Model):
     
-    project = models.ForeignKey(Project, null=False, blank=True)
+    business = models.ForeignKey(Business, null=False, blank=True)
     have_made_new_staging_release_today = models.BooleanField(default=False, blank=True, verbose_name="has there been a new release to the client's staging server today?")
     has_incoming_issues_created = models.BooleanField(default=False, blank=True, verbose_name="have issues been created for all client emails (for this project), and are they in the 'incoming' sprint?")
     are_all_issues_estimated = models.BooleanField(default=False, blank=True, verbose_name="have all previous issues from the incoming sprint been estimated?")
@@ -2957,7 +2936,7 @@ class TrafficChecklist(models.Model):
 
 
 class DevChecklist(models.Model):
-    project = models.ForeignKey(Project, null=False, blank=True)
+    business = models.ForeignKey(Business, null=False, blank=True)
 
     has_reviewed_previous_days_issues = models.BooleanField(default=False, blank=True, verbose_name="Were yesterday's issues reviewed?")
     description_has_testable = models.BooleanField(default=False, blank=True, verbose_name="Does today's issues descriptions have testable steps?")
@@ -2985,7 +2964,7 @@ class DevChecklist(models.Model):
         return "%s %s" % (self.created_by, self.created_at)
 
 class FinanceChecklist(models.Model):
-    project = models.ForeignKey(Project, null=False, blank=True)
+    business = models.ForeignKey(Business, null=False, blank=True)
 
 
     has_valid_budget = models.BooleanField(default=False, blank=True, verbose_name="does the sprint have a valid budget?")

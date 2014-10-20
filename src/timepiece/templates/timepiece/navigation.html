@@ -214,6 +214,16 @@
                         </li>
                     {% endif %}
 
+			
+			<li>
+			  <a onclick="imp.projects.show_business_comments(event,'{% url 'business_comments' business_id=business.id %}');return false" href='#' target_id=".issue_detail" business_id="{{ business.id }}">
+			    Project comments
+			  </a>
+			</li>
+			<li class="dropdown">
+			  {% include "timepiece/project/_checklist_menu.html" %}
+			</li>
+
                     {% for name, links in extra_nav.items %}
                         <li class="dropdown">
                             <a href="#" class="dropdown-toggle" data-toggle="dropdown">{{ name }} <b class="caret"></b></a>
