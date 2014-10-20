@@ -563,10 +563,10 @@ class Project(models.Model):
     objects = QuerySetManager(ProjectQuerySet)
     interface_plugin_number = models.CharField(max_length=255, null=True, blank=True) #eg jira
 
-    start_dev_at = models.DateField(null=True)
-    start_internal_qa_at = models.DateField(null=True)
-    start_client_qa_at = models.DateField(null=True)
-    invoice_at = models.DateField(null=True)
+    start_dev_at = models.DateField(null=True, blank=True)
+    start_internal_qa_at = models.DateField(null=True, blank=True)
+    start_client_qa_at = models.DateField(null=True, blank=True)
+    invoice_at = models.DateField(null=True, blank=True)
 
     colour = RGBColorField(null=True, blank=True)
 
