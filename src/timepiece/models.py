@@ -166,6 +166,15 @@ class Business(models.Model):
                 users = User.objects.none()
         return users
 
+    def get_traffic_owners(self):
+        return [x.user for x in BusinessPermissions.objects.filter(business=self, can_do_traffic_checklist=True)]
+
+    def get_dev_owners(self):
+        return [x.user for x in BusinessPermissions.objects.filter(business=self, can_do_dev_checklist=True)]
+
+    def get_finance_owners(self):
+        return [x.user for x in BusinessPermissions.objects.filter(business=self, can_do_finance_checklist=True)]
+
     def get_all_business_permissions(self,user=None):
         permissions_qs = BusinessPermissions.objects.filter(business=self)        
         if user is not None:
