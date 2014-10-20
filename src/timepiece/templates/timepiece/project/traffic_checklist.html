@@ -127,7 +127,7 @@
 	  {% endfor %}
 	</tr>
 	<tr>
-	  <td>Is the deadline for handing this sprint for client testing known?</td>
+	  <td>Is the deadlines for the next active sprint(s) set?</td>
 	  <td>{{form.has_deadline_been_set}}</td>
 	  {% for checklist in previous_checklists %}
 	  <td><img src="{{STATIC_URL}}images/icons/{% if checklist.has_deadline_been_set %}tick{% else %}cross{% endif %}.png"/></td>
@@ -158,7 +158,7 @@
 	<tr>
 	  <td></td>
 	  <td>      
-            <input class="btn btn-primary" type='submit' name='submit' value='Save' onclick='imp.submit_popup_form(this); return false;' />
+            <input class="btn btn-primary" type='submit' name='submit' value='Create' onclick='imp.submit_popup_form(this); return false;' />
 	  </td>
 	</tr>
 

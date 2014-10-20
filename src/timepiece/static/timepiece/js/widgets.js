@@ -10,9 +10,7 @@ jQuery(function($) {
         'dateFormat': 'mm/dd/yy'
     });
 
-    $('#id_week_start').datepicker({
-        'dateFormat': 'yy-mm-dd'
-    });
+    $('#id_week_start').datepicker({'dateFormat': 'yy-mm-dd'});
 
     $('.popover-toggle').popover({
         'title': function() {

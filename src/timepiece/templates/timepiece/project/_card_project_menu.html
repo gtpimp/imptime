@@ -86,6 +86,14 @@
       </li>
       {% end_permission %}
 
+      {% has_permission has_edit_deadlines project.business %}
+      <li>
+        <a href="#" onclick="imp.popup_page('{% url 'edit_project_deadlines' project.id %}'); return false;">
+          Deadlines
+        </a>
+      </li>
+      {% end_permission %}
+
       {% has_permission has_edit_invoices project.business %}
       <li>
         <a href="#" onclick="window.open('{% url 'invoice_list' %}?project_id={{project.id}}')">

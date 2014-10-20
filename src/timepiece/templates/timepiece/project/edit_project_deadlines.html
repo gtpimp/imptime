@@ -1,0 +1,29 @@
+{% load bootstrap_toolkit %}
+
+<div class="edit_budget">
+
+  <h1>{{project.business.name}} - {{project.name}}</h1>
+  <h2>Edit Sprint Deadlines</h2>
+
+  <div class="row-fluid">
+    <div class="span12">
+
+      <br style="clear: both;" />
+
+      <form id="create-edit-project" class="form-horizontal" action="{% url 'edit_project_deadlines' project.id %}" method="post" accept-charset="utf-8">
+                {% csrf_token %}
+		{{ project_form.errors }}
+                {{ project_form|as_bootstrap:"horizontal" }}
+        <div class="form-actions">
+          <input class="btn btn-primary" type='submit' name='submit' value='Save' onclick='imp.submit_popup_form(this); return false;' />
+        </div>
+      </form>
+    </div>
+  </div>
+
+
+</div>
+
+<script>
+$('.datepicker').datepicker({'dateFormat': 'yy-mm-dd'});
+</script>

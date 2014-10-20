@@ -325,6 +325,8 @@ class BusinessPermissions(models.Model):
     can_edit_permissions = models.BooleanField(default=False, verbose_name="Can Edit Permissions")
     can_toggle_graphs = models.BooleanField(default=False, verbose_name="Can Toggle Graphs")
     can_edit_project_detail = models.BooleanField(default=False, verbose_name="Can Edit Sprint Detail")
+    can_edit_deadlines = models.BooleanField(default=False,verbose_name = "Can Edit Deadlines ")
+    can_view_deadlines = models.BooleanField(default=False,verbose_name = "Can View Deadlines ")
     can_edit_budget = models.BooleanField(default=False,verbose_name = "Can Edit Budget ")
     can_view_budget = models.BooleanField(default=False, verbose_name="Can View Budget")
     can_edit_invoices = models.BooleanField(default=False, verbose_name="Can Edit Invoices")
@@ -369,6 +371,13 @@ class BusinessPermissions(models.Model):
     @property
     def has_view_budget(self):
         return self.user.is_superuser or self.can_view_budget or self.user.has_perm('timepiece.belongs_to_all_projects')
+
+    @property
+    def has_edit_deadlines(self):
+        return self.user.is_superuser or self.can_edit_deadlines or self.user.has_perm('timepiece.belongs_to_all_projects')
+    @property
+    def has_view_deadlines(self):
+        return self.user.is_superuser or self.can_view_deadlines or self.user.has_perm('timepiece.belongs_to_all_projects')
     
     @property
     def has_edit_invoices(self):
@@ -553,6 +562,11 @@ class Project(models.Model):
     order = models.BigIntegerField(null=True,blank=True)
     objects = QuerySetManager(ProjectQuerySet)
     interface_plugin_number = models.CharField(max_length=255, null=True, blank=True) #eg jira
+
+    start_dev_at = models.DateField(null=True)
+    start_internal_qa_at = models.DateField(null=True)
+    start_client_qa_at = models.DateField(null=True)
+    invoice_at = models.DateField(null=True)
 
     colour = RGBColorField(null=True, blank=True)
 

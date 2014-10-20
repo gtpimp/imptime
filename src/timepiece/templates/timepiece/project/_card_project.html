@@ -102,6 +102,31 @@
   </table>
   <hr/>
 
+
+  {% has_permission has_view_deadlines project.business %}
+    <h1>Deadlines</h1>
+    <table>
+      <tr>
+	<td>Start Dev</td>
+	<td>{{project.start_dev_at|date:'D d-M-Y'}}</td>
+      </tr>
+      <tr>
+	<td>Start Internal QA</td>
+	<td>{{project.start_internal_qa_at|date:'D d-M-Y'}}</td>
+      </tr>
+      <tr>
+	<td>Start Client QA</td>
+	<td>{{project.start_client_qa_at|date:'D d-M-Y'}}</td>
+      </tr>
+      <tr>
+	<td>Start Dev</td>
+	<td>{{project.invoice_at|date:'D d-M-Y'}}</td>
+      </tr>
+    </table>
+    <hr/>
+  {% end_permission %}
+
+
   <h1>Current Sprint Details</h1>
   <table>
     <thead>

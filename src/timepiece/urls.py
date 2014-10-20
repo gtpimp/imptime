@@ -621,5 +621,7 @@ urlpatterns = patterns('',
                        url(r'^checklist/dev/(?P<project_id>.*)', views.dev_checklist, {}, name='dev_checklist'),
                        url(r'^checklist/traffic/(?P<project_id>.*)', views.traffic_checklist, {}, name='traffic_checklist'),
 
+                       url(r'^project/(?P<project_id>\d+)/edit_project_deadlines/$', views.edit_project_deadlines, {}, name='edit_project_deadlines'),
+
 
 )

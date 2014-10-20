@@ -817,6 +817,20 @@ class ProjectBudgetForm(forms.ModelForm):
             'budget',
         )
 
+class ProjectDeadlineForm(forms.ModelForm):
+    class Meta:
+        model = timepiece.Project
+        fields = (
+            'start_dev_at', 'start_internal_qa_at', 'start_client_qa_at', 'invoice_at'
+        )
+
+    def __init__(self, *args, **kwargs):
+        super(ProjectDeadlineForm, self).__init__(*args, **kwargs)
+        self.fields['start_dev_at'].widget.attrs['class'] = 'datepicker'
+        self.fields['start_internal_qa_at'].widget.attrs['class'] = 'datepicker'
+        self.fields['start_client_qa_at'].widget.attrs['class'] = 'datepicker'
+        self.fields['invoice_at'].widget.attrs['class'] = 'datepicker'
+
 class IssueStatusForm(forms.ModelForm):
     class Meta:
         model = timepiece.Issue

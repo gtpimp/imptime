@@ -1717,6 +1717,31 @@ def edit_project_budget(request, project_id=None):
     }
     return context
 
+@render_with('timepiece/project/edit_project_deadlines.html')
+@login_required
+def edit_project_deadlines(request, project_id=None):
+    project = get_object_or_404(timepiece.Project, pk=project_id) \
+        if project_id else None
+
+    has_edit_deadlines = timepiece.BusinessPermissions.objects.get_or_create(business=project.business, user=request.user)[0].has_edit_deadlines
+    if not has_edit_deadlines:
+        raise PermissionDenied
+
+    form = timepiece_forms.ProjectDeadlineForm(request.POST or None, instance=project)
+    if request.POST and form.is_valid():
+        project = form.save()
+        project.save()
+        return HttpResponse("done")
+
+    context = {
+        'project': project,
+        'project_form': form,
+        'business': project.business,
+        'current_business': project.business,
+        'current_user': request.user,
+    }
+    return context
+
 
 @permission_required('timepiece.view_payroll_summary')
 @render_with('timepiece/time-sheet/reports/summary.html')
@@ -5256,3 +5281,4 @@ def dev_checklist(request, project_id, template="timepiece/project/dev_checklist
     context['project'] = project
     context['previous_checklists'] = timepiece.DevChecklist.objects.all().filter(project__business=project.business).order_by("-pk")[:5]
     return render_to_response(template, context, context_instance=RequestContext(request))
+
