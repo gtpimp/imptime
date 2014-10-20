@@ -3,10 +3,17 @@
   <a href="#" onclick="$(this).parent().find('ul').toggle(); return false">Checklists</a>
   <ul style="display:none" class="submenu">
 
-    {% has_permission has_do_finance_checklist project.business %}
+    {% has_permission has_do_traffic_checklist project.business %}
     <li>
-      <a href="#" onclick="imp.popup_page('{% url 'finance_checklist' project.id %}'); return false;">
-	Finance
+      <a href="#" onclick="imp.popup_page('{% url 'traffic_checklist' project.id %}'); return false;">
+	Traffic
+	{% if not project.has_recent_traffic_checklist %}
+	<img src="{{STATIC_URL}}images/timepiece/icons/bullet_red.png"/>
+	{% elif not project.has_recent_passed_traffic_checklist %}
+	<img src="{{STATIC_URL}}images/timepiece/icons/bullet_orange.png"/>
+	{% else %}
+	<img src="{{STATIC_URL}}images/timepiece/icons/bullet_green.png"/>
+	{% endif %}
       </a>
     </li>
     {% end_permission %}
@@ -14,13 +21,27 @@
     <li>
       <a href="#" onclick="imp.popup_page('{% url 'dev_checklist' project.id %}'); return false;">
 	Dev
+	{% if not project.has_recent_dev_checklist %}
+	<img src="{{STATIC_URL}}images/timepiece/icons/bullet_red.png"/>
+	{% elif not project.has_recent_passed_dev_checklist %}
+	<img src="{{STATIC_URL}}images/timepiece/icons/bullet_orange.png"/>
+	{% else %}
+	<img src="{{STATIC_URL}}images/timepiece/icons/bullet_green.png"/>
+	{% endif %}
       </a>
     </li>
     {% end_permission %}
-    {% has_permission has_do_traffic_checklist project.business %}
+    {% has_permission has_do_finance_checklist project.business %}
     <li>
-      <a href="#" onclick="imp.popup_page('{% url 'traffic_checklist' project.id %}'); return false;">
-	Traffic
+      <a href="#" onclick="imp.popup_page('{% url 'finance_checklist' project.id %}'); return false;">
+	Finance
+	{% if not project.has_recent_finance_checklist %}
+	<img src="{{STATIC_URL}}images/timepiece/icons/bullet_red.png"/>
+	{% elif not project.has_recent_passed_finance_checklist %}
+	<img src="{{STATIC_URL}}images/timepiece/icons/bullet_orange.png"/>
+	{% else %}
+	<img src="{{STATIC_URL}}images/timepiece/icons/bullet_green.png"/>
+	{% endif %}
       </a>
     </li>
     {% end_permission %}

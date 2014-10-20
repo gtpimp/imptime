@@ -36,6 +36,43 @@
         <a href="{% url 'show_permissions' business.id %}">Permissions</a>
       </td>
       {% endif %}
+
+      {% if name == 'active' or name == 'pending' or name == 'hopeful' %}
+      {% has_permission has_do_traffic_checklist %}
+      <td>
+	  {% if not business.has_recent_traffic_checklist %}
+	    <img src="{{STATIC_URL}}images/timepiece/icons/bullet_red.png"/>
+	  {% elif not business.has_recent_passed_traffic_checklist %}
+	    <img src="{{STATIC_URL}}images/timepiece/icons/bullet_orange.png"/>
+	  {% else %}
+	    <img src="{{STATIC_URL}}images/timepiece/icons/bullet_green.png"/>
+	  {% endif %}
+      </td>
+      {% end_permission %}
+      {% has_permission has_do_dev_checklist %}
+      <td>
+	{% if not business.has_recent_dev_checklist %}
+	  <img src="{{STATIC_URL}}images/timepiece/icons/bullet_red.png"/>
+	{% elif not business.has_recent_passed_dev_checklist %}
+	  <img src="{{STATIC_URL}}images/timepiece/icons/bullet_orange.png"/>
+	{% else %}
+	  <img src="{{STATIC_URL}}images/timepiece/icons/bullet_green.png"/>
+	{% endif %}
+      </td>
+      {% end_permission %}
+      {% has_permission has_do_finance_checklist %}
+      <td>
+	{% if not business.has_recent_finance_checklist %}
+	  <img src="{{STATIC_URL}}images/timepiece/icons/bullet_red.png"/>
+	{% elif not business.has_recent_passed_finance_checklist %}
+	  <img src="{{STATIC_URL}}images/timepiece/icons/bullet_orange.png"/>
+	{% else %}
+	  <img src="{{STATIC_URL}}images/timepiece/icons/bullet_green.png"/>
+	{% endif %}
+      </td>
+      {% end_permission %}
+      {% endif %}
+
     </tr>
   {% end_permission %}
 {% endfor %}

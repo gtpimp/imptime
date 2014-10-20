@@ -13,6 +13,23 @@
      <div class="row-fluid">
 
        <table class='table no_borders project_list'>
+
+	 <thead>
+	   <td></td>
+	   <td></td>
+	   <td></td>
+	   <td></td>
+	   {% has_permission has_do_traffic_checklist %}
+	   <td>Traffic</td>
+	   {% end_perission %}
+	   {% has_permission has_do_dev_checklist %}
+	   <td>Dev</td>
+	   {% end_permission %}
+	   {% has_permission has_do_finance_checklist %}
+	   <td>Finance</td>
+	   {% end_permission %}
+	 </thead>
+
          <tbody>
 
            {% if active_businesses|length > 0 %}

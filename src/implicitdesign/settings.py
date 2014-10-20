@@ -22,6 +22,8 @@ REDMINE_DB_MAPPING = [ { 'username' : 'test',
 TRAFFIC_LEVEL_YELLOW = 70
 TRAFFIC_LEVEL_RED = 90
 
+NUM_DAYS_FOR_SPRINT_CHECKLISTS=2
+
 # This setting is intentionally left invalid
 DATABASES = {
     'default': {

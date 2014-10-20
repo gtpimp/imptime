@@ -99,6 +99,45 @@ class Business(models.Model):
     objects = QuerySetManager(BusinessQuerySet)
     sync_with = models.CharField( max_length=100, blank=True, null=True, choices=( ("jira", "Jira"), ) )
 
+    def projects_requiring_checklists(self):
+        return Project.objects.filter(business=self, status2__in=(Project.active_states()+Project.pending_states()+Project.hopeful_states()))
+
+    def has_recent_passed_traffic_checklist(self):
+        for project in self.projects_requiring_checklists():
+            if not project.has_recent_passed_traffic_checklist:
+                return False
+        return True
+
+    def has_recent_traffic_checklist(self):
+        for project in self.projects_requiring_checklists:
+            if not project.has_recent_traffic_checklist:
+                return False
+        return True
+
+    def has_recent_passed_dev_checklist(self):
+        for project in self.projects_requiring_checklists():
+            if not project.has_recent_passed_dev_checklist:
+                return False
+        return True
+
+    def has_recent_dev_checklist(self):
+        for project in self.projects_requiring_checklists:
+            if not project.has_recent_dev_checklist:
+                return False
+        return True
+
+    def has_recent_passed_finance_checklist(self):
+        for project in self.projects_requiring_checklists():
+            if not project.has_recent_passed_finance_checklist:
+                return False
+        return True
+
+    def has_recent_finance_checklist(self):
+        for project in self.projects_requiring_checklists:
+            if not project.has_recent_finance_checklist:
+                return False
+        return True
+
     def get_ordered_projects(self):
         all_business_projects = Project.objects.filter(business=self)
         
@@ -638,6 +677,26 @@ class Project(models.Model):
             rate = Rate.objects.filter(project=self, user=user).order_by("user__id")[0]
             return rate
 
+    def has_recent_passed_traffic_checklist(self):
+        cl = TrafficChecklist.objects.filter(project=self).order_by("-pk").first()
+        return cl is not None and cl.passed
+
+    def has_recent_traffic_checklist(self):
+        return TrafficChecklist.objects.filter(project=self).filter(created_at__gte=datetime.datetime.today()-timedelta(days=settings.NUM_DAYS_FOR_SPRINT_CHECKLISTS)).count() > 0
+
+    def has_recent_passed_dev_checklist(self):
+        cl = DevChecklist.objects.filter(project=self).order_by("-pk").first()
+        return cl is not None and cl.passed
+
+    def has_recent_dev_checklist(self):
+        return DevChecklist.objects.filter(project=self).filter(created_at__gte=datetime.datetime.today()-timedelta(days=settings.NUM_DAYS_FOR_SPRINT_CHECKLISTS)).count() > 0
+
+    def has_recent_passed_finance_checklist(self):
+        cl = FinanceChecklist.objects.filter(project=self).order_by("-pk").first()
+        return cl is not None and cl.passed
+
+    def has_recent_finance_checklist(self):
+        return FinanceChecklist.objects.filter(project=self).filter(created_at__gte=datetime.datetime.today()-timedelta(days=settings.NUM_DAYS_FOR_SPRINT_CHECKLISTS)).count() > 0
 
     def __init__(self, *args, **kwargs):
         super(Project, self).__init__(*args, **kwargs)
@@ -2936,14 +2995,15 @@ class FinanceChecklist(models.Model):
 
     def save(self, *args, **kwargs):
 
-        failed_states = [ x for x in [ self.does_have_budget,
+        failed_states = [ x for x in [ self.has_valid_budget,
+                                       self.are_rates_correct,
                                        self.is_currently_under_budget,
                                        self.is_projected_cost_in_budget ] if not x ]
 
         passed = len(failed_states)==0
         if self.passed != passed:
             self.passed = passed
-        super(DevChecklist, self).save(*args, **kwargs)
+        super(FinanceChecklist, self).save(*args, **kwargs)
 
     def __unicode__(self):
         return "%s %s" % (self.created_by, self.created_at)
