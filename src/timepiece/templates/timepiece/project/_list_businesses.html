@@ -8,34 +8,34 @@
         <a href="{% url 'business_issues' business.id %}">{{ business }}</a>
       </td>
       {% comment %}
-      {% has_permission has_edit_project_detail business %}
       <td>
+        {% has_permission has_edit_project_detail business %}
         <a href="{% url 'project_detail' business.id %}">Breakdown</a>
+        {% end_permission %}
       </td>
-      {% end_permission %}
       {% endcomment %}
 
       {% if business %}
         {% has_permission has_view_ctc_billable_rates business %}
-          {% has_permission has_view_invoices business %}
             <td>
+              {% has_permission has_view_invoices business %}
               <a target="_blank" href="{% url 'business_cost_summary' business.id %}">Cost summary</a>
+              {% end_permission %}
             </td>
-          {% end_permission %}
         {% end_permission %}
       {% endif %}
 
-      {% has_permission has_edit_project_detail business %}
       <td>
+        {% has_permission has_edit_project_detail business %}
         <a href="{% url 'view_business_documents' business.id %}">Documents</a>
+	{% end_permission %}
       </td>
-      {% end_permission %}
 
-      {% if user.is_superuser %}
       <td>
+        {% if user.is_superuser %}
         <a href="{% url 'show_permissions' business.id %}">Permissions</a>
+        {% endif %}
       </td>
-      {% endif %}
 
       {% if business and name == 'active' or name == 'pending' or name == 'hopeful' %}
       {% has_permission has_do_traffic_checklist business %}
