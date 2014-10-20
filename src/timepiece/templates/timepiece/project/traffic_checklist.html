@@ -43,91 +43,14 @@
 	  <td colspan="99"></td>
 	</tr>
 	<tr>
-	  <td>Has there been a new release to the client's staging server recently?</td>
-	  <td>{{form.have_made_new_staging_release_today}}</td>
+	  <td>Has the client had any communication recently?</td>
+	  <td>{{form.has_communicated_with_client_this_week}}</td>
 	  {% for checklist in previous_checklists %}
-	  <td><img src="{{STATIC_URL}}images/icons/{% if checklist.have_made_new_staging_release_today %}tick{% else %}cross{% endif %}.png"/></td>
+	  <td><img src="{{STATIC_URL}}images/icons/{% if checklist.has_communicated_with_client_this_week %}tick{% else %}cross{% endif %}.png"/></td>
 	  {% endfor %}
 	</tr>
 	<tr>
-	  <td>Have issues been created for all client emails?</td>
-	  <td>{{form.has_incoming_issues_created}}</td>
-	  {% for checklist in previous_checklists %}
-	  <td><img src="{{STATIC_URL}}images/icons/{% if checklist.has_incoming_issues_created %}tick{% else %}cross{% endif %}.png"/></td>
-	  {% endfor %}
-	</tr>
-	<tr>
-	  <td>Have all new issues been estimated?</td>
-	  <td>{{form.are_all_issues_estimated}}</td>
-	  {% for checklist in previous_checklists %}
-	  <td><img src="{{STATIC_URL}}images/icons/{% if checklist.are_all_issues_estimated %}tick{% else %}cross{% endif %}.png"/></td>
-	  {% endfor %}
-	</tr>
-	<tr>
-	  <td>Are all issues assigned to a sprint (ie moved out of incoming)?</td>
-	  <td>{{form.have_incoming_issues_beenallocated}}</td>
-	  {% for checklist in previous_checklists %}
-	  <td><img src="{{STATIC_URL}}images/icons/{% if checklist.have_incoming_issues_beenallocated %}tick{% else %}cross{% endif %}.png"/></td>
-	  {% endfor %}
-	</tr>
-	<tr>
-	  <td>If there have been changes to the sprint which may have caused a requote, have the affected issues been reviewed?</td>
-	  <td>{{form.is_requote_required}}</td>
-	  {% for checklist in previous_checklists %}
-	  <td><img src="{{STATIC_URL}}images/icons/{% if checklist.is_requote_required %}tick{% else %}cross{% endif %}.png"/></td>
-	  {% endfor %}
-	</tr>
-	<tr>
-	  <td>If there is a re-quote on the sprint, has it been sent to the client (if any)?</td>
-	  <td>{{form.have_pending_requotes_been_sent}}</td>
-	  {% for checklist in previous_checklists %}
-	  <td><img src="{{STATIC_URL}}images/icons/{% if checklist.have_pending_requotes_been_sent %}tick{% else %}cross{% endif %}.png"/></td>
-	  {% endfor %}
-	</tr>
-	<tr>
-	  <td>If this is a new sprint requiring quoting, has a quote been generated and checked (if any)?</td>
-	  <td>{{form.is_quote_required}}</td>
-	  {% for checklist in previous_checklists %}
-	  <td><img src="{{STATIC_URL}}images/icons/{% if checklist.is_quote_required %}tick{% else %}cross{% endif %}.png"/></td>
-	  {% endfor %}
-	</tr>
-	<tr>
-	  <td>Have all pending quotes for this sprint been sent (if any)?</td>
-	  <td>{{form.have_all_new_quotes_been_sent}}</td>
-	  {% for checklist in previous_checklists %}
-	  <td><img src="{{STATIC_URL}}images/icons/{% if checklist.have_all_new_quotes_been_sent %}tick{% else %}cross{% endif %}.png"/></td>
-	  {% endfor %}
-	</tr>
-	<tr>
-	  <td>Are there any quotes which are waiting for acceptance from the client?</td>
-	  <td>{{form.has_existing_quotes_waiting_for_acceptance}}</td>
-	  {% for checklist in previous_checklists %}
-	  <td><img src="{{STATIC_URL}}images/icons/{% if checklist.has_existing_quotes_waiting_for_acceptance %}tick{% else %}cross{% endif %}.png"/></td>
-	  {% endfor %}
-	</tr>
-	<tr>
-	  <td>Have all quotes from the client been accepted (if any)?</td>
-	  <td>{{form.has_existing_quoted_accepted}}</td>
-	  {% for checklist in previous_checklists %}
-	  <td><img src="{{STATIC_URL}}images/icons/{% if checklist.has_existing_quoted_accepted %}tick{% else %}cross{% endif %}.png"/></td>
-	  {% endfor %}
-	</tr>
-	<tr>
-	  <td>If this sprint complete, are there any unsent invoices for this sprint?</td>
-	  <td>{{form.has_sprints_to_invoice}}</td>
-	  {% for checklist in previous_checklists %}
-	  <td><img src="{{STATIC_URL}}images/icons/{% if checklist.has_sprints_to_invoice %}tick{% else %}cross{% endif %}.png"/></td>
-	  {% endfor %}
-	</tr>
-	<tr>
-	  <td>Are all dev_done issues being tested?</td>
-	  <td>{{form.has_issues_for_testing}}</td>
-	  {% for checklist in previous_checklists %}
-	  <td><img src="{{STATIC_URL}}images/icons/{% if checklist.has_issues_for_testing %}tick{% else %}cross{% endif %}.png"/></td>
-	  {% endfor %}
-	</tr>
-	<tr>
-	  <td>Is the deadlines for the next active sprint(s) set?</td>
+	  <td>Are the deadlines for the next active sprint(s) set?</td>
 	  <td>{{form.has_deadline_been_set}}</td>
 	  {% for checklist in previous_checklists %}
 	  <td><img src="{{STATIC_URL}}images/icons/{% if checklist.has_deadline_been_set %}tick{% else %}cross{% endif %}.png"/></td>
@@ -141,10 +64,52 @@
 	  {% endfor %}
 	</tr>
 	<tr>
-	  <td>Has the client had any communication recently (within the last 5 days)?</td>
-	  <td>{{form.has_communicated_with_client_this_week}}</td>
+	  <td>Has there been a new release to the client's staging server recently?</td>
+	  <td>{{form.have_made_new_staging_release_today}}</td>
 	  {% for checklist in previous_checklists %}
-	  <td><img src="{{STATIC_URL}}images/icons/{% if checklist.has_communicated_with_client_this_week %}tick{% else %}cross{% endif %}.png"/></td>
+	  <td><img src="{{STATIC_URL}}images/icons/{% if checklist.have_made_new_staging_release_today %}tick{% else %}cross{% endif %}.png"/></td>
+	  {% endfor %}
+	</tr>
+	<tr>
+	  <td>Have issues been created for all client emails (emails to traffic only)?</td>
+	  <td>{{form.has_incoming_issues_created}}</td>
+	  {% for checklist in previous_checklists %}
+	  <td><img src="{{STATIC_URL}}images/icons/{% if checklist.has_incoming_issues_created %}tick{% else %}cross{% endif %}.png"/></td>
+	  {% endfor %}
+	</tr>
+	<tr>
+	  <td>Have all quotes or estimates for hopeful sprints been sent to the client?</td>
+	  <td>{{form.have_all_new_quotes_been_sent}}</td>
+	  {% for checklist in previous_checklists %}
+	  <td><img src="{{STATIC_URL}}images/icons/{% if checklist.have_all_new_quotes_been_sent %}tick{% else %}cross{% endif %}.png"/></td>
+	  {% endfor %}
+	</tr>
+	<tr>
+	  <td>Tick if there are no quotes waiting acceptance from the client, or if the client has been followed up on recently</td>
+	  <td>{{form.has_existing_quotes_waiting_for_acceptance}}</td>
+	  {% for checklist in previous_checklists %}
+	  <td><img src="{{STATIC_URL}}images/icons/{% if checklist.has_existing_quotes_waiting_for_acceptance %}tick{% else %}cross{% endif %}.png"/></td>
+	  {% endfor %}
+	</tr>
+	<tr>
+	  <td>Have all newly accepted sprints been set to "in dev"?</td>
+	  <td>{{form.has_existing_quoted_accepted}}</td>
+	  {% for checklist in previous_checklists %}
+	  <td><img src="{{STATIC_URL}}images/icons/{% if checklist.has_existing_quoted_accepted %}tick{% else %}cross{% endif %}.png"/></td>
+	  {% endfor %}
+	</tr>
+	<tr>
+	  <td>Have all sprints that are fully tested and accepted by the client been set to 'can_be_invoiced'?</td>
+	  <td>{{form.has_sprints_to_invoice}}</td>
+	  {% for checklist in previous_checklists %}
+	  <td><img src="{{STATIC_URL}}images/icons/{% if checklist.has_sprints_to_invoice %}tick{% else %}cross{% endif %}.png"/></td>
+	  {% endfor %}
+	</tr>
+	<tr>
+	  <td>Is the testing of issues keeping up with new dev issues?</td>
+	  <td>{{form.has_issues_for_testing}}</td>
+	  {% for checklist in previous_checklists %}
+	  <td><img src="{{STATIC_URL}}images/icons/{% if checklist.has_issues_for_testing %}tick{% else %}cross{% endif %}.png"/></td>
 	  {% endfor %}
 	</tr>
 	<tr>
@@ -161,6 +126,27 @@
             <input class="btn btn-primary" type='submit' name='submit' value='Create' onclick="imp.submit_popup_form(this, null, {display_results:true}); return false;" />
 	  </td>
 	</tr>
+
+
+	{% comment %}
+	<tr>
+	  <td>Tick if no new issues have been added that require requoting, or if the quote has already been sent</td>
+	  <td>{{form.have_pending_requotes_been_sent}}</td>
+	  {% for checklist in previous_checklists %}
+	  <td><img src="{{STATIC_URL}}images/icons/{% if checklist.have_pending_requotes_been_sent %}tick{% else %}cross{% endif %}.png"/></td>
+	  {% endfor %}
+	</tr>
+	{% endcomment %}
+	{% comment %}
+	<tr>
+	  <td>Have all quotes for hopeful sprints been sent?</td>
+	  <td>{{form.is_quote_required}}</td>
+	  {% for checklist in previous_checklists %}
+	  <td><img src="{{STATIC_URL}}images/icons/{% if checklist.is_quote_required %}tick{% else %}cross{% endif %}.png"/></td>
+	  {% endfor %}
+	</tr>
+	{% endcomment %}
+
 
       </tbody>
     </table>

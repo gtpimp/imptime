@@ -50,24 +50,38 @@
 	  {% endfor %}
 	</tr>
 	<tr>
-	  <td>Does every user in the sprint have a valid and correct rate?</td>
+	  <td>Does every user in the project have a valid and correct rate for all open sprints?</td>
 	  <td>{{form.are_rates_correct}}</td>
 	  {% for checklist in previous_checklists %}
 	  <td><img src="{{STATIC_URL}}images/icons/{% if checklist.are_rates_correct %}tick{% else %}cross{% endif %}.png"/></td>
 	  {% endfor %}
 	</tr>
 	<tr>
-	  <td>Is the sprint currently within budget?</td>
+	  <td>Are all sprints currently within budget?</td>
 	  <td>{{form.is_currently_under_budget}}</td>
 	  {% for checklist in previous_checklists %}
 	  <td><img src="{{STATIC_URL}}images/icons/{% if checklist.is_currently_under_budget %}tick{% else %}cross{% endif %}.png"/></td>
 	  {% endfor %}
 	</tr>
 	<tr>
-	  <td>Is the projected cost within budget?</td>
+	  <td>Is the projected cost for all sprints currently within budget?</td>
 	  <td>{{form.is_projected_cost_in_budget}}</td>
 	  {% for checklist in previous_checklists %}
 	  <td><img src="{{STATIC_URL}}images/icons/{% if checklist.is_projected_cost_in_budget %}tick{% else %}cross{% endif %}.png"/></td>
+	  {% endfor %}
+	</tr>
+	<tr>
+	  <td>Have all invoices for sprints in state 'can_be_invoiced' (and that are due) been sent to the client?</td>
+	  <td>{{form.all_invoices_sent}}</td>
+	  {% for checklist in previous_checklists %}
+	  <td><img src="{{STATIC_URL}}images/icons/{% if checklist.all_invoices_sent %}tick{% else %}cross{% endif %}.png"/></td>
+	  {% endfor %}
+	</tr>
+	<tr>
+	  <td>Have all sprints been closed if they have been paid?</td>
+	  <td>{{form.all_sprints_closed}}</td>
+	  {% for checklist in previous_checklists %}
+	  <td><img src="{{STATIC_URL}}images/icons/{% if checklist.all_sprints_closed %}tick{% else %}cross{% endif %}.png"/></td>
 	  {% endfor %}
 	</tr>
 	

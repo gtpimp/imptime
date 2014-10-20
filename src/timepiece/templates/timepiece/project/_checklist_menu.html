@@ -2,83 +2,83 @@
 
 {% if business %}
 
-<a href="#" class="dropdown-toggle" data-toggle="dropdown">
-  {% has_permission has_do_traffic_checklist business %}
-  {% if not business.has_recent_traffic_checklist %}
-  <img src="{{STATIC_URL}}images/timepiece/icons/bullet_red.png"/>
-  {% elif business.has_recent_passed_traffic_checklist %}
-  <img src="{{STATIC_URL}}images/timepiece/icons/bullet_green.png"/>
-  {% else %}
-  <img src="{{STATIC_URL}}images/timepiece/icons/bullet_orange.png"/>
-  {% endif %}
-  {% end_permission %}
 
-  {% has_permission has_do_dev_checklist business %}
-  {% if not business.has_recent_dev_checklist %}
-  <img src="{{STATIC_URL}}images/timepiece/icons/bullet_red.png"/>
-  {% elif not business.has_recent_passed_dev_checklist %}
-  <img src="{{STATIC_URL}}images/timepiece/icons/bullet_orange.png"/>
-  {% else %}
-  <img src="{{STATIC_URL}}images/timepiece/icons/bullet_green.png"/>
-  {% endif %}
-  {% end_permission %}
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+    {% has_permission has_do_traffic_checklist business %}
+    {% if not business.has_recent_traffic_checklist %}
+    <img src="{{STATIC_URL}}images/timepiece/icons/bullet_red.png"/>
+    {% elif business.has_recent_passed_traffic_checklist %}
+    <img src="{{STATIC_URL}}images/timepiece/icons/bullet_green.png"/>
+    {% else %}
+    <img src="{{STATIC_URL}}images/timepiece/icons/bullet_orange.png"/>
+    {% endif %}
+    {% end_permission %}
 
-  {% has_permission has_do_finance_checklist business %}
-  {% if not business.has_recent_finance_checklist %}
-  <img src="{{STATIC_URL}}images/timepiece/icons/bullet_red.png"/>
-  {% elif not business.has_recent_passed_finance_checklist %}
-  <img src="{{STATIC_URL}}images/timepiece/icons/bullet_orange.png"/>
-  {% else %}
-  <img src="{{STATIC_URL}}images/timepiece/icons/bullet_green.png"/>
-  {% endif %}
-  {% end_permission %}
-  <b class="caret"></b>
-</a>
+    {% has_permission has_do_dev_checklist business %}
+    {% if not business.has_recent_dev_checklist %}
+    <img src="{{STATIC_URL}}images/timepiece/icons/bullet_red.png"/>
+    {% elif not business.has_recent_passed_dev_checklist %}
+    <img src="{{STATIC_URL}}images/timepiece/icons/bullet_orange.png"/>
+    {% else %}
+    <img src="{{STATIC_URL}}images/timepiece/icons/bullet_green.png"/>
+    {% endif %}
+    {% end_permission %}
 
-<ul class="dropdown-menu">
+    {% has_permission has_do_finance_checklist business %}
+    {% if not business.has_recent_finance_checklist %}
+    <img src="{{STATIC_URL}}images/timepiece/icons/bullet_red.png"/>
+    {% elif not business.has_recent_passed_finance_checklist %}
+    <img src="{{STATIC_URL}}images/timepiece/icons/bullet_orange.png"/>
+    {% else %}
+    <img src="{{STATIC_URL}}images/timepiece/icons/bullet_green.png"/>
+    {% endif %}
+    {% end_permission %}
+    <b class="caret"></b>
+  </a>
 
-  {% has_permission has_do_traffic_checklist business %}
-  <li>
-    <a href="#" onclick="imp.popup_page('{% url 'traffic_checklist' business.id %}'); return false;">
-      Traffic
-      {% if not business.has_recent_traffic_checklist %}
-      <img src="{{STATIC_URL}}images/timepiece/icons/bullet_red.png"/>(no recent checklist)
-      {% elif not business.has_recent_passed_traffic_checklist %}
-      <img src="{{STATIC_URL}}images/timepiece/icons/bullet_orange.png"/>(last checklist not passed)
-      {% else %}
-      <img src="{{STATIC_URL}}images/timepiece/icons/bullet_green.png"/>(recent checklist passed)
-      {% endif %}
-    </a>
-  </li>
-  {% end_permission %}
-  {% has_permission has_do_dev_checklist business %}
-  <li>
-    <a href="#" onclick="imp.popup_page('{% url 'dev_checklist' business.id %}'); return false;">
-      Dev
-      {% if not business.has_recent_dev_checklist %}
-      <img src="{{STATIC_URL}}images/timepiece/icons/bullet_red.png"/>(no recent checklist)
-      {% elif not business.has_recent_passed_dev_checklist %}
-      <img src="{{STATIC_URL}}images/timepiece/icons/bullet_orange.png"/>(last checklist not passed)
-      {% else %}
-      <img src="{{STATIC_URL}}images/timepiece/icons/bullet_green.png"/>(recent checklist passed)
-      {% endif %}
-    </a>
-  </li>
-  {% end_permission %}
-  {% has_permission has_do_finance_checklist business %}
-  <li>
-    <a href="#" onclick="imp.popup_page('{% url 'finance_checklist' business.id %}'); return false;">
-      Finance
-      {% if not business.has_recent_finance_checklist %}
-      <img src="{{STATIC_URL}}images/timepiece/icons/bullet_red.png"/>(no recent checklist)
-      {% elif not business.has_recent_passed_finance_checklist %}
-      <img src="{{STATIC_URL}}images/timepiece/icons/bullet_orange.png"/>(last checklist not passed)
-      {% else %}
-      <img src="{{STATIC_URL}}images/timepiece/icons/bullet_green.png"/>
-      {% endif %}
-    </a>
-  </li>
-  {% end_permission %}
-</ul>
+  <ul class="dropdown-menu">
 
+    {% has_permission has_do_traffic_checklist business %}
+    <li>
+      <a href="#" onclick="imp.popup_page('{% url 'traffic_checklist' business.id %}'); return false;">
+	Traffic
+	{% if not business.has_recent_traffic_checklist %}
+	<img src="{{STATIC_URL}}images/timepiece/icons/bullet_red.png"/>(no recent checklist)
+	{% elif not business.has_recent_passed_traffic_checklist %}
+	<img src="{{STATIC_URL}}images/timepiece/icons/bullet_orange.png"/>(last checklist not passed)
+	{% else %}
+	<img src="{{STATIC_URL}}images/timepiece/icons/bullet_green.png"/>(recent checklist passed)
+	{% endif %}
+      </a>
+    </li>
+    {% end_permission %}
+    {% has_permission has_do_dev_checklist business %}
+    <li>
+      <a href="#" onclick="imp.popup_page('{% url 'dev_checklist' business.id %}'); return false;">
+	Dev
+	{% if not business.has_recent_dev_checklist %}
+	<img src="{{STATIC_URL}}images/timepiece/icons/bullet_red.png"/>(no recent checklist)
+	{% elif not business.has_recent_passed_dev_checklist %}
+	<img src="{{STATIC_URL}}images/timepiece/icons/bullet_orange.png"/>(last checklist not passed)
+	{% else %}
+	<img src="{{STATIC_URL}}images/timepiece/icons/bullet_green.png"/>(recent checklist passed)
+	{% endif %}
+      </a>
+    </li>
+    {% end_permission %}
+    {% has_permission has_do_finance_checklist business %}
+    <li>
+      <a href="#" onclick="imp.popup_page('{% url 'finance_checklist' business.id %}'); return false;">
+	Finance
+	{% if not business.has_recent_finance_checklist %}
+	<img src="{{STATIC_URL}}images/timepiece/icons/bullet_red.png"/>(no recent checklist)
+	{% elif not business.has_recent_passed_finance_checklist %}
+	<img src="{{STATIC_URL}}images/timepiece/icons/bullet_orange.png"/>(last checklist not passed)
+	{% else %}
+	<img src="{{STATIC_URL}}images/timepiece/icons/bullet_green.png"/>(recent checklist passed)
+	{% endif %}
+      </a>
+    </li>
+    {% end_permission %}
+  </ul>
 {% endif %}

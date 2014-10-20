@@ -2885,8 +2885,6 @@ class TrafficChecklist(models.Model):
     business = models.ForeignKey(Business, null=False, blank=True)
     have_made_new_staging_release_today = models.BooleanField(default=False, blank=True, verbose_name="has there been a new release to the client's staging server today?")
     has_incoming_issues_created = models.BooleanField(default=False, blank=True, verbose_name="have issues been created for all client emails (for this project), and are they in the 'incoming' sprint?")
-    are_all_issues_estimated = models.BooleanField(default=False, blank=True, verbose_name="have all previous issues from the incoming sprint been estimated?")
-    have_incoming_issues_beenallocated = models.BooleanField(default=False, blank=True, verbose_name="have all previous issues from the incoming sprint been allocated to an actual sprint?")
     is_requote_required = models.BooleanField(default=False, blank=True, verbose_name="have any changes to existing sprints, which may have caused a re-quote to be required, been reviewed?")
     have_pending_requotes_been_sent = models.BooleanField(default=False, blank=True, verbose_name="have any pending re-quotes been sent?")
     is_quote_required = models.BooleanField(default=False, blank=True, verbose_name="are there any quotes on this new sprint which need to be sent?")
@@ -2911,11 +2909,9 @@ class TrafficChecklist(models.Model):
 
         failed_states = [ x for x in [ self.have_made_new_staging_release_today,
                                        self.has_incoming_issues_created,
-                                       self.are_all_issues_estimated,
-                                       self.have_incoming_issues_beenallocated,
-                                       self.is_requote_required,
-                                       self.have_pending_requotes_been_sent,
-                                       self.is_quote_required,
+                                       #self.is_requote_required,
+                                       #self.have_pending_requotes_been_sent,
+                                       #self.is_quote_required,
                                        self.have_all_new_quotes_been_sent,
                                        self.has_existing_quotes_waiting_for_acceptance,
                                        self.has_existing_quoted_accepted,
@@ -2941,7 +2937,12 @@ class DevChecklist(models.Model):
     has_reviewed_previous_days_issues = models.BooleanField(default=False, blank=True, verbose_name="Were yesterday's issues reviewed?")
     description_has_testable = models.BooleanField(default=False, blank=True, verbose_name="Does today's issues descriptions have testable steps?")
     has_reviewed_description_for_todays_issues = models.BooleanField(default=False, blank=True, verbose_name="Have the descriptions for todays issues been reviewed with the developer?")
-    are_the_estimates_wildly_out = models.BooleanField(default=False, blank=True, verbose_name="Are the estimates for any developer wildly inaccurate based on actual time spent?")
+    are_the_estimates_consistently_over = models.BooleanField(default=False, blank=True, verbose_name="xxx?")
+    has_incoming_issues_created = models.BooleanField(default=False, blank=True, verbose_name="All issues from emails are created")
+    are_all_issues_estimated = models.BooleanField(default=False, blank=True, verbose_name="have all previous issues from the incoming sprint been estimated?")
+    have_incoming_issues_beenallocated = models.BooleanField(default=False, blank=True, verbose_name="have all previous issues from the incoming sprint been allocated to an actual sprint?")
+    has_sprints_to_invoice = models.BooleanField(default=False, blank=True, verbose_name="if sprints are closed, they should be set to?")
+    are_all_issues_assigned_to_a_user = models.BooleanField(default=False, blank=True, verbose_name="xxxyy?")
 
     comments = models.TextField(null=True, blank=True)
     passed = models.BooleanField(default=False, blank=True)
@@ -2953,7 +2954,13 @@ class DevChecklist(models.Model):
 
         failed_states = [ x for x in [ self.has_reviewed_previous_days_issues,
                                        self.description_has_testable,
-                                       self.has_reviewed_description_for_todays_issues ] if not x ]
+                                       self.has_reviewed_description_for_todays_issues,
+                                       #self.are_the_estimates_consistently_over,
+                                       self.has_incoming_issues_created,
+                                       self.are_all_issues_assigned_to_a_user,
+                                       self.are_all_issues_estimated,
+                                       self.have_incoming_issues_beenallocated,
+                                       self.has_sprints_to_invoice ] if not x ]
 
         passed = len(failed_states)==0
         if self.passed != passed:
@@ -2971,6 +2978,8 @@ class FinanceChecklist(models.Model):
     is_currently_under_budget = models.BooleanField(default=False, blank=True, verbose_name="is the sprint currently within budget?")
     is_projected_cost_in_budget = models.BooleanField(default=False, blank=True, verbose_name="is the projected cost within budget?")
     are_rates_correct = models.BooleanField(default=False, blank=True, verbose_name="does every user in the sprint have a valid and correct rate?")
+    all_invoices_sent = models.BooleanField(default=False, blank=True, verbose_name="xxx?")
+    all_sprints_closed = models.BooleanField(default=False, blank=True, verbose_name="xxx?")
 
     comments = models.TextField(null=True, blank=True)
     passed = models.BooleanField(default=False, blank=True)
@@ -2982,6 +2991,8 @@ class FinanceChecklist(models.Model):
         failed_states = [ x for x in [ self.has_valid_budget,
                                        self.are_rates_correct,
                                        self.is_currently_under_budget,
+                                       self.all_invoices_sent,
+                                       self.all_sprints_closed,
                                        self.is_projected_cost_in_budget ] if not x ]
 
         passed = len(failed_states)==0
