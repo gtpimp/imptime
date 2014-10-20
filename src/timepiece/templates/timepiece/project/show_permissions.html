@@ -45,7 +45,7 @@
 		    {% for form in permission_forms.forms %}
 		    <tr>
 		      <td>{{ form.id }}{{ form.instance.user.username}} </td>
-		      {% for field in permission_forms.forms.0 %}
+		      {% for field in form %}
 			{% if field.field.widget.attrs.class == 'safe' and not field.is_hidden %}		      
 			 <td>{{field.errors}}{{ field }}</td>
 			{% endif %}
@@ -73,7 +73,7 @@
 		    {% for form in permission_forms.forms %}
 		    <tr>
 		      <td>{{ form.id }}{{ form.instance.user.username}} </td>
-		      {% for field in permission_forms.forms.0 %}
+		      {% for field in form %}
 		        {% if field.field.widget.attrs.class == 'medium-safe' and not field.is_hidden %}		      
 			 <td>{{field.errors}}{{ field }}</td>
 			{% endif %}
@@ -102,7 +102,7 @@
 		    {% for form in permission_forms.forms %}
 		    <tr>
 		      <td>{{ form.id }}{{ form.instance.user.username}} </td>
-		      {% for field in permission_forms.forms.0 %}
+		      {% for field in form %}
 		        {% if field.field.widget.attrs.class == 'unsafe' and not field.is_hidden %}		      
 			 <td>{{field.errors}}{{ field }}</td>
 			{% endif %}
