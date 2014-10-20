@@ -129,7 +129,6 @@ class EditPersonPermission(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         super(EditPersonPermission, self).__init__(*args, **kwargs)
 
-
         self.fields['can_view_project_card'].widget.attrs['class'] = 'safe'
         self.fields['can_edit_issues'].widget.attrs['class'] = 'safe'
         self.fields['can_view_issues'].widget.attrs['class'] = 'safe'

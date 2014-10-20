@@ -37,9 +37,12 @@
       </td>
       {% endif %}
 
-      {% if name == 'active' or name == 'pending' or name == 'hopeful' %}
+      {% if business and name == 'active' or name == 'pending' or name == 'hopeful' %}
       {% has_permission has_do_traffic_checklist business %}
       <td>
+	  {% for owner in business.get_traffic_owners %}
+	   {{owner}}
+	  {% endfor %}
 	  {% if not business.has_recent_traffic_checklist %}
 	    <img src="{{STATIC_URL}}images/timepiece/icons/bullet_red.png"/>
 	  {% elif not business.has_recent_passed_traffic_checklist %}
@@ -51,6 +54,9 @@
       {% end_permission %}
       {% has_permission has_do_dev_checklist business %}
       <td>
+	{% for owner in business.get_dev_owners %}
+	{{owner}}
+	{% endfor %}
 	{% if not business.has_recent_dev_checklist %}
 	  <img src="{{STATIC_URL}}images/timepiece/icons/bullet_red.png"/>
 	{% elif not business.has_recent_passed_dev_checklist %}
@@ -62,6 +68,9 @@
       {% end_permission %}
       {% has_permission has_do_finance_checklist business %}
       <td>
+	{% for owner in business.get_finance_owners %}
+	{{owner}}
+	{% endfor %}
 	{% if not business.has_recent_finance_checklist %}
 	  <img src="{{STATIC_URL}}images/timepiece/icons/bullet_red.png"/>
 	{% elif not business.has_recent_passed_finance_checklist %}

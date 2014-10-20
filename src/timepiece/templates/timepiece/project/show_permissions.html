@@ -27,32 +27,92 @@
 	      {% csrf_token %}
 	      {{ permission_forms.management_form }}
 	      
+	      <h3>Safe fields</h3>
 	      <table class='permissions_list table table-striped table-bordered table-condensed'>
 		<thead>
 		  <tr>
 		    <th> user </th>
 		    {% for field in permission_forms.forms.0 %}
-		      {% if not field.is_hidden %}
+
+		      {% if field.field.widget.attrs.class == 'safe' and not field.is_hidden %}		      
  		       <th>{{ field.label }}</th>
 		      {% endif %}
 		    {% endfor %} 
 		  </tr>
-	      </thead>
-	      <tbody>
-		  {% for form in permission_forms.forms %}
+		</thead>
+		<tbody>
+		    {% for form in permission_forms.forms %}
+		    <tr>
+		      <td>{{ form.id }}{{ form.instance.user.username}} </td>
+		      {% for field in permission_forms.forms.0 %}
+			{% if field.field.widget.attrs.class == 'safe' and not field.is_hidden %}		      
+			 <td>{{field.errors}}{{ field }}</td>
+			{% endif %}
+		      {% endfor %} 
+
+		    </tr>
+		    {% endfor %}		  
+		</tbody>
+	      </table>
+
+	      <h3>Medium fields</h3>
+	      <table class='permissions_list table table-striped table-bordered table-condensed'>
+		<thead>
 		  <tr>
-		    <td>{{ form.id }}{{ form.instance.user.username}} </td>
-		    {% for field in form %}
-		      {% if not field.is_hidden %}		      
- 		       <td>{{field.errors}}{{ field }}</td>
+		    <th> user </th>
+		    {% for field in permission_forms.forms.0 %}
+
+		      {% if field.field.widget.attrs.class == 'medium-safe' and not field.is_hidden %}		      
+ 		       <th>{{ field.label }}</th>
 		      {% endif %}
 		    {% endfor %} 
-
 		  </tr>
-		  {% endfor %}		  
-	      </tbody>
+		</thead>
+		<tbody>
+		    {% for form in permission_forms.forms %}
+		    <tr>
+		      <td>{{ form.id }}{{ form.instance.user.username}} </td>
+		      {% for field in permission_forms.forms.0 %}
+		        {% if field.field.widget.attrs.class == 'medium-safe' and not field.is_hidden %}		      
+			 <td>{{field.errors}}{{ field }}</td>
+			{% endif %}
+		      {% endfor %} 
+
+		    </tr>
+		    {% endfor %}		  
+		</tbody>
 
 	      </table>
+
+	      <h3>Unsafe fields</h3>
+	      <table class='permissions_list table table-striped table-bordered table-condensed'>
+		<thead>
+		  <tr>
+		    <th> user </th>
+		    {% for field in permission_forms.forms.0 %}
+
+		      {% if field.field.widget.attrs.class == 'unsafe' and not field.is_hidden %}		      
+ 		       <th>{{ field.label }}</th>
+		      {% endif %}
+		    {% endfor %} 
+		  </tr>
+		</thead>
+		<tbody>
+		    {% for form in permission_forms.forms %}
+		    <tr>
+		      <td>{{ form.id }}{{ form.instance.user.username}} </td>
+		      {% for field in permission_forms.forms.0 %}
+		        {% if field.field.widget.attrs.class == 'unsafe' and not field.is_hidden %}		      
+			 <td>{{field.errors}}{{ field }}</td>
+			{% endif %}
+		      {% endfor %} 
+
+		    </tr>
+		    {% endfor %}		  
+		</tbody>
+
+	      </table>
+
 
 	      <input type="submit" value="save"/>
 	    </form>
