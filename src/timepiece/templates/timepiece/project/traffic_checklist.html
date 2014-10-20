@@ -122,6 +122,14 @@
 
 	<tr>
 	  <td></td>
+	  <td>{{form.comments}}</td>
+	  {% for checklist in previous_checklists %}
+	  <td>{{ checklist.comments }}</td>
+	  {% endfor %}
+	</tr>
+
+	<tr>
+	  <td></td>
 	  <td>      
             <input class="btn btn-primary" type='submit' name='submit' value='Create' onclick="imp.submit_popup_form(this, imp.refresh_checklist_navigation, {display_results:true}); return false;" />
 	  </td>
@@ -146,7 +154,6 @@
 	  {% endfor %}
 	</tr>
 	{% endcomment %}
-
 
       </tbody>
     </table>

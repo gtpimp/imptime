@@ -98,6 +98,14 @@
 	  <td><img src="{{STATIC_URL}}images/icons/{% if checklist.has_sprints_to_invoice %}tick{% else %}cross{% endif %}.png"/></td>
 	  {% endfor %}
 	</tr>
+
+	<tr>
+	  <td></td>
+	  <td>{{form.comments}}</td>
+	  {% for checklist in previous_checklists %}
+	  <td>{{ checklist.comments }}</td>
+	  {% endfor %}
+	</tr>
 	
 	
 	<tr>

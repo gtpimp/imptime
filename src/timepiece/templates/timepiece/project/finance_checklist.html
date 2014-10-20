@@ -84,6 +84,15 @@
 	  <td><img src="{{STATIC_URL}}images/icons/{% if checklist.all_sprints_closed %}tick{% else %}cross{% endif %}.png"/></td>
 	  {% endfor %}
 	</tr>
+
+	<tr>
+	  <td></td>
+	  <td>{{form.comments}}</td>
+	  {% for checklist in previous_checklists %}
+	  <td>{{ checklist.comments }}</td>
+	  {% endfor %}
+	</tr>
+	
 	
 	<tr>
 	  <td></td>
