@@ -220,7 +220,7 @@
 			    Project comments
 			  </a>
 			</li>
-			<li class="dropdown" id="checklist_menu_container">
+			<li class="dropdown" id="checklist_menu_container" data-refresh-url="{% url 'render_checklist_navigation' business.id %}">
 			  {% include "timepiece/project/_checklist_menu.html" %}
 			</li>
 

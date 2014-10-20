@@ -5210,6 +5210,14 @@ def show_business_history(request, business_id, template="timepiece/project/busi
     return render_to_response(template, context, context_instance=RequestContext(request))
 
 @login_required
+def render_checklist_navigation(request, business_id, template="timepiece/project/_checklist_menu.html", context=None):
+    context = context or {}
+    business = timepiece.Business.objects.get(pk=business_id)
+    context['business'] = business
+    context['current_user'] = request.user
+    return render_to_response(template, context, context_instance=RequestContext(request))
+
+@login_required
 def traffic_checklist(request, business_id, template="timepiece/project/traffic_checklist.html", context=None):
     context = context or {}
     business = timepiece.Business.objects.get(pk=business_id)

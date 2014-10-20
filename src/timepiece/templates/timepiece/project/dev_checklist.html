@@ -19,7 +19,7 @@
 	  <th> </th>
 	  <th>today</th>
 	  {% for checklist in previous_checklists %}
-	  <th> {{checklist.created_at|date:"d M Y H:m"}} </th>
+	  <th> {{checklist.created_at|date:"D d-M-Y H:m"}} </th>
 	  {% endfor %}
 	</tr>
 	<tr>
@@ -103,7 +103,7 @@
 	<tr>
 	  <td></td>
 	  <td>      
-            <input class="btn btn-primary" type='submit' name='submit' value='Create' onclick='imp.submit_popup_form(this, null, {display_results:true}); return false;' />
+            <input class="btn btn-primary" type='submit' name='submit' value='Create' onclick='imp.submit_popup_form(this, imp.refresh_checklist_navigation, {display_results:true}); return false;' />
 	  </td>
 	</tr>
 

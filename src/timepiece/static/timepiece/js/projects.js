@@ -365,6 +365,12 @@ imp.refresh_show_numbers = function() {
     }
 };
 
+imp.refresh_checklist_navigation = function() {
+    var container = $("#checklist_menu_container");
+    var url = container.attr('data-refresh-url');
+    container.load(url);
+};
+
 imp.on_document_ready = function() {
 
     var project_sort_url = $(".project_list").attr("project_sort_url");
