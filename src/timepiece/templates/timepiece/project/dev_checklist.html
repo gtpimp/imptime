@@ -43,14 +43,14 @@
 	  <td colspan="99"></td>
 	</tr>
 	<tr>
-	  <td>Were yesterday's issues reviewed?</td>
+	  <td>Has yesterdays progress been checked?</td>
 	  <td>{{form.has_reviewed_previous_days_issues}}</td>
 	  {% for checklist in previous_checklists %}
 	  <td><img src="{{STATIC_URL}}images/icons/{% if checklist.has_reviewed_previous_days_issues %}tick{% else %}cross{% endif %}.png"/></td>
 	  {% endfor %}
 	</tr>
 	<tr>
-	  <td>Does today's issues descriptions have testable steps?</td>
+	  <td>Do todays issues descriptions have testable steps?</td>
 	  <td>{{form.description_has_testable}}</td>
 	  {% for checklist in previous_checklists %}
 	  <td><img src="{{STATIC_URL}}images/icons/{% if checklist.description_has_testable %}tick{% else %}cross{% endif %}.png"/></td>
@@ -64,7 +64,7 @@
 	  {% endfor %}
 	</tr>
 	<tr>
-	  <td>Are the estimates for any developer wildly inaccurate based on actual time spent?</td>
+	  <td>Are the actual vs estimated times for all developers more-or-less accurate, taking into account velocity?</td>
 	  <td>{{form.are_the_estimates_wildly_out}}</td>
 	  {% for checklist in previous_checklists %}
 	  <td><img src="{{STATIC_URL}}images/icons/{% if checklist.are_the_estimates_wildly_out %}tick{% else %}cross{% endif %}.png"/></td>
