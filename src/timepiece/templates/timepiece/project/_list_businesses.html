@@ -45,7 +45,7 @@
 	  {% elif not business.has_recent_passed_traffic_checklist %}
 	    <img src="{{STATIC_URL}}images/timepiece/icons/bullet_orange.png"/>
 	  {% else %}
-	    <img src="{{STATIC_URL}}images/timepiece/icons/bullet_green.png"/>
+	    <img src="{{STATIC_URL}}images/timepiece/icons/tick.png"/>
 	  {% endif %}
 	  {% for owner in business.get_traffic_owners %}
 	   {{owner}}
@@ -59,7 +59,7 @@
 	{% elif not business.has_recent_passed_dev_checklist %}
 	  <img src="{{STATIC_URL}}images/timepiece/icons/bullet_orange.png"/>
 	{% else %}
-	  <img src="{{STATIC_URL}}images/timepiece/icons/bullet_green.png"/>
+	  <img src="{{STATIC_URL}}images/timepiece/icons/tick.png"/>
 	{% endif %}
 	{% for owner in business.get_dev_owners %}
 	{{owner}}
@@ -73,7 +73,7 @@
 	{% elif not business.has_recent_passed_finance_checklist %}
 	  <img src="{{STATIC_URL}}images/timepiece/icons/bullet_orange.png"/>
 	{% else %}
-	  <img src="{{STATIC_URL}}images/timepiece/icons/bullet_green.png"/>
+	  <img src="{{STATIC_URL}}images/timepiece/icons/tick.png"/>
 	{% endif %}
 	{% for owner in business.get_finance_owners %}
 	{{owner}}
