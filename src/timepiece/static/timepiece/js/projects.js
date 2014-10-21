@@ -365,10 +365,16 @@ imp.refresh_show_numbers = function() {
     }
 };
 
-imp.refresh_checklist_navigation = function() {
+imp.refresh_checklist_navigation = function(business_id) {
     var container = $("#checklist_menu_container");
     var url = container.attr('data-refresh-url');
     container.load(url);
+
+    $(".checklist_status_icon[business_id="+business_id+"]").each(function() {
+	var icon_el = $(this);
+	url = icon_el.attr('data-refresh-url');
+	icon_el.load(url);
+    });
 };
 
 imp.on_document_ready = function() {

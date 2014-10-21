@@ -6,9 +6,16 @@
 {% block extrajs %}
   <script type="text/javascript" src="{{ STATIC_URL }}timepiece/js/project_hours/rates.js"></script>
   <script type="text/javascript" src="{{ STATIC_URL }}timepiece/js/project_hours/expenses.js"></script>
+  <script type="text/javascript" src="{{ STATIC_URL }}timepiece/js/projects.js"></script>
  {% endblock extrajs %}
 
  {% block content %}
+
+  <div style="display:none">
+    <div class="project_card_dialog_container">
+      <div class="dialog_content"></div>
+    </div>
+  </div>
 
      <div class="row-fluid">
 

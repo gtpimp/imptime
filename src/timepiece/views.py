@@ -5218,6 +5218,27 @@ def render_checklist_navigation(request, business_id, template="timepiece/projec
     return render_to_response(template, context, context_instance=RequestContext(request))
 
 @login_required
+def render_checklist_status_icon_traffic(request, business_id, template="timepiece/project/_checklist_status_icon_traffic.html", context=None):
+    context = context or {}
+    business = timepiece.Business.objects.get(pk=business_id)
+    context['business'] = business
+    return render_to_response(template, context, context_instance=RequestContext(request))
+
+@login_required
+def render_checklist_status_icon_dev(request, business_id, template="timepiece/project/_checklist_status_icon_dev.html", context=None):
+    context = context or {}
+    business = timepiece.Business.objects.get(pk=business_id)
+    context['business'] = business
+    return render_to_response(template, context, context_instance=RequestContext(request))
+
+@login_required
+def render_checklist_status_icon_finance(request, business_id, template="timepiece/project/_checklist_status_icon_finance.html", context=None):
+    context = context or {}
+    business = timepiece.Business.objects.get(pk=business_id)
+    context['business'] = business
+    return render_to_response(template, context, context_instance=RequestContext(request))
+
+@login_required
 def traffic_checklist(request, business_id, template="timepiece/project/traffic_checklist.html", context=None):
     context = context or {}
     business = timepiece.Business.objects.get(pk=business_id)
