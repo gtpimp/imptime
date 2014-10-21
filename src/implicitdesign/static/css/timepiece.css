@@ -10410,3 +10410,7 @@ tr.clickable {
 .checklist table td {
     text-align:left;
 }
+
+.light_error {
+    color: #b94a48;
+}

@@ -83,6 +83,15 @@ class BusinessQuerySet(QuerySet):
     def exclude_has_closed_projects(self):
         return self.filter(new_business_projects__status2__in=Project.pending_states()+Project.active_states() )
 
+    def get_checklist_summary(self):
+
+        res = { 'traffic_ok': True, 'dev_ok': True, 'finance_ok': True }
+        for business in self:
+            res['traffic_ok'] = res['traffic_ok'] and business.has_recent_passed_traffic_checklist()
+            res['dev_ok'] = res['dev_ok'] and business.has_recent_passed_dev_checklist()
+            res['finance_ok'] = res['finance_ok'] and business.has_recent_passed_finance_checklist()
+        return res
+
 class Business(models.Model):
     
     DEFAULT_STATUS_COLOURS = COLOURS
@@ -2882,7 +2891,7 @@ class CalendarEvent(models.Model):
     
 class TrafficChecklist(models.Model):
     
-    business = models.ForeignKey(Business, null=False, blank=True)
+    business = models.ForeignKey(Business, null=False, blank=True, db_index=True)
     have_made_new_staging_release_today = models.BooleanField(default=False, blank=True, verbose_name="has there been a new release to the client's staging server today?")
     has_incoming_issues_created = models.BooleanField(default=False, blank=True, verbose_name="have issues been created for all client emails (for this project), and are they in the 'incoming' sprint?")
     is_requote_required = models.BooleanField(default=False, blank=True, verbose_name="have any changes to existing sprints, which may have caused a re-quote to be required, been reviewed?")
@@ -2900,7 +2909,7 @@ class TrafficChecklist(models.Model):
 
     comments = models.TextField(null=True, blank=True)
 
-    passed = models.BooleanField(default=False, blank=True)
+    passed = models.BooleanField(default=False, blank=True, db_index=True)
 
     created_by = models.ForeignKey(User, null=False, blank=False, related_name='traffic_checklist_created_by')
     created_at = models.DateTimeField(auto_now_add=True)
@@ -2930,9 +2939,11 @@ class TrafficChecklist(models.Model):
     def __unicode__(self):
         return "%s %s" % (self.created_by, self.created_at)
 
+    def is_ok(self):
+        return self.passed and self.created_at > datetime.datetime.today()-timedelta(days=settings.NUM_DAYS_FOR_SPRINT_CHECKLISTS)
 
 class DevChecklist(models.Model):
-    business = models.ForeignKey(Business, null=False, blank=True)
+    business = models.ForeignKey(Business, null=False, blank=True, db_index=True)
 
     has_reviewed_previous_days_issues = models.BooleanField(default=False, blank=True, verbose_name="Were yesterday's issues reviewed?")
     description_has_testable = models.BooleanField(default=False, blank=True, verbose_name="Does today's issues descriptions have testable steps?")
@@ -2945,7 +2956,7 @@ class DevChecklist(models.Model):
     are_all_issues_assigned_to_a_user = models.BooleanField(default=False, blank=True, verbose_name="xxxyy?")
 
     comments = models.TextField(null=True, blank=True)
-    passed = models.BooleanField(default=False, blank=True)
+    passed = models.BooleanField(default=False, blank=True, db_index=True)
     created_by = models.ForeignKey(User, null=False, blank=False, related_name='dev_checklist_created_by')
     created_at = models.DateTimeField(auto_now_add=True)
 
@@ -2970,8 +2981,11 @@ class DevChecklist(models.Model):
     def __unicode__(self):
         return "%s %s" % (self.created_by, self.created_at)
 
+    def is_ok(self):
+        return self.passed and self.created_at > datetime.datetime.today()-timedelta(days=settings.NUM_DAYS_FOR_SPRINT_CHECKLISTS)
+
 class FinanceChecklist(models.Model):
-    business = models.ForeignKey(Business, null=False, blank=True)
+    business = models.ForeignKey(Business, null=False, blank=True, db_index=True)
 
 
     has_valid_budget = models.BooleanField(default=False, blank=True, verbose_name="does the sprint have a valid budget?")
@@ -2982,7 +2996,7 @@ class FinanceChecklist(models.Model):
     all_sprints_closed = models.BooleanField(default=False, blank=True, verbose_name="xxx?")
 
     comments = models.TextField(null=True, blank=True)
-    passed = models.BooleanField(default=False, blank=True)
+    passed = models.BooleanField(default=False, blank=True, db_index=True)
     created_by = models.ForeignKey(User, null=False, blank=False, related_name='finance_checklist_created_by')
     created_at = models.DateTimeField(auto_now_add=True)
 
@@ -3002,3 +3016,6 @@ class FinanceChecklist(models.Model):
 
     def __unicode__(self):
         return "%s %s" % (self.created_by, self.created_at)
+
+    def is_ok(self):
+        return self.passed and self.created_at > datetime.datetime.today()-timedelta(days=settings.NUM_DAYS_FOR_SPRINT_CHECKLISTS)

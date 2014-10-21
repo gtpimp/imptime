@@ -15,15 +15,15 @@
       </td>
       {% endcomment %}
 
-      {% if business %}
+      <td>
+	{% if business %}
         {% has_permission has_view_ctc_billable_rates business %}
-            <td>
-              {% has_permission has_view_invoices business %}
-              <a target="_blank" href="{% url 'business_cost_summary' business.id %}">Cost summary</a>
-              {% end_permission %}
-            </td>
+        {% has_permission has_view_invoices business %}
+        <a target="_blank" href="{% url 'business_cost_summary' business.id %}">Cost summary</a>
         {% end_permission %}
-      {% endif %}
+        {% end_permission %}
+	{% endif %}
+      </td>
 
       <td>
         {% has_permission has_edit_project_detail business %}
@@ -48,7 +48,7 @@
 	    <img src="{{STATIC_URL}}images/timepiece/icons/tick.png"/>
 	  {% endif %}
 	  {% for owner in business.get_traffic_owners %}
-	   {{owner}}
+	    {{owner}}
 	  {% endfor %}
       </td>
       {% end_permission %}
@@ -62,7 +62,7 @@
 	  <img src="{{STATIC_URL}}images/timepiece/icons/tick.png"/>
 	{% endif %}
 	{% for owner in business.get_dev_owners %}
-	{{owner}}
+	  {{owner}}
 	{% endfor %}
       </td>
       {% end_permission %}
@@ -76,7 +76,7 @@
 	  <img src="{{STATIC_URL}}images/timepiece/icons/tick.png"/>
 	{% endif %}
 	{% for owner in business.get_finance_owners %}
-	{{owner}}
+	  {{owner}}
 	{% endfor %}
       </td>
       {% end_permission %}
