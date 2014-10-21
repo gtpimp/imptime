@@ -131,7 +131,7 @@
 	<tr>
 	  <td></td>
 	  <td>      
-            <input class="btn btn-primary" type='submit' name='submit' value='Create' onclick="imp.submit_popup_form(this, imp.refresh_checklist_navigation, {display_results:true}); return false;" />
+            <input class="btn btn-primary" type='submit' name='submit' value='Create' onclick="imp.submit_popup_form(this, function() { imp.refresh_checklist_navigation({{business.id}}); }, {display_results:true}); return false;" />
 	  </td>
 	</tr>
 

@@ -617,9 +617,12 @@ urlpatterns = patterns('',
                        url(r'^business_comments/(?P<business_id>.*)', views.business_comments, {}, name='business_comments'),
                        url(r'^show_business_history/(?P<business_id>.*)', views.show_business_history, {}, name='show_business_history'),
 
+                       url(r'^checklist/traffic/nav_only/(?P<business_id>.*)', views.render_checklist_navigation, {}, name='render_checklist_navigation'),
+                       url(r'^checklist/traffic/status_icon/(?P<business_id>.*)', views.render_checklist_status_icon_traffic, {}, name='render_checklist_status_icon_traffic'),
+                       url(r'^checklist/dev/status_icon/(?P<business_id>.*)', views.render_checklist_status_icon_dev, {}, name='render_checklist_status_icon_dev'),
+                       url(r'^checklist/finance/status_icon/(?P<business_id>.*)', views.render_checklist_status_icon_finance, {}, name='render_checklist_status_icon_finance'),
                        url(r'^checklist/finance/(?P<business_id>.*)', views.finance_checklist, {}, name='finance_checklist'),
                        url(r'^checklist/dev/(?P<business_id>.*)', views.dev_checklist, {}, name='dev_checklist'),
-                       url(r'^checklist/traffic/nav_only/(?P<business_id>.*)', views.render_checklist_navigation, {}, name='render_checklist_navigation'),
                        url(r'^checklist/traffic/(?P<business_id>.*)', views.traffic_checklist, {}, name='traffic_checklist'),
                        
 

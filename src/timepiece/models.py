@@ -108,22 +108,22 @@ class Business(models.Model):
     objects = QuerySetManager(BusinessQuerySet)
     sync_with = models.CharField( max_length=100, blank=True, null=True, choices=( ("jira", "Jira"), ) )
 
+    def has_recent_traffic_checklist(self):
+        return TrafficChecklist.objects.filter(business=self).filter(created_at__gte=datetime.datetime.today()-timedelta(days=settings.NUM_DAYS_FOR_TRAFFIC_SPRINT_CHECKLISTS)).count() > 0
+
+    def has_recent_dev_checklist(self):
+        return DevChecklist.objects.filter(business=self).filter(created_at__gte=datetime.datetime.today()-timedelta(days=settings.NUM_DAYS_FOR_DEV_SPRINT_CHECKLISTS)).count() > 0
+
+    def has_recent_finance_checklist(self):
+        return FinanceChecklist.objects.filter(business=self).filter(created_at__gte=datetime.datetime.today()-timedelta(days=settings.NUM_DAYS_FOR_FINANCE_SPRINT_CHECKLISTS)).count() > 0
+
     def has_recent_passed_traffic_checklist(self):
         cl = TrafficChecklist.objects.filter(business=self).order_by("-pk").first()
         return cl is not None and cl.passed
 
-    def has_recent_traffic_checklist(self):
-        return TrafficChecklist.objects.filter(business=self).filter(created_at__gte=datetime.datetime.today()-timedelta(days=settings.NUM_DAYS_FOR_SPRINT_CHECKLISTS)).count() > 0
-
-    def has_recent_dev_checklist(self):
-        return DevChecklist.objects.filter(business=self).filter(created_at__gte=datetime.datetime.today()-timedelta(days=settings.NUM_DAYS_FOR_SPRINT_CHECKLISTS)).count() > 0
-
     def has_recent_passed_dev_checklist(self):
         cl = DevChecklist.objects.filter(business=self).order_by("-pk").first()
         return cl is not None and cl.passed
-
-    def has_recent_finance_checklist(self):
-        return FinanceChecklist.objects.filter(business=self).filter(created_at__gte=datetime.datetime.today()-timedelta(days=settings.NUM_DAYS_FOR_SPRINT_CHECKLISTS)).count() > 0
 
     def has_recent_passed_finance_checklist(self):
         cl = FinanceChecklist.objects.filter(business=self).order_by("-pk").first()
@@ -2940,7 +2940,7 @@ class TrafficChecklist(models.Model):
         return "%s %s" % (self.created_by, self.created_at)
 
     def is_ok(self):
-        return self.passed and self.created_at > datetime.datetime.today()-timedelta(days=settings.NUM_DAYS_FOR_SPRINT_CHECKLISTS)
+        return self.passed and self.created_at > datetime.datetime.today()-timedelta(days=settings.NUM_DAYS_FOR_TRAFFIC_SPRINT_CHECKLISTS)
 
 class DevChecklist(models.Model):
     business = models.ForeignKey(Business, null=False, blank=True, db_index=True)
@@ -2982,7 +2982,7 @@ class DevChecklist(models.Model):
         return "%s %s" % (self.created_by, self.created_at)
 
     def is_ok(self):
-        return self.passed and self.created_at > datetime.datetime.today()-timedelta(days=settings.NUM_DAYS_FOR_SPRINT_CHECKLISTS)
+        return self.passed and self.created_at > datetime.datetime.today()-timedelta(days=settings.NUM_DAYS_FOR_DEV_SPRINT_CHECKLISTS)
 
 class FinanceChecklist(models.Model):
     business = models.ForeignKey(Business, null=False, blank=True, db_index=True)
@@ -3018,4 +3018,4 @@ class FinanceChecklist(models.Model):
         return "%s %s" % (self.created_by, self.created_at)
 
     def is_ok(self):
-        return self.passed and self.created_at > datetime.datetime.today()-timedelta(days=settings.NUM_DAYS_FOR_SPRINT_CHECKLISTS)
+        return self.passed and self.created_at > datetime.datetime.today()-timedelta(days=settings.NUM_DAYS_FOR_FINANCE_SPRINT_CHECKLISTS)
