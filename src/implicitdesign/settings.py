@@ -19,6 +19,8 @@ REDMINE_DB_MAPPING = [ { 'username' : 'test',
                          'db' : 'redmine_projects' }
                        ]
 
+SESSION_EXPIRE_AT_BROWSER_CLOSE = True
+
 TRAFFIC_LEVEL_YELLOW = 70
 TRAFFIC_LEVEL_RED = 90
 
