@@ -2440,7 +2440,7 @@ def salary_edit(request, user_id, template="timepiece/salary/payslip.html", cont
                 context['msg'] = '(created new blank salary)'
         else:
             salary = timepiece.Salary.objects.create(user=user,date=from_date)
-    was_locked = salary.locked
+    was_locked = False #salary.locked
 
     if request.POST and 'copy_from_previous' in request.POST:
         salary.copy_from_previous()
