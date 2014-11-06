@@ -20,6 +20,7 @@
         {% has_permission has_view_ctc_billable_rates business %}
         {% has_permission has_view_invoices business %}
         <a target="_blank" href="{% url 'business_cost_summary' business.id %}">Cost summary</a>
+	({{business.invoice_method}})
         {% end_permission %}
         {% end_permission %}
 	{% endif %}

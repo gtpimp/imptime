@@ -111,7 +111,8 @@ class Business(models.Model):
                                        default="billable_hours_per_sprint",
                                        choices=( ("billable_hours_per_sprint", "Billable Hours per Sprint"), 
                                                  ("billable_hours_per_month", "Billable Hours per Month"), 
-                                                 ("fixed_quote", "Fixed quote") ) )
+                                                 ("fixed_quote", "Fixed quote"),
+                                                 ("free", "Free or Equity or Other") ) )
 
     def has_recent_traffic_checklist(self):
         return TrafficChecklist.objects.filter(business=self).filter(created_at__gte=datetime.datetime.today()-timedelta(days=settings.NUM_DAYS_FOR_TRAFFIC_SPRINT_CHECKLISTS)).count() > 0
