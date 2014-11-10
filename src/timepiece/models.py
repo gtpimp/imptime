@@ -529,7 +529,14 @@ class ProjectQuerySet(QuerySet):
 
 class Project(models.Model):
 
-    PROJECT_STATUSES = ( ('pending', 'pending'), ('in dev', 'in development'), ('waiting_to_invoice', 'waiting to invoice'), ('invoiced', 'invoiced'), ('waiting to close', 'waiting to close'), ('closed', 'closed'), ('hopeful', 'hopeful') )
+    PROJECT_STATUSES = ( ('gathering specs', 'gathering specs'),
+                         ('quote sent', 'quote sent'),
+                         ('pending', 'pending'), 
+                         ('in dev', 'in development'), 
+                         ('waiting to invoice', 'waiting to invoice'), 
+                         ('invoiced', 'invoiced'), 
+                         ('waiting to close', 'waiting to close'), 
+                         ('closed', 'closed') )
 
     code = models.CharField(max_length=255,blank=True,null=True)        
     name = models.CharField(max_length=255, db_index=True)
@@ -870,11 +877,11 @@ class Project(models.Model):
 
     @classmethod
     def active_states(self):
-        return ( 'in dev', 'waiting to close' )
+        return ( 'in dev', 'waiting to close', 'waiting to invoice', 'invoiced' )
 
     @classmethod
     def pending_states(self):
-        return ( 'pending', )
+        return ( 'pending', 'quote sent' )
 
     @classmethod
     def closed_states(self):
@@ -882,7 +889,7 @@ class Project(models.Model):
 
     @classmethod
     def hopeful_states(self):
-        return ( 'hopeful', )
+        return ( 'gathering specs', )
 
     @property
     def is_open(self):
