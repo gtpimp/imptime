@@ -877,7 +877,7 @@ class Project(models.Model):
 
     @classmethod
     def active_states(self):
-        return ( 'in dev', 'waiting to close', 'waiting to invoice', 'invoiced' )
+        return ( 'in dev', 'waiting to invoice', 'invoiced' )
 
     @classmethod
     def pending_states(self):
@@ -885,7 +885,7 @@ class Project(models.Model):
 
     @classmethod
     def closed_states(self):
-        return ( 'closed', )
+        return ( 'closed', 'waiting to close' )
 
     @classmethod
     def hopeful_states(self):
