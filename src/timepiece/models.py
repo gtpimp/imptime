@@ -3040,6 +3040,11 @@ class UserNotification(models.Model):
 	notification_type = models.CharField(max_length=50, null=False, blank=False, choices=( ("daily_calendar", "Daily Calendar"), ) )
 	msg = models.TextField(null=True, blank=True)
 
+	@classmethod
+	def create_graph_notification(self, user):
+		UserNotification.objects.filter(user=user, notification_type="daily_calendar")).delete()
+		UserNotification.objects.create(user=user, notification_type="daily_calendar")
+	
 	def user_graph_from_date(self):
 		return self.user_graph_to_date() - relativedelta(days=14)
 
