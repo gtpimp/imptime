@@ -123,7 +123,7 @@ imp.load_user_notifications = function() {
 			  url: imp.config.load_user_notifications_url,
 			  success: function(data) {
 			      if ( data ) {
-				  el.show();
+				  el.slideDown();
 				  el.html(data);
 			      }
 			  },
@@ -131,7 +131,7 @@ imp.load_user_notifications = function() {
 			      el.hide();
 			  }
                 },
-		100 );
+		1000 );
     });
 
     
@@ -143,7 +143,7 @@ imp.seen_all_user_notifications = function(url) {
 	    url: url,
 	    success: function(data) {
 		on_done();
-		$("#user_notification_container").hide();
+		$("#user_notification_container").slideUp();
 	    },
 	    error: function(err) {
 		on_done();
