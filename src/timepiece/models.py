@@ -3042,7 +3042,7 @@ class UserNotification(models.Model):
 
 	@classmethod
 	def create_graph_notification(self, user):
-		UserNotification.objects.filter(user=user, notification_type="daily_calendar")).delete()
+		UserNotification.objects.filter(user=user, notification_type="daily_calendar").delete()
 		UserNotification.objects.create(user=user, notification_type="daily_calendar")
 	
 	def user_graph_from_date(self):
