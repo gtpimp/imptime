@@ -10414,3 +10414,19 @@ tr.clickable {
 .light_error {
     color: #b94a48;
 }
+
+#user_notification_container {
+    position: fixed;
+    top: 20px;
+    left:50px;
+    width: 80%;
+    min-height: 200px;
+    background: #efefef;
+    border-radius: 3px;
+    border: 1px solid #ababab;
+    -moz-box-shadow:    4px 4px 2px 2px #aaa;
+    -webkit-box-shadow: 4px 4px 2px 2px #aaa;
+    box-shadow:         4px 4px 2px 2px #aaa;
+    padding:5px;
+    z-index:99999;
+}

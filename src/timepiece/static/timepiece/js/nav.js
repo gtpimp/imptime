@@ -114,7 +114,46 @@ imp.nav.show_issue = function( issue_id, project_id, show_url ) {
     }
 };
 
+imp.load_user_notifications = function() {
+
+    setTimeout( function () {
+	          var el = $("#user_notification_container");
+
+	          $.ajax({type:"GET",
+			  url: imp.config.load_user_notifications_url,
+			  success: function(data) {
+			      if ( data ) {
+				  el.show();
+				  el.html(data);
+			      }
+			  },
+			  error: function(err) {
+			      el.hide();
+			  }
+                },
+		100 );
+    });
+
+    
+};
+
+imp.seen_all_user_notifications = function(url) {
+    var on_done = imp.loading("Updating");
+    $.ajax({type:"GET",
+	    url: url,
+	    success: function(data) {
+		on_done();
+		$("#user_notification_container").hide();
+	    },
+	    error: function(err) {
+		on_done();
+		alert(err);
+	    }
+	   });
+};
+
 $(document).ready(function() {
 		      imp.nav.hookup_search_form();
+                      imp.load_user_notifications();
 		  });
 

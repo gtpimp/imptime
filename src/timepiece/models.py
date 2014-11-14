@@ -3034,3 +3034,8 @@ class FinanceChecklist(models.Model):
 
     def is_ok(self):
         return self.passed and self.created_at > datetime.datetime.today()-timedelta(days=settings.NUM_DAYS_FOR_FINANCE_SPRINT_CHECKLISTS)
+
+class UserNotification(models.Model):
+	user = models.ForeignKey(User, related_name='notifications')
+	notification_type = models.CharField(max_length=50, null=False, blank=False, choices=( ("daily_calendar", "Daily Calendar"), ) )
+	

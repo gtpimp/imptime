@@ -628,5 +628,9 @@ urlpatterns = patterns('',
 
                        url(r'^project/(?P<project_id>\d+)/edit_project_deadlines/$', views.edit_project_deadlines, {}, name='edit_project_deadlines'),
 
+					   url(r'^user_notifications/$', views.user_notifications, {}, name='user_notifications'),
+					   url(r'^user_notification/(?P<notification_id>\d+)/seen/$', views.seen_user_notification, {}, name='seen_user_notification'),
+					   url(r'^user_notifications/seen/$', views.seen_all_user_notifications, {}, name='seen_all_user_notifications'),
+
 
 )

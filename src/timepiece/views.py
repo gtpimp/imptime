@@ -5310,3 +5310,24 @@ def finance_checklist(request, business_id, template="timepiece/project/finance_
     context['previous_checklists'] = timepiece.FinanceChecklist.objects.all().filter(business=business).order_by("-pk")[:5]
     return render_to_response(template, context, context_instance=RequestContext(request))
 
+@login_required
+def user_notifications(request, template="timepiece/project/user_notifications.html", context=None):
+	context = context or {}
+	notifications = timepiece.UserNotification.objects.filter(user=request.user)
+	context['notifications'] = notifications
+	timepiece.UserNotification.objects.create(user=request.user, notification_type="daily_calendar")
+	if notifications.count() == 0:
+		return HttpResponse("")
+	
+	return render_to_response(template, context, context_instance=RequestContext(request))
+
+@login_required
+def seen_user_notification(request, notification_id, context=None):
+	timepiece.UserNotification.objects.filter(user=request.user, pk=notification_id).delete()
+	return HttpResponse(json.dumps({ "status":"ok" }))
+
+@login_required
+def seen_all_user_notifications(request, context=None):
+	timepiece.UserNotification.objects.filter(user=request.user).delete()
+	return HttpResponse(json.dumps({ "status":"ok" }))
+

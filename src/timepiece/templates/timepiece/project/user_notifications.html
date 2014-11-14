@@ -1,0 +1,19 @@
+<div class="user_notifications">
+
+{% for notification in notifications %}
+
+  <div class="notification_card">
+
+    {% if notification.notification_type == "daily_calendar" %}
+      
+    {% endif %}
+
+  </div>
+
+{% endfor %}
+
+  <button class="btn btn-primary" onclick="return imp.seen_all_user_notifications('{% url 'seen_all_user_notifications' %}');">
+    Close
+  </button>
+
+</div>
