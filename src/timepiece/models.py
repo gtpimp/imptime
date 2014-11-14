@@ -2871,7 +2871,9 @@ class BusinessDocument(models.Model):
 
 class CalendarEvent(models.Model):
 
-    EVENT_TYPES = ( ('planned', 'Planned'), ('meeting', 'Meeting'), ('leave', 'Leave'), ('sickday', 'Sick day'), ('office_closed', 'Office Closed'), ('personal', 'Personal') )
+    EVENT_TYPES = ( ('planned', 'Planned'), ('meeting', 'Meeting'), ('leave', 'Leave'), ('sickday', 'Sick day'),
+					('office_closed', 'Office Closed'), ('personal', 'Personal'),
+                    ('deadline', 'Deadline') )
     EVENT_STATUSES = ( ('ready', 'Ready'), ('done', 'Done'), ('cancelled', 'Cancelled') )
 
     user = models.ForeignKey(User, blank=False, null=False, db_index=True)

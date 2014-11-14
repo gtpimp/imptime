@@ -35,10 +35,6 @@ var t_calendar = ( function() {
 				   event_el = $("." + event_widget_class_name);
 			       }
 
-			       if ( event.id == 132 ) {
-				   var x = 5;
-			       }
-
 			       $(event_el).addClass("event_status_" + event.status);
 			       if ( event.is_overdue ) {
 				   $(event_el).addClass("event_overdue");
@@ -46,6 +42,11 @@ var t_calendar = ( function() {
 				   $(event_el).removeClass("event_overdue");
 			       }
 			       $(event_el).addClass(event_widget_class_name);
+			       
+			       $(event_el).find(".event_type_holder").remove();
+			       var event_type_el = $("<div class='event_type_holder'>");
+			       $(event_el).append(event_type_el);
+			       event_type_el.addClass("event_type_" + event.event_type);
 			   },
 
 			   activate_project_for_scheduling: function(project_id) {

@@ -75,3 +75,51 @@ li.project_unscheduled a {
     background-position: right;
 
 }
+
+.event_status_done {
+    background-image: url('../../images/icons/tick.png');
+    background-repeat: no-repeat;
+    background-position: right;
+}
+
+.event_type_holder {
+    background-repeat: no-repeat;
+    background-position: right;
+    height:16px;
+    width:16px;
+    position:absolute;
+    top: 0px;
+    right: 0px;
+}
+
+.event_type_actual {
+    /*background-image: url('../../images/icons/tick.png');*/
+}
+
+.event_type_planned {
+    background-image: url('../../images/icons/event_type_planned.png');
+}
+
+.event_type_meeting {
+    background-image: url('../../images/icons/event_type_meeting.png');
+}
+
+.event_type_leave {
+    background-image: url('../../images/icons/event_type_leave.png');
+}
+
+.event_type_sickday {
+    background-image: url('../../images/icons/event_type_sick.png');
+}
+
+.event_type_office_closed {
+    background-image: url('../../images/icons/event_type_office_closed.png');
+}
+
+.event_type_personal {
+    /*background-image: url('../../images/icons/tick.png');*/
+}
+
+.event_type_deadline {
+    background-image: url('../../images/icons/event_type_deadline.png');
+}
