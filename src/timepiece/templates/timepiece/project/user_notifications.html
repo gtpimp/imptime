@@ -1,11 +1,60 @@
+{% load timepiece_tags %}
 <div class="user_notifications">
 
 {% for notification in notifications %}
 
-  <div class="notification_card">
+  <div class="notification_card notification_{{notification.id}}">
 
     {% if notification.notification_type == "daily_calendar" %}
-      
+     
+      <div id="chart_{{notification.id}}"></div>
+
+      <script>
+       
+	 var el = $("#chart_{{notification.id}}");
+	 el.css({width:0.8*$(".notification_{{notification.id}}").width(),
+		 height:200});
+
+	 var plot = $.plot(el, 
+			   [ 
+			     { label:"",
+			       data: [ [{{notification.user_graph_from_date|epoch}},8],
+				       [{{notification.user_graph_to_date|epoch}},8]
+			       ],
+			       lines: {show: true, steps: false},
+			       points: {show: false},
+			     },
+			     { label:"Timesheet Graph", 
+			       data: [
+				 {% for entry in notification.get_hours_for_user_graph %} 
+				 {%spaceless%} 
+				 [ {{entry.0|epoch}},
+				   {{entry.1}}
+				 ],
+				 {%endspaceless%}{% endfor %} 
+			       ],
+			       lines: {show: true, steps: true},
+			       points: {show: false},
+			     }
+			   ],
+			   {
+			     xaxis: { 
+			       mode: "time",
+			       timeformat: "%d %b %y",
+	                       min: {{notification.user_graph_from_date|epoch}},
+			       max: {{notification.user_graph_to_date|epoch}},
+			     },
+			     legend: { position: "se" },
+			     bars: {
+			       show: true
+			     }
+			   }
+	 );
+      </script>
+
+
+    {% else %}
+      {{notification.msg}}
     {% endif %}
 
   </div>

@@ -3038,4 +3038,34 @@ class FinanceChecklist(models.Model):
 class UserNotification(models.Model):
 	user = models.ForeignKey(User, related_name='notifications')
 	notification_type = models.CharField(max_length=50, null=False, blank=False, choices=( ("daily_calendar", "Daily Calendar"), ) )
+	msg = models.TextField(null=True, blank=True)
+
+	def user_graph_from_date(self):
+		return self.user_graph_to_date() - relativedelta(days=14)
+
+	def user_graph_to_date(self):
+		return datetime.datetime.today().date()
+	
+	def get_hours_for_user_graph(self):
+		from views import _get_daily_hours
+		to_date = self.user_graph_to_date()
+		from_date = self.user_graph_from_date()
+		hours = {}
+		entries = Entry.objects.filter(user=self.user).order_by("start_time").filter(start_time__gte=from_date, end_time__lte=to_date)
+
+		for entry in entries:
+			d = entry.start_time.date()
+			if from_date and to_date:
+				if from_date > d or to_date < d: continue
+			elif from_date:
+				if from_date > d: continue
+			elif to_date:
+				if to_date < d: continue
+			if d not in hours:
+				hours[d] = entry.hours
+			else:
+				hours[d] += entry.hours
+
+		hours = sorted(hours.iteritems())
+		return hours
 	

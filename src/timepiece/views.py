@@ -5313,9 +5313,9 @@ def finance_checklist(request, business_id, template="timepiece/project/finance_
 @login_required
 def user_notifications(request, template="timepiece/project/user_notifications.html", context=None):
 	context = context or {}
+	timepiece.UserNotification.objects.get_or_create(user=request.user, notification_type="daily_calendar") # ### HACK
 	notifications = timepiece.UserNotification.objects.filter(user=request.user)
 	context['notifications'] = notifications
-	timepiece.UserNotification.objects.create(user=request.user, notification_type="daily_calendar")
 	if notifications.count() == 0:
 		return HttpResponse("")
 	
@@ -5330,4 +5330,3 @@ def seen_user_notification(request, notification_id, context=None):
 def seen_all_user_notifications(request, context=None):
 	timepiece.UserNotification.objects.filter(user=request.user).delete()
 	return HttpResponse(json.dumps({ "status":"ok" }))
-

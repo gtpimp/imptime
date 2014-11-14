@@ -119,11 +119,11 @@ imp.load_user_notifications = function() {
     setTimeout( function () {
 	          var el = $("#user_notification_container");
 
+	          el.show();
 	          $.ajax({type:"GET",
 			  url: imp.config.load_user_notifications_url,
 			  success: function(data) {
 			      if ( data ) {
-				  el.show();
 				  el.html(data);
 			      }
 			  },
