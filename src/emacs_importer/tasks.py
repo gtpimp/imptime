@@ -3,6 +3,7 @@ from implicitdesign import settings
 from datetime import datetime
 from extract_for_timepiece import Extractor
 from timepiece.models import UserNotification
+from django.contrib.auth.models import User
 
 @task()
 def import_timesheets_from_emacs_task():
