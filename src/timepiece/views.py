@@ -5313,7 +5313,6 @@ def finance_checklist(request, business_id, template="timepiece/project/finance_
 @login_required
 def user_notifications(request, template="timepiece/project/user_notifications.html", context=None):
 	context = context or {}
-	timepiece.UserNotification.objects.get_or_create(user=request.user, notification_type="daily_calendar") # ### HACK
 	notifications = timepiece.UserNotification.objects.filter(user=request.user)
 	context['notifications'] = notifications
 	if notifications.count() == 0:

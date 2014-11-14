@@ -2,6 +2,7 @@ from celery.task import task
 from implicitdesign import settings
 from datetime import datetime
 from extract_for_timepiece import Extractor
+from timepiece.models import UserNotification
 
 @task()
 def import_timesheets_from_emacs_task():
@@ -23,5 +24,7 @@ def import_timesheets_from_emacs(users=None):
         status[username] = { 'status' : extract_result }
         status['errors'].extend(extract_result['errors'])
         status['infos'].extend(extract_result['infos'])
+
+		UserNotification.objects.get_or_create(user=User.objects.get(username=username), notification_type="daily_calendar")
                          
     return status
