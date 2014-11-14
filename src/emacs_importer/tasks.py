@@ -25,6 +25,6 @@ def import_timesheets_from_emacs(users=None):
         status['errors'].extend(extract_result['errors'])
         status['infos'].extend(extract_result['infos'])
 
-		UserNotification.objects.get_or_create(user=User.objects.get(username=username), notification_type="daily_calendar")
+        UserNotification.objects.get_or_create(user=User.objects.get(username=username), notification_type="daily_calendar")
                          
     return status
