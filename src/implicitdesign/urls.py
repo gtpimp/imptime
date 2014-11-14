@@ -37,6 +37,8 @@ urlpatterns = patterns('',
                        
                        url(r'^generate_incremental_timesheet', views.generate_incremental_timesheet, name='generate_incremental_timesheet'),
                        url(r'^staff_daylies', views.staff_daylies, name='staff_daylies'),
+
+                       
                        
 
 )

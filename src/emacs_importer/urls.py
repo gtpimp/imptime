@@ -6,6 +6,6 @@ admin.autodiscover()
 import views
 
 urlpatterns = patterns('',
-                       url(r'^do_import$', views.do_import, name='do_import')
+                       url(r'^import_timesheets$', views.import_timesheets, name='import_timesheets')
 
                        )

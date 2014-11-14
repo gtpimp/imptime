@@ -1,3 +1,4 @@
+
 from django.shortcuts import render_to_response, get_object_or_404
 from django.http import HttpResponse, HttpResponseRedirect
 from django.core.urlresolvers import reverse, resolve
@@ -196,4 +197,3 @@ def _generate_issues_clocktable_common(processor):
     context['footer'] = ['', '', '', '', '', '', total_hours, 'TOTAL HOURS']
 
     return context
-
