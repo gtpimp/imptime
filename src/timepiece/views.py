@@ -5314,7 +5314,7 @@ def finance_checklist(request, business_id, template="timepiece/project/finance_
 def user_notifications(request, template="timepiece/project/user_notifications.html", context=None):
 	context = context or {}
 	timepiece.UserNotification.create_default_notifications(request.user)
-	notifications = timepiece.UserNotification.objects.filter(user=request.user, seen=False)
+	notifications = timepiece.UserNotification.objects.filter(user=request.user, seen=False, applies_on=datetime.datetime.today().date())
 	context['notifications'] = notifications
 	if notifications.count() == 0:
 		return HttpResponse("")
