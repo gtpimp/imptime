@@ -69,8 +69,10 @@
 
     {% block navigation %}
         {% include "timepiece/navigation.html" %}
+        {% if request.id %}
         <div style="display:none" id="user_notification_container">
 	</div>
+	{% endif %}
     {% endblock navigation %}
 
     <div id="content" class="container-fluid">
