@@ -53,6 +53,15 @@
       </script>
 
 
+    {% elif notification.notification_type == "planned_for_today" %}
+      <h2>Calendar for today</h2>
+      {% for event in notification.get_planned_events_for_today %}
+      <div>
+	{{event.event_type}} : {{event.start}} for {{event.hours}} hours : {{event.project.business}} : {{event.description}}
+      </div>
+      {% empty %}
+      No planned items
+      {% endfor %}
     {% else %}
       {{notification.msg}}
     {% endif %}

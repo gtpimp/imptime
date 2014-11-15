@@ -3037,14 +3037,26 @@ class FinanceChecklist(models.Model):
 
 class UserNotification(models.Model):
 	user = models.ForeignKey(User, related_name='notifications')
-	notification_type = models.CharField(max_length=50, null=False, blank=False, choices=( ("daily_calendar", "Daily Calendar"), ) )
+	notification_type = models.CharField(max_length=50, null=False, blank=False,
+										 choices=( ("daily_calendar", "Daily Calendar"), ("planned_for_today", "Planned for today") ))
+	applies_on = models.DateField(blank=True, null=True)
 	msg = models.TextField(null=True, blank=True)
+	seen = models.BooleanField(default=False)
 
 	@classmethod
-	def create_graph_notification(self, user):
-		UserNotification.objects.filter(user=user, notification_type="daily_calendar").delete()
-		UserNotification.objects.create(user=user, notification_type="daily_calendar")
-	
+	def create_graph_notification(self, user, force=False):
+		if force:
+			UserNotification.objects.create(user=user, notification_type="daily_calendar", applies_on=datetime.datetime.today().date(),
+											seen=False)
+		else:
+			UserNotification.objects.get_or_create(user=user, notification_type="daily_calendar", applies_on=datetime.datetime.today().date(),
+												   defaults={'seen':False})
+
+	@classmethod
+	def create_default_notifications(self, user):
+		UserNotification.objects.get_or_create(user=user, notification_type="planned_for_today", applies_on=datetime.datetime.today().date(),
+											   defaults={'seen':False})
+					
 	def user_graph_from_date(self):
 		return self.user_graph_to_date() - relativedelta(days=14)
 
@@ -3073,4 +3085,7 @@ class UserNotification(models.Model):
 
 		hours = sorted(hours.iteritems())
 		return hours
+
+	def get_planned_events_for_today(self):
+		return CalendarEvent.objects.filter(user=self.user, start=datetime.datetime.today().date())
 	

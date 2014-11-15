@@ -115,7 +115,7 @@ imp.nav.show_issue = function( issue_id, project_id, show_url ) {
 };
 
 imp.load_user_notifications = function() {
-
+    
     setTimeout( function () {
 	          var el = $("#user_notification_container");
 
@@ -130,11 +130,9 @@ imp.load_user_notifications = function() {
 			  error: function(err) {
 			      el.hide();
 			  }
+                        });
                 },
-		1000 );
-    });
-
-    
+		3000 );
 };
 
 imp.seen_all_user_notifications = function(url) {
@@ -154,6 +152,6 @@ imp.seen_all_user_notifications = function(url) {
 
 $(document).ready(function() {
 		      imp.nav.hookup_search_form();
-                      imp.load_user_notifications();
 		  });
 
+imp.load_user_notifications();

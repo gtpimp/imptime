@@ -26,6 +26,6 @@ def import_timesheets_from_emacs(users=None):
         status['errors'].extend(extract_result['errors'])
         status['infos'].extend(extract_result['infos'])
 
-        UserNotification.create_graph_notification(user=User.objects.get(username=username))
+        UserNotification.create_graph_notification(user=User.objects.get(username=username), force=True)
                          
     return status
