@@ -114,6 +114,9 @@ class Business(models.Model):
                                                  ("fixed_quote", "Fixed quote"),
                                                  ("free", "Free or Equity or Other") ) )
 
+    def wiki_name(self):
+        return self.name.replace(" ", "_").lower()
+    
     def has_recent_traffic_checklist(self):
         return TrafficChecklist.objects.filter(business=self).filter(created_at__gte=datetime.datetime.today()-timedelta(days=settings.NUM_DAYS_FOR_TRAFFIC_SPRINT_CHECKLISTS)).count() > 0
 

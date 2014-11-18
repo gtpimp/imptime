@@ -66,6 +66,9 @@
                                   {% end_permission %}
                                 {% endif %}
 
+                                {% if business %}
+                                    <li><a href="{% url 'wiki:djiki-page-view' business.wiki_name %}">Wiki</a></li>
+                                {% endif %}
                             </ul>
                         </li>
                     {% endif %}

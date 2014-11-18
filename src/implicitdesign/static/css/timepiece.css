@@ -10430,3 +10430,9 @@ tr.clickable {
     padding:5px;
     z-index:99999;
 }
+
+.page_menu li {
+    float: left;
+    list-style: none;
+    margin-left: 10px;
+}

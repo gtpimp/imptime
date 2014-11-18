@@ -22,7 +22,7 @@ urlpatterns = patterns('',
                        url(r'^timepiece/', include('timepiece.urls'), name='timepiece'),
                        url(r'^welcome/', include('animated_website.urls'), name='animated_website'),
                        url(r'^selectable/', include('selectable.urls'), name='selectable'),
-#                       url(r'^timesheetfiles/', include(filebrowser.site.urls)),
+                       url(r'^wiki/', include('djiki.urls', namespace='wiki'), name='wiki'),
 
                        url(r'^us/', views.us),
                        
@@ -38,7 +38,6 @@ urlpatterns = patterns('',
                        url(r'^generate_incremental_timesheet', views.generate_incremental_timesheet, name='generate_incremental_timesheet'),
                        url(r'^staff_daylies', views.staff_daylies, name='staff_daylies'),
 
-                       
                        
 
 )

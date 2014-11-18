@@ -118,6 +118,9 @@ MEDIA_ROOT = os.path.join(PROJECT_HOME, "media")
 # Examples: "http://media.lawrence.com/media/", "http://example.com/media/"
 MEDIA_URL = '/media/'
 
+DJIKI_IMAGES_PATH='wiki'
+DJIKI_AUTHORIZATION_BACKEND="djiki.auth.base.OnlyAuthenticatedEdits"
+
 # Absolute path to the directory static files should be collected to.
 # Don't put anything in this directory yourself; store your static files
 # in apps' "static/" subdirectories and in STATICFILES_DIRS.
@@ -248,7 +251,11 @@ INSTALLED_APPS = (
     'invoicing',
     'animated_website',
 
+    'sorl.thumbnail',
+    'creole',
+    'djiki',
 )
+
 
 PAGINATION_DEFAULT_PAGINATION=50
 ENDLESS_PAGINATION_PER_PAGE=PAGINATION_DEFAULT_PAGINATION
