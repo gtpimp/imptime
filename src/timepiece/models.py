@@ -3087,5 +3087,6 @@ class UserNotification(models.Model):
 		return hours
 
 	def get_planned_events_for_today(self):
-		return CalendarEvent.objects.filter(user=self.user, start=datetime.datetime.today().date())
+		return CalendarEvent.objects.filter(user=self.user, start__gte=datetime.datetime.today().date(), start__lt=datetime.datetime.today().date()+relativedelta(days=1)).order_by("start")
+	
 	

@@ -218,11 +218,13 @@
                     {% endif %}
 
 			
+			{% if user.is %}
 			<li>
 			  <a onclick="imp.projects.show_business_comments(event,'{% url 'business_comments' business_id=business.id %}');return false" href='#' target_id=".issue_detail" business_id="{{ business.id }}">
 			    Project comments
 			  </a>
 			</li>
+			{% endif %}
 			<li class="dropdown" id="checklist_menu_container" data-refresh-url="{% url 'render_checklist_navigation' business.id %}">
 			  {% include "timepiece/project/_checklist_menu.html" %}
 			</li>
