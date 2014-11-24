@@ -1123,10 +1123,10 @@ def create_edit_person(request, person_id=None):
         if person_form.is_valid() and profile_form.is_valid():
             person = person_form.save(commit=False)
             profile = profile_form.save(commit=False)
-            profile.user = person
             person.save()
-            profile.save()
             person_form.save_m2m()
+            profile.user = person
+            profile.save()
             profile_form.save_m2m()
             return HttpResponseRedirect(
                 reverse('view_person', args=(person.id,))
