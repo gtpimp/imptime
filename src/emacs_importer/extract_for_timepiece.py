@@ -32,8 +32,13 @@ class Extractor(object):
             logger.debug("Invalid timesheet path: %s" % self.input_path)
             return
         logger.debug("Pulling timesheet path: %s" % self.input_path)
-        repo = git.Repo(self.input_path)
-        repo.remotes.origin.pull()
+        try:
+            repo = git.Repo(self.input_path)
+            repo.remotes.origin.pull()
+        except Exception, ex:
+            logger.exception(ex)
+            logger.error("Failed to pull from origin")
+            raise
         logger.debug("Pulled timesheet path: %s" % self.input_path)
     
     def extract(self):
