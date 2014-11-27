@@ -2,6 +2,7 @@ from django.shortcuts import render_to_response, get_object_or_404
 from django.template import RequestContext
 from django.http import HttpResponse, HttpResponseRedirect
 import os
+from django.core.mail import send_mail
 import pprint
 from implicitdesign import settings
 from django.contrib.auth.decorators import login_required, permission_required
@@ -30,5 +31,4 @@ def import_timesheets(self):
     t.start()
     return HttpResponse("Timesheet import started. It can take up to an hour or so, you will receive an email when it's complete.<br/>Don't start a new import until the previous one has completed")
 
-    
 

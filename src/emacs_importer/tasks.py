@@ -21,6 +21,7 @@ def import_timesheets_from_emacs(users=None):
                    }
 
         extractor = Extractor(**kwargs)
+        extractor.refresh_from_git()
         extract_result = extractor.extract()
         status[username] = { 'status' : extract_result }
         status['errors'].extend(extract_result['errors'])

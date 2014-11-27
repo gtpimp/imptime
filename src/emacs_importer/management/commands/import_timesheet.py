@@ -11,6 +11,7 @@ class Command(BaseCommand):
     website. '''
 
     def handle(self, *args, **options):
+
         try:
             status = import_timesheets_from_emacs()
         except Exception, ex:
@@ -43,3 +44,5 @@ class Command(BaseCommand):
             print("Import failed")
         else:
             print("Import complete")
+
+    

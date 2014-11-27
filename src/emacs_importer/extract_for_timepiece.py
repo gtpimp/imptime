@@ -1,5 +1,6 @@
 import os
 import fnmatch
+import git
 from implicitdesign import settings
 from timepiece.interface_plugin import get_interface_plugin
 from orgnode import makelist
@@ -26,6 +27,12 @@ class Extractor(object):
             timings[p.id] = p.total_hours_for_user(user=timesheet_user)
         return timings
 
+    def refresh_from_git(self):
+        if not os.path.exists(self.input_path):
+            return
+        repo = git.Repo(self.input_path)
+        repo.remotes.origin.pull()
+    
     def extract(self):
 
         with transaction.commit_manually():
