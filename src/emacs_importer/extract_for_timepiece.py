@@ -29,9 +29,12 @@ class Extractor(object):
 
     def refresh_from_git(self):
         if not os.path.exists(self.input_path):
+            logger.debug("Invalid timesheet path: %s" % self.input_path)
             return
+        logger.debug("Pulling timesheet path: %s" % self.input_path)
         repo = git.Repo(self.input_path)
         repo.remotes.origin.pull()
+        logger.debug("Pulled timesheet path: %s" % self.input_path)
     
     def extract(self):
 
