@@ -156,14 +156,25 @@ class Extractor(object):
                     issue = Issue.objects.get(number=issue_id, project__business=project.business) 
                 except Issue.DoesNotExist:
                     issue = None
-                    pass
+
                 except Issue.MultipleObjectsReturned:
                     issue = Issue.objects.filter(number=issue_id, project__business=project.business).order_by("-interface_plugin_number", "-id")[0]
 
-                if issue is not None:
-                    entry.issue = issue
-                    entry.project = issue.project
-                    entry.save()
-                    issues_processed.add(issue)
+            else:
+                # Auto create the issue
+                issue = Issue.objects.get_or_create(status='new',
+                                                    project=project,
+                                                    subject=orgnode.Heading(),
+                                                    defaults={'auto_created_during_import':True,
+                                                              'number':Issue.get_next_issue_number(project.business),
+                                                              'description':orgnode.CleanBody(),
+                                                              'story_points':0,
+                                                              'order':Issue.get_next_order(project)})[0]
+
+            if issue is not None:
+                entry.issue = issue
+                entry.project = issue.project
+                entry.save()
+                issues_processed.add(issue)
 
             self.status['num_entries_created'] += 1

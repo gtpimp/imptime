@@ -2588,6 +2588,7 @@ class Issue(models.Model):
     created = models.DateTimeField(auto_now_add=True)
     modified = models.DateTimeField(auto_now=True)
     due_date = models.DateTimeField(default=None, null=True, blank=True)
+    auto_created_during_import = models.BooleanField(default=False)
 
     @classmethod
     def get_last_issue_number(self, business):
@@ -2621,13 +2622,20 @@ class Issue(models.Model):
     def set_order(self):
         if self.order is not None:
             return self
-        project_issue_order = Issue.objects.filter(project = self.project).aggregate(max_order=Max('order'))
-        current_order = project_issue_order['max_order'] or 0
-        new_order = current_order + 1
-        self.order = new_order
+        self.order = Issue.get_next_order(self.project)
         self.save()
         return self
 
+    @classmethod
+    def get_next_order(self, project):
+        project_issue_order = Issue.objects.filter(project = project).aggregate(max_order=Max('order'))
+        current_order = project_issue_order['max_order'] or 0
+        new_order = current_order + 1
+        num_issues = Issue.objects.filter(project = project).count()
+        if new_order > num_issues:
+            new_order = num_issues
+        return new_order
+    
     def get_user_issue_points(self, user):
 
         if isinstance(user,basestring):
