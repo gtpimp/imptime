@@ -172,7 +172,7 @@ class Extractor(object):
                                                                   'story_points':0,
                                                                   'order':Issue.get_next_order(project)})[0]
                 except Issue.MultipleObjectsReturned:
-                    issue = Issue.objects.get_or_create(status='new',project=project, subject=orgnode.Heading())
+                    issue = Issue.objects.filter(status='new',project=project, subject=orgnode.Heading())[0]
 
             if issue is not None:
                 entry.issue = issue
