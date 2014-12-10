@@ -162,14 +162,17 @@ class Extractor(object):
 
             else:
                 # Auto create the issue
-                issue = Issue.objects.get_or_create(status='new',
-                                                    project=project,
-                                                    subject=orgnode.Heading(),
-                                                    defaults={'auto_created_during_import':True,
-                                                              'number':Issue.get_next_issue_number(project.business),
-                                                              'description':orgnode.CleanBody(),
-                                                              'story_points':0,
-                                                              'order':Issue.get_next_order(project)})[0]
+                try:
+                    issue = Issue.objects.get_or_create(status='new',
+                                                        project=project,
+                                                        subject=orgnode.Heading(),
+                                                        defaults={'auto_created_during_import':True,
+                                                                  'number':Issue.get_next_issue_number(project.business),
+                                                                  'description':orgnode.CleanBody(),
+                                                                  'story_points':0,
+                                                                  'order':Issue.get_next_order(project)})[0]
+                except Issue.MultipleObjectsReturned:
+                    issue = Issue.objects.get_or_create(status='new',project=project, subject=orgnode.Heading())
 
             if issue is not None:
                 entry.issue = issue
