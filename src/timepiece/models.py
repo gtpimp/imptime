@@ -2589,6 +2589,7 @@ class Issue(models.Model):
     modified = models.DateTimeField(auto_now=True)
     due_date = models.DateTimeField(default=None, null=True, blank=True)
     auto_created_during_import = models.BooleanField(default=False)
+    adhoc = models.BooleanField(default=False)
 
     @classmethod
     def get_last_issue_number(self, business):

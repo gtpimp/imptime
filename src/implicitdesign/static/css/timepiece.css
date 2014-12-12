@@ -10436,3 +10436,8 @@ tr.clickable {
     list-style: none;
     margin-left: 10px;
 }
+
+.issue_row_icon_bar {
+    float:left;
+    padding-right:3px;
+}

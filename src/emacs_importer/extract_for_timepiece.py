@@ -167,6 +167,7 @@ class Extractor(object):
                                                         project=project,
                                                         subject=orgnode.Heading(),
                                                         defaults={'auto_created_during_import':True,
+                                                                  'adhoc':True,
                                                                   'number':Issue.get_next_issue_number(project.business),
                                                                   'description':orgnode.CleanBody(),
                                                                   'story_points':0,

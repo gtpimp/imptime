@@ -377,6 +377,21 @@ imp.refresh_checklist_navigation = function(business_id) {
     });
 };
 
+imp.on_clear_adhoc_issue = function(el, issue_id, url) {
+    
+    if ( ! confirm( "Make this into a development issue?" ) ) {
+        return false;
+    }
+    var on_done = imp.loading("saving");
+    $.ajax({type:"POST",
+            url: url,
+            success : function (data) {
+		on_done();
+                imp.refresh_closest_issue_parent_row(el);
+            }
+           });
+};
+
 imp.on_document_ready = function() {
 
     var project_sort_url = $(".project_list").attr("project_sort_url");

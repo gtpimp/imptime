@@ -5330,3 +5330,16 @@ def seen_user_notification(request, notification_id, context=None):
 def seen_all_user_notifications(request, context=None):
 	timepiece.UserNotification.objects.filter(user=request.user).update(seen=True)
 	return HttpResponse(json.dumps({ "status":"ok" }))
+
+@login_required
+@csrf_exempt
+def clear_issue_adhoc_status(request, issue_id, context=None):
+    context = context or {}
+    issue = timepiece.Issue.objects.get(pk=issue_id)
+    bp = timepiece.BusinessPermissions.for_user(request.user, issue.project.business)
+    if not bp.has_add_issue:
+        return HttpResponse("No permission to do that")
+    issue.adhoc = False
+    issue.save()
+    return HttpResponse("{'status':'ok'}")
+    
