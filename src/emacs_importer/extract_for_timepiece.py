@@ -166,6 +166,7 @@ class Extractor(object):
                     issue = Issue.objects.get_or_create(status='new',
                                                         project=project,
                                                         subject=orgnode.Heading(),
+                                                        assigned_to=timesheet_user,
                                                         defaults={'auto_created_during_import':True,
                                                                   'adhoc':True,
                                                                   'number':Issue.get_next_issue_number(project.business),
@@ -176,6 +177,11 @@ class Extractor(object):
                     issue = Issue.objects.filter(status='new',project=project, subject=orgnode.Heading())[0]
 
             if issue is not None:
+
+                if issue.assigned_to is None:
+                    issue.assigned_to = timesheet_user
+                    issue.save()
+                
                 entry.issue = issue
                 entry.project = issue.project
                 entry.save()
