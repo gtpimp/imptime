@@ -5328,6 +5328,16 @@ def finance_checklist(request, business_id, template="timepiece/project/finance_
     return render_to_response(template, context, context_instance=RequestContext(request))
 
 @login_required
+def recalculate_all_checklists(request, context=None):
+    context = context or {}
+    for business in timepiece.Business.objects.filter_has_at_least_one_open_project():
+        timepiece.DevChecklist.get_todays_checklist(request.user, business).recalculate_all()
+        timepiece.TrafficChecklist.get_todays_checklist(request.user, business).recalculate_all()
+        timepiece.FinanceChecklist.get_todays_checklist(request.user, business).recalculate_all()
+    messages.info(request, "Checklists updated")
+    return HttpResponseRedirect(reverse('list_projects'))
+
+@login_required
 def user_notifications(request, template="timepiece/project/user_notifications.html", context=None):
 	context = context or {}
 	timepiece.UserNotification.create_default_notifications(request.user)

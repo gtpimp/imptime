@@ -42,6 +42,8 @@
                                 {% if perms.timepiece.add_business %}
                                   <li><a href="{% url 'create_business' %}">New project</a></li>
                                 {% endif %}
+                                  
+                                <li><a href="{% url 'recalculate_all_checklists' %}">Refresh checklists</a></li>
 
                                 <li><hr/></li>
                                 {% if perms.timepiece.add_business %}

@@ -78,6 +78,9 @@ class BusinessQuerySet(QuerySet):
     def filter_has_only_closed_projects(self):
         return self.exclude(new_business_projects__status2__in= Project.pending_states()+Project.active_states()+Project.hopeful_states() )
 
+    def filter_has_at_least_one_open_project(self):
+        return self.filter( new_business_projects__status2__in=Project.pending_states()+Project.active_states()+Project.hopeful_states() )
+    
     def filter_has_hopeful_projects(self):
         return self.filter(new_business_projects__status2__in=Project.hopeful_states())
 

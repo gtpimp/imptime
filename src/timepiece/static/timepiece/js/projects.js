@@ -365,6 +365,17 @@ imp.refresh_show_numbers = function() {
     }
 };
 
+imp.refresh_all_checklists = function(url) {
+    var on_done = imp.loading("saving");
+    $.ajax({type:"POST",
+            url: url,
+            success : function (data) {
+		on_done();
+                window.reload();
+            }
+           });    
+};
+
 imp.refresh_checklist_navigation = function(business_id) {
     var container = $("#checklist_menu_container");
     var url = container.attr('data-refresh-url');

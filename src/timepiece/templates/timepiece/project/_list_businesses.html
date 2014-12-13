@@ -55,7 +55,7 @@
       <td>
 	<a href="#" onclick="imp.popup_page('{% url 'dev_checklist' business.id %}'); return false;">
 	  <span class="checklist_status_icon" business_id="{{business.id}}" data-refresh-url="{% url 'render_checklist_status_icon_dev' business.id %}">
-	    {% include "timepiece/project/_checklist_status_icon_traffic.html" %}
+	    {% include "timepiece/project/_checklist_status_icon_dev.html" %}
 	    {% for owner in business.get_dev_owners %}
 	    {{owner}}
 	    {% endfor %}
@@ -67,7 +67,7 @@
       <td>
 	<a href="#" onclick="imp.popup_page('{% url 'finance_checklist' business.id %}'); return false;">
 	  <span class="checklist_status_icon" business_id="{{business.id}}" data-refresh-url="{% url 'render_checklist_status_icon_finance' business.id %}">
-	    {% include "timepiece/project/_checklist_status_icon_traffic.html" %}
+	    {% include "timepiece/project/_checklist_status_icon_finance.html" %}
 	    {% for owner in business.get_finance_owners %}
 	    {{owner}}
 	    {% endfor %}

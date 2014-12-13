@@ -627,6 +627,7 @@ urlpatterns = patterns('',
                        url(r'^checklist/finance/(?P<business_id>.*)', views.finance_checklist, {}, name='finance_checklist'),
                        url(r'^checklist/dev/(?P<business_id>.*)', views.dev_checklist, {}, name='dev_checklist'),
                        url(r'^checklist/traffic/(?P<business_id>.*)', views.traffic_checklist, {}, name='traffic_checklist'),
+                       url(r'^checklist/recalculate', views.recalculate_all_checklists, {}, name='recalculate_all_checklists'),
                        
 
                        url(r'^project/(?P<project_id>\d+)/edit_project_deadlines/$', views.edit_project_deadlines, {}, name='edit_project_deadlines'),
