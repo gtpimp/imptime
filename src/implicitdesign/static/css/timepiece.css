@@ -10441,3 +10441,37 @@ tr.clickable {
     float:left;
     padding-right:3px;
 }
+
+.checklist_items li {
+    float:none;
+}
+
+ul.checklist_items {
+    list-style: none;
+}
+
+.checklist_items ul {
+    list-style: none;
+}
+
+.checklist_items ul.item_attributes li {
+    float:left;
+    padding-right:10px;
+    clear:none;
+}
+
+.current_checklist_column {
+    min-width:300px;
+}
+
+.previous_checklist {
+    filter: alpha(opacity=40);
+    opacity: 0.4;
+
+}
+
+.previous_checklist:hover {
+    filter: alpha(opacity=100);
+    opacity: 1.0
+
+}

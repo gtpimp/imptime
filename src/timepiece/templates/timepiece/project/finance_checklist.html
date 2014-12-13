@@ -4,6 +4,7 @@
 
 <div class="checklist">
   <h1>{{business.name}}</h1>
+
   <h2>Finance Checklist</h2>
 
   {{msg}}
@@ -16,89 +17,65 @@
 
       <thead>
 	<tr>
-	  <th> </th>
-	  <th>today</th>
+	  <th>{{checklist.modified_at|date:"D d-M-Y H:m"}} </th>
 	  {% for checklist in previous_checklists %}
-	  <th> {{checklist.created_at|date:"D d-M-Y H:m"}} </th>
+	  <td><div class="previous_checklist">{{checklist.created_at|date:"D d-M-Y H:m"}} </div></td>
 	  {% endfor %}
 	</tr>
 	<tr>
-	  <th></th>
 	  <th>{{user}}</th>
 	  {% for checklist in previous_checklists %}
-	  <th> {{checklist.created_by}} </th>
-	{% endfor %}
+	  <td><div class="previous_checklist"> {{checklist.modified_by}} <div class="previous_checklist"></td>
+	  {% endfor %}
+        </tr>
       </thead>
 
       <tbody>
 	<tr>
-	  <td>Passed</td>
-	  <td></td>
-	  {% for checklist in previous_checklists %}
-	  <td><img src="{{STATIC_URL}}images/icons/{% if checklist.passed %}tick{% else %}cross{% endif %}.png"/>
+	  <td>
+            <img src="{{STATIC_URL}}images/icons/{% if checklist.passed %}tick{% else %}cross{% endif %}.png"/>
+          </td>
+	  {% for old_checklist in previous_checklists %}
+	  <td>
+            <div class="previous_checklist">
+              <img src="{{STATIC_URL}}images/icons/{% if old_checklist.passed %}tick{% else %}cross{% endif %}.png"/>
+            <div class="previous_checklist">
 	  </td>
 	  {% endfor %}
 	</tr>
 	<tr>
 	  <td colspan="99"></td>
 	</tr>
-	<tr>
-	  <td>Does each open sprint have a valid budget?</td>
-	  <td>{{form.has_valid_budget}}</td>
-	  {% for checklist in previous_checklists %}
-	  <td><img src="{{STATIC_URL}}images/icons/{% if checklist.has_valid_budget %}tick{% else %}cross{% endif %}.png"/></td>
-	  {% endfor %}
-	</tr>
-	<tr>
-	  <td>Does every user in the project have a valid and correct rate for all open sprints?</td>
-	  <td>{{form.are_rates_correct}}</td>
-	  {% for checklist in previous_checklists %}
-	  <td><img src="{{STATIC_URL}}images/icons/{% if checklist.are_rates_correct %}tick{% else %}cross{% endif %}.png"/></td>
-	  {% endfor %}
-	</tr>
-	<tr>
-	  <td>Are all sprints currently within budget?</td>
-	  <td>{{form.is_currently_under_budget}}</td>
-	  {% for checklist in previous_checklists %}
-	  <td><img src="{{STATIC_URL}}images/icons/{% if checklist.is_currently_under_budget %}tick{% else %}cross{% endif %}.png"/></td>
-	  {% endfor %}
-	</tr>
-	<tr>
-	  <td>Is the projected cost for all sprints currently within budget?</td>
-	  <td>{{form.is_projected_cost_in_budget}}</td>
-	  {% for checklist in previous_checklists %}
-	  <td><img src="{{STATIC_URL}}images/icons/{% if checklist.is_projected_cost_in_budget %}tick{% else %}cross{% endif %}.png"/></td>
-	  {% endfor %}
-	</tr>
-	<tr>
-	  <td>Have all invoices for sprints in state 'can_be_invoiced' (and that are due) been sent to the client?</td>
-	  <td>{{form.all_invoices_sent}}</td>
-	  {% for checklist in previous_checklists %}
-	  <td><img src="{{STATIC_URL}}images/icons/{% if checklist.all_invoices_sent %}tick{% else %}cross{% endif %}.png"/></td>
-	  {% endfor %}
-	</tr>
-	<tr>
-	  <td>Have all sprints been closed if they have been paid?</td>
-	  <td>{{form.all_sprints_closed}}</td>
-	  {% for checklist in previous_checklists %}
-	  <td><img src="{{STATIC_URL}}images/icons/{% if checklist.all_sprints_closed %}tick{% else %}cross{% endif %}.png"/></td>
-	  {% endfor %}
-	</tr>
+
+        <tr>
+          <td>
+            <div class="current_checklist_column">
+              {% include "timepiece/project/_checklist_items.html" with checklist=checklist %}
+            </div>
+          </td>
+          {% for previous_checklist in previous_checklists %}
+          <td>
+            <div class="previous_checklist">
+              {% include "timepiece/project/_checklist_items.html" with checklist=previous_checklist %}
+            </div>
+          </td>
+          {% endfor %}
+        </tr>
 
 	<tr>
-	  <td></td>
-	  <td>{{form.comments}}</td>
-	  {% for checklist in previous_checklists %}
-	  <td>{{ checklist.comments }}</td>
+	  <td>
+            {{form.comments}}
+            {{form.recalculate_all.label}} {{form.recalculate_all}}
+            <input class="btn btn-primary" type='submit' name='submit' value='Save' onclick='imp.submit_popup_form(this, function() { imp.refresh_checklist_navigation({{business.id}}); }, {display_results:true}); return false;' />
+
+          </td>
+	  {% for previous_checklist in previous_checklists %}
+	  <td>
+            <div class="previous_checklist">
+              {{ previous_checklist.comments }}
+            </div>
+          </td>
 	  {% endfor %}
-	</tr>
-	
-	
-	<tr>
-	  <td></td>
-	  <td>      
-            <input class="btn btn-primary" type='submit' name='submit' value='Create' onclick='imp.submit_popup_form(this, function() { imp.refresh_checklist_navigation({{business.id}}); }, {display_results:true}); return false;' />
-	  </td>
 	</tr>
 
       </tbody>

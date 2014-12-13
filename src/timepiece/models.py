@@ -17,6 +17,7 @@ from django.db.models import Q, Avg, Sum, Max, Min
 from django.utils.datastructures import SortedDict
 from re import sub as re_sub
 from re import UNICODE as re_UNICODE
+from checklist_plugins.registry import get_finance_plugins
 
 try:
     from django.utils import timezone
@@ -3014,39 +3015,74 @@ class DevChecklist(models.Model):
 class FinanceChecklist(models.Model):
     business = models.ForeignKey(Business, null=False, blank=True, db_index=True)
 
-
-    has_valid_budget = models.BooleanField(default=False, blank=True, verbose_name="does the sprint have a valid budget?")
-    is_currently_under_budget = models.BooleanField(default=False, blank=True, verbose_name="is the sprint currently within budget?")
-    is_projected_cost_in_budget = models.BooleanField(default=False, blank=True, verbose_name="is the projected cost within budget?")
-    are_rates_correct = models.BooleanField(default=False, blank=True, verbose_name="does every user in the sprint have a valid and correct rate?")
-    all_invoices_sent = models.BooleanField(default=False, blank=True, verbose_name="xxx?")
-    all_sprints_closed = models.BooleanField(default=False, blank=True, verbose_name="xxx?")
+    # has_valid_budget = models.BooleanField(default=False, blank=True, verbose_name="does the sprint have a valid budget?")
+    # is_currently_under_budget = models.BooleanField(default=False, blank=True, verbose_name="is the sprint currently within budget?")
+    # is_projected_cost_in_budget = models.BooleanField(default=False, blank=True, verbose_name="is the projected cost within budget?")
+    # are_rates_correct = models.BooleanField(default=False, blank=True, verbose_name="does every user in the sprint have a valid and correct rate?")
+    # all_invoices_sent = models.BooleanField(default=False, blank=True, verbose_name="xxx?")
+    # all_sprints_closed = models.BooleanField(default=False, blank=True, verbose_name="xxx?")
 
     comments = models.TextField(null=True, blank=True)
     passed = models.BooleanField(default=False, blank=True, db_index=True)
     created_by = models.ForeignKey(User, null=False, blank=False, related_name='finance_checklist_created_by')
     created_at = models.DateTimeField(auto_now_add=True)
+    modified_at = models.DateTimeField(auto_now=True)
+    modified_by = models.ForeignKey(User, null=False, blank=True, related_name='finance_checklist_modified_by')
 
-    def save(self, *args, **kwargs):
+    # def save(self, *args, **kwargs):
 
-        failed_states = [ x for x in [ self.has_valid_budget,
-                                       self.are_rates_correct,
-                                       self.is_currently_under_budget,
-                                       self.all_invoices_sent,
-                                       self.all_sprints_closed,
-                                       self.is_projected_cost_in_budget ] if not x ]
+    #     failed_states = [ x for x in [ self.has_valid_budget,
+    #                                    self.are_rates_correct,
+    #                                    self.is_currently_under_budget,
+    #                                    self.all_invoices_sent,
+    #                                    self.all_sprints_closed,
+    #                                    self.is_projected_cost_in_budget ] if not x ]
 
-        passed = len(failed_states)==0
-        if self.passed != passed:
-            self.passed = passed
-        super(FinanceChecklist, self).save(*args, **kwargs)
+    #     passed = len(failed_states)==0
+    #     if self.passed != passed:
+    #         self.passed = passed
+    #     super(FinanceChecklist, self).save(*args, **kwargs)
 
     def __unicode__(self):
         return "%s %s" % (self.created_by, self.created_at)
 
+    @classmethod
+    def get_todays_checklist(self, logged_in_user, business):
+        checklist = self.objects.filter(business=business,
+                                        created_at__gte=datetime.datetime.today().date(),
+                                        created_at__lt=(datetime.datetime.today()+relativedelta(days=1)).date).first()
+        if checklist is None:
+            checklist = self.objects.create(business=business, created_at=datetime.datetime.today(),
+                                            created_by=logged_in_user, modified_by=logged_in_user)
+            checklist.recalculate_all()
+        return checklist
+    
+    def recalculate_all(self):
+        self.items.all().delete()
+        num_problems = 0
+        for plugin in get_finance_plugins(self.business):
+            for problem in (plugin.check_for_problems() or []):
+                FinanceChecklistItem.objects.create(finance_checklist=self, name=plugin.name,
+                                                    passed=False, msg=problem['msg'],
+                                                    issue=problem['issue'],
+                                                    project=problem['project'])
+                num_problems += 1
+        self.passed = (num_problems==0)
+        self.comments = "%d problems" % num_problems
+        self.save()
+    
     def is_ok(self):
         return self.passed and self.created_at > datetime.datetime.today()-timedelta(days=settings.NUM_DAYS_FOR_FINANCE_SPRINT_CHECKLISTS)
 
+class FinanceChecklistItem(models.Model):
+    finance_checklist = models.ForeignKey(FinanceChecklist, null=False, blank=True, db_index=True, related_name="items")
+    name = models.CharField(max_length=255, null=False, blank=False)
+    passed = models.BooleanField(default=False, blank=True)
+    msg = models.TextField(null=True, blank=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+    issue = models.ForeignKey(Issue, null=True, blank=True)
+    project = models.ForeignKey(Project, null=True, blank=True)
+    
 class UserNotification(models.Model):
 	user = models.ForeignKey(User, related_name='notifications')
 	notification_type = models.CharField(max_length=50, null=False, blank=False,

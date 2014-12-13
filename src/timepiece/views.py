@@ -5294,20 +5294,26 @@ def finance_checklist(request, business_id, template="timepiece/project/finance_
     if not (bp.has_do_finance_checklist and bp.has_view_ctc_billable_rates and bp.has_view_ctc_rates):
         return HttpResponse("Sorry, you don't have access to the finance checklist")
 
-    form = timepiece_forms.FinanceChecklistForm(request.POST or None)
+    checklist = timepiece.FinanceChecklist.get_todays_checklist(request.user, business)
+    
+    form = timepiece_forms.FinanceChecklistForm(request.POST or None, instance=checklist)
     if form.is_valid():
         checklist = form.save(commit=False)
         checklist.business = business
-        checklist.created_by=request.user
+        checklist.modified_by=request.user
         checklist.save()
+        form.save_m2m()
+
+        if form.cleaned_data.get('recalculate_all', False):
+            checklist.recalculate_all()
 
         # ajax call, don't redirect
-        form = timepiece_forms.FinanceChecklistForm()
         context['msg'] = 'Saved'
-
+        
     context['form'] = form
+    context['checklist'] = checklist
     context['business'] = business
-    context['previous_checklists'] = timepiece.FinanceChecklist.objects.all().filter(business=business).order_by("-pk")[:5]
+    context['previous_checklists'] = timepiece.FinanceChecklist.objects.all().filter(business=business).order_by("-pk")[1:5]
     return render_to_response(template, context, context_instance=RequestContext(request))
 
 @login_required
