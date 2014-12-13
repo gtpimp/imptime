@@ -9,7 +9,15 @@ class RatesPlugin(BasePlugin):
     def check_for_problems(self):
         from timepiece import models as timepiece
         problems = []
-        for project in timepiece.Project.objects.filter(business=self.business).exclude(Q(status2='closed')|Q(status__label='closed')).order_by("order"):
-            problems.append(self._create_problem_item(msg="Sprint %s has no rates"%project.name, project=project))
+        open_projects = timepiece.Project.objects.filter(business=self.business).exclude(Q(status2='closed')|Q(status__label='closed')).order_by("order")
+
+        invalid_rates = timepiece.Rate.objects.filter(project__in=open_projects).filter(Q(billable_amount__isnull=True)|Q(billable_amount=0)|\
+                                                                                        Q(amount__isnull=True)|Q(amount=0)|\
+                                                                                        Q(velocity__isnull=True)|Q(velocity=0)|\
+                                                                                        Q(work_ratio__isnull=True)|Q(work_ratio=0))
+        for invalid_rate in invalid_rates.order_by("project__name"):
+            if timepiece.Entry.objects.filter(project=invalid_rate.project, user=invalid_rate.user).count()>0 or \
+                  timepiece.Issue.objects.filter(project=invalid_rate.project, assigned_to=invalid_rate.user).count()>0:
+                problems.append(self._create_problem_item(msg="User %s in sprint %s has no rate"%(invalid_rate.user.username, invalid_rate.project), project=invalid_rate.project))
         return problems
     
