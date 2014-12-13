@@ -19,7 +19,7 @@
 	<tr>
 	  <th>{{checklist.modified_at|date:"D d-M-Y H:m"}} </th>
 	  {% for checklist in previous_checklists %}
-	  <td><div class="previous_checklist">{{checklist.created_at|date:"D d-M-Y H:m"}} </div></td>
+	  <td><div class="previous_checklist">{{checklist.modified_at|date:"D d-M-Y H:m"}} </div></td>
 	  {% endfor %}
 	</tr>
 	<tr>

@@ -1460,14 +1460,18 @@ class BusinessCommentForm(forms.ModelForm):
         return data
 
 class TrafficChecklistForm(forms.ModelForm):
+    recalculate_all = forms.BooleanField(label="Do a re-check now", 
+                                         initial=False, required=False)
     class Meta:
         model = TrafficChecklist
-        exclude = ['business', 'created_at', 'created_by', 'passed']
+        exclude = ['business', 'created_at', 'created_by', 'passed', 'modified_by', 'modified_at']
 
 class DevChecklistForm(forms.ModelForm):
+    recalculate_all = forms.BooleanField(label="Do a re-check now", 
+                                         initial=False, required=False)
     class Meta:
         model = DevChecklist
-        exclude = ['business', 'created_at', 'created_by', 'passed']
+        exclude = ['business', 'created_at', 'created_by', 'passed', 'modified_by', 'modified_at']
 
 
 class FinanceChecklistForm(forms.ModelForm):

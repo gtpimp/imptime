@@ -1,7 +1,9 @@
-{% if not business.has_recent_dev_checklist %}
-<img src="{{STATIC_URL}}images/timepiece/icons/bullet_red.png"/>
-{% elif not business.has_recent_passed_dev_checklist %}
-<img src="{{STATIC_URL}}images/timepiece/icons/bullet_orange.png"/>
+{% if business.has_recent_passed_dev_checklist %}
+  {% if business.has_recent_finance_checklist %}
+    <img src="{{STATIC_URL}}images/timepiece/icons/bullet_green.png"/>
+  {% else %}
+    <img src="{{STATIC_URL}}images/timepiece/icons/bullet_orange.png"/>
+  {% endif %}
 {% else %}
-<img src="{{STATIC_URL}}images/timepiece/icons/tick.png"/>
+<img src="{{STATIC_URL}}images/timepiece/icons/bullet_red.png"/>
 {% endif %}

@@ -4,6 +4,7 @@
 
 <div class="checklist">
   <h1>{{business.name}}</h1>
+
   <h2>Traffic Checklist</h2>
 
   {{msg}}
@@ -16,144 +17,66 @@
 
       <thead>
 	<tr>
-	  <th> </th>
-	  <th>today</th>
+	  <th>{{checklist.modified_at|date:"D d-M-Y H:m"}} </th>
 	  {% for checklist in previous_checklists %}
-	  <th> {{checklist.created_at|date:"D d-M-Y H:m"}} </th>
+	  <td><div class="previous_checklist">{{checklist.created_at|date:"D d-M-Y H:m"}} </div></td>
 	  {% endfor %}
 	</tr>
 	<tr>
-	  <th></th>
 	  <th>{{user}}</th>
 	  {% for checklist in previous_checklists %}
-	  <th> {{checklist.created_by}} </th>
-	{% endfor %}
+	  <td><div class="previous_checklist"> {{checklist.modified_by}} <div class="previous_checklist"></td>
+	  {% endfor %}
+        </tr>
       </thead>
 
       <tbody>
 	<tr>
-	  <td>Passed</td>
-	  <td></td>
-	  {% for checklist in previous_checklists %}
-	  <td><img src="{{STATIC_URL}}images/icons/{% if checklist.passed %}tick{% else %}cross{% endif %}.png"/>
+	  <td>
+            <img src="{{STATIC_URL}}images/icons/{% if checklist.passed %}tick{% else %}cross{% endif %}.png"/>
+          </td>
+	  {% for old_checklist in previous_checklists %}
+	  <td>
+            <div class="previous_checklist">
+              <img src="{{STATIC_URL}}images/icons/{% if old_checklist.passed %}tick{% else %}cross{% endif %}.png"/>
+            <div class="previous_checklist">
 	  </td>
 	  {% endfor %}
 	</tr>
 	<tr>
 	  <td colspan="99"></td>
 	</tr>
-	<tr>
-	  <td>Has the client had any communication recently?</td>
-	  <td>{{form.has_communicated_with_client_this_week}}</td>
-	  {% for checklist in previous_checklists %}
-	  <td><img src="{{STATIC_URL}}images/icons/{% if checklist.has_communicated_with_client_this_week %}tick{% else %}cross{% endif %}.png"/></td>
-	  {% endfor %}
-	</tr>
-	<tr>
-	  <td>Are the deadlines for the next active sprint(s) set?</td>
-	  <td>{{form.has_deadline_been_set}}</td>
-	  {% for checklist in previous_checklists %}
-	  <td><img src="{{STATIC_URL}}images/icons/{% if checklist.has_deadline_been_set %}tick{% else %}cross{% endif %}.png"/></td>
-	  {% endfor %}
-	</tr>
-	<tr>
-	  <td>Is the deadline clear with the client?</td>
-	  <td>{{form.is_deadline_clear_to_client}}</td>
-	  {% for checklist in previous_checklists %}
-	  <td><img src="{{STATIC_URL}}images/icons/{% if checklist.is_deadline_clear_to_client %}tick{% else %}cross{% endif %}.png"/></td>
-	  {% endfor %}
-	</tr>
-	<tr>
-	  <td>Has there been a new release to the client's staging server recently?</td>
-	  <td>{{form.have_made_new_staging_release_today}}</td>
-	  {% for checklist in previous_checklists %}
-	  <td><img src="{{STATIC_URL}}images/icons/{% if checklist.have_made_new_staging_release_today %}tick{% else %}cross{% endif %}.png"/></td>
-	  {% endfor %}
-	</tr>
-	<tr>
-	  <td>Have issues been created for all client emails (emails to traffic only)?</td>
-	  <td>{{form.has_incoming_issues_created}}</td>
-	  {% for checklist in previous_checklists %}
-	  <td><img src="{{STATIC_URL}}images/icons/{% if checklist.has_incoming_issues_created %}tick{% else %}cross{% endif %}.png"/></td>
-	  {% endfor %}
-	</tr>
-	<tr>
-	  <td>Have all quotes or estimates for hopeful sprints been sent to the client?</td>
-	  <td>{{form.have_all_new_quotes_been_sent}}</td>
-	  {% for checklist in previous_checklists %}
-	  <td><img src="{{STATIC_URL}}images/icons/{% if checklist.have_all_new_quotes_been_sent %}tick{% else %}cross{% endif %}.png"/></td>
-	  {% endfor %}
-	</tr>
-	<tr>
-	  <td>Tick if there are no quotes waiting acceptance from the client, or if the client has been followed up on recently</td>
-	  <td>{{form.has_existing_quotes_waiting_for_acceptance}}</td>
-	  {% for checklist in previous_checklists %}
-	  <td><img src="{{STATIC_URL}}images/icons/{% if checklist.has_existing_quotes_waiting_for_acceptance %}tick{% else %}cross{% endif %}.png"/></td>
-	  {% endfor %}
-	</tr>
-	<tr>
-	  <td>Have all newly accepted sprints been set to "in dev"?</td>
-	  <td>{{form.has_existing_quoted_accepted}}</td>
-	  {% for checklist in previous_checklists %}
-	  <td><img src="{{STATIC_URL}}images/icons/{% if checklist.has_existing_quoted_accepted %}tick{% else %}cross{% endif %}.png"/></td>
-	  {% endfor %}
-	</tr>
-	<tr>
-	  <td>Have all sprints that are fully tested and accepted by the client been set to 'can_be_invoiced'?</td>
-	  <td>{{form.has_sprints_to_invoice}}</td>
-	  {% for checklist in previous_checklists %}
-	  <td><img src="{{STATIC_URL}}images/icons/{% if checklist.has_sprints_to_invoice %}tick{% else %}cross{% endif %}.png"/></td>
-	  {% endfor %}
-	</tr>
-	<tr>
-	  <td>Is the testing of issues keeping up with new dev issues?</td>
-	  <td>{{form.has_issues_for_testing}}</td>
-	  {% for checklist in previous_checklists %}
-	  <td><img src="{{STATIC_URL}}images/icons/{% if checklist.has_issues_for_testing %}tick{% else %}cross{% endif %}.png"/></td>
-	  {% endfor %}
-	</tr>
-	<tr>
-	  <td>Is the total required time per developer assigned to the calendar for this sprint?</td>
-	  <td>{{form.all_calendar_entries_assigned_per_developer}}</td>
-	  {% for checklist in previous_checklists %}
-	  <td><img src="{{STATIC_URL}}images/icons/{% if checklist.all_calendar_entries_assigned_per_developer %}tick{% else %}cross{% endif %}.png"/></td>
-	  {% endfor %}
-	</tr>
+
+        <tr>
+          <td>
+            <div class="current_checklist_column">
+              {% include "timepiece/project/_checklist_items.html" with checklist=checklist %}
+            </div>
+          </td>
+          {% for previous_checklist in previous_checklists %}
+          <td>
+            <div class="previous_checklist">
+              {% include "timepiece/project/_checklist_items.html" with checklist=previous_checklist %}
+            </div>
+          </td>
+          {% endfor %}
+        </tr>
 
 	<tr>
-	  <td></td>
-	  <td>{{form.comments}}</td>
-	  {% for checklist in previous_checklists %}
-	  <td>{{ checklist.comments }}</td>
+	  <td>
+            {{form.comments}}
+            {{form.recalculate_all.label}} {{form.recalculate_all}}
+            <input class="btn btn-primary" type='submit' name='submit' value='Save' onclick='imp.submit_popup_form(this, function() { imp.refresh_checklist_navigation({{business.id}}); }, {display_results:true}); return false;' />
+
+          </td>
+	  {% for previous_checklist in previous_checklists %}
+	  <td>
+            <div class="previous_checklist">
+              {{ previous_checklist.comments }}
+            </div>
+          </td>
 	  {% endfor %}
 	</tr>
-
-	<tr>
-	  <td></td>
-	  <td>      
-            <input class="btn btn-primary" type='submit' name='submit' value='Create' onclick="imp.submit_popup_form(this, function() { imp.refresh_checklist_navigation({{business.id}}); }, {display_results:true}); return false;" />
-	  </td>
-	</tr>
-
-
-	{% comment %}
-	<tr>
-	  <td>Tick if no new issues have been added that require requoting, or if the quote has already been sent</td>
-	  <td>{{form.have_pending_requotes_been_sent}}</td>
-	  {% for checklist in previous_checklists %}
-	  <td><img src="{{STATIC_URL}}images/icons/{% if checklist.have_pending_requotes_been_sent %}tick{% else %}cross{% endif %}.png"/></td>
-	  {% endfor %}
-	</tr>
-	{% endcomment %}
-	{% comment %}
-	<tr>
-	  <td>Have all quotes for hopeful sprints been sent?</td>
-	  <td>{{form.is_quote_required}}</td>
-	  {% for checklist in previous_checklists %}
-	  <td><img src="{{STATIC_URL}}images/icons/{% if checklist.is_quote_required %}tick{% else %}cross{% endif %}.png"/></td>
-	  {% endfor %}
-	</tr>
-	{% endcomment %}
 
       </tbody>
     </table>

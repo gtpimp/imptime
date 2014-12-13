@@ -17,7 +17,7 @@ from django.db.models import Q, Avg, Sum, Max, Min
 from django.utils.datastructures import SortedDict
 from re import sub as re_sub
 from re import UNICODE as re_UNICODE
-from checklist_plugins.registry import get_finance_plugins
+from checklist_plugins.registry import get_traffic_plugins, get_dev_plugins, get_finance_plugins
 
 try:
     from django.utils import timezone
@@ -2916,103 +2916,11 @@ class CalendarEvent(models.Model):
             c_int = c_int * 2
             c = "#"+hex(c_int)[2:]
         return c
-    
-class TrafficChecklist(models.Model):
-    
-    business = models.ForeignKey(Business, null=False, blank=True, db_index=True)
-    have_made_new_staging_release_today = models.BooleanField(default=False, blank=True, verbose_name="has there been a new release to the client's staging server today?")
-    has_incoming_issues_created = models.BooleanField(default=False, blank=True, verbose_name="have issues been created for all client emails (for this project), and are they in the 'incoming' sprint?")
-    is_requote_required = models.BooleanField(default=False, blank=True, verbose_name="have any changes to existing sprints, which may have caused a re-quote to be required, been reviewed?")
-    have_pending_requotes_been_sent = models.BooleanField(default=False, blank=True, verbose_name="have any pending re-quotes been sent?")
-    is_quote_required = models.BooleanField(default=False, blank=True, verbose_name="are there any quotes on this new sprint which need to be sent?")
-    have_all_new_quotes_been_sent = models.BooleanField(default=False, blank=True, verbose_name="have all quotes for new sprints been sent?")
-    has_existing_quotes_waiting_for_acceptance = models.BooleanField(default=False, blank=True, verbose_name="are there any existing quotes for this project which are waiting for acceptance?")
-    has_existing_quoted_accepted = models.BooleanField(default=False, blank=True, verbose_name="have all existing quotes for this project been accepted?")
-    has_sprints_to_invoice = models.BooleanField(default=False, blank=True, verbose_name="can any sprints be invoiced?")
-    has_issues_for_testing = models.BooleanField(default=False, blank=True, verbose_name="are there issues which can be tested?")
-    has_deadline_been_set = models.BooleanField(default=False, blank=True, verbose_name="is the deadline for handing this sprint for client testing set?")
-    is_deadline_clear_to_client = models.BooleanField(default=False, blank=True, verbose_name="is the deadline clear with the client?")
-    has_communicated_with_client_this_week = models.BooleanField(default=False, blank=True, verbose_name="has the client had any communication during this week?")
-    all_calendar_entries_assigned_per_developer = models.BooleanField(default=False, blank=True, verbose_name="is the total required time per developer assigned to the calendar for this sprint?")
 
-    comments = models.TextField(null=True, blank=True)
+class BaseChecklist(models.Model):
+    class Meta:
+        abstract=True
 
-    passed = models.BooleanField(default=False, blank=True, db_index=True)
-
-    created_by = models.ForeignKey(User, null=False, blank=False, related_name='traffic_checklist_created_by')
-    created_at = models.DateTimeField(auto_now_add=True)
-
-    def save(self, *args, **kwargs):
-
-        failed_states = [ x for x in [ self.have_made_new_staging_release_today,
-                                       self.has_incoming_issues_created,
-                                       #self.is_requote_required,
-                                       #self.have_pending_requotes_been_sent,
-                                       #self.is_quote_required,
-                                       self.have_all_new_quotes_been_sent,
-                                       self.has_existing_quotes_waiting_for_acceptance,
-                                       self.has_existing_quoted_accepted,
-                                       self.has_sprints_to_invoice,
-                                       self.has_issues_for_testing,
-                                       self.has_deadline_been_set,
-                                       self.is_deadline_clear_to_client,
-                                       self.has_communicated_with_client_this_week,
-                                       self.all_calendar_entries_assigned_per_developer ] if not x ]
-
-        passed = len(failed_states)==0
-        if self.passed != passed:
-            self.passed = passed
-        super(TrafficChecklist, self).save(*args, **kwargs)
-
-    def __unicode__(self):
-        return "%s %s" % (self.created_by, self.created_at)
-
-    def is_ok(self):
-        return self.passed and self.created_at > datetime.datetime.today()-timedelta(days=settings.NUM_DAYS_FOR_TRAFFIC_SPRINT_CHECKLISTS)
-
-class DevChecklist(models.Model):
-    business = models.ForeignKey(Business, null=False, blank=True, db_index=True)
-
-    has_reviewed_previous_days_issues = models.BooleanField(default=False, blank=True, verbose_name="Were yesterday's issues reviewed?")
-    description_has_testable = models.BooleanField(default=False, blank=True, verbose_name="Does today's issues descriptions have testable steps?")
-    has_reviewed_description_for_todays_issues = models.BooleanField(default=False, blank=True, verbose_name="Have the descriptions for todays issues been reviewed with the developer?")
-    are_the_estimates_consistently_over = models.BooleanField(default=False, blank=True, verbose_name="xxx?")
-    has_incoming_issues_created = models.BooleanField(default=False, blank=True, verbose_name="All issues from emails are created")
-    are_all_issues_estimated = models.BooleanField(default=False, blank=True, verbose_name="have all previous issues from the incoming sprint been estimated?")
-    have_incoming_issues_beenallocated = models.BooleanField(default=False, blank=True, verbose_name="have all previous issues from the incoming sprint been allocated to an actual sprint?")
-    has_sprints_to_invoice = models.BooleanField(default=False, blank=True, verbose_name="if sprints are closed, they should be set to?")
-    are_all_issues_assigned_to_a_user = models.BooleanField(default=False, blank=True, verbose_name="xxxyy?")
-
-    comments = models.TextField(null=True, blank=True)
-    passed = models.BooleanField(default=False, blank=True, db_index=True)
-    created_by = models.ForeignKey(User, null=False, blank=False, related_name='dev_checklist_created_by')
-    created_at = models.DateTimeField(auto_now_add=True)
-
-
-    def save(self, *args, **kwargs):
-
-        failed_states = [ x for x in [ self.has_reviewed_previous_days_issues,
-                                       self.description_has_testable,
-                                       self.has_reviewed_description_for_todays_issues,
-                                       #self.are_the_estimates_consistently_over,
-                                       self.has_incoming_issues_created,
-                                       self.are_all_issues_assigned_to_a_user,
-                                       self.are_all_issues_estimated,
-                                       self.have_incoming_issues_beenallocated,
-                                       self.has_sprints_to_invoice ] if not x ]
-
-        passed = len(failed_states)==0
-        if self.passed != passed:
-            self.passed = passed
-        super(DevChecklist, self).save(*args, **kwargs)
-
-    def __unicode__(self):
-        return "%s %s" % (self.created_by, self.created_at)
-
-    def is_ok(self):
-        return self.passed and self.created_at > datetime.datetime.today()-timedelta(days=settings.NUM_DAYS_FOR_DEV_SPRINT_CHECKLISTS)
-
-class FinanceChecklist(models.Model):
     business = models.ForeignKey(Business, null=False, blank=True, db_index=True)
 
     # has_valid_budget = models.BooleanField(default=False, blank=True, verbose_name="does the sprint have a valid budget?")
@@ -3024,24 +2932,6 @@ class FinanceChecklist(models.Model):
 
     comments = models.TextField(null=True, blank=True)
     passed = models.BooleanField(default=False, blank=True, db_index=True)
-    created_by = models.ForeignKey(User, null=False, blank=False, related_name='finance_checklist_created_by')
-    created_at = models.DateTimeField(auto_now_add=True)
-    modified_at = models.DateTimeField(auto_now=True)
-    modified_by = models.ForeignKey(User, null=False, blank=True, related_name='finance_checklist_modified_by')
-
-    # def save(self, *args, **kwargs):
-
-    #     failed_states = [ x for x in [ self.has_valid_budget,
-    #                                    self.are_rates_correct,
-    #                                    self.is_currently_under_budget,
-    #                                    self.all_invoices_sent,
-    #                                    self.all_sprints_closed,
-    #                                    self.is_projected_cost_in_budget ] if not x ]
-
-    #     passed = len(failed_states)==0
-    #     if self.passed != passed:
-    #         self.passed = passed
-    #     super(FinanceChecklist, self).save(*args, **kwargs)
 
     def __unicode__(self):
         return "%s %s" % (self.created_by, self.created_at)
@@ -3050,13 +2940,119 @@ class FinanceChecklist(models.Model):
     def get_todays_checklist(self, logged_in_user, business):
         checklist = self.objects.filter(business=business,
                                         created_at__gte=datetime.datetime.today().date(),
-                                        created_at__lt=(datetime.datetime.today()+relativedelta(days=1)).date).first()
+                                        created_at__lt=(datetime.datetime.today()+relativedelta(days=1)).date).order_by("-pk").first()
         if checklist is None:
             checklist = self.objects.create(business=business, created_at=datetime.datetime.today(),
                                             created_by=logged_in_user, modified_by=logged_in_user)
             checklist.recalculate_all()
         return checklist
     
+    
+    def is_ok(self):
+        return self.passed
+
+class BaseChecklistItem(models.Model):
+    class Meta:
+        abstract=True
+
+    name = models.CharField(max_length=255, null=False, blank=False)
+    passed = models.BooleanField(default=False, blank=True)
+    msg = models.TextField(null=True, blank=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+    issue = models.ForeignKey(Issue, null=True, blank=True)
+    project = models.ForeignKey(Project, null=True, blank=True)
+    
+                    
+class TrafficChecklist(BaseChecklist):
+    
+    # have_made_new_staging_release_today = models.BooleanField(default=False, blank=True, verbose_name="has there been a new release to the client's staging server today?")
+    # has_incoming_issues_created = models.BooleanField(default=False, blank=True, verbose_name="have issues been created for all client emails (for this project), and are they in the 'incoming' sprint?")
+    # is_requote_required = models.BooleanField(default=False, blank=True, verbose_name="have any changes to existing sprints, which may have caused a re-quote to be required, been reviewed?")
+    # have_pending_requotes_been_sent = models.BooleanField(default=False, blank=True, verbose_name="have any pending re-quotes been sent?")
+    # is_quote_required = models.BooleanField(default=False, blank=True, verbose_name="are there any quotes on this new sprint which need to be sent?")
+    # have_all_new_quotes_been_sent = models.BooleanField(default=False, blank=True, verbose_name="have all quotes for new sprints been sent?")
+    # has_existing_quotes_waiting_for_acceptance = models.BooleanField(default=False, blank=True, verbose_name="are there any existing quotes for this project which are waiting for acceptance?")
+    # has_existing_quoted_accepted = models.BooleanField(default=False, blank=True, verbose_name="have all existing quotes for this project been accepted?")
+    # has_sprints_to_invoice = models.BooleanField(default=False, blank=True, verbose_name="can any sprints be invoiced?")
+    # has_issues_for_testing = models.BooleanField(default=False, blank=True, verbose_name="are there issues which can be tested?")
+    # has_deadline_been_set = models.BooleanField(default=False, blank=True, verbose_name="is the deadline for handing this sprint for client testing set?")
+    # is_deadline_clear_to_client = models.BooleanField(default=False, blank=True, verbose_name="is the deadline clear with the client?")
+    # has_communicated_with_client_this_week = models.BooleanField(default=False, blank=True, verbose_name="has the client had any communication during this week?")
+    # all_calendar_entries_assigned_per_developer = models.BooleanField(default=False, blank=True, verbose_name="is the total required time per developer assigned to the calendar for this sprint?")
+
+    created_by = models.ForeignKey(User, null=False, blank=False, related_name='traffic_checklist_created_by')
+    created_at = models.DateTimeField(auto_now_add=True)
+    modified_at = models.DateTimeField(auto_now=True)
+    modified_by = models.ForeignKey(User, null=False, blank=True, related_name='traffic_checklist_modified_by')
+
+    
+    def is_ok(self):
+        return super(TrafficChecklist, self).is_ok() and self.created_at > datetime.datetime.today()-timedelta(days=settings.NUM_DAYS_FOR_TRAFFIC_SPRINT_CHECKLISTS)
+
+    def recalculate_all(self):
+        self.items.all().delete()
+        num_problems = 0
+        for plugin in get_traffic_plugins(self.business):
+            for problem in (plugin.check_for_problems() or []):
+                TrafficChecklistItem.objects.create(traffic_checklist=self, name=plugin.name,
+                                                    passed=False, msg=problem['msg'],
+                                                    issue=problem['issue'],
+                                                    project=problem['project'])
+                num_problems += 1
+        self.passed = (num_problems==0)
+        self.comments = "%d problems" % num_problems
+        self.save()
+
+class TrafficChecklistItem(BaseChecklistItem):
+    traffic_checklist = models.ForeignKey(TrafficChecklist, null=False, blank=True, db_index=True, related_name="items")
+    
+class DevChecklist(BaseChecklist):
+
+    # has_reviewed_previous_days_issues = models.BooleanField(default=False, blank=True, verbose_name="Were yesterday's issues reviewed?")
+    # description_has_testable = models.BooleanField(default=False, blank=True, verbose_name="Does today's issues descriptions have testable steps?")
+    # has_reviewed_description_for_todays_issues = models.BooleanField(default=False, blank=True, verbose_name="Have the descriptions for todays issues been reviewed with the developer?")
+    # are_the_estimates_consistently_over = models.BooleanField(default=False, blank=True, verbose_name="xxx?")
+    # has_incoming_issues_created = models.BooleanField(default=False, blank=True, verbose_name="All issues from emails are created")
+    # are_all_issues_estimated = models.BooleanField(default=False, blank=True, verbose_name="have all previous issues from the incoming sprint been estimated?")
+    # have_incoming_issues_beenallocated = models.BooleanField(default=False, blank=True, verbose_name="have all previous issues from the incoming sprint been allocated to an actual sprint?")
+    # has_sprints_to_invoice = models.BooleanField(default=False, blank=True, verbose_name="if sprints are closed, they should be set to?")
+    # are_all_issues_assigned_to_a_user = models.BooleanField(default=False, blank=True, verbose_name="xxxyy?")
+
+    created_by = models.ForeignKey(User, null=False, blank=False, related_name='dev_checklist_created_by')
+    created_at = models.DateTimeField(auto_now_add=True)
+    modified_at = models.DateTimeField(auto_now=True)
+    modified_by = models.ForeignKey(User, null=False, blank=True, related_name='dev_checklist_modified_by')
+    
+    def is_ok(self):
+        return super(FinanceChecklist, self).is_ok() and self.created_at > datetime.datetime.today()-timedelta(days=settings.NUM_DAYS_FOR_DEV_SPRINT_CHECKLISTS)
+
+    def recalculate_all(self):
+        self.items.all().delete()
+        num_problems = 0
+        for plugin in get_dev_plugins(self.business):
+            for problem in (plugin.check_for_problems() or []):
+                DevChecklistItem.objects.create(dev_checklist=self, name=plugin.name,
+                                                passed=False, msg=problem['msg'],
+                                                issue=problem['issue'],
+                                                project=problem['project'])
+                num_problems += 1
+        self.passed = (num_problems==0)
+        self.comments = "%d problems" % num_problems
+        self.save()
+
+class DevChecklistItem(BaseChecklistItem):
+    dev_checklist = models.ForeignKey(DevChecklist, null=False, blank=True, db_index=True, related_name="items")
+    
+class FinanceChecklist(BaseChecklist):
+
+    created_by = models.ForeignKey(User, null=False, blank=False, related_name='finance_checklist_created_by')
+    created_at = models.DateTimeField(auto_now_add=True)
+    modified_at = models.DateTimeField(auto_now=True)
+    modified_by = models.ForeignKey(User, null=False, blank=True, related_name='finance_checklist_modified_by')
+    
+    def is_ok(self):
+        return super(FinanceChecklist, self).is_ok() and self.created_at > datetime.datetime.today()-timedelta(days=settings.NUM_DAYS_FOR_FINANCE_SPRINT_CHECKLISTS)
+
     def recalculate_all(self):
         self.items.all().delete()
         num_problems = 0
@@ -3070,18 +3066,10 @@ class FinanceChecklist(models.Model):
         self.passed = (num_problems==0)
         self.comments = "%d problems" % num_problems
         self.save()
-    
-    def is_ok(self):
-        return self.passed and self.created_at > datetime.datetime.today()-timedelta(days=settings.NUM_DAYS_FOR_FINANCE_SPRINT_CHECKLISTS)
 
-class FinanceChecklistItem(models.Model):
+
+class FinanceChecklistItem(BaseChecklistItem):
     finance_checklist = models.ForeignKey(FinanceChecklist, null=False, blank=True, db_index=True, related_name="items")
-    name = models.CharField(max_length=255, null=False, blank=False)
-    passed = models.BooleanField(default=False, blank=True)
-    msg = models.TextField(null=True, blank=True)
-    created_at = models.DateTimeField(auto_now_add=True)
-    issue = models.ForeignKey(Issue, null=True, blank=True)
-    project = models.ForeignKey(Project, null=True, blank=True)
     
 class UserNotification(models.Model):
 	user = models.ForeignKey(User, related_name='notifications')
