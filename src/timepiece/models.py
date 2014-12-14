@@ -2929,10 +2929,8 @@ class BaseChecklist(models.Model):
 
     business = models.ForeignKey(Business, null=False, blank=True, db_index=True)
 
-    # has_valid_budget = models.BooleanField(default=False, blank=True, verbose_name="does the sprint have a valid budget?")
     # is_currently_under_budget = models.BooleanField(default=False, blank=True, verbose_name="is the sprint currently within budget?")
     # is_projected_cost_in_budget = models.BooleanField(default=False, blank=True, verbose_name="is the projected cost within budget?")
-    # are_rates_correct = models.BooleanField(default=False, blank=True, verbose_name="does every user in the sprint have a valid and correct rate?")
     # all_invoices_sent = models.BooleanField(default=False, blank=True, verbose_name="xxx?")
     # all_sprints_closed = models.BooleanField(default=False, blank=True, verbose_name="xxx?")
 
@@ -3102,7 +3100,6 @@ class UserNotification(models.Model):
 		return datetime.datetime.today().date()
 	
 	def get_hours_for_user_graph(self):
-		from views import _get_daily_hours
 		to_date = self.user_graph_to_date()
 		from_date = self.user_graph_from_date()
 		hours = {}

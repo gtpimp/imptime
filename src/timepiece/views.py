@@ -5212,7 +5212,10 @@ def show_business_history(request, business_id, template="timepiece/project/busi
 @login_required
 def render_checklist_navigation(request, business_id, template="timepiece/project/_checklist_menu.html", context=None):
     context = context or {}
-    business = timepiece.Business.objects.get(pk=business_id)
+    if not business_id:
+        business = None
+    else:
+        business = timepiece.Business.objects.get(pk=business_id)
     context['business'] = business
     context['current_user'] = request.user
     return render_to_response(template, context, context_instance=RequestContext(request))
