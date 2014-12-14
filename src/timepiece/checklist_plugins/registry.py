@@ -6,10 +6,11 @@ from missing_timesheet_entries_plugin import MissingTimesheetEntriesPlugin
 from issues_estimated_plugin import IssuesEstimatesPlugin
 from issues_assigned_plugin import IssuesAssignedPlugin
 from deadlines_plugin import DeadlinesPlugin
+from testable_plugin import TestablePlugin
 
 finance_plugin_classes = [ RatesPlugin, BudgetPresetPlugin, OverBudgetPlugin ]
-dev_plugin_classes = [  ]
-traffic_plugin_classes = [ MissingTimesheetEntriesPlugin, IssuesEstimatesPlugin, IssuesAssignedPlugin, DeadlinesPlugin ]
+dev_plugin_classes = [ TestablePlugin, IssuesEstimatesPlugin, IssuesAssignedPlugin ]
+traffic_plugin_classes = [ MissingTimesheetEntriesPlugin, DeadlinesPlugin ]
 
 def get_finance_plugins(business):
     return [ x(business) for x in finance_plugin_classes ]
