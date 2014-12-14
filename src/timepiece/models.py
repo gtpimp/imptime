@@ -2929,7 +2929,6 @@ class BaseChecklist(models.Model):
 
     business = models.ForeignKey(Business, null=False, blank=True, db_index=True)
 
-    # is_currently_under_budget = models.BooleanField(default=False, blank=True, verbose_name="is the sprint currently within budget?")
     # is_projected_cost_in_budget = models.BooleanField(default=False, blank=True, verbose_name="is the projected cost within budget?")
     # all_invoices_sent = models.BooleanField(default=False, blank=True, verbose_name="xxx?")
     # all_sprints_closed = models.BooleanField(default=False, blank=True, verbose_name="xxx?")
@@ -3016,7 +3015,6 @@ class DevChecklist(BaseChecklist):
     # has_reviewed_description_for_todays_issues = models.BooleanField(default=False, blank=True, verbose_name="Have the descriptions for todays issues been reviewed with the developer?")
     # are_the_estimates_consistently_over = models.BooleanField(default=False, blank=True, verbose_name="xxx?")
     # has_incoming_issues_created = models.BooleanField(default=False, blank=True, verbose_name="All issues from emails are created")
-    # are_all_issues_estimated = models.BooleanField(default=False, blank=True, verbose_name="have all previous issues from the incoming sprint been estimated?")
     # have_incoming_issues_beenallocated = models.BooleanField(default=False, blank=True, verbose_name="have all previous issues from the incoming sprint been allocated to an actual sprint?")
     # has_sprints_to_invoice = models.BooleanField(default=False, blank=True, verbose_name="if sprints are closed, they should be set to?")
     # are_all_issues_assigned_to_a_user = models.BooleanField(default=False, blank=True, verbose_name="xxxyy?")

@@ -10,8 +10,8 @@ class IssuesEstimatesPlugin(BasePlugin):
         from timepiece import models as timepiece
         problems = []
         projects = timepiece.Project.objects.all().filter(business=self.business).filter_open().filter_in_dev_or_pending()
-        unestimated_issues = timepiece.Issue.objects.all().filter(project__in=projects).annotate(estimate=Sum('issue_points__points')).filter(estimate=0)
+        unestimated_issues = timepiece.Issue.objects.all().filter(project__in=projects).annotate(estimate=Sum('issue_points__points')).filter(estimate=0)[0:5]
         for issue in unestimated_issues:
-            problems.append(self._create_problem_item(msg="Issue %s in sprint %s is not assigned"%(issue.number, issue.project), issue=issue))
+            problems.append(self._create_problem_item(msg="Issue %s in sprint %s has no estimate"%(issue.number, issue.project), issue=issue))
         return problems
     
