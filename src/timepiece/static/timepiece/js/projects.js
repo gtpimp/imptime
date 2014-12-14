@@ -248,6 +248,7 @@ imp.project_card_thinking = function(el) {
 
 imp.popup_page = function(url, big) {
 
+    $(".project_card_dialog_container").find(".dialog_content").html("loading...");
     if (imp.popup_dialog) {
 	$(".project_card_dialog_container").find(".dialog_content").load(url);
     } else {
