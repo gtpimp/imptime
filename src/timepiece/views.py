@@ -5276,6 +5276,7 @@ def traffic_checklist(request, business_id, template="timepiece/project/traffic_
         return HttpResponse("Sorry, you don't have access to the traffic checklist")
 
     checklist = timepiece.TrafficChecklist.get_todays_checklist(request.user, business)
+    checklist.recalculate_all()
     
     form = timepiece_forms.TrafficChecklistForm(request.POST or None, instance=checklist)
     if form.is_valid():
@@ -5284,8 +5285,6 @@ def traffic_checklist(request, business_id, template="timepiece/project/traffic_
         checklist.modified_by=request.user
         checklist.save()
         form.save_m2m()
-
-        checklist.recalculate_all()
 
         # ajax call, don't redirect
         context['msg'] = 'Saved'
@@ -5305,6 +5304,7 @@ def dev_checklist(request, business_id, template="timepiece/project/dev_checklis
         return HttpResponse("Sorry, you don't have access to the dev checklist")
 
     checklist = timepiece.DevChecklist.get_todays_checklist(request.user, business)
+    checklist.recalculate_all()
     
     form = timepiece_forms.DevChecklistForm(request.POST or None, instance=checklist)
     if form.is_valid():
@@ -5313,8 +5313,6 @@ def dev_checklist(request, business_id, template="timepiece/project/dev_checklis
         checklist.modified_by=request.user
         checklist.save()
         form.save_m2m()
-
-        checklist.recalculate_all()
 
         # ajax call, don't redirect
         context['msg'] = 'Saved'
@@ -5334,6 +5332,8 @@ def finance_checklist(request, business_id, template="timepiece/project/finance_
         return HttpResponse("Sorry, you don't have access to the finance checklist")
 
     checklist = timepiece.FinanceChecklist.get_todays_checklist(request.user, business)
+    checklist.recalculate_all()
+    
     form = timepiece_forms.FinanceChecklistForm(request.POST or None, instance=checklist)
     if form.is_valid():
         checklist = form.save(commit=False)
@@ -5341,8 +5341,6 @@ def finance_checklist(request, business_id, template="timepiece/project/finance_
         checklist.modified_by=request.user
         checklist.save()
         form.save_m2m()
-
-        checklist.recalculate_all()
 
         # ajax call, don't redirect
         context['msg'] = 'Saved'
