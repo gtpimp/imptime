@@ -598,7 +598,7 @@ urlpatterns = patterns('',
                        url(r'^bulk_move_issue_below_issue/$', views.bulk_move_issue_below_issue, {}, 'bulk_move_issue_below_issue'),
                        url(r'^bulk_clear_selected_issues/$', views.bulk_clear_selected_issues, {}, 'bulk_clear_selected_issues'),
                        url(r'^bulk_select_by_issue_state/(?P<project_id>.*)/$', views.bulk_select_by_issue_state, {}, 'bulk_select_by_issue_state'),
-                       
+                       url(r'^bulk_change_issue_adhoc/$', views.bulk_change_issue_adhoc, {}, 'bulk_change_issue_adhoc'),
 
                        url(r'^issue/clear_adhoc_status/(?P<issue_id>.*)/$', views.clear_issue_adhoc_status, {}, name='clear_issue_adhoc_status'),
 

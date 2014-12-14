@@ -1300,6 +1300,17 @@ class IssueCheckboxContextMenuActiveIssueForm(forms.Form):
         self.fields['focus_issue'].label = label
         self.fields['focus_issue'].widget.attrs['onchange'] = "this.form.submit();"
 
+class IssueCheckboxContextMenuChangeIssueAdhocForm(forms.Form):
+
+    adhoc = forms.ChoiceField( label="Adhoc", 
+                               required=True, initial=('New',) )
+    
+    def __init__(self, project, label, *args, **kwargs):
+        super(IssueCheckboxContextMenuChangeIssueAdhocForm, self).__init__(*args, **kwargs)
+        self.fields['adhoc'].choices = [ ('', ''), ('set_adhoc', "Make adhoc"), ('unset_adhoc', 'Make standard issue') ]
+        self.fields['adhoc'].label = label
+        self.fields['adhoc'].widget.attrs['onchange'] = "this.form.submit();"
+        
 
 # class NewCalendarEventForm(forms.ModelForm):
 #     class Meta:

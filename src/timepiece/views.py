@@ -4585,7 +4585,7 @@ def issue_checkbox_context_menu(request, project_id, template="timepiece/project
     if len(raw_checked_issue_numbers) == 0:
         raw_checked_issue_numbers = ""
     checked_issue_ids = [x for x in raw_checked_issue_numbers.split(",") if len(x.strip())>0]
-    
+
     from_project = timepiece.Project.objects.get(pk=project_id)
     bp = timepiece.BusinessPermissions.for_user(request.user, from_project.business)
     if not bp.has_add_issue:
@@ -4604,6 +4604,7 @@ def issue_checkbox_context_menu(request, project_id, template="timepiece/project
     context['assignee_change_form'] = timepiece_forms.IssueCheckboxContextMenuChangeAssigneeForm(from_project)
     context['move_above_issue_form'] = timepiece_forms.IssueCheckboxContextMenuActiveIssueForm(from_project, "Move above")
     context['move_below_issue_form'] = timepiece_forms.IssueCheckboxContextMenuActiveIssueForm(from_project, "Move below")
+    context['bulk_change_issue_adhoc_form'] = timepiece_forms.IssueCheckboxContextMenuChangeIssueAdhocForm(from_project, "Change adhoc")
 
     # easier to store the issue ids than to pass them through with every context menu option
     request.session['selected_issue_ids_for_context_menu'] = checked_issue_ids
@@ -4820,6 +4821,31 @@ def bulk_select_by_issue_state(request, project_id, context=None):
         messages.info(request, "%d issues selected for state %s" % (selected_issues.count(), state))
     else:
         messages.info(request, "Failure: %s" % form.errors)
+    return HttpResponseRedirect(reverse('project_list', args=[selected_project.id]))
+
+@login_required
+@csrf_exempt
+def bulk_change_issue_adhoc(request, context=None):
+    selected_issue_ids = request.session['selected_issue_ids_for_context_menu']
+    selected_project = timepiece.Project.objects.get(pk=request.session['selected_issue_project_id'])
+
+    form = timepiece_forms.IssueCheckboxContextMenuChangeIssueAdhocForm(selected_project, "Adhoc", request.GET or None)
+    if not form.is_valid():
+        return HttpResponse("Please choose a valid option: %s" % form.errors)
+
+    bp = timepiece.BusinessPermissions.for_user(request.user, selected_project.business)
+    if not bp.has_add_issue:
+        return HttpResponse("No permission")
+
+    new_adhoc = (form.cleaned_data['adhoc'] == 'set_adhoc')
+    for selected_issue_id in selected_issue_ids:
+        issue = timepiece.Issue.objects.get(pk=selected_issue_id)
+        if new_adhoc != issue.adhoc:
+            old_adhoc = issue.adhoc
+            issue.adhoc = new_adhoc
+            issue.save()
+            timepiece.IssueHistory.add_history(request.user, issue, "changed adhoc", old_adhoc, new_adhoc)
+    messages.info(request, "%d issues changed adhoc: : %s" % (len(selected_issue_ids), form.cleaned_data['adhoc']))
     return HttpResponseRedirect(reverse('project_list', args=[selected_project.id]))
 
 @csrf_exempt
