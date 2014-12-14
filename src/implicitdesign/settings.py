@@ -28,6 +28,12 @@ NUM_DAYS_FOR_TRAFFIC_SPRINT_CHECKLISTS=3
 NUM_DAYS_FOR_FINANCE_SPRINT_CHECKLISTS=5
 NUM_DAYS_FOR_DEV_SPRINT_CHECKLISTS=2
 
+# Maximum number of days before expecting a new development timesheet
+# entry for a particular project. This is used to raise an alarm if
+# either nothing is happening in a sprint or if the timesheet isn't
+# being imported correctly.
+EXPECTING_A_TIMESHEET_ENTRY_EVERY_X_DAYS = 4
+
 # This setting is intentionally left invalid
 DATABASES = {
     'default': {
