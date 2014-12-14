@@ -11,6 +11,6 @@ class BudgetPresetPlugin(BasePlugin):
         problems = []
         no_budget_projects = timepiece.Project.objects.all().filter(business=self.business).filter_open().filter_in_dev_or_pending().filter(Q(budget__isnull=True)|Q(budget=0)).order_by("order")
         for no_budget_project in no_budget_projects:
-            problems.append(self._create_problem_item(msg="Sprint %s has no budget"%(no_budget_project), project=no_budget_project))
+            problems.append(self._create_problem_item(msg="%s has no budget"%(no_budget_project), project=no_budget_project))
         return problems
     

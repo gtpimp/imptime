@@ -14,6 +14,6 @@ class OverBudgetPlugin(BasePlugin):
         for project in projects_with_a_budget:
             if project.stats['billed'] > project.budget:
                 amount_over = project.stats['billed'] - project.budget
-                problems.append(self._create_problem_item(msg="Sprint %s is R%s over budget"%(project, intcomma(float(amount_over)*100.0/100)), project=project))
+                problems.append(self._create_problem_item(msg="%s is R%s over budget"%(project, intcomma(float(amount_over)*100.0/100)), project=project))
         return problems
     

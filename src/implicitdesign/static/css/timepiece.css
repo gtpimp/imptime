@@ -10442,12 +10442,14 @@ tr.clickable {
     padding-right:3px;
 }
 
-.checklist_items li {
-    float:none;
-}
-
 ul.checklist_items {
     list-style: none;
+    margin: 2px;
+    padding: 2px;
+}
+
+.checklist_items li {
+    float:none;
 }
 
 .checklist_items ul {
@@ -10474,4 +10476,10 @@ ul.checklist_items {
     filter: alpha(opacity=100);
     opacity: 1.0
 
+}
+
+.ui-button-icon-primary.ui-icon.ui-icon-closethick {
+    margin-left: 0px;
+    left: 0px;
+    top: 0px;
 }

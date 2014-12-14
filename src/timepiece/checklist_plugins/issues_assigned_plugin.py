@@ -12,6 +12,6 @@ class IssuesAssignedPlugin(BasePlugin):
         projects = timepiece.Project.objects.all().filter(business=self.business).filter_open().filter_in_dev()
         unassigned_issues = timepiece.Issue.objects.all().filter(project__in=projects, assigned_to__isnull=True)[0:5]
         for issue in unassigned_issues:
-            problems.append(self._create_problem_item(msg="Issue %s in sprint %s is not assigned"%(issue.number, issue.project), issue=issue))
+            problems.append(self._create_problem_item(msg="Issue %s in %s is not assigned"%(issue.number, issue.project), issue=issue))
         return problems
     

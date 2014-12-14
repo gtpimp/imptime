@@ -66,7 +66,7 @@
 	  <td>
             {{form.comments}}
             {{form.recalculate_all.label}} {{form.recalculate_all}}
-            <input class="btn btn-primary" type='submit' name='submit' value='Save' onclick='imp.submit_popup_form(this, function() { imp.refresh_checklist_navigation({{business.id}}); }, {display_results:true}); return false;' />
+            <input class="btn btn-primary" type='submit' name='submit' value='Update and Save' onclick='imp.submit_popup_form(this, function() { imp.refresh_checklist_navigation({{business.id}}); }, {display_results:true}); return false;' />
 
           </td>
 	  {% for previous_checklist in previous_checklists %}

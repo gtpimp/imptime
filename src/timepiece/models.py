@@ -534,6 +534,9 @@ class ProjectQuerySet(QuerySet):
     def filter_in_dev(self):
         return self.filter(status2='in dev')
 
+    def filter_in_client_qa(self):
+        return self.filter(status2='in client_qa')
+
     def filter_in_dev_or_pending(self):
         return self.filter(Q(status2='in dev')|Q(status2='pending'))
 
@@ -542,7 +545,8 @@ class Project(models.Model):
     PROJECT_STATUSES = ( ('gathering specs', 'gathering specs'),
                          ('quote sent', 'quote sent'),
                          ('pending', 'pending'), 
-                         ('in dev', 'in development'), 
+                         ('in dev', 'in development'),
+                         ('in client qa', 'in client qa'), 
                          ('waiting to invoice', 'waiting to invoice'), 
                          ('invoiced', 'invoiced'), 
                          ('waiting to close', 'waiting to close'), 
@@ -598,7 +602,7 @@ class Project(models.Model):
     start_dev_at = models.DateField(null=True, blank=True)
     start_internal_qa_at = models.DateField(null=True, blank=True)
     start_client_qa_at = models.DateField(null=True, blank=True)
-    invoice_at = models.DateField(null=True, blank=True)
+    invoice_at = models.DateField(null=True, blank=True) # this is for the final invoice for the sprint.
 
     colour = RGBColorField(null=True, blank=True)
 
