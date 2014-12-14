@@ -5315,8 +5315,7 @@ def finance_checklist(request, business_id, template="timepiece/project/finance_
         checklist.save()
         form.save_m2m()
 
-        if form.cleaned_data.get('recalculate_all', False):
-            checklist.recalculate_all()
+        checklist.recalculate_all()
 
         # ajax call, don't redirect
         context['msg'] = 'Saved'

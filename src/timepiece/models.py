@@ -529,10 +529,13 @@ class ProjectQuerySet(QuerySet):
         return self.filter(business__business_permissions__user=user, business__business_permissions__can_view_project_card=True)
     
     def filter_open(self):
-        return self.filter(status__label='open', status__type='project-status')
+        return self.exclude(Q(status2='closed')|Q(status__label='closed')).order_by("order")
 
     def filter_in_dev(self):
         return self.filter(status2='in dev')
+
+    def filter_in_dev_or_pending(self):
+        return self.filter(Q(status2='in dev')|Q(status2='pending'))
 
 class Project(models.Model):
 
@@ -3003,7 +3006,6 @@ class TrafficChecklist(BaseChecklist):
                                                     project=problem['project'])
                 num_problems += 1
         self.passed = (num_problems==0)
-        self.comments = "%d problems" % num_problems
         self.save()
 
 class TrafficChecklistItem(BaseChecklistItem):
@@ -3027,7 +3029,7 @@ class DevChecklist(BaseChecklist):
     modified_by = models.ForeignKey(User, null=False, blank=True, related_name='dev_checklist_modified_by')
     
     def is_ok(self):
-        return super(FinanceChecklist, self).is_ok() and self.created_at > datetime.datetime.today()-timedelta(days=settings.NUM_DAYS_FOR_DEV_SPRINT_CHECKLISTS)
+        return super(DevChecklist, self).is_ok() and self.created_at > datetime.datetime.today()-timedelta(days=settings.NUM_DAYS_FOR_DEV_SPRINT_CHECKLISTS)
 
     def recalculate_all(self):
         self.items.all().delete()
@@ -3040,7 +3042,6 @@ class DevChecklist(BaseChecklist):
                                                 project=problem['project'])
                 num_problems += 1
         self.passed = (num_problems==0)
-        self.comments = "%d problems" % num_problems
         self.save()
 
 class DevChecklistItem(BaseChecklistItem):
@@ -3067,9 +3068,7 @@ class FinanceChecklist(BaseChecklist):
                                                     project=problem['project'])
                 num_problems += 1
         self.passed = (num_problems==0)
-        self.comments = "%d problems" % num_problems
         self.save()
-
 
 class FinanceChecklistItem(BaseChecklistItem):
     finance_checklist = models.ForeignKey(FinanceChecklist, null=False, blank=True, db_index=True, related_name="items")

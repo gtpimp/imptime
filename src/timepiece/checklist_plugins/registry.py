@@ -1,7 +1,8 @@
 
 from rates_plugin import RatesPlugin
+from budget_present_plugin import BudgetPresetPlugin
 
-finance_plugin_classes = [ RatesPlugin, ]
+finance_plugin_classes = [ RatesPlugin, BudgetPresetPlugin ]
 def get_finance_plugins(business):
     return [ x(business) for x in finance_plugin_classes ]
 
