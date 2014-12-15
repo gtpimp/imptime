@@ -10,7 +10,7 @@ class OverBudgetPlugin(BasePlugin):
     def check_for_problems(self):
         from timepiece import models as timepiece
         problems = []
-        projects_with_a_budget = timepiece.Project.objects.all().filter(business=self.business).filter_open().filter(budget__gt=0).order_by("order")
+        projects_with_a_budget = timepiece.Project.objects.all().filter(business=self.business).filter_open().filter_in_dev().filter(budget__gt=0).order_by("order")
         for project in projects_with_a_budget:
             if project.stats['billed'] > project.budget:
                 amount_over = project.stats['billed'] - project.budget
