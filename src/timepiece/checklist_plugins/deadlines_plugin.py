@@ -16,7 +16,7 @@ class DeadlinesPlugin(BasePlugin):
         for project in projects.filter_in_dev().filter(Q(start_dev_at__isnull=True)|Q(start_internal_qa_at__isnull=True)|Q(start_client_qa_at__isnull=True)|Q(invoice_at__isnull=True)):
             problems.append(self._create_problem_item(msg="%s has missing deadlines"%(project), project=project))
 
-        for project in projects.filter_in_dev().filter(Q(start_dev_at__lte=today)|Q(start_internal_qa_at__lte=today)):
+        for project in projects.filter_in_dev().filter(start_client_qa_at__lte=today):
             problems.append(self._create_problem_item(msg="%s has missed a deadline to go into client qa on %s"%(project, project.start_internal_qa_at), project=project))
 
         for project in projects.filter_in_client_qa().filter(invoice_at__lte=today):
