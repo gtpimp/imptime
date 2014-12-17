@@ -101,6 +101,12 @@ class Extractor(object):
 
         issues_processed = set()
         for orgnode in orgnodes:
+            if orgnode.Level() == 1:
+                section_name = orgnode.Heading().lower().strip()
+
+            if section_name != "development":
+                continue
+                
             if orgnode.Level() == 2:
                 sprint_name = orgnode.Heading()
             if orgnode.Level() >= 3 and sprint_name is not None:
@@ -154,17 +160,18 @@ class Extractor(object):
         else:
             # Auto create the issue
             try:
-                issue = Issue.objects.get_or_create(status='new',
-                                                    project=project,
-                                                    subject=orgnode.Heading(),
-                                                    defaults={'auto_created_during_import':True,
-                                                              'adhoc':True,
-                                                              'assigned_to':timesheet_user,
-                                                              'number':Issue.get_next_issue_number(project.business),
-                                                              'description':orgnode.Body(),
-                                                              'story_points':0,
-                                                              'order':Issue.get_next_order(project)})[0]
-                self.status['num_issues_created'] += 1
+                issue, is_new = Issue.objects.get_or_create(status='new',
+                                                            project=project,
+                                                            subject=orgnode.Heading(),
+                                                            defaults={'auto_created_during_import':True,
+                                                                      'adhoc':True,
+                                                                      'assigned_to':timesheet_user,
+                                                                      'number':Issue.get_next_issue_number(project.business),
+                                                                      'description':orgnode.Body(),
+                                                                      'story_points':0,
+                                                                      'order':Issue.get_next_order(project)})
+                if is_new:
+                    self.status['num_issues_created'] += 1
             except Issue.MultipleObjectsReturned:
                 issue = Issue.objects.filter(status='new',project=project, subject=orgnode.Heading())[0]
         

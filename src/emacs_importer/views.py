@@ -13,8 +13,11 @@ from django.contrib.auth.decorators import login_required, permission_required
 from tasks import import_timesheets_from_emacs_task, import_timesheets_from_emacs
 from django.utils import simplejson
 from django.contrib.auth.decorators import user_passes_test
+from django.contrib.auth.models import User
 from django.core import management
 import threading
+import logging
+logger = logging.getLogger(__name__)
 
 @login_required
 @user_passes_test(lambda u: u.is_superuser)
@@ -33,16 +36,32 @@ def import_timesheets(self):
     t = threading.Thread(target=go)
     t.daemon=True
     t.start()
-    return HttpResponse("Timesheet import started. It can take up to an hour or so, you will receive an email when it's complete.<br/>Don't start a new import until the previous one has completed")
+    return HttpResponse("Full timesheet import started. It can take up to an hour or so, you will receive an email when it's complete.<br/>Don't start a new import until the previous one has completed")
 
 @csrf_exempt
 def import_timesheet(request):
-    form = ImportTimesheetForm(request.POST or None)
+    form = ImportTimesheetForm(request.POST or None, request.FILES or None)
     if form.is_valid():
-        the_extractor = Extractor(username=form.cleaned_data['username'])
-        status = the_extractor.extract_for_filecontent(filename=form.cleaned_data['filename'],
-                                                        file_content=form.cleaned_data['filecontent'])
-        return HttpResponse(json.dumps({'status':status,
-                             'msg':"Single file import of %s complete." % (form.cleaned_data['filename'])}))
+        username=form.cleaned_data['username']
+        user = None
+        try:
+            user = User.objects.get(username=username)
+            the_extractor = Extractor(username=username)
+            status = the_extractor.extract_for_filecontent(filename=form.filename,
+                                                           file_content=form.filecontent)
+
+            return HttpResponse(json.dumps({'status':status,
+                                            'msg':"Single file import of %s complete." % (form.filename)}))
+        except Exception, ex:
+            logger.exception(ex)
+            mail_to = settings.EMACS_ADMIN_USER_EMAILS
+            if user:
+                mail_to.append(user.email)
+            send_mail(subject="Problems importing timesheet for %s : %s" %(username, form.filename),
+                      message=str(ex),
+                      from_email="info@implicitdesign.co.za",
+                      recipient_list=mail_to,
+                      fail_silently=True)
+            return HttpResponse(json.dumps({'status':'failed', 'msg': str(ex)}))
 
     return HttpResponse("Validation error: %s" % form.errors)

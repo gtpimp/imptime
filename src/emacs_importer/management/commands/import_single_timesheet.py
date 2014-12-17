@@ -20,14 +20,11 @@ class Command(BaseCommand):
         """ base_destination_url should not have a trailing slash """
 
         try:
-            filecontent = open(os.path.join(path, filename), 'r').read()
-            filecontent = base64.b64encode(filecontent)
-
             url = "http://" + base_destination_url + "/emacs_importer/import_timesheet"
             try:
-                response = requests.post(url=url, data={ 'username': username,
-                                                         'filename': filename,
-                                                         'filecontent': filecontent })
+                response = requests.post(url=url,
+                                         data={'username': username},
+                                         files={'orgfile': open(os.path.join(path, filename), 'r')})
             except Exception, ex:
                 logger.exception(ex)
                 try:

@@ -1,0 +1,14 @@
+
+echo "-Updating imptime-"
+
+USERNAME=`whoami`
+URL="http://imptime.impd.co.za/emacs_importer/import_timesheet"
+
+FILES=`git diff-tree --no-commit-id --name-only -r HEAD`
+for FILE in ${FILES}
+do
+    echo "Posting ${FILE}..."
+    curl -v -F username=${USERNAME} -F orgfile=@${FILE} ${URL}
+done
+    
+

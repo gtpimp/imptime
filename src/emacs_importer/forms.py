@@ -15,11 +15,14 @@ from django.db.models import Q
 
 class ImportTimesheetForm(forms.Form):
     username = forms.CharField(required=True, max_length=50)
-    filename = forms.CharField(required=True)
-    filecontent = forms.CharField(required=True, widget=forms.Textarea)
+    orgfile = forms.FileField(required=True)
+
+    @property
+    def filecontent(self):
+        return self.cleaned_data['orgfile'].file.read()
+
+    @property
+    def filename(self):
+        return self.cleaned_data['orgfile'].name
     
-    def clean_filecontent(self):
-        filecontent = self.cleaned_data['filecontent']
-        filecontent = base64.b64decode(filecontent)
-        return filecontent
     
