@@ -1,7 +1,11 @@
 from django.shortcuts import render_to_response, get_object_or_404
 from django.template import RequestContext
+import json
+from django.views.decorators.csrf import csrf_exempt
 from django.http import HttpResponse, HttpResponseRedirect
+from extract_for_timepiece import Extractor
 import os
+from forms import ImportTimesheetForm
 from django.core.mail import send_mail
 import pprint
 from implicitdesign import settings
@@ -31,4 +35,14 @@ def import_timesheets(self):
     t.start()
     return HttpResponse("Timesheet import started. It can take up to an hour or so, you will receive an email when it's complete.<br/>Don't start a new import until the previous one has completed")
 
+@csrf_exempt
+def import_timesheet(request):
+    form = ImportTimesheetForm(request.POST or None)
+    if form.is_valid():
+        the_extractor = Extractor(username=form.cleaned_data['username'])
+        status = the_extractor.extract_for_filecontent(filename=form.cleaned_data['filename'],
+                                                        file_content=form.cleaned_data['filecontent'])
+        return HttpResponse(json.dumps({'status':status,
+                             'msg':"Single file import of %s complete." % (form.cleaned_data['filename'])}))
 
+    return HttpResponse("Validation error: %s" % form.errors)

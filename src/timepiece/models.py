@@ -2027,18 +2027,8 @@ class Entry(models.Model):
     
     def try_get_issue_id(self):
         """ Make a best attempt to identify what the issue number. """
-        issue_id = None
-
-        for regex in [ "[iI]ssue *#(\d+)", "[iI]ssue(\d+)", "[iI]ssue (\d+)" ]:
-            match_object = re.compile(regex).search(self.comments)
-            if match_object and match_object.groups() != 0:
-                try:
-                    issue_id = int(match_object.group(1))
-                    return issue_id
-                except Exception:
-                    pass
-        return issue_id
-
+        return Issue.extract_issue_id(self.comments)
+    
 class EntryGroup(models.Model):
     VALID_STATUS = ('invoiced', 'not-invoiced')
     STATUS_CHOICES = [status for status in ENTRY_STATUS \
@@ -2672,6 +2662,21 @@ class Issue(models.Model):
         issue_points.points = points 
         issue_points.save()
 
+    @classmethod
+    def extract_issue_id(self, s):
+        """ Make a best attempt to identify what the issue number. """
+        issue_id = None
+
+        for regex in [ "[iI]ssue *#(\d+)", "[iI]ssue(\d+)", "[iI]ssue (\d+)" ]:
+            match_object = re.compile(regex).search(s)
+            if match_object and match_object.groups() != 0:
+                try:
+                    issue_id = int(match_object.group(1))
+                    return issue_id
+                except Exception:
+                    pass
+        return issue_id
+        
     @property
     def issue_number_duplicates_in_business(self):
         return Issue.objects.filter(project__business=self.project.business).filter(number=self.number).exclude(pk=self.id)
