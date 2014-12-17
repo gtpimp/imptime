@@ -94,9 +94,9 @@ class Extractor(object):
         try:
             business = Business.objects.get(name=business_name)
         except:
-            Business.objects.get(name=business_name)
+            raise Exception("No project found with name %s" % business_name)
             
-        Entry.objects.all().filter(user__username=self.username, business=business).delete()
+        Entry.objects.all().filter(user__username=self.username, project__business=business).delete()
         
         sprint_name = None
 
