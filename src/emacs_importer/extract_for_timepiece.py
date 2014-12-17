@@ -38,7 +38,6 @@ class Extractor(object):
 
             try:
                 self.timings_before = self.get_project_timings_for_user()
-                self._clean_clocktable_entries()
                 includes = ["*.org",]
                 excludes = [".git",]
                 for root, dirs, files in os.walk(self.input_path, topdown=True):
@@ -75,9 +74,6 @@ class Extractor(object):
     def _handle_file(self, dirname, fname):
             self._process_org_file(dirname, fname)
     
-    def _clean_clocktable_entries(self):
-        Entry.objects.all().filter(user__username=self.username).delete()
-
     def _process_org_file(self, dirname, filename):
         filepath = os.path.join(dirname, filename)
         orgnodes = makelist_from_file(filepath)
@@ -94,6 +90,13 @@ class Extractor(object):
             logger.error("Not a timesheet file: %s" % filename)
             return
         business_name = filename.replace(".org", "").replace("id-", "")
+
+        try:
+            business = Business.objects.get(name=business_name)
+        except:
+            Business.objects.get(name=business_name)
+            
+        Entry.objects.all().filter(user__username=self.username, business=business).delete()
         
         sprint_name = None
 
@@ -110,7 +113,7 @@ class Extractor(object):
             if orgnode.Level() == 2:
                 sprint_name = orgnode.Heading()
             if orgnode.Level() >= 3 and sprint_name is not None:
-                self._process_orgnode(business_name, sprint_name, orgnode, issues_processed)
+                self._process_orgnode(business, sprint_name, orgnode, issues_processed)
 
         for issue in issues_processed:
             try:
@@ -119,7 +122,7 @@ class Extractor(object):
                 logger.exception(ex)
                 self.status['infos'].append("Couldn't update actual time in the interface because: %s" % ex)
 
-    def _process_orgnode(self, business_name, sprint_name, orgnode, issues_processed):
+    def _process_orgnode(self, business, sprint_name, orgnode, issues_processed):
         activity = Activity.objects.get_or_create(code='dev')[0]
         try:
             timesheet_user = User.objects.get(username=self.username)
@@ -135,11 +138,6 @@ class Extractor(object):
         # except:
         #     project_type = Attribute.objects.create(type='project-type', label='default', billable=True, enable_timetracking=True)
         
-        try:
-            business = Business.objects.get(name=business_name)
-        except Business.DoesNotExist:
-            raise Exception("No project found with name: %s" % business_name) #sic, businesses are called projects
-
         try:
             project = Project.get_project_from_name(name=sprint_name, business=business)
         except Project.DoesNotExist:
