@@ -922,6 +922,9 @@ class Project(models.Model):
 
     def estimate_stats(self, issues=None, preferred_user_id=None):
 
+        if preferred_user_id is None:
+            raise Exception("No preferred user selected. If there is no preferred user in the report list, then ensure at least one user has the permission 'can estimate own points'")
+        
         if self._estimate_stats is not None:
             return self._estimate_stats
         if issues is None:
