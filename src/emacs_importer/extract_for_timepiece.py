@@ -103,10 +103,13 @@ class Extractor(object):
         timesheet_user = User.objects.get(username=self.username)
 
         issues_processed = set()
+        section_name = None
         for orgnode in orgnodes:
             if orgnode.Level() == 1:
                 section_name = orgnode.Heading().lower().strip()
 
+            if section_name is None:
+                raise Exception("Invalid timesheet, missing a one star section called")
             if section_name != "development":
                 continue
                 
