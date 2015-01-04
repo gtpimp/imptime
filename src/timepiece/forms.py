@@ -1353,7 +1353,7 @@ class CalendarFilterForm(forms.Form):
     def filter_includes_actual_events(self):
         return 'actual' in self.cleaned_data['event_types']
 
-    def save(self, calendar_events, entry_events):
+    def save(self, calendar_events, entry_events, holiday_events):
         if len(self.cleaned_data['users'])>0:
             calendar_events = calendar_events.filter(user__in=self.cleaned_data['users'])
             entry_events = entry_events.filter(user__in=self.cleaned_data['users'])
@@ -1363,9 +1363,11 @@ class CalendarFilterForm(forms.Form):
         if self.cleaned_data['start'] is not None:
             calendar_events = calendar_events.filter(start__gte=self.cleaned_data['start'])
             entry_events = entry_events.filter(start_time__gte=self.cleaned_data['start'])
+            holiday_events = holiday_events.filter(applies_on__gte=self.cleaned_data['start'])
         if self.cleaned_data['end'] is not None:
             calendar_events = calendar_events.filter(start__lte=self.cleaned_data['end'])
             entry_events = entry_events.filter(end_time__lte=self.cleaned_data['end'])
+            holiday_events = holiday_events.filter(applies_on__lte=self.cleaned_data['end'])
         if self.cleaned_data['event_types'] is not None and len(self.cleaned_data['event_types'])>0:
             calendar_events = calendar_events.filter(event_type__in=self.cleaned_data['event_types'])
 
@@ -1378,7 +1380,7 @@ class CalendarFilterForm(forms.Form):
             elif self.cleaned_data['actual_time_aggregation_mechanism'] == 'by_user':
                 entry_events = entry_events.extra(select={'day': 'date( start_time )'}).values('user', 'day').annotate(Sum('hours'))
 
-        return calendar_events, entry_events
+        return calendar_events, entry_events, holiday_events
 
 class CalendarEventCreateForm(forms.ModelForm):
 

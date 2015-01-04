@@ -419,7 +419,7 @@ urlpatterns = patterns('',
         name='graphs'
         ),
     url(
-        r'^daily_graph$',
+        r'^daily_graph/(?P<user_id>.*)$',
         views.daily_graph,
         name='daily_graph'
         ),

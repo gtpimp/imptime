@@ -2542,10 +2542,14 @@ def revenue(request, template="timepiece/time-sheet/reports/revenue.html", conte
     return render_to_response(template, context, context_instance=RequestContext(request))
 
 @login_required
-def daily_graph(request, template="timepiece/graphs/daily_graph.html", context=None):
+def daily_graph(request, user_id, template="timepiece/graphs/daily_graph.html", context=None):
 
     if not request.user.is_superuser:
-        return HttpResponse("")
+        users = [request.user]
+    elif not user_id:
+        users = User.objects.all()
+    else:
+        users = [User.objects.get(pk=user_id)]
 
     context = context or {}
 
@@ -2554,12 +2558,13 @@ def daily_graph(request, template="timepiece/graphs/daily_graph.html", context=N
     from_date, to_date =  _get_filter_dates_only(request, context, (today - relativedelta(months=1), today))
 
     daily_hours = {}
-    for user in User.objects.all():
+    for user in users:
         daily_hours[user.username] = _get_daily_hours(timepiece.Entry.objects.filter(user=user), from_date, to_date)
 
     context['daily_hours'] = sorted((k,sorted(v.iteritems())) for k,v in daily_hours.iteritems() if v)
     context['from_date'] = from_date
     context['to_date'] = to_date
+    context['default_user_id'] = user_id
 
     return render_to_response(template, context, context_instance=RequestContext(request))
 
@@ -4895,7 +4900,8 @@ def calendar_events(request, context=None):
     _populate_calendar_events(request, context)
 
     events = [ _create_js_calendar_event(event) for event in context['calendar_events'] ] + \
-             [ _create_js_entry_event(event) for event in context['entry_events'] ]
+             [ _create_js_entry_event(event) for event in context['entry_events'] ] + \
+             [ _create_js_holiday_event(event) for event in context['holiday_events'] ]
 
     return HttpResponse(json.dumps(events))
 
@@ -4981,38 +4987,61 @@ def _create_js_calendar_event(event):
 
     return res
 
+def _create_js_holiday_event(event):
+
+    res = { 'id': event.id,
+            'allDay': True,
+            'start': event.applies_on.strftime("%Y-%m-%d"),
+            'end': event.applies_on.strftime("%Y-%m-%d"),
+            'description': event.name,
+            'title': event.name,
+            'color': "#ff00ff",
+            'textColor': "#000000",
+            'borderColor': "#121212",
+            'editable': False
+            }
+
+    return res
+
 def _populate_calendar_events(request, context):
-    bps_for_scheduling = timepiece.BusinessPermissions.objects.filter(can_be_scheduled=True)
-    users = timepiece.User.objects.filter(pk__in=[ x['user'] for x in bps_for_scheduling.order_by("user__username").values("user") ])
+    try:
+        bps_for_scheduling = timepiece.BusinessPermissions.objects.filter(can_be_scheduled=True)
+        users = timepiece.User.objects.filter(pk__in=[ x['user'] for x in bps_for_scheduling.order_by("user__username").values("user") ])
 
-    bps_logged_in_user_can_view = timepiece.BusinessPermissions.objects.filter(can_view_calendar=True, user=request.user)
-    bp_businesses_for_scheduling = [ x['business'] for x in bps_for_scheduling.order_by("business__name").values("business") ]
-    businesses = timepiece.Business.objects.filter(pk__in=bp_businesses_for_scheduling)
+        bps_logged_in_user_can_view = timepiece.BusinessPermissions.objects.filter(can_view_calendar=True, user=request.user)
+        bp_businesses_for_scheduling = [ x['business'] for x in bps_for_scheduling.order_by("business__name").values("business") ]
+        businesses = timepiece.Business.objects.filter(pk__in=bp_businesses_for_scheduling)
 
-    if not request.user.is_superuser:
-        bp_businesses_logged_in_user_can_view = [ x['business'] for x in bps_logged_in_user_can_view.order_by("business__name").values("business") ]
-        businesses = businesses.filter(pk__in=bp_businesses_logged_in_user_can_view)
+        if not request.user.is_superuser:
+            bp_businesses_logged_in_user_can_view = [ x['business'] for x in bps_logged_in_user_can_view.order_by("business__name").values("business") ]
+            businesses = businesses.filter(pk__in=bp_businesses_logged_in_user_can_view)
 
-    projects = timepiece.Project.objects.filter(business__in=businesses).filter_in_dev().order_by("business__name", "name").distinct()
+        projects = timepiece.Project.objects.filter(business__in=businesses).filter_in_dev().order_by("business__name", "name").distinct()
 
-    calendar_events = timepiece.CalendarEvent.objects.filter(user__in=users).filter(Q(project__business__in=businesses)|Q(project__isnull=True)).distinct().order_by("start")
-    entry_events = timepiece.Entry.objects.all()
+        calendar_events = timepiece.CalendarEvent.objects.filter(user__in=users).filter(Q(project__business__in=businesses)|Q(project__isnull=True)).distinct().order_by("start")
+        entry_events = timepiece.Entry.objects.all()
 
-    if not request.user.is_superuser:
-        calendar_events = calendar_events.filter(user=request.user)
-        entry_events = entry_events.filter(user=request.user)
-        users = users.filter(pk=request.user.pk)
+        if not request.user.is_superuser:
+            calendar_events = calendar_events.filter(user=request.user)
+            entry_events = entry_events.filter(user=request.user)
+            users = users.filter(pk=request.user.pk)
 
-    filter_form = timepiece_forms.CalendarFilterForm(users, businesses, request.GET or None)
-    if filter_form.is_valid():
-        calendar_events, entry_events = filter_form.save(calendar_events, entry_events)
+        holiday_events = timepiece.Holiday.objects.all()
 
-    context['users'] = users
-    context['businesses'] = businesses
-    context['projects'] = projects
-    context['calendar_events'] = calendar_events
-    context['entry_events'] = entry_events
-    context['filter_form'] = filter_form
+        filter_form = timepiece_forms.CalendarFilterForm(users, businesses, request.GET or None)
+        if filter_form.is_valid():
+            calendar_events, entry_events, holiday_events = filter_form.save(calendar_events, entry_events, holiday_events)
+
+        context['users'] = users
+        context['businesses'] = businesses
+        context['projects'] = projects
+        context['calendar_events'] = calendar_events
+        context['entry_events'] = entry_events
+        context['holiday_events'] = holiday_events
+        context['filter_form'] = filter_form
+    except Exception, ex:
+        logger.exception(ex)
+        raise
 
 @login_required
 @csrf_exempt
@@ -5393,4 +5422,3 @@ def clear_issue_adhoc_status(request, issue_id, context=None):
     issue.adhoc = False
     issue.save()
     return HttpResponse("{'status':'ok'}")
-    

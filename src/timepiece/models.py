@@ -923,7 +923,10 @@ class Project(models.Model):
     def estimate_stats(self, issues=None, preferred_user_id=None):
 
         if preferred_user_id is None:
-            raise Exception("No preferred user selected. If there is no preferred user in the report list, then ensure at least one user has the permission 'can estimate own points'")
+            try:
+                preferred_user_id = BusinessPermissions.by_user(self.business).keys()[0]
+            except:
+                raise Exception("No preferred user selected. If there is no preferred user in the report list, then ensure at least one user has the permission 'can estimate own points'")
         
         if self._estimate_stats is not None:
             return self._estimate_stats
@@ -3131,4 +3134,9 @@ class UserNotification(models.Model):
 	def get_planned_events_for_today(self):
 		return CalendarEvent.objects.filter(user=self.user, start__gte=datetime.datetime.today().date(), start__lt=datetime.datetime.today().date()+relativedelta(days=1)).order_by("start")
 	
-	
+
+class Holiday(models.Model):
+    applies_on = models.DateField(blank=True, null=True)
+    name = models.CharField(max_length=100, default='public holiday', null=False, blank=True)
+
+    

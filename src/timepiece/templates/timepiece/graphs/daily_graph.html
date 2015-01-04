@@ -8,7 +8,7 @@
   {% include "timepiece/graphs/_date_filter_msg.html" %}
 </h2>
 
-    <form class="form-inline" accept-charset='UTF-8' method='get' action='{% url 'daily_graph' %}'>
+    <form class="form-inline" accept-charset='UTF-8' method='get' action='{% url 'daily_graph' default_user_id %}'>
 	  {% if date_form.errors %}
 	   {% for e in date_form.errors.values %} 
 	    {{ e }}
@@ -27,7 +27,6 @@
 
   {% for user,days_hours in daily_hours %}
   <table width="100%">
-
 
     <tr>
       <th>{{user}}</th>
