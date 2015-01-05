@@ -2930,7 +2930,7 @@ class CalendarEvent(models.Model):
 
     @classmethod
     def is_on_leave(self, d, user):
-        return self.objects.filter(user=user, start=d, event_type='leave', status__in=['ready', 'done']).count()>0
+        return self.objects.filter(user=user, start=d, event_type__in=['leave', 'sickday', 'office_closed'], status__in=['ready', 'done']).count()>0
     
     def get_colour(self):
         index = self.user_id % len(COLOURS)
