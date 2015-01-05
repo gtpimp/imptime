@@ -2928,6 +2928,10 @@ class CalendarEvent(models.Model):
     def is_open(self):
         return self.status == '' or self.status == 'ready'
 
+    @classmethod
+    def is_on_leave(self, d, user):
+        return self.objects.filter(user=user, start=d, event_type='leave', status__in=['ready', 'done']).count()>0
+    
     def get_colour(self):
         index = self.user_id % len(COLOURS)
         threshold = int("0x999999", 0)
@@ -3139,4 +3143,6 @@ class Holiday(models.Model):
     applies_on = models.DateField(blank=True, null=True)
     name = models.CharField(max_length=100, default='public holiday', null=False, blank=True)
 
-    
+    @classmethod
+    def is_a_holiday(self, d):
+        return d.weekday() in [5,6] or self.objects.filter(applies_on=d).count() > 0

@@ -25,7 +25,7 @@
      </div>
   </div>
 
-  {% for user,days_hours in daily_hours %}
+  {% for user,days_hours in daily_hours.items %}
   <table width="100%">
 
     <tr>
@@ -65,11 +65,12 @@
   $(document).ready( 
                function() {
 
-                 {% for user,days_hours in daily_hours %} 
+                 {% for user,values in daily_hours.items %} 
+
                  $.plot($("#graph{{user}}"),
 			[ 
-			  { label:"{{user}}",
-                            data: [ {% for date, hours in days_hours %} 
+			  { label:"hours",
+                            data: [ {% for date, hours in values.daily_hours.items %} 
                                                     [ {{date|epoch}},{{hours}}], {% endfor %} ],
 			    //lines: {show: true, steps: true, fill: true},
                             bars: {
@@ -78,6 +79,12 @@
                               horizontal: false
                             },
                             points: {show: false},
+			  },
+			  { label:"weekly average",
+                            data: [ {% for date, hours in values.weekly_average.items %} 
+                                                    [ {{date|epoch}},{{hours}}], {% endfor %} ],
+			    lines: {show: true, steps: false, fill: false},
+                            //points: {show: false},
 			  },
 			],
 			{
@@ -93,6 +100,9 @@
                             max: {{to_date|epoch}},
                             {% endif %}
 			  },
+                          yaxis: {
+                            tickSize: 1,
+                          },
                           grid: {markings: [{yaxis: {from: 8, to:8}, color: "#adff2f"}]},
                           legend: { position: "se" },
 			  bars: {
