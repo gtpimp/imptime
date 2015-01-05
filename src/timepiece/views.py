@@ -1038,7 +1038,7 @@ def list_people(request):
         people = auth_models.User.objects.filter(
             Q(first_name__icontains=search) |
             Q(last_name__icontains=search) |
-            Q(email__icontains=search)
+            Q(email__icontains=search).order_by("username")
         )
         if people.count() == 1:
             url_kwargs = {
@@ -1048,26 +1048,7 @@ def list_people(request):
                 reverse('view_person', kwargs=url_kwargs)
             )
     else:
-        people = auth_models.User.objects.all().order_by('last_name')
-
-    for person in people:
-        key = "person_ctc_"+str(person.id)
-        if key in request.POST.keys():
-            timepiece.UserProfile.objects.get_or_create(user=person)
-            person.save()
-            person.profile.amount = float(request.POST[key])
-            person.profile.save()
-            break;
-
-    for person in people:
-        key = "person_amount_"+str(person.id)
-        if key in request.POST.keys():
-            timepiece.UserProfile.objects.get_or_create(user=person)
-            person.save()
-            person.profile.billable_amount = float(request.POST[key])
-            person.profile.save()
-            break;
-
+        people = auth_models.User.objects.all().order_by('username')
 
     context = {
         'form': form,
