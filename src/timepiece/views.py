@@ -2615,18 +2615,18 @@ def graphs(request, template="timepiece/graphs/graph.html", context=None):
 
 def _get_daily_hours(entries, from_date=None, to_date=None):
     hours = {}
-    for entry in entries:
-        d = datetime.date(year=entry.start_time.year, month=entry.start_time.month, day=entry.start_time.day)
-        if from_date and to_date:
-            if from_date > d or to_date < d: continue
-        elif from_date:
-            if from_date > d: continue
-        elif to_date:
-            if to_date < d: continue
-        if d not in hours:
-            hours[d] = entry.hours
-        else:
-            hours[d] += entry.hours
+
+    entries_hours_per_day = entries.order_by("start_time").extra({'on_day':'date(start_time)'}).values('on_day', 'hours').annotate(total_hours=Sum('hours'))
+
+    hours_per_day = {}
+    for entry_hours_per_day in entries_hours_per_day:
+        hours_per_day[entry_hours_per_day['on_day']] = entry_hours_per_day['total_hours']
+    
+    running_date = from_date
+    while running_date <= to_date:
+        hours[running_date] = hours_per_day.get(running_date, 0)
+        running_date += relativedelta(days=1)
+
     return hours
 
 def _create_hours_series_for_graphs(request, entries, context):
