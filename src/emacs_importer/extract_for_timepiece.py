@@ -110,7 +110,7 @@ class Extractor(object):
 
             if section_name is None:
                 raise Exception("Invalid timesheet, missing a one star section called")
-            if "development" not in section_name:
+            if section_name != "development":
                 continue
                 
             if orgnode.Level() == 2:
