@@ -1,7 +1,7 @@
 <form class="box event_create_form" method="POST" style="display:none" action="{% url 'create_calendar_event'%}">
     {% csrf_token %}
 
-  <h2>Create an Event</h2>
+  <h2>First menu</h2>
 
   <div class='form-group{% if form_new_event.errors.start %} has-error{%endif%}'>
     <div class="col-md-6">
@@ -14,7 +14,7 @@
 
   <div class='form-group{% if form_new_event.errors.hours%} has-error{%endif%}'>
     <div class="col-md-6">
-      <h3>Hours</h3>
+      <h3>Hours(recovered) </h3>
     </div>
     <div class="col-md-6">
             {{ form_new_event.hours }}
@@ -31,12 +31,12 @@
   </div>
 
   <div class='form-group{% if form_new_event.errors.project%}has-error{%endif%}'>
-     <!--  <div class="col-md-6">-->
-	  <h3>Project List</h3>
-      <!-- </div>-->
-     <!--  <div class ="col-md-6">-->
-	 <!--  {{form_new_event.project}}-->
-     <!--  </div>-->
+     <div class="col-md-6">
+	  <h3>Project List(recovered)</h3>
+      </div>
+       <div class ="col-md-6">
+	 {{form_new_event.project}}
+     </div>
   </div>
 
   <div class='form-group{% if form_new_event.errors.user%} has-error{%endif%}'>
@@ -74,6 +74,36 @@
             {{ form_new_event.description }}
     </div>
   </div>
+
+  <li class="col-md-6">
+ <a href="#" class="dropdown-toggle" data-toggle="dropdown">Projects <b class="caret"></b></a>
+ <ul class="dropdown-menu">
+		                                       
+ <li><a href="/timepiece/time-sheet/business_issues/26/">1address</a></li>
+ 
+ <li><a href="/timepiece/time-sheet/business_issues/29/">7days</a></li>
+                                  
+ <li><a href="/timepiece/time-sheet/business_issues/5/">admin</a></li>
+                                  
+ <li><a href="/timepiece/time-sheet/business_issues/77/">bunchcut</a></li>
+                                  
+ <li><a href="/timepiece/time-sheet/business_issues/85/">charlottetilbury</a></li>
+                                  
+<li><a href="/timepiece/time-sheet/business_issues/69/">clevva</a></li>
+                                  
+ <li><a href="/timepiece/time-sheet/business_issues/128/">cloudfire</a></li>
+                                  
+ <li><a href="/timepiece/time-sheet/business_issues/125/">cornell-chatapp</a></li>
+                                  
+<li><a href="/timepiece/time-sheet/business_issues/13/">csir</a></li>
+                                  
+ <li><a href="/timepiece/time-sheet/business_issues/109/">dotnxt</a></li>
+                                  
+ <li><hr/></li></ul>
+
+
+
+
 
   <div class='form-group'>
     <div class="col-md-12">

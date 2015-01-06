@@ -41,7 +41,7 @@
       {% if business and name == 'active' or name == 'pending' or name == 'hopeful' %}
       {% has_permission has_do_traffic_checklist business %}
       <td>
-	<a href="#" onclick="imp.popup_page('{% url 'traffic_checklist' business.id %}'); return false;">
+	<a href="#" onclick="imp.popup_page('{% url 'traffic_checklist' business.id %}'); return true;">
 	  <span class="checklist_status_icon" business_id="{{business.id}}" data-refresh-url="{% url 'render_checklist_status_icon_traffic' business.id %}">
 	    {% include "timepiece/project/_checklist_status_icon_traffic.html" %}
 	    {% for owner in business.get_traffic_owners %}
