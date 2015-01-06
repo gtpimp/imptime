@@ -298,6 +298,11 @@ imp.on_document_ready = function() {
 
     imp.create_splitter();
     imp.attach_sprint_headings();
+
+    $(window).on('click', function(){
+    			  $('issue_edit_box').remove(); 
+    });
+
 };
 
 $(document).ready(imp.on_document_ready);

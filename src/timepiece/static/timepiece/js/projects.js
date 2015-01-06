@@ -420,6 +420,15 @@ imp.on_document_ready = function() {
 
     imp.create_splitter();
     imp.attach_sprint_headings();
+
+    $(window).on('blur', function(){
+
+  	  var parent = $('issue_edit_box').parent();
+	  var div_sibling = parent.find('.edit_issue_subject');
+	  $('.issue_edit_box').remove()
+   	  div_sibling.show();
+	  
+    });
 };
 
 $(document).ready(imp.on_document_ready);

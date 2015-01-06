@@ -513,13 +513,14 @@ imp.sync_from_remote = function(issue_id, url) {
 };
 
 imp.clickable_subject_box = function(element, url, item_id, size, width, issue_id, initial_value) {
-
+    debugger	      
     if (!issue_id) {
 	issue_id = item_id;
     }
 
     var textbox = $(element),
-        commentTextArea = $("<input/>");
+        commentTextArea = $("<input class='test'/>");
+    var abc = "ABC";
     var value;
     if ( initial_value ) {
 	value = initial_value;
@@ -535,7 +536,7 @@ imp.clickable_subject_box = function(element, url, item_id, size, width, issue_i
 
     imp.highlight_issue(issue_id);
 
-    commentTextArea = commentTextArea.attr("type","text").attr("value",value).attr("size",size).css("width",width).css("position","absolute").css("overflow","visible").css("z-index",200);
+    commentTextArea = commentTextArea.attr("type","text").attr("value",value).attr("size",size).css("width",width).css("position","relative").css("overflow","visible").css("z-index",200);
     textbox.parent().append(commentTextArea);
     textbox.hide();
     commentTextArea.select();
