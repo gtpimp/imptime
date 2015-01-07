@@ -1,6 +1,6 @@
 var imp = imp || {};
 
-imp.inline_editor_active = false;
+imp.inline_editor_active = true;
 imp.current_issue_detail_url = null;
 
 imp.highlight_issue = function(issue_id) {
@@ -34,8 +34,7 @@ imp.show_issue_detail = function(issue_id, url, msg, args) {
     $(".issue_detail").load(url,
 			    function() {
 
-				if (args && args.reload_on_done) {
-				    window.location=args.reload_on_done;
+				if (args && args.reload_on_done) {.location=args.reload_on_done;
 				    return;
 				}
 				
@@ -47,12 +46,12 @@ imp.show_issue_detail = function(issue_id, url, msg, args) {
 				    imp.highlight_issue(issue_id);
 				}
 
-				// $(".issue_detail .edit_comment_section").hover(function() {
-				// 						   $(this).find(".edit_comment_button").show();
-				// 					       },
-				// 					       function() {
-				// 						   $(this).find(".edit_comment_button").hide();
-				// 					       });
+				 $(".issue_detail .edit_comment_section").hover(function() {
+				 						   $(this).find(".edit_comment_button").show();
+				 					       },
+				 					       function() {
+				 						   $(this).find(".edit_comment_button").hide();
+				 					       });
 
 				on_done();
 			    });
@@ -614,8 +613,9 @@ imp.refresh_closest_issue_parent_row = function(element) {
 
 imp.clickable_feature_name = function (element, url, item_id) {
     // clear the parent of select boxes...
-    $(element).html("");
-    return imp.clickable_subject_box(element, url, item_id, "200px", "200px");
+    // $(element).html("");
+    $("issue_subject").click(function(){$(".issue_subject).removeClass('open');});
+    return imp.clickable_subject_box(element, url, item_id, "2000px", "2000px");
 };
 
 imp.dynamic_option_addition = function (element, item_id, update_url) {
@@ -833,54 +833,53 @@ imp.show_issue_history = function(url) {
 };
 
 
-// imp.dynamic_option_selection = function(element, item_id, options , update_url) {
-//     var selectme = $(element);
-//     var id = null;
-//     var d_options = {};
-//     var i;
+ imp.dynamic_option_selection = function(element, item_id, options , update_url) {
+     var selectme = $(element);
+     var id = null;
+     var d_options = {};
+     var i;
+     var editor = $(element).parents("td").find(".inline_editor").show();
 
-//     var editor = $(element).parents("td").find(".inline_editor").show();
+     for(i = 0; i < options.length; i++) {
+         d_options[options[i][0]] = options[i][1];
+     }
 
-//     for(i = 0; i < options.length; i++) {
-//         d_options[options[i][0]] = options[i][1];
-//     }
+     if (selectme.children('select').length == 0) {
+         var str ="";
+         var current_value = $.trim(selectme[0].innerHTML);
+         var new_select = $("<select/>").attr("class", "transient_selection");
+ 	var new_option;
+         new_select.css("width","auto");
+         for (item in d_options)  {
+             new_option  = $("<option/>");
+             new_option.attr("id", item);
+             new_option.text(d_options[item]);
+             if (current_value == d_options[item]) {
+                 new_option.attr("selected",true);
+             }
+             new_select.append(new_option);
+         }
+         selectme.html("");
+         selectme.append(new_select);
 
-//     if (selectme.children('select').length == 0) {
-//         var str ="";
-//         var current_value = $.trim(selectme[0].innerHTML);
-//         var new_select = $("<select/>").attr("class", "transient_selection");
-// 	var new_option;
-//         new_select.css("width","auto");
-//         for (item in d_options)  {
-//             new_option  = $("<option/>");
-//             new_option.attr("id", item);
-//             new_option.text(d_options[item]);
-//             if (current_value == d_options[item]) {
-//                 new_option.attr("selected",true);
-//             }
-//             new_select.append(new_option);
-//         }
-//         selectme.html("");
-//         selectme.append(new_select);
+         $("select.selectbox").focus();
+         $("select.selectbox").blur(function() {
+             var value = $(this).val();
+             var valuetext = $(this).children('option#opt-'+value).text();
+             $("div.selectme").attr({'id': "selectme-"+value});
+             $(".selectme").text(valuetext);
+         });
 
-//         $("select.selectbox").focus();
-//         $("select.selectbox").blur(function() {
-//             var value = $(this).val();
-//             var valuetext = $(this).children('option#opt-'+value).text();
-//             $("div.selectme").attr({'id': "selectme-"+value});
-//             $(".selectme").text(valuetext);
-//         });
+     }else {
+         var selected = selectme.find("option:selected");
+         var value = selected[0].innerHTML;
+         var response = $.ajax({type:"POST",
+                                url: update_url,
+                                data : { item_id: item_id , new_value:value, index: selected.attr("id") },
+                                dataType:"json"});
 
-//     }else {
-//         var selected = selectme.find("option:selected");
-//         var value = selected[0].innerHTML;
-//         var response = $.ajax({type:"POST",
-//                                url: update_url,
-//                                data : { item_id: item_id , new_value:value, index: selected.attr("id") },
-//                                dataType:"json"});
-
-//         selectme.html('<div class="selectme">'+value+'</div>');
-//         response.done( function() { imp.refresh_closest_issue_parent_row(selectme); } );
-//     }
-// };
+         selectme.html('<div class="selectme">'+value+'</div>');
+         response.done( function() { imp.refresh_closest_issue_parent_row(selectme); } );
+     }
+ };
 

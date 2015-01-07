@@ -6,7 +6,7 @@
 
   <td class="issue_checkbox_td">
     <div class="issue_checkbox_cell" style="width:100%; display:none;">
-      <input type="checkbox" name="issue_checked_{{issue.pk}}" {% if issue.pk in selected_issue_ids %}checked="checked"{% endif %} />
+      <input type="checkbox" name="issue_checked_{{issue.pk}}" {% if issue.pk in selected_issue_ids %}checked="checked"{% endif %} /> <!-- Code for checkbox on left hand side -->
     </div>
   </td>
 
@@ -36,7 +36,7 @@
       </a>
       {% endif %}
     </div>
-    <div class="edit_issue_subject" {% has_permission has_edit_subject project.business %} onclick="imp.clickable_subject_box(this, '{% url 'issue_subject_update' %}',{{ issue.pk }})" {% end_permission %} >
+    <div class="edit_issue_subject" {% has_permission has_edit_subject project.business %} onclick= "imp.clickable_subject_box(this, '{% url 'issue_subject_update' %}',{{ issue.pk }})" {% end_permission %} >
       {{issue.subject}}
     </div>
   </td>
