@@ -2911,7 +2911,7 @@ class CalendarEvent(models.Model):
     EVENT_STATUSES = ( ('ready', 'Ready'), ('done', 'Done'), ('cancelled', 'Cancelled') )
 
     user = models.ForeignKey(User, blank=False, null=False, db_index=True)
-    project = models.ForeignKey(Project, blank=True, null=True, db_index=True, related_name='calendar_events')
+    business = models.ForeignKey(Business, blank=True, null=True, db_index=True, related_name='calendar_events')
     start = models.DateTimeField(blank=False,null=False, db_index=True)
     hours = models.DecimalField(max_digits=4, decimal_places=2, default=2.0, db_index=True)
     description = models.TextField(null=True, blank=True)

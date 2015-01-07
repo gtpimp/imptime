@@ -4892,8 +4892,8 @@ def auto_issue_sort(request, project_id, template="timepiece/project/auto_issue_
 def calendar(request, template="timepiece/calendar/calendar.html", context=None):
     context = context or {}
     _populate_calendar_events(request, context)
-    context['form_new_event'] = timepiece_forms.CalendarEventCreateForm(context['users'], context['projects'], request.POST or None)
-    context['update_form'] = timepiece_forms.CalendarEventUpdateForm(context['users'], context['projects'])
+    context['form_new_event'] = timepiece_forms.CalendarEventCreateForm(context['users'], context['businesses'], request.POST or None)
+    context['update_form'] = timepiece_forms.CalendarEventUpdateForm(context['users'], context['businesses'])
     return render_to_response(template, context, context_instance=RequestContext(request))
 
 @login_required
@@ -4960,7 +4960,7 @@ def _create_js_calendar_event(event):
              'allDay': False,
              'start': event.start.strftime("%Y-%m-%d %H:%M"),
              'end': event.end.strftime("%Y-%m-%d %H:%M"),
-             'project_id': event.project.id if event.project else None,
+             'business_id': event.business.id if event.business else None,
              'user_id': event.user.id,
              'description': event.description,
              'event_type': event.event_type,
@@ -4977,10 +4977,10 @@ def _create_js_calendar_event(event):
         res['title'] = "S: %s..." % event.description.strip()[0:30]
     elif event.event_type == "office_closed":
         res['title'] = "X: %s..." % event.description.strip()[0:30]
-    elif event.project is None:
+    elif event.business is None:
         res['title'] = "G: %s..." % event.description.strip()[0:30]
     else:
-        res['title'] = event.project.business.name
+        res['title'] = event.business.name
 
     res['title'] += " (%s, %s hrs)" % (event.user.username, event.hours)
 
@@ -5020,7 +5020,7 @@ def _populate_calendar_events(request, context):
 
         projects = timepiece.Project.objects.filter(business__in=businesses).filter_in_dev().order_by("business__name", "name").distinct()
 
-        calendar_events = timepiece.CalendarEvent.objects.filter(user__in=users).filter(Q(project__business__in=businesses)|Q(project__isnull=True)).distinct().order_by("start")
+        calendar_events = timepiece.CalendarEvent.objects.filter(user__in=users).filter(Q(business__in=businesses)|Q(business__isnull=True)).distinct().order_by("start")
         entry_events = timepiece.Entry.objects.all()
 
         if not request.user.is_superuser:
@@ -5051,7 +5051,7 @@ def create_calendar_event(request, context=None):
     context = context or {}
     _populate_calendar_events(request, context)
 
-    form_new_event = timepiece_forms.CalendarEventCreateForm(context['users'], context['projects'], request.POST or None)
+    form_new_event = timepiece_forms.CalendarEventCreateForm(context['users'], context['businesses'], request.POST or None)
     if form_new_event.is_valid():
 
         if form_new_event.cleaned_data['project'] is not None:
@@ -5075,11 +5075,11 @@ def update_calendar_event(request, event_id, context=None):
     _populate_calendar_events(request, context)
     calendar_event = context['calendar_events'].get(pk=event_id)
 
-    form = timepiece_forms.CalendarEventUpdateForm(context['users'], context['projects'], request.POST or None, instance=calendar_event)
+    form = timepiece_forms.CalendarEventUpdateForm(context['users'], context['businesses'], request.POST or None, instance=calendar_event)
     if form.is_valid():
 
-        if calendar_event.project is not None:
-            bp = timepiece.BusinessPermissions.for_user(request.user, calendar_event.project.business)
+        if calendar_event.business is not None:
+            bp = timepiece.BusinessPermissions.for_user(request.user, calendar_event.business)
             if not bp.has_edit_calendar:
                 raise PermissionDenied
         else:
@@ -5099,8 +5099,8 @@ def delete_calendar_event(request, event_id, context=None):
     _populate_calendar_events(request, context)
     calendar_event = context['calendar_events'].get(pk=event_id)
 
-    if calendar_event.project is not None:
-        bp = timepiece.BusinessPermissions.for_user(request.user, calendar_event.project.business)
+    if calendar_event.business is not None:
+        bp = timepiece.BusinessPermissions.for_user(request.user, calendar_event.business)
         if not bp.has_edit_calendar:
             raise PermissionDenied
     else:

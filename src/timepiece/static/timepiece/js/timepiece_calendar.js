@@ -16,7 +16,7 @@ var t_calendar = ( function() {
 			       calendar_event.end = new_event_data.end;
 			       calendar_event.title = new_event_data.title;
 			       calendar_event.description = new_event_data.description;
-			       calendar_event.project_id = new_event_data.project_id;
+			       calendar_event.business_id = new_event_data.business_id;
 			       calendar_event.user_id = new_event_data.user_id;
 			       calendar_event.event_type = new_event_data.event_type;
 			       calendar_event.color = new_event_data.color;
@@ -49,8 +49,8 @@ var t_calendar = ( function() {
 			       event_type_el.addClass("event_type_" + event.event_type);
 			   },
 
-			   activate_project_for_scheduling: function(project_id) {
-			       $("#id_project").val(project_id);
+			   activate_business_for_scheduling: function(business_id) {
+			       $("#id_business").val(business_id);
 			   },
 
 			   switch_to_day_view: function() {
@@ -195,8 +195,8 @@ $(document).ready(function() {
 
 			  var data = { start: event.start.format('YYYY-MM-DD HH:mm:ss'),
 				       end: event.end.format('YYYY-MM-DD HH:mm:ss') };
-			  if ( event.project_id ) {
-			      data.project = event.project_id;
+			  if ( event.business_id ) {
+			      data.project = event.business_id;
 			  }
 
 			  $.ajax({type:"POST",
@@ -229,7 +229,7 @@ $(document).ready(function() {
 			  $("#calendar").fullCalendar('gotoDate', calEvent.start);
 			  var form = $(".event_edit_form");
 			  form.find("[name=user]").val(calEvent.user_id);
-			  form.find("[name=project]").val(calEvent.project_id);
+			  form.find("[name=business]").val(calEvent.business_id);
 			  form.find("[name=hours]").val((calEvent.end-calEvent.start)/(60*60*1000));
 			  form.find("[name=description]").val(calEvent.description);
 			  form.find("[name=event_type]").val(calEvent.event_type);

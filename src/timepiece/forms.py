@@ -1384,16 +1384,15 @@ class CalendarFilterForm(forms.Form):
 
 class CalendarEventCreateForm(forms.ModelForm):
 
-    project = GroupedModelChoiceField("business", queryset=Project.objects.all(), required=False)
     end = forms.DateTimeField(required=False)
 
     class Meta:
         model = CalendarEvent
     
-    def __init__(self, allowed_users, allowed_projects, *args, **kwargs):
+    def __init__(self, allowed_users, allowed_businesses, *args, **kwargs):
         super(CalendarEventCreateForm, self).__init__(*args, **kwargs)
         self.fields['user'].queryset = allowed_users
-        self.fields['project'].queryset = allowed_projects
+        self.fields['business'].queryset = allowed_businesses
         self.fields['start'].widget.attrs['class'] = 'datetimepicker'
         self.fields['end'].widget.attrs['class'] = 'datetimepicker'
         self.fields['hours'].required=False
@@ -1417,14 +1416,13 @@ class CalendarEventCreateForm(forms.ModelForm):
 class CalendarEventUpdateForm(forms.ModelForm):
 
     end = forms.DateTimeField()
-    project = GroupedModelChoiceField("business", queryset=Project.objects.all(), required=False)
 
     class Meta:
         model = CalendarEvent
     
-    def __init__(self, allowed_users, allowed_projects, *args, **kwargs):
+    def __init__(self, allowed_users, allowed_businesses, *args, **kwargs):
         super(CalendarEventUpdateForm, self).__init__(*args, **kwargs)
-        self.fields['project'].required = False
+        self.fields['business'].required = False
         self.fields['user'].required = False
         self.fields['start'].required = False
         self.fields['hours'].required = False
@@ -1434,7 +1432,7 @@ class CalendarEventUpdateForm(forms.ModelForm):
         self.fields['description'].required = False
 
         self.fields['user'].queryset = allowed_users
-        self.fields['project'].queryset = allowed_projects
+        self.fields['business'].queryset = allowed_businesses
         self.fields['start'].widget.attrs['class'] = 'datetimepicker'
         self.fields['end'].widget.attrs['class'] = 'datetimepicker'
 

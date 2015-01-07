@@ -21,22 +21,13 @@
     </div>
   </div>
 
-  <div class='form-group{% if form_new_event.errors.project %} has-error{%endif%}'>
+  <div class='form-group{% if form_new_event.errors.business %} has-error{%endif%}'>
     <div class="col-md-6">
-      <h3>Sprint</h3>
+      <h3>Project</h3>
     </div>
     <div class="col-md-6">
-            {{ form_new_event.project }}
+            {{ form_new_event.business }}
     </div>
-  </div>
-
-  <div class='form-group{% if form_new_event.errors.project%}has-error{%endif%}'>
-     <div class="col-md-6">
-	  <h3>Project List</h3>
-      </div>
-       <div class ="col-md-6">
-	 {{form_new_event.project}}
-     </div>
   </div>
 
   <div class='form-group{% if form_new_event.errors.user%} has-error{%endif%}'>
