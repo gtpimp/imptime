@@ -544,39 +544,36 @@ imp.clickable_subject_box = function(element, url, item_id, size, width, issue_i
     textbox.hide();
     commentTextArea.addClass("issue_edit_box");
     commentTextArea.select();
-    commentTextArea = commentTextArea.keypress(function(e) {
-        var parent = $(this).parent();
-        var div_sibling = parent.find('.edit_issue_subject');
-        var new_value = $(this).val();
 
-        if (e.which === 13) {
+    var create_event_handler = function(editable_el, readonly_el) {
+        return function(e) {
+            var new_value = editable_el.val();
+            if (e.which === 13) {
+                $("body").unbind("keydown", event_handler);
+                readonly_el.html(new_value);
+                editable_el.remove();
+                readonly_el.show();
+	        var on_done = imp.issue_loading(issue_id, "editing");
+                var response = $.ajax({type:"POST",
+                                       url: url,
+                                       data : { item_id: item_id, new_value: new_value },
+                                       dataType:"json"});
+                response.done( function() {
+		    imp.refresh_closest_issue_parent_row(readonly_el);
+		    on_done();
+	        } );
+            }
 
-            div_sibling.html(new_value);
-            $(this).remove();
-            div_sibling.show();
-	    var on_done = imp.issue_loading(issue_id, "editing");
-            var response = $.ajax({type:"POST",
-                                   url: url,
-                                   data : { item_id: item_id, new_value: new_value },
-                                   dataType:"json"});
-            response.done( function() {
-		imp.refresh_closest_issue_parent_row(div_sibling);
-		on_done();
-	    } );
-        }
-
-    });
-    commentTextArea = commentTextArea.keyup(function(e) {
-						e.stopImmediatePropagation();
-						if(e.which === 27) {
-						    var parent = $(this).parent();
-						    var div_sibling = parent.find('.edit_issue_subject');
-						    $(this).remove();
-						    div_sibling.show();
-						}
-					    });
+            if(e.which === 27) {
+                $("body").unbind("keydown", event_handler);
+                editable_el.remove();
+                readonly_el.show();
+            }
+        };
+    };
+    var event_handler = create_event_handler(commentTextArea, textbox);
+    $("body").bind("keydown", event_handler);
 };
-
 
 imp.refresh_closest_issue_parent_row = function(element) {
     element = $(element);
