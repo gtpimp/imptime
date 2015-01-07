@@ -5,45 +5,45 @@
     <h2>Filter</h2>
 
     <div class='form-group{% if filter_form.errors.event_types %} has-error{%endif%}'>
-      <div class="col-md-6">
+      <div class="col-md-12">
             <h3>Types</h3>
       </div>
-      <div class="col-md-6">
+      <div class="col-md-12">
             {{ filter_form.event_types }}
       </div>
 
-      <div class="col-md-6">
+      <div class="col-md-12">
         &nbsp;
       </div>
-      <div style="display:none" class="col-md-6">
+      <div style="display:none" class="col-md-12">
         {{ filter_form.actual_time_aggregation_mechanism }}
         <br/><br/>
       </div>
     </div>
 
     <div class='form-group{% if filter_form.errors.users%} has-error{%endif%}'>
-      <div class="col-md-6">
+      <div class="col-md-12">
             <h3>Users</h3>
       </div>
-      <div class="col-md-6">
+      <div class="col-md-12">
             {{ filter_form.users }}
       </div>
     </div>
 
     <div class='form-group{% if filter_form.errors.businesses %} has-error{%endif%}'>
-      <div class="col-md-6">
+      <div class="col-md-12">
             <h3>Projects</h3>
       </div>
-      <div class="col-md-6">
+      <div class="col-md-12">
             {{ filter_form.businesses }}
       </div>
     </div>
 
     <div class='form-group'>
-      <div class="col-md-6">
+      <div class="col-md-12">
         <input class="btn btn-primary" type="submit" value="Filter" onclick="t_calendar.refresh(); return false;" />
       </div>
-      <div class="col-md-6">
+      <div class="col-md-12">
         &nbsp;
       </div>
     </div>

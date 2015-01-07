@@ -132,7 +132,7 @@ imp.load_user_notifications = function() {
 			  }
                         });
                 },
-		3000 );
+		0 );
 };
 
 imp.seen_all_user_notifications = function(url) {

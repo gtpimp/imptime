@@ -7,7 +7,7 @@ var t_calendar = ( function() {
 
 			   refresh: function() {
 			       $("#calendar").fullCalendar( 'refetchEvents' );
-			       t_calendar.refresh_sprint_schedules();
+			       //t_calendar.refresh_sprint_schedules();
 			   },
 
 			   refresh_event: function(new_event_data) {
@@ -59,28 +59,29 @@ var t_calendar = ( function() {
 			       $(".event_edit_form").hide();
 			   },
 
-			   refresh_sprint_schedules: function() {
-			       var on_done = imp.loading("calculating...");
-			       $(".sprint_schedules").html("loading...");
-			       $.ajax({type:"GET",
-				       url: t_config.render_calendar_scheduled_sprints_url,
-				       success: function(data) {
-					   on_done();
-					   $(".sprint_schedules").html(data);
-					   $(".tooltip_anchor").hover(function() {
-									  $(this).parents("li").find(".hover_tooltip").show();
-								      },
-								      function() {
-									  $(this).parents("li").find(".hover_tooltip").hide();
-								      });
+			   // refresh_sprint_schedules: function() {
 
-				       },
-				       error: function(err) {
-					   on_done();
-					   alert("Fetch failed");
-				       }
-				      });
-			   },
+                           //     var on_done = imp.loading("calculating...");
+			   //     $(".sprint_schedules").html("loading...");
+			   //     $.ajax({type:"GET",
+			   //             url: t_config.render_calendar_scheduled_sprints_url,
+			   //             success: function(data) {
+			   //      	   on_done();
+			   //      	   $(".sprint_schedules").html(data);
+			   //      	   $(".tooltip_anchor").hover(function() {
+			   //      					  $(this).parents("li").find(".hover_tooltip").show();
+			   //      				      },
+			   //      				      function() {
+			   //      					  $(this).parents("li").find(".hover_tooltip").hide();
+			   //      				      });
+
+			   //             },
+			   //             error: function(err) {
+			   //      	   on_done();
+			   //      	   alert("Fetch failed");
+			   //             }
+			   //            });
+			   // },
 
 			   update_event: function(el) {
 			       var form = $(el).parents("form");
@@ -290,6 +291,6 @@ $(document).ready(function() {
 		      $('.datepicker').datepicker({dateFormat: 'yy-mm-dd'});
 		      $('.datetimepicker').datetimepicker({format: 'yyyy-mm-dd hh:ii', autoclose: true});
 
-		      t_calendar.refresh_sprint_schedules();
+		      //t_calendar.refresh_sprint_schedules();
 
 		  });

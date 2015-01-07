@@ -38,19 +38,24 @@ constructing data structures of these classes.
 import re, sys
 import datetime
 
-def makelist(filename):
+def makelist_from_file(filename):
+    try:
+        f = open(filename, 'r')
+    except IOError:
+        print "Unable to open file [%s] " % filename
+        raise
+    return makelist(lines=f)
+
+def makelist_from_string(s):
+    lines = s.replace("\r\n", "\n").split("\n")
+    return makelist(lines)
+  
+def makelist(lines):
    """
    Read an org-mode file and return a list of Orgnode objects
    created from this file.
    """
    ctr = 0
-
-   try:
-      f = open(filename, 'r')
-   except IOError:
-      print "Unable to open file [%s] " % filename
-      print "Program terminating."
-      sys.exit(1)
 
    todos         = dict()  # populated from #+SEQ_TODO line
    todos['TODO'] = ''   # default values
@@ -67,7 +72,7 @@ def makelist(filename):
    propdict      = dict()
    clocks        = []
    
-   for line in f:
+   for line in lines:
        ctr += 1     
        hdng = re.search('^(\*+)\s(.*?)\s*$', line)
        if hdng:
@@ -105,7 +110,7 @@ def makelist(filename):
 
            unclean_body_line = False
            if line[:1] != '#':
-              bodytext = bodytext + line
+              bodytext = bodytext + line + "\n"
            else:
               unclean_body_line = True
 

@@ -27,7 +27,7 @@
   <link href='{{ STATIC_URL }}fullcalendar/fullcalendar.print.css' rel='stylesheet' media='print' />
 {% endblock %}
 
-{% block title %}Calendar{% endblock %}
+{% block title %}Timesheet graph{% endblock %}
 
 {% block content %}
 
@@ -40,16 +40,7 @@
 
   {% include "timepiece/calendar/_event_filter_form.html" %}
 
-  {% comment %}
-  <div class="box sprint_schedules_container">
-    <div class="sprint_schedules">
-      loading...
-    </div>
-
-    <div style="clear:both"></div>
-  </div>
-  {% endcomment %}
-
+  
 
 </div>
 

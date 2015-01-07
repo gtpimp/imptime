@@ -20,7 +20,7 @@ echo "Sanitising db"
 cd ~/id/imptime/
 . ./venv/bin/activate
 cd src
-python manage.py shell < /home/gtp/id/website/impwebsite/scripts/anonymise_rates.py
+python manage.py shell < /home/gtp/id/imptime/scripts/anonymise_rates.py
 
 echo "Dumping sanitised db (use 'imp' for the password)"
 sudo su - postgres -c "pg_dump -i -h localhost -p 5432 -F c -b -v -U imp -f ~/${ANONYMISED_FILENAME} implicitdesign"

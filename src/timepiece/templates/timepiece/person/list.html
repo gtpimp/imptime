@@ -39,9 +39,7 @@
                         <th>First Name</th>
                         <th>Last Name</th>
                         <th>Email</th>
-                        <th>Timesheet</th>
-                        <th>Default CTC</th>
-                        <th>Default Billable Amount</th>
+                        <th>Graph</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -51,19 +49,7 @@
                             <td>{{ person.first_name }}</td>
                             <td>{{ person.last_name }}</td>
                             <td>{{ person.email }}</td>
-                            <td><a href="{% url 'view_person_time_sheet' person.pk %}">View Timesheet</a></td>
-			    <td>
-			      <form class='form-inline' accept-charset='UTF-8' method='post' action=''> {% csrf_token %}
-				<input type="text" name="person_ctc_{{person.pk}}" id="person_ctc_{{person.pk}}" value={{ person.profile.amount }}> </input>
-				<button type='submit' name='submit' class="btn">Submit</button>
-			      </form>
-			    </td>
-			    <td>
-			      <form class='form-inline' accept-charset='UTF-8' method='post' action=''> {% csrf_token %}
-				<input type="text" name="person_amount_{{person.pk}}" id="person_amount_{{person.pk}}" value={{ person.profile.billable_amount }}> </input>
-				<button type='submit' name='submit' class="btn">Submit</button>
-			      </form>
-			    </td>
+                            <td><a href="{% url 'daily_graph' person.pk %}">Timesheet graph</a></td>
                         </tr>
                     {% endfor %}
                 </tbody>

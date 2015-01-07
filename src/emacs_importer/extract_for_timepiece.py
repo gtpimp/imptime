@@ -3,7 +3,7 @@ import fnmatch
 import git
 from implicitdesign import settings
 from timepiece.interface_plugin import get_interface_plugin
-from orgnode import makelist
+from orgnode import makelist_from_file, makelist_from_string
 from django.db import transaction
 from django.contrib.auth.models import User
 from timepiece.models import Business, Project, Activity, Entry, Location, Attribute, Issue
@@ -12,13 +12,14 @@ logger = logging.getLogger(__name__)
 
 class Extractor(object):
 
-    def __init__(self, username, root_input_folder, pointperson_username):
+    def __init__(self, username, root_input_folder=None, pointperson_username='deprecated'):
         self.username = username
-        self.pointperson_username = pointperson_username
-        self.input_path = os.path.join(root_input_folder, self.username)
+        if root_input_folder:
+            self.input_path = os.path.join(root_input_folder, self.username)
         self.status = {'errors':[],
                        'infos':[],
-                       'num_entries_created':0}
+                       'num_entries_created':0,
+                       'num_issues_created':0}
 
     def get_project_timings_for_user(self):
         timesheet_user = User.objects.get(username=self.username)
@@ -27,27 +28,16 @@ class Extractor(object):
             timings[p.id] = p.total_hours_for_user(user=timesheet_user)
         return timings
 
-    def refresh_from_git(self):
-        if not os.path.exists(self.input_path):
-            logger.debug("Invalid timesheet path: %s" % self.input_path)
-            return
-        logger.debug("Pulling timesheet path: %s" % self.input_path)
-        try:
-            repo = git.Repo(self.input_path)
-            repo.remotes.origin.pull()
-        except Exception, ex:
-            logger.exception(ex)
-            logger.error("Failed to pull from origin")
-            raise
-        logger.debug("Pulled timesheet path: %s" % self.input_path)
-    
+    def extract_for_filecontent(self, filename, file_content):
+        self._process_org_string(file_content, filename)
+        return self.status
+            
     def extract(self):
 
         with transaction.commit_manually():
 
             try:
                 self.timings_before = self.get_project_timings_for_user()
-                self._clean_clocktable_entries()
                 includes = ["*.org",]
                 excludes = [".git",]
                 for root, dirs, files in os.walk(self.input_path, topdown=True):
@@ -82,27 +72,51 @@ class Extractor(object):
                     self.status['infos'].append("Adding entries to a closed project [%s - %s]. Expected %s hours, but trying to add %s hours." % (project.business.name, project, hours_before, hours_after))
 
     def _handle_file(self, dirname, fname):
-        is_valid_timesheet_file = fname[-4:] == ".org" and fname[0] != "." and fname[0] != "#"
-        if is_valid_timesheet_file:
             self._process_org_file(dirname, fname)
     
-    def _clean_clocktable_entries(self):
-        Entry.objects.all().filter(user__username=self.username).delete()
-                    
-    def _process_org_file(self, dirname, fname):
-        filepath = os.path.join(dirname, fname)
-        orgnodes = makelist(filepath)
+    def _process_org_file(self, dirname, filename):
+        filepath = os.path.join(dirname, filename)
+        orgnodes = makelist_from_file(filepath)
+        return self._process_org_nodes(orgnodes, filename=filename)
+
+    def _process_org_string(self, s, filename):
+        orgnodes = makelist_from_string(s)
+        return self._process_org_nodes(orgnodes, filename=filename)
+
+    def _process_org_nodes(self, orgnodes, filename):
+
+        is_valid_timesheet_file = filename[-4:] == ".org" and filename[0] != "." and filename[0] != "#"
+        if not is_valid_timesheet_file:
+            logger.error("Not a timesheet file: %s" % filename)
+            return
+        business_name = filename.replace(".org", "").replace("id-", "")
+
+        try:
+            business = Business.objects.get(name=business_name)
+        except:
+            raise Exception("No project found with name %s" % business_name)
+            
+        Entry.objects.all().filter(user__username=self.username, project__business=business).delete()
+        
         sprint_name = None
-        business_name = fname.replace(".org", "").replace("id-", "")
 
         timesheet_user = User.objects.get(username=self.username)
 
         issues_processed = set()
+        section_name = None
         for orgnode in orgnodes:
+            if orgnode.Level() == 1:
+                section_name = orgnode.Heading().lower().strip()
+
+            if section_name is None:
+                raise Exception("Invalid timesheet, missing a one star section called")
+            if section_name != "development":
+                continue
+                
             if orgnode.Level() == 2:
                 sprint_name = orgnode.Heading()
-            if orgnode.Level() >= 3 and len(orgnode.getClocks())>0 and sprint_name is not None:
-                self._process_orgnode(business_name, sprint_name, orgnode, issues_processed)
+            if orgnode.Level() >= 3 and sprint_name is not None:
+                self._process_orgnode(business, sprint_name, orgnode, issues_processed)
 
         for issue in issues_processed:
             try:
@@ -111,8 +125,7 @@ class Extractor(object):
                 logger.exception(ex)
                 self.status['infos'].append("Couldn't update actual time in the interface because: %s" % ex)
 
-    def _process_orgnode(self, business_name, sprint_name, orgnode, issues_processed):
-        #point_person = User.objects.get_or_create(username=self.pointperson_username)[0]
+    def _process_orgnode(self, business, sprint_name, orgnode, issues_processed):
         activity = Activity.objects.get_or_create(code='dev')[0]
         try:
             timesheet_user = User.objects.get(username=self.username)
@@ -129,17 +142,42 @@ class Extractor(object):
         #     project_type = Attribute.objects.create(type='project-type', label='default', billable=True, enable_timetracking=True)
         
         try:
-            business = Business.objects.get(name=business_name)
-        except Business.DoesNotExist:
-            raise Exception("No project found with name: %s" % business_name) #sic, businesses are called projects
-
-        try:
             project = Project.get_project_from_name(name=sprint_name, business=business)
         except Project.DoesNotExist:
             raise Exception("No sprint found for [%s] in business %s" % (sprint_name, business.name)) #sic, sprints are called projects
 
+        issue_id = Issue.extract_issue_id(orgnode.headline)
+
+        if issue_id is not None:
+            try:
+                # this filter allows that issues could be in the wrong sprint, but they must be in the right business
+                issue = Issue.objects.get(number=issue_id, project__business=project.business) 
+            except Issue.DoesNotExist:
+                issue = None
+
+            except Issue.MultipleObjectsReturned:
+                issue = Issue.objects.filter(number=issue_id, project__business=project.business).order_by("-interface_plugin_number", "-id")[0]
+
+        else:
+            # Auto create the issue
+            try:
+                issue, is_new = Issue.objects.get_or_create(status='new',
+                                                            project=project,
+                                                            subject=orgnode.Heading(),
+                                                            defaults={'auto_created_during_import':True,
+                                                                      'adhoc':True,
+                                                                      'assigned_to':timesheet_user,
+                                                                      'number':Issue.get_next_issue_number(project.business),
+                                                                      'description':orgnode.Body(),
+                                                                      'story_points':0,
+                                                                      'order':Issue.get_next_order(project)})
+                if is_new:
+                    self.status['num_issues_created'] += 1
+            except Issue.MultipleObjectsReturned:
+                issue = Issue.objects.filter(status='new',project=project, subject=orgnode.Heading())[0]
+        
+        # Insert the clock entries
         for clock in orgnode.getClocks():
-            
             entry = Entry.objects.create(user=timesheet_user, 
                                          start_time=clock['from'], end_time=clock['to'],
                                          activity=activity,
@@ -148,33 +186,6 @@ class Extractor(object):
                                          status='approved',
                                          comments=orgnode.Heading(),
                                          extended_comments=orgnode.CleanBody())
-
-            issue_id = entry.try_get_issue_id()
-            if issue_id is not None:
-                try:
-                    # this filter allows that issues could be in the wrong sprint, but they must be in the right business
-                    issue = Issue.objects.get(number=issue_id, project__business=project.business) 
-                except Issue.DoesNotExist:
-                    issue = None
-
-                except Issue.MultipleObjectsReturned:
-                    issue = Issue.objects.filter(number=issue_id, project__business=project.business).order_by("-interface_plugin_number", "-id")[0]
-
-            else:
-                # Auto create the issue
-                try:
-                    issue = Issue.objects.get_or_create(status='new',
-                                                        project=project,
-                                                        subject=orgnode.Heading(),
-                                                        defaults={'auto_created_during_import':True,
-                                                                  'adhoc':True,
-                                                                  'assigned_to':timesheet_user,
-                                                                  'number':Issue.get_next_issue_number(project.business),
-                                                                  'description':orgnode.CleanBody(),
-                                                                  'story_points':0,
-                                                                  'order':Issue.get_next_order(project)})[0]
-                except Issue.MultipleObjectsReturned:
-                    issue = Issue.objects.filter(status='new',project=project, subject=orgnode.Heading())[0]
 
             if issue is not None:
 

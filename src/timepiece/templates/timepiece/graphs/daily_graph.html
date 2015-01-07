@@ -8,7 +8,7 @@
   {% include "timepiece/graphs/_date_filter_msg.html" %}
 </h2>
 
-    <form class="form-inline" accept-charset='UTF-8' method='get' action='{% url 'daily_graph' %}'>
+    <form class="form-inline" accept-charset='UTF-8' method='get' action='{% url 'daily_graph' default_user_id %}'>
 	  {% if date_form.errors %}
 	   {% for e in date_form.errors.values %} 
 	    {{ e }}
@@ -25,9 +25,8 @@
      </div>
   </div>
 
-  {% for user,days_hours in daily_hours %}
+  {% for user,days_hours in daily_hours.items %}
   <table width="100%">
-
 
     <tr>
       <th>{{user}}</th>
@@ -65,34 +64,56 @@
 <script>
   $(document).ready( 
                function() {
-                  imp.create_chart([
-                      {% for user,days_hours in daily_hours %} 
-                      {divid: "#graph{{user}}",
-                       data: [ {%spaceless%} 
-                                       { label:"{{user}}", 
-                                         data: [ {% for date, hours in days_hours %} 
-                                                    [ {{date|epoch}},{{hours}}], {% endfor %} ],
-                                         lines: {show: true, steps:true},
-                                         {# points: {show: true}, #}
-                                       },
-                                   {%endspaceless%}
-                                 ],
-                      options: {xaxis: {mode: "time",
-                                        {% if from_date %}
-                                         min: {{from_date|epoch}},
-                                        {% endif %}
-                                       {% if to_date %}
-                                         max: {{to_date|epoch}},
-                                        {% endif %}
-                                       timeformat: "%d %b %y",
-                                       },
-                                grid: {markings: [{yaxis: {from: 8, to:8}, color: "#adff2f"}]}},
-                                series:{stack:true, bars:{show:true}},
-                       },
 
-                       {% endfor %}
-                       ]);
-                  });
+                 {% for user,values in daily_hours.items %} 
+
+                 $.plot($("#graph{{user}}"),
+			[ 
+			  { label:"hours",
+                            data: [ {% for date, hours in values.daily_hours.items %} 
+                                                    [ {{date|epoch}},{{hours}}], {% endfor %} ],
+			    //lines: {show: true, steps: true, fill: true},
+                            bars: {
+                              barWidth: 24 * 60 * 60 * 1000,
+                              align: "center",
+                              horizontal: false
+                            },
+                            points: {show: false},
+			  },
+			  { label:"weekly average",
+                            data: [ {% for date, hours in values.weekly_average.items %} 
+                                                    [ {{date|epoch}},{{hours}}], {% endfor %} ],
+			    lines: {show: true, steps: false, fill: false},
+                            //points: {show: false},
+			  },
+			],
+			{
+			  xaxis: { 
+			    mode: "time",
+                            tickSize: [1, "day"],
+                            rotateTicks: 90,
+			    timeformat: "%a %d %b %y",
+                            {% if from_date %}
+                            min: {{from_date|epoch}},
+                            {% endif %}
+                            {% if to_date %}
+                            max: {{to_date|epoch}},
+                            {% endif %}
+			  },
+                          yaxis: {
+                            tickSize: 1,
+                          },
+                          grid: {markings: [{yaxis: {from: 8, to:8}, color: "#adff2f"}]},
+                          legend: { position: "nw" },
+			  bars: {
+			    show: true
+			  }
+			}
+                 );
+                 {% endfor %}
+               });
+
+
 </script>
 
 {% endblock %}

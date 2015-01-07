@@ -20,6 +20,7 @@
 			<li><a href="{% url 'timepiece-import' %}">Import multiple time entries</a></li>
                         <li class="divider"></li>
                         <li><a href="{% url 'view_person_time_sheet' request.user.pk %}">My ledger</a></li>
+                        <li><a href="{% url 'daily_graph' request.user.pk %}">Timesheet graph</a></li>
 		      </ul>
 		    </li>
                     {% endif %}
@@ -189,7 +190,7 @@
                                     <li><a href="{% url 'list_people' %}">List of users</a></li>
                                 {% endif %}
                                 {% if perms.timpeiece.daily_graph %}
-				    <li><a href="{% url 'daily_graph' %}">Daily hours for all users</a></li>
+				    <li><a href="{% url 'daily_graph' '' %}">Daily hours for all users</a></li>
 				{% endif %}
                                 {% if perms.timpeiece.view_user %}
 				    <li><a href="{% url 'users_last_active' %}">Recent user activity</a></li>

@@ -922,6 +922,12 @@ class Project(models.Model):
 
     def estimate_stats(self, issues=None, preferred_user_id=None):
 
+        if preferred_user_id is None:
+            try:
+                preferred_user_id = BusinessPermissions.by_user(self.business).keys()[0]
+            except:
+                raise Exception("No preferred user selected. If there is no preferred user in the report list, then ensure at least one user has the permission 'can estimate own points'")
+        
         if self._estimate_stats is not None:
             return self._estimate_stats
         if issues is None:
@@ -2027,18 +2033,8 @@ class Entry(models.Model):
     
     def try_get_issue_id(self):
         """ Make a best attempt to identify what the issue number. """
-        issue_id = None
-
-        for regex in [ "[iI]ssue *#(\d+)", "[iI]ssue(\d+)", "[iI]ssue (\d+)" ]:
-            match_object = re.compile(regex).search(self.comments)
-            if match_object and match_object.groups() != 0:
-                try:
-                    issue_id = int(match_object.group(1))
-                    return issue_id
-                except Exception:
-                    pass
-        return issue_id
-
+        return Issue.extract_issue_id(self.comments)
+    
 class EntryGroup(models.Model):
     VALID_STATUS = ('invoiced', 'not-invoiced')
     STATUS_CHOICES = [status for status in ENTRY_STATUS \
@@ -2672,6 +2668,21 @@ class Issue(models.Model):
         issue_points.points = points 
         issue_points.save()
 
+    @classmethod
+    def extract_issue_id(self, s):
+        """ Make a best attempt to identify what the issue number. """
+        issue_id = None
+
+        for regex in [ "[iI]ssue *#(\d+)", "[iI]ssue(\d+)", "[iI]ssue (\d+)" ]:
+            match_object = re.compile(regex).search(s)
+            if match_object and match_object.groups() != 0:
+                try:
+                    issue_id = int(match_object.group(1))
+                    return issue_id
+                except Exception:
+                    pass
+        return issue_id
+        
     @property
     def issue_number_duplicates_in_business(self):
         return Issue.objects.filter(project__business=self.project.business).filter(number=self.number).exclude(pk=self.id)
@@ -2917,6 +2928,10 @@ class CalendarEvent(models.Model):
     def is_open(self):
         return self.status == '' or self.status == 'ready'
 
+    @classmethod
+    def is_on_leave(self, d, user):
+        return self.objects.filter(user=user, start=d, event_type__in=['leave', 'sickday', 'office_closed'], status__in=['ready', 'done']).count()>0
+    
     def get_colour(self):
         index = self.user_id % len(COLOURS)
         threshold = int("0x999999", 0)
@@ -3123,4 +3138,11 @@ class UserNotification(models.Model):
 	def get_planned_events_for_today(self):
 		return CalendarEvent.objects.filter(user=self.user, start__gte=datetime.datetime.today().date(), start__lt=datetime.datetime.today().date()+relativedelta(days=1)).order_by("start")
 	
-	
+
+class Holiday(models.Model):
+    applies_on = models.DateField(blank=True, null=True)
+    name = models.CharField(max_length=100, default='public holiday', null=False, blank=True)
+
+    @classmethod
+    def is_a_holiday(self, d):
+        return d.weekday() in [5,6] or self.objects.filter(applies_on=d).count() > 0
