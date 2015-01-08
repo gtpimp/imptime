@@ -261,11 +261,7 @@ imp.set_issue_checkbox_hooks = function(issue_row_container) {
                                }
                               });
     };
- var a =5;
-var one_message = function(){
-menu.show();
-alert(a);
-}
+
 
     var display_menu = function(e, menu) {
 	menu.show();
@@ -523,7 +519,7 @@ imp.sync_from_remote = function(issue_id, url) {
 			   }
 			  });
 };
-
+//This is what I need to focus on: (until line 597)
 imp.clickable_subject_box = function(element, url, item_id, size, width, issue_id, initial_value) {
     debugger	      
     if (!issue_id) {
@@ -546,7 +542,7 @@ imp.clickable_subject_box = function(element, url, item_id, size, width, issue_i
 	value = "0";
     }
 
-    imp.highlight_issue(issue_id);
+   // imp.highlight_issue(issue_id);
 
     commentTextArea = commentTextArea.attr("type","text").attr("value",value).attr("size",size).css("width",width).css("position","relative").css("overflow","visible").css("z-index",200);
     textbox.parent().append(commentTextArea);
@@ -557,7 +553,7 @@ imp.clickable_subject_box = function(element, url, item_id, size, width, issue_i
         var div_sibling = parent.find('.edit_issue_subject');
         var new_value = $(this).val();
 
-        if (e.which === 13) {
+        if (e.which === 46) {
 
             div_sibling.html(new_value);
             $(this).remove();
@@ -574,6 +570,13 @@ imp.clickable_subject_box = function(element, url, item_id, size, width, issue_i
         }
 
     });
+var a;
+a = 10;
+alert(a);
+window.alert("welcome");
+function(e){
+return a;
+}
     /*commentTextArea = commentTextArea.keyup(function(e) {
 						e.stopImmediatePropagation();
 						if(e.which === 27) {
@@ -584,6 +587,19 @@ imp.clickable_subject_box = function(element, url, item_id, size, width, issue_i
 						}
 					    });*/
 
+
+commentTextArea = commentTextArea.keypress(function(e){
+
+e.stopImmediatePropagation();
+if(e.which==46){
+var parent = $(this).parent();
+var div_sibling = parent.find('.edit_issue_subject');
+$(this).show();
+div_sibling.show();
+}
+
+
+/*  ORIGINAL CODE SEGMENT
 commentTextArea = commentTextArea.keyup(function(e){
 e.stopImmediatePropagation();
 if(e.which==27){
@@ -591,8 +607,10 @@ var parent = $(this).parent();
 var div_sibling = parent.find('.edit_issue_subject');
 $(this).show();
 div_sibling.show();
-}
+}*/
 };
+
+//Until here is where I should focus on.
 
 
 imp.refresh_closest_issue_parent_row = function(element) {
@@ -609,29 +627,6 @@ imp.refresh_closest_issue_parent_row = function(element) {
 };
 
 
-// imp.ajax_selection = function(element, url, update_url) {
-
-//     var handle_ajax_data_given = function (element , update_url) {
-//         var _update_url = update_url;
-//         var _element = element;
-//         var item_id = $(element).attr("id");
-//         function new_data_handler (data) {
-//             var selection_val ="nothing";
-//             if (data.length) {
-//              selection_val= data[0][0];
-//             }
-//             imp.dynamic_option_selection(_element, item_id, data, update_url);
-//         }
-//         return new_data_handler;
-//     };
-
-//     var response = $.ajax({ type:"GET",
-//                             url: url
-//                           });
-
-//     response.done( handle_ajax_data_given (element, update_url) );
-
-// };
 
 imp.clickable_feature_name = function (element, url, item_id) {
     // clear the parent of select boxes...
