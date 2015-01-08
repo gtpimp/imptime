@@ -259,12 +259,12 @@ $(document).ready(function() {
 						      eventSources: [
 							  { url: t_config.calendar_events_url,
 							    color: 'lightblue',
-							    textColor: 'black',
+							    textColor: 'yellow',
 							    data: function() {
 								return t_calendar.serialize_form($(".filter_form"));
 							    },
 							    error: function() {
-								alert("Failed to load calendar events");
+								alert("Failed to load Calendar events!");
 							    }
 							  }
 						      ],

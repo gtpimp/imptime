@@ -4916,8 +4916,8 @@ def _create_js_entry_event(entry):
         end_time = start_time + datetime.timedelta(hours=hours)
         user = User.objects.get(pk=entry['user'])
         try:
-            if 'project__business' in entry:
-                business = timepiece.Business.objects.get(pk=entry['project__business'])
+            if 'business__business_id' in entry:
+                business = timepiece.Business.objects.get(pk=entry['business__business_id'])
             else:
                 business = None
         except timepiece.Business.DoesNotExist:
@@ -4928,7 +4928,7 @@ def _create_js_entry_event(entry):
                  'allDay': False,
                  'start': start_time.strftime("%Y-%m-%d %H:%M"),
                  'end': end_time.strftime("%Y-%m-%d %H:%M"),
-                 'project_id': None,
+                 'business_id': None,
                  'user_id': user.id,
                  'description': "%s (%.2f hours)" % (business.name if business else 'none', hours),
                  'event_type': 'actual',
@@ -4944,7 +4944,7 @@ def _create_js_entry_event(entry):
                  'allDay': False,
                  'start': entry.start_time.strftime("%Y-%m-%d %H:%M"),
                  'end': entry.end_time.strftime("%Y-%m-%d %H:%M"),
-                 'project_id': entry.project.id,
+                 'business_id': entry.business.id,
                  'user_id': entry.user.id,
                  'description': entry.comments + "\n\n" + entry.extended_comments,
                  'event_type': 'actual',
@@ -5054,8 +5054,9 @@ def create_calendar_event(request, context=None):
     form_new_event = timepiece_forms.CalendarEventCreateForm(context['users'], context['businesses'], request.POST or None)
     if form_new_event.is_valid():
 
-        if form_new_event.cleaned_data['project'] is not None:
-            bp = timepiece.BusinessPermissions.for_user(request.user, form_new_event.cleaned_data['project'].business)
+        if form_new_event.cleaned_data['business'] is not None:
+            
+            bp = timepiece.BusinessPermissions.for_user(request.user, form_new_event.cleaned_data['business'])
             if not bp.has_edit_calendar:
                 raise PermissionDenied
         else:
