@@ -133,12 +133,15 @@ imp.close_add_issue = function (element) {
     return false;
 };
 
+
 imp.do_form_remove  = function() {
     var to_edit = $(".to_edit_expanded_form");
     to_edit.find(".new_dyn_form_container").remove();
     to_edit.hide();
     return false;
 };
+
+
 
 
 imp.create_issue_and_add_another = function(element, sprint_id, url) {
@@ -431,6 +434,8 @@ imp.sort_issues_by_state = function(el, sort_url) {
                           });
 };
 
+//This should be the focus for now
+
 imp.clickable_description_box = function(element, url, item_id, args) {
 
     var textbox = $(element),
@@ -498,8 +503,7 @@ imp.clickable_description_box = function(element, url, item_id, args) {
 
 imp.clickable_time_estimate = function(element, url, item_id, issue_id) {
     element = $(element).find("span.edit_issue_subject");
-    var initial_value = element.find(".estimated_hours").html() || "0";
-
+    var initial_value = element.find(".estimated_hours").html() || "0";  //This will set the intial amount of hours
     imp.highlight_issue(issue_id);
     return imp.clickable_subject_box(element, url, item_id, null, "auto", issue_id, initial_value=initial_value);
 };
@@ -544,7 +548,7 @@ imp.clickable_subject_box = function(element, url, item_id, size, width, issue_i
     textbox.hide();
     commentTextArea.addClass("issue_edit_box");
     commentTextArea.select();
-
+//Code for the event handle to keep showing event here
     var create_event_handler = function(editable_el, readonly_el) {
         return function(e) {
             var new_value = editable_el.val();
@@ -574,6 +578,7 @@ imp.clickable_subject_box = function(element, url, item_id, size, width, issue_i
     var event_handler = create_event_handler(commentTextArea, textbox);
     $("body").bind("keydown", event_handler);
 };
+//End of the code for the event creation above
 
 imp.refresh_closest_issue_parent_row = function(element) {
     element = $(element);
@@ -589,35 +594,88 @@ imp.refresh_closest_issue_parent_row = function(element) {
 };
 
 
-// imp.ajax_selection = function(element, url, update_url) {
+ imp.ajax_selection = function(element, url, update_url) {
 
-//     var handle_ajax_data_given = function (element , update_url) {
-//         var _update_url = update_url;
-//         var _element = element;
-//         var item_id = $(element).attr("id");
-//         function new_data_handler (data) {
-//             var selection_val ="nothing";
-//             if (data.length) {
-//              selection_val= data[0][0];
-//             }
-//             imp.dynamic_option_selection(_element, item_id, data, update_url);
-//         }
-//         return new_data_handler;
-//     };
+     var handle_ajax_data_given = function (element , update_url) {
+         var _update_url = update_url;
+         var _element = element;
+         var item_id = $(element).attr("id");
+         function new_data_handler (data) {
+             var selection_val ="nothing";
+             if (data.length) {
+              selection_val= data[0][0];
+             }
+             imp.dynamic_option_selection(_element, item_id, data, update_url);
+         }
+         return new_data_handler;
+     };
 
-//     var response = $.ajax({ type:"GET",
-//                             url: url
-//                           });
+     var response = $.ajax({ type:"GET",
+                             url: url
+                           });
 
-//     response.done( handle_ajax_data_given (element, update_url) );
+     response.done( handle_ajax_data_given (element, update_url) );
 
-// };
+ };
+
+function display_alert(){
+var a;
+a = 6;
+alert(a);
+alert("Brings up an Alert!");
+}
+window.onload = display_alert;
+;
+
+
+/*
+Enter code here (Test out alerts above this line)
+
+**********
+
+
+
+**********
+
+*/
+
 
 imp.clickable_feature_name = function (element, url, item_id) {
     // clear the parent of select boxes...
     $(element).html("");
     return imp.clickable_subject_box(element, url, item_id, "200px", "200px");
 };
+
+//FUNCTION BELOW DOES NOT WORK! ERROR: NONE OF THE TEXTBOXES OPEN ON CLICK
+
+/*Check on the some of the JQuery libraries such as the fadeOut and FadeIn in order to put so that the drop down menu can fade in when clicked and fade out when the next menu is clicked.*/
+
+
+/* 
+imp.clickable_feature_name = function (editable_stuff, editable_url, editable_item_id){
+
+return function(e){
+var new_vl = editable_stuff.val();
+if (e.which === 13) {
+               // $("body").unbind("keydown", event_handler);
+               // editable_url.html(new_value);
+                editable_stuff.remove();
+                editable_url.show();
+	       // var on_done = imp.issue_loading(issue_id, "editing");
+                var response = $.ajax({type:"POST",
+                                       url: url,
+                                      // data : { editable_item_id: editable_item_id, new_value: new_value },
+                                       dataType:"json"});
+                response.done( function() {
+		    imp.refresh_closest_issue_parent_row(editable_url);
+		    on_done();
+	        } );
+
+return imp.clickable_subject_box(editable_stuff, editable_url, editable_item_id, "200px", "200px");
+};
+*/
+
+
 
 imp.dynamic_option_addition = function (element, item_id, update_url) {
     option_addition_button = $("<input/>").attr("type", "button").attr('value','');
@@ -660,7 +718,7 @@ imp.select_business_feature = function(element, issue_id, request_url, update_ur
     response.done( create_widget_at_done(element, issue_id,  update_url) );
 
 };
-
+/*also add functionality in order to get keep these menus open while selecting other users for the issue to be assigned to*/
 imp.clickable_assign_user_box = function(element, update_url, issue_id) {
     var el = $(element);
     var form = el.find(".assign_user_form");
@@ -669,7 +727,7 @@ imp.clickable_assign_user_box = function(element, update_url, issue_id) {
     form.show();
 
     imp.highlight_issue(issue_id);
-
+    //$(element).hide();
     var cancel = function() {
 	el.find(".existing_assign").show();
 	form.hide();
@@ -706,6 +764,15 @@ imp.clickable_assign_user_box = function(element, update_url, issue_id) {
     return false;
 };
 
+//THIS CODE STOPS THE TEXTBOXES FROM OPENING
+/*
+$(document).ready(function(){
+$("p").click(function(){
+$(this).hide();
+})};
+*/
+
+//Used in the feature and assigned_to edit box
 imp.show_inline_editor = function(el, args) {
 
     if ( imp.inline_editor_active ) {
@@ -735,13 +802,13 @@ imp.show_inline_editor = function(el, args) {
 
     imp.highlight_issue(issue_id);
 
-    var deactivate_select = function() {
+    var deactivate_select = function() {  //This function allows the user to open a feature box then close it by pressing Esc or Return (DND)
 	imp.inline_editor_active = false;
 	editor_container.hide();
 	readonly_value.show();
     };
 
-    var activate_select = function() {
+   var activate_select = function() {  //This function allows the user to actually select the boxes in the sprints (DND)
 	var on_changed = function() {
 	    editor_container.hide();
 	    var on_done = imp.issue_loading("saving");
@@ -765,7 +832,7 @@ imp.show_inline_editor = function(el, args) {
 				  });
 	};
 
-	editor.change( on_changed );
+	editor.change( on_changed ); //This is for the Feature menu only
 
 	created_value_editor.keyup( function(event) {
 					event.stopImmediatePropagation();
@@ -846,54 +913,54 @@ imp.show_issue_history = function(url) {
 };
 
 
-// imp.dynamic_option_selection = function(element, item_id, options , update_url) {
-//     var selectme = $(element);
-//     var id = null;
-//     var d_options = {};
-//     var i;
+ imp.dynamic_option_selection = function(element, item_id, options , update_url) {
+     var selectme = $(element);
+     var id = null;
+     var d_options = {};
+     var i;
 
-//     var editor = $(element).parents("td").find(".inline_editor").show();
+     var editor = $(element).parents("td").find(".inline_editor").show();
 
-//     for(i = 0; i < options.length; i++) {
-//         d_options[options[i][0]] = options[i][1];
-//     }
+     for(i = 0; i < options.length; i++) {
+         d_options[options[i][0]] = options[i][1];
+     }
 
-//     if (selectme.children('select').length == 0) {
-//         var str ="";
-//         var current_value = $.trim(selectme[0].innerHTML);
-//         var new_select = $("<select/>").attr("class", "transient_selection");
-// 	var new_option;
-//         new_select.css("width","auto");
-//         for (item in d_options)  {
-//             new_option  = $("<option/>");
-//             new_option.attr("id", item);
-//             new_option.text(d_options[item]);
-//             if (current_value == d_options[item]) {
-//                 new_option.attr("selected",true);
-//             }
-//             new_select.append(new_option);
-//         }
-//         selectme.html("");
-//         selectme.append(new_select);
+     if (selectme.children('select').length == 0) {
+         var str ="";
+         var current_value = $.trim(selectme[0].innerHTML);
+         var new_select = $("<select/>").attr("class", "transient_selection");
+ 	var new_option;
+         new_select.css("width","auto");
+         for (item in d_options)  {
+             new_option  = $("<option/>");
+             new_option.attr("id", item);
+             new_option.text(d_options[item]);
+             if (current_value == d_options[item]) {
+                 new_option.attr("selected",true);
+             }
+             new_select.append(new_option);
+         }
+         selectme.html("");
+         selectme.append(new_select);
 
-//         $("select.selectbox").focus();
-//         $("select.selectbox").blur(function() {
-//             var value = $(this).val();
-//             var valuetext = $(this).children('option#opt-'+value).text();
-//             $("div.selectme").attr({'id': "selectme-"+value});
-//             $(".selectme").text(valuetext);
-//         });
+         $("select.selectbox").focus();
+         $("select.selectbox").blur(function() {
+             var value = $(this).val();
+             var valuetext = $(this).children('option#opt-'+value).text();
+             $("div.selectme").attr({'id': "selectme-"+value});
+             $(".selectme").text(valuetext);
+         });
 
-//     }else {
-//         var selected = selectme.find("option:selected");
-//         var value = selected[0].innerHTML;
-//         var response = $.ajax({type:"POST",
-//                                url: update_url,
-//                                data : { item_id: item_id , new_value:value, index: selected.attr("id") },
-//                                dataType:"json"});
+     }else {
+         var selected = selectme.find("option:selected");
+         var value = selected[0].innerHTML;
+         var response = $.ajax({type:"POST",
+                                url: update_url,
+                                data : { item_id: item_id , new_value:value, index: selected.attr("id") },
+                                dataType:"json"});
 
-//         selectme.html('<div class="selectme">'+value+'</div>');
-//         response.done( function() { imp.refresh_closest_issue_parent_row(selectme); } );
-//     }
-// };
+         selectme.html('<div class="selectme">'+value+'</div>');
+         response.done( function() { imp.refresh_closest_issue_parent_row(selectme); } );
+     }
+ };
 

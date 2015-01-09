@@ -145,7 +145,7 @@ imp.attach_sprint_headings = function(sprint_heading_container) {
 };
 
 imp.select_text_for_emacs = function(text) {
-    window.prompt("Press Ctrl+C then Enter, then paste into emacs:", text);
+    window.prompt("Press Ctrl+C then Return, then paste into emacs:", text);
     return false;
 };
 
