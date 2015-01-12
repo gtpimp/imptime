@@ -38,6 +38,8 @@ imp.show_issue_detail = function(issue_id, url, msg, args) {
 				    return;
 				}
 				
+				
+var a =6;
 				$(".issue_detail .subject_class input").focus();
 				imp.refresh_show_numbers();
 				imp.alert(a);
@@ -76,24 +78,6 @@ imp.post_issue_number_form = function(form_child_el, issue_id) {
 	   });
     return false;
 };
-
-//Enter code here that must be tested on page to see if it works:
-
-
-
-//test out bottom function here
-imp.display_alert = function(){
-
-return display_alert();
-
-};
-
-//try alert function here
-function display_alert(){
-alert("Alert function is working");
-}
-window.onload = display_alert;
-
 
 imp.bulk_clear_selected_issues = function(clear_url) {
 
@@ -278,9 +262,6 @@ imp.set_issue_checkbox_hooks = function(issue_row_container) {
                               });
     };
 
-var display_alert = function(e, menu){
-menu.show();
-};
 
     var display_menu = function(e, menu) {
 	menu.show();
@@ -589,12 +570,6 @@ imp.clickable_subject_box = function(element, url, item_id, size, width, issue_i
         }
 
     });
-
-function display_alert2(){
-alert("Alert Test");
-}
-window.onload = display_alert2;
-
 var a;
 a = 10;
 alert(a);
@@ -602,7 +577,6 @@ window.alert("welcome");
 function(e){
 return a;
 }
-
     /*commentTextArea = commentTextArea.keyup(function(e) {
 						e.stopImmediatePropagation();
 						if(e.which === 27) {
@@ -654,13 +628,12 @@ imp.refresh_closest_issue_parent_row = function(element) {
 
 
 
-/*imp.clickable_feature_name = function (element, url, item_id) {
-
-    $(element).html("");
+imp.clickable_feature_name = function (element, url, item_id) {
+    // clear the parent of select boxes...
+    // $(element).html("");
     $("issue_subject").click(function(){$(".issue_subject).removeClass('open');});
-    return imp.clickable_subject_box(element, url, item_id, "500px", "500px");
-
-};*/
+    return imp.clickable_subject_box(element, url, item_id, "2000px", "2000px");
+};
 
 imp.dynamic_option_addition = function (element, item_id, update_url) {
     option_addition_button = $("<input/>").attr("type", "button").attr('value','');
