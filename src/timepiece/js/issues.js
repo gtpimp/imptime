@@ -38,9 +38,11 @@ imp.show_issue_detail = function(issue_id, url, msg, args) {
 				    return;
 				}
 				
-
+				
+var a =6;
 				$(".issue_detail .subject_class input").focus();
 				imp.refresh_show_numbers();
+				imp.alert(a);
 				imp.current_issue_detail_url = url;
 				if ( issue_id ) {
 				    imp.highlight_issue(issue_id);
@@ -147,6 +149,8 @@ imp.create_issue_and_add_another = function(element, sprint_id, url) {
     return false;
 };
 
+
+
 imp.on_issue_form_submit = function(element, sprint_id, url, on_success) {
     var mform = $(element).parents("form");
     var on_done = imp.issue_loading("Creating issue");
@@ -181,6 +185,7 @@ imp.on_issue_form_submit = function(element, sprint_id, url, on_success) {
 
 imp.on_project_form_cancel = function(element) {
     imp.do_form_remove();
+    //imp.alert(6);
 };
 
 imp.delete_issue_attachment = function(url) {
@@ -256,6 +261,11 @@ imp.set_issue_checkbox_hooks = function(issue_row_container) {
                                }
                               });
     };
+ var a =5;
+var one_message = function(){
+menu.show();
+alert(a);
+}
 
     var display_menu = function(e, menu) {
 	menu.show();
@@ -267,7 +277,10 @@ imp.set_issue_checkbox_hooks = function(issue_row_container) {
 	}
 	if (left + menu.width() >= $(window).width()) {
 	    left -= menu.width();
+
 	}
+
+	
 
 	// Create and show menu
 	menu.css({zIndex:1000001, overflow:"auto", height:"50%", width: "300px" /*left:left, top:top*/})
@@ -444,7 +457,7 @@ imp.clickable_description_box = function(element, url, item_id) {
 
     var cancel = function() {
 	textbox.show();
-	submitButton.remove();
+	submitButton.show();
 	textField.remove();
 	textbox.find(".markdown_help").hide();
 	imp.refresh_issue_detail();
@@ -561,7 +574,7 @@ imp.clickable_subject_box = function(element, url, item_id, size, width, issue_i
         }
 
     });
-    commentTextArea = commentTextArea.keyup(function(e) {
+    /*commentTextArea = commentTextArea.keyup(function(e) {
 						e.stopImmediatePropagation();
 						if(e.which === 27) {
 						    var parent = $(this).parent();
@@ -569,7 +582,16 @@ imp.clickable_subject_box = function(element, url, item_id, size, width, issue_i
 						    $(this).remove();
 						    div_sibling.show();
 						}
-					    });
+					    });*/
+
+commentTextArea = commentTextArea.keyup(function(e){
+e.stopImmediatePropagation();
+if(e.which==27){
+var parent = $(this).parent();
+var div_sibling = parent.find('.edit_issue_subject');
+$(this).show();
+div_sibling.show();
+}
 };
 
 

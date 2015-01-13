@@ -1,7 +1,7 @@
 <form class="box event_edit_form" method="POST" style="display:none" action="{% url 'update_calendar_event' 999999 %}">
     {% csrf_token %}
 
-    <h2>Update an Existing Event</H2>
+    <h2>Update an Event</H2>
 
     <input type="hidden" name="event_id"/>
 
@@ -52,28 +52,6 @@
     </div>
 
   <div class='form-group{% if update_form.errors.status %} has-error{%endif%}'>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
     <div class="col-md-6">
       <h3>Status</h3>
