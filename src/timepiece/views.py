@@ -2542,7 +2542,7 @@ def daily_graph(request, user_id, template="timepiece/graphs/daily_graph.html", 
     for user in users:
         entries = timepiece.Entry.objects.filter(user=user)
         daily_hours[user.username] = {'daily_hours':{}, 'weekly_average':{}}
-        daily_hours[user.username]['daily_hours'], daily_hours[user.username]['weekly_average'] = _get_daily_hours(user, entries, from_date, to_date)
+        daily_hours[user.username]['daily_hours'], daily_hours[user.username]['weekly_average'], daily_hours[user.username]['daily_hours_by_project'],  = _get_daily_hours(user, entries, from_date, to_date)
 
     context['daily_hours'] = daily_hours
     context['from_date'] = from_date
@@ -2600,6 +2600,7 @@ def _get_daily_hours(user, entries, from_date=None, to_date=None):
 
     entries = entries.filter(start_time__gte=from_date, start_time__lte=to_date).extra({'on_day':'date(start_time)'})
     entries_hours_per_day = entries.values('on_day').order_by("on_day").annotate(total_hours=Sum('hours'))
+    daily_hours_by_project = entries.values('on_day', 'project__business__name', 'project__name').order_by("on_day", "project__business__name", "project__name").annotate(total_hours=Sum('hours'))
 
     hours_per_day = {}
     for entry_hours_per_day in entries_hours_per_day:
@@ -2626,10 +2627,9 @@ def _get_daily_hours(user, entries, from_date=None, to_date=None):
             running_days_in_week += 1
         
         daily_average_hours_per_week[running_date] = float(running_hours_per_week)/(running_days_in_week or 1)
-
         running_date += relativedelta(days=1)
 
-    return hours, daily_average_hours_per_week
+    return hours, daily_average_hours_per_week, daily_hours_by_project
 
 def _create_hours_series_for_graphs(request, entries, context):
     entries = entries.order_by("start_time")

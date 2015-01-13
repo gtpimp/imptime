@@ -38,10 +38,12 @@
           <div class="toggle_content" style="display:none">
               Daily hours for {{user}}
               <table border="1">
-                {% for date, hours in days_hours %}
+                {% for event in days_hours.daily_hours_by_project %}
                 <tr>
-                  <td style="padding:5px">{{date|date:"d-m-Y (D)"}}</td>
-                  <td style="padding:5px">{{hours}}</td>
+                  <td style="padding:5px">{{event.on_day|date:"d-M-Y (D)"}}</td>
+                  <td style="padding:5px">{{event.project__business__name}}</td>
+                  <td style="padding:5px">{{event.project__name}}</td>
+                  <td style="padding:5px">{{event.total_hours}}</td>
                 </tr>
                 {% endfor %}
               </table>
