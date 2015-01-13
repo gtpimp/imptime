@@ -1674,7 +1674,7 @@ class Entry(models.Model):
             return self._billable_rate
         except AttributeError:
             try:
-                self._billable_rate = Rate.objects.get(project=self.project, user=self.user).billable_amount
+                self._billable_rate = Rate.objects.filter(project=self.project, user=self.user).first().billable_amount
             except Rate.DoesNotExist:
                 self._billable_rate = 0
             return self._billable_rate
@@ -1685,7 +1685,7 @@ class Entry(models.Model):
             return self._rate
         except AttributeError:
             try:
-                self._rate = Rate.objects.get(project=self.project, user=self.user).amount
+                self._rate = Rate.objects.filter(project=self.project, user=self.user).first().amount
             except Rate.DoesNotExist:
                 self._rate = 0
             return self._rate
