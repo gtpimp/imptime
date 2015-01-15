@@ -850,9 +850,8 @@ class Project(models.Model):
             user_totals = entries_qs.values("user").annotate(hours=Sum('hours'))
             for user_total in user_totals:
                 user = User.objects.get(pk=user_total['user'])
-                try:
-                    rate = Rate.objects.get(project=self, user=user)
-                except Rate.DoesNotExist:
+                rate = Rate.objects.filter(project=self, user=user).first()
+                if rate is None:
                     rate = Rate.objects.create(project=self, user=user, amount=0)
                 cost_per_feature['ctc'] += float(user_total['hours'])*float(rate.amount)
                 cost_per_feature['billable'] += float(rate.billable_amount) * float(user_total['hours'])
@@ -954,9 +953,8 @@ class Project(models.Model):
                 points = points[0]['points']
 
             if user_id is not None:
-                try:
-                    rate = Rate.objects.get(project=self, user_id=user_id)
-                except Rate.DoesNotExist:
+                rate = Rate.objects.filter(project=self, user_id=user_id).first()
+                if rate is None:
                     rate = Rate.objects.create(project=self, user_id=user_id, amount=0)
             else:
                 rate = Rate(velocity=0, work_ratio=0, amount=0)
@@ -1086,9 +1084,8 @@ class Project(models.Model):
                 user_total = user_totals[user_id]
 
             user = User.objects.get(pk=user_id)
-            try:
-                rate = Rate.objects.get(project=self, user=user)
-            except Rate.DoesNotExist:
+            rate = Rate.objects.filter(project=self, user=user).first()
+            if rate is None:
                 rate = Rate.objects.create(project=self, user=user, amount=0)
 
             billed = float(user_total['hours']) * float(rate.billable_amount)
@@ -1674,9 +1671,11 @@ class Entry(models.Model):
             return self._billable_rate
         except AttributeError:
             try:
-                self._billable_rate = Rate.objects.filter(project=self.project, user=self.user).first().billable_amount
+                self._billable_rate = Rate.objects.get(project=self.project, user=self.user).billable_amount
             except Rate.DoesNotExist:
                 self._billable_rate = 0
+            except Rate.MultipleObjectsReturned:
+                self._billable_rate = Rate.objects.filter(project=self.project, user=self.user).first().billable_amount
             return self._billable_rate
 
     @property
@@ -1685,9 +1684,11 @@ class Entry(models.Model):
             return self._rate
         except AttributeError:
             try:
-                self._rate = Rate.objects.filter(project=self.project, user=self.user).first().amount
+                self._rate = Rate.objects.get(project=self.project, user=self.user).amount
             except Rate.DoesNotExist:
                 self._rate = 0
+            except Rate.MultipleObjectsReturned:
+                self._rate = Rate.objects.filter(project=self.project, user=self.user).first().amount
             return self._rate
 
     @classmethod
