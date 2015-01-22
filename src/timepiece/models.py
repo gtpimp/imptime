@@ -544,7 +544,8 @@ class Project(models.Model):
 
     PROJECT_STATUSES = ( ('gathering specs', 'gathering specs'),
                          ('quote sent', 'quote sent'),
-                         ('pending', 'pending'), 
+                         ('pending', 'pending'),
+                         ('hopeful', 'hopeful'), 
                          ('in dev', 'in development'),
                          ('in client qa', 'in client qa'), 
                          ('waiting to invoice', 'waiting to invoice'), 
@@ -628,10 +629,6 @@ class Project(models.Model):
                                              description=description,
                                              short_description=short_description)
         return project
-
-    @property
-    def can_capture_time(self):
-        return self.status in ( 'pending', 'hopeful', 'in dev', 'waiting_to_invoice' )
 
     def get_points(self):
         user_ids = [user.id for user in self.business.users]
@@ -905,7 +902,7 @@ class Project(models.Model):
         return ( 'gathering specs', )
 
     def can_add_dev_time(self):
-        return self.status2 in ['pending', 'in dev', 'in client qa', 'gathering specs', 'quote sent']
+        return self.status2 in ['hopeful', 'pending', 'in dev', 'in client qa', 'gathering specs', 'quote sent']
     
     @property
     def is_open(self):
