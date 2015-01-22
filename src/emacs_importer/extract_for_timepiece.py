@@ -68,8 +68,9 @@ class Extractor(object):
             hours_after = self.timings_after[p_id]
             if hours_before != hours_after:
                 project = Project.objects.get(pk=p_id)
-                if not project.is_open:
-                    self.status['infos'].append("Adding entries to a closed project [%s - %s]. Expected %s hours, but trying to add %s hours." % (project.business.name, project, hours_before, hours_after))
+                if not project.can_add_dev_time:
+                    self.status['errors'].append("Not allowed to add dev time to [%s - %s] in status %s. Expected %s hours, but trying to add %s hours." % \
+                                                 (project.business.name, project, project.status2, hours_before, hours_after))
 
     def _handle_file(self, dirname, fname):
             self._process_org_file(dirname, fname)

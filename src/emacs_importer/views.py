@@ -50,6 +50,9 @@ def import_timesheet(request):
             status = the_extractor.extract_for_filecontent(filename=form.filename,
                                                            file_content=form.filecontent)
 
+            if len(status.get('errors', [])) > 0:
+                raise Exception("\n".join(status['errors']))
+            
             return HttpResponse(json.dumps({'status':status,
                                             'msg':"Single file import of %s complete." % (form.filename)}))
         except Exception, ex:
