@@ -905,7 +905,7 @@ class Project(models.Model):
         return ( 'gathering specs', )
 
     def can_add_dev_time(self):
-        return self.status2 in ['in_dev', 'in_client_qa', 'gathering specs', 'quote sent']
+        return self.status2 in ['pending', 'in dev', 'in client qa', 'gathering specs', 'quote sent']
     
     @property
     def is_open(self):
