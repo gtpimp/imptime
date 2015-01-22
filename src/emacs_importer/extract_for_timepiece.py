@@ -96,12 +96,16 @@ class Extractor(object):
             business = Business.objects.get(name=business_name)
         except:
             raise Exception("No project found with name %s" % business_name)
-            
-        Entry.objects.all().filter(user__username=self.username, project__business=business).delete()
-        
-        sprint_name = None
 
         timesheet_user = User.objects.get(username=self.username)
+        
+        project_timings_before = {}
+        for project in Project.objects.filter(business=business):
+            project_timings_before[project] = project.total_hours_for_user(user=timesheet_user)
+                    
+        Entry.objects.all().filter(user__username=self.username, project__business=business).delete()
+
+        sprint_name = None
 
         issues_processed = set()
         section_name = None
@@ -116,6 +120,7 @@ class Extractor(object):
                 
             if orgnode.Level() == 2:
                 sprint_name = orgnode.Heading()
+
             if orgnode.Level() >= 3 and sprint_name is not None:
                 self._process_orgnode(business, sprint_name, orgnode, issues_processed)
 
@@ -126,6 +131,13 @@ class Extractor(object):
                 logger.exception(ex)
                 self.status['infos'].append("Couldn't update actual time in the interface because: %s" % ex)
 
+        for project in Project.objects.filter(business=business):
+            if not project.can_add_dev_time():
+                timing_after = project.total_hours_for_user(user=timesheet_user)
+                if timing_after != project_timings_before[project]:
+                    self.status['errors'].append("Not allowed to add dev time to [%s - %s] in status %s. Expected %s hours, but trying to add %s hours." % \
+                                                 (project.business.name, project, project.status2, project_timings_before[project], timing_after))
+                
     def _process_orgnode(self, business, sprint_name, orgnode, issues_processed):
         activity = Activity.objects.get_or_create(code='dev')[0]
         try:

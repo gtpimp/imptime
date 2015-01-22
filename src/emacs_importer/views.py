@@ -4,6 +4,7 @@ import json
 from django.views.decorators.csrf import csrf_exempt
 from django.http import HttpResponse, HttpResponseRedirect
 from extract_for_timepiece import Extractor
+from django.db import transaction
 import os
 from forms import ImportTimesheetForm
 from django.core.mail import send_mail
@@ -65,6 +66,7 @@ def import_timesheet(request):
                       from_email="info@implicitdesign.co.za",
                       recipient_list=mail_to,
                       fail_silently=True)
+            transaction.rollback()
             return HttpResponse(json.dumps({'status':'failed', 'msg': str(ex)}))
 
     return HttpResponse("Validation error: %s" % form.errors)
