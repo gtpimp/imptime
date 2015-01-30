@@ -10483,3 +10483,33 @@ ul.checklist_items {
     left: 0px;
     top: 0px;
 }
+
+.table_info_row {
+    font-size:10px; 
+    text-align:center; 
+    font-style: italic;
+    background-color: #efefef;
+}
+
+.project_card_top_level table {
+    margin-bottom: 10px;
+    border-bottom: 1px solid #cccccc;
+    border-right: 1px solid #cccccc;
+    width: 100%;
+}
+
+.project_card_top_level th {
+    background-color: #dddddd;
+}
+
+.project_card_top_level h1 {
+    background-color: #cdcdcd;
+    padding-left: 15px;
+    margin-bottom: 0px;
+}
+
+.project_card_top_level th, .project_card_top_level td  {
+    border-left: 1px solid #dddddd;
+    padding-right: 2px;
+    padding-left: 2px;
+}

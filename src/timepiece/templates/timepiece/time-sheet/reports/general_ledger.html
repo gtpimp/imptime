@@ -34,7 +34,7 @@
                 <tbody>
                     {% for entry in business_per_person_totals %}
                         <tr>
-                            <td>{{ entry.project__business__name }}</td>
+                            <td>{{ entry.issue__project__business__name }}</td>
 			    <td>{{ entry.user__username }}</td>
                             <td class="hours">{{ entry.total_hours|floatformat:2 }}</td>
                         </tr>
@@ -56,8 +56,8 @@
                 <tbody>
                     {% for entry in business_per_project_per_person_totals %}
                         <tr>
-                            <td>{{ entry.project__business__name }}</td>
-			    <td>{{ entry.project__name }}</td>
+                            <td>{{ entry.issue__project__business__name }}</td>
+			    <td>{{ entry.issue__project__name }}</td>
 			    <td>{{ entry.user__username }}</td>
                             <td class="hours">{{ entry.total_hours|floatformat:2 }}</td>
                         </tr>
@@ -79,7 +79,7 @@
                 <tbody>
                     {% for entry in project_totals %}
                         <tr>
-                            <td><a href="{% timesheet_url 'project' entry.project__id from_date %}">{{ entry.project__name }}</a></td>
+                            <td><a href="{% timesheet_url 'project' entry.issue__project__id from_date %}">{{ entry.issue__project__name }}</a></td>
                             <td class="hours">{{ entry.total_hours|floatformat:2 }}</td>
                         </tr>
                     {% endfor %}

@@ -99,11 +99,11 @@ def view_entries(request):
     week_start = utils.get_week_start()
     time_q = Q(end_time__gte=week_start) | Q(end_time__isnull=True)
     entries = timepiece.Entry.objects.select_related(
-        'project__business',
+        'issue__project__business',
     ).filter(
         time_q,
         user=request.user
-    ).select_related('project', 'activity', 'location')
+    ).select_related('issue__project', 'activity', 'location')
     today = datetime.date.today()
     assignments = timepiece.ContractAssignment.objects.filter(
         user=request.user,
@@ -119,11 +119,11 @@ def view_entries(request):
         end_time__isnull=True,
     ).exclude(
         user=request.user,
-    ).select_related('user', 'project', 'activity')
+    ).select_related('user', 'issue__project', 'activity')
     my_active_entries = timepiece.Entry.objects.select_related(
-        'project__business',
+        'issue__project__business',
     ).only(
-        'user', 'project', 'activity', 'start_time'
+        'user', 'issue__project', 'activity', 'start_time'
     ).filter(
         user=request.user,
         end_time__isnull=True,
@@ -147,10 +147,10 @@ def view_entries(request):
 #    'assignment__contract__project',)
 
     project_entries = entries.exclude(
-        project__in=allocated_projects,
+        issue__project__in=allocated_projects,
         end_time__isnull=True
     ).values(
-        'project__name', 'project__pk', 'project__business__name'
+        'issue__project__name', 'issue__project__pk', 'issue__project__business__name'
     ).annotate(sum=Sum('hours'))
     schedule = timepiece.PersonSchedule.objects.filter(
                                     user=request.user)
@@ -190,7 +190,7 @@ def clock_in(request):
                                        user=request.user, active=active_entry)
     if form.is_valid():
         entry = form.save()
-        message = 'You have clocked into %s' % entry.project
+        message = 'You have clocked into %s' % entry.issue.project
         messages.info(request, message)
         return HttpResponseRedirect(reverse('timepiece-entries'))
     return render_to_response('timepiece/time-sheet/entry/clock_in.html', {
@@ -565,6 +565,8 @@ def get_project_card(request,business_id,index=None):
                 'expand_older':index is not None,
                 'business_permissions_by_user':timepiece.BusinessPermissions.by_user(business)
                 }
+    import pdb; pdb.set_trace()
+
     return render_to_response('timepiece/project/card.html',
                               context, context_instance=RequestContext(request))
 
@@ -749,7 +751,7 @@ def confirm_invoice_project(request, project_id, to_date, from_date=None):
     entries_query = {
         'status': "approved",
         'end_time__lt': to_date + relativedelta(days=1),
-        'project__id': project.id
+        'issue__project__id': project.id
     }
     if from_date:
         entries_query.update({'end_time__gte': from_date})
@@ -795,11 +797,11 @@ def invoice_projects(request):
     datesQ &= Q(end_time__lt=to_date)  if to_date else Q()
     entries = timepiece.Entry.objects.filter_by_logged_in_user(request.user).filter(datesQ)
     project_totals = entries.filter(status='approved',
-        project__type__billable=True, project__status__billable=True).values(
-        'project__type__pk', 'project__type__label', 'project__name', 'hours',
-        'project__pk', 'status', 'project__status__label', 'project__business__name',
-    ).annotate(s=Sum('hours')).order_by('project__type__label',
-                                        'project__name', 'status')
+        issue__project__type__billable=True, issue__project__status__billable=True).values(
+        'issue__project__type__pk', 'issue__project__type__label', 'issue__project__name', 'hours',
+        'issue__project__pk', 'status', 'issue__project__status__label', 'issue__project__business__name',
+    ).annotate(s=Sum('hours')).order_by('issue__project__type__label',
+                                        'issue__project__name', 'status')
     return render_to_response(
         'timepiece/time-sheet/invoice/make_invoice.html', {
         'date_form': date_form,
@@ -1601,7 +1603,7 @@ def invoiced_project(request, project_id=None):
     project.status = timepiece.Attribute.objects.get(label='closed', type='project-status')
     project.billable = True
     project.save()
-    timepiece.Entry.objects.filter_by_logged_in_user(request.user).filter(project=project).update(status='invoiced')
+    timepiece.Entry.objects.filter_by_logged_in_user(request.user).filter(issue__project=project).update(status='invoiced')
     return HttpResponseRedirect(reverse('list_projects'))
 
 @permission_required('timepiece.add_project')
@@ -1612,7 +1614,7 @@ def unbillable_project(request, project_id=None):
     project.status = timepiece.Attribute.objects.get(label='closed', type='project-status')
     project.billable = False
     project.save()
-    timepiece.Entry.objects.filter_by_logged_in_user(request.user).filter(project=project).update(status='invoiced')
+    timepiece.Entry.objects.filter_by_logged_in_user(request.user).filter(issue__project=project).update(status='invoiced')
     return HttpResponseRedirect(reverse('list_projects'))
 
 
@@ -1958,7 +1960,7 @@ class ReportMixin(object):
                 query &= Q(project__in=project_form.cleaned_data['pj_select'])
 
         entries = timepiece.Entry.objects.filter_by_logged_in_user(user).date_trunc(trunc,
-            extra_values=('activity', 'project__status')).filter(query)
+            extra_values=('activity', 'issue__project__status')).filter(query)
         date_headers = utils.generate_dates(from_date, header_to, by=trunc)
 
         context.update({
@@ -2560,7 +2562,7 @@ def graphs(request, template="timepiece/graphs/graph.html", context=None):
     context = context or {}
 
     if request.GET:
-        entries = timepiece.Entry.objects.filter_by_logged_in_user(request.user).filter(status='approved').filter(project__users=request.user)
+        entries = timepiece.Entry.objects.filter_by_logged_in_user(request.user).filter(status='approved').filter(issue__project__users=request.user)
     else:
         entries = timepiece.Entry.objects.none()
 
@@ -3026,7 +3028,7 @@ def time_sheet_download(request, user_id, context=None):
     response['Content-Disposition'] = 'attachment; filename=entries_%s_%s.csv' % (request.GET['from_date'], request.GET['to_date'])
     writer = csv.writer(response)
     for entry in entries:
-        writer.writerow( [ entry.user.username.encode("utf8"), entry.project.business.name.encode("utf8"), entry.project.name.encode("utf8"),
+        writer.writerow( [ entry.user.username.encode("utf8"), entry.issue.project.business.name.encode("utf8"), entry.issue.project.name.encode("utf8"),
                            entry.start_time.strftime("%Y-%m-%d"), entry.hours, entry.comments.encode("utf8") ] )
 
     return response
@@ -3267,9 +3269,9 @@ def project_issues(request, pk, template="timepiece/project/issues.html", contex
 
     new_issue_form = timepiece_forms.IssueForm()
 
-    all_entries = project.entries.all().order_by("start_time")
+    all_entries = timepiece.Entry.objects.filter(issue__project=project).order_by("start_time")
     cost_totals = all_entries.cost_totals_for_project(project)
-    unassigned_cost_totals = timepiece.Issue.get_unassigned_timesheet_entries(project=project).cost_totals_for_project(project)
+    unassigned_cost_totals = timepiece.Issue.get_adhoc_timesheet_entries(project=project).cost_totals_for_project(project)
 
     rate = project.get_user_rate(request.user)
     context['next_issue_number']  = timepiece.Issue.get_next_issue_number(project.business)
@@ -3323,10 +3325,10 @@ def get_project_detail(request, project_id, template="timepiece/project/project_
 
     new_issue_form = timepiece_forms.IssueForm()
 
-    all_entries = project.entries.all().order_by("start_time")
+    all_entries = timepiece.Entry.objects.filter(issue__project=project).order_by("start_time")
 
     cost_totals = all_entries.cost_totals_for_project(project)
-    unassigned_cost_totals = timepiece.Issue.get_unassigned_timesheet_entries(context['project']).cost_totals_for_project(context['project'])
+    unassigned_cost_totals = timepiece.Issue.get_adhoc_timesheet_entries(context['project']).cost_totals_for_project(context['project'])
 
     rate = project.get_user_rate(request.user)
     context['next_issue_number']  = timepiece.Issue.get_next_issue_number(project.business)
@@ -3338,7 +3340,6 @@ def get_project_detail(request, project_id, template="timepiece/project/project_
     context['unassigned_timesheet_entries_hours'] = unassigned_cost_totals['hours']
     context['unassigned_timesheet_entries_ctc'] = unassigned_cost_totals['ctc']
     context['unassigned_timesheet_entries_billable'] = unassigned_cost_totals['billable']
-
     context['assign_user_form'] = timepiece_forms.AssignUserToIssueForm()
     context['issues_forms'] = issues_forms
     context['total_hours'] = cost_totals['hours']
@@ -3626,7 +3627,7 @@ def unassigned_timesheet_entries(request, project_id, template="timepiece/projec
                         'auto_expand_timesheet_entries':True,
                         'project':project,
                         'description':'unassigned timesheet entries',
-                        'related_entries':timepiece.Issue.get_unassigned_timesheet_entries(project=project)}
+                        'related_entries':timepiece.Issue.get_adhoc_timesheet_entries(project=project)}
     context['business'] = project.business
     context['project'] = project
     context['business_permissions_by_user'] = timepiece.BusinessPermissions.by_user(project.business)
@@ -3643,7 +3644,7 @@ def unassigned_timesheet_entries(request, project_id, template="timepiece/projec
 def all_timesheet_entries(request, project_id, template="timepiece/project/issue_detail.html", context=None):
     context = context or {}
     project = timepiece.Project.objects.filter(pk=project_id).filter_by_logged_in_user(request.user)[0]
-    entries = project.entries.all().order_by("start_time")
+    entries = timepiece.Entry.objects.filter(issue__project=project).order_by("start_time")
     context['supports_description'] = False
     context['current_user'] = request.user
     context['issue'] = {'id':None,
@@ -3763,7 +3764,7 @@ def _update_all_project_users():
     that project (can be missing for emacs users)"""
     for profile in timepiece.UserProfile.objects.all():
         for project in timepiece.Project.objects.exclude(users=profile.user):
-            if timepiece.Entry.objects.filter(user=profile.user,project=project).count()>0:
+            if timepiece.Entry.objects.filter(user=profile.user,issue__project=project).count()>0:
                 timepiece.ProjectRelationship.objects.get_or_create(user=profile.user, project=project)
 
 @login_required
@@ -3798,16 +3799,16 @@ def income_summary(request, template="timepiece/graphs/income_summary.html", con
         per_user[entry.user.username]['billable'] += entry.atbillablerate
         per_user[entry.user.username]['hours'] += entry.hours
 
-        per_business.setdefault(entry.project.business.name, {'ctc':0,'billable':0,'hours':0})
-        per_business[entry.project.business.name]['ctc'] += entry.atrate
-        per_business[entry.project.business.name]['billable'] += entry.atbillablerate
-        per_business[entry.project.business.name]['hours'] += entry.hours
+        per_business.setdefault(entry.issue.project.business.name, {'ctc':0,'billable':0,'hours':0})
+        per_business[entry.issue.project.business.name]['ctc'] += entry.atrate
+        per_business[entry.issue.project.business.name]['billable'] += entry.atbillablerate
+        per_business[entry.issue.project.business.name]['hours'] += entry.hours
 
         per_user_per_business.setdefault(entry.user.username, {})
-        per_user_per_business[entry.user.username].setdefault(entry.project.business.name, {'ctc':0,'billable':0,'hours':0})
-        per_user_per_business[entry.user.username][entry.project.business.name]['ctc'] += entry.atrate
-        per_user_per_business[entry.user.username][entry.project.business.name]['billable'] += entry.atbillablerate
-        per_user_per_business[entry.user.username][entry.project.business.name]['hours'] += entry.hours
+        per_user_per_business[entry.user.username].setdefault(entry.issue.project.business.name, {'ctc':0,'billable':0,'hours':0})
+        per_user_per_business[entry.user.username][entry.issue.project.business.name]['ctc'] += entry.atrate
+        per_user_per_business[entry.user.username][entry.issue.project.business.name]['billable'] += entry.atbillablerate
+        per_user_per_business[entry.user.username][entry.issue.project.business.name]['hours'] += entry.hours
 
     context['ctc_total'] = ctc_total
     context['billable_total'] = billable_total
@@ -3895,7 +3896,7 @@ def show_timeline(request, project_id):
     date_form = timepiece_forms.DateOnlyForm(request.GET)
     context['date_form'] = date_form
 
-    entries_qs = timepiece.Entry.objects.filter(project__business=project.business).order_by("start_time")
+    entries_qs = timepiece.Entry.objects.filter(issue__project__business=project.business).order_by("start_time")
     entries_qs = _apply_date_filter(request, entries_qs, context)
 
     graph_data = []
@@ -4940,7 +4941,7 @@ def _create_js_entry_event(entry):
 
     else:
         return { 'id': entry.id,
-                 'title': "A:%s (%s, %s hrs)" % (entry.project.business.name, entry.user.username, entry.hours),
+                 'title': "A:%s (%s, %s hrs)" % (entry.issue.project.business.name, entry.user.username, entry.hours),
                  'allDay': False,
                  'start': entry.start_time.strftime("%Y-%m-%d %H:%M"),
                  'end': entry.end_time.strftime("%Y-%m-%d %H:%M"),
@@ -4948,7 +4949,7 @@ def _create_js_entry_event(entry):
                  'user_id': entry.user.id,
                  'description': entry.comments + "\n\n" + entry.extended_comments,
                  'event_type': 'actual',
-                 'color': entry.project.business.get_colour(),
+                 'color': entry.issue.project.business.get_colour(),
                  'textColor': "#000000",
                  'borderColor': "#0000ff",
                  'editable': False,

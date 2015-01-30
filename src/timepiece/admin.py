@@ -39,7 +39,7 @@ admin.site.register(timepiece.Business, BusinessAdmin)
 class EntryAdmin(admin.ModelAdmin):
     model = timepiece.Entry
     list_display = ('user',
-                    'project',
+                    'issue',
                     'location',
                     'project_type',
                     'activity',
@@ -49,14 +49,14 @@ class EntryAdmin(admin.ModelAdmin):
                     'is_closed',
                     'is_paused',
                     )
-    list_filter = ['activity', 'project__type', 'user', 'project']
-    search_fields = ['user__first_name', 'user__last_name', 'project__name',
+    list_filter = ['activity', 'issue__project__type', 'user', 'issue']
+    search_fields = ['user__first_name', 'user__last_name', 'issue__project__name',
                      'activity__name', 'comments']
     date_hierarchy = 'start_time'
     ordering = ('-start_time',)
 
     def project_type(self, entry):
-        return entry.project.type
+        return entry.issue.project.type
 admin.site.register(timepiece.Entry, EntryAdmin)
 
 

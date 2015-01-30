@@ -248,7 +248,7 @@ class ClockInForm(forms.ModelForm):
     class Meta:
         model = timepiece.Entry
         fields = (
-            'active_comment', 'location', 'project', 'activity', 'start_time',
+            'active_comment', 'location', 'issue', 'activity', 'start_time',
             'comments'
         )
 
@@ -271,7 +271,7 @@ class ClockInForm(forms.ModelForm):
         project = initial.get('project')
         try:
             last_project_entry = timepiece.Entry.objects.filter(
-                user=self.user, project=project).order_by('-end_time')[0]
+                user=self.user, issue__project=project).order_by('-end_time')[0]
         except IndexError:
             initial['activity'] = None
         else:
@@ -307,7 +307,7 @@ class ClockInForm(forms.ModelForm):
             start_time__gte=start, end_time__isnull=True)
         for entry in active_entries:
             output = 'The start time is on or before the current entry: ' + \
-            '%s - %s starting at %s' % (entry.project, entry.activity,
+            '%s - %s starting at %s' % (entry.issue.project, entry.activity,
                 entry.start_time.strftime('%H:%M:%S'))
             raise forms.ValidationError(output)
         return start
@@ -586,7 +586,7 @@ class AddUpdateEntryForm(forms.Form):
         # for entry in entries:
         #     output = 'The times below conflict with the current entry: ' + \
         #     '%s - %s starting at %s' % \
-        #     (entry.project, entry.activity,
+        #     (entry.issue.project, entry.activity,
         #         entry.start_time.strftime('%H:%M:%S'))
         #     raise forms.ValidationError(output)
 

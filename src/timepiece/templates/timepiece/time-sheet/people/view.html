@@ -87,7 +87,7 @@
                                     <tbody>
                                         {% for entry in project_entries %}
                                             <tr>
-                                                <td>{{entry.project__business__name}} - {{ entry.project__name}} </td>
+                                                <td>{{entry.issue__project__business__name}} - {{ entry.issue__project__name}} </td>
                                                 <td class="hours">{{ entry.sum|floatformat:2 }}</td>
                                             </tr>
                                         {% endfor %}
@@ -160,7 +160,7 @@
                                 {% else %}
                                 <td></td>
                                 {% endifchanged %}
-				<td class="project">{{entry.project__business__name}} - {{ entry.project__name }}</td>
+				<td class="project">{{entry.issue.project__business__name}} - {{ entry.issue.project__name }}</td>
                                 
                                 <td class="hours time">{{ entry.hours|floatformat:2 }}</td>
                                 <td class="comments" title="{{entry.comments}}">{{ entry.comments|truncatewords:12|urlizetrunc:25|safe }}</td>
@@ -173,7 +173,7 @@
                                         {% endif %}
                                     {% endif %}
 				    {% if perms.timepiece.can_clock_in %}
-				      {% if entry.project__status__label == "open" or entry.project__status__label == "reopened" %}
+				      {% if entry.issue.project__status__label == "open" or entry.issue.project__status__label == "reopened" %}
 				        <a target="_blank" href="{% url 'timepiece-update' entry.id %}">Change</a>
 				        <a target="_blank" href="{% url 'timepiece-delete' entry.id %}">Remove</a>
 				      {% endif %}

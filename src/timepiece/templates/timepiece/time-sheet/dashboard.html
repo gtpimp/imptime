@@ -122,7 +122,7 @@
 
                             {% for entry in my_active_entries %}
                                 <tr>
-                                    <td><a href="{% url 'timepiece-clock-in' %}?project={{ entry.project_id }}">{{ entry.project.long_name }}</a></td>
+                                    <td><a href="{% url 'timepiece-clock-in' %}?project={{ entry.issue.project_id }}">{{ entry.issue.project.long_name }}</a></td>
                                     <td class="hours">{% get_active_hours entry %}</td>
                                 </tr>
                             {% endfor %}
@@ -144,7 +144,7 @@
 
                             {% for entry in project_entries %}
                                 <tr>
-                                    <td><a href="{% url 'timepiece-add' %}?project={{ entry.project__pk }}">{{ entry.project__business__name }} - {{ entry.project__name }}</a></td>
+                                    <td><a href="{% url 'timepiece-add' %}?project={{ entry.issue__project__pk }}">{{ entry.issue__project__business__name }} - {{ entry.issue__project__name }}</a></td>
                                     <td class="hours">{{ entry.sum }}</td>
                                 </tr>
                             {% endfor %}

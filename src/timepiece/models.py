@@ -282,7 +282,7 @@ class Business(models.Model):
 
     @property
     def end_time(self):
-        entries = Entry.objects.filter(project__business=self).order_by("-end_time")
+        entries = Entry.objects.filter(issue__project__business=self).order_by("-end_time")
         if entries.count()>0:
             return entries[0].end_time
         else:
@@ -821,7 +821,7 @@ class Project(models.Model):
 
     @classmethod
     def projects_in_desc_order_of_use(self, business_id):
-        entries = Entry.objects.filter(project__business_id=business_id).order_by('-end_time').values('project_id')
+        entries = Entry.objects.filter(issue__project__business_id=business_id).order_by('-end_time').values('project_id')
         p = SortedDict()
         for entry in entries:
             if entry['project_id'] not in p:
@@ -836,7 +836,7 @@ class Project(models.Model):
         costs_per_feature = SortedDict()
         features_in_project = list(self.issues.all().filter(feature__isnull=False).order_by('feature').values('feature').annotate(x=Count('feature'))) + [{'feature':None,'x':0}]
         for feature in features_in_project:
-            entries_qs = Entry.objects.all().filter(project=self)
+            entries_qs = Entry.objects.all().filter(issue__project=self)
             if feature['feature'] is None:
                 cost_per_feature = costs_per_feature.setdefault('none', {'name':'no feature', 'ctc':0,'billable':0})
                 entries_qs = entries_qs.filter(Q(issue__isnull=True)|Q(issue__feature__isnull=True))
@@ -959,12 +959,14 @@ class Project(models.Model):
             else:
                 rate = Rate(velocity=0, work_ratio=0, amount=0)
 
+            unadjusted_points = points
             points = points * (rate.velocity or 1)
             points = points / (rate.work_ratio or 1)
 
             min_cost = float(points)*float(rate.billable_amount)
 
             stats['issues'].append( { 'issue':issue,
+                                      'unadjusted_points':unadjusted_points,
                                       'points':points,
                                       'user_id':user_id,
                                       'min_cost':min_cost} )
@@ -994,11 +996,11 @@ class Project(models.Model):
         return stats
 
     def users_and_hours(self):
-        return self._get_users_and_hours({'entries':Entry.objects.filter(project=self)})
+        return self._get_users_and_hours({'entries':Entry.objects.filter(issue__project=self)})
 
     def cache_stats(self, start=None, end=None, issues=None):
         stats = {}
-        entries = Entry.objects.filter(project=self)
+        entries = Entry.objects.filter(issue__project=self)
         
         if issues is None:
             issues = self.issues
@@ -1107,6 +1109,7 @@ class Project(models.Model):
             total_billed += float(rate.billable_amount) * float(user_total['hours'])
             ctc_rate += float(rate.amount)
             billed_rate += float(rate.billable_amount)
+
         users_and_hours['totals']['hours'] = total_hours
         users_and_hours['totals']['revenue'] = total_revenue
         users_and_hours['totals']['billed'] = total_billed
@@ -1136,17 +1139,17 @@ class Project(models.Model):
             ratio = rate.work_ratio or 1
             user_hours = user_info['hours']
             
-            total_adjustedd_billed = points * (1/ratio) * float(rate.billable_amount) * velocity
-            total_adjustedd_ctc = points * (1/ratio) * float(rate.amount) * velocity
+            total_adjusted_billed = points * (1/ratio) * float(rate.billable_amount) * velocity
+            total_adjusted_ctc = points * (1/ratio) * float(rate.amount) * velocity
 
             ret[user] = {
                 'points': points, 
                 'hours':user_hours,
                 'ctc':rate.amount*user_hours,
                 'billable':rate.billable_amount*user_hours,
-                'total_adjusted_billed': total_adjustedd_billed,
-                'total_adjusted_ctc': total_adjustedd_ctc,
-                'total_adjusted_profit': total_adjustedd_billed - total_adjustedd_ctc,
+                'total_adjusted_billed': total_adjusted_billed,
+                'total_adjusted_ctc': total_adjusted_ctc,
+                'total_adjusted_profit': total_adjusted_billed - total_adjusted_ctc,
                 'rate': rate,
                 'velocity': (points/float(user_hours)) if float(user_hours)>0 else 1,
                 'work_ratio': (user_hours/total_hours) if total_hours>0 else 1
@@ -1166,7 +1169,7 @@ class Project(models.Model):
 
     @property
     def _last_entry_end_time(self):
-        entries = Entry.objects.filter(project=self).order_by("-end_time")
+        entries = Entry.objects.filter(issue__project=self).order_by("-end_time")
         if entries.count()>0:
             return entries[0].end_time
         else:
@@ -1174,7 +1177,7 @@ class Project(models.Model):
 
     @property
     def _first_entry_start_time(self):
-        entries = Entry.objects.filter(project=self).order_by("start_time")
+        entries = Entry.objects.filter(issue__project=self).order_by("start_time")
         if entries.count()>0:
             return entries[0].start_time
         else:
@@ -1188,7 +1191,7 @@ class Project(models.Model):
         return user.is_superuser or (user in self.users.all())
 
     def total_hours_for_user(self, user=None):
-        entries_qs = Entry.objects.filter(project=self)
+        entries_qs = Entry.objects.filter(issue__project=self)
 
         if user is not None:
             entries_qs = entries_qs.filter(user=user)
@@ -1197,7 +1200,7 @@ class Project(models.Model):
         return total
 
     def total_unassigned_hours_for_user(self, user):
-        entries_qs = Entry.objects.filter(project=self, user=user).filter(issue__isnull=True)
+        entries_qs = Entry.objects.filter(issue__project=self, user=user).filter(issue__isnull=True)
         total = entries_qs.aggregate(hours=Sum('hours'))['hours']
         return total
 
@@ -1217,7 +1220,7 @@ class Project(models.Model):
         return total_points['points']
 
     def get_users_with_time_but_no_estimates_in_this_project(self):
-        users = [ User.objects.get(pk=user['user']) for user in Entry.objects.all().filter(project=self).filter(hours__gt=0).exclude(issue__isnull=False).order_by('user').values('user').annotate(Count('user'))]
+        users = [ User.objects.get(pk=user['user']) for user in Entry.objects.all().filter(issue__project=self).filter(hours__gt=0).exclude(issue__isnull=False).order_by('user').values('user').annotate(Count('user'))]
         return [ user for user in users if not BusinessPermissions.for_user(user, self.business).has_estimate_own_points ] 
 
     # def users_and_hours(self, **entry_filter):
@@ -1566,20 +1569,20 @@ class EntryManagerBase(QuerySetManager):
         return self.get_query_set().timespan(from_date, to_date, span)
 
 class EntryManager(EntryManagerBase):
+    pass
+    # def get_query_set(self):
+    #     qs = EntryQuerySet(self.model)
+    #     #qs = qs.select_related('activity', 'project__type')
 
-    def get_query_set(self):
-        qs = EntryQuerySet(self.model)
-        qs = qs.select_related('activity', 'project__type')
+    #     # ensure our select_related are added.  Without this line later calls
+    #     # to select_related will void ours (not sure why - probably a bug
+    #     # in Django)
+    #     # in other words: do not remove!
+    #     #str(qs.query)
 
-        # ensure our select_related are added.  Without this line later calls
-        # to select_related will void ours (not sure why - probably a bug
-        # in Django)
-        # in other words: do not remove!
-        str(qs.query)
-
-        qs = qs.extra({'billable': 'timepiece_activity.billable AND '
-                                   'timepiece_attribute.billable'})
-        return qs
+    #     #qs = qs.extra({'billable': 'timepiece_activity.billable AND '
+    #     #                           'timepiece_attribute.billable'})
+    #     return qs
 
 
 class EntryWorkedManager(EntryManager):
@@ -1596,7 +1599,6 @@ class Entry(models.Model):
     """
 
     user = models.ForeignKey(User, related_name='timepiece_entries')
-    project = models.ForeignKey(Project, related_name='entries')
     activity = models.ForeignKey(
         Activity,
         related_name='entries',
@@ -1652,11 +1654,14 @@ class Entry(models.Model):
                       activity=activity,
                       location=location,
                       issue=issue,
-                      project=issue.project,
                       status='approved',
                       comments=comments)
         return entry
 
+    @property
+    def project(self):
+        return self.issue.project
+    
     @property
     def atrate(self):
         return self.hours * self.rate
@@ -1671,11 +1676,11 @@ class Entry(models.Model):
             return self._billable_rate
         except AttributeError:
             try:
-                self._billable_rate = Rate.objects.get(project=self.project, user=self.user).billable_amount
+                self._billable_rate = Rate.objects.get(project=self.issue.project, user=self.user).billable_amount
             except Rate.DoesNotExist:
                 self._billable_rate = 0
             except Rate.MultipleObjectsReturned:
-                self._billable_rate = Rate.objects.filter(project=self.project, user=self.user).first().billable_amount
+                self._billable_rate = Rate.objects.filter(project=self.issue.project, user=self.user).first().billable_amount
             return self._billable_rate
 
     @property
@@ -1684,11 +1689,11 @@ class Entry(models.Model):
             return self._rate
         except AttributeError:
             try:
-                self._rate = Rate.objects.get(project=self.project, user=self.user).amount
+                self._rate = Rate.objects.get(project=self.issue.project, user=self.user).amount
             except Rate.DoesNotExist:
                 self._rate = 0
             except Rate.MultipleObjectsReturned:
-                self._rate = Rate.objects.filter(project=self.project, user=self.user).first().amount
+                self._rate = Rate.objects.filter(project=self.issue.project, user=self.user).first().amount
             return self._rate
 
     @classmethod
@@ -1775,7 +1780,7 @@ class Entry(models.Model):
             entries = entries.exclude(pk=self.id)
         for entry in entries:
             entry_data = {
-                'project': entry.project,
+                'project': entry.issue.project,
                 'activity': entry.activity,
                 'start_time': entry.start_time,
                 'end_time': entry.end_time
@@ -1802,7 +1807,7 @@ class Entry(models.Model):
                     'from %(start_time)s to %(end_time)s' % entry_data
                     raise ValidationError(output)
         try:
-            act_group = self.project.activity_group
+            act_group = self.issue.project.activity_group
             if act_group:
                 activity = self.activity
                 if not act_group.activities.filter(pk=activity.pk).exists():
@@ -2092,7 +2097,7 @@ class ProjectContract(models.Model):
         # TODO put this in a .extra w/a subselect
         if not hasattr(self, '_hours_worked'):
             self._hours_worked = Entry.objects.filter(
-                project=self.project,
+                issue__project=self.project,
                 start_time__gte=self.start_date,
                 end_time__lt=self.end_date + datetime.timedelta(days=1),
             ).aggregate(sum=Sum('hours'))['sum']
@@ -2139,7 +2144,7 @@ class ContractMilestone(models.Model):
         """Hours worked during this milestone"""
         if not hasattr(self, '_hours_worked'):
             self._hours_worked = Entry.objects.filter(
-                project=self.contract.project,
+                issue__project=self.contract.project,
                 start_time__gte=self.start_date,
                 end_time__lt=self.end_date + datetime.timedelta(days=1),
             ).aggregate(sum=Sum('hours'))['sum']
@@ -2157,7 +2162,7 @@ class ContractMilestone(models.Model):
         """Total hours worked on project through the end of this milestone"""
         if not hasattr(self, '_total_hours_worked'):
             self._total_hours_worked = Entry.objects.filter(
-                project=self.contract.project,
+                issue__project=self.contract.project,
                 start_time__gte=self.contract.start_date,
                 end_time__lt=self.end_date + datetime.timedelta(days=1),
             ).aggregate(sum=Sum('hours'))['sum']
@@ -2216,7 +2221,7 @@ class ContractAssignment(models.Model):
     def _filtered_hours_worked(self, end_date):
         return Entry.objects.filter(
             user=self.user,
-            project=self.contract.project,
+            issue__project=self.contract.project,
             start_time__gte=self.start_date,
             end_time__lt=end_date,
         ).aggregate(sum=Sum('hours'))['sum'] or 0
@@ -2224,7 +2229,7 @@ class ContractAssignment(models.Model):
     def filtered_hours_worked_with_in_window(self, start_date, end_date):
         return Entry.objects.filter(
             user=self.user,
-            project=self.contract.project,
+            issue__project=self.contract.project,
             start_time__gte=start_date,
             end_time__lt=end_date,
         ).aggregate(sum=Sum('hours'))['sum'] or 0
@@ -2771,8 +2776,8 @@ class Issue(models.Model):
         return cost
 
     @classmethod
-    def get_unassigned_timesheet_entries(self, project):
-        return project.entries.filter(issue__isnull=True).order_by("start_time")
+    def get_adhoc_timesheet_entries(self, project):
+        return Entry.objects.filter(issue__project=project, issue__adhoc=True)
 
     def comments_in_order(self):
         return self.comments.get_query_set().order_by("-created")

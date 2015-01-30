@@ -664,7 +664,7 @@ class ClockOutTest(TimepieceDataTestCase):
         response = self.client.post(self.url, data)
         err_msg = 'Ending time exceeds starting time by 12 hours ' \
             'or more for {0} on {1} at {2} to {3} at {4}.'.format(
-                self.entry.project.name,
+                self.entry.issue.project.name,
                 self.entry.start_time.strftime('%m/%d/%Y'),
                 self.entry.start_time.strftime('%H:%M:%S'),
                 end_time.strftime('%m/%d/%Y'),
@@ -687,7 +687,7 @@ class ClockOutTest(TimepieceDataTestCase):
             reverse('timepiece-clock-out', args=[paused_entry.pk]), data)
         err_msg = 'Ending time exceeds starting time by 12 hours ' \
             'or more for {0} on {1} at {2} to {3} at {4}.'.format(
-                self.entry.project.name,
+                self.entry.issue.project.name,
                 paused_entry.start_time.strftime('%m/%d/%Y'),
                 paused_entry.start_time.strftime('%H:%M:%S'),
                 self.default_end_time.strftime('%m/%d/%Y'),

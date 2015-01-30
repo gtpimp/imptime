@@ -20,24 +20,8 @@
        Budget: R{{project.budget|floatformat:"0"|intcomma}}          
     {% end_permission %}
 
-    <br/>
-    {% has_permission has_view_invoices project.business %}
-         Invoiced: <input disabled type="checkbox" id="check_project_id_{{project.id}}" {% if project.stats.invoiced %} checked {% endif %} >
-         Paid: <input disabled type="checkbox" {% if project.stats.paid %} checked {% endif %} >
-    {% end_permission %}
-    <br/>
 
   </div>         
-
-  {% has_permission has_view_ctc_billable_rates project.business %}
-  <p>
-         {% has_permission has_view_ctc_rates project.business %}CTC R{{ project.stats.ctc|floatformat:"0"|intcomma }}
-         /{% end_permission %}
-         Billable R{{ project.stats.billed|floatformat:"0"|intcomma }}
-  </p>
-
-  {% end_permission %}
-
 
 
   {% has_permission has_view_budget project.business %}
@@ -67,41 +51,7 @@
     </div>
   </div>
 
-  </div>
-
-  {% has_permission has_view_ctc_billable_rates project.business %}
-  
   <br />
-  <hr />
-  <h1>Estimated Total Sprint Cost</h1>
-  <table>
-    <thead>
-      <th>User</th>
-      <th>Points</th>
-      <th>Ratio</th>
-      <th>Velocity</th>
-      {% has_permission has_view_ctc_rates project.business %}
-      <th>Total CTC</th>
-      {% end_permission %}
-      <th>Total Billed</th>
-    </thead>
-    <tbody>
-      {% for user, estimate in project.stats.cost_per_developer.items %}
-      <tr>
-	<td>{{ user.username }}</td>
-	<td>{{ estimate.points }}</td>
-	<td>{{ estimate.rate.work_ratio|floatformat:"1"|intcomma }}</td>
-	<td>{{ estimate.rate.velocity|floatformat:"1"|intcomma }}</td>
-        {% has_permission has_view_ctc_rates project.business %}
-	<td>R{{ estimate.total_adjusted_ctc|floatformat:"0"|intcomma }}</td>
-        {% end_permission %}
-	<td>R{{ estimate.total_adjusted_billed|floatformat:"0"|intcomma }}</td>
-      </tr>
-      {% endfor %}
-    </tbody>
-  </table>
-  <hr/>
-
 
   {% has_permission has_view_deadlines project.business %}
     <h1>Deadlines</h1>
@@ -123,16 +73,53 @@
 	<td>{{project.invoice_at|date:'D d-M-Y'}}</td>
       </tr>
     </table>
-    <hr/>
   {% end_permission %}
 
+  {% has_permission has_view_ctc_billable_rates project.business %}
+  
+  <br />
+  <h1>Estimated Total Sprint Cost</h1>
+  <table>
+    <thead>
+      <th>User</th>
+      <th>Points</th>
+      <th>Ratio</th>
+      <th>Velocity</th>
+      {% has_permission has_view_ctc_rates project.business %}
+      <th>Total CTC</th>
+      {% end_permission %}
+      <th>Adjusted billable</th>
+    </thead>
+    <tbody>
+      <tr class="table_info_row">
+        <td> </td>
+        <td>Adjusted</td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+      </tr>
+      {% for user, estimate in project.stats.cost_per_developer.items %}
+      <tr>
+	<td>{{ user.username }}</td>
+        <td>{{ estimate.points }}</td>
+	<td>{{ estimate.rate.work_ratio|floatformat:"1"|intcomma }}</td>
+	<td>{{ estimate.rate.velocity|floatformat:"1"|intcomma }}</td>
+        {% has_permission has_view_ctc_rates project.business %}
+	<td>R{{ estimate.total_adjusted_ctc|floatformat:"0"|intcomma }}</td>
+        {% end_permission %}
+	<td>R{{ estimate.total_adjusted_billed|floatformat:"0"|intcomma }}</td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
 
   <h1>Current Sprint Details</h1>
   <table>
     <thead>
       <th>User</th>
-      <th>Velocity</th>
-      <th>Ratio</th>
+      <th>Actual Velocity</th>
+      <th>Work Ratio</th>
       <th>Hours</th>
       {% has_permission has_view_ctc_rates project.business %}
       <th>Ctc</th>
@@ -142,6 +129,15 @@
       {% end_permission %}
     </thead>
     <tbody>
+      <tr class="table_info_row">
+        <td></td>
+        <td>based on issues worked on</td>
+        <td>(adhoc vs actual)</td>
+        <td></td>
+        <td></td>
+        <td></td>
+      </tr>
+
       {% for user, detail in project.stats.cost_per_developer.items %}
       <tr>
 	<td>{{ user.username }}</td>
@@ -197,7 +193,6 @@
   {% endcomment %}
 
     <br/>
-    <hr/>
     <br/>
     <h1>Features</h1>
     <table>
@@ -223,7 +218,6 @@
   {% end_permission %}
 
 
-  <hr/>
   <div class="toggle_graphs_section">
     <div class="graph">
       <h1>hours by user</h1>

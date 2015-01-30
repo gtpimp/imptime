@@ -15,9 +15,9 @@
             <td>{{ entry.start_time|date:"m/d | D" }}</td>
             <td>
                 {% if perms.timepiece.view_project %}
-                    <a href='{% url 'view_project' project_id=entry.project.id %}'>{{entry.project.business}} - {{ entry.project }}</a>
+                    <a href='{% url 'view_project' project_id=entry.issue.project.id %}'>{{entry.issue.project.business}} - {{ entry.issue.project }}</a>
                 {% else %}
-                    {{entry.project.business}} - {{ entry.project }}
+                    {{entry.issue.project.business}} - {{ entry.issue.project }}
                 {% endif %}
             </td>
             <td class="hours">{% get_active_hours entry %}</td>
