@@ -1074,10 +1074,6 @@ class Project(models.Model):
             stats_per_user[user]['percentage_points_complete'] = float(stats_per_user[user]['points_closed_non_adhoc'] or 0) / float(stats_per_user[user]['points_non_adhoc'] or 1) * 100
             
         
-        #stats_per_user['estimated_points'] = IssuePoints.objects.filter(issue__entries__in=entries).distinct().order_by('user').values('user').annotate(points=Sum('points'))
-        
-        #stats_per_user['total_estimated_points'] = _dict_from_annotation(entries.filter(issue__assigned_to=F('user')).order_by('user').values('user').annotate(hours=Sum('hours')))
-
         total_stats = {}
         total_stats['points_billable'] = sum(stats_per_user[x]['adjusted_points_billable'] for x in users)
         total_stats['points_comparative_billable'] = sum(stats_per_user[x]['adjusted_points_comparative_billable'] for x in users)

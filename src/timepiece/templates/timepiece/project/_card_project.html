@@ -64,8 +64,8 @@
     </thead>
     <tbody>
       <tr>
-        <td>R{{ project.stats.ctc|floatformat:"0"|intcomma }}</td>
-        <td>R{{ project.stats.billed|floatformat:"0"|intcomma }}</td>
+        <td>R{{ project.new_stats.total.hours_ctc|floatformat:"0"|intcomma }}</td>
+        <td>R{{ project.new_stats.total.hours_billable|floatformat:"0"|intcomma }}</td>
         <td>
           {% has_permission has_view_budget project.business %}
           R{{project.budget|floatformat:"0"|intcomma}}          
