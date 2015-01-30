@@ -1009,6 +1009,9 @@ class Project(models.Model):
         if self._new_stats is not None:
             return self._new_stats
 
+        if not self.id or not self.business:
+            return None
+
         entries_for_project = Entry.objects.filter(issue__project=self)
         stats_per_user = {}
 

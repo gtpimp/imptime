@@ -54,6 +54,10 @@ def epoch(value):
         return ''
 
 @register.simple_tag(takes_context=True)
+def prepare_project_stats(context, logged_in_user, project):
+    project.calculate_new_stats(logged_in_user)
+    
+@register.simple_tag(takes_context=True)
 def current_user_issue_cost(context, issue_points):
     try:
         rate = context['current_user_rate']
@@ -228,12 +232,16 @@ def get_all_devdone_points_for_project(context, user, project):
 
 
 # The first argument *must* be called "context" here.
-@register.inclusion_tag('timepiece/traffic_bar.html',
-                        takes_context=True)
+@register.inclusion_tag('timepiece/traffic_bar.html', takes_context=True)
 def running_progress_for_user_in_sprint(context, user, project):
 
-    actual = project.total_hours_for_user(user) or None
-    total = project.total_points_for_user_for_issues_with_entries(user) or 0
+    try:
+        #actual = project.new_stats['per_user'][user]['hours_closed_normal'] or None
+        actual = project.new_stats['per_user'][user]['hours'] or None
+        total = project.new_stats['per_user'][user]['points_closed_non_adhoc'] or 0
+    except KeyError:
+        actual = None
+        total = 0
     return _create_traffic_data(actual, total)
     
 def _create_traffic_data(actual, total):
