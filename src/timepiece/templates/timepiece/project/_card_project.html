@@ -16,13 +16,9 @@
      Last modified {% if project.stats.end_time %} {{ project.stats.end_time|timesince }} ago {% endif %}
     <br/>
 
-    {% has_permission has_view_budget project.business %}
-       Budget: R{{project.budget|floatformat:"0"|intcomma}}          
-    {% end_permission %}
-
-
   </div>         
 
+  <br/>
 
   {% has_permission has_view_budget project.business %}
     {% if project.has_budget %}
@@ -40,6 +36,7 @@
     {% endif %}
   {% end_permission %}
 
+
   <div style="clear:left;" class="traffic_bar">
     <div style="width:{{project.stats.percent_dev_done|floatformat:"0"}}%;" class="{{project.stats.percent_dev_done_traffic_class}}">
       {{project.stats.percent_dev_done|floatformat:"0"}}%&nbsp;points&nbsp;dev_done
@@ -52,32 +49,55 @@
   </div>
 
   <br />
+  <br />
+  <hr/>
+  <br />
+
+  {% has_permission has_view_ctc_billable_rates project.business %}
+  <h1>Cost summary</h1>
+  <table>
+    <thead>
+      <th>CTC</th>
+      <th>Billable</th>
+      <th>Budget</th>
+    </thead>
+    <tbody>
+      <tr>
+        <td>R{{ project.stats.ctc|floatformat:"0"|intcomma }}</td>
+        <td>R{{ project.stats.billed|floatformat:"0"|intcomma }}</td>
+        <td>
+          {% has_permission has_view_budget project.business %}
+          R{{project.budget|floatformat:"0"|intcomma}}          
+          {% end_permission %}
+        </td>
+      </tr>
+    </tbody>
+  </table>
+  {% end_permission %}
 
   {% has_permission has_view_deadlines project.business %}
     <h1>Deadlines</h1>
     <table>
       <tr>
 	<td>Start Dev</td>
-	<td>{{project.start_dev_at|date:'D d-M-Y'}}</td>
+	<td>{{project.start_dev_at|date:'D d-M-Y'|default:"not set"}}</td>
       </tr>
       <tr>
 	<td>Start Internal QA</td>
-	<td>{{project.start_internal_qa_at|date:'D d-M-Y'}}</td>
+	<td>{{project.start_internal_qa_at|date:'D d-M-Y'|default:"not set"}}</td>
       </tr>
       <tr>
 	<td>Start Client QA</td>
-	<td>{{project.start_client_qa_at|date:'D d-M-Y'}}</td>
+	<td>{{project.start_client_qa_at|date:'D d-M-Y'|default:"not set"}}</td>
       </tr>
       <tr>
 	<td>Invoice at</td>
-	<td>{{project.invoice_at|date:'D d-M-Y'}}</td>
+	<td>{{project.invoice_at|date:'D d-M-Y'|default:"not set"}}</td>
       </tr>
     </table>
   {% end_permission %}
 
   {% has_permission has_view_ctc_billable_rates project.business %}
-  
-  <br />
   <h1>Estimated Total Sprint Cost</h1>
   <table>
     <thead>
@@ -192,8 +212,6 @@
   </table>
   {% endcomment %}
 
-    <br/>
-    <br/>
     <h1>Features</h1>
     <table>
       <thead>
