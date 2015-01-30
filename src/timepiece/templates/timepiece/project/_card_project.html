@@ -60,6 +60,7 @@
       <th>CTC</th>
       <th>Billable</th>
       <th>Budget</th>
+      <th>Projected cost</th>
     </thead>
     <tbody>
       <tr>
@@ -68,6 +69,11 @@
         <td>
           {% has_permission has_view_budget project.business %}
           R{{project.budget|floatformat:"0"|intcomma}}          
+          {% end_permission %}
+        </td>
+        <td>
+          {% has_permission has_view_budget project.business %}
+          R{{project.new_stats.total.projected_total|default:""|floatformat:"0"|intcomma }}
           {% end_permission %}
         </td>
       </tr>
@@ -98,7 +104,10 @@
   {% end_permission %}
 
   {% has_permission has_view_ctc_billable_rates project.business %}
-  <h1>Estimates</h1>
+  <h1>
+    Estimates
+    <span class="tip">(uses the estimates for issues assigned to each developer)</span>
+  </h1>
   <table>
     <thead>
       <th>Assigned user</th>
@@ -165,6 +174,66 @@
       </tr>
     </tbody>
   </table>
+
+  {% has_permission has_view_ctc_billable_rates project.business %}
+  <h1>
+    Comparative estimates 
+    <span class="tip">(as if one developer does the whole project as per his own estimates)</span>
+  </h1>
+  
+  <table>
+    <thead>
+      <th>User</th>
+      <th>Points</th>
+
+      <th>Velocity</th>
+      <th>Work Ratio</th>
+
+      <th>Points</th>
+
+      {% has_permission has_view_ctc_rates project.business %}
+      <th colspan="2">ctc</th>
+      {% end_permission %}
+      <th colspan="2">billable</th>
+    </thead>
+    <tbody>
+      <tr class="table_info_row">
+        <td></td>
+        <td>Normal</td>
+        
+        <td>Estimated</td>
+        <td>Estimated</td>
+
+        <td>Normal Adjusted</td>
+
+        <td>Rate</td>
+        <td>Amount</td>
+
+        <td>Rate</td>
+        <td>Amount</td>
+      </tr>
+      {% for user, values in project.new_stats.per_user.items %}
+      <tr>
+	<td>{{ user.username }}</td>
+
+        <td>{{ values.points_comparative_non_adhoc|default:""|intcomma }}</td>
+
+	<td>{% if values.rate.velocity %}{{ values.rate.velocity|default:""|intcomma }}{% endif %}</td>
+        <td>{% if values.rate.work_ratio %}{{ values.rate.work_percentage|default:""|intcomma }}%{% endif %}</td>
+
+        <td>{{ values.adjusted_points_comparative_non_adhoc|default:""|intcomma }}</td>
+
+        {% has_permission has_view_ctc_rates project.business %}
+        <td>{% if values.rate.amount %}R{{ values.rate.amount|default:""|floatformat:"0"|intcomma }}{% endif %}</td>
+        <td>{% if values.adjusted_points_comparative_ctc %}R{{ values.adjusted_points_comparative_ctc|default:""|floatformat:"0"|intcomma}}{% endif %}</td>
+        {% end_permission %}
+        <td>{% if values.rate.billable_amount %}R{{ values.rate.billable_amount|default:""|floatformat:"0"|intcomma }}{% endif %}</td>
+        <td>{% if values.adjusted_points_comparative_billable %}R{{ values.adjusted_points_comparative_billable|default:""|floatformat:"0"|intcomma}}{% endif %}</td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+  {% end_permission %}
 
   <h1>Actuals</h1>
   <table>
@@ -242,7 +311,10 @@
     </tbody>
   </table>
 
-  <h1>Projected</h1>
+  <h1>
+    Projected
+    <span class="tip">(uses the points ratio for completed issues to estimate the overall project cost)</span>
+  </h1>
   <table>
     <thead>
       <th>Assigned user</th>

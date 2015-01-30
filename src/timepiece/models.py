@@ -1023,6 +1023,7 @@ class Project(models.Model):
         for user in users:
             entries = entries_for_project.filter(user=user)
             issue_points = IssuePoints.objects.filter(issue__project=self, issue__assigned_to=user, user=user).distinct()
+            issue_points_comparative = IssuePoints.objects.filter(issue__project=self, user=user).distinct()
             
             stats_per_user[user] = {}
 
@@ -1036,6 +1037,16 @@ class Project(models.Model):
 
             stats_per_user[user]['adjusted_points_ctc'] = stats_per_user[user]['adjusted_points_non_adhoc'] * float(stats_per_user[user]['rate'].amount)
             stats_per_user[user]['adjusted_points_billable'] = stats_per_user[user]['adjusted_points_non_adhoc'] * float(stats_per_user[user]['rate'].billable_amount)
+
+            stats_per_user[user]['points_comparative_non_adhoc'] = _get_total(issue_points_comparative.filter(issue__adhoc=False).values('user').annotate(total=Sum('points')))
+            stats_per_user[user]['points_comparative_closed_non_adhoc'] = _get_total(issue_points_comparative.exclude(issue__status__in=Issue.STATUSES_INDICATING_DEV_INCOMPLETE).filter(issue__adhoc=False).values('user').annotate(total=Sum('points')))
+            stats_per_user[user]['points_comparative_open_non_adhoc'] = _get_total(issue_points_comparative.filter(issue__status__in=Issue.STATUSES_INDICATING_DEV_INCOMPLETE).filter(issue__adhoc=False).values('user').annotate(total=Sum('points')))
+
+            stats_per_user[user]['adjusted_points_comparative_non_adhoc'] = (stats_per_user[user]['points_comparative_non_adhoc'] or 0) * (stats_per_user[user]['rate'].velocity or 0) / (stats_per_user[user]['rate'].work_ratio or 1)
+
+            stats_per_user[user]['adjusted_points_comparative_ctc'] = stats_per_user[user]['adjusted_points_comparative_non_adhoc'] * float(stats_per_user[user]['rate'].amount)
+            stats_per_user[user]['adjusted_points_comparative_billable'] = stats_per_user[user]['adjusted_points_comparative_non_adhoc'] * float(stats_per_user[user]['rate'].billable_amount)
+            # ##
             
             stats_per_user[user]['hours'] = _get_total(entries.order_by('user').values('user').annotate(total=Sum('hours')))
             stats_per_user[user]['hours_normal'] = _get_total(entries.filter(issue__adhoc=False).order_by('user').values('user').annotate(total=Sum('hours')))
@@ -1066,6 +1077,7 @@ class Project(models.Model):
 
         total_stats = {}
         total_stats['points_billable'] = sum(stats_per_user[x]['adjusted_points_billable'] for x in users)
+        total_stats['points_comparative_billable'] = sum(stats_per_user[x]['adjusted_points_comparative_billable'] for x in users)
         total_stats['points_non_adhoc'] = sum(stats_per_user[x]['points_non_adhoc'] for x in users)
         total_stats['points_closed_non_adhoc'] = sum(stats_per_user[x]['points_closed_non_adhoc'] for x in users)
         total_stats['hours'] = sum(stats_per_user[x]['hours'] for x in users)
@@ -1080,7 +1092,7 @@ class Project(models.Model):
         total_stats['calculated_remaining_billable'] = sum(stats_per_user[x]['calculated_remaining_billable'] for x in users)
         total_stats['percentage_points_complete'] = (total_stats['points_closed_non_adhoc'] or 0) / (total_stats['points_non_adhoc'] or 1) * 100
 
-        total_stats['projected_total'] = 1/(total_stats['percentage_points_complete']/100) * (float(total_stats['hours_billable'] or 0))
+        total_stats['projected_total'] = 1/(total_stats['percentage_points_complete']/100 or 1) * (float(total_stats['hours_billable'] or 0))
         total_stats['projected_remaining'] = total_stats['projected_total'] - float(total_stats['hours_billable'])
 
         self._new_stats = {'per_user': stats_per_user,
