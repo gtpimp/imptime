@@ -5,7 +5,8 @@
 	/*border: 5px solid #aaa;*/
 }
 .splitter .splitter-left, .splitter .splitter-right {
-	overflow: auto;
+    overflow-x: hidden;
+    overflow-y: auto;
 }
 .vsplitbar {
 	width: 5px;

@@ -9387,7 +9387,8 @@ ul.project_list {
     box-shadow:         6px 6px 0px 0px #ccc;
     margin:15px;
     min-width:230px;
-    /*width: 100%;*/
+    width: 100%;
+    overflow-y: hidden;
 }
 
 .project_card h1{
@@ -10494,7 +10495,7 @@ ul.checklist_items {
 .project_card_top_level table {
     margin-bottom: 10px;
     border-bottom: 1px solid #cccccc;
-    border-right: 1px solid #cccccc;
+    border-right: 1px solid #aaaaaa;
     width: 100%;
 }
 
@@ -10509,7 +10510,7 @@ ul.checklist_items {
 }
 
 .project_card_top_level th, .project_card_top_level td  {
-    border-left: 1px solid #dddddd;
+    border-left: 1px solid #aaaaaa;
     padding-right: 2px;
     padding-left: 2px;
 }

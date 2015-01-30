@@ -98,119 +98,245 @@
   {% end_permission %}
 
   {% has_permission has_view_ctc_billable_rates project.business %}
-  <h1>Estimated Total Sprint Cost</h1>
+  <h1>Estimates</h1>
   <table>
     <thead>
-      <th>User</th>
+      <th>Assigned user</th>
       <th>Points</th>
-      <th>Ratio</th>
+
       <th>Velocity</th>
+      <th>Work Ratio</th>
+
+      <th>Points</th>
+
       {% has_permission has_view_ctc_rates project.business %}
-      <th>Total CTC</th>
+      <th colspan="2">ctc</th>
       {% end_permission %}
-      <th>Adjusted billable</th>
+      <th colspan="2">billable</th>
     </thead>
     <tbody>
       <tr class="table_info_row">
-        <td> </td>
-        <td>Adjusted</td>
         <td></td>
-        <td></td>
-        <td></td>
-        <td></td>
+        <td>Normal</td>
+        
+        <td>Estimated</td>
+        <td>Estimated</td>
+
+        <td>Normal Adjusted</td>
+
+        <td>Rate</td>
+        <td>Amount</td>
+
+        <td>Rate</td>
+        <td>Amount</td>
       </tr>
-      {% for user, estimate in project.stats.cost_per_developer.items %}
+      {% for user, values in project.new_stats.per_user.items %}
       <tr>
 	<td>{{ user.username }}</td>
-        <td>{{ estimate.points }}</td>
-	<td>{{ estimate.rate.work_ratio|floatformat:"1"|intcomma }}</td>
-	<td>{{ estimate.rate.velocity|floatformat:"1"|intcomma }}</td>
+
+        <td>{{ values.points_non_adhoc|default:""|intcomma }}</td>
+
+	<td>{% if values.rate.velocity %}{{ values.rate.velocity|default:""|intcomma }}{% endif %}</td>
+        <td>{% if values.rate.work_ratio %}{{ values.rate.work_percentage|default:""|intcomma }}%{% endif %}</td>
+
+        <td>{{ values.adjusted_points_non_adhoc|default:""|intcomma }}</td>
+
         {% has_permission has_view_ctc_rates project.business %}
-	<td>R{{ estimate.total_adjusted_ctc|floatformat:"0"|intcomma }}</td>
+        <td>{% if values.rate.amount %}R{{ values.rate.amount|default:""|floatformat:"0"|intcomma }}{% endif %}</td>
+        <td>{% if values.adjusted_points_ctc %}R{{ values.adjusted_points_ctc|default:""|floatformat:"0"|intcomma}}{% endif %}</td>
         {% end_permission %}
-	<td>R{{ estimate.total_adjusted_billed|floatformat:"0"|intcomma }}</td>
+        <td>{% if values.rate.billable_amount %}R{{ values.rate.billable_amount|default:""|floatformat:"0"|intcomma }}{% endif %}</td>
+        <td>{% if values.adjusted_points_billable %}R{{ values.adjusted_points_billable|default:""|floatformat:"0"|intcomma}}{% endif %}</td>
       </tr>
       {% endfor %}
+      <tr>
+        <th>Total</th>
+        <th></th>
+
+        <th></th>
+        <th></th>
+
+        <th></th>
+        
+        <th></th>
+        <th></th>
+        <th></th>
+        <th>{% if project.new_stats.total.points_billable %}R{{ project.new_stats.total.points_billable|default:""|floatformat:"0"|intcomma }}{% endif %} </th>
+      </tr>
     </tbody>
   </table>
 
-  <h1>Current Sprint Details</h1>
+  <h1>Actuals</h1>
   <table>
     <thead>
-      <th>User</th>
-      <th>Actual Velocity</th>
-      <th>Work Ratio</th>
-      <th>Hours</th>
+      <th>Assigned user</th>
+      <th colspan="4">Hours</th>
+
+      <th>% complete</th>
+
       {% has_permission has_view_ctc_rates project.business %}
-      <th>Ctc</th>
+      <th colspan="2">ctc</th>
       {% end_permission %}
       {% has_permission has_view_ctc_billable_rates project.business %}
-      <th>Billable</th>
+      <th colspan="2">billable</th>
       {% end_permission %}
     </thead>
     <tbody>
       <tr class="table_info_row">
         <td></td>
-        <td></td>
-        <td></td>
-        <td></td>
-        <td></td>
-        <td></td>
+
+        <td>Total</td>
+        <td>Normal</td>
+        <td>Normal done</td>
+        <td>Adhoc</td>
+
+        <td>Normal points</td>
+
+        <td>Rate</td>
+        <td>Amount</td>
+        <td>Rate</td>
+        <td>Amount</td>
       </tr>
 
-      {% for user, detail in project.stats.cost_per_developer.items %}
+      {% for user, values in project.new_stats.per_user.items %}
       <tr>
 	<td>{{ user.username }}</td>
-	<td>{{ detail.velocity|floatformat:"1"|intcomma }}</td>
-	<td>{{ detail.work_ratio|floatformat:"1"|intcomma }}</td>
-        <td>{{ detail.hours|floatformat:"1"|intcomma }}</td>
+
+	<td>{{ values.hours|default:"" }}</td>
+        <td>{{ values.hours_normal|default:""|intcomma }}</td>
+        <td>{{ values.hours_closed_normal|default:""|intcomma }}</td>
+        <td>{{ values.hours_adhoc|default:""|intcomma }}</td>
+
+        <td>{% if values.percentage_points_complete %}{{ values.percentage_points_complete|default:""|floatformat:"0"|intcomma}}%{% endif %}</td>
+
         {% has_permission has_view_ctc_rates project.business %}
-        <td>R{{ detail.ctc|floatformat:"0"|intcomma }}</td>
+        <td>{% if values.rate.amount %}R{{ values.rate.amount|default:""|floatformat:"0"|intcomma }}{% endif %}</td>
+	<td>{% if values.hours_ctc %}R{{ values.hours_ctc|default:""|floatformat:"0"|intcomma }}{% endif %}</td>
         {% end_permission %}
-        {% has_permission has_view_ctc_billable_rates project.business %}
-        <td>R{{ detail.billable|floatformat:"0"|intcomma }}</td>
-        {% end_permission %}
+        <td>{% if values.rate.billable_amount %}R{{ values.rate.billable_amount|default:""|floatformat:"0"|intcomma }}{% endif %}</td>
+	<td>{% if values.hours_billable %}R{{ values.hours_billable|default:""|floatformat:"0"|intcomma }}{% endif %}</td>
+
       </tr>
       {% endfor %}
+      <tr>
+        <th>Total</th>
+        
+        <th>{{ project.new_stats.total.hours }}</th>
+        <th>{{ project.new_stats.total.hours_normal }}</th>
+        <th>{{ project.new_stats.total.hours_closed_normal }}</th>
+        <th>{{ project.new_stats.total.hours_adhoc }}</th>
+
+        <th>{{ project.new_stats.total.percentage_points_complete|default:""|floatformat:"0"|intcomma }}%</th>
+
+        {% has_permission has_view_ctc_rates project.business %}
+        <th></th>
+        <th>{% if project.new_stats.total.hours_ctc %}R{{ project.new_stats.total.hours_ctc|default:""|floatformat:"0"|intcomma }}{% endif %}</th>
+        {% end_permission %}
+        <th></th>
+        <th>{% if project.new_stats.total.hours_billable %}R{{ project.new_stats.total.hours_billable|default:""|floatformat:"0"|intcomma }}{% endif %}</th>
+
+      </tr>
+        
+      </tr>
+      
     </tbody>
   </table>
 
-  {% comment %}
+  <h1>Projected</h1>
   <table>
     <thead>
-      <th>Issue state</th>
-      <th>Actual hours</th>
-      <th>Estimated hours</th>
+      <th>Assigned user</th>
+      <th colspan="2">Points</th>
+
+      <th>Velocity</th>
+
+      <th>Points</th>
+
+      {% has_permission has_view_ctc_rates project.business %}
+      <th colspan="2">ctc</th>
+      {% end_permission %}
+      {% has_permission has_view_ctc_billable_rates project.business %}
+      <th colspan="4">billable</th>
+      {% end_permission %}
     </thead>
     <tbody>
-      {% for issue_status_info in project.stats.issues_by_status %}
+      <tr class="table_info_row">
+        <td></td>
+
+        <td>Normal closed</td>
+        <td>Normal open</td>
+
+        <td>Calculated</td>
+
+        <td>Projected normal open</td>
+
+        <td>Rate</td>
+        <td>Remaining</td>
+        <td>Rate</td>
+        <td>Remaining</td>
+        <td>Projected total remaining</td>
+        <td>Projected total</td>
+      </tr>
+
+      {% for user, values in project.new_stats.per_user.items %}
       <tr>
-        <td>{{issue_info.status}}</td>
-        <td>{{issue_info.hours}}</td>
-        
-        <td>
-          
-          <table>
-            <thead>
-              <th>User</th>
-              <th>Estimate</th>
-              <th>Actual</th>
-            </thead>
-            <tbody>
-              {% for user_info in issue_status_info.hours_by_user %}
-                <tr>
-                  <td>{{user_info.user.username}}</td>
-                  <td>{{user_info.estimate}}</td>
-                </tr>
-              {% endfor %}
-            </tbody>
-          </table>
-        </td>
+	<td>{{ user.username }}</td>
+
+	<td>{{ values.points_closed_non_adhoc|default:""|intcomma }}</td>
+        <td>{{ values.points_open_non_adhoc|default:""|intcomma }}</td>
+
+        <td>{% if values.calculated_velocity %}{{ values.calculated_velocity|default:""|floatformat:"2"|intcomma }}{% endif %}</td>
+
+        <td>{% if values.points_calculated_open_non_adhoc %}{{ values.points_calculated_open_non_adhoc|floatformat:"2"|default:""|intcomma }}{% endif %}</td>
+
+        {% has_permission has_view_ctc_rates project.business %}
+        <td>{% if values.rate.amount %}R{{ values.rate.amount|default:""|floatformat:"0"|intcomma }}{% endif %}</td>
+	<td>{% if values.points_calculated_open_non_adhoc_ctc %}R{{ values.points_calculated_open_non_adhoc_ctc|default:""|floatformat:"0"|intcomma }}{% endif %}</td>
+        {% end_permission %}
+        <td>{% if values.rate.billable_amount %}R{{ values.rate.billable_amount|default:""|floatformat:"0"|intcomma }}{% endif %}</td>
+        <td>{% if values.points_calculated_open_non_adhoc_billable %}R{{ values.points_calculated_open_non_adhoc_billable|default:""|floatformat:"0"|intcomma }}{% endif %}</td>
+
+        <td></td>
+        <td></td>
+
       </tr>
       {% endfor %}
+      <tr>
+        <th>Total</th>
+        
+        <th></th>
+        <th></th>
+        <th></th>
+        <th></th>
+        <th></th>
+        <th>{% if project.new_stats.total.points_calculated_open_non_adhoc_ctc %}R {{project.new_stats.total.points_calculated_open_non_adhoc_ctc|default:""|floatformat:"0"|intcomma }}{% endif %}</th>
+
+        <th></th>
+        <th>{% if project.new_stats.total.points_calculated_open_non_adhoc_billable %}R {{project.new_stats.total.points_calculated_open_non_adhoc_billable|default:""|floatformat:"0"|intcomma }}{% endif %}</th>
+        <th>{% if project.new_stats.total.projected_remaining %}R {{project.new_stats.total.projected_remaining|default:""|floatformat:"0"|intcomma }}{% endif %}</th>
+        <th>{% if project.new_stats.total.projected_total %}R {{project.new_stats.total.projected_total|default:""|floatformat:"0"|intcomma }}{% endif %}</th>
+        
+      </tr>
+
+      <tr>
+        <td></td>
+        
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td>for issues with points</td>
+        <td>including projected adhoc time</td>
+        <td>assumes the same ratio of adhoc time</td>
+        
+      </tr>
+      
     </tbody>
   </table>
-  {% endcomment %}
+
 
     <h1>Features</h1>
     <table>

@@ -13,7 +13,7 @@ from django.conf import settings
 from django.contrib.auth.models import User
 from django.core.exceptions import ValidationError, NON_FIELD_ERRORS
 from django.db import models
-from django.db.models import Q, Avg, Sum, Max, Min
+from django.db.models import Q, Avg, Sum, Max, Min, F
 from django.utils.datastructures import SortedDict
 from re import sub as re_sub
 from re import UNICODE as re_UNICODE
@@ -720,6 +720,7 @@ class Project(models.Model):
         self._stats = None
         self._estimate_stats = None
         self._users_and_hours = None
+        self._new_stats = None
 
     @property
     def has_budget(self):
@@ -998,6 +999,96 @@ class Project(models.Model):
     def users_and_hours(self):
         return self._get_users_and_hours({'entries':Entry.objects.filter(issue__project=self)})
 
+    @property
+    def new_stats(self):
+        if self._new_stats is None:
+            raise Exception("Must call calculate_stats_per_user first")
+        return self._new_stats
+    
+    def calculate_new_stats(self, current_user):
+        if self._new_stats is not None:
+            return self._new_stats
+
+        entries_for_project = Entry.objects.filter(issue__project=self)
+        stats_per_user = {}
+
+        users = self.business.get_users_allowed_to_estimate_on_business(current_user)
+
+        def _get_total(res):
+            try:
+                return res[0]['total']
+            except:
+                return 0
+        
+        for user in users:
+            entries = entries_for_project.filter(user=user)
+            issue_points = IssuePoints.objects.filter(issue__project=self, issue__assigned_to=user, user=user).distinct()
+            
+            stats_per_user[user] = {}
+
+            stats_per_user[user]['rate'] = Rate.objects.filter(project=self, user=user).first()
+                        
+            stats_per_user[user]['points_non_adhoc'] = _get_total(issue_points.filter(issue__adhoc=False).values('user').annotate(total=Sum('points')))
+            stats_per_user[user]['points_closed_non_adhoc'] = _get_total(issue_points.exclude(issue__status__in=Issue.STATUSES_INDICATING_DEV_INCOMPLETE).filter(issue__adhoc=False).values('user').annotate(total=Sum('points')))
+            stats_per_user[user]['points_open_non_adhoc'] = _get_total(issue_points.filter(issue__status__in=Issue.STATUSES_INDICATING_DEV_INCOMPLETE).filter(issue__adhoc=False).values('user').annotate(total=Sum('points')))
+
+            stats_per_user[user]['adjusted_points_non_adhoc'] = (stats_per_user[user]['points_non_adhoc'] or 0) * (stats_per_user[user]['rate'].velocity or 0) / (stats_per_user[user]['rate'].work_ratio or 1)
+
+            stats_per_user[user]['adjusted_points_ctc'] = stats_per_user[user]['adjusted_points_non_adhoc'] * float(stats_per_user[user]['rate'].amount)
+            stats_per_user[user]['adjusted_points_billable'] = stats_per_user[user]['adjusted_points_non_adhoc'] * float(stats_per_user[user]['rate'].billable_amount)
+            
+            stats_per_user[user]['hours'] = _get_total(entries.order_by('user').values('user').annotate(total=Sum('hours')))
+            stats_per_user[user]['hours_normal'] = _get_total(entries.filter(issue__adhoc=False).order_by('user').values('user').annotate(total=Sum('hours')))
+            stats_per_user[user]['hours_closed_normal'] = _get_total(entries.filter(issue__adhoc=False).exclude(issue__status__in=Issue.STATUSES_INDICATING_DEV_INCOMPLETE).order_by('user').values('user').annotate(total=Sum('hours')))
+            stats_per_user[user]['hours_adhoc'] = _get_total(entries.filter(issue__adhoc=True).order_by('user').values('user').annotate(total=Sum('hours')))
+            
+            stats_per_user[user]['hours_ctc'] = stats_per_user[user]['rate'].amount * stats_per_user[user]['hours']
+            stats_per_user[user]['hours_billable'] = stats_per_user[user]['rate'].billable_amount * stats_per_user[user]['hours']
+
+            stats_per_user[user]['hours_adhoc_billable'] = stats_per_user[user]['rate'].billable_amount * stats_per_user[user]['hours_adhoc']
+
+            if stats_per_user[user]['hours_closed_normal']:
+                stats_per_user[user]['calculated_velocity'] = float((stats_per_user[user]['points_closed_non_adhoc'] or 0)) / (float(stats_per_user[user]['hours_closed_normal']) or 1)
+            else:
+                stats_per_user[user]['calculated_velocity'] = 0
+            stats_per_user[user]['calculated_work_ratio'] = (float(stats_per_user[user]['hours_adhoc']) or 0.0) / (float((stats_per_user[user]['hours'] or 1)))
+
+            stats_per_user[user]['points_calculated_open_non_adhoc'] = (stats_per_user[user]['points_open_non_adhoc'] or 0) / (stats_per_user[user]['calculated_velocity'] or 1)
+            stats_per_user[user]['points_calculated_open_non_adhoc_ctc'] = float(stats_per_user[user]['rate'].amount) * (stats_per_user[user]['points_calculated_open_non_adhoc'] or 0)
+            stats_per_user[user]['points_calculated_open_non_adhoc_billable'] = float(stats_per_user[user]['rate'].billable_amount) * (stats_per_user[user]['points_calculated_open_non_adhoc'] or 0)
+            stats_per_user[user]['calculated_remaining_billable'] = float(stats_per_user[user]['points_calculated_open_non_adhoc_billable']) + float(stats_per_user[user]['hours_billable'])
+            stats_per_user[user]['percentage_points_complete'] = float(stats_per_user[user]['points_closed_non_adhoc'] or 0) / float(stats_per_user[user]['points_non_adhoc'] or 1) * 100
+            
+        
+        #stats_per_user['estimated_points'] = IssuePoints.objects.filter(issue__entries__in=entries).distinct().order_by('user').values('user').annotate(points=Sum('points'))
+        
+        #stats_per_user['total_estimated_points'] = _dict_from_annotation(entries.filter(issue__assigned_to=F('user')).order_by('user').values('user').annotate(hours=Sum('hours')))
+
+        total_stats = {}
+        total_stats['points_billable'] = sum(stats_per_user[x]['adjusted_points_billable'] for x in users)
+        total_stats['points_non_adhoc'] = sum(stats_per_user[x]['points_non_adhoc'] for x in users)
+        total_stats['points_closed_non_adhoc'] = sum(stats_per_user[x]['points_closed_non_adhoc'] for x in users)
+        total_stats['hours'] = sum(stats_per_user[x]['hours'] for x in users)
+        total_stats['hours_normal'] = sum(stats_per_user[x]['hours_normal'] for x in users)
+        total_stats['hours_closed_normal'] = sum(stats_per_user[x]['hours_closed_normal'] for x in users)
+        total_stats['hours_adhoc'] = sum(stats_per_user[x]['hours_adhoc'] for x in users)
+        total_stats['hours_ctc'] = sum(stats_per_user[x]['hours_ctc'] for x in users)
+        total_stats['hours_billable'] = sum(stats_per_user[x]['hours_billable'] for x in users)
+        total_stats['hours_adhoc_billable'] = sum(stats_per_user[x]['hours_adhoc_billable'] for x in users)
+        total_stats['points_calculated_open_non_adhoc_ctc'] = sum(stats_per_user[x]['points_calculated_open_non_adhoc_ctc'] for x in users)
+        total_stats['points_calculated_open_non_adhoc_billable'] = sum(stats_per_user[x]['points_calculated_open_non_adhoc_billable'] for x in users)
+        total_stats['calculated_remaining_billable'] = sum(stats_per_user[x]['calculated_remaining_billable'] for x in users)
+        total_stats['percentage_points_complete'] = (total_stats['points_closed_non_adhoc'] or 0) / (total_stats['points_non_adhoc'] or 1) * 100
+
+        total_stats['projected_total'] = 1/(total_stats['percentage_points_complete']/100) * (float(total_stats['hours_billable'] or 0))
+        total_stats['projected_remaining'] = total_stats['projected_total'] - float(total_stats['hours_billable'])
+
+        self._new_stats = {'per_user': stats_per_user,
+                           'total': total_stats}
+        
+        return self._new_stats
+
+    
     def cache_stats(self, start=None, end=None, issues=None):
         stats = {}
         entries = Entry.objects.filter(issue__project=self)
@@ -2529,6 +2620,10 @@ class Rate(models.Model):
     work_ratio = models.FloatField(default=0)
     velocity = models.FloatField(default=1)
 
+    @property
+    def work_percentage(self):
+        return (self.work_ratio or 0) * 100
+
 class Expense(models.Model):
     date = models.DateField()
     amount = models.DecimalField(max_digits=8,decimal_places=0,default=0)
@@ -2586,6 +2681,8 @@ class Issue(models.Model):
            ( 'bug', 'bug'),
            ( 'to be designed', 'to be designed'),
         )
+
+    STATUSES_INDICATING_DEV_INCOMPLETE = ['new', 'bug', 'reopened']
     
     status = models.CharField(max_length=255, choices = ISSUE_STATUS_CHOICES, blank=False)
     number = models.IntegerField(null=True,blank=True, db_index=True)

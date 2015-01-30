@@ -519,7 +519,8 @@ def get_project_card_for_business(request,business_id, project_id):
 
     project = timepiece.Project.objects.get(pk = project_id)
 
-
+    project.calculate_new_stats(request.user)
+    
     context = { 'business':business,
                 'current_business':business,
                 'current_user':request.user,
@@ -3609,7 +3610,7 @@ def issue_points_update(request,  template="timepiece/project/issue_detail.html"
     edited_issue_points.points = float(new_estimate)
     edited_issue_points.save()
     context['issue_number_form'] = timepiece_forms.IssueNumberForm(instance=edited_issue_points.issue)
-    timepiece.IssueHistory.add_history(request.user, edited_issue_points.issue, "changed estimate for "%edited_issue_points.user, old_points, edited_issue_points.points)
+    timepiece.IssueHistory.add_history(request.user, edited_issue_points.issue, "changed estimate for %s"%edited_issue_points.user, old_points, edited_issue_points.points)
     get_interface_plugin(request, current_project.business).update_issue_points(edited_issue_points)
 
     return HttpResponse("")
