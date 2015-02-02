@@ -1030,7 +1030,7 @@ class Project(models.Model):
             
             stats_per_user[user] = {}
 
-            stats_per_user[user]['rate'] = Rate.objects.filter(project=self, user=user).first()
+            stats_per_user[user]['rate'] = Rate.objects.filter(project=self, user=user).first() or Rate(project=self, user=user, amount=0, billable_amount=0, work_ratio=1, velocity=1)
                         
             stats_per_user[user]['points_non_adhoc'] = _get_total(issue_points.filter(issue__adhoc=False).values('user').annotate(total=Sum('points')))
             stats_per_user[user]['points_closed_non_adhoc'] = _get_total(issue_points.exclude(issue__status__in=Issue.STATUSES_INDICATING_DEV_INCOMPLETE).filter(issue__adhoc=False).values('user').annotate(total=Sum('points')))

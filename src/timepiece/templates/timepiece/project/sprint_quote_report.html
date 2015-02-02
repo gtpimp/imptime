@@ -296,7 +296,7 @@ identified in the specification phase which greatly reduces risk.
       {% if settings.show_hours %}
       <th>Hours</th>
       {% endif %}
-      {% if settings.show_billable %}
+      {% if settings.show_issue_billable %}
       <th>Cost</th>
       {% endif %}
     </thead>
@@ -318,7 +318,7 @@ identified in the specification phase which greatly reduces risk.
         {% if settings.show_hours %}
 	  <td>{{estimate.points|floatformat:2}} hour{% if estimate.points != 1 %}s{% endif %}</td>
         {% endif %}
-        {% if settings.show_billable %}
+        {% if settings.show_issue_billable %}
 	  <td>R{{estimate.min_cost|floatformat:"0"|intcomma}}</td>
         {% endif %}
       </tr>
