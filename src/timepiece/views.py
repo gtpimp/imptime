@@ -2603,7 +2603,7 @@ def _get_daily_hours(user, entries, from_date=None, to_date=None):
 
     entries = entries.filter(start_time__gte=from_date, start_time__lte=to_date).extra({'on_day':'date(start_time)'})
     entries_hours_per_day = entries.values('on_day').order_by("on_day").annotate(total_hours=Sum('hours'))
-    daily_hours_by_project = entries.values('on_day', 'project__business__name', 'project__name').order_by("on_day", "project__business__name", "project__name").annotate(total_hours=Sum('hours'))
+    daily_hours_by_project = entries.values('on_day', 'issue__project__business__name', 'issue__project__name').order_by("on_day", "issue__project__business__name", "issue__project__name").annotate(total_hours=Sum('hours'))
 
     hours_per_day = {}
     for entry_hours_per_day in entries_hours_per_day:
