@@ -131,12 +131,12 @@ class Extractor(object):
                 logger.exception(ex)
                 self.status['infos'].append("Couldn't update actual time in the interface because: %s" % ex)
 
-        # for project in Project.objects.filter(business=business):
-        #     if not project.can_add_dev_time():
-        #         timing_after = project.total_hours_for_user(user=timesheet_user)
-        #         if timing_after != project_timings_before[project]:
-        #             self.status['errors'].append("Not allowed to add dev time to [%s - %s] in status %s. Expected %s hours, but trying to add %s hours." % \
-        #                                          (project.business.name, project, project.status2, project_timings_before[project], timing_after))
+        for project in Project.objects.filter(business=business):
+            if not project.can_add_dev_time():
+                timing_after = project.total_hours_for_user(user=timesheet_user)
+                if timing_after != project_timings_before[project]:
+                    self.status['infos'].append("Dev time was added to [%s - %s] in status %s. Expected %s hours, but changed to %s hours." % \
+                                                 (project.business.name, project, project.status2, project_timings_before[project], timing_after))
                 
     def _process_orgnode(self, business, sprint_name, orgnode, issues_processed):
         activity = Activity.objects.get_or_create(code='dev')[0]

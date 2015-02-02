@@ -46,6 +46,10 @@ def import_timesheet(request):
         username=form.cleaned_data['username']
         user = None
         try:
+            mail_to = settings.EMACS_ADMIN_USER_EMAILS
+            #if user:
+            #    mail_to.append(user.email)
+            
             user = User.objects.get(username=username)
             the_extractor = Extractor(username=username)
             status = the_extractor.extract_for_filecontent(filename=form.filename,
@@ -53,14 +57,18 @@ def import_timesheet(request):
 
             if len(status.get('errors', [])) > 0:
                 raise Exception("\n".join(status['errors']))
+
+            if len(status.get('infos', [])) > 0:
+                send_mail(subject="Warnings importing timesheet for %s : %s" %(username, form.filename),
+                          message="\n".join(status['info']),
+                          from_email="info@implicitdesign.co.za",
+                          recipient_list=mail_to,
+                          fail_silently=True)
             
             return HttpResponse(json.dumps({'status':status,
                                             'msg':"Single file import of %s complete." % (form.filename)}))
         except Exception, ex:
             logger.exception(ex)
-            mail_to = settings.EMACS_ADMIN_USER_EMAILS
-            if user:
-                mail_to.append(user.email)
             send_mail(subject="Problems importing timesheet for %s : %s" %(username, form.filename),
                       message=str(ex),
                       from_email="info@implicitdesign.co.za",
