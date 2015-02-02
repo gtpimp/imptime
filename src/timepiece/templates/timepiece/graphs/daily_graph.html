@@ -41,8 +41,8 @@
                 {% for event in days_hours.daily_hours_by_project %}
                 <tr>
                   <td style="padding:5px">{{event.on_day|date:"d-M-Y (D)"}}</td>
-                  <td style="padding:5px">{{event.project__business__name}}</td>
-                  <td style="padding:5px">{{event.project__name}}</td>
+                  <td style="padding:5px">{{event.issue__project__business__name}}</td>
+                  <td style="padding:5px">{{event.issue__project__name}}</td>
                   <td style="padding:5px">{{event.total_hours}}</td>
                 </tr>
                 {% endfor %}
