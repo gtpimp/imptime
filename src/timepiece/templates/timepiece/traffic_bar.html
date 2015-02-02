@@ -1,10 +1,18 @@
 <div style="float:left" class="short_traffic">
-  <div class="special_traffic_container">
+  <div class="special_traffic_container" {% if tooltips %} style="cursor:point; position:relative" onclick="$(this).find('.traffic_tooltip').slideToggle(); return false"{% endif %}>
     <div class="special_traffic_colourbar {{colour}}" style="width:{{ width_percent }}%;" >
       &nbsp;
     </div>
     <div class="special_traffic_text">
       {{message}}
     </div>
+    {% if tooltips %}
+    <div class="traffic_tooltip" style="display:none">
+      {% for tooltip in tooltips %}
+        {{tooltip}}<br/>
+      {% endfor %}
+    </div>
+    {% endif %}
   </div>
+
 </div>
