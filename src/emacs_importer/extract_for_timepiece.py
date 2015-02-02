@@ -103,7 +103,7 @@ class Extractor(object):
         for project in Project.objects.filter(business=business):
             project_timings_before[project] = project.total_hours_for_user(user=timesheet_user)
                     
-        Entry.objects.all().filter(user__username=self.username, project__business=business).delete()
+        Entry.objects.all().filter(user__username=self.username, issue__project__business=business).delete()
 
         sprint_name = None
 
@@ -191,14 +191,14 @@ class Extractor(object):
         
         # Insert the clock entries
         for clock in orgnode.getClocks():
-            entry = Entry.objects.create(user=timesheet_user, 
-                                         start_time=clock['from'], end_time=clock['to'],
-                                         activity=activity,
-                                         location=location,
-                                         project=project,
-                                         status='approved',
-                                         comments=orgnode.Heading(),
-                                         extended_comments=orgnode.CleanBody())
+            Entry.objects.create(user=timesheet_user, 
+                                 start_time=clock['from'], end_time=clock['to'],
+                                 activity=activity,
+                                 location=location,
+                                 issue=issue,
+                                 status='approved',
+                                 comments=orgnode.Heading(),
+                                 extended_comments=orgnode.CleanBody())
 
             if issue is not None:
 
@@ -206,9 +206,6 @@ class Extractor(object):
                     issue.assigned_to = timesheet_user
                     issue.save()
                 
-                entry.issue = issue
-                entry.project = issue.project
-                entry.save()
                 issues_processed.add(issue)
 
             self.status['num_entries_created'] += 1
