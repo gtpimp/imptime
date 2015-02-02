@@ -1061,12 +1061,12 @@ class Project(models.Model):
             stats_per_user[user]['hours_adhoc_billable'] = stats_per_user[user]['rate'].billable_amount * stats_per_user[user]['hours_adhoc']
 
             if stats_per_user[user]['hours_closed_normal']:
-                stats_per_user[user]['calculated_velocity'] = float((stats_per_user[user]['points_closed_non_adhoc'] or 0)) / (float(stats_per_user[user]['hours_closed_normal']) or 1)
+                stats_per_user[user]['calculated_velocity'] = (float(stats_per_user[user]['hours_closed_normal']) or 0) / float((stats_per_user[user]['points_closed_non_adhoc'] or 1))
             else:
                 stats_per_user[user]['calculated_velocity'] = 0
             stats_per_user[user]['calculated_work_ratio'] = (float(stats_per_user[user]['hours_adhoc']) or 0.0) / (float((stats_per_user[user]['hours'] or 1)))
 
-            stats_per_user[user]['points_calculated_open_non_adhoc'] = (stats_per_user[user]['points_open_non_adhoc'] or 0) / (stats_per_user[user]['calculated_velocity'] or 1)
+            stats_per_user[user]['points_calculated_open_non_adhoc'] = (stats_per_user[user]['points_open_non_adhoc'] or 0) * (stats_per_user[user]['calculated_velocity'] or 1)
             stats_per_user[user]['points_calculated_open_non_adhoc_ctc'] = float(stats_per_user[user]['rate'].amount) * (stats_per_user[user]['points_calculated_open_non_adhoc'] or 0)
             stats_per_user[user]['points_calculated_open_non_adhoc_billable'] = float(stats_per_user[user]['rate'].billable_amount) * (stats_per_user[user]['points_calculated_open_non_adhoc'] or 0)
             stats_per_user[user]['calculated_remaining_billable'] = float(stats_per_user[user]['points_calculated_open_non_adhoc_billable']) + float(stats_per_user[user]['hours_billable'])
