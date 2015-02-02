@@ -14,7 +14,7 @@ class MissingTimesheetEntriesPlugin(BasePlugin):
 
         active_projects = timepiece.Project.objects.all().filter(business=self.business).filter_open().filter_in_dev().order_by("order")
         for project in active_projects:
-            most_recent_entry = timepiece.Entry.objects.filter(project=project).order_by("-start_time").first()
+            most_recent_entry = timepiece.Entry.objects.filter(issue__project=project).order_by("-start_time").first()
             if most_recent_entry is None:
                 problems.append(self._create_problem_item(msg="%s hasn't got any time logged"%(project), project=project))
             else:
