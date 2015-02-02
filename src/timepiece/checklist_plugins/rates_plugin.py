@@ -16,7 +16,7 @@ class RatesPlugin(BasePlugin):
                                                                                         Q(velocity__isnull=True)|Q(velocity=0)|\
                                                                                         Q(work_ratio__isnull=True)|Q(work_ratio=0))
         for invalid_rate in invalid_rates.order_by("project__name"):
-            if timepiece.Entry.objects.filter(project=invalid_rate.project, user=invalid_rate.user).count()>0 or \
+            if timepiece.Entry.objects.filter(issue__project=invalid_rate.project, user=invalid_rate.user).count()>0 or \
                   timepiece.Issue.objects.filter(project=invalid_rate.project, assigned_to=invalid_rate.user).count()>0:
                 problems.append(self._create_problem_item(msg="User %s in sprint %s has no rate"%(invalid_rate.user.username, invalid_rate.project), project=invalid_rate.project))
         return problems
