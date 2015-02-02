@@ -1590,7 +1590,7 @@ class EntriesQuerySet(QuerySet):
         user (typically the logged in user) is assigned to """
         if user.is_superuser:
             return self
-        return self.filter(project__users=user)
+        return self.filter(issue__project__users=user)
 
     def cost_totals_for_project(self, project):
         """ this function assumes that all entries in the queryset
