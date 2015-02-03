@@ -60,7 +60,7 @@ def import_timesheet(request):
 
             if len(status.get('infos', [])) > 0:
                 send_mail(subject="Warnings importing timesheet for %s : %s" %(username, form.filename),
-                          message="\n".join(status['info']),
+                          message="\n".join(status['infos']),
                           from_email="info@implicitdesign.co.za",
                           recipient_list=mail_to,
                           fail_silently=True)
