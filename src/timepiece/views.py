@@ -421,15 +421,15 @@ def summary(request, username=None):
         from_date, to_date = form.save()
 
     entries = timepiece.Entry.no_join.filter_by_logged_in_user(request.user).values(
-        'project__id',
-        'project__business__id',
-        'project__business__name',
-        'project__name',
+        'issue__project__id',
+        'issue__project__business__id',
+        'issue__project__business__name',
+        'issue__project__name',
     ).order_by(
-        'project__id',
-        'project__business__id',
-        'project__business__name',
-        'project__name',
+        'issue__project__id',
+        'issue__project__business__id',
+        'issue__project__business__name',
+        'issue__project__name',
     )
 
     dates = Q()
@@ -438,7 +438,7 @@ def summary(request, username=None):
     if to_date:
         dates &= Q(end_time__lte=to_date)
     project_totals = entries.filter(dates).annotate(total_hours=Sum('hours'))
-    project_totals = project_totals.order_by('project__name')
+    project_totals = project_totals.order_by('issue__project__name')
     total_hours = timepiece.Entry.objects.filter_by_logged_in_user(request.user).filter(dates).aggregate(
         hours=Sum('hours')
     )['hours']
@@ -448,8 +448,8 @@ def summary(request, username=None):
     people_totals = people_totals.annotate(total_hours=Sum('hours'))
 
     #business_per_person_totals = entries.filter(dates).values('user__username', 'project__business__name').annotate(total_hours=Sum('hours'))
-    business_per_person_totals = entries.filter(dates).values('user__username', 'project__business__name').annotate(total_hours=Sum('hours')).order_by('project__business__name')
-    business_per_project_per_person_totals = entries.filter(dates).values('user__username', 'project__name', 'project__business__name').annotate(total_hours=Sum('hours')).order_by('project__name')
+    business_per_person_totals = entries.filter(dates).values('user__username', 'issue__project__business__name').annotate(total_hours=Sum('hours')).order_by('issue__project__business__name')
+    business_per_project_per_person_totals = entries.filter(dates).values('user__username', 'issue__project__name', 'issue__project__business__name').annotate(total_hours=Sum('hours')).order_by('issue__project__name')
 
     context = {
         'form': form,

@@ -79,7 +79,13 @@
                 <tbody>
                     {% for entry in project_totals %}
                         <tr>
-                            <td><a href="{% timesheet_url 'project' entry.issue__project__id from_date %}">{{ entry.issue__project__name }}</a></td>
+                            <td>
+                              {% if entry.issue__project__id %}
+                              <a href="{% timesheet_url 'project' entry.issue__project__id from_date %}">{{ entry.issue__project__name }}</a>
+                              {% else %}
+                              No project
+                              {% endif %}
+                            </td>
                             <td class="hours">{{ entry.total_hours|floatformat:2 }}</td>
                         </tr>
                     {% endfor %}
