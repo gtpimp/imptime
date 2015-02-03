@@ -2091,8 +2091,8 @@ class Entry(models.Model):
 
 
         uninvoiced = entries.exclude(status='invoiced').aggregate(uninv=Sum('hours'))['uninv']
-        invoiced = entries.filter(status='invoiced').filter(project__billable=True).aggregate(total=Sum('hours'))['total']
-        unbillable = entries.filter(status='invoiced').exclude(project__billable=True).aggregate(total=Sum('hours'))['total']
+        invoiced = entries.filter(status='invoiced').filter(issue__project__billable=True).aggregate(total=Sum('hours'))['total']
+        unbillable = entries.filter(status='invoiced').exclude(issue__project__billable=True).aggregate(total=Sum('hours'))['total']
         
         # invoiced = entries.filter(
         #     status='invoiced').aggregate(i=Sum('hours'))['i']
@@ -2118,7 +2118,7 @@ class Entry(models.Model):
         #         data['non_billable'] += row['s']
         data['paid_leave'] = {}
         for name, pk in projects.iteritems():
-            qs = entries.filter(project=projects[name])
+            qs = entries.filter(issue__project=projects[name])
             data['paid_leave'][name] = qs.aggregate(s=Sum('hours'))['s']
         return data
 
