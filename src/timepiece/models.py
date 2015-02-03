@@ -1626,7 +1626,7 @@ class EntryQuerySet(EntriesQuerySet):
                   "month": {"date": """DATE_TRUNC('month', end_time)"""},
         }
         basic_values = (
-            'user', 'date', 'user__first_name', 'user__last_name', 'billable',
+            'user', 'date', 'user__first_name', 'user__last_name',
         )
         extra_values = extra_values or ()
         qs = self.extra(select=select[key])

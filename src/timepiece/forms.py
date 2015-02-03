@@ -528,7 +528,7 @@ class AddUpdateEntryForm(forms.Form):
     # )
 
     project = forms.ChoiceField()
-    issue_number = forms.CharField(required=False)
+    issue_number = forms.CharField(required=True)
     date = forms.DateField(required=True)
     hours = forms.CharField(required=True)
     comments = forms.CharField(max_length=1000, required=False, widget=forms.Textarea)
@@ -607,11 +607,11 @@ class AddUpdateEntryForm(forms.Form):
 
         self.instance.start_time = self.cleaned_data['start_time']
         self.instance.end_time = self.cleaned_data['end_time']
-        self.instance.project = Project.objects.get(pk=int(self.cleaned_data['project']))
+        project = Project.objects.get(pk=int(self.cleaned_data['project']))
         self.instance.user = self.user
         self.instance.comments = self.cleaned_data['comments']
         if self.cleaned_data['issue_number'].strip():
-            self.instance.issue = self.instance.project.issues.get(number=self.cleaned_data['issue_number'].strip())
+            self.instance.issue = project.issues.get(number=self.cleaned_data['issue_number'].strip())
             
         tidy_entry(self.instance)
         self.instance.save()
