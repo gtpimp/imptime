@@ -18,7 +18,7 @@ class Extractor(object):
             self.input_path = os.path.join(root_input_folder, self.username)
         self.status = {'errors':[],
                        'infos':[],
-                       'num_entries_created':0,
+                       'num_entries_refreshed':0,
                        'num_issues_created':0}
 
     def get_project_timings_for_user(self):
@@ -142,8 +142,8 @@ class Extractor(object):
             if not project.can_add_dev_time():
                 timing_after = project.total_hours_for_user(user=timesheet_user)
                 if timing_after != project_timings_before[project]:
-                    self.status['infos'].append("Dev time was added to a closed sprint: [%s - %s] which is in status %s. Expected %s hours, but changed to %s hours." % \
-                                                 (project.business.name, project, project.status2, project_timings_before[project], timing_after))
+                    self.status['infos'].append("Dev time was changed for a closed sprint: [%s - %s]. Expected %s hours, but changed to %s hours. Please check if this is right." % \
+                                                 (project.business.name, project, project_timings_before[project], timing_after))
                 
     def _process_orgnode(self, business, sprint_name, orgnode, issues_processed):
         activity = Activity.objects.get_or_create(code='dev')[0]
@@ -215,4 +215,4 @@ class Extractor(object):
                 
                 issues_processed.add(issue)
 
-            self.status['num_entries_created'] += 1
+            self.status['num_entries_refreshed'] += 1
