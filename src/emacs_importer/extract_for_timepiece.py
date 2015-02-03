@@ -104,7 +104,7 @@ class Extractor(object):
             for project in Project.objects.filter(business=business):
                 project_timings_before[project] = project.total_hours_for_user(user=timesheet_user)
                     
-            Entry.objects.all().filter(user__username=self.username, issue__project__business=business).delete()
+            Entry.objects.all().filter(user=timesheet_user, issue__project__business=business).delete()
 
         sprint_name = None
 
@@ -125,7 +125,9 @@ class Extractor(object):
             if orgnode.Level() >= 3 and sprint_name is not None:
 
                 if business is None:
-                    raise Exception("No project found with name %s, but there is a development section in the timesheet file " % business_name)
+                    logger.error("Found a development section for a project which doesn't exist: %s" % business_name)
+                    self.status['infos'].append("Found a development section for a project which doesn't exist: %s" % business_name)
+                    return
                 
                 self._process_orgnode(business, sprint_name, orgnode, issues_processed)
 
@@ -140,7 +142,7 @@ class Extractor(object):
             if not project.can_add_dev_time():
                 timing_after = project.total_hours_for_user(user=timesheet_user)
                 if timing_after != project_timings_before[project]:
-                    self.status['infos'].append("Dev time was added to [%s - %s] in status %s. Expected %s hours, but changed to %s hours." % \
+                    self.status['infos'].append("Dev time was added to a closed sprint: [%s - %s] which is in status %s. Expected %s hours, but changed to %s hours." % \
                                                  (project.business.name, project, project.status2, project_timings_before[project], timing_after))
                 
     def _process_orgnode(self, business, sprint_name, orgnode, issues_processed):

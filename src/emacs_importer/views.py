@@ -44,13 +44,13 @@ def import_timesheet(request):
     form = ImportTimesheetForm(request.POST or None, request.FILES or None)
     if form.is_valid():
         username=form.cleaned_data['username']
-        user = None
         try:
-            mail_to = settings.EMACS_ADMIN_USER_EMAILS
-            #if user:
-            #    mail_to.append(user.email)
-            
+            mail_to = set()
+            mail_to.update(settings.EMACS_ADMIN_USER_EMAILS)
             user = User.objects.get(username=username)
+            mail_to.update([user.email])
+            mail_to = list(mail_to)
+            
             the_extractor = Extractor(username=username)
             status = the_extractor.extract_for_filecontent(filename=form.filename,
                                                            file_content=form.filecontent)
