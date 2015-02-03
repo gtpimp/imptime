@@ -95,15 +95,16 @@ class Extractor(object):
         try:
             business = Business.objects.get(name=business_name)
         except:
-            raise Exception("No project found with name %s" % business_name)
+            business = None
 
         timesheet_user = User.objects.get(username=self.username)
         
         project_timings_before = {}
-        for project in Project.objects.filter(business=business):
-            project_timings_before[project] = project.total_hours_for_user(user=timesheet_user)
+        if business:
+            for project in Project.objects.filter(business=business):
+                project_timings_before[project] = project.total_hours_for_user(user=timesheet_user)
                     
-        Entry.objects.all().filter(user__username=self.username, issue__project__business=business).delete()
+            Entry.objects.all().filter(user__username=self.username, issue__project__business=business).delete()
 
         sprint_name = None
 
@@ -122,6 +123,10 @@ class Extractor(object):
                 sprint_name = orgnode.Heading()
 
             if orgnode.Level() >= 3 and sprint_name is not None:
+
+                if business is None:
+                    raise Exception("No project found with name %s, but there is a development section in the timesheet file " % business_name)
+                
                 self._process_orgnode(business, sprint_name, orgnode, issues_processed)
 
         for issue in issues_processed:
