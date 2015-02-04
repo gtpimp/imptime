@@ -859,11 +859,11 @@ class Project(models.Model):
 
     @classmethod
     def most_recent_project(self, business_id):
-        entries_per_business_ids = Entry.objects.filter(project__business_id=business_id).order_by('-end_time').values('project_id') 
+        entries_per_business_ids = Entry.objects.filter(issue__project__business_id=business_id).order_by('-end_time').values('issue__project_id') 
         project_returned = None
         
         if len(entries_per_business_ids) != 0:
-            project_id = entries_per_business_ids[0]['project_id']
+            project_id = entries_per_business_ids[0]['issue__project_id']
             
             try:
                 project_returned = Project.objects.get(pk=project_id)            
