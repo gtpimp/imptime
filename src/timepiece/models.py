@@ -888,7 +888,7 @@ class Project(models.Model):
 
     @classmethod
     def active_states(self):
-        return ( 'in dev', 'waiting to invoice', 'invoiced' )
+        return ( 'in dev', 'waiting to invoice', 'invoiced', 'in client qa' )
 
     @classmethod
     def pending_states(self):
