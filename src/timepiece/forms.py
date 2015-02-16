@@ -773,7 +773,9 @@ class ProjectForm(forms.ModelForm):
             'short_description',
             'description',
             #'colour',
-            'quote_uncertainty'
+            'ratio_management',
+            'ratio_testing',
+            'ratio_scope_creep'
         )
 
     # business = selectable_forms.AutoCompleteSelectField(
@@ -800,7 +802,9 @@ class NewProjectForm(forms.ModelForm):
             'name',
             'short_description',
             'description',
-            'quote_uncertainty'
+            'ratio_management',
+            'ratio_testing',
+            'ratio_scope_creep'
         )
 
     def __init__(self, *args, **kwargs):

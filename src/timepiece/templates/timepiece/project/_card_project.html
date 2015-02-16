@@ -114,7 +114,6 @@
       <th>Points</th>
 
       <th>Velocity</th>
-      <th>Work Ratio</th>
 
       <th>Points</th>
 
@@ -146,7 +145,6 @@
         <td>{{ values.points_non_adhoc|default:""|intcomma }}</td>
 
 	<td>{% if values.rate.velocity %}{{ values.rate.velocity|default:""|floatformat:"2"|intcomma }}{% endif %}</td>
-        <td>{% if values.rate.work_ratio %}{{ values.rate.work_percentage|default:""|floatformat:"0"|intcomma }}%{% endif %}</td>
 
         <td>{{ values.adjusted_points_non_adhoc|default:""|floatformat:"2"|intcomma }}</td>
 
@@ -185,10 +183,7 @@
     <thead>
       <th>User</th>
       <th>Points</th>
-
       <th>Velocity</th>
-      <th>Work Ratio</th>
-
       <th>Points</th>
 
       {% has_permission has_view_ctc_rates project.business %}
@@ -219,7 +214,6 @@
         <td>{{ values.points_comparative_non_adhoc|default:""|intcomma }}</td>
 
 	<td>{% if values.rate.velocity %}{{ values.rate.velocity|default:""|floatformat:"2"|intcomma }}{% endif %}</td>
-        <td>{% if values.rate.work_ratio %}{{ values.rate.work_percentage|default:""|floatformat:"0"|intcomma }}%{% endif %}</td>
 
         <td>{{ values.adjusted_points_comparative_non_adhoc|default:""|floatformat:"2"|intcomma }}</td>
 

@@ -3703,17 +3703,6 @@ def edit_project_rate(request, project_id):
         rate.velocity = new_value
         rate.save()
         return HttpResponse(new_value)
-    elif field_name == 'work_ratio':
-        if new_value.endswith('%'):
-            new_value = new_value[:-1]
-
-        try:
-            new_value = float(new_value) / 100.0
-        except (ValueError, TypeError):
-            return HttpResponse(request.POST['original_value'])
-        rate.work_ratio = new_value
-        rate.save()
-        return HttpResponse(percentage(new_value))
     else:
         ret_val = "Unsupported field"
 

@@ -15,7 +15,6 @@
         <th>CTC Rate</th>
         {% end_permission %}
         <th>Billed Rate</th>
-	<th>Work Ratio</th>
 	<th>Velocity (bigger is slower)</th>
         {% has_permission has_view_ctc_rates project.business %}
         <th>CTC</th>
@@ -40,9 +39,6 @@
         <td>
           <div class="editable_rate rate_info_billable_amount_{{user_name}}">R{{rate_info.rate.billable_amount|floatformat:"0"|intcomma}}</div>
         </td>
-	<td>
-	  <div class="editable_rate rate_info_work_ratio_{{user_name}}">{{rate_info.work_ratio|percentage}}</div>
-	</td>
 	<td>
 	  <div class="editable_rate rate_info_velocity_{{user_name}}">{{rate_info.velocity|floatformat:"1"|intcomma}}</div>
 	</td>
@@ -97,7 +93,6 @@
   {% for user_name,rate_info in users_and_hours.users.items %}
     imp.make_editable_rate("rate_info_amount_{{user_name}}","{{user_name}}","amount");
     imp.make_editable_rate("rate_info_billable_amount_{{user_name}}","{{user_name}}","billable_amount");
-    imp.make_editable_rate("rate_info_work_ratio_{{user_name}}","{{user_name}}","work_ratio");
     imp.make_editable_rate("rate_info_velocity_{{user_name}}","{{user_name}}","velocity");
   {% endfor %}
 

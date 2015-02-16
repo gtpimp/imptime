@@ -13,8 +13,7 @@ class RatesPlugin(BasePlugin):
 
         invalid_rates = timepiece.Rate.objects.filter(project__in=open_projects).filter(Q(billable_amount__isnull=True)|Q(billable_amount=0)|\
                                                                                         Q(amount__isnull=True)|Q(amount=0)|\
-                                                                                        Q(velocity__isnull=True)|Q(velocity=0)|\
-                                                                                        Q(work_ratio__isnull=True)|Q(work_ratio=0))
+                                                                                        Q(velocity__isnull=True)|Q(velocity=0))
         for invalid_rate in invalid_rates.order_by("project__name"):
             if timepiece.Entry.objects.filter(issue__project=invalid_rate.project, user=invalid_rate.user).count()>0 or \
                   timepiece.Issue.objects.filter(project=invalid_rate.project, assigned_to=invalid_rate.user).count()>0:
