@@ -5413,3 +5413,7 @@ def clear_issue_adhoc_status(request, issue_id, context=None):
     issue.adhoc = False
     issue.save()
     return HttpResponse("{'status':'ok'}")
+
+def blocked(request, template="blocked.html"):
+    context = {}
+    return render_to_response(template, context, context_instance=RequestContext(request))
