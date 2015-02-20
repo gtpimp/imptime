@@ -656,6 +656,38 @@ class Project(models.Model):
             ret[user] = total['points__sum'] if total['points__sum'] else 0
         return ret
 
+    def recalc_secondary_estimates(self):
+        """ these are estimates based on the developer estimates, for management and testing """
+
+        project_users = BusinessPermissions.by_user(self.business)
+        manager_users = []
+        tester_users = []
+        for user_id, bp in project_users.items():
+            time_tracking_mode = Rate.objects.get_or_create(project=self, user_id=user_id)[0].time_tracking_mode
+            if time_tracking_mode == 'manager':
+                manager_users.append([user_id, bp, User.objects.get(pk=user_id)])
+            elif time_tracking_mode == 'tester':
+                tester_users.append([user_id, bp, User.objects.get(pk=user_id)])
+
+        if manager_users:
+            for issue in self.issues.all():
+                estimate = issue.get_assigned_hours_estimate()[0] * self.ratio_management
+                if estimate < 0.1:
+                    estimate = 0.1
+                else:
+                    estimate = round(estimate, 2)
+                for user_id, bp, user in manager_users:
+                    issue.set_points(user=user, points=estimate)
+        if tester_users:
+            for issue in self.issues.all():
+                estimate = issue.get_assigned_hours_estimate()[0] * self.ratio_testing
+                if estimate < 0.1:
+                    estimate = 0.1
+                else:
+                    estimate = round(estimate, 2)
+                for user_id, bp, user in tester_users:
+                    issue.set_points(user=user, points=estimate)
+    
     def refresh_issues_order(self):
         """ Doesn't re-sort, just makes the numbers sequential """
         order = 1
@@ -2629,6 +2661,10 @@ class Rate(models.Model):
     work_ratio = models.FloatField(default=0)
     time_tracking_mode = models.CharField(default="developer", max_length=50, choices=TIME_TRACKING_MODES, null=False )
 
+    def save(self, *args, **kwargs):
+        super(Rate, self).save(*args, **kwargs)
+        self.project.recalc_secondary_estimates()
+
 class Expense(models.Model):
     date = models.DateField()
     amount = models.DecimalField(max_digits=8,decimal_places=0,default=0)
@@ -2683,6 +2719,7 @@ class Issue(models.Model):
            ( 'dev unclear', 'dev unclear'),
            ( 'duplicate', 'duplicate'),
            ( 'to be designed', 'to be designed'),
+           ( 'imported', 'imported'),
         )
 
     STATUSES_INDICATING_DEV_INCOMPLETE = ['new', 'bug', 'reopened']
@@ -2749,7 +2786,7 @@ class Issue(models.Model):
         if new_order > num_issues:
             new_order = num_issues
         return new_order
-    
+
     def get_user_issue_points(self, user):
 
         if isinstance(user,basestring):
@@ -2771,8 +2808,9 @@ class Issue(models.Model):
         except IssuePoints.DoesNotExist:
             issue_points = IssuePoints.objects.create(user=user, issue=self)
 
-        issue_points.points = points 
-        issue_points.save()
+        if issue_points != points:
+            issue_points.points = points 
+            issue_points.save()
 
     @classmethod
     def extract_issue_id(self, s):
@@ -2938,7 +2976,7 @@ class IssuePoints(models.Model):
     issue = models.ForeignKey(Issue, related_name="issue_points")
 
     def __unicode__(self):
-        return u'%s:%s - %s points' % (self.issue.subject, self.user.username, self.points)
+        return u'%s:%s - %s hours' % (self.issue.subject, self.user.username, self.points)
 
 class IssueHistory(models.Model):
     

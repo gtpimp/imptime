@@ -3664,6 +3664,8 @@ def view_project_rates(request, project_id, template="timepiece/project/view_rat
     if not has_view_ctc_billable_rates:
         raise PermissionDenied
 
+    project.recalc_secondary_estimates()
+    
     context['project'] = project
     context['current_user'] = request.user
     context['users_and_hours'] = project.users_and_hours()
@@ -3707,6 +3709,8 @@ def edit_project_rate(request, project_id):
         else:
             ret_val = "Unsupported field"
         project.save()
+        project.recalc_secondary_estimates()
+        
     else:
         rate = project.get_user_rate(user_name)
 

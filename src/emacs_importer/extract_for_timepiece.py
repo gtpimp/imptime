@@ -181,11 +181,11 @@ class Extractor(object):
         if issue_id is None or issue is None:
             # Auto create the issue
             try:
-                issue, is_new = Issue.objects.get_or_create(status='new',
-                                                            project=project,
+                issue, is_new = Issue.objects.get_or_create(project=project,
                                                             subject=orgnode.Heading(),
                                                             defaults={'auto_created_during_import':True,
                                                                       'adhoc':True,
+                                                                      'status':'imported',
                                                                       'assigned_to':timesheet_user,
                                                                       'number':Issue.get_next_issue_number(project.business),
                                                                       'description':orgnode.Body(),
