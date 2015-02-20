@@ -3668,6 +3668,7 @@ def view_project_rates(request, project_id, template="timepiece/project/view_rat
     context['current_user'] = request.user
     context['users_and_hours'] = project.users_and_hours()
     context['recalculate_url'] = reverse('view_project_rates', args=[project_id])
+    context['time_tracking_mode_options'] = ",".join( list( [x for x,y in timepiece.Rate.TIME_TRACKING_MODES] ) )
     return render_to_response(template, context, context_instance=RequestContext(request))
 
 @csrf_exempt
@@ -3726,6 +3727,10 @@ def edit_project_rate(request, project_id):
             rate.velocity = new_value
             rate.save()
             return HttpResponse(new_value)
+        elif field_name == 'time_tracking_mode':
+            rate.time_tracking_mode = new_value
+            rate.save()
+            ret_val = new_value
         else:
             ret_val = "Unsupported field"
 

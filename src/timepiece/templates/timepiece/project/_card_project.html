@@ -57,15 +57,15 @@
   <h1>Cost summary</h1>
   <table>
     <thead>
-      <th>CTC</th>
-      <th>Billable</th>
+      <th class="money_cell money_ctc">CTC</th>
+      <th class="money_cell money_billable">Billable</th>
       <th>Budget</th>
       <th>Projected cost</th>
     </thead>
     <tbody>
       <tr>
-        <td>R{{ project.new_stats.total.hours_ctc|floatformat:"0"|intcomma }}</td>
-        <td>R{{ project.new_stats.total.hours_billable|floatformat:"0"|intcomma }}</td>
+        <td class="money_cell money_ctc">R{{ project.new_stats.total.hours_ctc|floatformat:"0"|intcomma }}</td>
+        <td class="money_cell money_billable">R{{ project.new_stats.total.hours_billable|floatformat:"0"|intcomma }}</td>
         <td>
           {% has_permission has_view_budget project.business %}
           R{{project.budget|floatformat:"0"|intcomma}}          
@@ -118,42 +118,37 @@
       <th>Points</th>
 
       {% has_permission has_view_ctc_rates project.business %}
-      <th colspan="2">ctc</th>
+      <th colspan="2" class="money_cell money_ctc">ctc</th>
       {% end_permission %}
-      <th colspan="2">billable</th>
+      <th colspan="2" class="money_cell money_billable">billable</th>
     </thead>
     <tbody>
       <tr class="table_info_row">
         <td></td>
-        <td>Normal</td>
+        <td>Unadjusted</td>
         
         <td>Estimated</td>
-        <td>Estimated</td>
+        <td>Adjusted for velocity</td>
 
-        <td>Normal Adjusted</td>
+        <td  class="money_cell money_ctc">Rate</td>
+        <td  class="money_cell money_ctc">Amount</td>
 
-        <td>Rate</td>
-        <td>Amount</td>
-
-        <td>Rate</td>
-        <td>Amount</td>
+        <td  class="money_cell money_billable">Rate</td>
+        <td  class="money_cell money_billable">Amount</td>
       </tr>
       {% for user, values in project.new_stats.per_user.items %}
       <tr>
 	<td>{{ user.username }}</td>
-
         <td>{{ values.points_non_adhoc|default:""|intcomma }}</td>
-
 	<td>{% if values.rate.velocity %}{{ values.rate.velocity|default:""|floatformat:"2"|intcomma }}{% endif %}</td>
-
         <td>{{ values.adjusted_points_non_adhoc|default:""|floatformat:"2"|intcomma }}</td>
 
         {% has_permission has_view_ctc_rates project.business %}
-        <td>{% if values.rate.amount %}R{{ values.rate.amount|default:""|floatformat:"0"|intcomma }}{% endif %}</td>
-        <td>{% if values.adjusted_points_ctc %}R{{ values.adjusted_points_ctc|default:""|floatformat:"0"|intcomma}}{% endif %}</td>
+        <td class="money_cell money_ctc">{% if values.rate.amount %}R{{ values.rate.amount|default:""|floatformat:"0"|intcomma }}{% endif %}</td>
+        <td class="money_cell money_ctc">{% if values.adjusted_points_ctc %}R{{ values.adjusted_points_ctc|default:""|floatformat:"0"|intcomma}}{% endif %}</td>
         {% end_permission %}
-        <td>{% if values.rate.billable_amount %}R{{ values.rate.billable_amount|default:""|floatformat:"0"|intcomma }}{% endif %}</td>
-        <td>{% if values.adjusted_points_billable %}R{{ values.adjusted_points_billable|default:""|floatformat:"0"|intcomma}}{% endif %}</td>
+        <td class="money_cell money_billable">{% if values.rate.billable_amount %}R{{ values.rate.billable_amount|default:""|floatformat:"0"|intcomma }}{% endif %}</td>
+        <td class="money_cell money_billable">{% if values.adjusted_points_billable %}R{{ values.adjusted_points_billable|default:""|floatformat:"0"|intcomma}}{% endif %}</td>
       </tr>
       {% endfor %}
       <tr>
@@ -163,12 +158,10 @@
         <th></th>
         <th></th>
 
-        <th></th>
-        
-        <th></th>
-        <th></th>
-        <th></th>
-        <th>{% if project.new_stats.total.points_billable %}R{{ project.new_stats.total.points_billable|default:""|floatformat:"0"|intcomma }}{% endif %} </th>
+        <th class="money_cell money_ctc"></th>
+        <th class="money_cell money_ctc"></th>
+        <th class="money_cell money_billable"></th>
+        <th class="money_cell money_billable">{% if project.new_stats.total.points_billable %}R{{ project.new_stats.total.points_billable|default:""|floatformat:"0"|intcomma }}{% endif %} </th>
       </tr>
     </tbody>
   </table>
@@ -187,25 +180,25 @@
       <th>Points</th>
 
       {% has_permission has_view_ctc_rates project.business %}
-      <th colspan="2">ctc</th>
+      <th colspan="2" class="money_cell money_ctc">ctc</th>
       {% end_permission %}
-      <th colspan="2">billable</th>
+      <th colspan="2" class="money_cell money_billable">billable</th>
     </thead>
     <tbody>
       <tr class="table_info_row">
         <td></td>
-        <td>Normal</td>
+        <td>Unadjusted</td>
         
+        <td >Estimated</td>
         <td>Estimated</td>
-        <td>Estimated</td>
 
-        <td>Normal Adjusted</td>
+        <td>Adjusted</td>
 
-        <td>Rate</td>
-        <td>Amount</td>
+        <td class="money_cell money_ctc">Rate</td>
+        <td class="money_cell money_ctc">Amount</td>
 
-        <td>Rate</td>
-        <td>Amount</td>
+        <td class="money_cell money_billable">Rate</td>
+        <td class="money_cell money_billable">Amount</td>
       </tr>
       {% for user, values in project.new_stats.per_user.items %}
       <tr>
@@ -218,11 +211,11 @@
         <td>{{ values.adjusted_points_comparative_non_adhoc|default:""|floatformat:"2"|intcomma }}</td>
 
         {% has_permission has_view_ctc_rates project.business %}
-        <td>{% if values.rate.amount %}R{{ values.rate.amount|default:""|floatformat:"0"|intcomma }}{% endif %}</td>
-        <td>{% if values.adjusted_points_comparative_ctc %}R{{ values.adjusted_points_comparative_ctc|default:""|floatformat:"0"|intcomma}}{% endif %}</td>
+        <td class="money_cell money_ctc">{% if values.rate.amount %}R{{ values.rate.amount|default:""|floatformat:"0"|intcomma }}{% endif %}</td>
+        <td class="money_cell money_ctc">{% if values.adjusted_points_comparative_ctc %}R{{ values.adjusted_points_comparative_ctc|default:""|floatformat:"0"|intcomma}}{% endif %}</td>
         {% end_permission %}
-        <td>{% if values.rate.billable_amount %}R{{ values.rate.billable_amount|default:""|floatformat:"0"|intcomma }}{% endif %}</td>
-        <td>{% if values.adjusted_points_comparative_billable %}R{{ values.adjusted_points_comparative_billable|default:""|floatformat:"0"|intcomma}}{% endif %}</td>
+        <td class="money_cell money_billable">{% if values.rate.billable_amount %}R{{ values.rate.billable_amount|default:""|floatformat:"0"|intcomma }}{% endif %}</td>
+        <td class="money_cell money_billable">{% if values.adjusted_points_comparative_billable %}R{{ values.adjusted_points_comparative_billable|default:""|floatformat:"0"|intcomma}}{% endif %}</td>
       </tr>
       {% endfor %}
     </tbody>
@@ -238,10 +231,10 @@
       <th>% complete</th>
 
       {% has_permission has_view_ctc_rates project.business %}
-      <th colspan="2">ctc</th>
+      <th colspan="2" class="money_cell money_ctc">ctc</th>
       {% end_permission %}
       {% has_permission has_view_ctc_billable_rates project.business %}
-      <th colspan="2">billable</th>
+      <th colspan="2" class="money_cell money_billable">billable</th>
       {% end_permission %}
     </thead>
     <tbody>
@@ -249,16 +242,16 @@
         <td></td>
 
         <td>Total</td>
-        <td>Normal</td>
-        <td>Normal done</td>
+        <td>Unadjusted</td>
+        <td>Unadjusted done</td>
         <td>Adhoc</td>
 
-        <td>Normal points</td>
+        <td>Unadjusted points</td>
 
-        <td>Rate</td>
-        <td>Amount</td>
-        <td>Rate</td>
-        <td>Amount</td>
+        <td class="money_cell money_ctc">Rate</td>
+        <td class="money_cell money_ctc">Amount</td>
+        <td class="money_cell money_billable">Rate</td>
+        <td class="money_cell money_billable">Amount</td>
       </tr>
 
       {% for user, values in project.new_stats.per_user.items %}
@@ -266,18 +259,18 @@
 	<td>{{ user.username }}</td>
 
 	<td>{{ values.hours|default:"" }}</td>
-        <td>{{ values.hours_normal|default:""|intcomma }}</td>
-        <td>{{ values.hours_closed_normal|default:""|intcomma }}</td>
+        <td>{{ values.hours_unadjusted|default:""|intcomma }}</td>
+        <td>{{ values.hours_closed_unadjusted|default:""|intcomma }}</td>
         <td>{{ values.hours_adhoc|default:""|intcomma }}</td>
 
         <td>{% if values.percentage_points_complete %}{{ values.percentage_points_complete|default:""|floatformat:"0"|intcomma}}%{% endif %}</td>
 
         {% has_permission has_view_ctc_rates project.business %}
-        <td>{% if values.rate.amount %}R{{ values.rate.amount|default:""|floatformat:"0"|intcomma }}{% endif %}</td>
-	<td>{% if values.hours_ctc %}R{{ values.hours_ctc|default:""|floatformat:"0"|intcomma }}{% endif %}</td>
+        <td class="money_cell money_ctc">{% if values.rate.amount %}R{{ values.rate.amount|default:""|floatformat:"0"|intcomma }}{% endif %}</td>
+	<td class="money_cell money_ctc">{% if values.hours_ctc %}R{{ values.hours_ctc|default:""|floatformat:"0"|intcomma }}{% endif %}</td>
         {% end_permission %}
-        <td>{% if values.rate.billable_amount %}R{{ values.rate.billable_amount|default:""|floatformat:"0"|intcomma }}{% endif %}</td>
-	<td>{% if values.hours_billable %}R{{ values.hours_billable|default:""|floatformat:"0"|intcomma }}{% endif %}</td>
+        <td class="money_cell money_billable">{% if values.rate.billable_amount %}R{{ values.rate.billable_amount|default:""|floatformat:"0"|intcomma }}{% endif %}</td>
+	<td class="money_cell money_billable">{% if values.hours_billable %}R{{ values.hours_billable|default:""|floatformat:"0"|intcomma }}{% endif %}</td>
 
       </tr>
       {% endfor %}
@@ -285,18 +278,18 @@
         <th>Total</th>
         
         <th>{{ project.new_stats.total.hours }}</th>
-        <th>{{ project.new_stats.total.hours_normal }}</th>
-        <th>{{ project.new_stats.total.hours_closed_normal }}</th>
+        <th>{{ project.new_stats.total.hours_unadjusted }}</th>
+        <th>{{ project.new_stats.total.hours_closed_unadjusted }}</th>
         <th>{{ project.new_stats.total.hours_adhoc }}</th>
 
         <th>{{ project.new_stats.total.percentage_points_complete|default:""|floatformat:"0"|intcomma }}%</th>
 
         {% has_permission has_view_ctc_rates project.business %}
-        <th></th>
-        <th>{% if project.new_stats.total.hours_ctc %}R{{ project.new_stats.total.hours_ctc|default:""|floatformat:"0"|intcomma }}{% endif %}</th>
+        <th class="money_cell money_ctc"></th>
+        <th class="money_cell money_ctc">{% if project.new_stats.total.hours_ctc %}R{{ project.new_stats.total.hours_ctc|default:""|floatformat:"0"|intcomma }}{% endif %}</th>
         {% end_permission %}
-        <th></th>
-        <th>{% if project.new_stats.total.hours_billable %}R{{ project.new_stats.total.hours_billable|default:""|floatformat:"0"|intcomma }}{% endif %}</th>
+        <th class="money_cell money_billable"></th>
+        <th class="money_cell money_billable">{% if project.new_stats.total.hours_billable %}R{{ project.new_stats.total.hours_billable|default:""|floatformat:"0"|intcomma }}{% endif %}</th>
 
       </tr>
         
@@ -319,27 +312,27 @@
       <th>Points</th>
 
       {% has_permission has_view_ctc_rates project.business %}
-      <th colspan="2">ctc</th>
+      <th colspan="2" class="money_cell money_ctc">ctc</th>
       {% end_permission %}
       {% has_permission has_view_ctc_billable_rates project.business %}
-      <th colspan="4">billable</th>
+      <th colspan="4" class="money_cell money_billable">billable</th>
       {% end_permission %}
     </thead>
     <tbody>
       <tr class="table_info_row">
         <td></td>
 
-        <td>Normal closed</td>
-        <td>Normal open</td>
+        <td>Unadjusted closed</td>
+        <td>Unadjusted open</td>
 
         <td>Calculated</td>
 
-        <td>Projected normal open</td>
+        <td>Projected unadjusted open</td>
 
-        <td>Rate</td>
-        <td>Remaining</td>
-        <td>Rate</td>
-        <td>Remaining</td>
+        <td class="money_cell money_ctc">Rate</td>
+        <td class="money_cell money_ctc">Remaining</td>
+        <td class="money_cell money_billable">Rate</td>
+        <td class="money_cell money_billable">Remaining</td>
         <td>Projected total remaining</td>
         <td>Projected total</td>
       </tr>
@@ -356,11 +349,11 @@
         <td>{% if values.points_calculated_open_non_adhoc %}{{ values.points_calculated_open_non_adhoc|floatformat:"2"|default:""|intcomma }}{% endif %}</td>
 
         {% has_permission has_view_ctc_rates project.business %}
-        <td>{% if values.rate.amount %}R{{ values.rate.amount|default:""|floatformat:"0"|intcomma }}{% endif %}</td>
-	<td>{% if values.points_calculated_open_non_adhoc_ctc %}R{{ values.points_calculated_open_non_adhoc_ctc|default:""|floatformat:"0"|intcomma }}{% endif %}</td>
+        <td class="money_cell money_ctc">{% if values.rate.amount %}R{{ values.rate.amount|default:""|floatformat:"0"|intcomma }}{% endif %}</td>
+	<td class="money_cell money_ctc">{% if values.points_calculated_open_non_adhoc_ctc %}R{{ values.points_calculated_open_non_adhoc_ctc|default:""|floatformat:"0"|intcomma }}{% endif %}</td>
         {% end_permission %}
-        <td>{% if values.rate.billable_amount %}R{{ values.rate.billable_amount|default:""|floatformat:"0"|intcomma }}{% endif %}</td>
-        <td>{% if values.points_calculated_open_non_adhoc_billable %}R{{ values.points_calculated_open_non_adhoc_billable|default:""|floatformat:"0"|intcomma }}{% endif %}</td>
+        <td class="money_cell money_billable">{% if values.rate.billable_amount %}R{{ values.rate.billable_amount|default:""|floatformat:"0"|intcomma }}{% endif %}</td>
+        <td class="money_cell money_billable">{% if values.points_calculated_open_non_adhoc_billable %}R{{ values.points_calculated_open_non_adhoc_billable|default:""|floatformat:"0"|intcomma }}{% endif %}</td>
 
         <td></td>
         <td></td>
@@ -374,11 +367,11 @@
         <th></th>
         <th></th>
         <th></th>
-        <th></th>
-        <th>{% if project.new_stats.total.points_calculated_open_non_adhoc_ctc %}R {{project.new_stats.total.points_calculated_open_non_adhoc_ctc|default:""|floatformat:"0"|intcomma }}{% endif %}</th>
+        <th class="money_cell money_ctc"></th>
+        <th class="money_cell money_ctc">{% if project.new_stats.total.points_calculated_open_non_adhoc_ctc %}R {{project.new_stats.total.points_calculated_open_non_adhoc_ctc|default:""|floatformat:"0"|intcomma }}{% endif %}</th>
 
-        <th></th>
-        <th>{% if project.new_stats.total.points_calculated_open_non_adhoc_billable %}R {{project.new_stats.total.points_calculated_open_non_adhoc_billable|default:""|floatformat:"0"|intcomma }}{% endif %}</th>
+        <th class="money_cell money_billable"></th>
+        <th class="money_cell money_billable">{% if project.new_stats.total.points_calculated_open_non_adhoc_billable %}R {{project.new_stats.total.points_calculated_open_non_adhoc_billable|default:""|floatformat:"0"|intcomma }}{% endif %}</th>
         <th>{% if project.new_stats.total.projected_remaining %}R {{project.new_stats.total.projected_remaining|default:""|floatformat:"0"|intcomma }}{% endif %}</th>
         <th>{% if project.new_stats.total.projected_total %}R {{project.new_stats.total.projected_total|default:""|floatformat:"0"|intcomma }}{% endif %}</th>
         
@@ -390,10 +383,10 @@
         <td></td>
         <td></td>
         <td></td>
-        <td></td>
-        <td></td>
-        <td></td>
-        <td></td>
+        <td class="money_cell money_ctc"></td>
+        <td class="money_cell money_ctc"></td>
+        <td class="money_cell money_billable"></td>
+        <td class="money_cell money_billable"></td>
         <td>for issues with points</td>
         <td>including projected adhoc time</td>
         <td>assumes the same ratio of adhoc time</td>
@@ -409,18 +402,18 @@
       <thead>
         <th></th>
         {% has_permission has_view_ctc_rates project.business %}
-        <th>ctc</th>
+        <th class="money_cell money_ctc">ctc</th>
         {% end_permission %}
-        <th>billable</th>
+        <th class="money_cell money_billable">billable</th>
       </thead>
       <tbody>
         {% for data in project.costs_by_feature.values %} 
         <tr>
           <th>{{data.name}}</th>
           {% has_permission has_view_ctc_rates project.business %}
-          <td>R{{data.ctc|floatformat:"0"|intcomma}}</td>
+          <td class="money_cell money_ctc">R{{data.ctc|floatformat:"0"|intcomma}}</td>
           {% end_permission %}
-          <td>R{{data.billable|floatformat:"0"|intcomma}}</td>
+          <td class="money_cell money_billable">R{{data.billable|floatformat:"0"|intcomma}}</td>
         </tr>
         {% endfor %}
       </tbody>
@@ -440,7 +433,7 @@
     {% has_permission has_view_ctc_billable_rates project.business %}
     
         {% has_permission has_view_ctc_rates project.business %}
-        <div class="graph">
+        <div class="graph money_cell money_ctc"">
           <h1>ctc per user</h1>
           <div class="{{project.id}}_graph_ctc_by_user" style="height:300px;width:300px;"></div>
           <div style="clear:both"></div>
@@ -448,7 +441,7 @@
         </div>
         <div style="clear:both"></div>
         {% end_permission %}
-        <div class="graph">
+        <div class="graph money_cell money_billable">
           <h1>billable per user</h1>
           <div class="{{project.id}}_graph_billable_by_user" style="height:300px;width:300px;"></div>
           <div style="clear:both"></div>
@@ -564,3 +557,7 @@
 </div>
 
 <div style="clear:both"></div>
+
+<script>
+ imp.refresh_show_numbers();
+</script>

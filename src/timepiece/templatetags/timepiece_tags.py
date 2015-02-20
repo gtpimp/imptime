@@ -246,13 +246,13 @@ def running_progress_for_user_in_sprint(context, user, project):
     data['message'] = 'V = %.2f' % project.new_stats['per_user'][user]['calculated_velocity']
 
     data['tooltips'] = [ "Total hours: %.2f" % (project.new_stats['per_user'][user]['hours'] or 0),
-                         "Total Normal hours: %.2f" % (project.new_stats['per_user'][user]['hours_normal'] or 0),
+                         "Total Unadjusted hours: %.2f" % (project.new_stats['per_user'][user]['hours_unadjusted'] or 0),
                          "Total Adhoc hours: %.2f" % (project.new_stats['per_user'][user]['hours_adhoc'] or 0),
-                         "Closed normal hours: %.2f" % (project.new_stats['per_user'][user]['hours_closed_normal'] or 0),
+                         "Closed unadjusted hours: %.2f" % (project.new_stats['per_user'][user]['hours_closed_unadjusted'] or 0),
                          "",
-                         "Total normal points: %.2f" % (project.new_stats['per_user'][user]['points_non_adhoc'] or 0),
-                         "Open normal points: %.2f" % (project.new_stats['per_user'][user]['points_open_non_adhoc'] or 0),
-                         "Closed normal points: %.2f" % (project.new_stats['per_user'][user]['points_closed_non_adhoc'] or 0),
+                         "Total unadjusted points: %.2f" % (project.new_stats['per_user'][user]['points_non_adhoc'] or 0),
+                         "Open unadjusted points: %.2f" % (project.new_stats['per_user'][user]['points_open_non_adhoc'] or 0),
+                         "Closed unadjusted points: %.2f" % (project.new_stats['per_user'][user]['points_closed_non_adhoc'] or 0),
                          "",
                          "Expected velocity: %.2f" % (project.new_stats['per_user'][user]['rate'].velocity or 0),
                          "Actual velocity: %.2f" % (project.new_stats['per_user'][user]['calculated_velocity'] or 0) ]

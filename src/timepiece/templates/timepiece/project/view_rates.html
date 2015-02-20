@@ -11,6 +11,7 @@
       <tr>
         <th>Username</th>
         <th>Hours</th>
+        <th>Time tracking mode</th>
         {% has_permission has_view_ctc_rates project.business %}
         <th>CTC Rate</th>
         {% end_permission %}
@@ -21,9 +22,6 @@
         <th>CTC</th>
         {% end_permission %}
         <th>Billed</th>
-        {% has_permission has_view_ctc_rates project.business %}
-        <th>Profit</th>
-        {% end_permission %}
       </tr>
     </thead>
 
@@ -32,6 +30,11 @@
       <tr>
         <td>{{user_name}}</td>
         <td>{{rate_info.hours}}</td>
+        <td>
+          <div class="editable_rate rate_info_time_tracking_mode_{{user_name}}">
+            {{rate_info.rate.time_tracking_mode}}
+          </div>
+        </td>
         {% has_permission has_view_ctc_rates project.business %}
         <td>
           <div class="editable_rate rate_info_amount_{{user_name}}">R{{rate_info.rate.amount|floatformat:"0"|intcomma}}</div>
@@ -50,15 +53,13 @@
         <td>R{{rate_info.revenue|floatformat:"0"|intcomma}}</td>
         {% end_permission %}
         <td>R{{rate_info.billed|floatformat:"0"|intcomma}}</td>
-        {% has_permission has_view_ctc_rates project.business %}
-        <td>R{{rate_info.profit|floatformat:"0"|intcomma}}</td>
-        {% end_permission %}
       </tr>
       {% endfor %}
 
       <tr>
         <th></th>
         <th>{{users_and_hours.totals.hours}}</th>
+        <th></th>
         {% has_permission has_view_ctc_rates project.business %}
         <th></th>
         {% end_permission %}
@@ -70,9 +71,6 @@
         <th>R{{users_and_hours.totals.revenue|floatformat:"0"|intcomma}}</th>
         {% end_permission %}
         <th>R{{users_and_hours.totals.billed|floatformat:"0"|intcomma}}</th>
-        {% has_permission has_view_ctc_rates project.business %}
-        <th>R{{users_and_hours.totals.profit|floatformat:"0"|intcomma}}</th>
-        {% end_permission %}
       </tr>
 
     </tbody>
@@ -122,19 +120,31 @@
 <script>
 
   var imp = imp || {};
-  imp.make_editable_rate = function(clazz, user_name, field_name) {
+  imp.make_editinplace = function(clazz, user_name, field_name, field_type, kwargs) {
     var el = $(".rate_info");
-    el.find("."+clazz).editInPlace({url: "{% url 'edit_project_rate' project.id %}",
-                                params: "field_name="+field_name+"&user_name="+user_name});
+    args = {url: "{% url 'edit_project_rate' project.id %}",
+            params: "field_name="+field_name+"&user_name="+user_name}
+    if ( field_type ) {
+      args['field_type'] = field_type;
+      if ( field_type == 'select' ) {
+        args['select_options'] = kwargs.select_options;
+        args['select_text'] = kwargs.select_text;
+      }
+    }
+    el.find("."+clazz).editInPlace(args);
   }
 
   {% for user_name,rate_info in users_and_hours.users.items %}
-    imp.make_editable_rate("rate_info_amount_{{user_name}}","{{user_name}}","amount");
-    imp.make_editable_rate("rate_info_billable_amount_{{user_name}}","{{user_name}}","billable_amount");
-    imp.make_editable_rate("rate_info_velocity_{{user_name}}","{{user_name}}","velocity");
+    imp.make_editinplace("rate_info_amount_{{user_name}}","{{user_name}}","amount");
+    imp.make_editinplace("rate_info_billable_amount_{{user_name}}","{{user_name}}","billable_amount");
+    imp.make_editinplace("rate_info_velocity_{{user_name}}","{{user_name}}","velocity");
+    imp.make_editinplace("rate_info_time_tracking_mode_{{user_name}}","{{user_name}}","time_tracking_mode", "select", 
+                         { select_options:"{{time_tracking_mode_options}}",
+                           select_text:"Choose a time tracking mode" });
   {% endfor %}
- imp.make_editable_rate("project__ratio_management",null,"project__ratio_management");
- imp.make_editable_rate("project__ratio_testing",null,"project__ratio_testing");
- imp.make_editable_rate("project__ratio_scope_creep",null,"project__ratio_scope_creep");
+ imp.make_editinplace("project__ratio_management",null,"project__ratio_management");
+ imp.make_editinplace("project__ratio_testing",null,"project__ratio_testing");
+ imp.make_editinplace("project__ratio_scope_creep",null,"project__ratio_scope_creep");
+
 
 </script>

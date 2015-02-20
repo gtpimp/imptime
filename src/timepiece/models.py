@@ -343,6 +343,7 @@ class BusinessPermissions(models.Model):
     can_do_dev_checklist = models.BooleanField(default=False, verbose_name="Do dev checklist")
     can_do_traffic_checklist = models.BooleanField(default=False, verbose_name="Traffic checklist")
     can_do_finance_checklist = models.BooleanField(default=False, verbose_name="Finance checklist")
+    
 
     can_edit_permissions = models.BooleanField(default=False, verbose_name="Can Edit Permissions")
     can_toggle_graphs = models.BooleanField(default=False, verbose_name="Can Toggle Graphs")
@@ -1006,7 +1007,7 @@ class Project(models.Model):
         if self._new_stats is None:
             raise Exception("Must call calculate_new_stats first")
         return self._new_stats
-    
+
     def calculate_new_stats(self, current_user):
         if self._new_stats is not None:
             return self._new_stats
@@ -1053,8 +1054,8 @@ class Project(models.Model):
             stats_per_user[user]['adjusted_points_comparative_billable'] = stats_per_user[user]['adjusted_points_comparative_non_adhoc'] * float(stats_per_user[user]['rate'].billable_amount)
             
             stats_per_user[user]['hours'] = _get_total(entries.order_by('user').values('user').annotate(total=Sum('hours')))
-            stats_per_user[user]['hours_normal'] = _get_total(entries.filter(issue__adhoc=False).order_by('user').values('user').annotate(total=Sum('hours')))
-            stats_per_user[user]['hours_closed_normal'] = _get_total(entries.filter(issue__adhoc=False).exclude(issue__status__in=Issue.STATUSES_INDICATING_DEV_INCOMPLETE).order_by('user').values('user').annotate(total=Sum('hours')))
+            stats_per_user[user]['hours_unadjusted'] = _get_total(entries.filter(issue__adhoc=False).order_by('user').values('user').annotate(total=Sum('hours')))
+            stats_per_user[user]['hours_closed_unadjusted'] = _get_total(entries.filter(issue__adhoc=False).exclude(issue__status__in=Issue.STATUSES_INDICATING_DEV_INCOMPLETE).order_by('user').values('user').annotate(total=Sum('hours')))
             stats_per_user[user]['hours_adhoc'] = _get_total(entries.filter(issue__adhoc=True).order_by('user').values('user').annotate(total=Sum('hours')))
             
             stats_per_user[user]['hours_ctc'] = stats_per_user[user]['rate'].amount * stats_per_user[user]['hours']
@@ -1062,8 +1063,8 @@ class Project(models.Model):
 
             stats_per_user[user]['hours_adhoc_billable'] = stats_per_user[user]['rate'].billable_amount * stats_per_user[user]['hours_adhoc']
 
-            if stats_per_user[user]['hours_closed_normal']:
-                stats_per_user[user]['calculated_velocity'] = (float(stats_per_user[user]['hours_closed_normal']) or 0) / float((stats_per_user[user]['points_closed_non_adhoc'] or 1))
+            if stats_per_user[user]['hours_closed_unadjusted']:
+                stats_per_user[user]['calculated_velocity'] = (float(stats_per_user[user]['hours_closed_unadjusted']) or 0) / float((stats_per_user[user]['points_closed_non_adhoc'] or 1))
             else:
                 stats_per_user[user]['calculated_velocity'] = 0
             stats_per_user[user]['calculated_work_ratio'] = 1 # to be fixed (float(stats_per_user[user]['hours_adhoc']) or 0.0) / (float((stats_per_user[user]['hours'] or 1)))
@@ -1081,8 +1082,8 @@ class Project(models.Model):
         total_stats['points_non_adhoc'] = sum(stats_per_user[x]['points_non_adhoc'] or 0 for x in users)
         total_stats['points_closed_non_adhoc'] = sum(stats_per_user[x]['points_closed_non_adhoc'] or 0 for x in users)
         total_stats['hours'] = sum(stats_per_user[x]['hours'] or 0 for x in users)
-        total_stats['hours_normal'] = sum(stats_per_user[x]['hours_normal'] or 0 for x in users)
-        total_stats['hours_closed_normal'] = sum(stats_per_user[x]['hours_closed_normal'] or 0 for x in users)
+        total_stats['hours_unadjusted'] = sum(stats_per_user[x]['hours_unadjusted'] or 0 for x in users)
+        total_stats['hours_closed_unadjusted'] = sum(stats_per_user[x]['hours_closed_unadjusted'] or 0 for x in users)
         total_stats['hours_adhoc'] = sum(stats_per_user[x]['hours_adhoc'] or 0 for x in users)
         total_stats['hours_ctc'] = sum(stats_per_user[x]['hours_ctc'] or 0 for x in users)
         total_stats['hours_billable'] = sum(stats_per_user[x]['hours_billable'] or 0 for x in users)
@@ -2619,12 +2620,14 @@ class Salary(models.Model):
                  'leave_taken_this_month':self.leave_taken }
 
 class Rate(models.Model):
+    TIME_TRACKING_MODES = [ ('developer', 'Developer'), ('manager', 'Manager'), ('tester', 'Tester') ]
     project = models.ForeignKey(Project, related_name="rate")
     user = models.ForeignKey(User)
     amount = models.DecimalField(max_digits=8, decimal_places=2, default=0)
     billable_amount = models.DecimalField(max_digits=8, decimal_places=2, default=0)
     velocity = models.FloatField(default=1)
     work_ratio = models.FloatField(default=0)
+    time_tracking_mode = models.CharField(default="developer", max_length=50, choices=TIME_TRACKING_MODES, null=False )
 
 class Expense(models.Model):
     date = models.DateField()
@@ -2667,20 +2670,18 @@ class Issue(models.Model):
     ISSUE_STATUS_CHOICES = (
            ( 'new', 'new'),
            ( 'devdone', 'dev_done'),
-           ( 'in testing', 'in testing'),
-           ( 'tested', 'tested'),
+           ( 'internal_qa_passed', 'internal qa'),
+           ( 'in_client_qa', 'in client qa'),
+           ( 'client_qa_passed', 'client qa passed'),
            ( 'reopened', 'reopened'),
            ( 'onhold', 'on hold'),
+           ( 'bug', 'bug'),
            ( 'to be estimated', 'to be estimated'),
            ( 'needscodereview', 'needs code review'),
            ( "can't reproduce", "can't reproduce"),
            ( "discuss with client", "discuss with client"),
            ( 'dev unclear', 'dev unclear'),
            ( 'duplicate', 'duplicate'),
-           ( "internal_qa_done", "internal_qa_done"),
-           ( 'tested', 'tested'),
-           ( 'task done', 'task done'),
-           ( 'bug', 'bug'),
            ( 'to be designed', 'to be designed'),
         )
 
