@@ -1072,8 +1072,16 @@ class Project(models.Model):
             issue_points_comparative = IssuePoints.objects.filter(issue__project=self, user=user).distinct()
                         
             stats_per_user[user]['points_non_adhoc'] = _get_total(issue_points.filter(issue__adhoc=False).values('user').annotate(total=Sum('points')))
-            stats_per_user[user]['points_closed_non_adhoc'] = _get_total(issue_points.exclude(issue__status__in=Issue.STATUSES_INDICATING_DEV_INCOMPLETE).filter(issue__adhoc=False).values('user').annotate(total=Sum('points')))
-            stats_per_user[user]['points_open_non_adhoc'] = _get_total(issue_points.filter(issue__status__in=Issue.STATUSES_INDICATING_DEV_INCOMPLETE).filter(issue__adhoc=False).values('user').annotate(total=Sum('points')))
+
+            if rate.time_tracking_mode == 'developer':
+                open_status_options = Issue.STATUSES_INDICATING_DEV_INCOMPLETE
+            elif rate.time_tracking_mode == 'manager':
+                open_status_options = Issue.STATUSES_INDICATING_MANAGER_INCOMPLETE
+            elif rate.time_tracking_mode == 'manager':
+                open_status_options = Issue.STATUSES_INDICATING_TESTER_INCOMPLETE
+                
+            stats_per_user[user]['points_closed_non_adhoc'] = _get_total(issue_points.exclude(issue__status__in=open_status_options).filter(issue__adhoc=False).values('user').annotate(total=Sum('points')))
+            stats_per_user[user]['points_open_non_adhoc'] = _get_total(issue_points.filter(issue__status__in=open_status_options).filter(issue__adhoc=False).values('user').annotate(total=Sum('points')))
 
             stats_per_user[user]['adjusted_points_non_adhoc'] = (stats_per_user[user]['points_non_adhoc'] or 0) * (stats_per_user[user]['rate'].velocity or 0) / (None or 1) # to be fixed
 
@@ -1081,8 +1089,8 @@ class Project(models.Model):
             stats_per_user[user]['adjusted_points_billable'] = stats_per_user[user]['adjusted_points_non_adhoc'] * float(stats_per_user[user]['rate'].billable_amount)
 
             stats_per_user[user]['points_comparative_non_adhoc'] = _get_total(issue_points_comparative.filter(issue__adhoc=False).values('user').annotate(total=Sum('points')))
-            stats_per_user[user]['points_comparative_closed_non_adhoc'] = _get_total(issue_points_comparative.exclude(issue__status__in=Issue.STATUSES_INDICATING_DEV_INCOMPLETE).filter(issue__adhoc=False).values('user').annotate(total=Sum('points')))
-            stats_per_user[user]['points_comparative_open_non_adhoc'] = _get_total(issue_points_comparative.filter(issue__status__in=Issue.STATUSES_INDICATING_DEV_INCOMPLETE).filter(issue__adhoc=False).values('user').annotate(total=Sum('points')))
+            stats_per_user[user]['points_comparative_closed_non_adhoc'] = _get_total(issue_points_comparative.exclude(issue__status__in=open_status_options).filter(issue__adhoc=False).values('user').annotate(total=Sum('points')))
+            stats_per_user[user]['points_comparative_open_non_adhoc'] = _get_total(issue_points_comparative.filter(issue__status__in=open_status_options).filter(issue__adhoc=False).values('user').annotate(total=Sum('points')))
 
             stats_per_user[user]['adjusted_points_comparative_non_adhoc'] = (stats_per_user[user]['points_comparative_non_adhoc'] or 0) * (stats_per_user[user]['rate'].velocity or 0) / (None or 1) # to be fixed
 
@@ -1091,7 +1099,7 @@ class Project(models.Model):
             
             stats_per_user[user]['hours'] = _get_total(entries.order_by('user').values('user').annotate(total=Sum('hours')))
             stats_per_user[user]['hours_real'] = _get_total(entries.filter(issue__adhoc=False).order_by('user').values('user').annotate(total=Sum('hours')))
-            stats_per_user[user]['hours_closed_real'] = _get_total(entries.filter(issue__adhoc=False).exclude(issue__status__in=Issue.STATUSES_INDICATING_DEV_INCOMPLETE).order_by('user').values('user').annotate(total=Sum('hours')))
+            stats_per_user[user]['hours_closed_real'] = _get_total(entries.filter(issue__adhoc=False).exclude(issue__status__in=open_status_options).order_by('user').values('user').annotate(total=Sum('hours')))
             stats_per_user[user]['hours_adhoc'] = _get_total(entries.filter(issue__adhoc=True).order_by('user').values('user').annotate(total=Sum('hours')))
             
             stats_per_user[user]['hours_ctc'] = stats_per_user[user]['rate'].amount * stats_per_user[user]['hours']
@@ -2729,6 +2737,8 @@ class Issue(models.Model):
         )
 
     STATUSES_INDICATING_DEV_INCOMPLETE = ['new', 'bug', 'reopened']
+    STATUSES_INDICATING_MANAGER_INCOMPLETE = [x for x in ISSUE_STATUS_CHOICES if x not in ['client_qa_passed', 'duplicate', "can't reproduce", "onhold"]]
+    STATUSES_INDICATING_TESTER_INCOMPLETE = [x for x in ISSUE_STATUS_CHOICES if x not in ['internal_qa_passed', 'in_client_qa', 'client_qa_passed', 'duplicate', "can't reproduce", "onhold"]]
     
     status = models.CharField(max_length=255, choices = ISSUE_STATUS_CHOICES, blank=False)
     number = models.IntegerField(null=True,blank=True, db_index=True)

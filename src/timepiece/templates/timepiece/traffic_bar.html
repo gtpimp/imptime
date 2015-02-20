@@ -8,9 +8,15 @@
     </div>
     {% if tooltips %}
     <div class="traffic_tooltip" style="display:none">
-      {% for tooltip in tooltips %}
-        {{tooltip}}<br/>
-      {% endfor %}
+      <table class="clean">
+        {% for tooltip in tooltips %}
+        <tr>
+          {% for tip in tooltip %}
+          <td>{{tip}}</td>
+          {% endfor %}
+        </tr>
+        {% endfor %}
+      </table>
     </div>
     {% endif %}
   </div>

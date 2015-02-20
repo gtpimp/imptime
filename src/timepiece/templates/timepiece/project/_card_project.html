@@ -259,9 +259,9 @@
       <tr class="table_info_row">
         <td></td>
 
-        <td>Total</td>
-        <td>Real Issues</td>
-        <td>Real Issues done</td>
+        <td>All</td>
+        <td>Real issues</td>
+        <td>Closed real issues</td>
         <td>Adhoc</td>
 
         <td>Real Issues points</td>
@@ -277,8 +277,8 @@
 	<td>{{ user.username }} ({{ values.rate.time_tracking_mode|slice:"0:1" }})</td>
 
 	<td>{{ values.hours|default:"" }}</td>
-        <td>{{ values.hours_real_issues|default:""|intcomma }}</td>
-        <td>{{ values.hours_closed_real_issues|default:""|intcomma }}</td>
+        <td>{{ values.hours_real|default:""|intcomma }}</td>
+        <td>{{ values.hours_closed_real|default:""|intcomma }}</td>
         <td>{{ values.hours_adhoc|default:""|intcomma }}</td>
 
         <td>{% if values.percentage_points_complete %}{{ values.percentage_points_complete|default:""|floatformat:"0"|intcomma}}%{% endif %}</td>

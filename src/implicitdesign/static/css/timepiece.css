@@ -9423,8 +9423,14 @@ ul.project_list {
     z-index:999;
     padding:5px;
     border: 1px solid #ababab;
-    width: 200px;
+    width: 300px;
     background: #ffffff;
+}
+
+.issues_list .traffic_tooltip table tr {
+    background-color: #ffffff;
+    font-weight: normal;
+    text-align: left;
 }
 
 .special_traffic_colourbar{
@@ -10523,3 +10529,4 @@ ul.checklist_items {
     padding-right: 2px;
     padding-left: 2px;
 }
+

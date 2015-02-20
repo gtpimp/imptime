@@ -245,17 +245,15 @@ def running_progress_for_user_in_sprint(context, user, project):
     data = _create_traffic_data(actual, total)
     data['message'] = 'V = %.2f' % project.new_stats['per_user'][user]['calculated_velocity']
 
-    data['tooltips'] = [ "Total hours: %.2f" % (project.new_stats['per_user'][user]['hours'] or 0),
-                         "Total Unadjusted hours: %.2f" % (project.new_stats['per_user'][user]['hours_unadjusted'] or 0),
-                         "Total Adhoc hours: %.2f" % (project.new_stats['per_user'][user]['hours_adhoc'] or 0),
-                         "Closed unadjusted hours: %.2f" % (project.new_stats['per_user'][user]['hours_closed_unadjusted'] or 0),
-                         "",
-                         "Total unadjusted points: %.2f" % (project.new_stats['per_user'][user]['points_non_adhoc'] or 0),
-                         "Open unadjusted points: %.2f" % (project.new_stats['per_user'][user]['points_open_non_adhoc'] or 0),
-                         "Closed unadjusted points: %.2f" % (project.new_stats['per_user'][user]['points_closed_non_adhoc'] or 0),
-                         "",
-                         "Expected velocity: %.2f" % (project.new_stats['per_user'][user]['rate'].velocity or 0),
-                         "Actual velocity: %.2f" % (project.new_stats['per_user'][user]['calculated_velocity'] or 0) ]
+    data['tooltips'] = [ ["Total hours", "%.2f" % (project.new_stats['per_user'][user]['hours'] or 0)],
+                         ["Total issue hours", "%.2f"%(project.new_stats['per_user'][user]['hours_real'] or 0), "(estimated %.2f hours)"%(project.new_stats['per_user'][user]['points_non_adhoc'] or 0)],
+                         ["Closed issue hours","%.2f"%(project.new_stats['per_user'][user]['hours_closed_real'] or 0), "(estimated %.2f hours)"%(project.new_stats['per_user'][user]['points_closed_non_adhoc'] or 0)],
+                         ["Estimated remaining hours", "%.2f" % (project.new_stats['per_user'][user]['points_open_non_adhoc'] or 0)],
+                         ["--"],
+                         ["Total adhoc hours", "%.2f" % (project.new_stats['per_user'][user]['hours_adhoc'] or 0)],
+                         ["--"],
+                         ["Estimated velocity", "%.2f" % (project.new_stats['per_user'][user]['rate'].velocity or 0)],
+                         ["Actual velocity", "%.2f" % (project.new_stats['per_user'][user]['calculated_velocity'] or 0)] ]
     
     return data
     
