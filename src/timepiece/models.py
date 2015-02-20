@@ -1106,19 +1106,18 @@ class Project(models.Model):
             
             stats_per_user[user]['hours_ctc'] = stats_per_user[user]['rate'].amount * stats_per_user[user]['hours']
             stats_per_user[user]['hours_billable'] = stats_per_user[user]['rate'].billable_amount * stats_per_user[user]['hours']
-
+            stats_per_user[user]['hours_real_billable'] = stats_per_user[user]['rate'].billable_amount * stats_per_user[user]['hours_real']
             stats_per_user[user]['hours_adhoc_billable'] = stats_per_user[user]['rate'].billable_amount * stats_per_user[user]['hours_adhoc']
 
             if stats_per_user[user]['hours_closed_real']:
                 stats_per_user[user]['calculated_velocity'] = (float(stats_per_user[user]['hours_closed_real']) or 0) / float((stats_per_user[user]['points_closed_non_adhoc'] or 1))
             else:
-                stats_per_user[user]['calculated_velocity'] = 0
+                stats_per_user[user]['calculated_velocity'] = 1
             stats_per_user[user]['calculated_work_ratio'] = 1 # to be fixed (float(stats_per_user[user]['hours_adhoc']) or 0.0) / (float((stats_per_user[user]['hours'] or 1)))
 
             stats_per_user[user]['points_calculated_open_non_adhoc'] = (stats_per_user[user]['points_open_non_adhoc'] or 0) * (stats_per_user[user]['calculated_velocity'] or 1)
             stats_per_user[user]['points_calculated_open_non_adhoc_ctc'] = float(stats_per_user[user]['rate'].amount) * (stats_per_user[user]['points_calculated_open_non_adhoc'] or 0)
             stats_per_user[user]['points_calculated_open_non_adhoc_billable'] = float(stats_per_user[user]['rate'].billable_amount) * (stats_per_user[user]['points_calculated_open_non_adhoc'] or 0)
-            stats_per_user[user]['calculated_remaining_billable'] = float(stats_per_user[user]['points_calculated_open_non_adhoc_billable']) + float(stats_per_user[user]['hours_billable'])
 
             stats_per_user[user]['percentage_points_complete'] = float(stats_per_user[user]['points_closed_non_adhoc'] or 0) / float(stats_per_user[user]['points_non_adhoc'] or 1) * 100
             
@@ -1134,16 +1133,22 @@ class Project(models.Model):
         total_stats['hours_adhoc'] = sum(stats_per_user[x]['hours_adhoc'] or 0 for x in users)
         total_stats['hours_ctc'] = sum(stats_per_user[x]['hours_ctc'] or 0 for x in users)
         total_stats['hours_billable'] = sum(stats_per_user[x]['hours_billable'] or 0 for x in users)
+        total_stats['hours_real_billable'] = sum(stats_per_user[x]['hours_real_billable'] or 0 for x in users)
+        
         total_stats['hours_billable_with_scope_creep'] = round(float(total_stats['hours_billable']) * (1+float(self.ratio_scope_creep)), 2)
         total_stats['scope_creep_percentage'] = self.ratio_scope_creep*100
         total_stats['hours_adhoc_billable'] = sum(stats_per_user[x]['hours_adhoc_billable'] or 0 for x in users)
         total_stats['points_calculated_open_non_adhoc_ctc'] = sum(stats_per_user[x]['points_calculated_open_non_adhoc_ctc'] or 0 for x in users)
         total_stats['points_calculated_open_non_adhoc_billable'] = sum(stats_per_user[x]['points_calculated_open_non_adhoc_billable'] or 0 for x in users)
-        total_stats['calculated_remaining_billable'] = sum(stats_per_user[x]['calculated_remaining_billable'] or 0 for x in users)
         total_stats['percentage_points_complete'] = (total_stats['points_closed_non_adhoc'] or 0) / (total_stats['points_non_adhoc'] or 1) * 100
 
-        total_stats['projected_total'] = 1/(total_stats['percentage_points_complete']/100 or 1) * (float(total_stats['hours_billable'] or 0))
-        total_stats['projected_remaining'] = total_stats['projected_total'] - float(total_stats['hours_billable'])
+        
+        total_stats['projected_total_billable_no_more_adhoc'] = float(total_stats['points_calculated_open_non_adhoc_billable']) + float(total_stats['hours_billable'])
+        total_stats['projected_total_billable_no_more_adhoc_with_scope_creep'] = float(total_stats['projected_total_billable_no_more_adhoc']) * (1+self.ratio_scope_creep)
+        
+        total_stats['projected_adhoc_billable'] = 1/(total_stats['percentage_points_complete']/100 or 1) * (float(total_stats['hours_adhoc_billable'] or 0)) - (float(total_stats['hours_adhoc_billable'] or 0))
+        total_stats['projected_total_billable'] = float(total_stats['projected_total_billable_no_more_adhoc']) + float(total_stats['projected_adhoc_billable']) + float(total_stats['hours_billable'])
+        total_stats['projected_total_billable_with_scope_creep'] = total_stats['projected_total_billable'] * (1+self.ratio_scope_creep)
 
         total_stats['management_points_non_adhoc'] = total_stats['points_non_adhoc'] * self.ratio_management
         total_stats['testing_points_non_adhoc'] = total_stats['points_non_adhoc'] * self.ratio_testing
