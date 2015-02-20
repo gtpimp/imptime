@@ -178,7 +178,7 @@ class Extractor(object):
             except Issue.MultipleObjectsReturned:
                 issue = Issue.objects.filter(number=issue_id, project__business=project.business).order_by("-interface_plugin_number", "-id")[0]
 
-        else:
+        if issue_id is None or issue is None:
             # Auto create the issue
             try:
                 issue, is_new = Issue.objects.get_or_create(status='new',

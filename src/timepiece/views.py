@@ -71,6 +71,10 @@ import logging
 
 logger = logging.getLogger('timepiece_view')
 
+@login_required
+def home(request, template="timepiece/home.html"):
+    context = {}
+    return render_to_response(template, context, context_instance=RequestContext(request))
 
 @login_required
 def quick_search(request):
@@ -5402,3 +5406,15 @@ def clear_issue_adhoc_status(request, issue_id, context=None):
     issue.adhoc = False
     issue.save()
     return HttpResponse("{'status':'ok'}")
+
+def blocked(request, template="blocked.html"):
+    context = {}
+    return render_to_response(template, context, context_instance=RequestContext(request))
+
+def dashboard(request, template="timepiece/dashboard/dashboard.html"):
+    context = {}
+
+    
+
+    
+    return render_to_response(template, context, context_instance=RequestContext(request))
