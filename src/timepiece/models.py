@@ -1077,7 +1077,7 @@ class Project(models.Model):
                 open_status_options = Issue.STATUSES_INDICATING_DEV_INCOMPLETE
             elif rate.time_tracking_mode == 'manager':
                 open_status_options = Issue.STATUSES_INDICATING_MANAGER_INCOMPLETE
-            elif rate.time_tracking_mode == 'manager':
+            elif rate.time_tracking_mode == 'tester':
                 open_status_options = Issue.STATUSES_INDICATING_TESTER_INCOMPLETE
                 
             stats_per_user[user]['points_closed_non_adhoc'] = _get_total(issue_points.exclude(issue__status__in=open_status_options).filter(issue__adhoc=False).values('user').annotate(total=Sum('points')))
@@ -1117,6 +1117,7 @@ class Project(models.Model):
             stats_per_user[user]['points_calculated_open_non_adhoc_ctc'] = float(stats_per_user[user]['rate'].amount) * (stats_per_user[user]['points_calculated_open_non_adhoc'] or 0)
             stats_per_user[user]['points_calculated_open_non_adhoc_billable'] = float(stats_per_user[user]['rate'].billable_amount) * (stats_per_user[user]['points_calculated_open_non_adhoc'] or 0)
             stats_per_user[user]['calculated_remaining_billable'] = float(stats_per_user[user]['points_calculated_open_non_adhoc_billable']) + float(stats_per_user[user]['hours_billable'])
+
             stats_per_user[user]['percentage_points_complete'] = float(stats_per_user[user]['points_closed_non_adhoc'] or 0) / float(stats_per_user[user]['points_non_adhoc'] or 1) * 100
             
         
@@ -2737,8 +2738,8 @@ class Issue(models.Model):
         )
 
     STATUSES_INDICATING_DEV_INCOMPLETE = ['new', 'bug', 'reopened']
-    STATUSES_INDICATING_MANAGER_INCOMPLETE = [x for x in ISSUE_STATUS_CHOICES if x not in ['client_qa_passed', 'duplicate', "can't reproduce", "onhold"]]
-    STATUSES_INDICATING_TESTER_INCOMPLETE = [x for x in ISSUE_STATUS_CHOICES if x not in ['internal_qa_passed', 'in_client_qa', 'client_qa_passed', 'duplicate', "can't reproduce", "onhold"]]
+    STATUSES_INDICATING_MANAGER_INCOMPLETE = [x for x,y in ISSUE_STATUS_CHOICES if x not in ['client_qa_passed', 'duplicate', "onhold"]]
+    STATUSES_INDICATING_TESTER_INCOMPLETE = [x for x,y in ISSUE_STATUS_CHOICES if x not in ['internal_qa_passed', 'in_client_qa', 'client_qa_passed', 'duplicate', "onhold"]]
     
     status = models.CharField(max_length=255, choices = ISSUE_STATUS_CHOICES, blank=False)
     number = models.IntegerField(null=True,blank=True, db_index=True)

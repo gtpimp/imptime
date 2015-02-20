@@ -264,7 +264,7 @@
         <td>Closed real issues</td>
         <td>Adhoc</td>
 
-        <td>Real Issues points</td>
+        <td>(using closed issues)</td>
 
         <td class="money_cell money_ctc">Rate</td>
         <td class="money_cell money_ctc">Amount</td>
@@ -284,10 +284,10 @@
         <td>{% if values.percentage_points_complete %}{{ values.percentage_points_complete|default:""|floatformat:"0"|intcomma}}%{% endif %}</td>
 
         {% has_permission has_view_ctc_rates project.business %}
-        <td class="money_cell money_ctc">{% if values.rate.amount %}R{{ values.rate.amount|default:""|floatformat:"0"|intcomma }}{% endif %}</td>
+        <td class="money_cell money_ctc">{% if values.rate.amount and values.hours_ctc %}R{{ values.rate.amount|default:""|floatformat:"0"|intcomma }}{% endif %}</td>
 	<td class="money_cell money_ctc">{% if values.hours_ctc %}R{{ values.hours_ctc|default:""|floatformat:"0"|intcomma }}{% endif %}</td>
         {% end_permission %}
-        <td class="money_cell money_billable">{% if values.rate.billable_amount %}R{{ values.rate.billable_amount|default:""|floatformat:"0"|intcomma }}{% endif %}</td>
+        <td class="money_cell money_billable">{% if values.rate.billable_amount and values.hours_billable %}R{{ values.rate.billable_amount|default:""|floatformat:"0"|intcomma }}{% endif %}</td>
 	<td class="money_cell money_billable">{% if values.hours_billable %}R{{ values.hours_billable|default:""|floatformat:"0"|intcomma }}{% endif %}</td>
 
       </tr>
