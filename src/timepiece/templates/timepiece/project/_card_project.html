@@ -316,6 +316,30 @@
     </tbody>
   </table>
 
+  <h1>State legend</h1>
+  <table>
+    <thead>
+      <th>User</th>
+      <th>Role</th>
+    </thead>
+    <tbody>
+      {% for user, values in project.new_stats.per_user.items %}
+      <tr>
+        <td>{{ user.username }}</td>
+        <td>{{ values.rate.time_tracking_mode }}</td>
+      </tr>
+      <tr class="table_info_row">
+        <td colspan="99" style="text-align: left">
+        Open states are:{% for s in values.open_status_options %}
+        {{ s }}, 
+        {% endfor %}
+          <br/><br/>
+        </td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+
   <h1>
     Projected
     <span class="tip">(uses the points ratio for completed issues to estimate the overall project cost)</span>

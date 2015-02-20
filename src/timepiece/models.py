@@ -1079,6 +1079,8 @@ class Project(models.Model):
                 open_status_options = Issue.STATUSES_INDICATING_MANAGER_INCOMPLETE
             elif rate.time_tracking_mode == 'tester':
                 open_status_options = Issue.STATUSES_INDICATING_TESTER_INCOMPLETE
+
+            stats_per_user[user]['open_status_options'] = sorted(open_status_options)
                 
             stats_per_user[user]['points_closed_non_adhoc'] = _get_total(issue_points.exclude(issue__status__in=open_status_options).filter(issue__adhoc=False).values('user').annotate(total=Sum('points')))
             stats_per_user[user]['points_open_non_adhoc'] = _get_total(issue_points.filter(issue__status__in=open_status_options).filter(issue__adhoc=False).values('user').annotate(total=Sum('points')))
