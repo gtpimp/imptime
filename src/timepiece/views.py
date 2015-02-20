@@ -3688,27 +3688,46 @@ def edit_project_rate(request, project_id):
             except (ValueError, TypeError):
                 return HttpResponse(request.POST['original_value'])
 
-    rate = project.get_user_rate(user_name)
-
-    ret_val = None
-    if field_name == 'amount':
-        rate.amount = new_value
-        rate.save()
-        ret_val = "R%s" % rate.amount
-    elif field_name == "billable_amount":
-        rate.billable_amount = new_value
-        rate.save()
-        ret_val = "R%s" % rate.billable_amount
-    elif field_name == 'velocity':
+    if field_name.startswith('project__'):
         try:
+            # only because all the fields so far are floats, needs to be refactored if it gets more complex
             new_value = float(new_value)
         except (ValueError, TypeError):
             return HttpResponse(request.POST['original_value'])
-        rate.velocity = new_value
-        rate.save()
-        return HttpResponse(new_value)
+        if field_name == 'project__ratio_management' and project.ratio_management != new_value:
+            project.ratio_management = new_value
+            ret_val = new_value
+        elif field_name == 'project__ratio_testing':
+            project.ratio_testing = new_value
+            ret_val = new_value
+        elif field_name == 'project__ratio_scope_creep':
+            project.ratio_scope_creep = new_value
+            ret_val = new_value
+        else:
+            ret_val = "Unsupported field"
+        project.save()
     else:
-        ret_val = "Unsupported field"
+        rate = project.get_user_rate(user_name)
+
+        ret_val = None
+        if field_name == 'amount':
+            rate.amount = new_value
+            rate.save()
+            ret_val = "R%s" % rate.amount
+        elif field_name == "billable_amount":
+            rate.billable_amount = new_value
+            rate.save()
+            ret_val = "R%s" % rate.billable_amount
+        elif field_name == 'velocity':
+            try:
+                new_value = float(new_value)
+            except (ValueError, TypeError):
+                return HttpResponse(request.POST['original_value'])
+            rate.velocity = new_value
+            rate.save()
+            return HttpResponse(new_value)
+        else:
+            ret_val = "Unsupported field"
 
     return HttpResponse(ret_val)
 

@@ -15,6 +15,7 @@
         <th>CTC Rate</th>
         {% end_permission %}
         <th>Billed Rate</th>
+	<th>Work Ratio</th>
 	<th>Velocity (bigger is slower)</th>
         {% has_permission has_view_ctc_rates project.business %}
         <th>CTC</th>
@@ -39,6 +40,9 @@
         <td>
           <div class="editable_rate rate_info_billable_amount_{{user_name}}">R{{rate_info.rate.billable_amount|floatformat:"0"|intcomma}}</div>
         </td>
+	<td>
+	  <div class="editable_rate rate_info_work_ratio_{{user_name}}">{{rate_info.work_ratio|percentage}}</div>
+	</td>
 	<td>
 	  <div class="editable_rate rate_info_velocity_{{user_name}}">{{rate_info.velocity|floatformat:"1"|intcomma}}</div>
 	</td>
@@ -75,6 +79,40 @@
 
   </table>
 
+  <h3>Ratios</h3>
+  <p>
+    These are all in the range 0 to 1. They all relate to estimated
+    development hours, after adjusting for each developer's velocity.
+  </p>
+  <p>
+    For example, a value of 0.5 for management, means there will be
+    half an hour of management for every developer hour in the sprint.
+  </p>
+  <table>
+    <tr>
+      <td>Ratio of management</td>
+      <td>
+        <div class="editable_rate project__ratio_management">{{project.ratio_management}}</div>
+      </td>
+    </tr>
+    <tr>
+      <td>Ratio of testing</td>
+      <td>
+        <div class="editable_rate project__ratio_testing">{{project.ratio_testing}}</div>
+      </td>
+    </tr>
+    <tr>
+      <td>
+        Ratio of scope creep
+        (this ratio is applied to the total sprint size after all other ratios are taken into account)
+      </td>
+      <td>
+        <div class="editable_rate project__ratio_scope_creep">{{project.ratio_scope_creep}}</div>
+      </td>
+
+    </tr>
+  </table>
+
   <a href="#" class="secret_link" onclick="$(this).parents('.project_card_dialog_container').find('.dialog_content').load('{{recalculate_url}}');">
       recalculate
   </a>
@@ -95,5 +133,8 @@
     imp.make_editable_rate("rate_info_billable_amount_{{user_name}}","{{user_name}}","billable_amount");
     imp.make_editable_rate("rate_info_velocity_{{user_name}}","{{user_name}}","velocity");
   {% endfor %}
+ imp.make_editable_rate("project__ratio_management",null,"project__ratio_management");
+ imp.make_editable_rate("project__ratio_testing",null,"project__ratio_testing");
+ imp.make_editable_rate("project__ratio_scope_creep",null,"project__ratio_scope_creep");
 
 </script>

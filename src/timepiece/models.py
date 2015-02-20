@@ -1004,7 +1004,7 @@ class Project(models.Model):
     @property
     def new_stats(self):
         if self._new_stats is None:
-            raise Exception("Must call calculate_stats_per_user first")
+            raise Exception("Must call calculate_new_stats first")
         return self._new_stats
     
     def calculate_new_stats(self, current_user):
