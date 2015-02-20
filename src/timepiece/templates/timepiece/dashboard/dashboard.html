@@ -1,0 +1,37 @@
+{% extends "timepiece/base.html" %}
+{% load humanize %}
+{% load bootstrap_toolkit %}
+{% load timepiece_tags %}
+
+{% block title %}{{business.name}}{% endblock %}
+
+{% block extracss %}
+<link rel="stylesheet" href="{{STATIC_URL}}timepiece/css/splitter.css" />
+<link rel="stylesheet" type="text/css" href="{{STATIC_URL}}markitup/sets/markdown/style.css">
+<link rel="stylesheet" type="text/css" href="{{STATIC_URL}}markitup/skins/markitup/style.css">
+
+{% endblock %}
+
+{% block crumbs %}
+{% endblock %}
+
+{% block extrajs %}
+<script src="{{STATIC_URL}}timepiece/js/splitter.js"></script>
+
+<script type="text/javascript" src="{{STATIC_URL}}markitup/jquery.markitup.js"></script>
+<script type="text/javascript" src="{{STATIC_URL}}markitup/sets/markdown/set.js"></script>
+
+{% endblock extrajs %}
+
+{% block content %}
+
+<div class="splitter">
+  <div class="splitter-left">
+    
+    
+    left
+        
+  </div>
+</div>
+
+{% endblock %}

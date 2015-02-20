@@ -3095,8 +3095,7 @@ class BaseChecklistItem(models.Model):
     msg = models.TextField(null=True, blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
     issue = models.ForeignKey(Issue, null=True, blank=True)
-    project = models.ForeignKey(Project, null=True, blank=True)
-    
+    project = models.ForeignKey(Project, null=True, blank=True, db_index=True)
                     
 class TrafficChecklist(BaseChecklist):
     
