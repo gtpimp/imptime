@@ -15,8 +15,13 @@
 
        Complete project management for development companies at your fingertips
        <br/>
+       {% if perms.timepiece.view_dashboard %}
        <p>
-       <a class="button" href="{% url 'list_projects' %}">Project list</a>
+         <a class="btn btn-primary" href="{% url 'dashboard' %}">Dashboard</a>
+       </p>
+       {% endif %}
+       <p>
+       <a class="btn btn-info" href="{% url 'list_projects' %}">Project list</a>
        </p>
        <p>
          Useful tip, to find projects, sprints and issues quickly, type anything into the search box in the top right and press enter

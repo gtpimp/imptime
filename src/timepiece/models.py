@@ -564,6 +564,7 @@ class Project(models.Model):
     )
     billable = models.BooleanField(default=False)
     point_person = models.ForeignKey(User, limit_choices_to={'is_staff': True})
+    quote_uncertainty = models.FloatField(null=True, blank=True, default=0.25, verbose_name="Uncertainty overhead as a decimal between 0 and 1")
     users = models.ManyToManyField(
         User,
         related_name='user_projects',
@@ -576,6 +577,7 @@ class Project(models.Model):
         blank=True,
         verbose_name="restrict activities to",
     )
+
     type = models.ForeignKey(
         Attribute,
         limit_choices_to={'type': 'project-type'},
@@ -1262,10 +1264,6 @@ class Project(models.Model):
             return self._stats
         self.cache_stats()
         return self._stats
-
-    @property
-    def ratio_scope_creep(self):
-        return self.ratio_scope_creep or 0.25
 
     @property
     def _last_entry_end_time(self):
@@ -2626,6 +2624,7 @@ class Rate(models.Model):
     amount = models.DecimalField(max_digits=8, decimal_places=2, default=0)
     billable_amount = models.DecimalField(max_digits=8, decimal_places=2, default=0)
     velocity = models.FloatField(default=1)
+    work_ratio = models.FloatField(default=0)
 
 class Expense(models.Model):
     date = models.DateField()
