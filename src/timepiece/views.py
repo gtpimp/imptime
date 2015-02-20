@@ -509,6 +509,7 @@ def get_project_card_for_business(request,business_id, project_id):
 
     project = timepiece.Project.objects.get(pk = project_id)
 
+    project.recalc_secondary_estimates()
     project.calculate_new_stats(request.user)
     
     context = { 'business':business,
@@ -556,7 +557,6 @@ def get_project_card(request,business_id,index=None):
                 'expand_older':index is not None,
                 'business_permissions_by_user':timepiece.BusinessPermissions.by_user(business)
                 }
-    import pdb; pdb.set_trace()
 
     return render_to_response('timepiece/project/card.html',
                               context, context_instance=RequestContext(request))

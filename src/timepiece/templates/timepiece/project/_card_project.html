@@ -65,10 +65,12 @@
     <tbody>
       <tr>
         <td class="money_cell money_ctc">R{{ project.new_stats.total.hours_ctc|floatformat:"0"|intcomma }}</td>
-        <td class="money_cell money_billable">R{{ project.new_stats.total.hours_billable|floatformat:"0"|intcomma }}</td>
+        <td class="money_cell money_billable">
+          R{{ project.new_stats.total.hours_billable|floatformat:"0"|intcomma }}
+        </td>
         <td>
           {% has_permission has_view_budget project.business %}
-          R{{project.budget|floatformat:"0"|intcomma}}          
+          R{{project.budget|floatformat:"0"|intcomma}}
           {% end_permission %}
         </td>
         <td>
@@ -125,10 +127,10 @@
     <tbody>
       <tr class="table_info_row">
         <td></td>
-        <td>Unadjusted</td>
+        <td>Real Issues</td>
         
         <td>Estimated</td>
-        <td>Adjusted for velocity</td>
+        <td>Adjusted</td>
 
         <td  class="money_cell money_ctc">Rate</td>
         <td  class="money_cell money_ctc">Amount</td>
@@ -138,16 +140,16 @@
       </tr>
       {% for user, values in project.new_stats.per_user.items %}
       <tr>
-	<td>{{ user.username }}</td>
+	<td>{{ user.username }} ({{ values.rate.time_tracking_mode|slice:"0:1" }})</td>
         <td>{{ values.points_non_adhoc|default:""|intcomma }}</td>
-	<td>{% if values.rate.velocity %}{{ values.rate.velocity|default:""|floatformat:"2"|intcomma }}{% endif %}</td>
+	<td>{% if values.rate.velocity and values.points_non_adhoc %}{{ values.rate.velocity|default:""|floatformat:"2"|intcomma }}{% endif %}</td>
         <td>{{ values.adjusted_points_non_adhoc|default:""|floatformat:"2"|intcomma }}</td>
 
         {% has_permission has_view_ctc_rates project.business %}
-        <td class="money_cell money_ctc">{% if values.rate.amount %}R{{ values.rate.amount|default:""|floatformat:"0"|intcomma }}{% endif %}</td>
+        <td class="money_cell money_ctc">{% if values.rate.amount and values.adjusted_points_ctc %}R{{ values.rate.amount|default:""|floatformat:"0"|intcomma }}{% endif %}</td>
         <td class="money_cell money_ctc">{% if values.adjusted_points_ctc %}R{{ values.adjusted_points_ctc|default:""|floatformat:"0"|intcomma}}{% endif %}</td>
         {% end_permission %}
-        <td class="money_cell money_billable">{% if values.rate.billable_amount %}R{{ values.rate.billable_amount|default:""|floatformat:"0"|intcomma }}{% endif %}</td>
+        <td class="money_cell money_billable">{% if values.rate.billable_amount and adjusted_points_billable %}R{{ values.rate.billable_amount|default:""|floatformat:"0"|intcomma }}{% endif %}</td>
         <td class="money_cell money_billable">{% if values.adjusted_points_billable %}R{{ values.adjusted_points_billable|default:""|floatformat:"0"|intcomma}}{% endif %}</td>
       </tr>
       {% endfor %}
@@ -162,6 +164,23 @@
         <th class="money_cell money_ctc"></th>
         <th class="money_cell money_billable"></th>
         <th class="money_cell money_billable">{% if project.new_stats.total.points_billable %}R{{ project.new_stats.total.points_billable|default:""|floatformat:"0"|intcomma }}{% endif %} </th>
+      </tr>
+      <tr>
+        <th></th>
+        <th></th>
+
+        <th></th>
+        <th></th>
+
+        <th class="money_cell money_billable" colspan="3">
+          {% if project.new_stats.total.hours_billable_with_scope_creep %}
+          Total with expected scope creep of {{project.new_stats.total.scope_creep_percentage}}%
+          {% endif %}
+        </th>
+        <th class="money_cell money_billable">
+          {% if project.new_stats.total.hours_billable_with_scope_creep %}R{{ project.new_stats.total.hours_billable_with_scope_creep|default:""|floatformat:"0"|intcomma }}{% endif %} 
+        </th>     
+
       </tr>
     </tbody>
   </table>
@@ -187,9 +206,8 @@
     <tbody>
       <tr class="table_info_row">
         <td></td>
-        <td>Unadjusted</td>
+        <td>Real Issues</td>
         
-        <td >Estimated</td>
         <td>Estimated</td>
 
         <td>Adjusted</td>
@@ -202,19 +220,19 @@
       </tr>
       {% for user, values in project.new_stats.per_user.items %}
       <tr>
-	<td>{{ user.username }}</td>
+	<td>{{ user.username }} ({{ values.rate.time_tracking_mode|slice:"0:1" }})</td>
 
         <td>{{ values.points_comparative_non_adhoc|default:""|intcomma }}</td>
 
-	<td>{% if values.rate.velocity %}{{ values.rate.velocity|default:""|floatformat:"2"|intcomma }}{% endif %}</td>
+	<td>{% if values.rate.velocity and values.points_comparative_non_adhoc %}{{ values.rate.velocity|default:""|floatformat:"2"|intcomma }}{% endif %}</td>
 
         <td>{{ values.adjusted_points_comparative_non_adhoc|default:""|floatformat:"2"|intcomma }}</td>
 
         {% has_permission has_view_ctc_rates project.business %}
-        <td class="money_cell money_ctc">{% if values.rate.amount %}R{{ values.rate.amount|default:""|floatformat:"0"|intcomma }}{% endif %}</td>
+        <td class="money_cell money_ctc">{% if values.rate.amount and values.adjusted_points_comparative_ctc %}R{{ values.rate.amount|default:""|floatformat:"0"|intcomma }}{% endif %}</td>
         <td class="money_cell money_ctc">{% if values.adjusted_points_comparative_ctc %}R{{ values.adjusted_points_comparative_ctc|default:""|floatformat:"0"|intcomma}}{% endif %}</td>
         {% end_permission %}
-        <td class="money_cell money_billable">{% if values.rate.billable_amount %}R{{ values.rate.billable_amount|default:""|floatformat:"0"|intcomma }}{% endif %}</td>
+        <td class="money_cell money_billable">{% if values.rate.billable_amount and values.adjusted_points_comparative_billable %}R{{ values.rate.billable_amount|default:""|floatformat:"0"|intcomma }}{% endif %}</td>
         <td class="money_cell money_billable">{% if values.adjusted_points_comparative_billable %}R{{ values.adjusted_points_comparative_billable|default:""|floatformat:"0"|intcomma}}{% endif %}</td>
       </tr>
       {% endfor %}
@@ -242,11 +260,11 @@
         <td></td>
 
         <td>Total</td>
-        <td>Unadjusted</td>
-        <td>Unadjusted done</td>
+        <td>Real Issues</td>
+        <td>Real Issues done</td>
         <td>Adhoc</td>
 
-        <td>Unadjusted points</td>
+        <td>Real Issues points</td>
 
         <td class="money_cell money_ctc">Rate</td>
         <td class="money_cell money_ctc">Amount</td>
@@ -256,11 +274,11 @@
 
       {% for user, values in project.new_stats.per_user.items %}
       <tr>
-	<td>{{ user.username }}</td>
+	<td>{{ user.username }} ({{ values.rate.time_tracking_mode|slice:"0:1" }})</td>
 
 	<td>{{ values.hours|default:"" }}</td>
-        <td>{{ values.hours_unadjusted|default:""|intcomma }}</td>
-        <td>{{ values.hours_closed_unadjusted|default:""|intcomma }}</td>
+        <td>{{ values.hours_real_issues|default:""|intcomma }}</td>
+        <td>{{ values.hours_closed_real_issues|default:""|intcomma }}</td>
         <td>{{ values.hours_adhoc|default:""|intcomma }}</td>
 
         <td>{% if values.percentage_points_complete %}{{ values.percentage_points_complete|default:""|floatformat:"0"|intcomma}}%{% endif %}</td>
@@ -278,8 +296,8 @@
         <th>Total</th>
         
         <th>{{ project.new_stats.total.hours }}</th>
-        <th>{{ project.new_stats.total.hours_unadjusted }}</th>
-        <th>{{ project.new_stats.total.hours_closed_unadjusted }}</th>
+        <th>{{ project.new_stats.total.hours_real_issues }}</th>
+        <th>{{ project.new_stats.total.hours_closed_real_issues }}</th>
         <th>{{ project.new_stats.total.hours_adhoc }}</th>
 
         <th>{{ project.new_stats.total.percentage_points_complete|default:""|floatformat:"0"|intcomma }}%</th>
@@ -322,12 +340,12 @@
       <tr class="table_info_row">
         <td></td>
 
-        <td>Unadjusted closed</td>
-        <td>Unadjusted open</td>
+        <td>Real Issues closed</td>
+        <td>Real Issues open</td>
 
         <td>Calculated</td>
 
-        <td>Projected unadjusted open</td>
+        <td>Projected real issues open</td>
 
         <td class="money_cell money_ctc">Rate</td>
         <td class="money_cell money_ctc">Remaining</td>
@@ -339,7 +357,7 @@
 
       {% for user, values in project.new_stats.per_user.items %}
       <tr>
-	<td>{{ user.username }}</td>
+	<td>{{ user.username }} ({{ values.rate.time_tracking_mode|slice:"0:1" }})</td>
 
 	<td>{{ values.points_closed_non_adhoc|default:""|intcomma }}</td>
         <td>{{ values.points_open_non_adhoc|default:""|intcomma }}</td>
