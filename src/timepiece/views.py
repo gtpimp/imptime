@@ -1,7 +1,7 @@
 import random
 import markdown
 import dev_calendar
-from invoicing.models import Invoice
+from invoicing.models import Invoice, Quote
 from django.contrib.auth import login as django_login, load_backend
 from django.core.files.base import ContentFile
 import csv
@@ -516,6 +516,8 @@ def get_project_card_for_business(request,business_id, project_id):
                 'current_business':business,
                 'current_user':request.user,
                 'project':project,
+                'quotes': Quote.objects.filter(project=project).order_by("accepted_at", "sent_to_client_at"),
+                'invoices': Invoice.objects.filter(project=project).order_by("invoice_number"),
                 'business_permissions_by_user':timepiece.BusinessPermissions.by_user(business)
                 }
     return render_to_response('timepiece/project/card.html',

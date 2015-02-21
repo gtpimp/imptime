@@ -775,17 +775,6 @@ class Project(models.Model):
         return self.budget>0
 
     @property
-    def all_invoices_paid(self):
-        for invoice in Invoice.objects.filter(project=self):
-            if not invoice.paid:
-                return False
-        return True
-
-    @property
-    def has_invoices(self):
-        return Invoice.objects.filter(project=self).count() > 0
-
-    @property
     def next_issue_number(self):
         return Issue.objects.filter(project__business=self.business).aggregate(n=Max('number'))['n']+1
     
@@ -2712,19 +2701,19 @@ class Income(models.Model):
     date = models.DateField()
     amount = models.DecimalField(max_digits=8,decimal_places=0,default=0)
 
-class Invoice(models.Model):
-    description = models.CharField(max_length=255, blank=True, null=True)
-    date_sent = models.DateField(blank=True,null=True)
-    date_paid = models.DateField(blank=True,null=True)
-    amount = models.DecimalField(max_digits=8,decimal_places=0,default=0)
-    project = models.ForeignKey(Project, related_name='invoices', null=True, blank=True)
-    invoice_number = models.DecimalField(max_digits=8, decimal_places=0,default=0)
-    paid = models.BooleanField()
+# class Invoice(models.Model):
+#     description = models.CharField(max_length=255, blank=True, null=True)
+#     date_sent = models.DateField(blank=True,null=True)
+#     date_paid = models.DateField(blank=True,null=True)
+#     amount = models.DecimalField(max_digits=8,decimal_places=0,default=0)
+#     project = models.ForeignKey(Project, related_name='invoices', null=True, blank=True)
+#     invoice_number = models.DecimalField(max_digits=8, decimal_places=0,default=0)
+#     paid = models.BooleanField()
 
-    class Meta:
-        permissions = (
-            ('view_invoice', 'Can view invoices.'),
-        )
+#     class Meta:
+#         permissions = (
+#             ('view_invoice', 'Can view invoices.'),
+#         )
 
 class IssueRepresentation(object):
     """ object used to map helper data when rendering issues that doesn't belong in the database """
