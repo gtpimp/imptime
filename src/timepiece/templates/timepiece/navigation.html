@@ -25,65 +25,39 @@
 		    </li>
                     {% endif %}
 
-                    {% if perms.timepiece.view_dashboard %}
-                    <li><a href="{% url 'dashboard' %}">Dashboard</a></li>
-                    {% endif %}
-
-                    {% if perms.timepiece.view_project %}
-                        <li class="dropdown">
-                            <a href="#" class="dropdown-toggle" data-toggle="dropdown">Projects <b class="caret"></b></a>
-                            <ul class="dropdown-menu">
-
-			        {% if perms.timepiece.view_project or perms.auth.view_user or perms.timepiece.view_business %}
-
-                                  {% for business in user.profile.businesses.exclude_has_closed_projects|slice:":10" %}
-                                    <li><a href="{% url 'business_issues' business.id %}">{{business.name}}</a></li>
-                                  {% endfor %}
-                                  <li><hr/></li>
-
-   				  <li><a href="{% url 'list_projects' %}">All projects</a></li>
-				{% endif %}
-
-                                {% if perms.timepiece.add_business %}
-                                  <li><a href="{% url 'create_business' %}">New project</a></li>
-                                {% endif %}
-                                  
-                                <li><a href="{% url 'recalculate_all_checklists' %}">Refresh checklists</a></li>
-
-                                <li><hr/></li>
-                                {% if perms.timepiece.add_business %}
-				  {% if business.id %}
-				    <li><a target="_blank" href="{% url 'edit_business' business.id %}">Edit {{business.name}}</a></li>
-				  {% endif %}
-                                {% endif %}
-                                  
-                                {% if business %}
-                                  {% has_permission has_view_ctc_billable_rates business %}
-                                    {% has_permission has_view_invoices business %}
-                                      {% if business.id %}
-                                        <li><a target="_blank" href="{% url 'business_cost_summary' business.id %}">Cost summary</a></li>
-                                      {% endif %}
-                                    {% end_permission %}
-                                  {% end_permission %}
-                                {% endif %}
-
-                                {% if business %}
-                                  {% has_permission has_view_documents business %} 
-                                    <li><a href="{% url 'view_business_documents' business.id %}">Project documents</a></li>
-                                  {% end_permission %}
-                                {% endif %}
-
-                                {% if business %}
-                                    <li><a href="{% url 'wiki:djiki-page-view' business.wiki_name %}">Wiki</a></li>
-                                {% endif %}
-                            </ul>
-                        </li>
-                    {% endif %}
-
 		    {% if business.id %}
 		      <li class="dropdown">
-                            <a href="#" class="dropdown-toggle" data-toggle="dropdown">Sprints <b class="caret"></b></a>
+                            <a href="#" class="dropdown-toggle" data-toggle="dropdown">{{ business.name}} <b class="caret"></b></a>
                             <ul class="dropdown-menu">
+
+                              <li>
+                                <a href="#" onclick="imp.show_issue_detail(null, '{% url 'business_comments' business.id %}');">
+                                  Comments
+                                </a>
+                              </li>
+
+                              {% if perms.timepiece.add_business %}
+			      {% if business.id %}
+			      <li><a target="_blank" href="{% url 'edit_business' business.id %}">Edit {{business.name}}</a></li>
+			      {% endif %}
+                              {% endif %}
+
+                              <li><hr/></li>
+
+                              {% has_permission has_view_ctc_billable_rates business %}
+                              {% has_permission has_view_invoices business %}
+                              {% if business.id %}
+                              <li><a target="_blank" href="{% url 'business_cost_summary' business.id %}">Cost summary</a></li>
+                              {% endif %}
+                              {% end_permission %}
+                              {% end_permission %}
+
+                              {% has_permission has_view_documents business %} 
+                              <li><a href="{% url 'view_business_documents' business.id %}">Project documents</a></li>
+                              {% end_permission %}
+
+                              <li><hr/></li>
+
 			    {% if has_closed_sprints %}
 			      <li class="handle_show_closed_sprints" >
 				<a href="#" onclick="$('.project_li.closed_project').show(); $(this).hide(); $(this).parents('ul').find('.handle_hide_closed_sprints').show(); return false;">
@@ -116,6 +90,37 @@
 		      </li>
 		      
 		    {% endif %}
+
+
+
+                    {% if perms.timepiece.view_dashboard %}
+                    <li><a href="{% url 'dashboard' %}">Dashboard</a></li>
+                    {% endif %}
+
+                    {% if perms.timepiece.view_project %}
+                        <li class="dropdown">
+                            <a href="#" class="dropdown-toggle" data-toggle="dropdown">Projects <b class="caret"></b></a>
+                            <ul class="dropdown-menu">
+
+			        {% if perms.timepiece.view_project or perms.auth.view_user or perms.timepiece.view_business %}
+
+                                  {% for business in user.profile.businesses.exclude_has_closed_projects|slice:":10" %}
+                                    <li><a href="{% url 'business_issues' business.id %}">{{business.name}}</a></li>
+                                  {% endfor %}
+                                  <li><hr/></li>
+
+   				  <li><a href="{% url 'list_projects' %}">All projects</a></li>
+				{% endif %}
+
+                                {% if perms.timepiece.add_business %}
+                                  <li><a href="{% url 'create_business' %}">New project</a></li>
+                                {% endif %}
+                                  
+                                <li><a href="{% url 'recalculate_all_checklists' %}">Refresh checklists</a></li>
+
+                            </ul>
+                        </li>
+                    {% endif %}
 
                         {% if perms.timepiece.view_entry_summary or perms.timepiece.view_payroll_summary or perms.timepiece.add_project_contract or perms.timepiece.change_entrygroup  %}
                         <li class="dropdown">

@@ -118,6 +118,7 @@ class Business(models.Model):
                                                  ("fixed_quote", "Fixed quote"),
                                                  ("free", "Free or Equity or Other") ) )
 
+    
     def wiki_name(self):
         return self.name.replace(" ", "_").lower()
     
