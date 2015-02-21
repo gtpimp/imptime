@@ -23,7 +23,6 @@
 <table class="table table-striped">
   <thead>
     <tr style="background-color: #efefef">
-      <td></td>
       <td>{{ filter_form.client|add_class:'form-control' }}</td>
       <td>{{ filter_form.project|add_class:'form-control' }}</td>
       <td>{{ filter_form.status|add_class:'form-control' }}</td>
@@ -45,7 +44,6 @@
       <td></td>
     </tr>
     <tr style="background-color: #adadad">
-      <th></th>
       <th>Client</th>
       <th>Sprint</th>
       <th>Status</th>
@@ -63,12 +61,10 @@
       <th></th>
       <th></th>
       <th></th>
-      <th></th>
       <th>{{totals.currency_symbol}}{{totals.amount|currency|default:"0"}}</th>
       <th></th>
       <th>{% if totals.amount_waiting %}{{totals.currency_symbol}}{{totals.amount_waiting|currency|default:"0"}}{% endif %}</th>
       <th>{% if totals.amount_accepted %}{{totals.currency_symbol}}{{totals.amount_accepted|currency|default:"0"}}{% endif %}</th>
-      <th></th>
     </tr>
 
   </thead>
@@ -76,11 +72,6 @@
   <tbody>
     {% for quote in quotes %}
     <tr class="clickable" onclick="window.location='{% url 'invoicing:edit_quote' quote.id %}'; return false;">
-      <td>
-        {% if bp.has_edit_quotes %}
-          <a class="btn" href="{% url 'invoicing:edit_quote' quote.id %}">edit</a>
-        {% endif %}
-      </td>
       <td>{{quote.client.name}}</td>
       <td>{{quote.project.long_name}}</td>
       <td>
@@ -105,11 +96,6 @@
       <td></td>
       <td>{% if quote.amount_waiting %}{{quote.currency_symbol}}{{quote.amount_waiting|currency|default:"0"}}{% endif %}</td>
       <td>{% if quote.amount_accepted %}{{quote.currency_symbol}}{{quote.amount_accepted|currency|default:"0"}}{% endif %}</td>
-      <td>
-        {% if bp.has_edit_quotes %}
-          <a class="btn" href="{% url 'invoicing:edit_quote' quote.id %}">edit</a>
-        {% endif %}
-      </td>
     </tr>
     {% empty %}
     <tr><td colspan="20">No quotes</td></tr>
@@ -121,12 +107,10 @@
       <th></th>
       <th></th>
       <th></th>
-      <th></th>
       <th>{{totals.currency_symbol}}{{totals.amount|currency|default:"0"}}</th>
       <th></th>
       <th>{% if totals.amount_waiting %}{{totals.currency_symbol}}{{totals.amount_waiting|currency|default:"0"}}{% endif %}</th>
       <th>{% if totals.amount_accepted %}{{totals.currency_symbol}}{{totals.amount_accepted|currency|default:"0"}}{% endif %}</th>
-      <th></th>
     </tr>
 
   </tbody>

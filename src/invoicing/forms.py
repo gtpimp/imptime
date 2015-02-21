@@ -51,6 +51,7 @@ invoice_payment_formset = modelformset_factory(models.InvoicePayment, form=Invoi
 class InvoiceFilterForm(forms.Form):
     
     client = forms.ModelChoiceField(required=False, queryset=models.ClientInvoiceDetails.objects.order_by("name"))
+    project = GroupedModelChoiceField('business', required=False, queryset=timepiece.Project.objects.all().filter_open().order_by("business__name", "name"))
     status = forms.ChoiceField(required=False, choices=( ('all', 'All'),) + models.Invoice.INVOICE_STATUSES)
     invoice_number = forms.IntegerField(required=False)
     overdue = forms.ChoiceField(required=False, choices=( ('all', 'All'), ('overdue', 'Overdue'), ('not_overdue', 'Not overdue')) )
@@ -70,6 +71,8 @@ class InvoiceFilterForm(forms.Form):
         data = self.cleaned_data
         if data['client']:
             qs = qs.filter(client=data['client'])
+        if data['project']:
+            qs = qs.filter(project=data['project'])
         if data['status'] and data['status'] != 'all':
             qs = qs.filter(status=data['status'])
         if data['invoice_number']:
@@ -129,7 +132,8 @@ class QuoteForm(forms.ModelForm):
     class Meta:
         model = models.Quote
         fields = [ 'client', 'status', 'project', 'internal_comment',
-                   'sent_to_client_at', 'accepted_at', 'amount', 'currency_symbol' ]
+                   'sent_to_client_at', 'accepted_at', 'amount', 'currency_symbol',
+                   'quote_document', 'additional_document' ]
 
     project = GroupedModelChoiceField('business', required=False, queryset=timepiece.Project.objects.all().filter_open().order_by("business__name", "name"))
 
@@ -139,4 +143,7 @@ class QuoteForm(forms.ModelForm):
         self.fields['sent_to_client_at'].widget.attrs['class'] = 'date_field'
         self.fields['accepted_at'].widget.attrs['class'] = 'date_field'
         self.fields['status'].initial = 'sent to client'
+
+        if self.instance and self.instance.project:
+            self.fields['quote_document'].queryset = timepiece.BusinessDocument.objects.filter(project=self.instance.project, doc_type__in=['proposal', 'other'])
     

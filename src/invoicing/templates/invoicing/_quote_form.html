@@ -66,7 +66,12 @@
     </div>
   </div>
 
-  <div class='row form-group{% if form.errors.internal_comment%} has-error{%endif%}'>
+
+</div>
+
+<div class="col-md-4">
+
+    <div class='row form-group{% if form.errors.internal_comment%} has-error{%endif%}'>
     <div class="col-md-6">
       Internal comment
     </div>
@@ -75,7 +80,25 @@
     </div>
   </div>
 
+  <div class='row form-group{% if form.errors.quote_document%} has-error{%endif%}'>
+    <div class="col-md-6">
+      Quote document
+    </div>
+    <div class="col-md-6">
+      {{ form.quote_document|add_class:'form-control' }}
+    </div>
+  </div>
+
+  <div class='row form-group{% if form.errors.additional_document%} has-error{%endif%}'>
+    <div class="col-md-6">
+      Additional document
+    </div>
+    <div class="col-md-6">
+      {{ form.additional_document|add_class:'form-control' }}
+    </div>
+  </div>
+
+
 </div>
 
 <div style="clear:both"></div>
-

@@ -10,6 +10,7 @@
 <h1>Edit document {{ document }} for {{business}}</h1>
 
 <form method="POST" action="{% url 'edit_business_document' document.token %}" enctype="multipart/form-data">
+  {% csrf_token %}
   {{ form }}
   <input class="btn" type="submit" value="save"/>
 </form>

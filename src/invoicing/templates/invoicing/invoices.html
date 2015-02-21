@@ -25,6 +25,7 @@
     <tr style="background-color: #efefef">
       <td></td>
       <td>{{ filter_form.client|add_class:'form-control' }}</td>
+      <td>{{ filter_form.project|add_class:'form-control' }}</td>
       <td>{{ filter_form.invoice_number|add_class:'form-control'|add_class:'invoice_number' }}</td>
       <td>{{ filter_form.status|add_class:'form-control' }}</td>
       <td></td>
@@ -51,6 +52,7 @@
     <tr style="background-color: #adadad">
       <th></th>
       <th>Client</th>
+      <th>Project - Sprint</th>
       <th>#</th>
       <th>Status</th>
       <th>Invoice note</th>
@@ -66,6 +68,7 @@
     </tr>
 
     <tr style="background-color: #ef77ef">
+      <th></th>
       <th></th>
       <th></th>
       <th></th>
@@ -93,6 +96,7 @@
         <a class="btn" target="_blank" href="{% url 'invoicing:preview_invoice' invoice.id %}">view</a>
       </td>
       <td>{{invoice.client.name}}</td>
+      <td>{{invoice.project.long_name}}</td>
       <td>{{invoice.invoice_number}}</td>
       <td>
         {{invoice.status}}

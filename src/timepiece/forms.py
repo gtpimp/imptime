@@ -1244,9 +1244,13 @@ class NewBusinessDocumentForm(forms.ModelForm):
         exclude = ( 'filename', 'business', 'created_by', 'created_at', 'deleted', 'token', 'mime_type', 'modified_by', 'modified_at' )
         
 class EditBusinessDocumentForm(forms.ModelForm):
+
+    project = GroupedModelChoiceField('business', required=False, queryset=timepiece.Project.objects.all().filter_open().order_by("business__name", "name"))
+
     class Meta:
         model = timepiece.BusinessDocument
-        field = ( 'doc_type', 'comments' )
+        fields = ( 'doc_type', 'comments', 'project', 'filename', 'doc' )
+        
 
 class GenerateBusinessDocumentForm(forms.Form):
 
