@@ -175,12 +175,18 @@ class QuoteQuerySet(QuerySet):
 
     def amount(self):
         return self.aggregate(Sum('amount'))['amount__sum']
+
+    def quotes_waiting(self):
+        return self.filter(status='sent to client')
     
     def amount_waiting(self):
-        return self.filter(status='sent to client').aggregate(Sum('amount'))['amount__sum']
+        return self.quotes_waiting().aggregate(Sum('amount'))['amount__sum']
 
+    def quotes_accepted(self):
+        return self.filter(status='accepted')
+    
     def amount_accepted(self):
-        return self.filter(status='accepted').aggregate(Sum('amount'))['amount__sum']    
+        return self.quotes_accepted().aggregate(Sum('amount'))['amount__sum']    
 
 class Quote(models.Model):
     QUOTE_STATUSES = ( ('creating', 'Creating'), ('sent to client', 'Sent to client'), ('accepted', 'Accepted by client'), ('rejected', 'Rejected by client') )

@@ -28,8 +28,29 @@
 <div class="splitter">
   <div class="splitter-left">
     
-    
-    Dashboard
+      <div class="row-fluid">
+        <div class="col-md-3">
+          <div class="pane">
+            {% include "timepiece/dashboard/_projects.html" %}
+          </div>
+        </div>
+        <div class="col-md-3">
+          <div class="pane">
+            {% include "timepiece/dashboard/_quotes.html" %}
+          </div>
+        </div>
+        <div class="col-md-3">
+          <div class="pane">
+            {% include "timepiece/dashboard/_invoices.html" %}
+          </div>
+        </div>
+        <div class="col-md-3">
+          <div class="pane">
+            {% include "timepiece/dashboard/_employees.html" %}
+          </div>
+        </div>
+      </div>
+    </div>
         
   </div>
 </div>

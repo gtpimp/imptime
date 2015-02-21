@@ -1,0 +1,24 @@
+{% load humanize %}
+<h1>Quotes</h1>
+
+<table>
+  <tbody>
+    {% for quote_info in quotes_by_month %}
+    <tr>
+      <th>
+        {{quote_info.month|date:'M-Y'}}
+      </th>
+    </tr>
+    <tr onclick="window.open('')">
+      <td></td>
+      <td>Quotes waiting for approval</td>
+      <td>R{{quote_info.quotes_by_sent_to_client_at.amount_waiting|default:0|intcomma}}</td>
+    </tr>
+    <tr>
+      <td></td>
+      <td>Quotes accepted</td>
+      <td>R{{quote_info.quotes_by_accepted_at.amount_accepted|default:0|intcomma}}</td>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>

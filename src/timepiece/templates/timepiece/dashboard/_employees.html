@@ -1,0 +1,42 @@
+{% load humanize %}
+<h1>Employees</h1>
+
+<table>
+  <tbody>
+    {% for employees_info in employees_by_month %}
+    <tr>
+      <th>
+        {{employees_info.month|date:'M-Y'}}
+      </th>
+    </tr>
+    <tr>
+      <td></td>
+      <td>Salaries</td>
+      <td>R{{employees_info.salaries.amount|default:0|intcomma}} ({{employees_info.salaries|length}})</td>
+    </tr>
+    <tr>
+      <td></td>
+      <td>Number of business days</td>
+      <td>{{employees_info.number_of_business_days}}</td>
+    </tr>
+    {% comment %}
+    <tr>
+      <td></td>
+      <td>Hours logged</td>
+      <td>
+        {{employees_info.entries.total_hours|default:0|intcomma}}
+      </td>
+    </tr>
+    {% endcomment %}
+    <tr>
+      <td></td>
+      <td>
+        Average hours logged per employee per business day
+      </td>
+      <td>
+        {{employees_info.average_daily_hours_per_employee|floatformat:"2"|intcomma}}
+      </td>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>

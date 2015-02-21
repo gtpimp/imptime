@@ -10530,3 +10530,12 @@ ul.checklist_items {
     padding-left: 2px;
 }
 
+
+.pane {
+    -moz-box-shadow:    4px 4px 2px 2px #aaa;
+    -webkit-box-shadow: 4px 4px 2px 2px #aaa;
+    box-shadow:         4px 4px 2px 2px #aaa;   
+    border-radius: 3px;
+    border: 1px solid #000000;
+    padding: 10px;
+}

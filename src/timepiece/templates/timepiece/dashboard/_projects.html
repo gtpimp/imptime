@@ -1,0 +1,22 @@
+{% load humanize %}
+{% load timepiece_tags %}
+<h1>Businesss</h1>
+
+<table>
+  <thead>
+    <th> </th>
+    <th>Budget</th>
+  </thead>
+  <tbody>
+    {% for name, sprints in businesses.items %}
+    <tr>
+      <th>
+         {{name}}
+      </th>
+      <td>
+        R{{sprints.budget|intcomma}}
+      </td>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>

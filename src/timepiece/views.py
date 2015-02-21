@@ -5444,7 +5444,40 @@ def blocked(request, template="blocked.html"):
 def dashboard(request, template="timepiece/dashboard/dashboard.html"):
     context = {}
 
-    
+    now = timezone.now().replace(day=1, hour=0, minute=0, second=0)+relativedelta(months=1)
+    running_now = now
+    num_months = 4
+    context['quotes_by_month'] = []
+    context['invoices_by_month'] = []
+    context['employees_by_month'] = []
+    context['projects_by_month'] = []
+    for x in range(num_months):
+        date_from = running_now - relativedelta(months=1)
+        context['quotes_by_month'].append({ 'month' : date_from,
+                                            'quotes_by_sent_to_client_at' : Quote.objects.filter(sent_to_client_at__gte=date_from, sent_to_client_at__lt=running_now),
+                                            'quotes_by_accepted_at' : Quote.objects.filter(accepted_at__gte=date_from, accepted_at__lt=running_now)})
 
+        context['invoices_by_month'].append({ 'month' : date_from,
+                                              'invoices_waiting' : Invoice.objects.filter(status='open', payment_due__gte=date_from, payment_due__lt=running_now),
+                                              'invoices_paid' : Invoice.objects.filter(status='paid', payment_due__gte=date_from, payment_due__lt=running_now)})
+
+        entries = timepiece.Entry.objects_for_reporting.filter(start_time__gte=date_from, start_time__lte=running_now)
+        salaries = timepiece.Salary.objects.filter(date__gte=date_from, date__lt=running_now)
+        business_days = timepiece.Holiday.business_days_in_month(date_from)
+        context['employees_by_month'].append( {'month' : date_from,
+                                               'salaries' : salaries,
+                                               'entries': entries,
+                                               'average_hours_per_employee': entries.total_hours() / (salaries.count() or 1),
+                                               'average_daily_hours_per_employee': entries.total_hours() / (salaries.count() or 1) / len(business_days) or 1,
+                                               'number_of_business_days': len(business_days),
+                                               } )
+
+        running_now = date_from
+
+    businesses = timepiece.Business.objects.all().filter_by_logged_in_user(request.user).order_by("name").distinct()
+    context['businesses'] = SortedDict()
+    context['businesses']['active'] = businesses.filter_has_any_active_projects()
+    context['businesses']['pending'] = businesses.filter_has_only_pending_projects()
+    context['businesses']['hopeful'] = businesses.filter_has_hopeful_projects()
     
     return render_to_response(template, context, context_instance=RequestContext(request))

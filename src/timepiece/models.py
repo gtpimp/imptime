@@ -1,5 +1,6 @@
 import datetime
 from dateutil.relativedelta import relativedelta
+import calendar
 import uuid
 from colorful.fields import RGBColorField
 from interface_plugin import get_interface_plugin
@@ -62,6 +63,7 @@ class Attribute(models.Model):
         return self.label
 
 class BusinessQuerySet(QuerySet):
+
     def filter_by_logged_in_user(self, user):
         """ restricts entries to those belonging to projects the given
         user (typically the logged in user) is assigned to """
@@ -96,6 +98,9 @@ class BusinessQuerySet(QuerySet):
             res['finance_ok'] = res['finance_ok'] and business.has_recent_passed_finance_checklist()
         return res
 
+    def budget(self):
+        return self.aggregate(total=Sum('new_business_projects__budget'))['total']
+    
 class Business(models.Model):
     
     DEFAULT_STATUS_COLOURS = COLOURS
@@ -143,6 +148,10 @@ class Business(models.Model):
         cl = FinanceChecklist.objects.filter(business=self).order_by("-pk").first()
         return cl is not None and cl.passed
 
+    @property
+    def sprints(self):
+        return Project.objects.filter(business=self)
+    
     def get_ordered_projects(self):
         all_business_projects = Project.objects.filter(business=self)
         
@@ -538,6 +547,18 @@ class ProjectQuerySet(QuerySet):
             return self
 
         return self.filter(business__business_permissions__user=user, business__business_permissions__can_view_project_card=True)
+
+    def filter_active(self):
+        return self.filter(status2__in=Project.active_states())
+    
+    def filter_pending(self):
+        return self.filter(status2__in=Project.pending_states())
+    
+    def filter_closed(self):
+        return self.filter(status2__in=Project.closed_states())
+    
+    def filter_hopeful(self):
+        return self.filter(status2__in=Project.hopeful_states())
     
     def filter_open(self):
         return self.exclude(Q(status2='closed')|Q(status__label='closed')).order_by("order")
@@ -1738,6 +1759,9 @@ class EntryWorkedManager(EntryManager):
         projects = getattr(settings, 'TIMEPIECE_PROJECTS', {})
         return qs.exclude(project__in=projects.values())
 
+class EntryQuerySetForReporting(QuerySet):
+    def total_hours(self):
+        return self.aggregate(total_hours=Sum('hours'))['total_hours']
 
 class Entry(models.Model):
     """
@@ -1776,6 +1800,8 @@ class Entry(models.Model):
     hours = models.DecimalField(max_digits=8, decimal_places=2, default=0)
 
     objects = EntryManager()
+    objects_for_reporting = QuerySetManager(EntryQuerySetForReporting)
+
     worked = EntryWorkedManager()
     no_join = EntryManagerBase()
     issue = models.ForeignKey('Issue', blank=True, null=True, related_name='entries')
@@ -2609,6 +2635,10 @@ class ProjectHours(models.Model):
         verbose_name_plural = 'project hours entries'
         unique_together = ('week_start', 'project', 'user')
 
+class SalaryQuerySet(QuerySet):
+    def amount(self):
+        return self.aggregate(Sum('amount'))['amount__sum']
+        
 class Salary(models.Model):
     user = models.ForeignKey(User)
     amount = models.DecimalField(max_digits=8,decimal_places=2,default=0)
@@ -2622,6 +2652,8 @@ class Salary(models.Model):
     sick_days = models.DecimalField(max_digits=8,default=0,decimal_places=2, verbose_name="Sick days taken this month")
     locked = models.BooleanField(default=False)
 
+    objects = QuerySetManager(SalaryQuerySet)
+    
     @property
     def net_pay(self):
         return self.amount + self.bonus - self.paye - self.uif
@@ -3307,3 +3339,15 @@ class Holiday(models.Model):
     @classmethod
     def is_a_holiday(self, d):
         return d.weekday() in [5,6] or self.objects.filter(applies_on=d).count() > 0
+
+    @classmethod
+    def business_days_in_month(self, d):
+        # slow and nasty, needs optimising
+        month_days = range(1, calendar.monthrange(year=d.year, month=d.month)[1]+1)
+        holiday_dates = Holiday.objects.filter(applies_on__gte=datetime.datetime(d.year, d.month, 1),
+                                               applies_on__lt=datetime.datetime(d.year, d.month, 1)+relativedelta(months=1))\
+                                               .values('applies_on')
+        holiday_days = [x['applies_on'].day for x in holiday_dates]
+        business_days = [ x for x in month_days if calendar.weekday(year=d.year, month=d.month, day=x)<5 and x not in holiday_days ]
+        return business_days
+        

@@ -1,0 +1,24 @@
+{% load humanize %}
+<h1>Invoices</h1>
+
+<table>
+  <tbody>
+    {% for invoice_info in invoices_by_month %}
+    <tr>
+      <th>
+        {{invoice_info.month|date:'M-Y'}}
+      </th>
+    </tr>
+    <tr onclick="window.open('')">
+      <td></td>
+      <td>Invoices due</td>
+      <td>R{{invoice_info.invoices_waiting.amount_owed|default:0|intcomma}}</td>
+    </tr>
+    <tr>
+      <td></td>
+      <td>Invoices paid</td>
+      <td>R{{invoice_info.invoices_paid.amount_paid|default:0|intcomma}}</td>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
