@@ -15,7 +15,7 @@ class InvoiceForm(forms.ModelForm):
 
     class Meta:
         model = models.Invoice
-        fields = [ 'locked', 'client', 'project', 'business', 'invoice_number', 'internal_comment', 'client_order_name', 'client_order_number', 'status', 
+        fields = [ 'client', 'project', 'business', 'invoice_number', 'internal_comment', 'client_order_name', 'client_order_number', 'status', 
                    'issued_at', 'payment_due', 'invoice_note', 'footer_terms' ]
 
     project = GroupedModelChoiceField('business', required=False, queryset=timepiece.Project.objects.all().filter_open().order_by("business__name", "name"))
@@ -88,3 +88,55 @@ class InvoiceFilterForm(forms.Form):
         if data['payment_due_to']:
             qs = qs.filter(payment_due__lte=data['payment_due_to'])
         return qs
+
+class QuoteFilterForm(forms.Form):
+    
+    client = forms.ModelChoiceField(required=False, queryset=models.ClientInvoiceDetails.objects.order_by("name"))
+    project = GroupedModelChoiceField('business', required=False, queryset=timepiece.Project.objects.all().filter_open().order_by("business__name", "name"))
+    status = forms.ChoiceField(required=False, choices=( ('all', 'All'),) + models.Quote.QUOTE_STATUSES)
+    sent_to_client_from = forms.DateField(required=False)
+    sent_to_client_to = forms.DateField(required=False)
+    accepted_from = forms.DateField(required=False)
+    accepted_to = forms.DateField(required=False)
+
+    def __init__(self, *args, **kwargs):
+        super(QuoteFilterForm, self).__init__(*args, **kwargs)
+        self.fields['sent_to_client_from'].widget.attrs['class'] = 'date_field'
+        self.fields['sent_to_client_to'].widget.attrs['class'] = 'date_field'
+        self.fields['accepted_from'].widget.attrs['class'] = 'date_field'
+        self.fields['accepted_to'].widget.attrs['class'] = 'date_field'
+
+    def filter(self, qs):
+        data = self.cleaned_data
+        if data['client']:
+            qs = qs.filter(client=data['client'])
+        if data['project']:
+            qs = qs.filter(project=data['project'])
+        if data['status'] and data['status'] != 'all':
+            qs = qs.filter(status=data['status'])
+        if data['sent_to_client_from']:
+            qs = qs.filter(sent_to_client_at__gte=data['sent_to_client_from'])
+        if data['sent_to_client_to']:
+            qs = qs.filter(sent_to_client_at__lte=data['sent_to_client_to'])
+        if data['accepted_from']:
+            qs = qs.filter(accepted_at__gte=data['accepted_from'])
+        if data['accepted_to']:
+            qs = qs.filter(accepted_at__lte=data['accepted_to'])
+        return qs
+
+class QuoteForm(forms.ModelForm):
+
+    class Meta:
+        model = models.Quote
+        fields = [ 'client', 'status', 'project', 'internal_comment',
+                   'sent_to_client_at', 'accepted_at', 'amount', 'currency_symbol' ]
+
+    project = GroupedModelChoiceField('business', required=False, queryset=timepiece.Project.objects.all().filter_open().order_by("business__name", "name"))
+
+    def __init__(self, *args, **kwargs):
+        super(QuoteForm, self).__init__(*args, **kwargs)
+        self.fields['sent_to_client_at'].initial = datetime.today()
+        self.fields['sent_to_client_at'].widget.attrs['class'] = 'date_field'
+        self.fields['accepted_at'].widget.attrs['class'] = 'date_field'
+        self.fields['status'].initial = 'sent to client'
+    

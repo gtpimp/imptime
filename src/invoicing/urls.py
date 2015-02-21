@@ -18,4 +18,9 @@ urlpatterns = patterns('',
                        url(r'^preview_invoice/(?P<invoice_id>.*)$', views.preview_invoice, name='preview_invoice'),
                        url(r'^generate_invoice/(?P<invoice_id>.*)$', views.generate_invoice, name='generate_invoice'),
                        url(r'^print_invoice_from_phantomjs/(?P<invoice_id>.*)/(?P<username>.*)/(?P<token>.*)$', views.print_invoice_from_phantomjs, name='print_invoice_from_phantomjs'),
-)
+
+                       url(r'^quotes$', views.quotes, name='quotes'),
+                       url(r'^new_quote$', views.new_quote, name='new_quote'),
+                       url(r'^edit_quote/(?P<quote_id>.*)$', views.edit_quote, name='edit_quote'),
+                       )
+

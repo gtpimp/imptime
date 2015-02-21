@@ -1,0 +1,56 @@
+{% extends "invoicing/base.html" %}
+
+{% load add_class %}
+{% load currency %}
+{% load bootstrap_toolkit %}
+
+{% block title %}Edit quote{% endblock %}
+
+{% block content %}
+
+<h1>Edit quote {{quote.client.name}} 
+{% if quote.project %}
+  : {{quote.project.business}} - {{quote.project}}
+{% endif %}
+</h1>
+
+<br/><br/>
+
+<div class="{% if quote.is_accepted %}alert-success{% else %}{% if quote.is_sent %}alert-info{% endif %}{% endif %}">
+  <h3>{{quote.status}}</h3>
+  <table>
+    <tr>
+      <td>State</td><td style="text-align:right">{{quote.status}}</td>
+    </tr>
+    <tr>
+      <td>Amount</td><td style="text-align:right">{{quote.currency_symbol}} {{quote.amount|currency}}</td>
+    </tr>
+    {% if quote.sent_to_client_at %}
+    <tr>
+      <td>Sent to client at</td><td style="text-align:right">{{quote.sent_to_client_at}}</td>
+    </tr>
+    {% endif %}
+    {% if quote.accepted_at %}
+    <tr>
+      <td>Accepted at</td><td style="text-align:right">{{quote.accepted_at}}</td>
+    </tr>
+    {% endif %}
+    <tr>
+      <td>Amount</td><td style="text-align:right">{{quote.currency_symbol}} {{quote.amount|currency}}</td>
+    </tr>
+  </table>
+</div>
+<br/><br/>
+
+<form method="POST" action="{% url 'invoicing:edit_quote' quote.id %}">
+  <input class="btn btn-primary" type="submit" value="Save"/>
+  <a class="btn btn-secondary" href="{% url 'invoicing:quotes' %}">Back to Quotes</a>
+  <br/><br/><br/>
+
+  {% include "invoicing/_quote_form.html" %}
+  
+  <input class="btn btn-primary" type="submit" value="save"/>
+</form>
+
+
+{% endblock %}

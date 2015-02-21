@@ -1,0 +1,81 @@
+{% load bootstrap3 %}
+{% load add_class %}
+{% load currency %}
+
+{% csrf_token %}
+
+<h3>Quote details</h3>
+<div class="col-md-4">
+
+  <div class='row form-group{% if form.errors.client%} has-error{%endif%}'>
+    <div class="col-md-6">
+      Client 
+      {% if quote.client.id %}
+      <a onclick="if (!confirm('Editing {{quote.client.name}} \r\nmeans any changes to this quote will be lost, continue?') ) return false;" href="{% url 'invoicing:edit_client' quote.client.id %}">
+        (edit)
+      </a>
+      {% endif %}
+    </div>
+    <div class="col-md-6">
+      {{ form.client|add_class:'form-control' }}
+    </div>
+  </div>
+
+  <div class='row form-group{% if form.errors.project%} has-error{%endif%}'>
+    <div class="col-md-6">
+      Project (optional)
+    </div>
+    <div class="col-md-6">
+      {{ form.project|add_class:'form-control' }}
+    </div>
+  </div>
+  <div class='row form-group{% if form.errors.amount%} has-error{%endif%}'>
+    <div class="col-md-6">
+      Amount
+    </div>
+    <div class="col-md-6">
+      {{ form.currency_symbol|add_class:'form-control' }}
+    </div>
+    <div class="col-md-6">
+      {{ form.amount|add_class:'form-control' }}
+    </div>
+  </div>
+
+  <div class='row form-group{% if form.errors.status%} has-error{%endif%}'>
+    <div class="col-md-6">
+      Status
+    </div>
+    <div class="col-md-6">
+      {{ form.status|add_class:'form-control' }}
+    </div>
+  </div>
+  <div class='row form-group{% if form.errors.sent_to_client_at%} has-error{%endif%}'>
+    <div class="col-md-6">
+      Sent to client at
+    </div>
+    <div class="col-md-6">
+      {{ form.sent_to_client_at }}
+    </div>
+  </div>
+  <div class='row form-group{% if form.errors.accepted_at%} has-error{%endif%}'>
+    <div class="col-md-6">
+      Accepted at
+    </div>
+    <div class="col-md-6">
+      {{ form.accepted_at }}
+    </div>
+  </div>
+
+  <div class='row form-group{% if form.errors.internal_comment%} has-error{%endif%}'>
+    <div class="col-md-6">
+      Internal comment
+    </div>
+    <div class="col-md-6">
+      {{ form.internal_comment|add_class:'form-control' }}
+    </div>
+  </div>
+
+</div>
+
+<div style="clear:both"></div>
+

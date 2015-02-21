@@ -7,6 +7,8 @@ from django.db.models import Sum, Count, Q, F, Max, Min
 from django.db import models
 from datetime import datetime, date
 
+CURRENCY_SYMBOLS = ( ("R", "R"), ("£","£"), ("€","€"), ("bitcoin","B") )
+
 class ClientInvoiceDetails(models.Model):
     name = models.CharField(max_length=255, null=False, blank=False)
     address1 = models.CharField(max_length=255, null=True, blank=True)
@@ -70,11 +72,9 @@ class Invoice(models.Model):
     invoice_note = models.CharField(max_length=255, null=True, blank=True)
     issued_at = models.DateField()
     payment_due = models.DateField()
-    currency_symbol = models.CharField(max_length=3, blank=False, null=False, default="R", 
-                                       choices=( ("R", "R"), ("£","£"), ("€","€") ))
+    currency_symbol = models.CharField(max_length=3, blank=False, null=False, default="R", choices=CURRENCY_SYMBOLS)
     footer_terms = models.TextField(null=True, blank=True)
     status = models.CharField(max_length=20, default='open', blank=False, null=False, choices=INVOICE_STATUSES)
-    locked = models.BooleanField(default=False)
 
     def save(self, *args, **kwargs):
         if self.project is not None:
@@ -170,3 +170,51 @@ class InvoicePayment(models.Model):
     paid_at = models.DateField(null=False, blank=False)
     description = models.CharField(max_length=255, null=True, blank=True)
 
+
+class QuoteQuerySet(QuerySet):
+
+    def amount(self):
+        return self.aggregate(Sum('amount'))['amount__sum']
+    
+    def amount_waiting(self):
+        return self.filter(status='sent to client').aggregate(Sum('amount'))['amount__sum']
+
+    def amount_accepted(self):
+        return self.filter(status='accepted').aggregate(Sum('amount'))['amount__sum']    
+
+class Quote(models.Model):
+    QUOTE_STATUSES = ( ('creating', 'Creating'), ('sent to client', 'Sent to client'), ('accepted', 'Accepted by client'), ('rejected', 'Rejected by client') )
+    objects = QuerySetManager(QuoteQuerySet)
+    client = models.ForeignKey(ClientInvoiceDetails, blank=False, null=False)
+    internal_comment = models.TextField(blank=True, null=True, verbose_name="Comment (not sent to the client)")
+    project = models.ForeignKey("timepiece.Project", blank=True, null=True)
+    created = models.DateTimeField(auto_now_add=True)
+    modified = models.DateTimeField(auto_now=True)
+    sent_to_client_at = models.DateField(null=True, blank=True)
+    accepted_at = models.DateField(null=True, blank=True)
+    status = models.CharField(max_length=20, default='open', blank=False, null=False, choices=QUOTE_STATUSES)
+    amount = models.IntegerField(null=True, blank=True) # in rands
+    currency_symbol = models.CharField(max_length=3, blank=False, null=False, default="R", choices=CURRENCY_SYMBOLS)
+
+    @property
+    def is_sent(self):
+        return self.sent_to_client_at
+
+    @property
+    def is_accepted(self):
+        return self.accepted_at and self.status == 'accepted'
+
+    @property
+    def amount_waiting(self):
+        if self.status == 'sent to client':
+            return self.amount
+        else:
+            return None
+
+    @property
+    def amount_accepted(self):
+        if self.is_accepted:
+            return self.amount
+        else:
+            return None
+    

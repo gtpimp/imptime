@@ -105,9 +105,6 @@ def edit_invoice(request, invoice_id, template="invoicing/edit_invoice.html", co
     context = context or {}
     invoice = models.Invoice.objects.get(pk=invoice_id)
 
-    #was_locked = invoice.locked
-    was_locked = False
-
     bp = _get_best_bp(request, invoice)
     if not bp.has_edit_invoices:
         raise PermissionDenied
@@ -116,11 +113,7 @@ def edit_invoice(request, invoice_id, template="invoicing/edit_invoice.html", co
     items_formset = invoice_item_formset(request.POST or None, queryset = invoice.items_in_order, prefix='items')
     payments_formset = invoice_payment_formset(request.POST or None, queryset = invoice.payments.all().order_by("paid_at"), prefix='payments')
 
-    # if request.POST and was_locked and not request.user.has_perm('invoicing.can_unlock_invoices'):
-    #     messages.error(request, "Save failed, the invoice is locked")
-    #     return HttpResponseRedirect(reverse('invoicing:edit_invoice', kwargs={'invoice_id':invoice.id}))
-
-    if not was_locked and form.is_valid() and items_formset.is_valid() and payments_formset.is_valid():
+    if form.is_valid() and items_formset.is_valid() and payments_formset.is_valid():
         invoice = form.save()
         items = items_formset.save(commit=False)
         item_count = 1
@@ -253,4 +246,60 @@ def clone_invoice(request, invoice_id, template="invoicing/edit_invoice.html", c
     messages.info(request, "Invoice cloned")
     return HttpResponseRedirect(reverse('invoicing:edit_invoice', kwargs={'invoice_id':invoice.id}))
 
-    
+@login_required
+def quotes(request, template="invoicing/quotes.html", context=None):
+    context = context or {}
+
+    bp = _get_best_bp(request)
+    if not bp.has_view_quotes:
+        raise PermissionDenied
+
+    quotes = models.Quote.objects.all().order_by("-created")
+    filter_form = QuoteFilterForm(request.GET or None)
+    if filter_form.is_valid():
+        quotes = filter_form.filter(quotes)
+
+    context['quotes'] = quotes
+    context['totals'] = quotes
+    context['filter_form'] = filter_form
+    context['bp'] = bp
+    return render_to_response(template, context, context_instance=RequestContext(request))
+
+@login_required
+def new_quote(request, template="invoicing/new_quote.html", context=None):
+    context = context or {}
+
+    bp = _get_best_bp(request)
+    if not bp.has_edit_quotes:
+        raise PermissionDenied
+
+    form = QuoteForm(request.POST or None)
+    if form.is_valid():
+        quote = form.save()
+        messages.info(request, "Quote created")
+        return HttpResponseRedirect(reverse('invoicing:edit_quote', kwargs={'quote_id':quote.id}))
+    else:
+        messages.info(request, "Quote create failed: %s" % form._errors)
+
+    context['form'] = form
+    return render_to_response(template, context, context_instance=RequestContext(request))
+
+@login_required
+def edit_quote(request, quote_id, template="invoicing/edit_quote.html", context=None):
+    context = context or {}
+    quote = models.Quote.objects.get(pk=quote_id)
+
+    bp = _get_best_bp(request, quote)
+    if not bp.has_edit_quotes:
+        raise PermissionDenied
+
+    form = QuoteForm(request.POST or None, instance=quote)
+
+    if form.is_valid():
+        quote = form.save()
+        messages.info(request, "Quote updated")
+        return HttpResponseRedirect(reverse('invoicing:edit_quote', kwargs={'quote_id':quote.id}))
+
+    context['form'] = form
+    context['quote'] = quote
+    return render_to_response(template, context, context_instance=RequestContext(request))

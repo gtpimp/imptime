@@ -1,0 +1,24 @@
+{% extends "invoicing/base.html" %}
+
+{% load bootstrap_toolkit %}
+
+{% block title %}New quote{% endblock %}
+
+{% block content %}
+
+<h1>New quote</h1>
+
+<form method="POST" action="{% url 'invoicing:new_quote' %}">
+
+  <input class="btn btn-primary" type="submit" value="save"/>
+  <br/><br/><br/>
+
+  {% include "invoicing/_quote_form.html" %}
+
+  <input class="btn btn-primary" type="submit" value="save"/>
+
+
+</form>
+
+
+{% endblock %}
