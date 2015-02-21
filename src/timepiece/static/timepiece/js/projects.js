@@ -350,6 +350,12 @@ imp.edit_project_status = function(event, el) {
     return false;
 };
 
+imp.create_accordions = function() {
+    $(".accordion .accordion-toggle").bind('click', function() {
+        $(this).parent('.accordion').find('.accordion_content').slideToggle();
+    });
+};
+
 imp.refresh_show_numbers = function() {
     if ( imp.show_numbers_state == numbers_state['all'] ) {
 	$(".money_cell").show();

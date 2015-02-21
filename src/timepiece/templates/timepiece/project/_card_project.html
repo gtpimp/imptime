@@ -54,507 +54,544 @@
   <br />
 
   {% has_permission has_view_ctc_billable_rates project.business %}
-  <h1>Cost summary</h1>
-  <table>
-    <thead>
-      <th class="money_cell money_ctc">CTC</th>
-      <th class="money_cell money_billable">Billable</th>
-      <th>Budget</th>
-      <th>Projected cost</th>
-    </thead>
-    <tbody>
-      <tr>
-        <td class="money_cell money_ctc">R{{ project.new_stats.total.hours_ctc|floatformat:"0"|intcomma }}</td>
-        <td class="money_cell money_billable">
-          R{{ project.new_stats.total.hours_billable|floatformat:"0"|intcomma }}
-        </td>
-        <td>
-          {% has_permission has_view_budget project.business %}
-          R{{project.budget|floatformat:"0"|intcomma}}
-          {% end_permission %}
-        </td>
-        <td>
-          {% has_permission has_view_budget project.business %}
-          R{{project.new_stats.total.projected_total_billable_no_more_adhoc_with_scope_creep|default:""|floatformat:"0"|intcomma }}
-          {% end_permission %}
-        </td>
-      </tr>
-    </tbody>
-  </table>
+  <div class="accordion">
+    <h1 class="accordion_heading accordion-toggle">Cost summary</h1>
+    <div class="accordion_content">
+      <table>
+        <thead>
+          <th class="money_cell money_ctc">CTC</th>
+          <th class="money_cell money_billable">Billable</th>
+          <th>Budget</th>
+          <th>Projected cost</th>
+        </thead>
+        <tbody>
+          <tr>
+            <td class="money_cell money_ctc">R{{ project.new_stats.total.hours_ctc|floatformat:"0"|intcomma }}</td>
+            <td class="money_cell money_billable">
+              R{{ project.new_stats.total.hours_billable|floatformat:"0"|intcomma }}
+            </td>
+            <td>
+              {% has_permission has_view_budget project.business %}
+              R{{project.budget|floatformat:"0"|intcomma}}
+              {% end_permission %}
+            </td>
+            <td>
+              {% has_permission has_view_budget project.business %}
+              R{{project.new_stats.total.projected_total_billable_no_more_adhoc_with_scope_creep|default:""|floatformat:"0"|intcomma }}
+              {% end_permission %}
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
   {% end_permission %}
 
   {% has_permission has_view_deadlines project.business %}
-    <h1>Deadlines</h1>
-    <table>
-      <tr>
-	<td>Start Dev</td>
-	<td>{{project.start_dev_at|date:'D d-M-Y'|default:"not set"}}</td>
-      </tr>
-      <tr>
-	<td>Start Internal QA</td>
-	<td>{{project.start_internal_qa_at|date:'D d-M-Y'|default:"not set"}}</td>
-      </tr>
-      <tr>
-	<td>Start Client QA</td>
-	<td>{{project.start_client_qa_at|date:'D d-M-Y'|default:"not set"}}</td>
-      </tr>
-      <tr>
-	<td>Invoice at</td>
-	<td>{{project.invoice_at|date:'D d-M-Y'|default:"not set"}}</td>
-      </tr>
-    </table>
-  {% end_permission %}
-
-  {% has_permission has_view_ctc_billable_rates project.business %}
-  <h1>
-    Estimates
-    <span class="tip">(uses the estimates for issues assigned to each developer)</span>
-  </h1>
-  <table>
-    <thead>
-      <th>Assigned user</th>
-      <th>Points</th>
-
-      <th>Velocity</th>
-
-      <th>Points</th>
-
-      {% has_permission has_view_ctc_rates project.business %}
-      <th colspan="2" class="money_cell money_ctc">ctc</th>
-      {% end_permission %}
-      <th colspan="2" class="money_cell money_billable">billable</th>
-    </thead>
-    <tbody>
-      <tr class="table_info_row">
-        <td></td>
-        <td>Real Issues</td>
-        
-        <td>Estimated</td>
-        <td>Adjusted</td>
-
-        <td  class="money_cell money_ctc">Rate</td>
-        <td  class="money_cell money_ctc">Amount</td>
-
-        <td  class="money_cell money_billable">Rate</td>
-        <td  class="money_cell money_billable">Amount</td>
-      </tr>
-
-      {% for user, values in project.new_stats.per_user.items %}
-      <tr>
-	<td>{{ user.username }} ({{ values.rate.time_tracking_mode|slice:"0:1" }})</td>
-        <td>{{ values.points_non_adhoc|default:""|intcomma }}</td>
-	<td>{% if values.rate.velocity and values.points_non_adhoc %}{{ values.rate.velocity|default:""|floatformat:"2"|intcomma }}{% endif %}</td>
-        <td>{{ values.adjusted_points_non_adhoc|default:""|floatformat:"2"|intcomma }}</td>
-
-        {% has_permission has_view_ctc_rates project.business %}
-        <td class="money_cell money_ctc">{% if values.rate.amount and values.adjusted_points_ctc %}R{{ values.rate.amount|default:""|floatformat:"0"|intcomma }}{% endif %}</td>
-        <td class="money_cell money_ctc">{% if values.adjusted_points_ctc %}R{{ values.adjusted_points_ctc|default:""|floatformat:"0"|intcomma}}{% endif %}</td>
-        {% end_permission %}
-        <td class="money_cell money_billable">{% if values.rate.billable_amount and values.adjusted_points_billable %}R{{ values.rate.billable_amount|default:""|floatformat:"0"|intcomma }}{% endif %}</td>
-        <td class="money_cell money_billable">
-          {% if values.adjusted_points_billable %}
-            R{{ values.adjusted_points_billable|default:""|floatformat:"0"|intcomma}}
-            {% if values.rate.time_tracking_mode != "developer" %}
-            ({{ values.rate.time_tracking_mode|slice:"0:1" }})
-            {% endif %}
-          {% endif %}
-        </td>
-      </tr>
-      {% endfor %}
-
-      <tr>
-        <th>Total</th>
-        <th></th>
-
-        <th></th>
-        <th></th>
-
-        <th class="money_cell money_ctc"></th>
-        <th class="money_cell money_ctc"></th>
-        <th class="money_cell money_billable"></th>
-        <th class="money_cell money_billable">{% if project.new_stats.total.points_billable %}R{{ project.new_stats.total.points_billable|default:""|floatformat:"0"|intcomma }}{% endif %} </th>
-      </tr>
-      <tr>
-        <th></th>
-        <th></th>
-
-        <th></th>
-        <th></th>
-
-        <th class="money_cell money_billable" colspan="3">
-          {% if project.new_stats.total.hours_billable_with_scope_creep %}
-          Total with expected scope creep of {{project.new_stats.total.scope_creep_percentage}}%
-          {% endif %}
-        </th>
-        <th class="money_cell money_billable">
-          {% if project.new_stats.total.hours_billable_with_scope_creep %}R{{ project.new_stats.total.hours_billable_with_scope_creep|default:""|floatformat:"0"|intcomma }}{% endif %} 
-        </th>     
-
-      </tr>
-    </tbody>
-  </table>
-
-  {% has_permission has_view_ctc_billable_rates project.business %}
-  <h1>
-    Comparative estimates 
-    <span class="tip">(as if each person works on every issue at their own estimates)</span>
-  </h1>
-  
-  <table>
-    <thead>
-      <th>User</th>
-      <th>Points</th>
-      <th>Velocity</th>
-      <th>Points</th>
-
-      {% has_permission has_view_ctc_rates project.business %}
-      <th colspan="2" class="money_cell money_ctc">ctc</th>
-      {% end_permission %}
-      <th colspan="2" class="money_cell money_billable">billable</th>
-    </thead>
-    <tbody>
-      <tr class="table_info_row">
-        <td></td>
-        <td>Real Issues</td>
-        
-        <td>Estimated</td>
-
-        <td>Adjusted</td>
-
-        <td class="money_cell money_ctc">Rate</td>
-        <td class="money_cell money_ctc">Amount</td>
-
-        <td class="money_cell money_billable">Rate</td>
-        <td class="money_cell money_billable">Amount</td>
-      </tr>
-      {% for user, values in project.new_stats.per_user.items %}
-      <tr>
-	<td>{{ user.username }} ({{ values.rate.time_tracking_mode|slice:"0:1" }})</td>
-
-        <td>{{ values.points_comparative_non_adhoc|default:""|intcomma }}</td>
-
-	<td>{% if values.rate.velocity and values.points_comparative_non_adhoc %}{{ values.rate.velocity|default:""|floatformat:"2"|intcomma }}{% endif %}</td>
-
-        <td>{{ values.adjusted_points_comparative_non_adhoc|default:""|floatformat:"2"|intcomma }}</td>
-
-        {% has_permission has_view_ctc_rates project.business %}
-        <td class="money_cell money_ctc">{% if values.rate.amount and values.adjusted_points_comparative_ctc %}R{{ values.rate.amount|default:""|floatformat:"0"|intcomma }}{% endif %}</td>
-        <td class="money_cell money_ctc">{% if values.adjusted_points_comparative_ctc %}R{{ values.adjusted_points_comparative_ctc|default:""|floatformat:"0"|intcomma}}{% endif %}</td>
-        {% end_permission %}
-        <td class="money_cell money_billable">{% if values.rate.billable_amount and values.adjusted_points_comparative_billable %}R{{ values.rate.billable_amount|default:""|floatformat:"0"|intcomma }}{% endif %}</td>
-        <td class="money_cell money_billable">
-          {% if values.adjusted_points_comparative_billable %}
-            R{{ values.adjusted_points_comparative_billable|default:""|floatformat:"0"|intcomma}}
-            {% if values.rate.time_tracking_mode != "developer" %}
-            ({{ values.rate.time_tracking_mode|slice:"0:1" }})
-            {% endif %}
-          {% endif %}
-        </td>
-      </tr>
-      {% endfor %}
-    </tbody>
-  </table>
-  {% end_permission %}
-
-  <h1>Actuals</h1>
-  <table>
-    <thead>
-      <th>Assigned user</th>
-      <th colspan="4">Hours</th>
-
-      <th>% complete</th>
-
-      {% has_permission has_view_ctc_rates project.business %}
-      <th colspan="2" class="money_cell money_ctc">ctc</th>
-      {% end_permission %}
-      {% has_permission has_view_ctc_billable_rates project.business %}
-      <th colspan="3" class="money_cell money_billable">billable</th>
-      {% end_permission %}
-    </thead>
-    <tbody>
-      <tr class="table_info_row">
-        <td></td>
-
-        <td>All</td>
-        <td>Real issues</td>
-        <td>Closed real issues</td>
-        <td>Adhoc</td>
-
-        <td>(using closed issues)</td>
-
-        <td class="money_cell money_ctc">Rate</td>
-        <td class="money_cell money_ctc">Amount</td>
-        <td class="money_cell money_billable">Rate</td>
-        <td class="money_cell money_billable">Amount</td>
-        <td class="money_cell money_billable">(of which adhoc is)</td>
-      </tr>
-
-      {% for user, values in project.new_stats.per_user.items %}
-      <tr>
-	<td>{{ user.username }} ({{ values.rate.time_tracking_mode|slice:"0:1" }})</td>
-
-	<td>{{ values.hours|default:"" }}</td>
-        <td>{{ values.hours_real|default:""|intcomma }}</td>
-        <td>{{ values.hours_closed_real|default:""|intcomma }}</td>
-        <td>{{ values.hours_adhoc|default:""|intcomma }}</td>
-
-        <td>{% if values.percentage_points_complete %}{{ values.percentage_points_complete|default:""|floatformat:"0"|intcomma}}%{% endif %}</td>
-
-        {% has_permission has_view_ctc_rates project.business %}
-        <td class="money_cell money_ctc">{% if values.rate.amount and values.hours_ctc %}R{{ values.rate.amount|default:""|floatformat:"0"|intcomma }}{% endif %}</td>
-	<td class="money_cell money_ctc">{% if values.hours_ctc %}R{{ values.hours_ctc|default:""|floatformat:"0"|intcomma }}{% endif %}</td>
-        {% end_permission %}
-        <td class="money_cell money_billable">{% if values.rate.billable_amount and values.hours_billable %}R{{ values.rate.billable_amount|default:""|floatformat:"0"|intcomma }}{% endif %}</td>
-	<td class="money_cell money_billable">
-          {% if values.hours_billable %}
-            R{{ values.hours_billable|default:""|floatformat:"0"|intcomma }}
-            {% if values.rate.time_tracking_mode != "developer" %}
-            ({{ values.rate.time_tracking_mode|slice:"0:1" }})
-            {% endif %}
-          {% endif %}
-          
-        </td>
-
-      </tr>
-      {% endfor %}
-      <tr>
-        <th>Total</th>
-        
-        <th>{{ project.new_stats.total.hours }}</th>
-        <th>{{ project.new_stats.total.hours_real_issues }}</th>
-        <th>{{ project.new_stats.total.hours_closed_real_issues }}</th>
-        <th>{{ project.new_stats.total.hours_adhoc }}</th>
-
-        <th>{{ project.new_stats.total.percentage_points_complete|default:""|floatformat:"0"|intcomma }}%</th>
-
-        {% has_permission has_view_ctc_rates project.business %}
-        <th class="money_cell money_ctc"></th>
-        <th class="money_cell money_ctc">{% if project.new_stats.total.hours_ctc %}R{{ project.new_stats.total.hours_ctc|default:""|floatformat:"0"|intcomma }}{% endif %}</th>
-        {% end_permission %}
-        <th class="money_cell money_billable"></th>
-        <th class="money_cell money_billable">{% if project.new_stats.total.hours_billable %}R{{ project.new_stats.total.hours_billable|default:""|floatformat:"0"|intcomma }}{% endif %}</th>
-        <td class="money_cell money_billable" style="text-align:right">{% if project.new_stats.total.hours_adhoc_billable %}R{{ project.new_stats.total.hours_adhoc_billable|default:""|floatformat:"0"|intcomma }}{% endif %}</td>
-
-      </tr>
-      
-    </tbody>
-  </table>
-
-  <h1>
-    Projected
-    <span class="tip">(uses the points ratio for completed issues to estimate the overall project cost)</span>
-  </h1>
-  <table>
-    <thead>
-      <th>Assigned user</th>
-      <th colspan="3">Closed real issues</th>
-
-      <th colspan="2">Open real issues</th>
-
-      {% has_permission has_view_ctc_rates project.business %}
-      <th colspan="2" class="money_cell money_ctc">ctc</th>
-      {% end_permission %}
-      {% has_permission has_view_ctc_billable_rates project.business %}
-      <th colspan="2" class="money_cell money_billable">billable</th>
-      {% end_permission %}
-      <th colspan="3" class="money_cell money_billable">Projected costs</th>
-    </thead>
-    <tbody>
-      <tr class="table_info_row">
-        <td></td>
-
-        <td>Points</td>
-        <td>Hours</td>
-        <td>Actual velocity</td>
-
-        <td>Points</td>
-        <td>Velocity adjusted points</td>
-
-        <td class="money_cell money_ctc">Rate</td>
-        <td class="money_cell money_ctc">Remaining</td>
-        <td class="money_cell money_billable">Rate</td>
-        <td class="money_cell money_billable">Remaining</td>
-
-        <td></td>
-        <td></td>
-        <td></td>
-        <td></td>
-      </tr>
-
-      {% for user, values in project.new_stats.per_user.items %}
-      <tr>
-	<td>{{ user.username }} ({{ values.rate.time_tracking_mode|slice:"0:1" }})</td>
-
-	<td>{{ values.points_closed_non_adhoc|default:""|intcomma }}</td>
-        <td>{{ values.hours_closed_real|default:""|intcomma }}</td>
-        <td>{% if values.calculated_velocity and values.points_calculated_open_non_adhoc %}{{ values.calculated_velocity|default:""|floatformat:"2"|intcomma }}{% endif %}</td>
-
-        <td>{{ values.points_open_non_adhoc|default:""|intcomma }}</td>
-        <td>{% if values.points_calculated_open_non_adhoc %}{{ values.points_calculated_open_non_adhoc|floatformat:"2"|default:""|intcomma }}{% endif %}</td>
-
-        {% has_permission has_view_ctc_rates project.business %}
-        <td class="money_cell money_ctc">{% if values.rate.amount and values.points_calculated_open_non_adhoc_ctc %}R{{ values.rate.amount|default:""|floatformat:"0"|intcomma }}{% endif %}</td>
-	<td class="money_cell money_ctc">{% if values.points_calculated_open_non_adhoc_ctc %}R{{ values.points_calculated_open_non_adhoc_ctc|default:""|floatformat:"0"|intcomma }}{% endif %}</td>
-        {% end_permission %}
-        <td class="money_cell money_billable">{% if values.rate.billable_amount and values.points_calculated_open_non_adhoc_billable %}R{{ values.rate.billable_amount|default:""|floatformat:"0"|intcomma }}{% endif %}</td>
-        <td class="money_cell money_billable">{% if values.points_calculated_open_non_adhoc_billable %}R{{ values.points_calculated_open_non_adhoc_billable|default:""|floatformat:"0"|intcomma }}{% endif %}</td>
-
-        <td></td>
-        <td></td>
-        <td></td>
-
-      </tr>
-      {% endfor %}
-      <tr>
-        <th>Total</th>
-        
-        <th></th>
-        <th></th>
-        <th></th>
-        <th></th>
-        <th></th>
-        <th class="money_cell money_ctc"></th>
-        <th class="money_cell money_ctc">{% if project.new_stats.total.points_calculated_open_non_adhoc_ctc %}R {{project.new_stats.total.points_calculated_open_non_adhoc_ctc|default:""|floatformat:"0"|intcomma }}{% endif %}</th>
-
-        <th class="money_cell money_billable"></th>
-        <th class="money_cell money_billable">{% if project.new_stats.total.points_calculated_open_non_adhoc_billable %}R {{project.new_stats.total.points_calculated_open_non_adhoc_billable|default:""|floatformat:"0"|intcomma }}{% endif %}</th>
-        
-        <th>{% if project.new_stats.total.projected_total_billable_no_more_adhoc %}R{{ project.new_stats.total.projected_total_billable_no_more_adhoc|default:""|floatformat:"0"|intcomma }}{% endif %}</th>
-        <th>{% if project.new_stats.total.projected_total_billable_no_more_adhoc_with_scope_creep %}R{{ project.new_stats.total.projected_total_billable_no_more_adhoc_with_scope_creep|default:""|floatformat:"0"|intcomma }}{% endif %}</th>
-        
-        <th>{% if project.new_stats.total.projected_adhoc_billable %}R{{ project.new_stats.total.projected_adhoc_billable|default:""|floatformat:"0"|intcomma }}{% endif %}</th>
-        
-      </tr>
-
-      <tr>
-        <td></td>
-        
-        <td></td>
-        <td></td>
-        <td></td>
-        <td></td>
-        <td class="money_cell money_ctc"></td>
-        <td class="money_cell money_ctc"></td>
-        <td class="money_cell money_billable"></td>
-        <td class="money_cell money_billable"></td>
-        <td>issues remaining</td>
-        <td>actual+projected </td>
-        <td>with scope creep of {{project.new_stats.total.scope_creep_percentage}}%</td>
-        <td>(projected new adhoc issues)</td>
-      </tr>
-      
-    </tbody>
-  </table>
-
-  <h1>Quotes</h1>
-  <table>
-    <tbody>
-      {% for quote in quotes %}
-      <tr class="clickable" onclick="window.open('{% url 'invoicing:edit_quote' quote.id %}'); return false;">
-        <td>
-          {% if quote.quote_document %}
-          <a href="{{quote.quote_document.url}}">{{quote.quote_document}}</a>
-          {% endif %}
-        </td>
-        <td>
-          {% if quote.status == 'accepted' %}
-          <img width="15px" src="{{STATIC_URL}}images/icons/tick.png"/>
-          Accepted on {{quote.accepted_at|date:'D d-M-Y'}}
-          {% elif quote.status == 'sent to client' %}
-          <img width="15px" src="{{STATIC_URL}}images/icons/application_go.png"/>
-          Sent to client on {{quote.sent_to_client_at|date:'D d-M-Y'}}
-          {% elif quote.status == 'rejected' %}
-          <img width="15px" src="{{STATIC_URL}}images/icons/cross.png"/>
-          {{quote.status}}
-          {% endif %}
-        </td>
-        <td class="money_cell money_billable">
-          {% has_permission has_view_ctc_billable_rates quote.project.business %}
-            {{quote.currency_symbol}}{{quote.amount|intcomma}}
-          {% end_permission %}
-        </td>
-      </tr>
-      {% empty %}
-      <tr>
-        <td>No quotes{{msg}}</td>
-      </tr>
-      {% endfor %}
-    </tbody>
-  </table>
-
-  <h1>Invoices</h1>
-  <table>
-    <tbody>
-      {% for invoice in invoices %}
-      <tr class="clickable" onclick="window.open('{% url 'invoicing:edit_invoice' invoice.id %}'); return false;">
-        <td>{{invoice.status}}</td>
-        <td>
-          {% if invoice.is_overdue %}
-          <div class="error"><h3>Overdue by {{invoice.days_till_due}} days</h3></div>
-          {% else %}
-          <div class="info">Due in {{invoice.days_till_due}} days</div>
-          {% endif %}
-        </td>
-        <td>
-          <td class="money_cell money_billable" style="text-align:right">{{invoice.currency_symbol}}{{invoice.cost|intcomma}}</td>
-        </td>
-      </tr>
-      {% empty %}
-      <tr>
-        <td>No invoices{{msg}}</td>
-      </tr>
-      {% endfor %}
-    </tbody>
-  </table>
-
-
-  <h1>State legend</h1>
-  <table>
-    <thead>
-      <th>User</th>
-      <th>Role</th>
-    </thead>
-    <tbody>
-      {% for user, values in project.new_stats.per_user.items %}
-      <tr>
-        <td>{{ user.username }}</td>
-        <td>{{ values.rate.time_tracking_mode }}</td>
-      </tr>
-      <tr class="table_info_row">
-        <td colspan="99" style="text-align: left">
-        Open states are:{% for s in values.open_status_options %}
-        {{ s }}, 
-        {% endfor %}
-          <br/><br/>
-        </td>
-      </tr>
-      {% endfor %}
-    </tbody>
-  </table>
-
-
-
-    <h1>Features</h1>
-    <table>
-      <thead>
-        <th></th>
-        {% has_permission has_view_ctc_rates project.business %}
-        <th class="money_cell money_ctc">ctc</th>
-        {% end_permission %}
-        <th class="money_cell money_billable">billable</th>
-      </thead>
-      <tbody>
-        {% for data in project.costs_by_feature.values %} 
+  <div class="accordion">
+    <h1 class="accordion_heading accordion-toggle">Deadlines</h1>
+    <div class="accordion_content" style="display:none">
+      <table>
         <tr>
-          <th>{{data.name}}</th>
-          {% has_permission has_view_ctc_rates project.business %}
-          <td class="money_cell money_ctc">R{{data.ctc|floatformat:"0"|intcomma}}</td>
-          {% end_permission %}
-          <td class="money_cell money_billable">R{{data.billable|floatformat:"0"|intcomma}}</td>
+	  <td>Start Dev</td>
+	  <td>{{project.start_dev_at|date:'D d-M-Y'|default:"not set"}}</td>
         </tr>
-        {% endfor %}
-      </tbody>
-    </table>
+        <tr>
+	  <td>Start Internal QA</td>
+	  <td>{{project.start_internal_qa_at|date:'D d-M-Y'|default:"not set"}}</td>
+        </tr>
+        <tr>
+	  <td>Start Client QA</td>
+	  <td>{{project.start_client_qa_at|date:'D d-M-Y'|default:"not set"}}</td>
+        </tr>
+        <tr>
+	  <td>Invoice at</td>
+	  <td>{{project.invoice_at|date:'D d-M-Y'|default:"not set"}}</td>
+        </tr>
+      </table>
+    </div>
+  </div>
+  {% end_permission %}
+
+  {% has_permission has_view_ctc_billable_rates project.business %}
+  <div class="accordion">
+    <h1 class="accordion_heading accordion-toggle">
+      Estimates
+      <span class="tip">(uses the estimates for issues assigned to each developer)</span>
+    </h1>
+    <div class="accordion_content" style="display:none">
+      <table>
+        <thead>
+          <th>Assigned user</th>
+          <th>Points</th>
+
+          <th>Velocity</th>
+
+          <th>Points</th>
+
+          {% has_permission has_view_ctc_rates project.business %}
+          <th colspan="2" class="money_cell money_ctc">ctc</th>
+          {% end_permission %}
+          <th colspan="2" class="money_cell money_billable">billable</th>
+        </thead>
+        <tbody>
+          <tr class="table_info_row">
+            <td></td>
+            <td>Real Issues</td>
+            
+            <td>Estimated</td>
+            <td>Adjusted</td>
+
+            <td  class="money_cell money_ctc">Rate</td>
+            <td  class="money_cell money_ctc">Amount</td>
+
+            <td  class="money_cell money_billable">Rate</td>
+            <td  class="money_cell money_billable">Amount</td>
+          </tr>
+
+          {% for user, values in project.new_stats.per_user.items %}
+          <tr>
+	    <td>{{ user.username }} ({{ values.rate.time_tracking_mode|slice:"0:1" }})</td>
+            <td>{{ values.points_non_adhoc|default:""|intcomma }}</td>
+	    <td>{% if values.rate.velocity and values.points_non_adhoc %}{{ values.rate.velocity|default:""|floatformat:"2"|intcomma }}{% endif %}</td>
+            <td>{{ values.adjusted_points_non_adhoc|default:""|floatformat:"2"|intcomma }}</td>
+
+            {% has_permission has_view_ctc_rates project.business %}
+            <td class="money_cell money_ctc">{% if values.rate.amount and values.adjusted_points_ctc %}R{{ values.rate.amount|default:""|floatformat:"0"|intcomma }}{% endif %}</td>
+            <td class="money_cell money_ctc">{% if values.adjusted_points_ctc %}R{{ values.adjusted_points_ctc|default:""|floatformat:"0"|intcomma}}{% endif %}</td>
+            {% end_permission %}
+            <td class="money_cell money_billable">{% if values.rate.billable_amount and values.adjusted_points_billable %}R{{ values.rate.billable_amount|default:""|floatformat:"0"|intcomma }}{% endif %}</td>
+            <td class="money_cell money_billable">
+              {% if values.adjusted_points_billable %}
+              R{{ values.adjusted_points_billable|default:""|floatformat:"0"|intcomma}}
+              {% if values.rate.time_tracking_mode != "developer" %}
+              ({{ values.rate.time_tracking_mode|slice:"0:1" }})
+              {% endif %}
+              {% endif %}
+            </td>
+          </tr>
+          {% endfor %}
+
+          <tr>
+            <th>Total</th>
+            <th></th>
+
+            <th></th>
+            <th></th>
+
+            <th class="money_cell money_ctc"></th>
+            <th class="money_cell money_ctc"></th>
+            <th class="money_cell money_billable"></th>
+            <th class="money_cell money_billable">{% if project.new_stats.total.points_billable %}R{{ project.new_stats.total.points_billable|default:""|floatformat:"0"|intcomma }}{% endif %} </th>
+          </tr>
+          <tr>
+            <th></th>
+            <th></th>
+
+            <th></th>
+            <th></th>
+
+            <th class="money_cell money_billable" colspan="3">
+              {% if project.new_stats.total.hours_billable_with_scope_creep %}
+              Total with expected scope creep of {{project.new_stats.total.scope_creep_percentage}}%
+              {% endif %}
+            </th>
+            <th class="money_cell money_billable">
+              {% if project.new_stats.total.hours_billable_with_scope_creep %}R{{ project.new_stats.total.hours_billable_with_scope_creep|default:""|floatformat:"0"|intcomma }}{% endif %} 
+            </th>     
+
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  {% has_permission has_view_ctc_billable_rates project.business %}
+  <div class="accordion">
+    <h1 class="accordion_heading accordion-toggle">
+      Comparative estimates 
+      <span class="tip">(as if each person works on every issue at their own estimates)</span>
+    </h1>
+    <div class="accordion_content" style="display:none">
+      <table>
+        <thead>
+          <th>User</th>
+          <th>Points</th>
+          <th>Velocity</th>
+          <th>Points</th>
+
+          {% has_permission has_view_ctc_rates project.business %}
+          <th colspan="2" class="money_cell money_ctc">ctc</th>
+          {% end_permission %}
+          <th colspan="2" class="money_cell money_billable">billable</th>
+        </thead>
+        <tbody>
+          <tr class="table_info_row">
+            <td></td>
+            <td>Real Issues</td>
+            
+            <td>Estimated</td>
+
+            <td>Adjusted</td>
+
+            <td class="money_cell money_ctc">Rate</td>
+            <td class="money_cell money_ctc">Amount</td>
+
+            <td class="money_cell money_billable">Rate</td>
+            <td class="money_cell money_billable">Amount</td>
+          </tr>
+          {% for user, values in project.new_stats.per_user.items %}
+          <tr>
+	    <td>{{ user.username }} ({{ values.rate.time_tracking_mode|slice:"0:1" }})</td>
+
+            <td>{{ values.points_comparative_non_adhoc|default:""|intcomma }}</td>
+
+	    <td>{% if values.rate.velocity and values.points_comparative_non_adhoc %}{{ values.rate.velocity|default:""|floatformat:"2"|intcomma }}{% endif %}</td>
+
+            <td>{{ values.adjusted_points_comparative_non_adhoc|default:""|floatformat:"2"|intcomma }}</td>
+
+            {% has_permission has_view_ctc_rates project.business %}
+            <td class="money_cell money_ctc">{% if values.rate.amount and values.adjusted_points_comparative_ctc %}R{{ values.rate.amount|default:""|floatformat:"0"|intcomma }}{% endif %}</td>
+            <td class="money_cell money_ctc">{% if values.adjusted_points_comparative_ctc %}R{{ values.adjusted_points_comparative_ctc|default:""|floatformat:"0"|intcomma}}{% endif %}</td>
+            {% end_permission %}
+            <td class="money_cell money_billable">{% if values.rate.billable_amount and values.adjusted_points_comparative_billable %}R{{ values.rate.billable_amount|default:""|floatformat:"0"|intcomma }}{% endif %}</td>
+            <td class="money_cell money_billable">
+              {% if values.adjusted_points_comparative_billable %}
+              R{{ values.adjusted_points_comparative_billable|default:""|floatformat:"0"|intcomma}}
+              {% if values.rate.time_tracking_mode != "developer" %}
+              ({{ values.rate.time_tracking_mode|slice:"0:1" }})
+              {% endif %}
+              {% endif %}
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+  {% end_permission %}
+
+  <div class="accordion">
+    <h1 class="accordion_heading accordion-toggle">Actuals</h1>
+    <div class="accordion_content" style="display:none">
+      <table>
+        <thead>
+          <th>Assigned user</th>
+          <th colspan="4">Hours</th>
+
+          <th>% complete</th>
+
+          {% has_permission has_view_ctc_rates project.business %}
+          <th colspan="2" class="money_cell money_ctc">ctc</th>
+          {% end_permission %}
+          {% has_permission has_view_ctc_billable_rates project.business %}
+          <th colspan="3" class="money_cell money_billable">billable</th>
+          {% end_permission %}
+        </thead>
+        <tbody>
+          <tr class="table_info_row">
+            <td></td>
+
+            <td>All</td>
+            <td>Real issues</td>
+            <td>Closed real issues</td>
+            <td>Adhoc</td>
+
+            <td>(using closed issues)</td>
+
+            <td class="money_cell money_ctc">Rate</td>
+            <td class="money_cell money_ctc">Amount</td>
+            <td class="money_cell money_billable">Rate</td>
+            <td class="money_cell money_billable">Amount</td>
+            <td class="money_cell money_billable">(of which adhoc is)</td>
+          </tr>
+
+          {% for user, values in project.new_stats.per_user.items %}
+          <tr>
+	    <td>{{ user.username }} ({{ values.rate.time_tracking_mode|slice:"0:1" }})</td>
+
+	    <td>{{ values.hours|default:"" }}</td>
+            <td>{{ values.hours_real|default:""|intcomma }}</td>
+            <td>{{ values.hours_closed_real|default:""|intcomma }}</td>
+            <td>{{ values.hours_adhoc|default:""|intcomma }}</td>
+
+            <td>{% if values.percentage_points_complete %}{{ values.percentage_points_complete|default:""|floatformat:"0"|intcomma}}%{% endif %}</td>
+
+            {% has_permission has_view_ctc_rates project.business %}
+            <td class="money_cell money_ctc">{% if values.rate.amount and values.hours_ctc %}R{{ values.rate.amount|default:""|floatformat:"0"|intcomma }}{% endif %}</td>
+	    <td class="money_cell money_ctc">{% if values.hours_ctc %}R{{ values.hours_ctc|default:""|floatformat:"0"|intcomma }}{% endif %}</td>
+            {% end_permission %}
+            <td class="money_cell money_billable">{% if values.rate.billable_amount and values.hours_billable %}R{{ values.rate.billable_amount|default:""|floatformat:"0"|intcomma }}{% endif %}</td>
+	    <td class="money_cell money_billable">
+              {% if values.hours_billable %}
+              R{{ values.hours_billable|default:""|floatformat:"0"|intcomma }}
+              {% if values.rate.time_tracking_mode != "developer" %}
+              ({{ values.rate.time_tracking_mode|slice:"0:1" }})
+              {% endif %}
+              {% endif %}
+              
+            </td>
+
+          </tr>
+          {% endfor %}
+          <tr>
+            <th>Total</th>
+            
+            <th>{{ project.new_stats.total.hours }}</th>
+            <th>{{ project.new_stats.total.hours_real_issues }}</th>
+            <th>{{ project.new_stats.total.hours_closed_real_issues }}</th>
+            <th>{{ project.new_stats.total.hours_adhoc }}</th>
+
+            <th>{{ project.new_stats.total.percentage_points_complete|default:""|floatformat:"0"|intcomma }}%</th>
+
+            {% has_permission has_view_ctc_rates project.business %}
+            <th class="money_cell money_ctc"></th>
+            <th class="money_cell money_ctc">{% if project.new_stats.total.hours_ctc %}R{{ project.new_stats.total.hours_ctc|default:""|floatformat:"0"|intcomma }}{% endif %}</th>
+            {% end_permission %}
+            <th class="money_cell money_billable"></th>
+            <th class="money_cell money_billable">{% if project.new_stats.total.hours_billable %}R{{ project.new_stats.total.hours_billable|default:""|floatformat:"0"|intcomma }}{% endif %}</th>
+            <td class="money_cell money_billable" style="text-align:right">{% if project.new_stats.total.hours_adhoc_billable %}R{{ project.new_stats.total.hours_adhoc_billable|default:""|floatformat:"0"|intcomma }}{% endif %}</td>
+
+          </tr>
+          
+        </tbody>
+      </table>
+    </div>
+  </div>
+    
+  <div class="accordion">
+    <h1 class="accordion_heading accordion-toggle">
+      Projected
+      <span class="tip">(uses the points ratio for completed issues to estimate the overall project cost)</span>
+    </h1>
+    <div class="accordion_content" style="display:none">
+      <table>
+        <thead>
+          <th>Assigned user</th>
+          <th colspan="3">Closed real issues</th>
+
+          <th colspan="2">Open real issues</th>
+
+          {% has_permission has_view_ctc_rates project.business %}
+          <th colspan="2" class="money_cell money_ctc">ctc</th>
+          {% end_permission %}
+          {% has_permission has_view_ctc_billable_rates project.business %}
+          <th colspan="2" class="money_cell money_billable">billable</th>
+          {% end_permission %}
+          <th colspan="3" class="money_cell money_billable">Projected costs</th>
+        </thead>
+        <tbody>
+          <tr class="table_info_row">
+            <td></td>
+
+            <td>Points</td>
+            <td>Hours</td>
+            <td>Actual velocity</td>
+
+            <td>Points</td>
+            <td>Velocity adjusted points</td>
+
+            <td class="money_cell money_ctc">Rate</td>
+            <td class="money_cell money_ctc">Remaining</td>
+            <td class="money_cell money_billable">Rate</td>
+            <td class="money_cell money_billable">Remaining</td>
+
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+          </tr>
+
+          {% for user, values in project.new_stats.per_user.items %}
+          <tr>
+	    <td>{{ user.username }} ({{ values.rate.time_tracking_mode|slice:"0:1" }})</td>
+
+	    <td>{{ values.points_closed_non_adhoc|default:""|intcomma }}</td>
+            <td>{{ values.hours_closed_real|default:""|intcomma }}</td>
+            <td>{% if values.calculated_velocity and values.points_calculated_open_non_adhoc %}{{ values.calculated_velocity|default:""|floatformat:"2"|intcomma }}{% endif %}</td>
+
+            <td>{{ values.points_open_non_adhoc|default:""|intcomma }}</td>
+            <td>{% if values.points_calculated_open_non_adhoc %}{{ values.points_calculated_open_non_adhoc|floatformat:"2"|default:""|intcomma }}{% endif %}</td>
+
+            {% has_permission has_view_ctc_rates project.business %}
+            <td class="money_cell money_ctc">{% if values.rate.amount and values.points_calculated_open_non_adhoc_ctc %}R{{ values.rate.amount|default:""|floatformat:"0"|intcomma }}{% endif %}</td>
+	    <td class="money_cell money_ctc">{% if values.points_calculated_open_non_adhoc_ctc %}R{{ values.points_calculated_open_non_adhoc_ctc|default:""|floatformat:"0"|intcomma }}{% endif %}</td>
+            {% end_permission %}
+            <td class="money_cell money_billable">{% if values.rate.billable_amount and values.points_calculated_open_non_adhoc_billable %}R{{ values.rate.billable_amount|default:""|floatformat:"0"|intcomma }}{% endif %}</td>
+            <td class="money_cell money_billable">{% if values.points_calculated_open_non_adhoc_billable %}R{{ values.points_calculated_open_non_adhoc_billable|default:""|floatformat:"0"|intcomma }}{% endif %}</td>
+
+            <td></td>
+            <td></td>
+            <td></td>
+
+          </tr>
+          {% endfor %}
+          <tr>
+            <th>Total</th>
+            
+            <th></th>
+            <th></th>
+            <th></th>
+            <th></th>
+            <th></th>
+            <th class="money_cell money_ctc"></th>
+            <th class="money_cell money_ctc">{% if project.new_stats.total.points_calculated_open_non_adhoc_ctc %}R {{project.new_stats.total.points_calculated_open_non_adhoc_ctc|default:""|floatformat:"0"|intcomma }}{% endif %}</th>
+
+            <th class="money_cell money_billable"></th>
+            <th class="money_cell money_billable">{% if project.new_stats.total.points_calculated_open_non_adhoc_billable %}R {{project.new_stats.total.points_calculated_open_non_adhoc_billable|default:""|floatformat:"0"|intcomma }}{% endif %}</th>
+            
+            <th>{% if project.new_stats.total.projected_total_billable_no_more_adhoc %}R{{ project.new_stats.total.projected_total_billable_no_more_adhoc|default:""|floatformat:"0"|intcomma }}{% endif %}</th>
+            <th>{% if project.new_stats.total.projected_total_billable_no_more_adhoc_with_scope_creep %}R{{ project.new_stats.total.projected_total_billable_no_more_adhoc_with_scope_creep|default:""|floatformat:"0"|intcomma }}{% endif %}</th>
+            
+            <th>{% if project.new_stats.total.projected_adhoc_billable %}R{{ project.new_stats.total.projected_adhoc_billable|default:""|floatformat:"0"|intcomma }}{% endif %}</th>
+            
+          </tr>
+
+          <tr>
+            <td></td>
+            
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td class="money_cell money_ctc"></td>
+            <td class="money_cell money_ctc"></td>
+            <td class="money_cell money_billable"></td>
+            <td class="money_cell money_billable"></td>
+            <td>issues remaining</td>
+            <td>actual+projected </td>
+            <td>with scope creep of {{project.new_stats.total.scope_creep_percentage}}%</td>
+            <td>(projected new adhoc issues)</td>
+          </tr>
+          
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <div class="accordion">
+    <h1 class="accordion_heading accordion-toggle">Quotes</h1>
+    <div class="accordion_content" style="display:none">
+      <table>
+        <tbody>
+          {% for quote in quotes %}
+          <tr class="clickable" onclick="window.open('{% url 'invoicing:edit_quote' quote.id %}'); return false;">
+            <td>
+              {% if quote.quote_document %}
+              <a href="{{quote.quote_document.url}}">{{quote.quote_document}}</a>
+              {% endif %}
+            </td>
+            <td>
+              {% if quote.status == 'accepted' %}
+              <img width="15px" src="{{STATIC_URL}}images/icons/tick.png"/>
+              Accepted on {{quote.accepted_at|date:'D d-M-Y'}}
+              {% elif quote.status == 'sent to client' %}
+              <img width="15px" src="{{STATIC_URL}}images/icons/application_go.png"/>
+              Sent to client on {{quote.sent_to_client_at|date:'D d-M-Y'}}
+              {% elif quote.status == 'rejected' %}
+              <img width="15px" src="{{STATIC_URL}}images/icons/cross.png"/>
+              {{quote.status}}
+              {% endif %}
+            </td>
+            <td class="money_cell money_billable">
+              {% has_permission has_view_ctc_billable_rates quote.project.business %}
+              {{quote.currency_symbol}}{{quote.amount|intcomma}}
+              {% end_permission %}
+            </td>
+          </tr>
+          {% empty %}
+          <tr>
+            <td>No quotes{{msg}}</td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <div class="accordion">
+    <h1 class="accordion_heading accordion-toggle">Invoices</h1>
+    <div class="accordion_content" style="display:none">
+      <table>
+        <tbody>
+          {% for invoice in invoices %}
+          <tr class="clickable" onclick="window.open('{% url 'invoicing:edit_invoice' invoice.id %}'); return false;">
+            <td>{{invoice.status}}</td>
+            <td>
+              {% if invoice.is_overdue %}
+              <div class="error"><h3>Overdue by {{invoice.days_till_due}} days</h3></div>
+              {% else %}
+              <div class="info">Due in {{invoice.days_till_due}} days</div>
+              {% endif %}
+            </td>
+            <td>
+              <td class="money_cell money_billable" style="text-align:right">{{invoice.currency_symbol}}{{invoice.cost|intcomma}}</td>
+            </td>
+          </tr>
+          {% empty %}
+          <tr>
+            <td>No invoices{{msg}}</td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+
+  <div class="accordion">
+    <h1 class="accordion_heading accordion-toggle">State legend</h1>
+    <div class="accordion_content" style="display:none">
+      <table>
+        <thead>
+          <th>User</th>
+          <th>Role</th>
+        </thead>
+        <tbody>
+          {% for user, values in project.new_stats.per_user.items %}
+          <tr>
+            <td>{{ user.username }}</td>
+            <td>{{ values.rate.time_tracking_mode }}</td>
+          </tr>
+          <tr class="table_info_row">
+            <td colspan="99" style="text-align: left">
+              Open states are:{% for s in values.open_status_options %}
+              {{ s }}, 
+              {% endfor %}
+              <br/><br/>
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <div class="accordion">
+    <h1 class="accordion_heading accordion-toggle">Features</h1>
+    <div class="accordion_content" style="display:none">
+      <table>
+        <thead>
+          <th></th>
+          {% has_permission has_view_ctc_rates project.business %}
+          <th class="money_cell money_ctc">ctc</th>
+          {% end_permission %}
+          <th class="money_cell money_billable">billable</th>
+        </thead>
+        <tbody>
+          {% for data in project.costs_by_feature.values %} 
+          <tr>
+            <th>{{data.name}}</th>
+            {% has_permission has_view_ctc_rates project.business %}
+            <td class="money_cell money_ctc">R{{data.ctc|floatformat:"0"|intcomma}}</td>
+            {% end_permission %}
+            <td class="money_cell money_billable">R{{data.billable|floatformat:"0"|intcomma}}</td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
   {% end_permission %}
 
 
@@ -698,4 +735,6 @@
 
 <script>
  imp.refresh_show_numbers();
+ imp.create_accordions();
+ 
 </script>

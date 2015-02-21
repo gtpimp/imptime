@@ -950,9 +950,6 @@ class Project(models.Model):
         manually_closed = not(self.status.label == 'open' or self.status.label == "reopened")
         if manually_closed:
             return False
-        closed_because_paid = self.has_invoices and self.all_invoices_paid
-        if closed_because_paid:
-            return False
 
         return True
 
@@ -1198,8 +1195,6 @@ class Project(models.Model):
         stats['budget_traffic_class'] = get_css_class_for_level(stats['percentage_spent'])
         stats['amount_under_budget'] = self.budget - billed
         stats['amount_over_budget'] = billed-self.budget
-        stats['invoiced'] = self.has_invoices
-        stats['paid'] = self.has_invoices and self.all_invoices_paid
         stats['total_issue_points'] = number_total(issues)
         stats['percent_tested'] = 100* (number_tested(issues)/stats['total_issue_points'] if stats['total_issue_points'] > 0 else 1)
         stats['percent_dev_done'] = stats['percent_tested'] + 100 * (number_dev_done(issues)/stats['total_issue_points'] if stats['total_issue_points'] > 0 else 0)
