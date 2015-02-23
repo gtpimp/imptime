@@ -1,0 +1,27 @@
+{% load humanize %}
+<h1>Checklists</h1>
+
+<table>
+  <tbody>
+    {% for business, checklist_error, sample_errors in checklist_errors %}
+    <tr>
+      <td>
+        <a target="_blank" href="{% url 'business_issues' business.id %}">{{business.name}}</a>
+      </td>
+      <td>{{checklist_error}}</td>
+      <td>
+        <ul>
+        {% for sample_error in sample_errors %}
+          <li>
+            {{sample_error.msg}}
+          </li>
+        {% endfor %}
+        </ul>
+      </td>
+    </tr>
+    <tr>
+      <td><hr/></td>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>

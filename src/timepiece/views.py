@@ -5474,10 +5474,25 @@ def dashboard(request, template="timepiece/dashboard/dashboard.html"):
 
         running_now = date_from
 
+    checklist_errors = []
+    def create_checklist_info(state, checklist_name, business, checklist, checklist_errors=checklist_errors):
+        #checklist.recalculate_all()
+        if checklist.is_ok():
+            return
+        checklist_errors.append( (business,
+                                  "(%s) %d %s errors" % (state, checklist.items.filter(passed=False).count(), checklist_name),
+                                  checklist.items.filter(passed=False).values('msg')[0:3]) )
+        
+    def create_checklist_summary(state, businesses):
+        for business in businesses:
+            create_checklist_info(state, 'dev', business, timepiece.DevChecklist.get_todays_checklist(request.user, business))
+            create_checklist_info(state, 'traffic', business, timepiece.TrafficChecklist.get_todays_checklist(request.user, business))
+            create_checklist_info(state, 'finance', business, timepiece.FinanceChecklist.get_todays_checklist(request.user, business))
+
     businesses = timepiece.Business.objects.all().filter_by_logged_in_user(request.user).order_by("name").distinct()
-    context['businesses'] = SortedDict()
-    context['businesses']['active'] = businesses.filter_has_any_active_projects()
-    context['businesses']['pending'] = businesses.filter_has_only_pending_projects()
-    context['businesses']['hopeful'] = businesses.filter_has_hopeful_projects()
+    create_checklist_summary("active", businesses.filter_has_any_active_projects())
+    create_checklist_summary("pending", businesses.filter_has_only_pending_projects())
+    #create_checklist_summary(businesses.filter_has_hopeful_projects())
+    context['checklist_errors'] = checklist_errors
     
     return render_to_response(template, context, context_instance=RequestContext(request))
