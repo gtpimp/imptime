@@ -3029,7 +3029,7 @@ def time_sheet_download(request, user_id, context=None):
 
 
 @login_required
-def add_project(request, business_id , template="timepiece/project/_create_edit_project_form.html", context=None):
+def add_project(request, business_id , template="timepiece/project/create_edit_project_form.html", context=None):
     context = context or {}
     business = timepiece.Business.objects.get(pk=business_id)
     context['business'] = business

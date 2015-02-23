@@ -136,6 +136,7 @@ imp.close_add_issue = function (element) {
 imp.do_form_remove  = function() {
     var to_edit = $(".to_edit_expanded_form");
     to_edit.find(".new_dyn_form_container").remove();
+    $(".new_dyn_form_container").remove();
     to_edit.hide();
     return false;
 };

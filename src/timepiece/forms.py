@@ -801,10 +801,7 @@ class NewProjectForm(forms.ModelForm):
         fields = (
             'name',
             'short_description',
-            'description',
-            'ratio_management',
-            'ratio_testing',
-            'ratio_scope_creep'
+            'description'
         )
 
     def __init__(self, *args, **kwargs):
