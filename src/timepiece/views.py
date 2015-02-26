@@ -4314,7 +4314,8 @@ def sprint_report(request, project_id, context=None):
             doc_type = 'other'
         
         f = ContentFile(as_pdf)
-        document = timepiece.BusinessDocument.objects.create(business=project.business,
+        document = timepiece.BusinessDocument.objects.create(project=project,
+                                                             business=project.business,
                                                              filename=filename,
                                                              doc_type=doc_type,
                                                              mime_type='application/pdf',
