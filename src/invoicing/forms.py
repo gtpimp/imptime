@@ -145,5 +145,5 @@ class QuoteForm(forms.ModelForm):
         self.fields['status'].initial = 'sent to client'
 
         if self.instance and self.instance.project:
-            self.fields['quote_document'].queryset = timepiece.BusinessDocument.objects.filter(project=self.instance.project, doc_type__in=['proposal', 'other'])
+            self.fields['quote_document'].queryset = timepiece.BusinessDocument.objects.filter(project=self.instance.project)
     
