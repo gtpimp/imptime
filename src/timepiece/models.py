@@ -989,24 +989,16 @@ class Project(models.Model):
         stats = {'issues':[], 'users':{}, 'features':{}}
         self._estimate_stats = stats
 
-        estimate_cost = 0
-        estimate_hours = 0
-        for issue in issues:
-            
-            points = []
-            if issue.assigned_to:
-                points = issue.issue_points.get_query_set().all().filter(user=issue.assigned_to).values('points', 'user')
-            if len(points) == 0 or points[0]['points'] is None:
-                points = issue.issue_points.get_query_set().all().filter(user__id=preferred_user_id).values('points', 'user')
-            if len(points) == 0 or points[0]['points'] is None:
-                points = issue.issue_points.get_query_set().all().values('points', 'user')
-            if len(points) == 0 or points[0]['points'] is None:
-                points = 0
-                user_id = None
-            else:
-                user_id = points[0]['user']
-                points = points[0]['points']
+        total_estimated_cost = 0
+        total_estimated_hours = 0
+        estimated_management_cost = 0
+        estimated_testing_cost = 0
+        dev_estimate_cost = 0
+        dev_estimate_hours = 0
+        estimated_management_cost = 0
+        estimated_testing_cost = 0
 
+        def _calculate_user_contribution_to_issue_cost(issue, user_id, points):
             if user_id is not None:
                 rate = Rate.objects.filter(project=self, user_id=user_id).first()
                 if rate is None:
@@ -1019,33 +1011,83 @@ class Project(models.Model):
 
             min_cost = float(points)*float(rate.billable_amount)
 
-            stats['issues'].append( { 'issue':issue,
-                                      'unadjusted_points':unadjusted_points,
-                                      'points':points,
-                                      'user_id':user_id,
-                                      'min_cost':min_cost} )
+            return points, unadjusted_points, min_cost, rate
 
-            if user_id is not None and user_id not in stats['users']:
-                user = User.objects.get(pk=user_id)
-                stats['users'][user_id] = {'user':user,
-                                           'rate':rate.billable_amount,
-                                           'velocity_adjusted_rate':float(rate.velocity)*float(rate.billable_amount)}
+        if issues is not None and issues.count() > 0:
 
-            feature = issue.feature
-            if feature is None:
-                feature = "na"
-            if feature not in stats['features']:
-                stats['features'][feature] = 0
-            stats['features'][feature] += min_cost
+            managers = [x.user for x in Rate.objects.filter(project=self, time_tracking_mode='manager')]
+            testers = [x.user for x in Rate.objects.filter(project=self, time_tracking_mode='tester')]
+            
+            for issue in issues:
 
-            estimate_cost += min_cost
-            estimate_hours += points
+                points = []
+                if issue.assigned_to:
+                    points = issue.issue_points.get_query_set().all().filter(user=issue.assigned_to).values('points', 'user')
+                elif preferred_user_id:
+                    points = issue.issue_points.get_query_set().all().filter(user__id=preferred_user_id).values('points', 'user')
+                else:
+                    points = issue.issue_points.get_query_set().all().values('points', 'user')
+                    
+                if len(points) == 0 or points[0]['points'] is None:
+                    points = 0
+                    user_id = None
+                else:
+                    user_id = points[0]['user']
+                    points = points[0]['points']
 
-        stats['total_estimate_min'] = estimate_cost
-        stats['total_estimate_max'] = estimate_cost * (1+self.ratio_scope_creep)
-        stats['total_estimate_hours_min'] = estimate_hours
-        stats['total_estimate_hours_max'] = estimate_hours * (1+self.ratio_scope_creep)
+                points, unadjusted_points, min_cost, rate = _calculate_user_contribution_to_issue_cost(issue, user_id, points)
+                
+                stats['issues'].append( { 'issue':issue,
+                                          'unadjusted_points':unadjusted_points,
+                                          'points':points,
+                                          'user_id':user_id,
+                                          'min_cost':min_cost} )
+
+                if user_id is not None and user_id not in stats['users']:
+                    user = User.objects.get(pk=user_id)
+                    stats['users'][user_id] = {'user':user,
+                                               'rate':rate.billable_amount,
+                                               'velocity_adjusted_rate':float(rate.velocity)*float(rate.billable_amount)}
+
+                feature = issue.feature
+                if feature is None:
+                    feature = "na"
+                if feature not in stats['features']:
+                    stats['features'][feature] = 0
+                stats['features'][feature] += min_cost
+
+                dev_estimate_cost += min_cost
+                dev_estimate_hours += points
+
+                if not issue.adhoc:
+                    for manager in managers:
+                        user_id = manager.id
+                        try:
+                            points = issue.issue_points.get_query_set().all().filter(user=manager).values('points')[0]['points']
+                            points, unadjusted_points, min_cost, rate = _calculate_user_contribution_to_issue_cost(issue, user_id, points)
+                            estimated_management_cost += min_cost
+                        except IndexError:
+                            pass
+
+                    for tester in testers:
+                        user_id = tester.id
+                        try:
+                            points = issue.issue_points.get_query_set().all().filter(user=tester).values('points')[0]['points']
+                            points, unadjusted_points, min_cost, rate = _calculate_user_contribution_to_issue_cost(issue, user_id, points)
+                            estimated_testing_cost += min_cost
+                        except IndexError:
+                            pass
+
+                total_estimated_hours += points
+
+        stats['total_estimate_min'] = dev_estimate_cost + estimated_management_cost + estimated_testing_cost
+        stats['total_estimate_max'] = stats['total_estimate_min'] * (1+self.ratio_scope_creep)
+        stats['dev_estimate_cost'] = dev_estimate_cost
+        stats['management_estimate_cost'] = estimated_management_cost
+        stats['testing_estimate_cost'] = estimated_testing_cost
         stats['ratio_scope_creep'] = self.ratio_scope_creep*100
+        stats['total_estimate_hours_min'] = total_estimated_hours
+        stats['total_estimate_hours_max'] = total_estimated_hours * (1+self.ratio_scope_creep)
         return stats
 
     def users_and_hours(self):
@@ -1152,7 +1194,7 @@ class Project(models.Model):
         total_stats['hours_billable'] = sum(stats_per_user[x]['hours_billable'] or 0 for x in users)
         total_stats['hours_real_billable'] = sum(stats_per_user[x]['hours_real_billable'] or 0 for x in users)
         
-        total_stats['hours_billable_with_scope_creep'] = round(float(total_stats['hours_billable']) * (1+float(self.ratio_scope_creep)), 2)
+        total_stats['hours_billable_with_scope_creep'] = round(float(total_stats['points_billable']) * (1+float(self.ratio_scope_creep)), 2)
         total_stats['scope_creep_percentage'] = self.ratio_scope_creep*100
         total_stats['hours_adhoc_billable'] = sum(stats_per_user[x]['hours_adhoc_billable'] or 0 for x in users)
         total_stats['points_calculated_open_non_adhoc_ctc'] = sum(stats_per_user[x]['points_calculated_open_non_adhoc_ctc'] or 0 for x in users)

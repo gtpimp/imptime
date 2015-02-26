@@ -129,10 +129,49 @@ are derived.
   </p>
 
   <p>
-        <b>Estimated minimum cost</b> R{{ estimate_stats.total_estimate_min|floatformat:"0"|intcomma }}
-  <br/>
-        <b>Estimated maximum cost</b> R{{ estimate_stats.total_estimate_max|floatformat:"0"|intcomma }}
-  </p>
+
+      <table>
+    <tr>
+      <tr>
+        <td>Development</td>
+        <td></td>
+        <td style="text-align:right">R{{ estimate_stats.dev_estimate_cost|floatformat:"0"|intcomma }}</td>
+      </tr>
+      <tr>
+        <td>Management</td>
+        <td></td>
+        <td style="text-align:right">R{{ estimate_stats.management_estimate_cost|floatformat:"0"|intcomma }}</td>
+      </tr>
+      <tr>
+        <td>QA and testing</td>
+        <td></td>
+        <td>R{{ estimate_stats.testing_estimate_cost|floatformat:"0"|intcomma }}</td>
+      </tr>
+    </tr>
+    <tr>
+      <td><hr/></td>
+      <td><hr/></td>
+      <td><hr/></td>
+    </tr>
+    <tr>
+      <td></td>
+      <th>Total estimated code cost</th>
+      <th style="text-align:right">R{{ estimate_stats.total_estimate_min|floatformat:"0"|intcomma }}</th>
+    </tr>
+    <tr>
+      <td><hr/></td>
+      <td><hr/></td>
+      <td><hr/></td>
+    </tr>
+
+    <tr>
+      <td colspan="2">
+        With a typical scope creep of {{estimate_stats.ratio_scope_creep}}%
+      </td>
+      <td style="text-align:right">R{{ estimate_stats.total_estimate_max|floatformat:"0"|intcomma }}</td>
+    </tr>
+  </table>
+
   {% endif %}
 
 {% endifequal %}
@@ -151,11 +190,45 @@ are derived.
   amount will be invoiced.
   </p>
 
-  <p>
-        <b>Quoted minimum cost</b> R{{ estimate_stats.total_estimate_min|floatformat:"0"|intcomma }}
-  <br/>
-        <b>Quoted maximum cost</b> R{{ estimate_stats.total_estimate_max|floatformat:"0"|intcomma }}
-  </p>
+  <table>
+    <tr>
+      <td>Development</td>
+      <td></td>
+      <td style="text-align:right">R{{ estimate_stats.dev_estimate_cost|floatformat:"0"|intcomma }}</td>
+    </tr>
+    <tr>
+      <td>Management</td>
+      <td></td>
+      <td style="text-align:right">R{{ estimate_stats.management_estimate_cost|floatformat:"0"|intcomma }}</td>
+    </tr>
+    <tr>
+      <td>QA and testing</td>
+      <td></td>
+      <td style="text-align:right">R{{ estimate_stats.testing_estimate_cost|floatformat:"0"|intcomma }}</td>
+    </tr>
+    <tr>
+      <td><hr/></td>
+      <td><hr/></td>
+      <td><hr/></td>
+    </tr>
+    <tr>
+      <td></td>
+      <th>Total quoted cost</th>
+      <th style="text-align:right">R{{ estimate_stats.total_estimate_min|floatformat:"0"|intcomma }}</th>
+    </tr>
+    <tr>
+      <td><hr/></td>
+      <td><hr/></td>
+      <td><hr/></td>
+    </tr>
+
+    <tr>
+      <td colspan="2">
+        With a typical scope creep of {{estimate_stats.ratio_scope_creep}}%
+      </td>
+      <td style="text-align:right">R{{ estimate_stats.total_estimate_max|floatformat:"0"|intcomma }}</td>
+    </tr>
+  </table>
   {% endif %}
 {% endifequal %}
 
