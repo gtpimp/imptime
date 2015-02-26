@@ -5463,7 +5463,7 @@ def dashboard(request, template="timepiece/dashboard/dashboard.html"):
                                               'invoices_paid' : Invoice.objects.filter(status='paid', payment_due__gte=date_from, payment_due__lt=running_now)})
 
         entries = timepiece.Entry.objects_for_reporting.filter(start_time__gte=date_from, start_time__lte=running_now)
-        salaries = timepiece.Salary.objects.filter(date__gte=date_from, date__lt=running_now)
+        salaries = timepiece.Salary.objects.filter(date__gte=date_from, date__lt=running_now, amount__gt=0)
         business_days = timepiece.Holiday.business_days_in_month(date_from)
         context['employees_by_month'].append( {'month' : date_from,
                                                'salaries' : salaries,
