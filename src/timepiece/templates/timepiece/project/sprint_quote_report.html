@@ -73,8 +73,8 @@ We bill by the hour, for a number of reasons:
   involved, ie no quote padding is required
     </li>
     <li>
-scope changes to the project are easily managed as a normal part of
-  the development process
+      scope changes to the project are easily managed as a normal part of
+      the development process
     </li>
   </ul>
 </p>
@@ -94,12 +94,6 @@ all costs are clearly identifiable.
 <p>
 This proposal is a quote with a range, based on our internal
 estimates. 
-</p>
-
-<p>
-We aim to meet the minimum cost, but experience shows that
-unexpected items and scope creep are inevitable, and therefore an
-expected maximum cost is shown which should be budgeted for.
 </p>
 
 {% endifequal %}
@@ -164,12 +158,14 @@ are derived.
       <td><hr/></td>
     </tr>
 
+    {% comment %}
     <tr>
       <td colspan="2">
         With a typical scope creep of {{estimate_stats.ratio_scope_creep}}%
       </td>
       <td style="text-align:right">R{{ estimate_stats.total_estimate_max|floatformat:"0"|intcomma }}</td>
     </tr>
+    {% endcomment %}
   </table>
 
   {% endif %}
@@ -179,16 +175,6 @@ are derived.
 {% ifequal settings.preamble_type "quote" %}
 
   {% if settings.show_billable %}
-
-  <p>
-  The upper budget range is calculated by adding a variance of {{estimate_stats.slack_percentage}}%. This
-  is the amount of scope creep that is reasonably expected, taking into
-  account the uncertainty in the project scope.
-
-  We request that the client budget for the upper amount, but if there
-  is no scope creep to this quote during development then the lower
-  amount will be invoiced.
-  </p>
 
   <table>
     <tr>
@@ -222,12 +208,14 @@ are derived.
       <td><hr/></td>
     </tr>
 
+    {% comment %}
     <tr>
       <td colspan="2">
         With a typical scope creep of {{estimate_stats.ratio_scope_creep}}%
       </td>
       <td style="text-align:right">R{{ estimate_stats.total_estimate_max|floatformat:"0"|intcomma }}</td>
     </tr>
+    {% endcomment %}
   </table>
   {% endif %}
 {% endifequal %}
