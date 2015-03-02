@@ -508,7 +508,6 @@
             <th class="money_cell money_billable"></th>
             <th class="money_cell money_billable">{% if project.new_stats.total.points_calculated_open_non_adhoc_billable %}R {{project.new_stats.total.points_calculated_open_non_adhoc_billable|default:""|floatformat:"0"|intcomma }}{% endif %}</th>
             
-            <th>{% if project.new_stats.total.projected_adhoc_billable %}R{{ project.new_stats.total.projected_adhoc_billable|default:""|floatformat:"0"|intcomma }}{% endif %}</th>
             <th>{% if project.new_stats.total.hours_billable %}R{{ project.new_stats.total.hours_billable|default:""|floatformat:"0"|intcomma }}{% endif %}</th>
             <th>
               {% if project.new_stats.total.projected_total_billable %}R{{ project.new_stats.total.projected_total_billable|default:""|floatformat:"0"|intcomma }}{% endif %}
@@ -528,7 +527,6 @@
             <td class="money_cell money_billable"></td>
             <td class="money_cell money_billable"></td>
             <td>issues remaining</td>
-            <td>projected new adhoc issues</td>
             <td>actual</td>
             <td>Projected total</td>
           </tr>

@@ -4381,6 +4381,8 @@ def sprint_report(request, project_id, context=None):
     context['user'] = user
     context['date_created'] =  datetime.datetime.now().strftime("%d %b %Y %H:%M")
 
+    project.calculate_new_stats(request.user)
+
     return render_to_response(template, context, context_instance=RequestContext(request))
 
 @login_required

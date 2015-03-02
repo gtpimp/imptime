@@ -129,17 +129,17 @@ are derived.
       <tr>
         <td>Development</td>
         <td></td>
-        <td style="text-align:right">R{{ estimate_stats.dev_estimate_cost|floatformat:"0"|intcomma }}</td>
+        <td style="text-align:right">R{{ project.new_stats.per_role.developer.projected_billable|floatformat:"0"|intcomma }}</td>
       </tr>
       <tr>
         <td>Management</td>
         <td></td>
-        <td style="text-align:right">R{{ estimate_stats.management_estimate_cost|floatformat:"0"|intcomma }}</td>
+        <td style="text-align:right">R{{ project.new_stats.per_role.manager.projected_billable|floatformat:"0"|intcomma }}</td>
       </tr>
       <tr>
         <td>QA and testing</td>
         <td></td>
-        <td>R{{ estimate_stats.testing_estimate_cost|floatformat:"0"|intcomma }}</td>
+        <td style="text-align:right">R{{ project.new_stats.per_role.tester.projected_billable|floatformat:"0"|intcomma }}</td>
       </tr>
     </tr>
     <tr>
@@ -150,7 +150,7 @@ are derived.
     <tr>
       <td></td>
       <th>Total estimated code cost</th>
-      <th style="text-align:right">R{{ estimate_stats.total_estimate_min|floatformat:"0"|intcomma }}</th>
+      <th style="text-align:right">R{{ project.new_stats.total.projected_total_billable|floatformat:"0"|intcomma }}</th>
     </tr>
     <tr>
       <td><hr/></td>
