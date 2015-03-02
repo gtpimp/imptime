@@ -512,6 +512,9 @@
             <th>
               {% if project.new_stats.total.projected_total_billable %}R{{ project.new_stats.total.projected_total_billable|default:""|floatformat:"0"|intcomma }}{% endif %}
             </th>
+            <th>
+              {% if project.new_stats.total.projected_estimated_total_billable %}R{{ project.new_stats.total.projected_estimated_total_billable|default:""|floatformat:"0"|intcomma }}{% endif %}
+            </th>
             
           </tr>
 
@@ -528,7 +531,8 @@
             <td class="money_cell money_billable"></td>
             <td>issues remaining</td>
             <td>actual</td>
-            <td>Projected total</td>
+            <td>Projected total (actual velocity)</td>
+            <td>Projected total (estimated velocity)</td>
           </tr>
           
         </tbody>
