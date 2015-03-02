@@ -16,13 +16,16 @@ sudo su - postgres -c "createdb ${DB_NAME}"
 echo "Importing db"
 sudo su - postgres -c "pg_restore -d ${DB_NAME} ${LOCAL_BACKUP_PATH}/${FILENAME}"
 
-echo "Sanitising db"
-cd ~/id/imptime/
-. ./venv/bin/activate
-cd src
-python manage.py shell < /home/gtp/id/imptime/scripts/anonymise_rates.py
+read -p "Sanitize? (y/n)" SANITIZE
+if [ "${SANITIZE}" != 'n' ]; then
+    echo "Sanitising db"
+    cd ~/id/imptime/
+    . ./venv/bin/activate
+    cd src
+    python manage.py shell < /home/gtp/id/imptime/scripts/anonymise_rates.py
+fi
 
-echo "Dumping sanitised db (use 'imp' for the password)"
+echo "Dumping db (use 'imp' for the password)"
 sudo su - postgres -c "pg_dump -i -h localhost -p 5432 -F c -b -v -U imp -f ~/${ANONYMISED_FILENAME} implicitdesign"
 sudo mv /var/lib/postgresql/${ANONYMISED_FILENAME} ${LOCAL_BACKUP_PATH}
 echo "Sanitised backup at ${LOCAL_BACKUP_PATH}/${ANONYMISED_FILENAME}"
