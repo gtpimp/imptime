@@ -1009,7 +1009,15 @@ class Project(models.Model):
             unadjusted_points = points
             points = points * (rate.velocity or 1)
 
-            min_cost = float(points)*float(rate.billable_amount)
+            estimated_cost = float(points)*float(rate.billable_amount)
+            if estimated_cost > 0:
+                # If there's an estimate, then ignore the actuals
+                actual_cost_so_far = 0
+            else:
+                # For no estimate, this is most likely an ad-hoc issue, so put the time in as part of the quote
+                actual_cost_so_far = float(issue.entries.all().filter(user_id=user_id).aggregate(hours=Sum('hours'))['hours'] or 0) * float(rate.billable_amount)
+            
+            min_cost = estimated_cost + actual_cost_so_far
 
             return points, unadjusted_points, min_cost, rate
 
@@ -1023,14 +1031,16 @@ class Project(models.Model):
                 points = []
                 if issue.assigned_to:
                     points = issue.issue_points.get_query_set().all().filter(user=issue.assigned_to).values('points', 'user')
+                    user_id = issue.assigned_to.id
                 elif preferred_user_id:
                     points = issue.issue_points.get_query_set().all().filter(user__id=preferred_user_id).values('points', 'user')
+                    user_id = preferred_user_id
                 else:
                     points = issue.issue_points.get_query_set().all().values('points', 'user')
+                    user_id = None
                     
                 if len(points) == 0 or points[0]['points'] is None:
                     points = 0
-                    user_id = None
                 else:
                     user_id = points[0]['user']
                     points = points[0]['points']
