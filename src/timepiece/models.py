@@ -2837,7 +2837,7 @@ class Issue(models.Model):
            ( 'imported', 'imported'),
         )
 
-    STATUSES_INDICATING_DEV_INCOMPLETE = ['new', 'bug', 'reopened']
+    STATUSES_INDICATING_DEV_INCOMPLETE = ['new', 'bug', 'reopened', 'dev unclear']
     STATUSES_INDICATING_MANAGER_INCOMPLETE = [x for x,y in ISSUE_STATUS_CHOICES if x not in ['client_qa_passed', 'duplicate', "onhold"]]
     STATUSES_INDICATING_TESTER_INCOMPLETE = [x for x,y in ISSUE_STATUS_CHOICES if x not in ['internal_qa_passed', 'in_client_qa', 'client_qa_passed', 'duplicate', "onhold"]]
     
