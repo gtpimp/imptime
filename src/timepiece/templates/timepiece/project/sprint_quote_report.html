@@ -92,8 +92,7 @@ all costs are clearly identifiable.
 
 {% ifequal settings.preamble_type "quote" %}
 <p>
-This proposal is a quote with a range, based on our internal
-estimates. 
+This proposal is a quote.
 </p>
 
 {% endifequal %}
@@ -108,11 +107,6 @@ are derived.
 </p>
 
 {% ifequal settings.preamble_type "billable" %}
-
-  {% if settings.show_billable %}
-  <p>
-  The upper budget range is calculated by adding a variance of {{estimate_stats.slack_percentage}}%
-  </p>
 
   <p>
   The final cost will be invoiced as the actual billable time taken,
@@ -326,9 +320,9 @@ are derived.
 
 {% ifequal settings.preamble_type "billable" %}
 <p>
-The following list of issues represents the work agreed to be done in
-the costing range given above. This list is flexible to on-going
-change as determined through feedback with the client.
+The following list of issues represents the work agreed to be done
+within the cost given above. This list is flexible to on-going change
+as determined through feedback with the client.
 </p>
 
 <p>
@@ -350,8 +344,8 @@ pessimistic.
 
 {% ifequal settings.preamble_type "quote" %}
 <p>
-This list represents the work agreed to be done in the costing range
-given above. If changes to the list of issues is requested, the budget may
+This list represents the work agreed to be done in the costing given
+above. If changes to the list of issues is requested, the budget may
 need to be revised, or alternatively existing issues can be removed or
 made smaller.
 </p>
