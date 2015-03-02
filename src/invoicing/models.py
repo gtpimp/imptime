@@ -191,7 +191,7 @@ class QuoteQuerySet(QuerySet):
 class Quote(models.Model):
     QUOTE_STATUSES = ( ('creating', 'Creating'), ('sent to client', 'Sent to client'), ('accepted', 'Accepted by client'), ('rejected', 'Rejected by client') )
     objects = QuerySetManager(QuoteQuerySet)
-    client = models.ForeignKey(ClientInvoiceDetails, blank=False, null=False)
+    client = models.ForeignKey(ClientInvoiceDetails, blank=True, null=True)
     internal_comment = models.TextField(blank=True, null=True, verbose_name="Comment (not sent to the client)")
     project = models.ForeignKey("timepiece.Project", blank=True, null=True, related_name='quotes')
     created = models.DateTimeField(auto_now_add=True)
