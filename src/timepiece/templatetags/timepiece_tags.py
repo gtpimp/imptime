@@ -243,18 +243,32 @@ def running_progress_for_user_in_sprint(context, user, project):
         actual = None
         total = 0
     data = _create_traffic_data(actual, total)
-    data['message'] = 'V = %.2f' % project.new_stats['per_user'][user]['calculated_velocity']
 
-    data['tooltips'] = [ ["Total hours", "%.2f" % (project.new_stats['per_user'][user]['hours'] or 0)],
-                         ["Total issue hours", "%.2f"%(project.new_stats['per_user'][user]['hours_real'] or 0), "(estimated %.2f hours)"%(project.new_stats['per_user'][user]['points_non_adhoc'] or 0)],
-                         ["Closed issue hours","%.2f"%(project.new_stats['per_user'][user]['hours_closed_real'] or 0), "(estimated %.2f hours)"%(project.new_stats['per_user'][user]['points_closed_non_adhoc'] or 0)],
-                         ["Estimated remaining hours", "%.2f" % (project.new_stats['per_user'][user]['points_open_non_adhoc'] or 0)],
-                         ["--"],
+    if not project.new_stats['per_user'].get(user):
+        data['message'] = 'V = 0'
+        data['tooltips'] = [ ["Total hours", "0"],
+                             ["Total issue hours", "0", "(estimated 0 hours)"],
+                             ["Closed issue hours","0", "(estimated 0 hours)"],
+                             ["Estimated remaining hours", "0"],
+                             ["--"],
+                                  ["Total adhoc hours", "0"],
+                             ["--"],
+                                  ["Estimated velocity", "0"],
+                             ["Actual velocity", "0"] ]
+    else:
+        data['message'] = 'V = %.2f' % project.new_stats['per_user'][user]['calculated_velocity']
+        data['tooltips'] = [ ["Total hours", "%.2f" % (project.new_stats['per_user'][user]['hours'] or 0)],
+
+        data['tooltips'] = [ ["Total hours", "%.2f" % (project.new_stats['per_user'][user]['hours'] or 0)],
+                             ["Total issue hours", "%.2f"%(project.new_stats['per_user'][user]['hours_real'] or 0), "(estimated %.2f hours)"%(project.new_stats['per_user'][user]['points_non_adhoc'] or 0)],
+                             ["Closed issue hours","%.2f"%(project.new_stats['per_user'][user]['hours_closed_real'] or 0), "(estimated %.2f hours)"%(project.new_stats['per_user'][user]['points_closed_non_adhoc'] or 0)],
+                             ["Estimated remaining hours", "%.2f" % (project.new_stats['per_user'][user]['points_open_non_adhoc'] or 0)],
+                             ["--"],
                          ["Total adhoc hours", "%.2f" % (project.new_stats['per_user'][user]['hours_adhoc'] or 0)],
-                         ["--"],
+                             ["--"],
                          ["Estimated velocity", "%.2f" % (project.new_stats['per_user'][user]['rate'].velocity or 0)],
-                         ["Actual velocity", "%.2f" % (project.new_stats['per_user'][user]['calculated_velocity'] or 0)] ]
-    
+                             ["Actual velocity", "%.2f" % (project.new_stats['per_user'][user]['calculated_velocity'] or 0)] ]
+                             
     return data
     
 def _create_traffic_data(actual, total):
