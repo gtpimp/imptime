@@ -1108,6 +1108,9 @@ class Project(models.Model):
 
         entries_for_project = Entry.objects.filter(issue__project=self)
         stats_per_user = {}
+        stats_per_role = { 'developer': { 'hours':0, 'hours_billable':0},
+                           'manager': { 'hours':0, 'hours_billable':0},
+                           'tester': { 'hours':0, 'hours_billable':0} }
 
         users = self.business.get_users_allowed_to_estimate_on_business(current_user)
 
@@ -1179,7 +1182,9 @@ class Project(models.Model):
             stats_per_user[user]['points_calculated_open_non_adhoc_billable'] = float(stats_per_user[user]['rate'].billable_amount) * (stats_per_user[user]['points_calculated_open_non_adhoc'] or 0)
 
             stats_per_user[user]['percentage_points_complete'] = float(stats_per_user[user]['points_closed_non_adhoc'] or 0) / float(stats_per_user[user]['points_non_adhoc'] or 1) * 100
-            
+
+            stats_per_role[rate.time_tracking_mode]['hours'] += stats_per_user[user]['hours']
+            stats_per_role[rate.time_tracking_mode]['hours_billable'] += stats_per_user[user]['hours_billable']
         
         total_stats = {}
         total_stats['points_billable'] = sum(stats_per_user[x]['adjusted_points_billable'] or 0 for x in users)
@@ -1211,8 +1216,13 @@ class Project(models.Model):
 
         total_stats['management_points_non_adhoc'] = total_stats['points_non_adhoc'] * self.ratio_management
         total_stats['testing_points_non_adhoc'] = total_stats['points_non_adhoc'] * self.ratio_testing
+
+        for key, role_stat in stats_per_role.items():
+            role_stat['percentage_of_total_hours'] = float(role_stat['hours'] or 0.0) / float(total_stats['hours'] or 1) * 100
+            role_stat['percentage_of_total_hours_billable'] = float(role_stat['hours_billable'] or 0.0) / float(total_stats['hours_billable'] or 1) * 100
         
         self._new_stats = {'per_user': stats_per_user,
+                           'per_role': stats_per_role,
                            'total': total_stats}
         
         return self._new_stats
