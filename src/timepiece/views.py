@@ -5042,7 +5042,8 @@ def _populate_calendar_events(request, context):
 
         holiday_events = timepiece.Holiday.objects.all()
 
-        filter_form = timepiece_forms.CalendarFilterForm(users, businesses, request.GET or None)
+        filter_form = timepiece_forms.CalendarFilterForm(users, businesses, request.GET or None,
+                                                         initial={'users':[request.user]})
         if filter_form.is_valid():
             calendar_events, entry_events, holiday_events = filter_form.save(calendar_events, entry_events, holiday_events)
 

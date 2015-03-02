@@ -77,7 +77,7 @@
             </td>
             <td>
               {% has_permission has_view_budget project.business %}
-              R{{project.new_stats.total.projected_total_billable_no_more_adhoc_with_scope_creep|default:""|floatformat:"0"|intcomma }}
+              R{{project.new_stats.total.projected_total_billable|default:""|floatformat:"0"|intcomma }}
               {% end_permission %}
             </td>
           </tr>
@@ -422,7 +422,6 @@
 
             <td></td>
             <td></td>
-            <td></td>
 
           </tr>
           {% endfor %}
@@ -440,10 +439,11 @@
             <th class="money_cell money_billable"></th>
             <th class="money_cell money_billable">{% if project.new_stats.total.points_calculated_open_non_adhoc_billable %}R {{project.new_stats.total.points_calculated_open_non_adhoc_billable|default:""|floatformat:"0"|intcomma }}{% endif %}</th>
             
-            <th>{% if project.new_stats.total.projected_total_billable_no_more_adhoc %}R{{ project.new_stats.total.projected_total_billable_no_more_adhoc|default:""|floatformat:"0"|intcomma }}{% endif %}</th>
-            <th>{% if project.new_stats.total.projected_total_billable_no_more_adhoc_with_scope_creep %}R{{ project.new_stats.total.projected_total_billable_no_more_adhoc_with_scope_creep|default:""|floatformat:"0"|intcomma }}{% endif %}</th>
-            
             <th>{% if project.new_stats.total.projected_adhoc_billable %}R{{ project.new_stats.total.projected_adhoc_billable|default:""|floatformat:"0"|intcomma }}{% endif %}</th>
+            <th>{% if project.new_stats.total.hours_billable %}R{{ project.new_stats.total.hours_billable|default:""|floatformat:"0"|intcomma }}{% endif %}</th>
+            <th>
+              {% if project.new_stats.total.projected_total_billable %}R{{ project.new_stats.total.projected_total_billable|default:""|floatformat:"0"|intcomma }}{% endif %}
+            </th>
             
           </tr>
 
@@ -459,9 +459,9 @@
             <td class="money_cell money_billable"></td>
             <td class="money_cell money_billable"></td>
             <td>issues remaining</td>
-            <td>actual+projected </td>
-            <td>with scope creep of {{project.new_stats.total.scope_creep_percentage}}%</td>
-            <td>(projected new adhoc issues)</td>
+            <td>projected new adhoc issues</td>
+            <td>actual</td>
+            <td>Projected total</td>
           </tr>
           
         </tbody>

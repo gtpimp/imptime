@@ -1206,7 +1206,7 @@ class Project(models.Model):
         total_stats['projected_total_billable_no_more_adhoc_with_scope_creep'] = float(total_stats['projected_total_billable_no_more_adhoc']) * (1+self.ratio_scope_creep)
         
         total_stats['projected_adhoc_billable'] = 1/(total_stats['percentage_points_complete']/100 or 1) * (float(total_stats['hours_adhoc_billable'] or 0)) - (float(total_stats['hours_adhoc_billable'] or 0))
-        total_stats['projected_total_billable'] = float(total_stats['projected_total_billable_no_more_adhoc']) + float(total_stats['projected_adhoc_billable']) + float(total_stats['hours_billable'])
+        total_stats['projected_total_billable'] = float(total_stats['points_calculated_open_non_adhoc_billable']) + float(total_stats['projected_adhoc_billable']) + float(total_stats['hours_billable'])
         total_stats['projected_total_billable_with_scope_creep'] = total_stats['projected_total_billable'] * (1+self.ratio_scope_creep)
 
         total_stats['management_points_non_adhoc'] = total_stats['points_non_adhoc'] * self.ratio_management

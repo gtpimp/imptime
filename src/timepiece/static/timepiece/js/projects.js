@@ -4,7 +4,7 @@ imp.projects.already_loaded_sprints = {};
 
 
 var numbers_state = { 'all':0, 'no ctc':1, 'no money':2, 'no money and no estimates':3 };
-imp.show_numbers_state = numbers_state['no money'];
+imp.show_numbers_state = numbers_state['all'];
 
 imp.projects.on_sortable_changed_for_url = function(sortable_url) {
     var _sortable_url = sortable_url;
