@@ -131,16 +131,28 @@ are derived.
         <td></td>
         <td style="text-align:right">R{{ project.new_stats.per_role.developer.projected_billable|floatformat:"0"|intcomma }}</td>
       </tr>
-      <tr>
+      {% if project.new_stats.per_role.manager.projected_billable and project.new_stats.per_role.tester.projected_billable %}
+       <tr>
         <td>Management</td>
         <td></td>
-        <td style="text-align:right">R{{ project.new_stats.per_role.manager.projected_billable|floatformat:"0"|intcomma }}</td>
-      </tr>
+        <td style="text-align:right">
+          R{{ project.new_stats.per_role.manager.projected_billable|floatformat:"0"|intcomma }}
+        </td>
+       </tr>
       <tr>
         <td>QA and testing</td>
         <td></td>
         <td style="text-align:right">R{{ project.new_stats.per_role.tester.projected_billable|floatformat:"0"|intcomma }}</td>
       </tr>
+      {% else %}
+      <tr>
+        <td>Management and QA</td>
+        <td></td>
+        <td style="text-align:right">
+          R{{ project.new_stats.per_role.manager_and_tester_combined.projected_billable|floatformat:"0"|intcomma }}
+        </td>
+      </tr>
+      {% endif %}      
     </tr>
     <tr>
       <td><hr/></td>
@@ -178,19 +190,33 @@ are derived.
 
   <table>
     <tr>
-      <td>Development</td>
-      <td></td>
-      <td style="text-align:right">R{{ estimate_stats.dev_estimate_cost|floatformat:"0"|intcomma }}</td>
-    </tr>
-    <tr>
-      <td>Management</td>
-      <td></td>
-      <td style="text-align:right">R{{ estimate_stats.management_estimate_cost|floatformat:"0"|intcomma }}</td>
-    </tr>
-    <tr>
-      <td>QA and testing</td>
-      <td></td>
-      <td style="text-align:right">R{{ estimate_stats.testing_estimate_cost|floatformat:"0"|intcomma }}</td>
+      <tr>
+        <td>Development</td>
+        <td></td>
+        <td style="text-align:right">R{{ project.new_stats.per_role.developer.projected_billable|floatformat:"0"|intcomma }}</td>
+      </tr>
+      {% if project.new_stats.per_role.manager.projected_billable and project.new_stats.per_role.tester.projected_billable %}
+       <tr>
+        <td>Management</td>
+        <td></td>
+        <td style="text-align:right">
+          R{{ project.new_stats.per_role.manager.projected_billable|floatformat:"0"|intcomma }}
+        </td>
+       </tr>
+      <tr>
+        <td>QA and testing</td>
+        <td></td>
+        <td style="text-align:right">R{{ project.new_stats.per_role.tester.projected_billable|floatformat:"0"|intcomma }}</td>
+      </tr>
+      {% else %}
+      <tr>
+        <td>Management and QA</td>
+        <td></td>
+        <td style="text-align:right">
+          R{{ project.new_stats.per_role.manager_and_tester_combined.projected_billable|floatformat:"0"|intcomma }}
+        </td>
+      </tr>
+      {% endif %}
     </tr>
     <tr>
       <td><hr/></td>
@@ -199,8 +225,8 @@ are derived.
     </tr>
     <tr>
       <td></td>
-      <th>Total quoted cost</th>
-      <th style="text-align:right">R{{ estimate_stats.total_estimate_min|floatformat:"0"|intcomma }}</th>
+      <th>Total quoted code cost</th>
+      <th style="text-align:right">R{{ project.new_stats.total.projected_total_billable|floatformat:"0"|intcomma }}</th>
     </tr>
     <tr>
       <td><hr/></td>
