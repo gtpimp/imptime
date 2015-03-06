@@ -1120,16 +1120,21 @@ class Project(models.Model):
         stats_per_user = {}
         stats_per_role = { 'developer': { 'hours':0, 'hours_billable':0, 'points_calculated_open_non_adhoc_billable': 0,
                                           'projected_billable': 0, 'points_estimated_open_non_adhoc_billable':0,
-                                          'projected_estimated_billable':0},
+                                          'projected_estimated_billable':0,
+                                          'adjusted_points_billable':0},
+
                            'manager': { 'hours':0, 'hours_billable':0, 'points_calculated_open_non_adhoc_billable': 0,
                                         'projected_billable': 0, 'points_estimated_open_non_adhoc_billable':0,
-                                        'projected_estimated_billable':0},
+                                        'projected_estimated_billable':0,
+                                        'adjusted_points_billable':0},
                            'tester': { 'hours':0, 'hours_billable':0, 'points_calculated_open_non_adhoc_billable': 0,
                                        'projected_billable': 0, 'points_estimated_open_non_adhoc_billable':0,
-                                       'projected_estimated_billable':0},
+                                       'projected_estimated_billable':0,
+                                       'adjusted_points_billable':0},
                            'manager_and_tester_combined': { 'hours':0, 'hours_billable':0, 'points_calculated_open_non_adhoc_billable': 0,
                                                             'projected_billable': 0, 'points_estimated_open_non_adhoc_billable':0,
-                                                            'projected_estimated_billable':0}}
+                                                            'projected_estimated_billable':0,
+                                                            'adjusted_points_billable':0 }}
 
         users = self.business.get_users_allowed_to_estimate_on_business(current_user)
 
@@ -1212,9 +1217,11 @@ class Project(models.Model):
             stats_per_role[rate.time_tracking_mode]['points_estimated_open_non_adhoc_billable'] += float(stats_per_user[user]['points_estimated_open_non_adhoc_billable'])
             stats_per_role[rate.time_tracking_mode]['projected_billable'] += float(stats_per_user[user]['points_calculated_open_non_adhoc_billable']) + float(stats_per_user[user]['hours_billable'])
             stats_per_role[rate.time_tracking_mode]['projected_estimated_billable'] += float(stats_per_user[user]['points_estimated_open_non_adhoc_billable']) + float(stats_per_user[user]['hours_billable'])
+            stats_per_role[rate.time_tracking_mode]['adjusted_points_billable'] += float(stats_per_user[user]['adjusted_points_billable'])
 
         stats_per_role['manager_and_tester_combined']['projected_billable'] = stats_per_role['manager']['projected_billable'] + stats_per_role['tester']['projected_billable']
         stats_per_role['manager_and_tester_combined']['projected_estimated_billable'] = stats_per_role['manager']['projected_estimated_billable'] + stats_per_role['tester']['projected_estimated_billable']
+        stats_per_role['manager_and_tester_combined']['adjusted_points_billable'] = stats_per_role['manager']['adjusted_points_billable'] + stats_per_role['tester']['adjusted_points_billable']
                     
         total_stats = {}
         total_stats['points_billable'] = sum(stats_per_user[x]['adjusted_points_billable'] or 0 for x in users)

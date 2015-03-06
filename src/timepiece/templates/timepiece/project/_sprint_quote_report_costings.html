@@ -1,0 +1,61 @@
+{% load humanize %}
+{% load timepiece_tags %}
+{% load bootstrap_toolkit %}
+
+<table>
+  <tr>
+    <tr>
+      <td>Development</td>
+      <td></td>
+      <td style="text-align:right">
+        R{{ project.new_stats.per_role.developer.adjusted_points_billable|floatformat:"0"|intcomma }}
+      </td>
+    </tr>
+    {% if project.new_stats.per_role.manager.projected_estimated_billable and project.new_stats.per_role.tester.projected_estimated_billable %}
+    <tr>
+      <td>Management</td>
+      <td></td>
+      <td style="text-align:right">
+        R{{ project.new_stats.per_role.manager.adjusted_points_billable|floatformat:"0"|intcomma }}
+      </td>
+    </tr>
+    <tr>
+      <td>QA and testing</td>
+      <td></td>
+      <td style="text-align:right">R{{ project.new_stats.per_role.tester.adjusted_points_billable|floatformat:"0"|intcomma }}</td>
+    </tr>
+    {% else %}
+    <tr>
+      <td>Management and QA</td>
+      <td></td>
+      <td style="text-align:right">
+        R{{ project.new_stats.per_role.manager_and_tester_combined.adjusted_points_billable|floatformat:"0"|intcomma }}
+      </td>
+    </tr>
+    {% endif %}      
+  </tr>
+  <tr>
+    <td><hr/></td>
+    <td><hr/></td>
+    <td><hr/></td>
+  </tr>
+  <tr>
+    <td></td>
+    <th>Total estimated cost</th>
+    <th style="text-align:right">R{{ project.new_stats.total.points_billable|floatformat:"0"|intcomma }}</th>
+  </tr>
+  <tr>
+    <td><hr/></td>
+    <td><hr/></td>
+    <td><hr/></td>
+  </tr>
+
+  {% comment %}
+  <tr>
+    <td colspan="2">
+      With a typical scope creep of {{estimate_stats.ratio_scope_creep}}%
+    </td>
+    <td style="text-align:right">R{{ estimate_stats.total_estimate_max|floatformat:"0"|intcomma }}</td>
+  </tr>
+  {% endcomment %}
+</table>
