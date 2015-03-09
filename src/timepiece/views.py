@@ -296,7 +296,7 @@ def create_edit_entry(request, entry_id=None):
         try:
             entry = timepiece.Entry.no_join.get(
                 pk=entry_id,
-                user=request.user,
+                user=request.user
             )
             if not entry.is_editable:
                 raise Http404
@@ -5570,4 +5570,18 @@ def quick_clocker_clock_out(request):
     context['clock_out_form'] = clock_out_form
     return quick_clocker(request, context=context)
 
+
+@permission_required('timepiece.change_entry')
+@render_with('timepiece/time-sheet/quick_clocker_edit_entry.html')
+@login_required
+def quick_clocker_edit_entry(request, entry_id=None):
+    entry = timepiece.Entry.no_join.get(pk=entry_id,)
+
+    form = timepiece_forms.QuickClockerEditEntry(request.POST or None, instance=entry)
+    if form.is_valid():
+        form.save()
+        messages.info(request, "Entry updated")
+        return HttpResponseRedirect(reverse('quick_clocker_edit_entry', kwargs={'entry_id':entry_id}))
+
+    return {'form': form, 'entry': entry}
 

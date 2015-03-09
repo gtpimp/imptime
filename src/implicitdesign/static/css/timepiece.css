@@ -10406,7 +10406,7 @@ div.small_button, a.small_button, button.small_button {
     width: 100px;
 }
 
-tr.clickable {
+.clickable {
     cursor: pointer;
 }
 

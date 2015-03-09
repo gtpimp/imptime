@@ -1,0 +1,35 @@
+{% extends "timepiece/base.html" %}
+
+{% load humanize %}
+{% load bootstrap_toolkit %}
+{% load timepiece_tags %}
+
+{% block title %}Cost summary for {{business}}{% endblock %}
+
+{% block content %}
+
+<h1>Quick Clocker</h1>
+
+<div class="quick_clocker">
+
+  <div class="pane">
+    <form method="POST" action="{% url 'quick_clocker_edit_entry' entry.id %}">
+      {% csrf_token %}
+      {{ form.errors }}
+      {{ entry.user.username}}
+      <br/>
+      {{ entry.issue.project.long_name }}
+      <br/>
+      {{ entry.hours }} hours
+      <br/>
+      {{ form }}
+
+      <br/>
+      <input type="submit" value="Save"/>
+
+    </form>
+  </div>
+
+
+</div>
+{% endblock %}

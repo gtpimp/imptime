@@ -4,7 +4,7 @@
 {% load bootstrap_toolkit %}
 {% load timepiece_tags %}
 
-{% block title %}Cost summary for {{business}}{% endblock %}
+{% block title %}Quick clocker{% endblock %}
 
 {% block content %}
 
@@ -55,7 +55,7 @@
         <th>Hours</th>
       </thead>
       {% for entry in recently_clocked_out_entries %}
-      <tr>
+      <tr class="clickable" onclick="window.location='{% url 'quick_clocker_edit_entry' entry.id %}'; return false;">
         <td>{{entry.user.username}}</td>
         <td>{{entry.start_time|date:"D H:m"}}</td>
         <td>{{entry.end_time|date:"D H:m"}}</td>

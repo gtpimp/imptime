@@ -1490,3 +1490,14 @@ class QuickClockerClockOutForm(forms.Form):
         self.fields['clock_out_time'].widget.attrs['class'] = 'datetimepicker'
         self.fields['entry'].queryset = entries
         self.fields['entry'].choices = [ (x.id, "%s %s %s"%(x.user.username, x.issue.project.long_name(), x.start_time.strftime('%a %H:%M'))) for x in entries ]
+
+class QuickClockerEditEntry(forms.ModelForm):
+    
+    class Meta:
+        model = Entry
+        fields = ['start_time', 'end_time']
+
+    def __init__(self, *args, **kwargs):
+        super(QuickClockerEditEntry, self).__init__(*args, **kwargs)
+        self.fields['start_time'].widget.attrs['class'] = 'datetimepicker'
+        self.fields['end_time'].widget.attrs['class'] = 'datetimepicker'
