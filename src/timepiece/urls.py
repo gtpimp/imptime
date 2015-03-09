@@ -640,6 +640,7 @@ urlpatterns = patterns('',
                        url(r'^quick_clocker$', views.quick_clocker, {}, name='quick_clocker'),
                        url(r'^quick_clocker_clock_out$', views.quick_clocker_clock_out, {}, name='quick_clocker_clock_out'),
                        url(r'^quick_clocker_edit_entry/(?P<entry_id>\d+)$', views.quick_clocker_edit_entry, {}, name='quick_clocker_edit_entry'),
+                       url(r'^quick_clocker_delete_entry/(?P<entry_id>\d+)$', views.quick_clocker_delete_entry, {}, name='quick_clocker_delete_entry'),
                        
 
 

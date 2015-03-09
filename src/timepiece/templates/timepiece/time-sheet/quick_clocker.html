@@ -52,14 +52,24 @@
         <th>User</th>
         <th>Start</th>
         <th>End</th>
+        <th>Project</th>
         <th>Hours</th>
       </thead>
       {% for entry in recently_clocked_out_entries %}
-      <tr class="clickable" onclick="window.location='{% url 'quick_clocker_edit_entry' entry.id %}'; return false;">
+      <tr>
         <td>{{entry.user.username}}</td>
         <td>{{entry.start_time|date:"D H:m"}}</td>
         <td>{{entry.end_time|date:"D H:m"}}</td>
+        <td>{{entry.issue.project.long_name}}</td>
         <td>{{entry.hours}}</td>
+        <td>
+          <a href="{% url 'quick_clocker_edit_entry' entry.id %}">
+            <img src="{{STATIC_URL}}images/icons/pencil.png"/>
+          </a>
+          <a onclick="if ( ! confirm('Are you sure you want to delete this clock entry?') ) { return false; }" href="{% url 'quick_clocker_delete_entry' entry.id %}">
+            <img src="{{STATIC_URL}}images/icons/delete.png"/>
+          </a>
+        </td>
       </tr>
       {% empty %}
       <i>No recently clocked out entries</i>

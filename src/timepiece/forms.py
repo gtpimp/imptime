@@ -1492,12 +1492,16 @@ class QuickClockerClockOutForm(forms.Form):
         self.fields['entry'].choices = [ (x.id, "%s %s %s"%(x.user.username, x.issue.project.long_name(), x.start_time.strftime('%a %H:%M'))) for x in entries ]
 
 class QuickClockerEditEntry(forms.ModelForm):
+
+    project = GroupedModelChoiceField('business', required=False, queryset=timepiece.Project.objects.none())
     
     class Meta:
         model = Entry
         fields = ['start_time', 'end_time']
 
-    def __init__(self, *args, **kwargs):
+    def __init__(self, projects, *args, **kwargs):
         super(QuickClockerEditEntry, self).__init__(*args, **kwargs)
         self.fields['start_time'].widget.attrs['class'] = 'datetimepicker'
         self.fields['end_time'].widget.attrs['class'] = 'datetimepicker'
+        self.fields['project'].queryset=projects
+        self.fields['project'].choices=[ (x.id, x.long_name()) for x in projects ]

@@ -5542,15 +5542,15 @@ def quick_clocker(request, template="timepiece/time-sheet/quick_clocker.html", c
                                                    status='approved',
                                                    comments="quick clocker",
                                                    extended_comments="")
-        
-        for open_entry in timepiece.Entry.objects.filter(user=new_entry.user, issue__project__business=project.business).exclude(pk=new_entry.id).is_open():
+
+        for open_entry in timepiece.Entry.objects.filter(user=new_entry.user).exclude(pk=new_entry.id).is_open():
             open_entry.end_time = clock_time
             open_entry.save()
 
         return HttpResponseRedirect(reverse('quick_clocker'))
 
     context['clocked_in_entries'] = timepiece.Entry.objects.all().filter(source='quick_clocker').is_open().order_by("user__username")
-    context['recently_clocked_out_entries'] = timepiece.Entry.objects.all().filter(source='quick_clocker').is_closed().order_by("-date_updated")[0:10]
+    context['recently_clocked_out_entries'] = timepiece.Entry.objects.all().filter(source='quick_clocker').is_closed().order_by("-date_updated")[0:15]
     if context.get('clock_out_form', None) is None:
         context['clock_out_form'] = timepiece_forms.QuickClockerClockOutForm(context['clocked_in_entries'], initial={'clock_out_time':timezone.now()})
     context['clock_in_form'] = clock_in_form
@@ -5577,7 +5577,8 @@ def quick_clocker_clock_out(request):
 def quick_clocker_edit_entry(request, entry_id=None):
     entry = timepiece.Entry.no_join.get(pk=entry_id,)
 
-    form = timepiece_forms.QuickClockerEditEntry(request.POST or None, instance=entry)
+    projects = timepiece.Project.objects.filter(business=entry.issue.project.business).order_by("name")
+    form = timepiece_forms.QuickClockerEditEntry(projects, request.POST or None, instance=entry)
     if form.is_valid():
         form.save()
         messages.info(request, "Entry updated")
@@ -5585,3 +5586,9 @@ def quick_clocker_edit_entry(request, entry_id=None):
 
     return {'form': form, 'entry': entry}
 
+@permission_required('timepiece.change_entry')
+@login_required
+def quick_clocker_delete_entry(request, entry_id=None):
+    entry = timepiece.Entry.no_join.get(pk=entry_id,)
+    entry.delete()
+    return HttpResponseRedirect(reverse('quick_clocker'))
