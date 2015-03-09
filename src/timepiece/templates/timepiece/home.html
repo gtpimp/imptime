@@ -13,7 +13,7 @@
 
        <h2>ImpTime</h2>
 
-       Complete project management for development companies at your fingertips
+       Complete project management for dev houses and others, fully automated and at your fingertips
        <br/>
        {% if perms.timepiece.view_dashboard %}
        <p>
@@ -22,6 +22,9 @@
        {% endif %}
        <p>
        <a class="btn btn-info" href="{% url 'list_projects' %}">Project list</a>
+       </p>
+       <p>
+       <a class="btn btn-info" href="{% url 'quick_clocker' %}">Quick clocker</a>
        </p>
        <p>
          Useful tip, to find projects, sprints and issues quickly, type anything into the search box in the top right and press enter

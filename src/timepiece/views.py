@@ -5500,3 +5500,7 @@ def dashboard(request, template="timepiece/dashboard/dashboard.html"):
     context['checklist_errors'] = checklist_errors
     
     return render_to_response(template, context, context_instance=RequestContext(request))
+
+def quick_clocker(request, template="timepiece/time-sheet/quick_clocker.html"):
+    context = {}
+    return render_to_response(template, context, context_instance=RequestContext(request))

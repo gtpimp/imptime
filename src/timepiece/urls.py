@@ -637,6 +637,7 @@ urlpatterns = patterns('',
 					   url(r'^user_notifications/seen/$', views.seen_all_user_notifications, {}, name='seen_all_user_notifications'),
                        url(r'^blocked$', views.blocked, {}, name='blocked'),
                        url(r'^dashboard$', views.dashboard, {}, name='dashboard'),
+                       url(r'^quick_clocker$', views.quick_clocker, {}, name='quick_clocker'),
                        
 
 
