@@ -10,4 +10,61 @@
 
 <h1>Quick Clocker</h1>
 
+<div class="quick_clocker">
+
+  <div class="pane">
+    <form method="POST" action="{% url 'quick_clocker' %}">
+      {% csrf_token %}
+      {{ clock_in_form.errors }}
+      <div style="float:left">
+
+        <h3>User</h3>
+        {{ clock_in_form.user }}
+
+      </div>
+
+      <div style="float:left">
+        <h3>Project</h3>
+        {{ clock_in_form.business }}
+        
+      </div>
+
+      <input type="submit" value="Clock in"/>
+
+    </form>
+  </div>
+
+  <div class="pane">
+    <h3>Currently clocked in</h3>
+    <form method="POST" action="{% url 'quick_clocker_clock_out' %}">
+      {% csrf_token %}
+      {{ clock_out_form.errors }}
+      {{ clock_out_form }}
+      <input type="submit" name="clock_out" value="Clock out"/>
+    </form>
+  </div>
+
+
+  <div class="pane">
+    <h3>Recently clocked out</h3>
+    <table>
+      <thead>
+        <th>User</th>
+        <th>Start</th>
+        <th>End</th>
+        <th>Hours</th>
+      </thead>
+      {% for entry in recently_clocked_out_entries %}
+      <tr>
+        <td>{{entry.user.username}}</td>
+        <td>{{entry.start_time|date:"D H:m"}}</td>
+        <td>{{entry.end_time|date:"D H:m"}}</td>
+        <td>{{entry.hours}}</td>
+      </tr>
+      {% empty %}
+      <i>No recently clocked out entries</i>
+      {% endfor %}
+    </table>
+  </div>
+</div>
 {% endblock %}

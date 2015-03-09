@@ -1465,3 +1465,28 @@ class FinanceChecklistForm(forms.ModelForm):
     class Meta:
         model = FinanceChecklist
         exclude = ['business', 'created_at', 'created_by', 'passed', 'modified_by', 'modified_at']
+
+class QuickClockerForm(forms.Form):
+
+    user = UserModelChoiceField(queryset=User.objects.none(), required=True, widget=forms.RadioSelect())
+    business = forms.ModelChoiceField(required=True, queryset=Business.objects.none(), widget=forms.RadioSelect())
+
+    def __init__(self, users, businesses, *args, **kwargs):
+        self.users = users
+        self.businesses = businesses
+        super(QuickClockerForm, self).__init__(*args, **kwargs)
+
+        self.fields['user'].queryset = users
+        self.fields['user'].choices = [ (x.id, x.username) for x in self.users ]
+        self.fields['business'].queryset = businesses
+        self.fields['business'].choices = [ (x.id, x.name) for x in businesses ]
+
+class QuickClockerClockOutForm(forms.Form):
+    entry = forms.ModelChoiceField(required=True, queryset=Entry.objects.none(), widget=forms.RadioSelect())
+    clock_out_time = forms.DateTimeField()
+
+    def __init__(self, entries, *args, **kwargs):
+        super(QuickClockerClockOutForm, self).__init__(*args, **kwargs)
+        self.fields['clock_out_time'].widget.attrs['class'] = 'datetimepicker'
+        self.fields['entry'].queryset = entries
+        self.fields['entry'].choices = [ (x.id, "%s %s %s"%(x.user.username, x.issue.project.long_name(), x.start_time.strftime('%a %H:%M'))) for x in entries ]

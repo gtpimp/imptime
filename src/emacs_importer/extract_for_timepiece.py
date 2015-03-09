@@ -104,7 +104,7 @@ class Extractor(object):
             for project in Project.objects.filter(business=business):
                 project_timings_before[project] = project.total_hours_for_user(user=timesheet_user)
                     
-            Entry.objects.all().filter(user=timesheet_user, issue__project__business=business).delete()
+            Entry.objects.all().filter(user=timesheet_user, issue__project__business=business, source='emacs').delete()
 
         sprint_name = None
 
@@ -198,7 +198,8 @@ class Extractor(object):
         
         # Insert the clock entries
         for clock in orgnode.getClocks():
-            Entry.objects.create(user=timesheet_user, 
+            Entry.objects.create(user=timesheet_user,
+                                 source='emacs',
                                  start_time=clock['from'], end_time=clock['to'],
                                  activity=activity,
                                  location=location,

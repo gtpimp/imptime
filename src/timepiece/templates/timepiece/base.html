@@ -38,6 +38,8 @@
 	<script src="{{ STATIC_URL }}js/flot/jquery.flot.stack.js" type="text/javascript"></script>
 	<script src="{{ STATIC_URL }}js/flot/jquery.flot.time.js" type="text/javascript"></script>
         <script src="{{ STATIC_URL }}js/flot/jquery.flot.tickrotor.js" type="text/javascript"></script>
+        <script src="{{ STATIC_URL }}timepiece/js/timepiece.js" type="text/javascript"></script>
+
     {% endblock javascript %}
 
     {% block extrajs %}
@@ -49,6 +51,7 @@
 	<link type="text/css" rel="stylesheet" href="{{ STATIC_URL }}css/timepiece.css" />
         <link type="text/css" rel="stylesheet" href="{{ STATIC_URL }}timepiece/css/jquery.contextmenu.css" />
         <link href='{{STATIC_URL}}font/durasans.font' rel='stylesheet' type='text/css'>
+        <link type="text/css" rel="stylesheet" href="{{ STATIC_URL }}timepiece/css/bootstrap-datetimepicker.min.css" />
     {% endblock %}
 
     {% block extracss %}

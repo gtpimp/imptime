@@ -10543,3 +10543,15 @@ ul.checklist_items {
 .pane h1 {
     background-color: #ababa3;
 }
+
+.quick_clocker ul {
+ list-style: none;   
+}
+
+.quick_clocker td {
+    padding: 5px;
+}
+
+.quick_clocker .pane {
+    float: left;
+}

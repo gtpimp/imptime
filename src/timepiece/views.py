@@ -5501,6 +5501,73 @@ def dashboard(request, template="timepiece/dashboard/dashboard.html"):
     
     return render_to_response(template, context, context_instance=RequestContext(request))
 
-def quick_clocker(request, template="timepiece/time-sheet/quick_clocker.html"):
-    context = {}
+@login_required
+def quick_clocker(request, template="timepiece/time-sheet/quick_clocker.html", context=None):
+    context = context or {}
+
+    users = timepiece.BusinessPermissions.get_users_who_can_capture_time().order_by("username")
+    businesses = timepiece.Business.objects.all().filter_has_any_active_projects().distinct()
+    context['users'] = users
+    context['businesses'] = businesses
+
+    clock_in_form = timepiece_forms.QuickClockerForm(users, businesses, request.POST or None)
+    if clock_in_form.is_valid():
+        activity = timepiece.Activity.objects.get_or_create(code='dev')[0]
+        location = timepiece.Location.objects.get_or_create(name='office')[0]
+
+        project = timepiece.Project.objects.filter(business=clock_in_form.cleaned_data['business'],
+                                                   status2__in=timepiece.Project.active_states()).first()
+        if project is None:
+            raise Exception("No active sprint in %s to log against. Sprint must be in one of %s" % (clock_in_form.cleaned_data['business'], ",".join(timepiece.Project.active_states())))
+
+        issue = timepiece.Issue.objects.get_or_create(project=project,
+                                                      subject="daily management",
+                                                      defaults={'auto_created_during_import':True,
+                                                                'adhoc':False,
+                                                                'status':'management',
+                                                                'assigned_to':clock_in_form.cleaned_data['user'],
+                                                                'number':timepiece.Issue.get_next_issue_number(project.business),
+                                                                'description':"Quick clocker",
+                                                                'story_points':0,
+                                                                'order':timepiece.Issue.get_next_order(project)})[0]
+
+        clock_time = timezone.now()
+        new_entry = timepiece.Entry.objects.create(user=clock_in_form.cleaned_data['user'],
+                                                   source='quick_clocker',
+                                                   start_time=clock_time,
+                                                   end_time=None,
+                                                   activity=activity,
+                                                   location=location,
+                                                   issue=issue,
+                                                   status='approved',
+                                                   comments="quick clocker",
+                                                   extended_comments="")
+        
+        for open_entry in timepiece.Entry.objects.filter(user=new_entry.user, issue__project__business=project.business).exclude(pk=new_entry.id).is_open():
+            open_entry.end_time = clock_time
+            open_entry.save()
+
+        return HttpResponseRedirect(reverse('quick_clocker'))
+
+    context['clocked_in_entries'] = timepiece.Entry.objects.all().filter(source='quick_clocker').is_open().order_by("user__username")
+    context['recently_clocked_out_entries'] = timepiece.Entry.objects.all().filter(source='quick_clocker').is_closed().order_by("-date_updated")[0:10]
+    if context.get('clock_out_form', None) is None:
+        context['clock_out_form'] = timepiece_forms.QuickClockerClockOutForm(context['clocked_in_entries'], initial={'clock_out_time':timezone.now()})
+    context['clock_in_form'] = clock_in_form
+    
     return render_to_response(template, context, context_instance=RequestContext(request))
+
+@login_required
+def quick_clocker_clock_out(request):
+    context = {}
+    clock_out_form = timepiece_forms.QuickClockerClockOutForm(timepiece.Entry.objects.all().filter(source='quick_clocker').is_open(),
+                                                              request.POST or None, initial={'clock_out_time':timezone.now()})
+    if clock_out_form.is_valid():
+        entry = clock_out_form.cleaned_data['entry']
+        entry.end_time = clock_out_form.cleaned_data['clock_out_time']
+        entry.save()
+        return HttpResponseRedirect(reverse('quick_clocker'))
+    context['clock_out_form'] = clock_out_form
+    return quick_clocker(request, context=context)
+
+

@@ -638,6 +638,7 @@ urlpatterns = patterns('',
                        url(r'^blocked$', views.blocked, {}, name='blocked'),
                        url(r'^dashboard$', views.dashboard, {}, name='dashboard'),
                        url(r'^quick_clocker$', views.quick_clocker, {}, name='quick_clocker'),
+                       url(r'^quick_clocker_clock_out$', views.quick_clocker_clock_out, {}, name='quick_clocker_clock_out'),
                        
 
 

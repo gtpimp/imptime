@@ -381,6 +381,12 @@ class BusinessPermissions(models.Model):
     def for_user(self, user, business):
         return BusinessPermissions.objects.get_or_create(business=business,user=user)[0]
 
+    @classmethod
+    def get_users_who_can_capture_time(self):
+        """ any user who is allowed to estimate on at least one project """
+        users = User.objects.filter(business_permissions__can_view_project_card=True, business_permissions__business__new_business_projects__status2='in dev').distinct()
+        return users
+    
     @property
     def has_view_project_card(self):
         return self.user.is_superuser or self.can_view_project_card or self.user.has_perm('timepiece.belongs_to_all_projects')
@@ -1782,6 +1788,12 @@ class EntriesQuerySet(QuerySet):
 class EntryQuerySet(EntriesQuerySet):
     """QuerySet extension to provide filtering by billable status"""
 
+    def is_open(self):
+        return self.filter(end_time__isnull=True)
+
+    def is_closed(self):
+        return self.filter(end_time__isnull=False)    
+    
     def date_trunc(self, key='month', extra_values=None):
         select = {"day": {"date": """DATE_TRUNC('day', end_time)"""},
                   "week": {"date": """DATE_TRUNC('week', end_time)"""},
@@ -1885,6 +1897,9 @@ class Entry(models.Model):
         default='unverified',
     )
 
+    source = models.CharField(max_length=20, choices= ( ('quick_clocker', 'Quick clocker'), ('emacs', 'Emacs importer'), ('excel', 'In-site Excel importer') ),
+                              null=False, blank=False)
+    
     start_time = models.DateTimeField()
     end_time = models.DateTimeField(blank=True, null=True, db_index=True)
     seconds_paused = models.PositiveIntegerField(default=0)
@@ -2864,6 +2879,7 @@ class Issue(models.Model):
            ( 'duplicate', 'duplicate'),
            ( 'to be designed', 'to be designed'),
            ( 'imported', 'imported'),
+           ( 'management', 'management')
         )
 
     STATUSES_INDICATING_DEV_INCOMPLETE = ['new', 'bug', 'reopened', 'dev unclear']
