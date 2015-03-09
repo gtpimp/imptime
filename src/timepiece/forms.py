@@ -1482,7 +1482,7 @@ class QuickClockerForm(forms.Form):
         self.fields['business'].choices = [ (x.id, x.name) for x in businesses ]
 
 class QuickClockerClockOutForm(forms.Form):
-    entry = forms.ModelChoiceField(required=True, queryset=Entry.objects.none(), widget=forms.RadioSelect())
+    entry = forms.ModelChoiceField(required=True, queryset=Entry.objects.none(), widget=forms.RadioSelect(), label="")
     clock_out_time = forms.DateTimeField()
 
     def __init__(self, entries, *args, **kwargs):
