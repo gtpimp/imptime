@@ -5518,6 +5518,7 @@ def quick_clocker(request, template="timepiece/time-sheet/quick_clocker.html", c
         issue = _get_quick_clocker_issue(project, clock_in_form.cleaned_data['user'])
         clock_time = datetime.datetime.now()
         new_entry = timepiece.Entry.objects.create(user=clock_in_form.cleaned_data['user'],
+                                                   created_by=request.user,
                                                    source='quick_clocker',
                                                    start_time=clock_time,
                                                    end_time=None,

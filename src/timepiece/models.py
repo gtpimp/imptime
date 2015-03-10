@@ -1924,6 +1924,8 @@ class Entry(models.Model):
     no_join = EntryManagerBase()
     issue = models.ForeignKey('Issue', blank=True, null=True, related_name='entries')
 
+    created_by = models.ForeignKey(User, related_name='entries_created_by', null=True, blank=True)
+
     @classmethod
     def quick_create(self, user, hours, issue, comments="auto created"):
         entry = self.create_virtual_event(user, hours, issue.project, comments)
