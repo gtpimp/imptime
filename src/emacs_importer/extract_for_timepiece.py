@@ -188,7 +188,7 @@ class Extractor(object):
                                                                       'status':'imported',
                                                                       'assigned_to':timesheet_user,
                                                                       'number':Issue.get_next_issue_number(project.business),
-                                                                      'description':orgnode.Body(),
+                                                                      'description':orgnode.CleanBody(),
                                                                       'story_points':0,
                                                                       'order':Issue.get_next_order(project)})
                 if is_new:
