@@ -63,7 +63,7 @@ Developers should not need to use this page, rather use the emacs importer
         <th>Hours</th>
       </thead>
       {% for entry in recently_clocked_out_entries %}
-      <tr>
+      <tr {% if entry.user == user %}class='logged_in_user'{% endif %}>
         <td>{{entry.user.username}}</td>
         <td>{{entry.start_time|date:"D H:i"}}</td>
         <td>{{entry.end_time|date:"D H:i"}}</td>

@@ -10555,3 +10555,7 @@ ul.checklist_items {
 .quick_clocker .pane {
     float: left;
 }
+
+.quick_clocker tr.logged_in_user td {
+    background-color:#ededed;
+}
