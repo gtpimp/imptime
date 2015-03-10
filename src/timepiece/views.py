@@ -5532,6 +5532,8 @@ def quick_clocker(request, template="timepiece/time-sheet/quick_clocker.html", c
             open_entry.end_time = clock_time
             open_entry.save()
 
+        messages.info(request, "%s clocked into %s" % (new_entry.user.username, project.long_name()))
+            
         return HttpResponseRedirect(reverse('quick_clocker'))
 
     context['clocked_in_entries'] = timepiece.Entry.objects.all().filter(source='quick_clocker').is_open().order_by("user__username")
@@ -5555,6 +5557,7 @@ def quick_clocker_clock_out(request):
         entry = clock_out_form.cleaned_data['entry']
         entry.end_time = clock_out_form.cleaned_data['clock_out_time']
         entry.save()
+        messages.info(request, "%s clocked out of %s" % (entry.user.username, entry.issue.project.long_name()))
         return HttpResponseRedirect(reverse('quick_clocker'))
     context['clock_out_form'] = clock_out_form
     return quick_clocker(request, context=context)
