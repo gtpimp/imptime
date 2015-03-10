@@ -2069,26 +2069,26 @@ class Entry(models.Model):
                 'end_time': entry.end_time
             }
             #Conflicting saved entries
-            if entry.end_time:
-                if entry.start_time.date() == start.date() \
-                and entry.end_time.date() == end.date():
-                    entry_data['start_time'] = entry.start_time.strftime(
-                        '%H:%M:%S')
-                    entry_data['end_time'] = entry.end_time.strftime(
-                        '%H:%M:%S')
-                    output = 'Start time overlaps with: ' + \
-                    '%(project)s - %(activity)s - ' % entry_data + \
-                    'from %(start_time)s to %(end_time)s' % entry_data
-                    raise ValidationError(output)
-                else:
-                    entry_data['start_time'] = entry.start_time.strftime(
-                        '%H:%M:%S on %m\%d\%Y')
-                    entry_data['end_time'] = entry.end_time.strftime(
-                        '%H:%M:%S on %m\%d\%Y')
-                    output = 'Start time overlaps with: ' + \
-                    '%(project)s - %(activity)s - ' % entry_data + \
-                    'from %(start_time)s to %(end_time)s' % entry_data
-                    raise ValidationError(output)
+            # if entry.end_time:
+            #     if entry.start_time.date() == start.date() \
+            #     and entry.end_time.date() == end.date():
+            #         entry_data['start_time'] = entry.start_time.strftime(
+            #             '%H:%M:%S')
+            #         entry_data['end_time'] = entry.end_time.strftime(
+            #             '%H:%M:%S')
+            #         output = 'Start time overlaps with: ' + \
+            #         '%(project)s - %(activity)s - ' % entry_data + \
+            #         'from %(start_time)s to %(end_time)s' % entry_data
+            #         raise ValidationError(output)
+            #     else:
+            #         entry_data['start_time'] = entry.start_time.strftime(
+            #             '%H:%M:%S on %m\%d\%Y')
+            #         entry_data['end_time'] = entry.end_time.strftime(
+            #             '%H:%M:%S on %m\%d\%Y')
+            #         output = 'Start time overlaps with: ' + \
+            #         '%(project)s - %(activity)s - ' % entry_data + \
+            #         'from %(start_time)s to %(end_time)s' % entry_data
+            #         raise ValidationError(output)
         try:
             act_group = self.issue.project.activity_group
             if act_group:

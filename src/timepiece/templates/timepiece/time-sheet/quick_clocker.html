@@ -65,8 +65,8 @@ Developers should not need to use this page, rather use the emacs importer
       {% for entry in recently_clocked_out_entries %}
       <tr>
         <td>{{entry.user.username}}</td>
-        <td>{{entry.start_time|date:"D H:m"}}</td>
-        <td>{{entry.end_time|date:"D H:m"}}</td>
+        <td>{{entry.start_time|date:"D H:i"}}</td>
+        <td>{{entry.end_time|date:"D H:i"}}</td>
         <td>{{entry.issue.project.long_name}}</td>
         <td>{{entry.hours}}</td>
         <td>
