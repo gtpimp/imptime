@@ -23,7 +23,7 @@ Developers should not need to use this page, rather use the emacs importer
     <form method="POST" action="{% url 'quick_clocker' %}">
       {% csrf_token %}
       {{ clock_in_form.errors }}
-      <div style="float:left">
+      <div class="user_selection" style="float:left">
 
         <h3>User</h3>
         {{ clock_in_form.user }}

@@ -10560,3 +10560,27 @@ ul.checklist_items {
     background-color:#ededed;
 }
 
+.quick_clocker ul.form-button-radio li {
+    float: left;
+    clear:left;
+}
+
+.quick_clocker ul.form-button-radio input[type="radio"] {
+    display: none
+}
+
+.quick_clocker ul.form-button-radio input[type="radio"]+label {
+    padding: 2px;
+    padding-left: 5px;
+    min-width:100px;
+    border-radius: 5px;
+    -moz-border-radius: 5px;
+    -webkit-border-radius: 5px;
+    cursor: pointer;
+}
+
+.quick_clocker ul.form-button-radio input[type="radio"]:checked+label {
+    font-weight: bold;
+    background-color: #999;
+    color: white;
+}

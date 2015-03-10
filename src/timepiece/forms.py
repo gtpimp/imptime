@@ -2,6 +2,7 @@ from decimal import Decimal
 import re
 from django.db.models import Sum, Count, Q, F, Max, Min
 import time
+from fields import ButtonRadioSelect
 from time import mktime
 from datetime import datetime
 import math
@@ -1468,8 +1469,8 @@ class FinanceChecklistForm(forms.ModelForm):
 
 class QuickClockerForm(forms.Form):
 
-    user = UserModelChoiceField(queryset=User.objects.none(), required=True, widget=forms.RadioSelect())
-    business = forms.ModelChoiceField(required=True, queryset=Business.objects.none(), widget=forms.RadioSelect())
+    user = UserModelChoiceField(queryset=User.objects.none(), required=True, widget=ButtonRadioSelect())
+    business = forms.ModelChoiceField(required=True, queryset=Business.objects.none(), widget=ButtonRadioSelect())
 
     def __init__(self, logged_in_user, users, businesses, *args, **kwargs):
         self.users = users
@@ -1483,8 +1484,8 @@ class QuickClockerForm(forms.Form):
         self.fields['business'].choices = [ (x.id, x.name) for x in businesses ]
 
 class QuickClockerClockOutForm(forms.Form):
-    entry = forms.ModelChoiceField(required=True, queryset=Entry.objects.none(), widget=forms.RadioSelect(), label="")
-    clock_out_time = forms.DateTimeField()
+    entry = forms.ModelChoiceField(required=True, queryset=Entry.objects.none(), widget=ButtonRadioSelect(), label="")
+    clock_out_time = forms.DateTimeField(label="")
 
     def __init__(self, entries, *args, **kwargs):
         super(QuickClockerClockOutForm, self).__init__(*args, **kwargs)
