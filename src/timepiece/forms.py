@@ -1470,18 +1470,17 @@ class FinanceChecklistForm(forms.ModelForm):
 class QuickClockerForm(forms.Form):
 
     user = UserModelChoiceField(queryset=User.objects.none(), required=True, widget=ButtonRadioSelect())
-    business = forms.ModelChoiceField(required=True, queryset=Business.objects.none(), widget=ButtonRadioSelect())
+    project = forms.ModelChoiceField(required=True, queryset=timepiece.Project.objects.none(), widget=ButtonRadioSelect())
 
-    def __init__(self, logged_in_user, users, businesses, *args, **kwargs):
+    def __init__(self, logged_in_user, users, projects, *args, **kwargs):
         self.users = users
-        self.businesses = businesses
         kwargs.setdefault('initial', {})['user'] = logged_in_user
         super(QuickClockerForm, self).__init__(*args, **kwargs)
 
         self.fields['user'].queryset = users
         self.fields['user'].choices = [ (x.id, x.username) for x in self.users ]
-        self.fields['business'].queryset = businesses
-        self.fields['business'].choices = [ (x.id, x.name) for x in businesses ]
+        self.fields['project'].queryset = projects
+        self.fields['project'].choices = [ (x.id, "<b>%s</b>     %s"%(x.business.name, x.name)) for x in projects ]
 
 class QuickClockerClockOutForm(forms.Form):
     entry = forms.ModelChoiceField(required=True, queryset=Entry.objects.none(), widget=ButtonRadioSelect(), label="")

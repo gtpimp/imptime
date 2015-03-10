@@ -5506,20 +5506,15 @@ def quick_clocker(request, template="timepiece/time-sheet/quick_clocker.html", c
     context = context or {}
 
     users = timepiece.BusinessPermissions.get_users_who_can_capture_time().order_by("username")
-    businesses = timepiece.Business.objects.all().filter_has_any_active_projects().distinct()
+    projects = timepiece.Project.objects.all().filter_active().order_by("business__name", "name")
     context['users'] = users
-    context['businesses'] = businesses
+    context['projects'] = projects
 
-    clock_in_form = timepiece_forms.QuickClockerForm(request.user, users, businesses, request.POST or None)
+    clock_in_form = timepiece_forms.QuickClockerForm(request.user, users, projects, request.POST or None)
     if clock_in_form.is_valid():
         activity = timepiece.Activity.objects.get_or_create(code='dev')[0]
         location = timepiece.Location.objects.get_or_create(name='office')[0]
-
-        project = timepiece.Project.objects.filter(business=clock_in_form.cleaned_data['business'],
-                                                   status2__in=timepiece.Project.active_states()).first()
-        if project is None:
-            raise Exception("No active sprint in %s to log against. Sprint must be in one of %s" % (clock_in_form.cleaned_data['business'], ",".join(timepiece.Project.active_states())))
-
+        project = clock_in_form.cleaned_data['project']
         issue = _get_quick_clocker_issue(project, clock_in_form.cleaned_data['user'])
         clock_time = datetime.datetime.now()
         new_entry = timepiece.Entry.objects.create(user=clock_in_form.cleaned_data['user'],

@@ -10584,3 +10584,12 @@ ul.checklist_items {
     background-color: #999;
     color: white;
 }
+
+.quick_clocker ul.form-button-radio input[type="radio"]:hover+label {
+    background-color: #999;
+    color: white;
+}
+
+.quick_clocker label {
+    font-weight: normal;
+}
