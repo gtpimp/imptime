@@ -8,21 +8,28 @@
 
 {% block content %}
 
-<h1>Quick Clocker</h1>
+<br/>
+<a class="btn button button-info" href="{% url 'quick_clocker' %}">back to clocker page</a>
+<hr/>
+<h1>
+  Edit quick clocker entry
+</h1>
 
-<a href="{% url 'quick_clocker' %}">back</a>
-
+<br/>
 <div class="quick_clocker">
+
+  <div class="pane">
+    User: {{ entry.user.username}}
+    <br/>
+    Project: {{ entry.issue.project.long_name }}
+    <br/>
+    Hours: {{ entry.hours }}
+  </div>
 
   <div class="pane">
     <form method="POST" action="{% url 'quick_clocker_edit_entry' entry.id %}">
       {% csrf_token %}
       {{ form.errors }}
-      {{ entry.user.username}}
-      <br/>
-      {{ entry.issue.project.long_name }}
-      <br/>
-      {{ entry.hours }} hours
       <br/>
       {{ form }}
 

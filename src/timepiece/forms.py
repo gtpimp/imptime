@@ -1498,7 +1498,7 @@ class QuickClockerEditEntry(forms.ModelForm):
     
     class Meta:
         model = Entry
-        fields = ['start_time', 'end_time']
+        fields = ['start_time', 'end_time', 'comments']
 
     def __init__(self, projects, *args, **kwargs):
         kwargs.setdefault('initial', {})['project'] = kwargs['instance'].issue.project

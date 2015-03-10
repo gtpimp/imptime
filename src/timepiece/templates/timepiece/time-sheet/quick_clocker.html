@@ -64,6 +64,7 @@ Developers should not need to use this page, rather use the emacs importer
         <th>End</th>
         <th>Project</th>
         <th>Hours</th>
+        <th></th>
       </thead>
       {% for entry in recently_clocked_out_entries %}
       <tr {% if entry.user == user %}class='logged_in_user'{% endif %}>
@@ -72,6 +73,7 @@ Developers should not need to use this page, rather use the emacs importer
         <td>{{entry.end_time|date:"D H:i"}}</td>
         <td>{{entry.issue.project.long_name}}</td>
         <td>{{entry.hours_and_minutes.hours}}:{{entry.hours_and_minutes.minutes|stringformat:"02d"}}</td>
+        <td><div style="font-size:10px">{{entry.comments|slice:"0:20"}}...</div></td>
         <td>
           <a href="{% url 'quick_clocker_edit_entry' entry.id %}">
             <img src="{{STATIC_URL}}images/icons/pencil.png"/>

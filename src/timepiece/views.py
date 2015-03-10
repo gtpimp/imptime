@@ -5526,7 +5526,7 @@ def quick_clocker(request, template="timepiece/time-sheet/quick_clocker.html", c
                                                    location=location,
                                                    issue=issue,
                                                    status='approved',
-                                                   comments="quick clocker",
+                                                   comments="qc",
                                                    extended_comments="")
 
         for open_entry in timepiece.Entry.objects.filter(user=new_entry.user).exclude(pk=new_entry.id).is_open():
