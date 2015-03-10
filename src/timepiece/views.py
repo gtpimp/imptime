@@ -5448,7 +5448,7 @@ def blocked(request, template="blocked.html"):
 def dashboard(request, template="timepiece/dashboard/dashboard.html"):
     context = {}
 
-    now = timezone.now().replace(day=1, hour=0, minute=0, second=0)+relativedelta(months=1)
+    now = datetime.datetime.now().replace(day=1, hour=0, minute=0, second=0)+relativedelta(months=1)
     running_now = now
     num_months = 4
     context['quotes_by_month'] = []
@@ -5531,7 +5531,7 @@ def quick_clocker(request, template="timepiece/time-sheet/quick_clocker.html", c
                                                                 'story_points':0,
                                                                 'order':timepiece.Issue.get_next_order(project)})[0]
 
-        clock_time = timezone.now()
+        clock_time = datetime.datetime.now()
         new_entry = timepiece.Entry.objects.create(user=clock_in_form.cleaned_data['user'],
                                                    source='quick_clocker',
                                                    start_time=clock_time,
@@ -5552,7 +5552,7 @@ def quick_clocker(request, template="timepiece/time-sheet/quick_clocker.html", c
     context['clocked_in_entries'] = timepiece.Entry.objects.all().filter(source='quick_clocker').is_open().order_by("user__username")
     context['recently_clocked_out_entries'] = timepiece.Entry.objects.all().filter(source='quick_clocker').is_closed().order_by("-date_updated")[0:15]
     if context.get('clock_out_form', None) is None:
-        context['clock_out_form'] = timepiece_forms.QuickClockerClockOutForm(context['clocked_in_entries'], initial={'clock_out_time':timezone.now()})
+        context['clock_out_form'] = timepiece_forms.QuickClockerClockOutForm(context['clocked_in_entries'], initial={'clock_out_time':datetime.datetime.now()})
     context['clock_in_form'] = clock_in_form
     
     return render_to_response(template, context, context_instance=RequestContext(request))
@@ -5561,7 +5561,7 @@ def quick_clocker(request, template="timepiece/time-sheet/quick_clocker.html", c
 def quick_clocker_clock_out(request):
     context = {}
     clock_out_form = timepiece_forms.QuickClockerClockOutForm(timepiece.Entry.objects.all().filter(source='quick_clocker').is_open(),
-                                                              request.POST or None, initial={'clock_out_time':timezone.now()})
+                                                              request.POST or None, initial={'clock_out_time':datetime.datetime.now()})
     if clock_out_form.is_valid():
         entry = clock_out_form.cleaned_data['entry']
         entry.end_time = clock_out_form.cleaned_data['clock_out_time']
