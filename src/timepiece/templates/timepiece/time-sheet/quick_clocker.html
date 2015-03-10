@@ -36,7 +36,7 @@ Developers should not need to use this page, rather use the emacs importer
         
       </div>
 
-      <input type="submit" value="Clock in"/>
+      <input class="btn btn-primary" type="submit" value="Clock in"/>
 
     </form>
   </div>
@@ -47,7 +47,7 @@ Developers should not need to use this page, rather use the emacs importer
       {% csrf_token %}
       {{ clock_out_form.errors }}
       {{ clock_out_form }}
-      <input type="submit" name="clock_out" value="Clock out"/>
+      <input class="btn btn-info" type="submit" name="clock_out" value="Clock out"/>
     </form>
   </div>
 
