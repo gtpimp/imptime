@@ -5541,6 +5541,7 @@ def quick_clocker(request, template="timepiece/time-sheet/quick_clocker.html", c
 
     context['clocked_in_entries'] = timepiece.Entry.objects.all().filter(source='quick_clocker').is_open().order_by("user__username")
     context['recently_clocked_out_entries'] = timepiece.Entry.objects.all().filter(source='quick_clocker').is_closed().order_by("-date_updated")[0:15]
+    context['recent_dev_entries'] = timepiece.Entry.objects.all().filter(source='emacs').is_closed().order_by("-end_time")[0:20]
     if context.get('clock_out_form', None) is None:
         context['clock_out_form'] = timepiece_forms.QuickClockerClockOutForm(context['clocked_in_entries'], initial={'clock_out_time':datetime.datetime.now()})
     context['clock_in_form'] = clock_in_form
