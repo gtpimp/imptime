@@ -1501,6 +1501,7 @@ class QuickClockerEditEntry(forms.ModelForm):
         fields = ['start_time', 'end_time']
 
     def __init__(self, projects, *args, **kwargs):
+        kwargs.setdefault('initial', {})['project'] = kwargs['instance'].issue.project
         super(QuickClockerEditEntry, self).__init__(*args, **kwargs)
         self.fields['start_time'].widget.attrs['class'] = 'datetimepicker'
         self.fields['end_time'].widget.attrs['class'] = 'datetimepicker'

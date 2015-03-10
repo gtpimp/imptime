@@ -5520,17 +5520,7 @@ def quick_clocker(request, template="timepiece/time-sheet/quick_clocker.html", c
         if project is None:
             raise Exception("No active sprint in %s to log against. Sprint must be in one of %s" % (clock_in_form.cleaned_data['business'], ",".join(timepiece.Project.active_states())))
 
-        issue = timepiece.Issue.objects.get_or_create(project=project,
-                                                      subject="daily management",
-                                                      defaults={'auto_created_during_import':True,
-                                                                'adhoc':False,
-                                                                'status':'management',
-                                                                'assigned_to':clock_in_form.cleaned_data['user'],
-                                                                'number':timepiece.Issue.get_next_issue_number(project.business),
-                                                                'description':"Quick clocker",
-                                                                'story_points':0,
-                                                                'order':timepiece.Issue.get_next_order(project)})[0]
-
+        issue = _get_quick_clocker_issue(project, clock_in_form.cleaned_data['user'])
         clock_time = datetime.datetime.now()
         new_entry = timepiece.Entry.objects.create(user=clock_in_form.cleaned_data['user'],
                                                    source='quick_clocker',
@@ -5576,14 +5566,15 @@ def quick_clocker_clock_out(request):
 @login_required
 def quick_clocker_edit_entry(request, entry_id=None):
     entry = timepiece.Entry.no_join.get(pk=entry_id,)
-
     projects = timepiece.Project.objects.filter(business=entry.issue.project.business).order_by("name")
     form = timepiece_forms.QuickClockerEditEntry(projects, request.POST or None, instance=entry)
     if form.is_valid():
         form.save()
+        issue = _get_quick_clocker_issue(form.cleaned_data['project'], entry.user)
+        entry.issue = issue
+        entry.save()
         messages.info(request, "Entry updated")
         return HttpResponseRedirect(reverse('quick_clocker_edit_entry', kwargs={'entry_id':entry_id}))
-
     return {'form': form, 'entry': entry}
 
 @permission_required('timepiece.change_entry')
@@ -5592,3 +5583,16 @@ def quick_clocker_delete_entry(request, entry_id=None):
     entry = timepiece.Entry.no_join.get(pk=entry_id,)
     entry.delete()
     return HttpResponseRedirect(reverse('quick_clocker'))
+
+def _get_quick_clocker_issue(project, user):
+    issue = timepiece.Issue.objects.get_or_create(project=project,
+                                                  subject="daily management",
+                                                  defaults={'auto_created_during_import':True,
+                                                            'adhoc':False,
+                                                            'status':'management',
+                                                            'assigned_to':user,
+                                                            'number':timepiece.Issue.get_next_issue_number(project.business),
+                                                            'description':"Quick clocker",
+                                                            'story_points':0,
+                                                            'order':timepiece.Issue.get_next_order(project)})[0]
+    return issue
