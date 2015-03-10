@@ -5567,7 +5567,7 @@ def quick_clocker_clock_out(request):
 @login_required
 def quick_clocker_edit_entry(request, entry_id=None):
     entry = timepiece.Entry.no_join.get(pk=entry_id,)
-    projects = timepiece.Project.objects.filter(business=entry.issue.project.business).order_by("name")
+    projects = timepiece.Project.objects.filter(business=entry.issue.project.business).filter_can_add_dev_time_states().order_by("name")
     form = timepiece_forms.QuickClockerEditEntry(projects, request.POST or None, instance=entry)
     if form.is_valid():
         form.save()

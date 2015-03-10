@@ -92,6 +92,7 @@ Developers should not need to use this page, rather use the emacs importer
         <th>Start</th>
         <th>End</th>
         <th>Project</th>
+        <th>Issue</th>
         <th>Hours</th>
       </thead>
       {% for entry in recent_dev_entries %}
@@ -100,6 +101,7 @@ Developers should not need to use this page, rather use the emacs importer
         <td>{{entry.start_time|date:"D H:i"}}</td>
         <td>{{entry.end_time|date:"D H:i"}}</td>
         <td>{{entry.issue.project.long_name}}</td>
+        <td>{{entry.issue.number}} {{entry.issue.subject}}</td>
         <td>{{entry.hours_and_minutes.hours}}:{{entry.hours_and_minutes.minutes|stringformat:"02d"}}</td>
       </tr>
       {% empty %}

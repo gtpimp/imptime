@@ -105,14 +105,13 @@
     </div>
 
     {% block footer %}
-    {% comment %}
         <footer class="footer">
             <div class="container-fluid">
                 <p class="pull-right">
+                  {% now "jS F Y H:i" %}
                 </p>
             </div>
         </footer>
-        {% endcomment %}
     {% endblock footer %}
 </body>
 
