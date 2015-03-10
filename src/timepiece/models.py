@@ -1944,7 +1944,15 @@ class Entry(models.Model):
     @property
     def project(self):
         return self.issue.project
-    
+
+    @property
+    def hours_and_minutes(self):
+        full_hours = int(self.hours)
+        minutes_fraction = self.hours - full_hours
+        minutes = int(minutes_fraction*60)
+        return { 'hours': full_hours,
+                 'minutes': minutes }
+        
     @property
     def atrate(self):
         return self.hours * self.rate

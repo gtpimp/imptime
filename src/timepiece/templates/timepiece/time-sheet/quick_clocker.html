@@ -68,7 +68,7 @@ Developers should not need to use this page, rather use the emacs importer
         <td>{{entry.start_time|date:"D H:i"}}</td>
         <td>{{entry.end_time|date:"D H:i"}}</td>
         <td>{{entry.issue.project.long_name}}</td>
-        <td>{{entry.hours}}</td>
+        <td>{{entry.hours_and_minutes.hours}}:{{entry.hours_and_minutes.minutes|stringformat:"02d"}}</td>
         <td>
           <a href="{% url 'quick_clocker_edit_entry' entry.id %}">
             <img src="{{STATIC_URL}}images/icons/pencil.png"/>
