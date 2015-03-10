@@ -5510,7 +5510,7 @@ def quick_clocker(request, template="timepiece/time-sheet/quick_clocker.html", c
     context['users'] = users
     context['businesses'] = businesses
 
-    clock_in_form = timepiece_forms.QuickClockerForm(users, businesses, request.POST or None)
+    clock_in_form = timepiece_forms.QuickClockerForm(request.user, users, businesses, request.POST or None)
     if clock_in_form.is_valid():
         activity = timepiece.Activity.objects.get_or_create(code='dev')[0]
         location = timepiece.Location.objects.get_or_create(name='office')[0]

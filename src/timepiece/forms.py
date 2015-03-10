@@ -1471,9 +1471,10 @@ class QuickClockerForm(forms.Form):
     user = UserModelChoiceField(queryset=User.objects.none(), required=True, widget=forms.RadioSelect())
     business = forms.ModelChoiceField(required=True, queryset=Business.objects.none(), widget=forms.RadioSelect())
 
-    def __init__(self, users, businesses, *args, **kwargs):
+    def __init__(self, logged_in_user, users, businesses, *args, **kwargs):
         self.users = users
         self.businesses = businesses
+        kwargs.setdefault('initial', {})['user'] = logged_in_user
         super(QuickClockerForm, self).__init__(*args, **kwargs)
 
         self.fields['user'].queryset = users
