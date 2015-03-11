@@ -1,5 +1,6 @@
 import os
 import fnmatch
+from django.db.models import Q, Avg, Sum, Max, Min, F
 import git
 from implicitdesign import settings
 from timepiece.interface_plugin import get_interface_plugin
@@ -21,56 +22,72 @@ class Extractor(object):
                        'num_entries_refreshed':0,
                        'num_issues_created':0}
 
-    def get_project_timings_for_user(self):
+    def get_project_timings_for_user(self, business):
         timesheet_user = User.objects.get(username=self.username)
         timings = {}
-        for p in Project.objects.all():
-            timings[p.id] = p.total_hours_for_user(user=timesheet_user)
+        projects = Project.objects.filter(business=business)
+        for p in projects:
+            hours_per_issue = Entry.objects.filter(issue__project=p, user=timesheet_user).order_by('issue__order', 'issue__number').values('issue').annotate(hours=Sum('hours'))
+
+            hours_by_issue = {}
+            for x in hours_per_issue:
+                hours_by_issue[x['issue']] = x['hours']
+            timings[p.id] = { 'total_hours': p.total_hours_for_user(user=timesheet_user),
+                              'hours_by_issue': hours_by_issue }
+            
         return timings
 
     def extract_for_filecontent(self, filename, file_content):
         self._process_org_string(file_content, filename)
         return self.status
             
-    def extract(self):
+    # def extract(self):
 
-        with transaction.commit_manually():
+    #     with transaction.commit_manually():
 
-            try:
-                self.timings_before = self.get_project_timings_for_user()
-                includes = ["*.org",]
-                excludes = [".git",]
-                for root, dirs, files in os.walk(self.input_path, topdown=True):
-                    dirs[:] = [d for d in dirs if d not in excludes] 
-                    for pat in includes:
-                        for f in fnmatch.filter(files, pat):
-                            try:
-                                self._handle_file(root, f)
-                            except Exception, ex:
-                                self.status['errors'].append("%s: Failure handling file [%s]: %s" % (self.username, f, ex))
-                self.timings_after = self.get_project_timings_for_user()
+    #         try:
+    #             self.timings_before = self.get_project_timings_for_user()
+    #             includes = ["*.org",]
+    #             excludes = [".git",]
+    #             for root, dirs, files in os.walk(self.input_path, topdown=True):
+    #                 dirs[:] = [d for d in dirs if d not in excludes] 
+    #                 for pat in includes:
+    #                     for f in fnmatch.filter(files, pat):
+    #                         try:
+    #                             self._handle_file(root, f)
+    #                         except Exception, ex:
+    #                             self.status['errors'].append("%s: Failure handling file [%s]: %s" % (self.username, f, ex))
+    #             self.timings_after = self.get_project_timings_for_user()
 
-                try:
-                    self.check_changed_closed_projects()
-                except Exception, ex:
-                    self.status['errors'].append("%s: General failure: %s" % (self.username,ex))
+    #             try:
+    #                 self.check_changed_closed_projects()
+    #             except Exception, ex:
+    #                 self.status['errors'].append("%s: General failure: %s" % (self.username,ex))
                 
-            finally:
-                if len(self.status['errors'])==0:
-                    transaction.commit()
-                else:
-                    transaction.rollback()
+    #         finally:
+    #             if len(self.status['errors'])==0:
+    #                 transaction.commit()
+    #             else:
+    #                 transaction.rollback()
 
-        return self.status
+    #     return self.status
 
     def check_changed_closed_projects(self):
-        for p_id, hours_before in self.timings_before.items():
-            hours_after = self.timings_after[p_id]
-            if hours_before != hours_after:
+
+        for p_id, info_before in self.timings_before.items():
+            info_after = self.timings_after[p_id]
+            if info_before['total_hours'] != info_after['total_hours']:
                 project = Project.objects.get(pk=p_id)
-                if not project.can_add_dev_time:
-                    self.status['errors'].append("Not allowed to add dev time to [%s - %s] in status %s. Expected %s hours, but trying to add %s hours." % \
-                                                 (project.business.name, project, project.status2, hours_before, hours_after))
+                if not project.can_add_dev_time():
+                    failures = []
+                    for issue in project.issues.all().order_by("order", "number").values('pk', 'number'):
+                        hours_before = info_before['hours_by_issue'].get(issue['pk'], 0)
+                        hours_after = info_after['hours_by_issue'].get(issue['pk'], 0)
+                        if hours_before != hours_after:
+                            failures.append( "On issue%s in %s : was %s hours, now %s hours" % (issue['number'], project.long_name(), hours_before, hours_after) )
+
+                    self.status['infos'].append("Dev time was changed for a closed sprint in status %s: %s. Expected %s hours, but changed to %s hours. Please check if this is right. %s\n" % \
+                                                 (project.status2, project.long_name(), info_before['total_hours'], info_after['total_hours'], "\n  ".join(failures)))
 
     def _handle_file(self, dirname, fname):
             self._process_org_file(dirname, fname)
@@ -98,12 +115,10 @@ class Extractor(object):
             business = None
 
         timesheet_user = User.objects.get(username=self.username)
-        
-        project_timings_before = {}
+
+        self.timings_before = {}
         if business:
-            for project in Project.objects.filter(business=business):
-                project_timings_before[project] = project.total_hours_for_user(user=timesheet_user)
-                    
+            self.timings_before = self.get_project_timings_for_user(business=business)
             Entry.objects.all().filter(user=timesheet_user, issue__project__business=business, source='emacs').delete()
 
         sprint_name = None
@@ -138,12 +153,8 @@ class Extractor(object):
                 logger.exception(ex)
                 self.status['infos'].append("Couldn't update actual time in the interface because: %s" % ex)
 
-        for project in Project.objects.filter(business=business):
-            if not project.can_add_dev_time():
-                timing_after = project.total_hours_for_user(user=timesheet_user)
-                if timing_after != project_timings_before[project]:
-                    self.status['infos'].append("Dev time was changed for a closed sprint: [%s - %s]. Expected %s hours, but changed to %s hours. Please check if this is right." % \
-                                                 (project.business.name, project, project_timings_before[project], timing_after))
+        self.timings_after = self.get_project_timings_for_user(business=business)
+        self.check_changed_closed_projects()
                 
     def _process_orgnode(self, business, sprint_name, orgnode, issues_processed):
         activity = Activity.objects.get_or_create(code='dev')[0]

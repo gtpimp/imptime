@@ -5502,6 +5502,7 @@ def dashboard(request, template="timepiece/dashboard/dashboard.html"):
     return render_to_response(template, context, context_instance=RequestContext(request))
 
 @login_required
+@csrf_exempt
 def quick_clocker(request, template="timepiece/time-sheet/quick_clocker.html", context=None):
     context = context or {}
 
@@ -5550,6 +5551,7 @@ def quick_clocker(request, template="timepiece/time-sheet/quick_clocker.html", c
     return render_to_response(template, context, context_instance=RequestContext(request))
 
 @login_required
+@csrf_exempt
 def quick_clocker_clock_out(request):
     context = {}
     clock_out_form = timepiece_forms.QuickClockerClockOutForm(timepiece.Entry.objects.all().filter(source='quick_clocker').is_open(),
@@ -5567,6 +5569,7 @@ def quick_clocker_clock_out(request):
 @permission_required('timepiece.change_entry')
 @render_with('timepiece/time-sheet/quick_clocker_edit_entry.html')
 @login_required
+@csrf_exempt
 def quick_clocker_edit_entry(request, entry_id=None):
     entry = timepiece.Entry.no_join.get(pk=entry_id,)
     projects = timepiece.Project.objects.filter(business=entry.issue.project.business).filter_can_add_dev_time_states().order_by("name")
@@ -5582,6 +5585,7 @@ def quick_clocker_edit_entry(request, entry_id=None):
 
 @permission_required('timepiece.change_entry')
 @login_required
+@csrf_exempt
 def quick_clocker_delete_entry(request, entry_id=None):
     entry = timepiece.Entry.no_join.get(pk=entry_id,)
     entry.delete()
