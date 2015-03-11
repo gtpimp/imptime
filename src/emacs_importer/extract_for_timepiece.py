@@ -86,7 +86,7 @@ class Extractor(object):
                         if hours_before != hours_after:
                             failures.append( "On issue%s in %s : was %s hours, now %s hours" % (issue['number'], project.long_name(), hours_before, hours_after) )
 
-                    self.status['infos'].append("Dev time was changed for a closed sprint in status %s: %s. Expected %s hours, but changed to %s hours. Please check if this is right. %s\n" % \
+                    self.status['infos'].append("Dev time was changed for a closed sprint in status %s: %s. Expected %s hours, but changed to %s hours. \nPlease check if this is right: \n\n   %s\n" % \
                                                  (project.status2, project.long_name(), info_before['total_hours'], info_after['total_hours'], "\n  ".join(failures)))
 
     def _handle_file(self, dirname, fname):
