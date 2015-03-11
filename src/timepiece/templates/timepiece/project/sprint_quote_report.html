@@ -12,7 +12,7 @@
 <div class="sprint_report">
 
   {% ifequal "html" output_format %}
-    <form method="GET" action="{% url 'sprint_report' project.id %}">
+    <form method="GET" action="{% url 'sprint_report' project.id %}" target="_blank">
       <div style="display:none">
         {{ form }}
         <input type="hidden" name="report_type" value="Quote"/>
@@ -20,7 +20,10 @@
         <input type="hidden" name="authenticate_token" value="{{user.profile.authenticate_token}}"/>
         <input type="hidden" name="authenticate_username" value="{{user.username}}"/>
       </div>
-      <input style="position: fixed; right:100px; top: 100px;" type="submit" value="Print"/>
+      <div style="position: fixed; right:100px; top: 100px;">
+        <input class="btn btn-primary" type="submit" value="Print" onclick="window.location.reload();"/>
+        <a  class="btn btn-info" href="{{url_capture_quote}}">Capture quote</a>
+      </div>
     </form>
   {% endifequal %}
 

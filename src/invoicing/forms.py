@@ -131,19 +131,30 @@ class QuoteForm(forms.ModelForm):
 
     class Meta:
         model = models.Quote
-        fields = [ 'client', 'status', 'project', 'internal_comment',
+        fields = [ 'status', 'project', 'internal_comment',
                    'sent_to_client_at', 'accepted_at', 'amount', 'currency_symbol',
                    'quote_document', 'additional_document' ]
 
     project = GroupedModelChoiceField('business', required=False, queryset=timepiece.Project.objects.all().filter_open().order_by("business__name", "name"))
 
     def __init__(self, *args, **kwargs):
+        defaults = { 'status': 'sent to client',
+                     'sent_to_client_at' : datetime.today() }
+        defaults.update(kwargs.get('initial', {}))
+        kwargs['initial']=defaults
+
         super(QuoteForm, self).__init__(*args, **kwargs)
-        self.fields['sent_to_client_at'].initial = datetime.today()
         self.fields['sent_to_client_at'].widget.attrs['class'] = 'date_field'
         self.fields['accepted_at'].widget.attrs['class'] = 'date_field'
-        self.fields['status'].initial = 'sent to client'
 
         if self.instance and self.instance.project:
-            self.fields['quote_document'].queryset = timepiece.BusinessDocument.objects.filter(project=self.instance.project)
+            docs = timepiece.BusinessDocument.objects.filter(project=self.instance.project)
+        elif kwargs['initial'].get('project', None):
+            docs = timepiece.BusinessDocument.objects.filter(project=kwargs['initial']['project'])
+        else:
+            docs = None
+
+        if docs:
+            self.fields['quote_document'].queryset = docs
+            self.fields['quote_document'].options = [ (doc.id, doc.filename) for doc in docs ]
     

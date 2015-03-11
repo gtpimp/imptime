@@ -7,20 +7,6 @@
 <h3>Quote details</h3>
 <div class="col-md-4">
 
-  <div class='row form-group{% if form.errors.client%} has-error{%endif%}'>
-    <div class="col-md-6">
-      Client 
-      {% if quote.client.id %}
-      <a onclick="if (!confirm('Editing {{quote.client.name}} \r\nmeans any changes to this quote will be lost, continue?') ) return false;" href="{% url 'invoicing:edit_client' quote.client.id %}">
-        (edit)
-      </a>
-      {% endif %}
-    </div>
-    <div class="col-md-6">
-      {{ form.client|add_class:'form-control' }}
-    </div>
-  </div>
-
   <div class='row form-group{% if form.errors.project%} has-error{%endif%}'>
     <div class="col-md-6">
       Project (optional)

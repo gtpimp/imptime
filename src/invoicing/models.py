@@ -28,6 +28,10 @@ class ClientInvoiceDetails(models.Model):
     def __unicode__(self):
         return self.name
 
+    @classmethod
+    def get_for_business(self, business):
+        return ClientInvoiceDetails.objects.filter(invoices__business=business).order_by("-id").first()
+    
 class InvoiceQuerySet(QuerySet):
     def cost_with_vat(self):
         return (self.filter(client__taxable=True).aggregate(Sum('items__total_cost'))['items__total_cost__sum'] or 0) * (1+settings.INVOICE_DETAILS['vat_rate']) + \
@@ -60,9 +64,9 @@ class Invoice(models.Model):
 
     objects = QuerySetManager(InvoiceQuerySet)
 
-    client = models.ForeignKey(ClientInvoiceDetails, blank=False, null=False)
+    client = models.ForeignKey(ClientInvoiceDetails, blank=False, null=False, related_name='invoices')
     internal_comment = models.TextField(blank=True, null=True, verbose_name="Comment (doesn't appear on the invoice")
-    business = models.ForeignKey("timepiece.Business", blank=True, null=True)
+    business = models.ForeignKey("timepiece.Business", blank=True, null=True, related_name='invoices')
     project = models.ForeignKey("timepiece.Project", blank=True, null=True, related_name='invoices')
     invoice_number = models.IntegerField(default=0, null=False, blank=False)
     client_order_name = models.CharField(max_length=50, null=True, blank=True, verbose_name="Optional client order name")
@@ -191,7 +195,6 @@ class QuoteQuerySet(QuerySet):
 class Quote(models.Model):
     QUOTE_STATUSES = ( ('creating', 'Creating'), ('sent to client', 'Sent to client'), ('accepted', 'Accepted by client'), ('rejected', 'Rejected by client') )
     objects = QuerySetManager(QuoteQuerySet)
-    client = models.ForeignKey(ClientInvoiceDetails, blank=True, null=True)
     internal_comment = models.TextField(blank=True, null=True, verbose_name="Comment (not sent to the client)")
     project = models.ForeignKey("timepiece.Project", blank=True, null=True, related_name='quotes')
     created = models.DateTimeField(auto_now_add=True)

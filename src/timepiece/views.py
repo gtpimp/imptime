@@ -1,8 +1,9 @@
 import random
 import markdown
+import urllib
 import api
 import dev_calendar
-from invoicing.models import Invoice, Quote
+from invoicing.models import Invoice, Quote, ClientInvoiceDetails
 from django.contrib.auth import login as django_login, load_backend
 from django.core.files.base import ContentFile
 import csv
@@ -4297,7 +4298,13 @@ def sprint_report(request, project_id, context=None):
     if 'output_format' in request.GET and request.GET['output_format'] == "pdf" and 'HTTP_REFERER' in request.META:
         url = "%s&output_format=pdf&authenticate_token=%s&authenticate_username=%s" % (request.META['HTTP_REFERER'], user.profile.authenticate_token, user.username)
         from phantompdf.create_pdf import create_pdf
-        as_pdf = create_pdf(url)
+
+        try:
+            as_pdf = create_pdf(url)
+        except Exception, ex:
+            logger.exception(ex)
+            logger.error("Failed to create pdf using url: %s : %s" % (url, ex))
+            raise
 
         prefix = request.GET['report_type']
         if request.GET['report_type'] == 'Quote':
@@ -4380,9 +4387,16 @@ def sprint_report(request, project_id, context=None):
         context['output_format'] = 'html'
     
     context['user'] = user
-    context['date_created'] =  datetime.datetime.now().strftime("%d %b %Y %H:%M")
-
+    context['date_created'] = datetime.datetime.now().strftime("%d %b %Y %H:%M")
     project.calculate_new_stats(request.user)
+
+    most_recent_quote_document = timepiece.BusinessDocument.objects.filter(project=project).order_by("-id").first()
+    new_quote_default_args = { 'status': 'sent to client',
+                               'project': project.id,
+                               'internal_comment': 'Created by %s' % request.user,
+                               'amount': project.new_stats['total']['points_billable'],
+                               'quote_document': most_recent_quote_document.id if most_recent_quote_document else None }
+    context['url_capture_quote'] = reverse('invoicing:new_quote') + "?" + urllib.urlencode(new_quote_default_args)
 
     return render_to_response(template, context, context_instance=RequestContext(request))
 
