@@ -1,5 +1,6 @@
 import datetime
 from dateutil.relativedelta import relativedelta
+import api
 import calendar
 import uuid
 from colorful.fields import RGBColorField
@@ -2166,7 +2167,7 @@ class Entry(models.Model):
         """
         if self.start_time and self.end_time:
             # only calculate when the start and end are defined
-            delta = self.end_time - self.start_time
+            delta = api.localise_date(self.end_time) - api.localise_date(self.start_time)
             seconds = delta.seconds - self.seconds_paused
         else:
             seconds = 0
