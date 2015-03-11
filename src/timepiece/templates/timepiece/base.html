@@ -1,3 +1,4 @@
+{% load tz %}
 <!doctype html>
 <html>
 <head>
@@ -108,7 +109,9 @@
         <footer class="footer">
             <div class="container-fluid">
                 <p class="pull-right">
+                  {% timezone "Africa/Johannesburg" %}
                   {% now "jS F Y H:i" %}
+                  {% endtimezone %}
                 </p>
             </div>
         </footer>

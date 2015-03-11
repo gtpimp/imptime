@@ -161,7 +161,7 @@ def makelist(lines):
                        raise Exception("Invalid CLOCK tag: %s" % line)
 
            if not unclean_body_line:
-              cleanbodytext += line
+              cleanbodytext += line + "\n"
 
    # write out last node              
    thisNode = Orgnode(level, heading, bodytext, cleanbodytext, tag1, alltags, clocks)

@@ -1,5 +1,6 @@
 import random
 import markdown
+import api
 import dev_calendar
 from invoicing.models import Invoice, Quote
 from django.contrib.auth import login as django_login, load_backend
@@ -5517,7 +5518,7 @@ def quick_clocker(request, template="timepiece/time-sheet/quick_clocker.html", c
         location = timepiece.Location.objects.get_or_create(name='office')[0]
         project = clock_in_form.cleaned_data['project']
         issue = _get_quick_clocker_issue(project, clock_in_form.cleaned_data['user'])
-        clock_time = datetime.datetime.now()
+        clock_time = api.localised_today()
         new_entry = timepiece.Entry.objects.create(user=clock_in_form.cleaned_data['user'],
                                                    created_by=request.user,
                                                    source='quick_clocker',
@@ -5545,7 +5546,7 @@ def quick_clocker(request, template="timepiece/time-sheet/quick_clocker.html", c
     if context.get('clock_out_form', None) is None:
         context['clock_out_form'] = timepiece_forms.QuickClockerClockOutForm(context['clocked_in_entries'],
                                                                              initial={'entry':logged_in_users_active_entry,
-                                                                                      'clock_out_time':datetime.datetime.now()})
+                                                                                      'clock_out_time':api.localised_today()})
     context['clock_in_form'] = clock_in_form
     
     return render_to_response(template, context, context_instance=RequestContext(request))
@@ -5555,7 +5556,7 @@ def quick_clocker(request, template="timepiece/time-sheet/quick_clocker.html", c
 def quick_clocker_clock_out(request):
     context = {}
     clock_out_form = timepiece_forms.QuickClockerClockOutForm(timepiece.Entry.objects.all().filter(source='quick_clocker').is_open(),
-                                                              request.POST or None, initial={'clock_out_time':datetime.datetime.now()})
+                                                              request.POST or None, initial={'clock_out_time':api.localised_today()})
     if clock_out_form.is_valid():
         entry = clock_out_form.cleaned_data['entry']
         entry.end_time = clock_out_form.cleaned_data['clock_out_time']
