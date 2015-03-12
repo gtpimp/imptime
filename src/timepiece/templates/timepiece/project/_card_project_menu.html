@@ -62,7 +62,7 @@
       {% has_permission has_view_project_card project.business %}
       <li>
 	<a href="#" onclick="imp.popup_page('{% url 'sprint_report_settings' project.id %}?only_these_issues='+imp.get_selected_issue_ids_for_get($(this).parents('.project_li'))); return false;">
-	  Report
+	  Quote
 	</a>
       </li>
       {% end_permission %}
