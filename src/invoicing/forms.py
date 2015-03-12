@@ -157,4 +157,4 @@ class QuoteForm(forms.ModelForm):
         if docs:
             self.fields['quote_document'].queryset = docs
             self.fields['quote_document'].options = [ (doc.id, doc.filename) for doc in docs ]
-    
+
