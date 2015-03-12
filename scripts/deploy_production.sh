@@ -32,7 +32,7 @@ python ./manage.py collectstatic --noinput --verbosity=0
 
 echo "Updating permissions"
 cd ${ROOT}
-sudo chown -R iredadmin:gtp *
+sudo chown -R www-data:gtp *
 sudo chmod g+w -R *
 
 echo "Reloading apache"

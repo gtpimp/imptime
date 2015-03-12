@@ -1172,8 +1172,8 @@ class SprintQuoteReportSettingsForm(forms.Form):
 
     preamble_type = forms.ChoiceField( label="Preamble type",
                                        required=False,
-                                       choices = ( ("billable", "Billable hours"),
-                                                   ("quote", "Quote range") ) )
+                                       choices = ( ("billable", "Estimates"),
+                                                   ("quote", "Quote") ) )
 
     only_these_statuses = forms.MultipleChoiceField( label="Only include these statuses", 
                                                      required=True, initial=('New',),
