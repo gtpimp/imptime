@@ -27,6 +27,15 @@
     </div>
   </div>
 
+  <div class='row form-group{% if form.errors.amount%} has-error{%endif%}'>
+    <div class="col-md-6">
+      Also update the project budget
+    </div>
+    <div class="col-md-6">
+      {{ form.update_sprint_budget }}
+    </div>
+  </div>
+
   <div class='row form-group{% if form.errors.status%} has-error{%endif%}'>
     <div class="col-md-6">
       Status

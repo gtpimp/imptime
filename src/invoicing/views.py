@@ -276,6 +276,11 @@ def new_quote(request, template="invoicing/new_quote.html", context=None):
     form = QuoteForm(request.POST or None, initial=request.GET.dict())
     if form.is_valid():
         quote = form.save()
+
+        if form.cleaned_data['update_sprint_budget'] and quote.project:
+            project = quote.project
+            project.budget = quote.amount
+            project.save()
         messages.info(request, "Quote created")
         return HttpResponseRedirect(reverse('invoicing:edit_quote', kwargs={'quote_id':quote.id}))
     else:

@@ -129,6 +129,7 @@ class QuoteFilterForm(forms.Form):
 
 class QuoteForm(forms.ModelForm):
 
+    
     class Meta:
         model = models.Quote
         fields = [ 'status', 'project', 'internal_comment',
@@ -136,6 +137,7 @@ class QuoteForm(forms.ModelForm):
                    'quote_document', 'additional_document' ]
 
     project = GroupedModelChoiceField('business', required=False, queryset=timepiece.Project.objects.all().filter_open().order_by("business__name", "name"))
+    update_sprint_budget = forms.BooleanField(initial=True, required=False)
 
     def __init__(self, *args, **kwargs):
         defaults = { 'status': 'sent to client',
