@@ -40,8 +40,14 @@
     <td><hr/></td>
   </tr>
   <tr>
-    <td></td>
-    <th>Total estimated cost</th>
+    <th>
+      {% ifequal settings.preamble_type "billable" %}
+      Total estimated cost
+      {% else %}
+      Total quoted cost
+      {% endifequal %}
+    </th>
+    <td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</td>
     <th style="text-align:right">R{{ project.new_stats.total.points_billable|floatformat:"0"|intcomma }}</th>
   </tr>
   <tr>

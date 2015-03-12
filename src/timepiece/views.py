@@ -4397,6 +4397,7 @@ def sprint_report(request, project_id, context=None):
                                'amount': project.new_stats['total']['points_billable'],
                                'quote_document': most_recent_quote_document.id if most_recent_quote_document else None }
     context['url_capture_quote'] = reverse('invoicing:new_quote') + "?" + urllib.urlencode(new_quote_default_args)
+    context['report_type'] = request.GET['report_type']
 
     return render_to_response(template, context, context_instance=RequestContext(request))
 
