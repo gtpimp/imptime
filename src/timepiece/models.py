@@ -980,7 +980,7 @@ class Project(models.Model):
     @property
     def is_open(self):
 
-        if self.status2 == 'closed':
+        if self.status2 in self.closed_states():
             return False
 
         manually_closed = not(self.status.label == 'open' or self.status.label == "reopened")
