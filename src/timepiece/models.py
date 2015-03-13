@@ -964,7 +964,7 @@ class Project(models.Model):
 
     @classmethod
     def closed_states(self):
-        return ( 'closed', 'waiting to close' )
+        return ( 'closed', 'waiting to close', 'on hold' )
 
     @classmethod
     def hopeful_states(self):
