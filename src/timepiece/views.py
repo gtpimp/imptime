@@ -5523,7 +5523,7 @@ def quick_clocker(request, template="timepiece/time-sheet/quick_clocker.html", c
     context = context or {}
 
     users = timepiece.BusinessPermissions.get_users_who_can_capture_time().order_by("username")
-    projects = timepiece.Project.objects.all().filter_active().order_by("business__name", "name")
+    projects = timepiece.Project.objects.all().can_add_dev_time_states().order_by("business__name", "name")
     context['users'] = users
     context['projects'] = projects
 
