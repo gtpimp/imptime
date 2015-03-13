@@ -592,7 +592,8 @@ class Project(models.Model):
                          ('in client qa', 'in client qa'), 
                          ('waiting to invoice', 'waiting to invoice'), 
                          ('invoiced', 'invoiced'), 
-                         ('waiting to close', 'waiting to close'), 
+                         ('waiting to close', 'waiting to close'),
+                         ('on hold', 'on hold'),
                          ('closed', 'closed') )
 
     code = models.CharField(max_length=255,blank=True,null=True)        
@@ -967,7 +968,7 @@ class Project(models.Model):
 
     @classmethod
     def hopeful_states(self):
-        return ( 'gathering specs', )
+        return ( 'gathering specs', 'on hold' )
 
     @classmethod
     def can_add_dev_time_states(self):
