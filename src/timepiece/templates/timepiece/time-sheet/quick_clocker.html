@@ -37,6 +37,7 @@ Developers should not need to use this page, rather use the emacs importer
       <div style="float:left">
         <input class="btn btn-primary" type="submit" value="Clock in"/>
         <h3>Sprint</h3>
+        Filter: <input type="text" onkeyup="qc.filter_businesses($(this).val(), $(this));"/>
         {{ clock_in_form.project }}
         <input style="float:left" class="btn btn-primary" type="submit" value="Clock in"/>
       </div>
@@ -117,7 +118,9 @@ Developers should not need to use this page, rather use the emacs importer
     </table>
   </div>
 
-
+  <script>
+   
+  </script>
 
 </div>
 {% endblock %}

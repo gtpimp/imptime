@@ -46,7 +46,7 @@ class ButtonRadioSelect(forms.RadioSelect):
             else:
                 label_for = ''
             choice_label = self.choice_label
-            return mark_safe(u'%s <label%s>%s</label>' % (self.tag(), label_for, choice_label))
+            return mark_safe(u'<div class="button_radio_input" label="%s">%s<label%s>%s</label></div>' % (choice_label, self.tag(), label_for, choice_label))
 
     class ButtonRadioFieldRenderer(forms.widgets.RadioFieldRenderer):
         def __iter__(self):
