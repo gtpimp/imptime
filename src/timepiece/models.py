@@ -2842,6 +2842,11 @@ class Rate(models.Model):
         super(Rate, self).save(*args, **kwargs)
         self.project.recalc_secondary_estimates()
 
+    @classmethod
+    def for_business(self, user_id, business_id):
+        """ best guess """
+        return Rate.objects.filter(user_id=user_id, project__business_id=business_id).order_by("project__order").first()
+        
 class Expense(models.Model):
     date = models.DateField()
     amount = models.DecimalField(max_digits=8,decimal_places=0,default=0)
@@ -3492,7 +3497,25 @@ class ScheduleQuerySet(QuerySet):
         return self.filter(business_id=business_id).aggregate(num_hours=Sum('num_hours'))['num_hours']
 
     def num_hours_for_business(self, business_id):
-        return self.aggregate(num_hours=Sum('num_hours'))['num_hours']    
+        return self.aggregate(num_hours=Sum('num_hours'))['num_hours']
+
+    def billable_for_user(self, user_id):
+        schedules = self.filter(user_id=user_id)
+        total = 0
+        for schedule in schedules.values('business_id', 'num_hours'):
+            rate = Rate.for_business(user_id, schedule['business_id'])
+            if rate is not None:
+                total += rate.billable_amount * schedule['num_hours']
+        return total
+
+    def billable_for_business(self, business_id):
+        schedules = self.filter(business_id=business_id)
+        total = 0
+        for schedule in schedules.values('user_id'):
+            rate = Rate.for_business(schedule['user_id'], business_id)
+            if rate is not None:
+                total += rate.values('billable_amount')['billable_amount'] * schedule['num_hours']
+        return total
     
 class Schedule(models.Model):
     business = models.ForeignKey('business', null=False, blank=False)

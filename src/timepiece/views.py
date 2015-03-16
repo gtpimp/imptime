@@ -5666,6 +5666,9 @@ def schedule_edit(request, business_id, user_id, scheduled_date):
         schedules = timepiece.Schedule.objects.filter(scheduled_date__gte=date_from, scheduled_date__lt=date_to)
         return HttpResponse( json.dumps( { 'hours_captured': schedule.num_hours,
                                            'hours_for_user': "%d" % (schedules.hours_for_user(user_id) or 0),
-                                           'hours_for_business': "%d" % (schedules.hours_for_business(business_id) or 0) } ) )
+                                           'hours_for_business': "%d" % (schedules.hours_for_business(business_id) or 0),
+                                           #'billable_for_user': "%d" % (schedules.billable_for_user(user_id) or 0),
+                                           #'billable_for_business': "%d" % (schedules.billable_for_business(business_id) or 0)
+                                           } ) )
 
     raise Exception(form.errors)

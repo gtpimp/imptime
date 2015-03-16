@@ -60,17 +60,37 @@ Holidays:
           </td>
           {% endfor %}
         </tr>
+        {% comment %}
+        <tr>
+          <th></th>
+          <td></td>
+          {% for user in users %}
+          <td>
+            <span class="billable_for_user_{{user.id}}">
+              {% scheduled_total_user_billable user %}
+            </span>
+          </td>
+          {% endfor %}
+        </tr>
+        {% endcomment %}
       </thead>
 
       <tbody>
         {% for business in businesses %}
         <tr>
-          <th>{{business.name}}</th>
           <td>
             <span class="total_for_business_{{business.id}}">
               {% scheduled_total_business_time business %}
             </span>
           </td>
+          <th>{{business.name}}</th>
+          {% comment %}
+          <td>
+            <span class="billable_for_business_{{business.id}}">
+              {% scheduled_total_business_billable business %}
+            </span>
+          </td>
+          {% endcomment %}
           {% for user in users %}
           <td>
             <input class='scheduled_hours' type="text" value="{% scheduled_time user business %}" onchange="return scheduler.on_set_schedule($(this), {{user.id}}, {{business.id}}, '{% url 'schedule_edit' business.id user.id date|date:'Ymd' %}');";/>

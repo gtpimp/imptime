@@ -49,3 +49,13 @@ def possible_total_user_time(context, user):
     if hours['leave_hours']>0:
         msg += "<br/> (%d off days)" % (hours['leave_hours']/8)
     return msg
+
+@register.simple_tag(takes_context=True)
+def scheduled_total_user_billable(context, user):
+    return "R%d" % context['schedules'].billable_for_user(user) or 0
+
+@register.simple_tag(takes_context=True)
+def scheduled_total_business_billable(context, business):
+    return "R%d" % context['schedules'].billable_for_business(business) or 0
+
+
