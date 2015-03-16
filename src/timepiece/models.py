@@ -3254,7 +3254,11 @@ class CalendarEvent(models.Model):
 
     @classmethod
     def is_on_leave(self, d, user):
-        return self.objects.filter(user=user, start=d, event_type__in=['leave', 'sickday', 'office_closed'], status__in=['ready', 'done']).count()>0
+        return self.objects.filter(user=user, start=d, event_type__in=self.cant_work_event_types(), status__in=['ready', 'done']).count()>0
+
+    @classmethod
+    def cant_work_event_types(self):
+        return [ 'leave', 'sickday', 'office_closed' ]
     
     def get_colour(self):
         index = self.user_id % len(COLOURS)
@@ -3472,7 +3476,6 @@ class Holiday(models.Model):
 
     @classmethod
     def business_days_in_month(self, d):
-        # slow and nasty, needs optimising
         month_days = range(1, calendar.monthrange(year=d.year, month=d.month)[1]+1)
         holiday_dates = Holiday.objects.filter(applies_on__gte=datetime.datetime(d.year, d.month, 1),
                                                applies_on__lt=datetime.datetime(d.year, d.month, 1)+relativedelta(months=1))\
@@ -3498,4 +3501,16 @@ class Schedule(models.Model):
     user = models.ForeignKey(User, related_name='schedules')
 
     objects = QuerySetManager(ScheduleQuerySet)
-    
+
+    @classmethod
+    def available_business_hours(self, year, month, user):
+        date_from = datetime.datetime(year=year, month=month, day=1)
+        date_to = date_from + relativedelta(months=1)
+        num_days = len(Holiday.business_days_in_month(date_from))
+        leave_days = CalendarEvent.objects.filter(start__gte=date_from, start__lt=date_to,
+                                                  user=user, status__in=['ready', 'done'],
+                                                  event_type__in=CalendarEvent.cant_work_event_types()).count()
+        num_days -= leave_days
+        return { 'num_hours': num_days * settings.NUM_BUSINESS_HOURS_PER_DAY,
+                 'leave_hours': leave_days * settings.NUM_BUSINESS_HOURS_PER_DAY }
+                                                  

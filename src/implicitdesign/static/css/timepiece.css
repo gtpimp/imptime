@@ -10611,3 +10611,7 @@ ul.checklist_items {
 .scheduler input.schedule_saved {
     border: 1px solid #00ff00;
 }
+
+table.fixed-header thead tr {
+    background-color: #ededed;
+}

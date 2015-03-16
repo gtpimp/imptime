@@ -18,6 +18,15 @@
   <img src="{{STATIC_URL}}images/icons/calendar.png" onclick="$('.filter').slideToggle(); return false;"/>
 </h1>
 
+{% if public_holidays|length > 0 %}
+Holidays: 
+<ul>
+  {% for public_holiday in public_holidays %}
+  <li>{{ public_holiday.name }} : {{public_holiday.applies_on|date:"d M Y"}}</li>
+  {% endfor %}
+</ul>
+{% endif %}
+
 <div class="scheduler">
 
   <div class="pane filter" style="display:none">
@@ -29,7 +38,7 @@
 
   <div class="pane" style="max-height: 700px; overflow: auto">
 
-    <table class='table table-bordered table-striped table-condensed fixed-header'>
+    <table class='table table-condensed fixed-header'>
 
       <thead>
         <tr>
@@ -39,16 +48,16 @@
           <th>{{user.username}}</th>
           {% endfor %}
         </tr>
-        <td></td>
         <tr>
           <th></th>
           <td></td>
           {% for user in users %}
-          <th>
+          <td>
             <span class="total_for_user_{{user.id}}">
               {% scheduled_total_user_time user %}
             </span>
-          </th>
+             / {% possible_total_user_time user %}
+          </td>
           {% endfor %}
         </tr>
       </thead>
@@ -57,11 +66,11 @@
         {% for business in businesses %}
         <tr>
           <th>{{business.name}}</th>
-          <th>
+          <td>
             <span class="total_for_business_{{business.id}}">
               {% scheduled_total_business_time business %}
             </span>
-          </th>
+          </td>
           {% for user in users %}
           <td>
             <input class='scheduled_hours' type="text" value="{% scheduled_time user business %}" onchange="return scheduler.on_set_schedule($(this), {{user.id}}, {{business.id}}, '{% url 'schedule_edit' business.id user.id date|date:'Ymd' %}');";/>

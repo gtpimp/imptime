@@ -15,6 +15,7 @@ scheduler.on_set_schedule = function(input_el, user_id, business_id, url) {
 
                                $(".total_for_user_"+user_id).html(data['hours_for_user']);
                                $(".total_for_business_"+business_id).html(data['hours_for_business']);
+                               input_el.val(data.hours_captured);
 
                                input_el.removeClass('schedule_saving');
                                input_el.addClass('schedule_saved');

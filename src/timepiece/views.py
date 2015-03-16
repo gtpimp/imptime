@@ -5647,6 +5647,7 @@ def scheduler(request, template="timepiece/scheduler/scheduler.html", context=No
     context['users'] = users
     context['date'] = date_from
     context['schedule_filter_form'] = schedule_filter_form
+    context['public_holidays'] = timepiece.Holiday.objects.filter(applies_on__gte=date_from, applies_on__lt=date_to)
     
     return render_to_response(template, context, context_instance=RequestContext(request))
 
@@ -5663,7 +5664,8 @@ def schedule_edit(request, business_id, user_id, scheduled_date):
         date_from = scheduled_date.replace(day=1)
         date_to = date_from + relativedelta(months=1)
         schedules = timepiece.Schedule.objects.filter(scheduled_date__gte=date_from, scheduled_date__lt=date_to)
-        return HttpResponse( json.dumps( { 'hours_for_user': "%dh" % (schedules.hours_for_user(user_id) or 0),
-                                           'hours_for_business': "%dh" % (schedules.hours_for_business(business_id) or 0) } ) )
-                                           
+        return HttpResponse( json.dumps( { 'hours_captured': schedule.num_hours,
+                                           'hours_for_user': "%d" % (schedules.hours_for_user(user_id) or 0),
+                                           'hours_for_business': "%d" % (schedules.hours_for_business(business_id) or 0) } ) )
+
     raise Exception(form.errors)
