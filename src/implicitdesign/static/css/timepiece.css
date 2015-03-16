@@ -10595,7 +10595,7 @@ ul.checklist_items {
 }
 
 .scheduler input.scheduled_hours {
-    width: 15px;
+    width: 25px;
     border: 1px solid #ffffff;
     box-shadow: none;
 }
