@@ -1524,14 +1524,4 @@ class ScheduleForm(forms.ModelForm):
 
     class Meta:
         model = Schedule
-        
-    def __init__(self, businesses, users, *args, **kwargs):
-        
-        super(QuickClockerEditEntry, self).__init__(*args, **kwargs)
-        self.fields['business'].queryset = businesses
-        self.fields['business'].choices = [ (x.id, x.name) for x in businesses ]
-        self.fields['user'].queryset = users
-        self.fields['user'].choices = [ (x.id, x.name) for x in users ]
-        
-        
-    
+        fields=['num_hours']

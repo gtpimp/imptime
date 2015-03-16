@@ -3,6 +3,7 @@
 {% load humanize %}
 {% load bootstrap_toolkit %}
 {% load timepiece_tags %}
+{% load scheduler_tags %}
 
 {% block title %}Scheduler{% endblock %}
 
@@ -24,7 +25,30 @@
     </form>
   </div>
 
+  <table class='table table-bordered table-striped table-condensed'>
 
+    <thead>
+      <th></th>
+      {% for user in users %}
+      <th>{{user.username}}</th>
+      {% endfor %}
+    </thead>
+
+    <tbody>
+      {% for business in businesses %}
+      <tr>
+        <th>{{business.name}}</th>
+        {% for user in users %}
+        <td>
+          <input class='scheduled_hours' type="text" value="{% scheduled_time user business %}" onchange="return scheduler.on_set_schedule($(this), '{% url 'schedule_edit' business.id user.id date|date:'Ymd' %}');";/>
+        </td>
+        {% endfor %}
+      </tr>
+      {% endfor %}
+    </tbody>
+
+  </table>
+  
 
 </div>
 {% endblock %}

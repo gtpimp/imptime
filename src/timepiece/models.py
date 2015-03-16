@@ -3483,7 +3483,7 @@ class Holiday(models.Model):
 
 class Schedule(models.Model):
     business = models.ForeignKey('business', null=False, blank=False)
-    date = models.DateField(null=False, blank=False)
+    scheduled_date = models.DateField(null=False, blank=False)
     num_hours = models.IntegerField(null=False, blank=False)
     user = models.ForeignKey(User, related_name='schedules')
     

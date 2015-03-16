@@ -643,5 +643,6 @@ urlpatterns = patterns('',
                        url(r'^quick_clocker_delete_entry/(?P<entry_id>\d+)$', views.quick_clocker_delete_entry, {}, name='quick_clocker_delete_entry'),
 
                        url(r'^scheduler$', views.scheduler, {}, name='scheduler'),
+                       url(r'^schedule_edit/(?P<business_id>\d+)/(?P<user_id>\d+)/(?P<scheduled_date>.*)$', views.schedule_edit, {}, name='schedule_edit'),
 
 )

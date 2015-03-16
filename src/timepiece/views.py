@@ -5637,10 +5637,10 @@ def scheduler(request, template="timepiece/scheduler/scheduler.html", context=No
         date_from = datetime.datetime.now().replace(day=1)
     date_to = date_from + relativedelta(months=1)
 
-    businesses = timepiece.Business.objects.filter_has_can_add_dev_time_projects()
+    businesses = timepiece.Business.objects.filter_has_can_add_dev_time_projects().distinct()
     users = timepiece.BusinessPermissions.get_users_who_can_capture_time()
     
-    schedules = timepiece.Schedule.objects.filter(date__gte=date_from, date__lt=date_to)
+    schedules = timepiece.Schedule.objects.filter(scheduled_date__gte=date_from, scheduled_date__lt=date_to)
     
     context['businesses'] = businesses
     context['schedules'] = schedules.values()
@@ -5649,3 +5649,18 @@ def scheduler(request, template="timepiece/scheduler/scheduler.html", context=No
     context['schedule_filter_form'] = schedule_filter_form
     
     return render_to_response(template, context, context_instance=RequestContext(request))
+
+@permission_required('timepiece.scheduler')
+@login_required
+@csrf_exempt
+def schedule_edit(request, business_id, user_id, scheduled_date):
+    scheduled_date = datetime.datetime.strptime(scheduled_date, "%Y%m%d")
+    schedule = timepiece.Schedule.objects.get_or_create(business_id=business_id, user_id=user_id, scheduled_date=scheduled_date, num_hours=0)[0]
+    form = timepiece_forms.ScheduleForm(request.POST or None, instance=schedule)
+    if form.is_valid():
+        schedule = form.save()
+        return HttpResponse("ok")
+    raise Exception(form.errors)
+
+
+    

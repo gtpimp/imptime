@@ -10593,3 +10593,21 @@ ul.checklist_items {
 .quick_clocker label {
     font-weight: normal;
 }
+
+.scheduler input.scheduled_hours {
+    width: 15px;
+    border: 1px solid #ffffff;
+    box-shadow: none;
+}
+
+.scheduler input.scheduled_hours.schedule_saving {
+    border: 1px solid #0000ff;
+}
+
+.scheduler input.schedule_error {
+    border: 1px solid #ff0000;
+}
+
+.scheduler input.schedule_saved {
+    border: 1px solid #00ff00;
+}
