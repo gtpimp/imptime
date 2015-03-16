@@ -5655,7 +5655,8 @@ def scheduler(request, template="timepiece/scheduler/scheduler.html", context=No
 @csrf_exempt
 def schedule_edit(request, business_id, user_id, scheduled_date):
     scheduled_date = datetime.datetime.strptime(scheduled_date, "%Y%m%d")
-    schedule = timepiece.Schedule.objects.get_or_create(business_id=business_id, user_id=user_id, scheduled_date=scheduled_date, num_hours=0)[0]
+    schedule = timepiece.Schedule.objects.get_or_create(business_id=business_id, user_id=user_id, scheduled_date=scheduled_date,
+                                                        defaults={'num_hours':0})[0]
     form = timepiece_forms.ScheduleForm(request.POST or None, instance=schedule)
     if form.is_valid():
         schedule = form.save()

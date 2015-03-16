@@ -1522,6 +1522,16 @@ class ScheduleFilterForm(forms.Form):
             
 class ScheduleForm(forms.ModelForm):
 
+    num_hours = forms.CharField(required=True)
+    
     class Meta:
         model = Schedule
         fields=['num_hours']
+
+    def clean(self):
+        data = super(ScheduleForm, self).clean()
+        num_hours = data['num_hours']
+        if len(num_hours) > 1 and num_hours[-1] == 'd':
+            num_hours = float(num_hours[:-1])*8
+        data['num_hours'] = int(num_hours)
+        return data
