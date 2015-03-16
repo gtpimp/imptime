@@ -5619,3 +5619,33 @@ def _get_quick_clocker_issue(project, user):
                                                             'story_points':0,
                                                             'order':timepiece.Issue.get_next_order(project)})[0]
     return issue
+
+@permission_required('timepiece.scheduler')
+@login_required
+@csrf_exempt
+def scheduler(request, template="timepiece/scheduler/scheduler.html", context=None):
+    context = context or {}
+
+    schedule_filter_form = timepiece_forms.ScheduleFilterForm(request.GET or None,
+                                                              initial={'year':datetime.datetime.now().year,
+                                                                       'month':datetime.datetime.now().month})
+    if schedule_filter_form.is_valid():
+        date_from = datetime.datetime(year=schedule_filter_form.cleaned_data['year'],
+                                      month=schedule_filter_form.cleaned_data['month'],
+                                      day=1)
+    else:
+        date_from = datetime.datetime.now().replace(day=1)
+    date_to = date_from + relativedelta(months=1)
+
+    businesses = timepiece.Business.objects.filter_has_can_add_dev_time_projects()
+    users = timepiece.BusinessPermissions.get_users_who_can_capture_time()
+    
+    schedules = timepiece.Schedule.objects.filter(date__gte=date_from, date__lt=date_to)
+    
+    context['businesses'] = businesses
+    context['schedules'] = schedules.values()
+    context['users'] = users
+    context['date'] = date_from
+    context['schedule_filter_form'] = schedule_filter_form
+    
+    return render_to_response(template, context, context_instance=RequestContext(request))

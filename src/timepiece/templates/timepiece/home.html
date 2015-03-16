@@ -26,6 +26,11 @@
        <p>
        <a class="btn btn-info" href="{% url 'quick_clocker' %}">Quick clocker</a>
        </p>
+       {% if perms.timepiece.scheduler %}
+       <p>
+       <a class="btn btn-info" href="{% url 'scheduler' %}">Scheduler</a>
+       </p>
+       {% endif %}
        <p>
          Useful tip, to find projects, sprints and issues quickly, type anything into the search box in the top right and press enter
        </p>

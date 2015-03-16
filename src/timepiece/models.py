@@ -90,6 +90,9 @@ class BusinessQuerySet(QuerySet):
     def exclude_has_closed_projects(self):
         return self.filter(new_business_projects__status2__in=Project.pending_states()+Project.active_states() )
 
+    def filter_has_can_add_dev_time_projects(self):
+        return self.filter(new_business_projects__status2__in=Project.can_add_dev_time_states())
+    
     def get_checklist_summary(self):
 
         res = { 'traffic_ok': True, 'dev_ok': True, 'finance_ok': True }
@@ -3477,4 +3480,11 @@ class Holiday(models.Model):
         holiday_days = [x['applies_on'].day for x in holiday_dates]
         business_days = [ x for x in month_days if calendar.weekday(year=d.year, month=d.month, day=x)<5 and x not in holiday_days ]
         return business_days
-        
+
+class Schedule(models.Model):
+    business = models.ForeignKey('business', null=False, blank=False)
+    date = models.DateField(null=False, blank=False)
+    num_hours = models.IntegerField(null=False, blank=False)
+    user = models.ForeignKey(User, related_name='schedules')
+    
+    

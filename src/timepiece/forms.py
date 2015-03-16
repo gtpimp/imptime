@@ -27,7 +27,7 @@ from timepiece.lookups import ProjectLookup, QuickLookup
 from timepiece.lookups import UserLookup, BusinessLookup
 
 from timepiece.models import Project, Business, Entry, Activity, UserProfile, Attribute, Location, Activity, Feature, Issue, BusinessPermissions, BusinessComment
-from timepiece.models import ProjectHours, Salary, CalendarEvent, TrafficChecklist, DevChecklist, FinanceChecklist
+from timepiece.models import ProjectHours, Salary, CalendarEvent, TrafficChecklist, DevChecklist, FinanceChecklist, Schedule
 from timepiece.fields import UserModelChoiceField
 from django.contrib.auth.models import User
 from timepiece import models as timepiece
@@ -1507,3 +1507,31 @@ class QuickClockerEditEntry(forms.ModelForm):
         self.fields['end_time'].widget.attrs['class'] = 'datetimepicker'
         self.fields['project'].queryset=projects
         self.fields['project'].choices=[ (x.id, x.long_name()) for x in projects ]
+
+class ScheduleFilterForm(forms.Form):
+    year = forms.IntegerField(required=True)
+    month = forms.ChoiceField(required=True, choices=( (1, 'Jan'), (2, 'Feb'),
+                                                       (3, 'March'), (4, 'April'),
+                                                       (5, 'May'), (6, 'June'),
+                                                       (7, 'July'), (8, 'August'),
+                                                       (9, 'September'), (10, 'October'),
+                                                       (11, 'November'), (12, 'December') ))
+
+    def clean_month(self):
+        return int(self.cleaned_data['month'])
+            
+class ScheduleForm(forms.ModelForm):
+
+    class Meta:
+        model = Schedule
+        
+    def __init__(self, businesses, users, *args, **kwargs):
+        
+        super(QuickClockerEditEntry, self).__init__(*args, **kwargs)
+        self.fields['business'].queryset = businesses
+        self.fields['business'].choices = [ (x.id, x.name) for x in businesses ]
+        self.fields['user'].queryset = users
+        self.fields['user'].choices = [ (x.id, x.name) for x in users ]
+        
+        
+    
