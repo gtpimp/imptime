@@ -27,15 +27,28 @@
     </form>
   </div>
 
-  <div class="pane">
+  <div class="pane" style="max-height: 700px; overflow: auto">
 
-    <table class='fixed-header'>
+    <table class='table table-bordered table-striped table-condensed fixed-header'>
 
       <thead>
         <tr>
           <th></th>
+          <td></td>
           {% for user in users %}
           <th>{{user.username}}</th>
+          {% endfor %}
+        </tr>
+        <td></td>
+        <tr>
+          <th></th>
+          <td></td>
+          {% for user in users %}
+          <th>
+            <span class="total_for_user_{{user.id}}">
+              {% scheduled_total_user_time user %}
+            </span>
+          </th>
           {% endfor %}
         </tr>
       </thead>
@@ -44,9 +57,14 @@
         {% for business in businesses %}
         <tr>
           <th>{{business.name}}</th>
+          <th>
+            <span class="total_for_business_{{business.id}}">
+              {% scheduled_total_business_time business %}
+            </span>
+          </th>
           {% for user in users %}
           <td>
-            <input class='scheduled_hours' type="text" value="{% scheduled_time user business %}" onchange="return scheduler.on_set_schedule($(this), '{% url 'schedule_edit' business.id user.id date|date:'Ymd' %}');";/>
+            <input class='scheduled_hours' type="text" value="{% scheduled_time user business %}" onchange="return scheduler.on_set_schedule($(this), {{user.id}}, {{business.id}}, '{% url 'schedule_edit' business.id user.id date|date:'Ymd' %}');";/>
           </td>
           {% endfor %}
         </tr>

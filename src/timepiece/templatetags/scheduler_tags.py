@@ -29,4 +29,14 @@ def scheduled_time(context, user, business):
     except KeyError:
         return ""
     
-    
+@register.simple_tag(takes_context=True)    
+def scheduled_total_user_time(context, user):
+    return "%dh" % (context['schedules'].hours_for_user(user.id) or 0)
+
+@register.simple_tag(takes_context=True)    
+def scheduled_total_business_time(context, business):
+    return "%dh" % (context['schedules'].hours_for_business(business.id) or 0)
+
+@register.simple_tag(takes_context=True)
+def scheduled_total_time(context):
+    return "%dh" % (context['schedules'].num_hours() or 0)

@@ -5643,7 +5643,7 @@ def scheduler(request, template="timepiece/scheduler/scheduler.html", context=No
     schedules = timepiece.Schedule.objects.filter(scheduled_date__gte=date_from, scheduled_date__lt=date_to)
     
     context['businesses'] = businesses
-    context['schedules'] = schedules.values()
+    context['schedules'] = schedules
     context['users'] = users
     context['date'] = date_from
     context['schedule_filter_form'] = schedule_filter_form
@@ -5660,8 +5660,10 @@ def schedule_edit(request, business_id, user_id, scheduled_date):
     form = timepiece_forms.ScheduleForm(request.POST or None, instance=schedule)
     if form.is_valid():
         schedule = form.save()
-        return HttpResponse("ok")
+        date_from = scheduled_date.replace(day=1)
+        date_to = date_from + relativedelta(months=1)
+        schedules = timepiece.Schedule.objects.filter(scheduled_date__gte=date_from, scheduled_date__lt=date_to)
+        return HttpResponse( json.dumps( { 'hours_for_user': "%dh" % (schedules.hours_for_user(user_id) or 0),
+                                           'hours_for_business': "%dh" % (schedules.hours_for_business(business_id) or 0) } ) )
+                                           
     raise Exception(form.errors)
-
-
-    

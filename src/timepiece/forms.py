@@ -1534,6 +1534,6 @@ class ScheduleForm(forms.ModelForm):
         if len(num_hours) > 1 and num_hours[-1] == 'd':
             num_hours = float(num_hours[:-1])*8
         elif len(num_hours) > 1 and num_hours[-1] == 'h':
-            num_hours = int(num_hours)
+            num_hours = int(num_hours[:1])
         data['num_hours'] = int(num_hours)
         return data

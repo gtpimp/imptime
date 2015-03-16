@@ -3481,10 +3481,21 @@ class Holiday(models.Model):
         business_days = [ x for x in month_days if calendar.weekday(year=d.year, month=d.month, day=x)<5 and x not in holiday_days ]
         return business_days
 
+class ScheduleQuerySet(QuerySet):
+    def hours_for_user(self, user_id):
+        return self.filter(user_id=user_id).aggregate(num_hours=Sum('num_hours'))['num_hours']
+
+    def hours_for_business(self, business_id):
+        return self.filter(business_id=business_id).aggregate(num_hours=Sum('num_hours'))['num_hours']
+
+    def num_hours_for_business(self, business_id):
+        return self.aggregate(num_hours=Sum('num_hours'))['num_hours']    
+    
 class Schedule(models.Model):
     business = models.ForeignKey('business', null=False, blank=False)
     scheduled_date = models.DateField(null=False, blank=False)
     num_hours = models.IntegerField(null=False, blank=False)
     user = models.ForeignKey(User, related_name='schedules')
-    
+
+    objects = QuerySetManager(ScheduleQuerySet)
     
