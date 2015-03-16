@@ -13,42 +13,49 @@
 
 {% block content %}
 
-<h1>Scheduler</h1>
+<h1>
+  Scheduler : {{date|date:'M Y'}}
+  <img src="{{STATIC_URL}}images/icons/calendar.png" onclick="$('.filter').slideToggle(); return false;"/>
+</h1>
 
 <div class="scheduler">
 
-  <div class="pane">
-    <h3>{{date|date:'M Y'}}</h3>
+  <div class="pane filter" style="display:none">
     <form method="GET" action="{% url 'scheduler' %}">
       {{ schedule_filter_form|as_bootstrap:"horizontal" }}
       <input type="submit" class="btn btn-info" value="filter"/>
     </form>
   </div>
 
-  <table class='table table-bordered table-striped table-condensed'>
+  <div class="pane">
 
-    <thead>
-      <th></th>
-      {% for user in users %}
-      <th>{{user.username}}</th>
-      {% endfor %}
-    </thead>
+    <table class='fixed-header'>
 
-    <tbody>
-      {% for business in businesses %}
-      <tr>
-        <th>{{business.name}}</th>
-        {% for user in users %}
-        <td>
-          <input class='scheduled_hours' type="text" value="{% scheduled_time user business %}" onchange="return scheduler.on_set_schedule($(this), '{% url 'schedule_edit' business.id user.id date|date:'Ymd' %}');";/>
-        </td>
+      <thead>
+        <tr>
+          <th></th>
+          {% for user in users %}
+          <th>{{user.username}}</th>
+          {% endfor %}
+        </tr>
+      </thead>
+
+      <tbody>
+        {% for business in businesses %}
+        <tr>
+          <th>{{business.name}}</th>
+          {% for user in users %}
+          <td>
+            <input class='scheduled_hours' type="text" value="{% scheduled_time user business %}" onchange="return scheduler.on_set_schedule($(this), '{% url 'schedule_edit' business.id user.id date|date:'Ymd' %}');";/>
+          </td>
+          {% endfor %}
+        </tr>
         {% endfor %}
-      </tr>
-      {% endfor %}
-    </tbody>
+      </tbody>
 
-  </table>
+    </table>
   
+  </div>
 
 </div>
 {% endblock %}

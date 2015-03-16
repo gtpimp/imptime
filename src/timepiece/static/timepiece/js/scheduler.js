@@ -23,3 +23,8 @@ scheduler.on_set_schedule = function(input_el, url) {
     return false;
 };
 
+$(document).ready(function() {
+
+
+
+});
