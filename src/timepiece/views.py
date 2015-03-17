@@ -5608,16 +5608,19 @@ def quick_clocker_delete_entry(request, entry_id=None):
     return HttpResponseRedirect(reverse('quick_clocker'))
 
 def _get_quick_clocker_issue(project, user):
-    issue = timepiece.Issue.objects.get_or_create(project=project,
-                                                  subject="daily management",
-                                                  defaults={'auto_created_during_import':True,
-                                                            'adhoc':False,
-                                                            'status':'management',
-                                                            'assigned_to':user,
-                                                            'number':timepiece.Issue.get_next_issue_number(project.business),
-                                                            'description':"Quick clocker",
-                                                            'story_points':0,
-                                                            'order':timepiece.Issue.get_next_order(project)})[0]
+    try:
+        issue = timepiece.Issue.objects.get(project=project, subject="daily management")
+    except timepiece.Issue.DoesNotExist:
+        issue = timepiece.Issue.objects.create(project=project,
+                                               subject="daily management",
+                                               auto_created_during_import=True,
+                                               adhoc=False,
+                                               status='management',
+                                               assigned_to=user,
+                                               number=timepiece.Issue.get_next_issue_number(project.business),
+                                               description="Quick clocker",
+                                               story_points=0,
+                                               order=timepiece.Issue.get_next_order(project))
     return issue
 
 @permission_required('timepiece.scheduler')
