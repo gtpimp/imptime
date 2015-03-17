@@ -135,6 +135,24 @@ def scheduled_total_billable(context):
 def actual_total_billable(context):
     return _format_money(context['actuals'].billable(), trailing_slash=True)
 
+@register.simple_tag(takes_context=True)
+def css_class_for_over_schedule(context, user_id):
+    if (context['actuals'].hours_for_user(user_id) or 0) > (context['schedules'].hours_for_user(user_id) or 0):
+        return "over_schedule"
+    else:
+        return "under_schedule"
+
+@register.simple_tag(takes_context=True)
+def scheduled_status(context, user):
+    scheduled_hours = context['schedules'].hours_for_user(user.id) or 0
+    possible_hours = Schedule.available_business_hours(context['date'].year, context['date'].month, user)['num_hours']
+    if scheduled_hours > possible_hours:
+        return "<div class='over_schedule_msg'>Over scheduled</div>"
+    elif scheduled_hours < possible_hours:
+        return "<div class='over_schedule_msg'>Under scheduled</div>"
+    else:
+        return "<div class='perfect_schedule_msg'>Fully scheduled</div>"
+    
 def _format_money(x, trailing_slash=False):
     if not x:
         return ""
@@ -142,3 +160,4 @@ def _format_money(x, trailing_slash=False):
     if trailing_slash:
         msg += " / "
     return msg
+

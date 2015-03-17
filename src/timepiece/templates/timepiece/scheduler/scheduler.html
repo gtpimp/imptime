@@ -64,7 +64,12 @@ Holidays:
           <td class="money" style="display:none"></td>
           {% end_permission %}
           {% for user in users %}
-          <th>{{user.username}}</th>
+          <th>
+            {{user.username}}
+            <span class="scheduled_status_msg_{{user.id}}">
+              {% scheduled_status user %}
+            </span>
+          </th>
           {% endfor %}
         </tr>
 
@@ -82,7 +87,7 @@ Holidays:
           <td class="money" style="display:none"></td>
           {% end_permission %}
           {% for user in users %}
-          <td>
+          <td class='total_for_user_container_{{user.id}} {% css_class_for_over_schedule user.id %}'>
             {% actual_total_user_time user %}
             <span class="total_for_user_{{user.id}}">
               {% scheduled_total_user_time user %}

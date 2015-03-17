@@ -19,6 +19,14 @@ scheduler.on_set_schedule = function(input_el, user_id, business_id, url) {
                                $(".billable_for_business_"+business_id).html(data['billable_for_business']);
                                $(".scheduled_total_hours").html(data['hours_total']);
                                $(".scheduled_total_billable").html(data['billable_total']);
+                               if ( data['hours_for_user_is_over'] ) {
+                                   $(".total_for_user_container_"+user_id).addClass('over_schedule');
+                                   $(".total_for_user_container_"+user_id).removeClass('under_schedule');
+                               } else {
+                                   $(".total_for_user_container_"+user_id).removeClass('over_schedule');
+                                   $(".total_for_user_container_"+user_id).addClass('under_schedule');
+                               }
+                               $(".scheduled_status_msg_"+user_id).html(data['scheduled_status_msg']);
                                
                                input_el.val(data.hours_captured);
 

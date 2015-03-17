@@ -10629,10 +10629,22 @@ ul.checklist_items {
     border: 1px solid #00ff00;
 }
 
-table.fixed-header thead tr, table.fixed-header th {
+.scheduler table.fixed-header thead tr, table.fixed-header th {
     background-color: #ededed;
 }
 
-table.fixed-header thead {
-    border-bottom: 1px solid #000000;
+.scheduler .over_schedule {
+    background-color: #eddddd;
+}
+
+.scheduler .under_schedule {
+    background-color: #ddeedd;
+}
+
+.scheduler .over_schedule_msg {
+    color: #bb0000;
+}
+
+.scheduler .perfect_schedule_msg {
+    color: #00bb00;
 }

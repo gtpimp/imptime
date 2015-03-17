@@ -5662,6 +5662,8 @@ def scheduler(request, template="timepiece/scheduler/scheduler.html", context=No
 @login_required
 @csrf_exempt
 def schedule_edit(request, business_id, user_id, scheduled_date):
+    from timepiece.templatetags.scheduler_tags import scheduled_status
+
     scheduled_date = datetime.datetime.strptime(scheduled_date, "%Y%m%d")
     schedule = timepiece.Schedule.objects.get_or_create(business_id=business_id, user_id=user_id, scheduled_date=scheduled_date,
                                                         defaults={'num_hours':0})[0]
@@ -5671,10 +5673,13 @@ def schedule_edit(request, business_id, user_id, scheduled_date):
         date_from = scheduled_date.replace(day=1)
         date_to = date_from + relativedelta(months=1)
         schedules = timepiece.Schedule.objects.filter(scheduled_date__gte=date_from, scheduled_date__lt=date_to)
+        actuals = timepiece.Entry.objects.filter(start_time__gte=date_from, start_time__lt=date_to)
         return HttpResponse( json.dumps( { 'hours_captured': schedule.num_hours,
                                            'hours_for_user': "%d" % (schedules.hours_for_user(user_id) or 0),
+                                           'hours_for_user_is_over':  (actuals.hours_for_user(user_id) or 0) > (schedules.hours_for_user(user_id) or 0),
                                            'hours_for_business': "%d" % (schedules.hours_for_business(business_id) or 0),
                                            'hours_total': schedules.hours(),
+                                           'scheduled_status_msg': scheduled_status(context={'date':date_from, 'schedules': schedules}, user=User.objects.get(pk=user_id)),
                                            'billable_for_user': _format_money(schedules.billable_for_user(user_id)),
                                            'billable_for_business': _format_money(schedules.billable_for_business(business_id)),
                                            'billable_total': _format_money(schedules.billable()),
