@@ -75,9 +75,7 @@ Holidays:
         <tr class="money" style="display:none">
           <th></th>
           <td></td>
-          {% has_permission has_view_ctc_billable_rates user.profile.best_business_for_permissions %}
-          <td class="money" style="display:none"></td>
-          {% end_permission %}
+          <td></td>
           {% for user in users %}
           <td>
             <span class="billable_for_user_{{user.id}}">
