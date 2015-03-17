@@ -10598,6 +10598,23 @@ ul.checklist_items {
     width: 25px;
     border: 1px solid #ffffff;
     box-shadow: none;
+    margin-bottom: 3px;
+}
+
+.scheduler input.scheduled_hours:hover {
+    background-color: #dddddd;
+}
+
+.scheduler table td {
+    border-right: 1px solid #dddddd;
+}
+
+.scheduler .table tbody tr:hover td, .scheduler .table tbody tr:hover th {
+  background-color: transparent;
+}
+
+.scheduler .table-striped tbody tr:nth-child(odd):hover td {
+   background-color: #F9F9F9;
 }
 
 .scheduler input.scheduled_hours.schedule_saving {
@@ -10612,6 +10629,7 @@ ul.checklist_items {
     border: 1px solid #00ff00;
 }
 
-table.fixed-header thead tr {
+table.fixed-header thead tr, table.fixed-header th {
     background-color: #ededed;
 }
+

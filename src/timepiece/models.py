@@ -1797,6 +1797,30 @@ class EntriesQuerySet(QuerySet):
     def get_aggregated_info(self):
         return self.order_by('comments').values('comments').annotate(x=Count('comments'), hours=Sum('hours'))
 
+    def hours_for_user(self, user_id):
+        return self.filter(user_id=user_id).aggregate(num_hours=Sum('hours'))['num_hours']
+
+    def hours_for_business(self, business_id):
+        return self.filter(issue__project__business_id=business_id).aggregate(num_hours=Sum('hours'))['num_hours']
+
+    def billable_for_user(self, user_id):
+        total = 0
+        qs = self.filter(user_id=user_id).values('issue__project').annotate(num_hours=Sum('hours'))
+        for entry in qs:
+            rate = Rate.objects.filter(project_id=entry['issue__project'], user_id=user_id).values('billable_amount').first()
+            if rate is not None:
+                total += rate['billable_amount'] * entry['num_hours']
+        return total
+
+    def billable_for_business(self, business_id):
+        total = 0
+        qs = self.filter(issue__project__business_id=business_id).values('issue__project', 'user').annotate(num_hours=Sum('hours'))
+        for entry in qs:
+            rate = Rate.objects.filter(project_id=entry['issue__project'], user_id=entry['user']).values('billable_amount').first()
+            if rate is not None:
+                total += rate['billable_amount'] * entry['num_hours']
+        return total
+    
 class EntryQuerySet(EntriesQuerySet):
     """QuerySet extension to provide filtering by billable status"""
 
@@ -3501,9 +3525,6 @@ class ScheduleQuerySet(QuerySet):
 
     def hours_for_business(self, business_id):
         return self.filter(business_id=business_id).aggregate(num_hours=Sum('num_hours'))['num_hours']
-
-    def num_hours_for_business(self, business_id):
-        return self.aggregate(num_hours=Sum('num_hours'))['num_hours']
 
     def billable_for_user(self, user_id):
         schedules = self.filter(user_id=user_id)

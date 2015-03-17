@@ -64,10 +64,12 @@ Holidays:
           {% end_permission %}
           {% for user in users %}
           <td>
+            {% actual_total_user_time user %}
             <span class="total_for_user_{{user.id}}">
               {% scheduled_total_user_time user %}
             </span>
-             / {% possible_total_user_time user %}
+            <br/>
+            (max {% possible_total_user_time user %})
           </td>
           {% endfor %}
         </tr>
@@ -79,6 +81,7 @@ Holidays:
           {% for user in users %}
           <td>
             <span class="billable_for_user_{{user.id}}">
+              {% actual_total_user_billable user %}
               {% scheduled_total_user_billable user %}
             </span>
           </td>
@@ -91,20 +94,22 @@ Holidays:
         {% for business in businesses %}
         <tr>
           <th>{{business.name}}</th>
-          <td>
+          <th>
             <span class="total_for_business_{{business.id}}">
               {% scheduled_total_business_time business %}
             </span>
-          </td>
+          </th>
           {% has_permission has_view_ctc_billable_rates business %}
-          <td class="money" style="display:none">
+          <th class="money" style="display:none">
             <span class="billable_for_business_{{business.id}}">
+              {% actual_total_business_billable business %}
               {% scheduled_total_business_billable business %}
             </span>
-          </td>
+          </th>
           {% end_permission %}
           {% for user in users %}
           <td>
+            {% actual_time user business %}
             <input class='scheduled_hours' type="text" value="{% scheduled_time user business %}" onchange="return scheduler.on_set_schedule($(this), {{user.id}}, {{business.id}}, '{% url 'schedule_edit' business.id user.id date|date:'Ymd' %}');";/>
           </td>
           {% endfor %}

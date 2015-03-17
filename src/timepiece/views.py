@@ -1,5 +1,6 @@
 import random
 import markdown
+from django.contrib.humanize.templatetags.humanize import intcomma
 import urllib
 import api
 import dev_calendar
@@ -5641,12 +5642,15 @@ def scheduler(request, template="timepiece/scheduler/scheduler.html", context=No
     date_to = date_from + relativedelta(months=1)
 
     businesses = timepiece.Business.objects.filter_has_can_add_dev_time_projects().distinct()
-    users = timepiece.BusinessPermissions.get_users_who_can_capture_time()
+    users = timepiece.BusinessPermissions.get_users_who_can_capture_time().order_by("username")
     
     schedules = timepiece.Schedule.objects.filter(scheduled_date__gte=date_from, scheduled_date__lt=date_to)
+
+    actuals = timepiece.Entry.objects.filter(start_time__gte=date_from, start_time__lt=date_to)
     
     context['businesses'] = businesses
     context['schedules'] = schedules
+    context['actuals'] = actuals
     context['users'] = users
     context['date'] = date_from
     context['schedule_filter_form'] = schedule_filter_form
@@ -5670,8 +5674,13 @@ def schedule_edit(request, business_id, user_id, scheduled_date):
         return HttpResponse( json.dumps( { 'hours_captured': schedule.num_hours,
                                            'hours_for_user': "%d" % (schedules.hours_for_user(user_id) or 0),
                                            'hours_for_business': "%d" % (schedules.hours_for_business(business_id) or 0),
-                                           #'billable_for_user': "%d" % (schedules.billable_for_user(user_id) or 0),
-                                           #'billable_for_business': "%d" % (schedules.billable_for_business(business_id) or 0)
+                                           'billable_for_user': _format_money(schedules.billable_for_user(user_id)),
+                                           'billable_for_business': _format_money(schedules.billable_for_business(business_id))
                                            } ) )
 
     raise Exception(form.errors)
+
+def _format_money(x):
+    if not x:
+        return ""
+    return "R" + intcomma(int(x or 0))
