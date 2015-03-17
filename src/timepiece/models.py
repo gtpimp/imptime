@@ -2742,7 +2742,13 @@ class UserProfile(models.Model):
     @property
     def businesses(self):
         return Business.objects.all().filter_by_logged_in_user(self.user).order_by("name").distinct()
-
+    
+    @property
+    def best_business_for_permissions(self):
+        """ for use in cases where a businesspermissions object is required for a user,
+        but without a specific business """
+        return self.businesses.first()
+    
 class ProjectHours(models.Model):
     week_start = models.DateField(verbose_name='start of week')
     project = models.ForeignKey(Project)
@@ -3511,10 +3517,10 @@ class ScheduleQuerySet(QuerySet):
     def billable_for_business(self, business_id):
         schedules = self.filter(business_id=business_id)
         total = 0
-        for schedule in schedules.values('user_id'):
+        for schedule in schedules.values('user_id', 'num_hours'):
             rate = Rate.for_business(schedule['user_id'], business_id)
             if rate is not None:
-                total += rate.values('billable_amount')['billable_amount'] * schedule['num_hours']
+                total += rate.billable_amount * schedule['num_hours']
         return total
     
 class Schedule(models.Model):

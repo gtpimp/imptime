@@ -98,18 +98,18 @@ class HasPermissionNode(template.Node):
 
         has = False
 
-        if 'current_user' in context:
-            if context['current_user'].is_superuser or context['current_user'].has_perm('timepiece.belongs_to_all_projects'):
-                has = True
+        logged_in_user = context['user']
+        if logged_in_user.is_superuser or logged_in_user.has_perm('timepiece.belongs_to_all_projects'):
+            has = True
+        else:
+            try:
+                bp = business_permissions_by_user[logged_in_user.id]
+            except KeyError:
+                has = False
             else:
-                try:
-                    bp = business_permissions_by_user[context['current_user'].id]
-                except KeyError:
-                    has = False
-                else:
-                    has_permission = getattr(bp, self.perm_name)
-                    if has_permission:
-                        has = True
+                has_permission = getattr(bp, self.perm_name)
+                if has_permission:
+                    has = True
 
         if self.opposite:
             has = not has

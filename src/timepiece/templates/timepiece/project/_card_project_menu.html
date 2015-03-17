@@ -119,9 +119,13 @@
       {% end_permission %}
       {% endcomment %}
 
+      {% has_permission has_view_ctc_billable_rates project.business %}
       <li>
-        <a href="#" onclick="imp.toggle_show_numbers();return false;">Numbers</a>
+        <a href="#" onclick="imp.toggle_show_numbers();return false;">
+          <img src="{{STATIC_URL}}images/icons/money.png"/>
+        </a>
       </li>
+      {% end_permission %}
 
       <li>
         <a href="#" onclick="imp.toggle_show_colours();return false;">Colours</a>

@@ -3,8 +3,9 @@ imp.projects = imp.projects || {};
 imp.projects.already_loaded_sprints = {};
 
 
-var numbers_state = { 'all':0, 'no ctc':1, 'no money':2, 'no money and no estimates':3 };
-imp.show_numbers_state = numbers_state['all'];
+//var numbers_state = { 'all':0, 'no ctc':1, 'no money':2, 'no money and no estimates':3 };
+var numbers_state = { 'no ctc':0, 'no money':1 };
+imp.show_numbers_state = numbers_state['no money'];
 
 imp.projects.on_sortable_changed_for_url = function(sortable_url) {
     var _sortable_url = sortable_url;
@@ -328,7 +329,7 @@ imp.toggle_show_numbers = function() {
 
     imp.show_numbers_state += 1;
     if ( imp.show_numbers_state >= Object.keys(numbers_state).length ) {
-	imp.show_numbers_state = numbers_state['all'];
+	imp.show_numbers_state = 0;
     }
     imp.refresh_show_numbers();
 };
@@ -357,18 +358,22 @@ imp.create_accordions = function() {
 };
 
 imp.refresh_show_numbers = function() {
-    if ( imp.show_numbers_state == numbers_state['all'] ) {
-	$(".money_cell").show();
-	$(".estimates_cell").show();
-    } else if ( imp.show_numbers_state == numbers_state['no ctc'] ) {
+    if ( imp.show_numbers_state == numbers_state['no ctc'] ) {
+        $(".money_cell").show();
 	$(".money_cell.money_ctc").hide();
 	$(".estimates_cell").show();
     } else if ( imp.show_numbers_state == numbers_state['no money'] ) {
 	$(".money_cell").hide();
 	$(".estimates_cell").show();
+        $(".money_cell.money_ctc").hide();
+    } else if ( imp.show_numbers_state == numbers_state['all'] ) {
+	$(".money_cell").show();
+	$(".estimates_cell").show();
+        $(".money_cell.money_ctc").show();
     } else if ( imp.show_numbers_state == numbers_state['no money and no estimates'] ) {
 	$(".money_cell").hide();
 	$(".estimates_cell").hide();
+        $(".money_cell.money_ctc").hide();
     }
 };
 

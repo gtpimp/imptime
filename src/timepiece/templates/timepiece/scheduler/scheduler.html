@@ -16,6 +16,11 @@
 <h1>
   Scheduler : {{date|date:'M Y'}}
   <img src="{{STATIC_URL}}images/icons/calendar.png" onclick="$('.filter').slideToggle(); return false;"/>
+
+  {% has_permission has_view_ctc_billable_rates user.profile.best_business_for_permissions %}
+  <img src="{{STATIC_URL}}images/icons/money.png" onclick="$('.money').toggle(); return false;"/>
+  {% end_permission %}
+  
 </h1>
 
 {% if public_holidays|length > 0 %}
@@ -44,6 +49,9 @@ Holidays:
         <tr>
           <th></th>
           <td></td>
+          {% has_permission has_view_ctc_billable_rates user.profile.best_business_for_permissions %}
+          <td class="money" style="display:none"></td>
+          {% end_permission %}
           {% for user in users %}
           <th>{{user.username}}</th>
           {% endfor %}
@@ -51,6 +59,9 @@ Holidays:
         <tr>
           <th></th>
           <td></td>
+          {% has_permission has_view_ctc_billable_rates user.profile.best_business_for_permissions %}
+          <td class="money" style="display:none"></td>
+          {% end_permission %}
           {% for user in users %}
           <td>
             <span class="total_for_user_{{user.id}}">
@@ -60,10 +71,13 @@ Holidays:
           </td>
           {% endfor %}
         </tr>
-        {% comment %}
-        <tr>
+        {% has_permission has_view_ctc_billable_rates user.profile.best_business_for_permissions %}
+        <tr class="money" style="display:none">
           <th></th>
           <td></td>
+          {% has_permission has_view_ctc_billable_rates user.profile.best_business_for_permissions %}
+          <td class="money" style="display:none"></td>
+          {% end_permission %}
           {% for user in users %}
           <td>
             <span class="billable_for_user_{{user.id}}">
@@ -72,25 +86,25 @@ Holidays:
           </td>
           {% endfor %}
         </tr>
-        {% endcomment %}
+        {% end_permission %}
       </thead>
 
       <tbody>
         {% for business in businesses %}
         <tr>
+          <th>{{business.name}}</th>
           <td>
             <span class="total_for_business_{{business.id}}">
               {% scheduled_total_business_time business %}
             </span>
           </td>
-          <th>{{business.name}}</th>
-          {% comment %}
-          <td>
+          {% has_permission has_view_ctc_billable_rates business %}
+          <td class="money" style="display:none">
             <span class="billable_for_business_{{business.id}}">
               {% scheduled_total_business_billable business %}
             </span>
           </td>
-          {% endcomment %}
+          {% end_permission %}
           {% for user in users %}
           <td>
             <input class='scheduled_hours' type="text" value="{% scheduled_time user business %}" onchange="return scheduler.on_set_schedule($(this), {{user.id}}, {{business.id}}, '{% url 'schedule_edit' business.id user.id date|date:'Ymd' %}');";/>
