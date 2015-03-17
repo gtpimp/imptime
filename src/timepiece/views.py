@@ -5674,8 +5674,10 @@ def schedule_edit(request, business_id, user_id, scheduled_date):
         return HttpResponse( json.dumps( { 'hours_captured': schedule.num_hours,
                                            'hours_for_user': "%d" % (schedules.hours_for_user(user_id) or 0),
                                            'hours_for_business': "%d" % (schedules.hours_for_business(business_id) or 0),
+                                           'hours_total': schedules.hours(),
                                            'billable_for_user': _format_money(schedules.billable_for_user(user_id)),
-                                           'billable_for_business': _format_money(schedules.billable_for_business(business_id))
+                                           'billable_for_business': _format_money(schedules.billable_for_business(business_id)),
+                                           'billable_total': _format_money(schedules.billable()),
                                            } ) )
 
     raise Exception(form.errors)

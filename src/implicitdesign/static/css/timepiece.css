@@ -10633,3 +10633,6 @@ table.fixed-header thead tr, table.fixed-header th {
     background-color: #ededed;
 }
 
+table.fixed-header thead {
+    border-bottom: 1px solid #000000;
+}

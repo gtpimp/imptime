@@ -17,6 +17,9 @@ scheduler.on_set_schedule = function(input_el, user_id, business_id, url) {
                                $(".total_for_business_"+business_id).html(data['hours_for_business']);
                                $(".billable_for_user_"+user_id).html(data['billable_for_user']);
                                $(".billable_for_business_"+business_id).html(data['billable_for_business']);
+                               $(".scheduled_total_hours").html(data['hours_total']);
+                               $(".scheduled_total_billable").html(data['billable_total']);
+                               
                                input_el.val(data.hours_captured);
 
                                input_el.removeClass('schedule_saving');

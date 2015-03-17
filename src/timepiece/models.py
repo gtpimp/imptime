@@ -1803,6 +1803,9 @@ class EntriesQuerySet(QuerySet):
     def hours_for_business(self, business_id):
         return self.filter(issue__project__business_id=business_id).aggregate(num_hours=Sum('hours'))['num_hours']
 
+    def hours(self):
+        return self.aggregate(num_hours=Sum('hours'))['num_hours']
+    
     def billable_for_user(self, user_id):
         total = 0
         qs = self.filter(user_id=user_id).values('issue__project').annotate(num_hours=Sum('hours'))
@@ -1815,6 +1818,15 @@ class EntriesQuerySet(QuerySet):
     def billable_for_business(self, business_id):
         total = 0
         qs = self.filter(issue__project__business_id=business_id).values('issue__project', 'user').annotate(num_hours=Sum('hours'))
+        for entry in qs:
+            rate = Rate.objects.filter(project_id=entry['issue__project'], user_id=entry['user']).values('billable_amount').first()
+            if rate is not None:
+                total += rate['billable_amount'] * entry['num_hours']
+        return total
+
+    def billable(self):
+        total = 0
+        qs = self.values('issue__project', 'user').annotate(num_hours=Sum('hours'))
         for entry in qs:
             rate = Rate.objects.filter(project_id=entry['issue__project'], user_id=entry['user']).values('billable_amount').first()
             if rate is not None:
@@ -3526,6 +3538,9 @@ class ScheduleQuerySet(QuerySet):
     def hours_for_business(self, business_id):
         return self.filter(business_id=business_id).aggregate(num_hours=Sum('num_hours'))['num_hours']
 
+    def hours(self):
+        return self.aggregate(num_hours=Sum('num_hours'))['num_hours']
+    
     def billable_for_user(self, user_id):
         schedules = self.filter(user_id=user_id)
         total = 0
@@ -3543,7 +3558,17 @@ class ScheduleQuerySet(QuerySet):
             if rate is not None:
                 total += rate.billable_amount * schedule['num_hours']
         return total
-    
+
+    def billable(self):
+        schedules = self
+        total = 0
+        for schedule in schedules.values('user_id', 'num_hours', 'business'):
+            rate = Rate.for_business(schedule['user_id'], schedule['business'])
+            if rate is not None:
+                total += rate.billable_amount * schedule['num_hours']
+        return total
+
+        
 class Schedule(models.Model):
     business = models.ForeignKey('business', null=False, blank=False)
     scheduled_date = models.DateField(null=False, blank=False)

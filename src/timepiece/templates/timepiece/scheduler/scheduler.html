@@ -32,6 +32,15 @@ Holidays:
 </ul>
 {% endif %}
 
+<fieldset>
+  <title>Legend</title>
+  For cells with hours, the format is: actual / scheduled
+  <br/>
+  If the cell only has a single number, it's the scheduled number and there are no actuals yet
+  <br/>
+  You can capture days by ending the number with a 'd', eg 5d will convert to 40 hours.
+</fieldset>
+
 <div class="scheduler">
 
   <div class="pane filter" style="display:none">
@@ -56,9 +65,15 @@ Holidays:
           <th>{{user.username}}</th>
           {% endfor %}
         </tr>
+
         <tr>
           <th></th>
-          <td></td>
+          <td>
+            {% actual_total_time %}
+            <span class="scheduled_total_hours">
+              {% scheduled_total_time %}
+            </span>
+          </td>
           {% has_permission has_view_ctc_billable_rates user.profile.best_business_for_permissions %}
           <td class="money" style="display:none"></td>
           {% end_permission %}
@@ -77,11 +92,16 @@ Holidays:
         <tr class="money" style="display:none">
           <th></th>
           <td></td>
-          <td></td>
+          <td>
+            {% actual_total_billable %}
+            <span class="scheduled_total_billable">
+              {% scheduled_total_billable %}
+            </span>
+          </td>
           {% for user in users %}
           <td>
+            {% actual_total_user_billable user %}
             <span class="billable_for_user_{{user.id}}">
-              {% actual_total_user_billable user %}
               {% scheduled_total_user_billable user %}
             </span>
           </td>
@@ -101,8 +121,8 @@ Holidays:
           </th>
           {% has_permission has_view_ctc_billable_rates business %}
           <th class="money" style="display:none">
+            {% actual_total_business_billable business %}
             <span class="billable_for_business_{{business.id}}">
-              {% actual_total_business_billable business %}
               {% scheduled_total_business_billable business %}
             </span>
           </th>

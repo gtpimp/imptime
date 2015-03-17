@@ -71,15 +71,31 @@ def actual_total_user_time(context, user):
 
 @register.simple_tag(takes_context=True)    
 def scheduled_total_business_time(context, business):
-    return "%d" % (context['schedules'].hours_for_business(business.id) or 0)
+    hours = context['schedules'].hours_for_business(business.id) or 0
+    if not hours:
+        return ""
+    return str(hours)
 
 @register.simple_tag(takes_context=True)    
 def actual_total_business_time(context, business):
-    return "%d" % (context['actuals'].hours_for_business(business.id) or 0)
+    hours = context['actuals'].hours_for_business(business.id) or 0
+    if not hours:
+        return ""
+    return hours
 
 @register.simple_tag(takes_context=True)
 def scheduled_total_time(context):
-    return "%d" % (context['schedules'].num_hours() or 0)
+    hours = context['schedules'].hours() or 0
+    if not hours:
+        return ""
+    return hours
+
+@register.simple_tag(takes_context=True)
+def actual_total_time(context):
+    hours = "%d" % (context['actuals'].hours() or 0)
+    if not hours:
+        return ""
+    return hours + " / "
 
 @register.simple_tag(takes_context=True)
 def possible_total_user_time(context, user):
@@ -104,6 +120,14 @@ def scheduled_total_business_billable(context, business):
 @register.simple_tag(takes_context=True)
 def actual_total_business_billable(context, business):
     return _format_money(context['actuals'].billable_for_business(business), trailing_slash=True)
+
+@register.simple_tag(takes_context=True)
+def scheduled_total_billable(context):
+    return _format_money(context['schedules'].billable())
+
+@register.simple_tag(takes_context=True)
+def actual_total_billable(context):
+    return _format_money(context['actuals'].billable(), trailing_slash=True)
 
 def _format_money(x, trailing_slash=False):
     if not x:
