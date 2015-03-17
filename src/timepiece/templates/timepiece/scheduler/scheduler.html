@@ -39,6 +39,8 @@ Holidays:
   If the cell only has a single number, it's the scheduled number and there are no actuals yet
   <br/>
   You can capture days by ending the number with a 'd', eg 5d will convert to 40 hours.
+  <br/>
+  The calculated numbers are rounded to keep the table tidy, this can cause small rounding display anomalies.
 </fieldset>
 
 <div class="scheduler">
@@ -73,6 +75,8 @@ Holidays:
             <span class="scheduled_total_hours">
               {% scheduled_total_time %}
             </span>
+            <br/>
+            (max {% possible_total_time %})
           </td>
           {% has_permission has_view_ctc_billable_rates user.profile.best_business_for_permissions %}
           <td class="money" style="display:none"></td>
@@ -88,6 +92,7 @@ Holidays:
           </td>
           {% endfor %}
         </tr>
+
         {% has_permission has_view_ctc_billable_rates user.profile.best_business_for_permissions %}
         <tr class="money" style="display:none">
           <th></th>
@@ -115,6 +120,7 @@ Holidays:
         <tr>
           <th>{{business.name}}</th>
           <th>
+            {% actual_total_business_time business %}
             <span class="total_for_business_{{business.id}}">
               {% scheduled_total_business_time business %}
             </span>

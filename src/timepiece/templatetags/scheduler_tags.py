@@ -81,7 +81,7 @@ def actual_total_business_time(context, business):
     hours = context['actuals'].hours_for_business(business.id) or 0
     if not hours:
         return ""
-    return hours
+    return "%d / " % int(hours)
 
 @register.simple_tag(takes_context=True)
 def scheduled_total_time(context):
@@ -95,7 +95,7 @@ def actual_total_time(context):
     hours = "%d" % (context['actuals'].hours() or 0)
     if not hours:
         return ""
-    return hours + " / "
+    return "%d / " % int(hours)
 
 @register.simple_tag(takes_context=True)
 def possible_total_user_time(context, user):
@@ -103,6 +103,12 @@ def possible_total_user_time(context, user):
     msg = "%d" % hours['num_hours']
     if hours['leave_hours']>0:
         msg += "<br/> (%d off days)" % (hours['leave_hours']/8)
+    return msg
+
+@register.simple_tag(takes_context=True)
+def possible_total_time(context):
+    hours = Schedule.available_hours(context['date'].year, context['date'].month, context['users'])
+    msg = "%d" % hours['num_hours']
     return msg
 
 @register.simple_tag(takes_context=True)

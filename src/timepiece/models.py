@@ -3588,4 +3588,17 @@ class Schedule(models.Model):
         num_days -= leave_days
         return { 'num_hours': num_days * settings.NUM_BUSINESS_HOURS_PER_DAY,
                  'leave_hours': leave_days * settings.NUM_BUSINESS_HOURS_PER_DAY }
-                                                  
+
+    @classmethod
+    def available_hours(self, year, month, users):
+        date_from = datetime.datetime(year=year, month=month, day=1)
+        date_to = date_from + relativedelta(months=1)
+        num_days = len(Holiday.business_days_in_month(date_from)) * users.count()
+        leave_days = CalendarEvent.objects.filter(start__gte=date_from, start__lt=date_to,
+                                                  status__in=['ready', 'done'],
+                                                  user__in=users,
+                                                  event_type__in=CalendarEvent.cant_work_event_types()).count()
+        num_days -= leave_days
+        return { 'num_hours': num_days * settings.NUM_BUSINESS_HOURS_PER_DAY,
+                 'leave_hours': leave_days * settings.NUM_BUSINESS_HOURS_PER_DAY }
+                                                      
