@@ -167,14 +167,9 @@
                                 {% if perms.timpeiece.view_user %}
 				    <li><a href="{% url 'users_last_active' %}">Recent user activity</a></li>
 				{% endif %}
-                                {% if user.is_staff %}
+                                {% if user.is_superuser %}
                                     <li><a href="{% url 'edit_default_user_rates' %}">Edit default rates</a></li>
                                 {% endif %}
-				{% if user.is_superuser %}
-				    <li><a onclick="if (!confirm('Are you sure? This can take a long time')) {return false;}" href="{% url 'emacs_importer:import_timesheets' %}">Import timesheets</a></li>
-				{% endif %}
-                                                                        
-
                             </ul>
                         </li>
                     {% endif %}
@@ -239,7 +234,7 @@
                         <li class="dropdown">
                             <a href="" class="dropdown-toggle" data-toggle="dropdown">{{ user.email }} <b class="caret"></b></a>
                             <ul class="dropdown-menu">
-                                {% if user.is_staff %}
+                                {% if user.is_superuser %}
                                     <li><a href="{% url 'admin:index' %}">Admin</a></li>
                                 {% endif %}
                                 <li><a href="{% url 'edit_settings' %}">Settings</a></li>
