@@ -5611,6 +5611,8 @@ def quick_clocker_delete_entry(request, entry_id=None):
 def _get_quick_clocker_issue(project, user):
     try:
         issue = timepiece.Issue.objects.get(project=project, subject="daily management")
+    except timepiece.Issue.MultipleObjectsReturned:
+        issue = timepiece.Issue.objects.filter(project=project, subject="daily management").last()
     except timepiece.Issue.DoesNotExist:
         issue = timepiece.Issue.objects.create(project=project,
                                                subject="daily management",
