@@ -3091,6 +3091,10 @@ class Issue(models.Model):
         return self.entries.all()
 
     @property
+    def sorted_related_entries(self):
+        return self.entries.all().order_by('start_time')
+
+    @property
     def colour(self):
         return self.project.business.get_colour_for_status(self.status)
 

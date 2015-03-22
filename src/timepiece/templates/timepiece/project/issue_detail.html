@@ -160,7 +160,7 @@
         <div class="issue_entries">
           <table>
             <tbody>
-              {% for entry in issue.related_entries %}
+              {% for entry in issue.sorted_related_entries %}
               <tr>
                 <td>#{{entry.id}}</td>
                 <td>{{entry.user}}</td>
