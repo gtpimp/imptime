@@ -708,7 +708,10 @@ class Project(models.Model):
         manager_users = []
         tester_users = []
         for user_id, bp in project_users.items():
-            time_tracking_mode = Rate.objects.get_or_create(project=self, user_id=user_id)[0].time_tracking_mode
+            try:
+                time_tracking_mode = Rate.objects.get_or_create(project=self, user_id=user_id)[0].time_tracking_mode
+            except Rate.MultipleObjectsReturned:
+                time_tracking_mode = 'developer'
             if time_tracking_mode == 'manager':
                 manager_users.append([user_id, bp, User.objects.get(pk=user_id)])
             elif time_tracking_mode == 'tester':
