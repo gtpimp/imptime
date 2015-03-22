@@ -886,8 +886,11 @@ class Project(models.Model):
                 except Rate.MultipleObjectsReturned:
                     last_rate = Rate.objects.filter(project=last_project, user=user)[0]
                     Rate.objects.filter(project=last_project, user=user).exclude(pk=last_rate.id).delete()
-                    
-            rate, newly_created = Rate.objects.get_or_create(project=self, user=user)
+
+            try:
+                rate, newly_created = Rate.objects.get_or_create(project=self, user=user)
+            except Rate.MultipleObjectsReturned:
+                rate, newly_created = Rate.objects.create(project=self, user=user), True
             if newly_created:
                 rate.amount = last_rate.amount if last_rate else user.profile.amount
                 rate.billable_amount = last_rate.billable_amount if last_rate else user.profile.billable_amount
