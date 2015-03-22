@@ -707,11 +707,15 @@ class Project(models.Model):
         project_users = BusinessPermissions.by_user(self.business)
         manager_users = []
         tester_users = []
+        user_velocities = {}
         for user_id, bp in project_users.items():
             try:
-                time_tracking_mode = Rate.objects.get_or_create(project=self, user_id=user_id)[0].time_tracking_mode
+                rate = Rate.objects.get_or_create(project=self, user_id=user_id)[0]
+                time_tracking_mode = rate.time_tracking_mode
+                user_velocities[user_id] = rate.velocity
             except Rate.MultipleObjectsReturned:
                 time_tracking_mode = 'developer'
+                user_velocities[user_id] = 1
             if time_tracking_mode == 'manager':
                 manager_users.append([user_id, bp, User.objects.get(pk=user_id)])
             elif time_tracking_mode == 'tester':
@@ -719,7 +723,8 @@ class Project(models.Model):
 
         if manager_users:
             for issue in self.issues.all():
-                estimate = issue.get_assigned_hours_estimate()[0] * self.ratio_management
+                estimate, assigned_to = issue.get_assigned_hours_estimate()
+                estimate *= user_velocities[assigned_to.id if assigned_to else 1] * self.ratio_management
                 if estimate < 0.1:
                     estimate = 0.1
                 else:
@@ -728,7 +733,8 @@ class Project(models.Model):
                     issue.set_points(user=user, points=estimate)
         if tester_users:
             for issue in self.issues.all():
-                estimate = issue.get_assigned_hours_estimate()[0] * self.ratio_testing
+                estimate, assigned_to = issue.get_assigned_hours_estimate()
+                estimate *= user_velocities[assigned_to.id if assigned_to else 1] * self.ratio_testing
                 if estimate < 0.1:
                     estimate = 0.1
                 else:
