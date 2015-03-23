@@ -3623,7 +3623,8 @@ def unassigned_timesheet_entries(request, project_id, template="timepiece/projec
                         'auto_expand_timesheet_entries':True,
                         'project':project,
                         'description':'unassigned timesheet entries',
-                        'related_entries':timepiece.Issue.get_adhoc_timesheet_entries(project=project)}
+                        'related_entries':timepiece.Issue.get_adhoc_timesheet_entries(project=project),
+                        'sorted_related_entries':timepiece.Issue.get_adhoc_timesheet_entries(project=project).order_by("start_time")}
     context['business'] = project.business
     context['project'] = project
     context['business_permissions_by_user'] = timepiece.BusinessPermissions.by_user(project.business)
@@ -3648,7 +3649,8 @@ def all_timesheet_entries(request, project_id, template="timepiece/project/issue
                         'auto_expand_timesheet_entries':True,
                         'project':project,
                         'description':'all timesheet entries',
-                        'related_entries':entries}
+                        'related_entries':entries,
+                        'sorted_related_entries':entries}
     context['business'] = project.business
     context['project'] = project
 

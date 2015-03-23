@@ -724,7 +724,7 @@ class Project(models.Model):
         if manager_users:
             for issue in self.issues.all():
                 estimate, assigned_to = issue.get_assigned_hours_estimate()
-                estimate *= user_velocities[assigned_to.id if assigned_to else 1] * self.ratio_management
+                estimate *= (user_velocities[assigned_to.id] if assigned_to else 1) * self.ratio_management
                 if estimate < 0.1:
                     estimate = 0.1
                 else:
@@ -734,7 +734,7 @@ class Project(models.Model):
         if tester_users:
             for issue in self.issues.all():
                 estimate, assigned_to = issue.get_assigned_hours_estimate()
-                estimate *= user_velocities[assigned_to.id if assigned_to else 1] * self.ratio_testing
+                estimate *= (user_velocities[assigned_to.id] if assigned_to else 1) * self.ratio_testing
                 if estimate < 0.1:
                     estimate = 0.1
                 else:
