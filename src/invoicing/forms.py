@@ -18,7 +18,7 @@ class InvoiceForm(forms.ModelForm):
         fields = [ 'client', 'project', 'business', 'invoice_number', 'internal_comment', 'client_order_name', 'client_order_number', 'status', 
                    'issued_at', 'payment_due', 'invoice_note', 'footer_terms' ]
 
-    GroupedModelChoiceField('business', required=False, queryset=timepiece.Project.objects.all().order_by("business__name", "name"))
+    project = GroupedModelChoiceField('business', required=False, queryset=timepiece.Project.objects.all().order_by("business__name", "name"))
 
     def __init__(self, *args, **kwargs):
         super(InvoiceForm, self).__init__(*args, **kwargs)
