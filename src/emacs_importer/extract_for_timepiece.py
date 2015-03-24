@@ -86,7 +86,7 @@ class Extractor(object):
                         if hours_before != hours_after:
                             failures.append( "On issue%s in %s : was %s hours, now %s hours" % (issue['number'], project.long_name(), hours_before, hours_after) )
 
-                    self.status['infos'].append("Dev time was changed for a closed sprint in status %s: %s. Expected %s hours, but changed to %s hours. \nPlease check if this is right: \n\n   %s\n" % \
+                    self.status['errors'].append("Import failed: Dev time was changed for a closed sprint in status %s: %s. Expected %s hours, but changed to %s hours. \n\n   %s\n" % \
                                                  (project.status2, project.long_name(), info_before['total_hours'], info_after['total_hours'], "\n  ".join(failures)))
 
     def _handle_file(self, dirname, fname):
@@ -155,6 +155,11 @@ class Extractor(object):
 
         self.timings_after = self.get_project_timings_for_user(business=business)
         self.check_changed_closed_projects()
+
+        if len(self.status['errors'])==0:
+            transaction.commit()
+        else:
+            transaction.rollback()
                 
     def _process_orgnode(self, business, sprint_name, orgnode, issues_processed):
         activity = Activity.objects.get_or_create(code='dev')[0]
