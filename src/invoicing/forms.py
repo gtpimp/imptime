@@ -29,9 +29,6 @@ class InvoiceForm(forms.ModelForm):
         self.fields['payment_due'].widget.attrs['class'] = 'date_field'
         self.fields['issued_at'].initial = datetime.today()
 
-        self.fields['project'].queryset = timepiece.Project.objects.all().filter_open().order_by("business__name", "name")
-        self.fields['project'].choices
-
 class InvoiceItemForm(forms.ModelForm):
 
     class Meta:
