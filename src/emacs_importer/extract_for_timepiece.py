@@ -210,7 +210,7 @@ class Extractor(object):
                 if is_new:
                     self.status['num_issues_created'] += 1
             except Issue.MultipleObjectsReturned:
-                issue = Issue.objects.filter(status='new',project=project, subject=orgnode.Heading())[0]
+                issue = Issue.objects.filter(project=project, subject=orgnode.Heading())[0]
         
         # Insert the clock entries
         for clock in orgnode.getClocks():
