@@ -100,6 +100,7 @@ This proposal is a quote.
 
 {% endifequal %}
 
+{% if settings.show_billable %}
 <div class="page_break""></div>
 <h3>Costing</h3>
 
@@ -126,11 +127,7 @@ are derived.
 {% endifequal %}
 
 {% ifequal settings.preamble_type "quote" %}
-
-  {% if settings.show_billable %}
-
     {% include "timepiece/project/_sprint_quote_report_costings.html" %}
-  {% endif %}
 {% endifequal %}
 
 {% if settings.include_rates %}
@@ -206,6 +203,7 @@ are derived.
 
 {% endif %}
 
+{% endif %}
 
 <div class="page_break""></div>
 
