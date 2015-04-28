@@ -51,7 +51,8 @@
       {% endifequal %}
     </th>
     <td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</td>
-    <th style="text-align:right">R{{ project.new_stats.total.points_billable|floatformat:"0"|intcomma }}</th>
+    <th style="text-align:right">R{{ project.new_stats.total.hours_billable_with_scope_creep|floatformat:"0"|intcomma }}</th>
+    
   </tr>
   <tr>
     <td><hr/></td>
