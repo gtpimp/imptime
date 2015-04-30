@@ -1291,7 +1291,7 @@ class Project(models.Model):
         total_stats['management_points_non_adhoc'] = total_stats['points_non_adhoc'] * self.ratio_management
         total_stats['testing_points_non_adhoc'] = total_stats['points_non_adhoc'] * self.ratio_testing
 
-        total_stats['total_quote_cost'] = float(total_stats['hours_billable_with_scope_creep']) + float(total_stats['hours_billable'])
+        total_stats['total_quote_cost'] = float(total_stats['hours_billable_with_scope_creep'])
         
         for key, role_stat in stats_per_role.items():
             role_stat['percentage_of_total_hours'] = float(role_stat['hours'] or 0.0) / float(total_stats['hours'] or 1) * 100
