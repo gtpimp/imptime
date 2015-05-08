@@ -120,6 +120,15 @@ are derived.
   half-way through the sprint budget.
   </p>
 
+  {% ifequal settings.preamble_type "billable" %}
+  <p>
+   The total estimated cost includes the expected ratio of management,
+   testing and expected scope creep, based on our experience with this
+   and other projects.
+  </p>
+  {% endifequal %}
+  
+
   <p>
 
     {% include "timepiece/project/_sprint_quote_report_costings.html" %}
