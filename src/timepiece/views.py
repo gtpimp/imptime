@@ -1517,6 +1517,10 @@ def add_user_to_project(request, project_id):
                 user=user,
                 project=project,
             )
+            rate = timepiece.Rate(user=user, project=project)
+            rate.amount = timepiece.UserProfile.objects.get(user=user).amount
+            rate.billable_amount = timepiece.UserProfile.objects.get(user=user).billable_amount
+            rate.save()
 
     if 'next' in request.REQUEST and request.REQUEST['next']:
         return HttpResponseRedirect(request.REQUEST['next'])
