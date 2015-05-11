@@ -1012,12 +1012,13 @@ def create_edit_business(request, business=None):
             business = business_form.save()
             business.ensure_single_sprint(point_person=request.user);
 
-            point_person = business.sprints[0].point_person
-            rate_for_point_person = timepiece.Rate(user=point_person, project=business.sprints[0])
-            rate_for_point_person.amount = timepiece.UserProfile.objects.get(user=point_person).amount
-            rate_for_point_person.billable_amount = timepiece.UserProfile.objects.get(user=point_person).billable_amount
-
-            rate_for_point_person.save()
+            for project in business.sprints.filter():
+                if project.status2 == 'closed' or project.status2 == 'invoiced' or project.status2 == 'waiting to close':
+                    point_person = project.point_person
+                    rate_for_point_person = timepiece.Rate(user=point_person, project=project)
+                    rate_for_point_person.amount = timepiece.UserProfile.objects.get(user=point_person).amount
+                    rate_for_point_person.billable_amount = timepiece.UserProfile.objects.get(user=point_person).billable_amount
+                    rate_for_point_person.save()
 
             return HttpResponseRedirect(
                 reverse('closed_project_list', kwargs={'business_id':business.id})
