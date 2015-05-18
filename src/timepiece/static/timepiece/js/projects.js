@@ -325,6 +325,10 @@ imp.toggle_show_colours = function() {
     $(".issue_colour_square").toggle();
 };
 
+imp.toggle_show_adhoc_issues = function() {
+    $(".adhoc_issue_row").toggle();
+};
+
 imp.toggle_show_numbers = function() {
 
     imp.show_numbers_state += 1;
