@@ -300,7 +300,18 @@ identified in the specification phase which greatly reduces risk.
 	  <td>{{estimate.points|floatformat:2}} hour{% if estimate.points != 1 %}s{% endif %}</td>
         {% endif %}
         {% if settings.show_issue_billable %}
+          
+          <!-- this is the cost with management, testing and scope creep -->
+          <td>R{{estimate.combined_cost_with_scope_creep|floatformat:"0"|intcomma}}</td>
+
+          {% comment %}
+          <!-- this is the cost just for the assigned developer -->
 	  <td>R{{estimate.min_cost|floatformat:"0"|intcomma}}</td>
+
+          <!-- this is the cost with management and testing, without scope creep -->
+	  <td>R{{estimate.combined_cost|floatformat:"0"|intcomma}}</td>
+          {% endcomment %}
+
         {% endif %}
       </tr>
       {% endfor %}

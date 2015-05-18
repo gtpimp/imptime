@@ -1076,12 +1076,14 @@ class Project(models.Model):
                     points = points[0]['points']
 
                 points, unadjusted_points, min_cost, rate = _calculate_user_contribution_to_issue_cost(issue, user_id, points)
-                
-                stats['issues'].append( { 'issue':issue,
-                                          'unadjusted_points':unadjusted_points,
-                                          'points':points,
-                                          'user_id':user_id,
-                                          'min_cost':min_cost} )
+
+                issue_data = { 'issue':issue,
+                               'unadjusted_points':unadjusted_points,
+                               'points':points,
+                               'user_id':user_id,
+                               'min_cost':min_cost,
+                               'combined_cost':min_cost}
+                stats['issues'].append( issue_data )
 
                 if user_id is not None and user_id not in stats['users']:
                     user = User.objects.get(pk=user_id)
@@ -1104,8 +1106,10 @@ class Project(models.Model):
                         user_id = manager.id
                         try:
                             points = issue.issue_points.get_query_set().all().filter(user=manager).values('points')[0]['points']
-                            points, unadjusted_points, min_cost, rate = _calculate_user_contribution_to_issue_cost(issue, user_id, points)
-                            estimated_management_cost += min_cost
+                            points, unadjusted_points, manager_cost, rate = _calculate_user_contribution_to_issue_cost(issue, user_id, points)
+                            estimated_management_cost += manager_cost
+                            issue_data['combined_cost'] = issue_data['combined_cost'] + manager_cost
+
                         except IndexError:
                             pass
 
@@ -1113,12 +1117,16 @@ class Project(models.Model):
                         user_id = tester.id
                         try:
                             points = issue.issue_points.get_query_set().all().filter(user=tester).values('points')[0]['points']
-                            points, unadjusted_points, min_cost, rate = _calculate_user_contribution_to_issue_cost(issue, user_id, points)
-                            estimated_testing_cost += min_cost
+                            points, unadjusted_points, tester_cost, rate = _calculate_user_contribution_to_issue_cost(issue, user_id, points)
+                            estimated_testing_cost += tester_cost
+                            issue_data['combined_cost'] = issue_data['combined_cost'] + tester_cost
                         except IndexError:
                             pass
 
+                        
                 total_estimated_hours += points
+
+                issue_data['combined_cost_with_scope_creep'] = issue_data['combined_cost'] * (1+self.ratio_scope_creep)
 
         stats['total_estimate_min'] = dev_estimate_cost + estimated_management_cost + estimated_testing_cost
         stats['total_estimate_max'] = stats['total_estimate_min'] * (1+self.ratio_scope_creep)
