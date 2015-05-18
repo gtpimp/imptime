@@ -22,7 +22,9 @@
                         <li><a href="{% url 'view_person_time_sheet' request.user.pk %}">My ledger</a></li>
                         <li><a href="{% url 'daily_graph' request.user.pk %}">Timesheet graph</a></li>
                         <li class="divider"></li>
+                        {% if perms.timepiece.quick_clocker %}
                         <li><a href="{% url 'quick_clocker' %}">Quick clocker</a></li>
+                        {% endif %}
 		      </ul>
 		    </li>
                     {% endif %}

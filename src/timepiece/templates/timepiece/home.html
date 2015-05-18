@@ -23,9 +23,11 @@
        <p>
        <a class="btn btn-info" href="{% url 'list_projects' %}">Project list</a>
        </p>
+       {% if perms.timepiece.quick_clocker %}
        <p>
        <a class="btn btn-info" href="{% url 'quick_clocker' %}">Quick clocker</a>
        </p>
+       {% endif %}
        {% if perms.timepiece.scheduler %}
        <p>
        <a class="btn btn-info" href="{% url 'scheduler' %}">Scheduler</a>
