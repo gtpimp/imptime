@@ -235,10 +235,10 @@ class AssignUserToIssueForm(forms.Form):
         else:
             business = None
         super(AssignUserToIssueForm, self).__init__(*args, **kwargs)
-        
+
         if business is not None:
             self.fields['user'].widget.choices = [ ('', '') ] + [ (x.id, str(x)) for x in business.users.order_by("username") ]
-    
+
     def save(self):
         return self.cleaned_data['user']
 
@@ -1292,16 +1292,6 @@ class IssueCheckboxContextMenuChangeIssueAdhocForm(forms.Form):
         self.fields['adhoc'].widget.attrs['onchange'] = "this.form.submit();"
         
 
-# class NewCalendarEventForm(forms.ModelForm):
-#     class Meta:
-#         model = timepiece.CalendarEvent
-#         fields = (
-#             'user',
-#             'project',
-#             'hours_planned',
-#             'date'
-#         )
-
 class CalendarFilterForm(forms.Form):
     users = forms.ModelMultipleChoiceField(required=False,
                                            queryset=User.objects.all(),
@@ -1368,7 +1358,7 @@ class CalendarEventCreateForm(forms.ModelForm):
 
     class Meta:
         model = CalendarEvent
-    
+        #TODO
     def __init__(self, allowed_users, allowed_businesses, *args, **kwargs):
         super(CalendarEventCreateForm, self).__init__(*args, **kwargs)
         self.fields['user'].queryset = allowed_users

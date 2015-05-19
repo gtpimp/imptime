@@ -58,7 +58,7 @@
 
     var update_show_aggregation_mechanism = function() { 
 	var el = $('select[name=actual_time_aggregation_mechanism]').parent();
-	if ( $('input[name=event_types][value=actual]').attr('checked') ) { 
+	if ( $('input[name=event_types][value=actual]').attr('checked') ) {
 	    el.show();
 	} else {
 	    el.hide();
@@ -68,12 +68,12 @@
        $(document).ready( function() {
 
 			      $("#id_event_types input").click( function() {
-								    update_show_aggregation_mechanism();  
+								    update_show_aggregation_mechanism();
 								});
 
 			      update_show_aggregation_mechanism();
 			  });
 
   }());
-  
+
 </script>
