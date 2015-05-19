@@ -46,10 +46,12 @@
                       {% end_permission %}
                     </a>
 
+              {% if perms.timepiece.view_project_cards %}      
               <a onclick="imp.projects.show_project_card_as_popup(event,'{% url 'get_project_card_for_business'  business_id=project.business.id project_id=project.id %}');return false" href='#' target_id=".issue_detail" project_card_url="{% url 'get_project_card_for_business'  business_id=business.id project_id=project.id  %}" business_id="{{ business.id }}" project_id="{{ project.id }}">
                 Card
               </a>
-
+              {% endif %}
+              
 
                           </div>
                           <span class="project_description">{{ project.short_description }}</span>
