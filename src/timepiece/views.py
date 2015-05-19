@@ -3223,7 +3223,7 @@ def allowed_issue_stati(request, issue_id):
     issue = timepiece.Issue.objects.get(pk=issue_id)
     stati = get_interface_plugin(request, issue.project.business).get_allowed_stati(issue)
     if stati is None:
-        stati = timepiece.Issue.ISSUE_STATUS_CHOICES
+        stati = sorted(timepiece.Issue.ISSUE_STATUS_CHOICES, key=lambda x: x[1])
     return HttpResponse(json.dumps(stati), mimetype='application/json')
 
 @login_required

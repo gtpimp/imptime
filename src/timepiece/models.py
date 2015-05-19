@@ -319,7 +319,7 @@ class Feature(models.Model):
 
     class Meta:
         unique_together = (('name', 'business'), )
-
+        ordering = ['name']
     def __unicode__(self):
         return self.name
 
@@ -2780,7 +2780,8 @@ class UserProfile(models.Model):
     billable_amount = models.DecimalField(max_digits=8, decimal_places=2, default=0)
     project_names_to_ignore = models.TextField(blank=True)
     authenticate_token = models.CharField(max_length=100, blank=True, null=True, help_text="Authentication token remote connections")
-
+    class Meta:
+        ordering = ('user',)
     def __unicode__(self):
         return unicode(self.user.username)
 
@@ -3306,7 +3307,9 @@ class CalendarEvent(models.Model):
                                    choices = EVENT_TYPES )
     status = models.CharField( null=False, blank=False, max_length=50, default='ready',
                                choices = EVENT_STATUSES )
-
+    class Meta:
+        ordering = ['user']
+        
     @property
     def end(self):
         return self.start + datetime.timedelta(hours=float(self.hours))

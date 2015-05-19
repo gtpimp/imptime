@@ -834,6 +834,7 @@ class ProjectDeadlineForm(forms.ModelForm):
         self.fields['invoice_at'].widget.attrs['class'] = 'datepicker'
 
 class IssueStatusForm(forms.ModelForm):
+
     class Meta:
         model = timepiece.Issue
         fields = (
@@ -1315,7 +1316,6 @@ class CalendarFilterForm(forms.Form):
 
     def __init__(self, allowed_users, allowed_businesses, *args, **kwargs):
         super(CalendarFilterForm, self).__init__(*args, **kwargs)
-
         self.fields['users'].queryset = allowed_users
         self.fields['businesses'].queryset = allowed_businesses
 
@@ -1361,7 +1361,7 @@ class CalendarEventCreateForm(forms.ModelForm):
         #TODO
     def __init__(self, allowed_users, allowed_businesses, *args, **kwargs):
         super(CalendarEventCreateForm, self).__init__(*args, **kwargs)
-        self.fields['user'].queryset = allowed_users
+        self.fields['user'].queryset = allowed_users.order_by('username')
         self.fields['business'].queryset = allowed_businesses
         self.fields['start'].widget.attrs['class'] = 'datetimepicker'
         self.fields['end'].widget.attrs['class'] = 'datetimepicker'
@@ -1401,7 +1401,7 @@ class CalendarEventUpdateForm(forms.ModelForm):
         self.fields['status'].required = False
         self.fields['description'].required = False
 
-        self.fields['user'].queryset = allowed_users
+        self.fields['user'].queryset = allowed_users.order_by('username')
         self.fields['business'].queryset = allowed_businesses
         self.fields['start'].widget.attrs['class'] = 'datetimepicker'
         self.fields['end'].widget.attrs['class'] = 'datetimepicker'
