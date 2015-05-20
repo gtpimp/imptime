@@ -1316,8 +1316,9 @@ class CalendarFilterForm(forms.Form):
 
     def __init__(self, allowed_users, allowed_businesses, *args, **kwargs):
         super(CalendarFilterForm, self).__init__(*args, **kwargs)
-        self.fields['users'].queryset = allowed_users
+        self.fields['users'].queryset = allowed_users.order_by('username')
         self.fields['businesses'].queryset = allowed_businesses
+
 
     @property
     def filter_includes_actual_events(self):
