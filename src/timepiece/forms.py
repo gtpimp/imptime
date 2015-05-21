@@ -1181,6 +1181,7 @@ class SprintQuoteReportSettingsForm(forms.Form):
 
     include_features = forms.BooleanField(label="Tick to include features", initial=False, required=False)
     include_rates = forms.BooleanField(label="Tick to include rates", initial=False, required=False)
+    include_adhoc = forms.BooleanField(label="Tick to include adhoc issues", initial=False, required=False)
     show_hours = forms.BooleanField(label="Tick to show hours", initial=False, required=False)
     show_billable = forms.BooleanField(label="Tick to show billable cost for the sprint", initial=True, required=False)
     show_issue_billable = forms.BooleanField(label="Tick to show billable cost per item", initial=True, required=False)
