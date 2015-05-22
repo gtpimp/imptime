@@ -4354,13 +4354,12 @@ def sprint_report(request, project_id, context=None):
     elif request.GET['report_type'] == 'Invoice' and invoice_form.is_valid():
         form = invoice_form
         template = 'timepiece/project/sprint_invoice_report.html'
-
     else:
         raise Exception("%s %s %s" % (request.GET['report_type'], str(invoice_form.errors), str(quote_form.errors)))
 
     if form.is_valid():
         context['settings'] = form.cleaned_data
-        
+
         if 'only_these_statuses' in form.cleaned_data:
             statuses = form.cleaned_data['only_these_statuses']
             if 'all' not in statuses:
@@ -4370,9 +4369,6 @@ def sprint_report(request, project_id, context=None):
             assigned_to = form.cleaned_data['only_assigned_to']
             if 'all' not in assigned_to:
                 issues = issues.filter(assigned_to__username__in=assigned_to)
-
-        if not form.cleaned_data.get('include_adhoc'):
-            issues = issues.exclude(adhoc=True)
 
         if 'only_these_issue_numbers' in form.cleaned_data:
             issues = issues.filter(number__in=form.cleaned_data['only_these_issue_numbers'])

@@ -1046,7 +1046,7 @@ class Project(models.Model):
             else:
                 # For no estimate, this is most likely an ad-hoc issue, so put the time in as part of the quote
                 actual_cost_so_far = float(issue.entries.all().filter(user_id=user_id).aggregate(hours=Sum('hours'))['hours'] or 0) * float(rate.billable_amount)
-            
+
             min_cost = estimated_cost + actual_cost_so_far
 
             return points, unadjusted_points, min_cost, rate

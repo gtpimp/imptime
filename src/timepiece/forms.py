@@ -1164,7 +1164,7 @@ class SprintInvoiceReportSettingsForm(forms.Form):
         self.fields['only_assigned_to'].choices = [('all', 'Any user'),] + list( [ (x['assigned_to__username'],x['assigned_to__username']) for x in project.issues.exclude(assigned_to__isnull=True).values('assigned_to__username').distinct()] )
 
         if only_these_issues is None:
-            only_these_issues = project.issues.all()
+            only_these_issues = project.issues.filter(adhoc=False)
         self.fields['only_these_issue_numbers'].choices = [ (issue.number, issue.number) for issue in only_these_issues ] 
         self.fields['only_these_issue_numbers'].initial = [ issue.number for issue in only_these_issues ] 
         
@@ -1181,7 +1181,6 @@ class SprintQuoteReportSettingsForm(forms.Form):
 
     include_features = forms.BooleanField(label="Tick to include features", initial=False, required=False)
     include_rates = forms.BooleanField(label="Tick to include rates", initial=False, required=False)
-    include_adhoc = forms.BooleanField(label="Tick to include adhoc issues", initial=False, required=False)
     show_hours = forms.BooleanField(label="Tick to show hours", initial=False, required=False)
     show_billable = forms.BooleanField(label="Tick to show billable cost for the sprint", initial=True, required=False)
     show_issue_billable = forms.BooleanField(label="Tick to show billable cost per item", initial=True, required=False)
@@ -1206,7 +1205,7 @@ class SprintQuoteReportSettingsForm(forms.Form):
         self.fields['preferred_user_for_estimates'].choices = [ (x.user.id, x.user) for x in BusinessPermissions.by_user(project.business).values() if x.has_estimate_own_points ]
         
         if only_these_issues is None:
-            only_these_issues = project.issues.all()
+            only_these_issues = project.issues.filter(adhoc=False)
         self.fields['only_these_issue_numbers'].choices = [ (issue.number, issue.number) for issue in only_these_issues ] 
         self.fields['only_these_issue_numbers'].initial = [ issue.number for issue in only_these_issues ] 
 
