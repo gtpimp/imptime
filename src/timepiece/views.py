@@ -5490,8 +5490,8 @@ def dashboard(request, template="timepiece/dashboard/dashboard.html"):
         context['employees_by_month'].append( {'month' : date_from,
                                                'salaries' : salaries,
                                                'entries': entries,
-                                               'average_hours_per_employee': entries.total_hours() / (salaries.count() or 1),
-                                               'average_daily_hours_per_employee': entries.total_hours() / (salaries.count() or 1) / len(business_days) or 1,
+                                               #'average_hours_per_employee': entries.total_hours()/ (salaries.count() or 1),
+                                               #'average_daily_hours_per_employee': entries.total_hours() / (salaries.count() or 1) / len(business_days) or 1,
                                                'number_of_business_days': len(business_days),
                                                } )
 

@@ -1359,7 +1359,7 @@ class CalendarEventCreateForm(forms.ModelForm):
 
     class Meta:
         model = CalendarEvent
-        #TODO
+
     def __init__(self, allowed_users, allowed_businesses, *args, **kwargs):
         super(CalendarEventCreateForm, self).__init__(*args, **kwargs)
         self.fields['user'].queryset = allowed_users.order_by('username')
@@ -1486,7 +1486,6 @@ class QuickClockerClockOutForm(forms.Form):
 class QuickClockerEditEntry(forms.ModelForm):
 
     project = GroupedModelChoiceField('business', required=False, queryset=timepiece.Project.objects.none())
-    
     class Meta:
         model = Entry
         fields = ['start_time', 'end_time', 'comments']
@@ -1510,11 +1509,11 @@ class ScheduleFilterForm(forms.Form):
 
     def clean_month(self):
         return int(self.cleaned_data['month'])
-            
+
 class ScheduleForm(forms.ModelForm):
 
     num_hours = forms.CharField(required=True)
-    
+
     class Meta:
         model = Schedule
         fields=['num_hours']
