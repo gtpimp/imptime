@@ -84,7 +84,7 @@
         <ul class="unstyled">
           <li>
             <a target="_blank" href={{ attachment.attachment.url }}>{{attachment.name}}</a>
-            <img class="secret_link" onclick="return imp.delete_issue_attachment('{% url 'delete_issue_attachment' attachment.id %}');" src="{{STATIC_URL}}/images/timepiece/icons/delete.png"/>
+            <img class="secret_link" onclick="return imp.delete_issue_attachment('{% url 'delete_issue_attachment' attachment.id %}');" src="{{STATIC_URL}}/images/timepiece/icons/cross.png"/>
           </li>
         </ul>
       {% endfor %}

@@ -96,6 +96,28 @@ imp.bulk_clear_selected_issues = function(clear_url) {
 
 };
 
+imp.bulk_check_selected_issues = function(clear_url) {
+
+    if ( ! confirm('Select all checkboxes?') ) {
+	return false;
+    } 
+
+    var on_done = imp.loading("Checking");
+    $.ajax({type:"GET",
+	    url: clear_url,
+	    success: function(data) {
+		$(".issue_checkbox_cell input[type='checkbox']").attr("unchecked", false);
+		on_done();
+	    }
+	   });
+    return false;
+
+};
+
+
+
+
+
 imp.do_form_show  = function(element, url) {
     var button = $(element);
     var parent = button.parents(".to_expand_form_on_click").parent();

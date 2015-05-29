@@ -12,6 +12,8 @@
 
   <li> <a onclick="return imp.bulk_clear_selected_issues('{% url 'bulk_clear_selected_issues' %}'); " href="#">Clear all checkboxes</a> </li>
 
+  <li> <a onclick="return imp.bulk_clear_selected_issues('{% url 'bulk_clear_selected_issues' %}'); " href="#">Select all checkboxes</a> </li>
+  
   <li> <a onclick="if ( ! confirm('Delete all selected issues?') ) { return false; }" href="{% url 'bulk_delete_issues' %}">Delete</a> </li>
 
   <li class="divider"></li>
