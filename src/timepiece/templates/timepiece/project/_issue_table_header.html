@@ -158,7 +158,7 @@
 
                       {% comment %}
                   {% has_permission has_view_actual_hours  project.business %} 
-                    <td class="esimates_cell">
+                    <td class="estimates_cell">
                       <div class="secret_link" onclick="imp.show_issue_detail(null, '{% url 'unassigned_timesheet_entries' project.id %}');">
                         {{unassigned_timesheet_entries_hours|floatformat:"0"|intcomma}}
                       </div>
