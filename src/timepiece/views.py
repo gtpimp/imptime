@@ -1013,7 +1013,7 @@ def create_edit_business(request, business=None):
             business.ensure_single_sprint(point_person=request.user);
 
             for project in business.sprints.filter():
-                if project.status2 == 'closed' or project.status2 == 'invoiced' or project.status2 == 'waiting to close':
+                if not project.status2 == 'closed' or not project.status2 == 'invoiced' or not project.status2 == 'waiting to close':
                     point_person = project.point_person
                     rate_for_point_person = timepiece.Rate(user=point_person, project=project)
                     rate_for_point_person.amount = timepiece.UserProfile.objects.get(user=point_person).amount
