@@ -1010,16 +1010,8 @@ def create_edit_business(request, business=None):
         )
         if business_form.is_valid():
             business = business_form.save()
-            business.ensure_single_sprint(point_person=request.user);
-
-            for project in business.sprints.filter():
-                if not project.status2 == 'closed' or not project.status2 == 'invoiced' or not project.status2 == 'waiting to close':
-                    point_person = project.point_person
-                    rate_for_point_person = timepiece.Rate(user=point_person, project=project)
-                    rate_for_point_person.amount = timepiece.UserProfile.objects.get(user=point_person).amount
-                    rate_for_point_person.billable_amount = timepiece.UserProfile.objects.get(user=point_person).billable_amount
-                    rate_for_point_person.save()
-
+            business.ensure_single_sprint(point_person=request.user)
+            _set_project_rate_to_default_for_user(request.user, business.sprints.first())
             return HttpResponseRedirect(
                 reverse('closed_project_list', kwargs={'business_id':business.id})
             )
@@ -1032,6 +1024,18 @@ def create_edit_business(request, business=None):
         'business_form': business_form,
     }
     return context
+
+
+def _set_project_rate_to_default_for_user(user, project):
+    profile = timepiece.UserProfile.objects.get(user=user)
+    if timepiece.Rate.objects.filter(user=user, project=project):
+        rate = timepiece.Rate.objects.get(user=user, project=project)
+    else:
+        rate = timepiece.Rate.objects.create(user=user, project=project)
+    if rate.amount == 0 and rate.billable_amount == 0:
+        rate.amount = profile.amount
+        rate.billable_amount = profile.billable_amount
+        rate.save()
 
 
 @permission_required('auth.view_user')
@@ -1518,11 +1522,7 @@ def add_user_to_project(request, project_id):
                 user=user,
                 project=project,
             )
-            rate = timepiece.Rate(user=user, project=project)
-            rate.amount = timepiece.UserProfile.objects.get(user=user).amount
-            rate.billable_amount = timepiece.UserProfile.objects.get(user=user).billable_amount
-            rate.save()
-
+            _set_project_rate_to_default_for_user(user, project)
     if 'next' in request.REQUEST and request.REQUEST['next']:
         return HttpResponseRedirect(request.REQUEST['next'])
     else:
@@ -3068,12 +3068,27 @@ def add_project(request, business_id , template="timepiece/project/create_edit_p
         if not has_edit_budget:
             project.budget = 0
         project.save()
+        _set_project_rate_to_users_latest(user=project.point_person, project=project)
         context['project'] = project
         return get_project_row(request, project.id, context= context)
 
     context['project'] = project
     context['business_permissions_by_user'] = timepiece.BusinessPermissions.by_user(business)
     return render_to_response(template, context, context_instance=RequestContext(request))
+
+
+def _set_project_rate_to_users_latest(user, project):
+    business = project.business
+    if timepiece.Rate.objects.filter(user=user, project=project):
+        rate = timepiece.Rate.objects.get(user=user, project=project)
+    else:
+        rate = timepiece.Rate.objects.create(user=user, project=project)
+    latest_project = business.sprints.order_by('id')[len(business.sprints)-2]
+    latest_rate = timepiece.Rate.objects.get(user=user, project=latest_project)
+    if rate.amount == 0 and rate.billable_amount == 0:
+        rate.amount = latest_rate.amount
+        rate.billable_amount = latest_rate.billable_amount
+        rate.save()
 
 @login_required
 def add_issue(request, project_id, template="timepiece/project/_add_issue_form.html", context=None):
