@@ -869,6 +869,7 @@ class IssueForm(forms.ModelForm):
             business = None
         super(IssueForm,self).__init__(*args, **kwargs)
         self.fields['subject'].widget = forms.TextInput()
+        self.fields['subject'].required = False
 
         if business is not None:
             self.fields['feature'].widget.choices = [ ('', '') ] + list( (x.id, x.name) for x in Feature.objects.filter(business=business) )
