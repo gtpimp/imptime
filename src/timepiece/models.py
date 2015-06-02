@@ -310,7 +310,7 @@ class BusinessComment(models.Model):
     modified_at = models.DateTimeField(auto_now=True)
     modified_by = models.ForeignKey(User, null=False, blank=False, related_name='business_comments_modified_by')
 
-    def __unicode__(self):
+    def __unicode__(self): 
         return self.comment
 
 class Feature(models.Model):

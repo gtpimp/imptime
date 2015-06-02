@@ -171,6 +171,7 @@ imp.on_issue_form_submit = function(element, sprint_id, url, on_success) {
 	on_done();
 	if ( on_success ) {
 	    on_success();
+        
 	}
     };
 

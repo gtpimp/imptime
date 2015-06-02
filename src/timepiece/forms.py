@@ -870,7 +870,8 @@ class IssueForm(forms.ModelForm):
             business = None
         super(IssueForm,self).__init__(*args, **kwargs)
         self.fields['subject'].widget = forms.TextInput()
-
+        for subject in self.fields:
+            self.fields['subject'].required = True
         if business is not None:
             self.fields['feature'].widget.choices = [ ('', '') ] + list( (x.id, x.name) for x in Feature.objects.filter(business=business) )
 
@@ -879,7 +880,6 @@ class IssueForm(forms.ModelForm):
 
         if business is not None:
             self.fields['assigned_to'].widget.choices = [ ('', '') ] + [ (x.id, str(x)) for x in business.users ]
-        
 
 class ProjectRelationshipForm(forms.ModelForm):
     class Meta:
