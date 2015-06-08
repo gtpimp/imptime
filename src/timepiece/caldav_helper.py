@@ -24,7 +24,24 @@ class CalDavHelper(object):
 
     def _get_password(self, username):
         return "i" + username
-    
+
+    def get_username_from_url(self, url):
+        return url.replace("//","").split("/")[2]
+
+    def update_imptime_event_from_caldav_event(self, caldav_event, imptime_event):
+        vevent = caldav_event.instance.vevent
+        imptime_event.start = vevent.dtstart.value
+        end = vevent.dtend.value
+        imptime_event.duration = (end-imptime_event.start).seconds/(60*60)
+        imptime_event.description = vevent.description.value
+        imptime_event.event_type = 'meeting'
+        imptime_event.status = vevent.status.value
+        imptime_event.save()
+        
+    def get_event(self, username, uid):
+        calendar = self.calendar(username)
+        return calendar.event_by_uid(uid)
+        
     def on_event_saved(self, event):
         try:
             for user in event.event_users:
@@ -50,7 +67,10 @@ class CalDavHelper(object):
             cal_event = calendar.event_by_uid(self._uid(event))
             if cal_event is not None:
                 cal_event.delete()
-            
+
+    def as_ical(self, event):
+        return self._create_ical_string(event)
+                            
     def _create_ical_string(self, event):
         CRLF = "\r\n"
         invitees = (event.send_invites_to or "").split(",")
@@ -75,7 +95,7 @@ class CalDavHelper(object):
         return ical
 
     def _uid(self, event):
-        return "imptime%s" % (event.id)
+        return event.caldav_uid or ("imptime%s" % event.id)
 
     def send_invite(self, event):
         ical = self._create_ical_string(event)

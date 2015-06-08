@@ -8,7 +8,8 @@ from models import MailerMessage
 from django.conf import settings
 from django.template.loader import render_to_string
 
-def queue_admin_email(subject, msg):
+def queue_admin_email(subject, msg=None):
+    msg = msg or subject
     return queue_email(subject_content=subject, text_content="%s\n\n%s" % (subject,msg),
                        html_content="%s<br/><br/>%s" % (subject,msg),
                        to_addresses=settings.MAIL_ADMINS)
@@ -50,7 +51,6 @@ def queue_email(subject_content, text_content, html_content, to_addresses, from_
         app='imptime',
         created=datetime.today()
         )
-    logger.debug(msg,msg.to_address)
 
     if attachments:
         for f, filename in attachments:

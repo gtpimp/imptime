@@ -3318,15 +3318,18 @@ class CalendarEvent(models.Model):
     status = models.CharField( null=False, blank=False, max_length=50, default='ready',
                                choices = EVENT_STATUSES )
     send_invites_to = models.TextField(null=True, blank=True) # comma separated list of email addresses
+    caldav_uid = models.CharField(null=True, max_length=100)
 
     def save(self, *args, **kwargs):
         super(CalendarEvent, self).save(*args, **kwargs)
+        if not self.caldav_uid:
+            self.caldav_uid = "imptime%s" % str(self.id)
         CalDavHelper().on_event_saved(self)
 
     def delete(self, *args, **kwargs):
         CalDavHelper().on_event_deleted(self)
         super(CalendarEvent, self).delete(*args, **kwargs)
-        
+
     @property
     def event_users(self):
         users = set()
@@ -3364,6 +3367,9 @@ class CalendarEvent(models.Model):
             c = "#"+hex(c_int)[2:]
         return c
 
+    def __unicode__(self):
+        return "Starts as %s, ends at %s \n%s " % (self.start.strftime('%d %B %Y %H:%M'), self.end.strftime('%d %B %Y %H:%M'), self.description)
+    
 class BaseChecklist(models.Model):
     class Meta:
         abstract=True

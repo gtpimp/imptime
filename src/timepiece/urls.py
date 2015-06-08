@@ -611,6 +611,7 @@ urlpatterns = patterns('',
                        url(r'^delete_calendar_event/(?P<event_id>.*)/$', views.delete_calendar_event, {}, name='delete_calendar_event'),
                        url(r'^render_calendar_scheduled_sprints/$', views.render_calendar_scheduled_sprints, {}, name='render_calendar_scheduled_sprints'),
                        url(r'^send_calendar_invite/(?P<event_id>.*)$', views.send_calendar_invite, {}, name='send_calendar_invite'),
+                       url(r'^on_external_calendar_event_change/$', views.on_external_calendar_event_change, {}, name='on_external_calendar_event_change'),
 
                        url(r'^invoicing/', include('invoicing.urls', namespace="invoicing"), {}, "invoicing"),
 
