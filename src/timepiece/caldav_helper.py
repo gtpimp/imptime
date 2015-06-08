@@ -10,25 +10,33 @@ from caldav.objects import Principal, Calendar, Event, DAVObject, CalendarSet, F
 
 class CalDavHelper(object):
 
-    # def init_for_user(self, username):
-    #     self.username = username
-    #     self.url = settings.CALDAV_URL.format(USERNAME=self.username)
-    #     self.client = DAVClient(url=self.url)
-    #     self.principal = self.client.principal()
+    def calendar(self, username):
+        url = settings.CALDAV_URL.format(USERNAME=username)
+        client = DAVClient(url=url)
+        principal = client.principal()
+        return principal.calendar()
+
+    def on_event_saved(self, event):
+        for user in event.event_users:
+            calendar = self.calendar(user.username)
+            try:
+                cal_event = calendar.event_by_uid(self._uid(event))
+                cal_event.delete()
+            except Exception:
+                pass
+            calendar.add_event(self._create_ical_string(event))
+
+    def on_event_deleted(self, event):
+        for user in event.event_users:
+            calendar = self.calendar(user.username)
+            cal_event = calendar.event_by_uid(self._uid(event))
+            if cal_event is not None:
+                cal_event.delete()
             
-    # def sync_to_caldav(self, username):
-    #     #calendars = principal.calendars()
-
-    # def get_calendar(self):
-    #     pass
-
-    def send_invite(self, event):
-        #from email import Encoders
-        #import os,datetime
-
+    def _create_ical_string(self, event):
         CRLF = "\r\n"
         invitees = (event.send_invites_to or "").split(",")
-        organizer = "ORGANIZER;CN=organiser:mailto:first"+CRLF+" @gmail.com"
+        organizer = ("ORGANIZER;CN=organiser:mailto:%s" % event.user.email) +CRLF
 
         ddtstart = event.start
         dur = timedelta(hours = int(event.hours))
@@ -43,10 +51,17 @@ class CalDavHelper(object):
             attendee += "ATTENDEE;CUTYPE=INDIVIDUAL;ROLE=REQ-    PARTICIPANT;PARTSTAT=ACCEPTED;RSVP=TRUE"+CRLF+" ;CN="+att+";X-NUM-GUESTS=0:"+CRLF+" mailto:"+att+CRLF
         ical = "BEGIN:VCALENDAR"+CRLF+"PRODID:imptime"+CRLF+"VERSION:2.0"+CRLF+"CALSCALE:GREGORIAN"+CRLF
         ical+= "METHOD:REQUEST"+CRLF+"BEGIN:VEVENT"+CRLF+"DTSTART:"+dtstart+CRLF+"DTEND:"+dtend+CRLF+"DTSTAMP:"+dtstamp+CRLF+organizer+CRLF
-        ical+= ("UID:%s"%event.id)+dtstamp+CRLF
+        ical+= ("UID:%s"%self._uid(event))+CRLF
         ical+= attendee+"CREATED:"+dtstamp+CRLF+description+"LAST-MODIFIED:"+dtstamp+CRLF+"LOCATION:"+CRLF+"SEQUENCE:0"+CRLF+"STATUS:UNKNOWN"+CRLF
         ical+= ("SUMMARY:%s "%event.description[0:80])+ddtstart.strftime("%Y%m%d @ %H:%M")+CRLF+"TRANSP:OPAQUE"+CRLF+"END:VEVENT"+CRLF+"END:VCALENDAR"+CRLF
+        return ical
 
+    def _uid(self, event):
+        return "%s%s" % (event.id,event.start.strftime("%Y%m%dT%H%M%SZ"))
+            
+    def send_invite(self, event):
+        ical = self._create_ical_string(event)
+        invitees = (event.send_invites_to or "").split(",")
         content = """
         You are invited to a {EVENT_TYPE}, at {START_TIME} for {HOURS} hours
 

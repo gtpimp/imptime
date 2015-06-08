@@ -2,6 +2,7 @@ import datetime
 from dateutil.relativedelta import relativedelta
 import api
 import calendar
+from caldav_helper import CalDavHelper
 import uuid
 from colorful.fields import RGBColorField
 from interface_plugin import get_interface_plugin
@@ -3318,6 +3319,24 @@ class CalendarEvent(models.Model):
                                choices = EVENT_STATUSES )
     send_invites_to = models.TextField(null=True, blank=True) # comma separated list of email addresses
 
+    def save(self, *args, **kwargs):
+        super(CalendarEvent, self).save(*args, **kwargs)
+        CalDavHelper().on_event_saved(self)
+
+    def delete(self, *args, **kwargs):
+        CalDavHelper().on_event_deleted(self)
+        super(CalendarEvent, self).delete(*args, **kwargs)
+        
+    @property
+    def event_users(self):
+        users = set()
+        users.add(self.user)
+        for email in (self.send_invites_to or "").split(","):
+            user = User.objects.filter(email=email).first()
+            if user:
+                users.add(user)
+        return users
+            
     @property
     def end(self):
         return self.start + datetime.timedelta(hours=float(self.hours))
