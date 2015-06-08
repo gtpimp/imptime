@@ -47,12 +47,22 @@ class CalDavHelper(object):
         ical+= attendee+"CREATED:"+dtstamp+CRLF+description+"LAST-MODIFIED:"+dtstamp+CRLF+"LOCATION:"+CRLF+"SEQUENCE:0"+CRLF+"STATUS:UNKNOWN"+CRLF
         ical+= ("SUMMARY:%s "%event.description[0:80])+ddtstart.strftime("%Y%m%d @ %H:%M")+CRLF+"TRANSP:OPAQUE"+CRLF+"END:VEVENT"+CRLF+"END:VCALENDAR"+CRLF
 
+        content = """
+        You are invited to a {EVENT_TYPE}, at {START_TIME} for {HOURS} hours
+
+        {DESCRIPTION}
+        """
+        content = content.format(EVENT_TYPE=event.event_type,
+                                 START_TIME=event.start.strftime("%d %b %Y %H:%M"),
+                                 HOURS=event.hours,
+                                 DESCRIPTION=event.description)
+                    
         fname = os.path.join(settings.CALDAV_TEMP_FOLDER, "invite_%d.ics" % event.id)
         open(fname, "w").write(ical)
-        queue_email(subject_content="Invite on %s : %s" % (event.start.strftime("%Y %m %d %H %M"),event.description[0:20]),
+        queue_email(subject_content="Invite on %s : %s" % (event.start.strftime("%d %b %Y %H:%M"),event.description[0:20]),
                     from_address=event.user.email,
-                    text_content=ical,
-                    html_content=ical,
+                    text_content=content,
+                    html_content=content.replace("\n","<br/>"),
                     to_addresses=invitees,
                     attachments=[ (File(open(fname)), "invite.ics"), ])
                 
