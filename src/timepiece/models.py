@@ -3331,10 +3331,11 @@ class CalendarEvent(models.Model):
     def event_users(self):
         users = set()
         users.add(self.user)
-        for email in (self.send_invites_to or "").split(","):
-            user = User.objects.filter(email=email).first()
-            if user:
-                users.add(user)
+        if self.send_invites_to:
+            for email in self.send_invites_to.split(","):
+                user = User.objects.filter(email=email.strip()).first()
+                if user:
+                    users.add(user)
         return users
             
     @property

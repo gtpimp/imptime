@@ -7,24 +7,31 @@ from django.core.files import File
 from caldav.davclient import DAVClient
 from mailqueue.mailqueue_helper import queue_email
 from caldav.objects import Principal, Calendar, Event, DAVObject, CalendarSet, FreeBusy
+import logging
+logger = logging.getLogger(__name__)
 
 class CalDavHelper(object):
 
     def calendar(self, username):
         url = settings.CALDAV_URL.format(USERNAME=username)
-        client = DAVClient(url=url)
+        client = DAVClient(url=url, username=username, password=self._get_password(username))
         principal = client.principal()
         return principal.calendar()
 
+    def _get_password(self, username):
+        return "i" + username
+    
     def on_event_saved(self, event):
-        for user in event.event_users:
-            calendar = self.calendar(user.username)
-            try:
+        try:
+            for user in event.event_users:
+                calendar = self.calendar(user.username)
                 cal_event = calendar.event_by_uid(self._uid(event))
                 cal_event.delete()
-            except Exception:
-                pass
-            calendar.add_event(self._create_ical_string(event))
+                calendar.add_event(self._create_ical_string(event))
+                
+        except Exception, ex:
+            logger.exception(ex)
+            raise
 
     def on_event_deleted(self, event):
         for user in event.event_users:
@@ -57,7 +64,7 @@ class CalDavHelper(object):
         return ical
 
     def _uid(self, event):
-        return "%s%s" % (event.id,event.start.strftime("%Y%m%dT%H%M%SZ"))
+        return "imptime%s" % (event.id)
             
     def send_invite(self, event):
         ical = self._create_ical_string(event)
