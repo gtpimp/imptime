@@ -3155,20 +3155,13 @@ def _augment_issue_data(issue, current_user, users_allowed_to_estimate_on_busine
         per_user_issue_data["hours"] = hours
         per_user_issue_data["has_hours"] = per_user_issue_data["hours"]>0
         per_user_issue_data["completion_width"] = completion_against_estimated_hours
-        if per_user_issue_data["completion_width"] > 120: # allow some error
+        
+        if per_user_issue_data["completion_width"] > 110: # allow some error
             per_user_issue_data["completion_width"] = 100
             per_user_issue_data["bar_color"]= "traffic_red"
             per_user_issue_data["completion"] = 200 if per_user_issue_data["completion"] > 200 else per_user_issue_data["completion"]
         else:
-            if issue.is_closed():
-                # closed and within budget, so green
-                per_user_issue_data["bar_color"] = "traffic_green"
-            else:
-                if per_user_issue_data["completion"] > 80:
-                    # not closed and getting close to budget, so yellow
-                    per_user_issue_data["bar_color"] = "traffic_yellow"
-                else:
-                    per_user_issue_data["bar_color"] = "traffic_green"
+            per_user_issue_data["bar_color"] = "traffic_green"
 
         if per_user_issue_data["completion_width"]>100:
             per_user_issue_data["completion_width"] = 100
