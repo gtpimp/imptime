@@ -76,10 +76,11 @@ class CalDavHelper(object):
 
     def _uid(self, event):
         return "imptime%s" % (event.id)
-            
+
     def send_invite(self, event):
         ical = self._create_ical_string(event)
         invitees = (event.send_invites_to or "").split(",")
+        invitees += [event.user.email]
         content = """
         You are invited to a {EVENT_TYPE}, at {START_TIME} for {HOURS} hours
 
