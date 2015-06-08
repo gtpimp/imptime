@@ -15,9 +15,9 @@ class CalDavHelper(object):
 
     def calendar(self, username):
         url = settings.CALDAV_URL.format(USERNAME=username)
-        client = DAVClient(url=url, username=username, password=self._get_password(username))
-        principal = client.principal()
         try:
+            client = DAVClient(url=url, username=username, password=self._get_password(username))
+            principal = client.principal()
             return principal.calendars()[0]
         except IndexError:
             raise Exception("No calendars for %s" % username)
