@@ -1,6 +1,7 @@
 from datetime import datetime, timedelta
 from django.core.files.base import ContentFile
 import os
+from caldav.lib import error
 from django.conf import settings
 import tempfile
 from django.core.files import File
@@ -16,7 +17,10 @@ class CalDavHelper(object):
         url = settings.CALDAV_URL.format(USERNAME=username)
         client = DAVClient(url=url, username=username, password=self._get_password(username))
         principal = client.principal()
-        return principal.calendar()
+        try:
+            return principal.calendars()[0]
+        except IndexError:
+            raise Exception("No calendars for %s" % username)
 
     def _get_password(self, username):
         return "i" + username
@@ -25,10 +29,12 @@ class CalDavHelper(object):
         try:
             for user in event.event_users:
                 calendar = self.calendar(user.username)
-                cal_event = calendar.event_by_uid(self._uid(event))
-                cal_event.delete()
+                try:
+                    cal_event = calendar.event_by_uid(self._uid(event))
+                    cal_event.delete()
+                except error.NotFoundError:
+                    pass
                 calendar.add_event(self._create_ical_string(event))
-                
         except Exception, ex:
             logger.exception(ex)
             raise
