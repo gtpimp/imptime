@@ -5736,7 +5736,7 @@ def on_external_calendar_event_change(request):
 
         if action_type == 'DELETE':
             imptime_event = timepiece.CalendarEvent.objects.get(caldav_uid=uid)
-            queue_email(subject_content = "Event deleted: %s" % imptime_event.description[0:30],
+            queue_email(subject_content = "Event deleted",
                         text_content = "Event deleted by external calendar: %s\n\n%s" % (imptime_event, caldav.as_ical(imptime_event)),
                         html_content = ("Event deleted by external calendar: %s<br/><br/>%s" % (imptime_event, caldav.as_ical(imptime_event))).replace("\n", "<br/>"),
                         to_addresses=[user.email])
@@ -5749,7 +5749,7 @@ def on_external_calendar_event_change(request):
             except timepiece.CalendarEvent.DoesNotExist:
                 imptime_event = timepiece.CalendarEvent(user=user, caldav_uid=uid)
             caldav.update_imptime_event_from_caldav_event(caldav_event=caldav_event, imptime_event=imptime_event)
-            queue_email(subject_content = "Event updated: %s" % imptime_event.description[0:30],
+            queue_email(subject_content = "Event updated",
                         text_content = "Event updated by external calendar: %s\n\n%s" % (imptime_event, caldav.as_ical(imptime_event)),
                         html_content = ("Event updated by external calendar: %s<br/><br/>%s" % (imptime_event, caldav.as_ical(imptime_event))).replace("\n", "<br/>"),
                         to_addresses=[user.email])
@@ -5758,7 +5758,7 @@ def on_external_calendar_event_change(request):
             caldav_event = caldav.get_event(username, uid)
             imptime_event = timepiece.CalendarEvent(user=user, caldav_uid=uid)
             caldav.update_imptime_event_from_caldav_event(caldav_event=caldav_event, imptime_event=imptime_event)
-            queue_email(subject_content = "Event created: %s" % imptime_event.description[0:30],
+            queue_email(subject_content = "Event created",
                         text_content = "Event created by external calendar: %s\n\n%s" % (imptime_event, caldav.as_ical(imptime_event)),
                         html_content = ("Event created by external calendar: %s<br/><br/>%s" % (imptime_event, caldav.as_ical(imptime_event))).replace("\n", "<br/>"),
                         to_addresses=[user.email])

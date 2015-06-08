@@ -33,7 +33,10 @@ class CalDavHelper(object):
         imptime_event.start = vevent.dtstart.value
         end = vevent.dtend.value
         imptime_event.duration = (end-imptime_event.start).seconds/(60*60)
-        imptime_event.description = vevent.description.value
+        try:
+            imptime_event.description = vevent.description.value
+        except:
+            imptime_event.description = vevent.summary.value
         imptime_event.event_type = 'meeting'
         imptime_event.status = vevent.status.value
         imptime_event.save()

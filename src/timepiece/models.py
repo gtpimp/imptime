@@ -3318,7 +3318,7 @@ class CalendarEvent(models.Model):
     status = models.CharField( null=False, blank=False, max_length=50, default='ready',
                                choices = EVENT_STATUSES )
     send_invites_to = models.TextField(null=True, blank=True) # comma separated list of email addresses
-    caldav_uid = models.CharField(null=True, max_length=100)
+    caldav_uid = models.CharField(null=True, max_length=100, blank=True)
 
     def save(self, *args, **kwargs):
         super(CalendarEvent, self).save(*args, **kwargs)
