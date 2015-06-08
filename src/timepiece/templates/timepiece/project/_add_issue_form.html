@@ -9,7 +9,7 @@
   <form class="add_issue_form" method="POST" action="">
     {% csrf_token %}    
     {{ new_issue_form.non_field_errors }}
-    <div class="subject_class">
+    <div id="first" class="subject_class" required>
     {{ new_issue_form.subject.label }} {{ new_issue_form.subject }} 
     </div>
     <div class="description_class">
@@ -49,3 +49,17 @@
     <input type="submit" class="btn" onclick="return imp.create_issue_and_add_another(this, {{project.id}}, '{% url 'add_issue' project.id %}');" value="Create and add another"/>
   </form>
 </div>
+
+
+<script>
+ var v = $("form").validate({
+    submitHandler: function() {
+        console.log('successful submit');
+        return false;
+    }
+});
+
+$('#first').blur(function(){
+   v.element('#first'); 
+});
+</script>

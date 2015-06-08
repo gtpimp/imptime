@@ -834,6 +834,7 @@ class ProjectDeadlineForm(forms.ModelForm):
         self.fields['invoice_at'].widget.attrs['class'] = 'datepicker'
 
 class IssueStatusForm(forms.ModelForm):
+
     class Meta:
         model = timepiece.Issue
         fields = (
@@ -1165,7 +1166,7 @@ class SprintInvoiceReportSettingsForm(forms.Form):
         self.fields['only_assigned_to'].choices = [('all', 'Any user'),] + list( [ (x['assigned_to__username'],x['assigned_to__username']) for x in project.issues.exclude(assigned_to__isnull=True).values('assigned_to__username').distinct()] )
 
         if only_these_issues is None:
-            only_these_issues = project.issues.filter(adhoc=False)
+            only_these_issues = project.issues.all()
         self.fields['only_these_issue_numbers'].choices = [ (issue.number, issue.number) for issue in only_these_issues ] 
         self.fields['only_these_issue_numbers'].initial = [ issue.number for issue in only_these_issues ] 
         
@@ -1206,7 +1207,7 @@ class SprintQuoteReportSettingsForm(forms.Form):
         self.fields['preferred_user_for_estimates'].choices = [ (x.user.id, x.user) for x in BusinessPermissions.by_user(project.business).values() if x.has_estimate_own_points ]
         
         if only_these_issues is None:
-            only_these_issues = project.issues.filter(adhoc=False)
+            only_these_issues = project.issues.all()
         self.fields['only_these_issue_numbers'].choices = [ (issue.number, issue.number) for issue in only_these_issues ] 
         self.fields['only_these_issue_numbers'].initial = [ issue.number for issue in only_these_issues ] 
 
@@ -1326,9 +1327,9 @@ class CalendarFilterForm(forms.Form):
 
     def __init__(self, allowed_users, allowed_businesses, *args, **kwargs):
         super(CalendarFilterForm, self).__init__(*args, **kwargs)
-
-        self.fields['users'].queryset = allowed_users
+        self.fields['users'].queryset = allowed_users.order_by('username')
         self.fields['businesses'].queryset = allowed_businesses
+
 
     @property
     def filter_includes_actual_events(self):
@@ -1369,10 +1370,10 @@ class CalendarEventCreateForm(forms.ModelForm):
 
     class Meta:
         model = CalendarEvent
-    
+
     def __init__(self, allowed_users, allowed_businesses, *args, **kwargs):
         super(CalendarEventCreateForm, self).__init__(*args, **kwargs)
-        self.fields['user'].queryset = allowed_users
+        self.fields['user'].queryset = allowed_users.order_by('username')
         self.fields['business'].queryset = allowed_businesses
         self.fields['start'].widget.attrs['class'] = 'datetimepicker'
         self.fields['end'].widget.attrs['class'] = 'datetimepicker'
@@ -1412,7 +1413,7 @@ class CalendarEventUpdateForm(forms.ModelForm):
         self.fields['status'].required = False
         self.fields['description'].required = False
 
-        self.fields['user'].queryset = allowed_users
+        self.fields['user'].queryset = allowed_users.order_by('username')
         self.fields['business'].queryset = allowed_businesses
         self.fields['start'].widget.attrs['class'] = 'datetimepicker'
         self.fields['end'].widget.attrs['class'] = 'datetimepicker'
@@ -1496,7 +1497,6 @@ class QuickClockerClockOutForm(forms.Form):
 class QuickClockerEditEntry(forms.ModelForm):
 
     project = GroupedModelChoiceField('business', required=False, queryset=timepiece.Project.objects.none())
-    
     class Meta:
         model = Entry
         fields = ['start_time', 'end_time', 'comments']
@@ -1520,11 +1520,11 @@ class ScheduleFilterForm(forms.Form):
 
     def clean_month(self):
         return int(self.cleaned_data['month'])
-            
+
 class ScheduleForm(forms.ModelForm):
 
     num_hours = forms.CharField(required=True)
-    
+
     class Meta:
         model = Schedule
         fields=['num_hours']

@@ -310,7 +310,7 @@ class BusinessComment(models.Model):
     modified_at = models.DateTimeField(auto_now=True)
     modified_by = models.ForeignKey(User, null=False, blank=False, related_name='business_comments_modified_by')
 
-    def __unicode__(self):
+    def __unicode__(self): 
         return self.comment
 
 class Feature(models.Model):
@@ -319,7 +319,7 @@ class Feature(models.Model):
 
     class Meta:
         unique_together = (('name', 'business'), )
-
+        ordering = ['name']
     def __unicode__(self):
         return self.name
 
@@ -2788,7 +2788,8 @@ class UserProfile(models.Model):
     billable_amount = models.DecimalField(max_digits=8, decimal_places=2, default=0)
     project_names_to_ignore = models.TextField(blank=True)
     authenticate_token = models.CharField(max_length=100, blank=True, null=True, help_text="Authentication token remote connections")
-
+    class Meta:
+        ordering = ('user',)
     def __unicode__(self):
         return unicode(self.user.username)
 
@@ -3302,10 +3303,8 @@ class BusinessDocument(models.Model):
 
 class CalendarEvent(models.Model):
 
-    EVENT_TYPES = ( ('planned', 'Planned'), ('meeting', 'Meeting'), ('leave', 'Leave'), ('sickday', 'Sick day'),
-					('office_closed', 'Office Closed'), ('personal', 'Personal'),
-                    ('deadline', 'Deadline') )
-    EVENT_STATUSES = ( ('ready', 'Ready'), ('done', 'Done'), ('cancelled', 'Cancelled') )
+    EVENT_TYPES = ( ('deadline','Deadline'),('leave','Leave'),('meeting', 'Meeting'),('office_closed', 'Office Closed'), ('personal', 'Personal'),('planned', 'Planned'), ('sickday', 'Sick day'))
+    EVENT_STATUSES = (('cancelled', 'Cancelled'),  ('done', 'Done'),('ready', 'Ready'))
 
     user = models.ForeignKey(User, blank=False, null=False, db_index=True)
     business = models.ForeignKey(Business, blank=True, null=True, db_index=True, related_name='calendar_events')
@@ -3316,7 +3315,9 @@ class CalendarEvent(models.Model):
                                    choices = EVENT_TYPES )
     status = models.CharField( null=False, blank=False, max_length=50, default='ready',
                                choices = EVENT_STATUSES )
-
+    class Meta:
+        ordering = ['user']
+        
     @property
     def end(self):
         return self.start + datetime.timedelta(hours=float(self.hours))

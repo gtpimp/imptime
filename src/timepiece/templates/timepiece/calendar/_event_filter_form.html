@@ -1,3 +1,4 @@
+
 <form class="box filter_form" method="GET" action="{% url 'calendar'%}">
 
     {% csrf_token %}
@@ -41,7 +42,7 @@
 
     <div class='form-group'>
       <div class="col-md-12">
-        <input class="btn btn-primary" type="submit" value="Filter" onclick="t_calendar.refresh(); return false;" />
+        <input class="btn btn-primary" type="submit" value="Filter" onclick="t_calendar.refresh(); return false;" style="position:fixed; top:9%; margin:0 0 0 208px;" />
       </div>
       <div class="col-md-12">
         &nbsp;
@@ -58,7 +59,7 @@
 
     var update_show_aggregation_mechanism = function() { 
 	var el = $('select[name=actual_time_aggregation_mechanism]').parent();
-	if ( $('input[name=event_types][value=actual]').attr('checked') ) { 
+	if ( $('input[name=event_types][value=actual]').attr('checked') ) {
 	    el.show();
 	} else {
 	    el.hide();
@@ -68,12 +69,12 @@
        $(document).ready( function() {
 
 			      $("#id_event_types input").click( function() {
-								    update_show_aggregation_mechanism();  
+								    update_show_aggregation_mechanism();
 								});
 
 			      update_show_aggregation_mechanism();
 			  });
 
   }());
-  
+
 </script>

@@ -3243,7 +3243,7 @@ def allowed_issue_stati(request, issue_id):
     issue = timepiece.Issue.objects.get(pk=issue_id)
     stati = get_interface_plugin(request, issue.project.business).get_allowed_stati(issue)
     if stati is None:
-        stati = timepiece.Issue.ISSUE_STATUS_CHOICES
+        stati = sorted(timepiece.Issue.ISSUE_STATUS_CHOICES, key=lambda x: x[1])
     return HttpResponse(json.dumps(stati), mimetype='application/json')
 
 @login_required
@@ -5510,8 +5510,8 @@ def dashboard(request, template="timepiece/dashboard/dashboard.html"):
         context['employees_by_month'].append( {'month' : date_from,
                                                'salaries' : salaries,
                                                'entries': entries,
-                                               'average_hours_per_employee': entries.total_hours() / (salaries.count() or 1),
-                                               'average_daily_hours_per_employee': entries.total_hours() / (salaries.count() or 1) / len(business_days) or 1,
+                                               #'average_hours_per_employee': entries.total_hours()/ (salaries.count() or 1),
+                                               #'average_daily_hours_per_employee': entries.total_hours() / (salaries.count() or 1) / len(business_days) or 1,
                                                'number_of_business_days': len(business_days),
                                                } )
 

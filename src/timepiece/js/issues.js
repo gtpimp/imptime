@@ -171,6 +171,7 @@ imp.on_issue_form_submit = function(element, sprint_id, url, on_success) {
 	on_done();
 	if ( on_success ) {
 	    on_success();
+        
 	}
     };
 
@@ -608,35 +609,10 @@ imp.refresh_closest_issue_parent_row = function(element) {
          });
 };
 
-
-// imp.ajax_selection = function(element, url, update_url) {
-
-//     var handle_ajax_data_given = function (element , update_url) {
-//         var _update_url = update_url;
-//         var _element = element;
-//         var item_id = $(element).attr("id");
-//         function new_data_handler (data) {
-//             var selection_val ="nothing";
-//             if (data.length) {
-//              selection_val= data[0][0];
-//             }
-//             imp.dynamic_option_selection(_element, item_id, data, update_url);
-//         }
-//         return new_data_handler;
-//     };
-
-//     var response = $.ajax({ type:"GET",
-//                             url: url
-//                           });
-
-//     response.done( handle_ajax_data_given (element, update_url) );
-
-// };
-
 imp.clickable_feature_name = function (element, url, item_id) {
     // clear the parent of select boxes...
     // $(element).html("");
-    $("issue_subject").click(function(){$(".issue_subject).removeClass('open');});
+    $("issue_subject").click(function(){$(".issue_subject").removeClass('open');});
     return imp.clickable_subject_box(element, url, item_id, "2000px", "2000px");
 };
 
@@ -745,7 +721,8 @@ imp.show_inline_editor = function(el) {
     var url_for_options = td.attr("url_for_options");
     var old_value = editor.val();
     if ( ! old_value ) {
-	old_value = td.attr("selected_value");
+	    old_value = td.attr("selected_value");
+       
     }
 
     var issue_id = td.attr("issue_id");
@@ -754,7 +731,7 @@ imp.show_inline_editor = function(el) {
 
     var deactivate_select = function() {
 	imp.inline_editor_active = false;
-	editor_container.hide();
+    editor_container.hide();
 	readonly_value.show();
     };
 
@@ -788,19 +765,20 @@ imp.show_inline_editor = function(el) {
 					if(event.which === 13) {
 					    on_changed();
 					}
-					return false;
-				    });
-	editor.keyup( function(event) {
-			  event.stopImmediatePropagation();
-			  if(event.which === 27) {
-			      editor.val(old_value);
-			      deactivate_select();
-			  }
-			  if(event.which === 13) {
-			      on_changed();
-			  }
-			  return false;
-		      });
+		return false;
+	});
+	    editor.keyup( function(event) {
+			event.stopImmediatePropagation();
+			if(event.which === 27) {
+			    editor.val(old_value);
+			    deactivate_select();
+			}
+			if(event.which === 13) {
+			    on_changed();
+			}
+			return false;
+	    });
+
 	readonly_value.hide();
 	editor_container.show();
     };
