@@ -5764,8 +5764,9 @@ def on_external_calendar_event_change(request):
                         to_addresses=[user.email])
     except Exception, ex:
         logger.exception(ex)
+        logger.error("Caldav error: %s. %s %s %s %s. %s" % (ex, action_type, uid, davical_user_id, davical_path, request.POST))
         if caldav_event:
             logger.error(caldav_event.data)
-        queue_admin_email(subject="Caldav error", msg="Caldav error: %s. %s %s %s %s" % (ex, action_type, uid, davical_user_id, davical_path))
+        queue_admin_email(subject="Caldav error", msg="Caldav error: %s. %s %s %s %s. %s" % (ex, action_type, uid, davical_user_id, davical_path, request.POST))
             
     return HttpResponse("Done")

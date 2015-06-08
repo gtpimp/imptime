@@ -67,9 +67,11 @@ class CalDavHelper(object):
     def on_event_deleted(self, event):
         for user in event.event_users:
             calendar = self.calendar(user.username)
-            cal_event = calendar.event_by_uid(self._uid(event))
-            if cal_event is not None:
-                cal_event.delete()
+            try:
+                cal_event = calendar.event_by_uid(self._uid(event))
+            except error.NotFoundError:
+                return
+            cal_event.delete()
 
     def as_ical(self, event):
         return self._create_ical_string(event)

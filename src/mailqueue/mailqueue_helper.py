@@ -42,7 +42,7 @@ def queue_email(subject_content, text_content, html_content, to_addresses, from_
                 bcc_addresses=None, attachments=None):
 
     msg = MailerMessage(
-        subject=subject_content.replace("\n","").replace("\r","")[0:100], 
+        subject=str(subject_content.replace("\n","").replace("\r","")[0:100]), 
         content=text_content,
         html_content=html_content,
         to_address=",".join(to_addresses),
