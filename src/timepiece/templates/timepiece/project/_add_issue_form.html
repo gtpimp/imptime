@@ -9,7 +9,7 @@
   <form class="add_issue_form" method="POST" action="">
     {% csrf_token %}    
     {{ new_issue_form.non_field_errors }}
-    <div id="first" class="subject_class" required>
+    <div id="first" class="subject_class" onsubmit="return validateForm();">
     {{ new_issue_form.subject.label }} {{ new_issue_form.subject }} 
     </div>
     <div class="description_class">
@@ -52,14 +52,14 @@
 
 
 <script>
- var v = $("form").validate({
-    submitHandler: function() {
-        console.log('successful submit');
-        return false;
-    }
-});
+ function validateForm()
+ {
+     var title = $("subject_class").val();
+     if (title=="" || title==null) { } else {
+    	 alert("Please enter a subject!");
+     }
+     
+     return false;
+ }
 
-$('#first').blur(function(){
-   v.element('#first'); 
-});
 </script>

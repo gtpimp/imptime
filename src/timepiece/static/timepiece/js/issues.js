@@ -732,12 +732,13 @@ imp.clickable_assign_user_box = function(element, update_url, issue_id) {
 imp.show_inline_editor = function(el, args) {
 
     if ( imp.inline_editor_active ) {
-	return false;
+    return false;
     }
+
     imp.inline_editor_active = true;
 
     if ( ! args ) {
-	args = { blank_entry:true };
+	    args = { blank_entry:true };
     }
 
     var on_done = imp.loading("fetching options...");
