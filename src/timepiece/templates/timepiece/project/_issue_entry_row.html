@@ -57,7 +57,7 @@
     </div>
     
   </td>
-  <td class="feature_col" {% has_permission has_edit_issue_feature project.business %} onclick="return imp.show_inline_editor(this);" {% end_permission %} url_for_update="{% url 'update_issue_with_feature' %}" issue_id="{{issue.id}}" url_for_options="{% url 'business_features' business.id %}" selected_value="{{issue.feature.id}}" >
+  <td class="feature_col" {% has_permission has_edit_issue_feature project.business %} onclick="return imp.show_inline_editor(this);" style="z-index:100;" {% end_permission %} url_for_update="{% url 'update_issue_with_feature' %}" issue_id="{{issue.id}}" url_for_options="{% url 'business_features' business.id %}" selected_value="{{issue.feature.id}}" >
 
     <div class="styled-select">		     
       <div class="readonly_value"> 
