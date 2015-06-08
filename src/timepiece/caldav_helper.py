@@ -26,7 +26,7 @@ class CalDavHelper(object):
         return "i" + username
 
     def get_username_from_url(self, url):
-        return url.replace("//","").split("/")[2]
+        return url.replace("//","").split("/")[1]
 
     def update_imptime_event_from_caldav_event(self, caldav_event, imptime_event):
         vevent = caldav_event.instance.vevent

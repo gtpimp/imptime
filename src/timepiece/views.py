@@ -5720,6 +5720,7 @@ def on_external_calendar_event_change(request):
     davical_user_id = None
     davical_collection_id = None
     davical_path = None
+    caldav_event = None
     try:
         caldav = CalDavHelper()
         action_type = request.POST['put_action_type'] # exactly INSERT, UPDATE or DELETE
@@ -5731,8 +5732,7 @@ def on_external_calendar_event_change(request):
         try:
             user = User.objects.get(username=username)
         except User.DoesNotExist:
-            queue_admin_email("Caldav error, no user with username=%s. Caldav event uid=%s" % (username, uid))
-            return HttpResponse("Error")
+            raise Exception("Caldav error, no user with username=%s. Caldav event uid=%s" % (username, uid))
 
         if action_type == 'DELETE':
             imptime_event = timepiece.CalendarEvent.objects.get(caldav_uid=uid)
@@ -5744,7 +5744,10 @@ def on_external_calendar_event_change(request):
 
         elif action_type == "UPDATE":
             caldav_event = caldav.get_event(username, uid)
-            imptime_event = timepiece.CalendarEvent.objects.get(caldav_uid=uid)
+            try:
+                imptime_event = timepiece.CalendarEvent.objects.get(caldav_uid=uid)
+            except timepiece.CalendarEvent.DoesNotExist:
+                imptime_event = timepiece.CalendarEvent(user=user, caldav_uid=uid)
             caldav.update_imptime_event_from_caldav_event(caldav_event=caldav_event, imptime_event=imptime_event)
             queue_email(subject_content = "Event updated: %s" % imptime_event.description[0:30],
                         text_content = "Event updated by external calendar: %s\n\n%s" % (imptime_event, caldav.as_ical(imptime_event)),
@@ -5752,7 +5755,6 @@ def on_external_calendar_event_change(request):
                         to_addresses=[user.email])
 
         elif action_type == "INSERT":
-
             caldav_event = caldav.get_event(username, uid)
             imptime_event = timepiece.CalendarEvent(user=user, caldav_uid=uid)
             caldav.update_imptime_event_from_caldav_event(caldav_event=caldav_event, imptime_event=imptime_event)
@@ -5761,6 +5763,9 @@ def on_external_calendar_event_change(request):
                         html_content = ("Event created by external calendar: %s<br/><br/>%s" % (imptime_event, caldav.as_ical(imptime_event))).replace("\n", "<br/>"),
                         to_addresses=[user.email])
     except Exception, ex:
+        logger.exception(ex)
+        if caldav_event:
+            logger.error(caldav_event.data)
         queue_admin_email("Caldav error: %s. %s %s %s %s" % (ex, action_type, uid, davical_user_id, davical_path))
             
     return HttpResponse("Done")
