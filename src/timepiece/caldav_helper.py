@@ -28,7 +28,12 @@ class CalDavHelper(object):
     def on_event_saved(self, event):
         try:
             for user in event.event_users:
-                calendar = self.calendar(user.username)
+                try:
+                    calendar = self.calendar(user.username)
+                except Exception, ex:
+                    if "No calendars" in str(ex):
+                        logger.exception("User %s doesn't have a calendar, ignoring" % user.username)
+                        continue
                 try:
                     cal_event = calendar.event_by_uid(self._uid(event))
                     cal_event.delete()
