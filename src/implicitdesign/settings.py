@@ -11,6 +11,7 @@ LOG_FOLDER=os.path.join(PROJECT_HOME, "..", "..", 'logs')
 ADMINS = (
     ('Gareth Priede', 'gtp@implicitdesign.co.za'),
 )
+MAIL_ADMINS = [ "gtp@implicitdesign.co.za" ]
 
 MANAGERS = ADMINS
 

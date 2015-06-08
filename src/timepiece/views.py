@@ -5715,44 +5715,52 @@ def send_calendar_invite(request, event_id):
 def on_external_calendar_event_change(request):
     """ typically called from a caldav server to say that an event was changed by some external party, maybe a mobile phone calendar """
 
-    caldav = CalDavHelper()
-    action_type = request.POST['put_action_type'] # exactly INSERT, UPDATE or DELETE
-    uid = request.POST['uid'] # the UID value from the first non-VTIMEZONE component of the iCalendar data
-    davical_user_id = request.POST['user_no'] #- DAViCal's ID for the usr making the change.
-    davical_collection_id = request.POST['collection_id'] # DAViCal's ID for the collection containing the resource.
-    davical_path = request.POST['path'] # DAViCal's version of the path: everything after the 'caldav.php' in the URL.
-    username = caldav.get_username_from_url(davical_path)
+    action_type = None
+    uid = None
+    davical_user_id = None
+    davical_collection_id = None
+    davical_path = None
     try:
-        user = User.objects.get(username=username)
-    except User.DoesNotExist:
-        queue_admin_email("Caldav error, no user with username=%s. Caldav event uid=%s" % (username, uid))
-        return HttpResponse("Error")
+        caldav = CalDavHelper()
+        action_type = request.POST['put_action_type'] # exactly INSERT, UPDATE or DELETE
+        uid = request.POST['uid'] # the UID value from the first non-VTIMEZONE component of the iCalendar data
+        davical_user_id = request.POST['user_no'] #- DAViCal's ID for the usr making the change.
+        davical_collection_id = request.POST['collection_id'] # DAViCal's ID for the collection containing the resource.
+        davical_path = request.POST['path'] # DAViCal's version of the path: everything after the 'caldav.php' in the URL.
+        username = caldav.get_username_from_url(davical_path)
+        try:
+            user = User.objects.get(username=username)
+        except User.DoesNotExist:
+            queue_admin_email("Caldav error, no user with username=%s. Caldav event uid=%s" % (username, uid))
+            return HttpResponse("Error")
 
-    if action_type == 'DELETE':
-        imptime_event = timepiece.CalendarEvent.objects.get(caldav_uid=uid)
-        queue_email(subject_content = "Event deleted: %s" % imptime_event.description[0:30],
-                    text_content = "Event deleted by external calendar: %s\n\n%s" % (imptime_event, caldav.as_ical(imptime_event)),
-                    html_content = ("Event deleted by external calendar: %s<br/><br/>%s" % (imptime_event, caldav.as_ical(imptime_event))).replace("\n", "<br/>"),
-                    to_addresses=[user.email])
-        imptime_event.delete()
-        
-    elif action_type == "UPDATE":
-        caldav_event = caldav.get_event(username, uid)
-        imptime_event = timepiece.CalendarEvent.objects.get(caldav_uid=uid)
-        caldav.update_imptime_event_from_caldav_event(caldav_event=caldav_event, imptime_event=imptime_event)
-        queue_email(subject_content = "Event updated: %s" % imptime_event.description[0:30],
-                    text_content = "Event updated by external calendar: %s\n\n%s" % (imptime_event, caldav.as_ical(imptime_event)),
-                    html_content = ("Event updated by external calendar: %s<br/><br/>%s" % (imptime_event, caldav.as_ical(imptime_event))).replace("\n", "<br/>"),
-                    to_addresses=[user.email])
-        
-    elif action_type == "INSERT":
+        if action_type == 'DELETE':
+            imptime_event = timepiece.CalendarEvent.objects.get(caldav_uid=uid)
+            queue_email(subject_content = "Event deleted: %s" % imptime_event.description[0:30],
+                        text_content = "Event deleted by external calendar: %s\n\n%s" % (imptime_event, caldav.as_ical(imptime_event)),
+                        html_content = ("Event deleted by external calendar: %s<br/><br/>%s" % (imptime_event, caldav.as_ical(imptime_event))).replace("\n", "<br/>"),
+                        to_addresses=[user.email])
+            imptime_event.delete()
 
-        caldav_event = caldav.get_event(username, uid)
-        imptime_event = timepiece.CalendarEvent(user=user, caldav_uid=uid)
-        caldav.update_imptime_event_from_caldav_event(caldav_event=caldav_event, imptime_event=imptime_event)
-        queue_email(subject_content = "Event created: %s" % imptime_event.description[0:30],
-                    text_content = "Event created by external calendar: %s\n\n%s" % (imptime_event, caldav.as_ical(imptime_event)),
-                    html_content = ("Event created by external calendar: %s<br/><br/>%s" % (imptime_event, caldav.as_ical(imptime_event))).replace("\n", "<br/>"),
-                    to_addresses=[user.email])
-        
+        elif action_type == "UPDATE":
+            caldav_event = caldav.get_event(username, uid)
+            imptime_event = timepiece.CalendarEvent.objects.get(caldav_uid=uid)
+            caldav.update_imptime_event_from_caldav_event(caldav_event=caldav_event, imptime_event=imptime_event)
+            queue_email(subject_content = "Event updated: %s" % imptime_event.description[0:30],
+                        text_content = "Event updated by external calendar: %s\n\n%s" % (imptime_event, caldav.as_ical(imptime_event)),
+                        html_content = ("Event updated by external calendar: %s<br/><br/>%s" % (imptime_event, caldav.as_ical(imptime_event))).replace("\n", "<br/>"),
+                        to_addresses=[user.email])
+
+        elif action_type == "INSERT":
+
+            caldav_event = caldav.get_event(username, uid)
+            imptime_event = timepiece.CalendarEvent(user=user, caldav_uid=uid)
+            caldav.update_imptime_event_from_caldav_event(caldav_event=caldav_event, imptime_event=imptime_event)
+            queue_email(subject_content = "Event created: %s" % imptime_event.description[0:30],
+                        text_content = "Event created by external calendar: %s\n\n%s" % (imptime_event, caldav.as_ical(imptime_event)),
+                        html_content = ("Event created by external calendar: %s<br/><br/>%s" % (imptime_event, caldav.as_ical(imptime_event))).replace("\n", "<br/>"),
+                        to_addresses=[user.email])
+    except Exception, ex:
+        queue_admin_email("Caldav error: %s. %s %s %s %s" % (ex, action_type, uid, davical_user_id, davical_path))
+            
     return HttpResponse("Done")
