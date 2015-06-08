@@ -1,9 +1,9 @@
 import random
 import markdown
+from caldav_helper import CalDavHelper
 from django.contrib.humanize.templatetags.humanize import intcomma
 import urllib
 import api
-import dev_calendar
 from invoicing.models import Invoice, Quote, ClientInvoiceDetails
 from django.contrib.auth import login as django_login, load_backend
 from django.core.files.base import ContentFile
@@ -4996,6 +4996,7 @@ def _create_js_calendar_event(event):
              'business_id': event.business.id if event.business else None,
              'user_id': event.user.id,
              'description': event.description,
+             'send_invites_to': event.send_invites_to or '',
              'event_type': event.event_type,
              'color': event.get_colour(),
              'textColor': "#121212" if event.event_type == "meeting" else "#000000",
@@ -5695,3 +5696,17 @@ def _format_money(x):
     if not x:
         return ""
     return "R" + intcomma(int(x or 0))
+
+@login_required
+@csrf_exempt
+def send_calendar_invite(request, event_id):
+    event = timepiece.CalendarEvent.objects.get(pk=event_id)
+    try:
+        caldav = CalDavHelper()
+        caldav.send_invite(event)
+        return HttpResponse( json.dumps( {'status': 'ok' } ) )
+    except Exception, ex:
+        logger.exception(ex)
+        return HttpResponse( json.dumps( {'status': 'failed',
+                                          'error_msg': str(ex)} ) )
+    

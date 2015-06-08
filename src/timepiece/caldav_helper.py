@@ -1,0 +1,135 @@
+from datetime import datetime, timedelta
+from django.core.files.base import ContentFile
+import os
+from django.conf import settings
+import tempfile
+from django.core.files import File
+from caldav.davclient import DAVClient
+from mailqueue.mailqueue_helper import queue_email
+from caldav.objects import Principal, Calendar, Event, DAVObject, CalendarSet, FreeBusy
+
+class CalDavHelper(object):
+
+    # def init_for_user(self, username):
+    #     self.username = username
+    #     self.url = settings.CALDAV_URL.format(USERNAME=self.username)
+    #     self.client = DAVClient(url=self.url)
+    #     self.principal = self.client.principal()
+            
+    # def sync_to_caldav(self, username):
+    #     #calendars = principal.calendars()
+
+    # def get_calendar(self):
+    #     pass
+
+    def send_invite(self, event):
+        #from email import Encoders
+        #import os,datetime
+
+        CRLF = "\r\n"
+        invitees = (event.send_invites_to or "").split(",")
+        organizer = "ORGANIZER;CN=organiser:mailto:first"+CRLF+" @gmail.com"
+
+        ddtstart = event.start
+        dur = timedelta(hours = int(event.hours))
+        dtend = ddtstart + dur
+        dtstamp = datetime.now().strftime("%Y%m%dT%H%M%SZ")
+        dtstart = ddtstart.strftime("%Y%m%dT%H%M%SZ")
+        dtend = dtend.strftime("%Y%m%dT%H%M%SZ")
+
+        description = "DESCRIPTION: %s"%event.description +CRLF
+        attendee = ""
+        for att in invitees:
+            attendee += "ATTENDEE;CUTYPE=INDIVIDUAL;ROLE=REQ-    PARTICIPANT;PARTSTAT=ACCEPTED;RSVP=TRUE"+CRLF+" ;CN="+att+";X-NUM-GUESTS=0:"+CRLF+" mailto:"+att+CRLF
+        ical = "BEGIN:VCALENDAR"+CRLF+"PRODID:imptime"+CRLF+"VERSION:2.0"+CRLF+"CALSCALE:GREGORIAN"+CRLF
+        ical+= "METHOD:REQUEST"+CRLF+"BEGIN:VEVENT"+CRLF+"DTSTART:"+dtstart+CRLF+"DTEND:"+dtend+CRLF+"DTSTAMP:"+dtstamp+CRLF+organizer+CRLF
+        ical+= ("UID:%s"%event.id)+dtstamp+CRLF
+        ical+= attendee+"CREATED:"+dtstamp+CRLF+description+"LAST-MODIFIED:"+dtstamp+CRLF+"LOCATION:"+CRLF+"SEQUENCE:0"+CRLF+"STATUS:UNKNOWN"+CRLF
+        ical+= ("SUMMARY:%s "%event.description[0:80])+ddtstart.strftime("%Y%m%d @ %H:%M")+CRLF+"TRANSP:OPAQUE"+CRLF+"END:VEVENT"+CRLF+"END:VCALENDAR"+CRLF
+
+        fname = os.path.join(settings.CALDAV_TEMP_FOLDER, "invite_%d.ics" % event.id)
+        open(fname, "w").write(ical)
+        queue_email(subject_content="Invite on %s : %s" % (event.start.strftime("%Y %m %d %H %M"),event.description[0:20]),
+                    from_address=event.user.email,
+                    text_content=ical,
+                    html_content=ical,
+                    to_addresses=invitees,
+                    attachments=[ (File(open(fname)), "invite.ics"), ])
+                
+        # queue_email
+        # eml_body = event.description
+        # eml_body_bin = event.description
+        # msg = MIMEMultipart('mixed')
+        # msg['Reply-To']=fro
+        # msg['Date'] = formatdate(localtime=True)
+        # msg['Subject'] = "pyICSParser invite"+dtstart
+        # msg['From'] = fro
+        # msg['To'] = ",".join(attendees)
+
+        # part_email = MIMEText(eml_body,"html")
+        # part_cal = MIMEText(ical,'calendar;method=REQUEST')
+
+        # msgAlternative = MIMEMultipart('alternative')
+        # msg.attach(msgAlternative)
+
+        # ical_atch = MIMEBase('application/ics',' ;name="%s"'%("invite.ics"))
+        # ical_atch.set_payload(ical)
+        # Encoders.encode_base64(ical_atch)
+        # ical_atch.add_header('Content-Disposition', 'attachment; filename="%s"'%("invite.ics"))
+
+        # eml_atch = MIMEBase('text/plain','')
+        # Encoders.encode_base64(eml_atch)
+        # eml_atch.add_header('Content-Transfer-Encoding', "")
+
+        # msgAlternative.attach(part_email)
+        # msgAlternative.attach(part_cal)
+
+        # mailServer = smtplib.SMTP('smtp.gmail.com', 587)
+        # mailServer.ehlo()
+        # mailServer.starttls()
+        # mailServer.ehlo()
+        # mailServer.login(login, password)
+        # mailServer.sendmail(fro, attendees, msg.as_string())
+        # mailServer.close()
+
+
+        
+# import caldav
+# from caldav.elements import dav, cdav
+
+# # Caldav url
+# url = "https://user:pass@hostname/caldav.php/"
+
+# vcal = """BEGIN:VCALENDAR
+# VERSION:2.0
+# PRODID:-//Example Corp.//CalDAV Client//EN
+# BEGIN:VEVENT
+# UID:1234567890
+# DTSTAMP:20100510T182145Z
+# DTSTART:20100512T170000Z
+# DTEND:20100512T180000Z
+# SUMMARY:This is an event
+# END:VEVENT
+# END:VCALENDAR
+# """
+
+# client = caldav.DAVClient(url)
+# principal = client.principal()
+# calendars = principal.calendars()
+# if len(calendars) > 0:
+#     calendar = calendars[0]
+#     print "Using calendar", calendar
+
+#     print "Renaming"
+#     calendar.set_properties([dav.DisplayName("Test calendar"),])
+#     print calendar.get_properties([dav.DisplayName(),])
+
+#     event = calendar.add_event(vcal)
+#     print "Event", event, "created"
+
+#     print "Looking for events in 2010-05"
+#     results = calendar.date_search(
+#         datetime(2010, 5, 1), datetime(2010, 6, 1))
+
+#     for event in results:
+#         print "Found", event

@@ -250,6 +250,7 @@ INSTALLED_APPS = (
     'djcelery',
     'colorful',
     'endless_pagination',
+    'mailqueue',
 
     'timepiece',
     'south',
@@ -277,6 +278,8 @@ CELERYBEAT_CHDIR=PROJECT_HOME
 CELERYBEAT=PROJECT_HOME+"manage.py celerybeat"
 CELERYBEAT_OPTS="--schedule=/var/run/celerybeat-schedule"
 
+CALDAV_URL="http://localhost:5232/{USERNAME}/calendar.ics/"
+
 EMACSIMPORTER_TIMESHEET_ROOT_FOLDER='/home/gtp/id/timesheets'
 EMACSIMPORTER_NUM_HISTORICAL_DAYS=60
 EMACSIMPORTER_EMAIL_FROM='gtp@implicitdesign.co.za'
@@ -289,6 +292,7 @@ EMACS_USERS_TO_PROCESS = ["test", ]
 EMACS_ADMIN_USER_EMAILS = ["gtp@implicitdesign.co.za",]
 
 PDF_TEMP_FOLDER = "/tmp"
+CALDAV_TEMP_FOLDER = "/tmp"
 
 INVOICE_DETAILS={'name':'ImplicitDesign',
                  'address1':'Unit 4, Tramber Place',

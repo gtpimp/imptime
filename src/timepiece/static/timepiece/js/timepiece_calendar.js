@@ -16,6 +16,7 @@ var t_calendar = ( function() {
 			       calendar_event.end = new_event_data.end;
 			       calendar_event.title = new_event_data.title;
 			       calendar_event.description = new_event_data.description;
+                               calendar_event.send_invites_to = new_event_data.send_invites_to;
 			       calendar_event.business_id = new_event_data.business_id;
 			       calendar_event.user_id = new_event_data.user_id;
 			       calendar_event.event_type = new_event_data.event_type;
@@ -58,6 +59,32 @@ var t_calendar = ( function() {
 			       $(".event_create_form").hide();
 			       $(".event_edit_form").hide();
 			   },
+
+                           send_invites: function() {
+                               var event_id = $(".event_edit_form").find("[name=event_id]").val();
+
+                               var on_done = (function() {
+				   var loading_done = imp.loading("Sending invites...");
+				   return function() {
+				       loading_done();
+                                       alert("Invites sent");
+				   };
+			       }());
+
+                               var url = t_config.send_invite_calendar_event_url.replace("999999", event_id);
+                               $.ajax({type:"POST",
+				       url: url,
+				       dataType:"json",
+				       success: function(data) {
+					   on_done();
+				       },
+				       error: function(err) {
+					   on_done();
+					   alert("Save failed");
+				       }
+				      });
+  
+                           },
 
 			   // refresh_sprint_schedules: function() {
 
@@ -232,6 +259,7 @@ $(document).ready(function() {
 			  form.find("[name=business]").val(calEvent.business_id);
 			  form.find("[name=hours]").val((calEvent.end-calEvent.start)/(60*60*1000));
 			  form.find("[name=description]").val(calEvent.description);
+                          form.find("[name=send_invites_to]").val(calEvent.send_invites_to);
 			  form.find("[name=event_type]").val(calEvent.event_type);
 			  form.find("[name=status]").val(calEvent.status);
 			  form.find("[name=event_id]").val(calEvent.id);

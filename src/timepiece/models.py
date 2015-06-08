@@ -3316,6 +3316,7 @@ class CalendarEvent(models.Model):
                                    choices = EVENT_TYPES )
     status = models.CharField( null=False, blank=False, max_length=50, default='ready',
                                choices = EVENT_STATUSES )
+    send_invites_to = models.TextField(null=True, blank=True) # comma separated list of email addresses
 
     @property
     def end(self):
