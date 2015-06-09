@@ -5701,10 +5701,11 @@ def _format_money(x):
 @login_required
 @csrf_exempt
 def send_calendar_invite(request, event_id):
+    send_invites_to = request.POST['send_invites_to']
     event = timepiece.CalendarEvent.objects.get(pk=event_id)
     try:
         caldav = CalDavHelper()
-        caldav.send_invite(event)
+        caldav.send_invite(event, send_invites_to)
         return HttpResponse( json.dumps( {'status': 'ok' } ) )
     except Exception, ex:
         logger.exception(ex)

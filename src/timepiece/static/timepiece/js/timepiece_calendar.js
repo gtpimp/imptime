@@ -62,6 +62,7 @@ var t_calendar = ( function() {
 
                            send_invites: function() {
                                var event_id = $(".event_edit_form").find("[name=event_id]").val();
+                               var send_invites_to = $(".event_edit_form").find("[name=send_invites_to]").val();
 
                                var on_done = (function() {
 				   var loading_done = imp.loading("Sending invites...");
@@ -74,6 +75,7 @@ var t_calendar = ( function() {
                                var url = t_config.send_invite_calendar_event_url.replace("999999", event_id);
                                $.ajax({type:"POST",
 				       url: url,
+                                       data: { 'send_invites_to' : send_invites_to },
 				       dataType:"json",
 				       success: function(data) {
 					   on_done();

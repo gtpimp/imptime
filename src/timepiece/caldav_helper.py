@@ -102,12 +102,13 @@ class CalDavHelper(object):
     def _uid(self, event):
         return event.caldav_uid or ("imptime%s" % event.id)
 
-    def send_invite(self, event):
+    def send_invite(self, event, send_invites_to=None):
+        send_invites_to = send_invites_to or event.send_invites_to
         ical = self._create_ical_string(event)
-        invitees = (event.send_invites_to or "").split(",")
+        invitees = (send_invites_to or "").split(",")
         invitees += [event.user.email]
         content = """
-        You are invited to a {EVENT_TYPE}, at {START_TIME} for {HOURS} hours
+        You are invited to an event of type {EVENT_TYPE}, starting at {START_TIME}, for {HOURS} hours
 
         {DESCRIPTION}
         """
