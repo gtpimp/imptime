@@ -280,6 +280,7 @@ CELERYBEAT=PROJECT_HOME+"manage.py celerybeat"
 CELERYBEAT_OPTS="--schedule=/var/run/celerybeat-schedule"
 
 CALDAV_URL="http://localhost:5232/{USERNAME}/calendar.ics/"
+CALDAV_INCOMING_CALDAV_CHANGES_FOLDER=os.path.join(PROJECT_HOME, "..", "..", 'incoming_caldav_changes')
 
 EMACSIMPORTER_TIMESHEET_ROOT_FOLDER='/home/gtp/id/timesheets'
 EMACSIMPORTER_NUM_HISTORICAL_DAYS=60

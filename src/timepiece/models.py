@@ -3370,7 +3370,7 @@ class CalendarEvent(models.Model):
         return c
 
     def __unicode__(self):
-        return "Starts as %s, ends at %s \n%s " % (self.start.strftime('%d %B %Y %H:%M'), self.end.strftime('%d %B %Y %H:%M'), self.description)
+        return "Starts at %s, ends at %s \n%s " % (self.start.strftime('%d %B %Y %H:%M'), self.end.strftime('%d %B %Y %H:%M'), self.description)
     
 class BaseChecklist(models.Model):
     class Meta:
