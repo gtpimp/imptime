@@ -14,7 +14,24 @@ class Command(BaseCommand):
 
     args = "None"
     help = "Fetch all caldav changes from external calendars and import them"
-    
+
+    """ this class expects changes to be written out using a davical function something like this:
+
+        function log_caldav_action($put_action_type, $uid, $user_no, $collection_id, $path) {
+
+          $filename = "/home/timesheet/incoming_caldav_changes/change_".time().".csv";
+          while( file_exists( $filename ) ) {
+            $filename = $filename."x";
+          }
+          $f = fopen( $filename, "w" );
+          $line = $put_action_type."|".$uid."|".$user_no."|".$collection_id."|".$path;
+          fwrite( $f, $line );
+          fclose($f);
+
+        }
+
+    """
+        
     def handle(self, *args, **kwargs):
 
         for filename in sorted(os.listdir(settings.CALDAV_INCOMING_CALDAV_CHANGES_FOLDER)):
