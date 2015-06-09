@@ -5744,7 +5744,7 @@ def on_external_calendar_event_change(request):
                         text_content = "Event deleted by external calendar: %s\n\n%s" % (imptime_event, caldav.as_ical(imptime_event)),
                         html_content = ("Event deleted by external calendar: %s<br/><br/>%s" % (imptime_event, caldav.as_ical(imptime_event))).replace("\n", "<br/>"),
                         to_addresses=[user.email])
-            imptime_event.delete()
+            imptime_event.delete(update_caldav=False)
 
         elif action_type == "UPDATE":
             caldav_event = caldav.get_event(username, uid)

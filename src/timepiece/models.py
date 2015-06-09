@@ -3320,15 +3320,17 @@ class CalendarEvent(models.Model):
     send_invites_to = models.TextField(null=True, blank=True) # comma separated list of email addresses
     caldav_uid = models.CharField(null=True, max_length=100, blank=True)
 
-    def save(self, *args, **kwargs):
-        super(CalendarEvent, self).save(*args, **kwargs)
+    def save(self, update_caldav=True, *args, **kwargs):
         if not self.caldav_uid:
             self.caldav_uid = "imptime%s" % str(self.id)
-        CalDavHelper().on_event_saved(self)
+        super(CalendarEvent, self).save(*args, **kwargs)
+        if update_caldav:
+            CalDavHelper().on_event_saved(self)
 
-    def delete(self, *args, **kwargs):
+    def delete(self, update_caldav=True, *args, **kwargs):
         CalDavHelper().on_event_deleted(self)
-        super(CalendarEvent, self).delete(*args, **kwargs)
+        if update_caldav:
+            super(CalendarEvent, self).delete(*args, **kwargs)
 
     @property
     def event_users(self):

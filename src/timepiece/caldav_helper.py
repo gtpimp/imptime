@@ -39,7 +39,15 @@ class CalDavHelper(object):
             imptime_event.description = vevent.summary.value
         imptime_event.event_type = 'meeting'
         imptime_event.status = vevent.status.value
-        imptime_event.save()
+        imptime_event.save(update_caldav=False)
+
+    def update_caldav_event_from_imptime_event(self, caldav_event, imptime_event):
+        vevent = caldav_event.instance.vevent
+        vevent.dtstart.value = imptime_event.start
+        vevent.dtend.value = imptime_event.end
+        vevent.description.value = imptime_event.description
+        vevent.status.value = imptime_event.status
+        caldav_event.save()
         
     def get_event(self, username, uid):
         calendar = self.calendar(username)
@@ -48,9 +56,9 @@ class CalDavHelper(object):
         except error.NotFoundError:
             return None
         
-    def on_event_saved(self, event):
+    def on_event_saved(self, imptime_event):
         try:
-            for user in event.event_users:
+            for user in imptime_event.event_users:
                 try:
                     calendar = self.calendar(user.username)
                 except Exception, ex:
@@ -58,26 +66,26 @@ class CalDavHelper(object):
                         logger.exception("User %s doesn't have a calendar, ignoring" % user.username)
                         continue
                 try:
-                    cal_event = calendar.event_by_uid(self._uid(event))
-                    cal_event.delete()
+                    caldav_event = calendar.event_by_uid(self._uid(imptime_event))
+                    self.update_caldav_event_from_imptime_event(caldav_event, imptime_event)
                 except error.NotFoundError:
-                    pass
-                calendar.add_event(self._create_ical_string(event))
+                    calendar.add_event(self._create_ical_string(imptime_event))
+                    
         except Exception, ex:
             logger.exception(ex)
             raise
 
-    def on_event_deleted(self, event):
-        for user in event.event_users:
+    def on_event_deleted(self, imptime_event):
+        for user in imptime_event.event_users:
             calendar = self.calendar(user.username)
             try:
-                cal_event = calendar.event_by_uid(self._uid(event))
+                caldav_event = calendar.event_by_uid(self._uid(imptime_event))
             except error.NotFoundError:
                 return
-            cal_event.delete()
+            caldav_event.delete()
 
-    def as_ical(self, event):
-        return self._create_ical_string(event)
+    def as_ical(self, imptime_event):
+        return self._create_ical_string(imptime_event)
                             
     def _create_ical_string(self, event):
         CRLF = "\r\n"
