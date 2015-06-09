@@ -43,7 +43,10 @@ class CalDavHelper(object):
         
     def get_event(self, username, uid):
         calendar = self.calendar(username)
-        return calendar.event_by_uid(uid)
+        try:
+            return calendar.event_by_uid(uid)
+        except error.NotFoundError:
+            return None
         
     def on_event_saved(self, event):
         try:
