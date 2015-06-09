@@ -95,19 +95,53 @@ class CalDavHelper(object):
         ddtstart = event.start
         dur = timedelta(hours = int(event.hours))
         dtend = ddtstart + dur
-        dtstamp = datetime.now().strftime("%Y%m%dT%H%M%SZ")
-        dtstart = ddtstart.strftime("%Y%m%dT%H%M%SZ")
-        dtend = dtend.strftime("%Y%m%dT%H%M%SZ")
+        dtstamp = datetime.now().strftime("%Y%m%dT%H%M%S")
+        dtstart = ddtstart.strftime("%Y%m%dT%H%M%S")
+        dtend = dtend.strftime("%Y%m%dT%H%M%S")
 
         description = "DESCRIPTION: %s"%event.description +CRLF
         attendee = ""
         for att in invitees:
             attendee += "ATTENDEE;CUTYPE=INDIVIDUAL;ROLE=REQ-    PARTICIPANT;PARTSTAT=ACCEPTED;RSVP=TRUE"+CRLF+" ;CN="+att+";X-NUM-GUESTS=0:"+CRLF+" mailto:"+att+CRLF
         ical = "BEGIN:VCALENDAR"+CRLF+"PRODID:imptime"+CRLF+"VERSION:2.0"+CRLF+"CALSCALE:GREGORIAN"+CRLF
-        ical+= "METHOD:REQUEST"+CRLF+"BEGIN:VEVENT"+CRLF+"DTSTART:"+dtstart+CRLF+"DTEND:"+dtend+CRLF+"DTSTAMP:"+dtstamp+CRLF+organizer+CRLF
+        ical += "METHOD:REQUEST"+CRLF
+        ical += "BEGIN:VTIMEZONE"+CRLF+\
+                "TZID:Africa/Johannesburg"+CRLF+\
+                "X-LIC-LOCATION:Africa/Johannesburg"+CRLF+\
+                "BEGIN:STANDARD"+CRLF+\
+                "DTSTART:18920208T000000"+CRLF+\
+                "RDATE;VALUE=DATE-TIME:18920208T000000"+CRLF+\
+                "TZNAME:SAST"+CRLF+\
+                "TZOFFSETFROM:+0152"+CRLF+\
+                "TZOFFSETTO:+0130"+CRLF+\
+                "END:STANDARD"+CRLF+\
+                "BEGIN:STANDARD"+CRLF+\
+                "DTSTART:19030301T000000"+CRLF+\
+                "RDATE;VALUE=DATE-TIME:19030301T000000"+CRLF+\
+                "TZNAME:SAST"+CRLF+\
+                "TZOFFSETFROM:+0130"+CRLF+\
+                "TZOFFSETTO:+0200"+CRLF+\
+                "END:STANDARD"+CRLF+\
+                "BEGIN:DAYLIGHT"+CRLF+\
+                "DTSTART:19420920T020000"+CRLF+\
+                "RRULE:FREQ=YEARLY;UNTIL=19430919T000000Z;BYDAY=3SU;BYMONTH=9"+CRLF+\
+                "TZNAME:SAST"+CRLF+\
+                "TZOFFSETFROM:+0200"+CRLF+\
+                "TZOFFSETTO:+0300"+CRLF+\
+                "END:DAYLIGHT"+CRLF+\
+                "BEGIN:STANDARD"+CRLF+\
+                "DTSTART:19430321T020000"+CRLF+\
+                "RRULE:FREQ=YEARLY;UNTIL=19440318T230000Z;BYDAY=3SU;BYMONTH=3"+CRLF+\
+                "TZNAME:SAST"+CRLF+\
+                "TZOFFSETFROM:+0300"+CRLF+\
+                "TZOFFSETTO:+0200"+CRLF+\
+                "END:STANDARD"+CRLF+\
+                "END:VTIMEZONE"+CRLF
+
+        ical += "BEGIN:VEVENT"+CRLF+"DTSTART;TZID=Africa/Johannesburg:"+dtstart+CRLF+"DTEND;TZID=Africa/Johannesburg:"+dtend+CRLF+"DTSTAMP:"+dtstamp+CRLF+organizer+CRLF
         ical+= ("UID:%s"%self._uid(event))+CRLF
         ical+= attendee+"CREATED:"+dtstamp+CRLF+description+"LAST-MODIFIED:"+dtstamp+CRLF+"LOCATION:"+CRLF+"SEQUENCE:0"+CRLF+"STATUS:UNKNOWN"+CRLF
-        ical+= ("SUMMARY:%s "%event.description[0:80])+ddtstart.strftime("%Y%m%d @ %H:%M")+CRLF+"TRANSP:OPAQUE"+CRLF+"END:VEVENT"+CRLF+"END:VCALENDAR"+CRLF
+        ical+= ("SUMMARY:%s "%event.description[0:80])+CRLF+"TRANSP:OPAQUE"+CRLF+"END:VEVENT"+CRLF+"END:VCALENDAR"+CRLF
         return ical
 
     def _uid(self, event):
