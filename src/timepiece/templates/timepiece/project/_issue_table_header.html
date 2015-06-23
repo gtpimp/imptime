@@ -25,14 +25,14 @@
 		{% has_permission has_see_other_user_points project.business %}
                   {% with issues_forms.forms|first as first_form %}
 		    {% for user, per_user in first_form.instance.representation.per_user.items %}
-  	                <th class="estimates_cell">
+  	                <th data-username="{{ user.username }}" class="estimates_cell">
                          {{ user.username }}
 		        </th>
 		    {% endfor %}
 		  {% endwith %}
 
                   {% for user in users_with_time_but_no_estimates_in_this_project %}
-                    <th  class="estimates_cell">{{ user }}</th>
+                    <th data-username="{{ user.username }}" class="estimates_cell">{{ user }}</th>
                   {% endfor %}
 		  
 		{% end_permission %}
