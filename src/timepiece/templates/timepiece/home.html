@@ -23,7 +23,7 @@
        <p>
        <a class="btn btn-info" href="{% url 'list_projects' %}">Project list</a>
        </p>
-       {% if perms.timepiece.quick_clocker %}
+       {% if perms.timepiece.can_clock_in %}
        <p>
        <a class="btn btn-info" href="{% url 'quick_clocker' %}">Quick clocker</a>
        </p>
