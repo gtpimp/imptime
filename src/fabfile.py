@@ -70,12 +70,8 @@ def deploy_staging(git_origin, branch):
     print 'Deploying - ', env.base_dir
     release(env.base_dir, git_origin, branch)
     with cd(env.base_dir):
-        print('Reloading nginx config')
-        run('sudo service nginx reload')
         print('Reloading apache2 config')
         run('sudo service apache2 reload')
-        print('Killing gunicorn')
-        run('sudo killall -HUP gunicorn')
 
 def release(dirpath, git_origin, branch):
     with cd(dirpath):
