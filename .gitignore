@@ -5,6 +5,7 @@ venv
 src/*.pid
 *.log
 logs
+incoming_caldav_changes
 src/implicitdesign/local_settings.py
 src/static_collected
 src/implicitdesign/media/unknown_redmine_entries
@@ -30,3 +31,4 @@ db_backups
 src/implicitdesign/media/project_documents
 scripts/old_imports
 src/implicitdesign/media/
+static/

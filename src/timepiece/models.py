@@ -2,6 +2,7 @@ import datetime
 from dateutil.relativedelta import relativedelta
 import api
 import calendar
+from caldav_helper import CalDavHelper
 import uuid
 from colorful.fields import RGBColorField
 from interface_plugin import get_interface_plugin
@@ -3303,8 +3304,10 @@ class BusinessDocument(models.Model):
 
 class CalendarEvent(models.Model):
 
-    EVENT_TYPES = ( ('deadline','Deadline'),('leave','Leave'),('meeting', 'Meeting'),('office_closed', 'Office Closed'), ('personal', 'Personal'),('planned', 'Planned'), ('sickday', 'Sick day'))
-    EVENT_STATUSES = (('cancelled', 'Cancelled'),  ('done', 'Done'),('ready', 'Ready'))
+    EVENT_TYPES = ( ('planned', 'Planned'), ('meeting', 'Meeting'), ('leave', 'Leave'), ('sickday', 'Sick day'),
+					('office_closed', 'Office Closed'), ('personal', 'Personal'),
+                    ('deadline', 'Deadline') )
+    EVENT_STATUSES = ( ('ready', 'Ready'), ('done', 'Done'), ('cancelled', 'Cancelled') )
 
     user = models.ForeignKey(User, blank=False, null=False, db_index=True)
     business = models.ForeignKey(Business, blank=True, null=True, db_index=True, related_name='calendar_events')
@@ -3315,9 +3318,32 @@ class CalendarEvent(models.Model):
                                    choices = EVENT_TYPES )
     status = models.CharField( null=False, blank=False, max_length=50, default='ready',
                                choices = EVENT_STATUSES )
-    class Meta:
-        ordering = ['user']
-        
+    send_invites_to = models.TextField(null=True, blank=True) # comma separated list of email addresses
+    caldav_uid = models.CharField(null=True, max_length=100, blank=True)
+
+    def save(self, update_caldav=True, *args, **kwargs):
+        if not self.caldav_uid and self.id:
+            self.caldav_uid = "imptime%s" % str(self.id)
+        super(CalendarEvent, self).save(*args, **kwargs)
+        if update_caldav:
+            CalDavHelper().on_event_saved(self)
+
+    def delete(self, update_caldav=True, *args, **kwargs):
+        CalDavHelper().on_event_deleted(self)
+        if update_caldav:
+            super(CalendarEvent, self).delete(*args, **kwargs)
+
+    @property
+    def event_users(self):
+        users = set()
+        users.add(self.user)
+        if self.send_invites_to:
+            for email in self.send_invites_to.split(","):
+                user = User.objects.filter(email=email.strip()).first()
+                if user:
+                    users.add(user)
+        return users
+            
     @property
     def end(self):
         return self.start + datetime.timedelta(hours=float(self.hours))
@@ -3344,6 +3370,9 @@ class CalendarEvent(models.Model):
             c = "#"+hex(c_int)[2:]
         return c
 
+    def __unicode__(self):
+        return "Starts at %s, ends at %s \n%s " % (self.start.strftime('%d %B %Y %H:%M'), self.end.strftime('%d %B %Y %H:%M'), self.description)
+    
 class BaseChecklist(models.Model):
     class Meta:
         abstract=True

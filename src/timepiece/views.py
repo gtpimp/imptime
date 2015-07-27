@@ -1,9 +1,10 @@
 import random
 import markdown
+from mailqueue.mailqueue_helper import queue_email, queue_admin_email
+from caldav_helper import CalDavHelper
 from django.contrib.humanize.templatetags.humanize import intcomma
 import urllib
 import api
-import dev_calendar
 from invoicing.models import Invoice, Quote, ClientInvoiceDetails
 from django.contrib.auth import login as django_login, load_backend
 from django.core.files.base import ContentFile
@@ -3157,7 +3158,11 @@ def delete_issue(request, project_id, template="", context=None):
 
 def _augment_issue_data(issue, current_user, users_allowed_to_estimate_on_business):
 
-    #actual_billable_cost_of_issue = float(issue.billable)
+    # always show logged in user first
+    if current_user in users_allowed_to_estimate_on_business:
+        users_allowed_to_estimate_on_business.remove(current_user)
+        users_allowed_to_estimate_on_business.insert(0, current_user)
+
     for user in users_allowed_to_estimate_on_business:
 
         per_user_issue_data = {}
@@ -5016,6 +5021,7 @@ def _create_js_calendar_event(event):
              'business_id': event.business.id if event.business else None,
              'user_id': event.user.id,
              'description': event.description,
+             'send_invites_to': event.send_invites_to or '',
              'event_type': event.event_type,
              'color': event.get_colour(),
              'textColor': "#121212" if event.event_type == "meeting" else "#000000",
@@ -5715,3 +5721,18 @@ def _format_money(x):
     if not x:
         return ""
     return "R" + intcomma(int(x or 0))
+
+@login_required
+@csrf_exempt
+def send_calendar_invite(request, event_id):
+    send_invites_to = request.POST['send_invites_to']
+    event = timepiece.CalendarEvent.objects.get(pk=event_id)
+    try:
+        caldav = CalDavHelper()
+        caldav.send_invite(event, send_invites_to)
+        return HttpResponse( json.dumps( {'status': 'ok' } ) )
+    except Exception, ex:
+        logger.exception(ex)
+        return HttpResponse( json.dumps( {'status': 'failed',
+                                          'error_msg': str(ex)} ) )
+

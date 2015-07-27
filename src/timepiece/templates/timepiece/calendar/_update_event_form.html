@@ -10,7 +10,7 @@
 	    <h3>Start</h3>
 	</div>
 	<div class="col-md-d">
-{{update_form.start}}
+          {{update_form.start}}
 	</div>
     </div>
 
@@ -70,12 +70,23 @@
       </div>
     </div>
 
+    <div class='form-group{% if form_new_event.errors.send_invites_to %} has-error{%endif%}'>
+      <div class="col-md-6">
+        <h3>Send invites to (comma separated list of email addresses)</h3>
+      </div>
+      <div class="col-md-6">
+        {{ form_new_event.send_invites_to }}
+      </div>
+    </div>
+
+
     <div class='form-group'>
       <div class="col-md-12">
         <input class="btn btn-primary event_edit_button" type="submit" value="Save" onclick="t_calendar.update_event(this); return false;" />
         <input class="btn btn-secondary" type="submit" value="Cancel" onclick="$(this).parents('form').hide(); return false;" />
         <input class="btn btn-warning event_edit_button" type="submit" value="Delete" onclick="t_calendar.delete_event(this); return false;" />
         <input class="btn btn-secondary" type="submit" value="View day" onclick="t_calendar.switch_to_day_view(); return false;" />
+        <input class="btn btn-secondary" type="submit" value="Send invites" onclick="t_calendar.send_invites(); return false;" />
         <div class="edit_msg tip"></div>
       </div>
     </div>

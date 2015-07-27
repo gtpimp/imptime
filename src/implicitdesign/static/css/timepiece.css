@@ -10648,3 +10648,7 @@ ul.checklist_items {
 .scheduler .perfect_schedule_msg {
     color: #00bb00;
 }
+
+.estimates_cell.filtered {
+    color: #00bb00;
+}

@@ -203,8 +203,35 @@ imp.on_issue_rows_loaded = function(issue_row_container) {
 								  });
     imp.refresh_show_numbers();
     imp.highlight_issue();
-    
     imp.set_issue_checkbox_hooks(issue_row_container);
+    imp.set_assigned_by_clickable(issue_row_container);
+};
+
+imp.set_assigned_by_clickable = function(issue_row_container) { 
+    var currently_filtered_by;
+    issue_row_container.find('th.estimates_cell').click(function() {
+	var username = $(this).data('username');
+	if (!username)
+	{
+	    return;
+	}
+	issue_row_container.find('th.estimates_cell').removeClass('filtered');
+	if (currently_filtered_by == username)
+	{
+	    issue_row_container.find('.issue_instance_row').show();
+	    currently_filtered_by = null;
+	} else {
+	    imp.toggle_issues_for_user(issue_row_container, username);
+	    $(this).addClass('filtered');
+	    currently_filtered_by = username;
+	}
+    });
+};
+
+imp.toggle_issues_for_user = function (issue_row_container, username)
+{
+    issue_row_container.find(".issue_instance_row[assigned_to!='" + username + "']").hide();
+    issue_row_container.find(".issue_instance_row[assigned_to='" + username + "']").show();
 };
 
 imp.toggle_card_menu = function (event) {
@@ -419,6 +446,10 @@ imp.on_clear_adhoc_issue = function(el, issue_id, url) {
            });
 };
 
+imp.show_assigned_issues = function() {
+    alert('what');
+};
+
 imp.on_document_ready = function() {
 
     var project_sort_url = $(".project_list").attr("project_sort_url");
@@ -444,7 +475,12 @@ imp.on_document_ready = function() {
    	  div_sibling.show();
 	  
     });
+
+    $('.estimates_cell').click(function() {
+	imp.show_assigned_issues($(this).data('username'));
+    });
 };
 
 $(document).ready(imp.on_document_ready);
+
 
