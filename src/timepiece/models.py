@@ -805,7 +805,9 @@ class Project(models.Model):
                 return Rate.objects.create(project=self, user=user)
             return None
         except Rate.MultipleObjectsReturned:
-            rate = Rate.objects.filter(project=self, user=user).order_by("user__id")[0]
+            qs = Rate.objects.filter(project=self, user=user).order_by("user__id")
+            rate = qs.first()
+            qs.exclude(pk=rate.id).delete()
             return rate
 
     def __init__(self, *args, **kwargs):
@@ -868,41 +870,48 @@ class Project(models.Model):
         if not self.id and Project.objects.filter(code=self.code,business=self.business).count()>0:
             raise Exception("A Project with code %s already exists" % self.code)
 
+        new_project = self.id is None
+            
         super(Project, self).save(*args, **kwargs)
 
-        # Add all users from other projects in this business
+        if new_project:
+            self._sync_from_previous_project()
+
+    @property
+    def previous_project(self):
+        qs = self.business.get_ordered_projects().exclude(id=self.id)
+        project = qs.exclude(status2='closed').first()
+        if not project:
+            project = qs.first()
+        return project
+            
+    def _sync_from_previous_project(self):
+        """ Add all users from other projects in this business """
+
         users = User.objects.filter(user_projects__business=self.business).distinct()
         for user in users:
             ProjectRelationship.objects.get_or_create(user=user, project=self)
             UserProfile.objects.get_or_create(user=user)
             user.save()
 
-        projects = Project.objects.filter(business=self.business).order_by('pk')
-        if projects and projects.count() > 1:
-            last_project = projects[projects.count() - 2] #last project is this one
-        else:
-            last_project = None
-
-        for user in users:
-            last_rate = None
-            if last_project:
-                try:
-                    last_rate = Rate.objects.get(project=last_project, user=user)
-                except Rate.DoesNotExist:
-                    pass
-                except Rate.MultipleObjectsReturned:
-                    last_rate = Rate.objects.filter(project=last_project, user=user)[0]
-                    Rate.objects.filter(project=last_project, user=user).exclude(pk=last_rate.id).delete()
-
-            try:
-                rate, newly_created = Rate.objects.get_or_create(project=self, user=user)
-            except Rate.MultipleObjectsReturned:
-                rate, newly_created = Rate.objects.create(project=self, user=user), True
-            if newly_created:
-                rate.amount = last_rate.amount if last_rate else user.profile.amount
-                rate.billable_amount = last_rate.billable_amount if last_rate else user.profile.billable_amount
-                rate.velocity = last_rate.velocity if last_rate else 0
-                rate.save()
+        previous_project = self.previous_project
+        previous_rates = Rate.objects.filter(project=previous_project).distinct('user')
+        user_ids_with_rates = []
+        if previous_project:
+            for previous_rate in previous_rates:
+                rate = Rate(project=self,
+                            user=previous_rate.user,
+                            amount = previous_rate.amount,
+                            billable_amount = previous_rate.billable_amount,
+                            velocity = previous_rate.velocity)
+                rate.save(recalc_secondary_estimates=False)
+                user_ids_with_rates.append(previous_rate.user.id)
+                
+        for user in users.exclude(pk__in=user_ids_with_rates):
+            rate = Rate(project=self, user=user, amount=user.profile.amount,
+                        billable_amount=user.profile.billable_amout,
+                        velocity=1)
+            rate.save(recalc_secondary_estimates=False)
 
     @classmethod
     def projects_in_desc_order_of_use(self, business_id):
@@ -2905,8 +2914,10 @@ class Rate(models.Model):
     time_tracking_mode = models.CharField(default="developer", max_length=50, choices=TIME_TRACKING_MODES, null=False )
 
     def save(self, *args, **kwargs):
+        recalc_secondary_estimates = kwargs.pop('recalc_secondary_estimates', False)
         super(Rate, self).save(*args, **kwargs)
-        self.project.recalc_secondary_estimates()
+        if recalc_secondary_estimates:
+            self.project.recalc_secondary_estimates()
 
     @classmethod
     def for_business(self, user_id, business_id):

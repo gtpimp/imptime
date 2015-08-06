@@ -3069,27 +3069,12 @@ def add_project(request, business_id , template="timepiece/project/create_edit_p
         if not has_edit_budget:
             project.budget = 0
         project.save()
-        _set_project_rate_to_users_latest(user=project.point_person, project=project)
         context['project'] = project
         return get_project_row(request, project.id, context= context)
 
     context['project'] = project
     context['business_permissions_by_user'] = timepiece.BusinessPermissions.by_user(business)
     return render_to_response(template, context, context_instance=RequestContext(request))
-
-
-def _set_project_rate_to_users_latest(user, project):
-    business = project.business
-    if timepiece.Rate.objects.filter(user=user, project=project):
-        rate = timepiece.Rate.objects.get(user=user, project=project)
-    else:
-        rate = timepiece.Rate.objects.create(user=user, project=project)
-    latest_project = business.sprints.order_by('id')[len(business.sprints)-2]
-    latest_rate = timepiece.Rate.objects.get(user=user, project=latest_project)
-    if rate.amount == 0 and rate.billable_amount == 0:
-        rate.amount = latest_rate.amount
-        rate.billable_amount = latest_rate.billable_amount
-        rate.save()
 
 @login_required
 def add_issue(request, project_id, template="timepiece/project/_add_issue_form.html", context=None):
