@@ -79,7 +79,7 @@
       <div style="white-space: nowrap;">
         <div class="issue_colour_square" style="display:none; background-color:{{ issue.colour }}"></div>
         <div class="readonly_value"> 
-          {{ issue.status }}
+          {{ issue.status_name }}
         </div>
       </div>
       {% has_permission has_edit_issue_states project.business %}

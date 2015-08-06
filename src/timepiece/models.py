@@ -2965,9 +2965,10 @@ class Issue(models.Model):
     ISSUE_STATUS_CHOICES = (
            ( 'new', 'new'),
            ( 'devdone', 'dev_done'),
-           ( 'internal_qa_passed', 'internal qa'),
-           ( 'in_client_qa', 'in client qa'),
-           ( 'client_qa_passed', 'client qa passed'),
+           ( 'in_internal_qa', 'internal qa'),
+           ( 'internal_qa_passed', 'internal qa passed'),
+           ( 'in_client_qa', 'external qa'),
+           ( 'client_qa_passed', 'external qa passed'),
            ( 'reopened', 'reopened'),
            ( 'onhold', 'on hold'),
            ( 'bug', 'bug'),
@@ -3032,6 +3033,10 @@ class Issue(models.Model):
 
         return self.user_points.filter(user__id__in=[i.id for i in business_users]).order_by("user")
 
+    @property
+    def status_name(self):
+        return dict(self.ISSUE_STATUS_CHOICES)[self.status]
+    
     def set_order(self):
         if self.order is not None:
             return self
