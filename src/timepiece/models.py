@@ -2966,6 +2966,7 @@ class Issue(models.Model):
            ( 'new', 'new'),
            ( 'devdone', 'dev_done'),
            ( 'in_internal_qa', 'internal qa'),
+           ( 'internal_qa', 'internal qa'),
            ( 'internal_qa_passed', 'internal qa passed'),
            ( 'in_client_qa', 'external qa'),
            ( 'client_qa_passed', 'external qa passed'),
