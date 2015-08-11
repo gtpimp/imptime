@@ -1167,6 +1167,7 @@ class SprintInvoiceReportSettingsForm(forms.Form):
 
         if only_these_issues is None:
             only_these_issues = project.issues.all()
+            only_these_issues = project.issues.filter(adhoc=False)
         self.fields['only_these_issue_numbers'].choices = [ (issue.number, issue.number) for issue in only_these_issues ] 
         self.fields['only_these_issue_numbers'].initial = [ issue.number for issue in only_these_issues ] 
         
