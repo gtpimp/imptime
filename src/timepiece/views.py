@@ -2,6 +2,7 @@ import random
 import markdown
 from mailqueue.mailqueue_helper import queue_email, queue_admin_email
 from caldav_helper import CalDavHelper
+from phantom_pdf.generator import create_url_from_query_dict, render_url_to_pdf
 from django.contrib.humanize.templatetags.humanize import intcomma
 import urllib
 import api
@@ -4317,24 +4318,25 @@ def sprint_report(request, project_id, context=None):
         if 'output_format' in DATA and DATA['output_format'] == "pdf" and 'HTTP_REFERER' in request.META:
             url = request.build_absolute_uri(reverse('sprint_report', kwargs={'project_id':project.id}))
             #url = "%s&output_format=pdf&authenticate_token=%s&authenticate_username=%s&%s" % (request.META['HTTP_REFERER'], user.profile.authenticate_token, user.username, url_params)
-            from phantompdf.create_pdf import create_pdf
 
+            prefix = DATA['report_type']
+            if DATA['report_type'] == 'Quote':
+                prefix = "Proposal"
+            filename = prefix + "_implicitdesign_" + project.long_name().replace(" ","") + "_" + datetime.datetime.today().strftime("%d%m%Y") + ".pdf"
+            
             try:
-                import pdb; pdb.set_trace()
                 DATA['output_format'] = 'html'
-                as_pdf = create_pdf(url, query_dict=DATA)
+                url = create_url_from_query_dict(url, qd=DATA)
+                transaction.commit()
+                response = render_url_to_pdf(url, request, basename=filename)
             except Exception, ex:
                 logger.exception(ex)
                 logger.error("Failed to create pdf using url: %s : %s" % (url, ex))
                 raise
 
-            prefix = DATA['report_type']
-            if DATA['report_type'] == 'Quote':
-                prefix = "Proposal"
 
-            filename = prefix + "_implicitdesign_" + project.long_name().replace(" ","") + "_" + datetime.datetime.today().strftime("%d%m%Y") + ".pdf"
-            rendered = HttpResponse(as_pdf, mimetype='application/pdf')
-            rendered['Content-Disposition'] = 'attachment; filename="%s"' % filename
+            #response = HttpResponse(as_pdf, mimetype='application/pdf')
+            #response['Content-Disposition'] = 'attachment; filename="%s"' % filename
 
             if DATA['report_type'] == 'Quote':
                 doc_type = 'quote'
@@ -4343,7 +4345,7 @@ def sprint_report(request, project_id, context=None):
             else:
                 doc_type = 'other'
 
-            f = ContentFile(as_pdf)
+            f = ContentFile(response.content)
             document = timepiece.BusinessDocument.objects.create(project=project,
                                                                  business=project.business,
                                                                  filename=filename,
@@ -4354,7 +4356,7 @@ def sprint_report(request, project_id, context=None):
                                                                  created_by_id=request.user.id)
             document.doc.save(filename, f)
 
-            return rendered
+            return response
 
         business = project.business
         issues = project.issues.order_by("order")
@@ -4495,9 +4497,9 @@ def download_business_document(request, document_token, template="timepiece/proj
     context['business'] = business
     context['documents'] = business.documents.all().order_by("-created_at")
 
-    rendered = HttpResponse(document.doc, mimetype=document.mime_type)
-    rendered['Content-Disposition'] = 'attachment; filename="%s"' % document.filename
-    return rendered
+    response = HttpResponse(document.doc, mimetype=document.mime_type)
+    response['Content-Disposition'] = 'attachment; filename="%s"' % document.filename
+    return response
 
 @login_required
 def edit_business_document(request, document_token, template="timepiece/project/edit_business_document.html", context=None):
@@ -4582,20 +4584,21 @@ def generate_preview_business_document(request, business_id, template="timepiece
 
         if 'render_mode' in request.POST and request.POST['render_mode'] == 'generate' and 'HTTP_REFERER' in request.META:
             url = (request.META['HTTP_REFERER'])
-            from phantompdf.create_pdf import create_pdf
 
             post_data = {}
             post_data.update(form.cleaned_data)
             post_data['output_format'] = 'pdf'
             post_data['authenticate_token'] = request.user.profile.authenticate_token
             post_data['authenticate_username'] = request.user.username
-            as_pdf = create_pdf(url+"?"+urllib.urlencode(post_data))
-            
+            url = url+"?"+urllib.urlencode(post_data)
             filename = form.cleaned_data['filename'] + "_" + datetime.datetime.today().strftime("%d%m%Y") + ".pdf"
-            rendered = HttpResponse(as_pdf, mimetype='application/pdf')
-            rendered['Content-Disposition'] = 'attachment; filename="%s"' % filename
+            transaction.commit()
+            response = render_url_to_pdf(url, request, basename=filename)
+            
+            #response = HttpResponse(as_pdf, mimetype='application/pdf')
+            #response['Content-Disposition'] = 'attachment; filename="%s"' % filename
 
-            f = ContentFile(as_pdf)
+            f = ContentFile(response.content)
             document = timepiece.BusinessDocument.objects.create(business=business,
                                                                  filename=filename,
                                                                  doc_type=form.cleaned_data['doc_type'],
@@ -4606,7 +4609,7 @@ def generate_preview_business_document(request, business_id, template="timepiece
                                                                  modified_by_id=request.user.id)
             document.doc.save(filename, f)
 
-            return rendered
+            return response
 
     context['form'] = form
     context['business'] = business
