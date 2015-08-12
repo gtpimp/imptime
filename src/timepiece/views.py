@@ -1028,7 +1028,7 @@ def create_edit_business(request, business=None):
 
 
 def _set_project_rate_to_default_for_user(user, project):
-    profile = timepiece.UserProfile.objects.get(user=user)
+    profile = timepiece.UserProfile.objects.get_or_create(user=user)[0]
     if timepiece.Rate.objects.filter(user=user, project=project):
         rate = timepiece.Rate.objects.get(user=user, project=project)
     else:
@@ -4280,138 +4280,151 @@ def sprint_report_settings(request, project_id, context=None):
     return render_to_response('timepiece/project/sprint_report_settings.html',
                               context, context_instance=RequestContext(request))
 
+@csrf_exempt
 def sprint_report(request, project_id, context=None):
 
-    if 'authenticate_token' in request.GET and 'authenticate_username' in request.GET:
-
-        def override_login(request, user):
-            if not hasattr(user, 'backend'):
-                for backend in settings.AUTHENTICATION_BACKENDS:
-                    if user == load_backend(backend).get_user(user.pk):
-                        user.backend = backend
-                        break
-            if hasattr(user, 'backend'):
-                return django_login(request, user)
-
-        authenticate_token = request.GET['authenticate_token']
-        username = request.GET['authenticate_username']
-        try:
-            user = timepiece.UserProfile.objects.get(authenticate_token=authenticate_token, user__username=username).user
-            override_login(request, user)
-        except timepiece.UserProfile.DoesNotExist:
-            pass
-        except Exception:
-            return HttpResponse("Not authenticated")
-    else:
-        user = request.user
-
-    context = context or {}
-    project = timepiece.Project.objects.get(pk=project_id)
-
-    if 'output_format' in request.GET and request.GET['output_format'] == "pdf" and 'HTTP_REFERER' in request.META:
-        url = "%s&output_format=pdf&authenticate_token=%s&authenticate_username=%s" % (request.META['HTTP_REFERER'], user.profile.authenticate_token, user.username)
-        from phantompdf.create_pdf import create_pdf
-
-        try:
-            as_pdf = create_pdf(url)
-        except Exception, ex:
-            logger.exception(ex)
-            logger.error("Failed to create pdf using url: %s : %s" % (url, ex))
-            raise
-
-        prefix = request.GET['report_type']
-        if request.GET['report_type'] == 'Quote':
-            prefix = "Proposal"
-
-        filename = prefix + "_implicitdesign_" + project.long_name().replace(" ","") + "_" + datetime.datetime.today().strftime("%d%m%Y") + ".pdf"
-        rendered = HttpResponse(as_pdf, mimetype='application/pdf')
-        rendered['Content-Disposition'] = 'attachment; filename="%s"' % filename
-
-        if request.GET['report_type'] == 'Quote':
-            doc_type = 'quote'
-        elif request.GET['report_type'] == 'Invoice':
-            doc_type = 'invoice'
+    try:
+        if request.POST:
+            DATA = request.POST.copy()
         else:
-            doc_type = 'other'
+            DATA = request.GET.copy()
+        if 'authenticate_token' in DATA and 'authenticate_username' in DATA:
+
+            def override_login(request, user):
+                if not hasattr(user, 'backend'):
+                    for backend in settings.AUTHENTICATION_BACKENDS:
+                        if user == load_backend(backend).get_user(user.pk):
+                            user.backend = backend
+                            break
+                if hasattr(user, 'backend'):
+                    return django_login(request, user)
+
+            authenticate_token = DATA['authenticate_token']
+            username = DATA['authenticate_username']
+            try:
+                user = timepiece.UserProfile.objects.get(authenticate_token=authenticate_token, user__username=username).user
+                override_login(request, user)
+            except timepiece.UserProfile.DoesNotExist:
+                pass
+            except Exception:
+                return HttpResponse("Not authenticated")
+        else:
+            user = request.user
+
+        context = context or {}
+        project = timepiece.Project.objects.get(pk=project_id)
+
+        if 'output_format' in DATA and DATA['output_format'] == "pdf" and 'HTTP_REFERER' in request.META:
+            url = request.build_absolute_uri(reverse('sprint_report', kwargs={'project_id':project.id}))
+            #url = "%s&output_format=pdf&authenticate_token=%s&authenticate_username=%s&%s" % (request.META['HTTP_REFERER'], user.profile.authenticate_token, user.username, url_params)
+            from phantompdf.create_pdf import create_pdf
+
+            try:
+                import pdb; pdb.set_trace()
+                DATA['output_format'] = 'html'
+                as_pdf = create_pdf(url, query_dict=DATA)
+            except Exception, ex:
+                logger.exception(ex)
+                logger.error("Failed to create pdf using url: %s : %s" % (url, ex))
+                raise
+
+            prefix = DATA['report_type']
+            if DATA['report_type'] == 'Quote':
+                prefix = "Proposal"
+
+            filename = prefix + "_implicitdesign_" + project.long_name().replace(" ","") + "_" + datetime.datetime.today().strftime("%d%m%Y") + ".pdf"
+            rendered = HttpResponse(as_pdf, mimetype='application/pdf')
+            rendered['Content-Disposition'] = 'attachment; filename="%s"' % filename
+
+            if DATA['report_type'] == 'Quote':
+                doc_type = 'quote'
+            elif DATA['report_type'] == 'Invoice':
+                doc_type = 'invoice'
+            else:
+                doc_type = 'other'
+
+            f = ContentFile(as_pdf)
+            document = timepiece.BusinessDocument.objects.create(project=project,
+                                                                 business=project.business,
+                                                                 filename=filename,
+                                                                 doc_type=doc_type,
+                                                                 mime_type='application/pdf',
+                                                                 comments='auto created\n%s'%url.replace("authenticate_token","xx"),
+                                                                 modified_by_id=request.user.id,
+                                                                 created_by_id=request.user.id)
+            document.doc.save(filename, f)
+
+            return rendered
+
+        business = project.business
+        issues = project.issues.order_by("order")
+
+        bp = timepiece.BusinessPermissions.for_user(user, business)
+        quote_form = timepiece_forms.SprintQuoteReportSettingsForm(project, bp, issues, DATA)
+        invoice_form = timepiece_forms.SprintInvoiceReportSettingsForm(project, bp, issues, DATA)
+
+        if DATA['report_type'] == 'Quote' and quote_form.is_valid():
+            if not bp.has_view_ctc_billable_rates:
+                return HttpResponse("No permission to generate quotes")
+
+            form = quote_form
+            template = 'timepiece/project/sprint_quote_report.html'
+
+        elif (DATA['report_type'] == 'Invoice' or DATA['report_type'] == 'Summary') and invoice_form.is_valid():
+            form = invoice_form
+            template = 'timepiece/project/sprint_invoice_report.html'
+        else:
+            raise Exception("Unknown report type or invalid params: %s %s %s" % (DATA['report_type'], str(invoice_form.errors), str(quote_form.errors)))
+
+        if form.is_valid():
+            context['settings'] = form.cleaned_data
+
+            if 'only_these_statuses' in form.cleaned_data:
+                statuses = form.cleaned_data['only_these_statuses']
+                if 'all' not in statuses:
+                    issues = issues.filter(status__in=statuses)
+
+            if 'only_assigned_to' in form.cleaned_data:
+                assigned_to = form.cleaned_data['only_assigned_to']
+                if 'all' not in assigned_to:
+                    issues = issues.filter(assigned_to__username__in=assigned_to)
+
+            if 'only_these_issue_numbers' in form.cleaned_data:
+                issues = issues.filter(number__in=form.cleaned_data['only_these_issue_numbers'])
+
+
+        if form == quote_form:
+            context['estimate_stats'] = project.estimate_stats(issues, preferred_user_id=form.cleaned_data['preferred_user_for_estimates'])
+        context['issues'] = issues
+        context['form'] = form
+        context['project'] = project
+
+        if 'start' in context['settings']:
+            stats = project.cache_stats(start=context['settings']['start'], end=context['settings']['end'], issues=context['issues'])
+            context['issues'] = stats['issues_with_time_entries']
+
+        if 'output_format' in DATA and DATA['output_format'] == 'pdf':
+            context['output_format'] = 'pdf'
+        else:
+            context['output_format'] = 'html'
+
+        context['user'] = user
+        context['date_created'] = datetime.datetime.now().strftime("%d %b %Y %H:%M")
+        project.calculate_new_stats(request.user)
+
+        most_recent_quote_document = timepiece.BusinessDocument.objects.filter(project=project).order_by("-id").first()
+        new_quote_default_args = { 'status': 'sent to client',
+                                   'project': project.id,
+                                   'internal_comment': 'Created by %s' % request.user,
+                                   'amount': int(project.new_stats['total']['hours_billable_with_scope_creep'] or 0),
+                                   'quote_document': most_recent_quote_document.id if most_recent_quote_document else None }
+        context['url_capture_quote'] = reverse('invoicing:new_quote') + "?" + urllib.urlencode(new_quote_default_args)
+        context['report_type'] = DATA['report_type']
+
+    except Exception, ex:
+        logger.exception(ex)
+        raise
         
-        f = ContentFile(as_pdf)
-        document = timepiece.BusinessDocument.objects.create(project=project,
-                                                             business=project.business,
-                                                             filename=filename,
-                                                             doc_type=doc_type,
-                                                             mime_type='application/pdf',
-                                                             comments='auto created\n%s'%url.replace("authenticate_token","xx"),
-                                                             modified_by_id=request.user.id,
-                                                             created_by_id=request.user.id)
-        document.doc.save(filename, f)
-
-        return rendered
-        
-    business = project.business
-    issues = project.issues.order_by("order")
-
-    bp = timepiece.BusinessPermissions.for_user(user, business)
-    quote_form = timepiece_forms.SprintQuoteReportSettingsForm(project, bp, issues, request.GET)
-    invoice_form = timepiece_forms.SprintInvoiceReportSettingsForm(project, bp, issues, request.GET)
-
-    if request.GET['report_type'] == 'Quote' and quote_form.is_valid():
-        if not bp.has_view_ctc_billable_rates:
-            return HttpResponse("No permission to generate quotes")
-
-        form = quote_form
-        template = 'timepiece/project/sprint_quote_report.html'
-
-    elif request.GET['report_type'] == 'Invoice' and invoice_form.is_valid():
-        form = invoice_form
-        template = 'timepiece/project/sprint_invoice_report.html'
-    else:
-        raise Exception("%s %s %s" % (request.GET['report_type'], str(invoice_form.errors), str(quote_form.errors)))
-
-    if form.is_valid():
-        context['settings'] = form.cleaned_data
-
-        if 'only_these_statuses' in form.cleaned_data:
-            statuses = form.cleaned_data['only_these_statuses']
-            if 'all' not in statuses:
-                issues = issues.filter(status__in=statuses)
-            
-        if 'only_assigned_to' in form.cleaned_data:
-            assigned_to = form.cleaned_data['only_assigned_to']
-            if 'all' not in assigned_to:
-                issues = issues.filter(assigned_to__username__in=assigned_to)
-
-        if 'only_these_issue_numbers' in form.cleaned_data:
-            issues = issues.filter(number__in=form.cleaned_data['only_these_issue_numbers'])
-
-
-    if form == quote_form:
-        context['estimate_stats'] = project.estimate_stats(issues, preferred_user_id=form.cleaned_data['preferred_user_for_estimates'])
-    context['issues'] = issues
-    context['form'] = form
-    context['project'] = project
-
-    if 'start' in context['settings']:
-        stats = project.cache_stats(start=context['settings']['start'], end=context['settings']['end'], issues=context['issues'])
-        context['issues'] = stats['issues_with_time_entries']
-
-    if 'output_format' in request.GET and request.GET['output_format'] == 'pdf':
-        context['output_format'] = 'pdf'
-    else:
-        context['output_format'] = 'html'
-    
-    context['user'] = user
-    context['date_created'] = datetime.datetime.now().strftime("%d %b %Y %H:%M")
-    project.calculate_new_stats(request.user)
-
-    most_recent_quote_document = timepiece.BusinessDocument.objects.filter(project=project).order_by("-id").first()
-    new_quote_default_args = { 'status': 'sent to client',
-                               'project': project.id,
-                               'internal_comment': 'Created by %s' % request.user,
-                               'amount': int(project.new_stats['total']['hours_billable_with_scope_creep'] or 0),
-                               'quote_document': most_recent_quote_document.id if most_recent_quote_document else None }
-    context['url_capture_quote'] = reverse('invoicing:new_quote') + "?" + urllib.urlencode(new_quote_default_args)
-    context['report_type'] = request.GET['report_type']
-
     return render_to_response(template, context, context_instance=RequestContext(request))
 
 @login_required

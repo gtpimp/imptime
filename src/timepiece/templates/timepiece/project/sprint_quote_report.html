@@ -12,7 +12,7 @@
 <div class="sprint_report">
 
   {% ifequal "html" output_format %}
-    <form method="GET" action="{% url 'sprint_report' project.id %}" target="_blank">
+    <form method="POST" action="{% url 'sprint_report' project.id %}" target="_blank">
       <div style="display:none">
         {{ form }}
         <input type="hidden" name="report_type" value="Quote"/>

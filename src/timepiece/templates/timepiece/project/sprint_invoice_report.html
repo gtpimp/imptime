@@ -11,7 +11,7 @@
 <div class="sprint_report">
 
   {% ifequal "html" output_format %}
-    <form method="GET" action="{% url 'sprint_report' project.id %}">
+    <form method="POST" action="{% url 'sprint_report' project.id %}">
       <div style="display:none">
         {{ form }}
         <input type="hidden" name="report_type" value="Summary"/>

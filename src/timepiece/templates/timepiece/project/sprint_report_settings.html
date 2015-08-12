@@ -5,7 +5,7 @@
 <div class="report_settings">
   <h1>{{project.business.name}} - {{project.name}}</h1>
 
-  <form target="_blank" method="GET" action="{% url 'sprint_report' project.id %}">
+  <form target="_blank" method="POST" action="{% url 'sprint_report' project.id %}">
 
     {% if issue_ids %}
       <input type="hidden" name="issues" value="{{issue_ids}}"/>
