@@ -4325,7 +4325,6 @@ def sprint_report(request, project_id, context=None):
             filename = prefix + "_implicitdesign_" + project.long_name().replace(" ","") + "_" + datetime.datetime.today().strftime("%d%m%Y") + ".pdf"
             
             try:
-                DATA['output_format'] = 'html'
                 url = create_url_from_query_dict(url, qd=DATA)
                 transaction.commit()
                 response = render_url_to_pdf(url, request, basename=filename)
