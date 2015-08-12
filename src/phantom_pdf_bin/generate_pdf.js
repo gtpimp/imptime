@@ -17,6 +17,7 @@ address = system.args[1];
 output = system.args[2];
 cookie_file = system.args[3];
 domain = system.args[4];
+static_url = system.args[5];
 
 info = JSON.parse(fs.read(cookie_file));
 var headers = info.headers;
@@ -40,7 +41,30 @@ Object.keys(cookies).forEach(function(cookie) {
 });
 
 // Set the page size and orientation
-page.paperSize = { format: 'A4', orientation: 'landscape'};
+
+page.paperSize = {
+    format: 'A4',
+    margin: '0px',
+    orientation: 'portrait',
+    header: {
+	height: "1cm",
+	contents: phantom.callback(function(pageNum, numPages) {
+
+	    if ( pageNum == 1 ) {
+		return "";
+	    }
+
+	    return '<div style="width:100%;height:60px;background-color: #4C4C4C; font-size:14px;color:#ffffff" class="header"><div style="margin-left:20px;">ImplicitDesign<img width="75px" src="'+static_url+'images/implicitDesignLogo.jpg"/></div></div>';
+	})
+    },
+    footer: {
+	height: "1cm",
+	contents: phantom.callback(function(pageNum, numPages) {
+	    return '<div style="margin-top:10px; width:100%;height:60px;background-color: #4C4C4C; font-size:10px;color:#ffffff" class="header"><div style="float:left;">ImplicitDesign</div><div style="float:right;">info@implicitdesign.co.za  '+pageNum+'/'+numPages+'&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div></div>';
+	})
+    }
+};
+
 // page.viewPortSize  = {width: 1024, height: 1000};
 page.zoomFactor = 1;
 
