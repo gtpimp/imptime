@@ -16,10 +16,9 @@ logger=logging.getLogger(__name__)
 import phantom_pdf_bin
 
 GENERATE_PDF_JS = os.path.join(os.path.dirname(phantom_pdf_bin.__file__), 'generate_pdf.js')
-PHANTOM_ROOT_DIR = '/tmp/phantom_pdf'
 DEFAULT_SETTINGS = dict(
-    PHANTOMJS_COOKIE_DIR=os.path.join(PHANTOM_ROOT_DIR, 'cookies'),
-    PHANTOMJS_PDF_DIR=os.path.join(PHANTOM_ROOT_DIR, 'pdfs'),
+    PHANTOMJS_COOKIE_DIR=os.path.join(settings.PHANTOM_ROOT_DIR, 'cookies'),
+    PHANTOMJS_PDF_DIR=os.path.join(settings.PHANTOM_ROOT_DIR, 'pdfs'),
     PHANTOMJS_BIN='/usr/bin/phantomjs'
 )
 

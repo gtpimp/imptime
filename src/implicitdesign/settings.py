@@ -144,6 +144,7 @@ STATIC_URL = '/static/'
 STATICFILES_DIRS = (os.path.join(PROJECT_HOME, 'static/'), 
                     )
 
+    
 # List of finder classes that know how to find static files in
 # various locations.
 STATICFILES_FINDERS = (
@@ -181,6 +182,8 @@ STATICFILES_FINDERS = (
 #         'output_filename': 'js/stats.js',
 #     }
 # }
+
+PHANTOM_ROOT_DIR = LOG_FOLDER
 
 # Make this unique, and don't share it with anybody.
 SECRET_KEY = 'jvo(l47k$=imb)hy29kl+^0n6n@r41eoi_96&amp;6#@57!r1cl%8&amp;6'

@@ -70,10 +70,25 @@ if [ ! -d logs ]; then
     mkdir logs
 fi
 sudo chown -R `whoami` logs
+
+cd ${ROOT}
 if [ ! -d locks ]; then
     mkdir locks
 fi
 sudo chown -R `whoami` locks
+
+cd ${ROOT}/logs
+if [ ! -d cookies ]; then
+    mkdir cookies
+fi
+sudo chown -R `whoami` cookies
+
+cd ${ROOT}/logs
+if [ ! -d pdfs ]; then
+    mkdir pdfs
+fi
+sudo chown -R `whoami` pdfs
+
 
 echo "updating database"
 cd ${SITE_PATH}
