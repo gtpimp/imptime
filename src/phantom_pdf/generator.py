@@ -140,15 +140,20 @@ class RequestToPDF(object):
         ).netloc.split(':')[0]
 
 
-        phantom_args = [
-            self.PHANTOMJS_BIN,
-            self.PHANTOMJS_GENERATE_PDF,
-            url,
-            file_src,
-            cookie_file,
-            domain]
-        logger.debug("Rendering pdf using %s" % (phantom_args))
-        call(phantom_args)
+        try:
+            phantom_args = [
+                self.PHANTOMJS_BIN,
+                self.PHANTOMJS_GENERATE_PDF,
+                url,
+                file_src,
+                cookie_file,
+                domain,
+                settings.STATIC_URL]
+            logger.debug("Rendering pdf using %s" % (phantom_args))
+            call(phantom_args)
+        except Exception, ex:
+            logger.exception(ex)
+            raise
 
         logger.debug("pdf rendered, removing cookie file from %s" % cookie_file)
         
@@ -164,17 +169,23 @@ class RequestToPDF(object):
             url
         ).netloc.split(':')[0]
 
+        logger.debug("url is %s" % url)
+        
         try:
-            call([
+            phantom_args = [
                 self.PHANTOMJS_BIN,
                 self.PHANTOMJS_GENERATE_PDF,
                 url,
                 file_src,
                 cookie_file,
-                domain])
+                domain,
+                settings.STATIC_URL]
+            logger.debug("Rendering pdf using %s" % (phantom_args))
+            call(phantom_args)
         except Exception, ex:
             logger.exception(ex)
             raise
+
         
         # Once the pdf is created, remove the cookie file.
         os.remove(cookie_file)
