@@ -1,0 +1,13 @@
+<ul>
+  <li>
+    <a href="" onclick="return imp.filter_on_status({{project_id}}, '');">
+      <i>All</i>
+    </a>
+{% for status in stati %}
+  <li>
+    <a href="" onclick="return imp.filter_on_status({{project_id}}, '{{status.status}}');">
+      {{status.status}}
+    </a>
+  </li>
+{% endfor %}
+</ul>

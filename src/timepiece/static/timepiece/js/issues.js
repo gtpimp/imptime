@@ -241,6 +241,47 @@ imp.attach_upload_issue_attachment = function(el) {
     return false;
 };
 
+imp.attach_issue_filters = function(container) { 
+    
+    container.find(".filterable").each( function() {
+        var el = $(this);
+        var el_trigger = el.find(".filter_trigger");
+        var filter_field = el.attr("filter_property");
+        var filter_popup_url = el.attr("filter_popup_url");
+        el.hover( function() { el_trigger.show(); },
+                  function() { el_trigger.hide(); } );
+        el_trigger.on("click", function() {
+
+            if (imp.popup_dialog) {
+                var dlg = $(".project_card_dialog_container").find(".dialog_content");
+                dlg.html("loading options...");
+                dlg.load(filter_popup_url);
+            } else {
+                $(".project_card_dialog_container").dialog( { width: 600,
+						              height: 400,
+						              open: function(event, ui) {
+							          $(".project_card_dialog_container").find(".dialog_content").load(filter_popup_url);
+						              }
+						            });
+            }
+            return false;
+        });
+    });
+};
+
+imp.filter_on_status = function(project_id, status_name) {
+    // works in conjunction with imp.attach_issue_filters
+    var container = $(".project_li[list_project_id="+project_id+"]");
+    if (status_name) {
+        container.find(".issue_instance_row").hide();
+        container.find(".issue_instance_row[status='"+status_name+"']").show();
+    } else {
+        container.find(".issue_instance_row").show();
+    }
+    $(".project_card_dialog_container").dialog('close');
+    return false;
+};
+
 imp.hide_issue_checkboxes = function(el) {
     $(".issue_checkbox_cell").hide();
     $(el).parents("table").find(".issue_checkbox_cell_toggle").find(".hide").hide();

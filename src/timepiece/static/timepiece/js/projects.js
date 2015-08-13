@@ -205,6 +205,7 @@ imp.on_issue_rows_loaded = function(issue_row_container) {
     imp.highlight_issue();
     imp.set_issue_checkbox_hooks(issue_row_container);
     imp.set_assigned_by_clickable(issue_row_container);
+    imp.attach_issue_filters(issue_row_container);
 };
 
 imp.set_assigned_by_clickable = function(issue_row_container) { 
@@ -479,6 +480,7 @@ imp.on_document_ready = function() {
     $('.estimates_cell').click(function() {
 	imp.show_assigned_issues($(this).data('username'));
     });
+
 };
 
 $(document).ready(imp.on_document_ready);

@@ -2,7 +2,7 @@
 {% load humanize %}
 {% load bootstrap_toolkit %}
 
-<tr class="issue_instance_row {{issue.status_as_class}} {% if issue.adhoc %}adhoc_issue_row{% endif %}" assigned_to="{{issue.assigned_to.username}}"  id="{{issue.pk}}" refresh_url="{% url 'get_issue_row' issue.pk %}">                    
+<tr class="issue_instance_row {{issue.status_as_class}} {% if issue.adhoc %}adhoc_issue_row{% endif %}" assigned_to="{{issue.assigned_to.username}}"  id="{{issue.pk}}" refresh_url="{% url 'get_issue_row' issue.pk %}" status="{{issue.status}}" feature="{{issue.feature.name}}">                    
 
   <td class="issue_checkbox_td">
     <div class="issue_checkbox_cell" style="width:100%; display:none;">

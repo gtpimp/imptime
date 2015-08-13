@@ -3230,9 +3230,20 @@ def business_features(request, business_id):
                         mimetype='application/json')
 
 @login_required
-def allowed_issue_stati(request, issue_id):
-    issue = timepiece.Issue.objects.get(pk=issue_id)
-    stati = get_interface_plugin(request, issue.project.business).get_allowed_stati(issue)
+def status_filter(request, project_id, template="timepiece/project/status_filter_popup.html"):
+    context = {}
+    stati = timepiece.Issue.objects.filter(project_id=project_id).order_by('status').values('status').distinct()
+    context['stati'] = stati
+    context['project_id'] = project_id
+    return render_to_response(template, context, context_instance=RequestContext(request))
+
+@login_required
+def allowed_issue_stati(request, issue_id=None):
+    if issue_id:
+        issue = timepiece.Issue.objects.get(pk=issue_id)
+        stati = get_interface_plugin(request, issue.project.business).get_allowed_stati(issue)
+    else:
+        stati = None
     if stati is None:
         stati = sorted(timepiece.Issue.ISSUE_STATUS_CHOICES, key=lambda x: x[1])
     return HttpResponse(json.dumps(stati), mimetype='application/json')
