@@ -193,7 +193,7 @@ def generate_invoice(request, invoice_id, context=None):
                                                              modified_by_id=request.user.id)
         document.doc.save(filename, f)
 
-    return rendered
+    return response
 
 def print_invoice_from_phantomjs(request, invoice_id, username, token, template="invoicing/print_invoice.html", context=None):
     context = context or {}
