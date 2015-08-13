@@ -145,6 +145,14 @@ class Business(models.Model):
         cl = TrafficChecklist.objects.filter(business=self).order_by("-pk").first()
         return cl is not None and cl.passed
 
+    @property
+    def client(self):
+        from invoicing.models import Invoice
+        try:
+            return Invoice.objects.filter(business=self).first().client
+        except:
+            return None
+    
     def has_recent_passed_dev_checklist(self):
         cl = DevChecklist.objects.filter(business=self).order_by("-pk").first()
         return cl is not None and cl.passed
@@ -1914,8 +1922,8 @@ class EntryQuerySet(EntriesQuerySet):
         return self.filter(datesQ)
 
 class EntryManagerBase(QuerySetManager):
-    def __init__(self):
-        super(EntryManagerBase, self).__init__(EntryQuerySet)
+    def __init__(self, *args, **kwargs):
+        super(EntryManagerBase, self).__init__(EntryQuerySet, *args, **kwargs)
 
     def date_trunc(self, key='month', extra_values=()):
         return self.get_query_set().date_trunc(key, extra_values)

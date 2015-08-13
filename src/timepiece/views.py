@@ -2947,7 +2947,7 @@ def invoice_list(request, template='timepiece/invoice/index.html', context=None)
     if from_date or to_date:
         query = query | Q(date_sent__isnull=True)
 
-    queryset = timepiece.Invoice.objects.filter(query)
+    queryset = Invoice.objects.filter(query)
     project_id = request.GET.get('project_id')
     if project_id:
         queryset = queryset.filter(project__id=project_id)

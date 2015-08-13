@@ -94,11 +94,13 @@
       {% end_permission %}
 
       {% has_permission has_edit_invoices project.business %}
+      {% if project.business.client.id %}
       <li>
-        <a href="#" onclick="window.open('{% url 'invoice_list' %}?project_id={{project.id}}')">
+        <a href="#" onclick="window.open('{% url 'invoicing:invoices' %}?client={{project.business.client.id}}&project={{project.id}}')">
         Invoices
         </a>
       </li>
+      {% endif %}
       {% end_permission %}
 
       {% has_permission has_edit_ctc_billable_rates project.business %}
