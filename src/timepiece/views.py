@@ -3364,6 +3364,16 @@ def get_project_detail(request, project_id, template="timepiece/project/project_
 
     return render_to_response(template, context, context_instance=RequestContext(request))
 
+@login_required
+def open_issue(request, business_name=None, issue_number=None):
+    business = timepiece.Business.objects.all().filter_by_logged_in_user(request.user).get(name=business_name)
+    try:
+        issue = timepiece.Issue.objects.get(number=issue_number, project__business=business)
+    except timepiece.Issue.DoesNotExist:
+        return HttpResponse("Unknown issue number : %s" % issue_number)
+    return redirect(reverse('highlighted_project_list', kwargs={'project_id':issue.project_id,
+                                                                'highlight_issue_id':issue.id}))
+
 @csrf_exempt
 @login_required
 def project_list(request, project_id=None, highlight_issue_id=None, business_id=None,

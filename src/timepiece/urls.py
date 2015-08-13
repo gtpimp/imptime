@@ -512,6 +512,12 @@ urlpatterns = patterns('',
     ),
 
     url(
+        r'^open_issue/(?P<business_name>\w+)/(?P<issue_number>\d+)$',
+        views.open_issue,
+        name='open_issue',
+    ),
+    
+    url(
         r'^time-sheet/highlighted_project_list/(?P<project_id>\d+)/(?P<highlight_issue_id>\d+)$',
         views.project_list,
         {'business_id':None},
