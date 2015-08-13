@@ -556,6 +556,12 @@ urlpatterns = patterns('',
         views.status_filter,
         name='status_filter',
         ),
+
+    url(
+        r'^time-sheet/feature_filter/(?P<project_id>\d+)$',
+        views.feature_filter,
+        name='feature_filter',
+        ),        
         
    url(
         r'^time-sheet/business_users/(?P<business_id>\d+)/$',

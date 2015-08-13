@@ -282,6 +282,19 @@ imp.filter_on_status = function(project_id, status_name) {
     return false;
 };
 
+imp.filter_on_feature = function(project_id, feature_name) {
+    // works in conjunction with imp.attach_issue_filters
+    var container = $(".project_li[list_project_id="+project_id+"]");
+    if (feature_name) {
+        container.find(".issue_instance_row").hide();
+        container.find(".issue_instance_row[feature='"+feature_name+"']").show();
+    } else {
+        container.find(".issue_instance_row").show();
+    }
+    $(".project_card_dialog_container").dialog('close');
+    return false;
+};
+
 imp.hide_issue_checkboxes = function(el) {
     $(".issue_checkbox_cell").hide();
     $(el).parents("table").find(".issue_checkbox_cell_toggle").find(".hide").hide();

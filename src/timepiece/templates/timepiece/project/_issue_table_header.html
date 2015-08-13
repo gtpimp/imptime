@@ -19,7 +19,18 @@
                 <th>#</th>
                 <th>Subject</th>
                 <th>Assigned to</th>
-                <th>Feature</th>
+
+                {% if project.id %}
+                <th class="filterable" filter_property='feature' filter_popup_url="{% url 'feature_filter' project.id %}">
+                {% else %}
+                <th>
+                {% endif %}
+                  Feature
+                  <a href="" style="display:none" class='filter_trigger'>
+                    <img src="{{STATIC_URL}}images/icons/magnifier.png"/>
+                  </a>
+                </th>
+
                 {% if project.id %}
                 <th class="filterable" filter_property='status' filter_popup_url="{% url 'status_filter' project.id %}">
                 {% else %}

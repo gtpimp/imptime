@@ -3238,6 +3238,14 @@ def status_filter(request, project_id, template="timepiece/project/status_filter
     return render_to_response(template, context, context_instance=RequestContext(request))
 
 @login_required
+def feature_filter(request, project_id, template="timepiece/project/feature_filter_popup.html"):
+    context = {}
+    features = timepiece.Issue.objects.filter(project_id=project_id).order_by('feature__name').values('feature__name').distinct()
+    context['features'] = features
+    context['project_id'] = project_id
+    return render_to_response(template, context, context_instance=RequestContext(request))
+
+@login_required
 def allowed_issue_stati(request, issue_id=None):
     if issue_id:
         issue = timepiece.Issue.objects.get(pk=issue_id)

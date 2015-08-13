@@ -1,0 +1,17 @@
+<h3>Feature filter</h3>
+
+Click a feature to only show issues with that feature
+
+<ul>
+  <li>
+    <a href="" onclick="return imp.filter_on_feature({{project_id}}, '');">
+      <i>All</i>
+    </a>
+{% for feature in features %}
+  <li>
+    <a href="" onclick="return imp.filter_on_feature({{project_id}}, '{{feature.feature__name}}');">
+      {{feature.feature__name}}
+    </a>
+  </li>
+{% endfor %}
+</ul>
