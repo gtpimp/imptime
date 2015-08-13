@@ -1,5 +1,6 @@
 from invoicing import models
 from django.db.models import Sum, Count, Q, F, Max, Min
+from phantom_pdf.generator import create_url_from_query_dict, render_url_to_pdf
 from timepiece import models as timepiece
 from django.core.files.base import ContentFile
 from django.contrib.auth import login as django_login, load_backend
@@ -174,16 +175,12 @@ def generate_invoice(request, invoice_id, context=None):
                                              kwargs={'invoice_id':invoice.id,
                                                      'username':request.user.username,
                                                      'token':request.user.profile.authenticate_token}))
-    from phantompdf.create_pdf import create_pdf
-    as_pdf = create_pdf(url)
-    rendered = HttpResponse(as_pdf, mimetype='application/pdf')
     filename = "%s_%s_invoice%s.pdf" % (invoice.client.filename_prefix,
                                         settings.INVOICE_DETAILS['name'].lower().replace(" ",""), 
                                         invoice.invoice_number)
-    rendered = HttpResponse(as_pdf, mimetype='application/pdf')
-    rendered['Content-Disposition'] = 'attachment; filename="%s"' % filename
+    response = render_url_to_pdf(url, request, basename=filename)
 
-    f = ContentFile(as_pdf)
+    f = ContentFile(response.content)
     if invoice.project:
         document = timepiece.BusinessDocument.objects.create(business=invoice.project.business,
                                                              project=invoice.project,
