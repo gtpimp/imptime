@@ -3352,7 +3352,7 @@ def get_project_detail(request, project_id, template="timepiece/project/project_
 
     business = project.business
 
-    queryset = project.get_ordered_issues().select_related("feature")
+    queryset = project.get_ordered_issues().select_related("feature", "assigned_to")
     issues_forms = None
 
     context['users_with_time_but_no_estimates_in_this_project'] = project.get_users_with_time_but_no_estimates_in_this_project()
