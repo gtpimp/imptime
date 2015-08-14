@@ -402,7 +402,19 @@ imp.toggle_show_my_issues = function(menu_el, logged_in_username) {
 };
 
 imp.toggle_show_all_users = function(menu_el, logged_in_username) {
-    $(menu_el).parents(".project_li").find(".estimates_cell").not("[data-username="+logged_in_username+"]").toggle();
+    var on_done = imp.loading("toggling...");
+    var project_el = $(menu_el).parents(".project_li");
+    var trigger = project_el.find(".toggle_show_all_users_trigger");
+    var all_shown = trigger.attr("all_shown");
+    var cells = project_el.find(".estimates_cell").not("[data-username="+logged_in_username+"]");
+    if ( all_shown == "true" ) {
+        cells.css({"display":"none"});
+        trigger.attr("all_shown", "false");
+    } else {
+        cells.css({"display":"table-cell"});
+        trigger.attr("all_shown", "true");
+    }
+    on_done();
     return false;
 };
 

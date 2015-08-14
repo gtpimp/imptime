@@ -206,6 +206,7 @@ imp.on_issue_rows_loaded = function(issue_row_container) {
     imp.set_issue_checkbox_hooks(issue_row_container);
     imp.set_assigned_by_clickable(issue_row_container);
     imp.attach_issue_filters(issue_row_container);
+    imp.toggle_show_all_users(issue_row_container, imp.config.logged_in_username);
 };
 
 imp.set_assigned_by_clickable = function(issue_row_container) { 

@@ -131,7 +131,7 @@
 
       {% has_permission has_see_other_user_points project.business %}
       <li>
-        <a href="#" onclick="imp.toggle_show_all_users(this, '{{current_user.username}}');return false;">
+        <a href="#" all_shown="true" class="toggle_show_all_users_trigger" onclick="imp.toggle_show_all_users(this, '{{current_user.username}}');return false;">
           <img src="{{STATIC_URL}}images/icons/user_suit.png"/>
         </a>
       </li>
