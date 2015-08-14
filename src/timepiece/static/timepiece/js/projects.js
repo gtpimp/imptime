@@ -350,6 +350,17 @@ imp.create_splitter = function() {
     }
 };
 
+imp.update_splitter_height = function() {
+    var splitter = $(".splitter");
+    var top = splitter.offset().top;
+    var wh = $(window).height();
+    var height = (wh-top-20)+"px";
+    splitter.css("height", height);
+    splitter.find(".splitter-left").css("height", height);
+    splitter.find(".splitter-right").css("height", height);
+    splitter.find(".vsplitbar").css("height", height);
+};
+
 imp.toggle_show_colours = function() {
     $(".issue_colour_square").toggle();
 };
@@ -487,3 +498,6 @@ imp.on_document_ready = function() {
 $(document).ready(imp.on_document_ready);
 
 
+$(window).on('resize', function() {
+    imp.update_splitter_height();
+});

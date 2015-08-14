@@ -2,7 +2,7 @@
 .splitter {
 	height: 500px;
 	width: 100%;
-	/*border: 5px solid #aaa;*/
+	border-bottom: 1px solid #000;
 }
 .splitter .splitter-left, .splitter .splitter-right {
 	overflow: auto;
