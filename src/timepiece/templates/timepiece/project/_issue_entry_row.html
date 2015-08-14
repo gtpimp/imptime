@@ -71,7 +71,7 @@
 
     <div class="styled-select">		     
       <div class="readonly_value"> 
-        {{ issue.feature|default_if_none:"" }}
+        {{ issue.feature.name|default_if_none:"" }}
       </div>
       {% has_permission has_edit_issue_feature project.business %}
       <div id="dialog" class="inline_editor" style="display:none">
