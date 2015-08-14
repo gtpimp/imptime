@@ -9045,7 +9045,9 @@ body table.table-striped-vertical th:nth-child(even), body table.table-striped-v
 }
 body #content.container-fluid {
   width: 96%;
-  margin: 20px auto;
+  margin-top: 60px;
+  margin-left: 20px;
+  margin-right: 20px;
   height: 100%;
 }
 @media (max-width: 979px) {
