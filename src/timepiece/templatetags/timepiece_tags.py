@@ -178,12 +178,16 @@ def with_issue_links(content):
 @register.simple_tag(takes_context=True)
 def get_points_current_user(context, issue_id):
     user = context['current_user']
-    issue = timepiece.Issue.objects.get(pk=issue_id)
     try:
-        issue_points = timepiece.IssuePoints.objects.get(user=user,issue = issue)
-    except timepiece.IssuePoints.DoesNotExist:
-        issue_points = None
-    return issue_points.points if issue_points else None
+        return timepiece.IssuePoints.filter(user=user, issue_id=issue_id).values('points')[0]['points']
+    except IndexError:
+        return None
+    # issue = timepiece.Issue.objects.get(pk=issue_id)
+    # try:
+    #     issue_points = timepiece.IssuePoints.objects.get(user=user,issue = issue)
+    # except timepiece.IssuePoints.DoesNotExist:
+    #     issue_points = None
+    # return issue_points.points if issue_points else None
 
 @register.simple_tag(takes_context=True)
 def get_points_current_user_id(context, issue_id):
@@ -312,7 +316,7 @@ def bar_graph(context, name, worked, total, width=None, suffix=None):
     over_total = 0
     error = ''
     if worked < 0:
-        error = 'Somehow you\'ve logged %s negative hours for %s this week.' \
+        error = "Somehow you've logged %s negative hours for %s this week." \
         % (abs(worked), name)
     if left < 0:
         over = abs(left)
@@ -514,10 +518,11 @@ def keyvalue(dict, key):
 
 @register.filter(is_safe=True)
 def points_and_stuff(per_user):
+
     if not per_user:
         return mark_safe('&nbsp;')
     points = per_user['issue_points']
-    points = points.points if points else '&nbsp;'
+    points = points if points else '&nbsp;'
     points = '<span class="estimated_hours">%s</span>' % points
     
     if per_user['has_estimate'] and per_user['has_hours']:

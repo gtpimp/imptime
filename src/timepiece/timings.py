@@ -6,15 +6,17 @@ starts = {}
 totals = {}
 
 def start(name):
-
     starts[name] = time()
-    def end(name=name):
-        duration = time() - starts[name]
-        if name in totals:
-            totals[name] += duration
-        else:
-            totals[name] = duration
-    return end
+    def call_to_end(name=name):
+        return end(name)
+    return call_to_end
+
+def end(name):
+    duration = time() - starts[name]
+    if name in totals:
+        totals[name] += duration
+    else:
+        totals[name] = duration
 
 def results():
     msg = []

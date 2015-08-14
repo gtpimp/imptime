@@ -1,4 +1,5 @@
 import datetime
+import timings
 from dateutil.relativedelta import relativedelta
 import api
 import calendar
@@ -3044,7 +3045,7 @@ class Issue(models.Model):
 
     @property
     def status_name(self):
-        return dict(self.ISSUE_STATUS_CHOICES)[self.status]
+        return dict(self.ISSUE_STATUS_CHOICES)[self.status.lower()]
     
     def set_order(self):
         if self.order is not None:
@@ -3063,6 +3064,9 @@ class Issue(models.Model):
             new_order = num_issues
         return new_order
 
+    def get_issue_points_by_user(self):
+        return dict( [ (x['user'], float(x['points'] or 0)) for x in IssuePoints.objects.filter(issue=self).values('user', 'points') ] )
+    
     def get_user_issue_points(self, user):
 
         if isinstance(user,basestring):
@@ -3142,6 +3146,9 @@ class Issue(models.Model):
     def hours_for_user(self, user):
         return self.related_entries.all().filter(user=user).aggregate(total_hours=Sum('hours'))['total_hours'] or 0
 
+    def get_issue_hours_by_user(self):
+        return dict( [ (x['user'], float(x['hours'] or 0)) for x in self.related_entries.all().filter(hours__gt=0).values("user").order_by("user").annotate(hours=Sum('hours')) ] )
+    
     def hours_for_users(self):
         return [ (User.objects.get(pk=x['user']), x['hours']) for x in self.related_entries.all().filter(hours__gt=0).values("user").order_by("user").annotate(hours=Sum('hours')) ]
 
