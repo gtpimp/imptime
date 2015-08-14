@@ -3647,7 +3647,11 @@ def issue_subject_update(request,  template="timepiece/project/issue_detail.html
 def issue_points_update(request,  template="timepiece/project/issue_detail.html", context=None):
     context = context or {}
     try:
-        edited_issue_points = timepiece.IssuePoints.objects.get(pk=request.POST['item_id'])
+        user_id = request.POST['item_id']
+        user = User.objects.get(pk=user_id)
+        issue_id = request.POST['issue_id']
+        issue = timepiece.Issue.objects.get(pk=issue_id)
+        edited_issue_points = timepiece.IssuePoints.objects.get_or_create(user=user, issue=issue)[0]
     except KeyError:
         edited_issue_points = None
 

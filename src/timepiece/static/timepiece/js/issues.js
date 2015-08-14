@@ -573,12 +573,12 @@ imp.clickable_description_box = function(element, url, item_id, args) {
 };
 
 
-imp.clickable_time_estimate = function(element, url, item_id, issue_id) {
+imp.clickable_time_estimate = function(element, url, user_id, issue_id) {
     element = $(element).find("span.edit_issue_subject");
     var initial_value = element.find(".estimated_hours").html() || "0";
 
     imp.highlight_issue(issue_id);
-    return imp.clickable_subject_box(element, url, item_id, null, "auto", issue_id, initial_value=initial_value);
+    return imp.clickable_subject_box(element, url, user_id, null, "auto", issue_id, initial_value=initial_value);
 };
 
 imp.sync_from_remote = function(issue_id, url) {
@@ -633,7 +633,7 @@ imp.clickable_subject_box = function(element, url, item_id, size, width, issue_i
 	        var on_done = imp.issue_loading(issue_id, "editing");
                 var response = $.ajax({type:"POST",
                                        url: url,
-                                       data : { item_id: item_id, new_value: new_value },
+                                       data : { item_id: item_id, new_value: new_value, issue_id: issue_id },
                                        dataType:"json"});
                 response.done( function() {
 		    imp.refresh_closest_issue_parent_row(readonly_el);
