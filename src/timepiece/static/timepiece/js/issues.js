@@ -401,6 +401,11 @@ imp.toggle_show_my_issues = function(menu_el, logged_in_username) {
     $(menu_el).toggleClass("sprint_highlighted_menu_item");
 };
 
+imp.toggle_show_all_users = function(menu_el, logged_in_username) {
+    $(menu_el).parents(".project_li").find(".estimates_cell").not("[data-username="+logged_in_username+"]").toggle();
+    return false;
+};
+
 imp.on_add_issue_comment = function(el, url) {
 
     var container = el.parent();
