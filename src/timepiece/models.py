@@ -915,7 +915,9 @@ class Project(models.Model):
                             user=previous_rate.user,
                             amount = previous_rate.amount,
                             billable_amount = previous_rate.billable_amount,
-                            velocity = previous_rate.velocity)
+                            velocity = previous_rate.velocity,
+                            work_ratio=previous_rate.work_ratio,
+                            time_tracking_mode = previous_rate.time_tracking_mode)
                 rate.save(recalc_secondary_estimates=False)
                 user_ids_with_rates.append(previous_rate.user.id)
                 
@@ -2978,7 +2980,6 @@ class Issue(models.Model):
            ( 'new', 'new'),
            ( 'devdone', 'dev_done'),
            ( 'in_internal_qa', 'internal qa'),
-           ( 'internal_qa', 'internal qa'),
            ( 'internal_qa_passed', 'internal qa passed'),
            ( 'in_client_qa', 'external qa'),
            ( 'client_qa_passed', 'external qa passed'),
