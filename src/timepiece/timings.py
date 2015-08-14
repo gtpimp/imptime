@@ -1,15 +1,13 @@
 from time import time
 import logging
+from django.utils.datastructures import SortedDict
 logger = logging.getLogger(__name__)
 
-starts = {}
-totals = {}
+starts = SortedDict()
+totals = SortedDict()
 
 def start(name):
     starts[name] = time()
-    def call_to_end(name=name):
-        return end(name)
-    return call_to_end
 
 def end(name):
     duration = time() - starts[name]
@@ -19,10 +17,14 @@ def end(name):
         totals[name] = duration
 
 def results():
+    global starts
+    global totals
     msg = []
     for name, total in totals.items():
         msg.append( "%s took %f" % (name, total))
     logger.info("\n".join(msg))
+    starts = SortedDict()
+    totals = SortedDict()
     return "<br/>".join(msg)
 
     

@@ -801,6 +801,9 @@ class Project(models.Model):
             return self.scheduled_events.order_by("-start")[0].start
         except IndexError:
             return None
+
+    def get_rates_by_user(self):
+        return dict( [ (x['user'], { 'ctc_amount': float(x['amount'] or 0), 'billable_amount': float(x['billable_amount'] or 0) }) for x in Rate.objects.filter(project=self).values('user', 'amount', 'billable_amount') ] )
         
     def get_user_rate(self, user):
 
@@ -3188,6 +3191,9 @@ class Issue(models.Model):
 
     @property
     def ctc(self):
+        import pdb; pdb.set_trace()
+        
+        x= self.related_entries.all().aggregate(total=Sum(F('hours')*F('rate')))[0]['total']
         cost = 0
         for entry in self.related_entries:
             cost += entry.atrate

@@ -4,12 +4,15 @@
 
 <tr class="issue_instance_row {{issue.status_as_class}} {% if issue.adhoc %}adhoc_issue_row{% endif %}" assigned_to="{{issue.assigned_to.username}}"  id="{{issue.pk}}" refresh_url="{% url 'get_issue_row' issue.pk %}" status="{{issue.status}}" feature="{{issue.feature.name|default:None}}">                    
 
+  {% timing_start "a" %}
   <td class="issue_checkbox_td">
     <div class="issue_checkbox_cell" style="width:100%; display:none;">
       <input type="checkbox" name="issue_checked_{{issue.pk}}" {% if issue.pk in selected_issue_ids %}checked="checked"{% endif %} /> <!-- Code for checkbox on left hand side -->
     </div>
   </td>
+  {% timing_end "a" %}
 
+  {% timing_start "b" %}
   <td class="issue_number_cell"> 
     <div style="width:100%;position:relative">
       <div class="emacs_copy_container">
@@ -28,6 +31,9 @@
       </div> 
     </div>
   </td> 
+  {% timing_end "b" %}
+
+  {% timing_start "c" %}
   <td class="issue_subject">
     <div class="issue_row_icon_bar" >
       {% if issue.adhoc %}
@@ -40,7 +46,9 @@
       {{issue.subject}}
     </div>
   </td>
+  {% timing_end "c" %}
 
+  {% timing_start "d" %}
   <td class="assigned_col" {% has_permission has_assign_user project.business %} onclick="return imp.show_inline_editor(this);"{% end_permission %} url_for_update="{% url 'issue_assigned_to_update' %}" issue_id="{{issue.id}}" url_for_options="{% url 'issue_users' issue.id %}" selected_value="{{issue.assigned_to.id}}">
 
 
@@ -55,8 +63,10 @@
       </div>
       {% end_permission %}
     </div>
-    
   </td>
+  {% timing_end "d" %}
+
+  {% timing_start "e" %}
   <td class="feature_col" {% has_permission has_edit_issue_feature project.business %} onclick="return imp.show_inline_editor(this);" style="z-index:100;" {% end_permission %} url_for_update="{% url 'update_issue_with_feature' %}" issue_id="{{issue.id}}" url_for_options="{% url 'business_features' business.id %}" selected_value="{{issue.feature.id}}" >
 
     <div class="styled-select">		     
@@ -73,11 +83,12 @@
       {% end_permission %}
     </div>
   </td>
+  {% timing_end "e" %}
 
+  {% timing_start "f" %}
   <td class="status_col" {% has_permission has_edit_issue_states project.business %} onclick="return imp.show_inline_editor(this);"{% end_permission %} url_for_update="{% url 'issue_status_update' %}" issue_id="{{issue.id}}" url_for_options="{% url 'allowed_issue_stati' issue.id %}" selected_value="{{issue.status}}">
     <div class="styled-select">		     
       <div style="white-space: nowrap;">
-        <div class="issue_colour_square" style="display:none; background-color:{{ issue.colour }}"></div>
         <div class="readonly_value"> 
           {{ issue.status_name }}
         </div>
@@ -90,7 +101,9 @@
       {% end_permission %}
     </div>
   </td>
+  {% timing_end "f" %}
   
+  {% timing_start "g" %}
   {% has_permission has_see_other_user_points project.business %}
   {% for user, per_user in issue.representation.per_user.items %}
   {% include "timepiece/project/_issue_points_completed.html" %}
@@ -115,24 +128,30 @@
   </td>
   {% end_permission %}
   {% endcomment %}
+  {% timing_end "g" %}
 
   {% has_permission has_view_ctc_billable_rates project.business  %}
 
   {% has_permission has_view_ctc_rates project.business %}
+  {% timing_start "h" %}
   <td  class="money_cell money_ctc">
     <div class="secret_link"  onclick="imp.show_issue_detail({{issue.pk}}, '{% url 'issue_detail' issue.pk %}');">
-      R{{issue.ctc|floatformat:"0"|intcomma}}
+      R{{issue.representation.ctc|floatformat:"0"|intcomma}}
     </div>
   </td>
+  {% timing_end "h" %}
 {% end_permission %}
 
+  {% timing_start "i" %}
   <td  class="money_cell">
       <div class="secret_link"  onclick="imp.show_issue_detail({{issue.pk}}, '{% url 'issue_detail' issue.pk %}');">
-          R{{issue.billable|floatformat:"0"|intcomma}}
+          R{{issue.representation.billable|floatformat:"0"|intcomma}}
       </div>
   </td>
+  {% timing_end "i" %}
   {% end_permission %}		  
   {% has_permission has_delete_issue project.business %}
+  
   <td class="issue_delete" onclick="if (!confirm('Are you sure you want to delete this issue?')){ return false; }; imp.delete_issue_from_issues_list(this, '{% url 'delete_issue' project.id %}' , {{ issue.pk}} )">		    
       <img src="{{STATIC_URL}}/images/timepiece/icons/cross.png"/>
 

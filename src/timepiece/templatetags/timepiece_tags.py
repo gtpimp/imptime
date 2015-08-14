@@ -1,6 +1,7 @@
 import urllib
 import datetime
 import time
+from timepiece import timings
 import calendar
 from decimal import Decimal
 import markdown
@@ -114,9 +115,10 @@ class HasPermissionNode(template.Node):
         if self.opposite:
             has = not has
         if has:
-            return self.nodelist.render(context)
+            res = self.nodelist.render(context)
         else:
-            return ""
+            res = ""
+        return res
 
 def user_can_estimate_own_points(parser, token):
     nodelist = parser.parse(('end_can_estimate',))
@@ -515,6 +517,16 @@ def timesheet_url(type, pk, date):
 @register.filter
 def keyvalue(dict, key):    
     return dict[key]
+
+@register.simple_tag(takes_context=False)
+def timing_start(name):
+    timings.start(name)
+    return ""
+
+@register.simple_tag(takes_context=False)
+def timing_end(name):
+    timings.end(name)
+    return ""
 
 @register.filter(is_safe=True)
 def points_and_stuff(per_user):

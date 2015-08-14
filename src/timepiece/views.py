@@ -3142,41 +3142,32 @@ def delete_issue(request, project_id, template="", context=None):
 
     return HttpResponse("")
 
-# def _get_user_rates_for_project(current_user, project):
-#     rates_by_user = {}
-#     for user in project.business.get_users_allowed_to_estimate_on_business(current_user):
-#         r = project.get_user_rate(user)
-#         r = float(r.amount) if r else 0.0
-#         rates_by_user[user] = project.get_user_rate(user)
-#     return rates_by_user
-
-def _augment_issue_data(issue, current_user, users_allowed_to_estimate_on_business):
+def _augment_issue_data(issue, current_user, users_allowed_to_estimate_on_business, rates_by_user=None):
 
     # always show logged in user first
     if current_user in users_allowed_to_estimate_on_business:
         users_allowed_to_estimate_on_business.remove(current_user)
         users_allowed_to_estimate_on_business.insert(0, current_user)
 
-    timings.start("a")
-
     issue_points_by_user = issue.get_issue_points_by_user()
     issue_hours_by_user = issue.get_issue_hours_by_user()
-    
+
+    if rates_by_user is None:
+        rates_by_user = issue.project.get_rates_by_user()
+
+    issue.representation.ctc = 0
+    issue.representation.billable = 0
+            
     for user in users_allowed_to_estimate_on_business:
 
-        timings.start("b")
         per_user_issue_data = {}
 
-        timings.start("b1")
         user_points = issue_points_by_user.get(user.id, 0)
-        timings.end("b1")
         #user_points_float = float(user_points.points) if user_points and user_points.points else 0.0
 
         per_user_issue_data["issue_points"] = user_points
 
-        timings.start("b2")
         hours = issue_hours_by_user.get(user.id, 0)
-        timings.end("b2")
 
         #completion_against_estimated_cost = ((actual_billable_cost_of_issue / estimated_cost)*100) if estimated_cost>0 else 0.0
 
@@ -3185,8 +3176,6 @@ def _augment_issue_data(issue, current_user, users_allowed_to_estimate_on_busine
         else:
             completion_against_estimated_hours = ((hours/user_points)*100) if user_points>0 else 0.0
 
-        timings.end("b")
-        timings.start("c")
                 
         per_user_issue_data["completion"] = completion_against_estimated_hours
         per_user_issue_data["hours"] = hours
@@ -3203,22 +3192,18 @@ def _augment_issue_data(issue, current_user, users_allowed_to_estimate_on_busine
         if per_user_issue_data["completion_width"]>100:
             per_user_issue_data["completion_width"] = 100
 
-        timings.end("c")
-        timings.start("d")
             
         per_user_issue_data["has_estimate"] =  (per_user_issue_data["issue_points"] is not None and per_user_issue_data["issue_points"]>0) or per_user_issue_data["completion"]>0
         per_user_issue_data["can_estimate"] = True
         issue.add_user_to_representation(user, per_user_issue_data)
 
-        timings.end("d")
-        timings.start("e")
+        issue.representation.ctc += hours * rates_by_user[user.id]['ctc_amount']
+        issue.representation.billable += hours * rates_by_user[user.id]['billable_amount']
         
         if current_user.id == user.id:
             issue.representation.current_user_issue_data = per_user_issue_data
 
-        timings.end("e")
-
-    timings.end("a")
+    
             
     # for user, hours in issue.hours_for_users():
     #     if user not in users_allowed_to_estimate_on_business:
@@ -3318,9 +3303,11 @@ def project_issues(request, pk, template="timepiece/project/issues.html", contex
     issues_forms = timepiece_forms.issue_status_formset(request.POST or None,
                                                         queryset=queryset)
     users_allowed_to_estimate_on_business=business.get_users_allowed_to_estimate_on_business(request.user)
+    rates_by_user = project.get_rates_by_user()
     for form in issues_forms.forms:
         _augment_issue_data(form.instance,request.user,
-                            users_allowed_to_estimate_on_business=users_allowed_to_estimate_on_business)
+                            users_allowed_to_estimate_on_business=users_allowed_to_estimate_on_business,
+                            rates_by_user=rates_by_user)
 
     new_issue_form = timepiece_forms.IssueForm()
 
@@ -3370,15 +3357,16 @@ def get_project_detail(request, project_id, template="timepiece/project/project_
 
     context['users_with_time_but_no_estimates_in_this_project'] = project.get_users_with_time_but_no_estimates_in_this_project()
 
-    
     if len(queryset) :
         issues_forms = timepiece_forms.issue_status_formset(request.POST or None,
                                                             queryset=queryset)
         users_allowed_to_estimate_on_business=business.get_users_allowed_to_estimate_on_business(request.user)
+        rates_by_user = project.get_rates_by_user()
         for form in issues_forms.forms:
             timings.start("_augment_issue_data")
             _augment_issue_data(form.instance, request.user,
-                                users_allowed_to_estimate_on_business=users_allowed_to_estimate_on_business)
+                                users_allowed_to_estimate_on_business=users_allowed_to_estimate_on_business,
+                                rates_by_user=rates_by_user)
             timings.end("_augment_issue_data")
 
     new_issue_form = timepiece_forms.IssueForm()
@@ -3414,7 +3402,9 @@ def get_project_detail(request, project_id, template="timepiece/project/project_
     if 'selected_issue_ids_for_context_menu' in request.session:
         context['selected_issue_ids'] = [int(x) for x in request.session['selected_issue_ids_for_context_menu']]
 
+    timings.start("render")
     response = render_to_response(template, context, context_instance=RequestContext(request))
+    timings.end("render")
 
     timings.end("get_project_detail")
     timings.results()
