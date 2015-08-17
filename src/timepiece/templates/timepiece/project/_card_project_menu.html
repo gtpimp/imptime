@@ -21,12 +21,6 @@
       </li>
       {% end_permission %}
 
-      {% comment %}
-      <li>
-        <a target="_blank" href='#' onclick="imp.toggle_show_my_issues(this, '{{current_user.username}}'); return false" >My issues</a>
-      </li>
-      {% endcomment %}
-
       <li>
         <a href="#" onclick="imp.popup_page('{% url 'auto_issue_sort' project.id %}'); return false;">
           Sort
@@ -141,10 +135,6 @@
         <a href="#" onclick="imp.toggle_show_adhoc_issues(); return false;">
           <img src="{{STATIC_URL}}images/icons/auto_created_issue.png" title="Toggle show adhoc issues" />
         </a>
-      </li>
-
-      <li>
-        <a href="#" onclick="imp.toggle_show_colours();return false;">Colours</a>
       </li>
 
       {% comment %}

@@ -2994,7 +2994,8 @@ class Issue(models.Model):
            ( 'duplicate', 'duplicate'),
            ( 'to be designed', 'to be designed'),
            ( 'imported', 'imported'),
-           ( 'management', 'management')
+           ( 'management', 'management'),
+           ( 'quick_clocker', 'quick clocker')
         )
 
     STATUSES_INDICATING_DEV_INCOMPLETE = ['new', 'bug', 'reopened', 'dev unclear']

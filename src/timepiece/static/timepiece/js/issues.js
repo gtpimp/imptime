@@ -398,11 +398,6 @@ imp.set_issue_checkbox_hooks = function(issue_row_container) {
 
 };
 
-imp.toggle_show_my_issues = function(menu_el, logged_in_username) {
-    $(menu_el).parents(".project_li").find(".issue_instance_row[assigned_to!="+logged_in_username+"]").toggle();
-    $(menu_el).toggleClass("sprint_highlighted_menu_item");
-};
-
 imp.toggle_show_all_users = function(menu_el, logged_in_username) {
     var on_done = imp.loading("toggling...");
     var project_el = $(menu_el).parents(".project_li");

@@ -5698,19 +5698,26 @@ def quick_clocker_delete_entry(request, entry_id=None):
     return HttpResponseRedirect(reverse('quick_clocker'))
 
 def _get_quick_clocker_issue(project, user):
+
+    rate = timepiece.Rate.objects.filter(project=project, user=user).first()
+    if rate is None:
+        issue_subject = "general development"
+    else:
+        issue_subject = rate.time_tracking_mode
+    
     try:
-        issue = timepiece.Issue.objects.get(project=project, subject="daily management")
+        issue = timepiece.Issue.objects.get(project=project, subject=issue_subject, assigned_to=user)
     except timepiece.Issue.MultipleObjectsReturned:
-        issue = timepiece.Issue.objects.filter(project=project, subject="daily management").last()
+        issue = timepiece.Issue.objects.filter(project=project, subject=issue_subject, assigned_to=user).last()
     except timepiece.Issue.DoesNotExist:
         issue = timepiece.Issue.objects.create(project=project,
-                                               subject="daily management",
+                                               subject=issue_subject,
                                                auto_created_during_import=True,
                                                adhoc=False,
-                                               status='management',
+                                               status='quick_clocker',
                                                assigned_to=user,
                                                number=timepiece.Issue.get_next_issue_number(project.business),
-                                               description="Quick clocker",
+                                               description="General work",
                                                story_points=0,
                                                order=timepiece.Issue.get_next_order(project))
     return issue

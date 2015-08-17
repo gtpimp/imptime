@@ -361,10 +361,6 @@ imp.update_splitter_height = function() {
     splitter.find(".vsplitbar").css("height", height);
 };
 
-imp.toggle_show_colours = function() {
-    $(".issue_colour_square").toggle();
-};
-
 imp.toggle_show_adhoc_issues = function() {
     $(".adhoc_issue_row").toggle();
 };
@@ -484,7 +480,7 @@ imp.on_document_ready = function() {
 
   	  var parent = $('issue_edit_box').parent();
 	  var div_sibling = parent.find('.edit_issue_subject');
-	  $('.issue_edit_box').remove()
+	  $('.issue_edit_box').remove();
    	  div_sibling.show();
 	  
     });

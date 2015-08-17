@@ -330,11 +330,6 @@ alert(a);
 
 };
 
-imp.toggle_show_my_issues = function(menu_el, logged_in_username) {
-    $(menu_el).parents(".project_li").find(".issue_instance_row[assigned_to!="+logged_in_username+"]").toggle();
-    $(menu_el).toggleClass("sprint_highlighted_menu_item");
-};
-
 imp.on_add_issue_comment = function(el, url) {
 
     var container = el.parent();
@@ -526,7 +521,6 @@ imp.sync_from_remote = function(issue_id, url) {
 };
 
 imp.clickable_subject_box = function(element, url, item_id, size, width, issue_id, initial_value) {
-    debugger	      
     if (!issue_id) {
 	issue_id = item_id;
     }
@@ -617,7 +611,7 @@ imp.clickable_feature_name = function (element, url, item_id) {
 };
 
 imp.dynamic_option_addition = function (element, item_id, update_url) {
-    option_addition_button = $("<input/>").attr("type", "button").attr('value','');
+    var option_addition_button = $("<input/>").attr("type", "button").attr('value','');
     option_addition_button.attr("class","option_addition");
     option_addition_button.css("border","none");
 
