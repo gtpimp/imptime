@@ -40,8 +40,10 @@ imp.show_issue_detail = function(issue_id, url, msg, args) {
 				}
 				
 
-				$(".issue_detail .subject_class input").focus();
+                                var el = $("#" + issue_id);
+				el.find(".subject_class input").focus();
 				imp.refresh_show_numbers();
+                                imp.refresh_show_all_users(el, imp.config.logged_in_username);
 				imp.current_issue_detail_url = url;
 				if ( issue_id ) {
 				    imp.highlight_issue(issue_id);
@@ -413,6 +415,21 @@ imp.toggle_show_all_users = function(menu_el, logged_in_username) {
     } else {
         cells.css({"display":"table-cell"});
         trigger.attr("all_shown", "true");
+    }
+    on_done();
+    return false;
+};
+
+imp.refresh_show_all_users = function(menu_el, logged_in_username) {
+    var on_done = imp.loading("toggling...");
+    var project_el = $(menu_el).parents(".project_li");
+    var trigger = project_el.find(".toggle_show_all_users_trigger");
+    var all_shown = trigger.attr("all_shown");
+    var cells = project_el.find(".estimates_cell").not("[data-username="+logged_in_username+"]");
+    if ( all_shown == "true" ) {
+        cells.css({"display":"table-cell"});
+    } else {
+        cells.css({"display":"none"});
     }
     on_done();
     return false;
