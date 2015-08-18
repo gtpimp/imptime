@@ -3200,7 +3200,7 @@ def _augment_issue_data(issue, current_user, users_allowed_to_estimate_on_busine
         try:
             issue.representation.ctc += hours * rates_by_user[user.id]['ctc_amount']
             issue.representation.billable += hours * rates_by_user[user.id]['billable_amount']
-        except IndexError:
+        except KeyError:
             # no rate for this user, not a problem
             pass
         
