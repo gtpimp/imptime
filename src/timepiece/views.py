@@ -3197,8 +3197,12 @@ def _augment_issue_data(issue, current_user, users_allowed_to_estimate_on_busine
         per_user_issue_data["can_estimate"] = True
         issue.add_user_to_representation(user, per_user_issue_data)
 
-        issue.representation.ctc += hours * rates_by_user[user.id]['ctc_amount']
-        issue.representation.billable += hours * rates_by_user[user.id]['billable_amount']
+        try:
+            issue.representation.ctc += hours * rates_by_user[user.id]['ctc_amount']
+            issue.representation.billable += hours * rates_by_user[user.id]['billable_amount']
+        except IndexError:
+            # no rate for this user, not a problem
+            pass
         
         if current_user.id == user.id:
             issue.representation.current_user_issue_data = per_user_issue_data
