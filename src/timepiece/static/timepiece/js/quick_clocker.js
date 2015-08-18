@@ -23,7 +23,7 @@ $(document).ready(function() {
 
     qc.filter_businesses = function(filter_string, filter_el) {
         filter_el.parent().find('div.button_radio_input').each( function() {
-            if ( $(this).attr('label').indexOf(filter_string) > -1 ) {
+            if ( $(this).attr('label').indexOf(filter_string.toLowerCase()) > -1 ) {
                 $(this).show();
             } else {
                 $(this).hide();
