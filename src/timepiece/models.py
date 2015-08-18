@@ -923,7 +923,7 @@ class Project(models.Model):
                 
         for user in users.exclude(pk__in=user_ids_with_rates):
             rate = Rate(project=self, user=user, amount=user.profile.amount,
-                        billable_amount=user.profile.billable_amout,
+                        billable_amount=user.profile.billable_amount,
                         velocity=1)
             rate.save(recalc_secondary_estimates=False)
 

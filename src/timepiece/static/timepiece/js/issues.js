@@ -399,7 +399,6 @@ imp.set_issue_checkbox_hooks = function(issue_row_container) {
 };
 
 imp.toggle_show_all_users = function(menu_el, logged_in_username) {
-    var on_done = imp.loading("toggling...");
     var project_el = $(menu_el).parents(".project_li");
     var trigger = project_el.find(".toggle_show_all_users_trigger");
     var all_shown = trigger.attr("all_shown");
@@ -411,7 +410,6 @@ imp.toggle_show_all_users = function(menu_el, logged_in_username) {
         cells.css({"display":"table-cell"});
         trigger.attr("all_shown", "true");
     }
-    on_done();
     return false;
 };
 
@@ -863,7 +861,8 @@ imp.show_inline_editor = function(el, args) {
 				       editor_container.hide();
 				       deactivate_select();
 				       imp.refresh_closest_issue_parent_row(td);
-				       on_done();
+
+                                       on_done();
 
 				       if ( args.callback ) {
 					   args.callback(data);
