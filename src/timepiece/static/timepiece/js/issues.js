@@ -856,9 +856,11 @@ imp.show_inline_editor = function(el, args) {
         imp.editor_container.hide();
         var on_done = imp.issue_loading("saving");
         var value = imp.editor_container.find("input[name='transient_selection']:checked").val();
+        var created_value = imp.created_value_editor.val();
+        imp.created_value_editor.val('');
         var response = $.ajax({type:"POST",
                                url: url_for_update,
-                               data : { issue_id: issue_id, selected_value:value, created_value:imp.created_value_editor.val() },
+                               data : { issue_id: issue_id, selected_value:value, created_value:created_value },
                                dataType:"json",
                                success: function(data) {
                                    imp.readonly_value.html(data.new_value);
