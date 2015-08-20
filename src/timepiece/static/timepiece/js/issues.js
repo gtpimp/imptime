@@ -19,8 +19,13 @@ imp.highlight_issue = function(issue_id) {
     }
     imp.highlight_issue_id = issue_id;
 
-    $("#"+issue_id).addClass("highlight");
-    $("#"+issue_id).scrollintoview();
+    var issue_el = $("#"+issue_id);
+    issue_el.addClass("highlight");
+
+    setTimeout( function() {
+        issue_el.scrollintoview();
+        }, 
+                200 );
 };
 
 imp.search_on_issue_number = function(issue_number) {
@@ -43,8 +48,7 @@ imp.show_issue_detail = function(issue_id, url, msg, args) {
 
                                 var el = $("#" + issue_id);
 				el.find(".subject_class input").focus();
-				imp.refresh_show_numbers();
-                                imp.refresh_show_all_users(el, imp.config.logged_in_username);
+                                imp.refresh_hidden_fields(el);
 				imp.current_issue_detail_url = url;
 				if ( issue_id ) {
 				    imp.highlight_issue(issue_id);

@@ -135,6 +135,7 @@ function make_data_done_function_for_element(element) {
         var sortable_url = $(sortable).attr("update_order_url");
 
 	imp.projects.attach_sortable( sortable, sortable_url );
+        imp.on_issue_rows_loaded($(element));
     };
 };
 
@@ -150,7 +151,20 @@ imp.projects.attach_sortable = function(sortable, sortable_url) {
     }
 };
 
-imp.projects.load_or_display_issues = imp.projects._make_load_for_data( make_data_done_function_for_element );
+imp.projects.load_or_display_issues = function(element, expand_url) {
+    if ( imp.highlight_issue_id ) {
+	$("#"+imp.highlight_issue_id).removeClass("highlight");
+        imp.highlight_issue_id = null;
+    }
+    var callback = make_data_done_function_for_element(element);
+    imp.current_issue_detail_url = null;
+    imp.current_issue_id = null;
+    var action_func = imp.projects._make_load_for_data( function() {
+        callback();
+        //imp.refresh_show_all_users(element, imp.config.logged_in_username);
+    });
+    action_func(element, expand_url);
+};
 
 imp.projects.on_project_sorting_change_for_url = function ( project_sorting_url) {
     var url_to_call_when_projects_were_resorted = project_sorting_url;
@@ -201,7 +215,7 @@ imp.on_issue_rows_loaded = function(issue_row_container) {
 								      $(this).find('.emacs_copy_img').hide();
 								      $(this).removeClass("hovered");
 								  });
-    imp.refresh_show_numbers();
+    imp.refresh_hidden_fields(issue_row_container);
     imp.highlight_issue();
     imp.set_issue_checkbox_hooks(issue_row_container);
     imp.set_assigned_by_clickable(issue_row_container);
@@ -397,24 +411,35 @@ imp.create_accordions = function() {
     });
 };
 
-imp.refresh_show_numbers = function() {
-    if ( imp.show_numbers_state == numbers_state['no ctc'] ) {
-        $(".money_cell").show();
-	$(".money_cell.money_ctc").hide();
-	$(".estimates_cell").show();
-    } else if ( imp.show_numbers_state == numbers_state['no money'] ) {
-	$(".money_cell").hide();
-	$(".estimates_cell").show();
-        $(".money_cell.money_ctc").hide();
-    } else if ( imp.show_numbers_state == numbers_state['all'] ) {
-	$(".money_cell").show();
-	$(".estimates_cell").show();
-        $(".money_cell.money_ctc").show();
-    } else if ( imp.show_numbers_state == numbers_state['no money and no estimates'] ) {
-	$(".money_cell").hide();
-	$(".estimates_cell").hide();
-        $(".money_cell.money_ctc").hide();
+imp.refresh_show_numbers = function(issue_row_container) {
+    var parent_el;
+    if ( issue_row_container ) {
+        parent_el = issue_row_container.parents(".project_li");
+    } else {
+        parent_el = $("body");
     }
+    if ( imp.show_numbers_state == numbers_state['no ctc'] ) {
+        parent_el.find(".money_cell").show();
+	parent_el.find(".money_cell.money_ctc").hide();
+	parent_el.find(".estimates_cell").show();
+    } else if ( imp.show_numbers_state == numbers_state['no money'] ) {
+	parent_el.find(".money_cell").hide();
+	parent_el.find(".estimates_cell").show();
+        parent_el.find(".money_cell.money_ctc").hide();
+    } else if ( imp.show_numbers_state == numbers_state['all'] ) {
+	parent_el.find(".money_cell").show();
+	parent_el.find(".estimates_cell").show();
+        parent_el.find(".money_cell.money_ctc").show();
+    } else if ( imp.show_numbers_state == numbers_state['no money and no estimates'] ) {
+	parent_el.find(".money_cell").hide();
+	parent_el.find(".estimates_cell").hide();
+        parent_el.find(".money_cell.money_ctc").hide();
+    }
+};
+
+imp.refresh_hidden_fields = function(some_el_in_the_project) {
+    imp.refresh_show_numbers(some_el_in_the_project);
+    imp.refresh_show_all_users(some_el_in_the_project, imp.config.logged_in_username);
 };
 
 imp.refresh_all_checklists = function(url) {
