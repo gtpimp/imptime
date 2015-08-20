@@ -897,31 +897,25 @@ imp.show_inline_editor = function(el, args) {
             });
             imp.inline_editor_key_event_set = true;
         };
-	// imp.editor_container.keyup( function(event) {
-	// 				event.stopImmediatePropagation();
-	// 				if(event.which === 27) {
-	// 				    editor.val(old_value);
-	// 				    deactivate_select();
-	// 				}
-	// 				if(event.which === 13) {
-	// 				    on_changed();
-	// 				}
-	// 				return false;
-	// 			    });
-	// imp.editor_container.keyup( function(event) {
-	// 		  event.stopImmediatePropagation();
-	// 		  if(event.which === 27) {
-	// 		      editor.val(old_value);
-	// 		      deactivate_select();
-	// 		  }
-	// 		  if(event.which === 13) {
-	// 		      on_changed();
-	// 		  }
-	// 		  return false;
-	// 	      });
+        
+        if ( imp.created_value_editor.length > 0 ) {
+            imp.created_value_editor.on("keyup", function() {
+                var x = imp.created_value_editor.val();
+                if ( x.length > 0 ) {
+                    imp.editor_container.find("input[type='radio']").parent("label").hide();
+                    imp.editor_container.find("label[lower_case_value^='" + x + "']").show();
+                } else {
+                    imp.editor_container.find("input[type='radio']").parent("label").show();
+                }
+            });
+        }
+
 	imp.readonly_value.hide();
 	imp.editor_container.show();
-        imp.editor_container.find("input[name='transient_selection']").on("click", on_changed);
+        imp.editor_container.find("input[name='transient_selection']").on("click", function() {
+            imp.created_value_editor.val("");
+            on_changed();
+        });
         imp.inline_editor_active = true;
 
     };
@@ -941,7 +935,7 @@ imp.show_inline_editor = function(el, args) {
 
 		    $.each(data, function( index, value ) {
 			       
-                        new_option = $("<label><input id='"+ value[0] + "' value='" + value[0] + "' type='radio' name='transient_selection'>"+value[1]+"</label>");
+                        new_option = $("<label lower_case_value='"+value[1].toLowerCase() + "'><input id='"+ value[0] + "' value='" + value[0] + "' type='radio' name='transient_selection'>"+value[1]+"</label>");
 			if (old_value == value[0]) {
 			    new_option.find("input").attr("checked",true);
 			}
