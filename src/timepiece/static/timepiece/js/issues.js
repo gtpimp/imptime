@@ -2,6 +2,7 @@ var imp = imp || {};
 
 imp.inline_editor_active = false;
 imp.current_issue_detail_url = null;
+imp.current_issue_id = null;
 
 imp.highlight_issue = function(issue_id) {
     // highlight the given issue or the default issue
@@ -47,6 +48,7 @@ imp.show_issue_detail = function(issue_id, url, msg, args) {
 				imp.current_issue_detail_url = url;
 				if ( issue_id ) {
 				    imp.highlight_issue(issue_id);
+                                    imp.current_issue_id = issue_id;
 				}
 
 				// $(".issue_detail .edit_comment_section").hover(function() {
@@ -63,7 +65,7 @@ imp.show_issue_detail = function(issue_id, url, msg, args) {
 
 imp.refresh_issue_detail = function() {
 
-    imp.show_issue_detail(null, imp.current_issue_detail_url);
+    imp.show_issue_detail(imp.current_issue_id, imp.current_issue_detail_url);
 };
 
 imp.post_issue_number_form = function(form_child_el, issue_id) {
