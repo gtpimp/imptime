@@ -3556,7 +3556,7 @@ def issue_status_update(request,  template="timepiece/project/issue_detail.html"
 def update_issue_with_feature(request):
 
     issue = timepiece.Issue.objects.get(pk=request.POST['issue_id'])
-    feature_id = request.POST['selected_value']
+    feature_id = request.POST.get('selected_value', None)
     created_value = request.POST['created_value']
 
     business = issue.project.business

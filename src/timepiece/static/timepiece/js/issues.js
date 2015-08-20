@@ -834,7 +834,7 @@ imp.show_inline_editor = function(el, args) {
     imp.readonly_value = td.find(".readonly_value");
     imp.editor_container = td.find(".inline_editor");
     var editor = imp.editor_container.find(".transient_selection");
-    var created_value_editor = imp.editor_container.find("input");
+    imp.created_value_editor = imp.editor_container.find("input");
     var url_for_update = td.attr("url_for_update");
     var url_for_options = td.attr("url_for_options");
     var old_value = editor.val();
@@ -858,7 +858,7 @@ imp.show_inline_editor = function(el, args) {
         var value = imp.editor_container.find("input[name='transient_selection']:checked").val();
         var response = $.ajax({type:"POST",
                                url: url_for_update,
-                               data : { issue_id: issue_id, selected_value:value, created_value:created_value_editor.val() },
+                               data : { issue_id: issue_id, selected_value:value, created_value:imp.created_value_editor.val() },
                                dataType:"json",
                                success: function(data) {
                                    imp.readonly_value.html(data.new_value);
@@ -888,6 +888,9 @@ imp.show_inline_editor = function(el, args) {
                 event.stopImmediatePropagation();
                 if(event.which === 27) {
 		    deactivate_select();
+	        }
+                if(event.which === 13) {
+		    on_changed();
 	        }
             });
             imp.inline_editor_key_event_set = true;
