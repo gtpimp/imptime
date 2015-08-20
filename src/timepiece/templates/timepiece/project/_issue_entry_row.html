@@ -58,7 +58,7 @@
       </div>
       {% has_permission has_assign_user project.business %}
       <div class="inline_editor" style="display:none">
-        <div class='transient_selection' width="100%" style="overflow:visible">
+        <div class='transient_selection'>
         </div>
       </div>
       {% end_permission %}
@@ -95,8 +95,8 @@
       </div>
       {% has_permission has_edit_issue_states project.business %}
       <div class="inline_editor" style="display:none">
-        <select class='transient_selection'>
-        </select>
+        <div class='transient_selection'>
+        </div>
       </div>
       {% end_permission %}
     </div>

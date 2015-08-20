@@ -10663,6 +10663,7 @@ ul.checklist_items {
     position: absolute;
     z-index: fixed;
     max-height: 300px;
+    min-width: 125px;
     overflow: auto;
     background: #ffffff;
     font-size: 10px;
