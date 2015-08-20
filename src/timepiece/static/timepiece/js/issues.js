@@ -831,10 +831,10 @@ imp.show_inline_editor = function(el, args) {
     var on_done = imp.loading("fetching options...");
 
     var td = $(el);
-    var readonly_value = td.find(".readonly_value");
-    var editor_container = td.find(".inline_editor");
-    var editor = editor_container.find(".transient_selection");
-    var created_value_editor = editor_container.find("input");
+    imp.readonly_value = td.find(".readonly_value");
+    imp.editor_container = td.find(".inline_editor");
+    var editor = imp.editor_container.find(".transient_selection");
+    var created_value_editor = imp.editor_container.find("input");
     var url_for_update = td.attr("url_for_update");
     var url_for_options = td.attr("url_for_options");
     var old_value = editor.val();
@@ -848,22 +848,22 @@ imp.show_inline_editor = function(el, args) {
 
     var deactivate_select = function() {
 	imp.inline_editor_active = false;
-	editor_container.hide();
-	readonly_value.show();
+	imp.editor_container.hide();
+	imp.readonly_value.show();
     };
 
     var on_changed = function() {
-        editor_container.hide();
+        imp.editor_container.hide();
         var on_done = imp.issue_loading("saving");
-        var value = editor_container.find("input[name='transient_selection']:checked").val();
+        var value = imp.editor_container.find("input[name='transient_selection']:checked").val();
         var response = $.ajax({type:"POST",
                                url: url_for_update,
                                data : { issue_id: issue_id, selected_value:value, created_value:created_value_editor.val() },
                                dataType:"json",
                                success: function(data) {
-                                   readonly_value.html(data.new_value);
-                                   readonly_value.show();
-                                   editor_container.hide();
+                                   imp.readonly_value.html(data.new_value);
+                                   imp.readonly_value.show();
+                                   imp.editor_container.hide();
                                    deactivate_select();
                                    imp.refresh_closest_issue_parent_row(td);
 
@@ -880,31 +880,44 @@ imp.show_inline_editor = function(el, args) {
 
 	//editor.change( on_changed );
 
-	created_value_editor.keyup( function(event) {
-					event.stopImmediatePropagation();
-					if(event.which === 27) {
-					    editor.val(old_value);
-					    deactivate_select();
-					}
-					if(event.which === 13) {
-					    on_changed();
-					}
-					return false;
-				    });
-	editor.keyup( function(event) {
-			  event.stopImmediatePropagation();
-			  if(event.which === 27) {
-			      editor.val(old_value);
-			      deactivate_select();
-			  }
-			  if(event.which === 13) {
-			      on_changed();
-			  }
-			  return false;
-		      });
-	readonly_value.hide();
-	editor_container.show();
-        editor_container.find("input[name='transient_selection']").on("click", on_changed);
+        if ( ! imp.inline_editor_key_event_set ) {
+            $("body").keyup( function(event) {
+                if ( imp.inline_editor_active == false ) {
+                    return;
+                }
+                event.stopImmediatePropagation();
+                if(event.which === 27) {
+		    deactivate_select();
+	        }
+            });
+            imp.inline_editor_key_event_set = true;
+        };
+	// imp.editor_container.keyup( function(event) {
+	// 				event.stopImmediatePropagation();
+	// 				if(event.which === 27) {
+	// 				    editor.val(old_value);
+	// 				    deactivate_select();
+	// 				}
+	// 				if(event.which === 13) {
+	// 				    on_changed();
+	// 				}
+	// 				return false;
+	// 			    });
+	// imp.editor_container.keyup( function(event) {
+	// 		  event.stopImmediatePropagation();
+	// 		  if(event.which === 27) {
+	// 		      editor.val(old_value);
+	// 		      deactivate_select();
+	// 		  }
+	// 		  if(event.which === 13) {
+	// 		      on_changed();
+	// 		  }
+	// 		  return false;
+	// 	      });
+	imp.readonly_value.hide();
+	imp.editor_container.show();
+        imp.editor_container.find("input[name='transient_selection']").on("click", on_changed);
+        imp.inline_editor_active = true;
 
     };
 
