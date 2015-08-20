@@ -3614,7 +3614,7 @@ def issue_assigned_to_update(request,  template="timepiece/project/issue_detail.
 
     get_interface_plugin(request, project.business).update_issue_assigned_to(issue, username)
 
-    return HttpResponse(json.dumps({ 'new_value': issue.assigned_to.username }), mimetype='application/json')
+    return HttpResponse(json.dumps({ 'new_value': issue.assigned_to.username if issue.assigned_to else None }), mimetype='application/json')
 
 @csrf_exempt
 @login_required

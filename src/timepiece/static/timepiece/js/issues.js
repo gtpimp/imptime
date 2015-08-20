@@ -833,7 +833,7 @@ imp.show_inline_editor = function(el, args) {
     var td = $(el);
     var readonly_value = td.find(".readonly_value");
     var editor_container = td.find(".inline_editor");
-    var editor = editor_container.find("select");
+    var editor = editor_container.find(".transient_selection");
     var created_value_editor = editor_container.find("input");
     var url_for_update = td.attr("url_for_update");
     var url_for_options = td.attr("url_for_options");
@@ -852,32 +852,33 @@ imp.show_inline_editor = function(el, args) {
 	readonly_value.show();
     };
 
+    var on_changed = function() {
+        editor_container.hide();
+        var on_done = imp.issue_loading("saving");
+        var value = editor_container.find("input[name='transient_selection']:checked").val();
+        var response = $.ajax({type:"POST",
+                               url: url_for_update,
+                               data : { issue_id: issue_id, selected_value:value, created_value:created_value_editor.val() },
+                               dataType:"json",
+                               success: function(data) {
+                                   readonly_value.html(data.new_value);
+                                   readonly_value.show();
+                                   editor_container.hide();
+                                   deactivate_select();
+                                   imp.refresh_closest_issue_parent_row(td);
+
+                                   on_done();
+
+                                   if ( args.callback ) {
+                                       args.callback(data);
+                                   }
+                               }
+                              });
+    };
+
     var activate_select = function() {
-	var on_changed = function() {
-	    editor_container.hide();
-	    var on_done = imp.issue_loading("saving");
-	    var value = editor.val();
-	    var response = $.ajax({type:"POST",
-				   url: url_for_update,
-				   data : { issue_id: issue_id, selected_value:value, created_value:created_value_editor.val() },
-				   dataType:"json",
-				   success: function(data) {
-				       readonly_value.html(data.new_value);
-				       readonly_value.show();
-				       editor_container.hide();
-				       deactivate_select();
-				       imp.refresh_closest_issue_parent_row(td);
 
-                                       on_done();
-
-				       if ( args.callback ) {
-					   args.callback(data);
-				       }
-				   }
-				  });
-	};
-
-	editor.change( on_changed );
+	//editor.change( on_changed );
 
 	created_value_editor.keyup( function(event) {
 					event.stopImmediatePropagation();
@@ -903,6 +904,8 @@ imp.show_inline_editor = function(el, args) {
 		      });
 	readonly_value.hide();
 	editor_container.show();
+        editor_container.find("input[name='transient_selection']").on("click", on_changed);
+
     };
 
     if (url_for_options) {
@@ -913,23 +916,20 @@ imp.show_inline_editor = function(el, args) {
 		    editor.html("");
 
 		    if ( args.blank_entry ) {
-			new_option = $("<option/>");
-			new_option.attr("value", '');
-			new_option.text('');
+
+                        new_option = $("<label><input value='' type='radio' name='transient_selection'><i>None</i></label>");
 			editor.append(new_option);
 		    }
 
 		    $.each(data, function( index, value ) {
 			       
-			new_option = $("<option/>");
-			new_option.attr("id", value[0]);
-			new_option.attr("value", value[0]);
-			new_option.text(value[1]);
+                        new_option = $("<label><input id='"+ value[0] + "' value='" + value[0] + "' type='radio' name='transient_selection'>"+value[1]+"</label>");
 			if (old_value == value[0]) {
-			    new_option.attr("selected",true);
+			    new_option.find("input").attr("checked",true);
 			}
 			editor.append(new_option);
 		    });
+
 		    activate_select();
 		    on_done();
 		}
@@ -938,6 +938,7 @@ imp.show_inline_editor = function(el, args) {
 	activate_select();
 	on_done();
     }
+
     return false;
 
 };

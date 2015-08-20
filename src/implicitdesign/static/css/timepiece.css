@@ -10658,3 +10658,30 @@ ul.checklist_items {
 .splitter {
 
 }
+
+.inline_editor {
+    position: absolute;
+    z-index: fixed;
+    max-height: 300px;
+    overflow: auto;
+    background: #ffffff;
+    font-size: 10px;
+    padding: 20px;
+    -moz-box-shadow:    4px 4px 2px 2px #aaa;
+    -webkit-box-shadow: 4px 4px 2px 2px #aaa;
+    box-shadow:         4px 4px 2px 2px #aaa;   
+    
+}
+
+.inline_editor input, .inline_editor label {
+    font-size: 10px;
+    font-weight: normal;
+}
+
+.inline_editor input {
+    padding-left: 5px;
+}
+
+.inline_editor label {
+    padding-right: 10px;
+}
