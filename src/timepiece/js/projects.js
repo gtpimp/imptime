@@ -44,7 +44,7 @@ imp.projects.show_project_card_as_popup = function (event, project_card_url, msg
 imp.projects._make_load_for_data = function ( done_data_function_handler ) {
     var _done_data_function_handler = done_data_function_handler;
 
-    return function(element, expand_url) {
+    return function( element, expand_url) {
         var done_data_function_handler = _done_data_function_handler;
         var current_row = $(element);
         var parent_table = $(current_row.closest(".project_table"));
@@ -68,13 +68,14 @@ imp.projects._make_load_for_data = function ( done_data_function_handler ) {
                                         loading.hide();
                                         imp.projects.already_loaded_sprints[expand_url] = true;
 					imp.on_issue_rows_loaded(area_to_insert);
+
+                                        if (done_data_function_handler) {
+                                            response.done( done_data_function_handler(element) );
+                                        }
+
                                     }
                                   });
 
-
-            if (done_data_function_handler) {
-                response.done( done_data_function_handler(element) );
-            }
 
         }
 

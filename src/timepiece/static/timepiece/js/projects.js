@@ -109,13 +109,15 @@ imp.projects._make_load_for_data = function ( done_data_function_handler ) {
                                         loading.hide();
                                         imp.projects.already_loaded_sprints[expand_url] = true;
 					imp.on_issue_rows_loaded(area_to_insert);
+
+                                        if (done_data_function_handler) {
+                                            response.done( done_data_function_handler(element) );
+                                        }
+
                                     }
                                   });
 
 
-            if (done_data_function_handler) {
-                response.done( done_data_function_handler(element) );
-            }
 
         }
 

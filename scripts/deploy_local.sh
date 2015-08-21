@@ -24,23 +24,23 @@ if [ $? != 0 ]; then
 fi
 cd -
 
-cd ${SRC}/phantompdf
-if [ ! -d "phantomjs" ]; then
-    echo "installing phantomjs"
-    mkdir "phantomjs"
-    git clone git://github.com/ariya/phantomjs.git phantomjs
-    cd phantomjs
-    git checkout 1.9
+# cd ${SRC}/phantompdf
+# if [ ! -d "phantomjs" ]; then
+#     echo "installing phantomjs"
+#     mkdir "phantomjs"
+#     git clone git://github.com/ariya/phantomjs.git phantomjs
+#     cd phantomjs
+#     git checkout 1.9
     
-    # Add image support with a patch
-    git config --add remote.origin.fetch "+refs/pull/*/head:refs/remotes/origin/pr/*"
-    git fetch
-    git checkout pr/359
-    git checkout master
-    git merge pr/359
+#     # Add image support with a patch
+#     git config --add remote.origin.fetch "+refs/pull/*/head:refs/remotes/origin/pr/*"
+#     git fetch
+#     git checkout pr/359
+#     git checkout master
+#     git merge pr/359
 
-    ./build.sh
-fi
+#     ./build.sh
+# fi
 
 echo "deleting python compiled files"
 cd ${SRC}/implicitdesign
