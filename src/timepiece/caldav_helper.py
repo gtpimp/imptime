@@ -65,6 +65,8 @@ class CalDavHelper(object):
                     if "No calendars" in str(ex):
                         logger.exception("User %s doesn't have a calendar, ignoring" % user.username)
                         continue
+                    else:
+                        raise
                 try:
                     caldav_event = calendar.event_by_uid(self._uid(imptime_event))
                     self.update_caldav_event_from_imptime_event(caldav_event, imptime_event)
