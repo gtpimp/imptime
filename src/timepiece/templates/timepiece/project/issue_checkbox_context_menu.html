@@ -4,17 +4,17 @@
   <li class="header">Issues Bulk Operation</li>
   <li class="header">({{num_issues}} issues selected)</li>
 
-  {% for other_project in other_projects %}
-    <li> <a href="{% url 'bulk_move_issues_to_project' other_project.id %}">Move to {{other_project}}</a> </li>
-  {% endfor %}
+  <li> <a onclick="return imp.bulk_clear_selected_issues({{project.id}}, '{% url 'bulk_clear_selected_issues' %}'); " href="#">Clear all checkboxes</a> </li>
+
+  <li> <a onclick="return imp.bulk_check_all_issues({{project.id}}, '{% url 'bulk_select_issues_for_project' project.id %}'); " href="#">Select all checkboxes</a> </li>
+  
+  <li> <a onclick="if ( ! confirm('Delete all selected issues?') ) { return false; }" href="{% url 'bulk_delete_issues' %}">Delete</a> </li>
 
   <li class="divider"></li>
 
-  <li> <a onclick="return imp.bulk_clear_selected_issues('{% url 'bulk_clear_selected_issues' %}'); " href="#">Clear all checkboxes</a> </li>
-
-  <li> <a onclick="return imp.bulk_clear_selected_issues('{% url 'bulk_clear_selected_issues' %}'); " href="#">Select all checkboxes</a> </li>
-  
-  <li> <a onclick="if ( ! confirm('Delete all selected issues?') ) { return false; }" href="{% url 'bulk_delete_issues' %}">Delete</a> </li>
+  {% for other_project in other_projects %}
+    <li> <a href="{% url 'bulk_move_issues_to_project' other_project.id %}">Move to {{other_project}}</a> </li>
+  {% endfor %}
 
   <li class="divider"></li>
 

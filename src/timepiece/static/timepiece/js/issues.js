@@ -86,17 +86,19 @@ imp.post_issue_number_form = function(form_child_el, issue_id) {
     return false;
 };
 
-imp.bulk_clear_selected_issues = function(clear_url) {
+imp.bulk_clear_selected_issues = function(project_id, clear_url) {
 
     if ( ! confirm('Unselect all checkboxes?') ) {
 	return false;
     } 
+    var project_el = $(".project_li[list_project_id="+project_id+"]");
 
     var on_done = imp.loading("unchecking");
     $.ajax({type:"GET",
 	    url: clear_url,
 	    success: function(data) {
 		$(".issue_checkbox_cell input[type='checkbox']").attr("checked", false);
+                imp.hide_issue_checkboxes(project_el);
 		on_done();
 	    }
 	   });
@@ -104,27 +106,25 @@ imp.bulk_clear_selected_issues = function(clear_url) {
 
 };
 
-imp.bulk_check_selected_issues = function(clear_url) {
+imp.bulk_check_all_issues = function(project_id, check_url) {
 
     if ( ! confirm('Select all checkboxes?') ) {
 	return false;
     } 
+    var project_el = $(".project_li[list_project_id="+project_id+"]");
 
     var on_done = imp.loading("Checking");
     $.ajax({type:"GET",
-	    url: clear_url,
+	    url: check_url,
 	    success: function(data) {
-		$(".issue_checkbox_cell input[type='checkbox']").attr("unchecked", false);
+		project_el.find(".issue_checkbox_cell input[type='checkbox']").attr("checked", true);
+                imp.show_issue_checkboxes(project_el);
 		on_done();
 	    }
 	   });
     return false;
 
 };
-
-
-
-
 
 imp.do_form_show  = function(element, url) {
     var button = $(element);

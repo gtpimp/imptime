@@ -4935,6 +4935,20 @@ def bulk_clear_selected_issues(request, context=None):
 
 @login_required
 @csrf_exempt
+def bulk_select_issues_for_project(request, project_id, context=None):
+    selected_project = timepiece.Project.objects.get(pk=project_id)
+    request.session['selected_issue_project_id'] = selected_project.id
+
+    if 'selected_issue_ids_for_context_menu' in request.session:
+        del request.session['selected_issue_ids_for_context_menu']
+
+    selected_issues = selected_project.issues.all()
+    request.session['selected_issue_ids_for_context_menu'] = [x.id for x in selected_issues]
+    messages.info(request, "%d issues selected" % (selected_issues.count()))
+    return HttpResponseRedirect(reverse('project_list', args=[selected_project.id]))
+
+@login_required
+@csrf_exempt
 def bulk_select_by_issue_state(request, project_id, context=None):
     selected_project = timepiece.Project.objects.get(pk=project_id)
     request.session['selected_issue_project_id'] = selected_project.id
