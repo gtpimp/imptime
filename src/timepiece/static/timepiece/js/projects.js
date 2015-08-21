@@ -227,13 +227,13 @@ imp.on_issue_rows_loaded = function(issue_row_container) {
 
 imp.set_assigned_by_clickable = function(issue_row_container) { 
     var currently_filtered_by;
-    issue_row_container.find('th.estimates_cell').click(function() {
+    issue_row_container.find('.toggle_assigned_by').click(function() {
 	var username = $(this).data('username');
 	if (!username)
 	{
 	    return;
 	}
-	issue_row_container.find('th.estimates_cell').removeClass('filtered');
+	issue_row_container.find('.toggle_assigned_by').removeClass('filtered');
 	if (currently_filtered_by == username)
 	{
 	    issue_row_container.find('.issue_instance_row').show();
