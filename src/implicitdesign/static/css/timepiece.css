@@ -10660,10 +10660,12 @@ ul.checklist_items {
 }
 
 .inline_editor {
-    position: absolute;
-    z-index: fixed;
-    max-height: 300px;
-    min-width: 125px;
+    position: fixed;
+    top: 40%;
+    left: 40%;
+    z-index: 9999;
+    max-height: 450px;
+    min-width: 250px;
     overflow: auto;
     background: #ffffff;
     font-size: 10px;
@@ -10671,6 +10673,8 @@ ul.checklist_items {
     -moz-box-shadow:    4px 4px 2px 2px #aaa;
     -webkit-box-shadow: 4px 4px 2px 2px #aaa;
     box-shadow:         4px 4px 2px 2px #aaa;   
+    border-left: 1px solid #555555;
+    border-top: 1px solid #555555;
     
 }
 
