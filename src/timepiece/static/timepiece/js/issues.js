@@ -692,8 +692,10 @@ imp.refresh_closest_issue_parent_row = function(element) {
      $.ajax({type:"GET",
              url: url,
              success: function(data) {
-                 $(closest_row)[0].outerHTML = $(data)[0].outerHTML;
-		 imp.on_issue_rows_loaded($(".issue_instance_row"));
+                 if ( $(closest_row).length > 0 ) {
+                     $(closest_row)[0].outerHTML = $(data)[0].outerHTML;
+		     imp.on_issue_rows_loaded($(".issue_instance_row"));
+                 }
            }
          });
 };
