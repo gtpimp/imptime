@@ -836,7 +836,7 @@ imp.show_inline_editor = function(el, args) {
     imp.readonly_value = td.find(".readonly_value");
     imp.editor_container = td.find(".inline_editor");
     var editor = imp.editor_container.find(".transient_selection");
-    imp.created_value_editor = imp.editor_container.find("input");
+    imp.created_value_editor = imp.editor_container.find("input.filter");
     var url_for_update = td.attr("url_for_update");
     var url_for_options = td.attr("url_for_options");
     var old_value = editor.val();
@@ -893,7 +893,7 @@ imp.show_inline_editor = function(el, args) {
                 if(event.which === 27) {
 		    deactivate_select();
 	        }
-                if(event.which === 13) {
+                if(event.which === 13 && imp.editor_container.attr("supports_enter_for_submit") == "true") {
 		    on_changed();
 	        }
             });

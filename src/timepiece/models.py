@@ -3050,7 +3050,7 @@ class Issue(models.Model):
 
     @property
     def status_name(self):
-        return dict(self.ISSUE_STATUS_CHOICES)[self.status.lower()]
+        return dict(self.ISSUE_STATUS_CHOICES).get(self.status.lower(), "unknown")
     
     def set_order(self):
         if self.order is not None:

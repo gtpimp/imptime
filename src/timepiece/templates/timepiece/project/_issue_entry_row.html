@@ -58,6 +58,7 @@
       </div>
       {% has_permission has_assign_user project.business %}
       <div class="inline_editor" style="display:none">
+        Filter: <br/><input class="filter" type="text" name="filter"/>
         <div class='transient_selection'>
         </div>
       </div>
@@ -74,8 +75,8 @@
         {{ issue.feature.name|default_if_none:"" }}
       </div>
       {% has_permission has_edit_issue_feature project.business %}
-      <div id="dialog" class="inline_editor" style="display:none">
-        Add new feature or Filter existing features: <br/><input id="feature_box" type="text" name="new_feature"/>
+      <div id="dialog" class="inline_editor" supports_enter_for_submit="true" style="display:none">
+        Add new feature or Filter existing features: <br/><input class="filter" id="feature_box" type="text" name="new_feature"/>
         <div class='transient_selection' width="100%">
         </div>
         <br/>
@@ -95,6 +96,7 @@
       </div>
       {% has_permission has_edit_issue_states project.business %}
       <div class="inline_editor" style="display:none">
+        Filter: <br/><input class="filter" type="text" name="new_feature"/>
         <div class='transient_selection'>
         </div>
       </div>
