@@ -837,7 +837,7 @@ imp.show_inline_editor = function(el, args) {
     imp.editor_container = td.find(".inline_editor");
     var editor = imp.editor_container.find(".transient_selection");
     imp.created_value_editor = imp.editor_container.find("input.filter");
-    var url_for_update = td.attr("url_for_update");
+    imp.url_for_update = td.attr("url_for_update");
     var url_for_options = td.attr("url_for_options");
     var old_value = editor.val();
     if ( ! old_value ) {
@@ -861,7 +861,7 @@ imp.show_inline_editor = function(el, args) {
         var created_value = imp.created_value_editor.val();
         imp.created_value_editor.val('');
         var response = $.ajax({type:"POST",
-                               url: url_for_update,
+                               url: imp.url_for_update,
                                data : { issue_id: issue_id, selected_value:value, created_value:created_value },
                                dataType:"json",
                                success: function(data) {
@@ -893,8 +893,18 @@ imp.show_inline_editor = function(el, args) {
                 if(event.which === 27) {
 		    deactivate_select();
 	        }
-                if(event.which === 13 && imp.editor_container.attr("supports_enter_for_submit") == "true") {
-		    on_changed();
+                if(event.which === 13) {
+                    if ( imp.editor_container.attr("supports_enter_for_submit") == "true") {
+		        on_changed();
+                    } else {
+                        var items = imp.editor_container.find("input[type='radio']");
+                        var visible_items = items.parent("label").filter(":visible");
+                        if ( visible_items.length == 1 ) {
+                            items.attr("checked", false);
+                            visible_items.find("input").attr("checked",true);
+                            on_changed();
+                        }
+                    }
 	        }
             });
             imp.inline_editor_key_event_set = true;
@@ -906,6 +916,18 @@ imp.show_inline_editor = function(el, args) {
                 if ( x.length > 0 ) {
                     imp.editor_container.find("input[type='radio']").parent("label").hide();
                     imp.editor_container.find("label[lower_case_value^='" + x + "']").show();
+
+                    if ( imp.editor_container.attr("supports_enter_for_submit") != "true" ) {
+                        // we still allow enter if only one item is showing, so show a message about that
+                        var items = imp.editor_container.find("input[type='radio']");
+                        var visible_items = items.parent("label").filter(":visible");
+                        imp.editor_container.find(".enter_tip").remove();
+                        if ( visible_items.length == 1 ) {
+                            items.attr("checked", false);
+                            visible_items.find("input").attr("checked",true);
+                            imp.editor_container.append($("<span class='enter_tip'>(press enter to select)</span>"));
+                        }                        
+                    }
                 } else {
                     imp.editor_container.find("input[type='radio']").parent("label").show();
                 }
@@ -918,6 +940,7 @@ imp.show_inline_editor = function(el, args) {
             imp.created_value_editor.val("");
             on_changed();
         });
+        imp.editor_container.find(".filter").focus();
         imp.inline_editor_active = true;
 
     };
