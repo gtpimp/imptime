@@ -1061,7 +1061,7 @@ class Project(models.Model):
                 rate = Rate(velocity=0, amount=0)
 
             unadjusted_points = points
-            points = points * (rate.velocity or 1)
+            points = (points or 0) * (rate.velocity or 1)
 
             estimated_cost = float(points)*float(rate.billable_amount)
             if estimated_cost > 0:

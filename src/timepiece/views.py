@@ -3367,22 +3367,16 @@ def get_project_detail(request, project_id, template="timepiece/project/project_
         users_allowed_to_estimate_on_business=business.get_users_allowed_to_estimate_on_business(request.user)
         rates_by_user = project.get_rates_by_user()
         for form in issues_forms.forms:
-            timings.start("_augment_issue_data")
             _augment_issue_data(form.instance, request.user,
                                 users_allowed_to_estimate_on_business=users_allowed_to_estimate_on_business,
                                 rates_by_user=rates_by_user)
-            timings.end("_augment_issue_data")
 
     new_issue_form = timepiece_forms.IssueForm()
 
     all_entries = timepiece.Entry.objects.filter(issue__project=project).order_by("start_time")
 
-    timings.start("all_entries.cost_totals_for_project(project)")
     cost_totals = all_entries.cost_totals_for_project(project)
-    timings.end("all_entries.cost_totals_for_project(project)")
-    timings.start("adhoc cost_totals_for_project")
     unassigned_cost_totals = timepiece.Issue.get_adhoc_timesheet_entries(context['project']).cost_totals_for_project(context['project'])
-    timings.end("adhoc cost_totals_for_project")
 
     rate = project.get_user_rate(request.user)
     context['next_issue_number']  = timepiece.Issue.get_next_issue_number(project.business)
@@ -3406,12 +3400,7 @@ def get_project_detail(request, project_id, template="timepiece/project/project_
     if 'selected_issue_ids_for_context_menu' in request.session:
         context['selected_issue_ids'] = [int(x) for x in request.session['selected_issue_ids_for_context_menu']]
 
-    timings.start("render")
     response = render_to_response(template, context, context_instance=RequestContext(request))
-    timings.end("render")
-
-    timings.end("get_project_detail")
-    timings.results()
 
     return response
 
