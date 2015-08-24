@@ -1,8 +1,12 @@
 var imp = imp || {};
 
-imp.inline_editor_active = false;
 imp.current_issue_detail_url = null;
 imp.current_issue_id = null;
+
+imp.inline_editor = {};
+
+imp.inline_editor.active = false;
+
 
 imp.highlight_issue = function(issue_id) {
     // highlight the given issue or the default issue
@@ -820,11 +824,11 @@ imp.clickable_assign_user_box = function(element, update_url, issue_id) {
 
 imp.show_inline_editor = function(el, args) {
 
-    if ( imp.inline_editor_active ) {
+    if ( imp.inline_editor.active ) {
     return false;
     }
 
-    imp.inline_editor_active = true;
+    imp.inline_editor.active = true;
 
     if ( ! args ) {
 	    args = { blank_entry:true };
@@ -832,44 +836,44 @@ imp.show_inline_editor = function(el, args) {
 
     var on_done = imp.loading("fetching options...");
 
-    var td = $(el);
-    imp.readonly_value = td.find(".readonly_value");
-    imp.editor_container = td.find(".inline_editor");
-    var editor = imp.editor_container.find(".transient_selection");
-    imp.created_value_editor = imp.editor_container.find("input.filter");
-    imp.url_for_update = td.attr("url_for_update");
-    var url_for_options = td.attr("url_for_options");
+    imp.inline_editor.td = $(el);
+    imp.inline_editor.readonly_value = imp.inline_editor.td.find(".readonly_value");
+    imp.inline_editor.editor_container = imp.inline_editor.td.find(".inline_editor");
+    var editor = imp.inline_editor.editor_container.find(".transient_selection");
+    imp.inline_editor.created_value_editor = imp.inline_editor.editor_container.find("input.filter");
+    imp.inline_editor.url_for_update = imp.inline_editor.td.attr("url_for_update");
+    var url_for_options = imp.inline_editor.td.attr("url_for_options");
     var old_value = editor.val();
     if ( ! old_value ) {
-	old_value = td.attr("selected_value");
+	old_value = imp.inline_editor.td.attr("selected_value");
     }
 
-    var issue_id = td.attr("issue_id");
+    imp.inline_editor.issue_id = imp.inline_editor.td.attr("issue_id");
 
-    imp.highlight_issue(issue_id);
+    imp.highlight_issue(imp.inline_editor.issue_id);
 
     var deactivate_select = function() {
-	imp.inline_editor_active = false;
-	imp.editor_container.hide();
-	imp.readonly_value.show();
+	imp.inline_editor.active = false;
+	imp.inline_editor.editor_container.hide();
+	imp.inline_editor.readonly_value.show();
     };
 
     var on_changed = function() {
-        imp.editor_container.hide();
+        imp.inline_editor.editor_container.hide();
         var on_done = imp.issue_loading("saving");
-        var value = imp.editor_container.find("input[name='transient_selection']:checked").val();
-        var created_value = imp.created_value_editor.val();
-        imp.created_value_editor.val('');
+        var value = imp.inline_editor.editor_container.find("input[name='transient_selection']:checked").val();
+        var created_value = imp.inline_editor.created_value_editor.val();
+        imp.inline_editor.created_value_editor.val('');
         var response = $.ajax({type:"POST",
-                               url: imp.url_for_update,
-                               data : { issue_id: issue_id, selected_value:value, created_value:created_value },
+                               url: imp.inline_editor.url_for_update,
+                               data : { issue_id: imp.inline_editor.issue_id, selected_value:value, created_value:created_value },
                                dataType:"json",
                                success: function(data) {
-                                   imp.readonly_value.html(data.new_value);
-                                   imp.readonly_value.show();
-                                   imp.editor_container.hide();
+                                   imp.inline_editor.readonly_value.html(data.new_value);
+                                   imp.inline_editor.readonly_value.show();
+                                   imp.inline_editor.editor_container.hide();
                                    deactivate_select();
-                                   imp.refresh_closest_issue_parent_row(td);
+                                   imp.refresh_closest_issue_parent_row(imp.inline_editor.td);
 
                                    on_done();
 
@@ -886,7 +890,7 @@ imp.show_inline_editor = function(el, args) {
 
         if ( ! imp.inline_editor_key_event_set ) {
             $("body").keyup( function(event) {
-                if ( imp.inline_editor_active == false ) {
+                if ( imp.inline_editor.active == false ) {
                     return;
                 }
                 event.stopImmediatePropagation();
@@ -894,10 +898,10 @@ imp.show_inline_editor = function(el, args) {
 		    deactivate_select();
 	        }
                 if(event.which === 13) {
-                    if ( imp.editor_container.attr("supports_enter_for_submit") == "true") {
+                    if ( imp.inline_editor.editor_container.attr("supports_enter_for_submit") == "true") {
 		        on_changed();
                     } else {
-                        var items = imp.editor_container.find("input[type='radio']");
+                        var items = imp.inline_editor.editor_container.find("input[type='radio']");
                         var visible_items = items.parent("label").filter(":visible");
                         if ( visible_items.length == 1 ) {
                             items.attr("checked", false);
@@ -910,38 +914,38 @@ imp.show_inline_editor = function(el, args) {
             imp.inline_editor_key_event_set = true;
         };
         
-        if ( imp.created_value_editor.length > 0 ) {
-            imp.created_value_editor.on("keyup", function() {
-                var x = imp.created_value_editor.val();
+        if ( imp.inline_editor.created_value_editor.length > 0 ) {
+            imp.inline_editor.created_value_editor.on("keyup", function() {
+                var x = imp.inline_editor.created_value_editor.val();
                 if ( x.length > 0 ) {
-                    imp.editor_container.find("input[type='radio']").parent("label").hide();
-                    imp.editor_container.find("label[lower_case_value^='" + x + "']").show();
+                    imp.inline_editor.editor_container.find("input[type='radio']").parent("label").hide();
+                    imp.inline_editor.editor_container.find("label[lower_case_value^='" + x + "']").show();
 
-                    if ( imp.editor_container.attr("supports_enter_for_submit") != "true" ) {
+                    if ( imp.inline_editor.editor_container.attr("supports_enter_for_submit") != "true" ) {
                         // we still allow enter if only one item is showing, so show a message about that
-                        var items = imp.editor_container.find("input[type='radio']");
+                        var items = imp.inline_editor.editor_container.find("input[type='radio']");
                         var visible_items = items.parent("label").filter(":visible");
-                        imp.editor_container.find(".enter_tip").remove();
+                        imp.inline_editor.editor_container.find(".enter_tip").remove();
                         if ( visible_items.length == 1 ) {
                             items.attr("checked", false);
                             visible_items.find("input").attr("checked",true);
-                            imp.editor_container.append($("<span class='enter_tip'>(press enter to select)</span>"));
+                            imp.inline_editor.editor_container.append($("<span class='enter_tip'>(press enter to select)</span>"));
                         }                        
                     }
                 } else {
-                    imp.editor_container.find("input[type='radio']").parent("label").show();
+                    imp.inline_editor.editor_container.find("input[type='radio']").parent("label").show();
                 }
             });
         }
 
-	imp.readonly_value.hide();
-	imp.editor_container.show();
-        imp.editor_container.find("input[name='transient_selection']").on("click", function() {
-            imp.created_value_editor.val("");
+	imp.inline_editor.readonly_value.hide();
+	imp.inline_editor.editor_container.show();
+        imp.inline_editor.editor_container.find("input[name='transient_selection']").on("click", function() {
+            imp.inline_editor.created_value_editor.val("");
             on_changed();
         });
-        imp.editor_container.find(".filter").focus();
-        imp.inline_editor_active = true;
+        imp.inline_editor.editor_container.find(".filter").focus();
+        imp.inline_editor.active = true;
 
     };
 
