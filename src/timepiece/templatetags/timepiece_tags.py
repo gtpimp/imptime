@@ -548,4 +548,9 @@ def points_and_stuff(per_user):
         return mark_safe(u' / %s' % points)
     else:
         return mark_safe('&nbsp;')
-        
+
+@register.simple_tag(takes_context = True)
+def cookie(context, cookie_name, default_value=''):
+    request = context['request']
+    result = request.COOKIES.get(cookie_name, default_value)
+    return result

@@ -416,9 +416,11 @@ imp.toggle_show_all_users = function(menu_el, logged_in_username) {
     if ( all_shown == "true" ) {
         cells.css({"display":"none"});
         trigger.attr("all_shown", "false");
+        Cookies.set('default_show_all_user_columns', 'false');
     } else {
         cells.css({"display":"table-cell"});
         trigger.attr("all_shown", "true");
+        Cookies.set('default_show_all_user_columns', 'true');
     }
     return false;
 };
