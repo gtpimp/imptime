@@ -899,6 +899,15 @@ class SearchForm(forms.Form):
     search = forms.CharField(required=False, label='')
     search.widget.attrs['placeholder'] = 'Search'
 
+class UserSearchForm(forms.Form):
+
+    search = forms.CharField(required=False, label='')
+    search.widget.attrs['placeholder'] = 'Search'
+    staff = forms.ChoiceField(label='Filter on staff:',
+                              choices=[ ( 'all', 'All'), ('staff', 'Staff only'), ('non-staff', 'Non staff') ],
+                              required=False,
+                              initial='staff')
+    
 
 class UserForm(forms.ModelForm):
 

@@ -1045,14 +1045,21 @@ def _set_project_rate_to_default_for_user(user, project):
 @render_with('timepiece/person/list.html')
 @login_required
 def list_people(request):
-    form = timepiece_forms.SearchForm(request.GET)
-    if form.is_valid() and 'search' in request.GET:
-        search = form.cleaned_data['search']
-        people = auth_models.User.objects.filter(
-            Q(first_name__icontains=search) |
-            Q(last_name__icontains=search) |
-            Q(email__icontains=search)).order_by("username")
-
+    d = request.GET.copy()
+    if 'staff' not in d:
+        d['staff'] = 'staff'
+    form = timepiece_forms.UserSearchForm(d)
+    people = auth_models.User.objects.all().order_by('username')
+    if form.is_valid():
+        if form.cleaned_data.get('search', None):
+            search = form.cleaned_data['search']
+            people = people.filter(
+                Q(first_name__icontains=search) |
+                Q(last_name__icontains=search) |
+                Q(email__icontains=search)).order_by("username")
+        if form.cleaned_data.get('staff', 'all') != 'all':
+            people = people.filter( is_staff = (form.cleaned_data['staff'] == 'staff') )
+            
         if people.count() == 1:
             url_kwargs = {
                 'person_id': people[0].id,
@@ -1061,7 +1068,7 @@ def list_people(request):
                 reverse('view_person', kwargs=url_kwargs)
             )
     else:
-        people = auth_models.User.objects.all().order_by('username')
+        people = people.filter(is_staff=True)
 
     context = {
         'form': form,
