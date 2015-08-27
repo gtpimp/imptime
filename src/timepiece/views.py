@@ -1051,8 +1051,8 @@ def list_people(request):
         people = auth_models.User.objects.filter(
             Q(first_name__icontains=search) |
             Q(last_name__icontains=search) |
-            Q(email__icontains=search).order_by("username")
-        )
+            Q(email__icontains=search)).order_by("username")
+
         if people.count() == 1:
             url_kwargs = {
                 'person_id': people[0].id,

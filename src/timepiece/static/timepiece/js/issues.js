@@ -4,6 +4,7 @@ imp.current_issue_detail_url = null;
 imp.current_issue_id = null;
 
 imp.inline_editor = {};
+imp.checkboxes = {};
 
 imp.inline_editor.active = false;
 
@@ -332,13 +333,13 @@ imp.get_selected_issue_ids_for_get = function(issue_row_container) {
 
 imp.set_issue_checkbox_hooks = function(issue_row_container) {
 
-    var project_id = issue_row_container.attr("project_id");
+    imp.checkboxes.project_id = issue_row_container.attr("project_id");
 
     var fetch_menu_html = function(e, callback) {
 	var on_done = imp.loading("Loading context menu");
 	var selected_issue_ids = imp.get_selected_issue_ids_for_get(issue_row_container);
 	var response = $.ajax({type:"GET",
-                               url: imp.config.issue_checkbox_context_menu_url.replace("999999", project_id),
+                               url: imp.config.issue_checkbox_context_menu_url.replace("999999", imp.checkboxes.project_id),
 			       data: {checked_issue_numbers: selected_issue_ids},
                                success: function(data) {
 				   on_done();
