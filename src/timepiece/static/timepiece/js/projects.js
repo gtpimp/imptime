@@ -362,7 +362,17 @@ imp.create_chart = function(chart_info) {
 imp.create_splitter = function() {
     if ( $(".splitter").splitter ) {
 	$(".splitter").css({height:$(window).height()*0.9+"px"});
-	$(".splitter").splitter({sizeRight: $(window).width()*0.25});
+        var size_right = Cookies.get('splitter_right_width');
+        if ( ! size_right ) {
+            size_right = $(window).width()*0.25;
+        }
+	$(".splitter").splitter({sizeRight: size_right});
+        
+        $(".splitter").on("splitter:resized", function(evt, data) {
+            var right_width = data.B.width();
+            Cookies.set('splitter_right_width', right_width);
+        });
+
     }
 };
 

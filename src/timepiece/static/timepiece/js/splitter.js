@@ -65,6 +65,8 @@
 			$(document)
 				.unbind("mousemove", doSplitMouse)
 				.unbind("mouseup", endSplitMouse);
+
+                        splitter.trigger("splitter:resized", [ { 'A':A, 'B':B } ]);
 		}
 		function resplit(newPos) {
 			// Constrain new splitbar position to fit pane size limits

@@ -250,7 +250,9 @@ imp.create_chart = function(chart_info) {
 imp.create_splitter = function() {
     if ( $(".splitter").splitter ) {
 	$(".splitter").css({height:$(window).height()*0.9+"px"});
-	$(".splitter").splitter({sizeRight: $(window).width()*0.25});
+
+        var size_right = Cookies.get('splitter_right_width', $(window).width()*0.5);
+	$(".splitter").splitter({sizeRight: size_right});
     }
 };
 
