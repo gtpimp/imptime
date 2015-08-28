@@ -204,10 +204,11 @@ imp.select_text_for_emacs = function(text) {
     return false;
 };
 
-imp.refresh_project = function(el, expand_url) {
+imp.refresh_project = function(el, project_id) {
+    project_url = imp.config.project_issues_refresh_url.replace("999999", project_id);
     var project_container = $(el).parents(".project_li").find(".project_expand");
-    imp.projects.already_loaded_sprints[expand_url] = false;
-    imp.projects.load_or_display_issues(project_container, expand_url);
+    imp.projects.already_loaded_sprints[project_url] = false;
+    imp.projects.load_or_display_issues(project_container, project_url);
 };
 
 imp.on_issue_rows_loaded = function(issue_row_container) {

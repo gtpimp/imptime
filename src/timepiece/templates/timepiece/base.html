@@ -11,6 +11,7 @@
       imp.config.issue_checkbox_context_menu_url = "{% url 'issue_checkbox_context_menu' 999999 %}";
       imp.config.load_user_notifications_url = "{% url 'user_notifications' %}";
       imp.config.logged_in_username = "{{user.username}}";
+      imp.config.project_issues_refresh_url = "{% url 'get_project_detail' 999999 %}";
     </script>
 
     {% block javascript %}
