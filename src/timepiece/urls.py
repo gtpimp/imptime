@@ -665,5 +665,7 @@ urlpatterns = patterns('',
 
                        url(r'^scheduler$', views.scheduler, {}, name='scheduler'),
                        url(r'^schedule_edit/(?P<business_id>\d+)/(?P<user_id>\d+)/(?P<scheduled_date>.*)$', views.schedule_edit, {}, name='schedule_edit'),
+                       url(r'^issue_action_menu/(?P<issue_id>\d+)$', views.issue_action_menu, {}, name='issue_action_menu'),
+                       
 
 )

@@ -12,6 +12,12 @@
 
   <td class="issue_number_cell"> 
     <div style="width:100%;position:relative">
+      {% comment %}
+      <div class="issue_action_menu_container">
+        &nbsp;
+        <img class="issue_action_menu_img" style="display:none" src="{{STATIC_URL}}/images/icons/script_go.png" onclick="return imp.show_issue_action_menu(this, {{issue.id}});"/> 
+      </div>
+      {% endcomment %}
       <div class="emacs_copy_container">
         &nbsp;
         <img class="emacs_copy_img" style="display:none" src="{{STATIC_URL}}/images/icons/emacs.png" onclick="return imp.select_text_for_emacs('*** issue{{issue.number}} {{issue.subject|escapejs}}');"/> 

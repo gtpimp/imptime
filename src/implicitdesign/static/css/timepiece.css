@@ -10081,6 +10081,11 @@ ul.project_list {
     cursor: pointer;
 }
 
+.issue_action_menu_img {
+    cursor: pointer;
+    float: left;
+}
+
 .drag_img {
     cursor:grabbing;
     cursor:-moz-grabbing;

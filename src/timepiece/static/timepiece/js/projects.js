@@ -216,11 +216,14 @@ imp.on_issue_rows_loaded = function(issue_row_container) {
     $(issue_row_container).find(".drag_img").parents("tr").hover( function() {
 								      $(this).find('.drag_img').show();
 								      $(this).find('.emacs_copy_img').show();
+                                                                      $(this).find('.issue_action_menu_img').show();
 								      $(this).addClass("hovered");
+
 								  },
 								  function() {
 								      $(this).find('.drag_img').hide();
 								      $(this).find('.emacs_copy_img').hide();
+                                                                      $(this).find('.issue_action_menu_img').hide();
 								      $(this).removeClass("hovered");
 								  });
     imp.refresh_hidden_fields(issue_row_container);

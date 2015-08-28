@@ -12,6 +12,7 @@
       imp.config.load_user_notifications_url = "{% url 'user_notifications' %}";
       imp.config.logged_in_username = "{{user.username}}";
       imp.config.project_issues_refresh_url = "{% url 'get_project_detail' 999999 %}";
+      imp.config.issue_action_menu_url = "{% url 'issue_action_menu' 999999 %}";
     </script>
 
     {% block javascript %}

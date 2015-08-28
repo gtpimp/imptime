@@ -5818,3 +5818,11 @@ def send_calendar_invite(request, event_id):
         return HttpResponse( json.dumps( {'status': 'failed',
                                           'error_msg': str(ex)} ) )
 
+
+@login_required
+@csrf_exempt
+def issue_action_menu(request, issue_id, template="timepiece/project/_issue_action_menu.html"):
+    context = { 'issue_id': issue_id }
+    return render_to_response(template, context, context_instance=RequestContext(request))
+
+    
