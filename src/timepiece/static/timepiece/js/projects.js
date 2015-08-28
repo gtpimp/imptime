@@ -99,27 +99,25 @@ imp.projects._make_load_for_data = function ( done_data_function_handler ) {
             return;
         }
 
+        area_to_insert.find(".project_detail").remove();
         var loading = area_to_insert.find(".loading");
-        if (area_to_insert.find(".project_detail").length == 0) {
-            loading.show();
-            var response = $.ajax({ type:"GET",
-                                    url: expand_url,
-                                    success: function(data) {
-                                        area_to_insert.append($(data));
-                                        loading.hide();
-                                        imp.projects.already_loaded_sprints[expand_url] = true;
-					imp.on_issue_rows_loaded(area_to_insert);
+        loading.show();
+        var response = $.ajax({ type:"GET",
+                                url: expand_url,
+                                success: function(data) {
+                                    area_to_insert.append($(data));
+                                    loading.hide();
+                                    imp.projects.already_loaded_sprints[expand_url] = true;
+                                    imp.on_issue_rows_loaded(area_to_insert);
 
-                                        if (done_data_function_handler) {
-                                            response.done( done_data_function_handler(element) );
-                                        }
-
+                                    if (done_data_function_handler) {
+                                        response.done( done_data_function_handler(element) );
                                     }
-                                  });
+
+                                }
+                              });
 
 
-
-        }
 
     };
 };
@@ -204,6 +202,12 @@ imp.attach_sprint_headings = function(sprint_heading_container) {
 imp.select_text_for_emacs = function(text) {
     window.prompt("Press Ctrl+C then Enter, then paste into emacs:", text);
     return false;
+};
+
+imp.refresh_project = function(el, expand_url) {
+    var project_container = $(el).parents(".project_li").find(".project_expand");
+    imp.projects.already_loaded_sprints[expand_url] = false;
+    imp.projects.load_or_display_issues(project_container, expand_url);
 };
 
 imp.on_issue_rows_loaded = function(issue_row_container) {
