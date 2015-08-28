@@ -9485,6 +9485,14 @@ ul.project_list {
     color: #225522;
 }
 
+.issue_instance_row.status_in_internal_qa .issue_subject {
+    color: #225522;
+}
+
+.issue_instance_row.status_internal_qa_passed .issue_subject {
+    color: #225522;
+}
+
 .issue_instance_row.status_tested .issue_subject {
     color: #225522;
     text-decoration: line-through;
