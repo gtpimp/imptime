@@ -91,6 +91,23 @@ imp.post_issue_number_form = function(form_child_el, issue_id) {
     return false;
 };
 
+imp.bulk_run_action = function(action_url, project_ids_affected) {
+    
+    var on_done = imp.loading("updating");
+    $.ajax({type:"GET",
+	    url: action_url,
+	    success: function(data) {
+		
+                $.each(project_ids_affected, function(index, project_id) {
+                    imp.refresh_project(project_id);
+                });
+                
+		on_done();
+	    }
+	   });
+
+};
+
 imp.bulk_clear_selected_issues = function(project_id, clear_url) {
 
     if ( ! confirm('Unselect all checkboxes?') ) {
@@ -333,9 +350,17 @@ imp.get_selected_issue_ids_for_get = function(issue_row_container) {
 
 imp.set_issue_checkbox_hooks = function(issue_row_container) {
 
-    imp.checkboxes.project_id = issue_row_container.attr("project_id");
 
-    var fetch_menu_html = function(e, callback) {
+    var fetch_menu_html = function(el, callback) {
+
+        issue_row_container = $(el);
+        imp.checkboxes.project_id = issue_row_container.attr("list_project_id");
+        if ( ! imp.checkboxes.project_id ) {
+            issue_row_container = issue_row_container.parents(".project_li");
+            imp.checkboxes.project_id = issue_row_container.attr("list_project_id");
+        }
+
+
 	var on_done = imp.loading("Loading context menu");
 	var selected_issue_ids = imp.get_selected_issue_ids_for_get(issue_row_container);
 	var response = $.ajax({type:"GET",
@@ -345,7 +370,7 @@ imp.set_issue_checkbox_hooks = function(issue_row_container) {
 				   on_done();
 				   var menu = $(data);
 				   menu.appendTo(document.body);
-				   callback(e, menu);
+				   callback(el, menu);
                                }
                               });
     };
@@ -386,7 +411,7 @@ imp.set_issue_checkbox_hooks = function(issue_row_container) {
 
     // On contextmenu event (right click)
     issue_row_container.find(".issue_checkbox_cell").bind('contextmenu', function(e) {
-							      fetch_menu_html( e, display_menu );
+							      fetch_menu_html( $(this), display_menu );
 							      return false;
 							  });
 

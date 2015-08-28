@@ -13,7 +13,7 @@
   <li class="divider"></li>
 
   {% for other_project in other_projects %}
-    <li> <a href="{% url 'bulk_move_issues_to_project' other_project.id %}">Move to {{other_project}}</a> </li>
+    <li> <a href="#" onclick="imp.bulk_run_action('{% url 'bulk_move_issues_to_project' other_project.id %}', [ {{other_project.id}}, {{project.id}} ]); return false;">Move to {{other_project}}</a> </li>
   {% endfor %}
 
   <li class="divider"></li>

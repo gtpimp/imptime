@@ -36,7 +36,7 @@
       {% endif %}
 
       <li>
-        <a href="{% url 'project_list' project.id %}" onclick="imp.refresh_project(this, {{project.id}}); return false;">
+        <a href="{% url 'project_list' project.id %}" onclick="imp.refresh_project({{project.id}}); return false;">
           Refresh
         </a>
       </li>

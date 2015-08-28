@@ -204,9 +204,10 @@ imp.select_text_for_emacs = function(text) {
     return false;
 };
 
-imp.refresh_project = function(el, project_id) {
-    project_url = imp.config.project_issues_refresh_url.replace("999999", project_id);
-    var project_container = $(el).parents(".project_li").find(".project_expand");
+imp.refresh_project = function(project_id) {
+    var el = $("li[list_project_id="+project_id+"]");
+    var project_url = imp.config.project_issues_refresh_url.replace("999999", project_id);
+    var project_container = $(el).find(".project_expand");
     imp.projects.already_loaded_sprints[project_url] = false;
     imp.projects.load_or_display_issues(project_container, project_url);
 };
