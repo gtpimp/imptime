@@ -1,12 +1,17 @@
 #!/bin/bash
 
-FILENAME="timesheet_`date +%Y%m%d`_0230.pgdump"
+DATE=$1
+if [ -z "${DATE}" ]; then
+    DATE=`date +%Y%m%d`
+fi
+
+FILENAME="timesheet_${DATE}_0230.pgdump"
 ANONYMISED_FILENAME="timesheet_`date +%Y%m%d`_0230_anonymised.pgdump"
 
 LOCAL_BACKUP_PATH=/home/gtp/id/imptime/db_backups
 DB_NAME="implicitdesign"
 
-echo "Fetching latest backup..."
+echo "Fetching backup for ${DATE}..."
 scp gtp@live.implicitdesign.co.za:/home/timesheet/db_backups/${FILENAME} ${LOCAL_BACKUP_PATH}
 
 echo "Recreating db"

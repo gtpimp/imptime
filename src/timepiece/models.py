@@ -2011,6 +2011,7 @@ class Entry(models.Model):
     no_join = EntryManagerBase()
     issue = models.ForeignKey('Issue', blank=True, null=True, related_name='entries')
 
+    created = models.DateTimeField(auto_now_add=True)
     created_by = models.ForeignKey(User, related_name='entries_created_by', null=True, blank=True)
 
     @classmethod
