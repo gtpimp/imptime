@@ -1011,7 +1011,7 @@ class Project(models.Model):
 
     @classmethod
     def can_add_dev_time_states(self):
-        return ( 'hopeful', 'pending', 'in dev', 'in client qa', 'gathering specs', 'quote sent', 'waiting to invoice' )
+        return ( 'hopeful', 'pending', 'in dev', 'in client qa', 'gathering specs', 'quote sent' )
 
     def can_add_dev_time(self):
         return self.status2 in self.can_add_dev_time_states() and self.is_open
