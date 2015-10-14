@@ -168,7 +168,6 @@ def view_entries(request):
 
 
 @permission_required('timepiece.can_clock_in')
-@transaction.commit_on_success
 @login_required
 def clock_in(request):
     """For clocking the user into a project"""
@@ -726,7 +725,6 @@ def change_person_time_sheet(request, action, user_id, from_date):
 
 
 @login_required
-@transaction.commit_on_success
 def confirm_invoice_project(request, project_id, to_date, from_date=None):
     if not request.user.has_perm('timepiece.generate_project_invoice'):
         return HttpResponseForbidden('Forbidden')
@@ -1078,7 +1076,6 @@ def list_people(request):
 
 
 @permission_required('auth.view_user')
-@transaction.commit_on_success
 @render_with('timepiece/person/view.html')
 @login_required
 def view_person(request, person_id):
@@ -1490,7 +1487,6 @@ def _business_total(projects, start_time=None, end_time=None):
             'invoices': invoices,
             }
 
-@transaction.commit_on_success
 @render_with('timepiece/project/view.html')
 @login_required
 def view_project(request, project_id):
@@ -1520,7 +1516,6 @@ def view_project(request, project_id):
 
 @csrf_exempt
 @permission_required('timepiece.change_project')
-@transaction.commit_on_success
 @login_required
 def add_user_to_project(request, project_id):
     project = get_object_or_404(timepiece.Project, pk=project_id)
@@ -1542,7 +1537,6 @@ def add_user_to_project(request, project_id):
 
 @csrf_exempt
 @permission_required('timepiece.change_project')
-@transaction.commit_on_success
 @login_required
 def remove_user_from_project(request, project_id, user_id):
     project = get_object_or_404(timepiece.Project, pk=project_id)
@@ -1563,7 +1557,6 @@ def remove_user_from_project(request, project_id, user_id):
 
 
 @permission_required('timepiece.change_project')
-@transaction.commit_on_success
 @render_with('timepiece/project/relationship.html')
 @login_required
 def edit_project_relationship(request, project_id, user_id):
@@ -2510,7 +2503,6 @@ def incremental_timesheets_by_project(request, template="timepiece/time-sheet/re
 
 @csrf_exempt
 @permission_required('timepiece.change_project')
-@transaction.commit_on_success
 @login_required
 def set_project_rate(request, context=None):
     project_id = request.POST['project_id']
@@ -2983,7 +2975,6 @@ def invoice_list(request, template='timepiece/invoice/index.html', context=None)
 
 @csrf_exempt
 @permission_required('timepiece.change_project')
-@transaction.commit_on_success
 @login_required
 def create_expense(request, context=None):
     project_id = float(request.POST['project_id'])
@@ -3000,7 +2991,6 @@ def create_expense(request, context=None):
 
 @csrf_exempt
 @permission_required('timepiece.change_project')
-@transaction.commit_on_success
 @login_required
 def create_invoice(request, context=None):
     project_id = float(request.POST['project_id'])
@@ -3642,7 +3632,6 @@ def issue_subject_update(request,  template="timepiece/project/issue_detail.html
     return HttpResponse("")
 
 @csrf_exempt
-@transaction.commit_on_success
 @login_required
 def issue_points_update(request,  template="timepiece/project/issue_detail.html", context=None):
     context = context or {}
@@ -4056,7 +4045,6 @@ def show_timeline(request, project_id):
 
 
 @login_required
-@transaction.commit_on_success
 @render_with('timepiece/project/show_permissions.html')
 def show_permissions(request, business_id):
 
@@ -4102,7 +4090,6 @@ def show_permissions(request, business_id):
 
 @csrf_exempt
 @login_required
-@transaction.commit_on_success
 def get_project_row(request,project_id, context= None):
     context = context or {}
 
@@ -4123,7 +4110,6 @@ def show_issue(request, issue_id, context=None):
 
 @csrf_exempt
 @login_required
-@transaction.commit_on_success
 def get_issue_row(request,issue_id):
     context = {}
 
@@ -4160,7 +4146,6 @@ def get_issue_row(request,issue_id):
 
 @csrf_exempt
 @login_required
-@transaction.commit_on_success
 def add_issue_comment(request, issue_id):
     issue = timepiece.Issue.objects.get(pk=issue_id)
     business = issue.project.business
@@ -4183,7 +4168,6 @@ def add_issue_comment(request, issue_id):
 
 @csrf_exempt
 @login_required
-@transaction.commit_on_success
 def edit_issue_comment(request, comment_id):
     comment = timepiece.IssueComment.objects.get(pk=comment_id)
     issue = comment.issue
@@ -4206,7 +4190,6 @@ def edit_issue_comment(request, comment_id):
 
 @csrf_exempt
 @login_required
-@transaction.commit_on_success
 def delete_issue_comment(request, comment_id):
     comment = timepiece.IssueComment.objects.get(pk=comment_id)
     issue = comment.issue
@@ -4226,7 +4209,6 @@ def delete_issue_comment(request, comment_id):
 
 @csrf_exempt
 @login_required
-@transaction.commit_on_success
 def add_issue_attachment(request, issue_id):
 
     issue = timepiece.Issue.objects.get(pk=issue_id)
@@ -4243,7 +4225,6 @@ def add_issue_attachment(request, issue_id):
 
 @csrf_exempt
 @login_required
-@transaction.commit_on_success
 def delete_issue_attachment(request, attachment_id):
     attachment = timepiece.IssueAttachment.objects.get(pk=attachment_id)
     issue = attachment.issue
@@ -4258,7 +4239,6 @@ def delete_issue_attachment(request, attachment_id):
 
 @csrf_exempt
 @login_required
-@transaction.commit_on_success
 def sortable_issue_update(request, project_id):
     context = {}
 
@@ -4296,7 +4276,6 @@ def sortable_issue_update(request, project_id):
 
 @csrf_exempt
 @login_required
-@transaction.commit_on_success
 def sortable_project_update(request):
     context = {}
 

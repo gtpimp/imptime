@@ -38,7 +38,7 @@ EXPECTING_A_TIMESHEET_ENTRY_EVERY_X_DAYS = 4
 # This setting is intentionally left invalid
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.postgresql_psycopg2', # Add 'postgresql_psycopg2', 'mysql', 'sqlite3' or 'oracle'.
+        'ENGINE': 'django.db.backends.postgresql_psycopg2', # Add 'postgresql_psycopg2', 'postgresql', 'mysql', 'sqlite3' or 'oracle'.
         'NAME': 'imptime',                      # Or path to database file if using sqlite3.
         'USER': 'imp',                      # Not used with sqlite3.
         'PASSWORD': 'imp',                  # Not used with sqlite3.
@@ -162,7 +162,6 @@ TEMPLATE_LOADERS = (
 )
 
 MIDDLEWARE_CLASSES = (
-    'django.middleware.transaction.TransactionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -211,7 +210,6 @@ INSTALLED_APPS = (
     'mailqueue',
 
     'timepiece',
-    'south',
     'emacs_importer',
     'implicitdesign',
     'jira_interface',

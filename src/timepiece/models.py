@@ -130,7 +130,7 @@ class Business(models.Model):
     description = models.TextField(blank=True)
     notes = models.TextField(blank=True)
     external_id = models.CharField(max_length=32, blank=True)
-    objects = QuerySetManager(BusinessQuerySet)
+    objects = BusinessQuerySet.as_manager()
     sync_with = models.CharField( max_length=100, blank=True, null=True, choices=( ("jira", "Jira"), ) )
     invoice_method = models.CharField( max_length=50, blank=False, null=False, 
                                        default="billable_hours_per_sprint",
@@ -664,7 +664,7 @@ class Project(models.Model):
     description = models.TextField(blank=True, null=True, db_index=True)
     short_description = models.CharField(max_length=50, blank=True, null=True, db_index=True)
     order = models.BigIntegerField(null=True,blank=True)
-    objects = QuerySetManager(ProjectQuerySet)
+    objects = ProjectQuerySet.as_manager()
     interface_plugin_number = models.CharField(max_length=255, null=True, blank=True) #eg jira
 
     start_dev_at = models.DateField(null=True, blank=True)

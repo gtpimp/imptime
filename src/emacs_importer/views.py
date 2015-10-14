@@ -12,7 +12,6 @@ import pprint
 from implicitdesign import settings
 from django.contrib.auth.decorators import login_required, permission_required
 from tasks import import_timesheets_from_emacs_task, import_timesheets_from_emacs
-from django.utils import simplejson
 from django.contrib.auth.decorators import user_passes_test
 from django.contrib.auth.models import User
 from django.core import management

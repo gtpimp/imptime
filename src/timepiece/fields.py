@@ -30,7 +30,7 @@ class ButtonRadioSelect(forms.RadioSelect):
 
     """
 
-    class ButtonRadioInput(forms.widgets.RadioInput):
+    class ButtonRadioInput(forms.widgets.RadioSelect):
 
         def __unicode__(self):
             # No idea, why Superclass' __unicode__ does not call

@@ -10,6 +10,7 @@ from timepiece import models as timepiece
 class ClientInvoiceDetailsForm(forms.ModelForm):
     class Meta:
         model = models.ClientInvoiceDetails
+        exclude = []
     
 class InvoiceForm(forms.ModelForm):
 

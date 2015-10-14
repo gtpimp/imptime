@@ -1,407 +1,770 @@
-# encoding: utf-8
-import datetime
-from south.db import db
-from south.v2 import SchemaMigration
-from django.db import models
+# -*- coding: utf-8 -*-
+from __future__ import unicode_literals
 
-class Migration(SchemaMigration):
-
-    def forwards(self, orm):
-        
-        # Adding model 'Attribute'
-        db.create_table('timepiece_attribute', (
-            ('id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
-            ('type', self.gf('django.db.models.fields.CharField')(max_length=32)),
-            ('label', self.gf('django.db.models.fields.CharField')(max_length=255)),
-            ('sort_order', self.gf('django.db.models.fields.SmallIntegerField')(null=True, blank=True)),
-            ('enable_timetracking', self.gf('django.db.models.fields.BooleanField')(default=False)),
-        ))
-        db.send_create_signal('timepiece', ['Attribute'])
-
-        # Adding unique constraint on 'Attribute', fields ['type', 'label']
-        db.create_unique('timepiece_attribute', ['type', 'label'])
-
-        # Adding model 'Project'
-        db.create_table('timepiece_project', (
-            ('id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
-            ('name', self.gf('django.db.models.fields.CharField')(max_length=255)),
-            ('trac_environment', self.gf('django.db.models.fields.CharField')(max_length=255, null=True, blank=True)),
-            ('point_person', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['auth.User'])),
-            ('type', self.gf('django.db.models.fields.related.ForeignKey')(related_name='projects_with_type', to=orm['timepiece.Attribute'])),
-            ('status', self.gf('django.db.models.fields.related.ForeignKey')(related_name='projects_with_status', to=orm['timepiece.Attribute'])),
-            ('description', self.gf('django.db.models.fields.TextField')()),
-            ('billing_period', self.gf('django.db.models.fields.related.ForeignKey')(blank=True, related_name='projects', null=True, to=orm['timepiece.RepeatPeriod'])),
-        ))
-        db.send_create_signal('timepiece', ['Project'])
-
-        # Adding M2M table for field interactions on 'Project'
-        db.create_table('timepiece_project_interactions', (
-            ('id', models.AutoField(verbose_name='ID', primary_key=True, auto_created=True)),
-            ('project', models.ForeignKey(orm['timepiece.project'], null=False))
-        ))
-
-        # Adding model 'ProjectRelationship'
-        db.create_table('timepiece_projectrelationship', (
-            ('id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
-            ('project', self.gf('django.db.models.fields.related.ForeignKey')(related_name='project_relationships', to=orm['timepiece.Project'])),
-        ))
-        db.send_create_signal('timepiece', ['ProjectRelationship'])
-
-        # Adding M2M table for field types on 'ProjectRelationship'
-        db.create_table('timepiece_projectrelationship_types', (
-            ('id', models.AutoField(verbose_name='ID', primary_key=True, auto_created=True)),
-        ))
-
-        # Adding model 'Activity'
-        db.create_table('timepiece_activity', (
-            ('id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
-            ('code', self.gf('django.db.models.fields.CharField')(unique=True, max_length=5)),
-            ('name', self.gf('django.db.models.fields.CharField')(max_length=50)),
-        ))
-        db.send_create_signal('timepiece', ['Activity'])
-
-        # Adding model 'Location'
-        db.create_table('timepiece_location', (
-            ('id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
-            ('name', self.gf('django.db.models.fields.CharField')(unique=True, max_length=255)),
-            ('slug', self.gf('django.db.models.fields.CharField')(unique=True, max_length=255)),
-        ))
-        db.send_create_signal('timepiece', ['Location'])
-
-        # Adding model 'Entry'
-        db.create_table('timepiece_entry', (
-            ('id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
-            ('user', self.gf('django.db.models.fields.related.ForeignKey')(related_name='timepiece_entries', to=orm['auth.User'])),
-            ('project', self.gf('django.db.models.fields.related.ForeignKey')(related_name='entries', to=orm['timepiece.Project'])),
-            ('activity', self.gf('django.db.models.fields.related.ForeignKey')(blank=True, related_name='entries', null=True, to=orm['timepiece.Activity'])),
-            ('location', self.gf('django.db.models.fields.related.ForeignKey')(related_name='entries', to=orm['timepiece.Location'])),
-            ('start_time', self.gf('django.db.models.fields.DateTimeField')()),
-            ('end_time', self.gf('django.db.models.fields.DateTimeField')(null=True, blank=True)),
-            ('seconds_paused', self.gf('django.db.models.fields.PositiveIntegerField')(default=0)),
-            ('pause_time', self.gf('django.db.models.fields.DateTimeField')(null=True, blank=True)),
-            ('comments', self.gf('django.db.models.fields.TextField')(blank=True)),
-            ('date_updated', self.gf('django.db.models.fields.DateTimeField')(auto_now=True, blank=True)),
-            ('hours', self.gf('django.db.models.fields.DecimalField')(default=0, max_digits=8, decimal_places=2)),
-        ))
-        db.send_create_signal('timepiece', ['Entry'])
-
-        # Adding model 'RepeatPeriod'
-        db.create_table('timepiece_repeatperiod', (
-            ('id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
-            ('count', self.gf('django.db.models.fields.PositiveSmallIntegerField')()),
-            ('interval', self.gf('django.db.models.fields.CharField')(max_length=10)),
-            ('active', self.gf('django.db.models.fields.BooleanField')(default=False)),
-        ))
-        db.send_create_signal('timepiece', ['RepeatPeriod'])
-
-        # Adding model 'BillingWindow'
-        db.create_table('timepiece_billingwindow', (
-            ('id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
-            ('period', self.gf('django.db.models.fields.related.ForeignKey')(related_name='billing_windows', to=orm['timepiece.RepeatPeriod'])),
-            ('date', self.gf('django.db.models.fields.DateField')()),
-            ('end_date', self.gf('django.db.models.fields.DateField')()),
-        ))
-        db.send_create_signal('timepiece', ['BillingWindow'])
-
-        # Adding model 'PersonRepeatPeriod'
-        db.create_table('timepiece_personrepeatperiod', (
-            ('id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
-            ('repeat_period', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['timepiece.RepeatPeriod'], unique=True)),
-        ))
-        db.send_create_signal('timepiece', ['PersonRepeatPeriod'])
-
-        # Adding model 'ProjectContract'
-        db.create_table('timepiece_projectcontract', (
-            ('id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
-            ('project', self.gf('django.db.models.fields.related.ForeignKey')(related_name='contracts', to=orm['timepiece.Project'])),
-            ('start_date', self.gf('django.db.models.fields.DateField')()),
-            ('end_date', self.gf('django.db.models.fields.DateField')()),
-            ('num_hours', self.gf('django.db.models.fields.DecimalField')(default=0, max_digits=8, decimal_places=2)),
-        ))
-        db.send_create_signal('timepiece', ['ProjectContract'])
-
-        # Adding model 'ContractAssignment'
-        db.create_table('timepiece_contractassignment', (
-            ('id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
-            ('contract', self.gf('django.db.models.fields.related.ForeignKey')(related_name='assignments', to=orm['timepiece.ProjectContract'])),
-            ('start_date', self.gf('django.db.models.fields.DateField')()),
-            ('end_date', self.gf('django.db.models.fields.DateField')()),
-            ('num_hours', self.gf('django.db.models.fields.DecimalField')(default=0, max_digits=8, decimal_places=2)),
-        ))
-        db.send_create_signal('timepiece', ['ContractAssignment'])
-
-        # Adding model 'PersonSchedule'
-        db.create_table('timepiece_personschedule', (
-            ('id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
-            ('hours_per_week', self.gf('django.db.models.fields.DecimalField')(default=0, max_digits=8, decimal_places=2)),
-            ('end_date', self.gf('django.db.models.fields.DateField')()),
-        ))
-        db.send_create_signal('timepiece', ['PersonSchedule'])
+from django.db import migrations, models
+import colorful.fields
+import django.db.models.deletion
+from django.conf import settings
 
 
-    def backwards(self, orm):
-        
-        # Removing unique constraint on 'ContractAssignment', fields ['contract', 'contact']
-        db.delete_unique('timepiece_contractassignment', ['contract_id', 'contact_id'])
+class Migration(migrations.Migration):
 
-        # Removing unique constraint on 'ProjectRelationship', fields ['contact', 'project']
-        db.delete_unique('timepiece_projectrelationship', ['contact_id', 'project_id'])
+    dependencies = [
+        migrations.swappable_dependency(settings.AUTH_USER_MODEL),
+    ]
 
-        # Removing unique constraint on 'Attribute', fields ['type', 'label']
-        db.delete_unique('timepiece_attribute', ['type', 'label'])
-
-        # Deleting model 'Attribute'
-        db.delete_table('timepiece_attribute')
-
-        # Deleting model 'Project'
-        db.delete_table('timepiece_project')
-
-        # Removing M2M table for field interactions on 'Project'
-        db.delete_table('timepiece_project_interactions')
-
-        # Deleting model 'ProjectRelationship'
-        db.delete_table('timepiece_projectrelationship')
-
-        # Removing M2M table for field types on 'ProjectRelationship'
-        db.delete_table('timepiece_projectrelationship_types')
-
-        # Deleting model 'Activity'
-        db.delete_table('timepiece_activity')
-
-        # Deleting model 'Location'
-        db.delete_table('timepiece_location')
-
-        # Deleting model 'Entry'
-        db.delete_table('timepiece_entry')
-
-        # Deleting model 'RepeatPeriod'
-        db.delete_table('timepiece_repeatperiod')
-
-        # Deleting model 'BillingWindow'
-        db.delete_table('timepiece_billingwindow')
-
-        # Deleting model 'PersonRepeatPeriod'
-        db.delete_table('timepiece_personrepeatperiod')
-
-        # Deleting model 'ProjectContract'
-        db.delete_table('timepiece_projectcontract')
-
-        # Deleting model 'ContractAssignment'
-        db.delete_table('timepiece_contractassignment')
-
-        # Deleting model 'PersonSchedule'
-        db.delete_table('timepiece_personschedule')
-
-
-    models = {
-        'auth.group': {
-            'Meta': {'object_name': 'Group'},
-            'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
-            'name': ('django.db.models.fields.CharField', [], {'unique': 'True', 'max_length': '80'}),
-            'permissions': ('django.db.models.fields.related.ManyToManyField', [], {'to': "orm['auth.Permission']", 'symmetrical': 'False', 'blank': 'True'})
-        },
-        'auth.permission': {
-            'Meta': {'ordering': "('content_type__app_label', 'content_type__model', 'codename')", 'unique_together': "(('content_type', 'codename'),)", 'object_name': 'Permission'},
-            'codename': ('django.db.models.fields.CharField', [], {'max_length': '100'}),
-            'content_type': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['contenttypes.ContentType']"}),
-            'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
-            'name': ('django.db.models.fields.CharField', [], {'max_length': '50'})
-        },
-        'auth.user': {
-            'Meta': {'object_name': 'User'},
-            'date_joined': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime.now'}),
-            'email': ('django.db.models.fields.EmailField', [], {'max_length': '75', 'blank': 'True'}),
-            'first_name': ('django.db.models.fields.CharField', [], {'max_length': '30', 'blank': 'True'}),
-            'groups': ('django.db.models.fields.related.ManyToManyField', [], {'to': "orm['auth.Group']", 'symmetrical': 'False', 'blank': 'True'}),
-            'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
-            'is_active': ('django.db.models.fields.BooleanField', [], {'default': 'True'}),
-            'is_staff': ('django.db.models.fields.BooleanField', [], {'default': 'False'}),
-            'is_superuser': ('django.db.models.fields.BooleanField', [], {'default': 'False'}),
-            'last_login': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime.now'}),
-            'last_name': ('django.db.models.fields.CharField', [], {'max_length': '30', 'blank': 'True'}),
-            'password': ('django.db.models.fields.CharField', [], {'max_length': '128'}),
-            'user_permissions': ('django.db.models.fields.related.ManyToManyField', [], {'to': "orm['auth.Permission']", 'symmetrical': 'False', 'blank': 'True'}),
-            'username': ('django.db.models.fields.CharField', [], {'unique': 'True', 'max_length': '30'})
-        },
-        'contactinfo.location': {
-            'Meta': {'object_name': 'Location'},
-            'country': ('django.db.models.fields.related.ForeignKey', [], {'default': "u'US'", 'to': "orm['countries.Country']"}),
-            'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
-            'type': ('django.db.models.fields.related.ForeignKey', [], {'default': '2', 'to': "orm['contactinfo.LocationType']"})
-        },
-        'contactinfo.locationtype': {
-            'Meta': {'object_name': 'LocationType'},
-            'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
-            'name': ('django.db.models.fields.CharField', [], {'max_length': '30'}),
-            'slug': ('django.db.models.fields.CharField', [], {'max_length': '30'})
-        },
-        'contenttypes.contenttype': {
-            'Meta': {'ordering': "('name',)", 'unique_together': "(('app_label', 'model'),)", 'object_name': 'ContentType', 'db_table': "'django_content_type'"},
-            'app_label': ('django.db.models.fields.CharField', [], {'max_length': '100'}),
-            'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
-            'model': ('django.db.models.fields.CharField', [], {'max_length': '100'}),
-            'name': ('django.db.models.fields.CharField', [], {'max_length': '100'})
-        },
-        'countries.country': {
-            'Meta': {'ordering': "('name',)", 'object_name': 'Country', 'db_table': "'country'"},
-            'iso': ('django.db.models.fields.CharField', [], {'max_length': '2', 'primary_key': 'True'}),
-            'iso3': ('django.db.models.fields.CharField', [], {'max_length': '3', 'null': 'True'}),
-            'name': ('django.db.models.fields.CharField', [], {'max_length': '128'}),
-            'numcode': ('django.db.models.fields.PositiveSmallIntegerField', [], {'null': 'True'}),
-            'printable_name': ('django.db.models.fields.CharField', [], {'max_length': '128'})
-        },
-        'crm.businesstype': {
-            'Meta': {'object_name': 'BusinessType'},
-            'can_view_all_projects': ('django.db.models.fields.BooleanField', [], {'default': 'False'}),
-            'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
-            'name': ('django.db.models.fields.CharField', [], {'max_length': '255'})
-        },
-        'crm.contact': {
-            'Meta': {'object_name': 'Contact'},
-            'business_types': ('django.db.models.fields.related.ManyToManyField', [], {'symmetrical': 'False', 'related_name': "'businesses'", 'blank': 'True', 'to': "orm['crm.BusinessType']"}),
-            'contacts': ('django.db.models.fields.related.ManyToManyField', [], {'related_name': "'related_contacts+'", 'symmetrical': 'False', 'through': "orm['crm.ContactRelationship']", 'to': "orm['crm.Contact']"}),
-            'description': ('django.db.models.fields.TextField', [], {'blank': 'True'}),
-            'email': ('django.db.models.fields.EmailField', [], {'max_length': '75', 'blank': 'True'}),
-            'external_id': ('django.db.models.fields.CharField', [], {'max_length': '32', 'blank': 'True'}),
-            'first_name': ('django.db.models.fields.CharField', [], {'max_length': '50', 'blank': 'True'}),
-            'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
-            'last_name': ('django.db.models.fields.CharField', [], {'max_length': '50', 'blank': 'True'}),
-            'locations': ('django.db.models.fields.related.ManyToManyField', [], {'to': "orm['contactinfo.Location']", 'symmetrical': 'False', 'blank': 'True'}),
-            'middle_name': ('django.db.models.fields.CharField', [], {'max_length': '50', 'blank': 'True'}),
-            'name': ('django.db.models.fields.CharField', [], {'max_length': '255', 'blank': 'True'}),
-            'notes': ('django.db.models.fields.TextField', [], {'blank': 'True'}),
-            'picture': ('django.db.models.fields.files.ImageField', [], {'max_length': '1048576', 'null': 'True', 'blank': 'True'}),
-            'slug': ('django.db.models.fields.SlugField', [], {'unique': 'True', 'max_length': '255', 'db_index': 'True'}),
-            'sort_name': ('django.db.models.fields.CharField', [], {'max_length': '255'}),
-            'type': ('django.db.models.fields.CharField', [], {'max_length': '32'}),
-            'user': ('django.db.models.fields.related.ForeignKey', [], {'blank': 'True', 'related_name': "'contacts'", 'unique': 'True', 'null': 'True', 'to': "orm['auth.User']"})
-        },
-        'crm.contactrelationship': {
-            'Meta': {'unique_together': "(('from_contact', 'to_contact'),)", 'object_name': 'ContactRelationship'},
-            'end_date': ('django.db.models.fields.DateField', [], {'null': 'True', 'blank': 'True'}),
-            'from_contact': ('django.db.models.fields.related.ForeignKey', [], {'related_name': "'from_contacts'", 'to': "orm['crm.Contact']"}),
-            'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
-            'start_date': ('django.db.models.fields.DateField', [], {'null': 'True', 'blank': 'True'}),
-            'to_contact': ('django.db.models.fields.related.ForeignKey', [], {'related_name': "'to_contacts'", 'to': "orm['crm.Contact']"}),
-            'types': ('django.db.models.fields.related.ManyToManyField', [], {'symmetrical': 'False', 'related_name': "'contact_relationships'", 'blank': 'True', 'to': "orm['crm.RelationshipType']"})
-        },
-        'crm.interaction': {
-            'Meta': {'ordering': "['-date']", 'object_name': 'Interaction'},
-            'cdr_id': ('django.db.models.fields.TextField', [], {'null': 'True'}),
-            'completed': ('django.db.models.fields.BooleanField', [], {'default': 'False'}),
-            'contacts': ('django.db.models.fields.related.ManyToManyField', [], {'related_name': "'interactions'", 'symmetrical': 'False', 'to': "orm['crm.Contact']"}),
-            'date': ('django.db.models.fields.DateTimeField', [], {}),
-            'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
-            'memo': ('django.db.models.fields.TextField', [], {'blank': 'True'}),
-            'type': ('django.db.models.fields.CharField', [], {'max_length': '15'})
-        },
-        'crm.relationshiptype': {
-            'Meta': {'object_name': 'RelationshipType'},
-            'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
-            'name': ('django.db.models.fields.CharField', [], {'unique': 'True', 'max_length': '255'}),
-            'slug': ('django.db.models.fields.CharField', [], {'unique': 'True', 'max_length': '255'})
-        },
-        'timepiece.activity': {
-            'Meta': {'ordering': "('name',)", 'object_name': 'Activity'},
-            'code': ('django.db.models.fields.CharField', [], {'unique': 'True', 'max_length': '5'}),
-            'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
-            'name': ('django.db.models.fields.CharField', [], {'max_length': '50'})
-        },
-        'timepiece.attribute': {
-            'Meta': {'ordering': "('sort_order',)", 'unique_together': "(('type', 'label'),)", 'object_name': 'Attribute'},
-            'enable_timetracking': ('django.db.models.fields.BooleanField', [], {'default': 'False'}),
-            'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
-            'label': ('django.db.models.fields.CharField', [], {'max_length': '255'}),
-            'sort_order': ('django.db.models.fields.SmallIntegerField', [], {'null': 'True', 'blank': 'True'}),
-            'type': ('django.db.models.fields.CharField', [], {'max_length': '32'})
-        },
-        'timepiece.billingwindow': {
-            'Meta': {'object_name': 'BillingWindow'},
-            'date': ('django.db.models.fields.DateField', [], {}),
-            'end_date': ('django.db.models.fields.DateField', [], {}),
-            'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
-            'period': ('django.db.models.fields.related.ForeignKey', [], {'related_name': "'billing_windows'", 'to': "orm['timepiece.RepeatPeriod']"})
-        },
-        'timepiece.contractassignment': {
-            'Meta': {'unique_together': "(('contract', 'contact'),)", 'object_name': 'ContractAssignment'},
-            'contact': ('django.db.models.fields.related.ForeignKey', [], {'related_name': "'assignments'", 'to': "orm['crm.Contact']"}),
-            'contract': ('django.db.models.fields.related.ForeignKey', [], {'related_name': "'assignments'", 'to': "orm['timepiece.ProjectContract']"}),
-            'end_date': ('django.db.models.fields.DateField', [], {}),
-            'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
-            'num_hours': ('django.db.models.fields.DecimalField', [], {'default': '0', 'max_digits': '8', 'decimal_places': '2'}),
-            'start_date': ('django.db.models.fields.DateField', [], {})
-        },
-        'timepiece.entry': {
-            'Meta': {'object_name': 'Entry'},
-            'activity': ('django.db.models.fields.related.ForeignKey', [], {'blank': 'True', 'related_name': "'entries'", 'null': 'True', 'to': "orm['timepiece.Activity']"}),
-            'comments': ('django.db.models.fields.TextField', [], {'blank': 'True'}),
-            'date_updated': ('django.db.models.fields.DateTimeField', [], {'auto_now': 'True', 'blank': 'True'}),
-            'end_time': ('django.db.models.fields.DateTimeField', [], {'null': 'True', 'blank': 'True'}),
-            'hours': ('django.db.models.fields.DecimalField', [], {'default': '0', 'max_digits': '8', 'decimal_places': '2'}),
-            'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
-            'location': ('django.db.models.fields.related.ForeignKey', [], {'related_name': "'entries'", 'to': "orm['timepiece.Location']"}),
-            'pause_time': ('django.db.models.fields.DateTimeField', [], {'null': 'True', 'blank': 'True'}),
-            'project': ('django.db.models.fields.related.ForeignKey', [], {'related_name': "'entries'", 'to': "orm['timepiece.Project']"}),
-            'seconds_paused': ('django.db.models.fields.PositiveIntegerField', [], {'default': '0'}),
-            'start_time': ('django.db.models.fields.DateTimeField', [], {}),
-            'user': ('django.db.models.fields.related.ForeignKey', [], {'related_name': "'timepiece_entries'", 'to': "orm['auth.User']"})
-        },
-        'timepiece.location': {
-            'Meta': {'object_name': 'Location'},
-            'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
-            'name': ('django.db.models.fields.CharField', [], {'unique': 'True', 'max_length': '255'}),
-            'slug': ('django.db.models.fields.CharField', [], {'unique': 'True', 'max_length': '255'})
-        },
-        'timepiece.personrepeatperiod': {
-            'Meta': {'object_name': 'PersonRepeatPeriod'},
-            'contact': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['crm.Contact']", 'unique': 'True'}),
-            'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
-            'repeat_period': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['timepiece.RepeatPeriod']", 'unique': 'True'})
-        },
-        'timepiece.personschedule': {
-            'Meta': {'object_name': 'PersonSchedule'},
-            'contact': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['crm.Contact']", 'unique': 'True'}),
-            'end_date': ('django.db.models.fields.DateField', [], {}),
-            'hours_per_week': ('django.db.models.fields.DecimalField', [], {'default': '0', 'max_digits': '8', 'decimal_places': '2'}),
-            'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'})
-        },
-        'timepiece.project': {
-            'Meta': {'ordering': "('name', 'status', 'type')", 'object_name': 'Project'},
-            'billing_period': ('django.db.models.fields.related.ForeignKey', [], {'blank': 'True', 'related_name': "'projects'", 'null': 'True', 'to': "orm['timepiece.RepeatPeriod']"}),
-            'business': ('django.db.models.fields.related.ForeignKey', [], {'related_name': "'business_projects'", 'to': "orm['crm.Contact']"}),
-            'contacts': ('django.db.models.fields.related.ManyToManyField', [], {'related_name': "'contact_projects'", 'symmetrical': 'False', 'through': "orm['timepiece.ProjectRelationship']", 'to': "orm['crm.Contact']"}),
-            'description': ('django.db.models.fields.TextField', [], {}),
-            'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
-            'interactions': ('django.db.models.fields.related.ManyToManyField', [], {'to': "orm['crm.Interaction']", 'symmetrical': 'False', 'blank': 'True'}),
-            'name': ('django.db.models.fields.CharField', [], {'max_length': '255'}),
-            'point_person': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['auth.User']"}),
-            'status': ('django.db.models.fields.related.ForeignKey', [], {'related_name': "'projects_with_status'", 'to': "orm['timepiece.Attribute']"}),
-            'trac_environment': ('django.db.models.fields.CharField', [], {'max_length': '255', 'null': 'True', 'blank': 'True'}),
-            'type': ('django.db.models.fields.related.ForeignKey', [], {'related_name': "'projects_with_type'", 'to': "orm['timepiece.Attribute']"})
-        },
-        'timepiece.projectcontract': {
-            'Meta': {'object_name': 'ProjectContract'},
-            'end_date': ('django.db.models.fields.DateField', [], {}),
-            'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
-            'num_hours': ('django.db.models.fields.DecimalField', [], {'default': '0', 'max_digits': '8', 'decimal_places': '2'}),
-            'project': ('django.db.models.fields.related.ForeignKey', [], {'related_name': "'contracts'", 'to': "orm['timepiece.Project']"}),
-            'start_date': ('django.db.models.fields.DateField', [], {})
-        },
-        'timepiece.projectrelationship': {
-            'Meta': {'unique_together': "(('contact', 'project'),)", 'object_name': 'ProjectRelationship'},
-            'contact': ('django.db.models.fields.related.ForeignKey', [], {'related_name': "'project_relationships'", 'to': "orm['crm.Contact']"}),
-            'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
-            'project': ('django.db.models.fields.related.ForeignKey', [], {'related_name': "'project_relationships'", 'to': "orm['timepiece.Project']"}),
-            'types': ('django.db.models.fields.related.ManyToManyField', [], {'symmetrical': 'False', 'related_name': "'project_relationships'", 'blank': 'True', 'to': "orm['crm.RelationshipType']"})
-        },
-        'timepiece.repeatperiod': {
-            'Meta': {'object_name': 'RepeatPeriod'},
-            'active': ('django.db.models.fields.BooleanField', [], {'default': 'False'}),
-            'contacts': ('django.db.models.fields.related.ManyToManyField', [], {'symmetrical': 'False', 'related_name': "'repeat_periods'", 'blank': 'True', 'through': "orm['timepiece.PersonRepeatPeriod']", 'to': "orm['crm.Contact']"}),
-            'count': ('django.db.models.fields.PositiveSmallIntegerField', [], {}),
-            'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
-            'interval': ('django.db.models.fields.CharField', [], {'max_length': '10'})
-        }
-    }
-
-    complete_apps = ['timepiece']
+    operations = [
+        migrations.CreateModel(
+            name='Activity',
+            fields=[
+                ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
+                ('code', models.CharField(help_text=b'Enter a short code to describe the type of activity that took place.', unique=True, max_length=5)),
+                ('name', models.CharField(help_text=b'Now enter a more meaningful name for the activity.', max_length=50)),
+                ('billable', models.BooleanField(default=True)),
+            ],
+            options={
+                'ordering': ('name',),
+                'verbose_name_plural': 'activities',
+            },
+        ),
+        migrations.CreateModel(
+            name='ActivityGroup',
+            fields=[
+                ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
+                ('name', models.CharField(unique=True, max_length=255)),
+                ('activities', models.ManyToManyField(related_name='activity_group', to='timepiece.Activity')),
+            ],
+        ),
+        migrations.CreateModel(
+            name='AssignmentAllocation',
+            fields=[
+                ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
+                ('date', models.DateField()),
+                ('hours', models.DecimalField(default=0, max_digits=8, decimal_places=2)),
+            ],
+        ),
+        migrations.CreateModel(
+            name='Attribute',
+            fields=[
+                ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
+                ('type', models.CharField(max_length=32, choices=[(b'project-type', b'Project Type'), (b'project-status', b'Project Status')])),
+                ('label', models.CharField(max_length=255)),
+                ('sort_order', models.SmallIntegerField(blank=True, null=True, choices=[(-20, -20), (-19, -19), (-18, -18), (-17, -17), (-16, -16), (-15, -15), (-14, -14), (-13, -13), (-12, -12), (-11, -11), (-10, -10), (-9, -9), (-8, -8), (-7, -7), (-6, -6), (-5, -5), (-4, -4), (-3, -3), (-2, -2), (-1, -1), (0, 0), (1, 1), (2, 2), (3, 3), (4, 4), (5, 5), (6, 6), (7, 7), (8, 8), (9, 9), (10, 10), (11, 11), (12, 12), (13, 13), (14, 14), (15, 15), (16, 16), (17, 17), (18, 18), (19, 19), (20, 20)])),
+                ('enable_timetracking', models.BooleanField(default=False, help_text=b'Enable time tracking functionality for projects with this type or status.')),
+                ('billable', models.BooleanField(default=False)),
+            ],
+            options={
+                'ordering': ('sort_order',),
+            },
+        ),
+        migrations.CreateModel(
+            name='Business',
+            fields=[
+                ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
+                ('name', models.CharField(max_length=255, blank=True)),
+                ('slug', models.SlugField(unique=True, max_length=255, blank=True)),
+                ('email', models.EmailField(max_length=254, blank=True)),
+                ('description', models.TextField(blank=True)),
+                ('notes', models.TextField(blank=True)),
+                ('external_id', models.CharField(max_length=32, blank=True)),
+                ('sync_with', models.CharField(blank=True, max_length=100, null=True, choices=[(b'jira', b'Jira')])),
+                ('invoice_method', models.CharField(default=b'billable_hours_per_sprint', max_length=50, choices=[(b'billable_hours_per_sprint', b'Billable Hours per Sprint'), (b'billable_hours_per_month', b'Billable Hours per Month'), (b'fixed_quote', b'Fixed quote'), (b'free', b'Free or Equity or Other')])),
+            ],
+            options={
+                'ordering': ('name',),
+            },
+        ),
+        migrations.CreateModel(
+            name='BusinessComment',
+            fields=[
+                ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
+                ('comment', models.TextField(null=True, blank=True)),
+                ('created_at', models.DateTimeField(auto_now_add=True)),
+                ('modified_at', models.DateTimeField(auto_now=True)),
+                ('business', models.ForeignKey(related_name='business_comments', to='timepiece.Business')),
+                ('modified_by', models.ForeignKey(related_name='business_comments_modified_by', to=settings.AUTH_USER_MODEL)),
+            ],
+        ),
+        migrations.CreateModel(
+            name='BusinessDocument',
+            fields=[
+                ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
+                ('filename', models.CharField(max_length=255)),
+                ('doc', models.FileField(upload_to=b'project_documents')),
+                ('doc_type', models.CharField(max_length=100, choices=[(b'invoice', b'Invoice'), (b'summary', b'Sprint summary'), (b'proposal', b'Sprint proposal'), (b'contract', b'Contract'), (b'other', b'Other')])),
+                ('mime_type', models.CharField(max_length=50)),
+                ('token', models.CharField(max_length=255, db_index=True)),
+                ('comments', models.TextField(null=True, blank=True)),
+                ('deleted', models.BooleanField(default=False)),
+                ('original_content', models.TextField(null=True, blank=True)),
+                ('created_at', models.DateTimeField(auto_now_add=True)),
+                ('modified_at', models.DateTimeField(auto_now=True)),
+                ('business', models.ForeignKey(related_name='documents', to='timepiece.Business')),
+                ('created_by', models.ForeignKey(related_name='business_document_created_by', to=settings.AUTH_USER_MODEL)),
+                ('modified_by', models.ForeignKey(related_name='business_document_modified_by', to=settings.AUTH_USER_MODEL)),
+            ],
+        ),
+        migrations.CreateModel(
+            name='BusinessHistory',
+            fields=[
+                ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
+                ('business_id', models.IntegerField(db_index=True)),
+                ('created_at', models.DateTimeField(auto_now_add=True)),
+                ('description', models.CharField(max_length=255)),
+                ('before', models.TextField(null=True, blank=True)),
+                ('after', models.TextField(null=True, blank=True)),
+                ('created_by', models.ForeignKey(to=settings.AUTH_USER_MODEL)),
+            ],
+        ),
+        migrations.CreateModel(
+            name='BusinessPermissions',
+            fields=[
+                ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
+                ('can_view_project_card', models.BooleanField(default=True, verbose_name=b'Can View Sprint Card')),
+                ('can_edit_issues', models.BooleanField(default=True, verbose_name=b'Can Edit Issues')),
+                ('can_view_issues', models.BooleanField(default=True, verbose_name=b'Can View Issues')),
+                ('can_edit_issue_states', models.BooleanField(default=True, verbose_name=b'Can Edit Issue States')),
+                ('can_edit_project_states', models.BooleanField(default=True, verbose_name=b'Can Edit Sprint States')),
+                ('can_add_issue', models.BooleanField(default=True, verbose_name=b'Can Add Issue')),
+                ('can_delete_issue', models.BooleanField(default=True, verbose_name=b'Can Delete Issue')),
+                ('can_edit_description', models.BooleanField(default=True, verbose_name=b'Can Edit Description')),
+                ('can_add_issue_comment', models.BooleanField(default=True, verbose_name=b'Can Add Issue Comment')),
+                ('can_edit_subject', models.BooleanField(default=True, verbose_name=b'Can Edit Subject')),
+                ('can_edit_feature', models.BooleanField(default=True, verbose_name=b'Can Edit Feature')),
+                ('can_create_sprint', models.BooleanField(default=True, verbose_name=b'Can Create Sprint')),
+                ('can_assign_user', models.BooleanField(default=True, verbose_name=b'Can Assign User')),
+                ('can_be_scheduled', models.BooleanField(default=False, verbose_name=b'Can Be Scheduled')),
+                ('can_view_business_comments', models.BooleanField(default=False, verbose_name=b'Can view project comments')),
+                ('can_view_actual_hours', models.BooleanField(default=False, verbose_name=b'Can View Actual Hours')),
+                ('can_see_other_user_points', models.BooleanField(default=False, verbose_name=b"Can See Other User's Points")),
+                ('can_estimate_own_points', models.BooleanField(default=False, verbose_name=b'Can Estimate Own Points')),
+                ('can_view_calendar', models.BooleanField(default=False, verbose_name=b'Can View Calendar')),
+                ('can_import_actual_hours', models.BooleanField(default=False, verbose_name=b'Can Import Actual Hours')),
+                ('can_edit_business_comments', models.BooleanField(default=False, verbose_name=b'Can edit project comments')),
+                ('can_do_dev_checklist', models.BooleanField(default=False, verbose_name=b'Do dev checklist')),
+                ('can_do_traffic_checklist', models.BooleanField(default=False, verbose_name=b'Traffic checklist')),
+                ('can_do_finance_checklist', models.BooleanField(default=False, verbose_name=b'Finance checklist')),
+                ('can_edit_permissions', models.BooleanField(default=False, verbose_name=b'Can Edit Permissions')),
+                ('can_toggle_graphs', models.BooleanField(default=False, verbose_name=b'Can Toggle Graphs')),
+                ('can_edit_project_detail', models.BooleanField(default=False, verbose_name=b'Can Edit Sprint Detail')),
+                ('can_edit_deadlines', models.BooleanField(default=False, verbose_name=b'Can Edit Deadlines ')),
+                ('can_view_deadlines', models.BooleanField(default=False, verbose_name=b'Can View Deadlines ')),
+                ('can_edit_budget', models.BooleanField(default=False, verbose_name=b'Can Edit Budget ')),
+                ('can_view_budget', models.BooleanField(default=False, verbose_name=b'Can View Budget')),
+                ('can_edit_invoices', models.BooleanField(default=False, verbose_name=b'Can Edit Invoices')),
+                ('can_view_invoices', models.BooleanField(default=False, verbose_name=b'Can View Invoices')),
+                ('can_edit_quotes', models.BooleanField(default=False, verbose_name=b'Can Edit Quotes')),
+                ('can_view_quotes', models.BooleanField(default=False, verbose_name=b'Can View Quotes')),
+                ('can_edit_ctc_billable_rates', models.BooleanField(default=False, verbose_name=b'Can Edit Ctc Billable')),
+                ('can_view_ctc_billable_rates', models.BooleanField(default=False, verbose_name=b'Can View Ctc Billable')),
+                ('can_view_ctc_rates', models.BooleanField(default=False, verbose_name=b'Can View Ctc')),
+                ('can_view_documents', models.BooleanField(default=False, verbose_name=b'Can View Docs')),
+                ('can_edit_calendar', models.BooleanField(default=False, verbose_name=b'Can Edit Calendar')),
+                ('business', models.ForeignKey(related_name='business_permissions', to='timepiece.Business')),
+                ('user', models.ForeignKey(related_name='business_permissions', to=settings.AUTH_USER_MODEL)),
+            ],
+        ),
+        migrations.CreateModel(
+            name='CalendarEvent',
+            fields=[
+                ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
+                ('start', models.DateTimeField(db_index=True)),
+                ('hours', models.DecimalField(default=2.0, max_digits=4, decimal_places=2, db_index=True)),
+                ('description', models.TextField(null=True, blank=True)),
+                ('event_type', models.CharField(default=b'planned', max_length=50, choices=[(b'planned', b'Planned'), (b'meeting', b'Meeting'), (b'leave', b'Leave'), (b'sickday', b'Sick day'), (b'office_closed', b'Office Closed'), (b'personal', b'Personal'), (b'deadline', b'Deadline')])),
+                ('status', models.CharField(default=b'ready', max_length=50, choices=[(b'ready', b'Ready'), (b'done', b'Done'), (b'cancelled', b'Cancelled')])),
+                ('send_invites_to', models.TextField(null=True, blank=True)),
+                ('caldav_uid', models.CharField(max_length=100, null=True, blank=True)),
+                ('business', models.ForeignKey(related_name='calendar_events', blank=True, to='timepiece.Business', null=True)),
+                ('user', models.ForeignKey(to=settings.AUTH_USER_MODEL)),
+            ],
+        ),
+        migrations.CreateModel(
+            name='Client',
+            fields=[
+                ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
+                ('name', models.CharField(max_length=255, blank=True)),
+                ('code', models.CharField(max_length=100, blank=True)),
+                ('email', models.EmailField(max_length=254)),
+                ('logo', models.FileField(null=True, upload_to=b'logos', blank=True)),
+                ('created_at', models.DateTimeField(auto_now_add=True)),
+                ('modified_at', models.DateTimeField(auto_now=True)),
+            ],
+        ),
+        migrations.CreateModel(
+            name='ContractAssignment',
+            fields=[
+                ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
+                ('start_date', models.DateField()),
+                ('end_date', models.DateField()),
+                ('num_hours', models.DecimalField(default=0, max_digits=8, decimal_places=2)),
+                ('min_hours_per_week', models.IntegerField(default=0)),
+            ],
+        ),
+        migrations.CreateModel(
+            name='ContractMilestone',
+            fields=[
+                ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
+                ('name', models.CharField(max_length=255)),
+                ('start_date', models.DateField()),
+                ('end_date', models.DateField()),
+                ('hours', models.DecimalField(default=0, max_digits=8, decimal_places=2)),
+            ],
+            options={
+                'ordering': ('end_date',),
+            },
+        ),
+        migrations.CreateModel(
+            name='DevChecklist',
+            fields=[
+                ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
+                ('comments', models.TextField(null=True, blank=True)),
+                ('passed', models.BooleanField(default=False, db_index=True)),
+                ('created_at', models.DateTimeField(auto_now_add=True)),
+                ('modified_at', models.DateTimeField(auto_now=True)),
+                ('business', models.ForeignKey(to='timepiece.Business', blank=True)),
+                ('created_by', models.ForeignKey(related_name='dev_checklist_created_by', to=settings.AUTH_USER_MODEL)),
+                ('modified_by', models.ForeignKey(related_name='dev_checklist_modified_by', blank=True, to=settings.AUTH_USER_MODEL)),
+            ],
+            options={
+                'abstract': False,
+            },
+        ),
+        migrations.CreateModel(
+            name='DevChecklistItem',
+            fields=[
+                ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
+                ('name', models.CharField(max_length=255)),
+                ('passed', models.BooleanField(default=False)),
+                ('msg', models.TextField(null=True, blank=True)),
+                ('created_at', models.DateTimeField(auto_now_add=True)),
+                ('dev_checklist', models.ForeignKey(related_name='items', blank=True, to='timepiece.DevChecklist')),
+            ],
+            options={
+                'abstract': False,
+            },
+        ),
+        migrations.CreateModel(
+            name='Entry',
+            fields=[
+                ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
+                ('status', models.CharField(default=b'unverified', max_length=24, choices=[(b'unverified', b'Unverified'), (b'verified', b'Verified'), (b'approved', b'Approved'), (b'invoiced', b'Invoiced'), (b'not-invoiced', b'Not Invoiced')])),
+                ('source', models.CharField(max_length=20, choices=[(b'quick_clocker', b'Quick clocker'), (b'emacs', b'Emacs importer'), (b'excel', b'In-site Excel importer')])),
+                ('start_time', models.DateTimeField()),
+                ('end_time', models.DateTimeField(db_index=True, null=True, blank=True)),
+                ('seconds_paused', models.PositiveIntegerField(default=0)),
+                ('pause_time', models.DateTimeField(null=True, blank=True)),
+                ('comments', models.TextField(blank=True)),
+                ('extended_comments', models.TextField(blank=True)),
+                ('date_updated', models.DateTimeField(auto_now=True)),
+                ('hours', models.DecimalField(default=0, max_digits=8, decimal_places=2)),
+                ('created', models.DateTimeField(auto_now_add=True)),
+                ('activity', models.ForeignKey(related_name='entries', to='timepiece.Activity')),
+                ('created_by', models.ForeignKey(related_name='entries_created_by', blank=True, to=settings.AUTH_USER_MODEL, null=True)),
+            ],
+            options={
+                'verbose_name_plural': 'entries',
+                'permissions': (('can_clock_in', 'Can use Pendulum to clock in'), ('can_pause', 'Can pause and unpause log entries'), ('can_clock_out', 'Can use Pendulum to clock out'), ('view_entry_summary', 'Can view entry summary page'), ('view_payroll_summary', 'Can view payroll summary page')),
+            },
+        ),
+        migrations.CreateModel(
+            name='EntryGroup',
+            fields=[
+                ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
+                ('status', models.CharField(default=b'invoiced', max_length=24, choices=[(b'invoiced', b'Invoiced'), (b'not-invoiced', b'Not Invoiced')])),
+                ('number', models.CharField(max_length=50, null=True, verbose_name=b'Reference #', blank=True)),
+                ('comments', models.TextField(null=True, blank=True)),
+                ('created', models.DateTimeField(auto_now_add=True)),
+                ('modified', models.DateTimeField(auto_now=True)),
+                ('start', models.DateField(null=True, blank=True)),
+                ('end', models.DateField()),
+            ],
+        ),
+        migrations.CreateModel(
+            name='Expense',
+            fields=[
+                ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
+                ('date', models.DateField()),
+                ('amount', models.DecimalField(default=0, max_digits=8, decimal_places=0)),
+                ('description', models.CharField(max_length=255, null=True, blank=True)),
+                ('paid', models.BooleanField()),
+            ],
+            options={
+                'permissions': (('view_expense', 'Can view expenses.'),),
+            },
+        ),
+        migrations.CreateModel(
+            name='Feature',
+            fields=[
+                ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
+                ('name', models.CharField(max_length=255, null=True, blank=True)),
+                ('business', models.ForeignKey(related_name='features', to='timepiece.Business')),
+            ],
+            options={
+                'ordering': ['name'],
+            },
+        ),
+        migrations.CreateModel(
+            name='FinanceChecklist',
+            fields=[
+                ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
+                ('comments', models.TextField(null=True, blank=True)),
+                ('passed', models.BooleanField(default=False, db_index=True)),
+                ('created_at', models.DateTimeField(auto_now_add=True)),
+                ('modified_at', models.DateTimeField(auto_now=True)),
+                ('business', models.ForeignKey(to='timepiece.Business', blank=True)),
+                ('created_by', models.ForeignKey(related_name='finance_checklist_created_by', to=settings.AUTH_USER_MODEL)),
+                ('modified_by', models.ForeignKey(related_name='finance_checklist_modified_by', blank=True, to=settings.AUTH_USER_MODEL)),
+            ],
+            options={
+                'abstract': False,
+            },
+        ),
+        migrations.CreateModel(
+            name='FinanceChecklistItem',
+            fields=[
+                ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
+                ('name', models.CharField(max_length=255)),
+                ('passed', models.BooleanField(default=False)),
+                ('msg', models.TextField(null=True, blank=True)),
+                ('created_at', models.DateTimeField(auto_now_add=True)),
+                ('finance_checklist', models.ForeignKey(related_name='items', blank=True, to='timepiece.FinanceChecklist')),
+            ],
+            options={
+                'abstract': False,
+            },
+        ),
+        migrations.CreateModel(
+            name='Holiday',
+            fields=[
+                ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
+                ('applies_on', models.DateField(null=True, blank=True)),
+                ('name', models.CharField(default=b'public holiday', max_length=100, blank=True)),
+            ],
+        ),
+        migrations.CreateModel(
+            name='HourGroup',
+            fields=[
+                ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
+                ('name', models.CharField(unique=True, max_length=255)),
+                ('order', models.PositiveIntegerField(unique=True, null=True, blank=True)),
+                ('activities', models.ManyToManyField(related_name='activity_bundle', to='timepiece.Activity')),
+            ],
+        ),
+        migrations.CreateModel(
+            name='Income',
+            fields=[
+                ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
+                ('date', models.DateField()),
+                ('amount', models.DecimalField(default=0, max_digits=8, decimal_places=0)),
+            ],
+        ),
+        migrations.CreateModel(
+            name='Issue',
+            fields=[
+                ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
+                ('status', models.CharField(max_length=255, choices=[(b'new', b'new'), (b'devdone', b'dev_done'), (b'in_internal_qa', b'internal qa'), (b'internal_qa_passed', b'internal qa passed'), (b'in_client_qa', b'external qa'), (b'client_qa_passed', b'external qa passed'), (b'reopened', b'reopened'), (b'onhold', b'on hold'), (b'bug', b'bug'), (b'to be estimated', b'to be estimated'), (b'needscodereview', b'needs code review'), (b"can't reproduce", b"can't reproduce"), (b'discuss with client', b'discuss with client'), (b'dev unclear', b'dev unclear'), (b'duplicate', b'duplicate'), (b'to be designed', b'to be designed'), (b'imported', b'imported'), (b'management', b'management'), (b'quick_clocker', b'quick clocker')])),
+                ('number', models.IntegerField(db_index=True, null=True, blank=True)),
+                ('subject', models.TextField(db_index=True)),
+                ('description', models.TextField(blank=True)),
+                ('story_points', models.FloatField(null=True, blank=True)),
+                ('order', models.BigIntegerField(null=True, blank=True)),
+                ('order2', models.CharField(default=None, max_length=50, null=True, blank=True)),
+                ('interface_plugin_number', models.CharField(max_length=255, null=True, blank=True)),
+                ('created', models.DateTimeField(auto_now_add=True)),
+                ('modified', models.DateTimeField(auto_now=True)),
+                ('due_date', models.DateTimeField(default=None, null=True, blank=True)),
+                ('auto_created_during_import', models.BooleanField(default=False)),
+                ('adhoc', models.BooleanField(default=False)),
+                ('assigned_to', models.ForeignKey(related_name='assigned_issues', blank=True, to=settings.AUTH_USER_MODEL, null=True)),
+                ('feature', models.ForeignKey(related_name='issues', blank=True, to='timepiece.Feature', null=True)),
+            ],
+        ),
+        migrations.CreateModel(
+            name='IssueAttachment',
+            fields=[
+                ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
+                ('attachment', models.FileField(upload_to=b'issue_attachments')),
+                ('name', models.CharField(max_length=255)),
+                ('issue', models.ForeignKey(related_name='attachments', to='timepiece.Issue')),
+            ],
+        ),
+        migrations.CreateModel(
+            name='IssueComment',
+            fields=[
+                ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
+                ('comment', models.TextField(blank=True)),
+                ('created', models.DateTimeField(auto_now_add=True)),
+                ('modified', models.DateTimeField(auto_now=True)),
+                ('author', models.ForeignKey(related_name='issue_comments', to=settings.AUTH_USER_MODEL)),
+                ('issue', models.ForeignKey(related_name='comments', to='timepiece.Issue')),
+            ],
+        ),
+        migrations.CreateModel(
+            name='IssueHistory',
+            fields=[
+                ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
+                ('issue_id', models.IntegerField(db_index=True)),
+                ('created_at', models.DateTimeField(auto_now_add=True)),
+                ('description', models.CharField(max_length=255)),
+                ('before', models.TextField(null=True, blank=True)),
+                ('after', models.TextField(null=True, blank=True)),
+                ('created_by', models.ForeignKey(to=settings.AUTH_USER_MODEL)),
+            ],
+        ),
+        migrations.CreateModel(
+            name='IssuePoints',
+            fields=[
+                ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
+                ('points', models.FloatField(null=True, blank=True)),
+                ('issue', models.ForeignKey(related_name='issue_points', to='timepiece.Issue')),
+                ('user', models.ForeignKey(related_name='user_points', to=settings.AUTH_USER_MODEL)),
+            ],
+        ),
+        migrations.CreateModel(
+            name='IssueStatus',
+            fields=[
+                ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
+                ('name', models.CharField(max_length=255, null=True, blank=True)),
+                ('business', models.ForeignKey(related_name='stati', to='timepiece.Business')),
+            ],
+        ),
+        migrations.CreateModel(
+            name='Location',
+            fields=[
+                ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
+                ('name', models.CharField(unique=True, max_length=255)),
+                ('slug', models.CharField(unique=True, max_length=255)),
+            ],
+        ),
+        migrations.CreateModel(
+            name='PersonSchedule',
+            fields=[
+                ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
+                ('hours_per_week', models.DecimalField(default=0, max_digits=8, decimal_places=2)),
+                ('end_date', models.DateField()),
+                ('user', models.ForeignKey(null=True, to=settings.AUTH_USER_MODEL, unique=True)),
+            ],
+        ),
+        migrations.CreateModel(
+            name='Project',
+            fields=[
+                ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
+                ('code', models.CharField(max_length=255, null=True, blank=True)),
+                ('name', models.CharField(max_length=255, db_index=True)),
+                ('budget', models.DecimalField(default=0, max_digits=8, decimal_places=2)),
+                ('tracker_url', models.CharField(default=b'', max_length=255, blank=True)),
+                ('billable', models.BooleanField(default=False)),
+                ('quote_uncertainty', models.FloatField(default=0.25, null=True, verbose_name=b'Uncertainty overhead as a decimal between 0 and 1', blank=True)),
+                ('status2', models.CharField(default=b'pending', max_length=100, db_index=True, choices=[(b'gathering specs', b'gathering specs'), (b'quote sent', b'quote sent'), (b'pending', b'pending'), (b'hopeful', b'hopeful'), (b'in dev', b'in development'), (b'in client qa', b'in client qa'), (b'waiting to invoice', b'waiting to invoice'), (b'invoiced', b'invoiced'), (b'waiting to close', b'waiting to close'), (b'on hold', b'on hold'), (b'closed', b'closed')])),
+                ('description', models.TextField(db_index=True, null=True, blank=True)),
+                ('short_description', models.CharField(db_index=True, max_length=50, null=True, blank=True)),
+                ('order', models.BigIntegerField(null=True, blank=True)),
+                ('interface_plugin_number', models.CharField(max_length=255, null=True, blank=True)),
+                ('start_dev_at', models.DateField(null=True, blank=True)),
+                ('start_internal_qa_at', models.DateField(null=True, blank=True)),
+                ('start_client_qa_at', models.DateField(null=True, blank=True)),
+                ('invoice_at', models.DateField(null=True, blank=True)),
+                ('ratio_management', models.FloatField(default=0.2, verbose_name=b'Ratio of management per develpment hour, between 0 and 1')),
+                ('ratio_testing', models.FloatField(default=0.2, verbose_name=b'Ratio of testing per development hour, between 0 and 1')),
+                ('ratio_scope_creep', models.FloatField(default=0.25, verbose_name=b'Ratio of additional issue hours added, between 0 and 1')),
+                ('colour', colorful.fields.RGBColorField(null=True, blank=True)),
+                ('activity_group', models.ForeignKey(related_name='activity_group', verbose_name=b'restrict activities to', blank=True, to='timepiece.ActivityGroup', null=True)),
+                ('business', models.ForeignKey(related_name='new_business_projects', to='timepiece.Business')),
+                ('point_person', models.ForeignKey(to=settings.AUTH_USER_MODEL)),
+                ('status', models.ForeignKey(related_name='projects_with_status', to='timepiece.Attribute')),
+                ('type', models.ForeignKey(related_name='projects_with_type', to='timepiece.Attribute')),
+            ],
+            options={
+                'ordering': ('name', 'status', 'type'),
+                'permissions': (('view_project', 'Can view project'), ('email_project_report', 'Can email project report'), ('view_project_time_sheet', 'Can view project time sheet'), ('export_project_time_sheet', 'Can export project time sheet'), ('generate_project_invoice', 'Can generate project invoice')),
+            },
+        ),
+        migrations.CreateModel(
+            name='ProjectContract',
+            fields=[
+                ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
+                ('start_date', models.DateField()),
+                ('end_date', models.DateField()),
+                ('num_hours', models.DecimalField(default=0, max_digits=8, decimal_places=2)),
+                ('status', models.CharField(default=b'upcomming', max_length=32, choices=[(b'upcoming', b'Upcoming'), (b'current', b'Current'), (b'complete', b'Complete')])),
+                ('project', models.ForeignKey(related_name='contracts', to='timepiece.Project')),
+            ],
+        ),
+        migrations.CreateModel(
+            name='ProjectHours',
+            fields=[
+                ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
+                ('week_start', models.DateField(verbose_name=b'start of week')),
+                ('hours', models.DecimalField(default=0, max_digits=8, decimal_places=2)),
+                ('published', models.BooleanField(default=False)),
+                ('project', models.ForeignKey(to='timepiece.Project')),
+                ('user', models.ForeignKey(to=settings.AUTH_USER_MODEL)),
+            ],
+            options={
+                'verbose_name': 'project hours entry',
+                'verbose_name_plural': 'project hours entries',
+            },
+        ),
+        migrations.CreateModel(
+            name='ProjectRelationship',
+            fields=[
+                ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
+                ('project', models.ForeignKey(related_name='project_relationships', to='timepiece.Project')),
+            ],
+        ),
+        migrations.CreateModel(
+            name='Rate',
+            fields=[
+                ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
+                ('amount', models.DecimalField(default=0, max_digits=8, decimal_places=2)),
+                ('billable_amount', models.DecimalField(default=0, max_digits=8, decimal_places=2)),
+                ('velocity', models.FloatField(default=1)),
+                ('work_ratio', models.FloatField(default=0)),
+                ('time_tracking_mode', models.CharField(default=b'developer', max_length=50, choices=[(b'developer', b'Developer'), (b'manager', b'Manager'), (b'tester', b'Tester')])),
+                ('project', models.ForeignKey(related_name='rate', to='timepiece.Project')),
+                ('user', models.ForeignKey(to=settings.AUTH_USER_MODEL)),
+            ],
+        ),
+        migrations.CreateModel(
+            name='RedmineToTimepieceBusinessMapping',
+            fields=[
+                ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
+                ('redmine_business_name', models.CharField(max_length=255)),
+                ('timepiece_business_name', models.CharField(max_length=255)),
+            ],
+        ),
+        migrations.CreateModel(
+            name='RedmineToTimepieceProjectMapping',
+            fields=[
+                ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
+                ('timepiece_business_name', models.CharField(max_length=255)),
+                ('redmine_project_code', models.CharField(max_length=255)),
+                ('timepiece_project_code', models.CharField(max_length=255)),
+            ],
+        ),
+        migrations.CreateModel(
+            name='RelationshipType',
+            fields=[
+                ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
+                ('name', models.CharField(unique=True, max_length=255)),
+                ('slug', models.CharField(unique=True, max_length=255, editable=False)),
+            ],
+        ),
+        migrations.CreateModel(
+            name='Salary',
+            fields=[
+                ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
+                ('amount', models.DecimalField(default=0, max_digits=8, decimal_places=2)),
+                ('date', models.DateField(verbose_name=b'month')),
+                ('paye', models.DecimalField(default=0, max_digits=8, decimal_places=2)),
+                ('uif', models.DecimalField(default=0, max_digits=8, decimal_places=2)),
+                ('bonus', models.DecimalField(default=0, max_digits=8, decimal_places=2)),
+                ('expenses', models.DecimalField(default=0, max_digits=8, decimal_places=2)),
+                ('leave_accrued', models.DecimalField(default=0, verbose_name=b'Leave accrued this month', max_digits=8, decimal_places=2)),
+                ('leave_taken', models.DecimalField(default=0, verbose_name=b'Leave taken this month', max_digits=8, decimal_places=2)),
+                ('sick_days', models.DecimalField(default=0, verbose_name=b'Sick days taken this month', max_digits=8, decimal_places=2)),
+                ('locked', models.BooleanField(default=False)),
+                ('user', models.ForeignKey(to=settings.AUTH_USER_MODEL)),
+            ],
+        ),
+        migrations.CreateModel(
+            name='Schedule',
+            fields=[
+                ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
+                ('scheduled_date', models.DateField()),
+                ('num_hours', models.IntegerField()),
+                ('business', models.ForeignKey(to='timepiece.Business')),
+                ('user', models.ForeignKey(related_name='schedules', to=settings.AUTH_USER_MODEL)),
+            ],
+        ),
+        migrations.CreateModel(
+            name='TrafficChecklist',
+            fields=[
+                ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
+                ('comments', models.TextField(null=True, blank=True)),
+                ('passed', models.BooleanField(default=False, db_index=True)),
+                ('created_at', models.DateTimeField(auto_now_add=True)),
+                ('modified_at', models.DateTimeField(auto_now=True)),
+                ('business', models.ForeignKey(to='timepiece.Business', blank=True)),
+                ('created_by', models.ForeignKey(related_name='traffic_checklist_created_by', to=settings.AUTH_USER_MODEL)),
+                ('modified_by', models.ForeignKey(related_name='traffic_checklist_modified_by', blank=True, to=settings.AUTH_USER_MODEL)),
+            ],
+            options={
+                'abstract': False,
+            },
+        ),
+        migrations.CreateModel(
+            name='TrafficChecklistItem',
+            fields=[
+                ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
+                ('name', models.CharField(max_length=255)),
+                ('passed', models.BooleanField(default=False)),
+                ('msg', models.TextField(null=True, blank=True)),
+                ('created_at', models.DateTimeField(auto_now_add=True)),
+                ('issue', models.ForeignKey(blank=True, to='timepiece.Issue', null=True)),
+                ('project', models.ForeignKey(blank=True, to='timepiece.Project', null=True)),
+                ('traffic_checklist', models.ForeignKey(related_name='items', blank=True, to='timepiece.TrafficChecklist')),
+            ],
+            options={
+                'abstract': False,
+            },
+        ),
+        migrations.CreateModel(
+            name='UserNotification',
+            fields=[
+                ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
+                ('notification_type', models.CharField(max_length=50, choices=[(b'daily_calendar', b'Daily Calendar'), (b'planned_for_today', b'Planned for today')])),
+                ('applies_on', models.DateField(null=True, blank=True)),
+                ('msg', models.TextField(null=True, blank=True)),
+                ('seen', models.BooleanField(default=False)),
+                ('user', models.ForeignKey(related_name='notifications', to=settings.AUTH_USER_MODEL)),
+            ],
+        ),
+        migrations.CreateModel(
+            name='UserProfile',
+            fields=[
+                ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
+                ('amount', models.DecimalField(default=0, max_digits=8, decimal_places=2)),
+                ('billable_amount', models.DecimalField(default=0, max_digits=8, decimal_places=2)),
+                ('project_names_to_ignore', models.TextField(blank=True)),
+                ('authenticate_token', models.CharField(help_text=b'Authentication token remote connections', max_length=100, null=True, blank=True)),
+                ('user', models.OneToOneField(related_name='profile', to=settings.AUTH_USER_MODEL)),
+            ],
+            options={
+                'ordering': ('user',),
+            },
+        ),
+        migrations.AddField(
+            model_name='projectrelationship',
+            name='types',
+            field=models.ManyToManyField(related_name='project_relationships', to='timepiece.RelationshipType', blank=True),
+        ),
+        migrations.AddField(
+            model_name='projectrelationship',
+            name='user',
+            field=models.ForeignKey(related_name='project_relationships', to=settings.AUTH_USER_MODEL),
+        ),
+        migrations.AddField(
+            model_name='project',
+            name='users',
+            field=models.ManyToManyField(related_name='user_projects', through='timepiece.ProjectRelationship', to=settings.AUTH_USER_MODEL),
+        ),
+        migrations.AddField(
+            model_name='issue',
+            name='project',
+            field=models.ForeignKey(related_name='issues', to='timepiece.Project'),
+        ),
+        migrations.AddField(
+            model_name='financechecklistitem',
+            name='issue',
+            field=models.ForeignKey(blank=True, to='timepiece.Issue', null=True),
+        ),
+        migrations.AddField(
+            model_name='financechecklistitem',
+            name='project',
+            field=models.ForeignKey(blank=True, to='timepiece.Project', null=True),
+        ),
+        migrations.AddField(
+            model_name='expense',
+            name='project',
+            field=models.ForeignKey(related_name='expense', blank=True, to='timepiece.Project', null=True),
+        ),
+        migrations.AddField(
+            model_name='entrygroup',
+            name='project',
+            field=models.ForeignKey(related_name='entry_group', to='timepiece.Project'),
+        ),
+        migrations.AddField(
+            model_name='entrygroup',
+            name='user',
+            field=models.ForeignKey(related_name='entry_group', to=settings.AUTH_USER_MODEL),
+        ),
+        migrations.AddField(
+            model_name='entry',
+            name='entry_group',
+            field=models.ForeignKey(related_name='entries', on_delete=django.db.models.deletion.SET_NULL, blank=True, to='timepiece.EntryGroup', null=True),
+        ),
+        migrations.AddField(
+            model_name='entry',
+            name='issue',
+            field=models.ForeignKey(related_name='entries', blank=True, to='timepiece.Issue', null=True),
+        ),
+        migrations.AddField(
+            model_name='entry',
+            name='location',
+            field=models.ForeignKey(related_name='entries', to='timepiece.Location'),
+        ),
+        migrations.AddField(
+            model_name='entry',
+            name='user',
+            field=models.ForeignKey(related_name='timepiece_entries', to=settings.AUTH_USER_MODEL),
+        ),
+        migrations.AddField(
+            model_name='devchecklistitem',
+            name='issue',
+            field=models.ForeignKey(blank=True, to='timepiece.Issue', null=True),
+        ),
+        migrations.AddField(
+            model_name='devchecklistitem',
+            name='project',
+            field=models.ForeignKey(blank=True, to='timepiece.Project', null=True),
+        ),
+        migrations.AddField(
+            model_name='contractmilestone',
+            name='contract',
+            field=models.ForeignKey(related_name='milestones', to='timepiece.ProjectContract'),
+        ),
+        migrations.AddField(
+            model_name='contractassignment',
+            name='contract',
+            field=models.ForeignKey(related_name='assignments', to='timepiece.ProjectContract'),
+        ),
+        migrations.AddField(
+            model_name='contractassignment',
+            name='user',
+            field=models.ForeignKey(related_name='assignments', to=settings.AUTH_USER_MODEL),
+        ),
+        migrations.AddField(
+            model_name='businessdocument',
+            name='project',
+            field=models.ForeignKey(related_name='documents', blank=True, to='timepiece.Project', null=True),
+        ),
+        migrations.AlterUniqueTogether(
+            name='attribute',
+            unique_together=set([('type', 'label')]),
+        ),
+        migrations.AddField(
+            model_name='assignmentallocation',
+            name='assignment',
+            field=models.ForeignKey(related_name='blocks', to='timepiece.ContractAssignment'),
+        ),
+        migrations.AlterUniqueTogether(
+            name='projectrelationship',
+            unique_together=set([('user', 'project')]),
+        ),
+        migrations.AlterUniqueTogether(
+            name='projecthours',
+            unique_together=set([('week_start', 'project', 'user')]),
+        ),
+        migrations.AlterUniqueTogether(
+            name='issuestatus',
+            unique_together=set([('name', 'business')]),
+        ),
+        migrations.AlterUniqueTogether(
+            name='issuepoints',
+            unique_together=set([('user', 'issue')]),
+        ),
+        migrations.AlterUniqueTogether(
+            name='feature',
+            unique_together=set([('name', 'business')]),
+        ),
+        migrations.AlterUniqueTogether(
+            name='contractassignment',
+            unique_together=set([('contract', 'user')]),
+        ),
+        migrations.AlterUniqueTogether(
+            name='businesspermissions',
+            unique_together=set([('user', 'business')]),
+        ),
+    ]

@@ -1021,6 +1021,7 @@ class ProjectHoursForm(forms.ModelForm):
 
     class Meta:
         model = ProjectHours
+        exclude = []
 
 class SalaryForm(forms.ModelForm):
     class Meta:
@@ -1113,9 +1114,9 @@ def lookup_project(name, projects):
             return project
     raise LookupError("Project %s does not exist" % name)
 
-issue_status_formset = modelformset_factory(timepiece.Issue, form=IssueStatusForm,extra=0 ,can_delete=True)
-expense_formset = modelformset_factory(timepiece.Expense, can_delete=True, extra=2)
-permissions_formset = modelformset_factory(timepiece.BusinessPermissions, form=EditPersonPermission,extra=0 )
+issue_status_formset = modelformset_factory(timepiece.Issue, form=IssueStatusForm,extra=0 ,can_delete=True, exclude=[])
+expense_formset = modelformset_factory(timepiece.Expense, can_delete=True, extra=2, exclude=[])
+permissions_formset = modelformset_factory(timepiece.BusinessPermissions, form=EditPersonPermission,extra=0, exclude=[] )
 
 class ExpenseForm(forms.Form):
     date = forms.DateField(required=True)
@@ -1381,6 +1382,7 @@ class CalendarEventCreateForm(forms.ModelForm):
 
     class Meta:
         model = CalendarEvent
+        exclude = []
 
     def __init__(self, allowed_users, allowed_businesses, *args, **kwargs):
         super(CalendarEventCreateForm, self).__init__(*args, **kwargs)
@@ -1412,6 +1414,7 @@ class CalendarEventUpdateForm(forms.ModelForm):
 
     class Meta:
         model = CalendarEvent
+        exclude = []
     
     def __init__(self, allowed_users, allowed_businesses, *args, **kwargs):
         super(CalendarEventUpdateForm, self).__init__(*args, **kwargs)
