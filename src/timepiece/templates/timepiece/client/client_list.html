@@ -33,7 +33,7 @@
           <td>{{client.email}}</td>
           <td>
             {% if client.logo %}
-            <img  width="100px" src="{{client.logo.url}}"/>
+            <img width="100px" src="{{client.logo.url}}"/>
             {% endif %}
           </td>
           <td><a class="btn" href="{% url 'edit_client' client.code %}">Edit</a></td>
