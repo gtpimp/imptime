@@ -2,8 +2,6 @@
 {% load i18n admin_static %}
 {% load url from future %}
 
-{% block extrastyle %}{{ block.super }}<link rel="stylesheet" type="text/css" href="{% static "admin/css/login.css" %}" />{% endblock %}
-
 {% block bodyclass %}login{% endblock %}
 
 {% block nav-global %}{% endblock %}
@@ -26,16 +24,16 @@
 </p>
 {% endfor %}
 {% endif %}
-
-<div id="content-main">
+<link rel="stylesheet" type="text/css" href="{{STATIC_URL}}admin/css/login.css" />
+<div id="content-main" class="container-fluid">
 <form action="{{ app_path }}" method="post" id="login-form">{% csrf_token %}
   <div class="form-row">
     {% if not form.this_is_the_login_form.errors %}{{ form.username.errors }}{% endif %}
-    <label for="id_username" class="required">{% trans 'Username:' %}</label> {{ form.username }}
+    <label for="id_username" class="required">{% trans 'Username' %}</label> {{ form.username }}
   </div>
   <div class="form-row">
     {% if not form.this_is_the_login_form.errors %}{{ form.password.errors }}{% endif %}
-    <label for="id_password" class="required">{% trans 'Password:' %}</label> {{ form.password }}
+    <label for="id_password" class="required">{% trans 'Password' %}</label> {{ form.password }}
     <input type="hidden" name="this_is_the_login_form" value="1" />
     <input type="hidden" name="next" value="{{ next }}" />
   </div>
@@ -46,7 +44,10 @@
   </div>
   {% endif %}
   <div class="submit-row">
-    <label>&nbsp;</label><input type="submit" value="{% trans 'Log in' %}" />
+    <label>&nbsp;</label><input type="submit" value="{% trans 'Login' %}" />
+  </div>
+  <div id="reset-block">
+    <a href="{% url 'reset_password' %}">Reset Password</a>
   </div>
 </form>
 

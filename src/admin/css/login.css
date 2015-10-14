@@ -1,10 +1,10 @@
 /* LOGIN FORM */
 
-body.login {
+body form#login-form {
     background: #eee;
 }
 
-.login #container {
+form#login-form {
     background: white;
     border: 1px solid #ccc;
     width: 28em;
@@ -14,21 +14,21 @@ body.login {
     margin-top: 100px;
 }
 
-.login #content-main {
+form#login-form #content-main {
     width: 100%;
 }
 
-.login form {
+form#login-form {
     margin-top: 1em;
 }
 
-.login .form-row {
+form#login-form .form-row {
     padding: 4px 0;
     float: left;
     width: 100%;
 }
 
-.login .form-row label {
+form#login-form .form-row label {
     float: left;
     width: 9em;
     padding-right: 0.5em;
@@ -38,20 +38,39 @@ body.login {
     color: #333;
 }
 
-.login .form-row #id_username, .login .form-row #id_password {
+form#login-form .form-row #id_username, form#login-form .form-row #id_password {
     width: 14em;
 }
 
-.login span.help {
+form#login-form span.help {
     font-size: 10px;
     display: block;
 }
 
-.login .submit-row {
+form#login-form .submit-row {
     clear: both;
     padding: 1em 0 0 9.4em;
 }
 
-.login .password-reset-link {
+form#login-form .password-reset-link {
     text-align: center;
+}
+
+.form-row {
+    margin-bottom: 1em;
+}
+
+form#login-form {
+    font-size: 16px;
+    width: 400px;
+    margin: 100px auto;
+    padding: 10px;
+}
+
+.submit-row {
+    text-align: center;
+}
+
+#login-form input {
+    width: 100%;
 }
