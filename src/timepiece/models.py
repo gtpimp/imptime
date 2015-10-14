@@ -3224,7 +3224,7 @@ class Issue(models.Model):
         return Entry.objects.filter(issue__project=project, issue__adhoc=True)
 
     def comments_in_order(self):
-        return self.comments.get_query_set().order_by("-created")
+        return self.comments.all().order_by("-created")
 
 class IssueStatus(models.Model):
     name = models.CharField(max_length=255, blank=True, null=True)
