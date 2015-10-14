@@ -2272,7 +2272,7 @@ class ProjectHoursAjaxView(ProjectHoursMixin, View):
             'ajax_url': reverse('project_hours_ajax_view'),
         }
         return HttpResponse(json.dumps(data, cls=DecimalEncoder),
-            mimetype='application/json')
+            content_type='application/json')
 
     def duplicate_entries(self, duplicate, week_update):
         def duplicate_builder(queryset):
@@ -2346,7 +2346,7 @@ class ProjectHoursAjaxView(ProjectHoursMixin, View):
 
         if form.is_valid():
             ph = form.save()
-            return HttpResponse(str(ph.pk), mimetype='text/plain')
+            return HttpResponse(str(ph.pk), content_type='text/plain')
 
         msg = 'The request must contain values for user, project, and hours'
         return HttpResponse(msg, status=500)
@@ -2389,7 +2389,7 @@ class ProjectHoursDetailView(ProjectHoursMixin, View):
                 pass
             else:
                 ph.delete()
-                return HttpResponse('ok', mimetype='text/plain')
+                return HttpResponse('ok', content_type='text/plain')
 
         return HttpResponse('', status=500)
 
@@ -2478,7 +2478,7 @@ def salary_payslip(request, salary_id, preview=True, template="timepiece/salary/
     response = render_to_response(template, context, context_instance=RequestContext(request))
     if not preview:
         html = response.content
-        response = HttpResponse(render_to_pdf(html), mimetype='application/pdf')
+        response = HttpResponse(render_to_pdf(html), content_type='application/pdf')
         filename = "payslip_%s_%s.pdf" % (salary.user.username, salary.date.strftime("%b%Y"))
         response['Content-Disposition'] = 'attachment; filename="%s"' % filename
 
@@ -2494,7 +2494,7 @@ def incremental_timesheets_by_project(request, template="timepiece/time-sheet/re
         report = report_helper.incremental_timesheets_by_project(**report_args)
         context['report'] = report
         csv_report = report_helper.convert_report_to_csv(report)
-        response = HttpResponse(csv_report, mimetype="text/csv")
+        response = HttpResponse(csv_report, content_type="text/csv")
         response['Content-Disposition'] = 'attachment; filename="%s.csv"'%report_args['project'].name
         return response
 
@@ -3242,7 +3242,7 @@ def business_features(request, business_id):
     business = timepiece.Business.objects.get(pk=business_id)
     data = [ (feature.id, feature.name) for feature in business.features.all() ]
     return HttpResponse(json.dumps(data),
-                        mimetype='application/json')
+                        content_type='application/json')
 
 @login_required
 def status_filter(request, project_id, template="timepiece/project/status_filter_popup.html"):
@@ -3269,14 +3269,14 @@ def allowed_issue_stati(request, issue_id=None):
         stati = None
     if stati is None:
         stati = sorted(timepiece.Issue.ISSUE_STATUS_CHOICES, key=lambda x: x[1])
-    return HttpResponse(json.dumps(stati), mimetype='application/json')
+    return HttpResponse(json.dumps(stati), content_type='application/json')
 
 @login_required
 def business_users(request, business_id, issue_id):
     business = timepiece.Business.objects.get(pk=business_id)
     users = [ (user.id, user.get_full_name()) for user in business.users ]
     return HttpResponse(json.dumps(users),
-                        mimetype='application/json')
+                        content_type='application/json')
 
 @login_required
 def issue_users(request, issue_id):
@@ -3286,7 +3286,7 @@ def issue_users(request, issue_id):
     if users is None:
         users = [ (user.id, "%s (%s)" % (user.username, user.get_full_name())) for user in business.users ]
     return HttpResponse(json.dumps(users),
-                        mimetype='application/json')
+                        content_type='application/json')
 
 @csrf_exempt
 @login_required
@@ -3535,7 +3535,7 @@ def issue_status_update(request,  template="timepiece/project/issue_detail.html"
 
     get_interface_plugin(request, project.business).update_issue_status(edited_issue)
 
-    return HttpResponse(json.dumps({ 'new_value': edited_issue.status }), mimetype='application/json')
+    return HttpResponse(json.dumps({ 'new_value': edited_issue.status }), content_type='application/json')
 
 @csrf_exempt
 @login_required
@@ -3568,7 +3568,7 @@ def update_issue_with_feature(request):
 
     timepiece.IssueHistory.add_history(request.user, issue, "changed feature", old_feature, issue.feature)
 
-    return HttpResponse(json.dumps({ 'new_value': issue.feature.name }), mimetype='application/json')
+    return HttpResponse(json.dumps({ 'new_value': issue.feature.name }), content_type='application/json')
 
 @csrf_exempt
 @login_required
@@ -3600,7 +3600,7 @@ def issue_assigned_to_update(request,  template="timepiece/project/issue_detail.
 
     get_interface_plugin(request, project.business).update_issue_assigned_to(issue, username)
 
-    return HttpResponse(json.dumps({ 'new_value': issue.assigned_to.username if issue.assigned_to else None }), mimetype='application/json')
+    return HttpResponse(json.dumps({ 'new_value': issue.assigned_to.username if issue.assigned_to else None }), content_type='application/json')
 
 @csrf_exempt
 @login_required
@@ -4374,7 +4374,7 @@ def sprint_report(request, project_id, context=None):
                 raise
 
 
-            #response = HttpResponse(as_pdf, mimetype='application/pdf')
+            #response = HttpResponse(as_pdf, content_type='application/pdf')
             #response['Content-Disposition'] = 'attachment; filename="%s"' % filename
 
             if DATA['report_type'] == 'Quote':
@@ -4536,7 +4536,7 @@ def download_business_document(request, document_token, template="timepiece/proj
     context['business'] = business
     context['documents'] = business.documents.all().order_by("-created_at")
 
-    response = HttpResponse(document.doc, mimetype=document.mime_type)
+    response = HttpResponse(document.doc, content_type=document.mime_type)
     response['Content-Disposition'] = 'attachment; filename="%s"' % document.filename
     return response
 
@@ -4634,7 +4634,7 @@ def generate_preview_business_document(request, business_id, template="timepiece
             transaction.commit()
             response = render_url_to_pdf(url, request, basename=filename)
             
-            #response = HttpResponse(as_pdf, mimetype='application/pdf')
+            #response = HttpResponse(as_pdf, content_type='application/pdf')
             #response['Content-Disposition'] = 'attachment; filename="%s"' % filename
 
             f = ContentFile(response.content)
@@ -5326,11 +5326,11 @@ def project_status_update(request, project_id):
         raise PermissionDenied
     project.status2 = request.POST["selected_value"]
     project.save()
-    return HttpResponse(json.dumps({ 'new_value': project.status2, 'is_open': project.is_open }), mimetype='application/json')
+    return HttpResponse(json.dumps({ 'new_value': project.status2, 'is_open': project.is_open }), content_type='application/json')
 
 @login_required
 def allowed_project_stati(request, project_id):
-    return HttpResponse(json.dumps(timepiece.Project.PROJECT_STATUSES), mimetype='application/json')
+    return HttpResponse(json.dumps(timepiece.Project.PROJECT_STATUSES), content_type='application/json')
 
 @login_required
 @csrf_exempt
