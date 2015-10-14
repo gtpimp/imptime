@@ -1898,57 +1898,57 @@ class EntryQuerySet(EntriesQuerySet):
     def is_closed(self):
         return self.filter(end_time__isnull=False)    
     
-    def date_trunc(self, key='month', extra_values=None):
-        select = {"day": {"date": """DATE_TRUNC('day', end_time)"""},
-                  "week": {"date": """DATE_TRUNC('week', end_time)"""},
-                  "month": {"date": """DATE_TRUNC('month', end_time)"""},
-        }
-        basic_values = (
-            'user', 'date', 'user__first_name', 'user__last_name',
-        )
-        extra_values = extra_values or ()
-        qs = self.extra(select=select[key])
-        qs = qs.values(*basic_values + extra_values)
-        qs = qs.annotate(hours=Sum('hours')).order_by('user__last_name',
-                                                      'date')
-        return qs
+    # def date_trunc(self, key='month', extra_values=None):
+    #     select = {"day": {"date": """DATE_TRUNC('day', end_time)"""},
+    #               "week": {"date": """DATE_TRUNC('week', end_time)"""},
+    #               "month": {"date": """DATE_TRUNC('month', end_time)"""},
+    #     }
+    #     basic_values = (
+    #         'user', 'date', 'user__first_name', 'user__last_name',
+    #     )
+    #     extra_values = extra_values or ()
+    #     qs = self.extra(select=select[key])
+    #     qs = qs.values(*basic_values + extra_values)
+    #     qs = qs.annotate(hours=Sum('hours')).order_by('user__last_name',
+    #                                                   'date')
+    #     return qs
 
-    def timespan(self, from_date, to_date=None, span=None):
-        """
-        Takes a beginning date a filters entries. An optional to_date can be
-        specified, or a span, which is one of ('month', 'week', 'day').
-        N.B. - If given a to_date, it does not include that date, only before.
-        """
-        if span and not to_date:
-            diff = None
-            if span == 'month':
-                diff = relativedelta(months=1)
-            if span == 'week':
-                diff = relativedelta(days=7)
-            if span == 'day':
-                diff = relativedelta(days=1)
-            if diff is not None:
-                to_date = from_date + diff
+    # def timespan(self, from_date, to_date=None, span=None):
+    #     """
+    #     Takes a beginning date a filters entries. An optional to_date can be
+    #     specified, or a span, which is one of ('month', 'week', 'day').
+    #     N.B. - If given a to_date, it does not include that date, only before.
+    #     """
+    #     if span and not to_date:
+    #         diff = None
+    #         if span == 'month':
+    #             diff = relativedelta(months=1)
+    #         if span == 'week':
+    #             diff = relativedelta(days=7)
+    #         if span == 'day':
+    #             diff = relativedelta(days=1)
+    #         if diff is not None:
+    #             to_date = from_date + diff
 
-        datesQ = Q()
-        if from_date:
-            datesQ &= Q(end_time__gte=from_date)
-        if to_date:
-            datesQ &= Q(end_time__lt=to_date) if to_date else Q()
-        return self.filter(datesQ)
+    #     datesQ = Q()
+    #     if from_date:
+    #         datesQ &= Q(end_time__gte=from_date)
+    #     if to_date:
+    #         datesQ &= Q(end_time__lt=to_date) if to_date else Q()
+    #     return self.filter(datesQ)
 
-class EntryManagerBase(QuerySetManager):
-    def __init__(self, *args, **kwargs):
-        super(EntryManagerBase, self).__init__(EntryQuerySet, *args, **kwargs)
+# class EntryManagerBase(QuerySetManager):
+#     def __init__(self, *args, **kwargs):
+#         super(EntryManagerBase, self).__init__(EntryQuerySet, *args, **kwargs)
 
-    def date_trunc(self, key='month', extra_values=()):
-        return self.get_query_set().date_trunc(key, extra_values)
+#     def date_trunc(self, key='month', extra_values=()):
+#         return self.get_query_set().date_trunc(key, extra_values)
 
-    def timespan(self, from_date, to_date=None, span='month'):
-        return self.get_query_set().timespan(from_date, to_date, span)
+#     def timespan(self, from_date, to_date=None, span='month'):
+#         return self.get_query_set().timespan(from_date, to_date, span)
 
-class EntryManager(EntryManagerBase):
-    pass
+# class EntryManager(EntryManagerBase):
+#     pass
     # def get_query_set(self):
     #     qs = EntryQuerySet(self.model)
     #     #qs = qs.select_related('activity', 'project__type')
@@ -1964,12 +1964,12 @@ class EntryManager(EntryManagerBase):
     #     return qs
 
 
-class EntryWorkedManager(EntryManager):
+# class EntryWorkedManager(EntryManager):
 
-    def get_query_set(self):
-        qs = EntryQuerySet(self.model)
-        projects = getattr(settings, 'TIMEPIECE_PROJECTS', {})
-        return qs.exclude(project__in=projects.values())
+#     def get_query_set(self):
+#         qs = EntryQuerySet(self.model)
+#         projects = getattr(settings, 'TIMEPIECE_PROJECTS', {})
+#         return qs.exclude(project__in=projects.values())
 
 class EntryQuerySetForReporting(QuerySet):
     def total_hours(self):
@@ -2014,11 +2014,11 @@ class Entry(models.Model):
 
     hours = models.DecimalField(max_digits=8, decimal_places=2, default=0)
 
-    objects = EntryManager()
-    objects_for_reporting = QuerySetManager(EntryQuerySetForReporting)
+    objects = EntryQuerySet.as_manager()
+    objects_for_reporting = EntryQuerySetForReporting.as_manager()
 
-    worked = EntryWorkedManager()
-    no_join = EntryManagerBase()
+    #worked = EntryWorkedManager()
+    #no_join = EntryManagerBase()
     issue = models.ForeignKey('Issue', blank=True, null=True, related_name='entries')
 
     created = models.DateTimeField(auto_now_add=True)

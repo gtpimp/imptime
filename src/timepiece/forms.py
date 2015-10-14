@@ -1499,7 +1499,7 @@ class QuickClockerForm(forms.Form):
         self.fields['project'].choices = [ (x.id, "<b>%s</b>     %s <span searchable_name='%s' style='font-size:9px'>(%s)</span>"%(x.business.name, x.name, (x.name.lower() + " " + x.business.name.lower()), x.status2)) for x in projects ]
 
 class QuickClockerClockOutForm(forms.Form):
-    entry = forms.ModelChoiceField(required=True, queryset=Entry.objects.none(), widget=ButtonRadioSelect(), label="")
+    entry = forms.ModelChoiceField(required=True, queryset=Entry.objects.none(), label="", widget=ButtonRadioSelect())
     clock_out_time = forms.DateTimeField(label="")
 
     def __init__(self, entries, *args, **kwargs):
