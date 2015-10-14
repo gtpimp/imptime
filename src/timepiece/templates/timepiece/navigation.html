@@ -247,7 +247,9 @@
                 </li>
             </ul>
             {% else %}
+            {% block login %}
             <a class="btn btn-primary pull-right" href="{% url 'auth_login' %}">Login</a>
+            {% endblock %}
             {% endif %}
 
             {% block quick-search %}

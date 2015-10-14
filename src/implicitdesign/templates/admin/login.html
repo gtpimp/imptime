@@ -10,6 +10,12 @@
 
 {% block breadcrumbs %}{% endblock %}
 
+{% block navigation %}
+hihihihihihihihihihihihihihihi
+hi
+{% include "admin/login_navigation.html" %}
+{% endblock %}
+
 {% block content %}
 {% if form.errors and not form.non_field_errors and not form.this_is_the_login_form.errors %}
 <p class="errornote">
