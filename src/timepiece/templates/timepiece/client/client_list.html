@@ -1,0 +1,49 @@
+{% extends "timepiece/base.html" %}
+{% load bootstrap_toolkit %}
+{% load endless %}
+
+{% block title %}Clients{% endblock %}
+
+{% block content %}
+
+{% paginate clients %}
+
+
+<div class="row-fluid">
+  <div class="span12">
+    <h2>Clients</h2>
+
+    <a class="btn btn-primary" href="{% url 'add_client' %}">Add client</a>
+    {% show_pages %}
+    <table class='table table-bordered table-striped table-condensed'>
+      <thead>
+        <tr>
+          <th>Name</th>
+          <th>Code</th>
+          <th>Email</th>
+          <th>Logo</th>
+          <th></th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for client in clients %}
+        <tr>
+          <td>{{client.name}}</td>
+          <td>{{client.code}}</td>
+          <td>{{client.email}}</td>
+          <td>
+            {% if client.logo %}
+            <img  width="100px" src="{{client.logo.url}}"/>
+            {% endif %}
+          </td>
+          <td><a class="btn" href="{% url 'edit_client' client.code %}">Edit</a></td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+    {% show_pages %}
+  </div>
+</div>
+
+{% endblock %}
+

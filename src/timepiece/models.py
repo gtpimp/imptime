@@ -39,6 +39,16 @@ COLOURS = ["#F0F8FF","#FAEBD7","#00FFFF","#7FFFD4","#F0FFFF","#F5F5DC","#FFE4C4"
 
 ISSUE_DEV_COMPLETED_STATES = ["devdone", "dev done", "tested"]
 
+class Client(models.Model):
+    """ a client is a top-level customer of the system, which has their own users etc. """
+    name = models.CharField(max_length=255, null=False, blank=True)
+    code = models.CharField(max_length=100, null=False, blank=True)
+    email = models.EmailField(null=False, blank=False)
+    logo = models.FileField(upload_to="logos", null=True, blank=True)
+
+    created_at = models.DateTimeField(auto_now_add=True)
+    modified_at = models.DateTimeField(auto_now=True)
+
 class Attribute(models.Model):
     ATTRIBUTE_TYPES = (
         ('project-type', 'Project Type'),

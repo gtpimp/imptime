@@ -666,6 +666,11 @@ urlpatterns = patterns('',
                        url(r'^scheduler$', views.scheduler, {}, name='scheduler'),
                        url(r'^schedule_edit/(?P<business_id>\d+)/(?P<user_id>\d+)/(?P<scheduled_date>.*)$', views.schedule_edit, {}, name='schedule_edit'),
                        url(r'^issue_action_menu/(?P<issue_id>\d+)$', views.issue_action_menu, {}, name='issue_action_menu'),
+
+                       url(r'^clients$', views.client_list, {}, name='client_list'),
+                       url(r'^client$', views.add_client, {}, name='add_client'),
+                       url(r'^client/(?P<client_code>.*)$', views.edit_client, {}, name='edit_client'),
+                       
                        
 
 )

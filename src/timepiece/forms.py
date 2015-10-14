@@ -26,7 +26,7 @@ from selectable import forms as selectable_forms
 from timepiece.lookups import ProjectLookup, QuickLookup
 from timepiece.lookups import UserLookup, BusinessLookup
 
-from timepiece.models import Project, Business, Entry, Activity, UserProfile, Attribute, Location, Activity, Feature, Issue, BusinessPermissions, BusinessComment
+from timepiece.models import Project, Business, Entry, Activity, UserProfile, Attribute, Location, Activity, Feature, Issue, BusinessPermissions, BusinessComment, Client
 from timepiece.models import ProjectHours, Salary, CalendarEvent, TrafficChecklist, DevChecklist, FinanceChecklist, Schedule
 from timepiece.fields import UserModelChoiceField
 from django.contrib.auth.models import User
@@ -1549,3 +1549,9 @@ class ScheduleForm(forms.ModelForm):
             num_hours = int(num_hours[:1])
         data['num_hours'] = int(num_hours)
         return data
+
+class ClientForm(forms.ModelForm):
+    class Meta:
+        model = Client
+        exclude = [ 'created_at', 'modified_at' ]
+        

@@ -1,0 +1,10 @@
+{% load bootstrap_toolkit %}
+
+<form method="POST" enctype="multipart/form-data">
+
+  {% csrf_token %}
+  {{ form|as_bootstrap }}
+
+  <input class="btn btn-primary" type="submit" value="Save"/>
+
+</form>

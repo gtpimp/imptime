@@ -5825,4 +5825,48 @@ def issue_action_menu(request, issue_id, template="timepiece/project/_issue_acti
     context = { 'issue_id': issue_id }
     return render_to_response(template, context, context_instance=RequestContext(request))
 
+@login_required
+@csrf_exempt
+def client_list(request, template="timepiece/client/client_list.html", context=None):
+    context = context or {}
+    if not request.user.is_superuser:
+        return HttpResponseForbidden("Not allowed")
+
+    clients = timepiece.Client.objects.all().order_by("name")
+    context['clients'] = clients
     
+    return render_to_response(template, context, context_instance=RequestContext(request))
+
+@login_required
+@csrf_exempt
+def add_client(request, template="timepiece/client/add_client.html", context=None):
+    context = context or {}
+    form = timepiece_forms.ClientForm(request.POST or None, request.FILES or None)
+    if not request.user.is_superuser:
+        return HttpResponseForbidden("Not allowed")
+    
+    if form.is_valid():
+        form.save()
+        messages.info(request, "Client created")
+        return HttpResponseRedirect(reverse('client_list'))
+
+    context['form'] = form
+    return render_to_response(template, context, context_instance=RequestContext(request))
+
+@login_required
+@csrf_exempt
+def edit_client(request, client_code, template="timepiece/client/add_client.html", context=None):
+    context = context or {}
+    if not request.user.is_superuser:
+        return HttpResponseForbidden("Not allowed")
+
+    client = timepiece.Client.objects.get(code=client_code)
+    form = timepiece_forms.ClientForm(request.POST or None, request.FILES or None, instance=client)
+    if form.is_valid():
+        form.save()
+        messages.info(request, "Client updated")
+        return HttpResponseRedirect(reverse('client_list'))
+
+    context['form'] = form
+
+    return render_to_response(template, context, context_instance=RequestContext(request))
