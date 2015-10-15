@@ -2779,9 +2779,9 @@ class AssignmentAllocation(models.Model):
     objects = AllocationManager()
 
 class PersonSchedule(models.Model):
-    user = models.ForeignKey(
+    user = models.OneToOneField(
         User,
-        unique=True,
+        #unique=True,
         null=True,
     )
     hours_per_week = models.DecimalField(max_digits=8, decimal_places=2,

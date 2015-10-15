@@ -27,9 +27,11 @@
 	     <td></td>
 	     <td></td>
 	     <td></td>
+             {% comment %}
 	     <td>Traffic Checklist</td>
 	     <td>Dev Checklist</td>
 	     <td>Finance Checklist</td>
+             {% endcomment %}
 	   </tr>
 	 </thead>
 
@@ -41,7 +43,9 @@
                <h2 style="cursor:pointer" onclick="$('.active_business_row').toggle(); return false;">Active projects ({{active_businesses|length}})</h2>
                <div class="tip">has at least one sprint in [{{active_project_states}}]</div>
              </th>
+             {% comment %}
 	     {% include "timepiece/project/_checklist_failures_for_businesses.html" with businesses=active_businesses %}
+             {% endcomment %}
            </tr>
              {% include "timepiece/project/_list_businesses.html" with businesses=active_businesses name='active' expand=1 %}
            <tr>
@@ -57,7 +61,9 @@
                <h2 style="cursor:pointer" onclick="$('.pending_business_row').toggle(); return false;">Pending projects ({{pending_businesses|length}})</h2>
                <div class="tip">has at least one sprint in [{{pending_project_states}}] and has no active sprints</div>
              </th>
+             {% comment %}
 	     {% include "timepiece/project/_checklist_failures_for_businesses.html" with businesses=pending_businesses %}
+             {% endcomment %}
            </tr>
              {% include "timepiece/project/_list_businesses.html" with businesses=pending_businesses name='pending' expand=0 %}
            <tr>
@@ -74,7 +80,9 @@
                <div class="tip">has at least one sprint in [{{hopeful_project_states}}]</div>
                <div class="tip">these are potential leads to be followed up</div>
              </th>
+             {% comment %}
 	     {% include "timepiece/project/_checklist_failures_for_businesses.html" with businesses=hopeful_businesses %}
+             {% endcomment %}
            </tr>
              {% include "timepiece/project/_list_businesses.html" with businesses=hopeful_businesses name='hopeful' expand=0 %}
            <tr>

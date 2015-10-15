@@ -42,6 +42,11 @@ imp.projects.show_project_card_as_popup = function (event, project_card_url, msg
     return false;
 };
 
+imp.projects.popup_business_comments = function(business_id) {
+    alert("hi");
+    return false;
+};
+
 imp.projects.show_business_comments = function (event, business_comments_url, args) {
     imp.show_issue_detail(null, business_comments_url, "loading comments", args);
     event.stopPropagation();

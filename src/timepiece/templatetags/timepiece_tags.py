@@ -96,6 +96,7 @@ class HasPermissionNode(template.Node):
             business_permissions_by_user = timepiece.BusinessPermissions.by_user(business)
         else:
             business_permissions_by_user = context['business_permissions_by_user']
+            context['business_permissions_by_user'] = business_permissions_by_user
 
         has = False
 

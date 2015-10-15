@@ -38,44 +38,55 @@
         {% endif %}
     </td>
 
-    {% if business and name == 'active' or name == 'pending' or name == 'hopeful' %}
-    {% has_permission has_do_traffic_checklist business %}
+    {% comment %}
     <td>
-        <a href="#" onclick="imp.popup_page('{% url 'traffic_checklist' business.id %}'); return true;">
-	  <span class="checklist_status_icon" business_id="{{business.id}}" data-refresh-url="{% url 'render_checklist_status_icon_traffic' business.id %}">
-	    {% include "timepiece/project/_checklist_status_icon_traffic.html" %}
-          {% for owner in business.get_traffic_owners %}
-              {{owner}}
-          {% endfor %}
-	  </span>
-        </a>
+      {% has_permission has_view_business_comments business %}
+            <a href="#" onclick="return imp.projects.popup_business_comments();">Comments</a>
+      {% end_permission %}
     </td>
-    {% end_permission %}
-    {% has_permission has_do_dev_checklist business %}
-    <td>
-        <a href="#" onclick="imp.popup_page('{% url 'dev_checklist' business.id %}'); return false;">
-	  <span class="checklist_status_icon" business_id="{{business.id}}" data-refresh-url="{% url 'render_checklist_status_icon_dev' business.id %}">
-	    {% include "timepiece/project/_checklist_status_icon_dev.html" %}
-          {% for owner in business.get_dev_owners %}
-              {{owner}}
-          {% endfor %}
-	  </span>
-        </a>
-    </td>
-    {% end_permission %}
-    {% has_permission has_do_finance_checklist business %}
-    <td>
-        <a href="#" onclick="imp.popup_page('{% url 'finance_checklist' business.id %}'); return false;">
-	  <span class="checklist_status_icon" business_id="{{business.id}}" data-refresh-url="{% url 'render_checklist_status_icon_finance' business.id %}">
-	    {% include "timepiece/project/_checklist_status_icon_finance.html" %}
-          {% for owner in business.get_finance_owners %}
-              {{owner}}
-          {% endfor %}
-	  </span>
-        </a>
-    </td>
-    {% end_permission %}
-    {% endif %}
+    {% endcomment %}
+
+
+    {% comment %}
+                    {% if business and name == 'active' or name == 'pending' or name == 'hopeful' %}
+                    {% has_permission has_do_traffic_checklist business %}
+                    <td>
+                        <a href="#" onclick="imp.popup_page('{% url 'traffic_checklist' business.id %}'); return true;">
+                          <span class="checklist_status_icon" business_id="{{business.id}}" data-refresh-url="{% url 'render_checklist_status_icon_traffic' business.id %}">
+                            {% include "timepiece/project/_checklist_status_icon_traffic.html" %}
+                          {% for owner in business.get_traffic_owners %}
+                              {{owner}}
+                          {% endfor %}
+                          </span>
+                        </a>
+                    </td>
+                    {% end_permission %}
+                    {% has_permission has_do_dev_checklist business %}
+                    <td>
+                        <a href="#" onclick="imp.popup_page('{% url 'dev_checklist' business.id %}'); return false;">
+                          <span class="checklist_status_icon" business_id="{{business.id}}" data-refresh-url="{% url 'render_checklist_status_icon_dev' business.id %}">
+                            {% include "timepiece/project/_checklist_status_icon_dev.html" %}
+                          {% for owner in business.get_dev_owners %}
+                              {{owner}}
+                          {% endfor %}
+                          </span>
+                        </a>
+                    </td>
+                    {% end_permission %}
+                    {% has_permission has_do_finance_checklist business %}
+                    <td>
+                        <a href="#" onclick="imp.popup_page('{% url 'finance_checklist' business.id %}'); return false;">
+                          <span class="checklist_status_icon" business_id="{{business.id}}" data-refresh-url="{% url 'render_checklist_status_icon_finance' business.id %}">
+                            {% include "timepiece/project/_checklist_status_icon_finance.html" %}
+                          {% for owner in business.get_finance_owners %}
+                              {{owner}}
+                          {% endfor %}
+                          </span>
+                        </a>
+                    </td>
+                    {% end_permission %}
+                    {% endif %}
+     {% endcomment %}
 
 </tr>
 {% end_permission %}
