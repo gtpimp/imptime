@@ -2014,6 +2014,7 @@ class Entry(models.Model):
     hours = models.DecimalField(max_digits=8, decimal_places=2, default=0)
 
     objects = EntryQuerySet.as_manager()
+    objects_original = models.Manager()
     objects_for_reporting = EntryQuerySetForReporting.as_manager()
 
     #worked = EntryWorkedManager()

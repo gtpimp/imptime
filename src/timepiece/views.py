@@ -171,7 +171,7 @@ def view_entries(request):
 @login_required
 def clock_in(request):
     """For clocking the user into a project"""
-    active_entry = timepiece.Entry.no_join.filter(user=request.user,
+    active_entry = timepiece.Entry.objects_original.filter(user=request.user,
                                                   end_time__isnull=True)
     # Should never happen, but just in case.
     if len(active_entry) > 1:
@@ -240,7 +240,7 @@ def toggle_paused(request, entry_id):
 
     try:
         # retrieve the log entry
-        entry = timepiece.Entry.no_join.get(pk=entry_id,
+        entry = timepiece.Entry.objects_original.get(pk=entry_id,
                                   user=request.user,
                                   end_time__isnull=True)
     except:
@@ -299,7 +299,7 @@ def import_entries(request):
 def create_edit_entry(request, entry_id=None):
     if entry_id:
         try:
-            entry = timepiece.Entry.no_join.get(
+            entry = timepiece.Entry.objects_original.get(
                 pk=entry_id,
                 user=request.user
             )
@@ -353,7 +353,7 @@ def reject_entry(request, entry_id):
     user = request.user
     return_url = request.REQUEST.get('next', reverse('timepiece-entries'))
     try:
-        entry = timepiece.Entry.no_join.get(pk=entry_id)
+        entry = timepiece.Entry.objects_original.get(pk=entry_id)
     except:
         message = 'No such log entry.'
         messages.error(request, message)
@@ -389,7 +389,7 @@ def delete_entry(request, entry_id):
 
     try:
         # retrieve the log entry
-        entry = timepiece.Entry.no_join.get(pk=entry_id,
+        entry = timepiece.Entry.objects_original.get(pk=entry_id,
                                   user=request.user)
     except:
         # entry does not exist
@@ -429,7 +429,7 @@ def summary(request, username=None):
     if form.is_valid():
         from_date, to_date = form.save()
 
-    entries = timepiece.Entry.no_join.filter_by_logged_in_user(request.user).values(
+    entries = timepiece.Entry.objects_original.filter_by_logged_in_user(request.user).values(
         'issue__project__id',
         'issue__project__business__id',
         'issue__project__business__name',
@@ -451,7 +451,7 @@ def summary(request, username=None):
     total_hours = timepiece.Entry.objects.filter_by_logged_in_user(request.user).filter(dates).aggregate(
         hours=Sum('hours')
     )['hours']
-    people_totals = timepiece.Entry.no_join.filter_by_logged_in_user(request.user).values('user', 'user__first_name',
+    people_totals = timepiece.Entry.objects_original.filter_by_logged_in_user(request.user).values('user', 'user__first_name',
                                                                                        'user__last_name')
     people_totals = people_totals.order_by('user__last_name').filter(dates)
     people_totals = people_totals.annotate(total_hours=Sum('hours'))
@@ -672,10 +672,10 @@ def change_person_time_sheet(request, action, user_id, from_date):
     except (ValueError, OverflowError):
         raise Http404
     to_date = from_date + relativedelta(months=1)
-    entries = timepiece.Entry.no_join.filter(user=user_id,
+    entries = timepiece.Entry.objects_original.filter(user=user_id,
                                              end_time__gte=from_date,
                                              end_time__lt=to_date)
-    active_entries = timepiece.Entry.no_join.filter(
+    active_entries = timepiece.Entry.objects_original.filter(
         user=user_id,
         start_time__lt=to_date,
         end_time=None,
@@ -756,7 +756,7 @@ def confirm_invoice_project(request, project_id, to_date, from_date=None):
                                                initial=initial)
     if request.POST and invoice_form.is_valid():
         invoice = invoice_form.save()
-        entries = timepiece.Entry.no_join.filter_by_logged_in_user(request.user).filter(**entries_query)
+        entries = timepiece.Entry.objects_original.filter_by_logged_in_user(request.user).filter(**entries_query)
         entries.update(status=invoice.status, entry_group=invoice)
         return HttpResponseRedirect(reverse('view_invoice', args=[invoice.pk]))
     else:
@@ -5670,7 +5670,7 @@ def quick_clocker_clock_out(request):
 @login_required
 @csrf_exempt
 def quick_clocker_edit_entry(request, entry_id=None):
-    entry = timepiece.Entry.no_join.get(pk=entry_id,)
+    entry = timepiece.Entry.objects_original.get(pk=entry_id,)
     projects = timepiece.Project.objects.filter(business=entry.issue.project.business).filter_can_add_dev_time_states().order_by("name")
     form = timepiece_forms.QuickClockerEditEntry(projects, request.POST or None, instance=entry)
     if form.is_valid():
@@ -5686,7 +5686,7 @@ def quick_clocker_edit_entry(request, entry_id=None):
 @login_required
 @csrf_exempt
 def quick_clocker_delete_entry(request, entry_id=None):
-    entry = timepiece.Entry.no_join.get(pk=entry_id,)
+    entry = timepiece.Entry.objects_original.get(pk=entry_id,)
     entry.delete()
     return HttpResponseRedirect(reverse('quick_clocker'))
 
