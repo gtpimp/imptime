@@ -10,7 +10,6 @@ from interface_plugin import get_interface_plugin
 import re
 import logging
 from decimal import Decimal
-from model_managers import QuerySetManager
 from django.db.models import Count
 from django.db.models.query import QuerySet
 from django.conf import settings
@@ -1094,13 +1093,13 @@ class Project(models.Model):
 
                 points = []
                 if issue.assigned_to:
-                    points = issue.issue_points.get_query_set().all().filter(user=issue.assigned_to).values('points', 'user')
+                    points = issue.issue_points.all().filter(user=issue.assigned_to).values('points', 'user')
                     user_id = issue.assigned_to.id
                 elif preferred_user_id:
-                    points = issue.issue_points.get_query_set().all().filter(user__id=preferred_user_id).values('points', 'user')
+                    points = issue.issue_points.all().filter(user__id=preferred_user_id).values('points', 'user')
                     user_id = preferred_user_id
                 else:
-                    points = issue.issue_points.get_query_set().all().values('points', 'user')
+                    points = issue.issue_points.all().values('points', 'user')
                     user_id = None
                     
                 if len(points) == 0 or points[0]['points'] is None:
@@ -1139,7 +1138,7 @@ class Project(models.Model):
                     for manager in managers:
                         user_id = manager.id
                         try:
-                            points = issue.issue_points.get_query_set().all().filter(user=manager).values('points')[0]['points']
+                            points = issue.issue_points.all().filter(user=manager).values('points')[0]['points']
                             points, unadjusted_points, manager_cost, rate = _calculate_user_contribution_to_issue_cost(issue, user_id, points)
                             estimated_management_cost += manager_cost
                             issue_data['combined_cost'] = issue_data['combined_cost'] + manager_cost
@@ -1150,7 +1149,7 @@ class Project(models.Model):
                     for tester in testers:
                         user_id = tester.id
                         try:
-                            points = issue.issue_points.get_query_set().all().filter(user=tester).values('points')[0]['points']
+                            points = issue.issue_points.all().filter(user=tester).values('points')[0]['points']
                             points, unadjusted_points, tester_cost, rate = _calculate_user_contribution_to_issue_cost(issue, user_id, points)
                             estimated_testing_cost += tester_cost
                             issue_data['combined_cost'] = issue_data['combined_cost'] + tester_cost
@@ -2881,7 +2880,7 @@ class Salary(models.Model):
     sick_days = models.DecimalField(max_digits=8,default=0,decimal_places=2, verbose_name="Sick days taken this month")
     locked = models.BooleanField(default=False)
 
-    objects = QuerySetManager(SalaryQuerySet)
+    objects = SalaryQuerySet.as_manager()
     
     @property
     def net_pay(self):
@@ -3682,7 +3681,7 @@ class Schedule(models.Model):
     num_hours = models.IntegerField(null=False, blank=False)
     user = models.ForeignKey(User, related_name='schedules')
 
-    objects = QuerySetManager(ScheduleQuerySet)
+    objects = ScheduleQuerySet.as_manager()
 
     @classmethod
     def available_business_hours(self, year, month, user):

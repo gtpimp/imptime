@@ -2,7 +2,6 @@
 from django.conf import settings
 from django.db.models.query import QuerySet
 from django.contrib.auth.models import User
-from timepiece.model_managers import QuerySetManager
 from django.db.models import Sum, Count, Q, F, Max, Min
 from django.db import models
 from datetime import datetime, date
@@ -62,7 +61,7 @@ class Invoice(models.Model):
 
     INVOICE_STATUSES = (('open', 'Open'), ('paid', 'Paid'), ('writtenoff', 'Written Off'))
 
-    objects = QuerySetManager(InvoiceQuerySet)
+    objects = InvoiceQuerySet.as_manager()
 
     client = models.ForeignKey(ClientInvoiceDetails, blank=False, null=False, related_name='invoices')
     internal_comment = models.TextField(blank=True, null=True, verbose_name="Comment (doesn't appear on the invoice")
@@ -194,7 +193,7 @@ class QuoteQuerySet(QuerySet):
 
 class Quote(models.Model):
     QUOTE_STATUSES = ( ('creating', 'Creating'), ('sent to client', 'Sent to client'), ('accepted', 'Accepted by client'), ('rejected', 'Rejected by client'), ('work done', 'Work done') )
-    objects = QuerySetManager(QuoteQuerySet)
+    objects = QuoteQuerySet.as_manager()
     internal_comment = models.TextField(blank=True, null=True, verbose_name="Comment (not sent to the client)")
     project = models.ForeignKey("timepiece.Project", blank=True, null=True, related_name='quotes')
     created = models.DateTimeField(auto_now_add=True)
