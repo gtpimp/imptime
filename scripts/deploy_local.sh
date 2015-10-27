@@ -97,14 +97,9 @@ if [ $? != 0 ]; then
     echo "syncdb failed: ABORTING"
     exit 1
 fi
-python manage.py migrate --delete-ghost-migrations
+python manage.py migrate
 if [ $? != 0 ]; then
     echo "db migrate failed: ABORTING"
-    echo "If you are running this on an empty database and the error is "
-    echo "  django.db.utils.DatabaseError: relation 'crm_contact' does not exist"
-    echo "then import the database at db_backups/empty_starting_db.sql manually first."
-    echo "(see https://github.com/caktus/django-timepiece/issues/322 for background, "
-    echo "empty_starting_db.sql has the problematic migrations applied manually)"
     exit 1
 fi
 
