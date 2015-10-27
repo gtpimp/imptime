@@ -2017,8 +2017,6 @@ class Entry(models.Model):
     objects_original = models.Manager()
     objects_for_reporting = EntryQuerySetForReporting.as_manager()
 
-    #worked = EntryWorkedManager()
-    #no_join = EntryManagerBase()
     issue = models.ForeignKey('Issue', blank=True, null=True, related_name='entries')
 
     created = models.DateTimeField(auto_now_add=True)

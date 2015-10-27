@@ -713,8 +713,7 @@ class YearMonthForm(forms.Form):
         this_year = now.year
         this_month = now.month
         try:
-            first_entry = timepiece.Entry.no_join.values('end_time')\
-                                                 .order_by('end_time')[0]
+            first_entry = timepiece.Entry.objects_original.values('end_time').order_by('end_time')[0]
         except IndexError:
             first_year = this_year
         else:
