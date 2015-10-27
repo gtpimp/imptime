@@ -3375,10 +3375,17 @@ class CalendarEvent(models.Model):
             self.caldav_uid = "imptime%s" % str(self.id)
         super(CalendarEvent, self).save(*args, **kwargs)
         if update_caldav:
-            CalDavHelper().on_event_saved(self)
+            try:
+                CalDavHelper().on_event_saved(self)
+            except Exception, ex:
+                logger.exception(ex)
 
     def delete(self, update_caldav=True, *args, **kwargs):
-        CalDavHelper().on_event_deleted(self)
+        try:
+            CalDavHelper().on_event_deleted(self)
+        except Exception, ex:
+            logger.exception(ex)
+            
         if update_caldav:
             super(CalendarEvent, self).delete(*args, **kwargs)
 
