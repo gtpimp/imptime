@@ -219,6 +219,8 @@ INSTALLED_APPS = (
     'sorl.thumbnail',
     'creole',
     'djiki',
+    
+    'noui',
 )
 
 

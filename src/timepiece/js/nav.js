@@ -57,6 +57,28 @@ imp.nav.hookup_search_form = function() {
 		});
 };
 
+imp.nav.hookup_noui_form = function() {
+    var form = $(".noui_form form");
+    form.submit(function(event) {
+		    event.stopImmediatePropagation();
+		    var on_done = imp.loading("parsing");
+		    $.ajax({type:"POST",
+			    url: form.attr('command'),
+			    data: form.serialize(),
+			    success: function(search_results) {
+				on_done();
+				$(".noui_results").html(search_results);
+				imp.noui_results_dialog = $(".noui_results").dialog( { width: '75%', height: 500 } );
+			    },
+			    error: function(err) {
+				on_done();
+			    }
+			   });
+
+		    return false;
+		});
+};
+
 imp.nav.show_business = function( business_id, show_url ) {
 
     var on_done = imp.loading("Finding...");
@@ -112,5 +134,6 @@ imp.nav.show_issue = function( issue_id, project_id, show_url ) {
 
 $(document).ready(function() {
 		      imp.nav.hookup_search_form();
+                      imp.nav.hookup_noui_form();
 		  });
 

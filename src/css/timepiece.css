@@ -195,12 +195,12 @@ a:hover {
   width: 940px;
 }
 
-.navbar .issue_search {
+.navbar .issue_search, .navbar .noui_form {
     margin-top: 5px;
     margin-right: 20px;
 }
 
-.navbar .issue_search input.search_term {
+.navbar .issue_search input.search_term, .navbar .noui_form input.command {
     width: 75px;
     font-size: 11px;
     height: 15px;
