@@ -12,6 +12,7 @@ from django.template import RequestContext
 from django.contrib import messages
 from forms import CommandForm
 from django.views.decorators.csrf import csrf_exempt
+from noui.command_parser import CommandParser
 
 @login_required
 @csrf_exempt
@@ -20,10 +21,14 @@ def command(request, template="noui/command.html", context=None):
 
     form = CommandForm(request.POST or None)
     if form.is_valid():
-        pass
+        cp = CommandParser()
+        cp.parse(form.cleaned_data['command'])
+        context['result'] = 'Verb %s . Subject %s.' % (cp.verb, cp.subject)
+        context['parse_tree'] = cp.words
+    else:
+        context['result'] = form.errors
+
     context['command'] = form.cleaned_data['command']
     context['form'] = form
-
-    context['result'] = 'Ok'
     
     return render_to_response(template, context, context_instance=RequestContext(request))

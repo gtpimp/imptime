@@ -3,11 +3,12 @@
 <hr/>
 {{ result }}
 
+{{ parse_tree }}
+
 <hr/>
 
-
-
-<form method="POST">
+<form method="POST" action='{% url 'noui:command' %}'>
+  {% csrf_token %}
   {{ form }}
   <input type="submit" value="Process"/>
 </form>
