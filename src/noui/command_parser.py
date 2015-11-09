@@ -1,4 +1,6 @@
 import nltk
+import logging
+logger=logging.getLogger(__name__)
 
 class CommandParser(object):
 
@@ -14,6 +16,9 @@ class CommandParser(object):
             if "Please use the NLTK Downloader" in str(ex):
                 self._prepare()
                 return self.parse(command)
+            else:
+                logger.exception(ex)
+                raise
             
         self.tagged = nltk.pos_tag(self.tokens)
 
@@ -21,7 +26,7 @@ class CommandParser(object):
 
     @property
     def subject(self):
-        return self.words['NN']
+        return self.words.get('NN', None)
 
     @property
     def verb(self):
