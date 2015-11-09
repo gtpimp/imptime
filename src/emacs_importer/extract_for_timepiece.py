@@ -114,6 +114,12 @@ class Extractor(object):
         except:
             business = None
 
+        if business is None:
+            try:
+                business = Business.objects.get(name__icontains=business_name.lower())
+            except:
+                business = None
+
         timesheet_user = User.objects.get(username=self.username)
 
         self.timings_before = {}
