@@ -1,7 +1,7 @@
 {
   "uuid": "a33215f0-cf20-4c05-997b-3c9be5a64e5e",
   "shortName": "ImpTime",
-  "longName": "ImpTime pebble",
+  "longName": "ImpTime",
   "companyName": "ImplicitDesign",
   "versionCode": 1,
   "versionLabel": "1.0",
@@ -39,7 +39,8 @@
   },
   "targetPlatforms": [
     "aplite",
-    "basalt"
+    "basalt",
+    "chalk"
   ],
   "sdkVersion": "3"
 }
