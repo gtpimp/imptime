@@ -3,9 +3,39 @@
 static Window *window;
 static TextLayer *text_layer;
 
-static void select_click_handler(ClickRecognizerRef recognizer, void *context) {
-  text_layer_set_text(text_layer, "Select");
+
+static void dictation_session_callback(DictationSession *session, DictationSessionStatus status, 
+                                       char *transcription, void *context) {
+  // Print the results of a transcription attempt                                     
+  APP_LOG(APP_LOG_LEVEL_INFO, "Dictation status: %d", (int)status);
+
+  static char s_last_text[512];
+  if(status == DictationSessionStatusSuccess) {
+    // Display the dictated text
+    snprintf(s_last_text, sizeof(s_last_text), "Transcription:\n\n%s", transcription);
+    text_layer_set_text(text_layer, s_last_text);
+  } else {
+    // Display the reason for any error
+    APP_LOG(APP_LOG_LEVEL_INFO, "Error: %d", (int)status);
+    static char s_failed_buff[128];
+    snprintf(s_failed_buff, sizeof(s_failed_buff), "Transcription failed.\n\nReason:\n%d", 
+             (int)status);
+    text_layer_set_text(text_layer, s_failed_buff);
+  }
 }
+
+
+static void select_click_handler(ClickRecognizerRef recognizer, void *context) {
+  text_layer_set_text(text_layer, "Say a command");
+
+  static DictationSession *s_dictation_session;
+  static char s_last_text[512];
+  s_dictation_session = dictation_session_create(sizeof(s_last_text), dictation_session_callback, NULL);
+  APP_LOG(APP_LOG_LEVEL_INFO, "Starting dictation session");
+  dictation_session_start(s_dictation_session);
+  APP_LOG(APP_LOG_LEVEL_INFO, "Started dictation session");
+}
+
 
 static void up_click_handler(ClickRecognizerRef recognizer, void *context) {
   text_layer_set_text(text_layer, "Up");
@@ -26,7 +56,7 @@ static void window_load(Window *window) {
   GRect bounds = layer_get_bounds(window_layer);
 
   text_layer = text_layer_create((GRect) { .origin = { 0, 72 }, .size = { bounds.size.w, 20 } });
-  text_layer_set_text(text_layer, "Press a button");
+  text_layer_set_text(text_layer, "Press button to say a command");
   text_layer_set_text_alignment(text_layer, GTextAlignmentCenter);
   layer_add_child(window_layer, text_layer_get_layer(text_layer));
 }
