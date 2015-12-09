@@ -1,46 +1,18 @@
 {
-  "uuid": "a33215f0-cf20-4c05-997b-3c9be5a64e5e",
+  "uuid": "1685c248-0b1f-4a68-ba4f-319803a13d83",
   "shortName": "ImpTime",
   "longName": "ImpTime",
   "companyName": "ImplicitDesign",
-  "versionCode": 1,
   "versionLabel": "1.0",
-  "capabilities": [
-    "configurable"
-  ],
+  "sdkVersion": "3",
+  "targetPlatforms": ["aplite", "basalt", "chalk"],
   "watchapp": {
     "watchface": false
   },
-  "appKeys": {},
-  "resources": {
-    "media": [
-      {
-        "menuIcon": true,
-        "type": "png",
-        "name": "IMAGE_MENU_ICON",
-        "file": "images/menu_icon.png"
-      },
-      {
-        "type": "png",
-        "name": "IMAGE_LOGO_SPLASH",
-        "file": "images/logo_splash.png"
-      },
-      {
-        "type": "png",
-        "name": "IMAGE_TILE_SPLASH",
-        "file": "images/tile_splash.png"
-      },
-      {
-        "type": "font",
-        "name": "MONO_FONT_14",
-        "file": "fonts/UbuntuMono-Regular.ttf"
-      }
-    ]
+  "appKeys": {
+    "dummy": 0
   },
-  "targetPlatforms": [
-    "aplite",
-    "basalt",
-    "chalk"
-  ],
-  "sdkVersion": "3"
+  "resources": {
+    "media": []
+  }
 }
