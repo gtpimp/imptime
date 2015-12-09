@@ -5,7 +5,7 @@
  */
 
 var UI = require('ui');
-var Vector2 = require('vector2');
+var Voice = require('ui/voice');
 
 var main = new UI.Card({
     title: 'ImpTime',
@@ -39,9 +39,28 @@ main.show();
 //   menu.show();
 // });
 
+var count = 0;
+
 main.on('click', function(e) {
 
-    main.subtitle('Listening...');
+    console.log('Stopping any existing voice capture');
+    Voice.dictate('stop');
+
+    console.log("Updating subtitle");
+    main.subtitle('Listening ' + count + '...');
+    count += 1;
+
+    // console.log('Starting new voice capture');
+    // Voice.dictate('start', true, function(e) {
+    //     console.log('Voice capture callback');
+    //     if (e.err) {
+    //         console.log('Error: ' + e.err);
+    //         main.subtitle('Failed: ' + e.err);
+    //         return;
+    //     }
+
+    //     main.subtitle('Success: ' + e.transcription);
+    // });
 
     // var command = new UI.Card({
     //     title: 'Command',

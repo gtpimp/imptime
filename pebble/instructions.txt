@@ -42,11 +42,20 @@
   $ cd ~/id/imptime/pebble/
   $ ./scripts/build.sh
 
-12) Install on phone
+12) Build, Install and view logs
 
   $ cd ~/id/imptime/pebble
-  $ ./scripts/install.sh
+  $ ./scripts/go.sh
 
+OR, do it one at a time:
+
+  $ cd ~/id/imptime/pebble
+  $ ./scripts/build.sh
+  $ ./scripts/install.sh
+  $ ./scripts/logs.sh
+  
+
+ 
 
 
 
