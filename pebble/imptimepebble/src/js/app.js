@@ -8,12 +8,13 @@ var UI = require('ui');
 var Vector2 = require('vector2');
 
 var main = new UI.Card({
-  title: 'ImpTime',
-  icon: 'images/menu_icon.png',
-  subtitle: '',
-  body: 'Press the button to start a command',
-  subtitleColor: 'indigo', // Named colors
-  bodyColor: '#9a0036' // Hex colors
+    title: 'ImpTime',
+    icon: 'images/menu_icon.png',
+    subtitle: '',
+    body: 'Press the button to start a command',
+    subtitleColor: 'indigo', // Named colors
+    bodyColor: '#9a0036', // Hex colors
+    scrollable: true
 });
 
 main.show();
@@ -38,20 +39,25 @@ main.show();
 //   menu.show();
 // });
 
-// main.on('click', 'select', function(e) {
-//   var wind = new UI.Window({
-//     fullscreen: true,
-//   });
-//   var textfield = new UI.Text({
-//     position: new Vector2(0, 65),
-//     size: new Vector2(144, 30),
-//     font: 'gothic-24-bold',
-//     text: 'Text Anywhere!',
-//     textAlign: 'center'
-//   });
-//   wind.add(textfield);
-//   wind.show();
-// });
+main.on('click', function(e) {
+
+    main.subtitle('Listening...');
+
+    // var command = new UI.Card({
+    //     title: 'Command',
+    //     icon: 'images/menu_icon.png',
+    //     subtitle: '',
+    //     body: 'Speak',
+    //     subtitleColor: 'indigo', // Named colors
+    //     bodyColor: '#9a0036' // Hex colors
+    // });
+
+    // command.show();
+
+    
+});
+
+//main.hide();
 
 // main.on('click', 'down', function(e) {
 //   var card = new UI.Card();
