@@ -1,0 +1,21 @@
+1) Download pebble SDK 3.7:
+   wget http://assets.getpebble.com.s3-website-us-east-1.amazonaws.com/sdk2/PebbleSDK-3.7.tar.gz
+
+2) extract to pebble dev location:
+   tar -zxf ~/path/to/download/location.tar.gz
+
+3) cd into PebbleSDK-3.7 folder
+
+4) Download toolchain:
+   wget http://assets.getpebble.com.s3-website-us-east-1.amazonaws.com/sdk/arm-cs-tools-ubuntu-universal.tar.gz
+
+5) extract toolchain in PebbleSDK-3.7 folder
+
+6) in PebbleSDK-3.7 folder, create venv and activate it:
+   virtualenv --no-site-packages venv
+
+7) install requirements:
+   pip install -r requirements.txt
+
+8) install dependencies:
+   sudo apt-get install libsdl1.2debian libfdt1 libpixman-1-0
