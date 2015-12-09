@@ -1,18 +1,45 @@
 {
-  "uuid": "d230c695-493a-48f6-a774-617708ba31be",
-  "shortName": "sample_app_1",
-  "longName": "sample_app_1",
-  "companyName": "MakeAwesomeHappen",
+  "uuid": "a33215f0-cf20-4c05-997b-3c9be5a64e5e",
+  "shortName": "ImpTime",
+  "longName": "ImpTime pebble",
+  "companyName": "ImplicitDesign",
+  "versionCode": 1,
   "versionLabel": "1.0",
-  "sdkVersion": "3",
-  "targetPlatforms": ["aplite", "basalt", "chalk"],
+  "capabilities": [
+    "configurable"
+  ],
   "watchapp": {
     "watchface": false
   },
-  "appKeys": {
-    "dummy": 0
-  },
+  "appKeys": {},
   "resources": {
-    "media": []
-  }
+    "media": [
+      {
+        "menuIcon": true,
+        "type": "png",
+        "name": "IMAGE_MENU_ICON",
+        "file": "images/menu_icon.png"
+      },
+      {
+        "type": "png",
+        "name": "IMAGE_LOGO_SPLASH",
+        "file": "images/logo_splash.png"
+      },
+      {
+        "type": "png",
+        "name": "IMAGE_TILE_SPLASH",
+        "file": "images/tile_splash.png"
+      },
+      {
+        "type": "font",
+        "name": "MONO_FONT_14",
+        "file": "fonts/UbuntuMono-Regular.ttf"
+      }
+    ]
+  },
+  "targetPlatforms": [
+    "aplite",
+    "basalt"
+  ],
+  "sdkVersion": "3"
 }
