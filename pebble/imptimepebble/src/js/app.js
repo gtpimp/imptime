@@ -43,24 +43,24 @@ var count = 0;
 
 main.on('click', function(e) {
 
-    console.log('Stopping any existing voice capture');
-    Voice.dictate('stop');
-
     console.log("Updating subtitle");
     main.subtitle('Listening ' + count + '...');
     count += 1;
 
-    // console.log('Starting new voice capture');
-    // Voice.dictate('start', true, function(e) {
-    //     console.log('Voice capture callback');
-    //     if (e.err) {
-    //         console.log('Error: ' + e.err);
-    //         main.subtitle('Failed: ' + e.err);
-    //         return;
-    //     }
+    console.log('Stopping any existing voice capture');
+    Voice.dictate('stop');
 
-    //     main.subtitle('Success: ' + e.transcription);
-    // });
+    console.log('Starting new voice capture');
+    Voice.dictate('start', true, function(e) {
+        console.log('Voice capture callback');
+        if (e.err) {
+            console.log('Error: ' + e.err);
+            main.subtitle('Failed: ' + e.err);
+            return;
+        }
+
+        main.subtitle('Success: ' + e.transcription);
+    });
 
     // var command = new UI.Card({
     //     title: 'Command',
