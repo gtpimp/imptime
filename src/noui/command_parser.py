@@ -38,3 +38,5 @@ class CommandParser(object):
     @property
     def verb(self):
         return self.words.get('VBD', None) or self.words.get('RB', None) or self.words.get('JJ', None)
+
+    

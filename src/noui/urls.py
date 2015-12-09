@@ -5,7 +5,11 @@ except ImportError:
 
 import views
 
-urlpatterns = patterns('',
-                       url(r'^$', views.command, name='command'),
-                       )
+command = views.Command()
+command.init()
 
+urlpatterns = patterns(
+    '',
+    url(r'^$', views.command, name='command'),
+    url(r'^run_command/', include(command.url_conf())),
+)
