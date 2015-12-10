@@ -1,0 +1,13 @@
+body.slideshow {
+    background-color: #efefef;
+}
+
+body.slideshow .time_chart {
+    padding: 30px;
+}
+
+.timesheet_graph_container {
+    height: 150px;
+    width: 50%;
+}
+
