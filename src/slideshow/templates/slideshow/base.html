@@ -118,7 +118,7 @@
     <script>
      $(document).ready( function() {
        setTimeout( function() {
-                      location.reload();
+                      location = "{% url 'slideshow:home' %}";
                    },
                    60000);
      });
