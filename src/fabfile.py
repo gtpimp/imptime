@@ -48,7 +48,7 @@ def staging():
 
 # ===== top level commands ======
 
-def deploy(branch="master"):
+def deploy(branch="prod"):
     with cd(imp_remote_code_dir):
         run("./deploy_production.sh %s" % branch)
 

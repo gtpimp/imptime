@@ -34,10 +34,12 @@ def timesheets(request, template="slideshow/timesheets.html", context=None):
         entries = timepiece.Entry.objects.filter(user=user)
         daily_hours[user.username] = {'daily_hours':{}, 'weekly_average':{}}
         daily_hours[user.username]['daily_hours'], daily_hours[user.username]['weekly_average'], daily_hours[user.username]['daily_hours_by_project'],  = _get_daily_hours(user, entries, from_date, to_date)
+        daily_hours[user.username]['required_average'] = user.profile.required_daily_work_hours
 
         context['daily_hours'] = daily_hours
         context['from_date'] = from_date
         context['to_date'] = to_date
+
     return render_to_response(template, context, context_instance=RequestContext(request))
 
 def _get_daily_hours(user, entries, from_date=None, to_date=None):
