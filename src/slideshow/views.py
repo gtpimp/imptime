@@ -40,7 +40,18 @@ def timesheets(request, template="slideshow/timesheets.html", context=None):
         context['from_date'] = from_date
         context['to_date'] = to_date
 
+    _populate_ratios(context)
+        
     return render_to_response(template, context, context_instance=RequestContext(request))
+
+def _populate_ratios(context):
+    context['recent_ratios_per_project'] = {}
+    from_date = datetime.datetime.today().date() - relativedelta(days=30)
+
+    entries = timepiece.Entry.objects.filter(start_time__gte=from_date)
+    total_hours = entries.aggregate(hours=Sum('hours'))['hours']
+    times_per_project = entries.order_by("issue__project__business__name").values('issue__project__business__name').annotate(hours=Sum('hours'))
+    context['recent_ratios_per_project'] = [ { 'business': x['issue__project__business__name'], 'hours':x['hours'], 'ratio': float(x['hours'])/float(total_hours) } for x in times_per_project ]
 
 def _get_daily_hours(user, entries, from_date=None, to_date=None):
 
