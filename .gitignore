@@ -32,5 +32,3 @@ src/implicitdesign/media/project_documents
 scripts/old_imports
 src/implicitdesign/media/
 /static
-pebble/imptimepebble/build
-pebble/imptimepebble/.lock*
