@@ -68,10 +68,12 @@
 
   </head>
 
-  <body id="{% block bodyid %}{% endblock bodyid %}">
+  <body class="slideshow">
 
     {% block navigation %}
+    {% comment %}
     {% include "slideshow/navigation.html" %}
+    {% endcomment %}
     {% if user.id %}
     <div style="display:none" id="user_notification_container">
     </div>
@@ -104,6 +106,7 @@
     </div>
 
     {% block footer %}
+    {% comment %}
     <footer class="footer">
       <div class="container-fluid">
         <p class="pull-right">
@@ -113,6 +116,7 @@
         </p>
       </div>
     </footer>
+    {% endcomment %}
     {% endblock footer %}
 
     <script>
