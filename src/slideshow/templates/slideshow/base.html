@@ -1,0 +1,129 @@
+{% load tz %}
+<!doctype html>
+<html>
+  <head>
+    <title>{% block extended_title %}imptime - slideshow {% block title %}{% endblock %}{% endblock %}</title>
+    <link rel="icon" type="image/png" href="{{ STATIC_URL }}images/icons/implicit_icon.png">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+    
+    {% block javascript %}
+    <script src="{{STATIC_URL}}js/jquery.min.js"></script>
+    <script src="{{STATIC_URL}}js/jquery-ui.min.js"></script>
+    <script src="{{STATIC_URL}}timepiece/js/widgets.js"></script>
+    <script src="{{STATIC_URL}}bootstrap/js/bootstrap-dropdown.js"></script>
+    <script src="{{STATIC_URL}}js/jquery.editinplace.js"></script>
+    <script src="{{STATIC_URL}}/js/jquery.ui.widget.js"></script>
+    <script src="{{STATIC_URL}}/js/jquery.iframe-transport.js"></script>
+    <script src="{{STATIC_URL}}/js/jquery.fileupload.js"></script>
+    <script src="{{STATIC_URL}}js/jquery.scrollintoview.js"></script>
+    <script src="{{STATIC_URL}}js/bootstrap-datetimepicker.min.js"></script>
+    <script src="{{STATIC_URL}}js/jquery.stickytableheaders.min.js"></script>
+    <script src="{{STATIC_URL}}js/jquery.simulate.js"></script>
+    <script src="{{STATIC_URL}}js/js.cookie.js"></script>
+
+    {% if perms.timepiece.view_business %}
+    {{ quick_search_form.media.js }}
+    <script type="text/javascript" src="{{ STATIC_URL }}js/jquery.quicksearch.js"></script>
+    {% endif %}
+    <script src="{{ STATIC_URL }}bootstrap/js/bootstrap-alert.js"></script>
+    <script src="{{ STATIC_URL }}bootstrap/js/bootstrap-collapse.js"></script>
+    <script type="text/javascript" src="{{ STATIC_URL }}bootstrap/js/bootstrap-tooltip.js"></script>
+    <script type="text/javascript" src="{{ STATIC_URL }}bootstrap/js/bootstrap-popover.js"></script>
+    <script type="text/javascript" src="{{ STATIC_URL }}timepiece/js/nav.js"></script>
+
+    <script src="{{ STATIC_URL }}js/flot/jquery.flot.js" type="text/javascript"></script>
+    <script src="{{ STATIC_URL }}js/flot/jquery.flot.pie.js" type="text/javascript"></script>
+    <script src="{{ STATIC_URL }}js/flot/jquery.flot.stack.js" type="text/javascript"></script>
+    <script src="{{ STATIC_URL }}js/flot/jquery.flot.time.js" type="text/javascript"></script>
+    <script src="{{ STATIC_URL }}js/flot/jquery.flot.tickrotor.js" type="text/javascript"></script>
+    <script src="{{ STATIC_URL }}timepiece/js/timepiece.js" type="text/javascript"></script>
+
+    {% endblock javascript %}
+
+    {% block extrajs %}
+    {% endblock extrajs %}
+
+    {% block css %}
+    <link type="text/css" rel="stylesheet" href="{{ STATIC_URL }}/css/jquery-ui.css" />
+    <link type="text/css" rel="stylesheet" media="screen" href="{{ STATIC_URL }}css/books.css" />
+    <link type="text/css" rel="stylesheet" href="{{ STATIC_URL }}css/timepiece.css" />
+    <link type="text/css" rel="stylesheet" href="{{ STATIC_URL }}timepiece/css/jquery.contextmenu.css" />
+    <link href='{{STATIC_URL}}font/durasans.font' rel='stylesheet' type='text/css'>
+    <link type="text/css" rel="stylesheet" href="{{ STATIC_URL }}timepiece/css/bootstrap-datetimepicker.min.css" />
+    <link type="text/css" rel="stylesheet" href="{{ STATIC_URL }}css/slideshow.css" />
+    {% endblock %}
+
+    {% block extracss %}
+    {% endblock %}
+
+    {% block extramedia %}
+    {% endblock %}
+
+    <script>
+     $(document).ready(function() {
+       $('.date_field').datepicker({format: 'dd-mm-yyyy'});
+     });
+    </script>
+
+
+  </head>
+
+  <body id="{% block bodyid %}{% endblock bodyid %}">
+
+    {% block navigation %}
+    {% include "slideshow/navigation.html" %}
+    {% if user.id %}
+    <div style="display:none" id="user_notification_container">
+    </div>
+    {% endif %}
+    {% endblock navigation %}
+
+    <div id="content" class="container-fluid">
+
+      {% include "timepiece/loading.html" %}
+
+      {% block messages %}
+      {% include "timepiece/messages.html" %}
+      {% endblock messages %}
+
+      {% if user.is_authenticated %}
+      
+      <div style="display:none"
+           {% block breadcrumb %}
+        <ul class="breadcrumb">
+          {% block crumbs %}
+          <li><a href="{% url 'landing_page' %}">Home</a></li>
+          {% endblock crumbs %}
+        </ul>
+        {% endblock breadcrumb %}
+      </div>
+      {% endif %}
+
+      {% block content %}
+      {% endblock content %}
+    </div>
+
+    {% block footer %}
+    <footer class="footer">
+      <div class="container-fluid">
+        <p class="pull-right">
+          {% timezone "Africa/Johannesburg" %}
+          {% now "jS F Y H:i" %}
+          {% endtimezone %}
+        </p>
+      </div>
+    </footer>
+    {% endblock footer %}
+
+    <script>
+     $(document).ready( function() {
+       setTimeout( function() {
+                      location.reload();
+                   },
+                   60000);
+     });
+    </script>
+    
+  </body>
+
+</html>

@@ -215,6 +215,7 @@ INSTALLED_APPS = (
     'jira_interface',
     'invoicing',
     'animated_website',
+    'slideshow',
 
     'sorl.thumbnail',
     'creole',

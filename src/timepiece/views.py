@@ -2540,7 +2540,7 @@ def daily_graph(request, user_id, template="timepiece/graphs/daily_graph.html", 
     if not request.user.is_superuser:
         users = [request.user]
     elif not user_id:
-        users = User.objects.all()
+        users = User.objects.all().filter(is_staff=True)
     else:
         users = [User.objects.get(pk=user_id)]
 

@@ -598,6 +598,7 @@ urlpatterns = patterns('',
     # ),
 
     url(r'^jira/', include('jira_interface.urls', namespace="jira"), {}, "jira"),
+    url(r'^slideshow/', include('slideshow.urls', namespace="slideshow"), {}, "slideshow"),
 
                        url(r'^time-sheet/show_issue_history/(?P<issue_id>\d+)/$', views.show_issue_history, name="show_issue_history"),
                        url(r'^time-sheet/view_business_documents/(?P<business_id>\d+)/$', views.view_business_documents, name="view_business_documents"),
