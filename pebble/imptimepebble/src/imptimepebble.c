@@ -12,7 +12,8 @@ static void dictation_session_callback(DictationSession *session, DictationSessi
   static char s_last_text[512];
   if(status == DictationSessionStatusSuccess) {
     // Display the dictated text
-    snprintf(s_last_text, sizeof(s_last_text), "Transcription:\n\n%s", transcription);
+    APP_LOG(APP_LOG_LEVEL_INFO, "You said: %s", transcription);
+    snprintf(s_last_text, sizeof(s_last_text), transcription);
     text_layer_set_text(text_layer, s_last_text);
   } else {
     // Display the reason for any error
