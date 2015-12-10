@@ -1,0 +1,28 @@
+{% load timepiece_tags %}
+
+<div class="navbar navbar-fixed-top">
+  <div class="navbar-inner">
+    <div class="container-fluid visible-desktop">
+      {% block navbar-left %}
+      <ul class="nav pull-left">
+
+        <li class="active">
+          <a class="brand" href="http://www.implicitdesign.co.za">
+            {% block logo_name %}imptime{% endblock %}
+            <img width="50px" src="{{STATIC_URL}}images/implicitDesignLogo.jpg"/>
+          </a>
+        </li>
+
+        <li>
+          <a href="{% url 'slideshow:timesheets' %}">Timesheets</a>
+        </li>
+
+        <li>
+          <a href="{% url 'slideshow:ratios' %}">Ratios</a>
+        </li>
+        
+      </ul>
+      {% endblock %}
+    </div>
+  </div>
+</div>

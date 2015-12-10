@@ -2821,6 +2821,8 @@ class UserProfile(models.Model):
     billable_amount = models.DecimalField(max_digits=8, decimal_places=2, default=0)
     project_names_to_ignore = models.TextField(blank=True)
     authenticate_token = models.CharField(max_length=100, blank=True, null=True, help_text="Authentication token remote connections")
+    required_daily_work_hours = models.IntegerField(default=8, null=False, blank=True)
+    
     class Meta:
         ordering = ('user',)
     def __unicode__(self):

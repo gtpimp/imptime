@@ -1,0 +1,74 @@
+{% extends "slideshow/base.html" %}
+
+{% load timepiece_tags %}
+{% load bootstrap_toolkit %}
+{% block content %}
+
+{% for user,days_hours in daily_hours.items %}
+
+  <div class="col-md-3">
+
+    <h3>{{user}}</h3>
+        <div style="width:100%; height:200px"class="timesheet_graph_container" id="graph{{user}}"></div>
+  </div>
+
+{% endfor %}
+
+<script>
+  $(document).ready( 
+               function() {
+
+                 {% for user,values in daily_hours.items %} 
+
+                 $.plot($("#graph{{user}}"),
+			[ 
+			  { label:"hours",
+                            data: [ {% for date, hours in values.daily_hours.items %} 
+                                                    [ {{date|epoch}},{{hours}}], {% endfor %} ],
+			    //lines: {show: true, steps: true, fill: true},
+                            bars: {
+                              barWidth: 24 * 60 * 60 * 1000,
+                              align: "center",
+                              horizontal: false
+                            },
+                            points: {show: false},
+			  },
+			  { label:"weekly average",
+                            data: [ {% for date, hours in values.weekly_average.items %} 
+                                                    [ {{date|epoch}},{{hours}}], {% endfor %} ],
+			    lines: {show: true, steps: false, fill: false},
+                            //points: {show: false},
+			  },
+			],
+			{
+			  xaxis: { 
+			    mode: "time",
+                            tickSize: [1, "day"],
+                            rotateTicks: 90,
+			    timeformat: "%a %d %b %y",
+                            {% if from_date %}
+                            min: {{from_date|epoch}},
+                            {% endif %}
+                            {% if to_date %}
+                            max: {{to_date|epoch}},
+                            {% endif %}
+			  },
+                          yaxis: {
+                            tickSize: 1,
+                            min: 3,
+                            max: 9
+                          },
+                          grid: {markings: [{yaxis: {from: {{values.required_average}}, to:{{values.required_average}} }, color: "#adff2f"}]},
+                          legend: { show: false,
+                                    position: "nw" },
+			  bars: {
+			    show: true
+			  }
+			}
+                 );
+                 {% endfor %}
+               });
+
+</script>
+
+{% endblock %}
