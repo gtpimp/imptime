@@ -4,6 +4,7 @@ import re
 import logging
 logger = logging.getLogger(__name__)
 from lib.models import BaseModel, BaseManager
+from lib.fields import ProtectedForeignKey
 
 from django.db.models import Count
 from django.db.models.query import QuerySet
@@ -30,7 +31,8 @@ class NouiCommand(BaseModel):
     objects = BaseManager()
     objects_original = models.Manager()
     
-class NouiCommandParameter(models.Model):
+class NouiCommandParameter(BaseModel):
+    command = ProtectedForeignKey(NouiCommand, null=False, blank=True, related_name='parameters')
     pattern = models.CharField(max_length=255, null=False, blank=True)
     search_function = models.CharField(max_length=255, null=False, blank=True) # search function is the name of a global or class static function which will take a string and return an list of objects of the matching type
     description = models.TextField(null=True, blank=True)

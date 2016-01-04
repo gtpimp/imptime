@@ -10,7 +10,7 @@ from django.http import HttpResponse, HttpResponseRedirect
 from django.core.urlresolvers import reverse, resolve
 from django.template import RequestContext
 from django.contrib import messages
-from forms import NouiCommandForm, RunCommandForm
+from forms import NouiCommandForm, RunCommandForm, command_parameter_formset
 from models import NouiCommand, NouiCommandParameter
 from django.views.decorators.csrf import csrf_exempt
 from noui.command_parser import CommandParser
@@ -25,11 +25,18 @@ def command_list(request, template="noui/command_list.html", context=None):
 def command_add(request, template="noui/command_add.html", context=None):
     context = context or {}
     form = NouiCommandForm(request.POST or None)
-    if form.is_valid():
-        form.save()
+    parameters_formset = command_parameter_formset(request.POST or None, queryset = NouiCommandParameter.objects.none(), prefix='parameters')
+    if form.is_valid() and parameters_formset.is_valid():
+        command = form.save()
+        parameters = parameters_formset.save(commit=False)
+        for parameter in parameters:
+            parameter.command = command
+            parameter.save()
+        parameters_formset.save_m2m()
         messages.info(request, "New command created")
-        return redirect("noui:command_list")
+        return redirect(reverse("noui:command_edit", kwargs={'command_ref':command.id}))
     context['form'] = form
+    context['parameters_formset'] = parameters_formset
     return render_to_response(template, context, context_instance=RequestContext(request))
 
 @login_required
@@ -37,11 +44,21 @@ def command_edit(request, command_ref, template="noui/command_edit.html", contex
     context = context or {}
     command = NouiCommand.objects.get(pk=command_ref)
     form = NouiCommandForm(request.POST or None, instance=command)
-    if form.is_valid():
+    parameters_formset = command_parameter_formset(request.POST or None, queryset = command.parameters.order_by("id"), prefix='parameters')
+    if form.is_valid() and parameters_formset.is_valid():
         form.save()
+        parameters = parameters_formset.save(commit=False)
+        for parameter in parameters:
+            parameter.command = command
+            parameter.save()
+        for parameter in parameters_formset.deleted_objects:
+            parameter.deleted=True
+            parameter.save()
+        parameters_formset.save_m2m()
         messages.info(request, "Command updated")
-        return redirect("noui:command_list")
+        return redirect(reverse("noui:command_edit", kwargs={'command_ref':command.id}))
     context['form'] = form
+    context['parameters_formset'] = parameters_formset
     context['command'] = command
     return render_to_response(template, context, context_instance=RequestContext(request))
 

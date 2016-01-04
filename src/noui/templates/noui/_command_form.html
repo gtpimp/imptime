@@ -1,6 +1,30 @@
 {% load bootstrap3 %}
+{% load staticfiles %}
 
 {% bootstrap_form form %}
+
+<h3>Parameters</h3>
+<ul class="formset">
+
+  {% bootstrap_form parameters_formset.management_form %}
+  {% for parameter_form in parameters_formset %}
+  <li>
+    {% if parameter_form.instance.id %}
+    <a class="btn" href="#" onclick="$(this).parent().find('.parameter_content').slideToggle(); return false;">
+      {{ parameter_form.instance.pattern }}
+    </a>
+    {% else %}
+    <a href="#" onclick="$(this).parent().find('.parameter_content').slideToggle(); return false;">
+      <img width="20px" class="add_command" src="{% static 'images/icons/add.png' %}"/>
+    </a>
+    {% endif %}
+    <div class="parameter_content" style="display:none">
+      {% bootstrap_form parameter_form %}
+    </div>
+  </li>
+  {% endfor %}
+  
+</ul>
 
 {% buttons %}
 <button type="submit" class="btn btn-primary">
@@ -8,6 +32,7 @@
 </button>
 
 <a href="{% url 'noui:command_list' %}" class="btn btn-cancel">
-    {% bootstrap_icon "star" %} Cancel
+    {% bootstrap_icon "star" %} List
 </a>
+
 {% endbuttons %}

@@ -13,3 +13,11 @@ class NouiCommandForm(forms.ModelForm):
     class Meta:
         model = NouiCommand
         exclude = [ 'created', 'modified', 'deleted' ]
+
+class NouiCommandParameterForm(forms.ModelForm):
+
+    class Meta:
+        model = NouiCommandParameter
+        exclude = [ 'created', 'modified', 'deleted', 'command' ]
+
+command_parameter_formset = modelformset_factory(NouiCommandParameter, form=NouiCommandParameterForm, can_delete=True, extra=1)
