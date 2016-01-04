@@ -32,10 +32,14 @@
     <div id="content-main" class="container-fluid">
         <form action="{{ app_path }}" method="post" id="login-form">{% csrf_token %}
             <div class="form-row">
-                {% if not form.this_is_the_login_form.errors %}{{ form.username.errors }}{% endif %} {{ form.username }}
+                <div class="login-user-icon">
+                    {% if not form.this_is_the_login_form.errors %}{{ form.username.errors }}{% endif %} {{ form.username }}
+                </div>
             </div>
             <div class="form-row">
-                {% if not form.this_is_the_login_form.errors %}{{ form.password.errors }}{% endif %} {{ form.password }}
+                <div class="login-password-icon">
+                    {% if not form.this_is_the_login_form.errors %}{{ form.password.errors }}{% endif %} {{ form.password }}
+                </div>
                 <input type="hidden" name="this_is_the_login_form" value="1"/>
                 <input type="hidden" name="next" value="{{ next }}"/>
             </div>

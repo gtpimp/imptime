@@ -30,21 +30,22 @@ form#login-form .form-row label {
     color: #222;
 }
 
-form#login-form .form-row #id_username, form#login-form .form-row #id_password {
-    box-shadow: none;
+form#login-form .form-row #id_username,
+form#login-form .form-row #id_password {
     background: transparent;
     font-size: 20px;
     font-weight: normal;
     color: #fff;
     height: 40px;
-    padding: 10px;
     margin: 5px 0;
     width: 100%;
     border-radius: 1px;
     border: 0px;
     border-color: #fff;
-
     box-shadow: 0px 0px 0px 1px rgba(255,255,255,0.3);
+    padding: 10px;
+    padding-left: 42px;
+
 }
 
 form#login-form span.help {
@@ -85,24 +86,22 @@ form#login-form #reset-block {
     text-align: center;
     font-size: 14px;
     font-weight: normal;
+    transform: translate(-16px, 3px);
 }
 
 :-moz-placeholder {
     /* older Firefox*/
-    text-align: center;
     font-size: 12px;
     font-weight: normal;
 }
 
 ::-moz-placeholder {
     /* Firefox 19+ */
-    text-align: center;
     font-size: 12px;
     font-weight: normal;
 }
 
 :-ms-input-placeholder {
-    text-align: center;
     font-size: 12px;
     font-weight: normal;
 }
@@ -135,4 +134,12 @@ body {
 .password_reset {
     color: white;
     font-size: 16px;
+}
+
+.login-user-icon {
+    background: url('../img/login/login-user.png') no-repeat 10px 50%;
+}
+
+.login-password-icon {
+    background: url('../img/login/login-password.png') no-repeat 10px 50%;
 }
