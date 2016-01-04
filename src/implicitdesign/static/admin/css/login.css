@@ -85,6 +85,7 @@ form#login-form #reset-block {
 .centred_placeholder::-webkit-input-placeholder {
     text-align: center;
     font-size: 14px;
+    color: #eee;
     font-weight: normal;
     transform: translate(-16px, 3px);
 }
@@ -92,17 +93,20 @@ form#login-form #reset-block {
 :-moz-placeholder {
     /* older Firefox*/
     font-size: 12px;
+    color: #eee;
     font-weight: normal;
 }
 
 ::-moz-placeholder {
     /* Firefox 19+ */
     font-size: 12px;
+    color: #eee;
     font-weight: normal;
 }
 
 :-ms-input-placeholder {
     font-size: 12px;
+    color: #eee;
     font-weight: normal;
 }
 
@@ -116,19 +120,25 @@ body {
     background-size: cover;
 }
 
-.login_top_bar {
+.main_navigation_bar {
     background-color: #17112d;
     width: 100%;
-    padding: 2%;
+    /*height: 60px;*/
 }
 
-.login_top_bar a.home {
+.nagivation_head
+{
+    min-width: 600px;
+    width: 800px;
+    margin: 0px auto;
+    padding: 30px 0;
+
+}
+
+.main_navigation_bar a.home {
     color: white;
     font-weight: normal;
     font-size: 36px;
-    position: relative;
-
-    left: 20%;
 }
 
 .password_reset {
