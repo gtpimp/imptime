@@ -5,7 +5,7 @@ form#login-form {
 
     min-width: 300px;
     font-size: 16px;
-    width: 400px;
+    width: 350px;
     margin: 100px auto;
     padding: 10px;
 }
@@ -18,7 +18,7 @@ form#login-form #content-main {
 form#login-form {
     font-size: 20px;
     margin-top: 1em;
-    
+
 }
 
 form#login-form .form-row {
@@ -32,13 +32,19 @@ form#login-form .form-row label {
 
 form#login-form .form-row #id_username, form#login-form .form-row #id_password {
     box-shadow: none;
-    color: #575757 !important;
+    background: transparent;
     font-size: 20px;
-    font-weight: 400;
-    height:50px;
-    padding: 5px;
+    font-weight: normal;
+    color: #fff;
+    height: 40px;
+    padding: 10px;
     margin: 5px 0;
     width: 100%;
+    border-radius: 1px;
+    border: 0px;
+    border-color: #fff;
+
+    box-shadow: 0px 0px 0px 1px rgba(255,255,255,0.3);
 }
 
 form#login-form span.help {
@@ -51,20 +57,21 @@ form#login-form .submit-row {
 }
 form#login-form .submit-row  input{
     background-image: none;
-    background-color: #4fb2d3;
+    background-color: #62acde;
     border-radius: 0 !important;
-    font-size: 20px;
+    border: 0px;
+    font-size: 15px;
+    font-weight: bold;
     height: 40px;
     margin-bottom:1em;
     padding: 5px;
-    text-transform: uppercase;
     width: 100%;
-    
+
 }
 
 form#login-form .submit-row  input:hover{
     background-color: #2b8aab;
-    border:none;    
+    border:none;
 }
 
 form#login-form #reset-block {
@@ -72,3 +79,60 @@ form#login-form #reset-block {
     text-align: center;
 }
 
+
+/* ------------------------------------------------ */
+.centred_placeholder::-webkit-input-placeholder {
+    text-align: center;
+    font-size: 14px;
+    font-weight: normal;
+}
+
+:-moz-placeholder {
+    /* older Firefox*/
+    text-align: center;
+    font-size: 12px;
+    font-weight: normal;
+}
+
+::-moz-placeholder {
+    /* Firefox 19+ */
+    text-align: center;
+    font-size: 12px;
+    font-weight: normal;
+}
+
+:-ms-input-placeholder {
+    text-align: center;
+    font-size: 12px;
+    font-weight: normal;
+}
+
+/* ------------------------------------------------ */
+
+body {
+    background: url('../img/login/background.jpg') no-repeat center center fixed;
+    -webkit-background-size: cover;
+    -moz-background-size: cover;
+    -o-background-size: cover;
+    background-size: cover;
+}
+
+.login_top_bar {
+    background-color: #17112d;
+    width: 100%;
+    padding: 2%;
+}
+
+.login_top_bar a.home {
+    color: white;
+    font-weight: normal;
+    font-size: 36px;
+    position: relative;
+
+    left: 20%;
+}
+
+.password_reset {
+    color: white;
+    font-size: 16px;
+}
