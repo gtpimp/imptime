@@ -119,6 +119,7 @@
     {% endcomment %}
     {% endblock footer %}
 
+    {% block reload %}
     <script>
      $(document).ready( function() {
        setTimeout( function() {
@@ -127,6 +128,7 @@
                    60000);
      });
     </script>
+    {% endblock %}
     
   </body>
 
