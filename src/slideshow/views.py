@@ -20,7 +20,8 @@ import math
 @login_required
 def home(request):
 
-    slides = [ 'timesheets', 'ratios' ]
+    #slides = [ 'timesheets', 'ratios' ]
+    slides = [ 'timesheets' ]
 
     prev_slide_index = request.session.get('previous_slide_index', 0)
     slide_index = prev_slide_index + 1
