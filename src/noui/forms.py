@@ -1,12 +1,15 @@
 from django import forms
-from invoicing import models
 from django.forms.models import modelformset_factory
-from invoicing.fields import GroupedModelChoiceField
 from dateutil.relativedelta import relativedelta
 from datetime import datetime
 from django.conf import settings
-from timepiece import models as timepiece
+from models import NouiCommand, NouiCommandParameter
 
-class CommandForm(forms.Form):
-
+class RunCommandForm(forms.Form):
     command = forms.CharField(required=True)
+
+class NouiCommandForm(forms.ModelForm):
+
+    class Meta:
+        model = NouiCommand
+        exclude = [ 'created', 'modified', 'deleted' ]
