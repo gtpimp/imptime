@@ -1,0 +1,33 @@
+
+.navbar-inner {
+    min-height: 40px;
+    height: 90px;
+    line-height: 90px;
+
+    padding-left: 0px;
+    padding-right: 0px;
+
+    text-align: center;
+
+    background-color: #322f36;
+}
+
+.nagivation_head {
+    vertical-align: middle;
+    min-width: 600px;
+    width: 60%;
+    height: 860px;
+    margin: 0px auto;
+    text-align: left;
+}
+
+.nagivation_head a.home {
+    color: white;
+    font-weight: normal;
+    font-size: 30px;
+}
+
+
+body #content.container-fluid {
+    margin-top: 90px;
+}

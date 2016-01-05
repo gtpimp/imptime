@@ -59,6 +59,7 @@
         <link type="text/css" rel="stylesheet" href="{{ STATIC_URL }}timepiece/css/jquery.contextmenu.css" />
         <link href='{{STATIC_URL}}font/durasans.font' rel='stylesheet' type='text/css'>
         <link type="text/css" rel="stylesheet" href="{{ STATIC_URL }}timepiece/css/bootstrap-datetimepicker.min.css" />
+        <link type="text/css" rel="stylesheet" href="{{ STATIC_URL }}css/impd.css" />
     {% endblock %}
 
     {% block extracss %}
@@ -79,7 +80,7 @@
 <body id="{% block bodyid %}{% endblock bodyid %}">
 
     {% block navigation %}
-        {% include "timepiece/navigation.html" %}
+        {% include "timepiece/navigation_bar.html" %}
         {% if user.id %}
         <div style="display:none" id="user_notification_container">
 	</div>
