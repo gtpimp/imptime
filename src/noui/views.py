@@ -80,16 +80,20 @@ def command_delete(request, command_ref, context=None):
 def run_command(request, template="noui/command.html", context=None):
     context = context or {}
 
-    form = RunCommandForm(request.POST or None)
-    if form.is_valid():
-        raw_command = form.cleaned_data['command'].strip().lower()
-        cp = CommandParser(request)
-        res = cp.run_command(raw_command)
-        context['result'] = res
-    else:
-        context['result'] = form.errors
+    try:
+        form = RunCommandForm(request.POST or None)
+        if form.is_valid():
+            raw_command = form.cleaned_data['command'].strip().lower()
+            cp = CommandParser(request)
+            res = cp.run_command(raw_command)
+            context['result'] = res
+        else:
+            context['result'] = form.errors
 
-    context['command'] = form.cleaned_data['command']
-    context['form'] = form
-    
+        context['command'] = form.cleaned_data['command']
+        context['form'] = form
+        
+    except Exception, ex:
+        context['result'] = ex
+
     return render_to_response(template, context, context_instance=RequestContext(request))

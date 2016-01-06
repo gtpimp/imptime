@@ -7,11 +7,16 @@
 
 <hr/>
 
-<form method="POST" action='{% url 'noui:command' %}'>
-  {% csrf_token %}
-  {{ form }}
-  <input type="submit" value="Process"/>
-</form>
-
+<div class="noui_form">
+  <form method="POST" action='{% url 'noui:command' %}'>
+    {% csrf_token %}
+    {{ form }}
+    <input type="submit" value="Process"/>
+  </form>
+</div>
 
 {{ values }}
+
+<script>
+  imp.nav.hookup_noui_form();
+</script>
