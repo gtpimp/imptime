@@ -16,12 +16,14 @@ from django.views.decorators.csrf import csrf_exempt
 from noui.command_parser import CommandParser
 
 @login_required
+@permission_required('noui.command_list')
 def command_list(request, template="noui/command_list.html", context=None):
     context = context or {}
     context['commands'] = NouiCommand.objects.all().order_by("name")
     return render_to_response(template, context, context_instance=RequestContext(request))
 
 @login_required
+@permission_required('noui.command_edit')
 def command_add(request, template="noui/command_add.html", context=None):
     context = context or {}
     form = NouiCommandForm(request.POST or None)
@@ -40,6 +42,7 @@ def command_add(request, template="noui/command_add.html", context=None):
     return render_to_response(template, context, context_instance=RequestContext(request))
 
 @login_required
+@permission_required('noui.command_edit')
 def command_edit(request, command_ref, template="noui/command_edit.html", context=None):
     context = context or {}
     command = NouiCommand.objects.get(pk=command_ref)
@@ -63,6 +66,7 @@ def command_edit(request, command_ref, template="noui/command_edit.html", contex
     return render_to_response(template, context, context_instance=RequestContext(request))
 
 @login_required
+@permission_required('noui.command_edit')
 def command_delete(request, command_ref, context=None):
     context = context or {}
     command = NouiCommand.objects.get(pk=command_ref)
@@ -78,26 +82,10 @@ def run_command(request, template="noui/command.html", context=None):
 
     form = RunCommandForm(request.POST or None)
     if form.is_valid():
-        cp = CommandParser()
         raw_command = form.cleaned_data['command'].strip().lower()
-        cp.parse(raw_command)
-        
-        command_context = {
-            'verb': cp.verb,
-            'subject': cp.subject,
-            'parse_tree': cp.words,
-            'full_text': form.cleaned_data['command']
-        }
-
-        if raw_command == "list":
-            return redirect("noui:command_list")
-            
-        # command = Command()
-        # command.init()
-        # context['values'] = command.evaluate_command(request, command_context)
-
-        context['result'] = 'Verb %s . Subject %s.' % (cp.verb, cp.subject)
-        context['parse_tree'] = cp.words
+        cp = CommandParser(request)
+        res = cp.run_command(raw_command)
+        context['result'] = res
     else:
         context['result'] = form.errors
 

@@ -27,6 +27,7 @@ class NouiCommand(BaseModel):
     name = models.CharField(max_length=255, null=False, blank=True, db_index=True)
     pattern = models.CharField(max_length=255, null=False, blank=True)
     description = models.TextField(null=True, blank=True)
+    command_function = models.TextField(null=False, blank=True) # a snippet of python which must define a function called 'go' which takes all the parameters for this command.
 
     objects = BaseManager()
     objects_original = models.Manager()
