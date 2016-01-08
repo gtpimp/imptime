@@ -19,6 +19,7 @@ from re import UNICODE as re_UNICODE
 
 from timepiece import timezone
 from timepiece import utils
+from timepiece import models as timepiece_models
 
 from datetime import timedelta
 
@@ -47,4 +48,18 @@ class NouiCommandParameter(BaseModel):
 
     def __unicode__(self):
         return self.name
-    
+
+class NouiBusiness(object):
+
+    @classmethod
+    def find(self, search_string):
+        b = None
+        try:
+            b = timepiece_models.Business.objects.filter(pk=search_string).first()
+        except Exception:
+            pass
+        if not b:
+            b = timepiece_models.Business.objects.filter(name__icontains=search_string).first()
+        if not b:
+            b = timepiece_models.Business.objects.filter(description__icontains=search_string).first()
+        return b

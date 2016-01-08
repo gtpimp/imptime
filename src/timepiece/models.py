@@ -322,7 +322,7 @@ class Business(models.Model):
             return entries[0].end_time
         else:
             return None
-
+        
 class BusinessComment(models.Model):
     business = models.ForeignKey(Business, null=False, blank=False, related_name='business_comments')
     comment = models.TextField(null=True, blank=True)

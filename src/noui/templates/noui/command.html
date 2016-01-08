@@ -5,7 +5,7 @@
   {% for parameter in parameters.values %}
   <tr>
     <td>{{ parameter.name }}</td>
-    <td>{{ parameter.human_readable_parameter_value|default:"Not set" }}</td>
+    <td>{{ parameter.human_readable_parameter_value|default:"Not set"|default_if_none:"Not set" }}</td>
     <td>{{ parameter.pattern }}</td>
   </tr>
   {% endfor %}
@@ -23,8 +23,11 @@ There were multiple possible commands, please be more specific:
 
 {% endif %}
 
-{% if status == 'no_match' %}
+{% if not cp.active_command and result.status == 'no_match' %}
 <div class="error">No command found</div>
+<hr/>
+{% elif result.status == 'error' %}
+<div class="error">{{ result.exception }}</div>
 <hr/>
 {% endif %}
 

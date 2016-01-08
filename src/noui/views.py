@@ -115,6 +115,8 @@ def run_command(request, template="noui/command.html", context=None):
         context['cp'] = cp
         
     except Exception, ex:
-        context['result'] = ex
+        logger.exception(ex)
+        context['result'] = { 'status': 'error',
+                              'exception': ex }
 
     return render_to_response(template, context, context_instance=RequestContext(request))

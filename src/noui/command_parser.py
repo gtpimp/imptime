@@ -27,6 +27,9 @@ class CommandParser(object):
     def command_context(self):
         return self.request.session.setdefault('noui_command_context', {})
 
+    def _update_parameter_context(self, parameter_context):
+        self.request.session['parameters'] = parameter_context
+    
     @property
     def parameter_context(self):
         return self.command_context.setdefault('parameters', {})
@@ -43,7 +46,7 @@ class CommandParser(object):
         parameters = []
         for info in self.parameter_context.values():
             if info['required_by_active_command']:
-                parameters[info['name']] = info['value']
+                parameters[info['name']] = info['value'].strip()
         return parameters
         
     def parse_command_snippet(self, raw_command):
@@ -57,7 +60,6 @@ class CommandParser(object):
 
         if len(matching_commands) == 0 and self.command_context.get('active_command_id', None):
             self.parse_command_parameters(self.command_string)
-            self._set_active_command(None)
             
         return { 'matching_commands': matching_commands }
 
@@ -68,22 +70,27 @@ class CommandParser(object):
         
         func = self._resolve_noui_function(command.command_function)
         parameters = self.parameters_with_resolved_values
-        res = func(**parameters)
+        try:
+            res = func(**parameters)
+        except Exception, ex:
+            logger.exception(ex)
+            raise
         return res
     
     def _set_active_command(self, noui_command):
         self._active_command = noui_command
         self.command_context['active_command_id'] = self._active_command.id if noui_command else None
 
-        for p in self.parameter_context.items():
+        for p in self.parameter_context.values():
             p['required_by_active_command'] = False
         self.parse_command_parameters("")
     
     def parse_command_parameters(self, command_string):
         parameters = self.active_command.parameters.all().order_by("id")
         parameter_value = None
+        parameter_context = self.parameter_context
         for p in parameters:
-            parameter_info = self.parameter_context.setdefault(p.id, { 'name': p.name,
+            parameter_info = parameter_context.setdefault(p.id, { 'name': p.name,
                                                                        'id': p.id,
                                                                        'value': None,
                                                                        'pattern': p.pattern,
@@ -99,7 +106,9 @@ class CommandParser(object):
                     parameter_value = parameter_value.id
                 parameter_info['value'] = parameter_value
                 
-            self.parameter_context[p.id] = parameter_info
+            parameter_context[p.id] = parameter_info
+
+        self._update_parameter_context(parameter_context)
                     
     def _sanitize_raw_command(self, command):
         # because the command is run inside a regexp_matches clause
@@ -112,15 +121,16 @@ class CommandParser(object):
     
     def _resolve_parameter_value(self, command_parameter, raw_parameter_value):
         func = self._resolve_noui_function(command_parameter.search_function)
-        parameter_value = func(raw_parameter_value)
+        parameter_value = func(raw_parameter_value.strip())
         return parameter_value
 
     def _resolve_noui_function(self, function_string):
         parts = function_string.split(".")
         package_name = ".".join(parts[:-2])
-        module_name = parts[-2]
+        clazz_name = parts[-2]
         func_name = parts[-1]
-        module = __import__(package_name, fromlist=[module_name])
-        func = getattr(module, func_name)
+        module = __import__(package_name, fromlist=[clazz_name])
+        clazz = getattr(module, clazz_name)
+        func = getattr(clazz, func_name)
         return func
 
