@@ -138,7 +138,7 @@ class CommandParser(object):
         code_globals = {}
         exec(code, code_globals, code_locals)
         res = code_locals.get('res', None)
-        if not res:
-            logger("This code snippet didn't set res: %s" % code)
+        if 'res' not in code_locals:
+            logger.info("This code snippet didn't set res: %s" % code)
             raise Exception("No res variable specified to hold the result of the code snippet")
         return res

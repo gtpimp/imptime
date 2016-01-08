@@ -35,4 +35,24 @@
     {% bootstrap_icon "star" %} List
 </a>
 
+<div class="tip">
+  All python command boxes can take any python. The following 'magic' features exist:
+  <ul>
+    <li>
+      Set the variable 'res' to the output from the function
+    </li>
+    <li>
+      All parameters for the active command are available in the variable 'parameters'
+    </li>
+    <li>
+      For parameter code functions (which should resolve a parameter
+      value), the variable 'search_string' is also available, which is
+      whatever matched in the parameter regex.
+    </li>
+    <li>
+      (To see all available parameters, look at 'locals()' inside the code snippet.)
+    </li>
+  </ul>
+</div>
+
 {% endbuttons %}
