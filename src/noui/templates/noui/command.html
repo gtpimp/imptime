@@ -1,9 +1,32 @@
-"{{ command }}"
 
+{% if cp.active_command %}
+<h2>Active command: {{ cp.active_command }}</h2>
+<table class="table striped">
+  {% for parameter in parameters.values %}
+  <tr>
+    <td>{{ parameter.name }}</td>
+    <td>{{ parameter.human_readable_parameter_value|default:"Not set" }}</td>
+    <td>{{ parameter.pattern }}</td>
+  </tr>
+  {% endfor %}
+</table>
 <hr/>
-{{ result }}
 
-{{ parse_tree }}
+{% elif ambiguous_commands %}
+There were multiple possible commands, please be more specific:
+<ul>
+  {% for cmd in ambiguous_commands %}
+  <li>{{cmd.name}}</li>
+  {% endfor %}
+</ul>
+<hr/>
+
+{% endif %}
+
+{% if status == 'no_match' %}
+<div class="error">No command found</div>
+<hr/>
+{% endif %}
 
 <hr/>
 

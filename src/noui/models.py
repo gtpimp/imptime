@@ -31,8 +31,12 @@ class NouiCommand(BaseModel):
 
     objects = BaseManager()
     objects_original = models.Manager()
-    
+
+    def __unicode__(self):
+        return self.name
+        
 class NouiCommandParameter(BaseModel):
+    name = models.CharField(max_length=255, null=False, blank=True)
     command = ProtectedForeignKey(NouiCommand, null=False, blank=True, related_name='parameters')
     pattern = models.CharField(max_length=255, null=False, blank=True)
     search_function = models.CharField(max_length=255, null=False, blank=True) # search function is the name of a global or class static function which will take a string and return an list of objects of the matching type
@@ -40,4 +44,7 @@ class NouiCommandParameter(BaseModel):
 
     objects = BaseManager()
     objects_original = models.Manager()
+
+    def __unicode__(self):
+        return self.name
     

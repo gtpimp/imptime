@@ -14,6 +14,8 @@ from forms import NouiCommandForm, RunCommandForm, command_parameter_formset
 from models import NouiCommand, NouiCommandParameter
 from django.views.decorators.csrf import csrf_exempt
 from noui.command_parser import CommandParser
+import logging
+logger = logging.getLogger(__name__)
 
 @login_required
 @permission_required('noui.command_list')
@@ -85,13 +87,32 @@ def run_command(request, template="noui/command.html", context=None):
         if form.is_valid():
             raw_command = form.cleaned_data['command'].strip().lower()
             cp = CommandParser(request)
-            res = cp.run_command(raw_command)
-            context['result'] = res
+            res = cp.parse_command_snippet(raw_command)
+            if len(res['matching_commands']) > 1:
+                context['ambiguous_commands'] = res['matching_commands']
+                context['result'] = { 'status': 'ambiguous' }
+                
+            elif len(res['matching_commands']) == 0:
+                context['result'] = { 'status': 'no_match' }
+                
+            elif len(res['matching_commands']) == 1:
+                if cp.are_all_required_parameters_populated:
+                    try:
+                        res = cp.execute_active_command()
+                        context['result'] = { 'status': 'success',
+                                              'result': res }
+                    except Exception, ex:
+                        logger.exception(ex)
+                        context['result'] = { 'status': 'failed to execute',
+                                              'exception': ex }
+                context['result'] = res
         else:
             context['result'] = form.errors
 
         context['command'] = form.cleaned_data['command']
+        context['parameters'] = cp.parameter_context
         context['form'] = form
+        context['cp'] = cp
         
     except Exception, ex:
         context['result'] = ex
