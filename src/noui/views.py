@@ -84,9 +84,9 @@ def run_command(request, template="noui/command.html", context=None):
 
     try:
         form = RunCommandForm(request.POST or None)
+        cp = CommandParser(request)
         if form.is_valid():
             raw_command = form.cleaned_data['command'].strip().lower()
-            cp = CommandParser(request)
             res = cp.parse_command_snippet(raw_command)
             if len(res['matching_commands']) > 1:
                 context['ambiguous_commands'] = res['matching_commands']
@@ -94,22 +94,23 @@ def run_command(request, template="noui/command.html", context=None):
                 
             elif len(res['matching_commands']) == 0:
                 context['result'] = { 'status': 'no_match' }
+
+            if cp.ready_to_execute and raw_command == "go":
+                try:
+                    res = cp.execute_active_command()
+                    context['result'] = { 'status': 'executed',
+                                          'result': res }
+                except Exception, ex:
+                    logger.exception(ex)
+                    context['result'] = { 'status': 'failed to execute',
+                                          'exception': ex }
+            context['command'] = form.cleaned_data['command']
+
+            form = RunCommandForm()
                 
-            elif len(res['matching_commands']) == 1:
-                if cp.are_all_required_parameters_populated:
-                    try:
-                        res = cp.execute_active_command()
-                        context['result'] = { 'status': 'success',
-                                              'result': res }
-                    except Exception, ex:
-                        logger.exception(ex)
-                        context['result'] = { 'status': 'failed to execute',
-                                              'exception': ex }
-                context['result'] = res
         else:
             context['result'] = form.errors
 
-        context['command'] = form.cleaned_data['command']
         context['parameters'] = cp.parameter_context
         context['form'] = form
         context['cp'] = cp
@@ -120,3 +121,9 @@ def run_command(request, template="noui/command.html", context=None):
                               'exception': ex }
 
     return render_to_response(template, context, context_instance=RequestContext(request))
+
+@login_required
+@csrf_exempt
+def command_context_reset(request):
+    CommandParser(request).reset()
+    return run_command(request)

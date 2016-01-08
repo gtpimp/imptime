@@ -28,6 +28,10 @@ There were multiple possible commands, please be more specific:
 <hr/>
 {% elif result.status == 'error' %}
 <div class="error">{{ result.exception }}</div>
+{% elif result.status == 'executed' %}
+Command executed : {{ result.result.msg }}
+{% elif result.status == 'failed to execute' %}
+Command execution failed : {{ result.exception }}
 <hr/>
 {% endif %}
 
@@ -38,6 +42,16 @@ There were multiple possible commands, please be more specific:
     {% csrf_token %}
     {{ form }}
     <input type="submit" value="Process"/>
+  </form>
+</div>
+
+<div class="tip">
+  Type in any command to start. Then enter parameters. Once all parameters are valid, type "go" to run the command.
+</div>
+
+<div class="noui_form">
+  <form method="POST" action='{% url 'noui:command_context_reset' %}'>
+    <input type="submit" value="Reset parameters"/>
   </form>
 </div>
 

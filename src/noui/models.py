@@ -38,6 +38,7 @@ class NouiCommand(BaseModel):
         
 class NouiCommandParameter(BaseModel):
     name = models.CharField(max_length=255, null=False, blank=True)
+    var_name = models.CharField(max_length=255, null=False, blank=True)
     command = ProtectedForeignKey(NouiCommand, null=False, blank=True, related_name='parameters')
     pattern = models.CharField(max_length=255, null=False, blank=True)
     search_function = models.CharField(max_length=255, null=False, blank=True) # search function is the name of a global or class static function which will take a string and return an list of objects of the matching type
@@ -52,7 +53,7 @@ class NouiCommandParameter(BaseModel):
 class NouiBusiness(object):
 
     @classmethod
-    def find(self, search_string):
+    def find(self, search_string, **kwargs):
         b = None
         try:
             b = timepiece_models.Business.objects.filter(pk=search_string).first()
@@ -63,3 +64,40 @@ class NouiBusiness(object):
         if not b:
             b = timepiece_models.Business.objects.filter(description__icontains=search_string).first()
         return b
+
+class NouiProject(object):
+
+    @classmethod
+    def find(self, search_string, **kwargs):
+        b = None
+
+        filter_args = {}
+        if kwargs.get('business'):
+            filter_args['business']=kwargs['business']
+        
+        try:
+            b = timepiece_models.Project.objects.filter(pk=search_string, **filter_args).first()
+        except Exception:
+            pass
+        if not b:
+            b = timepiece_models.Project.objects.filter(name__icontains=search_string, **filter_args).first()
+        if not b:
+            b = timepiece_models.Project.objects.filter(short_description__icontains=search_string, **filter_args).first()            
+        if not b:
+            b = timepiece_models.Project.objects.filter(description__icontains=search_string, **filter_args).first()
+        return b
+
+    @classmethod
+    def find_state(self, state_string, **kwargs):
+        for k,v in timepiece_models.Project.PROJECT_STATUSES:
+            if state_string in v.lower():
+                return k
+        return None
+
+    @classmethod
+    def set_state(self, **kwargs):
+        project = timepiece_models.Project.objects.get(pk=kwargs['project'])
+        project.status2 = kwargs['new_state']
+        project.save()
+        return { 'msg': "Status of sprint %s changed to %s" % ( project.long_name(), project.status2 ) }
+    
