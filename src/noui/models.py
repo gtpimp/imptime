@@ -41,7 +41,7 @@ class NouiCommandParameter(BaseModel):
     var_name = models.CharField(max_length=255, null=False, blank=True)
     command = ProtectedForeignKey(NouiCommand, null=False, blank=True, related_name='parameters')
     pattern = models.CharField(max_length=255, null=False, blank=True)
-    search_function = models.CharField(max_length=255, null=False, blank=True) # search function is the name of a global or class static function which will take a string and return an list of objects of the matching type
+    search_function = models.TextField(max_length=255, null=False, blank=True) # search function is the name of a global or class static function which will take a string and return an list of objects of the matching type
     description = models.TextField(null=True, blank=True)
 
     objects = BaseManager()
@@ -88,9 +88,9 @@ class NouiProject(object):
         return b
 
     @classmethod
-    def find_state(self, state_string, **kwargs):
+    def find_state(self, search_string, **kwargs):
         for k,v in timepiece_models.Project.PROJECT_STATUSES:
-            if state_string in v.lower():
+            if search_string in v.lower():
                 return k
         return None
 

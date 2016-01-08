@@ -76,10 +76,9 @@ class CommandParser(object):
         if not command:
             raise Exception("No active command")
         
-        func = self._resolve_noui_function(command.command_function)
-        parameters = self.parameters_with_resolved_values
+        code_locals = self.parameters_with_resolved_values
         try:
-            res = func(**parameters)
+            res = self._call_noui_code_snippet(command.command_function, code_locals)
         except Exception, ex:
             logger.exception(ex)
             raise
@@ -122,24 +121,24 @@ class CommandParser(object):
     def _sanitize_raw_command(self, command):
         # because the command is run inside a regexp_matches clause
         # and surrounded by quotes, simply removing all quotes from
-        # the command is enough to prevent sql injection.
+        # the command is enough to prevent sql injection, I think?
         c = command.lower().replace("'", "").replace('"', "").strip()
         if len(c)>0:
             c += " " #trailing space to make regexes feel more natural when entering them
         return c
     
     def _resolve_parameter_value(self, command_parameter, raw_parameter_value):
-        func = self._resolve_noui_function(command_parameter.search_function)
-        parameter_value = func(raw_parameter_value.strip(), **self.parameters_with_resolved_values)
+        code_locals = { 'search_string': raw_parameter_value.strip() }
+        code_locals['parameters'] = self.parameters_with_resolved_values
+        parameter_value = self._call_noui_code_snippet(command_parameter.search_function, code_locals)
         return parameter_value
 
-    def _resolve_noui_function(self, function_string):
-        parts = function_string.split(".")
-        package_name = ".".join(parts[:-2])
-        clazz_name = parts[-2]
-        func_name = parts[-1]
-        module = __import__(package_name, fromlist=[clazz_name])
-        clazz = getattr(module, clazz_name)
-        func = getattr(clazz, func_name)
-        return func
+    def _call_noui_code_snippet(self, code, code_locals):
 
+        code_globals = {}
+        exec(code, code_globals, code_locals)
+        res = code_locals.get('res', None)
+        if not res:
+            logger("This code snippet didn't set res: %s" % code)
+            raise Exception("No res variable specified to hold the result of the code snippet")
+        return res
