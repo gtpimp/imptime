@@ -5,7 +5,7 @@
   {% for parameter in parameters.values %}
   <tr>
     <td>{{ parameter.name }}</td>
-    <td>{{ parameter.human_readable_parameter_value|default:"Not set"|default_if_none:"Not set" }}</td>
+    <td>{{ parameter.human_readable_value|default:"Not set"|default_if_none:"Not set" }}</td>
     <td>{{ parameter.pattern }}</td>
   </tr>
   {% endfor %}
@@ -33,6 +33,12 @@ Command executed : {{ result.result.msg }}
 {% elif result.status == 'failed to execute' %}
 Command execution failed : {{ result.exception }}
 <hr/>
+{% endif %}
+
+{% if last_result_message %}
+<br/>
+<b>{{ last_result_message }}</b>
+<br/>
 {% endif %}
 
 <hr/>

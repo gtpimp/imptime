@@ -88,6 +88,7 @@ def run_command(request, template="noui/command.html", context=None):
         if form.is_valid():
             raw_command = form.cleaned_data['command'].strip().lower()
             res = cp.parse_command_snippet(raw_command)
+            context['last_result_message'] = res.get('last_result_message', None)
             if len(res['matching_commands']) > 1:
                 context['ambiguous_commands'] = res['matching_commands']
                 context['result'] = { 'status': 'ambiguous' }
@@ -100,17 +101,19 @@ def run_command(request, template="noui/command.html", context=None):
                     res = cp.execute_active_command()
                     context['result'] = { 'status': 'executed',
                                           'result': res }
+                    context['last_result_message'] = "Executed"
                 except Exception, ex:
                     logger.exception(ex)
                     context['result'] = { 'status': 'failed to execute',
                                           'exception': ex }
+                    context['last_result_message'] = "Failed"
             context['command'] = form.cleaned_data['command']
 
             form = RunCommandForm()
                 
         else:
             context['result'] = form.errors
-
+        
         context['prompt'] = cp.get_prompt_for_next_requirement()
         context['parameters'] = cp.parameter_context
         context['form'] = form

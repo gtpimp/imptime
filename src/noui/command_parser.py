@@ -4,6 +4,7 @@ import importlib
 import re
 logger=logging.getLogger(__name__)
 from models import NouiCommand
+from built_in_commands import BuiltInCommands
 
 class CommandParser(object):
 
@@ -84,16 +85,30 @@ class CommandParser(object):
     def parse_command_snippet(self, raw_command):
         self.command_string = self._sanitize_raw_command(raw_command)
 
+        info = {}
+        
         res = NouiCommand.objects.raw("""select * from noui_nouicommand, regexp_matches('%s', pattern) where deleted='f'""" % self.command_string)
         matching_commands = [ command for command in res ]
         self.command_context['matching_commands'] = [ { 'name': x.name, 'id': x.id } for x in matching_commands ]
         if len(matching_commands) == 1:
             self._set_active_command(matching_commands[0])
 
-        if len(matching_commands) == 0 and self.command_context.get('active_command_id', None):
-            self.parse_command_parameters(self.command_string)
+        if len(matching_commands) == 0:
+
+            res = BuiltInCommands(self).try_process_command(raw_command)
+            if res:
+                info['last_result_message'] = unicode(res)
+
+                if self.command_context.get('active_command_id', None):
+                    matching_commands = [self.active_command]
+                else:
+                    matching_commands = []
             
-        return { 'matching_commands': matching_commands }
+            elif self.command_context.get('active_command_id', None):
+                self.parse_command_parameters(self.command_string)
+                
+        info['matching_commands'] = matching_commands
+        return info
 
     def execute_active_command(self):
         command = self.active_command
@@ -154,7 +169,7 @@ class CommandParser(object):
 
     def _update_parameter_info(self, p, parameter_info, raw_parameter_value):
         parameter_value = self._resolve_parameter_value(p, raw_parameter_value)
-        parameter_info['human_readable_parameter_value'] = unicode(parameter_value)
+        parameter_info['human_readable_value'] = unicode(parameter_value)
         if parameter_value and hasattr(parameter_value, "id"):
             parameter_value = parameter_value.id
         parameter_info['value'] = parameter_value
