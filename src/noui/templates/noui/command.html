@@ -39,6 +39,7 @@ Command execution failed : {{ result.exception }}
 
 <div class="noui_form">
   <form method="POST" action='{% url 'noui:command' %}'>
+    {{ prompt.prompt }}
     {% csrf_token %}
     {{ form }}
     <input type="submit" value="Process"/>

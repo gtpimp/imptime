@@ -56,6 +56,30 @@ class CommandParser(object):
             if info['required_by_active_command']:
                 parameters[info['var_name']] = unicode(info['value']).strip()
         return parameters
+
+    def get_prompt_for_next_requirement(self):
+
+        self.command_context['active_parameter_id'] = None
+        
+        next_requirement = { "prompt" : None,
+                             "options" : [] }
+        if not self.command_context.get("active_command_id", None):
+            next_requirement['prompt'] = "Please give me a command"
+
+        if next_requirement['prompt'] is None:
+            for p in self.parameter_context.values():
+                if p['required_by_active_command'] and p['value'] is None:
+                    next_requirement['prompt'] = "What value for " + p['name'] + "?"
+                    self.command_context['active_parameter_id'] = p['id']
+                    break
+
+        if next_requirement['prompt'] is None and self.ready_to_execute:
+            next_requirement['prompt'] = "Say go to run the command"
+
+        if next_requirement['prompt'] is None:
+            next_requirement['prompt'] = "Whoops, we are in an uncertain state"
+                            
+        return next_requirement
         
     def parse_command_snippet(self, raw_command):
         self.command_string = self._sanitize_raw_command(raw_command)
@@ -94,8 +118,8 @@ class CommandParser(object):
     
     def parse_command_parameters(self, command_string):
         parameters = self.active_command.parameters.all().order_by("id")
-        parameter_value = None
         parameter_context = self.parameter_context
+        matched = False
         for p in parameters:
             parameter_info = parameter_context.get(p.name, { 'name': p.name,
                                                              'id': p.id,
@@ -108,16 +132,33 @@ class CommandParser(object):
             res = re.match(p.pattern, command_string)
             if res and res.groups():
                 raw_parameter_value = res.groups()[0]
-                parameter_value = self._resolve_parameter_value(p, raw_parameter_value)
-                parameter_info['human_readable_parameter_value'] = unicode(parameter_value)
-                if parameter_value and hasattr(parameter_value, "id"):
-                    parameter_value = parameter_value.id
-                parameter_info['value'] = parameter_value
+                self._update_parameter_info(p, parameter_info, raw_parameter_value)
+                matched = True
+
+            parameter_context[p.name] = parameter_info
                 
+        if not matched and self.command_context.get('active_parameter_id', None):
+            p = self.active_command.parameters.get(pk=self.command_context['active_parameter_id'])
+            parameter_info = parameter_context.get(p.name, { 'name': p.name,
+                                                             'id': p.id,
+                                                             'var_name': p.var_name,
+                                                             'value': None,
+                                                             'pattern': p.pattern,
+                                                             'human_readable_value': None })
+            self._update_parameter_info(p, parameter_info, command_string)
+            matched = True
             parameter_context[p.name] = parameter_info
 
+
         self._update_parameter_context(parameter_context)
-                    
+
+    def _update_parameter_info(self, p, parameter_info, raw_parameter_value):
+        parameter_value = self._resolve_parameter_value(p, raw_parameter_value)
+        parameter_info['human_readable_parameter_value'] = unicode(parameter_value)
+        if parameter_value and hasattr(parameter_value, "id"):
+            parameter_value = parameter_value.id
+        parameter_info['value'] = parameter_value
+                
     def _sanitize_raw_command(self, command):
         # because the command is run inside a regexp_matches clause
         # and surrounded by quotes, simply removing all quotes from

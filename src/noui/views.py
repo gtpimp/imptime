@@ -111,6 +111,7 @@ def run_command(request, template="noui/command.html", context=None):
         else:
             context['result'] = form.errors
 
+        context['prompt'] = cp.get_prompt_for_next_requirement()
         context['parameters'] = cp.parameter_context
         context['form'] = form
         context['cp'] = cp
