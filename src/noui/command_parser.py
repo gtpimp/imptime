@@ -92,6 +92,7 @@ class CommandParser(object):
         self.command_context['matching_commands'] = [ { 'name': x.name, 'id': x.id } for x in matching_commands ]
         if len(matching_commands) == 1:
             self._set_active_command(matching_commands[0])
+            info['last_result_message'] = "Activated command %s" % self._active_command.name
 
         if len(matching_commands) == 0:
 
@@ -105,7 +106,11 @@ class CommandParser(object):
                     matching_commands = []
             
             elif self.command_context.get('active_command_id', None):
-                self.parse_command_parameters(self.command_string)
+                updated_parameter_info = self.parse_command_parameters(self.command_string)
+                if updated_parameter_info:
+                    info['last_result_message'] = "Parameter %s set to %s" % ( updated_parameter_info['name'], updated_parameter_info['human_readable_value'] )
+                else:
+                    info['last_result_message'] = "Couldn't do anything"
                 
         info['matching_commands'] = matching_commands
         return info
@@ -148,7 +153,7 @@ class CommandParser(object):
             if res and res.groups():
                 raw_parameter_value = res.groups()[0]
                 self._update_parameter_info(p, parameter_info, raw_parameter_value)
-                matched = True
+                matched = parameter_info
 
             parameter_context[p.name] = parameter_info
                 
@@ -161,11 +166,11 @@ class CommandParser(object):
                                                              'pattern': p.pattern,
                                                              'human_readable_value': None })
             self._update_parameter_info(p, parameter_info, command_string)
-            matched = True
+            matched = parameter_info
             parameter_context[p.name] = parameter_info
 
-
         self._update_parameter_context(parameter_context)
+        return matched
 
     def _update_parameter_info(self, p, parameter_info, raw_parameter_value):
         parameter_value = self._resolve_parameter_value(p, raw_parameter_value)
