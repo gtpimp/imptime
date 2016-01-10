@@ -331,7 +331,7 @@ imp.hide_issue_checkboxes = function(el) {
     $(el).parents("table").find(".issue_checkbox_cell_toggle").find(".show").show();
 };
 imp.show_issue_checkboxes = function(el) {
-    $(".issue_checkbox_cell").show();
+    $(".issue_checkbox_cell").css("display", "inline");
     $(el).parents("table").find(".issue_checkbox_cell_toggle").find(".hide").show();
     $(el).parents("table").find(".issue_checkbox_cell_toggle").find(".show").hide();
 };
@@ -444,13 +444,12 @@ imp.set_issue_checkbox_hooks = function(issue_row_container) {
 
     // If an issue checkbox is hidden, show on hover and hide on unhover
     issue_row_container.find(".issue_checkbox_td").hover(function() {
-							     var el = $(this).find(".issue_checkbox_cell").show();
-							 },
-							 function() {
-							     if ( ! imp.are_issue_checkboxes_visible($(this)) ) {
-								 var el = $(this).find(".issue_checkbox_cell").hide();
-							     }
-							 });
+	var el = $(this).find(".issue_checkbox_cell").css("display", "inline");
+    }, function() {
+	if ( ! imp.are_issue_checkboxes_visible($(this)) ) {
+	    var el = $(this).find(".issue_checkbox_cell").hide();
+	}
+    });
 
 };
 

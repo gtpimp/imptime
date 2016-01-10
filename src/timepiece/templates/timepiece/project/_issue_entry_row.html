@@ -5,9 +5,17 @@
 <tr class="issue_instance_row {{issue.status_as_class}} {% if issue.adhoc %}adhoc_issue_row{% endif %}" assigned_to="{{issue.assigned_to.username}}"  id="{{issue.pk}}" refresh_url="{% url 'get_issue_row' issue.pk %}" status="{{issue.status}}" feature="{{issue.feature.name|default:None}}">                    
 
   <td class="issue_checkbox_td">
-    <div class="issue_checkbox_cell" style="width:100%; display:none;">
+    <div class="issue_checkbox_cell">
       <input type="checkbox" name="issue_checked_{{issue.pk}}" {% if issue.pk in selected_issue_ids %}checked="checked"{% endif %} /> <!-- Code for checkbox on left hand side -->
     </div>
+    <div class="emacs_copy_container">
+        &nbsp;
+        <img class="emacs_copy_img" style="display:none" src="{{STATIC_URL}}/images/icons/emacs.png" onclick="return imp.select_text_for_emacs('*** issue{{issue.number}} {{issue.subject|escapejs}}');"/> 
+      </div>
+      <div class="drag_img_container">
+        &nbsp;
+        <img class="drag_img" style="display:none" src="{{STATIC_URL}}/images/icons/drag.png"/> 
+      </div>
   </td>
 
   <td class="issue_number_cell"> 
@@ -18,14 +26,7 @@
         <img class="issue_action_menu_img" style="display:none" src="{{STATIC_URL}}/images/icons/script_go.png" onclick="return imp.show_issue_action_menu(this, {{issue.id}});"/> 
       </div>
       {% endcomment %}
-      <div class="emacs_copy_container">
-        &nbsp;
-        <img class="emacs_copy_img" style="display:none" src="{{STATIC_URL}}/images/icons/emacs.png" onclick="return imp.select_text_for_emacs('*** issue{{issue.number}} {{issue.subject|escapejs}}');"/> 
-      </div>
-      <div class="drag_img_container">
-        &nbsp;
-        <img class="drag_img" style="display:none" src="{{STATIC_URL}}/images/icons/drag.png"/> 
-      </div>
+      
       <div style="float:left">
 	<img style="display:none" style="position:absolute" class="loading_issue_indicator" id="loading_issue_{{issue.id}}" src="{{STATIC_URL}}/images/icons/loadingAnimation.gif"/>
       </div>
