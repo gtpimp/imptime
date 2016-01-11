@@ -1,15 +1,32 @@
 
+html {
+    overflow: hidden;
+}
+
 .splitter {
 	height: 500px;
 	width: 100%;
 	/*border: 5px solid #aaa;*/
 }
-.splitter .splitter-left, .splitter .splitter-right {
+.splitter .splitter-left, .splitter .splitter-right,  .splitter .splitter-top, .splitter .splitter-bottom {
     overflow-x: hidden;
     overflow-y: auto;
 }
+
+
+.splitter .splitter-bottom {
+    display: none;
+}
+
 .vsplitbar {
 	width: 5px;
 	background: #aaa;
 	border: 1px solid #000000;
+}
+
+.hsplitbar {
+    display: none;
+    height: 5px;
+    background: #aaa;
+    border: 1px solid #000000;
 }

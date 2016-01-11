@@ -380,25 +380,54 @@ imp.create_splitter = function() {
         if ( ! size_right ) {
             size_right = $(window).width()*0.25;
         }
-	$(".splitter").splitter({sizeRight: size_right});
+	$(".splitter").splitter({sizeTop: $(".splitter").height()*0.9, 
+				 splitHorizontal: true
+				});
         
         $(".splitter").on("splitter:resized", function(evt, data) {
-            var right_width = data.B.width();
+            var right_width = data.B.height();
             Cookies.set('splitter_right_width', right_width);
         });
 
     }
 };
 
+imp.update_splitter_view = function (issue_id) {
+
+    var split_timeout = 250;
+    if ( !$(".splitter-bottom").is(":visible") ) {
+	$(".splitter-bottom, .hsplitbar").show();
+	$('.splitter-top').animate({height: '60%'},split_timeout);
+	$('.splitter-bottom').animate({height: '40%', top: "60%"},split_timeout);
+	$('.hsplitbar').animate({top: '60%'},split_timeout);
+	
+    } else if ( $(".splitter-bottom").is(":visible") && imp.current_issue_id == issue_id ){
+	$('.splitter-bottom').animate({height: '0', top: $(window).height()},split_timeout, function(){
+	    $(".splitter-bottom, .hsplitbar").hide();
+	});
+	$('.hsplitbar').css({top: $(window).height()});
+	$('.splitter-top').animate({height: $(window).height()*0.8},split_timeout);	
+	
+    }
+
+}
+
 imp.update_splitter_height = function() {
     var splitter = $(".splitter");
     var top = splitter.offset().top;
     var wh = $(window).height();
     var height = (wh-top-20)+"px";
+
+    var hbaroffset = splitter.find(".hsplitbar").offset().top;
+    var splitterheight = splitter.height()
+    
+
     splitter.css("height", height);
-    splitter.find(".splitter-left").css("height", height);
-    splitter.find(".splitter-right").css("height", height);
-    splitter.find(".vsplitbar").css("height", height);
+    splitter.find(".splitter-top").css("height", hbaroffset-top);
+
+    var splittertopheight = splitter.find(".splitter-top").height();
+    splitter.find(".splitter-bottom").css("height", splitterheight-splittertopheight);
+
 };
 
 imp.toggle_show_adhoc_issues = function() {

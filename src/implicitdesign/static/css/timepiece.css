@@ -449,6 +449,11 @@ a:hover {
 .container:after {
   clear: both;
 }
+.footer .container-fluid {
+    position: relative;
+    z-index: 1;
+    padding-right: 20px;
+}
 .container-fluid {
   *padding-right: 20px;
   *padding-left: 20px;
@@ -2570,7 +2575,7 @@ table .span24 {
   filter: alpha(opacity=30);
 }
 .dropdown .caret {
-    margin-top: 23px;
+    margin-top: 13px;
     opacity: 1;
     border-top: 4px solid #FFFFFF;
 }
@@ -9926,6 +9931,11 @@ border: 1px solid #939eb3;
     padding-left: 10px;
     color: #121212;
     font-family: "Dura Sans", Arial, sans-serif;
+    margin: 15px;
+    background-color: whitesmoke;
+    border: 2px solid;
+    border-style: outset;
+    box-shadow: 2px 3px 2px 0px grey;
 }
 
 .issue_detail h1 {
@@ -9944,6 +9954,7 @@ border: 1px solid #939eb3;
 
 .issue_detail .content {
     color: #000000;
+    background-color: #FFFFFF;
 }
 
 .project_card {

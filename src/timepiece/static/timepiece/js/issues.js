@@ -39,36 +39,33 @@ imp.search_on_issue_number = function(issue_number) {
 };
 
 imp.show_issue_detail = function(issue_id, url, msg, args) {
-    msg = msg || "loading issue detail";
-    var on_done = imp.loading(msg);
+   
+    if ( imp.current_issue_id != issue_id ) { 
+	msg = msg || "loading issue detail";
+	var on_done = imp.loading(msg);
+    
+	$(".issue_detail").load(url, function() {
+	    if (args && args.reload_on_done) {
+		window.location=args.reload_on_done;
+		return;
+	    }
+            
+	    var el = $("#" + issue_id);
+	    el.find(".subject_class input").focus();
+            imp.refresh_hidden_fields(el);
+	    imp.current_issue_detail_url = url;
+	    imp.update_splitter_view(issue_id);
 
-    $(".issue_detail").load(url,
-			    function() {
-
-				if (args && args.reload_on_done) {
-				    window.location=args.reload_on_done;
-				    return;
-				}
-				
-
-                                var el = $("#" + issue_id);
-				el.find(".subject_class input").focus();
-                                imp.refresh_hidden_fields(el);
-				imp.current_issue_detail_url = url;
-				if ( issue_id ) {
-				    imp.highlight_issue(issue_id);
-                                    imp.current_issue_id = issue_id;
-				}
-
-				// $(".issue_detail .edit_comment_section").hover(function() {
-				// 						   $(this).find(".edit_comment_button").show();
-				// 					       },
-				// 					       function() {
-				// 						   $(this).find(".edit_comment_button").hide();
-				// 					       });
-
-				on_done();
-			    });
+	    if ( issue_id ) {
+		imp.highlight_issue(issue_id);
+		imp.current_issue_id = issue_id;
+	    }
+	    
+	    on_done();
+	});
+    } else {
+	imp.update_splitter_view(issue_id);
+    }
 
  };
 
