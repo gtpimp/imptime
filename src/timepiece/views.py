@@ -3196,7 +3196,10 @@ def _augment_issue_data(issue, current_user, users_allowed_to_estimate_on_busine
 
         try:
             issue.representation.ctc += hours * rates_by_user[user.id]['ctc_amount']
-            issue.representation.billable += hours * rates_by_user[user.id]['billable_amount']
+            if issue.is_fixed_cost:
+                issue.representation.billable = issue.billable
+            else:
+                issue.representation.billable += hours * rates_by_user[user.id]['billable_amount']
         except KeyError:
             # no rate for this user, not a problem
             pass
@@ -4135,7 +4138,7 @@ def get_issue_row(request,issue_id):
     context['features'] = ( (f.id, f.name) for f in timepiece.Feature.objects.filter(business=business) )
 
     context['assign_user_form'] = timepiece_forms.AssignUserToIssueForm()
-
+    import pdb; pdb.set_trace()
     refresh_issue =timepiece.Issue.objects.get(id=issue.id)
     refresh_issue.representation = issue.representation
     context['issue'] = refresh_issue

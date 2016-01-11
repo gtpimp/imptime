@@ -3027,6 +3027,7 @@ class Issue(models.Model):
     due_date = models.DateTimeField(default=None, null=True, blank=True)
     auto_created_during_import = models.BooleanField(default=False)
     adhoc = models.BooleanField(default=False)
+    fixed_amount = models.DecimalField(max_digits=8,decimal_places=2,blank=True, null=True)
 
     @classmethod
     def get_last_issue_number(self, business):
@@ -3202,8 +3203,6 @@ class Issue(models.Model):
 
     @property
     def ctc(self):
-        import pdb; pdb.set_trace()
-        
         x= self.related_entries.all().aggregate(total=Sum(F('hours')*F('rate')))[0]['total']
         cost = 0
         for entry in self.related_entries:
@@ -3213,8 +3212,14 @@ class Issue(models.Model):
     @property
     def billable(self):
         cost = 0
-        for entry in self.related_entries:
-            cost += entry.atbillablerate
+        if self.is_fixed_cost:
+            pass
+            # if self.fixed_amount is not None:
+            #     cost = self.fixed_amount
+        else:
+            for entry in self.related_entries:
+                cost += entry.atbillablerate
+
         return cost
 
     @classmethod
@@ -3223,6 +3228,9 @@ class Issue(models.Model):
 
     def comments_in_order(self):
         return self.comments.all().order_by("-created")
+
+    def is_fixed_cost(self):
+        return self.fixed_amount is None
 
 class IssueStatus(models.Model):
     name = models.CharField(max_length=255, blank=True, null=True)
