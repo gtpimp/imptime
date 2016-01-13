@@ -37,6 +37,7 @@ imp.projects.on_sortable_changed_for_url = function(sortable_url) {
 };
 
 imp.projects.show_project_card_as_popup = function (event, project_card_url, msg, args) {
+    imp.current_issue_id = "";
     imp.show_issue_detail(null, project_card_url, msg, args);
     event.stopPropagation();
     return false;
@@ -48,6 +49,7 @@ imp.projects.popup_business_comments = function(business_id) {
 };
 
 imp.projects.show_business_comments = function (event, business_comments_url, args) {
+    imp.current_issue_id = "";
     imp.show_issue_detail(null, business_comments_url, "loading comments", args);
     event.stopPropagation();
     return false;
@@ -388,6 +390,11 @@ imp.create_splitter = function() {
             var right_width = data.B.height();
             Cookies.set('splitter_right_width', right_width);
         });
+
+	$(window).on("resize", function(e) {
+	    console.log(window.width)
+	    imp.update_splitter_height();
+	});
 
     }
 };

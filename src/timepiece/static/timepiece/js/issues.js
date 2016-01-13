@@ -54,24 +54,33 @@ imp.show_issue_detail = function(issue_id, url, msg, args) {
 	    el.find(".subject_class input").focus();
             imp.refresh_hidden_fields(el);
 	    imp.current_issue_detail_url = url;
+	    
 	    imp.update_splitter_view(issue_id);
 
 	    if ( issue_id ) {
 		imp.highlight_issue(issue_id);
-		imp.current_issue_id = issue_id;
 	    }
+	    imp.current_issue_id = issue_id;
 	    
 	    on_done();
 	});
-    } else {
+    } else  {
 	imp.update_splitter_view(issue_id);
     }
 
  };
 
 imp.refresh_issue_detail = function() {
-
-    imp.show_issue_detail(imp.current_issue_id, imp.current_issue_detail_url);
+    $(".issue_detail").load(imp.current_issue_detail_url, function() {
+	if (args && args.reload_on_done) {
+	    window.location=args.reload_on_done;
+	    return;
+	}
+	var el = $("#" + imp.current_issue_id);
+	el.find(".subject_class input").focus();
+        imp.refresh_hidden_fields(el);
+	imp.loading("Loading issue detail");
+    });
 };
 
 imp.post_issue_number_form = function(form_child_el, issue_id) {
@@ -483,7 +492,6 @@ imp.refresh_show_all_users = function(menu_el, logged_in_username) {
 };
 
 imp.on_add_issue_comment = function(el, url) {
-
     var container = el.parent();
     var on_done = imp.issue_loading("Creating comment");
     var input_el = container.find("textarea");
@@ -636,6 +644,7 @@ imp.clickable_description_box = function(element, url, item_id, args) {
 					      if ( ! args.refresh_url ) {
 						  imp.refresh_issue_detail();
 					      } else {
+						  imp.current_issue_id = "";
 						  imp.show_issue_detail(null, args.refresh_url, "refreshing");
 					      }
 					      attachments.show();
