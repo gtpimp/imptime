@@ -1306,8 +1306,11 @@ class Project(models.Model):
         total_stats['hours_real'] = sum(stats_per_user[x]['hours_real'] or 0 for x in users)
         total_stats['hours_closed_real'] = sum(stats_per_user[x]['hours_closed_real'] or 0 for x in users)
         total_stats['hours_adhoc'] = sum(stats_per_user[x]['hours_adhoc'] or 0 for x in users)
-        total_stats['hours_ctc'] = sum(stats_per_user[x]['hours_ctc'] or 0 for x in users)
-        total_stats['hours_billable'] = sum(stats_per_user[x]['hours_billable'] or 0 for x in users)
+
+        ctc_and_billable_totals = self.get_ctc_and_billable_totals()
+        total_stats['hours_ctc'] = sum(stats_per_user[x]['hours_ctc'] or 0 for x in users) + ctc_and_billable_totals['fixed_ctc_total']
+        total_stats['hours_billable'] = sum(stats_per_user[x]['hours_billable'] or 0 for x in users) + ctc_and_billable_totals['fixed_amount_total']
+
         total_stats['hours_real_billable'] = sum(stats_per_user[x]['hours_real_billable'] or 0 for x in users)
         
         total_stats['hours_billable_with_scope_creep'] = round(float(total_stats['points_billable']) * (1+float(self.ratio_scope_creep)), 2)
@@ -1667,7 +1670,19 @@ class Project(models.Model):
                     issue.order = index            
                     issue.save()
         return Issue.objects.filter(project=self).order_by("order", "order2")
-            
+
+    def get_ctc_and_billable_totals(self):
+        totals = Issue.objects.filter(project_id=self.id).values('fixed_ctc_amount', 'fixed_amount').aggregate(
+        fixed_ctc_total=Sum('fixed_ctc_amount'), fixed_amount_total=Sum('fixed_amount'))
+
+        if totals.get('fixed_ctc_total') is None:
+            totals['fixed_ctc_total'] = 0
+
+        if totals.get('fixed_amount_total') is None:
+            totals['fixed_amount_total'] = 0
+
+        return totals
+
 class RelationshipType(models.Model):
     name = models.CharField(max_length=255, unique=True)
     slug = models.CharField(max_length=255, unique=True, editable=False)
@@ -1848,14 +1863,9 @@ class EntriesQuerySet(QuerySet):
             ctc += hours_per_user['user_hours'] * rate['amount']
             billable += hours_per_user['user_hours'] * rate['billable_amount']
 
-        totals = Issue.objects.filter(project_id=project.id).values('fixed_ctc_amount', 'fixed_amount').aggregate(
-            fixed_ctc_total=Sum('fixed_ctc_amount'), fixed_amount_total=Sum('fixed_amount'))
-
-        if totals.get('fixed_ctc_total') is not None:
-            ctc += totals['fixed_ctc_total']
-
-        if totals.get('fixed_amount_total') is not None:
-            billable += totals['fixed_amount_total']
+        ctc_and_billable_totals = project.get_ctc_and_billable_totals()
+        ctc += ctc_and_billable_totals['fixed_ctc_total']
+        billable += ctc_and_billable_totals['fixed_amount_total']
 
         return { 'hours': hours,
                  'ctc': ctc,
