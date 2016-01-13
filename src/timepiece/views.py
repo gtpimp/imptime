@@ -31,7 +31,7 @@ from copy import deepcopy, copy
 from collections import defaultdict
 import time
 
-from decimal import Decimal
+from decimal import Decimal, ROUND_HALF_UP
 from dateutil.relativedelta import relativedelta
 from itertools import groupby
 
@@ -3196,10 +3196,8 @@ def _augment_issue_data(issue, current_user, users_allowed_to_estimate_on_busine
 
         try:
             issue.representation.ctc += hours * rates_by_user[user.id]['ctc_amount']
-            if issue.is_fixed_cost:
-                issue.representation.billable = issue.billable
-            else:
-                issue.representation.billable += hours * rates_by_user[user.id]['billable_amount']
+            issue.representation.billable += hours * rates_by_user[user.id]['billable_amount']
+
         except KeyError:
             # no rate for this user, not a problem
             pass
@@ -3207,7 +3205,12 @@ def _augment_issue_data(issue, current_user, users_allowed_to_estimate_on_busine
         if current_user.id == user.id:
             issue.representation.current_user_issue_data = per_user_issue_data
 
-    
+    if issue.is_fixed_ctc_cost():
+        issue.representation.ctc += float(issue.fixed_ctc_amount)
+
+    if issue.is_fixed_cost():
+        issue.representation.billable += float(issue.fixed_amount)
+
             
     # for user, hours in issue.hours_for_users():
     #     if user not in users_allowed_to_estimate_on_business:

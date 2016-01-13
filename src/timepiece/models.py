@@ -1845,6 +1845,15 @@ class EntriesQuerySet(QuerySet):
             ctc += hours_per_user['user_hours'] * rate['amount']
             billable += hours_per_user['user_hours'] * rate['billable_amount']
 
+        totals = Issue.objects.filter(project_id=project.id).values('fixed_ctc_amount', 'fixed_amount').aggregate(
+            fixed_ctc_total=Sum('fixed_ctc_amount'), fixed_amount_total=Sum('fixed_amount'))
+
+        if totals.get('fixed_ctc_total') is not None:
+            ctc += totals['fixed_ctc_total']
+
+        if totals.get('fixed_amount_total') is not None:
+            billable += totals['fixed_amount_total']
+
         return { 'hours': hours,
                  'ctc': ctc,
                  'billable': billable }
@@ -3028,6 +3037,7 @@ class Issue(models.Model):
     auto_created_during_import = models.BooleanField(default=False)
     adhoc = models.BooleanField(default=False)
     fixed_amount = models.DecimalField(max_digits=8, decimal_places=2, blank=True, null=True)
+    fixed_ctc_amount = models.DecimalField(max_digits=8, decimal_places=2, blank=True, null=True)
 
     @classmethod
     def get_last_issue_number(self, business):
@@ -3207,16 +3217,20 @@ class Issue(models.Model):
         cost = 0
         for entry in self.related_entries:
             cost += entry.atrate
+
+        if self.is_fixed_ctc_cost():
+            cost += self.fixed_ctc_amount
+
         return cost
 
     @property
     def billable(self):
         cost = 0
+        for entry in self.related_entries:
+            cost += entry.atbillablerate
+
         if self.is_fixed_cost():
-            cost = self.fixed_amount
-        else:
-            for entry in self.related_entries:
-                cost += entry.atbillablerate
+            cost += self.fixed_amount
 
         return cost
 
@@ -3229,6 +3243,9 @@ class Issue(models.Model):
 
     def is_fixed_cost(self):
         return self.fixed_amount is not None
+
+    def is_fixed_ctc_cost(self):
+        return self.fixed_ctc_amount is not None
 
 class IssueStatus(models.Model):
     name = models.CharField(max_length=255, blank=True, null=True)
