@@ -1082,6 +1082,9 @@ class Project(models.Model):
 
             min_cost = estimated_cost + actual_cost_so_far
 
+            if issue.is_fixed_cost():
+                min_cost += float(issue.fixed_amount)
+
             return points, unadjusted_points, min_cost, rate
 
         if issues is not None and issues.count() > 0:
@@ -1141,7 +1144,7 @@ class Project(models.Model):
                             points = issue.issue_points.all().filter(user=manager).values('points')[0]['points']
                             points, unadjusted_points, manager_cost, rate = _calculate_user_contribution_to_issue_cost(issue, user_id, points)
                             estimated_management_cost += manager_cost
-                            issue_data['combined_cost'] = issue_data['combined_cost'] + manager_cost
+                            issue_data['combined_cost'] += manager_cost
 
                         except IndexError:
                             pass
@@ -1152,7 +1155,7 @@ class Project(models.Model):
                             points = issue.issue_points.all().filter(user=tester).values('points')[0]['points']
                             points, unadjusted_points, tester_cost, rate = _calculate_user_contribution_to_issue_cost(issue, user_id, points)
                             estimated_testing_cost += tester_cost
-                            issue_data['combined_cost'] = issue_data['combined_cost'] + tester_cost
+                            issue_data['combined_cost'] += tester_cost
                         except IndexError:
                             pass
 
