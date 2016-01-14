@@ -3537,8 +3537,11 @@ def issue_fixed_cost_update(request, id, template="timepiece/project/issue_detai
     try:
         old_fixed_amount = edited_issue.fixed_amount
         edited_issue.fixed_amount = float(request.POST["fixed_amount"])
+
+        old_fixed_ctc_amount = edited_issue.fixed_ctc_amount
+        edited_issue.fixed_ctc_amount = float(request.POST["fixed_ctc_amount"])
         edited_issue.save()
-        timepiece.IssueHistory.add_history(request.user, edited_issue, "changed fixed_amount", old_fixed_amount, edited_issue.fixed_amount)
+        timepiece.IssueHistory.add_history(request.user, edited_issue, "changed fixed_ctc_amount", old_fixed_ctc_amount, edited_issue.fixed_ctc_amount)
     except KeyError:
         pass
 

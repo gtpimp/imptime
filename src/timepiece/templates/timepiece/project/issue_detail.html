@@ -59,10 +59,13 @@
   {% endcomment %}
 
     {% if issue.pk %} {% has_permission has_view_ctc_billable_rates project.business %}
-    <div class="fixed_cost_section">
+    <div class="money_cell fixed_cost_section">
         <div class="show_fixed_cost_button">
             {% if issue.fixed_amount %}
                 <div>Fixed amount: {{ issue.fixed_amount }}</div>
+            {% endif %}
+            {% if issue.fixed_ctc_amount %}
+                <div>Fixed CTC amount: {{ issue.fixed_ctc_amount }}</div>
             {% endif %}
             <a class=" btn small_button" href="#" onclick="$('.fixed_cost_panel').show(); $('.show_fixed_cost_button').hide(); return false;">
                 <img src="{{ STATIC_URL }}/images/timepiece/icons/comment_add.png" title="Fixed cost"/> </a>
@@ -70,7 +73,9 @@
         <div class="fixed_cost_panel" style="display:none">
             <div>Fixed Amount</div>
             <input type="text" name="fixed_amount" data-url="{% url 'issue_fixed_cost_update' issue.pk %}" value="{{ issue.fixed_amount|default:'' }}" /><br/>
-            <input type="button" class="btn small_button" onclick="imp.on_set_issue_fixed_cost($('input[name=fixed_amount]'));" value="save"/>
+            <div>Fixed CTC Amount</div>
+            <input type="text" name="fixed_ctc_amount" value="{{ issue.fixed_ctc_amount|default:'' }}" /><br/>
+            <input type="button" class="btn small_button" onclick="imp.on_set_issue_fixed_cost($('input[name=fixed_amount]'), $('input[name=fixed_ctc_amount]'));" value="save"/>
             <input type="button" class="btn small_button" onclick="$('.fixed_cost_section .show_fixed_cost_button').show(); $(this).parents('.fixed_cost_panel').hide(); return false;" value="cancel"/>
         </div>
     </div>

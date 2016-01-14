@@ -1048,25 +1048,31 @@ imp.show_issue_history = function(url) {
 };
 
 
-imp.on_set_issue_fixed_cost = function(el) {
-    debugger;
+imp.on_set_issue_fixed_cost = function (_fixed_amount_el, _fixed_ctc_amount_el) {
     var on_done = imp.issue_loading("saving the fixed amount");
-    var input_el = $(el);
-    var url = input_el.data('url');
-    if (!url)
-    {
+    var fixed_amount_el = $(_fixed_amount_el);
+    var fixed_ctc_amount_el = $(_fixed_ctc_amount_el);
+
+    var url = fixed_amount_el.data('url');
+    if (!url) {
         alert('url is not specified');
         return;
     }
-    input_el.hide();
 
-    var response = $.ajax({type:"POST",
-                           url: url,
-                           data: {'fixed_amount':input_el.val()}
-                          });
+    fixed_amount_el.hide();
+    fixed_ctc_amount_el.hide();
 
-    response.done( function() {
-	on_done();
-	imp.refresh_issue_detail();
-    } );
+    var response = $.ajax({
+        type: "POST",
+        url: url,
+        data: {
+            'fixed_amount': fixed_amount_el.val(),
+            'fixed_ctc_amount': fixed_ctc_amount_el.val()
+        }
+    });
+
+    response.done(function () {
+        on_done();
+        imp.refresh_issue_detail();
+    });
 };
