@@ -1048,3 +1048,25 @@ imp.show_issue_history = function(url) {
 };
 
 
+imp.on_set_issue_fixed_cost = function(el) {
+    debugger;
+    var on_done = imp.issue_loading("saving the fixed amount");
+    var input_el = $(el);
+    var url = input_el.data('url');
+    if (!url)
+    {
+        alert('url is not specified');
+        return;
+    }
+    input_el.hide();
+
+    var response = $.ajax({type:"POST",
+                           url: url,
+                           data: {'fixed_amount':input_el.val()}
+                          });
+
+    response.done( function() {
+	on_done();
+	imp.refresh_issue_detail();
+    } );
+};

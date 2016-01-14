@@ -3520,6 +3520,36 @@ def issue_detail_update(request,  template="timepiece/project/issue_detail.html"
 
 @csrf_exempt
 @login_required
+def issue_fixed_cost_update(request, id, template="timepiece/project/issue_detail.html", context=None):
+    context = context or {}
+
+    try:
+        edited_issue = timepiece.Issue.objects.get(pk=id)
+    except KeyError:
+        edited_issue = None
+
+    project = edited_issue.project
+
+    has_edit_description = timepiece.BusinessPermissions.objects.get_or_create(business=project.business, user=request.user)[0].has_view_ctc_billable_rates
+    if not has_edit_description:
+        raise PermissionDenied
+
+    try:
+        old_fixed_amount = edited_issue.fixed_amount
+        edited_issue.fixed_amount = float(request.POST["fixed_amount"])
+        edited_issue.save()
+        timepiece.IssueHistory.add_history(request.user, edited_issue, "changed fixed_amount", old_fixed_amount, edited_issue.fixed_amount)
+    except KeyError:
+        pass
+
+    get_interface_plugin(request, project.business).update_issue_description(edited_issue)
+
+
+    return HttpResponse("")
+
+
+@csrf_exempt
+@login_required
 def issue_status_update(request,  template="timepiece/project/issue_detail.html", context=None):
     context = context or {}
 
