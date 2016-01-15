@@ -378,17 +378,13 @@ imp.create_chart = function(chart_info) {
 imp.create_splitter = function() {
     if ( $(".splitter").splitter ) {
 	$(".splitter").css({height:$(window).height()*0.9+"px"});
-        var size_right = Cookies.get('splitter_right_width');
-        if ( ! size_right ) {
-            size_right = $(window).width()*0.25;
-        }
 	$(".splitter").splitter({sizeTop: $(".splitter").height()*0.9, 
 				 splitHorizontal: true
 				});
         
         $(".splitter").on("splitter:resized", function(evt, data) {
-            var right_width = data.B.height();
-            Cookies.set('splitter_right_width', right_width);
+            var bottom_height = data.B.height();
+            Cookies.set('splitter_bottom_height', bottom_height);
         });
 
 	$(window).on("resize", function(e) {
@@ -404,9 +400,19 @@ imp.update_splitter_view = function (issue_id) {
     var split_timeout = 250;
     if ( !$(".splitter-bottom").is(":visible") ) {
 	$(".splitter-bottom, .hsplitbar").show();
-	$('.splitter-top').animate({height: '60%'},split_timeout);
-	$('.splitter-bottom').animate({height: '40%', top: "60%"},split_timeout);
-	$('.hsplitbar').animate({top: '60%'},split_timeout);
+	
+        var size_bottom = Cookies.get('splitter_bottom_height');
+        if ( size_bottom ) {
+	    size_top = $('.splitter').height() - size_bottom;
+	    $('.splitter-top').animate({height: size_top },split_timeout);
+	    $('.splitter-bottom').animate({height: size_bottom, top: size_top},split_timeout);
+	
+	    $('.hsplitbar').animate({top: size_top},split_timeout);
+	} else {
+	    $('.splitter-top').animate({height: "60%" },split_timeout);
+	    $('.splitter-bottom').animate({height: "40%", top: "60%"},split_timeout);
+	    $('.hsplitbar').animate({top: "60%"},split_timeout);
+	}
 	
     } else if ( $(".splitter-bottom").is(":visible") && imp.current_issue_id == issue_id ){
 	$('.splitter-bottom').animate({height: '0', top: $(window).height()},split_timeout, function(){
