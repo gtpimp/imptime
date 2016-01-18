@@ -6212,6 +6212,12 @@ button.btn.btn-mini, input[type="submit"].btn.btn-mini {
   float: right;
   margin: 15px 0 0 10px;
 }
+
+.navbar .nav.pull-right li a.user_email span {
+    margin: 0px 0px 0 40px;
+}
+
+
 .navbar .nav.pull-right li a.user_email > .caret {
     margin-top: 8px;    
     border-top-color: #999999;

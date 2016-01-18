@@ -221,18 +221,16 @@ imp.refresh_project = function(project_id) {
 
 imp.on_issue_rows_loaded = function(issue_row_container) {
     $(issue_row_container).find(".drag_img").parents("tr").hover( function() {
-								      $(this).find('.drag_img').show();
-								      $(this).find('.emacs_copy_img').show();
-                                                                      $(this).find('.issue_action_menu_img').show();
-								      $(this).addClass("hovered");
-
-								  },
-								  function() {
-								      $(this).find('.drag_img').hide();
-								      $(this).find('.emacs_copy_img').hide();
-                                                                      $(this).find('.issue_action_menu_img').hide();
-								      $(this).removeClass("hovered");
-								  });
+	$(this).find('.drag_img').show();
+	$(this).find('.emacs_copy_img').show();
+        $(this).find('.issue_action_menu_img').show();
+	$(this).addClass("hovered");	
+    }, function() {
+	$(this).find('.drag_img').hide();
+	$(this).find('.emacs_copy_img').hide();
+        $(this).find('.issue_action_menu_img').hide();
+	$(this).removeClass("hovered");
+    });
     imp.refresh_hidden_fields(issue_row_container);
     imp.highlight_issue();
     imp.set_issue_checkbox_hooks(issue_row_container);
@@ -377,18 +375,25 @@ imp.create_chart = function(chart_info) {
 
 imp.create_splitter = function() {
     if ( $(".splitter").splitter ) {
-	$(".splitter").css({height:$(window).height()*0.9+"px"});
-	$(".splitter").splitter({sizeTop: $(".splitter").height()*0.9, 
+	var splitter_height = $(window).height() - $(".nav-parent").outerHeight() - $(".current_sprint_details").outerHeight() - $(".footer").outerHeight();
+
+	$(".project_menu").css({height:splitter_height+"px"});
+	$(".splitter").css({height:splitter_height+"px"});
+
+
+	$(".splitter").splitter({sizeTop: $(".splitter").height(),
 				 splitHorizontal: true
 				});
         
+	//$(".splitter, .splitter > div").width($(".content_container").width() - $(".project_menu").outerWidth() - 1);
+
+	$(".splitter-top").css({"height": splitter_height+"px"});
         $(".splitter").on("splitter:resized", function(evt, data) {
             var bottom_height = data.B.height();
             Cookies.set('splitter_bottom_height', bottom_height);
         });
-
+	
 	$(window).on("resize", function(e) {
-	    console.log(window.width)
 	    imp.update_splitter_height();
 	});
 
@@ -396,33 +401,24 @@ imp.create_splitter = function() {
 };
 
 imp.update_splitter_view = function (issue_id) {
+    var splitter_animation_speed = 250;
+    var splitter_bottom_padding = 8;
 
-    var split_timeout = 250;
-    if ( !$(".splitter-bottom").is(":visible") ) {
-	$(".splitter-bottom, .hsplitbar").show();
+    $(".splitter-bottom, .hsplitbar").show();
+    
+    var size_bottom = Cookies.get('splitter_bottom_height');
+    if ( size_bottom ) {
+	var size_top = $('.splitter').height() - size_bottom; 
+	$('.splitter-bottom').animate({height: (size_bottom-splitter_bottom_padding)+"px", top: size_top},splitter_animation_speed);
 	
-        var size_bottom = Cookies.get('splitter_bottom_height');
-        if ( size_bottom ) {
-	    size_top = $('.splitter').height() - size_bottom;
-	    $('.splitter-top').animate({height: size_top },split_timeout);
-	    $('.splitter-bottom').animate({height: size_bottom, top: size_top},split_timeout);
+	$('.splitter-top').animate({height: size_top },splitter_animation_speed);
 	
-	    $('.hsplitbar').animate({top: size_top},split_timeout);
-	} else {
-	    $('.splitter-top').animate({height: "60%" },split_timeout);
-	    $('.splitter-bottom').animate({height: "40%", top: "60%"},split_timeout);
-	    $('.hsplitbar').animate({top: "60%"},split_timeout);
-	}
-	
-    } else if ( $(".splitter-bottom").is(":visible") && imp.current_issue_id == issue_id ){
-	$('.splitter-bottom').animate({height: '0', top: $(window).height()},split_timeout, function(){
-	    $(".splitter-bottom, .hsplitbar").hide();
-	});
-	$('.hsplitbar').css({top: $(window).height()});
-	$('.splitter-top').animate({height: $(window).height()*0.8},split_timeout);	
-	
+	$('.hsplitbar').animate({top: size_top},splitter_animation_speed);
+    } else {
+	$('.splitter-bottom').animate({height: "39%", top: "60%"},splitter_animation_speed);
+	$('.splitter-top').animate({height: "60%" },splitter_animation_speed);
+	$('.hsplitbar').animate({top: "60%"},splitter_animation_speed);
     }
-
 }
 
 imp.update_splitter_height = function() {
@@ -430,17 +426,25 @@ imp.update_splitter_height = function() {
     var top = splitter.offset().top;
     var wh = $(window).height();
     var height = (wh-top-20)+"px";
+    var splitter_bottom_padding = 8;
 
     var hbaroffset = splitter.find(".hsplitbar").offset().top;
     var splitterheight = splitter.height()
     
-
     splitter.css("height", height);
     splitter.find(".splitter-top").css("height", hbaroffset-top);
 
-    var splittertopheight = splitter.find(".splitter-top").height();
-    splitter.find(".splitter-bottom").css("height", splitterheight-splittertopheight);
 
+    var splittertopheight = splitter.find(".splitter-top").height();
+    splitter.find(".splitter-bottom").css("height", splitterheight-splittertopheight-splitter_bottom_padding);
+
+    if ($(".project_menu").is(":visible")) {
+	$(".splitter, .splitter > div").width($(".content_container").width()- $(".project_menu").outerWidth() - 1);
+    } else {
+	$(".splitter, .splitter > div").width($(".content_container").width());
+    }
+    
+	
 };
 
 imp.toggle_show_adhoc_issues = function() {
@@ -582,11 +586,20 @@ imp.on_document_ready = function() {
 	imp.show_assigned_issues($(this).data('username'));
     });
 
+    $('.sprint_menu_trigger').click(function() {
+	$(".project_menu").animate({width:"toggle"}, 200, function(){
+	    if ($(".project_menu").is(":visible")) {
+		$(".splitter, .splitter > div").width($(".content_container").width()- $(".project_menu").outerWidth() - 1);
+	    } else {
+		$(".splitter, .splitter > div").animate({width:$(".content_container").width()});
+	    }
+	});
+
+	
+    });
+
+    
+
 };
 
 $(document).ready(imp.on_document_ready);
-
-
-$(window).on('resize', function() {
-    imp.update_splitter_height();
-});

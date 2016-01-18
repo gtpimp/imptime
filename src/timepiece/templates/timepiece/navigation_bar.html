@@ -5,21 +5,6 @@
       <div class="nagivation_head">
         <a class="home" href="http://www.implicitdesign.co.za"> Imptime </a>
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
         {% block navbar-right %}
         {% if user.is_authenticated %}
         <ul class="nav pull-right">
@@ -52,7 +37,8 @@
 
           <li class="dropdown">
             <a href="" class="user_email dropdown-toggle" data-toggle="dropdown">
-              <span><div class="hexagon"></div>{{ user.first_name }}</span>
+              <div class="hexagon"></div>
+              <span>{{ user.first_name }}</span>
               <br>
               <span class="small">{{ user.email }}</span>
               <b class="caret"></b>

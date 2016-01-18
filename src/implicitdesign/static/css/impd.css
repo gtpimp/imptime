@@ -135,11 +135,12 @@ a.ico-calc {
 }
 
 .hexagon {
-  position: relative;
+  position: absolute;
   width: 30px; 
   height: 17.32px;
   background-color: #e7e8e9;
   margin: 2px 0;
+  display: block;
 }
 
 .hexagon:before,
@@ -163,8 +164,34 @@ a.ico-calc {
 }
 
 .project_menu {
+    height: inherit;
+    width: 12%;
     display: none;
-    height: 100%
+    overflow-y: auto;
+    border-right: 8px solid #413d44;
+    background-color: #cececf;
+    float: left;
+}
+
+.project_menu .sprint_information {
+    margin: 10px 10px 0 10px;
+    background-color: #FFFFFF;
+    height: 65px;
+    vertical-align: middle;
+    display: block;
+    text-align: center;
+    box-shadow: 3px 2px 4px #aaa;
+    cursor: pointer;
+    overflow: hidden;
+}
+
+.sprint_information small{
+    white-space: nowrap;
+}
+.project_menu .sprint_information .project_number {
+    padding: 20px 0 0 0;
+    white-space: nowrap;
+    overflow: hidden;
 }
 
 .current_sprint_details {

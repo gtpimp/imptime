@@ -140,7 +140,7 @@
 		var bar = $(panes[2] || '<div></div>')
 			.insertAfter(A).css("z-index", "100").append(focuser)
 			.attr({"class": opts.splitbarClass, unselectable: "on"})
-			.css({position: "absolute",	"user-select": "none", "-webkit-user-select": "none",
+			.css({position: "inherit","user-select": "none", "-webkit-user-select": "none",
 				"-khtml-user-select": "none", "-moz-user-select": "none"})
 			.bind("mousedown", startSplitMouse);
 		// Use our cursor unless the style specifies a non-default cursor

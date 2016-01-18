@@ -29,8 +29,8 @@
 <div class="current_sprint_details">
   <div class="sprint_banner">
 
-    <a href="#"><img src="{{STATIC_URL}}/images/implicitdesign/menu.png"/></a>
-    <span class="project_number">#1234</span> - Sprint Sample Text - Sample project
+    <span class="sprint_menu_trigger"><img src="{{STATIC_URL}}/images/implicitdesign/menu.png"/></span>
+    {% comment %} <span class="project_number">#1234 - Sprint Sample Text - Sample project</span> {% endcomment %}
   </div>
 </div>
 
@@ -40,47 +40,54 @@
   {% has_permission has_create_sprint business %}  
   <div class="new_issue_form to_edit_expanded_form" style="display:none;position:absolute;z-index:100">		  
   </div>
-  {% end_permission %}
+{% end_permission %}
 
   
 </div>
 {% endif %}
 
-<div class="project_menu">
-  {% for project in projects %} 
-  <div class="sprint_information">
-    <span class="project_number">#{{project.id}}</span> - {{project.business.name}} - {{ project }}
+
+
+<div class="content_container">
+  <div class="project_menu">
+    {% for project in projects %} 
+    <div class="sprint_information {% if project.is_open %}open_project{%else%}closed_project{% endif %}"
+         title="#{{project.id}} - {{project.business.name}} - {{ project }}"
+         {% if not project.is_preloaded and not project.is_open%}style="display:none"{% endif %}>
+      <div class="project_number">#{{project.id}} - {{project.business.name}}</div>
+      <p><small>{{ project }}</small></p>
+    </div>
+    {% endfor %}
   </div>
-  {% endfor %}
-</div>
-<div class="splitter">
-  <div class="splitter-top">
+  <div class="splitter">
+    <div class="splitter-top">
 
       {% ifequal business.sync_with "jira" %}
-	<div class="jira_info">
+      <div class="jira_info">
 	  Jira is enabled for this project. Support is limited to:
-	  <ul>
-	    <li>Adds a 'sync jira' menu option to the Sprints main menu. This fetches all latest issues and sprints and imports them. Over-writes any local settings, except for time entries</li>
-	    <li>New issues are correctly created  (note there are two assigned user fields, the jira user will override the default user)</li>
-	    <li>In this version the following fields are correctly synced to Jira: subject, description, state, assigned user</li>
-	  </ul>
-	  <div style="clear:both"></div>
-	</div>
+	<ul>
+	  <li>Adds a 'sync jira' menu option to the Sprints main menu. This fetches all latest issues and sprints and imports them. Over-writes any local settings, except for time entries</li>
+	  <li>New issues are correctly created  (note there are two assigned user fields, the jira user will override the default user)</li>
+	  <li>In this version the following fields are correctly synced to Jira: subject, description, state, assigned user</li>
+	</ul>
+	<div style="clear:both"></div>
+      </div>
       {% endifequal %}
       
-    <ul class="project_list open" project_sort_url="{% url 'sortable_project_update' %}">
-      {% for project in projects %} 
+      <ul class="project_list open" project_sort_url="{% url 'sortable_project_update' %}">
+        {% for project in projects %} 
         {% include "timepiece/project/_project_list_item.html" %}
-      {% endfor %}
+        {% endfor %}
 
-      {% include "timepiece/project/floating_project_detail.html" with project=floating_project %}
+        {% include "timepiece/project/floating_project_detail.html" with project=floating_project %}
 
-    </ul>
-        
-  </div>
+      </ul>
+      
+    </div>
 
-  <div class="splitter-bottom">
-    <div class="issue_detail">
+    <div class="splitter-bottom">
+      <div class="issue_detail">
+      </div>
     </div>
   </div>
 </div>
@@ -92,8 +99,8 @@
 </div>
 
 <script>
-  imp.highlight_issue_id='{{highlight_issue_id}}';
-  imp.active_business_id='{{business.id}}';
+imp.highlight_issue_id='{{highlight_issue_id}}';
+imp.active_business_id='{{business.id}}';
 </script>
 
 {% endblock %}

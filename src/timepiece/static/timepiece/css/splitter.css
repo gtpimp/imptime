@@ -4,24 +4,25 @@ html {
 }
 
 .splitter {
-	height: 500px;
-	width: 100%;
-	/*border: 5px solid #aaa;*/
+    float: left;
+    width: 100%;
 }
+
 .splitter .splitter-left, .splitter .splitter-right,  .splitter .splitter-top, .splitter .splitter-bottom {
     overflow-x: hidden;
     overflow-y: auto;
+    width: 100%;
 }
-
-
 .splitter .splitter-bottom {
     display: none;
+    top: 100%;
 }
 
 .vsplitbar {
-	width: 5px;
-	background: #aaa;
-	border: 1px solid #000000;
+    width: 5px;
+    background: #aaa;
+    border: 1px solid #000000;
+    bottom: 0px
 }
 
 .hsplitbar {
@@ -29,4 +30,5 @@ html {
     height: 5px;
     background: #aaa;
     border: 1px solid #000000;
+    top: 100%;
 }
