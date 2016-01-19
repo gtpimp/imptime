@@ -56,6 +56,7 @@ body {
     text-align: left;
     display: inline-flex;
     vertical-align: text-bottom;
+    margin: 15px 0 0 0px;
 }
 
 
@@ -165,8 +166,8 @@ a.ico-calc {
 
 .project_menu {
     height: inherit;
-    width: 12%;
-    display: none;
+    width: 180px;
+    display: block;
     overflow-y: auto;
     border-right: 8px solid #413d44;
     background-color: #cececf;
@@ -211,4 +212,15 @@ a.ico-calc {
 
 .current_sprint_details .sprint_banner span {
     padding: 0 10px 0 25px;
+}
+
+.sprint_list {
+    overflow-y: auto;
+    height: 79%;
+}
+
+.sprint_actions {
+    height: 20%;
+    background: #13102c;
+    border-bottom: 8px solid #413d44;
 }

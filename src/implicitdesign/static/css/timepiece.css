@@ -9381,6 +9381,7 @@ ul.business_menu_on_project_page li {
 
 ul.project_list {
  list-style-type:none;
+ margin: 15px 22px 0px 15px;
 }
 
 .table-amounts {

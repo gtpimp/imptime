@@ -95,16 +95,16 @@ imp.projects._make_load_for_data = function ( done_data_function_handler ) {
     return function(element, expand_url) {
         var done_data_function_handler = _done_data_function_handler;
         var current_row = $(element);
-        var parent_table = $(current_row.closest(".project_table"));
+        var parent_table = $("ul.project_list"); // $(current_row.closest(".project_table"));
         var project_contents = parent_table.find(".project_contents");
-        var area_to_insert = project_contents.find(".information");
+        var area_to_insert = $("ul.project_list");//project_contents.find(".information");
         if (area_to_insert.find(".project_detail").length > 0) {
             area_to_insert.find(".project_detail").toggle();
         }
 
-        if ( imp.projects.already_loaded_sprints[expand_url] ) {
-            return;
-        }
+        // if ( imp.projects.already_loaded_sprints[expand_url] ) {
+        //     return;
+        // }
 
         area_to_insert.find(".project_detail").remove();
         var loading = area_to_insert.find(".loading");
@@ -385,7 +385,7 @@ imp.create_splitter = function() {
 				 splitHorizontal: true
 				});
         
-	//$(".splitter, .splitter > div").width($(".content_container").width() - $(".project_menu").outerWidth() - 1);
+	$(".splitter, .splitter > div").width($(".content_container").width() - $(".project_menu").outerWidth() - 1);
 
 	$(".splitter-top").css({"height": splitter_height+"px"});
         $(".splitter").on("splitter:resized", function(evt, data) {
@@ -587,15 +587,19 @@ imp.on_document_ready = function() {
     });
 
     $('.sprint_menu_trigger').click(function() {
-	$(".project_menu").animate({width:"toggle"}, 200, function(){
-	    if ($(".project_menu").is(":visible")) {
-		$(".splitter, .splitter > div").width($(".content_container").width()- $(".project_menu").outerWidth() - 1);
-	    } else {
-		$(".splitter, .splitter > div").animate({width:$(".content_container").width()});
-	    }
-	});
-
-	
+	if ( $(".project_menu").is(":visible") ) {
+	    $(".splitter, .splitter > div").animate({width:$(".content_container").width()}, 225);
+	    $(".project_menu").animate({width:"toggle"}, 200);
+	} else {
+	    //$(".splitter, .splitter > div").width($(".content_container").width()- $(".project_menu").outerWidth() - 1);
+	    var new_width = $(".content_container").width()- $(".project_menu").outerWidth() - 1;
+	    $(".splitter").css("float", "right");
+	    $(".splitter, .splitter > div").width(new_width);
+	    $(".project_menu").animate({width:"toggle"}, 200, function () {
+		$(".splitter").css("float", "left");
+	    });
+	    
+	}	
     });
 
     

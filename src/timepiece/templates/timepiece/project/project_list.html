@@ -50,17 +50,26 @@
 
 <div class="content_container">
   <div class="project_menu">
-    {% for project in projects %} 
-    <div class="sprint_information {% if project.is_open %}open_project{%else%}closed_project{% endif %}"
-         title="#{{project.id}} - {{project.business.name}} - {{ project }}"
-         {% if not project.is_preloaded and not project.is_open%}style="display:none"{% endif %}>
-      <div class="project_number">#{{project.id}} - {{project.business.name}}</div>
-      <p><small>{{ project }}</small></p>
+
+    <div class="sprint_actions">
+      The sprint actions are show here
     </div>
-    {% endfor %}
+    <div class="sprint_list">
+      {% for project in projects %} 
+      <div class="sprint_information {% if project.is_open %}open_project{%else%}closed_project{% endif %}"
+           preloaded="{{ project.is_preloaded }}"
+           title="#{{project.id}} - {{project.business.name}} - {{ project }}"
+           {% if not project.is_preloaded and not project.is_open%}style="display:none"{% endif %}
+           onclick="imp.projects.load_or_display_issues(this, '{% url 'get_project_detail' project.id %}')">
+        <div class="project_number">#{{project.id}} - {{project.business.name}}</div>
+        <p><small>{{ project }}</small></p>
+      </div>
+      {% endfor %}
+    </div>
   </div>
   <div class="splitter">
     <div class="splitter-top">
+
 
       {% ifequal business.sync_with "jira" %}
       <div class="jira_info">
@@ -75,8 +84,14 @@
       {% endifequal %}
       
       <ul class="project_list open" project_sort_url="{% url 'sortable_project_update' %}">
+        
+        <div class="project_table_row project_contents">
+          <div class="project_table_cell information" project_id="{{project.id}}">
+            <img style="display:none" class="loading" src="{{STATIC_URL}}/images/icons/loadingAnimation.gif"/>
+          </div>
+        </div>
         {% for project in projects %} 
-        {% include "timepiece/project/_project_list_item.html" %}
+        {% comment %}{% include "timepiece/project/_project_list_item.html" %}{% endcomment %}
         {% endfor %}
 
         {% include "timepiece/project/floating_project_detail.html" with project=floating_project %}
