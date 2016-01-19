@@ -196,6 +196,15 @@
                 </li>
                 {% endif %}
 
+		        {% if user.is_superuser %}
+                    <li class="dropdown">
+                        <a href="#" class="dropdown-toggle" data-toggle="dropdown">Clients <b class="caret"></b></a>
+                        <ul class="dropdown-menu">
+                            <li><a href="{% url 'client_list' %}">Clients</a></li>
+                        </ul>
+                    </li>
+                {% endif %}
+
 			    
 			    <li class="dropdown" id="checklist_menu_container" data-refresh-url="{% url 'render_checklist_navigation' business.id %}">
 			        {% include "timepiece/project/_checklist_menu.html" %}
