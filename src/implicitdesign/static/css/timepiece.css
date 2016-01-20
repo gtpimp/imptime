@@ -212,16 +212,16 @@ a:hover {
     width: 100%;
 }
 
-.issue_comments {
-    width: 35%;
-    display: inline-block;
-}
+/* .issue_comments { */
+/*     width: 35%; */
+/*     display: inline-block; */
+/* } */
 
-.edit_description {
-    width: 40%;
-    vertical-align:top;
-    display: inline-block;
-}
+/* .edit_description { */
+/*     width: 40%; */
+/*     vertical-align:top; */
+/*     display: inline-block; */
+/* } */
 
 .edit_description .content {
     background-color: #cdcdcd;
@@ -9969,11 +9969,11 @@ border: 1px solid #939eb3;
     padding-bottom: 10px;
     color: #121212;
     font-family: "Dura Sans", Arial, sans-serif;
-    margin: 15px;
-    background-color: whitesmoke;
-    border: 2px solid;
-    border-style: outset;
-    box-shadow: 2px 3px 2px 0px grey;
+    /* margin: 15px; */
+    /* background-color: whitesmoke; */
+    /* border: 2px solid; */
+    /* border-style: outset; */
+    /* box-shadow: 2px 3px 2px 0px grey; */
 }
 
 .issue_detail h1 {

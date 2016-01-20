@@ -393,8 +393,11 @@ imp.create_splitter = function() {
     var split_position = Cookies.get('splitter_position');
     if ( ! split_position || parseInt(split_position)<1 ) {
         split_position = "70%";
+    } else {
+        split_position += "px";
     }
-    $(".splitter").split({orientation:'vertical', limit:100, position:split_position});
+    $(".splitter").split( { orientation:'vertical', limit:100, position:split_position,
+                            onDragEnd: function() { imp.update_splitter_dimensions(); } } );
     imp.update_splitter_dimensions();
 
     $(window).on("resize", function(e) {
@@ -409,11 +412,14 @@ imp.update_splitter_dimensions = function() {
     var wh = $(window).height();
     var height = (wh-top-20)+"px";
     splitter.height(height);
-    var width = $(window).width() - 100;
+    var width = $(window).width()-100;
     if ( $(".project_menu").is(":visible") ) {
         width -= $(".project_menu").width();
     }
     splitter.width(width);
+    var split_position = splitter.split().position();
+    Cookies.set('splitter_position', split_position);
+    splitter.split().refresh();
 };
 
 imp.toggle_show_adhoc_issues = function() {
