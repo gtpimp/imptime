@@ -97,6 +97,10 @@ imp.projects.set_project_title = function( project ) {
     project_title_el.find(".business_name").html(project.business.name);
 };
 
+imp.projects.set_project_menu = function( project_menu ) {
+    $(".project_menu .project_actions").html(project_menu);
+};
+
 imp.projects._make_load_for_data = function ( done_data_function_handler ) {
     var _done_data_function_handler = done_data_function_handler;
 
@@ -124,9 +128,8 @@ imp.projects._make_load_for_data = function ( done_data_function_handler ) {
                                     area_to_insert.append($(data.issue_list_html));
                                     loading.hide();
                                     imp.projects.already_loaded_sprints[expand_url] = true;
-
                                     imp.projects.set_project_title(data.project);
-                                    
+                                    imp.projects.set_project_menu(data.project_menu);
                                     imp.on_issue_rows_loaded(area_to_insert);
 
                                     if (done_data_function_handler) {

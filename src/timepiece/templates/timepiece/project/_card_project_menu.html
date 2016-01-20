@@ -2,191 +2,184 @@
 
 <div class="card_menu">
   
-  <div class="title" >
-    <ul>
-      <li style="display:none">
-        <a onclick="$(this).parents('.card_menu').find('.menu_items').toggle(); return false;">Menu</a>
-      </li>
-    </ul>
-  </div>
   <div class="menu_items">
-    <ul>
 
-      {% has_permission has_add_issue project.business %}
-      <li class="parent_li_of_form_on_click">
+    {% has_permission has_add_issue project.business %}
+    <div class="menu_item commonly_used parent_li_of_form_on_click">
 
-        <a href="#" class="to_expand_form_on_click" onclick="imp.do_form_show(this , '{% url 'add_issue' project.id %}' )">
-            Add Issue
-        </a>
-      </li>
-      {% end_permission %}
+      <a href="#" class="to_expand_form_on_click" onclick="imp.do_form_show(this , '{% url 'add_issue' project.id %}' )" title="Add issue">
+        <img src="{{STATIC_URL}}images/icons/add.png">Add issue</a>
+      </a>
+    </div>
+    <div style="clear:both"></div>
+    {% end_permission %}
 
-      <li>
-        <a href="#" onclick="imp.popup_page('{% url 'auto_issue_sort' project.id %}'); return false;">
-          Sort
-        </a>
-      </li>
+    <div class='menu_item commonly_used'>
+      <a href="{% url 'project_list' project.id %}" onclick="imp.refresh_project({{project.id}}); return false;" title="Refresh issues">
+        <img src="{{STATIC_URL}}images/icons/arrow_refresh.png">Refresh</a>
+      </a>
+    </div>
+    <div style="clear:both"></div>
+    
+    <div class='menu_item' >
+      <a href="#" onclick="imp.popup_page('{% url 'auto_issue_sort' project.id %}'); return false;">
+        Sort
+      </a>
+    </div>
 
-      {% if perms.timepiece.change_project %}
-      <li>
-        <a href="#" onclick="imp.popup_page('{% url 'edit_project' project_id=project.id %}'); return false;">
-          Edit
-        </a>
-      </li>
-      {% endif %}
+    {% if perms.timepiece.change_project %}
+    <div class='menu_item' >
+      <a href="#" onclick="imp.popup_page('{% url 'edit_project' project_id=project.id %}'); return false;">
+        Edit
+      </a>
+    </div>
+    {% endif %}
 
-      <li>
-        <a href="{% url 'project_list' project.id %}" onclick="imp.refresh_project({{project.id}}); return false;">
-          Refresh
-        </a>
-      </li>
+    {% ifequal project.business.sync_with "jira" %}
+    {% include "jira/project_menu.html" %}
+    {% endifequal %}
 
-      {% ifequal project.business.sync_with "jira" %}
-        {% include "jira/project_menu.html" %}
-      {% endifequal %}
+    {% comment %}
+    {% has_permission has_view_ctc_billable_rates project.business %}
+    <div class='menu_item' >
+      <a href="{% url 'sprint_export' project.id %}">Export</a>
+    </div>
+    {% end_permission %}
+    {% endcomment %}
 
-      {% comment %}
-      {% has_permission has_view_ctc_billable_rates project.business %}
-      <li>
-        <a href="{% url 'sprint_export' project.id %}">Export</a>
-      </li>
-      {% end_permission %}
-      {% endcomment %}
+    {% has_permission has_view_project_card project.business %}
+    <div class='menu_item' >
+      <a href="#" onclick="imp.popup_page('{% url 'sprint_report_settings' project.id %}?only_these_issues='+imp.get_selected_issue_ids_for_get($(this).parents('.project_li'))); return false;">
+	Quote
+      </a>
+    </div>
+    {% end_permission %}
+    
+    {% comment %}
+    {% has_permission has_edit_project_detail project.business %}
+    <div class='menu_item' >
+      <a href="#" onclick="window.open('{%url 'project_detail' project.business.id%}')">
+        Breakdown
+      </a>
+    </div>
+    {% end_permission %}
+    {% endcomment %}
 
-      {% has_permission has_view_project_card project.business %}
-      <li>
-	<a href="#" onclick="imp.popup_page('{% url 'sprint_report_settings' project.id %}?only_these_issues='+imp.get_selected_issue_ids_for_get($(this).parents('.project_li'))); return false;">
-	  Quote
-	</a>
-      </li>
-      {% end_permission %}
-      
-      {% comment %}
-      {% has_permission has_edit_project_detail project.business %}
-      <li>
-        <a href="#" onclick="window.open('{%url 'project_detail' project.business.id%}')">
-          Breakdown
-        </a>
-      </li>
-      {% end_permission %}
-      {% endcomment %}
+    {% has_permission has_edit_budget project.business %}
+    <div class='menu_item' >
+      <a href="#" onclick="imp.popup_page('{% url 'edit_project_budget' project.id %}'); return false;">
+        Budget
+      </a>
+    </div>
+    {% end_permission %}
 
-      {% has_permission has_edit_budget project.business %}
-      <li>
-        <a href="#" onclick="imp.popup_page('{% url 'edit_project_budget' project.id %}'); return false;">
-          Budget
-        </a>
-      </li>
-      {% end_permission %}
+    {% has_permission has_edit_deadlines project.business %}
+    <div class='menu_item' >
+      <a href="#" onclick="imp.popup_page('{% url 'edit_project_deadlines' project.id %}'); return false;">
+        Deadlines
+      </a>
+    </div>
+    {% end_permission %}
 
-      {% has_permission has_edit_deadlines project.business %}
-      <li>
-        <a href="#" onclick="imp.popup_page('{% url 'edit_project_deadlines' project.id %}'); return false;">
-          Deadlines
-        </a>
-      </li>
-      {% end_permission %}
-
-      {% has_permission has_edit_invoices project.business %}
-      {% if project.business.client.id %}
-      <li>
-        <a href="#" onclick="window.open('{% url 'invoicing:invoices' %}?client={{project.business.client.id}}&project={{project.id}}')">
+    {% has_permission has_edit_invoices project.business %}
+    {% if project.business.client.id %}
+    <div class='menu_item' >
+      <a href="#" onclick="window.open('{% url 'invoicing:invoices' %}?client={{project.business.client.id}}&project={{project.id}}')">
         Invoices
-        </a>
-      </li>
-      {% endif %}
-      {% end_permission %}
+      </a>
+    </div>
+    {% endif %}
+    {% end_permission %}
 
-      {% has_permission has_edit_ctc_billable_rates project.business %}
-      <li>
-        <a href="#" onclick="imp.popup_page('{% url 'view_project_rates' project.id %}'); return false;">
-          Rates
-        </a>
-      </li>
-      {% end_permission %}
+    {% has_permission has_edit_ctc_billable_rates project.business %}
+    <div class='menu_item' >
+      <a href="#" onclick="imp.popup_page('{% url 'view_project_rates' project.id %}'); return false;">
+        Rates
+      </a>
+    </div>
+    {% end_permission %}
 
-      {% comment %}
-      {% has_permission has_view_actual_hours project.business %}
-      <li>
-        <a href="#" onclick="window.open('{% url 'show_timeline' project.id %}')">
-          Timeline
-        </a>
-      </li>
-      {% end_permission %}
-      {% endcomment %}
+    {% comment %}
+    {% has_permission has_view_actual_hours project.business %}
+    <div class='menu_item' >
+      <a href="#" onclick="window.open('{% url 'show_timeline' project.id %}')">
+        Timeline
+      </a>
+    </div>
+    {% end_permission %}
+    {% endcomment %}
 
-      {% has_permission has_view_ctc_billable_rates project.business %}
-      <li>
-        <a href="#" onclick="imp.toggle_show_numbers();return false;">
-          <img src="{{STATIC_URL}}images/icons/money.png"/>
-        </a>
-      </li>
-      {% end_permission %}
+    {% has_permission has_view_ctc_billable_rates project.business %}
+    <div class='menu_item' >
+      <a href="#" onclick="imp.toggle_show_numbers();return false;">
+        <img src="{{STATIC_URL}}images/icons/money.png"/>
+      </a>
+    </div>
+    {% end_permission %}
 
-      {% has_permission has_see_other_user_points project.business %}
-      <li>
-        <a href="#" all_shown="{% cookie 'default_show_all_user_columns' 'false' %}" class="toggle_show_all_users_trigger" onclick="imp.toggle_show_all_users(this, '{{current_user.username}}');return false;">
-          <img src="{{STATIC_URL}}images/icons/user_suit.png"/>
-        </a>
-      </li>
-      {% end_permission %}
+    {% has_permission has_see_other_user_points project.business %}
+    <div class='menu_item' >
+      <a href="#" all_shown="{% cookie 'default_show_all_user_columns' 'false' %}" class="toggle_show_all_users_trigger" onclick="imp.toggle_show_all_users(this, '{{current_user.username}}');return false;">
+        <img src="{{STATIC_URL}}images/icons/user_suit.png"/>
+      </a>
+    </div>
+    {% end_permission %}
 
-      <li>
-        <a href="#" onclick="imp.toggle_show_adhoc_issues(); return false;">
-          <img src="{{STATIC_URL}}images/icons/auto_created_issue.png" title="Toggle show adhoc issues" />
-        </a>
-      </li>
+    <div class='menu_item' >
+      <a href="#" onclick="imp.toggle_show_adhoc_issues(); return false;">
+        <img src="{{STATIC_URL}}images/icons/auto_created_issue.png" title="Toggle show adhoc issues" />
+      </a>
+    </div>
 
-      {% comment %}
-      <li>
-        <a href="#" onclick="window.open('{% url 'create_project' %}?business_id={{ business.id }}');return false;">New sprint</a>
-      </li>
-      {% endcomment %}
+    {% comment %}
+    <div class='menu_item' >
+      <a href="#" onclick="window.open('{% url 'create_project' %}?business_id={{ business.id }}');return false;">New sprint</a>
+    </div>
+    {% endcomment %}
 
-      {%  has_permission has_edit_permissions business  %}
-      <li>
-        <a href="#" onclick="window.open('{% url 'show_permissions' business.id %}')">
-          Permissions
-        </a> 
-      </li>
-      {% end_permission %}
+    {%  has_permission has_edit_permissions business  %}
+    <div class='menu_item' >
+      <a href="#" onclick="window.open('{% url 'show_permissions' business.id %}')">
+        Permissions
+      </a> 
+    </div>
+    {% end_permission %}
 
-      {% comment %}
-        {%  has_permission has_create_sprint business  %}
-        <li>
-            <a href="#" class="menu_close_sprint" {% if not project.is_open %}style="display:none"{% endif %} onclick="imp.close_sprint(this, '{{project}}', '{% url 'close_project' project.id %}')">
-              Close sprint
-            </a> 
-            <a href="#" class="menu_reopen_sprint" {% if project.is_open %}style="display:none"{% endif %} onclick="imp.reopen_sprint(this, '{{project}}', '{% url 'open_project' project.id %}')">
-              Reopen sprint
-            </a>
-        </li>
-        {% end_permission %}
-      {% endcomment %}
+    {% comment %}
+    {%  has_permission has_create_sprint business  %}
+    <div class='menu_item' >
+      <a href="#" class="menu_close_sprint" {% if not project.is_open %}style="display:none"{% endif %} onclick="imp.close_sprint(this, '{{project}}', '{% url 'close_project' project.id %}')">
+        Close sprint
+      </a> 
+      <a href="#" class="menu_reopen_sprint" {% if project.is_open %}style="display:none"{% endif %} onclick="imp.reopen_sprint(this, '{{project}}', '{% url 'open_project' project.id %}')">
+        Reopen sprint
+      </a>
+    </div>
+    {% end_permission %}
+    {% endcomment %}
 
-      {% comment %}
-     <div class="btn">
-        <div class="to_expand_form_on_click" style="display:block"  onclick="imp.projects.show_project_card_as_popup(this, '{% url 'get_project_card_for_business'  business_id=business.id project_id=project.id  %}');return false; "> 
-          Show Project Card
-        </div>	
-      </div>
+    {% comment %}
+    <div class="btn">
+      <div class="to_expand_form_on_click" style="display:block"  onclick="imp.projects.show_project_card_as_popup(this, '{% url 'get_project_card_for_business'  business_id=business.id project_id=project.id  %}');return false; "> 
+        Show Project Card
+      </div>	
+    </div>
 
-      <div class="" id="b_card_{{business.id}}"  style="position:absolute;z-index:100">		  
-      </div>
-      {% endcomment %}
+    <div class="" id="b_card_{{business.id}}"  style="position:absolute;z-index:100">		  
+    </div>
+    {% endcomment %}
 
-      {% comment %}
-      <li>
-        <a href="#" onclick="imp.project_card_thinking(this);$('#b_card_{{business.id}}').load('{% url 'get_project_card_indexed' business_id=business.id index=1 %}'); return false;">
-          All sprints
-        </a>
-      </li>
-      {% endcomment %}
+    {% comment %}
+    <div class='menu_item' >
+      <a href="#" onclick="imp.project_card_thinking(this);$('#b_card_{{business.id}}').load('{% url 'get_project_card_indexed' business_id=business.id index=1 %}'); return false;">
+        All sprints
+      </a>
+    </div>
+    {% endcomment %}
 
 
-    </li>
-
-    </ul>
+    <div style="clear:both"></div>
   </div>
-</div>
 
+  
+</div>

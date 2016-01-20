@@ -9666,8 +9666,6 @@ div.traffic_tooltip {
     padding:5px;
     font-size: 10px;
     zoom: 1;
-    filter: alpha(opacity=30);
-    opacity: 0.3;
 }
 
 .card_menu:hover {
@@ -9680,11 +9678,24 @@ div.traffic_tooltip {
     /*background-color: #aaaaaa;*/
 }
 
+.project_actions {
+    background: #413d44;
+}
+
 .card_menu .menu_items {
     padding:5px;
     /*position:absolute;*/
     /*background:#ffffff;*/
     /*border: 1px solid #aaaaaa;*/
+}
+
+.card_menu .menu_item {
+    float: left;
+    margin-left: 20px;
+}
+
+.card_menu .menu_item a {
+    color: #ffffff;
 }
 
 .card_menu ul {

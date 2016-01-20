@@ -3339,7 +3339,7 @@ def project_issues(request, pk, template="timepiece/project/issues.html", contex
 
 @csrf_exempt
 @login_required
-def get_project_detail(request, project_id, template="timepiece/project/project_detail.html", context=None):
+def get_project_detail(request, project_id, context=None):
     context = context or {}
 
     timings.start("get_project_detail")
@@ -3397,9 +3397,12 @@ def get_project_detail(request, project_id, template="timepiece/project/project_
     if 'selected_issue_ids_for_context_menu' in request.session:
         context['selected_issue_ids'] = [int(x) for x in request.session['selected_issue_ids_for_context_menu']]
 
-    rendered = render_to_response(template, context, context_instance=RequestContext(request))
+    issues_list_rendered = render_to_response("timepiece/project/project_detail.html", context, context_instance=RequestContext(request))
+    project_menu_rendered = render_to_response("timepiece/project/_card_project_menu.html", context, context_instance=RequestContext(request))
 
-    return HttpResponse(json.dumps({ 'project':project.model_to_dict(include_business=True), 'issue_list_html':rendered.content }))
+    return HttpResponse(json.dumps({ 'project':project.model_to_dict(include_business=True),
+                                     'project_menu': project_menu_rendered.content,
+                                     'issue_list_html':issues_list_rendered.content }))
 
 @login_required
 def open_issue(request, business_name=None, issue_number=None):
