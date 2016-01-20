@@ -56,7 +56,7 @@ imp.show_issue_detail = function(issue_id, url, msg, args) {
 	    el.find(".subject_class input").focus();
             imp.refresh_hidden_fields(el);
 	    imp.current_issue_detail_url = url;
-	    imp.update_splitter_view(imp.current_issue_id);
+	    imp.update_splitter_dimensions(imp.current_issue_id);
 
 	    if ( issue_id ) {
 		imp.highlight_issue(imp.current_issue_id);
@@ -68,7 +68,7 @@ imp.show_issue_detail = function(issue_id, url, msg, args) {
 
  };
 
-imp.refresh_issue_detail = function() {
+imp.refresh_issue_detail = function(args) {
     $(".issue_detail").load(imp.current_issue_detail_url, function() {
 	if (args && args.reload_on_done) {
 	    window.location=args.reload_on_done;

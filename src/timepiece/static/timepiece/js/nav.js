@@ -118,16 +118,10 @@ imp.nav.show_sprint = function(sprint_id, show_url) {
 imp.nav.show_issue = function( issue_id, project_id, show_url ) {
 
     var on_done = imp.loading("Finding...");
-    var project = $("[list_project_id='"+project_id+"']");
-    if ( project.length > 0 ) {
+    if ( imp.active_project && imp.active_project.id == project_id ) {
 
 	imp.issue_search_results_dialog.dialog('close');
 	imp.issue_search_results_dialog = null;
-
-	project.show();
-	project.scrollintoview();
-	project.find(".project_expand").click();
-	project.find(".project_detail").show();
 
 	imp.highlight_issue(issue_id);
 	on_done();

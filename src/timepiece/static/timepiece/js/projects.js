@@ -107,31 +107,22 @@ imp.projects._make_load_for_data = function ( done_data_function_handler ) {
     return function(element, expand_url) {
         var done_data_function_handler = _done_data_function_handler;
         var current_row = $(element);
-        var parent_table = $("ul.project_list"); // $(current_row.closest(".project_table"));
-        var project_contents = parent_table.find(".project_contents");
-        var area_to_insert = $("ul.project_list");//project_contents.find(".information");
-        if (area_to_insert.find(".project_detail").length > 0) {
-            area_to_insert.find(".project_detail").toggle();
-        }
-
-        // if ( imp.projects.already_loaded_sprints[expand_url] ) {
-        //     return;
-        // }
-
-        area_to_insert.find(".project_detail").remove();
+        var area_to_insert = $(".issue_list");
         var loading = area_to_insert.find(".loading");
         loading.show();
         var response = $.ajax({ type:"GET",
                                 url: expand_url,
                                 dataType:"json",
                                 success: function(data) {
-                                    area_to_insert.append($(data.issue_list_html));
+                                    area_to_insert.find(".issue_list_content").html(data.issue_list_html);
                                     loading.hide();
                                     imp.projects.already_loaded_sprints[expand_url] = true;
                                     imp.projects.set_project_title(data.project);
                                     imp.projects.set_project_menu(data.project_menu);
                                     imp.on_issue_rows_loaded(area_to_insert);
                                     imp.active_project = data.project;
+                                    $(".project_li").removeClass("active");
+                                    $(".project_li[list_project_id="+data.project.id+"]").addClass("active");
 
                                     if (done_data_function_handler) {
                                         response.done( done_data_function_handler(element) );
@@ -253,6 +244,7 @@ imp.on_issue_rows_loaded = function(issue_row_container) {
     imp.set_assigned_by_clickable(issue_row_container);
     imp.attach_issue_filters(issue_row_container);
     imp.refresh_show_all_users(issue_row_container, imp.config.logged_in_username);
+    imp.update_splitter_dimensions();
 };
 
 imp.set_assigned_by_clickable = function(issue_row_container) { 
@@ -420,6 +412,10 @@ imp.update_splitter_dimensions = function() {
     var split_position = splitter.split().position();
     Cookies.set('splitter_position', split_position);
     splitter.split().refresh();
+
+    var pl_el = $(".project_list");
+    height = wh - (pl_el.offset().top + 20);
+    pl_el.height( height );
 };
 
 imp.toggle_show_adhoc_issues = function() {

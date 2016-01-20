@@ -9361,6 +9361,13 @@ ul.business_menu_on_project_page li {
     margin-bottom: 20px;
 }
 
+.project_list .project_li:hover {
+    background: #B7CBEC;
+}
+
+.project_list .project_li.active {
+    background: #B7CBEC;
+}
 
 .project_list tbody tr:nth-child(odd) td, .project_list tbody tr:nth-child(odd) th {
   /*background-color: #ffffff;*/

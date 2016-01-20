@@ -21,7 +21,6 @@ body {
 }
 
 .nav-parent {
-    display: inline-block;
     height: 125px;
     width: 100%;
 }
@@ -168,7 +167,6 @@ a.ico-calc {
     height: inherit;
     width: 180px;
     display: block;
-    overflow-y: auto;
     border-right: 8px solid #413d44;
     background-color: #cececf;
     float: left;
@@ -184,6 +182,10 @@ a.ico-calc {
     box-shadow: 3px 2px 4px #aaa;
     cursor: pointer;
     overflow: hidden;
+}
+
+.project_list {
+    overflow-y: auto;
 }
 
 .sprint_information small{
