@@ -579,10 +579,9 @@ imp.on_document_ready = function() {
     var project_li_row = $(".project_li");
     project_li_row.each(function(item, project_row) {
         var elem = $(project_row);
-        var expanded_row = elem.find(".project_table_cell.project_expand");
-        var preloaded = expanded_row.attr("preloaded") == "true";
+        var preloaded = elem.attr("preloaded") == "true";
         if (preloaded) {
-            expanded_row.trigger('click');
+            elem.trigger('click');
         }
         
     });

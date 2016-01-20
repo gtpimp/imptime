@@ -100,7 +100,7 @@ imp.nav.show_business = function( business_id, show_url ) {
 
 imp.nav.show_sprint = function(sprint_id, show_url) {
     var on_done = imp.loading("Finding...");
-    var project = $("[list_project_id='"+sprint_id+"']");
+    var project = $(".project_li[list_project_id ='"+sprint_id+"']");
     if ( project.length > 0 ) {
 
 	imp.issue_search_results_dialog.dialog('close');
@@ -108,8 +108,7 @@ imp.nav.show_sprint = function(sprint_id, show_url) {
 
 	project.show();
 	project.scrollintoview();
-	project.find(".project_expand").click();
-	project.find(".project_detail").show();
+	project.click();
 	on_done();
     } else {
 	window.location = show_url;
