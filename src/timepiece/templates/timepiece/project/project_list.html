@@ -15,12 +15,14 @@
 {% endblock %}
 
 {% block extrajs %}
-<script src="{{STATIC_URL}}timepiece/js/splitter.js"></script>
+<script src="{{STATIC_URL}}timepiece/js/jquery.splitter-0.20.0.js"></script>
 <script src="{{STATIC_URL}}timepiece/js/projects.js"></script>
 <script src="{{STATIC_URL}}timepiece/js/issues.js"></script>
 
 <script type="text/javascript" src="{{STATIC_URL}}markitup/jquery.markitup.js"></script>
 <script type="text/javascript" src="{{STATIC_URL}}markitup/sets/markdown/set.js"></script>
+
+<link type="text/css" rel="stylesheet" href="{{ STATIC_URL }}/timepiece/css/jquery.splitter.css" />
 
 {% endblock extrajs %}
 
