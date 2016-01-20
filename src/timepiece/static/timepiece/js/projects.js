@@ -584,6 +584,7 @@ imp.on_document_ready = function() {
         if (preloaded) {
             expanded_row.trigger('click');
         }
+        
     });
 
     imp.create_splitter();
