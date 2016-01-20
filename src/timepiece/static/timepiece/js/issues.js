@@ -466,8 +466,8 @@ imp.set_issue_checkbox_hooks = function(issue_row_container) {
 };
 
 imp.toggle_show_all_users = function(menu_el, logged_in_username) {
-    var project_el = $(menu_el).parents(".project_li");
-    var trigger = project_el.find(".toggle_show_all_users_trigger");
+    var project_el = $(".issue_list");
+    var trigger = $(".toggle_show_all_users_trigger");
     var all_shown = trigger.attr("all_shown");
     var cells = project_el.find(".estimates_cell").not("[data-username="+logged_in_username+"]");
     if ( all_shown == "true" ) {
