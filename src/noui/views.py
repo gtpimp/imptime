@@ -15,6 +15,7 @@ from models import NouiCommand, NouiCommandParameter
 from django.views.decorators.csrf import csrf_exempt
 from noui.command_parser import CommandParser
 import logging
+import json
 logger = logging.getLogger(__name__)
 
 @login_required
@@ -77,7 +78,7 @@ def command_delete(request, command_ref, context=None):
     messages.info(request, "Command %s deleted" % command.name)
     return redirect("noui:command_list")
 
-@login_required
+#login_required
 @csrf_exempt
 def run_command(request, template="noui/command.html", context=None):
     context = context or {}
@@ -124,7 +125,15 @@ def run_command(request, template="noui/command.html", context=None):
         context['result'] = { 'status': 'error',
                               'exception': ex }
 
-    return render_to_response(template, context, context_instance=RequestContext(request))
+    
+    if request.GET.get('format') == 'json':
+        context['active_command'] = cp.active_command
+        context['errors'] = form._errors
+        del(context['form'])
+        del(context['cp'])
+        return HttpResponse(json.dumps(context), content_type='application/json')
+    else:
+        return render_to_response(template, context, context_instance=RequestContext(request))
 
 @login_required
 @csrf_exempt

@@ -29,6 +29,9 @@ NUM_DAYS_FOR_TRAFFIC_SPRINT_CHECKLISTS=3
 NUM_DAYS_FOR_FINANCE_SPRINT_CHECKLISTS=5
 NUM_DAYS_FOR_DEV_SPRINT_CHECKLISTS=2
 
+CORS_ORIGIN_ALLOW_ALL = True
+CORS_URLS_REGEX = r'^/timepiece/noui/.*$'
+
 # Maximum number of days before expecting a new development timesheet
 # entry for a particular project. This is used to raise an alarm if
 # either nothing is happening in a sprint or if the timesheet isn't
@@ -162,6 +165,8 @@ TEMPLATE_LOADERS = (
 )
 
 MIDDLEWARE_CLASSES = (
+    'corsheaders.middleware.CorsMiddleware',
+    'django.middleware.common.CommonMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -170,6 +175,7 @@ MIDDLEWARE_CLASSES = (
     'pagination.middleware.PaginationMiddleware',
     # Uncomment the next line for simple clickjacking protection:
     # 'django.middleware.clickjacking.XFrameOptionsMiddleware',
+
 )
 
 ROOT_URLCONF = 'implicitdesign.urls'
@@ -208,6 +214,7 @@ INSTALLED_APPS = (
     'colorful',
     'endless_pagination',
     'mailqueue',
+    'corsheaders',
 
     'timepiece',
     'emacs_importer',

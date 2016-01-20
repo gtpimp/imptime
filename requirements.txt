@@ -104,3 +104,4 @@ traitlets==4.0.0
 vobject==0.6.6
 wsgiref==0.1.2
 xhtml2pdf==0.0.6
+django-cors-headers=1.1.0
