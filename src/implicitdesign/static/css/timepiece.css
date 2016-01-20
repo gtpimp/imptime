@@ -10711,4 +10711,18 @@ ul.checklist_items {
 
 .inline_editor label {
     padding-right: 10px;
+
+}
+
+.formset li {
+    list-style: none outside none;
+    margin-top: 10px;
+    margin-bottom: 10px;
+}
+
+.parameter_content {
+    margin-top: 10px;
+    margin-bottom: 20px;
+    border-bottom: 1px solid #cdcdcd;
+
 }

@@ -34,6 +34,7 @@ django-celery==3.1.17
 django-classy-tags==0.6.2
 -e git+https://github.com/charettes/django-colorful.git@7b6c2db476f3a69a97745cd471284e616cf62eb1#egg=django_colorful-dev
 django-compressor==1.5
+django-cors-headers==1.1.0
 django-crispy-forms==1.5.2
 django-debug-toolbar==1.4
 django-downtime==1.0.4

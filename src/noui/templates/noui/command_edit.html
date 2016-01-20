@@ -1,0 +1,17 @@
+{% extends "base.html" %}
+{% load bootstrap3 %}
+
+{% block page %}
+
+<h1>Edit Command</h1>
+<div class='container'>
+  <div class="list">
+    <form action="{% url 'noui:command_edit' command.id %}" method="POST" enctype="multipart/form-data">
+      {% csrf_token %}
+      {% include "noui/_command_form.html" %}
+    </form>
+  </div>
+  
+</div>
+
+{% endblock %}

@@ -20,7 +20,7 @@ usage = """
 To deploy live to implicitdesign.co.za
 --------------------------------------
 
-  > fab host_imp deploy_prod
+  > fab host_impd deploy:<branch>
 
 To deploy to staging on dev.implicitdesign.co.za
 ------------------------------------------------
@@ -30,14 +30,14 @@ To deploy to staging on dev.implicitdesign.co.za
 To re-import timesheets on implicitdesign.co.za
 -----------------------------------------------
   
-  > fab host_imp import_timesheet
+  > fab host_impd import_timesheet
 
 """
 def help():
     print usage
 
 # ===== hosts =====
-def host_imp():
+def host_impd():
     env.user = "gtp"
     env.hosts = ['timesheet.implicitdesign.co.za']
 
@@ -48,8 +48,7 @@ def staging():
 
 # ===== top level commands ======
 
-def deploy_prod():
-    branch = prompt("Which branch?")
+def deploy(branch="prod"):
     with cd(imp_remote_code_dir):
         run("./deploy_production.sh %s" % branch)
 
