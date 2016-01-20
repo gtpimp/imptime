@@ -9513,6 +9513,15 @@ div.traffic_tooltip {
     clear:left;
 }
 
+.issues_list table tr {
+}
+
+.issue_instance_row {
+    -webkit-box-shadow: 7px 4px 5px 0px rgba(0,0,0,1);
+    -moz-box-shadow: 7px 4px 5px 0px rgba(0,0,0,1);
+    box-shadow: 7px 4px 5px 0px rgba(0,0,0,1);
+}
+
 .issue_instance_row.status_devdone .issue_subject {
     color: #225522;
 }
@@ -9796,7 +9805,7 @@ border: 1px solid #939eb3;
     background: transparent;
 }
 
-.issues .issues_list table tr {
+.issues .issues_list table tr.pseudo_issue_row, .issues .issues_list table tr.issue_instance_row {
     width: 100%;
     background:  #FFFFFF;
     line-height: 25px;

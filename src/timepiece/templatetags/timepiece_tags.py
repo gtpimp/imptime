@@ -57,6 +57,7 @@ def epoch(value):
 @register.simple_tag(takes_context=True)
 def prepare_project_stats(context, logged_in_user, project):
     project.calculate_new_stats(logged_in_user)
+    return ""
     
 @register.simple_tag(takes_context=True)
 def current_user_issue_cost(context, issue_points):

@@ -3,7 +3,7 @@
 {% load bootstrap_toolkit %}
 
 <tr class="issue_instance_row {{issue.status_as_class}} {% if issue.adhoc %}adhoc_issue_row{% endif %}" assigned_to="{{issue.assigned_to.username}}"  id="{{issue.pk}}" refresh_url="{% url 'get_issue_row' issue.pk %}" status="{{issue.status}}" feature="{{issue.feature.name|default:None}}">                    
-
+  
   <td class="issue_checkbox_td">
     <div class="issue_checkbox_cell">
       <input type="checkbox" name="issue_checked_{{issue.pk}}" {% if issue.pk in selected_issue_ids %}checked="checked"{% endif %} /> <!-- Code for checkbox on left hand side -->
