@@ -22,6 +22,8 @@ from re import sub as re_sub
 from re import UNICODE as re_UNICODE
 from checklist_plugins.registry import get_traffic_plugins, get_dev_plugins, get_finance_plugins
 
+logger = logging.getLogger(__name__)
+
 try:
     from django.utils import timezone
 except ImportError:
@@ -320,7 +322,7 @@ class Business(models.Model):
             return entries[0].end_time
         else:
             return None
-
+        
 class BusinessComment(models.Model):
     business = models.ForeignKey(Business, null=False, blank=False, related_name='business_comments')
     comment = models.TextField(null=True, blank=True)
@@ -2588,9 +2590,6 @@ class AssignmentManager(models.Manager):
         return sorted(self.get_query_set().all(),
             key=lambda contract: contract.this_weeks_priority_number)
 
-
-# contract assignment logger
-logger = logging.getLogger('timepiece.ca')
 
 
 class ContractAssignment(models.Model):

@@ -10,25 +10,124 @@ from django.http import HttpResponse, HttpResponseRedirect
 from django.core.urlresolvers import reverse, resolve
 from django.template import RequestContext
 from django.contrib import messages
-from forms import CommandForm
+from forms import NouiCommandForm, RunCommandForm, command_parameter_formset
+from models import NouiCommand, NouiCommandParameter
 from django.views.decorators.csrf import csrf_exempt
 from noui.command_parser import CommandParser
+import logging
+logger = logging.getLogger(__name__)
+
+@login_required
+@permission_required('noui.command_list')
+def command_list(request, template="noui/command_list.html", context=None):
+    context = context or {}
+    context['commands'] = NouiCommand.objects.all().order_by("name")
+    return render_to_response(template, context, context_instance=RequestContext(request))
+
+@login_required
+@permission_required('noui.command_edit')
+def command_add(request, template="noui/command_add.html", context=None):
+    context = context or {}
+    form = NouiCommandForm(request.POST or None)
+    parameters_formset = command_parameter_formset(request.POST or None, queryset = NouiCommandParameter.objects.none(), prefix='parameters')
+    if form.is_valid() and parameters_formset.is_valid():
+        command = form.save()
+        parameters = parameters_formset.save(commit=False)
+        for parameter in parameters:
+            parameter.command = command
+            parameter.save()
+        parameters_formset.save_m2m()
+        messages.info(request, "New command created")
+        return redirect(reverse("noui:command_edit", kwargs={'command_ref':command.id}))
+    context['form'] = form
+    context['parameters_formset'] = parameters_formset
+    return render_to_response(template, context, context_instance=RequestContext(request))
+
+@login_required
+@permission_required('noui.command_edit')
+def command_edit(request, command_ref, template="noui/command_edit.html", context=None):
+    context = context or {}
+    command = NouiCommand.objects.get(pk=command_ref)
+    form = NouiCommandForm(request.POST or None, instance=command)
+    parameters_formset = command_parameter_formset(request.POST or None, queryset = command.parameters.order_by("id"), prefix='parameters')
+    if form.is_valid() and parameters_formset.is_valid():
+        form.save()
+        parameters = parameters_formset.save(commit=False)
+        for parameter in parameters:
+            parameter.command = command
+            parameter.save()
+        for parameter in parameters_formset.deleted_objects:
+            parameter.deleted=True
+            parameter.save()
+        parameters_formset.save_m2m()
+        messages.info(request, "Command updated")
+        return redirect(reverse("noui:command_edit", kwargs={'command_ref':command.id}))
+    context['form'] = form
+    context['parameters_formset'] = parameters_formset
+    context['command'] = command
+    return render_to_response(template, context, context_instance=RequestContext(request))
+
+@login_required
+@permission_required('noui.command_edit')
+def command_delete(request, command_ref, context=None):
+    context = context or {}
+    command = NouiCommand.objects.get(pk=command_ref)
+    command.deleted = True
+    command.save()
+    messages.info(request, "Command %s deleted" % command.name)
+    return redirect("noui:command_list")
 
 @login_required
 @csrf_exempt
-def command(request, template="noui/command.html", context=None):
+def run_command(request, template="noui/command.html", context=None):
     context = context or {}
 
-    form = CommandForm(request.POST or None)
-    if form.is_valid():
-        cp = CommandParser()
-        cp.parse(form.cleaned_data['command'])
-        context['result'] = 'Verb %s . Subject %s.' % (cp.verb, cp.subject)
-        context['parse_tree'] = cp.words
-    else:
-        context['result'] = form.errors
+    try:
+        form = RunCommandForm(request.POST or None)
+        cp = CommandParser(request)
+        if form.is_valid():
+            raw_command = form.cleaned_data['command'].strip().lower()
+            res = cp.parse_command_snippet(raw_command)
+            context['last_result_message'] = res.get('last_result_message', None)
+            if len(res['matching_commands']) > 1:
+                context['ambiguous_commands'] = res['matching_commands']
+                context['result'] = { 'status': 'ambiguous' }
+                
+            elif len(res['matching_commands']) == 0:
+                context['result'] = { 'status': 'no_match' }
 
-    context['command'] = form.cleaned_data['command']
-    context['form'] = form
-    
+            if cp.ready_to_execute and raw_command == "go":
+                try:
+                    res = cp.execute_active_command()
+                    context['result'] = { 'status': 'executed',
+                                          'result': res }
+                    context['last_result_message'] = "Executed"
+                except Exception, ex:
+                    logger.exception(ex)
+                    context['result'] = { 'status': 'failed to execute',
+                                          'exception': ex }
+                    context['last_result_message'] = "Failed"
+            context['command'] = form.cleaned_data['command']
+
+            form = RunCommandForm()
+                
+        else:
+            context['result'] = form.errors
+        
+        context['prompt'] = cp.get_prompt_for_next_requirement()
+        context['parameters'] = cp.parameter_context
+        context['form'] = form
+        context['cp'] = cp
+        
+    except Exception, ex:
+        logger.exception(ex)
+        context['result'] = { 'status': 'error',
+                              'exception': ex }
+
     return render_to_response(template, context, context_instance=RequestContext(request))
+
+@login_required
+@csrf_exempt
+def command_context_reset(request):
+    CommandParser(request).reset()
+    return run_command(request)
