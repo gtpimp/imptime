@@ -10711,7 +10711,6 @@ ul.checklist_items {
 
 .inline_editor label {
     padding-right: 10px;
-
 }
 
 .formset li {
@@ -10724,5 +10723,20 @@ ul.checklist_items {
     margin-top: 10px;
     margin-bottom: 20px;
     border-bottom: 1px solid #cdcdcd;
+}
 
+.active_project_title .business_name {
+    font-weight: bold;
+}
+
+.active_project_title .project_name {
+    font-weight: bold;
+
+.active_project_title .project_description {
+    font-style: italic;
+}
+
+.active_project_title span {
+    padding-left: 0px;
+    padding-right: 0px;
 }

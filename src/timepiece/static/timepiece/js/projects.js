@@ -89,6 +89,14 @@ imp.projects.cycle_status = function(event, el, url) {
            });
 };
 
+imp.projects.set_project_title = function( project ) {
+    var project_title_el = $(".active_project_title");
+    project_title_el.find(".project_id").html("#" + project.id);
+    project_title_el.find(".project_name").html(project.name);
+    project_title_el.find(".project_description").html(project.short_description);
+    project_title_el.find(".business_name").html(project.business.name);
+};
+
 imp.projects._make_load_for_data = function ( done_data_function_handler ) {
     var _done_data_function_handler = done_data_function_handler;
 
@@ -111,10 +119,14 @@ imp.projects._make_load_for_data = function ( done_data_function_handler ) {
         loading.show();
         var response = $.ajax({ type:"GET",
                                 url: expand_url,
+                                dataType:"json",
                                 success: function(data) {
-                                    area_to_insert.append($(data));
+                                    area_to_insert.append($(data.issue_list_html));
                                     loading.hide();
                                     imp.projects.already_loaded_sprints[expand_url] = true;
+
+                                    imp.projects.set_project_title(data.project);
+                                    
                                     imp.on_issue_rows_loaded(area_to_insert);
 
                                     if (done_data_function_handler) {

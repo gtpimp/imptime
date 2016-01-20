@@ -3397,9 +3397,9 @@ def get_project_detail(request, project_id, template="timepiece/project/project_
     if 'selected_issue_ids_for_context_menu' in request.session:
         context['selected_issue_ids'] = [int(x) for x in request.session['selected_issue_ids_for_context_menu']]
 
-    response = render_to_response(template, context, context_instance=RequestContext(request))
+    rendered = render_to_response(template, context, context_instance=RequestContext(request))
 
-    return response
+    return HttpResponse(json.dumps({ 'project':project.model_to_dict(include_business=True), 'issue_list_html':rendered.content }))
 
 @login_required
 def open_issue(request, business_name=None, issue_number=None):

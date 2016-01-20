@@ -3,6 +3,7 @@ import timings
 from dateutil.relativedelta import relativedelta
 import api
 import calendar
+from lib.models import model_to_dict_with_date_support
 from caldav_helper import CalDavHelper
 import uuid
 from colorful.fields import RGBColorField
@@ -140,7 +141,10 @@ class Business(models.Model):
                                                  ("fixed_quote", "Fixed quote"),
                                                  ("free", "Free or Equity or Other") ) )
 
-    
+    def model_to_dict(self):
+        d = model_to_dict_with_date_support(self)
+        return d
+        
     def wiki_name(self):
         return self.name.replace(" ", "_").lower()
     
@@ -722,6 +726,12 @@ class Project(models.Model):
             ret[user] = total['points__sum'] if total['points__sum'] else 0
         return ret
 
+    def model_to_dict(self, include_business=False):
+        d = model_to_dict_with_date_support(self)
+        if include_business:
+            d['business'] = self.business.model_to_dict()
+        return d
+    
     def recalc_secondary_estimates(self):
         """ these are estimates based on the developer estimates, for management and testing """
 
@@ -1054,7 +1064,6 @@ class Project(models.Model):
         stats = {'issues':[], 'users':{}, 'features':{}}
         self._estimate_stats = stats
 
-        total_estimated_cost = 0
         total_estimated_hours = 0
         estimated_management_cost = 0
         estimated_testing_cost = 0
