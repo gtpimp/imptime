@@ -3,8 +3,12 @@ html {
     overflow: hidden;
 }
 
-.splitter {
+.splitter_container {
+    position: relative;
     float: left;
+}
+
+.splitter {
     width: 100%;
 }
 
