@@ -390,13 +390,11 @@ imp.create_chart = function(chart_info) {
 };
 
 imp.create_splitter = function() {
-
-    var width = $(window).width() - $(".project_menu").width() - 100;
     var split_position = Cookies.get('splitter_position');
     if ( ! split_position || parseInt(split_position)<1 ) {
         split_position = "70%";
     }
-    $(".splitter").width(width).split({orientation:'vertical', limit:100, position:split_position});
+    $(".splitter").split({orientation:'vertical', limit:100, position:split_position});
     imp.update_splitter_dimensions();
 
     $(window).on("resize", function(e) {
@@ -411,6 +409,11 @@ imp.update_splitter_dimensions = function() {
     var wh = $(window).height();
     var height = (wh-top-20)+"px";
     splitter.height(height);
+    var width = $(window).width() - 100;
+    if ( $(".project_menu").is(":visible") ) {
+        width -= $(".project_menu").width();
+    }
+    splitter.width(width);
 };
 
 imp.toggle_show_adhoc_issues = function() {
@@ -553,14 +556,17 @@ imp.on_document_ready = function() {
     });
 
     $('.sprint_menu_trigger').click(function() {
-	if ( $(".project_menu").is(":visible") ) {
-	    $(".project_menu").animate({width:"toggle"}, 200,
-                                      function() { imp.update_splitter_dimensions(); } );
-	} else {
-	    var new_width = $(".content_container").width()- $(".project_menu").outerWidth() - 1;
-	    $(".project_menu").animate({width:"toggle"}, 200,
-                                      function() { imp.update_splitter_dimensions(); } );
-	}
+
+        $(".project_menu").animate({width:'toggle'}, 200, function() { imp.update_splitter_dimensions(); } );
+        
+	// if ( $(".project_menu").is(":visible") ) {
+	//     $(".project_menu").animate({width:"250px"}, 200,
+        //                               function() { imp.update_splitter_dimensions(); } );
+	// } else {
+	//     var new_width = $(".content_container").width()- $(".project_menu").outerWidth() - 1;
+	//     $(".project_menu").animate({width:"0px"}, 200,
+        //                               function() { imp.update_splitter_dimensions(); } );
+	// }
     });
 
 };
