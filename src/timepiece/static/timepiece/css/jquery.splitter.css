@@ -4,6 +4,14 @@
  *
  * Same license as plugin
  */
+
+.splitter_container {
+    position: relative;
+    float: left;
+}
+
+
+
 .splitter_panel {
   position: relative;
 }
