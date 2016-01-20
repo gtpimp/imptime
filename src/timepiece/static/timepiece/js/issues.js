@@ -417,6 +417,14 @@ imp.set_issue_checkbox_hooks = function(issue_row_container) {
             imp.checkboxes.project_id = issue_row_container.attr("list_project_id");
         }
 
+        if ( ! imp.checkboxes.project_id && imp.active_project ) {
+            imp.checkboxes.project_id = imp.active_project.id;
+        }
+        
+        if ( ! imp.checkboxes.project_id ) {
+            alert("Error, no sprint selected");
+            return;
+        }
 
 	var on_done = imp.loading("Loading context menu");
 	var selected_issue_ids = imp.get_selected_issue_ids_for_get(issue_row_container);

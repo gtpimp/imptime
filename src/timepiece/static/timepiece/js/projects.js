@@ -131,6 +131,7 @@ imp.projects._make_load_for_data = function ( done_data_function_handler ) {
                                     imp.projects.set_project_title(data.project);
                                     imp.projects.set_project_menu(data.project_menu);
                                     imp.on_issue_rows_loaded(area_to_insert);
+                                    imp.active_project = data.project;
 
                                     if (done_data_function_handler) {
                                         response.done( done_data_function_handler(element) );

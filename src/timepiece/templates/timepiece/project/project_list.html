@@ -95,8 +95,6 @@
         {% comment %}{% include "timepiece/project/_project_list_item.html" %}{% endcomment %}
         {% endfor %}
 
-        {% include "timepiece/project/floating_project_detail.html" with project=floating_project %}
-
       </ul>
       
     </div>
@@ -116,7 +114,10 @@
 
 <script>
 imp.highlight_issue_id='{{highlight_issue_id}}';
-imp.active_business_id='{{business.id}}';
+ imp.active_business_id='{{business.id}}';
+
+
+ 
 </script>
 
 {% endblock %}
