@@ -1,28 +1,30 @@
-
 .contextMenuPlugin {
   -webkit-user-select: none;
   display: none;
-  font-family: tahoma, arial, sans-serif;
-  font-size: 11px;
   position: absolute;
   left: 100px;
   top: 100px;
   min-width: 100px;
-  list-style-type: none;
   margin: 0;
   padding: 0;
   background-color: #f7f3f7;
   border: 2px solid #f7f7f7;
   outline: 1px solid #949694;
+  font-family: tahoma, arial, sans-serif;
+  font-size: 11px;
 }
 
-.contextMenuPlugin > li {
+.contextMenuPlugin ul {
+  list-style-type: none;
+}
+
+.contextMenuPlugin li {
   margin: 0 0 0 0;
   padding: 1px;
   background-repeat: no-repeat;
 }
 
-.contextMenuPlugin > li > a {
+.contextMenuPlugin li a {
   position: relative;
   display: block;
   padding: 3px 3px 3px 28px;
@@ -31,14 +33,14 @@
   margin: 1px;
 }
 
-.contextMenuPlugin > li > a img {
+.contextMenuPlugin li a img {
   position: absolute;
   left: 3px;
   margin-top: -2px;
   width: 16px;
   height: 16px;
 }
-.contextMenuPlugin > li > a:hover {
+.contextMenuPlugin li a:hover {
   border: 1px solid #fffbff;
   outline: 1px solid #b5d3ff;
   margin: 0;
@@ -49,23 +51,23 @@
   background: -ms-linear-gradient(top, rgba(239,239,255,0.5) 0%,rgba(223,223,255,0.5) 100%); /* IE10+ */
   filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#80efefff', endColorstr='#80dfdfff',GradientType=0 ); /* IE6-9 */
   background: linear-gradient(top, rgba(239,239,255,0.5) 0%,rgba(223,223,255,0.5) 100%); /* W3C */
-  cursor: default;
+  cursor: pointer;
 }
 
-.contextMenuPlugin > li.disabled {
+.contextMenuPlugin ul li.disabled {
   pointer-events: none;
 }
 
-.contextMenuPlugin > li.disabled a {
+.contextMenuPlugin ul li.disabled a {
   color: grey;
 }
 
-.contextMenuPlugin > li.disabled > a:hover {
+.contextMenuPlugin ul li.disabled a:hover {
   border: none;
   outline: none;
 }
 
-.contextMenuPlugin > li.divider {
+.contextMenuPlugin ul > li.divider {
   border-top: 1px solid #e7e3e7;
   border-bottom: 1px solid #ffffff;
   height: 0;
@@ -73,7 +75,7 @@
   margin: 5px 0 5px 27px;
 }
 
-.contextMenuPlugin > .header {
+.contextMenuPlugin ul > .header {
   background: rgb(90,90,90); /* Old browsers */
   background: -moz-linear-gradient(top, rgba(90,90,90,1) 0%, rgba(20,20,20,1) 100%); /* FF3.6+ */
   background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,rgba(90,90,90,1)), color-stop(100%,rgba(20,20,20,1))); /* Chrome,Safari4+ */
@@ -99,7 +101,7 @@
   z-index: 0;
 }
 
-.contextMenuPlugin li div, .contextMenuPlugin li p, .contextMenuPlugin li label {
+.contextMenuPlugin ul li div, .contextMenuPlugin ul li p, .contextMenuPlugin ul li label {
     /*float:left;*/
     /*display:inline;*/
 }

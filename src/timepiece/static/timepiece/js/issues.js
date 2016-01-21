@@ -354,10 +354,6 @@ imp.get_selected_issue_ids_for_get = function(issue_row_container) {
 
 imp.show_issue_action_menu = function(el, issue_id) {
 
-    var callback = function() {
-        alert("You did it");
-    };
-
     var on_done = imp.loading("Loading context menu");
     var response = $.ajax({type:"GET",
                            url: imp.config.issue_action_menu_url.replace("999999", issue_id),
@@ -383,7 +379,7 @@ imp.display_menu = function(e, menu) {
     }
 
     // Create and show menu
-    menu.css({zIndex:1000001, overflow:"auto", height:"50%", width: "300px" /*left:left, top:top*/})
+    menu.css({zIndex:1000001, overflow:"auto", height:"75%", width: "50%" /*left:left, top:top*/})
         .bind('contextmenu', function() { return false; });
 
     // Cover rest of page with invisible div that when clicked will cancel the popup.

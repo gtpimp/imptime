@@ -1,72 +1,86 @@
-<ul class="contextMenuPlugin">
+<div class="contextMenuPlugin">
   <div class="gutterLine"></div>
 
-  <li class="header">Issues Bulk Operation</li>
-  <li class="header">({{num_issues}} issues selected)</li>
+  <div class="row">
+    <div class="col-md-3">
 
-  <li> <a onclick="return imp.bulk_clear_selected_issues({{project.id}}, '{% url 'bulk_clear_selected_issues' %}'); " href="#">Clear all checkboxes</a> </li>
+      <ul>
+        <li class="header">Issues Bulk Operation</li>
+        <li class="header">({{num_issues}} issues selected)</li>
 
-  <li> <a onclick="return imp.bulk_check_all_issues({{project.id}}, '{% url 'bulk_select_issues_for_project' project.id %}'); " href="#">Select all checkboxes</a> </li>
-  
-  <li> <a onclick="if ( ! confirm('Delete all selected issues?') ) { return false; }; imp.bulk_run_action('{% url 'bulk_delete_issues' %}', [{{project.id}} ]); return false;" href="#">Delete</a> </li>
+        <li> <a onclick="return imp.bulk_clear_selected_issues({{project.id}}, '{% url 'bulk_clear_selected_issues' %}'); " href="#">Clear all checkboxes</a> </li>
 
-  <li class="divider"></li>
+        <li> <a onclick="return imp.bulk_check_all_issues({{project.id}}, '{% url 'bulk_select_issues_for_project' project.id %}'); " href="#">Select all checkboxes</a> </li>
+        
+        <li> <a onclick="if ( ! confirm('Delete all selected issues?') ) { return false; }; imp.bulk_run_action('{% url 'bulk_delete_issues' %}', [{{project.id}} ]); return false;" href="#">Delete</a> </li>
 
-  {% for other_project in other_projects %}
-    <li> <a href="#" onclick="imp.bulk_run_action('{% url 'bulk_move_issues_to_project' other_project.id %}', [ {{other_project.id}}, {{project.id}} ]); return false;">Move to {{other_project}}</a> </li>
-  {% endfor %}
+        <li class="divider"></li>
 
-  <li class="divider"></li>
+        {% for other_project in other_projects %}
+        <li> <a href="#" onclick="imp.bulk_run_action('{% url 'bulk_move_issues_to_project' other_project.id %}', [ {{other_project.id}}, {{project.id}} ]); return false;">Move to {{other_project}}</a> </li>
+        {% endfor %}
+        <ul class="contextMenuPlugin">
+    </div>
 
-  <li>
-    <form method="GET" action='{% url 'bulk_select_by_issue_state' project.id %}'>
-      {{state_select_form.as_p}}
-    </form>
-  </li>
+    <div class="col-md-3">
 
-  <li> 
-    <form method="GET" action='{% url 'bulk_change_issue_state' %}'>
-      {{state_change_form.as_p}}
-    </form>
-  </li>
+      <ul>
+        <li>
+          <form method="GET" action='{% url 'bulk_select_by_issue_state' project.id %}'>
+            {{state_select_form.as_p}}
+          </form>
+        </li>
 
-  <li class="divider"></li>
+      </ul>
+    </div>
 
-  <li> 
-    <form method="GET" action='{% url 'bulk_change_issue_feature' %}'>
-      {{feature_change_form.as_p}}
-    </form>
-  </li>
+    <div class="col-md-3">
+      <ul>
+        <li> 
+          <form method="GET" action='{% url 'bulk_change_issue_state' %}'>
+            {{state_change_form.as_p}}
+          </form>
+        </li>
 
-  <li> 
-    <form method="GET" action='{% url 'bulk_change_issue_assignee' %}'>
-      {{assignee_change_form.as_p}}
-    </form>
-  </li>
+        <li class="divider"></li>
 
-  <li class="divider"></li>
+        <li> 
+          <form method="GET" action='{% url 'bulk_change_issue_feature' %}'>
+            {{feature_change_form.as_p}}
+          </form>
+        </li>
 
-  <li>
-    <form method="GET" action='{% url 'bulk_move_issue_above_issue' %}'>
-      {{move_above_issue_form.as_p}}
-    </form>
-    
-  </li>
+        <li> 
+          <form method="GET" action='{% url 'bulk_change_issue_assignee' %}'>
+            {{assignee_change_form.as_p}}
+          </form>
+        </li>
 
-  <li>
-    <form method="GET" action='{% url 'bulk_move_issue_below_issue' %}'>
-      {{move_below_issue_form.as_p}}
-    </form>
-    
-  </li>
+        <li>
+          <form method="GET" action='{% url 'bulk_move_issue_above_issue' %}'>
+            {{move_above_issue_form.as_p}}
+          </form>
+          
+        </li>
 
-  <li>
-    <form method="GET" action='{% url 'bulk_change_issue_adhoc' %}'>
-      {{bulk_change_issue_adhoc_form.as_p}}
-    </form>
-    
-  </li>
+        <li>
+          <form method="GET" action='{% url 'bulk_move_issue_below_issue' %}'>
+            {{move_below_issue_form.as_p}}
+          </form>
+          
+        </li>
 
-  <li class="divider"></li>
+        <li>
+          <form method="GET" action='{% url 'bulk_change_issue_adhoc' %}'>
+            {{bulk_change_issue_adhoc_form.as_p}}
+          </form>
+          
+        </li>
+
+      </ul>
+
+
+
+    </div>
 
 </ul>
