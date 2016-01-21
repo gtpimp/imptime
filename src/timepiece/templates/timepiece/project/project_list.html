@@ -76,7 +76,7 @@
             <a {% has_permission has_edit_project_states project.business %}onclick="return imp.edit_project_status(event, this);"{% end_permission %} >
               <small>
                 <span class="readonly_value"> 
-                  ({{ project.status2 }})
+                  {{ project.status2 }}
                 </span>
 
                 {% has_permission has_edit_project_states project.business %}
