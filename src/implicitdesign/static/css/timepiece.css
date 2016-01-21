@@ -51,8 +51,14 @@ a:focus {
   outline-offset: -2px;
 }
 a:hover, a:active {
-  outline: 0;
+             outline: 0;
+             text-decoration: none;
+         }
+
+a {
+    text-decoration: none;
 }
+
 sub, sup {
   position: relative;
   font-size: 75%;
@@ -152,14 +158,17 @@ body {
   color: #4c4c4c;
   background-color: #ffffff;
 }
+
 a {
   color: #0088cc;
   text-decoration: none;
 }
-a:hover {
-  color: #005580;
-  text-decoration: underline;
-}
+
+/* a:hover { */
+/*   color: #005580; */
+/*   text-decoration: underline; */
+/* } */
+
 .row {
   margin-left: -20px;
   *zoom: 1;
