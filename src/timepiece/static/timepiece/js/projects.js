@@ -428,12 +428,8 @@ imp.create_accordions = function() {
 };
 
 imp.refresh_show_numbers = function(issue_row_container) {
-    var parent_el;
-    if ( issue_row_container ) {
-        parent_el = issue_row_container.parents(".project_li");
-    } else {
-        parent_el = $("body");
-    }
+    var parent_el = $("body");
+
     if ( imp.show_numbers_state == numbers_state['no ctc'] ) {
         parent_el.find(".money_cell").show();
 	parent_el.find(".money_cell.money_ctc").hide();
@@ -451,6 +447,15 @@ imp.refresh_show_numbers = function(issue_row_container) {
 	parent_el.find(".estimates_cell").hide();
         parent_el.find(".money_cell.money_ctc").hide();
     }
+    
+    // if ( issue_row_container ) {
+    //     _show_numbers_for_el(issue_row_container.parents(".issue_list_content"));
+    // } else {
+    //     parent_el = $("body");
+    // }
+    // _show_numbers_for_el($("body"));
+
+
 };
 
 imp.refresh_hidden_fields = function(some_el_in_the_project) {
