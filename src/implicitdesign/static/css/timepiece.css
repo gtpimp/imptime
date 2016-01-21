@@ -9523,12 +9523,6 @@ div.traffic_tooltip {
 .issues_list table tr {
 }
 
-.issue_instance_row {
-    -webkit-box-shadow: 7px 4px 5px 0px rgba(0,0,0,1);
-    -moz-box-shadow: 7px 4px 5px 0px rgba(0,0,0,1);
-    box-shadow: 7px 4px 5px 0px rgba(0,0,0,1);
-}
-
 .issue_instance_row.status_devdone .issue_subject {
     color: #225522;
 }
@@ -9822,12 +9816,29 @@ border: 1px solid #939eb3;
     border-top: 6px solid #cececf;
 }
 
+/* .issue_instance_row td:first-child { */
+/*     box-shadow: 0px 2px 4px 3px #000 ; */
+/*     -moz-box-shadow: 0px 2px 4px 3px #000 ; */
+/*     -webkit-box-shadow: 0px 2px px 3px #000 ; */
+/* } */
+
+/* .issue_instance_row td:last-child { */
+/*     box-shadow: 3px 2px 4px 3px #000 ; */
+/*     -moz-box-shadow: 3px 2px 4px 3px #000 ; */
+/*     -webkit-box-shadow: 3px 2px 4px 3px #000 ; */
+/* } */
+
+
+
 .issues .issues_list table td {
     padding-left: 3px;
     padding-right: 2px;
     padding-top: 3px;
     padding-bottom: 3px;
     border-bottom: 6px solid #cececf;
+    /* box-shadow: 0px 1px 4px -2px #aaa ; */
+    /* -moz-box-shadow: 0px 1px 4px -2px #aaa ; */
+    /* -webkit-box-shadow: 0px 1px 4px -2px #aaa ; */
 }
 
 .issues .issues_list .hovered td {

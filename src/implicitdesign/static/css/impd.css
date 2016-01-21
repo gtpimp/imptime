@@ -180,6 +180,8 @@ a.ico-calc {
     display: block;
     text-align: center;
     box-shadow: 3px 2px 4px #aaa;
+    -moz-box-shadow: 3px 2px 4px #aaa;
+    -webkit-box-shadow: 3px 2px 4px #aaa;
     cursor: pointer;
     overflow: hidden;
 }
@@ -200,6 +202,10 @@ a.ico-calc {
 .current_sprint_details {
     background-color: #413d44;
     height: 60px;
+}
+
+.current_sprint_details .active_project_title {
+    margin-left: 8%;
 }
 
 .current_sprint_details .sprint_banner {
