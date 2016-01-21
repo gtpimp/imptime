@@ -116,8 +116,8 @@ imp.bulk_clear_selected_issues = function(project_id, clear_url) {
 
     if ( ! confirm('Unselect all checkboxes?') ) {
 	return false;
-    } 
-    var project_el = $(".project_li[list_project_id="+project_id+"]");
+    }
+    var project_el = imp.get_active_issue_list_el();
 
     var on_done = imp.loading("unchecking");
     $.ajax({type:"GET",
@@ -137,8 +137,8 @@ imp.bulk_check_all_issues = function(project_id, check_url) {
     if ( ! confirm('Select all checkboxes?') ) {
 	return false;
     } 
-    var project_el = $(".project_li[list_project_id="+project_id+"]");
-
+    var project_el = imp.get_active_issue_list_el();
+    
     var on_done = imp.loading("Checking");
     $.ajax({type:"GET",
 	    url: check_url,
@@ -208,7 +208,7 @@ imp.create_issue_and_add_another = function(element, sprint_id, url) {
 imp.on_issue_form_submit = function(element, sprint_id, url, on_success) {
     var mform = $(element).parents("form");
     var on_done = imp.issue_loading("Creating issue");
-    var sprint_el = $(".project_li[list_project_id="+sprint_id+"]");
+    var sprint_el = imp.get_active_issue_list_el();
 
     var handle_success_for_form = function(data) {
         var table_body =  sprint_el.find(".issue_list_body");
@@ -305,7 +305,7 @@ imp.attach_issue_filters = function(container) {
 
 imp.filter_on_status = function(project_id, status_name) {
     // works in conjunction with imp.attach_issue_filters
-    var container = $(".project_li[list_project_id="+project_id+"]");
+    var container = imp.get_active_issue_list_el();
     if (status_name) {
         container.find(".issue_instance_row").hide();
         container.find(".issue_instance_row[status='"+status_name+"']").show();
@@ -318,7 +318,7 @@ imp.filter_on_status = function(project_id, status_name) {
 
 imp.filter_on_feature = function(project_id, feature_name) {
     // works in conjunction with imp.attach_issue_filters
-    var container = $(".project_li[list_project_id="+project_id+"]");
+    var container = imp.get_active_issue_list_el();
     if (feature_name) {
         container.find(".issue_instance_row").hide();
         container.find(".issue_instance_row[feature='"+feature_name+"']").show();
@@ -413,7 +413,7 @@ imp.set_issue_checkbox_hooks = function(issue_row_container) {
         issue_row_container = $(el);
         imp.checkboxes.project_id = issue_row_container.attr("list_project_id");
         if ( ! imp.checkboxes.project_id ) {
-            issue_row_container = issue_row_container.parents(".project_li");
+            issue_row_container = issue_row_container.parents(".issue_list_content");
             imp.checkboxes.project_id = issue_row_container.attr("list_project_id");
         }
 
@@ -465,8 +465,12 @@ imp.set_issue_checkbox_hooks = function(issue_row_container) {
 
 };
 
+imp.get_active_issue_list_el = function() {
+    return $(".issue_list");
+};
+
 imp.toggle_show_all_users = function(menu_el, logged_in_username) {
-    var project_el = $(".issue_list");
+    var project_el = imp.get_active_issue_list_el();
     var trigger = $(".toggle_show_all_users_trigger");
     var all_shown = trigger.attr("all_shown");
     var cells = project_el.find(".estimates_cell").not("[data-username="+logged_in_username+"]");
@@ -484,7 +488,7 @@ imp.toggle_show_all_users = function(menu_el, logged_in_username) {
 
 imp.refresh_show_all_users = function(menu_el, logged_in_username) {
     var on_done = imp.loading("toggling...");
-    var project_el = $(menu_el).parents(".project_li");
+    var project_el = imp.get_active_issue_list_el();
     var trigger = project_el.find(".toggle_show_all_users_trigger");
     var all_shown = trigger.attr("all_shown");
     var cells = project_el.find(".estimates_cell").not("[data-username="+logged_in_username+"]");
