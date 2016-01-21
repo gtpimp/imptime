@@ -20,19 +20,6 @@
           <span class="project_number">#{{project.id}}</span> - {{project.business.name}} - {{ project }}
             <div class="project_title_menu">
 
-              {% comment %}
-              {%  has_permission has_create_sprint business  %}
-                    <a href="#" class="menu_close_sprint" {% if not project.is_open %}style="display:none"{% endif %} onclick="return imp.close_sprint(this, '{{project}}', '{% url 'close_project' project.id %}')">
-                      Close
-                    </a> 
-                    <a href="#" class="menu_reopen_sprint" {% if project.is_open %}style="display:none"{% endif %} onclick="return imp.reopen_sprint(this, '{{project}}', '{% url 'open_project' project.id %}')">
-                      Reopen
-                    </a>
-                     &nbsp; / &nbsp;
-              {% end_permission %}
-                    {% endcomment %}
-
-
 		    <a {% has_permission has_edit_project_states project.business %}onclick="return imp.edit_project_status(event, this);"{% end_permission %} url_for_update="{% url 'project_status_update' project.id %}" url_for_options="{% url 'allowed_project_stati' project.id %}" selected_value="{{project.status}}">
                       <span class="readonly_value"> 
                         ({{ project.status2 }})

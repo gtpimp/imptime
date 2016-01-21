@@ -65,9 +65,31 @@
            list_project_id="{{ project.id }}"
            title="#{{project.id}} - {{project.business.name}} - {{ project }}"
            {% if not project.is_preloaded and not project.is_open%}style="display:none"{% endif %}
-           onclick="imp.projects.load_or_display_issues(this, '{% url 'get_project_detail' project.id %}')">
+           onclick="imp.projects.load_or_display_issues(this, '{% url 'get_project_detail' project.id %}')"
+           url_for_update="{% url 'project_status_update' project.id %}" 
+           url_for_options="{% url 'allowed_project_stati' project.id %}" 
+           selected_value="{{project.status}}"  >
         <div class="project_number">#{{project.id}} - {{project.business.name}}</div>
         <p><small>{{ project }}</small></p>
+        <p>
+          <small>
+
+            <a {% has_permission has_edit_project_states project.business %}onclick="return imp.edit_project_status(event, this);"{% end_permission %} >
+              <span class="readonly_value"> 
+                ({{ project.status2 }})
+              </span>
+
+              {% has_permission has_edit_project_states project.business %}
+              <div class="inline_editor" style="display:none">
+                Filter: <br/><input class="filter" type="text" name="filter"/>
+                <div class='transient_selection'>
+                </div>
+              </div>
+              {% end_permission %}
+            </a>
+          </small>
+        </p>
+
       </div>
       {% endfor %}
     </div>

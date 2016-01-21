@@ -175,7 +175,7 @@ a.ico-calc {
 .project_menu .sprint_information {
     margin: 10px 10px 0 10px;
     background-color: #FFFFFF;
-    height: 65px;
+    min-height: 65px;
     vertical-align: middle;
     display: block;
     text-align: center;
