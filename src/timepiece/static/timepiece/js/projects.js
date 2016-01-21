@@ -357,7 +357,7 @@ imp.create_chart = function(chart_info) {
 imp.create_splitter = function() {
     var split_position = Cookies.get('splitter_position');
     if ( ! split_position || parseInt(split_position)<1 ) {
-        split_position = "70%";
+        split_position = "25%";
     } else {
         split_position += "px";
     }

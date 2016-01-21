@@ -2673,11 +2673,17 @@ table .span24 {
   color: #333333;
   white-space: nowrap;
 }
-.dropdown-menu li > a:hover, .dropdown-menu .active > a, .dropdown-menu .active > a:hover {
-  color: #ffffff;
-  text-decoration: none;
+
+.dropdown-menu a:hover {
   background-color: #0088cc;
 }
+
+.dropdown-menu li > a:hover, .dropdown-menu .active > a, .dropdown-menu .active > a:hover {
+                                                             color: #ffffff;
+                                                             text-decoration: none;
+                                                         }
+
+
 .open {
   *z-index: 1000;
 }
@@ -9075,14 +9081,19 @@ body table.table-striped-vertical th:nth-child(even), body table.table-striped-v
   background-color: #e6e6e6;
 }
 body #content.container-fluid {
-  width: 98%;
   
   z-index: 0;
   *margin-top: 60px;
   margin-left: 20px;
   margin-right: 20px;
   height: 80%;
+  padding: 20px;
 }
+
+body #content.container-fluid.maximize_size {
+    padding: 0px;
+}
+
 @media (max-width: 979px) {
   margin: 20px auto;
   width: 97%;
