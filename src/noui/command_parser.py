@@ -98,7 +98,8 @@ class CommandParser(object):
 
             res = BuiltInCommands(self).try_process_command(raw_command)
             if res:
-                info['last_result_message'] = unicode(res)
+                info['last_result_message'] = unicode(res['msg'])
+                info['last_result_action'] = res.get('action', None)
 
                 if self.command_context.get('active_command_id', None):
                     matching_commands = [self.active_command]

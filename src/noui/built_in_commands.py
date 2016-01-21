@@ -1,3 +1,5 @@
+from noui.models import NouiCommand
+from django.core.urlresolvers import reverse, resolve
 
 class BuiltInCommands(object):
     """ This class is for simple built-in commands, just to isolate them from the overall command parsing logic """
@@ -15,7 +17,7 @@ class BuiltInCommands(object):
 
     def clear(self):
         self.cp.reset()
-        return "Cleared parameters"
+        return { 'msg': "Cleared parameters" }
 
     def confirm(self):
 
@@ -34,7 +36,11 @@ class BuiltInCommands(object):
                 p_values.append(" with %s as %s " % ( p['name'], p['human_readable_value'] ) )
         cmd += " and ".join(p_values)
 
-        return cmd
+        return { 'msg' : cmd }
 
-    
-        
+    def help(self):
+        res = [ "%s - %s"%(x.name, x.pattern) for x in NouiCommand.objects.all().order_by("name") ]
+        if len(res) == 0:
+            return { 'msg' : "No commands created yet" }
+        return { 'msg' : "<br/>".join(res) }
+

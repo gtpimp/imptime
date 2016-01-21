@@ -90,6 +90,7 @@ def run_command(request, template="noui/command.html", context=None):
             raw_command = form.cleaned_data['command'].strip().lower()
             res = cp.parse_command_snippet(raw_command)
             context['last_result_message'] = res.get('last_result_message', None)
+
             if len(res['matching_commands']) > 1:
                 context['ambiguous_commands'] = res['matching_commands']
                 context['result'] = { 'status': 'ambiguous' }
