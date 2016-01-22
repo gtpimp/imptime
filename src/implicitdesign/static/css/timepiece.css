@@ -9381,6 +9381,11 @@ ul.business_menu_on_project_page li {
     margin-bottom: 20px;
 }
 
+.project_list .project_li {
+    padding-left: 4px;
+    padding-right: 4px;
+}
+
 .project_list .project_li:hover {
     background: #B7CBEC;
 }
@@ -9722,10 +9727,18 @@ div.traffic_tooltip {
 .card_menu .menu_item {
     float: left;
     margin-left: 20px;
+    border: 1px solid #413D44;
+    -webkit-border-radius: 3px;
+    -moz-border-radius: 3px;
+    border-radius: 3px;
 }
 
 .card_menu .menu_item a {
     color: #ffffff;
+}
+
+.card_menu .menu_item:hover {
+    border: 1px solid #dddddd;
 }
 
 .card_menu ul {
