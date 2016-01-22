@@ -2,7 +2,6 @@ imp.projects = imp.projects || {};
 
 imp.projects.already_loaded_sprints = {};
 
-
 //var numbers_state = { 'all':0, 'no ctc':1, 'no money':2, 'no money and no estimates':3 };
 var numbers_state = { 'no ctc':0, 'no money':1 };
 imp.show_numbers_state = numbers_state['no money'];
@@ -44,7 +43,6 @@ imp.projects.show_project_card_as_popup = function (event, project_card_url, msg
 };
 
 imp.projects.popup_business_comments = function(business_id) {
-    alert("hi");
     return false;
 };
 
@@ -129,28 +127,42 @@ imp.projects.load_or_display_issues = function(element, expand_url) {
     var current_row = $(element);
     var area_to_insert = $(".issue_list");
     var loading = area_to_insert.find(".loading");
+    area_to_insert.find(".issue_list_content").html("");
     loading.show();
-    var response = $.ajax({ type:"GET",
-                            url: expand_url,
-                            dataType:"json",
-                            success: function(data) {
-                                area_to_insert.find(".issue_list_content").html(data.issue_list_html);
-                                loading.hide();
-                                imp.projects.already_loaded_sprints[expand_url] = true;
-                                imp.projects.set_project_title(data.project);
-                                imp.projects.set_project_menu(data.project_menu);
-                                imp.on_issue_rows_loaded(area_to_insert);
-                                imp.active_project = data.project;
-                                $(".project_li").removeClass("active");
-                                $(".project_li[list_project_id="+data.project.id+"]").addClass("active");
 
-                                var sortable = $(area_to_insert.find(".issue_list_body"));
-                                var sortable_url = $(sortable).attr("update_order_url");
+    var show_issues_from_data = function(data) {
+        area_to_insert.find(".issue_list_content").html(data.issue_list_html);
+        imp.projects.set_project_title(data.project);
+        imp.projects.set_project_menu(data.project_menu);
+        imp.on_issue_rows_loaded(area_to_insert);
+        imp.active_project = data.project;
+        $(".project_li").removeClass("active");
+        $(".project_li[list_project_id="+data.project.id+"]").addClass("active");
 
-	                        imp.projects.attach_sortable( sortable, sortable_url );
-                                imp.on_issue_rows_loaded($(element));
-                            }
-                          });
+        var sortable = $(area_to_insert.find(".issue_list_body"));
+        var sortable_url = $(sortable).attr("update_order_url");
+
+	imp.projects.attach_sortable( sortable, sortable_url );
+        imp.on_issue_rows_loaded($(element));
+        imp.projects.already_loaded_sprints[expand_url] = data;
+    };
+
+    if ( imp.projects.already_loaded_sprints[expand_url] ) {
+        show_issues_from_data(imp.projects.already_loaded_sprints[expand_url]);
+        loading.hide();
+    } else {
+        $.ajax({ type:"GET",
+                 url: expand_url,
+                 dataType:"json",
+                 success: function(data) {
+                     show_issues_from_data(data);
+                     loading.hide();
+                 },
+                 error: function(err) {
+                     alert(err);
+                 }
+               });
+    }
 };
 
 imp.projects.on_project_sorting_change_for_url = function ( project_sorting_url) {
@@ -195,7 +207,7 @@ imp.refresh_project = function(project_id) {
     var el = $("li[list_project_id="+project_id+"]");
     var project_url = imp.config.project_issues_refresh_url.replace("999999", project_id);
     var project_container = $(el).find(".project_expand");
-    imp.projects.already_loaded_sprints[project_url] = false;
+    imp.projects.already_loaded_sprints[project_url] = null;
     imp.projects.load_or_display_issues(project_container, project_url);
 };
 
