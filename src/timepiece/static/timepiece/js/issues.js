@@ -40,7 +40,7 @@ imp.search_on_issue_number = function(issue_number) {
 
 imp.show_issue_detail = function(issue_id, url, msg, args) {
    
-    if ( imp.current_issue_id != issue_id ) { 
+    if ( issue_id == null || imp.current_issue_id != issue_id ) { 
 
 	imp.current_issue_id = issue_id;
 	msg = msg || "loading issue detail";

@@ -10180,8 +10180,13 @@ border: 1px solid #939eb3;
     cursor:-webkit-grabbing;
 }
 
+.loading {
+    width: 20px;
+}
+
 .loading_issue_indicator {
     position: absolute;
+    width: 15px;
 }
 
 .top_level_loading {
@@ -10193,6 +10198,11 @@ border: 1px solid #939eb3;
     color: #4c4c4c;
     background-color: #ffffff;
     padding: 2px;
+    min-width: 75px;
+}
+
+.top_level_loading img {
+    width: 20px;
 }
 
 form {
@@ -10274,24 +10284,6 @@ table.search_results tr:hover {
     background: -o-linear-gradient(top, #DDDDDD, #D0D3FA);
     background: linear-gradient(to bottom, #DDDDDD, #D0D3FA);
     cursor: pointer;
-}
-
-.floating_project {
-    z-index: 999;   
-    display:none;
-}
-
-.floating_project .project_table_appearance {
-    border: 1px solid #ababab;
-    -moz-box-shadow:    6px 6px 0px 0px #ccc;
-    -webkit-box-shadow: 6px 6px 0px 0px #ccc;
-    box-shadow:         6px 6px 0px 0px #ccc;
-}
-
-.floating_project .project_title {
-    cursor:grabbing;
-    cursor:-moz-grabbing;
-    cursor:-webkit-grabbing;
 }
 
 .creation_details {

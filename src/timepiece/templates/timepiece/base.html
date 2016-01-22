@@ -79,6 +79,8 @@
 
 <body id="{% block bodyid %}{% endblock bodyid %}">
 
+    {% include "timepiece/loading.html" %}
+  
     {% block navigation %}
         {% include "timepiece/navigation_bar.html" %}
         {% if user.id %}
@@ -87,11 +89,7 @@
 	{% endif %}
     {% endblock navigation %}
 
-
-
     <div id="content" class="container-fluid {% block extra_content_class %}{% endblock %}">
-
-      {% include "timepiece/loading.html" %}
 
         {% block messages %}
             {% include "timepiece/messages.html" %}
