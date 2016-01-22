@@ -4242,8 +4242,8 @@ def delete_issue_attachment(request, attachment_id):
 
 @csrf_exempt
 @login_required
-def sortable_issue_update(request, project_id):
-    context = {}
+def sortable_issue_update(request, project_id, context=None):
+    context = context or {}
 
     ordered_issue_ids = []
     for index in request.POST['ordered_ids'].split(","):
@@ -4721,6 +4721,33 @@ def issue_checkbox_context_menu(request, project_id, template="timepiece/project
     request.session['selected_issue_project_id'] = from_project.id
 
     return render_to_response(template, context, context_instance=RequestContext(request))
+
+@csrf_exempt 
+@login_required
+def move_issue_to_project(request):
+    issue_id = request.POST['issue_id'];
+    dest_project_id = request.POST['dest_project_id']
+
+    dest_project = timepiece.Project.objects.get(pk=dest_project_id)
+
+    bp = timepiece.BusinessPermissions.for_user(request.user, dest_project.business)
+    if not bp.has_edit_issues:
+        return HttpResponse(json.dumps({ "status": "No permission" }))
+
+    issue = timepiece.Issue.objects.get(pk=issue_id)
+    
+    old_project = issue.project
+    bp = timepiece.BusinessPermissions.for_user(request.user, old_project.business)
+    if not bp.has_edit_issues:
+        return HttpResponse(json.dumps({ "status": "No permission" }))
+
+    issue.project = dest_project
+    issue.order += 9999
+    issue.save()
+    timepiece.IssueHistory.add_history(request.user, issue, "moved project", unicode(old_project), unicode(dest_project))
+    get_interface_plugin(request, dest_project.business).move_issue(issue, old_project=old_project)
+    dest_project.refresh_issues_order()
+    return HttpResponse(json.dumps({ "status" : "ok" }))
 
 @login_required
 def bulk_move_issues_to_project(request, dest_project_id, context=None):

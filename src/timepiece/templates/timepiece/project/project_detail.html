@@ -15,7 +15,8 @@
           <thead>
             {% include "timepiece/project/_issue_table_header.html" %}
           </thead>
-          <tbody class="issue_list_body" id="{{project.id}}" update_order_url="{% url 'sortable_issue_update' project.id  %}" >
+          <tbody class="issue_list_body issue_drag_destination" id="{{project.id}}"
+                 update_order_url="{% url 'sortable_issue_update' project.id  %}" >
             {% if issues_forms.forms %}
             {% for form in issues_forms.forms %}
             {% with form.instance as issue %}

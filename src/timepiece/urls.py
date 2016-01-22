@@ -483,6 +483,12 @@ urlpatterns = patterns('',
         name='sortable_project_update'
         ),
 
+    url(
+        r'^move_issue_to_project/$',
+        views.move_issue_to_project,
+        name='move_issue_to_project'
+        ),
+
      url(
         r'^add_issue_attachment/(?P<issue_id>\d+)/$',
         views.add_issue_attachment,

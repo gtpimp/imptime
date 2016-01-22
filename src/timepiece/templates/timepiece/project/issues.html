@@ -225,7 +225,9 @@
 		  {% end_permission %}
                 </tr>
 	      </thead>
-	      <tbody class="issue_list_body" project_id="{{project.id}}" update_order_url="{% url 'sortable_issue_update' project.id %}">
+	      <tbody class="issue_list_body issue_drag_destination" project_id="{{project.id}}"
+                     update_order_url="{% url 'sortable_issue_update' project.id %}"
+                     move_issue_to_project_url="{% url 'move_issue_to_project' %}" >
 
 		{% for form in issues_forms.forms %}
 		  {% with form.instance as issue %}

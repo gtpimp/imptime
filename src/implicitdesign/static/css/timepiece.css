@@ -9386,6 +9386,10 @@ ul.business_menu_on_project_page li {
     padding-right: 4px;
 }
 
+.project_list .project_li.drop-hover {
+    border: 1px solid #000000;
+}
+
 .project_list .project_li:hover {
     background: #B7CBEC;
 }
