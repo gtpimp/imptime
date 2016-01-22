@@ -5,7 +5,7 @@
   {{ assign_user_form.media }}
 {% endblock %}
 
-<div class="project_detail">
+<div class="project_detail" project_id={{project.id}}>
   <img style="display:none" class="loading" src="{{STATIC_URL}}/images/icons/loadingAnimation.gif"/>
   
   <div class="row-fluid" style="float:left">

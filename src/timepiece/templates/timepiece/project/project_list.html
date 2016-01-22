@@ -58,6 +58,8 @@
 
     <div class="project_actions">
     </div>
+    <div class="hidden_project_list" style="display:none">
+    </div>
     <div class="project_list" project_sort_url="{% url 'sortable_project_update' %}" move_issue_to_project_url="{% url 'move_issue_to_project' %}" >
       {% for project in projects %} 
       <div class="project_li issue_drag_destination sprint_information {% if project.is_open %}open_project{%else%}closed_project{% endif %}"
