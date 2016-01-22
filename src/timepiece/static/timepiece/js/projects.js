@@ -561,12 +561,13 @@ imp.on_document_ready = function() {
             var from_el = $(event.srcElement);
             //from_el = ui.draggable;
 
-            var issue_row = from_el.parents(".issue_instance_row");
-            if ( issue_row.length == 0 ) {
+            var issue_el = from_el.parents(".issue_instance_row");
+            if ( issue_el.length == 0 ) {
                 return false;
             }
             
-            var issue_id = issue_row.attr("id");
+            var issue_id = issue_el.attr("id");
+            issue_el = $("#" + issue_id);
             var project_el = $(event.target);
             var loading_indicators = project_el.find(".loading");
             loading_indicators.show();
@@ -578,10 +579,10 @@ imp.on_document_ready = function() {
                     success : function (data) {
                         if ( data.status == "ok" ) {
                             var already_loaded_project_el = imp.projects.already_loaded_sprints.get_already_loaded_issue_list(project_id);
-                            if ( already_loaded_project_el ) {
-                                already_loaded_project_el.find(".issue_list_body").append(issue_row);
+                            if ( already_loaded_project_el.length > 0 ) {
+                                already_loaded_project_el.find(".issue_list_body").append(issue_el);
                             } else {
-                                issue_row.remove();
+                                issue_el.remove();
                             }
                             imp.projects.already_loaded_sprints.clear_cache_for_project(project_id);
                         } else {
