@@ -10,11 +10,9 @@
     <div style="float:left" class="short_traffic">
 	{% if per_user.has_hours %}
 	  <div class="special_traffic_container">
-            {% comment %}
 	    <div class="special_traffic_colourbar {{per_user.bar_color}}" style="width:{{ per_user.completion_width }}%;" >
 	      &nbsp;
 	    </div>
-            {% endcomment %}
 	  <div class="special_traffic_text">
             <span class="edit_issue_subject {{per_user.bar_color}}">
         {% else %}

@@ -9845,7 +9845,8 @@ border: 1px solid #939eb3;
 
 .issues .issues_list table tr.pseudo_issue_row, .issues .issues_list table tr.issue_instance_row {
     width: 100%;
-    background:  #FFFFFF;
+    /*background:  #FFFFFF;*/
+    background: #efefef;
     line-height: 25px;
 }
 

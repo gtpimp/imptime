@@ -131,26 +131,26 @@ imp.nav.show_issue = function( issue_id, project_id, show_url ) {
     }
 };
 
-imp.load_user_notifications = function() {
+// imp.load_user_notifications = function() {
     
-    setTimeout( function () {
-	          var el = $("#user_notification_container");
+//     setTimeout( function () {
+// 	          var el = $("#user_notification_container");
 
-	          $.ajax({type:"GET",
-			  url: imp.config.load_user_notifications_url,
-			  success: function(data) {
-			      if ( data ) {
-				  el.slideDown();
-				  el.html(data);
-			      }
-			  },
-			  error: function(err) {
-			      el.hide();
-			  }
-                        });
-                },
-		0 );
-};
+// 	          $.ajax({type:"GET",
+// 			  url: imp.config.load_user_notifications_url,
+// 			  success: function(data) {
+// 			      if ( data ) {
+// 				  el.slideDown();
+// 				  el.html(data);
+// 			      }
+// 			  },
+// 			  error: function(err) {
+// 			      el.hide();
+// 			  }
+//                         });
+//                 },
+// 		0 );
+// };
 
 imp.seen_all_user_notifications = function(url) {
     var on_done = imp.loading("Updating");
@@ -172,4 +172,4 @@ $(document).ready(function() {
                       imp.nav.hookup_noui_form();
 		  });
 
-imp.load_user_notifications();
+//imp.load_user_notifications();
