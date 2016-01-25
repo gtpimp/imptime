@@ -10,7 +10,7 @@ from django.http import HttpResponse, HttpResponseRedirect
 from django.core.urlresolvers import reverse, resolve
 from django.template import RequestContext
 from django.contrib import messages
-from forms import NouiCommandForm, RunCommandForm, command_parameter_formset
+from forms import NouiCommandForm, RunCommandForm, command_parameter_formset, NouiCommandImportForm
 from models import NouiCommand, NouiCommandParameter
 from django.views.decorators.csrf import csrf_exempt
 from noui.command_parser import CommandParser
@@ -23,6 +23,7 @@ logger = logging.getLogger(__name__)
 def command_list(request, template="noui/command_list.html", context=None):
     context = context or {}
     context['commands'] = NouiCommand.objects.all().order_by("name")
+    context['import_form'] = NouiCommandImportForm(prefix="import")
     return render_to_response(template, context, context_instance=RequestContext(request))
 
 @login_required
@@ -143,6 +144,7 @@ def command_context_reset(request):
     return run_command(request)
 
 @login_required
+@permission_required('noui.command_edit')
 def command_export(request, command_ref, context=None):
     context = context or {}
 
@@ -155,6 +157,20 @@ def command_export(request, command_ref, context=None):
     except Exception, ex:
         logger.exception(ex)
         raise
-    
-    
+
+@login_required
+@permission_required('noui.command_edit')    
+def command_import(request, context=None):
+    context = context or {}    
+
+    try:
+        import_form = NouiCommandImportForm(request.POST or None, request.FILES or None, prefix="import")
+        if import_form.is_valid():
+            command = import_form.save()
+            messages.info(request, "Command imports : %s" % command.name)
+            return redirect("noui:command_list")
+        
+    except Exception, ex:
+        logger.exception(ex)
+        raise
     

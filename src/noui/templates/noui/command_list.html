@@ -20,8 +20,21 @@
         <a class="btn" onclick="window.location='{% url 'noui:command_add' %}'; return false;">
           Add <img width="40px" class="add_command" src="{% static 'images/icons/add.png' %}">
         </a>
+        <a class="btn" onclick="$(this).parents('.list').find('.import_command_form').slideToggle(); return false;">
+          Import
+        </a>
       </div>
-      <div class="col-lg-4"></div>
+      <div class="col-lg-4">
+        <div class="import_command_form" style="display:none">
+
+          <form action="{% url 'noui:command_import' %}" method="POST" enctype="multipart/form-data">
+            {% csrf_token %}
+            {% bootstrap_form import_form %}
+            <input name="Upload" type="submit" class="btn btn-primary"/>
+          </form>
+        </div>
+        
+      </div>
     </div>
 
     <br/><br/><br/><br/>
