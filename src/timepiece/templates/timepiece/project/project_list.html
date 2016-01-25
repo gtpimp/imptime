@@ -61,43 +61,10 @@
     <div class="hidden_project_list" style="display:none">
     </div>
     <div class="project_list" project_sort_url="{% url 'sortable_project_update' %}" move_issue_to_project_url="{% url 'move_issue_to_project' %}" >
-      {% for project in projects %} 
-      <div class="project_li issue_drag_destination sprint_information {% if project.is_open %}open_project{%else%}closed_project{% endif %}"
-           preloaded="{{ project.is_preloaded }}"
-           list_project_id="{{ project.id }}"
-           title="#{{project.id}} - {{project.business.name}} - {{ project }}"
-           {% if not project.is_preloaded and not project.is_open%}style="display:none"{% endif %}
-           onclick="imp.projects.load_or_display_issues({{project.id}}, this, '{% url 'get_project_detail' project.id %}')"
-           url_for_update="{% url 'project_status_update' project.id %}" 
-           url_for_options="{% url 'allowed_project_stati' project.id %}" 
-           move_issue_to_project_url="{% url 'move_issue_to_project' %}" 
-           selected_value="{{project.status}}"  >
-        <div class="loading"> 
-          <img style="display:none" class="loading" src="{{STATIC_URL}}/images/icons/loadingAnimation.gif"/> 
-        </div>
-        <div class="project_number">#{{project.id}} - {{project}}</div>
-        <p>
-          <small>
+      {% for project in projects %}
 
-            <a {% has_permission has_edit_project_states project.business %}onclick="return imp.edit_project_status(event, this);"{% end_permission %} >
-              <small>
-                <span class="readonly_value"> 
-                  {{ project.status2 }}
-                </span>
-
-                {% has_permission has_edit_project_states project.business %}
-                <div class="inline_editor" style="display:none">
-                  Filter: <br/><input class="filter" type="text" name="filter"/>
-                  <div class='transient_selection'>
-                  </div>
-                </div>
-                {% end_permission %}
-              </small>
-            </a>
-          </small>
-        </p>
-
-      </div>
+      {% include timepiece/project/_project_list_item.html" %}
+      
       {% endfor %}
     </div>
   </div>
