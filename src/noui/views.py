@@ -141,3 +141,20 @@ def run_command(request, template="noui/command.html", context=None):
 def command_context_reset(request):
     CommandParser(request).reset()
     return run_command(request)
+
+@login_required
+def command_export(request, command_ref, context=None):
+    context = context or {}
+
+    try:
+        command = NouiCommand.objects.get(pk=command_ref)
+        data = json.dumps(command.model_to_dict())
+        response = HttpResponse(data, content_type="text/json")
+        response['Content-Disposition'] = 'attachment; filename=%s.json' % command.name
+        return response
+    except Exception, ex:
+        logger.exception(ex)
+        raise
+    
+    
+    

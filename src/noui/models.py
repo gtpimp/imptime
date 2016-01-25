@@ -35,7 +35,11 @@ class NouiCommand(BaseModel):
 
     def __unicode__(self):
         return self.name
-        
+
+    def model_to_dict(self):
+        d = super(NouiCommand, self).model_to_dict()
+        return d
+            
 class NouiCommandParameter(BaseModel):
     name = models.CharField(max_length=255, null=False, blank=True)
     var_name = models.CharField(max_length=255, null=False, blank=True)

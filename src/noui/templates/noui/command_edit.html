@@ -9,6 +9,7 @@
     <form action="{% url 'noui:command_edit' command.id %}" method="POST" enctype="multipart/form-data">
       {% csrf_token %}
       {% include "noui/_command_form.html" %}
+      <a class="btn btn-info" href="{% url 'noui:command_export' command.id %}">Export</a>
     </form>
   </div>
   

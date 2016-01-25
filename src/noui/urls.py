@@ -15,4 +15,5 @@ urlpatterns = patterns(
     url(r'^command/edit/(?P<command_ref>\d+)', views.command_edit, name='command_edit'),
     url(r'^command/delete/(?P<command_ref>\d+)', views.command_delete, name='command_delete'),
     url(r'^command/context/reset', views.command_context_reset, name='command_context_reset'),
+    url(r'^command/export/(?P<command_ref>\d+)', views.command_export, name='command_export'),
 )
