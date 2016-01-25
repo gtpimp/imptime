@@ -1153,7 +1153,7 @@ class SprintInvoiceReportSettingsForm(forms.Form):
 
     only_these_issue_numbers = forms.MultipleChoiceField(required=False,
                                                      widget=CheckboxSelectMultiple)
-    include_adhoc_issues = forms.BooleanField(label="Include Adhoc issues", initial=True, required=False)
+    include_adhoc_issues = forms.BooleanField(label="Include Adhoc issues", initial=False, required=False)
 
 
     def __init__(self, project, bp, only_these_issues=None, *args, **kwargs):
@@ -1205,7 +1205,7 @@ class SprintQuoteReportSettingsForm(forms.Form):
 
     only_these_issue_numbers = forms.MultipleChoiceField(required=False,
                                                      widget=CheckboxSelectMultiple)
-    include_adhoc_issues = forms.BooleanField(label="Include Adhoc issues", initial=True, required=False)
+    include_adhoc_issues = forms.BooleanField(label="Include Adhoc issues", initial=False, required=False)
 
     def __init__(self, project, bp, only_these_issues=None, *args, **kwargs):
         super(SprintQuoteReportSettingsForm, self).__init__(*args, **kwargs)

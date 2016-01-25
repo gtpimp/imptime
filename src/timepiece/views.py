@@ -4435,7 +4435,7 @@ def sprint_report(request, project_id, context=None):
             if 'only_these_issue_numbers' in form.cleaned_data:
                 issues = issues.filter(number__in=form.cleaned_data['only_these_issue_numbers'])
 
-            if 'include_adhoc_issues' not in form.cleaned_data:
+            if not form.cleaned_data.get('include_adhoc_issues', False):
                 issues = issues.exclude(adhoc=True)
 
         if form == quote_form:
