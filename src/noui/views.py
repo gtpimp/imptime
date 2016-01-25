@@ -150,7 +150,7 @@ def command_export(request, command_ref, context=None):
 
     try:
         command = NouiCommand.objects.get(pk=command_ref)
-        data = json.dumps(command.model_to_dict())
+        data = json.dumps(command.model_to_dict(include_parameters=True))
         response = HttpResponse(data, content_type="text/json")
         response['Content-Disposition'] = 'attachment; filename=%s.json' % command.name
         return response

@@ -36,8 +36,10 @@ class NouiCommand(BaseModel):
     def __unicode__(self):
         return self.name
 
-    def model_to_dict(self):
+    def model_to_dict(self, include_parameters=False):
         d = super(NouiCommand, self).model_to_dict()
+        if include_parameters:
+            d['parameters'] = [ x.model_to_dict() for x in self.parameters.order_by("name").all() ]
         return d
 
 class NouiCommandParameter(BaseModel):
@@ -53,7 +55,7 @@ class NouiCommandParameter(BaseModel):
 
     def __unicode__(self):
         return self.name
-
+    
 class PostedAction(BaseModel):
 
     ACTION_CHOICES = [ ('waiting', 'Waiting'),

@@ -5,6 +5,8 @@ import json
 from datetime import datetime
 from django.conf import settings
 from models import NouiCommand, NouiCommandParameter
+import logging
+logger = logging.getLogger(__name__)
 
 class RunCommandForm(forms.Form):
     command = forms.CharField(required=True)
@@ -30,12 +32,25 @@ class NouiCommandImportForm(forms.Form):
         j = self.cleaned_data['f'].read()
         data = json.loads(j)
 
-        if NouiCommand.objects.filter(name=data['name']).exists():
-            raise Exception( "A command already exists with name %s" % data['name'] )
+        existing_command = NouiCommand.objects.filter(name=data['name']).first()
+        if existing_command:
+            existing_command.name = existing_command.name + "_replaced_on_%s" % datetime.today().strftime("%H%M_%d%B%Y")
+            existing_command.save()
+            logger.info("Command import causing a rename of existing command from %s to %s" % (data['name'], existing_command.name))
 
         del data['modified']
         del data['created']
         del data['id']
+
+        parameters = data.pop('parameters', [])
         command = NouiCommand.objects.create(**data)
+
+        for parameter in parameters:
+            del parameter['id']
+            del parameter['command']
+            del parameter['created']
+            del parameter['modified']
+            parameter['command'] = command
+            NouiCommandParameter.objects.create(**parameter)
 
         return command
