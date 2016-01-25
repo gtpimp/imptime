@@ -240,7 +240,10 @@ class CommandParser(object):
     def _resolve_parameter_value(self, command_parameter, raw_parameter_value):
         code_locals = { 'search_string': raw_parameter_value.strip() }
         code_locals['parameters'] = self.parameters_with_resolved_values
-        parameter_value = self._call_noui_code_snippet(command_parameter.search_function, code_locals)
+        if command_parameter.search_function:
+            parameter_value = self._call_noui_code_snippet(command_parameter.search_function, code_locals)
+        else:
+            parameter_value = raw_parameter_value
         return parameter_value
 
     def _call_noui_code_snippet(self, code, code_locals):

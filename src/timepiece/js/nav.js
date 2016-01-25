@@ -38,6 +38,11 @@ imp.issue_loading = function(item_id, msg) {
     return on_done;
 };
 
+imp.nav.run_search = function(search_term) {
+    var form = $(".issue_search_form");
+    form.find("input[name=search_term]").value(search_term);
+    form.submit();
+};
 
 imp.nav.hookup_search_form = function() {
     var form = $(".issue_search form");

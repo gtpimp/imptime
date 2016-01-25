@@ -9,7 +9,7 @@ class PostedActionHelper(object):
         self.request = request
         self.command_parser = command_parser
 
-    def redirect(self, dest_url ):
+    def redirect(self, dest_url):
         action = PostedAction.objects.create( source_command=self.command_parser.active_command,
                                                   target_user=self.command_parser.target_user,
                                                   target_device=self.command_parser.target_device,
@@ -20,6 +20,17 @@ class PostedActionHelper(object):
                                                   action_args=json.dumps( {'url': reverse(dest_url)} ) )
         return action
 
+    def javascript(self, func):
+        action = PostedAction.objects.create( source_command=self.command_parser.active_command,
+                                                  target_user=self.command_parser.target_user,
+                                                  target_device=self.command_parser.target_device,
+                                                  source_user=self.request.user,
+                                                  human_readable_source_command=self.command_parser.command_as_human_readable_string(),
+                                                  status='waiting',
+                                                  action_type='javascript',
+                                                  action_args=json.dumps( {'func': func} ) )
+        return action
+    
     def run(self, action):
         if action.action_type == 'redirect':
             return self._run_redirect(self, action)

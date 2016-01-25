@@ -2,9 +2,13 @@
 var noui = (function() {
 
     var run_action = function(action) {
-        if ( action.action_type == "redirect") {
+        action_completed(action);
+        if ( action.action_type == "redirect" ) {
             window.location = action.action_args.url;
-            action_completed(action);
+        } else if ( action.action_type == "javascript" ) {
+
+            var func = new Function( action.action_args.func );
+            func();
         } else {
             alert("Unknown action type: " + action.action_type);
         }

@@ -65,6 +65,7 @@ class PostedAction(BaseModel):
                        ('completed', 'Completed') ]
 
     ACTION_TYPES = [ ( 'redirect', 'Redirect' ),
+                     ( 'javascript', 'Javascript' ),
                      ( 'run_search_result', 'Run search result' ) ]
     
     source_command = ProtectedForeignKey(NouiCommand, null=False, blank=True, related_name='noui_posted_actions')
