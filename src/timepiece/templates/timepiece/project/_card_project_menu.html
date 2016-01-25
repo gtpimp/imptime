@@ -4,29 +4,6 @@
 
 <li class="divider"></li>
 
-{% has_permission has_add_issue project.business %}
-
-
-<li class="menu_item commonly_used parent_li_of_form_on_click">
-
-  <a href="#" class="to_expand_form_on_click" onclick="imp.do_form_show(this , '{% url 'add_issue' project.id %}' )" title="Add issue">
-    <img src="{{STATIC_URL}}images/icons/add.png">Add issue</a>
-  </a>
-</li>
-{% end_permission %}
-
-<li class='menu_item commonly_used'>
-  <a href="{% url 'project_list' project.id %}" onclick="imp.refresh_project({{project.id}}); return false;" title="Refresh issues">
-    <img src="{{STATIC_URL}}images/icons/arrow_refresh.png">Refresh</a>
-  </a>
-</li>
-
-<li class='menu_item' >
-  <a href="#" onclick="imp.popup_page('{% url 'auto_issue_sort' project.id %}'); return false;">
-    Bulk sort
-  </a>
-</li>
-
 {% if perms.timepiece.change_project %}
 <li class='menu_item' >
   <a href="#" onclick="imp.popup_page('{% url 'edit_project' project_id=project.id %}'); return false;">
@@ -34,10 +11,6 @@
   </a>
 </li>
 {% endif %}
-
-{% ifequal project.business.sync_with "jira" %}
-{% include "jira/project_menu.html" %}
-{% endifequal %}
 
 {% comment %}
 {% has_permission has_view_ctc_billable_rates project.business %}
@@ -109,6 +82,51 @@
 {% end_permission %}
 {% endcomment %}
 
+{% if perms.timepiece.view_project_cards %}
+<li class='menu_item'>
+  <a onclick="imp.projects.show_project_card_as_popup(event,'{% url 'get_project_card_for_business'  business_id=project.business.id project_id=project.id %}');return false" href='#' target_id=".issue_detail" project_card_url="{% url 'get_project_card_for_business'  business_id=business.id project_id=project.id  %}" business_id="{{ business.id }}" project_id="{{ project.id }}" title="Project card">
+    Project card
+  </a>
+</li>
+{% endif %}
+
+{%  has_permission has_edit_permissions business  %}
+<li class='menu_item' >
+  <a href="#" onclick="window.open('{% url 'show_permissions' business.id %}')">
+    Permissions
+  </a> 
+</li>
+{% end_permission %}
+
+
+
+<li class="divider"></li>
+
+{% has_permission has_add_issue project.business %}
+<li class="menu_item commonly_used parent_li_of_form_on_click">
+
+  <a href="#" class="to_expand_form_on_click" onclick="imp.do_form_show(this , '{% url 'add_issue' project.id %}' )" title="Add issue">
+    <img src="{{STATIC_URL}}images/icons/add.png">Add issue</a>
+  </a>
+</li>
+{% end_permission %}
+
+<li class='menu_item commonly_used'>
+  <a href="{% url 'project_list' project.id %}" onclick="imp.refresh_project({{project.id}}); return false;" title="Refresh issues">
+    <img src="{{STATIC_URL}}images/icons/arrow_refresh.png">Refresh</a>
+  </a>
+</li>
+
+<li class='menu_item' >
+  <a href="#" onclick="imp.popup_page('{% url 'auto_issue_sort' project.id %}'); return false;">
+    Bulk sort
+  </a>
+</li>
+
+{% ifequal project.business.sync_with "jira" %}
+{% include "jira/project_menu.html" %}
+{% endifequal %}
+
 {% has_permission has_view_ctc_billable_rates project.business %}
 <li class='menu_item' >
   <a href="#" onclick="imp.toggle_show_numbers();return false;">
@@ -125,14 +143,6 @@
 </li>
 {% end_permission %}
 
-{% if perms.timepiece.view_project_cards %}
-<li class='menu_item'>
-  <a onclick="imp.projects.show_project_card_as_popup(event,'{% url 'get_project_card_for_business'  business_id=project.business.id project_id=project.id %}');return false" href='#' target_id=".issue_detail" project_card_url="{% url 'get_project_card_for_business'  business_id=business.id project_id=project.id  %}" business_id="{{ business.id }}" project_id="{{ project.id }}" title="Project card">
-    Project card
-  </a>
-</li>
-{% endif %}
-
 <li class='menu_item' >
   <a href="#" onclick="imp.toggle_show_adhoc_issues(); return false;">
     Show/hide ad-hoc issues
@@ -144,13 +154,5 @@
   <a href="#" onclick="window.open('{% url 'create_project' %}?business_id={{ business.id }}');return false;">New sprint</a>
 </li>
 {% endcomment %}
-
-{%  has_permission has_edit_permissions business  %}
-<li class='menu_item' >
-  <a href="#" onclick="window.open('{% url 'show_permissions' business.id %}')">
-    Permissions
-  </a> 
-</li>
-{% end_permission %}
 
 {% endif %}
