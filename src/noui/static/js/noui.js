@@ -2,8 +2,13 @@
 var noui = (function() {
 
     var run_action = function(action) {
-        alert("running " + action.name);
-        action_completed(action);
+        if ( action.action_type == "redirect") {
+            window.location = action.action_args.url;
+            action_completed(action);
+        } else {
+            alert("Unknown action type: " + action.action_type);
+        }
+        
     };
 
     var action_completed = function(action, callback) {
@@ -43,7 +48,6 @@ var noui = (function() {
 }());
 
 noui.hookup_noui_form = function() {
-
     var forms = $(".noui_form form");
     forms.submit(function(event) {
         var form = $(this);
@@ -70,6 +74,5 @@ noui.hookup_noui_form = function() {
 
 $(document).ready(function() {
     noui.hookup_noui_form();
-
     noui.check_for_actions();
 });

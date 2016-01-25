@@ -1,5 +1,6 @@
 from noui.models import PostedAction
 import json
+from django.core.urlresolvers import reverse
 
 class PostedActionHelper(object):
 
@@ -16,7 +17,7 @@ class PostedActionHelper(object):
                                                   human_readable_source_command=self.command_parser.command_as_human_readable_string(),
                                                   status='waiting',
                                                   action_type='redirect',
-                                                  action_args=json.dumps( {'url': dest_url} ) )
+                                                  action_args=json.dumps( {'url': reverse(dest_url)} ) )
         return action
 
     def run(self, action):

@@ -1,6 +1,7 @@
 import datetime
 from dateutil.relativedelta import relativedelta
 import re
+import json
 import logging
 logger = logging.getLogger(__name__)
 from lib.models import BaseModel, BaseManager
@@ -75,3 +76,9 @@ class PostedAction(BaseModel):
     action_type = models.CharField(max_length=20, null=False, blank=False, choices=ACTION_TYPES)
     action_args = models.TextField(null=True, blank=True) # json
     
+    def model_to_dict(self, convert_json_fields_to_json=False):
+        d = super(PostedAction, self).model_to_dict()
+        if convert_json_fields_to_json and d['action_args']:
+            d['action_args'] = json.loads(d['action_args'])
+        return d
+        

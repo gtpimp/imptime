@@ -181,13 +181,15 @@ def next_action(request, context=None):
     context = context or {}
     try:
         next_action = PostedAction.objects.all().filter(target_user=request.user, status='waiting').order_by("id").first()
+        #next_action = PostedAction.objects.all().filter(target_user=request.user).order_by("id").first()
         if next_action:
-            context['action'] = next_action.model_to_dict()
+            context['action'] = next_action.model_to_dict(convert_json_fields_to_json=True)
         context['status'] = 'ok'
     except Exception, ex:
         logger.exception(ex)
         context['status'] = 'failed'
         context['error_msg'] = str(ex)
+    return HttpResponse(json.dumps(context), content_type='application/json')
 
 @login_required
 @csrf_exempt
@@ -198,8 +200,10 @@ def update_action_status(request, action_ref, context=None):
         action = PostedAction.objects.get(pk=action_ref, target_user=request.user)
         action.status = new_status
         action.save()
+        context['status'] = 'ok'
     except Exception, ex:
         logger.exception(ex)
         context['status'] = 'failed'
         context['error_msg'] = str(ex)
-        
+
+    return HttpResponse(json.dumps(context), content_type='application/json')
