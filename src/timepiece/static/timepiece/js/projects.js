@@ -89,7 +89,8 @@ imp.projects.set_project_title = function( project ) {
 };
 
 imp.projects.set_project_menu = function( project_menu ) {
-    $(".project_menu .project_actions").html(project_menu);
+    $(".project_specific_menu").html(project_menu);
+    //$(".project_menu .project_actions").html(project_menu);
 };
 
 function make_data_done_function_for_element(element) {

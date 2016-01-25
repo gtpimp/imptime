@@ -1,0 +1,71 @@
+{% load timepiece_tags %}
+
+{% if business.id %}
+<div class="nav-link dropdown project_specific_menu">
+  <a href="#" class="ico-project dropdown-toggle" 
+     data-toggle="dropdown">{{ business.name}}{% if project.id %} -- {{ project.name }}{% endif %}  <b class="caret"></b>
+  </a>
+  <ul class="dropdown-menu">
+    <li>
+      <a href="#" onclick="imp.show_issue_detail(null, '{% url 'business_comments' business.id %}');">Comments</a>
+    </li>
+
+    {% if perms.timepiece.add_business %}
+    {% if business.id %}
+    <li>
+      <a target="_blank" 
+         href="{% url 'edit_business' business.id %}">Edit {{business.name}}
+      </a>
+    </li>
+    {% endif %}
+    {% endif %}
+    <li class="divider"></li>
+    {% has_permission has_view_ctc_billable_rates business %}
+    {% has_permission has_view_invoices business %}
+    {% if business.id %}
+    <li>
+      <a target="_blank" 
+         href="{% url 'business_cost_summary' business.id %}">Cost summary
+      </a>
+    </li>
+    {% endif %}
+    {% end_permission %}
+    {% end_permission %}
+
+    {% has_permission has_view_documents business %} 
+    <li>
+      <a href="{% url 'view_business_documents' business.id %}">Project documents2</a>
+    </li>
+    {% end_permission %}
+    <li class="divider"></li>
+
+    {% if has_closed_sprints %}
+    <li class="handle_show_closed_sprints" >
+      <a href="#" onclick="$('.project_li.closed_project').show(); $(this).hide(); $(this).parents('ul').find('.handle_hide_closed_sprints').show(); return false;">Show closed sprints
+      </a>
+    </li>
+    <li style="display:none" class="handle_hide_closed_sprints" >
+      <a href="#" onclick="$('.project_li.closed_project').hide(); $(this).hide(); $(this).parents('ul').find('.handle_show_closed_sprints').show(); return false;">Hide closed sprints
+      </a>
+    </li>
+    {% endif %}
+    {% has_permission has_create_sprint business %}  
+    <li>
+      <a href="#"  onclick="imp.do_form_show(this , '{% url 'add_project' business.id %}' ); return false;">Create sprint in {{business.name}}
+      </a>	
+    </li>
+
+    {% ifequal business.sync_with "jira" %}
+    <li>
+      <a href="#" onclick="imp.projects.show_project_card_as_popup(this, '{% url 'jira:sync_business_from_jira' business.id %}', 'Synching...', {'reload_on_done':'{% url 'closed_project_list' business.id %}'}); return false;">Sync sprint names from Jira
+      </a>
+    </li>
+    {% endifequal %}
+
+    {% end_permission %}
+
+    {% include "timepiece/project/_card_project_menu.html" %}
+    
+  </ul>
+</div>
+{% endif %}

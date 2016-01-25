@@ -3398,7 +3398,8 @@ def get_project_detail(request, project_id, context=None):
         context['selected_issue_ids'] = [int(x) for x in request.session['selected_issue_ids_for_context_menu']]
 
     issues_list_rendered = render_to_response("timepiece/project/project_detail.html", context, context_instance=RequestContext(request))
-    project_menu_rendered = render_to_response("timepiece/project/_card_project_menu.html", context, context_instance=RequestContext(request))
+    #project_menu_rendered = render_to_response("timepiece/project/_card_project_menu.html", context, context_instance=RequestContext(request))
+    project_menu_rendered = render_to_response("timepiece/_navigation_project_specific_menu.html", context, context_instance=RequestContext(request))
 
     return HttpResponse(json.dumps({ 'project':project.model_to_dict(include_business=True),
                                      'project_menu': project_menu_rendered.content,
