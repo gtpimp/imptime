@@ -136,7 +136,32 @@ class CommandParser(object):
         for p in self.parameter_context.values():
             p['required_by_active_command'] = False
         self.parse_command_parameters("")
-    
+
+    def command_as_human_readable_string(self):
+        active_command = self.cp.active_command
+        if not active_command:
+            return "No active command"
+
+        if not self.cp.ready_to_execute:
+            return "Waiting for more parameters for command %s" % active_command.name
+        
+        cmd = active_command.name
+
+        p_values = []
+        for p in self.cp.parameter_context.values():
+            if p['required_by_active_command']:
+                p_values.append(" with %s as %s " % ( p['name'], p['human_readable_value'] ) )
+        cmd += " and ".join(p_values)
+        return cmd
+
+    def target_user(self):
+        """ intended to allow a user different from the logged-in user to be effected by a particular command """
+        return self.request.user
+
+    def target_device(self):
+        """ intended to allow a device different from the logged-in user to be effected by a particular command. """
+        return None
+        
     def parse_command_parameters(self, command_string):
         parameters = self.active_command.parameters.all().order_by("id")
         parameter_context = self.parameter_context
@@ -204,3 +229,5 @@ class CommandParser(object):
             logger.info("This code snippet didn't set res: %s" % code)
             raise Exception("No res variable specified to hold the result of the code snippet")
         return res
+
+    

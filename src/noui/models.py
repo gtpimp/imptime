@@ -39,7 +39,7 @@ class NouiCommand(BaseModel):
     def model_to_dict(self):
         d = super(NouiCommand, self).model_to_dict()
         return d
-            
+
 class NouiCommandParameter(BaseModel):
     name = models.CharField(max_length=255, null=False, blank=True)
     var_name = models.CharField(max_length=255, null=False, blank=True)
@@ -54,54 +54,22 @@ class NouiCommandParameter(BaseModel):
     def __unicode__(self):
         return self.name
 
-class NouiBusiness(object):
+class PostedAction(BaseModel):
 
-    @classmethod
-    def find(self, search_string, **kwargs):
-        b = None
-        try:
-            b = timepiece_models.Business.objects.filter(pk=search_string).first()
-        except Exception:
-            pass
-        if not b:
-            b = timepiece_models.Business.objects.filter(name__icontains=search_string).first()
-        if not b:
-            b = timepiece_models.Business.objects.filter(description__icontains=search_string).first()
-        return b
+    ACTION_CHOICES = [ ('waiting', 'Waiting'),
+                       ('refused', 'Refused'),
+                       ('failed', 'Failed'),
+                       ('completed', 'Completed') ]
 
-class NouiProject(object):
-
-    @classmethod
-    def find(self, search_string, **kwargs):
-        b = None
-
-        filter_args = {}
-        if kwargs.get('business'):
-            filter_args['business']=kwargs['business']
-        
-        try:
-            b = timepiece_models.Project.objects.filter(pk=search_string, **filter_args).first()
-        except Exception:
-            pass
-        if not b:
-            b = timepiece_models.Project.objects.filter(name__icontains=search_string, **filter_args).first()
-        if not b:
-            b = timepiece_models.Project.objects.filter(short_description__icontains=search_string, **filter_args).first()            
-        if not b:
-            b = timepiece_models.Project.objects.filter(description__icontains=search_string, **filter_args).first()
-        return b
-
-    @classmethod
-    def find_state(self, search_string, **kwargs):
-        for k,v in timepiece_models.Project.PROJECT_STATUSES:
-            if search_string in v.lower():
-                return k
-        return None
-
-    @classmethod
-    def set_state(self, **kwargs):
-        project = timepiece_models.Project.objects.get(pk=kwargs['project'])
-        project.status2 = kwargs['new_state']
-        project.save()
-        return { 'msg': "Status of sprint %s changed to %s" % ( project.long_name(), project.status2 ) }
+    ACTION_TYPES = [ ( 'redirect', 'Redirect' ),
+                     ( 'run_search_result', 'Run search result' ) ]
+    
+    source_command = ProtectedForeignKey(NouiCommand, null=False, blank=True, related_name='noui_posted_actions')
+    target_user = ProtectedForeignKey(User, null=False, blank=True, related_name='noui_posted_actions_as_target')
+    target_device = models.CharField(max_length=255, null=True, blank=True)
+    source_user = ProtectedForeignKey(User, null=False, blank=True, related_name='noui_posted_actions_as_source')
+    human_readable_source_command = models.TextField(null=False, blank=True)
+    status = models.CharField(max_length=20, null=False, blank=False, choices=ACTION_CHOICES)
+    action_type = models.CharField(max_length=20, null=False, blank=False, choices=ACTION_TYPES)
+    action_args = models.TextField(null=True, blank=True) # json
     
