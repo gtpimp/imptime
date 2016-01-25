@@ -63,7 +63,7 @@
     <div class="project_list" project_sort_url="{% url 'sortable_project_update' %}" move_issue_to_project_url="{% url 'move_issue_to_project' %}" >
       {% for project in projects %}
 
-      {% include timepiece/project/_project_list_item.html" %}
+      {% include "timepiece/project/_project_list_item.html" %}
       
       {% endfor %}
     </div>
