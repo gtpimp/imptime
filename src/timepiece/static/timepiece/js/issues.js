@@ -485,7 +485,7 @@ imp.toggle_show_all_users = function(menu_el, logged_in_username) {
 imp.refresh_show_all_users = function(menu_el, logged_in_username) {
     var on_done = imp.loading("toggling...");
     var project_el = imp.get_active_issue_list_el();
-    var trigger = project_el.find(".toggle_show_all_users_trigger");
+    var trigger = $(".toggle_show_all_users_trigger");
     var all_shown = trigger.attr("all_shown");
     var cells = project_el.find(".estimates_cell").not("[data-username="+logged_in_username+"]");
     if ( all_shown == "true" ) {
