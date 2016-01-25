@@ -9,7 +9,6 @@ class PostedActionHelper(object):
         self.command_parser = command_parser
 
     def redirect(self, dest_url ):
-
         action = PostedAction.objects.create( source_command=self.command_parser.active_command,
                                                   target_user=self.command_parser.target_user,
                                                   target_device=self.command_parser.target_device,

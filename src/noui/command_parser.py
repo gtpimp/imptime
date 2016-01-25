@@ -125,7 +125,7 @@ class CommandParser(object):
         if not command:
             raise Exception("No active command")
         
-        code_locals = self.create_code_context(self.parameters_with_resolved_values)
+        code_locals = self.get_code_context(self.parameters_with_resolved_values)
         try:
             res = self._call_noui_code_snippet(command.command_function, code_locals)
         except Exception, ex:
@@ -159,26 +159,28 @@ class CommandParser(object):
         self.parse_command_parameters("")
 
     def command_as_human_readable_string(self):
-        active_command = self.cp.active_command
+        active_command = self.active_command
         if not active_command:
             return "No active command"
 
-        if not self.cp.ready_to_execute:
+        if not self.ready_to_execute:
             return "Waiting for more parameters for command %s" % active_command.name
         
         cmd = active_command.name
 
         p_values = []
-        for p in self.cp.parameter_context.values():
+        for p in self.parameter_context.values():
             if p['required_by_active_command']:
                 p_values.append(" with %s as %s " % ( p['name'], p['human_readable_value'] ) )
         cmd += " and ".join(p_values)
         return cmd
 
+    @property
     def target_user(self):
         """ intended to allow a user different from the logged-in user to be effected by a particular command """
         return self.request.user
 
+    @property
     def target_device(self):
         """ intended to allow a device different from the logged-in user to be effected by a particular command. """
         return None
