@@ -451,7 +451,10 @@ imp.toggle_show_numbers = function() {
 imp.edit_project_status = function(event, el) {
     event.stopPropagation();
 
-    var project_el = $(el).parents(".project_li");
+    var project_el = $(el);
+    if ( ! project_el.hasClass("project_li") ) {
+        project_el = $(el).parents(".project_li");
+    }
     var callback = function(data) {
 
 	if ( data.is_open ) {

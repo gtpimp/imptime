@@ -12,6 +12,14 @@
 </li>
 {% endif %}
 
+{% has_permission has_edit_project_states project.business %}
+<li class="menu_item">
+  <a href="#" onclick="imp.edit_project_status(event, $('.project_li[list_project_id={{project.id}}]')); $(this).parents('.nav-link.open').removeClass('open'); return false;">
+    Change sprint status
+  </a>
+</li>
+{% end_permission %}
+
 {% comment %}
 {% has_permission has_view_ctc_billable_rates project.business %}
 <li class='menu_item' >
