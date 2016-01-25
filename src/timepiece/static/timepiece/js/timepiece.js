@@ -1,4 +1,16 @@
 
+imp.on_error = function(err) {
+    var err_msg;
+    if  ( err.statusText ) {
+        err_msg = err.status + " " + err.statusText;
+    } else {
+        err_msg = err;
+    }
+    alert(err_msg);
+};
+
+
+
 $(document).ready(function() {
 
 

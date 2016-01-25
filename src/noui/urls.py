@@ -17,5 +17,8 @@ urlpatterns = patterns(
     url(r'^command/context/reset', views.command_context_reset, name='command_context_reset'),
     url(r'^command/export/(?P<command_ref>\d+)', views.command_export, name='command_export'),
     url(r'^command/import/', views.command_import, name='command_import'),
+
+    url(r'^next_action/', views.next_action, name='next_action'),
+    url(r'^action/(?P<action_ref>\d+)/status', views.update_action_status, name='update_action_status'),
     
 )

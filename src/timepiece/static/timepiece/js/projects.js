@@ -14,16 +14,6 @@ imp.projects.already_loaded_sprints = {
     }
 };
 
-imp.on_error = function(err) {
-    var err_msg;
-    if ( err.error ) {
-        err_msg = err.error();
-    } else {
-        err_msg = err;
-    }
-    alert(err_msg);
-};
-
 //var numbers_state = { 'all':0, 'no ctc':1, 'no money':2, 'no money and no estimates':3 };
 var numbers_state = { 'no ctc':0, 'no money':1 };
 imp.show_numbers_state = numbers_state['no money'];

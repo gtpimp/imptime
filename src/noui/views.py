@@ -11,7 +11,7 @@ from django.core.urlresolvers import reverse, resolve
 from django.template import RequestContext
 from django.contrib import messages
 from forms import NouiCommandForm, RunCommandForm, command_parameter_formset, NouiCommandImportForm
-from models import NouiCommand, NouiCommandParameter
+from models import NouiCommand, NouiCommandParameter, PostedAction
 from django.views.decorators.csrf import csrf_exempt
 from noui.command_parser import CommandParser
 import logging
@@ -175,3 +175,31 @@ def command_import(request, context=None):
     except Exception, ex:
         logger.exception(ex)
         raise
+
+@login_required
+def next_action(request, context=None):
+    context = context or {}
+    try:
+        next_action = PostedAction.objects.all().filter(target_user=request.user, status='waiting').order_by("id").first()
+        if next_action:
+            context['action'] = next_action.model_to_dict()
+        context['status'] = 'ok'
+    except Exception, ex:
+        logger.exception(ex)
+        context['status'] = 'failed'
+        context['error_msg'] = str(ex)
+
+@login_required
+@csrf_exempt
+def update_action_status(request, action_ref, context=None):
+    context = context or {}
+    new_status = request.POST['new_status']
+    try:
+        action = PostedAction.objects.get(pk=action_ref, target_user=request.user)
+        action.status = new_status
+        action.save()
+    except Exception, ex:
+        logger.exception(ex)
+        context['status'] = 'failed'
+        context['error_msg'] = str(ex)
+        
