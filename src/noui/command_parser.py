@@ -1,10 +1,13 @@
 import nltk
 import logging
+from django.utils.datastructures import SortedDict
 import importlib
 import re
 logger=logging.getLogger(__name__)
 from models import NouiCommand
 from built_in_commands import BuiltInCommands
+from helpers.posted_action_helper import PostedActionHelper
+from helpers.model_wrappers import NouiBusiness, NouiProject
 
 class CommandParser(object):
 
@@ -13,6 +16,7 @@ class CommandParser(object):
         self.request = request
         self.result = {}
         self._active_command = None
+        self._automatic_code_parameters = None
 
     @property
     def active_command(self):
@@ -121,13 +125,30 @@ class CommandParser(object):
         if not command:
             raise Exception("No active command")
         
-        code_locals = self.parameters_with_resolved_values
+        code_locals = self.create_code_context(self.parameters_with_resolved_values)
         try:
             res = self._call_noui_code_snippet(command.command_function, code_locals)
         except Exception, ex:
             logger.exception(ex)
             raise
         return res
+
+    def get_code_context(self, parameters_with_resolved_values={}):
+        context = {}
+        context.update(parameters_with_resolved_values)
+        context.update(self.automatic_code_parameters)
+        return context
+
+    @property
+    def automatic_code_parameters(self):
+        if self._automatic_code_parameters is not None:
+            return self._automatic_code_parameters
+        context = SortedDict()
+        context['post_action'] = PostedActionHelper(self.request, command_parser=self)
+        context['nouibusiness'] = NouiBusiness
+        context['nouiproject'] = NouiProject
+        self._automatic_code_parameters = context
+        return self._automatic_code_parameters
     
     def _set_active_command(self, noui_command):
         self._active_command = noui_command

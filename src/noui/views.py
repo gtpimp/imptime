@@ -43,6 +43,7 @@ def command_add(request, template="noui/command_add.html", context=None):
         return redirect(reverse("noui:command_edit", kwargs={'command_ref':command.id}))
     context['form'] = form
     context['parameters_formset'] = parameters_formset
+    context['command_parser'] = CommandParser(request)
     return render_to_response(template, context, context_instance=RequestContext(request))
 
 @login_required
@@ -67,6 +68,7 @@ def command_edit(request, command_ref, template="noui/command_edit.html", contex
     context['form'] = form
     context['parameters_formset'] = parameters_formset
     context['command'] = command
+    context['command_parser'] = CommandParser(request)
     return render_to_response(template, context, context_instance=RequestContext(request))
 
 @login_required
