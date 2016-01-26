@@ -9800,13 +9800,13 @@ border: 1px solid #939eb3;
     padding-right: 2px;
     padding-top: 3px;
     padding-bottom: 3px;
-    /*border-bottom: 6px solid #cececf;*/
+    border-bottom: 1px solid #787878;
     /* box-shadow: 0px 1px 4px -2px #aaa ; */
     /* -moz-box-shadow: 0px 1px 4px -2px #aaa ; */
     /* -webkit-box-shadow: 0px 1px 4px -2px #aaa ; */
-    -webkit-box-shadow: 7px 1px 8px -1px #000;
-    -moz-box-shadow: 7px 1px 8px -1px #000;
-    box-shadow: 7px 1px 8px -1px #000;
+    /* -webkit-box-shadow: 7px 1px 8px -1px #000; */
+    /* -moz-box-shadow: 7px 1px 8px -1px #000; */
+    /* box-shadow: 7px 1px 8px -1px #000; */
 }
 
 .issues .issues_list .hovered td {
