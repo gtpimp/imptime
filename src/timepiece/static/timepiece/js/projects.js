@@ -389,6 +389,9 @@ imp.create_chart = function(chart_info) {
 };
 
 imp.create_splitter = function() {
+    if( $(".splitter").length == 0 ) {
+        return;
+    }
     var split_position = Cookies.get('splitter_position');
     if ( ! split_position || parseInt(split_position)<1 ) {
         split_position = "25%";
