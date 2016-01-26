@@ -228,7 +228,8 @@
                         {% else %}
                         <form method="GET" action='{% url 'issue_search' %}'>
                         {% endif %}
-                            Find: <input type="text" name='search_term' class="search_term"/>
+                          Find: <input type="text" name='search_term' class="search_term"/>
+                        <input type="hidden" name="response_mode" value="html"/>
                         </form>
                     </div>
                     <div class="issue_search_results" style="display:none">

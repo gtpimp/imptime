@@ -2271,8 +2271,7 @@ class ProjectHoursAjaxView(ProjectHoursMixin, View):
             'all_users': list(all_users),
             'ajax_url': reverse('project_hours_ajax_view'),
         }
-        return HttpResponse(json.dumps(data, cls=DecimalEncoder),
-            content_type='application/json')
+        return HttpResponse(json.dumps(data, cls=DecimalEncoder), content_type='application/json')
 
     def duplicate_entries(self, duplicate, week_update):
         def duplicate_builder(queryset):
@@ -3920,6 +3919,7 @@ def issue_search(request, active_project_id=None, active_business_id=None, templ
     active_sprints = None
 
     search_term = request.GET['search_term']
+    response_mode = request.GET.get('response_mode', 'html')
 
     if active_project is not None:
         active_issues = timepiece.Issue.objects.filter(project__id=active_project.id).filter(Q(number__icontains=search_term)|Q(subject__icontains=search_term))
@@ -3954,6 +3954,20 @@ def issue_search(request, active_project_id=None, active_business_id=None, templ
     context['active_project'] = active_project
     context['active_issues'] = active_issues
     context['active_sprints'] = active_sprints
+
+    if response_mode == "im_feeling_lucky":
+        res = {}
+        if len(issues) > 0:
+            issue = issues[0]
+            res['best_match'] = { 'javascript' : "imp.nav.show_issue("+str(issue.id)+", "+str(issue.project.id)+", '" + reverse('highlighted_project_list', args=[issue.project.id,issue.id]) + "' );" }
+        elif len(sprints) > 0:
+            sprint = sprints[0]
+            res['best_match'] = { 'javascript' : "imp.nav.show_sprint("+str(sprint.id)+", '" + reverse('project_list', args=[sprint.id])+"' );" }
+        elif len(businesses) > 0:
+            business = businesses[0]
+            res['best_match'] = { 'javascript' : "imp.nav.show_business("+str(business.id)+", '" + reverse('closed_project_list', args=[business.id])+"');" }
+        return HttpResponse(json.dumps(res), content_type='application/json')
+        
     return render_to_response(template, context, context_instance=RequestContext(request))
 
 @render_with('timepiece/project/show_timeline.html')

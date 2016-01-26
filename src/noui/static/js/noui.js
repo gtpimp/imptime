@@ -6,7 +6,6 @@ var noui = (function() {
         if ( action.action_type == "redirect" ) {
             window.location = action.action_args.url;
         } else if ( action.action_type == "javascript" ) {
-
             var func = new Function( action.action_args.func );
             func();
         } else {
@@ -45,6 +44,34 @@ var noui = (function() {
                         imp.on_error(err);
                     }
            });    
+        },
+
+        close_noui_dialog: function() {
+            $(".noui_results").dialog('close');
+        },
+
+        im_feeling_lucky_search : function(search_term) {
+            var form = $(".issue_search form");
+            form.find("input[name=search_term]").val(search_term);
+            form.find("input[name=response_mode]").val("im_feeling_lucky");
+            var on_done = imp.loading("Searching");
+
+            $.ajax({type:"GET",
+	            url: form.attr('action'),
+	            data: form.serialize(),
+	            success: function(res) {
+                        on_done();
+                        if ( res.best_match ) {
+                            noui.close_noui_dialog();
+                            new Function( res.best_match.javascript )();
+                        } else {
+                            alert("No search results");
+                        }
+	            },
+                    error: imp.on_error
+	           });
+            
+            form.submit();
         }
 
     };

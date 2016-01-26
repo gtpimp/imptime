@@ -44,6 +44,7 @@ imp.nav.run_search = function(search_term) {
     form.submit();
 };
 
+
 imp.nav.hookup_search_form = function() {
     var form = $(".issue_search form");
     form.submit(function(event) {
@@ -101,8 +102,10 @@ imp.nav.show_issue = function( issue_id, project_id, show_url ) {
     var on_done = imp.loading("Finding...");
     if ( imp.active_project && imp.active_project.id == project_id ) {
 
-	imp.issue_search_results_dialog.dialog('close');
-	imp.issue_search_results_dialog = null;
+        if ( imp.issue_search_results_dialog ) {
+	    imp.issue_search_results_dialog.dialog('close');
+	    imp.issue_search_results_dialog = null;
+        }
 
 	imp.highlight_issue(issue_id);
 	on_done();
