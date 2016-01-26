@@ -90,11 +90,11 @@ class CommandParser(object):
         self.command_string = self._sanitize_raw_command(raw_command)
 
         info = {}
-        
-        res = NouiCommand.objects.raw("""select * from noui_nouicommand, regexp_matches('%s', pattern) where deleted='f'""" % self.command_string)
+
+        res = NouiCommand.objects.raw("""select * from noui_nouicommand, regexp_matches('%s', pattern) where deleted='f' order by id desc""" % self.command_string)
         matching_commands = [ command for command in res ]
         self.command_context['matching_commands'] = [ { 'name': x.name, 'id': x.id } for x in matching_commands ]
-        if len(matching_commands) == 1:
+        if len(matching_commands) >= 1:
             self._set_active_command(matching_commands[0])
             info['last_result_message'] = "Activated command %s" % self._active_command.name
 
@@ -137,6 +137,7 @@ class CommandParser(object):
         context = {}
         context.update(parameters_with_resolved_values)
         context.update(self.automatic_code_parameters)
+        context['parameters'] = parameters_with_resolved_values # duplication, but useful for **kwargs type constructs in the python
         return context
 
     @property
@@ -153,6 +154,7 @@ class CommandParser(object):
     def _set_active_command(self, noui_command):
         self._active_command = noui_command
         self.command_context['active_command_id'] = self._active_command.id if noui_command else None
+        self.command_context['parameters'] = {}
 
         for p in self.parameter_context.values():
             p['required_by_active_command'] = False
@@ -205,18 +207,19 @@ class CommandParser(object):
                 matched = parameter_info
 
             parameter_context[p.name] = parameter_info
-                
+
         if not matched and self.command_context.get('active_parameter_id', None):
-            p = self.active_command.parameters.get(pk=self.command_context['active_parameter_id'])
-            parameter_info = parameter_context.get(p.name, { 'name': p.name,
-                                                             'id': p.id,
-                                                             'var_name': p.var_name,
-                                                             'value': None,
-                                                             'pattern': p.pattern,
-                                                             'human_readable_value': None })
-            self._update_parameter_info(p, parameter_info, command_string)
-            matched = parameter_info
-            parameter_context[p.name] = parameter_info
+            p = self.active_command.parameters.filter(pk=self.command_context['active_parameter_id']).first()
+            if p is not None:
+                parameter_info = parameter_context.get(p.name, { 'name': p.name,
+                                                                 'id': p.id,
+                                                                 'var_name': p.var_name,
+                                                                 'value': None,
+                                                                 'pattern': p.pattern,
+                                                                 'human_readable_value': None })
+                self._update_parameter_info(p, parameter_info, command_string)
+                matched = parameter_info
+                parameter_context[p.name] = parameter_info
 
         self._update_parameter_context(parameter_context)
         return matched
@@ -238,8 +241,8 @@ class CommandParser(object):
         return c
     
     def _resolve_parameter_value(self, command_parameter, raw_parameter_value):
-        code_locals = { 'search_string': raw_parameter_value.strip() }
-        code_locals['parameters'] = self.parameters_with_resolved_values
+        code_locals = self.get_code_context(self.parameters_with_resolved_values)
+        code_locals['search_string'] = raw_parameter_value.strip()
         if command_parameter.search_function:
             parameter_value = self._call_noui_code_snippet(command_parameter.search_function, code_locals)
         else:
@@ -249,7 +252,11 @@ class CommandParser(object):
     def _call_noui_code_snippet(self, code, code_locals):
 
         code_globals = {}
-        exec(code, code_globals, code_locals)
+        try:
+            exec(code, code_globals, code_locals)
+        except Exception, ex:
+            logger.exception(ex)
+            logger.error("Code was: %s" % code)
         res = code_locals.get('res', None)
         if 'res' not in code_locals:
             logger.info("This code snippet didn't set res: %s" % code)
