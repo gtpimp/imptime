@@ -12,6 +12,13 @@
 </li>
 {% endif %}
 
+<li class="menu_item commonly_used">
+  <a href="#" onclick="return imp.select_text_for_emacs('** sprint#{{project.id}}');">
+    <img class="emacs_copy_img" src="{{STATIC_URL}}/images/icons/emacs.png" />
+    Emacs sprint name
+  </a>
+</li>
+
 {% has_permission has_edit_project_states project.business %}
 <li class="menu_item">
   <a href="#" onclick="imp.edit_project_status(event, $('.project_li[list_project_id={{project.id}}]')); $(this).parents('.nav-link.open').removeClass('open'); return false;">
