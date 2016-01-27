@@ -133,14 +133,37 @@
               
               {% endif %}
               
-              <li>
-                <a href="{% url 'slideshow:home' %}">Slideshow</a>
-              </li>
-	      
             </ul>
           </div>
           {% endif %}
 
+          {% if user.id %}
+          <div class="nav-link dropdown">
+            <a class="ico-list dropdown-toggle"  data-toggle="dropdown" href="#">slideshow<b class="caret"></b> </a>
+	    <ul class="dropdown-menu">
+              <li>
+                <a href="{% url 'slideshow:timesheets' %}">Timesheets</a>
+              </li>
+              <li>
+                <a href="http://nagios.impd.co.za/cgi-bin/nagios3/status.cgi?host=all">Server status</a>
+              </li>
+              <li>
+                <a href="http://nagios.impd.co.za/mobile">Mobile server status</a>
+              </li>
+
+              <li class="divider"></li>
+              <li>
+                <a href="http://nagios.impd.co.za/">Nagios Backend</a>
+              </li>
+              <li>
+                <a href="http://sentry.impd.co.za">Sentry (Site error logs)</a>
+              </li>
+              <li>
+                <a href="http://munin.impd.co.za">Munin (Historical server load graphs)</a>
+              </li>
+            </ul>
+          </div>
+          {% endif %}
 
 
           {% if user.id %}

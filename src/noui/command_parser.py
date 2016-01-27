@@ -250,7 +250,6 @@ class CommandParser(object):
         return parameter_value
 
     def _call_noui_code_snippet(self, code, code_locals):
-
         code_globals = {}
         try:
             exec(code, code_globals, code_locals)
