@@ -20,6 +20,8 @@ REDMINE_DB_MAPPING = [ { 'username' : 'test',
                          'db' : 'redmine_projects' }
                        ]
 
+SENTRY_ENABLED = False
+    
 SESSION_EXPIRE_AT_BROWSER_CLOSE = True
 
 TRAFFIC_LEVEL_YELLOW = 70
@@ -215,6 +217,7 @@ INSTALLED_APPS = (
     'endless_pagination',
     'mailqueue',
     'corsheaders',
+    'raven.contrib.django.raven_compat',
 
     'timepiece',
     'emacs_importer',
@@ -318,6 +321,10 @@ LOGGING = {
             'backupCount':50
             }
         },
+        'sentry': {
+            'level': 'ERROR',
+            'class': 'raven.contrib.django.raven_compat.handlers.SentryHandler',
+        },
     'loggers': {
         'django': {
             'handlers':['mail_admins',],
@@ -349,6 +356,9 @@ FROM_EMAIL="no-reply@imptime.impd.co.za"
 #
 if os.path.exists(os.path.join(PROJECT_HOME,"local_settings.py")):
     from local_settings import *
+
+if SENTRY_ENABLED:
+     from sentry_settings import *    
 
 if os.path.exists(os.path.join(PROJECT_HOME,"version_number.py")):
     from version_number import *
