@@ -217,7 +217,6 @@ INSTALLED_APPS = (
     'endless_pagination',
     'mailqueue',
     'corsheaders',
-    'raven.contrib.django.raven_compat',
 
     'timepiece',
     'emacs_importer',
