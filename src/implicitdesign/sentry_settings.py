@@ -7,6 +7,12 @@ MIDDLEWARE_CLASSES = tuple(
     ['raven.contrib.django.raven_compat.middleware.SentryResponseErrorIdMiddleware']
 )
 
+PROJECT_HOME = os.path.dirname(os.path.realpath(__file__))
+LOG_FOLDER=os.path.join(PROJECT_HOME, "..", "..", 'logs')
+LOG_FILENAME="imptime.log"
+LOG_LEVEL="INFO"
+
+
 LOGGING = {
     'version': 1,
     'disable_existing_loggers': True,
@@ -30,7 +36,7 @@ LOGGING = {
         'file':{
             'level':'DEBUG',
             'class':'logging.handlers.RotatingFileHandler',
-            'filename':os.path.join(settings.LOG_FOLDER, settings.LOG_FILENAME),
+            'filename':os.path.join(LOG_FOLDER, LOG_FILENAME),
             'formatter': 'verbose',
             'maxBytes':604800, 
             'backupCount':50
@@ -55,7 +61,7 @@ LOGGING = {
         '': {
             'handlers': ['file',],
             'propagate': True,
-            'level': settings.LOG_LEVEL
+            'level': LOG_LEVEL
         }
     },
 }
