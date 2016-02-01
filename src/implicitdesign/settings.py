@@ -335,6 +335,8 @@ EMAIL_HOST_PASSWORD = 'WRONG'
 
 FROM_EMAIL="no-reply@imptime.impd.co.za"
 
+# AUTH_USER_MODEL = 'timepiece.ClientUser'
+
 #################
 #
 # DON'T PUT ANY MORE SETTINGS AFTER THIS POINT, OTHERWISE local_settings.py CAN'T OVERRIDE THEM

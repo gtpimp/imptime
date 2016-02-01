@@ -21,6 +21,7 @@ from django.utils.datastructures import SortedDict
 from re import sub as re_sub
 from re import UNICODE as re_UNICODE
 from checklist_plugins.registry import get_traffic_plugins, get_dev_plugins, get_finance_plugins
+from django.contrib.auth.models import AbstractUser, AbstractBaseUser
 
 try:
     from django.utils import timezone
@@ -137,6 +138,8 @@ class Business(models.Model):
                                                  ("billable_hours_per_month", "Billable Hours per Month"), 
                                                  ("fixed_quote", "Fixed quote"),
                                                  ("free", "Free or Equity or Other") ) )
+
+    impd_client = models.ForeignKey(Client, null=True, blank=True, related_name='impd_clients')
 
     
     def wiki_name(self):
@@ -320,6 +323,11 @@ class Business(models.Model):
             return entries[0].end_time
         else:
             return None
+
+    def clean(self):
+        if self.impd_client is None:
+            raise ValidationError('impd_client is needed')
+            # self.impd_client = models.Client.objects.filter(code='impd')[:1].get()
 
 class BusinessComment(models.Model):
     business = models.ForeignKey(Business, null=False, blank=False, related_name='business_comments')
@@ -3750,3 +3758,7 @@ class Schedule(models.Model):
         return { 'num_hours': num_days * settings.NUM_BUSINESS_HOURS_PER_DAY,
                  'leave_hours': leave_days * settings.NUM_BUSINESS_HOURS_PER_DAY }
                                                       
+
+# class ClientUser(AbstractBaseUser):
+#     def __unicode__(self):
+#         return self.username
