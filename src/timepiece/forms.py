@@ -924,11 +924,7 @@ class UserProfileForm(forms.ModelForm):
 
     class Meta:
         model = timepiece.UserProfile
-        exclude = ('user','amount','billable_amount')
-
-    # def __init__(self, *args, **kwargs):
-    #     super(UserProfileForm, self).__init__(*args, **kwargs)
-    #     self.fields['impd_client'].label = "Client"
+        exclude = ('user','amount','billable_amount', 'authenticate_token')
 
 class ProjectSearchForm(forms.Form):
     search = forms.CharField(required=False, label='')

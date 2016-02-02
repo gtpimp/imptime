@@ -1099,16 +1099,13 @@ def view_person(request, person_id):
 
 @permission_required('auth.add_user')
 @permission_required('auth.change_user')
-@render_with('timepiece/person/create_edit.html')
 @login_required
-def create_edit_person(request, person_id=None):
-    import pdb; pdb.set_trace()
+def create_edit_person(request, person_id=None, template='timepiece/person/create_edit.html'):
 
     if person_id:
         person = get_object_or_404(auth_models.User, pk=person_id)
     else:
         person = None
-
 
     if request.POST:
         if person:
@@ -1135,10 +1132,10 @@ def create_edit_person(request, person_id=None):
         #person.save()
     else:
         if person:
-            profile_form = timepiece_forms.UserProfileForm(request.POST, instance=person.profile, prefix='profile')
+            profile_form = timepiece_forms.UserProfileForm(instance=person.profile, prefix='profile')
             person_form = timepiece_forms.EditPersonForm(instance=person)
         else:
-            profile_form = timepiece_forms.UserProfileForm(request.POST, prefix='profile')
+            profile_form = timepiece_forms.UserProfileForm(prefix='profile')
             person_form = timepiece_forms.CreatePersonForm()
 
     context = {
@@ -1146,7 +1143,7 @@ def create_edit_person(request, person_id=None):
         'person_form': person_form,
         'profile_form': profile_form
     }
-    return context
+    return render_to_response(template, context, context_instance=RequestContext(request))
 
 @render_with('timepiece/project/detail.html')
 @login_required
@@ -4193,7 +4190,6 @@ def get_issue_row(request,issue_id):
     context['features'] = ( (f.id, f.name) for f in timepiece.Feature.objects.filter(business=business) )
 
     context['assign_user_form'] = timepiece_forms.AssignUserToIssueForm()
-    import pdb; pdb.set_trace()
     refresh_issue =timepiece.Issue.objects.get(id=issue.id)
     refresh_issue.representation = issue.representation
     context['issue'] = refresh_issue
