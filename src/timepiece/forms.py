@@ -927,8 +927,6 @@ class UserProfileForm(forms.ModelForm):
 
     def __init__(self, *args, **kwargs):
         super(UserProfileForm, self).__init__(*args, **kwargs)
-        import pdb; pdb.set_trace()
-
         user = self.instance.user
 
         if user.is_superuser or user.has_perm('timepiece.belongs_to_all_projects'):
