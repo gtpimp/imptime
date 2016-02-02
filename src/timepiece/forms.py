@@ -921,10 +921,20 @@ class UserForm(forms.ModelForm):
 
 
 class UserProfileForm(forms.ModelForm):
-
     class Meta:
         model = timepiece.UserProfile
         exclude = ('user','amount','billable_amount', 'authenticate_token')
+
+    def __init__(self, *args, **kwargs):
+        super(UserProfileForm, self).__init__(*args, **kwargs)
+        import pdb; pdb.set_trace()
+
+        user = self.instance.user
+
+        if user.is_superuser or user.has_perm('timepiece.belongs_to_all_projects'):
+            self.fields['impd_client'].label = "Client"
+        else:
+            del self.fields['impd_client']
 
 class ProjectSearchForm(forms.Form):
     search = forms.CharField(required=False, label='')
