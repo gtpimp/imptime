@@ -1,6 +1,15 @@
 
-$(document).ready(function() {
+imp.on_error = function(err) {
+    var err_msg;
+    if  ( err.statusText ) {
+        err_msg = err.status + " " + err.statusText;
+    } else {
+        err_msg = err;
+    }
+    alert(err_msg);
+};
 
+$(document).ready(function() {
 
     $('.datepicker').datepicker({dateFormat: 'yy-mm-dd'});
     $('.datetimepicker').datetimepicker({format: 'yyyy-mm-dd hh:ii', autoclose: true});

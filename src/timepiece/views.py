@@ -2271,8 +2271,7 @@ class ProjectHoursAjaxView(ProjectHoursMixin, View):
             'all_users': list(all_users),
             'ajax_url': reverse('project_hours_ajax_view'),
         }
-        return HttpResponse(json.dumps(data, cls=DecimalEncoder),
-            content_type='application/json')
+        return HttpResponse(json.dumps(data, cls=DecimalEncoder), content_type='application/json')
 
     def duplicate_entries(self, duplicate, week_update):
         def duplicate_builder(queryset):
@@ -3345,7 +3344,7 @@ def project_issues(request, pk, template="timepiece/project/issues.html", contex
 
 @csrf_exempt
 @login_required
-def get_project_detail(request, project_id, template="timepiece/project/project_detail.html", context=None):
+def get_project_detail(request, project_id, context=None):
     context = context or {}
 
     timings.start("get_project_detail")
@@ -3403,9 +3402,13 @@ def get_project_detail(request, project_id, template="timepiece/project/project_
     if 'selected_issue_ids_for_context_menu' in request.session:
         context['selected_issue_ids'] = [int(x) for x in request.session['selected_issue_ids_for_context_menu']]
 
-    response = render_to_response(template, context, context_instance=RequestContext(request))
+    issues_list_rendered = render_to_response("timepiece/project/project_detail.html", context, context_instance=RequestContext(request))
+    #project_menu_rendered = render_to_response("timepiece/project/_card_project_menu.html", context, context_instance=RequestContext(request))
+    project_menu_rendered = render_to_response("timepiece/_navigation_project_specific_menu.html", context, context_instance=RequestContext(request))
 
-    return response
+    return HttpResponse(json.dumps({ 'project':project.model_to_dict(include_business=True),
+                                     'project_menu': project_menu_rendered.content,
+                                     'issue_list_html':issues_list_rendered.content }))
 
 @login_required
 def open_issue(request, business_name=None, issue_number=None):
@@ -3458,7 +3461,6 @@ def project_list(request, project_id=None, highlight_issue_id=None, business_id=
     context['highlight_issue_id'] = highlight_issue_id
     context['has_closed_sprints'] = business.has_closed_sprints()
     context['has_open_sprints'] = business.has_open_sprints()
-    context['floating_project'] = timepiece.Project(name='floating project', description="temporary")
 
     if 'selected_issue_ids_for_context_menu' in request.session:
         context['selected_issue_ids'] = [int(x) for x in request.session['selected_issue_ids_for_context_menu']]
@@ -3956,6 +3958,7 @@ def issue_search(request, active_project_id=None, active_business_id=None, templ
     active_sprints = None
 
     search_term = request.GET['search_term']
+    response_mode = request.GET.get('response_mode', 'html')
 
     if active_project is not None:
         active_issues = timepiece.Issue.objects.filter(project__id=active_project.id).filter(Q(number__icontains=search_term)|Q(subject__icontains=search_term))
@@ -3990,6 +3993,20 @@ def issue_search(request, active_project_id=None, active_business_id=None, templ
     context['active_project'] = active_project
     context['active_issues'] = active_issues
     context['active_sprints'] = active_sprints
+
+    if response_mode == "im_feeling_lucky":
+        res = {}
+        if len(issues) > 0:
+            issue = issues[0]
+            res['best_match'] = { 'javascript' : "imp.nav.show_issue("+str(issue.id)+", "+str(issue.project.id)+", '" + reverse('highlighted_project_list', args=[issue.project.id,issue.id]) + "' );" }
+        elif len(sprints) > 0:
+            sprint = sprints[0]
+            res['best_match'] = { 'javascript' : "imp.nav.show_sprint("+str(sprint.id)+", '" + reverse('project_list', args=[sprint.id])+"' );" }
+        elif len(businesses) > 0:
+            business = businesses[0]
+            res['best_match'] = { 'javascript' : "imp.nav.show_business("+str(business.id)+", '" + reverse('closed_project_list', args=[business.id])+"');" }
+        return HttpResponse(json.dumps(res), content_type='application/json')
+        
     return render_to_response(template, context, context_instance=RequestContext(request))
 
 @render_with('timepiece/project/show_timeline.html')
@@ -4278,8 +4295,8 @@ def delete_issue_attachment(request, attachment_id):
 
 @csrf_exempt
 @login_required
-def sortable_issue_update(request, project_id):
-    context = {}
+def sortable_issue_update(request, project_id, context=None):
+    context = context or {}
 
     ordered_issue_ids = []
     for index in request.POST['ordered_ids'].split(","):
@@ -4472,6 +4489,8 @@ def sprint_report(request, project_id, context=None):
             if 'only_these_issue_numbers' in form.cleaned_data:
                 issues = issues.filter(number__in=form.cleaned_data['only_these_issue_numbers'])
 
+            if not form.cleaned_data.get('include_adhoc_issues', False):
+                issues = issues.exclude(adhoc=True)
 
         if form == quote_form:
             context['estimate_stats'] = project.estimate_stats(issues, preferred_user_id=form.cleaned_data['preferred_user_for_estimates'])
@@ -4755,6 +4774,33 @@ def issue_checkbox_context_menu(request, project_id, template="timepiece/project
     request.session['selected_issue_project_id'] = from_project.id
 
     return render_to_response(template, context, context_instance=RequestContext(request))
+
+@csrf_exempt 
+@login_required
+def move_issue_to_project(request):
+    issue_id = request.POST['issue_id'];
+    dest_project_id = request.POST['dest_project_id']
+
+    dest_project = timepiece.Project.objects.get(pk=dest_project_id)
+
+    bp = timepiece.BusinessPermissions.for_user(request.user, dest_project.business)
+    if not bp.has_edit_issues:
+        return HttpResponse(json.dumps({ "status": "No permission" }))
+
+    issue = timepiece.Issue.objects.get(pk=issue_id)
+    
+    old_project = issue.project
+    bp = timepiece.BusinessPermissions.for_user(request.user, old_project.business)
+    if not bp.has_edit_issues:
+        return HttpResponse(json.dumps({ "status": "No permission" }))
+
+    issue.project = dest_project
+    issue.order += 9999
+    issue.save()
+    timepiece.IssueHistory.add_history(request.user, issue, "moved project", unicode(old_project), unicode(dest_project))
+    get_interface_plugin(request, dest_project.business).move_issue(issue, old_project=old_project)
+    dest_project.refresh_issues_order()
+    return HttpResponse(json.dumps({ "status" : "ok" }))
 
 @login_required
 def bulk_move_issues_to_project(request, dest_project_id, context=None):

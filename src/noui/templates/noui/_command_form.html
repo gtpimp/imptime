@@ -1,0 +1,89 @@
+{% load bootstrap3 %}
+{% load staticfiles %}
+
+<h3>Parameters</h3>
+
+<div class="row">
+  <div class="col-md-6">
+
+
+    {% bootstrap_form form %}
+
+
+    <ul class="formset">
+
+      {% bootstrap_form parameters_formset.management_form %}
+      {% for parameter_form in parameters_formset %}
+      <li>
+        {% if parameter_form.instance.id %}
+        <a class="btn" href="#" onclick="$(this).parent().find('.parameter_content').slideToggle(); return false;">
+          {{ parameter_form.instance.pattern }}
+        </a>
+        {% else %}
+        <a href="#" onclick="$(this).parent().find('.parameter_content').slideToggle(); return false;">
+          <img width="20px" class="add_command" src="{% static 'images/icons/add.png' %}"/>
+        </a>
+        {% endif %}
+        <div class="parameter_content" style="display:none">
+          {% bootstrap_form parameter_form %}
+        </div>
+      </li>
+      {% endfor %}
+      
+    </ul>
+
+    {% buttons %}
+    <button type="submit" class="btn btn-primary">
+      {% bootstrap_icon "star" %} Save
+    </button>
+
+    <a href="{% url 'noui:command_list' %}" class="btn btn-cancel">
+      {% bootstrap_icon "star" %} List
+    </a>
+    {% endbuttons %}
+    
+  </div>
+
+  <div class="col-md-4">
+
+    <div class="tip">
+      All python command boxes can take any python. The following 'magic' features exist:
+      <ul>
+        <li>
+          Set the variable 'res' to the output from the function
+        </li>
+        <li>
+          All parameters for the active command are available in the variable 'parameters'
+        </li>
+        <li>
+          For parameter code functions (which should resolve a parameter
+          value), the variable 'search_string' is also available, which is
+          whatever matched in the parameter regex.
+        </li>
+        <li>
+          (To see all available parameters, look at 'locals()' inside the code snippet.)
+        </li>
+      </ul>
+
+      The following variable are automatically available in all python boxes:
+      <ul>
+        {% for supplied_parameter_name in command_parser.automatic_code_parameters.keys %}
+        <li><b>{{supplied_parameter_name}}</b></li>
+        {% endfor %}
+      </ul>
+      
+      The parameters you have defined are available in the Command function python box as:
+      <ul>
+        {% for parameter_form in parameters_formset %}
+        {% if parameter_form.initial.var_name %}
+        <li><b>{{parameter_form.initial.var_name}}</b></li>
+        {% endif %}
+        {% endfor %}
+      </ul>
+      
+      
+    </div>
+
+  </div>
+</div>
+

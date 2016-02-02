@@ -39,42 +39,46 @@ imp.search_on_issue_number = function(issue_number) {
 };
 
 imp.show_issue_detail = function(issue_id, url, msg, args) {
-    msg = msg || "loading issue detail";
-    var on_done = imp.loading(msg);
+   
+    if ( issue_id == null || imp.current_issue_id != issue_id ) { 
 
-    $(".issue_detail").load(url,
-			    function() {
+	imp.current_issue_id = issue_id;
+	msg = msg || "loading issue detail";
+	var on_done = imp.loading(msg);
+    
+	$(".issue_detail").load(url, function(response, status, xhr) {
+	    if (args && args.reload_on_done) {
+		window.location=args.reload_on_done;
+		return;
+	    }
+            
+	    var el = $("#" + imp.current_issue_id);
+	    el.find(".subject_class input").focus();
+            imp.refresh_hidden_fields(el);
+	    imp.current_issue_detail_url = url;
+	    imp.update_splitter_dimensions(imp.current_issue_id);
 
-				if (args && args.reload_on_done) {
-				    window.location=args.reload_on_done;
-				    return;
-				}
-				
-
-                                var el = $("#" + issue_id);
-				el.find(".subject_class input").focus();
-                                imp.refresh_hidden_fields(el);
-				imp.current_issue_detail_url = url;
-				if ( issue_id ) {
-				    imp.highlight_issue(issue_id);
-                                    imp.current_issue_id = issue_id;
-				}
-
-				// $(".issue_detail .edit_comment_section").hover(function() {
-				// 						   $(this).find(".edit_comment_button").show();
-				// 					       },
-				// 					       function() {
-				// 						   $(this).find(".edit_comment_button").hide();
-				// 					       });
-
-				on_done();
-			    });
+	    if ( issue_id ) {
+		imp.highlight_issue(imp.current_issue_id);
+	    }
+	    
+	    on_done();
+	});
+    } 
 
  };
 
-imp.refresh_issue_detail = function() {
-
-    imp.show_issue_detail(imp.current_issue_id, imp.current_issue_detail_url);
+imp.refresh_issue_detail = function(args) {
+    $(".issue_detail").load(imp.current_issue_detail_url, function() {
+	if (args && args.reload_on_done) {
+	    window.location=args.reload_on_done;
+	    return;
+	}
+	var el = $("#" + imp.current_issue_id);
+	el.find(".subject_class input").focus();
+        imp.refresh_hidden_fields(el);
+	imp.loading("Loading issue detail");
+    });
 };
 
 imp.post_issue_number_form = function(form_child_el, issue_id) {
@@ -112,8 +116,8 @@ imp.bulk_clear_selected_issues = function(project_id, clear_url) {
 
     if ( ! confirm('Unselect all checkboxes?') ) {
 	return false;
-    } 
-    var project_el = $(".project_li[list_project_id="+project_id+"]");
+    }
+    var project_el = imp.get_active_issue_list_el();
 
     var on_done = imp.loading("unchecking");
     $.ajax({type:"GET",
@@ -133,8 +137,8 @@ imp.bulk_check_all_issues = function(project_id, check_url) {
     if ( ! confirm('Select all checkboxes?') ) {
 	return false;
     } 
-    var project_el = $(".project_li[list_project_id="+project_id+"]");
-
+    var project_el = imp.get_active_issue_list_el();
+    
     var on_done = imp.loading("Checking");
     $.ajax({type:"GET",
 	    url: check_url,
@@ -204,7 +208,7 @@ imp.create_issue_and_add_another = function(element, sprint_id, url) {
 imp.on_issue_form_submit = function(element, sprint_id, url, on_success) {
     var mform = $(element).parents("form");
     var on_done = imp.issue_loading("Creating issue");
-    var sprint_el = $(".project_li[list_project_id="+sprint_id+"]");
+    var sprint_el = imp.get_active_issue_list_el();
 
     var handle_success_for_form = function(data) {
         var table_body =  sprint_el.find(".issue_list_body");
@@ -301,7 +305,7 @@ imp.attach_issue_filters = function(container) {
 
 imp.filter_on_status = function(project_id, status_name) {
     // works in conjunction with imp.attach_issue_filters
-    var container = $(".project_li[list_project_id="+project_id+"]");
+    var container = imp.get_active_issue_list_el();
     if (status_name) {
         container.find(".issue_instance_row").hide();
         container.find(".issue_instance_row[status='"+status_name+"']").show();
@@ -314,7 +318,7 @@ imp.filter_on_status = function(project_id, status_name) {
 
 imp.filter_on_feature = function(project_id, feature_name) {
     // works in conjunction with imp.attach_issue_filters
-    var container = $(".project_li[list_project_id="+project_id+"]");
+    var container = imp.get_active_issue_list_el();
     if (feature_name) {
         container.find(".issue_instance_row").hide();
         container.find(".issue_instance_row[feature='"+feature_name+"']").show();
@@ -331,7 +335,7 @@ imp.hide_issue_checkboxes = function(el) {
     $(el).parents("table").find(".issue_checkbox_cell_toggle").find(".show").show();
 };
 imp.show_issue_checkboxes = function(el) {
-    $(".issue_checkbox_cell").show();
+    $(".issue_checkbox_cell").css("display", "inline");
     $(el).parents("table").find(".issue_checkbox_cell_toggle").find(".hide").show();
     $(el).parents("table").find(".issue_checkbox_cell_toggle").find(".show").hide();
 };
@@ -349,10 +353,6 @@ imp.get_selected_issue_ids_for_get = function(issue_row_container) {
 };
 
 imp.show_issue_action_menu = function(el, issue_id) {
-
-    var callback = function() {
-        alert("You did it");
-    };
 
     var on_done = imp.loading("Loading context menu");
     var response = $.ajax({type:"GET",
@@ -379,7 +379,7 @@ imp.display_menu = function(e, menu) {
     }
 
     // Create and show menu
-    menu.css({zIndex:1000001, overflow:"auto", height:"50%", width: "300px" /*left:left, top:top*/})
+    menu.css({zIndex:1000001, overflow:"auto", height:"75%", width: "50%" /*left:left, top:top*/})
         .bind('contextmenu', function() { return false; });
 
     // Cover rest of page with invisible div that when clicked will cancel the popup.
@@ -409,10 +409,18 @@ imp.set_issue_checkbox_hooks = function(issue_row_container) {
         issue_row_container = $(el);
         imp.checkboxes.project_id = issue_row_container.attr("list_project_id");
         if ( ! imp.checkboxes.project_id ) {
-            issue_row_container = issue_row_container.parents(".project_li");
+            issue_row_container = issue_row_container.parents(".issue_list_content");
             imp.checkboxes.project_id = issue_row_container.attr("list_project_id");
         }
 
+        if ( ! imp.checkboxes.project_id && imp.active_project ) {
+            imp.checkboxes.project_id = imp.active_project.id;
+        }
+        
+        if ( ! imp.checkboxes.project_id ) {
+            alert("Error, no sprint selected");
+            return;
+        }
 
 	var on_done = imp.loading("Loading context menu");
 	var selected_issue_ids = imp.get_selected_issue_ids_for_get(issue_row_container);
@@ -444,19 +452,22 @@ imp.set_issue_checkbox_hooks = function(issue_row_container) {
 
     // If an issue checkbox is hidden, show on hover and hide on unhover
     issue_row_container.find(".issue_checkbox_td").hover(function() {
-							     var el = $(this).find(".issue_checkbox_cell").show();
-							 },
-							 function() {
-							     if ( ! imp.are_issue_checkboxes_visible($(this)) ) {
-								 var el = $(this).find(".issue_checkbox_cell").hide();
-							     }
-							 });
+	var el = $(this).find(".issue_checkbox_cell").css("display", "inline");
+    }, function() {
+	if ( ! imp.are_issue_checkboxes_visible($(this)) ) {
+	    var el = $(this).find(".issue_checkbox_cell").hide();
+	}
+    });
 
 };
 
+imp.get_active_issue_list_el = function() {
+    return $(".issue_list");
+};
+
 imp.toggle_show_all_users = function(menu_el, logged_in_username) {
-    var project_el = $(menu_el).parents(".project_li");
-    var trigger = project_el.find(".toggle_show_all_users_trigger");
+    var project_el = imp.get_active_issue_list_el();
+    var trigger = $(".toggle_show_all_users_trigger");
     var all_shown = trigger.attr("all_shown");
     var cells = project_el.find(".estimates_cell").not("[data-username="+logged_in_username+"]");
     if ( all_shown == "true" ) {
@@ -473,8 +484,8 @@ imp.toggle_show_all_users = function(menu_el, logged_in_username) {
 
 imp.refresh_show_all_users = function(menu_el, logged_in_username) {
     var on_done = imp.loading("toggling...");
-    var project_el = $(menu_el).parents(".project_li");
-    var trigger = project_el.find(".toggle_show_all_users_trigger");
+    var project_el = imp.get_active_issue_list_el();
+    var trigger = $(".toggle_show_all_users_trigger");
     var all_shown = trigger.attr("all_shown");
     var cells = project_el.find(".estimates_cell").not("[data-username="+logged_in_username+"]");
     if ( all_shown == "true" ) {
@@ -487,7 +498,6 @@ imp.refresh_show_all_users = function(menu_el, logged_in_username) {
 };
 
 imp.on_add_issue_comment = function(el, url) {
-
     var container = el.parent();
     var on_done = imp.issue_loading("Creating comment");
     var input_el = container.find("textarea");
@@ -640,6 +650,7 @@ imp.clickable_description_box = function(element, url, item_id, args) {
 					      if ( ! args.refresh_url ) {
 						  imp.refresh_issue_detail();
 					      } else {
+						  imp.current_issue_id = "";
 						  imp.show_issue_detail(null, args.refresh_url, "refreshing");
 					      }
 					      attachments.show();

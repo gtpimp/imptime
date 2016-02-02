@@ -1,0 +1,241 @@
+body {
+    font-family: sans-serif;
+    font-size: 13px;
+    letter-spacing: 0.9px;
+    background: #413d44;
+}
+
+::-webkit-scrollbar {
+    width: 8px;
+    background-color: #FFFFFF;
+}
+ 
+::-webkit-scrollbar-track {
+    -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.3); 
+    *border-radius: 10px;
+}
+ 
+::-webkit-scrollbar-thumb {
+    *border-radius: 10px;
+    -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.5); 
+}
+
+.nav-parent {
+    height: 125px;
+    width: 100%;
+}
+.navbar-inner {
+    min-height: 40px;
+    height: 90px;
+    line-height: 70px;
+
+    padding-left: 0px;
+    padding-right: 0px;
+
+    text-align: center;
+
+    background-color: #322f36;
+}
+
+.navbar-inner a {
+    color: white;
+}
+
+.nagivation_head {
+    vertical-align: middle;
+    min-width: 600px;
+    width: 70%;
+    margin: 0px auto;
+    text-align: left;
+}
+
+.sub-navbar-inner {
+    padding-left: 10%;
+    width: 80%;
+    text-align: left;
+    display: inline-flex;
+    vertical-align: text-bottom;
+    margin: 15px 0 0 0px;
+}
+
+
+.sub-navbar-inner span.nav-link {
+    width: 13%;
+    display: inline;    
+    padding: 0 0 10px 0;
+    line-height: 20px;
+    overflow:hidden;
+}
+
+
+.nagivation_head a.home {
+    font-weight: bold;
+    font-size: 25px;
+    font-family: sans-serif;
+    letter-spacing: 2px;
+}
+
+.sub_nagivation_head {
+    background: #413d44;    
+    line-height: 30px;
+}
+
+body #content.container-fluid {
+    position: relative;
+    background-color: #cececf;
+}
+
+
+
+a.ico-clock {
+    background: url("../images/implicitdesign/clock.png") no-repeat;
+    background-size: 26px 25px;
+    padding: 5px 30px
+}
+
+a.ico-dashboard {
+    background: url("../images/implicitdesign/dashboard.png") no-repeat;
+    background-size: 26px 25px;
+    padding: 5px 30px
+}
+
+a.ico-project {
+    background: url("../images/implicitdesign/projects.png") no-repeat;
+    background-size: 26px 25px;
+    padding: 5px 30px
+}
+a.ico-report {
+    background: url("../images/implicitdesign/reports.png") no-repeat;
+    background-size: 26px 25px;
+    padding: 5px 30px
+}
+a.ico-list {
+    background: url("../images/implicitdesign/calendar.png") no-repeat;
+    background-size: 26px 25px;
+    padding: 5px 30px
+}
+a.ico-user{
+    background: url("../images/implicitdesign/users.png") no-repeat;
+    background-size: 26px 25px;
+    padding: 5px 30px
+}
+a.ico-calc {
+    background: url("../images/implicitdesign/expenses-income.png") no-repeat;
+    background-size: 26px 25px;
+    padding: 0 30px
+}
+
+
+.nav-link.dropdown-menu {
+    display: none;
+}
+
+.nav-link.dropdown:hover ~ .nav-link.dropdown-menu {
+    display: block;
+}
+
+.hexagon {
+  position: absolute;
+  width: 30px; 
+  height: 17.32px;
+  background-color: #e7e8e9;
+  margin: 2px 0;
+  display: block;
+}
+
+.hexagon:before,
+.hexagon:after {
+  content: "";
+  position: absolute;
+  width: 0;
+  border-left: 15px solid transparent;
+  border-right: 15px solid transparent;
+}
+
+.hexagon:before {
+  bottom: 100%;
+  border-bottom: 8.66px solid #e7e8e9;
+}
+
+.hexagon:after {
+  top: 100%;
+  width: 0;
+  border-top: 8.66px solid #e7e8e9;
+}
+
+.project_menu {
+    height: inherit;
+    width: 180px;
+    display: block;
+    border-right: 8px solid #413d44;
+    background-color: #cececf;
+    float: left;
+}
+
+.project_menu .sprint_information {
+    margin: 10px 10px 0 10px;
+    background-color: #FFFFFF;
+    min-height: 65px;
+    vertical-align: middle;
+    display: block;
+    text-align: center;
+    box-shadow: 3px 2px 4px #aaa;
+    -moz-box-shadow: 3px 2px 4px #aaa;
+    -webkit-box-shadow: 3px 2px 4px #aaa;
+    cursor: pointer;
+    overflow: hidden;
+}
+
+.project_list {
+    overflow-y: auto;
+}
+
+.sprint_information small{
+    white-space: nowrap;
+}
+.project_menu .sprint_information .project_number {
+    padding: 20px 0 0 0;
+    white-space: nowrap;
+    overflow: hidden;
+}
+
+.current_sprint_details {
+    background-color: #413d44;
+    height: 60px;
+}
+
+.current_sprint_details .active_project_title {
+    margin-left: 8%;
+}
+
+.current_sprint_details .sprint_banner {
+    background-color: #324972;
+    color: #FFFFFF;
+    padding: 15px;
+}
+
+.current_sprint_details .sprint_banner img {
+    width: 20px;
+}
+
+.current_sprint_details .sprint_banner span {
+    padding: 0 10px 0 25px;
+}
+
+.sprint_list {
+    overflow-y: auto;
+    height: 79%;
+}
+
+.sprint_actions {
+    height: 20%;
+    background: #13102c;
+    border-bottom: 8px solid #413d44;
+}
+
+
+
+
+.sprint_menu_trigger {
+    cursor: pointer;
+}

@@ -20,6 +20,8 @@ REDMINE_DB_MAPPING = [ { 'username' : 'test',
                          'db' : 'redmine_projects' }
                        ]
 
+SENTRY_ENABLED = False
+    
 SESSION_EXPIRE_AT_BROWSER_CLOSE = True
 
 TRAFFIC_LEVEL_YELLOW = 70
@@ -28,6 +30,9 @@ TRAFFIC_LEVEL_RED = 90
 NUM_DAYS_FOR_TRAFFIC_SPRINT_CHECKLISTS=3
 NUM_DAYS_FOR_FINANCE_SPRINT_CHECKLISTS=5
 NUM_DAYS_FOR_DEV_SPRINT_CHECKLISTS=2
+
+CORS_ORIGIN_ALLOW_ALL = True
+CORS_URLS_REGEX = r'^/timepiece/noui/.*$'
 
 # Maximum number of days before expecting a new development timesheet
 # entry for a particular project. This is used to raise an alarm if
@@ -162,6 +167,9 @@ TEMPLATE_LOADERS = (
 )
 
 MIDDLEWARE_CLASSES = (
+    'raven.contrib.django.raven_compat.middleware.Sentry404CatchMiddleware',
+    'corsheaders.middleware.CorsMiddleware',
+    'django.middleware.common.CommonMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -170,6 +178,8 @@ MIDDLEWARE_CLASSES = (
     'pagination.middleware.PaginationMiddleware',
     # Uncomment the next line for simple clickjacking protection:
     # 'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'raven.contrib.django.raven_compat.middleware.SentryResponseErrorIdMiddleware'
+
 )
 
 ROOT_URLCONF = 'implicitdesign.urls'
@@ -184,6 +194,7 @@ TEMPLATE_DIRS = (
     os.path.join(PROJECT_HOME, "templates"),
 )
 
+    
 INSTALLED_APPS = (
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -195,8 +206,8 @@ INSTALLED_APPS = (
     'grappelli',
     'filebrowser',
     'django.contrib.admin',
-    # Uncomment the next line to enable admin documentation:
-    # 'django.contrib.admindocs',
+
+    'raven.contrib.django.raven_compat',
     
     'bootstrap_toolkit',
     'bootstrap3',
@@ -208,6 +219,7 @@ INSTALLED_APPS = (
     'colorful',
     'endless_pagination',
     'mailqueue',
+    'corsheaders',
 
     'timepiece',
     'emacs_importer',
@@ -291,39 +303,53 @@ LOGGING = {
     'disable_existing_loggers': True,
     'formatters': {
         'verbose': {
-            'format': '%(levelname)s %(asctime)s %(module)s %(process)d %(message)s'
-            },
+            'format': '%(levelname)s %(asctime)s %(process)d %(filename)s %(lineno)d: %(message)s'
+        },
         'simple': {
             'format': '%(asctime)s %(levelname)s %(message)s'
-            },
         },
+    },
     'handlers': {
         'mail_admins': {
             'level': 'ERROR',
             'class': 'django.utils.log.AdminEmailHandler'
-            },
+        },
+        'sentry': {
+            'level': 'ERROR',
+            'class': 'raven.contrib.django.raven_compat.handlers.SentryHandler',
+        },
         'file':{
             'level':'DEBUG',
             'class':'logging.handlers.RotatingFileHandler',
-            'filename':os.path.join(LOG_FOLDER, 'impwebsite.log'),
+            'filename':os.path.join(LOG_FOLDER, "imptime.log"),
             'formatter': 'verbose',
             'maxBytes':604800, 
             'backupCount':50
-            }
         },
+         'console': {
+            'level': 'DEBUG',
+            'class': 'logging.StreamHandler',
+            'formatter': 'verbose'
+        }
+    },
     'loggers': {
         'django': {
-            'handlers':['mail_admins',],
+            'handlers':['mail_admins', 'sentry'],
             'propagate': True,
-            'level':'DEBUG',
-            },
-        '': {
-            'handlers': ['file',],
-            'propagate': True,
-            'level': 'DEBUG'
-            }
+            'level':'INFO',
         },
-    }
+        'raven': {
+            'level': 'DEBUG',
+            'handlers': ['console', 'sentry'],
+            'propagate': False,
+        },
+        '': {
+            'handlers': ['file', 'sentry'],
+            'propagate': True,
+            'level': "INFO"
+        }
+    },
+}
 
 #EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 EMAIL_USE_TLS = True
@@ -333,7 +359,7 @@ EMAIL_HOST_USER = 'timesheet@implicitdesign.co.za'
 EMAIL_HOST_PASSWORD = 'WRONG'
     # EMAIL_PORT = 587
 
-FROM_EMAIL="no-reply@imptime.impd.co.za"
+FROM_EMAIL="gtp@imptime.impd.co.za"
 
 # AUTH_USER_MODEL = 'timepiece.ClientUser'
 

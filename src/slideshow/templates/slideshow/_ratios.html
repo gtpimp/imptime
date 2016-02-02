@@ -1,0 +1,32 @@
+
+<div style="width:100%; height:800px"class="graph_container" id="ratio_graph"></div>
+
+<script>
+  $(document).ready( 
+               function() {
+
+                 $.plot($("#ratio_graph"),
+			[ 
+			  {% spaceless %}
+                          {% for ratio_info in recent_ratios_per_project %}
+                          { label:"{{ratio_info.business}}",
+                            data: {{ratio_info.hours}}
+                          },
+                          {% endfor %}
+                          {% endspaceless %}
+                        ],
+                        { series: { pie: { show: true,
+                                           label: {
+                                             show: true,
+                                             formatter: function(label, series) {
+                                               return "<div style='font-size:8pt;text-align:center;color:"+series.color+"'>"+label+"</div>";
+                                             }
+                                           }
+                                         }
+                                  },
+                          legend: { show: false }
+                        }
+                 );
+               });
+
+</script>

@@ -32,3 +32,4 @@ src/implicitdesign/media/project_documents
 scripts/old_imports
 src/implicitdesign/media/
 /static
+local_settings.py

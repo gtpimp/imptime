@@ -14,9 +14,12 @@
 	      &nbsp;
 	    </div>
 	  <div class="special_traffic_text">
+            <span class="edit_issue_subject {{per_user.bar_color}}">
+        {% else %}
+            <span class="edit_issue_subject">
 	{% endif %}
 
-	      <span class="edit_issue_subject">
+
 		{{ per_user|points_and_stuff }}
 	      </span>
 	{% if per_user.has_hours %}

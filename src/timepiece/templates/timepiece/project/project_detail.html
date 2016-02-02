@@ -5,43 +5,29 @@
   {{ assign_user_form.media }}
 {% endblock %}
 
-<div class="project_detail">
+<div class="project_detail" project_id={{project.id}}>
   <img style="display:none" class="loading" src="{{STATIC_URL}}/images/icons/loadingAnimation.gif"/>
   
-    <div class="row-fluid">
-    <div class="project_description span12">
-        {{ project.description }}
-    </div>
-  </div>
-
-  <div class="row-fluid">
-    <div class="span12">
-      <ul class="unstyled subnav">
-        {% include "timepiece/project/_card_project_menu.html" %}
-      </ul>
-    </div>
-  </div>
-
   <div class="row-fluid" style="float:left">
     <div class="issues">
-      <div class="issues_list" style="display:table">  <!-- overlflow:auto -->
-          <table>
-            <thead>
-              {% include "timepiece/project/_issue_table_header.html" %}
-            </thead>
-            <tbody class="issue_list_body" id="{{project.id}}" update_order_url="{% url 'sortable_issue_update' project.id  %}" >
-              {% if issues_forms.forms %}
-                {% for form in issues_forms.forms %}
-                  {% with form.instance as issue %}
-                    {% include "timepiece/project/_issue_entry_row.html" %}
-                  {% endwith %}
-                {% endfor %}
-              {% else %}
-              
-              {% endif %}
-              {% include "timepiece/project/_issue_blank_row.html" %}   
-            </tbody>
-          </table>
+      <div class="issues_list" style="display:table">
+        <table>
+          <thead>
+            {% include "timepiece/project/_issue_table_header.html" %}
+          </thead>
+          <tbody class="issue_list_body issue_drag_destination" id="{{project.id}}"
+                 update_order_url="{% url 'sortable_issue_update' project.id  %}" >
+            {% if issues_forms.forms %}
+            {% for form in issues_forms.forms %}
+            {% with form.instance as issue %}
+            {% include "timepiece/project/_issue_entry_row.html" %}
+            {% endwith %}
+            {% endfor %}
+            {% else %}
+            
+            {% endif %}
+          </tbody>
+        </table>
       </div>
     </div>
   </div>

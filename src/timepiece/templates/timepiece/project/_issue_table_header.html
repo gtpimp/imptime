@@ -75,10 +75,17 @@
 		{% has_permission has_delete_issue project.business %}
 		<th ></th>
 		{% end_permission %}
+
 		</tr>
 
-		{% if project.id %}
                 <tr>
+                  <td colspan="99"><br/></td>
+                </tr>
+
+		{% if project.id %}
+                <tr class="pseudo_issue_row">
+                <br/><br/>
+                
                   <td><div class="issue_checkbox_cell"></div></td>
                   <td>
                       <div class="secret_link issue_number" onclick="imp.show_issue_detail(null, '{% url 'all_timesheet_entries' project.id %}');">
@@ -144,7 +151,7 @@
 		{% endif %}
 
 		{% if project.id %}
-                <tr>
+                <tr class="pseudo_issue_row">
                   <td><div class="issue_checkbox_cell"></div></td>
                   <td>
                     <div class="secret_link issue_number" onclick="imp.show_issue_detail(null, '{% url 'unassigned_timesheet_entries' project.id %}');">

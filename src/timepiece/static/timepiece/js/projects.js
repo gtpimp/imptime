@@ -1,53 +1,36 @@
 imp.projects = imp.projects || {};
 
-imp.projects.already_loaded_sprints = {};
-
+imp.projects.already_loaded_sprints = {
+    get_already_loaded_issue_list : function(project_id) {
+        return $(".hidden_project_list").find(".project_detail[project_id="+project_id+"]");
+    },
+    cache_already_loaded_issue_lists : function() {
+        $(".hidden_project_list").append( $(".issue_list").find(".project_detail") );
+    },
+    clear_cache_for_project : function( project_id ) {
+        $(".hidden_project_list").find(".project_detail[project_id="+project_id+"]").remove();
+        $(".issue_list").find(".project_detail[project_id="+project_id+"]").remove();
+        imp.projects.already_loaded_sprints[project_id] = null;
+    }
+};
 
 //var numbers_state = { 'all':0, 'no ctc':1, 'no money':2, 'no money and no estimates':3 };
 var numbers_state = { 'no ctc':0, 'no money':1 };
 imp.show_numbers_state = numbers_state['no money'];
 
-imp.projects.on_sortable_changed_for_url = function(sortable_url) {
-    var _sortable_url = sortable_url;
-    function ret_func(event, ui) {
-        var url = _sortable_url;
-        var rows = ui.item.parent().find("tr");
-        var project_id = ui.item.parent().attr('id');
-        var ordered_ids = [];
-        rows.each(function(index, row) {
-            var elem = $(row);
-            var issue_id = elem.attr("id");
-            ordered_ids.push(issue_id);
-        });
-
-        var loading_indicators = ui.item.parent().find(".loading_issue_indicator");
-        loading_indicators.show();
-
-        var joined_ordered_ids = ordered_ids.join(',');
-        var response = $.ajax({type:"POST",
-                               url: url,
-                               data: { ordered_ids:joined_ordered_ids, project_id:project_id },
-                               dataType:"json",
-                               success : function () {
-                                   loading_indicators.hide();
-                               }
-                              });
-    };
-    return ret_func;
-};
-
 imp.projects.show_project_card_as_popup = function (event, project_card_url, msg, args) {
+    imp.current_issue_id = "";
     imp.show_issue_detail(null, project_card_url, msg, args);
     event.stopPropagation();
     return false;
 };
 
 imp.projects.popup_business_comments = function(business_id) {
-    alert("hi");
     return false;
 };
 
 imp.projects.show_business_comments = function (event, business_comments_url, args) {
+    imp.current_issue_id = "";
     imp.show_issue_detail(null, business_comments_url, "loading comments", args);
     event.stopPropagation();
     return false;
@@ -87,88 +70,121 @@ imp.projects.cycle_status = function(event, el, url) {
            });
 };
 
-imp.projects._make_load_for_data = function ( done_data_function_handler ) {
-    var _done_data_function_handler = done_data_function_handler;
-
-    return function(element, expand_url) {
-        var done_data_function_handler = _done_data_function_handler;
-        var current_row = $(element);
-        var parent_table = $(current_row.closest(".project_table"));
-        var project_contents = parent_table.find(".project_contents");
-        var area_to_insert = project_contents.find(".information");
-        if (area_to_insert.find(".project_detail").length > 0) {
-            area_to_insert.find(".project_detail").toggle();
-        }
-
-        if ( imp.projects.already_loaded_sprints[expand_url] ) {
-            return;
-        }
-
-        area_to_insert.find(".project_detail").remove();
-        var loading = area_to_insert.find(".loading");
-        loading.show();
-        var response = $.ajax({ type:"GET",
-                                url: expand_url,
-                                success: function(data) {
-                                    area_to_insert.append($(data));
-                                    loading.hide();
-                                    imp.projects.already_loaded_sprints[expand_url] = true;
-                                    imp.on_issue_rows_loaded(area_to_insert);
-
-                                    if (done_data_function_handler) {
-                                        response.done( done_data_function_handler(element) );
-                                    }
-
-                                }
-                              });
-
-
-
-    };
+imp.projects.set_project_title = function( project ) {
+    var project_title_el = $(".active_project_title");
+    project_title_el.find(".project_id").html("#" + project.id);
+    project_title_el.find(".project_name").html(project.name);
+    project_title_el.find(".project_description").html(project.short_description);
+    project_title_el.find(".business_name").html(project.business.name);
 };
 
+imp.projects.set_project_menu = function( project_menu ) {
+    $(".project_specific_menu").html(project_menu);
+    //$(".project_menu .project_actions").html(project_menu);
+};
 
 function make_data_done_function_for_element(element) {
-    var _element = element;
-    return function (data) {
-        var element = _element;
-        var current_row = $(element);
-        var parent_table = $(current_row.closest(".project_table"));
-        var project_contents = parent_table.find(".project_contents");
-        var area_to_insert = project_contents.find(".information");
-        var sortable = $(area_to_insert.find(".issue_list_body"));
-        var sortable_url = $(sortable).attr("update_order_url");
 
-	imp.projects.attach_sortable( sortable, sortable_url );
-        imp.on_issue_rows_loaded($(element));
+};
+
+imp.projects.on_sortable_changed_for_url = function(sortable_url) {
+    var _sortable_url = sortable_url;
+    function ret_func(event, ui) {
+        var url = _sortable_url;
+        var rows = ui.item.parent().find("tr");
+        var project_id = ui.item.parent().attr('id');
+        var ordered_ids = [];
+        rows.each(function(index, row) {
+            var elem = $(row);
+            var issue_id = elem.attr("id");
+            ordered_ids.push(issue_id);
+        });
+
+        var loading_indicators = ui.item.parent().find(".loading_issue_indicator");
+        loading_indicators.show();
+
+        var joined_ordered_ids = ordered_ids.join(',');
+        var response = $.ajax({type:"POST",
+                               url: url,
+                               data: { ordered_ids:joined_ordered_ids, project_id:project_id },
+                               dataType:"json",
+                               success : function () {
+                                   loading_indicators.hide();
+                               }
+                              });
     };
+    return ret_func;
 };
 
-imp.projects.attach_sortable = function(sortable, sortable_url) {
-
-    if ( sortable_url ) {
-	sortable.sortable({ connectWith: ".issue_list_body",
-                            update: imp.projects.on_sortable_changed_for_url(sortable_url),
-                            receive: imp.projects.on_sortable_changed_for_url(sortable_url)
-			  });
-    } else {
-	sortable.sortable({ connectWith: ".issue_list_body" });
-    }
+imp.projects.attach_sortable = function(sortable, sortable_url, move_issue_to_project_url ) {
+    var sortable_args = { cursor: "move",
+                          appendTo: document.body,
+                          helper: 'clone',
+                          connectWith: ".issue_drag_destination" };
+    sortable_args.update = imp.projects.on_sortable_changed_for_url(sortable_url);
+    sortable_args.receive = imp.projects.on_sortable_changed_for_url(sortable_url);
+    sortable.sortable(sortable_args);
+    
 };
 
-imp.projects.load_or_display_issues = function(element, expand_url) {
+imp.projects.load_or_display_issues = function(project_id, element, expand_url) {
     if ( imp.highlight_issue_id ) {
 	$("#"+imp.highlight_issue_id).removeClass("highlight");
         imp.highlight_issue_id = null;
     }
-    var callback = make_data_done_function_for_element(element);
+    
     imp.current_issue_detail_url = null;
     imp.current_issue_id = null;
-    var action_func = imp.projects._make_load_for_data( function() {
-        callback();
-        //imp.refresh_show_all_users(element, imp.config.logged_in_username);
-    });
-    action_func(element, expand_url);
+
+    var current_row = $(element);
+    var area_to_insert = $(".issue_list");
+    area_to_insert.find(".project_detail").hide();
+    var loading = area_to_insert.find(".loading");
+    loading.show();
+
+    var show_issues_from_data = function(data) {
+        imp.projects.already_loaded_sprints.cache_already_loaded_issue_lists();
+
+        var already_loaded_project_el = imp.projects.already_loaded_sprints.get_already_loaded_issue_list(project_id);
+        if ( already_loaded_project_el.length > 0 ) {
+            area_to_insert.find(".issue_list_content").html();
+            area_to_insert.find(".issue_list_content").append(already_loaded_project_el);
+            already_loaded_project_el.show();
+        } else {
+            area_to_insert.find(".issue_list_content").html(data.issue_list_html);
+        }
+        imp.projects.set_project_title(data.project);
+        imp.projects.set_project_menu(data.project_menu);
+        imp.on_issue_rows_loaded(area_to_insert);
+        imp.active_project = data.project;
+        $(".project_li").removeClass("active");
+        $(".project_li[list_project_id="+data.project.id+"]").addClass("active");
+
+        var sortable = $(area_to_insert.find(".issue_list_body"));
+        var sortable_url = $(sortable).attr("update_order_url");
+        var move_issue_to_project_url = $(sortable).attr("move_issue_to_project_url");
+
+	imp.projects.attach_sortable( sortable, sortable_url, move_issue_to_project_url );
+        imp.on_issue_rows_loaded($(element));
+        imp.projects.already_loaded_sprints[project_id] = data;
+    };
+
+    if ( imp.projects.already_loaded_sprints[project_id] ) {
+        show_issues_from_data(imp.projects.already_loaded_sprints[project_id]);
+        loading.hide();
+    } else {
+        $.ajax({ type:"GET",
+                 url: expand_url,
+                 dataType:"json",
+                 success: function(data) {
+                     show_issues_from_data(data);
+                     loading.hide();
+                 },
+                 error: function(err) {
+                     alert(err);
+                 }
+               });
+    }
 };
 
 imp.projects.on_project_sorting_change_for_url = function ( project_sorting_url) {
@@ -213,30 +229,29 @@ imp.refresh_project = function(project_id) {
     var el = $("li[list_project_id="+project_id+"]");
     var project_url = imp.config.project_issues_refresh_url.replace("999999", project_id);
     var project_container = $(el).find(".project_expand");
-    imp.projects.already_loaded_sprints[project_url] = false;
-    imp.projects.load_or_display_issues(project_container, project_url);
+    imp.projects.already_loaded_sprints.clear_cache_for_project(project_id);
+    imp.projects.load_or_display_issues(project_id, project_container, project_url);
 };
 
 imp.on_issue_rows_loaded = function(issue_row_container) {
     $(issue_row_container).find(".drag_img").parents("tr").hover( function() {
-								      $(this).find('.drag_img').show();
-								      $(this).find('.emacs_copy_img').show();
-                                                                      $(this).find('.issue_action_menu_img').show();
-								      $(this).addClass("hovered");
-
-								  },
-								  function() {
-								      $(this).find('.drag_img').hide();
-								      $(this).find('.emacs_copy_img').hide();
-                                                                      $(this).find('.issue_action_menu_img').hide();
-								      $(this).removeClass("hovered");
-								  });
+	$(this).find('.drag_img').show();
+	$(this).find('.emacs_copy_img').show();
+        $(this).find('.issue_action_menu_img').show();
+	$(this).addClass("hovered");	
+    }, function() {
+	$(this).find('.drag_img').hide();
+	$(this).find('.emacs_copy_img').hide();
+        $(this).find('.issue_action_menu_img').hide();
+	$(this).removeClass("hovered");
+    });
     imp.refresh_hidden_fields(issue_row_container);
     imp.highlight_issue();
     imp.set_issue_checkbox_hooks(issue_row_container);
     imp.set_assigned_by_clickable(issue_row_container);
     imp.attach_issue_filters(issue_row_container);
     imp.refresh_show_all_users(issue_row_container, imp.config.logged_in_username);
+    imp.update_splitter_dimensions();
 };
 
 imp.set_assigned_by_clickable = function(issue_row_container) { 
@@ -374,31 +389,43 @@ imp.create_chart = function(chart_info) {
 };
 
 imp.create_splitter = function() {
-    if ( $(".splitter").splitter ) {
-	$(".splitter").css({height:$(window).height()*0.9+"px"});
-        var size_right = Cookies.get('splitter_right_width');
-        if ( ! size_right ) {
-            size_right = $(window).width()*0.25;
-        }
-	$(".splitter").splitter({sizeRight: size_right});
-        
-        $(".splitter").on("splitter:resized", function(evt, data) {
-            var right_width = data.B.width();
-            Cookies.set('splitter_right_width', right_width);
-        });
-
+    if( $(".splitter").length == 0 ) {
+        return;
     }
+    var split_position = Cookies.get('splitter_position');
+    if ( ! split_position || parseInt(split_position)<1 ) {
+        split_position = "25%";
+    } else {
+        split_position += "px";
+    }
+    $(".splitter").split( { orientation:'vertical', limit:100, position:split_position,
+                            onDragEnd: function() { imp.update_splitter_dimensions(); } } );
+    imp.update_splitter_dimensions();
+
+    $(window).on("resize", function(e) {
+ 	imp.update_splitter_dimensions();
+    });
+
 };
 
-imp.update_splitter_height = function() {
+imp.update_splitter_dimensions = function() {
     var splitter = $(".splitter");
     var top = splitter.offset().top;
     var wh = $(window).height();
     var height = (wh-top-20)+"px";
-    splitter.css("height", height);
-    splitter.find(".splitter-left").css("height", height);
-    splitter.find(".splitter-right").css("height", height);
-    splitter.find(".vsplitbar").css("height", height);
+    splitter.height(height);
+    var width = $(window).width()-100;
+    if ( $(".project_menu").is(":visible") ) {
+        width -= $(".project_menu").width();
+    }
+    splitter.width(width);
+    var split_position = splitter.split().position();
+    Cookies.set('splitter_position', split_position);
+    splitter.split().refresh();
+
+    var pl_el = $(".project_list");
+    height = wh - (pl_el.offset().top + 20);
+    pl_el.height( height );
 };
 
 imp.toggle_show_adhoc_issues = function() {
@@ -417,17 +444,21 @@ imp.toggle_show_numbers = function() {
 imp.edit_project_status = function(event, el) {
     event.stopPropagation();
 
+    var project_el = $(el);
+    if ( ! project_el.hasClass("project_li") ) {
+        project_el = $(el).parents(".project_li");
+    }
     var callback = function(data) {
 
 	if ( data.is_open ) {
-	    $(el).parents(".project_li").addClass("open_project").removeClass("closed_project");
+	    project_el.addClass("open_project").removeClass("closed_project");
 	} else {
-	    $(el).parents(".project_li").addClass("closed_project").removeClass("open_project");
+	    project_el.addClass("closed_project").removeClass("open_project");
 	}
     };
     
     var args = { blank_entry: false, callback: callback };
-    imp.show_inline_editor(el, args);
+    imp.show_inline_editor(project_el, args);
     return false;
 };
 
@@ -438,12 +469,8 @@ imp.create_accordions = function() {
 };
 
 imp.refresh_show_numbers = function(issue_row_container) {
-    var parent_el;
-    if ( issue_row_container ) {
-        parent_el = issue_row_container.parents(".project_li");
-    } else {
-        parent_el = $("body");
-    }
+    var parent_el = $("body");
+
     if ( imp.show_numbers_state == numbers_state['no ctc'] ) {
         parent_el.find(".money_cell").show();
 	parent_el.find(".money_cell.money_ctc").hide();
@@ -461,6 +488,15 @@ imp.refresh_show_numbers = function(issue_row_container) {
 	parent_el.find(".estimates_cell").hide();
         parent_el.find(".money_cell.money_ctc").hide();
     }
+    
+    // if ( issue_row_container ) {
+    //     _show_numbers_for_el(issue_row_container.parents(".issue_list_content"));
+    // } else {
+    //     parent_el = $("body");
+    // }
+    // _show_numbers_for_el($("body"));
+
+
 };
 
 imp.refresh_hidden_fields = function(some_el_in_the_project) {
@@ -514,13 +550,60 @@ imp.on_document_ready = function() {
 
     var project_sort_url = $(".project_list").attr("project_sort_url");
     $(".project_list").sortable( { update : imp.projects.on_project_sorting_change_for_url(project_sort_url) });
-    var project_li_row = $(".project_li");
-    project_li_row.each(function(item, project_row) {
+
+    var move_issue_to_project_url = $(".project_list").attr("move_issue_to_project_url");
+    $(".project_li").droppable( {
+        drop: function( event, ui ) {
+
+            var from_el = $(event.srcElement);
+            //from_el = ui.draggable;
+
+            var issue_el = from_el.parents(".issue_instance_row");
+            if ( issue_el.length == 0 ) {
+                return false;
+            }
+            
+            var issue_id = issue_el.attr("id");
+            issue_el = $("#" + issue_id);
+            var project_el = $(event.target);
+            var loading_indicators = project_el.find(".loading");
+            loading_indicators.show();
+            var project_id = project_el.attr("list_project_id");
+            $.ajax({type:"POST",
+                    url: move_issue_to_project_url,
+                    data: { issue_id:issue_id, dest_project_id: project_id },
+                    dataType:"json",
+                    success : function (data) {
+                        if ( data.status == "ok" ) {
+                            var already_loaded_project_el = imp.projects.already_loaded_sprints.get_already_loaded_issue_list(project_id);
+                            if ( already_loaded_project_el.length > 0 ) {
+                                already_loaded_project_el.find(".issue_list_body").append(issue_el);
+                            } else {
+                                issue_el.remove();
+                            }
+                            imp.projects.already_loaded_sprints.clear_cache_for_project(project_id);
+                        } else {
+                            imp.on_error("Failed");
+                        }
+                        loading_indicators.hide();
+                        
+                    },
+                    error : function(err) {
+                        loading_indicators.hide();
+                        imp.on_error(err);
+                    }
+                   });
+            return true;
+        },
+        tolerance: "pointer",
+        hoverClass: "drop-hover"
+    });
+    
+    $(".project_li").each(function(item, project_row) {
         var elem = $(project_row);
-        var expanded_row = elem.find(".project_table_cell.project_expand");
-        var preloaded = expanded_row.attr("preloaded") == "true";
+        var preloaded = ( elem.attr("preloaded") == "true" );
         if (preloaded) {
-            expanded_row.trigger('click');
+            elem.trigger('click');
         }
     });
 
@@ -528,23 +611,20 @@ imp.on_document_ready = function() {
     imp.attach_sprint_headings();
 
     $(window).on('blur', function(){
-
-  	  var parent = $('issue_edit_box').parent();
-	  var div_sibling = parent.find('.edit_issue_subject');
-	  $('.issue_edit_box').remove();
-   	  div_sibling.show();
-	  
+  	var parent = $('issue_edit_box').parent();
+	var div_sibling = parent.find('.edit_issue_subject');
+	$('.issue_edit_box').remove();
+   	div_sibling.show();
     });
 
     $('.estimates_cell').click(function() {
 	imp.show_assigned_issues($(this).data('username'));
     });
 
+    $('.sprint_menu_trigger').click(function() {
+        $(".project_menu").animate({width:'toggle'}, 200, function() { imp.update_splitter_dimensions(); } );
+    });
+
 };
 
 $(document).ready(imp.on_document_ready);
-
-
-$(window).on('resize', function() {
-    imp.update_splitter_height();
-});

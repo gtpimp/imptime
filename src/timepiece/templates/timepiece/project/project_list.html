@@ -5,7 +5,6 @@
 {% load timepiece_tags %}
 
 {% block extracss %}
-<link rel="stylesheet" href="{{STATIC_URL}}timepiece/css/splitter.css" />
 <link rel="stylesheet" type="text/css" href="{{STATIC_URL}}markitup/sets/markdown/style.css">
 <link rel="stylesheet" type="text/css" href="{{STATIC_URL}}markitup/skins/markitup/style.css">
 
@@ -15,16 +14,30 @@
 {% endblock %}
 
 {% block extrajs %}
-<script src="{{STATIC_URL}}timepiece/js/splitter.js"></script>
+<script src="{{STATIC_URL}}timepiece/js/jquery.splitter-0.20.0.js"></script>
 <script src="{{STATIC_URL}}timepiece/js/projects.js"></script>
 <script src="{{STATIC_URL}}timepiece/js/issues.js"></script>
 
 <script type="text/javascript" src="{{STATIC_URL}}markitup/jquery.markitup.js"></script>
 <script type="text/javascript" src="{{STATIC_URL}}markitup/sets/markdown/set.js"></script>
 
+<link type="text/css" rel="stylesheet" href="{{ STATIC_URL }}/timepiece/css/jquery.splitter.css" />
+
 {% endblock extrajs %}
 
+{% block extra_content_class %}maximize_size{% endblock %}
+
 {% block content %}
+
+<div class="current_sprint_details">
+  <div class="sprint_banner">
+
+    <span class="sprint_menu_trigger"><img src="{{STATIC_URL}}/images/implicitdesign/menu.png"/></span>
+    <span class="active_project_title">
+      <span class="business_name"></span>  <span class="project_id"></span> <span class="project_name"></span> <span class="project_description"></span>
+    </span>
+  </div>
+</div>
 
 {% if business %}
 <div class="parent_li_of_form_on_click">
@@ -32,17 +45,36 @@
   {% has_permission has_create_sprint business %}  
   <div class="new_issue_form to_edit_expanded_form" style="display:none;position:absolute;z-index:100">		  
   </div>
-  {% end_permission %}
+{% end_permission %}
 
   
 </div>
 {% endif %}
 
-<div class="splitter">
-  <div class="splitter-left">
 
-      {% ifequal business.sync_with "jira" %}
-	<div class="jira_info">
+
+<div class="content_container">
+  <div class="project_menu">
+
+    <div class="project_actions">
+    </div>
+    <div class="hidden_project_list" style="display:none">
+    </div>
+    <div class="project_list" project_sort_url="{% url 'sortable_project_update' %}" move_issue_to_project_url="{% url 'move_issue_to_project' %}" >
+      {% for project in projects %}
+
+      {% include "timepiece/project/_project_list_item.html" %}
+      
+      {% endfor %}
+    </div>
+  </div>
+  <div class="splitter_container">
+    <div class="splitter">
+      <div class="splitter-left">
+
+
+        {% ifequal business.sync_with "jira" %}
+        <div class="jira_info">
 	  Jira is enabled for this project. Support is limited to:
 	  <ul>
 	    <li>Adds a 'sync jira' menu option to the Sprints main menu. This fetches all latest issues and sprints and imports them. Over-writes any local settings, except for time entries</li>
@@ -50,21 +82,27 @@
 	    <li>In this version the following fields are correctly synced to Jira: subject, description, state, assigned user</li>
 	  </ul>
 	  <div style="clear:both"></div>
-	</div>
-      {% endifequal %}
-      
-    <ul class="project_list open" project_sort_url="{% url 'sortable_project_update' %}">
-      {% for project in projects %} 
-        {% include "timepiece/project/_project_list_item.html" %}
-      {% endfor %}
-
-      {% include "timepiece/project/floating_project_detail.html" with project=floating_project %}
-
-    </ul>
+        </div>
+        {% endifequal %}
         
-  </div>
-  <div class="splitter-right">
-    <div class="issue_detail">
+        <ul class="issue_list open">
+          
+          <div class="project_table_row project_contents">
+            <div class="project_table_cell information">
+              <img style="display:none" class="loading" src="{{STATIC_URL}}/images/icons/loadingAnimation.gif"/>
+            </div>
+          </div>
+          
+          <div class="issue_list_content"></div>
+
+        </ul>
+        
+      </div>
+
+      <div class="splitter-right">
+        <div class="issue_detail">
+        </div>
+      </div>
     </div>
   </div>
 </div>
@@ -76,8 +114,11 @@
 </div>
 
 <script>
-  imp.highlight_issue_id='{{highlight_issue_id}}';
-  imp.active_business_id='{{business.id}}';
+imp.highlight_issue_id='{{highlight_issue_id}}';
+ imp.active_business_id='{{business.id}}';
+
+
+ 
 </script>
 
 {% endblock %}

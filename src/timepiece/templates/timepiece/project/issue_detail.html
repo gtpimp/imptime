@@ -99,6 +99,89 @@
       </div>
       <a href="http://daringfireball.net/projects/markdown/syntax" class="markdown_help" target="_blank" style="display:none">markdown syntax</a>
     </div>
+    <div class="issue_comments">
+      <br/>
+      {% if issue.comments_in_order.count %}
+      <h3>Comments, most recent first</h3>
+      {% endif %}
+      {% for comment in issue.comments_in_order %}
+        <div class="comment_section edit_comment_section">
+          <div class="creation_details">
+	    {{comment.modified}}
+	    {{comment.author}}
+	   </div>
+           
+	   <div class="markdown_content">
+	     {{comment.comment|asmarkdown|with_issue_links|safe}}
+           </div>
+           
+           {% has_permission has_add_issue_comment issue.project.business %}
+           <div class="edit_comment" style="display:none">
+             <textarea name="comment" data-url="{% url 'edit_issue_comment' comment.pk %}">{{comment.comment}}</textarea>
+             <input type="button" class="small_button btn" onclick="imp.on_edit_issue_comment($(this), '{% url 'edit_issue_comment' comment.pk %}');" value="save"/>
+             <input type="button" class="small_button btn" onclick="$(this).parents('.comment_section').find('.edit_comment_button').show(); $(this).parents('.comment_section').find('.markdown_content').show(); $(this).parents('.edi prot_comment').hide(); return false;" value="cancel"/>
+           </div>
+
+           <a class="edit_comment_button small_button btn" href="#" onclick="$(this).parent().find('.edit_comment').show(); $(this).hide(); $(this).parents('.comment_section').find('.markdown_content').hide(); return false;">
+             <img src="{{STATIC_URL}}images/icons/comment_edit.png"/>
+           </a>
+           <a class="delete_comment_button small_button btn" href="#" onclick="return imp.delete_issue_comment('{% url 'delete_issue_comment' comment.pk %}');">
+             <img src="{{STATIC_URL}}/images/timepiece/icons/comment_delete.png"/>
+           </a>
+        {% end_permission %}
+        </div>
+	<hr/>
+      {% endfor %}
+
+
+
+        {% has_permission has_add_issue_comment issue.project.business %}
+        <div class="comment_section">
+          <a class="new_comment_button btn small_button" href="#" onclick="$(this).parent().find('.new_comment').show(); $(this).hide(); return false;">
+            <img src="{{STATIC_URL}}/images/timepiece/icons/comment_add.png"/>
+          </a>
+          <div class="new_comment" style="display:none">
+	    <textarea name="comment" data-url="{% url 'add_issue_comment' issue.pk %}"></textarea>
+	    <input type="button" class="btn small_button" onclick="imp.on_add_issue_comment($(this), '{% url 'add_issue_comment' issue.id %}');" value="save"/>
+	    <input type="button" class="btn small_button" onclick="$(this).parents('.comment_section').find('.new_comment_button').show(); $(this).parents('.new_comment').hide(); return false;" value="cancel"/>
+          </div>
+        </div>
+        {% end_permission %}
+    </div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
   </div>
   {% endif %}
 
@@ -121,63 +204,13 @@
         <div class="new_attachment" style="display:none">
           <input type="file" name="attachment" data-url="{% url 'add_issue_attachment' issue.pk %}"/>
         </div>
-      <div>
+       
 
-    {% end_permission %}
-
-    <div class="issue_comments">
-      <br/>
-      {% if issue.comments_in_order.count %}
-        <h3>Comments, most recent first</h3>
-      {% endif %}
-      {% for comment in issue.comments_in_order %}
-
-        <div class="comment_section edit_comment_section">
-
-          <div class="creation_details">
-	    {{comment.modified}}
-	    {{comment.author}}
-	  </div>
-
-	  <div class="markdown_content">
-	    {{comment.comment|asmarkdown|with_issue_links|safe}}
-          </div>
-
-          {% has_permission has_add_issue_comment issue.project.business %}
-            <div class="edit_comment" style="display:none">
-              <textarea name="comment" data-url="{% url 'edit_issue_comment' comment.pk %}">{{comment.comment}}</textarea>
-              <input type="button" class="small_button btn" onclick="imp.on_edit_issue_comment($(this), '{% url 'edit_issue_comment' comment.pk %}');" value="save"/>
-              <input type="button" class="small_button btn" onclick="$(this).parents('.comment_section').find('.edit_comment_button').show(); $(this).parents('.comment_section').find('.markdown_content').show(); $(this).parents('.edit_comment').hide(); return false;" value="cancel"/>
-            </div>
-            <a class="edit_comment_button small_button btn" href="#" onclick="$(this).parent().find('.edit_comment').show(); $(this).hide(); $(this).parents('.comment_section').find('.markdown_content').hide(); return false;">
-              <img src="{{STATIC_URL}}images/icons/comment_edit.png"/>
-            </a>
-            <a class="delete_comment_button small_button btn" href="#" onclick="return imp.delete_issue_comment('{% url 'delete_issue_comment' comment.pk %}');">
-              <img src="{{STATIC_URL}}/images/timepiece/icons/comment_delete.png"/>
-            </a>
-          {% end_permission %}
-          </div>
-	</div>
-	<hr/>
-      {% endfor %}
-    </div>
-
-    {% has_permission has_add_issue_comment issue.project.business %}
-    <div class="comment_section">
-      <a class="new_comment_button btn small_button" href="#" onclick="$(this).parent().find('.new_comment').show(); $(this).hide(); return false;">
-        <img src="{{STATIC_URL}}/images/timepiece/icons/comment_add.png"/>
-      </a>
-      <div class="new_comment" style="display:none">
-	<textarea name="comment" data-url="{% url 'add_issue_comment' issue.pk %}"></textarea>
-	<input type="button" class="btn small_button" onclick="imp.on_add_issue_comment($(this), '{% url 'add_issue_comment' issue.id %}');" value="save"/>
-	<input type="button" class="btn small_button" onclick="$(this).parents('.comment_section').find('.new_comment_button').show(); $(this).parents('.new_comment').hide(); return false;" value="cancel"/>
-      </div>
-    </div>
-    {% end_permission %}
-      
-   {% endif %}
+        {% end_permission %}
+        
+  {% endif %}
   <hr/>
-
+        
   {% has_permission has_view_actual_hours project.business %}
     <a href="#" class="btn small_button" onclick="$(this).parent().find('.timesheet_entries').toggle(); return false;">
       <img src="{{STATIC_URL}}images/icons/clock.png"/>

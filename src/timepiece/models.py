@@ -3,6 +3,7 @@ import timings
 from dateutil.relativedelta import relativedelta
 import api
 import calendar
+from lib.models import model_to_dict_with_date_support
 from caldav_helper import CalDavHelper
 import uuid
 from colorful.fields import RGBColorField
@@ -22,6 +23,8 @@ from re import sub as re_sub
 from re import UNICODE as re_UNICODE
 from checklist_plugins.registry import get_traffic_plugins, get_dev_plugins, get_finance_plugins
 from django.contrib.auth.models import AbstractUser, AbstractBaseUser
+
+logger = logging.getLogger(__name__)
 
 try:
     from django.utils import timezone
@@ -142,6 +145,10 @@ class Business(models.Model):
     impd_client = models.ForeignKey(Client, null=True, blank=True, related_name='impd_clients')
 
     
+    def model_to_dict(self):
+        d = model_to_dict_with_date_support(self)
+        return d
+        
     def wiki_name(self):
         return self.name.replace(" ", "_").lower()
     
@@ -329,6 +336,7 @@ class Business(models.Model):
             raise ValidationError('impd_client is needed')
             # self.impd_client = models.Client.objects.filter(code='impd')[:1].get()
 
+        
 class BusinessComment(models.Model):
     business = models.ForeignKey(Business, null=False, blank=False, related_name='business_comments')
     comment = models.TextField(null=True, blank=True)
@@ -728,6 +736,12 @@ class Project(models.Model):
             ret[user] = total['points__sum'] if total['points__sum'] else 0
         return ret
 
+    def model_to_dict(self, include_business=False):
+        d = model_to_dict_with_date_support(self)
+        if include_business:
+            d['business'] = self.business.model_to_dict()
+        return d
+    
     def recalc_secondary_estimates(self):
         """ these are estimates based on the developer estimates, for management and testing """
 
@@ -1060,7 +1074,6 @@ class Project(models.Model):
         stats = {'issues':[], 'users':{}, 'features':{}}
         self._estimate_stats = stats
 
-        total_estimated_cost = 0
         total_estimated_hours = 0
         estimated_management_cost = 0
         estimated_testing_cost = 0
@@ -2619,9 +2632,6 @@ class AssignmentManager(models.Manager):
             key=lambda contract: contract.this_weeks_priority_number)
 
 
-# contract assignment logger
-logger = logging.getLogger('timepiece.ca')
-
 
 class ContractAssignment(models.Model):
     contract = models.ForeignKey(ProjectContract, related_name='assignments')
@@ -2851,6 +2861,8 @@ class UserProfile(models.Model):
     billable_amount = models.DecimalField(max_digits=8, decimal_places=2, default=0)
     project_names_to_ignore = models.TextField(blank=True)
     authenticate_token = models.CharField(max_length=100, blank=True, null=True, help_text="Authentication token remote connections")
+    required_daily_work_hours = models.IntegerField(default=8, null=False, blank=True)
+    
     class Meta:
         ordering = ('user',)
     def __unicode__(self):

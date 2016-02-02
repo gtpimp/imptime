@@ -4,15 +4,20 @@
 {% load bootstrap_toolkit %}
 {% block content %}
 
+<div class="col-md-3">
+  <img src="{{ STATIC_URL }}/images/implicitDesignLogoTransparent.png"/>
+</div>
+
 {% for user,days_hours in daily_hours.items %}
 
-  <div class="col-md-3">
+  <div class="time_chart col-md-3">
 
     <h3>{{user}}</h3>
         <div style="width:100%; height:200px"class="timesheet_graph_container" id="graph{{user}}"></div>
   </div>
 
-{% endfor %}
+  {% endfor %}
+
 
 <script>
   $(document).ready( 
@@ -58,7 +63,7 @@
                             min: 3,
                             max: 9
                           },
-                          grid: {markings: [{yaxis: {from: 8, to:8}, color: "#adff2f"}]},
+                          grid: {markings: [{yaxis: {from: {{values.required_average}}, to:{{values.required_average}} }, color: "#adff2f"}]},
                           legend: { show: false,
                                     position: "nw" },
 			  bars: {
@@ -68,7 +73,6 @@
                  );
                  {% endfor %}
                });
-
 
 </script>
 
