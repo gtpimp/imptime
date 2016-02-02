@@ -52,6 +52,9 @@ class Client(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     modified_at = models.DateTimeField(auto_now=True)
 
+    def __unicode__(self):
+        return self.name
+
 class Attribute(models.Model):
     ATTRIBUTE_TYPES = (
         ('project-type', 'Project Type'),
@@ -142,7 +145,7 @@ class Business(models.Model):
                                                  ("fixed_quote", "Fixed quote"),
                                                  ("free", "Free or Equity or Other") ) )
 
-    impd_client = models.ForeignKey(Client, null=True, blank=True, related_name='impd_clients')
+    impd_client = models.ForeignKey(Client, null=True, blank=False, related_name='businesses')
 
     
     def model_to_dict(self):
@@ -2861,6 +2864,8 @@ class UserProfile(models.Model):
     billable_amount = models.DecimalField(max_digits=8, decimal_places=2, default=0)
     project_names_to_ignore = models.TextField(blank=True)
     authenticate_token = models.CharField(max_length=100, blank=True, null=True, help_text="Authentication token remote connections")
+    impd_client = models.ForeignKey(Client, null=True, blank=False, related_name='profiles')
+
     required_daily_work_hours = models.IntegerField(default=8, null=False, blank=True)
     
     class Meta:
@@ -3771,6 +3776,3 @@ class Schedule(models.Model):
                  'leave_hours': leave_days * settings.NUM_BUSINESS_HOURS_PER_DAY }
                                                       
 
-# class ClientUser(AbstractBaseUser):
-#     def __unicode__(self):
-#         return self.username

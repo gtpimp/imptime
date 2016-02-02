@@ -1102,6 +1102,8 @@ def view_person(request, person_id):
 @render_with('timepiece/person/create_edit.html')
 @login_required
 def create_edit_person(request, person_id=None):
+    import pdb; pdb.set_trace()
+
     if person_id:
         person = get_object_or_404(auth_models.User, pk=person_id)
     else:
