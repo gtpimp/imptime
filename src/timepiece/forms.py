@@ -775,7 +775,8 @@ class ProjectForm(forms.ModelForm):
             #'colour',
             'ratio_management',
             'ratio_testing',
-            'ratio_scope_creep'
+            'ratio_scope_creep',
+            'commission_percentage',
         )
 
     # business = selectable_forms.AutoCompleteSelectField(

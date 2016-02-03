@@ -3776,6 +3776,9 @@ def edit_project_rate(request, project_id):
         elif field_name == 'project__ratio_scope_creep':
             project.ratio_scope_creep = new_value
             ret_val = new_value
+        elif field_name == 'project__commission_percentage':
+            project.commission_percentage = new_value
+            ret_val = new_value
         else:
             ret_val = "Unsupported field"
         project.save()
