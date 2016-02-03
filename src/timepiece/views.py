@@ -3399,9 +3399,11 @@ def get_project_detail(request, project_id, context=None):
     issues_list_rendered = render_to_response("timepiece/project/project_detail.html", context, context_instance=RequestContext(request))
     #project_menu_rendered = render_to_response("timepiece/project/_card_project_menu.html", context, context_instance=RequestContext(request))
     project_menu_rendered = render_to_response("timepiece/_navigation_project_specific_menu.html", context, context_instance=RequestContext(request))
+    project_banner_rendered = render_to_response("timepiece/project/_project_banner.html", context, context_instance=RequestContext(request))
 
     return HttpResponse(json.dumps({ 'project':project.model_to_dict(include_business=True),
                                      'project_menu': project_menu_rendered.content,
+                                     'project_banner': project_banner_rendered.content,
                                      'issue_list_html':issues_list_rendered.content }))
 
 @login_required

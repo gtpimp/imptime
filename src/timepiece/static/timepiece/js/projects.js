@@ -70,16 +70,9 @@ imp.projects.cycle_status = function(event, el, url) {
            });
 };
 
-imp.projects.set_project_title = function( project ) {
-    var project_title_el = $(".active_project_title");
-    project_title_el.find(".project_id").html("#" + project.id);
-    project_title_el.find(".project_name").html(project.name);
-    project_title_el.find(".project_description").html(project.short_description);
-    project_title_el.find(".business_name").html(project.business.name);
-};
-
-imp.projects.set_project_menu = function( project_menu ) {
-    $(".project_specific_menu").html(project_menu);
+imp.projects.set_project_menu = function( project_data ) {
+    $(".project_specific_menu").html(project_data.project_menu);
+    $(".current_sprint_details").html(project_data.project_banner);
     //$(".project_menu .project_actions").html(project_menu);
 };
 
@@ -153,8 +146,7 @@ imp.projects.load_or_display_issues = function(project_id, element, expand_url) 
         } else {
             area_to_insert.find(".issue_list_content").html(data.issue_list_html);
         }
-        imp.projects.set_project_title(data.project);
-        imp.projects.set_project_menu(data.project_menu);
+        imp.projects.set_project_menu(data);
         imp.on_issue_rows_loaded(area_to_insert);
         imp.active_project = data.project;
         $(".project_li").removeClass("active");
@@ -226,6 +218,11 @@ imp.select_text_for_emacs = function(text) {
 };
 
 imp.refresh_project = function(project_id) {
+
+    if ( ! project_id ) {
+        project_id = imp.active_project.id;
+    }
+    
     var el = $("li[list_project_id="+project_id+"]");
     var project_url = imp.config.project_issues_refresh_url.replace("999999", project_id);
     var project_container = $(el).find(".project_expand");
