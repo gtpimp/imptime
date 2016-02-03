@@ -764,6 +764,14 @@ class BusinessForm(forms.ModelForm):
     class Meta:
         model = timepiece.Business
         fields = ('name', 'email', 'description', 'invoice_method', 'notes', 'sync_with')
+        exclude = ['impd_client']
+
+    def save(self, impd_client):
+        instance = super(BusinessForm, self).save(commit=False)
+        instance.impd_client = impd_client
+        instance.save()
+        return instance
+
 
 class ProjectForm(forms.ModelForm):
     class Meta:
@@ -925,11 +933,10 @@ class UserProfileForm(forms.ModelForm):
         model = timepiece.UserProfile
         exclude = ('user','amount','billable_amount', 'authenticate_token')
 
-    def __init__(self, *args, **kwargs):
+    def __init__(self, creator, *args, **kwargs):
         super(UserProfileForm, self).__init__(*args, **kwargs)
-        user = self.instance.user
 
-        if user.is_superuser or user.has_perm('timepiece.belongs_to_all_projects'):
+        if creator.is_superuser or creator.has_perm('timepiece.belongs_to_all_projects'):
             self.fields['impd_client'].label = "Client"
         else:
             del self.fields['impd_client']

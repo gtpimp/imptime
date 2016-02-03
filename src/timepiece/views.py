@@ -1010,7 +1010,7 @@ def create_edit_business(request, business=None):
             instance=business,
         )
         if business_form.is_valid():
-            business = business_form.save()
+            business = business_form.save(request.user.profile.impd_client)
             business.ensure_single_sprint(point_person=request.user)
             _set_project_rate_to_default_for_user(request.user, business.sprints.first())
             return HttpResponseRedirect(
@@ -1109,14 +1109,14 @@ def create_edit_person(request, person_id=None, template='timepiece/person/creat
 
     if request.POST:
         if person:
-            profile_form = timepiece_forms.UserProfileForm(request.POST, instance=person.profile, prefix='profile')
+            profile_form = timepiece_forms.UserProfileForm(request.user, request.POST, instance=person.profile, prefix='profile')
             person_form = timepiece_forms.EditPersonForm(
                 request.POST,
                 instance=person,
             )
         else:
             person_form = timepiece_forms.CreatePersonForm(request.POST,)
-            profile_form = timepiece_forms.UserProfileForm(request.POST, prefix='profile')
+            profile_form = timepiece_forms.UserProfileForm(request.user, request.POST, prefix='profile')
         if person_form.is_valid() and profile_form.is_valid():
             person = person_form.save(commit=False)
             profile = profile_form.save(commit=False)
@@ -1132,10 +1132,10 @@ def create_edit_person(request, person_id=None, template='timepiece/person/creat
         #person.save()
     else:
         if person:
-            profile_form = timepiece_forms.UserProfileForm(instance=person.profile, prefix='profile')
+            profile_form = timepiece_forms.UserProfileForm(creator=request.user, instance=person.profile, prefix='profile')
             person_form = timepiece_forms.EditPersonForm(instance=person)
         else:
-            profile_form = timepiece_forms.UserProfileForm(prefix='profile')
+            profile_form = timepiece_forms.UserProfileForm(creator=request.user, prefix='profile')
             person_form = timepiece_forms.CreatePersonForm()
 
     context = {
@@ -1830,7 +1830,7 @@ def edit_settings(request):
     if request.POST:
         user_form = timepiece_forms.UserForm(
             request.POST, instance=request.user)
-        profile_form = timepiece_forms.UserProfileForm(
+        profile_form = timepiece_forms.UserProfileForm(request.user,
             request.POST, instance=profile)
         if user_form.is_valid() and profile_form.is_valid():
             user_form.save()
@@ -1838,7 +1838,7 @@ def edit_settings(request):
             messages.info(request, 'Your settings have been updated')
             return HttpResponseRedirect(next_url)
     else:
-        profile_form = timepiece_forms.UserProfileForm(instance=profile)
+        profile_form = timepiece_forms.UserProfileForm(creator=request.user, instance=profile)
         user_form = timepiece_forms.UserForm(instance=request.user)
     return {'profile_form': profile_form, 'user_form': user_form}
 
