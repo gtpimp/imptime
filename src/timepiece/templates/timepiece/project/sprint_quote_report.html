@@ -29,7 +29,7 @@
 
   <div style="text-align:center" >
     Proposal for
-    <h3>{{project.business.name}} - {{project.name}}</h3>
+    <h3>{{project.business.description}} - {{project.name}}</h3>
     {{project.short_description}}
      <hr/>
      <br/>
@@ -87,10 +87,6 @@ Therefore the project budget is not open-ended, but
 rather managed in an on-going manner.
 </p>
 
-<p>
-Transparent timesheets are provided at each billing period, so that
-all costs are clearly identifiable.
-</p>
 {% endifequal %}
 
 {% ifequal settings.preamble_type "quote" %}
@@ -106,8 +102,7 @@ This proposal is a quote.
 
 <p>
 The following costing is based on the list of issues given later in
-this document. Please read that section to understand how these costs
-are derived.
+this document. 
 </p>
 
 {% ifequal settings.preamble_type "billable" %}
@@ -123,8 +118,7 @@ are derived.
   {% ifequal settings.preamble_type "billable" %}
   <p>
    The total estimated cost includes the expected ratio of management,
-   testing and expected scope creep, based on our experience with this
-   and other projects.
+   testing and expected scope creep.
   </p>
   {% endifequal %}
   

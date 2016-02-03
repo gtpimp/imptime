@@ -121,14 +121,14 @@
 <li class="menu_item commonly_used parent_li_of_form_on_click">
 
   <a href="#" class="to_expand_form_on_click" onclick="imp.do_form_show(this , '{% url 'add_issue' project.id %}' )" title="Add issue">
-    <img src="{{STATIC_URL}}images/icons/add.png">Add issue</a>
+    <img src="{{STATIC_URL}}images/icons/add.png">Add issue
   </a>
 </li>
 {% end_permission %}
 
 <li class='menu_item commonly_used'>
   <a href="{% url 'project_list' project.id %}" onclick="imp.refresh_project({{project.id}}); return false;" title="Refresh issues">
-    <img src="{{STATIC_URL}}images/icons/arrow_refresh.png">Refresh</a>
+    <img src="{{STATIC_URL}}images/icons/arrow_refresh.png">Refresh
   </a>
 </li>
 
