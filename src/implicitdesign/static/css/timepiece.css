@@ -9715,6 +9715,7 @@ div.traffic_tooltip {
 
 .issues .issues_list .issue_checkbox_cell {
     display: none;
+    position: absolute;
 }
 
 
