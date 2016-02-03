@@ -1119,7 +1119,7 @@ def create_edit_person(request, person_id=None, template='timepiece/person/creat
             profile_form = timepiece_forms.UserProfileForm(request.user, request.POST, prefix='profile')
         if person_form.is_valid() and profile_form.is_valid():
             person = person_form.save(commit=False)
-            profile = profile_form.save(commit=False)
+            profile = profile_form.save(request.user, commit=False)
             person.save()
             person_form.save_m2m()
             profile.user = person
@@ -1834,7 +1834,7 @@ def edit_settings(request):
             request.POST, instance=profile)
         if user_form.is_valid() and profile_form.is_valid():
             user_form.save()
-            profile_form.save()
+            profile_form.save(request.user)
             messages.info(request, 'Your settings have been updated')
             return HttpResponseRedirect(next_url)
     else:

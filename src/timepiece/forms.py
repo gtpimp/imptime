@@ -937,10 +937,26 @@ class UserProfileForm(forms.ModelForm):
     def __init__(self, creator, *args, **kwargs):
         super(UserProfileForm, self).__init__(*args, **kwargs)
 
-        if creator.is_superuser or creator.has_perm('timepiece.belongs_to_all_projects'):
+        if not creator.is_superuser and not creator.is_staff:
+            del self.fields['is_staff']
+
+        if not creator.is_superuser:
+            del self.fields['is_superuser']
+
+        if creator.is_superuser:
             self.fields['impd_client'].label = "Client"
         else:
             del self.fields['impd_client']
+
+    def save(self, creator, commit=False):
+        instance = super(UserProfileForm, self).save(commit=commit)
+
+        if creator.is_staff or creator.has_perm('timepiece.belongs_to_all_projects'):
+            instance.impd_client = creator.profile.impd_client
+
+        return instance
+
+
 
 class ProjectSearchForm(forms.Form):
     search = forms.CharField(required=False, label='')

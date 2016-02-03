@@ -52,6 +52,9 @@
               <li><a href="{% url 'admin:index' %}">Admin</a></li>
               <li><a href="{% url 'client_list' %}">Clients</a></li>
               {% endif %}
+              {% if perms.auth.add_user or user.is_superuser or user.is_superuser %}
+                <li><a href='{% url 'list_people' %}'>Users</a></li>
+              {% endif %}
               <li><a href="{% url 'edit_settings' %}">Settings</a></li>
               <li><a href="{% url 'change_password' %}">Change Password</a></li>
               <li class="divider"></li>
