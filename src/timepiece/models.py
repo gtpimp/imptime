@@ -744,7 +744,7 @@ class Project(models.Model):
             try:
                 rate = Rate.objects.get_or_create(project=self, user_id=user_id)[0]
                 time_tracking_mode = rate.time_tracking_mode
-                user_velocities[user_id] = rate.velocity
+                user_velocities[user_id] = rate.full_velocity
             except Rate.MultipleObjectsReturned:
                 time_tracking_mode = 'developer'
                 user_velocities[user_id] = 1
@@ -980,8 +980,9 @@ class Project(models.Model):
                 rate = Rate.objects.filter(project=self, user=user).first()
                 if rate is None:
                     rate = Rate.objects.create(project=self, user=user, amount=0)
-                cost_per_feature['ctc'] += float(user_total['hours'])*float(rate.amount)
-                cost_per_feature['billable'] += float(rate.full_rate) * float(user_total['hours'])
+                hours = float(user_total['hours']) * rate.full_velocity
+                cost_per_feature['ctc'] += hours * float(rate.amount)
+                cost_per_feature['billable'] += hours * float(rate.full_rate)
 
         self._cached_billable_by_feature = costs_per_feature
         return self._cached_billable_by_feature
@@ -1082,7 +1083,7 @@ class Project(models.Model):
                 rate = Rate(velocity=0, amount=0)
 
             unadjusted_points = points
-            points = (points or 0) * (rate.velocity or 1)
+            points = (points or 0) * (rate.full_velocity or 1)
 
             estimated_cost = float(points)*rate.full_rate
 
@@ -1135,7 +1136,7 @@ class Project(models.Model):
                     user = User.objects.get(pk=user_id)
                     stats['users'][user_id] = {'user':user,
                                                'rate':rate.full_rate,
-                                               'velocity_adjusted_rate':float(rate.velocity)*float(rate.full_rate)}
+                                               'velocity_adjusted_rate':float(rate.full_velocity)*float(rate.full_rate)}
 
                 feature = issue.feature
                 if feature is None:
@@ -1152,9 +1153,9 @@ class Project(models.Model):
                         user_id = manager.id
                         try:
                             points = issue.issue_points.all().filter(user=manager).values('points')[0]['points']
-                            points, unadjusted_points, manager_cost, rate = _calculate_user_contribution_to_issue_cost(issue, user_id, points)
+                            manager_points, unadjusted_points, manager_cost, rate = _calculate_user_contribution_to_issue_cost(issue, user_id, points)
                             estimated_management_cost += manager_cost
-                            issue_data['combined_cost'] = issue_data['combined_cost'] + manager_cost
+                            issue_data['combined_cost'] += manager_cost
 
                         except IndexError:
                             pass
@@ -1163,25 +1164,25 @@ class Project(models.Model):
                         user_id = tester.id
                         try:
                             points = issue.issue_points.all().filter(user=tester).values('points')[0]['points']
-                            points, unadjusted_points, tester_cost, rate = _calculate_user_contribution_to_issue_cost(issue, user_id, points)
+                            tester_points, unadjusted_points, tester_cost, rate = _calculate_user_contribution_to_issue_cost(issue, user_id, points)
                             estimated_testing_cost += tester_cost
-                            issue_data['combined_cost'] = issue_data['combined_cost'] + tester_cost
+                            issue_data['combined_cost'] += tester_cost
                         except IndexError:
                             pass
 
                         
                 total_estimated_hours += points
 
-                issue_data['combined_cost_with_scope_creep'] = issue_data['combined_cost'] * (1+self.ratio_scope_creep)
+                issue_data['combined_cost_with_scope_creep'] = issue_data['combined_cost']
 
         stats['total_estimate_min'] = dev_estimate_cost + estimated_management_cost + estimated_testing_cost
-        stats['total_estimate_max'] = stats['total_estimate_min'] * (1+self.ratio_scope_creep)
+        stats['total_estimate_max'] = stats['total_estimate_min']
         stats['dev_estimate_cost'] = dev_estimate_cost
         stats['management_estimate_cost'] = estimated_management_cost
         stats['testing_estimate_cost'] = estimated_testing_cost
         stats['ratio_scope_creep'] = self.ratio_scope_creep*100
         stats['total_estimate_hours_min'] = total_estimated_hours
-        stats['total_estimate_hours_max'] = total_estimated_hours * (1+self.ratio_scope_creep)
+        stats['total_estimate_hours_max'] = total_estimated_hours
         return stats
 
     def users_and_hours(self):
@@ -1255,7 +1256,7 @@ class Project(models.Model):
             stats_per_user[user]['points_closed_non_adhoc'] = _get_total(issue_points.exclude(issue__status__in=open_status_options).filter(issue__adhoc=False).values('user').annotate(total=Sum('points')))
             stats_per_user[user]['points_open_non_adhoc'] = _get_total(issue_points.filter(issue__status__in=open_status_options).filter(issue__adhoc=False).values('user').annotate(total=Sum('points')))
 
-            stats_per_user[user]['adjusted_points_non_adhoc'] = (stats_per_user[user]['points_non_adhoc'] or 0) * (stats_per_user[user]['rate'].velocity or 0)
+            stats_per_user[user]['adjusted_points_non_adhoc'] = (stats_per_user[user]['points_non_adhoc'] or 0) * (stats_per_user[user]['rate'].full_velocity or 0)
 
             stats_per_user[user]['adjusted_points_ctc'] = stats_per_user[user]['adjusted_points_non_adhoc'] * float(stats_per_user[user]['rate'].amount)
             stats_per_user[user]['adjusted_points_billable'] = stats_per_user[user]['adjusted_points_non_adhoc'] * float(stats_per_user[user]['rate'].full_rate)
@@ -1264,7 +1265,7 @@ class Project(models.Model):
             stats_per_user[user]['points_comparative_closed_non_adhoc'] = _get_total(issue_points_comparative.exclude(issue__status__in=open_status_options).filter(issue__adhoc=False).values('user').annotate(total=Sum('points')))
             stats_per_user[user]['points_comparative_open_non_adhoc'] = _get_total(issue_points_comparative.filter(issue__status__in=open_status_options).filter(issue__adhoc=False).values('user').annotate(total=Sum('points')))
 
-            stats_per_user[user]['adjusted_points_comparative_non_adhoc'] = (stats_per_user[user]['points_comparative_non_adhoc'] or 0) * (stats_per_user[user]['rate'].velocity or 0)
+            stats_per_user[user]['adjusted_points_comparative_non_adhoc'] = (stats_per_user[user]['points_comparative_non_adhoc'] or 0) * (stats_per_user[user]['rate'].full_velocity or 0)
 
             stats_per_user[user]['adjusted_points_comparative_ctc'] = stats_per_user[user]['adjusted_points_comparative_non_adhoc'] * float(stats_per_user[user]['rate'].amount)
             stats_per_user[user]['adjusted_points_comparative_billable'] = stats_per_user[user]['adjusted_points_comparative_non_adhoc'] * float(stats_per_user[user]['rate'].full_rate)
@@ -1289,7 +1290,7 @@ class Project(models.Model):
             stats_per_user[user]['points_calculated_open_non_adhoc_ctc'] = float(stats_per_user[user]['rate'].amount) * (stats_per_user[user]['points_calculated_open_non_adhoc'] or 0)
             stats_per_user[user]['points_calculated_open_non_adhoc_billable'] = float(stats_per_user[user]['rate'].full_rate) * (stats_per_user[user]['points_calculated_open_non_adhoc'] or 0)
 
-            stats_per_user[user]['points_estimated_open_non_adhoc'] = (stats_per_user[user]['points_open_non_adhoc'] or 0) * (stats_per_user[user]['rate'].velocity or 1)
+            stats_per_user[user]['points_estimated_open_non_adhoc'] = (stats_per_user[user]['points_open_non_adhoc'] or 0) * (stats_per_user[user]['rate'].full_velocity or 1)
             stats_per_user[user]['points_estimated_open_non_adhoc_ctc'] = float(stats_per_user[user]['rate'].amount) * (stats_per_user[user]['points_estimated_open_non_adhoc'] or 0)
             stats_per_user[user]['points_estimated_open_non_adhoc_billable'] = float(stats_per_user[user]['rate'].full_rate) * (stats_per_user[user]['points_estimated_open_non_adhoc'] or 0)
 
@@ -1320,7 +1321,7 @@ class Project(models.Model):
         total_stats['hours_billable'] = sum(stats_per_user[x]['hours_billable'] or 0 for x in users)
         total_stats['hours_real_billable'] = sum(stats_per_user[x]['hours_real_billable'] or 0 for x in users)
         
-        total_stats['hours_billable_with_scope_creep'] = round(float(total_stats['points_billable']) * (1+float(self.ratio_scope_creep)), 2)
+        total_stats['hours_billable_with_scope_creep'] = round(float(total_stats['points_billable']), 2)
         total_stats['scope_creep_percentage'] = self.ratio_scope_creep*100
         total_stats['hours_adhoc_billable'] = sum(stats_per_user[x]['hours_adhoc_billable'] or 0 for x in users)
         total_stats['points_calculated_open_non_adhoc_ctc'] = sum(stats_per_user[x]['points_calculated_open_non_adhoc_ctc'] or 0 for x in users)
@@ -1333,11 +1334,11 @@ class Project(models.Model):
 
         
         total_stats['projected_total_billable_no_more_adhoc'] = float(total_stats['points_calculated_open_non_adhoc_billable']) + float(total_stats['hours_billable'])
-        total_stats['projected_total_billable_no_more_adhoc_with_scope_creep'] = float(total_stats['projected_total_billable_no_more_adhoc']) * (1+self.ratio_scope_creep)
+        total_stats['projected_total_billable_no_more_adhoc_with_scope_creep'] = float(total_stats['projected_total_billable_no_more_adhoc'])
         
         total_stats['projected_adhoc_billable'] = 1/(total_stats['percentage_points_complete']/100 or 1) * (float(total_stats['hours_adhoc_billable'] or 0)) - (float(total_stats['hours_adhoc_billable'] or 0))
         total_stats['projected_total_billable'] = float(total_stats['points_calculated_open_non_adhoc_billable']) + float(total_stats['hours_billable'])
-        total_stats['projected_total_billable_with_scope_creep'] = total_stats['projected_total_billable'] * (1+self.ratio_scope_creep)
+        total_stats['projected_total_billable_with_scope_creep'] = total_stats['projected_total_billable']
         
         total_stats['projected_estimated_total_billable'] = float(total_stats['points_estimated_open_non_adhoc_billable']) + float(total_stats['hours_billable'])
         total_stats['projected_estimated_total_billable'] = float(total_stats['points_estimated_open_non_adhoc_billable']) + float(total_stats['hours_billable'])
@@ -1491,7 +1492,7 @@ class Project(models.Model):
                 rate = user_info['rate']
             except KeyError:
                 continue
-            velocity = rate.velocity or 1
+            velocity = rate.full_velocity or 1
             user_hours = user_info['hours']
             
             total_adjusted_billed = points * float(rate.full_rate) * velocity
@@ -2956,8 +2957,12 @@ class Rate(models.Model):
 
     @property
     def full_rate(self):
-        return float(self.billable_amount) *  ( (100.0+self.project.commission_percentage)/100)
-            
+        return float(self.billable_amount) * ( (100.0+self.project.commission_percentage)/100)
+
+    @property
+    def full_velocity(self):
+         return self.velocity * (1+float(self.project.ratio_scope_creep))
+                
     @classmethod
     def for_business(self, user_id, business_id):
         """ best guess """
