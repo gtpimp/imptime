@@ -930,6 +930,8 @@ class UserForm(forms.ModelForm):
 
 
 class UserProfileForm(forms.ModelForm):
+    groups = forms.ModelMultipleChoiceField(queryset=auth_models.Group.objects.all())
+
     class Meta:
         model = timepiece.UserProfile
         exclude = ('user','amount','billable_amount', 'authenticate_token')
@@ -940,8 +942,10 @@ class UserProfileForm(forms.ModelForm):
         if not creator.is_superuser and not creator.is_staff:
             del self.fields['is_staff']
 
-        if not creator.is_superuser:
-            del self.fields['is_superuser']
+        if not creator.is_superuser and not creator.is_staff:
+            del self.fields['groups']
+        else:
+            self.fields['groups'].initial = [c.pk for c in self.instance.user.groups.all()]
 
         if creator.is_superuser:
             self.fields['impd_client'].label = "Client"
@@ -952,7 +956,13 @@ class UserProfileForm(forms.ModelForm):
         instance = super(UserProfileForm, self).save(commit=commit)
 
         if creator.is_staff or creator.has_perm('timepiece.belongs_to_all_projects'):
-            instance.impd_client = creator.profile.impd_client
+            if instance.impd_client is None and hasattr(creator, 'profile'):
+                instance.impd_client = creator.profile.impd_client
+
+        if creator.is_superuser or creator.is_staff:
+            ids = [c.pk for c in self.cleaned_data['groups']]
+            self.instance.user.groups.clear()
+            self.instance.user.groups.add(*ids)
 
         return instance
 

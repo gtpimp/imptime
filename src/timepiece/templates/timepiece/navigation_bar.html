@@ -52,9 +52,6 @@
               <li><a href="{% url 'admin:index' %}">Admin</a></li>
               <li><a href="{% url 'client_list' %}">Clients</a></li>
               {% endif %}
-              {% if perms.auth.add_user or user.is_superuser or user.is_superuser %}
-                <li><a href='{% url 'list_people' %}'>Users</a></li>
-              {% endif %}
               <li><a href="{% url 'edit_settings' %}">Settings</a></li>
               <li><a href="{% url 'change_password' %}">Change Password</a></li>
               <li class="divider"></li>
@@ -179,17 +176,17 @@
 	  </div>
           {% endif %}
 
-          {% if perms.auth.view_user or perms.timepiece.view_business %}
+          {% if perms.auth.view_user or perms.timepiece.view_business or user.is_staff %}
           <div class="nav-link dropdown">
             <a class="ico-user dropdown-toggle" data-toggle="dropdown" href="#"> users <b class="caret"></b> </a>
             <ul class="dropdown-menu">
-              {% if perms.auth.view_user %}
+              {% if perms.auth.view_user or user.is_staff %}
               <li><a href="{% url 'list_people' %}">List of users</a></li>
               {% endif %}
-              {% if perms.timpeiece.daily_graph %}
+              {% if perms.timpeiece.daily_graph or user.is_staff %}
 	      <li><a href="{% url 'daily_graph' '' %}">Daily hours for all users</a></li>
 	      {% endif %}
-              {% if perms.timpeiece.view_user %}
+              {% if perms.timpeiece.view_user or user.is_staff %}
 	      <li><a href="{% url 'users_last_active' %}">Recent user activity</a></li>
 	      {% endif %}
               {% if user.is_superuser %}
