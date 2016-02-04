@@ -200,8 +200,11 @@ class Business(models.Model):
         bp = BusinessPermissions.objects.get_or_create(business=self,user=current_user)[0]
         can_view_other_user_points = BusinessPermissions.has_see_other_user_points
         if can_view_other_user_points:
-            users = User.objects.filter(id__in = business_permissions_by_user.keys())
-            users = [user for user in users if business_permissions_by_user[user.id].has_estimate_own_points]
+            business_users = User.objects.filter(id__in = business_permissions_by_user.keys())
+            developers = [user for user in business_users if business_permissions_by_user[user.id].has_estimate_own_points]
+            import pdb; pdb.set_trace()
+            support_staff = [ user for user in business_users if Rate.for_business(user.id, self.id).time_tracking_mode in [ 'tester', 'manager' ] ]
+            users = list(set(developers + support_staff))
         else:
             if bp.has_estimate_own_points:
                 users = User.objects.filter(id__in = [current_user.id])
@@ -1083,7 +1086,7 @@ class Project(models.Model):
                 rate = Rate(velocity=0, amount=0)
 
             unadjusted_points = points
-            points = (points or 0) * (rate.full_velocity or 1)
+            points = float(points or 0) * (rate.full_velocity or 1)
 
             estimated_cost = float(points)*rate.full_rate
 
@@ -1172,7 +1175,6 @@ class Project(models.Model):
 
                         
                 total_estimated_hours += points
-
                 issue_data['combined_cost_with_scope_creep'] = issue_data['combined_cost']
 
         stats['total_estimate_min'] = dev_estimate_cost + estimated_management_cost + estimated_testing_cost
@@ -1309,6 +1311,8 @@ class Project(models.Model):
         stats_per_role['manager_and_tester_combined']['adjusted_points_billable'] = stats_per_role['manager']['adjusted_points_billable'] + stats_per_role['tester']['adjusted_points_billable']
                     
         total_stats = {}
+
+        
         total_stats['points_billable'] = sum(stats_per_user[x]['adjusted_points_billable'] or 0 for x in users)
         total_stats['points_comparative_billable'] = sum(stats_per_user[x]['adjusted_points_comparative_billable'] or 0 for x in users)
         total_stats['points_non_adhoc'] = sum(stats_per_user[x]['points_non_adhoc'] or 0 for x in users)
@@ -1321,7 +1325,7 @@ class Project(models.Model):
         total_stats['hours_billable'] = sum(stats_per_user[x]['hours_billable'] or 0 for x in users)
         total_stats['hours_real_billable'] = sum(stats_per_user[x]['hours_real_billable'] or 0 for x in users)
         
-        total_stats['hours_billable_with_scope_creep'] = round(float(total_stats['points_billable']), 2)
+        total_stats['hours_billable_with_scope_creep'] = float(total_stats['points_billable'])
         total_stats['scope_creep_percentage'] = self.ratio_scope_creep*100
         total_stats['hours_adhoc_billable'] = sum(stats_per_user[x]['hours_adhoc_billable'] or 0 for x in users)
         total_stats['points_calculated_open_non_adhoc_ctc'] = sum(stats_per_user[x]['points_calculated_open_non_adhoc_ctc'] or 0 for x in users)
@@ -3223,8 +3227,6 @@ class Issue(models.Model):
 
     @property
     def ctc(self):
-        import pdb; pdb.set_trace()
-        
         x= self.related_entries.all().aggregate(total=Sum(F('hours')*F('rate')))[0]['total']
         cost = 0
         for entry in self.related_entries:
