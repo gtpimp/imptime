@@ -6,6 +6,8 @@ from django.conf.urls.static import static
 import settings
 admin.autodiscover()
 from django.contrib.auth.decorators import login_required
+from django.contrib.staticfiles.storage import staticfiles_storage
+from django.views.generic.base import RedirectView
 
 admin.site.login = login_required(admin.site.login)
 
@@ -19,7 +21,15 @@ urlpatterns = patterns('',
                        url(r'^$', views.home, name='home'),
 
                        url(r'^robots.txt$', views.robots),
-          
+
+                       url(
+                           r'^favicon.ico$',
+                           RedirectView.as_view(
+                               url=staticfiles_storage.url('images/icons/implicit_icon.png'),
+                               permanent=False),
+                               name="favicon"
+                           ),
+                           
                        url( r'^grappelli/', include('grappelli.urls') ),
                        url(r'^emacs_importer/', include('emacs_importer.urls', namespace='emacs_importer')),
                        url(r'^timepiece/', include('timepiece.urls'), name='timepiece'),
