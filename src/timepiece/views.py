@@ -5900,3 +5900,4 @@ def edit_client(request, client_code, template="timepiece/client/add_client.html
     context['form'] = form
 
     return render_to_response(template, context, context_instance=RequestContext(request))
+

@@ -197,3 +197,7 @@ def _generate_issues_clocktable_common(processor):
     context['footer'] = ['', '', '', '', '', '', total_hours, 'TOTAL HOURS']
 
     return context
+
+def robots(request, template="robots.txt"):
+    context = {}
+    return render_to_response(template, context, context_instance=RequestContext(request))
