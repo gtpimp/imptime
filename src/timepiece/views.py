@@ -1068,6 +1068,10 @@ def list_people(request):
         d['staff'] = 'staff'
     form = timepiece_forms.UserSearchForm(d)
     people = auth_models.User.objects.all().order_by('username')
+
+    if not request.user.is_superuser:
+        people = people.filter(Q(profile__impd_client_id = request.user.profile.impd_client_id))
+    
     if form.is_valid():
         if form.cleaned_data.get('search', None):
             search = form.cleaned_data['search']
@@ -1077,21 +1081,6 @@ def list_people(request):
                 Q(email__icontains=search)).order_by("username")
         if form.cleaned_data.get('staff', 'all') != 'all':
             people = people.filter( is_staff = (form.cleaned_data['staff'] == 'staff') )
-            
-        if people.count() == 1:
-            url_kwargs = {
-                'person_id': people[0].id,
-            }
-            return HttpResponseRedirect(
-                reverse('view_person', kwargs=url_kwargs)
-            )
-    else:
-        people = people.filter(is_staff=True)
-
-    user = request.user
-    if user.is_staff and hasattr(user, 'profile'):
-        impd_client_id = user.profile.impd_client.id
-        people = people.filter(Q(profile__impd_client_id = impd_client_id))
 
     context = {
         'form': form,
