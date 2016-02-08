@@ -73,6 +73,7 @@ class ProjectFiltersForm(forms.Form):
 
 
 class CreatePersonForm(auth_forms.UserCreationForm):
+
     class Meta:
         model = auth_models.User
         fields = (
@@ -88,6 +89,10 @@ class EditPersonForm(auth_forms.UserChangeForm):
         label=_(u'Repeat Password'),
         widget=forms.PasswordInput(render_value=False))
 
+    class Meta:
+        model = auth_models.User
+        fields = ('username', 'first_name', 'last_name', 'email', 'is_active', 'is_staff')
+    
     def __init__(self, *args, **kwargs):
         super(EditPersonForm, self).__init__(*args, **kwargs)
 
@@ -117,10 +122,6 @@ class EditPersonForm(auth_forms.UserChangeForm):
             instance.save()
         return instance
 
-    class Meta:
-        model = auth_models.User
-        fields = ('username', 'first_name', 'last_name', 'email', 'is_active',
-                'is_staff')
 
 class EditPersonPermission(forms.ModelForm):
     class Meta:

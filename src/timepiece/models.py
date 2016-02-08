@@ -2871,6 +2871,8 @@ class UserProfile(models.Model):
     
     class Meta:
         ordering = ('user',)
+        permissions = ( ( 'can_manage_client_users', 'Can manage client users' ), )
+        
     def __unicode__(self):
         return unicode(self.user.username)
 

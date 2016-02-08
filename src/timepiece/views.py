@@ -1059,7 +1059,7 @@ def _set_project_rate_to_default_for_user(user, project):
         rate.save()
 
 
-@permission_required_or_staff('auth.view_user')
+@permission_required('timepiece.can_manage_client_users')
 @render_with('timepiece/person/list.html')
 @login_required
 def list_people(request):
@@ -1089,12 +1089,11 @@ def list_people(request):
     return context
 
 
-@permission_required_or_staff('auth.view_user')
+@permission_required('timepiece.can_manage_client_users')
 @render_with('timepiece/person/view.html')
 @login_required
 def view_person(request, person_id):
     person = get_object_or_404(auth_models.User, pk=person_id)
-    add_user_form = timepiece_forms.AddUserToProjectForm()
     context = {
         'person': person,
     }
@@ -1111,8 +1110,7 @@ def view_person(request, person_id):
     return context
 
 
-@permission_required_or_staff('auth.add_user')
-@permission_required_or_staff('auth.change_user')
+@permission_required('timepiece.can_manage_client_users')
 @login_required
 def create_edit_person(request, person_id=None, template='timepiece/person/create_edit.html'):
 
