@@ -11,6 +11,7 @@ class Command(BaseCommand):
     help = "recalculate all checklists"
     
     def handle(self, **kwargs):
+
         try:
             user = User.objects.filter(is_superuser=True).first() # pick pretty much any user for the created_by/modified_by field, this is an automated task
 
