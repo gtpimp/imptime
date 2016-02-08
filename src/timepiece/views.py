@@ -1257,6 +1257,8 @@ def users_last_active(request, context=None):
 @render_with('timepiece/project/amounts_billed.html')
 def amounts_billed(request):
 
+    raise Exception("This page is too slow")
+    
     if request.GET:
         form = timepiece_forms.ProjectSearchForm(request.GET)
     else:
@@ -1284,7 +1286,7 @@ def amounts_billed(request):
     else:
         projects = projects.distinct()
 
-    projects = projects.annotate(end_time=Max('entries__end_time'), start_time=Min('entries__start_time'))
+    projects = projects.annotate(end_time=Max('issues__entries__end_time'), start_time=Min('issues__entries__start_time'))
 
     total_outstanding_amount = 0
     total_outstanding_amounts_per_project = {}
@@ -1461,7 +1463,7 @@ def _business_total(projects, start_time=None, end_time=None):
     expenses = 0
     invoices = 0
     expense_objects = timepiece.Expense.objects.all()
-    invoice_objects = timepiece.Invoice.objects.all()
+    invoice_objects = Invoice.objects.all()
     business_id = None
 
     for project in projects:
@@ -1477,7 +1479,7 @@ def _business_total(projects, start_time=None, end_time=None):
         expense = expense_objects.filter(project=project).aggregate(amount=Sum('amount'))
         expense_amount = expense['amount']  if expense and expense['amount'] else 0
 
-        invoice = invoice_objects.filter(project=project).aggregate(amount=Sum('amount'))
+        invoice = invoice_objects.filter(project=project).aggregate(amount=Sum('items__total_cost'))
         invoice_amount = invoice['amount']  if invoice and invoice['amount'] else 0
 
         users_and_hours[project]['totals']['expenses'] = expense_amount
