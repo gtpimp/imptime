@@ -1,0 +1,26 @@
+{% load timepiece_tags %}
+<div class="sprint_banner">
+  <span class="sprint_menu_trigger"><img src="{{STATIC_URL}}/images/implicitdesign/menu.png"/></span>
+
+  <span class="sprint_banner_menu">
+    {% has_permission has_add_issue project.business %}
+    <a href="#" class="to_expand_form_on_click" onclick="imp.show_add_issue(this); return false;" title="Add issue">
+      <img src="{{STATIC_URL}}images/icons/add.png"/>
+    </a>
+    {% end_permission %}
+
+    <a href="#" onclick="imp.refresh_project(); return false;" title="Refresh issues">
+      <img src="{{STATIC_URL}}images/icons/arrow_refresh.png"/>
+    </a>
+
+  </span>
+
+  
+  <span class="active_project_title">
+    <span class="business_name">{{project.business.name}}</span>  <span class="project_id">#{{project.id}}</span> <span class="project_name">{{project.name}}</span> <span class="project_description">{{project.short_description}}</span>
+  </span>
+
+
+  
+</div>
+

@@ -152,6 +152,11 @@ imp.bulk_check_all_issues = function(project_id, check_url) {
 
 };
 
+imp.show_add_issue = function(el) {
+    var url = imp.config.add_issue_url.replace("999999", imp.active_project.id);
+    imp.do_form_show(el, url);
+};
+
 imp.do_form_show  = function(element, url) {
     var button = $(element);
     var parent = button.parents(".to_expand_form_on_click").parent();
