@@ -22,6 +22,30 @@ logger = logging.getLogger(__name__)
 def home(request, template="home.html", context=None):
     return HttpResponseRedirect(reverse("landing_page"))
 
+def error_handler_400(request, template="error_base.html", context=None):
+    context = context or {}
+    response = render_to_response(template, context, context_instance=RequestContext(request))
+    response.status_code = 400
+    return response
+
+def error_handler_403(request, template="error_base.html", context=None):
+    context = context or {}
+    response = render_to_response(template, context, context_instance=RequestContext(request))
+    response.status_code = 403
+    return response
+
+def error_handler_404(request, template="404.html", context=None):
+    context = context or {}
+    response = render_to_response(template, context, context_instance=RequestContext(request))
+    response.status_code = 404
+    return response
+
+def error_handler_500(request, template="500.html", context=None):
+    context = context or {}
+    response = render_to_response(template, context, context_instance=RequestContext(request))
+    response.status_code = 500
+    return response
+
 @user_passes_test(lambda u: u.is_superuser)
 def us(request, template="home.html", context=None):
     context = context or {}

@@ -1,4 +1,4 @@
-from django.conf.urls import patterns, include, url
+from django.conf.urls import patterns, include, url, handler400, handler403, handler404, handler500
 from filebrowser import sites as filebrowser
 from django.contrib.staticfiles.urls import staticfiles_urlpatterns
 from django.contrib import admin
@@ -13,6 +13,11 @@ admin.site.login = login_required(admin.site.login)
 
 import views
 from forms import ImpAuthenticationForm
+
+handler400 = 'implicitdesign.views.error_handler_400'
+handler403 = 'implicitdesign.views.error_handler_403'
+handler404 = 'implicitdesign.views.error_handler_404'
+handler500 = 'implicitdesign.views.error_handler_500'
 
 urlpatterns = patterns('',
 
