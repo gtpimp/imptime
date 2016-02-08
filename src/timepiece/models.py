@@ -1505,7 +1505,7 @@ class Project(models.Model):
                 'points': points, 
                 'hours':user_hours,
                 'ctc':rate.amount*user_hours,
-                'billable':rate.full_rate*user_hours,
+                'billable':float(rate.full_rate)*float(user_hours),
                 'total_adjusted_billed': total_adjusted_billed,
                 'total_adjusted_ctc': total_adjusted_ctc,
                 'total_adjusted_profit': total_adjusted_billed - total_adjusted_ctc,
