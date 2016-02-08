@@ -1,5 +1,6 @@
+{% load static %}
 {% block extrajs %}
-<script type="text/javascript" src="{{ STATIC_URL }}bootstrap/js/bootstrap-alert.js"></script>
+<script type="text/javascript" src="{% static 'bootstrap/js/bootstrap-alert.js' %}"></script>
 {% endblock extrajs %}
 
 <div id="alerts">
