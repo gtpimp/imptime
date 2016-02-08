@@ -764,6 +764,14 @@ class BusinessForm(forms.ModelForm):
     class Meta:
         model = timepiece.Business
         fields = ('name', 'email', 'description', 'invoice_method', 'notes', 'sync_with')
+        exclude = ['impd_client']
+
+    def save(self, impd_client):
+        instance = super(BusinessForm, self).save(commit=False)
+        instance.impd_client = impd_client
+        instance.save()
+        return instance
+
 
 class ProjectForm(forms.ModelForm):
     class Meta:
@@ -922,10 +930,43 @@ class UserForm(forms.ModelForm):
 
 
 class UserProfileForm(forms.ModelForm):
+    groups = forms.ModelMultipleChoiceField(queryset=auth_models.Group.objects.all())
 
     class Meta:
         model = timepiece.UserProfile
         exclude = ('user','amount','billable_amount', 'authenticate_token')
+
+    def __init__(self, creator, *args, **kwargs):
+        super(UserProfileForm, self).__init__(*args, **kwargs)
+
+        if not creator.is_superuser and not creator.is_staff:
+            del self.fields['is_staff']
+
+        if not creator.is_superuser and not creator.is_staff:
+            del self.fields['groups']
+        else:
+            self.fields['groups'].initial = [c.pk for c in self.instance.user.groups.all()]
+
+        if creator.is_superuser:
+            self.fields['impd_client'].label = "Client"
+        else:
+            del self.fields['impd_client']
+
+    def save(self, creator, commit=False):
+        instance = super(UserProfileForm, self).save(commit=commit)
+
+        if creator.is_staff or creator.has_perm('timepiece.belongs_to_all_projects'):
+            if instance.impd_client is None and hasattr(creator, 'profile'):
+                instance.impd_client = creator.profile.impd_client
+
+        if creator.is_superuser or creator.is_staff:
+            ids = [c.pk for c in self.cleaned_data['groups']]
+            self.instance.user.groups.clear()
+            self.instance.user.groups.add(*ids)
+
+        return instance
+
+
 
 class ProjectSearchForm(forms.Form):
     search = forms.CharField(required=False, label='')

@@ -336,11 +336,6 @@ class Business(models.Model):
         else:
             return None
 
-    def clean(self):
-        if self.impd_client is None:
-            raise ValidationError('impd_client is needed')
-            # self.impd_client = models.Client.objects.filter(code='impd')[:1].get()
-
         
 class BusinessComment(models.Model):
     business = models.ForeignKey(Business, null=False, blank=False, related_name='business_comments')

@@ -43,7 +43,7 @@ from django.core.exceptions import PermissionDenied
 from django.core.urlresolvers import reverse, resolve
 from django.http import HttpResponse, HttpResponseRedirect
 from django.http import  Http404, HttpResponseForbidden
-from django.contrib.auth.decorators import login_required, permission_required
+from django.contrib.auth.decorators import login_required, permission_required, user_passes_test
 from django.contrib.auth.models import User
 from django.contrib.auth import models as auth_models
 from django.db.models import Sum, Count, Q, F, Max, Min
@@ -76,6 +76,26 @@ from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 import logging
 
 logger = logging.getLogger('timepiece_view')
+
+def permission_required_or_staff(perm, login_url=None, raise_exception=False):
+    def check_perms(user):
+        if user.is_staff:
+            return True
+
+        if not isinstance(perm, (list, tuple)):
+            perms = (perm, )
+        else:
+            perms = perm
+        # First check if the user has the permission (even anon users)
+        if user.has_perms(perms):
+            return True
+        # In case the 403 handler should be called raise the exception
+        if raise_exception:
+            raise PermissionDenied
+        # As the last resort, show the login form
+        return False
+    return user_passes_test(check_perms, login_url=login_url)
+
 
 @login_required
 def home(request, template="timepiece/home.html"):
@@ -1010,7 +1030,7 @@ def create_edit_business(request, business=None):
             instance=business,
         )
         if business_form.is_valid():
-            business = business_form.save()
+            business = business_form.save(request.user.profile.impd_client)
             business.ensure_single_sprint(point_person=request.user)
             _set_project_rate_to_default_for_user(request.user, business.sprints.first())
             return HttpResponseRedirect(
@@ -1039,7 +1059,7 @@ def _set_project_rate_to_default_for_user(user, project):
         rate.save()
 
 
-@permission_required('auth.view_user')
+@permission_required_or_staff('auth.view_user')
 @render_with('timepiece/person/list.html')
 @login_required
 def list_people(request):
@@ -1068,6 +1088,11 @@ def list_people(request):
     else:
         people = people.filter(is_staff=True)
 
+    user = request.user
+    if user.is_staff and hasattr(user, 'profile'):
+        impd_client_id = user.profile.impd_client.id
+        people = people.filter(Q(profile__impd_client_id = impd_client_id))
+
     context = {
         'form': form,
         'people': people.select_related(),
@@ -1075,7 +1100,7 @@ def list_people(request):
     return context
 
 
-@permission_required('auth.view_user')
+@permission_required_or_staff('auth.view_user')
 @render_with('timepiece/person/view.html')
 @login_required
 def view_person(request, person_id):
@@ -1097,8 +1122,8 @@ def view_person(request, person_id):
     return context
 
 
-@permission_required('auth.add_user')
-@permission_required('auth.change_user')
+@permission_required_or_staff('auth.add_user')
+@permission_required_or_staff('auth.change_user')
 @login_required
 def create_edit_person(request, person_id=None, template='timepiece/person/create_edit.html'):
 
@@ -1109,17 +1134,17 @@ def create_edit_person(request, person_id=None, template='timepiece/person/creat
 
     if request.POST:
         if person:
-            profile_form = timepiece_forms.UserProfileForm(request.POST, instance=person.profile, prefix='profile')
+            profile_form = timepiece_forms.UserProfileForm(request.user, request.POST, instance=person.profile, prefix='profile')
             person_form = timepiece_forms.EditPersonForm(
                 request.POST,
                 instance=person,
             )
         else:
             person_form = timepiece_forms.CreatePersonForm(request.POST,)
-            profile_form = timepiece_forms.UserProfileForm(request.POST, prefix='profile')
+            profile_form = timepiece_forms.UserProfileForm(request.user, request.POST, prefix='profile')
         if person_form.is_valid() and profile_form.is_valid():
             person = person_form.save(commit=False)
-            profile = profile_form.save(commit=False)
+            profile = profile_form.save(request.user, commit=False)
             person.save()
             person_form.save_m2m()
             profile.user = person
@@ -1132,10 +1157,10 @@ def create_edit_person(request, person_id=None, template='timepiece/person/creat
         #person.save()
     else:
         if person:
-            profile_form = timepiece_forms.UserProfileForm(instance=person.profile, prefix='profile')
+            profile_form = timepiece_forms.UserProfileForm(creator=request.user, instance=person.profile, prefix='profile')
             person_form = timepiece_forms.EditPersonForm(instance=person)
         else:
-            profile_form = timepiece_forms.UserProfileForm(prefix='profile')
+            profile_form = timepiece_forms.UserProfileForm(creator=request.user, prefix='profile')
             person_form = timepiece_forms.CreatePersonForm()
 
     context = {
@@ -1830,15 +1855,15 @@ def edit_settings(request):
     if request.POST:
         user_form = timepiece_forms.UserForm(
             request.POST, instance=request.user)
-        profile_form = timepiece_forms.UserProfileForm(
+        profile_form = timepiece_forms.UserProfileForm(request.user,
             request.POST, instance=profile)
         if user_form.is_valid() and profile_form.is_valid():
             user_form.save()
-            profile_form.save()
+            profile_form.save(request.user)
             messages.info(request, 'Your settings have been updated')
             return HttpResponseRedirect(next_url)
     else:
-        profile_form = timepiece_forms.UserProfileForm(instance=profile)
+        profile_form = timepiece_forms.UserProfileForm(creator=request.user, instance=profile)
         user_form = timepiece_forms.UserForm(instance=request.user)
     return {'profile_form': profile_form, 'user_form': user_form}
 
