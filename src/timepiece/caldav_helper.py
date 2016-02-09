@@ -63,7 +63,7 @@ class CalDavHelper(object):
                     calendar = self.calendar(user.username)
                 except Exception, ex:
                     if "No calendars" in str(ex):
-                        logger.exception("User %s doesn't have a calendar, ignoring" % user.username)
+                        logger.info("User %s doesn't have a calendar, ignoring" % user.username)
                         continue
                     else:
                         raise
