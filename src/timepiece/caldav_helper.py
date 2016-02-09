@@ -68,7 +68,7 @@ class CalDavHelper(object):
                     else:
                         raise
                 try:
-                    caldav_event = calendar.event_by_uid(self._uid(imptime_event))
+                    caldav_event = self.caldav_event_for_imptime_event(imptime_event, calendar)
                     self.update_caldav_event_from_imptime_event(caldav_event, imptime_event)
                 except error.NotFoundError:
                     calendar.add_event(self._create_ical_string(imptime_event))
@@ -77,11 +77,20 @@ class CalDavHelper(object):
             logger.exception(ex)
             raise
 
+    def caldav_event_for_imptime_event(self, imptime_event, calendar):
+        uid = self._uid(imptime_event)
+        try:
+            caldav_event = calendar.event_by_uid(uid)
+        except Exception, ex:
+            logger.exception(ex)
+            raise
+        return caldav_event
+        
     def on_event_deleted(self, imptime_event):
         for user in imptime_event.event_users:
             calendar = self.calendar(user.username)
             try:
-                caldav_event = calendar.event_by_uid(self._uid(imptime_event))
+                caldav_event = self.caldav_event_for_imptime_event(imptime_event, calendar)
             except error.NotFoundError:
                 return
             caldav_event.delete()
