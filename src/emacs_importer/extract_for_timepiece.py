@@ -136,7 +136,7 @@ class Extractor(object):
                 section_name = orgnode.Heading().lower().strip()
 
             if section_name is None:
-                raise Exception("Invalid timesheet, missing a one star section called")
+                raise Exception("Invalid timesheet for %s, missing a one star section in " % (self.username, filename))
             if section_name != "development":
                 continue
                 
