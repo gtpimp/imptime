@@ -81,9 +81,14 @@ class CalDavHelper(object):
         uid = self._uid(imptime_event)
         try:
             caldav_event = calendar.event_by_uid(uid)
+        except error.NotFoundError, ex:
+            logger.error("No cal dav event found with uid=%s" % uid)
+            logger.exception(ex)
+            raise
         except Exception, ex:
             logger.exception(ex)
             raise
+        
         return caldav_event
         
     def on_event_deleted(self, imptime_event):
