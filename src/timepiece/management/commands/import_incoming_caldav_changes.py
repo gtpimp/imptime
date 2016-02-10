@@ -45,6 +45,9 @@ class Command(BaseCommand):
         cal_info = open(filepath).read().strip()
         action_type, uid, davical_user_id, davical_collection_id, davical_path = cal_info.split("|")
 
+        if not uid.strip():
+            uid = davical_path.split("/")[-1].split(".")[0].replace("imptime","")
+
         caldav_event = None
         try:
             caldav = CalDavHelper()
