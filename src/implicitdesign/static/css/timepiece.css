@@ -1683,7 +1683,7 @@ legend + .control-group {
   padding-left: 160px;
 }
 table {
-  background-color: transparent;
+  background-color: #ededed;
   border-collapse: collapse;
   border-spacing: 0;
   margin-bottom: 18px;
