@@ -105,7 +105,7 @@ class Extractor(object):
 
         is_valid_timesheet_file = filename[-4:] == ".org" and filename[0] != "." and filename[0] != "#"
         if not is_valid_timesheet_file:
-            logger.error("Not a timesheet file: %s" % filename)
+            logger.debug("Ignoring, Not a timesheet file: %s" % filename)
             return
         business_name = filename.replace(".org", "").replace("id-", "")
 
