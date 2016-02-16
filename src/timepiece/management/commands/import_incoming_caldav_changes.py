@@ -46,7 +46,8 @@ class Command(BaseCommand):
         action_type, uid, davical_user_id, davical_collection_id, davical_path = cal_info.split("|")
 
         if not uid.strip():
-            uid = davical_path.split("/")[-1].split(".")[0].replace("imptime","")
+            uid = davical_path.split("/")[-1].split(".")[0]
+        uid = uid.replace("imptime","")
         imptime_uid = "imptime%s" % uid
 
         caldav_event = None
