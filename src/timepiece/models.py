@@ -3393,10 +3393,12 @@ class CalendarEvent(models.Model):
     caldav_uid = models.CharField(null=True, max_length=100, blank=True)
 
     def save(self, update_caldav=True, *args, **kwargs):
+        super(CalendarEvent, self).save(*args, **kwargs)
+
         if not self.caldav_uid and self.id:
             self.caldav_uid = "imptime%s" % str(self.id)
-            
-        super(CalendarEvent, self).save(*args, **kwargs)
+            super(CalendarEvent, self).save(*args, **kwargs)
+        
         if update_caldav:
             try:
                 CalDavHelper().on_event_saved(imptime_event=self)
