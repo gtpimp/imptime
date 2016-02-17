@@ -1,5 +1,8 @@
  #!/bin/bash
 
+BASE_DIR="`dirname \"$0\"`/.."
+cd $BASE_DIR
+
 ROOT=`git rev-parse --show-toplevel`
 cd ${ROOT}
 SRC=${ROOT}/src
