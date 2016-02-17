@@ -340,7 +340,7 @@ LOGGING = {
         },
         'raven': {
             'level': 'DEBUG',
-            'handlers': ['console', 'sentry'],
+            'handlers': ['file', 'sentry'],
             'propagate': False,
         },
         '': {

@@ -9,14 +9,13 @@ SRC=${ROOT}/src
 SITE_PATH=${SRC}
 VENV=${ROOT}/venv
 
-echo "activate virtualenv"
 cd ${VENV}
 . ./bin/activate
 if [ $? != 0 ]; then
     echo "failed to activate virtualenv at ${VENV}: ABORTING"
     exit 1
 fi
-cd -
+cd - > /dev/null
 
 cd ${SITE_PATH}
 python manage.py deep_ping --settings=implicitdesign.nagios_settings
