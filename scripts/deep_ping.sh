@@ -16,7 +16,7 @@ fi
 cd -
 
 cd ${SITE_PATH}
-python manage.py ping --settings=implicitdesign.management_settings
+python manage.py deep_ping --settings=implicitdesign.management_settings
 RES=$?
 exit ${RES}
 
