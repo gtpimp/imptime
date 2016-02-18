@@ -5328,9 +5328,9 @@ def business_cost_summary(request, business_id, template="timepiece/project/busi
         running_project_amount_paid = 0
         running_project_amount_owed = 0
         for invoice in invoices:
-            running_project_amount_invoiced += invoice.cost
-            running_project_amount_paid += invoice.amount_paid
-            running_project_amount_owed += invoice.amount_owed
+            running_project_amount_invoiced += float(invoice.cost or 0)
+            running_project_amount_paid += float(invoice.amount_paid or 0)
+            running_project_amount_owed += float(invoice.amount_owed or 0)
         project_info['invoiced'] = running_project_amount_invoiced
         project_info['paid'] = running_project_amount_paid
         project_info['owed'] = running_project_amount_owed
