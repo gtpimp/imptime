@@ -36,4 +36,4 @@ class Command(BaseCommand):
         except Exception, ex:
             logger.debug(ex)
             return 2, "Db check failed"
-        
+
