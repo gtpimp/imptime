@@ -70,6 +70,7 @@ if [ ! -d logs ]; then
     mkdir logs
 fi
 sudo chown -R `whoami` logs
+sudo chown nagios logs/nagios.log
 
 cd ${ROOT}
 if [ ! -d locks ]; then
