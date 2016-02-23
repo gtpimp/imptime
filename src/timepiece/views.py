@@ -1133,7 +1133,8 @@ def create_edit_person(request, person_id=None):
         #person.save()
     else:
         if person:
-            profile_form = timepiece_forms.UserProfileForm(request.POST, instance=person.profile, prefix='profile')
+            profile = timepiece.UserProfile.objects.get_or_create(user=person)[0]
+            profile_form = timepiece_forms.UserProfileForm(request.POST, instance=profile, prefix='profile')
             person_form = timepiece_forms.EditPersonForm(instance=person)
         else:
             profile_form = timepiece_forms.UserProfileForm(request.POST, prefix='profile')
