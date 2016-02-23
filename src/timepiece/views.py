@@ -5256,6 +5256,7 @@ def update_calendar_event(request, event_id, context=None):
         calendar_event = form.save()
         return HttpResponse(json.dumps(_create_js_calendar_event(calendar_event)))
 
+    logger.exception("Couldn't update calendar event %s because %s" % (calendar_event.id, form.errors))
     return HttpResponse("Save failed : %s" % form.errors)
 
 @login_required
