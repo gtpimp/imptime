@@ -2,6 +2,8 @@ from django.core.management.base import BaseCommand
 from timepiece.models import *
 from time import time
 import sys
+import logging
+logger=logging.getLogger(__name__)
 
 class Command(BaseCommand):
     args = ''

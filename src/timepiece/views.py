@@ -3572,7 +3572,7 @@ def update_issue_with_feature(request):
 
     timepiece.IssueHistory.add_history(request.user, issue, "changed feature", old_feature, issue.feature)
 
-    return HttpResponse(json.dumps({ 'new_value': issue.feature.name }), content_type='application/json')
+    return HttpResponse(json.dumps({ 'new_value': issue.feature.name if issue.feature else None }), content_type='application/json')
 
 @csrf_exempt
 @login_required
