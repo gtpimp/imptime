@@ -1173,7 +1173,7 @@ class Project(models.Model):
                             pass
 
                         
-                total_estimated_hours += points
+                total_estimated_hours += points or 0
                 issue_data['combined_cost_with_scope_creep'] = issue_data['combined_cost']
 
         stats['total_estimate_min'] = dev_estimate_cost + estimated_management_cost + estimated_testing_cost
