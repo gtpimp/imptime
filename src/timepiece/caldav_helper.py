@@ -117,7 +117,7 @@ class CalDavHelper(object):
         attendee = ""
         for att in invitees:
             if att.strip():
-                attendee += "ATTENDEE;CUTYPE=INDIVIDUAL;ROLE=REQ-    PARTICIPANT;PARTSTAT=ACCEPTED;RSVP=TRUE"+CRLF+" ;CN="+att+";X-NUM-GUESTS=0:"+CRLF+" mailto:"+att+CRLF
+                attendee += "ATTENDEE;CN="+att+";CUTYPE=INDIVIDUAL;ROLE=REQ-PARTICIPANT;PARTSTAT=NEEDS-ACTION;RSVP=TRUE:mailto:"+att+CRLF
         ical = "BEGIN:VCALENDAR"+CRLF+"PRODID:imptime"+CRLF+"VERSION:2.0"+CRLF+"CALSCALE:GREGORIAN"+CRLF
         ical += "METHOD:REQUEST"+CRLF
         ical += "BEGIN:VTIMEZONE"+CRLF+\
