@@ -103,6 +103,7 @@ class CalDavHelper(object):
     def _create_ical_string(self, event):
         CRLF = "\r\n"
         invitees = (event.send_invites_to or "").split(",")
+        invitees += [event.user.email]
         organizer = ("ORGANIZER;CN=organiser:mailto:%s" % event.user.email) +CRLF
 
         ddtstart = event.start
@@ -179,7 +180,7 @@ class CalDavHelper(object):
         fname = os.path.join(settings.CALDAV_TEMP_FOLDER, "invite_%d.ics" % event.id)
         open(fname, "w").write(ical)
         queue_email(subject_content="Invite on %s : %s" % (event.start.strftime("%d %b %Y %H:%M"),event.description[0:20]),
-                    from_address=event.user.email,
+                    from_address=settings.FROM_EMAIL,
                     text_content=content,
                     html_content=content.replace("\n","<br/>"),
                     to_addresses=invitees,

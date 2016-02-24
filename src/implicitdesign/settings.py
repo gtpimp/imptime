@@ -359,7 +359,7 @@ EMAIL_HOST_USER = 'timesheet@implicitdesign.co.za'
 EMAIL_HOST_PASSWORD = 'WRONG'
     # EMAIL_PORT = 587
 
-FROM_EMAIL="gtp@imptime.impd.co.za"
+FROM_EMAIL="imptime@impd.co.za"
 
 #################
 #

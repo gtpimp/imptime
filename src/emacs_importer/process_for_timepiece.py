@@ -26,11 +26,11 @@ logger = logging.getLogger(__name__)
 
 class Processor(object):
     
-    email_from = "gtp@implicitdesign.co.za"
+    email_from = "imptime@impd.co.za"
     email_to = settings.EMACS_ADMIN_USER_EMAILS
     
     def __init__(self, user="test", user_email="fake@implicitdesign.co.za", 
-                 root_folder = '.', email_from='gtp@implicitdesign.co.za', 
+                 root_folder = '.', email_from='imptime@impd.co.za', 
                  num_historical_days=60, 
                  pointperson_username='test',
                  rates_info = {'test':{}},
