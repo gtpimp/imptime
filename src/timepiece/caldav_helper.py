@@ -117,7 +117,7 @@ class CalDavHelper(object):
         attendee = ""
         for att in invitees:
             if att.strip():
-                attendee += "ATTENDEE;CN="+att+";CUTYPE=INDIVIDUAL;ROLE=REQ-PARTICIPANT;PARTSTAT=NEEDS-ACTION;RSVP=TRUE:mailto:"+att+CRLF
+                attendee += "ATTENDEE;CN="+att+";CUTYPE=INDIVIDUAL:mailto:"+att+CRLF
         ical = "BEGIN:VCALENDAR"+CRLF+"PRODID:imptime"+CRLF+"VERSION:2.0"+CRLF+"CALSCALE:GREGORIAN"+CRLF
         ical += "METHOD:REQUEST"+CRLF
         ical += "BEGIN:VTIMEZONE"+CRLF+\
@@ -155,7 +155,7 @@ class CalDavHelper(object):
 
         ical += "BEGIN:VEVENT"+CRLF+"DTSTART;TZID=Africa/Johannesburg:"+dtstart+CRLF+"DTEND;TZID=Africa/Johannesburg:"+dtend+CRLF+"DTSTAMP:"+dtstamp+CRLF+organizer+CRLF
         ical+= ("UID:%s"%self._uid(event))+CRLF
-        ical+= attendee+"CREATED:"+dtstamp+CRLF+description+"LAST-MODIFIED:"+dtstamp+CRLF+"LOCATION:"+CRLF+"SEQUENCE:0"+CRLF+"STATUS:UNKNOWN"+CRLF
+        ical+= attendee+"CREATED:"+dtstamp+CRLF+description+"LAST-MODIFIED:"+dtstamp+CRLF+"LOCATION:"+CRLF+"SEQUENCE:0"+CRLF
         ical+= ("SUMMARY:%s "%event.description[0:80])+CRLF+"TRANSP:OPAQUE"+CRLF+"END:VEVENT"+CRLF+"END:VCALENDAR"+CRLF
         return ical
 
