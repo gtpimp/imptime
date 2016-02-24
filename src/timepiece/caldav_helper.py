@@ -104,7 +104,7 @@ class CalDavHelper(object):
         CRLF = "\r\n"
         invitees = (event.send_invites_to or "").split(",")
         invitees += [event.user.email]
-        organizer = ("ORGANIZER;CN=organiser:mailto:%s" % event.user.email) +CRLF
+        organizer = ("ORGANIZER;CN=organiser:mailto:%s" % event.user.email)
 
         ddtstart = event.start
         dur = timedelta(hours = int(event.hours))
