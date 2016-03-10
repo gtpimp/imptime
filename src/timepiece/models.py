@@ -1852,15 +1852,16 @@ class EntriesQuerySet(QuerySet):
         ctc = 0
         billable = 0
         hours_per_users = self.order_by("user").values('user').annotate(user_hours=Sum('hours'))
+
         for hours_per_user in hours_per_users:
             try:
-                rate = Rate.objects.filter(user_id=hours_per_user['user'], project_id=project.id).values('amount', 'billable_amount')[0]
+                rate = Rate.objects.filter(user_id=hours_per_user['user'], project_id=project.id)[0]
             except IndexError:
-                rate = {'billable_amount':0, 'amount':0}
+                rate = Rate(billable_amount=0, amount=0)
 
             hours += hours_per_user['user_hours']
-            ctc += hours_per_user['user_hours'] * rate['amount']
-            billable += hours_per_user['user_hours'] * rate['billable_amount']
+            ctc += hours_per_user['user_hours'] * rate.amount
+            billable += float(hours_per_user['user_hours']) * float(rate.full_rate)
 
         return { 'hours': hours,
                  'ctc': ctc,
