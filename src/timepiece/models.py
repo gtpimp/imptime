@@ -336,6 +336,9 @@ class Business(models.Model):
         else:
             return None
 
+    @classmethod
+    def get_related_business_by_user(cls, user):
+        return cls.objects.all().filter_by_logged_in_user(user).distinct()
         
 class BusinessComment(models.Model):
     business = models.ForeignKey(Business, null=False, blank=False, related_name='business_comments')
