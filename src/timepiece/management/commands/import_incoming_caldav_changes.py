@@ -45,6 +45,11 @@ class Command(BaseCommand):
         cal_info = open(filepath).read().strip()
         action_type, uid, davical_user_id, davical_collection_id, davical_path = cal_info.split("|")
 
+        if not uid.strip():
+            uid = davical_path.split("/")[-1].split(".")[0]
+        uid = uid.replace("imptime","")
+        imptime_uid = "imptime%s" % uid
+
         caldav_event = None
         try:
             caldav = CalDavHelper()
@@ -57,7 +62,7 @@ class Command(BaseCommand):
             
             if action_type == 'DELETE':
                 try:
-                    imptime_event = timepiece.CalendarEvent.objects.get(caldav_uid=uid)
+                    imptime_event = timepiece.CalendarEvent.objects.get(caldav_uid=imptime_uid)
                 except timepiece.CalendarEvent.DoesNotExist:
                     return
                 
@@ -73,9 +78,9 @@ class Command(BaseCommand):
                     logger.error("No event found with uid=%s" % uid)
                     return
                 try:
-                    imptime_event = timepiece.CalendarEvent.objects.get(caldav_uid=uid)
+                    imptime_event = timepiece.CalendarEvent.objects.get(caldav_uid=imptime_uid)
                 except timepiece.CalendarEvent.DoesNotExist:
-                    imptime_event = timepiece.CalendarEvent(user=user, caldav_uid=uid)
+                    imptime_event = timepiece.CalendarEvent(user=user, caldav_uid=imptime_uid)
                 caldav.update_imptime_event_from_caldav_event(caldav_event=caldav_event, imptime_event=imptime_event)
                 queue_email(subject_content = "Event updated",
                             text_content = "Event updated by external calendar: %s\n\n%s" % (imptime_event, caldav.as_ical(imptime_event)),
@@ -88,9 +93,9 @@ class Command(BaseCommand):
                     logger.error("No event found with uid=%s" % uid)
                     return
                 try:
-                    imptime_event = timepiece.CalendarEvent.objects.get(caldav_uid=uid)
+                    imptime_event = timepiece.CalendarEvent.objects.get(caldav_uid=imptime_uid)
                 except timepiece.CalendarEvent.DoesNotExist:
-                    imptime_event = timepiece.CalendarEvent(user=user, caldav_uid=uid)
+                    imptime_event = timepiece.CalendarEvent(user=user, caldav_uid=imptime_uid)
                 caldav.update_imptime_event_from_caldav_event(caldav_event=caldav_event, imptime_event=imptime_event)
                 queue_email(subject_content = "Event created",
                             text_content = "Event created by external calendar: %s\n\n%s" % (imptime_event, caldav.as_ical(imptime_event)),

@@ -1,6 +1,8 @@
 from invoicing import models
 from django.db.models import Sum, Count, Q, F, Max, Min
+import copy
 from phantom_pdf.generator import create_url_from_query_dict, render_url_to_pdf
+import datetime
 from timepiece import models as timepiece
 from django.core.files.base import ContentFile
 from django.contrib.auth import login as django_login, load_backend
@@ -195,20 +197,22 @@ def generate_invoice(request, invoice_id, context=None):
 
     return response
 
+def _override_login(request, user):
+    if not hasattr(user, 'backend'):
+        for backend in settings.AUTHENTICATION_BACKENDS:
+            if user == load_backend(backend).get_user(user.pk):
+                user.backend = backend
+                break
+    if hasattr(user, 'backend'):
+        return django_login(request, user)
+
+
+
 def print_invoice_from_phantomjs(request, invoice_id, username, token, template="invoicing/print_invoice.html", context=None):
     context = context or {}
 
-    def override_login(request, user):
-        if not hasattr(user, 'backend'):
-            for backend in settings.AUTHENTICATION_BACKENDS:
-                if user == load_backend(backend).get_user(user.pk):
-                    user.backend = backend
-                    break
-        if hasattr(user, 'backend'):
-            return django_login(request, user)
-        
     user = timepiece.UserProfile.objects.get(authenticate_token=token, user__username=username).user
-    override_login(request, user)
+    _override_login(request, user)
 
     invoice = models.Invoice.objects.get(pk=invoice_id)
     bp = _get_best_bp(request, invoice)
@@ -305,3 +309,90 @@ def edit_quote(request, quote_id, template="invoicing/edit_quote.html", context=
     context['form'] = form
     context['quote'] = quote
     return render_to_response(template, context, context_instance=RequestContext(request))
+
+
+@login_required
+def statements(request, template="invoicing/statements.html", context=None):
+    context = context or {}
+    filter_form = StatementFilterForm(request.GET or None)
+    bp = _get_best_bp(request, invoice=None)
+    if not bp.has_view_invoices:
+        raise PermissionDenied
+    context['filter_form'] = filter_form
+    return render_to_response(template, context,
+                              context_instance=RequestContext(request))
+
+
+@login_required
+def statement(request,
+              format,
+              template="invoicing/preview_statement.html",
+              context=None):
+
+    context = context or {}
+    filter_form = StatementFilterForm(request.GET or None)
+
+    if not filter_form.is_valid():
+        raise Exception("Couldn't generate statement: %s" % filter_form.errors)
+    invoices = models.Invoice.objects.all().order_by("invoice_number")
+    invoices = filter_form.filter(invoices)
+    if invoices.count() > 0:
+        bp = _get_best_bp(request, invoice=invoices[0])
+        if not bp.has_view_invoices:
+            raise PermissionDenied
+
+    context['invoices'] = invoices
+    context['filter'] = filter_form.cleaned_data
+    context['generated_on'] = datetime.today()
+    context['filter_form'] = filter_form
+
+    if format == "pdf":
+        data = copy.copy(request.GET)
+        data['username'] = request.user.username
+        data['token'] = request.user.profile.authenticate_token
+        url = request.build_absolute_uri(
+            reverse('invoicing:print_statement_from_phantomjs'))
+
+        url = create_url_from_query_dict(url, data)
+
+        filename = "%s_statement_from_%s_to_%s.pdf" % (
+            filter_form.cleaned_data['client'].name.lower().replace(" ", ""),
+            filter_form.cleaned_data['issued_from'].strftime("%d%b%Y"),
+            filter_form.cleaned_data['issued_to'].strftime("%d%b%Y"))
+
+        response = render_url_to_pdf(url, request, basename=filename)
+        return response
+    else:
+        return render_to_response(template, context,
+                                  context_instance=RequestContext(request))
+
+
+def print_statement_from_phantomjs(request,
+                                   template="invoicing/print_statement.html",
+                                   context=None):
+
+    context = context or {}
+
+    username = request.GET['username']
+    token = request.GET['token']
+    user = timepiece.UserProfile.objects.get(authenticate_token=token,
+                                             user__username=username).user
+    _override_login(request, user)
+
+    filter_form = StatementFilterForm(request.GET or None)
+    if not filter_form.is_valid():
+        raise Exception("Couldn't generate statement: %s" % filter_form.errors)
+    invoices = models.Invoice.objects.all().order_by("invoice_number")
+    invoices = filter_form.filter(invoices)
+    if invoices.count() > 0:
+        bp = _get_best_bp(request, invoice=invoices[0])
+        if not bp.has_view_invoices:
+            raise PermissionDenied
+
+    context['invoices'] = invoices
+    context['filter'] = filter_form.cleaned_data
+    context['generated_on'] = datetime.today()
+
+    return render_to_response(template, context,
+                              context_instance=RequestContext(request))
+    

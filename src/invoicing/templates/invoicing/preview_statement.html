@@ -1,0 +1,15 @@
+<div style="position:fixed;top:20px;right:20px;">
+
+  <form method="GET" action="{% url 'invoicing:download_statement' %}">
+
+    <div style="display:none">
+      {{ filter_form }}
+    </div>
+    
+    <input type="submit" value="Print"/>
+    <button  onclick="window.close(); return false"> Close </button>
+  </form>
+  
+</div>
+
+{% include "invoicing/print_statement.html" %}

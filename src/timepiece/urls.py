@@ -9,6 +9,7 @@ import jira_interface
 
 urlpatterns = patterns('',
     url(r'^$', views.home, name='landing_page'),
+
     url(r'^entries$', views.view_entries, name='timepiece-entries'),
     url(r'^period/(?P<delta>\d+)/$', views.view_entries,
         name='timepiece-previous-entries'),

@@ -340,7 +340,7 @@ LOGGING = {
         },
         'raven': {
             'level': 'DEBUG',
-            'handlers': ['console', 'sentry'],
+            'handlers': ['file', 'sentry'],
             'propagate': False,
         },
         '': {
@@ -359,7 +359,7 @@ EMAIL_HOST_USER = 'timesheet@implicitdesign.co.za'
 EMAIL_HOST_PASSWORD = 'WRONG'
     # EMAIL_PORT = 587
 
-FROM_EMAIL="gtp@imptime.impd.co.za"
+FROM_EMAIL="imptime@impd.co.za"
 
 # AUTH_USER_MODEL = 'timepiece.ClientUser'
 

@@ -63,28 +63,39 @@ class CalDavHelper(object):
                     calendar = self.calendar(user.username)
                 except Exception, ex:
                     if "No calendars" in str(ex):
-                        logger.exception("User %s doesn't have a calendar, ignoring" % user.username)
+                        logger.info("User %s doesn't have a calendar, ignoring" % user.username)
                         continue
                     else:
                         raise
-                try:
-                    caldav_event = calendar.event_by_uid(self._uid(imptime_event))
+                    
+                caldav_event = self.caldav_event_for_imptime_event(imptime_event, calendar)
+                if caldav_event:
                     self.update_caldav_event_from_imptime_event(caldav_event, imptime_event)
-                except error.NotFoundError:
+                else:
                     calendar.add_event(self._create_ical_string(imptime_event))
                     
         except Exception, ex:
             logger.exception(ex)
             raise
 
+    def caldav_event_for_imptime_event(self, imptime_event, calendar):
+        uid = self._uid(imptime_event)
+        try:
+            caldav_event = calendar.event_by_uid(uid)
+        except error.NotFoundError, ex:
+            return None
+        except Exception, ex:
+            logger.exception(ex)
+            raise
+        
+        return caldav_event
+        
     def on_event_deleted(self, imptime_event):
         for user in imptime_event.event_users:
             calendar = self.calendar(user.username)
-            try:
-                caldav_event = calendar.event_by_uid(self._uid(imptime_event))
-            except error.NotFoundError:
-                return
-            caldav_event.delete()
+            caldav_event = self.caldav_event_for_imptime_event(imptime_event, calendar)
+            if caldav_event:
+                caldav_event.delete()
 
     def as_ical(self, imptime_event):
         return self._create_ical_string(imptime_event)
@@ -92,7 +103,8 @@ class CalDavHelper(object):
     def _create_ical_string(self, event):
         CRLF = "\r\n"
         invitees = (event.send_invites_to or "").split(",")
-        organizer = ("ORGANIZER;CN=organiser:mailto:%s" % event.user.email) +CRLF
+        invitees += [event.user.email]
+        organizer = ("ORGANIZER;CN=organiser:mailto:%s" % event.user.email)
 
         ddtstart = event.start
         dur = timedelta(hours = int(event.hours))
@@ -104,7 +116,8 @@ class CalDavHelper(object):
         description = "DESCRIPTION: %s"%event.description +CRLF
         attendee = ""
         for att in invitees:
-            attendee += "ATTENDEE;CUTYPE=INDIVIDUAL;ROLE=REQ-    PARTICIPANT;PARTSTAT=ACCEPTED;RSVP=TRUE"+CRLF+" ;CN="+att+";X-NUM-GUESTS=0:"+CRLF+" mailto:"+att+CRLF
+            if att.strip():
+                attendee += "ATTENDEE;CN="+att+";CUTYPE=INDIVIDUAL:mailto:"+att+CRLF
         ical = "BEGIN:VCALENDAR"+CRLF+"PRODID:imptime"+CRLF+"VERSION:2.0"+CRLF+"CALSCALE:GREGORIAN"+CRLF
         ical += "METHOD:REQUEST"+CRLF
         ical += "BEGIN:VTIMEZONE"+CRLF+\
@@ -142,7 +155,7 @@ class CalDavHelper(object):
 
         ical += "BEGIN:VEVENT"+CRLF+"DTSTART;TZID=Africa/Johannesburg:"+dtstart+CRLF+"DTEND;TZID=Africa/Johannesburg:"+dtend+CRLF+"DTSTAMP:"+dtstamp+CRLF+organizer+CRLF
         ical+= ("UID:%s"%self._uid(event))+CRLF
-        ical+= attendee+"CREATED:"+dtstamp+CRLF+description+"LAST-MODIFIED:"+dtstamp+CRLF+"LOCATION:"+CRLF+"SEQUENCE:0"+CRLF+"STATUS:UNKNOWN"+CRLF
+        ical+= attendee+"CREATED:"+dtstamp+CRLF+description+"LAST-MODIFIED:"+dtstamp+CRLF+"LOCATION:"+CRLF+"SEQUENCE:0"+CRLF+"STATUS:CONFIRMED"+CRLF
         ical+= ("SUMMARY:%s "%event.description[0:80])+CRLF+"TRANSP:OPAQUE"+CRLF+"END:VEVENT"+CRLF+"END:VCALENDAR"+CRLF
         return ical
 
@@ -167,7 +180,7 @@ class CalDavHelper(object):
         fname = os.path.join(settings.CALDAV_TEMP_FOLDER, "invite_%d.ics" % event.id)
         open(fname, "w").write(ical)
         queue_email(subject_content="Invite on %s : %s" % (event.start.strftime("%d %b %Y %H:%M"),event.description[0:20]),
-                    from_address=event.user.email,
+                    from_address=settings.FROM_EMAIL,
                     text_content=content,
                     html_content=content.replace("\n","<br/>"),
                     to_addresses=invitees,

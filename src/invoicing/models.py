@@ -30,7 +30,8 @@ class ClientInvoiceDetails(models.Model):
     @classmethod
     def get_for_business(self, business):
         return ClientInvoiceDetails.objects.filter(invoices__business=business).order_by("-id").first()
-    
+
+
 class InvoiceQuerySet(QuerySet):
     def cost_with_vat(self):
         return (self.filter(client__taxable=True).aggregate(Sum('items__total_cost'))['items__total_cost__sum'] or 0) * (1+settings.INVOICE_DETAILS['vat_rate']) + \
@@ -147,13 +148,14 @@ class Invoice(models.Model):
     @property
     def is_written_off(self):
         return self.status == 'writtenoff'
-    
+
     @property
     def amount_owed(self):
         if self.is_written_off:
             return 0
         else:
             return self.cost_with_vat - self.amount_paid
+
 
 class InvoiceItem(models.Model):
     invoice = models.ForeignKey(Invoice, blank=False, null=False, related_name='items')
@@ -166,7 +168,8 @@ class InvoiceItem(models.Model):
     def save(self, *args, **kwargs):
         self.total_cost = (self.unit_cost or 0) * (self.num_units or 0)
         super(InvoiceItem, self).save(*args, **kwargs)
-    
+
+
 class InvoicePayment(models.Model):
     invoice = models.ForeignKey(Invoice, blank=False, null=False, related_name='payments')
     amount = models.FloatField(null=False, blank=False)

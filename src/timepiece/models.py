@@ -209,7 +209,7 @@ class Business(models.Model):
         if can_view_other_user_points:
             business_users = User.objects.filter(id__in = business_permissions_by_user.keys())
             developers = [user for user in business_users if business_permissions_by_user[user.id].has_estimate_own_points]
-            support_staff = [ user for user in business_users if Rate.for_business(user.id, self.id).time_tracking_mode in [ 'tester', 'manager' ] ]
+            support_staff = [ user for user in business_users if Rate.for_business(user.id, self.id) and Rate.for_business(user.id, self.id).time_tracking_mode in [ 'tester', 'manager' ] ]
             users = list(set(developers + support_staff))
         else:
             if bp.has_estimate_own_points:
@@ -1184,7 +1184,7 @@ class Project(models.Model):
                             pass
 
                         
-                total_estimated_hours += points
+                total_estimated_hours += points or 0
                 issue_data['combined_cost_with_scope_creep'] = issue_data['combined_cost']
 
         stats['total_estimate_min'] = dev_estimate_cost + estimated_management_cost + estimated_testing_cost
@@ -1519,7 +1519,7 @@ class Project(models.Model):
                 'points': points, 
                 'hours':user_hours,
                 'ctc':rate.amount*user_hours,
-                'billable':rate.full_rate*user_hours,
+                'billable':float(rate.full_rate)*float(user_hours),
                 'total_adjusted_billed': total_adjusted_billed,
                 'total_adjusted_ctc': total_adjusted_ctc,
                 'total_adjusted_profit': total_adjusted_billed - total_adjusted_ctc,
@@ -1878,15 +1878,16 @@ class EntriesQuerySet(QuerySet):
         ctc = 0
         billable = 0
         hours_per_users = self.order_by("user").values('user').annotate(user_hours=Sum('hours'))
+
         for hours_per_user in hours_per_users:
             try:
-                rate = Rate.objects.filter(user_id=hours_per_user['user'], project_id=project.id).values('amount', 'billable_amount')[0]
+                rate = Rate.objects.filter(user_id=hours_per_user['user'], project_id=project.id)[0]
             except IndexError:
-                rate = {'billable_amount':0, 'amount':0}
+                rate = Rate(billable_amount=0, amount=0)
 
             hours += hours_per_user['user_hours']
-            ctc += hours_per_user['user_hours'] * rate['amount']
-            billable += hours_per_user['user_hours'] * rate['billable_amount']
+            ctc += hours_per_user['user_hours'] * rate.amount
+            billable += float(hours_per_user['user_hours']) * float(rate.full_rate)
 
         ctc_and_billable_totals = project.get_ctc_and_billable_totals()
         ctc += ctc_and_billable_totals['fixed_ctc_total']
@@ -3428,7 +3429,7 @@ class CalendarEvent(models.Model):
     EVENT_TYPES = ( ('planned', 'Planned'), ('meeting', 'Meeting'), ('leave', 'Leave'), ('sickday', 'Sick day'),
 					('office_closed', 'Office Closed'), ('personal', 'Personal'),
                     ('deadline', 'Deadline') )
-    EVENT_STATUSES = ( ('ready', 'Ready'), ('done', 'Done'), ('cancelled', 'Cancelled') )
+    EVENT_STATUSES = ( ('ready', 'Ready'), ('done', 'Done'), ('cancelled', 'Cancelled'), ("UNKNOWN", "UNKNOWN") )
 
     user = models.ForeignKey(User, blank=False, null=False, db_index=True)
     business = models.ForeignKey(Business, blank=True, null=True, db_index=True, related_name='calendar_events')
@@ -3440,15 +3441,18 @@ class CalendarEvent(models.Model):
     status = models.CharField( null=False, blank=False, max_length=50, default='ready',
                                choices = EVENT_STATUSES )
     send_invites_to = models.TextField(null=True, blank=True) # comma separated list of email addresses
-    caldav_uid = models.CharField(null=True, max_length=100, blank=True)
+    caldav_uid = models.CharField(null=True, max_length=100, blank=True, db_index=True)
 
     def save(self, update_caldav=True, *args, **kwargs):
+        super(CalendarEvent, self).save(*args, **kwargs)
+
         if not self.caldav_uid and self.id:
             self.caldav_uid = "imptime%s" % str(self.id)
-        super(CalendarEvent, self).save(*args, **kwargs)
+            super(CalendarEvent, self).save(*args, **kwargs)
+        
         if update_caldav:
             try:
-                CalDavHelper().on_event_saved(self)
+                CalDavHelper().on_event_saved(imptime_event=self)
             except Exception, ex:
                 logger.exception(ex)
 

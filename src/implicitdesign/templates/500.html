@@ -1,18 +1,9 @@
-{% extends "admin/base_site.html" %}
-{% load i18n %}
-{% load url from future %}
+{% extends "error_base.html" %}
 
-{% block breadcrumbs %}
-<div class="breadcrumbs">
-<a href="{% url 'admin:index' %}">{% trans 'Home' %}</a>
-&rsaquo; {% trans 'Server error' %}
-</div>
-{% endblock %}
-
-{% block title %}{% trans 'Server error (500)' %}{% endblock %}
+{% block title %}500 Internal Server Error{% endblock %}
 
 {% block content %}
-<h1>{% trans 'Server Error <em>(500)</em>' %}</h1>
-<p>{% trans "There's been an error. It's been reported to the site administrators via e-mail and should be fixed shortly. Thanks for your patience." %}</p>
+    <h1>Internal Server Error</h1>
 
+    <p>A server error prevented this page from being displayed.  The system administrator has been notified and will investigate the problem as soon as possible.</p>
 {% endblock %}

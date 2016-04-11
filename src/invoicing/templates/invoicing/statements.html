@@ -1,0 +1,28 @@
+{% extends "invoicing/base.html" %}
+
+{% load currency %}
+{% load bootstrap_toolkit %}
+{% load endless %}
+{% load add_class %}
+
+{% block title %}Statements{% endblock %}
+
+{% block content %}
+
+<form target="_blank" class="filter" method="GET" action="{% url 'invoicing:statement' %}">
+
+  <table class="table table-striped">
+    <thead>
+      <tr style="background-color: #efefef">
+        <td></td>
+        <td>{{ filter_form.client|add_class:'form-control' }}</td>
+        <tr><td>From</td><td>{{ filter_form.issued_from }}</td></tr>
+        <tr><td>To</td><td>{{ filter_form.issued_to }}</td></tr>
+      </tr>
+    </thead>
+  </table>
+  <input class="btn btn-primary" type="submit" value="Create statement"/>
+  
+</form>
+
+{% endblock %}

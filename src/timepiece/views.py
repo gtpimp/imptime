@@ -1144,7 +1144,8 @@ def create_edit_person(request, person_id=None, template='timepiece/person/creat
         #person.save()
     else:
         if person:
-            profile_form = timepiece_forms.UserProfileForm(creator=request.user, instance=person.profile, prefix='profile')
+            profile = timepiece.UserProfile.objects.get_or_create(user=person)[0]
+            profile_form = timepiece_forms.UserProfileForm(request.POST, instance=profile, prefix='profile')
             person_form = timepiece_forms.EditPersonForm(instance=person)
         else:
             profile_form = timepiece_forms.UserProfileForm(creator=request.user, prefix='profile')
@@ -3624,7 +3625,7 @@ def update_issue_with_feature(request):
 
     timepiece.IssueHistory.add_history(request.user, issue, "changed feature", old_feature, issue.feature)
 
-    return HttpResponse(json.dumps({ 'new_value': issue.feature.name }), content_type='application/json')
+    return HttpResponse(json.dumps({ 'new_value': issue.feature.name if issue.feature else None }), content_type='application/json')
 
 @csrf_exempt
 @login_required
@@ -4477,6 +4478,9 @@ def sprint_report(request, project_id, context=None):
         quote_form = timepiece_forms.SprintQuoteReportSettingsForm(project, bp, issues, DATA)
         invoice_form = timepiece_forms.SprintInvoiceReportSettingsForm(project, bp, issues, DATA)
 
+        if not DATA.get('report_type', None):
+            return HttpResponse("No permission to generate quotes")
+        
         if DATA['report_type'] == 'Quote' and quote_form.is_valid():
             if not bp.has_view_ctc_billable_rates:
                 return HttpResponse("No permission to generate quotes")
@@ -5307,6 +5311,7 @@ def update_calendar_event(request, event_id, context=None):
         calendar_event = form.save()
         return HttpResponse(json.dumps(_create_js_calendar_event(calendar_event)))
 
+    logger.exception("Couldn't update calendar event %s because %s" % (calendar_event.id, form.errors))
     return HttpResponse("Save failed : %s" % form.errors)
 
 @login_required
@@ -5379,9 +5384,9 @@ def business_cost_summary(request, business_id, template="timepiece/project/busi
         running_project_amount_paid = 0
         running_project_amount_owed = 0
         for invoice in invoices:
-            running_project_amount_invoiced += invoice.cost
-            running_project_amount_paid += invoice.amount_paid
-            running_project_amount_owed += invoice.amount_owed
+            running_project_amount_invoiced += float(invoice.cost or 0)
+            running_project_amount_paid += float(invoice.amount_paid or 0)
+            running_project_amount_owed += float(invoice.amount_owed or 0)
         project_info['invoiced'] = running_project_amount_invoiced
         project_info['paid'] = running_project_amount_paid
         project_info['owed'] = running_project_amount_owed
@@ -5951,3 +5956,4 @@ def edit_client(request, client_code, template="timepiece/client/add_client.html
     context['form'] = form
 
     return render_to_response(template, context, context_instance=RequestContext(request))
+

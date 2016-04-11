@@ -34,6 +34,7 @@ echo "Updating permissions"
 cd ${ROOT}
 sudo chown -R www-data:gtp *
 sudo chmod g+w -R *
+sudo chgrp nagios logs/nagios.log
 
 echo "Reloading apache"
 sudo /etc/init.d/apache2 reload

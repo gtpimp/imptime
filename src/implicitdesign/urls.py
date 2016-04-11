@@ -1,4 +1,4 @@
-from django.conf.urls import patterns, include, url
+from django.conf.urls import patterns, include, url, handler400, handler403, handler404, handler500
 from filebrowser import sites as filebrowser
 from django.contrib.staticfiles.urls import staticfiles_urlpatterns
 from django.contrib import admin
@@ -6,18 +6,35 @@ from django.conf.urls.static import static
 import settings
 admin.autodiscover()
 from django.contrib.auth.decorators import login_required
+from django.contrib.staticfiles.storage import staticfiles_storage
+from django.views.generic.base import RedirectView
 
 admin.site.login = login_required(admin.site.login)
 
 import views
 from forms import ImpAuthenticationForm
 
+handler400 = 'implicitdesign.views.error_handler_400'
+handler403 = 'implicitdesign.views.error_handler_403'
+handler404 = 'implicitdesign.views.error_handler_404'
+handler500 = 'implicitdesign.views.error_handler_500'
+
 urlpatterns = patterns('',
 
                        url(r'^admin/', include(admin.site.urls)),
 
                        url(r'^$', views.home, name='home'),
-          
+
+                       url(r'^robots.txt$', views.robots),
+
+                       url(
+                           r'^favicon.ico$',
+                           RedirectView.as_view(
+                               url=staticfiles_storage.url('images/icons/implicit_icon.png'),
+                               permanent=False),
+                               name="favicon"
+                           ),
+                           
                        url( r'^grappelli/', include('grappelli.urls') ),
                        url(r'^emacs_importer/', include('emacs_importer.urls', namespace='emacs_importer')),
                        url(r'^timepiece/', include('timepiece.urls'), name='timepiece'),
