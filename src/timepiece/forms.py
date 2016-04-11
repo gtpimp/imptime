@@ -946,14 +946,17 @@ class UserProfileForm(forms.ModelForm):
         if not creator.is_superuser and not creator.is_staff:
             del self.fields['groups']
         else:
-            self.fields['groups'].initial = [c.pk for c in self.instance.user.groups.all()]
+            try:
+                self.fields['groups'].initial = [c.pk for c in self.instance.user.groups.all()]
+            except:
+                pass
 
         if creator.is_superuser:
             self.fields['impd_client'].label = "Client"
         else:
             del self.fields['impd_client']
 
-    def save(self, creator, commit=False):
+    def save(self, creator, user, commit=False):
         instance = super(UserProfileForm, self).save(commit=commit)
 
         if creator.is_staff or creator.has_perm('timepiece.belongs_to_all_projects'):

@@ -24,6 +24,9 @@ from re import UNICODE as re_UNICODE
 from checklist_plugins.registry import get_traffic_plugins, get_dev_plugins, get_finance_plugins
 from django.contrib.auth.models import AbstractUser, AbstractBaseUser
 
+from django.dispatch import receiver
+from django.db.models.signals import post_save
+
 logger = logging.getLogger(__name__)
 
 try:
@@ -336,6 +339,9 @@ class Business(models.Model):
         else:
             return None
 
+    @classmethod
+    def get_related_business_by_user(cls, user):
+        return cls.objects.all().filter_by_logged_in_user(user).distinct()
         
 class BusinessComment(models.Model):
     business = models.ForeignKey(Business, null=False, blank=False, related_name='business_comments')
