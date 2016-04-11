@@ -1331,7 +1331,7 @@ def list_projects(request):
     for user in User.objects.all().distinct():
         last_active[user.username] = entries.filter(user=user).aggregate(end_time=Max('end_time'))['end_time']
 
-    businesses = timepiece.Business.objects.all().filter_by_logged_in_user(request.user).order_by("name").distinct()
+    businesses = timepiece.Business.get_related_business_by_user(request.user).order_by("name")
 
     context = {'active_businesses': businesses.filter_has_any_active_projects(),
                'pending_businesses': businesses.filter_has_only_pending_projects(),
