@@ -1,0 +1,154 @@
+{% load humanize %}
+{% load currency %}
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <title>{{title}}</title>
+    <meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
+    <style type="text/css">
+     <style type="text/css">
+     body {
+       margin: 0.5in;
+     }
+     h1, h2, h3, h4, h5, h6, li, blockquote, p, th, td {
+       font-family: Helvetica, Arial, Verdana, sans-serif; /*Trebuchet MS,*/
+     }
+     h1, h2, h3, h4 {
+       color: #5E88B6;
+       font-weight: normal;
+     }
+     h4, h5, h6 {
+       color: #5E88B6;
+     }
+     h2 {
+       margin: 0 auto auto auto;
+       font-size: x-large;
+     }
+     h2 span {
+       text-transform: uppercase;
+     }
+     li, blockquote, p, th, td {
+       font-size: 12px;
+     }
+     ul {
+       list-style: url(img/bullet.gif) none;
+     }
+     table {
+       width: 100%;
+     }
+     td p {
+       font-size: small;
+       margin: 0;
+     }
+     th {
+       color: #000000;
+       text-align: left;
+       background-color:#A0A0A0;
+       font-weight: bold;
+       border: 1px solid #cccccc;
+     }
+     .money { text-align: right },
+     #footer {
+       border-top: 1px solid #CCC;
+       text-align: right;
+       font-size: 6pt;
+       color: #999999;
+     }
+     #footer a {
+       color: #999999;
+       text-decoration: none;
+     }
+
+     .footer_terms {
+       font-weight: bold;
+       color: #E23A3A;
+     }
+
+     table.stripe {
+       border-collapse: collapse;
+       page-break-after: auto;
+     }
+     table.stripe td {
+       /*border-bottom: 1pt solid black;*/
+     }
+
+     table.stripe td.separator {
+       border-bottom: 1px solid #cccccc;
+     }
+
+     .invoice_note {
+       font-weight: bold;
+       padding-left: 10px;
+       padding-bottom: 5px;
+     }
+
+    </style>
+  </head>
+  <body>
+
+    <table>
+      <tr>
+	<td width="60%">
+	  <img width="200px" src="{{STATIC_URL}}images/implicitDesignLogo.jpg"/><br/>
+	</td>
+        <td>
+          Generated on {{ generated_on|date:"d M Y" }}
+        </td>
+      </tr>
+      <tr>
+	<td style="text-align:center">
+	  <h2>
+	    INVOICE STATEMENT FOR {{ filter.client.name }}
+	  </h2>
+          <h3>
+            From {{ filter.issued_from|date:"d M Y" }}
+          </h3>
+          <h3>
+            To {{ filter.issued_to|date:"d M Y" }}
+          </h3>
+        </td>
+      </tr>
+    </table>
+
+    <table class="table stripe">
+      <thead>
+        <th>#</th>
+        <th>Status</th>
+        <th>Name</th>
+        <th>Issued on</th>
+        <th>ex VAT</th>
+        <th>VAT</th>
+        <th>incl VAT</th>
+        <th>Paid on</th>
+        <th>Amount owing</th>
+      </thead>
+
+      <tbody>
+        {% for invoice in invoices %}
+        <tr>
+          <td>{{ invoice.invoice_number }}</td>
+          <td>{{ invoice.status }}</td>
+          <td>{{ invoice.invoice_note }}</td>
+          <td>{{ invoice.issued_at|date:"d M Y" }}</td>
+          <td>{{invoice.currency_symbol}}{{invoice.cost|currency|default:"0"}}</td>
+          <td>{{invoice.currency_symbol}}{{invoice.vat|currency|default:"0"}}</td>
+          <td>{{invoice.currency_symbol}}{{invoice.cost_with_vat|currency|default:"0"}}</td>
+          <td>
+            {% if invoice.paid_at %}
+            {{ invoice.paid_at|date:"d M Y" }}
+            {% else %}
+            Payment outstanding
+            {% endif %}
+          </td>
+          <td>
+            {% if invoice.status != "paid" %}
+            {{invoice.currency_symbol}}{{ invoice.amount_owed|currency|default:""}}
+            {% endif %}
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+
+  </body>
+</html>

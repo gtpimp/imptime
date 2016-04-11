@@ -161,3 +161,27 @@ class QuoteForm(forms.ModelForm):
             self.fields['quote_document'].queryset = docs
             self.fields['quote_document'].options = [ (doc.id, doc.filename) for doc in docs ]
 
+
+class StatementFilterForm(forms.Form):
+
+    client = forms.ModelChoiceField(
+        required=False,
+        queryset=models.ClientInvoiceDetails.objects.order_by("name"))
+    issued_from = forms.DateField(required=False)
+    issued_to = forms.DateField(required=False)
+
+    def __init__(self, *args, **kwargs):
+        super(StatementFilterForm, self).__init__(*args, **kwargs)
+        self.fields['issued_from'].widget.attrs['class'] = 'date_field'
+        self.fields['issued_to'].widget.attrs['class'] = 'date_field'
+
+    def filter(self, qs):
+        data = self.cleaned_data
+        if data['client']:
+            qs = qs.filter(client=data['client'])
+        if data['issued_from']:
+            qs = qs.filter(issued_at__gte=data['issued_from'])
+        if data['issued_to']:
+            qs = qs.filter(issued_at__lte=data['issued_to'])
+        return qs
+            

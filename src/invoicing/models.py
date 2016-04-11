@@ -155,6 +155,7 @@ class Invoice(models.Model):
         else:
             return self.cost_with_vat - self.amount_paid
 
+
 class InvoiceItem(models.Model):
     invoice = models.ForeignKey(Invoice, blank=False, null=False, related_name='items')
     num_units = models.FloatField(blank=False, null=False)
@@ -166,7 +167,8 @@ class InvoiceItem(models.Model):
     def save(self, *args, **kwargs):
         self.total_cost = (self.unit_cost or 0) * (self.num_units or 0)
         super(InvoiceItem, self).save(*args, **kwargs)
-    
+
+
 class InvoicePayment(models.Model):
     invoice = models.ForeignKey(Invoice, blank=False, null=False, related_name='payments')
     amount = models.FloatField(null=False, blank=False)
