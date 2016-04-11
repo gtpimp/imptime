@@ -143,6 +143,8 @@
           <td>
             {% if invoice.status != "paid" %}
             {{invoice.currency_symbol}}{{ invoice.amount_owed|currency|default:""}}
+            {% else %}
+            {{invoice.currency_symbol}}0
             {% endif %}
           </td>
         </tr>
