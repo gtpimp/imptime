@@ -24,6 +24,9 @@ from re import UNICODE as re_UNICODE
 from checklist_plugins.registry import get_traffic_plugins, get_dev_plugins, get_finance_plugins
 from django.contrib.auth.models import AbstractUser, AbstractBaseUser
 
+from django.dispatch import receiver
+from django.db.models.signals import post_save
+
 logger = logging.getLogger(__name__)
 
 try:
@@ -209,6 +212,7 @@ class Business(models.Model):
         if can_view_other_user_points:
             business_users = User.objects.filter(id__in = business_permissions_by_user.keys())
             developers = [user for user in business_users if business_permissions_by_user[user.id].has_estimate_own_points]
+
             support_staff = [ user for user in business_users if Rate.for_business(user.id, self.id).time_tracking_mode in [ 'tester', 'manager' ] ]
             users = list(set(developers + support_staff))
         else:

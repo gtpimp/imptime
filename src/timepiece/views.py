@@ -1131,7 +1131,7 @@ def create_edit_person(request, person_id=None, template='timepiece/person/creat
             profile_form = timepiece_forms.UserProfileForm(request.user, request.POST, prefix='profile')
         if person_form.is_valid() and profile_form.is_valid():
             person = person_form.save(commit=False)
-            profile = profile_form.save(request.user, commit=False)
+            profile = profile_form.save(request.user, person, commit=False)
             person.save()
             person_form.save_m2m()
             profile.user = person
@@ -1160,7 +1160,6 @@ def create_edit_person(request, person_id=None, template='timepiece/person/creat
 @render_with('timepiece/project/detail.html')
 @login_required
 def project_detail(request, business_id):
-
     if request.GET:
         form = timepiece_forms.ProjectSearchForm(request.GET)
     else:
@@ -3301,6 +3300,7 @@ def issue_users(request, issue_id):
     issue = timepiece.Issue.objects.get(pk=issue_id)
     business = issue.project.business
     users = get_interface_plugin(request, business).get_assignable_users(issue)
+
     if users is None:
         users = [ (user.id, "%s (%s)" % (user.username, user.get_full_name())) for user in business.users ]
     return HttpResponse(json.dumps(users),
