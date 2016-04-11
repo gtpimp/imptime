@@ -30,7 +30,8 @@ class ClientInvoiceDetails(models.Model):
     @classmethod
     def get_for_business(self, business):
         return ClientInvoiceDetails.objects.filter(invoices__business=business).order_by("-id").first()
-    
+
+
 class InvoiceQuerySet(QuerySet):
     def cost_with_vat(self):
         return (self.filter(client__taxable=True).aggregate(Sum('items__total_cost'))['items__total_cost__sum'] or 0) * (1+settings.INVOICE_DETAILS['vat_rate']) + \
@@ -147,7 +148,7 @@ class Invoice(models.Model):
     @property
     def is_written_off(self):
         return self.status == 'writtenoff'
-    
+
     @property
     def amount_owed(self):
         if self.is_written_off:

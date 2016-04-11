@@ -149,6 +149,19 @@
           </td>
         </tr>
         {% endfor %}
+
+        <tr>
+          <th></th>
+          <th></th>
+          <th></th>
+          <th></th>
+          <th>{{invoices.0.currency_symbol}}{{ invoices.cost|currency|default:"0" }}</th>
+          <th>{{invoices.0.currency_symbol}}{{ invoices.vat|currency|default:"0" }}</th>
+          <th>{{invoices.0.currency_symbol}}{{ invoices.cost_with_vat|currency|default:"0" }}</th>
+          <th></th>
+          <th>{{invoices.0.currency_symbol}}{{ invoices.amount_owed|currency|default:"0" }}</th>
+        </tr>
+        
       </tbody>
     </table>
 
