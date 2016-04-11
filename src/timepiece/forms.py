@@ -1,6 +1,7 @@
 from decimal import Decimal
 import re
 from django.db.models import Sum, Count, Q, F, Max, Min
+from django.contrib.auth.models import Group
 import time
 from fields import ButtonRadioSelect
 from time import mktime
@@ -92,7 +93,8 @@ class EditPersonForm(auth_forms.UserChangeForm):
     class Meta:
         model = auth_models.User
         fields = ('username', 'first_name', 'last_name', 'email', 'is_active', 'is_staff')
-    
+
+
     def __init__(self, *args, **kwargs):
         super(EditPersonForm, self).__init__(*args, **kwargs)
 
@@ -931,45 +933,62 @@ class UserForm(forms.ModelForm):
 
 
 class UserProfileForm(forms.ModelForm):
-    groups = forms.ModelMultipleChoiceField(queryset=auth_models.Group.objects.all())
+    groups = forms.ModelMultipleChoiceField(
+        queryset=auth_models.Group.objects.all(),
+        widget=CheckboxSelectMultiple)
 
     class Meta:
         model = timepiece.UserProfile
-        exclude = ('user','amount','billable_amount', 'authenticate_token')
+        exclude = ('user', 'amount', 'billable_amount',
+                   'authenticate_token', 'project_names_to_ignore')
 
     def __init__(self, creator, *args, **kwargs):
+
+        profile = kwargs.get('instance', None)
+        if profile:
+            initial = kwargs.get('initial', {})
+            initial.setdefault('groups', profile.user.groups.all())
+            kwargs['initial'] = initial
+
         super(UserProfileForm, self).__init__(*args, **kwargs)
 
         if not creator.is_superuser and not creator.is_staff:
             del self.fields['is_staff']
-
-        if not creator.is_superuser and not creator.is_staff:
             del self.fields['groups']
+            del self.fields['required_daily_work_hours']
         else:
-            try:
-                self.fields['groups'].initial = [c.pk for c in self.instance.user.groups.all()]
-            except:
-                pass
-
-        if creator.is_superuser:
             self.fields['impd_client'].label = "Client"
-        else:
+
+        if not creator.is_superuser:
             del self.fields['impd_client']
 
-    def save(self, creator, user, commit=False):
-        instance = super(UserProfileForm, self).save(commit=commit)
+    def save(self, creator, user):
+        profile = super(UserProfileForm, self).save()
 
-        if creator.is_staff or creator.has_perm('timepiece.belongs_to_all_projects'):
-            if instance.impd_client is None and hasattr(creator, 'profile'):
-                instance.impd_client = creator.profile.impd_client
+        if user.profile != profile:
+            user.profile = profile
+            user.save()
+
+        if not creator.is_superuser:
+            profile.impd_client = creator.profile.impd_client
+            profile.save()
+
+        if user.profile is None:
+            user.profile = profile
+            user.save()
 
         if creator.is_superuser or creator.is_staff:
-            ids = [c.pk for c in self.cleaned_data['groups']]
-            self.instance.user.groups.clear()
-            self.instance.user.groups.add(*ids)
+            user = self.instance.user
+            user.groups = self.cleaned_data['groups']
+            user.save()
+            # for group in self.cleaned_data['groups']:
+            #     group.user_set.add(user)
 
-        return instance
+        if profile.user != user:
+            profile.user = user
+            profile.save()
 
+        return self.instance
 
 
 class ProjectSearchForm(forms.Form):

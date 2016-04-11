@@ -1070,8 +1070,10 @@ def list_people(request):
     people = auth_models.User.objects.all().order_by('username')
 
     if not request.user.is_superuser:
-        people = people.filter(Q(profile__impd_client_id = request.user.profile.impd_client_id))
-    
+        people = people.filter(profile__impd_client_id=request.user.profile.impd_client_id)
+    if not request.user.is_staff:
+        people = people.filter(pk=request.user.id)
+
     if form.is_valid():
         if form.cleaned_data.get('search', None):
             search = form.cleaned_data['search']
@@ -1094,6 +1096,16 @@ def list_people(request):
 @login_required
 def view_person(request, person_id):
     person = get_object_or_404(auth_models.User, pk=person_id)
+
+    if request.user.is_superuser:
+        pass
+    elif request.user.is_staff:
+        if person.profile.impd_client_id != request.user.profile.impd_client_id:
+            raise Exception("Can't edit this person")
+    else:
+        if person.profile.id != request.user.id:
+            raise Exception("Can't edit this person")
+    
     context = {
         'person': person,
     }
@@ -1119,36 +1131,38 @@ def create_edit_person(request, person_id=None, template='timepiece/person/creat
     else:
         person = None
 
+    if request.user.is_superuser:
+        pass
+    elif request.user.is_staff:
+        if person.profile.impd_client_id != request.user.profile.impd_client_id:
+            raise Exception("Can't edit this person")
+    else:
+        if person.profile.id != request.user.id:
+            raise Exception("Can't edit this person")
+        
     if request.POST:
         if person:
-            profile_form = timepiece_forms.UserProfileForm(request.user, request.POST, instance=person.profile, prefix='profile')
+            profile_form = timepiece_forms.UserProfileForm(creator=request.user, data=request.POST, instance=person.profile, prefix='profile')
             person_form = timepiece_forms.EditPersonForm(
                 request.POST,
                 instance=person,
             )
         else:
             person_form = timepiece_forms.CreatePersonForm(request.POST,)
-            profile_form = timepiece_forms.UserProfileForm(request.user, request.POST, prefix='profile')
+            profile_form = timepiece_forms.UserProfileForm(creator=request.user, data=request.POST, prefix='profile')
         if person_form.is_valid() and profile_form.is_valid():
-            person = person_form.save(commit=False)
-            profile = profile_form.save(request.user, person, commit=False)
-            person.save()
-            person_form.save_m2m()
-            profile.user = person
-            profile.save()
-            profile_form.save_m2m()
-            return HttpResponseRedirect(
-                reverse('view_person', args=(person.id,))
-            )
-        #timepiece.UserProfile.objects.get_or_create(user=person)
-        #person.save()
+            person = person_form.save()
+            profile = profile_form.save(request.user, person)
+
+            return HttpResponseRedirect(reverse('view_person', args=(person.id,))
+        )
     else:
         if person:
             profile = timepiece.UserProfile.objects.get_or_create(user=person)[0]
-            profile_form = timepiece_forms.UserProfileForm(request.POST, instance=profile, prefix='profile')
+            profile_form = timepiece_forms.UserProfileForm(request.user, instance=profile, prefix='profile')
             person_form = timepiece_forms.EditPersonForm(instance=person)
         else:
-            profile_form = timepiece_forms.UserProfileForm(creator=request.user, prefix='profile')
+            profile_form = timepiece_forms.UserProfileForm(request.user, creator=request.user, prefix='profile')
             person_form = timepiece_forms.CreatePersonForm()
 
     context = {
@@ -1322,7 +1336,6 @@ def amounts_billed(request):
     })
     return context
 
-@permission_required('timepiece.view_project')
 @render_with('timepiece/project/list.html')
 @login_required
 def list_projects(request):

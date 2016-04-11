@@ -45,8 +45,10 @@ COLOURS = ["#F0F8FF","#FAEBD7","#00FFFF","#7FFFD4","#F0FFFF","#F5F5DC","#FFE4C4"
 
 ISSUE_DEV_COMPLETED_STATES = ["devdone", "dev done", "tested"]
 
+
 class Client(models.Model):
-    """ a client is a top-level customer of the system, which has their own users etc. """
+    """ a client is a top-level customer of the system,
+    which has their own users etc. """
     name = models.CharField(max_length=255, null=False, blank=True)
     code = models.CharField(max_length=100, null=False, blank=True)
     email = models.EmailField(null=False, blank=False)
@@ -57,6 +59,7 @@ class Client(models.Model):
 
     def __unicode__(self):
         return self.name
+
 
 class Attribute(models.Model):
     ATTRIBUTE_TYPES = (
