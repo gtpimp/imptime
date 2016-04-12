@@ -13,6 +13,7 @@ from django.core.urlresolvers import reverse, resolve
 from django.template import RequestContext
 from django.contrib import messages
 from forms import *
+from timepiece import forms as timepiece_forms
 
 @login_required
 def clients(request, template="invoicing/clients.html", context=None):
@@ -145,7 +146,10 @@ def edit_invoice(request, invoice_id, template="invoicing/edit_invoice.html", co
         payments_formset.save_m2m()
         messages.info(request, "Invoice updated")
         return HttpResponseRedirect(reverse('invoicing:edit_invoice', kwargs={'invoice_id':invoice.id}))
-
+    
+    context['summary_form'] = timepiece_forms.SprintInvoiceReportSettingsForm(
+        invoice.project, bp,
+        initial=timepiece_forms.SprintInvoiceReportSettingsForm.get_initial_data_for_priceless_summary())
     context['form'] = form
     context['items_formset'] = items_formset
     context['payments_formset'] = payments_formset
@@ -395,4 +399,3 @@ def print_statement_from_phantomjs(request,
 
     return render_to_response(template, context,
                               context_instance=RequestContext(request))
-    

@@ -5,13 +5,13 @@
 {% csrf_token %}
 
 <h3>Invoice details</h3>
-<div class="col-md-4">
+<div class="col-md-5">
 
   <div class='form-group{% if form.errors.invoice_number%} has-error{%endif%}'>
     <div class="col-md-6">
       Invoice Number
     </div>
-    <div class="col-md-6">
+    <div class="col-md-5">
       {{ form.invoice_number|add_class:'form-control' }}
     </div>
   </div>
@@ -23,25 +23,25 @@
         <a onclick="if (!confirm('Editing {{invoice.client.name}} \r\nmeans any changes to this invoice will be lost, continue?') ) return false;" href="{% url 'invoicing:edit_client' invoice.client.id %}">(edit)</a>
       {% endif %}
     </div>
-    <div class="col-md-6">
+    <div class="col-md-5">
       {{ form.client|add_class:'form-control' }}
     </div>
   </div>
 
   <div class='form-group{% if form.errors.project%} has-error{%endif%}'>
     <div class="col-md-6">
-      Project (optional)
+      Sprint (optional)
     </div>
-    <div class="col-md-6">
+    <div class="col-md-5">
       {{ form.project|add_class:'form-control' }}
     </div>
   </div>
 
   <div class='form-group{% if form.errors.business%} has-error{%endif%}'>
     <div class="col-md-6">
-      Business (optional if project is specified)
+      Project (optional if project is specified)
     </div>
-    <div class="col-md-6">
+    <div class="col-md-5">
       {{ form.business|add_class:'form-control' }}
     </div>
   </div>
@@ -50,7 +50,7 @@
     <div class="col-md-6">
       Status
     </div>
-    <div class="col-md-6">
+    <div class="col-md-5">
       {{ form.status|add_class:'form-control' }}
     </div>
   </div>
@@ -58,7 +58,7 @@
     <div class="col-md-6">
       Issued at
     </div>
-    <div class="col-md-6">
+    <div class="col-md-5">
       {{ form.issued_at }}
     </div>
   </div>
@@ -66,7 +66,7 @@
     <div class="col-md-6">
       Payment due
     </div>
-    <div class="col-md-6">
+    <div class="col-md-5">
       {{ form.payment_due }}
     </div>
   </div>
@@ -75,7 +75,7 @@
     <div class="col-md-6">
       Invoice note
     </div>
-    <div class="col-md-6">
+    <div class="col-md-5">
       {{ form.invoice_note|add_class:'form-control' }}
     </div>
   </div>
@@ -84,7 +84,7 @@
 
 <div class="col-md-6">
   <div class='form-group{% if form.errors.internal_comment%} has-error{%endif%}'>
-    <div class="col-md-6">
+    <div class="col-md-5">
       Internal Comment (not shown on the invoice)
     </div>
     <div class="col-md-6">
@@ -92,7 +92,7 @@
     </div>
   </div>
   <div class='form-group{% if form.errors.client_order_name%} has-error{%endif%}'>
-    <div class="col-md-6">
+    <div class="col-md-5">
       Order name (optional)
     </div>
     <div class="col-md-6">
@@ -100,7 +100,7 @@
     </div>
   </div>
   <div class='form-group{% if form.errors.client_order_number%} has-error{%endif%}'>
-    <div class="col-md-6">
+    <div class="col-md-5">
       Order number (optional)
     </div>
     <div class="col-md-6">
@@ -172,7 +172,7 @@
 <br/><br/>
 <h3>Extra info</h3>
 <div class='form-group{% if form.errors.footer_terms%} has-error{%endif%}'>
-  <div class="col-md-6">
+  <div class="col-md-5">
     Footer terms (optional)
   </div>
   <div class="col-md-6">
@@ -181,7 +181,7 @@
 </div>
 
 <div class='form-group{% if form.errors.issues_list%} has-error{%endif%}'>
-  <div class="col-md-6">
+  <div class="col-md-5">
     Issues list (optional)
   </div>
   <div class="col-md-6">

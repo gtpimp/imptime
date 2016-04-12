@@ -4492,7 +4492,7 @@ def sprint_report(request, project_id, context=None):
         invoice_form = timepiece_forms.SprintInvoiceReportSettingsForm(project, bp, issues, DATA)
 
         if not DATA.get('report_type', None):
-            return HttpResponse("No permission to generate quotes")
+            return HttpResponse("No permission to generate quotes or invalid POST")
         
         if DATA['report_type'] == 'Quote' and quote_form.is_valid():
             if not bp.has_view_ctc_billable_rates:

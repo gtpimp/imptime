@@ -43,6 +43,17 @@
 </div>
 <br/><br/>
 
+{% if invoice.project.id %}
+<form target="_blank" method="POST" action="{% url 'sprint_report' invoice.project.id %}">
+  <div style="display:block">
+    {{ summary_form }}
+  </div>
+  <input type="hidden" name="report_type" value="Invoice"/>
+  <input class="btn btn-primary" type="submit" value="Sprint summary"/>
+</form>
+{% endif %}
+
+
 <form method="POST" action="{% url 'invoicing:edit_invoice' invoice.id %}">
   <input class="btn btn-primary" type="submit" value="Save"/>
   <a class="btn btn-primary" target="_blank" href="{% url 'invoicing:preview_invoice' invoice.id %}">Preview / Print</a>

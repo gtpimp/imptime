@@ -1219,7 +1219,6 @@ class SprintInvoiceReportSettingsForm(forms.Form):
                                                      widget=CheckboxSelectMultiple)
     include_adhoc_issues = forms.BooleanField(label="Include Adhoc issues", initial=False, required=False)
 
-
     def __init__(self, project, bp, only_these_issues=None, *args, **kwargs):
         super(SprintInvoiceReportSettingsForm, self).__init__(*args, **kwargs)
         self.bp = bp
@@ -1243,7 +1242,25 @@ class SprintInvoiceReportSettingsForm(forms.Form):
             only_these_issues = project.issues.all()
         self.fields['only_these_issue_numbers'].choices = [ (issue.number, issue.number) for issue in only_these_issues ] 
         self.fields['only_these_issue_numbers'].initial = [ issue.number for issue in only_these_issues ] 
-        
+
+    @classmethod
+    def get_initial_data_for_priceless_summary(self):
+        return {'ctc': False,
+                'billable': False,
+                'view_actual_hours': False,
+                'view_budget': False,
+                'issue_assignee': False,
+                'issue_status': False,
+                'only_issues_with_time': True,
+                'start': None,
+                'end': None,
+                'include_features': False,
+                'include_billable_per_user': False,
+                'only_these_statuses': ['all'],
+                'only_assigned_to': ['all'],
+                'include_adhoc_issues': True}
+
+
 class SprintQuoteReportSettingsForm(forms.Form):
 
     preamble_type = forms.ChoiceField( label="Preamble type",

@@ -38,4 +38,5 @@ urlpatterns = patterns(
     url(r'^print_statement_from_phantomjs/$',
         views.print_statement_from_phantomjs,
         name='print_statement_from_phantomjs'),
+
 )

@@ -47,6 +47,9 @@
 <br/>
 
 <div class="page_break""></div>  
+
+{% if settings.billable or settings.ctc or settings.include_billable_per_user or settings.include_features %}
+
 <h3>Costing</h3>
 
 {% if settings.billable or settings.ctc %}
@@ -277,6 +280,8 @@ daily by each individual working on the project.
 
 
 <div class="page_break""></div>  
+
+{% endif %}
 
   <h3>Issues</h3>
   <table class="issues">
