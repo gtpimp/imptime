@@ -45,7 +45,7 @@
 
 {% if invoice.project.id %}
 <form target="_blank" method="POST" action="{% url 'sprint_report' invoice.project.id %}">
-  <div style="display:blank">
+  <div style="display:none">
     {{ summary_form }}
   </div>
   <input type="hidden" name="report_type" value="Invoice"/>
