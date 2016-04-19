@@ -1892,7 +1892,7 @@ class EntriesQuerySet(QuerySet):
             try:
                 rate = Rate.objects.filter(user_id=hours_per_user['user'], project_id=project.id)[0]
             except IndexError:
-                rate = Rate(billable_amount=0, amount=0)
+                rate = Rate(billable_amount=0, amount=0, project=project)
 
             hours += hours_per_user['user_hours']
             ctc += hours_per_user['user_hours'] * rate.amount
