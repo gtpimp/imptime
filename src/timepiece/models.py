@@ -645,7 +645,7 @@ class Project(models.Model):
 
     code = models.CharField(max_length=255,blank=True,null=True)        
     name = models.CharField(max_length=255, db_index=True)
-    budget = models.DecimalField(max_digits=8, decimal_places=2, default=0)
+    budget = models.DecimalField(max_digits=12, decimal_places=2, default=0)
     tracker_url = models.CharField(max_length=255, blank=True, null=False,
         default="")
     business = models.ForeignKey(
@@ -2068,7 +2068,7 @@ class Entry(models.Model):
     extended_comments = models.TextField(blank=True)
     date_updated = models.DateTimeField(auto_now=True)
 
-    hours = models.DecimalField(max_digits=8, decimal_places=2, default=0)
+    hours = models.DecimalField(max_digits=12, decimal_places=2, default=0)
 
     objects = EntryQuerySet.as_manager()
     objects_original = models.Manager()
@@ -2537,7 +2537,7 @@ class ProjectContract(models.Model):
     project = models.ForeignKey(Project, related_name='contracts')
     start_date = models.DateField()
     end_date = models.DateField()
-    num_hours = models.DecimalField(max_digits=8, decimal_places=2,
+    num_hours = models.DecimalField(max_digits=12, decimal_places=2,
                                     default=0)
     status = models.CharField(choices=CONTRACT_STATUS, default='upcomming',
                               max_length=32)
@@ -2583,7 +2583,7 @@ class ContractMilestone(models.Model):
     name = models.CharField(max_length=255)
     start_date = models.DateField()
     end_date = models.DateField()
-    hours = models.DecimalField(max_digits=8, decimal_places=2,
+    hours = models.DecimalField(max_digits=12, decimal_places=2,
                                 default=0)
 
     class Meta(object):
@@ -2655,7 +2655,7 @@ class ContractAssignment(models.Model):
     )
     start_date = models.DateField()
     end_date = models.DateField()
-    num_hours = models.DecimalField(max_digits=8, decimal_places=2,
+    num_hours = models.DecimalField(max_digits=12, decimal_places=2,
                                     default=0)
     min_hours_per_week = models.IntegerField(default=0)
 
@@ -2812,7 +2812,7 @@ class AllocationManager(models.Manager):
 class AssignmentAllocation(models.Model):
     assignment = models.ForeignKey(ContractAssignment, related_name='blocks')
     date = models.DateField()
-    hours = models.DecimalField(max_digits=8, decimal_places=2, default=0)
+    hours = models.DecimalField(max_digits=12, decimal_places=2, default=0)
 
     @property
     def hours_worked(self):
@@ -2836,7 +2836,7 @@ class PersonSchedule(models.Model):
         #unique=True,
         null=True,
     )
-    hours_per_week = models.DecimalField(max_digits=8, decimal_places=2,
+    hours_per_week = models.DecimalField(max_digits=12, decimal_places=2,
                                          default=0)
     end_date = models.DateField()
 
@@ -2871,8 +2871,8 @@ class PersonSchedule(models.Model):
 
 class UserProfile(models.Model):
     user = models.OneToOneField(User, unique=True, related_name='profile')
-    amount = models.DecimalField(max_digits=8, decimal_places=2, default=0)
-    billable_amount = models.DecimalField(max_digits=8, decimal_places=2, default=0)
+    amount = models.DecimalField(max_digits=12, decimal_places=2, default=0)
+    billable_amount = models.DecimalField(max_digits=12, decimal_places=2, default=0)
     project_names_to_ignore = models.TextField(blank=True)
     authenticate_token = models.CharField(max_length=100, blank=True, null=True, help_text="Authentication token remote connections")
     impd_client = models.ForeignKey(Client, null=True, blank=False, related_name='profiles')
@@ -2905,7 +2905,7 @@ class ProjectHours(models.Model):
     week_start = models.DateField(verbose_name='start of week')
     project = models.ForeignKey(Project)
     user = models.ForeignKey(User)
-    hours = models.DecimalField(max_digits=8, decimal_places=2, default=0)
+    hours = models.DecimalField(max_digits=12, decimal_places=2, default=0)
     published = models.BooleanField(default=False)
 
     def __unicode__(self):
@@ -2928,15 +2928,15 @@ class SalaryQuerySet(QuerySet):
         
 class Salary(models.Model):
     user = models.ForeignKey(User)
-    amount = models.DecimalField(max_digits=8,decimal_places=2,default=0)
+    amount = models.DecimalField(max_digits=12,decimal_places=2,default=0)
     date = models.DateField(verbose_name='month')
-    paye = models.DecimalField(max_digits=8,decimal_places=2,default=0)
-    uif = models.DecimalField(max_digits=8,decimal_places=2,default=0)
-    bonus = models.DecimalField(max_digits=8,decimal_places=2,default=0)
-    expenses = models.DecimalField(max_digits=8,decimal_places=2,default=0)
-    leave_accrued = models.DecimalField(max_digits=8,default=0,decimal_places=2, verbose_name="Leave accrued this month")
-    leave_taken = models.DecimalField(max_digits=8,default=0,decimal_places=2, verbose_name="Leave taken this month")
-    sick_days = models.DecimalField(max_digits=8,default=0,decimal_places=2, verbose_name="Sick days taken this month")
+    paye = models.DecimalField(max_digits=12,decimal_places=2,default=0)
+    uif = models.DecimalField(max_digits=12,decimal_places=2,default=0)
+    bonus = models.DecimalField(max_digits=12,decimal_places=2,default=0)
+    expenses = models.DecimalField(max_digits=12,decimal_places=2,default=0)
+    leave_accrued = models.DecimalField(max_digits=12,default=0,decimal_places=2, verbose_name="Leave accrued this month")
+    leave_taken = models.DecimalField(max_digits=12,default=0,decimal_places=2, verbose_name="Leave taken this month")
+    sick_days = models.DecimalField(max_digits=12,default=0,decimal_places=2, verbose_name="Sick days taken this month")
     locked = models.BooleanField(default=False)
 
     objects = SalaryQuerySet.as_manager()
@@ -2990,8 +2990,8 @@ class Rate(models.Model):
     TIME_TRACKING_MODES = [ ('developer', 'Developer'), ('manager', 'Manager'), ('tester', 'Tester') ]
     project = models.ForeignKey(Project, related_name="rate")
     user = models.ForeignKey(User)
-    amount = models.DecimalField(max_digits=8, decimal_places=2, default=0)
-    billable_amount = models.DecimalField(max_digits=8, decimal_places=2, default=0)
+    amount = models.DecimalField(max_digits=12, decimal_places=2, default=0)
+    billable_amount = models.DecimalField(max_digits=12, decimal_places=2, default=0)
     velocity = models.FloatField(default=1)
     work_ratio = models.FloatField(default=0)
     time_tracking_mode = models.CharField(default="developer", max_length=50, choices=TIME_TRACKING_MODES, null=False )
@@ -3017,7 +3017,7 @@ class Rate(models.Model):
         
 class Expense(models.Model):
     date = models.DateField()
-    amount = models.DecimalField(max_digits=8,decimal_places=0,default=0)
+    amount = models.DecimalField(max_digits=12,decimal_places=0,default=0)
     description = models.CharField(max_length=255, blank=True, null=True)
     project = models.ForeignKey(Project, related_name='expense', null=True, blank=True)
     paid = models.BooleanField()
@@ -3028,15 +3028,15 @@ class Expense(models.Model):
 
 class Income(models.Model):
     date = models.DateField()
-    amount = models.DecimalField(max_digits=8,decimal_places=0,default=0)
+    amount = models.DecimalField(max_digits=12,decimal_places=0,default=0)
 
 # class Invoice(models.Model):
 #     description = models.CharField(max_length=255, blank=True, null=True)
 #     date_sent = models.DateField(blank=True,null=True)
 #     date_paid = models.DateField(blank=True,null=True)
-#     amount = models.DecimalField(max_digits=8,decimal_places=0,default=0)
+#     amount = models.DecimalField(max_digits=12,decimal_places=0,default=0)
 #     project = models.ForeignKey(Project, related_name='invoices', null=True, blank=True)
-#     invoice_number = models.DecimalField(max_digits=8, decimal_places=0,default=0)
+#     invoice_number = models.DecimalField(max_digits=12, decimal_places=0,default=0)
 #     paid = models.BooleanField()
 
 #     class Meta:
@@ -3095,8 +3095,8 @@ class Issue(models.Model):
     due_date = models.DateTimeField(default=None, null=True, blank=True)
     auto_created_during_import = models.BooleanField(default=False)
     adhoc = models.BooleanField(default=False)
-    fixed_amount = models.DecimalField(max_digits=8, decimal_places=2, blank=True, null=True)
-    fixed_ctc_amount = models.DecimalField(max_digits=8, decimal_places=2, blank=True, null=True)
+    fixed_amount = models.DecimalField(max_digits=12, decimal_places=2, blank=True, null=True)
+    fixed_ctc_amount = models.DecimalField(max_digits=12, decimal_places=2, blank=True, null=True)
 
     @classmethod
     def get_last_issue_number(self, business):
