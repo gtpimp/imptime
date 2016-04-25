@@ -1275,6 +1275,7 @@ class Project(models.Model):
             stats_per_user[user]['open_status_options'] = sorted(open_status_options)
                 
             stats_per_user[user]['points_closed_non_adhoc'] = _get_total(issue_points.exclude(issue__status__in=open_status_options).filter(issue__adhoc=False).values('user').annotate(total=Sum('points')))
+            stats_per_user[user]['points_closed'] = _get_total(issue_points.exclude(issue__status__in=open_status_options).values('user').annotate(total=Sum('points')))
             stats_per_user[user]['points_open_non_adhoc'] = _get_total(issue_points.filter(issue__status__in=open_status_options).filter(issue__adhoc=False).values('user').annotate(total=Sum('points')))
 
             stats_per_user[user]['adjusted_points_non_adhoc'] = (stats_per_user[user]['points_non_adhoc'] or 0) * (stats_per_user[user]['rate'].full_velocity or 0)
@@ -1293,6 +1294,7 @@ class Project(models.Model):
             
             stats_per_user[user]['hours'] = _get_total(entries.order_by('user').values('user').annotate(total=Sum('hours')))
             stats_per_user[user]['hours_real'] = _get_total(entries.filter(issue__adhoc=False).order_by('user').values('user').annotate(total=Sum('hours')))
+            stats_per_user[user]['hours_closed'] = _get_total(entries.exclude(issue__status__in=open_status_options).order_by('user').values('user').annotate(total=Sum('hours')))
             stats_per_user[user]['hours_closed_real'] = _get_total(entries.filter(issue__adhoc=False).exclude(issue__status__in=open_status_options).order_by('user').values('user').annotate(total=Sum('hours')))
             stats_per_user[user]['hours_adhoc'] = _get_total(entries.filter(issue__adhoc=True).order_by('user').values('user').annotate(total=Sum('hours')))
             
@@ -1301,10 +1303,12 @@ class Project(models.Model):
             stats_per_user[user]['hours_real_billable'] = stats_per_user[user]['rate'].full_rate * float(stats_per_user[user]['hours_real'])
             stats_per_user[user]['hours_adhoc_billable'] = stats_per_user[user]['rate'].full_rate * float(stats_per_user[user]['hours_adhoc'])
 
-            if stats_per_user[user]['hours_closed_real']:
-                stats_per_user[user]['calculated_velocity'] = (float(stats_per_user[user]['hours_closed_real']) or 0) / float((stats_per_user[user]['points_closed_non_adhoc'] or 1))
-            else:
-                stats_per_user[user]['calculated_velocity'] = 1
+            stats_per_user[user]['calculated_velocity'] = (float(stats_per_user[user]['hours']) or 0) / float((stats_per_user[user]['points_closed'] or 1))
+            # if stats_per_user[user]['hours_closed_real']:
+            #     #stats_per_user[user]['calculated_velocity'] = (float(stats_per_user[user]['hours_closed_real']) or 0) / float((stats_per_user[user]['points_closed_non_adhoc'] or 1))
+                
+            # else:
+            #     stats_per_user[user]['calculated_velocity'] = 1
             stats_per_user[user]['calculated_work_ratio'] = 1 # to be fixed (float(stats_per_user[user]['hours_adhoc']) or 0.0) / (float((stats_per_user[user]['hours'] or 1)))
 
             stats_per_user[user]['points_calculated_open_non_adhoc'] = (stats_per_user[user]['points_open_non_adhoc'] or 0) * (stats_per_user[user]['calculated_velocity'] or 1)
