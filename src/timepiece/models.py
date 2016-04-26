@@ -728,6 +728,22 @@ class Project(models.Model):
                                              short_description=short_description)
         return project
 
+    @property
+    def spendable_budget(self):
+        return float(self.budget) * (1-float(self.commission_percentage)/100)
+    
+    def budget_for_role(self, role_name):
+        if not self.budget:
+            return None
+
+        if role_name == "commission":
+            return float(self.budget) * float(self.commission_percentage)/100
+        
+        elif role_name in ["developer", "manager", "tester"]:
+            return self.new_stats['per_role'][role_name]['adjusted_points_billable']
+
+        return None
+    
     def get_points(self):
         user_ids = [user.id for user in self.business.users]
         users = User.objects.filter(id__in = user_ids)
@@ -796,7 +812,7 @@ class Project(models.Model):
                     issue.set_points(user=user, points=estimate)
     
     def refresh_issues_order(self):
-        """ Doesn't re-sort, just makes the numbers sequential """
+        """ Doesn''t re-sort, just makes the numbers sequential """
         order = 1
         for issue in self.issues.all().order_by("order", "order2"):
             old_order = issue.order
@@ -1438,12 +1454,12 @@ class Project(models.Model):
             ctc += entry.atrate
             billed += entry.atbillablerate
 
-        stats['percentage_spent'] = 100 * float(billed)/float(self.budget) if self.budget > 0 else 100.0
+        stats['percentage_spent'] = 100 * float(billed)/float(self.spendable_budget) if self.spendable_budget > 0 else 100.0
         if stats['percentage_spent']>100:
             stats['percentage_spent']=100
         stats['budget_traffic_class'] = get_css_class_for_level(stats['percentage_spent'])
-        stats['amount_under_budget'] = self.budget - billed
-        stats['amount_over_budget'] = billed-self.budget
+        stats['amount_under_budget'] = float(self.spendable_budget) - float(billed)
+        stats['amount_over_budget'] = float(billed) - float(self.spendable_budget)
         stats['total_issue_points'] = number_total(issues)
         stats['percent_tested'] = 100* (number_tested(issues)/stats['total_issue_points'] if stats['total_issue_points'] > 0 else 1)
         stats['percent_dev_done'] = stats['percent_tested'] + 100 * (number_dev_done(issues)/stats['total_issue_points'] if stats['total_issue_points'] > 0 else 0)
@@ -2140,7 +2156,7 @@ class Entry(models.Model):
 
     @property
     def atbillablerate(self):
-        return self.hours * self.billable_rate
+        return float(self.hours) * float(self.billable_rate)
 
     @property
     def billable_rate(self):
@@ -2148,11 +2164,11 @@ class Entry(models.Model):
             return self._billable_rate
         except AttributeError:
             try:
-                self._billable_rate = Rate.objects.get(project=self.issue.project, user=self.user).billable_amount
+                self._billable_rate = float(Rate.objects.get(project=self.issue.project, user=self.user).full_rate)
             except Rate.DoesNotExist:
                 self._billable_rate = 0
             except Rate.MultipleObjectsReturned:
-                self._billable_rate = Rate.objects.filter(project=self.issue.project, user=self.user).first().billable_amount
+                self._billable_rate = float(Rate.objects.filter(project=self.issue.project, user=self.user).first().full_rate)
             return self._billable_rate
 
     @property

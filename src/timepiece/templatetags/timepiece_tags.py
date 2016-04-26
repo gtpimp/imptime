@@ -238,15 +238,49 @@ def get_all_devdone_points_for_project(context, user, project):
         return ""
     return "%.1f" % float(hours)
 
+@register.inclusion_tag('timepiece/traffic_bar.html')
+def budget_traffic_bar(project):
+    if project.stats['amount_under_budget'] > 0:
+        text = "R{:10.2f} left".format(project.stats['amount_under_budget'])
+    else:
+        text = "R{:10.2f} over".format(project.stats['amount_over_budget'])
+    return traffic_bar(project.stats['percentage_spent'], text)
 
-# The first argument *must* be called "context" here.
 @register.inclusion_tag('timepiece/traffic_bar.html', takes_context=True)
+def traffic_bar(percentage, text, tooltips=None, colour=None ):
+    """ tooltips is a list of tuples which get displayed in a table """
+    if colour is None:
+        if percentage > 1:
+            colour = "traffic_red"
+        else:
+            colour = "traffic_green"
+    
+    return { 'width_percent': percentage,
+             'message': text,
+             'colour': colour,
+             'tooltips': tooltips }
+
+
+@register.simple_tag(takes_context=True)
 def calculate_role_data(context, user, project):
-    per_role =  project.new_stats['per_role']
-    data = {}
-    for role_name, role_data in per_role.items():
-        data[role_name] = [ ["Total hours", "%.2f" % (role_data['hours'])], ]
-    context['role_data'] = data
+
+    role_data = project.new_stats['per_role']
+
+    for role_name, data in role_data.items():
+        data['budget'] = project.budget_for_role(role_name)
+    
+    context['role_data'] = { 'per_role' : role_data,
+                             'commission' : {
+                                 'budget': project.budget_for_role("commission")
+                                 }
+                             }
+    return ""
+    
+    # per_role = 
+    # data = {}
+    # for role_name, role_data in per_role.items():
+    #     data[role_name] = role_data[ ["Total hours", "%.2f" % (role_data['hours'])], ]
+    # context['role_data'] = data
 
 # The first argument *must* be called "context" here.
 @register.inclusion_tag('timepiece/traffic_bar.html', takes_context=True)

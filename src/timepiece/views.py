@@ -5375,6 +5375,7 @@ def business_cost_summary(request, business_id, template="timepiece/project/busi
     project_infos = []
     
     running_budget = 0
+    running_spendable_budget = 0
     running_ctc = 0
     running_billable = 0
     running_amount_invoiced = 0
@@ -5385,9 +5386,11 @@ def business_cost_summary(request, business_id, template="timepiece/project/busi
         project_info = { 'project': project,
                          'status': project.status2,
                          'budget': project.budget,
+                         'spendable_budget': project.spendable_budget,
                          'ctc': stats['ctc'],
                          'billable': stats['billed']}
         running_budget += project.budget
+        running_spendable_budget += project.spendable_budget
         running_ctc += stats['ctc']
         running_billable += stats['billed']
         project_infos.append(project_info)
@@ -5973,6 +5976,7 @@ def edit_client(request, client_code, template="timepiece/client/add_client.html
 def blah(request, template="blah.html"):
     context = {}
 
-    context['project'] = timepiece.Project.objects.get(pk=2124)
-    context['project'].calculate_new_stats(request.user)
+    project = timepiece.Project.objects.get(pk=2124)
+    project.calculate_new_stats(request.user)
+    context['project'] = project
     return render_to_response(template, context, context_instance=RequestContext(request))

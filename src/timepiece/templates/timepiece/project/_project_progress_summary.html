@@ -2,28 +2,41 @@
 {% load humanize %}
 
 {% has_permission has_view_budget project.business %}
-Overall:
-{% if project.has_budget %}
-<div class="traffic_bar">
-  <div style="width:{{project.stats.percentage_spent}}%" class="{{project.stats.budget_traffic_class}}">
-    {% if project.stats.amount_under_budget > 0 %}
-    R{{project.stats.amount_under_budget|floatformat:"0"|intcomma}}&nbsp;left
+
+<div class="money_cell money_sprint_banner">
+
+  <p>
+    Budget:
+    {% if project.has_budget %}
+    {% budget_traffic_bar project %}
     {% else %}
-    R{{project.stats.amount_over_budget|floatformat:"0"|intcomma}}&nbsp;over
+    <div style="color:red">No budget</div>
     {% endif %}
-  </div>
+    {% end_permission %}
+  </p>
+
+  {% calculate_role_data user project %}
+
+  <p>
+    <h2>Spendable budget</h2>
+    <ul>
+      <li>Budget given to client : R{{ project.budget|floatformat:"0"|default:0 }}   </li>
+      <li>Internal commission : R{{ role_data.commission.budget|floatformat:"0"|default:0 }}   </li>
+      <li>Spendable budget : R{{ project.spendable_budget|floatformat:"0"|default:0 }}   </li>
+      <li>Total budget from estimates : R{{ project.new_stats.total.total_quote_cost|floatformat:"0"|default:0 }}   </li>
+      <li>Spent : R{{ project.new_stats.total.hours_billable|floatformat:"0"|default:0 }}   </li>
+    </ul>
+  </p>
+  
+  {% for role_name, data in role_data.per_role.items %}
+  <p>
+    
+    <h2>{{ role_name }}</h2>
+    <ul>
+      <li>Budget: R{{ data.budget|floatformat:"0"|default:0 }}</li>
+      <li>Actual : R{{ data.hours_billable|floatformat:"0"|default:0 }}   </li>
+    </ul>
+    {% endfor %}
+  </p>
+
 </div>
-{% else %}
-<div style="color:red">No budget</div>
-{% endif %}
-{% end_permission %}
-
-
-{% calculate_role_data user project %}
-{% for role_name, data in role_data.items %}
-<h2>{{ role_name }}</h2>
-<ul>
-  <li>Budget :  </li>
-</ul>
-{% endfor %}
-

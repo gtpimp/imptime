@@ -1,4 +1,15 @@
+{% load static %}
+<head>
 
+          <link type="text/css" rel="stylesheet" href="{% static 'css/jquery-ui.css' %}" />
+	<link type="text/css" rel="stylesheet" media="screen" href="{% static 'css/books.css' %}" />
+	<link type="text/css" rel="stylesheet" href="{% static 'css/timepiece.css' %}" />
+        <link type="text/css" rel="stylesheet" href="{% static 'timepiece/css/jquery.contextmenu.css' %}" />
+        <link href="{% static 'font/durasans.font' %}" rel='stylesheet' type='text/css'>
+        <link type="text/css" rel="stylesheet" href="{% static 'timepiece/css/bootstrap-datetimepicker.min.css' %}" />
+        <link type="text/css" rel="stylesheet" href="{% static 'css/impd.css' %}" />
+
+</head>
 
 {% load timepiece_tags %}
 {% include "timepiece/project/_project_banner.html" %}

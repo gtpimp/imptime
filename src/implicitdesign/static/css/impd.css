@@ -232,6 +232,14 @@ a.ico-calc {
     font-size: 12px;
 }
 
+.money_sprint_banner p {
+    min-width: 100px;
+}
+
+.money_sprint_banner .special_traffic_text {
+    color: #fff;
+}
+
 .sprint_list {
     overflow-y: auto;
     height: 79%;
