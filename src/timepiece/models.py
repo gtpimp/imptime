@@ -1168,13 +1168,6 @@ class Project(models.Model):
                                                'rate':rate.full_rate,
                                                'velocity_adjusted_rate':float(rate.full_velocity)*float(rate.full_rate)}
 
-                feature = issue.feature
-                if feature is None:
-                    feature = "na"
-                if feature not in stats['features']:
-                    stats['features'][feature] = 0
-                stats['features'][feature] += min_cost
-
                 dev_estimate_cost += min_cost
                 dev_estimate_hours += points
 
@@ -1203,6 +1196,13 @@ class Project(models.Model):
                         
                 total_estimated_hours += points or 0
                 issue_data['combined_cost_with_scope_creep'] = issue_data['combined_cost']
+
+                feature = issue.feature
+                if feature is None:
+                    feature = "na"
+                if feature not in stats['features']:
+                    stats['features'][feature] = 0
+                stats['features'][feature] += issue_data['combined_cost']
 
         stats['total_estimate_min'] = dev_estimate_cost + estimated_management_cost + estimated_testing_cost
         stats['total_estimate_max'] = stats['total_estimate_min']
