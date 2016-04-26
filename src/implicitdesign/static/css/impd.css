@@ -201,7 +201,7 @@ a.ico-calc {
 
 .current_sprint_details {
     background-color: #413d44;
-    height: 60px;
+    /*height: 60px;*/
 }
 
 .current_sprint_details .active_project_title {
@@ -222,6 +222,16 @@ a.ico-calc {
     padding: 0 10px 0 25px;
 }
 
+.money_sprint_banner {
+    background-color: #324972;
+    color: #ffffff;
+    padding: 15px;
+}
+
+.money_sprint_banner h2 {
+    font-size: 12px;
+}
+
 .sprint_list {
     overflow-y: auto;
     height: 79%;
@@ -232,8 +242,6 @@ a.ico-calc {
     background: #13102c;
     border-bottom: 8px solid #413d44;
 }
-
-
 
 
 .sprint_menu_trigger {

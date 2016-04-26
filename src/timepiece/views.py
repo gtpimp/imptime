@@ -5970,3 +5970,9 @@ def edit_client(request, client_code, template="timepiece/client/add_client.html
 
     return render_to_response(template, context, context_instance=RequestContext(request))
 
+def blah(request, template="blah.html"):
+    context = {}
+
+    context['project'] = timepiece.Project.objects.get(pk=2124)
+    context['project'].calculate_new_stats(request.user)
+    return render_to_response(template, context, context_instance=RequestContext(request))

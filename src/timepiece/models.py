@@ -44,6 +44,8 @@ from datetime import timedelta
 COLOURS = ["#F0F8FF","#FAEBD7","#00FFFF","#7FFFD4","#F0FFFF","#F5F5DC","#FFE4C4","#FFEBCD","#0000FF","#8A2BE2","#A52A2A","#DEB887","#5F9EA0","#7FFF00","#D2691E","#FF7F50","#6495ED","#FFF8DC","#DC143C","#00FFFF","#00008B","#008B8B","#B8860B","#A9A9A9","#006400","#BDB76B","#556B2F","#FF8C00","#9932CC","#E9967A","#8FBC8F","#483D8B","#2F4F4F","#00CED1","#9400D3","#FF1493","#00BFFF","#696969","#1E90FF","#B22222","#FFFAF0","#228B22","#FF00FF","#DCDCDC","#F8F8FF","#FFD700","#DAA520","#BEBEBE","#808080","#00FF00","#008000","#ADFF2F","#F0FFF0","#FF69B4","#CD5C5C","#4B0082","#FFFFF0","#F0E68C","#E6E6FA","#FFF0F5","#7CFC00","#FFFACD","#ADD8E6","#F08080","#E0FFFF","#FAFAD2","#D3D3D3","#90EE90","#FFB6C1","#FFA07A","#20B2AA","#87CEFA","#778899","#B0C4DE","#00FF00","#32CD32","#FAF0E6","#FF00FF","#B03060","#7F0000","#66CDAA","#0000CD","#BA55D3","#9370DB","#3CB371","#7B68EE","#00FA9A","#48D1CC","#C71585","#191970","#F5FFFA","#FFE4E1","#FFE4B5","#FFDEAD","#000080","#FDF5E6","#808000","#6B8E23","#FFA500","#FF4500","#DA70D6","#EEE8AA","#98FB98","#AFEEEE","#DB7093","#FFEFD5","#FFDAB9","#CD853F","#FFC0CB","#DDA0DD","#B0E0E6","#A020F0","#7F007F","#FF0000","#BC8F8F","#4169E1","#8B4513","#FA8072","#F4A460","#2E8B57","#FFF5EE","#A0522D","#C0C0C0","#87CEEB","#6A5ACD","#708090","#FFFAFA","#00FF7F","#4682B4","#D2B48C","#008080","#D8BFD8","#FF6347","#40E0D0","#EE82EE","#F5DEB3","#F5F5F5","#FFFF00","#9ACD32"]
 
 ISSUE_DEV_COMPLETED_STATES = ["devdone", "dev done", "tested"]
+FEATURE_NAMES_FOR_MANAGEMENT_ISSUES = [ "management", ]
+FEATURE_NAMES_FOR_TESTING_ISSUES = [ "testing", ]
 
 
 class Client(models.Model):
@@ -812,6 +814,12 @@ class Project(models.Model):
     def typical_estimate_hours(self):
         return self.estimate_stats()['total_estimate_hours_max']
 
+    def role_for_user(self, user):
+        rate = Rate.objects.filter(user=user, project=self).first()
+        if not rate:
+            return None
+        return rate.time_tracking_mode
+    
     @property
     def scheduled_events(self):
         return self.calendar_events.all().filter(Q(event_type='planned')|Q(event_type='meeting'))
@@ -1237,10 +1245,11 @@ class Project(models.Model):
                                        'projected_billable': 0, 'points_estimated_open_non_adhoc_billable':0,
                                        'projected_estimated_billable':0,
                                        'adjusted_points_billable':0},
-                           'manager_and_tester_combined': { 'hours':0, 'hours_billable':0, 'points_calculated_open_non_adhoc_billable': 0,
-                                                            'projected_billable': 0, 'points_estimated_open_non_adhoc_billable':0,
-                                                            'projected_estimated_billable':0,
-                                                            'adjusted_points_billable':0 }}
+                           # 'manager_and_tester_combined': { 'hours':0, 'hours_billable':0, 'points_calculated_open_non_adhoc_billable': 0,
+                           #                                  'projected_billable': 0, 'points_estimated_open_non_adhoc_billable':0,
+                           #                                  'projected_estimated_billable':0,
+                           #                                  'adjusted_points_billable':0 }
+                                                            }
 
         users = self.business.get_users_allowed_to_estimate_on_business(current_user)
 
@@ -1267,10 +1276,13 @@ class Project(models.Model):
 
             if rate.time_tracking_mode == 'developer':
                 open_status_options = Issue.STATUSES_INDICATING_DEV_INCOMPLETE
+                exclude_features_for_role = FEATURE_NAMES_FOR_MANAGEMENT_ISSUES + FEATURE_NAMES_FOR_TESTING_ISSUES
             elif rate.time_tracking_mode == 'manager':
                 open_status_options = Issue.STATUSES_INDICATING_MANAGER_INCOMPLETE
+                exclude_features_for_role = []
             elif rate.time_tracking_mode == 'tester':
                 open_status_options = Issue.STATUSES_INDICATING_TESTER_INCOMPLETE
+                exclude_features_for_role = []
 
             stats_per_user[user]['open_status_options'] = sorted(open_status_options)
                 
@@ -1293,6 +1305,9 @@ class Project(models.Model):
             stats_per_user[user]['adjusted_points_comparative_billable'] = stats_per_user[user]['adjusted_points_comparative_non_adhoc'] * float(stats_per_user[user]['rate'].full_rate)
             
             stats_per_user[user]['hours'] = _get_total(entries.order_by('user').values('user').annotate(total=Sum('hours')))
+
+            stats_per_user[user]['hours_for_role'] = _get_total(entries.order_by('user').exclude(issue__feature__name__in=exclude_features_for_role).values('user').annotate(total=Sum('hours')))
+            
             stats_per_user[user]['hours_real'] = _get_total(entries.filter(issue__adhoc=False).order_by('user').values('user').annotate(total=Sum('hours')))
             stats_per_user[user]['hours_closed'] = _get_total(entries.exclude(issue__status__in=open_status_options).order_by('user').values('user').annotate(total=Sum('hours')))
             stats_per_user[user]['hours_closed_real'] = _get_total(entries.filter(issue__adhoc=False).exclude(issue__status__in=open_status_options).order_by('user').values('user').annotate(total=Sum('hours')))
@@ -1303,7 +1318,7 @@ class Project(models.Model):
             stats_per_user[user]['hours_real_billable'] = stats_per_user[user]['rate'].full_rate * float(stats_per_user[user]['hours_real'])
             stats_per_user[user]['hours_adhoc_billable'] = stats_per_user[user]['rate'].full_rate * float(stats_per_user[user]['hours_adhoc'])
 
-            stats_per_user[user]['calculated_velocity'] = (float(stats_per_user[user]['hours']) or 0) / float((stats_per_user[user]['points_closed'] or 1))
+            stats_per_user[user]['calculated_velocity'] = (float(stats_per_user[user]['hours_for_role']) or 0) / float((stats_per_user[user]['points_closed'] or 1))
             # if stats_per_user[user]['hours_closed_real']:
             #     #stats_per_user[user]['calculated_velocity'] = (float(stats_per_user[user]['hours_closed_real']) or 0) / float((stats_per_user[user]['points_closed_non_adhoc'] or 1))
                 
@@ -1329,9 +1344,9 @@ class Project(models.Model):
             stats_per_role[rate.time_tracking_mode]['projected_estimated_billable'] += float(stats_per_user[user]['points_estimated_open_non_adhoc_billable']) + float(stats_per_user[user]['hours_billable'])
             stats_per_role[rate.time_tracking_mode]['adjusted_points_billable'] += float(stats_per_user[user]['adjusted_points_billable'])
 
-        stats_per_role['manager_and_tester_combined']['projected_billable'] = stats_per_role['manager']['projected_billable'] + stats_per_role['tester']['projected_billable']
-        stats_per_role['manager_and_tester_combined']['projected_estimated_billable'] = stats_per_role['manager']['projected_estimated_billable'] + stats_per_role['tester']['projected_estimated_billable']
-        stats_per_role['manager_and_tester_combined']['adjusted_points_billable'] = stats_per_role['manager']['adjusted_points_billable'] + stats_per_role['tester']['adjusted_points_billable']
+        # stats_per_role['manager_and_tester_combined']['projected_billable'] = stats_per_role['manager']['projected_billable'] + stats_per_role['tester']['projected_billable']
+        # stats_per_role['manager_and_tester_combined']['projected_estimated_billable'] = stats_per_role['manager']['projected_estimated_billable'] + stats_per_role['tester']['projected_estimated_billable']
+        # stats_per_role['manager_and_tester_combined']['adjusted_points_billable'] = stats_per_role['manager']['adjusted_points_billable'] + stats_per_role['tester']['adjusted_points_billable']
                     
         total_stats = {}
 

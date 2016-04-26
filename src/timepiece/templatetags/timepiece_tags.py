@@ -241,6 +241,15 @@ def get_all_devdone_points_for_project(context, user, project):
 
 # The first argument *must* be called "context" here.
 @register.inclusion_tag('timepiece/traffic_bar.html', takes_context=True)
+def calculate_role_data(context, user, project):
+    per_role =  project.new_stats['per_role']
+    data = {}
+    for role_name, role_data in per_role.items():
+        data[role_name] = [ ["Total hours", "%.2f" % (role_data['hours'])], ]
+    context['role_data'] = data
+
+# The first argument *must* be called "context" here.
+@register.inclusion_tag('timepiece/traffic_bar.html', takes_context=True)
 def running_progress_for_user_in_sprint(context, user, project):
 
     try:
@@ -266,8 +275,11 @@ def running_progress_for_user_in_sprint(context, user, project):
     else:
         data['message'] = 'V = %.2f' % project.new_stats['per_user'][user]['calculated_velocity']
 
-        data['tooltips'] = [ ["Total hours", "%.2f" % (project.new_stats['per_user'][user]['hours'] or 0)],
-                             ["Total no-adhoc hours", "%.2f"%(project.new_stats['per_user'][user]['hours_real'] or 0), "(estimated %.2f hours)"%(project.new_stats['per_user'][user]['points_non_adhoc'] or 0)],
+        data['tooltips'] = [ ["Role", project.role_for_user(user)],
+                             ["Total hours", "%.2f" % (project.new_stats['per_user'][user]['hours'] or 0)],
+                             ["Total role appropriate hours", "%.2f" % (project.new_stats['per_user'][user]['hours_for_role'] or 0)],
+                             ["Total other hours", "%.2f" % ((float(project.new_stats['per_user'][user]['hours'] or 0)) - (float(project.new_stats['per_user'][user]['hours_for_role'] or 0)))],
+                             ["Total non-adhoc hours", "%.2f"%(project.new_stats['per_user'][user]['hours_real'] or 0), "(estimated %.2f hours)"%(project.new_stats['per_user'][user]['points_non_adhoc'] or 0)],
                              ["Total adhoc hours", "%.2f" % (project.new_stats['per_user'][user]['hours_adhoc'] or 0)],
                              ["Closed issue hours","%.2f"%(project.new_stats['per_user'][user]['hours_closed'] or 0), "(estimated %.2f hours)"%(project.new_stats['per_user'][user]['points_closed_non_adhoc'] or 0)],
                              ["Estimated remaining hours", "%.2f" % (project.new_stats['per_user'][user]['points_open_non_adhoc'] or 0)],
