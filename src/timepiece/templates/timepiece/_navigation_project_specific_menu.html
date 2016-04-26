@@ -22,6 +22,7 @@
     <li class="divider"></li>
     {% has_permission has_view_ctc_billable_rates business %}
     {% has_permission has_view_invoices business %}
+    {% has_permission has_view_ctc_rates business %}
     {% if project.id %}
     <li>
       <a
@@ -37,6 +38,7 @@
       </a>
     </li>
     {% endif %}
+    {% end_permission %}
     {% end_permission %}
     {% end_permission %}
 

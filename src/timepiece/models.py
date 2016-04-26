@@ -2007,22 +2007,42 @@ class EntryQuerySet(EntriesQuerySet):
         return self.filter(end_time__isnull=True)
 
     def is_closed(self):
-        return self.filter(end_time__isnull=False)    
+        return self.filter(end_time__isnull=False)
+
+    def timespan(self, from_date, to_date=None, span='month'):
+
+        if span and not to_date:
+            diff = None
+            if span == 'month':
+                diff = relativedelta(months=1)
+            if span == 'week':
+                diff = relativedelta(days=7)
+            if span == 'day':
+                diff = relativedelta(days=1)
+            if diff is not None:
+                to_date = from_date + diff
+
+        datesQ = Q()
+        if from_date:
+            datesQ &= Q(end_time__gte=from_date)
+        if to_date:
+            datesQ &= Q(end_time__lt=to_date) if to_date else Q()
+        return self.filter(datesQ)
     
-    # def date_trunc(self, key='month', extra_values=None):
-    #     select = {"day": {"date": """DATE_TRUNC('day', end_time)"""},
-    #               "week": {"date": """DATE_TRUNC('week', end_time)"""},
-    #               "month": {"date": """DATE_TRUNC('month', end_time)"""},
-    #     }
-    #     basic_values = (
-    #         'user', 'date', 'user__first_name', 'user__last_name',
-    #     )
-    #     extra_values = extra_values or ()
-    #     qs = self.extra(select=select[key])
-    #     qs = qs.values(*basic_values + extra_values)
-    #     qs = qs.annotate(hours=Sum('hours')).order_by('user__last_name',
-    #                                                   'date')
-    #     return qs
+    def date_trunc(self, key='month', extra_values=None):
+        select = {"day": {"date": """DATE_TRUNC('day', end_time)"""},
+                  "week": {"date": """DATE_TRUNC('week', end_time)"""},
+                  "month": {"date": """DATE_TRUNC('month', end_time)"""},
+        }
+        basic_values = (
+            'user', 'date', 'user__first_name', 'user__last_name',
+        )
+        extra_values = extra_values or ()
+        qs = self.extra(select=select[key])
+        qs = qs.values(*basic_values + extra_values)
+        qs = qs.annotate(hours=Sum('hours')).order_by('user__last_name',
+                                                      'date')
+        return qs
 
     # def timespan(self, from_date, to_date=None, span=None):
     #     """
@@ -2048,17 +2068,15 @@ class EntryQuerySet(EntriesQuerySet):
     #         datesQ &= Q(end_time__lt=to_date) if to_date else Q()
     #     return self.filter(datesQ)
 
-# class EntryManagerBase(QuerySetManager):
+#  class EntryManagerBase(QuerySetManager):
 #     def __init__(self, *args, **kwargs):
 #         super(EntryManagerBase, self).__init__(EntryQuerySet, *args, **kwargs)
 
 #     def date_trunc(self, key='month', extra_values=()):
 #         return self.get_query_set().date_trunc(key, extra_values)
 
-#     def timespan(self, from_date, to_date=None, span='month'):
-#         return self.get_query_set().timespan(from_date, to_date, span)
 
-# class EntryManager(EntryManagerBase):
+# class EntryManager(models.Manager):
 #     pass
     # def get_query_set(self):
     #     qs = EntryQuerySet(self.model)
@@ -2085,6 +2103,7 @@ class EntryQuerySet(EntriesQuerySet):
 class EntryQuerySetForReporting(QuerySet):
     def total_hours(self):
         return self.aggregate(total_hours=Sum('hours'))['total_hours']
+
 
 class Entry(models.Model):
     """
