@@ -26,7 +26,7 @@
     {% if project.id %}
     <li>
       <a
-         href="#" onclick="imp.projects.show_project_cost_summary({{project.id}}, '{% url 'project_cost_summary' project.id %}'); return false;">
+         href="#" onclick="imp.projects.show_project_cost_summary({{project.id}}, '{% url 'project_cost_summary' project.id %}'); $(this).parents('.nav-link.open').removeClass('open'); return false;">
         {{project.name}} cost summary
       </a>
     </li>
