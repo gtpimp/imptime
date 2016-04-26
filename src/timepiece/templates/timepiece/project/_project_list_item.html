@@ -16,5 +16,21 @@
     <img style="display:none" class="loading" src="{{STATIC_URL}}/images/icons/loadingAnimation.gif"/> 
   </div>
   <div class="project_number">#{{project.id}} - {{project}}</div>
+
+  <p>
+    <small>
+      <span class="readonly_value"> 
+        {{ project.status2 }}
+      </span>
+
+      {% has_permission has_edit_project_states project.business %}
+      <div class="inline_editor" style="display:none">
+        Filter: <br/><input class="filter" type="text" name="filter"/>
+        <div class='transient_selection'>
+        </div>
+      </div>
+      {% end_permission %}
+    </small>
+  </p>
   
 </div>
