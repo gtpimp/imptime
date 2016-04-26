@@ -9459,18 +9459,18 @@ div.traffic_tooltip {
     text-align: center;
 }
 
-.traffic_bar .traffic_green {
+.traffic_green {
     background-color:green;
 }
-.traffic_bar .traffic_yellow {
+.traffic_yellow {
     background-color:yellow;
     color:#000000;
 }
-.traffic_bar .traffic_red {
+.traffic_red {
     background-color:red;
 }
 
-.project_card  .traffic_neutral {
+.traffic_neutral {
     background-color:#aaaaff;
 }
 

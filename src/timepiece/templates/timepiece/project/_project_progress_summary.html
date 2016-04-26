@@ -17,14 +17,29 @@
 
   {% calculate_role_data user project %}
 
+  <br/>
+  <p>
+    <div class="tip">
+      All numbers include velocity and scope creep
+    </div>
+  </p>
+  
   <p>
     <h2>Spendable budget</h2>
     <ul>
-      <li>(Budget based on estimates : R{{ project.new_stats.total.total_quote_cost|floatformat:"0"|default:0 }})</li>
       <li>Budget given to client : R{{ project.budget|floatformat:"0"|default:0 }}   </li>
       <li>Internal commission : R{{ role_data.commission.budget|floatformat:"0"|default:0 }}   </li>
       <li>Spendable budget : R{{ project.spendable_budget|floatformat:"0"|default:0 }}   </li>
-      <li>Spent : R{{ project.new_stats.total.hours_billable_core_rate|floatformat:"0"|default:0 }}   </li>
+      <li>
+        <span class="{% if project.spendable_budget > project.new_stats.total.unadjusted_points_billable_core_rate %}traffic_green{% else %}traffic_red{% endif %}">
+          (Estimated cost based on estimates : R{{ project.new_stats.total.unadjusted_points_billable_core_rate|floatformat:"0"|default:0 }})
+        </span>
+      </li>
+      <li>
+        <span class="{% if project.spendable_budget > project.new_stats.total.hours_billable_core_rate %}traffic_green{% else %}traffic_red{% endif %}">
+          Spent : R{{ project.new_stats.total.hours_billable_core_rate|floatformat:"0"|default:0 }}
+        </span>
+      </li>
     </ul>
   </p>
   
@@ -34,7 +49,11 @@
     <h2>{{ role_name }}</h2>
     <ul>
       <li>Budget: R{{ data.budget|floatformat:"0"|default:0 }}</li>
-      <li>Actual : R{{ data.hours_billable_core_rate|floatformat:"0"|default:0 }}   </li>
+      <li>
+        <span class="{% if data.budget > data.hours_billable_core_rate %}traffic_green{% else %}traffic_red{% endif %}">
+          Actual : R{{ data.hours_billable_core_rate|floatformat:"0"|default:0 }}
+        </span>
+      </li>
     </ul>
     {% endfor %}
   </p>
