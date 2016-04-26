@@ -26,7 +26,7 @@
     <li>
       <a
          href="#" onclick="imp.projects.show_project_cost_summary({{project.id}}, '{% url 'project_cost_summary' project.id %}'); return false;">
-        This sprint cost summary
+        {{project.name}} cost summary
       </a>
     </li>
     {% endif %}

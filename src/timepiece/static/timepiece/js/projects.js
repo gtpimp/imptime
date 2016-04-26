@@ -49,6 +49,7 @@ imp.show_business_history = function(url) {
 
 imp.popup = function(url) {
     if (imp.popup_dialog) {
+        $(".project_card_dialog_container").dialog();
         $(".project_card_dialog_container").find(".dialog_content").html("loading...");
 	$(".project_card_dialog_container").find(".dialog_content").load(url);
     } else {
