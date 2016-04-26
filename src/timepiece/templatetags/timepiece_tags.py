@@ -250,7 +250,7 @@ def budget_traffic_bar(project):
 def traffic_bar(percentage, text, tooltips=None, colour=None ):
     """ tooltips is a list of tuples which get displayed in a table """
     if colour is None:
-        if percentage > 1:
+        if percentage > 100:
             colour = "traffic_red"
         else:
             colour = "traffic_green"
