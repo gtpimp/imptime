@@ -5980,3 +5980,14 @@ def blah(request, template="blah.html"):
     project.calculate_new_stats(request.user)
     context['project'] = project
     return render_to_response(template, context, context_instance=RequestContext(request))
+
+def project_cost_summary(request, project_id, template="timepiece/project/project_cost_summary.html"):
+    context = {}
+    project = timepiece.Project.objects.get(pk=project_id)
+    bp = timepiece.BusinessPermissions.for_user(request.user, project.business)
+    if not bp.has_view_ctc_billable_rates:
+        return HttpResponse("No permission to do that")
+
+    project.calculate_new_stats(request.user)
+    context['project'] = project
+    return render_to_response(template, context, context_instance=RequestContext(request))

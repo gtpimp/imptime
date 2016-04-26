@@ -223,8 +223,7 @@ a.ico-calc {
 }
 
 .money_sprint_banner {
-    background-color: #324972;
-    color: #ffffff;
+    color: #000;
     padding: 15px;
 }
 
@@ -234,10 +233,15 @@ a.ico-calc {
 
 .money_sprint_banner p {
     min-width: 100px;
+    text-align: left;
 }
 
 .money_sprint_banner .special_traffic_text {
     color: #fff;
+}
+
+.money_sprint_banner ul {
+    list-style: none;
 }
 
 .sprint_list {

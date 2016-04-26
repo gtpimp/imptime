@@ -1303,14 +1303,14 @@ class Project(models.Model):
             stats_per_user[user]['adjusted_points_billable'] = stats_per_user[user]['adjusted_points_non_adhoc'] * float(stats_per_user[user]['rate'].full_rate)
 
             stats_per_user[user]['unadjusted_points_billable_core_rate_no_scope_creep'] = \
-              stats_per_user[user]['points_non_adhoc'] * \
+              (stats_per_user[user]['points_non_adhoc'] or 0) * \
               (stats_per_user[user]['rate'].velocity or 0) * \
-              float(stats_per_user[user]['rate'].billable_amount)
+              float(stats_per_user[user]['rate'].billable_amount or 0)
 
             stats_per_user[user]['unadjusted_points_billable_core_rate'] = \
-              stats_per_user[user]['points_non_adhoc'] * \
+              (stats_per_user[user]['points_non_adhoc'] or 0) * \
               (stats_per_user[user]['rate'].full_velocity or 0) * \
-              float(stats_per_user[user]['rate'].billable_amount)
+              float(stats_per_user[user]['rate'].billable_amount or 0)
 
               
             stats_per_user[user]['points_comparative_non_adhoc'] = _get_total(issue_points_comparative.filter(issue__adhoc=False).values('user').annotate(total=Sum('points')))

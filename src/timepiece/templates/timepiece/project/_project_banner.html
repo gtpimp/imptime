@@ -1,7 +1,9 @@
 {% load timepiece_tags %}
 
 <div class="sprint_banner">
+  {% comment %}
   <span class="sprint_menu_trigger"><img src="{{STATIC_URL}}/images/implicitdesign/menu.png"/></span>
+  {% endcomment %}
 
   <span class="sprint_banner_menu">
     {% has_permission has_add_issue project.business %}
@@ -30,6 +32,3 @@
 
   
 </div>
-
-{% include "timepiece/project/_project_progress_summary.html" %}
-

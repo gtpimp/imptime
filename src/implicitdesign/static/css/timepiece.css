@@ -9459,18 +9459,34 @@ div.traffic_tooltip {
     text-align: center;
 }
 
-.traffic_green {
+
+.generic_green {
+    background-color: #97CAAE;
+    padding: 2px;
+}
+
+.generic_yellow {
+    background-color: #A6A400;
+    padding: 2px;
+}
+
+.generic_red {
+    background-color: #E59999;
+    padding: 2px;
+}
+.traffic_bar .traffic_green {
     background-color:green;
 }
-.traffic_yellow {
+
+.traffic_bar .traffic_yellow {
     background-color:yellow;
     color:#000000;
 }
-.traffic_red {
+.traffic_bar .traffic_red {
     background-color:red;
 }
 
-.traffic_neutral {
+.project_card  .traffic_neutral, .generic_neutral {
     background-color:#aaaaff;
 }
 

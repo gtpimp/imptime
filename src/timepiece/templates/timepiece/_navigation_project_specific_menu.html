@@ -22,19 +22,29 @@
     <li class="divider"></li>
     {% has_permission has_view_ctc_billable_rates business %}
     {% has_permission has_view_invoices business %}
+    {% if project.id %}
+    <li>
+      <a
+         href="#" onclick="imp.projects.show_project_cost_summary({{project.id}}, '{% url 'project_cost_summary' project.id %}'); return false;">
+        This sprint cost summary
+      </a>
+    </li>
+    {% endif %}
     {% if business.id %}
     <li>
       <a target="_blank" 
-         href="{% url 'business_cost_summary' business.id %}">Cost summary
+         href="{% url 'business_cost_summary' business.id %}">All cost summaries
       </a>
     </li>
     {% endif %}
     {% end_permission %}
     {% end_permission %}
 
+    <li class="divider"></li>
+    
     {% has_permission has_view_documents business %} 
     <li>
-      <a href="{% url 'view_business_documents' business.id %}">Project documents2</a>
+      <a href="{% url 'view_business_documents' business.id %}">Project documents</a>
     </li>
     {% end_permission %}
     <li class="divider"></li>

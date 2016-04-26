@@ -684,6 +684,7 @@ urlpatterns = patterns('',
                        url(r'^client/(?P<client_code>.*)$', views.edit_client, {}, name='edit_client'),
 
                        url(r'^blah$', views.blah, {}, name='blah'),
+                       url(r'^project_cost_summary/(?P<project_id>\d+)$', views.project_cost_summary, {}, name='project_cost_summary'),
                        
                        
 

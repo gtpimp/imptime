@@ -6,7 +6,18 @@
 
 {% block title %}Cost summary for {{business}}{% endblock %}
 
+{% block extrajs %}
+  <script type="text/javascript" src="{{ STATIC_URL }}timepiece/js/projects.js"></script>
+  <script type="text/javascript" src="{{ STATIC_URL }}timepiece/js/issues.js"></script>
+ {% endblock extrajs %}
+
 {% block content %}
+
+<div style="display:none">
+  <div class="project_card_dialog_container">
+    <div class="dialog_content"></div>
+  </div>
+</div>
 
 <h1>Cost summary for {{business}}</h1>
 
@@ -22,6 +33,7 @@
     <th>Invoiced (exVAT)</th>
     <th>Paid</th>
     <th>Owed</th>
+    <th></th>
   </thead>
   <tbody>
   {% for project_info in project_infos %}
@@ -38,6 +50,11 @@
       <td>R{{project_info.invoiced|floatformat:"0"|intcomma}}</td>
       <td>R{{project_info.paid|floatformat:"0"|intcomma}}</td>
       <td>R{{project_info.owed|floatformat:"0"|intcomma}}</td>
+      <td>
+        <a class="btn btn-primary" href="#" onclick="imp.projects.show_project_cost_summary({{project_info.project.id}}, '{% url 'project_cost_summary' project_info.project.id %}'); return false;">
+          Breakdown
+        </a>
+      </td>
     </tr>
   {% endfor %}
 
