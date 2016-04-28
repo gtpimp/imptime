@@ -236,6 +236,10 @@ a.ico-calc {
     text-align: left;
 }
 
+.money_sprint_banner .short_traffic {
+    background-color: #cccccc;
+}
+
 .money_sprint_banner .special_traffic_text {
     color: #fff;
 }
