@@ -7,7 +7,7 @@ from timepiece.interface_plugin import get_interface_plugin
 from orgnode import makelist_from_file, makelist_from_string
 from django.db import transaction
 from django.contrib.auth.models import User
-from timepiece.models import Business, Project, Activity, Entry, Location, Attribute, Issue
+from timepiece.models import Business, Project, Activity, Entry, Location, Attribute, Issue, Feature
 import logging
 logger = logging.getLogger(__name__)
 
@@ -182,7 +182,7 @@ class Extractor(object):
         #     project_type = Attribute.objects.get(type='project-type', label='default')
         # except:
         #     project_type = Attribute.objects.create(type='project-type', label='default', billable=True, enable_timetracking=True)
-        
+
         try:
             project = Project.get_project_from_name(name=sprint_name, business=business)
         except Project.DoesNotExist:
@@ -200,14 +200,17 @@ class Extractor(object):
             except Issue.MultipleObjectsReturned:
                 issue = Issue.objects.filter(number=issue_id, project__business=project.business).order_by("-interface_plugin_number", "-id")[0]
 
+        feature, subject = self._unpack_subject(orgnode.Heading(), project.business)
+                
         if issue_id is None or issue is None:
             # Auto create the issue
             try:
                 issue, is_new = Issue.objects.get_or_create(project=project,
-                                                            subject=orgnode.Heading(),
+                                                            subject=subject,
                                                             defaults={'auto_created_during_import':True,
                                                                       'adhoc':True,
                                                                       'status':'imported',
+                                                                      'feature':feature,
                                                                       'assigned_to':timesheet_user,
                                                                       'number':Issue.get_next_issue_number(project.business),
                                                                       'description':orgnode.CleanBody(),
@@ -239,3 +242,12 @@ class Extractor(object):
                 issues_processed.add(issue)
 
             self.status['num_entries_refreshed'] += 1
+
+    def _unpack_subject(self, raw_subject, business):
+        if "|" in raw_subject:
+            feature_name, subject = raw_subject.split("|")
+            feature = Feature.objects.get_or_create(name=feature_name, business=business)[0]
+        else:
+            feature, subject = None, raw_subject
+        return feature, subject
+    
