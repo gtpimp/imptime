@@ -44,11 +44,16 @@ from datetime import timedelta
 COLOURS = ["#F0F8FF","#FAEBD7","#00FFFF","#7FFFD4","#F0FFFF","#F5F5DC","#FFE4C4","#FFEBCD","#0000FF","#8A2BE2","#A52A2A","#DEB887","#5F9EA0","#7FFF00","#D2691E","#FF7F50","#6495ED","#FFF8DC","#DC143C","#00FFFF","#00008B","#008B8B","#B8860B","#A9A9A9","#006400","#BDB76B","#556B2F","#FF8C00","#9932CC","#E9967A","#8FBC8F","#483D8B","#2F4F4F","#00CED1","#9400D3","#FF1493","#00BFFF","#696969","#1E90FF","#B22222","#FFFAF0","#228B22","#FF00FF","#DCDCDC","#F8F8FF","#FFD700","#DAA520","#BEBEBE","#808080","#00FF00","#008000","#ADFF2F","#F0FFF0","#FF69B4","#CD5C5C","#4B0082","#FFFFF0","#F0E68C","#E6E6FA","#FFF0F5","#7CFC00","#FFFACD","#ADD8E6","#F08080","#E0FFFF","#FAFAD2","#D3D3D3","#90EE90","#FFB6C1","#FFA07A","#20B2AA","#87CEFA","#778899","#B0C4DE","#00FF00","#32CD32","#FAF0E6","#FF00FF","#B03060","#7F0000","#66CDAA","#0000CD","#BA55D3","#9370DB","#3CB371","#7B68EE","#00FA9A","#48D1CC","#C71585","#191970","#F5FFFA","#FFE4E1","#FFE4B5","#FFDEAD","#000080","#FDF5E6","#808000","#6B8E23","#FFA500","#FF4500","#DA70D6","#EEE8AA","#98FB98","#AFEEEE","#DB7093","#FFEFD5","#FFDAB9","#CD853F","#FFC0CB","#DDA0DD","#B0E0E6","#A020F0","#7F007F","#FF0000","#BC8F8F","#4169E1","#8B4513","#FA8072","#F4A460","#2E8B57","#FFF5EE","#A0522D","#C0C0C0","#87CEEB","#6A5ACD","#708090","#FFFAFA","#00FF7F","#4682B4","#D2B48C","#008080","#D8BFD8","#FF6347","#40E0D0","#EE82EE","#F5DEB3","#F5F5F5","#FFFF00","#9ACD32"]
 
 ISSUE_DEV_COMPLETED_STATES = ["devdone", "dev done", "tested"]
+
+
+
 FEATURE_NAMES_FOR_MANAGEMENT_ISSUES = [ "management", ]
 FEATURE_NAMES_FOR_TESTING_ISSUES = [ "testing", ]
 TIME_TRACKING_MODES = [ "developer", "tester", "manager" ]
 TIME_TRACKING_MODES_WITHOUT_VELOCITY = [ "tester", "manager" ]
-
+TIME_TRACKING_MODES_RESERVED_FEATURE_NAMES = { 'developer': None,
+                                               'tester': ['testing',],
+                                               'manager': ['management',] }
 
 class Client(models.Model):
     """ a client is a top-level customer of the system,
@@ -1284,7 +1289,7 @@ class Project(models.Model):
 
             open_status_options = Issue.STATUSES_INDICATING_INCOMPLETE[rate.time_tracking_mode]
             if rate.time_tracking_mode == 'developer':
-                exclude_features_for_role = FEATURE_NAMES_FOR_MANAGEMENT_ISSUES + FEATURE_NAMES_FOR_TESTING_ISSUES
+                exclude_features_for_role = TIME_TRACKING_MODES_RESERVED_FEATURE_NAMES['manager'] + TIME_TRACKING_MODES_RESERVED_FEATURE_NAMES['tester']
             elif rate.time_tracking_mode == 'manager':
                 exclude_features_for_role = []
             elif rate.time_tracking_mode == 'tester':
@@ -1362,17 +1367,42 @@ class Project(models.Model):
             stats_per_user[user]['points_estimated_open_non_adhoc_billable'] = float(stats_per_user[user]['rate'].full_rate) * (stats_per_user[user]['points_estimated_open_non_adhoc'] or 0)
 
             stats_per_user[user]['percentage_points_complete'] = float(stats_per_user[user]['points_closed_non_adhoc'] or 0) / float(stats_per_user[user]['points_non_adhoc'] or 1) * 100
-
-            stats_per_role[rate.time_tracking_mode]['hours'] += float(stats_per_user[user]['hours'])
-            stats_per_role[rate.time_tracking_mode]['hours_billable'] += float(stats_per_user[user]['hours_billable'])
-            stats_per_role[rate.time_tracking_mode]['hours_billable_core_rate'] += float(stats_per_user[user]['hours_billable_core_rate'])
+            
             stats_per_role[rate.time_tracking_mode]['adjusted_points_non_adhoc_core_rate'] += stats_per_user[user]['adjusted_points_non_adhoc_core_rate']
-            stats_per_role[rate.time_tracking_mode]['points_calculated_open_non_adhoc_billable_core_rate'] += stats_per_user[user]['points_calculated_open_non_adhoc_billable_core_rate']
-            stats_per_role[rate.time_tracking_mode]['points_calculated_open_non_adhoc_billable'] += float(stats_per_user[user]['points_calculated_open_non_adhoc_billable'])
-            stats_per_role[rate.time_tracking_mode]['points_estimated_open_non_adhoc_billable'] += float(stats_per_user[user]['points_estimated_open_non_adhoc_billable'])
-            stats_per_role[rate.time_tracking_mode]['projected_billable'] += float(stats_per_user[user]['points_calculated_open_non_adhoc_billable']) + float(stats_per_user[user]['hours_billable'])
-            stats_per_role[rate.time_tracking_mode]['projected_estimated_billable'] += float(stats_per_user[user]['points_estimated_open_non_adhoc_billable']) + float(stats_per_user[user]['hours_billable'])
-            stats_per_role[rate.time_tracking_mode]['adjusted_points_billable'] += float(stats_per_user[user]['adjusted_points_billable'])
+
+        for role in TIME_TRACKING_MODES:
+
+
+            # Get all the entries which aren't specifically reserved for a different role by virtue of their feature
+            other_roles_reserved_feature_names = [v for k,v in TIME_TRACKING_MODES_RESERVED_FEATURE_NAMES.items() if k != role and v is not None]
+            features_to_exclude = [ item for sublist in other_roles_reserved_feature_names for item in sublist ]
+            entries_for_role = entries_for_project.exclude(issue__feature__name__in=features_to_exclude)
+            entries_for_role = entries_for_role.order_by("user_id")
+
+            # Now if the user isn't assigned to this role in this
+            # sprint, then only get the entries which exactly match
+            # this role.
+
+            for user in users:
+                
+                entries_for_user = entries_for_role.filter(user=user)
+                rate = Rate.objects.filter(project=self, user=user).first() or Rate(project=self, user=user, amount=0, billable_amount=0, velocity=1)
+                if rate.time_tracking_mode != role and TIME_TRACKING_MODES_RESERVED_FEATURE_NAMES[role] is not None:
+                    entries_for_user = entries_for_user.filter(issue__feature__name__in=TIME_TRACKING_MODES_RESERVED_FEATURE_NAMES[role])
+                hours = entries_for_user.values('user_id').aggregate(hours=Sum('hours'))['hours']
+                if hours is None:
+                    continue
+                hours = float(hours)
+                
+                stats_per_role[role]['hours'] += hours
+                stats_per_role[role]['hours_billable'] += hours * float(rate.full_rate)
+                stats_per_role[role]['hours_billable_core_rate'] += hours * float(rate.billable_amount)
+                #stats_per_role[rate.time_tracking_mode]['points_calculated_open_non_adhoc_billable_core_rate'] += stats_per_user[user]['points_calculated_open_non_adhoc_billable_core_rate']
+                #stats_per_role[rate.time_tracking_mode]['points_calculated_open_non_adhoc_billable'] += float(stats_per_user[user]['points_calculated_open_non_adhoc_billable'])
+                #stats_per_role[rate.time_tracking_mode]['points_estimated_open_non_adhoc_billable'] += float(stats_per_user[user]['points_estimated_open_non_adhoc_billable'])
+                #stats_per_role[rate.time_tracking_mode]['projected_billable'] += float(stats_per_user[user]['points_calculated_open_non_adhoc_billable']) + float(stats_per_user[user]['hours_billable'])
+                #stats_per_role[rate.time_tracking_mode]['projected_estimated_billable'] += float(stats_per_user[user]['points_estimated_open_non_adhoc_billable']) + float(stats_per_user[user]['hours_billable'])
+                #stats_per_role[rate.time_tracking_mode]['adjusted_points_billable'] += float(stats_per_user[user]['adjusted_points_billable'])
 
         # stats_per_role['manager_and_tester_combined']['projected_billable'] = stats_per_role['manager']['projected_billable'] + stats_per_role['tester']['projected_billable']
         # stats_per_role['manager_and_tester_combined']['projected_estimated_billable'] = stats_per_role['manager']['projected_estimated_billable'] + stats_per_role['tester']['projected_estimated_billable']
