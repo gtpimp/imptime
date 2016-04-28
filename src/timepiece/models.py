@@ -1491,7 +1491,7 @@ class Project(models.Model):
             if level < settings.TRAFFIC_LEVEL_YELLOW:
                 return 'traffic_green'  if not reverse_colours else "traffic_red"
             elif level < settings.TRAFFIC_LEVEL_RED:
-                return "traffic_yellow"
+                return "traffic_green" #traffic_yellow
             else:
                 return "traffic_red" if not reverse_colours else "traffic_green"
 
