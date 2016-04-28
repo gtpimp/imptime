@@ -291,18 +291,20 @@ imp.attach_issue_filters = function(container) {
                   function() { el_trigger.hide(); } );
         el_trigger.on("click", function() {
 
-            if (imp.popup_dialog) {
-                var dlg = $(".project_card_dialog_container").find(".dialog_content");
-                dlg.html("loading options...");
-                dlg.load(filter_popup_url);
-            } else {
-                $(".project_card_dialog_container").dialog( { width: 600,
-						              height: 400,
-						              open: function(event, ui) {
-							          $(".project_card_dialog_container").find(".dialog_content").load(filter_popup_url);
-						              }
-						            });
-            }
+            imp.popup(filter_popup_url);
+            
+            // if (imp.popup_dialog) {
+            //     var dlg = $(".project_card_dialog_container").find(".dialog_content");
+            //     dlg.html("loading options...");
+            //     dlg.load(filter_popup_url);
+            // } else {
+            //     $(".project_card_dialog_container").dialog( { width: 600,
+	    //     				              height: 400,
+	    //     				              open: function(event, ui) {
+	    //     					          $(".project_card_dialog_container").find(".dialog_content").load(filter_popup_url);
+	    //     				              }
+	    //     				            });
+            // }
             return false;
         });
     });
@@ -1049,18 +1051,7 @@ imp.show_inline_editor = function(el, args) {
 };
 
 imp.show_issue_history = function(url) {
-
-    if (imp.popup_dialog) {
-	$(".project_card_dialog_container").find(".dialog_content").load(url);
-    } else {
-	$(".project_card_dialog_container").dialog( { width: 600,
-						      height: 400,
-						      open: function(event, ui) {
-							  $(".project_card_dialog_container").find(".dialog_content").load(url);
-						      }
-						    });
-    }
-
+    imp.popup(url);
 };
 
 

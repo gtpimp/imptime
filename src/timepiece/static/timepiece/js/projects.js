@@ -19,16 +19,16 @@ var numbers_state = { 'no ctc':0, 'no money':1 };
 imp.show_numbers_state = numbers_state['no money'];
 
 imp.projects.show_project_card_as_popup = function (event, project_card_url, msg, args) {
+    event.stopPropagation();
     imp.current_issue_id = "";
     imp.show_issue_detail(null, project_card_url, msg, args);
-    event.stopPropagation();
     return false;
 };
 
 imp.projects.show_project_cost_summary = function(project_id, url) {
+    event.stopPropagation();
     imp.current_issue_id = "";
     imp.popup(url);
-    event.stopPropagation();
     return false;
 };
 
@@ -37,9 +37,9 @@ imp.projects.popup_business_comments = function(business_id) {
 };
 
 imp.projects.show_business_comments = function (event, business_comments_url, args) {
+    event.stopPropagation();
     imp.current_issue_id = "";
     imp.show_issue_detail(null, business_comments_url, "loading comments", args);
-    event.stopPropagation();
     return false;
 };
 
@@ -47,16 +47,31 @@ imp.show_business_history = function(url) {
     imp.popup(url);
 };
 
-imp.popup = function(url) {
+imp.popup = function(popup_url, optional_html) {
+    $(".project_card_dialog_container").find(".dialog_content").html("loading...");
     if (imp.popup_dialog) {
-        $(".project_card_dialog_container").dialog();
-        $(".project_card_dialog_container").find(".dialog_content").html("loading...");
-	$(".project_card_dialog_container").find(".dialog_content").load(url);
+        $(".project_card_dialog_container").dialog( { open: function(event, ui) {
+            if ( popup_url ) {
+	        $(".project_card_dialog_container").find(".dialog_content").load(popup_url);
+            } else {
+                $(".project_card_dialog_container").find(".dialog_content").html(optional_html);
+            }
+	}});
+
+        if ( popup_url ) {
+	    $(".project_card_dialog_container").find(".dialog_content").load(popup_url);
+        } else {
+            $(".project_card_dialog_container").find(".dialog_content").html(optional_html);
+        }
     } else {
 	imp.popup_dialog = $(".project_card_dialog_container").dialog( { width: 400,
 						                         height: 800,
 						                         open: function(event, ui) {
-							                     $(".project_card_dialog_container").find(".dialog_content").load(url);
+                                                                             if ( popup_url ) {
+	                                                                         $(".project_card_dialog_container").find(".dialog_content").load(popup_url);
+                                                                             } else {
+                                                                                 $(".project_card_dialog_container").find(".dialog_content").html(optional_html);
+                                                                             }
 						                         }
 						                       });
     }
@@ -330,34 +345,11 @@ imp.project_card_thinking = function(el) {
 };
 
 imp.popup_page = function(url, big) {
-
-    $(".project_card_dialog_container").find(".dialog_content").html("loading...");
-    if (imp.popup_dialog) {
-	$(".project_card_dialog_container").find(".dialog_content").load(url);
-    } else {
-	$(".project_card_dialog_container").dialog( { width: 600,
-						      height: $(window).height()*0.8,
-						      open: function(event, ui) {
-							  $(".project_card_dialog_container").find(".dialog_content").load(url);
-						      }
-						    });
-    }
-    
+    return imp.popup(url);
 };
 
 imp.popup_text = function(text) {
-
-    if (imp.popup_dialog) {
-	$(".project_card_dialog_container").find(".dialog_content")[0].innerHTML=text;
-    } else {
-	$(".project_card_dialog_container").dialog( { width: 600,
-						      height: 400,
-						      open: function(event, ui) {
-							  $(".project_card_dialog_container").find(".dialog_content")[0].innerHTML=text;
-						      }
-						    });
-    }
-    
+    return imp.popup(null, text);
 };
 
 imp.submit_popup_form = function(el, callback, args) {
