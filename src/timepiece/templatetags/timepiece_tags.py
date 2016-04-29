@@ -58,7 +58,12 @@ def epoch(value):
 def prepare_project_stats(context, logged_in_user, project):
     project.calculate_new_stats(logged_in_user)
     return ""
-    
+
+@register.simple_tag(takes_context=True)
+def clock_entries_for_user(context, user, issue):
+    context['entries'] = issue.entries.all().filter(user=user).order_by("start_time")
+    return ""
+
 @register.simple_tag(takes_context=True)
 def current_user_issue_cost(context, issue_points):
     try:

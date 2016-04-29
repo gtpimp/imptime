@@ -1,0 +1,18 @@
+#+TITLE: {{ business.name }}
+{% load timepiece_tags %}
+* Development
+{% for project in business.get_ordered_projects %}
+** sprint#{{project.id}} {{project.name}}
+{{ sprint.short_description }}
+{% for issue in project.get_ordered_issues %}
+*** issue{{ issue.number }} {{ issue.subject }}
+    {% spaceless %}
+{% clock_entries_for_user user issue %}
+{% for entry in entries %}    CLOCK: [{{entry.start_time|date:'Y-m-d D H:i'}}]--[{{entry.end_time|date:'Y-m-d D H:i'}}] =>  {{entry.hours_and_minutes.hours}}:{{entry.hours_and_minutes.minutes}}
+{% endfor %}
+{% endspaceless %}
+
+{{issue.description}}
+{% endfor %}
+{% endfor %}
+

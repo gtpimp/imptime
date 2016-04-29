@@ -15,6 +15,7 @@ from tasks import import_timesheets_from_emacs_task, import_timesheets_from_emac
 from django.contrib.auth.decorators import user_passes_test
 from django.contrib.auth.models import User
 from django.core import management
+from timepiece.models import Project
 import threading
 import logging
 logger = logging.getLogger(__name__)
@@ -77,3 +78,19 @@ def import_timesheet(request):
             return HttpResponse(json.dumps({'status':'failed', 'msg': str(ex)}))
 
     return HttpResponse("Validation error: %s" % form.errors)
+
+@login_required
+def export_project_to_emacs(request, project_id, template="emacs_importer/export_to_org_mode.org", context=None):
+    context = context or {}
+    project = Project.objects.get(pk=project_id)
+    business = project.business
+    context['business'] = business
+    context['user'] = request.user
+
+    rendered = render_to_response(template, context,
+                                  context_instance=RequestContext(request))
+
+    response = HttpResponse(content_type='text/plain')
+    response['Content-Disposition'] = 'attachment; filename=%s.org' % business.name
+    response.write(rendered.content)
+    return response

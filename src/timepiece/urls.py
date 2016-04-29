@@ -687,5 +687,6 @@ urlpatterns = patterns('',
                        url(r'^project_cost_summary/(?P<project_id>\d+)$', views.project_cost_summary, {}, name='project_cost_summary'),
                        
                        
+                       
 
 )

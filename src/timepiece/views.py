@@ -5991,3 +5991,4 @@ def project_cost_summary(request, project_id, template="timepiece/project/projec
     project.calculate_new_stats(request.user)
     context['project'] = project
     return render_to_response(template, context, context_instance=RequestContext(request))
+
