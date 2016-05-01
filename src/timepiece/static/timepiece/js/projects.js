@@ -64,7 +64,7 @@ imp.popup = function(popup_url, optional_html) {
             $(".project_card_dialog_container").find(".dialog_content").html(optional_html);
         }
     } else {
-	imp.popup_dialog = $(".project_card_dialog_container").dialog( { width: 400,
+	imp.popup_dialog = $(".project_card_dialog_container").dialog( { width: $(window).width()/2,
 						                         height: 800,
 						                         open: function(event, ui) {
                                                                              if ( popup_url ) {
