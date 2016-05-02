@@ -1,4 +1,5 @@
 {% load timepiece_tags %}
+{% load math_tags %}
 {% load humanize %}
 
 {% has_permission has_view_budget project.business %}
@@ -20,33 +21,56 @@
       <li>Budget given to client : R{{ project.budget|floatformat:"0"|default:0 }}   </li>
       <li>Internal commission : R{{ role_data.commission.budget|floatformat:"0"|default:0 }}   </li>
       <li>Spendable budget : R{{ project.spendable_budget|floatformat:"0"|default:0 }}   </li>
+    </ul>
+  </p>
+
+  <p>
+    <h2>Estimated versus budget</h2>
+    <ul>
+      <li>
+        <span>
+          Sprint estimated cost : R{{ project.new_stats.total.unadjusted_points_billable_core_rate|floatformat:"0"|default:0 }}
+        </span>
+      </li>
+      <li>
+        {% if project.spendable_budget > project.new_stats.total.unadjusted_points_billable_core_rate %}
+        <span class="generic_green">
+          This is less than the spendable budget
+        </span>
+        {% else %}
+        <span class="generic_red">
+          This is more than the spendable budget
+        </span>
+        {% endif %}
+      </li>
+    </ul>
+  </p>
+
+  <p>
+    <h2>Actual versus budget</h2>
+    <ul>
+
       <li>
         <span class="{% if project.spendable_budget > project.new_stats.total.hours_billable_core_rate %}generic_green{% else %}generic_red{% endif %}">
           Spent so far : R{{ project.new_stats.total.hours_billable_core_rate|floatformat:"0"|default:0 }}
         </span>
       </li>
       
-      <li>
+      <li>{% spaceless %}
+        
         {% if project.has_budget %}
         {% budget_traffic_bar project %}
         {% else %}
         <div style="color:red">No budget</div>
         {% endif %}
-        {% end_permission %}
+        {% endspaceless %}
       </li>
     </ul>
   </p>
 
-  <hr/>
+  
   <p>
-    <h2>Total sprint estimated budget</h2>
-    <ul>
-      <li>
-        <span class="{% if project.spendable_budget > project.new_stats.total.unadjusted_points_billable_core_rate %}generic_green{% else %}generic_red{% endif %}">
-          Cost based on estimates : R{{ project.new_stats.total.unadjusted_points_billable_core_rate|floatformat:"0"|default:0 }}
-        </span>
-      </li>
-    </ul>
+    <h2>Breakdown of actuals versus estimated</h2>
   </p>
   
   {% for role_name, data in role_data.per_role.items %}
@@ -54,7 +78,7 @@
     
     <h2>{{ role_name }}</h2>
     <ul>
-      <li>Estimated Budget: R{{ data.budget|floatformat:"0"|default:0 }}</li>
+      <li>Estimate: R{{ data.budget|floatformat:"0"|default:0 }}</li>
       <li>
         <span class="{% if data.budget > data.hours_billable_core_rate %}generic_green{% else %}generic_red{% endif %}">
           Actual : R{{ data.hours_billable_core_rate|floatformat:"0"|default:0 }}
@@ -65,3 +89,4 @@
   </p>
 
 </div>
+{% end_permission %}
