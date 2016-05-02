@@ -246,9 +246,9 @@ def get_all_devdone_points_for_project(context, user, project):
 @register.inclusion_tag('timepiece/traffic_bar.html')
 def budget_traffic_bar(project):
     if project.stats['amount_under_budget'] > 0:
-        text = "R{:10.2f} left".format(project.stats['amount_under_budget'])
+        text = "R{:10.2f} under budget".format(project.stats['amount_under_budget'])
     else:
-        text = "R{:10.2f} over".format(project.stats['amount_over_budget'])
+        text = "R{:10.2f} over budget".format(project.stats['amount_over_budget'])
     return traffic_bar(project.stats['percentage_spent'], text)
 
 @register.inclusion_tag('timepiece/traffic_bar.html', takes_context=True)

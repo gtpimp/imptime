@@ -5,15 +5,6 @@
 
 <div class="money_cell money_sprint_banner">
 
-  <p>
-    {% if project.has_budget %}
-    {% budget_traffic_bar project %}
-    {% else %}
-    <div style="color:red">No budget</div>
-    {% endif %}
-    {% end_permission %}
-  </p>
-
   {% calculate_role_data user project %}
 
   <br/>
@@ -24,19 +15,35 @@
   </p>
   
   <p>
-    <h2>Spendable budget</h2>
+    <h2>External budget budget</h2>
     <ul>
       <li>Budget given to client : R{{ project.budget|floatformat:"0"|default:0 }}   </li>
       <li>Internal commission : R{{ role_data.commission.budget|floatformat:"0"|default:0 }}   </li>
       <li>Spendable budget : R{{ project.spendable_budget|floatformat:"0"|default:0 }}   </li>
       <li>
-        <span class="{% if project.spendable_budget > project.new_stats.total.unadjusted_points_billable_core_rate %}generic_green{% else %}generic_red{% endif %}">
-          (Anticipated cost based on current estimates : R{{ project.new_stats.total.unadjusted_points_billable_core_rate|floatformat:"0"|default:0 }})
+        <span class="{% if project.spendable_budget > project.new_stats.total.hours_billable_core_rate %}generic_green{% else %}generic_red{% endif %}">
+          Spent so far : R{{ project.new_stats.total.hours_billable_core_rate|floatformat:"0"|default:0 }}
         </span>
       </li>
+      
       <li>
-        <span class="{% if project.spendable_budget > project.new_stats.total.hours_billable_core_rate %}generic_green{% else %}generic_red{% endif %}">
-          Spent : R{{ project.new_stats.total.hours_billable_core_rate|floatformat:"0"|default:0 }}
+        {% if project.has_budget %}
+        {% budget_traffic_bar project %}
+        {% else %}
+        <div style="color:red">No budget</div>
+        {% endif %}
+        {% end_permission %}
+      </li>
+    </ul>
+  </p>
+
+  <hr/>
+  <p>
+    <h2>Total sprint estimated budget</h2>
+    <ul>
+      <li>
+        <span class="{% if project.spendable_budget > project.new_stats.total.unadjusted_points_billable_core_rate %}generic_green{% else %}generic_red{% endif %}">
+          Cost based on estimates : R{{ project.new_stats.total.unadjusted_points_billable_core_rate|floatformat:"0"|default:0 }}
         </span>
       </li>
     </ul>
@@ -47,7 +54,7 @@
     
     <h2>{{ role_name }}</h2>
     <ul>
-      <li>Budget: R{{ data.budget|floatformat:"0"|default:0 }}</li>
+      <li>Estimated Budget: R{{ data.budget|floatformat:"0"|default:0 }}</li>
       <li>
         <span class="{% if data.budget > data.hours_billable_core_rate %}generic_green{% else %}generic_red{% endif %}">
           Actual : R{{ data.hours_billable_core_rate|floatformat:"0"|default:0 }}
