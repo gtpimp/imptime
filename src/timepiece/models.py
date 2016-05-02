@@ -1326,7 +1326,7 @@ class Project(models.Model):
             
             stats_per_user[user]['hours'] = _get_total(entries.order_by('user').values('user').annotate(total=Sum('hours')))
 
-            stats_per_user[user]['hours_for_role'] = _get_total(entries.order_by('user').exclude(issue__feature__name__in=exclude_features_for_role).values('user').annotate(total=Sum('hours')))
+            stats_per_user[user]['hours_for_role'] = _get_total(entries.filter_on_role(stats_per_user[user]['rate'].time_tracking_mode).values('user').annotate(total=Sum('hours')))
             
             stats_per_user[user]['hours_real'] = _get_total(entries.filter(issue__adhoc=False).order_by('user').values('user').annotate(total=Sum('hours')))
             stats_per_user[user]['hours_closed'] = _get_total(entries.exclude(issue__status__in=open_status_options).order_by('user').values('user').annotate(total=Sum('hours')))
@@ -1337,6 +1337,7 @@ class Project(models.Model):
             stats_per_user[user]['hours_billable'] = stats_per_user[user]['rate'].full_rate * float(stats_per_user[user]['hours'])
 
             stats_per_user[user]['hours_billable_core_rate'] = float(stats_per_user[user]['rate'].billable_amount) * float(stats_per_user[user]['hours'])
+            stats_per_user[user]['hours_for_role_billable_core_rate'] = float(stats_per_user[user]['rate'].billable_amount) * float(stats_per_user[user]['hours_for_role'])
             stats_per_user[user]['hours_real_billable'] = stats_per_user[user]['rate'].full_rate * float(stats_per_user[user]['hours_real'])
             stats_per_user[user]['hours_adhoc_billable'] = stats_per_user[user]['rate'].full_rate * float(stats_per_user[user]['hours_adhoc'])
 
@@ -1350,7 +1351,6 @@ class Project(models.Model):
             # else:
             #     stats_per_user[user]['calculated_velocity'] = 1
             stats_per_user[user]['calculated_work_ratio'] = 1 # to be fixed (float(stats_per_user[user]['hours_adhoc']) or 0.0) / (float((stats_per_user[user]['hours'] or 1)))
-
             
             stats_per_user[user]['points_calculated_open_non_adhoc'] = (stats_per_user[user]['points_open_non_adhoc'] or 0) * (stats_per_user[user]['calculated_velocity'] or 1)
             stats_per_user[user]['points_calculated_open_non_adhoc_ctc'] = float(stats_per_user[user]['rate'].amount) * (stats_per_user[user]['points_calculated_open_non_adhoc'] or 0)
@@ -1367,26 +1367,15 @@ class Project(models.Model):
             
             stats_per_role[rate.time_tracking_mode]['adjusted_points_non_adhoc_core_rate'] += stats_per_user[user]['adjusted_points_non_adhoc_core_rate']
 
-        for role in TIME_TRACKING_MODES:
 
+        for user in users:
 
-            # Get all the entries which aren't specifically reserved for a different role by virtue of their feature
-            other_roles_reserved_feature_names = [v for k,v in TIME_TRACKING_MODES_RESERVED_FEATURE_NAMES.items() if k != role and v is not None]
-            features_to_exclude = [ item for sublist in other_roles_reserved_feature_names for item in sublist ]
-            entries_for_role = entries_for_project.exclude(issue__feature__name__in=features_to_exclude)
-            entries_for_role = entries_for_role.order_by("user_id")
+            entries_for_user = entries_for_project.filter(user=user)
+            rate = Rate.objects.filter(project=self, user=user).first() or Rate(project=self, user=user, amount=0, billable_amount=0, velocity=1)
 
-            # Now if the user isn't assigned to this role in this
-            # sprint, then only get the entries which exactly match
-            # this role.
-
-            for user in users:
-                
-                entries_for_user = entries_for_role.filter(user=user)
-                rate = Rate.objects.filter(project=self, user=user).first() or Rate(project=self, user=user, amount=0, billable_amount=0, velocity=1)
-                if rate.time_tracking_mode != role and TIME_TRACKING_MODES_RESERVED_FEATURE_NAMES[role] is not None:
-                    entries_for_user = entries_for_user.filter(issue__feature__name__in=TIME_TRACKING_MODES_RESERVED_FEATURE_NAMES[role])
-                hours = entries_for_user.values('user_id').aggregate(hours=Sum('hours'))['hours']
+            for role in TIME_TRACKING_MODES:
+                entries_for_role = entries_for_user.filter_on_role(role, role_if_no_feature=rate.time_tracking_mode).order_by("user_id")
+                hours = entries_for_role.values('user_id').aggregate(hours=Sum('hours'))['hours']
                 if hours is None:
                     continue
                 hours = float(hours)
@@ -1406,7 +1395,6 @@ class Project(models.Model):
         # stats_per_role['manager_and_tester_combined']['adjusted_points_billable'] = stats_per_role['manager']['adjusted_points_billable'] + stats_per_role['tester']['adjusted_points_billable']
                     
         total_stats = {}
-
         
         total_stats['points_billable'] = sum(stats_per_user[x]['adjusted_points_billable'] or 0 for x in users)
         total_stats['points_comparative_billable'] = sum(stats_per_user[x]['adjusted_points_comparative_billable'] or 0 for x in users)
@@ -1420,9 +1408,9 @@ class Project(models.Model):
         ctc_and_billable_totals = self.get_ctc_and_billable_totals()
         total_stats['hours_ctc'] = sum(stats_per_user[x]['hours_ctc'] or 0 for x in users) + ctc_and_billable_totals['fixed_ctc_total']
         total_stats['hours_billable'] = sum(stats_per_user[x]['hours_billable'] or 0 for x in users) + ctc_and_billable_totals['fixed_amount_total']
-        total_stats['hours_billable_core_rate'] = sum(stats_per_user[x]['hours_billable_core_rate'] or 0 for x in users) + ctc_and_billable_totals['fixed_amount_total']
 
-        total_stats['hours_real_billable'] = sum(stats_per_user[x]['hours_real_billable'] or 0 for x in users)
+        total_stats['hours_billable_core_rate'] = sum( [ stats_per_user[x]['hours_billable_core_rate'] or 0 for x in users ] ) + ctc_and_billable_totals['fixed_amount_total']
+        total_stats['hours_real_billable'] = sum( [ stats_per_user[x]['hours_real_billable'] or 0 for x in users ] )
         
         total_stats['hours_billable_with_scope_creep'] = float(total_stats['points_billable'])
         total_stats['scope_creep_percentage'] = self.ratio_scope_creep*100
@@ -1999,7 +1987,29 @@ class EntriesQuerySet(QuerySet):
 
     def hours(self):
         return self.aggregate(num_hours=Sum('hours'))['num_hours']
-    
+
+    def filter_on_role(self, role, role_if_no_feature=None):
+        """ development role is special, because it's the default """
+        qs = self
+
+        if role_if_no_feature is None:
+            role_if_no_feature = role
+            
+        other_roles_reserved_feature_names = [v for k,v in TIME_TRACKING_MODES_RESERVED_FEATURE_NAMES.items() if k != role and v is not None]
+        features_to_exclude = [ item for sublist in other_roles_reserved_feature_names for item in sublist ]
+
+        if role_if_no_feature == role:
+            # every entry will belong, except those specifically belonging to other roles
+            qs = qs.exclude(issue__feature__name__in=features_to_exclude)
+        else:
+            # every entry will be wrong, unless the feature exactly matches the required role
+            if TIME_TRACKING_MODES_RESERVED_FEATURE_NAMES[role]:
+                qs = qs.filter(issue__feature__name__in=TIME_TRACKING_MODES_RESERVED_FEATURE_NAMES[role])
+            else:
+                qs = qs.exclude(Q(issue__feature__isnull=True)|Q(issue__feature__name__in=features_to_exclude))
+
+        return qs
+        
     def billable_for_user(self, user_id):
         total = 0
         qs = self.filter(user_id=user_id).values('issue__project').annotate(num_hours=Sum('hours'))

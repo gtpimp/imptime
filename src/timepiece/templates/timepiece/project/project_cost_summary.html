@@ -31,7 +31,7 @@
       <li>Spendable budget : R{{ project.spendable_budget|floatformat:"0"|default:0 }}   </li>
       <li>
         <span class="{% if project.spendable_budget > project.new_stats.total.unadjusted_points_billable_core_rate %}generic_green{% else %}generic_red{% endif %}">
-          (Spendable cost based on estimates : R{{ project.new_stats.total.unadjusted_points_billable_core_rate|floatformat:"0"|default:0 }})
+          (Anticipated cost based on current estimates : R{{ project.new_stats.total.unadjusted_points_billable_core_rate|floatformat:"0"|default:0 }})
         </span>
       </li>
       <li>
