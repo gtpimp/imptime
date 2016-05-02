@@ -17,10 +17,17 @@ LOCAL_BACKUP_PATH=/home/gtp/id/imptime/db_backups
 DB_NAME="implicitdesign"
 
 echo "Fetching backup for ${DATE}_${TIME}..."
-scp gtp@live.implicitdesign.co.za:/home/timesheet/db_backups/${FILENAME} ${LOCAL_BACKUP_PATH}
+#scp gtp@live.implicitdesign.co.za:/home/timesheet/db_backups/${FILENAME} ${LOCAL_BACKUP_PATH}
 
 echo "Recreating db"
+
 sudo su - postgres -c "dropdb ${DB_NAME}"
+RES=$?
+if [ ! ${RES} == 0 ]; then
+    echo "Failed to drop existing database"
+    echo "Check if you're running the django dev server"
+    exit ${RES}
+fi
 sudo su - postgres -c "createdb ${DB_NAME}"
 
 echo "Importing db"
