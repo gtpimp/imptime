@@ -6,17 +6,17 @@
 
 <div class="money_cell money_sprint_banner">
 
+  <h1>{{ project.long_name }}</h1>
+  
   {% calculate_role_data user project %}
+  <div class="tip">
+    All numbers include velocity and scope creep
+  </div>
 
-  <br/>
-  <p>
-    <div class="tip">
-      All numbers include velocity and scope creep
-    </div>
-  </p>
+  <h1>Budget</h1>
   
   <p>
-    <h2>External budget budget</h2>
+    <h2>Client expectations</h2>
     <ul>
       <li>Budget given to client : R{{ project.budget|floatformat:"0"|default:0 }}   </li>
       <li>Internal commission : R{{ role_data.commission.budget|floatformat:"0"|default:0 }}   </li>
@@ -28,9 +28,7 @@
     <h2>Estimated versus budget</h2>
     <ul>
       <li>
-        <span>
-          Sprint estimated cost : R{{ project.new_stats.total.unadjusted_points_billable_core_rate|floatformat:"0"|default:0 }}
-        </span>
+        Sprint estimated cost : R{{ project.new_stats.total.unadjusted_points_billable_core_rate|floatformat:"0"|default:0 }}
       </li>
       <li>
         {% if project.spendable_budget > project.new_stats.total.unadjusted_points_billable_core_rate %}
@@ -51,9 +49,7 @@
     <ul>
 
       <li>
-        <span class="{% if project.spendable_budget > project.new_stats.total.hours_billable_core_rate %}generic_green{% else %}generic_red{% endif %}">
-          Spent so far : R{{ project.new_stats.total.hours_billable_core_rate|floatformat:"0"|default:0 }}
-        </span>
+        Spent so far : R{{ project.new_stats.total.hours_billable_core_rate|floatformat:"0"|default:0 }}
       </li>
       
       <li>{% spaceless %}
@@ -67,26 +63,34 @@
       </li>
     </ul>
   </p>
+  
+  <p>
+    <h1>Breakdown of actuals versus estimated</h1>
+  </p>
 
-  
-  <p>
-    <h2>Breakdown of actuals versus estimated</h2>
-  </p>
-  
-  {% for role_name, data in role_data.per_role.items %}
-  <p>
-    
-    <h2>{{ role_name }}</h2>
-    <ul>
-      <li>Estimate: R{{ data.budget|floatformat:"0"|default:0 }}</li>
-      <li>
-        <span class="{% if data.budget > data.hours_billable_core_rate %}generic_green{% else %}generic_red{% endif %}">
-          Actual : R{{ data.hours_billable_core_rate|floatformat:"0"|default:0 }}
-        </span>
-      </li>
-    </ul>
+  <div style="float:right">
+    {% for role_name, data in role_data.per_role.items %}
+    <div style="float:left">
+      
+      <h2>{{ role_name }}</h2>
+      <ul>
+        <li>Estimate: R{{ data.budget|floatformat:"0"|default:0 }}</li>
+        <li>
+          <span class="{% if data.budget > data.hours_billable_core_rate %}generic_green{% else %}generic_red{% endif %}">
+            Actual : R{{ data.hours_billable_core_rate|floatformat:"0"|default:0 }}
+          </span>
+        </li>
+
+        {% for user, user_role_data in data.per_user.items %}
+        {% if user_role_data.hours_billable_core_rate %}
+        <li><span class="tip">{{ user }} : R{{ user_role_data.hours_billable_core_rate|floatformat:"0"|intcomma|default:"" }}</span></li>
+        {% endif %}
+        {% endfor %}
+        
+      </ul>
+    </div>
     {% endfor %}
-  </p>
+  </div>
 
 </div>
 {% end_permission %}

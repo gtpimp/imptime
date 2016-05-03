@@ -1257,6 +1257,7 @@ class Project(models.Model):
         for mode in TIME_TRACKING_MODES:
             stats_per_role[mode] = { 'hours':0, 'hours_billable':0, 'points_calculated_open_non_adhoc_billable': 0,
                                      'points_calculated_open_non_adhoc_billable_core_rate': 0,
+                                     'per_user': {},
                                      'hours_billable_core_rate': 0,
                                      'adjusted_points_non_adhoc_core_rate': 0,
                                      'projected_billable': 0, 'points_estimated_open_non_adhoc_billable':0,
@@ -1382,7 +1383,9 @@ class Project(models.Model):
                 
                 stats_per_role[role]['hours'] += hours
                 stats_per_role[role]['hours_billable'] += hours * float(rate.full_rate)
-                stats_per_role[role]['hours_billable_core_rate'] += hours * float(rate.billable_amount)
+                stats_per_role[role]['per_user'][user] = { 'hours_billable_core_rate' : hours * float(rate.billable_amount) }
+                stats_per_role[role]['hours_billable_core_rate'] += stats_per_role[role]['per_user'][user]['hours_billable_core_rate']
+                
                 #stats_per_role[rate.time_tracking_mode]['points_calculated_open_non_adhoc_billable_core_rate'] += stats_per_user[user]['points_calculated_open_non_adhoc_billable_core_rate']
                 #stats_per_role[rate.time_tracking_mode]['points_calculated_open_non_adhoc_billable'] += float(stats_per_user[user]['points_calculated_open_non_adhoc_billable'])
                 #stats_per_role[rate.time_tracking_mode]['points_estimated_open_non_adhoc_billable'] += float(stats_per_user[user]['points_estimated_open_non_adhoc_billable'])

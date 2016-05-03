@@ -244,6 +244,17 @@ a.ico-calc {
     color: #fff;
 }
 
+.money_sprint_banner h1 {
+    border-bottom: 1px solid #545454;
+    padding-top: 25px;
+    font-size: 18px;
+}
+
+.money_sprint_banner h2 {
+    border-bottom: none;
+    padding-bottom: 0px;
+}
+
 .money_sprint_banner ul {
     list-style: none;
 }
