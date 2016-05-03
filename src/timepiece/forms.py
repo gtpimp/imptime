@@ -1460,6 +1460,9 @@ class CalendarFilterForm(forms.Form):
 class CalendarEventCreateForm(forms.ModelForm):
 
     end = forms.DateTimeField(required=False)
+    status = forms.ChoiceField(required=False,
+                               initial='CONFIRMED',
+                               choices=(CalendarEvent.EVENT_STATUSES))
 
     class Meta:
         model = CalendarEvent
@@ -1492,6 +1495,9 @@ class CalendarEventCreateForm(forms.ModelForm):
 class CalendarEventUpdateForm(forms.ModelForm):
 
     end = forms.DateTimeField()
+    status = forms.ChoiceField(required=False,
+                               initial='CONFIRMED',
+                               choices=(CalendarEvent.EVENT_STATUSES))
 
     class Meta:
         model = CalendarEvent

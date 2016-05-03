@@ -3562,15 +3562,14 @@ class CalendarEvent(models.Model):
     EVENT_TYPES = ( ('planned', 'Planned'), ('meeting', 'Meeting'), ('leave', 'Leave'), ('sickday', 'Sick day'),
 					('office_closed', 'Office Closed'), ('personal', 'Personal'),
                     ('deadline', 'Deadline') )
-    #EVENT_STATUSES = ( ('ready', 'Ready'), ('done', 'Done'), ('cancelled', 'Cancelled'), ("CONFIRMED", "Confirmed"), ("UNKNOWN", "UNKNOWN") )
+    EVENT_STATUSES = ( ('ready', 'Ready'), ('done', 'Done'), ('cancelled', 'Cancelled'), ("CONFIRMED", "Confirmed"), ("UNKNOWN", "UNKNOWN") )
 
     user = models.ForeignKey(User, blank=False, null=False, db_index=True)
     business = models.ForeignKey(Business, blank=True, null=True, db_index=True, related_name='calendar_events')
     start = models.DateTimeField(blank=False,null=False, db_index=True)
     hours = models.DecimalField(max_digits=4, decimal_places=2, default=2.0, db_index=True)
     description = models.TextField(null=True, blank=True)
-    event_type = models.CharField( max_length=50, default='planned', 
-                                   choices = EVENT_TYPES )
+    event_type = models.CharField( max_length=50, default='planned', choices=EVENT_TYPES)
     status = models.CharField(null=False, blank=False, max_length=50, default='ready')
     send_invites_to = models.TextField(null=True, blank=True) # comma separated list of email addresses
     caldav_uid = models.CharField(null=True, max_length=100, blank=True, db_index=True)
