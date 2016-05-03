@@ -26,10 +26,13 @@
     <th>Sprint</th>
     <th>Status</th>
     <th>Budget</th>
+    <th>Spendable budget</th>
+    {% comment %}
     {% if bp.has_view_ctc_billable_rates %}
-      <th>ctc (based on hours)</th>
+    <th>ctc (based on hours)</th>
     {% endif %}
-    <th>Billable (based on hours)</th>
+    {% endcomment %}
+    <th>Actual</th>
     <th>Invoiced (exVAT)</th>
     <th>Paid</th>
     <th>Owed</th>
@@ -43,10 +46,13 @@
       </td>
       <td>{{project_info.status}}</td>
       <td>R{{project_info.budget|floatformat:"0"|intcomma}}</td>
+      <td>R{{project_info.spendable_budget|floatformat:"0"|intcomma}}</td>
+      {% comment %}
       {% if bp.has_view_ctc_billable_rates %}
-        <td>R{{project_info.ctc|floatformat:"0"|intcomma}}</td>
+      <td>R{{project_info.ctc|floatformat:"0"|intcomma}}</td>
       {% endif %}
-      <td>R{{project_info.billable|floatformat:"0"|intcomma}}</td>
+      {% endcomment %}
+      <td>R{{project_info.billable_core_rate|floatformat:"0"|intcomma}}</td>
       <td>R{{project_info.invoiced|floatformat:"0"|intcomma}}</td>
       <td>R{{project_info.paid|floatformat:"0"|intcomma}}</td>
       <td>R{{project_info.owed|floatformat:"0"|intcomma}}</td>
@@ -74,7 +80,10 @@
     <th></th>
     <th></th>
     <th>R{{project_totals.budget|floatformat:"0"|intcomma}}</th>
+    <th>R{{project_totals.spendable_budget|floatformat:"0"|intcomma}}</th>
+    {% comment %}
     <th>R{{project_totals.ctc|floatformat:"0"|intcomma}}</th>
+    {% endcomment %}
     <th>R{{project_totals.billable|floatformat:"0"|intcomma}}</th>
     <th>R{{project_totals.invoiced|floatformat:"0"|intcomma}}</th>
     <th>R{{project_totals.paid|floatformat:"0"|intcomma}}</th>

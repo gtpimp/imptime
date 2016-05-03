@@ -5388,11 +5388,11 @@ def business_cost_summary(request, business_id, template="timepiece/project/busi
                          'budget': project.budget,
                          'spendable_budget': project.spendable_budget,
                          'ctc': stats['ctc'],
-                         'billable': stats['billed']}
+                         'billable_core_rate': stats['billed_core_rate']}
         running_budget += project.budget
         running_spendable_budget += project.spendable_budget
         running_ctc += stats['ctc']
-        running_billable += stats['billed']
+        running_billable += stats['billed_core_rate']
         project_infos.append(project_info)
 
         invoices = Invoice.objects.all().filter(project=project)
@@ -5431,6 +5431,7 @@ def business_cost_summary(request, business_id, template="timepiece/project/busi
                                  'owed': sundry_owed }
 
     context['project_totals'] = { 'budget': running_budget,
+                                  'spendable_budget': running_spendable_budget,
                                   'ctc': running_ctc,
                                   'billable': running_billable,
                                   'invoiced': running_amount_invoiced,
