@@ -38,7 +38,10 @@ class CalDavHelper(object):
         except:
             imptime_event.description = vevent.summary.value
         imptime_event.event_type = 'meeting'
-        imptime_event.status = vevent.status.value
+        try:
+            imptime_event.status = vevent.status.value
+        except AttributeError:
+            imptime_event.status = "CONFIRMED"
         imptime_event.save(update_caldav=False)
 
     def update_caldav_event_from_imptime_event(self, caldav_event, imptime_event):
