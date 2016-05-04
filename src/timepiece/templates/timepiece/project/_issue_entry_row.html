@@ -136,9 +136,9 @@
 {% end_permission %}
 
   <td  class="money_cell">
-      <div class="secret_link {% if issue.is_fixed_cost %} fixed_cost {% endif %}"  onclick="imp.show_issue_detail({{issue.pk}}, '{% url 'issue_detail' issue.pk %}');">
-          R{{issue.representation.billable|floatformat:"0"|intcomma}}
-      </div>
+    <div class="secret_link {% if issue.is_fixed_cost %} fixed_cost {% endif %}"  onclick="imp.show_issue_detail({{issue.pk}}, '{% url 'issue_detail' issue.pk %}');">
+      {% traffic_bar_ratio issue.representation.billable issue.representation.estimated_cost %}
+    </div>
   </td>
   {% end_permission %}		  
   {% has_permission has_delete_issue project.business %}

@@ -251,7 +251,17 @@ def budget_traffic_bar(project):
         text = "R{:10.2f} over budget".format(project.stats['amount_over_budget'])
     return traffic_bar(project.stats['percentage_spent'], text)
 
-@register.inclusion_tag('timepiece/traffic_bar.html', takes_context=True)
+@register.inclusion_tag('timepiece/traffic_bar.html')
+def traffic_bar_ratio(amount_done, amount_todo):
+    if amount_done == 0:
+        text = "/ R{:10.0f}".format(amount_todo)
+        percentage = 0
+    else:
+        text = "R{:10.0f} / R{:10.0f}".format(amount_done, amount_todo)
+        percentage = float(amount_todo) / amount_done
+    return traffic_bar( percentage, text)
+
+@register.inclusion_tag('timepiece/traffic_bar.html')
 def traffic_bar(percentage, text, tooltips=None, colour=None ):
     """ tooltips is a list of tuples which get displayed in a table """
     if colour is None:

@@ -875,7 +875,12 @@ class Project(models.Model):
             return None
 
     def get_rates_by_user(self):
-        return dict( [ (x['user'], { 'ctc_amount': float(x['amount'] or 0), 'billable_amount': float(x['billable_amount'] or 0) }) for x in Rate.objects.filter(project=self).values('user', 'amount', 'billable_amount') ] )
+        return dict( [ (x['user'],
+                        { 'ctc_amount': float(x['amount'] or 0),
+                          'billable_amount': float(x['billable_amount'] or 0),
+                          'velocity': float(x['velocity']) or 1,
+                        })
+                        for x in Rate.objects.filter(project=self).values('user', 'amount', 'billable_amount', 'velocity') ] )
         
     def get_user_rate(self, user):
 
@@ -3134,12 +3139,20 @@ class Rate(models.Model):
 
     @property
     def full_rate(self):
-        comm_ratio = (1-self.project.commission_percentage/100) or 1
-        return float(self.billable_amount) / comm_ratio
+        return self.convert_to_full_rate(self.project, self.billable_amount)
 
+    @classmethod
+    def convert_to_full_rate(self, project, amount):
+        comm_ratio = (1-project.commission_percentage/100) or 1
+        return float(amount) / comm_ratio
+    
     @property
     def full_velocity(self):
-         return self.velocity * (1+float(self.project.ratio_scope_creep))
+        return self.convert_to_full_rate(self.project, self.velocity)
+
+    @classmethod
+    def convert_to_full_velocity(self, project, velocity):
+        return velocity * (1+float(project.ratio_scope_creep))
                 
     @classmethod
     def for_business(self, user_id, business_id):

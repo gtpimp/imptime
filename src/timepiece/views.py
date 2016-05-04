@@ -3179,19 +3179,17 @@ def _augment_issue_data(issue, current_user, users_allowed_to_estimate_on_busine
 
     issue.representation.ctc = 0
     issue.representation.billable = 0
+    issue.representation.estimated_cost = 0
             
     for user in users_allowed_to_estimate_on_business:
 
         per_user_issue_data = {}
 
         user_points = issue_points_by_user.get(user.id, 0)
-        #user_points_float = float(user_points.points) if user_points and user_points.points else 0.0
-
         per_user_issue_data["issue_points"] = user_points
-
         hours = issue_hours_by_user.get(user.id, 0)
 
-        #completion_against_estimated_cost = ((actual_billable_cost_of_issue / estimated_cost)*100) if estimated_cost>0 else 0.0
+        rate = rates_by_user[user.id] if user.id in rates_by_user else None
 
         if user_points == 0:
             completion_against_estimated_hours = 0
@@ -3219,13 +3217,11 @@ def _augment_issue_data(issue, current_user, users_allowed_to_estimate_on_busine
         per_user_issue_data["can_estimate"] = True
         issue.add_user_to_representation(user, per_user_issue_data)
 
-        try:
-            issue.representation.ctc += hours * rates_by_user[user.id]['ctc_amount']
-            issue.representation.billable += hours * rates_by_user[user.id]['billable_amount']
-
-        except KeyError:
-            # no rate for this user, not a problem
-            pass
+        if rate:
+            issue.representation.ctc += hours * rate['ctc_amount']
+            issue.representation.billable += hours * rate['billable_amount']
+            estimated_cost = user_points * timepiece.Rate.convert_to_full_rate(issue.project, rate['billable_amount']) * rate['velocity']
+            issue.representation.estimated_cost += estimated_cost
         
         if current_user.id == user.id:
             issue.representation.current_user_issue_data = per_user_issue_data
@@ -3235,7 +3231,6 @@ def _augment_issue_data(issue, current_user, users_allowed_to_estimate_on_busine
 
     if issue.is_fixed_cost():
         issue.representation.billable += float(issue.fixed_amount)
-
             
     # for user, hours in issue.hours_for_users():
     #     if user not in users_allowed_to_estimate_on_business:
