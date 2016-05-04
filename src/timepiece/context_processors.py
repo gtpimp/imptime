@@ -9,6 +9,7 @@ def timepiece_settings(request):
     famfamfam_url = getattr(settings, 'FAMFAMFAM_URL', default_famfamfam_url)
     context = {
         'FAMFAMFAM_URL': famfamfam_url,
+        'TIME_TRACKING_MODES': timepiece.TIME_TRACKING_MODES
     }
     return context
 

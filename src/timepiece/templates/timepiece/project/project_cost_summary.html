@@ -72,6 +72,7 @@
       <h2>{{ role_name }}</h2>
       <ul>
         <li>Estimate: R{{ data.budget|floatformat:"0"|default:0 }}</li>
+        <li class="tip">without {{ project.ratio_scope_creep|multiply:100|floatformat:"0" }}% scope creep: R{{ data.budget_without_scope_creep|floatformat:"0"|default:0 }}</li>
         <li>
           <span class="{% if data.budget > data.hours_billable_core_rate %}generic_green{% else %}generic_red{% endif %}">
             Actual : R{{ data.hours_billable_core_rate|floatformat:"0"|default:0 }}

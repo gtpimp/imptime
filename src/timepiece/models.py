@@ -736,7 +736,7 @@ class Project(models.Model):
     def spendable_budget(self):
         return float(self.budget) * (1-float(self.commission_percentage)/100)
     
-    def budget_for_role(self, role_name):
+    def budget_for_role(self, role_name, include_scope_creep=True):
         if not self.budget:
             return None
 
@@ -744,7 +744,10 @@ class Project(models.Model):
             return float(self.budget) * float(self.commission_percentage)/100
         
         elif role_name in ["developer", "manager", "tester"]:
-            return self.new_stats['per_role'][role_name]['adjusted_points_non_adhoc_core_rate']
+            if include_scope_creep:
+                return self.new_stats['per_role'][role_name]['adjusted_points_non_adhoc_core_rate']
+            else:
+                return self.new_stats['per_role'][role_name]['adjusted_points_non_adhoc_core_rate_no_scope_creep']
         
         return None
     
@@ -1260,6 +1263,7 @@ class Project(models.Model):
                                      'per_user': {},
                                      'hours_billable_core_rate': 0,
                                      'adjusted_points_non_adhoc_core_rate': 0,
+                                     'adjusted_points_non_adhoc_core_rate_no_scope_creep': 0,
                                      'projected_billable': 0, 'points_estimated_open_non_adhoc_billable':0,
                                      'projected_estimated_billable':0,
                                      'adjusted_points_billable':0}
@@ -1301,6 +1305,7 @@ class Project(models.Model):
             stats_per_user[user]['points_open_non_adhoc'] = _get_total(issue_points.filter(issue__status__in=open_status_options).filter(issue__adhoc=False).values('user').annotate(total=Sum('points')))
 
             stats_per_user[user]['adjusted_points_non_adhoc'] = (stats_per_user[user]['points_non_adhoc'] or 0) * (stats_per_user[user]['rate'].full_velocity or 0)
+            stats_per_user[user]['adjusted_points_non_adhoc_no_scope_creep'] = (stats_per_user[user]['points_non_adhoc'] or 0) * (stats_per_user[user]['rate'].velocity or 0)
 
             stats_per_user[user]['adjusted_points_ctc'] = stats_per_user[user]['adjusted_points_non_adhoc'] * float(stats_per_user[user]['rate'].amount)
             stats_per_user[user]['adjusted_points_billable'] = stats_per_user[user]['adjusted_points_non_adhoc'] * float(stats_per_user[user]['rate'].full_rate)
@@ -1358,6 +1363,7 @@ class Project(models.Model):
             stats_per_user[user]['points_calculated_open_non_adhoc_billable'] = float(stats_per_user[user]['rate'].full_rate) * (stats_per_user[user]['points_calculated_open_non_adhoc'] or 0)
 
             stats_per_user[user]['adjusted_points_non_adhoc_core_rate'] = float(stats_per_user[user]['rate'].billable_amount) * (stats_per_user[user]['adjusted_points_non_adhoc'] or 0)
+            stats_per_user[user]['adjusted_points_non_adhoc_core_rate_no_scope_creep'] = float(stats_per_user[user]['rate'].billable_amount) * (stats_per_user[user]['adjusted_points_non_adhoc_no_scope_creep'] or 0)
             stats_per_user[user]['points_calculated_open_non_adhoc_billable_core_rate'] = float(stats_per_user[user]['rate'].billable_amount) * (stats_per_user[user]['points_calculated_open_non_adhoc'] or 0)
 
             stats_per_user[user]['points_estimated_open_non_adhoc'] = (stats_per_user[user]['points_open_non_adhoc'] or 0) * (stats_per_user[user]['rate'].full_velocity or 1)
@@ -1367,6 +1373,7 @@ class Project(models.Model):
             stats_per_user[user]['percentage_points_complete'] = float(stats_per_user[user]['points_closed_non_adhoc'] or 0) / float(stats_per_user[user]['points_non_adhoc'] or 1) * 100
             
             stats_per_role[rate.time_tracking_mode]['adjusted_points_non_adhoc_core_rate'] += stats_per_user[user]['adjusted_points_non_adhoc_core_rate']
+            stats_per_role[rate.time_tracking_mode]['adjusted_points_non_adhoc_core_rate_no_scope_creep'] += stats_per_user[user]['adjusted_points_non_adhoc_core_rate_no_scope_creep']
 
 
         for user in users:

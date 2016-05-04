@@ -265,14 +265,15 @@ def traffic_bar(percentage, text, tooltips=None, colour=None ):
              'colour': colour,
              'tooltips': tooltips }
 
-
 @register.simple_tag(takes_context=True)
 def calculate_role_data(context, user, project):
 
+    project.calculate_new_stats(user)
     role_data = project.new_stats['per_role']
 
     for role_name, data in role_data.items():
         data['budget'] = project.budget_for_role(role_name)
+        data['budget_without_scope_creep'] = project.budget_for_role(role_name, include_scope_creep=False)
     
     context['role_data'] = { 'per_role' : role_data,
                              'commission' : {
@@ -280,13 +281,13 @@ def calculate_role_data(context, user, project):
                                  }
                              }
     return ""
-    
-    # per_role = 
-    # data = {}
-    # for role_name, role_data in per_role.items():
-    #     data[role_name] = role_data[ ["Total hours", "%.2f" % (role_data['hours'])], ]
-    # context['role_data'] = data
 
+@register.filter    
+def cost_for_mode(role_data, mode):
+    """ role_data comes from calculate_role_data, so it must have already been called with the correct project """
+    cost = role_data['per_role'][mode]['hours_billable_core_rate']
+    return cost
+    
 # The first argument *must* be called "context" here.
 @register.inclusion_tag('timepiece/traffic_bar.html', takes_context=True)
 def running_progress_for_user_in_sprint(context, user, project):

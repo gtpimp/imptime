@@ -157,6 +157,7 @@ TEMPLATE_CONTEXT_PROCESSORS = (
     'django.core.context_processors.static',
     "timepiece.context_processors.extra_nav",
     "timepiece.context_processors.active_entries",
+    "timepiece.context_processors.timepiece_settings",
 )
 
 # List of callables that know how to import templates from various sources.

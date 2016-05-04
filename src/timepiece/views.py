@@ -5381,6 +5381,7 @@ def business_cost_summary(request, business_id, template="timepiece/project/busi
     running_amount_invoiced = 0
     running_amount_paid = 0
     running_amount_owed = 0
+    running_costs_per_role = {}
     for project in timepiece.Project.objects.all().filter(business=business).filter_by_logged_in_user(request.user).order_by("order"):
         stats = project.stats
         project_info = { 'project': project,
@@ -5411,6 +5412,11 @@ def business_cost_summary(request, business_id, template="timepiece/project/busi
         running_amount_paid += running_project_amount_paid
         running_amount_owed += running_project_amount_owed
 
+        project.calculate_new_stats(request.user)
+        for mode in timepiece.TIME_TRACKING_MODES:
+            running_costs_per_role.setdefault(mode, {'hours_billable_core_rate': 0})
+            running_costs_per_role[mode]['hours_billable_core_rate'] += project.new_stats['per_role'][mode]['hours_billable_core_rate']
+
     context['project_infos'] = project_infos
 
     
@@ -5436,7 +5442,8 @@ def business_cost_summary(request, business_id, template="timepiece/project/busi
                                   'billable': running_billable,
                                   'invoiced': running_amount_invoiced,
                                   'paid': running_amount_paid,
-                                  'owed': running_amount_owed }
+                                  'owed': running_amount_owed,
+                                  'per_role': running_costs_per_role }
     context['bp'] = bp
 
     return render_to_response(template, context, context_instance=RequestContext(request))

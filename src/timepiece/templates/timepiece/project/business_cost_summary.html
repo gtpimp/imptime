@@ -36,10 +36,15 @@
     <th>Invoiced (exVAT)</th>
     <th>Paid</th>
     <th>Owed</th>
+
     <th></th>
+    {% for mode in TIME_TRACKING_MODES %}
+    <th class="tip">{{mode}}</th>
+    {% endfor %}
   </thead>
   <tbody>
-  {% for project_info in project_infos %}
+    {% for project_info in project_infos %}
+    {% calculate_role_data user project_info.project %}
     <tr>
       <td>
         <a href="{% url 'project_list' project_info.project.id %}">{{project_info.project}}</a>
@@ -61,8 +66,15 @@
           Breakdown
         </a>
       </td>
+      
+      {% for mode in TIME_TRACKING_MODES %}
+      <td class="tip">
+        R{{ role_data|cost_for_mode:mode|floatformat:"0"|intcomma }}
+      </td>
+      {% endfor %}
+      
     </tr>
-  {% endfor %}
+    {% endfor %}
 
     <tr>
       <td>Unspecified</td>
@@ -88,6 +100,13 @@
     <th>R{{project_totals.invoiced|floatformat:"0"|intcomma}}</th>
     <th>R{{project_totals.paid|floatformat:"0"|intcomma}}</th>
     <th>R{{project_totals.owed|floatformat:"0"|intcomma}}</th>
+    <th></th>
+    {% for mode in TIME_TRACKING_MODES %}
+    <th class="tip">
+      R{{ project_totals|cost_for_mode:mode|floatformat:"0"|intcomma }}
+    </th>
+    {% endfor %}
+
   </thead>
 </table>
 
