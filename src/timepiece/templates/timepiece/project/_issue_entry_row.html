@@ -137,7 +137,10 @@
 
   <td  class="money_cell">
     <div class="secret_link {% if issue.is_fixed_cost %} fixed_cost {% endif %}"  onclick="imp.show_issue_detail({{issue.pk}}, '{% url 'issue_detail' issue.pk %}');">
+      {% comment %}
       {% traffic_bar_ratio issue.representation.billable issue.representation.estimated_cost %}
+      {% endcomment %}
+      R{{issue.representation.billable|floatformat:"0"|intcomma}}
     </div>
   </td>
   {% end_permission %}		  

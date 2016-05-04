@@ -3148,7 +3148,7 @@ class Rate(models.Model):
     
     @property
     def full_velocity(self):
-        return self.convert_to_full_rate(self.project, self.velocity)
+        return self.convert_to_full_velocity(self.project, self.velocity)
 
     @classmethod
     def convert_to_full_velocity(self, project, velocity):
