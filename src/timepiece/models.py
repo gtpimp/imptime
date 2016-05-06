@@ -438,7 +438,8 @@ class BusinessPermissions(models.Model):
     @classmethod
     def get_users_who_can_capture_time(self):
         """ any user who is allowed to estimate on at least one project """
-        users = User.objects.filter(is_active=True, is_staff=True, business_permissions__can_view_project_card=True, business_permissions__business__new_business_projects__status2='in dev').distinct()
+        users = User.objects.filter(is_active=True, business_permissions__can_view_project_card=True,
+                                    business_permissions__business__new_business_projects__status2='in dev').distinct()
         return users
     
     @property

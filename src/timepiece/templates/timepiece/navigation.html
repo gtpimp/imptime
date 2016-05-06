@@ -12,39 +12,41 @@
                         <img width="50px" src="{{STATIC_URL}}images/implicitDesignLogo.jpg"/>
                     </a>
                 </li>
-                {% if perms.timepiece.add_entry %}
-		        <li class="dropdown">
-		            <a href="#" class="dropdown-toggle" data-toggle="dropdown">My time <b class="caret"></b></a>
-		            <ul class="dropdown-menu">
-			            <li><a href="{% url 'timepiece-add' %}">Add a time entry</a></li>
-			            <li><a href="{% url 'timepiece-import' %}">Import multiple time entries</a></li>
-                        <li class="divider"></li>
-                        <li><a href="{% url 'view_person_time_sheet' request.user.pk %}">My ledger</a></li>
-                        <li><a href="{% url 'daily_graph' request.user.pk %}">Timesheet graph</a></li>
-                        <li class="divider"></li>
-                        {% if perms.timepiece.can_clock_in %}
-                        <li><a href="{% url 'quick_clocker' %}">Quick clocker</a></li>
-                        {% endif %}
-		      </ul>
-		    </li>
+                {% if perms.timepiece.can_clock_in %}
+		<li class="dropdown">
+                  <a href="#" class="dropdown-toggle" data-toggle="dropdown">My time <b class="caret"></b></a>
+		  <ul class="dropdown-menu">
+                    {% comment %}
+		    <li><a href="{% url 'timepiece-add' %}">Add a time entry</a></li>
+		    <li><a href="{% url 'timepiece-import' %}">Import multiple time entries</a></li>
+                    <li class="divider"></li>
+                    <li><a href="{% url 'view_person_time_sheet' request.user.pk %}">My ledger</a></li>
+                    <li><a href="{% url 'daily_graph' request.user.pk %}">Timesheet graph</a></li>
+                    <li class="divider"></li>
+                    {% endcomment %}
+                    <li><a href="{% url 'quick_clocker' %}">Quick clocker</a></li>
+		  </ul>
+		</li>
+
+                        
+                {% endif %}
+
+		{% if business.id %}
+		<li class="dropdown">
+                  <a href="#" class="dropdown-toggle" data-toggle="dropdown">{{ business.name}} <b class="caret"></b></a>
+                  <ul class="dropdown-menu">
+
+                    <li>
+                      <a href="#" onclick="imp.show_issue_detail(null, '{% url 'business_comments' business.id %}');">
+                        Comments
+                      </a>
+                    </li>
+
+                    {% if perms.timepiece.add_business %}
+		    {% if business.id %}
+		    <li><a target="_blank" href="{% url 'edit_business' business.id %}">Edit {{business.name}}</a></li>
+		    {% endif %}
                     {% endif %}
-
-		        {% if business.id %}
-		        <li class="dropdown">
-                    <a href="#" class="dropdown-toggle" data-toggle="dropdown">{{ business.name}} <b class="caret"></b></a>
-                    <ul class="dropdown-menu">
-
-                        <li>
-                            <a href="#" onclick="imp.show_issue_detail(null, '{% url 'business_comments' business.id %}');">
-                                Comments
-                            </a>
-                        </li>
-
-                        {% if perms.timepiece.add_business %}
-			            {% if business.id %}
-			            <li><a target="_blank" href="{% url 'edit_business' business.id %}">Edit {{business.name}}</a></li>
-			            {% endif %}
-                        {% endif %}
 
                         <li><hr/></li>
 

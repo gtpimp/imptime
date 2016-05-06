@@ -15,10 +15,7 @@
 <h1>Quick Clocker</h1>
 
 <p>
-This page is useful for clocking management tasks. 
-</p>
-<p>
-Developers should not need to use this page, rather use the emacs importer
+Note: An alternative and sometimes quicker mechanism for time tracking is to use the textfile format importer
 </p>
 
 <div class="quick_clocker">
@@ -46,6 +43,7 @@ Developers should not need to use this page, rather use the emacs importer
   </div>
 
   <div class="pane">
+    {% if clock_out_form.is_clocked_in %}
     <h3>Currently clocked in</h3>
     <form method="POST" action="{% url 'quick_clocker_clock_out' %}">
       {% csrf_token %}
@@ -53,6 +51,9 @@ Developers should not need to use this page, rather use the emacs importer
       {{ clock_out_form }}
       <input class="btn btn-info" type="submit" name="clock_out" value="Clock out"/>
     </form>
+    {% else %}
+    <h3>Not clocked in</h3>
+    {% endif %}
   </div>
 
 

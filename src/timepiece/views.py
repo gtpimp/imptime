@@ -5732,7 +5732,9 @@ def quick_clocker(request, template="timepiece/time-sheet/quick_clocker.html", c
     context = context or {}
 
     users = timepiece.BusinessPermissions.get_users_who_can_capture_time().order_by("username")
-    projects = timepiece.Project.objects.all().filter_can_add_dev_time_states().filter_open().order_by("business__name", "name")
+    users = users.filter(pk=request.user.id)
+    allowed_projects = timepiece.Project.objects.all().filter_by_logged_in_user(request.user)
+    projects = allowed_projects.filter_can_add_dev_time_states().filter_open().order_by("business__name", "name")
     context['users'] = users
     context['projects'] = projects
 
@@ -5763,10 +5765,14 @@ def quick_clocker(request, template="timepiece/time-sheet/quick_clocker.html", c
             
         return HttpResponseRedirect(reverse('quick_clocker'))
 
-    context['clocked_in_entries'] = timepiece.Entry.objects.all().filter(source='quick_clocker').is_open().order_by("user__username")
-    context['recently_clocked_out_entries'] = timepiece.Entry.objects.all().filter(source='quick_clocker').is_closed().order_by("-date_updated")[0:15]
-    context['recent_dev_entries'] = timepiece.Entry.objects.all().filter(source='emacs').is_closed().order_by("-end_time")[0:20]
-    logged_in_users_active_entry = context['clocked_in_entries'].filter(user=request.user).first()
+    allowed_entries = timepiece.Entry.objects.all().filter_by_logged_in_user(request.user)
+    quick_clocker_entries = allowed_entries.filter(source='quick_clocker')
+    users_entries = allowed_entries.filter(user=request.user)
+    users_quick_clocker_entries = users_entries.filter(source='quick_clocker')
+    context['clocked_in_entries'] = users_quick_clocker_entries.is_open().order_by("user__username")
+    context['recently_clocked_out_entries'] = users_quick_clocker_entries.is_closed().order_by("-date_updated")[0:15]
+    context['recent_dev_entries'] = users_quick_clocker_entries.filter(source='emacs').is_closed().order_by("-end_time")[0:20]
+    logged_in_users_active_entry = users_quick_clocker_entries.filter(user=request.user).first()
     if context.get('clock_out_form', None) is None:
         context['clock_out_form'] = timepiece_forms.QuickClockerClockOutForm(context['clocked_in_entries'],
                                                                              initial={'entry':logged_in_users_active_entry,
@@ -5779,8 +5785,10 @@ def quick_clocker(request, template="timepiece/time-sheet/quick_clocker.html", c
 @csrf_exempt
 def quick_clocker_clock_out(request):
     context = {}
-    clock_out_form = timepiece_forms.QuickClockerClockOutForm(timepiece.Entry.objects.all().filter(source='quick_clocker').is_open(),
-                                                              request.POST or None, initial={'clock_out_time':api.localised_today()})
+
+    entries = timepiece.Entry.objects.all().filter(user=request.user, source='quick_clocker').is_open()
+    clock_out_form = timepiece_forms.QuickClockerClockOutForm(entries, request.POST or None,
+                                                              initial={'clock_out_time':api.localised_today()})
     if clock_out_form.is_valid():
         entry = clock_out_form.cleaned_data['entry']
         entry.end_time = clock_out_form.cleaned_data['clock_out_time']
@@ -5791,12 +5799,12 @@ def quick_clocker_clock_out(request):
     return quick_clocker(request, context=context)
 
 
-@permission_required('timepiece.change_entry')
+#@permission_required('timepiece.change_entry')
 @render_with('timepiece/time-sheet/quick_clocker_edit_entry.html')
 @login_required
 @csrf_exempt
 def quick_clocker_edit_entry(request, entry_id=None):
-    entry = timepiece.Entry.objects_original.get(pk=entry_id,)
+    entries = timepiece.Entry.objects_original.all().filter(user=request.user, source='quick_clocker').get(pk=entry_id)
     projects = timepiece.Project.objects.filter(business=entry.issue.project.business).filter_can_add_dev_time_states().order_by("name")
     form = timepiece_forms.QuickClockerEditEntry(projects, request.POST or None, instance=entry)
     if form.is_valid():

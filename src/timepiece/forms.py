@@ -291,6 +291,7 @@ class ClockInForm(forms.ModelForm):
             users=self.user, status__enable_timetracking=True,
             type__enable_timetracking=True
             )
+
         if not self.user.is_superuser:
             projects = projects.filter(users=self.user)
         self.fields['project'].queryset = projects
@@ -1594,6 +1595,10 @@ class QuickClockerClockOutForm(forms.Form):
         self.fields['clock_out_time'].widget.attrs['class'] = 'datetimepicker'
         self.fields['entry'].queryset = entries
         self.fields['entry'].choices = [ (x.id, "<b>%s</b> issue%s <b>%s</b> %s"%(x.user.username, x.issue.number, x.issue.project.long_name(), x.start_time.strftime('%a %H:%M'))) for x in entries ]
+        self.entries = entries
+
+    def is_clocked_in(self):
+        return self.entries
 
 class QuickClockerEditEntry(forms.ModelForm):
 

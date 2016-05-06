@@ -72,22 +72,22 @@
         <div class="sub-navbar-inner">
 
           {% include "timepiece/_navigation_project_specific_menu.html" %}
-          
-          {% if perms.timepiece.add_entry %}
-          <div class="nav-link dropdown">
+
+          {% if perms.timepiece.can_clock_in %}
+	  <div class="nav-link dropdown">
             <a class="ico-clock dropdown-toggle"  data-toggle="dropdown" href="#"> my time <b class="caret"></b></a>
-            <ul class="nav-link dropdown-menu">
+	    <ul class="dropdown-menu">
+              {% comment %}
 	      <li><a href="{% url 'timepiece-add' %}">Add a time entry</a></li>
 	      <li><a href="{% url 'timepiece-import' %}">Import multiple time entries</a></li>
               <li class="divider"></li>
               <li><a href="{% url 'view_person_time_sheet' request.user.pk %}">My ledger</a></li>
               <li><a href="{% url 'daily_graph' request.user.pk %}">Timesheet graph</a></li>
               <li class="divider"></li>
-              {% if perms.timepiece.can_clock_in %}
+              {% endcomment %}
               <li><a href="{% url 'quick_clocker' %}">Quick clocker</a></li>
-              {% endif %}
 	    </ul>
-          </div>
+	  </div>
           {% endif %}
 
           {% if perms.timepiece.view_dashboard %}
