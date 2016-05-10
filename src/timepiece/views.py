@@ -5804,7 +5804,7 @@ def quick_clocker_clock_out(request):
 @login_required
 @csrf_exempt
 def quick_clocker_edit_entry(request, entry_id=None):
-    entries = timepiece.Entry.objects_original.all().filter(user=request.user, source='quick_clocker').get(pk=entry_id)
+    entry = timepiece.Entry.objects_original.all().filter(user=request.user, source='quick_clocker').get(pk=entry_id)
     projects = timepiece.Project.objects.filter(business=entry.issue.project.business).filter_can_add_dev_time_states().order_by("name")
     form = timepiece_forms.QuickClockerEditEntry(projects, request.POST or None, instance=entry)
     if form.is_valid():
