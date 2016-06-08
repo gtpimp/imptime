@@ -1,4 +1,4 @@
-n#!/bin/bash
+#!/bin/bash
 
 DATE=$1
 if [ -z "${DATE}" ]; then
