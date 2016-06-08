@@ -1,4 +1,4 @@
-#!/bin/bash
+n#!/bin/bash
 
 DATE=$1
 if [ -z "${DATE}" ]; then
@@ -17,7 +17,7 @@ LOCAL_BACKUP_PATH=/home/gtp/id/imptime/db_backups
 DB_NAME="implicitdesign"
 
 echo "Fetching backup for ${DATE}_${TIME}..."
-#scp gtp@live.implicitdesign.co.za:/home/timesheet/db_backups/${FILENAME} ${LOCAL_BACKUP_PATH}
+scp gtp@live.implicitdesign.co.za:/home/timesheet/db_backups/${FILENAME} ${LOCAL_BACKUP_PATH}
 
 echo "Recreating db"
 
