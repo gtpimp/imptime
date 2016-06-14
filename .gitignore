@@ -33,3 +33,12 @@ scripts/old_imports
 src/implicitdesign/media/
 /static
 local_settings.py
+*.iml
+.idea
+*flymake*
+node_modules
+design/node_modules/.bin
+.DS_Store
+venv
+npm-debug.log
+.sass-cache
