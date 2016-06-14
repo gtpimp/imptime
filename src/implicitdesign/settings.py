@@ -222,6 +222,7 @@ INSTALLED_APPS = (
     'mailqueue',
     'corsheaders',
 
+    'imptime',
     'timepiece',
     'emacs_importer',
     'implicitdesign',
