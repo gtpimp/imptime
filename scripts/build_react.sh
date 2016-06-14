@@ -2,6 +2,6 @@
 
 BASE_DIR="`dirname \"$0\"`/.."
 cd $BASE_DIR/react_build
-npm install
+npm install --dev
 gulp build
 
