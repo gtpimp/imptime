@@ -26,3 +26,18 @@ class ProjectViewSet(viewsets.ViewSet):
             logger.exception(ex)
             data = {'status': 'failed', 'error': str(ex)}
         return HttpResponse(JSONRenderer().render(data))
+
+    def retrieve(self, request, pk):
+        try:
+            context = {}
+            user = request.user
+            projects = user.profile.businesses.exclude_has_closed_projects()
+            project = projects.get(pk=pk)
+
+            s = ProjectSerializer(project)
+            context['projects'] = s.data
+            data = {'status': 'success', 'payload': context}
+        except Exception, ex:
+            logger.exception(ex)
+            data = {'status': 'failed', 'error': str(ex)}
+        return HttpResponse(JSONRenderer().render(data))
