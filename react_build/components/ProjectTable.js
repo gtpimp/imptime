@@ -7,11 +7,15 @@ import {
 } from '../actions/Projects'
 
 
-export default class ProjectTable extends Component {
+export class ProjectTable extends Component {
 
     constructor(props) {
         super(props)
         this.onRefresh = this.onRefresh.bind(this)
+    }
+
+    componentDidMount() {
+	dispatch(fetchProjectsIfNeeded())
     }
 
     onRefresh() {
@@ -70,11 +74,9 @@ function mapStateToProps(state, props) {
     const { projects_by_id, ui_context } = state
     const { context_key } = props
     const context = ui_context[context_key] || {}
-
-    const { visible_project_ids } = context
-    projects = visible_project_ids.map(project_id, index) => 
-	projects_by_id[project_id]
-    )
+    const projects = (projects_by_id && projects_by_id.map( function(project_id, index) {
+	return projects_by_id[project_id]
+    })) || []
     
     return {
         context_key: context_key,

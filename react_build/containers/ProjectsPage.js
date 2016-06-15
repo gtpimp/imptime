@@ -1,7 +1,8 @@
 import React, { Component, PropTypes } from 'react'
 import { connect } from 'react-redux'
+import { ProjectTable } from '../components/ProjectTable'
 
-class IssuesPage extends Component {
+class ProjectsPage extends Component {
 
     constructor(props) {
         super(props)
@@ -13,11 +14,9 @@ class IssuesPage extends Component {
 
     render() {
 
-        const {} = this.props
-
         return (
             <div>
-		Some issues on a page
+		<ProjectTable key="projects" context_key="projects" />
 	    </div>
         )
     }
@@ -30,5 +29,5 @@ function mapStateToProps(state) {
     }
 }
 
-export default connect(mapStateToProps)(IssuesPage)
+export default connect(mapStateToProps)(ProjectsPage)
 

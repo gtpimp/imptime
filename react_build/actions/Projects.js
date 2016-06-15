@@ -37,7 +37,7 @@ function announceProjectsLoadFailed(error_message) {
 function fetchProjects(projects_id) {
     return dispatch => {
         dispatch(announceLoadingProjects)
-        return impfetch('projects)
+        return impfetch('/imp/project')
             .then(response => response.json())
             .then(json => {
                 if (json.status != 'success') {
