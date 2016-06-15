@@ -40,7 +40,7 @@ class SprintViewSet(viewsets.ViewSet):
             sprints = Sprint.objects.filter(business_id=project.id)
             sprint = sprints.get(pk=pk)
             s = SprintSerializer(sprint)
-            context['sprints'] = s.data
+            context['sprint'] = s.data
             data = {'status': 'success', 'payload': context}
         except Exception, ex:
             logger.exception(ex)
