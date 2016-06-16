@@ -15,6 +15,7 @@ export class ProjectTable extends Component {
     }
 
     componentDidMount() {
+	const { dispatch } = this.props
 	dispatch(fetchProjectsIfNeeded())
     }
 
@@ -73,9 +74,10 @@ export class ProjectTable extends Component {
 function mapStateToProps(state, props) {
     const { projects_by_id, ui_context } = state
     const { context_key } = props
-    const context = ui_context[context_key] || {}
-    const projects = (projects_by_id && projects_by_id.map( function(project_id, index) {
-	return projects_by_id[project_id]
+    const context = (ui_context && ui_context[context_key]) || {}
+    const visible_ids = context.visible_ids || []
+    const projects = (projects_by_id && visible_ids.map( function(visible_id, index) {
+	return projects_by_id[visible_id]
     })) || []
     
     return {

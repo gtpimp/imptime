@@ -1,4 +1,6 @@
 import { impfetch } from './lib.js'
+import difference from 'lodash/difference'
+import keys from 'lodash/keys'
 
 export const ANNOUNCE_PROJECTS_LOADED = 'ANNOUNCE_PROJECTS_LOADED'
 export const ANNOUNCE_PROJECTS_LOAD_FAILED = 'ANNOUNCE_PROJECTS_LOAD_FAILED'
@@ -34,10 +36,10 @@ function announceProjectsLoadFailed(error_message) {
     }
 }
 
-function fetchProjects(projects_id) {
+function fetchProjects(project_ids) {
     return dispatch => {
-        dispatch(announceLoadingProjects)
-        return impfetch('/imp/project')
+        dispatch(announceLoadingProjects())
+        return impfetch('/imp/project', {params:{project_ids:project_ids}})
             .then(response => response.json())
             .then(json => {
                 if (json.status != 'success') {
@@ -51,14 +53,27 @@ function fetchProjects(projects_id) {
     }
 }
 
-function shouldFetchProjects(state, projects_id) {
-    const projects = state.projectss.projectss_by_id[projects_id]
+function shouldFetchProjects(state, project_ids, context_key) {
+    
+    const { projects_by_id, ui_context } = state
+    const context = (ui_context && ui_context[context_key]) || {}
+    const invalidate_items = context.invalidate_items || false
+    const visible_project_ids = context.visible_project_ids || []
+    const missing_project_ids = difference(visible_project_ids, keys(projects_by_id))
+    /* const projects = visible_project_ids.map(
+       function(visible_id, index) {
+       const project = projects_by_id[visible_id]
+       if ( ! project ) {
+       project = { 'status': 'loading' }
+       }
+       return project
+     * })*/
+    
+    if ( missing_project_ids.length > 0 ) {
     if (!projects) {
         return true
-    } else if (projects.isFetching) {
-        return false
     } else {
-        return projects.didInvalidate
+        return projects.items_invalidated
     }
 }
 
