@@ -1,6 +1,6 @@
 import React, { Component, PropTypes } from 'react'
 import { connect } from 'react-redux'
-import { ProjectTable } from '../components/ProjectTable'
+import ProjectTable from '../components/ProjectTable'
 
 class ProjectsPage extends Component {
 
