@@ -29,21 +29,24 @@ export function update_list_filter(list_key, new_filter) {
     }
 }
 
-export function invalidateList() {
+export function invalidateList(list_key) {
     return {
-        type: INVALIDATE_LIST
+        type: INVALIDATE_LIST,
+	list_key: list_key
     }
 }
 
-function announceListLoading() {
+function announceListLoading(list_key) {
     return {
-        type: ANNOUNCE_LIST_LOADING
+        type: ANNOUNCE_LIST_LOADING,
+	list_key: list_key
     }
 }
 
-function announceMatchingItemsLoading() {
+function announceMatchingItemsLoading(list_key) {
     return {
-        type: ANNOUNCE_MATCHING_ITEMS_LOADING
+        type: ANNOUNCE_MATCHING_ITEMS_LOADING,
+	list_key: list_key
     }
 }
 
@@ -66,17 +69,19 @@ function announceMatchingItemsLoaded(list_key) {
     }
 }
 
-function announceListLoadFailed(error_message) {
+function announceListLoadFailed(list_key,error_message) {
     return {
         type: ANNOUNCE_LIST_LOAD_FAILED,
+	list_key: list_key,
         error_message: error_message,
         received_at: Date.now()
     }
 }
 
-function announceMatchingItemsLoadFailed(error_message) {
+function announceMatchingItemsLoadFailed(list_key, error_message) {
     return {
         type: ANNOUNCE_MATCHING_ITEMS_LOAD_FAILED,
+	list_key: list_key,
         error_message: error_message,
         received_at: Date.now()
     }
@@ -85,7 +90,7 @@ function announceMatchingItemsLoadFailed(error_message) {
 function fetchListAndItems(state, list_key,
 			   matching_items_key, matching_items_promise_func) {
     return dispatch => {
-        dispatch(announceListLoading())
+        dispatch(announceListLoading(list_key))
 
 	const l = state[list_key] || {}
 	const pagination = l.pagination || {}
@@ -94,37 +99,32 @@ function fetchListAndItems(state, list_key,
         return impfetch('/imp/' + matching_items_key + '/page/', {pagination:pagination, filter:filter})
             .then(response => response.json())
             .then(json => {
-                if (json.status != 'success') {
-                    dispatch(announceListLoadFailed(json.error_message))
+
+		if (json.status != 'success') {
+                    dispatch(announceListLoadFailed(list_key, json.error_message))
                 } else {
-                    dispatch(announceListLoaded(json.payload))
-                }
-		return json
+		    const required_item_ids = json.visible_item_ids || []
+		    const matching_items = state[matching_items_key] || {}
+		    const matching_item_ids = keys(matching_items.items_by_id || {}) // magic, assumes the specific reducer will use 'items_by_id' as well
+		    const unmatching_item_ids = difference(required_item_ids, matching_item_ids)
+
+		    if ( unmatching_item_ids.length == 0 ) {
+			dispatch(announceListLoaded(list_key, json.payload))
+		    } else {
+			matching_items_promise_func(dispatch, unmatching_item_ids)
+			    .then(() => {
+				announceMatchingItemsLoaded(list_key)
+				dispatch(announceListLoaded(list_key, json.payload))
+			    })
+			    .catch(function (error) {
+				dispatch(announceMatchingItemsLoadFailed(list_key, "Failed to load list: " + error.message))
+			    })
+		    }
+		}		
             })
-	    .then(json => {
-		_fetchMatchingItems(dispatch, list_key, json.payload.visible_item_ids,
-				    matching_items_key, matching_items_promise_func)
-	    })
 	    .catch(function (error) {
-                dispatch(announceListLoadFailed("Failed to load list: " + error.message))
+                dispatch(announceListLoadFailed(list_key,"Failed to load list: " + error.message))
             })
-    }
-}
-
-function _fetchMatchingItems(dispatch, list_key, visible_item_ids,
-			     matching_items_key, matching_items_promise_func) {
-
-    const required_item_ids = visible_item_ids || []
-    const matching_item_ids = keys(matching_items.items_by_id) // magic, assumes the specific reducer will use 'items_by_id' as well
-    const unmatching_item_ids = difference(required_item_ids, matching_item_ids)
-
-    if ( unmatching_item_ids.length > 0 ) {
-	dispatch(announceMatchingItemsLoading())
-	dispatch(matching_items_promise_func(unmatching_item_ids))
-	    .then(() => announceMatchingItemsLoaded(list_key))
-            .catch(function (error) {
-		dispatch(announceMatchingItemsLoadFailed("Failed to load list: " + error.message))
-	    })
     }
 }
 

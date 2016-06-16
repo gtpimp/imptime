@@ -21,8 +21,8 @@ export class ProjectTable extends Component {
 
     onRefresh() {
         const { dispatch } = this.props
-        dispatch(invalidateProjects())
-        dispatch(fetchProjectsIfNeeded())
+        dispatch(invalidateProjects(list_key))
+        dispatch(fetchProjectsIfNeeded(list_key))
     }
 
     renderProject(project, index) {
@@ -30,8 +30,12 @@ export class ProjectTable extends Component {
         return (
 	    <tr key={project.id+"."+index}>
 		<td>{project_id}</td>
+	        ( project.loaded === false &&
+		<td>{Loading...}</td>
+		)
+		( project.loaded !== false &&
 		<td>{project.name}</td>
-            </tr>
+		)
         )
     }
 
@@ -72,18 +76,20 @@ export class ProjectTable extends Component {
 }
 
 function mapStateToProps(state, props) {
-    const { projects_by_id, ui_context } = state
-    const { list_key } = props
-    const context = (ui_context && ui_context[list_key]) || {}
-    const visible_ids = context.visible_ids || []
-    const projects = (projects_by_id && visible_ids.map( function(visible_id, index) {
-	return projects_by_id[visible_id]
+    const { projects, item_list } = state
+    const items_by_id = projects && projects.items_by_id || {}
+    const l = (item_list && item_list[list_key]) || {}
+    const visible_item_ids = l.visible_item_ids || []
+    
+    const items = (items_by_id && visible_item_ids.map( function(visible_item_id, index) {
+	return items_by_id[visible_item_id] || { 'id': visible_item_id,
+						 'loaded': false }
     })) || []
     
     return {
         list_key: list_key,
-        projects: projects,
-        has_projects: projects && projects.length > 0,
+        projects: items,
+        has_items: items && items.length > 0,
         is_fetching: context.is_fetching,
         last_updated: context.last_updated
     }

@@ -1,6 +1,7 @@
 import { impfetch } from './lib.js'
 import difference from 'lodash/difference'
 import keys from 'lodash/keys'
+import map from 'lodash/map'
 import { fetchListIfNeeded } from './ItemList'
 
 export const ANNOUNCE_PROJECTS_LOADED = 'ANNOUNCE_PROJECTS_LOADED'
@@ -20,11 +21,10 @@ function announceLoadingProjects() {
     }
 }
 
-function announceProjectsLoaded(list_key, projects_by_id) {
+function announceProjectsLoaded(projects) {
     return {
         type: ANNOUNCE_PROJECTS_LOADED,
-        projects_by_id: projects_by_id,
-	list_key: list_key,
+        projects_by_id: map(projects, 'id'),
         received_at: Date.now()
     }
 }
@@ -37,46 +37,30 @@ function announceProjectsLoadFailed(error_message) {
     }
 }
 
-function fetchProjects(project_ids) {
-    return dispatch => {
-        dispatch(announceLoadingProjects())
-        return impfetch('/imp/project', {params:{project_ids:project_ids}})
-            .then(response => response.json())
-            .then(json => {
+function fetchProjectsPromise(dispatch, project_ids) {
+    return new Promise(function(resolve, reject) {
+	dispatch(announceLoadingProjects())
+        return impfetch('/imp/project/', {params:{project_ids:project_ids}})
+	    .then(response => response.json())
+	    .then(json => {
                 if (json.status != 'success') {
-                    dispatch(announceProjectsLoadFailed(json.error_message))
+		    dispatch(announceProjectsLoadFailed())
+		    reject(json.error_message)
                 } else {
-                    dispatch(announceProjectsLoaded(json.payload))
+		    dispatch(announceProjectsLoaded(json.payload))
                 }
-            }).catch(function (error) {
-                dispatch(announceProjectsLoadFailed("Failed to load projects: " + error.message))
-            })
-    }
-}
-
-function shouldFetchProjects(state, project_ids, list_key) {
-    
-    const { projects_by_id, ui_context } = state
-    const context = (ui_context && ui_context[list_key]) || {}
-    const invalidate_items = context.invalidate_items || false
-    const visible_project_ids = context.visible_project_ids || []
-    const missing_project_ids = difference(visible_project_ids, keys(projects_by_id))
-    if (!projects) {
-        return true
-    } else {
-        return projects.items_invalidated
-    }
+	    }).catch(function (error) {
+		dispatch(announceProjectsLoadFailed("Failed to load projects: " + error.message))
+		reject("Failed to load projects: " + error.message)
+	    })
+    })
 }
 
 export function fetchProjectsIfNeeded(list_key) {
     return (dispatch, getState) => {
-
 	const list_key = list_key
-	fetchListIfNeeded
-	
-        const state = getState()
-        if (shouldFetchProjects(state, projects_id)) {
-            return dispatch(fetchProjects(projects_id))
-        }
+	const matching_items_key = 'project'
+	const matching_items_promise_func = fetchProjectsPromise
+	dispatch(fetchListIfNeeded(list_key, matching_items_key, matching_items_promise_func))
     }
 }
