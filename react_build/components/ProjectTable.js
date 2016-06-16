@@ -15,8 +15,8 @@ export class ProjectTable extends Component {
     }
 
     componentDidMount() {
-	const { dispatch } = this.props
-	dispatch(fetchProjectsIfNeeded())
+	const { dispatch, list_key } = this.props
+	dispatch(fetchProjectsIfNeeded(list_key))
     }
 
     onRefresh() {

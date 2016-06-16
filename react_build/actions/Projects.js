@@ -1,6 +1,7 @@
 import { impfetch } from './lib.js'
 import difference from 'lodash/difference'
 import keys from 'lodash/keys'
+import { fetchListIfNeeded } from './ItemList'
 
 export const ANNOUNCE_PROJECTS_LOADED = 'ANNOUNCE_PROJECTS_LOADED'
 export const ANNOUNCE_PROJECTS_LOAD_FAILED = 'ANNOUNCE_PROJECTS_LOAD_FAILED'
@@ -67,8 +68,12 @@ function shouldFetchProjects(state, project_ids, list_key) {
     }
 }
 
-export function fetchProjectsIfNeeded(projects_id) {
+export function fetchProjectsIfNeeded(list_key) {
     return (dispatch, getState) => {
+
+	const list_key = list_key
+	fetchListIfNeeded
+	
         const state = getState()
         if (shouldFetchProjects(state, projects_id)) {
             return dispatch(fetchProjects(projects_id))
