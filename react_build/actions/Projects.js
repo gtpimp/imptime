@@ -19,11 +19,11 @@ function announceLoadingProjects() {
     }
 }
 
-function announceProjectsLoaded(context_key, projects_by_id) {
+function announceProjectsLoaded(list_key, projects_by_id) {
     return {
         type: ANNOUNCE_PROJECTS_LOADED,
         projects_by_id: projects_by_id,
-	context_key: context_key,
+	list_key: list_key,
         received_at: Date.now()
     }
 }
@@ -53,23 +53,13 @@ function fetchProjects(project_ids) {
     }
 }
 
-function shouldFetchProjects(state, project_ids, context_key) {
+function shouldFetchProjects(state, project_ids, list_key) {
     
     const { projects_by_id, ui_context } = state
-    const context = (ui_context && ui_context[context_key]) || {}
+    const context = (ui_context && ui_context[list_key]) || {}
     const invalidate_items = context.invalidate_items || false
     const visible_project_ids = context.visible_project_ids || []
     const missing_project_ids = difference(visible_project_ids, keys(projects_by_id))
-    /* const projects = visible_project_ids.map(
-       function(visible_id, index) {
-       const project = projects_by_id[visible_id]
-       if ( ! project ) {
-       project = { 'status': 'loading' }
-       }
-       return project
-     * })*/
-    
-    if ( missing_project_ids.length > 0 ) {
     if (!projects) {
         return true
     } else {

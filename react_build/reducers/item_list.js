@@ -3,9 +3,12 @@ import merge from 'lodash/merge'
 import { setErrorMessage } from '../actions/Error'
 
 import {
-    ANNOUNCE_LIST_LOAD_FAILED,
     ANNOUNCE_LIST_LOADED,
     ANNOUNCE_LIST_LOADING,
+    ANNOUNCE_LIST_LOAD_FAILED,
+    ANNOUNCE_MATCHING_ITEMS_LOADED,
+    ANNOUNCE_MATCHING_ITEMS_LOAD_FAILED,
+    ANNOUNCE_MATCHING_ITEMS_LOADING,
     INVALIDATE_LIST,
     UPDATE_LIST_PAGINATION,
     UPDATE_LIST_FILTER,
@@ -23,31 +26,50 @@ const initialState = {
 export default function item_list(state = initialState, action) {
 
     let state_copy = Object.assign({}, state)
-    let context = Object.assign({}, state_copy[action.context_key] || {})
+    let context = Object.assign({}, state_copy[action.list_key] || {})
     
     switch (action.type) {
         case INVALIDATE_LIST:
-	    state_copy[action.context_key] = Object.assign({}, context, {
+	    state_copy[action.list_key] = Object.assign({}, context, {
                 is_fetching: false,
                 items_invalidated: true
             })
 	    return state_copy
         case ANNOUNCE_LIST_LOADING:
-	    state_copy[action.context_key] = Object.assign({}, context, {
+	    state_copy[action.list_key] = Object.assign({}, context, {
+                is_fetching: true,
+                items_invalidated: false
+	    })
+	    return state_copy
+	case ANNOUNCE_MATCHING_ITEMS_LOADED:
+	    state_copy[action.list_key] = Object.assign({}, context, {
                 is_fetching: true,
                 items_invalidated: false
 	    })
 	    return state_copy
         case ANNOUNCE_LIST_LOADED:
-	    state_copy[action.context_key] = Object.assign({}, context, {
+	    state_copy[action.list_key] = Object.assign({}, context, {
 		is_fetching: false,
 		received_at: action.received_at,
 		visible_item_ids: action.visible_item_ids
 	    })
 	    return state_copy
+        case ANNOUNCE_MATCHING_ITEMS_LOADED:
+	    state_copy[action.list_key] = Object.assign({}, context, {
+		is_fetching: false,
+		received_at: action.received_at,
+	    })
+	    return state_copy
         case ANNOUNCE_LIST_LOAD_FAILED:
             setErrorMessage("Failed to load: " + action.error_message)
-	    state_copy[action.context_key] = Object.assign({}, context, {
+	    state_copy[action.list_key] = Object.assign({}, context, {
+                is_fetching: false,
+                items_invalidated: false
+	    })
+            return state_copy;
+        case ANNOUNCE_MATCHING_ITEMS_LOAD_FAILED:
+            setErrorMessage("Failed to load matching items: " + action.error_message)
+	    state_copy[action.list_key] = Object.assign({}, context, {
                 is_fetching: false,
                 items_invalidated: false
 	    })

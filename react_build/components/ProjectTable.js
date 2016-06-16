@@ -37,10 +37,10 @@ export class ProjectTable extends Component {
 
     render() {
 
-        const {projects, loading, has_projects } = this.props
+        const {projects, is_fetching, has_projects } = this.props
 
         return (
-            <div style={{ opacity: loading ? 0.5 : 1 }}>
+            <div style={{ opacity: is_fetching ? 0.5 : 1 }}>
 		<div className="panel panel--wide">
                     <div className="panel-heading">
 			<div className="panel__title">Projects</div>
@@ -61,7 +61,7 @@ export class ProjectTable extends Component {
 				{projects.map((project, index) => this.renderProject(project, index))}
                             </tbody>
 			</table>
-			{ !loading && !has_projects &&
+			{ !is_fetching && !has_projects &&
 			  <div className="table__no-rows">no projects</div>
 			}
                     </div>
@@ -73,18 +73,18 @@ export class ProjectTable extends Component {
 
 function mapStateToProps(state, props) {
     const { projects_by_id, ui_context } = state
-    const { context_key } = props
-    const context = (ui_context && ui_context[context_key]) || {}
+    const { list_key } = props
+    const context = (ui_context && ui_context[list_key]) || {}
     const visible_ids = context.visible_ids || []
     const projects = (projects_by_id && visible_ids.map( function(visible_id, index) {
 	return projects_by_id[visible_id]
     })) || []
     
     return {
-        context_key: context_key,
+        list_key: list_key,
         projects: projects,
         has_projects: projects && projects.length > 0,
-        loading: context.loading,
+        is_fetching: context.is_fetching,
         last_updated: context.last_updated
     }
 }

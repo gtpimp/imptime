@@ -16,7 +16,7 @@ class ProjectsPage extends Component {
 
         return (
             <div>
-		<ProjectTable key="projects" context_key="projects" />
+		<ProjectTable key="projects" list_key="projects" />
 	    </div>
         )
     }
