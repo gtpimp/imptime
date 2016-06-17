@@ -40,7 +40,7 @@ function announceProjectsLoadFailed(error_message) {
 function fetchProjectsPromise(dispatch, project_ids) {
     return new Promise(function(resolve, reject) {
 	dispatch(announceLoadingProjects())
-        return impfetch('/imp/project/', {params:{project_ids:project_ids}})
+        return impfetch('/imp/project/', {params:{ids:project_ids}})
 	    .then(response => response.json())
 	    .then(json => {
                 if (json.status != 'success') {

@@ -3,7 +3,7 @@ import cookie from 'react-cookie'
 import isArray from 'lodash/isArray'
 
 export function impfetch(url, args) {
-    url = "/imptime/" + url
+    url = "" + url
     args = args || {}
     if ( ! args.headers ) {
         args.headers = {"Content-type": "application/json; charset=UTF-8"}

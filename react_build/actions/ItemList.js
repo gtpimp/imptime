@@ -96,7 +96,7 @@ function fetchListAndItems(state, list_key,
 	const pagination = l.pagination || {}
 	const filter = l.filter || {}
 	
-        return impfetch('/imp/' + matching_items_key + '/page/', {pagination:pagination, filter:filter})
+        return impfetch('/imp/' + matching_items_key, {params:{pagination:pagination, filter:filter}})
             .then(response => response.json())
             .then(json => {
 
