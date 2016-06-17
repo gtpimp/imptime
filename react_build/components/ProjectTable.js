@@ -78,6 +78,7 @@ export class ProjectTable extends Component {
 
 function mapStateToProps(state, props) {
     const { projects, item_list } = state
+    const { list_key } = props
     const items_by_id = projects && projects.items_by_id || {}
     const l = (item_list && item_list[list_key]) || {}
     const visible_item_ids = l.visible_item_ids || []
@@ -91,8 +92,8 @@ function mapStateToProps(state, props) {
         list_key: list_key,
         projects: items,
         has_items: items && items.length > 0,
-        is_fetching: context.is_fetching,
-        last_updated: context.last_updated
+        is_fetching: l.is_fetching,
+        last_updated: l.last_updated
     }
 }
 

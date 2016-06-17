@@ -1,6 +1,7 @@
 import React, { Component, PropTypes } from 'react'
 import { connect } from 'react-redux'
 import ProjectsPage from './ProjectsPage'
+import NotificationBar from '../components/NotificationBar'
 
 class App extends Component {
 
@@ -17,6 +18,9 @@ class App extends Component {
 
         return (
             <div className="app">
+
+		<NotificationBar/>
+		
 		<ProjectsPage/>
 	    </div>
         )

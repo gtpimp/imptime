@@ -1,12 +1,15 @@
 @import 'variables';
 
 @media (min-width: 1200px) {
-  .container {
-    width: 1272px;
-  }
+    .container {
+	width: 1272px;
+    }
 }
 
 html, body {
-  height: 100%;
+    height: 100%;
 }
 
+error {
+    color: $error-color;
+}

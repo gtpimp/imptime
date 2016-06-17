@@ -1,5 +1,6 @@
 import { createStore, applyMiddleware, compose } from 'redux'
 import thunk from 'redux-thunk'
+import error_catcher_middleware from '../middleware/error_catcher'
 import rootReducer from '../reducers'
 
 export default function configureStore(initialState) {
@@ -8,7 +9,8 @@ export default function configureStore(initialState) {
         rootReducer,
         initialState,
         compose(
-            applyMiddleware(thunk),
+            applyMiddleware(thunk,
+			    error_catcher_middleware),
             window.devToolsExtension ? window.devToolsExtension() : f => f
         )
     )
