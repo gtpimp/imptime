@@ -14,19 +14,22 @@ import {
     UPDATE_LIST_FILTER,
 } from '../actions/ItemList.js'
 
-const initialState = {
+const initialState = {}
+
+const item_list_template = {
+    // Don't put any objects in here, only primitives
     is_fetching: false,
     items_invalidated: true,
-    visible_item_ids: [],
+    visible_item_ids: null,
     received_at: null,
-    filter: {},
-    pagination: {}
+    filter: null,
+    pagination: null
 }
 
 export default function item_list(state = initialState, action) {
 
     let state_copy = Object.assign({}, state)
-    let context = Object.assign({}, state_copy[action.list_key] || {})
+    let context = Object.assign({}, item_list_template, state_copy[action.list_key] || {})
     
     switch (action.type) {
         case INVALIDATE_LIST:
@@ -41,17 +44,22 @@ export default function item_list(state = initialState, action) {
                 items_invalidated: false
 	    })
 	    return state_copy
+        case ANNOUNCE_MATCHING_ITEMS_LOADING:
+	    state_copy[action.list_key] = Object.assign({}, context, {
+                // is_fetching: true
+	    })
+	    return state_copy
 	case ANNOUNCE_MATCHING_ITEMS_LOADED:
 	    state_copy[action.list_key] = Object.assign({}, context, {
-                is_fetching: true,
-                items_invalidated: false
+                // is_fetching: false
 	    })
 	    return state_copy
         case ANNOUNCE_LIST_LOADED:
 	    state_copy[action.list_key] = Object.assign({}, context, {
 		is_fetching: false,
 		received_at: action.received_at,
-		visible_item_ids: action.visible_item_ids
+		visible_item_ids: action.visible_item_ids,
+		pagination: action.pagination
 	    })
 	    return state_copy
         case ANNOUNCE_MATCHING_ITEMS_LOADED:

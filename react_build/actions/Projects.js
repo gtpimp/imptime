@@ -21,11 +21,17 @@ function announceLoadingProjects() {
     }
 }
 
-function announceProjectsLoaded(projects) {
+function announceProjectsLoaded(payload) {
+
+    let items_by_id = {}
+    payload.projects.map((item, index) => {
+        items_by_id[item.id] = item
+    });
+    
     return {
         type: ANNOUNCE_PROJECTS_LOADED,
-        projects_by_id: map(projects, 'id'),
-        received_at: Date.now()
+        items_by_id: items_by_id,
+	received_at: Date.now()
     }
 }
 
@@ -41,7 +47,8 @@ function fetchProjectsPromise(dispatch, project_ids) {
     return new Promise(function(resolve, reject) {
 	dispatch(announceLoadingProjects())
 
-	const params = { filter: { ids: project_ids } }
+	const params = { filter: { ids: project_ids },
+			 pagination: {'enabled': false} }
 	
         return impfetch('/imp/project/', {params:params})
 	    .then(response => response.json())
@@ -60,10 +67,7 @@ function fetchProjectsPromise(dispatch, project_ids) {
 }
 
 export function fetchProjectsIfNeeded(list_key) {
-    return (dispatch, getState) => {
-	const list_key = list_key
-	const matching_items_key = 'project'
-	const matching_items_promise_func = fetchProjectsPromise
-	dispatch(fetchListIfNeeded(list_key, matching_items_key, matching_items_promise_func))
-    }
+    const matching_items_key = 'project'
+    const matching_items_promise_func = fetchProjectsPromise
+    return fetchListIfNeeded(list_key, matching_items_key, matching_items_promise_func)
 }

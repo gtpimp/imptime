@@ -19,6 +19,9 @@ def apply_filter(qs, raw_filter_args):
 
 def apply_pagination(qs, pagination):
 
+    if not pagination.get('enabled', True):
+        return qs
+
     page_size = pagination.get(
         'page_size', settings.PAGINATION_DEFAULT_PAGINATION)
     current_page = pagination.get('page', 1)

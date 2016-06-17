@@ -29,13 +29,13 @@ export class ProjectTable extends Component {
         const {} = this.props
         return (
 	    <tr key={project.id+"."+index}>
-		<td>{project_id}</td>
-	        ( project.loaded === false &&
+		<td>{project.id}</td>
+	        { project.loaded === false &&
 		<td>Loading...</td>
-		)
-		( project.loaded !== false &&
+		}
+		{ project.loaded !== false &&
 		<td>{project.name}</td>
-		)
+		}
 	    </tr>
         )
     }

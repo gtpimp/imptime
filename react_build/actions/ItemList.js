@@ -50,11 +50,12 @@ function announceMatchingItemsLoading(list_key) {
     }
 }
 
-function announceListLoaded(list_key, items) {
+function announceListLoaded(list_key, payload) {
 
     return {
         type: ANNOUNCE_LIST_LOADED,
-        items_by_id: map(items, 'id'),
+        visible_item_ids: payload.ids,
+	pagination: payload.pagination,
 	list_key: list_key,
         received_at: Date.now()
     }
@@ -103,18 +104,18 @@ function fetchListAndItems(state, list_key,
 		if (json.status != 'success') {
                     dispatch(announceListLoadFailed(list_key, json.error_message))
                 } else {
+		    dispatch(announceListLoaded(list_key, json.payload))
+		    
 		    const required_item_ids = json.payload.ids || []
 		    const matching_items = state[matching_items_key] || {}
 		    const matching_item_ids = keys(matching_items.items_by_id || {}) // magic, assumes the specific reducer will use 'items_by_id' as well
 		    const unmatching_item_ids = difference(required_item_ids, matching_item_ids)
 
-		    if ( unmatching_item_ids.length == 0 ) {
-			dispatch(announceListLoaded(list_key, json.payload))
-		    } else {
+		    if ( unmatching_item_ids.length > 0 ) {
+			dispatch(announceMatchingItemsLoading(list_key))
 			matching_items_promise_func(dispatch, unmatching_item_ids)
 			    .then(() => {
-				announceMatchingItemsLoaded(list_key)
-				dispatch(announceListLoaded(list_key, json.payload))
+				dispatch(announceMatchingItemsLoaded(list_key))
 			    })
 			    .catch(function (error) {
 				dispatch(announceMatchingItemsLoadFailed(list_key, "Failed to load list: " + error.message))
