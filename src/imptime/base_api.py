@@ -28,8 +28,6 @@ def apply_pagination(qs, pagination):
 
     pagination['num_pages'] = p.num_pages
     pagination['num_items'] = p.count
-    pagination['first_page'] = p.page_range[0]
-    pagination['last_page'] = p.page_range[1]
     pagination['has_next_page'] = page.has_next()
     pagination['has_prev_page'] = page.has_previous()
     pagination['first_item_index'] = page.start_index()

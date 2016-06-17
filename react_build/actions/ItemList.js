@@ -93,17 +93,17 @@ function fetchListAndItems(state, list_key,
         dispatch(announceListLoading(list_key))
 
 	const l = state[list_key] || {}
-	const pagination = l.pagination || {}
-	const filter = l.filter || {}
-	
-        return impfetch('/imp/' + matching_items_key, {params:{pagination:pagination, filter:filter}})
+	const params = { filter: l.filter || {},
+			 format: {ids_only: true},
+			 pagination: l.pagination || {} }
+        return impfetch('/imp/' + matching_items_key + "/", {params:params})
             .then(response => response.json())
             .then(json => {
 
 		if (json.status != 'success') {
                     dispatch(announceListLoadFailed(list_key, json.error_message))
                 } else {
-		    const required_item_ids = json.visible_item_ids || []
+		    const required_item_ids = json.payload.ids || []
 		    const matching_items = state[matching_items_key] || {}
 		    const matching_item_ids = keys(matching_items.items_by_id || {}) // magic, assumes the specific reducer will use 'items_by_id' as well
 		    const unmatching_item_ids = difference(required_item_ids, matching_item_ids)

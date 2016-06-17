@@ -35,11 +35,11 @@ class ProjectViewSet(viewsets.ViewSet):
                                                  pagination=pagination)
 
             if format_args.get('ids_only'):
-                projects_data = projects.values_list('id', flat=True)
+                context['ids'] = projects.values_list('id', flat=True)
             else:
                 s = ProjectSerializer(projects, many=True)
                 projects_data = s.data
-            context['projects'] = projects_data
+                context['projects'] = projects_data
             context['pagination'] = pagination
             data = {'status': 'success', 'payload': context}
         except Exception, ex:
