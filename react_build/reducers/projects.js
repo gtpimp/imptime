@@ -37,7 +37,7 @@ export default function projects(state = initialState, action) {
 		items_by_id: Object.assign({},
 					      state.items_by_id)
 	    })
-            state_copy.items_by_id = Object.assign({}, assign(state_copy.items_by_id, action.items_by_id)
+            state_copy.items_by_id = Object.assign({}, assign(state_copy.items_by_id, action.items_by_id))
             return state_copy
         case ANNOUNCE_PROJECTS_LOAD_FAILED:
             setErrorMessage("Failed to load projects: " + action.error_message)

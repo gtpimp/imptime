@@ -54,7 +54,7 @@ function announceListLoaded(list_key, items) {
 
     return {
         type: ANNOUNCE_LIST_LOADED,
-        items_by_id: map(items, 'id')
+        items_by_id: map(items, 'id'),
 	list_key: list_key,
         received_at: Date.now()
     }

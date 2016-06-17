@@ -31,17 +31,18 @@ export class ProjectTable extends Component {
 	    <tr key={project.id+"."+index}>
 		<td>{project_id}</td>
 	        ( project.loaded === false &&
-		<td>{Loading...}</td>
+		<td>Loading...</td>
 		)
 		( project.loaded !== false &&
 		<td>{project.name}</td>
 		)
+	    </tr>
         )
     }
 
     render() {
 
-        const {projects, is_fetching, has_projects } = this.props
+        const { projects, is_fetching, has_projects } = this.props
 
         return (
             <div style={{ opacity: is_fetching ? 0.5 : 1 }}>
