@@ -1,41 +1,53 @@
 from django.core.paginator import Paginator
 from django.conf import settings
+from rest_framework import viewsets
 
 
-def apply_filter(qs, raw_filter_args):
+class BaseViewSet(viewsets.ViewSet):
 
-    filter_args = {}
+    def apply_filter(self, qs, raw_filter_args):
 
-    for k, v in raw_filter_args.items():
-        if k == 'ids':
-            filter_args['pk__in'] = [int(x) for x in v]
+        filter_args = {}
 
-        else:
-            raise Exception("Unknown filter argument: %s" % k)
+        for k, v in raw_filter_args.items():
+            if k == 'ids':
+                filter_args['pk__in'] = [int(x) for x in v]
 
-    qs = qs.filter(**filter_args)
-    return qs
+            else:
+                filter_args[k] = v
 
-
-def apply_pagination(qs, pagination):
-
-    if not pagination.get('enabled', True):
+        qs = qs.filter(**filter_args)
         return qs
 
-    page_size = pagination.get(
-        'page_size', settings.PAGINATION_DEFAULT_PAGINATION)
-    current_page = pagination.get('current_page', 1)
+    def apply_pagination(self, qs, pagination):
 
-    p = Paginator(qs, page_size)
-    page = p.page(current_page)
+        if not pagination.get('enabled', True):
+            return qs
 
-    pagination['page_size'] = page_size
-    pagination['current_page'] = current_page
-    pagination['num_pages'] = p.num_pages
-    pagination['num_items'] = p.count
-    pagination['has_next_page'] = page.has_next()
-    pagination['has_prev_page'] = page.has_previous()
-    pagination['first_item_index'] = page.start_index()
-    pagination['last_item_index'] = page.end_index()
+        page_size = pagination.get(
+            'page_size', settings.PAGINATION_DEFAULT_PAGINATION)
+        current_page = pagination.get('current_page', 1)
 
-    return page.object_list
+        p = Paginator(qs, page_size)
+        page = p.page(current_page)
+
+        pagination['page_size'] = page_size
+        pagination['current_page'] = current_page
+        pagination['num_pages'] = p.num_pages
+        pagination['num_items'] = p.count
+        pagination['has_next_page'] = page.has_next()
+        pagination['has_prev_page'] = page.has_previous()
+        pagination['first_item_index'] = page.start_index()
+        pagination['last_item_index'] = page.end_index()
+
+        return page.object_list
+
+    def _apply_project_sprint_switch(self, d):
+        d_fixed = {}
+        for k, v in d.items():
+            if k.startswith('project_'):
+                k = k.replace('project_', 'business_')
+            if k.startswith('sprint_'):
+                k = k.replace('sprint_', 'project_')
+            d_fixed[k] = v
+        return d_fixed

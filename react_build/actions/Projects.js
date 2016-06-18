@@ -22,7 +22,7 @@ function announceLoadingProjects() {
     }
 }
 
-export function refresh(list_key) {
+export function refreshProjects(list_key) {
     return (dispatch, getState) => {
         dispatch(invalidateItems(list_key))
         dispatch(fetchItems(list_key))

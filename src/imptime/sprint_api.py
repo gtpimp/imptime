@@ -2,47 +2,49 @@ import logging
 from sprint_serializer import SprintSerializer
 from rest_framework.renderers import JSONRenderer
 from django.http import HttpResponse
-from rest_framework import viewsets
+from base_api import BaseViewSet
+import json
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.decorators import permission_classes
-from timepiece.models import Business as Project
 from timepiece.models import Project as Sprint
 
 logger = logging.getLogger(__name__)
 
 
 @permission_classes((IsAuthenticated,))
-class SprintViewSet(viewsets.ViewSet):
+class SprintViewSet(BaseViewSet):
 
     def list(self, request):
         try:
             context = {}
-            user = request.user
-            project_id = request.GET.get('project_id', None)
-            projects = user.profile.businesses.exclude_has_closed_projects()
-            project = projects.get(pk=project_id)
-            sprints = Sprint.objects.filter(business_id=project.id)
-            s = SprintSerializer(sprints, many=True)
-            context['sprints'] = s.data
+
+            params = request.GET.get('params', '{}')
+            params = json.loads(params)
+            pagination = params.get('pagination', {})
+            filter_args = params.get('filter', {})
+            format_args = params.get('format', {})
+
+            sprints = Sprint.objects.all()
+            sprints = self.apply_filter(qs=sprints,
+                                        raw_filter_args=filter_args)
+            sprints = self.apply_pagination(qs=sprints,
+                                            pagination=pagination)
+
+            if format_args.get('ids_only'):
+                context['ids'] = [str(x) for x in sprints.values_list(
+                    'id', flat=True)]
+            else:
+                s = SprintSerializer(sprints, many=True)
+                sprints_data = s.data
+                context['sprints'] = sprints_data
+            context['pagination'] = pagination
             data = {'status': 'success', 'payload': context}
         except Exception, ex:
             logger.exception(ex)
             data = {'status': 'failed', 'error': str(ex)}
         return HttpResponse(JSONRenderer().render(data))
 
-    def retrieve(self, request, pk):
-        try:
-            context = {}
-            user = request.user
-            project_id = request.GET.get('project_id', None)
-            projects = user.profile.businesses.exclude_has_closed_projects()
-            project = projects.get(pk=project_id)
-            sprints = Sprint.objects.filter(business_id=project.id)
-            sprint = sprints.get(pk=pk)
-            s = SprintSerializer(sprint)
-            context['sprint'] = s.data
-            data = {'status': 'success', 'payload': context}
-        except Exception, ex:
-            logger.exception(ex)
-            data = {'status': 'failed', 'error': str(ex)}
-        return HttpResponse(JSONRenderer().render(data))
+    def apply_filter(self, qs, raw_filter_args):
+        raw_filter_args = self._apply_project_sprint_switch(raw_filter_args)
+        return super(SprintViewSet, self).apply_filter(
+            qs=qs, raw_filter_args=raw_filter_args)
