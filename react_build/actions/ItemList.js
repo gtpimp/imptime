@@ -108,7 +108,7 @@ function fetchListAndItems(state, list_key,
 		    
 		    const required_item_ids = json.payload.ids || []
 		    const matching_items = state[matching_items_key] || {}
-		    const matching_item_ids = keys(matching_items.items_by_id || {}) // magic, assumes the specific reducer will use 'items_by_id' as well
+		    const matching_item_ids = keys(matching_items.items_by_id || {}) // magic, assumes the matching_items reducer will use 'items_by_id' as well
 		    const unmatching_item_ids = difference(required_item_ids, matching_item_ids)
 
 		    if ( unmatching_item_ids.length > 0 ) {

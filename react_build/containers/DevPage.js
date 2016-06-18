@@ -1,8 +1,8 @@
 import React, { Component, PropTypes } from 'react'
 import { connect } from 'react-redux'
-import ProjectTable from '../components/ProjectTable'
+import ProjectList from '../components/ProjectList'
 
-class ProjectsPage extends Component {
+class DevPage extends Component {
 
     constructor(props) {
         super(props)
@@ -16,7 +16,7 @@ class ProjectsPage extends Component {
 
         return (
             <div>
-		<ProjectTable key="projects" list_key="projects" />
+		<ProjectList key="projects" list_key="projects" />
 	    </div>
         )
     }
@@ -29,5 +29,5 @@ function mapStateToProps(state) {
     }
 }
 
-export default connect(mapStateToProps)(ProjectsPage)
+export default connect(mapStateToProps)(DevPage)
 

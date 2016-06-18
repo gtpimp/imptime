@@ -1,6 +1,6 @@
 import React, { Component, PropTypes } from 'react'
 import { connect } from 'react-redux'
-import ProjectsPage from './ProjectsPage'
+import DevPage from './DevPage'
 import NotificationBar from '../components/NotificationBar'
 
 class App extends Component {
@@ -21,7 +21,7 @@ class App extends Component {
 
 		<NotificationBar/>
 		
-		<ProjectsPage/>
+		<DevPage/>
 	    </div>
         )
     }

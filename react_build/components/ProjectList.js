@@ -7,7 +7,7 @@ import {
 } from '../actions/Projects'
 
 
-export class ProjectTable extends Component {
+export class ProjectList extends Component {
 
     constructor(props) {
         super(props)
@@ -97,4 +97,4 @@ function mapStateToProps(state, props) {
     }
 }
 
-export default connect(mapStateToProps)(ProjectTable)
+export default connect(mapStateToProps)(ProjectList)
