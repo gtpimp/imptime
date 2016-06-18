@@ -1,7 +1,7 @@
 import React, { Component, PropTypes } from 'react'
 import { Link } from 'react-router'
 import { connect } from 'react-redux'
-import { invalidateList } from '../actions/ItemList'
+import { invalidateList, selectItems } from '../actions/ItemList'
 import { fetchProjectsIfNeeded } from '../actions/Projects'
 import Pagination from '../components/Pagination'
 
@@ -18,6 +18,11 @@ export class ProjectList extends Component {
 	dispatch(fetchProjectsIfNeeded(list_key))
     }
 
+    onClickedProject(project_id) {
+	const { dispatch, list_key } = this.props
+	dispatch(selectItems(list_key, [project_id]))
+    }
+
     onRefresh() {
         const { dispatch, list_key } = this.props
 	dispatch(invalidateList(list_key))
@@ -25,15 +30,21 @@ export class ProjectList extends Component {
     }
 
     renderProject(project, index) {
-        const {} = this.props
+        const { selected_ids } = this.props
+
+	let selected = selected_ids.indexOf(project.id) !== -1
+	
         return (
-	    <tr key={project.id+"."+index}>
+	    <tr key={project.id+"."+index}
+		onClick={() => this.onClickedProject(project.id)}
+		className={selected ? 'tr--selected' : ''}
+	    >
 		<td>{project.id}</td>
 	        { project.loaded === false &&
 		<td>Loading...</td>
 		}
 		{ project.loaded !== false &&
-		<td>{project.name}</td>
+		  <td>{project.name}</td>
 		}
 	    </tr>
         )
@@ -41,10 +52,10 @@ export class ProjectList extends Component {
 
     render() {
 
-        const { projects, list_key, is_fetching, has_projects } = this.props
+        const { projects, list_key, is_loading, has_items } = this.props
 
         return (
-            <div style={{ opacity: is_fetching ? 0.5 : 1 }}>
+            <div style={{ opacity: is_loading ? 0.5 : 1 }}>
 		<div className="panel panel--wide">
                     <div className="panel-heading">
 			<div className="panel__title">Projects</div>
@@ -65,7 +76,7 @@ export class ProjectList extends Component {
 				{projects.map((project, index) => this.renderProject(project, index))}
                             </tbody>
 			</table>
-			{ !is_fetching && !has_projects &&
+			{ !is_loading && !has_items &&
 			  <div className="table__no-rows">no projects</div>
 			}
                     </div>
@@ -92,8 +103,9 @@ function mapStateToProps(state, props) {
     return {
         list_key: list_key,
         projects: items,
+	selected_ids: l.selected_ids || [],
         has_items: items && items.length > 0,
-        is_fetching: l.is_fetching,
+        is_loading: l.is_loading,
         last_updated: l.last_updated
     }
 }

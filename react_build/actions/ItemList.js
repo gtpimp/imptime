@@ -12,6 +12,7 @@ export const ANNOUNCE_MATCHING_ITEMS_LOADING = 'ANNOUNCE_MATCHING_ITEMS_LOADING'
 export const INVALIDATE_LIST = 'INVALIDATE_LIST'
 export const UPDATE_LIST_PAGINATION = 'UPDATE_LIST_PAGINATION'
 export const UPDATE_LIST_FILTER = 'UPDATE_LIST_FILTER'
+export const UPDATE_LIST_SELECTION = 'UPDATE_LIST_SELECTION'
 
 export function update_list_pagination(list_key, pagination) {
     return {
@@ -26,6 +27,15 @@ export function update_list_filter(list_key, filter) {
         type: UPDATE_LIST_FILTER,
         list_key: list_key,
         filter: filter
+    }
+}
+
+export function selectItems(list_key, selected_ids) {
+
+    return {
+	type: UPDATE_LIST_SELECTION,
+	list_key: list_key,
+	selected_ids: selected_ids
     }
 }
 
@@ -143,7 +153,7 @@ function shouldFetchList(state, list_key) {
     if ( l.items_invalidated ) {
 	return true
     }
-    if( l.is_fetching ) {
+    if( l.is_loading ) {
 	return false
     }
     if ( ! l.visible_item_ids ) {
@@ -161,7 +171,7 @@ function shouldFetchMatchingItems(state, list_key, matching_items_key) {
     if ( ! matching_items ) {
 	return true
     }
-    if ( matching_items.is_fetching ) {
+    if ( matching_items.is_loading ) {
 	return false
     }
     if ( matching_items.items_invalidated ) {

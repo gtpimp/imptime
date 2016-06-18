@@ -11,7 +11,7 @@ import {
 } from '../actions/Projects.js'
 
 const initialState = {
-    is_fetching: false,
+    is_loading: false,
     items_invalidated: true,
     items_by_id: {}
 }
@@ -26,11 +26,11 @@ export default function project(state = initialState, action) {
 	    state_copy.items_by_id = difference(state_copy.item_ids,
 						item_ids_to_invalidate)
 	    state_copy.items_invalidated = true
-	    state_copy.is_fetching = false
+	    state_copy.is_loading = false
 	    return state_copy
         case ANNOUNCE_LOADING_PROJECTS:
             return Object.assign({}, state, {
-                is_fetching: true,
+                is_loading: true,
                 items_invalidated: false
             })
         case ANNOUNCE_PROJECTS_LOADED:
