@@ -39,8 +39,7 @@ export class ProjectList extends Component {
 		onClick={() => this.onClickedProject(project.id)}
 		className={selected ? 'tr--selected' : ''}
 	    >
-		<td>{project.id}</td>
-	        { project.loaded === false &&
+		{ project.loaded === false &&
 		<td>Loading...</td>
 		}
 		{ project.loaded !== false &&
@@ -68,7 +67,6 @@ export class ProjectList extends Component {
 			<table className="table table--default" >
                             <thead>
 				<tr>
-				    <th>ID</th>
 				    <th>Name</th>
 				</tr>
                             </thead>
