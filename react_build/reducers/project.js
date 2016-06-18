@@ -1,5 +1,6 @@
 import map from 'lodash/map'
 import assign from 'lodash/assign'
+import difference from 'lodash/difference'
 import { setErrorMessage } from '../actions/Error'
 
 import {
@@ -15,7 +16,7 @@ const initialState = {
     items_by_id: {}
 }
 
-export default function projects(state = initialState, action) {
+export default function project(state = initialState, action) {
 
     let state_copy = Object.assign({}, state)
     
@@ -46,6 +47,3 @@ export default function projects(state = initialState, action) {
             return state
     }
 }
-
-
-

@@ -9,15 +9,23 @@ export const ANNOUNCE_PROJECTS_LOAD_FAILED = 'ANNOUNCE_PROJECTS_LOAD_FAILED'
 export const ANNOUNCE_LOADING_PROJECTS = 'ANNOUNCE_LOADING_PROJECTS'
 export const INVALIDATE_PROJECTS = 'INVALIDATE_PROJECTS'
 
-export function invalidateProjects() {
-    return {
-        type: INVALIDATE_PROJECTS
-    }
-}
+// Commented out because you almost never need this, usually rather call invalidate_list on ItemList.
+/* export function invalidateProjects() {
+ *     return {
+ *         type: INVALIDATE_PROJECTS
+ *     }
+ * }*/
 
 function announceLoadingProjects() {
     return {
         type: ANNOUNCE_LOADING_PROJECTS
+    }
+}
+
+export function refresh(list_key) {
+    return (dispatch, getState) => {
+        dispatch(invalidateItems(list_key))
+        dispatch(fetchItems(list_key))
     }
 }
 

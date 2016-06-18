@@ -35,7 +35,8 @@ class ProjectViewSet(viewsets.ViewSet):
                                                  pagination=pagination)
 
             if format_args.get('ids_only'):
-                context['ids'] = projects.values_list('id', flat=True)
+                context['ids'] = [str(x) for x in projects.values_list(
+                    'id', flat=True)]
             else:
                 s = ProjectSerializer(projects, many=True)
                 projects_data = s.data

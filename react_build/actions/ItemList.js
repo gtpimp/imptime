@@ -93,7 +93,8 @@ function fetchListAndItems(state, list_key,
     return dispatch => {
         dispatch(announceListLoading(list_key))
 
-	const l = state[list_key] || {}
+	const item_list = state.item_list || {}
+	const l = item_list[list_key] || {}
 	const params = { filter: l.filter || {},
 			 format: {ids_only: true},
 			 pagination: l.pagination || {} }
@@ -107,9 +108,13 @@ function fetchListAndItems(state, list_key,
 		    dispatch(announceListLoaded(list_key, json.payload))
 		    
 		    const required_item_ids = json.payload.ids || []
+		    const required_item_refs = required_item_ids.map((item_id, index) => "" + item_id)
+		    
 		    const matching_items = state[matching_items_key] || {}
 		    const matching_item_ids = keys(matching_items.items_by_id || {}) // magic, assumes the matching_items reducer will use 'items_by_id' as well
-		    const unmatching_item_ids = difference(required_item_ids, matching_item_ids)
+		    const matching_item_refs = matching_item_ids.map((item_id, index) => "" + item_id)
+		    
+		    const unmatching_item_ids = difference(required_item_refs, matching_item_refs)
 
 		    if ( unmatching_item_ids.length > 0 ) {
 			dispatch(announceMatchingItemsLoading(list_key))
@@ -118,20 +123,23 @@ function fetchListAndItems(state, list_key,
 				dispatch(announceMatchingItemsLoaded(list_key))
 			    })
 			    .catch(function (error) {
-				dispatch(announceMatchingItemsLoadFailed(list_key, "Failed to load list: " + error.message))
+				dispatch(announceMatchingItemsLoadFailed(list_key, "Failed to load list: " + error))
+				throw(error)
 			    })
 		    }
 		}		
             })
 	    .catch(function (error) {
-                dispatch(announceListLoadFailed(list_key,"Failed to load list: " + error.message))
+                dispatch(announceListLoadFailed(list_key,"Failed to load list: " + error))
+		throw(error)
             })
     }
 }
 
 function shouldFetchList(state, list_key) {
 
-    const l = state[list_key] || {}
+    const item_list = state.item_list || {}
+    const l = item_list[list_key] || {}
     if ( l.items_invalidated ) {
 	return true
     }
@@ -145,7 +153,8 @@ function shouldFetchList(state, list_key) {
 
 function shouldFetchMatchingItems(state, list_key, matching_items_key) {
     // note: only call this function after shouldFetchList returns false
-    const l = state[list_key] || []
+    const item_list = state.item_list || {}
+    const l = item_list[list_key] || []
     const required_item_ids = l.visible_item_ids || []
 
     const matching_items = state[matching_items_key]

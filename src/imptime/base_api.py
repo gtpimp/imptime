@@ -24,11 +24,13 @@ def apply_pagination(qs, pagination):
 
     page_size = pagination.get(
         'page_size', settings.PAGINATION_DEFAULT_PAGINATION)
-    current_page = pagination.get('page', 1)
+    current_page = pagination.get('current_page', 1)
 
     p = Paginator(qs, page_size)
     page = p.page(current_page)
 
+    pagination['page_size'] = page_size
+    pagination['current_page'] = current_page
     pagination['num_pages'] = p.num_pages
     pagination['num_items'] = p.count
     pagination['has_next_page'] = page.has_next()

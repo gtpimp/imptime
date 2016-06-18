@@ -1,10 +1,9 @@
 import React, { Component, PropTypes } from 'react'
 import { Link } from 'react-router'
 import { connect } from 'react-redux'
-import {
-    invalidateProjects,
-    fetchProjectsIfNeeded
-} from '../actions/Projects'
+import { invalidateList } from '../actions/ItemList'
+import { fetchProjectsIfNeeded } from '../actions/Projects'
+import Pagination from '../components/Pagination'
 
 
 export class ProjectList extends Component {
@@ -20,9 +19,9 @@ export class ProjectList extends Component {
     }
 
     onRefresh() {
-        const { dispatch } = this.props
-        dispatch(invalidateProjects(list_key))
-        dispatch(fetchProjectsIfNeeded(list_key))
+        const { dispatch, list_key } = this.props
+	dispatch(invalidateList(list_key))
+	dispatch(fetchProjectsIfNeeded(list_key))
     }
 
     renderProject(project, index) {
@@ -42,7 +41,7 @@ export class ProjectList extends Component {
 
     render() {
 
-        const { projects, is_fetching, has_projects } = this.props
+        const { projects, list_key, is_fetching, has_projects } = this.props
 
         return (
             <div style={{ opacity: is_fetching ? 0.5 : 1 }}>
@@ -71,15 +70,17 @@ export class ProjectList extends Component {
 			}
                     </div>
 		</div>
+
+		<Pagination list_key={list_key} on_changed={this.onRefresh} />
             </div>
         )
     }
 }
 
 function mapStateToProps(state, props) {
-    const { projects, item_list } = state
+    const { project, item_list } = state
     const { list_key } = props
-    const items_by_id = projects && projects.items_by_id || {}
+    const items_by_id = project && project.items_by_id || {}
     const l = (item_list && item_list[list_key]) || {}
     const visible_item_ids = l.visible_item_ids || []
     
