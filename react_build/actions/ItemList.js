@@ -13,19 +13,19 @@ export const INVALIDATE_LIST = 'INVALIDATE_LIST'
 export const UPDATE_LIST_PAGINATION = 'UPDATE_LIST_PAGINATION'
 export const UPDATE_LIST_FILTER = 'UPDATE_LIST_FILTER'
 
-export function update_list_pagination(list_key, new_pagination) {
+export function update_list_pagination(list_key, pagination) {
     return {
         type: UPDATE_LIST_PAGINATION,
         list_key: list_key,
-        new_pagination: new_pagination
+        pagination: pagination
     }
 }
 
-export function update_list_filter(list_key, new_filter) {
+export function update_list_filter(list_key, filter) {
     return {
         type: UPDATE_LIST_FILTER,
         list_key: list_key,
-        new_filter: new_filter
+        filter: filter
     }
 }
 

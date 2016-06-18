@@ -29,33 +29,33 @@ const item_list_template = {
 export default function item_list(state = initialState, action) {
 
     let state_copy = Object.assign({}, state)
-    let context = Object.assign({}, item_list_template, state_copy[action.list_key] || {})
+    let l = Object.assign({}, item_list_template, state_copy[action.list_key] || {})
     
     switch (action.type) {
         case INVALIDATE_LIST:
-	    state_copy[action.list_key] = Object.assign({}, context, {
+	    state_copy[action.list_key] = Object.assign({}, l, {
                 is_fetching: false,
                 items_invalidated: true
             })
 	    return state_copy
         case ANNOUNCE_LIST_LOADING:
-	    state_copy[action.list_key] = Object.assign({}, context, {
+	    state_copy[action.list_key] = Object.assign({}, l, {
                 is_fetching: true,
                 items_invalidated: false
 	    })
 	    return state_copy
         case ANNOUNCE_MATCHING_ITEMS_LOADING:
-	    state_copy[action.list_key] = Object.assign({}, context, {
+	    state_copy[action.list_key] = Object.assign({}, l, {
                 // is_fetching: true
 	    })
 	    return state_copy
 	case ANNOUNCE_MATCHING_ITEMS_LOADED:
-	    state_copy[action.list_key] = Object.assign({}, context, {
+	    state_copy[action.list_key] = Object.assign({}, l, {
                 // is_fetching: false
 	    })
 	    return state_copy
         case ANNOUNCE_LIST_LOADED:
-	    state_copy[action.list_key] = Object.assign({}, context, {
+	    state_copy[action.list_key] = Object.assign({}, l, {
 		is_fetching: false,
 		received_at: action.received_at,
 		visible_item_ids: action.visible_item_ids,
@@ -63,27 +63,29 @@ export default function item_list(state = initialState, action) {
 	    })
 	    return state_copy
         case ANNOUNCE_MATCHING_ITEMS_LOADED:
-	    state_copy[action.list_key] = Object.assign({}, context, {
+	    state_copy[action.list_key] = Object.assign({}, l, {
 		is_fetching: false,
 		received_at: action.received_at,
 	    })
 	    return state_copy
         case ANNOUNCE_LIST_LOAD_FAILED:
             setErrorMessage("Failed to load: " + action.error_message)
-	    state_copy[action.list_key] = Object.assign({}, context, {
+	    state_copy[action.list_key] = Object.assign({}, l, {
                 is_fetching: false,
                 items_invalidated: false
 	    })
             return state_copy;
         case ANNOUNCE_MATCHING_ITEMS_LOAD_FAILED:
             setErrorMessage("Failed to load matching items: " + action.error_message)
-	    state_copy[action.list_key] = Object.assign({}, context, {
+	    state_copy[action.list_key] = Object.assign({}, l, {
                 is_fetching: false,
                 items_invalidated: false
 	    })
             return state_copy;
 	case UPDATE_LIST_PAGINATION:
-	    state_copy.pagination = Object.assign({}, state_copy.pagination, action.pagination)
+	    state_copy[action.list_key] = Object.assign({}, l, {
+		pagination: Object.assign({}, state_copy.pagination, action.pagination)
+	    })
 	    return state_copy
 	case UPDATE_LIST_FILTER:
 	    state_copy.filter = Object.assign({}, state_copy.filter, action.filter)
