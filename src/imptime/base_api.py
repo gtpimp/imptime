@@ -7,12 +7,12 @@ class BaseViewSet(viewsets.ViewSet):
 
     def apply_filter(self, qs, raw_filter_args):
 
+        raw_filter_args = self._apply_business_project_switch(raw_filter_args)
         filter_args = {}
 
         for k, v in raw_filter_args.items():
             if k == 'ids':
                 filter_args['pk__in'] = [int(x) for x in v]
-
             else:
                 filter_args[k] = v
 
@@ -42,7 +42,7 @@ class BaseViewSet(viewsets.ViewSet):
 
         return page.object_list
 
-    def _apply_project_sprint_switch(self, d):
+    def _apply_business_project_switch(self, d):
         d_fixed = {}
         for k, v in d.items():
             if k.startswith('project_'):

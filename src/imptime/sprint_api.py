@@ -43,8 +43,3 @@ class SprintViewSet(BaseViewSet):
             logger.exception(ex)
             data = {'status': 'failed', 'error': str(ex)}
         return HttpResponse(JSONRenderer().render(data))
-
-    def apply_filter(self, qs, raw_filter_args):
-        raw_filter_args = self._apply_project_sprint_switch(raw_filter_args)
-        return super(SprintViewSet, self).apply_filter(
-            qs=qs, raw_filter_args=raw_filter_args)

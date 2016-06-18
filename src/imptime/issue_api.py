@@ -2,7 +2,8 @@ import logging
 from issue_serializer import IssueSerializer
 from rest_framework.renderers import JSONRenderer
 from django.http import HttpResponse
-from rest_framework import viewsets
+from base_api import BaseViewSet
+import json
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.decorators import permission_classes
 from timepiece.models import Issue
@@ -11,29 +12,32 @@ logger = logging.getLogger(__name__)
 
 
 @permission_classes((IsAuthenticated,))
-class IssueViewSet(viewsets.ViewSet):
+class IssueViewSet(BaseViewSet):
 
     def list(self, request):
         try:
             context = {}
-            sprint_id = request.GET.get('sprint_id', None)
-            issues = Issue.objects.filter(project_id=sprint_id)
-            s = IssueSerializer(issues, many=True)
-            context['issues'] = s.data
-            data = {'status': 'success', 'payload': context}
-        except Exception, ex:
-            logger.exception(ex)
-            data = {'status': 'failed', 'error': str(ex)}
-        return HttpResponse(JSONRenderer().render(data))
 
-    def retrieve(self, request, pk):
-        try:
-            context = {}
-            sprint_id = request.GET.get('sprint_id', None)
-            issues = Issue.objects.filter(project_id=sprint_id)
-            issue = issues.get(pk=pk)
-            s = IssueSerializer(issue)
-            context['issue'] = s.data
+            params = request.GET.get('params', '{}')
+            params = json.loads(params)
+            pagination = params.get('pagination', {})
+            filter_args = params.get('filter', {})
+            format_args = params.get('format', {})
+
+            issues = Issue.objects.all()
+            issues = self.apply_filter(qs=issues,
+                                       raw_filter_args=filter_args)
+            issues = self.apply_pagination(qs=issues,
+                                           pagination=pagination)
+
+            if format_args.get('ids_only'):
+                context['ids'] = [str(x) for x in issues.values_list(
+                    'id', flat=True)]
+            else:
+                s = IssueSerializer(issues, many=True)
+                issues_data = s.data
+                context['issues'] = issues_data
+            context['pagination'] = pagination
             data = {'status': 'success', 'payload': context}
         except Exception, ex:
             logger.exception(ex)

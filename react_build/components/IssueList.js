@@ -2,11 +2,11 @@ import React, { Component, PropTypes } from 'react'
 import { Link } from 'react-router'
 import { connect } from 'react-redux'
 import { invalidateList, selectItems } from '../actions/ItemList'
-import { fetchSprintsIfNeeded } from '../actions/Sprints'
+import { fetchIssuesIfNeeded } from '../actions/Issues'
 import Pagination from '../components/Pagination'
 
 
-export class SprintList extends Component {
+export class IssueList extends Component {
 
     constructor(props) {
         super(props)
@@ -14,39 +14,39 @@ export class SprintList extends Component {
     }
 
     componentDidMount() {
-	const { dispatch, list_key, project_id } = this.props
-	if ( project_id ) {
-	    dispatch(fetchSprintsIfNeeded(list_key))
+	const { dispatch, list_key, sprint_id } = this.props
+	if ( sprint_id ) {
+	    dispatch(fetchIssuesIfNeeded(list_key))
 	}
     }
 
-    onClickedSprint(sprint_id) {
+    onClickedIssue(issue_id) {
 	const { dispatch, list_key } = this.props
-	dispatch(selectItems(list_key, [sprint_id]))
+	dispatch(selectItems(list_key, [issue_id]))
     }
 
     onRefresh() {
         const { dispatch, list_key } = this.props
 	dispatch(invalidateList(list_key))
-	dispatch(fetchSprintsIfNeeded(list_key))
+	dispatch(fetchIssuesIfNeeded(list_key))
     }
 
-    renderSprint(sprint, index) {
+    renderIssue(issue, index) {
         const { selected_ids } = this.props
 
-	let selected = selected_ids.indexOf(sprint.id) !== -1
+	let selected = selected_ids.indexOf(issue.id) !== -1
 	
         return (
-	    <tr key={sprint.id+"."+index}
-		onClick={() => this.onClickedSprint(sprint.id)}
+	    <tr key={issue.id+"."+index}
+		onClick={() => this.onClickedIssue(issue.id)}
 		className={selected ? 'tr--selected' : ''}
 	    >
-		<td>{sprint.id}</td>
-	        { sprint.loaded === false &&
+		<td>{issue.number}</td>
+	        { issue.loaded === false &&
 		<td>Loading...</td>
 		}
-		{ sprint.loaded !== false &&
-		  <td>{sprint.name}</td>
+		{ issue.loaded !== false &&
+		  <td>{issue.subject}</td>
 		}
 	    </tr>
         )
@@ -54,13 +54,13 @@ export class SprintList extends Component {
 
     render() {
 
-        const { sprints, list_key, is_loading, has_items } = this.props
+        const { issues, list_key, is_loading, has_items } = this.props
 
         return (
             <div style={{ opacity: is_loading ? 0.5 : 1 }}>
 		<div className="panel panel--wide">
                     <div className="panel-heading">
-			<div className="panel__title">Sprints</div>
+			<div className="panel__title">Issues</div>
 			<div className="panel__buttons">
                             <div className="panel__button panel__button--refresh"
 				 onClick={this.onRefresh}></div>
@@ -70,16 +70,16 @@ export class SprintList extends Component {
 			<table className="table table--default" >
                             <thead>
 				<tr>
-				    <th>ID</th>
+				    <th>Number</th>
 				    <th>Name</th>
 				</tr>
                             </thead>
                             <tbody>
-				{sprints.map((sprint, index) => this.renderSprint(sprint, index))}
+				{issues.map((issue, index) => this.renderIssue(issue, index))}
                             </tbody>
 			</table>
 			{ !is_loading && !has_items &&
-			  <div className="table__no-rows">no sprints</div>
+			  <div className="table__no-rows">no issues</div>
 			}
                     </div>
 		</div>
@@ -91,13 +91,16 @@ export class SprintList extends Component {
 }
 
 function mapStateToProps(state, props) {
-    const { sprint, item_list } = state
+    const { issue, item_list } = state
     const { list_key } = props
-    const items_by_id = sprint && sprint.items_by_id || {}
+    const items_by_id = issue && issue.items_by_id || {}
     const l = (item_list && item_list[list_key]) || {}
+
     const filter = l.filter || {}
-    const project_id = filter.project_id || null
+    
+    const sprint_id = filter.sprint_id || null
     const visible_item_ids = l.visible_item_ids || []
+    
     const items = (items_by_id && visible_item_ids.map( function(visible_item_id, index) {
 	return items_by_id[visible_item_id] || { 'id': visible_item_id,
 						 'loaded': false }
@@ -105,8 +108,8 @@ function mapStateToProps(state, props) {
     
     return {
         list_key: list_key,
-	project_id: project_id,
-        sprints: items,
+	sprint_id: sprint_id,
+        issues: items,
 	selected_ids: l.selected_ids || [],
         has_items: items && items.length > 0,
         is_loading: l.is_loading,
@@ -114,4 +117,4 @@ function mapStateToProps(state, props) {
     }
 }
 
-export default connect(mapStateToProps)(SprintList)
+export default connect(mapStateToProps)(IssueList)

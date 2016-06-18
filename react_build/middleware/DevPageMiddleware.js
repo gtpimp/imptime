@@ -3,9 +3,11 @@ import indexOf from 'lodash/indexOf'
 import { UPDATE_LIST_SELECTION } from '../actions/ItemList'
 import { invalidateList, update_list_filter } from '../actions/ItemList'
 import { fetchSprintsIfNeeded } from '../actions/Sprints'
+import { fetchIssuesIfNeeded } from '../actions/Issues'
 
 const sprints_list_key = 'sprints'
 const projects_list_key = 'projects'
+const issues_list_key = 'issues'
 
 function DevPageMiddleware(_ref) {
     var dispatch = _ref.dispatch;
@@ -16,10 +18,19 @@ function DevPageMiddleware(_ref) {
 
 	    switch (action.type) {
 		case UPDATE_LIST_SELECTION:
+
+		    const selected_ids = action.selected_ids || []
+		    const selected_id = (selected_ids.length > 0 && selected_ids[0]) || null
+		    
 		    if (action.list_key == projects_list_key) {
-			dispatch(update_list_filter(sprints_list_key, {project_id:action.selected_ids[0]}))
+			dispatch(update_list_filter(sprints_list_key, {project_id:selected_id}))
 			dispatch(invalidateList(sprints_list_key))
 			dispatch(fetchSprintsIfNeeded(sprints_list_key))
+		    }
+		    else if (action.list_key == sprints_list_key) {
+			dispatch(update_list_filter(issues_list_key, {sprint_id:selected_id}))
+			dispatch(invalidateList(issues_list_key))
+			dispatch(fetchIssuesIfNeeded(issues_list_key))
 		    }
 	    }
 	    return next(action)
