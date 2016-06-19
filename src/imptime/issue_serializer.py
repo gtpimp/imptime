@@ -12,3 +12,9 @@ class IssueSerializer(BaseModelSerializer):
         fields = ('id', 'number', 'subject', 'description', 'assigned_to')
 
     id = serializers.CharField()
+
+
+class IssueGeneralDetailsSerializer(BaseModelSerializer):
+    class Meta:
+        model = Issue
+        fields = ('id', 'number', 'subject', 'description', 'assigned_to')

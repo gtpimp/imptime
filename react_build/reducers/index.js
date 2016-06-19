@@ -6,6 +6,7 @@ import item_list from './item_list'
 import project from './project'
 import sprint from './sprint'
 import issue from './issue'
+import issue_general_details from './issue_general_details'
 import notification_bar from './notification_bar.js'
 
 const rootReducer = combineReducers({
@@ -13,6 +14,7 @@ const rootReducer = combineReducers({
     project,
     sprint,
     issue,
+    issue_general_details,
     item_list,
     notification_bar
 })

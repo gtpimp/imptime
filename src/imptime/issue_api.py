@@ -1,5 +1,6 @@
 import logging
 from issue_serializer import IssueSerializer
+from issue_serializer import IssueGeneralDetailsSerializer
 from rest_framework.renderers import JSONRenderer
 from django.http import HttpResponse
 from base_api import BaseViewSet
@@ -30,11 +31,17 @@ class IssueViewSet(BaseViewSet):
             issues = self.apply_pagination(qs=issues,
                                            pagination=pagination)
 
-            if format_args.get('ids_only'):
+            if format_args.get('ids_only', None):
                 context['ids'] = [str(x) for x in issues.values_list(
                     'id', flat=True)]
             else:
-                s = IssueSerializer(issues, many=True)
+
+                detail_level = format_args.get('detail_level', None)
+                if detail_level is None:
+                    s = IssueSerializer(issues, many=True)
+                elif detail_level == 'general':
+                    s = IssueGeneralDetailsSerializer(issues, many=True)
+
                 issues_data = s.data
                 context['issues'] = issues_data
             context['pagination'] = pagination

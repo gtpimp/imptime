@@ -9,23 +9,24 @@ export const ANNOUNCE_ISSUES_LOAD_FAILED = 'ANNOUNCE_ISSUES_LOAD_FAILED'
 export const ANNOUNCE_LOADING_ISSUES = 'ANNOUNCE_LOADING_ISSUES'
 export const INVALIDATE_ISSUES = 'INVALIDATE_ISSUES'
 
-// Commented out because you almost never need this, usually rather call invalidate_list on ItemList.
-/* export function invalidateIssues() {
- *     return {
- *         type: INVALIDATE_ISSUES
- *     }
- * }*/
-
-function announceLoadingIssues() {
+export function invalidateIssues(issue_ids) {
     return {
-        type: ANNOUNCE_LOADING_ISSUES
+        type: INVALIDATE_ISSUES,
+	issue_ids_to_invalidate: issue_ids
+    }
+}
+
+function announceLoadingIssues(issue_ids) {
+    return {
+        type: ANNOUNCE_LOADING_ISSUES,
+	issue_ids_to_load: issue_ids
     }
 }
 
 export function refreshIssues(list_key) {
     return (dispatch, getState) => {
-        dispatch(invalidateItems(list_key))
-        dispatch(fetchItems(list_key))
+        dispatch(invalidateItems())
+        dispatch(fetchIssuesIfNeeded())
     }
 }
 
@@ -47,13 +48,13 @@ function announceIssuesLoadFailed(error_message) {
     return {
         type: ANNOUNCE_ISSUES_LOAD_FAILED,
         error_message: error_message,
-        receivedAt: Date.now()
+        received_at: Date.now()
     }
 }
 
 function fetchIssuesPromise(dispatch, issue_ids) {
     return new Promise(function(resolve, reject) {
-	dispatch(announceLoadingIssues())
+	dispatch(announceLoadingIssues(issue_ids))
 
 	const params = { filter: { ids: issue_ids },
 			 pagination: {'enabled': false} }

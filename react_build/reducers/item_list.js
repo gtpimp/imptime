@@ -12,7 +12,8 @@ import {
     INVALIDATE_LIST,
     UPDATE_LIST_PAGINATION,
     UPDATE_LIST_FILTER,
-    UPDATE_LIST_SELECTION
+    UPDATE_LIST_SELECTION,
+    UPDATE_LIST_DISPLAY_MODE
 } from '../actions/ItemList.js'
 
 const initialState = {}
@@ -96,6 +97,10 @@ export default function item_list(state = initialState, action) {
 	case UPDATE_LIST_SELECTION:
 	    state_copy[action.list_key] = Object.assign({}, l, {
 		selected_ids: action.selected_ids})
+	    return state_copy
+	case UPDATE_LIST_DISPLAY_MODE:
+	    state_copy[action.list_key] = Object.assign({}, l, {
+		display_mode: action.display_mode})
 	    return state_copy
         default:
             return state

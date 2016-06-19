@@ -47,7 +47,7 @@ function announceSprintsLoadFailed(error_message) {
     return {
         type: ANNOUNCE_SPRINTS_LOAD_FAILED,
         error_message: error_message,
-        receivedAt: Date.now()
+        received_at: Date.now()
     }
 }
 

@@ -13,6 +13,7 @@ export const INVALIDATE_LIST = 'INVALIDATE_LIST'
 export const UPDATE_LIST_PAGINATION = 'UPDATE_LIST_PAGINATION'
 export const UPDATE_LIST_FILTER = 'UPDATE_LIST_FILTER'
 export const UPDATE_LIST_SELECTION = 'UPDATE_LIST_SELECTION'
+export const UPDATE_LIST_DISPLAY_MODE = 'UPDATE_LIST_DISPLAY_MODE'
 
 export function update_list_pagination(list_key, pagination) {
     return {
@@ -27,6 +28,22 @@ export function update_list_filter(list_key, filter) {
         type: UPDATE_LIST_FILTER,
         list_key: list_key,
         filter: filter
+    }
+}
+
+export function collapse_list(list_key) {
+    return {
+	type: UPDATE_LIST_DISPLAY_MODE,
+	list_key: list_key,
+	mode: 'collapsed'
+    }
+}
+
+export function expand_list(list_key) {
+    return {
+	type: UPDATE_LIST_DISPLAY_MODE,
+	list_key: list_key,
+	mode: 'expanded'
     }
 }
 
