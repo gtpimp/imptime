@@ -63,7 +63,7 @@ function fetchSprintsPromise(dispatch, sprint_ids) {
 	    .then(json => {
                 if (json.status != 'success') {
 		    dispatch(announceSprintsLoadFailed())
-		    reject(json.error_message)
+		    reject(json.error)
                 } else {
 		    dispatch(announceSprintsLoaded(json.payload))
                 }

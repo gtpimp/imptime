@@ -3,7 +3,7 @@ import { connect } from 'react-redux'
 import ProjectList from '../components/ProjectList'
 import SprintList from '../components/SprintList'
 import IssueList from '../components/IssueList'
-import IssueDetailsDeveloper from '../components/IssueDetailsDeveloper'
+import IssueDeveloperDetails from '../components/IssueDeveloperDetails'
 
 class DevPage extends Component {
 
@@ -22,7 +22,7 @@ class DevPage extends Component {
 		<ProjectList key="projects" list_key="projects" />
 		<SprintList key="sprints" list_key="sprints" />
 		<IssueList key="issues" list_key="issues" />
-		<IssueDetailsDeveloper key="issue_developer_details"
+		<IssueDeveloperDetails key="issue_developer_details"
 				       list_key="issue_developer_details" />
 	    </div>
         )

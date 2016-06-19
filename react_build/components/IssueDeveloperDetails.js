@@ -1,10 +1,11 @@
 import React, { Component, PropTypes } from 'react'
 import { Link } from 'react-router'
 import { connect } from 'react-redux'
+import indexOf from 'lodash/indexOf'
 import { fetchIssueGeneralDetailsIfNeeded } from '../actions/IssueGeneralDetails'
 
 
-export class IssueDetailsDeveloper extends Component {
+export class IssueDeveloperDetails extends Component {
 
     constructor(props) {
         super(props)
@@ -45,7 +46,7 @@ export class IssueDetailsDeveloper extends Component {
 			</div>
                     </div>
                     <div className="panel-body">
-			<h3>{gd.subject}</h3>
+			g<h3>issue#{gd.number}: {gd.subject}</h3>
 			<pre>
 			    {gd.description}
 			</pre>
@@ -58,13 +59,14 @@ export class IssueDetailsDeveloper extends Component {
 
 function mapStateToProps(state, props) {
     const item_list = state.item_list || {}
+    const issue_general_details = state.issue_general_details || {}
     const { list_key } = props
     const l = item_list[list_key] || {}
-    const issue_id = l.issue_id || null
+    const filter = l.filter || {}
+    const issue_id = filter.issue_id || null
 	
-    const issue_general_details = state.issue_general_details || {}
     const general_details = (issue_general_details.items_by_id || {})[issue_id] || {}
-    const is_loading = (issue_general_details.loading_item_ids || []).indexOf(issue_id) !== -1
+    const is_loading = indexOf(issue_general_details.loading_item_ids || [], issue_id) !== -1
     
     return {
         issue_id: issue_id,
@@ -73,4 +75,4 @@ function mapStateToProps(state, props) {
     }
 }
 
-export default connect(mapStateToProps)(IssueDetailsDeveloper)
+export default connect(mapStateToProps)(IssueDeveloperDetails)

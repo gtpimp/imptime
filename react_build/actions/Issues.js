@@ -64,7 +64,7 @@ function fetchIssuesPromise(dispatch, issue_ids) {
 	    .then(json => {
                 if (json.status != 'success') {
 		    dispatch(announceIssuesLoadFailed())
-		    reject(json.error_message)
+		    reject(json.error)
                 } else {
 		    dispatch(announceIssuesLoaded(json.payload))
                 }

@@ -47,6 +47,14 @@ export function expand_list(list_key) {
     }
 }
 
+export function unselectAllItems(list_key) {
+    return {
+	type: UPDATE_LIST_SELECTION,
+	list_key: list_key,
+	selected_ids: []
+    }
+}
+
 export function selectItems(list_key, selected_ids) {
 
     return {
@@ -130,7 +138,7 @@ function fetchListAndItems(state, list_key,
             .then(json => {
 
 		if (json.status != 'success') {
-                    dispatch(announceListLoadFailed(list_key, json.error_message))
+                    dispatch(announceListLoadFailed(list_key, json.error))
                 } else {
 		    dispatch(announceListLoaded(list_key, json.payload))
 		    

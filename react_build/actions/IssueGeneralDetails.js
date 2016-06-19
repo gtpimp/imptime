@@ -2,6 +2,7 @@ import { impfetch } from './lib.js'
 import difference from 'lodash/difference'
 import keys from 'lodash/keys'
 import map from 'lodash/map'
+import { setErrorMessage } from '../actions/Error'
 
 export const ANNOUNCE_ISSUE_GENERAL_DETAILS_LOADED = 'ANNOUNCE_ISSUES_GENERAL_DETAILS_LOADED'
 export const ANNOUNCE_ISSUE_GENERAL_DETAILS_LOAD_FAILED = 'ANNOUNCE_ISSUE_GENERAL_DETAILS_LOAD_FAILED'
@@ -55,22 +56,21 @@ function fetchIssueGeneralDetails(dispatch, issue_ids) {
 	    .then(response => response.json())
 	    .then(json => {
                 if (json.status != 'success') {
-		    dispatch(announceIssueGeneralDetailsLoadFailed())
-		    reject(json.error_message)
+		    dispatch(announceIssueGeneralDetailsLoadFailed(json.error))
                 } else {
 		    dispatch(announceIssueGeneralDetailsLoaded(json.payload))
                 }
 	    }).catch(function (error) {
 		dispatch(announceIssueGeneralDetailsLoadFailed("Failed to load issues: " + error.message))
-		reject("Failed to load issues: " + error.message)
 	    })
     }
 }
 
 function getMissingIssueGeneralDetails(state, required_issue_ids) {
     const matching_items = state.issue_general_details || {}
-    const matching_items_ids = keys(matching_items.items_by_id || {})
+    const matching_item_ids = keys(matching_items.items_by_id || {})
     const matching_item_refs = matching_item_ids.map((item_id, index) => "" + item_id)
+    const required_item_refs = required_issue_ids.map((item_id, index) => "" + item_id)
     const unmatching_item_ids = difference(required_item_refs, matching_item_refs)
     return unmatching_item_ids
 }
@@ -80,7 +80,7 @@ export function fetchIssueGeneralDetailsIfNeeded(issue_ids) {
 	const state = getState()
 	const missing_issue_ids = getMissingIssueGeneralDetails(dispatch, issue_ids)
 	if ( missing_issue_ids.length > 0 ) {
-	    fetchIssueGeneralDetails(dispatch, missing_issue_ids)
+	    dispatch(fetchIssueGeneralDetails(dispatch, missing_issue_ids))
 	}
     }
 }

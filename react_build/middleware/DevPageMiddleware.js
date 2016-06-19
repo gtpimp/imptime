@@ -10,7 +10,8 @@ import {
 } from '../actions/IssueGeneralDetails'
 import {
     collapse_list,
-    expand_list
+    expand_list,
+    unselectAllItems
 } from '../actions/ItemList'
 
 const sprints_list_key = 'sprints'
@@ -32,17 +33,32 @@ function DevPageMiddleware(_ref) {
 		    const selected_id = (selected_ids.length > 0 && selected_ids[0]) || null
 		    
 		    if (action.list_key == projects_list_key) {
+			// Change selected project
 			dispatch(update_list_filter(sprints_list_key, {project_id:selected_id}))
 			dispatch(invalidateList(sprints_list_key))
 			dispatch(fetchSprintsIfNeeded(sprints_list_key))
+			
 			dispatch(expand_list(sprints_list_key))
 			dispatch(collapse_list(issues_list_key))
+
+			dispatch(unselectAllItems(sprints_list_key))
+			dispatch(unselectAllItems(issues_list_key))
+			dispatch(update_list_filter(issue_details_developer_key, {issue_id:null}))
+			
 		    } else if (action.list_key == sprints_list_key) {
+			// Change selected sprint
 			dispatch(update_list_filter(issues_list_key, {sprint_id:selected_id}))
 			dispatch(invalidateList(issues_list_key))
 			dispatch(fetchIssuesIfNeeded(issues_list_key))
+			
 			dispatch(expand_list(issues_list_key))
-		    } else if (action.list_key == issue_details_developer_key) {
+			dispatch(update_list_filter(issue_details_developer_key, {issue_id:null}))
+			
+			dispatch(unselectAllItems(issues_list_key))
+			dispatch(update_list_filter(issue_details_developer_key, {issue_id:null}))
+			
+		    } else if (action.list_key == issues_list_key) {
+			// Change selected issue
 			const issue_id = selected_id
 			dispatch(update_list_filter(issue_details_developer_key, {issue_id:issue_id}))
 			dispatch(invalidateIssueGeneralDetails([issue_id]))
