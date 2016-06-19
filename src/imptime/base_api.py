@@ -12,7 +12,11 @@ class BaseViewSet(viewsets.ViewSet):
 
         for k, v in raw_filter_args.items():
             if k == 'ids':
-                filter_args['pk__in'] = [int(x) for x in v]
+                if v is None or (len(v) == 1 and
+                                 (v[0] is None or v[0] == "null")):
+                    filter_args['pk'] = None
+                else:
+                    filter_args['pk__in'] = [int(x) for x in v]
             else:
                 filter_args[k] = v
 

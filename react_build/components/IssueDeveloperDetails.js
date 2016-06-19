@@ -63,7 +63,7 @@ function mapStateToProps(state, props) {
     const { list_key } = props
     const l = item_list[list_key] || {}
     const filter = l.filter || {}
-    const issue_id = filter.issue_id || null
+    const issue_id = filter.issue_id
 	
     const general_details = (issue_general_details.items_by_id || {})[issue_id] || {}
     const is_loading = indexOf(issue_general_details.loading_item_ids || [], issue_id) !== -1
