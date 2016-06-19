@@ -47,31 +47,10 @@ export class IssueList extends Component {
 	dispatch(fetchIssuesIfNeeded(list_key))
     }
 
-    renderExpandedIssue(issue, index) {
-        const { selected_ids } = this.props
-
-	let selected = selected_ids.indexOf(issue.id) !== -1
-	
-        return (
-	    <tr key={issue.id+"."+index}
-		onClick={() => this.onClickedIssue(issue.id)}
-		className={selected ? 'tr--selected' : ''}
-	    >
-		<td>{issue.number}</td>
-	        { issue.loaded === false &&
-		<td>Loading...</td>
-		}
-		{ issue.loaded !== false &&
-		  <td>{issue.subject}</td>
-		}
-	    </tr>
-        )
-    }
-
     renderCollapsedIssue(issue) {
 	const { list_key } = this.props
 	return (
-	    <div key={"collapsed_issue_issue_"+issue.id+"_"+list_key}>
+	    <div key={"collapsed_issue_"+issue.id+"_"+list_key}>
 		{issue.number}
 		{issue.subject}
 	    </div>
@@ -95,14 +74,29 @@ export class IssueList extends Component {
 		</div>
 	    </div>
 	)
-	
-	return (
-	    <div>
-		{ selected_items.map((issue, index) => this.renderCollapsedIssue(issue)) }
-	    </div>
-	)
     }
+    
+    renderExpandedIssue(issue, index) {
+        const { selected_ids } = this.props
 
+	let selected = selected_ids.indexOf(issue.id) !== -1
+	
+        return (
+	    <tr key={issue.id+"."+index}
+		onClick={() => this.onClickedIssue(issue.id)}
+		className={selected ? 'tr--selected' : ''}
+	    >
+		<td>{issue.number}</td>
+	        { issue.loaded === false &&
+		<td>Loading...</td>
+		}
+		{ issue.loaded !== false &&
+		  <td>{issue.subject}</td>
+		}
+	    </tr>
+        )
+    }
+    
     render_expanded() {
 	const { is_loading, issues, has_items, list_key } = this.props
         return (
@@ -168,7 +162,7 @@ function mapStateToProps(state, props) {
     const visible_item_ids = l.visible_item_ids || []
 
     const selected_items = items_by_id && l.selected_ids && l.selected_ids.map( function(selected_id, index) {
-	return items_by_id[selected_id] || { 'id': visible_item_id,
+	return items_by_id[selected_id] || { 'id': selected_id,
 					     'loaded': false }
     })
     
