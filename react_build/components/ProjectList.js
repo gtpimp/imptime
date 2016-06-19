@@ -38,6 +38,7 @@ export class ProjectList extends Component {
     onClickedProject(project_id) {
 	const { dispatch, list_key } = this.props
 	dispatch(selectItems(list_key, [project_id]))
+	this.onCollapse()
     }
 
     onRefresh() {
