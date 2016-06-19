@@ -13,12 +13,12 @@ imp_remote_managepy_dir = imp_remote_code_dir + "/src"
 imp_remote_venv_command = "source %s/bin/activate" % imp_remote_venv_dir
 imp_remote_media_dir = imp_remote_code_dir + "/media"
 
-sass_remote_code_dir = "/home/imptime"
-sass_remote_scripts_dir = "/home/imptime/scripts"
-sass_remote_venv_dir = sass_remote_code_dir + "/venv"
-sass_remote_managepy_dir = sass_remote_code_dir + "/src"
-sass_remote_venv_command = "source %s/bin/activate" % sass_remote_venv_dir
-sass_remote_media_dir = sass_remote_code_dir + "/media"
+saas_remote_code_dir = "/home/imptime"
+saas_remote_scripts_dir = "/home/imptime/scripts"
+saas_remote_venv_dir = saas_remote_code_dir + "/venv"
+saas_remote_managepy_dir = saas_remote_code_dir + "/src"
+saas_remote_venv_command = "source %s/bin/activate" % saas_remote_venv_dir
+saas_remote_media_dir = saas_remote_code_dir + "/media"
 
 # ===== Usage =====
 
@@ -32,7 +32,7 @@ To deploy live to implicitdesign.co.za
 To deploy software as a service to imptime.co.za
 --------------------------------------
 
-  > fab host_sass deploy_sass:<branch>
+  > fab host_saas deploy_saas:<branch>
 
 To deploy to staging on dev.implicitdesign.co.za
 ------------------------------------------------
@@ -62,9 +62,9 @@ def staging():
     env.base_dir = '/home/imptime/'
 
 
-def host_sass():
+def host_saas():
     env.user = "impd"
-    env.hosts = ["cognitivesystems.imptime.co.za"]
+    env.hosts = ["www.imptime.co.za"]
 
 # ===== top level commands ======
 
@@ -74,8 +74,8 @@ def deploy(branch="prod"):
         run("./deploy_production.sh %s" % branch)
 
 
-def deploy_sass(branch="prod"):
-    with cd(sass_remote_code_dir):
+def deploy_saas(branch="prod"):
+    with cd(saas_remote_code_dir):
         run("./deploy_production.sh %s" % branch)
 
 
