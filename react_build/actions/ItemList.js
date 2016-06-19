@@ -35,7 +35,7 @@ export function collapse_list(list_key) {
     return {
 	type: UPDATE_LIST_DISPLAY_MODE,
 	list_key: list_key,
-	mode: 'collapsed'
+	display_mode: 'collapsed'
     }
 }
 
@@ -43,7 +43,7 @@ export function expand_list(list_key) {
     return {
 	type: UPDATE_LIST_DISPLAY_MODE,
 	list_key: list_key,
-	mode: 'expanded'
+	display_mode: 'expanded'
     }
 }
 
