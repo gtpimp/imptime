@@ -1,25 +1,26 @@
 var src = './';
-var dist = '../src/static_collected';
+var static_dist = '../src/imptime/static/';
+var html_dist = '../src/imptime/templates/imptime';
 
 module.exports = {
     clean: {
         src: [
-            dist + '/index_react.html',
-            dist + '/css',
-            dist + '/images',
-            dist + '/js']
+            html_dist + '/index_react.html',
+            static_dist + '/css',
+            static_dist + '/images',
+            static_dist + '/js']
     },
     html: {
         src: src + '/index_react.html',
-        dest: dist
+        dest: html_dist
     },
     images: {
         src: src + '/images/**/*',
-        dest: dist + '/images'
+        dest: static_dist + '/images'
     },
     sass: {
         src: src + '/sass/**/*.scss',
-        dest: dist + '/css',
+        dest: static_dist + '/css',
         options: {
             noCache: true,
             compass: false,
@@ -36,6 +37,6 @@ module.exports = {
     webpack: {
         configFile: '../../../webpack.config.js',
         src: src + '/index_react.js',
-        dest: dist + '/js/'
+        dest: static_dist + '/js/'
     }
 };
