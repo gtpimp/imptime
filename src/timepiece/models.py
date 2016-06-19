@@ -100,7 +100,7 @@ class BusinessQuerySet(QuerySet):
         user (typically the logged in user) is assigned to """
         if user.is_superuser or user.has_perm('timepiece.belongs_to_all_projects'):
             return self
-        return self.filter(new_business_projects__users=user)
+        return self.filter(new_business_projects__users=user).distinct()
 
     def filter_has_any_active_projects(self):
         return self.filter(new_business_projects__status2__in=Project.active_states())
@@ -3196,6 +3196,18 @@ class IssueRepresentation(object):
     def options(self):
         return str([ list(pair) for pair in Issue.ISSUE_STATUS_CHOICES ]) 
 
+
+class IssueQuerySet(QuerySet):
+
+    def filter_by_logged_in_user(self, user):
+        """ restricts entries to those belonging to projects the given
+        user (typically the logged in user) is assigned to """
+        if user.is_superuser or user.has_perm('timepiece.belongs_to_all_projects'):
+            return self
+        import pdb; pdb.set_trace()
+        return self.filter(project__business__users=user)
+
+
 class Issue(models.Model):
 
     ISSUE_STATUS_CHOICES = (
@@ -3243,6 +3255,8 @@ class Issue(models.Model):
     fixed_amount = models.DecimalField(max_digits=12, decimal_places=2, blank=True, null=True)
     fixed_ctc_amount = models.DecimalField(max_digits=12, decimal_places=2, blank=True, null=True)
 
+    objects = IssueQuerySet().as_manager()
+    
     @classmethod
     def get_last_issue_number(self, business):
         largest_number =  Issue.objects.filter(project__business=business).filter(number__isnull=False).aggregate(largest_number=Max("number"))['largest_number']

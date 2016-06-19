@@ -24,7 +24,7 @@ class SprintViewSet(BaseViewSet):
             filter_args = params.get('filter', {})
             format_args = params.get('format', {})
 
-            sprints = Sprint.objects.all()
+            sprints = self.allowed_sprints()
             sprints = self.apply_filter(qs=sprints,
                                         raw_filter_args=filter_args)
             sprints = self.apply_pagination(qs=sprints,

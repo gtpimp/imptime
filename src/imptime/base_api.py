@@ -1,9 +1,19 @@
 from django.core.paginator import Paginator
 from django.conf import settings
 from rest_framework import viewsets
+from timepiece.models import Business as Project
+from timepiece.models import Project as Sprint
+from timepiece.models import Issue
+from timepiece.models import Entry as TimesheetEntry
 
 
 class BaseViewSet(viewsets.ViewSet):
+
+    """Apart from being a useful base class for lists, this class also
+    helps to manage the naming confusion.
+    - timepiece.Business = imptime.Project
+    - timepiece.Project = imptime.Sprint
+    """
 
     def apply_filter(self, qs, raw_filter_args):
 
@@ -55,3 +65,33 @@ class BaseViewSet(viewsets.ViewSet):
                 k = k.replace('sprint_', 'project_')
             d_fixed[k] = v
         return d_fixed
+
+    def allowed_projects(self):
+        return Project.objects.all()\
+          .filter_by_logged_in_user(self.request.user)
+
+    def allowed_project(self, pk):
+        return self.allowed_projects().get(pk=pk)
+
+    def allowed_sprints(self):
+        return Sprint.objects.all()\
+          .filter_by_logged_in_user(self.request.user)
+
+    def allowed_sprint(self, pk):
+        return self.allowed_sprints().get(pk=pk)
+
+    def allowed_issues(self):
+        allowed_sprint_ids = self.allowed_sprints()\
+          .values_list('id', flat=True)
+        return Issue.objects.all()\
+                            .filter(project_id__in=allowed_sprint_ids)
+
+    def allowed_issue(self, pk):
+        return self.allowed_issues().get(pk=pk)
+
+    def allowed_timesheet_entries(self):
+        return TimesheetEntry.objects.all()\
+          .filter_by_logged_in_user(self.request.user)
+
+    def allowed_timesheet_entry(self, pk):
+        return self.allowed_timesheet_entries().get(pk=pk)

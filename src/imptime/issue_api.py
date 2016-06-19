@@ -25,7 +25,7 @@ class IssueViewSet(BaseViewSet):
             filter_args = params.get('filter', {})
             format_args = params.get('format', {})
 
-            issues = Issue.objects.all()
+            issues = self.allowed_issues()
             issues = self.apply_filter(qs=issues,
                                        raw_filter_args=filter_args)
             issues = self.apply_pagination(qs=issues,

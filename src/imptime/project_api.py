@@ -18,7 +18,6 @@ class ProjectViewSet(BaseViewSet):
     def list(self, request):
         try:
             context = {}
-            user = request.user
 
             params = request.GET.get('params', '{}')
             params = json.loads(params)
@@ -26,8 +25,7 @@ class ProjectViewSet(BaseViewSet):
             filter_args = params.get('filter', {})
             format_args = params.get('format', {})
 
-            projects = user.profile.businesses.exclude_has_closed_projects()
-
+            projects = self.allowed_projects()
             projects = self.apply_filter(qs=projects,
                                          raw_filter_args=filter_args)
             projects = self.apply_pagination(qs=projects,
