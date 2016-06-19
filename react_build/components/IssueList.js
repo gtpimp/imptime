@@ -155,9 +155,7 @@ function mapStateToProps(state, props) {
     const { list_key } = props
     const items_by_id = issue && issue.items_by_id || {}
     const l = (item_list && item_list[list_key]) || {}
-
     const filter = l.filter || {}
-    
     const sprint_id = filter.sprint_id || null
     const visible_item_ids = l.visible_item_ids || []
 
