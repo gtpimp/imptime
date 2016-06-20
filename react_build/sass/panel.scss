@@ -141,8 +141,9 @@
     max-width: $width;
     min-width: $width;
     width: $width;
-    background-color: #B7CBEC;
-    color: #000000;
+    background-color: #A6BADB;
+    color: #dddddd;
+    border-bottom: 1px solid #121212;
 
     .panel-body {
 	float: right;
