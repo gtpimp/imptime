@@ -40,7 +40,7 @@ export class IssueDeveloperDetails extends Component {
 	}
 	
         return (
-            <div style={{ opacity: is_loading ? 0.5 : 1 }}>
+            <div className="issue_developer_details" style={{ opacity: is_loading ? 0.5 : 1 }}>
 		<div className="panel panel--full">
                     <div className="panel-heading">
 			<div className="panel__title">Issue Details</div>

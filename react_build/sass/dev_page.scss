@@ -1,0 +1,12 @@
+@import 'variables';
+
+.devpage__workarea {
+    .issue_list {
+	width: 50%;
+	float: left;
+    }
+    .issue_developer_details {
+	width: 50%;
+	float: right;
+    }
+}

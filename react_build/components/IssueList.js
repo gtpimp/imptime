@@ -93,7 +93,7 @@ export class IssueList extends Component {
     render_expanded() {
 	const { is_loading, issues, has_items, list_key } = this.props
         return (
-            <div style={{ opacity: is_loading ? 0.5 : 1 }}>
+            <div className="issue_list" style={{ opacity: is_loading ? 0.5 : 1 }}>
 		<div className="panel panel--full">
                     <div className="panel-heading" onClick={this.onCollapse}>
 			<div className="panel__title">Issues</div>
