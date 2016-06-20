@@ -53,7 +53,7 @@ export class ProjectList extends Component {
 	const { list_key } = this.props
 	return (
 	    <div key={"collapsed_project_"+project.id+"_"+list_key}>
-		{project.name}
+		Project: {project.name}
 	    </div>
 	)
     }
@@ -102,9 +102,7 @@ export class ProjectList extends Component {
                     <div className="panel-heading" onClick={this.onCollapse}>
 			<div className="panel__title">Projects</div>
 			<div className="panel__buttons">
-			    <div className="panel__button panel__button--collapse">
-			    </div>
-                            <div className="panel__button panel__button--refresh"
+			    <div className="panel__button panel__button--refresh"
 				 onClick={this.onRefresh}></div>
 			</div>
                     </div>

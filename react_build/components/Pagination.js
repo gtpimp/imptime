@@ -1,6 +1,7 @@
 import React, { Component, PropTypes } from 'react'
 import { Link } from 'react-router'
 import { connect } from 'react-redux'
+import moment from 'moment'
 import {
     update_list_pagination
 } from "../actions/ItemList"
@@ -41,12 +42,12 @@ export default class Pagination extends Component {
                       <div>Loading...</div>
                     }
                       { !this.props.is_loading &&
-                        <div>As at {this.props.last_updated}</div>
+                        <div>As at {this.props.received_at}</div>
                       }
                 </div>
                 <div className="pager__text">
-		    {this.props.first_item_index} - {this.props.last_item_index}
-		    of
+		    Showing {this.props.first_item_index} to {this.props.last_item_index}
+		    out of 
 		    {this.props.num_items}
 		</div>
                 { this.props.has_prev_page &&
@@ -54,11 +55,11 @@ export default class Pagination extends Component {
 		      &nbsp;
 		  </div>
                 }
-                  { this.props.has_next_page &&
-                    <div className="icon icon--next-page" onClick={this.on_next_page}>
-			&nbsp;
-		    </div>
-                  }
+		{ this.props.has_next_page &&
+		  <div className="icon icon--next-page" onClick={this.on_next_page}>
+		      &nbsp;
+		  </div>
+		}
             </div>
         )
 
@@ -82,8 +83,8 @@ function mapStateToProps(state, props) {
 	last_item_index: pagination.last_item_index || 1,
 	has_prev_page: pagination.has_prev_page || false,
 	has_next_page: pagination.has_next_page || false,
-        last_updated: l.last_updated,
-        is_loading: l.is_loading
+        is_loading: l.is_loading,
+	received_at: moment(l.received_at).format('h:mm:ss a')
     }
 
 }

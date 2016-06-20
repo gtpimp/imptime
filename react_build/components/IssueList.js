@@ -103,7 +103,7 @@ export class IssueList extends Component {
 		    onClick={() => this.onClickedIssue(issue.id)}
 		    className={selected ? 'tr--selected' : ''}
 		>
-		    <td>{issue.number}</td>
+		    <td className="issue_list__tr__issue_number_button" >{issue.number}</td>
 		    <td>
 			<RIEInput value={issue.subject}
 				  propName="subject" 
@@ -124,8 +124,6 @@ export class IssueList extends Component {
 		<div className="panel panel--full">
                     <div className="panel-heading" onClick={this.onCollapse}>
 			<div className="panel__title">Issues</div>
-			<div className="panel__button panel__button--collapse" >
-			</div>
 			<div className="panel__buttons">
                             <div className="panel__button panel__button--refresh"
 				 onClick={this.onRefresh}></div>

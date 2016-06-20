@@ -55,8 +55,7 @@ export class SprintList extends Component {
 	const { list_key } = this.props
 	return (
 	    <div key={"collapsed_sprint_"+sprint.id+"_"+list_key}>
-		{sprint.id}
-		{sprint.name}
+		Sprint: {sprint.name}
 	    </div>
 	)
     }
@@ -120,8 +119,6 @@ export class SprintList extends Component {
 		<div className="panel panel--default">
                     <div className="panel-heading" onClick={this.onCollapse}>
 			<div className="panel__title">Sprints</div>
-			<div className="panel__button panel__button--collapse">
-			</div>
 			<div className="panel__buttons">
                             <div className="panel__button panel__button--refresh"
 				 onClick={this.onRefresh}></div>
