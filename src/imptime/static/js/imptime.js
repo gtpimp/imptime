@@ -36187,7 +36187,7 @@
 																	{ style: { opacity: is_loading ? 0.5 : 1 } },
 																	_react2.default.createElement(
 																					'div',
-																					{ className: 'panel panel--full' },
+																					{ className: 'panel panel--default' },
 																					_react2.default.createElement(
 																									'div',
 																									{ className: 'panel-heading', onClick: this.onCollapse },
@@ -36223,9 +36223,9 @@
 																													{ className: 'table__no-rows' },
 																													'no projects'
 																									)
-																					)
-																	),
-																	_react2.default.createElement(_Pagination2.default, { list_key: list_key, on_changed: this.onRefresh })
+																					),
+																					_react2.default.createElement(_Pagination2.default, { list_key: list_key, on_changed: this.onRefresh })
+																	)
 													);
 									}
 					}, {
@@ -41697,7 +41697,7 @@
 	'use strict';
 
 	Object.defineProperty(exports, "__esModule", {
-					value: true
+				value: true
 	});
 	exports.SprintList = undefined;
 
@@ -41728,277 +41728,300 @@
 	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 
 	var SprintList = exports.SprintList = function (_Component) {
-					_inherits(SprintList, _Component);
+				_inherits(SprintList, _Component);
 
-					function SprintList(props) {
-									_classCallCheck(this, SprintList);
+				function SprintList(props) {
+							_classCallCheck(this, SprintList);
 
-									var _this = _possibleConstructorReturn(this, Object.getPrototypeOf(SprintList).call(this, props));
+							var _this = _possibleConstructorReturn(this, Object.getPrototypeOf(SprintList).call(this, props));
 
-									_this.onRefresh = _this.onRefresh.bind(_this);
-									_this.onCollapse = _this.onCollapse.bind(_this);
-									_this.onExpand = _this.onExpand.bind(_this);
-									return _this;
-					}
+							_this.onRefresh = _this.onRefresh.bind(_this);
+							_this.onCollapse = _this.onCollapse.bind(_this);
+							_this.onExpand = _this.onExpand.bind(_this);
+							return _this;
+				}
 
-					_createClass(SprintList, [{
-									key: 'componentDidMount',
-									value: function componentDidMount() {
-													var _props = this.props;
-													var dispatch = _props.dispatch;
-													var list_key = _props.list_key;
-													var project_id = _props.project_id;
+				_createClass(SprintList, [{
+							key: 'componentDidMount',
+							value: function componentDidMount() {
+										var _props = this.props;
+										var dispatch = _props.dispatch;
+										var list_key = _props.list_key;
+										var project_id = _props.project_id;
 
-													if (project_id) {
-																	dispatch((0, _Sprints.fetchSprintsIfNeeded)(list_key));
-													}
-									}
-					}, {
-									key: 'onCollapse',
-									value: function onCollapse() {
-													var _props2 = this.props;
-													var dispatch = _props2.dispatch;
-													var list_key = _props2.list_key;
-
-													dispatch((0, _ItemList.collapse_list)(list_key));
-									}
-					}, {
-									key: 'onExpand',
-									value: function onExpand() {
-													var _props3 = this.props;
-													var dispatch = _props3.dispatch;
-													var list_key = _props3.list_key;
-
-													dispatch((0, _ItemList.expand_list)(list_key));
-									}
-					}, {
-									key: 'onClickedSprint',
-									value: function onClickedSprint(sprint_id) {
-													var _props4 = this.props;
-													var dispatch = _props4.dispatch;
-													var list_key = _props4.list_key;
-
-													dispatch((0, _ItemList.selectItems)(list_key, [sprint_id]));
-									}
-					}, {
-									key: 'onRefresh',
-									value: function onRefresh() {
-													var _props5 = this.props;
-													var dispatch = _props5.dispatch;
-													var list_key = _props5.list_key;
-
-													dispatch((0, _ItemList.invalidateList)(list_key));
+										if (project_id) {
 													dispatch((0, _Sprints.fetchSprintsIfNeeded)(list_key));
-									}
-					}, {
-									key: 'renderCollapsedSprint',
-									value: function renderCollapsedSprint(sprint) {
-													var list_key = this.props.list_key;
+										}
+							}
+				}, {
+							key: 'onCollapse',
+							value: function onCollapse() {
+										var _props2 = this.props;
+										var dispatch = _props2.dispatch;
+										var list_key = _props2.list_key;
 
+										dispatch((0, _ItemList.collapse_list)(list_key));
+							}
+				}, {
+							key: 'onExpand',
+							value: function onExpand() {
+										var _props3 = this.props;
+										var dispatch = _props3.dispatch;
+										var list_key = _props3.list_key;
+
+										dispatch((0, _ItemList.expand_list)(list_key));
+							}
+				}, {
+							key: 'onClickedSprint',
+							value: function onClickedSprint(sprint_id) {
+										var _props4 = this.props;
+										var dispatch = _props4.dispatch;
+										var list_key = _props4.list_key;
+
+										dispatch((0, _ItemList.selectItems)(list_key, [sprint_id]));
+							}
+				}, {
+							key: 'onRefresh',
+							value: function onRefresh() {
+										var _props5 = this.props;
+										var dispatch = _props5.dispatch;
+										var list_key = _props5.list_key;
+
+										dispatch((0, _ItemList.invalidateList)(list_key));
+										dispatch((0, _Sprints.fetchSprintsIfNeeded)(list_key));
+							}
+				}, {
+							key: 'renderCollapsedSprint',
+							value: function renderCollapsedSprint(sprint) {
+										var list_key = this.props.list_key;
+
+										return _react2.default.createElement(
+													'div',
+													{ key: "collapsed_sprint_" + sprint.id + "_" + list_key },
+													sprint.id,
+													sprint.name
+										);
+							}
+				}, {
+							key: 'render_collapsed',
+							value: function render_collapsed() {
+										var _this2 = this;
+
+										var _props6 = this.props;
+										var sprints = _props6.sprints;
+										var selected_items = _props6.selected_items;
+
+
+										return _react2.default.createElement(
+													'div',
+													{ className: 'panel panel--collapsed' },
+													_react2.default.createElement(
+																'div',
+																{ className: 'panel-heading', onClick: this.onExpand },
+																_react2.default.createElement(
+																			'div',
+																			{ className: 'panel__title' },
+																			selected_items.map(function (sprint, index) {
+																						return _this2.renderCollapsedSprint(sprint);
+																			})
+																)
+													)
+										);
+							}
+				}, {
+							key: 'renderExpandedSprint',
+							value: function renderExpandedSprint(sprint, index) {
+										var _this3 = this;
+
+										var selected_ids = this.props.selected_ids;
+
+
+										var selected = selected_ids.indexOf(sprint.id) !== -1;
+
+										if (sprint.loaded === false) {
 													return _react2.default.createElement(
-																	'div',
-																	{ key: "collapsed_sprint_" + sprint.id + "_" + list_key },
-																	sprint.id,
-																	sprint.name
+																'tr',
+																{ key: sprint.id + "." + index,
+																			onClick: function onClick() {
+																						return _this3.onClickedSprint(sprint.id);
+																			},
+																			className: selected ? 'tr--selected' : ''
+																},
+																_react2.default.createElement(
+																			'td',
+																			null,
+																			sprint.id
+																),
+																sprint.loaded === false && _react2.default.createElement(
+																			'td',
+																			null,
+																			'Loading...'
+																)
 													);
-									}
-					}, {
-									key: 'render_collapsed',
-									value: function render_collapsed() {
-													var _this2 = this;
-
-													var _props6 = this.props;
-													var sprints = _props6.sprints;
-													var selected_items = _props6.selected_items;
-
-
+										}
+										if (sprint.loaded !== false) {
 													return _react2.default.createElement(
-																	'div',
-																	{ className: 'panel panel--collapsed' },
-																	_react2.default.createElement(
-																					'div',
-																					{ className: 'panel-heading', onClick: this.onExpand },
-																					_react2.default.createElement(
-																									'div',
-																									{ className: 'panel__title' },
-																									selected_items.map(function (sprint, index) {
-																													return _this2.renderCollapsedSprint(sprint);
+																'tr',
+																{ key: sprint.id + "." + index,
+																			onClick: function onClick() {
+																						return _this3.onClickedSprint(sprint.id);
+																			},
+																			className: selected ? 'tr--selected' : ''
+																},
+																_react2.default.createElement(
+																			'td',
+																			null,
+																			sprint.id
+																),
+																_react2.default.createElement(
+																			'td',
+																			null,
+																			sprint.name
+																),
+																_react2.default.createElement(
+																			'td',
+																			null,
+																			sprint.status_name
+																)
+													);
+										}
+							}
+				}, {
+							key: 'render_expanded',
+							value: function render_expanded() {
+										var _this4 = this;
+
+										var _props7 = this.props;
+										var sprints = _props7.sprints;
+										var is_visible = _props7.is_visible;
+										var list_key = _props7.list_key;
+										var is_loading = _props7.is_loading;
+										var has_items = _props7.has_items;
+
+
+										if (!is_visible) {
+													return _react2.default.createElement('div', null);
+										}
+
+										return _react2.default.createElement(
+													'div',
+													{ style: { opacity: is_loading ? 0.5 : 1 } },
+													_react2.default.createElement(
+																'div',
+																{ className: 'panel panel--default' },
+																_react2.default.createElement(
+																			'div',
+																			{ className: 'panel-heading', onClick: this.onCollapse },
+																			_react2.default.createElement(
+																						'div',
+																						{ className: 'panel__title' },
+																						'Sprints'
+																			),
+																			_react2.default.createElement('div', { className: 'panel__button panel__button--collapse' }),
+																			_react2.default.createElement(
+																						'div',
+																						{ className: 'panel__buttons' },
+																						_react2.default.createElement('div', { className: 'panel__button panel__button--refresh',
+																									onClick: this.onRefresh })
+																			)
+																),
+																_react2.default.createElement(
+																			'div',
+																			{ className: 'panel-body' },
+																			_react2.default.createElement(
+																						'table',
+																						{ className: 'table table--default' },
+																						_react2.default.createElement(
+																									'thead',
+																									null,
+																									_react2.default.createElement(
+																												'tr',
+																												null,
+																												_react2.default.createElement(
+																															'th',
+																															null,
+																															'ID'
+																												),
+																												_react2.default.createElement(
+																															'th',
+																															null,
+																															'Name'
+																												)
+																									)
+																						),
+																						_react2.default.createElement(
+																									'tbody',
+																									null,
+																									sprints.map(function (sprint, index) {
+																												return _this4.renderExpandedSprint(sprint, index);
 																									})
-																					)
-																	)
-													);
-									}
-					}, {
-									key: 'renderExpandedSprint',
-									value: function renderExpandedSprint(sprint, index) {
-													var _this3 = this;
-
-													var selected_ids = this.props.selected_ids;
-
-
-													var selected = selected_ids.indexOf(sprint.id) !== -1;
-
-													return _react2.default.createElement(
-																	'tr',
-																	{ key: sprint.id + "." + index,
-																					onClick: function onClick() {
-																									return _this3.onClickedSprint(sprint.id);
-																					},
-																					className: selected ? 'tr--selected' : ''
-																	},
-																	_react2.default.createElement(
-																					'td',
-																					null,
-																					sprint.id
-																	),
-																	sprint.loaded === false && _react2.default.createElement(
-																					'td',
-																					null,
-																					'Loading...'
-																	),
-																	sprint.loaded !== false && _react2.default.createElement(
-																					'td',
-																					null,
-																					sprint.name
-																	)
-													);
-									}
-					}, {
-									key: 'render_expanded',
-									value: function render_expanded() {
-													var _this4 = this;
-
-													var _props7 = this.props;
-													var sprints = _props7.sprints;
-													var is_visible = _props7.is_visible;
-													var list_key = _props7.list_key;
-													var is_loading = _props7.is_loading;
-													var has_items = _props7.has_items;
+																						)
+																			),
+																			!is_loading && !has_items && _react2.default.createElement(
+																						'div',
+																						{ className: 'table__no-rows' },
+																						'no sprints'
+																			)
+																),
+																_react2.default.createElement(_Pagination2.default, { list_key: list_key, on_changed: this.onRefresh })
+													)
+										);
+							}
+				}, {
+							key: 'render',
+							value: function render() {
+										var _props8 = this.props;
+										var is_loading = _props8.is_loading;
+										var is_collapsed = _props8.is_collapsed;
+										var is_expanded = _props8.is_expanded;
 
 
-													if (!is_visible) {
-																	return _react2.default.createElement('div', null);
-													}
+										return _react2.default.createElement(
+													'div',
+													null,
+													is_collapsed && this.render_collapsed(),
+													is_expanded && this.render_expanded()
+										);
+							}
+				}]);
 
-													return _react2.default.createElement(
-																	'div',
-																	{ style: { opacity: is_loading ? 0.5 : 1 } },
-																	_react2.default.createElement(
-																					'div',
-																					{ className: 'panel panel--full' },
-																					_react2.default.createElement(
-																									'div',
-																									{ className: 'panel-heading', onClick: this.onCollapse },
-																									_react2.default.createElement(
-																													'div',
-																													{ className: 'panel__title' },
-																													'Sprints'
-																									),
-																									_react2.default.createElement('div', { className: 'panel__button panel__button--collapse' }),
-																									_react2.default.createElement(
-																													'div',
-																													{ className: 'panel__buttons' },
-																													_react2.default.createElement('div', { className: 'panel__button panel__button--refresh',
-																																	onClick: this.onRefresh })
-																									)
-																					),
-																					_react2.default.createElement(
-																									'div',
-																									{ className: 'panel-body' },
-																									_react2.default.createElement(
-																													'table',
-																													{ className: 'table table--default' },
-																													_react2.default.createElement(
-																																	'thead',
-																																	null,
-																																	_react2.default.createElement(
-																																					'tr',
-																																					null,
-																																					_react2.default.createElement(
-																																									'th',
-																																									null,
-																																									'ID'
-																																					),
-																																					_react2.default.createElement(
-																																									'th',
-																																									null,
-																																									'Name'
-																																					)
-																																	)
-																													),
-																													_react2.default.createElement(
-																																	'tbody',
-																																	null,
-																																	sprints.map(function (sprint, index) {
-																																					return _this4.renderExpandedSprint(sprint, index);
-																																	})
-																													)
-																									),
-																									!is_loading && !has_items && _react2.default.createElement(
-																													'div',
-																													{ className: 'table__no-rows' },
-																													'no sprints'
-																									)
-																					)
-																	),
-																	_react2.default.createElement(_Pagination2.default, { list_key: list_key, on_changed: this.onRefresh })
-													);
-									}
-					}, {
-									key: 'render',
-									value: function render() {
-													var _props8 = this.props;
-													var is_loading = _props8.is_loading;
-													var is_collapsed = _props8.is_collapsed;
-													var is_expanded = _props8.is_expanded;
-
-
-													return _react2.default.createElement(
-																	'div',
-																	null,
-																	is_collapsed && this.render_collapsed(),
-																	is_expanded && this.render_expanded()
-													);
-									}
-					}]);
-
-					return SprintList;
+				return SprintList;
 	}(_react.Component);
 
 	function mapStateToProps(state, props) {
-					var sprint = state.sprint;
-					var item_list = state.item_list;
-					var list_key = props.list_key;
+				var sprint = state.sprint;
+				var item_list = state.item_list;
+				var list_key = props.list_key;
 
-					var items_by_id = sprint && sprint.items_by_id || {};
-					var l = item_list && item_list[list_key] || {};
-					var filter = l.filter || {};
-					var project_id = filter.project_id || null;
-					var visible_item_ids = l.visible_item_ids || [];
+				var items_by_id = sprint && sprint.items_by_id || {};
+				var l = item_list && item_list[list_key] || {};
+				var filter = l.filter || {};
+				var project_id = filter.project_id || null;
+				var visible_item_ids = l.visible_item_ids || [];
 
-					var selected_items = items_by_id && l.selected_ids && l.selected_ids.map(function (selected_id, index) {
-									return items_by_id[selected_id] || { 'id': selected_id,
-													'loaded': false };
-					});
+				var selected_items = items_by_id && l.selected_ids && l.selected_ids.map(function (selected_id, index) {
+							return items_by_id[selected_id] || { 'id': selected_id,
+										'loaded': false };
+				});
 
-					var items = items_by_id && visible_item_ids.map(function (visible_item_id, index) {
-									return items_by_id[visible_item_id] || { 'id': visible_item_id,
-													'loaded': false };
-					}) || [];
+				var items = items_by_id && visible_item_ids.map(function (visible_item_id, index) {
+							return items_by_id[visible_item_id] || { 'id': visible_item_id,
+										'loaded': false };
+				}) || [];
 
-					return {
-									list_key: list_key,
-									project_id: project_id,
-									sprints: items,
-									selected_ids: l.selected_ids || [],
-									selected_items: selected_items || [],
-									has_items: items && items.length > 0,
-									is_visible: project_id || false,
-									is_loading: l.is_loading,
-									is_collapsed: l.display_mode == "collapsed",
-									is_expanded: l.display_mode == "expanded" || !l.display_mode,
-									last_updated: l.last_updated
-					};
+				return {
+							list_key: list_key,
+							project_id: project_id,
+							sprints: items,
+							selected_ids: l.selected_ids || [],
+							selected_items: selected_items || [],
+							has_items: items && items.length > 0,
+							is_visible: project_id || false,
+							is_loading: l.is_loading,
+							is_collapsed: l.display_mode == "collapsed",
+							is_expanded: l.display_mode == "expanded" || !l.display_mode,
+							last_updated: l.last_updated
+				};
 	}
 
 	exports.default = (0, _reactRedux.connect)(mapStateToProps)(SprintList);
@@ -42261,9 +42284,12 @@
 										if (issue.loaded === false) {
 													return _react2.default.createElement(
 																'tr',
-																{ key: issue.id + "." + index, onClick: function onClick() {
+																{ key: issue.id + "." + index,
+																			onClick: function onClick() {
 																						return _this3.onClickedIssue(issue.id);
-																			} },
+																			},
+																			className: selected ? 'tr--selected' : ''
+																},
 																_react2.default.createElement(
 																			'td',
 																			null,
@@ -42279,9 +42305,12 @@
 										if (!issue.loaded !== false) {
 													return _react2.default.createElement(
 																'tr',
-																{ key: issue.id + "." + index, onClick: function onClick() {
+																{ key: issue.id + "." + index,
+																			onClick: function onClick() {
 																						return _this3.onClickedIssue(issue.id);
-																			} },
+																			},
+																			className: selected ? 'tr--selected' : ''
+																},
 																_react2.default.createElement(
 																			'td',
 																			null,
@@ -42390,9 +42419,9 @@
 																						{ className: 'table__no-rows' },
 																						'no issues'
 																			)
-																)
-													),
-													_react2.default.createElement(_Pagination2.default, { list_key: list_key, on_changed: this.onRefresh })
+																),
+																_react2.default.createElement(_Pagination2.default, { list_key: list_key, on_changed: this.onRefresh })
+													)
 										);
 							}
 				}, {

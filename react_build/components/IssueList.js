@@ -76,7 +76,10 @@ export class IssueList extends Component {
 
 	if ( issue.loaded === false ) {
 	    return (
-		<tr key={issue.id+"."+index} onClick={() => this.onClickedIssue(issue.id)}>
+		<tr key={issue.id+"."+index}
+		    onClick={() => this.onClickedIssue(issue.id)}
+		    className={selected ? 'tr--selected' : ''}
+		>
 		    <td>{issue.number}</td>
 		    <td>Loading...</td>
 		</tr>
@@ -84,7 +87,10 @@ export class IssueList extends Component {
 	}
 	if ( ! issue.loaded !== false ) {
 	    return (
-		<tr key={issue.id+"."+index} onClick={() => this.onClickedIssue(issue.id)}>
+		<tr key={issue.id+"."+index}
+		    onClick={() => this.onClickedIssue(issue.id)}
+		    className={selected ? 'tr--selected' : ''}
+		>
 		    <td>{issue.subject}</td>
 		    <td>{issue.assigned_to_username}</td>
 		    <td>{issue.feature_name}</td>
@@ -127,9 +133,9 @@ export class IssueList extends Component {
 			  <div className="table__no-rows">no issues</div>
 			}
                     </div>
+		    <Pagination list_key={list_key} on_changed={this.onRefresh} />
 		</div>
 
-		<Pagination list_key={list_key} on_changed={this.onRefresh} />
             </div>
         )
     }

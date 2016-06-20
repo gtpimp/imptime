@@ -95,7 +95,7 @@ export class ProjectList extends Component {
 	
         return (
             <div style={{ opacity: is_loading ? 0.5 : 1 }}>
-		<div className="panel panel--full">
+		<div className="panel panel--default">
                     <div className="panel-heading" onClick={this.onCollapse}>
 			<div className="panel__title">Projects</div>
 			<div className="panel__buttons">
@@ -115,9 +115,8 @@ export class ProjectList extends Component {
 			  <div className="table__no-rows">no projects</div>
 			}
                     </div>
+		    <Pagination list_key={list_key} on_changed={this.onRefresh} />
 		</div>
-
-		<Pagination list_key={list_key} on_changed={this.onRefresh} />
             </div>
         )
     }

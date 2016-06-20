@@ -76,21 +76,32 @@ export class SprintList extends Component {
         const { selected_ids } = this.props
 
 	let selected = selected_ids.indexOf(sprint.id) !== -1
-	
-        return (
-	    <tr key={sprint.id+"."+index}
-		onClick={() => this.onClickedSprint(sprint.id)}
-		className={selected ? 'tr--selected' : ''}
-	    >
-		<td>{sprint.id}</td>
-	        { sprint.loaded === false &&
-		<td>Loading...</td>
-		}
-		{ sprint.loaded !== false &&
-		  <td>{sprint.name}</td>
-		}
-	    </tr>
-        )
+
+	if ( sprint.loaded === false ) {
+	    return (
+		<tr key={sprint.id+"."+index}
+		    onClick={() => this.onClickedSprint(sprint.id)}
+		    className={selected ? 'tr--selected' : ''}
+		>
+		    <td>{sprint.id}</td>
+	            { sprint.loaded === false &&
+		      <td>Loading...</td>
+		    }
+		</tr>
+	    )
+	}
+	if ( sprint.loaded !== false ) {
+            return (
+		<tr key={sprint.id+"."+index}
+		    onClick={() => this.onClickedSprint(sprint.id)}
+		    className={selected ? 'tr--selected' : ''}
+		>
+		    <td>{sprint.id}</td>
+		    <td>{sprint.name}</td>
+		    <td>{sprint.status_name}</td>
+		</tr>
+            )
+	}
     }
 
     render_expanded() {
@@ -103,7 +114,7 @@ export class SprintList extends Component {
 	
         return (
             <div style={{ opacity: is_loading ? 0.5 : 1 }}>
-		<div className="panel panel--full">
+		<div className="panel panel--default">
                     <div className="panel-heading" onClick={this.onCollapse}>
 			<div className="panel__title">Sprints</div>
 			<div className="panel__button panel__button--collapse">
@@ -129,9 +140,9 @@ export class SprintList extends Component {
 			  <div className="table__no-rows">no sprints</div>
 			}
                     </div>
+		    <Pagination list_key={list_key} on_changed={this.onRefresh} />
 		</div>
 
-		<Pagination list_key={list_key} on_changed={this.onRefresh} />
             </div>
         )
     }
