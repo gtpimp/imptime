@@ -2,7 +2,15 @@ import React, { Component, PropTypes } from 'react'
 import { Link } from 'react-router'
 import { connect } from 'react-redux'
 import indexOf from 'lodash/indexOf'
-import { fetchIssueGeneralDetailsIfNeeded } from '../actions/IssueGeneralDetails'
+import { RIETextArea } from '../widgets/RIETextArea'
+import {
+    updateIssueDescription,
+} from '../actions/Issue'
+
+import {
+    invalidateIssueGeneralDetails,
+    fetchIssueGeneralDetailsIfNeeded
+} from '../actions/IssueGeneralDetails'
 
 
 export class IssueDeveloperDetails extends Component {
@@ -10,6 +18,7 @@ export class IssueDeveloperDetails extends Component {
     constructor(props) {
         super(props)
         this.onRefresh = this.onRefresh.bind(this)
+	this.onChangeDescription = this.onChangeDescription.bind(this)
     }
 
     componentDidMount() {
@@ -19,9 +28,9 @@ export class IssueDeveloperDetails extends Component {
 	}
     }
 
-    onClickedSprint(sprint_id) {
-	const { dispatch, list_key } = this.props
-	dispatch(selectItems(list_key, [sprint_id]))
+    onChangeDescription(obj) {
+	const { dispatch, issue_id } = this.props
+	dispatch(updateIssueDescription(issue_id, obj.description))
     }
 
     onRefresh() {
@@ -43,7 +52,9 @@ export class IssueDeveloperDetails extends Component {
             <div className="issue_developer_details" style={{ opacity: is_loading ? 0.5 : 1 }}>
 		<div className="panel panel--full">
                     <div className="panel-heading">
-			<div className="panel__title">Issue Details</div>
+			<div className="panel__title">
+			    Issue Details
+			</div>
 			<div className="panel__buttons">
                             <div className="panel__button panel__button--refresh"
 				 onClick={this.onRefresh}></div>
@@ -52,7 +63,11 @@ export class IssueDeveloperDetails extends Component {
                     <div className="panel-body">
 			<h3>issue#{gd.number}: {gd.subject}</h3>
 			<pre>
-			    {gd.description}
+			    <RIETextArea
+				value={gd.description || ""}
+				propName="description"
+				change={this.onChangeDescription}
+			    />
 			</pre>
                     </div>
 		</div>

@@ -41,6 +41,10 @@ export function updateIssueSubject(issue_id, value) {
     return updateIssue(issue_id, "subject", value)
 }
 
+export function updateIssueDescription(issue_id, value) {
+    return updateIssue(issue_id, "description", value)
+}
+
 function updateIssue(issue_id, field_name, new_value) {
     return (dispatch, getState) => {
 	dispatch(announceIssueSaving(issue_id))

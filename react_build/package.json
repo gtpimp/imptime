@@ -24,6 +24,7 @@
     "moment": "^2.13.0",
     "normalizr": "^2.0.0",
     "react": "^15.1.0",
+    "react-autosize-textarea": "^0.3.1",
     "react-classnames": "^0.1.2",
     "react-cookie": "^0.4.6",
     "react-datepicker": "^0.27.0",
