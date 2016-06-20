@@ -36025,6 +36025,10 @@
 
 	var _reactRouter = __webpack_require__(466);
 
+	var _map = __webpack_require__(636);
+
+	var _map2 = _interopRequireDefault(_map);
+
 	var _reactRedux = __webpack_require__(533);
 
 	var _ItemList = __webpack_require__(559);
@@ -36098,9 +36102,11 @@
 									value: function onRefresh(event) {
 													var _props5 = this.props;
 													var dispatch = _props5.dispatch;
+													var project_ids = _props5.project_ids;
 													var list_key = _props5.list_key;
 
 													dispatch((0, _ItemList.invalidateList)(list_key));
+													dispatch((0, _Projects.invalidateProjects)(project_ids));
 													dispatch((0, _Projects.fetchProjectsIfNeeded)(list_key));
 													if (event) {
 																	event.stopPropagation();
@@ -36275,6 +36281,7 @@
 					return {
 									list_key: list_key,
 									projects: items,
+									project_ids: (0, _map2.default)(items, 'id'),
 									selected_ids: l.selected_ids || [],
 									selected_items: selected_items || [],
 									has_items: items && items.length > 0,
@@ -36537,6 +36544,7 @@
 	    value: true
 	});
 	exports.INVALIDATE_PROJECTS = exports.ANNOUNCE_LOADING_PROJECTS = exports.ANNOUNCE_PROJECTS_LOAD_FAILED = exports.ANNOUNCE_PROJECTS_LOADED = undefined;
+	exports.invalidateProjects = invalidateProjects;
 	exports.refreshProjects = refreshProjects;
 	exports.fetchProjectsIfNeeded = fetchProjectsIfNeeded;
 
@@ -36563,16 +36571,17 @@
 	var ANNOUNCE_LOADING_PROJECTS = exports.ANNOUNCE_LOADING_PROJECTS = 'ANNOUNCE_LOADING_PROJECTS';
 	var INVALIDATE_PROJECTS = exports.INVALIDATE_PROJECTS = 'INVALIDATE_PROJECTS';
 
-	// Commented out because you almost never need this, usually rather call invalidate_list on ItemList.
-	/* export function invalidateProjects() {
-	 *     return {
-	 *         type: INVALIDATE_PROJECTS
-	 *     }
-	 * }*/
-
-	function announceLoadingProjects() {
+	function invalidateProjects(project_ids) {
 	    return {
-	        type: ANNOUNCE_LOADING_PROJECTS
+	        type: INVALIDATE_PROJECTS,
+	        project_ids_to_invalidate: project_ids
+	    };
+	}
+
+	function announceLoadingProjects(project_ids) {
+	    return {
+	        type: ANNOUNCE_LOADING_PROJECTS,
+	        project_ids_to_load: project_ids
 	    };
 	}
 
@@ -36607,7 +36616,7 @@
 
 	function fetchProjectsPromise(dispatch, project_ids) {
 	    return new Promise(function (resolve, reject) {
-	        dispatch(announceLoadingProjects());
+	        dispatch(announceLoadingProjects(project_ids));
 
 	        var params = { filter: { ids: project_ids },
 	            pagination: { 'enabled': false } };
@@ -55482,7 +55491,7 @@
 	'use strict';
 
 	Object.defineProperty(exports, "__esModule", {
-				value: true
+					value: true
 	});
 	exports.SprintList = undefined;
 
@@ -55495,6 +55504,10 @@
 	var _reactRouter = __webpack_require__(466);
 
 	var _reactRedux = __webpack_require__(533);
+
+	var _map = __webpack_require__(636);
+
+	var _map2 = _interopRequireDefault(_map);
 
 	var _ItemList = __webpack_require__(559);
 
@@ -55513,284 +55526,287 @@
 	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 
 	var SprintList = exports.SprintList = function (_Component) {
-				_inherits(SprintList, _Component);
+					_inherits(SprintList, _Component);
 
-				function SprintList(props) {
-							_classCallCheck(this, SprintList);
+					function SprintList(props) {
+									_classCallCheck(this, SprintList);
 
-							var _this = _possibleConstructorReturn(this, Object.getPrototypeOf(SprintList).call(this, props));
+									var _this = _possibleConstructorReturn(this, Object.getPrototypeOf(SprintList).call(this, props));
 
-							_this.onRefresh = _this.onRefresh.bind(_this);
-							_this.onCollapse = _this.onCollapse.bind(_this);
-							_this.onExpand = _this.onExpand.bind(_this);
-							return _this;
-				}
+									_this.onRefresh = _this.onRefresh.bind(_this);
+									_this.onCollapse = _this.onCollapse.bind(_this);
+									_this.onExpand = _this.onExpand.bind(_this);
+									return _this;
+					}
 
-				_createClass(SprintList, [{
-							key: 'componentDidMount',
-							value: function componentDidMount() {
-										var _props = this.props;
-										var dispatch = _props.dispatch;
-										var list_key = _props.list_key;
-										var project_id = _props.project_id;
+					_createClass(SprintList, [{
+									key: 'componentDidMount',
+									value: function componentDidMount() {
+													var _props = this.props;
+													var dispatch = _props.dispatch;
+													var list_key = _props.list_key;
+													var project_id = _props.project_id;
 
-										if (project_id) {
+													if (project_id) {
+																	dispatch((0, _Sprints.fetchSprintsIfNeeded)(list_key));
+													}
+									}
+					}, {
+									key: 'onCollapse',
+									value: function onCollapse() {
+													var _props2 = this.props;
+													var dispatch = _props2.dispatch;
+													var list_key = _props2.list_key;
+
+													dispatch((0, _ItemList.collapse_list)(list_key));
+									}
+					}, {
+									key: 'onExpand',
+									value: function onExpand() {
+													var _props3 = this.props;
+													var dispatch = _props3.dispatch;
+													var list_key = _props3.list_key;
+
+													dispatch((0, _ItemList.expand_list)(list_key));
+									}
+					}, {
+									key: 'onClickedSprint',
+									value: function onClickedSprint(sprint_id) {
+													var _props4 = this.props;
+													var dispatch = _props4.dispatch;
+													var list_key = _props4.list_key;
+
+													dispatch((0, _ItemList.selectItems)(list_key, [sprint_id]));
+									}
+					}, {
+									key: 'onRefresh',
+									value: function onRefresh(event) {
+													var _props5 = this.props;
+													var dispatch = _props5.dispatch;
+													var sprint_ids = _props5.sprint_ids;
+													var list_key = _props5.list_key;
+
+													dispatch((0, _ItemList.invalidateList)(list_key));
+													dispatch((0, _Sprints.invalidateSprints)(sprint_ids));
 													dispatch((0, _Sprints.fetchSprintsIfNeeded)(list_key));
-										}
-							}
-				}, {
-							key: 'onCollapse',
-							value: function onCollapse() {
-										var _props2 = this.props;
-										var dispatch = _props2.dispatch;
-										var list_key = _props2.list_key;
+													if (event) {
+																	event.stopPropagation();
+													}
+									}
+					}, {
+									key: 'renderCollapsedSprint',
+									value: function renderCollapsedSprint(sprint) {
+													var list_key = this.props.list_key;
 
-										dispatch((0, _ItemList.collapse_list)(list_key));
-							}
-				}, {
-							key: 'onExpand',
-							value: function onExpand() {
-										var _props3 = this.props;
-										var dispatch = _props3.dispatch;
-										var list_key = _props3.list_key;
-
-										dispatch((0, _ItemList.expand_list)(list_key));
-							}
-				}, {
-							key: 'onClickedSprint',
-							value: function onClickedSprint(sprint_id) {
-										var _props4 = this.props;
-										var dispatch = _props4.dispatch;
-										var list_key = _props4.list_key;
-
-										dispatch((0, _ItemList.selectItems)(list_key, [sprint_id]));
-							}
-				}, {
-							key: 'onRefresh',
-							value: function onRefresh(event) {
-										var _props5 = this.props;
-										var dispatch = _props5.dispatch;
-										var list_key = _props5.list_key;
-
-										dispatch((0, _ItemList.invalidateList)(list_key));
-										dispatch((0, _Sprints.fetchSprintsIfNeeded)(list_key));
-										if (event) {
-													event.stopPropagation();
-										}
-							}
-				}, {
-							key: 'renderCollapsedSprint',
-							value: function renderCollapsedSprint(sprint) {
-										var list_key = this.props.list_key;
-
-										return _react2.default.createElement(
-													'div',
-													{ key: "collapsed_sprint_" + sprint.id + "_" + list_key },
-													'Sprint: ',
-													sprint.name
-										);
-							}
-				}, {
-							key: 'render_collapsed',
-							value: function render_collapsed() {
-										var _this2 = this;
-
-										var _props6 = this.props;
-										var sprints = _props6.sprints;
-										var selected_items = _props6.selected_items;
-
-
-										return _react2.default.createElement(
-													'div',
-													{ className: 'panel panel--collapsed' },
-													_react2.default.createElement(
-																'div',
-																{ className: 'panel-heading', onClick: this.onExpand },
-																_react2.default.createElement(
-																			'div',
-																			{ className: 'panel__title' },
-																			selected_items.map(function (sprint, index) {
-																						return _this2.renderCollapsedSprint(sprint);
-																			})
-																)
-													)
-										);
-							}
-				}, {
-							key: 'renderExpandedSprint',
-							value: function renderExpandedSprint(sprint, index) {
-										var _this3 = this;
-
-										var selected_ids = this.props.selected_ids;
-
-
-										var selected = selected_ids.indexOf(sprint.id) !== -1;
-
-										if (sprint.loaded === false) {
 													return _react2.default.createElement(
-																'tr',
-																{ key: sprint.id + "." + index,
-																			onClick: function onClick() {
-																						return _this3.onClickedSprint(sprint.id);
-																			},
-																			className: selected ? 'tr--selected' : ''
-																},
-																_react2.default.createElement(
-																			'td',
-																			null,
-																			sprint.id
-																),
-																sprint.loaded === false && _react2.default.createElement(
-																			'td',
-																			null,
-																			'Loading...'
-																)
+																	'div',
+																	{ key: "collapsed_sprint_" + sprint.id + "_" + list_key },
+																	'Sprint: ',
+																	sprint.name
 													);
-										}
-										if (sprint.loaded !== false) {
+									}
+					}, {
+									key: 'render_collapsed',
+									value: function render_collapsed() {
+													var _this2 = this;
+
+													var _props6 = this.props;
+													var sprints = _props6.sprints;
+													var selected_items = _props6.selected_items;
+
+
 													return _react2.default.createElement(
-																'tr',
-																{ key: sprint.id + "." + index,
-																			onClick: function onClick() {
-																						return _this3.onClickedSprint(sprint.id);
-																			},
-																			className: selected ? 'tr--selected' : ''
-																},
-																_react2.default.createElement(
-																			'td',
-																			null,
-																			sprint.id
-																),
-																_react2.default.createElement(
-																			'td',
-																			null,
-																			sprint.name
-																),
-																_react2.default.createElement(
-																			'td',
-																			null,
-																			sprint.status_name
-																)
-													);
-										}
-							}
-				}, {
-							key: 'render_expanded',
-							value: function render_expanded() {
-										var _this4 = this;
-
-										var _props7 = this.props;
-										var sprints = _props7.sprints;
-										var is_visible = _props7.is_visible;
-										var list_key = _props7.list_key;
-										var is_loading = _props7.is_loading;
-										var has_items = _props7.has_items;
-
-
-										if (!is_visible) {
-													return _react2.default.createElement('div', null);
-										}
-
-										return _react2.default.createElement(
-													'div',
-													{ style: { opacity: is_loading ? 0.5 : 1 } },
-													_react2.default.createElement(
-																'div',
-																{ className: 'panel panel--default' },
-																_react2.default.createElement(
-																			'div',
-																			{ className: 'panel-heading', onClick: this.onCollapse },
-																			_react2.default.createElement(
-																						'div',
-																						{ className: 'panel__title' },
-																						'Sprints'
-																			),
-																			_react2.default.createElement(
-																						'div',
-																						{ className: 'panel__buttons' },
-																						_react2.default.createElement('div', { className: 'panel__button panel__button--refresh',
-																									onClick: this.onRefresh })
-																			)
-																),
-																_react2.default.createElement(
-																			'div',
-																			{ className: 'panel-body' },
-																			_react2.default.createElement(
-																						'table',
-																						{ className: 'table table--default' },
-																						_react2.default.createElement(
-																									'tbody',
-																									null,
-																									sprints.map(function (sprint, index) {
-																												return _this4.renderExpandedSprint(sprint, index);
+																	'div',
+																	{ className: 'panel panel--collapsed' },
+																	_react2.default.createElement(
+																					'div',
+																					{ className: 'panel-heading', onClick: this.onExpand },
+																					_react2.default.createElement(
+																									'div',
+																									{ className: 'panel__title' },
+																									selected_items.map(function (sprint, index) {
+																													return _this2.renderCollapsedSprint(sprint);
 																									})
-																						)
-																			),
-																			!is_loading && !has_items && _react2.default.createElement(
-																						'div',
-																						{ className: 'table__no-rows' },
-																						'no sprints'
-																			)
-																),
-																_react2.default.createElement(_Pagination2.default, { list_key: list_key, on_changed: this.onRefresh })
-													)
-										);
-							}
-				}, {
-							key: 'render',
-							value: function render() {
-										var _props8 = this.props;
-										var is_loading = _props8.is_loading;
-										var is_collapsed = _props8.is_collapsed;
-										var is_expanded = _props8.is_expanded;
+																					)
+																	)
+													);
+									}
+					}, {
+									key: 'renderExpandedSprint',
+									value: function renderExpandedSprint(sprint, index) {
+													var _this3 = this;
+
+													var selected_ids = this.props.selected_ids;
 
 
-										return _react2.default.createElement(
-													'div',
-													null,
-													is_collapsed && this.render_collapsed(),
-													is_expanded && this.render_expanded()
-										);
-							}
-				}]);
+													var selected = selected_ids.indexOf(sprint.id) !== -1;
 
-				return SprintList;
+													if (sprint.loaded === false) {
+																	return _react2.default.createElement(
+																					'tr',
+																					{ key: sprint.id + "." + index,
+																									onClick: function onClick() {
+																													return _this3.onClickedSprint(sprint.id);
+																									},
+																									className: selected ? 'tr--selected' : ''
+																					},
+																					_react2.default.createElement(
+																									'td',
+																									null,
+																									sprint.id
+																					),
+																					sprint.loaded === false && _react2.default.createElement(
+																									'td',
+																									null,
+																									'Loading...'
+																					)
+																	);
+													}
+													if (sprint.loaded !== false) {
+																	return _react2.default.createElement(
+																					'tr',
+																					{ key: sprint.id + "." + index,
+																									onClick: function onClick() {
+																													return _this3.onClickedSprint(sprint.id);
+																									},
+																									className: selected ? 'tr--selected' : ''
+																					},
+																					_react2.default.createElement(
+																									'td',
+																									null,
+																									sprint.id
+																					),
+																					_react2.default.createElement(
+																									'td',
+																									null,
+																									sprint.name
+																					),
+																					_react2.default.createElement(
+																									'td',
+																									null,
+																									sprint.status_name
+																					)
+																	);
+													}
+									}
+					}, {
+									key: 'render_expanded',
+									value: function render_expanded() {
+													var _this4 = this;
+
+													var _props7 = this.props;
+													var sprints = _props7.sprints;
+													var is_visible = _props7.is_visible;
+													var list_key = _props7.list_key;
+													var is_loading = _props7.is_loading;
+													var has_items = _props7.has_items;
+
+
+													if (!is_visible) {
+																	return _react2.default.createElement('div', null);
+													}
+
+													return _react2.default.createElement(
+																	'div',
+																	{ style: { opacity: is_loading ? 0.5 : 1 } },
+																	_react2.default.createElement(
+																					'div',
+																					{ className: 'panel panel--default' },
+																					_react2.default.createElement(
+																									'div',
+																									{ className: 'panel-heading', onClick: this.onCollapse },
+																									_react2.default.createElement(
+																													'div',
+																													{ className: 'panel__title' },
+																													'Sprints'
+																									),
+																									_react2.default.createElement(
+																													'div',
+																													{ className: 'panel__buttons' },
+																													_react2.default.createElement('div', { className: 'panel__button panel__button--refresh',
+																																	onClick: this.onRefresh })
+																									)
+																					),
+																					_react2.default.createElement(
+																									'div',
+																									{ className: 'panel-body' },
+																									_react2.default.createElement(
+																													'table',
+																													{ className: 'table table--default' },
+																													_react2.default.createElement(
+																																	'tbody',
+																																	null,
+																																	sprints.map(function (sprint, index) {
+																																					return _this4.renderExpandedSprint(sprint, index);
+																																	})
+																													)
+																									),
+																									!is_loading && !has_items && _react2.default.createElement(
+																													'div',
+																													{ className: 'table__no-rows' },
+																													'no sprints'
+																									)
+																					),
+																					_react2.default.createElement(_Pagination2.default, { list_key: list_key, on_changed: this.onRefresh })
+																	)
+													);
+									}
+					}, {
+									key: 'render',
+									value: function render() {
+													var _props8 = this.props;
+													var is_loading = _props8.is_loading;
+													var is_collapsed = _props8.is_collapsed;
+													var is_expanded = _props8.is_expanded;
+
+
+													return _react2.default.createElement(
+																	'div',
+																	null,
+																	is_collapsed && this.render_collapsed(),
+																	is_expanded && this.render_expanded()
+													);
+									}
+					}]);
+
+					return SprintList;
 	}(_react.Component);
 
 	function mapStateToProps(state, props) {
-				var sprint = state.sprint;
-				var item_list = state.item_list;
-				var list_key = props.list_key;
+					var sprint = state.sprint;
+					var item_list = state.item_list;
+					var list_key = props.list_key;
 
-				var items_by_id = sprint && sprint.items_by_id || {};
-				var l = item_list && item_list[list_key] || {};
-				var filter = l.filter || {};
-				var project_id = filter.project_id || null;
-				var visible_item_ids = l.visible_item_ids || [];
+					var items_by_id = sprint && sprint.items_by_id || {};
+					var l = item_list && item_list[list_key] || {};
+					var filter = l.filter || {};
+					var project_id = filter.project_id || null;
+					var visible_item_ids = l.visible_item_ids || [];
 
-				var selected_items = items_by_id && l.selected_ids && l.selected_ids.map(function (selected_id, index) {
-							return items_by_id[selected_id] || { 'id': selected_id,
-										'loaded': false };
-				});
+					var selected_items = items_by_id && l.selected_ids && l.selected_ids.map(function (selected_id, index) {
+									return items_by_id[selected_id] || { 'id': selected_id,
+													'loaded': false };
+					});
 
-				var items = items_by_id && visible_item_ids.map(function (visible_item_id, index) {
-							return items_by_id[visible_item_id] || { 'id': visible_item_id,
-										'loaded': false };
-				}) || [];
+					var items = items_by_id && visible_item_ids.map(function (visible_item_id, index) {
+									return items_by_id[visible_item_id] || { 'id': visible_item_id,
+													'loaded': false };
+					}) || [];
 
-				return {
-							list_key: list_key,
-							project_id: project_id,
-							sprints: items,
-							selected_ids: l.selected_ids || [],
-							selected_items: selected_items || [],
-							has_items: items && items.length > 0,
-							is_visible: project_id || false,
-							is_loading: l.is_loading,
-							is_collapsed: l.display_mode == "collapsed",
-							is_expanded: l.display_mode == "expanded" || !l.display_mode,
-							last_updated: l.last_updated
-				};
+					return {
+									list_key: list_key,
+									project_id: project_id,
+									sprints: items,
+									sprint_ids: (0, _map2.default)(items, 'id'),
+									selected_ids: l.selected_ids || [],
+									selected_items: selected_items || [],
+									has_items: items && items.length > 0,
+									is_visible: project_id || false,
+									is_loading: l.is_loading,
+									is_collapsed: l.display_mode == "collapsed",
+									is_expanded: l.display_mode == "expanded" || !l.display_mode,
+									last_updated: l.last_updated
+					};
 	}
 
 	exports.default = (0, _reactRedux.connect)(mapStateToProps)(SprintList);
@@ -55805,7 +55821,7 @@
 	    value: true
 	});
 	exports.INVALIDATE_SPRINTS = exports.ANNOUNCE_LOADING_SPRINTS = exports.ANNOUNCE_SPRINTS_LOAD_FAILED = exports.ANNOUNCE_SPRINTS_LOADED = undefined;
-	exports.refreshSprints = refreshSprints;
+	exports.invalidateSprints = invalidateSprints;
 	exports.fetchSprintsIfNeeded = fetchSprintsIfNeeded;
 
 	var _lib = __webpack_require__(561);
@@ -55831,23 +55847,17 @@
 	var ANNOUNCE_LOADING_SPRINTS = exports.ANNOUNCE_LOADING_SPRINTS = 'ANNOUNCE_LOADING_SPRINTS';
 	var INVALIDATE_SPRINTS = exports.INVALIDATE_SPRINTS = 'INVALIDATE_SPRINTS';
 
-	// Commented out because you almost never need this, usually rather call invalidate_list on ItemList.
-	/* export function invalidateSprints() {
-	 *     return {
-	 *         type: INVALIDATE_SPRINTS
-	 *     }
-	 * }*/
-
-	function announceLoadingSprints() {
+	function invalidateSprints(sprint_ids) {
 	    return {
-	        type: ANNOUNCE_LOADING_SPRINTS
+	        type: INVALIDATE_SPRINTS,
+	        sprint_ids_to_invalidate: sprint_ids
 	    };
 	}
 
-	function refreshSprints(list_key) {
-	    return function (dispatch, getState) {
-	        dispatch(invalidateItems(list_key));
-	        dispatch(fetchItems(list_key));
+	function announceLoadingSprints(sprint_ids) {
+	    return {
+	        type: ANNOUNCE_LOADING_SPRINTS,
+	        sprint_ids_to_load: sprint_ids
 	    };
 	}
 
@@ -55875,7 +55885,7 @@
 
 	function fetchSprintsPromise(dispatch, sprint_ids) {
 	    return new Promise(function (resolve, reject) {
-	        dispatch(announceLoadingSprints());
+	        dispatch(announceLoadingSprints(sprint_ids));
 
 	        var params = { filter: { ids: sprint_ids },
 	            pagination: { 'enabled': false } };
@@ -55921,13 +55931,17 @@
 
 	var _reactRouter = __webpack_require__(466);
 
+	var _map = __webpack_require__(636);
+
+	var _map2 = _interopRequireDefault(_map);
+
 	var _reactRedux = __webpack_require__(533);
 
 	var _ItemList = __webpack_require__(559);
 
-	var _Issues = __webpack_require__(794);
-
 	var _Issue = __webpack_require__(795);
+
+	var _Issues = __webpack_require__(794);
 
 	var _Pagination = __webpack_require__(687);
 
@@ -56002,9 +56016,11 @@
 							value: function onRefresh(event) {
 										var _props5 = this.props;
 										var dispatch = _props5.dispatch;
+										var issue_ids = _props5.issue_ids;
 										var list_key = _props5.list_key;
 
 										dispatch((0, _ItemList.invalidateList)(list_key));
+										dispatch((0, _Issues.invalidateIssues)(issue_ids));
 										dispatch((0, _Issues.fetchIssuesIfNeeded)(list_key));
 										if (event) {
 													event.stopPropagation();
@@ -56271,6 +56287,7 @@
 							list_key: list_key,
 							sprint_id: sprint_id,
 							issues: items,
+							issue_ids: (0, _map2.default)(items, 'id'),
 							selected_ids: l.selected_ids || [],
 							selected_items: selected_items || [],
 							has_items: items && items.length > 0,
@@ -59355,6 +59372,9 @@
 	Object.defineProperty(exports, "__esModule", {
 	    value: true
 	});
+
+	var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol ? "symbol" : typeof obj; };
+
 	exports.default = project;
 
 	var _map = __webpack_require__(636);
@@ -59364,6 +59384,14 @@
 	var _assign = __webpack_require__(854);
 
 	var _assign2 = _interopRequireDefault(_assign);
+
+	var _keys = __webpack_require__(628);
+
+	var _keys2 = _interopRequireDefault(_keys);
+
+	var _union = __webpack_require__(857);
+
+	var _union2 = _interopRequireDefault(_union);
 
 	var _difference = __webpack_require__(567);
 
@@ -59376,9 +59404,8 @@
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 	var initialState = {
-	    is_loading: false,
-	    items_invalidated: true,
-	    items_by_id: {}
+	    items_by_id: {},
+	    loading_item_ids: []
 	};
 
 	function project() {
@@ -59388,30 +59415,48 @@
 
 	    var state_copy = Object.assign({}, state);
 
-	    switch (action.type) {
-	        case _Projects.INVALIDATE_PROJECTS:
-	            var item_ids_to_invalidate = action.project_ids_to_invalidate || [];
-	            state_copy.items_by_id = (0, _difference2.default)(state_copy.item_ids, item_ids_to_invalidate);
-	            state_copy.items_invalidated = true;
-	            state_copy.is_loading = false;
-	            return state_copy;
-	        case _Projects.ANNOUNCE_LOADING_PROJECTS:
-	            return Object.assign({}, state, {
-	                is_loading: true,
-	                items_invalidated: false
-	            });
-	        case _Projects.ANNOUNCE_PROJECTS_LOADED:
-	            state_copy = Object.assign({}, state, {
-	                items_by_id: Object.assign({}, state.items_by_id)
-	            });
-	            state_copy.items_by_id = Object.assign({}, (0, _assign2.default)(state_copy.items_by_id, action.items_by_id));
-	            return state_copy;
-	        case _Projects.ANNOUNCE_PROJECTS_LOAD_FAILED:
-	            (0, _Error.setErrorMessage)("Failed to load projects: " + action.error_message);
-	            return state;
-	        default:
-	            return state;
-	    }
+	    var _ret = function () {
+	        switch (action.type) {
+	            case _Projects.INVALIDATE_PROJECTS:
+
+	                var new_project_ids = Object.assign({}, state.items_by_id);
+	                action.project_ids_to_invalidate.map(function (id_to_invalidate) {
+	                    if (new_project_ids[id_to_invalidate]) {
+	                        delete new_project_ids[id_to_invalidate];
+	                    }
+	                });
+	                return {
+	                    v: Object.assign({}, state, { items_by_id: new_project_ids })
+	                };
+
+	            case _Projects.ANNOUNCE_LOADING_PROJECTS:
+	                return {
+	                    v: Object.assign({}, state, {
+	                        loading_item_ids: (0, _union2.default)(state.loading_item_ids, action.project_ids_to_load)
+	                    })
+	                };
+	            case _Projects.ANNOUNCE_PROJECTS_LOADED:
+	                return {
+	                    v: Object.assign({}, state, {
+
+	                        loading_item_ids: Object.assign({}, (0, _difference2.default)(state.loading_item_ids || [], (0, _keys2.default)(action.items_by_id))),
+	                        items_by_id: Object.assign({}, (0, _assign2.default)(state.items_by_id, action.items_by_id))
+	                    })
+	                };
+
+	            case _Projects.ANNOUNCE_PROJECTS_LOAD_FAILED:
+	                (0, _Error.setErrorMessage)("Failed to load projects: " + action.error_message);
+	                return {
+	                    v: state
+	                };
+	            default:
+	                return {
+	                    v: state
+	                };
+	        }
+	    }();
+
+	    if ((typeof _ret === 'undefined' ? 'undefined' : _typeof(_ret)) === "object") return _ret.v;
 	}
 
 /***/ },
@@ -59493,6 +59538,9 @@
 	Object.defineProperty(exports, "__esModule", {
 	    value: true
 	});
+
+	var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol ? "symbol" : typeof obj; };
+
 	exports.default = sprint;
 
 	var _map = __webpack_require__(636);
@@ -59502,6 +59550,14 @@
 	var _assign = __webpack_require__(854);
 
 	var _assign2 = _interopRequireDefault(_assign);
+
+	var _keys = __webpack_require__(628);
+
+	var _keys2 = _interopRequireDefault(_keys);
+
+	var _union = __webpack_require__(857);
+
+	var _union2 = _interopRequireDefault(_union);
 
 	var _difference = __webpack_require__(567);
 
@@ -59515,8 +59571,7 @@
 
 	var initialState = {
 	    is_loading: false,
-	    items_invalidated: true,
-	    items_by_id: {}
+	    loading_item_ids: []
 	};
 
 	function sprint() {
@@ -59526,30 +59581,47 @@
 
 	    var state_copy = Object.assign({}, state);
 
-	    switch (action.type) {
-	        case _Sprints.INVALIDATE_SPRINTS:
-	            var item_ids_to_invalidate = action.sprint_ids_to_invalidate || [];
-	            state_copy.items_by_id = (0, _difference2.default)(state_copy.item_ids, item_ids_to_invalidate);
-	            state_copy.items_invalidated = true;
-	            state_copy.is_loading = false;
-	            return state_copy;
-	        case _Sprints.ANNOUNCE_LOADING_SPRINTS:
-	            return Object.assign({}, state, {
-	                is_loading: true,
-	                items_invalidated: false
-	            });
-	        case _Sprints.ANNOUNCE_SPRINTS_LOADED:
-	            state_copy = Object.assign({}, state, {
-	                items_by_id: Object.assign({}, state.items_by_id)
-	            });
-	            state_copy.items_by_id = Object.assign({}, (0, _assign2.default)(state_copy.items_by_id, action.items_by_id));
-	            return state_copy;
-	        case _Sprints.ANNOUNCE_SPRINTS_LOAD_FAILED:
-	            (0, _Error.setErrorMessage)("Failed to load sprints: " + action.error_message);
-	            return state;
-	        default:
-	            return state;
-	    }
+	    var _ret = function () {
+	        switch (action.type) {
+	            case _Sprints.INVALIDATE_SPRINTS:
+
+	                var new_sprint_ids = Object.assign({}, state.items_by_id);
+	                action.sprint_ids_to_invalidate.map(function (id_to_invalidate) {
+	                    if (new_sprint_ids[id_to_invalidate]) {
+	                        delete new_sprint_ids[id_to_invalidate];
+	                    }
+	                });
+	                return {
+	                    v: Object.assign({}, state, { items_by_id: new_sprint_ids })
+	                };
+	            case _Sprints.ANNOUNCE_LOADING_SPRINTS:
+	                return {
+	                    v: Object.assign({}, state, {
+	                        loading_item_ids: (0, _union2.default)(state.loading_item_ids, action.sprint_ids_to_load)
+	                    })
+	                };
+	            case _Sprints.ANNOUNCE_SPRINTS_LOADED:
+	                state_copy = Object.assign({}, state, {
+	                    loading_item_ids: Object.assign({}, (0, _difference2.default)(state.loading_item_ids || [], (0, _keys2.default)(action.items_by_id))),
+	                    items_by_id: Object.assign({}, state.items_by_id)
+	                });
+	                state_copy.items_by_id = Object.assign({}, (0, _assign2.default)(state_copy.items_by_id, action.items_by_id));
+	                return {
+	                    v: state_copy
+	                };
+	            case _Sprints.ANNOUNCE_SPRINTS_LOAD_FAILED:
+	                (0, _Error.setErrorMessage)("Failed to load sprints: " + action.error_message);
+	                return {
+	                    v: state
+	                };
+	            default:
+	                return {
+	                    v: state
+	                };
+	        }
+	    }();
+
+	    if ((typeof _ret === 'undefined' ? 'undefined' : _typeof(_ret)) === "object") return _ret.v;
 	}
 
 /***/ },

@@ -9,23 +9,17 @@ export const ANNOUNCE_SPRINTS_LOAD_FAILED = 'ANNOUNCE_SPRINTS_LOAD_FAILED'
 export const ANNOUNCE_LOADING_SPRINTS = 'ANNOUNCE_LOADING_SPRINTS'
 export const INVALIDATE_SPRINTS = 'INVALIDATE_SPRINTS'
 
-// Commented out because you almost never need this, usually rather call invalidate_list on ItemList.
-/* export function invalidateSprints() {
- *     return {
- *         type: INVALIDATE_SPRINTS
- *     }
- * }*/
-
-function announceLoadingSprints() {
+export function invalidateSprints(sprint_ids) {
     return {
-        type: ANNOUNCE_LOADING_SPRINTS
+        type: INVALIDATE_SPRINTS,
+	sprint_ids_to_invalidate: sprint_ids
     }
 }
 
-export function refreshSprints(list_key) {
-    return (dispatch, getState) => {
-        dispatch(invalidateItems(list_key))
-        dispatch(fetchItems(list_key))
+function announceLoadingSprints(sprint_ids) {
+    return {
+        type: ANNOUNCE_LOADING_SPRINTS,
+	sprint_ids_to_load: sprint_ids
     }
 }
 
@@ -53,7 +47,7 @@ function announceSprintsLoadFailed(error) {
 
 function fetchSprintsPromise(dispatch, sprint_ids) {
     return new Promise(function(resolve, reject) {
-	dispatch(announceLoadingSprints())
+	dispatch(announceLoadingSprints(sprint_ids))
 
 	const params = { filter: { ids: sprint_ids },
 			 pagination: {'enabled': false} }

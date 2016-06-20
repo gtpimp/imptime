@@ -1,5 +1,7 @@
 import map from 'lodash/map'
 import assign from 'lodash/assign'
+import keys from 'lodash/keys'
+import union from 'lodash/union'
 import difference from 'lodash/difference'
 import { setErrorMessage } from '../actions/Error'
 
@@ -11,9 +13,8 @@ import {
 } from '../actions/Projects.js'
 
 const initialState = {
-    is_loading: false,
-    items_invalidated: true,
-    items_by_id: {}
+    items_by_id: {},
+    loading_item_ids: []
 }
 
 export default function project(state = initialState, action) {
@@ -22,24 +23,29 @@ export default function project(state = initialState, action) {
     
     switch (action.type) {
         case INVALIDATE_PROJECTS:
-	    let item_ids_to_invalidate = action.project_ids_to_invalidate || []
-	    state_copy.items_by_id = difference(state_copy.item_ids,
-						item_ids_to_invalidate)
-	    state_copy.items_invalidated = true
-	    state_copy.is_loading = false
-	    return state_copy
-        case ANNOUNCE_LOADING_PROJECTS:
-            return Object.assign({}, state, {
-                is_loading: true,
-                items_invalidated: false
-            })
-        case ANNOUNCE_PROJECTS_LOADED:
-            state_copy = Object.assign({}, state, {
-		items_by_id: Object.assign({},
-					      state.items_by_id)
+
+	    let new_project_ids = Object.assign({}, state.items_by_id)
+	    action.project_ids_to_invalidate.map(function(id_to_invalidate) {
+		if ( new_project_ids[id_to_invalidate] ) {
+		    delete new_project_ids[id_to_invalidate]
+		}
 	    })
-            state_copy.items_by_id = Object.assign({}, assign(state_copy.items_by_id, action.items_by_id))
-            return state_copy
+	    return Object.assign({}, state, {items_by_id: new_project_ids})
+
+        case ANNOUNCE_LOADING_PROJECTS:
+	    return Object.assign({}, state, {
+		loading_item_ids: union(state.loading_item_ids, action.project_ids_to_load)
+	    })
+        case ANNOUNCE_PROJECTS_LOADED:
+            return Object.assign({}, state, {
+
+		loading_item_ids: Object.assign({},
+						difference(state.loading_item_ids || [],
+							   keys(action.items_by_id))),
+		items_by_id: Object.assign({},
+					   assign(state.items_by_id, action.items_by_id))
+	    })
+	    
         case ANNOUNCE_PROJECTS_LOAD_FAILED:
             setErrorMessage("Failed to load projects: " + action.error_message)
             return state;

@@ -1,15 +1,19 @@
 import React, { Component, PropTypes } from 'react'
 import { Link } from 'react-router'
+import map from 'lodash/map'
 import { connect } from 'react-redux'
 import { invalidateList,
 	 selectItems,
 	 collapse_list,
 	 expand_list
 } from '../actions/ItemList'
-import { fetchIssuesIfNeeded } from '../actions/Issues'
 import {
     updateIssueSubject
 } from '../actions/Issue'
+import {
+    invalidateIssues,
+    fetchIssuesIfNeeded
+} from '../actions/Issues'
 import Pagination from '../components/Pagination'
 import { RIEInput } from 'riek'
 
@@ -46,8 +50,9 @@ export class IssueList extends Component {
     }
 
     onRefresh(event) {
-        const { dispatch, list_key } = this.props
+        const { dispatch, issue_ids, list_key } = this.props
 	dispatch(invalidateList(list_key))
+	dispatch(invalidateIssues(issue_ids))
 	dispatch(fetchIssuesIfNeeded(list_key))
 	if ( event ) {
 	    event.stopPropagation()
@@ -198,6 +203,7 @@ function mapStateToProps(state, props) {
         list_key: list_key,
 	sprint_id: sprint_id,
         issues: items,
+	issue_ids: map(items, 'id'),
 	selected_ids: l.selected_ids || [],
 	selected_items: selected_items || [],
         has_items: items && items.length > 0,

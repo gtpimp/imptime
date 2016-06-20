@@ -1,5 +1,7 @@
 import map from 'lodash/map'
 import assign from 'lodash/assign'
+import keys from 'lodash/keys'
+import union from 'lodash/union'
 import difference from 'lodash/difference'
 import { setErrorMessage } from '../actions/Error'
 
@@ -12,8 +14,7 @@ import {
 
 const initialState = {
     is_loading: false,
-    items_invalidated: true,
-    items_by_id: {}
+    loading_item_ids: []
 }
 
 export default function sprint(state = initialState, action) {
@@ -22,19 +23,23 @@ export default function sprint(state = initialState, action) {
     
     switch (action.type) {
         case INVALIDATE_SPRINTS:
-	    let item_ids_to_invalidate = action.sprint_ids_to_invalidate || []
-	    state_copy.items_by_id = difference(state_copy.item_ids,
-						item_ids_to_invalidate)
-	    state_copy.items_invalidated = true
-	    state_copy.is_loading = false
-	    return state_copy
+
+	    let new_sprint_ids = Object.assign({}, state.items_by_id)
+	    action.sprint_ids_to_invalidate.map(function(id_to_invalidate) {
+		if ( new_sprint_ids[id_to_invalidate] ) {
+		    delete new_sprint_ids[id_to_invalidate]
+		}
+	    })
+	    return Object.assign({}, state, {items_by_id: new_sprint_ids})
         case ANNOUNCE_LOADING_SPRINTS:
-            return Object.assign({}, state, {
-                is_loading: true,
-                items_invalidated: false
-            })
+	    return Object.assign({}, state, {
+		loading_item_ids: union(state.loading_item_ids, action.sprint_ids_to_load)
+	    })            
         case ANNOUNCE_SPRINTS_LOADED:
             state_copy = Object.assign({}, state, {
+		loading_item_ids: Object.assign({},
+						difference(state.loading_item_ids || [],
+							   keys(action.items_by_id))),
 		items_by_id: Object.assign({},
 					      state.items_by_id)
 	    })

@@ -9,16 +9,17 @@ export const ANNOUNCE_PROJECTS_LOAD_FAILED = 'ANNOUNCE_PROJECTS_LOAD_FAILED'
 export const ANNOUNCE_LOADING_PROJECTS = 'ANNOUNCE_LOADING_PROJECTS'
 export const INVALIDATE_PROJECTS = 'INVALIDATE_PROJECTS'
 
-// Commented out because you almost never need this, usually rather call invalidate_list on ItemList.
-/* export function invalidateProjects() {
- *     return {
- *         type: INVALIDATE_PROJECTS
- *     }
- * }*/
-
-function announceLoadingProjects() {
+export function invalidateProjects(project_ids) {
     return {
-        type: ANNOUNCE_LOADING_PROJECTS
+        type: INVALIDATE_PROJECTS,
+	project_ids_to_invalidate: project_ids
+    }
+}
+
+function announceLoadingProjects(project_ids) {
+    return {
+        type: ANNOUNCE_LOADING_PROJECTS,
+	project_ids_to_load: project_ids
     }
 }
 
@@ -53,7 +54,7 @@ function announceProjectsLoadFailed(error) {
 
 function fetchProjectsPromise(dispatch, project_ids) {
     return new Promise(function(resolve, reject) {
-	dispatch(announceLoadingProjects())
+	dispatch(announceLoadingProjects(project_ids))
 
 	const params = { filter: { ids: project_ids },
 			 pagination: {'enabled': false} }

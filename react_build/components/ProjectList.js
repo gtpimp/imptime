@@ -1,5 +1,6 @@
 import React, { Component, PropTypes } from 'react'
 import { Link } from 'react-router'
+import map from 'lodash/map'
 import { connect } from 'react-redux'
 import {
     invalidateList,
@@ -7,7 +8,10 @@ import {
     collapse_list,
     expand_list
 } from '../actions/ItemList'
-import { fetchProjectsIfNeeded } from '../actions/Projects'
+import {
+    invalidateProjects,
+    fetchProjectsIfNeeded
+} from '../actions/Projects'
 import Pagination from '../components/Pagination'
 
 
@@ -41,8 +45,9 @@ export class ProjectList extends Component {
     }
 
     onRefresh(event) {
-        const { dispatch, list_key } = this.props
+        const { dispatch, project_ids, list_key } = this.props
 	dispatch(invalidateList(list_key))
+	dispatch(invalidateProjects(project_ids))
 	dispatch(fetchProjectsIfNeeded(list_key))
 	if ( event ) {
 	    event.stopPropagation()
@@ -155,6 +160,7 @@ function mapStateToProps(state, props) {
     return {
         list_key: list_key,
         projects: items,
+	project_ids: map(items, 'id'),
 	selected_ids: l.selected_ids || [],
 	selected_items: selected_items || [],
         has_items: items && items.length > 0,
