@@ -73,21 +73,25 @@ export class IssueList extends Component {
         const { selected_ids } = this.props
 
 	let selected = selected_ids.indexOf(issue.id) !== -1
-	
-        return (
-	    <tr key={issue.id+"."+index}
-		onClick={() => this.onClickedIssue(issue.id)}
-		className={selected ? 'tr--selected' : ''}
-	    >
-		<td>{issue.number}</td>
-	        { issue.loaded === false &&
-		<td>Loading...</td>
-		}
-		{ issue.loaded !== false &&
-		  <td>{issue.subject}</td>
-		}
-	    </tr>
-        )
+
+	if ( issue.loaded === false ) {
+	    return (
+		<tr key={issue.id+"."+index} onClick={() => this.onClickedIssue(issue.id)}>
+		    <td>{issue.number}</td>
+		    <td>Loading...</td>
+		</tr>
+	    )
+	}
+	if ( ! issue.loaded !== false ) {
+	    return (
+		<tr key={issue.id+"."+index} onClick={() => this.onClickedIssue(issue.id)}>
+		    <td>{issue.subject}</td>
+		    <td>{issue.assigned_to_username}</td>
+		    <td>{issue.feature_name}</td>
+		    <td>{issue.status}</td>
+		</tr>
+	    )
+	}
     }
     
     render_expanded() {
@@ -110,6 +114,9 @@ export class IssueList extends Component {
 				<tr>
 				    <th>Number</th>
 				    <th>Name</th>
+				    <th>Assigned to</th>
+				    <th>Feature</th>
+				    <th>Status</th>
 				</tr>
                             </thead>
                             <tbody>

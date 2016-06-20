@@ -69,7 +69,7 @@
 
 	var _Root2 = _interopRequireDefault(_Root);
 
-	var _configureStore = __webpack_require__(698);
+	var _configureStore = __webpack_require__(697);
 
 	var _configureStore2 = _interopRequireDefault(_configureStore);
 
@@ -35855,7 +35855,7 @@
 
 	var _DevPage2 = _interopRequireDefault(_DevPage);
 
-	var _HeaderBar = __webpack_require__(696);
+	var _HeaderBar = __webpack_require__(695);
 
 	var _HeaderBar2 = _interopRequireDefault(_HeaderBar);
 
@@ -35943,7 +35943,7 @@
 
 	var _IssueList2 = _interopRequireDefault(_IssueList);
 
-	var _IssueDeveloperDetails = __webpack_require__(692);
+	var _IssueDeveloperDetails = __webpack_require__(691);
 
 	var _IssueDeveloperDetails2 = _interopRequireDefault(_IssueDeveloperDetails);
 
@@ -42133,7 +42133,7 @@
 
 	var _ItemList = __webpack_require__(559);
 
-	var _Issues = __webpack_require__(691);
+	var _Issues = __webpack_require__(701);
 
 	var _Pagination = __webpack_require__(687);
 
@@ -42258,30 +42258,52 @@
 
 										var selected = selected_ids.indexOf(issue.id) !== -1;
 
-										return _react2.default.createElement(
-													'tr',
-													{ key: issue.id + "." + index,
-																onClick: function onClick() {
-																			return _this3.onClickedIssue(issue.id);
-																},
-																className: selected ? 'tr--selected' : ''
-													},
-													_react2.default.createElement(
-																'td',
-																null,
-																issue.number
-													),
-													issue.loaded === false && _react2.default.createElement(
-																'td',
-																null,
-																'Loading...'
-													),
-													issue.loaded !== false && _react2.default.createElement(
-																'td',
-																null,
-																issue.subject
-													)
-										);
+										if (issue.loaded === false) {
+													return _react2.default.createElement(
+																'tr',
+																{ key: issue.id + "." + index, onClick: function onClick() {
+																						return _this3.onClickedIssue(issue.id);
+																			} },
+																_react2.default.createElement(
+																			'td',
+																			null,
+																			issue.number
+																),
+																_react2.default.createElement(
+																			'td',
+																			null,
+																			'Loading...'
+																)
+													);
+										}
+										if (!issue.loaded !== false) {
+													return _react2.default.createElement(
+																'tr',
+																{ key: issue.id + "." + index, onClick: function onClick() {
+																						return _this3.onClickedIssue(issue.id);
+																			} },
+																_react2.default.createElement(
+																			'td',
+																			null,
+																			issue.subject
+																),
+																_react2.default.createElement(
+																			'td',
+																			null,
+																			issue.assigned_to_username
+																),
+																_react2.default.createElement(
+																			'td',
+																			null,
+																			issue.feature_name
+																),
+																_react2.default.createElement(
+																			'td',
+																			null,
+																			issue.status
+																)
+													);
+										}
 							}
 				}, {
 							key: 'render_expanded',
@@ -42337,6 +42359,21 @@
 																															'th',
 																															null,
 																															'Name'
+																												),
+																												_react2.default.createElement(
+																															'th',
+																															null,
+																															'Assigned to'
+																												),
+																												_react2.default.createElement(
+																															'th',
+																															null,
+																															'Feature'
+																												),
+																												_react2.default.createElement(
+																															'th',
+																															null,
+																															'Status'
 																												)
 																									)
 																						),
@@ -42431,115 +42468,6 @@
 	Object.defineProperty(exports, "__esModule", {
 	    value: true
 	});
-	exports.INVALIDATE_ISSUES = exports.ANNOUNCE_LOADING_ISSUES = exports.ANNOUNCE_ISSUES_LOAD_FAILED = exports.ANNOUNCE_ISSUES_LOADED = undefined;
-	exports.invalidateIssues = invalidateIssues;
-	exports.refreshIssues = refreshIssues;
-	exports.fetchIssuesIfNeeded = fetchIssuesIfNeeded;
-
-	var _lib = __webpack_require__(560);
-
-	var _difference = __webpack_require__(566);
-
-	var _difference2 = _interopRequireDefault(_difference);
-
-	var _keys = __webpack_require__(627);
-
-	var _keys2 = _interopRequireDefault(_keys);
-
-	var _map = __webpack_require__(635);
-
-	var _map2 = _interopRequireDefault(_map);
-
-	var _ItemList = __webpack_require__(559);
-
-	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-	var ANNOUNCE_ISSUES_LOADED = exports.ANNOUNCE_ISSUES_LOADED = 'ANNOUNCE_ISSUES_LOADED';
-	var ANNOUNCE_ISSUES_LOAD_FAILED = exports.ANNOUNCE_ISSUES_LOAD_FAILED = 'ANNOUNCE_ISSUES_LOAD_FAILED';
-	var ANNOUNCE_LOADING_ISSUES = exports.ANNOUNCE_LOADING_ISSUES = 'ANNOUNCE_LOADING_ISSUES';
-	var INVALIDATE_ISSUES = exports.INVALIDATE_ISSUES = 'INVALIDATE_ISSUES';
-
-	function invalidateIssues(issue_ids) {
-	    return {
-	        type: INVALIDATE_ISSUES,
-	        issue_ids_to_invalidate: issue_ids
-	    };
-	}
-
-	function announceLoadingIssues(issue_ids) {
-	    return {
-	        type: ANNOUNCE_LOADING_ISSUES,
-	        issue_ids_to_load: issue_ids
-	    };
-	}
-
-	function refreshIssues(list_key) {
-	    return function (dispatch, getState) {
-	        dispatch(invalidateItems());
-	        dispatch(fetchIssuesIfNeeded());
-	    };
-	}
-
-	function announceIssuesLoaded(payload) {
-
-	    var items_by_id = {};
-	    payload.issues.map(function (item, index) {
-	        items_by_id[item.id] = item;
-	    });
-
-	    return {
-	        type: ANNOUNCE_ISSUES_LOADED,
-	        items_by_id: items_by_id,
-	        received_at: Date.now()
-	    };
-	}
-
-	function announceIssuesLoadFailed(error_message) {
-	    return {
-	        type: ANNOUNCE_ISSUES_LOAD_FAILED,
-	        error_message: error_message,
-	        received_at: Date.now()
-	    };
-	}
-
-	function fetchIssuesPromise(dispatch, issue_ids) {
-	    return new Promise(function (resolve, reject) {
-	        dispatch(announceLoadingIssues(issue_ids));
-
-	        var params = { filter: { ids: issue_ids },
-	            pagination: { 'enabled': false } };
-
-	        return (0, _lib.impfetch)('/imp/issue/', { params: params }).then(function (response) {
-	            return response.json();
-	        }).then(function (json) {
-	            if (json.status != 'success') {
-	                dispatch(announceIssuesLoadFailed());
-	                reject(json.error);
-	            } else {
-	                dispatch(announceIssuesLoaded(json.payload));
-	            }
-	        }).catch(function (error) {
-	            dispatch(announceIssuesLoadFailed("Failed to load issues: " + error.message));
-	            reject("Failed to load issues: " + error.message);
-	        });
-	    });
-	}
-
-	function fetchIssuesIfNeeded(list_key) {
-	    var matching_items_key = 'issue';
-	    var matching_items_promise_func = fetchIssuesPromise;
-	    return (0, _ItemList.fetchListIfNeeded)(list_key, matching_items_key, matching_items_promise_func);
-	}
-
-/***/ },
-/* 692 */
-/***/ function(module, exports, __webpack_require__) {
-
-	'use strict';
-
-	Object.defineProperty(exports, "__esModule", {
-	    value: true
-	});
 	exports.IssueDeveloperDetails = undefined;
 
 	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
@@ -42552,11 +42480,11 @@
 
 	var _reactRedux = __webpack_require__(533);
 
-	var _indexOf = __webpack_require__(693);
+	var _indexOf = __webpack_require__(692);
 
 	var _indexOf2 = _interopRequireDefault(_indexOf);
 
-	var _IssueGeneralDetails = __webpack_require__(694);
+	var _IssueGeneralDetails = __webpack_require__(693);
 
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -42692,7 +42620,7 @@
 	exports.default = (0, _reactRedux.connect)(mapStateToProps)(IssueDeveloperDetails);
 
 /***/ },
-/* 693 */
+/* 692 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var baseIndexOf = __webpack_require__(606),
@@ -42740,7 +42668,7 @@
 
 
 /***/ },
-/* 694 */
+/* 693 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -42766,7 +42694,7 @@
 
 	var _map2 = _interopRequireDefault(_map);
 
-	var _Error = __webpack_require__(695);
+	var _Error = __webpack_require__(694);
 
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -42856,7 +42784,7 @@
 	}
 
 /***/ },
-/* 695 */
+/* 694 */
 /***/ function(module, exports) {
 
 	'use strict';
@@ -42880,7 +42808,7 @@
 	}
 
 /***/ },
-/* 696 */
+/* 695 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -42900,7 +42828,7 @@
 
 	var _reactRedux = __webpack_require__(533);
 
-	var _NotificationBar = __webpack_require__(697);
+	var _NotificationBar = __webpack_require__(696);
 
 	var _NotificationBar2 = _interopRequireDefault(_NotificationBar);
 
@@ -42959,7 +42887,7 @@
 	exports.default = (0, _reactRedux.connect)(mapStateToProps)(HeaderBar);
 
 /***/ },
-/* 697 */
+/* 696 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -43027,7 +42955,7 @@
 	exports.default = (0, _reactRedux.connect)(mapStateToProps)(NotificationBar);
 
 /***/ },
-/* 698 */
+/* 697 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -43039,15 +42967,15 @@
 
 	var _redux = __webpack_require__(540);
 
-	var _reduxThunk = __webpack_require__(699);
+	var _reduxThunk = __webpack_require__(698);
 
 	var _reduxThunk2 = _interopRequireDefault(_reduxThunk);
 
-	var _error_catcher = __webpack_require__(700);
+	var _error_catcher = __webpack_require__(699);
 
 	var _error_catcher2 = _interopRequireDefault(_error_catcher);
 
-	var _DevPageMiddleware = __webpack_require__(701);
+	var _DevPageMiddleware = __webpack_require__(700);
 
 	var _DevPageMiddleware2 = _interopRequireDefault(_DevPageMiddleware);
 
@@ -43065,7 +42993,7 @@
 	}
 
 /***/ },
-/* 699 */
+/* 698 */
 /***/ function(module, exports) {
 
 	'use strict';
@@ -43093,14 +43021,14 @@
 	exports['default'] = thunk;
 
 /***/ },
-/* 700 */
+/* 699 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 
-	var _Error = __webpack_require__(695);
+	var _Error = __webpack_require__(694);
 
-	var _indexOf = __webpack_require__(693);
+	var _indexOf = __webpack_require__(692);
 
 	var _indexOf2 = _interopRequireDefault(_indexOf);
 
@@ -43126,14 +43054,14 @@
 	module.exports = error_catcher_middleware;
 
 /***/ },
-/* 701 */
+/* 700 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 
-	var _Error = __webpack_require__(695);
+	var _Error = __webpack_require__(694);
 
-	var _indexOf = __webpack_require__(693);
+	var _indexOf = __webpack_require__(692);
 
 	var _indexOf2 = _interopRequireDefault(_indexOf);
 
@@ -43141,9 +43069,9 @@
 
 	var _Sprints = __webpack_require__(689);
 
-	var _Issues = __webpack_require__(691);
+	var _Issues = __webpack_require__(701);
 
-	var _IssueGeneralDetails = __webpack_require__(694);
+	var _IssueGeneralDetails = __webpack_require__(693);
 
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -43207,6 +43135,115 @@
 	}
 
 	module.exports = DevPageMiddleware;
+
+/***/ },
+/* 701 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	Object.defineProperty(exports, "__esModule", {
+	    value: true
+	});
+	exports.INVALIDATE_ISSUES = exports.ANNOUNCE_LOADING_ISSUES = exports.ANNOUNCE_ISSUES_LOAD_FAILED = exports.ANNOUNCE_ISSUES_LOADED = undefined;
+	exports.invalidateIssues = invalidateIssues;
+	exports.refreshIssues = refreshIssues;
+	exports.fetchIssuesIfNeeded = fetchIssuesIfNeeded;
+
+	var _lib = __webpack_require__(560);
+
+	var _difference = __webpack_require__(566);
+
+	var _difference2 = _interopRequireDefault(_difference);
+
+	var _keys = __webpack_require__(627);
+
+	var _keys2 = _interopRequireDefault(_keys);
+
+	var _map = __webpack_require__(635);
+
+	var _map2 = _interopRequireDefault(_map);
+
+	var _ItemList = __webpack_require__(559);
+
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+	var ANNOUNCE_ISSUES_LOADED = exports.ANNOUNCE_ISSUES_LOADED = 'ANNOUNCE_ISSUES_LOADED';
+	var ANNOUNCE_ISSUES_LOAD_FAILED = exports.ANNOUNCE_ISSUES_LOAD_FAILED = 'ANNOUNCE_ISSUES_LOAD_FAILED';
+	var ANNOUNCE_LOADING_ISSUES = exports.ANNOUNCE_LOADING_ISSUES = 'ANNOUNCE_LOADING_ISSUES';
+	var INVALIDATE_ISSUES = exports.INVALIDATE_ISSUES = 'INVALIDATE_ISSUES';
+
+	function invalidateIssues(issue_ids) {
+	    return {
+	        type: INVALIDATE_ISSUES,
+	        issue_ids_to_invalidate: issue_ids
+	    };
+	}
+
+	function announceLoadingIssues(issue_ids) {
+	    return {
+	        type: ANNOUNCE_LOADING_ISSUES,
+	        issue_ids_to_load: issue_ids
+	    };
+	}
+
+	function refreshIssues(list_key) {
+	    return function (dispatch, getState) {
+	        dispatch(invalidateItems());
+	        dispatch(fetchIssuesIfNeeded());
+	    };
+	}
+
+	function announceIssuesLoaded(payload) {
+
+	    var items_by_id = {};
+	    payload.issues.map(function (item, index) {
+	        items_by_id[item.id] = item;
+	    });
+
+	    return {
+	        type: ANNOUNCE_ISSUES_LOADED,
+	        items_by_id: items_by_id,
+	        received_at: Date.now()
+	    };
+	}
+
+	function announceIssuesLoadFailed(error_message) {
+	    return {
+	        type: ANNOUNCE_ISSUES_LOAD_FAILED,
+	        error_message: error_message,
+	        received_at: Date.now()
+	    };
+	}
+
+	function fetchIssuesPromise(dispatch, issue_ids) {
+	    return new Promise(function (resolve, reject) {
+	        dispatch(announceLoadingIssues(issue_ids));
+
+	        var params = { filter: { ids: issue_ids },
+	            pagination: { 'enabled': false } };
+
+	        return (0, _lib.impfetch)('/imp/issue/', { params: params }).then(function (response) {
+	            return response.json();
+	        }).then(function (json) {
+	            if (json.status != 'success') {
+	                dispatch(announceIssuesLoadFailed());
+	                reject(json.error);
+	            } else {
+	                dispatch(announceIssuesLoaded(json.payload));
+	            }
+	        }).catch(function (error) {
+	            dispatch(announceIssuesLoadFailed("Failed to load issues: " + error.message));
+	            reject("Failed to load issues: " + error.message);
+	        });
+	    });
+	}
+
+	function fetchIssuesIfNeeded(list_key) {
+	    var matching_items_key = 'issue';
+	    var matching_items_promise_func = fetchIssuesPromise;
+	    return (0, _ItemList.fetchListIfNeeded)(list_key, matching_items_key, matching_items_promise_func);
+	}
 
 /***/ },
 /* 702 */
@@ -44689,7 +44726,7 @@
 
 	var _merge2 = _interopRequireDefault(_merge);
 
-	var _Error = __webpack_require__(695);
+	var _Error = __webpack_require__(694);
 
 	var _ItemList = __webpack_require__(559);
 
@@ -44813,7 +44850,7 @@
 
 	var _difference2 = _interopRequireDefault(_difference);
 
-	var _Error = __webpack_require__(695);
+	var _Error = __webpack_require__(694);
 
 	var _Projects = __webpack_require__(686);
 
@@ -44951,7 +44988,7 @@
 
 	var _difference2 = _interopRequireDefault(_difference);
 
-	var _Error = __webpack_require__(695);
+	var _Error = __webpack_require__(694);
 
 	var _Sprints = __webpack_require__(689);
 
@@ -45027,9 +45064,9 @@
 
 	var _keys2 = _interopRequireDefault(_keys);
 
-	var _Error = __webpack_require__(695);
+	var _Error = __webpack_require__(694);
 
-	var _Issues = __webpack_require__(691);
+	var _Issues = __webpack_require__(701);
 
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -45255,9 +45292,9 @@
 
 	var _union2 = _interopRequireDefault(_union);
 
-	var _Error = __webpack_require__(695);
+	var _Error = __webpack_require__(694);
 
-	var _IssueGeneralDetails = __webpack_require__(694);
+	var _IssueGeneralDetails = __webpack_require__(693);
 
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -45313,7 +45350,7 @@
 
 	var _merge2 = _interopRequireDefault(_merge);
 
-	var _Error = __webpack_require__(695);
+	var _Error = __webpack_require__(694);
 
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
