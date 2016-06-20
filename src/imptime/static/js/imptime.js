@@ -42338,8 +42338,12 @@
 																},
 																_react2.default.createElement(
 																			'td',
-																			{ className: 'issue_list__tr__issue_number_button' },
-																			issue.number
+																			null,
+																			_react2.default.createElement(
+																						'div',
+																						{ className: 'issue_list__issue_number_button' },
+																						issue.number
+																			)
 																),
 																_react2.default.createElement(
 																			'td',
@@ -42405,7 +42409,7 @@
 																			{ className: 'panel-body' },
 																			_react2.default.createElement(
 																						'table',
-																						{ className: 'table table--default' },
+																						{ className: 'table table--compact' },
 																						_react2.default.createElement(
 																									'thead',
 																									null,

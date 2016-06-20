@@ -103,7 +103,9 @@ export class IssueList extends Component {
 		    onClick={() => this.onClickedIssue(issue.id)}
 		    className={selected ? 'tr--selected' : ''}
 		>
-		    <td className="issue_list__tr__issue_number_button" >{issue.number}</td>
+		    <td>
+			<div className="issue_list__issue_number_button">{issue.number}</div>
+		    </td>
 		    <td>
 			<RIEInput value={issue.subject}
 				  propName="subject" 
@@ -130,7 +132,7 @@ export class IssueList extends Component {
 			</div>
                     </div>
                     <div className="panel-body">
-			<table className="table table--default" >
+			<table className="table table--compact" >
                             <thead>
 				<tr>
 				    <th>Number</th>

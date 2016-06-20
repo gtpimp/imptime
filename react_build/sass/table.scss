@@ -69,12 +69,14 @@
 	    background-color: $secondary-selection-color;
 	}
 
-	tr td {
-	    height: 40px;
+	tbody tr td {
+	    height: 35px;
+	    padding: 2px;
+	    padding-top: 4px;
 	}
 
 	td:first-child {
-	    padding-left: $padding-medium;
+	    padding-left: $padding-small;
 	}
 
 	td {

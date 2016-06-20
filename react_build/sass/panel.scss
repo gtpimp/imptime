@@ -6,9 +6,9 @@
     margin-bottom: 0;
 
     .panel-heading {
-	background-color: $heading-background-color;
+	//background-color: $heading-background-color;
 	border-radius: 2px;
-	color: #fff;
+	color: #000000;
 	display: table;
 	height: 40px;
 	font: $bold-extra-large;
@@ -141,9 +141,12 @@
     max-width: $width;
     min-width: $width;
     width: $width;
+    background-color: #B7CBEC;
+    color: #000000;
 
     .panel-body {
 	float: right;
     }
+
 }
 
