@@ -37,9 +37,12 @@ function DevPageMiddleware(_ref) {
 			dispatch(update_list_filter(sprints_list_key, {project_id:selected_id}))
 			dispatch(invalidateList(sprints_list_key))
 			dispatch(fetchSprintsIfNeeded(sprints_list_key))
-			
-			dispatch(expand_list(sprints_list_key))
-			dispatch(collapse_list(issues_list_key))
+
+			if ( selected_id ) {
+			    dispatch(collapse_list(projects_list_key))
+			    dispatch(collapse_list(issues_list_key))
+			    dispatch(expand_list(sprints_list_key))
+			}
 
 			dispatch(unselectAllItems(sprints_list_key))
 			dispatch(unselectAllItems(issues_list_key))
@@ -50,9 +53,11 @@ function DevPageMiddleware(_ref) {
 			dispatch(update_list_filter(issues_list_key, {sprint_id:selected_id}))
 			dispatch(invalidateList(issues_list_key))
 			dispatch(fetchIssuesIfNeeded(issues_list_key))
-			
-			dispatch(expand_list(issues_list_key))
-			dispatch(update_list_filter(issue_details_developer_key, {issue_id:null}))
+
+			if ( selected_id ) {
+			    dispatch(expand_list(issues_list_key))
+			    dispatch(collapse_list(sprints_list_key))
+			}
 			
 			dispatch(unselectAllItems(issues_list_key))
 			dispatch(update_list_filter(issue_details_developer_key, {issue_id:null}))

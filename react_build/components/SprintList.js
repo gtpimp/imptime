@@ -40,7 +40,6 @@ export class SprintList extends Component {
     onClickedSprint(sprint_id) {
 	const { dispatch, list_key } = this.props
 	dispatch(selectItems(list_key, [sprint_id]))
-	this.onCollapse()	
     }
 
     onRefresh() {
@@ -63,16 +62,11 @@ export class SprintList extends Component {
 	const { sprints, selected_items } = this.props
 
 	return (
-	    <div className="panel panel--wide">
-		<div className="panel-heading">
-		    <div className="panel__title">Sprint: </div>
-		    <div className="panel__button panel__button--collapse"
-			 onClick={this.onExpand}>
-			expand
+	    <div className="panel panel--collapsed">
+		<div className="panel-heading" onClick={this.onExpand}>
+		    <div className="panel__title">
+			{ selected_items.map((sprint, index) => this.renderCollapsedSprint(sprint)) }
 		    </div>
-		</div>
-		<div className="panel-body">
-		    { selected_items.map((sprint, index) => this.renderCollapsedSprint(sprint)) }
 		</div>
 	    </div>
 	)

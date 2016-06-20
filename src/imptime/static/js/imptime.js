@@ -69,7 +69,7 @@
 
 	var _Root2 = _interopRequireDefault(_Root);
 
-	var _configureStore = __webpack_require__(697);
+	var _configureStore = __webpack_require__(698);
 
 	var _configureStore2 = _interopRequireDefault(_configureStore);
 
@@ -35855,9 +35855,9 @@
 
 	var _DevPage2 = _interopRequireDefault(_DevPage);
 
-	var _NotificationBar = __webpack_require__(696);
+	var _HeaderBar = __webpack_require__(696);
 
-	var _NotificationBar2 = _interopRequireDefault(_NotificationBar);
+	var _HeaderBar2 = _interopRequireDefault(_HeaderBar);
 
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -35896,7 +35896,7 @@
 	            return _react2.default.createElement(
 	                'div',
 	                { className: 'app' },
-	                _react2.default.createElement(_NotificationBar2.default, null),
+	                _react2.default.createElement(_HeaderBar2.default, null),
 	                _react2.default.createElement(_DevPage2.default, null)
 	            );
 	        }
@@ -36084,7 +36084,6 @@
 													var list_key = _props4.list_key;
 
 													dispatch((0, _ItemList.selectItems)(list_key, [project_id]));
-													this.onCollapse();
 									}
 					}, {
 									key: 'onRefresh',
@@ -36119,28 +36118,17 @@
 
 													return _react2.default.createElement(
 																	'div',
-																	{ className: 'panel panel--wide' },
+																	{ className: 'panel panel--collapsed' },
 																	_react2.default.createElement(
 																					'div',
-																					{ className: 'panel-heading' },
+																					{ className: 'panel-heading', onClick: this.onExpand },
 																					_react2.default.createElement(
 																									'div',
 																									{ className: 'panel__title' },
-																									'Project: '
-																					),
-																					_react2.default.createElement(
-																									'div',
-																									{ className: 'panel__button panel__button--collapse',
-																													onClick: this.onExpand },
-																									'expand'
+																									selected_items.map(function (project, index) {
+																													return _this2.renderCollapsedProject(project);
+																									})
 																					)
-																	),
-																	_react2.default.createElement(
-																					'div',
-																					{ className: 'panel-body' },
-																					selected_items.map(function (project, index) {
-																									return _this2.renderCollapsedProject(project);
-																					})
 																	)
 													);
 									}
@@ -36203,12 +36191,8 @@
 																									_react2.default.createElement(
 																													'div',
 																													{ className: 'panel__buttons' },
-																													_react2.default.createElement(
-																																	'div',
-																																	{ className: 'panel__button panel__button--collapse',
-																																					onClick: this.onCollapse },
-																																	'collapse'
-																													),
+																													_react2.default.createElement('div', { className: 'panel__button panel__button--collapse',
+																																	onClick: this.onCollapse }),
 																													_react2.default.createElement('div', { className: 'panel__button panel__button--refresh',
 																																	onClick: this.onRefresh })
 																									)
@@ -36219,19 +36203,6 @@
 																									_react2.default.createElement(
 																													'table',
 																													{ className: 'table table--default' },
-																													_react2.default.createElement(
-																																	'thead',
-																																	null,
-																																	_react2.default.createElement(
-																																					'tr',
-																																					null,
-																																					_react2.default.createElement(
-																																									'th',
-																																									null,
-																																									'Name'
-																																					)
-																																	)
-																													),
 																													_react2.default.createElement(
 																																	'tbody',
 																																	null,
@@ -41800,7 +41771,6 @@
 													var list_key = _props4.list_key;
 
 													dispatch((0, _ItemList.selectItems)(list_key, [sprint_id]));
-													this.onCollapse();
 									}
 					}, {
 									key: 'onRefresh',
@@ -41836,28 +41806,17 @@
 
 													return _react2.default.createElement(
 																	'div',
-																	{ className: 'panel panel--wide' },
+																	{ className: 'panel panel--collapsed' },
 																	_react2.default.createElement(
 																					'div',
-																					{ className: 'panel-heading' },
+																					{ className: 'panel-heading', onClick: this.onExpand },
 																					_react2.default.createElement(
 																									'div',
 																									{ className: 'panel__title' },
-																									'Sprint: '
-																					),
-																					_react2.default.createElement(
-																									'div',
-																									{ className: 'panel__button panel__button--collapse',
-																													onClick: this.onExpand },
-																									'expand'
+																									selected_items.map(function (sprint, index) {
+																													return _this2.renderCollapsedSprint(sprint);
+																									})
 																					)
-																	),
-																	_react2.default.createElement(
-																					'div',
-																					{ className: 'panel-body' },
-																					selected_items.map(function (sprint, index) {
-																									return _this2.renderCollapsedSprint(sprint);
-																					})
 																	)
 													);
 									}
@@ -42149,7 +42108,7 @@
 	'use strict';
 
 	Object.defineProperty(exports, "__esModule", {
-		value: true
+				value: true
 	});
 	exports.IssueList = undefined;
 
@@ -42180,287 +42139,275 @@
 	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 
 	var IssueList = exports.IssueList = function (_Component) {
-		_inherits(IssueList, _Component);
+				_inherits(IssueList, _Component);
 
-		function IssueList(props) {
-			_classCallCheck(this, IssueList);
+				function IssueList(props) {
+							_classCallCheck(this, IssueList);
 
-			var _this = _possibleConstructorReturn(this, Object.getPrototypeOf(IssueList).call(this, props));
+							var _this = _possibleConstructorReturn(this, Object.getPrototypeOf(IssueList).call(this, props));
 
-			_this.onRefresh = _this.onRefresh.bind(_this);
-			_this.onCollapse = _this.onCollapse.bind(_this);
-			_this.onExpand = _this.onExpand.bind(_this);
-			return _this;
-		}
-
-		_createClass(IssueList, [{
-			key: 'componentDidMount',
-			value: function componentDidMount() {
-				var _props = this.props;
-				var dispatch = _props.dispatch;
-				var list_key = _props.list_key;
-				var sprint_id = _props.sprint_id;
-
-				if (sprint_id) {
-					dispatch((0, _Issues.fetchIssuesIfNeeded)(list_key));
+							_this.onRefresh = _this.onRefresh.bind(_this);
+							_this.onCollapse = _this.onCollapse.bind(_this);
+							_this.onExpand = _this.onExpand.bind(_this);
+							return _this;
 				}
-			}
-		}, {
-			key: 'onCollapse',
-			value: function onCollapse() {
-				var _props2 = this.props;
-				var dispatch = _props2.dispatch;
-				var list_key = _props2.list_key;
 
-				dispatch((0, _ItemList.collapse_list)(list_key));
-			}
-		}, {
-			key: 'onExpand',
-			value: function onExpand() {
-				var _props3 = this.props;
-				var dispatch = _props3.dispatch;
-				var list_key = _props3.list_key;
+				_createClass(IssueList, [{
+							key: 'componentDidMount',
+							value: function componentDidMount() {
+										var _props = this.props;
+										var dispatch = _props.dispatch;
+										var list_key = _props.list_key;
+										var sprint_id = _props.sprint_id;
 
-				dispatch((0, _ItemList.expand_list)(list_key));
-			}
-		}, {
-			key: 'onClickedIssue',
-			value: function onClickedIssue(issue_id) {
-				var _props4 = this.props;
-				var dispatch = _props4.dispatch;
-				var list_key = _props4.list_key;
+										if (sprint_id) {
+													dispatch((0, _Issues.fetchIssuesIfNeeded)(list_key));
+										}
+							}
+				}, {
+							key: 'onCollapse',
+							value: function onCollapse() {
+										var _props2 = this.props;
+										var dispatch = _props2.dispatch;
+										var list_key = _props2.list_key;
 
-				dispatch((0, _ItemList.selectItems)(list_key, [issue_id]));
-				this.onCollapse();
-			}
-		}, {
-			key: 'onRefresh',
-			value: function onRefresh() {
-				var _props5 = this.props;
-				var dispatch = _props5.dispatch;
-				var list_key = _props5.list_key;
+										dispatch((0, _ItemList.collapse_list)(list_key));
+							}
+				}, {
+							key: 'onExpand',
+							value: function onExpand() {
+										var _props3 = this.props;
+										var dispatch = _props3.dispatch;
+										var list_key = _props3.list_key;
 
-				dispatch((0, _ItemList.invalidateList)(list_key));
-				dispatch((0, _Issues.fetchIssuesIfNeeded)(list_key));
-			}
-		}, {
-			key: 'renderCollapsedIssue',
-			value: function renderCollapsedIssue(issue) {
-				var list_key = this.props.list_key;
+										dispatch((0, _ItemList.expand_list)(list_key));
+							}
+				}, {
+							key: 'onClickedIssue',
+							value: function onClickedIssue(issue_id) {
+										var _props4 = this.props;
+										var dispatch = _props4.dispatch;
+										var list_key = _props4.list_key;
 
-				return _react2.default.createElement(
-					'div',
-					{ key: "collapsed_issue_" + issue.id + "_" + list_key },
-					issue.number,
-					issue.subject
-				);
-			}
-		}, {
-			key: 'render_collapsed',
-			value: function render_collapsed() {
-				var _this2 = this;
+										dispatch((0, _ItemList.selectItems)(list_key, [issue_id]));
+							}
+				}, {
+							key: 'onRefresh',
+							value: function onRefresh() {
+										var _props5 = this.props;
+										var dispatch = _props5.dispatch;
+										var list_key = _props5.list_key;
 
-				var _props6 = this.props;
-				var issues = _props6.issues;
-				var selected_items = _props6.selected_items;
+										dispatch((0, _ItemList.invalidateList)(list_key));
+										dispatch((0, _Issues.fetchIssuesIfNeeded)(list_key));
+							}
+				}, {
+							key: 'renderCollapsedIssue',
+							value: function renderCollapsedIssue(issue) {
+										var list_key = this.props.list_key;
 
+										return _react2.default.createElement(
+													'div',
+													{ key: "collapsed_issue_" + issue.id + "_" + list_key },
+													issue.number,
+													issue.subject
+										);
+							}
+				}, {
+							key: 'render_collapsed',
+							value: function render_collapsed() {
+										var _this2 = this;
 
-				return _react2.default.createElement(
-					'div',
-					{ className: 'panel panel--wide' },
-					_react2.default.createElement(
-						'div',
-						{ className: 'panel-heading' },
-						_react2.default.createElement(
-							'div',
-							{ className: 'panel__title' },
-							'Issue: '
-						),
-						_react2.default.createElement(
-							'div',
-							{ className: 'panel__button panel__button--collapse',
-								onClick: this.onExpand },
-							'expand'
-						)
-					),
-					_react2.default.createElement(
-						'div',
-						{ className: 'panel-body' },
-						selected_items.map(function (issue, index) {
-							return _this2.renderCollapsedIssue(issue);
-						})
-					)
-				);
-			}
-		}, {
-			key: 'renderExpandedIssue',
-			value: function renderExpandedIssue(issue, index) {
-				var _this3 = this;
-
-				var selected_ids = this.props.selected_ids;
+										var _props6 = this.props;
+										var issues = _props6.issues;
+										var selected_items = _props6.selected_items;
 
 
-				var selected = selected_ids.indexOf(issue.id) !== -1;
+										return _react2.default.createElement(
+													'div',
+													{ className: 'panel panel--collapsed' },
+													_react2.default.createElement(
+																'div',
+																{ className: 'panel-heading', onClick: this.onExpand },
+																_react2.default.createElement(
+																			'div',
+																			{ className: 'panel__title' },
+																			selected_items.map(function (issue, index) {
+																						return _this2.renderCollapsedIssue(issue);
+																			})
+																)
+													)
+										);
+							}
+				}, {
+							key: 'renderExpandedIssue',
+							value: function renderExpandedIssue(issue, index) {
+										var _this3 = this;
 
-				return _react2.default.createElement(
-					'tr',
-					{ key: issue.id + "." + index,
-						onClick: function onClick() {
-							return _this3.onClickedIssue(issue.id);
-						},
-						className: selected ? 'tr--selected' : ''
-					},
-					_react2.default.createElement(
-						'td',
-						null,
-						issue.number
-					),
-					issue.loaded === false && _react2.default.createElement(
-						'td',
-						null,
-						'Loading...'
-					),
-					issue.loaded !== false && _react2.default.createElement(
-						'td',
-						null,
-						issue.subject
-					)
-				);
-			}
-		}, {
-			key: 'render_expanded',
-			value: function render_expanded() {
-				var _this4 = this;
-
-				var _props7 = this.props;
-				var is_loading = _props7.is_loading;
-				var issues = _props7.issues;
-				var has_items = _props7.has_items;
-				var list_key = _props7.list_key;
-
-				return _react2.default.createElement(
-					'div',
-					{ style: { opacity: is_loading ? 0.5 : 1 } },
-					_react2.default.createElement(
-						'div',
-						{ className: 'panel panel--wide' },
-						_react2.default.createElement(
-							'div',
-							{ className: 'panel-heading' },
-							_react2.default.createElement(
-								'div',
-								{ className: 'panel__title' },
-								'Issues'
-							),
-							_react2.default.createElement(
-								'div',
-								{ className: 'panel__button panel__button--collapse',
-									onClick: this.onCollapse },
-								'collapse'
-							),
-							_react2.default.createElement(
-								'div',
-								{ className: 'panel__buttons' },
-								_react2.default.createElement('div', { className: 'panel__button panel__button--refresh',
-									onClick: this.onRefresh })
-							)
-						),
-						_react2.default.createElement(
-							'div',
-							{ className: 'panel-body' },
-							_react2.default.createElement(
-								'table',
-								{ className: 'table table--default' },
-								_react2.default.createElement(
-									'thead',
-									null,
-									_react2.default.createElement(
-										'tr',
-										null,
-										_react2.default.createElement(
-											'th',
-											null,
-											'Number'
-										),
-										_react2.default.createElement(
-											'th',
-											null,
-											'Name'
-										)
-									)
-								),
-								_react2.default.createElement(
-									'tbody',
-									null,
-									issues.map(function (issue, index) {
-										return _this4.renderExpandedIssue(issue, index);
-									})
-								)
-							),
-							!is_loading && !has_items && _react2.default.createElement(
-								'div',
-								{ className: 'table__no-rows' },
-								'no issues'
-							)
-						)
-					),
-					_react2.default.createElement(_Pagination2.default, { list_key: list_key, on_changed: this.onRefresh })
-				);
-			}
-		}, {
-			key: 'render',
-			value: function render() {
-				var _props8 = this.props;
-				var is_loading = _props8.is_loading;
-				var is_collapsed = _props8.is_collapsed;
-				var is_expanded = _props8.is_expanded;
+										var selected_ids = this.props.selected_ids;
 
 
-				return _react2.default.createElement(
-					'div',
-					null,
-					is_collapsed && this.render_collapsed(),
-					is_expanded && this.render_expanded()
-				);
-			}
-		}]);
+										var selected = selected_ids.indexOf(issue.id) !== -1;
 
-		return IssueList;
+										return _react2.default.createElement(
+													'tr',
+													{ key: issue.id + "." + index,
+																onClick: function onClick() {
+																			return _this3.onClickedIssue(issue.id);
+																},
+																className: selected ? 'tr--selected' : ''
+													},
+													_react2.default.createElement(
+																'td',
+																null,
+																issue.number
+													),
+													issue.loaded === false && _react2.default.createElement(
+																'td',
+																null,
+																'Loading...'
+													),
+													issue.loaded !== false && _react2.default.createElement(
+																'td',
+																null,
+																issue.subject
+													)
+										);
+							}
+				}, {
+							key: 'render_expanded',
+							value: function render_expanded() {
+										var _this4 = this;
+
+										var _props7 = this.props;
+										var is_loading = _props7.is_loading;
+										var issues = _props7.issues;
+										var has_items = _props7.has_items;
+										var list_key = _props7.list_key;
+
+										return _react2.default.createElement(
+													'div',
+													{ style: { opacity: is_loading ? 0.5 : 1 } },
+													_react2.default.createElement(
+																'div',
+																{ className: 'panel panel--wide' },
+																_react2.default.createElement(
+																			'div',
+																			{ className: 'panel-heading' },
+																			_react2.default.createElement(
+																						'div',
+																						{ className: 'panel__title' },
+																						'Issues'
+																			),
+																			_react2.default.createElement(
+																						'div',
+																						{ className: 'panel__button panel__button--collapse',
+																									onClick: this.onCollapse },
+																						'collapse'
+																			),
+																			_react2.default.createElement(
+																						'div',
+																						{ className: 'panel__buttons' },
+																						_react2.default.createElement('div', { className: 'panel__button panel__button--refresh',
+																									onClick: this.onRefresh })
+																			)
+																),
+																_react2.default.createElement(
+																			'div',
+																			{ className: 'panel-body' },
+																			_react2.default.createElement(
+																						'table',
+																						{ className: 'table table--default' },
+																						_react2.default.createElement(
+																									'thead',
+																									null,
+																									_react2.default.createElement(
+																												'tr',
+																												null,
+																												_react2.default.createElement(
+																															'th',
+																															null,
+																															'Number'
+																												),
+																												_react2.default.createElement(
+																															'th',
+																															null,
+																															'Name'
+																												)
+																									)
+																						),
+																						_react2.default.createElement(
+																									'tbody',
+																									null,
+																									issues.map(function (issue, index) {
+																												return _this4.renderExpandedIssue(issue, index);
+																									})
+																						)
+																			),
+																			!is_loading && !has_items && _react2.default.createElement(
+																						'div',
+																						{ className: 'table__no-rows' },
+																						'no issues'
+																			)
+																)
+													),
+													_react2.default.createElement(_Pagination2.default, { list_key: list_key, on_changed: this.onRefresh })
+										);
+							}
+				}, {
+							key: 'render',
+							value: function render() {
+										var _props8 = this.props;
+										var is_loading = _props8.is_loading;
+										var is_collapsed = _props8.is_collapsed;
+										var is_expanded = _props8.is_expanded;
+
+
+										return _react2.default.createElement(
+													'div',
+													null,
+													is_collapsed && this.render_collapsed(),
+													is_expanded && this.render_expanded()
+										);
+							}
+				}]);
+
+				return IssueList;
 	}(_react.Component);
 
 	function mapStateToProps(state, props) {
-		var issue = state.issue;
-		var item_list = state.item_list;
-		var list_key = props.list_key;
+				var issue = state.issue;
+				var item_list = state.item_list;
+				var list_key = props.list_key;
 
-		var items_by_id = issue && issue.items_by_id || {};
-		var l = item_list && item_list[list_key] || {};
-		var filter = l.filter || {};
-		var sprint_id = filter.sprint_id || null;
-		var visible_item_ids = l.visible_item_ids || [];
+				var items_by_id = issue && issue.items_by_id || {};
+				var l = item_list && item_list[list_key] || {};
+				var filter = l.filter || {};
+				var sprint_id = filter.sprint_id || null;
+				var visible_item_ids = l.visible_item_ids || [];
 
-		var selected_items = items_by_id && l.selected_ids && l.selected_ids.map(function (selected_id, index) {
-			return items_by_id[selected_id] || { 'id': selected_id,
-				'loaded': false };
-		});
+				var selected_items = items_by_id && l.selected_ids && l.selected_ids.map(function (selected_id, index) {
+							return items_by_id[selected_id] || { 'id': selected_id,
+										'loaded': false };
+				});
 
-		var items = items_by_id && visible_item_ids.map(function (visible_item_id, index) {
-			return items_by_id[visible_item_id] || { 'id': visible_item_id,
-				'loaded': false };
-		}) || [];
+				var items = items_by_id && visible_item_ids.map(function (visible_item_id, index) {
+							return items_by_id[visible_item_id] || { 'id': visible_item_id,
+										'loaded': false };
+				}) || [];
 
-		return {
-			list_key: list_key,
-			sprint_id: sprint_id,
-			issues: items,
-			selected_ids: l.selected_ids || [],
-			selected_items: selected_items || [],
-			has_items: items && items.length > 0,
-			is_loading: l.is_loading,
-			is_collapsed: l.display_mode == "collapsed",
-			is_expanded: l.display_mode == "expanded" || !l.display_mode,
-			last_updated: l.last_updated
-		};
+				return {
+							list_key: list_key,
+							sprint_id: sprint_id,
+							issues: items,
+							selected_ids: l.selected_ids || [],
+							selected_items: selected_items || [],
+							has_items: items && items.length > 0,
+							is_loading: l.is_loading,
+							is_collapsed: l.display_mode == "collapsed",
+							is_expanded: l.display_mode == "expanded" || !l.display_mode,
+							last_updated: l.last_updated
+				};
 	}
 
 	exports.default = (0, _reactRedux.connect)(mapStateToProps)(IssueList);
@@ -42685,7 +42632,6 @@
 	                    _react2.default.createElement(
 	                        'div',
 	                        { className: 'panel-body' },
-	                        'g',
 	                        _react2.default.createElement(
 	                            'h3',
 	                            null,
@@ -42924,6 +42870,85 @@
 	'use strict';
 
 	Object.defineProperty(exports, "__esModule", {
+					value: true
+	});
+	exports.HeaderBar = undefined;
+
+	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+	var _react = __webpack_require__(300);
+
+	var _react2 = _interopRequireDefault(_react);
+
+	var _reactRouter = __webpack_require__(466);
+
+	var _reactRedux = __webpack_require__(533);
+
+	var _NotificationBar = __webpack_require__(697);
+
+	var _NotificationBar2 = _interopRequireDefault(_NotificationBar);
+
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+	function _objectDestructuringEmpty(obj) { if (obj == null) throw new TypeError("Cannot destructure undefined"); }
+
+	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+	function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+	var HeaderBar = exports.HeaderBar = function (_Component) {
+					_inherits(HeaderBar, _Component);
+
+					function HeaderBar() {
+									_classCallCheck(this, HeaderBar);
+
+									return _possibleConstructorReturn(this, Object.getPrototypeOf(HeaderBar).apply(this, arguments));
+					}
+
+					_createClass(HeaderBar, [{
+									key: 'render',
+									value: function render() {
+													_objectDestructuringEmpty(this.props);
+
+													return _react2.default.createElement(
+																	'div',
+																	{ className: 'header_bar' },
+																	_react2.default.createElement(
+																					'div',
+																					{ className: 'header_bar__inner' },
+																					_react2.default.createElement(
+																									'div',
+																									{ className: 'header_bar__logo' },
+																									_react2.default.createElement(
+																													'a',
+																													{ href: 'http://www.implicitdesign.co.za' },
+																													'ImpTime'
+																									)
+																					),
+																					_react2.default.createElement(_NotificationBar2.default, null)
+																	)
+													);
+									}
+					}]);
+
+					return HeaderBar;
+	}(_react.Component);
+
+	function mapStateToProps(state, props) {
+					return {};
+	}
+
+	exports.default = (0, _reactRedux.connect)(mapStateToProps)(HeaderBar);
+
+/***/ },
+/* 697 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	Object.defineProperty(exports, "__esModule", {
 	    value: true
 	});
 	exports.NotificationBar = undefined;
@@ -42986,7 +43011,7 @@
 	exports.default = (0, _reactRedux.connect)(mapStateToProps)(NotificationBar);
 
 /***/ },
-/* 697 */
+/* 698 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -42998,19 +43023,19 @@
 
 	var _redux = __webpack_require__(540);
 
-	var _reduxThunk = __webpack_require__(698);
+	var _reduxThunk = __webpack_require__(699);
 
 	var _reduxThunk2 = _interopRequireDefault(_reduxThunk);
 
-	var _error_catcher = __webpack_require__(699);
+	var _error_catcher = __webpack_require__(700);
 
 	var _error_catcher2 = _interopRequireDefault(_error_catcher);
 
-	var _DevPageMiddleware = __webpack_require__(700);
+	var _DevPageMiddleware = __webpack_require__(701);
 
 	var _DevPageMiddleware2 = _interopRequireDefault(_DevPageMiddleware);
 
-	var _reducers = __webpack_require__(701);
+	var _reducers = __webpack_require__(702);
 
 	var _reducers2 = _interopRequireDefault(_reducers);
 
@@ -43024,7 +43049,7 @@
 	}
 
 /***/ },
-/* 698 */
+/* 699 */
 /***/ function(module, exports) {
 
 	'use strict';
@@ -43052,7 +43077,7 @@
 	exports['default'] = thunk;
 
 /***/ },
-/* 699 */
+/* 700 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -43085,7 +43110,7 @@
 	module.exports = error_catcher_middleware;
 
 /***/ },
-/* 700 */
+/* 701 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -43130,8 +43155,11 @@
 							dispatch((0, _ItemList.invalidateList)(sprints_list_key));
 							dispatch((0, _Sprints.fetchSprintsIfNeeded)(sprints_list_key));
 
-							dispatch((0, _ItemList.expand_list)(sprints_list_key));
-							dispatch((0, _ItemList.collapse_list)(issues_list_key));
+							if (selected_id) {
+								dispatch((0, _ItemList.collapse_list)(projects_list_key));
+								dispatch((0, _ItemList.collapse_list)(issues_list_key));
+								dispatch((0, _ItemList.expand_list)(sprints_list_key));
+							}
 
 							dispatch((0, _ItemList.unselectAllItems)(sprints_list_key));
 							dispatch((0, _ItemList.unselectAllItems)(issues_list_key));
@@ -43142,8 +43170,10 @@
 							dispatch((0, _ItemList.invalidateList)(issues_list_key));
 							dispatch((0, _Issues.fetchIssuesIfNeeded)(issues_list_key));
 
-							dispatch((0, _ItemList.expand_list)(issues_list_key));
-							dispatch((0, _ItemList.update_list_filter)(issue_details_developer_key, { issue_id: null }));
+							if (selected_id) {
+								dispatch((0, _ItemList.expand_list)(issues_list_key));
+								dispatch((0, _ItemList.collapse_list)(sprints_list_key));
+							}
 
 							dispatch((0, _ItemList.unselectAllItems)(issues_list_key));
 							dispatch((0, _ItemList.update_list_filter)(issue_details_developer_key, { issue_id: null }));
@@ -43163,7 +43193,7 @@
 	module.exports = DevPageMiddleware;
 
 /***/ },
-/* 701 */
+/* 702 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -43172,7 +43202,7 @@
 	    value: true
 	});
 
-	var _merge = __webpack_require__(702);
+	var _merge = __webpack_require__(703);
 
 	var _merge2 = _interopRequireDefault(_merge);
 
@@ -43184,27 +43214,27 @@
 
 	var _map2 = _interopRequireDefault(_map);
 
-	var _item_list = __webpack_require__(742);
+	var _item_list = __webpack_require__(743);
 
 	var _item_list2 = _interopRequireDefault(_item_list);
 
-	var _project = __webpack_require__(743);
+	var _project = __webpack_require__(744);
 
 	var _project2 = _interopRequireDefault(_project);
 
-	var _sprint = __webpack_require__(745);
+	var _sprint = __webpack_require__(746);
 
 	var _sprint2 = _interopRequireDefault(_sprint);
 
-	var _issue = __webpack_require__(746);
+	var _issue = __webpack_require__(747);
 
 	var _issue2 = _interopRequireDefault(_issue);
 
-	var _issue_general_details = __webpack_require__(751);
+	var _issue_general_details = __webpack_require__(752);
 
 	var _issue_general_details2 = _interopRequireDefault(_issue_general_details);
 
-	var _notification_bar = __webpack_require__(752);
+	var _notification_bar = __webpack_require__(753);
 
 	var _notification_bar2 = _interopRequireDefault(_notification_bar);
 
@@ -43223,11 +43253,11 @@
 	exports.default = rootReducer;
 
 /***/ },
-/* 702 */
+/* 703 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var baseMerge = __webpack_require__(703),
-	    createAssigner = __webpack_require__(740);
+	var baseMerge = __webpack_require__(704),
+	    createAssigner = __webpack_require__(741);
 
 	/**
 	 * This method is like `_.assign` except that it recursively merges own and
@@ -43268,17 +43298,17 @@
 
 
 /***/ },
-/* 703 */
+/* 704 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var Stack = __webpack_require__(639),
-	    arrayEach = __webpack_require__(704),
-	    assignMergeValue = __webpack_require__(705),
-	    baseMergeDeep = __webpack_require__(706),
+	    arrayEach = __webpack_require__(705),
+	    assignMergeValue = __webpack_require__(706),
+	    baseMergeDeep = __webpack_require__(707),
 	    isArray = __webpack_require__(565),
 	    isObject = __webpack_require__(577),
 	    isTypedArray = __webpack_require__(660),
-	    keysIn = __webpack_require__(736);
+	    keysIn = __webpack_require__(737);
 
 	/**
 	 * The base implementation of `_.merge` without support for multiple sources.
@@ -43324,7 +43354,7 @@
 
 
 /***/ },
-/* 704 */
+/* 705 */
 /***/ function(module, exports) {
 
 	/**
@@ -43352,7 +43382,7 @@
 
 
 /***/ },
-/* 705 */
+/* 706 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var eq = __webpack_require__(592);
@@ -43377,12 +43407,12 @@
 
 
 /***/ },
-/* 706 */
+/* 707 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var assignMergeValue = __webpack_require__(705),
-	    baseClone = __webpack_require__(707),
-	    copyArray = __webpack_require__(712),
+	var assignMergeValue = __webpack_require__(706),
+	    baseClone = __webpack_require__(708),
+	    copyArray = __webpack_require__(713),
 	    isArguments = __webpack_require__(615),
 	    isArray = __webpack_require__(565),
 	    isArrayLikeObject = __webpack_require__(616),
@@ -43390,7 +43420,7 @@
 	    isObject = __webpack_require__(577),
 	    isPlainObject = __webpack_require__(542),
 	    isTypedArray = __webpack_require__(660),
-	    toPlainObject = __webpack_require__(735);
+	    toPlainObject = __webpack_require__(736);
 
 	/**
 	 * A specialized version of `baseMerge` for arrays and objects which performs
@@ -43466,23 +43496,23 @@
 
 
 /***/ },
-/* 707 */
+/* 708 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var Stack = __webpack_require__(639),
-	    arrayEach = __webpack_require__(704),
-	    assignValue = __webpack_require__(708),
-	    baseAssign = __webpack_require__(709),
-	    cloneBuffer = __webpack_require__(711),
-	    copyArray = __webpack_require__(712),
-	    copySymbols = __webpack_require__(713),
-	    getAllKeys = __webpack_require__(716),
+	    arrayEach = __webpack_require__(705),
+	    assignValue = __webpack_require__(709),
+	    baseAssign = __webpack_require__(710),
+	    cloneBuffer = __webpack_require__(712),
+	    copyArray = __webpack_require__(713),
+	    copySymbols = __webpack_require__(714),
+	    getAllKeys = __webpack_require__(717),
 	    getTag = __webpack_require__(655),
-	    initCloneArray = __webpack_require__(718),
-	    initCloneByTag = __webpack_require__(719),
-	    initCloneObject = __webpack_require__(730),
+	    initCloneArray = __webpack_require__(719),
+	    initCloneByTag = __webpack_require__(720),
+	    initCloneObject = __webpack_require__(731),
 	    isArray = __webpack_require__(565),
-	    isBuffer = __webpack_require__(732),
+	    isBuffer = __webpack_require__(733),
 	    isHostObject = __webpack_require__(544),
 	    isObject = __webpack_require__(577),
 	    keys = __webpack_require__(627);
@@ -43611,7 +43641,7 @@
 
 
 /***/ },
-/* 708 */
+/* 709 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var eq = __webpack_require__(592);
@@ -43644,10 +43674,10 @@
 
 
 /***/ },
-/* 709 */
+/* 710 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var copyObject = __webpack_require__(710),
+	var copyObject = __webpack_require__(711),
 	    keys = __webpack_require__(627);
 
 	/**
@@ -43667,10 +43697,10 @@
 
 
 /***/ },
-/* 710 */
+/* 711 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var assignValue = __webpack_require__(708);
+	var assignValue = __webpack_require__(709);
 
 	/**
 	 * Copies properties of `source` to `object`.
@@ -43704,7 +43734,7 @@
 
 
 /***/ },
-/* 711 */
+/* 712 */
 /***/ function(module, exports) {
 
 	/**
@@ -43728,7 +43758,7 @@
 
 
 /***/ },
-/* 712 */
+/* 713 */
 /***/ function(module, exports) {
 
 	/**
@@ -43754,11 +43784,11 @@
 
 
 /***/ },
-/* 713 */
+/* 714 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var copyObject = __webpack_require__(710),
-	    getSymbols = __webpack_require__(714);
+	var copyObject = __webpack_require__(711),
+	    getSymbols = __webpack_require__(715);
 
 	/**
 	 * Copies own symbol properties of `source` to `object`.
@@ -43776,10 +43806,10 @@
 
 
 /***/ },
-/* 714 */
+/* 715 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var stubArray = __webpack_require__(715);
+	var stubArray = __webpack_require__(716);
 
 	/** Built-in value references. */
 	var getOwnPropertySymbols = Object.getOwnPropertySymbols;
@@ -43806,7 +43836,7 @@
 
 
 /***/ },
-/* 715 */
+/* 716 */
 /***/ function(module, exports) {
 
 	/**
@@ -43835,11 +43865,11 @@
 
 
 /***/ },
-/* 716 */
+/* 717 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var baseGetAllKeys = __webpack_require__(717),
-	    getSymbols = __webpack_require__(714),
+	var baseGetAllKeys = __webpack_require__(718),
+	    getSymbols = __webpack_require__(715),
 	    keys = __webpack_require__(627);
 
 	/**
@@ -43857,7 +43887,7 @@
 
 
 /***/ },
-/* 717 */
+/* 718 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var arrayPush = __webpack_require__(613),
@@ -43883,7 +43913,7 @@
 
 
 /***/ },
-/* 718 */
+/* 719 */
 /***/ function(module, exports) {
 
 	/** Used for built-in method references. */
@@ -43915,16 +43945,16 @@
 
 
 /***/ },
-/* 719 */
+/* 720 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var cloneArrayBuffer = __webpack_require__(720),
-	    cloneDataView = __webpack_require__(721),
-	    cloneMap = __webpack_require__(722),
-	    cloneRegExp = __webpack_require__(725),
-	    cloneSet = __webpack_require__(726),
-	    cloneSymbol = __webpack_require__(728),
-	    cloneTypedArray = __webpack_require__(729);
+	var cloneArrayBuffer = __webpack_require__(721),
+	    cloneDataView = __webpack_require__(722),
+	    cloneMap = __webpack_require__(723),
+	    cloneRegExp = __webpack_require__(726),
+	    cloneSet = __webpack_require__(727),
+	    cloneSymbol = __webpack_require__(729),
+	    cloneTypedArray = __webpack_require__(730);
 
 	/** `Object#toString` result references. */
 	var boolTag = '[object Boolean]',
@@ -44001,7 +44031,7 @@
 
 
 /***/ },
-/* 720 */
+/* 721 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var Uint8Array = __webpack_require__(651);
@@ -44023,10 +44053,10 @@
 
 
 /***/ },
-/* 721 */
+/* 722 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var cloneArrayBuffer = __webpack_require__(720);
+	var cloneArrayBuffer = __webpack_require__(721);
 
 	/**
 	 * Creates a clone of `dataView`.
@@ -44045,11 +44075,11 @@
 
 
 /***/ },
-/* 722 */
+/* 723 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var addMapEntry = __webpack_require__(723),
-	    arrayReduce = __webpack_require__(724),
+	var addMapEntry = __webpack_require__(724),
+	    arrayReduce = __webpack_require__(725),
 	    mapToArray = __webpack_require__(652);
 
 	/**
@@ -44070,7 +44100,7 @@
 
 
 /***/ },
-/* 723 */
+/* 724 */
 /***/ function(module, exports) {
 
 	/**
@@ -44091,7 +44121,7 @@
 
 
 /***/ },
-/* 724 */
+/* 725 */
 /***/ function(module, exports) {
 
 	/**
@@ -44123,7 +44153,7 @@
 
 
 /***/ },
-/* 725 */
+/* 726 */
 /***/ function(module, exports) {
 
 	/** Used to match `RegExp` flags from their coerced string values. */
@@ -44146,11 +44176,11 @@
 
 
 /***/ },
-/* 726 */
+/* 727 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var addSetEntry = __webpack_require__(727),
-	    arrayReduce = __webpack_require__(724),
+	var addSetEntry = __webpack_require__(728),
+	    arrayReduce = __webpack_require__(725),
 	    setToArray = __webpack_require__(653);
 
 	/**
@@ -44171,7 +44201,7 @@
 
 
 /***/ },
-/* 727 */
+/* 728 */
 /***/ function(module, exports) {
 
 	/**
@@ -44191,7 +44221,7 @@
 
 
 /***/ },
-/* 728 */
+/* 729 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var Symbol = __webpack_require__(650);
@@ -44215,10 +44245,10 @@
 
 
 /***/ },
-/* 729 */
+/* 730 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var cloneArrayBuffer = __webpack_require__(720);
+	var cloneArrayBuffer = __webpack_require__(721);
 
 	/**
 	 * Creates a clone of `typedArray`.
@@ -44237,10 +44267,10 @@
 
 
 /***/ },
-/* 730 */
+/* 731 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var baseCreate = __webpack_require__(731),
+	var baseCreate = __webpack_require__(732),
 	    getPrototype = __webpack_require__(543),
 	    isPrototype = __webpack_require__(634);
 
@@ -44261,7 +44291,7 @@
 
 
 /***/ },
-/* 731 */
+/* 732 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var isObject = __webpack_require__(577);
@@ -44285,11 +44315,11 @@
 
 
 /***/ },
-/* 732 */
+/* 733 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(module) {var root = __webpack_require__(580),
-	    stubFalse = __webpack_require__(734);
+	    stubFalse = __webpack_require__(735);
 
 	/** Detect free variable `exports`. */
 	var freeExports = typeof exports == 'object' && exports;
@@ -44326,10 +44356,10 @@
 
 	module.exports = isBuffer;
 
-	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(733)(module)))
+	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(734)(module)))
 
 /***/ },
-/* 733 */
+/* 734 */
 /***/ function(module, exports) {
 
 	module.exports = function(module) {
@@ -44345,7 +44375,7 @@
 
 
 /***/ },
-/* 734 */
+/* 735 */
 /***/ function(module, exports) {
 
 	/**
@@ -44369,11 +44399,11 @@
 
 
 /***/ },
-/* 735 */
+/* 736 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var copyObject = __webpack_require__(710),
-	    keysIn = __webpack_require__(736);
+	var copyObject = __webpack_require__(711),
+	    keysIn = __webpack_require__(737);
 
 	/**
 	 * Converts `value` to a plain object flattening inherited enumerable string
@@ -44407,10 +44437,10 @@
 
 
 /***/ },
-/* 736 */
+/* 737 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var baseKeysIn = __webpack_require__(737),
+	var baseKeysIn = __webpack_require__(738),
 	    indexKeys = __webpack_require__(630),
 	    isIndex = __webpack_require__(633),
 	    isPrototype = __webpack_require__(634);
@@ -44468,11 +44498,11 @@
 
 
 /***/ },
-/* 737 */
+/* 738 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var Reflect = __webpack_require__(738),
-	    iteratorToArray = __webpack_require__(739);
+	var Reflect = __webpack_require__(739),
+	    iteratorToArray = __webpack_require__(740);
 
 	/** Used for built-in method references. */
 	var objectProto = Object.prototype;
@@ -44510,7 +44540,7 @@
 
 
 /***/ },
-/* 738 */
+/* 739 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var root = __webpack_require__(580);
@@ -44522,7 +44552,7 @@
 
 
 /***/ },
-/* 739 */
+/* 740 */
 /***/ function(module, exports) {
 
 	/**
@@ -44546,10 +44576,10 @@
 
 
 /***/ },
-/* 740 */
+/* 741 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var isIterateeCall = __webpack_require__(741),
+	var isIterateeCall = __webpack_require__(742),
 	    rest = __webpack_require__(621);
 
 	/**
@@ -44589,7 +44619,7 @@
 
 
 /***/ },
-/* 741 */
+/* 742 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var eq = __webpack_require__(592),
@@ -44625,7 +44655,7 @@
 
 
 /***/ },
-/* 742 */
+/* 743 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -44639,7 +44669,7 @@
 
 	var _map2 = _interopRequireDefault(_map);
 
-	var _merge = __webpack_require__(702);
+	var _merge = __webpack_require__(703);
 
 	var _merge2 = _interopRequireDefault(_merge);
 
@@ -44745,7 +44775,7 @@
 	}
 
 /***/ },
-/* 743 */
+/* 744 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -44759,7 +44789,7 @@
 
 	var _map2 = _interopRequireDefault(_map);
 
-	var _assign = __webpack_require__(744);
+	var _assign = __webpack_require__(745);
 
 	var _assign2 = _interopRequireDefault(_assign);
 
@@ -44813,12 +44843,12 @@
 	}
 
 /***/ },
-/* 744 */
+/* 745 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var assignValue = __webpack_require__(708),
-	    copyObject = __webpack_require__(710),
-	    createAssigner = __webpack_require__(740),
+	var assignValue = __webpack_require__(709),
+	    copyObject = __webpack_require__(711),
+	    createAssigner = __webpack_require__(741),
 	    isArrayLike = __webpack_require__(617),
 	    isPrototype = __webpack_require__(634),
 	    keys = __webpack_require__(627);
@@ -44883,7 +44913,7 @@
 
 
 /***/ },
-/* 745 */
+/* 746 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -44897,7 +44927,7 @@
 
 	var _map2 = _interopRequireDefault(_map);
 
-	var _assign = __webpack_require__(744);
+	var _assign = __webpack_require__(745);
 
 	var _assign2 = _interopRequireDefault(_assign);
 
@@ -44951,7 +44981,7 @@
 	}
 
 /***/ },
-/* 746 */
+/* 747 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -44965,7 +44995,7 @@
 
 	var _map2 = _interopRequireDefault(_map);
 
-	var _assign = __webpack_require__(744);
+	var _assign = __webpack_require__(745);
 
 	var _assign2 = _interopRequireDefault(_assign);
 
@@ -44973,7 +45003,7 @@
 
 	var _difference2 = _interopRequireDefault(_difference);
 
-	var _union = __webpack_require__(747);
+	var _union = __webpack_require__(748);
 
 	var _union2 = _interopRequireDefault(_union);
 
@@ -45021,11 +45051,11 @@
 	}
 
 /***/ },
-/* 747 */
+/* 748 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var baseFlatten = __webpack_require__(612),
-	    baseUniq = __webpack_require__(748),
+	    baseUniq = __webpack_require__(749),
 	    isArrayLikeObject = __webpack_require__(616),
 	    rest = __webpack_require__(621);
 
@@ -45053,14 +45083,14 @@
 
 
 /***/ },
-/* 748 */
+/* 749 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var SetCache = __webpack_require__(568),
 	    arrayIncludes = __webpack_require__(605),
 	    arrayIncludesWith = __webpack_require__(608),
 	    cacheHas = __webpack_require__(611),
-	    createSet = __webpack_require__(749),
+	    createSet = __webpack_require__(750),
 	    setToArray = __webpack_require__(653);
 
 	/** Used as the size to enable large array optimizations. */
@@ -45131,11 +45161,11 @@
 
 
 /***/ },
-/* 749 */
+/* 750 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var Set = __webpack_require__(658),
-	    noop = __webpack_require__(750),
+	    noop = __webpack_require__(751),
 	    setToArray = __webpack_require__(653);
 
 	/** Used as references for various `Number` constants. */
@@ -45156,7 +45186,7 @@
 
 
 /***/ },
-/* 750 */
+/* 751 */
 /***/ function(module, exports) {
 
 	/**
@@ -45179,7 +45209,7 @@
 
 
 /***/ },
-/* 751 */
+/* 752 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -45193,7 +45223,7 @@
 
 	var _map2 = _interopRequireDefault(_map);
 
-	var _assign = __webpack_require__(744);
+	var _assign = __webpack_require__(745);
 
 	var _assign2 = _interopRequireDefault(_assign);
 
@@ -45205,7 +45235,7 @@
 
 	var _difference2 = _interopRequireDefault(_difference);
 
-	var _union = __webpack_require__(747);
+	var _union = __webpack_require__(748);
 
 	var _union2 = _interopRequireDefault(_union);
 
@@ -45249,7 +45279,7 @@
 	}
 
 /***/ },
-/* 752 */
+/* 753 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -45263,7 +45293,7 @@
 
 	var _map2 = _interopRequireDefault(_map);
 
-	var _merge = __webpack_require__(702);
+	var _merge = __webpack_require__(703);
 
 	var _merge2 = _interopRequireDefault(_merge);
 

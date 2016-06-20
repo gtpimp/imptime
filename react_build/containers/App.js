@@ -1,7 +1,7 @@
 import React, { Component, PropTypes } from 'react'
 import { connect } from 'react-redux'
 import DevPage from './DevPage'
-import NotificationBar from '../components/NotificationBar'
+import HeaderBar from '../components/HeaderBar'
 
 class App extends Component {
 
@@ -19,7 +19,7 @@ class App extends Component {
         return (
             <div className="app">
 
-		<NotificationBar/>
+		<HeaderBar/>
 		
 		<DevPage/>
 	    </div>

@@ -8,6 +8,13 @@ var sourcemaps   = require('gulp-sourcemaps');
 var concat   = require('gulp-concat');
 var config       = require('../../config');
 
+var onError = function (err) {
+  gutil.beep();
+  console.log(err);
+  this.emit('end');
+};
+
+
 /**
  * Generate CSS from SCSS
  * Build sourcemaps
@@ -24,14 +31,13 @@ gulp.task('sass', function() {
     browsersync.notify('Compiling Sass');
 
     return sass(config.sass.src, {sourcemap: true})
-        .on('error', sass.logError)
-        // for inline sourcemaps
+        .pipe(plumber({errorHandler: onError}))
+        // .on('error', sass.logError)
         .pipe(sourcemaps.write())
-        // for file sourcemaps
         .pipe(sourcemaps.write('maps', {
             includeContent: false,
             sourceRoot: 'source'
         }))
-        .pipe(concat('app.css'))
+        .pipe(concat('imptime.css'))
         .pipe(gulp.dest(config.sass.dest))
 });

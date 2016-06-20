@@ -39,7 +39,6 @@ export class IssueList extends Component {
     onClickedIssue(issue_id) {
 	const { dispatch, list_key } = this.props
 	dispatch(selectItems(list_key, [issue_id]))
-	this.onCollapse()
     }
 
     onRefresh() {
@@ -62,16 +61,9 @@ export class IssueList extends Component {
 	const { issues, selected_items } = this.props
 
 	return (
-	    <div className="panel panel--wide">
-		<div className="panel-heading">
-		    <div className="panel__title">Issue: </div>
-		    <div className="panel__button panel__button--collapse"
-			 onClick={this.onExpand}>
-			expand
-		    </div>
-		</div>
-		<div className="panel-body">
-		    { selected_items.map((issue, index) => this.renderCollapsedIssue(issue)) }
+	    <div className="panel panel--collapsed">
+		<div className="panel-heading"  onClick={this.onExpand}>
+		    <div className="panel__title">{ selected_items.map((issue, index) => this.renderCollapsedIssue(issue)) }</div>
 		</div>
 	    </div>
 	)

@@ -38,7 +38,6 @@ export class ProjectList extends Component {
     onClickedProject(project_id) {
 	const { dispatch, list_key } = this.props
 	dispatch(selectItems(list_key, [project_id]))
-	this.onCollapse()
     }
 
     onRefresh() {
@@ -60,16 +59,11 @@ export class ProjectList extends Component {
 	const { projects, selected_items } = this.props
 
 	return (
-	    <div className="panel panel--wide">
-		<div className="panel-heading">
-		    <div className="panel__title">Project: </div>
-		    <div className="panel__button panel__button--collapse"
-			 onClick={this.onExpand}>
-			expand
+	    <div className="panel panel--collapsed">
+		<div className="panel-heading" onClick={this.onExpand}>
+		    <div className="panel__title">
+			{ selected_items.map((project, index) => this.renderCollapsedProject(project)) }
 		    </div>
-		</div>
-		<div className="panel-body">
-		    { selected_items.map((project, index) => this.renderCollapsedProject(project)) }
 		</div>
 	    </div>
 	)
@@ -107,7 +101,6 @@ export class ProjectList extends Component {
 			<div className="panel__buttons">
 			    <div className="panel__button panel__button--collapse"
 				 onClick={this.onCollapse}>
-				collapse
 			    </div>
                             <div className="panel__button panel__button--refresh"
 				 onClick={this.onRefresh}></div>
@@ -115,11 +108,6 @@ export class ProjectList extends Component {
                     </div>
                     <div className="panel-body">
 			<table className="table table--default" >
-                            <thead>
-				<tr>
-				    <th>Name</th>
-				</tr>
-                            </thead>
                             <tbody>
 				{projects.map((project, index) => this.renderExpandedProject(project, index))}
                             </tbody>

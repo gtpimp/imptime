@@ -1,0 +1,29 @@
+@import 'variables';
+
+.header_bar {
+    vertical-align: middle;
+    min-width: 600px;
+    width: 100%;
+    text-align: left;
+    background-color: #322f36;
+    min-height: 90px;
+}
+
+.header_bar__inner {
+    width: 70%;
+    margin: auto;
+}
+
+.header_bar__logo {
+    font-weight: bold;
+    font-size: 25px;
+    letter-spacing: 2px;
+    color: #ffffff;
+    line-height: 70px;
+
+    a {
+	color: #ffffff;
+	text-decoration: none;
+    }
+}
+
