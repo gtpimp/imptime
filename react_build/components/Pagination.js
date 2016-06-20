@@ -21,7 +21,7 @@ export default class Pagination extends Component {
         const { dispatch, list_key } = this.props
         if (this.props.has_next_page) {
 	    dispatch(update_list_pagination(list_key, {current_page: this.props.current_page + 1}))
-	    this.props.on_changed(list_key)
+	    this.props.on_changed()
         }
     }
 
@@ -29,7 +29,7 @@ export default class Pagination extends Component {
         const { dispatch, list_key } = this.props
         if (this.props.has_prev_page) {
 	    dispatch(update_list_pagination(list_key, {current_page: this.props.current_page - 1}))
-	    this.props.on_changed(list_key)
+	    this.props.on_changed()
         }
     }
 
@@ -56,7 +56,7 @@ export default class Pagination extends Component {
 		  </div>
                 }
                   { this.props.has_next_page &&
-                    <div className="icon icon--previous-next" onClick={this.on_next_page}>
+                    <div className="icon icon--next-page" onClick={this.on_next_page}>
 			Next &gt;
 		    </div>
                   }

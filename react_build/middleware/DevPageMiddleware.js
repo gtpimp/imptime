@@ -74,10 +74,10 @@ function DevPageMiddleware(_ref) {
 		    }
 		case ANNOUNCE_ISSUE_SAVED:
 		    const issue_id = action.issue_id
-		    dispatch(invalidateIssues([issue_id]))
-		    dispatch(fetchIssuesIfNeeded(issues_list_key))
-		    dispatch(invalidateIssueGeneralDetails([issue_id]))
-		    dispatch(fetchIssueGeneralDetailsIfNeeded([issue_id]))
+		    /* dispatch(invalidateIssues([issue_id]))
+		       dispatch(fetchIssuesIfNeeded(issues_list_key))
+		       dispatch(invalidateIssueGeneralDetails([issue_id]))
+		       dispatch(fetchIssueGeneralDetailsIfNeeded([issue_id]))*/
 	    }
 	    return next(action)
 	};

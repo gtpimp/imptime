@@ -6,7 +6,7 @@ gulp.task('build', function (callback) {
         'clean',
         [
             'html',
-            'images',
+            //'images',
             'sass',
             'webpack'
         ],

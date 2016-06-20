@@ -45,10 +45,13 @@ export class IssueList extends Component {
 	dispatch(selectItems(list_key, [issue_id]))
     }
 
-    onRefresh() {
+    onRefresh(event) {
         const { dispatch, list_key } = this.props
 	dispatch(invalidateList(list_key))
 	dispatch(fetchIssuesIfNeeded(list_key))
+	if ( event ) {
+	    event.stopPropagation()
+	}
     }
 
     onChangeSubject(issue_id, obj) {

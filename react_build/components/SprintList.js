@@ -42,10 +42,13 @@ export class SprintList extends Component {
 	dispatch(selectItems(list_key, [sprint_id]))
     }
 
-    onRefresh() {
+    onRefresh(event) {
         const { dispatch, list_key } = this.props
 	dispatch(invalidateList(list_key))
 	dispatch(fetchSprintsIfNeeded(list_key))
+	if ( event ) {
+	    event.stopPropagation()
+	}
     }
 
     renderCollapsedSprint(sprint) {

@@ -40,10 +40,13 @@ export class ProjectList extends Component {
 	dispatch(selectItems(list_key, [project_id]))
     }
 
-    onRefresh() {
+    onRefresh(event) {
         const { dispatch, list_key } = this.props
 	dispatch(invalidateList(list_key))
 	dispatch(fetchProjectsIfNeeded(list_key))
+	if ( event ) {
+	    event.stopPropagation()
+	}
     }
 
     renderCollapsedProject(project) {
