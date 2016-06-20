@@ -94,7 +94,7 @@ export class IssueList extends Component {
 	const { is_loading, issues, has_items, list_key } = this.props
         return (
             <div style={{ opacity: is_loading ? 0.5 : 1 }}>
-		<div className="panel panel--wide">
+		<div className="panel panel--full">
                     <div className="panel-heading">
 			<div className="panel__title">Issues</div>
 			<div className="panel__button panel__button--collapse"
@@ -131,8 +131,12 @@ export class IssueList extends Component {
 
     render() {
 
-        const { is_loading, is_collapsed, is_expanded } = this.props
+        const { is_visible, is_loading, is_collapsed, is_expanded } = this.props
 
+	if ( ! is_visible ) {
+	    return (<div></div>)
+	}
+	
 	return (
 	    <div>
 		{ is_collapsed && this.render_collapsed() }
@@ -172,7 +176,8 @@ function mapStateToProps(state, props) {
         is_loading: l.is_loading,
 	is_collapsed: l.display_mode == "collapsed",
 	is_expanded: l.display_mode == "expanded" || !l.display_mode,
-        last_updated: l.last_updated
+        last_updated: l.last_updated,
+	is_visible: sprint_id || false
     }
 }
 

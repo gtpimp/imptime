@@ -19,11 +19,18 @@ class DevPage extends Component {
 
         return (
             <div>
-		<ProjectList key="projects" list_key="projects" />
-		<SprintList key="sprints" list_key="sprints" />
-		<IssueList key="issues" list_key="issues" />
-		<IssueDeveloperDetails key="issue_developer_details"
-				       list_key="issue_developer_details" />
+
+		<div className="devpage__navigation__lists">
+		    <ProjectList key="projects" list_key="projects"/>
+		    <SprintList key="sprints" list_key="sprints"/>
+		</div>
+
+		<div className="devpage__workarea">
+		    <IssueList key="issues" list_key="issues" />
+		    <IssueDeveloperDetails key="issue_developer_details"
+					   list_key="issue_developer_details" />
+		</div>
+		
 	    </div>
         )
     }

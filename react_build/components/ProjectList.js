@@ -92,10 +92,10 @@ export class ProjectList extends Component {
     render_expanded() {
 
         const { projects, list_key, is_loading, has_items } = this.props
-
+	
         return (
             <div style={{ opacity: is_loading ? 0.5 : 1 }}>
-		<div className="panel panel--wide">
+		<div className="panel panel--full">
                     <div className="panel-heading">
 			<div className="panel__title">Projects</div>
 			<div className="panel__buttons">
@@ -138,7 +138,7 @@ export class ProjectList extends Component {
 
 function mapStateToProps(state, props) {
     const { project, item_list } = state
-    const { list_key } = props
+    const { list_key, only_display_mode } = props
     const items_by_id = project && project.items_by_id || {}
     const l = (item_list && item_list[list_key]) || {}
     const visible_item_ids = l.visible_item_ids || []

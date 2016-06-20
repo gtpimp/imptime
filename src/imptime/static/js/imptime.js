@@ -35978,11 +35978,19 @@
 	            return _react2.default.createElement(
 	                'div',
 	                null,
-	                _react2.default.createElement(_ProjectList2.default, { key: 'projects', list_key: 'projects' }),
-	                _react2.default.createElement(_SprintList2.default, { key: 'sprints', list_key: 'sprints' }),
-	                _react2.default.createElement(_IssueList2.default, { key: 'issues', list_key: 'issues' }),
-	                _react2.default.createElement(_IssueDeveloperDetails2.default, { key: 'issue_developer_details',
-	                    list_key: 'issue_developer_details' })
+	                _react2.default.createElement(
+	                    'div',
+	                    { className: 'devpage__navigation__lists' },
+	                    _react2.default.createElement(_ProjectList2.default, { key: 'projects', list_key: 'projects' }),
+	                    _react2.default.createElement(_SprintList2.default, { key: 'sprints', list_key: 'sprints' })
+	                ),
+	                _react2.default.createElement(
+	                    'div',
+	                    { className: 'devpage__workarea' },
+	                    _react2.default.createElement(_IssueList2.default, { key: 'issues', list_key: 'issues' }),
+	                    _react2.default.createElement(_IssueDeveloperDetails2.default, { key: 'issue_developer_details',
+	                        list_key: 'issue_developer_details' })
+	                )
 	            );
 	        }
 	    }]);
@@ -36179,7 +36187,7 @@
 																	{ style: { opacity: is_loading ? 0.5 : 1 } },
 																	_react2.default.createElement(
 																					'div',
-																					{ className: 'panel panel--wide' },
+																					{ className: 'panel panel--full' },
 																					_react2.default.createElement(
 																									'div',
 																									{ className: 'panel-heading' },
@@ -36246,6 +36254,7 @@
 					var project = state.project;
 					var item_list = state.item_list;
 					var list_key = props.list_key;
+					var only_display_mode = props.only_display_mode;
 
 					var items_by_id = project && project.items_by_id || {};
 					var l = item_list && item_list[list_key] || {};
@@ -41862,17 +41871,22 @@
 
 													var _props7 = this.props;
 													var sprints = _props7.sprints;
+													var is_visible = _props7.is_visible;
 													var list_key = _props7.list_key;
 													var is_loading = _props7.is_loading;
 													var has_items = _props7.has_items;
 
+
+													if (!is_visible) {
+																	return _react2.default.createElement('div', null);
+													}
 
 													return _react2.default.createElement(
 																	'div',
 																	{ style: { opacity: is_loading ? 0.5 : 1 } },
 																	_react2.default.createElement(
 																					'div',
-																					{ className: 'panel panel--wide' },
+																					{ className: 'panel panel--full' },
 																					_react2.default.createElement(
 																									'div',
 																									{ className: 'panel-heading' },
@@ -41985,6 +41999,7 @@
 									selected_ids: l.selected_ids || [],
 									selected_items: selected_items || [],
 									has_items: items && items.length > 0,
+									is_visible: project_id || false,
 									is_loading: l.is_loading,
 									is_collapsed: l.display_mode == "collapsed",
 									is_expanded: l.display_mode == "expanded" || !l.display_mode,
@@ -42290,7 +42305,7 @@
 													{ style: { opacity: is_loading ? 0.5 : 1 } },
 													_react2.default.createElement(
 																'div',
-																{ className: 'panel panel--wide' },
+																{ className: 'panel panel--full' },
 																_react2.default.createElement(
 																			'div',
 																			{ className: 'panel-heading' },
@@ -42358,10 +42373,15 @@
 							key: 'render',
 							value: function render() {
 										var _props8 = this.props;
+										var is_visible = _props8.is_visible;
 										var is_loading = _props8.is_loading;
 										var is_collapsed = _props8.is_collapsed;
 										var is_expanded = _props8.is_expanded;
 
+
+										if (!is_visible) {
+													return _react2.default.createElement('div', null);
+										}
 
 										return _react2.default.createElement(
 													'div',
@@ -42406,7 +42426,8 @@
 							is_loading: l.is_loading,
 							is_collapsed: l.display_mode == "collapsed",
 							is_expanded: l.display_mode == "expanded" || !l.display_mode,
-							last_updated: l.last_updated
+							last_updated: l.last_updated,
+							is_visible: sprint_id || false
 				};
 	}
 
@@ -42602,18 +42623,23 @@
 	        key: 'render',
 	        value: function render() {
 	            var _props4 = this.props;
+	            var is_visible = _props4.is_visible;
 	            var issue_id = _props4.issue_id;
 	            var general_details = _props4.general_details;
 	            var is_loading = _props4.is_loading;
 
 	            var gd = general_details;
 
+	            if (!is_visible) {
+	                return _react2.default.createElement('div', null);
+	            }
+
 	            return _react2.default.createElement(
 	                'div',
 	                { style: { opacity: is_loading ? 0.5 : 1 } },
 	                _react2.default.createElement(
 	                    'div',
-	                    { className: 'panel panel--wide' },
+	                    { className: 'panel panel--full' },
 	                    _react2.default.createElement(
 	                        'div',
 	                        { className: 'panel-heading' },
@@ -42669,7 +42695,8 @@
 	    return {
 	        issue_id: issue_id,
 	        general_details: general_details,
-	        is_loading: general_details.is_loading
+	        is_loading: general_details.is_loading,
+	        is_visible: issue_id || false
 	    };
 	}
 

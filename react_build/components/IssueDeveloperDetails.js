@@ -32,12 +32,16 @@ export class IssueDeveloperDetails extends Component {
     
     render() {
 
-        const { issue_id, general_details, is_loading } = this.props
+        const { is_visible, issue_id, general_details, is_loading } = this.props
 	const gd = general_details
 
+	if ( ! is_visible ) {
+	    return (<div></div>)
+	}
+	
         return (
             <div style={{ opacity: is_loading ? 0.5 : 1 }}>
-		<div className="panel panel--wide">
+		<div className="panel panel--full">
                     <div className="panel-heading">
 			<div className="panel__title">Issue Details</div>
 			<div className="panel__buttons">
@@ -71,7 +75,8 @@ function mapStateToProps(state, props) {
     return {
         issue_id: issue_id,
 	general_details: general_details,
-        is_loading: general_details.is_loading
+        is_loading: general_details.is_loading,
+	is_visible: issue_id || false
     }
 }
 
