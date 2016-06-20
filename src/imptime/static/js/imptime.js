@@ -42933,7 +42933,7 @@
 																									{ className: 'header_bar__logo' },
 																									_react2.default.createElement(
 																													'a',
-																													{ href: 'http://www.implicitdesign.co.za' },
+																													{ href: 'http://imptime.impd.co.za' },
 																													'ImpTime'
 																									)
 																					),

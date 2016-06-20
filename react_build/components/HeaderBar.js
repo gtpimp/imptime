@@ -14,7 +14,7 @@ export class HeaderBar extends Component {
 	    <div className="header_bar">
 		<div className="header_bar__inner">
 		    <div className="header_bar__logo">
-			<a href="http://www.implicitdesign.co.za">ImpTime</a>
+			<a href="http://imptime.impd.co.za">ImpTime</a>
 		    </div>
 		    <NotificationBar />
 		</div>

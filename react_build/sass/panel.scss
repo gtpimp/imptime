@@ -49,39 +49,39 @@
     }
 
     .panel__button--add {
-	background-image: url('../images/material-icons-whiterefresh-copy.png');
+	background-image: url('../images2/material-icons-whiterefresh-copy.png');
     }
 
     .panel__button--evidence-toggle {
-	background-image: url('../images/track.png');
+	background-image: url('../images2/track.png');
 	width: 34px;
     }
 
     .panel__button--filter {
-	background-image: url('../images/material-icons-blacksearch.png');
+	background-image: url('../images2/material-icons-blacksearch.png');
 	margin-left: 0;
 	padding-left: 0; // refactor - not panel
     }
 
     .panel__button--add-filter {
-	background-image: url('../images/material-icons-blackadd.png');
+	background-image: url('../images2/material-icons-blackadd.png');
     }
 
     .panel__button--disable-filter {
-	background-image: url('../images/track.png');
+	background-image: url('../images2/track.png');
 	width: 34px;
     }
 
     .panel__button--enable-filter {
-	background-image: url('../images/track.png');
+	background-image: url('../images2/track.png');
 	width: 34px;
     }
 
     .panel__button--refresh {
-	background-image: url('../images/material-icons-whiterefresh.png');
+	background-image: url('../images2/material-icons-whiterefresh.png');
 
 	&:hover {
-	    background-image: url('../images/material-icons-whiterefresh-hover.png');
+	    background-image: url('../images2/material-icons-whiterefresh-hover.png');
 	    //background-color: rgba(0, 0, 0, 0.12);
 	    width: 24px;
 	    height: 24px;
@@ -92,22 +92,22 @@
     }
 
     .panel__button--collapse {
-	background-image: url('../images/material-icons-whiteexpand-less.png');
+	background-image: url('../images2/material-icons-whiteexpand-less.png');
     }
 
     .panel__button--expand {
-	background-image: url('../images/material-icons-whiteexpand-more.png');
+	background-image: url('../images2/material-icons-whiteexpand-more.png');
     }    
     
     .panel__button--next-page {
-	background-image: url('../images/material-icons-blackchevron-right.png');
+	background-image: url('../images2/material-icons-blackchevron-right.png');
 	margin: 0;
 	padding-left: 0;
 	padding-right: 0;
     }
 
     .panel__button--previous-page {
-	background-image: url('../images/material-icons-blackchevron-left.png');
+	background-image: url('../images2/material-icons-blackchevron-left.png');
 	margin: 0;
 	padding-left: 0;
 	padding-right: $padding-small;

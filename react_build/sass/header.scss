@@ -10,8 +10,9 @@
 }
 
 .header_bar__inner {
-    width: 70%;
+    width: 100%;
     margin: auto;
+    padding: 10px;
 }
 
 .header_bar__logo {
@@ -20,6 +21,10 @@
     letter-spacing: 2px;
     color: #ffffff;
     line-height: 70px;
+    background-image: url('../images2/logo_header.png');
+    background-repeat: no-repeat;
+    padding-left: 40px;
+    padding-top: 10px;
 
     a {
 	color: #ffffff;
