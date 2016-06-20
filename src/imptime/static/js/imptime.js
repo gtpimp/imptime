@@ -36056,6 +36056,7 @@
 									var _this = _possibleConstructorReturn(this, Object.getPrototypeOf(ProjectList).call(this, props));
 
 									_this.onRefresh = _this.onRefresh.bind(_this);
+									_this.onChangePage = _this.onChangePage.bind(_this);
 									_this.onCollapse = _this.onCollapse.bind(_this);
 									_this.onExpand = _this.onExpand.bind(_this);
 									return _this;
@@ -36098,12 +36099,22 @@
 													dispatch((0, _ItemList.selectItems)(list_key, [project_id]));
 									}
 					}, {
-									key: 'onRefresh',
-									value: function onRefresh(event) {
+									key: 'onChangePage',
+									value: function onChangePage() {
 													var _props5 = this.props;
 													var dispatch = _props5.dispatch;
-													var project_ids = _props5.project_ids;
 													var list_key = _props5.list_key;
+
+													dispatch((0, _ItemList.invalidateList)(list_key));
+													dispatch((0, _Projects.fetchProjectsIfNeeded)(list_key));
+									}
+					}, {
+									key: 'onRefresh',
+									value: function onRefresh(event) {
+													var _props6 = this.props;
+													var dispatch = _props6.dispatch;
+													var project_ids = _props6.project_ids;
+													var list_key = _props6.list_key;
 
 													dispatch((0, _ItemList.invalidateList)(list_key));
 													dispatch((0, _Projects.invalidateProjects)(project_ids));
@@ -36129,9 +36140,9 @@
 									value: function render_collapsed() {
 													var _this2 = this;
 
-													var _props6 = this.props;
-													var projects = _props6.projects;
-													var selected_items = _props6.selected_items;
+													var _props7 = this.props;
+													var projects = _props7.projects;
+													var selected_items = _props7.selected_items;
 
 
 													return _react2.default.createElement(
@@ -36185,11 +36196,11 @@
 									value: function render_expanded() {
 													var _this4 = this;
 
-													var _props7 = this.props;
-													var projects = _props7.projects;
-													var list_key = _props7.list_key;
-													var is_loading = _props7.is_loading;
-													var has_items = _props7.has_items;
+													var _props8 = this.props;
+													var projects = _props8.projects;
+													var list_key = _props8.list_key;
+													var is_loading = _props8.is_loading;
+													var has_items = _props8.has_items;
 
 
 													return _react2.default.createElement(
@@ -36233,17 +36244,17 @@
 																													'no projects'
 																									)
 																					),
-																					_react2.default.createElement(_Pagination2.default, { list_key: list_key, on_changed: this.onRefresh })
+																					_react2.default.createElement(_Pagination2.default, { list_key: list_key, on_changed: this.onChangePage })
 																	)
 													);
 									}
 					}, {
 									key: 'render',
 									value: function render() {
-													var _props8 = this.props;
-													var is_loading = _props8.is_loading;
-													var is_collapsed = _props8.is_collapsed;
-													var is_expanded = _props8.is_expanded;
+													var _props9 = this.props;
+													var is_loading = _props9.is_loading;
+													var is_collapsed = _props9.is_collapsed;
+													var is_expanded = _props9.is_expanded;
 
 
 													return _react2.default.createElement(
@@ -41594,7 +41605,7 @@
 	        }
 	    }, {
 	        key: 'on_next_page',
-	        value: function on_next_page() {
+	        value: function on_next_page(event) {
 	            var _props2 = this.props;
 	            var dispatch = _props2.dispatch;
 	            var list_key = _props2.list_key;
@@ -41602,11 +41613,12 @@
 	            if (this.props.has_next_page) {
 	                dispatch((0, _ItemList.update_list_pagination)(list_key, { current_page: this.props.current_page + 1 }));
 	                this.props.on_changed();
+	                event.stopPropagation();
 	            }
 	        }
 	    }, {
 	        key: 'on_prev_page',
-	        value: function on_prev_page() {
+	        value: function on_prev_page(event) {
 	            var _props3 = this.props;
 	            var dispatch = _props3.dispatch;
 	            var list_key = _props3.list_key;
@@ -41614,6 +41626,7 @@
 	            if (this.props.has_prev_page) {
 	                dispatch((0, _ItemList.update_list_pagination)(list_key, { current_page: this.props.current_page - 1 }));
 	                this.props.on_changed();
+	                event.stopPropagation();
 	            }
 	        }
 	    }, {
@@ -55534,6 +55547,7 @@
 									var _this = _possibleConstructorReturn(this, Object.getPrototypeOf(SprintList).call(this, props));
 
 									_this.onRefresh = _this.onRefresh.bind(_this);
+									_this.onChangePage = _this.onChangePage.bind(_this);
 									_this.onCollapse = _this.onCollapse.bind(_this);
 									_this.onExpand = _this.onExpand.bind(_this);
 									return _this;
@@ -55579,12 +55593,22 @@
 													dispatch((0, _ItemList.selectItems)(list_key, [sprint_id]));
 									}
 					}, {
-									key: 'onRefresh',
-									value: function onRefresh(event) {
+									key: 'onChangePage',
+									value: function onChangePage() {
 													var _props5 = this.props;
 													var dispatch = _props5.dispatch;
-													var sprint_ids = _props5.sprint_ids;
 													var list_key = _props5.list_key;
+
+													dispatch((0, _ItemList.invalidateList)(list_key));
+													dispatch((0, _Sprints.fetchSprintsIfNeeded)(list_key));
+									}
+					}, {
+									key: 'onRefresh',
+									value: function onRefresh(event) {
+													var _props6 = this.props;
+													var dispatch = _props6.dispatch;
+													var sprint_ids = _props6.sprint_ids;
+													var list_key = _props6.list_key;
 
 													dispatch((0, _ItemList.invalidateList)(list_key));
 													dispatch((0, _Sprints.invalidateSprints)(sprint_ids));
@@ -55610,9 +55634,9 @@
 									value: function render_collapsed() {
 													var _this2 = this;
 
-													var _props6 = this.props;
-													var sprints = _props6.sprints;
-													var selected_items = _props6.selected_items;
+													var _props7 = this.props;
+													var sprints = _props7.sprints;
+													var selected_items = _props7.selected_items;
 
 
 													return _react2.default.createElement(
@@ -55694,12 +55718,12 @@
 									value: function render_expanded() {
 													var _this4 = this;
 
-													var _props7 = this.props;
-													var sprints = _props7.sprints;
-													var is_visible = _props7.is_visible;
-													var list_key = _props7.list_key;
-													var is_loading = _props7.is_loading;
-													var has_items = _props7.has_items;
+													var _props8 = this.props;
+													var sprints = _props8.sprints;
+													var is_visible = _props8.is_visible;
+													var list_key = _props8.list_key;
+													var is_loading = _props8.is_loading;
+													var has_items = _props8.has_items;
 
 
 													if (!is_visible) {
@@ -55747,17 +55771,17 @@
 																													'no sprints'
 																									)
 																					),
-																					_react2.default.createElement(_Pagination2.default, { list_key: list_key, on_changed: this.onRefresh })
+																					_react2.default.createElement(_Pagination2.default, { list_key: list_key, on_changed: this.onChangePage })
 																	)
 													);
 									}
 					}, {
 									key: 'render',
 									value: function render() {
-													var _props8 = this.props;
-													var is_loading = _props8.is_loading;
-													var is_collapsed = _props8.is_collapsed;
-													var is_expanded = _props8.is_expanded;
+													var _props9 = this.props;
+													var is_loading = _props9.is_loading;
+													var is_collapsed = _props9.is_collapsed;
+													var is_expanded = _props9.is_expanded;
 
 
 													return _react2.default.createElement(
@@ -55966,6 +55990,7 @@
 							var _this = _possibleConstructorReturn(this, Object.getPrototypeOf(IssueList).call(this, props));
 
 							_this.onRefresh = _this.onRefresh.bind(_this);
+							_this.onChangePage = _this.onChangePage.bind(_this);
 							_this.onCollapse = _this.onCollapse.bind(_this);
 							_this.onExpand = _this.onExpand.bind(_this);
 							_this.onChangeSubject = _this.onChangeSubject.bind(_this);
@@ -56012,12 +56037,23 @@
 										dispatch((0, _ItemList.selectItems)(list_key, [issue_id]));
 							}
 				}, {
-							key: 'onRefresh',
-							value: function onRefresh(event) {
+							key: 'onChangePage',
+							value: function onChangePage() {
 										var _props5 = this.props;
 										var dispatch = _props5.dispatch;
 										var issue_ids = _props5.issue_ids;
 										var list_key = _props5.list_key;
+
+										dispatch((0, _ItemList.invalidateList)(list_key));
+										dispatch((0, _Issues.fetchIssuesIfNeeded)(list_key));
+							}
+				}, {
+							key: 'onRefresh',
+							value: function onRefresh(event) {
+										var _props6 = this.props;
+										var dispatch = _props6.dispatch;
+										var issue_ids = _props6.issue_ids;
+										var list_key = _props6.list_key;
 
 										dispatch((0, _ItemList.invalidateList)(list_key));
 										dispatch((0, _Issues.invalidateIssues)(issue_ids));
@@ -56050,9 +56086,9 @@
 							value: function render_collapsed() {
 										var _this2 = this;
 
-										var _props6 = this.props;
-										var issues = _props6.issues;
-										var selected_items = _props6.selected_items;
+										var _props7 = this.props;
+										var issues = _props7.issues;
+										var selected_items = _props7.selected_items;
 
 
 										return _react2.default.createElement(
@@ -56152,11 +56188,11 @@
 							value: function render_expanded() {
 										var _this4 = this;
 
-										var _props7 = this.props;
-										var is_loading = _props7.is_loading;
-										var issues = _props7.issues;
-										var has_items = _props7.has_items;
-										var list_key = _props7.list_key;
+										var _props8 = this.props;
+										var is_loading = _props8.is_loading;
+										var issues = _props8.issues;
+										var has_items = _props8.has_items;
+										var list_key = _props8.list_key;
 
 										return _react2.default.createElement(
 													'div',
@@ -56232,18 +56268,18 @@
 																						'no issues'
 																			)
 																),
-																_react2.default.createElement(_Pagination2.default, { list_key: list_key, on_changed: this.onRefresh })
+																_react2.default.createElement(_Pagination2.default, { list_key: list_key, on_changed: this.onChangePage })
 													)
 										);
 							}
 				}, {
 							key: 'render',
 							value: function render() {
-										var _props8 = this.props;
-										var is_visible = _props8.is_visible;
-										var is_loading = _props8.is_loading;
-										var is_collapsed = _props8.is_collapsed;
-										var is_expanded = _props8.is_expanded;
+										var _props9 = this.props;
+										var is_visible = _props9.is_visible;
+										var is_loading = _props9.is_loading;
+										var is_collapsed = _props9.is_collapsed;
+										var is_expanded = _props9.is_expanded;
 
 
 										if (!is_visible) {

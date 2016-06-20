@@ -18,19 +18,21 @@ export default class Pagination extends Component {
         const { dispatch, context_key } = this.props
     }
 
-    on_next_page() {
+    on_next_page(event) {
         const { dispatch, list_key } = this.props
         if (this.props.has_next_page) {
 	    dispatch(update_list_pagination(list_key, {current_page: this.props.current_page + 1}))
 	    this.props.on_changed()
+	    event.stopPropagation()
         }
     }
 
-    on_prev_page() {
+    on_prev_page(event) {
         const { dispatch, list_key } = this.props
         if (this.props.has_prev_page) {
 	    dispatch(update_list_pagination(list_key, {current_page: this.props.current_page - 1}))
 	    this.props.on_changed()
+	    event.stopPropagation()
         }
     }
 

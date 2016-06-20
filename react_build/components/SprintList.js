@@ -20,6 +20,7 @@ export class SprintList extends Component {
     constructor(props) {
         super(props)
         this.onRefresh = this.onRefresh.bind(this)
+	this.onChangePage = this.onChangePage.bind(this)
 	this.onCollapse = this.onCollapse.bind(this)
 	this.onExpand = this.onExpand.bind(this)
     }
@@ -46,6 +47,12 @@ export class SprintList extends Component {
 	dispatch(selectItems(list_key, [sprint_id]))
     }
 
+    onChangePage() {
+        const { dispatch, list_key } = this.props
+	dispatch(invalidateList(list_key))
+	dispatch(fetchSprintsIfNeeded(list_key))
+    }
+    
     onRefresh(event) {
         const { dispatch, sprint_ids, list_key } = this.props
 	dispatch(invalidateList(list_key))
@@ -139,7 +146,7 @@ export class SprintList extends Component {
 			  <div className="table__no-rows">no sprints</div>
 			}
                     </div>
-		    <Pagination list_key={list_key} on_changed={this.onRefresh} />
+		    <Pagination list_key={list_key} on_changed={this.onChangePage} />
 		</div>
 
             </div>

@@ -20,6 +20,7 @@ export class ProjectList extends Component {
     constructor(props) {
         super(props)
         this.onRefresh = this.onRefresh.bind(this)
+	this.onChangePage = this.onChangePage.bind(this)
 	this.onCollapse = this.onCollapse.bind(this)
 	this.onExpand = this.onExpand.bind(this)
     }
@@ -44,6 +45,12 @@ export class ProjectList extends Component {
 	dispatch(selectItems(list_key, [project_id]))
     }
 
+    onChangePage() {
+        const { dispatch, list_key } = this.props
+	dispatch(invalidateList(list_key))
+	dispatch(fetchProjectsIfNeeded(list_key))
+    }
+    
     onRefresh(event) {
         const { dispatch, project_ids, list_key } = this.props
 	dispatch(invalidateList(list_key))
@@ -121,7 +128,7 @@ export class ProjectList extends Component {
 			  <div className="table__no-rows">no projects</div>
 			}
                     </div>
-		    <Pagination list_key={list_key} on_changed={this.onRefresh} />
+		    <Pagination list_key={list_key} on_changed={this.onChangePage} />
 		</div>
             </div>
         )

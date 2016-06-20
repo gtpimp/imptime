@@ -22,6 +22,7 @@ export class IssueList extends Component {
     constructor(props) {
         super(props)
         this.onRefresh = this.onRefresh.bind(this)
+	this.onChangePage = this.onChangePage.bind(this)	
 	this.onCollapse = this.onCollapse.bind(this)
 	this.onExpand = this.onExpand.bind(this)
 	this.onChangeSubject = this.onChangeSubject.bind(this)
@@ -49,6 +50,12 @@ export class IssueList extends Component {
 	dispatch(selectItems(list_key, [issue_id]))
     }
 
+    onChangePage() {
+        const { dispatch, issue_ids, list_key } = this.props
+	dispatch(invalidateList(list_key))
+	dispatch(fetchIssuesIfNeeded(list_key))
+    }
+    
     onRefresh(event) {
         const { dispatch, issue_ids, list_key } = this.props
 	dispatch(invalidateList(list_key))
@@ -155,7 +162,7 @@ export class IssueList extends Component {
 			  <div className="table__no-rows">no issues</div>
 			}
                     </div>
-		    <Pagination list_key={list_key} on_changed={this.onRefresh} />
+		    <Pagination list_key={list_key} on_changed={this.onChangePage} />
 		</div>
 
             </div>
