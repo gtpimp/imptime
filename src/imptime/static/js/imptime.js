@@ -36269,7 +36269,7 @@
 					var visible_item_ids = l.visible_item_ids || [];
 
 					var selected_items = items_by_id && l.selected_ids && l.selected_ids.map(function (selected_id, index) {
-									return items_by_id[selected_id] || { 'id': select_id,
+									return items_by_id[selected_id] || { 'id': selected_id,
 													'loaded': false };
 					});
 
