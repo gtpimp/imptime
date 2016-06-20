@@ -51,13 +51,12 @@ export default class Pagination extends Component {
 		</div>
                 { this.props.has_prev_page &&
                   <div className="icon icon--previous-page" onClick={this.on_prev_page}>
-		      &lt; Prev
-		      
+		      &nbsp;
 		  </div>
                 }
                   { this.props.has_next_page &&
                     <div className="icon icon--next-page" onClick={this.on_next_page}>
-			Next &gt;
+			&nbsp;
 		    </div>
                   }
             </div>

@@ -69,7 +69,7 @@
 
 	var _Root2 = _interopRequireDefault(_Root);
 
-	var _configureStore = __webpack_require__(705);
+	var _configureStore = __webpack_require__(697);
 
 	var _configureStore2 = _interopRequireDefault(_configureStore);
 
@@ -35855,7 +35855,7 @@
 
 	var _DevPage2 = _interopRequireDefault(_DevPage);
 
-	var _HeaderBar = __webpack_require__(703);
+	var _HeaderBar = __webpack_require__(695);
 
 	var _HeaderBar2 = _interopRequireDefault(_HeaderBar);
 
@@ -35943,7 +35943,7 @@
 
 	var _IssueList2 = _interopRequireDefault(_IssueList);
 
-	var _IssueDeveloperDetails = __webpack_require__(699);
+	var _IssueDeveloperDetails = __webpack_require__(691);
 
 	var _IssueDeveloperDetails2 = _interopRequireDefault(_IssueDeveloperDetails);
 
@@ -41652,12 +41652,12 @@
 	                this.props.has_prev_page && _react2.default.createElement(
 	                    'div',
 	                    { className: 'icon icon--previous-page', onClick: this.on_prev_page },
-	                    '< Prev'
+	                    ' '
 	                ),
 	                this.props.has_next_page && _react2.default.createElement(
 	                    'div',
 	                    { className: 'icon icon--next-page', onClick: this.on_next_page },
-	                    'Next >'
+	                    ' '
 	                )
 	            );
 	        }
@@ -42162,15 +42162,15 @@
 
 	var _ItemList = __webpack_require__(559);
 
-	var _Issues = __webpack_require__(691);
+	var _Issues = __webpack_require__(701);
 
-	var _Issue = __webpack_require__(692);
+	var _Issue = __webpack_require__(760);
 
 	var _Pagination = __webpack_require__(687);
 
 	var _Pagination2 = _interopRequireDefault(_Pagination);
 
-	var _riek = __webpack_require__(693);
+	var _riek = __webpack_require__(754);
 
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -42527,6 +42527,691 @@
 	Object.defineProperty(exports, "__esModule", {
 	    value: true
 	});
+	exports.IssueDeveloperDetails = undefined;
+
+	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+	var _react = __webpack_require__(300);
+
+	var _react2 = _interopRequireDefault(_react);
+
+	var _reactRouter = __webpack_require__(466);
+
+	var _reactRedux = __webpack_require__(533);
+
+	var _indexOf = __webpack_require__(692);
+
+	var _indexOf2 = _interopRequireDefault(_indexOf);
+
+	var _IssueGeneralDetails = __webpack_require__(693);
+
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+	function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+	var IssueDeveloperDetails = exports.IssueDeveloperDetails = function (_Component) {
+	    _inherits(IssueDeveloperDetails, _Component);
+
+	    function IssueDeveloperDetails(props) {
+	        _classCallCheck(this, IssueDeveloperDetails);
+
+	        var _this = _possibleConstructorReturn(this, Object.getPrototypeOf(IssueDeveloperDetails).call(this, props));
+
+	        _this.onRefresh = _this.onRefresh.bind(_this);
+	        return _this;
+	    }
+
+	    _createClass(IssueDeveloperDetails, [{
+	        key: 'componentDidMount',
+	        value: function componentDidMount() {
+	            var _props = this.props;
+	            var dispatch = _props.dispatch;
+	            var issue_id = _props.issue_id;
+
+	            if (issue_id) {
+	                dispatch((0, _IssueGeneralDetails.fetchIssueGeneralDetailsIfNeeded)([issue_id]));
+	            }
+	        }
+	    }, {
+	        key: 'onClickedSprint',
+	        value: function onClickedSprint(sprint_id) {
+	            var _props2 = this.props;
+	            var dispatch = _props2.dispatch;
+	            var list_key = _props2.list_key;
+
+	            dispatch(selectItems(list_key, [sprint_id]));
+	        }
+	    }, {
+	        key: 'onRefresh',
+	        value: function onRefresh() {
+	            var _props3 = this.props;
+	            var dispatch = _props3.dispatch;
+	            var issue_id = _props3.issue_id;
+
+	            dispatch(invalidateIssueGeneralDetails([issue_id]));
+	            dispatch((0, _IssueGeneralDetails.fetchIssueGeneralDetailsIfNeeded)([issue_id]));
+	        }
+	    }, {
+	        key: 'render',
+	        value: function render() {
+	            var _props4 = this.props;
+	            var is_visible = _props4.is_visible;
+	            var issue_id = _props4.issue_id;
+	            var general_details = _props4.general_details;
+	            var is_loading = _props4.is_loading;
+
+	            var gd = general_details;
+
+	            if (!is_visible) {
+	                return _react2.default.createElement('div', null);
+	            }
+
+	            return _react2.default.createElement(
+	                'div',
+	                { className: 'issue_developer_details', style: { opacity: is_loading ? 0.5 : 1 } },
+	                _react2.default.createElement(
+	                    'div',
+	                    { className: 'panel panel--full' },
+	                    _react2.default.createElement(
+	                        'div',
+	                        { className: 'panel-heading' },
+	                        _react2.default.createElement(
+	                            'div',
+	                            { className: 'panel__title' },
+	                            'Issue Details'
+	                        ),
+	                        _react2.default.createElement(
+	                            'div',
+	                            { className: 'panel__buttons' },
+	                            _react2.default.createElement('div', { className: 'panel__button panel__button--refresh',
+	                                onClick: this.onRefresh })
+	                        )
+	                    ),
+	                    _react2.default.createElement(
+	                        'div',
+	                        { className: 'panel-body' },
+	                        _react2.default.createElement(
+	                            'h3',
+	                            null,
+	                            'issue#',
+	                            gd.number,
+	                            ': ',
+	                            gd.subject
+	                        ),
+	                        _react2.default.createElement(
+	                            'pre',
+	                            null,
+	                            gd.description
+	                        )
+	                    )
+	                )
+	            );
+	        }
+	    }]);
+
+	    return IssueDeveloperDetails;
+	}(_react.Component);
+
+	function mapStateToProps(state, props) {
+	    var item_list = state.item_list || {};
+	    var issue_general_details = state.issue_general_details || {};
+	    var list_key = props.list_key;
+
+	    var l = item_list[list_key] || {};
+	    var filter = l.filter || {};
+	    var issue_id = filter.issue_id;
+
+	    var general_details = (issue_general_details.items_by_id || {})[issue_id] || {};
+	    var is_loading = (0, _indexOf2.default)(issue_general_details.loading_item_ids || [], issue_id) !== -1;
+
+	    return {
+	        issue_id: issue_id,
+	        general_details: general_details,
+	        is_loading: general_details.is_loading,
+	        is_visible: issue_id || false
+	    };
+	}
+
+	exports.default = (0, _reactRedux.connect)(mapStateToProps)(IssueDeveloperDetails);
+
+/***/ },
+/* 692 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var baseIndexOf = __webpack_require__(606),
+	    toInteger = __webpack_require__(623);
+
+	/* Built-in method references for those with the same name as other `lodash` methods. */
+	var nativeMax = Math.max;
+
+	/**
+	 * Gets the index at which the first occurrence of `value` is found in `array`
+	 * using [`SameValueZero`](http://ecma-international.org/ecma-262/6.0/#sec-samevaluezero)
+	 * for equality comparisons. If `fromIndex` is negative, it's used as the
+	 * offset from the end of `array`.
+	 *
+	 * @static
+	 * @memberOf _
+	 * @since 0.1.0
+	 * @category Array
+	 * @param {Array} array The array to search.
+	 * @param {*} value The value to search for.
+	 * @param {number} [fromIndex=0] The index to search from.
+	 * @returns {number} Returns the index of the matched value, else `-1`.
+	 * @example
+	 *
+	 * _.indexOf([1, 2, 1, 2], 2);
+	 * // => 1
+	 *
+	 * // Search from the `fromIndex`.
+	 * _.indexOf([1, 2, 1, 2], 2, 2);
+	 * // => 3
+	 */
+	function indexOf(array, value, fromIndex) {
+	  var length = array ? array.length : 0;
+	  if (!length) {
+	    return -1;
+	  }
+	  var index = fromIndex == null ? 0 : toInteger(fromIndex);
+	  if (index < 0) {
+	    index = nativeMax(length + index, 0);
+	  }
+	  return baseIndexOf(array, value, index);
+	}
+
+	module.exports = indexOf;
+
+
+/***/ },
+/* 693 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	Object.defineProperty(exports, "__esModule", {
+	    value: true
+	});
+	exports.INVALIDATE_ISSUE_GENERAL_DETAILS = exports.ANNOUNCE_LOADING_ISSUE_GENERAL_DETAILS = exports.ANNOUNCE_ISSUE_GENERAL_DETAILS_LOAD_FAILED = exports.ANNOUNCE_ISSUE_GENERAL_DETAILS_LOADED = undefined;
+	exports.invalidateIssueGeneralDetails = invalidateIssueGeneralDetails;
+	exports.fetchIssueGeneralDetailsIfNeeded = fetchIssueGeneralDetailsIfNeeded;
+
+	var _lib = __webpack_require__(560);
+
+	var _difference = __webpack_require__(566);
+
+	var _difference2 = _interopRequireDefault(_difference);
+
+	var _keys = __webpack_require__(627);
+
+	var _keys2 = _interopRequireDefault(_keys);
+
+	var _map = __webpack_require__(635);
+
+	var _map2 = _interopRequireDefault(_map);
+
+	var _Error = __webpack_require__(694);
+
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+	var ANNOUNCE_ISSUE_GENERAL_DETAILS_LOADED = exports.ANNOUNCE_ISSUE_GENERAL_DETAILS_LOADED = 'ANNOUNCE_ISSUES_GENERAL_DETAILS_LOADED';
+	var ANNOUNCE_ISSUE_GENERAL_DETAILS_LOAD_FAILED = exports.ANNOUNCE_ISSUE_GENERAL_DETAILS_LOAD_FAILED = 'ANNOUNCE_ISSUE_GENERAL_DETAILS_LOAD_FAILED';
+	var ANNOUNCE_LOADING_ISSUE_GENERAL_DETAILS = exports.ANNOUNCE_LOADING_ISSUE_GENERAL_DETAILS = 'ANNOUNCE_LOADING_ISSUE_GENERAL_DETAILS';
+	var INVALIDATE_ISSUE_GENERAL_DETAILS = exports.INVALIDATE_ISSUE_GENERAL_DETAILS = 'INVALIDATE_ISSUE_GENERAL_DETAILS';
+
+	function invalidateIssueGeneralDetails(issue_ids_to_invalidate) {
+	    return {
+	        type: INVALIDATE_ISSUE_GENERAL_DETAILS,
+	        issue_ids_to_invalidate: issue_ids_to_invalidate
+	    };
+	}
+
+	function announceLoadingIssueGeneralDetails() {
+	    return {
+	        type: ANNOUNCE_LOADING_ISSUE_GENERAL_DETAILS
+	    };
+	}
+
+	function announceIssueGeneralDetailsLoaded(payload) {
+
+	    var items_by_id = {};
+	    payload.issues.map(function (item, index) {
+	        items_by_id[item.id] = item;
+	    });
+
+	    return {
+	        type: ANNOUNCE_ISSUE_GENERAL_DETAILS_LOADED,
+	        items_by_id: items_by_id,
+	        received_at: Date.now()
+	    };
+	}
+
+	function announceIssueGeneralDetailsLoadFailed(error_message) {
+	    return {
+	        type: ANNOUNCE_ISSUE_GENERAL_DETAILS_LOAD_FAILED,
+	        error_message: error_message,
+	        received_at: Date.now()
+	    };
+	}
+
+	function fetchIssueGeneralDetails(dispatch, issue_ids) {
+	    return function (dispatch, getState) {
+	        dispatch(announceLoadingIssueGeneralDetails());
+
+	        var params = { filter: { ids: issue_ids },
+	            format: { detail_level: 'general' },
+	            pagination: { 'enabled': false } };
+
+	        return (0, _lib.impfetch)('/imp/issue/', { params: params }).then(function (response) {
+	            return response.json();
+	        }).then(function (json) {
+	            if (json.status != 'success') {
+	                dispatch(announceIssueGeneralDetailsLoadFailed(json.error));
+	            } else {
+	                dispatch(announceIssueGeneralDetailsLoaded(json.payload));
+	            }
+	        }).catch(function (error) {
+	            dispatch(announceIssueGeneralDetailsLoadFailed("Failed to load issues: " + error.message));
+	        });
+	    };
+	}
+
+	function getMissingIssueGeneralDetails(state, required_issue_ids) {
+	    var matching_items = state.issue_general_details || {};
+	    var matching_item_ids = (0, _keys2.default)(matching_items.items_by_id || {});
+	    var matching_item_refs = matching_item_ids.map(function (item_id, index) {
+	        return "" + item_id;
+	    });
+	    var required_item_refs = required_issue_ids.map(function (item_id, index) {
+	        return "" + item_id;
+	    });
+	    var unmatching_item_ids = (0, _difference2.default)(required_item_refs, matching_item_refs);
+	    return unmatching_item_ids;
+	}
+
+	function fetchIssueGeneralDetailsIfNeeded(issue_ids) {
+	    return function (dispatch, getState) {
+	        var state = getState();
+	        var missing_issue_ids = getMissingIssueGeneralDetails(dispatch, issue_ids);
+	        if (missing_issue_ids.length > 0) {
+	            dispatch(fetchIssueGeneralDetails(dispatch, missing_issue_ids));
+	        }
+	    };
+	}
+
+/***/ },
+/* 694 */
+/***/ function(module, exports) {
+
+	'use strict';
+
+	Object.defineProperty(exports, "__esModule", {
+	    value: true
+	});
+	exports.setErrorMessage = setErrorMessage;
+	exports.clearErrorMessage = clearErrorMessage;
+	var SET_ERROR_MESSAGE = exports.SET_ERROR_MESSAGE = 'SET_ERROR_MESSAGE';
+
+	function setErrorMessage(error_message) {
+	    return {
+	        type: SET_ERROR_MESSAGE,
+	        error_message: error_message
+	    };
+	}
+
+	function clearErrorMessage() {
+	    return setErrorMessage(null);
+	}
+
+/***/ },
+/* 695 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	Object.defineProperty(exports, "__esModule", {
+					value: true
+	});
+	exports.HeaderBar = undefined;
+
+	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+	var _react = __webpack_require__(300);
+
+	var _react2 = _interopRequireDefault(_react);
+
+	var _reactRouter = __webpack_require__(466);
+
+	var _reactRedux = __webpack_require__(533);
+
+	var _NotificationBar = __webpack_require__(696);
+
+	var _NotificationBar2 = _interopRequireDefault(_NotificationBar);
+
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+	function _objectDestructuringEmpty(obj) { if (obj == null) throw new TypeError("Cannot destructure undefined"); }
+
+	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+	function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+	var HeaderBar = exports.HeaderBar = function (_Component) {
+					_inherits(HeaderBar, _Component);
+
+					function HeaderBar() {
+									_classCallCheck(this, HeaderBar);
+
+									return _possibleConstructorReturn(this, Object.getPrototypeOf(HeaderBar).apply(this, arguments));
+					}
+
+					_createClass(HeaderBar, [{
+									key: 'render',
+									value: function render() {
+													_objectDestructuringEmpty(this.props);
+
+													return _react2.default.createElement(
+																	'div',
+																	{ className: 'header_bar' },
+																	_react2.default.createElement(
+																					'div',
+																					{ className: 'header_bar__inner' },
+																					_react2.default.createElement(
+																									'div',
+																									{ className: 'header_bar__logo' },
+																									_react2.default.createElement(
+																													'a',
+																													{ href: 'http://www.implicitdesign.co.za' },
+																													'ImpTime'
+																									)
+																					),
+																					_react2.default.createElement(_NotificationBar2.default, null)
+																	)
+													);
+									}
+					}]);
+
+					return HeaderBar;
+	}(_react.Component);
+
+	function mapStateToProps(state, props) {
+					return {};
+	}
+
+	exports.default = (0, _reactRedux.connect)(mapStateToProps)(HeaderBar);
+
+/***/ },
+/* 696 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	Object.defineProperty(exports, "__esModule", {
+	    value: true
+	});
+	exports.NotificationBar = undefined;
+
+	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+	var _react = __webpack_require__(300);
+
+	var _react2 = _interopRequireDefault(_react);
+
+	var _reactRouter = __webpack_require__(466);
+
+	var _reactRedux = __webpack_require__(533);
+
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+	function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+	var NotificationBar = exports.NotificationBar = function (_Component) {
+	    _inherits(NotificationBar, _Component);
+
+	    function NotificationBar() {
+	        _classCallCheck(this, NotificationBar);
+
+	        return _possibleConstructorReturn(this, Object.getPrototypeOf(NotificationBar).apply(this, arguments));
+	    }
+
+	    _createClass(NotificationBar, [{
+	        key: 'render',
+	        value: function render() {
+	            var error_message = this.props.error_message;
+
+
+	            return _react2.default.createElement(
+	                'div',
+	                null,
+	                error_message && _react2.default.createElement(
+	                    'div',
+	                    { 'class': 'error' },
+	                    error_message
+	                )
+	            );
+	        }
+	    }]);
+
+	    return NotificationBar;
+	}(_react.Component);
+
+	function mapStateToProps(state, props) {
+	    var notification_bar = state.notification_bar || {};
+	    return {
+	        error_message: notification_bar.error_message
+	    };
+	}
+
+	exports.default = (0, _reactRedux.connect)(mapStateToProps)(NotificationBar);
+
+/***/ },
+/* 697 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	Object.defineProperty(exports, "__esModule", {
+	    value: true
+	});
+	exports.default = configureStore;
+
+	var _redux = __webpack_require__(540);
+
+	var _reduxThunk = __webpack_require__(698);
+
+	var _reduxThunk2 = _interopRequireDefault(_reduxThunk);
+
+	var _error_catcher = __webpack_require__(699);
+
+	var _error_catcher2 = _interopRequireDefault(_error_catcher);
+
+	var _DevPageMiddleware = __webpack_require__(700);
+
+	var _DevPageMiddleware2 = _interopRequireDefault(_DevPageMiddleware);
+
+	var _reducers = __webpack_require__(702);
+
+	var _reducers2 = _interopRequireDefault(_reducers);
+
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+	function configureStore(initialState) {
+
+	    return (0, _redux.createStore)(_reducers2.default, initialState, (0, _redux.compose)((0, _redux.applyMiddleware)(_reduxThunk2.default, _DevPageMiddleware2.default, _error_catcher2.default), window.devToolsExtension ? window.devToolsExtension() : function (f) {
+	        return f;
+	    }));
+	}
+
+/***/ },
+/* 698 */
+/***/ function(module, exports) {
+
+	'use strict';
+
+	exports.__esModule = true;
+	function createThunkMiddleware(extraArgument) {
+	  return function (_ref) {
+	    var dispatch = _ref.dispatch;
+	    var getState = _ref.getState;
+	    return function (next) {
+	      return function (action) {
+	        if (typeof action === 'function') {
+	          return action(dispatch, getState, extraArgument);
+	        }
+
+	        return next(action);
+	      };
+	    };
+	  };
+	}
+
+	var thunk = createThunkMiddleware();
+	thunk.withExtraArgument = createThunkMiddleware;
+
+	exports['default'] = thunk;
+
+/***/ },
+/* 699 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	var _Error = __webpack_require__(694);
+
+	var _indexOf = __webpack_require__(692);
+
+	var _indexOf2 = _interopRequireDefault(_indexOf);
+
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+	var ACTIONS_TO_IGNORE = [];
+
+	function error_catcher_middleware(_ref) {
+	    var dispatch = _ref.dispatch;
+	    var getState = _ref.getState;
+
+	    return function (next) {
+	        return function (action) {
+
+	            if (action && action.type.indexOf('FAILED') !== -1 && ACTIONS_TO_IGNORE.indexOf(action.type) == -1) {
+	                dispatch((0, _Error.setErrorMessage)("Error: " + action.error_message));
+	            }
+	            return next(action);
+	        };
+	    };
+	}
+
+	module.exports = error_catcher_middleware;
+
+/***/ },
+/* 700 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	var _Error = __webpack_require__(694);
+
+	var _indexOf = __webpack_require__(692);
+
+	var _indexOf2 = _interopRequireDefault(_indexOf);
+
+	var _ItemList = __webpack_require__(559);
+
+	var _Issue = __webpack_require__(760);
+
+	var _Sprints = __webpack_require__(689);
+
+	var _Issues = __webpack_require__(701);
+
+	var _IssueGeneralDetails = __webpack_require__(693);
+
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+	var sprints_list_key = 'sprints';
+	var projects_list_key = 'projects';
+	var issues_list_key = 'issues';
+	var issue_details_developer_key = 'issue_developer_details';
+
+	function DevPageMiddleware(_ref) {
+		var dispatch = _ref.dispatch;
+		var getState = _ref.getState;
+
+		return function (next) {
+			return function (action) {
+
+				switch (action.type) {
+					case _ItemList.UPDATE_LIST_SELECTION:
+
+						var selected_ids = action.selected_ids || [];
+						var selected_id = selected_ids.length > 0 && selected_ids[0] || null;
+
+						if (action.list_key == projects_list_key) {
+							// Change selected project
+							dispatch((0, _ItemList.update_list_filter)(sprints_list_key, { project_id: selected_id }));
+							dispatch((0, _ItemList.invalidateList)(sprints_list_key));
+							dispatch((0, _Sprints.fetchSprintsIfNeeded)(sprints_list_key));
+
+							if (selected_id) {
+								dispatch((0, _ItemList.collapse_list)(projects_list_key));
+								dispatch((0, _ItemList.collapse_list)(issues_list_key));
+								dispatch((0, _ItemList.expand_list)(sprints_list_key));
+							}
+
+							dispatch((0, _ItemList.unselectAllItems)(sprints_list_key));
+							dispatch((0, _ItemList.unselectAllItems)(issues_list_key));
+							dispatch((0, _ItemList.update_list_filter)(issue_details_developer_key, { issue_id: null }));
+						} else if (action.list_key == sprints_list_key) {
+							// Change selected sprint
+							dispatch((0, _ItemList.update_list_filter)(issues_list_key, { sprint_id: selected_id }));
+							dispatch((0, _ItemList.invalidateList)(issues_list_key));
+							dispatch((0, _Issues.fetchIssuesIfNeeded)(issues_list_key));
+
+							if (selected_id) {
+								dispatch((0, _ItemList.expand_list)(issues_list_key));
+								dispatch((0, _ItemList.collapse_list)(sprints_list_key));
+							}
+
+							dispatch((0, _ItemList.unselectAllItems)(issues_list_key));
+							dispatch((0, _ItemList.update_list_filter)(issue_details_developer_key, { issue_id: null }));
+						} else if (action.list_key == issues_list_key) {
+							// Change selected issue
+							var _issue_id = selected_id;
+							dispatch((0, _ItemList.update_list_filter)(issue_details_developer_key, { issue_id: _issue_id }));
+							dispatch((0, _IssueGeneralDetails.invalidateIssueGeneralDetails)([_issue_id]));
+							dispatch((0, _IssueGeneralDetails.fetchIssueGeneralDetailsIfNeeded)([_issue_id]));
+						}
+					case _Issue.ANNOUNCE_ISSUE_SAVED:
+						var issue_id = action.issue_id;
+					/* dispatch(invalidateIssues([issue_id]))
+	       dispatch(fetchIssuesIfNeeded(issues_list_key))
+	       dispatch(invalidateIssueGeneralDetails([issue_id]))
+	       dispatch(fetchIssueGeneralDetailsIfNeeded([issue_id]))*/
+				}
+				return next(action);
+			};
+		};
+	}
+
+	module.exports = DevPageMiddleware;
+
+/***/ },
+/* 701 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	Object.defineProperty(exports, "__esModule", {
+	    value: true
+	});
 	exports.INVALIDATE_ISSUES = exports.ANNOUNCE_LOADING_ISSUES = exports.ANNOUNCE_ISSUES_LOAD_FAILED = exports.ANNOUNCE_ISSUES_LOADED = undefined;
 	exports.invalidateIssues = invalidateIssues;
 	exports.refreshIssues = refreshIssues;
@@ -42628,7 +43313,7 @@
 	}
 
 /***/ },
-/* 692 */
+/* 702 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -42636,87 +43321,2124 @@
 	Object.defineProperty(exports, "__esModule", {
 	    value: true
 	});
-	exports.ANNOUNCE_ISSUE_SAVE_FAILED = exports.ANNOUNCE_ISSUE_SAVED = exports.ANNOUNCE_ISSUE_SAVING = undefined;
-	exports.updateIssueSubject = updateIssueSubject;
 
-	var _lib = __webpack_require__(560);
+	var _merge = __webpack_require__(703);
 
-	var _difference = __webpack_require__(566);
+	var _merge2 = _interopRequireDefault(_merge);
 
-	var _difference2 = _interopRequireDefault(_difference);
+	var _reactRouterRedux = __webpack_require__(527);
 
-	var _keys = __webpack_require__(627);
-
-	var _keys2 = _interopRequireDefault(_keys);
+	var _redux = __webpack_require__(540);
 
 	var _map = __webpack_require__(635);
 
 	var _map2 = _interopRequireDefault(_map);
 
+	var _item_list = __webpack_require__(743);
+
+	var _item_list2 = _interopRequireDefault(_item_list);
+
+	var _project = __webpack_require__(744);
+
+	var _project2 = _interopRequireDefault(_project);
+
+	var _sprint = __webpack_require__(746);
+
+	var _sprint2 = _interopRequireDefault(_sprint);
+
+	var _issue = __webpack_require__(747);
+
+	var _issue2 = _interopRequireDefault(_issue);
+
+	var _issue_general_details = __webpack_require__(752);
+
+	var _issue_general_details2 = _interopRequireDefault(_issue_general_details);
+
+	var _notification_bar = __webpack_require__(753);
+
+	var _notification_bar2 = _interopRequireDefault(_notification_bar);
+
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+	var rootReducer = (0, _redux.combineReducers)({
+	    routing: _reactRouterRedux.routerReducer,
+	    project: _project2.default,
+	    sprint: _sprint2.default,
+	    issue: _issue2.default,
+	    issue_general_details: _issue_general_details2.default,
+	    item_list: _item_list2.default,
+	    notification_bar: _notification_bar2.default
+	});
+
+	exports.default = rootReducer;
+
+/***/ },
+/* 703 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var baseMerge = __webpack_require__(704),
+	    createAssigner = __webpack_require__(741);
+
+	/**
+	 * This method is like `_.assign` except that it recursively merges own and
+	 * inherited enumerable string keyed properties of source objects into the
+	 * destination object. Source properties that resolve to `undefined` are
+	 * skipped if a destination value exists. Array and plain object properties
+	 * are merged recursively. Other objects and value types are overridden by
+	 * assignment. Source objects are applied from left to right. Subsequent
+	 * sources overwrite property assignments of previous sources.
+	 *
+	 * **Note:** This method mutates `object`.
+	 *
+	 * @static
+	 * @memberOf _
+	 * @since 0.5.0
+	 * @category Object
+	 * @param {Object} object The destination object.
+	 * @param {...Object} [sources] The source objects.
+	 * @returns {Object} Returns `object`.
+	 * @example
+	 *
+	 * var users = {
+	 *   'data': [{ 'user': 'barney' }, { 'user': 'fred' }]
+	 * };
+	 *
+	 * var ages = {
+	 *   'data': [{ 'age': 36 }, { 'age': 40 }]
+	 * };
+	 *
+	 * _.merge(users, ages);
+	 * // => { 'data': [{ 'user': 'barney', 'age': 36 }, { 'user': 'fred', 'age': 40 }] }
+	 */
+	var merge = createAssigner(function(object, source, srcIndex) {
+	  baseMerge(object, source, srcIndex);
+	});
+
+	module.exports = merge;
+
+
+/***/ },
+/* 704 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var Stack = __webpack_require__(639),
+	    arrayEach = __webpack_require__(705),
+	    assignMergeValue = __webpack_require__(706),
+	    baseMergeDeep = __webpack_require__(707),
+	    isArray = __webpack_require__(565),
+	    isObject = __webpack_require__(577),
+	    isTypedArray = __webpack_require__(660),
+	    keysIn = __webpack_require__(737);
+
+	/**
+	 * The base implementation of `_.merge` without support for multiple sources.
+	 *
+	 * @private
+	 * @param {Object} object The destination object.
+	 * @param {Object} source The source object.
+	 * @param {number} srcIndex The index of `source`.
+	 * @param {Function} [customizer] The function to customize merged values.
+	 * @param {Object} [stack] Tracks traversed source values and their merged
+	 *  counterparts.
+	 */
+	function baseMerge(object, source, srcIndex, customizer, stack) {
+	  if (object === source) {
+	    return;
+	  }
+	  if (!(isArray(source) || isTypedArray(source))) {
+	    var props = keysIn(source);
+	  }
+	  arrayEach(props || source, function(srcValue, key) {
+	    if (props) {
+	      key = srcValue;
+	      srcValue = source[key];
+	    }
+	    if (isObject(srcValue)) {
+	      stack || (stack = new Stack);
+	      baseMergeDeep(object, source, key, srcIndex, baseMerge, customizer, stack);
+	    }
+	    else {
+	      var newValue = customizer
+	        ? customizer(object[key], srcValue, (key + ''), object, source, stack)
+	        : undefined;
+
+	      if (newValue === undefined) {
+	        newValue = srcValue;
+	      }
+	      assignMergeValue(object, key, newValue);
+	    }
+	  });
+	}
+
+	module.exports = baseMerge;
+
+
+/***/ },
+/* 705 */
+/***/ function(module, exports) {
+
+	/**
+	 * A specialized version of `_.forEach` for arrays without support for
+	 * iteratee shorthands.
+	 *
+	 * @private
+	 * @param {Array} [array] The array to iterate over.
+	 * @param {Function} iteratee The function invoked per iteration.
+	 * @returns {Array} Returns `array`.
+	 */
+	function arrayEach(array, iteratee) {
+	  var index = -1,
+	      length = array ? array.length : 0;
+
+	  while (++index < length) {
+	    if (iteratee(array[index], index, array) === false) {
+	      break;
+	    }
+	  }
+	  return array;
+	}
+
+	module.exports = arrayEach;
+
+
+/***/ },
+/* 706 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var eq = __webpack_require__(592);
+
+	/**
+	 * This function is like `assignValue` except that it doesn't assign
+	 * `undefined` values.
+	 *
+	 * @private
+	 * @param {Object} object The object to modify.
+	 * @param {string} key The key of the property to assign.
+	 * @param {*} value The value to assign.
+	 */
+	function assignMergeValue(object, key, value) {
+	  if ((value !== undefined && !eq(object[key], value)) ||
+	      (typeof key == 'number' && value === undefined && !(key in object))) {
+	    object[key] = value;
+	  }
+	}
+
+	module.exports = assignMergeValue;
+
+
+/***/ },
+/* 707 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var assignMergeValue = __webpack_require__(706),
+	    baseClone = __webpack_require__(708),
+	    copyArray = __webpack_require__(713),
+	    isArguments = __webpack_require__(615),
+	    isArray = __webpack_require__(565),
+	    isArrayLikeObject = __webpack_require__(616),
+	    isFunction = __webpack_require__(576),
+	    isObject = __webpack_require__(577),
+	    isPlainObject = __webpack_require__(542),
+	    isTypedArray = __webpack_require__(660),
+	    toPlainObject = __webpack_require__(736);
+
+	/**
+	 * A specialized version of `baseMerge` for arrays and objects which performs
+	 * deep merges and tracks traversed objects enabling objects with circular
+	 * references to be merged.
+	 *
+	 * @private
+	 * @param {Object} object The destination object.
+	 * @param {Object} source The source object.
+	 * @param {string} key The key of the value to merge.
+	 * @param {number} srcIndex The index of `source`.
+	 * @param {Function} mergeFunc The function to merge values.
+	 * @param {Function} [customizer] The function to customize assigned values.
+	 * @param {Object} [stack] Tracks traversed source values and their merged
+	 *  counterparts.
+	 */
+	function baseMergeDeep(object, source, key, srcIndex, mergeFunc, customizer, stack) {
+	  var objValue = object[key],
+	      srcValue = source[key],
+	      stacked = stack.get(srcValue);
+
+	  if (stacked) {
+	    assignMergeValue(object, key, stacked);
+	    return;
+	  }
+	  var newValue = customizer
+	    ? customizer(objValue, srcValue, (key + ''), object, source, stack)
+	    : undefined;
+
+	  var isCommon = newValue === undefined;
+
+	  if (isCommon) {
+	    newValue = srcValue;
+	    if (isArray(srcValue) || isTypedArray(srcValue)) {
+	      if (isArray(objValue)) {
+	        newValue = objValue;
+	      }
+	      else if (isArrayLikeObject(objValue)) {
+	        newValue = copyArray(objValue);
+	      }
+	      else {
+	        isCommon = false;
+	        newValue = baseClone(srcValue, true);
+	      }
+	    }
+	    else if (isPlainObject(srcValue) || isArguments(srcValue)) {
+	      if (isArguments(objValue)) {
+	        newValue = toPlainObject(objValue);
+	      }
+	      else if (!isObject(objValue) || (srcIndex && isFunction(objValue))) {
+	        isCommon = false;
+	        newValue = baseClone(srcValue, true);
+	      }
+	      else {
+	        newValue = objValue;
+	      }
+	    }
+	    else {
+	      isCommon = false;
+	    }
+	  }
+	  stack.set(srcValue, newValue);
+
+	  if (isCommon) {
+	    // Recursively merge objects and arrays (susceptible to call stack limits).
+	    mergeFunc(newValue, srcValue, srcIndex, customizer, stack);
+	  }
+	  stack['delete'](srcValue);
+	  assignMergeValue(object, key, newValue);
+	}
+
+	module.exports = baseMergeDeep;
+
+
+/***/ },
+/* 708 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var Stack = __webpack_require__(639),
+	    arrayEach = __webpack_require__(705),
+	    assignValue = __webpack_require__(709),
+	    baseAssign = __webpack_require__(710),
+	    cloneBuffer = __webpack_require__(712),
+	    copyArray = __webpack_require__(713),
+	    copySymbols = __webpack_require__(714),
+	    getAllKeys = __webpack_require__(717),
+	    getTag = __webpack_require__(655),
+	    initCloneArray = __webpack_require__(719),
+	    initCloneByTag = __webpack_require__(720),
+	    initCloneObject = __webpack_require__(731),
+	    isArray = __webpack_require__(565),
+	    isBuffer = __webpack_require__(733),
+	    isHostObject = __webpack_require__(544),
+	    isObject = __webpack_require__(577),
+	    keys = __webpack_require__(627);
+
+	/** `Object#toString` result references. */
+	var argsTag = '[object Arguments]',
+	    arrayTag = '[object Array]',
+	    boolTag = '[object Boolean]',
+	    dateTag = '[object Date]',
+	    errorTag = '[object Error]',
+	    funcTag = '[object Function]',
+	    genTag = '[object GeneratorFunction]',
+	    mapTag = '[object Map]',
+	    numberTag = '[object Number]',
+	    objectTag = '[object Object]',
+	    regexpTag = '[object RegExp]',
+	    setTag = '[object Set]',
+	    stringTag = '[object String]',
+	    symbolTag = '[object Symbol]',
+	    weakMapTag = '[object WeakMap]';
+
+	var arrayBufferTag = '[object ArrayBuffer]',
+	    dataViewTag = '[object DataView]',
+	    float32Tag = '[object Float32Array]',
+	    float64Tag = '[object Float64Array]',
+	    int8Tag = '[object Int8Array]',
+	    int16Tag = '[object Int16Array]',
+	    int32Tag = '[object Int32Array]',
+	    uint8Tag = '[object Uint8Array]',
+	    uint8ClampedTag = '[object Uint8ClampedArray]',
+	    uint16Tag = '[object Uint16Array]',
+	    uint32Tag = '[object Uint32Array]';
+
+	/** Used to identify `toStringTag` values supported by `_.clone`. */
+	var cloneableTags = {};
+	cloneableTags[argsTag] = cloneableTags[arrayTag] =
+	cloneableTags[arrayBufferTag] = cloneableTags[dataViewTag] =
+	cloneableTags[boolTag] = cloneableTags[dateTag] =
+	cloneableTags[float32Tag] = cloneableTags[float64Tag] =
+	cloneableTags[int8Tag] = cloneableTags[int16Tag] =
+	cloneableTags[int32Tag] = cloneableTags[mapTag] =
+	cloneableTags[numberTag] = cloneableTags[objectTag] =
+	cloneableTags[regexpTag] = cloneableTags[setTag] =
+	cloneableTags[stringTag] = cloneableTags[symbolTag] =
+	cloneableTags[uint8Tag] = cloneableTags[uint8ClampedTag] =
+	cloneableTags[uint16Tag] = cloneableTags[uint32Tag] = true;
+	cloneableTags[errorTag] = cloneableTags[funcTag] =
+	cloneableTags[weakMapTag] = false;
+
+	/**
+	 * The base implementation of `_.clone` and `_.cloneDeep` which tracks
+	 * traversed objects.
+	 *
+	 * @private
+	 * @param {*} value The value to clone.
+	 * @param {boolean} [isDeep] Specify a deep clone.
+	 * @param {boolean} [isFull] Specify a clone including symbols.
+	 * @param {Function} [customizer] The function to customize cloning.
+	 * @param {string} [key] The key of `value`.
+	 * @param {Object} [object] The parent object of `value`.
+	 * @param {Object} [stack] Tracks traversed objects and their clone counterparts.
+	 * @returns {*} Returns the cloned value.
+	 */
+	function baseClone(value, isDeep, isFull, customizer, key, object, stack) {
+	  var result;
+	  if (customizer) {
+	    result = object ? customizer(value, key, object, stack) : customizer(value);
+	  }
+	  if (result !== undefined) {
+	    return result;
+	  }
+	  if (!isObject(value)) {
+	    return value;
+	  }
+	  var isArr = isArray(value);
+	  if (isArr) {
+	    result = initCloneArray(value);
+	    if (!isDeep) {
+	      return copyArray(value, result);
+	    }
+	  } else {
+	    var tag = getTag(value),
+	        isFunc = tag == funcTag || tag == genTag;
+
+	    if (isBuffer(value)) {
+	      return cloneBuffer(value, isDeep);
+	    }
+	    if (tag == objectTag || tag == argsTag || (isFunc && !object)) {
+	      if (isHostObject(value)) {
+	        return object ? value : {};
+	      }
+	      result = initCloneObject(isFunc ? {} : value);
+	      if (!isDeep) {
+	        return copySymbols(value, baseAssign(result, value));
+	      }
+	    } else {
+	      if (!cloneableTags[tag]) {
+	        return object ? value : {};
+	      }
+	      result = initCloneByTag(value, tag, baseClone, isDeep);
+	    }
+	  }
+	  // Check for circular references and return its corresponding clone.
+	  stack || (stack = new Stack);
+	  var stacked = stack.get(value);
+	  if (stacked) {
+	    return stacked;
+	  }
+	  stack.set(value, result);
+
+	  if (!isArr) {
+	    var props = isFull ? getAllKeys(value) : keys(value);
+	  }
+	  // Recursively populate clone (susceptible to call stack limits).
+	  arrayEach(props || value, function(subValue, key) {
+	    if (props) {
+	      key = subValue;
+	      subValue = value[key];
+	    }
+	    assignValue(result, key, baseClone(subValue, isDeep, isFull, customizer, key, value, stack));
+	  });
+	  return result;
+	}
+
+	module.exports = baseClone;
+
+
+/***/ },
+/* 709 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var eq = __webpack_require__(592);
+
+	/** Used for built-in method references. */
+	var objectProto = Object.prototype;
+
+	/** Used to check objects for own properties. */
+	var hasOwnProperty = objectProto.hasOwnProperty;
+
+	/**
+	 * Assigns `value` to `key` of `object` if the existing value is not equivalent
+	 * using [`SameValueZero`](http://ecma-international.org/ecma-262/6.0/#sec-samevaluezero)
+	 * for equality comparisons.
+	 *
+	 * @private
+	 * @param {Object} object The object to modify.
+	 * @param {string} key The key of the property to assign.
+	 * @param {*} value The value to assign.
+	 */
+	function assignValue(object, key, value) {
+	  var objValue = object[key];
+	  if (!(hasOwnProperty.call(object, key) && eq(objValue, value)) ||
+	      (value === undefined && !(key in object))) {
+	    object[key] = value;
+	  }
+	}
+
+	module.exports = assignValue;
+
+
+/***/ },
+/* 710 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var copyObject = __webpack_require__(711),
+	    keys = __webpack_require__(627);
+
+	/**
+	 * The base implementation of `_.assign` without support for multiple sources
+	 * or `customizer` functions.
+	 *
+	 * @private
+	 * @param {Object} object The destination object.
+	 * @param {Object} source The source object.
+	 * @returns {Object} Returns `object`.
+	 */
+	function baseAssign(object, source) {
+	  return object && copyObject(source, keys(source), object);
+	}
+
+	module.exports = baseAssign;
+
+
+/***/ },
+/* 711 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var assignValue = __webpack_require__(709);
+
+	/**
+	 * Copies properties of `source` to `object`.
+	 *
+	 * @private
+	 * @param {Object} source The object to copy properties from.
+	 * @param {Array} props The property identifiers to copy.
+	 * @param {Object} [object={}] The object to copy properties to.
+	 * @param {Function} [customizer] The function to customize copied values.
+	 * @returns {Object} Returns `object`.
+	 */
+	function copyObject(source, props, object, customizer) {
+	  object || (object = {});
+
+	  var index = -1,
+	      length = props.length;
+
+	  while (++index < length) {
+	    var key = props[index];
+
+	    var newValue = customizer
+	      ? customizer(object[key], source[key], key, object, source)
+	      : source[key];
+
+	    assignValue(object, key, newValue);
+	  }
+	  return object;
+	}
+
+	module.exports = copyObject;
+
+
+/***/ },
+/* 712 */
+/***/ function(module, exports) {
+
+	/**
+	 * Creates a clone of  `buffer`.
+	 *
+	 * @private
+	 * @param {Buffer} buffer The buffer to clone.
+	 * @param {boolean} [isDeep] Specify a deep clone.
+	 * @returns {Buffer} Returns the cloned buffer.
+	 */
+	function cloneBuffer(buffer, isDeep) {
+	  if (isDeep) {
+	    return buffer.slice();
+	  }
+	  var result = new buffer.constructor(buffer.length);
+	  buffer.copy(result);
+	  return result;
+	}
+
+	module.exports = cloneBuffer;
+
+
+/***/ },
+/* 713 */
+/***/ function(module, exports) {
+
+	/**
+	 * Copies the values of `source` to `array`.
+	 *
+	 * @private
+	 * @param {Array} source The array to copy values from.
+	 * @param {Array} [array=[]] The array to copy values to.
+	 * @returns {Array} Returns `array`.
+	 */
+	function copyArray(source, array) {
+	  var index = -1,
+	      length = source.length;
+
+	  array || (array = Array(length));
+	  while (++index < length) {
+	    array[index] = source[index];
+	  }
+	  return array;
+	}
+
+	module.exports = copyArray;
+
+
+/***/ },
+/* 714 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var copyObject = __webpack_require__(711),
+	    getSymbols = __webpack_require__(715);
+
+	/**
+	 * Copies own symbol properties of `source` to `object`.
+	 *
+	 * @private
+	 * @param {Object} source The object to copy symbols from.
+	 * @param {Object} [object={}] The object to copy symbols to.
+	 * @returns {Object} Returns `object`.
+	 */
+	function copySymbols(source, object) {
+	  return copyObject(source, getSymbols(source), object);
+	}
+
+	module.exports = copySymbols;
+
+
+/***/ },
+/* 715 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var stubArray = __webpack_require__(716);
+
+	/** Built-in value references. */
+	var getOwnPropertySymbols = Object.getOwnPropertySymbols;
+
+	/**
+	 * Creates an array of the own enumerable symbol properties of `object`.
+	 *
+	 * @private
+	 * @param {Object} object The object to query.
+	 * @returns {Array} Returns the array of symbols.
+	 */
+	function getSymbols(object) {
+	  // Coerce `object` to an object to avoid non-object errors in V8.
+	  // See https://bugs.chromium.org/p/v8/issues/detail?id=3443 for more details.
+	  return getOwnPropertySymbols(Object(object));
+	}
+
+	// Fallback for IE < 11.
+	if (!getOwnPropertySymbols) {
+	  getSymbols = stubArray;
+	}
+
+	module.exports = getSymbols;
+
+
+/***/ },
+/* 716 */
+/***/ function(module, exports) {
+
+	/**
+	 * A method that returns a new empty array.
+	 *
+	 * @static
+	 * @memberOf _
+	 * @since 4.13.0
+	 * @category Util
+	 * @returns {Array} Returns the new empty array.
+	 * @example
+	 *
+	 * var arrays = _.times(2, _.stubArray);
+	 *
+	 * console.log(arrays);
+	 * // => [[], []]
+	 *
+	 * console.log(arrays[0] === arrays[1]);
+	 * // => false
+	 */
+	function stubArray() {
+	  return [];
+	}
+
+	module.exports = stubArray;
+
+
+/***/ },
+/* 717 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var baseGetAllKeys = __webpack_require__(718),
+	    getSymbols = __webpack_require__(715),
+	    keys = __webpack_require__(627);
+
+	/**
+	 * Creates an array of own enumerable property names and symbols of `object`.
+	 *
+	 * @private
+	 * @param {Object} object The object to query.
+	 * @returns {Array} Returns the array of property names and symbols.
+	 */
+	function getAllKeys(object) {
+	  return baseGetAllKeys(object, keys, getSymbols);
+	}
+
+	module.exports = getAllKeys;
+
+
+/***/ },
+/* 718 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var arrayPush = __webpack_require__(613),
+	    isArray = __webpack_require__(565);
+
+	/**
+	 * The base implementation of `getAllKeys` and `getAllKeysIn` which uses
+	 * `keysFunc` and `symbolsFunc` to get the enumerable property names and
+	 * symbols of `object`.
+	 *
+	 * @private
+	 * @param {Object} object The object to query.
+	 * @param {Function} keysFunc The function to get the keys of `object`.
+	 * @param {Function} symbolsFunc The function to get the symbols of `object`.
+	 * @returns {Array} Returns the array of property names and symbols.
+	 */
+	function baseGetAllKeys(object, keysFunc, symbolsFunc) {
+	  var result = keysFunc(object);
+	  return isArray(object) ? result : arrayPush(result, symbolsFunc(object));
+	}
+
+	module.exports = baseGetAllKeys;
+
+
+/***/ },
+/* 719 */
+/***/ function(module, exports) {
+
+	/** Used for built-in method references. */
+	var objectProto = Object.prototype;
+
+	/** Used to check objects for own properties. */
+	var hasOwnProperty = objectProto.hasOwnProperty;
+
+	/**
+	 * Initializes an array clone.
+	 *
+	 * @private
+	 * @param {Array} array The array to clone.
+	 * @returns {Array} Returns the initialized clone.
+	 */
+	function initCloneArray(array) {
+	  var length = array.length,
+	      result = array.constructor(length);
+
+	  // Add properties assigned by `RegExp#exec`.
+	  if (length && typeof array[0] == 'string' && hasOwnProperty.call(array, 'index')) {
+	    result.index = array.index;
+	    result.input = array.input;
+	  }
+	  return result;
+	}
+
+	module.exports = initCloneArray;
+
+
+/***/ },
+/* 720 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var cloneArrayBuffer = __webpack_require__(721),
+	    cloneDataView = __webpack_require__(722),
+	    cloneMap = __webpack_require__(723),
+	    cloneRegExp = __webpack_require__(726),
+	    cloneSet = __webpack_require__(727),
+	    cloneSymbol = __webpack_require__(729),
+	    cloneTypedArray = __webpack_require__(730);
+
+	/** `Object#toString` result references. */
+	var boolTag = '[object Boolean]',
+	    dateTag = '[object Date]',
+	    mapTag = '[object Map]',
+	    numberTag = '[object Number]',
+	    regexpTag = '[object RegExp]',
+	    setTag = '[object Set]',
+	    stringTag = '[object String]',
+	    symbolTag = '[object Symbol]';
+
+	var arrayBufferTag = '[object ArrayBuffer]',
+	    dataViewTag = '[object DataView]',
+	    float32Tag = '[object Float32Array]',
+	    float64Tag = '[object Float64Array]',
+	    int8Tag = '[object Int8Array]',
+	    int16Tag = '[object Int16Array]',
+	    int32Tag = '[object Int32Array]',
+	    uint8Tag = '[object Uint8Array]',
+	    uint8ClampedTag = '[object Uint8ClampedArray]',
+	    uint16Tag = '[object Uint16Array]',
+	    uint32Tag = '[object Uint32Array]';
+
+	/**
+	 * Initializes an object clone based on its `toStringTag`.
+	 *
+	 * **Note:** This function only supports cloning values with tags of
+	 * `Boolean`, `Date`, `Error`, `Number`, `RegExp`, or `String`.
+	 *
+	 * @private
+	 * @param {Object} object The object to clone.
+	 * @param {string} tag The `toStringTag` of the object to clone.
+	 * @param {Function} cloneFunc The function to clone values.
+	 * @param {boolean} [isDeep] Specify a deep clone.
+	 * @returns {Object} Returns the initialized clone.
+	 */
+	function initCloneByTag(object, tag, cloneFunc, isDeep) {
+	  var Ctor = object.constructor;
+	  switch (tag) {
+	    case arrayBufferTag:
+	      return cloneArrayBuffer(object);
+
+	    case boolTag:
+	    case dateTag:
+	      return new Ctor(+object);
+
+	    case dataViewTag:
+	      return cloneDataView(object, isDeep);
+
+	    case float32Tag: case float64Tag:
+	    case int8Tag: case int16Tag: case int32Tag:
+	    case uint8Tag: case uint8ClampedTag: case uint16Tag: case uint32Tag:
+	      return cloneTypedArray(object, isDeep);
+
+	    case mapTag:
+	      return cloneMap(object, isDeep, cloneFunc);
+
+	    case numberTag:
+	    case stringTag:
+	      return new Ctor(object);
+
+	    case regexpTag:
+	      return cloneRegExp(object);
+
+	    case setTag:
+	      return cloneSet(object, isDeep, cloneFunc);
+
+	    case symbolTag:
+	      return cloneSymbol(object);
+	  }
+	}
+
+	module.exports = initCloneByTag;
+
+
+/***/ },
+/* 721 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var Uint8Array = __webpack_require__(651);
+
+	/**
+	 * Creates a clone of `arrayBuffer`.
+	 *
+	 * @private
+	 * @param {ArrayBuffer} arrayBuffer The array buffer to clone.
+	 * @returns {ArrayBuffer} Returns the cloned array buffer.
+	 */
+	function cloneArrayBuffer(arrayBuffer) {
+	  var result = new arrayBuffer.constructor(arrayBuffer.byteLength);
+	  new Uint8Array(result).set(new Uint8Array(arrayBuffer));
+	  return result;
+	}
+
+	module.exports = cloneArrayBuffer;
+
+
+/***/ },
+/* 722 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var cloneArrayBuffer = __webpack_require__(721);
+
+	/**
+	 * Creates a clone of `dataView`.
+	 *
+	 * @private
+	 * @param {Object} dataView The data view to clone.
+	 * @param {boolean} [isDeep] Specify a deep clone.
+	 * @returns {Object} Returns the cloned data view.
+	 */
+	function cloneDataView(dataView, isDeep) {
+	  var buffer = isDeep ? cloneArrayBuffer(dataView.buffer) : dataView.buffer;
+	  return new dataView.constructor(buffer, dataView.byteOffset, dataView.byteLength);
+	}
+
+	module.exports = cloneDataView;
+
+
+/***/ },
+/* 723 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var addMapEntry = __webpack_require__(724),
+	    arrayReduce = __webpack_require__(725),
+	    mapToArray = __webpack_require__(652);
+
+	/**
+	 * Creates a clone of `map`.
+	 *
+	 * @private
+	 * @param {Object} map The map to clone.
+	 * @param {Function} cloneFunc The function to clone values.
+	 * @param {boolean} [isDeep] Specify a deep clone.
+	 * @returns {Object} Returns the cloned map.
+	 */
+	function cloneMap(map, isDeep, cloneFunc) {
+	  var array = isDeep ? cloneFunc(mapToArray(map), true) : mapToArray(map);
+	  return arrayReduce(array, addMapEntry, new map.constructor);
+	}
+
+	module.exports = cloneMap;
+
+
+/***/ },
+/* 724 */
+/***/ function(module, exports) {
+
+	/**
+	 * Adds the key-value `pair` to `map`.
+	 *
+	 * @private
+	 * @param {Object} map The map to modify.
+	 * @param {Array} pair The key-value pair to add.
+	 * @returns {Object} Returns `map`.
+	 */
+	function addMapEntry(map, pair) {
+	  // Don't return `Map#set` because it doesn't return the map instance in IE 11.
+	  map.set(pair[0], pair[1]);
+	  return map;
+	}
+
+	module.exports = addMapEntry;
+
+
+/***/ },
+/* 725 */
+/***/ function(module, exports) {
+
+	/**
+	 * A specialized version of `_.reduce` for arrays without support for
+	 * iteratee shorthands.
+	 *
+	 * @private
+	 * @param {Array} [array] The array to iterate over.
+	 * @param {Function} iteratee The function invoked per iteration.
+	 * @param {*} [accumulator] The initial value.
+	 * @param {boolean} [initAccum] Specify using the first element of `array` as
+	 *  the initial value.
+	 * @returns {*} Returns the accumulated value.
+	 */
+	function arrayReduce(array, iteratee, accumulator, initAccum) {
+	  var index = -1,
+	      length = array ? array.length : 0;
+
+	  if (initAccum && length) {
+	    accumulator = array[++index];
+	  }
+	  while (++index < length) {
+	    accumulator = iteratee(accumulator, array[index], index, array);
+	  }
+	  return accumulator;
+	}
+
+	module.exports = arrayReduce;
+
+
+/***/ },
+/* 726 */
+/***/ function(module, exports) {
+
+	/** Used to match `RegExp` flags from their coerced string values. */
+	var reFlags = /\w*$/;
+
+	/**
+	 * Creates a clone of `regexp`.
+	 *
+	 * @private
+	 * @param {Object} regexp The regexp to clone.
+	 * @returns {Object} Returns the cloned regexp.
+	 */
+	function cloneRegExp(regexp) {
+	  var result = new regexp.constructor(regexp.source, reFlags.exec(regexp));
+	  result.lastIndex = regexp.lastIndex;
+	  return result;
+	}
+
+	module.exports = cloneRegExp;
+
+
+/***/ },
+/* 727 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var addSetEntry = __webpack_require__(728),
+	    arrayReduce = __webpack_require__(725),
+	    setToArray = __webpack_require__(653);
+
+	/**
+	 * Creates a clone of `set`.
+	 *
+	 * @private
+	 * @param {Object} set The set to clone.
+	 * @param {Function} cloneFunc The function to clone values.
+	 * @param {boolean} [isDeep] Specify a deep clone.
+	 * @returns {Object} Returns the cloned set.
+	 */
+	function cloneSet(set, isDeep, cloneFunc) {
+	  var array = isDeep ? cloneFunc(setToArray(set), true) : setToArray(set);
+	  return arrayReduce(array, addSetEntry, new set.constructor);
+	}
+
+	module.exports = cloneSet;
+
+
+/***/ },
+/* 728 */
+/***/ function(module, exports) {
+
+	/**
+	 * Adds `value` to `set`.
+	 *
+	 * @private
+	 * @param {Object} set The set to modify.
+	 * @param {*} value The value to add.
+	 * @returns {Object} Returns `set`.
+	 */
+	function addSetEntry(set, value) {
+	  set.add(value);
+	  return set;
+	}
+
+	module.exports = addSetEntry;
+
+
+/***/ },
+/* 729 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var Symbol = __webpack_require__(650);
+
+	/** Used to convert symbols to primitives and strings. */
+	var symbolProto = Symbol ? Symbol.prototype : undefined,
+	    symbolValueOf = symbolProto ? symbolProto.valueOf : undefined;
+
+	/**
+	 * Creates a clone of the `symbol` object.
+	 *
+	 * @private
+	 * @param {Object} symbol The symbol object to clone.
+	 * @returns {Object} Returns the cloned symbol object.
+	 */
+	function cloneSymbol(symbol) {
+	  return symbolValueOf ? Object(symbolValueOf.call(symbol)) : {};
+	}
+
+	module.exports = cloneSymbol;
+
+
+/***/ },
+/* 730 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var cloneArrayBuffer = __webpack_require__(721);
+
+	/**
+	 * Creates a clone of `typedArray`.
+	 *
+	 * @private
+	 * @param {Object} typedArray The typed array to clone.
+	 * @param {boolean} [isDeep] Specify a deep clone.
+	 * @returns {Object} Returns the cloned typed array.
+	 */
+	function cloneTypedArray(typedArray, isDeep) {
+	  var buffer = isDeep ? cloneArrayBuffer(typedArray.buffer) : typedArray.buffer;
+	  return new typedArray.constructor(buffer, typedArray.byteOffset, typedArray.length);
+	}
+
+	module.exports = cloneTypedArray;
+
+
+/***/ },
+/* 731 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var baseCreate = __webpack_require__(732),
+	    getPrototype = __webpack_require__(543),
+	    isPrototype = __webpack_require__(634);
+
+	/**
+	 * Initializes an object clone.
+	 *
+	 * @private
+	 * @param {Object} object The object to clone.
+	 * @returns {Object} Returns the initialized clone.
+	 */
+	function initCloneObject(object) {
+	  return (typeof object.constructor == 'function' && !isPrototype(object))
+	    ? baseCreate(getPrototype(object))
+	    : {};
+	}
+
+	module.exports = initCloneObject;
+
+
+/***/ },
+/* 732 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var isObject = __webpack_require__(577);
+
+	/** Built-in value references. */
+	var objectCreate = Object.create;
+
+	/**
+	 * The base implementation of `_.create` without support for assigning
+	 * properties to the created object.
+	 *
+	 * @private
+	 * @param {Object} prototype The object to inherit from.
+	 * @returns {Object} Returns the new object.
+	 */
+	function baseCreate(proto) {
+	  return isObject(proto) ? objectCreate(proto) : {};
+	}
+
+	module.exports = baseCreate;
+
+
+/***/ },
+/* 733 */
+/***/ function(module, exports, __webpack_require__) {
+
+	/* WEBPACK VAR INJECTION */(function(module) {var root = __webpack_require__(580),
+	    stubFalse = __webpack_require__(735);
+
+	/** Detect free variable `exports`. */
+	var freeExports = typeof exports == 'object' && exports;
+
+	/** Detect free variable `module`. */
+	var freeModule = freeExports && typeof module == 'object' && module;
+
+	/** Detect the popular CommonJS extension `module.exports`. */
+	var moduleExports = freeModule && freeModule.exports === freeExports;
+
+	/** Built-in value references. */
+	var Buffer = moduleExports ? root.Buffer : undefined;
+
+	/**
+	 * Checks if `value` is a buffer.
+	 *
+	 * @static
+	 * @memberOf _
+	 * @since 4.3.0
+	 * @category Lang
+	 * @param {*} value The value to check.
+	 * @returns {boolean} Returns `true` if `value` is a buffer, else `false`.
+	 * @example
+	 *
+	 * _.isBuffer(new Buffer(2));
+	 * // => true
+	 *
+	 * _.isBuffer(new Uint8Array(2));
+	 * // => false
+	 */
+	var isBuffer = !Buffer ? stubFalse : function(value) {
+	  return value instanceof Buffer;
+	};
+
+	module.exports = isBuffer;
+
+	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(734)(module)))
+
+/***/ },
+/* 734 */
+/***/ function(module, exports) {
+
+	module.exports = function(module) {
+		if(!module.webpackPolyfill) {
+			module.deprecate = function() {};
+			module.paths = [];
+			// module.parent = undefined by default
+			module.children = [];
+			module.webpackPolyfill = 1;
+		}
+		return module;
+	}
+
+
+/***/ },
+/* 735 */
+/***/ function(module, exports) {
+
+	/**
+	 * A method that returns `false`.
+	 *
+	 * @static
+	 * @memberOf _
+	 * @since 4.13.0
+	 * @category Util
+	 * @returns {boolean} Returns `false`.
+	 * @example
+	 *
+	 * _.times(2, _.stubFalse);
+	 * // => [false, false]
+	 */
+	function stubFalse() {
+	  return false;
+	}
+
+	module.exports = stubFalse;
+
+
+/***/ },
+/* 736 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var copyObject = __webpack_require__(711),
+	    keysIn = __webpack_require__(737);
+
+	/**
+	 * Converts `value` to a plain object flattening inherited enumerable string
+	 * keyed properties of `value` to own properties of the plain object.
+	 *
+	 * @static
+	 * @memberOf _
+	 * @since 3.0.0
+	 * @category Lang
+	 * @param {*} value The value to convert.
+	 * @returns {Object} Returns the converted plain object.
+	 * @example
+	 *
+	 * function Foo() {
+	 *   this.b = 2;
+	 * }
+	 *
+	 * Foo.prototype.c = 3;
+	 *
+	 * _.assign({ 'a': 1 }, new Foo);
+	 * // => { 'a': 1, 'b': 2 }
+	 *
+	 * _.assign({ 'a': 1 }, _.toPlainObject(new Foo));
+	 * // => { 'a': 1, 'b': 2, 'c': 3 }
+	 */
+	function toPlainObject(value) {
+	  return copyObject(value, keysIn(value));
+	}
+
+	module.exports = toPlainObject;
+
+
+/***/ },
+/* 737 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var baseKeysIn = __webpack_require__(738),
+	    indexKeys = __webpack_require__(630),
+	    isIndex = __webpack_require__(633),
+	    isPrototype = __webpack_require__(634);
+
+	/** Used for built-in method references. */
+	var objectProto = Object.prototype;
+
+	/** Used to check objects for own properties. */
+	var hasOwnProperty = objectProto.hasOwnProperty;
+
+	/**
+	 * Creates an array of the own and inherited enumerable property names of `object`.
+	 *
+	 * **Note:** Non-object values are coerced to objects.
+	 *
+	 * @static
+	 * @memberOf _
+	 * @since 3.0.0
+	 * @category Object
+	 * @param {Object} object The object to query.
+	 * @returns {Array} Returns the array of property names.
+	 * @example
+	 *
+	 * function Foo() {
+	 *   this.a = 1;
+	 *   this.b = 2;
+	 * }
+	 *
+	 * Foo.prototype.c = 3;
+	 *
+	 * _.keysIn(new Foo);
+	 * // => ['a', 'b', 'c'] (iteration order is not guaranteed)
+	 */
+	function keysIn(object) {
+	  var index = -1,
+	      isProto = isPrototype(object),
+	      props = baseKeysIn(object),
+	      propsLength = props.length,
+	      indexes = indexKeys(object),
+	      skipIndexes = !!indexes,
+	      result = indexes || [],
+	      length = result.length;
+
+	  while (++index < propsLength) {
+	    var key = props[index];
+	    if (!(skipIndexes && (key == 'length' || isIndex(key, length))) &&
+	        !(key == 'constructor' && (isProto || !hasOwnProperty.call(object, key)))) {
+	      result.push(key);
+	    }
+	  }
+	  return result;
+	}
+
+	module.exports = keysIn;
+
+
+/***/ },
+/* 738 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var Reflect = __webpack_require__(739),
+	    iteratorToArray = __webpack_require__(740);
+
+	/** Used for built-in method references. */
+	var objectProto = Object.prototype;
+
+	/** Built-in value references. */
+	var enumerate = Reflect ? Reflect.enumerate : undefined,
+	    propertyIsEnumerable = objectProto.propertyIsEnumerable;
+
+	/**
+	 * The base implementation of `_.keysIn` which doesn't skip the constructor
+	 * property of prototypes or treat sparse arrays as dense.
+	 *
+	 * @private
+	 * @param {Object} object The object to query.
+	 * @returns {Array} Returns the array of property names.
+	 */
+	function baseKeysIn(object) {
+	  object = object == null ? object : Object(object);
+
+	  var result = [];
+	  for (var key in object) {
+	    result.push(key);
+	  }
+	  return result;
+	}
+
+	// Fallback for IE < 9 with es6-shim.
+	if (enumerate && !propertyIsEnumerable.call({ 'valueOf': 1 }, 'valueOf')) {
+	  baseKeysIn = function(object) {
+	    return iteratorToArray(enumerate(object));
+	  };
+	}
+
+	module.exports = baseKeysIn;
+
+
+/***/ },
+/* 739 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var root = __webpack_require__(580);
+
+	/** Built-in value references. */
+	var Reflect = root.Reflect;
+
+	module.exports = Reflect;
+
+
+/***/ },
+/* 740 */
+/***/ function(module, exports) {
+
+	/**
+	 * Converts `iterator` to an array.
+	 *
+	 * @private
+	 * @param {Object} iterator The iterator to convert.
+	 * @returns {Array} Returns the converted array.
+	 */
+	function iteratorToArray(iterator) {
+	  var data,
+	      result = [];
+
+	  while (!(data = iterator.next()).done) {
+	    result.push(data.value);
+	  }
+	  return result;
+	}
+
+	module.exports = iteratorToArray;
+
+
+/***/ },
+/* 741 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var isIterateeCall = __webpack_require__(742),
+	    rest = __webpack_require__(621);
+
+	/**
+	 * Creates a function like `_.assign`.
+	 *
+	 * @private
+	 * @param {Function} assigner The function to assign values.
+	 * @returns {Function} Returns the new assigner function.
+	 */
+	function createAssigner(assigner) {
+	  return rest(function(object, sources) {
+	    var index = -1,
+	        length = sources.length,
+	        customizer = length > 1 ? sources[length - 1] : undefined,
+	        guard = length > 2 ? sources[2] : undefined;
+
+	    customizer = (assigner.length > 3 && typeof customizer == 'function')
+	      ? (length--, customizer)
+	      : undefined;
+
+	    if (guard && isIterateeCall(sources[0], sources[1], guard)) {
+	      customizer = length < 3 ? undefined : customizer;
+	      length = 1;
+	    }
+	    object = Object(object);
+	    while (++index < length) {
+	      var source = sources[index];
+	      if (source) {
+	        assigner(object, source, index, customizer);
+	      }
+	    }
+	    return object;
+	  });
+	}
+
+	module.exports = createAssigner;
+
+
+/***/ },
+/* 742 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var eq = __webpack_require__(592),
+	    isArrayLike = __webpack_require__(617),
+	    isIndex = __webpack_require__(633),
+	    isObject = __webpack_require__(577);
+
+	/**
+	 * Checks if the given arguments are from an iteratee call.
+	 *
+	 * @private
+	 * @param {*} value The potential iteratee value argument.
+	 * @param {*} index The potential iteratee index or key argument.
+	 * @param {*} object The potential iteratee object argument.
+	 * @returns {boolean} Returns `true` if the arguments are from an iteratee call,
+	 *  else `false`.
+	 */
+	function isIterateeCall(value, index, object) {
+	  if (!isObject(object)) {
+	    return false;
+	  }
+	  var type = typeof index;
+	  if (type == 'number'
+	        ? (isArrayLike(object) && isIndex(index, object.length))
+	        : (type == 'string' && index in object)
+	      ) {
+	    return eq(object[index], value);
+	  }
+	  return false;
+	}
+
+	module.exports = isIterateeCall;
+
+
+/***/ },
+/* 743 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	Object.defineProperty(exports, "__esModule", {
+	    value: true
+	});
+	exports.default = item_list;
+
+	var _map = __webpack_require__(635);
+
+	var _map2 = _interopRequireDefault(_map);
+
+	var _merge = __webpack_require__(703);
+
+	var _merge2 = _interopRequireDefault(_merge);
+
+	var _Error = __webpack_require__(694);
+
 	var _ItemList = __webpack_require__(559);
 
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-	var ANNOUNCE_ISSUE_SAVING = exports.ANNOUNCE_ISSUE_SAVING = 'ANNOUNCE_ISSUE_SAVING';
-	var ANNOUNCE_ISSUE_SAVED = exports.ANNOUNCE_ISSUE_SAVED = 'ANNOUNCE_ISSUE_SAVED';
-	var ANNOUNCE_ISSUE_SAVE_FAILED = exports.ANNOUNCE_ISSUE_SAVE_FAILED = 'ANNOUNCE_ISSUE_SAVE_FAILED';
+	var initialState = {};
 
-	function announceIssueSaveFailed(error) {
-	    return {
-	        type: ANNOUNCE_ISSUE_SAVE_FAILED,
-	        error_message: error_message,
-	        received_at: Date.now()
-	    };
-	}
+	var item_list_template = {
+	    // Don't put any objects in here, only primitives
+	    is_loading: false,
+	    items_invalidated: true,
+	    visible_item_ids: null,
+	    received_at: null,
+	    filter: null,
+	    pagination: null
+	};
 
-	function announceIssueSaved(issue_id) {
-	    return {
-	        type: ANNOUNCE_ISSUE_SAVED,
-	        issue_id: issue_id,
-	        saved_at: Date.now()
-	    };
-	}
+	function item_list() {
+	    var state = arguments.length <= 0 || arguments[0] === undefined ? initialState : arguments[0];
+	    var action = arguments[1];
 
-	function announceIssueSaving(issue_id) {
-	    return {
-	        type: ANNOUNCE_ISSUE_SAVING,
-	        issue_id: issue_id,
-	        saved_at: Date.now()
-	    };
-	}
 
-	function updateIssueSubject(issue_id, value) {
-	    return updateIssue(issue_id, "subject", value);
-	}
+	    var state_copy = Object.assign({}, state);
+	    var l = Object.assign({}, item_list_template, state_copy[action.list_key] || {});
 
-	function updateIssue(issue_id, field_name, new_value) {
-	    return function (dispatch, getState) {
-	        dispatch(announceIssueSaving(issue_id));
-	        var data = { field_name: field_name,
-	            value: new_value };
-	        return (0, _lib.impfetch)("/imp/issue/" + issue_id + "/", { method: "PUT",
-	            credentials: 'same-origin',
-	            data: data,
-	            headers: { "Content-type": "application/json; charset=UTF-8" },
-	            body: JSON.stringify(data) }).then(function (response) {
-	            return response.json();
-	        }).then(function (json) {
-	            if (json.status != 'success') {
-	                console.log('Request failed with JSON response', json);
-	                dispatch(announceIssueSaveFailed(json.error));
-	            } else {
-	                console.log('Request succeeded with JSON response', json);
-	                dispatch(announceIssueSaved(json.payload));
-	            }
-	        }).catch(function (error) {
-	            console.log('Request failed', error);
-	            dispatch(announceIssueSaveFailed(json.error));
-	        });
-	    };
+	    switch (action.type) {
+	        case _ItemList.INVALIDATE_LIST:
+	            state_copy[action.list_key] = Object.assign({}, l, {
+	                is_loading: false,
+	                items_invalidated: true
+	            });
+	            return state_copy;
+	        case _ItemList.ANNOUNCE_LIST_LOADING:
+	            state_copy[action.list_key] = Object.assign({}, l, {
+	                is_loading: true,
+	                items_invalidated: false
+	            });
+	            return state_copy;
+	        case _ItemList.ANNOUNCE_MATCHING_ITEMS_LOADING:
+	            state_copy[action.list_key] = Object.assign({}, l, {
+	                // is_loading: true
+	            });
+	            return state_copy;
+	        case _ItemList.ANNOUNCE_MATCHING_ITEMS_LOADED:
+	            state_copy[action.list_key] = Object.assign({}, l, {
+	                // is_loading: false
+	            });
+	            return state_copy;
+	        case _ItemList.ANNOUNCE_LIST_LOADED:
+	            state_copy[action.list_key] = Object.assign({}, l, {
+	                is_loading: false,
+	                received_at: action.received_at,
+	                visible_item_ids: action.visible_item_ids,
+	                pagination: action.pagination
+	            });
+	            return state_copy;
+	        case _ItemList.ANNOUNCE_MATCHING_ITEMS_LOADED:
+	            state_copy[action.list_key] = Object.assign({}, l, {
+	                is_loading: false,
+	                received_at: action.received_at
+	            });
+	            return state_copy;
+	        case _ItemList.ANNOUNCE_LIST_LOAD_FAILED:
+	            (0, _Error.setErrorMessage)("Failed to load: " + action.error_message);
+	            state_copy[action.list_key] = Object.assign({}, l, {
+	                is_loading: false,
+	                items_invalidated: false
+	            });
+	            return state_copy;
+	        case _ItemList.ANNOUNCE_MATCHING_ITEMS_LOAD_FAILED:
+	            (0, _Error.setErrorMessage)("Failed to load matching items: " + action.error_message);
+	            state_copy[action.list_key] = Object.assign({}, l, {
+	                is_loading: false,
+	                items_invalidated: false
+	            });
+	            return state_copy;
+	        case _ItemList.UPDATE_LIST_PAGINATION:
+	            state_copy[action.list_key] = Object.assign({}, l, {
+	                pagination: Object.assign({}, state_copy.pagination, action.pagination)
+	            });
+	            return state_copy;
+	        case _ItemList.UPDATE_LIST_FILTER:
+	            state_copy[action.list_key] = Object.assign({}, l, {
+	                filter: Object.assign({}, state_copy.filter, action.filter)
+	            });
+	            return state_copy;
+	        case _ItemList.UPDATE_LIST_SELECTION:
+	            state_copy[action.list_key] = Object.assign({}, l, {
+	                selected_ids: action.selected_ids });
+	            return state_copy;
+	        case _ItemList.UPDATE_LIST_DISPLAY_MODE:
+	            state_copy[action.list_key] = Object.assign({}, l, {
+	                display_mode: action.display_mode });
+	            return state_copy;
+	        default:
+	            return state;
+
+	    }
 	}
 
 /***/ },
-/* 693 */
+/* 744 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	Object.defineProperty(exports, "__esModule", {
+	    value: true
+	});
+	exports.default = project;
+
+	var _map = __webpack_require__(635);
+
+	var _map2 = _interopRequireDefault(_map);
+
+	var _assign = __webpack_require__(745);
+
+	var _assign2 = _interopRequireDefault(_assign);
+
+	var _difference = __webpack_require__(566);
+
+	var _difference2 = _interopRequireDefault(_difference);
+
+	var _Error = __webpack_require__(694);
+
+	var _Projects = __webpack_require__(686);
+
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+	var initialState = {
+	    is_loading: false,
+	    items_invalidated: true,
+	    items_by_id: {}
+	};
+
+	function project() {
+	    var state = arguments.length <= 0 || arguments[0] === undefined ? initialState : arguments[0];
+	    var action = arguments[1];
+
+
+	    var state_copy = Object.assign({}, state);
+
+	    switch (action.type) {
+	        case _Projects.INVALIDATE_PROJECTS:
+	            var item_ids_to_invalidate = action.project_ids_to_invalidate || [];
+	            state_copy.items_by_id = (0, _difference2.default)(state_copy.item_ids, item_ids_to_invalidate);
+	            state_copy.items_invalidated = true;
+	            state_copy.is_loading = false;
+	            return state_copy;
+	        case _Projects.ANNOUNCE_LOADING_PROJECTS:
+	            return Object.assign({}, state, {
+	                is_loading: true,
+	                items_invalidated: false
+	            });
+	        case _Projects.ANNOUNCE_PROJECTS_LOADED:
+	            state_copy = Object.assign({}, state, {
+	                items_by_id: Object.assign({}, state.items_by_id)
+	            });
+	            state_copy.items_by_id = Object.assign({}, (0, _assign2.default)(state_copy.items_by_id, action.items_by_id));
+	            return state_copy;
+	        case _Projects.ANNOUNCE_PROJECTS_LOAD_FAILED:
+	            (0, _Error.setErrorMessage)("Failed to load projects: " + action.error_message);
+	            return state;
+	        default:
+	            return state;
+	    }
+	}
+
+/***/ },
+/* 745 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var assignValue = __webpack_require__(709),
+	    copyObject = __webpack_require__(711),
+	    createAssigner = __webpack_require__(741),
+	    isArrayLike = __webpack_require__(617),
+	    isPrototype = __webpack_require__(634),
+	    keys = __webpack_require__(627);
+
+	/** Used for built-in method references. */
+	var objectProto = Object.prototype;
+
+	/** Used to check objects for own properties. */
+	var hasOwnProperty = objectProto.hasOwnProperty;
+
+	/** Built-in value references. */
+	var propertyIsEnumerable = objectProto.propertyIsEnumerable;
+
+	/** Detect if properties shadowing those on `Object.prototype` are non-enumerable. */
+	var nonEnumShadows = !propertyIsEnumerable.call({ 'valueOf': 1 }, 'valueOf');
+
+	/**
+	 * Assigns own enumerable string keyed properties of source objects to the
+	 * destination object. Source objects are applied from left to right.
+	 * Subsequent sources overwrite property assignments of previous sources.
+	 *
+	 * **Note:** This method mutates `object` and is loosely based on
+	 * [`Object.assign`](https://mdn.io/Object/assign).
+	 *
+	 * @static
+	 * @memberOf _
+	 * @since 0.10.0
+	 * @category Object
+	 * @param {Object} object The destination object.
+	 * @param {...Object} [sources] The source objects.
+	 * @returns {Object} Returns `object`.
+	 * @see _.assignIn
+	 * @example
+	 *
+	 * function Foo() {
+	 *   this.c = 3;
+	 * }
+	 *
+	 * function Bar() {
+	 *   this.e = 5;
+	 * }
+	 *
+	 * Foo.prototype.d = 4;
+	 * Bar.prototype.f = 6;
+	 *
+	 * _.assign({ 'a': 1 }, new Foo, new Bar);
+	 * // => { 'a': 1, 'c': 3, 'e': 5 }
+	 */
+	var assign = createAssigner(function(object, source) {
+	  if (nonEnumShadows || isPrototype(source) || isArrayLike(source)) {
+	    copyObject(source, keys(source), object);
+	    return;
+	  }
+	  for (var key in source) {
+	    if (hasOwnProperty.call(source, key)) {
+	      assignValue(object, key, source[key]);
+	    }
+	  }
+	});
+
+	module.exports = assign;
+
+
+/***/ },
+/* 746 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	Object.defineProperty(exports, "__esModule", {
+	    value: true
+	});
+	exports.default = sprint;
+
+	var _map = __webpack_require__(635);
+
+	var _map2 = _interopRequireDefault(_map);
+
+	var _assign = __webpack_require__(745);
+
+	var _assign2 = _interopRequireDefault(_assign);
+
+	var _difference = __webpack_require__(566);
+
+	var _difference2 = _interopRequireDefault(_difference);
+
+	var _Error = __webpack_require__(694);
+
+	var _Sprints = __webpack_require__(689);
+
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+	var initialState = {
+	    is_loading: false,
+	    items_invalidated: true,
+	    items_by_id: {}
+	};
+
+	function sprint() {
+	    var state = arguments.length <= 0 || arguments[0] === undefined ? initialState : arguments[0];
+	    var action = arguments[1];
+
+
+	    var state_copy = Object.assign({}, state);
+
+	    switch (action.type) {
+	        case _Sprints.INVALIDATE_SPRINTS:
+	            var item_ids_to_invalidate = action.sprint_ids_to_invalidate || [];
+	            state_copy.items_by_id = (0, _difference2.default)(state_copy.item_ids, item_ids_to_invalidate);
+	            state_copy.items_invalidated = true;
+	            state_copy.is_loading = false;
+	            return state_copy;
+	        case _Sprints.ANNOUNCE_LOADING_SPRINTS:
+	            return Object.assign({}, state, {
+	                is_loading: true,
+	                items_invalidated: false
+	            });
+	        case _Sprints.ANNOUNCE_SPRINTS_LOADED:
+	            state_copy = Object.assign({}, state, {
+	                items_by_id: Object.assign({}, state.items_by_id)
+	            });
+	            state_copy.items_by_id = Object.assign({}, (0, _assign2.default)(state_copy.items_by_id, action.items_by_id));
+	            return state_copy;
+	        case _Sprints.ANNOUNCE_SPRINTS_LOAD_FAILED:
+	            (0, _Error.setErrorMessage)("Failed to load sprints: " + action.error_message);
+	            return state;
+	        default:
+	            return state;
+	    }
+	}
+
+/***/ },
+/* 747 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	Object.defineProperty(exports, "__esModule", {
+	    value: true
+	});
+	exports.default = issue;
+
+	var _map = __webpack_require__(635);
+
+	var _map2 = _interopRequireDefault(_map);
+
+	var _assign = __webpack_require__(745);
+
+	var _assign2 = _interopRequireDefault(_assign);
+
+	var _difference = __webpack_require__(566);
+
+	var _difference2 = _interopRequireDefault(_difference);
+
+	var _union = __webpack_require__(748);
+
+	var _union2 = _interopRequireDefault(_union);
+
+	var _keys = __webpack_require__(627);
+
+	var _keys2 = _interopRequireDefault(_keys);
+
+	var _Error = __webpack_require__(694);
+
+	var _Issues = __webpack_require__(701);
+
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+	var initialState = {
+	    items_by_id: {},
+	    loading_item_ids: []
+	};
+
+	function issue() {
+	    var state = arguments.length <= 0 || arguments[0] === undefined ? initialState : arguments[0];
+	    var action = arguments[1];
+
+
+	    switch (action.type) {
+	        case _Issues.INVALIDATE_ISSUES:
+	            return Object.assign({}, state, {
+	                items_by_id: (0, _difference2.default)(state.item_ids, action.issue_ids_to_invalidate) });
+	        case _Issues.ANNOUNCE_LOADING_ISSUES:
+	            return Object.assign({}, state, {
+	                loading_item_ids: (0, _union2.default)(state.loading_item_ids, action.issue_ids_to_load)
+	            });
+
+	        case _Issues.ANNOUNCE_ISSUES_LOADED:
+	            return Object.assign({}, state, {
+	                loading_item_ids: Object.assign({}, (0, _difference2.default)(state.loading_item_ids || [], (0, _keys2.default)(action.items_by_id))),
+	                items_by_id: Object.assign({}, (0, _assign2.default)(state.items_by_id, action.items_by_id))
+	            });
+	        case _Issues.ANNOUNCE_ISSUES_LOAD_FAILED:
+	            (0, _Error.setErrorMessage)("Failed to load issues: " + action.error_message);
+	            return state;
+
+	        default:
+	            return state;
+	    }
+	}
+
+/***/ },
+/* 748 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var baseFlatten = __webpack_require__(612),
+	    baseUniq = __webpack_require__(749),
+	    isArrayLikeObject = __webpack_require__(616),
+	    rest = __webpack_require__(621);
+
+	/**
+	 * Creates an array of unique values, in order, from all given arrays using
+	 * [`SameValueZero`](http://ecma-international.org/ecma-262/6.0/#sec-samevaluezero)
+	 * for equality comparisons.
+	 *
+	 * @static
+	 * @memberOf _
+	 * @since 0.1.0
+	 * @category Array
+	 * @param {...Array} [arrays] The arrays to inspect.
+	 * @returns {Array} Returns the new array of combined values.
+	 * @example
+	 *
+	 * _.union([2], [1, 2]);
+	 * // => [2, 1]
+	 */
+	var union = rest(function(arrays) {
+	  return baseUniq(baseFlatten(arrays, 1, isArrayLikeObject, true));
+	});
+
+	module.exports = union;
+
+
+/***/ },
+/* 749 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var SetCache = __webpack_require__(568),
+	    arrayIncludes = __webpack_require__(605),
+	    arrayIncludesWith = __webpack_require__(608),
+	    cacheHas = __webpack_require__(611),
+	    createSet = __webpack_require__(750),
+	    setToArray = __webpack_require__(653);
+
+	/** Used as the size to enable large array optimizations. */
+	var LARGE_ARRAY_SIZE = 200;
+
+	/**
+	 * The base implementation of `_.uniqBy` without support for iteratee shorthands.
+	 *
+	 * @private
+	 * @param {Array} array The array to inspect.
+	 * @param {Function} [iteratee] The iteratee invoked per element.
+	 * @param {Function} [comparator] The comparator invoked per element.
+	 * @returns {Array} Returns the new duplicate free array.
+	 */
+	function baseUniq(array, iteratee, comparator) {
+	  var index = -1,
+	      includes = arrayIncludes,
+	      length = array.length,
+	      isCommon = true,
+	      result = [],
+	      seen = result;
+
+	  if (comparator) {
+	    isCommon = false;
+	    includes = arrayIncludesWith;
+	  }
+	  else if (length >= LARGE_ARRAY_SIZE) {
+	    var set = iteratee ? null : createSet(array);
+	    if (set) {
+	      return setToArray(set);
+	    }
+	    isCommon = false;
+	    includes = cacheHas;
+	    seen = new SetCache;
+	  }
+	  else {
+	    seen = iteratee ? [] : result;
+	  }
+	  outer:
+	  while (++index < length) {
+	    var value = array[index],
+	        computed = iteratee ? iteratee(value) : value;
+
+	    value = (comparator || value !== 0) ? value : 0;
+	    if (isCommon && computed === computed) {
+	      var seenIndex = seen.length;
+	      while (seenIndex--) {
+	        if (seen[seenIndex] === computed) {
+	          continue outer;
+	        }
+	      }
+	      if (iteratee) {
+	        seen.push(computed);
+	      }
+	      result.push(value);
+	    }
+	    else if (!includes(seen, computed, comparator)) {
+	      if (seen !== result) {
+	        seen.push(computed);
+	      }
+	      result.push(value);
+	    }
+	  }
+	  return result;
+	}
+
+	module.exports = baseUniq;
+
+
+/***/ },
+/* 750 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var Set = __webpack_require__(658),
+	    noop = __webpack_require__(751),
+	    setToArray = __webpack_require__(653);
+
+	/** Used as references for various `Number` constants. */
+	var INFINITY = 1 / 0;
+
+	/**
+	 * Creates a set of `values`.
+	 *
+	 * @private
+	 * @param {Array} values The values to add to the set.
+	 * @returns {Object} Returns the new set.
+	 */
+	var createSet = !(Set && (1 / setToArray(new Set([,-0]))[1]) == INFINITY) ? noop : function(values) {
+	  return new Set(values);
+	};
+
+	module.exports = createSet;
+
+
+/***/ },
+/* 751 */
+/***/ function(module, exports) {
+
+	/**
+	 * A method that returns `undefined`.
+	 *
+	 * @static
+	 * @memberOf _
+	 * @since 2.3.0
+	 * @category Util
+	 * @example
+	 *
+	 * _.times(2, _.noop);
+	 * // => [undefined, undefined]
+	 */
+	function noop() {
+	  // No operation performed.
+	}
+
+	module.exports = noop;
+
+
+/***/ },
+/* 752 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	Object.defineProperty(exports, "__esModule", {
+	    value: true
+	});
+	exports.default = issue;
+
+	var _map = __webpack_require__(635);
+
+	var _map2 = _interopRequireDefault(_map);
+
+	var _assign = __webpack_require__(745);
+
+	var _assign2 = _interopRequireDefault(_assign);
+
+	var _keys = __webpack_require__(627);
+
+	var _keys2 = _interopRequireDefault(_keys);
+
+	var _difference = __webpack_require__(566);
+
+	var _difference2 = _interopRequireDefault(_difference);
+
+	var _union = __webpack_require__(748);
+
+	var _union2 = _interopRequireDefault(_union);
+
+	var _Error = __webpack_require__(694);
+
+	var _IssueGeneralDetails = __webpack_require__(693);
+
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+	var initialState = {
+	    items_by_id: {},
+	    loading_item_ids: []
+	};
+
+	function issue() {
+	    var state = arguments.length <= 0 || arguments[0] === undefined ? initialState : arguments[0];
+	    var action = arguments[1];
+
+
+	    switch (action.type) {
+	        case _IssueGeneralDetails.INVALIDATE_ISSUE_GENERAL_DETAILS:
+	            return Object.assign({}, state, {
+	                items_by_id: (0, _difference2.default)(state.item_ids, action.issue_ids_to_invalidate) });
+	        case _IssueGeneralDetails.ANNOUNCE_LOADING_ISSUE_GENERAL_DETAILS:
+	            return Object.assign({}, state, {
+	                loading_item_ids: (0, _union2.default)(state.loading_item_ids, action.issue_ids_to_load)
+	            });
+
+	        case _IssueGeneralDetails.ANNOUNCE_ISSUE_GENERAL_DETAILS_LOADED:
+	            return Object.assign({}, state, {
+	                loading_item_ids: Object.assign({}, (0, _difference2.default)(state.loading_item_ids || [], (0, _keys2.default)(action.items_by_id))),
+	                items_by_id: Object.assign({}, (0, _assign2.default)(state.items_by_id, action.items_by_id))
+	            });
+	        case _IssueGeneralDetails.ANNOUNCE_ISSUE_GENERAL_DETAILS_LOAD_FAILED:
+	            (0, _Error.setErrorMessage)("Failed to load issue general details: " + action.error_message);
+	            return state;
+
+	        default:
+	            return state;
+	    }
+	}
+
+/***/ },
+/* 753 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	Object.defineProperty(exports, "__esModule", {
+	    value: true
+	});
+	exports.default = notification_bar;
+
+	var _map = __webpack_require__(635);
+
+	var _map2 = _interopRequireDefault(_map);
+
+	var _merge = __webpack_require__(703);
+
+	var _merge2 = _interopRequireDefault(_merge);
+
+	var _Error = __webpack_require__(694);
+
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+	var initialState = {
+	    error_message: null
+	};
+
+	function notification_bar() {
+	    var state = arguments.length <= 0 || arguments[0] === undefined ? initialState : arguments[0];
+	    var action = arguments[1];
+
+	    switch (action.type) {
+	        case _Error.SET_ERROR_MESSAGE:
+	            return Object.assign({}, state, { error_message: action.error_message });
+	        default:
+	            return state;
+	    }
+	}
+
+/***/ },
+/* 754 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -42726,19 +45448,19 @@
 	});
 	exports.RIETags = exports.RIENumber = exports.RIEInput = exports.RIEToggle = undefined;
 
-	var _RIEToggle = __webpack_require__(694);
+	var _RIEToggle = __webpack_require__(755);
 
 	var _RIEToggle2 = _interopRequireDefault(_RIEToggle);
 
-	var _RIEStatefulBase2 = __webpack_require__(696);
+	var _RIEStatefulBase2 = __webpack_require__(757);
 
 	var _RIEStatefulBase3 = _interopRequireDefault(_RIEStatefulBase2);
 
-	var _RIENumber = __webpack_require__(697);
+	var _RIENumber = __webpack_require__(758);
 
 	var _RIENumber2 = _interopRequireDefault(_RIENumber);
 
-	var _RIETags = __webpack_require__(698);
+	var _RIETags = __webpack_require__(759);
 
 	var _RIETags2 = _interopRequireDefault(_RIETags);
 
@@ -42768,7 +45490,7 @@
 	exports.RIETags = _RIETags2.default;
 
 /***/ },
-/* 694 */
+/* 755 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -42781,7 +45503,7 @@
 
 	var _react2 = _interopRequireDefault(_react);
 
-	var _RIEBase2 = __webpack_require__(695);
+	var _RIEBase2 = __webpack_require__(756);
 
 	var _RIEBase3 = _interopRequireDefault(_RIEBase2);
 
@@ -42834,7 +45556,7 @@
 	exports.default = RIEToggle;
 
 /***/ },
-/* 695 */
+/* 756 */
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
@@ -42943,7 +45665,7 @@
 	exports.default = RIEBase;
 
 /***/ },
-/* 696 */
+/* 757 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -42960,7 +45682,7 @@
 
 	var _reactDom2 = _interopRequireDefault(_reactDom);
 
-	var _RIEBase2 = __webpack_require__(695);
+	var _RIEBase2 = __webpack_require__(756);
 
 	var _RIEBase3 = _interopRequireDefault(_RIEBase2);
 
@@ -43069,7 +45791,7 @@
 	exports.default = RIEStatefulBase;
 
 /***/ },
-/* 697 */
+/* 758 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -43082,7 +45804,7 @@
 
 	var _react2 = _interopRequireDefault(_react);
 
-	var _RIEStatefulBase2 = __webpack_require__(696);
+	var _RIEStatefulBase2 = __webpack_require__(757);
 
 	var _RIEStatefulBase3 = _interopRequireDefault(_RIEStatefulBase2);
 
@@ -43140,7 +45862,7 @@
 	exports.default = RIENumber;
 
 /***/ },
-/* 698 */
+/* 759 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -43157,7 +45879,7 @@
 
 	var _reactDom2 = _interopRequireDefault(_reactDom);
 
-	var _RIEStatefulBase2 = __webpack_require__(696);
+	var _RIEStatefulBase2 = __webpack_require__(757);
 
 	var _RIEStatefulBase3 = _interopRequireDefault(_RIEStatefulBase2);
 
@@ -43324,7 +46046,7 @@
 	exports.default = RIETags;
 
 /***/ },
-/* 699 */
+/* 760 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -43332,217 +46054,8 @@
 	Object.defineProperty(exports, "__esModule", {
 	    value: true
 	});
-	exports.IssueDeveloperDetails = undefined;
-
-	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
-
-	var _react = __webpack_require__(300);
-
-	var _react2 = _interopRequireDefault(_react);
-
-	var _reactRouter = __webpack_require__(466);
-
-	var _reactRedux = __webpack_require__(533);
-
-	var _indexOf = __webpack_require__(700);
-
-	var _indexOf2 = _interopRequireDefault(_indexOf);
-
-	var _IssueGeneralDetails = __webpack_require__(701);
-
-	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
-	function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
-
-	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
-
-	var IssueDeveloperDetails = exports.IssueDeveloperDetails = function (_Component) {
-	    _inherits(IssueDeveloperDetails, _Component);
-
-	    function IssueDeveloperDetails(props) {
-	        _classCallCheck(this, IssueDeveloperDetails);
-
-	        var _this = _possibleConstructorReturn(this, Object.getPrototypeOf(IssueDeveloperDetails).call(this, props));
-
-	        _this.onRefresh = _this.onRefresh.bind(_this);
-	        return _this;
-	    }
-
-	    _createClass(IssueDeveloperDetails, [{
-	        key: 'componentDidMount',
-	        value: function componentDidMount() {
-	            var _props = this.props;
-	            var dispatch = _props.dispatch;
-	            var issue_id = _props.issue_id;
-
-	            if (issue_id) {
-	                dispatch((0, _IssueGeneralDetails.fetchIssueGeneralDetailsIfNeeded)([issue_id]));
-	            }
-	        }
-	    }, {
-	        key: 'onClickedSprint',
-	        value: function onClickedSprint(sprint_id) {
-	            var _props2 = this.props;
-	            var dispatch = _props2.dispatch;
-	            var list_key = _props2.list_key;
-
-	            dispatch(selectItems(list_key, [sprint_id]));
-	        }
-	    }, {
-	        key: 'onRefresh',
-	        value: function onRefresh() {
-	            var _props3 = this.props;
-	            var dispatch = _props3.dispatch;
-	            var issue_id = _props3.issue_id;
-
-	            dispatch(invalidateIssueGeneralDetails([issue_id]));
-	            dispatch((0, _IssueGeneralDetails.fetchIssueGeneralDetailsIfNeeded)([issue_id]));
-	        }
-	    }, {
-	        key: 'render',
-	        value: function render() {
-	            var _props4 = this.props;
-	            var is_visible = _props4.is_visible;
-	            var issue_id = _props4.issue_id;
-	            var general_details = _props4.general_details;
-	            var is_loading = _props4.is_loading;
-
-	            var gd = general_details;
-
-	            if (!is_visible) {
-	                return _react2.default.createElement('div', null);
-	            }
-
-	            return _react2.default.createElement(
-	                'div',
-	                { className: 'issue_developer_details', style: { opacity: is_loading ? 0.5 : 1 } },
-	                _react2.default.createElement(
-	                    'div',
-	                    { className: 'panel panel--full' },
-	                    _react2.default.createElement(
-	                        'div',
-	                        { className: 'panel-heading' },
-	                        _react2.default.createElement(
-	                            'div',
-	                            { className: 'panel__title' },
-	                            'Issue Details'
-	                        ),
-	                        _react2.default.createElement(
-	                            'div',
-	                            { className: 'panel__buttons' },
-	                            _react2.default.createElement('div', { className: 'panel__button panel__button--refresh',
-	                                onClick: this.onRefresh })
-	                        )
-	                    ),
-	                    _react2.default.createElement(
-	                        'div',
-	                        { className: 'panel-body' },
-	                        _react2.default.createElement(
-	                            'h3',
-	                            null,
-	                            'issue#',
-	                            gd.number,
-	                            ': ',
-	                            gd.subject
-	                        ),
-	                        _react2.default.createElement(
-	                            'pre',
-	                            null,
-	                            gd.description
-	                        )
-	                    )
-	                )
-	            );
-	        }
-	    }]);
-
-	    return IssueDeveloperDetails;
-	}(_react.Component);
-
-	function mapStateToProps(state, props) {
-	    var item_list = state.item_list || {};
-	    var issue_general_details = state.issue_general_details || {};
-	    var list_key = props.list_key;
-
-	    var l = item_list[list_key] || {};
-	    var filter = l.filter || {};
-	    var issue_id = filter.issue_id;
-
-	    var general_details = (issue_general_details.items_by_id || {})[issue_id] || {};
-	    var is_loading = (0, _indexOf2.default)(issue_general_details.loading_item_ids || [], issue_id) !== -1;
-
-	    return {
-	        issue_id: issue_id,
-	        general_details: general_details,
-	        is_loading: general_details.is_loading,
-	        is_visible: issue_id || false
-	    };
-	}
-
-	exports.default = (0, _reactRedux.connect)(mapStateToProps)(IssueDeveloperDetails);
-
-/***/ },
-/* 700 */
-/***/ function(module, exports, __webpack_require__) {
-
-	var baseIndexOf = __webpack_require__(606),
-	    toInteger = __webpack_require__(623);
-
-	/* Built-in method references for those with the same name as other `lodash` methods. */
-	var nativeMax = Math.max;
-
-	/**
-	 * Gets the index at which the first occurrence of `value` is found in `array`
-	 * using [`SameValueZero`](http://ecma-international.org/ecma-262/6.0/#sec-samevaluezero)
-	 * for equality comparisons. If `fromIndex` is negative, it's used as the
-	 * offset from the end of `array`.
-	 *
-	 * @static
-	 * @memberOf _
-	 * @since 0.1.0
-	 * @category Array
-	 * @param {Array} array The array to search.
-	 * @param {*} value The value to search for.
-	 * @param {number} [fromIndex=0] The index to search from.
-	 * @returns {number} Returns the index of the matched value, else `-1`.
-	 * @example
-	 *
-	 * _.indexOf([1, 2, 1, 2], 2);
-	 * // => 1
-	 *
-	 * // Search from the `fromIndex`.
-	 * _.indexOf([1, 2, 1, 2], 2, 2);
-	 * // => 3
-	 */
-	function indexOf(array, value, fromIndex) {
-	  var length = array ? array.length : 0;
-	  if (!length) {
-	    return -1;
-	  }
-	  var index = fromIndex == null ? 0 : toInteger(fromIndex);
-	  if (index < 0) {
-	    index = nativeMax(length + index, 0);
-	  }
-	  return baseIndexOf(array, value, index);
-	}
-
-	module.exports = indexOf;
-
-
-/***/ },
-/* 701 */
-/***/ function(module, exports, __webpack_require__) {
-
-	'use strict';
-
-	Object.defineProperty(exports, "__esModule", {
-	    value: true
-	});
-	exports.INVALIDATE_ISSUE_GENERAL_DETAILS = exports.ANNOUNCE_LOADING_ISSUE_GENERAL_DETAILS = exports.ANNOUNCE_ISSUE_GENERAL_DETAILS_LOAD_FAILED = exports.ANNOUNCE_ISSUE_GENERAL_DETAILS_LOADED = undefined;
-	exports.invalidateIssueGeneralDetails = invalidateIssueGeneralDetails;
-	exports.fetchIssueGeneralDetailsIfNeeded = fetchIssueGeneralDetailsIfNeeded;
+	exports.ANNOUNCE_ISSUE_SAVE_FAILED = exports.ANNOUNCE_ISSUE_SAVED = exports.ANNOUNCE_ISSUE_SAVING = undefined;
+	exports.updateIssueSubject = updateIssueSubject;
 
 	var _lib = __webpack_require__(560);
 
@@ -43558,2579 +46071,66 @@
 
 	var _map2 = _interopRequireDefault(_map);
 
-	var _Error = __webpack_require__(702);
+	var _ItemList = __webpack_require__(559);
 
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-	var ANNOUNCE_ISSUE_GENERAL_DETAILS_LOADED = exports.ANNOUNCE_ISSUE_GENERAL_DETAILS_LOADED = 'ANNOUNCE_ISSUES_GENERAL_DETAILS_LOADED';
-	var ANNOUNCE_ISSUE_GENERAL_DETAILS_LOAD_FAILED = exports.ANNOUNCE_ISSUE_GENERAL_DETAILS_LOAD_FAILED = 'ANNOUNCE_ISSUE_GENERAL_DETAILS_LOAD_FAILED';
-	var ANNOUNCE_LOADING_ISSUE_GENERAL_DETAILS = exports.ANNOUNCE_LOADING_ISSUE_GENERAL_DETAILS = 'ANNOUNCE_LOADING_ISSUE_GENERAL_DETAILS';
-	var INVALIDATE_ISSUE_GENERAL_DETAILS = exports.INVALIDATE_ISSUE_GENERAL_DETAILS = 'INVALIDATE_ISSUE_GENERAL_DETAILS';
+	var ANNOUNCE_ISSUE_SAVING = exports.ANNOUNCE_ISSUE_SAVING = 'ANNOUNCE_ISSUE_SAVING';
+	var ANNOUNCE_ISSUE_SAVED = exports.ANNOUNCE_ISSUE_SAVED = 'ANNOUNCE_ISSUE_SAVED';
+	var ANNOUNCE_ISSUE_SAVE_FAILED = exports.ANNOUNCE_ISSUE_SAVE_FAILED = 'ANNOUNCE_ISSUE_SAVE_FAILED';
 
-	function invalidateIssueGeneralDetails(issue_ids_to_invalidate) {
+	function announceIssueSaveFailed(error) {
 	    return {
-	        type: INVALIDATE_ISSUE_GENERAL_DETAILS,
-	        issue_ids_to_invalidate: issue_ids_to_invalidate
-	    };
-	}
-
-	function announceLoadingIssueGeneralDetails() {
-	    return {
-	        type: ANNOUNCE_LOADING_ISSUE_GENERAL_DETAILS
-	    };
-	}
-
-	function announceIssueGeneralDetailsLoaded(payload) {
-
-	    var items_by_id = {};
-	    payload.issues.map(function (item, index) {
-	        items_by_id[item.id] = item;
-	    });
-
-	    return {
-	        type: ANNOUNCE_ISSUE_GENERAL_DETAILS_LOADED,
-	        items_by_id: items_by_id,
-	        received_at: Date.now()
-	    };
-	}
-
-	function announceIssueGeneralDetailsLoadFailed(error_message) {
-	    return {
-	        type: ANNOUNCE_ISSUE_GENERAL_DETAILS_LOAD_FAILED,
+	        type: ANNOUNCE_ISSUE_SAVE_FAILED,
 	        error_message: error_message,
 	        received_at: Date.now()
 	    };
 	}
 
-	function fetchIssueGeneralDetails(dispatch, issue_ids) {
+	function announceIssueSaved(issue_id) {
+	    return {
+	        type: ANNOUNCE_ISSUE_SAVED,
+	        issue_id: issue_id,
+	        saved_at: Date.now()
+	    };
+	}
+
+	function announceIssueSaving(issue_id) {
+	    return {
+	        type: ANNOUNCE_ISSUE_SAVING,
+	        issue_id: issue_id,
+	        saved_at: Date.now()
+	    };
+	}
+
+	function updateIssueSubject(issue_id, value) {
+	    return updateIssue(issue_id, "subject", value);
+	}
+
+	function updateIssue(issue_id, field_name, new_value) {
 	    return function (dispatch, getState) {
-	        dispatch(announceLoadingIssueGeneralDetails());
-
-	        var params = { filter: { ids: issue_ids },
-	            format: { detail_level: 'general' },
-	            pagination: { 'enabled': false } };
-
-	        return (0, _lib.impfetch)('/imp/issue/', { params: params }).then(function (response) {
+	        dispatch(announceIssueSaving(issue_id));
+	        var data = { field_name: field_name,
+	            value: new_value };
+	        return (0, _lib.impfetch)("/imp/issue/" + issue_id + "/", { method: "PUT",
+	            credentials: 'same-origin',
+	            data: data,
+	            headers: { "Content-type": "application/json; charset=UTF-8" },
+	            body: JSON.stringify(data) }).then(function (response) {
 	            return response.json();
 	        }).then(function (json) {
 	            if (json.status != 'success') {
-	                dispatch(announceIssueGeneralDetailsLoadFailed(json.error));
+	                console.log('Request failed with JSON response', json);
+	                dispatch(announceIssueSaveFailed(json.error));
 	            } else {
-	                dispatch(announceIssueGeneralDetailsLoaded(json.payload));
+	                console.log('Request succeeded with JSON response', json);
+	                dispatch(announceIssueSaved(json.payload));
 	            }
 	        }).catch(function (error) {
-	            dispatch(announceIssueGeneralDetailsLoadFailed("Failed to load issues: " + error.message));
+	            console.log('Request failed', error);
+	            dispatch(announceIssueSaveFailed(json.error));
 	        });
 	    };
-	}
-
-	function getMissingIssueGeneralDetails(state, required_issue_ids) {
-	    var matching_items = state.issue_general_details || {};
-	    var matching_item_ids = (0, _keys2.default)(matching_items.items_by_id || {});
-	    var matching_item_refs = matching_item_ids.map(function (item_id, index) {
-	        return "" + item_id;
-	    });
-	    var required_item_refs = required_issue_ids.map(function (item_id, index) {
-	        return "" + item_id;
-	    });
-	    var unmatching_item_ids = (0, _difference2.default)(required_item_refs, matching_item_refs);
-	    return unmatching_item_ids;
-	}
-
-	function fetchIssueGeneralDetailsIfNeeded(issue_ids) {
-	    return function (dispatch, getState) {
-	        var state = getState();
-	        var missing_issue_ids = getMissingIssueGeneralDetails(dispatch, issue_ids);
-	        if (missing_issue_ids.length > 0) {
-	            dispatch(fetchIssueGeneralDetails(dispatch, missing_issue_ids));
-	        }
-	    };
-	}
-
-/***/ },
-/* 702 */
-/***/ function(module, exports) {
-
-	'use strict';
-
-	Object.defineProperty(exports, "__esModule", {
-	    value: true
-	});
-	exports.setErrorMessage = setErrorMessage;
-	exports.clearErrorMessage = clearErrorMessage;
-	var SET_ERROR_MESSAGE = exports.SET_ERROR_MESSAGE = 'SET_ERROR_MESSAGE';
-
-	function setErrorMessage(error_message) {
-	    return {
-	        type: SET_ERROR_MESSAGE,
-	        error_message: error_message
-	    };
-	}
-
-	function clearErrorMessage() {
-	    return setErrorMessage(null);
-	}
-
-/***/ },
-/* 703 */
-/***/ function(module, exports, __webpack_require__) {
-
-	'use strict';
-
-	Object.defineProperty(exports, "__esModule", {
-					value: true
-	});
-	exports.HeaderBar = undefined;
-
-	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
-
-	var _react = __webpack_require__(300);
-
-	var _react2 = _interopRequireDefault(_react);
-
-	var _reactRouter = __webpack_require__(466);
-
-	var _reactRedux = __webpack_require__(533);
-
-	var _NotificationBar = __webpack_require__(704);
-
-	var _NotificationBar2 = _interopRequireDefault(_NotificationBar);
-
-	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-	function _objectDestructuringEmpty(obj) { if (obj == null) throw new TypeError("Cannot destructure undefined"); }
-
-	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
-	function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
-
-	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
-
-	var HeaderBar = exports.HeaderBar = function (_Component) {
-					_inherits(HeaderBar, _Component);
-
-					function HeaderBar() {
-									_classCallCheck(this, HeaderBar);
-
-									return _possibleConstructorReturn(this, Object.getPrototypeOf(HeaderBar).apply(this, arguments));
-					}
-
-					_createClass(HeaderBar, [{
-									key: 'render',
-									value: function render() {
-													_objectDestructuringEmpty(this.props);
-
-													return _react2.default.createElement(
-																	'div',
-																	{ className: 'header_bar' },
-																	_react2.default.createElement(
-																					'div',
-																					{ className: 'header_bar__inner' },
-																					_react2.default.createElement(
-																									'div',
-																									{ className: 'header_bar__logo' },
-																									_react2.default.createElement(
-																													'a',
-																													{ href: 'http://www.implicitdesign.co.za' },
-																													'ImpTime'
-																									)
-																					),
-																					_react2.default.createElement(_NotificationBar2.default, null)
-																	)
-													);
-									}
-					}]);
-
-					return HeaderBar;
-	}(_react.Component);
-
-	function mapStateToProps(state, props) {
-					return {};
-	}
-
-	exports.default = (0, _reactRedux.connect)(mapStateToProps)(HeaderBar);
-
-/***/ },
-/* 704 */
-/***/ function(module, exports, __webpack_require__) {
-
-	'use strict';
-
-	Object.defineProperty(exports, "__esModule", {
-	    value: true
-	});
-	exports.NotificationBar = undefined;
-
-	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
-
-	var _react = __webpack_require__(300);
-
-	var _react2 = _interopRequireDefault(_react);
-
-	var _reactRouter = __webpack_require__(466);
-
-	var _reactRedux = __webpack_require__(533);
-
-	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
-	function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
-
-	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
-
-	var NotificationBar = exports.NotificationBar = function (_Component) {
-	    _inherits(NotificationBar, _Component);
-
-	    function NotificationBar() {
-	        _classCallCheck(this, NotificationBar);
-
-	        return _possibleConstructorReturn(this, Object.getPrototypeOf(NotificationBar).apply(this, arguments));
-	    }
-
-	    _createClass(NotificationBar, [{
-	        key: 'render',
-	        value: function render() {
-	            var error_message = this.props.error_message;
-
-
-	            return _react2.default.createElement(
-	                'div',
-	                null,
-	                error_message && _react2.default.createElement(
-	                    'div',
-	                    { 'class': 'error' },
-	                    error_message
-	                )
-	            );
-	        }
-	    }]);
-
-	    return NotificationBar;
-	}(_react.Component);
-
-	function mapStateToProps(state, props) {
-	    var notification_bar = state.notification_bar || {};
-	    return {
-	        error_message: notification_bar.error_message
-	    };
-	}
-
-	exports.default = (0, _reactRedux.connect)(mapStateToProps)(NotificationBar);
-
-/***/ },
-/* 705 */
-/***/ function(module, exports, __webpack_require__) {
-
-	'use strict';
-
-	Object.defineProperty(exports, "__esModule", {
-	    value: true
-	});
-	exports.default = configureStore;
-
-	var _redux = __webpack_require__(540);
-
-	var _reduxThunk = __webpack_require__(706);
-
-	var _reduxThunk2 = _interopRequireDefault(_reduxThunk);
-
-	var _error_catcher = __webpack_require__(707);
-
-	var _error_catcher2 = _interopRequireDefault(_error_catcher);
-
-	var _DevPageMiddleware = __webpack_require__(708);
-
-	var _DevPageMiddleware2 = _interopRequireDefault(_DevPageMiddleware);
-
-	var _reducers = __webpack_require__(709);
-
-	var _reducers2 = _interopRequireDefault(_reducers);
-
-	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-	function configureStore(initialState) {
-
-	    return (0, _redux.createStore)(_reducers2.default, initialState, (0, _redux.compose)((0, _redux.applyMiddleware)(_reduxThunk2.default, _DevPageMiddleware2.default, _error_catcher2.default), window.devToolsExtension ? window.devToolsExtension() : function (f) {
-	        return f;
-	    }));
-	}
-
-/***/ },
-/* 706 */
-/***/ function(module, exports) {
-
-	'use strict';
-
-	exports.__esModule = true;
-	function createThunkMiddleware(extraArgument) {
-	  return function (_ref) {
-	    var dispatch = _ref.dispatch;
-	    var getState = _ref.getState;
-	    return function (next) {
-	      return function (action) {
-	        if (typeof action === 'function') {
-	          return action(dispatch, getState, extraArgument);
-	        }
-
-	        return next(action);
-	      };
-	    };
-	  };
-	}
-
-	var thunk = createThunkMiddleware();
-	thunk.withExtraArgument = createThunkMiddleware;
-
-	exports['default'] = thunk;
-
-/***/ },
-/* 707 */
-/***/ function(module, exports, __webpack_require__) {
-
-	'use strict';
-
-	var _Error = __webpack_require__(702);
-
-	var _indexOf = __webpack_require__(700);
-
-	var _indexOf2 = _interopRequireDefault(_indexOf);
-
-	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-	var ACTIONS_TO_IGNORE = [];
-
-	function error_catcher_middleware(_ref) {
-	    var dispatch = _ref.dispatch;
-	    var getState = _ref.getState;
-
-	    return function (next) {
-	        return function (action) {
-
-	            if (action && action.type.indexOf('FAILED') !== -1 && ACTIONS_TO_IGNORE.indexOf(action.type) == -1) {
-	                dispatch((0, _Error.setErrorMessage)("Error: " + action.error_message));
-	            }
-	            return next(action);
-	        };
-	    };
-	}
-
-	module.exports = error_catcher_middleware;
-
-/***/ },
-/* 708 */
-/***/ function(module, exports, __webpack_require__) {
-
-	'use strict';
-
-	var _Error = __webpack_require__(702);
-
-	var _indexOf = __webpack_require__(700);
-
-	var _indexOf2 = _interopRequireDefault(_indexOf);
-
-	var _ItemList = __webpack_require__(559);
-
-	var _Issue = __webpack_require__(692);
-
-	var _Sprints = __webpack_require__(689);
-
-	var _Issues = __webpack_require__(691);
-
-	var _IssueGeneralDetails = __webpack_require__(701);
-
-	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-	var sprints_list_key = 'sprints';
-	var projects_list_key = 'projects';
-	var issues_list_key = 'issues';
-	var issue_details_developer_key = 'issue_developer_details';
-
-	function DevPageMiddleware(_ref) {
-		var dispatch = _ref.dispatch;
-		var getState = _ref.getState;
-
-		return function (next) {
-			return function (action) {
-
-				switch (action.type) {
-					case _ItemList.UPDATE_LIST_SELECTION:
-
-						var selected_ids = action.selected_ids || [];
-						var selected_id = selected_ids.length > 0 && selected_ids[0] || null;
-
-						if (action.list_key == projects_list_key) {
-							// Change selected project
-							dispatch((0, _ItemList.update_list_filter)(sprints_list_key, { project_id: selected_id }));
-							dispatch((0, _ItemList.invalidateList)(sprints_list_key));
-							dispatch((0, _Sprints.fetchSprintsIfNeeded)(sprints_list_key));
-
-							if (selected_id) {
-								dispatch((0, _ItemList.collapse_list)(projects_list_key));
-								dispatch((0, _ItemList.collapse_list)(issues_list_key));
-								dispatch((0, _ItemList.expand_list)(sprints_list_key));
-							}
-
-							dispatch((0, _ItemList.unselectAllItems)(sprints_list_key));
-							dispatch((0, _ItemList.unselectAllItems)(issues_list_key));
-							dispatch((0, _ItemList.update_list_filter)(issue_details_developer_key, { issue_id: null }));
-						} else if (action.list_key == sprints_list_key) {
-							// Change selected sprint
-							dispatch((0, _ItemList.update_list_filter)(issues_list_key, { sprint_id: selected_id }));
-							dispatch((0, _ItemList.invalidateList)(issues_list_key));
-							dispatch((0, _Issues.fetchIssuesIfNeeded)(issues_list_key));
-
-							if (selected_id) {
-								dispatch((0, _ItemList.expand_list)(issues_list_key));
-								dispatch((0, _ItemList.collapse_list)(sprints_list_key));
-							}
-
-							dispatch((0, _ItemList.unselectAllItems)(issues_list_key));
-							dispatch((0, _ItemList.update_list_filter)(issue_details_developer_key, { issue_id: null }));
-						} else if (action.list_key == issues_list_key) {
-							// Change selected issue
-							var _issue_id = selected_id;
-							dispatch((0, _ItemList.update_list_filter)(issue_details_developer_key, { issue_id: _issue_id }));
-							dispatch((0, _IssueGeneralDetails.invalidateIssueGeneralDetails)([_issue_id]));
-							dispatch((0, _IssueGeneralDetails.fetchIssueGeneralDetailsIfNeeded)([_issue_id]));
-						}
-					case _Issue.ANNOUNCE_ISSUE_SAVED:
-						var issue_id = action.issue_id;
-					/* dispatch(invalidateIssues([issue_id]))
-	       dispatch(fetchIssuesIfNeeded(issues_list_key))
-	       dispatch(invalidateIssueGeneralDetails([issue_id]))
-	       dispatch(fetchIssueGeneralDetailsIfNeeded([issue_id]))*/
-				}
-				return next(action);
-			};
-		};
-	}
-
-	module.exports = DevPageMiddleware;
-
-/***/ },
-/* 709 */
-/***/ function(module, exports, __webpack_require__) {
-
-	'use strict';
-
-	Object.defineProperty(exports, "__esModule", {
-	    value: true
-	});
-
-	var _merge = __webpack_require__(710);
-
-	var _merge2 = _interopRequireDefault(_merge);
-
-	var _reactRouterRedux = __webpack_require__(527);
-
-	var _redux = __webpack_require__(540);
-
-	var _map = __webpack_require__(635);
-
-	var _map2 = _interopRequireDefault(_map);
-
-	var _item_list = __webpack_require__(750);
-
-	var _item_list2 = _interopRequireDefault(_item_list);
-
-	var _project = __webpack_require__(751);
-
-	var _project2 = _interopRequireDefault(_project);
-
-	var _sprint = __webpack_require__(753);
-
-	var _sprint2 = _interopRequireDefault(_sprint);
-
-	var _issue = __webpack_require__(754);
-
-	var _issue2 = _interopRequireDefault(_issue);
-
-	var _issue_general_details = __webpack_require__(759);
-
-	var _issue_general_details2 = _interopRequireDefault(_issue_general_details);
-
-	var _notification_bar = __webpack_require__(760);
-
-	var _notification_bar2 = _interopRequireDefault(_notification_bar);
-
-	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-	var rootReducer = (0, _redux.combineReducers)({
-	    routing: _reactRouterRedux.routerReducer,
-	    project: _project2.default,
-	    sprint: _sprint2.default,
-	    issue: _issue2.default,
-	    issue_general_details: _issue_general_details2.default,
-	    item_list: _item_list2.default,
-	    notification_bar: _notification_bar2.default
-	});
-
-	exports.default = rootReducer;
-
-/***/ },
-/* 710 */
-/***/ function(module, exports, __webpack_require__) {
-
-	var baseMerge = __webpack_require__(711),
-	    createAssigner = __webpack_require__(748);
-
-	/**
-	 * This method is like `_.assign` except that it recursively merges own and
-	 * inherited enumerable string keyed properties of source objects into the
-	 * destination object. Source properties that resolve to `undefined` are
-	 * skipped if a destination value exists. Array and plain object properties
-	 * are merged recursively. Other objects and value types are overridden by
-	 * assignment. Source objects are applied from left to right. Subsequent
-	 * sources overwrite property assignments of previous sources.
-	 *
-	 * **Note:** This method mutates `object`.
-	 *
-	 * @static
-	 * @memberOf _
-	 * @since 0.5.0
-	 * @category Object
-	 * @param {Object} object The destination object.
-	 * @param {...Object} [sources] The source objects.
-	 * @returns {Object} Returns `object`.
-	 * @example
-	 *
-	 * var users = {
-	 *   'data': [{ 'user': 'barney' }, { 'user': 'fred' }]
-	 * };
-	 *
-	 * var ages = {
-	 *   'data': [{ 'age': 36 }, { 'age': 40 }]
-	 * };
-	 *
-	 * _.merge(users, ages);
-	 * // => { 'data': [{ 'user': 'barney', 'age': 36 }, { 'user': 'fred', 'age': 40 }] }
-	 */
-	var merge = createAssigner(function(object, source, srcIndex) {
-	  baseMerge(object, source, srcIndex);
-	});
-
-	module.exports = merge;
-
-
-/***/ },
-/* 711 */
-/***/ function(module, exports, __webpack_require__) {
-
-	var Stack = __webpack_require__(639),
-	    arrayEach = __webpack_require__(712),
-	    assignMergeValue = __webpack_require__(713),
-	    baseMergeDeep = __webpack_require__(714),
-	    isArray = __webpack_require__(565),
-	    isObject = __webpack_require__(577),
-	    isTypedArray = __webpack_require__(660),
-	    keysIn = __webpack_require__(744);
-
-	/**
-	 * The base implementation of `_.merge` without support for multiple sources.
-	 *
-	 * @private
-	 * @param {Object} object The destination object.
-	 * @param {Object} source The source object.
-	 * @param {number} srcIndex The index of `source`.
-	 * @param {Function} [customizer] The function to customize merged values.
-	 * @param {Object} [stack] Tracks traversed source values and their merged
-	 *  counterparts.
-	 */
-	function baseMerge(object, source, srcIndex, customizer, stack) {
-	  if (object === source) {
-	    return;
-	  }
-	  if (!(isArray(source) || isTypedArray(source))) {
-	    var props = keysIn(source);
-	  }
-	  arrayEach(props || source, function(srcValue, key) {
-	    if (props) {
-	      key = srcValue;
-	      srcValue = source[key];
-	    }
-	    if (isObject(srcValue)) {
-	      stack || (stack = new Stack);
-	      baseMergeDeep(object, source, key, srcIndex, baseMerge, customizer, stack);
-	    }
-	    else {
-	      var newValue = customizer
-	        ? customizer(object[key], srcValue, (key + ''), object, source, stack)
-	        : undefined;
-
-	      if (newValue === undefined) {
-	        newValue = srcValue;
-	      }
-	      assignMergeValue(object, key, newValue);
-	    }
-	  });
-	}
-
-	module.exports = baseMerge;
-
-
-/***/ },
-/* 712 */
-/***/ function(module, exports) {
-
-	/**
-	 * A specialized version of `_.forEach` for arrays without support for
-	 * iteratee shorthands.
-	 *
-	 * @private
-	 * @param {Array} [array] The array to iterate over.
-	 * @param {Function} iteratee The function invoked per iteration.
-	 * @returns {Array} Returns `array`.
-	 */
-	function arrayEach(array, iteratee) {
-	  var index = -1,
-	      length = array ? array.length : 0;
-
-	  while (++index < length) {
-	    if (iteratee(array[index], index, array) === false) {
-	      break;
-	    }
-	  }
-	  return array;
-	}
-
-	module.exports = arrayEach;
-
-
-/***/ },
-/* 713 */
-/***/ function(module, exports, __webpack_require__) {
-
-	var eq = __webpack_require__(592);
-
-	/**
-	 * This function is like `assignValue` except that it doesn't assign
-	 * `undefined` values.
-	 *
-	 * @private
-	 * @param {Object} object The object to modify.
-	 * @param {string} key The key of the property to assign.
-	 * @param {*} value The value to assign.
-	 */
-	function assignMergeValue(object, key, value) {
-	  if ((value !== undefined && !eq(object[key], value)) ||
-	      (typeof key == 'number' && value === undefined && !(key in object))) {
-	    object[key] = value;
-	  }
-	}
-
-	module.exports = assignMergeValue;
-
-
-/***/ },
-/* 714 */
-/***/ function(module, exports, __webpack_require__) {
-
-	var assignMergeValue = __webpack_require__(713),
-	    baseClone = __webpack_require__(715),
-	    copyArray = __webpack_require__(720),
-	    isArguments = __webpack_require__(615),
-	    isArray = __webpack_require__(565),
-	    isArrayLikeObject = __webpack_require__(616),
-	    isFunction = __webpack_require__(576),
-	    isObject = __webpack_require__(577),
-	    isPlainObject = __webpack_require__(542),
-	    isTypedArray = __webpack_require__(660),
-	    toPlainObject = __webpack_require__(743);
-
-	/**
-	 * A specialized version of `baseMerge` for arrays and objects which performs
-	 * deep merges and tracks traversed objects enabling objects with circular
-	 * references to be merged.
-	 *
-	 * @private
-	 * @param {Object} object The destination object.
-	 * @param {Object} source The source object.
-	 * @param {string} key The key of the value to merge.
-	 * @param {number} srcIndex The index of `source`.
-	 * @param {Function} mergeFunc The function to merge values.
-	 * @param {Function} [customizer] The function to customize assigned values.
-	 * @param {Object} [stack] Tracks traversed source values and their merged
-	 *  counterparts.
-	 */
-	function baseMergeDeep(object, source, key, srcIndex, mergeFunc, customizer, stack) {
-	  var objValue = object[key],
-	      srcValue = source[key],
-	      stacked = stack.get(srcValue);
-
-	  if (stacked) {
-	    assignMergeValue(object, key, stacked);
-	    return;
-	  }
-	  var newValue = customizer
-	    ? customizer(objValue, srcValue, (key + ''), object, source, stack)
-	    : undefined;
-
-	  var isCommon = newValue === undefined;
-
-	  if (isCommon) {
-	    newValue = srcValue;
-	    if (isArray(srcValue) || isTypedArray(srcValue)) {
-	      if (isArray(objValue)) {
-	        newValue = objValue;
-	      }
-	      else if (isArrayLikeObject(objValue)) {
-	        newValue = copyArray(objValue);
-	      }
-	      else {
-	        isCommon = false;
-	        newValue = baseClone(srcValue, true);
-	      }
-	    }
-	    else if (isPlainObject(srcValue) || isArguments(srcValue)) {
-	      if (isArguments(objValue)) {
-	        newValue = toPlainObject(objValue);
-	      }
-	      else if (!isObject(objValue) || (srcIndex && isFunction(objValue))) {
-	        isCommon = false;
-	        newValue = baseClone(srcValue, true);
-	      }
-	      else {
-	        newValue = objValue;
-	      }
-	    }
-	    else {
-	      isCommon = false;
-	    }
-	  }
-	  stack.set(srcValue, newValue);
-
-	  if (isCommon) {
-	    // Recursively merge objects and arrays (susceptible to call stack limits).
-	    mergeFunc(newValue, srcValue, srcIndex, customizer, stack);
-	  }
-	  stack['delete'](srcValue);
-	  assignMergeValue(object, key, newValue);
-	}
-
-	module.exports = baseMergeDeep;
-
-
-/***/ },
-/* 715 */
-/***/ function(module, exports, __webpack_require__) {
-
-	var Stack = __webpack_require__(639),
-	    arrayEach = __webpack_require__(712),
-	    assignValue = __webpack_require__(716),
-	    baseAssign = __webpack_require__(717),
-	    cloneBuffer = __webpack_require__(719),
-	    copyArray = __webpack_require__(720),
-	    copySymbols = __webpack_require__(721),
-	    getAllKeys = __webpack_require__(724),
-	    getTag = __webpack_require__(655),
-	    initCloneArray = __webpack_require__(726),
-	    initCloneByTag = __webpack_require__(727),
-	    initCloneObject = __webpack_require__(738),
-	    isArray = __webpack_require__(565),
-	    isBuffer = __webpack_require__(740),
-	    isHostObject = __webpack_require__(544),
-	    isObject = __webpack_require__(577),
-	    keys = __webpack_require__(627);
-
-	/** `Object#toString` result references. */
-	var argsTag = '[object Arguments]',
-	    arrayTag = '[object Array]',
-	    boolTag = '[object Boolean]',
-	    dateTag = '[object Date]',
-	    errorTag = '[object Error]',
-	    funcTag = '[object Function]',
-	    genTag = '[object GeneratorFunction]',
-	    mapTag = '[object Map]',
-	    numberTag = '[object Number]',
-	    objectTag = '[object Object]',
-	    regexpTag = '[object RegExp]',
-	    setTag = '[object Set]',
-	    stringTag = '[object String]',
-	    symbolTag = '[object Symbol]',
-	    weakMapTag = '[object WeakMap]';
-
-	var arrayBufferTag = '[object ArrayBuffer]',
-	    dataViewTag = '[object DataView]',
-	    float32Tag = '[object Float32Array]',
-	    float64Tag = '[object Float64Array]',
-	    int8Tag = '[object Int8Array]',
-	    int16Tag = '[object Int16Array]',
-	    int32Tag = '[object Int32Array]',
-	    uint8Tag = '[object Uint8Array]',
-	    uint8ClampedTag = '[object Uint8ClampedArray]',
-	    uint16Tag = '[object Uint16Array]',
-	    uint32Tag = '[object Uint32Array]';
-
-	/** Used to identify `toStringTag` values supported by `_.clone`. */
-	var cloneableTags = {};
-	cloneableTags[argsTag] = cloneableTags[arrayTag] =
-	cloneableTags[arrayBufferTag] = cloneableTags[dataViewTag] =
-	cloneableTags[boolTag] = cloneableTags[dateTag] =
-	cloneableTags[float32Tag] = cloneableTags[float64Tag] =
-	cloneableTags[int8Tag] = cloneableTags[int16Tag] =
-	cloneableTags[int32Tag] = cloneableTags[mapTag] =
-	cloneableTags[numberTag] = cloneableTags[objectTag] =
-	cloneableTags[regexpTag] = cloneableTags[setTag] =
-	cloneableTags[stringTag] = cloneableTags[symbolTag] =
-	cloneableTags[uint8Tag] = cloneableTags[uint8ClampedTag] =
-	cloneableTags[uint16Tag] = cloneableTags[uint32Tag] = true;
-	cloneableTags[errorTag] = cloneableTags[funcTag] =
-	cloneableTags[weakMapTag] = false;
-
-	/**
-	 * The base implementation of `_.clone` and `_.cloneDeep` which tracks
-	 * traversed objects.
-	 *
-	 * @private
-	 * @param {*} value The value to clone.
-	 * @param {boolean} [isDeep] Specify a deep clone.
-	 * @param {boolean} [isFull] Specify a clone including symbols.
-	 * @param {Function} [customizer] The function to customize cloning.
-	 * @param {string} [key] The key of `value`.
-	 * @param {Object} [object] The parent object of `value`.
-	 * @param {Object} [stack] Tracks traversed objects and their clone counterparts.
-	 * @returns {*} Returns the cloned value.
-	 */
-	function baseClone(value, isDeep, isFull, customizer, key, object, stack) {
-	  var result;
-	  if (customizer) {
-	    result = object ? customizer(value, key, object, stack) : customizer(value);
-	  }
-	  if (result !== undefined) {
-	    return result;
-	  }
-	  if (!isObject(value)) {
-	    return value;
-	  }
-	  var isArr = isArray(value);
-	  if (isArr) {
-	    result = initCloneArray(value);
-	    if (!isDeep) {
-	      return copyArray(value, result);
-	    }
-	  } else {
-	    var tag = getTag(value),
-	        isFunc = tag == funcTag || tag == genTag;
-
-	    if (isBuffer(value)) {
-	      return cloneBuffer(value, isDeep);
-	    }
-	    if (tag == objectTag || tag == argsTag || (isFunc && !object)) {
-	      if (isHostObject(value)) {
-	        return object ? value : {};
-	      }
-	      result = initCloneObject(isFunc ? {} : value);
-	      if (!isDeep) {
-	        return copySymbols(value, baseAssign(result, value));
-	      }
-	    } else {
-	      if (!cloneableTags[tag]) {
-	        return object ? value : {};
-	      }
-	      result = initCloneByTag(value, tag, baseClone, isDeep);
-	    }
-	  }
-	  // Check for circular references and return its corresponding clone.
-	  stack || (stack = new Stack);
-	  var stacked = stack.get(value);
-	  if (stacked) {
-	    return stacked;
-	  }
-	  stack.set(value, result);
-
-	  if (!isArr) {
-	    var props = isFull ? getAllKeys(value) : keys(value);
-	  }
-	  // Recursively populate clone (susceptible to call stack limits).
-	  arrayEach(props || value, function(subValue, key) {
-	    if (props) {
-	      key = subValue;
-	      subValue = value[key];
-	    }
-	    assignValue(result, key, baseClone(subValue, isDeep, isFull, customizer, key, value, stack));
-	  });
-	  return result;
-	}
-
-	module.exports = baseClone;
-
-
-/***/ },
-/* 716 */
-/***/ function(module, exports, __webpack_require__) {
-
-	var eq = __webpack_require__(592);
-
-	/** Used for built-in method references. */
-	var objectProto = Object.prototype;
-
-	/** Used to check objects for own properties. */
-	var hasOwnProperty = objectProto.hasOwnProperty;
-
-	/**
-	 * Assigns `value` to `key` of `object` if the existing value is not equivalent
-	 * using [`SameValueZero`](http://ecma-international.org/ecma-262/6.0/#sec-samevaluezero)
-	 * for equality comparisons.
-	 *
-	 * @private
-	 * @param {Object} object The object to modify.
-	 * @param {string} key The key of the property to assign.
-	 * @param {*} value The value to assign.
-	 */
-	function assignValue(object, key, value) {
-	  var objValue = object[key];
-	  if (!(hasOwnProperty.call(object, key) && eq(objValue, value)) ||
-	      (value === undefined && !(key in object))) {
-	    object[key] = value;
-	  }
-	}
-
-	module.exports = assignValue;
-
-
-/***/ },
-/* 717 */
-/***/ function(module, exports, __webpack_require__) {
-
-	var copyObject = __webpack_require__(718),
-	    keys = __webpack_require__(627);
-
-	/**
-	 * The base implementation of `_.assign` without support for multiple sources
-	 * or `customizer` functions.
-	 *
-	 * @private
-	 * @param {Object} object The destination object.
-	 * @param {Object} source The source object.
-	 * @returns {Object} Returns `object`.
-	 */
-	function baseAssign(object, source) {
-	  return object && copyObject(source, keys(source), object);
-	}
-
-	module.exports = baseAssign;
-
-
-/***/ },
-/* 718 */
-/***/ function(module, exports, __webpack_require__) {
-
-	var assignValue = __webpack_require__(716);
-
-	/**
-	 * Copies properties of `source` to `object`.
-	 *
-	 * @private
-	 * @param {Object} source The object to copy properties from.
-	 * @param {Array} props The property identifiers to copy.
-	 * @param {Object} [object={}] The object to copy properties to.
-	 * @param {Function} [customizer] The function to customize copied values.
-	 * @returns {Object} Returns `object`.
-	 */
-	function copyObject(source, props, object, customizer) {
-	  object || (object = {});
-
-	  var index = -1,
-	      length = props.length;
-
-	  while (++index < length) {
-	    var key = props[index];
-
-	    var newValue = customizer
-	      ? customizer(object[key], source[key], key, object, source)
-	      : source[key];
-
-	    assignValue(object, key, newValue);
-	  }
-	  return object;
-	}
-
-	module.exports = copyObject;
-
-
-/***/ },
-/* 719 */
-/***/ function(module, exports) {
-
-	/**
-	 * Creates a clone of  `buffer`.
-	 *
-	 * @private
-	 * @param {Buffer} buffer The buffer to clone.
-	 * @param {boolean} [isDeep] Specify a deep clone.
-	 * @returns {Buffer} Returns the cloned buffer.
-	 */
-	function cloneBuffer(buffer, isDeep) {
-	  if (isDeep) {
-	    return buffer.slice();
-	  }
-	  var result = new buffer.constructor(buffer.length);
-	  buffer.copy(result);
-	  return result;
-	}
-
-	module.exports = cloneBuffer;
-
-
-/***/ },
-/* 720 */
-/***/ function(module, exports) {
-
-	/**
-	 * Copies the values of `source` to `array`.
-	 *
-	 * @private
-	 * @param {Array} source The array to copy values from.
-	 * @param {Array} [array=[]] The array to copy values to.
-	 * @returns {Array} Returns `array`.
-	 */
-	function copyArray(source, array) {
-	  var index = -1,
-	      length = source.length;
-
-	  array || (array = Array(length));
-	  while (++index < length) {
-	    array[index] = source[index];
-	  }
-	  return array;
-	}
-
-	module.exports = copyArray;
-
-
-/***/ },
-/* 721 */
-/***/ function(module, exports, __webpack_require__) {
-
-	var copyObject = __webpack_require__(718),
-	    getSymbols = __webpack_require__(722);
-
-	/**
-	 * Copies own symbol properties of `source` to `object`.
-	 *
-	 * @private
-	 * @param {Object} source The object to copy symbols from.
-	 * @param {Object} [object={}] The object to copy symbols to.
-	 * @returns {Object} Returns `object`.
-	 */
-	function copySymbols(source, object) {
-	  return copyObject(source, getSymbols(source), object);
-	}
-
-	module.exports = copySymbols;
-
-
-/***/ },
-/* 722 */
-/***/ function(module, exports, __webpack_require__) {
-
-	var stubArray = __webpack_require__(723);
-
-	/** Built-in value references. */
-	var getOwnPropertySymbols = Object.getOwnPropertySymbols;
-
-	/**
-	 * Creates an array of the own enumerable symbol properties of `object`.
-	 *
-	 * @private
-	 * @param {Object} object The object to query.
-	 * @returns {Array} Returns the array of symbols.
-	 */
-	function getSymbols(object) {
-	  // Coerce `object` to an object to avoid non-object errors in V8.
-	  // See https://bugs.chromium.org/p/v8/issues/detail?id=3443 for more details.
-	  return getOwnPropertySymbols(Object(object));
-	}
-
-	// Fallback for IE < 11.
-	if (!getOwnPropertySymbols) {
-	  getSymbols = stubArray;
-	}
-
-	module.exports = getSymbols;
-
-
-/***/ },
-/* 723 */
-/***/ function(module, exports) {
-
-	/**
-	 * A method that returns a new empty array.
-	 *
-	 * @static
-	 * @memberOf _
-	 * @since 4.13.0
-	 * @category Util
-	 * @returns {Array} Returns the new empty array.
-	 * @example
-	 *
-	 * var arrays = _.times(2, _.stubArray);
-	 *
-	 * console.log(arrays);
-	 * // => [[], []]
-	 *
-	 * console.log(arrays[0] === arrays[1]);
-	 * // => false
-	 */
-	function stubArray() {
-	  return [];
-	}
-
-	module.exports = stubArray;
-
-
-/***/ },
-/* 724 */
-/***/ function(module, exports, __webpack_require__) {
-
-	var baseGetAllKeys = __webpack_require__(725),
-	    getSymbols = __webpack_require__(722),
-	    keys = __webpack_require__(627);
-
-	/**
-	 * Creates an array of own enumerable property names and symbols of `object`.
-	 *
-	 * @private
-	 * @param {Object} object The object to query.
-	 * @returns {Array} Returns the array of property names and symbols.
-	 */
-	function getAllKeys(object) {
-	  return baseGetAllKeys(object, keys, getSymbols);
-	}
-
-	module.exports = getAllKeys;
-
-
-/***/ },
-/* 725 */
-/***/ function(module, exports, __webpack_require__) {
-
-	var arrayPush = __webpack_require__(613),
-	    isArray = __webpack_require__(565);
-
-	/**
-	 * The base implementation of `getAllKeys` and `getAllKeysIn` which uses
-	 * `keysFunc` and `symbolsFunc` to get the enumerable property names and
-	 * symbols of `object`.
-	 *
-	 * @private
-	 * @param {Object} object The object to query.
-	 * @param {Function} keysFunc The function to get the keys of `object`.
-	 * @param {Function} symbolsFunc The function to get the symbols of `object`.
-	 * @returns {Array} Returns the array of property names and symbols.
-	 */
-	function baseGetAllKeys(object, keysFunc, symbolsFunc) {
-	  var result = keysFunc(object);
-	  return isArray(object) ? result : arrayPush(result, symbolsFunc(object));
-	}
-
-	module.exports = baseGetAllKeys;
-
-
-/***/ },
-/* 726 */
-/***/ function(module, exports) {
-
-	/** Used for built-in method references. */
-	var objectProto = Object.prototype;
-
-	/** Used to check objects for own properties. */
-	var hasOwnProperty = objectProto.hasOwnProperty;
-
-	/**
-	 * Initializes an array clone.
-	 *
-	 * @private
-	 * @param {Array} array The array to clone.
-	 * @returns {Array} Returns the initialized clone.
-	 */
-	function initCloneArray(array) {
-	  var length = array.length,
-	      result = array.constructor(length);
-
-	  // Add properties assigned by `RegExp#exec`.
-	  if (length && typeof array[0] == 'string' && hasOwnProperty.call(array, 'index')) {
-	    result.index = array.index;
-	    result.input = array.input;
-	  }
-	  return result;
-	}
-
-	module.exports = initCloneArray;
-
-
-/***/ },
-/* 727 */
-/***/ function(module, exports, __webpack_require__) {
-
-	var cloneArrayBuffer = __webpack_require__(728),
-	    cloneDataView = __webpack_require__(729),
-	    cloneMap = __webpack_require__(730),
-	    cloneRegExp = __webpack_require__(733),
-	    cloneSet = __webpack_require__(734),
-	    cloneSymbol = __webpack_require__(736),
-	    cloneTypedArray = __webpack_require__(737);
-
-	/** `Object#toString` result references. */
-	var boolTag = '[object Boolean]',
-	    dateTag = '[object Date]',
-	    mapTag = '[object Map]',
-	    numberTag = '[object Number]',
-	    regexpTag = '[object RegExp]',
-	    setTag = '[object Set]',
-	    stringTag = '[object String]',
-	    symbolTag = '[object Symbol]';
-
-	var arrayBufferTag = '[object ArrayBuffer]',
-	    dataViewTag = '[object DataView]',
-	    float32Tag = '[object Float32Array]',
-	    float64Tag = '[object Float64Array]',
-	    int8Tag = '[object Int8Array]',
-	    int16Tag = '[object Int16Array]',
-	    int32Tag = '[object Int32Array]',
-	    uint8Tag = '[object Uint8Array]',
-	    uint8ClampedTag = '[object Uint8ClampedArray]',
-	    uint16Tag = '[object Uint16Array]',
-	    uint32Tag = '[object Uint32Array]';
-
-	/**
-	 * Initializes an object clone based on its `toStringTag`.
-	 *
-	 * **Note:** This function only supports cloning values with tags of
-	 * `Boolean`, `Date`, `Error`, `Number`, `RegExp`, or `String`.
-	 *
-	 * @private
-	 * @param {Object} object The object to clone.
-	 * @param {string} tag The `toStringTag` of the object to clone.
-	 * @param {Function} cloneFunc The function to clone values.
-	 * @param {boolean} [isDeep] Specify a deep clone.
-	 * @returns {Object} Returns the initialized clone.
-	 */
-	function initCloneByTag(object, tag, cloneFunc, isDeep) {
-	  var Ctor = object.constructor;
-	  switch (tag) {
-	    case arrayBufferTag:
-	      return cloneArrayBuffer(object);
-
-	    case boolTag:
-	    case dateTag:
-	      return new Ctor(+object);
-
-	    case dataViewTag:
-	      return cloneDataView(object, isDeep);
-
-	    case float32Tag: case float64Tag:
-	    case int8Tag: case int16Tag: case int32Tag:
-	    case uint8Tag: case uint8ClampedTag: case uint16Tag: case uint32Tag:
-	      return cloneTypedArray(object, isDeep);
-
-	    case mapTag:
-	      return cloneMap(object, isDeep, cloneFunc);
-
-	    case numberTag:
-	    case stringTag:
-	      return new Ctor(object);
-
-	    case regexpTag:
-	      return cloneRegExp(object);
-
-	    case setTag:
-	      return cloneSet(object, isDeep, cloneFunc);
-
-	    case symbolTag:
-	      return cloneSymbol(object);
-	  }
-	}
-
-	module.exports = initCloneByTag;
-
-
-/***/ },
-/* 728 */
-/***/ function(module, exports, __webpack_require__) {
-
-	var Uint8Array = __webpack_require__(651);
-
-	/**
-	 * Creates a clone of `arrayBuffer`.
-	 *
-	 * @private
-	 * @param {ArrayBuffer} arrayBuffer The array buffer to clone.
-	 * @returns {ArrayBuffer} Returns the cloned array buffer.
-	 */
-	function cloneArrayBuffer(arrayBuffer) {
-	  var result = new arrayBuffer.constructor(arrayBuffer.byteLength);
-	  new Uint8Array(result).set(new Uint8Array(arrayBuffer));
-	  return result;
-	}
-
-	module.exports = cloneArrayBuffer;
-
-
-/***/ },
-/* 729 */
-/***/ function(module, exports, __webpack_require__) {
-
-	var cloneArrayBuffer = __webpack_require__(728);
-
-	/**
-	 * Creates a clone of `dataView`.
-	 *
-	 * @private
-	 * @param {Object} dataView The data view to clone.
-	 * @param {boolean} [isDeep] Specify a deep clone.
-	 * @returns {Object} Returns the cloned data view.
-	 */
-	function cloneDataView(dataView, isDeep) {
-	  var buffer = isDeep ? cloneArrayBuffer(dataView.buffer) : dataView.buffer;
-	  return new dataView.constructor(buffer, dataView.byteOffset, dataView.byteLength);
-	}
-
-	module.exports = cloneDataView;
-
-
-/***/ },
-/* 730 */
-/***/ function(module, exports, __webpack_require__) {
-
-	var addMapEntry = __webpack_require__(731),
-	    arrayReduce = __webpack_require__(732),
-	    mapToArray = __webpack_require__(652);
-
-	/**
-	 * Creates a clone of `map`.
-	 *
-	 * @private
-	 * @param {Object} map The map to clone.
-	 * @param {Function} cloneFunc The function to clone values.
-	 * @param {boolean} [isDeep] Specify a deep clone.
-	 * @returns {Object} Returns the cloned map.
-	 */
-	function cloneMap(map, isDeep, cloneFunc) {
-	  var array = isDeep ? cloneFunc(mapToArray(map), true) : mapToArray(map);
-	  return arrayReduce(array, addMapEntry, new map.constructor);
-	}
-
-	module.exports = cloneMap;
-
-
-/***/ },
-/* 731 */
-/***/ function(module, exports) {
-
-	/**
-	 * Adds the key-value `pair` to `map`.
-	 *
-	 * @private
-	 * @param {Object} map The map to modify.
-	 * @param {Array} pair The key-value pair to add.
-	 * @returns {Object} Returns `map`.
-	 */
-	function addMapEntry(map, pair) {
-	  // Don't return `Map#set` because it doesn't return the map instance in IE 11.
-	  map.set(pair[0], pair[1]);
-	  return map;
-	}
-
-	module.exports = addMapEntry;
-
-
-/***/ },
-/* 732 */
-/***/ function(module, exports) {
-
-	/**
-	 * A specialized version of `_.reduce` for arrays without support for
-	 * iteratee shorthands.
-	 *
-	 * @private
-	 * @param {Array} [array] The array to iterate over.
-	 * @param {Function} iteratee The function invoked per iteration.
-	 * @param {*} [accumulator] The initial value.
-	 * @param {boolean} [initAccum] Specify using the first element of `array` as
-	 *  the initial value.
-	 * @returns {*} Returns the accumulated value.
-	 */
-	function arrayReduce(array, iteratee, accumulator, initAccum) {
-	  var index = -1,
-	      length = array ? array.length : 0;
-
-	  if (initAccum && length) {
-	    accumulator = array[++index];
-	  }
-	  while (++index < length) {
-	    accumulator = iteratee(accumulator, array[index], index, array);
-	  }
-	  return accumulator;
-	}
-
-	module.exports = arrayReduce;
-
-
-/***/ },
-/* 733 */
-/***/ function(module, exports) {
-
-	/** Used to match `RegExp` flags from their coerced string values. */
-	var reFlags = /\w*$/;
-
-	/**
-	 * Creates a clone of `regexp`.
-	 *
-	 * @private
-	 * @param {Object} regexp The regexp to clone.
-	 * @returns {Object} Returns the cloned regexp.
-	 */
-	function cloneRegExp(regexp) {
-	  var result = new regexp.constructor(regexp.source, reFlags.exec(regexp));
-	  result.lastIndex = regexp.lastIndex;
-	  return result;
-	}
-
-	module.exports = cloneRegExp;
-
-
-/***/ },
-/* 734 */
-/***/ function(module, exports, __webpack_require__) {
-
-	var addSetEntry = __webpack_require__(735),
-	    arrayReduce = __webpack_require__(732),
-	    setToArray = __webpack_require__(653);
-
-	/**
-	 * Creates a clone of `set`.
-	 *
-	 * @private
-	 * @param {Object} set The set to clone.
-	 * @param {Function} cloneFunc The function to clone values.
-	 * @param {boolean} [isDeep] Specify a deep clone.
-	 * @returns {Object} Returns the cloned set.
-	 */
-	function cloneSet(set, isDeep, cloneFunc) {
-	  var array = isDeep ? cloneFunc(setToArray(set), true) : setToArray(set);
-	  return arrayReduce(array, addSetEntry, new set.constructor);
-	}
-
-	module.exports = cloneSet;
-
-
-/***/ },
-/* 735 */
-/***/ function(module, exports) {
-
-	/**
-	 * Adds `value` to `set`.
-	 *
-	 * @private
-	 * @param {Object} set The set to modify.
-	 * @param {*} value The value to add.
-	 * @returns {Object} Returns `set`.
-	 */
-	function addSetEntry(set, value) {
-	  set.add(value);
-	  return set;
-	}
-
-	module.exports = addSetEntry;
-
-
-/***/ },
-/* 736 */
-/***/ function(module, exports, __webpack_require__) {
-
-	var Symbol = __webpack_require__(650);
-
-	/** Used to convert symbols to primitives and strings. */
-	var symbolProto = Symbol ? Symbol.prototype : undefined,
-	    symbolValueOf = symbolProto ? symbolProto.valueOf : undefined;
-
-	/**
-	 * Creates a clone of the `symbol` object.
-	 *
-	 * @private
-	 * @param {Object} symbol The symbol object to clone.
-	 * @returns {Object} Returns the cloned symbol object.
-	 */
-	function cloneSymbol(symbol) {
-	  return symbolValueOf ? Object(symbolValueOf.call(symbol)) : {};
-	}
-
-	module.exports = cloneSymbol;
-
-
-/***/ },
-/* 737 */
-/***/ function(module, exports, __webpack_require__) {
-
-	var cloneArrayBuffer = __webpack_require__(728);
-
-	/**
-	 * Creates a clone of `typedArray`.
-	 *
-	 * @private
-	 * @param {Object} typedArray The typed array to clone.
-	 * @param {boolean} [isDeep] Specify a deep clone.
-	 * @returns {Object} Returns the cloned typed array.
-	 */
-	function cloneTypedArray(typedArray, isDeep) {
-	  var buffer = isDeep ? cloneArrayBuffer(typedArray.buffer) : typedArray.buffer;
-	  return new typedArray.constructor(buffer, typedArray.byteOffset, typedArray.length);
-	}
-
-	module.exports = cloneTypedArray;
-
-
-/***/ },
-/* 738 */
-/***/ function(module, exports, __webpack_require__) {
-
-	var baseCreate = __webpack_require__(739),
-	    getPrototype = __webpack_require__(543),
-	    isPrototype = __webpack_require__(634);
-
-	/**
-	 * Initializes an object clone.
-	 *
-	 * @private
-	 * @param {Object} object The object to clone.
-	 * @returns {Object} Returns the initialized clone.
-	 */
-	function initCloneObject(object) {
-	  return (typeof object.constructor == 'function' && !isPrototype(object))
-	    ? baseCreate(getPrototype(object))
-	    : {};
-	}
-
-	module.exports = initCloneObject;
-
-
-/***/ },
-/* 739 */
-/***/ function(module, exports, __webpack_require__) {
-
-	var isObject = __webpack_require__(577);
-
-	/** Built-in value references. */
-	var objectCreate = Object.create;
-
-	/**
-	 * The base implementation of `_.create` without support for assigning
-	 * properties to the created object.
-	 *
-	 * @private
-	 * @param {Object} prototype The object to inherit from.
-	 * @returns {Object} Returns the new object.
-	 */
-	function baseCreate(proto) {
-	  return isObject(proto) ? objectCreate(proto) : {};
-	}
-
-	module.exports = baseCreate;
-
-
-/***/ },
-/* 740 */
-/***/ function(module, exports, __webpack_require__) {
-
-	/* WEBPACK VAR INJECTION */(function(module) {var root = __webpack_require__(580),
-	    stubFalse = __webpack_require__(742);
-
-	/** Detect free variable `exports`. */
-	var freeExports = typeof exports == 'object' && exports;
-
-	/** Detect free variable `module`. */
-	var freeModule = freeExports && typeof module == 'object' && module;
-
-	/** Detect the popular CommonJS extension `module.exports`. */
-	var moduleExports = freeModule && freeModule.exports === freeExports;
-
-	/** Built-in value references. */
-	var Buffer = moduleExports ? root.Buffer : undefined;
-
-	/**
-	 * Checks if `value` is a buffer.
-	 *
-	 * @static
-	 * @memberOf _
-	 * @since 4.3.0
-	 * @category Lang
-	 * @param {*} value The value to check.
-	 * @returns {boolean} Returns `true` if `value` is a buffer, else `false`.
-	 * @example
-	 *
-	 * _.isBuffer(new Buffer(2));
-	 * // => true
-	 *
-	 * _.isBuffer(new Uint8Array(2));
-	 * // => false
-	 */
-	var isBuffer = !Buffer ? stubFalse : function(value) {
-	  return value instanceof Buffer;
-	};
-
-	module.exports = isBuffer;
-
-	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(741)(module)))
-
-/***/ },
-/* 741 */
-/***/ function(module, exports) {
-
-	module.exports = function(module) {
-		if(!module.webpackPolyfill) {
-			module.deprecate = function() {};
-			module.paths = [];
-			// module.parent = undefined by default
-			module.children = [];
-			module.webpackPolyfill = 1;
-		}
-		return module;
-	}
-
-
-/***/ },
-/* 742 */
-/***/ function(module, exports) {
-
-	/**
-	 * A method that returns `false`.
-	 *
-	 * @static
-	 * @memberOf _
-	 * @since 4.13.0
-	 * @category Util
-	 * @returns {boolean} Returns `false`.
-	 * @example
-	 *
-	 * _.times(2, _.stubFalse);
-	 * // => [false, false]
-	 */
-	function stubFalse() {
-	  return false;
-	}
-
-	module.exports = stubFalse;
-
-
-/***/ },
-/* 743 */
-/***/ function(module, exports, __webpack_require__) {
-
-	var copyObject = __webpack_require__(718),
-	    keysIn = __webpack_require__(744);
-
-	/**
-	 * Converts `value` to a plain object flattening inherited enumerable string
-	 * keyed properties of `value` to own properties of the plain object.
-	 *
-	 * @static
-	 * @memberOf _
-	 * @since 3.0.0
-	 * @category Lang
-	 * @param {*} value The value to convert.
-	 * @returns {Object} Returns the converted plain object.
-	 * @example
-	 *
-	 * function Foo() {
-	 *   this.b = 2;
-	 * }
-	 *
-	 * Foo.prototype.c = 3;
-	 *
-	 * _.assign({ 'a': 1 }, new Foo);
-	 * // => { 'a': 1, 'b': 2 }
-	 *
-	 * _.assign({ 'a': 1 }, _.toPlainObject(new Foo));
-	 * // => { 'a': 1, 'b': 2, 'c': 3 }
-	 */
-	function toPlainObject(value) {
-	  return copyObject(value, keysIn(value));
-	}
-
-	module.exports = toPlainObject;
-
-
-/***/ },
-/* 744 */
-/***/ function(module, exports, __webpack_require__) {
-
-	var baseKeysIn = __webpack_require__(745),
-	    indexKeys = __webpack_require__(630),
-	    isIndex = __webpack_require__(633),
-	    isPrototype = __webpack_require__(634);
-
-	/** Used for built-in method references. */
-	var objectProto = Object.prototype;
-
-	/** Used to check objects for own properties. */
-	var hasOwnProperty = objectProto.hasOwnProperty;
-
-	/**
-	 * Creates an array of the own and inherited enumerable property names of `object`.
-	 *
-	 * **Note:** Non-object values are coerced to objects.
-	 *
-	 * @static
-	 * @memberOf _
-	 * @since 3.0.0
-	 * @category Object
-	 * @param {Object} object The object to query.
-	 * @returns {Array} Returns the array of property names.
-	 * @example
-	 *
-	 * function Foo() {
-	 *   this.a = 1;
-	 *   this.b = 2;
-	 * }
-	 *
-	 * Foo.prototype.c = 3;
-	 *
-	 * _.keysIn(new Foo);
-	 * // => ['a', 'b', 'c'] (iteration order is not guaranteed)
-	 */
-	function keysIn(object) {
-	  var index = -1,
-	      isProto = isPrototype(object),
-	      props = baseKeysIn(object),
-	      propsLength = props.length,
-	      indexes = indexKeys(object),
-	      skipIndexes = !!indexes,
-	      result = indexes || [],
-	      length = result.length;
-
-	  while (++index < propsLength) {
-	    var key = props[index];
-	    if (!(skipIndexes && (key == 'length' || isIndex(key, length))) &&
-	        !(key == 'constructor' && (isProto || !hasOwnProperty.call(object, key)))) {
-	      result.push(key);
-	    }
-	  }
-	  return result;
-	}
-
-	module.exports = keysIn;
-
-
-/***/ },
-/* 745 */
-/***/ function(module, exports, __webpack_require__) {
-
-	var Reflect = __webpack_require__(746),
-	    iteratorToArray = __webpack_require__(747);
-
-	/** Used for built-in method references. */
-	var objectProto = Object.prototype;
-
-	/** Built-in value references. */
-	var enumerate = Reflect ? Reflect.enumerate : undefined,
-	    propertyIsEnumerable = objectProto.propertyIsEnumerable;
-
-	/**
-	 * The base implementation of `_.keysIn` which doesn't skip the constructor
-	 * property of prototypes or treat sparse arrays as dense.
-	 *
-	 * @private
-	 * @param {Object} object The object to query.
-	 * @returns {Array} Returns the array of property names.
-	 */
-	function baseKeysIn(object) {
-	  object = object == null ? object : Object(object);
-
-	  var result = [];
-	  for (var key in object) {
-	    result.push(key);
-	  }
-	  return result;
-	}
-
-	// Fallback for IE < 9 with es6-shim.
-	if (enumerate && !propertyIsEnumerable.call({ 'valueOf': 1 }, 'valueOf')) {
-	  baseKeysIn = function(object) {
-	    return iteratorToArray(enumerate(object));
-	  };
-	}
-
-	module.exports = baseKeysIn;
-
-
-/***/ },
-/* 746 */
-/***/ function(module, exports, __webpack_require__) {
-
-	var root = __webpack_require__(580);
-
-	/** Built-in value references. */
-	var Reflect = root.Reflect;
-
-	module.exports = Reflect;
-
-
-/***/ },
-/* 747 */
-/***/ function(module, exports) {
-
-	/**
-	 * Converts `iterator` to an array.
-	 *
-	 * @private
-	 * @param {Object} iterator The iterator to convert.
-	 * @returns {Array} Returns the converted array.
-	 */
-	function iteratorToArray(iterator) {
-	  var data,
-	      result = [];
-
-	  while (!(data = iterator.next()).done) {
-	    result.push(data.value);
-	  }
-	  return result;
-	}
-
-	module.exports = iteratorToArray;
-
-
-/***/ },
-/* 748 */
-/***/ function(module, exports, __webpack_require__) {
-
-	var isIterateeCall = __webpack_require__(749),
-	    rest = __webpack_require__(621);
-
-	/**
-	 * Creates a function like `_.assign`.
-	 *
-	 * @private
-	 * @param {Function} assigner The function to assign values.
-	 * @returns {Function} Returns the new assigner function.
-	 */
-	function createAssigner(assigner) {
-	  return rest(function(object, sources) {
-	    var index = -1,
-	        length = sources.length,
-	        customizer = length > 1 ? sources[length - 1] : undefined,
-	        guard = length > 2 ? sources[2] : undefined;
-
-	    customizer = (assigner.length > 3 && typeof customizer == 'function')
-	      ? (length--, customizer)
-	      : undefined;
-
-	    if (guard && isIterateeCall(sources[0], sources[1], guard)) {
-	      customizer = length < 3 ? undefined : customizer;
-	      length = 1;
-	    }
-	    object = Object(object);
-	    while (++index < length) {
-	      var source = sources[index];
-	      if (source) {
-	        assigner(object, source, index, customizer);
-	      }
-	    }
-	    return object;
-	  });
-	}
-
-	module.exports = createAssigner;
-
-
-/***/ },
-/* 749 */
-/***/ function(module, exports, __webpack_require__) {
-
-	var eq = __webpack_require__(592),
-	    isArrayLike = __webpack_require__(617),
-	    isIndex = __webpack_require__(633),
-	    isObject = __webpack_require__(577);
-
-	/**
-	 * Checks if the given arguments are from an iteratee call.
-	 *
-	 * @private
-	 * @param {*} value The potential iteratee value argument.
-	 * @param {*} index The potential iteratee index or key argument.
-	 * @param {*} object The potential iteratee object argument.
-	 * @returns {boolean} Returns `true` if the arguments are from an iteratee call,
-	 *  else `false`.
-	 */
-	function isIterateeCall(value, index, object) {
-	  if (!isObject(object)) {
-	    return false;
-	  }
-	  var type = typeof index;
-	  if (type == 'number'
-	        ? (isArrayLike(object) && isIndex(index, object.length))
-	        : (type == 'string' && index in object)
-	      ) {
-	    return eq(object[index], value);
-	  }
-	  return false;
-	}
-
-	module.exports = isIterateeCall;
-
-
-/***/ },
-/* 750 */
-/***/ function(module, exports, __webpack_require__) {
-
-	'use strict';
-
-	Object.defineProperty(exports, "__esModule", {
-	    value: true
-	});
-	exports.default = item_list;
-
-	var _map = __webpack_require__(635);
-
-	var _map2 = _interopRequireDefault(_map);
-
-	var _merge = __webpack_require__(710);
-
-	var _merge2 = _interopRequireDefault(_merge);
-
-	var _Error = __webpack_require__(702);
-
-	var _ItemList = __webpack_require__(559);
-
-	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-	var initialState = {};
-
-	var item_list_template = {
-	    // Don't put any objects in here, only primitives
-	    is_loading: false,
-	    items_invalidated: true,
-	    visible_item_ids: null,
-	    received_at: null,
-	    filter: null,
-	    pagination: null
-	};
-
-	function item_list() {
-	    var state = arguments.length <= 0 || arguments[0] === undefined ? initialState : arguments[0];
-	    var action = arguments[1];
-
-
-	    var state_copy = Object.assign({}, state);
-	    var l = Object.assign({}, item_list_template, state_copy[action.list_key] || {});
-
-	    switch (action.type) {
-	        case _ItemList.INVALIDATE_LIST:
-	            state_copy[action.list_key] = Object.assign({}, l, {
-	                is_loading: false,
-	                items_invalidated: true
-	            });
-	            return state_copy;
-	        case _ItemList.ANNOUNCE_LIST_LOADING:
-	            state_copy[action.list_key] = Object.assign({}, l, {
-	                is_loading: true,
-	                items_invalidated: false
-	            });
-	            return state_copy;
-	        case _ItemList.ANNOUNCE_MATCHING_ITEMS_LOADING:
-	            state_copy[action.list_key] = Object.assign({}, l, {
-	                // is_loading: true
-	            });
-	            return state_copy;
-	        case _ItemList.ANNOUNCE_MATCHING_ITEMS_LOADED:
-	            state_copy[action.list_key] = Object.assign({}, l, {
-	                // is_loading: false
-	            });
-	            return state_copy;
-	        case _ItemList.ANNOUNCE_LIST_LOADED:
-	            state_copy[action.list_key] = Object.assign({}, l, {
-	                is_loading: false,
-	                received_at: action.received_at,
-	                visible_item_ids: action.visible_item_ids,
-	                pagination: action.pagination
-	            });
-	            return state_copy;
-	        case _ItemList.ANNOUNCE_MATCHING_ITEMS_LOADED:
-	            state_copy[action.list_key] = Object.assign({}, l, {
-	                is_loading: false,
-	                received_at: action.received_at
-	            });
-	            return state_copy;
-	        case _ItemList.ANNOUNCE_LIST_LOAD_FAILED:
-	            (0, _Error.setErrorMessage)("Failed to load: " + action.error_message);
-	            state_copy[action.list_key] = Object.assign({}, l, {
-	                is_loading: false,
-	                items_invalidated: false
-	            });
-	            return state_copy;
-	        case _ItemList.ANNOUNCE_MATCHING_ITEMS_LOAD_FAILED:
-	            (0, _Error.setErrorMessage)("Failed to load matching items: " + action.error_message);
-	            state_copy[action.list_key] = Object.assign({}, l, {
-	                is_loading: false,
-	                items_invalidated: false
-	            });
-	            return state_copy;
-	        case _ItemList.UPDATE_LIST_PAGINATION:
-	            state_copy[action.list_key] = Object.assign({}, l, {
-	                pagination: Object.assign({}, state_copy.pagination, action.pagination)
-	            });
-	            return state_copy;
-	        case _ItemList.UPDATE_LIST_FILTER:
-	            state_copy[action.list_key] = Object.assign({}, l, {
-	                filter: Object.assign({}, state_copy.filter, action.filter)
-	            });
-	            return state_copy;
-	        case _ItemList.UPDATE_LIST_SELECTION:
-	            state_copy[action.list_key] = Object.assign({}, l, {
-	                selected_ids: action.selected_ids });
-	            return state_copy;
-	        case _ItemList.UPDATE_LIST_DISPLAY_MODE:
-	            state_copy[action.list_key] = Object.assign({}, l, {
-	                display_mode: action.display_mode });
-	            return state_copy;
-	        default:
-	            return state;
-
-	    }
-	}
-
-/***/ },
-/* 751 */
-/***/ function(module, exports, __webpack_require__) {
-
-	'use strict';
-
-	Object.defineProperty(exports, "__esModule", {
-	    value: true
-	});
-	exports.default = project;
-
-	var _map = __webpack_require__(635);
-
-	var _map2 = _interopRequireDefault(_map);
-
-	var _assign = __webpack_require__(752);
-
-	var _assign2 = _interopRequireDefault(_assign);
-
-	var _difference = __webpack_require__(566);
-
-	var _difference2 = _interopRequireDefault(_difference);
-
-	var _Error = __webpack_require__(702);
-
-	var _Projects = __webpack_require__(686);
-
-	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-	var initialState = {
-	    is_loading: false,
-	    items_invalidated: true,
-	    items_by_id: {}
-	};
-
-	function project() {
-	    var state = arguments.length <= 0 || arguments[0] === undefined ? initialState : arguments[0];
-	    var action = arguments[1];
-
-
-	    var state_copy = Object.assign({}, state);
-
-	    switch (action.type) {
-	        case _Projects.INVALIDATE_PROJECTS:
-	            var item_ids_to_invalidate = action.project_ids_to_invalidate || [];
-	            state_copy.items_by_id = (0, _difference2.default)(state_copy.item_ids, item_ids_to_invalidate);
-	            state_copy.items_invalidated = true;
-	            state_copy.is_loading = false;
-	            return state_copy;
-	        case _Projects.ANNOUNCE_LOADING_PROJECTS:
-	            return Object.assign({}, state, {
-	                is_loading: true,
-	                items_invalidated: false
-	            });
-	        case _Projects.ANNOUNCE_PROJECTS_LOADED:
-	            state_copy = Object.assign({}, state, {
-	                items_by_id: Object.assign({}, state.items_by_id)
-	            });
-	            state_copy.items_by_id = Object.assign({}, (0, _assign2.default)(state_copy.items_by_id, action.items_by_id));
-	            return state_copy;
-	        case _Projects.ANNOUNCE_PROJECTS_LOAD_FAILED:
-	            (0, _Error.setErrorMessage)("Failed to load projects: " + action.error_message);
-	            return state;
-	        default:
-	            return state;
-	    }
-	}
-
-/***/ },
-/* 752 */
-/***/ function(module, exports, __webpack_require__) {
-
-	var assignValue = __webpack_require__(716),
-	    copyObject = __webpack_require__(718),
-	    createAssigner = __webpack_require__(748),
-	    isArrayLike = __webpack_require__(617),
-	    isPrototype = __webpack_require__(634),
-	    keys = __webpack_require__(627);
-
-	/** Used for built-in method references. */
-	var objectProto = Object.prototype;
-
-	/** Used to check objects for own properties. */
-	var hasOwnProperty = objectProto.hasOwnProperty;
-
-	/** Built-in value references. */
-	var propertyIsEnumerable = objectProto.propertyIsEnumerable;
-
-	/** Detect if properties shadowing those on `Object.prototype` are non-enumerable. */
-	var nonEnumShadows = !propertyIsEnumerable.call({ 'valueOf': 1 }, 'valueOf');
-
-	/**
-	 * Assigns own enumerable string keyed properties of source objects to the
-	 * destination object. Source objects are applied from left to right.
-	 * Subsequent sources overwrite property assignments of previous sources.
-	 *
-	 * **Note:** This method mutates `object` and is loosely based on
-	 * [`Object.assign`](https://mdn.io/Object/assign).
-	 *
-	 * @static
-	 * @memberOf _
-	 * @since 0.10.0
-	 * @category Object
-	 * @param {Object} object The destination object.
-	 * @param {...Object} [sources] The source objects.
-	 * @returns {Object} Returns `object`.
-	 * @see _.assignIn
-	 * @example
-	 *
-	 * function Foo() {
-	 *   this.c = 3;
-	 * }
-	 *
-	 * function Bar() {
-	 *   this.e = 5;
-	 * }
-	 *
-	 * Foo.prototype.d = 4;
-	 * Bar.prototype.f = 6;
-	 *
-	 * _.assign({ 'a': 1 }, new Foo, new Bar);
-	 * // => { 'a': 1, 'c': 3, 'e': 5 }
-	 */
-	var assign = createAssigner(function(object, source) {
-	  if (nonEnumShadows || isPrototype(source) || isArrayLike(source)) {
-	    copyObject(source, keys(source), object);
-	    return;
-	  }
-	  for (var key in source) {
-	    if (hasOwnProperty.call(source, key)) {
-	      assignValue(object, key, source[key]);
-	    }
-	  }
-	});
-
-	module.exports = assign;
-
-
-/***/ },
-/* 753 */
-/***/ function(module, exports, __webpack_require__) {
-
-	'use strict';
-
-	Object.defineProperty(exports, "__esModule", {
-	    value: true
-	});
-	exports.default = sprint;
-
-	var _map = __webpack_require__(635);
-
-	var _map2 = _interopRequireDefault(_map);
-
-	var _assign = __webpack_require__(752);
-
-	var _assign2 = _interopRequireDefault(_assign);
-
-	var _difference = __webpack_require__(566);
-
-	var _difference2 = _interopRequireDefault(_difference);
-
-	var _Error = __webpack_require__(702);
-
-	var _Sprints = __webpack_require__(689);
-
-	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-	var initialState = {
-	    is_loading: false,
-	    items_invalidated: true,
-	    items_by_id: {}
-	};
-
-	function sprint() {
-	    var state = arguments.length <= 0 || arguments[0] === undefined ? initialState : arguments[0];
-	    var action = arguments[1];
-
-
-	    var state_copy = Object.assign({}, state);
-
-	    switch (action.type) {
-	        case _Sprints.INVALIDATE_SPRINTS:
-	            var item_ids_to_invalidate = action.sprint_ids_to_invalidate || [];
-	            state_copy.items_by_id = (0, _difference2.default)(state_copy.item_ids, item_ids_to_invalidate);
-	            state_copy.items_invalidated = true;
-	            state_copy.is_loading = false;
-	            return state_copy;
-	        case _Sprints.ANNOUNCE_LOADING_SPRINTS:
-	            return Object.assign({}, state, {
-	                is_loading: true,
-	                items_invalidated: false
-	            });
-	        case _Sprints.ANNOUNCE_SPRINTS_LOADED:
-	            state_copy = Object.assign({}, state, {
-	                items_by_id: Object.assign({}, state.items_by_id)
-	            });
-	            state_copy.items_by_id = Object.assign({}, (0, _assign2.default)(state_copy.items_by_id, action.items_by_id));
-	            return state_copy;
-	        case _Sprints.ANNOUNCE_SPRINTS_LOAD_FAILED:
-	            (0, _Error.setErrorMessage)("Failed to load sprints: " + action.error_message);
-	            return state;
-	        default:
-	            return state;
-	    }
-	}
-
-/***/ },
-/* 754 */
-/***/ function(module, exports, __webpack_require__) {
-
-	'use strict';
-
-	Object.defineProperty(exports, "__esModule", {
-	    value: true
-	});
-	exports.default = issue;
-
-	var _map = __webpack_require__(635);
-
-	var _map2 = _interopRequireDefault(_map);
-
-	var _assign = __webpack_require__(752);
-
-	var _assign2 = _interopRequireDefault(_assign);
-
-	var _difference = __webpack_require__(566);
-
-	var _difference2 = _interopRequireDefault(_difference);
-
-	var _union = __webpack_require__(755);
-
-	var _union2 = _interopRequireDefault(_union);
-
-	var _keys = __webpack_require__(627);
-
-	var _keys2 = _interopRequireDefault(_keys);
-
-	var _Error = __webpack_require__(702);
-
-	var _Issues = __webpack_require__(691);
-
-	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-	var initialState = {
-	    items_by_id: {},
-	    loading_item_ids: []
-	};
-
-	function issue() {
-	    var state = arguments.length <= 0 || arguments[0] === undefined ? initialState : arguments[0];
-	    var action = arguments[1];
-
-
-	    switch (action.type) {
-	        case _Issues.INVALIDATE_ISSUES:
-	            return Object.assign({}, state, {
-	                items_by_id: (0, _difference2.default)(state.item_ids, action.issue_ids_to_invalidate) });
-	        case _Issues.ANNOUNCE_LOADING_ISSUES:
-	            return Object.assign({}, state, {
-	                loading_item_ids: (0, _union2.default)(state.loading_item_ids, action.issue_ids_to_load)
-	            });
-
-	        case _Issues.ANNOUNCE_ISSUES_LOADED:
-	            return Object.assign({}, state, {
-	                loading_item_ids: Object.assign({}, (0, _difference2.default)(state.loading_item_ids || [], (0, _keys2.default)(action.items_by_id))),
-	                items_by_id: Object.assign({}, (0, _assign2.default)(state.items_by_id, action.items_by_id))
-	            });
-	        case _Issues.ANNOUNCE_ISSUES_LOAD_FAILED:
-	            (0, _Error.setErrorMessage)("Failed to load issues: " + action.error_message);
-	            return state;
-
-	        default:
-	            return state;
-	    }
-	}
-
-/***/ },
-/* 755 */
-/***/ function(module, exports, __webpack_require__) {
-
-	var baseFlatten = __webpack_require__(612),
-	    baseUniq = __webpack_require__(756),
-	    isArrayLikeObject = __webpack_require__(616),
-	    rest = __webpack_require__(621);
-
-	/**
-	 * Creates an array of unique values, in order, from all given arrays using
-	 * [`SameValueZero`](http://ecma-international.org/ecma-262/6.0/#sec-samevaluezero)
-	 * for equality comparisons.
-	 *
-	 * @static
-	 * @memberOf _
-	 * @since 0.1.0
-	 * @category Array
-	 * @param {...Array} [arrays] The arrays to inspect.
-	 * @returns {Array} Returns the new array of combined values.
-	 * @example
-	 *
-	 * _.union([2], [1, 2]);
-	 * // => [2, 1]
-	 */
-	var union = rest(function(arrays) {
-	  return baseUniq(baseFlatten(arrays, 1, isArrayLikeObject, true));
-	});
-
-	module.exports = union;
-
-
-/***/ },
-/* 756 */
-/***/ function(module, exports, __webpack_require__) {
-
-	var SetCache = __webpack_require__(568),
-	    arrayIncludes = __webpack_require__(605),
-	    arrayIncludesWith = __webpack_require__(608),
-	    cacheHas = __webpack_require__(611),
-	    createSet = __webpack_require__(757),
-	    setToArray = __webpack_require__(653);
-
-	/** Used as the size to enable large array optimizations. */
-	var LARGE_ARRAY_SIZE = 200;
-
-	/**
-	 * The base implementation of `_.uniqBy` without support for iteratee shorthands.
-	 *
-	 * @private
-	 * @param {Array} array The array to inspect.
-	 * @param {Function} [iteratee] The iteratee invoked per element.
-	 * @param {Function} [comparator] The comparator invoked per element.
-	 * @returns {Array} Returns the new duplicate free array.
-	 */
-	function baseUniq(array, iteratee, comparator) {
-	  var index = -1,
-	      includes = arrayIncludes,
-	      length = array.length,
-	      isCommon = true,
-	      result = [],
-	      seen = result;
-
-	  if (comparator) {
-	    isCommon = false;
-	    includes = arrayIncludesWith;
-	  }
-	  else if (length >= LARGE_ARRAY_SIZE) {
-	    var set = iteratee ? null : createSet(array);
-	    if (set) {
-	      return setToArray(set);
-	    }
-	    isCommon = false;
-	    includes = cacheHas;
-	    seen = new SetCache;
-	  }
-	  else {
-	    seen = iteratee ? [] : result;
-	  }
-	  outer:
-	  while (++index < length) {
-	    var value = array[index],
-	        computed = iteratee ? iteratee(value) : value;
-
-	    value = (comparator || value !== 0) ? value : 0;
-	    if (isCommon && computed === computed) {
-	      var seenIndex = seen.length;
-	      while (seenIndex--) {
-	        if (seen[seenIndex] === computed) {
-	          continue outer;
-	        }
-	      }
-	      if (iteratee) {
-	        seen.push(computed);
-	      }
-	      result.push(value);
-	    }
-	    else if (!includes(seen, computed, comparator)) {
-	      if (seen !== result) {
-	        seen.push(computed);
-	      }
-	      result.push(value);
-	    }
-	  }
-	  return result;
-	}
-
-	module.exports = baseUniq;
-
-
-/***/ },
-/* 757 */
-/***/ function(module, exports, __webpack_require__) {
-
-	var Set = __webpack_require__(658),
-	    noop = __webpack_require__(758),
-	    setToArray = __webpack_require__(653);
-
-	/** Used as references for various `Number` constants. */
-	var INFINITY = 1 / 0;
-
-	/**
-	 * Creates a set of `values`.
-	 *
-	 * @private
-	 * @param {Array} values The values to add to the set.
-	 * @returns {Object} Returns the new set.
-	 */
-	var createSet = !(Set && (1 / setToArray(new Set([,-0]))[1]) == INFINITY) ? noop : function(values) {
-	  return new Set(values);
-	};
-
-	module.exports = createSet;
-
-
-/***/ },
-/* 758 */
-/***/ function(module, exports) {
-
-	/**
-	 * A method that returns `undefined`.
-	 *
-	 * @static
-	 * @memberOf _
-	 * @since 2.3.0
-	 * @category Util
-	 * @example
-	 *
-	 * _.times(2, _.noop);
-	 * // => [undefined, undefined]
-	 */
-	function noop() {
-	  // No operation performed.
-	}
-
-	module.exports = noop;
-
-
-/***/ },
-/* 759 */
-/***/ function(module, exports, __webpack_require__) {
-
-	'use strict';
-
-	Object.defineProperty(exports, "__esModule", {
-	    value: true
-	});
-	exports.default = issue;
-
-	var _map = __webpack_require__(635);
-
-	var _map2 = _interopRequireDefault(_map);
-
-	var _assign = __webpack_require__(752);
-
-	var _assign2 = _interopRequireDefault(_assign);
-
-	var _keys = __webpack_require__(627);
-
-	var _keys2 = _interopRequireDefault(_keys);
-
-	var _difference = __webpack_require__(566);
-
-	var _difference2 = _interopRequireDefault(_difference);
-
-	var _union = __webpack_require__(755);
-
-	var _union2 = _interopRequireDefault(_union);
-
-	var _Error = __webpack_require__(702);
-
-	var _IssueGeneralDetails = __webpack_require__(701);
-
-	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-	var initialState = {
-	    items_by_id: {},
-	    loading_item_ids: []
-	};
-
-	function issue() {
-	    var state = arguments.length <= 0 || arguments[0] === undefined ? initialState : arguments[0];
-	    var action = arguments[1];
-
-
-	    switch (action.type) {
-	        case _IssueGeneralDetails.INVALIDATE_ISSUE_GENERAL_DETAILS:
-	            return Object.assign({}, state, {
-	                items_by_id: (0, _difference2.default)(state.item_ids, action.issue_ids_to_invalidate) });
-	        case _IssueGeneralDetails.ANNOUNCE_LOADING_ISSUE_GENERAL_DETAILS:
-	            return Object.assign({}, state, {
-	                loading_item_ids: (0, _union2.default)(state.loading_item_ids, action.issue_ids_to_load)
-	            });
-
-	        case _IssueGeneralDetails.ANNOUNCE_ISSUE_GENERAL_DETAILS_LOADED:
-	            return Object.assign({}, state, {
-	                loading_item_ids: Object.assign({}, (0, _difference2.default)(state.loading_item_ids || [], (0, _keys2.default)(action.items_by_id))),
-	                items_by_id: Object.assign({}, (0, _assign2.default)(state.items_by_id, action.items_by_id))
-	            });
-	        case _IssueGeneralDetails.ANNOUNCE_ISSUE_GENERAL_DETAILS_LOAD_FAILED:
-	            (0, _Error.setErrorMessage)("Failed to load issue general details: " + action.error_message);
-	            return state;
-
-	        default:
-	            return state;
-	    }
-	}
-
-/***/ },
-/* 760 */
-/***/ function(module, exports, __webpack_require__) {
-
-	'use strict';
-
-	Object.defineProperty(exports, "__esModule", {
-	    value: true
-	});
-	exports.default = notification_bar;
-
-	var _map = __webpack_require__(635);
-
-	var _map2 = _interopRequireDefault(_map);
-
-	var _merge = __webpack_require__(710);
-
-	var _merge2 = _interopRequireDefault(_merge);
-
-	var _Error = __webpack_require__(702);
-
-	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-	var initialState = {
-	    error_message: null
-	};
-
-	function notification_bar() {
-	    var state = arguments.length <= 0 || arguments[0] === undefined ? initialState : arguments[0];
-	    var action = arguments[1];
-
-	    switch (action.type) {
-	        case _Error.SET_ERROR_MESSAGE:
-	            return Object.assign({}, state, { error_message: action.error_message });
-	        default:
-	            return state;
-	    }
 	}
 
 /***/ }

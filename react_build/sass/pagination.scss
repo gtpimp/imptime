@@ -1,11 +1,18 @@
 @import 'variables';
+@import 'snippets';
 
-.icon--previous-page {
-    background-image: url('../images/ic_forward_white_18dp.png');
+.pager .icon {
     cursor: pointer;
+    background-repeat: no-repeat;
+    padding-bottom: 15px;
+    width: 30px;
 }
 
-.icon--next-page {
-    background-image: url('../images/ic_forward_white_18dp.png');
-    cursor: pointer;
+.pager .icon--previous-page {
+    background-image: url('../images/ic_forward_black_18dp.png');
+    @include flip-horizontally()
+}
+
+.pager .icon--next-page {
+    background-image: url('../images/ic_forward_black_18dp.png');
 }
