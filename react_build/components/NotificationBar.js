@@ -11,7 +11,7 @@ export class NotificationBar extends Component {
         return (
 	    <div>
 	    { error_message &&
-              <div class="error">
+              <div className="notification_bar__error">
 		{ error_message }
 	      </div>
 	    }

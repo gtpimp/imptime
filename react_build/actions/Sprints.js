@@ -43,10 +43,10 @@ function announceSprintsLoaded(payload) {
     }
 }
 
-function announceSprintsLoadFailed(error_message) {
+function announceSprintsLoadFailed(error) {
     return {
         type: ANNOUNCE_SPRINTS_LOAD_FAILED,
-        error_message: error_message,
+        error: error,
         received_at: Date.now()
     }
 }

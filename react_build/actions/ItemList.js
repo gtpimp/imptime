@@ -105,31 +105,68 @@ function announceMatchingItemsLoaded(list_key) {
     }
 }
 
-function announceListLoadFailed(list_key,error_message) {
+function announceListLoadFailed(list_key,error) {
     return {
         type: ANNOUNCE_LIST_LOAD_FAILED,
 	list_key: list_key,
-        error_message: error_message,
+        error: error,
         received_at: Date.now()
     }
 }
 
-function announceMatchingItemsLoadFailed(list_key, error_message) {
+function announceMatchingItemsLoadFailed(list_key, error) {
     return {
         type: ANNOUNCE_MATCHING_ITEMS_LOAD_FAILED,
 	list_key: list_key,
-        error_message: error_message,
+        error: error,
         received_at: Date.now()
     }
 }
 
-function fetchListAndItems(state, list_key,
-			   matching_items_key, matching_items_promise_func) {
+function tryFetchMatchingItems(dispatch, state, list_key,
+			       required_item_ids,
+			       matching_items_key, matching_items_promise_func) {
+    // The second half of tryFetchListAndItems, separated out for clarity
+    
+    const required_item_refs = required_item_ids.map((item_id, index) => "" + item_id)
+    const matching_items = state[matching_items_key] || {}
+    const matching_item_ids = keys(matching_items.items_by_id || {}) // magic, assumes the matching_items reducer will use 'items_by_id' as well
+    const matching_item_refs = matching_item_ids.map((item_id, index) => "" + item_id)
+    
+    const unmatching_item_ids = difference(required_item_refs, matching_item_refs)
+
+    if ( unmatching_item_ids.length > 0 ) {
+	dispatch(announceMatchingItemsLoading(list_key))
+	matching_items_promise_func(dispatch, unmatching_item_ids)
+	    .then(() => {
+		dispatch(announceMatchingItemsLoaded(list_key))
+	    })
+	    .catch(function (error) {
+		dispatch(announceMatchingItemsLoadFailed(list_key, "Failed to load list: " + error))
+		throw(error)
+	    })
+    }
+}
+
+function tryFetchListAndItems(state, list_key,
+			      matching_items_key, matching_items_promise_func) {
+
+    // First tries to fetch the list of items, and then fetches all
+    // missing matching items
+    
     return dispatch => {
-        dispatch(announceListLoading(list_key))
 
 	const item_list = state.item_list || {}
 	const l = item_list[list_key] || {}
+
+	if ( ! shouldFetchList(state, list_key) ) {
+	    const visible_item_ids = l.visible_item_ids
+	    return tryFetchMatchingItems(dispatch, state, list_key,
+					 visible_item_ids,
+					 matching_items_key, matching_items_promise_func)
+	}
+	
+	dispatch(announceListLoading(list_key))
 	const params = { filter: l.filter || {},
 			 format: {ids_only: true},
 			 pagination: l.pagination || {} }
@@ -141,28 +178,12 @@ function fetchListAndItems(state, list_key,
                     dispatch(announceListLoadFailed(list_key, json.error))
                 } else {
 		    dispatch(announceListLoaded(list_key, json.payload))
-		    
 		    const required_item_ids = json.payload.ids || []
-		    const required_item_refs = required_item_ids.map((item_id, index) => "" + item_id)
-		    
-		    const matching_items = state[matching_items_key] || {}
-		    const matching_item_ids = keys(matching_items.items_by_id || {}) // magic, assumes the matching_items reducer will use 'items_by_id' as well
-		    const matching_item_refs = matching_item_ids.map((item_id, index) => "" + item_id)
-		    
-		    const unmatching_item_ids = difference(required_item_refs, matching_item_refs)
-
-		    if ( unmatching_item_ids.length > 0 ) {
-			dispatch(announceMatchingItemsLoading(list_key))
-			matching_items_promise_func(dispatch, unmatching_item_ids)
-			    .then(() => {
-				dispatch(announceMatchingItemsLoaded(list_key))
-			    })
-			    .catch(function (error) {
-				dispatch(announceMatchingItemsLoadFailed(list_key, "Failed to load list: " + error))
-				throw(error)
-			    })
-		    }
-		}		
+		    tryFetchMatchingItems(dispatch, state, list_key,
+					  required_item_ids,
+					  matching_items_key,
+					  matching_items_promise_func)
+		}
             })
 	    .catch(function (error) {
                 dispatch(announceListLoadFailed(list_key,"Failed to load list: " + error))
@@ -186,42 +207,14 @@ function shouldFetchList(state, list_key) {
     }
 }
 
-function shouldFetchMatchingItems(state, list_key, matching_items_key) {
-    // note: only call this function after shouldFetchList returns false
-    const item_list = state.item_list || {}
-    const l = item_list[list_key] || []
-    const required_item_ids = l.visible_item_ids || []
-
-    const matching_items = state[matching_items_key]
-    if ( ! matching_items ) {
-	return true
-    }
-    if ( matching_items.is_loading ) {
-	return false
-    }
-    if ( matching_items.items_invalidated ) {
-	return true
-    }
-    if ( ! matching_items.items_by_id ) {
-	return true
-    }
-    const matching_item_ids = keys(matching_items.items_by_id) // magic, assumes the specific reducer will use 'items_by_id' as well
-    const unmatching_item_ids = difference(required_item_ids, matching_item_ids)
-    
-    if ( unmatching_item_ids.length > 0 ) {
-	return true
-    }
-    return false
-}
-
 export function fetchListIfNeeded(list_key,
 				  matching_items_key, matching_items_promise_func) {
     return (dispatch, getState) => {
         const state = getState()
 
-        if (shouldFetchList(state, list_key) || shouldFetchMatchingItems(state, list_key, matching_items_key)) {
-	    return dispatch(fetchListAndItems(state, list_key,
-					      matching_items_key, matching_items_promise_func))
-        }
+	dispatch(tryFetchListAndItems(state, list_key,
+				      matching_items_key,
+				      matching_items_promise_func))
     }
 }
+

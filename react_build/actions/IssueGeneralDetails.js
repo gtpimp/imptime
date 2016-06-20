@@ -36,10 +36,10 @@ function announceIssueGeneralDetailsLoaded(payload) {
     }
 }
 
-function announceIssueGeneralDetailsLoadFailed(error_message) {
+function announceIssueGeneralDetailsLoadFailed(error) {
     return {
         type: ANNOUNCE_ISSUE_GENERAL_DETAILS_LOAD_FAILED,
-        error_message: error_message,
+        error: error,
         received_at: Date.now()
     }
 }

@@ -21,9 +21,15 @@ export default function issue(state = initialState, action) {
     
     switch (action.type) {
         case INVALIDATE_ISSUES:
-	    return Object.assign({}, state, {
-		items_by_id: difference(state.item_ids,
-					action.issue_ids_to_invalidate)})
+
+	    let new_issue_ids = Object.assign({}, state.items_by_id)
+	    action.issue_ids_to_invalidate.map(function(id_to_invalidate) {
+					       if ( new_issue_ids[id_to_invalidate] ) {
+						   delete new_issue_ids[id_to_invalidate]
+					       }
+	    })
+	    
+	    return Object.assign({}, state, {items_by_id: new_issue_ids})
         case ANNOUNCE_LOADING_ISSUES:
             return Object.assign({}, state, {
 		loading_item_ids: union(state.loading_item_ids, action.issue_ids_to_load)
@@ -31,6 +37,7 @@ export default function issue(state = initialState, action) {
 	    
         case ANNOUNCE_ISSUES_LOADED:
             return Object.assign({}, state, {
+
 		loading_item_ids: Object.assign({},
 						difference(state.loading_item_ids || [],
 							   keys(action.items_by_id))),

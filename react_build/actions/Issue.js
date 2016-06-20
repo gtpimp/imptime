@@ -16,7 +16,7 @@ export const ANNOUNCE_ISSUE_SAVE_FAILED = 'ANNOUNCE_ISSUE_SAVE_FAILED'
 function announceIssueSaveFailed(error) {
     return {
         type: ANNOUNCE_ISSUE_SAVE_FAILED,
-        error_message: error_message,
+        error: error,
         received_at: Date.now()
     }
 }
@@ -65,7 +65,7 @@ function updateIssue(issue_id, field_name, new_value) {
 	 })
 	 .catch(function (error) {
              console.log('Request failed', error);
-	     dispatch(announceIssueSaveFailed(json.error))
+	     dispatch(announceIssueSaveFailed(error))
 	 })
     }
 }

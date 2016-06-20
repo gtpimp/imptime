@@ -43,10 +43,10 @@ function announceProjectsLoaded(payload) {
     }
 }
 
-function announceProjectsLoadFailed(error_message) {
+function announceProjectsLoadFailed(error) {
     return {
         type: ANNOUNCE_PROJECTS_LOAD_FAILED,
-        error_message: error_message,
+        error: error,
         received_at: Date.now()
     }
 }

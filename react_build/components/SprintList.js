@@ -126,12 +126,6 @@ export class SprintList extends Component {
                     </div>
                     <div className="panel-body">
 			<table className="table table--default" >
-                            <thead>
-				<tr>
-				    <th>ID</th>
-				    <th>Name</th>
-				</tr>
-                            </thead>
                             <tbody>
 				{sprints.map((sprint, index) => this.renderExpandedSprint(sprint, index))}
                             </tbody>

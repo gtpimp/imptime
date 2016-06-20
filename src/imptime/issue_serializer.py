@@ -9,7 +9,7 @@ class IssueSerializer(BaseModelSerializer):
 
     class Meta:
         model = Issue
-        fields = ('id', 'number', 'subject', 'description', 'assigned_to',
+        fields = ('id', 'number', 'subject', 'assigned_to',
                   'feature', 'status')
 
     id = serializers.CharField()

@@ -44,10 +44,10 @@ function announceIssuesLoaded(payload) {
     }
 }
 
-function announceIssuesLoadFailed(error_message) {
+function announceIssuesLoadFailed(error) {
     return {
         type: ANNOUNCE_ISSUES_LOAD_FAILED,
-        error_message: error_message,
+        error: error,
         received_at: Date.now()
     }
 }

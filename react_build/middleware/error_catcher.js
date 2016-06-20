@@ -11,7 +11,7 @@ function error_catcher_middleware(_ref) {
 	return function (action) {
 
 	    if ( action && action.type.indexOf('FAILED') !== -1 && ACTIONS_TO_IGNORE.indexOf(action.type) == -1 ) {
-		dispatch(setErrorMessage("Error: " + action.error_message))
+		dispatch(setErrorMessage("Error: " + action.error))
             }
             return next(action)
 	};
