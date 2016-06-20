@@ -46,7 +46,7 @@ export class IssueDeveloperDetails extends Component {
 			</div>
                     </div>
                     <div className="panel-body">
-			g<h3>issue#{gd.number}: {gd.subject}</h3>
+			<h3>issue#{gd.number}: {gd.subject}</h3>
 			<pre>
 			    {gd.description}
 			</pre>
