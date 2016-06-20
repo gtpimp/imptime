@@ -91,6 +91,7 @@ export class IssueList extends Component {
 		    onClick={() => this.onClickedIssue(issue.id)}
 		    className={selected ? 'tr--selected' : ''}
 		>
+		    <td>{issue.number}</td>
 		    <td>{issue.subject}</td>
 		    <td>{issue.assigned_to_username}</td>
 		    <td>{issue.feature_name}</td>

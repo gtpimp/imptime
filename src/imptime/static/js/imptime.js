@@ -42314,6 +42314,11 @@
 																_react2.default.createElement(
 																			'td',
 																			null,
+																			issue.number
+																),
+																_react2.default.createElement(
+																			'td',
+																			null,
 																			issue.subject
 																),
 																_react2.default.createElement(
