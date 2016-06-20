@@ -1,17 +1,17 @@
 import React, { Component, PropTypes } from 'react'
 import ReactDOM from 'react-dom';
-import {Editor, EditorState} from 'draft-js';
 import { RIEInput } from 'riek'
 
 export class RIETextArea extends Component {
 
     constructor(props) {
         super(props);
-	this.state = {editorState: EditorState.createEmpty()};
-	this.onChange = (editorState) => this.setState({editorState});
 	this.startEditing = this.startEditing.bind(this)
 	this.stopEditing = this.stopEditing.bind(this)
 	this.commit = this.commit.bind(this)
+	this.state = {
+            editing: false,
+	}
     }
 
     startEditing() {
@@ -38,9 +38,7 @@ export class RIETextArea extends Component {
     };
 
     renderEditingComponent() {
-	const {editorState} = this.state;
-	return <textarea ref={(ref) => this.editor = ref} editorState={editorState} onBlur={this.commit} onChange={this.change} />;
-	//return <Editor editorState={editorState} onBlur={this.stopEditing} onChange={this.change} />;
+	return <textarea ref={(ref) => this.editor = ref} cols="20" defaultValue={this.props.value} onBlur={this.commit}/>;
     };
 
     render() {
