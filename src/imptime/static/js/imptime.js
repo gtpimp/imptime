@@ -36190,7 +36190,7 @@
 																					{ className: 'panel panel--full' },
 																					_react2.default.createElement(
 																									'div',
-																									{ className: 'panel-heading' },
+																									{ className: 'panel-heading', onClick: this.onCollapse },
 																									_react2.default.createElement(
 																													'div',
 																													{ className: 'panel__title' },
@@ -36199,8 +36199,7 @@
 																									_react2.default.createElement(
 																													'div',
 																													{ className: 'panel__buttons' },
-																													_react2.default.createElement('div', { className: 'panel__button panel__button--collapse',
-																																	onClick: this.onCollapse }),
+																													_react2.default.createElement('div', { className: 'panel__button panel__button--collapse' }),
 																													_react2.default.createElement('div', { className: 'panel__button panel__button--refresh',
 																																	onClick: this.onRefresh })
 																									)
@@ -41889,18 +41888,13 @@
 																					{ className: 'panel panel--full' },
 																					_react2.default.createElement(
 																									'div',
-																									{ className: 'panel-heading' },
+																									{ className: 'panel-heading', onClick: this.onCollapse },
 																									_react2.default.createElement(
 																													'div',
 																													{ className: 'panel__title' },
 																													'Sprints'
 																									),
-																									_react2.default.createElement(
-																													'div',
-																													{ className: 'panel__button panel__button--collapse',
-																																	onClick: this.onCollapse },
-																													'collapse'
-																									),
+																									_react2.default.createElement('div', { className: 'panel__button panel__button--collapse' }),
 																									_react2.default.createElement(
 																													'div',
 																													{ className: 'panel__buttons' },
@@ -42308,18 +42302,13 @@
 																{ className: 'panel panel--full' },
 																_react2.default.createElement(
 																			'div',
-																			{ className: 'panel-heading' },
+																			{ className: 'panel-heading', onClick: this.onCollapse },
 																			_react2.default.createElement(
 																						'div',
 																						{ className: 'panel__title' },
 																						'Issues'
 																			),
-																			_react2.default.createElement(
-																						'div',
-																						{ className: 'panel__button panel__button--collapse',
-																									onClick: this.onCollapse },
-																						'collapse'
-																			),
+																			_react2.default.createElement('div', { className: 'panel__button panel__button--collapse' }),
 																			_react2.default.createElement(
 																						'div',
 																						{ className: 'panel__buttons' },

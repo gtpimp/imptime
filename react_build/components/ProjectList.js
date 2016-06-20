@@ -96,11 +96,10 @@ export class ProjectList extends Component {
         return (
             <div style={{ opacity: is_loading ? 0.5 : 1 }}>
 		<div className="panel panel--full">
-                    <div className="panel-heading">
+                    <div className="panel-heading" onClick={this.onCollapse}>
 			<div className="panel__title">Projects</div>
 			<div className="panel__buttons">
-			    <div className="panel__button panel__button--collapse"
-				 onClick={this.onCollapse}>
+			    <div className="panel__button panel__button--collapse">
 			    </div>
                             <div className="panel__button panel__button--refresh"
 				 onClick={this.onRefresh}></div>
