@@ -1,6 +1,7 @@
 import React, { Component, PropTypes } from 'react'
 import ReactDOM from 'react-dom';
 import { RIEInput } from 'riek'
+import TextareaAutosize from 'react-autosize-textarea'
 
 export class RIETextArea extends Component {
 
@@ -38,7 +39,7 @@ export class RIETextArea extends Component {
     };
 
     renderEditingComponent() {
-	return <textarea ref={(ref) => this.editor = ref} cols="20" defaultValue={this.props.value} onBlur={this.commit}/>;
+	return <TextareaAutosize ref={(ref) => this.editor = ref} rows="20"  cols="80" defaultValue={this.props.value} onBlur={this.commit}/>;
     };
 
     render() {
