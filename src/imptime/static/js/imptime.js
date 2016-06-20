@@ -46080,6 +46080,8 @@
 
 	var _ItemList = __webpack_require__(559);
 
+	var _Issues = __webpack_require__(701);
+
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 	var ANNOUNCE_ISSUE_SAVING = exports.ANNOUNCE_ISSUE_SAVING = 'ANNOUNCE_ISSUE_SAVING';
@@ -46132,6 +46134,7 @@
 	            } else {
 	                console.log('Request succeeded with JSON response', json);
 	                dispatch(announceIssueSaved(json.payload));
+	                dispatch((0, _Issues.invalidateIssues)([issue_id]));
 	            }
 	        }).catch(function (error) {
 	            console.log('Request failed', error);

@@ -3,6 +3,11 @@ import difference from 'lodash/difference'
 import keys from 'lodash/keys'
 import map from 'lodash/map'
 import { fetchListIfNeeded } from './ItemList'
+import {
+    invalidateIssues,
+    fetchIssuesIfNeeded
+} from './Issues'
+
 
 export const ANNOUNCE_ISSUE_SAVING = 'ANNOUNCE_ISSUE_SAVING'
 export const ANNOUNCE_ISSUE_SAVED = 'ANNOUNCE_ISSUE_SAVED'
@@ -55,6 +60,7 @@ function updateIssue(issue_id, field_name, new_value) {
              } else {
 		 console.log('Request succeeded with JSON response', json);
 		 dispatch(announceIssueSaved(json.payload))
+		 dispatch(invalidateIssues([issue_id]))
              }
 	 })
 	 .catch(function (error) {
