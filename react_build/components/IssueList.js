@@ -7,8 +7,11 @@ import { invalidateList,
 	 expand_list
 } from '../actions/ItemList'
 import { fetchIssuesIfNeeded } from '../actions/Issues'
+import {
+    updateIssueSubject
+} from '../actions/Issue'
 import Pagination from '../components/Pagination'
-
+import { RIEInput } from 'riek'
 
 export class IssueList extends Component {
 
@@ -17,6 +20,7 @@ export class IssueList extends Component {
         this.onRefresh = this.onRefresh.bind(this)
 	this.onCollapse = this.onCollapse.bind(this)
 	this.onExpand = this.onExpand.bind(this)
+	this.onChangeSubject = this.onChangeSubject.bind(this)
     }
 
     componentDidMount() {
@@ -45,6 +49,11 @@ export class IssueList extends Component {
         const { dispatch, list_key } = this.props
 	dispatch(invalidateList(list_key))
 	dispatch(fetchIssuesIfNeeded(list_key))
+    }
+
+    onChangeSubject(issue_id, obj) {
+	const { dispatch } = this.props
+	dispatch(updateIssueSubject(issue_id, obj.subject))
     }
 
     renderCollapsedIssue(issue) {
@@ -92,7 +101,11 @@ export class IssueList extends Component {
 		    className={selected ? 'tr--selected' : ''}
 		>
 		    <td>{issue.number}</td>
-		    <td>{issue.subject}</td>
+		    <td>
+			<RIEInput value={issue.subject}
+				  propName="subject" 
+				  change={(obj) => this.onChangeSubject(issue.id, obj)} />
+		    </td>
 		    <td>{issue.assigned_to_username}</td>
 		    <td>{issue.feature_name}</td>
 		    <td>{issue.status}</td>

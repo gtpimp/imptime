@@ -50,3 +50,23 @@ class IssueViewSet(BaseViewSet):
             logger.exception(ex)
             data = {'status': 'failed', 'error': str(ex)}
         return HttpResponse(JSONRenderer().render(data))
+
+    def update(self, request, pk):
+        try:
+            params = request.data
+            issue = self.allowed_issue(pk)
+            field_name = params['field_name']
+            new_value = params['value']
+
+            if field_name == "subject":
+                issue.subject = new_value
+            else:
+                raise Exception("Unsupported field name: %s" % field_name)
+            issue.save()
+
+            data = {'status': 'success', 'payload': pk}
+
+        except Exception, ex:
+            logger.exception(ex)
+            data = {'status': 'failed', 'error': str(ex)}
+        return HttpResponse(JSONRenderer().render(data))

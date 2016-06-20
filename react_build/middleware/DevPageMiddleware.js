@@ -1,9 +1,12 @@
 import { setErrorMessage } from '../actions/Error.js'
 import indexOf from 'lodash/indexOf'
 import { UPDATE_LIST_SELECTION } from '../actions/ItemList'
+import {
+    ANNOUNCE_ISSUE_SAVED
+} from '../actions/Issue'
 import { invalidateList, update_list_filter } from '../actions/ItemList'
 import { fetchSprintsIfNeeded } from '../actions/Sprints'
-import { fetchIssuesIfNeeded } from '../actions/Issues'
+import { fetchIssuesIfNeeded, invalidateIssues } from '../actions/Issues'
 import {
     invalidateIssueGeneralDetails,
     fetchIssueGeneralDetailsIfNeeded
@@ -69,6 +72,12 @@ function DevPageMiddleware(_ref) {
 			dispatch(invalidateIssueGeneralDetails([issue_id]))
 			dispatch(fetchIssueGeneralDetailsIfNeeded([issue_id]))
 		    }
+		case ANNOUNCE_ISSUE_SAVED:
+		    const issue_id = action.issue_id
+		    dispatch(invalidateIssues([issue_id]))
+		    dispatch(fetchIssuesIfNeeded(issues_list_key))
+		    dispatch(invalidateIssueGeneralDetails([issue_id]))
+		    dispatch(fetchIssueGeneralDetailsIfNeeded([issue_id]))
 	    }
 	    return next(action)
 	};
