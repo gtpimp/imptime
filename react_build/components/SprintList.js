@@ -13,6 +13,7 @@ import {
     fetchSprintsIfNeeded
 } from '../actions/Sprints'
 import Pagination from '../components/Pagination'
+import Sprint from './Sprint'
 
 
 export class SprintList extends Component {
@@ -23,6 +24,7 @@ export class SprintList extends Component {
 	this.onChangePage = this.onChangePage.bind(this)
 	this.onCollapse = this.onCollapse.bind(this)
 	this.onExpand = this.onExpand.bind(this)
+	this.onClickedSprint = this.onClickedSprint.bind(this)
     }
 
     componentDidMount() {
@@ -73,54 +75,31 @@ export class SprintList extends Component {
     }
     
     render_collapsed() {
-	const { sprints, selected_items } = this.props
+	const { sprints, selected_items, is_collapsed, list_key } = this.props
 
 	return (
 	    <div className="panel panel--collapsed">
 		<div className="panel-heading" onClick={this.onExpand}>
 		    <div className="panel__title">
-			{ selected_items.map((sprint, index) => this.renderCollapsedSprint(sprint)) }
+			{ selected_items.map((sprint, index) =>
+			    <Sprint key={list_key+"sprint.id"+index} 
+				    is_collapsed={true}
+				    onClickedSprint={() => this.onClickedSprint(sprint.id)}
+				    is_loading={loading_item_ids.indexOf(sprint_id) !== -1}
+				    is_selected={selected_ids.indexOf(sprint.id) !== -1}
+				    sprint_id={sprint.id} />
+			)}
 		    </div>
 		</div>
 	    </div>
 	)
     }
 
-    renderExpandedSprint(sprint, index) {
-        const { selected_ids } = this.props
-
-	let selected = selected_ids.indexOf(sprint.id) !== -1
-
-	if ( sprint.loaded === false ) {
-	    return (
-		<tr key={sprint.id+"."+index}
-		    onClick={() => this.onClickedSprint(sprint.id)}
-		    className={selected ? 'tr--selected' : ''}
-		>
-		    <td>{sprint.id}</td>
-	            { sprint.loaded === false &&
-		      <td>Loading...</td>
-		    }
-		</tr>
-	    )
-	}
-	if ( sprint.loaded !== false ) {
-            return (
-		<tr key={sprint.id+"."+index}
-		    onClick={() => this.onClickedSprint(sprint.id)}
-		    className={selected ? 'tr--selected' : ''}
-		>
-		    <td>{sprint.id}</td>
-		    <td>{sprint.name}</td>
-		    <td>{sprint.status_name}</td>
-		</tr>
-            )
-	}
-    }
-
     render_expanded() {
 
-        const { sprints, is_visible, list_key, is_loading, has_items } = this.props
+        const { sprints, is_visible, list_key, is_loading,
+		selected_ids, 
+		loading_item_ids, has_items } = this.props
 
 	if ( ! is_visible ) {
 	    return (<div></div>)
@@ -139,7 +118,15 @@ export class SprintList extends Component {
                     <div className="panel-body">
 			<table className="table table--default" >
                             <tbody>
-				{sprints.map((sprint, index) => this.renderExpandedSprint(sprint, index))}
+				{sprints.map( (sprint, index) =>
+				    <Sprint key={list_key+"sprint.id"+index}
+					    is_collapsed={false}
+					    onClick={() => this.onClickedSprint(sprint.id)}
+					    is_loading={loading_item_ids.indexOf(sprint.id) !== -1}
+					    is_selected={selected_ids.indexOf(sprint.id) !== -1}
+					    sprint_id={sprint.id}
+				    />
+				 )}
                             </tbody>
 			</table>
 			{ !is_loading && !has_items &&
@@ -191,6 +178,7 @@ function mapStateToProps(state, props) {
 	sprint_ids: map(items, 'id'),
 	selected_ids: l.selected_ids || [],
 	selected_items: selected_items || [],
+	loading_item_ids: l.loading_item_ids || [],
         has_items: items && items.length > 0,
 	is_visible: project_id || false,
         is_loading: l.is_loading,

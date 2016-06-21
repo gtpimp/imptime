@@ -13,7 +13,7 @@ import {
 } from '../actions/Sprints.js'
 
 const initialState = {
-    is_loading: false,
+    items_by_id: [],
     loading_item_ids: []
 }
 
