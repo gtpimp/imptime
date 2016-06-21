@@ -15,27 +15,32 @@
 
        Complete project management for dev houses and others, fully automated and at your fingertips
        <br/>
+       
+       <p>
+         <a class="btn btn-primary" href="{% url 'imp:home' %}">Dev Page (experimental)</a>
+       </p>
+
        {% if perms.timepiece.view_dashboard %}
        <p>
-         <a class="btn btn-primary" href="{% url 'dashboard' %}">Dashboard</a>
+         <a class="btn btn-info" href="{% url 'dashboard' %}">Dashboard</a>
        </p>
        {% endif %}
+
        <p>
        <a class="btn btn-info" href="{% url 'list_projects' %}">Project list</a>
        </p>
+       
        {% if perms.timepiece.can_clock_in %}
        <p>
        <a class="btn btn-info" href="{% url 'quick_clocker' %}">Quick clocker</a>
        </p>
        {% endif %}
+       
        {% if perms.timepiece.scheduler %}
        <p>
        <a class="btn btn-info" href="{% url 'scheduler' %}">Scheduler</a>
        </p>
        {% endif %}
-       <p>
-         Useful tip, to find projects, sprints and issues quickly, type anything into the search box in the top right and press enter
-       </p>
 
     </div>
 {% endblock %}

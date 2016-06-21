@@ -55640,9 +55640,11 @@
 													var _this2 = this;
 
 													var _props7 = this.props;
-													var sprints = _props7.sprints;
+													var sprint = _props7.sprint;
 													var selected_items = _props7.selected_items;
 													var is_collapsed = _props7.is_collapsed;
+													var selected_ids = _props7.selected_ids;
+													var loading_item_ids = _props7.loading_item_ids;
 													var list_key = _props7.list_key;
 
 
@@ -55656,12 +55658,12 @@
 																									'div',
 																									{ className: 'panel__title' },
 																									selected_items.map(function (sprint, index) {
-																													return _react2.default.createElement(_Sprint2.default, { key: list_key + "sprint.id" + index,
+																													return _react2.default.createElement(_Sprint2.default, { key: list_key + sprint.id + index,
 																																	is_collapsed: true,
 																																	onClickedSprint: function onClickedSprint() {
 																																					return _this2.onClickedSprint(sprint.id);
 																																	},
-																																	is_loading: loading_item_ids.indexOf(sprint_id) !== -1,
+																																	is_loading: loading_item_ids.indexOf(sprint.id) !== -1,
 																																	is_selected: selected_ids.indexOf(sprint.id) !== -1,
 																																	sprint_id: sprint.id });
 																									})
@@ -55721,7 +55723,7 @@
 																																	sprints.map(function (sprint, index) {
 																																					return _react2.default.createElement(_Sprint2.default, { key: list_key + "sprint.id" + index,
 																																									is_collapsed: false,
-																																									onClick: function onClick() {
+																																									onClickedSprint: function onClickedSprint() {
 																																													return _this3.onClickedSprint(sprint.id);
 																																									},
 																																									is_loading: loading_item_ids.indexOf(sprint.id) !== -1,
@@ -60558,8 +60560,10 @@
 
 					_createClass(Sprint, [{
 									key: 'render_collapsed',
-									value: function render_collapsed(sprint) {
-													var list_key = this.props.list_key;
+									value: function render_collapsed() {
+													var _props = this.props;
+													var sprint = _props.sprint;
+													var list_key = _props.list_key;
 
 													return _react2.default.createElement(
 																	'div',
@@ -60570,23 +60574,37 @@
 									}
 					}, {
 									key: 'render_expanded',
-									value: function render_expanded(sprint, index) {
-													var _props = this.props;
-													var is_loading = _props.is_loading;
-													var is_selected = _props.is_selected;
+									value: function render_expanded() {
+													var _props2 = this.props;
+													var sprint = _props2.sprint;
+													var is_loading = _props2.is_loading;
+													var is_selected = _props2.is_selected;
+													var onClickedSprint = _props2.onClickedSprint;
 
 
-													if (sprint.loaded === false) {
+													if (!sprint) {
 																	return _react2.default.createElement(
 																					'tr',
-																					{ key: this.key + "." + sprint.id + "." + index,
-																									onClick: this.props.onClickedSprint,
+																					null,
+																					_react2.default.createElement(
+																									'td',
+																									null,
+																									'Loading...'
+																					)
+																	);
+													}
+
+													if (!is_loading === false) {
+																	return _react2.default.createElement(
+																					'tr',
+																					{ key: this.key + "." + sprint.id,
+																									onClick: onClickedSprint,
 																									className: is_selected ? 'tr--selected' : ''
 																					},
 																					_react2.default.createElement(
 																									'td',
 																									null,
-																									sprint.id
+																									sprint && sprint.id
 																					),
 																					sprint.loaded === false && _react2.default.createElement(
 																									'td',
@@ -60594,12 +60612,11 @@
 																									'Loading...'
 																					)
 																	);
-													}
-													if (!sprint.loaded) {
+													} else {
 																	return _react2.default.createElement(
 																					'tr',
-																					{ key: this.key + "." + sprint.id + "." + index,
-																									onClick: this.props.onClickedSprint,
+																					{ key: this.key + "." + sprint.id,
+																									onClick: onClickedSprint,
 																									className: is_selected ? 'tr--selected' : ''
 																					},
 																					_react2.default.createElement(
@@ -60623,9 +60640,9 @@
 					}, {
 									key: 'render',
 									value: function render() {
-													var _props2 = this.props;
-													var is_collapsed = _props2.is_collapsed;
-													var is_expanded = _props2.is_expanded;
+													var _props3 = this.props;
+													var is_collapsed = _props3.is_collapsed;
+													var is_expanded = _props3.is_expanded;
 
 
 													if (is_collapsed) {

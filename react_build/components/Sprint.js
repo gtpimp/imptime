@@ -9,8 +9,8 @@ export class Sprint extends Component {
         super(props)
     }
     
-    render_collapsed(sprint) {
-	const { list_key } = this.props
+    render_collapsed() {
+	const { sprint, list_key } = this.props
 	return (
 	    <div key={this.key+".collapsed_sprint."+sprint.id}>
 		Sprint: {sprint.name}
@@ -18,26 +18,29 @@ export class Sprint extends Component {
 	)
     }
     
-    render_expanded(sprint, index) {
-        const { is_loading, is_selected } = this.props
+    render_expanded() {
+        const { sprint, is_loading, is_selected, onClickedSprint } = this.props
 
-	if ( sprint.loaded === false ) {
+	if ( ! sprint ) {
+	    return (<tr><td>Loading...</td></tr>)
+	}
+	
+	if ( ! is_loading === false ) {
 	    return (
-		<tr key={this.key+"."+sprint.id+"."+index}
-		    onClick={this.props.onClickedSprint}
+		<tr key={this.key+"."+sprint.id}
+		    onClick={onClickedSprint}
 		    className={is_selected ? 'tr--selected' : ''}
 		>
-		    <td>{sprint.id}</td>
+		    <td>{sprint && sprint.id}</td>
 	            { sprint.loaded === false &&
 		      <td>Loading...</td>
 		    }
 		</tr>
 	    )
-	}
-	if ( ! sprint.loaded ) {
+	} else {
             return (
-		<tr key={this.key+"."+sprint.id+"."+index}
-		    onClick={this.props.onClickedSprint}
+		<tr key={this.key+"."+sprint.id}
+		    onClick={onClickedSprint}
 		    className={is_selected ? 'tr--selected' : ''}
 		>
 		    <td>{sprint.id}</td>

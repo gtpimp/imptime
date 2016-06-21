@@ -33,7 +33,7 @@ urlpatterns = patterns(
     ),
     url( r'^grappelli/', include('grappelli.urls') ),
     url(r'^emacs_importer/', include('emacs_importer.urls', namespace='emacs_importer')),
-    url(r'^imp/', include('imptime.urls'), name='imptime'),
+    url(r'^imp/', include('imptime.urls', namespace='imp'), name='imptime'),
     url(r'^timepiece/', include('timepiece.urls'), name='timepiece'),
     url(r'^welcome/', include('animated_website.urls'), name='animated_website'),
     url(r'^selectable/', include('selectable.urls'), name='selectable'),
