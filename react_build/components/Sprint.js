@@ -1,6 +1,6 @@
 import React, { Component, PropTypes } from 'react'
 import { Link } from 'react-router'
-import { DragSource } from 'react-dnd';
+import { DragSource, DropTarget } from 'react-dnd';
 import { connect } from 'react-redux'
 import map from 'lodash/map'
 
@@ -20,7 +20,8 @@ export class Sprint extends Component {
     }
     
     render_expanded() {
-        const { sprint, is_loading, is_selected, onClickedSprint } = this.props
+        const { sprint, is_loading, is_selected,
+		onClickedSprint, connectDragSource } = this.props
 
 	if ( ! sprint ) {
 	    return (<tr><td>Loading...</td></tr>)
@@ -39,7 +40,7 @@ export class Sprint extends Component {
 		</tr>
 	    )
 	} else {
-            return (
+            return connectDragSource(
 		<tr key={this.key+"."+sprint.id}
 		    onClick={onClickedSprint}
 		    className={is_selected ? 'tr--selected' : ''}
@@ -81,18 +82,55 @@ function mapStateToProps(state, props) {
     }
 }
 
-const sprintSource = {
+// see http://gaearon.github.io/react-dnd/docs-drop-target.html
+const headingSource = {
     beginDrag() {
-	return {};
+	//const { sprint_id } = this.props
+	return {}
+	//return { sprint_id: sprint_id };
     }
 };
 
-function mapCollectToProps(connect, monitor) {
+const headingTarget = {
+    drop: (props, monitor, component) => {
+	sprint = monitor.getItem()
+	alert("Got the sprint: " + sprint.id)
+    },
+    hover: (props, monitor, component) => {
+    },
+    canDrop: (props, monitor) => {
+	return true;
+    }
+    
+}
+
+function collect(connect, monitor) {
   return {
     connectDragSource: connect.dragSource(),
     isDragging: monitor.isDragging()
   };
 }
 
+function collectDrop(connect, monitor) {
+    return {
+        connectDropTarget: connect.dropTarget(),
+        isOver: monitor.isOver(),
+        canDrop: monitor.canDrop()
+    }
+}
 
-export default connect(mapStateToProps)(DragSource("sprint", sprintSource, mapCollectToProps)(Sprint))
+function dndTarget(connect, monitor) {
+    return {
+	// Call this function inside render()
+	// to let React DnD handle the drag events:
+	connectDropTarget: connect.dropTarget(),
+	// You can ask the monitor about the current drag state:
+	isOver: monitor.isOver(),
+	isOverCurrent: monitor.isOver({ shallow: true }),
+	canDrop: monitor.canDrop(),
+	itemType: monitor.getItemType()
+    };
+}
+
+export default connect(mapStateToProps) (DragSource("sprint", headingSource, collect) (DropTarget("sprint", headingTarget, collectDrop)(Sprint)))
+    
