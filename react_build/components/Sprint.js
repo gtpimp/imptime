@@ -1,5 +1,6 @@
 import React, { Component, PropTypes } from 'react'
 import { Link } from 'react-router'
+import { DragSource } from 'react-dnd';
 import { connect } from 'react-redux'
 import map from 'lodash/map'
 
@@ -80,4 +81,18 @@ function mapStateToProps(state, props) {
     }
 }
 
-export default connect(mapStateToProps)(Sprint)
+const sprintSource = {
+    beginDrag() {
+	return {};
+    }
+};
+
+function mapCollectToProps(connect, monitor) {
+  return {
+    connectDragSource: connect.dragSource(),
+    isDragging: monitor.isDragging()
+  };
+}
+
+
+export default connect(mapStateToProps)(DragSource("sprint", sprintSource, mapCollectToProps)(Sprint))

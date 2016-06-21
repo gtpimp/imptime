@@ -28,6 +28,8 @@
     "react-classnames": "^0.1.2",
     "react-cookie": "^0.4.6",
     "react-datepicker": "^0.27.0",
+    "react-dnd": "^2.1.4",
+    "react-dnd-html5-backend": "^2.1.2",
     "react-dom": "^15.1.0",
     "react-key-handler": "^0.2.0",
     "react-onclickoutside": "^5.2.0",

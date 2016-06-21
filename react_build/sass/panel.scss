@@ -127,6 +127,11 @@
     max-width: $width;
     min-width: $width;
     width: $width;
+    
+    .panel-heading {
+	background-color: $panel-focus-header-background-color;
+    }
+    
 }
 
 .panel--default {
@@ -135,6 +140,10 @@
     min-width: $width;
     width: $width;
 
+    .panel-heading {
+	background-color: $panel-focus-header-background-color;
+    }
+    
 }
 
 .panel--collapsed {
@@ -142,13 +151,15 @@
     max-width: $width;
     min-width: $width;
     width: $width;
-    background-color: #A6BADB;
+    background-color: $panel-header-collapsed-background-color;
     color: #dddddd;
     border-bottom: 5px solid #CECECF;
 
     .panel-body {
 	float: right;
     }
+
+
 
 }
 
