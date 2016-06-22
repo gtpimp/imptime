@@ -49,7 +49,7 @@ export class Sprint extends Component {
 		<tr key={this.key+"."+sprint.id}
 		    onClick={onClickedSprint}
 		    className={classNames({'tr--selected': is_selected, 'tr--drop-target': isOver})}
-		>
+		    >
 		    <td>{sprint.id}</td>
 		    <td>{sprint.name}</td>
 		    <td>{sprint.status_name}</td>
