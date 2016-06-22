@@ -60076,7 +60076,7 @@
 																													return _react2.default.createElement(_Issue3.default, (_React$createElement = {
 																																	key: list_key + issue.id + index,
 																																	is_collapsed: true,
-																																	reorderIssue: _Issue.reorderIssue,
+																																	reorderIssue: _this2.reorderIssue,
 																																	onClickedIssue: function onClickedIssue() {
 																																					return _this2.onClickedIssue(issue.id);
 																																	},
@@ -60175,7 +60175,7 @@
 																																					return _react2.default.createElement(_Issue3.default, (_React$createElement2 = {
 																																									key: list_key + issue.id + index,
 																																									is_collapsed: false,
-																																									reorderIssue: _Issue.reorderIssue,
+																																									reorderIssue: _this3.reorderIssue,
 																																									onClickedIssue: function onClickedIssue() {
 																																													return _this3.onClickedIssue(issue.id);
 																																									},
@@ -65752,7 +65752,6 @@
 
 	var headingSource = {
 					beginDrag: function beginDrag(props) {
-
 									return { id: props.issue_id };
 					}
 	};
@@ -65976,7 +65975,6 @@
 
 	var headingSource = {
 					beginDrag: function beginDrag(props) {
-
 									return { id: props.sprint_id };
 					}
 	};

@@ -84,7 +84,6 @@ function mapStateToProps(state, props) {
 
 const headingSource = {
     beginDrag(props) {
-	
 	return { id: props.sprint_id }
     }
 };

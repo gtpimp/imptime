@@ -89,7 +89,7 @@ export class IssueList extends Component {
 			<Issue
 			    key={list_key+issue.id+index}
 			    is_collapsed={true}
-			    reorderIssue={reorderIssue}
+			    reorderIssue={this.reorderIssue}
 			    onClickedIssue={() => this.onClickedIssue(issue.id)}
 			    is_loading={loading_item_ids.indexOf(issue.id) !== -1}
 			    is_loading={selected_ids.indexOf(issue.id) !== -1}
@@ -136,7 +136,7 @@ export class IssueList extends Component {
 				    <Issue
 					key={list_key+issue.id+index}
 					is_collapsed={false}
-					reorderIssue={reorderIssue}
+					reorderIssue={this.reorderIssue}
 					onClickedIssue={() => this.onClickedIssue(issue.id)}
 					is_loading={loading_item_ids.indexOf(issue.id) !== -1}
 					is_loading={selected_ids.indexOf(issue.id) !== -1}

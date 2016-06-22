@@ -106,10 +106,9 @@ function mapStateToProps(state, props) {
 
 const headingSource = {
     beginDrag(props) {
-	
 	return { id: props.issue_id }
     }
-};
+}
 
 const headingTarget = {
     drop: (props, monitor, component) => {

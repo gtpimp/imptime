@@ -25,7 +25,7 @@ class IssueViewSet(BaseViewSet):
             filter_args = params.get('filter', {})
             format_args = params.get('format', {})
 
-            issues = self.allowed_issues()
+            issues = self.allowed_issues().order_by("order")
             issues = self.apply_filter(qs=issues,
                                        raw_filter_args=filter_args)
             issues = self.apply_pagination(qs=issues,
@@ -63,7 +63,8 @@ class IssueViewSet(BaseViewSet):
             elif field_name == "description":
                 issue.description = new_value
             elif field_name == 'issue_id_after':
-                issue.move_after(new_value)
+                after_issue = self.allowed_issue(new_value)
+                issue.move_after(after_issue)
             else:
                 raise Exception("Unsupported field name: %s" % field_name)
             issue.save()
