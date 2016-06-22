@@ -62,6 +62,8 @@ class IssueViewSet(BaseViewSet):
                 issue.subject = new_value
             elif field_name == "description":
                 issue.description = new_value
+            elif field_name == 'issue_id_after':
+                issue.move_after(new_value)
             else:
                 raise Exception("Unsupported field name: %s" % field_name)
             issue.save()

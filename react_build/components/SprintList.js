@@ -69,7 +69,6 @@ export class SprintList extends Component {
 
     reorderSprints(moving_sprint_id, move_after_sprint_id) {
 	const { dispatch, list_key } = this.props
-	console.log("Moving " + moving_sprint_id + " to after " + move_after_sprint_id)
 	dispatch(reorderSprints(moving_sprint_id, move_after_sprint_id,
 				function() {
 				    dispatch(invalidateList(list_key))

@@ -3258,7 +3258,7 @@ class Issue(models.Model):
     subject = models.TextField(db_index=True)
     description = models.TextField(blank=True)
     story_points = models.FloatField(null=True,blank=True)    
-    order = models.BigIntegerField(null=True,blank=True)
+    order = models.FloatField(null=True,blank=True)
     order2 = models.CharField(max_length=50, default=None, null=True,blank=True) #alternative means of ordering by string (used by eg jira)
     feature = models.ForeignKey("Feature",blank=True,null=True,related_name='issues')
     assigned_to = models.ForeignKey(User, related_name='assigned_issues', blank=True,null=True)
@@ -3305,7 +3305,23 @@ class Issue(models.Model):
     @property
     def status_name(self):
         return dict(self.ISSUE_STATUS_CHOICES).get(self.status.lower(), "unknown")
-    
+
+    def move_after(self, other_issue):
+        self.order = other_issue.order + 0.00001
+        self.save()
+        self.renumber_issue_order()
+
+    def renumber_issue_order(self):
+        """ Doesn''t re-sort, just makes the numbers sequential """
+        order = 1
+        for issue in self.project.issues\
+                                 .all().order_by("order"):
+            old_order = issue.order
+            if old_order != order:
+                issue.order = order
+                issue.save()
+            order += 1
+
     def set_order(self):
         if self.order is not None:
             return self

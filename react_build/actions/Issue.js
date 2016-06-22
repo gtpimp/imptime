@@ -45,7 +45,7 @@ export function updateIssueDescription(issue_id, value) {
     return updateIssue(issue_id, "description", value)
 }
 
-function updateIssue(issue_id, field_name, new_value) {
+function updateIssue(issue_id, field_name, new_value, on_done) {
     return (dispatch, getState) => {
 	dispatch(announceIssueSaving(issue_id))
 	let data = {field_name: field_name,
@@ -66,11 +66,18 @@ function updateIssue(issue_id, field_name, new_value) {
 		 dispatch(announceIssueSaved(json.payload))
 		 dispatch(invalidateIssues([issue_id]))
              }
+	     if ( on_done ) {
+		 on_done()
+	     }
 	 })
 	 .catch(function (error) {
              console.log('Request failed', error);
 	     dispatch(announceIssueSaveFailed(error))
 	 })
     }
+}
+
+export function reorderIssue(issue_id_before, issue_id_after, on_done) {
+    return updateIssue(issue_id_before, "issue_id_after", issue_id_after, on_done)
 }
 

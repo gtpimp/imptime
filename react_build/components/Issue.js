@@ -1,11 +1,14 @@
 import React, { Component, PropTypes } from 'react'
 import { Link } from 'react-router'
 import map from 'lodash/map'
+import { DragSource, DropTarget } from 'react-dnd';
 import { connect } from 'react-redux'
+import classNames from 'classnames'
 import {
     updateIssueSubject
 } from '../actions/Issue'
 import { RIEInput } from 'riek'
+import { DndTypes } from '../actions/Dnd'
 
 export class Issue extends Component {
 
@@ -30,27 +33,28 @@ export class Issue extends Component {
     }
     
     render_expanded() {
-        const { issue, is_loading, is_selected, onClickedIssue } = this.props
+        const { issue, is_loading, is_selected, onClickedIssue,
+		isOver, connectDragSource, connectDropTarget } = this.props
 
 	if ( ! issue ) {
 	    return (<tr><td>Loading...</td></tr>)
 	}
-	
+
 	if ( issue.loaded === false ) {
 	    return (
 		<tr key={this.key+"."+issue.id}
 		    onClick={onClickedIssue}
-		    className={is_selected ? 'tr--selected' : ''}
+		    className={classNames({'tr--selected': is_selected, 'tr--drop-target': isOver})}
 		>
 		    <td><div className="issue_list__issue_number_button">{issue.number}</div></td>
 		    <td>Loading...</td>
 		</tr>
 	    )
 	} else {
-	    return (
+	    return connectDragSource(connectDropTarget(
 		<tr key={this.key+"."+issue.id}
 		    onClick={onClickedIssue}
-		    className={is_selected ? 'tr--selected' : ''}
+		    className={classNames({'tr--selected': is_selected, 'tr--drop-target': isOver})}
 		>
 		    <td>
 			<div className="issue_list__issue_number_button">{issue.number}</div>
@@ -64,7 +68,7 @@ export class Issue extends Component {
 		    <td>{issue.feature_name}</td>
 		    <td>{issue.status}</td>
 		</tr>
-	    )
+	    ))
 	}
     }
 
@@ -100,4 +104,49 @@ function mapStateToProps(state, props) {
 
 }
 
-export default connect(mapStateToProps)(Issue)
+const headingSource = {
+    beginDrag(props) {
+	
+	return { id: props.issue_id }
+    }
+};
+
+const headingTarget = {
+    drop: (props, monitor, component) => {
+	const { issue_id } = props
+	const dragging_item = monitor.getItem()
+	if ( ! dragging_item ) {
+	    return;
+	}
+	const dragging_issue_id = dragging_item.id
+	if ( issue_id == dragging_issue_id ) {
+	    console.log("ignoring dnd on the same element: " + issue_id)
+	    return;
+	}
+	
+	props.reorderIssue(dragging_issue_id, issue_id)
+    },
+    hover: (props, monitor, component) => {
+    },
+    canDrop: (props, monitor) => {
+	return true;
+    }
+    
+}
+
+function collect(connect, monitor) {
+    return {
+	connectDragSource: connect.dragSource(),
+	isDragging: monitor.isDragging()
+    };
+}
+
+function collectDrop(connect, monitor) {
+    return {
+        connectDropTarget: connect.dropTarget(),
+        isOver: monitor.isOver(),
+        canDrop: monitor.canDrop()
+    }
+}
+
+export default connect(mapStateToProps) (DragSource(DndTypes.ISSUE, headingSource, collect) (DropTarget(DndTypes.ISSUE, headingTarget, collectDrop)(Issue)))

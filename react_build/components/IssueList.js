@@ -10,8 +10,11 @@ import {
 } from '../actions/ItemList'
 import {
     invalidateIssues,
-    fetchIssuesIfNeeded
+    fetchIssuesIfNeeded,
 } from '../actions/Issues'
+import {
+    reorderIssue
+} from '../actions/Issue'
 import Pagination from '../components/Pagination'
 import Issue from './Issue'
 
@@ -24,6 +27,7 @@ export class IssueList extends Component {
 	this.onCollapse = this.onCollapse.bind(this)
 	this.onExpand = this.onExpand.bind(this)
 	this.onClickedIssue = this.onClickedIssue.bind(this)
+	this.reorderIssue = this.reorderIssue.bind(this)
     }
 
     componentDidMount() {
@@ -64,6 +68,16 @@ export class IssueList extends Component {
 	}
     }
 
+    reorderIssue(moving_issue_id, move_after_issue_id) {
+	const { dispatch, list_key } = this.props
+	console.log("Moving " + moving_issue_id + " to after " + move_after_issue_id)
+	dispatch(reorderIssue(moving_issue_id, move_after_issue_id,
+			      function() {
+				  dispatch(invalidateList(list_key))
+				  dispatch(fetchIssuesIfNeeded(list_key))
+			      }))
+    }
+    
     render_collapsed() {
 	
 	const { issue, selected_items, is_collapsed, selected_ids, loading_item_ids, list_key } = this.props
@@ -75,6 +89,7 @@ export class IssueList extends Component {
 			<Issue
 			    key={list_key+issue.id+index}
 			    is_collapsed={true}
+			    reorderIssue={reorderIssue}
 			    onClickedIssue={() => this.onClickedIssue(issue.id)}
 			    is_loading={loading_item_ids.indexOf(issue.id) !== -1}
 			    is_loading={selected_ids.indexOf(issue.id) !== -1}
@@ -89,8 +104,7 @@ export class IssueList extends Component {
     render_expanded() {
 	
 	const { issues, is_visible, list_key, is_loading,
-		selected_ids, reorderIssues,
-		loading_item_ids, has_items } = this.props
+		selected_ids, loading_item_ids, has_items } = this.props
 
 	if ( ! is_visible ) {
 	    return (<div></div>)
@@ -122,6 +136,7 @@ export class IssueList extends Component {
 				    <Issue
 					key={list_key+issue.id+index}
 					is_collapsed={false}
+					reorderIssue={reorderIssue}
 					onClickedIssue={() => this.onClickedIssue(issue.id)}
 					is_loading={loading_item_ids.indexOf(issue.id) !== -1}
 					is_loading={selected_ids.indexOf(issue.id) !== -1}

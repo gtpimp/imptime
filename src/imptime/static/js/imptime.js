@@ -59715,7 +59715,6 @@
 										var dispatch = _props7.dispatch;
 										var list_key = _props7.list_key;
 
-										console.log("Moving " + moving_sprint_id + " to after " + move_after_sprint_id);
 										dispatch((0, _Sprints.reorderSprints)(moving_sprint_id, move_after_sprint_id, function () {
 													dispatch((0, _ItemList.invalidateList)(list_key));
 													dispatch((0, _Sprints.fetchSprintsIfNeeded)(list_key));
@@ -59911,7 +59910,7 @@
 	'use strict';
 
 	Object.defineProperty(exports, "__esModule", {
-				value: true
+					value: true
 	});
 	exports.IssueList = undefined;
 
@@ -59933,13 +59932,15 @@
 
 	var _Issues = __webpack_require__(864);
 
+	var _Issue = __webpack_require__(863);
+
 	var _Pagination = __webpack_require__(745);
 
 	var _Pagination2 = _interopRequireDefault(_Pagination);
 
-	var _Issue = __webpack_require__(934);
+	var _Issue2 = __webpack_require__(934);
 
-	var _Issue2 = _interopRequireDefault(_Issue);
+	var _Issue3 = _interopRequireDefault(_Issue2);
 
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -59952,294 +59953,309 @@
 	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 
 	var IssueList = exports.IssueList = function (_Component) {
-				_inherits(IssueList, _Component);
+					_inherits(IssueList, _Component);
 
-				function IssueList(props) {
-							_classCallCheck(this, IssueList);
+					function IssueList(props) {
+									_classCallCheck(this, IssueList);
 
-							var _this = _possibleConstructorReturn(this, Object.getPrototypeOf(IssueList).call(this, props));
+									var _this = _possibleConstructorReturn(this, Object.getPrototypeOf(IssueList).call(this, props));
 
-							_this.onRefresh = _this.onRefresh.bind(_this);
-							_this.onChangePage = _this.onChangePage.bind(_this);
-							_this.onCollapse = _this.onCollapse.bind(_this);
-							_this.onExpand = _this.onExpand.bind(_this);
-							_this.onClickedIssue = _this.onClickedIssue.bind(_this);
-							return _this;
-				}
+									_this.onRefresh = _this.onRefresh.bind(_this);
+									_this.onChangePage = _this.onChangePage.bind(_this);
+									_this.onCollapse = _this.onCollapse.bind(_this);
+									_this.onExpand = _this.onExpand.bind(_this);
+									_this.onClickedIssue = _this.onClickedIssue.bind(_this);
+									_this.reorderIssue = _this.reorderIssue.bind(_this);
+									return _this;
+					}
 
-				_createClass(IssueList, [{
-							key: 'componentDidMount',
-							value: function componentDidMount() {
-										var _props = this.props;
-										var dispatch = _props.dispatch;
-										var list_key = _props.list_key;
-										var sprint_id = _props.sprint_id;
+					_createClass(IssueList, [{
+									key: 'componentDidMount',
+									value: function componentDidMount() {
+													var _props = this.props;
+													var dispatch = _props.dispatch;
+													var list_key = _props.list_key;
+													var sprint_id = _props.sprint_id;
 
-										if (sprint_id) {
+													if (sprint_id) {
+																	dispatch((0, _Issues.fetchIssuesIfNeeded)(list_key));
+													}
+									}
+					}, {
+									key: 'onCollapse',
+									value: function onCollapse() {
+													var _props2 = this.props;
+													var dispatch = _props2.dispatch;
+													var list_key = _props2.list_key;
+
+													dispatch((0, _ItemList.collapse_list)(list_key));
+									}
+					}, {
+									key: 'onExpand',
+									value: function onExpand() {
+													var _props3 = this.props;
+													var dispatch = _props3.dispatch;
+													var list_key = _props3.list_key;
+
+													dispatch((0, _ItemList.expand_list)(list_key));
+									}
+					}, {
+									key: 'onClickedIssue',
+									value: function onClickedIssue(issue_id) {
+													var _props4 = this.props;
+													var dispatch = _props4.dispatch;
+													var list_key = _props4.list_key;
+
+													dispatch((0, _ItemList.selectItems)(list_key, [issue_id]));
+									}
+					}, {
+									key: 'onChangePage',
+									value: function onChangePage() {
+													var _props5 = this.props;
+													var dispatch = _props5.dispatch;
+													var issue_ids = _props5.issue_ids;
+													var list_key = _props5.list_key;
+
+													dispatch((0, _ItemList.invalidateList)(list_key));
 													dispatch((0, _Issues.fetchIssuesIfNeeded)(list_key));
-										}
-							}
-				}, {
-							key: 'onCollapse',
-							value: function onCollapse() {
-										var _props2 = this.props;
-										var dispatch = _props2.dispatch;
-										var list_key = _props2.list_key;
+									}
+					}, {
+									key: 'onRefresh',
+									value: function onRefresh(event) {
+													var _props6 = this.props;
+													var dispatch = _props6.dispatch;
+													var issue_ids = _props6.issue_ids;
+													var list_key = _props6.list_key;
 
-										dispatch((0, _ItemList.collapse_list)(list_key));
-							}
-				}, {
-							key: 'onExpand',
-							value: function onExpand() {
-										var _props3 = this.props;
-										var dispatch = _props3.dispatch;
-										var list_key = _props3.list_key;
+													dispatch((0, _ItemList.invalidateList)(list_key));
+													dispatch((0, _Issues.invalidateIssues)(issue_ids));
+													dispatch((0, _Issues.fetchIssuesIfNeeded)(list_key));
+													if (event) {
+																	event.stopPropagation();
+													}
+									}
+					}, {
+									key: 'reorderIssue',
+									value: function reorderIssue(moving_issue_id, move_after_issue_id) {
+													var _props7 = this.props;
+													var dispatch = _props7.dispatch;
+													var list_key = _props7.list_key;
 
-										dispatch((0, _ItemList.expand_list)(list_key));
-							}
-				}, {
-							key: 'onClickedIssue',
-							value: function onClickedIssue(issue_id) {
-										var _props4 = this.props;
-										var dispatch = _props4.dispatch;
-										var list_key = _props4.list_key;
+													console.log("Moving " + moving_issue_id + " to after " + move_after_issue_id);
+													dispatch((0, _Issue.reorderIssue)(moving_issue_id, move_after_issue_id, function () {
+																	dispatch((0, _ItemList.invalidateList)(list_key));
+																	dispatch((0, _Issues.fetchIssuesIfNeeded)(list_key));
+													}));
+									}
+					}, {
+									key: 'render_collapsed',
+									value: function render_collapsed() {
+													var _this2 = this;
 
-										dispatch((0, _ItemList.selectItems)(list_key, [issue_id]));
-							}
-				}, {
-							key: 'onChangePage',
-							value: function onChangePage() {
-										var _props5 = this.props;
-										var dispatch = _props5.dispatch;
-										var issue_ids = _props5.issue_ids;
-										var list_key = _props5.list_key;
-
-										dispatch((0, _ItemList.invalidateList)(list_key));
-										dispatch((0, _Issues.fetchIssuesIfNeeded)(list_key));
-							}
-				}, {
-							key: 'onRefresh',
-							value: function onRefresh(event) {
-										var _props6 = this.props;
-										var dispatch = _props6.dispatch;
-										var issue_ids = _props6.issue_ids;
-										var list_key = _props6.list_key;
-
-										dispatch((0, _ItemList.invalidateList)(list_key));
-										dispatch((0, _Issues.invalidateIssues)(issue_ids));
-										dispatch((0, _Issues.fetchIssuesIfNeeded)(list_key));
-										if (event) {
-													event.stopPropagation();
-										}
-							}
-				}, {
-							key: 'render_collapsed',
-							value: function render_collapsed() {
-										var _this2 = this;
-
-										var _props7 = this.props;
-										var issue = _props7.issue;
-										var selected_items = _props7.selected_items;
-										var is_collapsed = _props7.is_collapsed;
-										var selected_ids = _props7.selected_ids;
-										var loading_item_ids = _props7.loading_item_ids;
-										var list_key = _props7.list_key;
+													var _props8 = this.props;
+													var issue = _props8.issue;
+													var selected_items = _props8.selected_items;
+													var is_collapsed = _props8.is_collapsed;
+													var selected_ids = _props8.selected_ids;
+													var loading_item_ids = _props8.loading_item_ids;
+													var list_key = _props8.list_key;
 
 
-										return _react2.default.createElement(
-													'div',
-													{ className: 'panel panel--collapsed' },
-													_react2.default.createElement(
-																'div',
-																{ className: 'panel-heading', onClick: this.onExpand },
-																_react2.default.createElement(
-																			'div',
-																			{ className: 'panel__title' },
-																			selected_items.map(function (issue, index) {
-																						var _React$createElement;
+													return _react2.default.createElement(
+																	'div',
+																	{ className: 'panel panel--collapsed' },
+																	_react2.default.createElement(
+																					'div',
+																					{ className: 'panel-heading', onClick: this.onExpand },
+																					_react2.default.createElement(
+																									'div',
+																									{ className: 'panel__title' },
+																									selected_items.map(function (issue, index) {
+																													var _React$createElement;
 
-																						return _react2.default.createElement(_Issue2.default, (_React$createElement = {
-																									key: list_key + issue.id + index,
-																									is_collapsed: true,
-																									onClickedIssue: function onClickedIssue() {
-																												return _this2.onClickedIssue(issue.id);
-																									},
-																									is_loading: loading_item_ids.indexOf(issue.id) !== -1
-																						}, _defineProperty(_React$createElement, 'is_loading', selected_ids.indexOf(issue.id) !== -1), _defineProperty(_React$createElement, 'issue_id', issue.id), _React$createElement));
-																			})
-																)
-													)
-										);
-							}
-				}, {
-							key: 'render_expanded',
-							value: function render_expanded() {
-										var _this3 = this;
-
-										var _props8 = this.props;
-										var issues = _props8.issues;
-										var is_visible = _props8.is_visible;
-										var list_key = _props8.list_key;
-										var is_loading = _props8.is_loading;
-										var selected_ids = _props8.selected_ids;
-										var reorderIssues = _props8.reorderIssues;
-										var loading_item_ids = _props8.loading_item_ids;
-										var has_items = _props8.has_items;
-
-
-										if (!is_visible) {
-													return _react2.default.createElement('div', null);
-										}
-
-										return _react2.default.createElement(
-													'div',
-													{ className: 'issue_list', style: { opacity: is_loading ? 0.5 : 1 } },
-													_react2.default.createElement(
-																'div',
-																{ className: 'panel panel--full' },
-																_react2.default.createElement(
-																			'div',
-																			{ className: 'panel-heading', onClick: this.onCollapse },
-																			_react2.default.createElement(
-																						'div',
-																						{ className: 'panel__title' },
-																						'Issues'
-																			),
-																			_react2.default.createElement(
-																						'div',
-																						{ className: 'panel__buttons' },
-																						_react2.default.createElement('div', { className: 'panel__button panel__button--refresh',
-																									onClick: this.onRefresh })
-																			)
-																),
-																_react2.default.createElement(
-																			'div',
-																			{ className: 'panel-body' },
-																			_react2.default.createElement(
-																						'table',
-																						{ className: 'table table--compact' },
-																						_react2.default.createElement(
-																									'thead',
-																									null,
-																									_react2.default.createElement(
-																												'tr',
-																												null,
-																												_react2.default.createElement(
-																															'th',
-																															null,
-																															'Number'
-																												),
-																												_react2.default.createElement(
-																															'th',
-																															null,
-																															'Name'
-																												),
-																												_react2.default.createElement(
-																															'th',
-																															null,
-																															'Assigned to'
-																												),
-																												_react2.default.createElement(
-																															'th',
-																															null,
-																															'Feature'
-																												),
-																												_react2.default.createElement(
-																															'th',
-																															null,
-																															'Status'
-																												)
-																									)
-																						),
-																						_react2.default.createElement(
-																									'tbody',
-																									null,
-																									issues.map(function (issue, index) {
-																												var _React$createElement2;
-
-																												return _react2.default.createElement(_Issue2.default, (_React$createElement2 = {
-																															key: list_key + issue.id + index,
-																															is_collapsed: false,
-																															onClickedIssue: function onClickedIssue() {
-																																		return _this3.onClickedIssue(issue.id);
-																															},
-																															is_loading: loading_item_ids.indexOf(issue.id) !== -1
-																												}, _defineProperty(_React$createElement2, 'is_loading', selected_ids.indexOf(issue.id) !== -1), _defineProperty(_React$createElement2, 'issue_id', issue.id), _React$createElement2));
+																													return _react2.default.createElement(_Issue3.default, (_React$createElement = {
+																																	key: list_key + issue.id + index,
+																																	is_collapsed: true,
+																																	reorderIssue: _Issue.reorderIssue,
+																																	onClickedIssue: function onClickedIssue() {
+																																					return _this2.onClickedIssue(issue.id);
+																																	},
+																																	is_loading: loading_item_ids.indexOf(issue.id) !== -1
+																													}, _defineProperty(_React$createElement, 'is_loading', selected_ids.indexOf(issue.id) !== -1), _defineProperty(_React$createElement, 'issue_id', issue.id), _React$createElement));
 																									})
-																						)
-																			),
-																			!is_loading && !has_items && _react2.default.createElement(
-																						'div',
-																						{ className: 'table__no-rows' },
-																						'no issues'
-																			)
-																),
-																_react2.default.createElement(_Pagination2.default, { list_key: list_key, on_changed: this.onChangePage })
-													)
-										);
-							}
-				}, {
-							key: 'render',
-							value: function render() {
-										var _props9 = this.props;
-										var is_visible = _props9.is_visible;
-										var is_loading = _props9.is_loading;
-										var is_collapsed = _props9.is_collapsed;
-										var is_expanded = _props9.is_expanded;
+																					)
+																	)
+													);
+									}
+					}, {
+									key: 'render_expanded',
+									value: function render_expanded() {
+													var _this3 = this;
+
+													var _props9 = this.props;
+													var issues = _props9.issues;
+													var is_visible = _props9.is_visible;
+													var list_key = _props9.list_key;
+													var is_loading = _props9.is_loading;
+													var selected_ids = _props9.selected_ids;
+													var loading_item_ids = _props9.loading_item_ids;
+													var has_items = _props9.has_items;
 
 
-										if (!is_visible) {
-													return _react2.default.createElement('div', null);
-										}
+													if (!is_visible) {
+																	return _react2.default.createElement('div', null);
+													}
 
-										return _react2.default.createElement(
-													'div',
-													null,
-													is_collapsed && this.render_collapsed(),
-													is_expanded && this.render_expanded()
-										);
-							}
-				}]);
+													return _react2.default.createElement(
+																	'div',
+																	{ className: 'issue_list', style: { opacity: is_loading ? 0.5 : 1 } },
+																	_react2.default.createElement(
+																					'div',
+																					{ className: 'panel panel--full' },
+																					_react2.default.createElement(
+																									'div',
+																									{ className: 'panel-heading', onClick: this.onCollapse },
+																									_react2.default.createElement(
+																													'div',
+																													{ className: 'panel__title' },
+																													'Issues'
+																									),
+																									_react2.default.createElement(
+																													'div',
+																													{ className: 'panel__buttons' },
+																													_react2.default.createElement('div', { className: 'panel__button panel__button--refresh',
+																																	onClick: this.onRefresh })
+																									)
+																					),
+																					_react2.default.createElement(
+																									'div',
+																									{ className: 'panel-body' },
+																									_react2.default.createElement(
+																													'table',
+																													{ className: 'table table--compact' },
+																													_react2.default.createElement(
+																																	'thead',
+																																	null,
+																																	_react2.default.createElement(
+																																					'tr',
+																																					null,
+																																					_react2.default.createElement(
+																																									'th',
+																																									null,
+																																									'Number'
+																																					),
+																																					_react2.default.createElement(
+																																									'th',
+																																									null,
+																																									'Name'
+																																					),
+																																					_react2.default.createElement(
+																																									'th',
+																																									null,
+																																									'Assigned to'
+																																					),
+																																					_react2.default.createElement(
+																																									'th',
+																																									null,
+																																									'Feature'
+																																					),
+																																					_react2.default.createElement(
+																																									'th',
+																																									null,
+																																									'Status'
+																																					)
+																																	)
+																													),
+																													_react2.default.createElement(
+																																	'tbody',
+																																	null,
+																																	issues.map(function (issue, index) {
+																																					var _React$createElement2;
 
-				return IssueList;
+																																					return _react2.default.createElement(_Issue3.default, (_React$createElement2 = {
+																																									key: list_key + issue.id + index,
+																																									is_collapsed: false,
+																																									reorderIssue: _Issue.reorderIssue,
+																																									onClickedIssue: function onClickedIssue() {
+																																													return _this3.onClickedIssue(issue.id);
+																																									},
+																																									is_loading: loading_item_ids.indexOf(issue.id) !== -1
+																																					}, _defineProperty(_React$createElement2, 'is_loading', selected_ids.indexOf(issue.id) !== -1), _defineProperty(_React$createElement2, 'issue_id', issue.id), _React$createElement2));
+																																	})
+																													)
+																									),
+																									!is_loading && !has_items && _react2.default.createElement(
+																													'div',
+																													{ className: 'table__no-rows' },
+																													'no issues'
+																									)
+																					),
+																					_react2.default.createElement(_Pagination2.default, { list_key: list_key, on_changed: this.onChangePage })
+																	)
+													);
+									}
+					}, {
+									key: 'render',
+									value: function render() {
+													var _props10 = this.props;
+													var is_visible = _props10.is_visible;
+													var is_loading = _props10.is_loading;
+													var is_collapsed = _props10.is_collapsed;
+													var is_expanded = _props10.is_expanded;
+
+
+													if (!is_visible) {
+																	return _react2.default.createElement('div', null);
+													}
+
+													return _react2.default.createElement(
+																	'div',
+																	null,
+																	is_collapsed && this.render_collapsed(),
+																	is_expanded && this.render_expanded()
+													);
+									}
+					}]);
+
+					return IssueList;
 	}(_react.Component);
 
 	function mapStateToProps(state, props) {
-				var issue = state.issue;
-				var item_list = state.item_list;
-				var list_key = props.list_key;
+					var issue = state.issue;
+					var item_list = state.item_list;
+					var list_key = props.list_key;
 
-				var items_by_id = issue && issue.items_by_id || {};
-				var l = item_list && item_list[list_key] || {};
-				var filter = l.filter || {};
-				var sprint_id = filter.sprint_id || null;
-				var visible_item_ids = l.visible_item_ids || [];
+					var items_by_id = issue && issue.items_by_id || {};
+					var l = item_list && item_list[list_key] || {};
+					var filter = l.filter || {};
+					var sprint_id = filter.sprint_id || null;
+					var visible_item_ids = l.visible_item_ids || [];
 
-				var selected_items = items_by_id && l.selected_ids && l.selected_ids.map(function (selected_id, index) {
-							return items_by_id[selected_id] || { 'id': selected_id,
-										'loaded': false };
-				});
+					var selected_items = items_by_id && l.selected_ids && l.selected_ids.map(function (selected_id, index) {
+									return items_by_id[selected_id] || { 'id': selected_id,
+													'loaded': false };
+					});
 
-				var items = items_by_id && visible_item_ids.map(function (visible_item_id, index) {
-							return items_by_id[visible_item_id] || { 'id': visible_item_id,
-										'loaded': false };
-				}) || [];
+					var items = items_by_id && visible_item_ids.map(function (visible_item_id, index) {
+									return items_by_id[visible_item_id] || { 'id': visible_item_id,
+													'loaded': false };
+					}) || [];
 
-				return {
-							list_key: list_key,
-							sprint_id: sprint_id,
-							issues: items,
-							issue_ids: (0, _map2.default)(items, 'id'),
-							selected_ids: l.selected_ids || [],
-							selected_items: selected_items || [],
-							loading_item_ids: l.loading_item_ids || [],
-							has_items: items && items.length > 0,
-							is_loading: l.is_loading,
-							is_collapsed: l.display_mode == "collapsed",
-							is_expanded: l.display_mode == "expanded" || !l.display_mode,
-							last_updated: l.last_updated,
-							is_visible: sprint_id || false
-				};
+					return {
+									list_key: list_key,
+									sprint_id: sprint_id,
+									issues: items,
+									issue_ids: (0, _map2.default)(items, 'id'),
+									selected_ids: l.selected_ids || [],
+									selected_items: selected_items || [],
+									loading_item_ids: l.loading_item_ids || [],
+									has_items: items && items.length > 0,
+									is_loading: l.is_loading,
+									is_collapsed: l.display_mode == "collapsed",
+									is_expanded: l.display_mode == "expanded" || !l.display_mode,
+									last_updated: l.last_updated,
+									is_visible: sprint_id || false
+					};
 	}
 
 	exports.default = (0, _reactRedux.connect)(mapStateToProps)(IssueList);
@@ -61544,6 +61560,7 @@
 	exports.ANNOUNCE_ISSUE_SAVE_FAILED = exports.ANNOUNCE_ISSUE_SAVED = exports.ANNOUNCE_ISSUE_SAVING = undefined;
 	exports.updateIssueSubject = updateIssueSubject;
 	exports.updateIssueDescription = updateIssueDescription;
+	exports.reorderIssue = reorderIssue;
 
 	var _lib = __webpack_require__(734);
 
@@ -61601,7 +61618,7 @@
 	    return updateIssue(issue_id, "description", value);
 	}
 
-	function updateIssue(issue_id, field_name, new_value) {
+	function updateIssue(issue_id, field_name, new_value, on_done) {
 	    return function (dispatch, getState) {
 	        dispatch(announceIssueSaving(issue_id));
 	        var data = { field_name: field_name,
@@ -61621,11 +61638,18 @@
 	                dispatch(announceIssueSaved(json.payload));
 	                dispatch((0, _Issues.invalidateIssues)([issue_id]));
 	            }
+	            if (on_done) {
+	                on_done();
+	            }
 	        }).catch(function (error) {
 	            console.log('Request failed', error);
 	            dispatch(announceIssueSaveFailed(error));
 	        });
 	    };
+	}
+
+	function reorderIssue(issue_id_before, issue_id_after, on_done) {
+	    return updateIssue(issue_id_before, "issue_id_after", issue_id_after, on_done);
 	}
 
 /***/ },
@@ -65517,7 +65541,7 @@
 	'use strict';
 
 	Object.defineProperty(exports, "__esModule", {
-		value: true
+					value: true
 	});
 	exports.Issue = undefined;
 
@@ -65533,11 +65557,19 @@
 
 	var _map2 = _interopRequireDefault(_map);
 
+	var _reactDnd = __webpack_require__(557);
+
 	var _reactRedux = __webpack_require__(533);
+
+	var _classnames = __webpack_require__(936);
+
+	var _classnames2 = _interopRequireDefault(_classnames);
 
 	var _Issue = __webpack_require__(863);
 
 	var _riek = __webpack_require__(853);
+
+	var _Dnd = __webpack_require__(937);
 
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -65548,174 +65580,222 @@
 	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 
 	var Issue = exports.Issue = function (_Component) {
-		_inherits(Issue, _Component);
+					_inherits(Issue, _Component);
 
-		function Issue(props) {
-			_classCallCheck(this, Issue);
+					function Issue(props) {
+									_classCallCheck(this, Issue);
 
-			var _this = _possibleConstructorReturn(this, Object.getPrototypeOf(Issue).call(this, props));
+									var _this = _possibleConstructorReturn(this, Object.getPrototypeOf(Issue).call(this, props));
 
-			_this.onChangeSubject = _this.onChangeSubject.bind(_this);
-			return _this;
-		}
+									_this.onChangeSubject = _this.onChangeSubject.bind(_this);
+									return _this;
+					}
 
-		_createClass(Issue, [{
-			key: 'onChangeSubject',
-			value: function onChangeSubject(issue_id, obj) {
-				var dispatch = this.props.dispatch;
+					_createClass(Issue, [{
+									key: 'onChangeSubject',
+									value: function onChangeSubject(issue_id, obj) {
+													var dispatch = this.props.dispatch;
 
-				dispatch((0, _Issue.updateIssueSubject)(issue_id, obj.subject));
-			}
-		}, {
-			key: 'render_collapsed',
-			value: function render_collapsed() {
-				var _props = this.props;
-				var issue = _props.issue;
-				var list_key = _props.list_key;
+													dispatch((0, _Issue.updateIssueSubject)(issue_id, obj.subject));
+									}
+					}, {
+									key: 'render_collapsed',
+									value: function render_collapsed() {
+													var _props = this.props;
+													var issue = _props.issue;
+													var list_key = _props.list_key;
 
-				return _react2.default.createElement(
-					'div',
-					{ key: "collapsed_issue_" + issue.id + "_" + list_key },
-					issue.number,
-					issue.subject
-				);
-			}
-		}, {
-			key: 'render_expanded',
-			value: function render_expanded() {
-				var _this2 = this;
+													return _react2.default.createElement(
+																	'div',
+																	{ key: "collapsed_issue_" + issue.id + "_" + list_key },
+																	issue.number,
+																	issue.subject
+													);
+									}
+					}, {
+									key: 'render_expanded',
+									value: function render_expanded() {
+													var _this2 = this;
 
-				var _props2 = this.props;
-				var issue = _props2.issue;
-				var is_loading = _props2.is_loading;
-				var is_selected = _props2.is_selected;
-				var onClickedIssue = _props2.onClickedIssue;
-
-
-				if (!issue) {
-					return _react2.default.createElement(
-						'tr',
-						null,
-						_react2.default.createElement(
-							'td',
-							null,
-							'Loading...'
-						)
-					);
-				}
-
-				if (issue.loaded === false) {
-					return _react2.default.createElement(
-						'tr',
-						{ key: this.key + "." + issue.id,
-							onClick: onClickedIssue,
-							className: is_selected ? 'tr--selected' : ''
-						},
-						_react2.default.createElement(
-							'td',
-							null,
-							_react2.default.createElement(
-								'div',
-								{ className: 'issue_list__issue_number_button' },
-								issue.number
-							)
-						),
-						_react2.default.createElement(
-							'td',
-							null,
-							'Loading...'
-						)
-					);
-				} else {
-					return _react2.default.createElement(
-						'tr',
-						{ key: this.key + "." + issue.id,
-							onClick: onClickedIssue,
-							className: is_selected ? 'tr--selected' : ''
-						},
-						_react2.default.createElement(
-							'td',
-							null,
-							_react2.default.createElement(
-								'div',
-								{ className: 'issue_list__issue_number_button' },
-								issue.number
-							)
-						),
-						_react2.default.createElement(
-							'td',
-							null,
-							_react2.default.createElement(_riek.RIEInput, { value: issue.subject,
-								propName: 'subject',
-								change: function change(obj) {
-									return _this2.onChangeSubject(issue.id, obj);
-								} })
-						),
-						_react2.default.createElement(
-							'td',
-							null,
-							issue.assigned_to_username
-						),
-						_react2.default.createElement(
-							'td',
-							null,
-							issue.feature_name
-						),
-						_react2.default.createElement(
-							'td',
-							null,
-							issue.status
-						)
-					);
-				}
-			}
-		}, {
-			key: 'render',
-			value: function render() {
-				var _props3 = this.props;
-				var is_collapsed = _props3.is_collapsed;
-				var is_expanded = _props3.is_expanded;
+													var _props2 = this.props;
+													var issue = _props2.issue;
+													var is_loading = _props2.is_loading;
+													var is_selected = _props2.is_selected;
+													var onClickedIssue = _props2.onClickedIssue;
+													var isOver = _props2.isOver;
+													var connectDragSource = _props2.connectDragSource;
+													var connectDropTarget = _props2.connectDropTarget;
 
 
-				if (is_collapsed) {
-					return this.render_collapsed();
-				} else if (is_expanded) {
-					return this.render_expanded();
-				} else {
-					return _react2.default.createElement(
-						'div',
-						null,
-						'Dev error'
-					);
-				}
-			}
-		}]);
+													if (!issue) {
+																	return _react2.default.createElement(
+																					'tr',
+																					null,
+																					_react2.default.createElement(
+																									'td',
+																									null,
+																									'Loading...'
+																					)
+																	);
+													}
 
-		return Issue;
+													if (issue.loaded === false) {
+																	return _react2.default.createElement(
+																					'tr',
+																					{ key: this.key + "." + issue.id,
+																									onClick: onClickedIssue,
+																									className: (0, _classnames2.default)({ 'tr--selected': is_selected, 'tr--drop-target': isOver })
+																					},
+																					_react2.default.createElement(
+																									'td',
+																									null,
+																									_react2.default.createElement(
+																													'div',
+																													{ className: 'issue_list__issue_number_button' },
+																													issue.number
+																									)
+																					),
+																					_react2.default.createElement(
+																									'td',
+																									null,
+																									'Loading...'
+																					)
+																	);
+													} else {
+																	return connectDragSource(connectDropTarget(_react2.default.createElement(
+																					'tr',
+																					{ key: this.key + "." + issue.id,
+																									onClick: onClickedIssue,
+																									className: (0, _classnames2.default)({ 'tr--selected': is_selected, 'tr--drop-target': isOver })
+																					},
+																					_react2.default.createElement(
+																									'td',
+																									null,
+																									_react2.default.createElement(
+																													'div',
+																													{ className: 'issue_list__issue_number_button' },
+																													issue.number
+																									)
+																					),
+																					_react2.default.createElement(
+																									'td',
+																									null,
+																									_react2.default.createElement(_riek.RIEInput, { value: issue.subject,
+																													propName: 'subject',
+																													change: function change(obj) {
+																																	return _this2.onChangeSubject(issue.id, obj);
+																													} })
+																					),
+																					_react2.default.createElement(
+																									'td',
+																									null,
+																									issue.assigned_to_username
+																					),
+																					_react2.default.createElement(
+																									'td',
+																									null,
+																									issue.feature_name
+																					),
+																					_react2.default.createElement(
+																									'td',
+																									null,
+																									issue.status
+																					)
+																	)));
+													}
+									}
+					}, {
+									key: 'render',
+									value: function render() {
+													var _props3 = this.props;
+													var is_collapsed = _props3.is_collapsed;
+													var is_expanded = _props3.is_expanded;
+
+
+													if (is_collapsed) {
+																	return this.render_collapsed();
+													} else if (is_expanded) {
+																	return this.render_expanded();
+													} else {
+																	return _react2.default.createElement(
+																					'div',
+																					null,
+																					'Dev error'
+																	);
+													}
+									}
+					}]);
+
+					return Issue;
 	}(_react.Component);
 
 	function mapStateToProps(state, props) {
-		var issue = state.issue;
-		var item_list = state.item_list;
-		var issue_id = props.issue_id;
-		var is_selected = props.is_selected;
-		var is_collapsed = props.is_collapsed;
-		var is_loading = props.is_loading;
+					var issue = state.issue;
+					var item_list = state.item_list;
+					var issue_id = props.issue_id;
+					var is_selected = props.is_selected;
+					var is_collapsed = props.is_collapsed;
+					var is_loading = props.is_loading;
 
 
-		var this_issue = issue && issue.items_by_id && issue.items_by_id[issue_id] || { 'loaded': false };
+					var this_issue = issue && issue.items_by_id && issue.items_by_id[issue_id] || { 'loaded': false };
 
-		return {
-			issue: this_issue,
-			issue_id: issue_id,
-			is_selected: is_selected,
-			is_loading: is_loading,
-			is_collapsed: is_collapsed,
-			is_expanded: !is_collapsed
-		};
+					return {
+									issue: this_issue,
+									issue_id: issue_id,
+									is_selected: is_selected,
+									is_loading: is_loading,
+									is_collapsed: is_collapsed,
+									is_expanded: !is_collapsed
+					};
 	}
 
-	exports.default = (0, _reactRedux.connect)(mapStateToProps)(Issue);
+	var headingSource = {
+					beginDrag: function beginDrag(props) {
+
+									return { id: props.issue_id };
+					}
+	};
+
+	var headingTarget = {
+					drop: function drop(props, monitor, component) {
+									var issue_id = props.issue_id;
+
+									var dragging_item = monitor.getItem();
+									if (!dragging_item) {
+													return;
+									}
+									var dragging_issue_id = dragging_item.id;
+									if (issue_id == dragging_issue_id) {
+													console.log("ignoring dnd on the same element: " + issue_id);
+													return;
+									}
+
+									props.reorderIssue(dragging_issue_id, issue_id);
+					},
+					hover: function hover(props, monitor, component) {},
+					canDrop: function canDrop(props, monitor) {
+									return true;
+					}
+
+	};
+
+	function collect(connect, monitor) {
+					return {
+									connectDragSource: connect.dragSource(),
+									isDragging: monitor.isDragging()
+					};
+	}
+
+	function collectDrop(connect, monitor) {
+					return {
+									connectDropTarget: connect.dropTarget(),
+									isOver: monitor.isOver(),
+									canDrop: monitor.canDrop()
+					};
+	}
+
+	exports.default = (0, _reactRedux.connect)(mapStateToProps)((0, _reactDnd.DragSource)(_Dnd.DndTypes.ISSUE, headingSource, collect)((0, _reactDnd.DropTarget)(_Dnd.DndTypes.ISSUE, headingTarget, collectDrop)(Issue)));
 
 /***/ },
 /* 935 */
@@ -65748,6 +65828,8 @@
 
 	var _classnames2 = _interopRequireDefault(_classnames);
 
+	var _Dnd = __webpack_require__(937);
+
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
@@ -65755,10 +65837,6 @@
 	function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
 
 	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
-
-	var DndTypes = {
-					SPRINT: 'sprint'
-	};
 
 	var Sprint = exports.Sprint = function (_Component) {
 					_inherits(Sprint, _Component);
@@ -65896,7 +65974,6 @@
 					};
 	}
 
-	// see http://gaearon.github.io/react-dnd/docs-drop-target.html
 	var headingSource = {
 					beginDrag: function beginDrag(props) {
 
@@ -65942,7 +66019,7 @@
 					};
 	}
 
-	exports.default = (0, _reactRedux.connect)(mapStateToProps)((0, _reactDnd.DragSource)(DndTypes.SPRINT, headingSource, collect)((0, _reactDnd.DropTarget)(DndTypes.SPRINT, headingTarget, collectDrop)(Sprint)));
+	exports.default = (0, _reactRedux.connect)(mapStateToProps)((0, _reactDnd.DragSource)(_Dnd.DndTypes.SPRINT, headingSource, collect)((0, _reactDnd.DropTarget)(_Dnd.DndTypes.SPRINT, headingTarget, collectDrop)(Sprint)));
 
 /***/ },
 /* 936 */
@@ -65997,6 +66074,20 @@
 		}
 	}());
 
+
+/***/ },
+/* 937 */
+/***/ function(module, exports) {
+
+	'use strict';
+
+	Object.defineProperty(exports, "__esModule", {
+	    value: true
+	});
+	var DndTypes = exports.DndTypes = {
+	    SPRINT: 'sprint',
+	    ISSUE: 'issue'
+	};
 
 /***/ }
 /******/ ]);

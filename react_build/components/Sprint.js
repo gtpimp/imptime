@@ -4,10 +4,7 @@ import { DragSource, DropTarget } from 'react-dnd';
 import { connect } from 'react-redux'
 import map from 'lodash/map'
 import classNames from 'classnames'
-
-var DndTypes = {
-    SPRINT: 'sprint'
-};
+import { DndTypes } from '../actions/Dnd'
 
 export class Sprint extends Component {
 
@@ -85,7 +82,6 @@ function mapStateToProps(state, props) {
     }
 }
 
-// see http://gaearon.github.io/react-dnd/docs-drop-target.html
 const headingSource = {
     beginDrag(props) {
 	
