@@ -10,7 +10,8 @@ import {
 } from '../actions/ItemList'
 import {
     invalidateSprints,
-    fetchSprintsIfNeeded
+    fetchSprintsIfNeeded,
+    reorderSprints
 } from '../actions/Sprints'
 import Pagination from '../components/Pagination'
 import Sprint from './Sprint'
@@ -25,6 +26,7 @@ export class SprintList extends Component {
 	this.onCollapse = this.onCollapse.bind(this)
 	this.onExpand = this.onExpand.bind(this)
 	this.onClickedSprint = this.onClickedSprint.bind(this)
+	this.reorderSprints = this.reorderSprints.bind(this)
     }
 
     componentDidMount() {
@@ -65,6 +67,13 @@ export class SprintList extends Component {
 	}
     }
 
+    reorderSprints(moving_sprint_id, move_after_sprint_id) {
+	const { dispatch, list_key } = this.props
+	console.log("Moving " + moving_sprint_id + " to after " + move_after_sprint_id)
+	dispatch(reorderSprints(moving_sprint_id, move_after_sprint_id))
+	dispatch(invalidateList(list_key))
+    }
+
     renderCollapsedSprint(sprint) {
 	const { list_key } = this.props
 	return (
@@ -75,7 +84,7 @@ export class SprintList extends Component {
     }
     
     render_collapsed() {
-	const { sprint, selected_items, is_collapsed, selected_ids,
+	const { sprint, selected_items, is_collapsed, selected_ids, reorderSprints,
 		loading_item_ids, list_key } = this.props
 
 	return (
@@ -85,6 +94,7 @@ export class SprintList extends Component {
 			{ selected_items.map((sprint, index) =>
 			    <Sprint key={list_key+sprint.id+index} 
 				    is_collapsed={true}
+				    reorderSprints={reorderSprints}
 				    onClickedSprint={() => this.onClickedSprint(sprint.id)}
 				    is_loading={loading_item_ids.indexOf(sprint.id) !== -1}
 				    is_selected={selected_ids.indexOf(sprint.id) !== -1}
@@ -99,7 +109,7 @@ export class SprintList extends Component {
     render_expanded() {
 
         const { sprints, is_visible, list_key, is_loading,
-		selected_ids, 
+		selected_ids, reorderSprints,
 		loading_item_ids, has_items } = this.props
 
 	if ( ! is_visible ) {
@@ -122,6 +132,7 @@ export class SprintList extends Component {
 				{sprints.map( (sprint, index) =>
 				    <Sprint key={list_key+"sprint.id"+index}
 					    is_collapsed={false}
+					    reorderSprints={this.reorderSprints}
 					    onClickedSprint={() => this.onClickedSprint(sprint.id)}
 					    is_loading={loading_item_ids.indexOf(sprint.id) !== -1}
 					    is_selected={selected_ids.indexOf(sprint.id) !== -1}

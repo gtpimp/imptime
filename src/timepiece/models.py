@@ -694,7 +694,7 @@ class Project(models.Model):
 
     description = models.TextField(blank=True, null=True, db_index=True)
     short_description = models.CharField(max_length=50, blank=True, null=True, db_index=True)
-    order = models.BigIntegerField(null=True,blank=True)
+    order = models.FloatField(null=True,blank=True)
     objects = ProjectQuerySet.as_manager()
     interface_plugin_number = models.CharField(max_length=255, null=True, blank=True) #eg jira
 
@@ -732,6 +732,22 @@ class Project(models.Model):
                                              description=description,
                                              short_description=short_description)
         return project
+
+    def move_after(self, other_project):
+        self.order = other_project.order + 0.00001
+        self.save()
+        self.renumber_project_order()
+
+    def renumber_project_order(self):
+        """ Doesn''t re-sort, just makes the numbers sequential """
+        order = 1
+        for project in self.business.new_business_projects\
+                                    .all().order_by("order"):
+            old_order = project.order
+            if old_order != order:
+                project.order = order
+                project.save()
+            order += 1
 
     @property
     def spendable_budget(self):

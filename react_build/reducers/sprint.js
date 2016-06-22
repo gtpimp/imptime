@@ -9,12 +9,16 @@ import {
     ANNOUNCE_SPRINTS_LOAD_FAILED,
     ANNOUNCE_SPRINTS_LOADED,
     ANNOUNCE_LOADING_SPRINTS,
+    ANNOUNCE_SPRINTS_SAVED,
+    ANNOUNCE_SPRINTS_SAVE_FAILED,
+    ANNOUNCE_SAVING_SPRINTS,
     INVALIDATE_SPRINTS
 } from '../actions/Sprints.js'
 
 const initialState = {
     items_by_id: [],
-    loading_item_ids: []
+    loading_item_ids: [],
+    saving_item_ids: []
 }
 
 export default function sprint(state = initialState, action) {
@@ -47,6 +51,20 @@ export default function sprint(state = initialState, action) {
             return state_copy
         case ANNOUNCE_SPRINTS_LOAD_FAILED:
             setErrorMessage("Failed to load sprints: " + action.error_message)
+            return state;
+        case ANNOUNCE_SAVING_SPRINTS:
+	    return Object.assign({}, state, {
+		saving_item_ids: union(state.saving_item_ids, action.sprint_ids_to_save)
+	    })            
+        case ANNOUNCE_SPRINTS_SAVED:
+            state_copy = Object.assign({}, state, {
+		saving_item_ids: Object.assign({},
+						difference(state.saving_item_ids || [],
+							   action.sprint_ids))
+	    })
+            return state_copy
+        case ANNOUNCE_SPRINTS_SAVE_FAILED:
+            setErrorMessage("Failed to save sprints: " + action.error_message)
             return state;
         default:
             return state

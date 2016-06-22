@@ -2,6 +2,7 @@ import { impfetch } from './lib.js'
 import difference from 'lodash/difference'
 import keys from 'lodash/keys'
 import map from 'lodash/map'
+import { reorderSprints } from './Sprints'
 
 export const ANNOUNCE_LIST_LOADED = 'ANNOUNCE_LIST_LOADED'
 export const ANNOUNCE_LIST_LOAD_FAILED = 'ANNOUNCE_LIST_LOAD_FAILED'
@@ -217,4 +218,3 @@ export function fetchListIfNeeded(list_key,
 				      matching_items_promise_func))
     }
 }
-

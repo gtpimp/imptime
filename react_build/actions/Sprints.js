@@ -1,12 +1,16 @@
 import { impfetch } from './lib.js'
 import difference from 'lodash/difference'
 import keys from 'lodash/keys'
+import indexOf from 'lodash/indexOf'
 import map from 'lodash/map'
 import { fetchListIfNeeded } from './ItemList'
 
 export const ANNOUNCE_SPRINTS_LOADED = 'ANNOUNCE_SPRINTS_LOADED'
 export const ANNOUNCE_SPRINTS_LOAD_FAILED = 'ANNOUNCE_SPRINTS_LOAD_FAILED'
 export const ANNOUNCE_LOADING_SPRINTS = 'ANNOUNCE_LOADING_SPRINTS'
+export const ANNOUNCE_SPRINTS_SAVED = 'ANNOUNCE_SPRINTS_SAVED'
+export const ANNOUNCE_SPRINTS_SAVE_FAILED = 'ANNOUNCE_SPRINTS_SAVE_FAILED'
+export const ANNOUNCE_SAVING_SPRINTS = 'ANNOUNCE_SAVING_SPRINTS'
 export const INVALIDATE_SPRINTS = 'INVALIDATE_SPRINTS'
 
 export function invalidateSprints(sprint_ids) {
@@ -37,11 +41,72 @@ function announceSprintsLoaded(payload) {
     }
 }
 
-function announceSprintsLoadFailed(error) {
+function announceSprintsSaveFailed(error) {
     return {
-        type: ANNOUNCE_SPRINTS_LOAD_FAILED,
+        type: ANNOUNCE_SPRINTS_SAVE_FAILED,
         error: error,
         received_at: Date.now()
+    }
+}
+
+function announceSavingSprints(sprint_ids) {
+    return {
+        type: ANNOUNCE_SAVING_SPRINTS,
+	sprint_ids_to_save: sprint_ids
+    }
+}
+
+function announceSprintsSaved(sprint_ids) {
+
+    return {
+        type: ANNOUNCE_SPRINTS_SAVED,
+	save_at: Date.now(),
+	sprint_ids: sprint_ids
+    }
+}
+
+function announceSprintsSaveFailed(error) {
+    return {
+        type: ANNOUNCE_SPRINTS_SAVE_FAILED,
+        error: error,
+        received_at: Date.now()
+    }
+}
+
+
+export function reorderSprints(sprint_id_before, sprint_id_after) {
+
+    return (dispatch, getState) => {
+
+	const state = getState()
+	const saving_sprint_ids = state.sprint.saving_item_ids || []
+	if (indexOf(saving_sprint_ids, sprint_id_before) !== -1 ||
+	    indexOf(saving_sprint_ids, sprint_id_after) !== -1) {
+
+	    // do nothing, already saving
+	    return
+	}
+	
+	dispatch(announceSavingSprints([sprint_id_before, sprint_id_after]))
+
+	const data = { sprint_id_before: sprint_id_before,
+		       sprint_id_after: sprint_id_after }
+	
+        return impfetch('/imp/sprint/'+sprint_id_before+'/', {method: "PUT",
+					 credentials: 'same-origin',
+					 data: data,
+					 headers: {"Content-type": "application/json; charset=UTF-8"}, 
+					 body: JSON.stringify(data)}
+	).then(response => response.json())
+	 .then(json => {
+             if (json.status != 'success') {
+		 dispatch(announceSprintsSaveFailed())
+             } else {
+		 dispatch(announceSprintsSaved([sprint_id_before, sprint_id_after]))
+             }
+	 }).catch(function (error) {
+	     dispatch(announceSprintsSaveFailed("Failed to save sprints: " + error.message))
+	 })
     }
 }
 
