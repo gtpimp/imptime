@@ -59495,8 +59495,10 @@
 										var list_key = _props7.list_key;
 
 										console.log("Moving " + moving_sprint_id + " to after " + move_after_sprint_id);
-										dispatch((0, _Sprints.reorderSprints)(moving_sprint_id, move_after_sprint_id));
-										dispatch((0, _ItemList.invalidateList)(list_key));
+										dispatch((0, _Sprints.reorderSprints)(moving_sprint_id, move_after_sprint_id, function () {
+													dispatch((0, _ItemList.invalidateList)(list_key));
+													dispatch((0, _Sprints.fetchSprintsIfNeeded)(list_key));
+										}));
 							}
 				}, {
 							key: 'renderCollapsedSprint',
@@ -63741,7 +63743,7 @@
 	    };
 	}
 
-	function reorderSprints(sprint_id_before, sprint_id_after) {
+	function reorderSprints(sprint_id_before, sprint_id_after, on_done) {
 
 	    return function (dispatch, getState) {
 
@@ -63769,6 +63771,9 @@
 	                dispatch(announceSprintsSaveFailed());
 	            } else {
 	                dispatch(announceSprintsSaved([sprint_id_before, sprint_id_after]));
+	                if (on_done) {
+	                    on_done();
+	                }
 	            }
 	        }).catch(function (error) {
 	            dispatch(announceSprintsSaveFailed("Failed to save sprints: " + error.message));
@@ -65755,8 +65760,7 @@
 	};
 
 	var headingTarget = {
-					drop: function drop(props, monitor, component) {},
-					hover: function hover(props, monitor, component) {
+					drop: function drop(props, monitor, component) {
 									var sprint_id = props.sprint_id;
 
 									var dragging_item = monitor.getItem();
@@ -65771,6 +65775,7 @@
 
 									props.reorderSprints(dragging_sprint_id, sprint_id);
 					},
+					hover: function hover(props, monitor, component) {},
 					canDrop: function canDrop(props, monitor) {
 									return true;
 					}

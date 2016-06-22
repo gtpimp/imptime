@@ -97,8 +97,6 @@ const headingSource = {
 
 const headingTarget = {
     drop: (props, monitor, component) => {
-    },
-    hover: (props, monitor, component) => {
 	const { sprint_id } = props
 	const dragging_item = monitor.getItem()
 	if ( ! dragging_item ) {
@@ -111,6 +109,8 @@ const headingTarget = {
 	}
 	
 	props.reorderSprints(dragging_sprint_id, sprint_id)
+    },
+    hover: (props, monitor, component) => {
     },
     canDrop: (props, monitor) => {
 	return true;

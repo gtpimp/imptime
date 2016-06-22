@@ -74,7 +74,7 @@ function announceSprintsSaveFailed(error) {
 }
 
 
-export function reorderSprints(sprint_id_before, sprint_id_after) {
+export function reorderSprints(sprint_id_before, sprint_id_after, on_done) {
 
     return (dispatch, getState) => {
 
@@ -103,6 +103,9 @@ export function reorderSprints(sprint_id_before, sprint_id_after) {
 		 dispatch(announceSprintsSaveFailed())
              } else {
 		 dispatch(announceSprintsSaved([sprint_id_before, sprint_id_after]))
+		 if ( on_done ) {
+		     on_done()
+		 }
              }
 	 }).catch(function (error) {
 	     dispatch(announceSprintsSaveFailed("Failed to save sprints: " + error.message))
