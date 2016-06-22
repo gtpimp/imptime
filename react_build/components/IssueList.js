@@ -2,20 +2,18 @@ import React, { Component, PropTypes } from 'react'
 import { Link } from 'react-router'
 import map from 'lodash/map'
 import { connect } from 'react-redux'
-import { invalidateList,
-	 selectItems,
-	 collapse_list,
-	 expand_list
-} from '../actions/ItemList'
 import {
-    updateIssueSubject
-} from '../actions/Issue'
+    invalidateList,
+    selectItems,
+    collapse_list,
+    expand_list
+} from '../actions/ItemList'
 import {
     invalidateIssues,
     fetchIssuesIfNeeded
 } from '../actions/Issues'
 import Pagination from '../components/Pagination'
-import { RIEInput } from 'riek'
+import Issue from './Issue'
 
 export class IssueList extends Component {
 
@@ -25,7 +23,7 @@ export class IssueList extends Component {
 	this.onChangePage = this.onChangePage.bind(this)	
 	this.onCollapse = this.onCollapse.bind(this)
 	this.onExpand = this.onExpand.bind(this)
-	this.onChangeSubject = this.onChangeSubject.bind(this)
+	this.onClickedIssue = this.onClickedIssue.bind(this)
     }
 
     componentDidMount() {
@@ -66,73 +64,38 @@ export class IssueList extends Component {
 	}
     }
 
-    onChangeSubject(issue_id, obj) {
-	const { dispatch } = this.props
-	dispatch(updateIssueSubject(issue_id, obj.subject))
-    }
-
-    renderCollapsedIssue(issue) {
-	const { list_key } = this.props
-	return (
-	    <div key={"collapsed_issue_"+issue.id+"_"+list_key}>
-		{issue.number}
-		{issue.subject}
-	    </div>
-	)
-    }
-    
     render_collapsed() {
-	const { issues, selected_items } = this.props
+	
+	const { issue, selected_items, is_collapsed, selected_ids, loading_item_ids, list_key } = this.props
 
 	return (
 	    <div className="panel panel--collapsed">
 		<div className="panel-heading"  onClick={this.onExpand}>
-		    <div className="panel__title">{ selected_items.map((issue, index) => this.renderCollapsedIssue(issue)) }</div>
+		    <div className="panel__title">{ selected_items.map((issue, index) =>
+			<Issue
+			    key={list_key+issue.id+index}
+			    is_collapsed={true}
+			    onClickedIssue={() => this.onClickedIssue(issue.id)}
+			    is_loading={loading_item_ids.indexOf(issue.id) !== -1}
+			    is_loading={selected_ids.indexOf(issue.id) !== -1}
+			    issue_id={issue.id} />
+			)}
+		    </div>
 		</div>
 	    </div>
 	)
     }
     
-    renderExpandedIssue(issue, index) {
-        const { selected_ids } = this.props
-
-	let selected = selected_ids.indexOf(issue.id) !== -1
-
-	if ( issue.loaded === false ) {
-	    return (
-		<tr key={issue.id+"."+index}
-		    onClick={() => this.onClickedIssue(issue.id)}
-		    className={selected ? 'tr--selected' : ''}
-		>
-		    <td>{issue.number}</td>
-		    <td>Loading...</td>
-		</tr>
-	    )
-	}
-	if ( ! issue.loaded !== false ) {
-	    return (
-		<tr key={issue.id+"."+index}
-		    onClick={() => this.onClickedIssue(issue.id)}
-		    className={selected ? 'tr--selected' : ''}
-		>
-		    <td>
-			<div className="issue_list__issue_number_button">{issue.number}</div>
-		    </td>
-		    <td>
-			<RIEInput value={issue.subject}
-				  propName="subject" 
-				  change={(obj) => this.onChangeSubject(issue.id, obj)} />
-		    </td>
-		    <td>{issue.assigned_to_username}</td>
-		    <td>{issue.feature_name}</td>
-		    <td>{issue.status}</td>
-		</tr>
-	    )
-	}
-    }
-    
     render_expanded() {
-	const { is_loading, issues, has_items, list_key } = this.props
+	
+	const { issues, is_visible, list_key, is_loading,
+		selected_ids, reorderIssues,
+		loading_item_ids, has_items } = this.props
+
+	if ( ! is_visible ) {
+	    return (<div></div>)
+	}
+	
         return (
             <div className="issue_list" style={{ opacity: is_loading ? 0.5 : 1 }}>
 		<div className="panel panel--full">
@@ -155,7 +118,15 @@ export class IssueList extends Component {
 				</tr>
                             </thead>
                             <tbody>
-				{issues.map((issue, index) => this.renderExpandedIssue(issue, index))}
+				{issues.map((issue, index) =>
+				    <Issue
+					key={list_key+issue.id+index}
+					is_collapsed={false}
+					onClickedIssue={() => this.onClickedIssue(issue.id)}
+					is_loading={loading_item_ids.indexOf(issue.id) !== -1}
+					is_loading={selected_ids.indexOf(issue.id) !== -1}
+					issue_id={issue.id} />
+				 )}
                             </tbody>
 			</table>
 			{ !is_loading && !has_items &&
@@ -213,6 +184,7 @@ function mapStateToProps(state, props) {
 	issue_ids: map(items, 'id'),
 	selected_ids: l.selected_ids || [],
 	selected_items: selected_items || [],
+	loading_item_ids: l.loading_item_ids || [],
         has_items: items && items.length > 0,
         is_loading: l.is_loading,
 	is_collapsed: l.display_mode == "collapsed",

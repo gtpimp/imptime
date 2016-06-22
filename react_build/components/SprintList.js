@@ -115,11 +115,7 @@ export class SprintList extends Component {
 		selected_ids, reorderSprints,
 		loading_item_ids, has_items } = this.props
 
-	if ( ! is_visible ) {
-	    return (<div></div>)
-	}
-	
-        return (
+	return (
             <div style={{ opacity: is_loading ? 0.5 : 1 }}>
 		<div className="panel panel--default">
                     <div className="panel-heading" onClick={this.onCollapse}>
@@ -156,7 +152,7 @@ export class SprintList extends Component {
     }
 
     render() {
-        const { is_loading, is_collapsed, is_expanded } = this.props
+        const { is_visible, is_loading, is_collapsed, is_expanded } = this.props
 
 	return (
 	    <div>
@@ -199,7 +195,8 @@ function mapStateToProps(state, props) {
         is_loading: l.is_loading,
 	is_collapsed: l.display_mode == "collapsed",
 	is_expanded: l.display_mode == "expanded" || !l.display_mode,
-        last_updated: l.last_updated
+        last_updated: l.last_updated,
+	is_visible: project_id || false
     }
 }
 

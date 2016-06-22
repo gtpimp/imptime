@@ -39,9 +39,7 @@ export class Sprint extends Component {
 		    className={is_selected ? 'tr--selected' : ''}
 		>
 		    <td>{sprint && sprint.id}</td>
-	            { sprint.loaded === false &&
-		      <td>Loading...</td>
-		    }
+		    <td>Loading...</td>
 		</tr>
 	    )
 	} else {
