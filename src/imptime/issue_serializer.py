@@ -14,6 +14,7 @@ class IssueSerializer(BaseSerializer):
     status = serializers.CharField()
     assigned_to_id = serializers.CharField()
     feature = serializers.CharField()
+    number = serializers.IntegerField()
 
     def to_representation(self, issue, *args, **kwargs):
         issue.assigned_to_quick_name = \
@@ -26,6 +27,7 @@ class IssueSerializer(BaseSerializer):
 
 
 class IssueGeneralDetailsSerializer(BaseModelSerializer):
+
     class Meta:
         model = Issue
-        fields = ('id', 'number', 'subject', 'description', 'assigned_to_id')
+        fields = ('id', 'description')

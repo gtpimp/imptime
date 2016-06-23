@@ -10,6 +10,7 @@ export class RIETextArea extends Component {
 	this.startEditing = this.startEditing.bind(this)
 	this.stopEditing = this.stopEditing.bind(this)
 	this.commit = this.commit.bind(this)
+	this.cancel = this.cancel.bind(this)
 	this.state = {
             editing: false,
 	}
@@ -27,19 +28,33 @@ export class RIETextArea extends Component {
 	this.props.change(res)
     };
 
+    cancel() {
+	this.stopEditing()
+    }
+
     stopEditing() {
 	this.setState({editing: false});
     };
 
     renderNormalComponent() {
-        return <span
-		   tabIndex="0"
-		   onFocus={this.startEditing}
-		   onClick={this.startEditing}>{(this.state.newValue || this.props.value)}</span>;
+        return (
+	    <div>
+	        {(this.state.newValue || this.props.value)}
+		<br/>
+		<button className="btn btn-secondary" onClick={this.startEditing}>Edit</button>
+	    </div>
+	)
+	
     };
 
     renderEditingComponent() {
-	return <TextareaAutosize ref={(ref) => this.editor = ref} rows="20"  cols="80" defaultValue={this.props.value} onBlur={this.commit}/>;
+	return (
+	    <div>
+		<TextareaAutosize ref={(ref) => this.editor = ref} rows="20"  cols="80" defaultValue={this.props.value}/>
+		<button className="btn btn-primary" onClick={this.commit}>Save</button>
+		<button className="btn btn-cancel" onClick={this.cancel}>Cancel</button>
+	    </div>
+	)
     };
 
     render() {

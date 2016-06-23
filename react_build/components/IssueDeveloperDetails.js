@@ -41,8 +41,7 @@ export class IssueDeveloperDetails extends Component {
     
     render() {
 
-        const { is_visible, issue_id, general_details, is_loading } = this.props
-	const gd = general_details
+        const { is_visible, issue_id, issue, is_loading } = this.props
 
 	if ( ! is_visible ) {
 	    return (<div></div>)
@@ -60,15 +59,13 @@ export class IssueDeveloperDetails extends Component {
 				 onClick={this.onRefresh}></div>
 			</div>
                     </div>
-                    <div className="panel-body">
-			<h3>issue#{gd.number}: {gd.subject}</h3>
-			<pre>
+                    <div className="issue_developer_details__panel-body">
+			<h3>issue#{issue.number}: {issue.subject}</h3>
 			    <RIETextArea
-				value={gd.description || ""}
+				value={issue.description || ""}
 				propName="description"
 				change={this.onChangeDescription}
 			    />
-			</pre>
                     </div>
 		</div>
             </div>
@@ -78,18 +75,25 @@ export class IssueDeveloperDetails extends Component {
 
 function mapStateToProps(state, props) {
     const item_list = state.item_list || {}
-    const issue_general_details = state.issue_general_details || {}
     const { list_key } = props
     const l = item_list[list_key] || {}
     const filter = l.filter || {}
     const issue_id = filter.issue_id
-	
+
+    const issue_general_details = state.issue_general_details || {}
     const general_details = (issue_general_details.items_by_id || {})[issue_id] || {}
     const is_loading = indexOf(issue_general_details.loading_item_ids || [], issue_id) !== -1
+
+    const issues = (state.issue || {}).items_by_id || {}
+    let issue = issues[issue_id] || {}
+
+    issue = Object.assign({},
+			  issue,
+			  general_details)
     
     return {
         issue_id: issue_id,
-	general_details: general_details,
+	issue: issue,
         is_loading: general_details.is_loading,
 	is_visible: issue_id || false
     }

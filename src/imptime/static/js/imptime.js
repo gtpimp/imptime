@@ -62005,10 +62005,9 @@
 	            var _props4 = this.props;
 	            var is_visible = _props4.is_visible;
 	            var issue_id = _props4.issue_id;
-	            var general_details = _props4.general_details;
+	            var issue = _props4.issue;
 	            var is_loading = _props4.is_loading;
 
-	            var gd = general_details;
 
 	            if (!is_visible) {
 	                return _react2.default.createElement('div', null);
@@ -62037,24 +62036,20 @@
 	                    ),
 	                    _react2.default.createElement(
 	                        'div',
-	                        { className: 'panel-body' },
+	                        { className: 'issue_developer_details__panel-body' },
 	                        _react2.default.createElement(
 	                            'h3',
 	                            null,
 	                            'issue#',
-	                            gd.number,
+	                            issue.number,
 	                            ': ',
-	                            gd.subject
+	                            issue.subject
 	                        ),
-	                        _react2.default.createElement(
-	                            'pre',
-	                            null,
-	                            _react2.default.createElement(_RIETextArea.RIETextArea, {
-	                                value: gd.description || "",
-	                                propName: 'description',
-	                                change: this.onChangeDescription
-	                            })
-	                        )
+	                        _react2.default.createElement(_RIETextArea.RIETextArea, {
+	                            value: issue.description || "",
+	                            propName: 'description',
+	                            change: this.onChangeDescription
+	                        })
 	                    )
 	                )
 	            );
@@ -62066,19 +62061,24 @@
 
 	function mapStateToProps(state, props) {
 	    var item_list = state.item_list || {};
-	    var issue_general_details = state.issue_general_details || {};
 	    var list_key = props.list_key;
 
 	    var l = item_list[list_key] || {};
 	    var filter = l.filter || {};
 	    var issue_id = filter.issue_id;
 
+	    var issue_general_details = state.issue_general_details || {};
 	    var general_details = (issue_general_details.items_by_id || {})[issue_id] || {};
 	    var is_loading = (0, _indexOf2.default)(issue_general_details.loading_item_ids || [], issue_id) !== -1;
 
+	    var issues = (state.issue || {}).items_by_id || {};
+	    var issue = issues[issue_id] || {};
+
+	    issue = Object.assign({}, issue, general_details);
+
 	    return {
 	        issue_id: issue_id,
-	        general_details: general_details,
+	        issue: issue,
 	        is_loading: general_details.is_loading,
 	        is_visible: issue_id || false
 	    };
@@ -62093,7 +62093,7 @@
 	'use strict';
 
 	Object.defineProperty(exports, "__esModule", {
-	    value: true
+					value: true
 	});
 	exports.RIETextArea = undefined;
 
@@ -62122,74 +62122,97 @@
 	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 
 	var RIETextArea = exports.RIETextArea = function (_Component) {
-	    _inherits(RIETextArea, _Component);
+					_inherits(RIETextArea, _Component);
 
-	    function RIETextArea(props) {
-	        _classCallCheck(this, RIETextArea);
+					function RIETextArea(props) {
+									_classCallCheck(this, RIETextArea);
 
-	        var _this = _possibleConstructorReturn(this, Object.getPrototypeOf(RIETextArea).call(this, props));
+									var _this = _possibleConstructorReturn(this, Object.getPrototypeOf(RIETextArea).call(this, props));
 
-	        _this.startEditing = _this.startEditing.bind(_this);
-	        _this.stopEditing = _this.stopEditing.bind(_this);
-	        _this.commit = _this.commit.bind(_this);
-	        _this.state = {
-	            editing: false
-	        };
-	        return _this;
-	    }
+									_this.startEditing = _this.startEditing.bind(_this);
+									_this.stopEditing = _this.stopEditing.bind(_this);
+									_this.commit = _this.commit.bind(_this);
+									_this.cancel = _this.cancel.bind(_this);
+									_this.state = {
+													editing: false
+									};
+									return _this;
+					}
 
-	    _createClass(RIETextArea, [{
-	        key: 'startEditing',
-	        value: function startEditing() {
-	            this.setState({ editing: true });
-	        }
-	    }, {
-	        key: 'commit',
-	        value: function commit() {
-	            var new_value = _reactDom2.default.findDOMNode(this.editor).value;
-	            this.stopEditing();
-	            var res = {};
-	            res[this.props.propName] = new_value;
-	            this.props.change(res);
-	        }
-	    }, {
-	        key: 'stopEditing',
-	        value: function stopEditing() {
-	            this.setState({ editing: false });
-	        }
-	    }, {
-	        key: 'renderNormalComponent',
-	        value: function renderNormalComponent() {
-	            return _react2.default.createElement(
-	                'span',
-	                {
-	                    tabIndex: '0',
-	                    onFocus: this.startEditing,
-	                    onClick: this.startEditing },
-	                this.state.newValue || this.props.value
-	            );
-	        }
-	    }, {
-	        key: 'renderEditingComponent',
-	        value: function renderEditingComponent() {
-	            var _this2 = this;
+					_createClass(RIETextArea, [{
+									key: 'startEditing',
+									value: function startEditing() {
+													this.setState({ editing: true });
+									}
+					}, {
+									key: 'commit',
+									value: function commit() {
+													var new_value = _reactDom2.default.findDOMNode(this.editor).value;
+													this.stopEditing();
+													var res = {};
+													res[this.props.propName] = new_value;
+													this.props.change(res);
+									}
+					}, {
+									key: 'cancel',
+									value: function cancel() {
+													this.stopEditing();
+									}
+					}, {
+									key: 'stopEditing',
+									value: function stopEditing() {
+													this.setState({ editing: false });
+									}
+					}, {
+									key: 'renderNormalComponent',
+									value: function renderNormalComponent() {
+													return _react2.default.createElement(
+																	'div',
+																	null,
+																	this.state.newValue || this.props.value,
+																	_react2.default.createElement('br', null),
+																	_react2.default.createElement(
+																					'button',
+																					{ className: 'btn btn-secondary', onClick: this.startEditing },
+																					'Edit'
+																	)
+													);
+									}
+					}, {
+									key: 'renderEditingComponent',
+									value: function renderEditingComponent() {
+													var _this2 = this;
 
-	            return _react2.default.createElement(_reactAutosizeTextarea2.default, { ref: function ref(_ref) {
-	                    return _this2.editor = _ref;
-	                }, rows: '20', cols: '80', defaultValue: this.props.value, onBlur: this.commit });
-	        }
-	    }, {
-	        key: 'render',
-	        value: function render() {
-	            if (this.state.editing) {
-	                return this.renderEditingComponent();
-	            } else {
-	                return this.renderNormalComponent();
-	            }
-	        }
-	    }]);
+													return _react2.default.createElement(
+																	'div',
+																	null,
+																	_react2.default.createElement(_reactAutosizeTextarea2.default, { ref: function ref(_ref) {
+																									return _this2.editor = _ref;
+																					}, rows: '20', cols: '80', defaultValue: this.props.value }),
+																	_react2.default.createElement(
+																					'button',
+																					{ className: 'btn btn-primary', onClick: this.commit },
+																					'Save'
+																	),
+																	_react2.default.createElement(
+																					'button',
+																					{ className: 'btn btn-cancel', onClick: this.cancel },
+																					'Cancel'
+																	)
+													);
+									}
+					}, {
+									key: 'render',
+									value: function render() {
+													if (this.state.editing) {
+																	return this.renderEditingComponent();
+													} else {
+																	return this.renderNormalComponent();
+													}
+									}
+					}]);
 
-	    return RIETextArea;
+					return RIETextArea;
 	}(_react.Component);
 
 /***/ },
