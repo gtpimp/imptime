@@ -51,7 +51,7 @@ export class OtherUser extends Component {
 
 function mapStateToProps(state, props) {
     const { user } = state
-    const { user_id } = props
+    const { user_id, render_mode, loading_value } = props
 
     const this_user = (user && user.items_by_id && user.items_by_id[user_id]) || {}
     const is_loading = (user &&
@@ -60,7 +60,9 @@ function mapStateToProps(state, props) {
     
     return {
 	user: this_user,
-	is_loading: is_loading
+	is_loading: is_loading,
+	render_mode: render_mode || "inline--small",
+	loading_value: loading_value || "..."
     }
 }
 

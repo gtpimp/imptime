@@ -2,7 +2,9 @@ import React, { Component, PropTypes } from 'react'
 import { Link } from 'react-router'
 import { connect } from 'react-redux'
 import indexOf from 'lodash/indexOf'
+import map from 'lodash/map'
 import { RIETextArea } from '../widgets/RIETextArea'
+import OtherUser from '../components/OtherUser'
 import {
     updateIssueDescription,
 } from '../actions/Issue'
@@ -22,7 +24,7 @@ export class IssueDeveloperDetails extends Component {
     }
 
     componentDidMount() {
-	const { dispatch, issue_id } = this.props
+	const { dispatch, issue_id, issue } = this.props
 	if ( issue_id ) {
 	    dispatch(fetchIssueGeneralDetailsIfNeeded([issue_id]))
 	}
@@ -38,10 +40,23 @@ export class IssueDeveloperDetails extends Component {
 	dispatch(invalidateIssueGeneralDetails([issue_id]))
 	dispatch(fetchIssueGeneralDetailsIfNeeded([issue_id]))
     }
+
+    renderComment(comment) {
+	return (
+	    <div className="issue_developer_details__commment">
+		<div>
+		    {comment.comment}
+		</div>
+		<div className="issue_developer_details__comment__author">By <OtherUser user_id={comment.author_id} /></div>
+		<div className="issue_developer_details__comment__created">At {comment.created}</div>
+		<div className="issue_developer_details__comment__separator">&nbsp;</div>
+	    </div>
+	)
+    }
     
     render() {
 
-        const { is_visible, issue_id, issue, is_loading } = this.props
+        const { is_visible, issue_id, issue, comments, is_loading } = this.props
 
 	if ( ! is_visible ) {
 	    return (<div></div>)
@@ -67,6 +82,10 @@ export class IssueDeveloperDetails extends Component {
 				change={this.onChangeDescription}
 			    />
                     </div>
+
+		    <div>
+			{ comments.map((comment) => this.renderComment(comment)) } 
+		    </div>
 		</div>
             </div>
         )
@@ -90,10 +109,13 @@ function mapStateToProps(state, props) {
     issue = Object.assign({},
 			  issue,
 			  general_details)
+
+    const comments = issue.issue_comments || []
     
     return {
         issue_id: issue_id,
 	issue: issue,
+	comments: comments,
         is_loading: general_details.is_loading,
 	is_visible: issue_id || false
     }

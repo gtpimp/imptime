@@ -3,3 +3,23 @@
 .issue_developer_details__panel-body {
     background: $issue_developer_details__panel-body-background-color;
 }
+
+.issue_developer_details__commment {
+    margin-bottom: 20px;
+    clear: both;
+}
+
+.issue_developer_details__comment__author {
+    font-size: $font-size-tiny;
+    float:left;
+}
+
+.issue_developer_details__comment__created {
+    font-size: $font-size-tiny;
+    float:left;
+}
+
+.issue_developer_details__comment__separator {
+    clear: both;
+}
+
