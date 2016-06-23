@@ -133,6 +133,11 @@ export class IssueList extends Component {
 
 	const issue_rows = []
 	issues.map(function(issue, index) {
+
+	    if (is_creating_issue && index==0 && candidate_issue.position == 0) {
+		issue_rows.push(that.render_candidate_issue())
+	    }
+	    
 	    issue_rows.push(
 		<Issue
 		    key={list_key+issue.id+index}

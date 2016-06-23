@@ -60431,6 +60431,11 @@
 
 										var issue_rows = [];
 										issues.map(function (issue, index) {
+
+													if (is_creating_issue && index == 0 && candidate_issue.position == 0) {
+																issue_rows.push(that.render_candidate_issue());
+													}
+
 													issue_rows.push(_react2.default.createElement(_Issue3.default, {
 																key: list_key + issue.id + index,
 																is_collapsed: false,
