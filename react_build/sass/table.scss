@@ -75,6 +75,10 @@
 	    padding-top: 4px;
 	}
 
+	tbody .tr--selected td {
+	    background-color: $selection-color;
+	}
+
 	td:first-child {
 	    padding-left: $padding-small;
 	}

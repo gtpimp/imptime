@@ -60461,17 +60461,16 @@
 																																	'tbody',
 																																	null,
 																																	issues.map(function (issue, index) {
-																																					var _React$createElement2;
-
-																																					return _react2.default.createElement(_Issue3.default, (_React$createElement2 = {
+																																					return _react2.default.createElement(_Issue3.default, {
 																																									key: list_key + issue.id + index,
 																																									is_collapsed: false,
 																																									reorderIssue: _this3.reorderIssue,
 																																									onClickedIssue: function onClickedIssue() {
 																																													return _this3.onClickedIssue(issue.id);
 																																									},
-																																									is_loading: loading_item_ids.indexOf(issue.id) !== -1
-																																					}, _defineProperty(_React$createElement2, 'is_loading', selected_ids.indexOf(issue.id) !== -1), _defineProperty(_React$createElement2, 'issue_id', issue.id), _React$createElement2));
+																																									is_loading: loading_item_ids.indexOf(issue.id) !== -1,
+																																									is_selected: selected_ids.indexOf(issue.id) !== -1,
+																																									issue_id: issue.id });
 																																	})
 																													)
 																									),

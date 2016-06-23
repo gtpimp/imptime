@@ -139,7 +139,7 @@ export class IssueList extends Component {
 					reorderIssue={this.reorderIssue}
 					onClickedIssue={() => this.onClickedIssue(issue.id)}
 					is_loading={loading_item_ids.indexOf(issue.id) !== -1}
-					is_loading={selected_ids.indexOf(issue.id) !== -1}
+					is_selected={selected_ids.indexOf(issue.id) !== -1}
 					issue_id={issue.id} />
 				 )}
                             </tbody>
