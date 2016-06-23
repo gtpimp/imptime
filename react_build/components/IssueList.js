@@ -13,7 +13,8 @@ import {
     fetchIssuesIfNeeded,
 } from '../actions/Issues'
 import {
-    reorderIssue
+    reorderIssue,
+    startCandidateIssue
 } from '../actions/Issue'
 import Pagination from '../components/Pagination'
 import Issue from './Issue'
@@ -28,6 +29,7 @@ export class IssueList extends Component {
 	this.onExpand = this.onExpand.bind(this)
 	this.onClickedIssue = this.onClickedIssue.bind(this)
 	this.reorderIssue = this.reorderIssue.bind(this)
+	this.onCreateIssue = this.onCreateIssue.bind(this)
     }
 
     componentDidMount() {
@@ -68,6 +70,12 @@ export class IssueList extends Component {
 	}
     }
 
+    onCreateIssue(event) {
+	const { dispatch, list_key } = this.props
+	event.stopPropagation()
+	dispatch(startCandidateIssue(list_key))
+    }
+
     reorderIssue(moving_issue_id, move_after_issue_id) {
 	const { dispatch, list_key } = this.props
 	console.log("Moving " + moving_issue_id + " to after " + move_after_issue_id)
@@ -100,15 +108,46 @@ export class IssueList extends Component {
 	    </div>
 	)
     }
+
+    render_candidate_issue() {
+
+	const { candidate_issue, list_key  } = this.props
+
+	return (
+	    <tr key={list_key+".candidate_issue"} className="issue_list__candidate_issue">
+		<td><input value="This is the new issue text" onChange={() => alert('not don yet')}/></td>
+	    </tr>
+	)
+    }
     
     render_expanded() {
 	
 	const { issues, is_visible, list_key, is_loading,
+		is_creating_issue, candidate_issue,
 		selected_ids, loading_item_ids, has_items } = this.props
 
 	if ( ! is_visible ) {
 	    return (<div></div>)
 	}
+	const that = this
+
+	const issue_rows = []
+	issues.map(function(issue, index) {
+	    issue_rows.push(
+		<Issue
+		    key={list_key+issue.id+index}
+		    is_collapsed={false}
+		    reorderIssue={that.reorderIssue}
+		    onClickedIssue={() => that.onClickedIssue(issue.id)}
+		    is_loading={loading_item_ids.indexOf(issue.id) !== -1}
+		    is_selected={selected_ids.indexOf(issue.id) !== -1}
+		    issue_id={issue.id}
+		/>
+	    )
+	    if ( is_creating_issue && candidate_issue.issue_id_before==issue.id ) {
+		issue_rows.push(that.render_candidate_issue())
+	    }
+	})
 	
         return (
             <div className="issue_list" style={{ opacity: is_loading ? 0.5 : 1 }}>
@@ -117,7 +156,11 @@ export class IssueList extends Component {
 			<div className="panel__title">Issues</div>
 			<div className="panel__buttons">
                             <div className="panel__button panel__button--refresh"
-				 onClick={this.onRefresh}></div>
+				 onClick={this.onRefresh}>
+			    </div>
+                            <div className="panel__button panel__button--add"
+				 onClick={this.onCreateIssue}>
+			    </div>			    
 			</div>
                     </div>
                     <div className="panel-body">
@@ -132,16 +175,7 @@ export class IssueList extends Component {
 				</tr>
                             </thead>
                             <tbody>
-				{issues.map((issue, index) =>
-				    <Issue
-					key={list_key+issue.id+index}
-					is_collapsed={false}
-					reorderIssue={this.reorderIssue}
-					onClickedIssue={() => this.onClickedIssue(issue.id)}
-					is_loading={loading_item_ids.indexOf(issue.id) !== -1}
-					is_selected={selected_ids.indexOf(issue.id) !== -1}
-					issue_id={issue.id} />
-				 )}
+				{issue_rows}
                             </tbody>
 			</table>
 			{ !is_loading && !has_items &&
@@ -191,6 +225,9 @@ function mapStateToProps(state, props) {
 	return items_by_id[visible_item_id] || { 'id': visible_item_id,
 						 'loaded': false }
     })) || []
+
+    const candidate_issue = issue.candidate_issue
+    const is_creating_issue = candidate_issue || false
     
     return {
         list_key: list_key,
@@ -205,7 +242,9 @@ function mapStateToProps(state, props) {
 	is_collapsed: l.display_mode == "collapsed",
 	is_expanded: l.display_mode == "expanded" || !l.display_mode,
         last_updated: l.last_updated,
-	is_visible: sprint_id || false
+	is_visible: sprint_id || false,
+	candidate_issue: candidate_issue,
+	is_creating_issue: is_creating_issue
     }
 }
 

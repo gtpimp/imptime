@@ -109,11 +109,28 @@ export function reorderIssue(issue_id_before, issue_id_after, on_done) {
     return updateIssue(issue_id_before, "issue_id_after", issue_id_after, on_done)
 }
 
-export function startCandidateIssue(sprint_id, issue_id_before) {
-    return {
-	key: ANNOUNCE_CAPTURING_NEW_ISSUE,
-	issue_id_before: issue_id_before,
-	sprint_id: sprint_id
+export function startCandidateIssue(list_key) {
+    return (dispatch, getState) => {
+	const state = getState()
+	const issues_by_id = state.issue.items_by_id
+	const l = state.item_list[list_key]
+
+	const selected_ids = l.selected_ids
+
+	let position = 0
+	let issue_id_before = null
+	if ( selected_ids.length > 0 ) {
+	    issue_id_before = selected_ids[0]
+	    const issue_before = issues_by_id[issue_id_before] 
+	    position = issue_before.position || position
+	}
+	
+	dispatch({
+	    type: ANNOUNCE_CAPTURING_NEW_ISSUE,
+	    position: position,
+	    issue_id_before: issue_id_before,
+	    sprint_id: l.sprint_id
+	})
     }
 }
 

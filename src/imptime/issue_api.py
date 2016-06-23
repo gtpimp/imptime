@@ -82,9 +82,10 @@ class IssueViewSet(BaseViewSet):
             params = request.data
             sprint_id = params['sprint_id']
             sprint = self.allowed_sprint(sprint_id)
-            issue = Issue.objects.create(project=sprint,
+            issue = Issue.objects.create(project=sprint,   # sic
                                          order=params['order'],
-                                         subject=params['subject'])  # sic
+                                         subject=params['subject'])
+            issue.renumber_issue_order()
             s = IssueSerializer(issue)
             issue_data = s.data
             context['issue'] = issue_data

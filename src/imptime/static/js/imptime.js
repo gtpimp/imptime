@@ -69,7 +69,7 @@
 
 	var _Root2 = _interopRequireDefault(_Root);
 
-	var _configureStore = __webpack_require__(897);
+	var _configureStore = __webpack_require__(896);
 
 	var _configureStore2 = _interopRequireDefault(_configureStore);
 
@@ -35857,7 +35857,7 @@
 
 	var _DevPage2 = _interopRequireDefault(_DevPage);
 
-	var _HeaderBar = __webpack_require__(873);
+	var _HeaderBar = __webpack_require__(872);
 
 	var _HeaderBar2 = _interopRequireDefault(_HeaderBar);
 
@@ -35871,7 +35871,7 @@
 
 	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 
-	var HTML5Backend = __webpack_require__(875);
+	var HTML5Backend = __webpack_require__(874);
 
 	var App = function (_Component) {
 	    _inherits(App, _Component);
@@ -41629,7 +41629,7 @@
 
 	var _IssueList2 = _interopRequireDefault(_IssueList);
 
-	var _IssueDeveloperDetails = __webpack_require__(866);
+	var _IssueDeveloperDetails = __webpack_require__(854);
 
 	var _IssueDeveloperDetails2 = _interopRequireDefault(_IssueDeveloperDetails);
 
@@ -60201,7 +60201,7 @@
 	'use strict';
 
 	Object.defineProperty(exports, "__esModule", {
-					value: true
+				value: true
 	});
 	exports.IssueList = undefined;
 
@@ -60221,15 +60221,15 @@
 
 	var _ItemList = __webpack_require__(733);
 
-	var _Issues = __webpack_require__(854);
+	var _Issues = __webpack_require__(870);
 
-	var _Issue = __webpack_require__(855);
+	var _Issue = __webpack_require__(869);
 
 	var _Pagination = __webpack_require__(745);
 
 	var _Pagination2 = _interopRequireDefault(_Pagination);
 
-	var _Issue2 = __webpack_require__(856);
+	var _Issue2 = __webpack_require__(940);
 
 	var _Issue3 = _interopRequireDefault(_Issue2);
 
@@ -60244,308 +60244,354 @@
 	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 
 	var IssueList = exports.IssueList = function (_Component) {
-					_inherits(IssueList, _Component);
+				_inherits(IssueList, _Component);
 
-					function IssueList(props) {
-									_classCallCheck(this, IssueList);
+				function IssueList(props) {
+							_classCallCheck(this, IssueList);
 
-									var _this = _possibleConstructorReturn(this, Object.getPrototypeOf(IssueList).call(this, props));
+							var _this = _possibleConstructorReturn(this, Object.getPrototypeOf(IssueList).call(this, props));
 
-									_this.onRefresh = _this.onRefresh.bind(_this);
-									_this.onChangePage = _this.onChangePage.bind(_this);
-									_this.onCollapse = _this.onCollapse.bind(_this);
-									_this.onExpand = _this.onExpand.bind(_this);
-									_this.onClickedIssue = _this.onClickedIssue.bind(_this);
-									_this.reorderIssue = _this.reorderIssue.bind(_this);
-									return _this;
-					}
+							_this.onRefresh = _this.onRefresh.bind(_this);
+							_this.onChangePage = _this.onChangePage.bind(_this);
+							_this.onCollapse = _this.onCollapse.bind(_this);
+							_this.onExpand = _this.onExpand.bind(_this);
+							_this.onClickedIssue = _this.onClickedIssue.bind(_this);
+							_this.reorderIssue = _this.reorderIssue.bind(_this);
+							_this.onCreateIssue = _this.onCreateIssue.bind(_this);
+							return _this;
+				}
 
-					_createClass(IssueList, [{
-									key: 'componentDidMount',
-									value: function componentDidMount() {
-													var _props = this.props;
-													var dispatch = _props.dispatch;
-													var list_key = _props.list_key;
-													var sprint_id = _props.sprint_id;
+				_createClass(IssueList, [{
+							key: 'componentDidMount',
+							value: function componentDidMount() {
+										var _props = this.props;
+										var dispatch = _props.dispatch;
+										var list_key = _props.list_key;
+										var sprint_id = _props.sprint_id;
 
-													if (sprint_id) {
-																	dispatch((0, _Issues.fetchIssuesIfNeeded)(list_key));
-													}
-									}
-					}, {
-									key: 'onCollapse',
-									value: function onCollapse() {
-													var _props2 = this.props;
-													var dispatch = _props2.dispatch;
-													var list_key = _props2.list_key;
+										if (sprint_id) {
+													dispatch((0, _Issues.fetchIssuesIfNeeded)(list_key));
+										}
+							}
+				}, {
+							key: 'onCollapse',
+							value: function onCollapse() {
+										var _props2 = this.props;
+										var dispatch = _props2.dispatch;
+										var list_key = _props2.list_key;
 
-													dispatch((0, _ItemList.collapse_list)(list_key));
-									}
-					}, {
-									key: 'onExpand',
-									value: function onExpand() {
-													var _props3 = this.props;
-													var dispatch = _props3.dispatch;
-													var list_key = _props3.list_key;
+										dispatch((0, _ItemList.collapse_list)(list_key));
+							}
+				}, {
+							key: 'onExpand',
+							value: function onExpand() {
+										var _props3 = this.props;
+										var dispatch = _props3.dispatch;
+										var list_key = _props3.list_key;
 
-													dispatch((0, _ItemList.expand_list)(list_key));
-									}
-					}, {
-									key: 'onClickedIssue',
-									value: function onClickedIssue(issue_id) {
-													var _props4 = this.props;
-													var dispatch = _props4.dispatch;
-													var list_key = _props4.list_key;
+										dispatch((0, _ItemList.expand_list)(list_key));
+							}
+				}, {
+							key: 'onClickedIssue',
+							value: function onClickedIssue(issue_id) {
+										var _props4 = this.props;
+										var dispatch = _props4.dispatch;
+										var list_key = _props4.list_key;
 
-													dispatch((0, _ItemList.selectItems)(list_key, [issue_id]));
-									}
-					}, {
-									key: 'onChangePage',
-									value: function onChangePage() {
-													var _props5 = this.props;
-													var dispatch = _props5.dispatch;
-													var issue_ids = _props5.issue_ids;
-													var list_key = _props5.list_key;
+										dispatch((0, _ItemList.selectItems)(list_key, [issue_id]));
+							}
+				}, {
+							key: 'onChangePage',
+							value: function onChangePage() {
+										var _props5 = this.props;
+										var dispatch = _props5.dispatch;
+										var issue_ids = _props5.issue_ids;
+										var list_key = _props5.list_key;
 
+										dispatch((0, _ItemList.invalidateList)(list_key));
+										dispatch((0, _Issues.fetchIssuesIfNeeded)(list_key));
+							}
+				}, {
+							key: 'onRefresh',
+							value: function onRefresh(event) {
+										var _props6 = this.props;
+										var dispatch = _props6.dispatch;
+										var issue_ids = _props6.issue_ids;
+										var list_key = _props6.list_key;
+
+										dispatch((0, _ItemList.invalidateList)(list_key));
+										dispatch((0, _Issues.invalidateIssues)(issue_ids));
+										dispatch((0, _Issues.fetchIssuesIfNeeded)(list_key));
+										if (event) {
+													event.stopPropagation();
+										}
+							}
+				}, {
+							key: 'onCreateIssue',
+							value: function onCreateIssue(event) {
+										var _props7 = this.props;
+										var dispatch = _props7.dispatch;
+										var list_key = _props7.list_key;
+
+										event.stopPropagation();
+										dispatch((0, _Issue.startCandidateIssue)(list_key));
+							}
+				}, {
+							key: 'reorderIssue',
+							value: function reorderIssue(moving_issue_id, move_after_issue_id) {
+										var _props8 = this.props;
+										var dispatch = _props8.dispatch;
+										var list_key = _props8.list_key;
+
+										console.log("Moving " + moving_issue_id + " to after " + move_after_issue_id);
+										dispatch((0, _Issue.reorderIssue)(moving_issue_id, move_after_issue_id, function () {
 													dispatch((0, _ItemList.invalidateList)(list_key));
 													dispatch((0, _Issues.fetchIssuesIfNeeded)(list_key));
-									}
-					}, {
-									key: 'onRefresh',
-									value: function onRefresh(event) {
-													var _props6 = this.props;
-													var dispatch = _props6.dispatch;
-													var issue_ids = _props6.issue_ids;
-													var list_key = _props6.list_key;
+										}));
+							}
+				}, {
+							key: 'render_collapsed',
+							value: function render_collapsed() {
+										var _this2 = this;
 
-													dispatch((0, _ItemList.invalidateList)(list_key));
-													dispatch((0, _Issues.invalidateIssues)(issue_ids));
-													dispatch((0, _Issues.fetchIssuesIfNeeded)(list_key));
-													if (event) {
-																	event.stopPropagation();
-													}
-									}
-					}, {
-									key: 'reorderIssue',
-									value: function reorderIssue(moving_issue_id, move_after_issue_id) {
-													var _props7 = this.props;
-													var dispatch = _props7.dispatch;
-													var list_key = _props7.list_key;
+										var _props9 = this.props;
+										var issue = _props9.issue;
+										var selected_items = _props9.selected_items;
+										var is_collapsed = _props9.is_collapsed;
+										var selected_ids = _props9.selected_ids;
+										var loading_item_ids = _props9.loading_item_ids;
+										var list_key = _props9.list_key;
 
-													console.log("Moving " + moving_issue_id + " to after " + move_after_issue_id);
-													dispatch((0, _Issue.reorderIssue)(moving_issue_id, move_after_issue_id, function () {
-																	dispatch((0, _ItemList.invalidateList)(list_key));
-																	dispatch((0, _Issues.fetchIssuesIfNeeded)(list_key));
+
+										return _react2.default.createElement(
+													'div',
+													{ className: 'panel panel--collapsed' },
+													_react2.default.createElement(
+																'div',
+																{ className: 'panel-heading', onClick: this.onExpand },
+																_react2.default.createElement(
+																			'div',
+																			{ className: 'panel__title' },
+																			selected_items.map(function (issue, index) {
+																						var _React$createElement;
+
+																						return _react2.default.createElement(_Issue3.default, (_React$createElement = {
+																									key: list_key + issue.id + index,
+																									is_collapsed: true,
+																									reorderIssue: _this2.reorderIssue,
+																									onClickedIssue: function onClickedIssue() {
+																												return _this2.onClickedIssue(issue.id);
+																									},
+																									is_loading: loading_item_ids.indexOf(issue.id) !== -1
+																						}, _defineProperty(_React$createElement, 'is_loading', selected_ids.indexOf(issue.id) !== -1), _defineProperty(_React$createElement, 'issue_id', issue.id), _React$createElement));
+																			})
+																)
+													)
+										);
+							}
+				}, {
+							key: 'render_candidate_issue',
+							value: function render_candidate_issue() {
+										var _props10 = this.props;
+										var candidate_issue = _props10.candidate_issue;
+										var list_key = _props10.list_key;
+
+
+										return _react2.default.createElement(
+													'tr',
+													{ key: list_key + ".candidate_issue", className: 'issue_list__candidate_issue' },
+													_react2.default.createElement(
+																'td',
+																null,
+																_react2.default.createElement('input', { value: 'This is the new issue text', onChange: function onChange() {
+																						return alert('not don yet');
+																			} })
+													)
+										);
+							}
+				}, {
+							key: 'render_expanded',
+							value: function render_expanded() {
+										var _props11 = this.props;
+										var issues = _props11.issues;
+										var is_visible = _props11.is_visible;
+										var list_key = _props11.list_key;
+										var is_loading = _props11.is_loading;
+										var is_creating_issue = _props11.is_creating_issue;
+										var candidate_issue = _props11.candidate_issue;
+										var selected_ids = _props11.selected_ids;
+										var loading_item_ids = _props11.loading_item_ids;
+										var has_items = _props11.has_items;
+
+
+										if (!is_visible) {
+													return _react2.default.createElement('div', null);
+										}
+										var that = this;
+
+										var issue_rows = [];
+										issues.map(function (issue, index) {
+													issue_rows.push(_react2.default.createElement(_Issue3.default, {
+																key: list_key + issue.id + index,
+																is_collapsed: false,
+																reorderIssue: that.reorderIssue,
+																onClickedIssue: function onClickedIssue() {
+																			return that.onClickedIssue(issue.id);
+																},
+																is_loading: loading_item_ids.indexOf(issue.id) !== -1,
+																is_selected: selected_ids.indexOf(issue.id) !== -1,
+																issue_id: issue.id
 													}));
-									}
-					}, {
-									key: 'render_collapsed',
-									value: function render_collapsed() {
-													var _this2 = this;
-
-													var _props8 = this.props;
-													var issue = _props8.issue;
-													var selected_items = _props8.selected_items;
-													var is_collapsed = _props8.is_collapsed;
-													var selected_ids = _props8.selected_ids;
-													var loading_item_ids = _props8.loading_item_ids;
-													var list_key = _props8.list_key;
-
-
-													return _react2.default.createElement(
-																	'div',
-																	{ className: 'panel panel--collapsed' },
-																	_react2.default.createElement(
-																					'div',
-																					{ className: 'panel-heading', onClick: this.onExpand },
-																					_react2.default.createElement(
-																									'div',
-																									{ className: 'panel__title' },
-																									selected_items.map(function (issue, index) {
-																													var _React$createElement;
-
-																													return _react2.default.createElement(_Issue3.default, (_React$createElement = {
-																																	key: list_key + issue.id + index,
-																																	is_collapsed: true,
-																																	reorderIssue: _this2.reorderIssue,
-																																	onClickedIssue: function onClickedIssue() {
-																																					return _this2.onClickedIssue(issue.id);
-																																	},
-																																	is_loading: loading_item_ids.indexOf(issue.id) !== -1
-																													}, _defineProperty(_React$createElement, 'is_loading', selected_ids.indexOf(issue.id) !== -1), _defineProperty(_React$createElement, 'issue_id', issue.id), _React$createElement));
-																									})
-																					)
-																	)
-													);
-									}
-					}, {
-									key: 'render_expanded',
-									value: function render_expanded() {
-													var _this3 = this;
-
-													var _props9 = this.props;
-													var issues = _props9.issues;
-													var is_visible = _props9.is_visible;
-													var list_key = _props9.list_key;
-													var is_loading = _props9.is_loading;
-													var selected_ids = _props9.selected_ids;
-													var loading_item_ids = _props9.loading_item_ids;
-													var has_items = _props9.has_items;
-
-
-													if (!is_visible) {
-																	return _react2.default.createElement('div', null);
+													if (is_creating_issue && candidate_issue.issue_id_before == issue.id) {
+																issue_rows.push(that.render_candidate_issue());
 													}
+										});
 
-													return _react2.default.createElement(
-																	'div',
-																	{ className: 'issue_list', style: { opacity: is_loading ? 0.5 : 1 } },
-																	_react2.default.createElement(
-																					'div',
-																					{ className: 'panel panel--full' },
-																					_react2.default.createElement(
-																									'div',
-																									{ className: 'panel-heading', onClick: this.onCollapse },
+										return _react2.default.createElement(
+													'div',
+													{ className: 'issue_list', style: { opacity: is_loading ? 0.5 : 1 } },
+													_react2.default.createElement(
+																'div',
+																{ className: 'panel panel--full' },
+																_react2.default.createElement(
+																			'div',
+																			{ className: 'panel-heading', onClick: this.onCollapse },
+																			_react2.default.createElement(
+																						'div',
+																						{ className: 'panel__title' },
+																						'Issues'
+																			),
+																			_react2.default.createElement(
+																						'div',
+																						{ className: 'panel__buttons' },
+																						_react2.default.createElement('div', { className: 'panel__button panel__button--refresh',
+																									onClick: this.onRefresh }),
+																						_react2.default.createElement('div', { className: 'panel__button panel__button--add',
+																									onClick: this.onCreateIssue })
+																			)
+																),
+																_react2.default.createElement(
+																			'div',
+																			{ className: 'panel-body' },
+																			_react2.default.createElement(
+																						'table',
+																						{ className: 'table table--compact' },
+																						_react2.default.createElement(
+																									'thead',
+																									null,
 																									_react2.default.createElement(
-																													'div',
-																													{ className: 'panel__title' },
-																													'Issues'
-																									),
-																									_react2.default.createElement(
-																													'div',
-																													{ className: 'panel__buttons' },
-																													_react2.default.createElement('div', { className: 'panel__button panel__button--refresh',
-																																	onClick: this.onRefresh })
+																												'tr',
+																												null,
+																												_react2.default.createElement(
+																															'th',
+																															null,
+																															'Number'
+																												),
+																												_react2.default.createElement(
+																															'th',
+																															null,
+																															'Name'
+																												),
+																												_react2.default.createElement(
+																															'th',
+																															null,
+																															'Assigned to'
+																												),
+																												_react2.default.createElement(
+																															'th',
+																															null,
+																															'Feature'
+																												),
+																												_react2.default.createElement(
+																															'th',
+																															null,
+																															'Status'
+																												)
 																									)
-																					),
-																					_react2.default.createElement(
-																									'div',
-																									{ className: 'panel-body' },
-																									_react2.default.createElement(
-																													'table',
-																													{ className: 'table table--compact' },
-																													_react2.default.createElement(
-																																	'thead',
-																																	null,
-																																	_react2.default.createElement(
-																																					'tr',
-																																					null,
-																																					_react2.default.createElement(
-																																									'th',
-																																									null,
-																																									'Number'
-																																					),
-																																					_react2.default.createElement(
-																																									'th',
-																																									null,
-																																									'Name'
-																																					),
-																																					_react2.default.createElement(
-																																									'th',
-																																									null,
-																																									'Assigned to'
-																																					),
-																																					_react2.default.createElement(
-																																									'th',
-																																									null,
-																																									'Feature'
-																																					),
-																																					_react2.default.createElement(
-																																									'th',
-																																									null,
-																																									'Status'
-																																					)
-																																	)
-																													),
-																													_react2.default.createElement(
-																																	'tbody',
-																																	null,
-																																	issues.map(function (issue, index) {
-																																					return _react2.default.createElement(_Issue3.default, {
-																																									key: list_key + issue.id + index,
-																																									is_collapsed: false,
-																																									reorderIssue: _this3.reorderIssue,
-																																									onClickedIssue: function onClickedIssue() {
-																																													return _this3.onClickedIssue(issue.id);
-																																									},
-																																									is_loading: loading_item_ids.indexOf(issue.id) !== -1,
-																																									is_selected: selected_ids.indexOf(issue.id) !== -1,
-																																									issue_id: issue.id });
-																																	})
-																													)
-																									),
-																									!is_loading && !has_items && _react2.default.createElement(
-																													'div',
-																													{ className: 'table__no-rows' },
-																													'no issues'
-																									)
-																					),
-																					_react2.default.createElement(_Pagination2.default, { list_key: list_key, on_changed: this.onChangePage })
-																	)
-													);
-									}
-					}, {
-									key: 'render',
-									value: function render() {
-													var _props10 = this.props;
-													var is_visible = _props10.is_visible;
-													var is_loading = _props10.is_loading;
-													var is_collapsed = _props10.is_collapsed;
-													var is_expanded = _props10.is_expanded;
+																						),
+																						_react2.default.createElement(
+																									'tbody',
+																									null,
+																									issue_rows
+																						)
+																			),
+																			!is_loading && !has_items && _react2.default.createElement(
+																						'div',
+																						{ className: 'table__no-rows' },
+																						'no issues'
+																			)
+																),
+																_react2.default.createElement(_Pagination2.default, { list_key: list_key, on_changed: this.onChangePage })
+													)
+										);
+							}
+				}, {
+							key: 'render',
+							value: function render() {
+										var _props12 = this.props;
+										var is_visible = _props12.is_visible;
+										var is_loading = _props12.is_loading;
+										var is_collapsed = _props12.is_collapsed;
+										var is_expanded = _props12.is_expanded;
 
 
-													if (!is_visible) {
-																	return _react2.default.createElement('div', null);
-													}
+										if (!is_visible) {
+													return _react2.default.createElement('div', null);
+										}
 
-													return _react2.default.createElement(
-																	'div',
-																	null,
-																	is_collapsed && this.render_collapsed(),
-																	is_expanded && this.render_expanded()
-													);
-									}
-					}]);
+										return _react2.default.createElement(
+													'div',
+													null,
+													is_collapsed && this.render_collapsed(),
+													is_expanded && this.render_expanded()
+										);
+							}
+				}]);
 
-					return IssueList;
+				return IssueList;
 	}(_react.Component);
 
 	function mapStateToProps(state, props) {
-					var issue = state.issue;
-					var item_list = state.item_list;
-					var list_key = props.list_key;
+				var issue = state.issue;
+				var item_list = state.item_list;
+				var list_key = props.list_key;
 
-					var items_by_id = issue && issue.items_by_id || {};
-					var l = item_list && item_list[list_key] || {};
-					var filter = l.filter || {};
-					var sprint_id = filter.sprint_id || null;
-					var visible_item_ids = l.visible_item_ids || [];
+				var items_by_id = issue && issue.items_by_id || {};
+				var l = item_list && item_list[list_key] || {};
+				var filter = l.filter || {};
+				var sprint_id = filter.sprint_id || null;
+				var visible_item_ids = l.visible_item_ids || [];
 
-					var selected_items = items_by_id && l.selected_ids && l.selected_ids.map(function (selected_id, index) {
-									return items_by_id[selected_id] || { 'id': selected_id,
-													'loaded': false };
-					});
+				var selected_items = items_by_id && l.selected_ids && l.selected_ids.map(function (selected_id, index) {
+							return items_by_id[selected_id] || { 'id': selected_id,
+										'loaded': false };
+				});
 
-					var items = items_by_id && visible_item_ids.map(function (visible_item_id, index) {
-									return items_by_id[visible_item_id] || { 'id': visible_item_id,
-													'loaded': false };
-					}) || [];
+				var items = items_by_id && visible_item_ids.map(function (visible_item_id, index) {
+							return items_by_id[visible_item_id] || { 'id': visible_item_id,
+										'loaded': false };
+				}) || [];
 
-					return {
-									list_key: list_key,
-									sprint_id: sprint_id,
-									issues: items,
-									issue_ids: (0, _map2.default)(items, 'id'),
-									selected_ids: l.selected_ids || [],
-									selected_items: selected_items || [],
-									loading_item_ids: l.loading_item_ids || [],
-									has_items: items && items.length > 0,
-									is_loading: l.is_loading,
-									is_collapsed: l.display_mode == "collapsed",
-									is_expanded: l.display_mode == "expanded" || !l.display_mode,
-									last_updated: l.last_updated,
-									is_visible: sprint_id || false
-					};
+				var candidate_issue = issue.candidate_issue;
+				var is_creating_issue = candidate_issue || false;
+
+				return {
+							list_key: list_key,
+							sprint_id: sprint_id,
+							issues: items,
+							issue_ids: (0, _map2.default)(items, 'id'),
+							selected_ids: l.selected_ids || [],
+							selected_items: selected_items || [],
+							loading_item_ids: l.loading_item_ids || [],
+							has_items: items && items.length > 0,
+							is_loading: l.is_loading,
+							is_collapsed: l.display_mode == "collapsed",
+							is_expanded: l.display_mode == "expanded" || !l.display_mode,
+							last_updated: l.last_updated,
+							is_visible: sprint_id || false,
+							candidate_issue: candidate_issue,
+							is_creating_issue: is_creating_issue
+				};
 	}
 
 	exports.default = (0, _reactRedux.connect)(mapStateToProps)(IssueList);
@@ -60557,107 +60603,219 @@
 	'use strict';
 
 	Object.defineProperty(exports, "__esModule", {
-	    value: true
+					value: true
 	});
-	exports.INVALIDATE_ISSUES = exports.ANNOUNCE_LOADING_ISSUES = exports.ANNOUNCE_ISSUES_LOAD_FAILED = exports.ANNOUNCE_ISSUES_LOADED = undefined;
-	exports.invalidateIssues = invalidateIssues;
-	exports.refreshIssues = refreshIssues;
-	exports.fetchIssuesIfNeeded = fetchIssuesIfNeeded;
+	exports.IssueDeveloperDetails = undefined;
 
-	var _lib = __webpack_require__(734);
+	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
-	var _difference = __webpack_require__(739);
+	var _react = __webpack_require__(300);
 
-	var _difference2 = _interopRequireDefault(_difference);
+	var _react2 = _interopRequireDefault(_react);
 
-	var _keys = __webpack_require__(695);
+	var _reactRouter = __webpack_require__(466);
 
-	var _keys2 = _interopRequireDefault(_keys);
+	var _reactRedux = __webpack_require__(533);
+
+	var _indexOf = __webpack_require__(743);
+
+	var _indexOf2 = _interopRequireDefault(_indexOf);
 
 	var _map = __webpack_require__(675);
 
 	var _map2 = _interopRequireDefault(_map);
 
-	var _ItemList = __webpack_require__(733);
+	var _RIETextArea = __webpack_require__(855);
+
+	var _OtherUser = __webpack_require__(866);
+
+	var _OtherUser2 = _interopRequireDefault(_OtherUser);
+
+	var _Issue = __webpack_require__(869);
+
+	var _IssueGeneralDetails = __webpack_require__(871);
 
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-	var ANNOUNCE_ISSUES_LOADED = exports.ANNOUNCE_ISSUES_LOADED = 'ANNOUNCE_ISSUES_LOADED';
-	var ANNOUNCE_ISSUES_LOAD_FAILED = exports.ANNOUNCE_ISSUES_LOAD_FAILED = 'ANNOUNCE_ISSUES_LOAD_FAILED';
-	var ANNOUNCE_LOADING_ISSUES = exports.ANNOUNCE_LOADING_ISSUES = 'ANNOUNCE_LOADING_ISSUES';
-	var INVALIDATE_ISSUES = exports.INVALIDATE_ISSUES = 'INVALIDATE_ISSUES';
+	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
-	function invalidateIssues(issue_ids) {
-	    return {
-	        type: INVALIDATE_ISSUES,
-	        issue_ids_to_invalidate: issue_ids
-	    };
+	function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+	var IssueDeveloperDetails = exports.IssueDeveloperDetails = function (_Component) {
+					_inherits(IssueDeveloperDetails, _Component);
+
+					function IssueDeveloperDetails(props) {
+									_classCallCheck(this, IssueDeveloperDetails);
+
+									var _this = _possibleConstructorReturn(this, Object.getPrototypeOf(IssueDeveloperDetails).call(this, props));
+
+									_this.onRefresh = _this.onRefresh.bind(_this);
+									_this.onChangeDescription = _this.onChangeDescription.bind(_this);
+									return _this;
+					}
+
+					_createClass(IssueDeveloperDetails, [{
+									key: 'componentDidMount',
+									value: function componentDidMount() {
+													var _props = this.props;
+													var dispatch = _props.dispatch;
+													var issue_id = _props.issue_id;
+													var issue = _props.issue;
+
+													if (issue_id) {
+																	dispatch((0, _IssueGeneralDetails.fetchIssueGeneralDetailsIfNeeded)([issue_id]));
+													}
+									}
+					}, {
+									key: 'onChangeDescription',
+									value: function onChangeDescription(obj) {
+													var _props2 = this.props;
+													var dispatch = _props2.dispatch;
+													var issue_id = _props2.issue_id;
+
+													dispatch((0, _Issue.updateIssueDescription)(issue_id, obj.description));
+									}
+					}, {
+									key: 'onRefresh',
+									value: function onRefresh() {
+													var _props3 = this.props;
+													var dispatch = _props3.dispatch;
+													var issue_id = _props3.issue_id;
+
+													dispatch((0, _IssueGeneralDetails.invalidateIssueGeneralDetails)([issue_id]));
+													dispatch((0, _IssueGeneralDetails.fetchIssueGeneralDetailsIfNeeded)([issue_id]));
+									}
+					}, {
+									key: 'renderComment',
+									value: function renderComment(comment) {
+													return _react2.default.createElement(
+																	'div',
+																	{ key: "comment_" + comment.id, className: 'issue_developer_details__commment' },
+																	_react2.default.createElement(
+																					'div',
+																					null,
+																					comment.comment
+																	),
+																	_react2.default.createElement(
+																					'div',
+																					{ className: 'issue_developer_details__comment__author' },
+																					'By ',
+																					_react2.default.createElement(_OtherUser2.default, { user_id: comment.author_id })
+																	),
+																	_react2.default.createElement(
+																					'div',
+																					{ className: 'issue_developer_details__comment__created' },
+																					'At ',
+																					comment.created
+																	),
+																	_react2.default.createElement(
+																					'div',
+																					{ className: 'issue_developer_details__comment__separator' },
+																					' '
+																	)
+													);
+									}
+					}, {
+									key: 'render',
+									value: function render() {
+													var _this2 = this;
+
+													var _props4 = this.props;
+													var is_visible = _props4.is_visible;
+													var issue_id = _props4.issue_id;
+													var issue = _props4.issue;
+													var comments = _props4.comments;
+													var is_loading = _props4.is_loading;
+
+
+													if (!is_visible) {
+																	return _react2.default.createElement('div', null);
+													}
+
+													return _react2.default.createElement(
+																	'div',
+																	{ className: 'issue_developer_details', style: { opacity: is_loading ? 0.5 : 1 } },
+																	_react2.default.createElement(
+																					'div',
+																					{ className: 'panel panel--full' },
+																					_react2.default.createElement(
+																									'div',
+																									{ className: 'panel-heading' },
+																									_react2.default.createElement(
+																													'div',
+																													{ className: 'panel__title' },
+																													'Issue Details'
+																									),
+																									_react2.default.createElement(
+																													'div',
+																													{ className: 'panel__buttons' },
+																													_react2.default.createElement('div', { className: 'panel__button panel__button--refresh',
+																																	onClick: this.onRefresh })
+																									)
+																					),
+																					_react2.default.createElement(
+																									'div',
+																									{ className: 'issue_developer_details__panel-body' },
+																									_react2.default.createElement(
+																													'h3',
+																													null,
+																													'issue#',
+																													issue.number,
+																													': ',
+																													issue.subject
+																									),
+																									_react2.default.createElement(_RIETextArea.RIETextArea, {
+																													value: issue.description || "",
+																													propName: 'description',
+																													change: this.onChangeDescription
+																									})
+																					),
+																					_react2.default.createElement(
+																									'div',
+																									null,
+																									comments.map(function (comment) {
+																													return _this2.renderComment(comment);
+																									})
+																					)
+																	)
+													);
+									}
+					}]);
+
+					return IssueDeveloperDetails;
+	}(_react.Component);
+
+	function mapStateToProps(state, props) {
+					var item_list = state.item_list || {};
+					var list_key = props.list_key;
+
+					var l = item_list[list_key] || {};
+					var filter = l.filter || {};
+					var issue_id = filter.issue_id;
+
+					var issue_general_details = state.issue_general_details || {};
+					var general_details = (issue_general_details.items_by_id || {})[issue_id] || {};
+					var is_loading = (0, _indexOf2.default)(issue_general_details.loading_item_ids || [], issue_id) !== -1;
+
+					var issues = (state.issue || {}).items_by_id || {};
+					var issue = issues[issue_id] || {};
+
+					issue = Object.assign({}, issue, general_details);
+
+					var comments = issue.issue_comments || [];
+
+					return {
+									issue_id: issue_id,
+									issue: issue,
+									comments: comments,
+									is_loading: general_details.is_loading,
+									is_visible: issue_id || false
+					};
 	}
 
-	function announceLoadingIssues(issue_ids) {
-	    return {
-	        type: ANNOUNCE_LOADING_ISSUES,
-	        issue_ids_to_load: issue_ids
-	    };
-	}
-
-	function refreshIssues(list_key) {
-	    return function (dispatch, getState) {
-	        dispatch(invalidateItems());
-	        dispatch(fetchIssuesIfNeeded());
-	    };
-	}
-
-	function announceIssuesLoaded(payload) {
-
-	    var items_by_id = {};
-	    payload.issues.map(function (item, index) {
-	        items_by_id[item.id] = item;
-	    });
-
-	    return {
-	        type: ANNOUNCE_ISSUES_LOADED,
-	        items_by_id: items_by_id,
-	        received_at: Date.now()
-	    };
-	}
-
-	function announceIssuesLoadFailed(error) {
-	    return {
-	        type: ANNOUNCE_ISSUES_LOAD_FAILED,
-	        error: error,
-	        received_at: Date.now()
-	    };
-	}
-
-	function fetchIssuesPromise(dispatch, issue_ids) {
-	    return new Promise(function (resolve, reject) {
-	        dispatch(announceLoadingIssues(issue_ids));
-
-	        var params = { filter: { ids: issue_ids },
-	            pagination: { 'enabled': false } };
-
-	        return (0, _lib.impfetch)('/imp/issue/', { params: params }).then(function (response) {
-	            return response.json();
-	        }).then(function (json) {
-	            if (json.status != 'success') {
-	                dispatch(announceIssuesLoadFailed());
-	                reject(json.error);
-	            } else {
-	                dispatch(announceIssuesLoaded(json.payload));
-	            }
-	        }).catch(function (error) {
-	            dispatch(announceIssuesLoadFailed("Failed to load issues: " + error.message));
-	            reject("Failed to load issues: " + error.message);
-	        });
-	    });
-	}
-
-	function fetchIssuesIfNeeded(list_key) {
-	    var matching_items_key = 'issue';
-	    var matching_items_promise_func = fetchIssuesPromise;
-	    return (0, _ItemList.fetchListIfNeeded)(list_key, matching_items_key, matching_items_promise_func);
-	}
+	exports.default = (0, _reactRedux.connect)(mapStateToProps)(IssueDeveloperDetails);
 
 /***/ },
 /* 855 */
@@ -60668,191 +60826,7 @@
 	Object.defineProperty(exports, "__esModule", {
 					value: true
 	});
-	exports.ANNOUNCE_SAVING_NEW_ISSUE_FAILED = exports.ANNOUNCE_SAVED_NEW_ISSUE = exports.ANNOUNCE_SAVING_NEW_ISSUE = exports.CANCEL_CREATING_NEW_ISSUE = exports.UPDATE_NEW_ISSUE_DETAILS = exports.ANNOUNCE_CAPTURING_NEW_ISSUE = exports.ANNOUNCE_ISSUE_SAVE_FAILED = exports.ANNOUNCE_ISSUE_SAVED = exports.ANNOUNCE_ISSUE_SAVING = undefined;
-	exports.updateIssueSubject = updateIssueSubject;
-	exports.updateIssueDescription = updateIssueDescription;
-	exports.reorderIssue = reorderIssue;
-	exports.startCandidateIssue = startCandidateIssue;
-	exports.updateCandidateSubject = updateCandidateSubject;
-	exports.cancelCandidateIssue = cancelCandidateIssue;
-	exports.saveCandidateIssue = saveCandidateIssue;
-
-	var _lib = __webpack_require__(734);
-
-	var _difference = __webpack_require__(739);
-
-	var _difference2 = _interopRequireDefault(_difference);
-
-	var _keys = __webpack_require__(695);
-
-	var _keys2 = _interopRequireDefault(_keys);
-
-	var _map = __webpack_require__(675);
-
-	var _map2 = _interopRequireDefault(_map);
-
-	var _ItemList = __webpack_require__(733);
-
-	var _Issues = __webpack_require__(854);
-
-	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-	var ANNOUNCE_ISSUE_SAVING = exports.ANNOUNCE_ISSUE_SAVING = 'ANNOUNCE_ISSUE_SAVING';
-	var ANNOUNCE_ISSUE_SAVED = exports.ANNOUNCE_ISSUE_SAVED = 'ANNOUNCE_ISSUE_SAVED';
-	var ANNOUNCE_ISSUE_SAVE_FAILED = exports.ANNOUNCE_ISSUE_SAVE_FAILED = 'ANNOUNCE_ISSUE_SAVE_FAILED';
-
-	var ANNOUNCE_CAPTURING_NEW_ISSUE = exports.ANNOUNCE_CAPTURING_NEW_ISSUE = 'ANNOUNCE_CAPTURING_NEW_ISSUE';
-	var UPDATE_NEW_ISSUE_DETAILS = exports.UPDATE_NEW_ISSUE_DETAILS = 'UPDATE_NEW_ISSUE_DETAILS';
-	var CANCEL_CREATING_NEW_ISSUE = exports.CANCEL_CREATING_NEW_ISSUE = 'CANCEL_CREATING_NEW_ISSUE';
-	var ANNOUNCE_SAVING_NEW_ISSUE = exports.ANNOUNCE_SAVING_NEW_ISSUE = 'ANNOUNCE_SAVING_NEW_ISSUE';
-	var ANNOUNCE_SAVED_NEW_ISSUE = exports.ANNOUNCE_SAVED_NEW_ISSUE = 'ANNOUNCE_SAVED_NEW_ISSUE';
-	var ANNOUNCE_SAVING_NEW_ISSUE_FAILED = exports.ANNOUNCE_SAVING_NEW_ISSUE_FAILED = 'ANNOUNCE_SAVING_NEW_ISSUE_FAILED';
-
-	function announceIssueSaveFailed(error) {
-					return {
-									type: ANNOUNCE_ISSUE_SAVE_FAILED,
-									error: error,
-									received_at: Date.now()
-					};
-	}
-
-	function announceIssueSaved(issue_id) {
-					return {
-									type: ANNOUNCE_ISSUE_SAVED,
-									issue_id: issue_id,
-									saved_at: Date.now()
-					};
-	}
-
-	function announceIssueSaving(issue_id) {
-					return {
-									type: ANNOUNCE_ISSUE_SAVING,
-									issue_id: issue_id,
-									saved_at: Date.now()
-					};
-	}
-
-	function announceCandidateIssueSaving() {
-					return {
-									type: ANNOUNCE_SAVING_NEW_ISSUE
-					};
-	}
-
-	function announceCandidateIssueSaved(new_issue) {
-					return {
-									type: ANNOUNCE_SAVED_NEW_ISSUE,
-									issue: new_issue
-					};
-	}
-
-	function announceCandidateIssueSaveFailed(error) {
-					return {
-									type: ANNOUNCE_SAVING_NEW_ISSUE_FAILED,
-									error: error
-					};
-	}
-
-	function updateIssueSubject(issue_id, value) {
-					return updateIssue(issue_id, "subject", value);
-	}
-
-	function updateIssueDescription(issue_id, value) {
-					return updateIssue(issue_id, "description", value);
-	}
-
-	function updateIssue(issue_id, field_name, new_value, on_done) {
-					return function (dispatch, getState) {
-									dispatch(announceIssueSaving(issue_id));
-									var data = { field_name: field_name,
-													value: new_value };
-									return (0, _lib.impfetch)("/imp/issue/" + issue_id + "/", { method: "PUT",
-													credentials: 'same-origin',
-													data: data,
-													headers: { "Content-type": "application/json; charset=UTF-8" },
-													body: JSON.stringify(data) }).then(function (response) {
-													return response.json();
-									}).then(function (json) {
-													if (json.status != 'success') {
-																	console.log('Request failed with JSON response', json);
-																	dispatch(announceIssueSaveFailed(json.error));
-													} else {
-																	console.log('Request succeeded with JSON response', json);
-																	dispatch(announceIssueSaved(json.payload));
-																	dispatch((0, _Issues.invalidateIssues)([issue_id]));
-													}
-													if (on_done) {
-																	on_done();
-													}
-									}).catch(function (error) {
-													console.log('Request failed', error);
-													dispatch(announceIssueSaveFailed(error));
-									});
-					};
-	}
-
-	function reorderIssue(issue_id_before, issue_id_after, on_done) {
-					return updateIssue(issue_id_before, "issue_id_after", issue_id_after, on_done);
-	}
-
-	function startCandidateIssue(sprint_id, issue_id_before) {
-					return {
-									key: ANNOUNCE_CAPTURING_NEW_ISSUE,
-									issue_id_before: issue_id_before,
-									sprint_id: sprint_id
-					};
-	}
-
-	function updateCandidateSubject(subject) {
-					return {
-									key: UPDATE_NEW_ISSUE_DETAILS,
-									candidate_issue: { "subject": subject }
-					};
-	}
-
-	function cancelCandidateIssue() {
-					return {
-									key: CANCEL_CREATING_NEW_ISSUE
-					};
-	}
-
-	function saveCandidateIssue() {
-
-					return function (dispatch, getState) {
-									var state = getState();
-									dispatch(announceCandidateIssueSaving());
-									var data = { issue: state.issue.candidate_issue };
-
-									return (0, _lib.impfetch)("/imp/issue/", { method: "POST",
-													credentials: 'same-origin',
-													data: data,
-													headers: { "Content-type": "application/json; charset=UTF-8" },
-													body: JSON.stringify(data) }).then(function (response) {
-													return response.json();
-									}).then(function (json) {
-													if (json.status != 'success') {
-																	console.log('Request failed with JSON response', json);
-																	dispatch(announceCandidateIssueSaveFailed(json.error));
-													} else {
-																	console.log('Request succeeded with JSON response', json);
-																	dispatch(announceCandidateIssueSaved(json.payload));
-													}
-									}).catch(function (error) {
-													console.log('Request failed', error);
-													dispatch(announceCandidateIssueSaveFailed(error));
-									});
-					};
-	}
-
-/***/ },
-/* 856 */
-/***/ function(module, exports, __webpack_require__) {
-
-	'use strict';
-
-	Object.defineProperty(exports, "__esModule", {
-					value: true
-	});
-	exports.Issue = undefined;
+	exports.RIETextArea = undefined;
 
 	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
@@ -60860,29 +60834,15 @@
 
 	var _react2 = _interopRequireDefault(_react);
 
-	var _reactRouter = __webpack_require__(466);
+	var _reactDom = __webpack_require__(336);
 
-	var _map = __webpack_require__(675);
+	var _reactDom2 = _interopRequireDefault(_reactDom);
 
-	var _map2 = _interopRequireDefault(_map);
+	var _riek = __webpack_require__(856);
 
-	var _reactDnd = __webpack_require__(557);
+	var _reactAutosizeTextarea = __webpack_require__(862);
 
-	var _reactRedux = __webpack_require__(533);
-
-	var _classnames = __webpack_require__(851);
-
-	var _classnames2 = _interopRequireDefault(_classnames);
-
-	var _Issue = __webpack_require__(855);
-
-	var _riek = __webpack_require__(857);
-
-	var _OtherUser = __webpack_require__(863);
-
-	var _OtherUser2 = _interopRequireDefault(_OtherUser);
-
-	var _Dnd = __webpack_require__(852);
+	var _reactAutosizeTextarea2 = _interopRequireDefault(_reactAutosizeTextarea);
 
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -60892,227 +60852,102 @@
 
 	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 
-	var Issue = exports.Issue = function (_Component) {
-					_inherits(Issue, _Component);
+	var RIETextArea = exports.RIETextArea = function (_Component) {
+					_inherits(RIETextArea, _Component);
 
-					function Issue(props) {
-									_classCallCheck(this, Issue);
+					function RIETextArea(props) {
+									_classCallCheck(this, RIETextArea);
 
-									var _this = _possibleConstructorReturn(this, Object.getPrototypeOf(Issue).call(this, props));
+									var _this = _possibleConstructorReturn(this, Object.getPrototypeOf(RIETextArea).call(this, props));
 
-									_this.onChangeSubject = _this.onChangeSubject.bind(_this);
+									_this.startEditing = _this.startEditing.bind(_this);
+									_this.stopEditing = _this.stopEditing.bind(_this);
+									_this.commit = _this.commit.bind(_this);
+									_this.cancel = _this.cancel.bind(_this);
+									_this.state = {
+													editing: false
+									};
 									return _this;
 					}
 
-					_createClass(Issue, [{
-									key: 'onChangeSubject',
-									value: function onChangeSubject(issue_id, obj) {
-													var dispatch = this.props.dispatch;
-
-													dispatch((0, _Issue.updateIssueSubject)(issue_id, obj.subject));
+					_createClass(RIETextArea, [{
+									key: 'startEditing',
+									value: function startEditing() {
+													this.setState({ editing: true });
 									}
 					}, {
-									key: 'render_collapsed',
-									value: function render_collapsed() {
-													var _props = this.props;
-													var issue = _props.issue;
-													var list_key = _props.list_key;
-
+									key: 'commit',
+									value: function commit() {
+													var new_value = _reactDom2.default.findDOMNode(this.editor).value;
+													this.stopEditing();
+													var res = {};
+													res[this.props.propName] = new_value;
+													this.props.change(res);
+									}
+					}, {
+									key: 'cancel',
+									value: function cancel() {
+													this.stopEditing();
+									}
+					}, {
+									key: 'stopEditing',
+									value: function stopEditing() {
+													this.setState({ editing: false });
+									}
+					}, {
+									key: 'renderNormalComponent',
+									value: function renderNormalComponent() {
 													return _react2.default.createElement(
 																	'div',
-																	{ key: "collapsed_issue_" + issue.id + "_" + list_key },
-																	issue.number,
-																	issue.subject
+																	null,
+																	this.state.newValue || this.props.value,
+																	_react2.default.createElement('br', null),
+																	_react2.default.createElement(
+																					'button',
+																					{ className: 'btn btn-secondary', onClick: this.startEditing },
+																					'Edit'
+																	)
 													);
 									}
 					}, {
-									key: 'render_expanded',
-									value: function render_expanded() {
+									key: 'renderEditingComponent',
+									value: function renderEditingComponent() {
 													var _this2 = this;
 
-													var _props2 = this.props;
-													var issue = _props2.issue;
-													var is_loading = _props2.is_loading;
-													var is_selected = _props2.is_selected;
-													var onClickedIssue = _props2.onClickedIssue;
-													var isOver = _props2.isOver;
-													var connectDragSource = _props2.connectDragSource;
-													var connectDropTarget = _props2.connectDropTarget;
-
-
-													if (!issue) {
-																	return _react2.default.createElement(
-																					'tr',
-																					null,
-																					_react2.default.createElement(
-																									'td',
-																									null,
-																									'Loading...'
-																					)
-																	);
-													}
-
-													if (issue.loaded === false) {
-																	return _react2.default.createElement(
-																					'tr',
-																					{ key: this.key + "." + issue.id,
-																									onClick: onClickedIssue,
-																									className: (0, _classnames2.default)({ 'tr--selected': is_selected, 'tr--drop-target': isOver })
-																					},
-																					_react2.default.createElement(
-																									'td',
-																									null,
-																									_react2.default.createElement(
-																													'div',
-																													{ className: 'issue_list__issue_number_button' },
-																													issue.number
-																									)
-																					),
-																					_react2.default.createElement(
-																									'td',
-																									null,
-																									'Loading...'
-																					)
-																	);
-													} else {
-																	return connectDragSource(connectDropTarget(_react2.default.createElement(
-																					'tr',
-																					{ key: this.key + "." + issue.id,
-																									onClick: onClickedIssue,
-																									className: (0, _classnames2.default)({ 'tr--selected': is_selected, 'tr--drop-target': isOver })
-																					},
-																					_react2.default.createElement(
-																									'td',
-																									null,
-																									_react2.default.createElement(
-																													'div',
-																													{ className: 'issue_list__issue_number_button' },
-																													issue.number
-																									)
-																					),
-																					_react2.default.createElement(
-																									'td',
-																									null,
-																									_react2.default.createElement(_riek.RIEInput, { value: issue.subject,
-																													propName: 'subject',
-																													change: function change(obj) {
-																																	return _this2.onChangeSubject(issue.id, obj);
-																													} })
-																					),
-																					_react2.default.createElement(
-																									'td',
-																									null,
-																									_react2.default.createElement(_OtherUser2.default, { user_id: issue.assigned_to_id,
-																													render_mode: 'inline--small',
-																													loading_value: issue.assigned_to_quick_name })
-																					),
-																					_react2.default.createElement(
-																									'td',
-																									null,
-																									issue.feature_name
-																					),
-																					_react2.default.createElement(
-																									'td',
-																									null,
-																									issue.status
-																					)
-																	)));
-													}
+													return _react2.default.createElement(
+																	'div',
+																	null,
+																	_react2.default.createElement(_reactAutosizeTextarea2.default, { ref: function ref(_ref) {
+																									return _this2.editor = _ref;
+																					}, rows: '20', cols: '80', defaultValue: this.props.value }),
+																	_react2.default.createElement(
+																					'button',
+																					{ className: 'btn btn-primary', onClick: this.commit },
+																					'Save'
+																	),
+																	_react2.default.createElement(
+																					'button',
+																					{ className: 'btn btn-cancel', onClick: this.cancel },
+																					'Cancel'
+																	)
+													);
 									}
 					}, {
 									key: 'render',
 									value: function render() {
-													var _props3 = this.props;
-													var is_collapsed = _props3.is_collapsed;
-													var is_expanded = _props3.is_expanded;
-
-
-													if (is_collapsed) {
-																	return this.render_collapsed();
-													} else if (is_expanded) {
-																	return this.render_expanded();
+													if (this.state.editing) {
+																	return this.renderEditingComponent();
 													} else {
-																	return _react2.default.createElement(
-																					'div',
-																					null,
-																					'Dev error'
-																	);
+																	return this.renderNormalComponent();
 													}
 									}
 					}]);
 
-					return Issue;
+					return RIETextArea;
 	}(_react.Component);
 
-	function mapStateToProps(state, props) {
-					var issue = state.issue;
-					var item_list = state.item_list;
-					var issue_id = props.issue_id;
-					var is_selected = props.is_selected;
-					var is_collapsed = props.is_collapsed;
-					var is_loading = props.is_loading;
-
-
-					var this_issue = issue && issue.items_by_id && issue.items_by_id[issue_id] || { 'loaded': false };
-
-					return {
-									issue: this_issue,
-									issue_id: issue_id,
-									is_selected: is_selected,
-									is_loading: is_loading,
-									is_collapsed: is_collapsed,
-									is_expanded: !is_collapsed
-					};
-	}
-
-	var headingSource = {
-					beginDrag: function beginDrag(props) {
-									return { id: props.issue_id };
-					}
-	};
-
-	var headingTarget = {
-					drop: function drop(props, monitor, component) {
-									var issue_id = props.issue_id;
-
-									var dragging_item = monitor.getItem();
-									if (!dragging_item) {
-													return;
-									}
-									var dragging_issue_id = dragging_item.id;
-									if (issue_id == dragging_issue_id) {
-													console.log("ignoring dnd on the same element: " + issue_id);
-													return;
-									}
-
-									props.reorderIssue(dragging_issue_id, issue_id);
-					},
-					hover: function hover(props, monitor, component) {},
-					canDrop: function canDrop(props, monitor) {
-									return true;
-					}
-
-	};
-
-	function collect(connect, monitor) {
-					return {
-									connectDragSource: connect.dragSource(),
-									isDragging: monitor.isDragging()
-					};
-	}
-
-	function collectDrop(connect, monitor) {
-					return {
-									connectDropTarget: connect.dropTarget(),
-									isOver: monitor.isOver(),
-									canDrop: monitor.canDrop()
-					};
-	}
-
-	exports.default = (0, _reactRedux.connect)(mapStateToProps)((0, _reactDnd.DragSource)(_Dnd.DndTypes.ISSUE, headingSource, collect)((0, _reactDnd.DropTarget)(_Dnd.DndTypes.ISSUE, headingTarget, collectDrop)(Issue)));
-
 /***/ },
-/* 857 */
+/* 856 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -61122,19 +60957,19 @@
 	});
 	exports.RIETags = exports.RIENumber = exports.RIEInput = exports.RIEToggle = undefined;
 
-	var _RIEToggle = __webpack_require__(858);
+	var _RIEToggle = __webpack_require__(857);
 
 	var _RIEToggle2 = _interopRequireDefault(_RIEToggle);
 
-	var _RIEStatefulBase2 = __webpack_require__(860);
+	var _RIEStatefulBase2 = __webpack_require__(859);
 
 	var _RIEStatefulBase3 = _interopRequireDefault(_RIEStatefulBase2);
 
-	var _RIENumber = __webpack_require__(861);
+	var _RIENumber = __webpack_require__(860);
 
 	var _RIENumber2 = _interopRequireDefault(_RIENumber);
 
-	var _RIETags = __webpack_require__(862);
+	var _RIETags = __webpack_require__(861);
 
 	var _RIETags2 = _interopRequireDefault(_RIETags);
 
@@ -61164,7 +60999,7 @@
 	exports.RIETags = _RIETags2.default;
 
 /***/ },
-/* 858 */
+/* 857 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -61177,7 +61012,7 @@
 
 	var _react2 = _interopRequireDefault(_react);
 
-	var _RIEBase2 = __webpack_require__(859);
+	var _RIEBase2 = __webpack_require__(858);
 
 	var _RIEBase3 = _interopRequireDefault(_RIEBase2);
 
@@ -61230,7 +61065,7 @@
 	exports.default = RIEToggle;
 
 /***/ },
-/* 859 */
+/* 858 */
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
@@ -61339,7 +61174,7 @@
 	exports.default = RIEBase;
 
 /***/ },
-/* 860 */
+/* 859 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -61356,7 +61191,7 @@
 
 	var _reactDom2 = _interopRequireDefault(_reactDom);
 
-	var _RIEBase2 = __webpack_require__(859);
+	var _RIEBase2 = __webpack_require__(858);
 
 	var _RIEBase3 = _interopRequireDefault(_RIEBase2);
 
@@ -61465,7 +61300,7 @@
 	exports.default = RIEStatefulBase;
 
 /***/ },
-/* 861 */
+/* 860 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -61478,7 +61313,7 @@
 
 	var _react2 = _interopRequireDefault(_react);
 
-	var _RIEStatefulBase2 = __webpack_require__(860);
+	var _RIEStatefulBase2 = __webpack_require__(859);
 
 	var _RIEStatefulBase3 = _interopRequireDefault(_RIEStatefulBase2);
 
@@ -61536,7 +61371,7 @@
 	exports.default = RIENumber;
 
 /***/ },
-/* 862 */
+/* 861 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -61553,7 +61388,7 @@
 
 	var _reactDom2 = _interopRequireDefault(_reactDom);
 
-	var _RIEStatefulBase2 = __webpack_require__(860);
+	var _RIEStatefulBase2 = __webpack_require__(859);
 
 	var _RIEStatefulBase3 = _interopRequireDefault(_RIEStatefulBase2);
 
@@ -61720,644 +61555,13 @@
 	exports.default = RIETags;
 
 /***/ },
+/* 862 */
+/***/ function(module, exports, __webpack_require__) {
+
+	module.exports = __webpack_require__(863);
+
+/***/ },
 /* 863 */
-/***/ function(module, exports, __webpack_require__) {
-
-	'use strict';
-
-	Object.defineProperty(exports, "__esModule", {
-					value: true
-	});
-	exports.OtherUser = undefined;
-
-	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
-
-	var _react = __webpack_require__(300);
-
-	var _react2 = _interopRequireDefault(_react);
-
-	var _reactRouter = __webpack_require__(466);
-
-	var _reactDnd = __webpack_require__(557);
-
-	var _reactRedux = __webpack_require__(533);
-
-	var _map = __webpack_require__(675);
-
-	var _map2 = _interopRequireDefault(_map);
-
-	var _indexOf = __webpack_require__(743);
-
-	var _indexOf2 = _interopRequireDefault(_indexOf);
-
-	var _classnames = __webpack_require__(851);
-
-	var _classnames2 = _interopRequireDefault(_classnames);
-
-	var _Dnd = __webpack_require__(852);
-
-	var _Users = __webpack_require__(864);
-
-	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
-	function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
-
-	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
-
-	var OtherUser = exports.OtherUser = function (_Component) {
-					_inherits(OtherUser, _Component);
-
-					function OtherUser(props) {
-									_classCallCheck(this, OtherUser);
-
-									return _possibleConstructorReturn(this, Object.getPrototypeOf(OtherUser).call(this, props));
-					}
-
-					_createClass(OtherUser, [{
-									key: 'componentDidMount',
-									value: function componentDidMount() {
-													var _props = this.props;
-													var dispatch = _props.dispatch;
-													var user_id = _props.user_id;
-
-													if (user_id) {
-																	dispatch((0, _Users.fetchUsersIfNeeded)([user_id]));
-													}
-									}
-					}, {
-									key: 'render_inline_small',
-									value: function render_inline_small() {
-													var _props2 = this.props;
-													var user = _props2.user;
-													var loading_value = _props2.loading_value;
-
-
-													return _react2.default.createElement(
-																	'div',
-																	{ key: this.key + ".collapsed_user." + user.id },
-																	user.username && user.username,
-																	!user.username && loading_value
-													);
-									}
-					}, {
-									key: 'render',
-									value: function render() {
-													var _props3 = this.props;
-													var user_id = _props3.user_id;
-													var render_mode = _props3.render_mode;
-													var loading_value = _props3.loading_value;
-
-
-													if (!user_id) {
-																	return _react2.default.createElement(
-																					'div',
-																					null,
-																					loading_value
-																	);
-													}
-
-													if (render_mode == 'inline--small') {
-																	return this.render_inline_small();
-													} else {
-																	return _react2.default.createElement(
-																					'div',
-																					null,
-																					'Dev error, unsupported render mode: ',
-																					render_mode
-																	);
-													}
-									}
-					}]);
-
-					return OtherUser;
-	}(_react.Component);
-
-	function mapStateToProps(state, props) {
-					var user = state.user;
-					var user_id = props.user_id;
-					var render_mode = props.render_mode;
-					var loading_value = props.loading_value;
-
-
-					var this_user = user && user.items_by_id && user.items_by_id[user_id] || {};
-					var is_loading = user && user.loading_item_ids && (0, _indexOf2.default)(user.loading_item_ids, user_id) !== -1 || false;
-
-					return {
-									user: this_user,
-									is_loading: is_loading,
-									render_mode: render_mode || "inline--small",
-									loading_value: loading_value || "..."
-					};
-	}
-
-	exports.default = (0, _reactRedux.connect)(mapStateToProps)(OtherUser);
-
-/***/ },
-/* 864 */
-/***/ function(module, exports, __webpack_require__) {
-
-	'use strict';
-
-	Object.defineProperty(exports, "__esModule", {
-	    value: true
-	});
-	exports.INVALIDATE_USERS = exports.ANNOUNCE_LOADING_USERS = exports.ANNOUNCE_USERS_LOAD_FAILED = exports.ANNOUNCE_USERS_LOADED = undefined;
-	exports.invalidateUsers = invalidateUsers;
-	exports.fetchUsersIfNeeded = fetchUsersIfNeeded;
-
-	var _lib = __webpack_require__(734);
-
-	var _difference = __webpack_require__(739);
-
-	var _difference2 = _interopRequireDefault(_difference);
-
-	var _keys = __webpack_require__(695);
-
-	var _keys2 = _interopRequireDefault(_keys);
-
-	var _map = __webpack_require__(675);
-
-	var _map2 = _interopRequireDefault(_map);
-
-	var _Error = __webpack_require__(865);
-
-	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-	var ANNOUNCE_USERS_LOADED = exports.ANNOUNCE_USERS_LOADED = 'ANNOUNCE_USERS_LOADED';
-	var ANNOUNCE_USERS_LOAD_FAILED = exports.ANNOUNCE_USERS_LOAD_FAILED = 'ANNOUNCE_USERS_LOAD_FAILED';
-	var ANNOUNCE_LOADING_USERS = exports.ANNOUNCE_LOADING_USERS = 'ANNOUNCE_LOADING_USERS';
-	var INVALIDATE_USERS = exports.INVALIDATE_USERS = 'INVALIDATE_USERS';
-
-	function invalidateUsers(user_ids_to_invalidate) {
-	    return {
-	        type: INVALIDATE_USERS,
-	        user_ids_to_invalidate: user_ids_to_invalidate
-	    };
-	}
-
-	function announceLoadingUsers(user_ids) {
-	    return {
-	        type: ANNOUNCE_LOADING_USERS,
-	        user_ids_to_load: user_ids
-	    };
-	}
-
-	function announceUsersLoaded(payload) {
-
-	    var items_by_id = {};
-	    payload.users.map(function (item, index) {
-	        items_by_id[item.id] = item;
-	    });
-
-	    return {
-	        type: ANNOUNCE_USERS_LOADED,
-	        items_by_id: items_by_id,
-	        received_at: Date.now()
-	    };
-	}
-
-	function announceUsersLoadFailed(error) {
-	    return {
-	        type: ANNOUNCE_USERS_LOAD_FAILED,
-	        error: error,
-	        received_at: Date.now()
-	    };
-	}
-
-	function fetchUsers(dispatch, user_ids) {
-	    return function (dispatch, getState) {
-	        dispatch(announceLoadingUsers(user_ids));
-
-	        var params = { filter: { ids: user_ids },
-	            format: { detail_level: 'general' },
-	            pagination: { 'enabled': false } };
-
-	        return (0, _lib.impfetch)('/imp/user/', { params: params }).then(function (response) {
-	            return response.json();
-	        }).then(function (json) {
-	            if (json.status != 'success') {
-	                dispatch(announceUsersLoadFailed(json.error));
-	            } else {
-	                dispatch(announceUsersLoaded(json.payload));
-	            }
-	        }).catch(function (error) {
-	            dispatch(announceUsersLoadFailed("Failed to load users: " + error.message));
-	        });
-	    };
-	}
-
-	function getMissingUsers(state, required_user_ids) {
-	    var matching_items = state.user || {};
-	    var matching_item_ids = (0, _keys2.default)(matching_items.items_by_id || {});
-	    var matching_item_refs = matching_item_ids.map(function (item_id, index) {
-	        return "" + item_id;
-	    });
-	    var loading_item_ids = matching_items.loading_item_ids || [];
-	    var loading_item_refs = (0, _map2.default)(loading_item_ids, function (item_id, index) {
-	        return "" + item_id;
-	    });
-	    var required_item_refs = required_user_ids.map(function (item_id, index) {
-	        return "" + item_id;
-	    });
-	    var unmatching_item_refs = (0, _difference2.default)(required_item_refs, matching_item_refs);
-	    var unmatching_and_not_loading_item_refs = (0, _difference2.default)(unmatching_item_refs, loading_item_refs);
-	    return unmatching_and_not_loading_item_refs;
-	}
-
-	function fetchUsersIfNeeded(user_ids) {
-	    return function (dispatch, getState) {
-	        var state = getState();
-	        var missing_user_ids = getMissingUsers(state, user_ids);
-	        if (missing_user_ids.length > 0) {
-	            dispatch(fetchUsers(dispatch, missing_user_ids));
-	        }
-	    };
-	}
-
-/***/ },
-/* 865 */
-/***/ function(module, exports) {
-
-	'use strict';
-
-	Object.defineProperty(exports, "__esModule", {
-	    value: true
-	});
-	exports.setErrorMessage = setErrorMessage;
-	exports.clearErrorMessage = clearErrorMessage;
-	var SET_ERROR_MESSAGE = exports.SET_ERROR_MESSAGE = 'SET_ERROR_MESSAGE';
-
-	function setErrorMessage(error) {
-	    return {
-	        type: SET_ERROR_MESSAGE,
-	        error_message: error
-	    };
-	}
-
-	function clearErrorMessage() {
-	    return setErrorMessage(null);
-	}
-
-/***/ },
-/* 866 */
-/***/ function(module, exports, __webpack_require__) {
-
-	'use strict';
-
-	Object.defineProperty(exports, "__esModule", {
-	    value: true
-	});
-	exports.IssueDeveloperDetails = undefined;
-
-	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
-
-	var _react = __webpack_require__(300);
-
-	var _react2 = _interopRequireDefault(_react);
-
-	var _reactRouter = __webpack_require__(466);
-
-	var _reactRedux = __webpack_require__(533);
-
-	var _indexOf = __webpack_require__(743);
-
-	var _indexOf2 = _interopRequireDefault(_indexOf);
-
-	var _map = __webpack_require__(675);
-
-	var _map2 = _interopRequireDefault(_map);
-
-	var _RIETextArea = __webpack_require__(867);
-
-	var _OtherUser = __webpack_require__(863);
-
-	var _OtherUser2 = _interopRequireDefault(_OtherUser);
-
-	var _Issue = __webpack_require__(855);
-
-	var _IssueGeneralDetails = __webpack_require__(872);
-
-	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
-	function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
-
-	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
-
-	var IssueDeveloperDetails = exports.IssueDeveloperDetails = function (_Component) {
-	    _inherits(IssueDeveloperDetails, _Component);
-
-	    function IssueDeveloperDetails(props) {
-	        _classCallCheck(this, IssueDeveloperDetails);
-
-	        var _this = _possibleConstructorReturn(this, Object.getPrototypeOf(IssueDeveloperDetails).call(this, props));
-
-	        _this.onRefresh = _this.onRefresh.bind(_this);
-	        _this.onChangeDescription = _this.onChangeDescription.bind(_this);
-	        return _this;
-	    }
-
-	    _createClass(IssueDeveloperDetails, [{
-	        key: 'componentDidMount',
-	        value: function componentDidMount() {
-	            var _props = this.props;
-	            var dispatch = _props.dispatch;
-	            var issue_id = _props.issue_id;
-	            var issue = _props.issue;
-
-	            if (issue_id) {
-	                dispatch((0, _IssueGeneralDetails.fetchIssueGeneralDetailsIfNeeded)([issue_id]));
-	            }
-	        }
-	    }, {
-	        key: 'onChangeDescription',
-	        value: function onChangeDescription(obj) {
-	            var _props2 = this.props;
-	            var dispatch = _props2.dispatch;
-	            var issue_id = _props2.issue_id;
-
-	            dispatch((0, _Issue.updateIssueDescription)(issue_id, obj.description));
-	        }
-	    }, {
-	        key: 'onRefresh',
-	        value: function onRefresh() {
-	            var _props3 = this.props;
-	            var dispatch = _props3.dispatch;
-	            var issue_id = _props3.issue_id;
-
-	            dispatch((0, _IssueGeneralDetails.invalidateIssueGeneralDetails)([issue_id]));
-	            dispatch((0, _IssueGeneralDetails.fetchIssueGeneralDetailsIfNeeded)([issue_id]));
-	        }
-	    }, {
-	        key: 'renderComment',
-	        value: function renderComment(comment) {
-	            return _react2.default.createElement(
-	                'div',
-	                { key: "comment_" + comment.id, className: 'issue_developer_details__commment' },
-	                _react2.default.createElement(
-	                    'div',
-	                    null,
-	                    comment.comment
-	                ),
-	                _react2.default.createElement(
-	                    'div',
-	                    { className: 'issue_developer_details__comment__author' },
-	                    'By ',
-	                    _react2.default.createElement(_OtherUser2.default, { user_id: comment.author_id })
-	                ),
-	                _react2.default.createElement(
-	                    'div',
-	                    { className: 'issue_developer_details__comment__created' },
-	                    'At ',
-	                    comment.created
-	                ),
-	                _react2.default.createElement(
-	                    'div',
-	                    { className: 'issue_developer_details__comment__separator' },
-	                    ' '
-	                )
-	            );
-	        }
-	    }, {
-	        key: 'render',
-	        value: function render() {
-	            var _this2 = this;
-
-	            var _props4 = this.props;
-	            var is_visible = _props4.is_visible;
-	            var issue_id = _props4.issue_id;
-	            var issue = _props4.issue;
-	            var comments = _props4.comments;
-	            var is_loading = _props4.is_loading;
-
-
-	            if (!is_visible) {
-	                return _react2.default.createElement('div', null);
-	            }
-
-	            return _react2.default.createElement(
-	                'div',
-	                { className: 'issue_developer_details', style: { opacity: is_loading ? 0.5 : 1 } },
-	                _react2.default.createElement(
-	                    'div',
-	                    { className: 'panel panel--full' },
-	                    _react2.default.createElement(
-	                        'div',
-	                        { className: 'panel-heading' },
-	                        _react2.default.createElement(
-	                            'div',
-	                            { className: 'panel__title' },
-	                            'Issue Details'
-	                        ),
-	                        _react2.default.createElement(
-	                            'div',
-	                            { className: 'panel__buttons' },
-	                            _react2.default.createElement('div', { className: 'panel__button panel__button--refresh',
-	                                onClick: this.onRefresh })
-	                        )
-	                    ),
-	                    _react2.default.createElement(
-	                        'div',
-	                        { className: 'issue_developer_details__panel-body' },
-	                        _react2.default.createElement(
-	                            'h3',
-	                            null,
-	                            'issue#',
-	                            issue.number,
-	                            ': ',
-	                            issue.subject
-	                        ),
-	                        _react2.default.createElement(_RIETextArea.RIETextArea, {
-	                            value: issue.description || "",
-	                            propName: 'description',
-	                            change: this.onChangeDescription
-	                        })
-	                    ),
-	                    _react2.default.createElement(
-	                        'div',
-	                        null,
-	                        comments.map(function (comment) {
-	                            return _this2.renderComment(comment);
-	                        })
-	                    )
-	                )
-	            );
-	        }
-	    }]);
-
-	    return IssueDeveloperDetails;
-	}(_react.Component);
-
-	function mapStateToProps(state, props) {
-	    var item_list = state.item_list || {};
-	    var list_key = props.list_key;
-
-	    var l = item_list[list_key] || {};
-	    var filter = l.filter || {};
-	    var issue_id = filter.issue_id;
-
-	    var issue_general_details = state.issue_general_details || {};
-	    var general_details = (issue_general_details.items_by_id || {})[issue_id] || {};
-	    var is_loading = (0, _indexOf2.default)(issue_general_details.loading_item_ids || [], issue_id) !== -1;
-
-	    var issues = (state.issue || {}).items_by_id || {};
-	    var issue = issues[issue_id] || {};
-
-	    issue = Object.assign({}, issue, general_details);
-
-	    var comments = issue.issue_comments || [];
-
-	    return {
-	        issue_id: issue_id,
-	        issue: issue,
-	        comments: comments,
-	        is_loading: general_details.is_loading,
-	        is_visible: issue_id || false
-	    };
-	}
-
-	exports.default = (0, _reactRedux.connect)(mapStateToProps)(IssueDeveloperDetails);
-
-/***/ },
-/* 867 */
-/***/ function(module, exports, __webpack_require__) {
-
-	'use strict';
-
-	Object.defineProperty(exports, "__esModule", {
-					value: true
-	});
-	exports.RIETextArea = undefined;
-
-	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
-
-	var _react = __webpack_require__(300);
-
-	var _react2 = _interopRequireDefault(_react);
-
-	var _reactDom = __webpack_require__(336);
-
-	var _reactDom2 = _interopRequireDefault(_reactDom);
-
-	var _riek = __webpack_require__(857);
-
-	var _reactAutosizeTextarea = __webpack_require__(868);
-
-	var _reactAutosizeTextarea2 = _interopRequireDefault(_reactAutosizeTextarea);
-
-	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
-	function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
-
-	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
-
-	var RIETextArea = exports.RIETextArea = function (_Component) {
-					_inherits(RIETextArea, _Component);
-
-					function RIETextArea(props) {
-									_classCallCheck(this, RIETextArea);
-
-									var _this = _possibleConstructorReturn(this, Object.getPrototypeOf(RIETextArea).call(this, props));
-
-									_this.startEditing = _this.startEditing.bind(_this);
-									_this.stopEditing = _this.stopEditing.bind(_this);
-									_this.commit = _this.commit.bind(_this);
-									_this.cancel = _this.cancel.bind(_this);
-									_this.state = {
-													editing: false
-									};
-									return _this;
-					}
-
-					_createClass(RIETextArea, [{
-									key: 'startEditing',
-									value: function startEditing() {
-													this.setState({ editing: true });
-									}
-					}, {
-									key: 'commit',
-									value: function commit() {
-													var new_value = _reactDom2.default.findDOMNode(this.editor).value;
-													this.stopEditing();
-													var res = {};
-													res[this.props.propName] = new_value;
-													this.props.change(res);
-									}
-					}, {
-									key: 'cancel',
-									value: function cancel() {
-													this.stopEditing();
-									}
-					}, {
-									key: 'stopEditing',
-									value: function stopEditing() {
-													this.setState({ editing: false });
-									}
-					}, {
-									key: 'renderNormalComponent',
-									value: function renderNormalComponent() {
-													return _react2.default.createElement(
-																	'div',
-																	null,
-																	this.state.newValue || this.props.value,
-																	_react2.default.createElement('br', null),
-																	_react2.default.createElement(
-																					'button',
-																					{ className: 'btn btn-secondary', onClick: this.startEditing },
-																					'Edit'
-																	)
-													);
-									}
-					}, {
-									key: 'renderEditingComponent',
-									value: function renderEditingComponent() {
-													var _this2 = this;
-
-													return _react2.default.createElement(
-																	'div',
-																	null,
-																	_react2.default.createElement(_reactAutosizeTextarea2.default, { ref: function ref(_ref) {
-																									return _this2.editor = _ref;
-																					}, rows: '20', cols: '80', defaultValue: this.props.value }),
-																	_react2.default.createElement(
-																					'button',
-																					{ className: 'btn btn-primary', onClick: this.commit },
-																					'Save'
-																	),
-																	_react2.default.createElement(
-																					'button',
-																					{ className: 'btn btn-cancel', onClick: this.cancel },
-																					'Cancel'
-																	)
-													);
-									}
-					}, {
-									key: 'render',
-									value: function render() {
-													if (this.state.editing) {
-																	return this.renderEditingComponent();
-													} else {
-																	return this.renderNormalComponent();
-													}
-									}
-					}]);
-
-					return RIETextArea;
-	}(_react.Component);
-
-/***/ },
-/* 868 */
-/***/ function(module, exports, __webpack_require__) {
-
-	module.exports = __webpack_require__(869);
-
-/***/ },
-/* 869 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -62366,7 +61570,7 @@
 
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
 
-	var _TextareaAutosizeJs = __webpack_require__(870);
+	var _TextareaAutosizeJs = __webpack_require__(864);
 
 	var _TextareaAutosizeJs2 = _interopRequireDefault(_TextareaAutosizeJs);
 
@@ -62374,7 +61578,7 @@
 	module.exports = exports['default'];
 
 /***/ },
-/* 870 */
+/* 864 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -62401,7 +61605,7 @@
 
 	var _reactDom2 = _interopRequireDefault(_reactDom);
 
-	var _autosize = __webpack_require__(871);
+	var _autosize = __webpack_require__(865);
 
 	var _autosize2 = _interopRequireDefault(_autosize);
 
@@ -62497,7 +61701,7 @@
 	module.exports = exports['default'];
 
 /***/ },
-/* 871 */
+/* 865 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/*!
@@ -62756,7 +61960,598 @@
 	});
 
 /***/ },
-/* 872 */
+/* 866 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	Object.defineProperty(exports, "__esModule", {
+					value: true
+	});
+	exports.OtherUser = undefined;
+
+	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+	var _react = __webpack_require__(300);
+
+	var _react2 = _interopRequireDefault(_react);
+
+	var _reactRouter = __webpack_require__(466);
+
+	var _reactDnd = __webpack_require__(557);
+
+	var _reactRedux = __webpack_require__(533);
+
+	var _map = __webpack_require__(675);
+
+	var _map2 = _interopRequireDefault(_map);
+
+	var _indexOf = __webpack_require__(743);
+
+	var _indexOf2 = _interopRequireDefault(_indexOf);
+
+	var _classnames = __webpack_require__(851);
+
+	var _classnames2 = _interopRequireDefault(_classnames);
+
+	var _Dnd = __webpack_require__(852);
+
+	var _Users = __webpack_require__(867);
+
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+	function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+	var OtherUser = exports.OtherUser = function (_Component) {
+					_inherits(OtherUser, _Component);
+
+					function OtherUser(props) {
+									_classCallCheck(this, OtherUser);
+
+									return _possibleConstructorReturn(this, Object.getPrototypeOf(OtherUser).call(this, props));
+					}
+
+					_createClass(OtherUser, [{
+									key: 'componentDidMount',
+									value: function componentDidMount() {
+													var _props = this.props;
+													var dispatch = _props.dispatch;
+													var user_id = _props.user_id;
+
+													if (user_id) {
+																	dispatch((0, _Users.fetchUsersIfNeeded)([user_id]));
+													}
+									}
+					}, {
+									key: 'render_inline_small',
+									value: function render_inline_small() {
+													var _props2 = this.props;
+													var user = _props2.user;
+													var loading_value = _props2.loading_value;
+
+
+													return _react2.default.createElement(
+																	'div',
+																	{ key: this.key + ".collapsed_user." + user.id },
+																	user.username && user.username,
+																	!user.username && loading_value
+													);
+									}
+					}, {
+									key: 'render',
+									value: function render() {
+													var _props3 = this.props;
+													var user_id = _props3.user_id;
+													var render_mode = _props3.render_mode;
+													var loading_value = _props3.loading_value;
+
+
+													if (!user_id) {
+																	return _react2.default.createElement(
+																					'div',
+																					null,
+																					loading_value
+																	);
+													}
+
+													if (render_mode == 'inline--small') {
+																	return this.render_inline_small();
+													} else {
+																	return _react2.default.createElement(
+																					'div',
+																					null,
+																					'Dev error, unsupported render mode: ',
+																					render_mode
+																	);
+													}
+									}
+					}]);
+
+					return OtherUser;
+	}(_react.Component);
+
+	function mapStateToProps(state, props) {
+					var user = state.user;
+					var user_id = props.user_id;
+					var render_mode = props.render_mode;
+					var loading_value = props.loading_value;
+
+
+					var this_user = user && user.items_by_id && user.items_by_id[user_id] || {};
+					var is_loading = user && user.loading_item_ids && (0, _indexOf2.default)(user.loading_item_ids, user_id) !== -1 || false;
+
+					return {
+									user: this_user,
+									is_loading: is_loading,
+									render_mode: render_mode || "inline--small",
+									loading_value: loading_value || "..."
+					};
+	}
+
+	exports.default = (0, _reactRedux.connect)(mapStateToProps)(OtherUser);
+
+/***/ },
+/* 867 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	Object.defineProperty(exports, "__esModule", {
+	    value: true
+	});
+	exports.INVALIDATE_USERS = exports.ANNOUNCE_LOADING_USERS = exports.ANNOUNCE_USERS_LOAD_FAILED = exports.ANNOUNCE_USERS_LOADED = undefined;
+	exports.invalidateUsers = invalidateUsers;
+	exports.fetchUsersIfNeeded = fetchUsersIfNeeded;
+
+	var _lib = __webpack_require__(734);
+
+	var _difference = __webpack_require__(739);
+
+	var _difference2 = _interopRequireDefault(_difference);
+
+	var _keys = __webpack_require__(695);
+
+	var _keys2 = _interopRequireDefault(_keys);
+
+	var _map = __webpack_require__(675);
+
+	var _map2 = _interopRequireDefault(_map);
+
+	var _Error = __webpack_require__(868);
+
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+	var ANNOUNCE_USERS_LOADED = exports.ANNOUNCE_USERS_LOADED = 'ANNOUNCE_USERS_LOADED';
+	var ANNOUNCE_USERS_LOAD_FAILED = exports.ANNOUNCE_USERS_LOAD_FAILED = 'ANNOUNCE_USERS_LOAD_FAILED';
+	var ANNOUNCE_LOADING_USERS = exports.ANNOUNCE_LOADING_USERS = 'ANNOUNCE_LOADING_USERS';
+	var INVALIDATE_USERS = exports.INVALIDATE_USERS = 'INVALIDATE_USERS';
+
+	function invalidateUsers(user_ids_to_invalidate) {
+	    return {
+	        type: INVALIDATE_USERS,
+	        user_ids_to_invalidate: user_ids_to_invalidate
+	    };
+	}
+
+	function announceLoadingUsers(user_ids) {
+	    return {
+	        type: ANNOUNCE_LOADING_USERS,
+	        user_ids_to_load: user_ids
+	    };
+	}
+
+	function announceUsersLoaded(payload) {
+
+	    var items_by_id = {};
+	    payload.users.map(function (item, index) {
+	        items_by_id[item.id] = item;
+	    });
+
+	    return {
+	        type: ANNOUNCE_USERS_LOADED,
+	        items_by_id: items_by_id,
+	        received_at: Date.now()
+	    };
+	}
+
+	function announceUsersLoadFailed(error) {
+	    return {
+	        type: ANNOUNCE_USERS_LOAD_FAILED,
+	        error: error,
+	        received_at: Date.now()
+	    };
+	}
+
+	function fetchUsers(dispatch, user_ids) {
+	    return function (dispatch, getState) {
+	        dispatch(announceLoadingUsers(user_ids));
+
+	        var params = { filter: { ids: user_ids },
+	            format: { detail_level: 'general' },
+	            pagination: { 'enabled': false } };
+
+	        return (0, _lib.impfetch)('/imp/user/', { params: params }).then(function (response) {
+	            return response.json();
+	        }).then(function (json) {
+	            if (json.status != 'success') {
+	                dispatch(announceUsersLoadFailed(json.error));
+	            } else {
+	                dispatch(announceUsersLoaded(json.payload));
+	            }
+	        }).catch(function (error) {
+	            dispatch(announceUsersLoadFailed("Failed to load users: " + error.message));
+	        });
+	    };
+	}
+
+	function getMissingUsers(state, required_user_ids) {
+	    var matching_items = state.user || {};
+	    var matching_item_ids = (0, _keys2.default)(matching_items.items_by_id || {});
+	    var matching_item_refs = matching_item_ids.map(function (item_id, index) {
+	        return "" + item_id;
+	    });
+	    var loading_item_ids = matching_items.loading_item_ids || [];
+	    var loading_item_refs = (0, _map2.default)(loading_item_ids, function (item_id, index) {
+	        return "" + item_id;
+	    });
+	    var required_item_refs = required_user_ids.map(function (item_id, index) {
+	        return "" + item_id;
+	    });
+	    var unmatching_item_refs = (0, _difference2.default)(required_item_refs, matching_item_refs);
+	    var unmatching_and_not_loading_item_refs = (0, _difference2.default)(unmatching_item_refs, loading_item_refs);
+	    return unmatching_and_not_loading_item_refs;
+	}
+
+	function fetchUsersIfNeeded(user_ids) {
+	    return function (dispatch, getState) {
+	        var state = getState();
+	        var missing_user_ids = getMissingUsers(state, user_ids);
+	        if (missing_user_ids.length > 0) {
+	            dispatch(fetchUsers(dispatch, missing_user_ids));
+	        }
+	    };
+	}
+
+/***/ },
+/* 868 */
+/***/ function(module, exports) {
+
+	'use strict';
+
+	Object.defineProperty(exports, "__esModule", {
+	    value: true
+	});
+	exports.setErrorMessage = setErrorMessage;
+	exports.clearErrorMessage = clearErrorMessage;
+	var SET_ERROR_MESSAGE = exports.SET_ERROR_MESSAGE = 'SET_ERROR_MESSAGE';
+
+	function setErrorMessage(error) {
+	    return {
+	        type: SET_ERROR_MESSAGE,
+	        error_message: error
+	    };
+	}
+
+	function clearErrorMessage() {
+	    return setErrorMessage(null);
+	}
+
+/***/ },
+/* 869 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	Object.defineProperty(exports, "__esModule", {
+					value: true
+	});
+	exports.ANNOUNCE_SAVING_NEW_ISSUE_FAILED = exports.ANNOUNCE_SAVED_NEW_ISSUE = exports.ANNOUNCE_SAVING_NEW_ISSUE = exports.CANCEL_CREATING_NEW_ISSUE = exports.UPDATE_NEW_ISSUE_DETAILS = exports.ANNOUNCE_CAPTURING_NEW_ISSUE = exports.ANNOUNCE_ISSUE_SAVE_FAILED = exports.ANNOUNCE_ISSUE_SAVED = exports.ANNOUNCE_ISSUE_SAVING = undefined;
+	exports.updateIssueSubject = updateIssueSubject;
+	exports.updateIssueDescription = updateIssueDescription;
+	exports.reorderIssue = reorderIssue;
+	exports.startCandidateIssue = startCandidateIssue;
+	exports.updateCandidateSubject = updateCandidateSubject;
+	exports.cancelCandidateIssue = cancelCandidateIssue;
+	exports.saveCandidateIssue = saveCandidateIssue;
+
+	var _lib = __webpack_require__(734);
+
+	var _difference = __webpack_require__(739);
+
+	var _difference2 = _interopRequireDefault(_difference);
+
+	var _keys = __webpack_require__(695);
+
+	var _keys2 = _interopRequireDefault(_keys);
+
+	var _map = __webpack_require__(675);
+
+	var _map2 = _interopRequireDefault(_map);
+
+	var _ItemList = __webpack_require__(733);
+
+	var _Issues = __webpack_require__(870);
+
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+	var ANNOUNCE_ISSUE_SAVING = exports.ANNOUNCE_ISSUE_SAVING = 'ANNOUNCE_ISSUE_SAVING';
+	var ANNOUNCE_ISSUE_SAVED = exports.ANNOUNCE_ISSUE_SAVED = 'ANNOUNCE_ISSUE_SAVED';
+	var ANNOUNCE_ISSUE_SAVE_FAILED = exports.ANNOUNCE_ISSUE_SAVE_FAILED = 'ANNOUNCE_ISSUE_SAVE_FAILED';
+
+	var ANNOUNCE_CAPTURING_NEW_ISSUE = exports.ANNOUNCE_CAPTURING_NEW_ISSUE = 'ANNOUNCE_CAPTURING_NEW_ISSUE';
+	var UPDATE_NEW_ISSUE_DETAILS = exports.UPDATE_NEW_ISSUE_DETAILS = 'UPDATE_NEW_ISSUE_DETAILS';
+	var CANCEL_CREATING_NEW_ISSUE = exports.CANCEL_CREATING_NEW_ISSUE = 'CANCEL_CREATING_NEW_ISSUE';
+	var ANNOUNCE_SAVING_NEW_ISSUE = exports.ANNOUNCE_SAVING_NEW_ISSUE = 'ANNOUNCE_SAVING_NEW_ISSUE';
+	var ANNOUNCE_SAVED_NEW_ISSUE = exports.ANNOUNCE_SAVED_NEW_ISSUE = 'ANNOUNCE_SAVED_NEW_ISSUE';
+	var ANNOUNCE_SAVING_NEW_ISSUE_FAILED = exports.ANNOUNCE_SAVING_NEW_ISSUE_FAILED = 'ANNOUNCE_SAVING_NEW_ISSUE_FAILED';
+
+	function announceIssueSaveFailed(error) {
+					return {
+									type: ANNOUNCE_ISSUE_SAVE_FAILED,
+									error: error,
+									received_at: Date.now()
+					};
+	}
+
+	function announceIssueSaved(issue_id) {
+					return {
+									type: ANNOUNCE_ISSUE_SAVED,
+									issue_id: issue_id,
+									saved_at: Date.now()
+					};
+	}
+
+	function announceIssueSaving(issue_id) {
+					return {
+									type: ANNOUNCE_ISSUE_SAVING,
+									issue_id: issue_id,
+									saved_at: Date.now()
+					};
+	}
+
+	function announceCandidateIssueSaving() {
+					return {
+									type: ANNOUNCE_SAVING_NEW_ISSUE
+					};
+	}
+
+	function announceCandidateIssueSaved(new_issue) {
+					return {
+									type: ANNOUNCE_SAVED_NEW_ISSUE,
+									issue: new_issue
+					};
+	}
+
+	function announceCandidateIssueSaveFailed(error) {
+					return {
+									type: ANNOUNCE_SAVING_NEW_ISSUE_FAILED,
+									error: error
+					};
+	}
+
+	function updateIssueSubject(issue_id, value) {
+					return updateIssue(issue_id, "subject", value);
+	}
+
+	function updateIssueDescription(issue_id, value) {
+					return updateIssue(issue_id, "description", value);
+	}
+
+	function updateIssue(issue_id, field_name, new_value, on_done) {
+					return function (dispatch, getState) {
+									dispatch(announceIssueSaving(issue_id));
+									var data = { field_name: field_name,
+													value: new_value };
+									return (0, _lib.impfetch)("/imp/issue/" + issue_id + "/", { method: "PUT",
+													credentials: 'same-origin',
+													data: data,
+													headers: { "Content-type": "application/json; charset=UTF-8" },
+													body: JSON.stringify(data) }).then(function (response) {
+													return response.json();
+									}).then(function (json) {
+													if (json.status != 'success') {
+																	console.log('Request failed with JSON response', json);
+																	dispatch(announceIssueSaveFailed(json.error));
+													} else {
+																	console.log('Request succeeded with JSON response', json);
+																	dispatch(announceIssueSaved(json.payload));
+																	dispatch((0, _Issues.invalidateIssues)([issue_id]));
+													}
+													if (on_done) {
+																	on_done();
+													}
+									}).catch(function (error) {
+													console.log('Request failed', error);
+													dispatch(announceIssueSaveFailed(error));
+									});
+					};
+	}
+
+	function reorderIssue(issue_id_before, issue_id_after, on_done) {
+					return updateIssue(issue_id_before, "issue_id_after", issue_id_after, on_done);
+	}
+
+	function startCandidateIssue(list_key) {
+					return function (dispatch, getState) {
+									var state = getState();
+									var issues_by_id = state.issue.items_by_id;
+									var l = state.item_list[list_key];
+
+									var selected_ids = l.selected_ids;
+
+									var position = 0;
+									var issue_id_before = null;
+									if (selected_ids.length > 0) {
+													issue_id_before = selected_ids[0];
+													var issue_before = issues_by_id[issue_id_before];
+													position = issue_before.position || position;
+									}
+
+									dispatch({
+													type: ANNOUNCE_CAPTURING_NEW_ISSUE,
+													position: position,
+													issue_id_before: issue_id_before,
+													sprint_id: l.sprint_id
+									});
+					};
+	}
+
+	function updateCandidateSubject(subject) {
+					return {
+									key: UPDATE_NEW_ISSUE_DETAILS,
+									candidate_issue: { "subject": subject }
+					};
+	}
+
+	function cancelCandidateIssue() {
+					return {
+									key: CANCEL_CREATING_NEW_ISSUE
+					};
+	}
+
+	function saveCandidateIssue() {
+
+					return function (dispatch, getState) {
+									var state = getState();
+									dispatch(announceCandidateIssueSaving());
+									var data = { issue: state.issue.candidate_issue };
+
+									return (0, _lib.impfetch)("/imp/issue/", { method: "POST",
+													credentials: 'same-origin',
+													data: data,
+													headers: { "Content-type": "application/json; charset=UTF-8" },
+													body: JSON.stringify(data) }).then(function (response) {
+													return response.json();
+									}).then(function (json) {
+													if (json.status != 'success') {
+																	console.log('Request failed with JSON response', json);
+																	dispatch(announceCandidateIssueSaveFailed(json.error));
+													} else {
+																	console.log('Request succeeded with JSON response', json);
+																	dispatch(announceCandidateIssueSaved(json.payload));
+													}
+									}).catch(function (error) {
+													console.log('Request failed', error);
+													dispatch(announceCandidateIssueSaveFailed(error));
+									});
+					};
+	}
+
+/***/ },
+/* 870 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	Object.defineProperty(exports, "__esModule", {
+	    value: true
+	});
+	exports.INVALIDATE_ISSUES = exports.ANNOUNCE_LOADING_ISSUES = exports.ANNOUNCE_ISSUES_LOAD_FAILED = exports.ANNOUNCE_ISSUES_LOADED = undefined;
+	exports.invalidateIssues = invalidateIssues;
+	exports.refreshIssues = refreshIssues;
+	exports.fetchIssuesIfNeeded = fetchIssuesIfNeeded;
+
+	var _lib = __webpack_require__(734);
+
+	var _difference = __webpack_require__(739);
+
+	var _difference2 = _interopRequireDefault(_difference);
+
+	var _keys = __webpack_require__(695);
+
+	var _keys2 = _interopRequireDefault(_keys);
+
+	var _map = __webpack_require__(675);
+
+	var _map2 = _interopRequireDefault(_map);
+
+	var _ItemList = __webpack_require__(733);
+
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+	var ANNOUNCE_ISSUES_LOADED = exports.ANNOUNCE_ISSUES_LOADED = 'ANNOUNCE_ISSUES_LOADED';
+	var ANNOUNCE_ISSUES_LOAD_FAILED = exports.ANNOUNCE_ISSUES_LOAD_FAILED = 'ANNOUNCE_ISSUES_LOAD_FAILED';
+	var ANNOUNCE_LOADING_ISSUES = exports.ANNOUNCE_LOADING_ISSUES = 'ANNOUNCE_LOADING_ISSUES';
+	var INVALIDATE_ISSUES = exports.INVALIDATE_ISSUES = 'INVALIDATE_ISSUES';
+
+	function invalidateIssues(issue_ids) {
+	    return {
+	        type: INVALIDATE_ISSUES,
+	        issue_ids_to_invalidate: issue_ids
+	    };
+	}
+
+	function announceLoadingIssues(issue_ids) {
+	    return {
+	        type: ANNOUNCE_LOADING_ISSUES,
+	        issue_ids_to_load: issue_ids
+	    };
+	}
+
+	function refreshIssues(list_key) {
+	    return function (dispatch, getState) {
+	        dispatch(invalidateItems());
+	        dispatch(fetchIssuesIfNeeded());
+	    };
+	}
+
+	function announceIssuesLoaded(payload) {
+
+	    var items_by_id = {};
+	    payload.issues.map(function (item, index) {
+	        items_by_id[item.id] = item;
+	    });
+
+	    return {
+	        type: ANNOUNCE_ISSUES_LOADED,
+	        items_by_id: items_by_id,
+	        received_at: Date.now()
+	    };
+	}
+
+	function announceIssuesLoadFailed(error) {
+	    return {
+	        type: ANNOUNCE_ISSUES_LOAD_FAILED,
+	        error: error,
+	        received_at: Date.now()
+	    };
+	}
+
+	function fetchIssuesPromise(dispatch, issue_ids) {
+	    return new Promise(function (resolve, reject) {
+	        dispatch(announceLoadingIssues(issue_ids));
+
+	        var params = { filter: { ids: issue_ids },
+	            pagination: { 'enabled': false } };
+
+	        return (0, _lib.impfetch)('/imp/issue/', { params: params }).then(function (response) {
+	            return response.json();
+	        }).then(function (json) {
+	            if (json.status != 'success') {
+	                dispatch(announceIssuesLoadFailed());
+	                reject(json.error);
+	            } else {
+	                dispatch(announceIssuesLoaded(json.payload));
+	            }
+	        }).catch(function (error) {
+	            dispatch(announceIssuesLoadFailed("Failed to load issues: " + error.message));
+	            reject("Failed to load issues: " + error.message);
+	        });
+	    });
+	}
+
+	function fetchIssuesIfNeeded(list_key) {
+	    var matching_items_key = 'issue';
+	    var matching_items_promise_func = fetchIssuesPromise;
+	    return (0, _ItemList.fetchListIfNeeded)(list_key, matching_items_key, matching_items_promise_func);
+	}
+
+/***/ },
+/* 871 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -62782,7 +62577,7 @@
 
 	var _map2 = _interopRequireDefault(_map);
 
-	var _Error = __webpack_require__(865);
+	var _Error = __webpack_require__(868);
 
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -62872,7 +62667,7 @@
 	}
 
 /***/ },
-/* 873 */
+/* 872 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -62892,7 +62687,7 @@
 
 	var _reactRedux = __webpack_require__(533);
 
-	var _NotificationBar = __webpack_require__(874);
+	var _NotificationBar = __webpack_require__(873);
 
 	var _NotificationBar2 = _interopRequireDefault(_NotificationBar);
 
@@ -62951,7 +62746,7 @@
 	exports.default = (0, _reactRedux.connect)(mapStateToProps)(HeaderBar);
 
 /***/ },
-/* 874 */
+/* 873 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -63019,7 +62814,7 @@
 	exports.default = (0, _reactRedux.connect)(mapStateToProps)(NotificationBar);
 
 /***/ },
-/* 875 */
+/* 874 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -63031,15 +62826,15 @@
 
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
 
-	var _HTML5Backend = __webpack_require__(876);
+	var _HTML5Backend = __webpack_require__(875);
 
 	var _HTML5Backend2 = _interopRequireDefault(_HTML5Backend);
 
-	var _getEmptyImage = __webpack_require__(896);
+	var _getEmptyImage = __webpack_require__(895);
 
 	var _getEmptyImage2 = _interopRequireDefault(_getEmptyImage);
 
-	var _NativeTypes = __webpack_require__(895);
+	var _NativeTypes = __webpack_require__(894);
 
 	var NativeTypes = _interopRequireWildcard(_NativeTypes);
 
@@ -63051,7 +62846,7 @@
 	}
 
 /***/ },
-/* 876 */
+/* 875 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -63064,25 +62859,25 @@
 
 	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError('Cannot call a class as a function'); } }
 
-	var _lodashDefaults = __webpack_require__(877);
+	var _lodashDefaults = __webpack_require__(876);
 
 	var _lodashDefaults2 = _interopRequireDefault(_lodashDefaults);
 
-	var _shallowEqual = __webpack_require__(888);
+	var _shallowEqual = __webpack_require__(887);
 
 	var _shallowEqual2 = _interopRequireDefault(_shallowEqual);
 
-	var _EnterLeaveCounter = __webpack_require__(889);
+	var _EnterLeaveCounter = __webpack_require__(888);
 
 	var _EnterLeaveCounter2 = _interopRequireDefault(_EnterLeaveCounter);
 
-	var _BrowserDetector = __webpack_require__(891);
+	var _BrowserDetector = __webpack_require__(890);
 
-	var _OffsetUtils = __webpack_require__(892);
+	var _OffsetUtils = __webpack_require__(891);
 
-	var _NativeDragSources = __webpack_require__(894);
+	var _NativeDragSources = __webpack_require__(893);
 
-	var _NativeTypes = __webpack_require__(895);
+	var _NativeTypes = __webpack_require__(894);
 
 	var NativeTypes = _interopRequireWildcard(_NativeTypes);
 
@@ -63632,12 +63427,12 @@
 	module.exports = exports['default'];
 
 /***/ },
-/* 877 */
+/* 876 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var apply = __webpack_require__(621),
-	    assignInDefaults = __webpack_require__(878),
-	    assignInWith = __webpack_require__(879),
+	    assignInDefaults = __webpack_require__(877),
+	    assignInWith = __webpack_require__(878),
 	    rest = __webpack_require__(620);
 
 	/**
@@ -63670,7 +63465,7 @@
 
 
 /***/ },
-/* 878 */
+/* 877 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var eq = __webpack_require__(595);
@@ -63703,12 +63498,12 @@
 
 
 /***/ },
-/* 879 */
+/* 878 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var copyObject = __webpack_require__(880),
-	    createAssigner = __webpack_require__(882),
-	    keysIn = __webpack_require__(884);
+	var copyObject = __webpack_require__(879),
+	    createAssigner = __webpack_require__(881),
+	    keysIn = __webpack_require__(883);
 
 	/**
 	 * This method is like `_.assignIn` except that it accepts `customizer`
@@ -63747,10 +63542,10 @@
 
 
 /***/ },
-/* 880 */
+/* 879 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var assignValue = __webpack_require__(881);
+	var assignValue = __webpack_require__(880);
 
 	/**
 	 * Copies properties of `source` to `object`.
@@ -63784,7 +63579,7 @@
 
 
 /***/ },
-/* 881 */
+/* 880 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var eq = __webpack_require__(595);
@@ -63817,10 +63612,10 @@
 
 
 /***/ },
-/* 882 */
+/* 881 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var isIterateeCall = __webpack_require__(883),
+	var isIterateeCall = __webpack_require__(882),
 	    rest = __webpack_require__(620);
 
 	/**
@@ -63860,7 +63655,7 @@
 
 
 /***/ },
-/* 883 */
+/* 882 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var eq = __webpack_require__(595),
@@ -63896,10 +63691,10 @@
 
 
 /***/ },
-/* 884 */
+/* 883 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var baseKeysIn = __webpack_require__(885),
+	var baseKeysIn = __webpack_require__(884),
 	    indexKeys = __webpack_require__(697),
 	    isIndex = __webpack_require__(701),
 	    isPrototype = __webpack_require__(702);
@@ -63957,11 +63752,11 @@
 
 
 /***/ },
-/* 885 */
+/* 884 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var Reflect = __webpack_require__(886),
-	    iteratorToArray = __webpack_require__(887);
+	var Reflect = __webpack_require__(885),
+	    iteratorToArray = __webpack_require__(886);
 
 	/** Used for built-in method references. */
 	var objectProto = Object.prototype;
@@ -63999,7 +63794,7 @@
 
 
 /***/ },
-/* 886 */
+/* 885 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var root = __webpack_require__(583);
@@ -64011,7 +63806,7 @@
 
 
 /***/ },
-/* 887 */
+/* 886 */
 /***/ function(module, exports) {
 
 	/**
@@ -64035,7 +63830,7 @@
 
 
 /***/ },
-/* 888 */
+/* 887 */
 /***/ function(module, exports) {
 
 	"use strict";
@@ -64076,7 +63871,7 @@
 	module.exports = exports["default"];
 
 /***/ },
-/* 889 */
+/* 888 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -64087,7 +63882,7 @@
 
 	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError('Cannot call a class as a function'); } }
 
-	var _lodashUnion = __webpack_require__(890);
+	var _lodashUnion = __webpack_require__(889);
 
 	var _lodashUnion2 = _interopRequireDefault(_lodashUnion);
 
@@ -64133,7 +63928,7 @@
 	module.exports = exports['default'];
 
 /***/ },
-/* 890 */
+/* 889 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var baseFlatten = __webpack_require__(740),
@@ -64165,7 +63960,7 @@
 
 
 /***/ },
-/* 891 */
+/* 890 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -64190,7 +63985,7 @@
 	exports.isSafari = isSafari;
 
 /***/ },
-/* 892 */
+/* 891 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -64202,9 +63997,9 @@
 
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
 
-	var _BrowserDetector = __webpack_require__(891);
+	var _BrowserDetector = __webpack_require__(890);
 
-	var _MonotonicInterpolant = __webpack_require__(893);
+	var _MonotonicInterpolant = __webpack_require__(892);
 
 	var _MonotonicInterpolant2 = _interopRequireDefault(_MonotonicInterpolant);
 
@@ -64290,7 +64085,7 @@
 	}
 
 /***/ },
-/* 893 */
+/* 892 */
 /***/ function(module, exports) {
 
 	"use strict";
@@ -64407,7 +64202,7 @@
 	module.exports = exports["default"];
 
 /***/ },
-/* 894 */
+/* 893 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -64425,7 +64220,7 @@
 
 	function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
 
-	var _NativeTypes = __webpack_require__(895);
+	var _NativeTypes = __webpack_require__(894);
 
 	var NativeTypes = _interopRequireWildcard(_NativeTypes);
 
@@ -64515,7 +64310,7 @@
 	}
 
 /***/ },
-/* 895 */
+/* 894 */
 /***/ function(module, exports) {
 
 	'use strict';
@@ -64529,7 +64324,7 @@
 	exports.TEXT = TEXT;
 
 /***/ },
-/* 896 */
+/* 895 */
 /***/ function(module, exports) {
 
 	'use strict';
@@ -64550,7 +64345,7 @@
 	module.exports = exports['default'];
 
 /***/ },
-/* 897 */
+/* 896 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -64562,19 +64357,19 @@
 
 	var _redux = __webpack_require__(540);
 
-	var _reduxThunk = __webpack_require__(898);
+	var _reduxThunk = __webpack_require__(897);
 
 	var _reduxThunk2 = _interopRequireDefault(_reduxThunk);
 
-	var _error_catcher = __webpack_require__(899);
+	var _error_catcher = __webpack_require__(898);
 
 	var _error_catcher2 = _interopRequireDefault(_error_catcher);
 
-	var _DevPageMiddleware = __webpack_require__(900);
+	var _DevPageMiddleware = __webpack_require__(899);
 
 	var _DevPageMiddleware2 = _interopRequireDefault(_DevPageMiddleware);
 
-	var _reducers = __webpack_require__(901);
+	var _reducers = __webpack_require__(900);
 
 	var _reducers2 = _interopRequireDefault(_reducers);
 
@@ -64588,7 +64383,7 @@
 	}
 
 /***/ },
-/* 898 */
+/* 897 */
 /***/ function(module, exports) {
 
 	'use strict';
@@ -64616,12 +64411,12 @@
 	exports['default'] = thunk;
 
 /***/ },
-/* 899 */
+/* 898 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 
-	var _Error = __webpack_require__(865);
+	var _Error = __webpack_require__(868);
 
 	var _indexOf = __webpack_require__(743);
 
@@ -64649,12 +64444,12 @@
 	module.exports = error_catcher_middleware;
 
 /***/ },
-/* 900 */
+/* 899 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 
-	var _Error = __webpack_require__(865);
+	var _Error = __webpack_require__(868);
 
 	var _indexOf = __webpack_require__(743);
 
@@ -64662,13 +64457,13 @@
 
 	var _ItemList = __webpack_require__(733);
 
-	var _Issue = __webpack_require__(855);
+	var _Issue = __webpack_require__(869);
 
 	var _Sprints = __webpack_require__(742);
 
-	var _Issues = __webpack_require__(854);
+	var _Issues = __webpack_require__(870);
 
-	var _IssueGeneralDetails = __webpack_require__(872);
+	var _IssueGeneralDetails = __webpack_require__(871);
 
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -64689,7 +64484,6 @@
 
 																					var selected_ids = action.selected_ids || [];
 																					var selected_id = selected_ids.length > 0 && selected_ids[0] || null;
-
 																					if (action.list_key == projects_list_key) {
 																									// Change selected project
 																									dispatch((0, _ItemList.update_list_filter)(sprints_list_key, { project_id: selected_id }));
@@ -64721,19 +64515,25 @@
 																									dispatch((0, _ItemList.update_list_filter)(issue_details_developer_key, { issue_id: null }));
 																					} else if (action.list_key == issues_list_key) {
 																									// Change selected issue
-																									var _issue_id = selected_id;
-																									dispatch((0, _ItemList.update_list_filter)(issue_details_developer_key, { issue_id: _issue_id }));
-																									dispatch((0, _IssueGeneralDetails.invalidateIssueGeneralDetails)([_issue_id]));
-																									dispatch((0, _IssueGeneralDetails.fetchIssueGeneralDetailsIfNeeded)([_issue_id]));
+																									var issue_id = selected_id;
+																									dispatch((0, _ItemList.update_list_filter)(issue_details_developer_key, { issue_id: issue_id }));
+																									dispatch((0, _IssueGeneralDetails.invalidateIssueGeneralDetails)([issue_id]));
+																									dispatch((0, _IssueGeneralDetails.fetchIssueGeneralDetailsIfNeeded)([issue_id]));
 																					}
 																					break;
 																	case _Issue.ANNOUNCE_ISSUE_SAVED:
-																					var issue_id = action.issue_id;
-																					dispatch((0, _Issues.invalidateIssues)([issue_id]));
-																					dispatch((0, _IssueGeneralDetails.invalidateIssueGeneralDetails)([issue_id]));
+																					dispatch((0, _Issues.invalidateIssues)([action.issue.id]));
+																					dispatch((0, _IssueGeneralDetails.invalidateIssueGeneralDetails)([action.issue.id]));
 
 																					dispatch((0, _Issues.fetchIssuesIfNeeded)(issues_list_key));
-																					dispatch((0, _IssueGeneralDetails.fetchIssueGeneralDetailsIfNeeded)([issue_id]));
+																					dispatch((0, _IssueGeneralDetails.fetchIssueGeneralDetailsIfNeeded)([action.issue.id]));
+																					break;
+																	case _Issue.ANNOUNCE_SAVED_NEW_ISSUE:
+																					dispatch((0, _Issues.invalidateIssues)([action.issue.id]));
+																					dispatch((0, _IssueGeneralDetails.invalidateIssueGeneralDetails)([action.issue.id]));
+
+																					dispatch((0, _Issues.fetchIssuesIfNeeded)(issues_list_key));
+																					dispatch((0, _IssueGeneralDetails.fetchIssueGeneralDetailsIfNeeded)([action.issue.id]));
 																					break;
 													}
 													return next(action);
@@ -64744,7 +64544,7 @@
 	module.exports = DevPageMiddleware;
 
 /***/ },
-/* 901 */
+/* 900 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -64753,7 +64553,7 @@
 	    value: true
 	});
 
-	var _merge = __webpack_require__(902);
+	var _merge = __webpack_require__(901);
 
 	var _merge2 = _interopRequireDefault(_merge);
 
@@ -64765,31 +64565,31 @@
 
 	var _map2 = _interopRequireDefault(_map);
 
-	var _item_list = __webpack_require__(933);
+	var _item_list = __webpack_require__(932);
 
 	var _item_list2 = _interopRequireDefault(_item_list);
 
-	var _project = __webpack_require__(934);
+	var _project = __webpack_require__(933);
 
 	var _project2 = _interopRequireDefault(_project);
 
-	var _sprint = __webpack_require__(936);
+	var _sprint = __webpack_require__(935);
 
 	var _sprint2 = _interopRequireDefault(_sprint);
 
-	var _issue = __webpack_require__(937);
+	var _issue = __webpack_require__(936);
 
 	var _issue2 = _interopRequireDefault(_issue);
 
-	var _issue_general_details = __webpack_require__(938);
+	var _issue_general_details = __webpack_require__(937);
 
 	var _issue_general_details2 = _interopRequireDefault(_issue_general_details);
 
-	var _notification_bar = __webpack_require__(939);
+	var _notification_bar = __webpack_require__(938);
 
 	var _notification_bar2 = _interopRequireDefault(_notification_bar);
 
-	var _user = __webpack_require__(940);
+	var _user = __webpack_require__(939);
 
 	var _user2 = _interopRequireDefault(_user);
 
@@ -64809,11 +64609,11 @@
 	exports.default = rootReducer;
 
 /***/ },
-/* 902 */
+/* 901 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var baseMerge = __webpack_require__(903),
-	    createAssigner = __webpack_require__(882);
+	var baseMerge = __webpack_require__(902),
+	    createAssigner = __webpack_require__(881);
 
 	/**
 	 * This method is like `_.assign` except that it recursively merges own and
@@ -64854,17 +64654,17 @@
 
 
 /***/ },
-/* 903 */
+/* 902 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var Stack = __webpack_require__(679),
-	    arrayEach = __webpack_require__(904),
-	    assignMergeValue = __webpack_require__(905),
-	    baseMergeDeep = __webpack_require__(906),
+	    arrayEach = __webpack_require__(903),
+	    assignMergeValue = __webpack_require__(904),
+	    baseMergeDeep = __webpack_require__(905),
 	    isArray = __webpack_require__(565),
 	    isObject = __webpack_require__(567),
 	    isTypedArray = __webpack_require__(707),
-	    keysIn = __webpack_require__(884);
+	    keysIn = __webpack_require__(883);
 
 	/**
 	 * The base implementation of `_.merge` without support for multiple sources.
@@ -64910,7 +64710,7 @@
 
 
 /***/ },
-/* 904 */
+/* 903 */
 /***/ function(module, exports) {
 
 	/**
@@ -64938,7 +64738,7 @@
 
 
 /***/ },
-/* 905 */
+/* 904 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var eq = __webpack_require__(595);
@@ -64963,12 +64763,12 @@
 
 
 /***/ },
-/* 906 */
+/* 905 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var assignMergeValue = __webpack_require__(905),
-	    baseClone = __webpack_require__(907),
-	    copyArray = __webpack_require__(910),
+	var assignMergeValue = __webpack_require__(904),
+	    baseClone = __webpack_require__(906),
+	    copyArray = __webpack_require__(909),
 	    isArguments = __webpack_require__(699),
 	    isArray = __webpack_require__(565),
 	    isArrayLikeObject = __webpack_require__(615),
@@ -64976,7 +64776,7 @@
 	    isObject = __webpack_require__(567),
 	    isPlainObject = __webpack_require__(542),
 	    isTypedArray = __webpack_require__(707),
-	    toPlainObject = __webpack_require__(932);
+	    toPlainObject = __webpack_require__(931);
 
 	/**
 	 * A specialized version of `baseMerge` for arrays and objects which performs
@@ -65052,23 +64852,23 @@
 
 
 /***/ },
-/* 907 */
+/* 906 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var Stack = __webpack_require__(679),
-	    arrayEach = __webpack_require__(904),
-	    assignValue = __webpack_require__(881),
-	    baseAssign = __webpack_require__(908),
-	    cloneBuffer = __webpack_require__(909),
-	    copyArray = __webpack_require__(910),
-	    copySymbols = __webpack_require__(911),
-	    getAllKeys = __webpack_require__(914),
+	    arrayEach = __webpack_require__(903),
+	    assignValue = __webpack_require__(880),
+	    baseAssign = __webpack_require__(907),
+	    cloneBuffer = __webpack_require__(908),
+	    copyArray = __webpack_require__(909),
+	    copySymbols = __webpack_require__(910),
+	    getAllKeys = __webpack_require__(913),
 	    getTag = __webpack_require__(703),
-	    initCloneArray = __webpack_require__(916),
-	    initCloneByTag = __webpack_require__(917),
-	    initCloneObject = __webpack_require__(928),
+	    initCloneArray = __webpack_require__(915),
+	    initCloneByTag = __webpack_require__(916),
+	    initCloneObject = __webpack_require__(927),
 	    isArray = __webpack_require__(565),
-	    isBuffer = __webpack_require__(930),
+	    isBuffer = __webpack_require__(929),
 	    isHostObject = __webpack_require__(544),
 	    isObject = __webpack_require__(567),
 	    keys = __webpack_require__(695);
@@ -65197,10 +64997,10 @@
 
 
 /***/ },
-/* 908 */
+/* 907 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var copyObject = __webpack_require__(880),
+	var copyObject = __webpack_require__(879),
 	    keys = __webpack_require__(695);
 
 	/**
@@ -65220,7 +65020,7 @@
 
 
 /***/ },
-/* 909 */
+/* 908 */
 /***/ function(module, exports) {
 
 	/**
@@ -65244,7 +65044,7 @@
 
 
 /***/ },
-/* 910 */
+/* 909 */
 /***/ function(module, exports) {
 
 	/**
@@ -65270,11 +65070,11 @@
 
 
 /***/ },
-/* 911 */
+/* 910 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var copyObject = __webpack_require__(880),
-	    getSymbols = __webpack_require__(912);
+	var copyObject = __webpack_require__(879),
+	    getSymbols = __webpack_require__(911);
 
 	/**
 	 * Copies own symbol properties of `source` to `object`.
@@ -65292,10 +65092,10 @@
 
 
 /***/ },
-/* 912 */
+/* 911 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var stubArray = __webpack_require__(913);
+	var stubArray = __webpack_require__(912);
 
 	/** Built-in value references. */
 	var getOwnPropertySymbols = Object.getOwnPropertySymbols;
@@ -65322,7 +65122,7 @@
 
 
 /***/ },
-/* 913 */
+/* 912 */
 /***/ function(module, exports) {
 
 	/**
@@ -65351,11 +65151,11 @@
 
 
 /***/ },
-/* 914 */
+/* 913 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var baseGetAllKeys = __webpack_require__(915),
-	    getSymbols = __webpack_require__(912),
+	var baseGetAllKeys = __webpack_require__(914),
+	    getSymbols = __webpack_require__(911),
 	    keys = __webpack_require__(695);
 
 	/**
@@ -65373,7 +65173,7 @@
 
 
 /***/ },
-/* 915 */
+/* 914 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var arrayPush = __webpack_require__(631),
@@ -65399,7 +65199,7 @@
 
 
 /***/ },
-/* 916 */
+/* 915 */
 /***/ function(module, exports) {
 
 	/** Used for built-in method references. */
@@ -65431,16 +65231,16 @@
 
 
 /***/ },
-/* 917 */
+/* 916 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var cloneArrayBuffer = __webpack_require__(918),
-	    cloneDataView = __webpack_require__(919),
-	    cloneMap = __webpack_require__(920),
-	    cloneRegExp = __webpack_require__(923),
-	    cloneSet = __webpack_require__(924),
-	    cloneSymbol = __webpack_require__(926),
-	    cloneTypedArray = __webpack_require__(927);
+	var cloneArrayBuffer = __webpack_require__(917),
+	    cloneDataView = __webpack_require__(918),
+	    cloneMap = __webpack_require__(919),
+	    cloneRegExp = __webpack_require__(922),
+	    cloneSet = __webpack_require__(923),
+	    cloneSymbol = __webpack_require__(925),
+	    cloneTypedArray = __webpack_require__(926);
 
 	/** `Object#toString` result references. */
 	var boolTag = '[object Boolean]',
@@ -65517,7 +65317,7 @@
 
 
 /***/ },
-/* 918 */
+/* 917 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var Uint8Array = __webpack_require__(691);
@@ -65539,10 +65339,10 @@
 
 
 /***/ },
-/* 919 */
+/* 918 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var cloneArrayBuffer = __webpack_require__(918);
+	var cloneArrayBuffer = __webpack_require__(917);
 
 	/**
 	 * Creates a clone of `dataView`.
@@ -65561,11 +65361,11 @@
 
 
 /***/ },
-/* 920 */
+/* 919 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var addMapEntry = __webpack_require__(921),
-	    arrayReduce = __webpack_require__(922),
+	var addMapEntry = __webpack_require__(920),
+	    arrayReduce = __webpack_require__(921),
 	    mapToArray = __webpack_require__(692);
 
 	/**
@@ -65586,7 +65386,7 @@
 
 
 /***/ },
-/* 921 */
+/* 920 */
 /***/ function(module, exports) {
 
 	/**
@@ -65607,7 +65407,7 @@
 
 
 /***/ },
-/* 922 */
+/* 921 */
 /***/ function(module, exports) {
 
 	/**
@@ -65639,7 +65439,7 @@
 
 
 /***/ },
-/* 923 */
+/* 922 */
 /***/ function(module, exports) {
 
 	/** Used to match `RegExp` flags from their coerced string values. */
@@ -65662,11 +65462,11 @@
 
 
 /***/ },
-/* 924 */
+/* 923 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var addSetEntry = __webpack_require__(925),
-	    arrayReduce = __webpack_require__(922),
+	var addSetEntry = __webpack_require__(924),
+	    arrayReduce = __webpack_require__(921),
 	    setToArray = __webpack_require__(636);
 
 	/**
@@ -65687,7 +65487,7 @@
 
 
 /***/ },
-/* 925 */
+/* 924 */
 /***/ function(module, exports) {
 
 	/**
@@ -65707,7 +65507,7 @@
 
 
 /***/ },
-/* 926 */
+/* 925 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var Symbol = __webpack_require__(690);
@@ -65731,10 +65531,10 @@
 
 
 /***/ },
-/* 927 */
+/* 926 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var cloneArrayBuffer = __webpack_require__(918);
+	var cloneArrayBuffer = __webpack_require__(917);
 
 	/**
 	 * Creates a clone of `typedArray`.
@@ -65753,10 +65553,10 @@
 
 
 /***/ },
-/* 928 */
+/* 927 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var baseCreate = __webpack_require__(929),
+	var baseCreate = __webpack_require__(928),
 	    getPrototype = __webpack_require__(543),
 	    isPrototype = __webpack_require__(702);
 
@@ -65777,7 +65577,7 @@
 
 
 /***/ },
-/* 929 */
+/* 928 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var isObject = __webpack_require__(567);
@@ -65801,11 +65601,11 @@
 
 
 /***/ },
-/* 930 */
+/* 929 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(module) {var root = __webpack_require__(583),
-	    stubFalse = __webpack_require__(931);
+	    stubFalse = __webpack_require__(930);
 
 	/** Detect free variable `exports`. */
 	var freeExports = typeof exports == 'object' && exports;
@@ -65845,7 +65645,7 @@
 	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(747)(module)))
 
 /***/ },
-/* 931 */
+/* 930 */
 /***/ function(module, exports) {
 
 	/**
@@ -65869,11 +65669,11 @@
 
 
 /***/ },
-/* 932 */
+/* 931 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var copyObject = __webpack_require__(880),
-	    keysIn = __webpack_require__(884);
+	var copyObject = __webpack_require__(879),
+	    keysIn = __webpack_require__(883);
 
 	/**
 	 * Converts `value` to a plain object flattening inherited enumerable string
@@ -65907,7 +65707,7 @@
 
 
 /***/ },
-/* 933 */
+/* 932 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -65921,11 +65721,11 @@
 
 	var _map2 = _interopRequireDefault(_map);
 
-	var _merge = __webpack_require__(902);
+	var _merge = __webpack_require__(901);
 
 	var _merge2 = _interopRequireDefault(_merge);
 
-	var _Error = __webpack_require__(865);
+	var _Error = __webpack_require__(868);
 
 	var _ItemList = __webpack_require__(733);
 
@@ -66027,7 +65827,7 @@
 	}
 
 /***/ },
-/* 934 */
+/* 933 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -66044,7 +65844,7 @@
 
 	var _map2 = _interopRequireDefault(_map);
 
-	var _assign = __webpack_require__(935);
+	var _assign = __webpack_require__(934);
 
 	var _assign2 = _interopRequireDefault(_assign);
 
@@ -66052,7 +65852,7 @@
 
 	var _keys2 = _interopRequireDefault(_keys);
 
-	var _union = __webpack_require__(890);
+	var _union = __webpack_require__(889);
 
 	var _union2 = _interopRequireDefault(_union);
 
@@ -66060,7 +65860,7 @@
 
 	var _difference2 = _interopRequireDefault(_difference);
 
-	var _Error = __webpack_require__(865);
+	var _Error = __webpack_require__(868);
 
 	var _Projects = __webpack_require__(744);
 
@@ -66123,12 +65923,12 @@
 	}
 
 /***/ },
-/* 935 */
+/* 934 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var assignValue = __webpack_require__(881),
-	    copyObject = __webpack_require__(880),
-	    createAssigner = __webpack_require__(882),
+	var assignValue = __webpack_require__(880),
+	    copyObject = __webpack_require__(879),
+	    createAssigner = __webpack_require__(881),
 	    isArrayLike = __webpack_require__(616),
 	    isPrototype = __webpack_require__(702),
 	    keys = __webpack_require__(695);
@@ -66193,7 +65993,7 @@
 
 
 /***/ },
-/* 936 */
+/* 935 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -66210,7 +66010,7 @@
 
 	var _map2 = _interopRequireDefault(_map);
 
-	var _assign = __webpack_require__(935);
+	var _assign = __webpack_require__(934);
 
 	var _assign2 = _interopRequireDefault(_assign);
 
@@ -66218,7 +66018,7 @@
 
 	var _keys2 = _interopRequireDefault(_keys);
 
-	var _union = __webpack_require__(890);
+	var _union = __webpack_require__(889);
 
 	var _union2 = _interopRequireDefault(_union);
 
@@ -66226,7 +66026,7 @@
 
 	var _difference2 = _interopRequireDefault(_difference);
 
-	var _Error = __webpack_require__(865);
+	var _Error = __webpack_require__(868);
 
 	var _Sprints = __webpack_require__(742);
 
@@ -66307,7 +66107,7 @@
 	}
 
 /***/ },
-/* 937 */
+/* 936 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -66324,7 +66124,7 @@
 
 	var _map2 = _interopRequireDefault(_map);
 
-	var _assign = __webpack_require__(935);
+	var _assign = __webpack_require__(934);
 
 	var _assign2 = _interopRequireDefault(_assign);
 
@@ -66332,7 +66132,7 @@
 
 	var _difference2 = _interopRequireDefault(_difference);
 
-	var _union = __webpack_require__(890);
+	var _union = __webpack_require__(889);
 
 	var _union2 = _interopRequireDefault(_union);
 
@@ -66340,9 +66140,11 @@
 
 	var _keys2 = _interopRequireDefault(_keys);
 
-	var _Error = __webpack_require__(865);
+	var _Error = __webpack_require__(868);
 
-	var _Issues = __webpack_require__(854);
+	var _Issues = __webpack_require__(870);
+
+	var _Issue = __webpack_require__(869);
 
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -66391,27 +66193,28 @@
 																					v: state
 																	};
 
-													case _Issues.ANNOUNCE_CAPTURING_NEW_ISSUE:
+													case _Issue.ANNOUNCE_CAPTURING_NEW_ISSUE:
 																	return {
 																					v: Object.assign({}, state, { candidate_issue: {
+																													position: action.position,
 																													issue_id_before: action.issue_id_before,
 																													sprint_id: action.sprint_id
 																									} })
 																	};
-													case _Issues.UPDATE_NEW_ISSUE_DETAILS:
+													case _Issue.UPDATE_NEW_ISSUE_DETAILS:
 																	return {
 																					v: Object.assign({}, state, { candidate_issue: Object.assign({}, state.candidate_issue || {}, action.candidate_issue) })
 																	};
-													case _Issues.CANCEL_CREATING_NEW_ISSUE:
+													case _Issue.CANCEL_CREATING_NEW_ISSUE:
 																	return {
 																					v: Object.assign({}, state, { candidate_issue: null })
 																	};
 
-													case _Issues.ANNOUNCE_SAVING_NEW_ISSUE:
+													case _Issue.ANNOUNCE_SAVING_NEW_ISSUE:
 																	return {
 																					v: Object.assign({}, state, { candidate_issue: Object.assign({}, state.candidate_issue || {}, { saving: true }) })
 																	};
-													case _Issues.ANNOUNCE_SAVED_NEW_ISSUE:
+													case _Issue.ANNOUNCE_SAVED_NEW_ISSUE:
 
 																	new_items_by_id = Object.assign({}, state.items_by_id);
 																	new_items_by_id[action.issue.id] = action.issue;
@@ -66419,7 +66222,7 @@
 																					v: Object.assign({}, state, { items_by_id: new_items_by_id })
 																	};
 
-													case _Issues.ANNOUNCE_SAVING_NEW_ISSUE_FAILED:
+													case _Issue.ANNOUNCE_SAVING_NEW_ISSUE_FAILED:
 																	return {
 																					v: Object.assign({}, state, { candidate_issue: Object.assign({}, state.candidate_issue || {}, { is_saving: false }) })
 																	};
@@ -66434,7 +66237,7 @@
 	}
 
 /***/ },
-/* 938 */
+/* 937 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -66448,7 +66251,7 @@
 
 	var _map2 = _interopRequireDefault(_map);
 
-	var _assign = __webpack_require__(935);
+	var _assign = __webpack_require__(934);
 
 	var _assign2 = _interopRequireDefault(_assign);
 
@@ -66460,13 +66263,13 @@
 
 	var _difference2 = _interopRequireDefault(_difference);
 
-	var _union = __webpack_require__(890);
+	var _union = __webpack_require__(889);
 
 	var _union2 = _interopRequireDefault(_union);
 
-	var _Error = __webpack_require__(865);
+	var _Error = __webpack_require__(868);
 
-	var _IssueGeneralDetails = __webpack_require__(872);
+	var _IssueGeneralDetails = __webpack_require__(871);
 
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -66504,7 +66307,7 @@
 	}
 
 /***/ },
-/* 939 */
+/* 938 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -66518,11 +66321,11 @@
 
 	var _map2 = _interopRequireDefault(_map);
 
-	var _merge = __webpack_require__(902);
+	var _merge = __webpack_require__(901);
 
 	var _merge2 = _interopRequireDefault(_merge);
 
-	var _Error = __webpack_require__(865);
+	var _Error = __webpack_require__(868);
 
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -66543,7 +66346,7 @@
 	}
 
 /***/ },
-/* 940 */
+/* 939 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -66560,7 +66363,7 @@
 
 	var _map2 = _interopRequireDefault(_map);
 
-	var _assign = __webpack_require__(935);
+	var _assign = __webpack_require__(934);
 
 	var _assign2 = _interopRequireDefault(_assign);
 
@@ -66568,7 +66371,7 @@
 
 	var _keys2 = _interopRequireDefault(_keys);
 
-	var _union = __webpack_require__(890);
+	var _union = __webpack_require__(889);
 
 	var _union2 = _interopRequireDefault(_union);
 
@@ -66576,9 +66379,9 @@
 
 	var _difference2 = _interopRequireDefault(_difference);
 
-	var _Error = __webpack_require__(865);
+	var _Error = __webpack_require__(868);
 
-	var _Users = __webpack_require__(864);
+	var _Users = __webpack_require__(867);
 
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -66637,6 +66440,274 @@
 
 	    if ((typeof _ret === 'undefined' ? 'undefined' : _typeof(_ret)) === "object") return _ret.v;
 	}
+
+/***/ },
+/* 940 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	Object.defineProperty(exports, "__esModule", {
+					value: true
+	});
+	exports.Issue = undefined;
+
+	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+	var _react = __webpack_require__(300);
+
+	var _react2 = _interopRequireDefault(_react);
+
+	var _reactRouter = __webpack_require__(466);
+
+	var _map = __webpack_require__(675);
+
+	var _map2 = _interopRequireDefault(_map);
+
+	var _reactDnd = __webpack_require__(557);
+
+	var _reactRedux = __webpack_require__(533);
+
+	var _classnames = __webpack_require__(851);
+
+	var _classnames2 = _interopRequireDefault(_classnames);
+
+	var _Issue = __webpack_require__(869);
+
+	var _riek = __webpack_require__(856);
+
+	var _OtherUser = __webpack_require__(866);
+
+	var _OtherUser2 = _interopRequireDefault(_OtherUser);
+
+	var _Dnd = __webpack_require__(852);
+
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+	function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+	var Issue = exports.Issue = function (_Component) {
+					_inherits(Issue, _Component);
+
+					function Issue(props) {
+									_classCallCheck(this, Issue);
+
+									var _this = _possibleConstructorReturn(this, Object.getPrototypeOf(Issue).call(this, props));
+
+									_this.onChangeSubject = _this.onChangeSubject.bind(_this);
+									return _this;
+					}
+
+					_createClass(Issue, [{
+									key: 'onChangeSubject',
+									value: function onChangeSubject(issue_id, obj) {
+													var dispatch = this.props.dispatch;
+
+													dispatch((0, _Issue.updateIssueSubject)(issue_id, obj.subject));
+									}
+					}, {
+									key: 'render_collapsed',
+									value: function render_collapsed() {
+													var _props = this.props;
+													var issue = _props.issue;
+													var list_key = _props.list_key;
+
+													return _react2.default.createElement(
+																	'div',
+																	{ key: "collapsed_issue_" + issue.id + "_" + list_key },
+																	issue.number,
+																	issue.subject
+													);
+									}
+					}, {
+									key: 'render_expanded',
+									value: function render_expanded() {
+													var _this2 = this;
+
+													var _props2 = this.props;
+													var issue = _props2.issue;
+													var is_loading = _props2.is_loading;
+													var is_selected = _props2.is_selected;
+													var onClickedIssue = _props2.onClickedIssue;
+													var isOver = _props2.isOver;
+													var connectDragSource = _props2.connectDragSource;
+													var connectDropTarget = _props2.connectDropTarget;
+
+
+													if (!issue) {
+																	return _react2.default.createElement(
+																					'tr',
+																					null,
+																					_react2.default.createElement(
+																									'td',
+																									null,
+																									'Loading...'
+																					)
+																	);
+													}
+
+													if (issue.loaded === false) {
+																	return _react2.default.createElement(
+																					'tr',
+																					{ key: this.key + "." + issue.id,
+																									onClick: onClickedIssue,
+																									className: (0, _classnames2.default)({ 'tr--selected': is_selected, 'tr--drop-target': isOver })
+																					},
+																					_react2.default.createElement(
+																									'td',
+																									null,
+																									_react2.default.createElement(
+																													'div',
+																													{ className: 'issue_list__issue_number_button' },
+																													issue.number
+																									)
+																					),
+																					_react2.default.createElement(
+																									'td',
+																									null,
+																									'Loading...'
+																					)
+																	);
+													} else {
+																	return connectDragSource(connectDropTarget(_react2.default.createElement(
+																					'tr',
+																					{ key: this.key + "." + issue.id,
+																									onClick: onClickedIssue,
+																									className: (0, _classnames2.default)({ 'tr--selected': is_selected, 'tr--drop-target': isOver })
+																					},
+																					_react2.default.createElement(
+																									'td',
+																									null,
+																									_react2.default.createElement(
+																													'div',
+																													{ className: 'issue_list__issue_number_button' },
+																													issue.number
+																									)
+																					),
+																					_react2.default.createElement(
+																									'td',
+																									null,
+																									_react2.default.createElement(_riek.RIEInput, { value: issue.subject,
+																													propName: 'subject',
+																													change: function change(obj) {
+																																	return _this2.onChangeSubject(issue.id, obj);
+																													} })
+																					),
+																					_react2.default.createElement(
+																									'td',
+																									null,
+																									_react2.default.createElement(_OtherUser2.default, { user_id: issue.assigned_to_id,
+																													render_mode: 'inline--small',
+																													loading_value: issue.assigned_to_quick_name })
+																					),
+																					_react2.default.createElement(
+																									'td',
+																									null,
+																									issue.feature_name
+																					),
+																					_react2.default.createElement(
+																									'td',
+																									null,
+																									issue.status
+																					)
+																	)));
+													}
+									}
+					}, {
+									key: 'render',
+									value: function render() {
+													var _props3 = this.props;
+													var is_collapsed = _props3.is_collapsed;
+													var is_expanded = _props3.is_expanded;
+
+
+													if (is_collapsed) {
+																	return this.render_collapsed();
+													} else if (is_expanded) {
+																	return this.render_expanded();
+													} else {
+																	return _react2.default.createElement(
+																					'div',
+																					null,
+																					'Dev error'
+																	);
+													}
+									}
+					}]);
+
+					return Issue;
+	}(_react.Component);
+
+	function mapStateToProps(state, props) {
+					var issue = state.issue;
+					var item_list = state.item_list;
+					var issue_id = props.issue_id;
+					var is_selected = props.is_selected;
+					var is_collapsed = props.is_collapsed;
+					var is_loading = props.is_loading;
+
+
+					var this_issue = issue && issue.items_by_id && issue.items_by_id[issue_id] || { 'loaded': false };
+
+					return {
+									issue: this_issue,
+									issue_id: issue_id,
+									is_selected: is_selected,
+									is_loading: is_loading,
+									is_collapsed: is_collapsed,
+									is_expanded: !is_collapsed
+					};
+	}
+
+	var headingSource = {
+					beginDrag: function beginDrag(props) {
+									return { id: props.issue_id };
+					}
+	};
+
+	var headingTarget = {
+					drop: function drop(props, monitor, component) {
+									var issue_id = props.issue_id;
+
+									var dragging_item = monitor.getItem();
+									if (!dragging_item) {
+													return;
+									}
+									var dragging_issue_id = dragging_item.id;
+									if (issue_id == dragging_issue_id) {
+													console.log("ignoring dnd on the same element: " + issue_id);
+													return;
+									}
+
+									props.reorderIssue(dragging_issue_id, issue_id);
+					},
+					hover: function hover(props, monitor, component) {},
+					canDrop: function canDrop(props, monitor) {
+									return true;
+					}
+
+	};
+
+	function collect(connect, monitor) {
+					return {
+									connectDragSource: connect.dragSource(),
+									isDragging: monitor.isDragging()
+					};
+	}
+
+	function collectDrop(connect, monitor) {
+					return {
+									connectDropTarget: connect.dropTarget(),
+									isOver: monitor.isOver(),
+									canDrop: monitor.canDrop()
+					};
+	}
+
+	exports.default = (0, _reactRedux.connect)(mapStateToProps)((0, _reactDnd.DragSource)(_Dnd.DndTypes.ISSUE, headingSource, collect)((0, _reactDnd.DropTarget)(_Dnd.DndTypes.ISSUE, headingTarget, collectDrop)(Issue)));
 
 /***/ }
 /******/ ]);

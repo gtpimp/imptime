@@ -10,13 +10,15 @@ import {
     ANNOUNCE_ISSUES_LOADED,
     ANNOUNCE_LOADING_ISSUES,
     INVALIDATE_ISSUES,
+} from '../actions/Issues.js'
+import {
     ANNOUNCE_CAPTURING_NEW_ISSUE,
     UPDATE_NEW_ISSUE_DETAILS,
     CANCEL_CREATING_NEW_ISSUE,
     ANNOUNCE_SAVING_NEW_ISSUE,
     ANNOUNCE_SAVED_NEW_ISSUE,
-    ANNOUNCE_SAVING_NEW_ISSUE_FAILED,
-} from '../actions/Issues.js'
+    ANNOUNCE_SAVING_NEW_ISSUE_FAILED
+} from '../actions/Issue.js'
 
 const initialState = {
     items_by_id: {},
@@ -57,6 +59,7 @@ export default function issue(state = initialState, action) {
 	case ANNOUNCE_CAPTURING_NEW_ISSUE:
             return Object.assign({}, state,
 				 { candidate_issue: {
+				     position: action.position,
 				     issue_id_before: action.issue_id_before,
 				     sprint_id: action.sprint_id
 				 }})

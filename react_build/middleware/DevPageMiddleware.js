@@ -2,7 +2,8 @@ import { setErrorMessage } from '../actions/Error.js'
 import indexOf from 'lodash/indexOf'
 import { UPDATE_LIST_SELECTION } from '../actions/ItemList'
 import {
-    ANNOUNCE_ISSUE_SAVED
+    ANNOUNCE_ISSUE_SAVED,
+    ANNOUNCE_SAVED_NEW_ISSUE
 } from '../actions/Issue'
 import {
     invalidateList,
@@ -38,7 +39,6 @@ function DevPageMiddleware(_ref) {
 
 		    const selected_ids = action.selected_ids || []
 		    const selected_id = (selected_ids.length > 0 && selected_ids[0]) || null
-		    
 		    if (action.list_key == projects_list_key) {
 			// Change selected project
 			dispatch(update_list_filter(sprints_list_key, {project_id:selected_id}))
@@ -79,12 +79,18 @@ function DevPageMiddleware(_ref) {
 		    }
 		    break
 		case ANNOUNCE_ISSUE_SAVED:
-		    const issue_id = action.issue_id
-		    dispatch(invalidateIssues([issue_id]))
-		    dispatch(invalidateIssueGeneralDetails([issue_id]))
+		    dispatch(invalidateIssues([action.issue.id]))
+		    dispatch(invalidateIssueGeneralDetails([action.issue.id]))
 		    
 		    dispatch(fetchIssuesIfNeeded(issues_list_key))
-		    dispatch(fetchIssueGeneralDetailsIfNeeded([issue_id]))
+		    dispatch(fetchIssueGeneralDetailsIfNeeded([action.issue.id]))
+		    break
+		case ANNOUNCE_SAVED_NEW_ISSUE:
+		    dispatch(invalidateIssues([action.issue.id]))
+		    dispatch(invalidateIssueGeneralDetails([action.issue.id]))
+		    
+		    dispatch(fetchIssuesIfNeeded(issues_list_key))
+		    dispatch(fetchIssueGeneralDetailsIfNeeded([action.issue.id]))
 		    break
 	    }
 	    return next(action)

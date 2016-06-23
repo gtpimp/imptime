@@ -71,7 +71,9 @@ export class IssueDeveloperDetails extends Component {
 			</div>
 			<div className="panel__buttons">
                             <div className="panel__button panel__button--refresh"
-				 onClick={this.onRefresh}></div>
+				 onClick={this.onRefresh}>
+			    </div>
+			    
 			</div>
                     </div>
                     <div className="issue_developer_details__panel-body">
