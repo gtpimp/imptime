@@ -1,29 +1,31 @@
 import logging
 from rest_framework import serializers
-from base_serializer import BaseModelSerializer
+from base_serializer import BaseSerializer, BaseModelSerializer
 from timepiece.models import Issue
 logger = logging.getLogger(__name__)
 
 
-class IssueSerializer(BaseModelSerializer):
-
-    class Meta:
-        model = Issue
-        fields = ('id', 'number', 'subject', 'assigned_to',
-                  'feature', 'status')
+class IssueSerializer(BaseSerializer):
 
     id = serializers.CharField()
+    assigned_to_quick_name = serializers.CharField()
+    feature = serializers.CharField()
+    subject = serializers.CharField()
+    status = serializers.CharField()
+    assigned_to_id = serializers.CharField()
+    feature = serializers.CharField()
 
     def to_representation(self, issue, *args, **kwargs):
+        issue.assigned_to_quick_name = \
+            issue.assigned_to.username if issue.assigned_to_id else None
+        issue.feature = issue.feature.name if issue.feature_id else None
+
         d = super(IssueSerializer, self).to_representation(
             issue, *args, **kwargs)
-        d['feature_name'] = issue.feature.name if issue.feature else None
-        d['assigned_to_quick_name'] = \
-            issue.assigned_to.username if issue.assigned_to else None
         return d
 
 
 class IssueGeneralDetailsSerializer(BaseModelSerializer):
     class Meta:
         model = Issue
-        fields = ('id', 'number', 'subject', 'description', 'assigned_to')
+        fields = ('id', 'number', 'subject', 'description', 'assigned_to_id')

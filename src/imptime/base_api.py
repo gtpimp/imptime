@@ -4,6 +4,7 @@ from rest_framework import viewsets
 from timepiece.models import Business as Project
 from timepiece.models import Project as Sprint
 from timepiece.models import Issue
+from timepiece.models import BusinessPermissions
 from timepiece.models import Entry as TimesheetEntry
 
 
@@ -95,3 +96,9 @@ class BaseViewSet(viewsets.ViewSet):
 
     def allowed_timesheet_entry(self, pk):
         return self.allowed_timesheet_entries().get(pk=pk)
+
+    def allowed_users(self):
+        return BusinessPermissions.viewable_users(self.request.user)
+
+    def allowed_user(self, pk):
+        return self.allowed_users().get(pk=pk)

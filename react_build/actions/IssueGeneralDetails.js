@@ -78,7 +78,7 @@ function getMissingIssueGeneralDetails(state, required_issue_ids) {
 export function fetchIssueGeneralDetailsIfNeeded(issue_ids) {
     return (dispatch, getState) => {
 	const state = getState()
-	const missing_issue_ids = getMissingIssueGeneralDetails(dispatch, issue_ids)
+	const missing_issue_ids = getMissingIssueGeneralDetails(state, issue_ids)
 	if ( missing_issue_ids.length > 0 ) {
 	    dispatch(fetchIssueGeneralDetails(dispatch, missing_issue_ids))
 	}

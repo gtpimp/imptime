@@ -378,8 +378,8 @@ class BusinessPermissions(models.Model):
     class Meta:
         unique_together = (('user','business'),)
 
-    business = models.ForeignKey(Business, related_name='business_permissions')
-    user = models.ForeignKey(User, related_name='business_permissions')
+    business = models.ForeignKey(Business, related_name='business_permissions', db_index=True)
+    user = models.ForeignKey(User, related_name='business_permissions', db_index=True)
 
     can_view_project_card = models.BooleanField(default=True, verbose_name="Can View Sprint Card")
     can_edit_issues = models.BooleanField(default=True, verbose_name="Can Edit Issues")
@@ -434,6 +434,12 @@ class BusinessPermissions(models.Model):
     @classmethod
     def for_user(self, user, business):
         return BusinessPermissions.objects.get_or_create(business=business,user=user)[0]
+
+    @classmethod
+    def viewable_users(self, user):
+        return User.objects.filter(
+            business_permissions__user=user,
+            business_permissions__can_view_project_card=True)
 
     @classmethod
     def get_users_who_can_capture_time(self):

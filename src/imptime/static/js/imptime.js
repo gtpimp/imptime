@@ -60801,6 +60801,8 @@
 
 	var _OtherUser = __webpack_require__(863);
 
+	var _OtherUser2 = _interopRequireDefault(_OtherUser);
+
 	var _Dnd = __webpack_require__(852);
 
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
@@ -60921,7 +60923,7 @@
 																					_react2.default.createElement(
 																									'td',
 																									null,
-																									_react2.default.createElement(_OtherUser.OtherUser, { user_id: issue.assigned_to_user_id,
+																									_react2.default.createElement(_OtherUser2.default, { user_id: issue.assigned_to_id,
 																													render_mode: 'inline--small',
 																													loading_value: issue.assigned_to_quick_name })
 																					),
@@ -61645,7 +61647,7 @@
 	'use strict';
 
 	Object.defineProperty(exports, "__esModule", {
-	    value: true
+					value: true
 	});
 	exports.OtherUser = undefined;
 
@@ -61686,76 +61688,85 @@
 	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 
 	var OtherUser = exports.OtherUser = function (_Component) {
-	    _inherits(OtherUser, _Component);
+					_inherits(OtherUser, _Component);
 
-	    function OtherUser(props) {
-	        _classCallCheck(this, OtherUser);
+					function OtherUser(props) {
+									_classCallCheck(this, OtherUser);
 
-	        return _possibleConstructorReturn(this, Object.getPrototypeOf(OtherUser).call(this, props));
-	    }
+									return _possibleConstructorReturn(this, Object.getPrototypeOf(OtherUser).call(this, props));
+					}
 
-	    _createClass(OtherUser, [{
-	        key: 'componentDidMount',
-	        value: function componentDidMount() {
-	            var _props = this.props;
-	            var dispatch = _props.dispatch;
-	            var user_id = _props.user_id;
+					_createClass(OtherUser, [{
+									key: 'componentDidMount',
+									value: function componentDidMount() {
+													var _props = this.props;
+													var dispatch = _props.dispatch;
+													var user_id = _props.user_id;
 
-	            dispatch((0, _Users.fetchUsersIfNeeded)(user_id));
-	        }
-	    }, {
-	        key: 'render_inline_small',
-	        value: function render_inline_small() {
-	            var user = this.props.user;
-
-
-	            return _react2.default.createElement(
-	                'div',
-	                { key: this.key + ".collapsed_user." + user.id },
-	                'User: ',
-	                user.name
-	            );
-	        }
-	    }, {
-	        key: 'render',
-	        value: function render() {
-	            var _props2 = this.props;
-	            var user_id = _props2.user_id;
-	            var render_mode = _props2.render_mode;
+													if (user_id) {
+																	dispatch((0, _Users.fetchUsersIfNeeded)([user_id]));
+													}
+									}
+					}, {
+									key: 'render_inline_small',
+									value: function render_inline_small() {
+													var _props2 = this.props;
+													var user = _props2.user;
+													var loading_value = _props2.loading_value;
 
 
-	            if (!user_id) {
-	                return null;
-	            }
+													return _react2.default.createElement(
+																	'div',
+																	{ key: this.key + ".collapsed_user." + user.id },
+																	user.username && user.username,
+																	!user.username && loading_value
+													);
+									}
+					}, {
+									key: 'render',
+									value: function render() {
+													var _props3 = this.props;
+													var user_id = _props3.user_id;
+													var render_mode = _props3.render_mode;
+													var loading_value = _props3.loading_value;
 
-	            if (render_mode == 'inline--small') {
-	                return this.render_inline_small();
-	            } else {
-	                return _react2.default.createElement(
-	                    'div',
-	                    null,
-	                    'Dev error, unsupported render mode: ',
-	                    render_mode
-	                );
-	            }
-	        }
-	    }]);
 
-	    return OtherUser;
+													if (!user_id) {
+																	return _react2.default.createElement(
+																					'div',
+																					null,
+																					loading_value
+																	);
+													}
+
+													if (render_mode == 'inline--small') {
+																	return this.render_inline_small();
+													} else {
+																	return _react2.default.createElement(
+																					'div',
+																					null,
+																					'Dev error, unsupported render mode: ',
+																					render_mode
+																	);
+													}
+									}
+					}]);
+
+					return OtherUser;
 	}(_react.Component);
 
 	function mapStateToProps(state, props) {
-	    var user = state.user;
-	    var user_id = props.user_id;
+					var user = state.user;
+					var user_id = props.user_id;
 
 
-	    var this_user = user && user.items_by_id && user.items_by_id[user_id] || {};
-	    var is_loading = user && user.loading_item_ids && (0, _indexOf2.default)(user.loading_item_ids, user_id) !== -1 || false;
+					var this_user = user && user.items_by_id && user.items_by_id[user_id] || {};
+					var is_loading = user && user.loading_item_ids && (0, _indexOf2.default)(user.loading_item_ids, user_id) !== -1 || false;
 
-	    return {
-	        user: this_user,
-	        is_loading: is_loading
-	    };
+					return {
+									user: this_user,
+									is_loading: is_loading
+					};
 	}
 
 	exports.default = (0, _reactRedux.connect)(mapStateToProps)(OtherUser);
@@ -61803,9 +61814,10 @@
 	    };
 	}
 
-	function announceLoadingUsers() {
+	function announceLoadingUsers(user_ids) {
 	    return {
-	        type: ANNOUNCE_LOADING_USERS
+	        type: ANNOUNCE_LOADING_USERS,
+	        user_ids_to_load: user_ids
 	    };
 	}
 
@@ -61833,7 +61845,7 @@
 
 	function fetchUsers(dispatch, user_ids) {
 	    return function (dispatch, getState) {
-	        dispatch(announceLoadingUsers());
+	        dispatch(announceLoadingUsers(user_ids));
 
 	        var params = { filter: { ids: user_ids },
 	            format: { detail_level: 'general' },
@@ -61854,22 +61866,27 @@
 	}
 
 	function getMissingUsers(state, required_user_ids) {
-	    var matching_items = state.users || {};
+	    var matching_items = state.user || {};
 	    var matching_item_ids = (0, _keys2.default)(matching_items.items_by_id || {});
 	    var matching_item_refs = matching_item_ids.map(function (item_id, index) {
+	        return "" + item_id;
+	    });
+	    var loading_item_ids = matching_items.loading_item_ids || [];
+	    var loading_item_refs = loading_item_ids.map(function (item_id, index) {
 	        return "" + item_id;
 	    });
 	    var required_item_refs = required_user_ids.map(function (item_id, index) {
 	        return "" + item_id;
 	    });
-	    var unmatching_item_ids = (0, _difference2.default)(required_item_refs, matching_item_refs);
-	    return unmatching_item_ids;
+	    var unmatching_item_refs = (0, _difference2.default)(required_item_refs, matching_item_refs);
+	    var unmatching_and_not_loading_item_refs = (0, _difference2.default)(unmatching_item_refs, loading_item_refs);
+	    return unmatching_and_not_loading_item_refs;
 	}
 
 	function fetchUsersIfNeeded(user_ids) {
 	    return function (dispatch, getState) {
 	        var state = getState();
-	        var missing_user_ids = getMissingUsers(dispatch, user_ids);
+	        var missing_user_ids = getMissingUsers(state, user_ids);
 	        if (missing_user_ids.length > 0) {
 	            dispatch(fetchUsers(dispatch, missing_user_ids));
 	        }
@@ -62689,7 +62706,7 @@
 	function fetchIssueGeneralDetailsIfNeeded(issue_ids) {
 	    return function (dispatch, getState) {
 	        var state = getState();
-	        var missing_issue_ids = getMissingIssueGeneralDetails(dispatch, issue_ids);
+	        var missing_issue_ids = getMissingIssueGeneralDetails(state, issue_ids);
 	        if (missing_issue_ids.length > 0) {
 	            dispatch(fetchIssueGeneralDetails(dispatch, missing_issue_ids));
 	        }

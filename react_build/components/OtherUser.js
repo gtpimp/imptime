@@ -18,24 +18,27 @@ export class OtherUser extends Component {
 
     componentDidMount() {
 	const { dispatch, user_id } = this.props
-	dispatch(fetchUsersIfNeeded(user_id))
+	if ( user_id ) {
+	    dispatch(fetchUsersIfNeeded([user_id]))
+	}
     }
     
     render_inline_small() {
-	const { user } = this.props
+	const { user, loading_value } = this.props
 
 	return (
 	    <div key={this.key+".collapsed_user."+user.id}>
-		User: {user.name}
+		{ user.username && user.username }
+		{ ! user.username && loading_value }
 	    </div>
 	)
     }
     
     render() {
-        const { user_id, render_mode } = this.props
+        const { user_id, render_mode, loading_value } = this.props
 
 	if ( ! user_id ) {
-	    return null
+	    return ( <div>{loading_value}</div> )
 	}
 	
 	if ( render_mode == 'inline--small' ) {
@@ -49,7 +52,7 @@ export class OtherUser extends Component {
 function mapStateToProps(state, props) {
     const { user } = state
     const { user_id } = props
-    
+
     const this_user = (user && user.items_by_id && user.items_by_id[user_id]) || {}
     const is_loading = (user &&
 			user.loading_item_ids &&

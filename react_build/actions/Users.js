@@ -16,9 +16,10 @@ export function invalidateUsers(user_ids_to_invalidate) {
     }
 }
 
-function announceLoadingUsers() {
+function announceLoadingUsers(user_ids) {
     return {
-        type: ANNOUNCE_LOADING_USERS
+        type: ANNOUNCE_LOADING_USERS,
+	user_ids_to_load: user_ids
     }
 }
 
@@ -46,7 +47,7 @@ function announceUsersLoadFailed(error) {
 
 function fetchUsers(dispatch, user_ids) {
     return (dispatch, getState) => {
-	dispatch(announceLoadingUsers())
+	dispatch(announceLoadingUsers(user_ids))
 
 	const params = { filter: { ids: user_ids },
 			 format: { detail_level: 'general' },
@@ -67,18 +68,21 @@ function fetchUsers(dispatch, user_ids) {
 }
 
 function getMissingUsers(state, required_user_ids) {
-    const matching_items = state.users || {}
+    const matching_items = state.user || {}
     const matching_item_ids = keys(matching_items.items_by_id || {})
     const matching_item_refs = matching_item_ids.map((item_id, index) => "" + item_id)
+    const loading_item_ids = matching_items.loading_item_ids || []
+    const loading_item_refs = loading_item_ids.map((item_id, index) => "" + item_id)
     const required_item_refs = required_user_ids.map((item_id, index) => "" + item_id)
-    const unmatching_item_ids = difference(required_item_refs, matching_item_refs)
-    return unmatching_item_ids
+    const unmatching_item_refs = difference(required_item_refs, matching_item_refs)
+    const unmatching_and_not_loading_item_refs = difference(unmatching_item_refs, loading_item_refs)
+    return unmatching_and_not_loading_item_refs
 }
 
 export function fetchUsersIfNeeded(user_ids) {
     return (dispatch, getState) => {
 	const state = getState()
-	const missing_user_ids = getMissingUsers(dispatch, user_ids)
+	const missing_user_ids = getMissingUsers(state, user_ids)
 	if ( missing_user_ids.length > 0 ) {
 	    dispatch(fetchUsers(dispatch, missing_user_ids))
 	}
