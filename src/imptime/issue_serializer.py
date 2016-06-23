@@ -18,7 +18,7 @@ class IssueSerializer(BaseModelSerializer):
         d = super(IssueSerializer, self).to_representation(
             issue, *args, **kwargs)
         d['feature_name'] = issue.feature.name if issue.feature else None
-        d['assigned_to_username'] = \
+        d['assigned_to_quick_name'] = \
             issue.assigned_to.username if issue.assigned_to else None
         return d
 

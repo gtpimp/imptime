@@ -4,7 +4,11 @@ import { UPDATE_LIST_SELECTION } from '../actions/ItemList'
 import {
     ANNOUNCE_ISSUE_SAVED
 } from '../actions/Issue'
-import { invalidateList, update_list_filter } from '../actions/ItemList'
+import {
+    invalidateList,
+    update_list_filter,
+    update_list_pagination
+} from '../actions/ItemList'
 import { fetchSprintsIfNeeded } from '../actions/Sprints'
 import { fetchIssuesIfNeeded, invalidateIssues } from '../actions/Issues'
 import {
@@ -63,6 +67,7 @@ function DevPageMiddleware(_ref) {
 			}
 			
 			dispatch(unselectAllItems(issues_list_key))
+			dispatch(update_list_pagination(issues_list_key, {current_page:1}))
 			dispatch(update_list_filter(issue_details_developer_key, {issue_id:null}))
 			
 		    } else if (action.list_key == issues_list_key) {

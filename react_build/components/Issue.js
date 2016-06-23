@@ -8,6 +8,7 @@ import {
     updateIssueSubject
 } from '../actions/Issue'
 import { RIEInput } from 'riek'
+import { OtherUser } from '../components/OtherUser'
 import { DndTypes } from '../actions/Dnd'
 
 export class Issue extends Component {
@@ -64,7 +65,11 @@ export class Issue extends Component {
 				  propName="subject" 
 				  change={(obj) => this.onChangeSubject(issue.id, obj)} />
 		    </td>
-		    <td>{issue.assigned_to_username}</td>
+		    <td>
+			<OtherUser user_id={issue.assigned_to_user_id}
+				   render_mode="inline--small"
+				   loading_value={issue.assigned_to_quick_name} />
+		    </td>
 		    <td>{issue.feature_name}</td>
 		    <td>{issue.status}</td>
 		</tr>

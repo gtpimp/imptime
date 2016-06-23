@@ -8,6 +8,7 @@ import sprint from './sprint'
 import issue from './issue'
 import issue_general_details from './issue_general_details'
 import notification_bar from './notification_bar.js'
+import user from './user'
 
 const rootReducer = combineReducers({
     routing,
@@ -16,7 +17,8 @@ const rootReducer = combineReducers({
     issue,
     issue_general_details,
     item_list,
-    notification_bar
+    notification_bar,
+    user
 })
 
 export default rootReducer
