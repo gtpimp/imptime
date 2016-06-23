@@ -27,6 +27,7 @@ class IssueSerializer(BaseSerializer):
 
 
 class IssueCommentSerializer(BaseSerializer):
+    id = serializers.CharField()
     comment = serializers.CharField()
     author_id = serializers.CharField()
     created = serializers.DateTimeField()
@@ -38,8 +39,10 @@ class IssueGeneralDetailsSerializer(BaseSerializer):
     id = serializers.CharField()
     description = serializers.CharField()
     issue_comments = IssueCommentSerializer(many=True)
+    position_if_creating_new_issue_after = serializers.IntegerField()
 
     def to_representation(self, issue, *args, **kwargs):
         issue.issue_comments = issue.comments.all().order_by("-created")
+        issue.position_if_creating_new_issue_after = issue.order + 0.5
         return super(IssueGeneralDetailsSerializer, self)\
             .to_representation(issue, *args, **kwargs)

@@ -62017,7 +62017,7 @@
 	        value: function renderComment(comment) {
 	            return _react2.default.createElement(
 	                'div',
-	                { className: 'issue_developer_details__commment' },
+	                { key: "comment_" + comment.id, className: 'issue_developer_details__commment' },
 	                _react2.default.createElement(
 	                    'div',
 	                    null,

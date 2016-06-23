@@ -43,7 +43,7 @@ export class IssueDeveloperDetails extends Component {
 
     renderComment(comment) {
 	return (
-	    <div className="issue_developer_details__commment">
+	    <div key={"comment_"+comment.id} className="issue_developer_details__commment">
 		<div>
 		    {comment.comment}
 		</div>
