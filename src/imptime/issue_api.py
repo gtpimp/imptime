@@ -75,3 +75,22 @@ class IssueViewSet(BaseViewSet):
             logger.exception(ex)
             data = {'status': 'failed', 'error': str(ex)}
         return HttpResponse(JSONRenderer().render(data))
+
+    def create(self, request):
+        try:
+            context = {}
+            params = request.data
+            sprint_id = params['sprint_id']
+            sprint = self.allowed_sprint(sprint_id)
+            issue = Issue.objects.create(project=sprint,
+                                         order=params['order'],
+                                         subject=params['subject'])  # sic
+            s = IssueSerializer(issue)
+            issue_data = s.data
+            context['issue'] = issue_data
+            data = {'status': 'success', 'payload': context}
+
+        except Exception, ex:
+            logger.exception(ex)
+            data = {'status': 'failed', 'error': str(ex)}
+        return HttpResponse(JSONRenderer().render(data))

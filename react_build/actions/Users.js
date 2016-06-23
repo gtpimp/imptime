@@ -72,7 +72,7 @@ function getMissingUsers(state, required_user_ids) {
     const matching_item_ids = keys(matching_items.items_by_id || {})
     const matching_item_refs = matching_item_ids.map((item_id, index) => "" + item_id)
     const loading_item_ids = matching_items.loading_item_ids || []
-    const loading_item_refs = loading_item_ids.map((item_id, index) => "" + item_id)
+    const loading_item_refs = map(loading_item_ids, (item_id, index) => "" + item_id)
     const required_item_refs = required_user_ids.map((item_id, index) => "" + item_id)
     const unmatching_item_refs = difference(required_item_refs, matching_item_refs)
     const unmatching_and_not_loading_item_refs = difference(unmatching_item_refs, loading_item_refs)

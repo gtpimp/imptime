@@ -9,7 +9,13 @@ import {
     ANNOUNCE_ISSUES_LOAD_FAILED,
     ANNOUNCE_ISSUES_LOADED,
     ANNOUNCE_LOADING_ISSUES,
-    INVALIDATE_ISSUES
+    INVALIDATE_ISSUES,
+    ANNOUNCE_CAPTURING_NEW_ISSUE,
+    UPDATE_NEW_ISSUE_DETAILS,
+    CANCEL_CREATING_NEW_ISSUE,
+    ANNOUNCE_SAVING_NEW_ISSUE,
+    ANNOUNCE_SAVED_NEW_ISSUE,
+    ANNOUNCE_SAVING_NEW_ISSUE_FAILED,
 } from '../actions/Issues.js'
 
 const initialState = {
@@ -48,6 +54,43 @@ export default function issue(state = initialState, action) {
             setErrorMessage("Failed to load issues: " + action.error_message)
             return state;
 
+	case ANNOUNCE_CAPTURING_NEW_ISSUE:
+            return Object.assign({}, state,
+				 { candidate_issue: {
+				     issue_id_before: action.issue_id_before,
+				     sprint_id: action.sprint_id
+				 }})
+	case UPDATE_NEW_ISSUE_DETAILS:
+	    return Object.assign(
+		{}, state,
+		{candidate_issue: Object.assign({},
+						state.candidate_issue || {},
+						action.candidate_issue)})
+	case CANCEL_CREATING_NEW_ISSUE:
+	    return Object.assign(
+		{}, state,
+		{candidate_issue: null})
+	    
+	case ANNOUNCE_SAVING_NEW_ISSUE:
+	    return Object.assign(
+		{}, state,
+		{candidate_issue: Object.assign({},
+						state.candidate_issue || {},
+						{saving: true})})
+	case ANNOUNCE_SAVED_NEW_ISSUE:
+
+	    new_items_by_id = Object.assign({}, state.items_by_id)
+	    new_items_by_id[action.issue.id] = action.issue
+	    return Object.assign({},
+				 state,
+				 {items_by_id: new_items_by_id})
+		    
+	case ANNOUNCE_SAVING_NEW_ISSUE_FAILED:
+	    return Object.assign(
+		{}, state,
+		{candidate_issue: Object.assign({},
+						state.candidate_issue || {},
+						{is_saving: false})})
         default:
             return state
     }

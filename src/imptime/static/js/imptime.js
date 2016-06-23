@@ -69,7 +69,7 @@
 
 	var _Root2 = _interopRequireDefault(_Root);
 
-	var _configureStore = __webpack_require__(891);
+	var _configureStore = __webpack_require__(897);
 
 	var _configureStore2 = _interopRequireDefault(_configureStore);
 
@@ -35857,7 +35857,7 @@
 
 	var _DevPage2 = _interopRequireDefault(_DevPage);
 
-	var _HeaderBar = __webpack_require__(867);
+	var _HeaderBar = __webpack_require__(873);
 
 	var _HeaderBar2 = _interopRequireDefault(_HeaderBar);
 
@@ -35871,7 +35871,7 @@
 
 	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 
-	var HTML5Backend = __webpack_require__(869);
+	var HTML5Backend = __webpack_require__(875);
 
 	var App = function (_Component) {
 	    _inherits(App, _Component);
@@ -60667,12 +60667,16 @@
 	'use strict';
 
 	Object.defineProperty(exports, "__esModule", {
-	    value: true
+					value: true
 	});
-	exports.ANNOUNCE_ISSUE_SAVE_FAILED = exports.ANNOUNCE_ISSUE_SAVED = exports.ANNOUNCE_ISSUE_SAVING = undefined;
+	exports.ANNOUNCE_SAVING_NEW_ISSUE_FAILED = exports.ANNOUNCE_SAVED_NEW_ISSUE = exports.ANNOUNCE_SAVING_NEW_ISSUE = exports.CANCEL_CREATING_NEW_ISSUE = exports.UPDATE_NEW_ISSUE_DETAILS = exports.ANNOUNCE_CAPTURING_NEW_ISSUE = exports.ANNOUNCE_ISSUE_SAVE_FAILED = exports.ANNOUNCE_ISSUE_SAVED = exports.ANNOUNCE_ISSUE_SAVING = undefined;
 	exports.updateIssueSubject = updateIssueSubject;
 	exports.updateIssueDescription = updateIssueDescription;
 	exports.reorderIssue = reorderIssue;
+	exports.startCandidateIssue = startCandidateIssue;
+	exports.updateCandidateSubject = updateCandidateSubject;
+	exports.cancelCandidateIssue = cancelCandidateIssue;
+	exports.saveCandidateIssue = saveCandidateIssue;
 
 	var _lib = __webpack_require__(734);
 
@@ -60698,70 +60702,146 @@
 	var ANNOUNCE_ISSUE_SAVED = exports.ANNOUNCE_ISSUE_SAVED = 'ANNOUNCE_ISSUE_SAVED';
 	var ANNOUNCE_ISSUE_SAVE_FAILED = exports.ANNOUNCE_ISSUE_SAVE_FAILED = 'ANNOUNCE_ISSUE_SAVE_FAILED';
 
+	var ANNOUNCE_CAPTURING_NEW_ISSUE = exports.ANNOUNCE_CAPTURING_NEW_ISSUE = 'ANNOUNCE_CAPTURING_NEW_ISSUE';
+	var UPDATE_NEW_ISSUE_DETAILS = exports.UPDATE_NEW_ISSUE_DETAILS = 'UPDATE_NEW_ISSUE_DETAILS';
+	var CANCEL_CREATING_NEW_ISSUE = exports.CANCEL_CREATING_NEW_ISSUE = 'CANCEL_CREATING_NEW_ISSUE';
+	var ANNOUNCE_SAVING_NEW_ISSUE = exports.ANNOUNCE_SAVING_NEW_ISSUE = 'ANNOUNCE_SAVING_NEW_ISSUE';
+	var ANNOUNCE_SAVED_NEW_ISSUE = exports.ANNOUNCE_SAVED_NEW_ISSUE = 'ANNOUNCE_SAVED_NEW_ISSUE';
+	var ANNOUNCE_SAVING_NEW_ISSUE_FAILED = exports.ANNOUNCE_SAVING_NEW_ISSUE_FAILED = 'ANNOUNCE_SAVING_NEW_ISSUE_FAILED';
+
 	function announceIssueSaveFailed(error) {
-	    return {
-	        type: ANNOUNCE_ISSUE_SAVE_FAILED,
-	        error: error,
-	        received_at: Date.now()
-	    };
+					return {
+									type: ANNOUNCE_ISSUE_SAVE_FAILED,
+									error: error,
+									received_at: Date.now()
+					};
 	}
 
 	function announceIssueSaved(issue_id) {
-	    return {
-	        type: ANNOUNCE_ISSUE_SAVED,
-	        issue_id: issue_id,
-	        saved_at: Date.now()
-	    };
+					return {
+									type: ANNOUNCE_ISSUE_SAVED,
+									issue_id: issue_id,
+									saved_at: Date.now()
+					};
 	}
 
 	function announceIssueSaving(issue_id) {
-	    return {
-	        type: ANNOUNCE_ISSUE_SAVING,
-	        issue_id: issue_id,
-	        saved_at: Date.now()
-	    };
+					return {
+									type: ANNOUNCE_ISSUE_SAVING,
+									issue_id: issue_id,
+									saved_at: Date.now()
+					};
+	}
+
+	function announceCandidateIssueSaving() {
+					return {
+									type: ANNOUNCE_SAVING_NEW_ISSUE
+					};
+	}
+
+	function announceCandidateIssueSaved(new_issue) {
+					return {
+									type: ANNOUNCE_SAVED_NEW_ISSUE,
+									issue: new_issue
+					};
+	}
+
+	function announceCandidateIssueSaveFailed(error) {
+					return {
+									type: ANNOUNCE_SAVING_NEW_ISSUE_FAILED,
+									error: error
+					};
 	}
 
 	function updateIssueSubject(issue_id, value) {
-	    return updateIssue(issue_id, "subject", value);
+					return updateIssue(issue_id, "subject", value);
 	}
 
 	function updateIssueDescription(issue_id, value) {
-	    return updateIssue(issue_id, "description", value);
+					return updateIssue(issue_id, "description", value);
 	}
 
 	function updateIssue(issue_id, field_name, new_value, on_done) {
-	    return function (dispatch, getState) {
-	        dispatch(announceIssueSaving(issue_id));
-	        var data = { field_name: field_name,
-	            value: new_value };
-	        return (0, _lib.impfetch)("/imp/issue/" + issue_id + "/", { method: "PUT",
-	            credentials: 'same-origin',
-	            data: data,
-	            headers: { "Content-type": "application/json; charset=UTF-8" },
-	            body: JSON.stringify(data) }).then(function (response) {
-	            return response.json();
-	        }).then(function (json) {
-	            if (json.status != 'success') {
-	                console.log('Request failed with JSON response', json);
-	                dispatch(announceIssueSaveFailed(json.error));
-	            } else {
-	                console.log('Request succeeded with JSON response', json);
-	                dispatch(announceIssueSaved(json.payload));
-	                dispatch((0, _Issues.invalidateIssues)([issue_id]));
-	            }
-	            if (on_done) {
-	                on_done();
-	            }
-	        }).catch(function (error) {
-	            console.log('Request failed', error);
-	            dispatch(announceIssueSaveFailed(error));
-	        });
-	    };
+					return function (dispatch, getState) {
+									dispatch(announceIssueSaving(issue_id));
+									var data = { field_name: field_name,
+													value: new_value };
+									return (0, _lib.impfetch)("/imp/issue/" + issue_id + "/", { method: "PUT",
+													credentials: 'same-origin',
+													data: data,
+													headers: { "Content-type": "application/json; charset=UTF-8" },
+													body: JSON.stringify(data) }).then(function (response) {
+													return response.json();
+									}).then(function (json) {
+													if (json.status != 'success') {
+																	console.log('Request failed with JSON response', json);
+																	dispatch(announceIssueSaveFailed(json.error));
+													} else {
+																	console.log('Request succeeded with JSON response', json);
+																	dispatch(announceIssueSaved(json.payload));
+																	dispatch((0, _Issues.invalidateIssues)([issue_id]));
+													}
+													if (on_done) {
+																	on_done();
+													}
+									}).catch(function (error) {
+													console.log('Request failed', error);
+													dispatch(announceIssueSaveFailed(error));
+									});
+					};
 	}
 
 	function reorderIssue(issue_id_before, issue_id_after, on_done) {
-	    return updateIssue(issue_id_before, "issue_id_after", issue_id_after, on_done);
+					return updateIssue(issue_id_before, "issue_id_after", issue_id_after, on_done);
+	}
+
+	function startCandidateIssue(sprint_id, issue_id_before) {
+					return {
+									key: ANNOUNCE_CAPTURING_NEW_ISSUE,
+									issue_id_before: issue_id_before,
+									sprint_id: sprint_id
+					};
+	}
+
+	function updateCandidateSubject(subject) {
+					return {
+									key: UPDATE_NEW_ISSUE_DETAILS,
+									candidate_issue: { "subject": subject }
+					};
+	}
+
+	function cancelCandidateIssue() {
+					return {
+									key: CANCEL_CREATING_NEW_ISSUE
+					};
+	}
+
+	function saveCandidateIssue() {
+
+					return function (dispatch, getState) {
+									var state = getState();
+									dispatch(announceCandidateIssueSaving());
+									var data = { issue: state.issue.candidate_issue };
+
+									return (0, _lib.impfetch)("/imp/issue/", { method: "POST",
+													credentials: 'same-origin',
+													data: data,
+													headers: { "Content-type": "application/json; charset=UTF-8" },
+													body: JSON.stringify(data) }).then(function (response) {
+													return response.json();
+									}).then(function (json) {
+													if (json.status != 'success') {
+																	console.log('Request failed with JSON response', json);
+																	dispatch(announceCandidateIssueSaveFailed(json.error));
+													} else {
+																	console.log('Request succeeded with JSON response', json);
+																	dispatch(announceCandidateIssueSaved(json.payload));
+													}
+									}).catch(function (error) {
+													console.log('Request failed', error);
+													dispatch(announceCandidateIssueSaveFailed(error));
+									});
+					};
 	}
 
 /***/ },
@@ -61876,7 +61956,7 @@
 	        return "" + item_id;
 	    });
 	    var loading_item_ids = matching_items.loading_item_ids || [];
-	    var loading_item_refs = loading_item_ids.map(function (item_id, index) {
+	    var loading_item_refs = (0, _map2.default)(loading_item_ids, function (item_id, index) {
 	        return "" + item_id;
 	    });
 	    var required_item_refs = required_user_ids.map(function (item_id, index) {
@@ -61950,7 +62030,7 @@
 
 	var _map2 = _interopRequireDefault(_map);
 
-	var _RIETextArea = __webpack_require__(936);
+	var _RIETextArea = __webpack_require__(867);
 
 	var _OtherUser = __webpack_require__(863);
 
@@ -61958,7 +62038,7 @@
 
 	var _Issue = __webpack_require__(855);
 
-	var _IssueGeneralDetails = __webpack_require__(895);
+	var _IssueGeneralDetails = __webpack_require__(872);
 
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -62151,6 +62231,656 @@
 	Object.defineProperty(exports, "__esModule", {
 					value: true
 	});
+	exports.RIETextArea = undefined;
+
+	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+	var _react = __webpack_require__(300);
+
+	var _react2 = _interopRequireDefault(_react);
+
+	var _reactDom = __webpack_require__(336);
+
+	var _reactDom2 = _interopRequireDefault(_reactDom);
+
+	var _riek = __webpack_require__(857);
+
+	var _reactAutosizeTextarea = __webpack_require__(868);
+
+	var _reactAutosizeTextarea2 = _interopRequireDefault(_reactAutosizeTextarea);
+
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+	function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+	var RIETextArea = exports.RIETextArea = function (_Component) {
+					_inherits(RIETextArea, _Component);
+
+					function RIETextArea(props) {
+									_classCallCheck(this, RIETextArea);
+
+									var _this = _possibleConstructorReturn(this, Object.getPrototypeOf(RIETextArea).call(this, props));
+
+									_this.startEditing = _this.startEditing.bind(_this);
+									_this.stopEditing = _this.stopEditing.bind(_this);
+									_this.commit = _this.commit.bind(_this);
+									_this.cancel = _this.cancel.bind(_this);
+									_this.state = {
+													editing: false
+									};
+									return _this;
+					}
+
+					_createClass(RIETextArea, [{
+									key: 'startEditing',
+									value: function startEditing() {
+													this.setState({ editing: true });
+									}
+					}, {
+									key: 'commit',
+									value: function commit() {
+													var new_value = _reactDom2.default.findDOMNode(this.editor).value;
+													this.stopEditing();
+													var res = {};
+													res[this.props.propName] = new_value;
+													this.props.change(res);
+									}
+					}, {
+									key: 'cancel',
+									value: function cancel() {
+													this.stopEditing();
+									}
+					}, {
+									key: 'stopEditing',
+									value: function stopEditing() {
+													this.setState({ editing: false });
+									}
+					}, {
+									key: 'renderNormalComponent',
+									value: function renderNormalComponent() {
+													return _react2.default.createElement(
+																	'div',
+																	null,
+																	this.state.newValue || this.props.value,
+																	_react2.default.createElement('br', null),
+																	_react2.default.createElement(
+																					'button',
+																					{ className: 'btn btn-secondary', onClick: this.startEditing },
+																					'Edit'
+																	)
+													);
+									}
+					}, {
+									key: 'renderEditingComponent',
+									value: function renderEditingComponent() {
+													var _this2 = this;
+
+													return _react2.default.createElement(
+																	'div',
+																	null,
+																	_react2.default.createElement(_reactAutosizeTextarea2.default, { ref: function ref(_ref) {
+																									return _this2.editor = _ref;
+																					}, rows: '20', cols: '80', defaultValue: this.props.value }),
+																	_react2.default.createElement(
+																					'button',
+																					{ className: 'btn btn-primary', onClick: this.commit },
+																					'Save'
+																	),
+																	_react2.default.createElement(
+																					'button',
+																					{ className: 'btn btn-cancel', onClick: this.cancel },
+																					'Cancel'
+																	)
+													);
+									}
+					}, {
+									key: 'render',
+									value: function render() {
+													if (this.state.editing) {
+																	return this.renderEditingComponent();
+													} else {
+																	return this.renderNormalComponent();
+													}
+									}
+					}]);
+
+					return RIETextArea;
+	}(_react.Component);
+
+/***/ },
+/* 868 */
+/***/ function(module, exports, __webpack_require__) {
+
+	module.exports = __webpack_require__(869);
+
+/***/ },
+/* 869 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	exports.__esModule = true;
+
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
+
+	var _TextareaAutosizeJs = __webpack_require__(870);
+
+	var _TextareaAutosizeJs2 = _interopRequireDefault(_TextareaAutosizeJs);
+
+	exports['default'] = _TextareaAutosizeJs2['default'];
+	module.exports = exports['default'];
+
+/***/ },
+/* 870 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	exports.__esModule = true;
+
+	var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
+
+	var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ('value' in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
+
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
+
+	function _objectWithoutProperties(obj, keys) { var target = {}; for (var i in obj) { if (keys.indexOf(i) >= 0) continue; if (!Object.prototype.hasOwnProperty.call(obj, i)) continue; target[i] = obj[i]; } return target; }
+
+	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError('Cannot call a class as a function'); } }
+
+	function _inherits(subClass, superClass) { if (typeof superClass !== 'function' && superClass !== null) { throw new TypeError('Super expression must either be null or a function, not ' + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+	var _react = __webpack_require__(300);
+
+	var _react2 = _interopRequireDefault(_react);
+
+	var _reactDom = __webpack_require__(336);
+
+	var _reactDom2 = _interopRequireDefault(_reactDom);
+
+	var _autosize = __webpack_require__(871);
+
+	var _autosize2 = _interopRequireDefault(_autosize);
+
+	var UPDATE = 'autosize:update',
+	    DESTROY = 'autosize:destroy',
+	    RESIZED = 'autosize:resized';
+
+	var TextareaAutosize = (function (_React$Component) {
+	  _inherits(TextareaAutosize, _React$Component);
+
+	  function TextareaAutosize() {
+	    var _this = this;
+
+	    _classCallCheck(this, TextareaAutosize);
+
+	    _React$Component.apply(this, arguments);
+
+	    this.getTextareaDOMNode = function () {
+	      return _this.refs.textarea.nodeType === 1 ? _this.refs.textarea : _reactDom2['default'].findDOMNode(_this.refs.textarea);
+	    };
+
+	    this.dispatchEvent = function (EVENT_TYPE, defer) {
+	      var event = document.createEvent('Event');
+	      event.initEvent(EVENT_TYPE, true, false);
+	      var dispatch = function dispatch() {
+	        return _this.getTextareaDOMNode().dispatchEvent(event);
+	      };
+	      if (defer) {
+	        setTimeout(dispatch);
+	      } else {
+	        dispatch();
+	      }
+	    };
+
+	    this.getValue = function (_ref) {
+	      var valueLink = _ref.valueLink;
+	      var value = _ref.value;
+	      return valueLink ? valueLink.value : value;
+	    };
+	  }
+
+	  TextareaAutosize.prototype.componentDidMount = function componentDidMount() {
+	    _autosize2['default'](this.getTextareaDOMNode());
+	    if (this.props.onResize) {
+	      this.getTextareaDOMNode().addEventListener(RESIZED, this.props.onResize);
+	    }
+	  };
+
+	  TextareaAutosize.prototype.componentWillUnmount = function componentWillUnmount() {
+	    if (this.props.onResize) {
+	      this.getTextareaDOMNode().removeEventListener(RESIZED, this.props.onResize);
+	    }
+	    this.dispatchEvent(DESTROY);
+	  };
+
+	  TextareaAutosize.prototype.render = function render() {
+	    var _props = this.props;
+	    var children = _props.children;
+
+	    var props = _objectWithoutProperties(_props, ['children']);
+
+	    return _react2['default'].createElement(
+	      'textarea',
+	      _extends({}, props, { ref: 'textarea' }),
+	      children
+	    );
+	  };
+
+	  TextareaAutosize.prototype.componentWillReceiveProps = function componentWillReceiveProps(nextProps) {
+	    if (this.getValue(nextProps) !== this.getValue(this.props)) {
+	      this.dispatchEvent(UPDATE, true);
+	    }
+	  };
+
+	  _createClass(TextareaAutosize, null, [{
+	    key: 'propTypes',
+	    value: {
+	      onResize: _react2['default'].PropTypes.func
+	    },
+	    enumerable: true
+	  }, {
+	    key: 'defaultProps',
+	    value: {
+	      rows: 1
+	    },
+	    enumerable: true
+	  }]);
+
+	  return TextareaAutosize;
+	})(_react2['default'].Component);
+
+	exports['default'] = TextareaAutosize;
+	module.exports = exports['default'];
+
+/***/ },
+/* 871 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/*!
+		Autosize 3.0.15
+		license: MIT
+		http://www.jacklmoore.com/autosize
+	*/
+	(function (global, factory) {
+		if (true) {
+			!(__WEBPACK_AMD_DEFINE_ARRAY__ = [exports, module], __WEBPACK_AMD_DEFINE_FACTORY__ = (factory), __WEBPACK_AMD_DEFINE_RESULT__ = (typeof __WEBPACK_AMD_DEFINE_FACTORY__ === 'function' ? (__WEBPACK_AMD_DEFINE_FACTORY__.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__)) : __WEBPACK_AMD_DEFINE_FACTORY__), __WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
+		} else if (typeof exports !== 'undefined' && typeof module !== 'undefined') {
+			factory(exports, module);
+		} else {
+			var mod = {
+				exports: {}
+			};
+			factory(mod.exports, mod);
+			global.autosize = mod.exports;
+		}
+	})(this, function (exports, module) {
+		'use strict';
+
+		var set = typeof Set === 'function' ? new Set() : (function () {
+			var list = [];
+
+			return {
+				has: function has(key) {
+					return Boolean(list.indexOf(key) > -1);
+				},
+				add: function add(key) {
+					list.push(key);
+				},
+				'delete': function _delete(key) {
+					list.splice(list.indexOf(key), 1);
+				} };
+		})();
+
+		var createEvent = function createEvent(name) {
+			return new Event(name);
+		};
+		try {
+			new Event('test');
+		} catch (e) {
+			// IE does not support `new Event()`
+			createEvent = function (name) {
+				var evt = document.createEvent('Event');
+				evt.initEvent(name, true, false);
+				return evt;
+			};
+		}
+
+		function assign(ta) {
+			var _ref = arguments[1] === undefined ? {} : arguments[1];
+
+			var _ref$setOverflowX = _ref.setOverflowX;
+			var setOverflowX = _ref$setOverflowX === undefined ? true : _ref$setOverflowX;
+			var _ref$setOverflowY = _ref.setOverflowY;
+			var setOverflowY = _ref$setOverflowY === undefined ? true : _ref$setOverflowY;
+
+			if (!ta || !ta.nodeName || ta.nodeName !== 'TEXTAREA' || set.has(ta)) return;
+
+			var heightOffset = null;
+			var overflowY = null;
+			var clientWidth = ta.clientWidth;
+
+			function init() {
+				var style = window.getComputedStyle(ta, null);
+
+				overflowY = style.overflowY;
+
+				if (style.resize === 'vertical') {
+					ta.style.resize = 'none';
+				} else if (style.resize === 'both') {
+					ta.style.resize = 'horizontal';
+				}
+
+				if (style.boxSizing === 'content-box') {
+					heightOffset = -(parseFloat(style.paddingTop) + parseFloat(style.paddingBottom));
+				} else {
+					heightOffset = parseFloat(style.borderTopWidth) + parseFloat(style.borderBottomWidth);
+				}
+				// Fix when a textarea is not on document body and heightOffset is Not a Number
+				if (isNaN(heightOffset)) {
+					heightOffset = 0;
+				}
+
+				update();
+			}
+
+			function changeOverflow(value) {
+				{
+					// Chrome/Safari-specific fix:
+					// When the textarea y-overflow is hidden, Chrome/Safari do not reflow the text to account for the space
+					// made available by removing the scrollbar. The following forces the necessary text reflow.
+					var width = ta.style.width;
+					ta.style.width = '0px';
+					// Force reflow:
+					/* jshint ignore:start */
+					ta.offsetWidth;
+					/* jshint ignore:end */
+					ta.style.width = width;
+				}
+
+				overflowY = value;
+
+				if (setOverflowY) {
+					ta.style.overflowY = value;
+				}
+
+				resize();
+			}
+
+			function resize() {
+				var htmlTop = window.pageYOffset;
+				var bodyTop = document.body.scrollTop;
+				var originalHeight = ta.style.height;
+
+				ta.style.height = 'auto';
+
+				var endHeight = ta.scrollHeight + heightOffset;
+
+				if (ta.scrollHeight === 0) {
+					// If the scrollHeight is 0, then the element probably has display:none or is detached from the DOM.
+					ta.style.height = originalHeight;
+					return;
+				}
+
+				ta.style.height = endHeight + 'px';
+
+				// used to check if an update is actually necessary on window.resize
+				clientWidth = ta.clientWidth;
+
+				// prevents scroll-position jumping
+				document.documentElement.scrollTop = htmlTop;
+				document.body.scrollTop = bodyTop;
+			}
+
+			function update() {
+				var startHeight = ta.style.height;
+
+				resize();
+
+				var style = window.getComputedStyle(ta, null);
+
+				if (style.height !== ta.style.height) {
+					if (overflowY !== 'visible') {
+						changeOverflow('visible');
+					}
+				} else {
+					if (overflowY !== 'hidden') {
+						changeOverflow('hidden');
+					}
+				}
+
+				if (startHeight !== ta.style.height) {
+					var evt = createEvent('autosize:resized');
+					ta.dispatchEvent(evt);
+				}
+			}
+
+			var pageResize = function pageResize() {
+				if (ta.clientWidth !== clientWidth) {
+					update();
+				}
+			};
+
+			var destroy = (function (style) {
+				window.removeEventListener('resize', pageResize, false);
+				ta.removeEventListener('input', update, false);
+				ta.removeEventListener('keyup', update, false);
+				ta.removeEventListener('autosize:destroy', destroy, false);
+				ta.removeEventListener('autosize:update', update, false);
+				set['delete'](ta);
+
+				Object.keys(style).forEach(function (key) {
+					ta.style[key] = style[key];
+				});
+			}).bind(ta, {
+				height: ta.style.height,
+				resize: ta.style.resize,
+				overflowY: ta.style.overflowY,
+				overflowX: ta.style.overflowX,
+				wordWrap: ta.style.wordWrap });
+
+			ta.addEventListener('autosize:destroy', destroy, false);
+
+			// IE9 does not fire onpropertychange or oninput for deletions,
+			// so binding to onkeyup to catch most of those events.
+			// There is no way that I know of to detect something like 'cut' in IE9.
+			if ('onpropertychange' in ta && 'oninput' in ta) {
+				ta.addEventListener('keyup', update, false);
+			}
+
+			window.addEventListener('resize', pageResize, false);
+			ta.addEventListener('input', update, false);
+			ta.addEventListener('autosize:update', update, false);
+			set.add(ta);
+
+			if (setOverflowX) {
+				ta.style.overflowX = 'hidden';
+				ta.style.wordWrap = 'break-word';
+			}
+
+			init();
+		}
+
+		function destroy(ta) {
+			if (!(ta && ta.nodeName && ta.nodeName === 'TEXTAREA')) return;
+			var evt = createEvent('autosize:destroy');
+			ta.dispatchEvent(evt);
+		}
+
+		function update(ta) {
+			if (!(ta && ta.nodeName && ta.nodeName === 'TEXTAREA')) return;
+			var evt = createEvent('autosize:update');
+			ta.dispatchEvent(evt);
+		}
+
+		var autosize = null;
+
+		// Do nothing in Node.js environment and IE8 (or lower)
+		if (typeof window === 'undefined' || typeof window.getComputedStyle !== 'function') {
+			autosize = function (el) {
+				return el;
+			};
+			autosize.destroy = function (el) {
+				return el;
+			};
+			autosize.update = function (el) {
+				return el;
+			};
+		} else {
+			autosize = function (el, options) {
+				if (el) {
+					Array.prototype.forEach.call(el.length ? el : [el], function (x) {
+						return assign(x, options);
+					});
+				}
+				return el;
+			};
+			autosize.destroy = function (el) {
+				if (el) {
+					Array.prototype.forEach.call(el.length ? el : [el], destroy);
+				}
+				return el;
+			};
+			autosize.update = function (el) {
+				if (el) {
+					Array.prototype.forEach.call(el.length ? el : [el], update);
+				}
+				return el;
+			};
+		}
+
+		module.exports = autosize;
+	});
+
+/***/ },
+/* 872 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	Object.defineProperty(exports, "__esModule", {
+	    value: true
+	});
+	exports.INVALIDATE_ISSUE_GENERAL_DETAILS = exports.ANNOUNCE_LOADING_ISSUE_GENERAL_DETAILS = exports.ANNOUNCE_ISSUE_GENERAL_DETAILS_LOAD_FAILED = exports.ANNOUNCE_ISSUE_GENERAL_DETAILS_LOADED = undefined;
+	exports.invalidateIssueGeneralDetails = invalidateIssueGeneralDetails;
+	exports.fetchIssueGeneralDetailsIfNeeded = fetchIssueGeneralDetailsIfNeeded;
+
+	var _lib = __webpack_require__(734);
+
+	var _difference = __webpack_require__(739);
+
+	var _difference2 = _interopRequireDefault(_difference);
+
+	var _keys = __webpack_require__(695);
+
+	var _keys2 = _interopRequireDefault(_keys);
+
+	var _map = __webpack_require__(675);
+
+	var _map2 = _interopRequireDefault(_map);
+
+	var _Error = __webpack_require__(865);
+
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+	var ANNOUNCE_ISSUE_GENERAL_DETAILS_LOADED = exports.ANNOUNCE_ISSUE_GENERAL_DETAILS_LOADED = 'ANNOUNCE_ISSUES_GENERAL_DETAILS_LOADED';
+	var ANNOUNCE_ISSUE_GENERAL_DETAILS_LOAD_FAILED = exports.ANNOUNCE_ISSUE_GENERAL_DETAILS_LOAD_FAILED = 'ANNOUNCE_ISSUE_GENERAL_DETAILS_LOAD_FAILED';
+	var ANNOUNCE_LOADING_ISSUE_GENERAL_DETAILS = exports.ANNOUNCE_LOADING_ISSUE_GENERAL_DETAILS = 'ANNOUNCE_LOADING_ISSUE_GENERAL_DETAILS';
+	var INVALIDATE_ISSUE_GENERAL_DETAILS = exports.INVALIDATE_ISSUE_GENERAL_DETAILS = 'INVALIDATE_ISSUE_GENERAL_DETAILS';
+
+	function invalidateIssueGeneralDetails(issue_ids_to_invalidate) {
+	    return {
+	        type: INVALIDATE_ISSUE_GENERAL_DETAILS,
+	        issue_ids_to_invalidate: issue_ids_to_invalidate
+	    };
+	}
+
+	function announceLoadingIssueGeneralDetails() {
+	    return {
+	        type: ANNOUNCE_LOADING_ISSUE_GENERAL_DETAILS
+	    };
+	}
+
+	function announceIssueGeneralDetailsLoaded(payload) {
+
+	    var items_by_id = {};
+	    payload.issues.map(function (item, index) {
+	        items_by_id[item.id] = item;
+	    });
+
+	    return {
+	        type: ANNOUNCE_ISSUE_GENERAL_DETAILS_LOADED,
+	        items_by_id: items_by_id,
+	        received_at: Date.now()
+	    };
+	}
+
+	function announceIssueGeneralDetailsLoadFailed(error) {
+	    return {
+	        type: ANNOUNCE_ISSUE_GENERAL_DETAILS_LOAD_FAILED,
+	        error: error,
+	        received_at: Date.now()
+	    };
+	}
+
+	function fetchIssueGeneralDetails(dispatch, issue_ids) {
+	    return function (dispatch, getState) {
+	        dispatch(announceLoadingIssueGeneralDetails());
+
+	        var params = { filter: { ids: issue_ids },
+	            format: { detail_level: 'general' },
+	            pagination: { 'enabled': false } };
+
+	        return (0, _lib.impfetch)('/imp/issue/', { params: params }).then(function (response) {
+	            return response.json();
+	        }).then(function (json) {
+	            if (json.status != 'success') {
+	                dispatch(announceIssueGeneralDetailsLoadFailed(json.error));
+	            } else {
+	                dispatch(announceIssueGeneralDetailsLoaded(json.payload));
+	            }
+	        }).catch(function (error) {
+	            dispatch(announceIssueGeneralDetailsLoadFailed("Failed to load issues: " + error.message));
+	        });
+	    };
+	}
+
+	function getMissingIssueGeneralDetails(state, required_issue_ids) {
+	    var matching_items = state.issue_general_details || {};
+	    var matching_item_ids = (0, _keys2.default)(matching_items.items_by_id || {});
+	    var matching_item_refs = matching_item_ids.map(function (item_id, index) {
+	        return "" + item_id;
+	    });
+	    var required_item_refs = required_issue_ids.map(function (item_id, index) {
+	        return "" + item_id;
+	    });
+	    var unmatching_item_ids = (0, _difference2.default)(required_item_refs, matching_item_refs);
+	    return unmatching_item_ids;
+	}
+
+	function fetchIssueGeneralDetailsIfNeeded(issue_ids) {
+	    return function (dispatch, getState) {
+	        var state = getState();
+	        var missing_issue_ids = getMissingIssueGeneralDetails(state, issue_ids);
+	        if (missing_issue_ids.length > 0) {
+	            dispatch(fetchIssueGeneralDetails(dispatch, missing_issue_ids));
+	        }
+	    };
+	}
+
+/***/ },
+/* 873 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	Object.defineProperty(exports, "__esModule", {
+					value: true
+	});
 	exports.HeaderBar = undefined;
 
 	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
@@ -62163,7 +62893,7 @@
 
 	var _reactRedux = __webpack_require__(533);
 
-	var _NotificationBar = __webpack_require__(868);
+	var _NotificationBar = __webpack_require__(874);
 
 	var _NotificationBar2 = _interopRequireDefault(_NotificationBar);
 
@@ -62222,7 +62952,7 @@
 	exports.default = (0, _reactRedux.connect)(mapStateToProps)(HeaderBar);
 
 /***/ },
-/* 868 */
+/* 874 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -62290,7 +63020,7 @@
 	exports.default = (0, _reactRedux.connect)(mapStateToProps)(NotificationBar);
 
 /***/ },
-/* 869 */
+/* 875 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -62302,15 +63032,15 @@
 
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
 
-	var _HTML5Backend = __webpack_require__(870);
+	var _HTML5Backend = __webpack_require__(876);
 
 	var _HTML5Backend2 = _interopRequireDefault(_HTML5Backend);
 
-	var _getEmptyImage = __webpack_require__(890);
+	var _getEmptyImage = __webpack_require__(896);
 
 	var _getEmptyImage2 = _interopRequireDefault(_getEmptyImage);
 
-	var _NativeTypes = __webpack_require__(889);
+	var _NativeTypes = __webpack_require__(895);
 
 	var NativeTypes = _interopRequireWildcard(_NativeTypes);
 
@@ -62322,7 +63052,7 @@
 	}
 
 /***/ },
-/* 870 */
+/* 876 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -62335,25 +63065,25 @@
 
 	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError('Cannot call a class as a function'); } }
 
-	var _lodashDefaults = __webpack_require__(871);
+	var _lodashDefaults = __webpack_require__(877);
 
 	var _lodashDefaults2 = _interopRequireDefault(_lodashDefaults);
 
-	var _shallowEqual = __webpack_require__(882);
+	var _shallowEqual = __webpack_require__(888);
 
 	var _shallowEqual2 = _interopRequireDefault(_shallowEqual);
 
-	var _EnterLeaveCounter = __webpack_require__(883);
+	var _EnterLeaveCounter = __webpack_require__(889);
 
 	var _EnterLeaveCounter2 = _interopRequireDefault(_EnterLeaveCounter);
 
-	var _BrowserDetector = __webpack_require__(885);
+	var _BrowserDetector = __webpack_require__(891);
 
-	var _OffsetUtils = __webpack_require__(886);
+	var _OffsetUtils = __webpack_require__(892);
 
-	var _NativeDragSources = __webpack_require__(888);
+	var _NativeDragSources = __webpack_require__(894);
 
-	var _NativeTypes = __webpack_require__(889);
+	var _NativeTypes = __webpack_require__(895);
 
 	var NativeTypes = _interopRequireWildcard(_NativeTypes);
 
@@ -62903,12 +63633,12 @@
 	module.exports = exports['default'];
 
 /***/ },
-/* 871 */
+/* 877 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var apply = __webpack_require__(621),
-	    assignInDefaults = __webpack_require__(872),
-	    assignInWith = __webpack_require__(873),
+	    assignInDefaults = __webpack_require__(878),
+	    assignInWith = __webpack_require__(879),
 	    rest = __webpack_require__(620);
 
 	/**
@@ -62941,7 +63671,7 @@
 
 
 /***/ },
-/* 872 */
+/* 878 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var eq = __webpack_require__(595);
@@ -62974,12 +63704,12 @@
 
 
 /***/ },
-/* 873 */
+/* 879 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var copyObject = __webpack_require__(874),
-	    createAssigner = __webpack_require__(876),
-	    keysIn = __webpack_require__(878);
+	var copyObject = __webpack_require__(880),
+	    createAssigner = __webpack_require__(882),
+	    keysIn = __webpack_require__(884);
 
 	/**
 	 * This method is like `_.assignIn` except that it accepts `customizer`
@@ -63018,10 +63748,10 @@
 
 
 /***/ },
-/* 874 */
+/* 880 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var assignValue = __webpack_require__(875);
+	var assignValue = __webpack_require__(881);
 
 	/**
 	 * Copies properties of `source` to `object`.
@@ -63055,7 +63785,7 @@
 
 
 /***/ },
-/* 875 */
+/* 881 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var eq = __webpack_require__(595);
@@ -63088,10 +63818,10 @@
 
 
 /***/ },
-/* 876 */
+/* 882 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var isIterateeCall = __webpack_require__(877),
+	var isIterateeCall = __webpack_require__(883),
 	    rest = __webpack_require__(620);
 
 	/**
@@ -63131,7 +63861,7 @@
 
 
 /***/ },
-/* 877 */
+/* 883 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var eq = __webpack_require__(595),
@@ -63167,10 +63897,10 @@
 
 
 /***/ },
-/* 878 */
+/* 884 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var baseKeysIn = __webpack_require__(879),
+	var baseKeysIn = __webpack_require__(885),
 	    indexKeys = __webpack_require__(697),
 	    isIndex = __webpack_require__(701),
 	    isPrototype = __webpack_require__(702);
@@ -63228,11 +63958,11 @@
 
 
 /***/ },
-/* 879 */
+/* 885 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var Reflect = __webpack_require__(880),
-	    iteratorToArray = __webpack_require__(881);
+	var Reflect = __webpack_require__(886),
+	    iteratorToArray = __webpack_require__(887);
 
 	/** Used for built-in method references. */
 	var objectProto = Object.prototype;
@@ -63270,7 +64000,7 @@
 
 
 /***/ },
-/* 880 */
+/* 886 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var root = __webpack_require__(583);
@@ -63282,7 +64012,7 @@
 
 
 /***/ },
-/* 881 */
+/* 887 */
 /***/ function(module, exports) {
 
 	/**
@@ -63306,7 +64036,7 @@
 
 
 /***/ },
-/* 882 */
+/* 888 */
 /***/ function(module, exports) {
 
 	"use strict";
@@ -63347,7 +64077,7 @@
 	module.exports = exports["default"];
 
 /***/ },
-/* 883 */
+/* 889 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -63358,7 +64088,7 @@
 
 	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError('Cannot call a class as a function'); } }
 
-	var _lodashUnion = __webpack_require__(884);
+	var _lodashUnion = __webpack_require__(890);
 
 	var _lodashUnion2 = _interopRequireDefault(_lodashUnion);
 
@@ -63404,7 +64134,7 @@
 	module.exports = exports['default'];
 
 /***/ },
-/* 884 */
+/* 890 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var baseFlatten = __webpack_require__(740),
@@ -63436,7 +64166,7 @@
 
 
 /***/ },
-/* 885 */
+/* 891 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -63461,7 +64191,7 @@
 	exports.isSafari = isSafari;
 
 /***/ },
-/* 886 */
+/* 892 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -63473,9 +64203,9 @@
 
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
 
-	var _BrowserDetector = __webpack_require__(885);
+	var _BrowserDetector = __webpack_require__(891);
 
-	var _MonotonicInterpolant = __webpack_require__(887);
+	var _MonotonicInterpolant = __webpack_require__(893);
 
 	var _MonotonicInterpolant2 = _interopRequireDefault(_MonotonicInterpolant);
 
@@ -63561,7 +64291,7 @@
 	}
 
 /***/ },
-/* 887 */
+/* 893 */
 /***/ function(module, exports) {
 
 	"use strict";
@@ -63678,7 +64408,7 @@
 	module.exports = exports["default"];
 
 /***/ },
-/* 888 */
+/* 894 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -63696,7 +64426,7 @@
 
 	function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
 
-	var _NativeTypes = __webpack_require__(889);
+	var _NativeTypes = __webpack_require__(895);
 
 	var NativeTypes = _interopRequireWildcard(_NativeTypes);
 
@@ -63786,7 +64516,7 @@
 	}
 
 /***/ },
-/* 889 */
+/* 895 */
 /***/ function(module, exports) {
 
 	'use strict';
@@ -63800,7 +64530,7 @@
 	exports.TEXT = TEXT;
 
 /***/ },
-/* 890 */
+/* 896 */
 /***/ function(module, exports) {
 
 	'use strict';
@@ -63821,7 +64551,7 @@
 	module.exports = exports['default'];
 
 /***/ },
-/* 891 */
+/* 897 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -63833,19 +64563,19 @@
 
 	var _redux = __webpack_require__(540);
 
-	var _reduxThunk = __webpack_require__(892);
+	var _reduxThunk = __webpack_require__(898);
 
 	var _reduxThunk2 = _interopRequireDefault(_reduxThunk);
 
-	var _error_catcher = __webpack_require__(893);
+	var _error_catcher = __webpack_require__(899);
 
 	var _error_catcher2 = _interopRequireDefault(_error_catcher);
 
-	var _DevPageMiddleware = __webpack_require__(894);
+	var _DevPageMiddleware = __webpack_require__(900);
 
 	var _DevPageMiddleware2 = _interopRequireDefault(_DevPageMiddleware);
 
-	var _reducers = __webpack_require__(896);
+	var _reducers = __webpack_require__(901);
 
 	var _reducers2 = _interopRequireDefault(_reducers);
 
@@ -63859,7 +64589,7 @@
 	}
 
 /***/ },
-/* 892 */
+/* 898 */
 /***/ function(module, exports) {
 
 	'use strict';
@@ -63887,7 +64617,7 @@
 	exports['default'] = thunk;
 
 /***/ },
-/* 893 */
+/* 899 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -63920,7 +64650,7 @@
 	module.exports = error_catcher_middleware;
 
 /***/ },
-/* 894 */
+/* 900 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -63939,7 +64669,7 @@
 
 	var _Issues = __webpack_require__(854);
 
-	var _IssueGeneralDetails = __webpack_require__(895);
+	var _IssueGeneralDetails = __webpack_require__(872);
 
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -64015,123 +64745,7 @@
 	module.exports = DevPageMiddleware;
 
 /***/ },
-/* 895 */
-/***/ function(module, exports, __webpack_require__) {
-
-	'use strict';
-
-	Object.defineProperty(exports, "__esModule", {
-	    value: true
-	});
-	exports.INVALIDATE_ISSUE_GENERAL_DETAILS = exports.ANNOUNCE_LOADING_ISSUE_GENERAL_DETAILS = exports.ANNOUNCE_ISSUE_GENERAL_DETAILS_LOAD_FAILED = exports.ANNOUNCE_ISSUE_GENERAL_DETAILS_LOADED = undefined;
-	exports.invalidateIssueGeneralDetails = invalidateIssueGeneralDetails;
-	exports.fetchIssueGeneralDetailsIfNeeded = fetchIssueGeneralDetailsIfNeeded;
-
-	var _lib = __webpack_require__(734);
-
-	var _difference = __webpack_require__(739);
-
-	var _difference2 = _interopRequireDefault(_difference);
-
-	var _keys = __webpack_require__(695);
-
-	var _keys2 = _interopRequireDefault(_keys);
-
-	var _map = __webpack_require__(675);
-
-	var _map2 = _interopRequireDefault(_map);
-
-	var _Error = __webpack_require__(865);
-
-	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-	var ANNOUNCE_ISSUE_GENERAL_DETAILS_LOADED = exports.ANNOUNCE_ISSUE_GENERAL_DETAILS_LOADED = 'ANNOUNCE_ISSUES_GENERAL_DETAILS_LOADED';
-	var ANNOUNCE_ISSUE_GENERAL_DETAILS_LOAD_FAILED = exports.ANNOUNCE_ISSUE_GENERAL_DETAILS_LOAD_FAILED = 'ANNOUNCE_ISSUE_GENERAL_DETAILS_LOAD_FAILED';
-	var ANNOUNCE_LOADING_ISSUE_GENERAL_DETAILS = exports.ANNOUNCE_LOADING_ISSUE_GENERAL_DETAILS = 'ANNOUNCE_LOADING_ISSUE_GENERAL_DETAILS';
-	var INVALIDATE_ISSUE_GENERAL_DETAILS = exports.INVALIDATE_ISSUE_GENERAL_DETAILS = 'INVALIDATE_ISSUE_GENERAL_DETAILS';
-
-	function invalidateIssueGeneralDetails(issue_ids_to_invalidate) {
-	    return {
-	        type: INVALIDATE_ISSUE_GENERAL_DETAILS,
-	        issue_ids_to_invalidate: issue_ids_to_invalidate
-	    };
-	}
-
-	function announceLoadingIssueGeneralDetails() {
-	    return {
-	        type: ANNOUNCE_LOADING_ISSUE_GENERAL_DETAILS
-	    };
-	}
-
-	function announceIssueGeneralDetailsLoaded(payload) {
-
-	    var items_by_id = {};
-	    payload.issues.map(function (item, index) {
-	        items_by_id[item.id] = item;
-	    });
-
-	    return {
-	        type: ANNOUNCE_ISSUE_GENERAL_DETAILS_LOADED,
-	        items_by_id: items_by_id,
-	        received_at: Date.now()
-	    };
-	}
-
-	function announceIssueGeneralDetailsLoadFailed(error) {
-	    return {
-	        type: ANNOUNCE_ISSUE_GENERAL_DETAILS_LOAD_FAILED,
-	        error: error,
-	        received_at: Date.now()
-	    };
-	}
-
-	function fetchIssueGeneralDetails(dispatch, issue_ids) {
-	    return function (dispatch, getState) {
-	        dispatch(announceLoadingIssueGeneralDetails());
-
-	        var params = { filter: { ids: issue_ids },
-	            format: { detail_level: 'general' },
-	            pagination: { 'enabled': false } };
-
-	        return (0, _lib.impfetch)('/imp/issue/', { params: params }).then(function (response) {
-	            return response.json();
-	        }).then(function (json) {
-	            if (json.status != 'success') {
-	                dispatch(announceIssueGeneralDetailsLoadFailed(json.error));
-	            } else {
-	                dispatch(announceIssueGeneralDetailsLoaded(json.payload));
-	            }
-	        }).catch(function (error) {
-	            dispatch(announceIssueGeneralDetailsLoadFailed("Failed to load issues: " + error.message));
-	        });
-	    };
-	}
-
-	function getMissingIssueGeneralDetails(state, required_issue_ids) {
-	    var matching_items = state.issue_general_details || {};
-	    var matching_item_ids = (0, _keys2.default)(matching_items.items_by_id || {});
-	    var matching_item_refs = matching_item_ids.map(function (item_id, index) {
-	        return "" + item_id;
-	    });
-	    var required_item_refs = required_issue_ids.map(function (item_id, index) {
-	        return "" + item_id;
-	    });
-	    var unmatching_item_ids = (0, _difference2.default)(required_item_refs, matching_item_refs);
-	    return unmatching_item_ids;
-	}
-
-	function fetchIssueGeneralDetailsIfNeeded(issue_ids) {
-	    return function (dispatch, getState) {
-	        var state = getState();
-	        var missing_issue_ids = getMissingIssueGeneralDetails(state, issue_ids);
-	        if (missing_issue_ids.length > 0) {
-	            dispatch(fetchIssueGeneralDetails(dispatch, missing_issue_ids));
-	        }
-	    };
-	}
-
-/***/ },
-/* 896 */
+/* 901 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -64140,7 +64754,7 @@
 	    value: true
 	});
 
-	var _merge = __webpack_require__(897);
+	var _merge = __webpack_require__(902);
 
 	var _merge2 = _interopRequireDefault(_merge);
 
@@ -64152,31 +64766,31 @@
 
 	var _map2 = _interopRequireDefault(_map);
 
-	var _item_list = __webpack_require__(928);
+	var _item_list = __webpack_require__(933);
 
 	var _item_list2 = _interopRequireDefault(_item_list);
 
-	var _project = __webpack_require__(929);
+	var _project = __webpack_require__(934);
 
 	var _project2 = _interopRequireDefault(_project);
 
-	var _sprint = __webpack_require__(931);
+	var _sprint = __webpack_require__(936);
 
 	var _sprint2 = _interopRequireDefault(_sprint);
 
-	var _issue = __webpack_require__(932);
+	var _issue = __webpack_require__(937);
 
 	var _issue2 = _interopRequireDefault(_issue);
 
-	var _issue_general_details = __webpack_require__(933);
+	var _issue_general_details = __webpack_require__(938);
 
 	var _issue_general_details2 = _interopRequireDefault(_issue_general_details);
 
-	var _notification_bar = __webpack_require__(934);
+	var _notification_bar = __webpack_require__(939);
 
 	var _notification_bar2 = _interopRequireDefault(_notification_bar);
 
-	var _user = __webpack_require__(935);
+	var _user = __webpack_require__(940);
 
 	var _user2 = _interopRequireDefault(_user);
 
@@ -64196,11 +64810,11 @@
 	exports.default = rootReducer;
 
 /***/ },
-/* 897 */
+/* 902 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var baseMerge = __webpack_require__(898),
-	    createAssigner = __webpack_require__(876);
+	var baseMerge = __webpack_require__(903),
+	    createAssigner = __webpack_require__(882);
 
 	/**
 	 * This method is like `_.assign` except that it recursively merges own and
@@ -64241,17 +64855,17 @@
 
 
 /***/ },
-/* 898 */
+/* 903 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var Stack = __webpack_require__(679),
-	    arrayEach = __webpack_require__(899),
-	    assignMergeValue = __webpack_require__(900),
-	    baseMergeDeep = __webpack_require__(901),
+	    arrayEach = __webpack_require__(904),
+	    assignMergeValue = __webpack_require__(905),
+	    baseMergeDeep = __webpack_require__(906),
 	    isArray = __webpack_require__(565),
 	    isObject = __webpack_require__(567),
 	    isTypedArray = __webpack_require__(707),
-	    keysIn = __webpack_require__(878);
+	    keysIn = __webpack_require__(884);
 
 	/**
 	 * The base implementation of `_.merge` without support for multiple sources.
@@ -64297,7 +64911,7 @@
 
 
 /***/ },
-/* 899 */
+/* 904 */
 /***/ function(module, exports) {
 
 	/**
@@ -64325,7 +64939,7 @@
 
 
 /***/ },
-/* 900 */
+/* 905 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var eq = __webpack_require__(595);
@@ -64350,12 +64964,12 @@
 
 
 /***/ },
-/* 901 */
+/* 906 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var assignMergeValue = __webpack_require__(900),
-	    baseClone = __webpack_require__(902),
-	    copyArray = __webpack_require__(905),
+	var assignMergeValue = __webpack_require__(905),
+	    baseClone = __webpack_require__(907),
+	    copyArray = __webpack_require__(910),
 	    isArguments = __webpack_require__(699),
 	    isArray = __webpack_require__(565),
 	    isArrayLikeObject = __webpack_require__(615),
@@ -64363,7 +64977,7 @@
 	    isObject = __webpack_require__(567),
 	    isPlainObject = __webpack_require__(542),
 	    isTypedArray = __webpack_require__(707),
-	    toPlainObject = __webpack_require__(927);
+	    toPlainObject = __webpack_require__(932);
 
 	/**
 	 * A specialized version of `baseMerge` for arrays and objects which performs
@@ -64439,23 +65053,23 @@
 
 
 /***/ },
-/* 902 */
+/* 907 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var Stack = __webpack_require__(679),
-	    arrayEach = __webpack_require__(899),
-	    assignValue = __webpack_require__(875),
-	    baseAssign = __webpack_require__(903),
-	    cloneBuffer = __webpack_require__(904),
-	    copyArray = __webpack_require__(905),
-	    copySymbols = __webpack_require__(906),
-	    getAllKeys = __webpack_require__(909),
+	    arrayEach = __webpack_require__(904),
+	    assignValue = __webpack_require__(881),
+	    baseAssign = __webpack_require__(908),
+	    cloneBuffer = __webpack_require__(909),
+	    copyArray = __webpack_require__(910),
+	    copySymbols = __webpack_require__(911),
+	    getAllKeys = __webpack_require__(914),
 	    getTag = __webpack_require__(703),
-	    initCloneArray = __webpack_require__(911),
-	    initCloneByTag = __webpack_require__(912),
-	    initCloneObject = __webpack_require__(923),
+	    initCloneArray = __webpack_require__(916),
+	    initCloneByTag = __webpack_require__(917),
+	    initCloneObject = __webpack_require__(928),
 	    isArray = __webpack_require__(565),
-	    isBuffer = __webpack_require__(925),
+	    isBuffer = __webpack_require__(930),
 	    isHostObject = __webpack_require__(544),
 	    isObject = __webpack_require__(567),
 	    keys = __webpack_require__(695);
@@ -64584,10 +65198,10 @@
 
 
 /***/ },
-/* 903 */
+/* 908 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var copyObject = __webpack_require__(874),
+	var copyObject = __webpack_require__(880),
 	    keys = __webpack_require__(695);
 
 	/**
@@ -64607,7 +65221,7 @@
 
 
 /***/ },
-/* 904 */
+/* 909 */
 /***/ function(module, exports) {
 
 	/**
@@ -64631,7 +65245,7 @@
 
 
 /***/ },
-/* 905 */
+/* 910 */
 /***/ function(module, exports) {
 
 	/**
@@ -64657,11 +65271,11 @@
 
 
 /***/ },
-/* 906 */
+/* 911 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var copyObject = __webpack_require__(874),
-	    getSymbols = __webpack_require__(907);
+	var copyObject = __webpack_require__(880),
+	    getSymbols = __webpack_require__(912);
 
 	/**
 	 * Copies own symbol properties of `source` to `object`.
@@ -64679,10 +65293,10 @@
 
 
 /***/ },
-/* 907 */
+/* 912 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var stubArray = __webpack_require__(908);
+	var stubArray = __webpack_require__(913);
 
 	/** Built-in value references. */
 	var getOwnPropertySymbols = Object.getOwnPropertySymbols;
@@ -64709,7 +65323,7 @@
 
 
 /***/ },
-/* 908 */
+/* 913 */
 /***/ function(module, exports) {
 
 	/**
@@ -64738,11 +65352,11 @@
 
 
 /***/ },
-/* 909 */
+/* 914 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var baseGetAllKeys = __webpack_require__(910),
-	    getSymbols = __webpack_require__(907),
+	var baseGetAllKeys = __webpack_require__(915),
+	    getSymbols = __webpack_require__(912),
 	    keys = __webpack_require__(695);
 
 	/**
@@ -64760,7 +65374,7 @@
 
 
 /***/ },
-/* 910 */
+/* 915 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var arrayPush = __webpack_require__(631),
@@ -64786,7 +65400,7 @@
 
 
 /***/ },
-/* 911 */
+/* 916 */
 /***/ function(module, exports) {
 
 	/** Used for built-in method references. */
@@ -64818,16 +65432,16 @@
 
 
 /***/ },
-/* 912 */
+/* 917 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var cloneArrayBuffer = __webpack_require__(913),
-	    cloneDataView = __webpack_require__(914),
-	    cloneMap = __webpack_require__(915),
-	    cloneRegExp = __webpack_require__(918),
-	    cloneSet = __webpack_require__(919),
-	    cloneSymbol = __webpack_require__(921),
-	    cloneTypedArray = __webpack_require__(922);
+	var cloneArrayBuffer = __webpack_require__(918),
+	    cloneDataView = __webpack_require__(919),
+	    cloneMap = __webpack_require__(920),
+	    cloneRegExp = __webpack_require__(923),
+	    cloneSet = __webpack_require__(924),
+	    cloneSymbol = __webpack_require__(926),
+	    cloneTypedArray = __webpack_require__(927);
 
 	/** `Object#toString` result references. */
 	var boolTag = '[object Boolean]',
@@ -64904,7 +65518,7 @@
 
 
 /***/ },
-/* 913 */
+/* 918 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var Uint8Array = __webpack_require__(691);
@@ -64926,10 +65540,10 @@
 
 
 /***/ },
-/* 914 */
+/* 919 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var cloneArrayBuffer = __webpack_require__(913);
+	var cloneArrayBuffer = __webpack_require__(918);
 
 	/**
 	 * Creates a clone of `dataView`.
@@ -64948,11 +65562,11 @@
 
 
 /***/ },
-/* 915 */
+/* 920 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var addMapEntry = __webpack_require__(916),
-	    arrayReduce = __webpack_require__(917),
+	var addMapEntry = __webpack_require__(921),
+	    arrayReduce = __webpack_require__(922),
 	    mapToArray = __webpack_require__(692);
 
 	/**
@@ -64973,7 +65587,7 @@
 
 
 /***/ },
-/* 916 */
+/* 921 */
 /***/ function(module, exports) {
 
 	/**
@@ -64994,7 +65608,7 @@
 
 
 /***/ },
-/* 917 */
+/* 922 */
 /***/ function(module, exports) {
 
 	/**
@@ -65026,7 +65640,7 @@
 
 
 /***/ },
-/* 918 */
+/* 923 */
 /***/ function(module, exports) {
 
 	/** Used to match `RegExp` flags from their coerced string values. */
@@ -65049,11 +65663,11 @@
 
 
 /***/ },
-/* 919 */
+/* 924 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var addSetEntry = __webpack_require__(920),
-	    arrayReduce = __webpack_require__(917),
+	var addSetEntry = __webpack_require__(925),
+	    arrayReduce = __webpack_require__(922),
 	    setToArray = __webpack_require__(636);
 
 	/**
@@ -65074,7 +65688,7 @@
 
 
 /***/ },
-/* 920 */
+/* 925 */
 /***/ function(module, exports) {
 
 	/**
@@ -65094,7 +65708,7 @@
 
 
 /***/ },
-/* 921 */
+/* 926 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var Symbol = __webpack_require__(690);
@@ -65118,10 +65732,10 @@
 
 
 /***/ },
-/* 922 */
+/* 927 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var cloneArrayBuffer = __webpack_require__(913);
+	var cloneArrayBuffer = __webpack_require__(918);
 
 	/**
 	 * Creates a clone of `typedArray`.
@@ -65140,10 +65754,10 @@
 
 
 /***/ },
-/* 923 */
+/* 928 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var baseCreate = __webpack_require__(924),
+	var baseCreate = __webpack_require__(929),
 	    getPrototype = __webpack_require__(543),
 	    isPrototype = __webpack_require__(702);
 
@@ -65164,7 +65778,7 @@
 
 
 /***/ },
-/* 924 */
+/* 929 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var isObject = __webpack_require__(567);
@@ -65188,11 +65802,11 @@
 
 
 /***/ },
-/* 925 */
+/* 930 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(module) {var root = __webpack_require__(583),
-	    stubFalse = __webpack_require__(926);
+	    stubFalse = __webpack_require__(931);
 
 	/** Detect free variable `exports`. */
 	var freeExports = typeof exports == 'object' && exports;
@@ -65232,7 +65846,7 @@
 	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(747)(module)))
 
 /***/ },
-/* 926 */
+/* 931 */
 /***/ function(module, exports) {
 
 	/**
@@ -65256,11 +65870,11 @@
 
 
 /***/ },
-/* 927 */
+/* 932 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var copyObject = __webpack_require__(874),
-	    keysIn = __webpack_require__(878);
+	var copyObject = __webpack_require__(880),
+	    keysIn = __webpack_require__(884);
 
 	/**
 	 * Converts `value` to a plain object flattening inherited enumerable string
@@ -65294,7 +65908,7 @@
 
 
 /***/ },
-/* 928 */
+/* 933 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -65308,7 +65922,7 @@
 
 	var _map2 = _interopRequireDefault(_map);
 
-	var _merge = __webpack_require__(897);
+	var _merge = __webpack_require__(902);
 
 	var _merge2 = _interopRequireDefault(_merge);
 
@@ -65414,7 +66028,7 @@
 	}
 
 /***/ },
-/* 929 */
+/* 934 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -65431,7 +66045,7 @@
 
 	var _map2 = _interopRequireDefault(_map);
 
-	var _assign = __webpack_require__(930);
+	var _assign = __webpack_require__(935);
 
 	var _assign2 = _interopRequireDefault(_assign);
 
@@ -65439,7 +66053,7 @@
 
 	var _keys2 = _interopRequireDefault(_keys);
 
-	var _union = __webpack_require__(884);
+	var _union = __webpack_require__(890);
 
 	var _union2 = _interopRequireDefault(_union);
 
@@ -65510,12 +66124,12 @@
 	}
 
 /***/ },
-/* 930 */
+/* 935 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var assignValue = __webpack_require__(875),
-	    copyObject = __webpack_require__(874),
-	    createAssigner = __webpack_require__(876),
+	var assignValue = __webpack_require__(881),
+	    copyObject = __webpack_require__(880),
+	    createAssigner = __webpack_require__(882),
 	    isArrayLike = __webpack_require__(616),
 	    isPrototype = __webpack_require__(702),
 	    keys = __webpack_require__(695);
@@ -65580,7 +66194,7 @@
 
 
 /***/ },
-/* 931 */
+/* 936 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -65597,7 +66211,7 @@
 
 	var _map2 = _interopRequireDefault(_map);
 
-	var _assign = __webpack_require__(930);
+	var _assign = __webpack_require__(935);
 
 	var _assign2 = _interopRequireDefault(_assign);
 
@@ -65605,7 +66219,7 @@
 
 	var _keys2 = _interopRequireDefault(_keys);
 
-	var _union = __webpack_require__(884);
+	var _union = __webpack_require__(890);
 
 	var _union2 = _interopRequireDefault(_union);
 
@@ -65694,13 +66308,13 @@
 	}
 
 /***/ },
-/* 932 */
+/* 937 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 
 	Object.defineProperty(exports, "__esModule", {
-	    value: true
+					value: true
 	});
 
 	var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol ? "symbol" : typeof obj; };
@@ -65711,7 +66325,7 @@
 
 	var _map2 = _interopRequireDefault(_map);
 
-	var _assign = __webpack_require__(930);
+	var _assign = __webpack_require__(935);
 
 	var _assign2 = _interopRequireDefault(_assign);
 
@@ -65719,7 +66333,7 @@
 
 	var _difference2 = _interopRequireDefault(_difference);
 
-	var _union = __webpack_require__(884);
+	var _union = __webpack_require__(890);
 
 	var _union2 = _interopRequireDefault(_union);
 
@@ -65734,62 +66348,94 @@
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 	var initialState = {
-	    items_by_id: {},
-	    loading_item_ids: []
+					items_by_id: {},
+					loading_item_ids: []
 	};
 
 	function issue() {
-	    var state = arguments.length <= 0 || arguments[0] === undefined ? initialState : arguments[0];
-	    var action = arguments[1];
+					var state = arguments.length <= 0 || arguments[0] === undefined ? initialState : arguments[0];
+					var action = arguments[1];
 
-	    var _ret = function () {
+					var _ret = function () {
 
-	        switch (action.type) {
-	            case _Issues.INVALIDATE_ISSUES:
+									switch (action.type) {
+													case _Issues.INVALIDATE_ISSUES:
 
-	                var new_issue_ids = Object.assign({}, state.items_by_id);
-	                action.issue_ids_to_invalidate.map(function (id_to_invalidate) {
-	                    if (new_issue_ids[id_to_invalidate]) {
-	                        delete new_issue_ids[id_to_invalidate];
-	                    }
-	                });
+																	var new_issue_ids = Object.assign({}, state.items_by_id);
+																	action.issue_ids_to_invalidate.map(function (id_to_invalidate) {
+																					if (new_issue_ids[id_to_invalidate]) {
+																									delete new_issue_ids[id_to_invalidate];
+																					}
+																	});
 
-	                return {
-	                    v: Object.assign({}, state, { items_by_id: new_issue_ids })
-	                };
-	            case _Issues.ANNOUNCE_LOADING_ISSUES:
-	                return {
-	                    v: Object.assign({}, state, {
-	                        loading_item_ids: (0, _union2.default)(state.loading_item_ids, action.issue_ids_to_load)
-	                    })
-	                };
+																	return {
+																					v: Object.assign({}, state, { items_by_id: new_issue_ids })
+																	};
+													case _Issues.ANNOUNCE_LOADING_ISSUES:
+																	return {
+																					v: Object.assign({}, state, {
+																									loading_item_ids: (0, _union2.default)(state.loading_item_ids, action.issue_ids_to_load)
+																					})
+																	};
 
-	            case _Issues.ANNOUNCE_ISSUES_LOADED:
-	                return {
-	                    v: Object.assign({}, state, {
+													case _Issues.ANNOUNCE_ISSUES_LOADED:
+																	return {
+																					v: Object.assign({}, state, {
 
-	                        loading_item_ids: Object.assign({}, (0, _difference2.default)(state.loading_item_ids || [], (0, _keys2.default)(action.items_by_id))),
-	                        items_by_id: Object.assign({}, (0, _assign2.default)(state.items_by_id, action.items_by_id))
-	                    })
-	                };
-	            case _Issues.ANNOUNCE_ISSUES_LOAD_FAILED:
-	                (0, _Error.setErrorMessage)("Failed to load issues: " + action.error_message);
-	                return {
-	                    v: state
-	                };
+																									loading_item_ids: Object.assign({}, (0, _difference2.default)(state.loading_item_ids || [], (0, _keys2.default)(action.items_by_id))),
+																									items_by_id: Object.assign({}, (0, _assign2.default)(state.items_by_id, action.items_by_id))
+																					})
+																	};
+													case _Issues.ANNOUNCE_ISSUES_LOAD_FAILED:
+																	(0, _Error.setErrorMessage)("Failed to load issues: " + action.error_message);
+																	return {
+																					v: state
+																	};
 
-	            default:
-	                return {
-	                    v: state
-	                };
-	        }
-	    }();
+													case _Issues.ANNOUNCE_CAPTURING_NEW_ISSUE:
+																	return {
+																					v: Object.assign({}, state, { candidate_issue: {
+																													issue_id_before: action.issue_id_before,
+																													sprint_id: action.sprint_id
+																									} })
+																	};
+													case _Issues.UPDATE_NEW_ISSUE_DETAILS:
+																	return {
+																					v: Object.assign({}, state, { candidate_issue: Object.assign({}, state.candidate_issue || {}, action.candidate_issue) })
+																	};
+													case _Issues.CANCEL_CREATING_NEW_ISSUE:
+																	return {
+																					v: Object.assign({}, state, { candidate_issue: null })
+																	};
 
-	    if ((typeof _ret === 'undefined' ? 'undefined' : _typeof(_ret)) === "object") return _ret.v;
+													case _Issues.ANNOUNCE_SAVING_NEW_ISSUE:
+																	return {
+																					v: Object.assign({}, state, { candidate_issue: Object.assign({}, state.candidate_issue || {}, { saving: true }) })
+																	};
+													case _Issues.ANNOUNCE_SAVED_NEW_ISSUE:
+
+																	new_items_by_id = Object.assign({}, state.items_by_id);
+																	new_items_by_id[action.issue.id] = action.issue;
+																	return {
+																					v: Object.assign({}, state, { items_by_id: new_items_by_id })
+																	};
+
+													case _Issues.ANNOUNCE_SAVING_NEW_ISSUE_FAILED:
+																	return {
+																					v: Object.assign({}, state, { candidate_issue: Object.assign({}, state.candidate_issue || {}, { is_saving: false }) })
+																	};
+													default:
+																	return {
+																					v: state
+																	};
+									}
+					}();
+
+					if ((typeof _ret === 'undefined' ? 'undefined' : _typeof(_ret)) === "object") return _ret.v;
 	}
 
 /***/ },
-/* 933 */
+/* 938 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -65803,7 +66449,7 @@
 
 	var _map2 = _interopRequireDefault(_map);
 
-	var _assign = __webpack_require__(930);
+	var _assign = __webpack_require__(935);
 
 	var _assign2 = _interopRequireDefault(_assign);
 
@@ -65815,13 +66461,13 @@
 
 	var _difference2 = _interopRequireDefault(_difference);
 
-	var _union = __webpack_require__(884);
+	var _union = __webpack_require__(890);
 
 	var _union2 = _interopRequireDefault(_union);
 
 	var _Error = __webpack_require__(865);
 
-	var _IssueGeneralDetails = __webpack_require__(895);
+	var _IssueGeneralDetails = __webpack_require__(872);
 
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -65859,7 +66505,7 @@
 	}
 
 /***/ },
-/* 934 */
+/* 939 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -65873,7 +66519,7 @@
 
 	var _map2 = _interopRequireDefault(_map);
 
-	var _merge = __webpack_require__(897);
+	var _merge = __webpack_require__(902);
 
 	var _merge2 = _interopRequireDefault(_merge);
 
@@ -65898,7 +66544,7 @@
 	}
 
 /***/ },
-/* 935 */
+/* 940 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -65915,7 +66561,7 @@
 
 	var _map2 = _interopRequireDefault(_map);
 
-	var _assign = __webpack_require__(930);
+	var _assign = __webpack_require__(935);
 
 	var _assign2 = _interopRequireDefault(_assign);
 
@@ -65923,7 +66569,7 @@
 
 	var _keys2 = _interopRequireDefault(_keys);
 
-	var _union = __webpack_require__(884);
+	var _union = __webpack_require__(890);
 
 	var _union2 = _interopRequireDefault(_union);
 
@@ -65992,540 +66638,6 @@
 
 	    if ((typeof _ret === 'undefined' ? 'undefined' : _typeof(_ret)) === "object") return _ret.v;
 	}
-
-/***/ },
-/* 936 */
-/***/ function(module, exports, __webpack_require__) {
-
-	'use strict';
-
-	Object.defineProperty(exports, "__esModule", {
-					value: true
-	});
-	exports.RIETextArea = undefined;
-
-	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
-
-	var _react = __webpack_require__(300);
-
-	var _react2 = _interopRequireDefault(_react);
-
-	var _reactDom = __webpack_require__(336);
-
-	var _reactDom2 = _interopRequireDefault(_reactDom);
-
-	var _riek = __webpack_require__(857);
-
-	var _reactAutosizeTextarea = __webpack_require__(937);
-
-	var _reactAutosizeTextarea2 = _interopRequireDefault(_reactAutosizeTextarea);
-
-	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
-	function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
-
-	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
-
-	var RIETextArea = exports.RIETextArea = function (_Component) {
-					_inherits(RIETextArea, _Component);
-
-					function RIETextArea(props) {
-									_classCallCheck(this, RIETextArea);
-
-									var _this = _possibleConstructorReturn(this, Object.getPrototypeOf(RIETextArea).call(this, props));
-
-									_this.startEditing = _this.startEditing.bind(_this);
-									_this.stopEditing = _this.stopEditing.bind(_this);
-									_this.commit = _this.commit.bind(_this);
-									_this.cancel = _this.cancel.bind(_this);
-									_this.state = {
-													editing: false
-									};
-									return _this;
-					}
-
-					_createClass(RIETextArea, [{
-									key: 'startEditing',
-									value: function startEditing() {
-													this.setState({ editing: true });
-									}
-					}, {
-									key: 'commit',
-									value: function commit() {
-													var new_value = _reactDom2.default.findDOMNode(this.editor).value;
-													this.stopEditing();
-													var res = {};
-													res[this.props.propName] = new_value;
-													this.props.change(res);
-									}
-					}, {
-									key: 'cancel',
-									value: function cancel() {
-													this.stopEditing();
-									}
-					}, {
-									key: 'stopEditing',
-									value: function stopEditing() {
-													this.setState({ editing: false });
-									}
-					}, {
-									key: 'renderNormalComponent',
-									value: function renderNormalComponent() {
-													return _react2.default.createElement(
-																	'div',
-																	null,
-																	this.state.newValue || this.props.value,
-																	_react2.default.createElement('br', null),
-																	_react2.default.createElement(
-																					'button',
-																					{ className: 'btn btn-secondary', onClick: this.startEditing },
-																					'Edit'
-																	)
-													);
-									}
-					}, {
-									key: 'renderEditingComponent',
-									value: function renderEditingComponent() {
-													var _this2 = this;
-
-													return _react2.default.createElement(
-																	'div',
-																	null,
-																	_react2.default.createElement(_reactAutosizeTextarea2.default, { ref: function ref(_ref) {
-																									return _this2.editor = _ref;
-																					}, rows: '20', cols: '80', defaultValue: this.props.value }),
-																	_react2.default.createElement(
-																					'button',
-																					{ className: 'btn btn-primary', onClick: this.commit },
-																					'Save'
-																	),
-																	_react2.default.createElement(
-																					'button',
-																					{ className: 'btn btn-cancel', onClick: this.cancel },
-																					'Cancel'
-																	)
-													);
-									}
-					}, {
-									key: 'render',
-									value: function render() {
-													if (this.state.editing) {
-																	return this.renderEditingComponent();
-													} else {
-																	return this.renderNormalComponent();
-													}
-									}
-					}]);
-
-					return RIETextArea;
-	}(_react.Component);
-
-/***/ },
-/* 937 */
-/***/ function(module, exports, __webpack_require__) {
-
-	module.exports = __webpack_require__(938);
-
-/***/ },
-/* 938 */
-/***/ function(module, exports, __webpack_require__) {
-
-	'use strict';
-
-	exports.__esModule = true;
-
-	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
-
-	var _TextareaAutosizeJs = __webpack_require__(939);
-
-	var _TextareaAutosizeJs2 = _interopRequireDefault(_TextareaAutosizeJs);
-
-	exports['default'] = _TextareaAutosizeJs2['default'];
-	module.exports = exports['default'];
-
-/***/ },
-/* 939 */
-/***/ function(module, exports, __webpack_require__) {
-
-	'use strict';
-
-	exports.__esModule = true;
-
-	var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
-
-	var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ('value' in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
-
-	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
-
-	function _objectWithoutProperties(obj, keys) { var target = {}; for (var i in obj) { if (keys.indexOf(i) >= 0) continue; if (!Object.prototype.hasOwnProperty.call(obj, i)) continue; target[i] = obj[i]; } return target; }
-
-	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError('Cannot call a class as a function'); } }
-
-	function _inherits(subClass, superClass) { if (typeof superClass !== 'function' && superClass !== null) { throw new TypeError('Super expression must either be null or a function, not ' + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
-
-	var _react = __webpack_require__(300);
-
-	var _react2 = _interopRequireDefault(_react);
-
-	var _reactDom = __webpack_require__(336);
-
-	var _reactDom2 = _interopRequireDefault(_reactDom);
-
-	var _autosize = __webpack_require__(940);
-
-	var _autosize2 = _interopRequireDefault(_autosize);
-
-	var UPDATE = 'autosize:update',
-	    DESTROY = 'autosize:destroy',
-	    RESIZED = 'autosize:resized';
-
-	var TextareaAutosize = (function (_React$Component) {
-	  _inherits(TextareaAutosize, _React$Component);
-
-	  function TextareaAutosize() {
-	    var _this = this;
-
-	    _classCallCheck(this, TextareaAutosize);
-
-	    _React$Component.apply(this, arguments);
-
-	    this.getTextareaDOMNode = function () {
-	      return _this.refs.textarea.nodeType === 1 ? _this.refs.textarea : _reactDom2['default'].findDOMNode(_this.refs.textarea);
-	    };
-
-	    this.dispatchEvent = function (EVENT_TYPE, defer) {
-	      var event = document.createEvent('Event');
-	      event.initEvent(EVENT_TYPE, true, false);
-	      var dispatch = function dispatch() {
-	        return _this.getTextareaDOMNode().dispatchEvent(event);
-	      };
-	      if (defer) {
-	        setTimeout(dispatch);
-	      } else {
-	        dispatch();
-	      }
-	    };
-
-	    this.getValue = function (_ref) {
-	      var valueLink = _ref.valueLink;
-	      var value = _ref.value;
-	      return valueLink ? valueLink.value : value;
-	    };
-	  }
-
-	  TextareaAutosize.prototype.componentDidMount = function componentDidMount() {
-	    _autosize2['default'](this.getTextareaDOMNode());
-	    if (this.props.onResize) {
-	      this.getTextareaDOMNode().addEventListener(RESIZED, this.props.onResize);
-	    }
-	  };
-
-	  TextareaAutosize.prototype.componentWillUnmount = function componentWillUnmount() {
-	    if (this.props.onResize) {
-	      this.getTextareaDOMNode().removeEventListener(RESIZED, this.props.onResize);
-	    }
-	    this.dispatchEvent(DESTROY);
-	  };
-
-	  TextareaAutosize.prototype.render = function render() {
-	    var _props = this.props;
-	    var children = _props.children;
-
-	    var props = _objectWithoutProperties(_props, ['children']);
-
-	    return _react2['default'].createElement(
-	      'textarea',
-	      _extends({}, props, { ref: 'textarea' }),
-	      children
-	    );
-	  };
-
-	  TextareaAutosize.prototype.componentWillReceiveProps = function componentWillReceiveProps(nextProps) {
-	    if (this.getValue(nextProps) !== this.getValue(this.props)) {
-	      this.dispatchEvent(UPDATE, true);
-	    }
-	  };
-
-	  _createClass(TextareaAutosize, null, [{
-	    key: 'propTypes',
-	    value: {
-	      onResize: _react2['default'].PropTypes.func
-	    },
-	    enumerable: true
-	  }, {
-	    key: 'defaultProps',
-	    value: {
-	      rows: 1
-	    },
-	    enumerable: true
-	  }]);
-
-	  return TextareaAutosize;
-	})(_react2['default'].Component);
-
-	exports['default'] = TextareaAutosize;
-	module.exports = exports['default'];
-
-/***/ },
-/* 940 */
-/***/ function(module, exports, __webpack_require__) {
-
-	var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/*!
-		Autosize 3.0.15
-		license: MIT
-		http://www.jacklmoore.com/autosize
-	*/
-	(function (global, factory) {
-		if (true) {
-			!(__WEBPACK_AMD_DEFINE_ARRAY__ = [exports, module], __WEBPACK_AMD_DEFINE_FACTORY__ = (factory), __WEBPACK_AMD_DEFINE_RESULT__ = (typeof __WEBPACK_AMD_DEFINE_FACTORY__ === 'function' ? (__WEBPACK_AMD_DEFINE_FACTORY__.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__)) : __WEBPACK_AMD_DEFINE_FACTORY__), __WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
-		} else if (typeof exports !== 'undefined' && typeof module !== 'undefined') {
-			factory(exports, module);
-		} else {
-			var mod = {
-				exports: {}
-			};
-			factory(mod.exports, mod);
-			global.autosize = mod.exports;
-		}
-	})(this, function (exports, module) {
-		'use strict';
-
-		var set = typeof Set === 'function' ? new Set() : (function () {
-			var list = [];
-
-			return {
-				has: function has(key) {
-					return Boolean(list.indexOf(key) > -1);
-				},
-				add: function add(key) {
-					list.push(key);
-				},
-				'delete': function _delete(key) {
-					list.splice(list.indexOf(key), 1);
-				} };
-		})();
-
-		var createEvent = function createEvent(name) {
-			return new Event(name);
-		};
-		try {
-			new Event('test');
-		} catch (e) {
-			// IE does not support `new Event()`
-			createEvent = function (name) {
-				var evt = document.createEvent('Event');
-				evt.initEvent(name, true, false);
-				return evt;
-			};
-		}
-
-		function assign(ta) {
-			var _ref = arguments[1] === undefined ? {} : arguments[1];
-
-			var _ref$setOverflowX = _ref.setOverflowX;
-			var setOverflowX = _ref$setOverflowX === undefined ? true : _ref$setOverflowX;
-			var _ref$setOverflowY = _ref.setOverflowY;
-			var setOverflowY = _ref$setOverflowY === undefined ? true : _ref$setOverflowY;
-
-			if (!ta || !ta.nodeName || ta.nodeName !== 'TEXTAREA' || set.has(ta)) return;
-
-			var heightOffset = null;
-			var overflowY = null;
-			var clientWidth = ta.clientWidth;
-
-			function init() {
-				var style = window.getComputedStyle(ta, null);
-
-				overflowY = style.overflowY;
-
-				if (style.resize === 'vertical') {
-					ta.style.resize = 'none';
-				} else if (style.resize === 'both') {
-					ta.style.resize = 'horizontal';
-				}
-
-				if (style.boxSizing === 'content-box') {
-					heightOffset = -(parseFloat(style.paddingTop) + parseFloat(style.paddingBottom));
-				} else {
-					heightOffset = parseFloat(style.borderTopWidth) + parseFloat(style.borderBottomWidth);
-				}
-				// Fix when a textarea is not on document body and heightOffset is Not a Number
-				if (isNaN(heightOffset)) {
-					heightOffset = 0;
-				}
-
-				update();
-			}
-
-			function changeOverflow(value) {
-				{
-					// Chrome/Safari-specific fix:
-					// When the textarea y-overflow is hidden, Chrome/Safari do not reflow the text to account for the space
-					// made available by removing the scrollbar. The following forces the necessary text reflow.
-					var width = ta.style.width;
-					ta.style.width = '0px';
-					// Force reflow:
-					/* jshint ignore:start */
-					ta.offsetWidth;
-					/* jshint ignore:end */
-					ta.style.width = width;
-				}
-
-				overflowY = value;
-
-				if (setOverflowY) {
-					ta.style.overflowY = value;
-				}
-
-				resize();
-			}
-
-			function resize() {
-				var htmlTop = window.pageYOffset;
-				var bodyTop = document.body.scrollTop;
-				var originalHeight = ta.style.height;
-
-				ta.style.height = 'auto';
-
-				var endHeight = ta.scrollHeight + heightOffset;
-
-				if (ta.scrollHeight === 0) {
-					// If the scrollHeight is 0, then the element probably has display:none or is detached from the DOM.
-					ta.style.height = originalHeight;
-					return;
-				}
-
-				ta.style.height = endHeight + 'px';
-
-				// used to check if an update is actually necessary on window.resize
-				clientWidth = ta.clientWidth;
-
-				// prevents scroll-position jumping
-				document.documentElement.scrollTop = htmlTop;
-				document.body.scrollTop = bodyTop;
-			}
-
-			function update() {
-				var startHeight = ta.style.height;
-
-				resize();
-
-				var style = window.getComputedStyle(ta, null);
-
-				if (style.height !== ta.style.height) {
-					if (overflowY !== 'visible') {
-						changeOverflow('visible');
-					}
-				} else {
-					if (overflowY !== 'hidden') {
-						changeOverflow('hidden');
-					}
-				}
-
-				if (startHeight !== ta.style.height) {
-					var evt = createEvent('autosize:resized');
-					ta.dispatchEvent(evt);
-				}
-			}
-
-			var pageResize = function pageResize() {
-				if (ta.clientWidth !== clientWidth) {
-					update();
-				}
-			};
-
-			var destroy = (function (style) {
-				window.removeEventListener('resize', pageResize, false);
-				ta.removeEventListener('input', update, false);
-				ta.removeEventListener('keyup', update, false);
-				ta.removeEventListener('autosize:destroy', destroy, false);
-				ta.removeEventListener('autosize:update', update, false);
-				set['delete'](ta);
-
-				Object.keys(style).forEach(function (key) {
-					ta.style[key] = style[key];
-				});
-			}).bind(ta, {
-				height: ta.style.height,
-				resize: ta.style.resize,
-				overflowY: ta.style.overflowY,
-				overflowX: ta.style.overflowX,
-				wordWrap: ta.style.wordWrap });
-
-			ta.addEventListener('autosize:destroy', destroy, false);
-
-			// IE9 does not fire onpropertychange or oninput for deletions,
-			// so binding to onkeyup to catch most of those events.
-			// There is no way that I know of to detect something like 'cut' in IE9.
-			if ('onpropertychange' in ta && 'oninput' in ta) {
-				ta.addEventListener('keyup', update, false);
-			}
-
-			window.addEventListener('resize', pageResize, false);
-			ta.addEventListener('input', update, false);
-			ta.addEventListener('autosize:update', update, false);
-			set.add(ta);
-
-			if (setOverflowX) {
-				ta.style.overflowX = 'hidden';
-				ta.style.wordWrap = 'break-word';
-			}
-
-			init();
-		}
-
-		function destroy(ta) {
-			if (!(ta && ta.nodeName && ta.nodeName === 'TEXTAREA')) return;
-			var evt = createEvent('autosize:destroy');
-			ta.dispatchEvent(evt);
-		}
-
-		function update(ta) {
-			if (!(ta && ta.nodeName && ta.nodeName === 'TEXTAREA')) return;
-			var evt = createEvent('autosize:update');
-			ta.dispatchEvent(evt);
-		}
-
-		var autosize = null;
-
-		// Do nothing in Node.js environment and IE8 (or lower)
-		if (typeof window === 'undefined' || typeof window.getComputedStyle !== 'function') {
-			autosize = function (el) {
-				return el;
-			};
-			autosize.destroy = function (el) {
-				return el;
-			};
-			autosize.update = function (el) {
-				return el;
-			};
-		} else {
-			autosize = function (el, options) {
-				if (el) {
-					Array.prototype.forEach.call(el.length ? el : [el], function (x) {
-						return assign(x, options);
-					});
-				}
-				return el;
-			};
-			autosize.destroy = function (el) {
-				if (el) {
-					Array.prototype.forEach.call(el.length ? el : [el], destroy);
-				}
-				return el;
-			};
-			autosize.update = function (el) {
-				if (el) {
-					Array.prototype.forEach.call(el.length ? el : [el], update);
-				}
-				return el;
-			};
-		}
-
-		module.exports = autosize;
-	});
 
 /***/ }
 /******/ ]);
