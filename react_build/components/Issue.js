@@ -7,7 +7,7 @@ import classNames from 'classnames'
 import {
     updateIssueSubject
 } from '../actions/Issue'
-import { RIEInput } from 'riek'
+import RIEInput from '../widgets/RIEInput'
 import OtherUser from '../components/OtherUser'
 import { DndTypes } from '../actions/Dnd'
 

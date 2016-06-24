@@ -3,7 +3,7 @@ import { Link } from 'react-router'
 import { connect } from 'react-redux'
 import indexOf from 'lodash/indexOf'
 import map from 'lodash/map'
-import { RIETextArea } from '../widgets/RIETextArea'
+import RIETextArea from '../widgets/RIETextArea'
 import OtherUser from '../components/OtherUser'
 import {
     updateIssueDescription,

@@ -1,9 +1,9 @@
 import React, { Component, PropTypes } from 'react'
 import ReactDOM from 'react-dom';
-import { RIEInput } from 'riek'
+import { RIEInput } from './RIEInput'
 import TextareaAutosize from 'react-autosize-textarea'
 
-export class RIETextArea extends Component {
+export default class RIETextArea extends Component {
 
     constructor(props) {
         super(props);
@@ -39,7 +39,9 @@ export class RIETextArea extends Component {
     renderNormalComponent() {
         return (
 	    <div>
-	        {(this.state.newValue || this.props.value)}
+		<pre>
+	            {(this.state.newValue || this.props.value)}
+		</pre>
 		<br/>
 		<button className="btn btn-secondary" onClick={this.startEditing}>Edit</button>
 	    </div>

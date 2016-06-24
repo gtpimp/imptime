@@ -1,6 +1,7 @@
 import React, { Component, PropTypes } from 'react'
 import { Link } from 'react-router'
 import map from 'lodash/map'
+import { RIEInput } from '../widgets/RIEInput'
 import { connect } from 'react-redux'
 import {
     invalidateList,
@@ -14,7 +15,10 @@ import {
 } from '../actions/Issues'
 import {
     reorderIssue,
-    startCandidateIssue
+    startCandidateIssue,
+    updateCandidateSubject,
+    cancelCandidateIssue,
+    saveCandidateIssue
 } from '../actions/Issue'
 import Pagination from '../components/Pagination'
 import Issue from './Issue'
@@ -29,7 +33,9 @@ export class IssueList extends Component {
 	this.onExpand = this.onExpand.bind(this)
 	this.onClickedIssue = this.onClickedIssue.bind(this)
 	this.reorderIssue = this.reorderIssue.bind(this)
-	this.onCreateIssue = this.onCreateIssue.bind(this)
+	this.onStartCandidateIssue = this.onStartCandidateIssue.bind(this)
+	this.onSaveCandidateIssue = this.onSaveCandidateIssue.bind(this)
+	this.onCancelCandidateIssue = this.onCancelCandidateIssue.bind(this)
     }
 
     componentDidMount() {
@@ -70,10 +76,21 @@ export class IssueList extends Component {
 	}
     }
 
-    onCreateIssue(event) {
+    onStartCandidateIssue(event) {
 	const { dispatch, list_key } = this.props
 	event.stopPropagation()
 	dispatch(startCandidateIssue(list_key))
+    }
+
+    onSaveCandidateIssue(obj) {
+	const { dispatch } = this.props
+	dispatch(updateCandidateSubject(obj.subject))
+	dispatch(saveCandidateIssue())
+    }
+
+    onCancelCandidateIssue() {
+	const { dispatch } = this.props
+	dispatch(cancelCandidateIssue())
     }
 
     reorderIssue(moving_issue_id, move_after_issue_id) {
@@ -115,7 +132,13 @@ export class IssueList extends Component {
 
 	return (
 	    <tr key={list_key+".candidate_issue"} className="issue_list__candidate_issue">
-		<td><input value="This is the new issue text" onChange={() => alert('not don yet')}/></td>
+		<td>New issue</td>
+		<td>
+		    <RIEInput value=""
+			      propName="candidate_issue" 
+			      change={(obj) => this.onStartCandidateIssue(issue.id, obj)} />
+		    <input value="This is the new issue text" onChange={() => alert('not don yet')}/>
+		</td>
 	    </tr>
 	)
     }
