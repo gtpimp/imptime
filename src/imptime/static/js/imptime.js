@@ -60712,6 +60712,7 @@
 	        _this.doValidations = _this.doValidations.bind(_this);
 	        _this.textChanged = _this.textChanged.bind(_this);
 	        _this.startEditing = _this.startEditing.bind(_this);
+	        _this.stopEditing = _this.stopEditing.bind(_this);
 	        _this.finishEditing = _this.finishEditing.bind(_this);
 	        _this.keyDown = _this.keyDown.bind(_this);
 	        return _this;
@@ -60737,14 +60738,19 @@
 	            if (!this.state.invalid && this.props.value !== newValue) {
 	                this.commit(newValue);
 	            }
-	            this.cancelEditing();
+	            this.stopEditing();
+	        }
+	    }, {
+	        key: 'stopEditing',
+	        value: function stopEditing() {
+	            this.setState({ editing: false, invalid: false });
 	        }
 	    }, {
 	        key: 'cancelEditing',
 	        value: function cancelEditing() {
-	            this.setState({ editing: false, invalid: false });
-	            if (this.cancel) {
-	                this.cancel();
+	            this.stopEditing();
+	            if (this.props.cancel) {
+	                this.props.cancel();
 	            }
 	        }
 	    }, {

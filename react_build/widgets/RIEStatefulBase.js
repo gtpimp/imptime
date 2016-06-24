@@ -8,6 +8,7 @@ export default class RIEStatefulBase extends RIEBase {
 	this.doValidations = this.doValidations.bind(this)
 	this.textChanged = this.textChanged.bind(this)
 	this.startEditing = this.startEditing.bind(this)
+	this.stopEditing = this.stopEditing.bind(this)
 	this.finishEditing = this.finishEditing.bind(this)
 	this.keyDown = this.keyDown.bind(this)
     }
@@ -28,13 +29,17 @@ export default class RIEStatefulBase extends RIEBase {
         if(!this.state.invalid && this.props.value !== newValue) {
             this.commit(newValue);
         }
-        this.cancelEditing();
+        this.stopEditing();
     };
 
-    cancelEditing() {
+    stopEditing() {
         this.setState({editing: false, invalid: false});
-	if ( this.cancel ) {
-	    this.cancel()
+    }
+
+    cancelEditing() {
+	this.stopEditing()
+	if ( this.props.cancel ) {
+	    this.props.cancel()
 	}
     };
 
