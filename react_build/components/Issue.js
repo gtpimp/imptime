@@ -5,22 +5,52 @@ import { DragSource, DropTarget } from 'react-dnd';
 import { connect } from 'react-redux'
 import classNames from 'classnames'
 import {
-    updateIssueSubject
+    updateIssueSubject,
+    updateIssueStatus,
 } from '../actions/Issue'
 import RIEInput from '../widgets/RIEInput'
+import RIEDropDown from '../widgets/RIEDropDown'
 import OtherUser from '../components/OtherUser'
 import { DndTypes } from '../actions/Dnd'
+
+const ISSUE_STATUS_CHOICES = [
+    { value: 'new', label: 'new'},
+    { value: 'devdone', label: 'dev_done'},
+    { value: 'in_internal_qa', label: 'internal qa'},
+    { value: 'internal_qa_passed', label: 'internal qa passed'},
+    { value: 'in_client_qa', label: 'external qa'},
+    { value: 'client_qa_passed', label: 'external qa passed'},
+    { value: 'reopened', label: 'reopened'},
+    { value: 'onhold', label: 'on hold'},
+    { value: 'bug', label: 'bug'},
+    { value: 'to be estimated', label: 'to be estimated'},
+    { value: 'needscodereview', label: 'needs code review'},
+    { value: "cannot reproduce", label: "cannot reproduce"},
+    { value: "discuss with client", label: "discuss with client"},
+    { value: 'dev unclear', label: 'dev unclear'},
+    { value: 'duplicate', label: 'duplicate'},
+    { value: 'to be designed', label: 'to be designed'},
+    { value: 'imported', label: 'imported'},
+    { value: 'management', label: 'management'},
+    { value: 'quick_clocker', label: 'quick clocker'}
+]
 
 export class Issue extends Component {
 
     constructor(props) {
         super(props)
 	this.onChangeSubject = this.onChangeSubject.bind(this)
+	this.onChangeStatus = this.onChangeStatus.bind(this)
     }
     
     onChangeSubject(issue_id, obj) {
 	const { dispatch } = this.props
 	dispatch(updateIssueSubject(issue_id, obj.subject))
+    }
+
+    onChangeStatus(issue_id, obj) {
+	const { dispatch } = this.props
+	dispatch(updateIssueStatus(issue_id, obj.status))
     }
 
     render_collapsed() {
@@ -71,7 +101,13 @@ export class Issue extends Component {
 				   loading_value={issue.assigned_to_quick_name} />
 		    </td>
 		    <td>{issue.feature_name}</td>
-		    <td>{issue.status}</td>
+		    <td>
+			<RIEDropDown value={issue.status}
+				     propName="status"
+				     options={ISSUE_STATUS_CHOICES}
+				     change={(obj) => this.onChangeStatus(issue.id, obj)}
+			/>
+		    </td>
 		</tr>
 	    ))
 	}

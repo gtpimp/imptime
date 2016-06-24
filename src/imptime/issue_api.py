@@ -63,6 +63,8 @@ class IssueViewSet(BaseViewSet):
                 issue.subject = new_value
             elif field_name == "description":
                 issue.description = new_value
+            elif field_name == "status":
+                issue.status = new_value
             elif field_name == 'issue_id_after':
                 after_issue = self.allowed_issue(new_value)
                 issue.move_after(after_issue)

@@ -68,6 +68,10 @@ export function updateIssueSubject(issue_id, value) {
     return updateIssue(issue_id, "subject", value)
 }
 
+export function updateIssueStatus(issue_id, value) {
+    return updateIssue(issue_id, "status", value)
+}
+
 export function updateIssueDescription(issue_id, value) {
     return updateIssue(issue_id, "description", value)
 }
