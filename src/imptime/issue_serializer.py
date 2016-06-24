@@ -13,14 +13,15 @@ class IssueSerializer(BaseSerializer):
     subject = serializers.CharField()
     status = serializers.CharField()
     assigned_to_id = serializers.CharField()
-    feature = serializers.CharField()
+    feature_name = serializers.CharField()
     number = serializers.IntegerField()
     position_if_creating_new_issue_after = serializers.IntegerField()
 
     def to_representation(self, issue, *args, **kwargs):
         issue.assigned_to_quick_name = \
             issue.assigned_to.username if issue.assigned_to_id else None
-        issue.feature = issue.feature.name if issue.feature_id else None
+
+        issue.feature_name = issue.feature.name if issue.feature_id else None
         issue.position_if_creating_new_issue_after = issue.order + 0.5
 
         d = super(IssueSerializer, self).to_representation(
