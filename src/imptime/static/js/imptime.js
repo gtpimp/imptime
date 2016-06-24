@@ -60460,7 +60460,7 @@
 										var issue_rows = [];
 										issues.map(function (issue, index) {
 
-													if (is_creating_issue && index == 0 && candidate_issue.position == 0) {
+													if (is_creating_issue && index == 0 && !candidate_issue.issue_id_before) {
 																issue_rows.push(that.render_candidate_issue());
 													}
 
@@ -61200,17 +61200,14 @@
 
 									var selected_ids = l.selected_ids;
 
-									var position = 0;
 									var issue_id_before = null;
 									if (selected_ids.length > 0) {
 													issue_id_before = selected_ids[0];
 													var issue_before = issues_by_id[issue_id_before];
-													position = issue_before.position || position;
 									}
 
 									dispatch({
 													type: ANNOUNCE_CAPTURING_NEW_ISSUE,
-													position: position,
 													issue_id_before: issue_id_before,
 													sprint_id: l.filter.sprint_id
 									});
@@ -66218,7 +66215,6 @@
 													case _Issue.ANNOUNCE_CAPTURING_NEW_ISSUE:
 																	return {
 																					v: Object.assign({}, state, { candidate_issue: {
-																													position: action.position,
 																													issue_id_before: action.issue_id_before,
 																													sprint_id: action.sprint_id
 																									} })

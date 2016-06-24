@@ -82,10 +82,16 @@ class IssueViewSet(BaseViewSet):
             context = {}
             params = request.data['issue']
             sprint_id = params['sprint_id']
+            issue_id_before = params['issue_id_before']
+            if issue_id_before:
+                issue_before = self.allowed_issue(issue_id_before)
+                order = issue_before.order + 0.5
+            else:
+                order = 0
             sprint = self.allowed_sprint(sprint_id)
             issue = Issue.objects.create(
                 project=sprint,   # sic
-                order=params['position'],
+                order=order,
                 number=Issue.get_next_issue_number(sprint.business),
                 subject=params['subject'])
             issue.renumber_issue_order()

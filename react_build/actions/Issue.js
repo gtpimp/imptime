@@ -117,17 +117,14 @@ export function startCandidateIssue(list_key) {
 
 	const selected_ids = l.selected_ids
 
-	let position = 0
 	let issue_id_before = null
 	if ( selected_ids.length > 0 ) {
 	    issue_id_before = selected_ids[0]
 	    const issue_before = issues_by_id[issue_id_before] 
-	    position = issue_before.position || position
 	}
 	
 	dispatch({
 	    type: ANNOUNCE_CAPTURING_NEW_ISSUE,
-	    position: position,
 	    issue_id_before: issue_id_before,
 	    sprint_id: l.filter.sprint_id
 	})
