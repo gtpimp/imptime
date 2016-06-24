@@ -102,7 +102,7 @@ export class Issue extends Component {
 		    </td>
 		    <td>{issue.feature_name}</td>
 		    <td>
-			<RIEDropDown value={issue.status}
+			<RIEDropDown value={issue.status || "..."}
 				     propName="status"
 				     options={ISSUE_STATUS_CHOICES}
 				     change={(obj) => this.onChangeStatus(issue.id, obj)}

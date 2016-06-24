@@ -61346,7 +61346,7 @@
 																					_react2.default.createElement(
 																									'td',
 																									null,
-																									_react2.default.createElement(_RIEDropDown2.default, { value: issue.status,
+																									_react2.default.createElement(_RIEDropDown2.default, { value: issue.status || "...",
 																													propName: 'status',
 																													options: ISSUE_STATUS_CHOICES,
 																													change: function change(obj) {

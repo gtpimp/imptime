@@ -1,5 +1,12 @@
 @import 'variables';
 
+.issue_developer_details {
+    position: fixed;
+    right: 0px;
+    width: 48%;
+    border-left: 2px solid #777777;
+}
+
 .issue_developer_details__panel-body {
     background: $issue_developer_details__panel-body-background-color;
 }
