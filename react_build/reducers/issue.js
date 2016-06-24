@@ -82,10 +82,11 @@ export default function issue(state = initialState, action) {
 						{saving: true})})
 	case ANNOUNCE_SAVED_NEW_ISSUE:
 
-	    new_items_by_id = Object.assign({}, state.items_by_id)
+	    const new_items_by_id = Object.assign({}, state.items_by_id)
 	    new_items_by_id[action.issue.id] = action.issue
 	    return Object.assign({},
 				 state,
+				 {candidate_issue: null},
 				 {items_by_id: new_items_by_id})
 		    
 	case ANNOUNCE_SAVING_NEW_ISSUE_FAILED:

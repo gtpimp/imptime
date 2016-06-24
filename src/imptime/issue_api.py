@@ -26,6 +26,7 @@ class IssueViewSet(BaseViewSet):
             format_args = params.get('format', {})
 
             issues = self.allowed_issues().order_by("order")
+
             issues = self.apply_filter(qs=issues,
                                        raw_filter_args=filter_args)
             issues = self.apply_pagination(qs=issues,
@@ -79,12 +80,14 @@ class IssueViewSet(BaseViewSet):
     def create(self, request):
         try:
             context = {}
-            params = request.data
+            params = request.data['issue']
             sprint_id = params['sprint_id']
             sprint = self.allowed_sprint(sprint_id)
-            issue = Issue.objects.create(project=sprint,   # sic
-                                         order=params['order'],
-                                         subject=params['subject'])
+            issue = Issue.objects.create(
+                project=sprint,   # sic
+                order=params['position'],
+                number=Issue.get_next_issue_number(sprint.business),
+                subject=params['subject'])
             issue.renumber_issue_order()
             s = IssueSerializer(issue)
             issue_data = s.data

@@ -5,6 +5,17 @@ import RIEBase from './RIEBase';
 export default class RIEStatefulBase extends RIEBase {
     constructor(props){
         super(props);
+	this.doValidations = this.doValidations.bind(this)
+	this.textChanged = this.textChanged.bind(this)
+	this.startEditing = this.startEditing.bind(this)
+	this.finishEditing = this.finishEditing.bind(this)
+	this.keyDown = this.keyDown.bind(this)
+    }
+
+    componentDidMount() {
+	if ( this.props.initialState == 'editing' ) {
+	    this.startEditing()
+	}
     }
 
     startEditing() {

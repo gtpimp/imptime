@@ -60219,6 +60219,8 @@
 
 	var _RIEInput = __webpack_require__(854);
 
+	var _RIEInput2 = _interopRequireDefault(_RIEInput);
+
 	var _reactRedux = __webpack_require__(533);
 
 	var _ItemList = __webpack_require__(733);
@@ -60345,7 +60347,7 @@
 							value: function onSaveCandidateIssue(obj) {
 										var dispatch = this.props.dispatch;
 
-										dispatch((0, _Issue.updateCandidateSubject)(obj.subject));
+										dispatch((0, _Issue.updateCandidateSubject)(obj.candidate_issue_subject));
 										dispatch((0, _Issue.saveCandidateIssue)());
 							}
 				}, {
@@ -60411,8 +60413,6 @@
 				}, {
 							key: 'render_candidate_issue',
 							value: function render_candidate_issue() {
-										var _this3 = this;
-
 										var _props10 = this.props;
 										var candidate_issue = _props10.candidate_issue;
 										var list_key = _props10.list_key;
@@ -60429,14 +60429,11 @@
 													_react2.default.createElement(
 																'td',
 																null,
-																_react2.default.createElement(_RIEInput.RIEInput, { value: '',
-																			propName: 'candidate_issue',
-																			change: function change(obj) {
-																						return _this3.onStartCandidateIssue(issue.id, obj);
-																			} }),
-																_react2.default.createElement('input', { value: 'This is the new issue text', onChange: function onChange() {
-																						return alert('not don yet');
-																			} })
+																_react2.default.createElement(_RIEInput2.default, { value: '',
+																			propName: 'candidate_issue_subject',
+																			initialState: 'editing',
+																			change: this.onSaveCandidateIssue,
+																			cancel: this.onCancelCandidateIssue })
 													)
 										);
 							}
@@ -60503,7 +60500,7 @@
 																						_react2.default.createElement('div', { className: 'panel__button panel__button--refresh',
 																									onClick: this.onRefresh }),
 																						_react2.default.createElement('div', { className: 'panel__button panel__button--add',
-																									onClick: this.onCreateIssue })
+																									onClick: this.onStartCandidateIssue })
 																			)
 																),
 																_react2.default.createElement(
@@ -60710,10 +60707,24 @@
 	    function RIEStatefulBase(props) {
 	        _classCallCheck(this, RIEStatefulBase);
 
-	        return _possibleConstructorReturn(this, Object.getPrototypeOf(RIEStatefulBase).call(this, props));
+	        var _this = _possibleConstructorReturn(this, Object.getPrototypeOf(RIEStatefulBase).call(this, props));
+
+	        _this.doValidations = _this.doValidations.bind(_this);
+	        _this.textChanged = _this.textChanged.bind(_this);
+	        _this.startEditing = _this.startEditing.bind(_this);
+	        _this.finishEditing = _this.finishEditing.bind(_this);
+	        _this.keyDown = _this.keyDown.bind(_this);
+	        return _this;
 	    }
 
 	    _createClass(RIEStatefulBase, [{
+	        key: 'componentDidMount',
+	        value: function componentDidMount() {
+	            if (this.props.initialState == 'editing') {
+	                this.startEditing();
+	            }
+	        }
+	    }, {
 	        key: 'startEditing',
 	        value: function startEditing() {
 	            this.setState({ editing: true });
@@ -61195,21 +61206,21 @@
 													type: ANNOUNCE_CAPTURING_NEW_ISSUE,
 													position: position,
 													issue_id_before: issue_id_before,
-													sprint_id: l.sprint_id
+													sprint_id: l.filter.sprint_id
 									});
 					};
 	}
 
 	function updateCandidateSubject(subject) {
 					return {
-									key: UPDATE_NEW_ISSUE_DETAILS,
+									type: UPDATE_NEW_ISSUE_DETAILS,
 									candidate_issue: { "subject": subject }
 					};
 	}
 
 	function cancelCandidateIssue() {
 					return {
-									key: CANCEL_CREATING_NEW_ISSUE
+									type: CANCEL_CREATING_NEW_ISSUE
 					};
 	}
 
@@ -61232,7 +61243,7 @@
 																	dispatch(announceCandidateIssueSaveFailed(json.error));
 													} else {
 																	console.log('Request succeeded with JSON response', json);
-																	dispatch(announceCandidateIssueSaved(json.payload));
+																	dispatch(announceCandidateIssueSaved(json.payload.issue));
 													}
 									}).catch(function (error) {
 													console.log('Request failed', error);
@@ -64536,6 +64547,7 @@
 																					dispatch((0, _Issues.invalidateIssues)([action.issue.id]));
 																					dispatch((0, _IssueGeneralDetails.invalidateIssueGeneralDetails)([action.issue.id]));
 
+																					dispatch((0, _ItemList.invalidateList)(issues_list_key));
 																					dispatch((0, _Issues.fetchIssuesIfNeeded)(issues_list_key));
 																					dispatch((0, _IssueGeneralDetails.fetchIssueGeneralDetailsIfNeeded)([action.issue.id]));
 																					break;
@@ -66220,10 +66232,10 @@
 																	};
 													case _Issue.ANNOUNCE_SAVED_NEW_ISSUE:
 
-																	new_items_by_id = Object.assign({}, state.items_by_id);
+																	var new_items_by_id = Object.assign({}, state.items_by_id);
 																	new_items_by_id[action.issue.id] = action.issue;
 																	return {
-																					v: Object.assign({}, state, { items_by_id: new_items_by_id })
+																					v: Object.assign({}, state, { candidate_issue: null }, { items_by_id: new_items_by_id })
 																	};
 
 													case _Issue.ANNOUNCE_SAVING_NEW_ISSUE_FAILED:

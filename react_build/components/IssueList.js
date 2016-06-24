@@ -1,7 +1,7 @@
 import React, { Component, PropTypes } from 'react'
 import { Link } from 'react-router'
 import map from 'lodash/map'
-import { RIEInput } from '../widgets/RIEInput'
+import RIEInput from '../widgets/RIEInput'
 import { connect } from 'react-redux'
 import {
     invalidateList,
@@ -84,7 +84,7 @@ export class IssueList extends Component {
 
     onSaveCandidateIssue(obj) {
 	const { dispatch } = this.props
-	dispatch(updateCandidateSubject(obj.subject))
+	dispatch(updateCandidateSubject(obj.candidate_issue_subject))
 	dispatch(saveCandidateIssue())
     }
 
@@ -135,9 +135,10 @@ export class IssueList extends Component {
 		<td>New issue</td>
 		<td>
 		    <RIEInput value=""
-			      propName="candidate_issue" 
-			      change={(obj) => this.onStartCandidateIssue(issue.id, obj)} />
-		    <input value="This is the new issue text" onChange={() => alert('not don yet')}/>
+			      propName="candidate_issue_subject"
+			      initialState="editing"
+			      change={this.onSaveCandidateIssue}
+		              cancel={this.onCancelCandidateIssue} />
 		</td>
 	    </tr>
 	)
@@ -187,7 +188,7 @@ export class IssueList extends Component {
 				 onClick={this.onRefresh}>
 			    </div>
                             <div className="panel__button panel__button--add"
-				 onClick={this.onCreateIssue}>
+				 onClick={this.onStartCandidateIssue}>
 			    </div>			    
 			</div>
                     </div>

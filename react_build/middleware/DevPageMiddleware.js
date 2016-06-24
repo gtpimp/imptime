@@ -88,7 +88,8 @@ function DevPageMiddleware(_ref) {
 		case ANNOUNCE_SAVED_NEW_ISSUE:
 		    dispatch(invalidateIssues([action.issue.id]))
 		    dispatch(invalidateIssueGeneralDetails([action.issue.id]))
-		    
+
+		    dispatch(invalidateList(issues_list_key))
 		    dispatch(fetchIssuesIfNeeded(issues_list_key))
 		    dispatch(fetchIssueGeneralDetailsIfNeeded([action.issue.id]))
 		    break

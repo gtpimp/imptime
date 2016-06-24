@@ -129,21 +129,21 @@ export function startCandidateIssue(list_key) {
 	    type: ANNOUNCE_CAPTURING_NEW_ISSUE,
 	    position: position,
 	    issue_id_before: issue_id_before,
-	    sprint_id: l.sprint_id
+	    sprint_id: l.filter.sprint_id
 	})
     }
 }
 
 export function updateCandidateSubject(subject) {
     return {
-	key: UPDATE_NEW_ISSUE_DETAILS,
+	type: UPDATE_NEW_ISSUE_DETAILS,
 	candidate_issue: { "subject": subject }
     }
 }
 
 export function cancelCandidateIssue() {
     return {
-	key: CANCEL_CREATING_NEW_ISSUE
+	type: CANCEL_CREATING_NEW_ISSUE
     }
 }
 
@@ -167,7 +167,7 @@ export function saveCandidateIssue() {
 		 dispatch(announceCandidateIssueSaveFailed(json.error))
              } else {
 		 console.log('Request succeeded with JSON response', json);
-		 dispatch(announceCandidateIssueSaved(json.payload))
+		 dispatch(announceCandidateIssueSaved(json.payload.issue))
              }
 	 })
 	 .catch(function (error) {
