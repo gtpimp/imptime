@@ -8,6 +8,9 @@ import {
     updateIssueSubject,
     updateIssueStatus,
 } from '../actions/Issue'
+import {
+    fetchUsersIfNeeded
+} from '../actions/Users'
 import RIEInput from '../widgets/RIEInput'
 import RIEDropDown from '../widgets/RIEDropDown'
 import OtherUser from '../components/OtherUser'
@@ -41,6 +44,12 @@ export class Issue extends Component {
         super(props)
 	this.onChangeSubject = this.onChangeSubject.bind(this)
 	this.onChangeStatus = this.onChangeStatus.bind(this)
+    }
+
+    componentDidMount() {
+	const { dispatch, assignable_users_ids } = this.props
+	dispatch(fetchUsersIfNeeded(assignable_users_ids))
+
     }
     
     onChangeSubject(issue_id, obj) {
@@ -129,10 +138,14 @@ export class Issue extends Component {
 }
 
 function mapStateToProps(state, props) {
-    const { issue, item_list } = state
+    const { project, issue, item_list, user } = state
     const { issue_id, is_selected, is_collapsed, is_loading } = props
 
     const this_issue = (issue && issue.items_by_id && issue.items_by_id[issue_id]) || {'loaded':false}
+    const project_id = this_issue.project_id
+    const this_project = (project && project.items_by_id && project.items_by_id[project_id]) || {}
+    const assignable_user_ids = this_project.allowed_user_ids || []
+    const assignable_users = (user && user.items_by_id && assignable_user_ids.map( (user_id) => user.items_by_id[user_id])) || []
     
     return {
 	issue: this_issue,
@@ -140,7 +153,9 @@ function mapStateToProps(state, props) {
 	is_selected: is_selected,
 	is_loading: is_loading,
 	is_collapsed: is_collapsed,
-	is_expanded: !is_collapsed
+	is_expanded: !is_collapsed,
+	assignable_users_ids: assignable_user_ids,
+	assignable_users: assignable_users
     }
 
 }

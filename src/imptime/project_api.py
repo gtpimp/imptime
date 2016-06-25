@@ -35,7 +35,9 @@ class ProjectViewSet(BaseViewSet):
                 context['ids'] = [str(x) for x in projects.values_list(
                     'id', flat=True)]
             else:
-                s = ProjectSerializer(projects, many=True)
+                s = ProjectSerializer(projects,
+                                      logged_in_user=self.request.user,
+                                      many=True)
                 projects_data = s.data
                 context['projects'] = projects_data
             context['pagination'] = pagination

@@ -41,9 +41,9 @@ function announceSprintsLoaded(payload) {
     }
 }
 
-function announceSprintsSaveFailed(error) {
+function announceSprintsLoadFailed(error) {
     return {
-        type: ANNOUNCE_SPRINTS_SAVE_FAILED,
+        type: ANNOUNCE_SPRINTS_LOAD_FAILED,
         error: error,
         received_at: Date.now()
     }

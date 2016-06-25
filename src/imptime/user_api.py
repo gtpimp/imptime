@@ -44,3 +44,14 @@ class UserViewSet(BaseViewSet):
             logger.exception(ex)
             data = {'status': 'failed', 'error': str(ex)}
         return HttpResponse(JSONRenderer().render(data))
+
+    def apply_filter(self, qs, raw_filter_args):
+
+        if 'project_id' in raw_filter_args:
+            # get users belonging to this project
+            project_id = raw_filter_args.pop("project_id")
+            raw_filter_args[
+                'project__business__business_permissions__business_id'] = \
+                project_id
+
+        return super(UserViewSet, self).apply_filter(qs, raw_filter_args)

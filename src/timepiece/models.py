@@ -437,10 +437,16 @@ class BusinessPermissions(models.Model):
 
     @classmethod
     def viewable_users(self, user):
-        return User.objects.filter(
-            business_permissions__user=user,
-            business_permissions__can_view_project_card=True)
+        """ returns all users that this user could know about, based on which businesses they have in common """
+        business_ids = self.objects.filter(user=user).values_list('id', flat=True)
+        return User.objects.filter(business_permissions__business_id__in=business_ids,
+                                   business_permissions__can_view_project_card=True)
 
+    @classmethod
+    def viewable_users_for_business(self, logged_in_user, business_id):
+        users = self.viewable_users(user=logged_in_user)
+        return users.filter(business_permissions__business_id=business_id).distinct()
+    
     @classmethod
     def get_users_who_can_capture_time(self):
         """ any user who is allowed to estimate on at least one project """

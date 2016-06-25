@@ -36,7 +36,7 @@ function announceProjectsLoaded(payload) {
     payload.projects.map((item, index) => {
         items_by_id[item.id] = item
     });
-    
+
     return {
         type: ANNOUNCE_PROJECTS_LOADED,
         items_by_id: items_by_id,

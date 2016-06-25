@@ -16,6 +16,8 @@ class IssueSerializer(BaseSerializer):
     feature_name = serializers.CharField()
     number = serializers.IntegerField()
     position_if_creating_new_issue_after = serializers.IntegerField()
+    sprint_id = serializers.CharField()
+    project_id = serializers.CharField()
 
     def to_representation(self, issue, *args, **kwargs):
         issue.assigned_to_quick_name = \
@@ -23,6 +25,8 @@ class IssueSerializer(BaseSerializer):
 
         issue.feature_name = issue.feature.name if issue.feature_id else None
         issue.position_if_creating_new_issue_after = issue.order + 0.5
+        issue.sprint_id = str(issue.project_id)  # sic
+        issue.project_id = str(issue.project.business_id)  # sic
 
         d = super(IssueSerializer, self).to_representation(
             issue, *args, **kwargs)

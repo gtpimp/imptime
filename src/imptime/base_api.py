@@ -69,14 +69,16 @@ class BaseViewSet(viewsets.ViewSet):
 
     def allowed_projects(self):
         return Project.objects.all()\
-          .filter_by_logged_in_user(self.request.user)
+          .filter_by_logged_in_user(self.request.user)\
+          .distinct()
 
     def allowed_project(self, pk):
         return self.allowed_projects().get(pk=pk)
 
     def allowed_sprints(self):
         return Sprint.objects.all()\
-          .filter_by_logged_in_user(self.request.user)
+          .filter_by_logged_in_user(self.request.user)\
+          .distinct()
 
     def allowed_sprint(self, pk):
         return self.allowed_sprints().get(pk=pk)
@@ -85,20 +87,21 @@ class BaseViewSet(viewsets.ViewSet):
         allowed_sprint_ids = self.allowed_sprints()\
           .values_list('id', flat=True)
         return Issue.objects.all()\
-                            .filter(project_id__in=allowed_sprint_ids)
+                            .filter(project_id__in=allowed_sprint_ids)\
+                            .distinct()
 
     def allowed_issue(self, pk):
         return self.allowed_issues().get(pk=pk)
 
     def allowed_timesheet_entries(self):
         return TimesheetEntry.objects.all()\
-          .filter_by_logged_in_user(self.request.user)
+          .filter_by_logged_in_user(self.request.user).distinct()
 
     def allowed_timesheet_entry(self, pk):
         return self.allowed_timesheet_entries().get(pk=pk)
 
     def allowed_users(self):
-        return BusinessPermissions.viewable_users(self.request.user)
+        return BusinessPermissions.viewable_users(self.request.user).distinct()
 
     def allowed_user(self, pk):
         return self.allowed_users().get(pk=pk)
