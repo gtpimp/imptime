@@ -24,10 +24,12 @@ export class OtherUser extends Component {
     }
     
     render_inline_small() {
-	const { user, loading_value } = this.props
+	const { user, loading_value, onClick } = this.props
 
 	return (
-	    <div key={this.key+".collapsed_user."+user.id}>
+	    <div key={this.key+".collapsed_user."+user.id}
+		 onClick={onClick}
+	    >
 		{ user.username && user.username }
 		{ ! user.username && loading_value }
 	    </div>

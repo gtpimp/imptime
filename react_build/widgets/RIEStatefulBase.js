@@ -75,10 +75,13 @@ export default class RIEStatefulBase extends RIEBase {
 
     renderNormalComponent() {
         return <span
-            tabIndex="0"
-            className={this.makeClassString()}
-            onFocus={this.startEditing}
-            onClick={this.startEditing}>{this.state.newValue || this.props.value}</span>;
+		   tabIndex="0"
+		   className={this.makeClassString()}
+		   onFocus={this.startEditing}
+		   onClick={this.startEditing}
+	       >
+                   {this.state.newValue || this.props.value}
+	       </span>
     };
 
     elementBlur(event) {

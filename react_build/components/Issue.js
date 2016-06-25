@@ -13,6 +13,7 @@ import {
 } from '../actions/Users'
 import RIEInput from '../widgets/RIEInput'
 import RIEDropDown from '../widgets/RIEDropDown'
+import RIEUserDropDown from '../widgets/RIEUserDropDown'
 import OtherUser from '../components/OtherUser'
 import { DndTypes } from '../actions/Dnd'
 
@@ -47,8 +48,8 @@ export class Issue extends Component {
     }
 
     componentDidMount() {
-	const { dispatch, assignable_users_ids } = this.props
-	dispatch(fetchUsersIfNeeded(assignable_users_ids))
+	const { dispatch, assignable_user_ids } = this.props
+	dispatch(fetchUsersIfNeeded(assignable_user_ids))
 
     }
     
@@ -73,7 +74,7 @@ export class Issue extends Component {
     }
     
     render_expanded() {
-        const { issue, is_loading, is_selected, onClickedIssue,
+        const { issue, is_loading, is_selected, onClickedIssue, assignable_user_ids,
 		isOver, connectDragSource, connectDropTarget } = this.props
 
 	if ( ! issue ) {
@@ -105,9 +106,11 @@ export class Issue extends Component {
 				  change={(obj) => this.onChangeSubject(issue.id, obj)} />
 		    </td>
 		    <td>
-			<OtherUser user_id={issue.assigned_to_id}
-				   render_mode="inline--small"
-				   loading_value={issue.assigned_to_quick_name} />
+			<RIEUserDropDown value={issue.assigned_to_id}
+					 propName="assigned_to"
+					 user_ids={assignable_user_ids}
+					 change={(obj) => this.onChangeAssignedTo(issue.id, obj)}
+			/>
 		    </td>
 		    <td>{issue.feature_name}</td>
 		    <td>
@@ -145,7 +148,6 @@ function mapStateToProps(state, props) {
     const project_id = this_issue.project_id
     const this_project = (project && project.items_by_id && project.items_by_id[project_id]) || {}
     const assignable_user_ids = this_project.allowed_user_ids || []
-    const assignable_users = (user && user.items_by_id && assignable_user_ids.map( (user_id) => user.items_by_id[user_id])) || []
     
     return {
 	issue: this_issue,
@@ -154,8 +156,7 @@ function mapStateToProps(state, props) {
 	is_loading: is_loading,
 	is_collapsed: is_collapsed,
 	is_expanded: !is_collapsed,
-	assignable_users_ids: assignable_user_ids,
-	assignable_users: assignable_users
+	assignable_user_ids: assignable_user_ids
     }
 
 }

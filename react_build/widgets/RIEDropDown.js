@@ -28,7 +28,7 @@ export default class RIEDropDown extends RIEInput {
     };
 
     commit(new_value) {
-	let v = new_value.value
+	let v = (new_value && new_value.value) || null
 	this.stopEditing()
 	const res = {}
 	res[this.props.propName] = v
