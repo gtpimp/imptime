@@ -60970,6 +60970,7 @@
 	exports.updateIssueSubject = updateIssueSubject;
 	exports.updateIssueStatus = updateIssueStatus;
 	exports.updateIssueDescription = updateIssueDescription;
+	exports.updateIssueAssignedTo = updateIssueAssignedTo;
 	exports.reorderIssue = reorderIssue;
 	exports.startCandidateIssue = startCandidateIssue;
 	exports.updateCandidateSubject = updateCandidateSubject;
@@ -61061,6 +61062,10 @@
 
 	function updateIssueDescription(issue_id, value) {
 					return updateIssue(issue_id, "description", value);
+	}
+
+	function updateIssueAssignedTo(issue_id, value) {
+					return updateIssue(issue_id, "assigned_to_id", value);
 	}
 
 	function updateIssue(issue_id, field_name, new_value, on_done) {
@@ -61251,6 +61256,13 @@
 													var dispatch = this.props.dispatch;
 
 													dispatch((0, _Issue.updateIssueSubject)(issue_id, obj.subject));
+									}
+					}, {
+									key: 'onChangeAssignedTo',
+									value: function onChangeAssignedTo(issue_id, obj) {
+													var dispatch = this.props.dispatch;
+
+													dispatch((0, _Issue.updateIssueAssignedTo)(issue_id, obj.assigned_to));
 									}
 					}, {
 									key: 'onChangeStatus',

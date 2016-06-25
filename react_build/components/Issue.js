@@ -7,6 +7,7 @@ import classNames from 'classnames'
 import {
     updateIssueSubject,
     updateIssueStatus,
+    updateIssueAssignedTo
 } from '../actions/Issue'
 import {
     fetchUsersIfNeeded
@@ -56,6 +57,11 @@ export class Issue extends Component {
     onChangeSubject(issue_id, obj) {
 	const { dispatch } = this.props
 	dispatch(updateIssueSubject(issue_id, obj.subject))
+    }
+
+    onChangeAssignedTo(issue_id, obj) {
+	const { dispatch } = this.props
+	dispatch(updateIssueAssignedTo(issue_id, obj.assigned_to))
     }
 
     onChangeStatus(issue_id, obj) {

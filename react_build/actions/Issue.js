@@ -76,6 +76,9 @@ export function updateIssueDescription(issue_id, value) {
     return updateIssue(issue_id, "description", value)
 }
 
+export function updateIssueAssignedTo(issue_id, value) {
+    return updateIssue(issue_id, "assigned_to_id", value)
+}
 
 function updateIssue(issue_id, field_name, new_value, on_done) {
     return (dispatch, getState) => {

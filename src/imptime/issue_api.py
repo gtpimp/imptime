@@ -68,6 +68,8 @@ class IssueViewSet(BaseViewSet):
             elif field_name == 'issue_id_after':
                 after_issue = self.allowed_issue(new_value)
                 issue.move_after(after_issue)
+            elif field_name == 'assigned_to_id':
+                issue.assigned_to_id = new_value
             else:
                 raise Exception("Unsupported field name: %s" % field_name)
             issue.save()
