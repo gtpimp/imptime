@@ -37,10 +37,10 @@ export class OtherUser extends Component {
     }
     
     render() {
-        const { user_id, render_mode, loading_value } = this.props
+        const { user_id, render_mode, loading_value, onClick } = this.props
 
 	if ( ! user_id ) {
-	    return ( <div>{loading_value}</div> )
+	    return ( <div onClick={onClick}>{loading_value}</div> )
 	}
 	
 	if ( render_mode == 'inline--small' ) {

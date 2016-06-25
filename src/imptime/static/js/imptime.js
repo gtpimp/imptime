@@ -63891,12 +63891,13 @@
 													var user_id = _props3.user_id;
 													var render_mode = _props3.render_mode;
 													var loading_value = _props3.loading_value;
+													var onClick = _props3.onClick;
 
 
 													if (!user_id) {
 																	return _react2.default.createElement(
 																					'div',
-																					null,
+																					{ onClick: onClick },
 																					loading_value
 																	);
 													}
