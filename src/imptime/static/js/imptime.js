@@ -41577,9 +41577,12 @@
 	                    _react2.default.createElement(
 	                        'div',
 	                        { className: 'devpage__workarea' },
-	                        _react2.default.createElement(_IssueList2.default, { key: 'issues', list_key: 'issues' }),
-	                        _react2.default.createElement(_IssueDeveloperDetails2.default, { key: 'issue_developer_details',
-	                            list_key: 'issue_developer_details' })
+	                        _react2.default.createElement(
+	                            _IssueList2.default,
+	                            { key: 'issues', list_key: 'issues' },
+	                            _react2.default.createElement(_IssueDeveloperDetails2.default, { key: 'issue_developer_details',
+	                                list_key: 'issue_developer_details' })
+	                        )
 	                    )
 	                )
 	            );
@@ -60457,53 +60460,62 @@
 						),
 						_react2.default.createElement(
 							'div',
-							{ className: 'panel-body' },
+							{ className: 'issue_list__panel-body' },
 							_react2.default.createElement(
-								'table',
-								{ className: 'table table--compact' },
+								'div',
+								{ className: 'issue_list__panel-body__left' },
 								_react2.default.createElement(
-									'thead',
-									null,
+									'table',
+									{ className: 'table table--compact' },
 									_react2.default.createElement(
-										'tr',
+										'thead',
 										null,
 										_react2.default.createElement(
-											'th',
+											'tr',
 											null,
-											'Number'
-										),
-										_react2.default.createElement(
-											'th',
-											null,
-											'Name'
-										),
-										_react2.default.createElement(
-											'th',
-											null,
-											'Assigned to'
-										),
-										_react2.default.createElement(
-											'th',
-											null,
-											'Feature'
-										),
-										_react2.default.createElement(
-											'th',
-											null,
-											'Status'
+											_react2.default.createElement(
+												'th',
+												null,
+												'Number'
+											),
+											_react2.default.createElement(
+												'th',
+												null,
+												'Name'
+											),
+											_react2.default.createElement(
+												'th',
+												null,
+												'Assigned to'
+											),
+											_react2.default.createElement(
+												'th',
+												null,
+												'Feature'
+											),
+											_react2.default.createElement(
+												'th',
+												null,
+												'Status'
+											)
 										)
+									),
+									_react2.default.createElement(
+										'tbody',
+										null,
+										issue_rows
 									)
 								),
-								_react2.default.createElement(
-									'tbody',
-									null,
-									issue_rows
+								!is_loading && !has_items && _react2.default.createElement(
+									'div',
+									{ className: 'table__no-rows' },
+									'no issues'
 								)
 							),
-							!is_loading && !has_items && _react2.default.createElement(
+							_react2.default.createElement(
 								'div',
-								{ className: 'table__no-rows' },
-								'no issues'
+								{ className: 'issue_list__panel-body__right' },
+								this.props.children
 							)
 						),
 						_react2.default.createElement(_Pagination2.default, { list_key: list_key, on_changed: this.onChangePage })

@@ -28,9 +28,10 @@ class DevPage extends Component {
 		    </div>
 
 		    <div className="devpage__workarea">
-			<IssueList key="issues" list_key="issues" />
-			<IssueDeveloperDetails key="issue_developer_details"
-					       list_key="issue_developer_details" />
+			<IssueList key="issues" list_key="issues">
+			    <IssueDeveloperDetails key="issue_developer_details"
+						   list_key="issue_developer_details" />
+			</IssueList>
 		    </div>
 		</StickyContainer>
 		

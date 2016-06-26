@@ -198,24 +198,29 @@ export class IssueList extends Component {
 			    </div>
 			</div>
 		    </Sticky>
-                    <div className="panel-body">
-			<table className="table table--compact" >
-                            <thead>
-				<tr>
-				    <th>Number</th>
-				    <th>Name</th>
-				    <th>Assigned to</th>
-				    <th>Feature</th>
-				    <th>Status</th>
-				</tr>
-                            </thead>
-                            <tbody>
-				{issue_rows}
-                            </tbody>
-			</table>
-			{ !is_loading && !has_items &&
-			  <div className="table__no-rows">no issues</div>
-			}
+                    <div className="issue_list__panel-body">
+			<div className="issue_list__panel-body__left">
+			    <table className="table table--compact" >
+				<thead>
+				    <tr>
+					<th>Number</th>
+					<th>Name</th>
+					<th>Assigned to</th>
+					<th>Feature</th>
+					<th>Status</th>
+				    </tr>
+				</thead>
+				<tbody>
+				    {issue_rows}
+				</tbody>
+			    </table>
+			    { !is_loading && !has_items &&
+			      <div className="table__no-rows">no issues</div>
+			    }
+			</div>
+			<div className="issue_list__panel-body__right">
+			    {this.props.children}
+			</div>
                     </div>
 		    <Pagination list_key={list_key} on_changed={this.onChangePage} />
 		</div>
