@@ -127,6 +127,7 @@ export class SprintList extends Component {
 				     onClick={this.onRefresh}></div>
 			    </div>
 			</div>
+			<Pagination list_key={list_key} on_changed={this.onChangePage} />
 		    </Sticky>
                     <div className="panel-body">
 			<table className="table table--default" >
@@ -147,7 +148,6 @@ export class SprintList extends Component {
 			  <div className="table__no-rows">no sprints</div>
 			}
                     </div>
-		    <Pagination list_key={list_key} on_changed={this.onChangePage} />
 		</div>
 
             </div>

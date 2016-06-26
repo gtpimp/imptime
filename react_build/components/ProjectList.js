@@ -118,9 +118,11 @@ export class ProjectList extends Component {
 			    <div className="panel__title">Projects</div>
 			    <div className="panel__buttons">
 				<div className="panel__button panel__button--refresh"
-				     onClick={this.onRefresh}></div>
+				     onClick={this.onRefresh}>
+				</div>
 			    </div>
 			</div>
+			<Pagination list_key={list_key} on_changed={this.onChangePage} />
 		    </Sticky>
                     <div className="panel-body">
 			<table className="table table--default" >
@@ -132,7 +134,6 @@ export class ProjectList extends Component {
 			  <div className="table__no-rows">no projects</div>
 			}
                     </div>
-		    <Pagination list_key={list_key} on_changed={this.onChangePage} />
 		</div>
             </div>
         )

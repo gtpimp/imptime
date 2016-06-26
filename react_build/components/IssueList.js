@@ -197,6 +197,7 @@ export class IssueList extends Component {
 				</div>			    
 			    </div>
 			</div>
+			<Pagination list_key={list_key} on_changed={this.onChangePage} />
 		    </Sticky>
                     <div className="issue_list__panel-body">
 			<div className="issue_list__panel-body__left">
@@ -222,7 +223,6 @@ export class IssueList extends Component {
 			    {this.props.children}
 			</div>
                     </div>
-		    <Pagination list_key={list_key} on_changed={this.onChangePage} />
 		</div>
 
             </div>

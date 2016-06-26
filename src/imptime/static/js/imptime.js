@@ -41826,7 +41826,8 @@
 																																	_react2.default.createElement('div', { className: 'panel__button panel__button--refresh',
 																																					onClick: this.onRefresh })
 																													)
-																									)
+																									),
+																									_react2.default.createElement(_Pagination2.default, { list_key: list_key, on_changed: this.onChangePage })
 																					),
 																					_react2.default.createElement(
 																									'div',
@@ -41847,8 +41848,7 @@
 																													{ className: 'table__no-rows' },
 																													'no projects'
 																									)
-																					),
-																					_react2.default.createElement(_Pagination2.default, { list_key: list_key, on_changed: this.onChangePage })
+																					)
 																	)
 													);
 									}
@@ -59750,7 +59750,8 @@
 																									_react2.default.createElement('div', { className: 'panel__button panel__button--refresh',
 																												onClick: this.onRefresh })
 																						)
-																			)
+																			),
+																			_react2.default.createElement(_Pagination2.default, { list_key: list_key, on_changed: this.onChangePage })
 																),
 																_react2.default.createElement(
 																			'div',
@@ -59780,8 +59781,7 @@
 																						{ className: 'table__no-rows' },
 																						'no sprints'
 																			)
-																),
-																_react2.default.createElement(_Pagination2.default, { list_key: list_key, on_changed: this.onChangePage })
+																)
 													)
 										);
 							}
@@ -60456,7 +60456,8 @@
 									_react2.default.createElement('div', { className: 'panel__button panel__button--add',
 										onClick: this.onStartCandidateIssue })
 								)
-							)
+							),
+							_react2.default.createElement(_Pagination2.default, { list_key: list_key, on_changed: this.onChangePage })
 						),
 						_react2.default.createElement(
 							'div',
@@ -60517,8 +60518,7 @@
 								{ className: 'issue_list__panel-body__right' },
 								this.props.children
 							)
-						),
-						_react2.default.createElement(_Pagination2.default, { list_key: list_key, on_changed: this.onChangePage })
+						)
 					)
 				);
 			}
