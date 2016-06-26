@@ -41532,6 +41532,8 @@
 
 	var _IssueDeveloperDetails2 = _interopRequireDefault(_IssueDeveloperDetails);
 
+	var _reactSticky = __webpack_require__(944);
+
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 	function _objectDestructuringEmpty(obj) { if (obj == null) throw new TypeError("Cannot destructure undefined"); }
@@ -41564,17 +41566,21 @@
 	                'div',
 	                null,
 	                _react2.default.createElement(
-	                    'div',
-	                    { className: 'devpage__navigation__lists' },
-	                    _react2.default.createElement(_ProjectList2.default, { key: 'projects', list_key: 'projects' }),
-	                    _react2.default.createElement(_SprintList2.default, { key: 'sprints', list_key: 'sprints' })
-	                ),
-	                _react2.default.createElement(
-	                    'div',
-	                    { className: 'devpage__workarea' },
-	                    _react2.default.createElement(_IssueList2.default, { key: 'issues', list_key: 'issues' }),
-	                    _react2.default.createElement(_IssueDeveloperDetails2.default, { key: 'issue_developer_details',
-	                        list_key: 'issue_developer_details' })
+	                    _reactSticky.StickyContainer,
+	                    null,
+	                    _react2.default.createElement(
+	                        'div',
+	                        { className: 'devpage__navigation__lists' },
+	                        _react2.default.createElement(_ProjectList2.default, { key: 'projects', list_key: 'projects' }),
+	                        _react2.default.createElement(_SprintList2.default, { key: 'sprints', list_key: 'sprints' })
+	                    ),
+	                    _react2.default.createElement(
+	                        'div',
+	                        { className: 'devpage__workarea' },
+	                        _react2.default.createElement(_IssueList2.default, { key: 'issues', list_key: 'issues' }),
+	                        _react2.default.createElement(_IssueDeveloperDetails2.default, { key: 'issue_developer_details',
+	                            list_key: 'issue_developer_details' })
+	                    )
 	                )
 	            );
 	        }
@@ -41623,6 +41629,8 @@
 	var _Pagination = __webpack_require__(743);
 
 	var _Pagination2 = _interopRequireDefault(_Pagination);
+
+	var _reactSticky = __webpack_require__(944);
 
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -41734,14 +41742,18 @@
 																	'div',
 																	{ className: 'panel panel--collapsed' },
 																	_react2.default.createElement(
-																					'div',
-																					{ className: 'panel-heading', onClick: this.onExpand },
+																					_reactSticky.Sticky,
+																					null,
 																					_react2.default.createElement(
 																									'div',
-																									{ className: 'panel__title' },
-																									selected_items.map(function (project, index) {
-																													return _this2.renderCollapsedProject(project);
-																									})
+																									{ className: 'panel-heading', onClick: this.onExpand },
+																									_react2.default.createElement(
+																													'div',
+																													{ className: 'panel__title' },
+																													selected_items.map(function (project, index) {
+																																	return _this2.renderCollapsedProject(project);
+																													})
+																									)
 																					)
 																	)
 													);
@@ -41795,18 +41807,22 @@
 																					'div',
 																					{ className: 'panel panel--default' },
 																					_react2.default.createElement(
-																									'div',
-																									{ className: 'panel-heading', onClick: this.onCollapse },
+																									_reactSticky.Sticky,
+																									null,
 																									_react2.default.createElement(
 																													'div',
-																													{ className: 'panel__title' },
-																													'Projects'
-																									),
-																									_react2.default.createElement(
-																													'div',
-																													{ className: 'panel__buttons' },
-																													_react2.default.createElement('div', { className: 'panel__button panel__button--refresh',
-																																	onClick: this.onRefresh })
+																													{ className: 'panel-heading', onClick: this.onCollapse },
+																													_react2.default.createElement(
+																																	'div',
+																																	{ className: 'panel__title' },
+																																	'Projects'
+																													),
+																													_react2.default.createElement(
+																																	'div',
+																																	{ className: 'panel__buttons' },
+																																	_react2.default.createElement('div', { className: 'panel__button panel__button--refresh',
+																																					onClick: this.onRefresh })
+																													)
 																									)
 																					),
 																					_react2.default.createElement(
@@ -59532,6 +59548,8 @@
 
 	var _Sprint2 = _interopRequireDefault(_Sprint);
 
+	var _reactSticky = __webpack_require__(944);
+
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 	function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
@@ -59666,22 +59684,26 @@
 													'div',
 													{ className: 'panel panel--collapsed' },
 													_react2.default.createElement(
-																'div',
-																{ className: 'panel-heading', onClick: this.onExpand },
+																_reactSticky.Sticky,
+																null,
 																_react2.default.createElement(
 																			'div',
-																			{ className: 'panel__title' },
-																			selected_items.map(function (sprint, index) {
-																						return _react2.default.createElement(_Sprint2.default, { key: list_key + sprint.id + index,
-																									is_collapsed: true,
-																									reorderSprints: reorderSprints,
-																									onClickedSprint: function onClickedSprint() {
-																												return _this2.onClickedSprint(sprint.id);
-																									},
-																									is_loading: loading_item_ids.indexOf(sprint.id) !== -1,
-																									is_selected: selected_ids.indexOf(sprint.id) !== -1,
-																									sprint_id: sprint.id });
-																			})
+																			{ className: 'panel-heading', onClick: this.onExpand },
+																			_react2.default.createElement(
+																						'div',
+																						{ className: 'panel__title' },
+																						selected_items.map(function (sprint, index) {
+																									return _react2.default.createElement(_Sprint2.default, { key: list_key + sprint.id + index,
+																												is_collapsed: true,
+																												reorderSprints: reorderSprints,
+																												onClickedSprint: function onClickedSprint() {
+																															return _this2.onClickedSprint(sprint.id);
+																												},
+																												is_loading: loading_item_ids.indexOf(sprint.id) !== -1,
+																												is_selected: selected_ids.indexOf(sprint.id) !== -1,
+																												sprint_id: sprint.id });
+																						})
+																			)
 																)
 													)
 										);
@@ -59709,18 +59731,22 @@
 																'div',
 																{ className: 'panel panel--default' },
 																_react2.default.createElement(
-																			'div',
-																			{ className: 'panel-heading', onClick: this.onCollapse },
+																			_reactSticky.Sticky,
+																			null,
 																			_react2.default.createElement(
 																						'div',
-																						{ className: 'panel__title' },
-																						'Sprints'
-																			),
-																			_react2.default.createElement(
-																						'div',
-																						{ className: 'panel__buttons' },
-																						_react2.default.createElement('div', { className: 'panel__button panel__button--refresh',
-																									onClick: this.onRefresh })
+																						{ className: 'panel-heading', onClick: this.onCollapse },
+																						_react2.default.createElement(
+																									'div',
+																									{ className: 'panel__title' },
+																									'Sprints'
+																						),
+																						_react2.default.createElement(
+																									'div',
+																									{ className: 'panel__buttons' },
+																									_react2.default.createElement('div', { className: 'panel__button panel__button--refresh',
+																												onClick: this.onRefresh })
+																						)
 																			)
 																),
 																_react2.default.createElement(
@@ -60116,7 +60142,7 @@
 	'use strict';
 
 	Object.defineProperty(exports, "__esModule", {
-				value: true
+		value: true
 	});
 	exports.IssueList = undefined;
 
@@ -60152,6 +60178,8 @@
 
 	var _Issue3 = _interopRequireDefault(_Issue2);
 
+	var _reactSticky = __webpack_require__(944);
+
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 	function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
@@ -60163,384 +60191,392 @@
 	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 
 	var IssueList = exports.IssueList = function (_Component) {
-				_inherits(IssueList, _Component);
+		_inherits(IssueList, _Component);
 
-				function IssueList(props) {
-							_classCallCheck(this, IssueList);
+		function IssueList(props) {
+			_classCallCheck(this, IssueList);
 
-							var _this = _possibleConstructorReturn(this, Object.getPrototypeOf(IssueList).call(this, props));
+			var _this = _possibleConstructorReturn(this, Object.getPrototypeOf(IssueList).call(this, props));
 
-							_this.onRefresh = _this.onRefresh.bind(_this);
-							_this.onChangePage = _this.onChangePage.bind(_this);
-							_this.onCollapse = _this.onCollapse.bind(_this);
-							_this.onExpand = _this.onExpand.bind(_this);
-							_this.onClickedIssue = _this.onClickedIssue.bind(_this);
-							_this.reorderIssue = _this.reorderIssue.bind(_this);
-							_this.onStartCandidateIssue = _this.onStartCandidateIssue.bind(_this);
-							_this.onSaveCandidateIssue = _this.onSaveCandidateIssue.bind(_this);
-							_this.onCancelCandidateIssue = _this.onCancelCandidateIssue.bind(_this);
-							return _this;
+			_this.onRefresh = _this.onRefresh.bind(_this);
+			_this.onChangePage = _this.onChangePage.bind(_this);
+			_this.onCollapse = _this.onCollapse.bind(_this);
+			_this.onExpand = _this.onExpand.bind(_this);
+			_this.onClickedIssue = _this.onClickedIssue.bind(_this);
+			_this.reorderIssue = _this.reorderIssue.bind(_this);
+			_this.onStartCandidateIssue = _this.onStartCandidateIssue.bind(_this);
+			_this.onSaveCandidateIssue = _this.onSaveCandidateIssue.bind(_this);
+			_this.onCancelCandidateIssue = _this.onCancelCandidateIssue.bind(_this);
+			return _this;
+		}
+
+		_createClass(IssueList, [{
+			key: 'componentDidMount',
+			value: function componentDidMount() {
+				var _props = this.props;
+				var dispatch = _props.dispatch;
+				var list_key = _props.list_key;
+				var sprint_id = _props.sprint_id;
+
+				if (sprint_id) {
+					dispatch((0, _Issues.fetchIssuesIfNeeded)(list_key));
+				}
+			}
+		}, {
+			key: 'onCollapse',
+			value: function onCollapse() {
+				var _props2 = this.props;
+				var dispatch = _props2.dispatch;
+				var list_key = _props2.list_key;
+
+				dispatch((0, _ItemList.collapse_list)(list_key));
+			}
+		}, {
+			key: 'onExpand',
+			value: function onExpand() {
+				var _props3 = this.props;
+				var dispatch = _props3.dispatch;
+				var list_key = _props3.list_key;
+
+				dispatch((0, _ItemList.expand_list)(list_key));
+			}
+		}, {
+			key: 'onClickedIssue',
+			value: function onClickedIssue(issue_id) {
+				var _props4 = this.props;
+				var dispatch = _props4.dispatch;
+				var list_key = _props4.list_key;
+
+				dispatch((0, _ItemList.selectItems)(list_key, [issue_id]));
+			}
+		}, {
+			key: 'onChangePage',
+			value: function onChangePage() {
+				var _props5 = this.props;
+				var dispatch = _props5.dispatch;
+				var issue_ids = _props5.issue_ids;
+				var list_key = _props5.list_key;
+
+				dispatch((0, _ItemList.invalidateList)(list_key));
+				dispatch((0, _Issues.fetchIssuesIfNeeded)(list_key));
+			}
+		}, {
+			key: 'onRefresh',
+			value: function onRefresh(event) {
+				var _props6 = this.props;
+				var dispatch = _props6.dispatch;
+				var issue_ids = _props6.issue_ids;
+				var list_key = _props6.list_key;
+
+				dispatch((0, _ItemList.invalidateList)(list_key));
+				dispatch((0, _Issues.invalidateAllIssues)(issue_ids));
+				dispatch((0, _Issue.cancelCandidateIssue)());
+				dispatch((0, _Issues.fetchIssuesIfNeeded)(list_key));
+				if (event) {
+					event.stopPropagation();
+				}
+			}
+		}, {
+			key: 'onStartCandidateIssue',
+			value: function onStartCandidateIssue(event) {
+				var _props7 = this.props;
+				var dispatch = _props7.dispatch;
+				var list_key = _props7.list_key;
+
+				event.stopPropagation();
+				dispatch((0, _Issue.startCandidateIssue)(list_key));
+			}
+		}, {
+			key: 'onSaveCandidateIssue',
+			value: function onSaveCandidateIssue(obj) {
+				var dispatch = this.props.dispatch;
+
+				dispatch((0, _Issue.updateCandidateSubject)(obj.candidate_issue_subject));
+				dispatch((0, _Issue.saveCandidateIssue)());
+			}
+		}, {
+			key: 'onCancelCandidateIssue',
+			value: function onCancelCandidateIssue() {
+				var dispatch = this.props.dispatch;
+
+				dispatch((0, _Issue.cancelCandidateIssue)());
+			}
+		}, {
+			key: 'reorderIssue',
+			value: function reorderIssue(moving_issue_id, move_after_issue_id) {
+				var _props8 = this.props;
+				var dispatch = _props8.dispatch;
+				var list_key = _props8.list_key;
+
+				console.log("Moving " + moving_issue_id + " to after " + move_after_issue_id);
+				dispatch((0, _Issue.reorderIssue)(moving_issue_id, move_after_issue_id, function () {
+					dispatch((0, _ItemList.invalidateList)(list_key));
+					dispatch((0, _Issues.fetchIssuesIfNeeded)(list_key));
+				}));
+			}
+		}, {
+			key: 'render_collapsed',
+			value: function render_collapsed() {
+				var _this2 = this;
+
+				var _props9 = this.props;
+				var issue = _props9.issue;
+				var selected_items = _props9.selected_items;
+				var is_collapsed = _props9.is_collapsed;
+				var selected_ids = _props9.selected_ids;
+				var loading_item_ids = _props9.loading_item_ids;
+				var list_key = _props9.list_key;
+
+
+				return _react2.default.createElement(
+					'div',
+					{ className: 'panel panel--collapsed' },
+					_react2.default.createElement(
+						_reactSticky.Sticky,
+						null,
+						_react2.default.createElement(
+							'div',
+							{ className: 'panel-heading', onClick: this.onExpand },
+							_react2.default.createElement(
+								'div',
+								{ className: 'panel__title' },
+								selected_items.map(function (issue, index) {
+									var _React$createElement;
+
+									return _react2.default.createElement(_Issue3.default, (_React$createElement = {
+										key: list_key + issue.id + index,
+										is_collapsed: true,
+										reorderIssue: _this2.reorderIssue,
+										onClickedIssue: function onClickedIssue() {
+											return _this2.onClickedIssue(issue.id);
+										},
+										is_loading: loading_item_ids.indexOf(issue.id) !== -1
+									}, _defineProperty(_React$createElement, 'is_loading', selected_ids.indexOf(issue.id) !== -1), _defineProperty(_React$createElement, 'issue_id', issue.id), _React$createElement));
+								})
+							)
+						)
+					)
+				);
+			}
+		}, {
+			key: 'render_candidate_issue',
+			value: function render_candidate_issue() {
+				var _props10 = this.props;
+				var candidate_issue = _props10.candidate_issue;
+				var list_key = _props10.list_key;
+
+
+				return _react2.default.createElement(
+					'tr',
+					{ key: list_key + ".candidate_issue", className: 'issue_list__candidate_issue' },
+					_react2.default.createElement(
+						'td',
+						null,
+						'New issue'
+					),
+					_react2.default.createElement(
+						'td',
+						null,
+						_react2.default.createElement(_RIEInput2.default, { value: '',
+							propName: 'candidate_issue_subject',
+							initialState: 'editing',
+							change: this.onSaveCandidateIssue,
+							cancel: this.onCancelCandidateIssue })
+					)
+				);
+			}
+		}, {
+			key: 'render_expanded',
+			value: function render_expanded() {
+				var _props11 = this.props;
+				var issues = _props11.issues;
+				var is_visible = _props11.is_visible;
+				var list_key = _props11.list_key;
+				var is_loading = _props11.is_loading;
+				var is_creating_issue = _props11.is_creating_issue;
+				var candidate_issue = _props11.candidate_issue;
+				var selected_ids = _props11.selected_ids;
+				var loading_item_ids = _props11.loading_item_ids;
+				var has_items = _props11.has_items;
+
+
+				if (!is_visible) {
+					return _react2.default.createElement('div', null);
+				}
+				var that = this;
+
+				var issue_rows = [];
+				issues.map(function (issue, index) {
+
+					if (is_creating_issue && index == 0 && !candidate_issue.issue_id_before) {
+						issue_rows.push(that.render_candidate_issue());
+					}
+
+					issue_rows.push(_react2.default.createElement(_Issue3.default, {
+						key: list_key + issue.id + index,
+						is_collapsed: false,
+						reorderIssue: that.reorderIssue,
+						onClickedIssue: function onClickedIssue() {
+							return that.onClickedIssue(issue.id);
+						},
+						is_loading: loading_item_ids.indexOf(issue.id) !== -1,
+						is_selected: selected_ids.indexOf(issue.id) !== -1,
+						issue_id: issue.id
+					}));
+					if (is_creating_issue && candidate_issue.issue_id_before == issue.id) {
+						issue_rows.push(that.render_candidate_issue());
+					}
+				});
+
+				return _react2.default.createElement(
+					'div',
+					{ className: 'issue_list', style: { opacity: is_loading ? 0.5 : 1 } },
+					_react2.default.createElement(
+						'div',
+						{ className: 'panel panel--full' },
+						_react2.default.createElement(
+							_reactSticky.Sticky,
+							null,
+							_react2.default.createElement(
+								'div',
+								{ className: 'panel-heading', onClick: this.onCollapse },
+								_react2.default.createElement(
+									'div',
+									{ className: 'panel__title' },
+									'Issues'
+								),
+								_react2.default.createElement(
+									'div',
+									{ className: 'panel__buttons' },
+									_react2.default.createElement('div', { className: 'panel__button panel__button--refresh',
+										onClick: this.onRefresh }),
+									_react2.default.createElement('div', { className: 'panel__button panel__button--add',
+										onClick: this.onStartCandidateIssue })
+								)
+							)
+						),
+						_react2.default.createElement(
+							'div',
+							{ className: 'panel-body' },
+							_react2.default.createElement(
+								'table',
+								{ className: 'table table--compact' },
+								_react2.default.createElement(
+									'thead',
+									null,
+									_react2.default.createElement(
+										'tr',
+										null,
+										_react2.default.createElement(
+											'th',
+											null,
+											'Number'
+										),
+										_react2.default.createElement(
+											'th',
+											null,
+											'Name'
+										),
+										_react2.default.createElement(
+											'th',
+											null,
+											'Assigned to'
+										),
+										_react2.default.createElement(
+											'th',
+											null,
+											'Feature'
+										),
+										_react2.default.createElement(
+											'th',
+											null,
+											'Status'
+										)
+									)
+								),
+								_react2.default.createElement(
+									'tbody',
+									null,
+									issue_rows
+								)
+							),
+							!is_loading && !has_items && _react2.default.createElement(
+								'div',
+								{ className: 'table__no-rows' },
+								'no issues'
+							)
+						),
+						_react2.default.createElement(_Pagination2.default, { list_key: list_key, on_changed: this.onChangePage })
+					)
+				);
+			}
+		}, {
+			key: 'render',
+			value: function render() {
+				var _props12 = this.props;
+				var is_visible = _props12.is_visible;
+				var is_loading = _props12.is_loading;
+				var is_collapsed = _props12.is_collapsed;
+				var is_expanded = _props12.is_expanded;
+
+
+				if (!is_visible) {
+					return _react2.default.createElement('div', null);
 				}
 
-				_createClass(IssueList, [{
-							key: 'componentDidMount',
-							value: function componentDidMount() {
-										var _props = this.props;
-										var dispatch = _props.dispatch;
-										var list_key = _props.list_key;
-										var sprint_id = _props.sprint_id;
+				return _react2.default.createElement(
+					'div',
+					null,
+					is_collapsed && this.render_collapsed(),
+					is_expanded && this.render_expanded()
+				);
+			}
+		}]);
 
-										if (sprint_id) {
-													dispatch((0, _Issues.fetchIssuesIfNeeded)(list_key));
-										}
-							}
-				}, {
-							key: 'onCollapse',
-							value: function onCollapse() {
-										var _props2 = this.props;
-										var dispatch = _props2.dispatch;
-										var list_key = _props2.list_key;
-
-										dispatch((0, _ItemList.collapse_list)(list_key));
-							}
-				}, {
-							key: 'onExpand',
-							value: function onExpand() {
-										var _props3 = this.props;
-										var dispatch = _props3.dispatch;
-										var list_key = _props3.list_key;
-
-										dispatch((0, _ItemList.expand_list)(list_key));
-							}
-				}, {
-							key: 'onClickedIssue',
-							value: function onClickedIssue(issue_id) {
-										var _props4 = this.props;
-										var dispatch = _props4.dispatch;
-										var list_key = _props4.list_key;
-
-										dispatch((0, _ItemList.selectItems)(list_key, [issue_id]));
-							}
-				}, {
-							key: 'onChangePage',
-							value: function onChangePage() {
-										var _props5 = this.props;
-										var dispatch = _props5.dispatch;
-										var issue_ids = _props5.issue_ids;
-										var list_key = _props5.list_key;
-
-										dispatch((0, _ItemList.invalidateList)(list_key));
-										dispatch((0, _Issues.fetchIssuesIfNeeded)(list_key));
-							}
-				}, {
-							key: 'onRefresh',
-							value: function onRefresh(event) {
-										var _props6 = this.props;
-										var dispatch = _props6.dispatch;
-										var issue_ids = _props6.issue_ids;
-										var list_key = _props6.list_key;
-
-										dispatch((0, _ItemList.invalidateList)(list_key));
-										dispatch((0, _Issues.invalidateAllIssues)(issue_ids));
-										dispatch((0, _Issue.cancelCandidateIssue)());
-										dispatch((0, _Issues.fetchIssuesIfNeeded)(list_key));
-										if (event) {
-													event.stopPropagation();
-										}
-							}
-				}, {
-							key: 'onStartCandidateIssue',
-							value: function onStartCandidateIssue(event) {
-										var _props7 = this.props;
-										var dispatch = _props7.dispatch;
-										var list_key = _props7.list_key;
-
-										event.stopPropagation();
-										dispatch((0, _Issue.startCandidateIssue)(list_key));
-							}
-				}, {
-							key: 'onSaveCandidateIssue',
-							value: function onSaveCandidateIssue(obj) {
-										var dispatch = this.props.dispatch;
-
-										dispatch((0, _Issue.updateCandidateSubject)(obj.candidate_issue_subject));
-										dispatch((0, _Issue.saveCandidateIssue)());
-							}
-				}, {
-							key: 'onCancelCandidateIssue',
-							value: function onCancelCandidateIssue() {
-										var dispatch = this.props.dispatch;
-
-										dispatch((0, _Issue.cancelCandidateIssue)());
-							}
-				}, {
-							key: 'reorderIssue',
-							value: function reorderIssue(moving_issue_id, move_after_issue_id) {
-										var _props8 = this.props;
-										var dispatch = _props8.dispatch;
-										var list_key = _props8.list_key;
-
-										console.log("Moving " + moving_issue_id + " to after " + move_after_issue_id);
-										dispatch((0, _Issue.reorderIssue)(moving_issue_id, move_after_issue_id, function () {
-													dispatch((0, _ItemList.invalidateList)(list_key));
-													dispatch((0, _Issues.fetchIssuesIfNeeded)(list_key));
-										}));
-							}
-				}, {
-							key: 'render_collapsed',
-							value: function render_collapsed() {
-										var _this2 = this;
-
-										var _props9 = this.props;
-										var issue = _props9.issue;
-										var selected_items = _props9.selected_items;
-										var is_collapsed = _props9.is_collapsed;
-										var selected_ids = _props9.selected_ids;
-										var loading_item_ids = _props9.loading_item_ids;
-										var list_key = _props9.list_key;
-
-
-										return _react2.default.createElement(
-													'div',
-													{ className: 'panel panel--collapsed' },
-													_react2.default.createElement(
-																'div',
-																{ className: 'panel-heading', onClick: this.onExpand },
-																_react2.default.createElement(
-																			'div',
-																			{ className: 'panel__title' },
-																			selected_items.map(function (issue, index) {
-																						var _React$createElement;
-
-																						return _react2.default.createElement(_Issue3.default, (_React$createElement = {
-																									key: list_key + issue.id + index,
-																									is_collapsed: true,
-																									reorderIssue: _this2.reorderIssue,
-																									onClickedIssue: function onClickedIssue() {
-																												return _this2.onClickedIssue(issue.id);
-																									},
-																									is_loading: loading_item_ids.indexOf(issue.id) !== -1
-																						}, _defineProperty(_React$createElement, 'is_loading', selected_ids.indexOf(issue.id) !== -1), _defineProperty(_React$createElement, 'issue_id', issue.id), _React$createElement));
-																			})
-																)
-													)
-										);
-							}
-				}, {
-							key: 'render_candidate_issue',
-							value: function render_candidate_issue() {
-										var _props10 = this.props;
-										var candidate_issue = _props10.candidate_issue;
-										var list_key = _props10.list_key;
-
-
-										return _react2.default.createElement(
-													'tr',
-													{ key: list_key + ".candidate_issue", className: 'issue_list__candidate_issue' },
-													_react2.default.createElement(
-																'td',
-																null,
-																'New issue'
-													),
-													_react2.default.createElement(
-																'td',
-																null,
-																_react2.default.createElement(_RIEInput2.default, { value: '',
-																			propName: 'candidate_issue_subject',
-																			initialState: 'editing',
-																			change: this.onSaveCandidateIssue,
-																			cancel: this.onCancelCandidateIssue })
-													)
-										);
-							}
-				}, {
-							key: 'render_expanded',
-							value: function render_expanded() {
-										var _props11 = this.props;
-										var issues = _props11.issues;
-										var is_visible = _props11.is_visible;
-										var list_key = _props11.list_key;
-										var is_loading = _props11.is_loading;
-										var is_creating_issue = _props11.is_creating_issue;
-										var candidate_issue = _props11.candidate_issue;
-										var selected_ids = _props11.selected_ids;
-										var loading_item_ids = _props11.loading_item_ids;
-										var has_items = _props11.has_items;
-
-
-										if (!is_visible) {
-													return _react2.default.createElement('div', null);
-										}
-										var that = this;
-
-										var issue_rows = [];
-										issues.map(function (issue, index) {
-
-													if (is_creating_issue && index == 0 && !candidate_issue.issue_id_before) {
-																issue_rows.push(that.render_candidate_issue());
-													}
-
-													issue_rows.push(_react2.default.createElement(_Issue3.default, {
-																key: list_key + issue.id + index,
-																is_collapsed: false,
-																reorderIssue: that.reorderIssue,
-																onClickedIssue: function onClickedIssue() {
-																			return that.onClickedIssue(issue.id);
-																},
-																is_loading: loading_item_ids.indexOf(issue.id) !== -1,
-																is_selected: selected_ids.indexOf(issue.id) !== -1,
-																issue_id: issue.id
-													}));
-													if (is_creating_issue && candidate_issue.issue_id_before == issue.id) {
-																issue_rows.push(that.render_candidate_issue());
-													}
-										});
-
-										return _react2.default.createElement(
-													'div',
-													{ className: 'issue_list', style: { opacity: is_loading ? 0.5 : 1 } },
-													_react2.default.createElement(
-																'div',
-																{ className: 'panel panel--full' },
-																_react2.default.createElement(
-																			'div',
-																			{ className: 'panel-heading', onClick: this.onCollapse },
-																			_react2.default.createElement(
-																						'div',
-																						{ className: 'panel__title' },
-																						'Issues'
-																			),
-																			_react2.default.createElement(
-																						'div',
-																						{ className: 'panel__buttons' },
-																						_react2.default.createElement('div', { className: 'panel__button panel__button--refresh',
-																									onClick: this.onRefresh }),
-																						_react2.default.createElement('div', { className: 'panel__button panel__button--add',
-																									onClick: this.onStartCandidateIssue })
-																			)
-																),
-																_react2.default.createElement(
-																			'div',
-																			{ className: 'panel-body' },
-																			_react2.default.createElement(
-																						'table',
-																						{ className: 'table table--compact' },
-																						_react2.default.createElement(
-																									'thead',
-																									null,
-																									_react2.default.createElement(
-																												'tr',
-																												null,
-																												_react2.default.createElement(
-																															'th',
-																															null,
-																															'Number'
-																												),
-																												_react2.default.createElement(
-																															'th',
-																															null,
-																															'Name'
-																												),
-																												_react2.default.createElement(
-																															'th',
-																															null,
-																															'Assigned to'
-																												),
-																												_react2.default.createElement(
-																															'th',
-																															null,
-																															'Feature'
-																												),
-																												_react2.default.createElement(
-																															'th',
-																															null,
-																															'Status'
-																												)
-																									)
-																						),
-																						_react2.default.createElement(
-																									'tbody',
-																									null,
-																									issue_rows
-																						)
-																			),
-																			!is_loading && !has_items && _react2.default.createElement(
-																						'div',
-																						{ className: 'table__no-rows' },
-																						'no issues'
-																			)
-																),
-																_react2.default.createElement(_Pagination2.default, { list_key: list_key, on_changed: this.onChangePage })
-													)
-										);
-							}
-				}, {
-							key: 'render',
-							value: function render() {
-										var _props12 = this.props;
-										var is_visible = _props12.is_visible;
-										var is_loading = _props12.is_loading;
-										var is_collapsed = _props12.is_collapsed;
-										var is_expanded = _props12.is_expanded;
-
-
-										if (!is_visible) {
-													return _react2.default.createElement('div', null);
-										}
-
-										return _react2.default.createElement(
-													'div',
-													null,
-													is_collapsed && this.render_collapsed(),
-													is_expanded && this.render_expanded()
-										);
-							}
-				}]);
-
-				return IssueList;
+		return IssueList;
 	}(_react.Component);
 
 	function mapStateToProps(state, props) {
-				var issue = state.issue;
-				var item_list = state.item_list;
-				var list_key = props.list_key;
+		var issue = state.issue;
+		var item_list = state.item_list;
+		var list_key = props.list_key;
 
-				var items_by_id = issue && issue.items_by_id || {};
-				var l = item_list && item_list[list_key] || {};
-				var filter = l.filter || {};
-				var sprint_id = filter.sprint_id || null;
-				var visible_item_ids = l.visible_item_ids || [];
+		var items_by_id = issue && issue.items_by_id || {};
+		var l = item_list && item_list[list_key] || {};
+		var filter = l.filter || {};
+		var sprint_id = filter.sprint_id || null;
+		var visible_item_ids = l.visible_item_ids || [];
 
-				var selected_items = items_by_id && l.selected_ids && l.selected_ids.map(function (selected_id, index) {
-							return items_by_id[selected_id] || { 'id': selected_id,
-										'loaded': false };
-				});
+		var selected_items = items_by_id && l.selected_ids && l.selected_ids.map(function (selected_id, index) {
+			return items_by_id[selected_id] || { 'id': selected_id,
+				'loaded': false };
+		});
 
-				var items = items_by_id && visible_item_ids.map(function (visible_item_id, index) {
-							return items_by_id[visible_item_id] || { 'id': visible_item_id,
-										'loaded': false };
-				}) || [];
+		var items = items_by_id && visible_item_ids.map(function (visible_item_id, index) {
+			return items_by_id[visible_item_id] || { 'id': visible_item_id,
+				'loaded': false };
+		}) || [];
 
-				var candidate_issue = issue.candidate_issue;
-				var is_creating_issue = candidate_issue || false;
+		var candidate_issue = issue.candidate_issue;
+		var is_creating_issue = candidate_issue || false;
 
-				return {
-							list_key: list_key,
-							sprint_id: sprint_id,
-							issues: items,
-							issue_ids: (0, _map2.default)(items, 'id'),
-							selected_ids: l.selected_ids || [],
-							selected_items: selected_items || [],
-							loading_item_ids: l.loading_item_ids || [],
-							has_items: items && items.length > 0,
-							is_loading: l.is_loading,
-							is_collapsed: l.display_mode == "collapsed",
-							is_expanded: l.display_mode == "expanded" || !l.display_mode,
-							last_updated: l.last_updated,
-							is_visible: sprint_id || false,
-							candidate_issue: candidate_issue,
-							is_creating_issue: is_creating_issue
-				};
+		return {
+			list_key: list_key,
+			sprint_id: sprint_id,
+			issues: items,
+			issue_ids: (0, _map2.default)(items, 'id'),
+			selected_ids: l.selected_ids || [],
+			selected_items: selected_items || [],
+			loading_item_ids: l.loading_item_ids || [],
+			has_items: items && items.length > 0,
+			is_loading: l.is_loading,
+			is_collapsed: l.display_mode == "collapsed",
+			is_expanded: l.display_mode == "expanded" || !l.display_mode,
+			last_updated: l.last_updated,
+			is_visible: sprint_id || false,
+			candidate_issue: candidate_issue,
+			is_creating_issue: is_creating_issue
+		};
 	}
 
 	exports.default = (0, _reactRedux.connect)(mapStateToProps)(IssueList);
@@ -68223,6 +68259,432 @@
 
 	    if ((typeof _ret === 'undefined' ? 'undefined' : _typeof(_ret)) === "object") return _ret.v;
 	}
+
+/***/ },
+/* 944 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+	exports.Channel = exports.StickyContainer = exports.Sticky = undefined;
+
+	var _sticky = __webpack_require__(945);
+
+	var _sticky2 = _interopRequireDefault(_sticky);
+
+	var _container = __webpack_require__(946);
+
+	var _container2 = _interopRequireDefault(_container);
+
+	var _channel = __webpack_require__(947);
+
+	var _channel2 = _interopRequireDefault(_channel);
+
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+	exports.Sticky = _sticky2.default;
+	exports.StickyContainer = _container2.default;
+	exports.Channel = _channel2.default;
+	exports.default = _sticky2.default;
+
+/***/ },
+/* 945 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+
+	var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
+
+	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+	var _react = __webpack_require__(300);
+
+	var _react2 = _interopRequireDefault(_react);
+
+	var _reactDom = __webpack_require__(336);
+
+	var _reactDom2 = _interopRequireDefault(_reactDom);
+
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+	function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+	var Sticky = function (_React$Component) {
+	  _inherits(Sticky, _React$Component);
+
+	  function Sticky(props) {
+	    _classCallCheck(this, Sticky);
+
+	    var _this = _possibleConstructorReturn(this, Object.getPrototypeOf(Sticky).call(this, props));
+
+	    _this.updateContext = function (_ref) {
+	      var inherited = _ref.inherited;
+	      var node = _ref.node;
+
+	      _this.containerNode = node;
+	      _this.setState({
+	        containerOffset: inherited,
+	        distanceFromBottom: _this.getDistanceFromBottom()
+	      });
+	    };
+
+	    _this.recomputeState = function () {
+	      var isSticky = _this.isSticky();
+	      var height = _this.getHeight();
+	      var width = _this.getWidth();
+	      var xOffset = _this.getXOffset();
+	      var distanceFromBottom = _this.getDistanceFromBottom();
+	      var hasChanged = _this.state.isSticky !== isSticky;
+
+	      _this.setState({ isSticky: isSticky, height: height, width: width, xOffset: xOffset, distanceFromBottom: distanceFromBottom });
+
+	      if (hasChanged) {
+	        if (_this.channel) {
+	          _this.channel.update(function (data) {
+	            data.offset = isSticky ? _this.state.height : 0;
+	          });
+	        }
+
+	        _this.props.onStickyStateChange(isSticky);
+	      }
+	    };
+
+	    _this.state = {};
+	    return _this;
+	  }
+
+	  _createClass(Sticky, [{
+	    key: 'componentWillMount',
+	    value: function componentWillMount() {
+	      this.channel = this.context['sticky-channel'];
+	      this.channel.subscribe(this.updateContext);
+	    }
+	  }, {
+	    key: 'componentDidMount',
+	    value: function componentDidMount() {
+	      this.on(['resize', 'scroll', 'touchstart', 'touchmove', 'touchend', 'pageshow', 'load'], this.recomputeState);
+	      this.recomputeState();
+	    }
+	  }, {
+	    key: 'componentWillReceiveProps',
+	    value: function componentWillReceiveProps() {
+	      this.recomputeState();
+	    }
+	  }, {
+	    key: 'componentWillUnmount',
+	    value: function componentWillUnmount() {
+	      this.off(['resize', 'scroll', 'touchstart', 'touchmove', 'touchend', 'pageshow', 'load'], this.recomputeState);
+	      this.channel.unsubscribe(this.updateContext);
+	    }
+	  }, {
+	    key: 'getXOffset',
+	    value: function getXOffset() {
+	      return this.refs.placeholder.getBoundingClientRect().left;
+	    }
+	  }, {
+	    key: 'getWidth',
+	    value: function getWidth() {
+	      return this.refs.placeholder.getBoundingClientRect().width;
+	    }
+	  }, {
+	    key: 'getHeight',
+	    value: function getHeight() {
+	      return _reactDom2.default.findDOMNode(this).getBoundingClientRect().height;
+	    }
+	  }, {
+	    key: 'getDistanceFromTop',
+	    value: function getDistanceFromTop() {
+	      return this.refs.placeholder.getBoundingClientRect().top;
+	    }
+	  }, {
+	    key: 'getDistanceFromBottom',
+	    value: function getDistanceFromBottom() {
+	      if (!this.containerNode) return 0;
+	      return this.containerNode.getBoundingClientRect().bottom;
+	    }
+	  }, {
+	    key: 'isSticky',
+	    value: function isSticky() {
+	      if (!this.props.isActive) return false;
+
+	      var fromTop = this.getDistanceFromTop();
+	      var fromBottom = this.getDistanceFromBottom();
+
+	      var topBreakpoint = this.state.containerOffset - this.props.topOffset;
+	      var bottomBreakpoint = this.state.containerOffset + this.props.bottomOffset;
+
+	      return fromTop <= topBreakpoint && fromBottom >= bottomBreakpoint;
+	    }
+	  }, {
+	    key: 'on',
+	    value: function on(events, callback) {
+	      events.forEach(function (evt) {
+	        window.addEventListener(evt, callback);
+	      });
+	    }
+	  }, {
+	    key: 'off',
+	    value: function off(events, callback) {
+	      events.forEach(function (evt) {
+	        window.removeEventListener(evt, callback);
+	      });
+	    }
+	  }, {
+	    key: 'shouldComponentUpdate',
+	    value: function shouldComponentUpdate(newProps, newState) {
+	      var _this2 = this;
+
+	      // Have we changed the number of props?
+	      var propNames = Object.keys(this.props);
+	      if (Object.keys(newProps).length != propNames.length) return true;
+
+	      // Have we changed any prop values?
+	      var valuesMatch = propNames.every(function (key) {
+	        return newProps.hasOwnProperty(key) && newProps[key] === _this2.props[key];
+	      });
+	      if (!valuesMatch) return true;
+
+	      // Have we changed any state that will always impact rendering?
+	      var state = this.state;
+	      if (newState.isSticky !== state.isSticky) return true;
+
+	      // If we are sticky, have we changed any state that will impact rendering?
+	      if (state.isSticky) {
+	        if (newState.height !== state.height) return true;
+	        if (newState.width !== state.width) return true;
+	        if (newState.xOffset !== state.xOffset) return true;
+	        if (newState.containerOffset !== state.containerOffset) return true;
+	        if (newState.distanceFromBottom !== state.distanceFromBottom) return true;
+	      }
+
+	      return false;
+	    }
+
+	    /*
+	     * The special sauce.
+	     */
+
+	  }, {
+	    key: 'render',
+	    value: function render() {
+	      var placeholderStyle = { paddingBottom: 0 };
+	      var className = this.props.className;
+	      var style = this.props.style;
+
+	      if (this.state.isSticky) {
+	        var stickyStyle = {
+	          position: 'fixed',
+	          top: this.state.containerOffset,
+	          left: this.state.xOffset,
+	          width: this.state.width
+	        };
+
+	        var bottomLimit = this.state.distanceFromBottom - this.state.height - this.props.bottomOffset;
+	        if (this.state.containerOffset > bottomLimit) {
+	          stickyStyle.top = bottomLimit;
+	        }
+
+	        placeholderStyle.paddingBottom = this.state.height;
+
+	        className += ' ' + this.props.stickyClassName;
+	        style = _extends({}, style, stickyStyle, this.props.stickyStyle);
+	      }
+
+	      return _react2.default.createElement(
+	        'div',
+	        null,
+	        _react2.default.createElement('div', { ref: 'placeholder', style: placeholderStyle }),
+	        _react2.default.createElement(
+	          'div',
+	          _extends({}, this.props, { className: className, style: style }),
+	          this.props.children
+	        )
+	      );
+	    }
+	  }]);
+
+	  return Sticky;
+	}(_react2.default.Component);
+
+	Sticky.propTypes = {
+	  isActive: _react2.default.PropTypes.bool,
+	  className: _react2.default.PropTypes.string,
+	  style: _react2.default.PropTypes.object,
+	  stickyClassName: _react2.default.PropTypes.string,
+	  stickyStyle: _react2.default.PropTypes.object,
+	  topOffset: _react2.default.PropTypes.number,
+	  bottomOffset: _react2.default.PropTypes.number,
+	  onStickyStateChange: _react2.default.PropTypes.func
+	};
+	Sticky.defaultProps = {
+	  isActive: true,
+	  className: '',
+	  style: {},
+	  stickyClassName: 'sticky',
+	  stickyStyle: {},
+	  topOffset: 0,
+	  bottomOffset: 0,
+	  onStickyStateChange: function onStickyStateChange() {}
+	};
+	Sticky.contextTypes = {
+	  'sticky-channel': _react2.default.PropTypes.any
+	};
+	exports.default = Sticky;
+	module.exports = exports['default'];
+
+/***/ },
+/* 946 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+
+	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+	var _react = __webpack_require__(300);
+
+	var _react2 = _interopRequireDefault(_react);
+
+	var _reactDom = __webpack_require__(336);
+
+	var _reactDom2 = _interopRequireDefault(_reactDom);
+
+	var _channel = __webpack_require__(947);
+
+	var _channel2 = _interopRequireDefault(_channel);
+
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+	function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+	var Container = function (_React$Component) {
+	  _inherits(Container, _React$Component);
+
+	  function Container(props) {
+	    _classCallCheck(this, Container);
+
+	    var _this = _possibleConstructorReturn(this, Object.getPrototypeOf(Container).call(this, props));
+
+	    _this.updateOffset = function (_ref) {
+	      var inherited = _ref.inherited;
+	      var offset = _ref.offset;
+
+	      _this.channel.update(function (data) {
+	        data.inherited = inherited + offset;
+	      });
+	    };
+
+	    _this.channel = new _channel2.default({ inherited: 0, offset: 0, node: null });
+	    return _this;
+	  }
+
+	  _createClass(Container, [{
+	    key: 'getChildContext',
+	    value: function getChildContext() {
+	      return { 'sticky-channel': this.channel };
+	    }
+	  }, {
+	    key: 'componentWillMount',
+	    value: function componentWillMount() {
+	      var parentChannel = this.context['sticky-channel'];
+	      if (parentChannel) parentChannel.subscribe(this.updateOffset);
+	    }
+	  }, {
+	    key: 'componentDidMount',
+	    value: function componentDidMount() {
+	      var node = _reactDom2.default.findDOMNode(this);
+	      this.channel.update(function (data) {
+	        data.node = node;
+	      });
+	    }
+	  }, {
+	    key: 'componentWillUnmount',
+	    value: function componentWillUnmount() {
+	      this.channel.update(function (data) {
+	        data.node = null;
+	      });
+
+	      var parentChannel = this.context['sticky-channel'];
+	      if (parentChannel) parentChannel.unsubscribe(this.updateOffset);
+	    }
+	  }, {
+	    key: 'render',
+	    value: function render() {
+	      return _react2.default.createElement(
+	        'div',
+	        this.props,
+	        this.props.children
+	      );
+	    }
+	  }]);
+
+	  return Container;
+	}(_react2.default.Component);
+
+	Container.contextTypes = {
+	  'sticky-channel': _react2.default.PropTypes.any
+	};
+	Container.childContextTypes = {
+	  'sticky-channel': _react2.default.PropTypes.any
+	};
+	exports.default = Container;
+	module.exports = exports['default'];
+
+/***/ },
+/* 947 */
+/***/ function(module, exports) {
+
+	"use strict";
+
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+
+	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+	var Channel = function Channel(data) {
+	  _classCallCheck(this, Channel);
+
+	  var listeners = [];
+	  data = data || {};
+
+	  this.subscribe = function (fn) {
+	    listeners.push(fn);
+	  };
+
+	  this.unsubscribe = function (fn) {
+	    var idx = listeners.indexOf(fn);
+	    if (idx !== -1) listeners.splice(idx, 1);
+	  };
+
+	  this.update = function (fn) {
+	    if (fn) fn(data);
+	    listeners.forEach(function (l) {
+	      return l(data);
+	    });
+	  };
+	};
+
+	exports.default = Channel;
+	module.exports = exports['default'];
 
 /***/ }
 /******/ ]);

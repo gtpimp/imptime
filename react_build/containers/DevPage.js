@@ -4,6 +4,7 @@ import ProjectList from '../components/ProjectList'
 import SprintList from '../components/SprintList'
 import IssueList from '../components/IssueList'
 import IssueDeveloperDetails from '../components/IssueDeveloperDetails'
+import { StickyContainer } from 'react-sticky';
 
 class DevPage extends Component {
 
@@ -20,16 +21,18 @@ class DevPage extends Component {
         return (
             <div>
 
-		<div className="devpage__navigation__lists">
-		    <ProjectList key="projects" list_key="projects"/>
-		    <SprintList key="sprints" list_key="sprints"/>
-		</div>
+		<StickyContainer>
+		    <div className="devpage__navigation__lists">
+			<ProjectList key="projects" list_key="projects"/>
+			<SprintList key="sprints" list_key="sprints"/>
+		    </div>
 
-		<div className="devpage__workarea">
-		    <IssueList key="issues" list_key="issues" />
-		    <IssueDeveloperDetails key="issue_developer_details"
-					   list_key="issue_developer_details" />
-		</div>
+		    <div className="devpage__workarea">
+			<IssueList key="issues" list_key="issues" />
+			<IssueDeveloperDetails key="issue_developer_details"
+					       list_key="issue_developer_details" />
+		    </div>
+		</StickyContainer>
 		
 	    </div>
         )

@@ -15,7 +15,7 @@ import {
 } from '../actions/Sprints'
 import Pagination from '../components/Pagination'
 import Sprint from './Sprint'
-
+import { Sticky } from 'react-sticky';
 
 export class SprintList extends Component {
 
@@ -91,19 +91,21 @@ export class SprintList extends Component {
 
 	return (
 	    <div className="panel panel--collapsed">
-		<div className="panel-heading" onClick={this.onExpand}>
-		    <div className="panel__title">
-			{ selected_items.map((sprint, index) =>
-			    <Sprint key={list_key+sprint.id+index} 
-				    is_collapsed={true}
-				    reorderSprints={reorderSprints}
-				    onClickedSprint={() => this.onClickedSprint(sprint.id)}
-				    is_loading={loading_item_ids.indexOf(sprint.id) !== -1}
-				    is_selected={selected_ids.indexOf(sprint.id) !== -1}
-				    sprint_id={sprint.id} />
-			)}
+		<Sticky>
+		    <div className="panel-heading" onClick={this.onExpand}>
+			<div className="panel__title">
+			    { selected_items.map((sprint, index) =>
+				<Sprint key={list_key+sprint.id+index} 
+					is_collapsed={true}
+					reorderSprints={reorderSprints}
+					onClickedSprint={() => this.onClickedSprint(sprint.id)}
+					is_loading={loading_item_ids.indexOf(sprint.id) !== -1}
+					is_selected={selected_ids.indexOf(sprint.id) !== -1}
+					sprint_id={sprint.id} />
+			      )}
+			</div>
 		    </div>
-		</div>
+		</Sticky>
 	    </div>
 	)
     }
@@ -117,13 +119,15 @@ export class SprintList extends Component {
 	return (
             <div style={{ opacity: is_loading ? 0.5 : 1 }}>
 		<div className="panel panel--default">
-                    <div className="panel-heading" onClick={this.onCollapse}>
-			<div className="panel__title">Sprints</div>
-			<div className="panel__buttons">
-                            <div className="panel__button panel__button--refresh"
-				 onClick={this.onRefresh}></div>
+		    <Sticky>
+			<div className="panel-heading" onClick={this.onCollapse}>
+			    <div className="panel__title">Sprints</div>
+			    <div className="panel__buttons">
+				<div className="panel__button panel__button--refresh"
+				     onClick={this.onRefresh}></div>
+			    </div>
 			</div>
-                    </div>
+		    </Sticky>
                     <div className="panel-body">
 			<table className="table table--default" >
                             <tbody>

@@ -22,6 +22,7 @@ import {
 } from '../actions/Issue'
 import Pagination from '../components/Pagination'
 import Issue from './Issue'
+import { Sticky } from 'react-sticky';
 
 export class IssueList extends Component {
 
@@ -110,19 +111,21 @@ export class IssueList extends Component {
 
 	return (
 	    <div className="panel panel--collapsed">
-		<div className="panel-heading"  onClick={this.onExpand}>
-		    <div className="panel__title">{ selected_items.map((issue, index) =>
-			<Issue
-			    key={list_key+issue.id+index}
-			    is_collapsed={true}
-			    reorderIssue={this.reorderIssue}
-			    onClickedIssue={() => this.onClickedIssue(issue.id)}
-			    is_loading={loading_item_ids.indexOf(issue.id) !== -1}
-			    is_loading={selected_ids.indexOf(issue.id) !== -1}
-			    issue_id={issue.id} />
-			)}
+		<Sticky>
+		    <div className="panel-heading"  onClick={this.onExpand}>
+			<div className="panel__title">{ selected_items.map((issue, index) =>
+			    <Issue
+				key={list_key+issue.id+index}
+				is_collapsed={true}
+				reorderIssue={this.reorderIssue}
+				onClickedIssue={() => this.onClickedIssue(issue.id)}
+				is_loading={loading_item_ids.indexOf(issue.id) !== -1}
+				is_loading={selected_ids.indexOf(issue.id) !== -1}
+				issue_id={issue.id} />
+			    )}
+			</div>
 		    </div>
-		</div>
+		</Sticky>
 	    </div>
 	)
     }
@@ -182,17 +185,19 @@ export class IssueList extends Component {
         return (
             <div className="issue_list" style={{ opacity: is_loading ? 0.5 : 1 }}>
 		<div className="panel panel--full">
-                    <div className="panel-heading" onClick={this.onCollapse}>
-			<div className="panel__title">Issues</div>
-			<div className="panel__buttons">
-                            <div className="panel__button panel__button--refresh"
-				 onClick={this.onRefresh}>
+		    <Sticky> 
+			<div className="panel-heading" onClick={this.onCollapse}>
+			    <div className="panel__title">Issues</div>
+			    <div className="panel__buttons">
+				<div className="panel__button panel__button--refresh"
+				     onClick={this.onRefresh}>
+				</div>
+				<div className="panel__button panel__button--add"
+				     onClick={this.onStartCandidateIssue}>
+				</div>			    
 			    </div>
-                            <div className="panel__button panel__button--add"
-				 onClick={this.onStartCandidateIssue}>
-			    </div>			    
 			</div>
-                    </div>
+		    </Sticky>
                     <div className="panel-body">
 			<table className="table table--compact" >
                             <thead>

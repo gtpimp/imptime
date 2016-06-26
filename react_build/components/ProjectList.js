@@ -13,7 +13,7 @@ import {
     fetchProjectsIfNeeded
 } from '../actions/Projects'
 import Pagination from '../components/Pagination'
-
+import { Sticky } from 'react-sticky';
 
 export class ProjectList extends Component {
 
@@ -75,11 +75,13 @@ export class ProjectList extends Component {
 
 	return (
 	    <div className="panel panel--collapsed">
-		<div className="panel-heading" onClick={this.onExpand}>
-		    <div className="panel__title">
-			{ selected_items.map((project, index) => this.renderCollapsedProject(project)) }
+		<Sticky>
+		    <div className="panel-heading" onClick={this.onExpand}>
+			<div className="panel__title">
+			    { selected_items.map((project, index) => this.renderCollapsedProject(project)) }
+			</div>
 		    </div>
-		</div>
+		</Sticky>
 	    </div>
 	)
     }
@@ -111,13 +113,15 @@ export class ProjectList extends Component {
         return (
             <div style={{ opacity: is_loading ? 0.5 : 1 }}>
 		<div className="panel panel--default">
-                    <div className="panel-heading" onClick={this.onCollapse}>
-			<div className="panel__title">Projects</div>
-			<div className="panel__buttons">
-			    <div className="panel__button panel__button--refresh"
-				 onClick={this.onRefresh}></div>
+		    <Sticky>
+			<div className="panel-heading" onClick={this.onCollapse}>
+			    <div className="panel__title">Projects</div>
+			    <div className="panel__buttons">
+				<div className="panel__button panel__button--refresh"
+				     onClick={this.onRefresh}></div>
+			    </div>
 			</div>
-                    </div>
+		    </Sticky>
                     <div className="panel-body">
 			<table className="table table--default" >
                             <tbody>

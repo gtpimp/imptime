@@ -37,6 +37,7 @@
     "react-router": "^2.4.1",
     "react-router-redux": "^4.0.4",
     "react-select": "^1.0.0-beta13",
+    "react-sticky": "^5.0.3",
     "react-timeout": "^1.0.0",
     "redux": "^3.5.2",
     "redux-logger": "^2.6.1",
