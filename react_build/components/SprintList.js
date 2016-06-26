@@ -91,7 +91,6 @@ export class SprintList extends Component {
 
 	return (
 	    <div className="panel panel--collapsed">
-		<Sticky>
 		    <div className="panel-heading" onClick={this.onExpand}>
 			<div className="panel__title">
 			    { selected_items.map((sprint, index) =>
@@ -105,7 +104,6 @@ export class SprintList extends Component {
 			      )}
 			</div>
 		    </div>
-		</Sticky>
 	    </div>
 	)
     }

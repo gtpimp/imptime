@@ -75,13 +75,11 @@ export class ProjectList extends Component {
 
 	return (
 	    <div className="panel panel--collapsed">
-		<Sticky>
 		    <div className="panel-heading" onClick={this.onExpand}>
 			<div className="panel__title">
 			    { selected_items.map((project, index) => this.renderCollapsedProject(project)) }
 			</div>
 		    </div>
-		</Sticky>
 	    </div>
 	)
     }

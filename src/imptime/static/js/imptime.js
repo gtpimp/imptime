@@ -41745,18 +41745,14 @@
 																	'div',
 																	{ className: 'panel panel--collapsed' },
 																	_react2.default.createElement(
-																					_reactSticky.Sticky,
-																					null,
+																					'div',
+																					{ className: 'panel-heading', onClick: this.onExpand },
 																					_react2.default.createElement(
 																									'div',
-																									{ className: 'panel-heading', onClick: this.onExpand },
-																									_react2.default.createElement(
-																													'div',
-																													{ className: 'panel__title' },
-																													selected_items.map(function (project, index) {
-																																	return _this2.renderCollapsedProject(project);
-																													})
-																									)
+																									{ className: 'panel__title' },
+																									selected_items.map(function (project, index) {
+																													return _this2.renderCollapsedProject(project);
+																									})
 																					)
 																	)
 													);
@@ -59687,26 +59683,22 @@
 													'div',
 													{ className: 'panel panel--collapsed' },
 													_react2.default.createElement(
-																_reactSticky.Sticky,
-																null,
+																'div',
+																{ className: 'panel-heading', onClick: this.onExpand },
 																_react2.default.createElement(
 																			'div',
-																			{ className: 'panel-heading', onClick: this.onExpand },
-																			_react2.default.createElement(
-																						'div',
-																						{ className: 'panel__title' },
-																						selected_items.map(function (sprint, index) {
-																									return _react2.default.createElement(_Sprint2.default, { key: list_key + sprint.id + index,
-																												is_collapsed: true,
-																												reorderSprints: reorderSprints,
-																												onClickedSprint: function onClickedSprint() {
-																															return _this2.onClickedSprint(sprint.id);
-																												},
-																												is_loading: loading_item_ids.indexOf(sprint.id) !== -1,
-																												is_selected: selected_ids.indexOf(sprint.id) !== -1,
-																												sprint_id: sprint.id });
-																						})
-																			)
+																			{ className: 'panel__title' },
+																			selected_items.map(function (sprint, index) {
+																						return _react2.default.createElement(_Sprint2.default, { key: list_key + sprint.id + index,
+																									is_collapsed: true,
+																									reorderSprints: reorderSprints,
+																									onClickedSprint: function onClickedSprint() {
+																												return _this2.onClickedSprint(sprint.id);
+																									},
+																									is_loading: loading_item_ids.indexOf(sprint.id) !== -1,
+																									is_selected: selected_ids.indexOf(sprint.id) !== -1,
+																									sprint_id: sprint.id });
+																			})
 																)
 													)
 										);
@@ -60456,8 +60448,7 @@
 									_react2.default.createElement('div', { className: 'panel__button panel__button--add',
 										onClick: this.onStartCandidateIssue })
 								)
-							),
-							_react2.default.createElement(_Pagination2.default, { list_key: list_key, on_changed: this.onChangePage })
+							)
 						),
 						_react2.default.createElement(
 							'div',
