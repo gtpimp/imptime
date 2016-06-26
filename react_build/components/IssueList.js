@@ -70,6 +70,7 @@ export class IssueList extends Component {
         const { dispatch, issue_ids, list_key } = this.props
 	dispatch(invalidateList(list_key))
 	dispatch(invalidateAllIssues(issue_ids))
+	dispatch(cancelCandidateIssue())
 	dispatch(fetchIssuesIfNeeded(list_key))
 	if ( event ) {
 	    event.stopPropagation()

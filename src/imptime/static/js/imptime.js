@@ -60242,6 +60242,7 @@
 
 										dispatch((0, _ItemList.invalidateList)(list_key));
 										dispatch((0, _Issues.invalidateAllIssues)(issue_ids));
+										dispatch((0, _Issue.cancelCandidateIssue)());
 										dispatch((0, _Issues.fetchIssuesIfNeeded)(list_key));
 										if (event) {
 													event.stopPropagation();
