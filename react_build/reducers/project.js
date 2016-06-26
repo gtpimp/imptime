@@ -9,7 +9,8 @@ import {
     ANNOUNCE_PROJECTS_LOAD_FAILED,
     ANNOUNCE_PROJECTS_LOADED,
     ANNOUNCE_LOADING_PROJECTS,
-    INVALIDATE_PROJECTS
+    INVALIDATE_PROJECTS,
+    INVALIDATE_ALL_PROJECTS
 } from '../actions/Projects.js'
 
 const initialState = {
@@ -22,6 +23,9 @@ export default function project(state = initialState, action) {
     let state_copy = Object.assign({}, state)
     
     switch (action.type) {
+	case INVALIDATE_ALL_PROJECTS:
+	    return Object.assign({}, state, {items_by_id: null})
+
         case INVALIDATE_PROJECTS:
 
 	    let new_project_ids = Object.assign({}, state.items_by_id)

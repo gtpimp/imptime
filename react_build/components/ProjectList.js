@@ -9,7 +9,7 @@ import {
     expand_list
 } from '../actions/ItemList'
 import {
-    invalidateProjects,
+    invalidateAllProjects,
     fetchProjectsIfNeeded
 } from '../actions/Projects'
 import Pagination from '../components/Pagination'
@@ -54,7 +54,7 @@ export class ProjectList extends Component {
     onRefresh(event) {
         const { dispatch, project_ids, list_key } = this.props
 	dispatch(invalidateList(list_key))
-	dispatch(invalidateProjects(project_ids))
+	dispatch(invalidateAllProjects())
 	dispatch(fetchProjectsIfNeeded(list_key))
 	if ( event ) {
 	    event.stopPropagation()

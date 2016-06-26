@@ -12,6 +12,13 @@ export const ANNOUNCE_SPRINTS_SAVED = 'ANNOUNCE_SPRINTS_SAVED'
 export const ANNOUNCE_SPRINTS_SAVE_FAILED = 'ANNOUNCE_SPRINTS_SAVE_FAILED'
 export const ANNOUNCE_SAVING_SPRINTS = 'ANNOUNCE_SAVING_SPRINTS'
 export const INVALIDATE_SPRINTS = 'INVALIDATE_SPRINTS'
+export const INVALIDATE_ALL_SPRINTS = 'INVALIDATE_ALL_SPRINTS'
+
+export function invalidateAllSprints() {
+    return {
+        type: INVALIDATE_ALL_SPRINTS
+    }
+}
 
 export function invalidateSprints(sprint_ids) {
     return {

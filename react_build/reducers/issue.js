@@ -10,6 +10,7 @@ import {
     ANNOUNCE_ISSUES_LOADED,
     ANNOUNCE_LOADING_ISSUES,
     INVALIDATE_ISSUES,
+    INVALIDATE_ALL_ISSUES
 } from '../actions/Issues.js'
 import {
     ANNOUNCE_CAPTURING_NEW_ISSUE,
@@ -28,8 +29,11 @@ const initialState = {
 export default function issue(state = initialState, action) {
     
     switch (action.type) {
-        case INVALIDATE_ISSUES:
 
+	case INVALIDATE_ALL_ISSUES:
+	    return Object.assign({}, state, {items_by_id: null})
+	    
+        case INVALIDATE_ISSUES:
 	    let new_issue_ids = Object.assign({}, state.items_by_id)
 	    action.issue_ids_to_invalidate.map(function(id_to_invalidate) {
 					       if ( new_issue_ids[id_to_invalidate] ) {

@@ -8,6 +8,13 @@ export const ANNOUNCE_PROJECTS_LOADED = 'ANNOUNCE_PROJECTS_LOADED'
 export const ANNOUNCE_PROJECTS_LOAD_FAILED = 'ANNOUNCE_PROJECTS_LOAD_FAILED'
 export const ANNOUNCE_LOADING_PROJECTS = 'ANNOUNCE_LOADING_PROJECTS'
 export const INVALIDATE_PROJECTS = 'INVALIDATE_PROJECTS'
+export const INVALIDATE_ALL_PROJECTS = 'INVALIDATE_ALL_PROJECTS'
+
+export function invalidateAllProjects() {
+    return {
+        type: INVALIDATE_ALL_PROJECTS
+    }
+}
 
 export function invalidateProjects(project_ids) {
     return {
@@ -15,6 +22,8 @@ export function invalidateProjects(project_ids) {
 	project_ids_to_invalidate: project_ids
     }
 }
+
+
 
 function announceLoadingProjects(project_ids) {
     return {

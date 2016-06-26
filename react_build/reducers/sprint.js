@@ -12,7 +12,8 @@ import {
     ANNOUNCE_SPRINTS_SAVED,
     ANNOUNCE_SPRINTS_SAVE_FAILED,
     ANNOUNCE_SAVING_SPRINTS,
-    INVALIDATE_SPRINTS
+    INVALIDATE_SPRINTS,
+    INVALIDATE_ALL_SPRINTS
 } from '../actions/Sprints.js'
 
 const initialState = {
@@ -26,8 +27,9 @@ export default function sprint(state = initialState, action) {
     let state_copy = Object.assign({}, state)
     
     switch (action.type) {
+	case INVALIDATE_ALL_SPRINTS:
+	    return Object.assign({}, state, {items_by_id: null})
         case INVALIDATE_SPRINTS:
-
 	    let new_sprint_ids = Object.assign({}, state.items_by_id)
 	    action.sprint_ids_to_invalidate.map(function(id_to_invalidate) {
 		if ( new_sprint_ids[id_to_invalidate] ) {

@@ -9,7 +9,7 @@ import {
     expand_list
 } from '../actions/ItemList'
 import {
-    invalidateSprints,
+    invalidateAllSprints,
     fetchSprintsIfNeeded,
     reorderSprints
 } from '../actions/Sprints'
@@ -60,7 +60,7 @@ export class SprintList extends Component {
     onRefresh(event) {
         const { dispatch, sprint_ids, list_key } = this.props
 	dispatch(invalidateList(list_key))
-	dispatch(invalidateSprints(sprint_ids))
+	dispatch(invalidateAllSprints())
 	dispatch(fetchSprintsIfNeeded(list_key))
 	if ( event ) {
 	    event.stopPropagation()

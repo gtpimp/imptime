@@ -41702,7 +41702,7 @@
 													var list_key = _props6.list_key;
 
 													dispatch((0, _ItemList.invalidateList)(list_key));
-													dispatch((0, _Projects.invalidateProjects)(project_ids));
+													dispatch((0, _Projects.invalidateAllProjects)());
 													dispatch((0, _Projects.fetchProjectsIfNeeded)(list_key));
 													if (event) {
 																	event.stopPropagation();
@@ -45212,7 +45212,8 @@
 	Object.defineProperty(exports, "__esModule", {
 	    value: true
 	});
-	exports.INVALIDATE_SPRINTS = exports.ANNOUNCE_SAVING_SPRINTS = exports.ANNOUNCE_SPRINTS_SAVE_FAILED = exports.ANNOUNCE_SPRINTS_SAVED = exports.ANNOUNCE_LOADING_SPRINTS = exports.ANNOUNCE_SPRINTS_LOAD_FAILED = exports.ANNOUNCE_SPRINTS_LOADED = undefined;
+	exports.INVALIDATE_ALL_SPRINTS = exports.INVALIDATE_SPRINTS = exports.ANNOUNCE_SAVING_SPRINTS = exports.ANNOUNCE_SPRINTS_SAVE_FAILED = exports.ANNOUNCE_SPRINTS_SAVED = exports.ANNOUNCE_LOADING_SPRINTS = exports.ANNOUNCE_SPRINTS_LOAD_FAILED = exports.ANNOUNCE_SPRINTS_LOADED = undefined;
+	exports.invalidateAllSprints = invalidateAllSprints;
 	exports.invalidateSprints = invalidateSprints;
 	exports.reorderSprints = reorderSprints;
 	exports.fetchSprintsIfNeeded = fetchSprintsIfNeeded;
@@ -45246,6 +45247,13 @@
 	var ANNOUNCE_SPRINTS_SAVE_FAILED = exports.ANNOUNCE_SPRINTS_SAVE_FAILED = 'ANNOUNCE_SPRINTS_SAVE_FAILED';
 	var ANNOUNCE_SAVING_SPRINTS = exports.ANNOUNCE_SAVING_SPRINTS = 'ANNOUNCE_SAVING_SPRINTS';
 	var INVALIDATE_SPRINTS = exports.INVALIDATE_SPRINTS = 'INVALIDATE_SPRINTS';
+	var INVALIDATE_ALL_SPRINTS = exports.INVALIDATE_ALL_SPRINTS = 'INVALIDATE_ALL_SPRINTS';
+
+	function invalidateAllSprints() {
+	    return {
+	        type: INVALIDATE_ALL_SPRINTS
+	    };
+	}
 
 	function invalidateSprints(sprint_ids) {
 	    return {
@@ -45431,7 +45439,8 @@
 	Object.defineProperty(exports, "__esModule", {
 	    value: true
 	});
-	exports.INVALIDATE_PROJECTS = exports.ANNOUNCE_LOADING_PROJECTS = exports.ANNOUNCE_PROJECTS_LOAD_FAILED = exports.ANNOUNCE_PROJECTS_LOADED = undefined;
+	exports.INVALIDATE_ALL_PROJECTS = exports.INVALIDATE_PROJECTS = exports.ANNOUNCE_LOADING_PROJECTS = exports.ANNOUNCE_PROJECTS_LOAD_FAILED = exports.ANNOUNCE_PROJECTS_LOADED = undefined;
+	exports.invalidateAllProjects = invalidateAllProjects;
 	exports.invalidateProjects = invalidateProjects;
 	exports.refreshProjects = refreshProjects;
 	exports.fetchProjectsIfNeeded = fetchProjectsIfNeeded;
@@ -45458,6 +45467,13 @@
 	var ANNOUNCE_PROJECTS_LOAD_FAILED = exports.ANNOUNCE_PROJECTS_LOAD_FAILED = 'ANNOUNCE_PROJECTS_LOAD_FAILED';
 	var ANNOUNCE_LOADING_PROJECTS = exports.ANNOUNCE_LOADING_PROJECTS = 'ANNOUNCE_LOADING_PROJECTS';
 	var INVALIDATE_PROJECTS = exports.INVALIDATE_PROJECTS = 'INVALIDATE_PROJECTS';
+	var INVALIDATE_ALL_PROJECTS = exports.INVALIDATE_ALL_PROJECTS = 'INVALIDATE_ALL_PROJECTS';
+
+	function invalidateAllProjects() {
+	    return {
+	        type: INVALIDATE_ALL_PROJECTS
+	    };
+	}
 
 	function invalidateProjects(project_ids) {
 	    return {
@@ -59601,7 +59617,7 @@
 										var list_key = _props6.list_key;
 
 										dispatch((0, _ItemList.invalidateList)(list_key));
-										dispatch((0, _Sprints.invalidateSprints)(sprint_ids));
+										dispatch((0, _Sprints.invalidateAllSprints)());
 										dispatch((0, _Sprints.fetchSprintsIfNeeded)(list_key));
 										if (event) {
 													event.stopPropagation();
@@ -60225,7 +60241,7 @@
 										var list_key = _props6.list_key;
 
 										dispatch((0, _ItemList.invalidateList)(list_key));
-										dispatch((0, _Issues.invalidateIssues)(issue_ids));
+										dispatch((0, _Issues.invalidateAllIssues)(issue_ids));
 										dispatch((0, _Issues.fetchIssuesIfNeeded)(list_key));
 										if (event) {
 													event.stopPropagation();
@@ -60857,7 +60873,8 @@
 	Object.defineProperty(exports, "__esModule", {
 	    value: true
 	});
-	exports.INVALIDATE_ISSUES = exports.ANNOUNCE_LOADING_ISSUES = exports.ANNOUNCE_ISSUES_LOAD_FAILED = exports.ANNOUNCE_ISSUES_LOADED = undefined;
+	exports.INVALIDATE_ALL_ISSUES = exports.INVALIDATE_ISSUES = exports.ANNOUNCE_LOADING_ISSUES = exports.ANNOUNCE_ISSUES_LOAD_FAILED = exports.ANNOUNCE_ISSUES_LOADED = undefined;
+	exports.invalidateAllIssues = invalidateAllIssues;
 	exports.invalidateIssues = invalidateIssues;
 	exports.refreshIssues = refreshIssues;
 	exports.fetchIssuesIfNeeded = fetchIssuesIfNeeded;
@@ -60884,6 +60901,13 @@
 	var ANNOUNCE_ISSUES_LOAD_FAILED = exports.ANNOUNCE_ISSUES_LOAD_FAILED = 'ANNOUNCE_ISSUES_LOAD_FAILED';
 	var ANNOUNCE_LOADING_ISSUES = exports.ANNOUNCE_LOADING_ISSUES = 'ANNOUNCE_LOADING_ISSUES';
 	var INVALIDATE_ISSUES = exports.INVALIDATE_ISSUES = 'INVALIDATE_ISSUES';
+	var INVALIDATE_ALL_ISSUES = exports.INVALIDATE_ALL_ISSUES = 'INVALIDATE_ALL_ISSUES';
+
+	function invalidateAllIssues() {
+	    return {
+	        type: INVALIDATE_ALL_ISSUES
+	    };
+	}
 
 	function invalidateIssues(issue_ids) {
 	    return {
@@ -67626,6 +67650,11 @@
 
 	    var _ret = function () {
 	        switch (action.type) {
+	            case _Projects.INVALIDATE_ALL_PROJECTS:
+	                return {
+	                    v: Object.assign({}, state, { items_by_id: null })
+	                };
+
 	            case _Projects.INVALIDATE_PROJECTS:
 
 	                var new_project_ids = Object.assign({}, state.items_by_id);
@@ -67793,8 +67822,11 @@
 
 	    var _ret = function () {
 	        switch (action.type) {
+	            case _Sprints.INVALIDATE_ALL_SPRINTS:
+	                return {
+	                    v: Object.assign({}, state, { items_by_id: null })
+	                };
 	            case _Sprints.INVALIDATE_SPRINTS:
-
 	                var new_sprint_ids = Object.assign({}, state.items_by_id);
 	                action.sprint_ids_to_invalidate.map(function (id_to_invalidate) {
 	                    if (new_sprint_ids[id_to_invalidate]) {
@@ -67906,8 +67938,13 @@
 					var _ret = function () {
 
 									switch (action.type) {
-													case _Issues.INVALIDATE_ISSUES:
 
+													case _Issues.INVALIDATE_ALL_ISSUES:
+																	return {
+																					v: Object.assign({}, state, { items_by_id: null })
+																	};
+
+													case _Issues.INVALIDATE_ISSUES:
 																	var new_issue_ids = Object.assign({}, state.items_by_id);
 																	action.issue_ids_to_invalidate.map(function (id_to_invalidate) {
 																					if (new_issue_ids[id_to_invalidate]) {

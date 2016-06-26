@@ -8,6 +8,13 @@ export const ANNOUNCE_ISSUES_LOADED = 'ANNOUNCE_ISSUES_LOADED'
 export const ANNOUNCE_ISSUES_LOAD_FAILED = 'ANNOUNCE_ISSUES_LOAD_FAILED'
 export const ANNOUNCE_LOADING_ISSUES = 'ANNOUNCE_LOADING_ISSUES'
 export const INVALIDATE_ISSUES = 'INVALIDATE_ISSUES'
+export const INVALIDATE_ALL_ISSUES = 'INVALIDATE_ALL_ISSUES'
+
+export function invalidateAllIssues() {
+    return {
+        type: INVALIDATE_ALL_ISSUES
+    }
+}
 
 export function invalidateIssues(issue_ids) {
     return {

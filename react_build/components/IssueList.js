@@ -10,7 +10,7 @@ import {
     expand_list
 } from '../actions/ItemList'
 import {
-    invalidateIssues,
+    invalidateAllIssues,
     fetchIssuesIfNeeded,
 } from '../actions/Issues'
 import {
@@ -69,7 +69,7 @@ export class IssueList extends Component {
     onRefresh(event) {
         const { dispatch, issue_ids, list_key } = this.props
 	dispatch(invalidateList(list_key))
-	dispatch(invalidateIssues(issue_ids))
+	dispatch(invalidateAllIssues(issue_ids))
 	dispatch(fetchIssuesIfNeeded(list_key))
 	if ( event ) {
 	    event.stopPropagation()
