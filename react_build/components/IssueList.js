@@ -22,7 +22,7 @@ import {
 } from '../actions/Issue'
 import Pagination from '../components/Pagination'
 import Issue from './Issue'
-import { Sticky } from 'react-sticky';
+import { Sticky, StickyContainer } from 'react-sticky';
 
 export class IssueList extends Component {
 
@@ -220,7 +220,9 @@ export class IssueList extends Component {
 			    }
 			</div>
 			<div className="issue_list__panel-body__right">
-			    {this.props.children}
+			    <StickyContainer>
+				{this.props.children}
+			    </StickyContainer>
 			</div>
                     </div>
 		</div>

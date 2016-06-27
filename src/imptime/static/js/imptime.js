@@ -60934,7 +60934,11 @@
 							_react2.default.createElement(
 								'div',
 								{ className: 'issue_list__panel-body__right' },
-								this.props.children
+								_react2.default.createElement(
+									_reactSticky.StickyContainer,
+									null,
+									this.props.children
+								)
 							)
 						)
 					)
@@ -61457,16 +61461,18 @@
 	Object.defineProperty(exports, "__esModule", {
 					value: true
 	});
-	exports.ANNOUNCE_SAVING_NEW_ISSUE_FAILED = exports.ANNOUNCE_SAVED_NEW_ISSUE = exports.ANNOUNCE_SAVING_NEW_ISSUE = exports.CANCEL_CREATING_NEW_ISSUE = exports.UPDATE_NEW_ISSUE_DETAILS = exports.ANNOUNCE_CAPTURING_NEW_ISSUE = exports.ANNOUNCE_ISSUE_SAVE_FAILED = exports.ANNOUNCE_ISSUE_SAVED = exports.ANNOUNCE_ISSUE_SAVING = undefined;
+	exports.ANNOUNCE_DELETE_ISSUE_FAILED = exports.ANNOUNCE_ISSUE_DELETED = exports.ANNOUNCE_DELETING_ISSUE = exports.ANNOUNCE_SAVING_NEW_ISSUE_FAILED = exports.ANNOUNCE_SAVED_NEW_ISSUE = exports.ANNOUNCE_SAVING_NEW_ISSUE = exports.CANCEL_CREATING_NEW_ISSUE = exports.UPDATE_NEW_ISSUE_DETAILS = exports.ANNOUNCE_CAPTURING_NEW_ISSUE = exports.ANNOUNCE_ISSUE_SAVE_FAILED = exports.ANNOUNCE_ISSUE_SAVED = exports.ANNOUNCE_ISSUE_SAVING = undefined;
 	exports.updateIssueSubject = updateIssueSubject;
 	exports.updateIssueStatus = updateIssueStatus;
 	exports.updateIssueDescription = updateIssueDescription;
 	exports.updateIssueAssignedTo = updateIssueAssignedTo;
+	exports.announceIssueDeleted = announceIssueDeleted;
 	exports.reorderIssue = reorderIssue;
 	exports.startCandidateIssue = startCandidateIssue;
 	exports.updateCandidateSubject = updateCandidateSubject;
 	exports.cancelCandidateIssue = cancelCandidateIssue;
 	exports.saveCandidateIssue = saveCandidateIssue;
+	exports.deleteIssue = deleteIssue;
 
 	var _lib = __webpack_require__(732);
 
@@ -61498,6 +61504,10 @@
 	var ANNOUNCE_SAVING_NEW_ISSUE = exports.ANNOUNCE_SAVING_NEW_ISSUE = 'ANNOUNCE_SAVING_NEW_ISSUE';
 	var ANNOUNCE_SAVED_NEW_ISSUE = exports.ANNOUNCE_SAVED_NEW_ISSUE = 'ANNOUNCE_SAVED_NEW_ISSUE';
 	var ANNOUNCE_SAVING_NEW_ISSUE_FAILED = exports.ANNOUNCE_SAVING_NEW_ISSUE_FAILED = 'ANNOUNCE_SAVING_NEW_ISSUE_FAILED';
+
+	var ANNOUNCE_DELETING_ISSUE = exports.ANNOUNCE_DELETING_ISSUE = 'ANNOUNCE_DELETING_ISSUE';
+	var ANNOUNCE_ISSUE_DELETED = exports.ANNOUNCE_ISSUE_DELETED = 'ANNOUNCE_ISSUE_DELETED';
+	var ANNOUNCE_DELETE_ISSUE_FAILED = exports.ANNOUNCE_DELETE_ISSUE_FAILED = 'ANNOUNCE_DELETE_ISSUE_FAILED';
 
 	function announceIssueSaveFailed(error) {
 					return {
@@ -61557,6 +61567,28 @@
 
 	function updateIssueAssignedTo(issue_id, value) {
 					return updateIssue(issue_id, "assigned_to_id", value);
+	}
+
+	function announceDeletingIssue(issue_id) {
+					return {
+									type: ANNOUNCE_DELETING_ISSUE,
+									deleting_issue_id: issue_id
+					};
+	}
+
+	function announceIssueDeleted(issue_id) {
+					return {
+									type: ANNOUNCE_ISSUE_DELETED,
+									deleted_issue_id: issue_id
+					};
+	}
+
+	function announceIssueDeleteFailed(issue_id, error) {
+					return {
+									type: ANNOUNCE_DELETE_ISSUE_FAILED,
+									deleting_issue_id: issue_id,
+									error: error
+					};
 	}
 
 	function updateIssue(issue_id, field_name, new_value, on_done) {
@@ -61652,6 +61684,32 @@
 									}).catch(function (error) {
 													console.log('Request failed', error);
 													dispatch(announceCandidateIssueSaveFailed(error));
+									});
+					};
+	}
+
+	function deleteIssue(issue_id) {
+					return function (dispatch, getState) {
+									var state = getState();
+									dispatch(announceDeletingIssue(issue_id));
+									var data = { issue_id: issue_id };
+									return (0, _lib.impfetch)("/imp/issue/", { method: "DELETE",
+													credentials: 'same-origin',
+													data: data,
+													headers: { "Content-type": "application/json; charset=UTF-8" },
+													body: JSON.stringify(data) }).then(function (response) {
+													return response.json();
+									}).then(function (json) {
+													if (json.status != 'success') {
+																	console.log('Request failed with JSON response', json);
+																	dispatch(announceIssueDeleteFailed(issue_id, json.error));
+													} else {
+																	console.log('Request succeeded with JSON response', json);
+																	dispatch(announceIssueDeleted(issue_id));
+													}
+									}).catch(function (error) {
+													console.log('Request failed', error);
+													dispatch(announceIssueDeleteFailed(issue_id, error));
 									});
 					};
 	}
@@ -64436,7 +64494,7 @@
 	'use strict';
 
 	Object.defineProperty(exports, "__esModule", {
-					value: true
+		value: true
 	});
 	exports.IssueDeveloperDetails = undefined;
 
@@ -64470,6 +64528,8 @@
 
 	var _IssueGeneralDetails = __webpack_require__(879);
 
+	var _reactSticky = __webpack_require__(847);
+
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
@@ -64479,175 +64539,178 @@
 	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 
 	var IssueDeveloperDetails = exports.IssueDeveloperDetails = function (_Component) {
-					_inherits(IssueDeveloperDetails, _Component);
+		_inherits(IssueDeveloperDetails, _Component);
 
-					function IssueDeveloperDetails(props) {
-									_classCallCheck(this, IssueDeveloperDetails);
+		function IssueDeveloperDetails(props) {
+			_classCallCheck(this, IssueDeveloperDetails);
 
-									var _this = _possibleConstructorReturn(this, Object.getPrototypeOf(IssueDeveloperDetails).call(this, props));
+			var _this = _possibleConstructorReturn(this, Object.getPrototypeOf(IssueDeveloperDetails).call(this, props));
 
-									_this.onRefresh = _this.onRefresh.bind(_this);
-									_this.onChangeDescription = _this.onChangeDescription.bind(_this);
-									return _this;
-					}
+			_this.onDelete = _this.onDelete.bind(_this);
+			_this.onChangeDescription = _this.onChangeDescription.bind(_this);
+			return _this;
+		}
 
-					_createClass(IssueDeveloperDetails, [{
-									key: 'componentDidMount',
-									value: function componentDidMount() {
-													var _props = this.props;
-													var dispatch = _props.dispatch;
-													var issue_id = _props.issue_id;
-													var issue = _props.issue;
+		_createClass(IssueDeveloperDetails, [{
+			key: 'componentDidMount',
+			value: function componentDidMount() {
+				var _props = this.props;
+				var dispatch = _props.dispatch;
+				var issue_id = _props.issue_id;
+				var issue = _props.issue;
 
-													if (issue_id) {
-																	dispatch((0, _IssueGeneralDetails.fetchIssueGeneralDetailsIfNeeded)([issue_id]));
-													}
-									}
-					}, {
-									key: 'onChangeDescription',
-									value: function onChangeDescription(obj) {
-													var _props2 = this.props;
-													var dispatch = _props2.dispatch;
-													var issue_id = _props2.issue_id;
+				if (issue_id) {
+					dispatch((0, _IssueGeneralDetails.fetchIssueGeneralDetailsIfNeeded)([issue_id]));
+				}
+			}
+		}, {
+			key: 'onChangeDescription',
+			value: function onChangeDescription(obj) {
+				var _props2 = this.props;
+				var dispatch = _props2.dispatch;
+				var issue_id = _props2.issue_id;
 
-													dispatch((0, _Issue.updateIssueDescription)(issue_id, obj.description));
-									}
-					}, {
-									key: 'onRefresh',
-									value: function onRefresh() {
-													var _props3 = this.props;
-													var dispatch = _props3.dispatch;
-													var issue_id = _props3.issue_id;
+				dispatch((0, _Issue.updateIssueDescription)(issue_id, obj.description));
+			}
+		}, {
+			key: 'onDelete',
+			value: function onDelete() {
+				var _props3 = this.props;
+				var dispatch = _props3.dispatch;
+				var issue_id = _props3.issue_id;
 
-													dispatch((0, _IssueGeneralDetails.invalidateIssueGeneralDetails)([issue_id]));
-													dispatch((0, _IssueGeneralDetails.fetchIssueGeneralDetailsIfNeeded)([issue_id]));
-									}
-					}, {
-									key: 'renderComment',
-									value: function renderComment(comment) {
-													return _react2.default.createElement(
-																	'div',
-																	{ key: "comment_" + comment.id, className: 'issue_developer_details__commment' },
-																	_react2.default.createElement(
-																					'div',
-																					null,
-																					comment.comment
-																	),
-																	_react2.default.createElement(
-																					'div',
-																					{ className: 'issue_developer_details__comment__author' },
-																					'By ',
-																					_react2.default.createElement(_OtherUser2.default, { user_id: comment.author_id })
-																	),
-																	_react2.default.createElement(
-																					'div',
-																					{ className: 'issue_developer_details__comment__created' },
-																					'At ',
-																					comment.created
-																	),
-																	_react2.default.createElement(
-																					'div',
-																					{ className: 'issue_developer_details__comment__separator' },
-																					' '
-																	)
-													);
-									}
-					}, {
-									key: 'render',
-									value: function render() {
-													var _this2 = this;
+				dispatch((0, _Issue.deleteIssue)(issue_id));
+			}
+		}, {
+			key: 'renderComment',
+			value: function renderComment(comment) {
+				return _react2.default.createElement(
+					'div',
+					{ key: "comment_" + comment.id, className: 'issue_developer_details__commment' },
+					_react2.default.createElement(
+						'div',
+						null,
+						comment.comment
+					),
+					_react2.default.createElement(
+						'div',
+						{ className: 'issue_developer_details__comment__author' },
+						'By ',
+						_react2.default.createElement(_OtherUser2.default, { user_id: comment.author_id })
+					),
+					_react2.default.createElement(
+						'div',
+						{ className: 'issue_developer_details__comment__created' },
+						'At ',
+						comment.created
+					),
+					_react2.default.createElement(
+						'div',
+						{ className: 'issue_developer_details__comment__separator' },
+						' '
+					)
+				);
+			}
+		}, {
+			key: 'render',
+			value: function render() {
+				var _this2 = this;
 
-													var _props4 = this.props;
-													var is_visible = _props4.is_visible;
-													var issue_id = _props4.issue_id;
-													var issue = _props4.issue;
-													var comments = _props4.comments;
-													var is_loading = _props4.is_loading;
+				var _props4 = this.props;
+				var is_visible = _props4.is_visible;
+				var issue_id = _props4.issue_id;
+				var issue = _props4.issue;
+				var comments = _props4.comments;
+				var is_loading = _props4.is_loading;
 
 
-													if (!is_visible) {
-																	return _react2.default.createElement('div', null);
-													}
+				if (!is_visible) {
+					return _react2.default.createElement('div', null);
+				}
 
-													return _react2.default.createElement(
-																	'div',
-																	{ className: 'issue_developer_details', style: { opacity: is_loading ? 0.5 : 1 } },
-																	_react2.default.createElement(
-																					'div',
-																					{ className: 'panel panel--full' },
-																					_react2.default.createElement(
-																									'div',
-																									{ className: 'panel-heading' },
-																									_react2.default.createElement(
-																													'div',
-																													{ className: 'panel__title' },
-																													'Issue Details'
-																									),
-																									_react2.default.createElement(
-																													'div',
-																													{ className: 'panel__buttons' },
-																													_react2.default.createElement('div', { className: 'panel__button panel__button--refresh',
-																																	onClick: this.onRefresh })
-																									)
-																					),
-																					_react2.default.createElement(
-																									'div',
-																									{ className: 'issue_developer_details__panel-body' },
-																									_react2.default.createElement(
-																													'h3',
-																													null,
-																													'issue#',
-																													issue.number,
-																													': ',
-																													issue.subject
-																									),
-																									_react2.default.createElement(_RIETextArea2.default, {
-																													value: issue.description || "",
-																													propName: 'description',
-																													change: this.onChangeDescription
-																									})
-																					),
-																					_react2.default.createElement(
-																									'div',
-																									null,
-																									comments.map(function (comment) {
-																													return _this2.renderComment(comment);
-																									})
-																					)
-																	)
-													);
-									}
-					}]);
+				return _react2.default.createElement(
+					_reactSticky.Sticky,
+					null,
+					_react2.default.createElement(
+						'div',
+						{ className: 'issue_developer_details', style: { opacity: is_loading ? 0.5 : 1 } },
+						_react2.default.createElement(
+							'div',
+							{ className: 'panel panel--full' },
+							_react2.default.createElement(
+								'div',
+								{ className: 'panel-heading' },
+								_react2.default.createElement(
+									'div',
+									{ className: 'panel__title' },
+									'Issue Details'
+								),
+								_react2.default.createElement(
+									'div',
+									{ className: 'panel__buttons' },
+									_react2.default.createElement('div', { className: 'panel__button panel__button--delete',
+										onClick: this.onDelete })
+								)
+							),
+							_react2.default.createElement(
+								'div',
+								{ className: 'issue_developer_details__panel-body' },
+								_react2.default.createElement(
+									'h3',
+									null,
+									'issue#',
+									issue.number,
+									': ',
+									issue.subject
+								),
+								_react2.default.createElement(_RIETextArea2.default, {
+									value: issue.description || "",
+									propName: 'description',
+									change: this.onChangeDescription
+								})
+							),
+							_react2.default.createElement(
+								'div',
+								null,
+								comments.map(function (comment) {
+									return _this2.renderComment(comment);
+								})
+							)
+						)
+					)
+				);
+			}
+		}]);
 
-					return IssueDeveloperDetails;
+		return IssueDeveloperDetails;
 	}(_react.Component);
 
 	function mapStateToProps(state, props) {
-					var item_list = state.item_list || {};
-					var list_key = props.list_key;
+		var item_list = state.item_list || {};
+		var list_key = props.list_key;
 
-					var l = item_list[list_key] || {};
-					var filter = l.filter || {};
-					var issue_id = filter.issue_id;
+		var l = item_list[list_key] || {};
+		var filter = l.filter || {};
+		var issue_id = filter.issue_id;
 
-					var issue_general_details = state.issue_general_details || {};
-					var general_details = (issue_general_details.items_by_id || {})[issue_id] || {};
-					var is_loading = (0, _indexOf2.default)(issue_general_details.loading_item_ids || [], issue_id) !== -1;
+		var issue_general_details = state.issue_general_details || {};
+		var general_details = (issue_general_details.items_by_id || {})[issue_id] || {};
+		var is_loading = (0, _indexOf2.default)(issue_general_details.loading_item_ids || [], issue_id) !== -1;
 
-					var issues = (state.issue || {}).items_by_id || {};
-					var issue = issues[issue_id] || {};
+		var issues = (state.issue || {}).items_by_id || {};
+		var issue = issues[issue_id] || {};
 
-					issue = Object.assign({}, issue, general_details);
+		issue = Object.assign({}, issue, general_details);
 
-					var comments = issue.issue_comments || [];
+		var comments = issue.issue_comments || [];
 
-					return {
-									issue_id: issue_id,
-									issue: issue,
-									comments: comments,
-									is_loading: general_details.is_loading,
-									is_visible: issue_id || false
-					};
+		return {
+			issue_id: issue_id,
+			issue: issue,
+			comments: comments,
+			is_loading: general_details.is_loading,
+			is_visible: issue_id || false
+		};
 	}
 
 	exports.default = (0, _reactRedux.connect)(mapStateToProps)(IssueDeveloperDetails);
@@ -66772,6 +66835,11 @@
 																					dispatch((0, _Issues.fetchIssuesIfNeeded)(issues_list_key));
 																					dispatch((0, _IssueGeneralDetails.fetchIssueGeneralDetailsIfNeeded)([action.issue.id]));
 																					break;
+																	case _Issue.ANNOUNCE_ISSUE_DELETED:
+																					dispatch((0, _ItemList.invalidateList)(issues_list_key));
+																					dispatch((0, _Issues.fetchIssuesIfNeeded)(issues_list_key));
+																					dispatch((0, _ItemList.unselectAllItems)(issues_list_key));
+																					break;
 													}
 													return next(action);
 									};
@@ -68360,9 +68428,6 @@
 	Object.defineProperty(exports, "__esModule", {
 					value: true
 	});
-
-	var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol ? "symbol" : typeof obj; };
-
 	exports.default = issue;
 
 	var _map = __webpack_require__(673);
@@ -68395,94 +68460,84 @@
 
 	var initialState = {
 					items_by_id: {},
-					loading_item_ids: []
+					loading_item_ids: [],
+					saving_item_ids: []
 	};
 
 	function issue() {
 					var state = arguments.length <= 0 || arguments[0] === undefined ? initialState : arguments[0];
 					var action = arguments[1];
 
-					var _ret = function () {
 
-									switch (action.type) {
+					var new_items_by_id = null;
 
-													case _Issues.INVALIDATE_ALL_ISSUES:
-																	return {
-																					v: Object.assign({}, state, { items_by_id: null })
-																	};
+					switch (action.type) {
 
-													case _Issues.INVALIDATE_ISSUES:
-																	var new_issue_ids = Object.assign({}, state.items_by_id);
-																	action.issue_ids_to_invalidate.map(function (id_to_invalidate) {
-																					if (new_issue_ids[id_to_invalidate]) {
-																									delete new_issue_ids[id_to_invalidate];
-																					}
-																	});
+									case _Issues.INVALIDATE_ALL_ISSUES:
+													return Object.assign({}, state, { items_by_id: null });
 
-																	return {
-																					v: Object.assign({}, state, { items_by_id: new_issue_ids })
-																	};
-													case _Issues.ANNOUNCE_LOADING_ISSUES:
-																	return {
-																					v: Object.assign({}, state, {
-																									loading_item_ids: (0, _union2.default)(state.loading_item_ids, action.issue_ids_to_load)
-																					})
-																	};
+									case _Issues.INVALIDATE_ISSUES:
+													new_issues_by_id = Object.assign({}, state.items_by_id);
+													action.issue_ids_to_invalidate.map(function (id_to_invalidate) {
+																	if (new_issues_by_id[id_to_invalidate]) {
+																					delete new_issues_by_id[id_to_invalidate];
+																	}
+													});
 
-													case _Issues.ANNOUNCE_ISSUES_LOADED:
-																	return {
-																					v: Object.assign({}, state, {
+													return Object.assign({}, state, { items_by_id: new_issues_by_id });
+									case _Issues.ANNOUNCE_LOADING_ISSUES:
+													return Object.assign({}, state, {
+																	loading_item_ids: (0, _union2.default)(state.loading_item_ids, action.issue_ids_to_load)
+													});
 
-																									loading_item_ids: Object.assign({}, (0, _difference2.default)(state.loading_item_ids || [], (0, _keys2.default)(action.items_by_id))),
-																									items_by_id: Object.assign({}, (0, _assign2.default)(state.items_by_id, action.items_by_id))
-																					})
-																	};
-													case _Issues.ANNOUNCE_ISSUES_LOAD_FAILED:
-																	(0, _Error.setErrorMessage)("Failed to load issues: " + action.error_message);
-																	return {
-																					v: state
-																	};
+									case _Issues.ANNOUNCE_ISSUES_LOADED:
+													return Object.assign({}, state, {
 
-													case _Issue.ANNOUNCE_CAPTURING_NEW_ISSUE:
-																	return {
-																					v: Object.assign({}, state, { candidate_issue: {
-																													issue_id_before: action.issue_id_before,
-																													sprint_id: action.sprint_id
-																									} })
-																	};
-													case _Issue.UPDATE_NEW_ISSUE_DETAILS:
-																	return {
-																					v: Object.assign({}, state, { candidate_issue: Object.assign({}, state.candidate_issue || {}, action.candidate_issue) })
-																	};
-													case _Issue.CANCEL_CREATING_NEW_ISSUE:
-																	return {
-																					v: Object.assign({}, state, { candidate_issue: null })
-																	};
+																	loading_item_ids: Object.assign({}, (0, _difference2.default)(state.loading_item_ids || [], (0, _keys2.default)(action.items_by_id))),
+																	items_by_id: Object.assign({}, (0, _assign2.default)(state.items_by_id, action.items_by_id))
+													});
+									case _Issues.ANNOUNCE_ISSUES_LOAD_FAILED:
+													return state;
 
-													case _Issue.ANNOUNCE_SAVING_NEW_ISSUE:
-																	return {
-																					v: Object.assign({}, state, { candidate_issue: Object.assign({}, state.candidate_issue || {}, { saving: true }) })
-																	};
-													case _Issue.ANNOUNCE_SAVED_NEW_ISSUE:
+									case _Issue.ANNOUNCE_CAPTURING_NEW_ISSUE:
+													return Object.assign({}, state, { candidate_issue: {
+																					issue_id_before: action.issue_id_before,
+																					sprint_id: action.sprint_id
+																	} });
+									case _Issue.UPDATE_NEW_ISSUE_DETAILS:
+													return Object.assign({}, state, { candidate_issue: Object.assign({}, state.candidate_issue || {}, action.candidate_issue) });
+									case _Issue.CANCEL_CREATING_NEW_ISSUE:
+													return Object.assign({}, state, { candidate_issue: null });
 
-																	var new_items_by_id = Object.assign({}, state.items_by_id);
-																	new_items_by_id[action.issue.id] = action.issue;
-																	return {
-																					v: Object.assign({}, state, { candidate_issue: null }, { items_by_id: new_items_by_id })
-																	};
+									case _Issue.ANNOUNCE_SAVING_NEW_ISSUE:
+													return Object.assign({}, state, { candidate_issue: Object.assign({}, state.candidate_issue || {}, { saving: true }) });
+									case _Issue.ANNOUNCE_SAVED_NEW_ISSUE:
+													new_items_by_id = Object.assign({}, state.items_by_id);
+													new_items_by_id[action.issue.id] = action.issue;
+													return Object.assign({}, state, { candidate_issue: null }, { items_by_id: new_items_by_id });
 
-													case _Issue.ANNOUNCE_SAVING_NEW_ISSUE_FAILED:
-																	return {
-																					v: Object.assign({}, state, { candidate_issue: Object.assign({}, state.candidate_issue || {}, { is_saving: false }) })
-																	};
-													default:
-																	return {
-																					v: state
-																	};
-									}
-					}();
+									case _Issue.ANNOUNCE_SAVING_NEW_ISSUE_FAILED:
+													return Object.assign({}, state, { candidate_issue: Object.assign({}, state.candidate_issue || {}, { is_saving: false }) });
 
-					if ((typeof _ret === 'undefined' ? 'undefined' : _typeof(_ret)) === "object") return _ret.v;
+									case _Issue.ANNOUNCE_DELETING_ISSUE:
+													return Object.assign({}, state, {
+																	saving_item_ids: (0, _union2.default)(state.saving_item_ids, [action.deleting_issue_id])
+													});
+									case _Issue.ANNOUNCE_ISSUE_DELETED:
+													new_items_by_id = Object.assign({}, state.items_by_id);
+													if (new_items_by_id[action.deleted_issue_id]) {
+																	delete new_items_by_id[action.deleted_issue_id];
+													}
+													return Object.assign({}, state, { saving_item_ids: Object.assign({}, (0, _difference2.default)(state.saving_item_ids || [], [action.deleted_issue_id])),
+																	items_by_id: new_items_by_id });
+									case _Issue.ANNOUNCE_DELETE_ISSUE_FAILED:
+													return Object.assign({}, state, {
+																	saving_item_ids: (0, _difference2.default)(state.saving_item_ids, [action.deleting_issue_id])
+													});
+
+									default:
+													return state;
+					}
 	}
 
 /***/ },

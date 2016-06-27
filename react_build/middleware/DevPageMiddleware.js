@@ -3,7 +3,8 @@ import indexOf from 'lodash/indexOf'
 import { UPDATE_LIST_SELECTION } from '../actions/ItemList'
 import {
     ANNOUNCE_ISSUE_SAVED,
-    ANNOUNCE_SAVED_NEW_ISSUE
+    ANNOUNCE_SAVED_NEW_ISSUE,
+    ANNOUNCE_ISSUE_DELETED
 } from '../actions/Issue'
 import {
     invalidateList,
@@ -92,6 +93,11 @@ function DevPageMiddleware(_ref) {
 		    dispatch(invalidateList(issues_list_key))
 		    dispatch(fetchIssuesIfNeeded(issues_list_key))
 		    dispatch(fetchIssueGeneralDetailsIfNeeded([action.issue.id]))
+		    break
+		case ANNOUNCE_ISSUE_DELETED:
+		    dispatch(invalidateList(issues_list_key))
+		    dispatch(fetchIssuesIfNeeded(issues_list_key))
+		    dispatch(unselectAllItems(issues_list_key))
 		    break
 	    }
 	    return next(action)

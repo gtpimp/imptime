@@ -7,19 +7,20 @@ import RIETextArea from '../widgets/RIETextArea'
 import OtherUser from '../components/OtherUser'
 import {
     updateIssueDescription,
+    deleteIssue
 } from '../actions/Issue'
 
 import {
     invalidateIssueGeneralDetails,
     fetchIssueGeneralDetailsIfNeeded
 } from '../actions/IssueGeneralDetails'
-
+import { Sticky } from 'react-sticky';
 
 export class IssueDeveloperDetails extends Component {
 
     constructor(props) {
         super(props)
-        this.onRefresh = this.onRefresh.bind(this)
+        this.onDelete = this.onDelete.bind(this)
 	this.onChangeDescription = this.onChangeDescription.bind(this)
     }
 
@@ -35,10 +36,9 @@ export class IssueDeveloperDetails extends Component {
 	dispatch(updateIssueDescription(issue_id, obj.description))
     }
 
-    onRefresh() {
+    onDelete() {
         const { dispatch, issue_id } = this.props
-	dispatch(invalidateIssueGeneralDetails([issue_id]))
-	dispatch(fetchIssueGeneralDetailsIfNeeded([issue_id]))
+	dispatch(deleteIssue(issue_id))
     }
 
     renderComment(comment) {
@@ -63,33 +63,35 @@ export class IssueDeveloperDetails extends Component {
 	}
 	
         return (
-            <div className="issue_developer_details" style={{ opacity: is_loading ? 0.5 : 1 }}>
-		<div className="panel panel--full">
-                    <div className="panel-heading">
-			<div className="panel__title">
-			    Issue Details
-			</div>
-			<div className="panel__buttons">
-                            <div className="panel__button panel__button--refresh"
-				 onClick={this.onRefresh}>
+	    <Sticky>
+		<div className="issue_developer_details" style={{ opacity: is_loading ? 0.5 : 1 }}>
+		    <div className="panel panel--full">
+			<div className="panel-heading">
+			    <div className="panel__title">
+				Issue Details
 			    </div>
-			    
-			</div>
-                    </div>
-                    <div className="issue_developer_details__panel-body">
-			<h3>issue#{issue.number}: {issue.subject}</h3>
-			    <RIETextArea
-				value={issue.description || ""}
-				propName="description"
-				change={this.onChangeDescription}
-			    />
-                    </div>
+			    <div className="panel__buttons">
+				<div className="panel__button panel__button--delete"
+				     onClick={this.onDelete}>
+				</div>
 
-		    <div>
-			{ comments.map((comment) => this.renderComment(comment)) } 
+			    </div>
+			</div>
+			<div className="issue_developer_details__panel-body">
+			    <h3>issue#{issue.number}: {issue.subject}</h3>
+				<RIETextArea
+				    value={issue.description || ""}
+				    propName="description"
+				    change={this.onChangeDescription}
+				/>
+			</div>
+
+			<div>
+			    { comments.map((comment) => this.renderComment(comment)) } 
+			</div>
 		    </div>
 		</div>
-            </div>
+	    </Sticky>
         )
     }
 }

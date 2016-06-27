@@ -2,12 +2,13 @@ import logging
 from issue_serializer import IssueSerializer
 from issue_serializer import IssueGeneralDetailsSerializer
 from rest_framework.renderers import JSONRenderer
+from django.contrib.auth.models import User
 from django.http import HttpResponse
 from base_api import BaseViewSet
 import json
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.decorators import permission_classes
-from timepiece.models import Issue
+from timepiece.models import Issue, IssueHistory
 
 logger = logging.getLogger(__name__)
 
@@ -60,16 +61,41 @@ class IssueViewSet(BaseViewSet):
             new_value = params['value']
 
             if field_name == "subject":
+                old_subject = issue.subject
                 issue.subject = new_value
+                IssueHistory.add_history(
+                    self.request.user, issue, "changed subject",
+                    old_subject, issue.subject)
             elif field_name == "description":
+                old_description = issue.description
                 issue.description = new_value
+                IssueHistory.add_history(
+                    self.request.user, issue, "changed description",
+                    old_description, issue.description)
             elif field_name == "status":
+                old_status = issue.status
                 issue.status = new_value
+                IssueHistory.add_history(
+                    self.request.user, issue, "changed status",
+                    old_status, issue.status)
             elif field_name == 'issue_id_after':
+                old_order = issue.order
                 after_issue = self.allowed_issue(new_value)
                 issue.move_after(after_issue)
+                IssueHistory.add_history(
+                    self.request.user, issue, "changed order",
+                    old_order, issue.order)
             elif field_name == 'assigned_to_id':
+                old_assigned_to = \
+                    issue.assigned_to.username \
+                    if issue.assigned_to else "no-one"
                 issue.assigned_to_id = new_value
+                new_assigned_to = \
+                    User.objects.get(pk=new_value).username \
+                    if new_value else "no-one"
+                IssueHistory.add_history(
+                    self.request.user, issue, "changed assigned to",
+                    old_assigned_to, new_assigned_to)
             else:
                 raise Exception("Unsupported field name: %s" % field_name)
             issue.save()
@@ -101,7 +127,26 @@ class IssueViewSet(BaseViewSet):
             issue.renumber_issue_order()
             s = IssueSerializer(issue)
             issue_data = s.data
+            IssueHistory.add_history(self.request.user, issue,
+                                     "created", "", issue.number)
             context['issue'] = issue_data
+            data = {'status': 'success', 'payload': context}
+
+        except Exception, ex:
+            logger.exception(ex)
+            data = {'status': 'failed', 'error': str(ex)}
+        return HttpResponse(JSONRenderer().render(data))
+
+    def delete(self, request):
+        try:
+            context = {}
+            params = request.data
+            issue_id = params['issue_id']
+            issue = self.allowed_issue(issue_id)
+            IssueHistory.add_history(self.request.user, issue,
+                                     "deleted", issue.id, "")
+            issue.delete()
+            context['issue_id'] = issue_id
             data = {'status': 'success', 'payload': context}
 
         except Exception, ex:

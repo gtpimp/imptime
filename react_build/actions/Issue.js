@@ -20,6 +20,10 @@ export const ANNOUNCE_SAVING_NEW_ISSUE = 'ANNOUNCE_SAVING_NEW_ISSUE'
 export const ANNOUNCE_SAVED_NEW_ISSUE = 'ANNOUNCE_SAVED_NEW_ISSUE'
 export const ANNOUNCE_SAVING_NEW_ISSUE_FAILED = 'ANNOUNCE_SAVING_NEW_ISSUE_FAILED'
 
+export const ANNOUNCE_DELETING_ISSUE = 'ANNOUNCE_DELETING_ISSUE'
+export const ANNOUNCE_ISSUE_DELETED = 'ANNOUNCE_ISSUE_DELETED'
+export const ANNOUNCE_DELETE_ISSUE_FAILED = 'ANNOUNCE_DELETE_ISSUE_FAILED'
+
 function announceIssueSaveFailed(error) {
     return {
         type: ANNOUNCE_ISSUE_SAVE_FAILED,
@@ -78,6 +82,28 @@ export function updateIssueDescription(issue_id, value) {
 
 export function updateIssueAssignedTo(issue_id, value) {
     return updateIssue(issue_id, "assigned_to_id", value)
+}
+
+function announceDeletingIssue(issue_id) {
+    return {
+        type: ANNOUNCE_DELETING_ISSUE,
+	deleting_issue_id: issue_id
+    }
+}
+
+export function announceIssueDeleted(issue_id) {
+    return {
+	type: ANNOUNCE_ISSUE_DELETED,
+	deleted_issue_id: issue_id
+    }
+}
+
+function announceIssueDeleteFailed(issue_id, error) {
+    return {
+        type: ANNOUNCE_DELETE_ISSUE_FAILED,
+	deleting_issue_id: issue_id,
+	error: error
+    }
 }
 
 function updateIssue(issue_id, field_name, new_value, on_done) {
@@ -180,5 +206,33 @@ export function saveCandidateIssue() {
 	 })
     }
 
+}
+
+export function deleteIssue(issue_id) {
+    return (dispatch, getState) => {
+	const state = getState()
+	dispatch(announceDeletingIssue(issue_id))
+	let data = { issue_id: issue_id }
+	return impfetch("/imp/issue/",
+			{method: "DELETE",
+			 credentials: 'same-origin',
+			 data: data,
+			 headers: {"Content-type": "application/json; charset=UTF-8"}, 
+			 body: JSON.stringify(data)}
+	).then(response => response.json())
+	 .then(json => {
+             if ( json.status != 'success' ) {
+		 console.log('Request failed with JSON response', json);
+		 dispatch(announceIssueDeleteFailed(issue_id, json.error))
+             } else {
+		 console.log('Request succeeded with JSON response', json);
+		 dispatch(announceIssueDeleted(issue_id))
+             }
+	 })
+	 .catch(function (error) {
+             console.log('Request failed', error);
+	     dispatch(announceIssueDeleteFailed(issue_id, error))
+	 })
+    }
 }
 
