@@ -60879,7 +60879,7 @@
 						),
 						_react2.default.createElement(
 							'div',
-							{ className: 'issue_list__panel-body' },
+							{ className: 'panel-body' },
 							_react2.default.createElement(
 								'div',
 								{ className: 'issue_list__panel-body__left' },

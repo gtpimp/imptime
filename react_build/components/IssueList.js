@@ -199,7 +199,7 @@ export class IssueList extends Component {
 			</div>
 			<Pagination list_key={list_key} on_changed={this.onChangePage} />
 		    </Sticky>
-                    <div className="issue_list__panel-body">
+                    <div className="panel-body">
 			<div className="issue_list__panel-body__left">
 			    <table className="table table--compact" >
 				<thead>
