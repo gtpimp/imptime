@@ -7,6 +7,7 @@ import classNames from 'classnames'
 import {
     updateIssueSubject,
     updateIssueStatus,
+    updateIssueFeature,
     updateIssueAssignedTo
 } from '../actions/Issue'
 import {
@@ -49,7 +50,7 @@ export class Issue extends Component {
     }
 
     componentDidMount() {
-	const { dispatch, assignable_user_ids } = this.props
+	const { dispatch, assignable_user_ids, project_id } = this.props
 	dispatch(fetchUsersIfNeeded(assignable_user_ids))
 
     }
@@ -69,6 +70,11 @@ export class Issue extends Component {
 	dispatch(updateIssueStatus(issue_id, obj.status))
     }
 
+    onChangeFeature(issue_id, obj) {
+	const { dispatch } = this.props
+	dispatch(updateIssueFeature(issue_id, obj.feature_name))
+    }
+
     render_collapsed() {
 	const { issue, list_key } = this.props
 	return (
@@ -81,6 +87,7 @@ export class Issue extends Component {
     
     render_expanded() {
         const { issue, is_loading, is_selected, onClickedIssue, assignable_user_ids,
+		feature_options,
 		isOver, connectDragSource, connectDropTarget } = this.props
 
 	if ( ! issue ) {
@@ -118,7 +125,13 @@ export class Issue extends Component {
 					 change={(obj) => this.onChangeAssignedTo(issue.id, obj)}
 			/>
 		    </td>
-		    <td>{issue.feature_name}</td>
+		    <td>
+			<RIEDropDown value={issue.feature_name || "..."}
+				     propName="feature_name"
+				     options={feature_options}
+				     change={(obj) => this.onChangeFeature(issue.id, obj)}
+			/>
+		    </td>
 		    <td>
 			<RIEDropDown value={issue.status || "..."}
 				     propName="status"
@@ -154,6 +167,12 @@ function mapStateToProps(state, props) {
     const project_id = this_issue.project_id
     const this_project = (project && project.items_by_id && project.items_by_id[project_id]) || {}
     const assignable_user_ids = this_project.allowed_user_ids || []
+    const feature_names = this_project.feature_names || []
+    const feature_options = feature_names.map(
+	function(feature_name) {
+	    return {'value':feature_name, 'label': feature_name}
+	}
+    )
     
     return {
 	issue: this_issue,
@@ -162,7 +181,8 @@ function mapStateToProps(state, props) {
 	is_loading: is_loading,
 	is_collapsed: is_collapsed,
 	is_expanded: !is_collapsed,
-	assignable_user_ids: assignable_user_ids
+	assignable_user_ids: assignable_user_ids,
+	feature_options: feature_options
     }
 
 }

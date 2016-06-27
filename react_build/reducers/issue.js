@@ -40,14 +40,14 @@ export default function issue(state = initialState, action) {
 	    return Object.assign({}, state, {items_by_id: null})
 	    
         case INVALIDATE_ISSUES:
-	    new_issues_by_id = Object.assign({}, state.items_by_id)
+	    new_items_by_id = Object.assign({}, state.items_by_id)
 	    action.issue_ids_to_invalidate.map(function(id_to_invalidate) {
-		if ( new_issues_by_id[id_to_invalidate] ) {
-		    delete new_issues_by_id[id_to_invalidate]
+		if ( new_items_by_id[id_to_invalidate] ) {
+		    delete new_items_by_id[id_to_invalidate]
 		}
 	    })
 	    
-	    return Object.assign({}, state, {items_by_id: new_issues_by_id})
+	    return Object.assign({}, state, {items_by_id: new_items_by_id})
         case ANNOUNCE_LOADING_ISSUES:
             return Object.assign({}, state, {
 		loading_item_ids: union(state.loading_item_ids, action.issue_ids_to_load)

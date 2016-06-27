@@ -8,7 +8,7 @@ from base_api import BaseViewSet
 import json
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.decorators import permission_classes
-from timepiece.models import Issue, IssueHistory
+from timepiece.models import Issue, IssueHistory, Feature
 
 logger = logging.getLogger(__name__)
 
@@ -78,6 +78,14 @@ class IssueViewSet(BaseViewSet):
                 IssueHistory.add_history(
                     self.request.user, issue, "changed status",
                     old_status, issue.status)
+            elif field_name == "feature":
+                old_feature_name = issue.feature.name \
+                  if issue.feature else "none"
+                issue.feature = Feature.objects.get_or_create(
+                    business=issue.project.business, name=new_value)[0]
+                IssueHistory.add_history(
+                    self.request.user, issue, "changed feature",
+                    old_feature_name, issue.feature.name)
             elif field_name == 'issue_id_after':
                 old_order = issue.order
                 after_issue = self.allowed_issue(new_value)

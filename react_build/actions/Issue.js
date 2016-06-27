@@ -76,6 +76,10 @@ export function updateIssueStatus(issue_id, value) {
     return updateIssue(issue_id, "status", value)
 }
 
+export function updateIssueFeature(issue_id, value) {
+    return updateIssue(issue_id, "feature", value)
+}
+
 export function updateIssueDescription(issue_id, value) {
     return updateIssue(issue_id, "description", value)
 }

@@ -61464,6 +61464,7 @@
 	exports.ANNOUNCE_DELETE_ISSUE_FAILED = exports.ANNOUNCE_ISSUE_DELETED = exports.ANNOUNCE_DELETING_ISSUE = exports.ANNOUNCE_SAVING_NEW_ISSUE_FAILED = exports.ANNOUNCE_SAVED_NEW_ISSUE = exports.ANNOUNCE_SAVING_NEW_ISSUE = exports.CANCEL_CREATING_NEW_ISSUE = exports.UPDATE_NEW_ISSUE_DETAILS = exports.ANNOUNCE_CAPTURING_NEW_ISSUE = exports.ANNOUNCE_ISSUE_SAVE_FAILED = exports.ANNOUNCE_ISSUE_SAVED = exports.ANNOUNCE_ISSUE_SAVING = undefined;
 	exports.updateIssueSubject = updateIssueSubject;
 	exports.updateIssueStatus = updateIssueStatus;
+	exports.updateIssueFeature = updateIssueFeature;
 	exports.updateIssueDescription = updateIssueDescription;
 	exports.updateIssueAssignedTo = updateIssueAssignedTo;
 	exports.announceIssueDeleted = announceIssueDeleted;
@@ -61559,6 +61560,10 @@
 
 	function updateIssueStatus(issue_id, value) {
 					return updateIssue(issue_id, "status", value);
+	}
+
+	function updateIssueFeature(issue_id, value) {
+					return updateIssue(issue_id, "feature", value);
 	}
 
 	function updateIssueDescription(issue_id, value) {
@@ -61721,7 +61726,7 @@
 	'use strict';
 
 	Object.defineProperty(exports, "__esModule", {
-					value: true
+				value: true
 	});
 	exports.Issue = undefined;
 
@@ -61778,261 +61783,281 @@
 	var ISSUE_STATUS_CHOICES = [{ value: 'new', label: 'new' }, { value: 'devdone', label: 'dev_done' }, { value: 'in_internal_qa', label: 'internal qa' }, { value: 'internal_qa_passed', label: 'internal qa passed' }, { value: 'in_client_qa', label: 'external qa' }, { value: 'client_qa_passed', label: 'external qa passed' }, { value: 'reopened', label: 'reopened' }, { value: 'onhold', label: 'on hold' }, { value: 'bug', label: 'bug' }, { value: 'to be estimated', label: 'to be estimated' }, { value: 'needscodereview', label: 'needs code review' }, { value: "cannot reproduce", label: "cannot reproduce" }, { value: "discuss with client", label: "discuss with client" }, { value: 'dev unclear', label: 'dev unclear' }, { value: 'duplicate', label: 'duplicate' }, { value: 'to be designed', label: 'to be designed' }, { value: 'imported', label: 'imported' }, { value: 'management', label: 'management' }, { value: 'quick_clocker', label: 'quick clocker' }];
 
 	var Issue = exports.Issue = function (_Component) {
-					_inherits(Issue, _Component);
+				_inherits(Issue, _Component);
 
-					function Issue(props) {
-									_classCallCheck(this, Issue);
+				function Issue(props) {
+							_classCallCheck(this, Issue);
 
-									var _this = _possibleConstructorReturn(this, Object.getPrototypeOf(Issue).call(this, props));
+							var _this = _possibleConstructorReturn(this, Object.getPrototypeOf(Issue).call(this, props));
 
-									_this.onChangeSubject = _this.onChangeSubject.bind(_this);
-									_this.onChangeStatus = _this.onChangeStatus.bind(_this);
-									return _this;
-					}
+							_this.onChangeSubject = _this.onChangeSubject.bind(_this);
+							_this.onChangeStatus = _this.onChangeStatus.bind(_this);
+							return _this;
+				}
 
-					_createClass(Issue, [{
-									key: 'componentDidMount',
-									value: function componentDidMount() {
-													var _props = this.props;
-													var dispatch = _props.dispatch;
-													var assignable_user_ids = _props.assignable_user_ids;
+				_createClass(Issue, [{
+							key: 'componentDidMount',
+							value: function componentDidMount() {
+										var _props = this.props;
+										var dispatch = _props.dispatch;
+										var assignable_user_ids = _props.assignable_user_ids;
+										var project_id = _props.project_id;
 
-													dispatch((0, _Users.fetchUsersIfNeeded)(assignable_user_ids));
-									}
-					}, {
-									key: 'onChangeSubject',
-									value: function onChangeSubject(issue_id, obj) {
-													var dispatch = this.props.dispatch;
+										dispatch((0, _Users.fetchUsersIfNeeded)(assignable_user_ids));
+							}
+				}, {
+							key: 'onChangeSubject',
+							value: function onChangeSubject(issue_id, obj) {
+										var dispatch = this.props.dispatch;
 
-													dispatch((0, _Issue.updateIssueSubject)(issue_id, obj.subject));
-									}
-					}, {
-									key: 'onChangeAssignedTo',
-									value: function onChangeAssignedTo(issue_id, obj) {
-													var dispatch = this.props.dispatch;
+										dispatch((0, _Issue.updateIssueSubject)(issue_id, obj.subject));
+							}
+				}, {
+							key: 'onChangeAssignedTo',
+							value: function onChangeAssignedTo(issue_id, obj) {
+										var dispatch = this.props.dispatch;
 
-													dispatch((0, _Issue.updateIssueAssignedTo)(issue_id, obj.assigned_to));
-									}
-					}, {
-									key: 'onChangeStatus',
-									value: function onChangeStatus(issue_id, obj) {
-													var dispatch = this.props.dispatch;
+										dispatch((0, _Issue.updateIssueAssignedTo)(issue_id, obj.assigned_to));
+							}
+				}, {
+							key: 'onChangeStatus',
+							value: function onChangeStatus(issue_id, obj) {
+										var dispatch = this.props.dispatch;
 
-													dispatch((0, _Issue.updateIssueStatus)(issue_id, obj.status));
-									}
-					}, {
-									key: 'render_collapsed',
-									value: function render_collapsed() {
-													var _props2 = this.props;
-													var issue = _props2.issue;
-													var list_key = _props2.list_key;
+										dispatch((0, _Issue.updateIssueStatus)(issue_id, obj.status));
+							}
+				}, {
+							key: 'onChangeFeature',
+							value: function onChangeFeature(issue_id, obj) {
+										var dispatch = this.props.dispatch;
 
+										dispatch((0, _Issue.updateIssueFeature)(issue_id, obj.feature_name));
+							}
+				}, {
+							key: 'render_collapsed',
+							value: function render_collapsed() {
+										var _props2 = this.props;
+										var issue = _props2.issue;
+										var list_key = _props2.list_key;
+
+										return _react2.default.createElement(
+													'div',
+													{ key: "collapsed_issue_" + issue.id + "_" + list_key },
+													issue.number,
+													issue.subject
+										);
+							}
+				}, {
+							key: 'render_expanded',
+							value: function render_expanded() {
+										var _this2 = this;
+
+										var _props3 = this.props;
+										var issue = _props3.issue;
+										var is_loading = _props3.is_loading;
+										var is_selected = _props3.is_selected;
+										var onClickedIssue = _props3.onClickedIssue;
+										var assignable_user_ids = _props3.assignable_user_ids;
+										var feature_options = _props3.feature_options;
+										var isOver = _props3.isOver;
+										var connectDragSource = _props3.connectDragSource;
+										var connectDropTarget = _props3.connectDropTarget;
+
+
+										if (!issue) {
 													return _react2.default.createElement(
-																	'div',
-																	{ key: "collapsed_issue_" + issue.id + "_" + list_key },
-																	issue.number,
-																	issue.subject
+																'tr',
+																null,
+																_react2.default.createElement(
+																			'td',
+																			null,
+																			'Loading...'
+																)
 													);
-									}
-					}, {
-									key: 'render_expanded',
-									value: function render_expanded() {
-													var _this2 = this;
+										}
 
-													var _props3 = this.props;
-													var issue = _props3.issue;
-													var is_loading = _props3.is_loading;
-													var is_selected = _props3.is_selected;
-													var onClickedIssue = _props3.onClickedIssue;
-													var assignable_user_ids = _props3.assignable_user_ids;
-													var isOver = _props3.isOver;
-													var connectDragSource = _props3.connectDragSource;
-													var connectDropTarget = _props3.connectDropTarget;
-
-
-													if (!issue) {
-																	return _react2.default.createElement(
-																					'tr',
-																					null,
-																					_react2.default.createElement(
-																									'td',
-																									null,
-																									'Loading...'
-																					)
-																	);
-													}
-
-													if (issue.loaded === false) {
-																	return _react2.default.createElement(
-																					'tr',
-																					{ key: this.key + "." + issue.id,
-																									onClick: onClickedIssue,
-																									className: (0, _classnames2.default)({ 'tr--selected': is_selected, 'tr--drop-target': isOver })
-																					},
-																					_react2.default.createElement(
-																									'td',
-																									null,
-																									_react2.default.createElement(
-																													'div',
-																													{ className: 'issue_list__issue_number_button' },
-																													issue.number
-																									)
-																					),
-																					_react2.default.createElement(
-																									'td',
-																									null,
-																									'Loading...'
-																					)
-																	);
-													} else {
-																	return connectDragSource(connectDropTarget(_react2.default.createElement(
-																					'tr',
-																					{ key: this.key + "." + issue.id,
-																									onClick: onClickedIssue,
-																									className: (0, _classnames2.default)({ 'tr--selected': is_selected, 'tr--drop-target': isOver })
-																					},
-																					_react2.default.createElement(
-																									'td',
-																									null,
-																									_react2.default.createElement(
-																													'div',
-																													{ className: 'issue_list__issue_number_button' },
-																													issue.number
-																									)
-																					),
-																					_react2.default.createElement(
-																									'td',
-																									null,
-																									_react2.default.createElement(_RIEInput2.default, { value: issue.subject,
-																													propName: 'subject',
-																													change: function change(obj) {
-																																	return _this2.onChangeSubject(issue.id, obj);
-																													} })
-																					),
-																					_react2.default.createElement(
-																									'td',
-																									null,
-																									_react2.default.createElement(_RIEUserDropDown2.default, { value: issue.assigned_to_id,
-																													propName: 'assigned_to',
-																													user_ids: assignable_user_ids,
-																													change: function change(obj) {
-																																	return _this2.onChangeAssignedTo(issue.id, obj);
-																													}
-																									})
-																					),
-																					_react2.default.createElement(
-																									'td',
-																									null,
-																									issue.feature_name
-																					),
-																					_react2.default.createElement(
-																									'td',
-																									null,
-																									_react2.default.createElement(_RIEDropDown2.default, { value: issue.status || "...",
-																													propName: 'status',
-																													options: ISSUE_STATUS_CHOICES,
-																													change: function change(obj) {
-																																	return _this2.onChangeStatus(issue.id, obj);
-																													}
-																									})
-																					)
-																	)));
-													}
-									}
-					}, {
-									key: 'render',
-									value: function render() {
-													var _props4 = this.props;
-													var is_collapsed = _props4.is_collapsed;
-													var is_expanded = _props4.is_expanded;
+										if (issue.loaded === false) {
+													return _react2.default.createElement(
+																'tr',
+																{ key: this.key + "." + issue.id,
+																			onClick: onClickedIssue,
+																			className: (0, _classnames2.default)({ 'tr--selected': is_selected, 'tr--drop-target': isOver })
+																},
+																_react2.default.createElement(
+																			'td',
+																			null,
+																			_react2.default.createElement(
+																						'div',
+																						{ className: 'issue_list__issue_number_button' },
+																						issue.number
+																			)
+																),
+																_react2.default.createElement(
+																			'td',
+																			null,
+																			'Loading...'
+																)
+													);
+										} else {
+													return connectDragSource(connectDropTarget(_react2.default.createElement(
+																'tr',
+																{ key: this.key + "." + issue.id,
+																			onClick: onClickedIssue,
+																			className: (0, _classnames2.default)({ 'tr--selected': is_selected, 'tr--drop-target': isOver })
+																},
+																_react2.default.createElement(
+																			'td',
+																			null,
+																			_react2.default.createElement(
+																						'div',
+																						{ className: 'issue_list__issue_number_button' },
+																						issue.number
+																			)
+																),
+																_react2.default.createElement(
+																			'td',
+																			null,
+																			_react2.default.createElement(_RIEInput2.default, { value: issue.subject,
+																						propName: 'subject',
+																						change: function change(obj) {
+																									return _this2.onChangeSubject(issue.id, obj);
+																						} })
+																),
+																_react2.default.createElement(
+																			'td',
+																			null,
+																			_react2.default.createElement(_RIEUserDropDown2.default, { value: issue.assigned_to_id,
+																						propName: 'assigned_to',
+																						user_ids: assignable_user_ids,
+																						change: function change(obj) {
+																									return _this2.onChangeAssignedTo(issue.id, obj);
+																						}
+																			})
+																),
+																_react2.default.createElement(
+																			'td',
+																			null,
+																			_react2.default.createElement(_RIEDropDown2.default, { value: issue.feature_name || "...",
+																						propName: 'feature_name',
+																						options: feature_options,
+																						change: function change(obj) {
+																									return _this2.onChangeFeature(issue.id, obj);
+																						}
+																			})
+																),
+																_react2.default.createElement(
+																			'td',
+																			null,
+																			_react2.default.createElement(_RIEDropDown2.default, { value: issue.status || "...",
+																						propName: 'status',
+																						options: ISSUE_STATUS_CHOICES,
+																						change: function change(obj) {
+																									return _this2.onChangeStatus(issue.id, obj);
+																						}
+																			})
+																)
+													)));
+										}
+							}
+				}, {
+							key: 'render',
+							value: function render() {
+										var _props4 = this.props;
+										var is_collapsed = _props4.is_collapsed;
+										var is_expanded = _props4.is_expanded;
 
 
-													if (is_collapsed) {
-																	return this.render_collapsed();
-													} else if (is_expanded) {
-																	return this.render_expanded();
-													} else {
-																	return _react2.default.createElement(
-																					'div',
-																					null,
-																					'Dev error'
-																	);
-													}
-									}
-					}]);
+										if (is_collapsed) {
+													return this.render_collapsed();
+										} else if (is_expanded) {
+													return this.render_expanded();
+										} else {
+													return _react2.default.createElement(
+																'div',
+																null,
+																'Dev error'
+													);
+										}
+							}
+				}]);
 
-					return Issue;
+				return Issue;
 	}(_react.Component);
 
 	function mapStateToProps(state, props) {
-					var project = state.project;
-					var issue = state.issue;
-					var item_list = state.item_list;
-					var user = state.user;
-					var issue_id = props.issue_id;
-					var is_selected = props.is_selected;
-					var is_collapsed = props.is_collapsed;
-					var is_loading = props.is_loading;
+				var project = state.project;
+				var issue = state.issue;
+				var item_list = state.item_list;
+				var user = state.user;
+				var issue_id = props.issue_id;
+				var is_selected = props.is_selected;
+				var is_collapsed = props.is_collapsed;
+				var is_loading = props.is_loading;
 
 
-					var this_issue = issue && issue.items_by_id && issue.items_by_id[issue_id] || { 'loaded': false };
-					var project_id = this_issue.project_id;
-					var this_project = project && project.items_by_id && project.items_by_id[project_id] || {};
-					var assignable_user_ids = this_project.allowed_user_ids || [];
+				var this_issue = issue && issue.items_by_id && issue.items_by_id[issue_id] || { 'loaded': false };
+				var project_id = this_issue.project_id;
+				var this_project = project && project.items_by_id && project.items_by_id[project_id] || {};
+				var assignable_user_ids = this_project.allowed_user_ids || [];
+				var feature_names = this_project.feature_names || [];
+				var feature_options = feature_names.map(function (feature_name) {
+							return { 'value': feature_name, 'label': feature_name };
+				});
 
-					return {
-									issue: this_issue,
-									issue_id: issue_id,
-									is_selected: is_selected,
-									is_loading: is_loading,
-									is_collapsed: is_collapsed,
-									is_expanded: !is_collapsed,
-									assignable_user_ids: assignable_user_ids
-					};
+				return {
+							issue: this_issue,
+							issue_id: issue_id,
+							is_selected: is_selected,
+							is_loading: is_loading,
+							is_collapsed: is_collapsed,
+							is_expanded: !is_collapsed,
+							assignable_user_ids: assignable_user_ids,
+							feature_options: feature_options
+				};
 	}
 
 	var headingSource = {
-					beginDrag: function beginDrag(props) {
-									return { id: props.issue_id };
-					}
+				beginDrag: function beginDrag(props) {
+							return { id: props.issue_id };
+				}
 	};
 
 	var headingTarget = {
-					drop: function drop(props, monitor, component) {
-									var issue_id = props.issue_id;
+				drop: function drop(props, monitor, component) {
+							var issue_id = props.issue_id;
 
-									var dragging_item = monitor.getItem();
-									if (!dragging_item) {
-													return;
-									}
-									var dragging_issue_id = dragging_item.id;
-									if (issue_id == dragging_issue_id) {
-													console.log("ignoring dnd on the same element: " + issue_id);
-													return;
-									}
+							var dragging_item = monitor.getItem();
+							if (!dragging_item) {
+										return;
+							}
+							var dragging_issue_id = dragging_item.id;
+							if (issue_id == dragging_issue_id) {
+										console.log("ignoring dnd on the same element: " + issue_id);
+										return;
+							}
 
-									props.reorderIssue(dragging_issue_id, issue_id);
-					},
-					hover: function hover(props, monitor, component) {},
-					canDrop: function canDrop(props, monitor) {
-									return true;
-					}
+							props.reorderIssue(dragging_issue_id, issue_id);
+				},
+				hover: function hover(props, monitor, component) {},
+				canDrop: function canDrop(props, monitor) {
+							return true;
+				}
 
 	};
 
 	function collect(connect, monitor) {
-					return {
-									connectDragSource: connect.dragSource(),
-									isDragging: monitor.isDragging()
-					};
+				return {
+							connectDragSource: connect.dragSource(),
+							isDragging: monitor.isDragging()
+				};
 	}
 
 	function collectDrop(connect, monitor) {
-					return {
-									connectDropTarget: connect.dropTarget(),
-									isOver: monitor.isOver(),
-									canDrop: monitor.canDrop()
-					};
+				return {
+							connectDropTarget: connect.dropTarget(),
+							isOver: monitor.isOver(),
+							canDrop: monitor.canDrop()
+				};
 	}
 
 	exports.default = (0, _reactRedux.connect)(mapStateToProps)((0, _reactDnd.DragSource)(_Dnd.DndTypes.ISSUE, headingSource, collect)((0, _reactDnd.DropTarget)(_Dnd.DndTypes.ISSUE, headingTarget, collectDrop)(Issue)));
@@ -68477,14 +68502,14 @@
 													return Object.assign({}, state, { items_by_id: null });
 
 									case _Issues.INVALIDATE_ISSUES:
-													new_issues_by_id = Object.assign({}, state.items_by_id);
+													new_items_by_id = Object.assign({}, state.items_by_id);
 													action.issue_ids_to_invalidate.map(function (id_to_invalidate) {
-																	if (new_issues_by_id[id_to_invalidate]) {
-																					delete new_issues_by_id[id_to_invalidate];
+																	if (new_items_by_id[id_to_invalidate]) {
+																					delete new_items_by_id[id_to_invalidate];
 																	}
 													});
 
-													return Object.assign({}, state, { items_by_id: new_issues_by_id });
+													return Object.assign({}, state, { items_by_id: new_items_by_id });
 									case _Issues.ANNOUNCE_LOADING_ISSUES:
 													return Object.assign({}, state, {
 																	loading_item_ids: (0, _union2.default)(state.loading_item_ids, action.issue_ids_to_load)
