@@ -61568,11 +61568,12 @@
 					};
 	}
 
-	function announceIssueSaving(issue_id) {
+	function announceIssueSaving(issue_id, field_name, new_value) {
 					return {
 									type: ANNOUNCE_ISSUE_SAVING,
 									issue_id: issue_id,
-									saved_at: Date.now()
+									field_name: field_name,
+									new_value: new_value
 					};
 	}
 
@@ -61605,7 +61606,7 @@
 	}
 
 	function updateIssueFeature(issue_id, value) {
-					return updateIssue(issue_id, "feature", value);
+					return updateIssue(issue_id, "feature_name", value);
 	}
 
 	function updateIssueDescription(issue_id, value) {
@@ -61640,7 +61641,7 @@
 
 	function updateIssue(issue_id, field_name, new_value, on_done) {
 					return function (dispatch, getState) {
-									dispatch(announceIssueSaving(issue_id));
+									dispatch(announceIssueSaving(issue_id, field_name, new_value));
 									var data = { field_name: field_name,
 													value: new_value };
 									return (0, _lib.impfetch)("/imp/issue/" + issue_id + "/", { method: "PUT",
@@ -68471,7 +68472,7 @@
 	'use strict';
 
 	Object.defineProperty(exports, "__esModule", {
-					value: true
+				value: true
 	});
 	exports.default = issue;
 
@@ -68504,90 +68505,95 @@
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 	var initialState = {
-					items_by_id: {},
-					loading_item_ids: [],
-					saving_item_ids: [],
-					invalidated_item_ids: []
+				items_by_id: {},
+				loading_item_ids: [],
+				saving_item_ids: [],
+				invalidated_item_ids: []
 	};
 
 	function issue() {
-					var state = arguments.length <= 0 || arguments[0] === undefined ? initialState : arguments[0];
-					var action = arguments[1];
+				var state = arguments.length <= 0 || arguments[0] === undefined ? initialState : arguments[0];
+				var action = arguments[1];
 
 
-					var new_items_by_id = null;
+				var new_items_by_id = null;
 
-					switch (action.type) {
+				switch (action.type) {
 
-									case _Issues.INVALIDATE_ALL_ISSUES:
-													return Object.assign({}, state, { invalidated_item_ids: (0, _keys2.default)(state.items_by_id || {})
-													});
+							case _Issues.INVALIDATE_ALL_ISSUES:
+										return Object.assign({}, state, { invalidated_item_ids: (0, _keys2.default)(state.items_by_id || {})
+										});
 
-									case _Issues.INVALIDATE_ISSUES:
-													return Object.assign({}, state, { invalidated_item_ids: (0, _union2.default)(state.invalidated_item_ids, action.issue_ids_to_invalidate)
-													});
+							case _Issues.INVALIDATE_ISSUES:
+										return Object.assign({}, state, { invalidated_item_ids: (0, _union2.default)(state.invalidated_item_ids, action.issue_ids_to_invalidate)
+										});
 
-									case _Issues.ANNOUNCE_LOADING_ISSUES:
-													return Object.assign({}, state, {
-																	loading_item_ids: (0, _union2.default)(state.loading_item_ids, action.issue_ids_to_load),
-																	invalidated_item_ids: (0, _difference2.default)(state.invalidated_item_ids || [], action.issue_ids_to_load)
-													});
+							case _Issues.ANNOUNCE_LOADING_ISSUES:
+										return Object.assign({}, state, {
+													loading_item_ids: (0, _union2.default)(state.loading_item_ids, action.issue_ids_to_load),
+													invalidated_item_ids: (0, _difference2.default)(state.invalidated_item_ids || [], action.issue_ids_to_load)
+										});
 
-									case _Issues.ANNOUNCE_ISSUES_LOADED:
-													return Object.assign({}, state, {
-																	loading_item_ids: (0, _difference2.default)(state.loading_item_ids || [], (0, _keys2.default)(action.items_by_id)),
-																	items_by_id: Object.assign({}, (0, _assign2.default)(state.items_by_id, action.items_by_id))
-													});
-									case _Issues.ANNOUNCE_ISSUES_LOAD_FAILED:
-													return state;
+							case _Issues.ANNOUNCE_ISSUES_LOADED:
+										return Object.assign({}, state, {
+													loading_item_ids: (0, _difference2.default)(state.loading_item_ids || [], (0, _keys2.default)(action.items_by_id)),
+													items_by_id: Object.assign({}, (0, _assign2.default)(state.items_by_id, action.items_by_id))
+										});
+							case _Issues.ANNOUNCE_ISSUES_LOAD_FAILED:
+										return state;
 
-									case _Issue.ANNOUNCE_ISSUE_SAVING:
-													return Object.assign({}, state, {
-																	saving_item_ids: (0, _union2.default)(state.saving_item_ids, [action.issue_id])
-													});
-									case _Issue.ANNOUNCE_ISSUE_SAVED:
-													return Object.assign({}, state, { saving_item_ids: (0, _difference2.default)(state.saving_item_ids || [], [action.issue_id])
-													});
-									case _Issue.ANNOUNCE_CAPTURING_NEW_ISSUE:
-													return Object.assign({}, state, { candidate_issue: {
-																					issue_id_before: action.issue_id_before,
-																					sprint_id: action.sprint_id }
-													});
-									case _Issue.UPDATE_NEW_ISSUE_DETAILS:
-													return Object.assign({}, state, { candidate_issue: Object.assign({}, state.candidate_issue || {}, action.candidate_issue)
-													});
-									case _Issue.CANCEL_CREATING_NEW_ISSUE:
-													return Object.assign({}, state, { candidate_issue: null });
+							case _Issue.ANNOUNCE_ISSUE_SAVING:
+										var new_issue_props = {};
+										new_issue_props[action.field_name] = action.new_value;
+										var issue_id = action.issue_id;
 
-									case _Issue.ANNOUNCE_SAVING_NEW_ISSUE:
-													return Object.assign({}, state, { candidate_issue: Object.assign({}, state.candidate_issue || {}, { saving: true }) });
-									case _Issue.ANNOUNCE_SAVED_NEW_ISSUE:
-													new_items_by_id = Object.assign({}, state.items_by_id);
-													new_items_by_id[action.issue.id] = action.issue;
-													return Object.assign({}, state, { candidate_issue: null }, { items_by_id: new_items_by_id });
+										return Object.assign({}, state, {
+													items_by_id: Object.assign({}, state.items_by_id, { issue_id: Object.assign(state.items_by_id[issue_id], new_issue_props) }),
+													saving_item_ids: (0, _union2.default)(state.saving_item_ids, [issue_id])
+										});
+							case _Issue.ANNOUNCE_ISSUE_SAVED:
+										return Object.assign({}, state, { saving_item_ids: (0, _difference2.default)(state.saving_item_ids || [], [action.issue_id])
+										});
+							case _Issue.ANNOUNCE_CAPTURING_NEW_ISSUE:
+										return Object.assign({}, state, { candidate_issue: {
+																issue_id_before: action.issue_id_before,
+																sprint_id: action.sprint_id }
+										});
+							case _Issue.UPDATE_NEW_ISSUE_DETAILS:
+										return Object.assign({}, state, { candidate_issue: Object.assign({}, state.candidate_issue || {}, action.candidate_issue)
+										});
+							case _Issue.CANCEL_CREATING_NEW_ISSUE:
+										return Object.assign({}, state, { candidate_issue: null });
 
-									case _Issue.ANNOUNCE_SAVING_NEW_ISSUE_FAILED:
-													return Object.assign({}, state, { candidate_issue: Object.assign({}, state.candidate_issue || {}, { is_saving: false }) });
+							case _Issue.ANNOUNCE_SAVING_NEW_ISSUE:
+										return Object.assign({}, state, { candidate_issue: Object.assign({}, state.candidate_issue || {}, { saving: true }) });
+							case _Issue.ANNOUNCE_SAVED_NEW_ISSUE:
+										new_items_by_id = Object.assign({}, state.items_by_id);
+										new_items_by_id[action.issue.id] = action.issue;
+										return Object.assign({}, state, { candidate_issue: null }, { items_by_id: new_items_by_id });
 
-									case _Issue.ANNOUNCE_DELETING_ISSUE:
-													return Object.assign({}, state, {
-																	saving_item_ids: (0, _union2.default)(state.saving_item_ids, [action.deleting_issue_id])
-													});
-									case _Issue.ANNOUNCE_ISSUE_DELETED:
-													new_items_by_id = Object.assign({}, state.items_by_id);
-													if (new_items_by_id[action.deleted_issue_id]) {
-																	delete new_items_by_id[action.deleted_issue_id];
-													}
-													return Object.assign({}, state, { saving_item_ids: (0, _difference2.default)(state.saving_item_ids || [], [action.deleted_issue_id]),
-																	items_by_id: new_items_by_id });
-									case _Issue.ANNOUNCE_DELETE_ISSUE_FAILED:
-													return Object.assign({}, state, {
-																	saving_item_ids: (0, _difference2.default)(state.saving_item_ids, [action.deleting_issue_id])
-													});
+							case _Issue.ANNOUNCE_SAVING_NEW_ISSUE_FAILED:
+										return Object.assign({}, state, { candidate_issue: Object.assign({}, state.candidate_issue || {}, { is_saving: false }) });
 
-									default:
-													return state;
-					}
+							case _Issue.ANNOUNCE_DELETING_ISSUE:
+										return Object.assign({}, state, {
+													saving_item_ids: (0, _union2.default)(state.saving_item_ids, [action.deleting_issue_id])
+										});
+							case _Issue.ANNOUNCE_ISSUE_DELETED:
+										new_items_by_id = Object.assign({}, state.items_by_id);
+										if (new_items_by_id[action.deleted_issue_id]) {
+													delete new_items_by_id[action.deleted_issue_id];
+										}
+										return Object.assign({}, state, { saving_item_ids: (0, _difference2.default)(state.saving_item_ids || [], [action.deleted_issue_id]),
+													items_by_id: new_items_by_id });
+							case _Issue.ANNOUNCE_DELETE_ISSUE_FAILED:
+										return Object.assign({}, state, {
+													saving_item_ids: (0, _difference2.default)(state.saving_item_ids, [action.deleting_issue_id])
+										});
+
+							default:
+										return state;
+				}
 	}
 
 /***/ },

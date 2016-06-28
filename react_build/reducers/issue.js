@@ -69,8 +69,17 @@ export default function issue(state = initialState, action) {
             return state;
 
 	case ANNOUNCE_ISSUE_SAVING:
+	    const new_issue_props = {}
+	    new_issue_props[action.field_name] = action.new_value
+	    const issue_id = action.issue_id
+	    
             return Object.assign({}, state, {
-		saving_item_ids: union(state.saving_item_ids, [action.issue_id])
+		items_by_id: Object.assign(
+		    {},
+		    state.items_by_id,
+		    {issue_id: Object.assign(state.items_by_id[issue_id],
+					     new_issue_props)}),
+		saving_item_ids: union(state.saving_item_ids, [issue_id])
 	    })
 	case ANNOUNCE_ISSUE_SAVED:
 	    return Object.assign({}, state,

@@ -78,7 +78,7 @@ class IssueViewSet(BaseViewSet):
                 IssueHistory.add_history(
                     self.request.user, issue, "changed status",
                     old_status, issue.status)
-            elif field_name == "feature":
+            elif field_name == "feature_name":
                 old_feature_name = issue.feature.name \
                   if issue.feature else "none"
                 issue.feature = Feature.objects.get_or_create(

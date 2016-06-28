@@ -40,11 +40,12 @@ function announceIssueSaved(issue_id) {
     }
 }
 
-function announceIssueSaving(issue_id) {
+function announceIssueSaving(issue_id, field_name, new_value) {
     return {
         type: ANNOUNCE_ISSUE_SAVING,
         issue_id: issue_id,
-        saved_at: Date.now()
+	field_name: field_name,
+	new_value: new_value
     }
 }
 
@@ -77,7 +78,7 @@ export function updateIssueStatus(issue_id, value) {
 }
 
 export function updateIssueFeature(issue_id, value) {
-    return updateIssue(issue_id, "feature", value)
+    return updateIssue(issue_id, "feature_name", value)
 }
 
 export function updateIssueDescription(issue_id, value) {
@@ -112,7 +113,7 @@ function announceIssueDeleteFailed(issue_id, error) {
 
 function updateIssue(issue_id, field_name, new_value, on_done) {
     return (dispatch, getState) => {
-	dispatch(announceIssueSaving(issue_id))
+	dispatch(announceIssueSaving(issue_id, field_name, new_value))
 	let data = {field_name: field_name,
 		    value: new_value }
 	return impfetch("/imp/issue/"+issue_id+"/",
