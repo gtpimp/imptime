@@ -120,7 +120,7 @@ export class IssueList extends Component {
 				reorderIssue={this.reorderIssue}
 				onClickedIssue={() => this.onClickedIssue(issue.id)}
 				is_loading={loading_item_ids.indexOf(issue.id) !== -1}
-				is_loading={selected_ids.indexOf(issue.id) !== -1}
+				is_selected={selected_ids.indexOf(issue.id) !== -1}
 				issue_id={issue.id} />
 			    )}
 			</div>
@@ -151,7 +151,8 @@ export class IssueList extends Component {
     render_expanded() {
 	
 	const { issues, is_visible, list_key, is_loading,
-		is_creating_issue, candidate_issue,
+		saving_issue_ids,
+		is_creating_issue, candidate_issue, invalidated_issue_ids,
 		selected_ids, loading_item_ids, has_items } = this.props
 
 	if ( ! is_visible ) {
@@ -174,6 +175,8 @@ export class IssueList extends Component {
 		    onClickedIssue={() => that.onClickedIssue(issue.id)}
 		    is_loading={loading_item_ids.indexOf(issue.id) !== -1}
 		    is_selected={selected_ids.indexOf(issue.id) !== -1}
+		    is_invalidated={invalidated_issue_ids.indexOf(issue.id) !== -1}
+		    is_saving={saving_issue_ids.indexOf(issue.id) !== -1}
 		    issue_id={issue.id}
 		/>
 	    )
@@ -257,6 +260,8 @@ function mapStateToProps(state, props) {
     const filter = l.filter || {}
     const sprint_id = filter.sprint_id || null
     const visible_item_ids = l.visible_item_ids || []
+    const invalidated_item_ids = (issue && issue.invalidated_item_ids) || []
+    const saving_item_ids = (issue && issue.saving_item_ids) || []
 
     const selected_items = items_by_id && l.selected_ids && l.selected_ids.map( function(selected_id, index) {
 	return items_by_id[selected_id] || { 'id': selected_id,
@@ -277,6 +282,8 @@ function mapStateToProps(state, props) {
         issues: items,
 	issue_ids: map(items, 'id'),
 	selected_ids: l.selected_ids || [],
+	invalidated_issue_ids: invalidated_item_ids,
+	saving_issue_ids: saving_item_ids,
 	selected_items: selected_items || [],
 	loading_item_ids: l.loading_item_ids || [],
         has_items: items && items.length > 0,

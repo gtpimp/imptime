@@ -80,15 +80,15 @@ function DevPageMiddleware(_ref) {
 		    }
 		    break
 		case ANNOUNCE_ISSUE_SAVED:
-		    dispatch(invalidateIssues([action.issue_id]))
-		    dispatch(invalidateIssueGeneralDetails([action.issue_id]))
+		    // dispatch(invalidateIssues([action.issue_id]))
+		    // dispatch(invalidateIssueGeneralDetails([action.issue_id]))
 		    
 		    dispatch(fetchIssuesIfNeeded(issues_list_key))
 		    dispatch(fetchIssueGeneralDetailsIfNeeded([action.issue_id]))
 		    break
 		case ANNOUNCE_SAVED_NEW_ISSUE:
-		    dispatch(invalidateIssues([action.issue.id]))
-		    dispatch(invalidateIssueGeneralDetails([action.issue.id]))
+		    // dispatch(invalidateIssues([action.issue.id]))
+		    // dispatch(invalidateIssueGeneralDetails([action.issue.id]))
 
 		    dispatch(invalidateList(issues_list_key))
 		    dispatch(fetchIssuesIfNeeded(issues_list_key))

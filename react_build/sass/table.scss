@@ -40,12 +40,20 @@
     }
 
     tbody .tr--selected td {
-	background-color: $selection-color;
+	background-color: $selection-background-color;
 	height: 48px;
     }
 
+    tbody .tr--invalidated td {
+	background-color: $invalidated-background-color;
+    }
+
+    tbody .tr--saving td {
+	background-color: $saving-background-color;
+    }
+
     tbody tr:hover td {
-	background-color: $selection-color;
+	background-color: $selection-background-color;
     }
 
     &.table--default {
@@ -76,7 +84,15 @@
 	}
 
 	tbody .tr--selected td {
-	    background-color: $selection-color;
+	    background-color: $selection-background-color;
+	}
+
+	tbody .tr--invalidated td {
+	    background-color: $invalidated-background-color;
+	}
+
+	tbody .tr--saving td {
+	    background-color: $saving-background-color;
 	}
 
 	td:first-child {

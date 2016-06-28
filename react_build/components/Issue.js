@@ -87,7 +87,7 @@ export class Issue extends Component {
     
     render_expanded() {
         const { issue, is_loading, is_selected, onClickedIssue, assignable_user_ids,
-		feature_options,
+		feature_options, is_invalidated, is_saving,
 		isOver, connectDragSource, connectDropTarget } = this.props
 
 	if ( ! issue ) {
@@ -108,7 +108,10 @@ export class Issue extends Component {
 	    return connectDragSource(connectDropTarget(
 		<tr key={this.key+"."+issue.id}
 		    onClick={onClickedIssue}
-		    className={classNames({'tr--selected': is_selected, 'tr--drop-target': isOver})}
+		    className={classNames({'tr--selected': is_selected,
+					   'tr--invalidated': is_invalidated,
+					   'tr--saving': is_saving,
+					   'tr--drop-target': isOver})}
 		>
 		    <td>
 			<div className="issue_list__issue_number_button">{issue.number}</div>
@@ -161,7 +164,8 @@ export class Issue extends Component {
 
 function mapStateToProps(state, props) {
     const { project, issue, item_list, user } = state
-    const { issue_id, is_selected, is_collapsed, is_loading } = props
+    const { issue_id, is_selected, is_collapsed,
+	    is_loading, is_invalidated, is_saving } = props
 
     const this_issue = (issue && issue.items_by_id && issue.items_by_id[issue_id]) || {'loaded':false}
     const project_id = this_issue.project_id
@@ -179,8 +183,10 @@ function mapStateToProps(state, props) {
 	issue_id: issue_id,
 	is_selected: is_selected,
 	is_loading: is_loading,
+	is_saving: is_saving,
 	is_collapsed: is_collapsed,
 	is_expanded: !is_collapsed,
+	is_invalidated: is_invalidated || false,
 	assignable_user_ids: assignable_user_ids,
 	feature_options: feature_options
     }

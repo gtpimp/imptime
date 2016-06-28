@@ -1,6 +1,7 @@
 import { impfetch } from './lib.js'
 import difference from 'lodash/difference'
 import keys from 'lodash/keys'
+import union from 'lodash/union'
 import map from 'lodash/map'
 import { reorderSprints } from './Sprints'
 
@@ -134,7 +135,8 @@ function tryFetchMatchingItems(dispatch, state, list_key,
     const matching_item_ids = keys(matching_items.items_by_id || {}) // magic, assumes the matching_items reducer will use 'items_by_id' as well
     const matching_item_refs = matching_item_ids.map((item_id, index) => "" + item_id)
     
-    const unmatching_item_ids = difference(required_item_refs, matching_item_refs)
+    let unmatching_item_ids = difference(required_item_refs, matching_item_refs)
+    unmatching_item_ids = union(unmatching_item_ids, matching_items.invalidated_item_ids || [])
 
     if ( unmatching_item_ids.length > 0 ) {
 	dispatch(announceMatchingItemsLoading(list_key))

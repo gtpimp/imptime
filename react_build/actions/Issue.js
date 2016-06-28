@@ -130,6 +130,7 @@ function updateIssue(issue_id, field_name, new_value, on_done) {
 		 console.log('Request succeeded with JSON response', json);
 		 dispatch(announceIssueSaved(json.payload))
 		 dispatch(invalidateIssues([issue_id]))
+		 dispatch(fetchIssuesIfNeeded())
              }
 	     if ( on_done ) {
 		 on_done()
