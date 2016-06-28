@@ -66868,7 +66868,7 @@
 																					break;
 																	case _Issue.ANNOUNCE_ISSUE_SAVED:
 																					// dispatch(invalidateIssues([action.issue_id]))
-																					// dispatch(invalidateIssueGeneralDetails([action.issue_id]))
+																					dispatch((0, _IssueGeneralDetails.invalidateIssueGeneralDetails)([action.issue_id]));
 
 																					dispatch((0, _Issues.fetchIssuesIfNeeded)(issues_list_key));
 																					dispatch((0, _IssueGeneralDetails.fetchIssueGeneralDetailsIfNeeded)([action.issue_id]));
@@ -66876,7 +66876,6 @@
 																	case _Issue.ANNOUNCE_SAVED_NEW_ISSUE:
 																					// dispatch(invalidateIssues([action.issue.id]))
 																					// dispatch(invalidateIssueGeneralDetails([action.issue.id]))
-
 																					dispatch((0, _ItemList.invalidateList)(issues_list_key));
 																					dispatch((0, _Issues.fetchIssuesIfNeeded)(issues_list_key));
 																					dispatch((0, _IssueGeneralDetails.fetchIssueGeneralDetailsIfNeeded)([action.issue.id]));
