@@ -4,10 +4,15 @@ import { connect } from 'react-redux'
 import indexOf from 'lodash/indexOf'
 import map from 'lodash/map'
 import RIETextArea from '../widgets/RIETextArea'
+import RIEInput from '../widgets/RIEInput'
 import OtherUser from '../components/OtherUser'
 import {
     updateIssueDescription,
-    deleteIssue
+    updateIssueSubject,
+    deleteIssue,
+    startCandidateIssue,
+    updateCandidateSubject,
+    cancelCandidateIssue
 } from '../actions/Issue'
 
 import {
@@ -21,6 +26,7 @@ export class IssueDeveloperDetails extends Component {
     constructor(props) {
         super(props)
         this.onDelete = this.onDelete.bind(this)
+	this.onChangeSubject = this.onChangeSubject.bind(this)
 	this.onChangeDescription = this.onChangeDescription.bind(this)
     }
 
@@ -31,6 +37,11 @@ export class IssueDeveloperDetails extends Component {
 	}
     }
 
+    onChangeSubject(issue_id, obj) {
+	const { dispatch } = this.props
+	dispatch(updateIssueSubject(issue_id, obj.subject))
+    }
+
     onChangeDescription(obj) {
 	const { dispatch, issue_id } = this.props
 	dispatch(updateIssueDescription(issue_id, obj.description))
@@ -39,6 +50,17 @@ export class IssueDeveloperDetails extends Component {
     onDelete() {
         const { dispatch, issue_id } = this.props
 	dispatch(deleteIssue(issue_id))
+    }
+
+    onSaveCandidateIssue(obj) {
+	const { dispatch } = this.props
+	dispatch(updateCandidateSubject(obj.candidate_issue_subject))
+	dispatch(saveCandidateIssue())
+    }
+
+    onCancelCandidateIssue() {
+	const { dispatch } = this.props
+	dispatch(cancelCandidateIssue())
     }
 
     renderComment(comment) {
@@ -53,17 +75,53 @@ export class IssueDeveloperDetails extends Component {
 	    </div>
 	)
     }
+
+    renderCreatingIssue() {
+	const { candidate_issue, is_creating_issue } = this.props
+	return (
+
+	    <div className="issue_developer_details">
+		<div className="panel panel--full">
+		    <div className="panel-heading">
+			<div className="panel__title">
+			    New Issue
+			</div>
+			<div className="panel__buttons">
+			    <div className="panel__button panel__button--delete"
+				 onClick={this.onCancelCandidateIssue}>
+			    </div>
+			</div>
+		    </div>
+		    <div className="issue_developer_details__panel-body">
+
+			<h3>Subject: </h3>
+			<h3>
+			    <RIEInput value=""
+				      propName="candidate_issue_subject"
+				      initialState="editing"
+				      change={this.onSaveCandidateIssue}
+				      cancel={this.onCancelCandidateIssue} />
+			</h3>
+		    </div>
+		</div>
+	    </div>
+	)
+    }
     
     render() {
 
-        const { is_visible, issue_id, issue, comments, is_loading } = this.props
+        const { is_visible, issue_id, issue, comments, is_loading,
+		is_creating_issue } = this.props
 
 	if ( ! is_visible ) {
 	    return (<div></div>)
 	}
+
+	if ( is_creating_issue ) {
+	    return this.renderCreatingIssue()
+	}
 	
         return (
-	    <Sticky>
 		<div className="issue_developer_details" style={{ opacity: is_loading ? 0.5 : 1 }}>
 		    <div className="panel panel--full">
 			<div className="panel-heading">
@@ -78,8 +136,12 @@ export class IssueDeveloperDetails extends Component {
 			    </div>
 			</div>
 			<div className="issue_developer_details__panel-body">
-			    <h3>issue#{issue.number}: {issue.subject}</h3>
-				<RIETextArea
+			    <h3>issue#{issue.number}:
+				<RIEInput value={issue.subject}
+					  propName="subject" 
+					  change={(obj) => this.onChangeSubject(issue.id, obj)} />
+			    </h3>
+			        <RIETextArea
 				    value={issue.description || ""}
 				    propName="description"
 				    change={this.onChangeDescription}
@@ -91,12 +153,12 @@ export class IssueDeveloperDetails extends Component {
 			</div>
 		    </div>
 		</div>
-	    </Sticky>
         )
     }
 }
 
 function mapStateToProps(state, props) {
+    const state_issues = state.issue || {}
     const item_list = state.item_list || {}
     const { list_key } = props
     const l = item_list[list_key] || {}
@@ -115,13 +177,18 @@ function mapStateToProps(state, props) {
 			  general_details)
 
     const comments = issue.issue_comments || []
+
+    const candidate_issue = state_issues.candidate_issue
+    const is_creating_issue = candidate_issue || false
     
     return {
         issue_id: issue_id,
 	issue: issue,
 	comments: comments,
         is_loading: general_details.is_loading,
-	is_visible: issue_id || false
+	is_visible: issue_id || false,
+	is_creating_issue: is_creating_issue,
+	candidate_issue: candidate_issue
     }
 }
 

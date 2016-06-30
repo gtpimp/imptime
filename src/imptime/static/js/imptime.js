@@ -41520,11 +41520,11 @@
 
 	var _ProjectList2 = _interopRequireDefault(_ProjectList);
 
-	var _SprintList = __webpack_require__(852);
+	var _SprintList = __webpack_require__(855);
 
 	var _SprintList2 = _interopRequireDefault(_SprintList);
 
-	var _IssueList = __webpack_require__(856);
+	var _IssueList = __webpack_require__(859);
 
 	var _IssueList2 = _interopRequireDefault(_IssueList);
 
@@ -41634,6 +41634,14 @@
 	var _Pagination2 = _interopRequireDefault(_Pagination);
 
 	var _reactSticky = __webpack_require__(848);
+
+	var _RIEModeToggler = __webpack_require__(852);
+
+	var _RIEModeToggler2 = _interopRequireDefault(_RIEModeToggler);
+
+	var _RIEInput = __webpack_require__(853);
+
+	var _RIEInput2 = _interopRequireDefault(_RIEInput);
 
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -41860,8 +41868,16 @@
 													return _react2.default.createElement(
 																	'div',
 																	null,
-																	is_collapsed && this.render_collapsed(),
-																	is_expanded && this.render_expanded()
+																	_react2.default.createElement(
+																					_RIEModeToggler2.default,
+																					{
+																									rie_key: 'blahblah',
+																									initialValue: 'how zie'
+																					},
+																					_react2.default.createElement(_RIEInput2.default, null)
+																	),
+																	false && is_collapsed && this.render_collapsed(),
+																	false && is_expanded && this.render_expanded()
 													);
 									}
 					}]);
@@ -59982,6 +59998,293 @@
 	Object.defineProperty(exports, "__esModule", {
 				value: true
 	});
+	exports.RIEModeToggler = undefined;
+
+	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+	var _react = __webpack_require__(300);
+
+	var _react2 = _interopRequireDefault(_react);
+
+	var _reactDom = __webpack_require__(336);
+
+	var _reactDom2 = _interopRequireDefault(_reactDom);
+
+	var _reactRedux = __webpack_require__(534);
+
+	var _Rie = __webpack_require__(949);
+
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+	function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+	var RIEModeToggler = exports.RIEModeToggler = function (_React$Component) {
+				_inherits(RIEModeToggler, _React$Component);
+
+				function RIEModeToggler(props) {
+							_classCallCheck(this, RIEModeToggler);
+
+							var _this = _possibleConstructorReturn(this, Object.getPrototypeOf(RIEModeToggler).call(this, props));
+
+							_this.startEditing = _this.startEditing.bind(_this);
+							_this.cancelEditing = _this.cancelEditing.bind(_this);
+							_this.stopEditing = _this.stopEditing.bind(_this);
+							_this.finishEditing = _this.finishEditing.bind(_this);
+							_this.onChange = _this.onChange.bind(_this);
+							_this.keyDown = _this.keyDown.bind(_this);
+							return _this;
+				}
+
+				_createClass(RIEModeToggler, [{
+							key: 'componentDidMount',
+							value: function componentDidMount() {
+										if (this.props.initialState == 'editing') {
+													this.startEditing();
+										}
+							}
+				}, {
+							key: 'onChange',
+							value: function onChange(new_value) {
+										var _props = this.props;
+										var dispatch = _props.dispatch;
+										var rie_key = _props.rie_key;
+
+										dispatch((0, _Rie.updateValue)(rie_key, new_value));
+							}
+				}, {
+							key: 'finishEditing',
+							value: function finishEditing() {
+										var value = this.props.value;
+
+										if (this.props.onChange) {
+													this.onChange(value);
+										}
+										this.stopEditing();
+							}
+				}, {
+							key: 'startEditing',
+							value: function startEditing() {
+										var _props2 = this.props;
+										var dispatch = _props2.dispatch;
+										var rie_key = _props2.rie_key;
+
+										dispatch((0, _Rie.startEditing)(rie_key));
+							}
+				}, {
+							key: 'stopEditing',
+							value: function stopEditing() {
+										var _props3 = this.props;
+										var dispatch = _props3.dispatch;
+										var rie_key = _props3.rie_key;
+
+										dispatch((0, _Rie.stopEditing)(rie_key));
+							}
+				}, {
+							key: 'cancelEditing',
+							value: function cancelEditing() {
+										var _props4 = this.props;
+										var dispatch = _props4.dispatch;
+										var rie_key = _props4.rie_key;
+
+										dispatch((0, _Rie.updateValue)(rie_key, this.props.initialValue));
+										this.stopEditing();
+										if (this.props.onCancel) {
+													this.props.onCancel();
+										}
+							}
+				}, {
+							key: 'keyDown',
+							value: function keyDown(event) {
+										var is_editing = this.props.is_editing;
+
+										if (!is_editing) {
+													return;
+										}
+										if (event.keyCode === 13) {
+													event.preventDefault();
+													this.finishEditing();
+										} else if (event.keyCode === 27) {
+													event.preventDefault();
+													this.cancelEditing();
+										}
+							}
+				}, {
+							key: 'elementBlur',
+							value: function elementBlur(event) {
+										this.finishEditing();
+							}
+				}, {
+							key: 'elementClick',
+							value: function elementClick(event) {
+										this.startEditing();
+										event.target.element.focus();
+							}
+				}, {
+							key: 'renderNormalMode',
+							value: function renderNormalMode() {
+										var value = this.props.value;
+
+										return _react2.default.createElement(
+													'span',
+													{ onClick: this.startEditing },
+													value
+										);
+							}
+				}, {
+							key: 'renderEditMode',
+							value: function renderEditMode() {
+										var _props5 = this.props;
+										var children = _props5.children;
+										var value = _props5.value;
+
+										if (!children) {
+													return _react2.default.createElement(
+																'div',
+																null,
+																'No edit child provided'
+													);
+										}
+										var that = this;
+
+										return _react2.default.Children.map(children, function (child, index) {
+													return _react2.default.cloneElement(child, {
+																value: value,
+																onChange: that.onChange
+													});
+										});
+							}
+				}, {
+							key: 'render',
+							value: function render() {
+										var _props6 = this.props;
+										var is_editing = _props6.is_editing;
+										var is_readonly = _props6.is_readonly;
+
+
+										return _react2.default.createElement(
+													'div',
+													{ onKeyDown: this.keyDown },
+													is_editing && this.renderEditMode(),
+													is_readonly && this.renderNormalMode()
+										);
+							}
+				}]);
+
+				return RIEModeToggler;
+	}(_react2.default.Component);
+
+	function mapStateToProps(state, props) {
+				var rie_key = props.rie_key;
+
+
+				var rie = state.rie || {};
+				var r = rie[rie_key] || {};
+				var mode = r.mode || 'readonly';
+				var value = r.value || props.initialValue;
+
+				return {
+							is_editing: mode == 'editing',
+							is_readonly: mode == 'readonly',
+							value: value
+				};
+	}
+
+	exports.default = (0, _reactRedux.connect)(mapStateToProps)(RIEModeToggler);
+
+/***/ },
+/* 853 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	Object.defineProperty(exports, "__esModule", {
+	   value: true
+	});
+	exports.RIEInput = undefined;
+
+	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+	var _react = __webpack_require__(300);
+
+	var _react2 = _interopRequireDefault(_react);
+
+	var _reactDom = __webpack_require__(336);
+
+	var _reactDom2 = _interopRequireDefault(_reactDom);
+
+	var _RIEEditBase2 = __webpack_require__(950);
+
+	var _RIEEditBase3 = _interopRequireDefault(_RIEEditBase2);
+
+	var _reactRedux = __webpack_require__(534);
+
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+	function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+	var RIEInput = exports.RIEInput = function (_RIEEditBase) {
+	   _inherits(RIEInput, _RIEEditBase);
+
+	   function RIEInput(props) {
+	      _classCallCheck(this, RIEInput);
+
+	      var _this = _possibleConstructorReturn(this, Object.getPrototypeOf(RIEInput).call(this, props));
+
+	      _this.onChange = _this.onChange.bind(_this);
+	      return _this;
+	   }
+
+	   _createClass(RIEInput, [{
+	      key: 'onChange',
+	      value: function onChange() {
+	         this.props.onChange(this.editField.value);
+	      }
+	   }, {
+	      key: 'render',
+	      value: function render() {
+	         var _this2 = this;
+
+	         var _props = this.props;
+	         var value = _props.value;
+	         var onChange = _props.onChange;
+
+	         return _react2.default.createElement('input', {
+	            ref: function ref(_ref) {
+	               return _this2.editField = _ref;
+	            },
+	            value: value,
+	            onChange: this.onChange
+	         });
+	      }
+	   }]);
+
+	   return RIEInput;
+	}(_RIEEditBase3.default);
+
+	function mapStateToProps(state, props) {
+	   return {};
+	}
+
+	exports.default = (0, _reactRedux.connect)(mapStateToProps)(RIEInput);
+
+/***/ },
+/* 854 */,
+/* 855 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	Object.defineProperty(exports, "__esModule", {
+				value: true
+	});
 	exports.SprintList = undefined;
 
 	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
@@ -60006,7 +60309,7 @@
 
 	var _Pagination2 = _interopRequireDefault(_Pagination);
 
-	var _Sprint = __webpack_require__(853);
+	var _Sprint = __webpack_require__(856);
 
 	var _Sprint2 = _interopRequireDefault(_Sprint);
 
@@ -60303,7 +60606,7 @@
 	exports.default = (0, _reactRedux.connect)(mapStateToProps)(SprintList);
 
 /***/ },
-/* 853 */
+/* 856 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -60329,11 +60632,11 @@
 
 	var _map2 = _interopRequireDefault(_map);
 
-	var _classnames = __webpack_require__(854);
+	var _classnames = __webpack_require__(857);
 
 	var _classnames2 = _interopRequireDefault(_classnames);
 
-	var _Dnd = __webpack_require__(855);
+	var _Dnd = __webpack_require__(858);
 
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -60526,7 +60829,7 @@
 	exports.default = (0, _reactRedux.connect)(mapStateToProps)((0, _reactDnd.DragSource)(_Dnd.DndTypes.SPRINT, headingSource, collect)((0, _reactDnd.DropTarget)(_Dnd.DndTypes.SPRINT, headingTarget, collectDrop)(Sprint)));
 
 /***/ },
-/* 854 */
+/* 857 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/*!
@@ -60580,7 +60883,7 @@
 
 
 /***/ },
-/* 855 */
+/* 858 */
 /***/ function(module, exports) {
 
 	'use strict';
@@ -60594,7 +60897,7 @@
 	};
 
 /***/ },
-/* 856 */
+/* 859 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -60616,7 +60919,7 @@
 
 	var _map2 = _interopRequireDefault(_map);
 
-	var _RIEInput = __webpack_require__(857);
+	var _RIEInput = __webpack_require__(853);
 
 	var _RIEInput2 = _interopRequireDefault(_RIEInput);
 
@@ -61058,326 +61361,6 @@
 	exports.default = (0, _reactRedux.connect)(mapStateToProps)(IssueList);
 
 /***/ },
-/* 857 */
-/***/ function(module, exports, __webpack_require__) {
-
-	'use strict';
-
-	Object.defineProperty(exports, "__esModule", {
-	  value: true
-	});
-
-	var _react = __webpack_require__(300);
-
-	var _react2 = _interopRequireDefault(_react);
-
-	var _RIEStatefulBase2 = __webpack_require__(858);
-
-	var _RIEStatefulBase3 = _interopRequireDefault(_RIEStatefulBase2);
-
-	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
-	function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
-
-	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
-
-	var RIEInput = function (_RIEStatefulBase) {
-	  _inherits(RIEInput, _RIEStatefulBase);
-
-	  function RIEInput() {
-	    _classCallCheck(this, RIEInput);
-
-	    return _possibleConstructorReturn(this, Object.getPrototypeOf(RIEInput).apply(this, arguments));
-	  }
-
-	  return RIEInput;
-	}(_RIEStatefulBase3.default);
-
-	exports.default = RIEInput;
-
-/***/ },
-/* 858 */
-/***/ function(module, exports, __webpack_require__) {
-
-	'use strict';
-
-	Object.defineProperty(exports, "__esModule", {
-	    value: true
-	});
-
-	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
-
-	var _react = __webpack_require__(300);
-
-	var _react2 = _interopRequireDefault(_react);
-
-	var _reactDom = __webpack_require__(336);
-
-	var _reactDom2 = _interopRequireDefault(_reactDom);
-
-	var _RIEBase2 = __webpack_require__(859);
-
-	var _RIEBase3 = _interopRequireDefault(_RIEBase2);
-
-	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
-	function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
-
-	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
-
-	var RIEStatefulBase = function (_RIEBase) {
-	    _inherits(RIEStatefulBase, _RIEBase);
-
-	    function RIEStatefulBase(props) {
-	        _classCallCheck(this, RIEStatefulBase);
-
-	        var _this = _possibleConstructorReturn(this, Object.getPrototypeOf(RIEStatefulBase).call(this, props));
-
-	        _this.doValidations = _this.doValidations.bind(_this);
-	        _this.textChanged = _this.textChanged.bind(_this);
-	        _this.startEditing = _this.startEditing.bind(_this);
-	        _this.stopEditing = _this.stopEditing.bind(_this);
-	        _this.finishEditing = _this.finishEditing.bind(_this);
-	        _this.keyDown = _this.keyDown.bind(_this);
-	        return _this;
-	    }
-
-	    _createClass(RIEStatefulBase, [{
-	        key: 'componentDidMount',
-	        value: function componentDidMount() {
-	            if (this.props.initialState == 'editing') {
-	                this.startEditing();
-	            }
-	        }
-	    }, {
-	        key: 'startEditing',
-	        value: function startEditing() {
-	            this.setState({ editing: true });
-	        }
-	    }, {
-	        key: 'finishEditing',
-	        value: function finishEditing() {
-	            var newValue = _reactDom2.default.findDOMNode(this.refs.input).value;
-	            this.doValidations(newValue);
-	            if (!this.state.invalid && this.props.value !== newValue) {
-	                this.commit(newValue);
-	            }
-	            this.stopEditing();
-	        }
-	    }, {
-	        key: 'stopEditing',
-	        value: function stopEditing() {
-	            this.setState({ editing: false, invalid: false });
-	        }
-	    }, {
-	        key: 'cancelEditing',
-	        value: function cancelEditing() {
-	            this.stopEditing();
-	            if (this.props.cancel) {
-	                this.props.cancel();
-	            }
-	        }
-	    }, {
-	        key: 'keyDown',
-	        value: function keyDown(event) {
-	            if (event.keyCode === 13) {
-	                this.finishEditing();
-	            } // Enter
-	            else if (event.keyCode === 27) {
-	                    this.cancelEditing();
-	                } // Escape
-	        }
-	    }, {
-	        key: 'textChanged',
-	        value: function textChanged(event) {
-	            this.doValidations(event.target.value.trim());
-	        }
-	    }, {
-	        key: 'componentDidUpdate',
-	        value: function componentDidUpdate(prevProps, prevState) {
-	            var inputElem = _reactDom2.default.findDOMNode(this.refs.input);
-	            if (this.state.editing && !prevState.editing) {
-	                inputElem.focus();
-	                this.selectInputText(inputElem);
-	            } else if (this.state.editing && prevProps.text != this.props.text) {
-	                this.finishEditing();
-	            }
-	        }
-	    }, {
-	        key: 'renderEditingComponent',
-	        value: function renderEditingComponent() {
-	            return _react2.default.createElement('input', {
-	                disabled: this.state.loading,
-	                className: this.makeClassString(),
-	                defaultValue: this.props.value,
-	                onInput: this.textChanged,
-	                onBlur: this.finishEditing,
-	                ref: 'input',
-	                onKeyDown: this.keyDown });
-	        }
-	    }, {
-	        key: 'renderNormalComponent',
-	        value: function renderNormalComponent() {
-	            return _react2.default.createElement(
-	                'span',
-	                {
-	                    tabIndex: '0',
-	                    className: this.makeClassString(),
-	                    onFocus: this.startEditing,
-	                    onClick: this.startEditing
-	                },
-	                this.state.newValue || this.props.value
-	            );
-	        }
-	    }, {
-	        key: 'elementBlur',
-	        value: function elementBlur(event) {
-	            this.finishEditing();
-	        }
-	    }, {
-	        key: 'elementClick',
-	        value: function elementClick(event) {
-	            this.startEditing();
-	            event.target.element.focus();
-	        }
-	    }, {
-	        key: 'render',
-	        value: function render() {
-	            if (this.state.editing) {
-	                return this.renderEditingComponent();
-	            } else {
-	                return this.renderNormalComponent();
-	            }
-	        }
-	    }]);
-
-	    return RIEStatefulBase;
-	}(_RIEBase3.default);
-
-	exports.default = RIEStatefulBase;
-
-/***/ },
-/* 859 */
-/***/ function(module, exports, __webpack_require__) {
-
-	'use strict';
-
-	Object.defineProperty(exports, "__esModule", {
-	    value: true
-	});
-
-	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
-
-	var _react = __webpack_require__(300);
-
-	var _react2 = _interopRequireDefault(_react);
-
-	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
-	function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
-
-	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
-
-	var RIEBase = function (_React$Component) {
-	    _inherits(RIEBase, _React$Component);
-
-	    function RIEBase(props) {
-	        _classCallCheck(this, RIEBase);
-
-	        var _this = _possibleConstructorReturn(this, Object.getPrototypeOf(RIEBase).call(this, props));
-
-	        _this.state = {
-	            editing: false,
-	            loading: false,
-	            disabled: false,
-	            invalid: false
-	        };
-	        return _this;
-	    }
-
-	    /* propTypes = {
-	     *     value: React.PropTypes.any.isRequired,
-	     *     change: React.PropTypes.func.isRequired,
-	       cancel: React.PropTypes.func.isRequired,
-	     *     propName: React.PropTypes.string.isRequired,
-	     *     isDisabled: React.PropTypes.bool,
-	     *     validate: React.PropTypes.func,
-	     *     shouldBlockWhileLoading: React.PropTypes.bool,
-	     *     classLoading: React.PropTypes.string,
-	     *     classEditing: React.PropTypes.string,
-	     *     classDisabled: React.PropTypes.string,
-	     *     classInvalid: React.PropTypes.string,
-	     *     className: React.PropTypes.string
-	     * };*/
-
-	    _createClass(RIEBase, [{
-	        key: 'doValidations',
-	        value: function doValidations(value) {
-	            if (this.props.validate) {
-	                this.setState({ invalid: !this.props.validate(value) });
-	            } else if (this.validate) {
-	                this.setState({ invalid: !this.validate(value) });
-	            }
-	        }
-	    }, {
-	        key: 'selectInputText',
-	        value: function selectInputText(element) {
-	            element.setSelectionRange(0, element.value.length);
-	        }
-	    }, {
-	        key: 'elementClick',
-	        value: function elementClick(event) {
-	            throw "RIEBase must be subclassed first: use a concrete class like RIEInput, RIEToggle, RIEDate et.c";
-	        }
-	    }, {
-	        key: 'componentWillReceiveProps',
-	        value: function componentWillReceiveProps(nextProps) {
-	            if ('value' in nextProps) this.setState({ loading: false, editing: false, invalid: false, newValue: null });
-	        }
-	    }, {
-	        key: 'commit',
-	        value: function commit(value) {
-	            if (!this.state.invalid) {
-	                var newProp = {};
-	                newProp[this.props.propName] = value;
-	                this.setState({ loading: true, newValue: value });
-	                this.props.change(newProp);
-	            }
-	        }
-	    }, {
-	        key: 'makeClassString',
-	        value: function makeClassString() {
-	            var classNames = [];
-	            if (this.props.className) classNames.push(this.props.className);
-	            if (this.state.editing && this.props.classEditing) classNames.push(this.props.classEditing);
-	            if (this.state.loading && this.props.classLoading) classNames.push(this.props.classLoading);
-	            if (this.state.disabled && this.props.classDisabled) classNames.push(this.props.classDisabled);
-	            if (this.state.invalid && this.props.classInvalid) classNames.push(this.props.classInvalid);
-	            return classNames.join(' ');
-	        }
-	    }, {
-	        key: 'render',
-	        value: function render() {
-	            return _react2.default.createElement(
-	                'span',
-	                { tabindex: '0', className: this.makeClassString(), onClick: this.elementClick },
-	                this.props.value
-	            );
-	        }
-	    }]);
-
-	    return RIEBase;
-	}(_react2.default.Component);
-
-	exports.default = RIEBase;
-
-/***/ },
 /* 860 */
 /***/ function(module, exports, __webpack_require__) {
 
@@ -61790,7 +61773,7 @@
 
 	var _reactRedux = __webpack_require__(534);
 
-	var _classnames = __webpack_require__(854);
+	var _classnames = __webpack_require__(857);
 
 	var _classnames2 = _interopRequireDefault(_classnames);
 
@@ -61798,7 +61781,7 @@
 
 	var _Users = __webpack_require__(863);
 
-	var _RIEInput = __webpack_require__(857);
+	var _RIEInput = __webpack_require__(853);
 
 	var _RIEInput2 = _interopRequireDefault(_RIEInput);
 
@@ -61814,7 +61797,7 @@
 
 	var _OtherUser2 = _interopRequireDefault(_OtherUser);
 
-	var _Dnd = __webpack_require__(855);
+	var _Dnd = __webpack_require__(858);
 
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -61834,7 +61817,6 @@
 
 							var _this = _possibleConstructorReturn(this, Object.getPrototypeOf(Issue).call(this, props));
 
-							_this.onChangeSubject = _this.onChangeSubject.bind(_this);
 							_this.onChangeStatus = _this.onChangeStatus.bind(_this);
 							return _this;
 				}
@@ -61848,13 +61830,6 @@
 										var project_id = _props.project_id;
 
 										dispatch((0, _Users.fetchUsersIfNeeded)(assignable_user_ids));
-							}
-				}, {
-							key: 'onChangeSubject',
-							value: function onChangeSubject(issue_id, obj) {
-										var dispatch = this.props.dispatch;
-
-										dispatch((0, _Issue.updateIssueSubject)(issue_id, obj.subject));
 							}
 				}, {
 							key: 'onChangeAssignedTo',
@@ -61966,11 +61941,7 @@
 																_react2.default.createElement(
 																			'td',
 																			null,
-																			_react2.default.createElement(_RIEInput2.default, { value: issue.subject,
-																						propName: 'subject',
-																						change: function change(obj) {
-																									return _this2.onChangeSubject(issue.id, obj);
-																						} })
+																			issue.subject
 																),
 																_react2.default.createElement(
 																			'td',
@@ -62281,7 +62252,7 @@
 
 	var _reactDom2 = _interopRequireDefault(_reactDom);
 
-	var _RIEInput2 = __webpack_require__(857);
+	var _RIEInput2 = __webpack_require__(853);
 
 	var _RIEInput3 = _interopRequireDefault(_RIEInput2);
 
@@ -62401,7 +62372,7 @@
 
 	var _reactInputAutosize2 = _interopRequireDefault(_reactInputAutosize);
 
-	var _classnames = __webpack_require__(854);
+	var _classnames = __webpack_require__(857);
 
 	var _classnames2 = _interopRequireDefault(_classnames);
 
@@ -63669,7 +63640,7 @@
 
 	var _react2 = _interopRequireDefault(_react);
 
-	var _classnames = __webpack_require__(854);
+	var _classnames = __webpack_require__(857);
 
 	var _classnames2 = _interopRequireDefault(_classnames);
 
@@ -63778,7 +63749,7 @@
 
 	var _react2 = _interopRequireDefault(_react);
 
-	var _classnames = __webpack_require__(854);
+	var _classnames = __webpack_require__(857);
 
 	var _classnames2 = _interopRequireDefault(_classnames);
 
@@ -64457,11 +64428,11 @@
 
 	var _indexOf2 = _interopRequireDefault(_indexOf);
 
-	var _classnames = __webpack_require__(854);
+	var _classnames = __webpack_require__(857);
 
 	var _classnames2 = _interopRequireDefault(_classnames);
 
-	var _Dnd = __webpack_require__(855);
+	var _Dnd = __webpack_require__(858);
 
 	var _Users = __webpack_require__(863);
 
@@ -64598,6 +64569,10 @@
 
 	var _RIETextArea2 = _interopRequireDefault(_RIETextArea);
 
+	var _RIEInput = __webpack_require__(853);
+
+	var _RIEInput2 = _interopRequireDefault(_RIEInput);
+
 	var _OtherUser = __webpack_require__(877);
 
 	var _OtherUser2 = _interopRequireDefault(_OtherUser);
@@ -64625,6 +64600,7 @@
 			var _this = _possibleConstructorReturn(this, Object.getPrototypeOf(IssueDeveloperDetails).call(this, props));
 
 			_this.onDelete = _this.onDelete.bind(_this);
+			_this.onChangeSubject = _this.onChangeSubject.bind(_this);
 			_this.onChangeDescription = _this.onChangeDescription.bind(_this);
 			return _this;
 		}
@@ -64640,6 +64616,13 @@
 				if (issue_id) {
 					dispatch((0, _IssueGeneralDetails.fetchIssueGeneralDetailsIfNeeded)([issue_id]));
 				}
+			}
+		}, {
+			key: 'onChangeSubject',
+			value: function onChangeSubject(issue_id, obj) {
+				var dispatch = this.props.dispatch;
+
+				dispatch((0, _Issue.updateIssueSubject)(issue_id, obj.subject));
 			}
 		}, {
 			key: 'onChangeDescription',
@@ -64658,6 +64641,21 @@
 				var issue_id = _props3.issue_id;
 
 				dispatch((0, _Issue.deleteIssue)(issue_id));
+			}
+		}, {
+			key: 'onSaveCandidateIssue',
+			value: function onSaveCandidateIssue(obj) {
+				var dispatch = this.props.dispatch;
+
+				dispatch((0, _Issue.updateCandidateSubject)(obj.candidate_issue_subject));
+				dispatch(saveCandidateIssue());
+			}
+		}, {
+			key: 'onCancelCandidateIssue',
+			value: function onCancelCandidateIssue() {
+				var dispatch = this.props.dispatch;
+
+				dispatch((0, _Issue.cancelCandidateIssue)());
 			}
 		}, {
 			key: 'renderComment',
@@ -64690,70 +64688,124 @@
 				);
 			}
 		}, {
+			key: 'renderCreatingIssue',
+			value: function renderCreatingIssue() {
+				var _props4 = this.props;
+				var candidate_issue = _props4.candidate_issue;
+				var is_creating_issue = _props4.is_creating_issue;
+
+				return _react2.default.createElement(
+					'div',
+					{ className: 'issue_developer_details' },
+					_react2.default.createElement(
+						'div',
+						{ className: 'panel panel--full' },
+						_react2.default.createElement(
+							'div',
+							{ className: 'panel-heading' },
+							_react2.default.createElement(
+								'div',
+								{ className: 'panel__title' },
+								'New Issue'
+							),
+							_react2.default.createElement(
+								'div',
+								{ className: 'panel__buttons' },
+								_react2.default.createElement('div', { className: 'panel__button panel__button--delete',
+									onClick: this.onCancelCandidateIssue })
+							)
+						),
+						_react2.default.createElement(
+							'div',
+							{ className: 'issue_developer_details__panel-body' },
+							_react2.default.createElement(
+								'h3',
+								null,
+								'Subject: '
+							),
+							_react2.default.createElement(
+								'h3',
+								null,
+								_react2.default.createElement(_RIEInput2.default, { value: '',
+									propName: 'candidate_issue_subject',
+									initialState: 'editing',
+									change: this.onSaveCandidateIssue,
+									cancel: this.onCancelCandidateIssue })
+							)
+						)
+					)
+				);
+			}
+		}, {
 			key: 'render',
 			value: function render() {
 				var _this2 = this;
 
-				var _props4 = this.props;
-				var is_visible = _props4.is_visible;
-				var issue_id = _props4.issue_id;
-				var issue = _props4.issue;
-				var comments = _props4.comments;
-				var is_loading = _props4.is_loading;
+				var _props5 = this.props;
+				var is_visible = _props5.is_visible;
+				var issue_id = _props5.issue_id;
+				var issue = _props5.issue;
+				var comments = _props5.comments;
+				var is_loading = _props5.is_loading;
+				var is_creating_issue = _props5.is_creating_issue;
 
 
 				if (!is_visible) {
 					return _react2.default.createElement('div', null);
 				}
 
+				if (is_creating_issue) {
+					return this.renderCreatingIssue();
+				}
+
 				return _react2.default.createElement(
-					_reactSticky.Sticky,
-					null,
+					'div',
+					{ className: 'issue_developer_details', style: { opacity: is_loading ? 0.5 : 1 } },
 					_react2.default.createElement(
 						'div',
-						{ className: 'issue_developer_details', style: { opacity: is_loading ? 0.5 : 1 } },
+						{ className: 'panel panel--full' },
 						_react2.default.createElement(
 							'div',
-							{ className: 'panel panel--full' },
+							{ className: 'panel-heading' },
 							_react2.default.createElement(
 								'div',
-								{ className: 'panel-heading' },
-								_react2.default.createElement(
-									'div',
-									{ className: 'panel__title' },
-									'Issue Details'
-								),
-								_react2.default.createElement(
-									'div',
-									{ className: 'panel__buttons' },
-									_react2.default.createElement('div', { className: 'panel__button panel__button--delete',
-										onClick: this.onDelete })
-								)
+								{ className: 'panel__title' },
+								'Issue Details'
 							),
 							_react2.default.createElement(
 								'div',
-								{ className: 'issue_developer_details__panel-body' },
-								_react2.default.createElement(
-									'h3',
-									null,
-									'issue#',
-									issue.number,
-									': ',
-									issue.subject
-								),
-								_react2.default.createElement(_RIETextArea2.default, {
-									value: issue.description || "",
-									propName: 'description',
-									change: this.onChangeDescription
-								})
-							),
-							_react2.default.createElement(
-								'div',
-								null,
-								comments.map(function (comment) {
-									return _this2.renderComment(comment);
-								})
+								{ className: 'panel__buttons' },
+								_react2.default.createElement('div', { className: 'panel__button panel__button--delete',
+									onClick: this.onDelete })
 							)
+						),
+						_react2.default.createElement(
+							'div',
+							{ className: 'issue_developer_details__panel-body' },
+							_react2.default.createElement(
+								'h3',
+								null,
+								'issue#',
+								issue.number,
+								':',
+								_react2.default.createElement(_RIEInput2.default, { value: issue.subject,
+									propName: 'subject',
+									change: function change(obj) {
+										return _this2.onChangeSubject(issue.id, obj);
+									} })
+							),
+							_react2.default.createElement(_RIETextArea2.default, {
+								value: issue.description || "",
+								propName: 'description',
+								change: this.onChangeDescription
+							})
+						),
+						_react2.default.createElement(
+							'div',
+							null,
+							comments.map(function (comment) {
+								return _this2.renderComment(comment);
+							})
 						)
 					)
 				);
@@ -64764,6 +64816,7 @@
 	}(_react.Component);
 
 	function mapStateToProps(state, props) {
+		var state_issues = state.issue || {};
 		var item_list = state.item_list || {};
 		var list_key = props.list_key;
 
@@ -64782,12 +64835,17 @@
 
 		var comments = issue.issue_comments || [];
 
+		var candidate_issue = state_issues.candidate_issue;
+		var is_creating_issue = candidate_issue || false;
+
 		return {
 			issue_id: issue_id,
 			issue: issue,
 			comments: comments,
 			is_loading: general_details.is_loading,
-			is_visible: issue_id || false
+			is_visible: issue_id || false,
+			is_creating_issue: is_creating_issue,
+			candidate_issue: candidate_issue
 		};
 	}
 
@@ -64813,7 +64871,7 @@
 
 	var _reactDom2 = _interopRequireDefault(_reactDom);
 
-	var _RIEInput = __webpack_require__(857);
+	var _RIEInput = __webpack_require__(853);
 
 	var _reactAutosizeTextarea = __webpack_require__(872);
 
@@ -66873,13 +66931,16 @@
 																					dispatch((0, _Issues.fetchIssuesIfNeeded)(issues_list_key));
 																					dispatch((0, _IssueGeneralDetails.fetchIssueGeneralDetailsIfNeeded)([action.issue_id]));
 																					break;
+																	case _Issue.ANNOUNCE_CAPTURING_NEW_ISSUE:
+																	// dispatch(invalidateIssueGeneralDetails([action.issue.id]))
+
 																	case _Issue.ANNOUNCE_SAVED_NEW_ISSUE:
 																					// dispatch(invalidateIssues([action.issue.id]))
 																					// dispatch(invalidateIssueGeneralDetails([action.issue.id]))
 
 																					dispatch((0, _ItemList.invalidateList)(issues_list_key));
 																					dispatch((0, _Issues.fetchIssuesIfNeeded)(issues_list_key));
-																					dispatch((0, _IssueGeneralDetails.fetchIssueGeneralDetailsIfNeeded)([action.issue.id]));
+																					// dispatch(fetchIssueGeneralDetailsIfNeeded([action.issue.id]))
 																					break;
 																	case _Issue.ANNOUNCE_ISSUE_DELETED:
 																					dispatch((0, _ItemList.invalidateList)(issues_list_key));
@@ -66944,6 +67005,10 @@
 
 	var _user2 = _interopRequireDefault(_user);
 
+	var _rie = __webpack_require__(948);
+
+	var _rie2 = _interopRequireDefault(_rie);
+
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 	var rootReducer = (0, _redux.combineReducers)({
@@ -66954,7 +67019,8 @@
 	    issue_general_details: _issue_general_details2.default,
 	    item_list: _item_list2.default,
 	    notification_bar: _notification_bar2.default,
-	    user: _user2.default
+	    user: _user2.default,
+	    rie: _rie2.default
 	});
 
 	exports.default = rootReducer;
@@ -68800,6 +68866,188 @@
 
 	    if ((typeof _ret === 'undefined' ? 'undefined' : _typeof(_ret)) === "object") return _ret.v;
 	}
+
+/***/ },
+/* 948 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	Object.defineProperty(exports, "__esModule", {
+					value: true
+	});
+	exports.default = rie;
+
+	var _map = __webpack_require__(673);
+
+	var _map2 = _interopRequireDefault(_map);
+
+	var _assign = __webpack_require__(942);
+
+	var _assign2 = _interopRequireDefault(_assign);
+
+	var _keys = __webpack_require__(693);
+
+	var _keys2 = _interopRequireDefault(_keys);
+
+	var _union = __webpack_require__(740);
+
+	var _union2 = _interopRequireDefault(_union);
+
+	var _difference = __webpack_require__(737);
+
+	var _difference2 = _interopRequireDefault(_difference);
+
+	var _Error = __webpack_require__(864);
+
+	var _Rie = __webpack_require__(949);
+
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+	var initial_state = {};
+
+	var rie_state_template = {
+					mode: 'readonly'
+	};
+
+	function rie() {
+					var state = arguments.length <= 0 || arguments[0] === undefined ? initial_state : arguments[0];
+					var action = arguments[1];
+
+
+					var state_copy = Object.assign({}, state);
+					var r = Object.assign({}, rie_state_template, state_copy[action.rie_key] || {});
+
+					switch (action.type) {
+									case _Rie.RIE_START_EDITING:
+													state_copy[action.rie_key] = Object.assign({}, r, {
+																	mode: 'editing'
+													});
+													return state_copy;
+									case _Rie.RIE_STOP_EDITING:
+													state_copy[action.rie_key] = Object.assign({}, r, {
+																	mode: 'readonly'
+													});
+													return state_copy;
+									case _Rie.RIE_UPDATE_VALUE:
+													state_copy[action.rie_key] = Object.assign({}, r, {
+																	value: action.new_value
+													});
+													return state_copy;
+									default:
+													return state;
+					}
+	}
+
+/***/ },
+/* 949 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	Object.defineProperty(exports, "__esModule", {
+					value: true
+	});
+	exports.RIE_UPDATE_VALUE = exports.RIE_STOP_EDITING = exports.RIE_START_EDITING = undefined;
+	exports.startEditing = startEditing;
+	exports.stopEditing = stopEditing;
+	exports.updateValue = updateValue;
+
+	var _lib = __webpack_require__(732);
+
+	var _difference = __webpack_require__(737);
+
+	var _difference2 = _interopRequireDefault(_difference);
+
+	var _keys = __webpack_require__(693);
+
+	var _keys2 = _interopRequireDefault(_keys);
+
+	var _indexOf = __webpack_require__(742);
+
+	var _indexOf2 = _interopRequireDefault(_indexOf);
+
+	var _map = __webpack_require__(673);
+
+	var _map2 = _interopRequireDefault(_map);
+
+	var _ItemList = __webpack_require__(731);
+
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+	var RIE_START_EDITING = exports.RIE_START_EDITING = 'RIE_START_EDITING';
+	var RIE_STOP_EDITING = exports.RIE_STOP_EDITING = 'RIE_STOP_EDITING';
+	var RIE_UPDATE_VALUE = exports.RIE_UPDATE_VALUE = 'RIE_UPDATE_VALUE';
+
+	function startEditing(rie_key) {
+					return {
+									type: RIE_START_EDITING,
+									rie_key: rie_key
+					};
+	}
+
+	function stopEditing(rie_key) {
+					return {
+									type: RIE_STOP_EDITING,
+									rie_key: rie_key
+					};
+	}
+
+	function updateValue(rie_key, new_value) {
+					return {
+									type: RIE_UPDATE_VALUE,
+									rie_key: rie_key,
+									new_value: new_value
+					};
+	}
+
+/***/ },
+/* 950 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	Object.defineProperty(exports, "__esModule", {
+	    value: true
+	});
+
+	var _react = __webpack_require__(300);
+
+	var _react2 = _interopRequireDefault(_react);
+
+	var _reactDom = __webpack_require__(336);
+
+	var _reactDom2 = _interopRequireDefault(_reactDom);
+
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+	function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+	var RIEEditBase = function (_React$Component) {
+	    _inherits(RIEEditBase, _React$Component);
+
+	    function RIEEditBase(props) {
+	        _classCallCheck(this, RIEEditBase);
+
+	        return _possibleConstructorReturn(this, Object.getPrototypeOf(RIEEditBase).call(this, props));
+	    }
+
+	    /* keyDown(event) {
+	     *     if (event.keyCode === 13) {
+	       this.finishEditing()
+	       } else if (event.keyCode === 27) {
+	       this.cancelEditing()
+	       }
+	     * }*/
+
+	    return RIEEditBase;
+	}(_react2.default.Component);
+
+	exports.default = RIEEditBase;
 
 /***/ }
 /******/ ]);

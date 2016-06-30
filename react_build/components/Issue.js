@@ -5,7 +5,7 @@ import { DragSource, DropTarget } from 'react-dnd';
 import { connect } from 'react-redux'
 import classNames from 'classnames'
 import {
-    updateIssueSubject,
+    //updateIssueSubject,
     updateIssueStatus,
     updateIssueFeature,
     updateIssueAssignedTo
@@ -45,7 +45,6 @@ export class Issue extends Component {
 
     constructor(props) {
         super(props)
-	this.onChangeSubject = this.onChangeSubject.bind(this)
 	this.onChangeStatus = this.onChangeStatus.bind(this)
     }
 
@@ -55,11 +54,6 @@ export class Issue extends Component {
 
     }
     
-    onChangeSubject(issue_id, obj) {
-	const { dispatch } = this.props
-	dispatch(updateIssueSubject(issue_id, obj.subject))
-    }
-
     onChangeAssignedTo(issue_id, obj) {
 	const { dispatch } = this.props
 	dispatch(updateIssueAssignedTo(issue_id, obj.assigned_to))
@@ -117,9 +111,7 @@ export class Issue extends Component {
 			<div className="issue_list__issue_number_button">{issue.number}</div>
 		    </td>
 		    <td>
-			<RIEInput value={issue.subject}
-				  propName="subject" 
-				  change={(obj) => this.onChangeSubject(issue.id, obj)} />
+			{issue.subject}
 		    </td>
 		    <td>
 			<RIEUserDropDown value={issue.assigned_to_id}
