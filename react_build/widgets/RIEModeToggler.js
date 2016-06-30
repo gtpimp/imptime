@@ -2,6 +2,8 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import { connect } from 'react-redux'
 import {
+    reset,
+    setInitialValue,
     startEditing,
     stopEditing,
     updateValue
@@ -20,8 +22,18 @@ export class RIEModeToggler extends React.Component {
     }
 
     componentDidMount() {
+	const { dispatch, rie_key } = this.props
+	dispatch(setInitialValue(rie_key, this.props.initialValue))
 	if ( this.props.initialState == 'editing' ) {
 	    this.startEditing()
+	}
+    }
+
+    componentWillUpdate() {
+	const { dispatch, rie_key, initialValue, original_initial_value } = this.props
+	if ( original_initial_value != initialValue ) {
+	    dispatch(reset(rie_key))
+	    dispatch(setInitialValue(rie_key, this.props.initialValue))
 	}
     }
 
@@ -115,11 +127,13 @@ function mapStateToProps(state, props) {
     const r = rie[rie_key] || {}
     const mode = r.mode || 'readonly'
     const value = r.value || props.initialValue
+    const original_initial_value = r.initial_value
 
     return {
 	is_editing: mode == 'editing',
 	is_readonly: mode == 'readonly',
-	value: value
+	value: value,
+	original_initial_value: original_initial_value
     }
 }
 

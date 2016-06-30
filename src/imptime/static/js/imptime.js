@@ -60027,16 +60027,35 @@
 				_createClass(RIEModeToggler, [{
 							key: 'componentDidMount',
 							value: function componentDidMount() {
+										var _props = this.props;
+										var dispatch = _props.dispatch;
+										var rie_key = _props.rie_key;
+
+										dispatch((0, _Rie.setInitialValue)(rie_key, this.props.initialValue));
 										if (this.props.initialState == 'editing') {
 													this.startEditing();
 										}
 							}
 				}, {
+							key: 'componentWillUpdate',
+							value: function componentWillUpdate() {
+										var _props2 = this.props;
+										var dispatch = _props2.dispatch;
+										var rie_key = _props2.rie_key;
+										var initialValue = _props2.initialValue;
+										var original_initial_value = _props2.original_initial_value;
+
+										if (original_initial_value != initialValue) {
+													dispatch((0, _Rie.reset)(rie_key));
+													dispatch((0, _Rie.setInitialValue)(rie_key, this.props.initialValue));
+										}
+							}
+				}, {
 							key: 'onChange',
 							value: function onChange(new_value) {
-										var _props = this.props;
-										var dispatch = _props.dispatch;
-										var rie_key = _props.rie_key;
+										var _props3 = this.props;
+										var dispatch = _props3.dispatch;
+										var rie_key = _props3.rie_key;
 
 										dispatch((0, _Rie.updateValue)(rie_key, new_value));
 							}
@@ -60053,27 +60072,27 @@
 				}, {
 							key: 'startEditing',
 							value: function startEditing() {
-										var _props2 = this.props;
-										var dispatch = _props2.dispatch;
-										var rie_key = _props2.rie_key;
+										var _props4 = this.props;
+										var dispatch = _props4.dispatch;
+										var rie_key = _props4.rie_key;
 
 										dispatch((0, _Rie.startEditing)(rie_key));
 							}
 				}, {
 							key: 'stopEditing',
 							value: function stopEditing() {
-										var _props3 = this.props;
-										var dispatch = _props3.dispatch;
-										var rie_key = _props3.rie_key;
+										var _props5 = this.props;
+										var dispatch = _props5.dispatch;
+										var rie_key = _props5.rie_key;
 
 										dispatch((0, _Rie.stopEditing)(rie_key));
 							}
 				}, {
 							key: 'cancelEditing',
 							value: function cancelEditing() {
-										var _props4 = this.props;
-										var dispatch = _props4.dispatch;
-										var rie_key = _props4.rie_key;
+										var _props6 = this.props;
+										var dispatch = _props6.dispatch;
+										var rie_key = _props6.rie_key;
 
 										dispatch((0, _Rie.updateValue)(rie_key, this.props.initialValue));
 										this.stopEditing();
@@ -60121,11 +60140,11 @@
 				}, {
 							key: 'render',
 							value: function render() {
-										var _props5 = this.props;
-										var is_editing = _props5.is_editing;
-										var is_readonly = _props5.is_readonly;
-										var children = _props5.children;
-										var value = _props5.value;
+										var _props7 = this.props;
+										var is_editing = _props7.is_editing;
+										var is_readonly = _props7.is_readonly;
+										var children = _props7.children;
+										var value = _props7.value;
 
 
 										var that = this;
@@ -60155,11 +60174,13 @@
 				var r = rie[rie_key] || {};
 				var mode = r.mode || 'readonly';
 				var value = r.value || props.initialValue;
+				var original_initial_value = r.initial_value;
 
 				return {
 							is_editing: mode == 'editing',
 							is_readonly: mode == 'readonly',
-							value: value
+							value: value,
+							original_initial_value: original_initial_value
 				};
 	}
 
@@ -68837,7 +68858,7 @@
 	'use strict';
 
 	Object.defineProperty(exports, "__esModule", {
-					value: true
+		value: true
 	});
 	exports.default = rie;
 
@@ -68870,36 +68891,44 @@
 	var initial_state = {};
 
 	var rie_state_template = {
-					mode: 'readonly'
+		mode: 'readonly'
 	};
 
 	function rie() {
-					var state = arguments.length <= 0 || arguments[0] === undefined ? initial_state : arguments[0];
-					var action = arguments[1];
+		var state = arguments.length <= 0 || arguments[0] === undefined ? initial_state : arguments[0];
+		var action = arguments[1];
 
 
-					var state_copy = Object.assign({}, state);
-					var r = Object.assign({}, rie_state_template, state_copy[action.rie_key] || {});
+		var state_copy = Object.assign({}, state);
+		var r = Object.assign({}, rie_state_template, state_copy[action.rie_key] || {});
 
-					switch (action.type) {
-									case _Rie.RIE_START_EDITING:
-													state_copy[action.rie_key] = Object.assign({}, r, {
-																	mode: 'editing'
-													});
-													return state_copy;
-									case _Rie.RIE_STOP_EDITING:
-													state_copy[action.rie_key] = Object.assign({}, r, {
-																	mode: 'readonly'
-													});
-													return state_copy;
-									case _Rie.RIE_UPDATE_VALUE:
-													state_copy[action.rie_key] = Object.assign({}, r, {
-																	value: action.new_value
-													});
-													return state_copy;
-									default:
-													return state;
-					}
+		switch (action.type) {
+			case _Rie.RIE_RESET:
+				state_copy[action.rie_key] = null;
+				return state_copy;
+			case _Rie.RIE_START_EDITING:
+				state_copy[action.rie_key] = Object.assign({}, r, {
+					mode: 'editing'
+				});
+				return state_copy;
+			case _Rie.RIE_STOP_EDITING:
+				state_copy[action.rie_key] = Object.assign({}, r, {
+					mode: 'readonly'
+				});
+				return state_copy;
+			case _Rie.RIE_UPDATE_VALUE:
+				state_copy[action.rie_key] = Object.assign({}, r, {
+					value: action.new_value
+				});
+				return state_copy;
+			case _Rie.RIE_SET_INITIAL_VALUE:
+				state_copy[action.rie_key] = Object.assign({}, r, {
+					initial_value: action.initial_value
+				});
+				return state_copy;
+			default:
+				return state;
+		}
 	}
 
 /***/ },
@@ -68911,10 +68940,12 @@
 	Object.defineProperty(exports, "__esModule", {
 					value: true
 	});
-	exports.RIE_UPDATE_VALUE = exports.RIE_STOP_EDITING = exports.RIE_START_EDITING = undefined;
+	exports.RIE_SET_INITIAL_VALUE = exports.RIE_UPDATE_VALUE = exports.RIE_STOP_EDITING = exports.RIE_START_EDITING = exports.RIE_RESET = undefined;
+	exports.reset = reset;
 	exports.startEditing = startEditing;
 	exports.stopEditing = stopEditing;
 	exports.updateValue = updateValue;
+	exports.setInitialValue = setInitialValue;
 
 	var _lib = __webpack_require__(732);
 
@@ -68938,9 +68969,18 @@
 
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
+	var RIE_RESET = exports.RIE_RESET = 'RIE_RESET';
 	var RIE_START_EDITING = exports.RIE_START_EDITING = 'RIE_START_EDITING';
 	var RIE_STOP_EDITING = exports.RIE_STOP_EDITING = 'RIE_STOP_EDITING';
 	var RIE_UPDATE_VALUE = exports.RIE_UPDATE_VALUE = 'RIE_UPDATE_VALUE';
+	var RIE_SET_INITIAL_VALUE = exports.RIE_SET_INITIAL_VALUE = 'RIE_SET_INITIAL_VALUE';
+
+	function reset(rie_key) {
+					return {
+									type: RIE_RESET,
+									rie_key: rie_key
+					};
+	}
 
 	function startEditing(rie_key) {
 					return {
@@ -68961,6 +69001,14 @@
 									type: RIE_UPDATE_VALUE,
 									rie_key: rie_key,
 									new_value: new_value
+					};
+	}
+
+	function setInitialValue(rie_key, initial_value) {
+					return {
+									type: RIE_SET_INITIAL_VALUE,
+									rie_key: rie_key,
+									initial_value: initial_value
 					};
 	}
 
