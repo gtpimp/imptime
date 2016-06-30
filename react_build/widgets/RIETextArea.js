@@ -25,7 +25,7 @@ export default class RIETextArea extends Component {
 	this.stopEditing()
 	const res = {}
 	res[this.props.propName] = new_value
-	this.props.change(res)
+	this.props.onChange(res)
     };
 
     cancel() {

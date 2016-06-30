@@ -41635,14 +41635,6 @@
 
 	var _reactSticky = __webpack_require__(848);
 
-	var _RIEModeToggler = __webpack_require__(852);
-
-	var _RIEModeToggler2 = _interopRequireDefault(_RIEModeToggler);
-
-	var _RIEInput = __webpack_require__(853);
-
-	var _RIEInput2 = _interopRequireDefault(_RIEInput);
-
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
@@ -41868,16 +41860,8 @@
 													return _react2.default.createElement(
 																	'div',
 																	null,
-																	_react2.default.createElement(
-																					_RIEModeToggler2.default,
-																					{
-																									rie_key: 'blahblah',
-																									initialValue: 'how zie'
-																					},
-																					_react2.default.createElement(_RIEInput2.default, null)
-																	),
-																	false && is_collapsed && this.render_collapsed(),
-																	false && is_expanded && this.render_expanded()
+																	is_collapsed && this.render_collapsed(),
+																	is_expanded && this.render_expanded()
 													);
 									}
 					}]);
@@ -60036,6 +60020,7 @@
 							_this.finishEditing = _this.finishEditing.bind(_this);
 							_this.onChange = _this.onChange.bind(_this);
 							_this.keyDown = _this.keyDown.bind(_this);
+							_this.elementClick = _this.elementClick.bind(_this);
 							return _this;
 				}
 
@@ -60121,7 +60106,6 @@
 							key: 'elementClick',
 							value: function elementClick(event) {
 										this.startEditing();
-										event.target.element.focus();
 							}
 				}, {
 							key: 'renderNormalMode',
@@ -60135,41 +60119,27 @@
 										);
 							}
 				}, {
-							key: 'renderEditMode',
-							value: function renderEditMode() {
+							key: 'render',
+							value: function render() {
 										var _props5 = this.props;
+										var is_editing = _props5.is_editing;
+										var is_readonly = _props5.is_readonly;
 										var children = _props5.children;
 										var value = _props5.value;
 
-										if (!children) {
-													return _react2.default.createElement(
-																'div',
-																null,
-																'No edit child provided'
-													);
-										}
+
 										var that = this;
-
-										return _react2.default.Children.map(children, function (child, index) {
-													return _react2.default.cloneElement(child, {
-																value: value,
-																onChange: that.onChange
-													});
-										});
-							}
-				}, {
-							key: 'render',
-							value: function render() {
-										var _props6 = this.props;
-										var is_editing = _props6.is_editing;
-										var is_readonly = _props6.is_readonly;
-
-
 										return _react2.default.createElement(
 													'div',
-													{ onKeyDown: this.keyDown },
-													is_editing && this.renderEditMode(),
-													is_readonly && this.renderNormalMode()
+													{ onKeyDown: this.keyDown, onClick: this.elementClick },
+													_react2.default.Children.map(children, function (child, index) {
+																return _react2.default.cloneElement(child, {
+																			value: value,
+																			is_editing: is_editing,
+																			is_readonly: is_readonly,
+																			onChange: that.onChange
+																});
+													})
 										);
 							}
 				}]);
@@ -60202,7 +60172,7 @@
 	'use strict';
 
 	Object.defineProperty(exports, "__esModule", {
-	   value: true
+				value: true
 	});
 	exports.RIEInput = undefined;
 
@@ -60231,46 +60201,58 @@
 	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 
 	var RIEInput = exports.RIEInput = function (_RIEEditBase) {
-	   _inherits(RIEInput, _RIEEditBase);
+				_inherits(RIEInput, _RIEEditBase);
 
-	   function RIEInput(props) {
-	      _classCallCheck(this, RIEInput);
+				function RIEInput(props) {
+							_classCallCheck(this, RIEInput);
 
-	      var _this = _possibleConstructorReturn(this, Object.getPrototypeOf(RIEInput).call(this, props));
+							var _this = _possibleConstructorReturn(this, Object.getPrototypeOf(RIEInput).call(this, props));
 
-	      _this.onChange = _this.onChange.bind(_this);
-	      return _this;
-	   }
+							_this.onChange = _this.onChange.bind(_this);
+							return _this;
+				}
 
-	   _createClass(RIEInput, [{
-	      key: 'onChange',
-	      value: function onChange() {
-	         this.props.onChange(this.editField.value);
-	      }
-	   }, {
-	      key: 'render',
-	      value: function render() {
-	         var _this2 = this;
+				_createClass(RIEInput, [{
+							key: 'onChange',
+							value: function onChange() {
+										this.props.onChange(this.editField.value);
+							}
+				}, {
+							key: 'render',
+							value: function render() {
+										var _this2 = this;
 
-	         var _props = this.props;
-	         var value = _props.value;
-	         var onChange = _props.onChange;
+										var _props = this.props;
+										var value = _props.value;
+										var onChange = _props.onChange;
+										var is_editing = _props.is_editing;
+										var is_readonly = _props.is_readonly;
 
-	         return _react2.default.createElement('input', {
-	            ref: function ref(_ref) {
-	               return _this2.editField = _ref;
-	            },
-	            value: value,
-	            onChange: this.onChange
-	         });
-	      }
-	   }]);
 
-	   return RIEInput;
+										return _react2.default.createElement(
+													'div',
+													null,
+													is_editing && _react2.default.createElement('input', {
+																ref: function ref(_ref) {
+																			return _this2.editField = _ref;
+																},
+																value: value,
+																onChange: this.onChange
+													}),
+													is_readonly && _react2.default.createElement(
+																'span',
+																null,
+																value
+													)
+										);
+							}
+				}]);
+
+				return RIEInput;
 	}(_RIEEditBase3.default);
 
 	function mapStateToProps(state, props) {
-	   return {};
+				return {};
 	}
 
 	exports.default = (0, _reactRedux.connect)(mapStateToProps)(RIEInput);
@@ -61781,10 +61763,6 @@
 
 	var _Users = __webpack_require__(863);
 
-	var _RIEInput = __webpack_require__(853);
-
-	var _RIEInput2 = _interopRequireDefault(_RIEInput);
-
 	var _RIEDropDown = __webpack_require__(865);
 
 	var _RIEDropDown2 = _interopRequireDefault(_RIEDropDown);
@@ -62239,7 +62217,7 @@
 	'use strict';
 
 	Object.defineProperty(exports, "__esModule", {
-	    value: true
+				value: true
 	});
 
 	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
@@ -62252,17 +62230,15 @@
 
 	var _reactDom2 = _interopRequireDefault(_reactDom);
 
-	var _RIEInput2 = __webpack_require__(853);
-
-	var _RIEInput3 = _interopRequireDefault(_RIEInput2);
-
 	var _reactSelect = __webpack_require__(866);
 
 	var _reactSelect2 = _interopRequireDefault(_reactSelect);
 
-	var _reactAutosizeTextarea = __webpack_require__(872);
+	var _RIEEditBase2 = __webpack_require__(950);
 
-	var _reactAutosizeTextarea2 = _interopRequireDefault(_reactAutosizeTextarea);
+	var _RIEEditBase3 = _interopRequireDefault(_RIEEditBase2);
+
+	var _reactRedux = __webpack_require__(534);
 
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -62272,79 +62248,57 @@
 
 	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 
-	var RIEDropDown = function (_RIEInput) {
-	    _inherits(RIEDropDown, _RIEInput);
+	var RIEDropDown = function (_RIEEditBase) {
+				_inherits(RIEDropDown, _RIEEditBase);
 
-	    function RIEDropDown(props) {
-	        _classCallCheck(this, RIEDropDown);
+				function RIEDropDown(props) {
+							_classCallCheck(this, RIEDropDown);
 
-	        var _this = _possibleConstructorReturn(this, Object.getPrototypeOf(RIEDropDown).call(this, props));
+							var _this = _possibleConstructorReturn(this, Object.getPrototypeOf(RIEDropDown).call(this, props));
 
-	        _this.startEditing = _this.startEditing.bind(_this);
-	        _this.stopEditing = _this.stopEditing.bind(_this);
-	        _this.commit = _this.commit.bind(_this);
-	        _this.state = {
-	            editing: false
-	        };
-	        return _this;
-	    }
+							_this.onChange = _this.onChange.bind(_this);
+							return _this;
+				}
 
-	    _createClass(RIEDropDown, [{
-	        key: 'selectInputText',
-	        value: function selectInputText(inputElem) {}
-	    }, {
-	        key: 'stopEditing',
-	        value: function stopEditing() {
-	            this.setState({ editing: false });
-	        }
-	    }, {
-	        key: 'startEditing',
-	        value: function startEditing() {
-	            this.setState({ editing: true });
-	        }
-	    }, {
-	        key: 'commit',
-	        value: function commit(new_value) {
-	            var v = new_value && new_value.value || null;
-	            this.stopEditing();
-	            var res = {};
-	            res[this.props.propName] = v;
-	            this.props.change(res);
-	        }
-	    }, {
-	        key: 'renderEditingComponent',
-	        value: function renderEditingComponent() {
-	            var _props = this.props;
-	            var options = _props.options;
-	            var value = _props.value;
+				_createClass(RIEDropDown, [{
+							key: 'onChange',
+							value: function onChange() {
+										this.props.onChange(this.editField.value);
+							}
+				}, {
+							key: 'render',
+							value: function render() {
+										var _this2 = this;
 
-	            return _react2.default.createElement(
-	                'div',
-	                { className: 'RIEDropDown' },
-	                _react2.default.createElement(_reactSelect2.default, { name: 'status',
-	                    value: value,
-	                    ref: 'input',
-	                    autofocus: true,
-	                    options: options,
-	                    onChange: this.commit
-	                })
-	            );
-	        }
-	    }, {
-	        key: 'render',
-	        value: function render() {
-	            if (this.state.editing) {
-	                return this.renderEditingComponent();
-	            } else {
-	                return this.renderNormalComponent();
-	            }
-	        }
-	    }]);
+										var _props = this.props;
+										var options = _props.options;
+										var value = _props.value;
 
-	    return RIEDropDown;
-	}(_RIEInput3.default);
+										return _react2.default.createElement(
+													'div',
+													{ className: 'RIEDropDown' },
+													_react2.default.createElement(_reactSelect2.default, { value: value,
+																ref: function ref(_ref) {
+																			return _this2.editField = _ref;
+																},
+																options: options,
+																onChange: this.onChange
+													})
+										);
+							}
+				}]);
+
+				return RIEDropDown;
+	}(_RIEEditBase3.default);
 
 	exports.default = RIEDropDown;
+
+
+	function mapStateToProps(state, props) {
+				return {};
+	}
+
+	exports.default = (0, _reactRedux.connect)(mapStateToProps)(RIEDropDown);
 
 /***/ },
 /* 866 */
@@ -64565,14 +64519,6 @@
 
 	var _map2 = _interopRequireDefault(_map);
 
-	var _RIETextArea = __webpack_require__(879);
-
-	var _RIETextArea2 = _interopRequireDefault(_RIETextArea);
-
-	var _RIEInput = __webpack_require__(853);
-
-	var _RIEInput2 = _interopRequireDefault(_RIEInput);
-
 	var _OtherUser = __webpack_require__(877);
 
 	var _OtherUser2 = _interopRequireDefault(_OtherUser);
@@ -64581,7 +64527,13 @@
 
 	var _IssueGeneralDetails = __webpack_require__(880);
 
-	var _reactSticky = __webpack_require__(848);
+	var _RIEModeToggler = __webpack_require__(852);
+
+	var _RIEModeToggler2 = _interopRequireDefault(_RIEModeToggler);
+
+	var _RIEInput = __webpack_require__(853);
+
+	var _RIEInput2 = _interopRequireDefault(_RIEInput);
 
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -64788,13 +64740,19 @@
 								'issue#',
 								issue.number,
 								':',
-								_react2.default.createElement(_RIEInput2.default, { value: issue.subject,
-									propName: 'subject',
-									change: function change(obj) {
-										return _this2.onChangeSubject(issue.id, obj);
-									} })
+								_react2.default.createElement(
+									_RIEModeToggler2.default,
+									{
+										rie_key: 'issue_subject',
+										initialValue: issue.subject,
+										onChange: function onChange(new_value) {
+											return _this2.onChangeSubject(issue.id, new_value);
+										}
+									},
+									_react2.default.createElement(_RIEInput2.default, null)
+								)
 							),
-							_react2.default.createElement(_RIETextArea2.default, {
+							_react2.default.createElement(RIETextArea, {
 								value: issue.description || "",
 								propName: 'description',
 								change: this.onChangeDescription
@@ -64852,140 +64810,7 @@
 	exports.default = (0, _reactRedux.connect)(mapStateToProps)(IssueDeveloperDetails);
 
 /***/ },
-/* 879 */
-/***/ function(module, exports, __webpack_require__) {
-
-	'use strict';
-
-	Object.defineProperty(exports, "__esModule", {
-					value: true
-	});
-
-	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
-
-	var _react = __webpack_require__(300);
-
-	var _react2 = _interopRequireDefault(_react);
-
-	var _reactDom = __webpack_require__(336);
-
-	var _reactDom2 = _interopRequireDefault(_reactDom);
-
-	var _RIEInput = __webpack_require__(853);
-
-	var _reactAutosizeTextarea = __webpack_require__(872);
-
-	var _reactAutosizeTextarea2 = _interopRequireDefault(_reactAutosizeTextarea);
-
-	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
-	function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
-
-	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
-
-	var RIETextArea = function (_Component) {
-					_inherits(RIETextArea, _Component);
-
-					function RIETextArea(props) {
-									_classCallCheck(this, RIETextArea);
-
-									var _this = _possibleConstructorReturn(this, Object.getPrototypeOf(RIETextArea).call(this, props));
-
-									_this.startEditing = _this.startEditing.bind(_this);
-									_this.stopEditing = _this.stopEditing.bind(_this);
-									_this.commit = _this.commit.bind(_this);
-									_this.cancel = _this.cancel.bind(_this);
-									_this.state = {
-													editing: false
-									};
-									return _this;
-					}
-
-					_createClass(RIETextArea, [{
-									key: 'startEditing',
-									value: function startEditing() {
-													this.setState({ editing: true });
-									}
-					}, {
-									key: 'commit',
-									value: function commit() {
-													var new_value = _reactDom2.default.findDOMNode(this.editor).value;
-													this.stopEditing();
-													var res = {};
-													res[this.props.propName] = new_value;
-													this.props.change(res);
-									}
-					}, {
-									key: 'cancel',
-									value: function cancel() {
-													this.stopEditing();
-									}
-					}, {
-									key: 'stopEditing',
-									value: function stopEditing() {
-													this.setState({ editing: false });
-									}
-					}, {
-									key: 'renderNormalComponent',
-									value: function renderNormalComponent() {
-													return _react2.default.createElement(
-																	'div',
-																	null,
-																	_react2.default.createElement(
-																					'pre',
-																					null,
-																					this.state.newValue || this.props.value
-																	),
-																	_react2.default.createElement('br', null),
-																	_react2.default.createElement(
-																					'button',
-																					{ className: 'btn btn-secondary', onClick: this.startEditing },
-																					'Edit'
-																	)
-													);
-									}
-					}, {
-									key: 'renderEditingComponent',
-									value: function renderEditingComponent() {
-													var _this2 = this;
-
-													return _react2.default.createElement(
-																	'div',
-																	null,
-																	_react2.default.createElement(_reactAutosizeTextarea2.default, { ref: function ref(_ref) {
-																									return _this2.editor = _ref;
-																					}, rows: '20', cols: '80', defaultValue: this.props.value }),
-																	_react2.default.createElement(
-																					'button',
-																					{ className: 'btn btn-primary', onClick: this.commit },
-																					'Save'
-																	),
-																	_react2.default.createElement(
-																					'button',
-																					{ className: 'btn btn-cancel', onClick: this.cancel },
-																					'Cancel'
-																	)
-													);
-									}
-					}, {
-									key: 'render',
-									value: function render() {
-													if (this.state.editing) {
-																	return this.renderEditingComponent();
-													} else {
-																	return this.renderNormalComponent();
-													}
-									}
-					}]);
-
-					return RIETextArea;
-	}(_react.Component);
-
-	exports.default = RIETextArea;
-
-/***/ },
+/* 879 */,
 /* 880 */
 /***/ function(module, exports, __webpack_require__) {
 
@@ -66837,6 +66662,7 @@
 	        return function (action) {
 
 	            if (action && action.type.indexOf('FAILED') !== -1 && ACTIONS_TO_IGNORE.indexOf(action.type) == -1) {
+	                console.log(action.error);
 	                dispatch((0, _Error.setErrorMessage)("Error: " + action.error));
 	            }
 	            return next(action);

@@ -16,6 +16,7 @@ export class RIEModeToggler extends React.Component {
 	this.finishEditing = this.finishEditing.bind(this)
 	this.onChange = this.onChange.bind(this)
 	this.keyDown = this.keyDown.bind(this)
+	this.elementClick = this.elementClick.bind(this)
     }
 
     componentDidMount() {
@@ -76,7 +77,6 @@ export class RIEModeToggler extends React.Component {
 
     elementClick(event) {
         this.startEditing();
-        event.target.element.focus();
     };
 
     renderNormalMode() {
@@ -88,31 +88,24 @@ export class RIEModeToggler extends React.Component {
 	)
     };
 
-    renderEditMode() {
-	const { children, value } = this.props
-	if ( ! children ) {
-	    return (<div>No edit child provided</div>)
-	}
-	const that = this
-
-	return React.Children.map(children, function(child, index) {
-	    return React.cloneElement(child, {
-		value: value,
-		onChange: that.onChange
-	    })
-	})
-    }
-    
     render() {
-	const { is_editing, is_readonly } = this.props
+	const { is_editing, is_readonly, children, value } = this.props
 
+	const that = this
 	return (
-	    <div onKeyDown={this.keyDown}>
-		{ is_editing && this.renderEditMode() }
-		{ is_readonly && this.renderNormalMode() }
+	    <div onKeyDown={this.keyDown} onClick={this.elementClick}>
+		{ React.Children.map(children, function(child, index) {
+		      return React.cloneElement(child, {
+			  value: value,
+			  is_editing: is_editing,
+			  is_readonly: is_readonly,
+			  onChange: that.onChange
+		      })
+		  })
+		}
 	    </div>
 	)
-    };
+    }
 }
 
 function mapStateToProps(state, props) {

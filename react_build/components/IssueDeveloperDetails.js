@@ -3,8 +3,6 @@ import { Link } from 'react-router'
 import { connect } from 'react-redux'
 import indexOf from 'lodash/indexOf'
 import map from 'lodash/map'
-import RIETextArea from '../widgets/RIETextArea'
-import RIEInput from '../widgets/RIEInput'
 import OtherUser from '../components/OtherUser'
 import {
     updateIssueDescription,
@@ -19,7 +17,8 @@ import {
     invalidateIssueGeneralDetails,
     fetchIssueGeneralDetailsIfNeeded
 } from '../actions/IssueGeneralDetails'
-import { Sticky } from 'react-sticky';
+import RIEModeToggler from '../widgets/RIEModeToggler'
+import RIEInput from '../widgets/RIEInput'
 
 export class IssueDeveloperDetails extends Component {
 
@@ -120,7 +119,7 @@ export class IssueDeveloperDetails extends Component {
 	if ( is_creating_issue ) {
 	    return this.renderCreatingIssue()
 	}
-	
+
         return (
 		<div className="issue_developer_details" style={{ opacity: is_loading ? 0.5 : 1 }}>
 		    <div className="panel panel--full">
@@ -137,9 +136,14 @@ export class IssueDeveloperDetails extends Component {
 			</div>
 			<div className="issue_developer_details__panel-body">
 			    <h3>issue#{issue.number}:
-				<RIEInput value={issue.subject}
-					  propName="subject" 
-					  change={(obj) => this.onChangeSubject(issue.id, obj)} />
+
+				<RIEModeToggler
+				    rie_key="issue_subject"
+				    initialValue={issue.subject}
+				    onChange={(new_value) => this.onChangeSubject(issue.id, new_value)}
+				>
+				    <RIEInput />
+				</RIEModeToggler>
 			    </h3>
 			        <RIETextArea
 				    value={issue.description || ""}

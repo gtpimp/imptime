@@ -15,9 +15,6 @@ import {
 import Pagination from '../components/Pagination'
 import { Sticky } from 'react-sticky';
 
-import RIEModeToggler from '../widgets/RIEModeToggler'
-import RIEInput from '../widgets/RIEInput'
-
 export class ProjectList extends Component {
 
     constructor(props) {
@@ -146,16 +143,8 @@ export class ProjectList extends Component {
 
 	return (
 	    <div>
-
-		<RIEModeToggler
-		    rie_key="blahblah"
-		    initialValue="how zie"
-		>
-		    <RIEInput />
-		</RIEModeToggler>
-		
-		{ false && is_collapsed && this.render_collapsed() }
-		{ false && is_expanded && this.render_expanded() }
+		{ is_collapsed && this.render_collapsed() }
+		{ is_expanded && this.render_expanded() }
 	    </div>
 	)
     }

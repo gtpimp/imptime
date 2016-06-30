@@ -15,12 +15,22 @@ export class RIEInput extends RIEEditBase {
     }
 
     render() {
-	const { value, onChange } = this.props
-        return <input
-	           ref={(ref) => this.editField = ref}
-	           value={value}
-		   onChange={this.onChange}
-	       />
+	const { value, onChange, is_editing, is_readonly } = this.props
+
+	return (
+	    <div>
+		{ is_editing &&
+		  <input
+	              ref={(ref) => this.editField = ref}
+	              value={value}
+		      onChange={this.onChange}
+		  />
+		}
+		{ is_readonly &&
+		  <span>{value}</span>
+		}
+	    </div>
+	)
     }
 }
 

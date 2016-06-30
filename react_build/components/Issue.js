@@ -5,7 +5,6 @@ import { DragSource, DropTarget } from 'react-dnd';
 import { connect } from 'react-redux'
 import classNames from 'classnames'
 import {
-    //updateIssueSubject,
     updateIssueStatus,
     updateIssueFeature,
     updateIssueAssignedTo
@@ -13,7 +12,6 @@ import {
 import {
     fetchUsersIfNeeded
 } from '../actions/Users'
-import RIEInput from '../widgets/RIEInput'
 import RIEDropDown from '../widgets/RIEDropDown'
 import RIEUserDropDown from '../widgets/RIEUserDropDown'
 import OtherUser from '../components/OtherUser'

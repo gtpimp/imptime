@@ -1,35 +1,32 @@
-import React from 'react';
-import RIEStatefulBase from './RIEStatefulBase';
+import React, { PropTypes } from 'react';
+import ReactDOM from 'react-dom';
+import RIEEditBase from './RIEEditBase';
+import { connect } from 'react-redux'
 
-export default class RIENumber extends RIEStatefulBase {
+export default class RIENumber extends RIEEditBase {
 
-    constructor(props) {
+    constructor(props){
         super(props);
+	this.onChange = this.onChange.bind(this)
     }
 
-    propTypes = {
-        format: React.PropTypes.func
-    };
+    onChange() {
+	this.props.onChange(this.editField.value)
+    }
 
-    validate(value) {
-        return !isNaN(value) && isFinite(value) && value.length > 0;
-    };
-
-    renderNormalComponent() {
-        return <span
-            tabIndex="0"
-            className={this.makeClassString()}
-            onFocus={this.startEditing}
-            onClick={this.startEditing}>{this.props.format ? this.props.format(this.state.newValue || this.props.value) : (this.state.newValue || this.props.value)}</span>;
-    };
-
-    renderEditingComponent() {
-        return <input disabled={(this.props.shouldBlockWhileLoading && this.state.loading)}
-                      className={this.makeClassString()}
-                      defaultValue={this.props.value}
-                      onInput={this.textChanged}
-                      onBlur={this.finishEditing}
-                      ref="input"
-                      onKeyDown={this.keyDown} />;
-    };
+    render() {
+	const { value, onChange } = this.props
+        return <input
+	           ref={(ref) => this.editField = ref}
+	           value={value}
+		   onChange={this.onChange}
+	       />
+    }
 }
+
+function mapStateToProps(state, props) {
+    return {
+    }
+}
+
+export default connect(mapStateToProps)(RIENumber)
