@@ -33,7 +33,7 @@ export class RIEModeToggler extends React.Component {
     finishEditing() {
 	const { value } = this.props
 	if ( this.props.onChange ) {
-            this.onChange(value);
+            this.props.onChange(value);
 	}
         this.stopEditing();
     };

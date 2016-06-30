@@ -112,25 +112,31 @@ export class Issue extends Component {
 			{issue.subject}
 		    </td>
 		    <td>
+			{ false && 
 			<RIEUserDropDown value={issue.assigned_to_id}
 					 propName="assigned_to"
 					 user_ids={assignable_user_ids}
 					 change={(obj) => this.onChangeAssignedTo(issue.id, obj)}
-			/>
+/>
+			}
 		    </td>
 		    <td>
+			{ false && 
 			<RIEDropDown value={issue.feature_name || "..."}
 				     propName="feature_name"
 				     options={feature_options}
 				     change={(obj) => this.onChangeFeature(issue.id, obj)}
-			/>
+/>
+			}
 		    </td>
 		    <td>
+			{ false && 
 			<RIEDropDown value={issue.status || "..."}
 				     propName="status"
 				     options={ISSUE_STATUS_CHOICES}
 				     change={(obj) => this.onChangeStatus(issue.id, obj)}
-			/>
+/>
+			}
 		    </td>
 		</tr>
 	    ))

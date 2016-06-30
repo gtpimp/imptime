@@ -19,6 +19,7 @@ import {
 } from '../actions/IssueGeneralDetails'
 import RIEModeToggler from '../widgets/RIEModeToggler'
 import RIEInput from '../widgets/RIEInput'
+import RIETextArea from '../widgets/RIETextArea'
 
 export class IssueDeveloperDetails extends Component {
 
@@ -36,9 +37,9 @@ export class IssueDeveloperDetails extends Component {
 	}
     }
 
-    onChangeSubject(issue_id, obj) {
+    onChangeSubject(issue_id, value) {
 	const { dispatch } = this.props
-	dispatch(updateIssueSubject(issue_id, obj.subject))
+	dispatch(updateIssueSubject(issue_id, value))
     }
 
     onChangeDescription(obj) {
@@ -145,11 +146,13 @@ export class IssueDeveloperDetails extends Component {
 				    <RIEInput />
 				</RIEModeToggler>
 			    </h3>
+			    { false && 
 			        <RIETextArea
 				    value={issue.description || ""}
 				    propName="description"
 				    change={this.onChangeDescription}
-				/>
+/>
+			    }
 			</div>
 
 			<div>
