@@ -42,9 +42,9 @@ export class IssueDeveloperDetails extends Component {
 	dispatch(updateIssueSubject(issue_id, value))
     }
 
-    onChangeDescription(obj) {
+    onChangeDescription(new_value) {
 	const { dispatch, issue_id } = this.props
-	dispatch(updateIssueDescription(issue_id, obj.description))
+	dispatch(updateIssueDescription(issue_id, new_value))
     }
 
     onDelete() {
@@ -146,13 +146,12 @@ export class IssueDeveloperDetails extends Component {
 				    <RIEInput />
 				</RIEModeToggler>
 			    </h3>
-			    { false && 
-			        <RIETextArea
-				    value={issue.description || ""}
-				    propName="description"
-				    change={this.onChangeDescription}
-/>
-			    }
+			    <RIEModeToggler
+				rie_key="issue_description"
+				initialValue={issue.description || ""}
+				onChange={this.onChangeDescription} >
+				<RIETextArea />
+			    </RIEModeToggler>
 			</div>
 
 			<div>

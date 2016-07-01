@@ -1,69 +1,73 @@
 import React, { Component, PropTypes } from 'react'
 import ReactDOM from 'react-dom';
-import { RIEInput } from './RIEInput'
+import RIEEditBase from './RIEEditBase';
 import TextareaAutosize from 'react-autosize-textarea'
 
-export default class RIETextArea extends Component {
+export default class RIETextArea extends RIEEditBase {
 
     constructor(props) {
         super(props);
-	this.startEditing = this.startEditing.bind(this)
-	this.stopEditing = this.stopEditing.bind(this)
 	this.commit = this.commit.bind(this)
 	this.cancel = this.cancel.bind(this)
-	this.state = {
-            editing: false,
+	this.keyDown = this.keyDown.bind(this)
+    }
+
+    commit(event) {
+	event.stopPropagation()
+	let new_value = ReactDOM.findDOMNode(this.editor).value;
+	this.props.onChange(new_value)
+	this.props.onSave(new_value)
+    }
+
+    cancel(event) {
+	event.stopPropagation()
+	this.props.onCancel()
+    }
+
+    keyDown(event) {
+	if ( event.keyCode === 13 ) {
+	    event.stopPropagation()
 	}
     }
-
-    startEditing() {
-        this.setState({editing: true});
-    };
-
-    commit() {
-	let new_value = ReactDOM.findDOMNode(this.editor).value;
-	this.stopEditing()
-	const res = {}
-	res[this.props.propName] = new_value
-	this.props.onChange(res)
-    };
-
-    cancel() {
-	this.stopEditing()
-    }
-
-    stopEditing() {
-	this.setState({editing: false});
-    };
 
     renderNormalComponent() {
         return (
 	    <div>
 		<pre>
-	            {(this.state.newValue || this.props.value)}
+	            {this.props.value}
 		</pre>
 		<br/>
-		<button className="btn btn-secondary" onClick={this.startEditing}>Edit</button>
+		<button className="btn btn-secondary" onClick={this.props.startEditing}>
+		    Edit
+		</button>
 	    </div>
 	)
 	
-    };
+    }
 
     renderEditingComponent() {
 	return (
 	    <div>
-		<TextareaAutosize ref={(ref) => this.editor = ref} rows="20"  cols="80" defaultValue={this.props.value}/>
+		<TextareaAutosize
+		    ref={(ref) => this.editor = ref}
+		    rows="20"
+		    cols="80"
+		    onKeyDown={this.keyDown}
+		    defaultValue={this.props.value}/>
 		<button className="btn btn-primary" onClick={this.commit}>Save</button>
 		<button className="btn btn-cancel" onClick={this.cancel}>Cancel</button>
 	    </div>
 	)
-    };
+    }
 
     render() {
-        if(this.state.editing) {
-            return this.renderEditingComponent();
-        } else {
-            return this.renderNormalComponent();
-        }
-    };
+	const { value, onChange, is_editing, is_readonly } = this.props
+	return (
+	    <div>
+		{ is_editing && this.renderEditingComponent() }
+		{ is_readonly && this.renderNormalComponent() }
+	    </div>
+	)
+    }
+
 }

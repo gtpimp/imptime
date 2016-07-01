@@ -42,22 +42,26 @@ export class RIEModeToggler extends React.Component {
 	dispatch(updateValue(rie_key, new_value))
     }
 
-    finishEditing() {
-	const { value } = this.props
+    finishEditing(current_value) {
+	let v = current_value || this.props.value
 	if ( this.props.onChange ) {
-            this.props.onChange(value);
+            this.props.onChange(v);
 	}
         this.stopEditing();
     };
 
     startEditing() {
-	const { dispatch, rie_key } = this.props
-	dispatch(startEditing(rie_key))
+	const { dispatch, rie_key, is_editing } = this.props
+	if ( ! is_editing ) {
+	    dispatch(startEditing(rie_key))
+	}
     };
 
     stopEditing() {
-	const { dispatch, rie_key } = this.props
-	dispatch(stopEditing(rie_key))
+	const { dispatch, rie_key, is_editing } = this.props
+	if ( is_editing ) {
+	    dispatch(stopEditing(rie_key))
+	}
     }
 
     cancelEditing() {
@@ -111,7 +115,10 @@ export class RIEModeToggler extends React.Component {
 			  value: value,
 			  is_editing: is_editing,
 			  is_readonly: is_readonly,
-			  onChange: that.onChange
+			  startEditing: that.startEditing,
+			  onChange: that.onChange,
+			  onSave: that.finishEditing,
+			  onCancel: that.cancelEditing
 		      })
 		  })
 		}
