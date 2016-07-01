@@ -4,7 +4,7 @@ import Select from 'react-select';
 import RIEEditBase from './RIEEditBase';
 import { connect } from 'react-redux'
 
-export default class RIEDropDown extends RIEEditBase {
+export class RIEDropDown extends RIEEditBase {
 
     constructor(props) {
         super(props)
@@ -12,18 +12,28 @@ export default class RIEDropDown extends RIEEditBase {
     }
 
     onChange() {
-	this.props.onChange(this.editField.value)
+	const new_value = this.editField.value
+	this.props.onChange(new_value)
+	this.props.onSave(new_value)
     }
     
     render() {
-	const { options, value } = this.props
+	const { options, value, is_editing, is_readonly } = this.props
+
+	return ( <div>Hi there</div> )
+	
 	return (
 	    <div className="RIEDropDown">
-		<Select value={value}
-			ref={(ref) => this.editField = ref}
-			options={options}
-			onChange={this.onChange}
-		/>
+		{ is_editing &&
+		  <Select value={value}
+			  ref={(ref) => this.editField = ref}
+			  options={options}
+			  onChange={this.onChange}
+		  />		  
+		}
+		{ is_readonly &&
+		  <span>{value}</span>
+		}
 	    </div>
 	)
     };

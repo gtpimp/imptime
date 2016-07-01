@@ -61622,6 +61622,14 @@
 
 	var _RIEDropDown2 = _interopRequireDefault(_RIEDropDown);
 
+	var _RIEInput = __webpack_require__(857);
+
+	var _RIEInput2 = _interopRequireDefault(_RIEInput);
+
+	var _RIEModeToggler = __webpack_require__(879);
+
+	var _RIEModeToggler2 = _interopRequireDefault(_RIEModeToggler);
+
 	var _RIEUserDropDown = __webpack_require__(871);
 
 	var _RIEUserDropDown2 = _interopRequireDefault(_RIEUserDropDown);
@@ -61673,10 +61681,10 @@
 							}
 				}, {
 							key: 'onChangeStatus',
-							value: function onChangeStatus(issue_id, obj) {
+							value: function onChangeStatus(issue_id, new_value) {
 										var dispatch = this.props.dispatch;
 
-										dispatch((0, _Issue.updateIssueStatus)(issue_id, obj.status));
+										dispatch((0, _Issue.updateIssueStatus)(issue_id, new_value));
 							}
 				}, {
 							key: 'onChangeFeature',
@@ -61801,13 +61809,19 @@
 																_react2.default.createElement(
 																			'td',
 																			null,
-																			false && _react2.default.createElement(_RIEDropDown2.default, { value: issue.status || "...",
-																						propName: 'status',
-																						options: ISSUE_STATUS_CHOICES,
-																						change: function change(obj) {
-																									return _this2.onChangeStatus(issue.id, obj);
-																						}
-																			})
+																			issue.status || "...",
+																			true && _react2.default.createElement(
+																						_RIEModeToggler2.default,
+																						{
+																									rie_key: 'issue_status',
+																									initialValue: issue.status || "...",
+																									onChange: function onChange(new_value) {
+																												return _this2.onChangeStatus(issue.id, new_value);
+																									}
+																						},
+																						false && _react2.default.createElement(_RIEDropDown2.default, { options: ISSUE_STATUS_CHOICES }),
+																						_react2.default.createElement(_RIEInput2.default, null)
+																			)
 																)
 													)));
 										}
@@ -62074,6 +62088,7 @@
 	Object.defineProperty(exports, "__esModule", {
 				value: true
 	});
+	exports.RIEDropDown = undefined;
 
 	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
@@ -62103,7 +62118,7 @@
 
 	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 
-	var RIEDropDown = function (_RIEEditBase) {
+	var RIEDropDown = exports.RIEDropDown = function (_RIEEditBase) {
 				_inherits(RIEDropDown, _RIEEditBase);
 
 				function RIEDropDown(props) {
@@ -62118,7 +62133,9 @@
 				_createClass(RIEDropDown, [{
 							key: 'onChange',
 							value: function onChange() {
-										this.props.onChange(this.editField.value);
+										var new_value = this.editField.value;
+										this.props.onChange(new_value);
+										this.props.onSave(new_value);
 							}
 				}, {
 							key: 'render',
@@ -62128,26 +62145,37 @@
 										var _props = this.props;
 										var options = _props.options;
 										var value = _props.value;
+										var is_editing = _props.is_editing;
+										var is_readonly = _props.is_readonly;
+
+
+										return _react2.default.createElement(
+													'div',
+													null,
+													'Hi there'
+										);
 
 										return _react2.default.createElement(
 													'div',
 													{ className: 'RIEDropDown' },
-													_react2.default.createElement(_reactSelect2.default, { value: value,
+													is_editing && _react2.default.createElement(_reactSelect2.default, { value: value,
 																ref: function ref(_ref) {
 																			return _this2.editField = _ref;
 																},
 																options: options,
 																onChange: this.onChange
-													})
+													}),
+													is_readonly && _react2.default.createElement(
+																'span',
+																null,
+																value
+													)
 										);
 							}
 				}]);
 
 				return RIEDropDown;
 	}(_RIEEditBase3.default);
-
-	exports.default = RIEDropDown;
-
 
 	function mapStateToProps(state, props) {
 				return {};

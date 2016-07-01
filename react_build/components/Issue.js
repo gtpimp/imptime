@@ -13,6 +13,8 @@ import {
     fetchUsersIfNeeded
 } from '../actions/Users'
 import RIEDropDown from '../widgets/RIEDropDown'
+import RIEInput from '../widgets/RIEInput'
+import RIEModeToggler from '../widgets/RIEModeToggler'
 import RIEUserDropDown from '../widgets/RIEUserDropDown'
 import OtherUser from '../components/OtherUser'
 import { DndTypes } from '../actions/Dnd'
@@ -57,9 +59,9 @@ export class Issue extends Component {
 	dispatch(updateIssueAssignedTo(issue_id, obj.assigned_to))
     }
 
-    onChangeStatus(issue_id, obj) {
+    onChangeStatus(issue_id, new_value) {
 	const { dispatch } = this.props
-	dispatch(updateIssueStatus(issue_id, obj.status))
+	dispatch(updateIssueStatus(issue_id, new_value))
     }
 
     onChangeFeature(issue_id, obj) {
@@ -126,16 +128,20 @@ export class Issue extends Component {
 				     propName="feature_name"
 				     options={feature_options}
 				     change={(obj) => this.onChangeFeature(issue.id, obj)}
-/>
+			/>
 			}
 		    </td>
 		    <td>
-			{ false && 
-			<RIEDropDown value={issue.status || "..."}
-				     propName="status"
-				     options={ISSUE_STATUS_CHOICES}
-				     change={(obj) => this.onChangeStatus(issue.id, obj)}
-/>
+			{ issue.status || "..." }
+			{ true && 
+			<RIEModeToggler
+			    rie_key="issue_status"
+			    initialValue={issue.status || "..."}
+			    onChange={(new_value) => this.onChangeStatus(issue.id, new_value)}
+			>
+			    { false && <RIEDropDown options={ISSUE_STATUS_CHOICES} /> }
+			    <RIEInput />
+			</RIEModeToggler>
 			}
 		    </td>
 		</tr>
