@@ -149,7 +149,8 @@ export class IssueDeveloperDetails extends Component {
 			    <RIEModeToggler
 				rie_key="issue_description"
 				initialValue={issue.description || ""}
-				onChange={this.onChangeDescription} >
+				onChange={this.onChangeDescription}
+			    >
 				<RIETextArea />
 			    </RIEModeToggler>
 			</div>

@@ -64616,7 +64616,8 @@
 								{
 									rie_key: 'issue_description',
 									initialValue: issue.description || "",
-									onChange: this.onChangeDescription },
+									onChange: this.onChangeDescription
+								},
 								_react2.default.createElement(_RIETextArea2.default, null)
 							)
 						),
@@ -64858,9 +64859,9 @@
 										var rie_key = _props2.rie_key;
 										var initialValue = _props2.initialValue;
 										var original_initial_value = _props2.original_initial_value;
+										var is_editing = _props2.is_editing;
 
 										if (original_initial_value != initialValue) {
-													dispatch((0, _Rie.reset)(rie_key));
 													dispatch((0, _Rie.setInitialValue)(rie_key, this.props.initialValue));
 										}
 							}
@@ -69069,7 +69070,8 @@
 				return state_copy;
 			case _Rie.RIE_SET_INITIAL_VALUE:
 				state_copy[action.rie_key] = Object.assign({}, r, {
-					initial_value: action.initial_value
+					initial_value: action.initial_value,
+					value: action.initial_value
 				});
 				return state_copy;
 			default:

@@ -30,9 +30,8 @@ export class RIEModeToggler extends React.Component {
     }
 
     componentWillUpdate() {
-	const { dispatch, rie_key, initialValue, original_initial_value } = this.props
+	const { dispatch, rie_key, initialValue, original_initial_value, is_editing } = this.props
 	if ( original_initial_value != initialValue ) {
-	    dispatch(reset(rie_key))
 	    dispatch(setInitialValue(rie_key, this.props.initialValue))
 	}
     }

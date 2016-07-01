@@ -46,7 +46,8 @@ export default function rie(state=initial_state, action) {
 	    return state_copy
 	case RIE_SET_INITIAL_VALUE:
 	    state_copy[action.rie_key] = Object.assign({}, r, {
-		initial_value: action.initial_value
+		initial_value: action.initial_value,
+		value: action.initial_value
 	    })
 	    return state_copy
         default:
