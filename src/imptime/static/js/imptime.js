@@ -61688,10 +61688,10 @@
 							}
 				}, {
 							key: 'onChangeFeature',
-							value: function onChangeFeature(issue_id, obj) {
+							value: function onChangeFeature(issue_id, new_value) {
 										var dispatch = this.props.dispatch;
 
-										dispatch((0, _Issue.updateIssueFeature)(issue_id, obj.feature_name));
+										dispatch((0, _Issue.updateIssueFeature)(issue_id, new_value));
 							}
 				}, {
 							key: 'render_collapsed',
@@ -61798,13 +61798,17 @@
 																_react2.default.createElement(
 																			'td',
 																			null,
-																			false && _react2.default.createElement(_RIEDropDown2.default, { value: issue.feature_name || "...",
-																						propName: 'feature_name',
-																						options: feature_options,
-																						change: function change(obj) {
-																									return _this2.onChangeFeature(issue.id, obj);
-																						}
-																			})
+																			_react2.default.createElement(
+																						_RIEModeToggler2.default,
+																						{
+																									rie_key: "issue_feature_" + issue.id,
+																									initialValue: issue.feature_name || "...",
+																									onChange: function onChange(new_value) {
+																												return _this2.onChangeFeature(issue.id, new_value);
+																									}
+																						},
+																						_react2.default.createElement(_RIEDropDown2.default, { options: feature_options })
+																			)
 																),
 																_react2.default.createElement(
 																			'td',

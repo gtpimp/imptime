@@ -64,9 +64,9 @@ export class Issue extends Component {
 	dispatch(updateIssueStatus(issue_id, new_value))
     }
 
-    onChangeFeature(issue_id, obj) {
+    onChangeFeature(issue_id, new_value) {
 	const { dispatch } = this.props
-	dispatch(updateIssueFeature(issue_id, obj.feature_name))
+	dispatch(updateIssueFeature(issue_id, new_value))
     }
 
     render_collapsed() {
@@ -123,13 +123,13 @@ export class Issue extends Component {
 			}
 		    </td>
 		    <td>
-			{ false && 
-			<RIEDropDown value={issue.feature_name || "..."}
-				     propName="feature_name"
-				     options={feature_options}
-				     change={(obj) => this.onChangeFeature(issue.id, obj)}
-			/>
-			}
+			<RIEModeToggler
+			    rie_key={"issue_feature_"+issue.id}
+			    initialValue={issue.feature_name || "..."}
+			    onChange={(new_value) => this.onChangeFeature(issue.id, new_value)}
+			>
+			    <RIEDropDown options={feature_options} />
+			</RIEModeToggler>
 		    </td>
 		    <td>
 			<RIEModeToggler
