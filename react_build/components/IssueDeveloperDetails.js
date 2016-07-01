@@ -147,7 +147,7 @@ export class IssueDeveloperDetails extends Component {
 
 				<RIEModeToggler
 				    rie_key="issue_subject"
-				    initialValue={issue.subject}
+				    initialValue={issue.subject || "..."}
 				    onChange={(new_value) => this.onChangeSubject(issue.id, new_value)}
 				>
 				    <RIEInput />

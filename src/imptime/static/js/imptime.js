@@ -64633,7 +64633,7 @@
 									_RIEModeToggler2.default,
 									{
 										rie_key: 'issue_subject',
-										initialValue: issue.subject,
+										initialValue: issue.subject || "...",
 										onChange: function onChange(new_value) {
 											return _this2.onChangeSubject(issue.id, new_value);
 										}
