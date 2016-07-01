@@ -61809,18 +61809,16 @@
 																_react2.default.createElement(
 																			'td',
 																			null,
-																			issue.status || "...",
-																			true && _react2.default.createElement(
+																			_react2.default.createElement(
 																						_RIEModeToggler2.default,
 																						{
-																									rie_key: 'issue_status',
+																									rie_key: "issue_status_" + issue.id,
 																									initialValue: issue.status || "...",
 																									onChange: function onChange(new_value) {
 																												return _this2.onChangeStatus(issue.id, new_value);
 																									}
 																						},
-																						false && _react2.default.createElement(_RIEDropDown2.default, { options: ISSUE_STATUS_CHOICES }),
-																						_react2.default.createElement(_RIEInput2.default, null)
+																						_react2.default.createElement(_RIEDropDown2.default, { options: ISSUE_STATUS_CHOICES })
 																			)
 																)
 													)));
@@ -62132,8 +62130,8 @@
 
 				_createClass(RIEDropDown, [{
 							key: 'onChange',
-							value: function onChange() {
-										var new_value = this.editField.value;
+							value: function onChange(selected_option) {
+										var new_value = selected_option.value;
 										this.props.onChange(new_value);
 										this.props.onSave(new_value);
 							}
@@ -62148,12 +62146,6 @@
 										var is_editing = _props.is_editing;
 										var is_readonly = _props.is_readonly;
 
-
-										return _react2.default.createElement(
-													'div',
-													null,
-													'Hi there'
-										);
 
 										return _react2.default.createElement(
 													'div',
@@ -64642,7 +64634,7 @@
 							_react2.default.createElement(
 								_RIEModeToggler2.default,
 								{
-									rie_key: 'issue_description',
+									rie_key: "issue_description",
 									initialValue: issue.description || "",
 									onChange: this.onChangeDescription
 								},

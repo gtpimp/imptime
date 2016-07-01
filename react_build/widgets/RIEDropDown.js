@@ -11,8 +11,8 @@ export class RIEDropDown extends RIEEditBase {
 	this.onChange = this.onChange.bind(this)
     }
 
-    onChange() {
-	const new_value = this.editField.value
+    onChange(selected_option) {
+	const new_value = selected_option.value
 	this.props.onChange(new_value)
 	this.props.onSave(new_value)
     }
@@ -20,8 +20,6 @@ export class RIEDropDown extends RIEEditBase {
     render() {
 	const { options, value, is_editing, is_readonly } = this.props
 
-	return ( <div>Hi there</div> )
-	
 	return (
 	    <div className="RIEDropDown">
 		{ is_editing &&

@@ -132,17 +132,13 @@ export class Issue extends Component {
 			}
 		    </td>
 		    <td>
-			{ issue.status || "..." }
-			{ true && 
 			<RIEModeToggler
-			    rie_key="issue_status"
+			    rie_key={"issue_status_"+issue.id}
 			    initialValue={issue.status || "..."}
 			    onChange={(new_value) => this.onChangeStatus(issue.id, new_value)}
 			>
-			    { false && <RIEDropDown options={ISSUE_STATUS_CHOICES} /> }
-			    <RIEInput />
+			    <RIEDropDown options={ISSUE_STATUS_CHOICES} />
 			</RIEModeToggler>
-			}
 		    </td>
 		</tr>
 	    ))
