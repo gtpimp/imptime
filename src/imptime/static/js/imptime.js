@@ -64435,6 +64435,8 @@
 			_this.onDelete = _this.onDelete.bind(_this);
 			_this.onChangeSubject = _this.onChangeSubject.bind(_this);
 			_this.onChangeDescription = _this.onChangeDescription.bind(_this);
+			_this.onSaveCandidateIssue = _this.onSaveCandidateIssue.bind(_this);
+			_this.onCancelCandidateIssue = _this.onCancelCandidateIssue.bind(_this);
 			return _this;
 		}
 
@@ -64477,11 +64479,11 @@
 			}
 		}, {
 			key: 'onSaveCandidateIssue',
-			value: function onSaveCandidateIssue(obj) {
+			value: function onSaveCandidateIssue(new_subject) {
 				var dispatch = this.props.dispatch;
 
-				dispatch((0, _Issue.updateCandidateSubject)(obj.candidate_issue_subject));
-				dispatch(saveCandidateIssue());
+				dispatch((0, _Issue.updateCandidateSubject)(new_subject));
+				dispatch((0, _Issue.saveCandidateIssue)());
 			}
 		}, {
 			key: 'onCancelCandidateIssue',
@@ -64559,11 +64561,17 @@
 							_react2.default.createElement(
 								'h3',
 								null,
-								_react2.default.createElement(_RIEInput2.default, { value: '',
-									propName: 'candidate_issue_subject',
-									initialState: 'editing',
-									change: this.onSaveCandidateIssue,
-									cancel: this.onCancelCandidateIssue })
+								_react2.default.createElement(
+									_RIEModeToggler2.default,
+									{
+										rie_key: 'issue_subject',
+										initialValue: '',
+										initialState: 'editing',
+										onChange: this.onSaveCandidateIssue,
+										onCancel: this.onCancelCandidateIssue
+									},
+									_react2.default.createElement(_RIEInput2.default, null)
+								)
 							)
 						)
 					)
@@ -64686,7 +64694,7 @@
 			issue: issue,
 			comments: comments,
 			is_loading: general_details.is_loading,
-			is_visible: issue_id || false,
+			is_visible: issue_id || is_creating_issue || false,
 			is_creating_issue: is_creating_issue,
 			candidate_issue: candidate_issue
 		};
@@ -67085,15 +67093,15 @@
 																					dispatch((0, _IssueGeneralDetails.fetchIssueGeneralDetailsIfNeeded)([action.issue_id]));
 																					break;
 																	case _Issue.ANNOUNCE_CAPTURING_NEW_ISSUE:
-																	// dispatch(invalidateIssueGeneralDetails([action.issue.id]))
-
+																					// dispatch(invalidateIssueGeneralDetails([action.issue.id]))
+																					break;
 																	case _Issue.ANNOUNCE_SAVED_NEW_ISSUE:
 																					// dispatch(invalidateIssues([action.issue.id]))
 																					// dispatch(invalidateIssueGeneralDetails([action.issue.id]))
 
 																					dispatch((0, _ItemList.invalidateList)(issues_list_key));
 																					dispatch((0, _Issues.fetchIssuesIfNeeded)(issues_list_key));
-																					// dispatch(fetchIssueGeneralDetailsIfNeeded([action.issue.id]))
+																					dispatch((0, _ItemList.selectItems)(issues_list_key, [action.issue.id]));
 																					break;
 																	case _Issue.ANNOUNCE_ISSUE_DELETED:
 																					dispatch((0, _ItemList.invalidateList)(issues_list_key));

@@ -10,6 +10,7 @@ import {
     deleteIssue,
     startCandidateIssue,
     updateCandidateSubject,
+    saveCandidateIssue,
     cancelCandidateIssue
 } from '../actions/Issue'
 
@@ -28,6 +29,8 @@ export class IssueDeveloperDetails extends Component {
         this.onDelete = this.onDelete.bind(this)
 	this.onChangeSubject = this.onChangeSubject.bind(this)
 	this.onChangeDescription = this.onChangeDescription.bind(this)
+	this.onSaveCandidateIssue = this.onSaveCandidateIssue.bind(this)
+	this.onCancelCandidateIssue = this.onCancelCandidateIssue.bind(this)
     }
 
     componentDidMount() {
@@ -52,9 +55,9 @@ export class IssueDeveloperDetails extends Component {
 	dispatch(deleteIssue(issue_id))
     }
 
-    onSaveCandidateIssue(obj) {
+    onSaveCandidateIssue(new_subject) {
 	const { dispatch } = this.props
-	dispatch(updateCandidateSubject(obj.candidate_issue_subject))
+	dispatch(updateCandidateSubject(new_subject))
 	dispatch(saveCandidateIssue())
     }
 
@@ -96,11 +99,15 @@ export class IssueDeveloperDetails extends Component {
 
 			<h3>Subject: </h3>
 			<h3>
-			    <RIEInput value=""
-				      propName="candidate_issue_subject"
-				      initialState="editing"
-				      change={this.onSaveCandidateIssue}
-				      cancel={this.onCancelCandidateIssue} />
+			    <RIEModeToggler
+				rie_key="issue_subject"
+				initialValue=""
+				initialState="editing"
+				onChange={this.onSaveCandidateIssue}
+				onCancel={this.onCancelCandidateIssue}
+			    >
+				<RIEInput />
+			    </RIEModeToggler>
 			</h3>
 		    </div>
 		</div>
@@ -193,7 +200,7 @@ function mapStateToProps(state, props) {
 	issue: issue,
 	comments: comments,
         is_loading: general_details.is_loading,
-	is_visible: issue_id || false,
+	is_visible: issue_id || is_creating_issue || false,
 	is_creating_issue: is_creating_issue,
 	candidate_issue: candidate_issue
     }
