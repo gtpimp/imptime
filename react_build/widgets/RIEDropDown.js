@@ -19,13 +19,11 @@ export class RIEDropDown extends RIEEditBase {
     
     render() {
 	const { options, value, is_editing, is_readonly } = this.props
-
 	return (
 	    <div>
 		{ is_editing &&
 		  <div className="RIEDropDown">
 		      <Select value={value}
-			      ref={(ref) => this.editField = ref}
 			      options={options}
 			      onChange={this.onChange}
 		      />
@@ -36,7 +34,7 @@ export class RIEDropDown extends RIEEditBase {
 		}
 	    </div>
 	)
-    };
+    }
 }
 
 

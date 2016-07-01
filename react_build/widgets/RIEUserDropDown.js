@@ -1,68 +1,63 @@
 import React, { Component, PropTypes } from 'react'
 import ReactDOM from 'react-dom';
-import RIEDropDown from './RIEDropDown'
 import OtherUser from '../components/OtherUser'
 import Select from 'react-select';
 import TextareaAutosize from 'react-autosize-textarea'
 import { connect } from 'react-redux'
 import {
     fetchUsersIfNeeded
-} from '../actions/Users'	
+} from '../actions/Users'
+import RIEEditBase from './RIEEditBase';
 
-export default class RIEUserDropDown extends RIEDropDown {
+export class RIEUserDropDown extends RIEEditBase {
 
     constructor(props) {
 	super(props)
-	this.startEditing = this.startEditing.bind(this)
+	this.onChange = this.onChange.bind(this)
     }
-
+    
     componentDidMount() {
 	const { dispatch, user_ids } = this.props
 	dispatch(fetchUsersIfNeeded(user_ids))
     }
-    
-    selectInputText(inputElem) {
-    }
 
-    startEditing(event) {
-        this.setState({editing: true});
-	event.stopPropagation()
+    onChange(selected_option) {
+	const new_value = selected_option.value
+	this.props.onChange(new_value)
+	this.props.onSave(new_value)
     }
     
-    renderNormalComponent() {
+    renderReadonly() {
 	const { value } = this.props
 	return (
 	    <OtherUser user_id={value}
 		       render_mode="inline--small"
-		       className={this.makeClassString()}
-		       onClick={this.startEditing}
-		       loading_value={ value } />
+		       loading_value={value} />
 	)
     }
     
-    renderEditingComponent() {
+    renderEditing() {
 	const { options, value } = this.props
 
 	return (
 	    <div className="RIEDropDown">
-		<Select name='dropdown'
-			value={value}
-			ref="input"
-			autofocus={true}
+		<Select value={value}
 			options={options}
-			onChange={this.commit}
+			onChange={this.onChange}
 		/>
 	    </div>
 	)
     };
 
     render() {
-        if(this.state.editing) {
-            return this.renderEditingComponent();
-        } else {
-            return this.renderNormalComponent();
-        }
-    };
+	const { is_editing, is_readonly } = this.props
+	return (
+	    <div>
+		{ is_editing && this.renderEditing() }
+		{ is_readonly && this.renderReadonly() }
+	    </div>
+	)
+    }
 }
 
 function mapStateToProps(state, props) {

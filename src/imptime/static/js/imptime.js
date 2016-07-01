@@ -61674,10 +61674,10 @@
 							}
 				}, {
 							key: 'onChangeAssignedTo',
-							value: function onChangeAssignedTo(issue_id, obj) {
+							value: function onChangeAssignedTo(issue_id, new_value) {
 										var dispatch = this.props.dispatch;
 
-										dispatch((0, _Issue.updateIssueAssignedTo)(issue_id, obj.assigned_to));
+										dispatch((0, _Issue.updateIssueAssignedTo)(issue_id, new_value));
 							}
 				}, {
 							key: 'onChangeStatus',
@@ -61787,13 +61787,17 @@
 																_react2.default.createElement(
 																			'td',
 																			null,
-																			false && _react2.default.createElement(_RIEUserDropDown2.default, { value: issue.assigned_to_id,
-																						propName: 'assigned_to',
-																						user_ids: assignable_user_ids,
-																						change: function change(obj) {
-																									return _this2.onChangeAssignedTo(issue.id, obj);
-																						}
-																			})
+																			_react2.default.createElement(
+																						_RIEModeToggler2.default,
+																						{
+																									rie_key: "issue_assigned_to_" + issue.id,
+																									initialValue: issue.assigned_to_id || "...",
+																									onChange: function onChange(new_value) {
+																												return _this2.onChangeAssignedTo(issue.id, new_value);
+																									}
+																						},
+																						_react2.default.createElement(_RIEUserDropDown2.default, { user_ids: assignable_user_ids })
+																			)
 																),
 																_react2.default.createElement(
 																			'td',
@@ -62142,14 +62146,11 @@
 				}, {
 							key: 'render',
 							value: function render() {
-										var _this2 = this;
-
 										var _props = this.props;
 										var options = _props.options;
 										var value = _props.value;
 										var is_editing = _props.is_editing;
 										var is_readonly = _props.is_readonly;
-
 
 										return _react2.default.createElement(
 													'div',
@@ -62158,9 +62159,6 @@
 																'div',
 																{ className: 'RIEDropDown' },
 																_react2.default.createElement(_reactSelect2.default, { value: value,
-																			ref: function ref(_ref) {
-																						return _this2.editField = _ref;
-																			},
 																			options: options,
 																			onChange: this.onChange
 																})
@@ -63690,8 +63688,9 @@
 	'use strict';
 
 	Object.defineProperty(exports, "__esModule", {
-	    value: true
+				value: true
 	});
+	exports.RIEUserDropDown = undefined;
 
 	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
@@ -63702,10 +63701,6 @@
 	var _reactDom = __webpack_require__(336);
 
 	var _reactDom2 = _interopRequireDefault(_reactDom);
-
-	var _RIEDropDown2 = __webpack_require__(864);
-
-	var _RIEDropDown3 = _interopRequireDefault(_RIEDropDown2);
 
 	var _OtherUser = __webpack_require__(872);
 
@@ -63723,6 +63718,10 @@
 
 	var _Users = __webpack_require__(862);
 
+	var _RIEEditBase2 = __webpack_require__(858);
+
+	var _RIEEditBase3 = _interopRequireDefault(_RIEEditBase2);
+
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
@@ -63731,100 +63730,95 @@
 
 	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 
-	var RIEUserDropDown = function (_RIEDropDown) {
-	    _inherits(RIEUserDropDown, _RIEDropDown);
+	var RIEUserDropDown = exports.RIEUserDropDown = function (_RIEEditBase) {
+				_inherits(RIEUserDropDown, _RIEEditBase);
 
-	    function RIEUserDropDown(props) {
-	        _classCallCheck(this, RIEUserDropDown);
+				function RIEUserDropDown(props) {
+							_classCallCheck(this, RIEUserDropDown);
 
-	        var _this = _possibleConstructorReturn(this, Object.getPrototypeOf(RIEUserDropDown).call(this, props));
+							var _this = _possibleConstructorReturn(this, Object.getPrototypeOf(RIEUserDropDown).call(this, props));
 
-	        _this.startEditing = _this.startEditing.bind(_this);
-	        return _this;
-	    }
+							_this.onChange = _this.onChange.bind(_this);
+							return _this;
+				}
 
-	    _createClass(RIEUserDropDown, [{
-	        key: 'componentDidMount',
-	        value: function componentDidMount() {
-	            var _props = this.props;
-	            var dispatch = _props.dispatch;
-	            var user_ids = _props.user_ids;
+				_createClass(RIEUserDropDown, [{
+							key: 'componentDidMount',
+							value: function componentDidMount() {
+										var _props = this.props;
+										var dispatch = _props.dispatch;
+										var user_ids = _props.user_ids;
 
-	            dispatch((0, _Users.fetchUsersIfNeeded)(user_ids));
-	        }
-	    }, {
-	        key: 'selectInputText',
-	        value: function selectInputText(inputElem) {}
-	    }, {
-	        key: 'startEditing',
-	        value: function startEditing(event) {
-	            this.setState({ editing: true });
-	            event.stopPropagation();
-	        }
-	    }, {
-	        key: 'renderNormalComponent',
-	        value: function renderNormalComponent() {
-	            var value = this.props.value;
+										dispatch((0, _Users.fetchUsersIfNeeded)(user_ids));
+							}
+				}, {
+							key: 'onChange',
+							value: function onChange(selected_option) {
+										var new_value = selected_option.value;
+										this.props.onChange(new_value);
+										this.props.onSave(new_value);
+							}
+				}, {
+							key: 'renderReadonly',
+							value: function renderReadonly() {
+										var value = this.props.value;
 
-	            return _react2.default.createElement(_OtherUser2.default, { user_id: value,
-	                render_mode: 'inline--small',
-	                className: this.makeClassString(),
-	                onClick: this.startEditing,
-	                loading_value: value });
-	        }
-	    }, {
-	        key: 'renderEditingComponent',
-	        value: function renderEditingComponent() {
-	            var _props2 = this.props;
-	            var options = _props2.options;
-	            var value = _props2.value;
+										return _react2.default.createElement(_OtherUser2.default, { user_id: value,
+													render_mode: 'inline--small',
+													loading_value: value });
+							}
+				}, {
+							key: 'renderEditing',
+							value: function renderEditing() {
+										var _props2 = this.props;
+										var options = _props2.options;
+										var value = _props2.value;
 
 
-	            return _react2.default.createElement(
-	                'div',
-	                { className: 'RIEDropDown' },
-	                _react2.default.createElement(_reactSelect2.default, { name: 'dropdown',
-	                    value: value,
-	                    ref: 'input',
-	                    autofocus: true,
-	                    options: options,
-	                    onChange: this.commit
-	                })
-	            );
-	        }
-	    }, {
-	        key: 'render',
-	        value: function render() {
-	            if (this.state.editing) {
-	                return this.renderEditingComponent();
-	            } else {
-	                return this.renderNormalComponent();
-	            }
-	        }
-	    }]);
+										return _react2.default.createElement(
+													'div',
+													{ className: 'RIEDropDown' },
+													_react2.default.createElement(_reactSelect2.default, { value: value,
+																options: options,
+																onChange: this.onChange
+													})
+										);
+							}
+				}, {
+							key: 'render',
+							value: function render() {
+										var _props3 = this.props;
+										var is_editing = _props3.is_editing;
+										var is_readonly = _props3.is_readonly;
 
-	    return RIEUserDropDown;
-	}(_RIEDropDown3.default);
+										return _react2.default.createElement(
+													'div',
+													null,
+													is_editing && this.renderEditing(),
+													is_readonly && this.renderReadonly()
+										);
+							}
+				}]);
 
-	exports.default = RIEUserDropDown;
-
+				return RIEUserDropDown;
+	}(_RIEEditBase3.default);
 
 	function mapStateToProps(state, props) {
-	    var user_ids = props.user_ids;
-	    var user = state.user;
+				var user_ids = props.user_ids;
+				var user = state.user;
 
-	    var users = user && user.items_by_id && user_ids.map(function (user_id) {
-	        return user.items_by_id[user_id] || { 'id': user_id, 'username': user_id };
-	    }) || [];
-	    var options = users.map(function (user) {
-	        return { value: user.id, label: user.username };
-	    });
+				var users = user && user.items_by_id && user_ids.map(function (user_id) {
+							return user.items_by_id[user_id] || { 'id': user_id, 'username': user_id };
+				}) || [];
+				var options = users.map(function (user) {
+							return { value: user.id, label: user.username };
+				});
 
-	    return {
-	        user_ids: user_ids,
-	        users: user,
-	        options: options
-	    };
+				return {
+							user_ids: user_ids,
+							users: user,
+							options: options
+				};
 	}
 
 	exports.default = (0, _reactRedux.connect)(mapStateToProps)(RIEUserDropDown);

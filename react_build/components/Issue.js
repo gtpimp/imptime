@@ -54,9 +54,9 @@ export class Issue extends Component {
 
     }
     
-    onChangeAssignedTo(issue_id, obj) {
+    onChangeAssignedTo(issue_id, new_value) {
 	const { dispatch } = this.props
-	dispatch(updateIssueAssignedTo(issue_id, obj.assigned_to))
+	dispatch(updateIssueAssignedTo(issue_id, new_value))
     }
 
     onChangeStatus(issue_id, new_value) {
@@ -114,13 +114,13 @@ export class Issue extends Component {
 			{issue.subject}
 		    </td>
 		    <td>
-			{ false && 
-			<RIEUserDropDown value={issue.assigned_to_id}
-					 propName="assigned_to"
-					 user_ids={assignable_user_ids}
-					 change={(obj) => this.onChangeAssignedTo(issue.id, obj)}
-/>
-			}
+			<RIEModeToggler
+			    rie_key={"issue_assigned_to_"+issue.id}
+			    initialValue={issue.assigned_to_id || "..."}
+			    onChange={(new_value) => this.onChangeAssignedTo(issue.id, new_value)}
+			>
+			    <RIEUserDropDown user_ids={assignable_user_ids} />
+			</RIEModeToggler>
 		    </td>
 		    <td>
 			<RIEModeToggler
