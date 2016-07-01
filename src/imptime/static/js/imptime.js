@@ -62149,14 +62149,18 @@
 
 										return _react2.default.createElement(
 													'div',
-													{ className: 'RIEDropDown' },
-													is_editing && _react2.default.createElement(_reactSelect2.default, { value: value,
-																ref: function ref(_ref) {
-																			return _this2.editField = _ref;
-																},
-																options: options,
-																onChange: this.onChange
-													}),
+													null,
+													is_editing && _react2.default.createElement(
+																'div',
+																{ className: 'RIEDropDown' },
+																_react2.default.createElement(_reactSelect2.default, { value: value,
+																			ref: function ref(_ref) {
+																						return _this2.editField = _ref;
+																			},
+																			options: options,
+																			onChange: this.onChange
+																})
+													),
 													is_readonly && _react2.default.createElement(
 																'span',
 																null,
