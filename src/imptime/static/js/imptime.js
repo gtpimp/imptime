@@ -41528,7 +41528,7 @@
 
 	var _IssueList2 = _interopRequireDefault(_IssueList);
 
-	var _IssueDeveloperDetails = __webpack_require__(877);
+	var _IssueDeveloperDetails = __webpack_require__(879);
 
 	var _IssueDeveloperDetails2 = _interopRequireDefault(_IssueDeveloperDetails);
 
@@ -61626,15 +61626,15 @@
 
 	var _RIEInput2 = _interopRequireDefault(_RIEInput);
 
-	var _RIEModeToggler = __webpack_require__(879);
+	var _RIEModeToggler = __webpack_require__(871);
 
 	var _RIEModeToggler2 = _interopRequireDefault(_RIEModeToggler);
 
-	var _RIEUserDropDown = __webpack_require__(871);
+	var _RIEUserDropDown = __webpack_require__(873);
 
 	var _RIEUserDropDown2 = _interopRequireDefault(_RIEUserDropDown);
 
-	var _OtherUser = __webpack_require__(872);
+	var _OtherUser = __webpack_require__(874);
 
 	var _OtherUser2 = _interopRequireDefault(_OtherUser);
 
@@ -63690,6 +63690,329 @@
 	Object.defineProperty(exports, "__esModule", {
 				value: true
 	});
+	exports.RIEModeToggler = undefined;
+
+	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+	var _react = __webpack_require__(300);
+
+	var _react2 = _interopRequireDefault(_react);
+
+	var _reactDom = __webpack_require__(336);
+
+	var _reactDom2 = _interopRequireDefault(_reactDom);
+
+	var _reactRedux = __webpack_require__(534);
+
+	var _Rie = __webpack_require__(872);
+
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+	function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+	var RIEModeToggler = exports.RIEModeToggler = function (_React$Component) {
+				_inherits(RIEModeToggler, _React$Component);
+
+				function RIEModeToggler(props) {
+							_classCallCheck(this, RIEModeToggler);
+
+							var _this = _possibleConstructorReturn(this, Object.getPrototypeOf(RIEModeToggler).call(this, props));
+
+							_this.startEditing = _this.startEditing.bind(_this);
+							_this.cancelEditing = _this.cancelEditing.bind(_this);
+							_this.stopEditing = _this.stopEditing.bind(_this);
+							_this.finishEditing = _this.finishEditing.bind(_this);
+							_this.onChange = _this.onChange.bind(_this);
+							_this.keyDown = _this.keyDown.bind(_this);
+							_this.elementClick = _this.elementClick.bind(_this);
+							return _this;
+				}
+
+				_createClass(RIEModeToggler, [{
+							key: 'componentDidMount',
+							value: function componentDidMount() {
+										var _props = this.props;
+										var dispatch = _props.dispatch;
+										var rie_key = _props.rie_key;
+
+										dispatch((0, _Rie.setInitialValue)(rie_key, this.props.initialValue));
+										if (this.props.initialState == 'editing') {
+													this.startEditing();
+										}
+							}
+				}, {
+							key: 'componentWillUpdate',
+							value: function componentWillUpdate() {
+										var _props2 = this.props;
+										var dispatch = _props2.dispatch;
+										var rie_key = _props2.rie_key;
+										var initialValue = _props2.initialValue;
+										var original_initial_value = _props2.original_initial_value;
+										var is_editing = _props2.is_editing;
+
+										if (original_initial_value != initialValue) {
+													dispatch((0, _Rie.setInitialValue)(rie_key, this.props.initialValue));
+										}
+							}
+				}, {
+							key: 'onChange',
+							value: function onChange(new_value) {
+										var _props3 = this.props;
+										var dispatch = _props3.dispatch;
+										var rie_key = _props3.rie_key;
+
+										dispatch((0, _Rie.updateValue)(rie_key, new_value));
+							}
+				}, {
+							key: 'finishEditing',
+							value: function finishEditing(current_value) {
+										var v = current_value || this.props.value;
+										if (this.props.onChange) {
+													this.props.onChange(v);
+										}
+										this.stopEditing();
+							}
+				}, {
+							key: 'startEditing',
+							value: function startEditing() {
+										var _props4 = this.props;
+										var dispatch = _props4.dispatch;
+										var rie_key = _props4.rie_key;
+										var is_editing = _props4.is_editing;
+
+										if (!is_editing) {
+													dispatch((0, _Rie.startEditing)(rie_key));
+										}
+							}
+				}, {
+							key: 'stopEditing',
+							value: function stopEditing() {
+										var _props5 = this.props;
+										var dispatch = _props5.dispatch;
+										var rie_key = _props5.rie_key;
+										var is_editing = _props5.is_editing;
+
+										if (is_editing) {
+													dispatch((0, _Rie.stopEditing)(rie_key));
+										}
+							}
+				}, {
+							key: 'cancelEditing',
+							value: function cancelEditing() {
+										var _props6 = this.props;
+										var dispatch = _props6.dispatch;
+										var rie_key = _props6.rie_key;
+
+										dispatch((0, _Rie.updateValue)(rie_key, this.props.initialValue));
+										this.stopEditing();
+										if (this.props.onCancel) {
+													this.props.onCancel();
+										}
+							}
+				}, {
+							key: 'keyDown',
+							value: function keyDown(event) {
+										var is_editing = this.props.is_editing;
+
+										if (!is_editing) {
+													return;
+										}
+										if (event.keyCode === 13) {
+													event.preventDefault();
+													this.finishEditing();
+										} else if (event.keyCode === 27) {
+													event.preventDefault();
+													this.cancelEditing();
+										}
+							}
+				}, {
+							key: 'elementBlur',
+							value: function elementBlur(event) {
+										this.finishEditing();
+							}
+				}, {
+							key: 'elementClick',
+							value: function elementClick(event) {
+										this.startEditing();
+							}
+				}, {
+							key: 'renderNormalMode',
+							value: function renderNormalMode() {
+										var value = this.props.value;
+
+										return _react2.default.createElement(
+													'span',
+													{ onClick: this.startEditing },
+													value
+										);
+							}
+				}, {
+							key: 'render',
+							value: function render() {
+										var _props7 = this.props;
+										var is_editing = _props7.is_editing;
+										var is_readonly = _props7.is_readonly;
+										var children = _props7.children;
+										var value = _props7.value;
+
+
+										var that = this;
+										var editing_child = null;
+										var readonly_child = null;
+
+										_react2.default.Children.map(children, function (child, index) {
+													if (index == 0) {
+																editing_child = _react2.default.cloneElement(child, {
+																			value: value,
+																			is_editing: is_editing,
+																			is_readonly: is_readonly,
+																			startEditing: that.startEditing,
+																			onChange: that.onChange,
+																			onSave: that.finishEditing,
+																			onCancel: that.cancelEditing
+																});
+													} else if (index == 1) {
+																readonly_child = _react2.default.cloneElement(child, {
+																			value: value,
+																			is_editing: is_editing,
+																			is_readonly: is_readonly,
+																			startEditing: that.startEditing,
+																			onChange: that.onChange,
+																			onSave: that.finishEditing,
+																			onCancel: that.cancelEditing
+																});
+													}
+										});
+										if (!readonly_child) {
+													readonly_child = editing_child;
+										}
+
+										return _react2.default.createElement(
+													'div',
+													{ onKeyDown: this.keyDown, onClick: this.elementClick },
+													is_editing && editing_child,
+													is_readonly && readonly_child
+										);
+							}
+				}]);
+
+				return RIEModeToggler;
+	}(_react2.default.Component);
+
+	function mapStateToProps(state, props) {
+				var rie_key = props.rie_key;
+
+
+				var rie = state.rie || {};
+				var r = rie[rie_key] || {};
+				var mode = r.mode || 'readonly';
+				var value = r.value || props.initialValue;
+				var original_initial_value = r.initial_value;
+
+				return {
+							is_editing: mode == 'editing',
+							is_readonly: mode == 'readonly',
+							value: value,
+							original_initial_value: original_initial_value
+				};
+	}
+
+	exports.default = (0, _reactRedux.connect)(mapStateToProps)(RIEModeToggler);
+
+/***/ },
+/* 872 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	Object.defineProperty(exports, "__esModule", {
+					value: true
+	});
+	exports.RIE_SET_INITIAL_VALUE = exports.RIE_UPDATE_VALUE = exports.RIE_STOP_EDITING = exports.RIE_START_EDITING = exports.RIE_RESET = undefined;
+	exports.reset = reset;
+	exports.startEditing = startEditing;
+	exports.stopEditing = stopEditing;
+	exports.updateValue = updateValue;
+	exports.setInitialValue = setInitialValue;
+
+	var _lib = __webpack_require__(732);
+
+	var _difference = __webpack_require__(737);
+
+	var _difference2 = _interopRequireDefault(_difference);
+
+	var _keys = __webpack_require__(693);
+
+	var _keys2 = _interopRequireDefault(_keys);
+
+	var _indexOf = __webpack_require__(742);
+
+	var _indexOf2 = _interopRequireDefault(_indexOf);
+
+	var _map = __webpack_require__(673);
+
+	var _map2 = _interopRequireDefault(_map);
+
+	var _ItemList = __webpack_require__(731);
+
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+	var RIE_RESET = exports.RIE_RESET = 'RIE_RESET';
+	var RIE_START_EDITING = exports.RIE_START_EDITING = 'RIE_START_EDITING';
+	var RIE_STOP_EDITING = exports.RIE_STOP_EDITING = 'RIE_STOP_EDITING';
+	var RIE_UPDATE_VALUE = exports.RIE_UPDATE_VALUE = 'RIE_UPDATE_VALUE';
+	var RIE_SET_INITIAL_VALUE = exports.RIE_SET_INITIAL_VALUE = 'RIE_SET_INITIAL_VALUE';
+
+	function reset(rie_key) {
+					return {
+									type: RIE_RESET,
+									rie_key: rie_key
+					};
+	}
+
+	function startEditing(rie_key) {
+					return {
+									type: RIE_START_EDITING,
+									rie_key: rie_key
+					};
+	}
+
+	function stopEditing(rie_key) {
+					return {
+									type: RIE_STOP_EDITING,
+									rie_key: rie_key
+					};
+	}
+
+	function updateValue(rie_key, new_value) {
+					return {
+									type: RIE_UPDATE_VALUE,
+									rie_key: rie_key,
+									new_value: new_value
+					};
+	}
+
+	function setInitialValue(rie_key, initial_value) {
+					return {
+									type: RIE_SET_INITIAL_VALUE,
+									rie_key: rie_key,
+									initial_value: initial_value
+					};
+	}
+
+/***/ },
+/* 873 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	Object.defineProperty(exports, "__esModule", {
+				value: true
+	});
 	exports.RIEUserDropDown = undefined;
 
 	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
@@ -63702,7 +64025,7 @@
 
 	var _reactDom2 = _interopRequireDefault(_reactDom);
 
-	var _OtherUser = __webpack_require__(872);
+	var _OtherUser = __webpack_require__(874);
 
 	var _OtherUser2 = _interopRequireDefault(_OtherUser);
 
@@ -63710,7 +64033,7 @@
 
 	var _reactSelect2 = _interopRequireDefault(_reactSelect);
 
-	var _reactAutosizeTextarea = __webpack_require__(873);
+	var _reactAutosizeTextarea = __webpack_require__(875);
 
 	var _reactAutosizeTextarea2 = _interopRequireDefault(_reactAutosizeTextarea);
 
@@ -63824,7 +64147,7 @@
 	exports.default = (0, _reactRedux.connect)(mapStateToProps)(RIEUserDropDown);
 
 /***/ },
-/* 872 */
+/* 874 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -63963,13 +64286,13 @@
 	exports.default = (0, _reactRedux.connect)(mapStateToProps)(OtherUser);
 
 /***/ },
-/* 873 */
+/* 875 */
 /***/ function(module, exports, __webpack_require__) {
 
-	module.exports = __webpack_require__(874);
+	module.exports = __webpack_require__(876);
 
 /***/ },
-/* 874 */
+/* 876 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -63978,7 +64301,7 @@
 
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
 
-	var _TextareaAutosizeJs = __webpack_require__(875);
+	var _TextareaAutosizeJs = __webpack_require__(877);
 
 	var _TextareaAutosizeJs2 = _interopRequireDefault(_TextareaAutosizeJs);
 
@@ -63986,7 +64309,7 @@
 	module.exports = exports['default'];
 
 /***/ },
-/* 875 */
+/* 877 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -64013,7 +64336,7 @@
 
 	var _reactDom2 = _interopRequireDefault(_reactDom);
 
-	var _autosize = __webpack_require__(876);
+	var _autosize = __webpack_require__(878);
 
 	var _autosize2 = _interopRequireDefault(_autosize);
 
@@ -64109,7 +64432,7 @@
 	module.exports = exports['default'];
 
 /***/ },
-/* 876 */
+/* 878 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/*!
@@ -64368,7 +64691,7 @@
 	});
 
 /***/ },
-/* 877 */
+/* 879 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -64396,15 +64719,15 @@
 
 	var _map2 = _interopRequireDefault(_map);
 
-	var _OtherUser = __webpack_require__(872);
+	var _OtherUser = __webpack_require__(874);
 
 	var _OtherUser2 = _interopRequireDefault(_OtherUser);
 
 	var _Issue = __webpack_require__(860);
 
-	var _IssueGeneralDetails = __webpack_require__(878);
+	var _IssueGeneralDetails = __webpack_require__(880);
 
-	var _RIEModeToggler = __webpack_require__(879);
+	var _RIEModeToggler = __webpack_require__(871);
 
 	var _RIEModeToggler2 = _interopRequireDefault(_RIEModeToggler);
 
@@ -64703,7 +65026,7 @@
 	exports.default = (0, _reactRedux.connect)(mapStateToProps)(IssueDeveloperDetails);
 
 /***/ },
-/* 878 */
+/* 880 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -64819,308 +65142,6 @@
 	}
 
 /***/ },
-/* 879 */
-/***/ function(module, exports, __webpack_require__) {
-
-	'use strict';
-
-	Object.defineProperty(exports, "__esModule", {
-				value: true
-	});
-	exports.RIEModeToggler = undefined;
-
-	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
-
-	var _react = __webpack_require__(300);
-
-	var _react2 = _interopRequireDefault(_react);
-
-	var _reactDom = __webpack_require__(336);
-
-	var _reactDom2 = _interopRequireDefault(_reactDom);
-
-	var _reactRedux = __webpack_require__(534);
-
-	var _Rie = __webpack_require__(880);
-
-	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
-	function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
-
-	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
-
-	var RIEModeToggler = exports.RIEModeToggler = function (_React$Component) {
-				_inherits(RIEModeToggler, _React$Component);
-
-				function RIEModeToggler(props) {
-							_classCallCheck(this, RIEModeToggler);
-
-							var _this = _possibleConstructorReturn(this, Object.getPrototypeOf(RIEModeToggler).call(this, props));
-
-							_this.startEditing = _this.startEditing.bind(_this);
-							_this.cancelEditing = _this.cancelEditing.bind(_this);
-							_this.stopEditing = _this.stopEditing.bind(_this);
-							_this.finishEditing = _this.finishEditing.bind(_this);
-							_this.onChange = _this.onChange.bind(_this);
-							_this.keyDown = _this.keyDown.bind(_this);
-							_this.elementClick = _this.elementClick.bind(_this);
-							return _this;
-				}
-
-				_createClass(RIEModeToggler, [{
-							key: 'componentDidMount',
-							value: function componentDidMount() {
-										var _props = this.props;
-										var dispatch = _props.dispatch;
-										var rie_key = _props.rie_key;
-
-										dispatch((0, _Rie.setInitialValue)(rie_key, this.props.initialValue));
-										if (this.props.initialState == 'editing') {
-													this.startEditing();
-										}
-							}
-				}, {
-							key: 'componentWillUpdate',
-							value: function componentWillUpdate() {
-										var _props2 = this.props;
-										var dispatch = _props2.dispatch;
-										var rie_key = _props2.rie_key;
-										var initialValue = _props2.initialValue;
-										var original_initial_value = _props2.original_initial_value;
-										var is_editing = _props2.is_editing;
-
-										if (original_initial_value != initialValue) {
-													dispatch((0, _Rie.setInitialValue)(rie_key, this.props.initialValue));
-										}
-							}
-				}, {
-							key: 'onChange',
-							value: function onChange(new_value) {
-										var _props3 = this.props;
-										var dispatch = _props3.dispatch;
-										var rie_key = _props3.rie_key;
-
-										dispatch((0, _Rie.updateValue)(rie_key, new_value));
-							}
-				}, {
-							key: 'finishEditing',
-							value: function finishEditing(current_value) {
-										var v = current_value || this.props.value;
-										if (this.props.onChange) {
-													this.props.onChange(v);
-										}
-										this.stopEditing();
-							}
-				}, {
-							key: 'startEditing',
-							value: function startEditing() {
-										var _props4 = this.props;
-										var dispatch = _props4.dispatch;
-										var rie_key = _props4.rie_key;
-										var is_editing = _props4.is_editing;
-
-										if (!is_editing) {
-													dispatch((0, _Rie.startEditing)(rie_key));
-										}
-							}
-				}, {
-							key: 'stopEditing',
-							value: function stopEditing() {
-										var _props5 = this.props;
-										var dispatch = _props5.dispatch;
-										var rie_key = _props5.rie_key;
-										var is_editing = _props5.is_editing;
-
-										if (is_editing) {
-													dispatch((0, _Rie.stopEditing)(rie_key));
-										}
-							}
-				}, {
-							key: 'cancelEditing',
-							value: function cancelEditing() {
-										var _props6 = this.props;
-										var dispatch = _props6.dispatch;
-										var rie_key = _props6.rie_key;
-
-										dispatch((0, _Rie.updateValue)(rie_key, this.props.initialValue));
-										this.stopEditing();
-										if (this.props.onCancel) {
-													this.props.onCancel();
-										}
-							}
-				}, {
-							key: 'keyDown',
-							value: function keyDown(event) {
-										var is_editing = this.props.is_editing;
-
-										if (!is_editing) {
-													return;
-										}
-										if (event.keyCode === 13) {
-													event.preventDefault();
-													this.finishEditing();
-										} else if (event.keyCode === 27) {
-													event.preventDefault();
-													this.cancelEditing();
-										}
-							}
-				}, {
-							key: 'elementBlur',
-							value: function elementBlur(event) {
-										this.finishEditing();
-							}
-				}, {
-							key: 'elementClick',
-							value: function elementClick(event) {
-										this.startEditing();
-							}
-				}, {
-							key: 'renderNormalMode',
-							value: function renderNormalMode() {
-										var value = this.props.value;
-
-										return _react2.default.createElement(
-													'span',
-													{ onClick: this.startEditing },
-													value
-										);
-							}
-				}, {
-							key: 'render',
-							value: function render() {
-										var _props7 = this.props;
-										var is_editing = _props7.is_editing;
-										var is_readonly = _props7.is_readonly;
-										var children = _props7.children;
-										var value = _props7.value;
-
-
-										var that = this;
-										return _react2.default.createElement(
-													'div',
-													{ onKeyDown: this.keyDown, onClick: this.elementClick },
-													_react2.default.Children.map(children, function (child, index) {
-																return _react2.default.cloneElement(child, {
-																			value: value,
-																			is_editing: is_editing,
-																			is_readonly: is_readonly,
-																			startEditing: that.startEditing,
-																			onChange: that.onChange,
-																			onSave: that.finishEditing,
-																			onCancel: that.cancelEditing
-																});
-													})
-										);
-							}
-				}]);
-
-				return RIEModeToggler;
-	}(_react2.default.Component);
-
-	function mapStateToProps(state, props) {
-				var rie_key = props.rie_key;
-
-
-				var rie = state.rie || {};
-				var r = rie[rie_key] || {};
-				var mode = r.mode || 'readonly';
-				var value = r.value || props.initialValue;
-				var original_initial_value = r.initial_value;
-
-				return {
-							is_editing: mode == 'editing',
-							is_readonly: mode == 'readonly',
-							value: value,
-							original_initial_value: original_initial_value
-				};
-	}
-
-	exports.default = (0, _reactRedux.connect)(mapStateToProps)(RIEModeToggler);
-
-/***/ },
-/* 880 */
-/***/ function(module, exports, __webpack_require__) {
-
-	'use strict';
-
-	Object.defineProperty(exports, "__esModule", {
-					value: true
-	});
-	exports.RIE_SET_INITIAL_VALUE = exports.RIE_UPDATE_VALUE = exports.RIE_STOP_EDITING = exports.RIE_START_EDITING = exports.RIE_RESET = undefined;
-	exports.reset = reset;
-	exports.startEditing = startEditing;
-	exports.stopEditing = stopEditing;
-	exports.updateValue = updateValue;
-	exports.setInitialValue = setInitialValue;
-
-	var _lib = __webpack_require__(732);
-
-	var _difference = __webpack_require__(737);
-
-	var _difference2 = _interopRequireDefault(_difference);
-
-	var _keys = __webpack_require__(693);
-
-	var _keys2 = _interopRequireDefault(_keys);
-
-	var _indexOf = __webpack_require__(742);
-
-	var _indexOf2 = _interopRequireDefault(_indexOf);
-
-	var _map = __webpack_require__(673);
-
-	var _map2 = _interopRequireDefault(_map);
-
-	var _ItemList = __webpack_require__(731);
-
-	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-	var RIE_RESET = exports.RIE_RESET = 'RIE_RESET';
-	var RIE_START_EDITING = exports.RIE_START_EDITING = 'RIE_START_EDITING';
-	var RIE_STOP_EDITING = exports.RIE_STOP_EDITING = 'RIE_STOP_EDITING';
-	var RIE_UPDATE_VALUE = exports.RIE_UPDATE_VALUE = 'RIE_UPDATE_VALUE';
-	var RIE_SET_INITIAL_VALUE = exports.RIE_SET_INITIAL_VALUE = 'RIE_SET_INITIAL_VALUE';
-
-	function reset(rie_key) {
-					return {
-									type: RIE_RESET,
-									rie_key: rie_key
-					};
-	}
-
-	function startEditing(rie_key) {
-					return {
-									type: RIE_START_EDITING,
-									rie_key: rie_key
-					};
-	}
-
-	function stopEditing(rie_key) {
-					return {
-									type: RIE_STOP_EDITING,
-									rie_key: rie_key
-					};
-	}
-
-	function updateValue(rie_key, new_value) {
-					return {
-									type: RIE_UPDATE_VALUE,
-									rie_key: rie_key,
-									new_value: new_value
-					};
-	}
-
-	function setInitialValue(rie_key, initial_value) {
-					return {
-									type: RIE_SET_INITIAL_VALUE,
-									rie_key: rie_key,
-									initial_value: initial_value
-					};
-	}
-
-/***/ },
 /* 881 */
 /***/ function(module, exports, __webpack_require__) {
 
@@ -65144,7 +65165,7 @@
 
 	var _RIEEditBase3 = _interopRequireDefault(_RIEEditBase2);
 
-	var _reactAutosizeTextarea = __webpack_require__(873);
+	var _reactAutosizeTextarea = __webpack_require__(875);
 
 	var _reactAutosizeTextarea2 = _interopRequireDefault(_reactAutosizeTextarea);
 
@@ -65286,6 +65307,10 @@
 
 	var _NotificationBar2 = _interopRequireDefault(_NotificationBar);
 
+	var _FilterBox = __webpack_require__(950);
+
+	var _FilterBox2 = _interopRequireDefault(_FilterBox);
+
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 	function _objectDestructuringEmpty(obj) { if (obj == null) throw new TypeError("Cannot destructure undefined"); }
@@ -65325,6 +65350,7 @@
 																													'ImpTime'
 																									)
 																					),
+																					_react2.default.createElement(_FilterBox2.default, null),
 																					_react2.default.createElement(_NotificationBar2.default, null)
 																	)
 													);
@@ -67027,7 +67053,7 @@
 
 	var _Issues = __webpack_require__(859);
 
-	var _IssueGeneralDetails = __webpack_require__(878);
+	var _IssueGeneralDetails = __webpack_require__(880);
 
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -67138,17 +67164,13 @@
 
 	var _map2 = _interopRequireDefault(_map);
 
+	var _filter = __webpack_require__(952);
+
+	var _filter2 = _interopRequireDefault(_filter);
+
 	var _item_list = __webpack_require__(941);
 
 	var _item_list2 = _interopRequireDefault(_item_list);
-
-	var _project = __webpack_require__(942);
-
-	var _project2 = _interopRequireDefault(_project);
-
-	var _sprint = __webpack_require__(944);
-
-	var _sprint2 = _interopRequireDefault(_sprint);
 
 	var _issue = __webpack_require__(945);
 
@@ -67162,26 +67184,35 @@
 
 	var _notification_bar2 = _interopRequireDefault(_notification_bar);
 
-	var _user = __webpack_require__(948);
+	var _project = __webpack_require__(942);
 
-	var _user2 = _interopRequireDefault(_user);
+	var _project2 = _interopRequireDefault(_project);
 
 	var _rie = __webpack_require__(949);
 
 	var _rie2 = _interopRequireDefault(_rie);
 
+	var _sprint = __webpack_require__(944);
+
+	var _sprint2 = _interopRequireDefault(_sprint);
+
+	var _user = __webpack_require__(948);
+
+	var _user2 = _interopRequireDefault(_user);
+
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 	var rootReducer = (0, _redux.combineReducers)({
-	    routing: _reactRouterRedux.routerReducer,
-	    project: _project2.default,
-	    sprint: _sprint2.default,
+	    filter: _filter2.default,
 	    issue: _issue2.default,
 	    issue_general_details: _issue_general_details2.default,
 	    item_list: _item_list2.default,
 	    notification_bar: _notification_bar2.default,
-	    user: _user2.default,
-	    rie: _rie2.default
+	    project: _project2.default,
+	    rie: _rie2.default,
+	    routing: _reactRouterRedux.routerReducer,
+	    sprint: _sprint2.default,
+	    user: _user2.default
 	});
 
 	exports.default = rootReducer;
@@ -68856,7 +68887,7 @@
 
 	var _Error = __webpack_require__(863);
 
-	var _IssueGeneralDetails = __webpack_require__(878);
+	var _IssueGeneralDetails = __webpack_require__(880);
 
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -69061,7 +69092,7 @@
 
 	var _Error = __webpack_require__(863);
 
-	var _Rie = __webpack_require__(880);
+	var _Rie = __webpack_require__(872);
 
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -69107,6 +69138,211 @@
 			default:
 				return state;
 		}
+	}
+
+/***/ },
+/* 950 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	Object.defineProperty(exports, "__esModule", {
+					value: true
+	});
+	exports.FilterBox = undefined;
+
+	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+	var _react = __webpack_require__(300);
+
+	var _react2 = _interopRequireDefault(_react);
+
+	var _reactRouter = __webpack_require__(466);
+
+	var _reactRedux = __webpack_require__(534);
+
+	var _RIEModeToggler = __webpack_require__(871);
+
+	var _RIEModeToggler2 = _interopRequireDefault(_RIEModeToggler);
+
+	var _RIEInput = __webpack_require__(857);
+
+	var _RIEInput2 = _interopRequireDefault(_RIEInput);
+
+	var _Filter = __webpack_require__(951);
+
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+	function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+	var FilterBox = exports.FilterBox = function (_Component) {
+					_inherits(FilterBox, _Component);
+
+					function FilterBox(props) {
+									_classCallCheck(this, FilterBox);
+
+									var _this = _possibleConstructorReturn(this, Object.getPrototypeOf(FilterBox).call(this, props));
+
+									_this.onFilter = _this.onFilter.bind(_this);
+									return _this;
+					}
+
+					_createClass(FilterBox, [{
+									key: 'onFilter',
+									value: function onFilter(value) {
+													var dispatch = this.props.dispatch;
+
+													dispatch((0, _Filter.updateGlobalFilter)(value));
+									}
+					}, {
+									key: 'render',
+									value: function render() {
+													var global_filter = this.props.global_filter;
+
+
+													return _react2.default.createElement(
+																	'div',
+																	{ className: 'header_bar__filter_box' },
+																	_react2.default.createElement(
+																					_RIEModeToggler2.default,
+																					{
+																									rie_key: 'filter_box',
+																									initialValue: global_filter,
+																									onChange: this.onFilter
+																					},
+																					_react2.default.createElement(_RIEInput2.default, null),
+																					_react2.default.createElement(
+																									'div',
+																									{ className: 'header_bar__filter_box__current_value' },
+																									global_filter,
+																									_react2.default.createElement(
+																													'div',
+																													{ className: 'header_bar__filter_box__search_icon' },
+																													' '
+																									)
+																					)
+																	)
+													);
+									}
+					}]);
+
+					return FilterBox;
+	}(_react.Component);
+
+	function mapStateToProps(state, props) {
+					var filter = state.filter;
+
+					var global_filter = filter && filter.global_filter || null;
+
+					return {
+									global_filter: global_filter
+					};
+	}
+
+	exports.default = (0, _reactRedux.connect)(mapStateToProps)(FilterBox);
+
+/***/ },
+/* 951 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	Object.defineProperty(exports, "__esModule", {
+	    value: true
+	});
+	exports.UPDATE_GLOBAL_FILTER = undefined;
+	exports.updateGlobalFilter = updateGlobalFilter;
+	exports.clearGlobalFilter = clearGlobalFilter;
+
+	var _lib = __webpack_require__(732);
+
+	var _difference = __webpack_require__(737);
+
+	var _difference2 = _interopRequireDefault(_difference);
+
+	var _keys = __webpack_require__(693);
+
+	var _keys2 = _interopRequireDefault(_keys);
+
+	var _indexOf = __webpack_require__(742);
+
+	var _indexOf2 = _interopRequireDefault(_indexOf);
+
+	var _map = __webpack_require__(673);
+
+	var _map2 = _interopRequireDefault(_map);
+
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+	var UPDATE_GLOBAL_FILTER = exports.UPDATE_GLOBAL_FILTER = 'UPDATE_GLOBAL_FILTER';
+
+	function updateGlobalFilter(new_filter_value) {
+	    return {
+	        type: UPDATE_GLOBAL_FILTER,
+	        value: new_filter_value
+	    };
+	}
+
+	function clearGlobalFilter() {
+	    return updateGlobalFilter(null);
+	}
+
+/***/ },
+/* 952 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	Object.defineProperty(exports, "__esModule", {
+	    value: true
+	});
+	exports.default = filter;
+
+	var _map = __webpack_require__(673);
+
+	var _map2 = _interopRequireDefault(_map);
+
+	var _assign = __webpack_require__(943);
+
+	var _assign2 = _interopRequireDefault(_assign);
+
+	var _keys = __webpack_require__(693);
+
+	var _keys2 = _interopRequireDefault(_keys);
+
+	var _union = __webpack_require__(740);
+
+	var _union2 = _interopRequireDefault(_union);
+
+	var _difference = __webpack_require__(737);
+
+	var _difference2 = _interopRequireDefault(_difference);
+
+	var _Error = __webpack_require__(863);
+
+	var _Filter = __webpack_require__(951);
+
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+	var initial_state = {
+	    global_filter: null
+	};
+
+	function filter() {
+	    var state = arguments.length <= 0 || arguments[0] === undefined ? initial_state : arguments[0];
+	    var action = arguments[1];
+
+
+	    switch (action.type) {
+	        case _Filter.UPDATE_GLOBAL_FILTER:
+	            return Object.assign({}, state, { global_filter: action.value });
+	        default:
+	            return state;
+	    }
 	}
 
 /***/ }

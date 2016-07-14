@@ -107,20 +107,40 @@ export class RIEModeToggler extends React.Component {
 	const { is_editing, is_readonly, children, value } = this.props
 
 	const that = this
+	let editing_child = null
+	let readonly_child = null
+
+	React.Children.map(children, function(child, index) {
+	    if ( index == 0 ) {
+		editing_child = React.cloneElement(child, {
+		    value: value,
+		    is_editing: is_editing,
+		    is_readonly: is_readonly,
+		    startEditing: that.startEditing,
+		    onChange: that.onChange,
+		    onSave: that.finishEditing,
+		    onCancel: that.cancelEditing
+		})
+	    } else if ( index == 1 ) {
+		readonly_child = React.cloneElement(child, {
+		    value: value,
+		    is_editing: is_editing,
+		    is_readonly: is_readonly,
+		    startEditing: that.startEditing,
+		    onChange: that.onChange,
+		    onSave: that.finishEditing,
+		    onCancel: that.cancelEditing
+		})
+	    }
+	})
+	if ( ! readonly_child ) {
+	    readonly_child = editing_child
+	}
+	
 	return (
 	    <div onKeyDown={this.keyDown} onClick={this.elementClick}>
-		{ React.Children.map(children, function(child, index) {
-		      return React.cloneElement(child, {
-			  value: value,
-			  is_editing: is_editing,
-			  is_readonly: is_readonly,
-			  startEditing: that.startEditing,
-			  onChange: that.onChange,
-			  onSave: that.finishEditing,
-			  onCancel: that.cancelEditing
-		      })
-		  })
-		}
+		{ is_editing && editing_child }
+		{ is_readonly && readonly_child }
 	    </div>
 	)
     }
