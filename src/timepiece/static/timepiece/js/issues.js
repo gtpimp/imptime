@@ -675,6 +675,31 @@ imp.clickable_description_box = function(element, url, item_id, args) {
     textField.markItUp(markdown_settings);
 };
 
+imp.clock_in = function(element, user_id, issue_id, url) {
+    var on_done = imp.issue_loading("Clocking in");
+    var response = $.ajax({type:"POST",
+			   url: url,
+			   data: {issue_id: issue_id},
+			   dataType:"json",
+			   success: function(data) {
+			       on_done();
+			       imp.refresh_issue_detail();
+			   }
+    });
+};
+
+imp.clock_out = function(element, user_id, issue_id, url) {
+    var on_done = imp.issue_loading("Clocking out");
+    var response = $.ajax({type:"POST",
+			   url: url,
+			   data: {issue_id: issue_id},
+			   dataType:"json",
+			   success: function(data) {
+			       on_done();
+			       imp.refresh_issue_detail();
+			   }
+    });
+};
 
 imp.clickable_time_estimate = function(element, url, user_id, issue_id) {
     element = $(element).find("span.edit_issue_subject");

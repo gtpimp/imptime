@@ -8,6 +8,19 @@
 
   <h2 class="issue_detail_title">#{{issue.number}} {{issue.subject}}</h2>
 
+      <div class="clock_container">
+	&nbsp;
+	{% if is_clocked_in %}
+	<button class="btn btn-info" onclick="return imp.clock_out(this, {{current_user.id}}, {{issue.id}}, '{% url 'issue_clock_out' %}');">
+	  <img class="clock_img" src="{{STATIC_URL}}/images/icons/clock_out.png" title="clock out"/>
+	</button>
+	{% else %}
+	<button class="btn btn-info" onclick="return imp.clock_in(this, {{current_user.id}}, {{issue.id}}, '{% url 'issue_clock_in' %}');">
+	  <img class="clock_img" src="{{STATIC_URL}}/images/icons/clock_in.png" title="clock in"/>
+	</button>
+	{% endif %}
+      </div>
+  
   {% if issue.id %}
     <div class="change_issue_number">
       <div class="small_button btn title" onclick="$(this).parents('.change_issue_number').find('.content').toggle(); return false;">Change number</div>

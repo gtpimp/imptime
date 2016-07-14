@@ -3506,6 +3506,7 @@ def issue_detail(request, issue_id, template="timepiece/project/issue_detail.htm
     context['current_user'] = request.user
     context['business_permissions_by_user'] = timepiece.BusinessPermissions.by_user(project.business)
     context['issue_number_form'] = timepiece_forms.IssueNumberForm(instance=issue)
+    context['is_clocked_in'] = timepiece.Entry.objects.filter(user=request.user, issue_id=issue_id).is_open().count() > 0
 
     context['timesheet_export_url'] = reverse('issue_detail', args=[issue.id]) + "?timesheet_as_csv=1"
     if 'timesheet_as_csv' in request.GET and request.GET['timesheet_as_csv'] == "1":
@@ -4216,7 +4217,6 @@ def get_issue_row(request,issue_id):
     context['business_permissions_by_user'] = timepiece.BusinessPermissions.by_user(business)
     context['users_with_time_but_no_estimates_in_this_project'] = project.get_users_with_time_but_no_estimates_in_this_project()
     context['features'] = ( (f.id, f.name) for f in timepiece.Feature.objects.filter(business=business) )
-
     context['assign_user_form'] = timepiece_forms.AssignUserToIssueForm()
     refresh_issue =timepiece.Issue.objects.get(id=issue.id)
     refresh_issue.representation = issue.representation
@@ -6003,3 +6003,38 @@ def project_cost_summary(request, project_id, template="timepiece/project/projec
     context['project'] = project
     return render_to_response(template, context, context_instance=RequestContext(request))
 
+
+@login_required
+@csrf_exempt
+def issue_clock_in(request):
+
+    user_id = request.user.id
+    issue_id = request.POST['issue_id']
+    activity = timepiece.Activity.objects.get_or_create(code='dev')[0]
+    location = timepiece.Location.objects.get_or_create(name='office')[0]
+    clock_time = api.localised_today()
+    new_entry = timepiece.Entry.objects.create(user=request.user,
+                                               created_by=request.user,
+                                               source='quick_clocker',
+                                               start_time=clock_time,
+                                               end_time=None,
+                                               activity=activity,
+                                               location=location,
+                                               issue_id=issue_id,
+                                               status='approved',
+                                               comments="rowing",
+                                               extended_comments="")
+
+    for open_entry in timepiece.Entry.objects.filter(user=request.user).exclude(pk=new_entry.id).is_open():
+        open_entry.end_time = clock_time
+        open_entry.save()
+    return HttpResponse(json.dumps({"status":"ok"}))
+
+@login_required
+@csrf_exempt
+def issue_clock_out(request):
+    clock_time = api.localised_today()
+    for open_entry in timepiece.Entry.objects.filter(user=request.user).is_open():
+        open_entry.end_time = clock_time
+        open_entry.save()
+    return HttpResponse(json.dumps({"status":"ok"}))
