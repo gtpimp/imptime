@@ -69252,7 +69252,7 @@
 	'use strict';
 
 	Object.defineProperty(exports, "__esModule", {
-	    value: true
+					value: true
 	});
 	exports.UPDATE_GLOBAL_FILTER = undefined;
 	exports.updateGlobalFilter = updateGlobalFilter;
@@ -69281,14 +69281,16 @@
 	var UPDATE_GLOBAL_FILTER = exports.UPDATE_GLOBAL_FILTER = 'UPDATE_GLOBAL_FILTER';
 
 	function updateGlobalFilter(new_filter_value) {
-	    return {
-	        type: UPDATE_GLOBAL_FILTER,
-	        value: new_filter_value
-	    };
+					return function (dispatch, getState) {
+									dispatch({
+													type: UPDATE_GLOBAL_FILTER,
+													value: new_filter_value
+									});
+					};
 	}
 
 	function clearGlobalFilter() {
-	    return updateGlobalFilter(null);
+					return updateGlobalFilter(null);
 	}
 
 /***/ },
