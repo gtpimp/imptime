@@ -1228,7 +1228,7 @@ class SprintInvoiceReportSettingsForm(forms.Form):
             del self.fields['ctc']
             del self.fields['billable']
             del self.fields['include_billable_per_user']
-        if not self.bp.has_view_ctc_rates:
+        if not self.bp.has_view_ctc_rates and 'ctc' in self.fields:
             del self.fields['ctc']
         if not bp.has_view_actual_hours:
             del self.fields['view_actual_hours']

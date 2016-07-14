@@ -20,7 +20,6 @@ class DevPage extends Component {
 
         return (
             <div>
-
 		<StickyContainer>
 		    <div className="devpage__navigation__lists">
 			<ProjectList key="projects" list_key="projects"/>
@@ -34,7 +33,6 @@ class DevPage extends Component {
 			</IssueList>
 		    </div>
 		</StickyContainer>
-		
 	    </div>
         )
     }

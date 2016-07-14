@@ -5,7 +5,6 @@ import { DragSource, DropTarget } from 'react-dnd';
 import { connect } from 'react-redux'
 import classNames from 'classnames'
 import {
-    updateIssueSubject,
     updateIssueStatus,
     updateIssueFeature,
     updateIssueAssignedTo
@@ -13,8 +12,9 @@ import {
 import {
     fetchUsersIfNeeded
 } from '../actions/Users'
-import RIEInput from '../widgets/RIEInput'
 import RIEDropDown from '../widgets/RIEDropDown'
+import RIEInput from '../widgets/RIEInput'
+import RIEModeToggler from '../widgets/RIEModeToggler'
 import RIEUserDropDown from '../widgets/RIEUserDropDown'
 import OtherUser from '../components/OtherUser'
 import { DndTypes } from '../actions/Dnd'
@@ -45,7 +45,6 @@ export class Issue extends Component {
 
     constructor(props) {
         super(props)
-	this.onChangeSubject = this.onChangeSubject.bind(this)
 	this.onChangeStatus = this.onChangeStatus.bind(this)
     }
 
@@ -55,24 +54,19 @@ export class Issue extends Component {
 
     }
     
-    onChangeSubject(issue_id, obj) {
+    onChangeAssignedTo(issue_id, new_value) {
 	const { dispatch } = this.props
-	dispatch(updateIssueSubject(issue_id, obj.subject))
+	dispatch(updateIssueAssignedTo(issue_id, new_value))
     }
 
-    onChangeAssignedTo(issue_id, obj) {
+    onChangeStatus(issue_id, new_value) {
 	const { dispatch } = this.props
-	dispatch(updateIssueAssignedTo(issue_id, obj.assigned_to))
+	dispatch(updateIssueStatus(issue_id, new_value))
     }
 
-    onChangeStatus(issue_id, obj) {
+    onChangeFeature(issue_id, new_value) {
 	const { dispatch } = this.props
-	dispatch(updateIssueStatus(issue_id, obj.status))
-    }
-
-    onChangeFeature(issue_id, obj) {
-	const { dispatch } = this.props
-	dispatch(updateIssueFeature(issue_id, obj.feature_name))
+	dispatch(updateIssueFeature(issue_id, new_value))
     }
 
     render_collapsed() {
@@ -117,30 +111,34 @@ export class Issue extends Component {
 			<div className="issue_list__issue_number_button">{issue.number}</div>
 		    </td>
 		    <td>
-			<RIEInput value={issue.subject}
-				  propName="subject" 
-				  change={(obj) => this.onChangeSubject(issue.id, obj)} />
+			{issue.subject}
 		    </td>
 		    <td>
-			<RIEUserDropDown value={issue.assigned_to_id}
-					 propName="assigned_to"
-					 user_ids={assignable_user_ids}
-					 change={(obj) => this.onChangeAssignedTo(issue.id, obj)}
-			/>
+			<RIEModeToggler
+			    rie_key={"issue_assigned_to_"+issue.id}
+			    initialValue={issue.assigned_to_id || "..."}
+			    onChange={(new_value) => this.onChangeAssignedTo(issue.id, new_value)}
+			>
+			    <RIEUserDropDown user_ids={assignable_user_ids} />
+			</RIEModeToggler>
 		    </td>
 		    <td>
-			<RIEDropDown value={issue.feature_name || "..."}
-				     propName="feature_name"
-				     options={feature_options}
-				     change={(obj) => this.onChangeFeature(issue.id, obj)}
-			/>
+			<RIEModeToggler
+			    rie_key={"issue_feature_"+issue.id}
+			    initialValue={issue.feature_name || "..."}
+			    onChange={(new_value) => this.onChangeFeature(issue.id, new_value)}
+			>
+			    <RIEDropDown options={feature_options} />
+			</RIEModeToggler>
 		    </td>
 		    <td>
-			<RIEDropDown value={issue.status || "..."}
-				     propName="status"
-				     options={ISSUE_STATUS_CHOICES}
-				     change={(obj) => this.onChangeStatus(issue.id, obj)}
-			/>
+			<RIEModeToggler
+			    rie_key={"issue_status_"+issue.id}
+			    initialValue={issue.status || "..."}
+			    onChange={(new_value) => this.onChangeStatus(issue.id, new_value)}
+			>
+			    <RIEDropDown options={ISSUE_STATUS_CHOICES} />
+			</RIEModeToggler>
 		    </td>
 		</tr>
 	    ))

@@ -3,25 +3,34 @@ import { Link } from 'react-router'
 import { connect } from 'react-redux'
 import indexOf from 'lodash/indexOf'
 import map from 'lodash/map'
-import RIETextArea from '../widgets/RIETextArea'
 import OtherUser from '../components/OtherUser'
 import {
     updateIssueDescription,
-    deleteIssue
+    updateIssueSubject,
+    deleteIssue,
+    startCandidateIssue,
+    updateCandidateSubject,
+    saveCandidateIssue,
+    cancelCandidateIssue
 } from '../actions/Issue'
 
 import {
     invalidateIssueGeneralDetails,
     fetchIssueGeneralDetailsIfNeeded
 } from '../actions/IssueGeneralDetails'
-import { Sticky } from 'react-sticky';
+import RIEModeToggler from '../widgets/RIEModeToggler'
+import RIEInput from '../widgets/RIEInput'
+import RIETextArea from '../widgets/RIETextArea'
 
 export class IssueDeveloperDetails extends Component {
 
     constructor(props) {
         super(props)
         this.onDelete = this.onDelete.bind(this)
+	this.onChangeSubject = this.onChangeSubject.bind(this)
 	this.onChangeDescription = this.onChangeDescription.bind(this)
+	this.onSaveCandidateIssue = this.onSaveCandidateIssue.bind(this)
+	this.onCancelCandidateIssue = this.onCancelCandidateIssue.bind(this)
     }
 
     componentDidMount() {
@@ -31,14 +40,30 @@ export class IssueDeveloperDetails extends Component {
 	}
     }
 
-    onChangeDescription(obj) {
+    onChangeSubject(issue_id, value) {
+	const { dispatch } = this.props
+	dispatch(updateIssueSubject(issue_id, value))
+    }
+
+    onChangeDescription(new_value) {
 	const { dispatch, issue_id } = this.props
-	dispatch(updateIssueDescription(issue_id, obj.description))
+	dispatch(updateIssueDescription(issue_id, new_value))
     }
 
     onDelete() {
         const { dispatch, issue_id } = this.props
 	dispatch(deleteIssue(issue_id))
+    }
+
+    onSaveCandidateIssue(new_subject) {
+	const { dispatch } = this.props
+	dispatch(updateCandidateSubject(new_subject))
+	dispatch(saveCandidateIssue())
+    }
+
+    onCancelCandidateIssue() {
+	const { dispatch } = this.props
+	dispatch(cancelCandidateIssue())
     }
 
     renderComment(comment) {
@@ -53,17 +78,57 @@ export class IssueDeveloperDetails extends Component {
 	    </div>
 	)
     }
+
+    renderCreatingIssue() {
+	const { candidate_issue, is_creating_issue } = this.props
+	return (
+
+	    <div className="issue_developer_details">
+		<div className="panel panel--full">
+		    <div className="panel-heading">
+			<div className="panel__title">
+			    New Issue
+			</div>
+			<div className="panel__buttons">
+			    <div className="panel__button panel__button--delete"
+				 onClick={this.onCancelCandidateIssue}>
+			    </div>
+			</div>
+		    </div>
+		    <div className="issue_developer_details__panel-body">
+
+			<h3>Subject: </h3>
+			<h3>
+			    <RIEModeToggler
+				rie_key="issue_subject"
+				initialValue=""
+				initialState="editing"
+				onChange={this.onSaveCandidateIssue}
+				onCancel={this.onCancelCandidateIssue}
+			    >
+				<RIEInput />
+			    </RIEModeToggler>
+			</h3>
+		    </div>
+		</div>
+	    </div>
+	)
+    }
     
     render() {
 
-        const { is_visible, issue_id, issue, comments, is_loading } = this.props
+        const { is_visible, issue_id, issue, comments, is_loading,
+		is_creating_issue } = this.props
 
 	if ( ! is_visible ) {
 	    return (<div></div>)
 	}
-	
+
+	if ( is_creating_issue ) {
+	    return this.renderCreatingIssue()
+	}
+
         return (
-	    <Sticky>
 		<div className="issue_developer_details" style={{ opacity: is_loading ? 0.5 : 1 }}>
 		    <div className="panel panel--full">
 			<div className="panel-heading">
@@ -78,12 +143,23 @@ export class IssueDeveloperDetails extends Component {
 			    </div>
 			</div>
 			<div className="issue_developer_details__panel-body">
-			    <h3>issue#{issue.number}: {issue.subject}</h3>
-				<RIETextArea
-				    value={issue.description || ""}
-				    propName="description"
-				    change={this.onChangeDescription}
-				/>
+			    <h3>issue#{issue.number}:
+
+				<RIEModeToggler
+				    rie_key="issue_subject"
+				    initialValue={issue.subject || "..."}
+				    onChange={(new_value) => this.onChangeSubject(issue.id, new_value)}
+				>
+				    <RIEInput />
+				</RIEModeToggler>
+			    </h3>
+			    <RIEModeToggler
+				rie_key={"issue_description"}
+				initialValue={issue.description || ""}
+				onChange={this.onChangeDescription}
+			    >
+				<RIETextArea />
+			    </RIEModeToggler>
 			</div>
 
 			<div>
@@ -91,12 +167,12 @@ export class IssueDeveloperDetails extends Component {
 			</div>
 		    </div>
 		</div>
-	    </Sticky>
         )
     }
 }
 
 function mapStateToProps(state, props) {
+    const state_issues = state.issue || {}
     const item_list = state.item_list || {}
     const { list_key } = props
     const l = item_list[list_key] || {}
@@ -115,13 +191,18 @@ function mapStateToProps(state, props) {
 			  general_details)
 
     const comments = issue.issue_comments || []
+
+    const candidate_issue = state_issues.candidate_issue
+    const is_creating_issue = candidate_issue || false
     
     return {
         issue_id: issue_id,
 	issue: issue,
 	comments: comments,
         is_loading: general_details.is_loading,
-	is_visible: issue_id || false
+	is_visible: issue_id || is_creating_issue || false,
+	is_creating_issue: is_creating_issue,
+	candidate_issue: candidate_issue
     }
 }
 

@@ -4,6 +4,7 @@ import { UPDATE_LIST_SELECTION } from '../actions/ItemList'
 import {
     ANNOUNCE_ISSUE_SAVED,
     ANNOUNCE_SAVED_NEW_ISSUE,
+    ANNOUNCE_CAPTURING_NEW_ISSUE,
     ANNOUNCE_ISSUE_DELETED
 } from '../actions/Issue'
 import {
@@ -20,7 +21,8 @@ import {
 import {
     collapse_list,
     expand_list,
-    unselectAllItems
+    unselectAllItems,
+    selectItems
 } from '../actions/ItemList'
 
 const sprints_list_key = 'sprints'
@@ -86,12 +88,15 @@ function DevPageMiddleware(_ref) {
 		    dispatch(fetchIssuesIfNeeded(issues_list_key))
 		    dispatch(fetchIssueGeneralDetailsIfNeeded([action.issue_id]))
 		    break
+		case ANNOUNCE_CAPTURING_NEW_ISSUE:
+		    // dispatch(invalidateIssueGeneralDetails([action.issue.id]))
+		    break
 		case ANNOUNCE_SAVED_NEW_ISSUE:
 		    // dispatch(invalidateIssues([action.issue.id]))
 		    // dispatch(invalidateIssueGeneralDetails([action.issue.id]))
 		    dispatch(invalidateList(issues_list_key))
 		    dispatch(fetchIssuesIfNeeded(issues_list_key))
-		    dispatch(fetchIssueGeneralDetailsIfNeeded([action.issue.id]))
+		    dispatch(selectItems(issues_list_key, [action.issue.id]))
 		    break
 		case ANNOUNCE_ISSUE_DELETED:
 		    dispatch(invalidateList(issues_list_key))

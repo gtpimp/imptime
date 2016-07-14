@@ -2,7 +2,7 @@ import React, { Component, PropTypes } from 'react'
 import { Link } from 'react-router'
 import { connect } from 'react-redux'
 import NotificationBar from '../components/NotificationBar'
-
+import FilterBox from '../components/FilterBox'
 
 export class HeaderBar extends Component {
 
@@ -16,6 +16,7 @@ export class HeaderBar extends Component {
 		    <div className="header_bar__logo">
 			<a href="http://imptime.impd.co.za">ImpTime</a>
 		    </div>
+		    <FilterBox />
 		    <NotificationBar />
 		</div>
 	    </div>

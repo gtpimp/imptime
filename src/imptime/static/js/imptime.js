@@ -69,7 +69,7 @@
 
 	var _Root2 = _interopRequireDefault(_Root);
 
-	var _configureStore = __webpack_require__(904);
+	var _configureStore = __webpack_require__(905);
 
 	var _configureStore2 = _interopRequireDefault(_configureStore);
 
@@ -35814,7 +35814,7 @@
 
 	var _DevPage2 = _interopRequireDefault(_DevPage);
 
-	var _HeaderBar = __webpack_require__(881);
+	var _HeaderBar = __webpack_require__(882);
 
 	var _HeaderBar2 = _interopRequireDefault(_HeaderBar);
 
@@ -35828,7 +35828,7 @@
 
 	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 
-	var HTML5Backend = __webpack_require__(883);
+	var HTML5Backend = __webpack_require__(884);
 
 	var App = function (_Component) {
 	    _inherits(App, _Component);
@@ -41528,7 +41528,7 @@
 
 	var _IssueList2 = _interopRequireDefault(_IssueList);
 
-	var _IssueDeveloperDetails = __webpack_require__(878);
+	var _IssueDeveloperDetails = __webpack_require__(879);
 
 	var _IssueDeveloperDetails2 = _interopRequireDefault(_IssueDeveloperDetails);
 
@@ -60624,15 +60624,15 @@
 
 	var _ItemList = __webpack_require__(731);
 
-	var _Issues = __webpack_require__(860);
+	var _Issues = __webpack_require__(859);
 
-	var _Issue = __webpack_require__(861);
+	var _Issue = __webpack_require__(860);
 
 	var _Pagination = __webpack_require__(744);
 
 	var _Pagination2 = _interopRequireDefault(_Pagination);
 
-	var _Issue2 = __webpack_require__(862);
+	var _Issue2 = __webpack_require__(861);
 
 	var _Issue3 = _interopRequireDefault(_Issue2);
 
@@ -61064,48 +61064,9 @@
 	'use strict';
 
 	Object.defineProperty(exports, "__esModule", {
-	  value: true
+				value: true
 	});
-
-	var _react = __webpack_require__(300);
-
-	var _react2 = _interopRequireDefault(_react);
-
-	var _RIEStatefulBase2 = __webpack_require__(858);
-
-	var _RIEStatefulBase3 = _interopRequireDefault(_RIEStatefulBase2);
-
-	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
-	function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
-
-	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
-
-	var RIEInput = function (_RIEStatefulBase) {
-	  _inherits(RIEInput, _RIEStatefulBase);
-
-	  function RIEInput() {
-	    _classCallCheck(this, RIEInput);
-
-	    return _possibleConstructorReturn(this, Object.getPrototypeOf(RIEInput).apply(this, arguments));
-	  }
-
-	  return RIEInput;
-	}(_RIEStatefulBase3.default);
-
-	exports.default = RIEInput;
-
-/***/ },
-/* 858 */
-/***/ function(module, exports, __webpack_require__) {
-
-	'use strict';
-
-	Object.defineProperty(exports, "__esModule", {
-	    value: true
-	});
+	exports.RIEInput = undefined;
 
 	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
@@ -61117,9 +61078,11 @@
 
 	var _reactDom2 = _interopRequireDefault(_reactDom);
 
-	var _RIEBase2 = __webpack_require__(859);
+	var _RIEEditBase2 = __webpack_require__(858);
 
-	var _RIEBase3 = _interopRequireDefault(_RIEBase2);
+	var _RIEEditBase3 = _interopRequireDefault(_RIEEditBase2);
+
+	var _reactRedux = __webpack_require__(534);
 
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -61129,139 +61092,65 @@
 
 	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 
-	var RIEStatefulBase = function (_RIEBase) {
-	    _inherits(RIEStatefulBase, _RIEBase);
+	var RIEInput = exports.RIEInput = function (_RIEEditBase) {
+				_inherits(RIEInput, _RIEEditBase);
 
-	    function RIEStatefulBase(props) {
-	        _classCallCheck(this, RIEStatefulBase);
+				function RIEInput(props) {
+							_classCallCheck(this, RIEInput);
 
-	        var _this = _possibleConstructorReturn(this, Object.getPrototypeOf(RIEStatefulBase).call(this, props));
+							var _this = _possibleConstructorReturn(this, Object.getPrototypeOf(RIEInput).call(this, props));
 
-	        _this.doValidations = _this.doValidations.bind(_this);
-	        _this.textChanged = _this.textChanged.bind(_this);
-	        _this.startEditing = _this.startEditing.bind(_this);
-	        _this.stopEditing = _this.stopEditing.bind(_this);
-	        _this.finishEditing = _this.finishEditing.bind(_this);
-	        _this.keyDown = _this.keyDown.bind(_this);
-	        return _this;
-	    }
+							_this.onChange = _this.onChange.bind(_this);
+							return _this;
+				}
 
-	    _createClass(RIEStatefulBase, [{
-	        key: 'componentDidMount',
-	        value: function componentDidMount() {
-	            if (this.props.initialState == 'editing') {
-	                this.startEditing();
-	            }
-	        }
-	    }, {
-	        key: 'startEditing',
-	        value: function startEditing() {
-	            this.setState({ editing: true });
-	        }
-	    }, {
-	        key: 'finishEditing',
-	        value: function finishEditing() {
-	            var newValue = _reactDom2.default.findDOMNode(this.refs.input).value;
-	            this.doValidations(newValue);
-	            if (!this.state.invalid && this.props.value !== newValue) {
-	                this.commit(newValue);
-	            }
-	            this.stopEditing();
-	        }
-	    }, {
-	        key: 'stopEditing',
-	        value: function stopEditing() {
-	            this.setState({ editing: false, invalid: false });
-	        }
-	    }, {
-	        key: 'cancelEditing',
-	        value: function cancelEditing() {
-	            this.stopEditing();
-	            if (this.props.cancel) {
-	                this.props.cancel();
-	            }
-	        }
-	    }, {
-	        key: 'keyDown',
-	        value: function keyDown(event) {
-	            if (event.keyCode === 13) {
-	                this.finishEditing();
-	            } // Enter
-	            else if (event.keyCode === 27) {
-	                    this.cancelEditing();
-	                } // Escape
-	        }
-	    }, {
-	        key: 'textChanged',
-	        value: function textChanged(event) {
-	            this.doValidations(event.target.value.trim());
-	        }
-	    }, {
-	        key: 'componentDidUpdate',
-	        value: function componentDidUpdate(prevProps, prevState) {
-	            var inputElem = _reactDom2.default.findDOMNode(this.refs.input);
-	            if (this.state.editing && !prevState.editing) {
-	                inputElem.focus();
-	                this.selectInputText(inputElem);
-	            } else if (this.state.editing && prevProps.text != this.props.text) {
-	                this.finishEditing();
-	            }
-	        }
-	    }, {
-	        key: 'renderEditingComponent',
-	        value: function renderEditingComponent() {
-	            return _react2.default.createElement('input', {
-	                disabled: this.state.loading,
-	                className: this.makeClassString(),
-	                defaultValue: this.props.value,
-	                onInput: this.textChanged,
-	                onBlur: this.finishEditing,
-	                ref: 'input',
-	                onKeyDown: this.keyDown });
-	        }
-	    }, {
-	        key: 'renderNormalComponent',
-	        value: function renderNormalComponent() {
-	            return _react2.default.createElement(
-	                'span',
-	                {
-	                    tabIndex: '0',
-	                    className: this.makeClassString(),
-	                    onFocus: this.startEditing,
-	                    onClick: this.startEditing
-	                },
-	                this.state.newValue || this.props.value
-	            );
-	        }
-	    }, {
-	        key: 'elementBlur',
-	        value: function elementBlur(event) {
-	            this.finishEditing();
-	        }
-	    }, {
-	        key: 'elementClick',
-	        value: function elementClick(event) {
-	            this.startEditing();
-	            event.target.element.focus();
-	        }
-	    }, {
-	        key: 'render',
-	        value: function render() {
-	            if (this.state.editing) {
-	                return this.renderEditingComponent();
-	            } else {
-	                return this.renderNormalComponent();
-	            }
-	        }
-	    }]);
+				_createClass(RIEInput, [{
+							key: 'onChange',
+							value: function onChange() {
+										this.props.onChange(this.editField.value);
+							}
+				}, {
+							key: 'render',
+							value: function render() {
+										var _this2 = this;
 
-	    return RIEStatefulBase;
-	}(_RIEBase3.default);
+										var _props = this.props;
+										var value = _props.value;
+										var onChange = _props.onChange;
+										var is_editing = _props.is_editing;
+										var is_readonly = _props.is_readonly;
 
-	exports.default = RIEStatefulBase;
+
+										return _react2.default.createElement(
+													'div',
+													null,
+													is_editing && _react2.default.createElement('input', {
+																ref: function ref(_ref) {
+																			return _this2.editField = _ref;
+																},
+																value: value,
+																onChange: this.onChange
+													}),
+													is_readonly && _react2.default.createElement(
+																'span',
+																null,
+																value
+													)
+										);
+							}
+				}]);
+
+				return RIEInput;
+	}(_RIEEditBase3.default);
+
+	function mapStateToProps(state, props) {
+				return {};
+	}
+
+	exports.default = (0, _reactRedux.connect)(mapStateToProps)(RIEInput);
 
 /***/ },
-/* 859 */
+/* 858 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -61270,11 +61159,13 @@
 	    value: true
 	});
 
-	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
-
 	var _react = __webpack_require__(300);
 
 	var _react2 = _interopRequireDefault(_react);
+
+	var _reactDom = __webpack_require__(336);
+
+	var _reactDom2 = _interopRequireDefault(_reactDom);
 
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -61284,101 +61175,30 @@
 
 	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 
-	var RIEBase = function (_React$Component) {
-	    _inherits(RIEBase, _React$Component);
+	var RIEEditBase = function (_React$Component) {
+	    _inherits(RIEEditBase, _React$Component);
 
-	    function RIEBase(props) {
-	        _classCallCheck(this, RIEBase);
+	    function RIEEditBase(props) {
+	        _classCallCheck(this, RIEEditBase);
 
-	        var _this = _possibleConstructorReturn(this, Object.getPrototypeOf(RIEBase).call(this, props));
-
-	        _this.state = {
-	            editing: false,
-	            loading: false,
-	            disabled: false,
-	            invalid: false
-	        };
-	        return _this;
+	        return _possibleConstructorReturn(this, Object.getPrototypeOf(RIEEditBase).call(this, props));
 	    }
 
-	    /* propTypes = {
-	     *     value: React.PropTypes.any.isRequired,
-	     *     change: React.PropTypes.func.isRequired,
-	       cancel: React.PropTypes.func.isRequired,
-	     *     propName: React.PropTypes.string.isRequired,
-	     *     isDisabled: React.PropTypes.bool,
-	     *     validate: React.PropTypes.func,
-	     *     shouldBlockWhileLoading: React.PropTypes.bool,
-	     *     classLoading: React.PropTypes.string,
-	     *     classEditing: React.PropTypes.string,
-	     *     classDisabled: React.PropTypes.string,
-	     *     classInvalid: React.PropTypes.string,
-	     *     className: React.PropTypes.string
-	     * };*/
+	    /* keyDown(event) {
+	     *     if (event.keyCode === 13) {
+	       this.finishEditing()
+	       } else if (event.keyCode === 27) {
+	       this.cancelEditing()
+	       }
+	     * }*/
 
-	    _createClass(RIEBase, [{
-	        key: 'doValidations',
-	        value: function doValidations(value) {
-	            if (this.props.validate) {
-	                this.setState({ invalid: !this.props.validate(value) });
-	            } else if (this.validate) {
-	                this.setState({ invalid: !this.validate(value) });
-	            }
-	        }
-	    }, {
-	        key: 'selectInputText',
-	        value: function selectInputText(element) {
-	            element.setSelectionRange(0, element.value.length);
-	        }
-	    }, {
-	        key: 'elementClick',
-	        value: function elementClick(event) {
-	            throw "RIEBase must be subclassed first: use a concrete class like RIEInput, RIEToggle, RIEDate et.c";
-	        }
-	    }, {
-	        key: 'componentWillReceiveProps',
-	        value: function componentWillReceiveProps(nextProps) {
-	            if ('value' in nextProps) this.setState({ loading: false, editing: false, invalid: false, newValue: null });
-	        }
-	    }, {
-	        key: 'commit',
-	        value: function commit(value) {
-	            if (!this.state.invalid) {
-	                var newProp = {};
-	                newProp[this.props.propName] = value;
-	                this.setState({ loading: true, newValue: value });
-	                this.props.change(newProp);
-	            }
-	        }
-	    }, {
-	        key: 'makeClassString',
-	        value: function makeClassString() {
-	            var classNames = [];
-	            if (this.props.className) classNames.push(this.props.className);
-	            if (this.state.editing && this.props.classEditing) classNames.push(this.props.classEditing);
-	            if (this.state.loading && this.props.classLoading) classNames.push(this.props.classLoading);
-	            if (this.state.disabled && this.props.classDisabled) classNames.push(this.props.classDisabled);
-	            if (this.state.invalid && this.props.classInvalid) classNames.push(this.props.classInvalid);
-	            return classNames.join(' ');
-	        }
-	    }, {
-	        key: 'render',
-	        value: function render() {
-	            return _react2.default.createElement(
-	                'span',
-	                { tabindex: '0', className: this.makeClassString(), onClick: this.elementClick },
-	                this.props.value
-	            );
-	        }
-	    }]);
-
-	    return RIEBase;
+	    return RIEEditBase;
 	}(_react2.default.Component);
 
-	exports.default = RIEBase;
+	exports.default = RIEEditBase;
 
 /***/ },
-/* 860 */
+/* 859 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -61495,7 +61315,7 @@
 	}
 
 /***/ },
-/* 861 */
+/* 860 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -61533,7 +61353,7 @@
 
 	var _ItemList = __webpack_require__(731);
 
-	var _Issues = __webpack_require__(860);
+	var _Issues = __webpack_require__(859);
 
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -61764,7 +61584,7 @@
 	}
 
 /***/ },
-/* 862 */
+/* 861 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -61794,23 +61614,27 @@
 
 	var _classnames2 = _interopRequireDefault(_classnames);
 
-	var _Issue = __webpack_require__(861);
+	var _Issue = __webpack_require__(860);
 
-	var _Users = __webpack_require__(863);
+	var _Users = __webpack_require__(862);
+
+	var _RIEDropDown = __webpack_require__(864);
+
+	var _RIEDropDown2 = _interopRequireDefault(_RIEDropDown);
 
 	var _RIEInput = __webpack_require__(857);
 
 	var _RIEInput2 = _interopRequireDefault(_RIEInput);
 
-	var _RIEDropDown = __webpack_require__(865);
+	var _RIEModeToggler = __webpack_require__(871);
 
-	var _RIEDropDown2 = _interopRequireDefault(_RIEDropDown);
+	var _RIEModeToggler2 = _interopRequireDefault(_RIEModeToggler);
 
-	var _RIEUserDropDown = __webpack_require__(876);
+	var _RIEUserDropDown = __webpack_require__(873);
 
 	var _RIEUserDropDown2 = _interopRequireDefault(_RIEUserDropDown);
 
-	var _OtherUser = __webpack_require__(877);
+	var _OtherUser = __webpack_require__(874);
 
 	var _OtherUser2 = _interopRequireDefault(_OtherUser);
 
@@ -61834,7 +61658,6 @@
 
 							var _this = _possibleConstructorReturn(this, Object.getPrototypeOf(Issue).call(this, props));
 
-							_this.onChangeSubject = _this.onChangeSubject.bind(_this);
 							_this.onChangeStatus = _this.onChangeStatus.bind(_this);
 							return _this;
 				}
@@ -61850,32 +61673,25 @@
 										dispatch((0, _Users.fetchUsersIfNeeded)(assignable_user_ids));
 							}
 				}, {
-							key: 'onChangeSubject',
-							value: function onChangeSubject(issue_id, obj) {
-										var dispatch = this.props.dispatch;
-
-										dispatch((0, _Issue.updateIssueSubject)(issue_id, obj.subject));
-							}
-				}, {
 							key: 'onChangeAssignedTo',
-							value: function onChangeAssignedTo(issue_id, obj) {
+							value: function onChangeAssignedTo(issue_id, new_value) {
 										var dispatch = this.props.dispatch;
 
-										dispatch((0, _Issue.updateIssueAssignedTo)(issue_id, obj.assigned_to));
+										dispatch((0, _Issue.updateIssueAssignedTo)(issue_id, new_value));
 							}
 				}, {
 							key: 'onChangeStatus',
-							value: function onChangeStatus(issue_id, obj) {
+							value: function onChangeStatus(issue_id, new_value) {
 										var dispatch = this.props.dispatch;
 
-										dispatch((0, _Issue.updateIssueStatus)(issue_id, obj.status));
+										dispatch((0, _Issue.updateIssueStatus)(issue_id, new_value));
 							}
 				}, {
 							key: 'onChangeFeature',
-							value: function onChangeFeature(issue_id, obj) {
+							value: function onChangeFeature(issue_id, new_value) {
 										var dispatch = this.props.dispatch;
 
-										dispatch((0, _Issue.updateIssueFeature)(issue_id, obj.feature_name));
+										dispatch((0, _Issue.updateIssueFeature)(issue_id, new_value));
 							}
 				}, {
 							key: 'render_collapsed',
@@ -61966,44 +61782,52 @@
 																_react2.default.createElement(
 																			'td',
 																			null,
-																			_react2.default.createElement(_RIEInput2.default, { value: issue.subject,
-																						propName: 'subject',
-																						change: function change(obj) {
-																									return _this2.onChangeSubject(issue.id, obj);
-																						} })
+																			issue.subject
 																),
 																_react2.default.createElement(
 																			'td',
 																			null,
-																			_react2.default.createElement(_RIEUserDropDown2.default, { value: issue.assigned_to_id,
-																						propName: 'assigned_to',
-																						user_ids: assignable_user_ids,
-																						change: function change(obj) {
-																									return _this2.onChangeAssignedTo(issue.id, obj);
-																						}
-																			})
+																			_react2.default.createElement(
+																						_RIEModeToggler2.default,
+																						{
+																									rie_key: "issue_assigned_to_" + issue.id,
+																									initialValue: issue.assigned_to_id || "...",
+																									onChange: function onChange(new_value) {
+																												return _this2.onChangeAssignedTo(issue.id, new_value);
+																									}
+																						},
+																						_react2.default.createElement(_RIEUserDropDown2.default, { user_ids: assignable_user_ids })
+																			)
 																),
 																_react2.default.createElement(
 																			'td',
 																			null,
-																			_react2.default.createElement(_RIEDropDown2.default, { value: issue.feature_name || "...",
-																						propName: 'feature_name',
-																						options: feature_options,
-																						change: function change(obj) {
-																									return _this2.onChangeFeature(issue.id, obj);
-																						}
-																			})
+																			_react2.default.createElement(
+																						_RIEModeToggler2.default,
+																						{
+																									rie_key: "issue_feature_" + issue.id,
+																									initialValue: issue.feature_name || "...",
+																									onChange: function onChange(new_value) {
+																												return _this2.onChangeFeature(issue.id, new_value);
+																									}
+																						},
+																						_react2.default.createElement(_RIEDropDown2.default, { options: feature_options })
+																			)
 																),
 																_react2.default.createElement(
 																			'td',
 																			null,
-																			_react2.default.createElement(_RIEDropDown2.default, { value: issue.status || "...",
-																						propName: 'status',
-																						options: ISSUE_STATUS_CHOICES,
-																						change: function change(obj) {
-																									return _this2.onChangeStatus(issue.id, obj);
-																						}
-																			})
+																			_react2.default.createElement(
+																						_RIEModeToggler2.default,
+																						{
+																									rie_key: "issue_status_" + issue.id,
+																									initialValue: issue.status || "...",
+																									onChange: function onChange(new_value) {
+																												return _this2.onChangeStatus(issue.id, new_value);
+																									}
+																						},
+																						_react2.default.createElement(_RIEDropDown2.default, { options: ISSUE_STATUS_CHOICES })
+																			)
 																)
 													)));
 										}
@@ -62116,7 +61940,7 @@
 	exports.default = (0, _reactRedux.connect)(mapStateToProps)((0, _reactDnd.DragSource)(_Dnd.DndTypes.ISSUE, headingSource, collect)((0, _reactDnd.DropTarget)(_Dnd.DndTypes.ISSUE, headingTarget, collectDrop)(Issue)));
 
 /***/ },
-/* 863 */
+/* 862 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -62142,7 +61966,7 @@
 
 	var _map2 = _interopRequireDefault(_map);
 
-	var _Error = __webpack_require__(864);
+	var _Error = __webpack_require__(863);
 
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -62238,7 +62062,7 @@
 	}
 
 /***/ },
-/* 864 */
+/* 863 */
 /***/ function(module, exports) {
 
 	'use strict';
@@ -62262,14 +62086,15 @@
 	}
 
 /***/ },
-/* 865 */
+/* 864 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 
 	Object.defineProperty(exports, "__esModule", {
-	    value: true
+				value: true
 	});
+	exports.RIEDropDown = undefined;
 
 	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
@@ -62281,17 +62106,15 @@
 
 	var _reactDom2 = _interopRequireDefault(_reactDom);
 
-	var _RIEInput2 = __webpack_require__(857);
-
-	var _RIEInput3 = _interopRequireDefault(_RIEInput2);
-
-	var _reactSelect = __webpack_require__(866);
+	var _reactSelect = __webpack_require__(865);
 
 	var _reactSelect2 = _interopRequireDefault(_reactSelect);
 
-	var _reactAutosizeTextarea = __webpack_require__(872);
+	var _RIEEditBase2 = __webpack_require__(858);
 
-	var _reactAutosizeTextarea2 = _interopRequireDefault(_reactAutosizeTextarea);
+	var _RIEEditBase3 = _interopRequireDefault(_RIEEditBase2);
+
+	var _reactRedux = __webpack_require__(534);
 
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -62301,82 +62124,65 @@
 
 	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 
-	var RIEDropDown = function (_RIEInput) {
-	    _inherits(RIEDropDown, _RIEInput);
+	var RIEDropDown = exports.RIEDropDown = function (_RIEEditBase) {
+				_inherits(RIEDropDown, _RIEEditBase);
 
-	    function RIEDropDown(props) {
-	        _classCallCheck(this, RIEDropDown);
+				function RIEDropDown(props) {
+							_classCallCheck(this, RIEDropDown);
 
-	        var _this = _possibleConstructorReturn(this, Object.getPrototypeOf(RIEDropDown).call(this, props));
+							var _this = _possibleConstructorReturn(this, Object.getPrototypeOf(RIEDropDown).call(this, props));
 
-	        _this.startEditing = _this.startEditing.bind(_this);
-	        _this.stopEditing = _this.stopEditing.bind(_this);
-	        _this.commit = _this.commit.bind(_this);
-	        _this.state = {
-	            editing: false
-	        };
-	        return _this;
-	    }
+							_this.onChange = _this.onChange.bind(_this);
+							return _this;
+				}
 
-	    _createClass(RIEDropDown, [{
-	        key: 'selectInputText',
-	        value: function selectInputText(inputElem) {}
-	    }, {
-	        key: 'stopEditing',
-	        value: function stopEditing() {
-	            this.setState({ editing: false });
-	        }
-	    }, {
-	        key: 'startEditing',
-	        value: function startEditing() {
-	            this.setState({ editing: true });
-	        }
-	    }, {
-	        key: 'commit',
-	        value: function commit(new_value) {
-	            var v = new_value && new_value.value || null;
-	            this.stopEditing();
-	            var res = {};
-	            res[this.props.propName] = v;
-	            this.props.change(res);
-	        }
-	    }, {
-	        key: 'renderEditingComponent',
-	        value: function renderEditingComponent() {
-	            var _props = this.props;
-	            var options = _props.options;
-	            var value = _props.value;
+				_createClass(RIEDropDown, [{
+							key: 'onChange',
+							value: function onChange(selected_option) {
+										var new_value = selected_option.value;
+										this.props.onChange(new_value);
+										this.props.onSave(new_value);
+							}
+				}, {
+							key: 'render',
+							value: function render() {
+										var _props = this.props;
+										var options = _props.options;
+										var value = _props.value;
+										var is_editing = _props.is_editing;
+										var is_readonly = _props.is_readonly;
 
-	            return _react2.default.createElement(
-	                'div',
-	                { className: 'RIEDropDown' },
-	                _react2.default.createElement(_reactSelect2.default, { name: 'status',
-	                    value: value,
-	                    ref: 'input',
-	                    autofocus: true,
-	                    options: options,
-	                    onChange: this.commit
-	                })
-	            );
-	        }
-	    }, {
-	        key: 'render',
-	        value: function render() {
-	            if (this.state.editing) {
-	                return this.renderEditingComponent();
-	            } else {
-	                return this.renderNormalComponent();
-	            }
-	        }
-	    }]);
+										return _react2.default.createElement(
+													'div',
+													null,
+													is_editing && _react2.default.createElement(
+																'div',
+																{ className: 'RIEDropDown' },
+																_react2.default.createElement(_reactSelect2.default, { value: value,
+																			options: options,
+																			onChange: this.onChange
+																})
+													),
+													is_readonly && _react2.default.createElement(
+																'span',
+																null,
+																value
+													)
+										);
+							}
+				}]);
 
-	    return RIEDropDown;
-	}(_RIEInput3.default);
+				return RIEDropDown;
+	}(_RIEEditBase3.default);
 
-	exports.default = RIEDropDown;
+	function mapStateToProps(state, props) {
+				return {};
+	}
+
+	exports.default = (0, _reactRedux.connect)(mapStateToProps)(RIEDropDown);
 
 /***/ },
-/* 866 */
+/* 865 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -62397,7 +62203,7 @@
 
 	var _reactDom2 = _interopRequireDefault(_reactDom);
 
-	var _reactInputAutosize = __webpack_require__(867);
+	var _reactInputAutosize = __webpack_require__(866);
 
 	var _reactInputAutosize2 = _interopRequireDefault(_reactInputAutosize);
 
@@ -62405,19 +62211,19 @@
 
 	var _classnames2 = _interopRequireDefault(_classnames);
 
-	var _utilsStripDiacritics = __webpack_require__(868);
+	var _utilsStripDiacritics = __webpack_require__(867);
 
 	var _utilsStripDiacritics2 = _interopRequireDefault(_utilsStripDiacritics);
 
-	var _Async = __webpack_require__(869);
+	var _Async = __webpack_require__(868);
 
 	var _Async2 = _interopRequireDefault(_Async);
 
-	var _Option = __webpack_require__(870);
+	var _Option = __webpack_require__(869);
 
 	var _Option2 = _interopRequireDefault(_Option);
 
-	var _Value = __webpack_require__(871);
+	var _Value = __webpack_require__(870);
 
 	var _Value2 = _interopRequireDefault(_Value);
 
@@ -63331,7 +63137,7 @@
 	module.exports = exports['default'];
 
 /***/ },
-/* 867 */
+/* 866 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -63462,7 +63268,7 @@
 	module.exports = AutosizeInput;
 
 /***/ },
-/* 868 */
+/* 867 */
 /***/ function(module, exports) {
 
 	'use strict';
@@ -63477,7 +63283,7 @@
 	};
 
 /***/ },
-/* 869 */
+/* 868 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -63490,11 +63296,11 @@
 
 	var _react2 = _interopRequireDefault(_react);
 
-	var _Select = __webpack_require__(866);
+	var _Select = __webpack_require__(865);
 
 	var _Select2 = _interopRequireDefault(_Select);
 
-	var _utilsStripDiacritics = __webpack_require__(868);
+	var _utilsStripDiacritics = __webpack_require__(867);
 
 	var _utilsStripDiacritics2 = _interopRequireDefault(_utilsStripDiacritics);
 
@@ -63658,7 +63464,7 @@
 	module.exports = Async;
 
 /***/ },
-/* 870 */
+/* 869 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -63767,7 +63573,7 @@
 	module.exports = Option;
 
 /***/ },
-/* 871 */
+/* 870 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -63876,13 +63682,617 @@
 	module.exports = Value;
 
 /***/ },
+/* 871 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	Object.defineProperty(exports, "__esModule", {
+				value: true
+	});
+	exports.RIEModeToggler = undefined;
+
+	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+	var _react = __webpack_require__(300);
+
+	var _react2 = _interopRequireDefault(_react);
+
+	var _reactDom = __webpack_require__(336);
+
+	var _reactDom2 = _interopRequireDefault(_reactDom);
+
+	var _reactRedux = __webpack_require__(534);
+
+	var _Rie = __webpack_require__(872);
+
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+	function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+	var RIEModeToggler = exports.RIEModeToggler = function (_React$Component) {
+				_inherits(RIEModeToggler, _React$Component);
+
+				function RIEModeToggler(props) {
+							_classCallCheck(this, RIEModeToggler);
+
+							var _this = _possibleConstructorReturn(this, Object.getPrototypeOf(RIEModeToggler).call(this, props));
+
+							_this.startEditing = _this.startEditing.bind(_this);
+							_this.cancelEditing = _this.cancelEditing.bind(_this);
+							_this.stopEditing = _this.stopEditing.bind(_this);
+							_this.finishEditing = _this.finishEditing.bind(_this);
+							_this.onChange = _this.onChange.bind(_this);
+							_this.keyDown = _this.keyDown.bind(_this);
+							_this.elementClick = _this.elementClick.bind(_this);
+							return _this;
+				}
+
+				_createClass(RIEModeToggler, [{
+							key: 'componentDidMount',
+							value: function componentDidMount() {
+										var _props = this.props;
+										var dispatch = _props.dispatch;
+										var rie_key = _props.rie_key;
+
+										dispatch((0, _Rie.setInitialValue)(rie_key, this.props.initialValue));
+										if (this.props.initialState == 'editing') {
+													this.startEditing();
+										}
+							}
+				}, {
+							key: 'componentWillUpdate',
+							value: function componentWillUpdate() {
+										var _props2 = this.props;
+										var dispatch = _props2.dispatch;
+										var rie_key = _props2.rie_key;
+										var initialValue = _props2.initialValue;
+										var original_initial_value = _props2.original_initial_value;
+										var is_editing = _props2.is_editing;
+
+										if (original_initial_value != initialValue) {
+													dispatch((0, _Rie.setInitialValue)(rie_key, this.props.initialValue));
+										}
+							}
+				}, {
+							key: 'onChange',
+							value: function onChange(new_value) {
+										var _props3 = this.props;
+										var dispatch = _props3.dispatch;
+										var rie_key = _props3.rie_key;
+
+										dispatch((0, _Rie.updateValue)(rie_key, new_value));
+							}
+				}, {
+							key: 'finishEditing',
+							value: function finishEditing(current_value) {
+										var v = current_value || this.props.value;
+										if (this.props.onChange) {
+													this.props.onChange(v);
+										}
+										this.stopEditing();
+							}
+				}, {
+							key: 'startEditing',
+							value: function startEditing() {
+										var _props4 = this.props;
+										var dispatch = _props4.dispatch;
+										var rie_key = _props4.rie_key;
+										var is_editing = _props4.is_editing;
+
+										if (!is_editing) {
+													dispatch((0, _Rie.startEditing)(rie_key));
+										}
+							}
+				}, {
+							key: 'stopEditing',
+							value: function stopEditing() {
+										var _props5 = this.props;
+										var dispatch = _props5.dispatch;
+										var rie_key = _props5.rie_key;
+										var is_editing = _props5.is_editing;
+
+										if (is_editing) {
+													dispatch((0, _Rie.stopEditing)(rie_key));
+										}
+							}
+				}, {
+							key: 'cancelEditing',
+							value: function cancelEditing() {
+										var _props6 = this.props;
+										var dispatch = _props6.dispatch;
+										var rie_key = _props6.rie_key;
+
+										dispatch((0, _Rie.updateValue)(rie_key, this.props.initialValue));
+										this.stopEditing();
+										if (this.props.onCancel) {
+													this.props.onCancel();
+										}
+							}
+				}, {
+							key: 'keyDown',
+							value: function keyDown(event) {
+										var is_editing = this.props.is_editing;
+
+										if (!is_editing) {
+													return;
+										}
+										if (event.keyCode === 13) {
+													event.preventDefault();
+													this.finishEditing();
+										} else if (event.keyCode === 27) {
+													event.preventDefault();
+													this.cancelEditing();
+										}
+							}
+				}, {
+							key: 'elementBlur',
+							value: function elementBlur(event) {
+										this.finishEditing();
+							}
+				}, {
+							key: 'elementClick',
+							value: function elementClick(event) {
+										this.startEditing();
+							}
+				}, {
+							key: 'renderNormalMode',
+							value: function renderNormalMode() {
+										var value = this.props.value;
+
+										return _react2.default.createElement(
+													'span',
+													{ onClick: this.startEditing },
+													value
+										);
+							}
+				}, {
+							key: 'render',
+							value: function render() {
+										var _props7 = this.props;
+										var is_editing = _props7.is_editing;
+										var is_readonly = _props7.is_readonly;
+										var children = _props7.children;
+										var value = _props7.value;
+
+
+										var that = this;
+										var editing_child = null;
+										var readonly_child = null;
+
+										_react2.default.Children.map(children, function (child, index) {
+													if (index == 0) {
+																editing_child = _react2.default.cloneElement(child, {
+																			value: value,
+																			is_editing: is_editing,
+																			is_readonly: is_readonly,
+																			startEditing: that.startEditing,
+																			onChange: that.onChange,
+																			onSave: that.finishEditing,
+																			onCancel: that.cancelEditing
+																});
+													} else if (index == 1) {
+																readonly_child = _react2.default.cloneElement(child, {
+																			value: value,
+																			is_editing: is_editing,
+																			is_readonly: is_readonly,
+																			startEditing: that.startEditing,
+																			onChange: that.onChange,
+																			onSave: that.finishEditing,
+																			onCancel: that.cancelEditing
+																});
+													}
+										});
+										if (!readonly_child) {
+													readonly_child = editing_child;
+										}
+
+										return _react2.default.createElement(
+													'div',
+													{ onKeyDown: this.keyDown, onClick: this.elementClick },
+													is_editing && editing_child,
+													is_readonly && readonly_child
+										);
+							}
+				}]);
+
+				return RIEModeToggler;
+	}(_react2.default.Component);
+
+	function mapStateToProps(state, props) {
+				var rie_key = props.rie_key;
+
+
+				var rie = state.rie || {};
+				var r = rie[rie_key] || {};
+				var mode = r.mode || 'readonly';
+				var value = r.value || props.initialValue;
+				var original_initial_value = r.initial_value;
+
+				return {
+							is_editing: mode == 'editing',
+							is_readonly: mode == 'readonly',
+							value: value,
+							original_initial_value: original_initial_value
+				};
+	}
+
+	exports.default = (0, _reactRedux.connect)(mapStateToProps)(RIEModeToggler);
+
+/***/ },
 /* 872 */
 /***/ function(module, exports, __webpack_require__) {
 
-	module.exports = __webpack_require__(873);
+	'use strict';
+
+	Object.defineProperty(exports, "__esModule", {
+					value: true
+	});
+	exports.RIE_SET_INITIAL_VALUE = exports.RIE_UPDATE_VALUE = exports.RIE_STOP_EDITING = exports.RIE_START_EDITING = exports.RIE_RESET = undefined;
+	exports.reset = reset;
+	exports.startEditing = startEditing;
+	exports.stopEditing = stopEditing;
+	exports.updateValue = updateValue;
+	exports.setInitialValue = setInitialValue;
+
+	var _lib = __webpack_require__(732);
+
+	var _difference = __webpack_require__(737);
+
+	var _difference2 = _interopRequireDefault(_difference);
+
+	var _keys = __webpack_require__(693);
+
+	var _keys2 = _interopRequireDefault(_keys);
+
+	var _indexOf = __webpack_require__(742);
+
+	var _indexOf2 = _interopRequireDefault(_indexOf);
+
+	var _map = __webpack_require__(673);
+
+	var _map2 = _interopRequireDefault(_map);
+
+	var _ItemList = __webpack_require__(731);
+
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+	var RIE_RESET = exports.RIE_RESET = 'RIE_RESET';
+	var RIE_START_EDITING = exports.RIE_START_EDITING = 'RIE_START_EDITING';
+	var RIE_STOP_EDITING = exports.RIE_STOP_EDITING = 'RIE_STOP_EDITING';
+	var RIE_UPDATE_VALUE = exports.RIE_UPDATE_VALUE = 'RIE_UPDATE_VALUE';
+	var RIE_SET_INITIAL_VALUE = exports.RIE_SET_INITIAL_VALUE = 'RIE_SET_INITIAL_VALUE';
+
+	function reset(rie_key) {
+					return {
+									type: RIE_RESET,
+									rie_key: rie_key
+					};
+	}
+
+	function startEditing(rie_key) {
+					return {
+									type: RIE_START_EDITING,
+									rie_key: rie_key
+					};
+	}
+
+	function stopEditing(rie_key) {
+					return {
+									type: RIE_STOP_EDITING,
+									rie_key: rie_key
+					};
+	}
+
+	function updateValue(rie_key, new_value) {
+					return {
+									type: RIE_UPDATE_VALUE,
+									rie_key: rie_key,
+									new_value: new_value
+					};
+	}
+
+	function setInitialValue(rie_key, initial_value) {
+					return {
+									type: RIE_SET_INITIAL_VALUE,
+									rie_key: rie_key,
+									initial_value: initial_value
+					};
+	}
 
 /***/ },
 /* 873 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	Object.defineProperty(exports, "__esModule", {
+				value: true
+	});
+	exports.RIEUserDropDown = undefined;
+
+	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+	var _react = __webpack_require__(300);
+
+	var _react2 = _interopRequireDefault(_react);
+
+	var _reactDom = __webpack_require__(336);
+
+	var _reactDom2 = _interopRequireDefault(_reactDom);
+
+	var _OtherUser = __webpack_require__(874);
+
+	var _OtherUser2 = _interopRequireDefault(_OtherUser);
+
+	var _reactSelect = __webpack_require__(865);
+
+	var _reactSelect2 = _interopRequireDefault(_reactSelect);
+
+	var _reactAutosizeTextarea = __webpack_require__(875);
+
+	var _reactAutosizeTextarea2 = _interopRequireDefault(_reactAutosizeTextarea);
+
+	var _reactRedux = __webpack_require__(534);
+
+	var _Users = __webpack_require__(862);
+
+	var _RIEEditBase2 = __webpack_require__(858);
+
+	var _RIEEditBase3 = _interopRequireDefault(_RIEEditBase2);
+
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+	function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+	var RIEUserDropDown = exports.RIEUserDropDown = function (_RIEEditBase) {
+				_inherits(RIEUserDropDown, _RIEEditBase);
+
+				function RIEUserDropDown(props) {
+							_classCallCheck(this, RIEUserDropDown);
+
+							var _this = _possibleConstructorReturn(this, Object.getPrototypeOf(RIEUserDropDown).call(this, props));
+
+							_this.onChange = _this.onChange.bind(_this);
+							return _this;
+				}
+
+				_createClass(RIEUserDropDown, [{
+							key: 'componentDidMount',
+							value: function componentDidMount() {
+										var _props = this.props;
+										var dispatch = _props.dispatch;
+										var user_ids = _props.user_ids;
+
+										dispatch((0, _Users.fetchUsersIfNeeded)(user_ids));
+							}
+				}, {
+							key: 'onChange',
+							value: function onChange(selected_option) {
+										var new_value = selected_option.value;
+										this.props.onChange(new_value);
+										this.props.onSave(new_value);
+							}
+				}, {
+							key: 'renderReadonly',
+							value: function renderReadonly() {
+										var value = this.props.value;
+
+										return _react2.default.createElement(_OtherUser2.default, { user_id: value,
+													render_mode: 'inline--small',
+													loading_value: value });
+							}
+				}, {
+							key: 'renderEditing',
+							value: function renderEditing() {
+										var _props2 = this.props;
+										var options = _props2.options;
+										var value = _props2.value;
+
+
+										return _react2.default.createElement(
+													'div',
+													{ className: 'RIEDropDown' },
+													_react2.default.createElement(_reactSelect2.default, { value: value,
+																options: options,
+																onChange: this.onChange
+													})
+										);
+							}
+				}, {
+							key: 'render',
+							value: function render() {
+										var _props3 = this.props;
+										var is_editing = _props3.is_editing;
+										var is_readonly = _props3.is_readonly;
+
+										return _react2.default.createElement(
+													'div',
+													null,
+													is_editing && this.renderEditing(),
+													is_readonly && this.renderReadonly()
+										);
+							}
+				}]);
+
+				return RIEUserDropDown;
+	}(_RIEEditBase3.default);
+
+	function mapStateToProps(state, props) {
+				var user_ids = props.user_ids;
+				var user = state.user;
+
+				var users = user && user.items_by_id && user_ids.map(function (user_id) {
+							return user.items_by_id[user_id] || { 'id': user_id, 'username': user_id };
+				}) || [];
+				var options = users.map(function (user) {
+							return { value: user.id, label: user.username };
+				});
+
+				return {
+							user_ids: user_ids,
+							users: user,
+							options: options
+				};
+	}
+
+	exports.default = (0, _reactRedux.connect)(mapStateToProps)(RIEUserDropDown);
+
+/***/ },
+/* 874 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	Object.defineProperty(exports, "__esModule", {
+					value: true
+	});
+	exports.OtherUser = undefined;
+
+	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+	var _react = __webpack_require__(300);
+
+	var _react2 = _interopRequireDefault(_react);
+
+	var _reactRouter = __webpack_require__(466);
+
+	var _reactDnd = __webpack_require__(556);
+
+	var _reactRedux = __webpack_require__(534);
+
+	var _map = __webpack_require__(673);
+
+	var _map2 = _interopRequireDefault(_map);
+
+	var _indexOf = __webpack_require__(742);
+
+	var _indexOf2 = _interopRequireDefault(_indexOf);
+
+	var _classnames = __webpack_require__(854);
+
+	var _classnames2 = _interopRequireDefault(_classnames);
+
+	var _Dnd = __webpack_require__(855);
+
+	var _Users = __webpack_require__(862);
+
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+	function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+	var OtherUser = exports.OtherUser = function (_Component) {
+					_inherits(OtherUser, _Component);
+
+					function OtherUser(props) {
+									_classCallCheck(this, OtherUser);
+
+									return _possibleConstructorReturn(this, Object.getPrototypeOf(OtherUser).call(this, props));
+					}
+
+					_createClass(OtherUser, [{
+									key: 'componentDidMount',
+									value: function componentDidMount() {
+													var _props = this.props;
+													var dispatch = _props.dispatch;
+													var user_id = _props.user_id;
+
+													if (user_id) {
+																	dispatch((0, _Users.fetchUsersIfNeeded)([user_id]));
+													}
+									}
+					}, {
+									key: 'render_inline_small',
+									value: function render_inline_small() {
+													var _props2 = this.props;
+													var user = _props2.user;
+													var loading_value = _props2.loading_value;
+													var onClick = _props2.onClick;
+
+
+													return _react2.default.createElement(
+																	'div',
+																	{ key: this.key + ".collapsed_user." + user.id,
+																					onClick: onClick
+																	},
+																	user.username && user.username,
+																	!user.username && loading_value
+													);
+									}
+					}, {
+									key: 'render',
+									value: function render() {
+													var _props3 = this.props;
+													var user_id = _props3.user_id;
+													var render_mode = _props3.render_mode;
+													var loading_value = _props3.loading_value;
+													var onClick = _props3.onClick;
+
+
+													if (!user_id) {
+																	return _react2.default.createElement(
+																					'div',
+																					{ onClick: onClick },
+																					loading_value
+																	);
+													}
+
+													if (render_mode == 'inline--small') {
+																	return this.render_inline_small();
+													} else {
+																	return _react2.default.createElement(
+																					'div',
+																					null,
+																					'Dev error, unsupported render mode: ',
+																					render_mode
+																	);
+													}
+									}
+					}]);
+
+					return OtherUser;
+	}(_react.Component);
+
+	function mapStateToProps(state, props) {
+					var user = state.user;
+					var user_id = props.user_id;
+					var render_mode = props.render_mode;
+					var loading_value = props.loading_value;
+
+
+					var this_user = user && user.items_by_id && user.items_by_id[user_id] || {};
+					var is_loading = user && user.loading_item_ids && (0, _indexOf2.default)(user.loading_item_ids, user_id) !== -1 || false;
+
+					return {
+									user: this_user,
+									is_loading: is_loading,
+									render_mode: render_mode || "inline--small",
+									loading_value: loading_value || "..."
+					};
+	}
+
+	exports.default = (0, _reactRedux.connect)(mapStateToProps)(OtherUser);
+
+/***/ },
+/* 875 */
+/***/ function(module, exports, __webpack_require__) {
+
+	module.exports = __webpack_require__(876);
+
+/***/ },
+/* 876 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -63891,7 +64301,7 @@
 
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
 
-	var _TextareaAutosizeJs = __webpack_require__(874);
+	var _TextareaAutosizeJs = __webpack_require__(877);
 
 	var _TextareaAutosizeJs2 = _interopRequireDefault(_TextareaAutosizeJs);
 
@@ -63899,7 +64309,7 @@
 	module.exports = exports['default'];
 
 /***/ },
-/* 874 */
+/* 877 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -63926,7 +64336,7 @@
 
 	var _reactDom2 = _interopRequireDefault(_reactDom);
 
-	var _autosize = __webpack_require__(875);
+	var _autosize = __webpack_require__(878);
 
 	var _autosize2 = _interopRequireDefault(_autosize);
 
@@ -64022,7 +64432,7 @@
 	module.exports = exports['default'];
 
 /***/ },
-/* 875 */
+/* 878 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/*!
@@ -64281,292 +64691,7 @@
 	});
 
 /***/ },
-/* 876 */
-/***/ function(module, exports, __webpack_require__) {
-
-	'use strict';
-
-	Object.defineProperty(exports, "__esModule", {
-	    value: true
-	});
-
-	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
-
-	var _react = __webpack_require__(300);
-
-	var _react2 = _interopRequireDefault(_react);
-
-	var _reactDom = __webpack_require__(336);
-
-	var _reactDom2 = _interopRequireDefault(_reactDom);
-
-	var _RIEDropDown2 = __webpack_require__(865);
-
-	var _RIEDropDown3 = _interopRequireDefault(_RIEDropDown2);
-
-	var _OtherUser = __webpack_require__(877);
-
-	var _OtherUser2 = _interopRequireDefault(_OtherUser);
-
-	var _reactSelect = __webpack_require__(866);
-
-	var _reactSelect2 = _interopRequireDefault(_reactSelect);
-
-	var _reactAutosizeTextarea = __webpack_require__(872);
-
-	var _reactAutosizeTextarea2 = _interopRequireDefault(_reactAutosizeTextarea);
-
-	var _reactRedux = __webpack_require__(534);
-
-	var _Users = __webpack_require__(863);
-
-	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
-	function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
-
-	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
-
-	var RIEUserDropDown = function (_RIEDropDown) {
-	    _inherits(RIEUserDropDown, _RIEDropDown);
-
-	    function RIEUserDropDown(props) {
-	        _classCallCheck(this, RIEUserDropDown);
-
-	        var _this = _possibleConstructorReturn(this, Object.getPrototypeOf(RIEUserDropDown).call(this, props));
-
-	        _this.startEditing = _this.startEditing.bind(_this);
-	        return _this;
-	    }
-
-	    _createClass(RIEUserDropDown, [{
-	        key: 'componentDidMount',
-	        value: function componentDidMount() {
-	            var _props = this.props;
-	            var dispatch = _props.dispatch;
-	            var user_ids = _props.user_ids;
-
-	            dispatch((0, _Users.fetchUsersIfNeeded)(user_ids));
-	        }
-	    }, {
-	        key: 'selectInputText',
-	        value: function selectInputText(inputElem) {}
-	    }, {
-	        key: 'startEditing',
-	        value: function startEditing(event) {
-	            this.setState({ editing: true });
-	            event.stopPropagation();
-	        }
-	    }, {
-	        key: 'renderNormalComponent',
-	        value: function renderNormalComponent() {
-	            var value = this.props.value;
-
-	            return _react2.default.createElement(_OtherUser2.default, { user_id: value,
-	                render_mode: 'inline--small',
-	                className: this.makeClassString(),
-	                onClick: this.startEditing,
-	                loading_value: value });
-	        }
-	    }, {
-	        key: 'renderEditingComponent',
-	        value: function renderEditingComponent() {
-	            var _props2 = this.props;
-	            var options = _props2.options;
-	            var value = _props2.value;
-
-
-	            return _react2.default.createElement(
-	                'div',
-	                { className: 'RIEDropDown' },
-	                _react2.default.createElement(_reactSelect2.default, { name: 'dropdown',
-	                    value: value,
-	                    ref: 'input',
-	                    autofocus: true,
-	                    options: options,
-	                    onChange: this.commit
-	                })
-	            );
-	        }
-	    }, {
-	        key: 'render',
-	        value: function render() {
-	            if (this.state.editing) {
-	                return this.renderEditingComponent();
-	            } else {
-	                return this.renderNormalComponent();
-	            }
-	        }
-	    }]);
-
-	    return RIEUserDropDown;
-	}(_RIEDropDown3.default);
-
-	exports.default = RIEUserDropDown;
-
-
-	function mapStateToProps(state, props) {
-	    var user_ids = props.user_ids;
-	    var user = state.user;
-
-	    var users = user && user.items_by_id && user_ids.map(function (user_id) {
-	        return user.items_by_id[user_id] || { 'id': user_id, 'username': user_id };
-	    }) || [];
-	    var options = users.map(function (user) {
-	        return { value: user.id, label: user.username };
-	    });
-
-	    return {
-	        user_ids: user_ids,
-	        users: user,
-	        options: options
-	    };
-	}
-
-	exports.default = (0, _reactRedux.connect)(mapStateToProps)(RIEUserDropDown);
-
-/***/ },
-/* 877 */
-/***/ function(module, exports, __webpack_require__) {
-
-	'use strict';
-
-	Object.defineProperty(exports, "__esModule", {
-					value: true
-	});
-	exports.OtherUser = undefined;
-
-	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
-
-	var _react = __webpack_require__(300);
-
-	var _react2 = _interopRequireDefault(_react);
-
-	var _reactRouter = __webpack_require__(466);
-
-	var _reactDnd = __webpack_require__(556);
-
-	var _reactRedux = __webpack_require__(534);
-
-	var _map = __webpack_require__(673);
-
-	var _map2 = _interopRequireDefault(_map);
-
-	var _indexOf = __webpack_require__(742);
-
-	var _indexOf2 = _interopRequireDefault(_indexOf);
-
-	var _classnames = __webpack_require__(854);
-
-	var _classnames2 = _interopRequireDefault(_classnames);
-
-	var _Dnd = __webpack_require__(855);
-
-	var _Users = __webpack_require__(863);
-
-	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
-	function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
-
-	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
-
-	var OtherUser = exports.OtherUser = function (_Component) {
-					_inherits(OtherUser, _Component);
-
-					function OtherUser(props) {
-									_classCallCheck(this, OtherUser);
-
-									return _possibleConstructorReturn(this, Object.getPrototypeOf(OtherUser).call(this, props));
-					}
-
-					_createClass(OtherUser, [{
-									key: 'componentDidMount',
-									value: function componentDidMount() {
-													var _props = this.props;
-													var dispatch = _props.dispatch;
-													var user_id = _props.user_id;
-
-													if (user_id) {
-																	dispatch((0, _Users.fetchUsersIfNeeded)([user_id]));
-													}
-									}
-					}, {
-									key: 'render_inline_small',
-									value: function render_inline_small() {
-													var _props2 = this.props;
-													var user = _props2.user;
-													var loading_value = _props2.loading_value;
-													var onClick = _props2.onClick;
-
-
-													return _react2.default.createElement(
-																	'div',
-																	{ key: this.key + ".collapsed_user." + user.id,
-																					onClick: onClick
-																	},
-																	user.username && user.username,
-																	!user.username && loading_value
-													);
-									}
-					}, {
-									key: 'render',
-									value: function render() {
-													var _props3 = this.props;
-													var user_id = _props3.user_id;
-													var render_mode = _props3.render_mode;
-													var loading_value = _props3.loading_value;
-													var onClick = _props3.onClick;
-
-
-													if (!user_id) {
-																	return _react2.default.createElement(
-																					'div',
-																					{ onClick: onClick },
-																					loading_value
-																	);
-													}
-
-													if (render_mode == 'inline--small') {
-																	return this.render_inline_small();
-													} else {
-																	return _react2.default.createElement(
-																					'div',
-																					null,
-																					'Dev error, unsupported render mode: ',
-																					render_mode
-																	);
-													}
-									}
-					}]);
-
-					return OtherUser;
-	}(_react.Component);
-
-	function mapStateToProps(state, props) {
-					var user = state.user;
-					var user_id = props.user_id;
-					var render_mode = props.render_mode;
-					var loading_value = props.loading_value;
-
-
-					var this_user = user && user.items_by_id && user.items_by_id[user_id] || {};
-					var is_loading = user && user.loading_item_ids && (0, _indexOf2.default)(user.loading_item_ids, user_id) !== -1 || false;
-
-					return {
-									user: this_user,
-									is_loading: is_loading,
-									render_mode: render_mode || "inline--small",
-									loading_value: loading_value || "..."
-					};
-	}
-
-	exports.default = (0, _reactRedux.connect)(mapStateToProps)(OtherUser);
-
-/***/ },
-/* 878 */
+/* 879 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -64594,19 +64719,25 @@
 
 	var _map2 = _interopRequireDefault(_map);
 
-	var _RIETextArea = __webpack_require__(879);
-
-	var _RIETextArea2 = _interopRequireDefault(_RIETextArea);
-
-	var _OtherUser = __webpack_require__(877);
+	var _OtherUser = __webpack_require__(874);
 
 	var _OtherUser2 = _interopRequireDefault(_OtherUser);
 
-	var _Issue = __webpack_require__(861);
+	var _Issue = __webpack_require__(860);
 
 	var _IssueGeneralDetails = __webpack_require__(880);
 
-	var _reactSticky = __webpack_require__(848);
+	var _RIEModeToggler = __webpack_require__(871);
+
+	var _RIEModeToggler2 = _interopRequireDefault(_RIEModeToggler);
+
+	var _RIEInput = __webpack_require__(857);
+
+	var _RIEInput2 = _interopRequireDefault(_RIEInput);
+
+	var _RIETextArea = __webpack_require__(881);
+
+	var _RIETextArea2 = _interopRequireDefault(_RIETextArea);
 
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -64625,7 +64756,10 @@
 			var _this = _possibleConstructorReturn(this, Object.getPrototypeOf(IssueDeveloperDetails).call(this, props));
 
 			_this.onDelete = _this.onDelete.bind(_this);
+			_this.onChangeSubject = _this.onChangeSubject.bind(_this);
 			_this.onChangeDescription = _this.onChangeDescription.bind(_this);
+			_this.onSaveCandidateIssue = _this.onSaveCandidateIssue.bind(_this);
+			_this.onCancelCandidateIssue = _this.onCancelCandidateIssue.bind(_this);
 			return _this;
 		}
 
@@ -64642,13 +64776,20 @@
 				}
 			}
 		}, {
+			key: 'onChangeSubject',
+			value: function onChangeSubject(issue_id, value) {
+				var dispatch = this.props.dispatch;
+
+				dispatch((0, _Issue.updateIssueSubject)(issue_id, value));
+			}
+		}, {
 			key: 'onChangeDescription',
-			value: function onChangeDescription(obj) {
+			value: function onChangeDescription(new_value) {
 				var _props2 = this.props;
 				var dispatch = _props2.dispatch;
 				var issue_id = _props2.issue_id;
 
-				dispatch((0, _Issue.updateIssueDescription)(issue_id, obj.description));
+				dispatch((0, _Issue.updateIssueDescription)(issue_id, new_value));
 			}
 		}, {
 			key: 'onDelete',
@@ -64658,6 +64799,21 @@
 				var issue_id = _props3.issue_id;
 
 				dispatch((0, _Issue.deleteIssue)(issue_id));
+			}
+		}, {
+			key: 'onSaveCandidateIssue',
+			value: function onSaveCandidateIssue(new_subject) {
+				var dispatch = this.props.dispatch;
+
+				dispatch((0, _Issue.updateCandidateSubject)(new_subject));
+				dispatch((0, _Issue.saveCandidateIssue)());
+			}
+		}, {
+			key: 'onCancelCandidateIssue',
+			value: function onCancelCandidateIssue() {
+				var dispatch = this.props.dispatch;
+
+				dispatch((0, _Issue.cancelCandidateIssue)());
 			}
 		}, {
 			key: 'renderComment',
@@ -64690,70 +64846,140 @@
 				);
 			}
 		}, {
+			key: 'renderCreatingIssue',
+			value: function renderCreatingIssue() {
+				var _props4 = this.props;
+				var candidate_issue = _props4.candidate_issue;
+				var is_creating_issue = _props4.is_creating_issue;
+
+				return _react2.default.createElement(
+					'div',
+					{ className: 'issue_developer_details' },
+					_react2.default.createElement(
+						'div',
+						{ className: 'panel panel--full' },
+						_react2.default.createElement(
+							'div',
+							{ className: 'panel-heading' },
+							_react2.default.createElement(
+								'div',
+								{ className: 'panel__title' },
+								'New Issue'
+							),
+							_react2.default.createElement(
+								'div',
+								{ className: 'panel__buttons' },
+								_react2.default.createElement('div', { className: 'panel__button panel__button--delete',
+									onClick: this.onCancelCandidateIssue })
+							)
+						),
+						_react2.default.createElement(
+							'div',
+							{ className: 'issue_developer_details__panel-body' },
+							_react2.default.createElement(
+								'h3',
+								null,
+								'Subject: '
+							),
+							_react2.default.createElement(
+								'h3',
+								null,
+								_react2.default.createElement(
+									_RIEModeToggler2.default,
+									{
+										rie_key: 'issue_subject',
+										initialValue: '',
+										initialState: 'editing',
+										onChange: this.onSaveCandidateIssue,
+										onCancel: this.onCancelCandidateIssue
+									},
+									_react2.default.createElement(_RIEInput2.default, null)
+								)
+							)
+						)
+					)
+				);
+			}
+		}, {
 			key: 'render',
 			value: function render() {
 				var _this2 = this;
 
-				var _props4 = this.props;
-				var is_visible = _props4.is_visible;
-				var issue_id = _props4.issue_id;
-				var issue = _props4.issue;
-				var comments = _props4.comments;
-				var is_loading = _props4.is_loading;
+				var _props5 = this.props;
+				var is_visible = _props5.is_visible;
+				var issue_id = _props5.issue_id;
+				var issue = _props5.issue;
+				var comments = _props5.comments;
+				var is_loading = _props5.is_loading;
+				var is_creating_issue = _props5.is_creating_issue;
 
 
 				if (!is_visible) {
 					return _react2.default.createElement('div', null);
 				}
 
+				if (is_creating_issue) {
+					return this.renderCreatingIssue();
+				}
+
 				return _react2.default.createElement(
-					_reactSticky.Sticky,
-					null,
+					'div',
+					{ className: 'issue_developer_details', style: { opacity: is_loading ? 0.5 : 1 } },
 					_react2.default.createElement(
 						'div',
-						{ className: 'issue_developer_details', style: { opacity: is_loading ? 0.5 : 1 } },
+						{ className: 'panel panel--full' },
 						_react2.default.createElement(
 							'div',
-							{ className: 'panel panel--full' },
+							{ className: 'panel-heading' },
 							_react2.default.createElement(
 								'div',
-								{ className: 'panel-heading' },
+								{ className: 'panel__title' },
+								'Issue Details'
+							),
+							_react2.default.createElement(
+								'div',
+								{ className: 'panel__buttons' },
+								_react2.default.createElement('div', { className: 'panel__button panel__button--delete',
+									onClick: this.onDelete })
+							)
+						),
+						_react2.default.createElement(
+							'div',
+							{ className: 'issue_developer_details__panel-body' },
+							_react2.default.createElement(
+								'h3',
+								null,
+								'issue#',
+								issue.number,
+								':',
 								_react2.default.createElement(
-									'div',
-									{ className: 'panel__title' },
-									'Issue Details'
-								),
-								_react2.default.createElement(
-									'div',
-									{ className: 'panel__buttons' },
-									_react2.default.createElement('div', { className: 'panel__button panel__button--delete',
-										onClick: this.onDelete })
+									_RIEModeToggler2.default,
+									{
+										rie_key: 'issue_subject',
+										initialValue: issue.subject || "...",
+										onChange: function onChange(new_value) {
+											return _this2.onChangeSubject(issue.id, new_value);
+										}
+									},
+									_react2.default.createElement(_RIEInput2.default, null)
 								)
 							),
 							_react2.default.createElement(
-								'div',
-								{ className: 'issue_developer_details__panel-body' },
-								_react2.default.createElement(
-									'h3',
-									null,
-									'issue#',
-									issue.number,
-									': ',
-									issue.subject
-								),
-								_react2.default.createElement(_RIETextArea2.default, {
-									value: issue.description || "",
-									propName: 'description',
-									change: this.onChangeDescription
-								})
-							),
-							_react2.default.createElement(
-								'div',
-								null,
-								comments.map(function (comment) {
-									return _this2.renderComment(comment);
-								})
+								_RIEModeToggler2.default,
+								{
+									rie_key: "issue_description",
+									initialValue: issue.description || "",
+									onChange: this.onChangeDescription
+								},
+								_react2.default.createElement(_RIETextArea2.default, null)
 							)
+						),
+						_react2.default.createElement(
+							'div',
+							null,
+							comments.map(function (comment) {
+								return _this2.renderComment(comment);
+							})
 						)
 					)
 				);
@@ -64764,6 +64990,7 @@
 	}(_react.Component);
 
 	function mapStateToProps(state, props) {
+		var state_issues = state.issue || {};
 		var item_list = state.item_list || {};
 		var list_key = props.list_key;
 
@@ -64782,150 +65009,21 @@
 
 		var comments = issue.issue_comments || [];
 
+		var candidate_issue = state_issues.candidate_issue;
+		var is_creating_issue = candidate_issue || false;
+
 		return {
 			issue_id: issue_id,
 			issue: issue,
 			comments: comments,
 			is_loading: general_details.is_loading,
-			is_visible: issue_id || false
+			is_visible: issue_id || is_creating_issue || false,
+			is_creating_issue: is_creating_issue,
+			candidate_issue: candidate_issue
 		};
 	}
 
 	exports.default = (0, _reactRedux.connect)(mapStateToProps)(IssueDeveloperDetails);
-
-/***/ },
-/* 879 */
-/***/ function(module, exports, __webpack_require__) {
-
-	'use strict';
-
-	Object.defineProperty(exports, "__esModule", {
-					value: true
-	});
-
-	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
-
-	var _react = __webpack_require__(300);
-
-	var _react2 = _interopRequireDefault(_react);
-
-	var _reactDom = __webpack_require__(336);
-
-	var _reactDom2 = _interopRequireDefault(_reactDom);
-
-	var _RIEInput = __webpack_require__(857);
-
-	var _reactAutosizeTextarea = __webpack_require__(872);
-
-	var _reactAutosizeTextarea2 = _interopRequireDefault(_reactAutosizeTextarea);
-
-	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
-	function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
-
-	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
-
-	var RIETextArea = function (_Component) {
-					_inherits(RIETextArea, _Component);
-
-					function RIETextArea(props) {
-									_classCallCheck(this, RIETextArea);
-
-									var _this = _possibleConstructorReturn(this, Object.getPrototypeOf(RIETextArea).call(this, props));
-
-									_this.startEditing = _this.startEditing.bind(_this);
-									_this.stopEditing = _this.stopEditing.bind(_this);
-									_this.commit = _this.commit.bind(_this);
-									_this.cancel = _this.cancel.bind(_this);
-									_this.state = {
-													editing: false
-									};
-									return _this;
-					}
-
-					_createClass(RIETextArea, [{
-									key: 'startEditing',
-									value: function startEditing() {
-													this.setState({ editing: true });
-									}
-					}, {
-									key: 'commit',
-									value: function commit() {
-													var new_value = _reactDom2.default.findDOMNode(this.editor).value;
-													this.stopEditing();
-													var res = {};
-													res[this.props.propName] = new_value;
-													this.props.change(res);
-									}
-					}, {
-									key: 'cancel',
-									value: function cancel() {
-													this.stopEditing();
-									}
-					}, {
-									key: 'stopEditing',
-									value: function stopEditing() {
-													this.setState({ editing: false });
-									}
-					}, {
-									key: 'renderNormalComponent',
-									value: function renderNormalComponent() {
-													return _react2.default.createElement(
-																	'div',
-																	null,
-																	_react2.default.createElement(
-																					'pre',
-																					null,
-																					this.state.newValue || this.props.value
-																	),
-																	_react2.default.createElement('br', null),
-																	_react2.default.createElement(
-																					'button',
-																					{ className: 'btn btn-secondary', onClick: this.startEditing },
-																					'Edit'
-																	)
-													);
-									}
-					}, {
-									key: 'renderEditingComponent',
-									value: function renderEditingComponent() {
-													var _this2 = this;
-
-													return _react2.default.createElement(
-																	'div',
-																	null,
-																	_react2.default.createElement(_reactAutosizeTextarea2.default, { ref: function ref(_ref) {
-																									return _this2.editor = _ref;
-																					}, rows: '20', cols: '80', defaultValue: this.props.value }),
-																	_react2.default.createElement(
-																					'button',
-																					{ className: 'btn btn-primary', onClick: this.commit },
-																					'Save'
-																	),
-																	_react2.default.createElement(
-																					'button',
-																					{ className: 'btn btn-cancel', onClick: this.cancel },
-																					'Cancel'
-																	)
-													);
-									}
-					}, {
-									key: 'render',
-									value: function render() {
-													if (this.state.editing) {
-																	return this.renderEditingComponent();
-													} else {
-																	return this.renderNormalComponent();
-													}
-									}
-					}]);
-
-					return RIETextArea;
-	}(_react.Component);
-
-	exports.default = RIETextArea;
 
 /***/ },
 /* 880 */
@@ -64954,7 +65052,7 @@
 
 	var _map2 = _interopRequireDefault(_map);
 
-	var _Error = __webpack_require__(864);
+	var _Error = __webpack_require__(863);
 
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -65050,6 +65148,147 @@
 	'use strict';
 
 	Object.defineProperty(exports, "__esModule", {
+				value: true
+	});
+
+	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+	var _react = __webpack_require__(300);
+
+	var _react2 = _interopRequireDefault(_react);
+
+	var _reactDom = __webpack_require__(336);
+
+	var _reactDom2 = _interopRequireDefault(_reactDom);
+
+	var _RIEEditBase2 = __webpack_require__(858);
+
+	var _RIEEditBase3 = _interopRequireDefault(_RIEEditBase2);
+
+	var _reactAutosizeTextarea = __webpack_require__(875);
+
+	var _reactAutosizeTextarea2 = _interopRequireDefault(_reactAutosizeTextarea);
+
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+	function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+	var RIETextArea = function (_RIEEditBase) {
+				_inherits(RIETextArea, _RIEEditBase);
+
+				function RIETextArea(props) {
+							_classCallCheck(this, RIETextArea);
+
+							var _this = _possibleConstructorReturn(this, Object.getPrototypeOf(RIETextArea).call(this, props));
+
+							_this.commit = _this.commit.bind(_this);
+							_this.cancel = _this.cancel.bind(_this);
+							_this.keyDown = _this.keyDown.bind(_this);
+							return _this;
+				}
+
+				_createClass(RIETextArea, [{
+							key: 'commit',
+							value: function commit(event) {
+										event.stopPropagation();
+										var new_value = _reactDom2.default.findDOMNode(this.editor).value;
+										this.props.onChange(new_value);
+										this.props.onSave(new_value);
+							}
+				}, {
+							key: 'cancel',
+							value: function cancel(event) {
+										event.stopPropagation();
+										this.props.onCancel();
+							}
+				}, {
+							key: 'keyDown',
+							value: function keyDown(event) {
+										if (event.keyCode === 13) {
+													event.stopPropagation();
+										}
+							}
+				}, {
+							key: 'renderNormalComponent',
+							value: function renderNormalComponent() {
+										return _react2.default.createElement(
+													'div',
+													null,
+													_react2.default.createElement(
+																'pre',
+																null,
+																this.props.value
+													),
+													_react2.default.createElement('br', null),
+													_react2.default.createElement(
+																'button',
+																{ className: 'btn btn-secondary', onClick: this.props.startEditing },
+																'Edit'
+													)
+										);
+							}
+				}, {
+							key: 'renderEditingComponent',
+							value: function renderEditingComponent() {
+										var _this2 = this;
+
+										return _react2.default.createElement(
+													'div',
+													null,
+													_react2.default.createElement(_reactAutosizeTextarea2.default, {
+																ref: function ref(_ref) {
+																			return _this2.editor = _ref;
+																},
+																rows: '20',
+																cols: '80',
+																onKeyDown: this.keyDown,
+																defaultValue: this.props.value }),
+													_react2.default.createElement(
+																'button',
+																{ className: 'btn btn-primary', onClick: this.commit },
+																'Save'
+													),
+													_react2.default.createElement(
+																'button',
+																{ className: 'btn btn-cancel', onClick: this.cancel },
+																'Cancel'
+													)
+										);
+							}
+				}, {
+							key: 'render',
+							value: function render() {
+										var _props = this.props;
+										var value = _props.value;
+										var onChange = _props.onChange;
+										var is_editing = _props.is_editing;
+										var is_readonly = _props.is_readonly;
+
+										return _react2.default.createElement(
+													'div',
+													null,
+													is_editing && this.renderEditingComponent(),
+													is_readonly && this.renderNormalComponent()
+										);
+							}
+				}]);
+
+				return RIETextArea;
+	}(_RIEEditBase3.default);
+
+	exports.default = RIETextArea;
+
+/***/ },
+/* 882 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	Object.defineProperty(exports, "__esModule", {
 					value: true
 	});
 	exports.HeaderBar = undefined;
@@ -65064,9 +65303,13 @@
 
 	var _reactRedux = __webpack_require__(534);
 
-	var _NotificationBar = __webpack_require__(882);
+	var _NotificationBar = __webpack_require__(883);
 
 	var _NotificationBar2 = _interopRequireDefault(_NotificationBar);
+
+	var _FilterBox = __webpack_require__(950);
+
+	var _FilterBox2 = _interopRequireDefault(_FilterBox);
 
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -65107,6 +65350,7 @@
 																													'ImpTime'
 																									)
 																					),
+																					_react2.default.createElement(_FilterBox2.default, null),
 																					_react2.default.createElement(_NotificationBar2.default, null)
 																	)
 													);
@@ -65123,7 +65367,7 @@
 	exports.default = (0, _reactRedux.connect)(mapStateToProps)(HeaderBar);
 
 /***/ },
-/* 882 */
+/* 883 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -65191,7 +65435,7 @@
 	exports.default = (0, _reactRedux.connect)(mapStateToProps)(NotificationBar);
 
 /***/ },
-/* 883 */
+/* 884 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -65203,15 +65447,15 @@
 
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
 
-	var _HTML5Backend = __webpack_require__(884);
+	var _HTML5Backend = __webpack_require__(885);
 
 	var _HTML5Backend2 = _interopRequireDefault(_HTML5Backend);
 
-	var _getEmptyImage = __webpack_require__(903);
+	var _getEmptyImage = __webpack_require__(904);
 
 	var _getEmptyImage2 = _interopRequireDefault(_getEmptyImage);
 
-	var _NativeTypes = __webpack_require__(902);
+	var _NativeTypes = __webpack_require__(903);
 
 	var NativeTypes = _interopRequireWildcard(_NativeTypes);
 
@@ -65223,7 +65467,7 @@
 	}
 
 /***/ },
-/* 884 */
+/* 885 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -65236,25 +65480,25 @@
 
 	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError('Cannot call a class as a function'); } }
 
-	var _lodashDefaults = __webpack_require__(885);
+	var _lodashDefaults = __webpack_require__(886);
 
 	var _lodashDefaults2 = _interopRequireDefault(_lodashDefaults);
 
-	var _shallowEqual = __webpack_require__(896);
+	var _shallowEqual = __webpack_require__(897);
 
 	var _shallowEqual2 = _interopRequireDefault(_shallowEqual);
 
-	var _EnterLeaveCounter = __webpack_require__(897);
+	var _EnterLeaveCounter = __webpack_require__(898);
 
 	var _EnterLeaveCounter2 = _interopRequireDefault(_EnterLeaveCounter);
 
-	var _BrowserDetector = __webpack_require__(898);
+	var _BrowserDetector = __webpack_require__(899);
 
-	var _OffsetUtils = __webpack_require__(899);
+	var _OffsetUtils = __webpack_require__(900);
 
-	var _NativeDragSources = __webpack_require__(901);
+	var _NativeDragSources = __webpack_require__(902);
 
-	var _NativeTypes = __webpack_require__(902);
+	var _NativeTypes = __webpack_require__(903);
 
 	var NativeTypes = _interopRequireWildcard(_NativeTypes);
 
@@ -65804,12 +66048,12 @@
 	module.exports = exports['default'];
 
 /***/ },
-/* 885 */
+/* 886 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var apply = __webpack_require__(619),
-	    assignInDefaults = __webpack_require__(886),
-	    assignInWith = __webpack_require__(887),
+	    assignInDefaults = __webpack_require__(887),
+	    assignInWith = __webpack_require__(888),
 	    rest = __webpack_require__(618);
 
 	/**
@@ -65842,7 +66086,7 @@
 
 
 /***/ },
-/* 886 */
+/* 887 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var eq = __webpack_require__(593);
@@ -65875,12 +66119,12 @@
 
 
 /***/ },
-/* 887 */
+/* 888 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var copyObject = __webpack_require__(888),
-	    createAssigner = __webpack_require__(890),
-	    keysIn = __webpack_require__(892);
+	var copyObject = __webpack_require__(889),
+	    createAssigner = __webpack_require__(891),
+	    keysIn = __webpack_require__(893);
 
 	/**
 	 * This method is like `_.assignIn` except that it accepts `customizer`
@@ -65919,10 +66163,10 @@
 
 
 /***/ },
-/* 888 */
+/* 889 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var assignValue = __webpack_require__(889);
+	var assignValue = __webpack_require__(890);
 
 	/**
 	 * Copies properties of `source` to `object`.
@@ -65956,7 +66200,7 @@
 
 
 /***/ },
-/* 889 */
+/* 890 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var eq = __webpack_require__(593);
@@ -65989,10 +66233,10 @@
 
 
 /***/ },
-/* 890 */
+/* 891 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var isIterateeCall = __webpack_require__(891),
+	var isIterateeCall = __webpack_require__(892),
 	    rest = __webpack_require__(618);
 
 	/**
@@ -66032,7 +66276,7 @@
 
 
 /***/ },
-/* 891 */
+/* 892 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var eq = __webpack_require__(593),
@@ -66068,10 +66312,10 @@
 
 
 /***/ },
-/* 892 */
+/* 893 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var baseKeysIn = __webpack_require__(893),
+	var baseKeysIn = __webpack_require__(894),
 	    indexKeys = __webpack_require__(695),
 	    isIndex = __webpack_require__(699),
 	    isPrototype = __webpack_require__(700);
@@ -66129,11 +66373,11 @@
 
 
 /***/ },
-/* 893 */
+/* 894 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var Reflect = __webpack_require__(894),
-	    iteratorToArray = __webpack_require__(895);
+	var Reflect = __webpack_require__(895),
+	    iteratorToArray = __webpack_require__(896);
 
 	/** Used for built-in method references. */
 	var objectProto = Object.prototype;
@@ -66171,7 +66415,7 @@
 
 
 /***/ },
-/* 894 */
+/* 895 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var root = __webpack_require__(581);
@@ -66183,7 +66427,7 @@
 
 
 /***/ },
-/* 895 */
+/* 896 */
 /***/ function(module, exports) {
 
 	/**
@@ -66207,7 +66451,7 @@
 
 
 /***/ },
-/* 896 */
+/* 897 */
 /***/ function(module, exports) {
 
 	"use strict";
@@ -66248,7 +66492,7 @@
 	module.exports = exports["default"];
 
 /***/ },
-/* 897 */
+/* 898 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -66305,7 +66549,7 @@
 	module.exports = exports['default'];
 
 /***/ },
-/* 898 */
+/* 899 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -66330,7 +66574,7 @@
 	exports.isSafari = isSafari;
 
 /***/ },
-/* 899 */
+/* 900 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -66342,9 +66586,9 @@
 
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
 
-	var _BrowserDetector = __webpack_require__(898);
+	var _BrowserDetector = __webpack_require__(899);
 
-	var _MonotonicInterpolant = __webpack_require__(900);
+	var _MonotonicInterpolant = __webpack_require__(901);
 
 	var _MonotonicInterpolant2 = _interopRequireDefault(_MonotonicInterpolant);
 
@@ -66430,7 +66674,7 @@
 	}
 
 /***/ },
-/* 900 */
+/* 901 */
 /***/ function(module, exports) {
 
 	"use strict";
@@ -66547,7 +66791,7 @@
 	module.exports = exports["default"];
 
 /***/ },
-/* 901 */
+/* 902 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -66565,7 +66809,7 @@
 
 	function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
 
-	var _NativeTypes = __webpack_require__(902);
+	var _NativeTypes = __webpack_require__(903);
 
 	var NativeTypes = _interopRequireWildcard(_NativeTypes);
 
@@ -66655,7 +66899,7 @@
 	}
 
 /***/ },
-/* 902 */
+/* 903 */
 /***/ function(module, exports) {
 
 	'use strict';
@@ -66669,7 +66913,7 @@
 	exports.TEXT = TEXT;
 
 /***/ },
-/* 903 */
+/* 904 */
 /***/ function(module, exports) {
 
 	'use strict';
@@ -66690,7 +66934,7 @@
 	module.exports = exports['default'];
 
 /***/ },
-/* 904 */
+/* 905 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -66702,19 +66946,19 @@
 
 	var _redux = __webpack_require__(541);
 
-	var _reduxThunk = __webpack_require__(905);
+	var _reduxThunk = __webpack_require__(906);
 
 	var _reduxThunk2 = _interopRequireDefault(_reduxThunk);
 
-	var _error_catcher = __webpack_require__(906);
+	var _error_catcher = __webpack_require__(907);
 
 	var _error_catcher2 = _interopRequireDefault(_error_catcher);
 
-	var _DevPageMiddleware = __webpack_require__(907);
+	var _DevPageMiddleware = __webpack_require__(908);
 
 	var _DevPageMiddleware2 = _interopRequireDefault(_DevPageMiddleware);
 
-	var _reducers = __webpack_require__(908);
+	var _reducers = __webpack_require__(909);
 
 	var _reducers2 = _interopRequireDefault(_reducers);
 
@@ -66728,7 +66972,7 @@
 	}
 
 /***/ },
-/* 905 */
+/* 906 */
 /***/ function(module, exports) {
 
 	'use strict';
@@ -66756,12 +67000,12 @@
 	exports['default'] = thunk;
 
 /***/ },
-/* 906 */
+/* 907 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 
-	var _Error = __webpack_require__(864);
+	var _Error = __webpack_require__(863);
 
 	var _indexOf = __webpack_require__(742);
 
@@ -66779,6 +67023,7 @@
 	        return function (action) {
 
 	            if (action && action.type.indexOf('FAILED') !== -1 && ACTIONS_TO_IGNORE.indexOf(action.type) == -1) {
+	                console.log(action.error);
 	                dispatch((0, _Error.setErrorMessage)("Error: " + action.error));
 	            }
 	            return next(action);
@@ -66789,12 +67034,12 @@
 	module.exports = error_catcher_middleware;
 
 /***/ },
-/* 907 */
+/* 908 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 
-	var _Error = __webpack_require__(864);
+	var _Error = __webpack_require__(863);
 
 	var _indexOf = __webpack_require__(742);
 
@@ -66802,11 +67047,11 @@
 
 	var _ItemList = __webpack_require__(731);
 
-	var _Issue = __webpack_require__(861);
+	var _Issue = __webpack_require__(860);
 
 	var _Sprints = __webpack_require__(741);
 
-	var _Issues = __webpack_require__(860);
+	var _Issues = __webpack_require__(859);
 
 	var _IssueGeneralDetails = __webpack_require__(880);
 
@@ -66873,12 +67118,15 @@
 																					dispatch((0, _Issues.fetchIssuesIfNeeded)(issues_list_key));
 																					dispatch((0, _IssueGeneralDetails.fetchIssueGeneralDetailsIfNeeded)([action.issue_id]));
 																					break;
+																	case _Issue.ANNOUNCE_CAPTURING_NEW_ISSUE:
+																					// dispatch(invalidateIssueGeneralDetails([action.issue.id]))
+																					break;
 																	case _Issue.ANNOUNCE_SAVED_NEW_ISSUE:
 																					// dispatch(invalidateIssues([action.issue.id]))
 																					// dispatch(invalidateIssueGeneralDetails([action.issue.id]))
 																					dispatch((0, _ItemList.invalidateList)(issues_list_key));
 																					dispatch((0, _Issues.fetchIssuesIfNeeded)(issues_list_key));
-																					dispatch((0, _IssueGeneralDetails.fetchIssueGeneralDetailsIfNeeded)([action.issue.id]));
+																					dispatch((0, _ItemList.selectItems)(issues_list_key, [action.issue.id]));
 																					break;
 																	case _Issue.ANNOUNCE_ISSUE_DELETED:
 																					dispatch((0, _ItemList.invalidateList)(issues_list_key));
@@ -66894,7 +67142,7 @@
 	module.exports = DevPageMiddleware;
 
 /***/ },
-/* 908 */
+/* 909 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -66903,7 +67151,7 @@
 	    value: true
 	});
 
-	var _merge = __webpack_require__(909);
+	var _merge = __webpack_require__(910);
 
 	var _merge2 = _interopRequireDefault(_merge);
 
@@ -66915,55 +67163,65 @@
 
 	var _map2 = _interopRequireDefault(_map);
 
-	var _item_list = __webpack_require__(940);
+	var _filter = __webpack_require__(952);
+
+	var _filter2 = _interopRequireDefault(_filter);
+
+	var _item_list = __webpack_require__(941);
 
 	var _item_list2 = _interopRequireDefault(_item_list);
 
-	var _project = __webpack_require__(941);
-
-	var _project2 = _interopRequireDefault(_project);
-
-	var _sprint = __webpack_require__(943);
-
-	var _sprint2 = _interopRequireDefault(_sprint);
-
-	var _issue = __webpack_require__(944);
+	var _issue = __webpack_require__(945);
 
 	var _issue2 = _interopRequireDefault(_issue);
 
-	var _issue_general_details = __webpack_require__(945);
+	var _issue_general_details = __webpack_require__(946);
 
 	var _issue_general_details2 = _interopRequireDefault(_issue_general_details);
 
-	var _notification_bar = __webpack_require__(946);
+	var _notification_bar = __webpack_require__(947);
 
 	var _notification_bar2 = _interopRequireDefault(_notification_bar);
 
-	var _user = __webpack_require__(947);
+	var _project = __webpack_require__(942);
+
+	var _project2 = _interopRequireDefault(_project);
+
+	var _rie = __webpack_require__(949);
+
+	var _rie2 = _interopRequireDefault(_rie);
+
+	var _sprint = __webpack_require__(944);
+
+	var _sprint2 = _interopRequireDefault(_sprint);
+
+	var _user = __webpack_require__(948);
 
 	var _user2 = _interopRequireDefault(_user);
 
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 	var rootReducer = (0, _redux.combineReducers)({
-	    routing: _reactRouterRedux.routerReducer,
-	    project: _project2.default,
-	    sprint: _sprint2.default,
+	    filter: _filter2.default,
 	    issue: _issue2.default,
 	    issue_general_details: _issue_general_details2.default,
 	    item_list: _item_list2.default,
 	    notification_bar: _notification_bar2.default,
+	    project: _project2.default,
+	    rie: _rie2.default,
+	    routing: _reactRouterRedux.routerReducer,
+	    sprint: _sprint2.default,
 	    user: _user2.default
 	});
 
 	exports.default = rootReducer;
 
 /***/ },
-/* 909 */
+/* 910 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var baseMerge = __webpack_require__(910),
-	    createAssigner = __webpack_require__(890);
+	var baseMerge = __webpack_require__(911),
+	    createAssigner = __webpack_require__(891);
 
 	/**
 	 * This method is like `_.assign` except that it recursively merges own and
@@ -67004,17 +67262,17 @@
 
 
 /***/ },
-/* 910 */
+/* 911 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var Stack = __webpack_require__(677),
-	    arrayEach = __webpack_require__(911),
-	    assignMergeValue = __webpack_require__(912),
-	    baseMergeDeep = __webpack_require__(913),
+	    arrayEach = __webpack_require__(912),
+	    assignMergeValue = __webpack_require__(913),
+	    baseMergeDeep = __webpack_require__(914),
 	    isArray = __webpack_require__(564),
 	    isObject = __webpack_require__(565),
 	    isTypedArray = __webpack_require__(705),
-	    keysIn = __webpack_require__(892);
+	    keysIn = __webpack_require__(893);
 
 	/**
 	 * The base implementation of `_.merge` without support for multiple sources.
@@ -67060,7 +67318,7 @@
 
 
 /***/ },
-/* 911 */
+/* 912 */
 /***/ function(module, exports) {
 
 	/**
@@ -67088,7 +67346,7 @@
 
 
 /***/ },
-/* 912 */
+/* 913 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var eq = __webpack_require__(593);
@@ -67113,12 +67371,12 @@
 
 
 /***/ },
-/* 913 */
+/* 914 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var assignMergeValue = __webpack_require__(912),
-	    baseClone = __webpack_require__(914),
-	    copyArray = __webpack_require__(917),
+	var assignMergeValue = __webpack_require__(913),
+	    baseClone = __webpack_require__(915),
+	    copyArray = __webpack_require__(918),
 	    isArguments = __webpack_require__(697),
 	    isArray = __webpack_require__(564),
 	    isArrayLikeObject = __webpack_require__(613),
@@ -67126,7 +67384,7 @@
 	    isObject = __webpack_require__(565),
 	    isPlainObject = __webpack_require__(543),
 	    isTypedArray = __webpack_require__(705),
-	    toPlainObject = __webpack_require__(939);
+	    toPlainObject = __webpack_require__(940);
 
 	/**
 	 * A specialized version of `baseMerge` for arrays and objects which performs
@@ -67202,23 +67460,23 @@
 
 
 /***/ },
-/* 914 */
+/* 915 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var Stack = __webpack_require__(677),
-	    arrayEach = __webpack_require__(911),
-	    assignValue = __webpack_require__(889),
-	    baseAssign = __webpack_require__(915),
-	    cloneBuffer = __webpack_require__(916),
-	    copyArray = __webpack_require__(917),
-	    copySymbols = __webpack_require__(918),
-	    getAllKeys = __webpack_require__(921),
+	    arrayEach = __webpack_require__(912),
+	    assignValue = __webpack_require__(890),
+	    baseAssign = __webpack_require__(916),
+	    cloneBuffer = __webpack_require__(917),
+	    copyArray = __webpack_require__(918),
+	    copySymbols = __webpack_require__(919),
+	    getAllKeys = __webpack_require__(922),
 	    getTag = __webpack_require__(701),
-	    initCloneArray = __webpack_require__(923),
-	    initCloneByTag = __webpack_require__(924),
-	    initCloneObject = __webpack_require__(935),
+	    initCloneArray = __webpack_require__(924),
+	    initCloneByTag = __webpack_require__(925),
+	    initCloneObject = __webpack_require__(936),
 	    isArray = __webpack_require__(564),
-	    isBuffer = __webpack_require__(937),
+	    isBuffer = __webpack_require__(938),
 	    isHostObject = __webpack_require__(545),
 	    isObject = __webpack_require__(565),
 	    keys = __webpack_require__(693);
@@ -67347,10 +67605,10 @@
 
 
 /***/ },
-/* 915 */
+/* 916 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var copyObject = __webpack_require__(888),
+	var copyObject = __webpack_require__(889),
 	    keys = __webpack_require__(693);
 
 	/**
@@ -67370,7 +67628,7 @@
 
 
 /***/ },
-/* 916 */
+/* 917 */
 /***/ function(module, exports) {
 
 	/**
@@ -67394,7 +67652,7 @@
 
 
 /***/ },
-/* 917 */
+/* 918 */
 /***/ function(module, exports) {
 
 	/**
@@ -67420,11 +67678,11 @@
 
 
 /***/ },
-/* 918 */
+/* 919 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var copyObject = __webpack_require__(888),
-	    getSymbols = __webpack_require__(919);
+	var copyObject = __webpack_require__(889),
+	    getSymbols = __webpack_require__(920);
 
 	/**
 	 * Copies own symbol properties of `source` to `object`.
@@ -67442,10 +67700,10 @@
 
 
 /***/ },
-/* 919 */
+/* 920 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var stubArray = __webpack_require__(920);
+	var stubArray = __webpack_require__(921);
 
 	/** Built-in value references. */
 	var getOwnPropertySymbols = Object.getOwnPropertySymbols;
@@ -67472,7 +67730,7 @@
 
 
 /***/ },
-/* 920 */
+/* 921 */
 /***/ function(module, exports) {
 
 	/**
@@ -67501,11 +67759,11 @@
 
 
 /***/ },
-/* 921 */
+/* 922 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var baseGetAllKeys = __webpack_require__(922),
-	    getSymbols = __webpack_require__(919),
+	var baseGetAllKeys = __webpack_require__(923),
+	    getSymbols = __webpack_require__(920),
 	    keys = __webpack_require__(693);
 
 	/**
@@ -67523,7 +67781,7 @@
 
 
 /***/ },
-/* 922 */
+/* 923 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var arrayPush = __webpack_require__(629),
@@ -67549,7 +67807,7 @@
 
 
 /***/ },
-/* 923 */
+/* 924 */
 /***/ function(module, exports) {
 
 	/** Used for built-in method references. */
@@ -67581,16 +67839,16 @@
 
 
 /***/ },
-/* 924 */
+/* 925 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var cloneArrayBuffer = __webpack_require__(925),
-	    cloneDataView = __webpack_require__(926),
-	    cloneMap = __webpack_require__(927),
-	    cloneRegExp = __webpack_require__(930),
-	    cloneSet = __webpack_require__(931),
-	    cloneSymbol = __webpack_require__(933),
-	    cloneTypedArray = __webpack_require__(934);
+	var cloneArrayBuffer = __webpack_require__(926),
+	    cloneDataView = __webpack_require__(927),
+	    cloneMap = __webpack_require__(928),
+	    cloneRegExp = __webpack_require__(931),
+	    cloneSet = __webpack_require__(932),
+	    cloneSymbol = __webpack_require__(934),
+	    cloneTypedArray = __webpack_require__(935);
 
 	/** `Object#toString` result references. */
 	var boolTag = '[object Boolean]',
@@ -67667,7 +67925,7 @@
 
 
 /***/ },
-/* 925 */
+/* 926 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var Uint8Array = __webpack_require__(689);
@@ -67689,10 +67947,10 @@
 
 
 /***/ },
-/* 926 */
+/* 927 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var cloneArrayBuffer = __webpack_require__(925);
+	var cloneArrayBuffer = __webpack_require__(926);
 
 	/**
 	 * Creates a clone of `dataView`.
@@ -67711,11 +67969,11 @@
 
 
 /***/ },
-/* 927 */
+/* 928 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var addMapEntry = __webpack_require__(928),
-	    arrayReduce = __webpack_require__(929),
+	var addMapEntry = __webpack_require__(929),
+	    arrayReduce = __webpack_require__(930),
 	    mapToArray = __webpack_require__(690);
 
 	/**
@@ -67736,7 +67994,7 @@
 
 
 /***/ },
-/* 928 */
+/* 929 */
 /***/ function(module, exports) {
 
 	/**
@@ -67757,7 +68015,7 @@
 
 
 /***/ },
-/* 929 */
+/* 930 */
 /***/ function(module, exports) {
 
 	/**
@@ -67789,7 +68047,7 @@
 
 
 /***/ },
-/* 930 */
+/* 931 */
 /***/ function(module, exports) {
 
 	/** Used to match `RegExp` flags from their coerced string values. */
@@ -67812,11 +68070,11 @@
 
 
 /***/ },
-/* 931 */
+/* 932 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var addSetEntry = __webpack_require__(932),
-	    arrayReduce = __webpack_require__(929),
+	var addSetEntry = __webpack_require__(933),
+	    arrayReduce = __webpack_require__(930),
 	    setToArray = __webpack_require__(634);
 
 	/**
@@ -67837,7 +68095,7 @@
 
 
 /***/ },
-/* 932 */
+/* 933 */
 /***/ function(module, exports) {
 
 	/**
@@ -67857,7 +68115,7 @@
 
 
 /***/ },
-/* 933 */
+/* 934 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var Symbol = __webpack_require__(688);
@@ -67881,10 +68139,10 @@
 
 
 /***/ },
-/* 934 */
+/* 935 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var cloneArrayBuffer = __webpack_require__(925);
+	var cloneArrayBuffer = __webpack_require__(926);
 
 	/**
 	 * Creates a clone of `typedArray`.
@@ -67903,10 +68161,10 @@
 
 
 /***/ },
-/* 935 */
+/* 936 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var baseCreate = __webpack_require__(936),
+	var baseCreate = __webpack_require__(937),
 	    getPrototype = __webpack_require__(544),
 	    isPrototype = __webpack_require__(700);
 
@@ -67927,7 +68185,7 @@
 
 
 /***/ },
-/* 936 */
+/* 937 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var isObject = __webpack_require__(565);
@@ -67951,11 +68209,11 @@
 
 
 /***/ },
-/* 937 */
+/* 938 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(module) {var root = __webpack_require__(581),
-	    stubFalse = __webpack_require__(938);
+	    stubFalse = __webpack_require__(939);
 
 	/** Detect free variable `exports`. */
 	var freeExports = typeof exports == 'object' && exports;
@@ -67995,7 +68253,7 @@
 	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(746)(module)))
 
 /***/ },
-/* 938 */
+/* 939 */
 /***/ function(module, exports) {
 
 	/**
@@ -68019,11 +68277,11 @@
 
 
 /***/ },
-/* 939 */
+/* 940 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var copyObject = __webpack_require__(888),
-	    keysIn = __webpack_require__(892);
+	var copyObject = __webpack_require__(889),
+	    keysIn = __webpack_require__(893);
 
 	/**
 	 * Converts `value` to a plain object flattening inherited enumerable string
@@ -68057,7 +68315,7 @@
 
 
 /***/ },
-/* 940 */
+/* 941 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -68071,11 +68329,11 @@
 
 	var _map2 = _interopRequireDefault(_map);
 
-	var _merge = __webpack_require__(909);
+	var _merge = __webpack_require__(910);
 
 	var _merge2 = _interopRequireDefault(_merge);
 
-	var _Error = __webpack_require__(864);
+	var _Error = __webpack_require__(863);
 
 	var _ItemList = __webpack_require__(731);
 
@@ -68177,7 +68435,7 @@
 	}
 
 /***/ },
-/* 941 */
+/* 942 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -68194,7 +68452,7 @@
 
 	var _map2 = _interopRequireDefault(_map);
 
-	var _assign = __webpack_require__(942);
+	var _assign = __webpack_require__(943);
 
 	var _assign2 = _interopRequireDefault(_assign);
 
@@ -68210,7 +68468,7 @@
 
 	var _difference2 = _interopRequireDefault(_difference);
 
-	var _Error = __webpack_require__(864);
+	var _Error = __webpack_require__(863);
 
 	var _Projects = __webpack_require__(743);
 
@@ -68278,12 +68536,12 @@
 	}
 
 /***/ },
-/* 942 */
+/* 943 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var assignValue = __webpack_require__(889),
-	    copyObject = __webpack_require__(888),
-	    createAssigner = __webpack_require__(890),
+	var assignValue = __webpack_require__(890),
+	    copyObject = __webpack_require__(889),
+	    createAssigner = __webpack_require__(891),
 	    isArrayLike = __webpack_require__(614),
 	    isPrototype = __webpack_require__(700),
 	    keys = __webpack_require__(693);
@@ -68348,7 +68606,7 @@
 
 
 /***/ },
-/* 943 */
+/* 944 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -68365,7 +68623,7 @@
 
 	var _map2 = _interopRequireDefault(_map);
 
-	var _assign = __webpack_require__(942);
+	var _assign = __webpack_require__(943);
 
 	var _assign2 = _interopRequireDefault(_assign);
 
@@ -68381,7 +68639,7 @@
 
 	var _difference2 = _interopRequireDefault(_difference);
 
-	var _Error = __webpack_require__(864);
+	var _Error = __webpack_require__(863);
 
 	var _Sprints = __webpack_require__(741);
 
@@ -68465,7 +68723,7 @@
 	}
 
 /***/ },
-/* 944 */
+/* 945 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -68479,7 +68737,7 @@
 
 	var _map2 = _interopRequireDefault(_map);
 
-	var _assign = __webpack_require__(942);
+	var _assign = __webpack_require__(943);
 
 	var _assign2 = _interopRequireDefault(_assign);
 
@@ -68495,11 +68753,11 @@
 
 	var _keys2 = _interopRequireDefault(_keys);
 
-	var _Error = __webpack_require__(864);
+	var _Error = __webpack_require__(863);
 
-	var _Issues = __webpack_require__(860);
+	var _Issues = __webpack_require__(859);
 
-	var _Issue = __webpack_require__(861);
+	var _Issue = __webpack_require__(860);
 
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -68596,7 +68854,7 @@
 	}
 
 /***/ },
-/* 945 */
+/* 946 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -68610,7 +68868,7 @@
 
 	var _map2 = _interopRequireDefault(_map);
 
-	var _assign = __webpack_require__(942);
+	var _assign = __webpack_require__(943);
 
 	var _assign2 = _interopRequireDefault(_assign);
 
@@ -68626,7 +68884,7 @@
 
 	var _union2 = _interopRequireDefault(_union);
 
-	var _Error = __webpack_require__(864);
+	var _Error = __webpack_require__(863);
 
 	var _IssueGeneralDetails = __webpack_require__(880);
 
@@ -68666,7 +68924,7 @@
 	}
 
 /***/ },
-/* 946 */
+/* 947 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -68680,11 +68938,11 @@
 
 	var _map2 = _interopRequireDefault(_map);
 
-	var _merge = __webpack_require__(909);
+	var _merge = __webpack_require__(910);
 
 	var _merge2 = _interopRequireDefault(_merge);
 
-	var _Error = __webpack_require__(864);
+	var _Error = __webpack_require__(863);
 
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -68705,7 +68963,7 @@
 	}
 
 /***/ },
-/* 947 */
+/* 948 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -68722,7 +68980,7 @@
 
 	var _map2 = _interopRequireDefault(_map);
 
-	var _assign = __webpack_require__(942);
+	var _assign = __webpack_require__(943);
 
 	var _assign2 = _interopRequireDefault(_assign);
 
@@ -68738,9 +68996,9 @@
 
 	var _difference2 = _interopRequireDefault(_difference);
 
-	var _Error = __webpack_require__(864);
+	var _Error = __webpack_require__(863);
 
-	var _Users = __webpack_require__(863);
+	var _Users = __webpack_require__(862);
 
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -68798,6 +69056,294 @@
 	    }();
 
 	    if ((typeof _ret === 'undefined' ? 'undefined' : _typeof(_ret)) === "object") return _ret.v;
+	}
+
+/***/ },
+/* 949 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	Object.defineProperty(exports, "__esModule", {
+		value: true
+	});
+	exports.default = rie;
+
+	var _map = __webpack_require__(673);
+
+	var _map2 = _interopRequireDefault(_map);
+
+	var _assign = __webpack_require__(943);
+
+	var _assign2 = _interopRequireDefault(_assign);
+
+	var _keys = __webpack_require__(693);
+
+	var _keys2 = _interopRequireDefault(_keys);
+
+	var _union = __webpack_require__(740);
+
+	var _union2 = _interopRequireDefault(_union);
+
+	var _difference = __webpack_require__(737);
+
+	var _difference2 = _interopRequireDefault(_difference);
+
+	var _Error = __webpack_require__(863);
+
+	var _Rie = __webpack_require__(872);
+
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+	var initial_state = {};
+
+	var rie_state_template = {
+		mode: 'readonly'
+	};
+
+	function rie() {
+		var state = arguments.length <= 0 || arguments[0] === undefined ? initial_state : arguments[0];
+		var action = arguments[1];
+
+
+		var state_copy = Object.assign({}, state);
+		var r = Object.assign({}, rie_state_template, state_copy[action.rie_key] || {});
+
+		switch (action.type) {
+			case _Rie.RIE_RESET:
+				state_copy[action.rie_key] = null;
+				return state_copy;
+			case _Rie.RIE_START_EDITING:
+				state_copy[action.rie_key] = Object.assign({}, r, {
+					mode: 'editing'
+				});
+				return state_copy;
+			case _Rie.RIE_STOP_EDITING:
+				state_copy[action.rie_key] = Object.assign({}, r, {
+					mode: 'readonly'
+				});
+				return state_copy;
+			case _Rie.RIE_UPDATE_VALUE:
+				state_copy[action.rie_key] = Object.assign({}, r, {
+					value: action.new_value
+				});
+				return state_copy;
+			case _Rie.RIE_SET_INITIAL_VALUE:
+				state_copy[action.rie_key] = Object.assign({}, r, {
+					initial_value: action.initial_value,
+					value: action.initial_value
+				});
+				return state_copy;
+			default:
+				return state;
+		}
+	}
+
+/***/ },
+/* 950 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	Object.defineProperty(exports, "__esModule", {
+					value: true
+	});
+	exports.FilterBox = undefined;
+
+	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+	var _react = __webpack_require__(300);
+
+	var _react2 = _interopRequireDefault(_react);
+
+	var _reactRouter = __webpack_require__(466);
+
+	var _reactRedux = __webpack_require__(534);
+
+	var _RIEModeToggler = __webpack_require__(871);
+
+	var _RIEModeToggler2 = _interopRequireDefault(_RIEModeToggler);
+
+	var _RIEInput = __webpack_require__(857);
+
+	var _RIEInput2 = _interopRequireDefault(_RIEInput);
+
+	var _Filter = __webpack_require__(951);
+
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+	function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+	var FilterBox = exports.FilterBox = function (_Component) {
+					_inherits(FilterBox, _Component);
+
+					function FilterBox(props) {
+									_classCallCheck(this, FilterBox);
+
+									var _this = _possibleConstructorReturn(this, Object.getPrototypeOf(FilterBox).call(this, props));
+
+									_this.onFilter = _this.onFilter.bind(_this);
+									return _this;
+					}
+
+					_createClass(FilterBox, [{
+									key: 'onFilter',
+									value: function onFilter(value) {
+													var dispatch = this.props.dispatch;
+
+													dispatch((0, _Filter.updateGlobalFilter)(value));
+									}
+					}, {
+									key: 'render',
+									value: function render() {
+													var global_filter = this.props.global_filter;
+
+
+													return _react2.default.createElement(
+																	'div',
+																	{ className: 'header_bar__filter_box' },
+																	_react2.default.createElement(
+																					_RIEModeToggler2.default,
+																					{
+																									rie_key: 'filter_box',
+																									initialValue: global_filter,
+																									onChange: this.onFilter
+																					},
+																					_react2.default.createElement(_RIEInput2.default, null),
+																					_react2.default.createElement(
+																									'div',
+																									{ className: 'header_bar__filter_box__current_value' },
+																									global_filter,
+																									_react2.default.createElement(
+																													'div',
+																													{ className: 'header_bar__filter_box__search_icon' },
+																													' '
+																									)
+																					)
+																	)
+													);
+									}
+					}]);
+
+					return FilterBox;
+	}(_react.Component);
+
+	function mapStateToProps(state, props) {
+					var filter = state.filter;
+
+					var global_filter = filter && filter.global_filter || null;
+
+					return {
+									global_filter: global_filter
+					};
+	}
+
+	exports.default = (0, _reactRedux.connect)(mapStateToProps)(FilterBox);
+
+/***/ },
+/* 951 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	Object.defineProperty(exports, "__esModule", {
+					value: true
+	});
+	exports.UPDATE_GLOBAL_FILTER = undefined;
+	exports.updateGlobalFilter = updateGlobalFilter;
+	exports.clearGlobalFilter = clearGlobalFilter;
+
+	var _lib = __webpack_require__(732);
+
+	var _difference = __webpack_require__(737);
+
+	var _difference2 = _interopRequireDefault(_difference);
+
+	var _keys = __webpack_require__(693);
+
+	var _keys2 = _interopRequireDefault(_keys);
+
+	var _indexOf = __webpack_require__(742);
+
+	var _indexOf2 = _interopRequireDefault(_indexOf);
+
+	var _map = __webpack_require__(673);
+
+	var _map2 = _interopRequireDefault(_map);
+
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+	var UPDATE_GLOBAL_FILTER = exports.UPDATE_GLOBAL_FILTER = 'UPDATE_GLOBAL_FILTER';
+
+	function updateGlobalFilter(new_filter_value) {
+					return function (dispatch, getState) {
+									dispatch({
+													type: UPDATE_GLOBAL_FILTER,
+													value: new_filter_value
+									});
+					};
+	}
+
+	function clearGlobalFilter() {
+					return updateGlobalFilter(null);
+	}
+
+/***/ },
+/* 952 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	Object.defineProperty(exports, "__esModule", {
+	    value: true
+	});
+	exports.default = filter;
+
+	var _map = __webpack_require__(673);
+
+	var _map2 = _interopRequireDefault(_map);
+
+	var _assign = __webpack_require__(943);
+
+	var _assign2 = _interopRequireDefault(_assign);
+
+	var _keys = __webpack_require__(693);
+
+	var _keys2 = _interopRequireDefault(_keys);
+
+	var _union = __webpack_require__(740);
+
+	var _union2 = _interopRequireDefault(_union);
+
+	var _difference = __webpack_require__(737);
+
+	var _difference2 = _interopRequireDefault(_difference);
+
+	var _Error = __webpack_require__(863);
+
+	var _Filter = __webpack_require__(951);
+
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+	var initial_state = {
+	    global_filter: null
+	};
+
+	function filter() {
+	    var state = arguments.length <= 0 || arguments[0] === undefined ? initial_state : arguments[0];
+	    var action = arguments[1];
+
+
+	    switch (action.type) {
+	        case _Filter.UPDATE_GLOBAL_FILTER:
+	            return Object.assign({}, state, { global_filter: action.value });
+	        default:
+	            return state;
+	    }
 	}
 
 /***/ }
