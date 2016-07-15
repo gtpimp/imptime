@@ -1602,18 +1602,27 @@ class QuickClockerClockOutForm(forms.Form):
 
 class QuickClockerEditEntry(forms.ModelForm):
 
+    issue = GroupedModelChoiceField('issue', required=False, queryset=timepiece.Issue.objects.none())
     project = GroupedModelChoiceField('business', required=False, queryset=timepiece.Project.objects.none())
+
     class Meta:
         model = Entry
-        fields = ['start_time', 'end_time', 'comments']
+        fields = ['start_time', 'end_time', 'comments', 'issue']
 
     def __init__(self, projects, *args, **kwargs):
         kwargs.setdefault('initial', {})['project'] = kwargs['instance'].issue.project
+
+        kwargs.setdefault('initial', {})['issue'] = kwargs['instance'].issue
         super(QuickClockerEditEntry, self).__init__(*args, **kwargs)
         self.fields['start_time'].widget.attrs['class'] = 'datetimepicker'
         self.fields['end_time'].widget.attrs['class'] = 'datetimepicker'
         self.fields['project'].queryset=projects
         self.fields['project'].choices=[ (x.id, x.long_name()) for x in projects ]
+
+        if self.instance and self.instance.project:
+            issues = self.instance.project.issues.all().order_by("order")
+            self.fields['issue'].queryset = issues
+            self.fields['issue'].choices=[(None,"default"),] + [ (x.id, "issue%d: %s" % (x.number, x.subject)) for x in issues ]
 
 class ScheduleFilterForm(forms.Form):
     year = forms.IntegerField(required=True)

@@ -5809,9 +5809,10 @@ def quick_clocker_edit_entry(request, entry_id=None):
     form = timepiece_forms.QuickClockerEditEntry(projects, request.POST or None, instance=entry)
     if form.is_valid():
         form.save()
-        issue = _get_quick_clocker_issue(form.cleaned_data['project'], entry.user)
-        entry.issue = issue
-        entry.save()
+        if not entry.issue:
+            issue = _get_quick_clocker_issue(form.cleaned_data['project'], entry.user)
+            entry.issue = issue
+            entry.save()
         messages.info(request, "Entry updated")
         return HttpResponseRedirect(reverse('quick_clocker_edit_entry', kwargs={'entry_id':entry_id}))
     return {'form': form, 'entry': entry}
@@ -6007,7 +6008,6 @@ def project_cost_summary(request, project_id, template="timepiece/project/projec
 @login_required
 @csrf_exempt
 def issue_clock_in(request):
-
     user_id = request.user.id
     issue_id = request.POST['issue_id']
     activity = timepiece.Activity.objects.get_or_create(code='dev')[0]
