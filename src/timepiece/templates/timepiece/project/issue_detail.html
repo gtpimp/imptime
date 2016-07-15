@@ -12,12 +12,12 @@
 	&nbsp;
 	{% if is_clocked_in %}
 	<button class="btn btn-info" onclick="return imp.clock_out(this, {{current_user.id}}, {{issue.id}}, '{% url 'issue_clock_out' %}');">
-	  clock in
+	  clock out
 	  <img style="display:none" class="clock_img" src="{{STATIC_URL}}/images/icons/clock_out.png" title="clock out"/>
 	</button>
 	{% else %}
 	<button class="btn btn-info" onclick="return imp.clock_in(this, {{current_user.id}}, {{issue.id}}, '{% url 'issue_clock_in' %}');">
-	  clock out
+	  clock in
 	  <img style="display:none" class="clock_img" src="{{STATIC_URL}}/images/icons/clock_in.png" title="clock in"/>
 	</button>
 	{% endif %}
