@@ -104,6 +104,5 @@ export default function item_list(state = initialState, action) {
 	    return state_copy
         default:
             return state
-	    
     }
 }
