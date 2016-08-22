@@ -129,7 +129,7 @@
 			    </tr>
 			    {% endif %}
 			    <tr>
-				<td>Tax Invoice Date </td><td>{{invoice.modified|date:"d M Y"}}</td>
+				<td>Tax Invoice Date </td><td>{{invoice.issued_at|date:"d M Y"}}</td>
 			    </tr>
 			    <tr>
 				<td>Please pay by </td><td>{{invoice.payment_due|date:"d M Y"}}</td>
