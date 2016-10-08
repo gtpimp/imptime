@@ -14,6 +14,8 @@ from django.template import RequestContext
 from django.contrib import messages
 from forms import *
 from timepiece import forms as timepiece_forms
+import logging
+logger = logging.getLogger(__name__)
 
 @login_required
 def clients(request, template="invoicing/clients.html", context=None):
@@ -127,11 +129,13 @@ def edit_invoice(request, invoice_id, template="invoicing/edit_invoice.html", co
                 item.order = item_count
                 item_count += 1
             item.save()
-        payments = payments_formset.save(commit=False)
+        for item in items_formset.deleted_objects:
+            item.delete()
         items_formset.save_m2m()
+            
+        payments = payments_formset.save(commit=False)
         for payment in payments:
             payment.invoice = invoice
-            
             fail_count = 0
             while True:
                 try:
@@ -142,8 +146,10 @@ def edit_invoice(request, invoice_id, template="invoicing/edit_invoice.html", co
                     fail_count += 1
                     if fail_count>200:
                         raise
-                
         payments_formset.save_m2m()
+        for payment in payments_formset.deleted_objects:
+            payment.delete()
+                
         messages.info(request, "Invoice updated")
         return HttpResponseRedirect(reverse('invoicing:edit_invoice', kwargs={'invoice_id':invoice.id}))
     
