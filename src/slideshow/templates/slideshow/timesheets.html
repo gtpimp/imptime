@@ -44,6 +44,12 @@
 			    lines: {show: true, steps: false, fill: false},
                             //points: {show: false},
 			  },
+			  { label:"monthly average",
+                            data: [ {% for date, hours in values.monthly_average.items %} 
+                                                    [ {{date|epoch}},{{hours}}], {% endfor %} ],
+			    lines: {show: true, steps: false, fill: false},
+                            //points: {show: false},
+			  },
 			],
 			{
 			  xaxis: { 
