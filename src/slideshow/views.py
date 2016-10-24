@@ -36,7 +36,7 @@ def home(request):
 def timesheets(request, template="slideshow/timesheets.html", context=None):
     context = context or {}
 
-    users = User.objects.all().filter(is_active=True, is_staff=True)
+    users = User.objects.all().filter(is_active=True, is_staff=True).exclude(username="us")
     today = datetime.datetime.today().date()
 
     from_date = today - relativedelta(days=14)
