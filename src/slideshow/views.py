@@ -42,9 +42,7 @@ def timesheets(request, template="slideshow/timesheets.html", context=None):
     from_date = today - relativedelta(days=14)
     from_date = from_date.replace(day=1)
     
-    to_date = from_date + relativedelta(months=1)
-    if to_date < today:
-        to_date += relativedelta(months=1)
+    to_date = today
 
     daily_hours = {}
     for user in users:
@@ -100,7 +98,7 @@ def _get_daily_hours(user, entries, from_date=None, to_date=None):
     total_hours_by_month[month_date] = {'total_available_hours_per_month': 0,
                                           'total_worked_hours_per_month': 0}
     while running_date <= to_date:
-
+        
         hours_this_day = hours_per_day.get(running_date, 0)
         hours[running_date] = hours_this_day
 
