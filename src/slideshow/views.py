@@ -40,11 +40,6 @@ def timesheets(request, template="slideshow/timesheets.html", context=None):
     today = datetime.datetime.today().date()
 
     from_date = today - relativedelta(days=14)
-
-    # ##
-    from_date = from_date - relativedelta(months=6)
-    # ##
-    
     from_date = from_date.replace(day=1)
     
     to_date = from_date + relativedelta(months=1)
