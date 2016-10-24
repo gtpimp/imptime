@@ -30,7 +30,7 @@
 			  { label:"hours",
                             data: [ {% for date, hours in values.daily_hours.items %} 
                                                     [ {{date|epoch}},{{hours}}], {% endfor %} ],
-			    //lines: {show: true, steps: true, fill: true},
+			    lines: {show: true, steps: true, fill: true},
                             bars: {
                               barWidth: 24 * 60 * 60 * 1000,
                               align: "center",
@@ -41,20 +41,20 @@
 			  { label:"weekly average",
                             data: [ {% for date, hours in values.weekly_average.items %} 
                                                     [ {{date|epoch}},{{hours}}], {% endfor %} ],
-			    lines: {show: true, steps: false, fill: false},
+			    lines: {show: false, steps: false, fill: false},
                             //points: {show: false},
 			  },
 			  { label:"monthly average",
                             data: [ {% for date, hours in values.monthly_average.items %} 
                                                     [ {{date|epoch}},{{hours}}], {% endfor %} ],
 			    lines: {show: true, steps: false, fill: false},
-                            //points: {show: false},
+                            points: {show: false},
 			  },
 			],
 			{
 			  xaxis: { 
 			    mode: "time",
-                            tickSize: [1, "day"],
+                            tickSize: [3, "day"],
                             rotateTicks: 90,
 			    timeformat: "%a %d %b %y",
                             {% if from_date %}
@@ -73,7 +73,7 @@
                           legend: { show: false,
                                     position: "nw" },
 			  bars: {
-			    show: true
+			    show: false
 			  }
 			}
                  );
