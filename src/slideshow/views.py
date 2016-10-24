@@ -98,6 +98,12 @@ def _get_daily_hours(user, entries, from_date=None, to_date=None):
     running_days_in_week = 0
     running_hours_per_month = 0
     running_days_in_month = 0
+
+    total_hours_by_month = SortedDict()
+
+    month_date = running_date.replace(day=1)
+    total_hours_by_month[month_date] = {'total_available_hours_per_month': 0,
+                                          'total_worked_hours_per_month': 0}
     while running_date <= to_date:
 
         hours_this_day = hours_per_day.get(running_date, 0)
@@ -109,13 +115,18 @@ def _get_daily_hours(user, entries, from_date=None, to_date=None):
         if running_date.day == 1:
             running_days_in_month = 0
             running_hours_per_month = 0
+            month_date = running_date.replace(day=1)
+            total_hours_by_month[month_date] = {'total_available_hours_per_month': 0,
+                                                'total_worked_hours_per_month': 0}
         
         running_hours_per_week += hours_this_day
         running_hours_per_month += hours_this_day
+        total_hours_by_month[month_date]['total_worked_hours_per_month'] += hours_this_day
 
         if not timepiece.Holiday.is_a_holiday(running_date) and not timepiece.CalendarEvent.is_on_leave(running_date, user):
             running_days_in_week += 1
             running_days_in_month += 1
+            total_hours_by_month[month_date]['total_available_hours_per_month'] += user.profile.required_daily_work_hours
         
         daily_average_hours_per_week[running_date] = float(running_hours_per_week)/(running_days_in_week or 1)
         daily_average_hours_per_month[running_date] = float(running_hours_per_month)/(running_days_in_month or 1)
@@ -124,4 +135,5 @@ def _get_daily_hours(user, entries, from_date=None, to_date=None):
     return {'daily_hours': hours,
             'weekly_average': daily_average_hours_per_week,
             'monthly_average': daily_average_hours_per_month,
-            'daily_hours_by_project': daily_hours_by_project}
+            'daily_hours_by_project': daily_hours_by_project,
+            'total_hours_by_month': total_hours_by_month}

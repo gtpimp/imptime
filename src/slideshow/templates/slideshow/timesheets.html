@@ -10,10 +10,29 @@
 
 {% for user,days_hours in daily_hours.items %}
 
-  <div class="time_chart col-md-3">
+<div class="time_chart col-md-3" style="border: 1px solid #bebebe; margin:2px;">
 
     <h3>{{user}}</h3>
-        <div style="width:100%; height:200px"class="timesheet_graph_container" id="graph{{user}}"></div>
+    <div style="width:100%; height:200px" class="timesheet_graph_container" id="graph{{user}}"></div>
+
+    <div class="available_hours" style="font-size:7px;margin-top:5px;">
+      <table class="table table-compact">
+        <thead>
+            <th style="line-height:8px;padding:0px;"></th>
+            <th style="line-height:8px;padding:0px;">Actual hours</th>
+            <th style="line-height:8px;padding:0px;">Available hours</th>
+        </thead>
+        <tbody>
+            {% for d, total_hours_for_month in days_hours.total_hours_by_month.items %}
+            <tr>
+                <td style="line-height:8px;padding:0px;">{{ d|date:"M Y" }}</td>
+                <td style="line-height:8px;padding:0px;">{{total_hours_for_month.total_worked_hours_per_month}}</td>
+                <td style="line-height:8px;padding:0px;">{{total_hours_for_month.total_available_hours_per_month}}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+      </table>
+    </div>
   </div>
 
   {% endfor %}
@@ -54,9 +73,9 @@
 			{
 			  xaxis: { 
 			    mode: "time",
-                            tickSize: [3, "day"],
+                            tickSize: [7, "day"],
                             rotateTicks: 90,
-			    timeformat: "%a %d %b %y",
+			    timeformat: "%a %d %b",
                             {% if from_date %}
                             min: {{from_date|epoch}},
                             {% endif %}

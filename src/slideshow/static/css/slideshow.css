@@ -4,6 +4,7 @@ body.slideshow {
 
 body.slideshow .time_chart {
     padding: 30px;
+    border: 1px solid #ababab;
 }
 
 .timesheet_graph_container {
@@ -11,3 +12,6 @@ body.slideshow .time_chart {
     width: 50%;
 }
 
+body.slideshow .available_hours {
+    font-size:7px;
+}
