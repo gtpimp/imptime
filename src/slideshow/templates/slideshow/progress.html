@@ -1,0 +1,110 @@
+{% extends "slideshow/base.html" %}
+
+{% load timepiece_tags %}{% load bootstrap_toolkit %}
+{% block content %}
+
+    {% for business, graph_info_list in plot_data.items %}
+        <h3>{{ business }}</h3>
+
+        <div>
+            {% for item in graph_info_list %}
+                <div>{{ item.project }}: {{ item.values.manager_rate }}, {{ item.values.developer_rate }}, {{ item.values.tester_rate }} </div>
+            {% endfor %}
+        </div>
+
+    {% endfor %}
+
+    <div style="width:100%; height:200px" class="timesheet_graph_container" id="test"></div>
+
+    <script>
+        $(document).ready(
+                function () {
+
+                    function line(label, starting_x, starting_y, length, colour) {
+                        return {
+                            label: label,
+                            data: [[starting_x, starting_y], [starting_x + length, starting_y]],
+                            color: colour,
+                            hoverable: true,
+                            ratio: length
+                        }
+                    }
+
+                    function createLinePerSprint(starting_y, managerRatio, developerRatio, testerRatio) {
+                        var x1 = 0;
+                        var x2 = x1 + managerRatio;
+                        var x3 = x2 + developerRatio;
+
+                        return [
+                            line('M', x1, starting_y, managerRatio, 'red'),
+                            line('D', x2, starting_y, developerRatio, 'green'),
+                            line('T', x3, starting_y, testerRatio, 'blue')
+                        ];
+                    }
+
+                    var y = 10.0;
+                    var data_points = [];
+                    data_points = data_points.concat(createLinePerSprint(y, 10, 20, 30));
+                    data_points = data_points.concat(createLinePerSprint(y + 10, 20, 40, 30));
+
+                    $.plot($("#test"),
+                            data_points,
+                            {
+                                series: {
+                                     lines: { show: true, fill: false },
+                                     points: { show: true, fill: false }
+                                },
+                                xaxis: {
+                                    position: 'top',
+                                    tickSize: 10,
+                                    min: 0.0,
+                                    max: 100.0
+                                },
+                                yaxis: {
+                                    show: true,
+                                    position: 'left',
+                                    tickSize: 10,
+                                    ticks: [[10, "abc &nbsp;"], [20, "def &nbsp;"]],
+                                    min: 0.0,
+                                    max: 100.0,
+                                    transform: function (v) {
+                                        return -v;
+                                    },
+                                    inverseTransform: function (v) {
+                                        return -v;
+                                    }
+                                },
+                                grid: {
+                                    show: true,
+                                    aboveData: false
+                                },
+                                legend: {
+                                    show: false,
+                                    position: "ne"
+                                },
+                                bars: {
+                                    show: false
+                                }
+                            }
+                    );
+
+                    $("#test").bind("plothover", function (event, pos, item) {
+                        alert("You hover at " + pos.x + ", " + pos.y);
+                        // axis coordinates for other axes, if present, are in pos.x2, pos.x3, ...
+                        // if you need global screen coordinates, they are pos.pageX, pos.pageY
+
+                        if (item) {
+                            highlight(item.series, item.datapoint);
+                            alert("You hover a line!");
+                        }
+                    });
+
+                });
+
+    </script>
+
+{% endblock %}
+
+{% block reload %}
+
+{% endblock %}

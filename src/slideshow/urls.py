@@ -8,6 +8,7 @@ import views
 urlpatterns = patterns('',
                        url(r'^$', views.home, name='home'),
                        url(r'^timesheets$', views.timesheets, name='timesheets'),
+                       url(r'^progress$', views.progress, name='progress'),
                        url(r'^ratios$', views.ratios, name='ratios'),
                        )
 

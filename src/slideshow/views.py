@@ -17,20 +17,21 @@ import datetime
 import random
 import math
 
+
 @login_required
 def home(request):
-
-    #slides = [ 'timesheets', 'ratios' ]
-    slides = [ 'timesheets' ]
+    # slides = [ 'timesheets', 'ratios' ]
+    slides = ['timesheets']
 
     prev_slide_index = request.session.get('previous_slide_index', 0)
     slide_index = prev_slide_index + 1
     if slide_index >= len(slides):
         slide_index = 0
-    
-    slide = slides[ slide_index ]
+
+    slide = slides[slide_index]
     request.session['previous_slide_index'] = slide_index
     return redirect(reverse('slideshow:' + slide))
+
 
 @login_required
 def timesheets(request, template="slideshow/timesheets.html", context=None):
@@ -41,21 +42,63 @@ def timesheets(request, template="slideshow/timesheets.html", context=None):
 
     from_date = today - relativedelta(days=14)
     from_date = from_date.replace(day=1)
-    
+
     to_date = today
 
     daily_hours = {}
     for user in users:
         entries = timepiece.Entry.objects.filter(user=user)
-        daily_hours[user.username] = {'daily_hours':{}, 'weekly_average':{}}
+        daily_hours[user.username] = {'daily_hours': {}, 'weekly_average': {}}
         daily_hours[user.username].update(_get_daily_hours(user, entries, from_date, to_date))
         daily_hours[user.username]['required_average'] = user.profile.required_daily_work_hours
 
         context['daily_hours'] = daily_hours
         context['from_date'] = from_date
         context['to_date'] = to_date
-        
+
     return render_to_response(template, context, context_instance=RequestContext(request))
+
+
+@login_required
+def progress(request, template="slideshow/progress.html", context=None):
+    context = context or {}
+
+    projects = timepiece.Project.objects.filter_open()
+
+    plot_data = {}
+
+    for project in projects:
+        stats = project.calculate_new_stats(request.user)
+        manager_rate = stats['per_role']['manager']['hours_billable_core_rate']
+        developer_rate = stats['per_role']['developer']['hours_billable_core_rate']
+        tester_rate = stats['per_role']['tester']['hours_billable_core_rate']
+        spendable_budget = project.spendable_budget
+
+        business = project.business
+        if not plot_data.has_key(business):
+            plot_data[business] = []
+
+        if spendable_budget == 0:
+            spendable_budget = manager_rate + developer_rate + tester_rate
+
+        ratio = spendable_budget * 100.0
+
+        values = {
+            'spendable_budget': spendable_budget,
+            'manager_rate': manager_rate * ratio,
+            'developer_rate': developer_rate * ratio,
+            'tester_rate': tester_rate * ratio
+        }
+
+        plot_data[business].append({'project': project, 'values': values})
+        break
+
+    context['plot_data'] = plot_data
+
+    # import pdb; pdb.set_trace()
+
+    return render_to_response(template, context, context_instance=RequestContext(request))
+
 
 @login_required
 def ratios(request, template="slideshow/ratios.html", context=None):
@@ -63,20 +106,27 @@ def ratios(request, template="slideshow/ratios.html", context=None):
     _populate_ratios(context)
     return render_to_response(template, context, context_instance=RequestContext(request))
 
+
 def _populate_ratios(context):
     context['recent_ratios_per_project'] = {}
     from_date = datetime.datetime.today().date() - relativedelta(days=30)
 
     entries = timepiece.Entry.objects.filter(start_time__gte=from_date)
     total_hours = entries.aggregate(hours=Sum('hours'))['hours']
-    times_per_project = entries.order_by("-issue__project__business__name").values('issue__project__business__name').annotate(hours=Sum('hours'))
-    context['recent_ratios_per_project'] = [ { 'business': x['issue__project__business__name'], 'hours':x['hours'], 'ratio': float(x['hours'])/float(total_hours) } for x in times_per_project ]
+    times_per_project = entries.order_by("-issue__project__business__name").values(
+        'issue__project__business__name').annotate(hours=Sum('hours'))
+    context['recent_ratios_per_project'] = [{'business': x['issue__project__business__name'], 'hours': x['hours'],
+                                             'ratio': float(x['hours']) / float(total_hours)} for x in
+                                            times_per_project]
+
 
 def _get_daily_hours(user, entries, from_date=None, to_date=None):
-
-    entries = entries.filter(start_time__gte=from_date, start_time__lte=to_date).extra({'on_day':'date(start_time)'})
+    entries = entries.filter(start_time__gte=from_date, start_time__lte=to_date).extra({'on_day': 'date(start_time)'})
     entries_hours_per_day = entries.values('on_day').order_by("on_day").annotate(total_hours=Sum('hours'))
-    daily_hours_by_project = entries.values('on_day', 'issue__project__business__name', 'issue__project__name').order_by("on_day", "issue__project__business__name", "issue__project__name").annotate(total_hours=Sum('hours'))
+    daily_hours_by_project = entries.values('on_day', 'issue__project__business__name',
+                                            'issue__project__name').order_by("on_day", "issue__project__business__name",
+                                                                             "issue__project__name").annotate(
+        total_hours=Sum('hours'))
 
     hours_per_day = {}
     for entry_hours_per_day in entries_hours_per_day:
@@ -85,7 +135,7 @@ def _get_daily_hours(user, entries, from_date=None, to_date=None):
     hours = SortedDict()
     daily_average_hours_per_week = SortedDict()
     daily_average_hours_per_month = SortedDict()
-            
+
     running_date = from_date
     running_hours_per_week = 0
     running_days_in_week = 0
@@ -96,9 +146,9 @@ def _get_daily_hours(user, entries, from_date=None, to_date=None):
 
     month_date = running_date.replace(day=1)
     total_hours_by_month[month_date] = {'total_available_hours_per_month': 0,
-                                          'total_worked_hours_per_month': 0}
+                                        'total_worked_hours_per_month': 0}
     while running_date <= to_date:
-        
+
         hours_this_day = hours_per_day.get(running_date, 0)
         hours[running_date] = hours_this_day
 
@@ -111,18 +161,20 @@ def _get_daily_hours(user, entries, from_date=None, to_date=None):
             month_date = running_date.replace(day=1)
             total_hours_by_month[month_date] = {'total_available_hours_per_month': 0,
                                                 'total_worked_hours_per_month': 0}
-        
+
         running_hours_per_week += hours_this_day
         running_hours_per_month += hours_this_day
         total_hours_by_month[month_date]['total_worked_hours_per_month'] += hours_this_day
 
-        if not timepiece.Holiday.is_a_holiday(running_date) and not timepiece.CalendarEvent.is_on_leave(running_date, user):
+        if not timepiece.Holiday.is_a_holiday(running_date) and not timepiece.CalendarEvent.is_on_leave(running_date,
+                                                                                                        user):
             running_days_in_week += 1
             running_days_in_month += 1
-            total_hours_by_month[month_date]['total_available_hours_per_month'] += user.profile.required_daily_work_hours
-        
-        daily_average_hours_per_week[running_date] = float(running_hours_per_week)/(running_days_in_week or 1)
-        daily_average_hours_per_month[running_date] = float(running_hours_per_month)/(running_days_in_month or 1)
+            total_hours_by_month[month_date][
+                'total_available_hours_per_month'] += user.profile.required_daily_work_hours
+
+        daily_average_hours_per_week[running_date] = float(running_hours_per_week) / (running_days_in_week or 1)
+        daily_average_hours_per_month[running_date] = float(running_hours_per_month) / (running_days_in_month or 1)
         running_date += relativedelta(days=1)
 
     return {'daily_hours': hours,
