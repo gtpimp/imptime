@@ -71,10 +71,10 @@ def progress(request, template="slideshow/progress.html", context=None):
     i = 0
     for project in projects:
         stats = project.calculate_new_stats(request.user)
-        manager_rate = 1 #stats['per_role']['manager']['hours_billable_core_rate']
-        developer_rate = 2 #stats['per_role']['developer']['hours_billable_core_rate']
-        tester_rate = 3 # stats['per_role']['tester']['hours_billable_core_rate']
-        spendable_budget = 10 # project.spendable_budget
+        manager_rate = stats['per_role']['manager']['hours_billable_core_rate']
+        developer_rate = stats['per_role']['developer']['hours_billable_core_rate']
+        tester_rate = stats['per_role']['tester']['hours_billable_core_rate']
+        spendable_budget = project.spendable_budget
 
         business = project.business
         business_id = business.id
@@ -98,9 +98,9 @@ def progress(request, template="slideshow/progress.html", context=None):
 
         plot_height[business] += 1
 
-        i += 1
-        if i > 5:
-            break
+        # i += 1
+        # if i > 5:
+        #     break
 
     for business, count in plot_height.items():
         plot_height[business] = plot_height[business] * 5 + 100
