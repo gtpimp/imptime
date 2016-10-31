@@ -71,8 +71,6 @@ def progress(request, template="slideshow/progress.html", context=None):
     for project in projects:
         business = project.business
         business_id = business.id
-        # if business_id != 4:
-        #     continue
 
         stats = project.calculate_new_stats(request.user)
         manager_rate = stats['per_role']['manager']['hours_billable_core_rate']
@@ -89,9 +87,9 @@ def progress(request, template="slideshow/progress.html", context=None):
             ratio = 100 / spendable_budget
 
         values = {
-            'manager_rate': round(manager_rate * ratio, 2),
-            'developer_rate': round(developer_rate * ratio, 2),
-            'tester_rate': round(tester_rate * ratio, 2)
+            'manager_rate': calculate_progress_ratio(manager_rate, ratio),
+            'developer_rate': calculate_progress_ratio(developer_rate, ratio),
+            'tester_rate': calculate_progress_ratio(tester_rate, ratio)
         }
 
         plot_data[business_id].append({'project': project.name, 'values': values})
@@ -104,6 +102,9 @@ def progress(request, template="slideshow/progress.html", context=None):
 
     return render_to_response(template, context, context_instance=RequestContext(request))
 
+def calculate_progress_ratio(rate, ratio):
+    value = round(rate * ratio, 2)
+    return value if value < 100 else 100
 
 @login_required
 def ratios(request, template="slideshow/ratios.html", context=None):
