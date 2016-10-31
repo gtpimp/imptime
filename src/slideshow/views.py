@@ -66,18 +66,21 @@ def progress(request, template="slideshow/progress.html", context=None):
     projects = timepiece.Project.objects.filter_open()
 
     plot_data = {}
-    plot_height = {}
+    business_list = {}
 
     i = 0
     for project in projects:
-        stats = project.calculate_new_stats(request.user)
-        manager_rate = stats['per_role']['manager']['hours_billable_core_rate']
-        developer_rate = stats['per_role']['developer']['hours_billable_core_rate']
-        tester_rate = stats['per_role']['tester']['hours_billable_core_rate']
-        spendable_budget = project.spendable_budget
-
         business = project.business
         business_id = business.id
+        # if business_id != 4:
+        #     continue
+
+        stats = project.calculate_new_stats(request.user)
+        manager_rate = 2 # stats['per_role']['manager']['hours_billable_core_rate']
+        developer_rate = 4 #stats['per_role']['developer']['hours_billable_core_rate']
+        tester_rate = 6 # stats['per_role']['tester']['hours_billable_core_rate']
+        spendable_budget = 20 # project.spendable_budget
+
         if not plot_data.has_key(business_id):
             plot_data[business_id] = []
 
@@ -93,19 +96,9 @@ def progress(request, template="slideshow/progress.html", context=None):
         }
 
         plot_data[business_id].append({'project': project.name, 'values': values})
-        if not (business in plot_height):
-            plot_height[business] = 0
+        business_list[business] = True
 
-        plot_height[business] += 1
-
-        # i += 1
-        # if i > 5:
-        #     break
-
-    for business, count in plot_height.items():
-        plot_height[business] = plot_height[business] * 5 + 100
-
-    context['plot_height'] = plot_height
+    context['business_list'] = business_list
     context['plot_data_json'] = json.dumps(plot_data)
 
     # import pdb; pdb.set_trace()

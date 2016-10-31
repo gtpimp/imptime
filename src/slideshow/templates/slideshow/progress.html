@@ -3,16 +3,16 @@
 {% load timepiece_tags %}{% load bootstrap_toolkit %}
 {% block content %}
 
-    {% for business, height in plot_height.items %}
-        <div>
+    {% for business, height in business_list.items %}
+        <div class="project">
             <h3>{{ business.name }}</h3>
 
-            <div style="width:100%; height:{{ height }}px" class="timesheet_graph_container" id="test_{{ business.id }}"></div>
+            <div style="width:100%;" class="timesheet_graph_container" id="test_{{ business.id }}"></div>
         </div>
     {% endfor %}
 
-
-
+{% endblock %}
+{% block extrajs %}
     <script>
         function line(label, starting_x, starting_y, length, colour) {
             return {
@@ -36,11 +36,10 @@
             ];
         }
 
-        var data_points = [];
-        var labels = [];
-
         var data_string = '{{ plot_data_json|safe }}';
         var data = jQuery.parseJSON(data_string);
+
+        var main_map = [];
 
         for (var business_id in data) {
             if (typeof business_id != "string") {
@@ -49,71 +48,84 @@
 
             var plot_data_for_project = data[business_id];
 
-            if (!(business_id in data_points)) {
-                data_points[business_id] = [];
-            }
-
+            var data_points = [];
+            var labels = [];
             var y = 5;
             $.each(plot_data_for_project, function (index, sprint_data) {
                 var sprint_name = sprint_data['project'];
                 var values = sprint_data['values'];
 
                 var data_line = createLinePerSprint(y, values.manager_rate, values.developer_rate, values.tester_rate);
-                data_points[business_id] = data_points[business_id].concat(data_line);
+                data_points = data_points.concat(data_line);
 
                 var label = [y, sprint_name + " &nbsp;"];
                 labels.push(label);
-                y += 5;
+                y += 10;
             });
+
+            main_map[business_id] = {
+                'data_points': data_points,
+                'labels': labels
+            };
+        }
+
+        function calculate_graph_height(count) {
+            return count * 10;
+        }
+
+        function shared_options(labels) {
+
+            return {
+                series: {
+                    lines: {show: true, fill: false},
+                    points: {show: true, fill: false}
+                },
+                xaxis: {
+                    position: 'top',
+                    tickSize: 10,
+                    min: 0.0,
+                    max: 100.0
+                },
+                yaxis: {
+                    show: true,
+                    position: 'left',
+                    tickSize: 10,
+                    ticks: labels,
+                    min: 0.0,
+                    max: calculate_graph_height(labels.length),
+                    transform: function (v) {
+                        return -v;
+                    },
+                    inverseTransform: function (v) {
+                        return -v;
+                    }
+                },
+                grid: {
+                    show: true,
+                    aboveData: false,
+                    hoverable: true,
+                    clickable: true
+                },
+                legend: {
+                    show: false,
+                    position: "ne"
+                },
+                bars: {
+                    show: false
+                }
+            }
         }
 
         $(document).ready(
                 function () {
-                    var shared_options = {
-                        series: {
-                            lines: {show: true, fill: false},
-                            points: {show: true, fill: false}
-                        },
-                        xaxis: {
-                            position: 'top',
-                            tickSize: 10,
-                            min: 0.0,
-                            max: 100.0
-                        },
-                        yaxis: {
-                            show: true,
-                            position: 'left',
-                            tickSize: 20,
-                            {#                            ticks: labels,#}
-                            min: 0.0,
-                            max: 100.0,
-                            transform: function (v) {
-                                return -v;
-                            },
-                            inverseTransform: function (v) {
-                                return -v;
-                            }
-                        },
-                        grid: {
-                            show: true,
-                            aboveData: false,
-                            hoverable: true,
-                            clickable: true
-                        },
-                        legend: {
-                            show: false,
-                            position: "ne"
-                        },
-                        bars: {
-                            show: false
-                        }
-                    };
-
-                    for (business_id in data_points) {
-                        var value = data_points[business_id];
-                        var options = jQuery.extend({}, shared_options);
+                    for (business_id in main_map) {
+                        var values = main_map[business_id]['data_points'];
+                        var labels = main_map[business_id]['labels'];
+                        var options = shared_options(labels);
+                        var div_id = "#test_" + business_id;
+                        $(div_id).css("height", calculate_graph_height(labels.length) + 50);
                         $.plot($("#test_" + business_id),
-                                value,
+                                values,
                                 options);
                     }
 
