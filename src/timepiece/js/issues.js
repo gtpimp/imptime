@@ -34,7 +34,7 @@ imp.show_issue_detail = function(issue_id, url, msg, args) {
     $(".issue_detail").load(url,
 			    function() {
 
-				if (args && args.reload_on_done) {.location=args.reload_on_done;
+				if (args && args.reload_on_done) {window.location=args.reload_on_done;
 				    return;
 				}
 				
@@ -586,7 +586,7 @@ var div_sibling = parent.find('.edit_issue_subject');
 $(this).show();
 div_sibling.show();
 }
-};
+});
 
 
 imp.refresh_closest_issue_parent_row = function(element) {
@@ -715,7 +715,7 @@ imp.show_inline_editor = function(el) {
     var old_value = editor.val();
     if ( ! old_value ) {
 	    old_value = td.attr("selected_value");
-       
+
     }
 
     var issue_id = td.attr("issue_id");
@@ -789,7 +789,7 @@ imp.show_inline_editor = function(el) {
 		    editor.append(new_option);
 
 		    $.each(data, function( index, value ) {
-			       
+
 			new_option = $("<option/>");
 			new_option.attr("id", value[0]);
 			new_option.attr("value", value[0]);
@@ -874,5 +874,6 @@ imp.show_issue_history = function(url) {
          selectme.html('<div class="selectme">'+value+'</div>');
          response.done( function() { imp.refresh_closest_issue_parent_row(selectme); } );
      }
- };
+ }
+};
 

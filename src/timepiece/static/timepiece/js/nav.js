@@ -1,3 +1,8 @@
+if (typeof imp === 'undefined' )
+{
+    var imp = {};
+}
+
 imp.nav = imp.nav || {};
 
 (function() {

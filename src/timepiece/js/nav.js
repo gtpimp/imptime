@@ -1,4 +1,7 @@
-imp.nav = imp.nav || {};
+if (typeof imp === 'undefined' )
+{
+    var imp = {};
+}
 
 (function() {
   var loading_counter = 0;

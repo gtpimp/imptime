@@ -1,3 +1,7 @@
+if (typeof imp === 'undefined' )
+{
+    var imp = {};
+}
 
 imp.on_error = function(err) {
     var err_msg;

@@ -66,34 +66,47 @@ def progress(request, template="slideshow/progress.html", context=None):
     projects = timepiece.Project.objects.filter_open()
 
     plot_data = {}
+    plot_height = {}
 
+    i = 0
     for project in projects:
         stats = project.calculate_new_stats(request.user)
-        manager_rate = stats['per_role']['manager']['hours_billable_core_rate']
-        developer_rate = stats['per_role']['developer']['hours_billable_core_rate']
-        tester_rate = stats['per_role']['tester']['hours_billable_core_rate']
-        spendable_budget = project.spendable_budget
+        manager_rate = 1 #stats['per_role']['manager']['hours_billable_core_rate']
+        developer_rate = 2 #stats['per_role']['developer']['hours_billable_core_rate']
+        tester_rate = 3 # stats['per_role']['tester']['hours_billable_core_rate']
+        spendable_budget = 10 # project.spendable_budget
 
         business = project.business
-        if not plot_data.has_key(business):
-            plot_data[business] = []
+        business_id = business.id
+        if not plot_data.has_key(business_id):
+            plot_data[business_id] = []
 
         if spendable_budget == 0:
-            spendable_budget = manager_rate + developer_rate + tester_rate
-
-        ratio = spendable_budget * 100.0
+            ratio = 0
+        else:
+            ratio = 100 / spendable_budget
 
         values = {
-            'spendable_budget': spendable_budget,
-            'manager_rate': manager_rate * ratio,
-            'developer_rate': developer_rate * ratio,
-            'tester_rate': tester_rate * ratio
+            'manager_rate': round(manager_rate * ratio, 2),
+            'developer_rate': round(developer_rate * ratio, 2),
+            'tester_rate': round(tester_rate * ratio, 2)
         }
 
-        plot_data[business].append({'project': project, 'values': values})
-        break
+        plot_data[business_id].append({'project': project.name, 'values': values})
+        if not (business in plot_height):
+            plot_height[business] = 0
 
-    context['plot_data'] = json.dump(plot_data)
+        plot_height[business] += 1
+
+        i += 1
+        if i > 5:
+            break
+
+    for business, count in plot_height.items():
+        plot_height[business] = plot_height[business] * 5 + 100
+
+    context['plot_height'] = plot_height
+    context['plot_data_json'] = json.dumps(plot_data)
 
     # import pdb; pdb.set_trace()
 
