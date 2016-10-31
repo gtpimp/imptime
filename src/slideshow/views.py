@@ -63,12 +63,11 @@ def timesheets(request, template="slideshow/timesheets.html", context=None):
 def progress(request, template="slideshow/progress.html", context=None):
     context = context or {}
 
-    projects = timepiece.Project.objects.filter_open()
+    projects = timepiece.Project.objects.filter_open().order_by('business_id', 'order')
 
     plot_data = {}
     business_list = {}
 
-    i = 0
     for project in projects:
         business = project.business
         business_id = business.id
@@ -76,10 +75,10 @@ def progress(request, template="slideshow/progress.html", context=None):
         #     continue
 
         stats = project.calculate_new_stats(request.user)
-        manager_rate = 2 # stats['per_role']['manager']['hours_billable_core_rate']
-        developer_rate = 4 #stats['per_role']['developer']['hours_billable_core_rate']
-        tester_rate = 6 # stats['per_role']['tester']['hours_billable_core_rate']
-        spendable_budget = 20 # project.spendable_budget
+        manager_rate = stats['per_role']['manager']['hours_billable_core_rate']
+        developer_rate = stats['per_role']['developer']['hours_billable_core_rate']
+        tester_rate = stats['per_role']['tester']['hours_billable_core_rate']
+        spendable_budget = project.spendable_budget
 
         if not plot_data.has_key(business_id):
             plot_data[business_id] = []

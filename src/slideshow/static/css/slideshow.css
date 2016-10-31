@@ -15,3 +15,17 @@ body.slideshow .time_chart {
 body.slideshow .available_hours {
     font-size:7px;
 }
+
+.project {
+    margin: 0px 0px 3em 0px;
+}
+
+.project_legend {
+    width: 100px;
+    color: white;
+    border-radius: 5px;
+    padding: 5px;
+    margin: 5px;
+    float: left;
+    text-align: center;
+}

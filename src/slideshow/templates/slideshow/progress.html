@@ -2,6 +2,10 @@
 
 {% load timepiece_tags %}{% load bootstrap_toolkit %}
 {% block content %}
+    <div class="project_legend" style="background: red">Manager</div>
+    <div class="project_legend" style="background: green"> Developer</div>
+    <div class="project_legend" style="background: blue">Tester</div>
+    <div style="clear: both;"></div>
 
     {% for business, height in business_list.items %}
         <div class="project">
@@ -89,8 +93,6 @@
                 yaxis: {
                     show: true,
                     position: 'left',
-                    tickSize: 10,
-                    ticks: labels,
                     min: 0.0,
                     max: calculate_graph_height(labels.length),
                     transform: function (v) {
@@ -98,7 +100,12 @@
                     },
                     inverseTransform: function (v) {
                         return -v;
-                    }
+                    },
+
+                    tickSize: 10,
+                    ticks: labels,
+                    labelWidth: 150,
+                    reserveSpace: true
                 },
                 grid: {
                     show: true,
