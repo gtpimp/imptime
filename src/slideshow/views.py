@@ -16,7 +16,7 @@ from django.contrib.auth.models import User
 import datetime
 import random
 import math
-
+import json
 
 @login_required
 def home(request):
@@ -93,7 +93,7 @@ def progress(request, template="slideshow/progress.html", context=None):
         plot_data[business].append({'project': project, 'values': values})
         break
 
-    context['plot_data'] = plot_data
+    context['plot_data'] = json.dump(plot_data)
 
     # import pdb; pdb.set_trace()
 
