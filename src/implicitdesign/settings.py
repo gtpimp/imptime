@@ -362,6 +362,7 @@ EMAIL_HOST_PASSWORD = 'WRONG'
     # EMAIL_PORT = 587
 
 FROM_EMAIL="imptime@impd.co.za"
+WEEKLY_HOURS_MAIL_RECIPIENT = ""
 
 # AUTH_USER_MODEL = 'timepiece.ClientUser'
 
