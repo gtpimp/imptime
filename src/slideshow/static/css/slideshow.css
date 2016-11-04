@@ -18,6 +18,12 @@ body.slideshow .available_hours {
 
 .project {
     margin: 0px 0px 3em 0px;
+    float: left;
+    width: 30%;
+    border-right: 1px solid #aaaaaa;
+    padding-bottom: 5px;
+    padding-right: 20px;
+    padding-left: 20px;
 }
 
 .project_legend {
