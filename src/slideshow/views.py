@@ -1,6 +1,7 @@
 from invoicing import models
 from django.db.models import Sum, Count, Q, F, Max, Min
 from django.utils.datastructures import SortedDict
+from collections import OrderedDict
 from dateutil.relativedelta import relativedelta
 from phantom_pdf.generator import create_url_from_query_dict, render_url_to_pdf
 from timepiece import models as timepiece
@@ -66,17 +67,24 @@ def progress(request, template="slideshow/progress.html", context=None):
     projects = timepiece.Project.objects.filter_open().order_by('business_id', 'order')
 
     plot_data = {}
-    business_list = {}
+    business_list = OrderedDict()
 
     for project in projects:
         business = project.business
         business_id = business.id
 
         stats = project.calculate_new_stats(request.user)
+        spendable_budget = project.spendable_budget
+
+        # # useful for testing
+        # stats = {'per_role': {'manager': {'hours_billable_core_rate': 10},
+        #                      'developer': {'hours_billable_core_rate': 50},
+        #                      'tester': {'hours_billable_core_rate': 30}}}
+        # spendable_budget = 100
+        
         manager_rate = stats['per_role']['manager']['hours_billable_core_rate']
         developer_rate = stats['per_role']['developer']['hours_billable_core_rate']
         tester_rate = stats['per_role']['tester']['hours_billable_core_rate']
-        spendable_budget = project.spendable_budget
 
         if not plot_data.has_key(business_id):
             plot_data[business_id] = []

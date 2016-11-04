@@ -636,6 +636,9 @@ class ProjectQuerySet(QuerySet):
     def filter_open(self):
         return self.exclude(Q(status2__in=Project.closed_states())|Q(status__label='closed')).order_by("order")
 
+    def filter_has_time(self):
+        return self.exclude(Q(status2__in=Project.closed_states())|Q(status__label='closed')).order_by("order")
+
     def filter_in_dev(self):
         return self.filter(status2='in dev')
 
