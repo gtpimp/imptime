@@ -89,7 +89,8 @@ def progress(request, template="slideshow/progress.html", context=None):
         values = {
             'manager_rate': calculate_progress_ratio(manager_rate, ratio),
             'developer_rate': calculate_progress_ratio(developer_rate, ratio),
-            'tester_rate': calculate_progress_ratio(tester_rate, ratio)
+            'tester_rate': calculate_progress_ratio(tester_rate, ratio),
+            'has_budget': spendable_budget > 0
         }
 
         plot_data[business_id].append({'project': project.name, 'values': values})

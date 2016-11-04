@@ -78,7 +78,16 @@
                 var data_line = createLinePerSprint(y, values.manager_rate, values.developer_rate, values.tester_rate);
                 data_points = data_points.concat(data_line);
 
-                var label = [y, sprint_name + " &nbsp;"];
+                var total_cost_percentage = values.manager_rate + values.developer_rate + values.tester_rate;
+                var label = sprint_name + " &nbsp;";
+                if ( total_cost_percentage > 100 ) {
+                    label += " ("+Math.round(total_cost_percentage)+"%)";
+                }
+                if ( ! values.has_budget ) {
+                    label += " (no budget)";
+                }
+                label = [y, label];
+
                 labels.push(label);
                 y += 10;
             });
@@ -120,7 +129,7 @@
 
                     tickSize: 10,
                     ticks: labels,
-                    labelWidth: 150,
+                    labelWidth: 300,
                     reserveSpace: true
                 },
                 grid: {
@@ -158,5 +167,12 @@
 {% endblock %}
 
 {% block reload %}
-
+    <script>
+     $(document).ready( function() {
+         setTimeout( function() {
+             location = "{% url 'slideshow:progress' %}";
+         },
+                     1*60*60*1000);
+     });
+    </script>
 {% endblock %}
