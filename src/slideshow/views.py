@@ -98,7 +98,7 @@ def progress(request, template="slideshow/progress.html", context=None):
         role_data = stats['per_role']['developer']
         dev_budget = project.budget_for_role('developer', include_scope_creep=False)
         dev_budget_used = role_data['hours_billable_core_rate']
-        if role_data['average_billable_rate'] > 0:
+        if role_data['average_billable_rate'] > 0 and dev_budget:
             dev_hours_available = float(dev_budget-dev_budget_used)/float(role_data['average_billable_rate'])
         else:
             dev_hours_available = 0
