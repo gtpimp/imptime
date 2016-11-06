@@ -632,7 +632,7 @@ class ProjectQuerySet(QuerySet):
     
     def filter_hopeful(self):
         return self.filter(status2__in=Project.hopeful_states())
-    
+
     def filter_open(self):
         return self.exclude(Q(status2__in=Project.closed_states())|Q(status__label='closed')).order_by("order")
 
@@ -937,6 +937,7 @@ class Project(models.Model):
         self._estimate_stats = None
         self._users_and_hours = None
         self._new_stats = None
+        self._new_stats_summary = None
 
     @property
     def has_budget(self):

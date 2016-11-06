@@ -35,3 +35,11 @@ body.slideshow .available_hours {
     float: left;
     text-align: center;
 }
+
+.project .heading {
+    float: right;
+}
+
+.timesheet_graph_container {
+    clear: both;
+}

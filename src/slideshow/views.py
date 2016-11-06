@@ -64,7 +64,8 @@ def timesheets(request, template="slideshow/timesheets.html", context=None):
 def progress(request, template="slideshow/progress.html", context=None):
     context = context or {}
 
-    projects = timepiece.Project.objects.filter_open().order_by('business_id', 'order')
+    projects = timepiece.Project.objects.filter_open().filter_in_dev_or_pending()\
+      .order_by('business_id', 'order')
 
     plot_data = {}
     business_list = OrderedDict()
@@ -75,7 +76,7 @@ def progress(request, template="slideshow/progress.html", context=None):
 
         stats = project.calculate_new_stats(request.user)
         spendable_budget = project.spendable_budget
-
+        
         # # useful for testing
         # stats = {'per_role': {'manager': {'hours_billable_core_rate': 10},
         #                      'developer': {'hours_billable_core_rate': 50},
