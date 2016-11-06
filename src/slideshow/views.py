@@ -70,7 +70,7 @@ def progress(request, template="slideshow/progress.html", context=None):
     plot_data = {}
     business_list = OrderedDict()
 
-    for project in projects[0:10]:
+    for project in projects:
         business = project.business
         business_id = business.id
 
