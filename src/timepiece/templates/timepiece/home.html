@@ -13,13 +13,6 @@
 
        <h2>ImpTime</h2>
 
-       Complete project management for dev houses and others, fully automated and at your fingertips
-       <br/>
-       
-       <p>
-         <a class="btn btn-primary" href="{% url 'imp:home' %}">Dev Page (experimental)</a>
-       </p>
-
        {% if perms.timepiece.view_dashboard %}
        <p>
          <a class="btn btn-info" href="{% url 'dashboard' %}">Dashboard</a>

@@ -42,9 +42,15 @@
             var x3 = x2 + developerRate;
             var x4 = x3 + testerRate;
 
-            if (x4 >= 100) {
+            var over_budget = (x4 >= 100)
+            if (over_budget) {
                 return [
                     line('Manager', 0, starting_y, 100, 'red')
+                ];
+            } else if ( x4 < 0 ) {
+                // no budget
+                return [
+                    line('Manager', 0, starting_y, 100, 'orange')
                 ];
             }
             else {
@@ -80,11 +86,15 @@
 
                 var total_cost_percentage = values.manager_rate + values.developer_rate + values.tester_rate;
                 var label = sprint_name + " &nbsp;";
-                if ( total_cost_percentage > 100 ) {
+                var over_budget = total_cost_percentage > 100;
+                if ( over_budget ) {
                     label += " ("+Math.round(total_cost_percentage)+"%)";
                 }
                 if ( ! values.has_budget ) {
                     label += " (no budget)";
+                }
+                if ( !over_budget && values.dev_hours_available > 0 ) {
+                    label += " ("+Math.round(values.dev_hours_available)+" hours left)";
                 }
                 label = [y, label];
 
@@ -111,7 +121,7 @@
                 },
                 xaxis: {
                     position: 'top',
-                    tickSize: 10,
+                    tickSize: 50,
                     min: 0.0,
                     max: 100.0
                 },

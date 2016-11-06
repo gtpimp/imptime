@@ -1299,9 +1299,11 @@ class Project(models.Model):
             stats_per_role[mode] = { 'hours':0, 'hours_billable':0, 'points_calculated_open_non_adhoc_billable': 0,
                                      'points_calculated_open_non_adhoc_billable_core_rate': 0,
                                      'per_user': {},
+                                     'average_rate': {},
                                      'hours_billable_core_rate': 0,
                                      'adjusted_points_non_adhoc_core_rate': 0,
                                      'adjusted_points_non_adhoc_core_rate_no_scope_creep': 0,
+                                     'users_in_role': [],
                                      'projected_billable': 0, 'points_estimated_open_non_adhoc_billable':0,
                                      'projected_estimated_billable':0,
                                      'adjusted_points_billable':0}
@@ -1412,7 +1414,7 @@ class Project(models.Model):
             
             stats_per_role[rate.time_tracking_mode]['adjusted_points_non_adhoc_core_rate'] += stats_per_user[user]['adjusted_points_non_adhoc_core_rate']
             stats_per_role[rate.time_tracking_mode]['adjusted_points_non_adhoc_core_rate_no_scope_creep'] += stats_per_user[user]['adjusted_points_non_adhoc_core_rate_no_scope_creep']
-
+            stats_per_role[rate.time_tracking_mode]['users_in_role'].append(user)
 
         for user in users:
 
@@ -1489,10 +1491,14 @@ class Project(models.Model):
 
         total_stats['total_quote_cost'] = float(total_stats['hours_billable_with_scope_creep'])
         
-        for key, role_stat in stats_per_role.items():
+        for role_name, role_stat in stats_per_role.items():
             role_stat['percentage_of_total_hours'] = float(role_stat['hours'] or 0.0) / float(total_stats['hours'] or 1) * 100
             role_stat['percentage_of_total_hours_billable'] = float(role_stat['hours_billable'] or 0.0) / float(total_stats['hours_billable'] or 1) * 100
-        
+
+            role_stat['average_billable_rate'] = sum(stats_per_user[x]['rate'].full_rate or 0 for x in role_stat['users_in_role'])\
+                                                   /len(role_stat['users_in_role'])\
+                                                 if len(role_stat['users_in_role'])>0 else 0
+            
         self._new_stats = {'per_user': stats_per_user,
                            'per_role': stats_per_role,
                            'total': total_stats}

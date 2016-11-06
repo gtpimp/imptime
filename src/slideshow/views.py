@@ -91,15 +91,26 @@ def progress(request, template="slideshow/progress.html", context=None):
             plot_data[business_id] = []
 
         if spendable_budget == 0:
-            ratio = 0
+            ratio = -1
         else:
             ratio = 100 / spendable_budget
 
+        role_data = stats['per_role']['developer']
+        dev_budget = project.budget_for_role('developer', include_scope_creep=False)
+        dev_budget_used = role_data['hours_billable_core_rate']
+        if role_data['average_billable_rate'] > 0:
+            dev_hours_available = float(dev_budget-dev_budget_used)/float(role_data['average_billable_rate'])
+        else:
+            dev_hours_available = 0
+        if dev_hours_available < 0:
+            dev_hours_available = -1
+            
         values = {
             'manager_rate': calculate_progress_ratio(manager_rate, ratio),
             'developer_rate': calculate_progress_ratio(developer_rate, ratio),
             'tester_rate': calculate_progress_ratio(tester_rate, ratio),
-            'has_budget': spendable_budget > 0
+            'has_budget': spendable_budget > 0,
+            'dev_hours_available': dev_hours_available
         }
 
         plot_data[business_id].append({'project': project.name, 'values': values})
