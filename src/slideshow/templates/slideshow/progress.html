@@ -36,21 +36,20 @@
             }
         }
 
-        function createLinePerSprint(starting_y, managerRate, developerRate, testerRate) {
+        function createLinePerSprint(starting_y, managerRate, developerRate, testerRate, has_budget) {
             var x1 = 0;
             var x2 = x1 + managerRate;
             var x3 = x2 + developerRate;
             var x4 = x3 + testerRate;
 
             var over_budget = (x4 >= 100)
-            if (over_budget) {
-                return [
-                    line('Manager', 0, starting_y, 100, 'red')
-                ];
-            } else if ( x4 < 0 ) {
-                // no budget
+            if ( !has_budget ) {
                 return [
                     line('Manager', 0, starting_y, 100, 'orange')
+                ];                
+            } if (over_budget) {
+                return [
+                    line('Manager', 0, starting_y, 100, 'red')
                 ];
             }
             else {
@@ -81,7 +80,7 @@
                 var sprint_name = sprint_data['project'];
                 var values = sprint_data['values'];
 
-                var data_line = createLinePerSprint(y, values.manager_rate, values.developer_rate, values.tester_rate);
+                var data_line = createLinePerSprint(y, values.manager_rate, values.developer_rate, values.tester_rate, values.has_budget);
                 data_points = data_points.concat(data_line);
 
                 var total_cost_percentage = values.manager_rate + values.developer_rate + values.tester_rate;
