@@ -36,16 +36,18 @@ class Command(BaseCommand):
             hours = self.get_daily_hours(user, entries, from_date, to_date)
 
             for start_date, values in hours['total_hours_by_month'].items():
-                content += self.create_row(user, start_date, values) + "\n\r"
+                content += self.create_row(user, start_date, values) + "\n"
 
-            content += "\n\r"
+            content += "\n"
+
+        html_content = "<html><head></head><body>%s</body></html>" % (content.replace("\n", "<br/>"))
 
         subject_content = "Weekly hours report for %s\n\r" % (from_date.strftime("%d %b %Y %H:%M"))
         recipients = [email_recipient_address]
         queue_email(subject_content=subject_content,
                     from_address=settings.FROM_EMAIL,
                     text_content=content,
-                    html_content=content.replace("\n", "<br/>"),
+                    html_content=html_content,
                     to_addresses=recipients)
 
     def create_row(self, user, start_date, values):
