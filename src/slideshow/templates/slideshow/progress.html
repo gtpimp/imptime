@@ -3,8 +3,12 @@
 {% load timepiece_tags %}{% load bootstrap_toolkit %}{% load bootstrap_toolkit %}
 {% block content %}
 
+<div class="col-md-4">
+    <img class="logo" src="{{ STATIC_URL }}/images/implicitDesignLogoTransparent.png"/>
+</div>
+
     <div style="clear: both;"></div>
-    <div>
+    <div style="display:none">
         <div class="project_legend" style="background: purple">Manager</div>
         <div class="project_legend" style="background: green"> Developer</div>
         <div class="project_legend" style="background: blue">Tester</div>

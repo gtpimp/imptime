@@ -21,6 +21,7 @@ body.slideshow .available_hours {
     float: left;
     width: 20%;
     border-right: 1px solid #aaaaaa;
+    padding-right: 3px;
     padding-bottom: 5px;
     -webkit-box-shadow: 10px 10px 5px 0px rgba(0,0,0,0.25);
     -moz-box-shadow: 10px 10px 5px 0px rgba(0,0,0,0.25);
@@ -45,4 +46,8 @@ body.slideshow .available_hours {
 
 .timesheet_graph_container {
     clear: both;
+}
+
+.logo {
+    height: 100px;
 }
