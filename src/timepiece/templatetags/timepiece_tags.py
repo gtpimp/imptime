@@ -282,12 +282,12 @@ def calculate_role_data(context, user, project):
     role_data = project.new_stats['per_role']
 
     for role_name, data in role_data.items():
-        data['budget'] = project.budget_for_role(role_name)
-        data['budget_without_scope_creep'] = project.budget_for_role(role_name, include_scope_creep=False)
+        data['budget'] = project.estimated_budget_for_role(role_name)
+        data['budget_without_scope_creep'] = project.estimated_budget_for_role(role_name, include_scope_creep=False)
     
     context['role_data'] = { 'per_role' : role_data,
                              'commission' : {
-                                 'budget': project.budget_for_role("commission")
+                                 'budget': project.estimated_budget_for_role("commission")
                                  }
                              }
     return ""

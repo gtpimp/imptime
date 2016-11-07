@@ -91,17 +91,41 @@ def progress(request, template="slideshow/progress.html", context=None):
             plot_data[business_id] = []
 
         if spendable_budget == 0:
+            spendable_budget = 1
             ratio = 0
         else:
             ratio = 100 / float(spendable_budget)
 
-        role_data = stats['per_role']['developer']
-        dev_budget = project.budget_for_role('developer', include_scope_creep=False)
-        dev_budget_used = role_data['hours_billable_core_rate']
-        if role_data['average_billable_rate'] > 0 and dev_budget:
-            dev_hours_available = float(dev_budget-dev_budget_used)/float(role_data['average_billable_rate'])
+        # calculate the total time by reworking the formula:
+        #  : dev_time*dev_rate + tester_time*tester_rate + manager_time*manager_rate = budget
+        # with the substitution:
+        #  : xxx_time = total_time*xxx_time_ratio
+        #
+        #_dd = project.time_ratio_for_role('developer')*float(stats['per_role']['developer']['average_billable_rate'])
+        _tt = project.time_ratio_for_role('tester')*float(stats['per_role']['tester']['average_billable_rate'])
+        _mm = project.time_ratio_for_role('manager')*float(stats['per_role']['manager']['average_billable_rate'])
+        _b = spendable_budget
+        _d_rate = float(stats['per_role']['developer']['average_billable_rate'])
+        _d_ratio = project.time_ratio_for_role('developer')
+
+        # ###
+        _tt = 0.2 * 100
+        _mm = 0.2 * 100
+        _b = 100
+        _d_rate = 50
+        _d_ratio = 0.6
+        import pdb; pdb.set_trace()
+        # ###
+            
+        if _d_rate > 0:
+            total_time = _b/_d_rate * (1 / (_tt/_d_rate + _mm/_d_rate + _d_ratio))
         else:
-            dev_hours_available = 0
+            total_time = 0
+        
+        total_dev_time = project.time_ratio_for_role('developer') * total_time
+        dev_budget_used = stats['per_role']['developer']['hours_billable_core_rate']
+        dev_hours_used = float(dev_budget_used)/float(stats['per_role']['developer']['average_billable_rate'] or 1)
+        dev_hours_available = total_dev_time - dev_hours_used
             
         values = {
             'manager_rate': calculate_progress_ratio(manager_rate, ratio),

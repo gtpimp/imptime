@@ -767,8 +767,18 @@ class Project(models.Model):
     @property
     def spendable_budget(self):
         return float(self.budget) * (1-float(self.commission_percentage)/100)
+
+    def time_ratio_for_role(self, role_name):
+        ratio_of_time = 1
+        if role_name == 'manager':
+            ratio_of_time = self.ratio_management
+        elif role_name == 'tester':
+            ratio_of_time = self.ratio_testing
+        else:
+            ratio_of_time = 1 - (self.ratio_testing+self.ratio_management)
+        return ratio_of_time
     
-    def budget_for_role(self, role_name, include_scope_creep=True):
+    def estimated_budget_for_role(self, role_name, include_scope_creep=True):
         if not self.budget:
             return None
 
@@ -1495,9 +1505,9 @@ class Project(models.Model):
             role_stat['percentage_of_total_hours'] = float(role_stat['hours'] or 0.0) / float(total_stats['hours'] or 1) * 100
             role_stat['percentage_of_total_hours_billable'] = float(role_stat['hours_billable'] or 0.0) / float(total_stats['hours_billable'] or 1) * 100
 
-            role_stat['average_billable_rate'] = sum(stats_per_user[x]['rate'].full_rate or 0 for x in role_stat['users_in_role'])\
-                                                   /len(role_stat['users_in_role'])\
-                                                 if len(role_stat['users_in_role'])>0 else 0
+            positive_rates = [x for x in role_stat['users_in_role'] if stats_per_user[x]['rate'].full_rate > 0]
+            role_stat['average_billable_rate'] = sum([stats_per_user[x]['rate'].full_rate for x in positive_rates])/len(positive_rates)\
+                                                   if len(positive_rates)>0 else 0
             
         self._new_stats = {'per_user': stats_per_user,
                            'per_role': stats_per_role,
