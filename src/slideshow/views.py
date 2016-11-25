@@ -77,12 +77,6 @@ def progress(request, template="slideshow/progress.html", context=None):
         stats = project.calculate_new_stats(request.user)
         spendable_budget = project.spendable_budget
         
-        # # useful for testing
-        # stats = {'per_role': {'manager': {'hours_billable_core_rate': 10},
-        #                      'developer': {'hours_billable_core_rate': 50},
-        #                      'tester': {'hours_billable_core_rate': 30}}}
-        # spendable_budget = 100
-        
         manager_rate = stats['per_role']['manager']['hours_billable_core_rate']
         developer_rate = stats['per_role']['developer']['hours_billable_core_rate']
         tester_rate = stats['per_role']['tester']['hours_billable_core_rate']
@@ -101,22 +95,12 @@ def progress(request, template="slideshow/progress.html", context=None):
         # with the substitution:
         #  : xxx_time = total_time*xxx_time_ratio
         #
-        #_dd = project.time_ratio_for_role('developer')*float(stats['per_role']['developer']['average_billable_rate'])
         _tt = project.time_ratio_for_role('tester')*float(stats['per_role']['tester']['average_billable_rate'])
         _mm = project.time_ratio_for_role('manager')*float(stats['per_role']['manager']['average_billable_rate'])
         _b = spendable_budget
         _d_rate = float(stats['per_role']['developer']['average_billable_rate'])
         _d_ratio = project.time_ratio_for_role('developer')
 
-        # ###
-        _tt = 0.2 * 100
-        _mm = 0.2 * 100
-        _b = 100
-        _d_rate = 50
-        _d_ratio = 0.6
-        import pdb; pdb.set_trace()
-        # ###
-            
         if _d_rate > 0:
             total_time = _b/_d_rate * (1 / (_tt/_d_rate + _mm/_d_rate + _d_ratio))
         else:

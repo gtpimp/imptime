@@ -20,7 +20,7 @@
     <div class="project">
       <div class="heading">
         <h3>
-          <a href="{% url 'business_issues' business.id %}">{{ business.name }}</a>
+          <a target="_blank" href="{% url 'business_issues' business.id %}">{{ business.name }}</a>
         </h3>
       </div>
       <div style="width:100%;" class="timesheet_graph_container" id="test_{{ business.id }}"></div>
