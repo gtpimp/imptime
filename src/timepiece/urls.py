@@ -60,6 +60,12 @@ urlpatterns = patterns('',
         views.create_edit_business,
         name='edit_business',
     ),
+        url(
+        r'^business/(?P<business_id>\d+)/point_person/add/$',
+        views.add_user_to_business,
+        name='add_user_to_business',
+    ),
+                   
     url(r'^project/list/$',
         views.list_projects,
         name='list_projects'

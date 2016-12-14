@@ -27,9 +27,16 @@
                 <div class="form-actions">
                     <input class="btn btn-primary" type="submit" value="Save" name="submit">
                     <input class="btn" type="button" onclick="history.go(-1)" value="Cancel">
-		    {% ifequal business.sync_with 'jira' %}
-		      <a class="btn" href="{% url 'jira:settings' business.id %}"/>Jira settings</a>
-		    {% endifequal %}
+		                {% ifequal business.sync_with 'jira' %}
+		                  <a class="btn" href="{% url 'jira:settings' business.id %}"/>Jira settings</a>
+		                {% endifequal %}
+        
+                    <form class="form-inline" action="{% url 'add_user_to_business' business_id=business.id %}?" method="post" accept-charset="utf-8">
+                      {% csrf_token %}
+                      {{ add_user_form|as_bootstrap:"inline" }}
+                      <input class="btn" type="submit" name="submit" id="submit" value="Add" />
+                    </form>
+        
                 </div>
             </form>
 

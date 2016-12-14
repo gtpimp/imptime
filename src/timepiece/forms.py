@@ -767,8 +767,8 @@ class ProjectionForm(DateForm):
 class BusinessForm(forms.ModelForm):
     class Meta:
         model = timepiece.Business
-        fields = ('name', 'email', 'description', 'invoice_method', 'notes', 'sync_with')
-        exclude = ['impd_client']
+        fields = ('name', 'email', 'description', 'invoice_method', 'notes', 'sync_with', 'point_person')
+        exclude = ['impd_client','point_person']
 
     def save(self, impd_client):
         instance = super(BusinessForm, self).save(commit=False)
@@ -776,6 +776,13 @@ class BusinessForm(forms.ModelForm):
         instance.save()
         return instance
 
+class AddUserToBusinessForm(forms.Form):
+    point_person = selectable_forms.AutoCompleteSelectField(UserLookup, label="")
+    point_person.widget.attrs['placeholder'] = 'Add User'
+
+    def save(self):
+        return self.cleaned_data['point_person']
+    
 
 class ProjectForm(forms.ModelForm):
     class Meta:

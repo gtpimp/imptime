@@ -27,8 +27,169 @@
   
   <span class="active_project_title">
     <span class="business_name">{{project.business.name}}</span>  <span class="project_id">#{{project.id}}</span> <span class="project_name">{{project.name}}</span> <span class="project_description">{{project.short_description}}</span>
+    <div class="project">
+      <div style="width:25%;background:#efefef; left:15%;"  class="project_graph_container" id="sprint_graph"></div>
+    </div>
   </span>
-
-
-  
 </div>
+
+
+
+{% block extrajs %}
+  <script>
+   function line(label, starting_x, starting_y, length, colour) {
+       return {
+           label: label,
+           data: [[starting_x, starting_y], [starting_x + length, starting_y]],
+           color: colour,
+           hoverable: true,
+           ratio: length
+       }
+   }
+
+   function createLinePerSprint(starting_y, managerRate, developerRate, testerRate, has_budget, over_budget) {
+       var x1 = 0;
+       var x2 = x1 + managerRate;
+       var x3 = x2 + developerRate;
+       var x4 = x3 + testerRate;
+
+       //var over_budget = (x4 >= 100)
+       if ( !has_budget ) {
+           return [
+               line('Manager', 0, starting_y, 100, 'orange'),
+           ];                
+       } if (over_budget) {
+           return [
+               line('Manager', 0, starting_y, 100, 'red'),
+           ];                
+       }
+       else {
+           return [
+               line('Manager', x1, starting_y, managerRate, 'purple'),
+               line('Dev', x2, starting_y, developerRate, 'green'),
+               line('Tester', x3, starting_y, testerRate, 'blue')
+           ];
+       }
+   }
+
+   var data_string = '{{plot_data_json|safe }}';
+   var data = jQuery.parseJSON(data_string);
+
+   var main_map = [];
+
+   for (var project_id in data) {
+       if (typeof project_id != "string") {
+           continue;
+       }
+
+       var plot_data_for_project = data[project_id];
+       var data_points = [];
+       var labels = [];
+       var y = 5;
+
+       $.each(plot_data_for_project, function (index, sprint_data) {
+           var sprint_name = sprint_data['project'];
+           var values = sprint_data['values'];
+           var dev_hours_used = sprint_data['dev_hours_used']
+
+           var total_cost_percentage = values.manager_rate + values.developer_rate + values.tester_rate;
+           var label = sprint_name + " &nbsp;";
+           var over_budget = total_cost_percentage > 100;
+           
+           var data_line = createLinePerSprint(y, values.manager_rate, values.developer_rate, values.tester_rate, values.has_budget, over_budget);
+           data_points = data_points.concat(data_line);
+
+           /* var total_cost_percentage = values.manager_rate + values.developer_rate + values.tester_rate;
+            * var label = sprint_name + " &nbsp;";
+            * var over_budget = total_cost_percentage > 100;*/
+           if ( over_budget ) {
+               label += " ("+Math.round(total_cost_percentage)+"%)";
+           }
+           if ( ! values.has_budget ) {
+               //label += " (no budget)";
+               label += Math.round(dev_hours_used) + " hours used " + " (no budget)";
+           }
+           if ( !over_budget && values.dev_hours_available > 0 ) {
+               //label += " ("+Math.round(values.dev_hours_available)+" hours left)";
+               label += " (" + Math.round(dev_hours_used)+ " hours used " + Math.round(values.dev_hours_available)+ " hours left)";
+           }
+           label = [y, label];
+
+           labels.push(label);
+           y += 10;
+       });
+
+       main_map[project_id] = {
+           'data_points': data_points,
+           'labels': labels
+       };
+   }
+
+   function calculate_graph_height(count) {
+       return count * 10;
+   }
+
+   function shared_options(labels) {
+
+       return {
+           series: {
+               lines: {show: true, fill: false},
+               points: {show: true, fill: false}
+           },
+           xaxis: {
+               position: 'top',
+               tickSize: 50,
+               min: 0.0,
+               max: 100.0
+           },
+           yaxis: {
+               show: true,
+               position: 'left',
+               min: 0.0,
+               max: calculate_graph_height(labels.length),
+               transform: function (v) {
+                   return -v;
+               },
+               inverseTransform: function (v) {
+                   return -v;
+               },
+
+               tickSize: 10,
+               ticks: labels,
+               labelWidth: 300,
+               reserveSpace: true
+           },
+           grid: {
+               show: true,
+               aboveData: false,
+               hoverable: true,
+               clickable: true
+           },
+           legend: {
+               show: false,
+               position: "ne"
+           },
+           bars: {
+               show: false
+           }
+       }
+   }
+
+   $(document).ready(
+       function () {
+         for (project_id in main_map) {
+             var values = main_map[project_id]['data_points'];
+             var labels = main_map[project_id]['labels'];
+             var options = shared_options(labels);
+             var div_id = "#sprint_graph";
+             $(div_id).css("height", calculate_graph_height(labels.length) + 50);
+             $.plot($("#sprint_graph"),
+                  values,
+                  options);
+         }
+           
+       });
+
+  </script>
+
+{% endblock %}

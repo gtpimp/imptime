@@ -14,6 +14,7 @@ from django.core.urlresolvers import reverse, resolve
 from django.template import RequestContext
 from django.contrib import messages
 from django.contrib.auth.models import User
+from  operator import itemgetter
 import datetime
 import random
 import math
@@ -64,74 +65,92 @@ def timesheets(request, template="slideshow/timesheets.html", context=None):
 def progress(request, template="slideshow/progress.html", context=None):
     context = context or {}
 
-    projects = timepiece.Project.objects.filter_open().filter_in_dev_or_pending()\
-      .order_by('business_id', 'order')
-
-    plot_data = {}
     business_list = OrderedDict()
+    business_proj_list = []
+
+    projects = timepiece.Project.objects.filter().filter_open().filter_in_dev_or_pending()\
+        .order_by('business_id', 'order')
+   
+    plot_data = {}
 
     for project in projects:
         business = project.business
         business_id = business.id
-
-        stats = project.calculate_new_stats(request.user)
-        spendable_budget = project.spendable_budget
-        
-        manager_rate = stats['per_role']['manager']['hours_billable_core_rate']
-        developer_rate = stats['per_role']['developer']['hours_billable_core_rate']
-        tester_rate = stats['per_role']['tester']['hours_billable_core_rate']
-
         if not plot_data.has_key(business_id):
             plot_data[business_id] = []
 
-        if spendable_budget == 0:
-            spendable_budget = 1
-            ratio = 0
-        else:
-            ratio = 100 / float(spendable_budget)
-
-        # calculate the total time by reworking the formula:
-        #  : dev_time*dev_rate + tester_time*tester_rate + manager_time*manager_rate = budget
-        # with the substitution:
-        #  : xxx_time = total_time*xxx_time_ratio
-        #
-        _tt = project.time_ratio_for_role('tester')*float(stats['per_role']['tester']['average_billable_rate'])
-        _mm = project.time_ratio_for_role('manager')*float(stats['per_role']['manager']['average_billable_rate'])
-        _b = spendable_budget
-        _d_rate = float(stats['per_role']['developer']['average_billable_rate'])
-        _d_ratio = project.time_ratio_for_role('developer')
-
-        if _d_rate > 0:
-            total_time = _b/_d_rate * (1 / (_tt/_d_rate + _mm/_d_rate + _d_ratio))
-        else:
-            total_time = 0
-        
-        total_dev_time = project.time_ratio_for_role('developer') * total_time
-        dev_budget_used = stats['per_role']['developer']['hours_billable_core_rate']
-        dev_hours_used = float(dev_budget_used)/float(stats['per_role']['developer']['average_billable_rate'] or 1)
-        dev_hours_available = total_dev_time - dev_hours_used
+        dev_stats = calculate_dev_hours_stats(project, request.user)
+        dev_hours_available, dev_hours_used, ratio, manager_rate, developer_rate, tester_rate = dev_stats
             
         values = {
             'manager_rate': calculate_progress_ratio(manager_rate, ratio),
             'developer_rate': calculate_progress_ratio(developer_rate, ratio),
             'tester_rate': calculate_progress_ratio(tester_rate, ratio),
-            'has_budget': spendable_budget > 0,
+            'has_budget': project.spendable_budget > 0,
             'dev_hours_available': dev_hours_available
         }
 
-        plot_data[business_id].append({'project': project.name, 'values': values})
-        business_list[business] = True
-
-    context['business_list'] = business_list
+        point_person = project.point_person.first_name + ' ' +  project.point_person.last_name    
+        
+        plot_data[business_id].append({'project': project.name, 'values': values,
+                                       'point_person': point_person,'dev_hours_used': dev_hours_used })
+        #business_list[business] = True
+        business_proj_list.append([project.business.point_person.last_name, business.name ,business])
+        
+    business_proj_list.sort(key=itemgetter(0,1))
+   
+    for bus_data in business_proj_list:
+        business_list[bus_data[2]] = True
+        
+    context['business_list'] = business_list    
     context['plot_data_json'] = json.dumps(plot_data)
-
-    # import pdb; pdb.set_trace()
 
     return render_to_response(template, context, context_instance=RequestContext(request))
 
 def calculate_progress_ratio(rate, ratio):
     value = round(rate * ratio, 2)
     return value if value < 100 else 100
+
+def calculate_dev_hours_stats(project, user):    
+    stats = project.calculate_new_stats(user)
+    spendable_budget = project.spendable_budget
+   
+    manager_rate = stats['per_role']['manager']['hours_billable_core_rate']
+    developer_rate = stats['per_role']['developer']['hours_billable_core_rate']
+    tester_rate = stats['per_role']['tester']['hours_billable_core_rate']
+
+    if spendable_budget == 0:
+       #spendable_budget = 1
+       ratio = 0
+    else:
+       ratio = 100 / float(spendable_budget)
+      
+    # calculate the total time by reworking the formula:
+    #  : dev_time*dev_rate + tester_time*tester_rate + manager_time*manager_rate = budget
+    # with the substitution:
+    #  : xxx_time = total_time*xxx_time_ratio
+    #
+    _tt = project.time_ratio_for_role('tester')*float(stats['per_role']['tester']['average_billable_rate'])
+    _mm = project.time_ratio_for_role('manager')*float(stats['per_role']['manager']['average_billable_rate'])
+    _b = spendable_budget
+    _d_rate = float(stats['per_role']['developer']['average_billable_rate'])
+    _d_ratio = project.time_ratio_for_role('developer')
+
+ 
+    if _d_rate > 0:
+        total_time = _b/_d_rate * (1 / (_tt/_d_rate + _mm/_d_rate + _d_ratio))
+    else:
+        total_time = 0
+    
+    total_dev_time = project.time_ratio_for_role('developer') * total_time
+    dev_budget_used = stats['per_role']['developer']['hours_billable_core_rate']
+    dev_hours_used = float(dev_budget_used)/float(stats['per_role']['developer']['average_billable_rate'] or 1)
+
+    dev_hours_clocked = float
+    dev_hours_available = total_dev_time - dev_hours_used
+    
+    return dev_hours_available, dev_hours_used, ratio, manager_rate, developer_rate, tester_rate
+    
 
 @login_required
 def ratios(request, template="slideshow/ratios.html", context=None):

@@ -75,6 +75,8 @@ from emacs_importer import models as bamboo_models
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 import logging
 
+from slideshow.views import calculate_progress_ratio, calculate_dev_hours_stats
+
 logger = logging.getLogger('timepiece_view')
 
 def permission_required_or_staff(perm, login_url=None, raise_exception=False):
@@ -1040,12 +1042,37 @@ def create_edit_business(request, business=None):
         business_form = timepiece_forms.BusinessForm(
             instance=business
         )
+
+    
+    add_user_form = timepiece_forms.AddUserToBusinessForm()    
     context = {
         'business': business,
         'business_form': business_form,
+        'add_user_form': add_user_form
     }
+
+    import pdb; pdb.set_trace()     
     return context
 
+@csrf_exempt
+@permission_required('timepiece.add_business')
+@login_required
+def add_user_to_business(request, business_id):
+    business = get_object_or_404(timepiece.Business, pk=business_id)
+    if request.POST:
+        form = timepiece_forms.AddUserToBusinessForm(request.POST)
+        if form.is_valid():
+            point_person = form.save()
+            #timepiece.BusinessRelationship.objects.get_or_create(
+            #    user=user,
+            #    business=business,
+            #)
+    #import pdb; pdb.set_trace()
+    #if 'next' in request.REQUEST and request.REQUEST['next']:
+    #    return HttpResponseRedirect(request.REQUEST['next'])
+    #else:
+    #    return HttpResponseRedirect(
+    #        reverse('view_business', args=(business.pk,)))
 
 def _set_project_rate_to_default_for_user(user, project):
     profile = timepiece.UserProfile.objects.get_or_create(user=user)[0]
@@ -1233,6 +1260,8 @@ def project_detail(request, business_id):
         last_active[user.username] = entries.filter(user=user).aggregate(end_time=Max('end_time'))['end_time']
 
     #print user_totals
+
+    
 
     context.update({
         'current_user':request.user,
@@ -3419,11 +3448,31 @@ def get_project_detail(request, project_id, context=None):
     context['total_billable'] = cost_totals['billable']
     context['business_permissions_by_user'] = timepiece.BusinessPermissions.by_user(business)
     context['has_closed_sprints'] = business.has_closed_sprints()
+
+    dev_stats = calculate_dev_hours_stats(project, request.user)
+    dev_hours_available, dev_hours_used, ratio, manager_rate, developer_rate, tester_rate = dev_stats
+
+    values = {
+            'manager_rate':  calculate_progress_ratio(manager_rate, ratio),
+            'developer_rate': calculate_progress_ratio(developer_rate, ratio),
+            'tester_rate':  calculate_progress_ratio(tester_rate, ratio),
+            'has_budget': project.spendable_budget > 0,
+            'dev_hours_available': dev_hours_available
+    }
+    
     context['has_open_sprints'] = business.has_open_sprints()
+
+    plot_data = {}
+    plot_data.setdefault(project_id, [])
+    
+    plot_data[project_id].append({'project': project.name, 'values': values,
+                                  'dev_hours_used': dev_hours_used })
+
+    context['plot_data_json'] = json.dumps(plot_data)
 
     if 'selected_issue_ids_for_context_menu' in request.session:
         context['selected_issue_ids'] = [int(x) for x in request.session['selected_issue_ids_for_context_menu']]
-
+        
     issues_list_rendered = render_to_response("timepiece/project/project_detail.html", context, context_instance=RequestContext(request))
     #project_menu_rendered = render_to_response("timepiece/project/_card_project_menu.html", context, context_instance=RequestContext(request))
     project_menu_rendered = render_to_response("timepiece/_navigation_project_specific_menu.html", context, context_instance=RequestContext(request))
@@ -3433,6 +3482,10 @@ def get_project_detail(request, project_id, context=None):
                                      'project_menu': project_menu_rendered.content,
                                      'project_banner': project_banner_rendered.content,
                                      'issue_list_html':issues_list_rendered.content }))
+
+def calculate_progress_ratio(rate, ratio):
+    value = round(rate * ratio, 2)
+    return value if value < 100 else 100
 
 @login_required
 def open_issue(request, business_name=None, issue_number=None):

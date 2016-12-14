@@ -158,7 +158,7 @@ class Business(models.Model):
                                                  ("free", "Free or Equity or Other") ) )
 
     impd_client = models.ForeignKey(Client, null=True, blank=False, related_name='businesses')
-
+    point_person = models.ForeignKey(User, limit_choices_to={'is_staff': True}, default=3)  
     
     def model_to_dict(self):
         d = model_to_dict_with_date_support(self)

@@ -20,7 +20,8 @@
     <div class="project">
       <div class="heading">
         <h3>
-          <a target="_blank" href="{% url 'business_issues' business.id %}">{{ business.name }}</a>
+          {{business.point_person.first_name|add:" "|add:business.point_person.last_name}}<br>
+          <a target="_blank" href="{% url 'business_issues' business.id %}">{{business.name}}</a>
         </h3>
       </div>
       <div style="width:100%;" class="timesheet_graph_container" id="test_{{ business.id }}"></div>
@@ -40,21 +41,21 @@
             }
         }
 
-        function createLinePerSprint(starting_y, managerRate, developerRate, testerRate, has_budget) {
+        function createLinePerSprint(starting_y, managerRate, developerRate, testerRate, has_budget, over_budget) {
             var x1 = 0;
             var x2 = x1 + managerRate;
             var x3 = x2 + developerRate;
             var x4 = x3 + testerRate;
 
-            var over_budget = (x4 >= 100)
+            //var over_budget = (x4 >= 100)
             if ( !has_budget ) {
                 return [
-                    line('Manager', 0, starting_y, 100, 'orange')
+                    line('Manager', 0, starting_y, 100, 'orange'),
                 ];                
             } if (over_budget) {
                 return [
-                    line('Manager', 0, starting_y, 100, 'red')
-                ];
+                    line('Manager', 0, starting_y, 100, 'red'),
+                ];                
             }
             else {
                 return [
@@ -83,22 +84,30 @@
             $.each(plot_data_for_project, function (index, sprint_data) {
                 var sprint_name = sprint_data['project'];
                 var values = sprint_data['values'];
-
-                var data_line = createLinePerSprint(y, values.manager_rate, values.developer_rate, values.tester_rate, values.has_budget);
-                data_points = data_points.concat(data_line);
+                var dev_hours_used = sprint_data['dev_hours_used']
 
                 var total_cost_percentage = values.manager_rate + values.developer_rate + values.tester_rate;
                 var label = sprint_name + " &nbsp;";
                 var over_budget = total_cost_percentage > 100;
+                
+                var data_line = createLinePerSprint(y, values.manager_rate, values.developer_rate, values.tester_rate, values.has_budget, over_budget);
+                data_points = data_points.concat(data_line);
+
+                /* var total_cost_percentage = values.manager_rate + values.developer_rate + values.tester_rate;
+                 * var label = sprint_name + " &nbsp;";
+                 * var over_budget = total_cost_percentage > 100;*/
                 if ( over_budget ) {
                     label += " ("+Math.round(total_cost_percentage)+"%)";
                 }
                 if ( ! values.has_budget ) {
-                    label += " (no budget)";
+                    //label += " (no budget)";
+                    label += Math.round(dev_hours_used) + " hours used " + " (no budget)";
                 }
                 if ( !over_budget && values.dev_hours_available > 0 ) {
-                    label += " ("+Math.round(values.dev_hours_available)+" hours left)";
-                }
+                    //label += " ("+Math.round(values.dev_hours_available)+" hours left)";
+                    label += " (" + Math.round(dev_hours_used)+ " hours used " + Math.round(values.dev_hours_available)+ " hours left)";
+                }               
+                
                 label = [y, label];
 
                 labels.push(label);
