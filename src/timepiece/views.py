@@ -3457,7 +3457,7 @@ def get_project_detail(request, project_id, context=None):
             'developer_rate': calculate_progress_ratio(developer_rate, ratio),
             'tester_rate':  calculate_progress_ratio(tester_rate, ratio),
             'has_budget': project.spendable_budget > 0,
-            'percentage_over_budget': float(context['total_billable'] - project.spendable_budget)/project.spendable_budget,
+            'percentage_over_budget': float(context['total_billable'] - project.spendable_budget)/project.spendable_budget if project.spendable_budget else 0,
             'dev_hours_available': dev_hours_available
     }
     
