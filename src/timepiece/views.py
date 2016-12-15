@@ -5985,14 +5985,6 @@ def edit_client(request, client_code, template="timepiece/client/add_client.html
 
     return render_to_response(template, context, context_instance=RequestContext(request))
 
-def blah(request, template="blah.html"):
-    context = {}
-
-    project = timepiece.Project.objects.get(pk=2124)
-    project.calculate_new_stats(request.user)
-    context['project'] = project
-    return render_to_response(template, context, context_instance=RequestContext(request))
-
 def project_cost_summary(request, project_id, template="timepiece/project/project_cost_summary.html"):
     context = {}
     project = timepiece.Project.objects.get(pk=project_id)
@@ -6002,6 +5994,7 @@ def project_cost_summary(request, project_id, template="timepiece/project/projec
 
     project.calculate_new_stats(request.user)
     context['project'] = project
+
     return render_to_response(template, context, context_instance=RequestContext(request))
 
 
