@@ -222,6 +222,14 @@ a.ico-calc {
     padding: 0 10px 0 25px;
 }
 
+.project_list_progress_graph_container {
+    background:#efefef;
+    left:15%;
+    width: 25%;
+    float: right;
+    
+}
+
 .money_sprint_banner {
     color: #000;
     padding: 15px;

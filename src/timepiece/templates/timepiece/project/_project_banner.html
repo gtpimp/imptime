@@ -27,9 +27,9 @@
   
   <span class="active_project_title">
     <span class="business_name">{{project.business.name}}</span>  <span class="project_id">#{{project.id}}</span> <span class="project_name">{{project.name}}</span> <span class="project_description">{{project.short_description}}</span>
-    <div class="project">
-      <div style="width:25%;background:#efefef; left:15%;"  class="project_graph_container" id="sprint_graph"></div>
-    </div>
+        <div class="project_list_progress_graph_container" >
+            <div id="sprint_graph"/>
+        </div>
   </span>
 </div>
 
@@ -44,6 +44,7 @@
            color: colour,
            hoverable: true,
            ratio: length
+           
        }
    }
 
@@ -93,25 +94,26 @@
            var dev_hours_used = sprint_data['dev_hours_used']
 
            var total_cost_percentage = values.manager_rate + values.developer_rate + values.tester_rate;
-           var label = sprint_name + " &nbsp;";
-           var over_budget = total_cost_percentage > 100;
+           var label = "";
+           var percentage_over_budget = values['percentage_over_budget'];
            
-           var data_line = createLinePerSprint(y, values.manager_rate, values.developer_rate, values.tester_rate, values.has_budget, over_budget);
+           var data_line = createLinePerSprint(y, values.manager_rate, values.developer_rate, values.tester_rate, values.has_budget, percentage_over_budget>0);
            data_points = data_points.concat(data_line);
 
            /* var total_cost_percentage = values.manager_rate + values.developer_rate + values.tester_rate;
             * var label = sprint_name + " &nbsp;";
             * var over_budget = total_cost_percentage > 100;*/
-           if ( over_budget ) {
-               label += " ("+Math.round(total_cost_percentage)+"%)";
+
+           if ( percentage_over_budget > 0 ) {
+               label += " "+Math.round(percentage_over_budget)+"% over budget";
            }
            if ( ! values.has_budget ) {
                //label += " (no budget)";
-               label += Math.round(dev_hours_used) + " hours used " + " (no budget)";
+               label += "dev: " + Math.round(dev_hours_used) + " hours used " + " (no budget)";
            }
-           if ( !over_budget && values.dev_hours_available > 0 ) {
+           if ( percentage_over_budget<=0 && values.dev_hours_available > 0 ) {
                //label += " ("+Math.round(values.dev_hours_available)+" hours left)";
-               label += " (" + Math.round(dev_hours_used)+ " hours used " + Math.round(values.dev_hours_available)+ " hours left)";
+               label += " (dev: " + Math.round(dev_hours_used)+ " hours used, " + Math.round(values.dev_hours_available)+ " hours left)";
            }
            label = [y, label];
 
@@ -137,6 +139,7 @@
                points: {show: true, fill: false}
            },
            xaxis: {
+               show: false,
                position: 'top',
                tickSize: 50,
                min: 0.0,
@@ -182,7 +185,7 @@
              var labels = main_map[project_id]['labels'];
              var options = shared_options(labels);
              var div_id = "#sprint_graph";
-             $(div_id).css("height", calculate_graph_height(labels.length) + 50);
+             $(div_id).css("height", calculate_graph_height(labels.length) + 10);
              $.plot($("#sprint_graph"),
                   values,
                   options);
