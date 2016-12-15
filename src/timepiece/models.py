@@ -996,16 +996,15 @@ class Project(models.Model):
         return new_name
 
     def save(self, *args, **kwargs):
-        
+
         self.code = Project.get_code_from_name(self.name)
 
-        if not self.id and Project.objects.filter(code=self.code,business=self.business).count()>0:
-            raise Exception("A Project with code %s already exists" % self.code)
-
+        if not self.id:
+            duplicate_projects = Project.objects.filter(business=self.business)
+            while duplicate_projects.filter(code=self.code).exists():
+                self.code = self.code + "_d"
         new_project = self.id is None
-            
         super(Project, self).save(*args, **kwargs)
-
         if new_project:
             self._sync_from_previous_project()
 
