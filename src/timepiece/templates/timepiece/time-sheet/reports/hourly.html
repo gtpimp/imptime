@@ -1,11 +1,12 @@
 {% extends 'timepiece/base.html' %}
 {% load timepiece_tags %}
 {% load bootstrap_toolkit %}
+{% load static %}
 
 {% block title %}Payroll Per Project{% endblock %}
 
 {% block extrajs %}
-    <script src="{{ STATIC_URL }}js/quicksearch.js" type="text/javascript"></script>
+    <script src="{% static 'js/quicksearch.js' %}" type="text/javascript"></script>
     {{ pj_filters.media }}
 {% endblock extrajs %}
 

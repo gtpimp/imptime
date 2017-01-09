@@ -1,6 +1,7 @@
 {% load humanize %}
 {% load timepiece_tags %}
 {% load bootstrap_toolkit %}
+{% load static %}
 
 <div class="checklist">
   <h1>{{business.name}}</h1>
@@ -33,12 +34,12 @@
       <tbody>
 	<tr>
 	  <td>
-            <img src="{{STATIC_URL}}images/icons/{% if checklist.passed %}tick{% else %}cross{% endif %}.png"/>
+            <img src="{% static 'images/icons/{% if checklist.passed %}tick{% else %}cross{% endif %}.png' %}"/>
           </td>
 	  {% for old_checklist in previous_checklists %}
 	  <td>
             <div class="previous_checklist">
-              <img src="{{STATIC_URL}}images/icons/{% if old_checklist.passed %}tick{% else %}cross{% endif %}.png"/>
+              <img src="{% static 'images/icons/{% if old_checklist.passed %}tick{% else %}cross{% endif %}.png' %}"/>
             <div class="previous_checklist">
 	  </td>
 	  {% endfor %}

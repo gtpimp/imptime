@@ -2,9 +2,10 @@
 {% block title %}ImpTime{% endblock %}
 {% load bootstrap_toolkit %}
 {% load timepiece_tags %}
+{% load static %}
 
 {% block extrajs %}
-  <script type="text/javascript" src="{{ STATIC_URL }}timepiece/js/projects.js"></script>
+  <script type="text/javascript" src="{% static 'timepiece/js/projects.js' %}"></script>
  {% endblock extrajs %}
 
  {% block content %}

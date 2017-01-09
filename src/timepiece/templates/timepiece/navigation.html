@@ -1,4 +1,5 @@
 {% load timepiece_tags %}
+{% load static %}
 {% load tz %}
 <div class="navbar navbar-fixed-top">
     <div class="navbar-inner">
@@ -9,7 +10,7 @@
                 <li class="active">
                     <a class="brand" href="http://www.implicitdesign.co.za">
                         {% block logo_name %}imptime{% endblock %}
-                        <img width="50px" src="{{STATIC_URL}}images/implicitDesignLogo.jpg"/>
+                        <img width="50px" src="{% static 'images/implicitDesignLogo.jpg' %}"/>
                     </a>
                 </li>
                 {% if perms.timepiece.can_clock_in %}
@@ -251,7 +252,7 @@
                     <form method="POST" action='{% url 'noui:command' %}'>
                       Command: <input type="text" name='command' class="command"/>
                       <a href="{% url 'noui:command_list' %}">
-                        <img src="{{STATIC_URL}}images/icons/application_view_list.png"/>
+                        <img src="{% static 'images/icons/application_view_list.png' %}"/>
                       </a>
                     </form>
                     <div class="noui_results" style="display:none">

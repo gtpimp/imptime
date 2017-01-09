@@ -1,5 +1,6 @@
 {% extends "timepiece/base.html" %}
 {% load bootstrap3 %}
+{% load static %}
 
 {% block extrajs %}
 
@@ -14,17 +15,17 @@
 
   {% include "timepiece/_graph_js_includes.html" %}
 
-  <script src="{{STATIC_URL}}fullcalendar/lib/moment.min.js"></script>
-  <script src="{{STATIC_URL}}fullcalendar/lib/jquery-ui.custom.min.js"></script>
-  <script src="{{STATIC_URL}}fullcalendar/fullcalendar.min.js"></script>
-  <script src="{{STATIC_URL}}timepiece/js/timepiece_calendar.js"></script>
+  <script src="{% static 'fullcalendar/lib/moment.min.js' %}"></script>
+  <script src="{% static 'fullcalendar/lib/jquery-ui.custom.min.js' %}"></script>
+  <script src="{% static 'fullcalendar/fullcalendar.min.js' %}"></script>
+  <script src="{% static 'timepiece/js/timepiece_calendar.js' %}"></script>
 
 {% endblock %}
 
 {% block extracss %}
-  <link type="text/css" rel="stylesheet" href="{{ STATIC_URL }}fullcalendar/fullcalendar.css" />
-  <link type="text/css" rel="stylesheet" href="{{ STATIC_URL }}timepiece/css/timepiece_fullcalendar.css" />
-  <link href='{{ STATIC_URL }}fullcalendar/fullcalendar.print.css' rel='stylesheet' media='print' />
+  <link type="text/css" rel="stylesheet" href="{% static 'fullcalendar/fullcalendar.css' %}" />
+  <link type="text/css" rel="stylesheet" href="{% static 'timepiece/css/timepiece_fullcalendar.css' %}" />
+  <link href='{% static 'fullcalendar/fullcalendar.print.css' rel='stylesheet' media='print' />
 {% endblock %}
 
 {% block title %}Calendar{% endblock %}
@@ -35,7 +36,7 @@
 
 <div id='floating_menus'>
 
-  {% include "timepiece/calendar/_create_event_form.html" %}
+  {% include ' %}"timepiece/calendar/_create_event_form.html" %}
   {% include "timepiece/calendar/_update_event_form.html" %}
 
   {% include "timepiece/calendar/_event_filter_form.html" %}

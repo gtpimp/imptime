@@ -1,5 +1,6 @@
 {% extends 'timepiece/hours/base.html' %}
 {% load bootstrap_toolkit %}
+{% load static %}
 
 {% block title %}Schedule for the Week of {{ week|date:'F j, Y' }}{% endblock %}
 
@@ -8,16 +9,16 @@
         var ajax_url = '{{ ajax_url }}';
     </script>
 
-    <script type="text/javascript" src="{{ STATIC_URL }}bootstrap/js/bootstrap-typeahead.js"></script>
-    <script type="text/javascript" src="{{ STATIC_URL }}timepiece/js/handsontable/jquery.handsontable.js"></script>
-    <script type="text/javascript" src="{{ STATIC_URL }}timepiece/js/ajax.js"></script>
+    <script type="text/javascript" src="{% static 'bootstrap/js/bootstrap-typeahead.js' %}"></script>
+    <script type="text/javascript" src="{% static 'timepiece/js/handsontable/jquery.handsontable.js' %}"></script>
+    <script type="text/javascript" src="{% static 'timepiece/js/ajax.js' %}"></script>
 
-    <script type="text/javascript" src="{{ STATIC_URL }}timepiece/js/project_hours/models.js"></script>
-    <script type="text/javascript" src="{{ STATIC_URL }}timepiece/js/project_hours/app.js"></script>
+    <script type="text/javascript" src="{% static 'timepiece/js/project_hours/models.js' %}"></script>
+    <script type="text/javascript" src="{% static 'timepiece/js/project_hours/app.js' %}"></script>
 {% endblock extrajs %}
 
 {% block extracss %}
-    <link type="text/css" rel="stylesheet" href="{{ STATIC_URL }}timepiece/js/handsontable/jquery.handsontable.css" />
+    <link type="text/css" rel="stylesheet" href="{% static 'timepiece/js/handsontable/jquery.handsontable.css' %}" />
 {% endblock extracss %}
 
 {% block crumbs %}

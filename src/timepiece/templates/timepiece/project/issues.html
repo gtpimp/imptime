@@ -1,6 +1,7 @@
 {% extends "timepiece/project/base.html" %}
 {% load humanize %}
 {% block title %}Project Issues{% endblock %}
+{% load static %}
 {% load bootstrap_toolkit %}
 {% load timepiece_tags %}
 {% block extramedia %}
@@ -9,7 +10,7 @@
 
 {% block content %}
 
-<img style="display:none" class="loading" src="{{STATIC_URL}}/images/icons/loadingAnimation.gif"/>
+<img style="display:none" class="loading" src="{% static 'images/icons/loadingAnimation.gif' %}"/>
 
 <div class="row-fluid">
     <div class="span12">

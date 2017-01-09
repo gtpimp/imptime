@@ -1,4 +1,5 @@
 {% load timepiece_tags %}
+{% load static %}
 
 <div class="issue_detail_container">
 
@@ -37,7 +38,7 @@
 
     {% has_permission has_edit_project_detail business %}
       <a href="#" class"btn small_button" onclick="return imp.show_business_history('{% url 'show_business_history' business.pk %}')">
-        <img src="{{STATIC_URL}}/images/icons/report.png"/>
+        <img src="{% static 'images/icons/report.png' %}"/>
       </a>
     {% end_permission %}
 

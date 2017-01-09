@@ -1,4 +1,5 @@
 {% extends "timepiece/base.html" %}
+{% load static %}
 {% load timepiece_tags bootstrap_toolkit %}
 
 {% block title %}Revenue{% endblock title %}
@@ -21,6 +22,6 @@
 
 </div>
 
-<script type="text/javascript" src="{{ STATIC_URL }}timepiece/js/chart/chart.js" data-hours="{{ data }}" data-dates="{{ dates }}"></script>
+<script type="text/javascript" src="{% static 'timepiece/js/chart/chart.js' %}" data-hours="{{ data }}" data-dates="{{ dates }}"></script>
 
 {% endblock content %}

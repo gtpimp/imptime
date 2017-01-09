@@ -1,6 +1,7 @@
 {% load timepiece_tags %}
 {% load humanize %}
 {% load bootstrap_toolkit %}
+{% load static %}
 
 <tr class="issue_instance_row {{issue.status_as_class}} {% if issue.adhoc %}adhoc_issue_row{% endif %}" assigned_to="{{issue.assigned_to.username}}"  id="{{issue.pk}}" refresh_url="{% url 'get_issue_row' issue.pk %}" status="{{issue.status}}" feature="{{issue.feature.name|default:None}}">                    
   
@@ -10,11 +11,11 @@
     </div>
     <div class="emacs_copy_container">
       &nbsp;
-      <img class="emacs_copy_img" style="display:none" src="{{STATIC_URL}}/images/icons/emacs.png" onclick="return imp.select_text_for_emacs('*** issue{{issue.number}} {{issue.subject|escapejs}}');"/> 
+      <img class="emacs_copy_img" style="display:none" src="{% static 'images/icons/emacs.png' %}" onclick="return imp.select_text_for_emacs('*** issue{{issue.number}} {{issue.subject|escapejs}}');"/> 
     </div>
     <div class="drag_img_container">
       &nbsp;
-      <img class="drag_img" style="display:none" src="{{STATIC_URL}}/images/icons/drag.png"/> 
+      <img class="drag_img" style="display:none" src="{% static 'images/icons/drag.png' %}"/> 
     </div>
   </td>
 
@@ -23,12 +24,12 @@
       {% comment %}
       <div class="issue_action_menu_container">
         &nbsp;
-        <img class="issue_action_menu_img" style="display:none" src="{{STATIC_URL}}/images/icons/script_go.png" onclick="return imp.show_issue_action_menu(this, {{issue.id}});"/> 
+        <img class="issue_action_menu_img" style="display:none" src="{% static 'images/icons/script_go.png' %}" onclick="return imp.show_issue_action_menu(this, {{issue.id}});"/> 
       </div>
       {% endcomment %}
       
       <div style="float:left">
-	<img style="display:none" style="position:absolute" class="loading_issue_indicator" id="loading_issue_{{issue.id}}" src="{{STATIC_URL}}/images/icons/loadingAnimation.gif"/>
+	<img style="display:none" style="position:absolute" class="loading_issue_indicator" id="loading_issue_{{issue.id}}" src="{% static 'images/icons/loadingAnimation.gif' %}"/>
       </div>
       <div class="secret_link issue_number{% if issue.interface_plugin_number %} jira_issue_number{% endif %}" onclick="imp.show_issue_detail({{issue.pk}}, '{% url 'issue_detail' issue.pk %}');">
 	{{issue.number}}
@@ -40,7 +41,7 @@
     <div class="issue_row_icon_bar" >
       {% if issue.adhoc %}
       <a href="#" onclick="imp.on_clear_adhoc_issue(this, {{issue.id}}, '{% url 'clear_issue_adhoc_status' issue.id %}' ); return false;">
-        <img src="{{STATIC_URL}}images/icons/auto_created_issue.png" title="This is an adhoc issue. Click to accept as a new standard issue, or leave to indicate an ad-hoc issue." />
+        <img src="{% static 'images/icons/auto_created_issue.png' %}" title="This is an adhoc issue. Click to accept as a new standard issue, or leave to indicate an ad-hoc issue." />
       </a>
       {% endif %}
     </div>
@@ -147,7 +148,7 @@
   {% has_permission has_delete_issue project.business %}
   
   <td class="issue_delete" onclick="if (!confirm('Are you sure you want to delete this issue?')){ return false; }; imp.delete_issue_from_issues_list(this, '{% url 'delete_issue' project.id %}' , {{ issue.pk}} )">		    
-      <img src="{{STATIC_URL}}/images/timepiece/icons/cross.png"/>
+      <img src="{% static 'images/timepiece/icons/cross.png' %}"/>
 
   </td>
   {% end_permission  %}

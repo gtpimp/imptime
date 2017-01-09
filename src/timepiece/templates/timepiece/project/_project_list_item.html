@@ -1,6 +1,7 @@
 {% load humanize %}
 {% load bootstrap_toolkit %}
 {% load timepiece_tags %}
+{% load static %}
 
 <div class="project_li issue_drag_destination sprint_information {% if project.is_open %}open_project{%else%}closed_project{% endif %}"
      preloaded="{{ project.is_preloaded }}"
@@ -13,7 +14,7 @@
      move_issue_to_project_url="{% url 'move_issue_to_project' %}" 
      selected_value="{{project.status}}"  >
   <div class="loading"> 
-    <img style="display:none" class="loading" src="{{STATIC_URL}}/images/icons/loadingAnimation.gif"/> 
+    <img style="display:none" class="loading" src="{% static 'images/icons/loadingAnimation.gif' %}"/> 
   </div>
   <div class="project_number">#{{project.id}} - {{project}}</div>
 

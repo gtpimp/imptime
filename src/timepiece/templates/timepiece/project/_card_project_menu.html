@@ -1,4 +1,5 @@
 {% load timepiece_tags %}
+{% load static %}
 
 {% if project.id %}
 
@@ -14,14 +15,14 @@
 
 <li class="menu_item commonly_used">
   <a href="#" onclick="return imp.select_text_for_emacs('** sprint#{{project.id}} {{project.name}}');">
-    <img class="emacs_copy_img" src="{{STATIC_URL}}/images/icons/emacs.png" />
+    <img class="emacs_copy_img" src="{% static 'images/icons/emacs.png' %}" />
     Emacs sprint name
   </a>
 </li>
 
 <li class="menu_item commonly_used">
   <a target="_blank" href="{% url 'emacs_importer:export_project_to_emacs' project.id %}">
-    <img class="emacs_copy_img" src="{{STATIC_URL}}/images/icons/emacs.png" />
+    <img class="emacs_copy_img" src="{% static 'images/icons/emacs.png' %}" />
     Export to emacs
   </a>
 </li>
@@ -128,14 +129,14 @@
 <li class="menu_item commonly_used parent_li_of_form_on_click">
 
   <a href="#" class="to_expand_form_on_click" onclick="imp.do_form_show(this , '{% url 'add_issue' project.id %}' )" title="Add issue">
-    <img src="{{STATIC_URL}}images/icons/add.png">Add issue
+    <img src="{% static 'images/icons/add.png' %}">Add issue
   </a>
 </li>
 {% end_permission %}
 
 <li class='menu_item commonly_used'>
   <a href="{% url 'project_list' project.id %}" onclick="imp.refresh_project({{project.id}}); return false;" title="Refresh issues">
-    <img src="{{STATIC_URL}}images/icons/arrow_refresh.png">Refresh
+    <img src="{% static 'images/icons/arrow_refresh.png' %}">Refresh
   </a>
 </li>
 
@@ -152,7 +153,7 @@
 {% has_permission has_view_ctc_billable_rates project.business %}
 <li class='menu_item' >
   <a href="#" onclick="imp.toggle_show_numbers();return false;">
-    <img class="emacs_copy_img" src="{{STATIC_URL}}/images/icons/money.png" />
+    <img class="emacs_copy_img" src="{% static 'images/icons/money.png' %}" />
     Show/hide money
   </a>
 </li>

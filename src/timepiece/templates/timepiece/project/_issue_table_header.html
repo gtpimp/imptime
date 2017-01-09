@@ -1,5 +1,6 @@
 {% load humanize %}
 {% load bootstrap_toolkit %}
+{% load static %}
 {% load timepiece_tags %}
 {% prepare_project_stats current_user project %}
 
@@ -8,10 +9,10 @@
                   <th> 
                     <div class="issue_checkbox_cell_toggle">
                       <a href="#" class="show" onclick="imp.show_issue_checkboxes(this); return false;">
-                        <img src="{{STATIC_URL}}images/bullet_toggle_plus.png"/>
+                        <img src="{% static 'images/bullet_toggle_plus.png' %}"/>
                       </a>
                       <a href="#" style="display:none" class="hide" onclick="imp.hide_issue_checkboxes(this); return false;">
-                        <img src="{{STATIC_URL}}images/bullet_toggle_minus.png"/>
+                        <img src="{% static 'images/bullet_toggle_minus.png' %}"/>
                       </a>
                     </div>
                   </th>
@@ -27,7 +28,7 @@
                 {% endif %}
                   Feature
                   <a href="" style="display:none" class='filter_trigger'>
-                    <img src="{{STATIC_URL}}images/icons/magnifier.png"/>
+                    <img src="{% static 'images/icons/magnifier.png' %}"/>
                   </a>
                 </th>
 
@@ -38,7 +39,7 @@
                 {% endif %}
                   Status
                   <a href="" style="display:none" class='filter_trigger'>
-                    <img src="{{STATIC_URL}}images/icons/magnifier.png"/>
+                    <img src="{% static 'images/icons/magnifier.png' %}"/>
                   </a>
                 </th>
 

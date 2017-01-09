@@ -1,11 +1,12 @@
 {% comment %}
+{% load static %}
 {% with businesses.get_checklist_summary as checklists %}
 <th>
   <h2>
     {% if checklists.traffic_ok|length == 0 %}
-    <img src="{{STATIC_URL}}images/timepiece/icons/bullet_green.png"/>
+    <img src="{% static 'images/timepiece/icons/bullet_green.png' %}"/>
     {% else %}
-    <img src="{{STATIC_URL}}images/timepiece/icons/bullet_red.png"/>
+    <img src="{% static 'images/timepiece/icons/bullet_red.png' %}"/>
     {% endif %}
   </h2>
 </th>
@@ -13,9 +14,9 @@
 <th>
   <h2>
     {% if checklists.dev_ok|length == 0 %}
-    <img src="{{STATIC_URL}}images/timepiece/icons/bullet_green.png"/>
+    <img src="{% static 'images/timepiece/icons/bullet_green.png' %}"/>
     {% else %}
-    <img src="{{STATIC_URL}}images/timepiece/icons/bullet_red.png"/>
+    <img src="{% static 'images/timepiece/icons/bullet_red.png' %}"/>
     {% endif %}
   </h2>
 </th>
@@ -23,9 +24,9 @@
 <th>
   <h2>
     {% if checklists.finance_ok|length == 0 %}
-    <img src="{{STATIC_URL}}images/timepiece/icons/bullet_green.png"/>
+    <img src="{% static 'images/timepiece/icons/bullet_green.png' %}"/>
     {% else %}
-    <img src="{{STATIC_URL}}images/timepiece/icons/bullet_red.png"/>
+    <img src="{% static 'images/timepiece/icons/bullet_red.png' %}"/>
     {% endif %}
   </h2>
 </th>

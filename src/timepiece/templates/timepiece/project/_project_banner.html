@@ -1,24 +1,25 @@
 {% load timepiece_tags %}
+{% load static %}
 
 <div class="sprint_banner">
   {% comment %}
-  <span class="sprint_menu_trigger"><img src="{{STATIC_URL}}/images/implicitdesign/menu.png"/></span>
+  <span class="sprint_menu_trigger"><img src="{% static 'images/implicitdesign/menu.png' %}"/></span>
   {% endcomment %}
 
   <span class="sprint_banner_menu">
     {% has_permission has_add_issue project.business %}
     <a href="#" class="to_expand_form_on_click" onclick="imp.show_add_issue(this); return false;" title="Add issue">
-      <img src="{{STATIC_URL}}images/icons/add.png"/>
+      <img src="{% static 'images/icons/add.png' %}"/>
     </a>
     {% end_permission %}
 
     <a href="#" onclick="imp.refresh_project(); return false;" title="Refresh issues">
-      <img src="{{STATIC_URL}}images/icons/arrow_refresh.png"/>
+      <img src="{% static 'images/icons/arrow_refresh.png' %}"/>
     </a>
 
     {% has_permission has_view_ctc_billable_rates project.business %}
     <a href="#" onclick="imp.toggle_show_numbers();return false;">
-      <img src="{{STATIC_URL}}images/icons/money.png" />
+      <img src="{% static 'images/icons/money.png' %}" />
     </a>
     {% end_permission %}
 

@@ -1,10 +1,11 @@
 {% extends "timepiece/base.html" %}
 {% load timepiece_tags %}
+{% load static %}
 
 {% block javascript %}
     {{ block.super }}
-	<script src="{{ STATIC_URL }}timepiece/js/clear_form.js" type="text/javascript"></script>
+	<script src="{% static 'timepiece/js/clear_form.js' %}" type="text/javascript"></script>
         {% include "timepiece/_graph_js_includes.html" %}
-	<link type="text/css" rel="stylesheet" href="{{ STATIC_URL }}timepiece/css/graph.css"></link>
+	<link type="text/css" rel="stylesheet" href="{% static 'timepiece/css/graph.css' %}"></link>
 {% endblock %}
 

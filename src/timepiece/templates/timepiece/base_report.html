@@ -37,7 +37,7 @@
   <div class="header">
     
     <div class="logo">
-      <img width="75px" src="{{STATIC_URL}}images/implicitDesignLogo.jpg"/>
+      <img width="75px" src="{% static 'images/implicitDesignLogo.jpg' %}"/>
     </div>
     {% ifequal "html" output_format %}
     <h2>{% block report_heading_outer %}{% block report_heading_extra %}{% endblock %} for {{project.business.name}} - {{project.name}}{% endblock %}</h2>

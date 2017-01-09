@@ -1,4 +1,5 @@
 {% load timepiece_tags %}
+{% load static %}
 
 <script>
   imp.loggedin_username="{{current_user.username}}";
@@ -13,12 +14,12 @@
 	{% if is_clocked_in %}
 	<button class="btn btn-info" onclick="return imp.clock_out(this, {{current_user.id}}, {{issue.id}}, '{% url 'issue_clock_out' %}');">
 	  clock out
-	  <img style="display:none" class="clock_img" src="{{STATIC_URL}}/images/icons/clock_out.png" title="clock out"/>
+	  <img style="display:none" class="clock_img" src="{% static 'images/icons/clock_out.png' %}" title="clock out"/>
 	</button>
 	{% else %}
 	<button class="btn btn-info" onclick="return imp.clock_in(this, {{current_user.id}}, {{issue.id}}, '{% url 'issue_clock_in' %}');">
 	  clock in
-	  <img style="display:none" class="clock_img" src="{{STATIC_URL}}/images/icons/clock_in.png" title="clock in"/>
+	  <img style="display:none" class="clock_img" src="{% static 'images/icons/clock_in.png' %}" title="clock in"/>
 	</button>
 	{% endif %}
       </div>
@@ -83,7 +84,7 @@
                 <div>Fixed CTC amount: {{ issue.fixed_ctc_amount }}</div>
             {% endif %}
             <a class=" btn small_button" href="#" onclick="$('.fixed_cost_panel').show(); $('.show_fixed_cost_button').hide(); return false;">
-                <img src="{{ STATIC_URL }}/images/timepiece/icons/comment_add.png" title="Fixed cost"/> </a>
+                <img src="{% static 'images/timepiece/icons/comment_add.png' %}" title="Fixed cost"/> </a>
         </div>
         <div class="fixed_cost_panel" style="display:none">
             <div>Fixed Amount</div>
@@ -104,7 +105,7 @@
       <div class="static_div">
         {% has_permission has_edit_description issue.project.business %}
 	<div class="small_button btn" onclick="imp.clickable_description_box($(this).parent(), '{% url 'issue_detail_update' %}',{{ issue.id }})">
-          <img src="{{STATIC_URL}}images/timepiece/icons/note_edit.png" title="Edit description"/>
+          <img src="{% static 'images/timepiece/icons/note_edit.png' %}" title="Edit description"/>
 	</div>
 	{% end_permission %}
           <div class="markdown_content" style="display:none">{{issue.description}}</div>
@@ -138,10 +139,10 @@
            </div>
 
            <a class="edit_comment_button small_button btn" href="#" onclick="$(this).parent().find('.edit_comment').show(); $(this).hide(); $(this).parents('.comment_section').find('.markdown_content').hide(); return false;">
-             <img src="{{STATIC_URL}}images/icons/comment_edit.png"/>
+             <img src="{% static 'images/icons/comment_edit.png' %}"/>
            </a>
            <a class="delete_comment_button small_button btn" href="#" onclick="return imp.delete_issue_comment('{% url 'delete_issue_comment' comment.pk %}');">
-             <img src="{{STATIC_URL}}/images/timepiece/icons/comment_delete.png"/>
+             <img src="{% static 'images/timepiece/icons/comment_delete.png' %}"/>
            </a>
         {% end_permission %}
         </div>
@@ -153,7 +154,7 @@
         {% has_permission has_add_issue_comment issue.project.business %}
         <div class="comment_section">
           <a class="new_comment_button btn small_button" href="#" onclick="$(this).parent().find('.new_comment').show(); $(this).hide(); return false;">
-            <img src="{{STATIC_URL}}/images/timepiece/icons/comment_add.png"/>
+            <img src="{% static 'images/timepiece/icons/comment_add.png' %}"/>
           </a>
           <div class="new_comment" style="display:none">
 	    <textarea name="comment" data-url="{% url 'add_issue_comment' issue.pk %}"></textarea>
@@ -207,14 +208,14 @@
         <ul class="unstyled">
           <li>
             <a target="_blank" href={{ attachment.attachment.url }}>{{attachment.name}}</a>
-            <img class="secret_link" onclick="return imp.delete_issue_attachment('{% url 'delete_issue_attachment' attachment.id %}');" src="{{STATIC_URL}}/images/timepiece/icons/cross.png"/>
+            <img class="secret_link" onclick="return imp.delete_issue_attachment('{% url 'delete_issue_attachment' attachment.id %}');" src="{% static 'images/timepiece/icons/cross.png' %}"/>
           </li>
         </ul>
       {% endfor %}
 
       <div class="attachment_section">
         <a href="#" class="small_button btn" onclick="return imp.attach_upload_issue_attachment($(this));">
-          <img src="{{STATIC_URL}}images/timepiece/icons/attach.png"/>
+          <img src="{% static 'images/timepiece/icons/attach.png' %}"/>
         </a>
         <div class="new_attachment" style="display:none">
           <input type="file" name="attachment" data-url="{% url 'add_issue_attachment' issue.pk %}"/>
@@ -228,7 +229,7 @@
         
   {% has_permission has_view_actual_hours project.business %}
     <a href="#" class="btn small_button" onclick="$(this).parent().find('.timesheet_entries').toggle(); return false;">
-      <img src="{{STATIC_URL}}images/icons/clock.png"/>
+      <img src="{% static 'images/icons/clock.png' %}"/>
     </a>
     <div class="timesheet_entries" {% if not issue.auto_expand_timesheet_entries %}style="display:none"{% endif %}>
       <h3>Timesheet entries</h3>
@@ -278,7 +279,7 @@
 
     {% if issue.pk %}
     <a href="#" class="btn small_button" onclick="return imp.show_issue_history('{% url 'show_issue_history' issue.pk %}')">
-      <img src="{{STATIC_URL}}/images/icons/report.png"/>
+      <img src="{% static 'images/icons/report.png' %}"/>
     </a>
     {% endif %}
 

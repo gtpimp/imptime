@@ -3,10 +3,11 @@
 {% block title %}{{business.name}}{% endblock %}
 {% load bootstrap_toolkit %}
 {% load timepiece_tags %}
+{% load static %}
 
 {% block extracss %}
-<link rel="stylesheet" type="text/css" href="{{STATIC_URL}}markitup/sets/markdown/style.css">
-<link rel="stylesheet" type="text/css" href="{{STATIC_URL}}markitup/skins/markitup/style.css">
+<link rel="stylesheet" type="text/css" href="{% static 'markitup/sets/markdown/style.css' %}">
+<link rel="stylesheet" type="text/css" href="{% static 'markitup/skins/markitup/style.css' %}">
 
 {% endblock %}
 
@@ -14,14 +15,14 @@
 {% endblock %}
 
 {% block extrajs %}
-<script src="{{STATIC_URL}}timepiece/js/jquery.splitter-0.20.0.js"></script>
-<script src="{{STATIC_URL}}timepiece/js/projects.js"></script>
-<script src="{{STATIC_URL}}timepiece/js/issues.js"></script>
+<script src="{% static 'timepiece/js/jquery.splitter-0.20.0.js' %}"></script>
+<script src="{% static 'timepiece/js/projects.js' %}"></script>
+<script src="{% static 'timepiece/js/issues.js' %}"></script>
 
-<script type="text/javascript" src="{{STATIC_URL}}markitup/jquery.markitup.js"></script>
-<script type="text/javascript" src="{{STATIC_URL}}markitup/sets/markdown/set.js"></script>
+<script type="text/javascript" src="{% static 'markitup/jquery.markitup.js' %}"></script>
+<script type="text/javascript" src="{% static 'markitup/sets/markdown/set.js' %}"></script>
 
-<link type="text/css" rel="stylesheet" href="{{ STATIC_URL }}/timepiece/css/jquery.splitter.css" />
+<link type="text/css" rel="stylesheet" href="{% static 'timepiece/css/jquery.splitter.css' %}" />
 
 {% endblock extrajs %}
 
@@ -82,7 +83,7 @@
           
           <div class="project_table_row project_contents">
             <div class="project_table_cell information">
-              <img style="display:none" class="loading" src="{{STATIC_URL}}/images/icons/loadingAnimation.gif"/>
+              <img style="display:none" class="loading" src="{% static 'images/icons/loadingAnimation.gif' %}"/>
             </div>
           </div>
           

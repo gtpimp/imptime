@@ -1,4 +1,5 @@
 {% load timepiece_tags %}
+{% load static %}
 <div class="nav-parent">
   <div class="navbar navbar-fixed-top">
     <div class="navbar-inner">
@@ -31,7 +32,7 @@
               <form method="POST" action='{% url 'noui:command' %}'>
                 Command: <input type="text" name='command' class="command"/>
                 <a href="{% url 'noui:command_list' %}">
-                  <img src="{{STATIC_URL}}images/icons/application_view_list.png"/>
+                  <img src="{% static 'images/icons/application_view_list.png' %}"/>
                 </a>
               </form>
               <div class="noui_results" style="display:none">

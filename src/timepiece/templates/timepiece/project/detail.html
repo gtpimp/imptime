@@ -1,11 +1,12 @@
 {% extends "timepiece/project/base.html" %}
 {% block title %}Projects{% endblock %}
 {% load bootstrap_toolkit %}
+{% load static %}
 {% load timepiece_tags %}
 
 {% block extrajs %}
-  <script type="text/javascript" src="{{ STATIC_URL }}timepiece/js/project_hours/rates.js"></script>
-  <script type="text/javascript" src="{{ STATIC_URL }}timepiece/js/project_hours/expenses.js"></script>
+  <script type="text/javascript" src="{% static 'timepiece/js/project_hours/rates.js' %}"></script>
+  <script type="text/javascript" src="{% static 'timepiece/js/project_hours/expenses.js' %}"></script>
  {% endblock extrajs %}
 
  {% block content %}
@@ -112,7 +113,7 @@ $(document).ready(function(){
 	<p id='invoice_error_message'></p>
        <button onclick="TP_invoices.save();">Save</button>
        <button onclick="TP_invoices.cancel();">Cancel</button>
-   <img style="display:none" class="loading" src="{{STATIC_URL}}/images/icons/loadingAnimation.gif"/>
+   <img style="display:none" class="loading" src="{% static 'images/icons/loadingAnimation.gif' %}"/>
  </div>
 
 <div style="display:none" class="rates_editor_popup" id="expense_editor_popup">
@@ -121,7 +122,7 @@ $(document).ready(function(){
 	<p id='expense_error_message'></p>
        <button onclick="TP_expenses.save();">Save</button>
        <button onclick="TP_expenses.cancel();">Cancel</button>
-   <img style="display:none" class="loading" src="{{STATIC_URL}}/images/icons/loadingAnimation.gif"/>
+   <img style="display:none" class="loading" src="{% static 'images/icons/loadingAnimation.gif' %}"/>
  </div>
 
 <div style="display:none" class="rates_editor_popup" id="rates_editor_popup">
@@ -143,7 +144,7 @@ $(document).ready(function(){
        <td><button onclick="TP_rates.save();">Update</button></td>
      </tr>
    </table>
-   <img style="display:none" class="loading" src="{{STATIC_URL}}/images/icons/loadingAnimation.gif"/>
+   <img style="display:none" class="loading" src="{% static 'images/icons/loadingAnimation.gif' %}"/>
  </div>
 
  <div class="row-fluid">
