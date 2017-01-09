@@ -1,6 +1,6 @@
 import nltk
 import logging
-from django.utils.datastructures import SortedDict
+from collections import OrderedDict
 import importlib
 import re
 logger=logging.getLogger(__name__)
@@ -144,7 +144,7 @@ class CommandParser(object):
     def automatic_code_parameters(self):
         if self._automatic_code_parameters is not None:
             return self._automatic_code_parameters
-        context = SortedDict()
+        context = OrderedDict()
         context['post_action'] = PostedActionHelper(self.request, command_parser=self)
         context['nouibusiness'] = NouiBusiness
         context['nouiproject'] = NouiProject

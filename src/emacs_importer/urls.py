@@ -1,13 +1,13 @@
-from django.conf.urls import patterns, include, url
+from django.conf.urls import include, url
 
 from django.contrib import admin
 admin.autodiscover()
 
 import views
 
-urlpatterns = patterns('',
+urlpatterns = [
                        url(r'^import_timesheets$', views.import_timesheets, name='import_timesheets'),
                        url(r'^import_timesheet$', views.import_timesheet, name='import_timesheet'),
                        url(r'^export_project_to_emacs/(?P<project_id>\d+)$', views.export_project_to_emacs, {}, name='export_project_to_emacs'),
 
-                       )
+                       ]

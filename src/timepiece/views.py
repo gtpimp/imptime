@@ -50,7 +50,7 @@ from django.db.models import Sum, Count, Q, F, Max, Min
 from django.db import transaction
 from django.db import DatabaseError
 from django.conf import settings
-from django.utils.datastructures import SortedDict
+from collections import OrderedDict
 from django.views.decorators.csrf import csrf_exempt
 from django.views.generic.base import TemplateView
 from django.views.generic import UpdateView, ListView, DetailView, View
@@ -102,7 +102,7 @@ def permission_required_or_staff(perm, login_url=None, raise_exception=False):
 @login_required
 def home(request, template="timepiece/home.html"):
     context = {}
-    return render_to_response(template, context, context_instance=RequestContext(request))
+    return render(request, template, context)
 
 @login_required
 def quick_search(request):
@@ -110,10 +110,9 @@ def quick_search(request):
         form = timepiece_forms.QuickSearchForm(request.GET)
         if form.is_valid():
             return HttpResponseRedirect(form.save())
-    return render_to_response('timepiece/search_results.html', {
+    return render(request, 'timepiece/search_results.html', {
             'form': form,
-        },
-        context_instance=RequestContext(request)
+        }
     )
 
 
@@ -210,11 +209,10 @@ def clock_in(request):
         message = 'You have clocked into %s' % entry.issue.project
         messages.info(request, message)
         return HttpResponseRedirect(reverse('timepiece-entries'))
-    return render_to_response('timepiece/time-sheet/entry/clock_in.html', {
+    return render(request, 'timepiece/time-sheet/entry/clock_in.html', {
             'form': form,
             'active': active_entry,
-        },
-        context_instance=RequestContext(request),
+        }
     )
 
 
@@ -243,10 +241,9 @@ def clock_out(request, entry_id):
         'form': form,
         'entry': entry,
     }
-    return render_to_response(
+    return render(request, 
         'timepiece/time-sheet/entry/clock_out.html',
-        context,
-        context_instance=RequestContext(request),
+        context
     )
 
 
@@ -392,11 +389,10 @@ def reject_entry(request, entry_id):
         msg_text = "The entry's status was set to unverified"
         messages.info(request, msg_text)
         return redirect(return_url)
-    return render_to_response('timepiece/time-sheet/entry/reject_entry.html', {
+    return render(request, 'timepiece/time-sheet/entry/reject_entry.html', {
                                   'entry': entry,
                                   'next': request.REQUEST.get('next'),
-                              },
-                              context_instance=RequestContext(request))
+                              })
 
 
 @permission_required('timepiece.delete_entry')
@@ -430,9 +426,8 @@ def delete_entry(request, entry_id):
             message = 'You are not authorized to delete this entry!'
             messages.error(request, message)
 
-    return render_to_response('timepiece/time-sheet/entry/delete_entry.html',
-                              {'entry': entry},
-                              context_instance=RequestContext(request))
+    return render(request, 'timepiece/time-sheet/entry/delete_entry.html',
+                              {'entry': entry})
 
 
 @permission_required('timepiece.view_entry_summary')
@@ -523,8 +518,8 @@ def view_summary(request,user_id, include_older_businesses=False):
 
     context = { 'current_businesses':current_businesses,
                 'old_businesses':old_businesses }
-    return render_to_response('timepiece/time-sheet/people/projects.html',
-                              context, context_instance=RequestContext(request))
+    return render(request, 'timepiece/time-sheet/people/projects.html',
+                              context)
 
 @login_required
 def get_project_card_for_business(request,business_id, project_id):
@@ -547,8 +542,8 @@ def get_project_card_for_business(request,business_id, project_id):
                 'invoices': Invoice.objects.filter(project=project).order_by("invoice_number"),
                 'business_permissions_by_user':timepiece.BusinessPermissions.by_user(business)
                 }
-    return render_to_response('timepiece/project/card.html',
-                              context, context_instance=RequestContext(request))
+    return render(request, 'timepiece/project/card.html',
+                              context)
 
 
 @login_required
@@ -587,8 +582,8 @@ def get_project_card(request,business_id,index=None):
                 'business_permissions_by_user':timepiece.BusinessPermissions.by_user(business)
                 }
 
-    return render_to_response('timepiece/project/card.html',
-                              context, context_instance=RequestContext(request))
+    return render(request, 'timepiece/project/card.html',
+                              context)
 
 
 @login_required
@@ -669,8 +664,8 @@ def view_person_time_sheet(request, user_id):
         'project_entries': project_entries,
         'summary': summary,
     }
-    return render_to_response('timepiece/time-sheet/people/view.html',
-        context, context_instance=RequestContext(request))
+    return render(request, 'timepiece/time-sheet/people/view.html',
+        context)
 
 
 @login_required
@@ -742,8 +737,8 @@ def change_person_time_sheet(request, action, user_id, from_date):
         'return_url': return_url,
         'hours': hours,
     }
-    return render_to_response('timepiece/time-sheet/people/change_status.html',
-        context, context_instance=RequestContext(request))
+    return render(request, 'timepiece/time-sheet/people/change_status.html',
+        context)
 
 
 @login_required
@@ -789,14 +784,14 @@ def confirm_invoice_project(request, project_id, to_date, from_date=None):
 
     totals = timepiece.HourGroup.objects.summaries(entries)
     template = 'timepiece/time-sheet/invoice/confirm.html'
-    return render_to_response(template, {
+    return render(template, {
         'invoice_form': invoice_form,
         'entries': entries.select_related(),
         'project': project,
         'totals': totals,
         'from_date': from_date,
         'to_date': to_date,
-    }, context_instance=RequestContext(request))
+    })
 
 
 @permission_required('timepiece.change_entrygroup')
@@ -821,13 +816,13 @@ def invoice_projects(request):
         'issue__project__pk', 'status', 'issue__project__status__label', 'issue__project__business__name',
     ).annotate(s=Sum('hours')).order_by('issue__project__type__label',
                                         'issue__project__name', 'status')
-    return render_to_response(
+    return render(request, 
         'timepiece/time-sheet/invoice/make_invoice.html', {
         'date_form': date_form,
         'project_totals': project_totals if to_date else [],
         'to_date': to_date - relativedelta(days=1) if to_date else '',
         'from_date': from_date,
-    }, context_instance=RequestContext(request))
+    })
 
 
 class InvoiceList(ListView):
@@ -974,10 +969,9 @@ def remove_invoice_entry(request, invoice_id, entry_id):
             'invoice': invoice,
             'entry': entry,
         }
-        return render_to_response(
+        return render(request, 
             'timepiece/time-sheet/invoice/remove_invoice_entry.html',
-            context,
-            context_instance=RequestContext(request)
+            context
         )
 
 
@@ -1197,7 +1191,7 @@ def create_edit_person(request, person_id=None, template='timepiece/person/creat
         'person_form': person_form,
         'profile_form': profile_form
     }
-    return render_to_response(template, context, context_instance=RequestContext(request))
+    return render(request, template, context)
 
 @render_with('timepiece/project/detail.html')
 @login_required
@@ -1709,7 +1703,7 @@ def update_project(request, project_id=None, template='timepiece/project/edit.ht
         'project_form': form,
     }
     
-    return render_to_response(template, context, context_instance=RequestContext(request))
+    return render(request, template, context)
 
 @permission_required('timepiece.add_project')
 @render_with('timepiece/project/create_edit.html')
@@ -2195,45 +2189,45 @@ class ProjectHoursMixin(object):
             week_start__lt=week_end)
 
 
-class ProjectHoursView(ProjectHoursMixin, TemplateView):
-    template_name = 'timepiece/hours/list.html'
-    permissions = ('timepiece.can_clock_in',)
+# class ProjectHoursView(ProjectHoursMixin, TemplateView):
+#     template_name = 'timepiece/hours/list.html'
+#     permissions = ('timepiece.can_clock_in',)
 
-    def get_context_data(self, **kwargs):
-        context = super(ProjectHoursView, self).get_context_data(**kwargs)
+#     def get_context_data(self, **kwargs):
+#         context = super(ProjectHoursView, self).get_context_data(**kwargs)
 
-        form = timepiece_forms.ProjectHoursSearchForm(initial={
-            'week_start': self.week_start
-        })
+#         form = timepiece_forms.ProjectHoursSearchForm(initial={
+#             'week_start': self.week_start
+#         })
 
-        project_hours = utils.get_project_hours_for_week(self.week_start) \
-            .filter(published=True)
-        people = utils.get_people_from_project_hours(project_hours)
-        id_list = [person[0] for person in people]
-        projects = []
+#         project_hours = utils.get_project_hours_for_week(self.week_start) \
+#             .filter(published=True)
+#         people = utils.get_people_from_project_hours(project_hours)
+#         id_list = [person[0] for person in people]
+#         projects = []
 
-        for project, entries in groupby(project_hours, lambda o: o['project__id']):
-            entries = list(entries)
-            proj_id = entries[0]['project__id']
-            name = entries[0]['project__name']
-            row = [None for i in range(len(id_list))]
-            for entry in entries:
-                index = id_list.index(entry['user__id'])
-                hours = entry['hours']
-                row[index] = row[index] + hours if row[index] else hours
-            projects.append((proj_id, name, row))
+#         for project, entries in groupby(project_hours, lambda o: o['project__id']):
+#             entries = list(entries)
+#             proj_id = entries[0]['project__id']
+#             name = entries[0]['project__name']
+#             row = [None for i in range(len(id_list))]
+#             for entry in entries:
+#                 index = id_list.index(entry['user__id'])
+#                 hours = entry['hours']
+#                 row[index] = row[index] + hours if row[index] else hours
+#             projects.append((proj_id, name, row))
 
-        context.update({
-            'form': form,
-            'week': self.week_start,
-            'prev_week': self.week_start - relativedelta(days=7),
-            'next_week': self.week_start + relativedelta(days=7),
-            'people': people,
-            'project_hours': project_hours,
-            'projects': projects
-        })
+#         context.update({
+#             'form': form,
+#             'week': self.week_start,
+#             'prev_week': self.week_start - relativedelta(days=7),
+#             'next_week': self.week_start + relativedelta(days=7),
+#             'people': people,
+#             'project_hours': project_hours,
+#             'projects': projects
+#         })
 
-        return context
+#         return context
 
 
 class EditProjectHoursView(ProjectHoursMixin, TemplateView):
@@ -2514,7 +2508,7 @@ def salary_edit(request, user_id, template="timepiece/salary/payslip.html", cont
     if salary:
         context['ytd'] = salary.ytd()
         context['leave'] = salary.leave_summary
-    return render_to_response(template, context, context_instance=RequestContext(request))
+    return render(request, template, context)
 
 @permission_required('timepiece.can_change_salary')
 @login_required
@@ -2529,7 +2523,7 @@ def salary_payslip(request, salary_id, preview=True, template="timepiece/salary/
     context['ytd'] = salary.ytd()
     context['leave'] = salary.leave_summary
     context['preview'] = preview
-    response = render_to_response(template, context, context_instance=RequestContext(request))
+    response = render(request, template, context)
     if not preview:
         html = response.content
         response = HttpResponse(render_to_pdf(html), content_type='application/pdf')
@@ -2553,7 +2547,7 @@ def incremental_timesheets_by_project(request, template="timepiece/time-sheet/re
         return response
 
     context['form'] = form
-    return render_to_response(template, context, context_instance=RequestContext(request))
+    return render(request, template, context)
 
 @csrf_exempt
 @permission_required('timepiece.change_project')
@@ -2586,7 +2580,7 @@ def revenue(request, template="timepiece/time-sheet/reports/revenue.html", conte
     entries = entries.values('month', 'project', 'user').annotate(Sum('hours')).order_by('month')
     context['entries'] = entries
 
-    return render_to_response(template, context, context_instance=RequestContext(request))
+    return render(request, template, context)
 
 @login_required
 def daily_graph(request, user_id, template="timepiece/graphs/daily_graph.html", context=None):
@@ -2615,7 +2609,7 @@ def daily_graph(request, user_id, template="timepiece/graphs/daily_graph.html", 
     context['to_date'] = to_date
     context['default_user_id'] = user_id
 
-    return render_to_response(template, context, context_instance=RequestContext(request))
+    return render(request, template, context)
 
 @login_required
 def graphs(request, template="timepiece/graphs/graph.html", context=None):
@@ -2660,7 +2654,7 @@ def graphs(request, template="timepiece/graphs/graph.html", context=None):
 
     context['series'] = series
 
-    return render_to_response(template, context, context_instance=RequestContext(request))
+    return render(request, template, context)
 
 def _get_daily_hours(user, entries, from_date=None, to_date=None):
 
@@ -2672,8 +2666,8 @@ def _get_daily_hours(user, entries, from_date=None, to_date=None):
     for entry_hours_per_day in entries_hours_per_day:
         hours_per_day[entry_hours_per_day['on_day']] = entry_hours_per_day['total_hours']
 
-    hours = SortedDict()
-    daily_average_hours_per_week = SortedDict()
+    hours = OrderedDict()
+    daily_average_hours_per_week = OrderedDict()
             
     running_date = from_date
     running_hours_per_week = 0
@@ -2976,7 +2970,7 @@ def expense_list(request, template='timepiece/expense/index.html', context=None)
     context['expense_formset'] = expense_formset
     context['total'] = queryset.aggregate(total=Sum('amount'))['total']
 
-    return render_to_response(template, context, context_instance=RequestContext(request))
+    return render(request, template, context)
 
 @login_required
 def invoice_list(request, template='timepiece/invoice/index.html', context=None):
@@ -3024,7 +3018,7 @@ def invoice_list(request, template='timepiece/invoice/index.html', context=None)
     context['total'] = queryset.aggregate(total=Sum('amount'))['total']
     context['project_id'] = project_id
 
-    return render_to_response(template, context, context_instance=RequestContext(request))
+    return render(request, template, context)
 
 
 @csrf_exempt
@@ -3127,7 +3121,7 @@ def add_project(request, business_id , template="timepiece/project/create_edit_p
 
     context['project'] = project
     context['business_permissions_by_user'] = timepiece.BusinessPermissions.by_user(business)
-    return render_to_response(template, context, context_instance=RequestContext(request))
+    return render(request, template, context)
 
 @login_required
 def add_issue(request, project_id, template="timepiece/project/_add_issue_form.html", context=None):
@@ -3168,7 +3162,7 @@ def add_issue(request, project_id, template="timepiece/project/_add_issue_form.h
     context['plugin_form'] = plugin_form
     context['business'] = current_business
     context['new_issue_form'] = new_issue_form;
-    return render_to_response(template, context, context_instance=RequestContext(request))
+    return render(request, template, context)
 
 @csrf_exempt
 @login_required
@@ -3305,7 +3299,7 @@ def status_filter(request, project_id, template="timepiece/project/status_filter
     stati = timepiece.Issue.objects.filter(project_id=project_id).order_by('status').values('status').distinct()
     context['stati'] = stati
     context['project_id'] = project_id
-    return render_to_response(template, context, context_instance=RequestContext(request))
+    return render(request, template, context)
 
 @login_required
 def feature_filter(request, project_id, template="timepiece/project/feature_filter_popup.html"):
@@ -3313,7 +3307,7 @@ def feature_filter(request, project_id, template="timepiece/project/feature_filt
     features = timepiece.Issue.objects.filter(project_id=project_id).order_by('feature__name').values('feature__name').distinct()
     context['features'] = features
     context['project_id'] = project_id
-    return render_to_response(template, context, context_instance=RequestContext(request))
+    return render(request, template, context)
 
 @login_required
 def allowed_issue_stati(request, issue_id=None):
@@ -3391,7 +3385,7 @@ def project_issues(request, pk, template="timepiece/project/issues.html", contex
     context['business_permissions_by_user'] = timepiece.BusinessPermissions.by_user(business)
 
     timings.results()
-    return render_to_response(template, context, context_instance=RequestContext(request))
+    return render(request, template, context)
 
 @csrf_exempt
 @login_required
@@ -3476,10 +3470,10 @@ def get_project_detail(request, project_id, context=None):
     if 'selected_issue_ids_for_context_menu' in request.session:
         context['selected_issue_ids'] = [int(x) for x in request.session['selected_issue_ids_for_context_menu']]
         
-    issues_list_rendered = render_to_response("timepiece/project/project_detail.html", context, context_instance=RequestContext(request))
-    #project_menu_rendered = render_to_response("timepiece/project/_card_project_menu.html", context, context_instance=RequestContext(request))
-    project_menu_rendered = render_to_response("timepiece/_navigation_project_specific_menu.html", context, context_instance=RequestContext(request))
-    project_banner_rendered = render_to_response("timepiece/project/_project_banner.html", context, context_instance=RequestContext(request))
+    issues_list_rendered = render(request, "timepiece/project/project_detail.html", context)
+    #project_menu_rendered = render(request, "timepiece/project/_card_project_menu.html", context)
+    project_menu_rendered = render(request, "timepiece/_navigation_project_specific_menu.html", context)
+    project_banner_rendered = render(request, "timepiece/project/_project_banner.html", context)
 
     return HttpResponse(json.dumps({ 'project':project.model_to_dict(include_business=True),
                                      'project_menu': project_menu_rendered.content,
@@ -3545,7 +3539,7 @@ def project_list(request, project_id=None, highlight_issue_id=None, business_id=
     if 'selected_issue_ids_for_context_menu' in request.session:
         context['selected_issue_ids'] = [int(x) for x in request.session['selected_issue_ids_for_context_menu']]
 
-    return render_to_response(template, context, context_instance=RequestContext(request))
+    return render(request, template, context)
 
 @csrf_exempt
 @login_required
@@ -3568,7 +3562,7 @@ def issue_detail(request, issue_id, template="timepiece/project/issue_detail.htm
     if 'timesheet_as_csv' in request.GET and request.GET['timesheet_as_csv'] == "1":
         return CSVTimesheetExport(name='issue%d'%issue.number, project=project, timesheet_entries=issue.related_entries, request=request).render_to_response(context)
 
-    return render_to_response(template, context, context_instance=RequestContext(request))
+    return render(request, template, context)
 
 @csrf_exempt
 @login_required
@@ -3816,7 +3810,7 @@ def unassigned_timesheet_entries(request, project_id, template="timepiece/projec
     if 'timesheet_as_csv' in request.GET and request.GET['timesheet_as_csv'] == "1":
         return CSVTimesheetExport(name='noissue', project=project, timesheet_entries=context['issue']['related_entries'], request=request).render_to_response(context)
 
-    return render_to_response(template, context, context_instance=RequestContext(request))
+    return render(request, template, context)
 
 @csrf_exempt
 # @permission_required('timepiece.change_project')
@@ -3843,7 +3837,7 @@ def all_timesheet_entries(request, project_id, template="timepiece/project/issue
     if 'timesheet_as_csv' in request.GET and request.GET['timesheet_as_csv'] == "1":
         return CSVTimesheetExport(name='all', project=project, timesheet_entries=context['issue']['related_entries'], request=request).render_to_response(context)
 
-    return render_to_response(template, context, context_instance=RequestContext(request))
+    return render(request, template, context)
 
 @csrf_exempt
 @login_required
@@ -3861,7 +3855,7 @@ def view_project_rates(request, project_id, template="timepiece/project/view_rat
     context['users_and_hours'] = project.users_and_hours()
     context['recalculate_url'] = reverse('view_project_rates', args=[project_id])
     context['time_tracking_mode_options'] = ",".join( list( [x for x,y in timepiece.Rate.TIME_TRACKING_MODES] ) )
-    return render_to_response(template, context, context_instance=RequestContext(request))
+    return render(request, template, context)
 
 @csrf_exempt
 @permission_required('timepiece.change_project')
@@ -3947,7 +3941,7 @@ def edit_default_user_rates(request, template="timepiece/person/edit_default_use
         _update_all_project_rates()
         return HttpResponseRedirect(reverse('edit_default_user_rates'))
     context['formset'] = formset
-    return render_to_response(template, context, context_instance=RequestContext(request))
+    return render(request, template, context)
 
 def _update_all_project_rates():
     """ set all missing projects rates with the user's default
@@ -4029,7 +4023,7 @@ def income_summary(request, template="timepiece/graphs/income_summary.html", con
         invoices_paid_total += invoice.amount
     context['invoices_paid_total'] = invoices_paid_total
 
-    return render_to_response(template, context, context_instance=RequestContext(request))
+    return render(request, template, context)
 
 @csrf_exempt
 @login_required
@@ -4091,7 +4085,7 @@ def issue_search(request, active_project_id=None, active_business_id=None, templ
             res['best_match'] = { 'javascript' : "imp.nav.show_business("+str(business.id)+", '" + reverse('closed_project_list', args=[business.id])+"');" }
         return HttpResponse(json.dumps(res), content_type='application/json')
         
-    return render_to_response(template, context, context_instance=RequestContext(request))
+    return render(request, template, context)
 
 @render_with('timepiece/project/show_timeline.html')
 @login_required
@@ -4236,8 +4230,8 @@ def get_project_row(request,project_id, context= None):
     project  = timepiece.Project.objects.get(pk = project_id)
 
     context['project'] = project
-    r = render_to_response('timepiece/project/_project_list_item.html',
-                           context, context_instance=RequestContext(request))
+    r = render(request, 'timepiece/project/_project_list_item.html',
+                           context)
     return r
 
 @csrf_exempt
@@ -4277,8 +4271,8 @@ def get_issue_row(request,issue_id):
     refresh_issue =timepiece.Issue.objects.get(id=issue.id)
     refresh_issue.representation = issue.representation
     context['issue'] = refresh_issue
-    r = render_to_response('timepiece/project/_issue_entry_row.html',
-                           context, context_instance=RequestContext(request))
+    r = render(request, 'timepiece/project/_issue_entry_row.html',
+                           context)
 
     return r
 
@@ -4456,8 +4450,8 @@ def sprint_report_settings(request, project_id, context=None):
     context['quote_form'] = timepiece_forms.SprintQuoteReportSettingsForm(project, bp, only_these_issues)
     context['invoice_form'] = timepiece_forms.SprintInvoiceReportSettingsForm(project, bp, only_these_issues)
     context['project'] = project
-    return render_to_response('timepiece/project/sprint_report_settings.html',
-                              context, context_instance=RequestContext(request))
+    return render(request, 'timepiece/project/sprint_report_settings.html',
+                              context)
 
 @csrf_exempt
 def sprint_report(request, project_id, context=None):
@@ -4609,7 +4603,7 @@ def sprint_report(request, project_id, context=None):
         logger.exception(ex)
         raise
         
-    return render_to_response(template, context, context_instance=RequestContext(request))
+    return render(request, template, context)
 
 @login_required
 def edit_issue_number(request, issue_id, context=None):
@@ -4638,7 +4632,7 @@ def show_issue_history(request, issue_id, template="timepiece/project/issue_hist
 
     context['issue'] = issue
     context['history'] = timepiece.IssueHistory.for_issue(issue)
-    return render_to_response(template, context, context_instance=RequestContext(request))
+    return render(request, template, context)
 
 @login_required
 def view_business_documents(request, business_id, template="timepiece/project/business_documents.html", context=None):
@@ -4665,7 +4659,7 @@ def view_business_documents(request, business_id, template="timepiece/project/bu
     context['generate_doc_form'] = timepiece_forms.GenerateBusinessDocumentForm(request.POST or None)
     context['business'] = business
     context['documents'] = business.documents.all().filter(deleted=False).order_by("-created_at")
-    return render_to_response(template, context, context_instance=RequestContext(request))
+    return render(request, template, context)
 
 @login_required
 def download_business_document(request, document_token, template="timepiece/project/business_documents.html", context=None):
@@ -4703,7 +4697,7 @@ def edit_business_document(request, document_token, template="timepiece/project/
 
     context['form'] = form
     context['document'] = document
-    return render_to_response(template, context, context_instance=RequestContext(request))
+    return render(request, template, context)
 
 @login_required
 def delete_business_document(request, document_token, template="timepiece/project/business_documents.html", context=None):
@@ -4801,7 +4795,7 @@ def generate_preview_business_document(request, business_id, template="timepiece
         context['output_format'] = request.GET['output_format']
     else:
         context['output_format'] = 'html'
-    return render_to_response(template, context, context_instance=RequestContext(request))
+    return render(request, template, context)
 
 @login_required
 def generate_business_document(request, business_id, context=None):
@@ -4858,7 +4852,7 @@ def issue_checkbox_context_menu(request, project_id, template="timepiece/project
     request.session['selected_issue_ids_for_context_menu'] = checked_issue_ids
     request.session['selected_issue_project_id'] = from_project.id
 
-    return render_to_response(template, context, context_instance=RequestContext(request))
+    return render(request, template, context)
 
 @csrf_exempt 
 @login_required
@@ -5168,7 +5162,7 @@ def auto_issue_sort(request, project_id, template="timepiece/project/auto_issue_
     else:
         context['states'] = [x['status'] for x in project.issues.order_by("status").values("status").distinct()]
         context['project'] = project
-        return render_to_response(template, context, context_instance=RequestContext(request))
+        return render(request, template, context)
 
 @login_required
 def calendar(request, template="timepiece/calendar/calendar.html", context=None):
@@ -5176,7 +5170,7 @@ def calendar(request, template="timepiece/calendar/calendar.html", context=None)
     _populate_calendar_events(request, context)
     context['form_new_event'] = timepiece_forms.CalendarEventCreateForm(context['users'], context['businesses'], request.POST or None)
     context['update_form'] = timepiece_forms.CalendarEventUpdateForm(context['users'], context['businesses'])
-    return render_to_response(template, context, context_instance=RequestContext(request))
+    return render(request, template, context)
 
 @login_required
 def calendar_events(request, context=None):
@@ -5409,7 +5403,7 @@ def render_calendar_scheduled_sprints(request, template="timepiece/calendar/_sch
     else:
         context['projects_with_unscheduled_hours'] = []
         context['projects_with_fully_scheduled_hours'] = []
-    return render_to_response(template, context, context_instance=RequestContext(request))
+    return render(request, template, context)
 
 @login_required
 def business_cost_summary(request, business_id, template="timepiece/project/business_cost_summary.html", context=None):
@@ -5497,7 +5491,7 @@ def business_cost_summary(request, business_id, template="timepiece/project/busi
                                   'per_role': running_costs_per_role }
     context['bp'] = bp
 
-    return render_to_response(template, context, context_instance=RequestContext(request))
+    return render(request, template, context)
 
 @csrf_exempt
 @login_required
@@ -5548,8 +5542,8 @@ def business_comments(request, business_id):
                 'current_user':request.user,
                 'business_permissions_by_user':timepiece.BusinessPermissions.by_user(business)
                 }
-    return render_to_response('timepiece/project/project_comments.html',
-                              context, context_instance=RequestContext(request))
+    return render(request, 'timepiece/project/project_comments.html',
+                              context)
 
 @login_required
 def show_business_history(request, business_id, template="timepiece/project/business_history.html", context=None):
@@ -5561,7 +5555,7 @@ def show_business_history(request, business_id, template="timepiece/project/busi
 
     context['business'] = business
     context['history'] = timepiece.BusinessHistory.for_business(business)
-    return render_to_response(template, context, context_instance=RequestContext(request))
+    return render(request, template, context)
 
 @login_required
 def render_checklist_navigation(request, business_id, template="timepiece/project/_checklist_menu.html", context=None):
@@ -5572,28 +5566,28 @@ def render_checklist_navigation(request, business_id, template="timepiece/projec
         business = timepiece.Business.objects.get(pk=business_id)
     context['business'] = business
     context['current_user'] = request.user
-    return render_to_response(template, context, context_instance=RequestContext(request))
+    return render(request, template, context)
 
 @login_required
 def render_checklist_status_icon_traffic(request, business_id, template="timepiece/project/_checklist_status_icon_traffic.html", context=None):
     context = context or {}
     business = timepiece.Business.objects.get(pk=business_id)
     context['business'] = business
-    return render_to_response(template, context, context_instance=RequestContext(request))
+    return render(request, template, context)
 
 @login_required
 def render_checklist_status_icon_dev(request, business_id, template="timepiece/project/_checklist_status_icon_dev.html", context=None):
     context = context or {}
     business = timepiece.Business.objects.get(pk=business_id)
     context['business'] = business
-    return render_to_response(template, context, context_instance=RequestContext(request))
+    return render(request, template, context)
 
 @login_required
 def render_checklist_status_icon_finance(request, business_id, template="timepiece/project/_checklist_status_icon_finance.html", context=None):
     context = context or {}
     business = timepiece.Business.objects.get(pk=business_id)
     context['business'] = business
-    return render_to_response(template, context, context_instance=RequestContext(request))
+    return render(request, template, context)
 
 @login_required
 def traffic_checklist(request, business_id, template="timepiece/project/traffic_checklist.html", context=None):
@@ -5621,7 +5615,7 @@ def traffic_checklist(request, business_id, template="timepiece/project/traffic_
     context['checklist'] = checklist
     context['business'] = business
     context['previous_checklists'] = timepiece.TrafficChecklist.objects.all().filter(business=business).order_by("-pk")[1:5]
-    return render_to_response(template, context, context_instance=RequestContext(request))
+    return render(request, template, context)
 
 @login_required
 def dev_checklist(request, business_id, template="timepiece/project/dev_checklist.html", context=None):
@@ -5649,7 +5643,7 @@ def dev_checklist(request, business_id, template="timepiece/project/dev_checklis
     context['checklist'] = checklist
     context['business'] = business
     context['previous_checklists'] = timepiece.DevChecklist.objects.all().filter(business=business).order_by("-pk")[1:5]
-    return render_to_response(template, context, context_instance=RequestContext(request))
+    return render(request, template, context)
 
 @login_required
 def finance_checklist(request, business_id, template="timepiece/project/finance_checklist.html", context=None):
@@ -5677,7 +5671,7 @@ def finance_checklist(request, business_id, template="timepiece/project/finance_
     context['checklist'] = checklist
     context['business'] = business
     context['previous_checklists'] = timepiece.FinanceChecklist.objects.all().filter(business=business).order_by("-pk")[1:5]
-    return render_to_response(template, context, context_instance=RequestContext(request))
+    return render(template, context)
 
 @login_required
 def recalculate_all_checklists(request, context=None):
@@ -5698,7 +5692,7 @@ def user_notifications(request, template="timepiece/project/user_notifications.h
 	if notifications.count() == 0:
 		return HttpResponse("")
 	
-	return render_to_response(template, context, context_instance=RequestContext(request))
+	return render(request, template, context)
 
 @login_required
 def seen_user_notification(request, notification_id, context=None):
@@ -5724,7 +5718,7 @@ def clear_issue_adhoc_status(request, issue_id, context=None):
 
 def blocked(request, template="blocked.html"):
     context = {}
-    return render_to_response(template, context, context_instance=RequestContext(request))
+    return render(request, template, context)
 
 def dashboard(request, template="timepiece/dashboard/dashboard.html"):
     context = {}
@@ -5780,7 +5774,7 @@ def dashboard(request, template="timepiece/dashboard/dashboard.html"):
     #create_checklist_summary(businesses.filter_has_hopeful_projects())
     context['checklist_errors'] = checklist_errors
     
-    return render_to_response(template, context, context_instance=RequestContext(request))
+    return render(request, template, context)
 
 @login_required
 @csrf_exempt
@@ -5835,7 +5829,7 @@ def quick_clocker(request, template="timepiece/time-sheet/quick_clocker.html", c
                                                                                       'clock_out_time':api.localised_today()})
     context['clock_in_form'] = clock_in_form
     
-    return render_to_response(template, context, context_instance=RequestContext(request))
+    return render(request, template, context)
 
 @login_required
 @csrf_exempt
@@ -5938,7 +5932,7 @@ def scheduler(request, template="timepiece/scheduler/scheduler.html", context=No
     context['schedule_filter_form'] = schedule_filter_form
     context['public_holidays'] = timepiece.Holiday.objects.filter(applies_on__gte=date_from, applies_on__lt=date_to)
     
-    return render_to_response(template, context, context_instance=RequestContext(request))
+    return render(request, template, context)
 
 @permission_required('timepiece.scheduler')
 @login_required
@@ -5993,7 +5987,7 @@ def send_calendar_invite(request, event_id):
 @csrf_exempt
 def issue_action_menu(request, issue_id, template="timepiece/project/_issue_action_menu.html"):
     context = { 'issue_id': issue_id }
-    return render_to_response(template, context, context_instance=RequestContext(request))
+    return render(request, template, context)
 
 @login_required
 @csrf_exempt
@@ -6005,7 +5999,7 @@ def client_list(request, template="timepiece/client/client_list.html", context=N
     clients = timepiece.Client.objects.all().order_by("name")
     context['clients'] = clients
     
-    return render_to_response(template, context, context_instance=RequestContext(request))
+    return render(request, template, context)
 
 @login_required
 @csrf_exempt
@@ -6021,7 +6015,7 @@ def add_client(request, template="timepiece/client/add_client.html", context=Non
         return HttpResponseRedirect(reverse('client_list'))
 
     context['form'] = form
-    return render_to_response(template, context, context_instance=RequestContext(request))
+    return render(request, template, context)
 
 @login_required
 @csrf_exempt
@@ -6039,7 +6033,7 @@ def edit_client(request, client_code, template="timepiece/client/add_client.html
 
     context['form'] = form
 
-    return render_to_response(template, context, context_instance=RequestContext(request))
+    return render(request, template, context)
 
 def project_cost_summary(request, project_id, template="timepiece/project/project_cost_summary.html"):
     context = {}
@@ -6051,7 +6045,7 @@ def project_cost_summary(request, project_id, template="timepiece/project/projec
     project.calculate_new_stats(request.user)
     context['project'] = project
 
-    return render_to_response(template, context, context_instance=RequestContext(request))
+    return render(request, template, context)
 
 
 @login_required

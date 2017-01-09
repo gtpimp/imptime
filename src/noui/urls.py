@@ -1,13 +1,9 @@
 import views
 
-try:
-    from django.conf.urls import patterns, include, url
-except ImportError:
-    from django.conf.urls.defaults import patterns, include, url
+from django.conf.urls import include, url
 
 
-urlpatterns = patterns(
-    '',
+urlpatterns = [
     url(r'^$', views.run_command, name='command'),
 
     url(r'^commands/', views.command_list, name='command_list'),
@@ -21,4 +17,4 @@ urlpatterns = patterns(
     url(r'^next_action/', views.next_action, name='next_action'),
     url(r'^action/(?P<action_ref>\d+)/status', views.update_action_status, name='update_action_status'),
     
-)
+]

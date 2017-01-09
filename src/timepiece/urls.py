@@ -1,13 +1,10 @@
-try:
-    from django.conf.urls import patterns, include, url
-except ImportError:
-    from django.conf.urls.defaults import patterns, include, url
+from django.conf.urls import include, url
 
 from timepiece.models import Entry
 from timepiece import views, exporter
 import jira_interface
 
-urlpatterns = patterns('',
+urlpatterns = [
     url(r'^$', views.home, name='landing_page'),
 
     url(r'^entries$', views.view_entries, name='timepiece-entries'),
@@ -348,11 +345,11 @@ urlpatterns = patterns('',
         name='list_contracts',
     ),
     # project hours
-    url(
-        r'^schedule/$',
-        views.ProjectHoursView.as_view(),
-        name='project_hours',
-    ),
+    # url(
+    #     r'^schedule/$',
+    #     views.ProjectHoursView.as_view(),
+    #     name='project_hours',
+    # ),
     url(
         r'^schedule/edit/$',
         views.EditProjectHoursView.as_view(),
@@ -697,4 +694,4 @@ urlpatterns = patterns('',
                        
                        
 
-)
+]

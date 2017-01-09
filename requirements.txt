@@ -1,5 +1,5 @@
 Babel==2.1.1
-Django==1.8.5
+Django==1.10.5
 Fabric==1.10.2
 GitPython==1.0.1
 Jinja2==2.8
@@ -21,6 +21,7 @@ amqp==1.4.9
 amqplib==1.0.2
 anyjson==0.3.3
 argparse==1.2.1
+asgi-redis==1.0.0
 asgiref==1.0.0
 async==0.6.2
 autobahn==0.17.1
@@ -79,6 +80,7 @@ kombu==3.0.35
 lxml==3.4.4
 mimeparse==0.1.3
 mock==1.3.0
+msgpack-python==0.4.8
 nltk==3.1
 nose==1.3.7
 numpy==1.10.1
@@ -97,6 +99,7 @@ python-dateutil==2.4.2
 python-mimeparse==0.1.4
 pytz==2015.6
 raven==5.10.2
+redis==2.10.5
 reportlab==3.2.0
 requests==2.8.1
 requests-oauthlib==0.5.0

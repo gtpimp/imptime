@@ -2,7 +2,6 @@
 from django.shortcuts import render_to_response, get_object_or_404
 from django.http import HttpResponse, HttpResponseRedirect
 from django.core.urlresolvers import reverse, resolve
-from django.core.cache import get_cache as django_get_cache
 from django.contrib.auth.decorators import user_passes_test
 from operator import itemgetter
 from django import template
@@ -16,7 +15,7 @@ from django.template import RequestContext
 from emacs_importer.process_for_timepiece import Processor
 from datetime import datetime
 import logging
-from django.utils.datastructures import SortedDict
+from collections import OrderedDict
 logger = logging.getLogger(__name__)
 
 def home(request, template="home.html", context=None):
@@ -71,7 +70,7 @@ def render_staff_daylies(request=None, template="staff_daylies.html", context=No
         processor = Processor(**processor_kwargs)
         user_daylies = processor.generate_staff_daylies()
         dates = sorted(user_daylies.keys())
-        sorted_daylies = SortedDict()
+        sorted_daylies = OrderedDict()
         for date in dates:
             sorted_daylies[date] = user_daylies[date]
         daylies[username] = sorted_daylies

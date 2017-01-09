@@ -26,16 +26,19 @@ class App extends Component {
 
     onDisconnectFromSocket() {
         const { dispatch } = this.props
+        console.log("Websocket disconnected")
         dispatch(websocketDisconnected())
     }
 
     onConnectFromSocket() {
         const { dispatch } = this.props
+        console.log("Websocket connected")
         dispatch(websocketConnected())
     }
 
     onRefreshFromSocket(data) {
         const { dispatch } = this.props
+        console.log("Websocket refreshed")
         dispatch(asyncRefreshNotification(data))
     }    
 

@@ -10,7 +10,8 @@ from django.http import HttpResponse, HttpResponseRedirect, Http404
 from django.shortcuts import render_to_response
 from django.template import RequestContext
 from django.template.defaultfilters import slugify
-from django.db.models import Sum, get_model
+from django.db.models import Sum
+#, get_model
 from django.contrib.sites.models import Site
 from django.utils.functional import lazy
 from django.core.urlresolvers import reverse
@@ -456,20 +457,19 @@ def payroll_totals(month_work_entries, month_leave_entries):
     return labels, rows
 
 
-def get_project_hours_for_week(week_start):
-    """
-    Gets all ProjectHours entries in the 7-day period beginning on week_start.
+# def get_project_hours_for_week(week_start):
+#     """
+#     Gets all ProjectHours entries in the 7-day period beginning on week_start.
 
-    Returns a values set, ordered by the project id.
-    """
-    week_end = week_start + relativedelta(days=7)
-    ProjectHours = get_model('timepiece', 'ProjectHours')
-    qs = ProjectHours.objects.filter(week_start__gte=week_start,
-            week_start__lt=week_end)
-    qs = qs.values('project__id', 'project__name', 'user__id',
-            'user__first_name', 'user__last_name', 'hours')
-    qs = qs.order_by('-project__type__billable', 'project__name',)
-    return qs
+#     Returns a values set, ordered by the project id.
+#     """
+#     week_end = week_start + relativedelta(days=7)
+#     qs = timepiece.ProjectHours.objects.filter(week_start__gte=week_start,
+#             week_start__lt=week_end)
+#     qs = qs.values('project__id', 'project__name', 'user__id',
+#             'user__first_name', 'user__last_name', 'hours')
+#     qs = qs.order_by('-project__type__billable', 'project__name',)
+#     return qs
 
 
 def get_people_from_project_hours(project_hours):

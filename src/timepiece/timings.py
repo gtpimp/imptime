@@ -1,10 +1,10 @@
 from time import time
 import logging
-from django.utils.datastructures import SortedDict
+from collections import OrderedDict
 logger = logging.getLogger(__name__)
 
-starts = SortedDict()
-totals = SortedDict()
+starts = OrderedDict()
+totals = OrderedDict()
 
 def start(name):
     starts[name] = time()
@@ -23,8 +23,8 @@ def results():
     for name, total in totals.items():
         msg.append( "%s took %f" % (name, total))
     logger.info("\n".join(msg))
-    starts = SortedDict()
-    totals = SortedDict()
+    starts = OrderedDict()
+    totals = OrderedDict()
     return "<br/>".join(msg)
 
     

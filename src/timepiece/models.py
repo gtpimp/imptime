@@ -18,7 +18,7 @@ from django.contrib.auth.models import User
 from django.core.exceptions import ValidationError, NON_FIELD_ERRORS
 from django.db import models
 from django.db.models import Q, Avg, Sum, Max, Min, F
-from django.utils.datastructures import SortedDict
+from django.utils.datastructures import OrderedDict
 from re import sub as re_sub
 from re import UNICODE as re_UNICODE
 from checklist_plugins.registry import get_traffic_plugins, get_dev_plugins, get_finance_plugins
@@ -1049,7 +1049,7 @@ class Project(models.Model):
     @classmethod
     def projects_in_desc_order_of_use(self, business_id):
         entries = Entry.objects.filter(issue__project__business_id=business_id).order_by('-end_time').values('project_id')
-        p = SortedDict()
+        p = OrderedDict()
         for entry in entries:
             if entry['project_id'] not in p:
                 p[entry['project_id']] = Project.objects.get(pk=entry['project_id'])
@@ -1060,7 +1060,7 @@ class Project(models.Model):
         if hasattr(self, '_cached_billable_by_feature'):
             return self._cached_billable_by_feature
 
-        costs_per_feature = SortedDict()
+        costs_per_feature = OrderedDict()
         features_in_project = list(self.issues.all().filter(feature__isnull=False).order_by('feature').values('feature').annotate(x=Count('feature'))) + [{'feature':None,'x':0}]
         for feature in features_in_project:
             entries_qs = Entry.objects.all().filter(issue__project=self)
@@ -3318,7 +3318,7 @@ class Issue(models.Model):
         super(Issue, self).__init__(*args, **kwargs)
         self._entries = None
         self.representation = IssueRepresentation()
-        self.representation.per_user = SortedDict()
+        self.representation.per_user = OrderedDict()
 
     def status_as_class(self):
         return 'status_%s' % self.status.replace(" ","_").lower()

@@ -13,7 +13,7 @@ from django.contrib.auth.models import User
 from django.core.exceptions import ValidationError, NON_FIELD_ERRORS
 from django.db import models
 from django.db.models import Q, Avg, Sum, Max, Min, F
-from django.utils.datastructures import SortedDict
+from collections import OrderedDict
 from re import sub as re_sub
 from re import UNICODE as re_UNICODE
 

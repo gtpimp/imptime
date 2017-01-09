@@ -1,4 +1,4 @@
-from django.conf.urls import patterns, include, url
+from django.conf.urls import include, url
 import project_api
 import sprint_api
 import issue_api

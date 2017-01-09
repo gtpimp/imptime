@@ -35865,6 +35865,7 @@
 	        value: function onDisconnectFromSocket() {
 	            var dispatch = this.props.dispatch;
 
+	            console.log("Websocket disconnected");
 	            dispatch((0, _Async.websocketDisconnected)());
 	        }
 	    }, {
@@ -35872,6 +35873,7 @@
 	        value: function onConnectFromSocket() {
 	            var dispatch = this.props.dispatch;
 
+	            console.log("Websocket connected");
 	            dispatch((0, _Async.websocketConnected)());
 	        }
 	    }, {
@@ -35879,6 +35881,7 @@
 	        value: function onRefreshFromSocket(data) {
 	            var dispatch = this.props.dispatch;
 
+	            console.log("Websocket refreshed");
 	            dispatch((0, _Async.asyncRefreshNotification)(data));
 	        }
 	    }, {
@@ -69478,7 +69481,7 @@
 	        var _this = _possibleConstructorReturn(this, Object.getPrototypeOf(Websocket).call(this, props));
 
 	        _this.state = {
-	            ws: new WebSocket(_this.props.url, _this.props.protocol),
+	            ws: new WebSocket(_this.props.url),
 	            attempts: 1
 	        };
 	        return _this;
@@ -69501,6 +69504,7 @@
 	        value: function setupWebsocket() {
 	            var _this2 = this;
 
+	            this.state.ws = this.state.ws || new WebSocket(this.props.url);
 	            var websocket = this.state.ws;
 
 	            var _props = this.props;
@@ -69523,9 +69527,10 @@
 
 	                if (_this2.props.reconnect) {
 	                    var time = _this2.generateInterval(_this2.state.attempts);
+	                    _this2.state.ws = null;
 	                    setTimeout(function () {
 	                        _this2.setState({ attempts: _this2.state.attempts++ });
-	                        _this2.setupWebsocket();
+	                        //this.setupWebsocket();
 	                    }, time);
 	                }
 	            };
@@ -69560,8 +69565,7 @@
 	    url: _react2.default.PropTypes.string.isRequired,
 	    onMessage: _react2.default.PropTypes.func.isRequired,
 	    debug: _react2.default.PropTypes.bool,
-	    reconnect: _react2.default.PropTypes.bool,
-	    protocol: _react2.default.PropTypes.string
+	    reconnect: _react2.default.PropTypes.bool
 	};
 
 	exports.default = Websocket;

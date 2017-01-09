@@ -1,6 +1,5 @@
 from invoicing import models
 from django.db.models import Sum, Count, Q, F, Max, Min
-from django.utils.datastructures import SortedDict
 from collections import OrderedDict
 from dateutil.relativedelta import relativedelta
 from phantom_pdf.generator import create_url_from_query_dict, render_url_to_pdf
@@ -189,9 +188,9 @@ def _get_daily_hours(user, entries, from_date=None, to_date=None):
     for entry_hours_per_day in entries_hours_per_day:
         hours_per_day[entry_hours_per_day['on_day']] = entry_hours_per_day['total_hours']
 
-    hours = SortedDict()
-    daily_average_hours_per_week = SortedDict()
-    daily_average_hours_per_month = SortedDict()
+    hours = OrderedDict()
+    daily_average_hours_per_week = OrderedDict()
+    daily_average_hours_per_month = OrderedDict()
 
     running_date = from_date
     running_hours_per_week = 0
@@ -199,7 +198,7 @@ def _get_daily_hours(user, entries, from_date=None, to_date=None):
     running_hours_per_month = 0
     running_days_in_month = 0
 
-    total_hours_by_month = SortedDict()
+    total_hours_by_month = OrderedDict()
 
     month_date = running_date.replace(day=1)
     total_hours_by_month[month_date] = {'total_available_hours_per_month': 0,

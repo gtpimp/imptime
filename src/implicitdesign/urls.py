@@ -1,4 +1,4 @@
-from django.conf.urls import patterns, include, url, handler400, handler403, handler404, handler500
+from django.conf.urls import include, url, handler400, handler403, handler404, handler500
 from filebrowser import sites as filebrowser
 from django.contrib.staticfiles.urls import staticfiles_urlpatterns
 from django.contrib import admin
@@ -8,6 +8,7 @@ admin.autodiscover()
 from django.contrib.auth.decorators import login_required
 from django.contrib.staticfiles.storage import staticfiles_storage
 from django.views.generic.base import RedirectView
+import django.contrib.auth.views as django_auth
 
 admin.site.login = login_required(admin.site.login)
 
@@ -19,8 +20,7 @@ handler403 = 'implicitdesign.views.error_handler_403'
 handler404 = 'implicitdesign.views.error_handler_404'
 handler500 = 'implicitdesign.views.error_handler_500'
 
-urlpatterns = patterns(
-    '',
+urlpatterns = [
     url(r'^admin/', include(admin.site.urls)),
     url(r'^$', views.home, name='home'),
     url(r'^robots.txt$', views.robots),
@@ -37,24 +37,23 @@ urlpatterns = patterns(
     url(r'^timepiece/', include('timepiece.urls'), name='timepiece'),
     url(r'^welcome/', include('animated_website.urls'), name='animated_website'),
     url(r'^selectable/', include('selectable.urls'), name='selectable'),
-    url(r'^wiki/', include('djiki.urls', namespace='wiki'), name='wiki'),
     url(r'^us/', views.us),
 
-    url(r'^accounts/login/$', 'django.contrib.auth.views.login',
+    url(r'^accounts/login/$', django_auth.login,
         {'template_name': 'admin/login.html',
          'authentication_form': ImpAuthenticationForm},
         name='auth_login'),
         
-    url(r'^accounts/logout/$', 'django.contrib.auth.views.logout_then_login', name='auth_logout'),
-    url(r'^accounts/password-change/$', 'django.contrib.auth.views.password_change', name='change_password'),
-    url(r'^accounts/password-change/done/$', 'django.contrib.auth.views.password_change_done', name='password_change_done'),
-    url(r'^accounts/password-reset/$', 'django.contrib.auth.views.password_reset', name='reset_password'),
-    url(r'^accounts/password-reset/done/$', 'django.contrib.auth.views.password_reset_done', name='password_reset_done'),
-    url(r'^accounts/reset/(?P<uidb36>[0-9A-Za-z]+)-(?P<token>.+)/$', 'django.contrib.auth.views.password_reset_confirm'),
-    url(r'^accounts/reset/done/$', 'django.contrib.auth.views.password_reset_complete'),
+    url(r'^accounts/logout/$', django_auth.logout_then_login, name='auth_logout'),
+    url(r'^accounts/password-change/$', django_auth.password_change, name='change_password'),
+    url(r'^accounts/password-change/done/$', django_auth.password_change_done, name='password_change_done'),
+    url(r'^accounts/password-reset/$', django_auth.password_reset, name='reset_password'),
+    url(r'^accounts/password-reset/done/$', django_auth.password_reset_done, name='password_reset_done'),
+    url(r'^accounts/reset/(?P<uidb36>[0-9A-Za-z]+)-(?P<token>.+)/$', django_auth.password_reset_confirm),
+    url(r'^accounts/reset/done/$', django_auth.password_reset_complete),
     url(r'^generate_incremental_timesheet', views.generate_incremental_timesheet, name='generate_incremental_timesheet'),
     url(r'^staff_daylies', views.staff_daylies, name='staff_daylies'),
-)
+]
 
 urlpatterns += staticfiles_urlpatterns()
 urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

@@ -1,12 +1,8 @@
-try:
-    from django.conf.urls import patterns, include, url
-except ImportError:
-    from django.conf.urls.defaults import patterns, include, url
+from django.conf.urls import include, url
 
 import views
 
-urlpatterns = patterns(
-    '',
+urlpatterns = [
     url(r'^clients$', views.clients, name='clients'),
     url(r'^new_client$', views.new_client, name='new_client'),
     url(r'^edit_client/(?P<client_id>.*)$', views.edit_client,
@@ -39,4 +35,4 @@ urlpatterns = patterns(
         views.print_statement_from_phantomjs,
         name='print_statement_from_phantomjs'),
 
-)
+]
