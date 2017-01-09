@@ -64798,6 +64798,9 @@
 				var dispatch = _props3.dispatch;
 				var issue_id = _props3.issue_id;
 
+				if (!confirm("Delete this issue?")) {
+					return false;
+				}
 				dispatch((0, _Issue.deleteIssue)(issue_id));
 			}
 		}, {

@@ -52,6 +52,9 @@ export class IssueDeveloperDetails extends Component {
 
     onDelete() {
         const { dispatch, issue_id } = this.props
+        if ( ! confirm( "Delete this issue?") ) {
+            return false;
+        }
 	dispatch(deleteIssue(issue_id))
     }
 
