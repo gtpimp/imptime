@@ -11,6 +11,7 @@ import project from './project'
 import rie from './rie'
 import sprint from './sprint'
 import user from './user'
+import websockets from './websockets'
 
 const rootReducer = combineReducers({
     filter,
@@ -22,7 +23,8 @@ const rootReducer = combineReducers({
     rie,
     routing,
     sprint,
-    user
+    user,
+    websockets
 })
 
 export default rootReducer

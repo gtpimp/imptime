@@ -208,6 +208,7 @@ INSTALLED_APPS = (
     'grappelli',
     'filebrowser',
     'django.contrib.admin',
+    'channels',
 
     'raven.contrib.django.raven_compat',
     
@@ -231,6 +232,7 @@ INSTALLED_APPS = (
     'invoicing',
     'animated_website',
     'slideshow',
+    'async',
 
     'sorl.thumbnail',
     'creole',
@@ -294,6 +296,14 @@ INVOICE_DETAILS={'name':'ImplicitDesign',
 #LOGIN_URL=
 #LOGOUT_URL=
 LOGIN_REDIRECT_URL = "/"
+
+# Websockets
+CHANNEL_LAYERS = {
+    "default": {
+        "BACKEND": "asgiref.inmemory.ChannelLayer",
+        "ROUTING": "async.routing.channel_routing"
+        }
+}
 
 # A sample logging configuration. The only tangible logging
 # performed by this configuration is to send an email to

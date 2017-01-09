@@ -39,6 +39,7 @@
     "react-select": "^1.0.0-beta13",
     "react-sticky": "^5.0.3",
     "react-timeout": "^1.0.0",
+    "react-websocket": "^1.1.6",
     "redux": "^3.5.2",
     "redux-logger": "^2.6.1",
     "redux-thunk": "^2.1.0"
