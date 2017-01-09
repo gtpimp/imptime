@@ -159,7 +159,7 @@ TEMPLATES = [
                 #"django.core.context_processors.i18n",
                 #"django.core.context_processors.media",
                 "django.contrib.messages.context_processors.messages",
-                #"django.core.context_processors.request",
+                'django.template.context_processors.request',
                 #'django.core.context_processors.static',
                 "timepiece.context_processors.extra_nav",
                 "timepiece.context_processors.active_entries",

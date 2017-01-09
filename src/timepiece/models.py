@@ -817,6 +817,8 @@ class Project(models.Model):
         d = model_to_dict_with_date_support(self)
         if include_business:
             d['business'] = self.business.model_to_dict()
+
+        del d['users']
         return d
     
     def recalc_secondary_estimates(self):
