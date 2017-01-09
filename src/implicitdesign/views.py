@@ -1,5 +1,5 @@
 
-from django.shortcuts import render_to_response, get_object_or_404
+from django.shortcuts import get_object_or_404, render
 from django.http import HttpResponse, HttpResponseRedirect
 from django.core.urlresolvers import reverse, resolve
 from django.contrib.auth.decorators import user_passes_test
@@ -23,32 +23,32 @@ def home(request, template="home.html", context=None):
 
 def error_handler_400(request, template="error_base.html", context=None):
     context = context or {}
-    response = render_to_response(template, context, context_instance=RequestContext(request))
+    response = render(request, template, context)
     response.status_code = 400
     return response
 
 def error_handler_403(request, template="error_base.html", context=None):
     context = context or {}
-    response = render_to_response(template, context, context_instance=RequestContext(request))
+    response = render(request, template, context)
     response.status_code = 403
     return response
 
 def error_handler_404(request, template="404.html", context=None):
     context = context or {}
-    response = render_to_response(template, context, context_instance=RequestContext(request))
+    response = render(request, template, context)
     response.status_code = 404
     return response
 
 def error_handler_500(request, template="500.html", context=None):
     context = context or {}
-    response = render_to_response(template, context, context_instance=RequestContext(request))
+    response = render(request, template, context)
     response.status_code = 500
     return response
 
 @user_passes_test(lambda u: u.is_superuser)
 def us(request, template="home.html", context=None):
     context = context or {}
-    return render_to_response(template, context, context_instance=RequestContext(request))
+    return render(request, template, context)
 
 @user_passes_test(lambda u: u.is_superuser)
 def staff_daylies(request, template="staff_daylies.html", context=None):
@@ -80,7 +80,7 @@ def render_staff_daylies(request=None, template="staff_daylies.html", context=No
         context_instance=RequestContext(request)
     else:
         context_instance = None
-    return render_to_response(template, context, context_instance=context_instance)
+    return render(request, template, context)
 
 @user_passes_test(lambda u: u.is_superuser)
 def generate_incremental_timesheet(request, template="generate_incremental_timesheet.html", context=None):
@@ -154,7 +154,7 @@ def generate_incremental_timesheet(request, template="generate_incremental_times
                 response['Content-Disposition'] = 'attachment; filename="%s"' % filename
             elif display_type == 'screen':
                 context['timesheet_entries'] = clocktable_raw
-                response = render_to_response(template, context, context_instance=RequestContext(request))
+                response = render(request, template, context)
 
             if len(email_to.strip())>0:
                 email = EmailMessage('%s: %s %s. %s -> %s' % (email_subject, username, client, from_date.strftime("%Y-%m-%d"), to_date.strftime("%Y-%m-%d")),
@@ -176,11 +176,11 @@ def generate_incremental_timesheet(request, template="generate_incremental_times
 
             return response
         else:
-            return render_to_response(template, context, context_instance=RequestContext(request))
+            return render(request, template, context)
     except Exception, ex:
         logger.exception(ex)
         context['error'] = str(ex)
-        return render_to_response(template, context, context_instance=RequestContext(request))
+        return render(request, template, context)
 
 def _generate_org_clocktable(processor):
     clocktable_raw = processor.clocktable_raws[0]
@@ -223,4 +223,4 @@ def _generate_issues_clocktable_common(processor):
 
 def robots(request, template="robots.txt"):
     context = {}
-    return render_to_response(template, context, context_instance=RequestContext(request))
+    return render(request, template, context)

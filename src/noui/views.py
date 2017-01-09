@@ -4,7 +4,7 @@ from phantom_pdf.generator import create_url_from_query_dict, render_url_to_pdf
 from timepiece import models as timepiece
 from django.core.files.base import ContentFile
 from django.contrib.auth import login as django_login, load_backend
-from django.shortcuts import render_to_response, get_object_or_404, redirect, render
+from django.shortcuts import get_object_or_404, redirect, render
 from django.contrib.auth.decorators import login_required, permission_required
 from django.http import HttpResponse, HttpResponseRedirect
 from django.core.urlresolvers import reverse, resolve
@@ -24,7 +24,7 @@ def command_list(request, template="noui/command_list.html", context=None):
     context = context or {}
     context['commands'] = NouiCommand.objects.all().order_by("name")
     context['import_form'] = NouiCommandImportForm(prefix="import")
-    return render_to_response(template, context, context_instance=RequestContext(request))
+    return render(request, template, context)
 
 @login_required
 @permission_required('noui.command_edit')
@@ -44,7 +44,7 @@ def command_add(request, template="noui/command_add.html", context=None):
     context['form'] = form
     context['parameters_formset'] = parameters_formset
     context['command_parser'] = CommandParser(request)
-    return render_to_response(template, context, context_instance=RequestContext(request))
+    return render(request, template, context)
 
 @login_required
 @permission_required('noui.command_edit')
@@ -69,7 +69,7 @@ def command_edit(request, command_ref, template="noui/command_edit.html", contex
     context['parameters_formset'] = parameters_formset
     context['command'] = command
     context['command_parser'] = CommandParser(request)
-    return render_to_response(template, context, context_instance=RequestContext(request))
+    return render(request, template, context)
 
 @login_required
 @permission_required('noui.command_edit')
@@ -137,7 +137,7 @@ def run_command(request, template="noui/command.html", context=None):
         del(context['cp'])
         return HttpResponse(json.dumps(context), content_type='application/json')
     else:
-        return render_to_response(template, context, context_instance=RequestContext(request))
+        return render(request, template, context)
 
 @login_required
 @csrf_exempt

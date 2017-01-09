@@ -2,7 +2,6 @@
 
 {% load currency %}
 {% load bootstrap_toolkit %}
-{% load endless %}
 {% load add_class %}
 
 {% block title %}Quote clients{% endblock %}
@@ -12,14 +11,14 @@
 
 <form class="filter" method="GET" action="{% url 'invoicing:quotes' %}">
 
-{% paginate quotes %}
 
 <h3>Quotes</h3>
 <a class="btn btn-primary" href="{% url 'invoicing:new_quote' %}">New quote</a>
 <input class="btn btn-primary" type="submit" value="Apply Filter"/>
 <br/><br/>
 
-{% show_pages %}
+(Showing 30 quotes out of {{quotes|length}})
+
 <table class="table table-striped">
   <thead>
     <tr style="background-color: #efefef">
@@ -70,7 +69,7 @@
   </thead>
 
   <tbody>
-    {% for quote in quotes %}
+    {% for quote in quotes|slice:"0:30" %}
     <tr class="clickable" onclick="window.location='{% url 'invoicing:edit_quote' quote.id %}'; return false;">
       <td>{{quote.client.name}}</td>
       <td>{{quote.project.long_name}}</td>

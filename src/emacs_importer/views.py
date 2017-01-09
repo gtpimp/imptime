@@ -1,4 +1,4 @@
-from django.shortcuts import render_to_response, get_object_or_404
+from django.shortcuts import get_object_or_404
 from django.template import RequestContext
 import json
 from django.views.decorators.csrf import csrf_exempt
@@ -87,8 +87,7 @@ def export_project_to_emacs(request, project_id, template="emacs_importer/export
     context['business'] = business
     context['user'] = request.user
 
-    rendered = render_to_response(template, context,
-                                  context_instance=RequestContext(request))
+    rendered = render(request, template, context)
 
     response = HttpResponse(content_type='text/plain')
     response['Content-Disposition'] = 'attachment; filename=%s.org' % business.name

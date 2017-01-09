@@ -7,7 +7,7 @@ import time
 import calendar
 
 from django.http import HttpResponse, HttpResponseRedirect, Http404
-from django.shortcuts import render_to_response
+from django.shortcuts import render
 from django.template import RequestContext
 from django.template.defaultfilters import slugify
 from django.db.models import Sum
@@ -68,11 +68,10 @@ def render_with(template_name):
             else:
                 # assume response is a context dictionary
                 context = response
-                return render_to_response(
+                return render(request,
                     template_name,
-                    context,
-                    context_instance=RequestContext(request),
-                )
+                    context)
+
         return wrapper
     return render_with_decorator
 

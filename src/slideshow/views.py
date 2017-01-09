@@ -6,7 +6,7 @@ from phantom_pdf.generator import create_url_from_query_dict, render_url_to_pdf
 from timepiece import models as timepiece
 from django.core.files.base import ContentFile
 from django.contrib.auth import login as django_login, load_backend
-from django.shortcuts import render_to_response, get_object_or_404, redirect, render
+from django.shortcuts import get_object_or_404, redirect, render
 from django.contrib.auth.decorators import login_required, permission_required
 from django.http import HttpResponse, HttpResponseRedirect
 from django.core.urlresolvers import reverse, resolve
@@ -57,7 +57,7 @@ def timesheets(request, template="slideshow/timesheets.html", context=None):
         context['from_date'] = from_date
         context['to_date'] = to_date
 
-    return render_to_response(template, context, context_instance=RequestContext(request))
+    return render(request, template, context)
 
 
 @login_required
@@ -109,7 +109,7 @@ def progress(request, template="slideshow/progress.html", context=None):
     context['business_list'] = business_list    
     context['plot_data_json'] = json.dumps(plot_data)
 
-    return render_to_response(template, context, context_instance=RequestContext(request))
+    return render(request, template, context)
 
 def calculate_progress_ratio(rate, ratio):
     value = round(rate * ratio, 2)
@@ -160,7 +160,7 @@ def calculate_dev_hours_stats(project, user):
 def ratios(request, template="slideshow/ratios.html", context=None):
     context = context or {}
     _populate_ratios(context)
-    return render_to_response(template, context, context_instance=RequestContext(request))
+    return render(request, template, context)
 
 
 def _populate_ratios(context):

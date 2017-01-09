@@ -2,7 +2,6 @@
 
 {% load currency %}
 {% load bootstrap_toolkit %}
-{% load endless %}
 {% load add_class %}
 
 {% block title %}Invoice clients{% endblock %}
@@ -12,14 +11,13 @@
 
 <form class="filter" method="GET" action="{% url 'invoicing:invoices' %}">
 
-{% paginate invoices %}
-
 <h3>Invoices</h3>
 <a class="btn btn-primary" href="{% url 'invoicing:new_invoice' %}">New invoice</a>
 <input class="btn btn-primary" type="submit" value="Apply Filter"/>
 <br/><br/>
 
-{% show_pages %}
+(Showing 30 invoices out of {{invoices|length}})
+
 <table class="table table-striped">
   <thead>
     <tr style="background-color: #efefef">
@@ -87,7 +85,7 @@
   </thead>
 
   <tbody>
-    {% for invoice in invoices %}
+    {% for invoice in invoices|slice:"0:30" %}
     <tr class="clickable" onclick="window.location='{% url 'invoicing:edit_invoice' invoice.id %}'; return false;">
       <td>
         {% if bp.has_edit_invoices %}

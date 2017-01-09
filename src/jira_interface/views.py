@@ -9,7 +9,7 @@ from django.http import HttpResponse, HttpResponseRedirect
 from django.http import  Http404, HttpResponseForbidden
 from models import Jira, JiraUser
 from forms import JiraSettingsForm, JiraUserForm
-from django.shortcuts import render_to_response, get_object_or_404, redirect, render
+from django.shortcuts import get_object_or_404, redirect, render
 from jira_sync import JiraSync
 import logging
 logger = logging.getLogger(__name__)
@@ -32,7 +32,7 @@ def edit_settings(request, business_id, template="jira/edit_settings.html", cont
     context['form'] = form
     context['business'] = business
 
-    return render_to_response(template, context, context_instance=RequestContext(request))
+    return render(request, template, context)
 
 def my_settings(request, business_id, template="jira/my_settings.html", context=None):
     context = context or {}
@@ -61,7 +61,7 @@ def my_settings(request, business_id, template="jira/my_settings.html", context=
     context['business'] = business
     context['user'] = current_user
 
-    return render_to_response(template, context, context_instance=RequestContext(request))
+    return render(request, template, context)
 
 @login_required
 def sync_business_from_jira(request, business_id, context=None):
@@ -100,7 +100,7 @@ def sync_project_to_jira(request, timepiece_project_id, template="jira/sync_to_j
 
         context = { 'form': form,
                     'project': timepiece_project }
-        return render_to_response(template, context, context_instance=RequestContext(request))
+        return render(request, template, context)
 
     except Exception, ex:
         logger.exception(ex)

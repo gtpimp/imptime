@@ -11,7 +11,7 @@ from lib.date_helper import today_in_local_timezone
 import json
 from django.conf import settings
 import os
-from django.shortcuts import render_to_response, redirect
+from django.shortcuts import render, redirect
 from django.template import RequestContext
 from django.contrib.auth.decorators import login_required
 logger = logging.getLogger(__name__)

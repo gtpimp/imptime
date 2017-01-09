@@ -6,7 +6,7 @@ import datetime
 from timepiece import models as timepiece
 from django.core.files.base import ContentFile
 from django.contrib.auth import login as django_login, load_backend
-from django.shortcuts import render_to_response, get_object_or_404, redirect, render
+from django.shortcuts import get_object_or_404, redirect, render
 from django.contrib.auth.decorators import login_required, permission_required
 from django.http import HttpResponse, HttpResponseRedirect
 from django.core.urlresolvers import reverse, resolve
@@ -21,7 +21,7 @@ logger = logging.getLogger(__name__)
 def clients(request, template="invoicing/clients.html", context=None):
     context = context or {}
     context['clients'] = models.ClientInvoiceDetails.objects.all().order_by("name")
-    return render_to_response(template, context, context_instance=RequestContext(request))
+    return render(request, template, context)
 
 @login_required
 def invoices(request, template="invoicing/invoices.html", context=None):
@@ -40,7 +40,7 @@ def invoices(request, template="invoicing/invoices.html", context=None):
     context['totals'] = context['invoices']
     context['filter_form'] = filter_form
     context['bp'] = bp
-    return render_to_response(template, context, context_instance=RequestContext(request))
+    return render(request, template, context)
 
 @login_required
 def new_client(request, template="invoicing/new_client.html", context=None):
@@ -57,7 +57,7 @@ def new_client(request, template="invoicing/new_client.html", context=None):
         return HttpResponseRedirect(reverse('invoicing:edit_client', kwargs={'client_id':client.id}))
 
     context['form'] = form
-    return render_to_response(template, context, context_instance=RequestContext(request))
+    return render(request, template, context)
 
 @login_required
 def edit_client(request, client_id, template="invoicing/edit_client.html", context=None):
@@ -76,7 +76,7 @@ def edit_client(request, client_id, template="invoicing/edit_client.html", conte
 
     context['form'] = form
     context['client'] = client
-    return render_to_response(template, context, context_instance=RequestContext(request))
+    return render(request, template, context)
 
 @login_required
 def new_invoice(request, template="invoicing/new_invoice.html", context=None):
@@ -104,7 +104,7 @@ def new_invoice(request, template="invoicing/new_invoice.html", context=None):
 
     context['form'] = form
     context['items_formset'] = items_formset
-    return render_to_response(template, context, context_instance=RequestContext(request))
+    return render(request, template, context)
 
 @login_required
 def edit_invoice(request, invoice_id, template="invoicing/edit_invoice.html", context=None):
@@ -160,7 +160,7 @@ def edit_invoice(request, invoice_id, template="invoicing/edit_invoice.html", co
     context['items_formset'] = items_formset
     context['payments_formset'] = payments_formset
     context['invoice'] = invoice
-    return render_to_response(template, context, context_instance=RequestContext(request))
+    return render(request, template, context)
 
 @login_required
 def preview_invoice(request, invoice_id, template="invoicing/preview_invoice.html", context=None):
@@ -173,7 +173,7 @@ def preview_invoice(request, invoice_id, template="invoicing/preview_invoice.htm
     context = context or {}
     context['invoice'] = invoice
     context['local_company_details'] = settings.INVOICE_DETAILS
-    return render_to_response(template, context, context_instance=RequestContext(request))
+    return render(request, template, context)
 
 @login_required
 def generate_invoice(request, invoice_id, context=None):
@@ -232,7 +232,7 @@ def print_invoice_from_phantomjs(request, invoice_id, username, token, template=
     context['invoice'] = invoice
     context['local_company_details'] = settings.INVOICE_DETAILS
 
-    return render_to_response(template, context, context_instance=RequestContext(request))
+    return render(request, template, context)
 
 def _get_best_bp(request, invoice=None):
     if invoice is None or invoice.project is None:
@@ -274,7 +274,7 @@ def quotes(request, template="invoicing/quotes.html", context=None):
     context['totals'] = quotes
     context['filter_form'] = filter_form
     context['bp'] = bp
-    return render_to_response(template, context, context_instance=RequestContext(request))
+    return render(request, template, context)
 
 @login_required
 def new_quote(request, template="invoicing/new_quote.html", context=None):
@@ -298,7 +298,7 @@ def new_quote(request, template="invoicing/new_quote.html", context=None):
         messages.info(request, "Quote create failed: %s" % form._errors)
 
     context['form'] = form
-    return render_to_response(template, context, context_instance=RequestContext(request))
+    return render(request, template, context)
 
 @login_required
 def edit_quote(request, quote_id, template="invoicing/edit_quote.html", context=None):
@@ -318,7 +318,7 @@ def edit_quote(request, quote_id, template="invoicing/edit_quote.html", context=
 
     context['form'] = form
     context['quote'] = quote
-    return render_to_response(template, context, context_instance=RequestContext(request))
+    return render(request, template, context)
 
 
 @login_required
@@ -329,8 +329,7 @@ def statements(request, template="invoicing/statements.html", context=None):
     if not bp.has_view_invoices:
         raise PermissionDenied
     context['filter_form'] = filter_form
-    return render_to_response(template, context,
-                              context_instance=RequestContext(request))
+    return render(request, template, context)
 
 
 @login_required
@@ -373,8 +372,7 @@ def statement(request,
         response = render_url_to_pdf(url, request, basename=filename)
         return response
     else:
-        return render_to_response(template, context,
-                                  context_instance=RequestContext(request))
+        return render(request, template, context)
 
 
 def print_statement_from_phantomjs(request,
@@ -403,5 +401,4 @@ def print_statement_from_phantomjs(request,
     context['filter'] = filter_form.cleaned_data
     context['generated_on'] = datetime.today()
 
-    return render_to_response(template, context,
-                              context_instance=RequestContext(request))
+    return render(request, template, context)
