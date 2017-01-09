@@ -48,7 +48,7 @@ class App extends Component {
         return (
             <div className="app">
 
-                <Websocket url={"ws://" + window.location.host + "/refresh/"}
+                <Websocket url={"ws://" + window.location.host + "/refresh"}
                            debug={true}
                            onMessage={this.onRefreshFromSocket}
                            onConnect={this.onConnectFromSocket}

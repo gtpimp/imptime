@@ -35892,7 +35892,7 @@
 	            return _react2.default.createElement(
 	                'div',
 	                { className: 'app' },
-	                _react2.default.createElement(_Websocket2.default, { url: "ws://" + window.location.host + "/refresh/",
+	                _react2.default.createElement(_Websocket2.default, { url: "ws://" + window.location.host + "/refresh",
 	                    debug: true,
 	                    onMessage: this.onRefreshFromSocket,
 	                    onConnect: this.onConnectFromSocket,
