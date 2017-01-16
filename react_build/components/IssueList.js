@@ -4,6 +4,7 @@ import map from 'lodash/map'
 import RIEInput from '../widgets/RIEInput'
 import { connect } from 'react-redux'
 import {
+    initList,
     invalidateList,
     selectItems,
     collapse_list,
@@ -42,10 +43,16 @@ class IssueList extends Component {
     componentDidMount() {
 	const { dispatch, list_key, sprint_id } = this.props
 	if ( sprint_id ) {
+	    dispatch(initList(list_key))
 	    dispatch(fetchIssuesIfNeeded(list_key))
 	}
     }
 
+    componentWillReceiveProps() {
+        const { dispatch, list_key } = this.props
+        dispatch(fetchIssuesIfNeeded(list_key))
+    }
+    
     onCollapse() {
 	const { dispatch, list_key } = this.props
 	dispatch(collapse_list(list_key))

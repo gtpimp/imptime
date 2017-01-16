@@ -135,6 +135,7 @@ function fetchSprintsPromise(dispatch, sprint_ids) {
 		    reject(json.error)
                 } else {
 		    dispatch(announceSprintsLoaded(json.payload))
+		    resolve(json.payload)
                 }
 	    }).catch(function (error) {
 		dispatch(announceSprintsLoadFailed("Failed to load sprints: " + error.message))

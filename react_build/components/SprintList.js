@@ -3,6 +3,7 @@ import { Link } from 'react-router'
 import { connect } from 'react-redux'
 import map from 'lodash/map'
 import {
+    initList,
     invalidateList,
     selectItems,
     collapse_list,
@@ -32,7 +33,15 @@ class SprintList extends Component {
     componentDidMount() {
 	const { dispatch, list_key, project_id } = this.props
 	if ( project_id ) {
+	    dispatch(initList(list_key))
 	    dispatch(fetchSprintsIfNeeded(list_key))
+	}
+    }
+
+    componentWillReceiveProps() {
+        const { dispatch, list_key, project_id } = this.props
+	if ( project_id ) {
+            dispatch(fetchSprintsIfNeeded(list_key))
 	}
     }
 

@@ -3,10 +3,16 @@ import {
 } from '../actions/Async'
 
 import { invalidateProjects } from '../actions/Projects'
+import { invalidateSprints } from '../actions/Sprints'
+import { invalidateIssues } from '../actions/Issues'
 
 function triggerInvalidate(payload, dispatch) {
     if ( payload.entity_name == 'project' ) {
         dispatch(invalidateProjects([payload.entity_ref]))
+    } else if ( payload.entity_name == 'sprint' ) {
+        dispatch(invalidateSprints([payload.entity_ref]))
+    } else if ( payload.entity_name == 'issue' ) {
+        dispatch(invalidateIssues([payload.entity_ref]))
     } else {
         console.log("Unknown entity to refresh: " + payload.entity_name)
     }

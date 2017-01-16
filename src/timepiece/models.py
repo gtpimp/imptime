@@ -683,6 +683,8 @@ class Project(models.Model):
         "Business",
         related_name='new_business_projects',
     )
+    created = models.DateTimeField(auto_now_add=True)
+    modified = models.DateTimeField(auto_now=True)
     billable = models.BooleanField(default=False)
     point_person = models.ForeignKey(User, limit_choices_to={'is_staff': True})
     quote_uncertainty = models.FloatField(null=True, blank=True, default=0.25, verbose_name="Uncertainty overhead as a decimal between 0 and 1")
@@ -1018,6 +1020,10 @@ class Project(models.Model):
         super(Project, self).save(*args, **kwargs)
         if new_project:
             self._sync_from_previous_project()
+            RefreshNotifier().notify_model_create(self)
+        else:
+            RefreshNotifier().notify_model_update(self)
+            
 
     @property
     def previous_project(self):
@@ -3313,6 +3319,14 @@ class Issue(models.Model):
     fixed_ctc_amount = models.DecimalField(max_digits=12, decimal_places=2, blank=True, null=True)
 
     objects = IssueQuerySet().as_manager()
+
+    def save(*args, **kwargs):
+        was_created = not self.id
+        super(self, Issue).save(*args, **kwargs)
+        if was_created:
+            RefreshNotifier().notify_model_create(self)
+        else:
+            RefreshNotifier().notify_model_update(self)
     
     @classmethod
     def get_last_issue_number(self, business):

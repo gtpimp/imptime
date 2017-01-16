@@ -74,6 +74,7 @@ function fetchIssuesPromise(dispatch, issue_ids) {
 		    reject(json.error)
                 } else {
 		    dispatch(announceIssuesLoaded(json.payload))
+		    resolve(json.payload)
                 }
 	    }).catch(function (error) {
 		dispatch(announceIssuesLoadFailed("Failed to load issues: " + error.message))

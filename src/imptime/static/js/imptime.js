@@ -47143,6 +47143,7 @@
 	                reject(json.error);
 	            } else {
 	                dispatch(announceSprintsLoaded(json.payload));
+	                resolve(json.payload);
 	            }
 	        }).catch(function (error) {
 	            dispatch(announceSprintsLoadFailed("Failed to load sprints: " + error.message));
@@ -48154,42 +48155,55 @@
 										    project_id = _props.project_id;
 
 										if (project_id) {
+													dispatch((0, _ItemList.initList)(list_key));
+													dispatch((0, _Sprints.fetchSprintsIfNeeded)(list_key));
+										}
+							}
+				}, {
+							key: 'componentWillReceiveProps',
+							value: function componentWillReceiveProps() {
+										var _props2 = this.props,
+										    dispatch = _props2.dispatch,
+										    list_key = _props2.list_key,
+										    project_id = _props2.project_id;
+
+										if (project_id) {
 													dispatch((0, _Sprints.fetchSprintsIfNeeded)(list_key));
 										}
 							}
 				}, {
 							key: 'onCollapse',
 							value: function onCollapse() {
-										var _props2 = this.props,
-										    dispatch = _props2.dispatch,
-										    list_key = _props2.list_key;
+										var _props3 = this.props,
+										    dispatch = _props3.dispatch,
+										    list_key = _props3.list_key;
 
 										dispatch((0, _ItemList.collapse_list)(list_key));
 							}
 				}, {
 							key: 'onExpand',
 							value: function onExpand() {
-										var _props3 = this.props,
-										    dispatch = _props3.dispatch,
-										    list_key = _props3.list_key;
+										var _props4 = this.props,
+										    dispatch = _props4.dispatch,
+										    list_key = _props4.list_key;
 
 										dispatch((0, _ItemList.expand_list)(list_key));
 							}
 				}, {
 							key: 'onClickedSprint',
 							value: function onClickedSprint(sprint_id) {
-										var _props4 = this.props,
-										    dispatch = _props4.dispatch,
-										    list_key = _props4.list_key;
+										var _props5 = this.props,
+										    dispatch = _props5.dispatch,
+										    list_key = _props5.list_key;
 
 										dispatch((0, _ItemList.selectItems)(list_key, [sprint_id]));
 							}
 				}, {
 							key: 'onChangePage',
 							value: function onChangePage() {
-										var _props5 = this.props,
-										    dispatch = _props5.dispatch,
-										    list_key = _props5.list_key;
+										var _props6 = this.props,
+										    dispatch = _props6.dispatch,
+										    list_key = _props6.list_key;
 
 										dispatch((0, _ItemList.invalidateList)(list_key));
 										dispatch((0, _Sprints.fetchSprintsIfNeeded)(list_key));
@@ -48197,10 +48211,10 @@
 				}, {
 							key: 'onRefresh',
 							value: function onRefresh(event) {
-										var _props6 = this.props,
-										    dispatch = _props6.dispatch,
-										    sprint_ids = _props6.sprint_ids,
-										    list_key = _props6.list_key;
+										var _props7 = this.props,
+										    dispatch = _props7.dispatch,
+										    sprint_ids = _props7.sprint_ids,
+										    list_key = _props7.list_key;
 
 										dispatch((0, _ItemList.invalidateList)(list_key));
 										dispatch((0, _Sprints.invalidateAllSprints)());
@@ -48212,9 +48226,9 @@
 				}, {
 							key: 'reorderSprints',
 							value: function reorderSprints(moving_sprint_id, move_after_sprint_id) {
-										var _props7 = this.props,
-										    dispatch = _props7.dispatch,
-										    list_key = _props7.list_key;
+										var _props8 = this.props,
+										    dispatch = _props8.dispatch,
+										    list_key = _props8.list_key;
 
 										dispatch((0, _Sprints.reorderSprints)(moving_sprint_id, move_after_sprint_id, function () {
 													dispatch((0, _ItemList.invalidateList)(list_key));
@@ -48238,14 +48252,14 @@
 							value: function render_collapsed() {
 										var _this2 = this;
 
-										var _props8 = this.props,
-										    sprint = _props8.sprint,
-										    selected_items = _props8.selected_items,
-										    is_collapsed = _props8.is_collapsed,
-										    selected_ids = _props8.selected_ids,
-										    reorderSprints = _props8.reorderSprints,
-										    loading_item_ids = _props8.loading_item_ids,
-										    list_key = _props8.list_key;
+										var _props9 = this.props,
+										    sprint = _props9.sprint,
+										    selected_items = _props9.selected_items,
+										    is_collapsed = _props9.is_collapsed,
+										    selected_ids = _props9.selected_ids,
+										    reorderSprints = _props9.reorderSprints,
+										    loading_item_ids = _props9.loading_item_ids,
+										    list_key = _props9.list_key;
 
 
 										return _react2.default.createElement(
@@ -48277,15 +48291,15 @@
 							value: function render_expanded() {
 										var _this3 = this;
 
-										var _props9 = this.props,
-										    sprints = _props9.sprints,
-										    is_visible = _props9.is_visible,
-										    list_key = _props9.list_key,
-										    is_loading = _props9.is_loading,
-										    selected_ids = _props9.selected_ids,
-										    reorderSprints = _props9.reorderSprints,
-										    loading_item_ids = _props9.loading_item_ids,
-										    has_items = _props9.has_items;
+										var _props10 = this.props,
+										    sprints = _props10.sprints,
+										    is_visible = _props10.is_visible,
+										    list_key = _props10.list_key,
+										    is_loading = _props10.is_loading,
+										    selected_ids = _props10.selected_ids,
+										    reorderSprints = _props10.reorderSprints,
+										    loading_item_ids = _props10.loading_item_ids,
+										    has_items = _props10.has_items;
 
 
 										return _react2.default.createElement(
@@ -48349,11 +48363,11 @@
 				}, {
 							key: 'render',
 							value: function render() {
-										var _props10 = this.props,
-										    is_visible = _props10.is_visible,
-										    is_loading = _props10.is_loading,
-										    is_collapsed = _props10.is_collapsed,
-										    is_expanded = _props10.is_expanded;
+										var _props11 = this.props,
+										    is_visible = _props11.is_visible,
+										    is_loading = _props11.is_loading,
+										    is_collapsed = _props11.is_collapsed,
+										    is_expanded = _props11.is_expanded;
 
 
 										return _react2.default.createElement(
@@ -48779,43 +48793,53 @@
 				    sprint_id = _props.sprint_id;
 
 				if (sprint_id) {
+					dispatch((0, _ItemList.initList)(list_key));
 					dispatch((0, _Issues.fetchIssuesIfNeeded)(list_key));
 				}
 			}
 		}, {
-			key: 'onCollapse',
-			value: function onCollapse() {
+			key: 'componentWillReceiveProps',
+			value: function componentWillReceiveProps() {
 				var _props2 = this.props,
 				    dispatch = _props2.dispatch,
 				    list_key = _props2.list_key;
+
+				dispatch((0, _Issues.fetchIssuesIfNeeded)(list_key));
+			}
+		}, {
+			key: 'onCollapse',
+			value: function onCollapse() {
+				var _props3 = this.props,
+				    dispatch = _props3.dispatch,
+				    list_key = _props3.list_key;
 
 				dispatch((0, _ItemList.collapse_list)(list_key));
 			}
 		}, {
 			key: 'onExpand',
 			value: function onExpand() {
-				var _props3 = this.props,
-				    dispatch = _props3.dispatch,
-				    list_key = _props3.list_key;
+				var _props4 = this.props,
+				    dispatch = _props4.dispatch,
+				    list_key = _props4.list_key;
 
 				dispatch((0, _ItemList.expand_list)(list_key));
 			}
 		}, {
 			key: 'onClickedIssue',
 			value: function onClickedIssue(issue_id) {
-				var _props4 = this.props,
-				    dispatch = _props4.dispatch,
-				    list_key = _props4.list_key;
+				var _props5 = this.props,
+				    dispatch = _props5.dispatch,
+				    list_key = _props5.list_key;
 
 				dispatch((0, _ItemList.selectItems)(list_key, [issue_id]));
 			}
 		}, {
 			key: 'onChangePage',
 			value: function onChangePage() {
-				var _props5 = this.props,
-				    dispatch = _props5.dispatch,
-				    issue_ids = _props5.issue_ids,
-				    list_key = _props5.list_key;
+				var _props6 = this.props,
+				    dispatch = _props6.dispatch,
+				    issue_ids = _props6.issue_ids,
+				    list_key = _props6.list_key;
 
 				dispatch((0, _ItemList.invalidateList)(list_key));
 				dispatch((0, _Issues.fetchIssuesIfNeeded)(list_key));
@@ -48823,10 +48847,10 @@
 		}, {
 			key: 'onRefresh',
 			value: function onRefresh(event) {
-				var _props6 = this.props,
-				    dispatch = _props6.dispatch,
-				    issue_ids = _props6.issue_ids,
-				    list_key = _props6.list_key;
+				var _props7 = this.props,
+				    dispatch = _props7.dispatch,
+				    issue_ids = _props7.issue_ids,
+				    list_key = _props7.list_key;
 
 				dispatch((0, _ItemList.invalidateList)(list_key));
 				dispatch((0, _Issues.invalidateAllIssues)(issue_ids));
@@ -48839,9 +48863,9 @@
 		}, {
 			key: 'onStartCandidateIssue',
 			value: function onStartCandidateIssue(event) {
-				var _props7 = this.props,
-				    dispatch = _props7.dispatch,
-				    list_key = _props7.list_key;
+				var _props8 = this.props,
+				    dispatch = _props8.dispatch,
+				    list_key = _props8.list_key;
 
 				event.stopPropagation();
 				dispatch((0, _Issue.startCandidateIssue)(list_key));
@@ -48864,9 +48888,9 @@
 		}, {
 			key: 'reorderIssue',
 			value: function reorderIssue(moving_issue_id, move_after_issue_id) {
-				var _props8 = this.props,
-				    dispatch = _props8.dispatch,
-				    list_key = _props8.list_key;
+				var _props9 = this.props,
+				    dispatch = _props9.dispatch,
+				    list_key = _props9.list_key;
 
 				console.log("Moving " + moving_issue_id + " to after " + move_after_issue_id);
 				dispatch((0, _Issue.reorderIssue)(moving_issue_id, move_after_issue_id, function () {
@@ -48879,13 +48903,13 @@
 			value: function render_collapsed() {
 				var _this2 = this;
 
-				var _props9 = this.props,
-				    issue = _props9.issue,
-				    selected_items = _props9.selected_items,
-				    is_collapsed = _props9.is_collapsed,
-				    selected_ids = _props9.selected_ids,
-				    loading_item_ids = _props9.loading_item_ids,
-				    list_key = _props9.list_key;
+				var _props10 = this.props,
+				    issue = _props10.issue,
+				    selected_items = _props10.selected_items,
+				    is_collapsed = _props10.is_collapsed,
+				    selected_ids = _props10.selected_ids,
+				    loading_item_ids = _props10.loading_item_ids,
+				    list_key = _props10.list_key;
 
 
 				return _react2.default.createElement(
@@ -48920,9 +48944,9 @@
 		}, {
 			key: 'render_candidate_issue',
 			value: function render_candidate_issue() {
-				var _props10 = this.props,
-				    candidate_issue = _props10.candidate_issue,
-				    list_key = _props10.list_key;
+				var _props11 = this.props,
+				    candidate_issue = _props11.candidate_issue,
+				    list_key = _props11.list_key;
 
 
 				return _react2.default.createElement(
@@ -48947,18 +48971,18 @@
 		}, {
 			key: 'render_expanded',
 			value: function render_expanded() {
-				var _props11 = this.props,
-				    issues = _props11.issues,
-				    is_visible = _props11.is_visible,
-				    list_key = _props11.list_key,
-				    is_loading = _props11.is_loading,
-				    saving_issue_ids = _props11.saving_issue_ids,
-				    is_creating_issue = _props11.is_creating_issue,
-				    candidate_issue = _props11.candidate_issue,
-				    invalidated_issue_ids = _props11.invalidated_issue_ids,
-				    selected_ids = _props11.selected_ids,
-				    loading_item_ids = _props11.loading_item_ids,
-				    has_items = _props11.has_items;
+				var _props12 = this.props,
+				    issues = _props12.issues,
+				    is_visible = _props12.is_visible,
+				    list_key = _props12.list_key,
+				    is_loading = _props12.is_loading,
+				    saving_issue_ids = _props12.saving_issue_ids,
+				    is_creating_issue = _props12.is_creating_issue,
+				    candidate_issue = _props12.candidate_issue,
+				    invalidated_issue_ids = _props12.invalidated_issue_ids,
+				    selected_ids = _props12.selected_ids,
+				    loading_item_ids = _props12.loading_item_ids,
+				    has_items = _props12.has_items;
 
 
 				if (!is_visible) {
@@ -49089,11 +49113,11 @@
 		}, {
 			key: 'render',
 			value: function render() {
-				var _props12 = this.props,
-				    is_visible = _props12.is_visible,
-				    is_loading = _props12.is_loading,
-				    is_collapsed = _props12.is_collapsed,
-				    is_expanded = _props12.is_expanded;
+				var _props13 = this.props,
+				    is_visible = _props13.is_visible,
+				    is_loading = _props13.is_loading,
+				    is_collapsed = _props13.is_collapsed,
+				    is_expanded = _props13.is_expanded;
 
 
 				if (!is_visible) {
@@ -49404,6 +49428,7 @@
 	                reject(json.error);
 	            } else {
 	                dispatch(announceIssuesLoaded(json.payload));
+	                resolve(json.payload);
 	            }
 	        }).catch(function (error) {
 	            dispatch(announceIssuesLoadFailed("Failed to load issues: " + error.message));
@@ -58921,9 +58946,17 @@
 
 	var _Projects = __webpack_require__(774);
 
+	var _Sprints = __webpack_require__(769);
+
+	var _Issues = __webpack_require__(787);
+
 	function triggerInvalidate(payload, dispatch) {
 	    if (payload.entity_name == 'project') {
 	        dispatch((0, _Projects.invalidateProjects)([payload.entity_ref]));
+	    } else if (payload.entity_name == 'sprint') {
+	        dispatch((0, _Sprints.invalidateSprints)([payload.entity_ref]));
+	    } else if (payload.entity_name == 'issue') {
+	        dispatch((0, _Issues.invalidateIssues)([payload.entity_ref]));
 	    } else {
 	        console.log("Unknown entity to refresh: " + payload.entity_name);
 	    }
