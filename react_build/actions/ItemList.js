@@ -19,7 +19,7 @@ export const UPDATE_LIST_SELECTION = 'UPDATE_LIST_SELECTION'
 export const UPDATE_LIST_DISPLAY_MODE = 'UPDATE_LIST_DISPLAY_MODE'
 
 
-function initList(list_key) {
+export function initList(list_key) {
     return {
 	type: INIT_LIST,
 	list_key: list_key
@@ -134,39 +134,43 @@ function announceMatchingItemsLoadFailed(list_key, error) {
     }
 }
 
-function tryFetchMatchingItems(dispatch, state, list_key,
+function tryFetchMatchingItems(list_key,
 			       required_item_ids,
 			       matching_items_key, matching_items_promise_func) {
     // The second half of tryFetchListAndItems, separated out for clarity
 
-    if ( ! required_item_ids ) {
-	return
-    }
+    return (dispatch, getState) => {
     
-    const required_item_refs = map(required_item_ids, function(item_id, index) { return "" + item_id })
-    const l = (state.item_list || {})[list_key] || {}
-    const matching_items = state[matching_items_key] || {}
-    const matching_item_ids = keys(matching_items.items_by_id || {}) // magic, assumes the matching_items reducer will use 'items_by_id' as well
-    const matching_item_refs = map(matching_item_ids, function(item_id, index) { return "" + item_id })
+	if ( ! required_item_ids ) {
+	    return
+	}
 
-    if ( l.loading_matching_items ) {
-	console.log("already fetching matching items")
-	return
-    }
-    
-    let unmatching_item_ids = difference(required_item_refs, matching_item_refs)
-    unmatching_item_ids = union(unmatching_item_ids, matching_items.invalidated_item_ids || [])
+	const state = getState()
+	const required_item_refs = map(required_item_ids, function(item_id, index) { return "" + item_id })
+	const l = (state.item_list || {})[list_key] || {}
+	if ( l.loading_matching_items ) {
+	    return
+	}
 
-    if ( unmatching_item_ids.length > 0 ) {
-	dispatch(announceMatchingItemsLoading(list_key))
-	matching_items_promise_func(dispatch, unmatching_item_ids)
-	    .then(() => {
-		dispatch(announceMatchingItemsLoaded(list_key))
-	    })
-	    .catch(function (error) {
-		dispatch(announceMatchingItemsLoadFailed(list_key, "Failed to load list: " + error))
-		throw(error)
-	    })
+	const matching_items = state[matching_items_key] || {}
+	const matching_item_ids = keys(matching_items.items_by_id || {}) // magic, assumes the matching_items reducer will use 'items_by_id' as well
+	const matching_item_refs = map(matching_item_ids, function(item_id, index) { return "" + item_id })
+
+
+	let unmatching_item_ids = difference(required_item_refs, matching_item_refs)
+	unmatching_item_ids = union(unmatching_item_ids, matching_items.invalidated_item_ids || [])
+
+	if ( unmatching_item_ids.length > 0 ) {
+	    dispatch(announceMatchingItemsLoading(list_key))
+	    matching_items_promise_func(dispatch, unmatching_item_ids)
+		.then(() => {
+		    dispatch(announceMatchingItemsLoaded(list_key))
+		})
+		.catch(function (error) {
+		    dispatch(announceMatchingItemsLoadFailed(list_key, "Failed to load list: " + error))
+		    throw(error)
+		})
+         }
     }
 }
 
@@ -176,16 +180,18 @@ function tryFetchListAndItems(list_key, matching_items_key, matching_items_promi
     // missing matching items
     
     return (dispatch, getState) => {
-
 	const state = getState()
 	const item_list = state.item_list || {}
 	const l = item_list[list_key] || {}
 
 	if ( ! shouldFetchList(state, list_key) ) {
 	    const visible_item_ids = l.visible_item_ids
-	    return tryFetchMatchingItems(dispatch, state, list_key,
-					 visible_item_ids,
-					 matching_items_key, matching_items_promise_func)
+	    if ( visible_item_ids ) {
+		dispatch(tryFetchMatchingItems(list_key,
+					       visible_item_ids,
+					       matching_items_key, matching_items_promise_func))
+	    }
+	    return
 	}
 	
 	dispatch(announceListLoading(list_key))
@@ -201,10 +207,10 @@ function tryFetchListAndItems(list_key, matching_items_key, matching_items_promi
                 } else {
 		    dispatch(announceListLoaded(list_key, json.payload))
 		    const required_item_ids = json.payload.ids || []
-		    tryFetchMatchingItems(dispatch, state, list_key,
-					  required_item_ids,
-					  matching_items_key,
-					  matching_items_promise_func)
+		    dispatch(tryFetchMatchingItems(list_key,
+						   required_item_ids,
+						   matching_items_key,
+						   matching_items_promise_func))
 		}
             })
 	    .catch(function (error) {
@@ -232,7 +238,6 @@ function shouldFetchList(state, list_key) {
 export function fetchListIfNeeded(list_key,
 				  matching_items_key, matching_items_promise_func) {
     return (dispatch, getState) => {
-	dispatch(initList(list_key))
 	dispatch(tryFetchListAndItems(list_key,
 				      matching_items_key,
 				      matching_items_promise_func))

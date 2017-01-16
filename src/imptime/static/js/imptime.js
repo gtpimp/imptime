@@ -43154,7 +43154,7 @@
 													    dispatch = _props.dispatch,
 													    list_key = _props.list_key;
 
-													dispatch((0, _Projects.fetchProjectsIfNeeded)(list_key));
+													dispatch((0, _ItemList.initList)(list_key));
 													dispatch((0, _Projects.fetchProjectsIfNeeded)(list_key));
 									}
 					}, {
@@ -43163,7 +43163,8 @@
 													var _props2 = this.props,
 													    dispatch = _props2.dispatch,
 													    list_key = _props2.list_key;
-													//dispatch(fetchProjectsIfNeeded(list_key))
+
+													dispatch((0, _Projects.fetchProjectsIfNeeded)(list_key));
 									}
 					}, {
 									key: 'onCollapse',
@@ -45763,9 +45764,10 @@
 	'use strict';
 
 	Object.defineProperty(exports, "__esModule", {
-	    value: true
+					value: true
 	});
 	exports.UPDATE_LIST_DISPLAY_MODE = exports.UPDATE_LIST_SELECTION = exports.UPDATE_LIST_FILTER = exports.UPDATE_LIST_PAGINATION = exports.INVALIDATE_LIST = exports.ANNOUNCE_MATCHING_ITEMS_LOADING = exports.ANNOUNCE_MATCHING_ITEMS_LOAD_FAILED = exports.ANNOUNCE_MATCHING_ITEMS_LOADED = exports.ANNOUNCE_LIST_LOADING = exports.ANNOUNCE_LIST_LOAD_FAILED = exports.ANNOUNCE_LIST_LOADED = exports.INIT_LIST = undefined;
+	exports.initList = initList;
 	exports.update_list_pagination = update_list_pagination;
 	exports.update_list_filter = update_list_filter;
 	exports.collapse_list = collapse_list;
@@ -45811,214 +45813,218 @@
 	var UPDATE_LIST_DISPLAY_MODE = exports.UPDATE_LIST_DISPLAY_MODE = 'UPDATE_LIST_DISPLAY_MODE';
 
 	function initList(list_key) {
-	    return {
-	        type: INIT_LIST,
-	        list_key: list_key
-	    };
+					return {
+									type: INIT_LIST,
+									list_key: list_key
+					};
 	}
 
 	function update_list_pagination(list_key, pagination) {
-	    return {
-	        type: UPDATE_LIST_PAGINATION,
-	        list_key: list_key,
-	        pagination: pagination
-	    };
+					return {
+									type: UPDATE_LIST_PAGINATION,
+									list_key: list_key,
+									pagination: pagination
+					};
 	}
 
 	function update_list_filter(list_key, filter) {
-	    return {
-	        type: UPDATE_LIST_FILTER,
-	        list_key: list_key,
-	        filter: filter
-	    };
+					return {
+									type: UPDATE_LIST_FILTER,
+									list_key: list_key,
+									filter: filter
+					};
 	}
 
 	function collapse_list(list_key) {
-	    return {
-	        type: UPDATE_LIST_DISPLAY_MODE,
-	        list_key: list_key,
-	        display_mode: 'collapsed'
-	    };
+					return {
+									type: UPDATE_LIST_DISPLAY_MODE,
+									list_key: list_key,
+									display_mode: 'collapsed'
+					};
 	}
 
 	function expand_list(list_key) {
-	    return {
-	        type: UPDATE_LIST_DISPLAY_MODE,
-	        list_key: list_key,
-	        display_mode: 'expanded'
-	    };
+					return {
+									type: UPDATE_LIST_DISPLAY_MODE,
+									list_key: list_key,
+									display_mode: 'expanded'
+					};
 	}
 
 	function unselectAllItems(list_key) {
-	    return {
-	        type: UPDATE_LIST_SELECTION,
-	        list_key: list_key,
-	        selected_ids: []
-	    };
+					return {
+									type: UPDATE_LIST_SELECTION,
+									list_key: list_key,
+									selected_ids: []
+					};
 	}
 
 	function selectItems(list_key, selected_ids) {
 
-	    return {
-	        type: UPDATE_LIST_SELECTION,
-	        list_key: list_key,
-	        selected_ids: selected_ids
-	    };
+					return {
+									type: UPDATE_LIST_SELECTION,
+									list_key: list_key,
+									selected_ids: selected_ids
+					};
 	}
 
 	function invalidateList(list_key) {
-	    return {
-	        type: INVALIDATE_LIST,
-	        list_key: list_key
-	    };
+					return {
+									type: INVALIDATE_LIST,
+									list_key: list_key
+					};
 	}
 
 	function announceListLoading(list_key) {
-	    return {
-	        type: ANNOUNCE_LIST_LOADING,
-	        list_key: list_key
-	    };
+					return {
+									type: ANNOUNCE_LIST_LOADING,
+									list_key: list_key
+					};
 	}
 
 	function announceMatchingItemsLoading(list_key) {
-	    return {
-	        type: ANNOUNCE_MATCHING_ITEMS_LOADING,
-	        list_key: list_key
-	    };
+					return {
+									type: ANNOUNCE_MATCHING_ITEMS_LOADING,
+									list_key: list_key
+					};
 	}
 
 	function announceListLoaded(list_key, payload) {
 
-	    return {
-	        type: ANNOUNCE_LIST_LOADED,
-	        visible_item_ids: payload.ids,
-	        pagination: payload.pagination,
-	        list_key: list_key,
-	        received_at: Date.now()
-	    };
+					return {
+									type: ANNOUNCE_LIST_LOADED,
+									visible_item_ids: payload.ids,
+									pagination: payload.pagination,
+									list_key: list_key,
+									received_at: Date.now()
+					};
 	}
 
 	function announceMatchingItemsLoaded(list_key) {
 
-	    return {
-	        type: ANNOUNCE_MATCHING_ITEMS_LOADED,
-	        list_key: list_key,
-	        received_at: Date.now()
-	    };
+					return {
+									type: ANNOUNCE_MATCHING_ITEMS_LOADED,
+									list_key: list_key,
+									received_at: Date.now()
+					};
 	}
 
 	function announceListLoadFailed(list_key, error) {
-	    return {
-	        type: ANNOUNCE_LIST_LOAD_FAILED,
-	        list_key: list_key,
-	        error: error,
-	        received_at: Date.now()
-	    };
+					return {
+									type: ANNOUNCE_LIST_LOAD_FAILED,
+									list_key: list_key,
+									error: error,
+									received_at: Date.now()
+					};
 	}
 
 	function announceMatchingItemsLoadFailed(list_key, error) {
-	    return {
-	        type: ANNOUNCE_MATCHING_ITEMS_LOAD_FAILED,
-	        list_key: list_key,
-	        error: error,
-	        received_at: Date.now()
-	    };
+					return {
+									type: ANNOUNCE_MATCHING_ITEMS_LOAD_FAILED,
+									list_key: list_key,
+									error: error,
+									received_at: Date.now()
+					};
 	}
 
-	function tryFetchMatchingItems(dispatch, state, list_key, required_item_ids, matching_items_key, matching_items_promise_func) {
-	    // The second half of tryFetchListAndItems, separated out for clarity
+	function tryFetchMatchingItems(list_key, required_item_ids, matching_items_key, matching_items_promise_func) {
+					// The second half of tryFetchListAndItems, separated out for clarity
 
-	    if (!required_item_ids) {
-	        return;
-	    }
+					return function (dispatch, getState) {
 
-	    var required_item_refs = (0, _map2.default)(required_item_ids, function (item_id, index) {
-	        return "" + item_id;
-	    });
-	    var l = (state.item_list || {})[list_key] || {};
-	    var matching_items = state[matching_items_key] || {};
-	    var matching_item_ids = (0, _keys2.default)(matching_items.items_by_id || {}); // magic, assumes the matching_items reducer will use 'items_by_id' as well
-	    var matching_item_refs = (0, _map2.default)(matching_item_ids, function (item_id, index) {
-	        return "" + item_id;
-	    });
+									if (!required_item_ids) {
+													return;
+									}
 
-	    if (l.loading_matching_items) {
-	        console.log("already fetching matching items");
-	        return;
-	    }
+									var state = getState();
+									var required_item_refs = (0, _map2.default)(required_item_ids, function (item_id, index) {
+													return "" + item_id;
+									});
+									var l = (state.item_list || {})[list_key] || {};
+									if (l.loading_matching_items) {
+													return;
+									}
 
-	    var unmatching_item_ids = (0, _difference2.default)(required_item_refs, matching_item_refs);
-	    unmatching_item_ids = (0, _union2.default)(unmatching_item_ids, matching_items.invalidated_item_ids || []);
+									var matching_items = state[matching_items_key] || {};
+									var matching_item_ids = (0, _keys2.default)(matching_items.items_by_id || {}); // magic, assumes the matching_items reducer will use 'items_by_id' as well
+									var matching_item_refs = (0, _map2.default)(matching_item_ids, function (item_id, index) {
+													return "" + item_id;
+									});
 
-	    if (unmatching_item_ids.length > 0) {
-	        dispatch(announceMatchingItemsLoading(list_key));
-	        matching_items_promise_func(dispatch, unmatching_item_ids).then(function () {
-	            dispatch(announceMatchingItemsLoaded(list_key));
-	        }).catch(function (error) {
-	            dispatch(announceMatchingItemsLoadFailed(list_key, "Failed to load list: " + error));
-	            throw error;
-	        });
-	    }
+									var unmatching_item_ids = (0, _difference2.default)(required_item_refs, matching_item_refs);
+									unmatching_item_ids = (0, _union2.default)(unmatching_item_ids, matching_items.invalidated_item_ids || []);
+
+									if (unmatching_item_ids.length > 0) {
+													dispatch(announceMatchingItemsLoading(list_key));
+													matching_items_promise_func(dispatch, unmatching_item_ids).then(function () {
+																	dispatch(announceMatchingItemsLoaded(list_key));
+													}).catch(function (error) {
+																	dispatch(announceMatchingItemsLoadFailed(list_key, "Failed to load list: " + error));
+																	throw error;
+													});
+									}
+					};
 	}
 
 	function tryFetchListAndItems(list_key, matching_items_key, matching_items_promise_func) {
 
-	    // First tries to fetch the list of items, and then fetches all
-	    // missing matching items
+					// First tries to fetch the list of items, and then fetches all
+					// missing matching items
 
-	    return function (dispatch, getState) {
+					return function (dispatch, getState) {
+									var state = getState();
+									var item_list = state.item_list || {};
+									var l = item_list[list_key] || {};
 
-	        var state = getState();
-	        var item_list = state.item_list || {};
-	        var l = item_list[list_key] || {};
+									if (!shouldFetchList(state, list_key)) {
+													var visible_item_ids = l.visible_item_ids;
+													if (visible_item_ids) {
+																	dispatch(tryFetchMatchingItems(list_key, visible_item_ids, matching_items_key, matching_items_promise_func));
+													}
+													return;
+									}
 
-	        if (!shouldFetchList(state, list_key)) {
-	            var visible_item_ids = l.visible_item_ids;
-	            return tryFetchMatchingItems(dispatch, state, list_key, visible_item_ids, matching_items_key, matching_items_promise_func);
-	        }
+									dispatch(announceListLoading(list_key));
+									var params = { filter: l.filter || {},
+													format: { ids_only: true },
+													pagination: l.pagination || {} };
+									return (0, _lib.impfetch)('/imp/' + matching_items_key + "/", { params: params }).then(function (response) {
+													return response.json();
+									}).then(function (json) {
 
-	        dispatch(announceListLoading(list_key));
-	        var params = { filter: l.filter || {},
-	            format: { ids_only: true },
-	            pagination: l.pagination || {} };
-	        return (0, _lib.impfetch)('/imp/' + matching_items_key + "/", { params: params }).then(function (response) {
-	            return response.json();
-	        }).then(function (json) {
-
-	            if (json.status != 'success') {
-	                dispatch(announceListLoadFailed(list_key, json.error));
-	            } else {
-	                dispatch(announceListLoaded(list_key, json.payload));
-	                var required_item_ids = json.payload.ids || [];
-	                tryFetchMatchingItems(dispatch, state, list_key, required_item_ids, matching_items_key, matching_items_promise_func);
-	            }
-	        }).catch(function (error) {
-	            dispatch(announceListLoadFailed(list_key, "Failed to load list: " + error));
-	            throw error;
-	        });
-	    };
+													if (json.status != 'success') {
+																	dispatch(announceListLoadFailed(list_key, json.error));
+													} else {
+																	dispatch(announceListLoaded(list_key, json.payload));
+																	var required_item_ids = json.payload.ids || [];
+																	dispatch(tryFetchMatchingItems(list_key, required_item_ids, matching_items_key, matching_items_promise_func));
+													}
+									}).catch(function (error) {
+													dispatch(announceListLoadFailed(list_key, "Failed to load list: " + error));
+													throw error;
+									});
+					};
 	}
 
 	function shouldFetchList(state, list_key) {
 
-	    var item_list = state.item_list || {};
-	    var l = item_list[list_key] || {};
-	    if (l.items_invalidated) {
-	        return true;
-	    }
-	    if (l.is_loading) {
-	        return false;
-	    }
-	    if (!l.visible_item_ids) {
-	        return true;
-	    }
+					var item_list = state.item_list || {};
+					var l = item_list[list_key] || {};
+					if (l.items_invalidated) {
+									return true;
+					}
+					if (l.is_loading) {
+									return false;
+					}
+					if (!l.visible_item_ids) {
+									return true;
+					}
 	}
 
 	function fetchListIfNeeded(list_key, matching_items_key, matching_items_promise_func) {
-	    return function (dispatch, getState) {
-	        dispatch(initList(list_key));
-	        dispatch(tryFetchListAndItems(list_key, matching_items_key, matching_items_promise_func));
-	    };
+					return function (dispatch, getState) {
+									dispatch(tryFetchListAndItems(list_key, matching_items_key, matching_items_promise_func));
+					};
 	}
 
 /***/ },
@@ -47464,6 +47470,7 @@
 	                reject(json.error);
 	            } else {
 	                dispatch(announceProjectsLoaded(json.payload));
+	                resolve(json.payload);
 	            }
 	        }).catch(function (error) {
 	            dispatch(announceProjectsLoadFailed("Failed to load projects: " + error.message));

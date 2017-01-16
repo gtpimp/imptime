@@ -3,6 +3,7 @@ import { Link } from 'react-router'
 import map from 'lodash/map'
 import { connect } from 'react-redux'
 import {
+    initList,
     invalidateList,
     selectItems,
     collapse_list,
@@ -27,13 +28,13 @@ class ProjectList extends Component {
 
     componentDidMount() {
 	const { dispatch, list_key } = this.props
-	dispatch(fetchProjectsIfNeeded(list_key))
+	dispatch(initList(list_key))
 	dispatch(fetchProjectsIfNeeded(list_key))
     }
 
     componentWillReceiveProps() {
         const { dispatch, list_key } = this.props
-        //dispatch(fetchProjectsIfNeeded(list_key))
+        dispatch(fetchProjectsIfNeeded(list_key))
     }
     
     onCollapse() {
