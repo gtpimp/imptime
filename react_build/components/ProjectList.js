@@ -15,7 +15,7 @@ import {
 import Pagination from '../components/Pagination'
 import { Sticky } from 'react-sticky';
 
-export class ProjectList extends Component {
+class ProjectList extends Component {
 
     constructor(props) {
         super(props)
@@ -27,12 +27,13 @@ export class ProjectList extends Component {
 
     componentDidMount() {
 	const { dispatch, list_key } = this.props
-	// dispatch(fetchProjectsIfNeeded(list_key))
+	dispatch(fetchProjectsIfNeeded(list_key))
+	dispatch(fetchProjectsIfNeeded(list_key))
     }
 
     componentWillReceiveProps() {
         const { dispatch, list_key } = this.props
-        dispatch(fetchProjectsIfNeeded(list_key))
+        //dispatch(fetchProjectsIfNeeded(list_key))
     }
     
     onCollapse() {

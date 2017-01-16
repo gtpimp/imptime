@@ -17,7 +17,7 @@ import Pagination from '../components/Pagination'
 import Sprint from './Sprint'
 import { Sticky } from 'react-sticky';
 
-export class SprintList extends Component {
+class SprintList extends Component {
 
     constructor(props) {
         super(props)

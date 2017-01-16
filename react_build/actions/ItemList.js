@@ -5,6 +5,7 @@ import union from 'lodash/union'
 import map from 'lodash/map'
 import { reorderSprints } from './Sprints'
 
+export const INIT_LIST = 'INIT_LIST'
 export const ANNOUNCE_LIST_LOADED = 'ANNOUNCE_LIST_LOADED'
 export const ANNOUNCE_LIST_LOAD_FAILED = 'ANNOUNCE_LIST_LOAD_FAILED'
 export const ANNOUNCE_LIST_LOADING = 'ANNOUNCE_LIST_LOADING'
@@ -16,6 +17,14 @@ export const UPDATE_LIST_PAGINATION = 'UPDATE_LIST_PAGINATION'
 export const UPDATE_LIST_FILTER = 'UPDATE_LIST_FILTER'
 export const UPDATE_LIST_SELECTION = 'UPDATE_LIST_SELECTION'
 export const UPDATE_LIST_DISPLAY_MODE = 'UPDATE_LIST_DISPLAY_MODE'
+
+
+function initList(list_key) {
+    return {
+	type: INIT_LIST,
+	list_key: list_key
+    }
+}
 
 export function update_list_pagination(list_key, pagination) {
     return {
@@ -129,11 +138,21 @@ function tryFetchMatchingItems(dispatch, state, list_key,
 			       required_item_ids,
 			       matching_items_key, matching_items_promise_func) {
     // The second half of tryFetchListAndItems, separated out for clarity
+
+    if ( ! required_item_ids ) {
+	return
+    }
     
     const required_item_refs = map(required_item_ids, function(item_id, index) { return "" + item_id })
+    const l = (state.item_list || {})[list_key] || {}
     const matching_items = state[matching_items_key] || {}
     const matching_item_ids = keys(matching_items.items_by_id || {}) // magic, assumes the matching_items reducer will use 'items_by_id' as well
     const matching_item_refs = map(matching_item_ids, function(item_id, index) { return "" + item_id })
+
+    if ( l.loading_matching_items ) {
+	console.log("already fetching matching items")
+	return
+    }
     
     let unmatching_item_ids = difference(required_item_refs, matching_item_refs)
     unmatching_item_ids = union(unmatching_item_ids, matching_items.invalidated_item_ids || [])
@@ -151,14 +170,14 @@ function tryFetchMatchingItems(dispatch, state, list_key,
     }
 }
 
-function tryFetchListAndItems(state, list_key,
-			      matching_items_key, matching_items_promise_func) {
+function tryFetchListAndItems(list_key, matching_items_key, matching_items_promise_func) {
 
     // First tries to fetch the list of items, and then fetches all
     // missing matching items
     
-    return dispatch => {
+    return (dispatch, getState) => {
 
+	const state = getState()
 	const item_list = state.item_list || {}
 	const l = item_list[list_key] || {}
 
@@ -213,9 +232,8 @@ function shouldFetchList(state, list_key) {
 export function fetchListIfNeeded(list_key,
 				  matching_items_key, matching_items_promise_func) {
     return (dispatch, getState) => {
-        const state = getState()
-
-	dispatch(tryFetchListAndItems(state, list_key,
+	dispatch(initList(list_key))
+	dispatch(tryFetchListAndItems(list_key,
 				      matching_items_key,
 				      matching_items_promise_func))
     }

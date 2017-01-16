@@ -10,7 +10,7 @@ import {
     fetchUsersIfNeeded
 } from '../actions/Users'
 
-export class OtherUser extends Component {
+class OtherUser extends Component {
 
     constructor(props) {
         super(props)

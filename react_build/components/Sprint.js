@@ -6,7 +6,7 @@ import map from 'lodash/map'
 import classNames from 'classnames'
 import { DndTypes } from '../actions/Dnd'
 
-export class Sprint extends Component {
+class Sprint extends Component {
 
     constructor(props) {
         super(props)

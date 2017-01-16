@@ -5,7 +5,7 @@ import RIEModeToggler from '../widgets/RIEModeToggler'
 import RIEInput from '../widgets/RIEInput'
 import { updateGlobalFilter, clearGlobalFilter } from '../actions/Filter'
 
-export class FilterBox extends Component {
+class FilterBox extends Component {
 
     constructor(props) {
 	super(props)

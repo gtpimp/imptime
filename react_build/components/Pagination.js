@@ -6,7 +6,7 @@ import {
     update_list_pagination
 } from "../actions/ItemList"
 
-export default class Pagination extends Component {
+class Pagination extends Component {
 
     constructor(props) {
         super(props)

@@ -4,7 +4,7 @@ import { connect } from 'react-redux'
 import NotificationBar from '../components/NotificationBar'
 import FilterBox from '../components/FilterBox'
 
-export class HeaderBar extends Component {
+class HeaderBar extends Component {
 
     render() {
 

@@ -22,7 +22,7 @@ import RIEModeToggler from '../widgets/RIEModeToggler'
 import RIEInput from '../widgets/RIEInput'
 import RIETextArea from '../widgets/RIETextArea'
 
-export class IssueDeveloperDetails extends Component {
+class IssueDeveloperDetails extends Component {
 
     constructor(props) {
         super(props)

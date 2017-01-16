@@ -24,7 +24,7 @@ import Pagination from '../components/Pagination'
 import Issue from './Issue'
 import { Sticky, StickyContainer } from 'react-sticky';
 
-export class IssueList extends Component {
+class IssueList extends Component {
 
     constructor(props) {
         super(props)

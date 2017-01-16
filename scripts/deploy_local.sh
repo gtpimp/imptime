@@ -7,7 +7,7 @@ sudo ls > /dev/null
 sudo apt install python-dev postgresql-server-dev-9.5 virtualenv
 sudo apt install libjpeg-dev libxml2-dev libxslt1-dev
 sudo apt install redis-server
-
+sudo apt install npm nodejs-legacy
 
 ROOT=`git rev-parse --show-toplevel`
 cd ${ROOT}
@@ -97,14 +97,7 @@ if [ ! -d pdfs ]; then
 fi
 sudo chown -R `whoami` pdfs
 
-
-echo "updating database"
-cd ${SITE_PATH}
-python manage.py syncdb
-if [ $? != 0 ]; then
-    echo "syncdb failed: ABORTING"
-    exit 1
-fi
+cd ${ROOT}/src
 python manage.py migrate
 if [ $? != 0 ]; then
     echo "db migrate failed: ABORTING"
@@ -112,7 +105,14 @@ if [ $? != 0 ]; then
 fi
 
 echo "collecting static files"
+cd ${ROOT}/src
 python manage.py collectstatic --noinput --verbosity=0
 cd -
+
+echo "building react"
+cd ${ROOT}/react_build/
+export NODE_ENV=development
+npm install
+webpack --progress --colors --output-path=${ROOT}/src/imptime/static/js
 
 echo "Deploy local complete"

@@ -1,6 +1,7 @@
 #!/bin/bash
 
-cd "`dirname \"$0\"`/.."
+ROOT=`git rev-parse --show-toplevel`
+cd ${ROOT}
 ROOT=`pwd`
 
 cd ${ROOT}/react_build/

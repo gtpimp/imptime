@@ -41,7 +41,7 @@ const ISSUE_STATUS_CHOICES = [
     { value: 'quick_clocker', label: 'quick clocker'}
 ]
 
-export class Issue extends Component {
+class Issue extends Component {
 
     constructor(props) {
         super(props)
