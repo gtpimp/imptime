@@ -1,18 +1,33 @@
-import React from 'react';
+import React, { Component, PropTypes } from 'react'
 import ReactDOM from 'react-dom';
+import { connect } from 'react-redux'
+import { asyncRefreshNotification, websocketDisconnected, websocketConnected } from '../actions/Async'
 
-class Websocket extends React.Component {
+class Websocket extends Component {
 
     constructor(props) {
         super(props);
+        this.onMessageFromSocket = this.onMessageFromSocket.bind(this)
+        this.onDisconnectFromSocket = this.onDisconnectFromSocket.bind(this)
+        this.onConnectFromSocket = this.onConnectFromSocket.bind(this)
         this.state = {
             ws: new WebSocket(this.props.url),
             attempts: 1
         };
     }
 
+    componentDidMount() {
+        this.setupWebsocket();
+    }
+
+    componentWillUnmount() {
+        let websocket = this.state.ws;
+        websocket.close();
+    }
+
     logging(logline) {
-        if (this.props.debug === true) {
+        const { debug } = this.props
+        if ( debug ) {
             console.log(logline);
         }
     }
@@ -21,25 +36,41 @@ class Websocket extends React.Component {
         return Math.min(30, (Math.pow(2, k) - 1)) * 1000;
     }
 
+    onDisconnectFromSocket() {
+        const { dispatch } = this.props
+        console.log("Websocket disconnected")
+        dispatch(websocketDisconnected())
+    }
+
+    onConnectFromSocket() {
+        const { dispatch } = this.props
+        console.log("Websocket connected")
+        dispatch(websocketConnected())
+    }
+
+    onMessageFromSocket(data) {
+        const { dispatch } = this.props
+        console.log("Websocket refreshed")
+        dispatch(asyncRefreshNotification(data))
+    }    
+
     setupWebsocket() {
         this.state.ws = this.state.ws || new WebSocket(this.props.url);
         let websocket = this.state.ws;
-        
-
-        const { onDisconnect, onConnect } = this.props
 
         websocket.onopen = () => {
             this.logging('Websocket connected');
-            onConnect && onConnect()
+            this.onConnectFromSocket();
         };
 
         websocket.onmessage = (evt) => {
-            this.props.onMessage(evt.data);
+            console.log("websocket message" + evt.data)
+            this.onMessageFromSocket(evt.data);
         };
 
         websocket.onclose = () => {
             this.logging('Websocket disconnected');
-            onDisconnect && onDisconnect()
+            this.onDisconnectFromSocket()
 
             if (this.props.reconnect) {
                 let time = this.generateInterval(this.state.attempts);
@@ -52,15 +83,6 @@ class Websocket extends React.Component {
         }
     }
 
-    componentDidMount() {
-        this.setupWebsocket();
-    }
-
-    componentWillUnmount() {
-        let websocket = this.state.ws;
-        websocket.close();
-    }
-
     render() {
         return (
             <div></div>
@@ -68,16 +90,11 @@ class Websocket extends React.Component {
     }
 }
 
-Websocket.defaultProps = {
-    debug: false,
-    reconnect: true
-};
+function mapStateToProps(state, props) {
+    return {
+        reconnect: true,
+        debug: true
+    }
+}
 
-Websocket.propTypes = {
-    url: React.PropTypes.string.isRequired,
-    onMessage: React.PropTypes.func.isRequired,
-    debug: React.PropTypes.bool,
-    reconnect: React.PropTypes.bool,
-};
-
-export default Websocket;
+export default connect(mapStateToProps)(Websocket)

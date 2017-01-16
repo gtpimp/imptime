@@ -35822,8 +35822,6 @@
 
 	var _Websocket2 = _interopRequireDefault(_Websocket);
 
-	var _Async = __webpack_require__(887);
-
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 	function _objectDestructuringEmpty(obj) { if (obj == null) throw new TypeError("Cannot destructure undefined"); }
@@ -35842,12 +35840,7 @@
 	    function App(props) {
 	        _classCallCheck(this, App);
 
-	        var _this = _possibleConstructorReturn(this, Object.getPrototypeOf(App).call(this, props));
-
-	        _this.onRefreshFromSocket = _this.onRefreshFromSocket.bind(_this);
-	        _this.onDisconnectFromSocket = _this.onDisconnectFromSocket.bind(_this);
-	        _this.onConnectFromSocket = _this.onConnectFromSocket.bind(_this);
-	        return _this;
+	        return _possibleConstructorReturn(this, Object.getPrototypeOf(App).call(this, props));
 	    }
 
 	    _createClass(App, [{
@@ -35861,30 +35854,6 @@
 	            };
 	        }
 	    }, {
-	        key: 'onDisconnectFromSocket',
-	        value: function onDisconnectFromSocket() {
-	            var dispatch = this.props.dispatch;
-
-	            console.log("Websocket disconnected");
-	            dispatch((0, _Async.websocketDisconnected)());
-	        }
-	    }, {
-	        key: 'onConnectFromSocket',
-	        value: function onConnectFromSocket() {
-	            var dispatch = this.props.dispatch;
-
-	            console.log("Websocket connected");
-	            dispatch((0, _Async.websocketConnected)());
-	        }
-	    }, {
-	        key: 'onRefreshFromSocket',
-	        value: function onRefreshFromSocket(data) {
-	            var dispatch = this.props.dispatch;
-
-	            console.log("Websocket refreshed");
-	            dispatch((0, _Async.asyncRefreshNotification)(data));
-	        }
-	    }, {
 	        key: 'render',
 	        value: function render() {
 	            _objectDestructuringEmpty(this.props);
@@ -35892,12 +35861,7 @@
 	            return _react2.default.createElement(
 	                'div',
 	                { className: 'app' },
-	                _react2.default.createElement(_Websocket2.default, { url: "ws://" + window.location.host + "/refresh",
-	                    debug: true,
-	                    onMessage: this.onRefreshFromSocket,
-	                    onConnect: this.onConnectFromSocket,
-	                    onDisconnect: this.onDisconnectFromSocket
-	                }),
+	                _react2.default.createElement(_Websocket2.default, { url: "ws://" + window.location.host + "/refresh" }),
 	                _react2.default.createElement(_HeaderBar2.default, null),
 	                _react2.default.createElement(_DevPage2.default, null)
 	            );
@@ -65665,6 +65629,10 @@
 
 	var _reactDom2 = _interopRequireDefault(_reactDom);
 
+	var _reactRedux = __webpack_require__(534);
+
+	var _Async = __webpack_require__(887);
+
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
@@ -65673,14 +65641,17 @@
 
 	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 
-	var Websocket = function (_React$Component) {
-	    _inherits(Websocket, _React$Component);
+	var Websocket = function (_Component) {
+	    _inherits(Websocket, _Component);
 
 	    function Websocket(props) {
 	        _classCallCheck(this, Websocket);
 
 	        var _this = _possibleConstructorReturn(this, Object.getPrototypeOf(Websocket).call(this, props));
 
+	        _this.onMessageFromSocket = _this.onMessageFromSocket.bind(_this);
+	        _this.onDisconnectFromSocket = _this.onDisconnectFromSocket.bind(_this);
+	        _this.onConnectFromSocket = _this.onConnectFromSocket.bind(_this);
 	        _this.state = {
 	            ws: new WebSocket(_this.props.url),
 	            attempts: 1
@@ -65689,9 +65660,22 @@
 	    }
 
 	    _createClass(Websocket, [{
+	        key: 'componentDidMount',
+	        value: function componentDidMount() {
+	            this.setupWebsocket();
+	        }
+	    }, {
+	        key: 'componentWillUnmount',
+	        value: function componentWillUnmount() {
+	            var websocket = this.state.ws;
+	            websocket.close();
+	        }
+	    }, {
 	        key: 'logging',
 	        value: function logging(logline) {
-	            if (this.props.debug === true) {
+	            var debug = this.props.debug;
+
+	            if (debug) {
 	                console.log(logline);
 	            }
 	        }
@@ -65701,6 +65685,30 @@
 	            return Math.min(30, Math.pow(2, k) - 1) * 1000;
 	        }
 	    }, {
+	        key: 'onDisconnectFromSocket',
+	        value: function onDisconnectFromSocket() {
+	            var dispatch = this.props.dispatch;
+
+	            console.log("Websocket disconnected");
+	            dispatch((0, _Async.websocketDisconnected)());
+	        }
+	    }, {
+	        key: 'onConnectFromSocket',
+	        value: function onConnectFromSocket() {
+	            var dispatch = this.props.dispatch;
+
+	            console.log("Websocket connected");
+	            dispatch((0, _Async.websocketConnected)());
+	        }
+	    }, {
+	        key: 'onMessageFromSocket',
+	        value: function onMessageFromSocket(data) {
+	            var dispatch = this.props.dispatch;
+
+	            console.log("Websocket refreshed");
+	            dispatch((0, _Async.asyncRefreshNotification)(data));
+	        }
+	    }, {
 	        key: 'setupWebsocket',
 	        value: function setupWebsocket() {
 	            var _this2 = this;
@@ -65708,23 +65716,19 @@
 	            this.state.ws = this.state.ws || new WebSocket(this.props.url);
 	            var websocket = this.state.ws;
 
-	            var _props = this.props;
-	            var onDisconnect = _props.onDisconnect;
-	            var onConnect = _props.onConnect;
-
-
 	            websocket.onopen = function () {
 	                _this2.logging('Websocket connected');
-	                onConnect && onConnect();
+	                _this2.onConnectFromSocket();
 	            };
 
 	            websocket.onmessage = function (evt) {
-	                _this2.props.onMessage(evt.data);
+	                console.log("websocket message" + evt.data);
+	                _this2.onMessageFromSocket(evt.data);
 	            };
 
 	            websocket.onclose = function () {
 	                _this2.logging('Websocket disconnected');
-	                onDisconnect && onDisconnect();
+	                _this2.onDisconnectFromSocket();
 
 	                if (_this2.props.reconnect) {
 	                    var time = _this2.generateInterval(_this2.state.attempts);
@@ -65737,17 +65741,6 @@
 	            };
 	        }
 	    }, {
-	        key: 'componentDidMount',
-	        value: function componentDidMount() {
-	            this.setupWebsocket();
-	        }
-	    }, {
-	        key: 'componentWillUnmount',
-	        value: function componentWillUnmount() {
-	            var websocket = this.state.ws;
-	            websocket.close();
-	        }
-	    }, {
 	        key: 'render',
 	        value: function render() {
 	            return _react2.default.createElement('div', null);
@@ -65755,21 +65748,16 @@
 	    }]);
 
 	    return Websocket;
-	}(_react2.default.Component);
+	}(_react.Component);
 
-	Websocket.defaultProps = {
-	    debug: false,
-	    reconnect: true
-	};
+	function mapStateToProps(state, props) {
+	    return {
+	        reconnect: true,
+	        debug: true
+	    };
+	}
 
-	Websocket.propTypes = {
-	    url: _react2.default.PropTypes.string.isRequired,
-	    onMessage: _react2.default.PropTypes.func.isRequired,
-	    debug: _react2.default.PropTypes.bool,
-	    reconnect: _react2.default.PropTypes.bool
-	};
-
-	exports.default = Websocket;
+	exports.default = (0, _reactRedux.connect)(mapStateToProps)(Websocket);
 
 /***/ },
 /* 887 */
@@ -67331,11 +67319,11 @@
 
 	var _DevPageMiddleware2 = _interopRequireDefault(_DevPageMiddleware);
 
-	var _RefreshMiddleware = __webpack_require__(956);
+	var _RefreshMiddleware = __webpack_require__(913);
 
 	var _RefreshMiddleware2 = _interopRequireDefault(_RefreshMiddleware);
 
-	var _reducers = __webpack_require__(913);
+	var _reducers = __webpack_require__(914);
 
 	var _reducers2 = _interopRequireDefault(_reducers);
 
@@ -67524,11 +67512,53 @@
 
 	'use strict';
 
+	var _Async = __webpack_require__(887);
+
+	var _Projects = __webpack_require__(743);
+
+	function triggerInvalidate(payload, dispatch) {
+
+	    if (payload.entity_name == 'project') {
+	        dispatch((0, _Projects.invalidateProjects)([payload.entity_ref]));
+	    } else {
+	        console.log("Unknown entity to refresh: " + payload.entity_name);
+	    }
+	}
+
+	function refreshMiddleware(_ref) {
+
+	    var dispatch = _ref.dispatch;
+	    var getState = _ref.getState;
+
+	    return function (next) {
+	        return function (action) {
+
+	            var state = getState();
+	            if (action && action.type == _Async.ASYNC_REFRESH_NOTIFICATION) {
+
+	                var payload = action.payload || [{}];
+	                payload.map(function (d) {
+	                    triggerInvalidate(d, dispatch);
+	                });
+	            }
+	            return next(action);
+	        };
+	    };
+	}
+
+	module.exports = refreshMiddleware;
+
+/***/ },
+/* 914 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+
 	Object.defineProperty(exports, "__esModule", {
 	    value: true
 	});
 
-	var _merge = __webpack_require__(914);
+	var _merge = __webpack_require__(915);
 
 	var _merge2 = _interopRequireDefault(_merge);
 
@@ -67540,43 +67570,43 @@
 
 	var _map2 = _interopRequireDefault(_map);
 
-	var _filter = __webpack_require__(945);
+	var _filter = __webpack_require__(946);
 
 	var _filter2 = _interopRequireDefault(_filter);
 
-	var _item_list = __webpack_require__(947);
+	var _item_list = __webpack_require__(948);
 
 	var _item_list2 = _interopRequireDefault(_item_list);
 
-	var _issue = __webpack_require__(948);
+	var _issue = __webpack_require__(949);
 
 	var _issue2 = _interopRequireDefault(_issue);
 
-	var _issue_general_details = __webpack_require__(949);
+	var _issue_general_details = __webpack_require__(950);
 
 	var _issue_general_details2 = _interopRequireDefault(_issue_general_details);
 
-	var _notification_bar = __webpack_require__(950);
+	var _notification_bar = __webpack_require__(951);
 
 	var _notification_bar2 = _interopRequireDefault(_notification_bar);
 
-	var _project = __webpack_require__(951);
+	var _project = __webpack_require__(952);
 
 	var _project2 = _interopRequireDefault(_project);
 
-	var _rie = __webpack_require__(952);
+	var _rie = __webpack_require__(953);
 
 	var _rie2 = _interopRequireDefault(_rie);
 
-	var _sprint = __webpack_require__(953);
+	var _sprint = __webpack_require__(954);
 
 	var _sprint2 = _interopRequireDefault(_sprint);
 
-	var _user = __webpack_require__(954);
+	var _user = __webpack_require__(955);
 
 	var _user2 = _interopRequireDefault(_user);
 
-	var _websockets = __webpack_require__(955);
+	var _websockets = __webpack_require__(956);
 
 	var _websockets2 = _interopRequireDefault(_websockets);
 
@@ -67599,10 +67629,10 @@
 	exports.default = rootReducer;
 
 /***/ },
-/* 914 */
+/* 915 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var baseMerge = __webpack_require__(915),
+	var baseMerge = __webpack_require__(916),
 	    createAssigner = __webpack_require__(895);
 
 	/**
@@ -67644,13 +67674,13 @@
 
 
 /***/ },
-/* 915 */
+/* 916 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var Stack = __webpack_require__(677),
-	    arrayEach = __webpack_require__(916),
-	    assignMergeValue = __webpack_require__(917),
-	    baseMergeDeep = __webpack_require__(918),
+	    arrayEach = __webpack_require__(917),
+	    assignMergeValue = __webpack_require__(918),
+	    baseMergeDeep = __webpack_require__(919),
 	    isArray = __webpack_require__(564),
 	    isObject = __webpack_require__(565),
 	    isTypedArray = __webpack_require__(705),
@@ -67700,7 +67730,7 @@
 
 
 /***/ },
-/* 916 */
+/* 917 */
 /***/ function(module, exports) {
 
 	/**
@@ -67728,7 +67758,7 @@
 
 
 /***/ },
-/* 917 */
+/* 918 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var eq = __webpack_require__(593);
@@ -67753,12 +67783,12 @@
 
 
 /***/ },
-/* 918 */
+/* 919 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var assignMergeValue = __webpack_require__(917),
-	    baseClone = __webpack_require__(919),
-	    copyArray = __webpack_require__(922),
+	var assignMergeValue = __webpack_require__(918),
+	    baseClone = __webpack_require__(920),
+	    copyArray = __webpack_require__(923),
 	    isArguments = __webpack_require__(697),
 	    isArray = __webpack_require__(564),
 	    isArrayLikeObject = __webpack_require__(613),
@@ -67766,7 +67796,7 @@
 	    isObject = __webpack_require__(565),
 	    isPlainObject = __webpack_require__(543),
 	    isTypedArray = __webpack_require__(705),
-	    toPlainObject = __webpack_require__(944);
+	    toPlainObject = __webpack_require__(945);
 
 	/**
 	 * A specialized version of `baseMerge` for arrays and objects which performs
@@ -67842,23 +67872,23 @@
 
 
 /***/ },
-/* 919 */
+/* 920 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var Stack = __webpack_require__(677),
-	    arrayEach = __webpack_require__(916),
+	    arrayEach = __webpack_require__(917),
 	    assignValue = __webpack_require__(894),
-	    baseAssign = __webpack_require__(920),
-	    cloneBuffer = __webpack_require__(921),
-	    copyArray = __webpack_require__(922),
-	    copySymbols = __webpack_require__(923),
-	    getAllKeys = __webpack_require__(926),
+	    baseAssign = __webpack_require__(921),
+	    cloneBuffer = __webpack_require__(922),
+	    copyArray = __webpack_require__(923),
+	    copySymbols = __webpack_require__(924),
+	    getAllKeys = __webpack_require__(927),
 	    getTag = __webpack_require__(701),
-	    initCloneArray = __webpack_require__(928),
-	    initCloneByTag = __webpack_require__(929),
-	    initCloneObject = __webpack_require__(940),
+	    initCloneArray = __webpack_require__(929),
+	    initCloneByTag = __webpack_require__(930),
+	    initCloneObject = __webpack_require__(941),
 	    isArray = __webpack_require__(564),
-	    isBuffer = __webpack_require__(942),
+	    isBuffer = __webpack_require__(943),
 	    isHostObject = __webpack_require__(545),
 	    isObject = __webpack_require__(565),
 	    keys = __webpack_require__(693);
@@ -67987,7 +68017,7 @@
 
 
 /***/ },
-/* 920 */
+/* 921 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var copyObject = __webpack_require__(893),
@@ -68010,7 +68040,7 @@
 
 
 /***/ },
-/* 921 */
+/* 922 */
 /***/ function(module, exports) {
 
 	/**
@@ -68034,7 +68064,7 @@
 
 
 /***/ },
-/* 922 */
+/* 923 */
 /***/ function(module, exports) {
 
 	/**
@@ -68060,11 +68090,11 @@
 
 
 /***/ },
-/* 923 */
+/* 924 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var copyObject = __webpack_require__(893),
-	    getSymbols = __webpack_require__(924);
+	    getSymbols = __webpack_require__(925);
 
 	/**
 	 * Copies own symbol properties of `source` to `object`.
@@ -68082,10 +68112,10 @@
 
 
 /***/ },
-/* 924 */
+/* 925 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var stubArray = __webpack_require__(925);
+	var stubArray = __webpack_require__(926);
 
 	/** Built-in value references. */
 	var getOwnPropertySymbols = Object.getOwnPropertySymbols;
@@ -68112,7 +68142,7 @@
 
 
 /***/ },
-/* 925 */
+/* 926 */
 /***/ function(module, exports) {
 
 	/**
@@ -68141,11 +68171,11 @@
 
 
 /***/ },
-/* 926 */
+/* 927 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var baseGetAllKeys = __webpack_require__(927),
-	    getSymbols = __webpack_require__(924),
+	var baseGetAllKeys = __webpack_require__(928),
+	    getSymbols = __webpack_require__(925),
 	    keys = __webpack_require__(693);
 
 	/**
@@ -68163,7 +68193,7 @@
 
 
 /***/ },
-/* 927 */
+/* 928 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var arrayPush = __webpack_require__(629),
@@ -68189,7 +68219,7 @@
 
 
 /***/ },
-/* 928 */
+/* 929 */
 /***/ function(module, exports) {
 
 	/** Used for built-in method references. */
@@ -68221,16 +68251,16 @@
 
 
 /***/ },
-/* 929 */
+/* 930 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var cloneArrayBuffer = __webpack_require__(930),
-	    cloneDataView = __webpack_require__(931),
-	    cloneMap = __webpack_require__(932),
-	    cloneRegExp = __webpack_require__(935),
-	    cloneSet = __webpack_require__(936),
-	    cloneSymbol = __webpack_require__(938),
-	    cloneTypedArray = __webpack_require__(939);
+	var cloneArrayBuffer = __webpack_require__(931),
+	    cloneDataView = __webpack_require__(932),
+	    cloneMap = __webpack_require__(933),
+	    cloneRegExp = __webpack_require__(936),
+	    cloneSet = __webpack_require__(937),
+	    cloneSymbol = __webpack_require__(939),
+	    cloneTypedArray = __webpack_require__(940);
 
 	/** `Object#toString` result references. */
 	var boolTag = '[object Boolean]',
@@ -68307,7 +68337,7 @@
 
 
 /***/ },
-/* 930 */
+/* 931 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var Uint8Array = __webpack_require__(689);
@@ -68329,10 +68359,10 @@
 
 
 /***/ },
-/* 931 */
+/* 932 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var cloneArrayBuffer = __webpack_require__(930);
+	var cloneArrayBuffer = __webpack_require__(931);
 
 	/**
 	 * Creates a clone of `dataView`.
@@ -68351,11 +68381,11 @@
 
 
 /***/ },
-/* 932 */
+/* 933 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var addMapEntry = __webpack_require__(933),
-	    arrayReduce = __webpack_require__(934),
+	var addMapEntry = __webpack_require__(934),
+	    arrayReduce = __webpack_require__(935),
 	    mapToArray = __webpack_require__(690);
 
 	/**
@@ -68376,7 +68406,7 @@
 
 
 /***/ },
-/* 933 */
+/* 934 */
 /***/ function(module, exports) {
 
 	/**
@@ -68397,7 +68427,7 @@
 
 
 /***/ },
-/* 934 */
+/* 935 */
 /***/ function(module, exports) {
 
 	/**
@@ -68429,7 +68459,7 @@
 
 
 /***/ },
-/* 935 */
+/* 936 */
 /***/ function(module, exports) {
 
 	/** Used to match `RegExp` flags from their coerced string values. */
@@ -68452,11 +68482,11 @@
 
 
 /***/ },
-/* 936 */
+/* 937 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var addSetEntry = __webpack_require__(937),
-	    arrayReduce = __webpack_require__(934),
+	var addSetEntry = __webpack_require__(938),
+	    arrayReduce = __webpack_require__(935),
 	    setToArray = __webpack_require__(634);
 
 	/**
@@ -68477,7 +68507,7 @@
 
 
 /***/ },
-/* 937 */
+/* 938 */
 /***/ function(module, exports) {
 
 	/**
@@ -68497,7 +68527,7 @@
 
 
 /***/ },
-/* 938 */
+/* 939 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var Symbol = __webpack_require__(688);
@@ -68521,10 +68551,10 @@
 
 
 /***/ },
-/* 939 */
+/* 940 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var cloneArrayBuffer = __webpack_require__(930);
+	var cloneArrayBuffer = __webpack_require__(931);
 
 	/**
 	 * Creates a clone of `typedArray`.
@@ -68543,10 +68573,10 @@
 
 
 /***/ },
-/* 940 */
+/* 941 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var baseCreate = __webpack_require__(941),
+	var baseCreate = __webpack_require__(942),
 	    getPrototype = __webpack_require__(544),
 	    isPrototype = __webpack_require__(700);
 
@@ -68567,7 +68597,7 @@
 
 
 /***/ },
-/* 941 */
+/* 942 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var isObject = __webpack_require__(565);
@@ -68591,11 +68621,11 @@
 
 
 /***/ },
-/* 942 */
+/* 943 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(module) {var root = __webpack_require__(581),
-	    stubFalse = __webpack_require__(943);
+	    stubFalse = __webpack_require__(944);
 
 	/** Detect free variable `exports`. */
 	var freeExports = typeof exports == 'object' && exports;
@@ -68635,7 +68665,7 @@
 	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(746)(module)))
 
 /***/ },
-/* 943 */
+/* 944 */
 /***/ function(module, exports) {
 
 	/**
@@ -68659,7 +68689,7 @@
 
 
 /***/ },
-/* 944 */
+/* 945 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var copyObject = __webpack_require__(893),
@@ -68697,7 +68727,7 @@
 
 
 /***/ },
-/* 945 */
+/* 946 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -68711,7 +68741,7 @@
 
 	var _map2 = _interopRequireDefault(_map);
 
-	var _assign = __webpack_require__(946);
+	var _assign = __webpack_require__(947);
 
 	var _assign2 = _interopRequireDefault(_assign);
 
@@ -68751,7 +68781,7 @@
 	}
 
 /***/ },
-/* 946 */
+/* 947 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var assignValue = __webpack_require__(894),
@@ -68821,7 +68851,7 @@
 
 
 /***/ },
-/* 947 */
+/* 948 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -68835,7 +68865,7 @@
 
 	var _map2 = _interopRequireDefault(_map);
 
-	var _merge = __webpack_require__(914);
+	var _merge = __webpack_require__(915);
 
 	var _merge2 = _interopRequireDefault(_merge);
 
@@ -68940,7 +68970,7 @@
 	}
 
 /***/ },
-/* 948 */
+/* 949 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -68954,7 +68984,7 @@
 
 	var _map2 = _interopRequireDefault(_map);
 
-	var _assign = __webpack_require__(946);
+	var _assign = __webpack_require__(947);
 
 	var _assign2 = _interopRequireDefault(_assign);
 
@@ -69071,7 +69101,7 @@
 	}
 
 /***/ },
-/* 949 */
+/* 950 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -69085,7 +69115,7 @@
 
 	var _map2 = _interopRequireDefault(_map);
 
-	var _assign = __webpack_require__(946);
+	var _assign = __webpack_require__(947);
 
 	var _assign2 = _interopRequireDefault(_assign);
 
@@ -69141,7 +69171,7 @@
 	}
 
 /***/ },
-/* 950 */
+/* 951 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -69155,7 +69185,7 @@
 
 	var _map2 = _interopRequireDefault(_map);
 
-	var _merge = __webpack_require__(914);
+	var _merge = __webpack_require__(915);
 
 	var _merge2 = _interopRequireDefault(_merge);
 
@@ -69180,7 +69210,7 @@
 	}
 
 /***/ },
-/* 951 */
+/* 952 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -69197,7 +69227,7 @@
 
 	var _map2 = _interopRequireDefault(_map);
 
-	var _assign = __webpack_require__(946);
+	var _assign = __webpack_require__(947);
 
 	var _assign2 = _interopRequireDefault(_assign);
 
@@ -69281,7 +69311,7 @@
 	}
 
 /***/ },
-/* 952 */
+/* 953 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -69295,7 +69325,7 @@
 
 	var _map2 = _interopRequireDefault(_map);
 
-	var _assign = __webpack_require__(946);
+	var _assign = __webpack_require__(947);
 
 	var _assign2 = _interopRequireDefault(_assign);
 
@@ -69362,7 +69392,7 @@
 	}
 
 /***/ },
-/* 953 */
+/* 954 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -69379,7 +69409,7 @@
 
 	var _map2 = _interopRequireDefault(_map);
 
-	var _assign = __webpack_require__(946);
+	var _assign = __webpack_require__(947);
 
 	var _assign2 = _interopRequireDefault(_assign);
 
@@ -69479,7 +69509,7 @@
 	}
 
 /***/ },
-/* 954 */
+/* 955 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -69496,7 +69526,7 @@
 
 	var _map2 = _interopRequireDefault(_map);
 
-	var _assign = __webpack_require__(946);
+	var _assign = __webpack_require__(947);
 
 	var _assign2 = _interopRequireDefault(_assign);
 
@@ -69575,7 +69605,7 @@
 	}
 
 /***/ },
-/* 955 */
+/* 956 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -69604,48 +69634,6 @@
 	            return state;
 	    }
 	}
-
-/***/ },
-/* 956 */
-/***/ function(module, exports, __webpack_require__) {
-
-	'use strict';
-
-	var _Async = __webpack_require__(887);
-
-	var _Projects = __webpack_require__(743);
-
-	function triggerInvalidate(payload, dispatch) {
-
-	    if (payload.entity_name == 'project') {
-	        dispatch((0, _Projects.invalidateProjects)([payload.entity_ref]));
-	    } else {
-	        console.log("Unknown entity to refresh: " + payload.entity_name);
-	    }
-	}
-
-	function refreshMiddleware(_ref) {
-
-	    var dispatch = _ref.dispatch;
-	    var getState = _ref.getState;
-
-	    return function (next) {
-	        return function (action) {
-
-	            var state = getState();
-	            if (action && action.type == _Async.ASYNC_REFRESH_NOTIFICATION) {
-
-	                var payload = action.payload || [{}];
-	                payload.map(function (d) {
-	                    triggerInvalidate(d, dispatch);
-	                });
-	            }
-	            return next(action);
-	        };
-	    };
-	}
-
-	module.exports = refreshMiddleware;
 
 /***/ }
 /******/ ]);
