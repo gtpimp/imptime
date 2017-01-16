@@ -190,23 +190,33 @@ TEMPLATES = [
 # #     'django.template.loaders.eggs.Loader',
 # )
 
-MIDDLEWARE = (
-    # 'raven.contrib.django.raven_compat.middleware.Sentry404CatchMiddleware',
-    # 'corsheaders.middleware.CorsMiddleware',
-    'django.middleware.common.CommonMiddleware',
+MIDDLEWARE = [
+    'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
+    'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
-    # 'pagination.middleware.PaginationMiddleware',
-    
-    # Uncomment the next line for simple clickjacking protection:
-    # 'django.middleware.clickjacking.XFrameOptionsMiddleware',
-    
+    'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'async.middleware.MergeAsyncNotificationsMiddleware',
-    # 'raven.contrib.django.raven_compat.middleware.SentryResponseErrorIdMiddleware'
+]
 
-)
+# MIDDLEWARE = (
+#     # 'raven.contrib.django.raven_compat.middleware.Sentry404CatchMiddleware',
+#     # 'corsheaders.middleware.CorsMiddleware',
+#     'django.contrib.sessions.middleware.SessionMiddleware',
+#     'django.contrib.auth.middleware.AuthenticationMiddleware',
+#     'django.middleware.common.CommonMiddleware',
+#     'django.middleware.csrf.CsrfViewMiddleware',
+#     'django.contrib.messages.middleware.MessageMiddleware',
+#     # 'pagination.middleware.PaginationMiddleware',
+    
+#     # Uncomment the next line for simple clickjacking protection:
+#     # 'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    
+#     # 'raven.contrib.django.raven_compat.middleware.SentryResponseErrorIdMiddleware'
+
+# )
 
 ROOT_URLCONF = 'implicitdesign.urls'
 

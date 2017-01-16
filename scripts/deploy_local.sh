@@ -6,7 +6,7 @@ sudo ls > /dev/null
 # install dependencies
 sudo apt install python-dev postgresql-server-dev-9.5 virtualenv
 sudo apt install libjpeg-dev libxml2-dev libxslt1-dev
-
+sudo apt install redis-server
 
 
 ROOT=`git rev-parse --show-toplevel`

@@ -21,7 +21,10 @@ from collections import OrderedDict
 logger = logging.getLogger(__name__)
 
 def home(request, template="home.html", context=None):
-    return HttpResponseRedirect(reverse("landing_page"))
+    if hasattr(request, 'user'):
+        return HttpResponseRedirect(reverse("landing_page"))
+    else:
+        return HttpResponseRedirect(reverse("auth_login"))
 
 
 def primary_login(request, template="registration/login.html", context=None):
