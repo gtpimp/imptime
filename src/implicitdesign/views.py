@@ -13,6 +13,8 @@ import settings
 from zipfile import ZipFile
 from django.template import RequestContext
 from emacs_importer.process_for_timepiece import Processor
+from django.contrib.auth import authenticate, login
+from forms import ImpAuthenticationForm
 from datetime import datetime
 import logging
 from collections import OrderedDict
@@ -20,6 +22,23 @@ logger = logging.getLogger(__name__)
 
 def home(request, template="home.html", context=None):
     return HttpResponseRedirect(reverse("landing_page"))
+
+
+def primary_login(request, template="registration/login.html", context=None):
+    context = context or {}
+    form = ImpAuthenticationForm(request.POST or None)
+    if form.is_valid():
+        user = authenticate(username=form.cleaned_data['username'],
+                            password=form.cleaned_data['password'])
+        if user is not None:
+            login(request, user)
+            return HttpResponseRedirect(request.GET.get('next', "/"))
+        else:
+            context['errors'] = 'Invalid login credentials'
+            
+    context['form'] = form
+    return render(request, template, context)
+        
 
 def error_handler_400(request, template="error_base.html", context=None):
     context = context or {}

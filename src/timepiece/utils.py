@@ -60,11 +60,15 @@ def render_with(template_name):
             response = view_func(*args, **kwargs)
 
             if isinstance(response, HttpResponse):
-                if isinstance(response, HttpResponseRedirect) and \
-                  'next' in request.REQUEST:
-                    return HttpResponseRedirect(request.REQUEST['next'])
-                else:
+                try:
+                    if isinstance(response, HttpResponseRedirect) and \
+                          'next' in request.REQUEST:
+                        return HttpResponseRedirect(request.REQUEST['next'])
+                    else:
+                        return response
+                except AttributeError:
                     return response
+                
             else:
                 # assume response is a context dictionary
                 context = response

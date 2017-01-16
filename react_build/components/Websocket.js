@@ -46,7 +46,7 @@ class Websocket extends React.Component {
                 this.state.ws = null;
                 setTimeout(() => {
                     this.setState({attempts: this.state.attempts++});
-                    //this.setupWebsocket();
+                    this.setupWebsocket();
                 }, time);
             }
         }

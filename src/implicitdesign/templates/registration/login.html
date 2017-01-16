@@ -1,4 +1,6 @@
-{% extends "admin/base_site.html" %}{% load i18n admin_static %}{% load url from future %}
+{% extends "admin/base_site.html" %}
+{% load i18n admin_static %}
+{% load static %}
 
 {% block bodyid %}login{% endblock %}
 
@@ -29,8 +31,15 @@
                 {{ error }}
             </p>
         {% endfor %}
-    {% endif %}
-    <link rel="stylesheet" type="text/css" href="{{ STATIC_URL }}admin/css/login.css"/>
+            {% endif %}
+
+            {% if errors %}
+            <p class="errornote">
+                Invalid login credentials.
+            </p>
+            {% endif %}
+            
+    <link rel="stylesheet" type="text/css" href="{% static 'admin/css/login.css' %}"/>
     <div id="content-main" class="container-fluid">
         <form action="{{ app_path }}" method="post" id="login-form">{% csrf_token %}
             <div class="form-row">

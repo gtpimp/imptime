@@ -1,11 +1,11 @@
 from threading import local
 from channels import Group
 import json
+from collections import OrderedDict
 from async.refresh_consumer import REFRESH_GROUP_NAME
 import logging
 
 logger = logging.getLogger(__name__)
-
 _active = local()
 
 def add_notification(notification):
@@ -26,17 +26,16 @@ class MergeAsyncNotificationsMiddleware(object):
         return response
 
     def merge_duplicate_notifications(self, notifications):
-        valid_entities = set()
-        merged_notifications = []
+        merged_notifications = OrderedDict()
         for notification in notifications:
-            entity_key = (notification['entity'], notification['entity_ref'])
-            if entity_key not in valid_entities:
-                valid_entities.add(entity_key)
-                merged_notifications.append(notification)
-        return merged_notifications
+            entity_key = (notification['entity_name'], notification['entity_ref'])
+            merged_notifications[entity_key] = notification
+        return merged_notifications.values()
 
     def post_notifications(self, notifications=None):
         if notifications is None:
-            notifications = self.merge_duplicate_notifications(_active.notifications)
+            notifications = _active.notifications
             delattr(_active, 'notifications')
+            notifications = self.merge_duplicate_notifications(notifications)
+        if notifications:
             Group(REFRESH_GROUP_NAME).send({"text":json.dumps(notifications)})

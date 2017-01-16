@@ -4,6 +4,7 @@ from dateutil.relativedelta import relativedelta
 import api
 import calendar
 from lib.models import model_to_dict_with_date_support
+from async.refresh_notifier import RefreshNotifier
 from caldav_helper import CalDavHelper
 import uuid
 from colorful.fields import RGBColorField
@@ -146,6 +147,8 @@ class Business(models.Model):
     slug = models.SlugField(max_length=255, unique=True, blank=True)
     email = models.EmailField(blank=True)
     description = models.TextField(blank=True)
+    created = models.DateTimeField(auto_now_add=True)
+    modified = models.DateTimeField(auto_now=True)
     notes = models.TextField(blank=True)
     external_id = models.CharField(max_length=32, blank=True)
     objects = BusinessQuerySet.as_manager()
@@ -316,12 +319,18 @@ class Business(models.Model):
 
     def save(self, *args, **kwargs):
         queryset = Business.objects.all()
+        was_created = not self.id
         if not self.slug:
             if self.id:
                 queryset = queryset.exclude(id__exact=self.id)
             self.slug = utils.slugify_uniquely(self.name, queryset, 'slug')
         super(Business, self).save(*args, **kwargs)
-        
+
+        if was_created:
+            RefreshNotifier().notify_model_create(self)
+        else:
+            RefreshNotifier().notify_model_update(self)
+
     def autocreate_all_status_colours(self):
         # incomplete
         for status in Issue.objects.filter(project__business=self).values('status').distinct():
@@ -3253,7 +3262,6 @@ class IssueQuerySet(QuerySet):
         user (typically the logged in user) is assigned to """
         if user.is_superuser or user.has_perm('timepiece.belongs_to_all_projects'):
             return self
-        import pdb; pdb.set_trace()
         return self.filter(project__business__users=user)
 
 

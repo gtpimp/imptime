@@ -39,11 +39,8 @@ urlpatterns = [
     url(r'^selectable/', include('selectable.urls'), name='selectable'),
     url(r'^us/', views.us),
 
-    url(r'^accounts/login/$', django_auth.login,
-        {'template_name': 'admin/login.html',
-         'authentication_form': ImpAuthenticationForm},
-        name='auth_login'),
-        
+    url(r'^accounts/login/$', views.primary_login, name='auth_login'),
+         
     url(r'^accounts/logout/$', django_auth.logout_then_login, name='auth_logout'),
     url(r'^accounts/password-change/$', django_auth.password_change, name='change_password'),
     url(r'^accounts/password-change/done/$', django_auth.password_change_done, name='password_change_done'),
