@@ -3,6 +3,12 @@
 #force a sudo early
 sudo ls > /dev/null
 
+# install dependencies
+sudo apt install python-dev postgresql-server-dev-9.5 virtualenv
+sudo apt install libjpeg-dev libxml2-dev libxslt1-dev
+
+
+
 ROOT=`git rev-parse --show-toplevel`
 cd ${ROOT}
 SRC=${ROOT}/src
