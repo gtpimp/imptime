@@ -130,10 +130,10 @@ function tryFetchMatchingItems(dispatch, state, list_key,
 			       matching_items_key, matching_items_promise_func) {
     // The second half of tryFetchListAndItems, separated out for clarity
     
-    const required_item_refs = required_item_ids.map((item_id, index) => "" + item_id)
+    const required_item_refs = map(required_item_ids, function(item_id, index) { return "" + item_id })
     const matching_items = state[matching_items_key] || {}
     const matching_item_ids = keys(matching_items.items_by_id || {}) // magic, assumes the matching_items reducer will use 'items_by_id' as well
-    const matching_item_refs = matching_item_ids.map((item_id, index) => "" + item_id)
+    const matching_item_refs = map(matching_item_ids, function(item_id, index) { return "" + item_id })
     
     let unmatching_item_ids = difference(required_item_refs, matching_item_refs)
     unmatching_item_ids = union(unmatching_item_ids, matching_items.invalidated_item_ids || [])

@@ -50,7 +50,6 @@ class Websocket extends Component {
 
     onMessageFromSocket(data) {
         const { dispatch } = this.props
-        console.log("Websocket refreshed")
         dispatch(asyncRefreshNotification(data))
     }    
 

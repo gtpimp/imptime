@@ -5,7 +5,6 @@ import {
 import { invalidateProjects } from '../actions/Projects'
 
 function triggerInvalidate(payload, dispatch) {
-
     if ( payload.entity_name == 'project' ) {
         dispatch(invalidateProjects([payload.entity_ref]))
     } else {

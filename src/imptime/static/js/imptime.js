@@ -41669,42 +41669,50 @@
 													var _props = this.props;
 													var dispatch = _props.dispatch;
 													var list_key = _props.list_key;
+													// dispatch(fetchProjectsIfNeeded(list_key))
+									}
+					}, {
+									key: 'componentWillReceiveProps',
+									value: function componentWillReceiveProps() {
+													var _props2 = this.props;
+													var dispatch = _props2.dispatch;
+													var list_key = _props2.list_key;
 
 													dispatch((0, _Projects.fetchProjectsIfNeeded)(list_key));
 									}
 					}, {
 									key: 'onCollapse',
 									value: function onCollapse() {
-													var _props2 = this.props;
-													var dispatch = _props2.dispatch;
-													var list_key = _props2.list_key;
+													var _props3 = this.props;
+													var dispatch = _props3.dispatch;
+													var list_key = _props3.list_key;
 
 													dispatch((0, _ItemList.collapse_list)(list_key));
 									}
 					}, {
 									key: 'onExpand',
 									value: function onExpand() {
-													var _props3 = this.props;
-													var dispatch = _props3.dispatch;
-													var list_key = _props3.list_key;
+													var _props4 = this.props;
+													var dispatch = _props4.dispatch;
+													var list_key = _props4.list_key;
 
 													dispatch((0, _ItemList.expand_list)(list_key));
 									}
 					}, {
 									key: 'onClickedProject',
 									value: function onClickedProject(project_id) {
-													var _props4 = this.props;
-													var dispatch = _props4.dispatch;
-													var list_key = _props4.list_key;
+													var _props5 = this.props;
+													var dispatch = _props5.dispatch;
+													var list_key = _props5.list_key;
 
 													dispatch((0, _ItemList.selectItems)(list_key, [project_id]));
 									}
 					}, {
 									key: 'onChangePage',
 									value: function onChangePage() {
-													var _props5 = this.props;
-													var dispatch = _props5.dispatch;
-													var list_key = _props5.list_key;
+													var _props6 = this.props;
+													var dispatch = _props6.dispatch;
+													var list_key = _props6.list_key;
 
 													dispatch((0, _ItemList.invalidateList)(list_key));
 													dispatch((0, _Projects.fetchProjectsIfNeeded)(list_key));
@@ -41712,10 +41720,10 @@
 					}, {
 									key: 'onRefresh',
 									value: function onRefresh(event) {
-													var _props6 = this.props;
-													var dispatch = _props6.dispatch;
-													var project_ids = _props6.project_ids;
-													var list_key = _props6.list_key;
+													var _props7 = this.props;
+													var dispatch = _props7.dispatch;
+													var project_ids = _props7.project_ids;
+													var list_key = _props7.list_key;
 
 													dispatch((0, _ItemList.invalidateList)(list_key));
 													dispatch((0, _Projects.invalidateAllProjects)());
@@ -41741,9 +41749,9 @@
 									value: function render_collapsed() {
 													var _this2 = this;
 
-													var _props7 = this.props;
-													var projects = _props7.projects;
-													var selected_items = _props7.selected_items;
+													var _props8 = this.props;
+													var projects = _props8.projects;
+													var selected_items = _props8.selected_items;
 
 
 													return _react2.default.createElement(
@@ -41797,11 +41805,11 @@
 									value: function render_expanded() {
 													var _this4 = this;
 
-													var _props8 = this.props;
-													var projects = _props8.projects;
-													var list_key = _props8.list_key;
-													var is_loading = _props8.is_loading;
-													var has_items = _props8.has_items;
+													var _props9 = this.props;
+													var projects = _props9.projects;
+													var list_key = _props9.list_key;
+													var is_loading = _props9.is_loading;
+													var has_items = _props9.has_items;
 
 
 													return _react2.default.createElement(
@@ -41856,10 +41864,10 @@
 					}, {
 									key: 'render',
 									value: function render() {
-													var _props9 = this.props;
-													var is_loading = _props9.is_loading;
-													var is_collapsed = _props9.is_collapsed;
-													var is_expanded = _props9.is_expanded;
+													var _props10 = this.props;
+													var is_loading = _props10.is_loading;
+													var is_collapsed = _props10.is_collapsed;
+													var is_expanded = _props10.is_expanded;
 
 
 													return _react2.default.createElement(
@@ -44235,12 +44243,12 @@
 	function tryFetchMatchingItems(dispatch, state, list_key, required_item_ids, matching_items_key, matching_items_promise_func) {
 	    // The second half of tryFetchListAndItems, separated out for clarity
 
-	    var required_item_refs = required_item_ids.map(function (item_id, index) {
+	    var required_item_refs = (0, _map2.default)(required_item_ids, function (item_id, index) {
 	        return "" + item_id;
 	    });
 	    var matching_items = state[matching_items_key] || {};
 	    var matching_item_ids = (0, _keys2.default)(matching_items.items_by_id || {}); // magic, assumes the matching_items reducer will use 'items_by_id' as well
-	    var matching_item_refs = matching_item_ids.map(function (item_id, index) {
+	    var matching_item_refs = (0, _map2.default)(matching_item_ids, function (item_id, index) {
 	        return "" + item_id;
 	    });
 
@@ -65705,7 +65713,6 @@
 	        value: function onMessageFromSocket(data) {
 	            var dispatch = this.props.dispatch;
 
-	            console.log("Websocket refreshed");
 	            dispatch((0, _Async.asyncRefreshNotification)(data));
 	        }
 	    }, {
@@ -67517,7 +67524,6 @@
 	var _Projects = __webpack_require__(743);
 
 	function triggerInvalidate(payload, dispatch) {
-
 	    if (payload.entity_name == 'project') {
 	        dispatch((0, _Projects.invalidateProjects)([payload.entity_ref]));
 	    } else {

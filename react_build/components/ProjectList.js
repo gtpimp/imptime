@@ -27,7 +27,12 @@ export class ProjectList extends Component {
 
     componentDidMount() {
 	const { dispatch, list_key } = this.props
-	dispatch(fetchProjectsIfNeeded(list_key))
+	// dispatch(fetchProjectsIfNeeded(list_key))
+    }
+
+    componentWillReceiveProps() {
+        const { dispatch, list_key } = this.props
+        dispatch(fetchProjectsIfNeeded(list_key))
     }
     
     onCollapse() {
