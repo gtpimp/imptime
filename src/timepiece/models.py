@@ -3320,9 +3320,9 @@ class Issue(models.Model):
 
     objects = IssueQuerySet().as_manager()
 
-    def save(*args, **kwargs):
+    def save(self, *args, **kwargs):
         was_created = not self.id
-        super(self, Issue).save(*args, **kwargs)
+        super(Issue, self).save(*args, **kwargs)
         if was_created:
             RefreshNotifier().notify_model_create(self)
         else:
