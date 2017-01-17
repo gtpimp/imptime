@@ -213,7 +213,7 @@ function mapStateToProps(state, props) {
 	is_visible: issue_id || is_creating_issue || false,
 	is_creating_issue: is_creating_issue,
 	candidate_issue: candidate_issue,
-        description: issue.description,
+        description: general_details.description,
         subject: issue.subject,
         number: issue.number
     }

@@ -63752,7 +63752,7 @@
 	'use strict';
 
 	Object.defineProperty(exports, "__esModule", {
-				value: true
+					value: true
 	});
 	exports.RIEModeToggler = undefined;
 
@@ -63779,214 +63779,221 @@
 	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 
 	var RIEModeToggler = exports.RIEModeToggler = function (_React$Component) {
-				_inherits(RIEModeToggler, _React$Component);
+					_inherits(RIEModeToggler, _React$Component);
 
-				function RIEModeToggler(props) {
-							_classCallCheck(this, RIEModeToggler);
+					function RIEModeToggler(props) {
+									_classCallCheck(this, RIEModeToggler);
 
-							var _this = _possibleConstructorReturn(this, Object.getPrototypeOf(RIEModeToggler).call(this, props));
+									var _this = _possibleConstructorReturn(this, Object.getPrototypeOf(RIEModeToggler).call(this, props));
 
-							_this.startEditing = _this.startEditing.bind(_this);
-							_this.cancelEditing = _this.cancelEditing.bind(_this);
-							_this.stopEditing = _this.stopEditing.bind(_this);
-							_this.finishEditing = _this.finishEditing.bind(_this);
-							_this.onChange = _this.onChange.bind(_this);
-							_this.keyDown = _this.keyDown.bind(_this);
-							_this.elementClick = _this.elementClick.bind(_this);
-							return _this;
-				}
+									_this.startEditing = _this.startEditing.bind(_this);
+									_this.cancelEditing = _this.cancelEditing.bind(_this);
+									_this.stopEditing = _this.stopEditing.bind(_this);
+									_this.finishEditing = _this.finishEditing.bind(_this);
+									_this.onChange = _this.onChange.bind(_this);
+									_this.keyDown = _this.keyDown.bind(_this);
+									_this.elementClick = _this.elementClick.bind(_this);
+									return _this;
+					}
 
-				_createClass(RIEModeToggler, [{
-							key: 'componentDidMount',
-							value: function componentDidMount() {
-										var _props = this.props;
-										var dispatch = _props.dispatch;
-										var rie_key = _props.rie_key;
-										var initialValue = _props.initialValue;
+					_createClass(RIEModeToggler, [{
+									key: 'componentDidMount',
+									value: function componentDidMount() {
+													var _props = this.props;
+													var dispatch = _props.dispatch;
+													var rie_key = _props.rie_key;
+													var initialValue = _props.initialValue;
 
 
-										this.setState({ value: initialValue });
-
-										if (this.props.initialState == 'editing') {
-													this.startEditing();
-										}
-							}
-				}, {
-							key: 'componentWillUpdate',
-							value: function componentWillUpdate() {
-										var _props2 = this.props;
-										var dispatch = _props2.dispatch;
-										var rie_key = _props2.rie_key;
-										var initialValue = _props2.initialValue;
-										var original_initial_value = _props2.original_initial_value;
-										var is_editing = _props2.is_editing;
-
-										if (!this.state || !is_editing && initialValue != this.state.value) {
 													this.setState({ value: initialValue });
-										}
-							}
-				}, {
-							key: 'onChange',
-							value: function onChange(new_value) {
-										var _props3 = this.props;
-										var dispatch = _props3.dispatch;
-										var rie_key = _props3.rie_key;
 
-										this.setState({ value: new_value });
-							}
-				}, {
-							key: 'finishEditing',
-							value: function finishEditing(current_value) {
-										var v = current_value || this.state.value || this.props.value || None;
-										if (this.props.onChange) {
-													this.props.onChange(v);
-										}
-										this.stopEditing();
-							}
-				}, {
-							key: 'startEditing',
-							value: function startEditing() {
-										var _props4 = this.props;
-										var dispatch = _props4.dispatch;
-										var rie_key = _props4.rie_key;
-										var is_editing = _props4.is_editing;
-
-										if (!is_editing) {
-													dispatch((0, _Rie.startEditing)(rie_key));
-										}
-							}
-				}, {
-							key: 'stopEditing',
-							value: function stopEditing() {
-										var _props5 = this.props;
-										var dispatch = _props5.dispatch;
-										var rie_key = _props5.rie_key;
-										var is_editing = _props5.is_editing;
-
-										if (is_editing) {
-													dispatch((0, _Rie.stopEditing)(rie_key));
-										}
-							}
-				}, {
-							key: 'cancelEditing',
-							value: function cancelEditing() {
-										var _props6 = this.props;
-										var dispatch = _props6.dispatch;
-										var rie_key = _props6.rie_key;
-
-										dispatch((0, _Rie.updateValue)(rie_key, this.props.initialValue));
-										this.stopEditing();
-										if (this.props.onCancel) {
-													this.props.onCancel();
-										}
-							}
-				}, {
-							key: 'keyDown',
-							value: function keyDown(event) {
-										var is_editing = this.props.is_editing;
-
-										if (!is_editing) {
-													return;
-										}
-										if (event.keyCode === 13) {
-													event.preventDefault();
-													this.finishEditing();
-										} else if (event.keyCode === 27) {
-													event.preventDefault();
-													this.cancelEditing();
-										}
-							}
-				}, {
-							key: 'elementBlur',
-							value: function elementBlur(event) {
-										this.finishEditing();
-							}
-				}, {
-							key: 'elementClick',
-							value: function elementClick(event) {
-										this.startEditing();
-							}
-				}, {
-							key: 'renderNormalMode',
-							value: function renderNormalMode() {
-										var value = this.props.value;
-
-										return _react2.default.createElement(
-													'span',
-													{ onClick: this.startEditing },
-													value
-										);
-							}
-				}, {
-							key: 'render',
-							value: function render() {
-										var _props7 = this.props;
-										var is_editing = _props7.is_editing;
-										var is_readonly = _props7.is_readonly;
-										var children = _props7.children;
-
-										var _ref = this.state || {};
-
-										var value = _ref.value;
-
-
-										var that = this;
-										var editing_child = null;
-										var readonly_child = null;
-
-										_react2.default.Children.map(children, function (child, index) {
-													if (index == 0) {
-																editing_child = _react2.default.cloneElement(child, {
-																			value: value,
-																			is_editing: is_editing,
-																			is_readonly: is_readonly,
-																			startEditing: that.startEditing,
-																			onChange: that.onChange,
-																			onSave: that.finishEditing,
-																			onCancel: that.cancelEditing
-																});
-													} else if (index == 1) {
-																readonly_child = _react2.default.cloneElement(child, {
-																			value: value,
-																			is_editing: is_editing,
-																			is_readonly: is_readonly,
-																			startEditing: that.startEditing,
-																			onChange: that.onChange,
-																			onSave: that.finishEditing,
-																			onCancel: that.cancelEditing
-																});
+													if (this.props.initialState == 'editing') {
+																	this.startEditing();
 													}
-										});
-										if (!readonly_child) {
-													readonly_child = editing_child;
-										}
+									}
+					}, {
+									key: 'componentWillReceiveProps',
+									value: function componentWillReceiveProps(newProps) {
+													var dispatch = newProps.dispatch;
+													var initialValue = newProps.initialValue;
+													var is_editing = newProps.is_editing;
+													var rie_key = newProps.rie_key;
 
-										return _react2.default.createElement(
-													'div',
-													{ onKeyDown: this.keyDown, onClick: this.elementClick },
-													is_editing && editing_child,
-													is_readonly && readonly_child
-										);
-							}
-				}]);
 
-				return RIEModeToggler;
+													if (rie_key == "issue_description") {
+																	var x = 2;
+													}
+													if (!this.state || !is_editing && initialValue != this.state.value) {
+																	this.setState({ value: initialValue });
+													}
+									}
+					}, {
+									key: 'onChange',
+									value: function onChange(new_value) {
+													var _props2 = this.props;
+													var dispatch = _props2.dispatch;
+													var rie_key = _props2.rie_key;
+
+													this.setState({ value: new_value });
+									}
+					}, {
+									key: 'finishEditing',
+									value: function finishEditing(current_value) {
+													var v = current_value || this.state.value || this.props.value || None;
+													if (this.props.onChange) {
+																	this.props.onChange(v);
+													}
+													this.stopEditing();
+									}
+					}, {
+									key: 'startEditing',
+									value: function startEditing() {
+													var _props3 = this.props;
+													var dispatch = _props3.dispatch;
+													var rie_key = _props3.rie_key;
+													var is_editing = _props3.is_editing;
+
+													if (!is_editing) {
+																	dispatch((0, _Rie.startEditing)(rie_key));
+													}
+									}
+					}, {
+									key: 'stopEditing',
+									value: function stopEditing() {
+													var _props4 = this.props;
+													var dispatch = _props4.dispatch;
+													var rie_key = _props4.rie_key;
+													var is_editing = _props4.is_editing;
+
+													if (is_editing) {
+																	dispatch((0, _Rie.stopEditing)(rie_key));
+													}
+									}
+					}, {
+									key: 'cancelEditing',
+									value: function cancelEditing() {
+													var _props5 = this.props;
+													var dispatch = _props5.dispatch;
+													var rie_key = _props5.rie_key;
+
+													dispatch((0, _Rie.updateValue)(rie_key, this.props.initialValue));
+													this.stopEditing();
+													if (this.props.onCancel) {
+																	this.props.onCancel();
+													}
+									}
+					}, {
+									key: 'keyDown',
+									value: function keyDown(event) {
+													var is_editing = this.props.is_editing;
+
+													if (!is_editing) {
+																	return;
+													}
+													if (event.keyCode === 13) {
+																	event.preventDefault();
+																	this.finishEditing();
+													} else if (event.keyCode === 27) {
+																	event.preventDefault();
+																	this.cancelEditing();
+													}
+									}
+					}, {
+									key: 'elementBlur',
+									value: function elementBlur(event) {
+													this.finishEditing();
+									}
+					}, {
+									key: 'elementClick',
+									value: function elementClick(event) {
+													this.startEditing();
+									}
+					}, {
+									key: 'renderNormalMode',
+									value: function renderNormalMode() {
+													var value = this.props.value;
+
+													return _react2.default.createElement(
+																	'span',
+																	{ onClick: this.startEditing },
+																	value
+													);
+									}
+					}, {
+									key: 'render',
+									value: function render() {
+													var _props6 = this.props;
+													var is_editing = _props6.is_editing;
+													var is_readonly = _props6.is_readonly;
+													var children = _props6.children;
+
+													var _ref = this.state || {};
+
+													var value = _ref.value;
+
+
+													var that = this;
+													var editing_child = null;
+													var readonly_child = null;
+
+													_react2.default.Children.map(children, function (child, index) {
+																	if (index == 0) {
+																					editing_child = _react2.default.cloneElement(child, {
+																									value: value,
+																									is_editing: is_editing,
+																									is_readonly: is_readonly,
+																									startEditing: that.startEditing,
+																									onChange: that.onChange,
+																									onSave: that.finishEditing,
+																									onCancel: that.cancelEditing
+																					});
+																	} else if (index == 1) {
+																					readonly_child = _react2.default.cloneElement(child, {
+																									value: value,
+																									is_editing: is_editing,
+																									is_readonly: is_readonly,
+																									startEditing: that.startEditing,
+																									onChange: that.onChange,
+																									onSave: that.finishEditing,
+																									onCancel: that.cancelEditing
+																					});
+																	}
+													});
+													if (!readonly_child) {
+																	readonly_child = editing_child;
+													}
+
+													return _react2.default.createElement(
+																	'div',
+																	{ onKeyDown: this.keyDown, onClick: this.elementClick },
+																	is_editing && editing_child,
+																	is_readonly && readonly_child
+													);
+									}
+					}]);
+
+					return RIEModeToggler;
 	}(_react2.default.Component);
 
 	function mapStateToProps(state, props) {
-				var rie_key = props.rie_key;
+					var rie_key = props.rie_key;
 
 
-				var rie = state.rie || {};
-				var r = rie[rie_key] || {};
-				var mode = r.mode || 'readonly';
-				var original_initial_value = r.initial_value;
+					var rie = state.rie || {};
+					var r = rie[rie_key] || {};
+					var mode = r.mode || 'readonly';
+					var original_initial_value = r.initial_value;
 
-				return {
-							is_editing: mode == 'editing',
-							is_readonly: mode == 'readonly',
-							original_initial_value: original_initial_value
-				};
+					if (rie_key == "issue_description") {
+									var x = 1;
+					}
+
+					return {
+									is_editing: mode == 'editing',
+									is_readonly: mode == 'readonly',
+									original_initial_value: original_initial_value,
+									initialValue: props.initialValue
+					};
 	}
 
 	exports.default = (0, _reactRedux.connect)(mapStateToProps)(RIEModeToggler);
@@ -65107,7 +65114,7 @@
 			is_visible: issue_id || is_creating_issue || false,
 			is_creating_issue: is_creating_issue,
 			candidate_issue: candidate_issue,
-			description: issue.description,
+			description: general_details.description,
 			subject: issue.subject,
 			number: issue.number
 		};

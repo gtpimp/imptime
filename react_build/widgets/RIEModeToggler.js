@@ -31,13 +31,17 @@ export class RIEModeToggler extends React.Component {
 	}
     }
 
-    componentWillUpdate() {
-	const { dispatch, rie_key, initialValue, original_initial_value, is_editing } = this.props
+    componentWillReceiveProps(newProps) {
+        const { dispatch, initialValue, is_editing, rie_key } = newProps
+
+        if ( rie_key == "issue_description" ) {
+            var x = 2;
+        }
         if ( ! this.state || (! is_editing && initialValue != this.state.value) ) {
             this.setState({value: initialValue})
         }
     }
-
+    
     onChange(new_value) {
 	const { dispatch, rie_key } = this.props
         this.setState({value: new_value})
@@ -157,10 +161,15 @@ function mapStateToProps(state, props) {
     const mode = r.mode || 'readonly'
     const original_initial_value = r.initial_value
 
+    if ( rie_key == "issue_description" ) {
+        var x = 1;
+    }
+    
     return {
 	is_editing: mode == 'editing',
 	is_readonly: mode == 'readonly',
-	original_initial_value: original_initial_value
+	original_initial_value: original_initial_value,
+        initialValue: props.initialValue
     }
 }
 
