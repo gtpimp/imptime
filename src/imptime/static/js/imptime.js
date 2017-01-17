@@ -44269,7 +44269,12 @@
 									}
 
 									var matching_items = state[matching_items_key] || {};
-									var matching_item_ids = (0, _keys2.default)(matching_items.items_by_id || {}); // magic, assumes the matching_items reducer will use 'items_by_id' as well
+									var matching_item_ids = (0, _keys2.default)(matching_items.items_by_id || {});
+
+									var invalidated_item_refs = (0, _map2.default)(matching_items.invalidated_item_ids || [], function (item_id, index) {
+													return "" + item_id;
+									});
+									matching_item_ids = (0, _difference2.default)(matching_item_ids, invalidated_item_refs);
 									var matching_item_refs = (0, _map2.default)(matching_item_ids, function (item_id, index) {
 													return "" + item_id;
 									});
@@ -64840,6 +64845,18 @@
 				}
 			}
 		}, {
+			key: 'componentWillReceiveProps',
+			value: function componentWillReceiveProps() {
+				var _props2 = this.props;
+				var dispatch = _props2.dispatch;
+				var issue_id = _props2.issue_id;
+				var issue = _props2.issue;
+
+				if (issue_id) {
+					dispatch((0, _IssueGeneralDetails.fetchIssueGeneralDetailsIfNeeded)([issue_id]));
+				}
+			}
+		}, {
 			key: 'onChangeSubject',
 			value: function onChangeSubject(issue_id, value) {
 				var dispatch = this.props.dispatch;
@@ -64849,18 +64866,18 @@
 		}, {
 			key: 'onChangeDescription',
 			value: function onChangeDescription(new_value) {
-				var _props2 = this.props;
-				var dispatch = _props2.dispatch;
-				var issue_id = _props2.issue_id;
+				var _props3 = this.props;
+				var dispatch = _props3.dispatch;
+				var issue_id = _props3.issue_id;
 
 				dispatch((0, _Issue.updateIssueDescription)(issue_id, new_value));
 			}
 		}, {
 			key: 'onDelete',
 			value: function onDelete() {
-				var _props3 = this.props;
-				var dispatch = _props3.dispatch;
-				var issue_id = _props3.issue_id;
+				var _props4 = this.props;
+				var dispatch = _props4.dispatch;
+				var issue_id = _props4.issue_id;
 
 				if (!confirm("Delete this issue?")) {
 					return false;
@@ -64915,9 +64932,9 @@
 		}, {
 			key: 'renderCreatingIssue',
 			value: function renderCreatingIssue() {
-				var _props4 = this.props;
-				var candidate_issue = _props4.candidate_issue;
-				var is_creating_issue = _props4.is_creating_issue;
+				var _props5 = this.props;
+				var candidate_issue = _props5.candidate_issue;
+				var is_creating_issue = _props5.is_creating_issue;
 
 				return _react2.default.createElement(
 					'div',
@@ -64972,13 +64989,16 @@
 			value: function render() {
 				var _this2 = this;
 
-				var _props5 = this.props;
-				var is_visible = _props5.is_visible;
-				var issue_id = _props5.issue_id;
-				var issue = _props5.issue;
-				var comments = _props5.comments;
-				var is_loading = _props5.is_loading;
-				var is_creating_issue = _props5.is_creating_issue;
+				var _props6 = this.props;
+				var is_visible = _props6.is_visible;
+				var issue_id = _props6.issue_id;
+				var issue = _props6.issue;
+				var comments = _props6.comments;
+				var is_loading = _props6.is_loading;
+				var is_creating_issue = _props6.is_creating_issue;
+				var subject = _props6.subject;
+				var description = _props6.description;
+				var number = _props6.number;
 
 
 				if (!is_visible) {
@@ -65017,13 +65037,13 @@
 								'h3',
 								null,
 								'issue#',
-								issue.number,
+								number,
 								':',
 								_react2.default.createElement(
 									_RIEModeToggler2.default,
 									{
 										rie_key: 'issue_subject',
-										initialValue: issue.subject || "...",
+										initialValue: subject || "...",
 										onChange: function onChange(new_value) {
 											return _this2.onChangeSubject(issue.id, new_value);
 										}
@@ -65035,7 +65055,7 @@
 								_RIEModeToggler2.default,
 								{
 									rie_key: "issue_description",
-									initialValue: issue.description || "",
+									initialValue: description || "",
 									onChange: this.onChangeDescription
 								},
 								_react2.default.createElement(_RIETextArea2.default, null)
@@ -65083,10 +65103,13 @@
 			issue_id: issue_id,
 			issue: issue,
 			comments: comments,
-			is_loading: general_details.is_loading,
+			is_loading: is_loading,
 			is_visible: issue_id || is_creating_issue || false,
 			is_creating_issue: is_creating_issue,
-			candidate_issue: candidate_issue
+			candidate_issue: candidate_issue,
+			description: issue.description,
+			subject: issue.subject,
+			number: issue.number
 		};
 	}
 
@@ -65135,9 +65158,10 @@
 	    };
 	}
 
-	function announceLoadingIssueGeneralDetails() {
+	function announceLoadingIssueGeneralDetails(issue_ids_to_load) {
 	    return {
-	        type: ANNOUNCE_LOADING_ISSUE_GENERAL_DETAILS
+	        type: ANNOUNCE_LOADING_ISSUE_GENERAL_DETAILS,
+	        issue_ids_to_load: issue_ids_to_load
 	    };
 	}
 
@@ -65165,7 +65189,7 @@
 
 	function fetchIssueGeneralDetails(dispatch, issue_ids) {
 	    return function (dispatch, getState) {
-	        dispatch(announceLoadingIssueGeneralDetails());
+	        dispatch(announceLoadingIssueGeneralDetails(issue_ids));
 
 	        var params = { filter: { ids: issue_ids },
 	            format: { detail_level: 'general' },
@@ -65191,11 +65215,17 @@
 	    var matching_item_refs = matching_item_ids.map(function (item_id, index) {
 	        return "" + item_id;
 	    });
+	    var invalidated_item_ids = matching_items.invalidated_item_ids;
+	    matching_item_refs = (0, _difference2.default)(matching_item_refs, invalidated_item_ids);
+
 	    var required_item_refs = required_issue_ids.map(function (item_id, index) {
 	        return "" + item_id;
 	    });
-	    var unmatching_item_ids = (0, _difference2.default)(required_item_refs, matching_item_refs);
-	    return unmatching_item_ids;
+	    var loading_item_ids = matching_items.loading_item_ids;
+	    var missing_item_ids = (0, _difference2.default)(required_item_refs, matching_item_refs);
+	    missing_item_ids = (0, _difference2.default)(missing_item_ids, loading_item_ids);
+
+	    return missing_item_ids;
 	}
 
 	function fetchIssueGeneralDetailsIfNeeded(issue_ids) {
@@ -67575,6 +67605,8 @@
 
 	var _Issues = __webpack_require__(859);
 
+	var _IssueGeneralDetails = __webpack_require__(880);
+
 	function triggerInvalidate(payload, dispatch) {
 	    if (payload.entity_name == 'project') {
 	        dispatch((0, _Projects.invalidateProjects)([payload.entity_ref]));
@@ -67582,6 +67614,7 @@
 	        dispatch((0, _Sprints.invalidateSprints)([payload.entity_ref]));
 	    } else if (payload.entity_name == 'issue') {
 	        dispatch((0, _Issues.invalidateIssues)([payload.entity_ref]));
+	        dispatch((0, _IssueGeneralDetails.invalidateIssueGeneralDetails)([payload.entity_ref]));
 	    } else {
 	        console.log("Unknown entity to refresh: " + payload.entity_name);
 	    }

@@ -153,10 +153,12 @@ function tryFetchMatchingItems(list_key,
 	}
 
 	const matching_items = state[matching_items_key] || {}
-	const matching_item_ids = keys(matching_items.items_by_id || {}) // magic, assumes the matching_items reducer will use 'items_by_id' as well
+	let matching_item_ids = keys(matching_items.items_by_id || {})
+
+        const invalidated_item_refs = map(matching_items.invalidated_item_ids || [], function(item_id, index) { return "" + item_id })
+        matching_item_ids = difference(matching_item_ids, invalidated_item_refs)
 	const matching_item_refs = map(matching_item_ids, function(item_id, index) { return "" + item_id })
-
-
+        
 	let unmatching_item_ids = difference(required_item_refs, matching_item_refs)
 	unmatching_item_ids = union(unmatching_item_ids, matching_items.invalidated_item_ids || [])
 
