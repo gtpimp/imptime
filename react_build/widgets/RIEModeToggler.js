@@ -22,8 +22,11 @@ export class RIEModeToggler extends React.Component {
     }
 
     componentDidMount() {
-	const { dispatch, rie_key } = this.props
-	dispatch(setInitialValue(rie_key, this.props.initialValue))
+	const { dispatch, rie_key, initialValue } = this.props
+        
+	//dispatch(setInitialValue(rie_key, this.props.initialValue))
+        this.setState({value: initialValue})
+        
 	if ( this.props.initialState == 'editing' ) {
 	    this.startEditing()
 	}
@@ -32,17 +35,22 @@ export class RIEModeToggler extends React.Component {
     componentWillUpdate() {
 	const { dispatch, rie_key, initialValue, original_initial_value, is_editing } = this.props
 	if ( original_initial_value != initialValue ) {
-	    dispatch(setInitialValue(rie_key, this.props.initialValue))
+            if ( ! this.state || (! is_editing && initialValue != this.state.value) ) {
+                this.setState({value: initialValue})
+            }
+	    //dispatch(setInitialValue(rie_key, initialValue))
 	}
     }
 
     onChange(new_value) {
 	const { dispatch, rie_key } = this.props
-	dispatch(updateValue(rie_key, new_value))
+        this.setState({value: new_value})
+	//dispatch(updateValue(rie_key, new_value))
     }
 
     finishEditing(current_value) {
-	let v = current_value || this.props.value
+	// let v = current_value || this.props.value
+        let v = current_value || this.state.value || this.props.value || None
 	if ( this.props.onChange ) {
             this.props.onChange(v);
 	}
@@ -104,8 +112,9 @@ export class RIEModeToggler extends React.Component {
     };
 
     render() {
-	const { is_editing, is_readonly, children, value } = this.props
-
+	const { is_editing, is_readonly, children } = this.props
+        const { value } = this.state || {}
+        
 	const that = this
 	let editing_child = null
 	let readonly_child = null
@@ -152,13 +161,14 @@ function mapStateToProps(state, props) {
     const rie = state.rie || {}
     const r = rie[rie_key] || {}
     const mode = r.mode || 'readonly'
-    const value = r.value || props.initialValue
+    // const value = r.value || props.initialValue
+    // const value = state.value || props.initialValue
     const original_initial_value = r.initial_value
 
     return {
 	is_editing: mode == 'editing',
 	is_readonly: mode == 'readonly',
-	value: value,
+	// value: value,
 	original_initial_value: original_initial_value
     }
 }

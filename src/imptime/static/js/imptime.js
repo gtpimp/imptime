@@ -63794,8 +63794,12 @@
 										var _props = this.props;
 										var dispatch = _props.dispatch;
 										var rie_key = _props.rie_key;
+										var initialValue = _props.initialValue;
 
-										dispatch((0, _Rie.setInitialValue)(rie_key, this.props.initialValue));
+										//dispatch(setInitialValue(rie_key, this.props.initialValue))
+
+										this.setState({ value: initialValue });
+
 										if (this.props.initialState == 'editing') {
 													this.startEditing();
 										}
@@ -63811,7 +63815,10 @@
 										var is_editing = _props2.is_editing;
 
 										if (original_initial_value != initialValue) {
-													dispatch((0, _Rie.setInitialValue)(rie_key, this.props.initialValue));
+													if (!this.state || !is_editing && initialValue != this.state.value) {
+																this.setState({ value: initialValue });
+													}
+													//dispatch(setInitialValue(rie_key, initialValue))
 										}
 							}
 				}, {
@@ -63821,12 +63828,14 @@
 										var dispatch = _props3.dispatch;
 										var rie_key = _props3.rie_key;
 
-										dispatch((0, _Rie.updateValue)(rie_key, new_value));
+										this.setState({ value: new_value });
+										//dispatch(updateValue(rie_key, new_value))
 							}
 				}, {
 							key: 'finishEditing',
 							value: function finishEditing(current_value) {
-										var v = current_value || this.props.value;
+										// let v = current_value || this.props.value
+										var v = current_value || this.state.value || this.props.value || None;
 										if (this.props.onChange) {
 													this.props.onChange(v);
 										}
@@ -63913,7 +63922,10 @@
 										var is_editing = _props7.is_editing;
 										var is_readonly = _props7.is_readonly;
 										var children = _props7.children;
-										var value = _props7.value;
+
+										var _ref = this.state || {};
+
+										var value = _ref.value;
 
 
 										var that = this;
@@ -63966,13 +63978,14 @@
 				var rie = state.rie || {};
 				var r = rie[rie_key] || {};
 				var mode = r.mode || 'readonly';
-				var value = r.value || props.initialValue;
+				// const value = r.value || props.initialValue
+				// const value = state.value || props.initialValue
 				var original_initial_value = r.initial_value;
 
 				return {
 							is_editing: mode == 'editing',
 							is_readonly: mode == 'readonly',
-							value: value,
+							// value: value,
 							original_initial_value: original_initial_value
 				};
 	}
