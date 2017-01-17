@@ -24,7 +24,6 @@ export class RIEModeToggler extends React.Component {
     componentDidMount() {
 	const { dispatch, rie_key, initialValue } = this.props
         
-	//dispatch(setInitialValue(rie_key, this.props.initialValue))
         this.setState({value: initialValue})
         
 	if ( this.props.initialState == 'editing' ) {
@@ -34,22 +33,17 @@ export class RIEModeToggler extends React.Component {
 
     componentWillUpdate() {
 	const { dispatch, rie_key, initialValue, original_initial_value, is_editing } = this.props
-	if ( original_initial_value != initialValue ) {
-            if ( ! this.state || (! is_editing && initialValue != this.state.value) ) {
-                this.setState({value: initialValue})
-            }
-	    //dispatch(setInitialValue(rie_key, initialValue))
-	}
+        if ( ! this.state || (! is_editing && initialValue != this.state.value) ) {
+            this.setState({value: initialValue})
+        }
     }
 
     onChange(new_value) {
 	const { dispatch, rie_key } = this.props
         this.setState({value: new_value})
-	//dispatch(updateValue(rie_key, new_value))
     }
 
     finishEditing(current_value) {
-	// let v = current_value || this.props.value
         let v = current_value || this.state.value || this.props.value || None
 	if ( this.props.onChange ) {
             this.props.onChange(v);
@@ -161,14 +155,11 @@ function mapStateToProps(state, props) {
     const rie = state.rie || {}
     const r = rie[rie_key] || {}
     const mode = r.mode || 'readonly'
-    // const value = r.value || props.initialValue
-    // const value = state.value || props.initialValue
     const original_initial_value = r.initial_value
 
     return {
 	is_editing: mode == 'editing',
 	is_readonly: mode == 'readonly',
-	// value: value,
 	original_initial_value: original_initial_value
     }
 }

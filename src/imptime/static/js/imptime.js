@@ -62148,7 +62148,7 @@
 	'use strict';
 
 	Object.defineProperty(exports, "__esModule", {
-				value: true
+					value: true
 	});
 	exports.RIEDropDown = undefined;
 
@@ -62181,58 +62181,61 @@
 	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 
 	var RIEDropDown = exports.RIEDropDown = function (_RIEEditBase) {
-				_inherits(RIEDropDown, _RIEEditBase);
+					_inherits(RIEDropDown, _RIEEditBase);
 
-				function RIEDropDown(props) {
-							_classCallCheck(this, RIEDropDown);
+					function RIEDropDown(props) {
+									_classCallCheck(this, RIEDropDown);
 
-							var _this = _possibleConstructorReturn(this, Object.getPrototypeOf(RIEDropDown).call(this, props));
+									var _this = _possibleConstructorReturn(this, Object.getPrototypeOf(RIEDropDown).call(this, props));
 
-							_this.onChange = _this.onChange.bind(_this);
-							return _this;
-				}
+									_this.onChange = _this.onChange.bind(_this);
+									return _this;
+					}
 
-				_createClass(RIEDropDown, [{
-							key: 'onChange',
-							value: function onChange(selected_option) {
-										var new_value = selected_option.value;
-										this.props.onChange(new_value);
-										this.props.onSave(new_value);
-							}
-				}, {
-							key: 'render',
-							value: function render() {
-										var _props = this.props;
-										var options = _props.options;
-										var value = _props.value;
-										var is_editing = _props.is_editing;
-										var is_readonly = _props.is_readonly;
+					_createClass(RIEDropDown, [{
+									key: 'onChange',
+									value: function onChange(selected_option) {
+													if (!selected_option) {
+																	return;
+													}
+													var new_value = selected_option.value;
+													this.props.onChange(new_value);
+													this.props.onSave(new_value);
+									}
+					}, {
+									key: 'render',
+									value: function render() {
+													var _props = this.props;
+													var options = _props.options;
+													var value = _props.value;
+													var is_editing = _props.is_editing;
+													var is_readonly = _props.is_readonly;
 
-										return _react2.default.createElement(
-													'div',
-													null,
-													is_editing && _react2.default.createElement(
-																'div',
-																{ className: 'RIEDropDown' },
-																_react2.default.createElement(_reactSelect2.default, { value: value,
-																			options: options,
-																			onChange: this.onChange
-																})
-													),
-													is_readonly && _react2.default.createElement(
-																'span',
-																null,
-																value
-													)
-										);
-							}
-				}]);
+													return _react2.default.createElement(
+																	'div',
+																	null,
+																	is_editing && _react2.default.createElement(
+																					'div',
+																					{ className: 'RIEDropDown' },
+																					_react2.default.createElement(_reactSelect2.default, { value: value,
+																									options: options,
+																									onChange: this.onChange
+																					})
+																	),
+																	is_readonly && _react2.default.createElement(
+																					'span',
+																					null,
+																					value
+																	)
+													);
+									}
+					}]);
 
-				return RIEDropDown;
+					return RIEDropDown;
 	}(_RIEEditBase3.default);
 
 	function mapStateToProps(state, props) {
-				return {};
+					return {};
 	}
 
 	exports.default = (0, _reactRedux.connect)(mapStateToProps)(RIEDropDown);
@@ -63796,7 +63799,6 @@
 										var rie_key = _props.rie_key;
 										var initialValue = _props.initialValue;
 
-										//dispatch(setInitialValue(rie_key, this.props.initialValue))
 
 										this.setState({ value: initialValue });
 
@@ -63814,11 +63816,8 @@
 										var original_initial_value = _props2.original_initial_value;
 										var is_editing = _props2.is_editing;
 
-										if (original_initial_value != initialValue) {
-													if (!this.state || !is_editing && initialValue != this.state.value) {
-																this.setState({ value: initialValue });
-													}
-													//dispatch(setInitialValue(rie_key, initialValue))
+										if (!this.state || !is_editing && initialValue != this.state.value) {
+													this.setState({ value: initialValue });
 										}
 							}
 				}, {
@@ -63829,12 +63828,10 @@
 										var rie_key = _props3.rie_key;
 
 										this.setState({ value: new_value });
-										//dispatch(updateValue(rie_key, new_value))
 							}
 				}, {
 							key: 'finishEditing',
 							value: function finishEditing(current_value) {
-										// let v = current_value || this.props.value
 										var v = current_value || this.state.value || this.props.value || None;
 										if (this.props.onChange) {
 													this.props.onChange(v);
@@ -63978,14 +63975,11 @@
 				var rie = state.rie || {};
 				var r = rie[rie_key] || {};
 				var mode = r.mode || 'readonly';
-				// const value = r.value || props.initialValue
-				// const value = state.value || props.initialValue
 				var original_initial_value = r.initial_value;
 
 				return {
 							is_editing: mode == 'editing',
 							is_readonly: mode == 'readonly',
-							// value: value,
 							original_initial_value: original_initial_value
 				};
 	}
@@ -64146,6 +64140,9 @@
 				}, {
 							key: 'onChange',
 							value: function onChange(selected_option) {
+										if (!selected_option) {
+													return;
+										}
 										var new_value = selected_option.value;
 										this.props.onChange(new_value);
 										this.props.onSave(new_value);
