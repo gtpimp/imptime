@@ -10,6 +10,10 @@ from timepiece.models import Project as Sprint
 
 logger = logging.getLogger(__name__)
 
+# Sprints are weird: They use the timepiece.Project model for legacy
+# reasons. This api renames the model to Sprint in the import, but
+# functions on the model will still refer to project. This is noted
+# with 'sic' where it could be surprising.
 
 @permission_classes((IsAuthenticated,))
 class SprintViewSet(BaseViewSet):
