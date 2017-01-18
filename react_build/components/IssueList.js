@@ -2,6 +2,7 @@ import React, { Component, PropTypes } from 'react'
 import { Link } from 'react-router'
 import map from 'lodash/map'
 import RIEInput from '../widgets/RIEInput'
+import RIEModeToggler from '../widgets/RIEModeToggler'
 import { connect } from 'react-redux'
 import {
     initList,
@@ -145,11 +146,13 @@ class IssueList extends Component {
 	    <tr key={list_key+".candidate_issue"} className="issue_list__candidate_issue">
 		<td>New issue</td>
 		<td>
-		    <RIEInput value=""
-			      propName="candidate_issue_subject"
-			      initialState="editing"
-			      change={this.onSaveCandidateIssue}
-		              cancel={this.onCancelCandidateIssue} />
+		    <RIEModeToggler initialValue=""
+			            propName="candidate_issue_subject"
+			            initialState="editing"
+			            change={this.onSaveCandidateIssue}
+		                    cancel={this.onCancelCandidateIssue}>
+                        <RIEInput/>
+                    </RIEModeToggler>
 		</td>
 	    </tr>
 	)

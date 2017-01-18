@@ -1,6 +1,8 @@
 import React, { Component, PropTypes } from 'react'
 import { Link } from 'react-router'
 import { connect } from 'react-redux'
+import RIEInput from '../widgets/RIEInput'
+import RIEModeToggler from '../widgets/RIEModeToggler'
 import map from 'lodash/map'
 import {
     initList,
@@ -12,7 +14,11 @@ import {
 import {
     invalidateAllSprints,
     fetchSprintsIfNeeded,
-    reorderSprints
+    reorderSprints,
+    startCandidateSprint,
+    updateCandidateTitle,
+    cancelCandidateSprint,
+    saveCandidateSprint
 } from '../actions/Sprints'
 import Pagination from '../components/Pagination'
 import Sprint from './Sprint'
@@ -28,6 +34,9 @@ class SprintList extends Component {
 	this.onExpand = this.onExpand.bind(this)
 	this.onClickedSprint = this.onClickedSprint.bind(this)
 	this.reorderSprints = this.reorderSprints.bind(this)
+        this.onStartCandidateSprint = this.onStartCandidateSprint.bind(this)
+	this.onSaveCandidateSprint = this.onSaveCandidateSprint.bind(this)
+	this.onCancelCandidateSprint = this.onCancelCandidateSprint.bind(this)
     }
 
     componentDidMount() {
@@ -76,6 +85,23 @@ class SprintList extends Component {
 	}
     }
 
+    onStartCandidateSprint(event) {
+	const { dispatch, list_key } = this.props
+	event.stopPropagation()
+	dispatch(startCandidateSprint(list_key))
+    }
+
+    onSaveCandidateSprint(obj) {
+	const { dispatch } = this.props
+	dispatch(updateCandidateTitle(obj.candidate_sprint_title))
+	dispatch(saveCandidateSprint())
+    }
+
+    onCancelCandidateSprint() {
+	const { dispatch } = this.props
+	dispatch(cancelCandidateSprint())
+    }
+
     reorderSprints(moving_sprint_id, move_after_sprint_id) {
 	const { dispatch, list_key } = this.props
 	dispatch(reorderSprints(moving_sprint_id, move_after_sprint_id,
@@ -117,11 +143,55 @@ class SprintList extends Component {
 	)
     }
 
+    render_candidate_sprint() {
+	const { candidate_sprint, list_key  } = this.props
+
+	return (
+	    <tr key={list_key+".candidate_sprint"} className="sprint_list__candidate_sprint">
+		<td>New sprint</td>
+		<td>
+                    <RIEModeToggler propName="candidate_sprint_title"
+                                    initialValue=""
+			            initialState="editing"
+			            change={this.onSaveCandidateSprint}
+		                    cancel={this.onCancelCandidateSprint}>
+                        <RIEInput/>
+                    </RIEModeToggler>
+		</td>
+	    </tr>
+	)
+    }
+
     render_expanded() {
 
         const { sprints, is_visible, list_key, is_loading,
 		selected_ids, reorderSprints,
+                is_creating_sprint, candidate_sprint, 
 		loading_item_ids, has_items } = this.props
+        const that = this
+
+        const sprint_rows = []
+	sprints.map(function(sprint, index) {
+
+	    if (is_creating_sprint && index==0 && !candidate_sprint.sprint_id_before) {
+		sprint_rows.push(that.render_candidate_sprint())
+	    }
+	    
+	    sprint_rows.push(
+                <Sprint key={list_key+sprint.id+index}
+			is_collapsed={false}
+			reorderSprints={that.reorderSprints}
+			onClickedSprint={() => that.onClickedSprint(sprint.id)}
+			is_loading={loading_item_ids.indexOf(sprint.id) !== -1}
+			is_selected={selected_ids.indexOf(sprint.id) !== -1}
+			sprint_id={sprint.id}
+		/>
+	    )
+	    if ( is_creating_sprint && candidate_sprint.sprint_id_before==sprint.id ) {
+		sprint_rows.push(that.render_candidate_sprint())
+	    }
+            
+	})
 
 	return (
             <div style={{ opacity: is_loading ? 0.5 : 1 }}>
@@ -131,7 +201,11 @@ class SprintList extends Component {
 			    <div className="panel__title">Sprints</div>
 			    <div className="panel__buttons">
 				<div className="panel__button panel__button--refresh"
-				     onClick={this.onRefresh}></div>
+				     onClick={this.onRefresh}>
+                                </div>
+                                <div className="panel__button panel__button--add"
+				     onClick={this.onStartCandidateSprint}>
+				</div>			    
 			    </div>
 			</div>
 			<Pagination list_key={list_key} on_changed={this.onChangePage} /> 
@@ -139,16 +213,7 @@ class SprintList extends Component {
                     <div className="panel-body">
 			<table className="table table--default" >
                             <tbody>
-				{sprints.map( (sprint, index) =>
-				    <Sprint key={list_key+"sprint.id"+index}
-					    is_collapsed={false}
-					    reorderSprints={this.reorderSprints}
-					    onClickedSprint={() => this.onClickedSprint(sprint.id)}
-					    is_loading={loading_item_ids.indexOf(sprint.id) !== -1}
-					    is_selected={selected_ids.indexOf(sprint.id) !== -1}
-					    sprint_id={sprint.id}
-				    />
-				 )}
+                                {sprint_rows}
                             </tbody>
 			</table>
 			{ !is_loading && !has_items &&
@@ -191,6 +256,9 @@ function mapStateToProps(state, props) {
 	return items_by_id[visible_item_id] || { 'id': visible_item_id,
 						 'loaded': false }
     })) || []
+
+    const candidate_sprint = sprint.candidate_sprint
+    const is_creating_sprint = candidate_sprint || false
     
     return {
         list_key: list_key,
@@ -206,7 +274,9 @@ function mapStateToProps(state, props) {
 	is_collapsed: l.display_mode == "collapsed",
 	is_expanded: l.display_mode == "expanded" || !l.display_mode,
         last_updated: l.last_updated,
-	is_visible: project_id || false
+	is_visible: project_id || false,
+        candidate_sprint: candidate_sprint,
+	is_creating_sprint: is_creating_sprint
     }
 }
 

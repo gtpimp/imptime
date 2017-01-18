@@ -15,7 +15,7 @@ class NotificationBar extends Component {
 		      { error_message }
 	          </div>
 	        }
-                { is_websockets_connected &&
+                { false && is_websockets_connected &&
                   <div className="notification_bar__websockets_connected">
                       Websockets OK
                   </div>

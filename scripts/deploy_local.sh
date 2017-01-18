@@ -4,10 +4,12 @@
 sudo ls > /dev/null
 
 # install dependencies
-sudo apt install python-dev postgresql-server-dev-9.5 virtualenv
-sudo apt install libjpeg-dev libxml2-dev libxslt1-dev
-sudo apt install redis-server
-sudo apt install npm nodejs-legacy
+echo "Dependencies for ubuntu, for reference:"
+echo "---------------------------------------"
+echo "sudo apt install python-dev postgresql-server-dev-9.5 virtualenv"
+echo "sudo apt install libjpeg-dev libxml2-dev libxslt1-dev"
+echo "sudo apt install redis-server"
+echo "sudo apt install npm nodejs-legacy"
 
 ROOT=`git rev-parse --show-toplevel`
 cd ${ROOT}
