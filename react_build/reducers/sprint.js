@@ -20,7 +20,7 @@ import {
     CANCEL_CREATING_NEW_SPRINT,
     ANNOUNCE_SAVING_NEW_SPRINT,
     ANNOUNCE_SAVED_NEW_SPRINT,
-    ANNOUNCE_SAVING_NEW_SPRINT_FAILED,
+    ANNOUNCE_SAVING_NEW_SPRINT_FAILED
 } from '../actions/Sprints.js'
 
 const initialState = {
@@ -32,6 +32,7 @@ const initialState = {
 export default function sprint(state = initialState, action) {
 
     let state_copy = Object.assign({}, state)
+    let new_items_by_id = null
     
     switch (action.type) {
 	case INVALIDATE_ALL_SPRINTS:

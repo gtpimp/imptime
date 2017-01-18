@@ -4,6 +4,7 @@ import keys from 'lodash/keys'
 import indexOf from 'lodash/indexOf'
 import map from 'lodash/map'
 import { fetchListIfNeeded } from './ItemList'
+import { ENTITY_KEY__SPRINT } from '../actions/ItemListKeyRegistry'
 
 export const ANNOUNCE_SPRINTS_LOADED = 'ANNOUNCE_SPRINTS_LOADED'
 export const ANNOUNCE_SPRINTS_LOAD_FAILED = 'ANNOUNCE_SPRINTS_LOAD_FAILED'
@@ -173,7 +174,7 @@ function fetchSprintsPromise(dispatch, sprint_ids) {
 }
 
 export function fetchSprintsIfNeeded(list_key) {
-    const matching_items_key = 'sprint'
+    const matching_items_key = ENTITY_KEY__SPRINT
     const matching_items_promise_func = fetchSprintsPromise
     return fetchListIfNeeded(list_key, matching_items_key, matching_items_promise_func)
 }

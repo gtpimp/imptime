@@ -3,6 +3,7 @@ import difference from 'lodash/difference'
 import keys from 'lodash/keys'
 import map from 'lodash/map'
 import { fetchListIfNeeded } from './ItemList'
+import { ENTITY_KEY__PROJECT } from '../actions/ItemListKeyRegistry'
 
 export const ANNOUNCE_PROJECTS_LOADED = 'ANNOUNCE_PROJECTS_LOADED'
 export const ANNOUNCE_PROJECTS_LOAD_FAILED = 'ANNOUNCE_PROJECTS_LOAD_FAILED'
@@ -86,7 +87,7 @@ function fetchProjectsPromise(dispatch, project_ids) {
 }
 
 export function fetchProjectsIfNeeded(list_key) {
-    const matching_items_key = 'project'
+    const matching_items_key = ENTITY_KEY__PROJECT
     const matching_items_promise_func = fetchProjectsPromise
     return fetchListIfNeeded(list_key, matching_items_key, matching_items_promise_func)
 }

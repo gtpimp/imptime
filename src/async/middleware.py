@@ -25,17 +25,17 @@ class MergeAsyncNotificationsMiddleware(object):
         self.post_notifications()
         return response
 
-    def merge_duplicate_notifications(self, notifications):
-        merged_notifications = OrderedDict()
-        for notification in notifications:
-            entity_key = (notification['entity_name'], notification['entity_ref'])
-            merged_notifications[entity_key] = notification
-        return merged_notifications.values()
+    # def merge_duplicate_notifications(self, notifications):
+    #     merged_notifications = OrderedDict()
+    #     for notification in notifications:
+    #         entity_key = (notification['entity_name'], notification['entity_ref'])
+    #         merged_notifications[entity_key] = notification
+    #     return merged_notifications.values()
 
     def post_notifications(self, notifications=None):
         if notifications is None:
             notifications = _active.notifications
             delattr(_active, 'notifications')
-            notifications = self.merge_duplicate_notifications(notifications)
+            #notifications = self.merge_duplicate_notifications(notifications)
         if notifications:
             Group(REFRESH_GROUP_NAME).send({"text":json.dumps(notifications)})

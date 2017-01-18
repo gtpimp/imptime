@@ -149,8 +149,8 @@ class IssueList extends Component {
 		    <RIEModeToggler initialValue=""
 			            propName="candidate_issue_subject"
 			            initialState="editing"
-			            change={this.onSaveCandidateIssue}
-		                    cancel={this.onCancelCandidateIssue}>
+			            onChange={this.onSaveCandidateIssue}
+		                    onCancel={this.onCancelCandidateIssue}>
                         <RIEInput/>
                     </RIEModeToggler>
 		</td>

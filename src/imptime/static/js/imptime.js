@@ -43024,6 +43024,8 @@
 
 	var _reactSticky = __webpack_require__(886);
 
+	var _ItemListKeyRegistry = __webpack_require__(1039);
+
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 	function _objectDestructuringEmpty(obj) { if (obj == null) throw new TypeError("Cannot destructure undefined"); }
@@ -43061,17 +43063,17 @@
 	                    _react2.default.createElement(
 	                        'div',
 	                        { className: 'devpage__navigation__lists' },
-	                        _react2.default.createElement(_ProjectList2.default, { key: 'projects', list_key: 'projects' }),
-	                        _react2.default.createElement(_SprintList2.default, { key: 'sprints', list_key: 'sprints' })
+	                        _react2.default.createElement(_ProjectList2.default, { key: 'projects', list_key: _ItemListKeyRegistry.LIST_KEY__PROJECT_LIST }),
+	                        _react2.default.createElement(_SprintList2.default, { key: 'sprints', list_key: _ItemListKeyRegistry.LIST_KEY__SPRINT_LIST })
 	                    ),
 	                    _react2.default.createElement(
 	                        'div',
 	                        { className: 'devpage__workarea' },
 	                        _react2.default.createElement(
 	                            _IssueList2.default,
-	                            { key: 'issues', list_key: 'issues' },
+	                            { key: 'issues', list_key: _ItemListKeyRegistry.LIST_KEY__ISSUE_LIST },
 	                            _react2.default.createElement(_IssueDeveloperDetails2.default, { key: 'issue_developer_details',
-	                                list_key: 'issue_developer_details' })
+	                                list_key: _ItemListKeyRegistry.LIST_KEY__ISSUE_DEVELOPER_DETAILS })
 	                        )
 	                    )
 	                )
@@ -47022,6 +47024,8 @@
 
 	var _ItemList = __webpack_require__(761);
 
+	var _ItemListKeyRegistry = __webpack_require__(1039);
+
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 	var ANNOUNCE_SPRINTS_LOADED = exports.ANNOUNCE_SPRINTS_LOADED = 'ANNOUNCE_SPRINTS_LOADED';
@@ -47189,7 +47193,7 @@
 	}
 
 	function fetchSprintsIfNeeded(list_key) {
-					var matching_items_key = 'sprint';
+					var matching_items_key = _ItemListKeyRegistry.ENTITY_KEY__SPRINT;
 					var matching_items_promise_func = fetchSprintsPromise;
 					return (0, _ItemList.fetchListIfNeeded)(list_key, matching_items_key, matching_items_promise_func);
 	}
@@ -47498,6 +47502,8 @@
 
 	var _ItemList = __webpack_require__(761);
 
+	var _ItemListKeyRegistry = __webpack_require__(1039);
+
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 	var ANNOUNCE_PROJECTS_LOADED = exports.ANNOUNCE_PROJECTS_LOADED = 'ANNOUNCE_PROJECTS_LOADED';
@@ -47580,7 +47586,7 @@
 	}
 
 	function fetchProjectsIfNeeded(list_key) {
-	    var matching_items_key = 'project';
+	    var matching_items_key = _ItemListKeyRegistry.ENTITY_KEY__PROJECT;
 	    var matching_items_promise_func = fetchProjectsPromise;
 	    return (0, _ItemList.fetchListIfNeeded)(list_key, matching_items_key, matching_items_promise_func);
 	}
@@ -63229,10 +63235,10 @@
 							}
 				}, {
 							key: 'onSaveCandidateSprint',
-							value: function onSaveCandidateSprint(obj) {
+							value: function onSaveCandidateSprint(candidate_sprint_title) {
 										var dispatch = this.props.dispatch;
 
-										dispatch((0, _Sprints.updateCandidateTitle)(obj.candidate_sprint_title));
+										dispatch((0, _Sprints.updateCandidateTitle)(candidate_sprint_title));
 										dispatch((0, _Sprints.saveCandidateSprint)());
 							}
 				}, {
@@ -63319,7 +63325,7 @@
 													_react2.default.createElement(
 																'td',
 																null,
-																'New sprint'
+																'Creating new sprint:'
 													),
 													_react2.default.createElement(
 																'td',
@@ -63329,8 +63335,8 @@
 																			{ propName: 'candidate_sprint_title',
 																						initialValue: '',
 																						initialState: 'editing',
-																						change: this.onSaveCandidateSprint,
-																						cancel: this.onCancelCandidateSprint },
+																						onChange: this.onSaveCandidateSprint,
+																						onCancel: this.onCancelCandidateSprint },
 																			_react2.default.createElement(_RIEInput2.default, null)
 																)
 													)
@@ -64038,8 +64044,8 @@
 							{ initialValue: '',
 								propName: 'candidate_issue_subject',
 								initialState: 'editing',
-								change: this.onSaveCandidateIssue,
-								cancel: this.onCancelCandidateIssue },
+								onChange: this.onSaveCandidateIssue,
+								onCancel: this.onCancelCandidateIssue },
 							_react2.default.createElement(_RIEInput2.default, null)
 						)
 					)
@@ -64433,6 +64439,8 @@
 
 	var _ItemList = __webpack_require__(761);
 
+	var _ItemListKeyRegistry = __webpack_require__(1039);
+
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 	var ANNOUNCE_ISSUES_LOADED = exports.ANNOUNCE_ISSUES_LOADED = 'ANNOUNCE_ISSUES_LOADED';
@@ -64515,7 +64523,7 @@
 	}
 
 	function fetchIssuesIfNeeded(list_key) {
-	    var matching_items_key = 'issue';
+	    var matching_items_key = _ItemListKeyRegistry.ENTITY_KEY__ISSUE;
 	    var matching_items_promise_func = fetchIssuesPromise;
 	    return (0, _ItemList.fetchListIfNeeded)(list_key, matching_items_key, matching_items_promise_func);
 	}
@@ -74062,16 +74070,42 @@
 
 	var _IssueGeneralDetails = __webpack_require__(982);
 
-	function triggerInvalidate(payload, dispatch) {
-	    if (payload.entity_name == 'project') {
-	        dispatch((0, _Projects.invalidateProjects)([payload.entity_ref]));
-	    } else if (payload.entity_name == 'sprint') {
-	        dispatch((0, _Sprints.invalidateSprints)([payload.entity_ref]));
-	    } else if (payload.entity_name == 'issue') {
-	        dispatch((0, _Issues.invalidateIssues)([payload.entity_ref]));
-	        dispatch((0, _IssueGeneralDetails.invalidateIssueGeneralDetails)([payload.entity_ref]));
+	var _ItemList = __webpack_require__(761);
+
+	var _ItemListKeyRegistry = __webpack_require__(1039);
+
+	function triggerInvalidateEntity(d, dispatch) {
+	    // used for updates of existing objects, invalidates or
+	    // removes the object from the primary entitylists.
+	    //
+	    // Components which refer to these objects should automatically refresh
+	    // these object on demand using componentWillReceiveProps
+	    if (d.entity_name == 'project') {
+	        dispatch((0, _Projects.invalidateProjects)([d.entity_ref]));
+	    } else if (d.entity_name == 'sprint') {
+	        dispatch((0, _Sprints.invalidateSprints)([d.entity_ref]));
+	    } else if (d.entity_name == 'issue') {
+	        dispatch((0, _Issues.invalidateIssues)([d.entity_ref]));
+	        dispatch((0, _IssueGeneralDetails.invalidateIssueGeneralDetails)([d.entity_ref]));
 	    } else {
-	        console.log("Unknown entity to refresh: " + payload.entity_name);
+	        console.log("Unknown entity to refresh: " + d.entity_name);
+	    }
+	}
+
+	function triggerInvalidateItemLists(d, dispatch) {
+	    // used for creation of new objects. invalidates the lists that point to
+	    // these objects.
+	    //
+	    // Components which show lists of objects should automatically
+	    // refresh their lists on demand using componentWillReceiveProps
+	    if (d.entity_name == 'project') {
+	        dispatch((0, _ItemList.invalidateList)(_ItemListKeyRegistry.LIST_KEY__PROJECT_LIST));
+	    } else if (d.entity_name == 'sprint') {
+	        dispatch((0, _ItemList.invalidateList)(_ItemListKeyRegistry.LIST_KEY__SPRINT_LIST));
+	    } else if (d.entity_name == 'issue') {
+	        dispatch((0, _ItemList.invalidateList)(_ItemListKeyRegistry.LIST_KEY__ISSUE_LIST));
+	    } else {
+	        console.log("Unknown entity to refresh lists: " + d.entity_name);
 	    }
 	}
 
@@ -74087,8 +74121,15 @@
 	            if (action && action.type == _Async.ASYNC_REFRESH_NOTIFICATION) {
 
 	                var payload = action.payload || [{}];
+
 	                payload.map(function (d) {
-	                    triggerInvalidate(d, dispatch);
+	                    if (d.action_type == "create") {
+	                        triggerInvalidateItemLists(d, dispatch);
+	                    } else if (d.action_type == "update") {
+	                        triggerInvalidateEntity(d, dispatch);
+	                    } else {
+	                        console.log("Unknown action_type for async refresh: " + d.action_type);
+	                    }
 	                });
 	            }
 	            return next(action);
@@ -75318,6 +75359,7 @@
 
 
 					var state_copy = Object.assign({}, state);
+					var new_items_by_id = null;
 
 					var _ret = function () {
 									switch (action.type) {
@@ -75543,6 +75585,24 @@
 	            return state;
 	    }
 	}
+
+/***/ },
+/* 1039 */
+/***/ function(module, exports) {
+
+	'use strict';
+
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+	var LIST_KEY__PROJECT_LIST = exports.LIST_KEY__PROJECT_LIST = 'projects';
+	var LIST_KEY__SPRINT_LIST = exports.LIST_KEY__SPRINT_LIST = 'sprints';
+	var LIST_KEY__ISSUE_LIST = exports.LIST_KEY__ISSUE_LIST = 'issues';
+	var LIST_KEY__ISSUE_DEVELOPER_DETAILS = exports.LIST_KEY__ISSUE_DEVELOPER_DETAILS = 'issue_developer_details';
+
+	var ENTITY_KEY__PROJECT = exports.ENTITY_KEY__PROJECT = 'project';
+	var ENTITY_KEY__SPRINT = exports.ENTITY_KEY__SPRINT = 'sprint';
+	var ENTITY_KEY__ISSUE = exports.ENTITY_KEY__ISSUE = 'issue';
 
 /***/ }
 /******/ ]);

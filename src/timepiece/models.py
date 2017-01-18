@@ -161,7 +161,7 @@ class Business(models.Model):
                                                  ("free", "Free or Equity or Other") ) )
 
     impd_client = models.ForeignKey(Client, null=True, blank=False, related_name='businesses')
-    point_person = models.ForeignKey(User, limit_choices_to={'is_staff': True}, default=3)  
+    point_person = models.ForeignKey(User, limit_choices_to={'is_staff': True}, null=True)  
     
     def model_to_dict(self):
         d = model_to_dict_with_date_support(self)
@@ -686,8 +686,9 @@ class Project(models.Model):
     created = models.DateTimeField(auto_now_add=True)
     modified = models.DateTimeField(auto_now=True)
     billable = models.BooleanField(default=False)
-    point_person = models.ForeignKey(User, limit_choices_to={'is_staff': True})
-    quote_uncertainty = models.FloatField(null=True, blank=True, default=0.25, verbose_name="Uncertainty overhead as a decimal between 0 and 1")
+    point_person = models.ForeignKey(User, limit_choices_to={'is_staff': True}, null=True)
+    quote_uncertainty = models.FloatField(null=True, blank=True, default=0.25,
+                                          verbose_name="Uncertainty overhead as a decimal between 0 and 1")
     users = models.ManyToManyField(
         User,
         related_name='user_projects',
@@ -705,6 +706,7 @@ class Project(models.Model):
         Attribute,
         limit_choices_to={'type': 'project-type'},
         related_name='projects_with_type',
+        null=True
     )
 
     # Deprecated. Still used in a few places, but needs to be removed completely.
@@ -712,11 +714,13 @@ class Project(models.Model):
         Attribute,
         limit_choices_to={'type': 'project-status'},
         related_name='projects_with_status',
+        null=True
     )
 
     # This status will replace the original status. All new
-    # functionality should hang of this field instead.
-    status2 = models.CharField(max_length=100, blank=False, null=False, default='pending', choices = PROJECT_STATUSES, db_index=True)
+    # functionality should hang off this field instead.
+    status2 = models.CharField(max_length=100, blank=False, null=False,
+                               default='pending', choices = PROJECT_STATUSES, db_index=True)
 
     description = models.TextField(blank=True, null=True, db_index=True)
     short_description = models.CharField(max_length=50, blank=True, null=True, db_index=True)

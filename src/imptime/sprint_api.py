@@ -57,3 +57,34 @@ class SprintViewSet(BaseViewSet):
             logger.exception(ex)
             data = {'status': 'failed', 'error': str(ex)}
         return HttpResponse(JSONRenderer().render(data))
+
+    def create(self, request):
+        try:
+            context = {}
+            params = request.data['sprint']
+            project_id = params['project_id']
+            sprint_id_before = params['sprint_id_before']
+            if sprint_id_before:
+                sprint_before = self.allowed_sprint(sprint_id_before)
+                order = sprint_before.order + 0.5
+            else:
+                order = 0
+            project = self.allowed_project(project_id)
+            sprint = Sprint.objects.create(
+                business=project, #sic
+                order=order,
+                status2='pending',
+                code=Sprint.get_code_from_name(params['title']),
+                name=params['title'])
+            sprint.renumber_project_order()
+            s = SprintSerializer(sprint)
+            sprint_data = s.data
+            context['sprint'] = sprint_data
+            data = {'status': 'success', 'payload': context}
+
+        except Exception, ex:
+            logger.exception(ex)
+            data = {'status': 'failed', 'error': str(ex)}
+        return HttpResponse(JSONRenderer().render(data))
+
+    

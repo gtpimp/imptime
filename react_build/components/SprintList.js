@@ -91,9 +91,9 @@ class SprintList extends Component {
 	dispatch(startCandidateSprint(list_key))
     }
 
-    onSaveCandidateSprint(obj) {
+    onSaveCandidateSprint(candidate_sprint_title) {
 	const { dispatch } = this.props
-	dispatch(updateCandidateTitle(obj.candidate_sprint_title))
+	dispatch(updateCandidateTitle(candidate_sprint_title))
 	dispatch(saveCandidateSprint())
     }
 
@@ -148,13 +148,13 @@ class SprintList extends Component {
 
 	return (
 	    <tr key={list_key+".candidate_sprint"} className="sprint_list__candidate_sprint">
-		<td>New sprint</td>
+		<td>Creating new sprint:</td>
 		<td>
                     <RIEModeToggler propName="candidate_sprint_title"
                                     initialValue=""
 			            initialState="editing"
-			            change={this.onSaveCandidateSprint}
-		                    cancel={this.onCancelCandidateSprint}>
+			            onChange={this.onSaveCandidateSprint}
+		                    onCancel={this.onCancelCandidateSprint}>
                         <RIEInput/>
                     </RIEModeToggler>
 		</td>

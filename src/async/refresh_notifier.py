@@ -28,6 +28,7 @@ class RefreshNotifier(object):
         try:
             post_data = {'entity_name': entity_name,
                          'entity_ref': obj.id,
+                         'action_type': action_type,
                          'created_at': convert_datetime_to_iso_string(obj.created),
                          'modified_at': convert_datetime_to_iso_string(obj.modified),
                          'params': params}
