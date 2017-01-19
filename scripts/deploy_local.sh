@@ -11,7 +11,7 @@ echo "sudo apt install libjpeg-dev libxml2-dev libxslt1-dev"
 echo "sudo apt install redis-server"
 echo "sudo apt install npm nodejs-legacy"
 
-ROOT=`git rev-parse --show-toplevel`
+ROOT="`dirname \"$0\"`/.."
 cd ${ROOT}
 SRC=${ROOT}/src
 SITE_PATH=${SRC}
