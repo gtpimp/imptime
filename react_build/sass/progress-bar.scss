@@ -1,0 +1,18 @@
+@import 'variables';
+
+.progress-bar__section {
+  display: inline-block;
+  height: 4px;
+}
+
+.progress-bar__section--over {
+  background-color: $color-7;
+}
+
+.progress-bar__section--remaining {
+  background-color: $color-6;
+}
+
+.progress-bar__section--progress {
+  background-color: $color-5;
+}

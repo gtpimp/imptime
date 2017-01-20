@@ -26,8 +26,21 @@ class ProjectList extends Component {
 	this.onExpand = this.onExpand.bind(this)
     }
 
+    switchToSampleContext() {
+        const { dispatch, list_key } = this.props
+        var project_id = 167
+        var sprint_id = 2373
+
+        dispatch(selectItems('projects', [project_id]))
+        dispatch(collapse_list('projects'))
+
+        dispatch(selectItems('sprints', [sprint_id]))
+        dispatch(collapse_list('sprints'))
+	}
+
     componentDidMount() {
 	const { dispatch, list_key } = this.props
+        this.switchToSampleContext()
 	dispatch(initList(list_key))
 	dispatch(fetchProjectsIfNeeded(list_key))
     }

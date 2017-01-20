@@ -27,10 +27,10 @@ class DevPage extends Component {
         return (
             <div>
 		<StickyContainer>
-		    <div className="devpage__navigation__lists">
-			<ProjectList key="projects" list_key={LIST_KEY__PROJECT_LIST}/>
-			<SprintList key="sprints" list_key={LIST_KEY__SPRINT_LIST}/>
-		    </div>
+            <div className="devpage__navigation__lists">
+                <ProjectList key="projects" list_key={LIST_KEY__PROJECT_LIST}/>
+                <SprintList key="sprints" list_key={LIST_KEY__SPRINT_LIST}/>
+            </div>
 
 		    <div className="devpage__workarea">
 			<IssueList key="issues" list_key={LIST_KEY__ISSUE_LIST}>

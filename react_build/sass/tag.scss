@@ -1,0 +1,28 @@
+@import 'variables';
+
+.tag {
+  background-color: $color-11;
+  border-radius: 3px;
+  margin-bottom: 2px;
+  padding-bottom: 4px;
+  padding-left: 6px;
+  padding-right: 6px;
+  padding-top: 4px;
+
+  &:last-child {
+    margin-bottom: 0;
+  }
+}
+
+.tag__component {
+  display: inline-block;
+  white-space: nowrap;
+}
+
+.tag__component--category {
+
+}
+
+.tag__component--name {
+
+}
