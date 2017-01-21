@@ -8,11 +8,10 @@ class Duration extends Component {
         super(props)
     }
 
-
     render() {
     	const { value } = this.props
     	return (
-    		<div className="duration">{value} </div>
+    		<div className="duration">{value}</div>
 		)
     }
 }

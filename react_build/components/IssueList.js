@@ -23,6 +23,7 @@ import {
     saveCandidateIssue
 } from '../actions/Issue'
 import Pagination from '../components/Pagination'
+import Toolbar from '../components/Toolbar'
 import Issue from './Issue'
 import {Sticky, StickyContainer} from 'react-sticky';
 
@@ -216,30 +217,32 @@ class IssueList extends Component {
                     </Sticky>
                     <div className="panel-body">
                         <div className="xissue_list__panel-body__left">
-                            <table className="table xtable--compact">
-                                <thead>
-                                <tr className="issue-list__headers">
-                                    <th className="issue-list__header">#</th>
-                                    <th className="issue-list__header"></th>
-                                    <th className="issue-list__header">Name</th>
-                                    <th className="issue-list__header">Assignee</th>
-                                    <th className="issue-list__header">Status</th>
-                                    <th className="issue-list__header">Feature</th>
-                                    <th className="issue-list__header">Sprint</th>
-                                    <th className="issue-list__header">Progress</th>
-                                    <th className="issue-list__header">Estimates</th>
-                                    <th className="issue-list__header">Tags</th>
-                                    <th className="issue-list__header">Tracking</th>
-
-                                </tr>
-                                </thead>
-                                <tbody>
-                                {issue_rows}
-                                </tbody>
-                            </table>
-                            { !is_loading && !has_items &&
-                            <div className="table__no-rows">no issues</div>
-                            }
+                            <div className="issue-list__inner">
+                                <Toolbar> </Toolbar>
+                                <table className="table xtable--compact">
+                                    <thead>
+                                    <tr className="issue-list__headers">
+                                        <th className="issue-list__header">#</th>
+                                        <th className="issue-list__header"></th>
+                                        <th className="issue-list__header">Name</th>
+                                        <th className="issue-list__header">Assignee</th>
+                                        <th className="issue-list__header">Status</th>
+                                        <th className="issue-list__header">Feature</th>
+                                        <th className="issue-list__header">Sprint</th>
+                                        <th className="issue-list__header">Progress</th>
+                                        <th className="issue-list__header">Estimates</th>
+                                        <th className="issue-list__header">Tags</th>
+                                        <th className="issue-list__header">Tracking</th>
+                                    </tr>
+                                    </thead>
+                                    <tbody>
+                                    {issue_rows}
+                                    </tbody>
+                                </table>
+                                { !is_loading && !has_items &&
+                                <div className="table__no-rows">no issues</div>
+                                }
+                            </div>
                         </div>
                         <div className="issue_list__panel-body__right">
                             <StickyContainer>

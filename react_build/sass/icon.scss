@@ -13,6 +13,18 @@
   @include icon(20px, 20px, 'icon_feature_blue 4@2x.png')
 }
 
+.icon--info {
+  @include icon(20px, 20px, 'icon_info_black@2x.png')
+}
+
+.icon--more {
+  @include icon(16px, 4px, 'icon_more_black@2x.png')
+}
+
+.icon--settings {
+  @include icon(20px, 19.45px, 'icon_settings_black@2x.png')
+}
+
 .icon--timer-inactive {
   @include icon(20px, 20px, 'icon_time_black 14@2x.png')
 }
