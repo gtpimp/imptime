@@ -14,7 +14,7 @@ class Toolbar extends Component {
             <div className="toolbar">
                 <div className="toolbar__container">
                     <div className="toolbar__item">
-                    <button className="button button--primary">New (N)</button>
+                    <button className="button button--default button--primary">New (N)</button>
                     </div>
                     <div className="toolbar__item">
                     <div className="toolbar__label">Inbox</div>

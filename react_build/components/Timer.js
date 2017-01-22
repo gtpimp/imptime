@@ -15,7 +15,7 @@ class Timer extends Component {
             <div className="timer">
                 <div className="timer__component timer__component--controls">
                 { active &&
-                <button className="button button--timer button--stop-timer">
+                <button className="button button--default button--timer button--stop-timer">
                     <div className="button__icon">
                         <i className="material-icons">access_time</i>
                     </div>
@@ -25,7 +25,7 @@ class Timer extends Component {
                 </button>
                 }
                 { !active &&
-                <button className="button button--timer button--start-timer">
+                <button className="button button--default button--timer button--start-timer">
                     <div className="button__icon">
                     <i className="material-icons">access_time</i>
                     </div>

@@ -1,0 +1,163 @@
+@import 'variables';
+
+.issue-details {
+  height: 100%;
+  width: 100%;
+}
+
+.issue-details__toolbar {
+  align-items: center;
+  background-color: $color-2;
+  box-shadow: 0 1px 0 0 $color-13;
+  display: flex;
+  height: 56px;
+  justify-content: space-between;
+  left: 0;
+  position: fixed;
+  top: 0;
+  width: 100%;
+}
+
+.issue-details__toolbar-back {
+  margin-right: 16px;
+
+  > * {
+    line-height: 28px;
+  }
+}
+
+.issue-details__toolbar-label {
+  font: $font-4;
+  line-height: 28px;
+}
+
+.issue-details__toolbar-mode-icon {
+  background-color: $color-4;
+  border: 1px solid $color-12;
+  border-radius: 3px;
+  height: 32px;
+  width: 32px;
+
+  > * {
+    line-height: 32px;
+    text-align: center;
+    width: 32px;
+  }
+}
+
+.issue-details__toolbar-mode-icon--unselected {
+  opacity: 0.2;
+}
+
+.issue-details__toolbar-mode-icon--selected {
+  opacity: 1;
+}
+
+.issue-details__toolbar__container {
+  align-items: center;
+  display: inline-flex;
+
+  &:first-child {
+    padding-left: 16px;
+
+  }
+
+  &:last-child {
+    padding-right: 16px;
+
+  }
+}
+
+.issue-details__workspace {
+  height: 100%;
+  width: 100%;
+}
+
+.issue-details__left-menu {
+  background-color: $color-8;
+  box-shadow: inset -1px 0 0 0 #e0e0e0;
+  position: fixed;
+  height: 100%;
+  left: 0;
+  top: 56px;
+  width: 216px;
+}
+
+.issue-details__left-menu-group {
+  box-shadow: inset 0 1px 0 0 $color-12;
+  box-sizing: border-box;
+  padding-bottom: 10px;
+  padding-left: 18px;
+  padding-right: 18px;
+  padding-top: 10px;
+  width: 100%;
+}
+
+.issue-details__left-menu-item {
+  align-content: center;
+  color: $color-10;
+  display: flex;
+  font: $font-2;
+  height: 40px;
+  //padding-bottom: 12px;
+  //padding-top: 13px;
+  width: 100%;
+}
+
+.issue-details__left-menu-item-component {
+  height: 40px;
+  line-height: 40px;
+}
+
+.issue-details__left-menu-item-icon {
+  margin-right: 20px;
+
+  > i {
+    line-height: 40px;
+  }
+}
+
+.issue-details__left-menu-item-label {
+  //display: table-cell;
+  //vertical-align: middle;
+}
+
+.issue-details__content {
+  background-color: $color-2;
+  margin-left: 216px;
+  height: 100%;
+  width: 100%;
+}
+
+.issue-details__feature-pane {
+  display: none;
+  background-color: blue;
+}
+
+.feature details {
+  background-color: red;
+}
+
+.issue-details__issue-pane {
+  background-color: $color-13;
+  //height: 100%;
+}
+
+.issue-details__issue-details-pane {
+  //background-color: green;
+  display: inline-block;
+  max-width: 520px;
+  width: 50%;
+}
+
+.issue-details__attachments-pane {
+  //background-color: $color-13;
+  display: inline-block;
+  height: 100%;
+  width: 50%;
+}
+
+.issue-details__issues-pane {
+  display: none;
+  background-color: gold;
+}
