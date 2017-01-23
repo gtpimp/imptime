@@ -299,7 +299,7 @@ function mapStateToProps(state, props) {
                 }
         })) || []
 
-    const candidate_issue = issue.candidate_issue
+    const candidate_issue = (issue && issue.candidate_issue) || null
     const is_creating_issue = candidate_issue || false
 
     return {

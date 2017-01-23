@@ -32,8 +32,8 @@ class DevPage extends Component {
         return (
             <div>
                 <StickyContainer>
-                    <IssueDetails></IssueDetails>
-                    { false &&
+                    { false && <IssueDetails></IssueDetails> }
+                    { true && 
                     <div>
                         <div className="devpage__navigation__lists">
                             <ProjectList key="projects" list_key={LIST_KEY__PROJECT_LIST}/>

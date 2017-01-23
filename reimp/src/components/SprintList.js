@@ -272,7 +272,7 @@ function mapStateToProps(state, props) {
                 }
         })) || []
 
-    const candidate_sprint = sprint.candidate_sprint
+    const candidate_sprint = (sprint && sprint.candidate_sprint) || null
     const is_creating_sprint = candidate_sprint || false
 
     return {
