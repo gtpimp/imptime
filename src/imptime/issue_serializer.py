@@ -51,3 +51,12 @@ class IssueGeneralDetailsSerializer(BaseSerializer):
         issue.issue_comments = issue.comments.all().order_by("-created")
         return super(IssueGeneralDetailsSerializer, self)\
             .to_representation(issue, *args, **kwargs)
+
+class IssueEstimate(BaseSerializer):
+    pass
+    
+class IssueWithEstimatesSerializer(IssueSerializer):
+
+    issue_estimates = IssueEstimate(many=True)
+
+

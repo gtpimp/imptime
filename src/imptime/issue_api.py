@@ -1,6 +1,7 @@
 import logging
 from issue_serializer import IssueSerializer
 from issue_serializer import IssueGeneralDetailsSerializer
+from issue_serializer import IssueWithEstimatesSerializer
 from rest_framework.renderers import JSONRenderer
 from django.contrib.auth.models import User
 from django.http import HttpResponse
@@ -38,10 +39,12 @@ class IssueViewSet(BaseViewSet):
                     'id', flat=True)]
             else:
 
-                detail_level = format_args.get('detail_level', None)
-                if detail_level is None:
+                detail_levels = format_args.get('detail_level', '').split(",")
+                if len(detail_levels) == 0:
                     s = IssueSerializer(issues, many=True)
-                elif detail_level == 'general':
+                elif 'estimates' in detail_levels:
+                    s = IssueWithEstimatesSerializer(issues, many=True)
+                elif 'general' in detail_levels:
                     s = IssueGeneralDetailsSerializer(issues, many=True)
 
                 issues_data = s.data

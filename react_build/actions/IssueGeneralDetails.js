@@ -3,6 +3,7 @@ import difference from 'lodash/difference'
 import keys from 'lodash/keys'
 import map from 'lodash/map'
 import { setErrorMessage } from '../actions/Error'
+import { ENTITY_KEY__ISSUE_GENERAL_DETAILS } from '../actions/ItemListKeyRegistry'
 
 export const ANNOUNCE_ISSUE_GENERAL_DETAILS_LOADED = 'ANNOUNCE_ISSUES_GENERAL_DETAILS_LOADED'
 export const ANNOUNCE_ISSUE_GENERAL_DETAILS_LOAD_FAILED = 'ANNOUNCE_ISSUE_GENERAL_DETAILS_LOAD_FAILED'
@@ -68,7 +69,7 @@ function fetchIssueGeneralDetails(dispatch, issue_ids) {
 }
 
 function getMissingIssueGeneralDetails(state, required_issue_ids) {
-    const matching_items = state.issue_general_details || {}
+    const matching_items = state[ENTITY_KEY__ISSUE_GENERAL_DETAILS] || {}
     const matching_item_ids = keys(matching_items.items_by_id || {})
     let matching_item_refs = matching_item_ids.map((item_id, index) => "" + item_id)
     const invalidated_item_ids = matching_items.invalidated_item_ids

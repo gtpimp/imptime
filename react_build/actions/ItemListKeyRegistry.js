@@ -7,5 +7,4 @@ export const LIST_KEY__ISSUE_DEVELOPER_DETAILS = 'issue_developer_details'
 export const ENTITY_KEY__PROJECT = 'project'
 export const ENTITY_KEY__SPRINT = 'sprint'
 export const ENTITY_KEY__ISSUE = 'issue'
-
-
+export const ENTITY_KEY__ISSUE_GENERAL_DETAILS = 'issue_general_details'
