@@ -9,10 +9,10 @@
 }
 
 .pager .icon--previous-page {
-    background-image: url('%PUBLIC_URL%/images2/ic_forward_black_18dp.png');
+    background-image: url('../../public/images2/ic_forward_black_18dp.png');
     @include flip-horizontally()
 }
 
 .pager .icon--next-page {
-    background-image: url('%PUBLIC_URL%/images2/ic_forward_black_18dp.png');
+    background-image: url('../../public/images2/ic_forward_black_18dp.png');
 }
