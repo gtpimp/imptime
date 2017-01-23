@@ -244,6 +244,7 @@ INSTALLED_APPS = (
     'filebrowser',
     'django.contrib.admin',
     'channels',
+    'rest_framework.authtoken',
 
     'raven.contrib.django.raven_compat',
     

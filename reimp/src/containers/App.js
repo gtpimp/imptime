@@ -5,6 +5,8 @@ var HTML5Backend = require('react-dnd-html5-backend');
 import DevPage from './DevPage'
 import HeaderBar from '../components/HeaderBar'
 import Websocket from '../components/Websocket'
+import LoginPage from '../containers/LoginPage'
+import { is_authenticated } from '../actions/Auth'
 import { WEBSOCKET_BASE_URL } from '../settings'
 
 class App extends Component {
@@ -22,25 +24,35 @@ class App extends Component {
     }
 
     render() {
-        const {} = this.props
+        const { is_authenticated } = this.props
 
         return (
-            <div className="app">
+            <div>
+            { ! is_authenticated &&
+              <LoginPage/>
+            }
+            { is_authenticated &&
+              (
+                  <div className="app">
 
-                { <Websocket url={WEBSOCKET_BASE_URL+"/refresh"} /> }
-                
-		<HeaderBar/>
-		
-		<DevPage/>
-	    </div>
+                      { <Websocket url={WEBSOCKET_BASE_URL+"/refresh"} /> }
+                      
+		      <HeaderBar/>
+		      
+		      <DevPage/>
+
+                      <LoginPage/>
+	          </div>
+              )
+            }
+            </div>
         )
     }
 }
 
 function mapStateToProps(state) {
-    const {} = state
-
     return {
+        is_authenticated: is_authenticated(state)
     }
 }
 

@@ -2,6 +2,7 @@ import merge from 'lodash/merge'
 import { routerReducer as routing } from 'react-router-redux'
 import { combineReducers } from 'redux'
 import map from 'lodash/map'
+import auth from './auth'
 import filter from './filter'
 import item_list from './item_list'
 import issue from './issue'
@@ -14,6 +15,7 @@ import user from './user'
 import websockets from './websockets'
 
 const rootReducer = combineReducers({
+    auth,
     filter,
     issue,
     issue_general_details,
