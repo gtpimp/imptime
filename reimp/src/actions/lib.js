@@ -2,6 +2,7 @@ import fetch from 'isomorphic-fetch'
 import cookie from 'react-cookie'
 import isArray from 'lodash/isArray'
 import moment from 'moment'
+import { logged_in_user } from '../actions/Auth'
 
 const throttles = throttles || {}
 
@@ -19,6 +20,12 @@ export function impfetch(url, args) {
     if ( ! args.credentials ) {
         args.credentials = 'same-origin'
     }
+
+    const auth_token = logged_in_user().token
+    if ( auth_token ) {
+        args.headers['Authorization'] = 'Token ' + auth_token
+    }
+    
     if ( args.params ) {
         let param_payload = JSON.stringify(args.params)
         url += "?params=" + param_payload

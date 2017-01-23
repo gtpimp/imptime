@@ -24,14 +24,14 @@ class App extends Component {
     }
 
     render() {
-        const { is_authenticated } = this.props
+        const { is_logged_in } = this.props
 
         return (
             <div>
-            { ! is_authenticated &&
+            { ! is_logged_in &&
               <LoginPage/>
             }
-            { is_authenticated &&
+            { is_logged_in &&
               (
                   <div className="app">
 
@@ -41,7 +41,6 @@ class App extends Component {
 		      
 		      <DevPage/>
 
-                      <LoginPage/>
 	          </div>
               )
             }
@@ -52,7 +51,7 @@ class App extends Component {
 
 function mapStateToProps(state) {
     return {
-        is_authenticated: is_authenticated(state)
+        is_logged_in: is_authenticated()
     }
 }
 

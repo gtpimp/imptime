@@ -1,5 +1,6 @@
 import { impfetch } from './lib.js'
 import { API_BASE_URL } from '../settings'
+import cookie from 'react-cookie';
 export const SET_AUTH_TOKEN = "SET_AUTH_TOKEN"
 
 function setAuthToken(username, token) {
@@ -36,10 +37,12 @@ export function login(username, password) {
     
 }
 
-export function logged_in_user(state) {
-    return state.auth || {}
+export function logged_in_user() {
+    return { username: cookie.load('username'),
+             token: cookie.load('token')
+    }
 }
 
-export function is_authenticated(state) {
-    return logged_in_user(state).token || false
+export function is_authenticated() {
+    return logged_in_user().token || false
 }
