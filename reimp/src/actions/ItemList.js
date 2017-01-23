@@ -239,9 +239,7 @@ function shouldFetchList(state, list_key) {
 
 export function fetchListIfNeeded(list_key,
 				  matching_items_key, matching_items_promise_func) {
-    return (dispatch, getState) => {
-	dispatch(tryFetchListAndItems(list_key,
-				      matching_items_key,
-				      matching_items_promise_func))
-    }
+    return tryFetchListAndItems(list_key,
+			        matching_items_key,
+			        matching_items_promise_func)
 }
