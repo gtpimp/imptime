@@ -5,6 +5,7 @@ import { connect } from 'react-redux'
 import map from 'lodash/map'
 import classNames from 'classnames'
 import { DndTypes } from '../actions/Dnd'
+import Progress from '../components/Progress'
 
 class Sprint extends Component {
 
@@ -43,11 +44,15 @@ class Sprint extends Component {
             return connectDragSource(connectDropTarget(
 		<tr key={this.key+"."+sprint.id}
 		    onClick={onClickedSprint}
-		    className={classNames({'tr--selected': is_selected, 'tr--drop-target': isOver})}
+		    className={classNames('sprint', {'tr--selected': is_selected, 'tr--drop-target': isOver})}
 		    >
-		    <td>{sprint.id}</td>
-		    <td>{sprint.name}</td>
-		    <td>{sprint.status_name}</td>
+		    <td className="sprint__cell">{sprint.id}</td>
+		    <td className="sprint__cell">{sprint.name}</td>
+		    <td className="sprint__cell">12 March 2016</td>
+		    <td className="sprint__cell">24 March 2016</td>
+		    <td className="sprint__cell">46 Items</td>
+		    <td className="sprint__cell"><Progress issue={sprint} /></td>
+		    <td className="sprint__cell">{sprint.status_name}</td>
 		</tr>
             ))
 	}

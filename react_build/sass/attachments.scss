@@ -1,0 +1,23 @@
+@import 'variables';
+
+.attachments {
+  background-color: $color-13;
+  height: 100%;
+  padding: 16px;
+  width: 100%;
+}
+
+.attachments__preview {
+  background-color: red;
+  //background-image: url('http://www.opsactive.com/wp-content/uploads/2012/11/Surface-Screenshot.png');
+  box-shadow: 0 2px 8px 0 rgba(0, 0, 0, 0.5);
+height: 100%;
+  width: 100%;
+  //position: absolute;
+  //top: 0;
+  //left: 0;
+  overflow: hidden;
+  background-size: cover;
+  background-position: center center;
+}
+

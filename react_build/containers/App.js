@@ -26,7 +26,7 @@ class App extends Component {
         return (
             <div className="app">
 
-                <Websocket url={"ws://" + window.location.host + "/refresh"} />                
+                <Websocket url={"wss://" + window.location.host + "/refresh"} />
                 
 		<HeaderBar/>
 		
