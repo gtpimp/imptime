@@ -5,6 +5,7 @@ var HTML5Backend = require('react-dnd-html5-backend');
 import DevPage from './DevPage'
 import HeaderBar from '../components/HeaderBar'
 import Websocket from '../components/Websocket'
+import { WEBSOCKET_BASE_URL } from '../settings'
 
 class App extends Component {
 
@@ -26,8 +27,7 @@ class App extends Component {
         return (
             <div className="app">
 
-                { false && <Websocket url={"wss://" + window.location.host + "/refresh"} /> }
-                { true && <Websocket url={"ws://localhost:8002/refresh"} /> }
+                { <Websocket url={WEBSOCKET_BASE_URL+"/refresh"} /> }
                 
 		<HeaderBar/>
 		

@@ -7,6 +7,7 @@ import {
     invalidateIssues,
     fetchIssuesIfNeeded
 } from './Issues'
+import { API_BASE_URL } from '../settings'
 
 
 export const ANNOUNCE_ISSUE_SAVING = 'ANNOUNCE_ISSUE_SAVING'
@@ -116,7 +117,7 @@ function updateIssue(issue_id, field_name, new_value, on_done) {
 	dispatch(announceIssueSaving(issue_id, field_name, new_value))
 	let data = {field_name: field_name,
 		    value: new_value }
-	return impfetch("/imp/issue/"+issue_id+"/",
+	return impfetch(API_BASE_URL+"imp/issue/"+issue_id+"/",
 			{method: "PUT",
 			 credentials: 'same-origin',
 			 data: data,
@@ -190,7 +191,7 @@ export function saveCandidateIssue() {
 	dispatch(announceCandidateIssueSaving())
 	let data = {issue: state.issue.candidate_issue}
 	
-	return impfetch("/imp/issue/",
+	return impfetch(API_BASE_URL+"imp/issue/",
 			{method: "POST",
 			 credentials: 'same-origin',
 			 data: data,
@@ -219,7 +220,7 @@ export function deleteIssue(issue_id) {
 	const state = getState()
 	dispatch(announceDeletingIssue(issue_id))
 	let data = { issue_id: issue_id }
-	return impfetch("/imp/issue/",
+	return impfetch( API_BASE_URL+"imp/issue/",
 			{method: "DELETE",
 			 credentials: 'same-origin',
 			 data: data,

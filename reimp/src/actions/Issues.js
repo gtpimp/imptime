@@ -4,6 +4,7 @@ import keys from 'lodash/keys'
 import map from 'lodash/map'
 import { fetchListIfNeeded } from './ItemList'
 import { ENTITY_KEY__ISSUE } from '../actions/ItemListKeyRegistry'
+import { API_BASE_URL } from '../settings'
 
 export const ANNOUNCE_ISSUES_LOADED = 'ANNOUNCE_ISSUES_LOADED'
 export const ANNOUNCE_ISSUES_LOAD_FAILED = 'ANNOUNCE_ISSUES_LOAD_FAILED'
@@ -60,7 +61,7 @@ function fetchIssuesPromise(dispatch, issue_ids) {
 	const params = { filter: { ids: issue_ids },
 			 pagination: {'enabled': false} }
 	
-        return impfetch('/imp/issue/', {params:params})
+        return impfetch(API_BASE_URL+'imp/issue/', {params:params})
 	    .then(response => response.json())
 	    .then(json => {
                 if (json.status != 'success') {

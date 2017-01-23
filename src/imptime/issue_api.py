@@ -46,6 +46,8 @@ class IssueViewSet(BaseViewSet):
                     s = IssueWithEstimatesSerializer(issues, many=True)
                 elif 'general' in detail_levels:
                     s = IssueGeneralDetailsSerializer(issues, many=True)
+                else:
+                    s = IssueSerializer(issues, many=True)
 
                 issues_data = s.data
                 context['issues'] = issues_data

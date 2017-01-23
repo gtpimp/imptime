@@ -4,6 +4,7 @@ import keys from 'lodash/keys'
 import map from 'lodash/map'
 import { fetchListIfNeeded } from './ItemList'
 import { ENTITY_KEY__PROJECT } from '../actions/ItemListKeyRegistry'
+import { API_BASE_URL } from '../settings'
 
 export const ANNOUNCE_PROJECTS_LOADED = 'ANNOUNCE_PROJECTS_LOADED'
 export const ANNOUNCE_PROJECTS_LOAD_FAILED = 'ANNOUNCE_PROJECTS_LOAD_FAILED'
@@ -62,7 +63,7 @@ function fetchProjectsPromise(dispatch, project_ids) {
 	const params = { filter: { ids: project_ids },
 			 pagination: {'enabled': false} }
 	
-        return impfetch('/imp/project/', {params:params})
+        return impfetch(API_BASE_URL+'imp/project/', {params:params})
 	    .then(response => response.json())
 	    .then(json => {
                 if (json.status != 'success') {
