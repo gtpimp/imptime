@@ -1,0 +1,169 @@
+@import 'variables.scss';
+
+.panel {
+    background-color: $form-background-color;
+    padding: 0;
+    margin-bottom: 0;
+
+    .panel-heading {
+	//background-color: $heading-background-color;
+	border-radius: 2px;
+	color: #000000;
+	display: table;
+	height: 40px;
+	font: $bold-extra-large;
+	padding-left: $padding-large;
+	padding-right: $padding-medium;
+	width: 100%;
+	cursor: pointer;
+
+	> * {
+	    display: table-cell;
+	}
+
+	* {
+	    vertical-align: middle;
+	}
+
+	.panel__buttons {
+	    text-align: right;
+	}
+
+    }
+
+    .panel-body {
+	border: 1px solid $box-shadow-color;
+	border-radius: 2px;
+	padding: 0;
+	background-color: $background-color;
+    }
+
+    .panel__button,
+    .panel-block__control {
+	display: inline-block;
+	background-position: center;
+	background-repeat: no-repeat;
+	height: 24px;
+	margin-left: $padding-medium;
+	width: 24px;
+    }
+
+    .panel__button--add {
+	background-image: url('%PUBLIC_URL%/images2/add_panel_item_white.png');
+    }
+
+    .panel__button--delete {
+	background-image: url('%PUBLIC_URL%/images2/delete_panel_item_white.png');
+    }
+
+    .panel__button--evidence-toggle {
+	background-image: url('%PUBLIC_URL%/images2/track.png');
+	width: 34px;
+    }
+
+    .panel__button--filter {
+	background-image: url('%PUBLIC_URL%/images2/material-icons-blacksearch.png');
+	margin-left: 0;
+	padding-left: 0; // refactor - not panel
+    }
+
+    .panel__button--add-filter {
+	background-image: url('%PUBLIC_URL%/images2/material-icons-blackadd.png');
+    }
+
+    .panel__button--disable-filter {
+	background-image: url('%PUBLIC_URL%/images2/track.png');
+	width: 34px;
+    }
+
+    .panel__button--enable-filter {
+	background-image: url('%PUBLIC_URL%/images2/track.png');
+	width: 34px;
+    }
+
+    .panel__button--refresh {
+	background-image: url('%PUBLIC_URL%/images2/material-icons-whiterefresh.png');
+
+	&:hover {
+	    background-image: url('%PUBLIC_URL%/images2/material-icons-whiterefresh-hover.png');
+	    //background-color: rgba(0, 0, 0, 0.12);
+	    width: 24px;
+	    height: 24px;
+	    object-fit: contain;
+	    //-webkit-transform: rotate(-180deg);
+	    //transform: rotate(-180deg);
+	}
+    }
+
+    .panel__button--collapse {
+	background-image: url('%PUBLIC_URL%/images2/material-icons-whiteexpand-less.png');
+    }
+
+    .panel__button--expand {
+	background-image: url('%PUBLIC_URL%/images2/material-icons-whiteexpand-more.png');
+    }
+
+    .panel__button--next-page {
+	background-image: url('%PUBLIC_URL%/images2/material-icons-blackchevron-right.png');
+	margin: 0;
+	padding-left: 0;
+	padding-right: 0;
+    }
+
+    .panel__button--previous-page {
+	background-image: url('%PUBLIC_URL%/images2/material-icons-blackchevron-left.png');
+	margin: 0;
+	padding-left: 0;
+	padding-right: $padding-small;
+    }
+
+}
+
+.panel--wide {
+    $width: 808px;
+    max-width: $width;
+    min-width: $width;
+    width: $width;
+}
+
+.panel--full {
+    $width: 100%;
+    max-width: $width;
+    min-width: $width;
+    width: $width;
+
+    .panel-heading {
+	background-color: $panel-focus-header-background-color;
+    }
+
+}
+
+.panel--default {
+    $width: 392px;
+    max-width: $width;
+    min-width: $width;
+    width: $width;
+
+    .panel-heading {
+	background-color: $panel-focus-header-background-color;
+    }
+
+}
+
+.panel--collapsed {
+    $width: 100%;
+    max-width: $width;
+    min-width: $width;
+    width: $width;
+    background-color: $panel-header-collapsed-background-color;
+    color: #dddddd;
+    border-bottom: 5px solid #CECECF;
+
+    .panel-body {
+	float: right;
+    }
+
+
+
+}
+

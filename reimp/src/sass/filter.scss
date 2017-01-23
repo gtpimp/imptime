@@ -1,0 +1,18 @@
+@import 'variables.scss';
+
+.header_bar__filter_box {
+    float: right;
+}
+
+.header_bar__filter_box__current_value {
+    color: #ffffff;
+    min-width: 24px;
+    cursor: pointer;
+    float: right;
+}
+
+.header_bar__filter_box__search_icon {
+    background-image: url('%PUBLIC_URL%/images2/search.png');
+    width: 24px;
+    float: right;
+}

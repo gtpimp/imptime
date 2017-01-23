@@ -1,0 +1,87 @@
+@import 'variables.scss';
+
+.issue-details2 {
+  background-color: $color-2;
+  height: 100%;
+  padding-top: 32px;
+  width: 100%;
+}
+
+.issue-details2__title-component {
+  display: inline-block;
+  //line-height: 25px;
+}
+
+.issue-details2__section {
+  margin-bottom: 17px;
+  padding-left: 40px;
+  padding-right: 40px;
+}
+
+.issue-details2__title-icon {
+  margin-right: 18px;
+}
+
+.issue-details2__title-label {
+  font: $font-5;
+}
+
+.issue-details2__section-title {
+  font: $font-2;
+  margin-bottom: 12px;
+}
+
+.issue-details2__description {
+  color: $color-10;
+  font: $font-1;
+  line-height: 20px;
+}
+
+.issue-details2__testables-list {
+  color: $color-10;
+  font: $font-1;
+  line-height: 20px;
+}
+
+.issue-details2__progress {
+  background-color: $color-8;
+  display: flex;
+  justify-content: space-between;
+  padding: 12px;
+}
+
+.issue-details2__progress-component {
+  display: inline-block;
+}
+
+.issue-details2__progress-component--timer {
+
+}
+
+.issue-details2__progress-component--progress {
+
+}
+
+.issue-details2__estimates {
+  font: $font-1;
+}
+
+.issue-details2__estimates-time {
+  color: $color-1;
+  width: 4em;
+}
+
+.issue-details2__estimates-estimator {
+  color: $color-10;
+}
+
+.issue-details2__attachment {
+  display: block;
+  padding-top: 16px;
+}
+
+.issue-details2__save {
+  box-shadow: inset 0 1px 0 0 #E0E0E0;
+  text-align: right;
+  padding: 16px;
+}

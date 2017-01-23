@@ -1,0 +1,34 @@
+{
+  "name": "reimp",
+  "version": "0.1.0",
+  "private": true,
+  "devDependencies": {
+    "react-scripts": "0.8.5"
+  },
+  "dependencies": {
+    "classnames": "^2.2.5",
+    "moment": "^2.13.0",
+    "react": "^15.4.2",
+    "react-classnames": "^0.1.2",
+    "react-cookie": "^0.4.6",
+    "react-dnd": "^2.1.4",
+    "react-dnd-html5-backend": "^2.1.2",
+    "react-dom": "^15.4.2",
+    "react-redux": "^4.4.5",
+    "react-router": "^2.4.1",
+    "react-router-redux": "^4.0.7",
+    "react-select": "^1.0.0-rc.2",
+    "react-sticky": "^5.0.3",
+    "react-timeout": "^1.0.0",
+    "react-websocket": "^1.1.6",
+    "redux": "^3.5.2",
+    "redux-logger": "^2.6.1",
+    "redux-thunk": "^2.1.0"
+  },
+  "scripts": {
+    "start": "react-scripts-with-sass start",
+    "build": "react-scripts-with-sass build",
+    "test": "react-scripts test --env=jsdom",
+    "eject": "react-scripts eject"
+  }
+}

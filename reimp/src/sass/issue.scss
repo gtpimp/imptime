@@ -1,0 +1,63 @@
+@import 'variables.scss';
+
+.issue {
+    color: $color-1;
+    width: 100%;
+}
+
+.issue--unselected {
+    background-color: $color-2;
+}
+
+.issue--selected {
+    background-color: $color-3 !important;
+}
+
+.issue--feature {
+    box-shadow: inset 0 -1px 0 0 #E0E0E0, 0 0 5px 0 rgba(0,0,0,0.16);
+    font: $font-2;
+}
+
+.issue--standalone {
+    box-shadow: inset 0 -1px 0 0 #E0E0E0;
+    font: $font-1;
+}
+
+.issue--grouped {
+    background-color: $color-4;
+    box-shadow: inset 0 -1px 0 0 #E0E0E0;
+    font: $font-1;
+}
+
+.issue__cell {
+    height: 56px;
+    padding-left: 16px;
+    padding-right: 16px;
+    vertical-align: middle;
+}
+
+.issue_list__issue_number_button {
+    border: 1px solid #939eb3;
+    border-radius: 4px 4px 4px 4px;
+    color: #FFFFFF;
+    padding-left: 4px;
+    padding-right: 4px;
+    margin: auto;
+    text-align: center;
+    background-color: #324972;
+    width: 50%;
+    height: 100%;
+    padding-top: 7px;
+}
+
+.issue_list__panel-body__right {
+    @inherit panel-body;
+    width: 50%;
+    float: right;
+}
+
+.issue_list__panel-body__left {
+    @inherit panel-body;
+    width: 50%;
+    float: left;
+}

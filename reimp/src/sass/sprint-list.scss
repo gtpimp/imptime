@@ -1,0 +1,14 @@
+@import 'variables.scss';
+
+.sprint-list {
+  width: 100%;
+}
+
+.sprint-list__inner {
+  background-color: $color-2;
+}
+
+.sprint-list__section-title {
+  font: $font-2;
+  margin-bottom: 22px;
+}

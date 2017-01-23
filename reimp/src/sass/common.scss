@@ -1,0 +1,18 @@
+@import 'variables.scss';
+
+@media (min-width: 1200px) {
+    .container {
+	width: 100%;
+    }
+}
+
+html, body {
+    background-color: #CECECF;
+    height: 100%;
+    margin: 0;
+    width: 100%;
+}
+
+error {
+    color: $error-color;
+}
