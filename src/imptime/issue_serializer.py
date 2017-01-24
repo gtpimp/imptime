@@ -20,6 +20,9 @@ class IssueSerializer(BaseSerializer):
     sprint_id = serializers.CharField()
     project_id = serializers.CharField()
     tags = TagSerializer(many=True, source='get_tags')
+    dev_estimate_hours = serializers.FloatField()
+    dev_estimate_user_quick_name = serializers.CharField()
+    actual_hours = serializers.FloatField(source='hours')
 
     def to_representation(self, issue, *args, **kwargs):
         issue.assigned_to_quick_name = \
@@ -29,6 +32,7 @@ class IssueSerializer(BaseSerializer):
         issue.position_if_creating_new_issue_after = issue.order + 0.5
         issue.sprint_id = str(issue.project_id)  # sic
         issue.project_id = str(issue.project.business_id)  # sic
+        issue.dev_estimate_hours, issue.dev_estimate_user_quick_name = issue.best_hours_estimate
 
         d = super(IssueSerializer, self).to_representation(
             issue, *args, **kwargs)

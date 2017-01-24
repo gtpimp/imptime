@@ -14,8 +14,8 @@ class Progress extends Component {
     render() {
         const {issue} = this.props
         const active = issue.number % 3 === 0
-        const current = Math.floor((Math.random() * 10) + 1)
-        const max = Math.floor((Math.random() * 10) + 1)
+        const current = issue.actual_hours || 0
+        const max = issue.dev_estimate_hours || 0
         return (
             <div className="progress">
                 <div className="progress__component progress__component--timer">
@@ -23,9 +23,13 @@ class Progress extends Component {
                 </div>
                 <div className="progress__component progress__component--progress">
                     <div className="progress__times">
-                        <div className={classNames('progress__time', 'progress__time--' + ( current <= max ? 'progress' : 'over'))}><Duration value="2:00"/></div>
+                        <div className={classNames('progress__time', 'progress__time--' + ( current <= max ? 'progress' : 'over'))}>
+                            <Duration value={current}/>
+                        </div>
                         <div className="progress__time-separator">/</div>
-                        <div className="progress__time progress__time--max"><Duration value="3:00"/></div>
+                        <div className="progress__time progress__time--max">
+                            <Duration value={max}/>
+                        </div>
                     </div>
                     <div className="progress__progress_bar">
                         <ProgressBar current={current} max={max}/>

@@ -3495,6 +3495,7 @@ class Issue(models.Model):
     def hours(self):
         return self.related_entries.all().aggregate(total_hours=Sum('hours'))['total_hours']
 
+    @property
     def hours_for_user(self, user):
         return self.related_entries.all().filter(user=user).aggregate(total_hours=Sum('hours'))['total_hours'] or 0
 
