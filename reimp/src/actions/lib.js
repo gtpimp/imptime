@@ -52,8 +52,6 @@ export function impfetch(url, args) {
 
         if ( ( (""+response.status)[0] == "4" ) || ( (""+response.status)[0] == "5" ) ) {
             throttles[url].last_failure_at = moment()
-        } else if ( response.status && response.status != 'success' ) {
-            throttles[url].last_failure_at = moment()
         } else {
             throttles[url].last_failure_at = null
         }
