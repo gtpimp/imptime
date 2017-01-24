@@ -1,4 +1,4 @@
-@import 'variables.scss';
+@import 'variables';
 
 @media (min-width: 1200px) {
     .container {
@@ -13,6 +13,12 @@ html, body {
     width: 100%;
 }
 
-error {
+.error {
     color: $error-color;
+}
+
+.group:after {
+    content: "";
+    display: table;
+    clear: both;
 }

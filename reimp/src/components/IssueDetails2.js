@@ -24,6 +24,7 @@ class IssueDetails2 extends Component {
                             <div className="icon--feature"></div>
                         </div>
                         <div className="issue-details2__title-component issue-details2__title-label">Registration Form</div>
+                        @Richard to fix width of this panel
                     </div>
                 </div>
                 <div className="issue-details2__section">
