@@ -1,11 +1,14 @@
 version: '2'
 
+volumes:
+  static-assets:
+
 services:
 
   django:
     build:
-      context: ./
-      dockerfile: Dockerfile-django
+      context: ../
+      dockerfile: docker/Dockerfile-django
     depends_on:
       - postgres
       - redis
@@ -16,31 +19,43 @@ services:
 
   nginx:
     build:
-      context: ./
-      dockerfile: Dockerfile-nginx
+      context: ../
+      dockerfile: docker/Dockerfile-nginx
     ports:
      - "80:80"
      - "443:443"
+     - "8443:8443"
     depends_on:
       - django
     volumes:
       - ../:/opt/imptime
+      - static-assets:/opt/imptime/static-assets
 
   postgres:
     build:
-      context: ./
-      dockerfile: Dockerfile-postgres
+      context: ../
+      dockerfile: docker/Dockerfile-postgres
     ports:
       - "5432:5432"
     volumes:
       - ../:/opt/imptime
 
-  react-dev:
+#  react-dev:
+#    build:
+#      context: ../
+#      dockerfile: docker/Dockerfile-react-dev
+#    volumes:
+#      - ../:/opt/imptime
+
+  react-static-assets-deployer:
     build:
-      context: ./
-      dockerfile: Dockerfile-react-dev
+      context: ../
+      dockerfile: docker/Dockerfile-react-static-assets-deployer
     volumes:
       - ../:/opt/imptime
+      - static-assets:/opt/imptime/static-assets
+    environment:
+      - STATIC_ASSETS_HASH=
 
   redis:
     image: redis:3.2-alpine

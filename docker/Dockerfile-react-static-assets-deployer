@@ -1,0 +1,46 @@
+FROM ubuntu:16.04
+
+RUN apt-get update && DEBIAN_FRONTEND=noninteractive apt-get install -y \
+  build-essential \
+  curl \
+  git \
+  libssl-dev \
+  libreadline-dev \
+  libyaml-dev \
+  libxml2-dev \
+  libxslt-dev \
+  python \
+  python2.7-dev \
+  python-pip \
+  vim \
+  wget \
+  zlib1g-dev
+
+# Build ruby
+RUN wget http://ftp.ruby-lang.org/pub/ruby/2.4/ruby-2.4.0.tar.gz
+RUN tar -xzvf ruby-2.4.0.tar.gz
+WORKDIR ruby-2.4.0/
+RUN ./configure
+RUN make
+RUN make install
+RUN ruby -v
+
+# Install gems
+RUN echo 'gem: --no-rdoc --no-ri' >> /.gemrc
+RUN gem install sass
+
+# Intall node
+RUN curl -sL https://deb.nodesource.com/setup_4.x -o nodesource_setup.sh && bash nodesource_setup.sh && DEBIAN_FRONTEND=noninteractive apt-get install -y nodejs
+
+# Build
+# Copy source to new directory so that it uses its own NPM modules
+RUN mkdir -p /tmp/imptime/work
+RUN pwd
+COPY reimp /tmp/imptime/work
+WORKDIR /tmp/imptime/work
+RUN npm install
+RUN NODE_ENV=production npm run build
+
+COPY docker/start-react-static-assets-deployer.sh start-react-static-assets-deployer.sh
+
+ENTRYPOINT ["./start-react-static-assets-deployer.sh"]
