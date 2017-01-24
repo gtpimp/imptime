@@ -3,6 +3,12 @@ import {connect} from 'react-redux'
 import classNames from 'classnames'
 import IssueDetails2 from '../components/IssueDetails2'
 import Attachments from '../components/Attachments'
+import IssueList from '../components/IssueList'
+import IssueDeveloperDetails from '../components/IssueDeveloperDetails'
+import {
+    LIST_KEY__ISSUE_LIST,
+    LIST_KEY__ISSUE_DEVELOPER_DETAILS
+} from '../actions/ItemListKeyRegistry'
 
 const groups = [
     {
@@ -105,7 +111,10 @@ class IssueDetails extends Component {
                             </div>
                         </div>
                         <div className="issue-details__issues-pane">
-                            sub issues go here
+                            <p>@Gareth: This area should have an IssueList in it. The list will have the issues that are children of the feature.</p>
+                            <p>I tried wiring it up but got some sort of endless loop. Once you've added this in I'll style it.</p>
+                            <p>We'll also need to set the appropriate mode for the list to get the right columns once we suppor that.</p>
+                            <p>This are should be hidden if the issue is not a feature and/or if the feature has no child issues.</p>
                         </div>
 
                     </div>
