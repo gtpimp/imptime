@@ -7,6 +7,7 @@ logger = logging.getLogger(__name__)
 class SprintSerializer(BaseSerializer):
 
     id = serializers.CharField()
+    number = serializers.CharField()
     name = serializers.CharField()
     status_name = serializers.CharField()
 

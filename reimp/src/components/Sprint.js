@@ -46,7 +46,7 @@ class Sprint extends Component {
 		    onClick={onClickedSprint}
 		    className={classNames('sprint', {'tr--selected': is_selected, 'tr--drop-target': isOver})}
 		    >
-		    <td className="sprint__cell">{sprint.id}</td>
+		    <td className="sprint__cell">{sprint.number}</td>
 		    <td className="sprint__cell">{sprint.name}</td>
 		    <td className="sprint__cell">12 March 2016</td>
 		    <td className="sprint__cell">24 March 2016</td>

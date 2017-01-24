@@ -689,6 +689,7 @@ class Project(models.Model):
     point_person = models.ForeignKey(User, limit_choices_to={'is_staff': True}, null=True)
     quote_uncertainty = models.FloatField(null=True, blank=True, default=0.25,
                                           verbose_name="Uncertainty overhead as a decimal between 0 and 1")
+    number = models.IntegerField(null=False)
     users = models.ManyToManyField(
         User,
         related_name='user_projects',
@@ -1012,6 +1013,15 @@ class Project(models.Model):
 
         return new_name
 
+    @classmethod
+    def get_last_project_number(self, business):
+        largest_number =  Project.objects.filter(business=business).filter(number__isnull=False).aggregate(largest_number=Max("number"))['largest_number']
+        return largest_number or 0
+
+    @classmethod
+    def get_next_project_number(self, business):
+        return Project.get_last_project_number(business) + 1 
+    
     def save(self, *args, **kwargs):
 
         self.code = Project.get_code_from_name(self.name)
@@ -1021,6 +1031,11 @@ class Project(models.Model):
             while duplicate_projects.filter(code=self.code).exists():
                 self.code = self.code + "_d"
         new_project = self.id is None
+
+        if self.number is None or self.number == -1:
+            self.number = Project.get_next_project_number(self.business)
+
+        
         super(Project, self).save(*args, **kwargs)
         if new_project:
             self._sync_from_previous_project()
