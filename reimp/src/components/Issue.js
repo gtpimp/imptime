@@ -165,9 +165,11 @@ class Issue extends Component {
                             <RIEDropDown options={feature_options}/>
                         </RIEModeToggler>
                     </td>
-                    <td className="issue__cell issue__cell--sprint">
-                        1
-                    </td>
+                    { false &&
+                      <td className="issue__cell issue__cell--sprint">
+                          1
+                      </td>
+                    }
                     <td className="issue__cell issue__cell--progress">
                         <Progress issue={issue} />
                     </td>

@@ -26,22 +26,20 @@ class ProgressBar extends Component {
                 percentage: current / fullWidth,
                 style: 'progress'
             })
-        }
-        if (current > max) {
-            sections.push({
-                percentage: max / fullWidth,
-                style: 'progress'
-            })
-        }
-        if (current < max) {
             sections.push({
                 percentage: (max - current) / fullWidth,
                 style: 'remaining'
             })
         }
+        /* if (current > max) {
+         *     sections.push({
+         *         percentage: max / fullWidth,
+         *         style: 'progress'
+         *     })
+         * }*/
         if (current > max) {
             sections.push({
-                percentage: (current - max) / fullWidth,
+                percentage: 1.0,
                 style: 'over'
             })
         }
