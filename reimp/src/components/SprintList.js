@@ -255,7 +255,7 @@ function mapStateToProps(state, props) {
     const items_by_id = sprint && sprint.items_by_id || {}
     const l = (item_list && item_list[list_key]) || {}
     const filter = l.filter || {}
-    const project_id = filter.project_id || null
+    const project_id = (props.params && props.params.projectRef) || filter.project_id || null
     const visible_item_ids = l.visible_item_ids || []
 
     const selected_items = items_by_id && l.selected_ids && l.selected_ids.map(function (selected_id, index) {
