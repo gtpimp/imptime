@@ -40,6 +40,7 @@ class IssueList extends Component {
         this.onStartCandidateIssue = this.onStartCandidateIssue.bind(this)
         this.onSaveCandidateIssue = this.onSaveCandidateIssue.bind(this)
         this.onCancelCandidateIssue = this.onCancelCandidateIssue.bind(this)
+        this.onShortcut = this.onShortcut.bind(this)
     }
 
     componentDidMount() {
@@ -102,6 +103,14 @@ class IssueList extends Component {
     onCancelCandidateIssue() {
         const {dispatch} = this.props
         dispatch(cancelCandidateIssue())
+    }
+
+    onShortcut(event) {
+        const { dispatch, is_creating_issue } = this.props
+        event.stopPropagation()
+        if ( event.keyCode === 78 /*n*/ ) {
+            this.onStartCandidateIssue(event)
+        }
     }
 
     reorderIssue(moving_issue_id, move_after_issue_id) {
@@ -199,7 +208,9 @@ class IssueList extends Component {
         })
 
         return (
-            <div className="issue-list" style={{opacity: is_loading ? 0.5 : 1}}>
+            <div className="issue-list"
+                 onKeyDown={this.onShortcut}
+                 style={{opacity: is_loading ? 0.5 : 1}}>
                 <div className="panel panel--full">
                     <Sticky>
                         <div className="panel-heading" onClick={this.onCollapse}>
