@@ -56,7 +56,7 @@ class IssueViewSet(BaseViewSet):
             data = {'status': 'success', 'payload': context}
         except Exception, ex:
             logger.exception(ex)
-            data = {'status': 'failed', 'error': str(ex)}
+            return self.error_response(ex)
         return HttpResponse(JSONRenderer().render(data))
 
     def update(self, request, pk):
@@ -118,7 +118,8 @@ class IssueViewSet(BaseViewSet):
 
         except Exception, ex:
             logger.exception(ex)
-            data = {'status': 'failed', 'error': str(ex)}
+            return self.error_response(ex)
+
         return HttpResponse(JSONRenderer().render(data))
 
     def create(self, request):
@@ -148,7 +149,8 @@ class IssueViewSet(BaseViewSet):
 
         except Exception, ex:
             logger.exception(ex)
-            data = {'status': 'failed', 'error': str(ex)}
+            return self.error_response(ex)
+
         return HttpResponse(JSONRenderer().render(data))
 
     def delete(self, request):
@@ -165,7 +167,8 @@ class IssueViewSet(BaseViewSet):
 
         except Exception, ex:
             logger.exception(ex)
-            data = {'status': 'failed', 'error': str(ex)}
+            return self.error_response(ex)
+
         return HttpResponse(JSONRenderer().render(data))
 
     def add_tag(self, request, pk):
@@ -178,12 +181,13 @@ class IssueViewSet(BaseViewSet):
             tag_category = TagCategory.objects.get_or_create(business=issue.project.business,
                                                              name=tag_category_name)[0]
             tag = Tag.objects.get_or_create(category=tag_category, name=tag_name)[0]
-            issue_tag = IssueTag.get_or_create(issue=issue, tag=tag)
+            IssueTag.get_or_create(issue=issue, tag=tag)
             data = {'status': 'success'}
             
         except Exception, ex:
             logger.exception(ex)
-            data = {'status': 'failed', 'error': str(ex)}
+            return self.error_response(ex)
+            
         return HttpResponse(JSONRenderer().render(data))
         
     def delete_tag(self, request, pk):
@@ -203,5 +207,6 @@ class IssueViewSet(BaseViewSet):
             
         except Exception, ex:
             logger.exception(ex)
-            data = {'status': 'failed', 'error': str(ex)}
+            return self.error_response(ex)
+        
         return HttpResponse(JSONRenderer().render(data))

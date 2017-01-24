@@ -32,7 +32,11 @@ function triggerInvalidateEntity(d, dispatch) {
     } else if ( d.entity_name == 'issue' ) {
         dispatch(invalidateIssues([d.entity_ref]))
         dispatch(invalidateIssueGeneralDetails([d.entity_ref]))
-	
+
+    } else if ( d.entity_name == 'issuetag' || d.entity_nane == 'tag' || d.entity_name=='tagcategory' ) {
+        dispatch(invalidateIssues(d.params.issues))
+        dispatch(invalidateIssueGeneralDetails(d.params.issues))
+        
     } else {
         console.log("Unknown entity to refresh: " + d.entity_name)
     }
@@ -77,6 +81,9 @@ function refreshMiddleware(_ref) {
                         triggerInvalidateItemLists(d, dispatch)
                     } else if ( d.action_type == "update" ) {
                         triggerInvalidateEntity(d, dispatch)
+                    } else if ( d.action_type == "delete" ) {
+                        triggerInvalidateEntity(d, dispatch)
+                        triggerInvalidateItemLists(d, dispatch)
                     } else { 
                         console.log("Unknown action_type for async refresh: " + d.action_type)
                     }

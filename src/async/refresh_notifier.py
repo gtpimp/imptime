@@ -38,3 +38,4 @@ class RefreshNotifier(object):
         except Exception, ex:
             logger.exception(ex)
             logger.error("Failed to notify the refresh queue about")
+

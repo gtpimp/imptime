@@ -175,8 +175,9 @@ class Issue extends Component {
                         (3) 4:00
                     </td>
                     <td className="issue__cell issue__cell--tags">
-                        <Tag category="type" name="bug"/>
-                        <Tag category="module" name="candidates"/>
+                        { map(issue.tags, function(tag, index) {
+                              return (<Tag key={index} category={tag.category_name} name={tag.name}/>)
+                        })}
                     </td>
                     <td className="issue__cell issue__cell--tracking-control">
                         <Timer />

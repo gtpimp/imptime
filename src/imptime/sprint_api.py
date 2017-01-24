@@ -45,7 +45,8 @@ class SprintViewSet(BaseViewSet):
             data = {'status': 'success', 'payload': context}
         except Exception, ex:
             logger.exception(ex)
-            data = {'status': 'failed', 'error': str(ex)}
+            return self.error_response(ex)
+            
         return HttpResponse(JSONRenderer().render(data))
 
     def update(self, request, pk):
@@ -59,7 +60,8 @@ class SprintViewSet(BaseViewSet):
             data = {'status': 'success'}
         except Exception, ex:
             logger.exception(ex)
-            data = {'status': 'failed', 'error': str(ex)}
+            return self.error_response(ex)
+        
         return HttpResponse(JSONRenderer().render(data))
 
     def create(self, request):
@@ -88,7 +90,8 @@ class SprintViewSet(BaseViewSet):
 
         except Exception, ex:
             logger.exception(ex)
-            data = {'status': 'failed', 'error': str(ex)}
+            return self.error_response(ex)
+        
         return HttpResponse(JSONRenderer().render(data))
 
     

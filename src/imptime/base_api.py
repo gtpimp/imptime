@@ -1,5 +1,7 @@
 from django.core.paginator import Paginator
 from django.conf import settings
+from django.http import HttpResponse
+from rest_framework.renderers import JSONRenderer
 from rest_framework import viewsets
 from timepiece.models import Business as Project
 from timepiece.models import Project as Sprint
@@ -16,6 +18,10 @@ class BaseViewSet(viewsets.ViewSet):
     - timepiece.Project = imptime.Sprint
     """
 
+    def error_response(self, ex):
+        data = {'status': 'failed', 'error': str(ex)}
+        return HttpResponse(JSONRenderer().render(data), status=500)
+    
     def apply_filter(self, qs, raw_filter_args):
 
         raw_filter_args = self._apply_business_project_switch(raw_filter_args)

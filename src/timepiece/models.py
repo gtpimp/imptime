@@ -4058,14 +4058,64 @@ class TagCategory(models.Model):
     
     business = models.ForeignKey(Business, null=False, related_name='tag_categories')
     name = models.CharField(max_length=100, default='tag_category', null=False, blank=True, db_index=True)
+    created = models.DateTimeField(auto_now_add=True)
+    modified = models.DateTimeField(auto_now=True)
+
+    def save(self, *args, **kwargs):
+        was_created = not self.id
+        super(TagCategory, self).save(*args, **kwargs)
+        affected_issues = [x.id for x in self.tags.issues.all()]
+        if was_created:
+            RefreshNotifier().notify_model_create(
+                self, params={'issues': affected_issues})
+        else:
+            RefreshNotifier().notify_model_update(
+                self, params={'issues': affected_issues})
 
     
 class Tag(models.Model):
+
+    class Meta:
+        unique_together = ('name', 'category')
+    
     category = models.ForeignKey(TagCategory, null=False, related_name='tags')
     name = models.CharField(max_length=100, null=False, blank=True, db_index=True)
+    created = models.DateTimeField(auto_now_add=True)
+    modified = models.DateTimeField(auto_now=True)
 
+    def save(self, *args, **kwargs):
+        was_created = not self.id
+        super(Tag, self).save(*args, **kwargs)
+        affected_issues = [x.id for x in self.issues.all()]
+        if was_created:
+            RefreshNotifier().notify_model_create(
+                self, params={'issues': affected_issues})
+        else:
+            RefreshNotifier().notify_model_update(
+                self, params={'issues': affected_issues})
+        
 
 class IssueTag(models.Model):
+
+    class Meta:
+        unique_together = ('issue', 'tag')
+    
     issue = models.ForeignKey(Issue, null=False, related_name='tags')
     tag = models.ForeignKey(Tag, null=False, related_name='issues')
+    created = models.DateTimeField(auto_now_add=True)
+    modified = models.DateTimeField(auto_now=True)
 
+    def save(self, *args, **kwargs):
+        was_created = not self.id
+        super(IssueTag, self).save(*args, **kwargs)
+        affected_issues = [ self.issue.id ]
+        if was_created:
+            RefreshNotifier().notify_model_create(self, params={'issues': affected_issues})
+        else:
+            RefreshNotifier().notify_model_update(self, params={'issues': affected_issues})
+        
+
+    def delete(self, *args, **kwargs):
+        affected_issues = [ self.issue.id ]
+        super(IssueTag, self).delete(*args, **kwargs)
+        RefreshNotifier().notify_model_delete(self, params={'issues': affected_issues})

@@ -42,7 +42,8 @@ class UserViewSet(BaseViewSet):
             data = {'status': 'success', 'payload': context}
         except Exception, ex:
             logger.exception(ex)
-            data = {'status': 'failed', 'error': str(ex)}
+            return self.error_response(ex)
+        
         return HttpResponse(JSONRenderer().render(data))
 
     def apply_filter(self, qs, raw_filter_args):
