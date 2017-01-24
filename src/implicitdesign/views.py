@@ -13,9 +13,11 @@ import settings
 from zipfile import ZipFile
 from django.template import RequestContext
 from emacs_importer.process_for_timepiece import Processor
-from django.contrib.auth import authenticate, login
+from django.contrib.auth import authenticate
+from django.contrib.auth import login as django_login
 from forms import ImpAuthenticationForm
 from datetime import datetime
+from rest_framework.authtoken.models import Token as RestFrameworkToken
 import logging
 from collections import OrderedDict
 logger = logging.getLogger(__name__)
@@ -34,7 +36,8 @@ def primary_login(request, template="registration/login.html", context=None):
         user = authenticate(username=form.cleaned_data['username'],
                             password=form.cleaned_data['password'])
         if user is not None:
-            login(request, user)
+            django_login(request, user)
+            RestFrameworkToken.objects.create(user=user)
             return HttpResponseRedirect(request.GET.get('next', "/"))
         else:
             context['errors'] = 'Invalid login credentials'

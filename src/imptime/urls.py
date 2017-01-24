@@ -5,8 +5,11 @@ import issue_api
 import user_api
 import views
 from rest_framework.routers import DefaultRouter
+from rest_framework.authtoken import views as rest_views
 
 router = DefaultRouter()
+router.register(r'auth', project_api.ProjectViewSet,
+                base_name='project')
 router.register(r'project', project_api.ProjectViewSet,
                 base_name='project')
 router.register(r'sprint', sprint_api.SprintViewSet,
@@ -17,6 +20,7 @@ router.register(r'user', user_api.UserViewSet,
                 base_name='user')
 
 urlpatterns = [
-    url(r'^$', views.home, name='home')
+    url(r'^$', views.home, name='home'),
+    url(r'^login/', rest_views.obtain_auth_token)
 
 ] + router.urls

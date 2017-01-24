@@ -230,6 +230,15 @@ WSGI_APPLICATION = 'implicitdesign.wsgi.application'
 #     os.path.join(PROJECT_HOME, "templates"),
 # )
 
+REST_FRAMEWORK = {
+   'DEFAULT_AUTHENTICATION_CLASSES': (
+       'rest_framework.authentication.TokenAuthentication',
+   ),
+   'DEFAULT_PERMISSION_CLASSES': (
+        'rest_framework.permissions.IsAuthenticated'
+   ),
+   'PAGINATE_BY': 20,
+}
     
 INSTALLED_APPS = (
     'django.contrib.auth',
@@ -243,6 +252,7 @@ INSTALLED_APPS = (
     'filebrowser',
     'django.contrib.admin',
     'channels',
+    'rest_framework.authtoken',
 
     'raven.contrib.django.raven_compat',
     

@@ -3,12 +3,14 @@
   "version": "0.1.0",
   "private": true,
   "devDependencies": {
+    "create-react-app-sass": "^1.1.0",
     "react-scripts": "0.8.5"
   },
   "dependencies": {
     "classnames": "^2.2.5",
     "moment": "^2.13.0",
     "react": "^15.4.2",
+    "react-autosize-textarea": "^0.3.6",
     "react-classnames": "^0.1.2",
     "react-cookie": "^0.4.6",
     "react-dnd": "^2.1.4",

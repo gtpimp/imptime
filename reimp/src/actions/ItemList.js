@@ -170,7 +170,7 @@ function tryFetchMatchingItems(list_key,
 		    dispatch(announceMatchingItemsLoaded(list_key))
 		})
 		.catch(function (error) {
-		    dispatch(announceMatchingItemsLoadFailed(list_key, "Failed to load list: " + error))
+		    dispatch(announceMatchingItemsLoadFailed(list_key, "Failed to load entity list: " + error))
 		    throw(error)
 		})
          }
