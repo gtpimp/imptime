@@ -2,6 +2,7 @@ import logging
 from rest_framework import serializers
 from base_serializer import BaseSerializer, BaseModelSerializer
 from tag_serializer import TagSerializer
+from user_serializer import UserSerializer
 from timepiece.models import Issue
 logger = logging.getLogger(__name__)
 
@@ -23,7 +24,8 @@ class IssueSerializer(BaseSerializer):
     dev_estimate_hours = serializers.FloatField()
     dev_estimate_user_quick_name = serializers.CharField()
     actual_hours = serializers.FloatField(source='hours')
-
+    currently_clocked_in_by = UserSerializer(many=True)
+ 
     def to_representation(self, issue, *args, **kwargs):
         issue.assigned_to_quick_name = \
             issue.assigned_to.username if issue.assigned_to_id else None

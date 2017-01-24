@@ -241,7 +241,7 @@ class IssueList extends Component {
                                         <th className="issue-list__header">Feature</th>
                                         { false && <th className="issue-list__header">Sprint</th> }
                                         <th className="issue-list__header">Progress</th>
-                                        <th className="issue-list__header">Estimates</th>
+                                        { false && <th className="issue-list__header">Estimates</th> }
                                         <th className="issue-list__header">Tags</th>
                                         <th className="issue-list__header">Tracking</th>
                                     </tr>

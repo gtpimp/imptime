@@ -173,9 +173,10 @@ class Issue extends Component {
                     <td className="issue__cell issue__cell--progress">
                         <Progress issue={issue} />
                     </td>
-                    <td className="issue__cell issue__cell--estimates">
+                    { false && <td className="issue__cell issue__cell--estimates">
                         (3) 4:00
                     </td>
+                    }
                     <td className="issue__cell issue__cell--tags">
                         { map(issue.tags, function(tag, index) {
                               return (<Tag key={index} category={tag.category_name} name={tag.name}/>)

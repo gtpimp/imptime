@@ -3353,6 +3353,10 @@ class Issue(models.Model):
          
         return largest_number or 0
 
+    def currently_clocked_in_by(self):
+        active_clocks = Entry.objects.filter(issue_id=self.id).is_open()
+        return [ x.user for x in active_clocks ]
+    
     @classmethod
     def get_next_issue_number(self, business):
         return Issue.get_last_issue_number(business) +1 
