@@ -5,7 +5,7 @@ import indexOf from 'lodash/indexOf'
 import map from 'lodash/map'
 import { fetchListIfNeeded } from './ItemList'
 import { ENTITY_KEY__SPRINT } from '../actions/ItemListKeyRegistry'
-import { API_BASE_URL } from '../settings'
+import { GLOBAL_SETTINGS } from '../settings'
 
 export const ANNOUNCE_SPRINTS_LOADED = 'ANNOUNCE_SPRINTS_LOADED'
 export const ANNOUNCE_SPRINTS_LOAD_FAILED = 'ANNOUNCE_SPRINTS_LOAD_FAILED'
@@ -129,7 +129,7 @@ export function reorderSprints(sprint_id_before, sprint_id_after, on_done) {
 	const data = { sprint_id_before: sprint_id_before,
 		       sprint_id_after: sprint_id_after }
 	
-        return impfetch(API_BASE_URL+'imp/sprint/'+sprint_id_before+'/', {method: "PUT",
+        return impfetch(GLOBAL_SETTINGS.API_BASE_URL+'imp/sprint/'+sprint_id_before+'/', {method: "PUT",
 					 credentials: 'same-origin',
 					 data: data,
 					 headers: {"Content-type": "application/json; charset=UTF-8"}, 
@@ -157,7 +157,7 @@ function fetchSprintsPromise(dispatch, sprint_ids) {
 	const params = { filter: { ids: sprint_ids },
 			 pagination: {'enabled': false} }
 	
-        return impfetch(API_BASE_URL+'imp/sprint/', {params:params})
+        return impfetch(GLOBAL_SETTINGS.API_BASE_URL+'imp/sprint/', {params:params})
 	    .then(response => response.json())
 	    .then(json => {
                 if (json.status != 'success') {
@@ -222,7 +222,7 @@ export function saveCandidateSprint() {
 	dispatch(announceCandidateSprintSaving())
 	let data = {sprint: state.sprint.candidate_sprint}
 	
-	return impfetch(API_BASE_URL+"imp/sprint/",
+	return impfetch(GLOBAL_SETTINGS.API_BASE_URL+"imp/sprint/",
 			{method: "POST",
 			 credentials: 'same-origin',
 			 data: data,

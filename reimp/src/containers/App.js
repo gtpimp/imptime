@@ -7,7 +7,7 @@ import HeaderBar from '../components/HeaderBar'
 import Websocket from '../components/Websocket'
 import LoginPage from '../containers/LoginPage'
 import { is_authenticated } from '../actions/Auth'
-import { WEBSOCKET_BASE_URL } from '../settings'
+import { GLOBAL_SETTINGS } from '../settings'
 
 class App extends Component {
 
@@ -35,7 +35,7 @@ class App extends Component {
               (
                   <div className="app">
 
-                      { <Websocket url={WEBSOCKET_BASE_URL+"/refresh"} /> }
+                      { <Websocket url={GLOBAL_SETTINGS.WEBSOCKET_BASE_URL} /> }
                       
 		      <HeaderBar/>
 		      

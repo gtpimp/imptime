@@ -15,3 +15,4 @@ build
 npm-debug.log
 
 src/sass/*.css
+src/external_config/local_settings.js

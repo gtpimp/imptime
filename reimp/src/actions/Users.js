@@ -3,7 +3,7 @@ import difference from 'lodash/difference'
 import keys from 'lodash/keys'
 import map from 'lodash/map'
 import { setErrorMessage } from '../actions/Error'
-import { API_BASE_URL } from '../settings'
+import { GLOBAL_SETTINGS } from '../settings'
 
 export const ANNOUNCE_USERS_LOADED = 'ANNOUNCE_USERS_LOADED'
 export const ANNOUNCE_USERS_LOAD_FAILED = 'ANNOUNCE_USERS_LOAD_FAILED'
@@ -54,7 +54,7 @@ function fetchUsers(dispatch, user_ids) {
 			 format: { detail_level: 'general' },
 			 pagination: {'enabled': false} }
 	
-        return impfetch(API_BASE_URL+'imp/user/', {params:params})
+        return impfetch(GLOBAL_SETTINGS.API_BASE_URL+'imp/user/', {params:params})
 	    .then(response => response.json())
 	    .then(json => {
                 if (json.status != 'success') {

@@ -10,6 +10,7 @@ import json
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.decorators import permission_classes
 from timepiece.models import Issue, IssueHistory, Feature
+from timepiece.models import TagCategory, Tag, IssueTag
 
 logger = logging.getLogger(__name__)
 
@@ -162,6 +163,44 @@ class IssueViewSet(BaseViewSet):
             context['issue_id'] = issue_id
             data = {'status': 'success', 'payload': context}
 
+        except Exception, ex:
+            logger.exception(ex)
+            data = {'status': 'failed', 'error': str(ex)}
+        return HttpResponse(JSONRenderer().render(data))
+
+    def add_tag(self, request, pk):
+        try:
+            params = request.data
+            issue = self.allowed_issue(pk)
+            tag_category_name = params['tag_category_name']
+            tag_name = params['tag_name']
+
+            tag_category = TagCategory.objects.get_or_create(business=issue.project.business,
+                                                             name=tag_category_name)[0]
+            tag = Tag.objects.get_or_create(category=tag_category, name=tag_name)[0]
+            issue_tag = IssueTag.get_or_create(issue=issue, tag=tag)
+            data = {'status': 'success'}
+            
+        except Exception, ex:
+            logger.exception(ex)
+            data = {'status': 'failed', 'error': str(ex)}
+        return HttpResponse(JSONRenderer().render(data))
+        
+    def delete_tag(self, request, pk):
+        try:
+            params = request.data
+            issue = self.allowed_issue(pk)
+            tag_category_name = params['tag_category_name']
+            tag_name = params['tag_name']
+
+            tag_category = TagCategory.objects.get_or_create(business=issue.project.business,
+                                                             name=tag_category_name)[0]
+            tag = Tag.objects.get_or_create(category=tag_category, name=tag_name)[0]
+            issue_tag = IssueTag.objects.filter(issue=issue, tag=tag)
+            if issue_tag.exists():
+                issue_tag.delete()
+            data = {'status': 'success'}
+            
         except Exception, ex:
             logger.exception(ex)
             data = {'status': 'failed', 'error': str(ex)}

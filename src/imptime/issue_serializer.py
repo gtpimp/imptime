@@ -1,6 +1,7 @@
 import logging
 from rest_framework import serializers
 from base_serializer import BaseSerializer, BaseModelSerializer
+from tag_serializer import TagSerializer
 from timepiece.models import Issue
 logger = logging.getLogger(__name__)
 
@@ -18,6 +19,7 @@ class IssueSerializer(BaseSerializer):
     position_if_creating_new_issue_after = serializers.IntegerField()
     sprint_id = serializers.CharField()
     project_id = serializers.CharField()
+    tags = TagSerializer(many=True, source='get_tags')
 
     def to_representation(self, issue, *args, **kwargs):
         issue.assigned_to_quick_name = \

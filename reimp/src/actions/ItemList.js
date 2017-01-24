@@ -4,7 +4,7 @@ import keys from 'lodash/keys'
 import union from 'lodash/union'
 import map from 'lodash/map'
 import { reorderSprints } from './Sprints'
-import { API_BASE_URL } from '../settings'
+import { GLOBAL_SETTINGS } from '../settings'
 
 export const INIT_LIST = 'INIT_LIST'
 export const ANNOUNCE_LIST_LOADED = 'ANNOUNCE_LIST_LOADED'
@@ -201,7 +201,7 @@ function tryFetchListAndItems(list_key, matching_items_key, matching_items_promi
 	const params = { filter: l.filter || {},
 			 format: {ids_only: true},
 			 pagination: l.pagination || {} }
-        return impfetch(API_BASE_URL+'imp/' + matching_items_key + "/", {params:params})
+        return impfetch(GLOBAL_SETTINGS.API_BASE_URL+'imp/' + matching_items_key + "/", {params:params})
             .then(response => response.json())
             .then(json => {
 
