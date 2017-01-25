@@ -80,6 +80,20 @@
 	}
     }
 
+    .panel__button--refresh {
+	background-image: url('../../public/images2/material-icons-whiterefresh.png');
+
+	&:hover {
+	    background-image: url('../../public/images2/material-icons-whiterefresh-hover.png');
+	    //background-color: rgba(0, 0, 0, 0.12);
+	    width: 24px;
+	    height: 24px;
+	    object-fit: contain;
+	    //-webkit-transform: rotate(-180deg);
+	    //transform: rotate(-180deg);
+	}
+    }
+
     .panel__button--collapse {
 	background-image: url('../../public/images2/material-icons-whiteexpand-less.png');
     }

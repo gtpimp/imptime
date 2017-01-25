@@ -106,7 +106,8 @@ class IssueList extends Component {
         dispatch(cancelCandidateIssue())
     }
 
-    toggleAsFeature() {
+    toggleAsFeature(event) {
+        event.stopPropagation()
         const {dispatch, selected_ids, selected_items} = this.props
         const current_value = selected_items[0].can_group_issues === true || false
         const new_value = ! current_value
