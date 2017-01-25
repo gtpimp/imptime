@@ -34,8 +34,14 @@ export function impfetch(url, args) {
     const throttle = throttles[url] || {}
     const THROTTLE_HIT_PAUSE_SECONDS = 5
     const now = moment()
+    
+    const last_run_was_x_milliseconds_ago = throttle.last_run_at && now.diff(throttle.last_run_at, 'milliseconds') || null
+    const is_running = throttle.running && last_run_was_x_milliseconds_ago < THROTTLE_HIT_PAUSE_SECONDS
+    
     const last_failure_was_x_milliseconds_ago = throttle.last_failure_at && now.diff(throttle.last_failure_at, 'milliseconds') || null
-    if ( throttle.running || (last_failure_was_x_milliseconds_ago && last_failure_was_x_milliseconds_ago < THROTTLE_HIT_PAUSE_SECONDS*1000) ) {
+    const failed_recently = last_failure_was_x_milliseconds_ago && last_failure_was_x_milliseconds_ago < THROTTLE_HIT_PAUSE_SECONDS*1000
+    
+    if ( is_running || failed_recently ) {
         return new Promise(function(resolve, reject) {
             // note we reject because we don't want to say anything about
             // whether the existing throttle succeeded, and the caller should
@@ -47,6 +53,7 @@ export function impfetch(url, args) {
     // we continue to reference the main throttles object to help with multi-threading
     throttles[url] = throttle
     throttles[url].running = true
+    throttles[url].last_run_at = moment()
     const res = fetch(url, args)
     res.then(function(response) {
 
