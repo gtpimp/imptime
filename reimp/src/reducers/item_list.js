@@ -1,5 +1,4 @@
 import map from 'lodash/map'
-import merge from 'lodash/merge'
 import { setErrorMessage } from '../actions/Error'
 
 import {

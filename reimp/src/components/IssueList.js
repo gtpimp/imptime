@@ -1,6 +1,9 @@
 import React, {Component, PropTypes} from 'react'
 import {Link} from 'react-router'
 import map from 'lodash/map'
+import union from 'lodash/union'
+import includes from 'lodash/includes'
+import difference from 'lodash/difference'
 import RIEInput from '../widgets/RIEInput'
 import RIEModeToggler from '../widgets/RIEModeToggler'
 import {connect} from 'react-redux'
@@ -67,9 +70,19 @@ class IssueList extends Component {
         dispatch(expand_list(list_key))
     }
 
-    onClickedIssue(issue_id) {
-        const {dispatch, list_key} = this.props
-        dispatch(selectItems(list_key, [issue_id]))
+    onClickedIssue(event, issue_id) {
+	const { dispatch, list_key, selected_ids } = this.props
+        event.stopPropagation()
+
+        if ( event.ctrlKey ) {
+            if ( includes(selected_ids, issue_id) ) {
+                dispatch(selectItems(list_key, difference(selected_ids, [issue_id])))
+            } else {
+                dispatch(selectItems(list_key, union(selected_ids, [issue_id])))
+            }
+        } else {
+	    dispatch(selectItems(list_key, [issue_id]))
+        }
     }
 
     onChangePage() {
@@ -106,7 +119,8 @@ class IssueList extends Component {
         dispatch(cancelCandidateIssue())
     }
 
-    toggleAsFeature() {
+    toggleAsFeature(event) {
+        event.stopPropagation()
         const {dispatch, selected_ids, selected_items} = this.props
         const current_value = selected_items[0].can_group_issues === true || false
         const new_value = ! current_value
@@ -136,7 +150,7 @@ class IssueList extends Component {
                                 key={list_key + issue.id + index}
                                 is_collapsed={true}
                                 reorderIssue={this.reorderIssue}
-                                onClickedIssue={() => this.onClickedIssue(issue.id)}
+                                onClickedIssue={(event) => this.onClickedIssue(event, issue.id)}
                                 is_loading={loading_item_ids.indexOf(issue.id) !== -1}
                                 is_selected={selected_ids.indexOf(issue.id) !== -1}
                                 issue_id={issue.id}/>
@@ -196,7 +210,7 @@ class IssueList extends Component {
                     key={list_key + issue.id + index}
                     is_collapsed={false}
                     reorderIssue={that.reorderIssue}
-                    onClickedIssue={() => that.onClickedIssue(issue.id)}
+                    onClickedIssue={(event) => that.onClickedIssue(event, issue.id)}
                     is_loading={loading_item_ids.indexOf(issue.id) !== -1}
                     is_selected={selected_ids.indexOf(issue.id) !== -1}
                     is_invalidated={invalidated_issue_ids.indexOf(issue.id) !== -1}

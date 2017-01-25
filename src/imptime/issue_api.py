@@ -72,7 +72,7 @@ class IssueViewSet(BaseViewSet):
                 issue_pks = [pk]
 
             for issue_pk in issue_pks:
-                issue = self.allowed_issue(pk)
+                issue = self.allowed_issue(issue_pk)
 
                 if field_name == "subject":
                     old_subject = issue.subject
@@ -120,7 +120,7 @@ class IssueViewSet(BaseViewSet):
                         old_assigned_to, new_assigned_to)
                 elif field_name == 'can_group_issues':
                     old_can_group_issues = issue.can_group_issues
-                    issue.can_group_issues = not issue.can_group_issues
+                    issue.can_group_issues = new_value
                     IssueHistory.add_history(
                         self.request.user, issue, "changed can group issues to",
                         old_can_group_issues, new_value)
