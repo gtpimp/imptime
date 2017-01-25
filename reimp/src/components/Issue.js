@@ -86,7 +86,7 @@ class Issue extends Component {
         const {
             issue, is_loading, is_selected, onClickedIssue, assignable_user_ids,
             feature_options, is_invalidated, is_saving,
-            isOver, connectDragSource, connectDropTarget
+            isOver, connectDragSource, connectDropTarget, show_children
         } = this.props
 
         if (!issue) {
@@ -132,8 +132,13 @@ class Issue extends Component {
                     </td>
                     <td className="issue__cell issue__cell--icon">
                         { issue.can_group_issues &&
-                        <div className="icon--feature"></div>
+                          <div className="icon--feature">
+                          { show_children &&
+                            <div className="icon--more"></div>
+                          }
+                          </div>
                         }
+                        
                     </td>
                     <td className="issue__cell issue__cell--name">
                         {issue.subject}
@@ -208,7 +213,7 @@ function mapStateToProps(state, props) {
     const {project, issue, item_list, user} = state
     const {
         issue_id, is_selected, is_collapsed,
-        is_loading, is_invalidated, is_saving
+        is_loading, is_invalidated, is_saving, show_children
     } = props
 
     const this_issue = (issue && issue.items_by_id && issue.items_by_id[issue_id]) || {'loaded': false}
@@ -232,7 +237,8 @@ function mapStateToProps(state, props) {
         is_expanded: !is_collapsed,
         is_invalidated: is_invalidated || false,
         assignable_user_ids: assignable_user_ids,
-        feature_options: feature_options
+        feature_options: feature_options,
+        show_children: show_children
     }
 
 }

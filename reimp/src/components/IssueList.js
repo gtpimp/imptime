@@ -1,6 +1,9 @@
 import React, {Component, PropTypes} from 'react'
 import {Link} from 'react-router'
 import map from 'lodash/map'
+import union from 'lodash/union'
+import includes from 'lodash/includes'
+import difference from 'lodash/difference'
 import RIEInput from '../widgets/RIEInput'
 import RIEModeToggler from '../widgets/RIEModeToggler'
 import {connect} from 'react-redux'
@@ -9,7 +12,8 @@ import {
     invalidateList,
     selectItems,
     collapse_list,
-    expand_list
+    expand_list,
+    setItemFlag
 } from '../actions/ItemList'
 import {
     invalidateAllIssues,
@@ -42,6 +46,7 @@ class IssueList extends Component {
         this.onSaveCandidateIssue = this.onSaveCandidateIssue.bind(this)
         this.onCancelCandidateIssue = this.onCancelCandidateIssue.bind(this)
         this.toggleAsFeature = this.toggleAsFeature.bind(this)
+        this.toggleExpandFeatures = this.toggleExpandFeatures.bind(this)
     }
 
     componentDidMount() {
@@ -67,9 +72,19 @@ class IssueList extends Component {
         dispatch(expand_list(list_key))
     }
 
-    onClickedIssue(issue_id) {
-        const {dispatch, list_key} = this.props
-        dispatch(selectItems(list_key, [issue_id]))
+    onClickedIssue(event, issue_id) {
+	const { dispatch, list_key, selected_ids } = this.props
+        event.stopPropagation()
+
+        if ( event.ctrlKey ) {
+            if ( includes(selected_ids, issue_id) ) {
+                dispatch(selectItems(list_key, difference(selected_ids, [issue_id])))
+            } else {
+                dispatch(selectItems(list_key, union(selected_ids, [issue_id])))
+            }
+        } else {
+	    dispatch(selectItems(list_key, [issue_id]))
+        }
     }
 
     onChangePage() {
@@ -114,6 +129,14 @@ class IssueList extends Component {
         dispatch(updateIssueToggleAsFeature(selected_ids, new_value))
     }
 
+    toggleExpandFeatures(event) {
+        event.stopPropagation()
+        const {dispatch, list_key, selected_ids, selected_items, expanded_issues} = this.props
+        const currently_expanded = includes(expanded_issues, selected_items[0].id)
+        const new_value = ! currently_expanded
+        dispatch(setItemFlag(list_key, selected_ids, 'expanded_issues', new_value))
+    }
+
     reorderIssue(moving_issue_id, move_after_issue_id) {
         const {dispatch, list_key} = this.props
         console.log("Moving " + moving_issue_id + " to after " + move_after_issue_id)
@@ -126,7 +149,9 @@ class IssueList extends Component {
 
     render_collapsed() {
 
-        const {issue, selected_items, is_collapsed, selected_ids, loading_item_ids, list_key} = this.props
+        const {issue, selected_items, is_collapsed,
+               selected_ids, loading_item_ids, list_key,
+               expanded_issues} = this.props
 
         return (
             <div className="panel panel--collapsed">
@@ -136,8 +161,9 @@ class IssueList extends Component {
                             <Issue
                                 key={list_key + issue.id + index}
                                 is_collapsed={true}
+                                show_children={includes(expanded_issues, issue.id)}
                                 reorderIssue={this.reorderIssue}
-                                onClickedIssue={() => this.onClickedIssue(issue.id)}
+                                onClickedIssue={(event) => this.onClickedIssue(event, issue.id)}
                                 is_loading={loading_item_ids.indexOf(issue.id) !== -1}
                                 is_selected={selected_ids.indexOf(issue.id) !== -1}
                                 issue_id={issue.id}/>
@@ -175,7 +201,7 @@ class IssueList extends Component {
             issues, is_visible, list_key, is_loading,
             saving_issue_ids,
             is_creating_issue, candidate_issue, invalidated_issue_ids,
-            selected_ids, loading_item_ids, has_items
+            selected_ids, loading_item_ids, has_items, expanded_issues
         } = this.props
 
         
@@ -196,8 +222,9 @@ class IssueList extends Component {
                 <Issue
                     key={list_key + issue.id + index}
                     is_collapsed={false}
+                    show_children={includes(expanded_issues, issue.id)}
                     reorderIssue={that.reorderIssue}
-                    onClickedIssue={() => that.onClickedIssue(issue.id)}
+                    onClickedIssue={(event) => that.onClickedIssue(event, issue.id)}
                     is_loading={loading_item_ids.indexOf(issue.id) !== -1}
                     is_selected={selected_ids.indexOf(issue.id) !== -1}
                     is_invalidated={invalidated_issue_ids.indexOf(issue.id) !== -1}
@@ -218,9 +245,15 @@ class IssueList extends Component {
                             <div className="panel__title">Issues</div>
                             <div className="panel__buttons">
                                 { at_least_one_issue_selected &&
+
                                   <div className="panel__button panel__button--toggle_as_feature"
                                        onClick={this.toggleAsFeature}>
-                                  </div>                                  
+                                  </div>
+                                }
+                                { at_least_one_issue_selected &&
+                                  <div className="panel__button panel__button--toggle_expand_features"
+                                       onClick={this.toggleExpandFeatures}>
+                                  </div>
                                 }
                                 <div className="panel__button panel__button--refresh"
                                      onClick={this.onRefresh}>
@@ -336,7 +369,8 @@ function mapStateToProps(state, props) {
         last_updated: l.last_updated,
         is_visible: sprint_id || false,
         candidate_issue: candidate_issue,
-        is_creating_issue: is_creating_issue
+        is_creating_issue: is_creating_issue,
+        expanded_issues: l.flag_expanded_issues
     }
 }
 

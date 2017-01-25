@@ -1,5 +1,7 @@
 import map from 'lodash/map'
+import difference from 'lodash/difference'
 import merge from 'lodash/merge'
+import union from 'lodash/union'
 import { setErrorMessage } from '../actions/Error'
 
 import {
@@ -10,6 +12,7 @@ import {
     ANNOUNCE_MATCHING_ITEMS_LOADED,
     ANNOUNCE_MATCHING_ITEMS_LOAD_FAILED,
     ANNOUNCE_MATCHING_ITEMS_LOADING,
+    SET_ITEMS_FLAG,
     INVALIDATE_LIST,
     UPDATE_LIST_PAGINATION,
     UPDATE_LIST_FILTER,
@@ -27,7 +30,7 @@ const item_list_template = {
     loading_matching_items: false,
     received_at: null,
     filter: null,
-    pagination: null,
+    pagination: null
 }
 
 export default function item_list(state = initialState, action) {
@@ -105,6 +108,21 @@ export default function item_list(state = initialState, action) {
 	    state_copy[action.list_key] = Object.assign({}, l, {
 		display_mode: action.display_mode})
 	    return state_copy
+        case SET_ITEMS_FLAG:
+
+            const flag_name = "flag_" + action.flag_name
+            const flag_value = action.flag_value
+            
+            var flag_ids = l[flag_name] || []
+            if ( flag_value == false ) {
+                flag_ids = difference(flag_ids, action.selected_ids)
+            } else {
+                flag_ids = union(flag_ids, action.selected_ids)
+            }
+            state_copy[action.list_key] = Object.assign({}, l)
+            state_copy[action.list_key][flag_name] = flag_ids
+	    return state_copy
+            
         default:
             return state
     }
