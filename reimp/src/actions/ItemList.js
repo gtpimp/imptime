@@ -13,11 +13,13 @@ export const ANNOUNCE_LIST_LOADING = 'ANNOUNCE_LIST_LOADING'
 export const ANNOUNCE_MATCHING_ITEMS_LOADED = 'ANNOUNCE_MATCHING_ITEMS_LOADED'
 export const ANNOUNCE_MATCHING_ITEMS_LOAD_FAILED = 'ANNOUNCE_MATCHING_ITEMS_LOAD_FAILED'
 export const ANNOUNCE_MATCHING_ITEMS_LOADING = 'ANNOUNCE_MATCHING_ITEMS_LOADING'
+export const SET_ITEMS_FLAG = 'SET_ITEMS_FLAG'
 export const INVALIDATE_LIST = 'INVALIDATE_LIST'
 export const UPDATE_LIST_PAGINATION = 'UPDATE_LIST_PAGINATION'
 export const UPDATE_LIST_FILTER = 'UPDATE_LIST_FILTER'
 export const UPDATE_LIST_SELECTION = 'UPDATE_LIST_SELECTION'
 export const UPDATE_LIST_DISPLAY_MODE = 'UPDATE_LIST_DISPLAY_MODE'
+
 
 
 export function initList(list_key) {
@@ -73,6 +75,16 @@ export function selectItems(list_key, selected_ids) {
 	type: UPDATE_LIST_SELECTION,
 	list_key: list_key,
 	selected_ids: selected_ids
+    }
+}
+
+export function setItemFlag(list_key, selected_ids, flag_name, flag_value) {
+    return {
+        type: SET_ITEMS_FLAG,
+        list_key: list_key,
+        selected_ids: selected_ids,
+        flag_name: flag_name,
+        flag_value: flag_value
     }
 }
 

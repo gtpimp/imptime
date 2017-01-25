@@ -28,3 +28,7 @@
 .panel__button--toggle_as_feature {
     @include icon(20px, 20px, 'icon_feature_blue 4@2x.png')
 }
+
+.panel__button--toggle_expand_features {
+    @include icon(20px, 20px, 'material-icons-blackchevron-right@2x.png')
+}
