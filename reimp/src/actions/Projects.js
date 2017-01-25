@@ -56,14 +56,15 @@ function announceProjectsLoadFailed(error) {
     }
 }
 
-function fetchProjectsPromise(dispatch, project_ids) {
+function fetchProjectsPromise(dispatch, state, project_ids) {
     return new Promise(function(resolve, reject) {
+        const API_BASE_URL = state.settings.configured && state.settings.API_BASE_URL
 	dispatch(announceLoadingProjects(project_ids))
 
 	const params = { filter: { ids: project_ids },
 			 pagination: {'enabled': false} }
 	
-        return impfetch(GLOBAL_SETTINGS.API_BASE_URL+'imp/project/', {params:params})
+        return impfetch(API_BASE_URL+'imp/project/', {params:params})
 	    .then(response => response.json())
 	    .then(json => {
                 if (json.status != 'success') {

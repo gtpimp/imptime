@@ -15,6 +15,7 @@ export function login(username, password) {
 
     return (dispatch, getState) => {
         const state = getState()
+        const API_BASE_URL = state.settings.configured && state.settings.API_BASE_URL
         const data = { 'username': username,
                        'password': password }
 
@@ -24,7 +25,7 @@ export function login(username, password) {
 	                headers: {"Content-type": "application/json; charset=UTF-8"}, 
 	                body: JSON.stringify(data)}
         
-        return impfetch(GLOBAL_SETTINGS.API_BASE_URL+'imp/login/', params)
+        return impfetch(API_BASE_URL+'imp/login/', params)
             .then(response => response.json())
             .then(json => {
                 if ( json.token ) {

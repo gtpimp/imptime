@@ -13,6 +13,7 @@ import rie from './rie'
 import sprint from './sprint'
 import user from './user'
 import websockets from './websockets'
+import settings from './settings'
 
 const rootReducer = combineReducers({
     auth,
@@ -26,7 +27,8 @@ const rootReducer = combineReducers({
     routing,
     sprint,
     user,
-    websockets
+    websockets,
+    settings
 })
 
 export default rootReducer

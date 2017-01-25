@@ -20,6 +20,13 @@ class Websocket extends Component {
         this.setupWebsocket();
     }
 
+    componentWillReceiveProps(new_props) {
+        if ( new_props.url != this.props.url ) {
+            this.state.ws.close()
+            this.state.ws = new WebSocket(new_props.url);
+        }
+    }
+
     componentWillUnmount() {
         let websocket = this.state.ws;
         websocket.close();
@@ -90,9 +97,11 @@ class Websocket extends Component {
 }
 
 function mapStateToProps(state, props) {
+    const url = state.settings.WEBSOCKET_BASE_URL
     return {
         reconnect: true,
-        debug: true
+        debug: true,
+        url: url
     }
 }
 

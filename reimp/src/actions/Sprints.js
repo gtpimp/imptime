@@ -116,6 +116,7 @@ export function reorderSprints(sprint_id_before, sprint_id_after, on_done) {
     return (dispatch, getState) => {
 
 	const state = getState()
+        const API_BASE_URL = state.settings.configured && state.settings.API_BASE_URL
 	const saving_sprint_ids = state.sprint.saving_item_ids || []
 	if (indexOf(saving_sprint_ids, sprint_id_before) !== -1 ||
 	    indexOf(saving_sprint_ids, sprint_id_after) !== -1) {
@@ -129,7 +130,7 @@ export function reorderSprints(sprint_id_before, sprint_id_after, on_done) {
 	const data = { sprint_id_before: sprint_id_before,
 		       sprint_id_after: sprint_id_after }
 	
-        return impfetch(GLOBAL_SETTINGS.API_BASE_URL+'imp/sprint/'+sprint_id_before+'/', {method: "PUT",
+        return impfetch(API_BASE_URL+'imp/sprint/'+sprint_id_before+'/', {method: "PUT",
 					 credentials: 'same-origin',
 					 data: data,
 					 headers: {"Content-type": "application/json; charset=UTF-8"}, 
@@ -150,14 +151,15 @@ export function reorderSprints(sprint_id_before, sprint_id_after, on_done) {
     }
 }
 
-function fetchSprintsPromise(dispatch, sprint_ids) {
+function fetchSprintsPromise(dispatch, state, sprint_ids) {
     return new Promise(function(resolve, reject) {
+        const API_BASE_URL = state.settings.configured && state.settings.API_BASE_URL
 	dispatch(announceLoadingSprints(sprint_ids))
 
 	const params = { filter: { ids: sprint_ids },
 			 pagination: {'enabled': false} }
 	
-        return impfetch(GLOBAL_SETTINGS.API_BASE_URL+'imp/sprint/', {params:params})
+        return impfetch(API_BASE_URL+'imp/sprint/', {params:params})
 	    .then(response => response.json())
 	    .then(json => {
                 if (json.status != 'success') {
@@ -219,10 +221,11 @@ export function saveCandidateSprint() {
 
     return (dispatch, getState) => {
 	const state = getState()
+        const API_BASE_URL = state.settings.configured && state.settings.API_BASE_URL
 	dispatch(announceCandidateSprintSaving())
 	let data = {sprint: state.sprint.candidate_sprint}
 	
-	return impfetch(GLOBAL_SETTINGS.API_BASE_URL+"imp/sprint/",
+	return impfetch(API_BASE_URL+"imp/sprint/",
 			{method: "POST",
 			 credentials: 'same-origin',
 			 data: data,

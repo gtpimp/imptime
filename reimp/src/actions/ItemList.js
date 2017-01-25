@@ -4,7 +4,6 @@ import keys from 'lodash/keys'
 import union from 'lodash/union'
 import map from 'lodash/map'
 import { reorderSprints } from './Sprints'
-import { GLOBAL_SETTINGS } from '../settings'
 
 export const INIT_LIST = 'INIT_LIST'
 export const ANNOUNCE_LIST_LOADED = 'ANNOUNCE_LIST_LOADED'
@@ -177,7 +176,7 @@ function tryFetchMatchingItems(list_key,
 
 	if ( unmatching_item_ids.length > 0 ) {
 	    dispatch(announceMatchingItemsLoading(list_key))
-	    matching_items_promise_func(dispatch, unmatching_item_ids)
+	    matching_items_promise_func(dispatch, state, unmatching_item_ids)
 		.then(() => {
 		    dispatch(announceMatchingItemsLoaded(list_key))
 		})
@@ -196,6 +195,8 @@ function tryFetchListAndItems(list_key, matching_items_key, matching_items_promi
     
     return (dispatch, getState) => {
 	const state = getState()
+        const API_BASE_URL = state.settings.configured && state.settings.API_BASE_URL
+        
 	const item_list = state.item_list || {}
 	const l = item_list[list_key] || {}
 
@@ -213,7 +214,7 @@ function tryFetchListAndItems(list_key, matching_items_key, matching_items_promi
 	const params = { filter: l.filter || {},
 			 format: {ids_only: true},
 			 pagination: l.pagination || {} }
-        return impfetch(GLOBAL_SETTINGS.API_BASE_URL+'imp/' + matching_items_key + "/", {params:params})
+        return impfetch(API_BASE_URL+'imp/' + matching_items_key + "/", {params:params})
             .then(response => response.json())
             .then(json => {
 

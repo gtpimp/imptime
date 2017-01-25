@@ -48,13 +48,15 @@ function announceUsersLoadFailed(error) {
 
 function fetchUsers(dispatch, user_ids) {
     return (dispatch, getState) => {
+        const state = getState()
+        const API_BASE_URL = state.settings.configured && state.settings.API_BASE_URL
 	dispatch(announceLoadingUsers(user_ids))
 
 	const params = { filter: { ids: user_ids },
 			 format: { detail_level: 'general' },
 			 pagination: {'enabled': false} }
 	
-        return impfetch(GLOBAL_SETTINGS.API_BASE_URL+'imp/user/', {params:params})
+        return impfetch(API_BASE_URL+'imp/user/', {params:params})
 	    .then(response => response.json())
 	    .then(json => {
                 if (json.status != 'success') {

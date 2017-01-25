@@ -7,7 +7,7 @@ import HeaderBar from '../components/HeaderBar'
 import Websocket from '../components/Websocket'
 import LoginPage from '../containers/LoginPage'
 import { is_authenticated } from '../actions/Auth'
-import { GLOBAL_SETTINGS } from '../settings'
+import { updateSettings } from '../actions/Settings'
 
 class App extends Component {
 
@@ -21,10 +21,21 @@ class App extends Component {
         window.onerror = function(msg, url, line, col, error) {
 	    //alert("whoops")
         }
+
+        require.ensure(['../external_config/react_local_settings'], function() {
+            let local_settings = require('../external_config/react_local_settings')
+            dispatch(updateSettings(local_settings.local_settings))
+        })
     }
 
     render() {
-        const { is_logged_in } = this.props
+        const { is_logged_in, are_settings_loaded } = this.props
+
+        if ( ! are_settings_loaded ) {
+            return (
+                <div>Loading settings...</div>
+            )
+        }
 
         return (
             <div>
@@ -34,11 +45,8 @@ class App extends Component {
             { is_logged_in &&
               (
                   <div className="app">
-
-                      { <Websocket url={GLOBAL_SETTINGS.WEBSOCKET_BASE_URL} /> }
-                      
+                      <Websocket/>
 		      <HeaderBar/>
-		      
 		      <DevPage/>
 
 	          </div>
@@ -50,10 +58,11 @@ class App extends Component {
 }
 
 function mapStateToProps(state) {
+    const { configured } = state.settings
     return {
-        is_logged_in: is_authenticated()
+        is_logged_in: is_authenticated(),
+        are_settings_loaded: configured
     }
 }
 
 export default connect(mapStateToProps)(DragDropContext(HTML5Backend)(App))
-

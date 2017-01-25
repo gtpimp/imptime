@@ -7,7 +7,7 @@ const initialState = {
     token: null
 }
 
-export default function issue(state = initialState, action) {
+export default function auth(state = initialState, action) {
 
     switch (action.type) {
         case SET_AUTH_TOKEN:

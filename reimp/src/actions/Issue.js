@@ -118,11 +118,13 @@ function announceIssueDeleteFailed(issue_id, error) {
 
 function updateIssue(issue_ids, field_name, new_value, on_done) {
     return (dispatch, getState) => {
+        const state = getState()
+        const API_BASE_URL = state.settings.configured && state.settings.API_BASE_URL
 	dispatch(announceIssuesSaving(issue_ids, field_name, new_value))
 	let data = {issue_ids: issue_ids,
                     field_name: field_name,
 		    value: new_value }
-	return impfetch(GLOBAL_SETTINGS.API_BASE_URL+"imp/issue/"+issue_ids[0]+"/",
+	return impfetch(API_BASE_URL+"imp/issue/"+issue_ids[0]+"/",
 			{method: "PUT",
 			 credentials: 'same-origin',
 			 data: data,
@@ -193,10 +195,11 @@ export function saveCandidateIssue() {
 
     return (dispatch, getState) => {
 	const state = getState()
+        const API_BASE_URL = state.settings.configured && state.settings.API_BASE_URL
 	dispatch(announceCandidateIssueSaving())
 	let data = {issue: state.issue.candidate_issue}
 	
-	return impfetch(GLOBAL_SETTINGS.API_BASE_URL+"imp/issue/",
+	return impfetch(API_BASE_URL+"imp/issue/",
 			{method: "POST",
 			 credentials: 'same-origin',
 			 data: data,
@@ -223,9 +226,10 @@ export function saveCandidateIssue() {
 export function deleteIssue(issue_id) {
     return (dispatch, getState) => {
 	const state = getState()
+        const API_BASE_URL = state.settings.configured && state.settings.API_BASE_URL
 	dispatch(announceDeletingIssue(issue_id))
 	let data = { issue_id: issue_id }
-	return impfetch( GLOBAL_SETTINGS.API_BASE_URL+"imp/issue/",
+	return impfetch( API_BASE_URL+"imp/issue/",
 			{method: "DELETE",
 			 credentials: 'same-origin',
 			 data: data,
