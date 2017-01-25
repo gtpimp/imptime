@@ -424,7 +424,7 @@ WEEKLY_HOURS_MAIL_RECIPIENT = ""
 # DON'T PUT ANY MORE SETTINGS AFTER THIS POINT, OTHERWISE local_settings.py CAN'T OVERRIDE THEM
 #
 #
-if os.path.exists(os.path.join(PROJECT_HOME,"external_config","django_local_settings.py")):
+if os.path.exists(os.path.join(PROJECT_HOME, "external_config","django_local_settings.py")):
     from external_config.django_local_settings import *
 
 if os.path.exists(os.path.join(PROJECT_HOME,"version_number.py")):
