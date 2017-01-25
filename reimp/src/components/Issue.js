@@ -108,10 +108,9 @@ class Issue extends Component {
                 </tr>
             )
         } else {
-            const isStandalone = issue.number % 3 === 0
-            const isFeature = issue.number % 3 === 1
-            const isGroup = issue.number % 3 === 2
-            const isUserTrackingTime = issue.number % 2 === 0;
+            const isFeature = issue.can_group_issues
+            const belongsToFeature = issue.parent_group || false
+            const isStandalone = !isFeature && !belongsToFeature
             return connectDragSource(connectDropTarget(
                 <tr key={this.key + "." + issue.id}
                     onClick={onClickedIssue}
@@ -121,7 +120,7 @@ class Issue extends Component {
                             'issue--selected': is_selected,
                             'issue--standalone': isStandalone,
                             'issue--feature': isFeature,
-                            'issue--grouped': isGroup,
+                            'issue--grouped': belongsToFeature,
                         /*'tr--selected': is_selected,*/
                         'tr--invalidated': is_invalidated,
                         'tr--saving': is_saving,
@@ -132,7 +131,7 @@ class Issue extends Component {
                         <div>{issue.number}</div>
                     </td>
                     <td className="issue__cell issue__cell--icon">
-                        { isFeature &&
+                        { issue.can_group_issues &&
                         <div className="icon--feature"></div>
                         }
                     </td>

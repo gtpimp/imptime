@@ -20,7 +20,8 @@ import {
     startCandidateIssue,
     updateCandidateSubject,
     cancelCandidateIssue,
-    saveCandidateIssue
+    saveCandidateIssue,
+    updateIssueToggleAsFeature
 } from '../actions/Issue'
 import Pagination from '../components/Pagination'
 import Toolbar from '../components/Toolbar'
@@ -40,7 +41,7 @@ class IssueList extends Component {
         this.onStartCandidateIssue = this.onStartCandidateIssue.bind(this)
         this.onSaveCandidateIssue = this.onSaveCandidateIssue.bind(this)
         this.onCancelCandidateIssue = this.onCancelCandidateIssue.bind(this)
-        this.onShortcut = this.onShortcut.bind(this)
+        this.toggleAsFeature = this.toggleAsFeature.bind(this)
     }
 
     componentDidMount() {
@@ -105,12 +106,11 @@ class IssueList extends Component {
         dispatch(cancelCandidateIssue())
     }
 
-    onShortcut(event) {
-        const { dispatch, is_creating_issue } = this.props
-        event.stopPropagation()
-        if ( event.keyCode === 78 /*n*/ ) {
-            this.onStartCandidateIssue(event)
-        }
+    toggleAsFeature() {
+        const {dispatch, selected_ids, selected_items} = this.props
+        const current_value = selected_items[0].can_group_issues === true || false
+        const new_value = ! current_value
+        dispatch(updateIssueToggleAsFeature(selected_ids, new_value))
     }
 
     reorderIssue(moving_issue_id, move_after_issue_id) {
@@ -177,10 +177,12 @@ class IssueList extends Component {
             selected_ids, loading_item_ids, has_items
         } = this.props
 
+        
         if (!is_visible) {
             return (<div></div>)
         }
         const that = this
+        const at_least_one_issue_selected = selected_ids && selected_ids.length > 0
 
         const issue_rows = []
         issues.map(function (issue, index) {
@@ -208,14 +210,17 @@ class IssueList extends Component {
         })
 
         return (
-            <div className="issue-list"
-                 onKeyDown={this.onShortcut}
-                 style={{opacity: is_loading ? 0.5 : 1}}>
+            <div className="issue-list" style={{opacity: is_loading ? 0.5 : 1}}>
                 <div className="panel panel--full">
                     <Sticky>
                         <div className="panel-heading" onClick={this.onCollapse}>
                             <div className="panel__title">Issues</div>
                             <div className="panel__buttons">
+                                { at_least_one_issue_selected &&
+                                  <div className="panel__button panel__button--toggle_as_feature"
+                                       onClick={this.toggleAsFeature}>
+                                  </div>                                  
+                                }
                                 <div className="panel__button panel__button--refresh"
                                      onClick={this.onRefresh}>
                                 </div>
@@ -239,9 +244,9 @@ class IssueList extends Component {
                                         <th className="issue-list__header">Assignee</th>
                                         <th className="issue-list__header">Status</th>
                                         <th className="issue-list__header">Feature</th>
-                                        { false && <th className="issue-list__header">Sprint</th> }
+                                        <th className="issue-list__header">Sprint</th>
                                         <th className="issue-list__header">Progress</th>
-                                        { false && <th className="issue-list__header">Estimates</th> }
+                                        <th className="issue-list__header">Estimates</th>
                                         <th className="issue-list__header">Tags</th>
                                         <th className="issue-list__header">Tracking</th>
                                     </tr>

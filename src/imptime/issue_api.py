@@ -2,6 +2,7 @@ import logging
 from issue_serializer import IssueSerializer
 from issue_serializer import IssueGeneralDetailsSerializer
 from issue_serializer import IssueWithEstimatesSerializer
+from rest_framework.decorators import detail_route
 from rest_framework.renderers import JSONRenderer
 from django.contrib.auth.models import User
 from django.http import HttpResponse
@@ -62,59 +63,72 @@ class IssueViewSet(BaseViewSet):
     def update(self, request, pk):
         try:
             params = request.data
-            issue = self.allowed_issue(pk)
             field_name = params['field_name']
             new_value = params['value']
 
-            if field_name == "subject":
-                old_subject = issue.subject
-                issue.subject = new_value
-                IssueHistory.add_history(
-                    self.request.user, issue, "changed subject",
-                    old_subject, issue.subject)
-            elif field_name == "description":
-                old_description = issue.description
-                issue.description = new_value
-                IssueHistory.add_history(
-                    self.request.user, issue, "changed description",
-                    old_description, issue.description)
-            elif field_name == "status":
-                old_status = issue.status
-                issue.status = new_value
-                IssueHistory.add_history(
-                    self.request.user, issue, "changed status",
-                    old_status, issue.status)
-            elif field_name == "feature_name":
-                old_feature_name = issue.feature.name \
-                  if issue.feature else "none"
-                issue.feature = Feature.objects.get_or_create(
-                    business=issue.project.business, name=new_value)[0]
-                IssueHistory.add_history(
-                    self.request.user, issue, "changed feature",
-                    old_feature_name, issue.feature.name)
-            elif field_name == 'issue_id_after':
-                old_order = issue.order
-                after_issue = self.allowed_issue(new_value)
-                issue.move_after(after_issue)
-                IssueHistory.add_history(
-                    self.request.user, issue, "changed order",
-                    old_order, issue.order)
-            elif field_name == 'assigned_to_id':
-                old_assigned_to = \
-                    issue.assigned_to.username \
-                    if issue.assigned_to else "no-one"
-                issue.assigned_to_id = new_value
-                new_assigned_to = \
-                    User.objects.get(pk=new_value).username \
-                    if new_value else "no-one"
-                IssueHistory.add_history(
-                    self.request.user, issue, "changed assigned to",
-                    old_assigned_to, new_assigned_to)
+            if 'issue_ids' in params:
+                issue_pks = params['issue_ids']
             else:
-                raise Exception("Unsupported field name: %s" % field_name)
-            issue.save()
+                issue_pks = [pk]
 
-            data = {'status': 'success', 'payload': pk}
+            for issue_pk in issue_pks:
+                issue = self.allowed_issue(pk)
+
+                if field_name == "subject":
+                    old_subject = issue.subject
+                    issue.subject = new_value
+                    IssueHistory.add_history(
+                        self.request.user, issue, "changed subject",
+                        old_subject, issue.subject)
+                elif field_name == "description":
+                    old_description = issue.description
+                    issue.description = new_value
+                    IssueHistory.add_history(
+                        self.request.user, issue, "changed description",
+                        old_description, issue.description)
+                elif field_name == "status":
+                    old_status = issue.status
+                    issue.status = new_value
+                    IssueHistory.add_history(
+                        self.request.user, issue, "changed status",
+                        old_status, issue.status)
+                elif field_name == "feature_name":
+                    old_feature_name = issue.feature.name \
+                      if issue.feature else "none"
+                    issue.feature = Feature.objects.get_or_create(
+                        business=issue.project.business, name=new_value)[0]
+                    IssueHistory.add_history(
+                        self.request.user, issue, "changed feature",
+                        old_feature_name, issue.feature.name)
+                elif field_name == 'issue_id_after':
+                    old_order = issue.order
+                    after_issue = self.allowed_issue(new_value)
+                    issue.move_after(after_issue)
+                    IssueHistory.add_history(
+                        self.request.user, issue, "changed order",
+                        old_order, issue.order)
+                elif field_name == 'assigned_to_id':
+                    old_assigned_to = \
+                        issue.assigned_to.username \
+                        if issue.assigned_to else "no-one"
+                    issue.assigned_to_id = new_value
+                    new_assigned_to = \
+                        User.objects.get(pk=new_value).username \
+                        if new_value else "no-one"
+                    IssueHistory.add_history(
+                        self.request.user, issue, "changed assigned to",
+                        old_assigned_to, new_assigned_to)
+                elif field_name == 'can_group_issues':
+                    old_can_group_issues = issue.can_group_issues
+                    issue.can_group_issues = not issue.can_group_issues
+                    IssueHistory.add_history(
+                        self.request.user, issue, "changed can group issues to",
+                        old_can_group_issues, new_value)
+                else:
+                    raise Exception("Unsupported field name: %s" % field_name)
+                issue.save()
+
+            data = {'status': 'success', 'payload': issue_pks}
 
         except Exception, ex:
             logger.exception(ex)
@@ -171,6 +185,7 @@ class IssueViewSet(BaseViewSet):
 
         return HttpResponse(JSONRenderer().render(data))
 
+    @detail_route(methods=['POST'])
     def add_tag(self, request, pk):
         try:
             params = request.data
@@ -189,7 +204,8 @@ class IssueViewSet(BaseViewSet):
             return self.error_response(ex)
             
         return HttpResponse(JSONRenderer().render(data))
-        
+
+    @detail_route(methods=['POST'])
     def delete_tag(self, request, pk):
         try:
             params = request.data
@@ -210,3 +226,4 @@ class IssueViewSet(BaseViewSet):
             return self.error_response(ex)
         
         return HttpResponse(JSONRenderer().render(data))
+

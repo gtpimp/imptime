@@ -10,8 +10,8 @@ import {
 import { GLOBAL_SETTINGS } from '../settings'
 
 
-export const ANNOUNCE_ISSUE_SAVING = 'ANNOUNCE_ISSUE_SAVING'
-export const ANNOUNCE_ISSUE_SAVED = 'ANNOUNCE_ISSUE_SAVED'
+export const ANNOUNCE_ISSUES_SAVING = 'ANNOUNCE_ISSUES_SAVING'
+export const ANNOUNCE_ISSUES_SAVED = 'ANNOUNCE_ISSUES_SAVED'
 export const ANNOUNCE_ISSUE_SAVE_FAILED = 'ANNOUNCE_ISSUE_SAVE_FAILED'
 
 export const ANNOUNCE_CAPTURING_NEW_ISSUE = 'ANNOUNCE_CAPTURING_NEW_ISSUE'
@@ -33,18 +33,18 @@ function announceIssueSaveFailed(error) {
     }
 }
 
-function announceIssueSaved(issue_id) {
+function announceIssuesSaved(issue_ids) {
     return {
-        type: ANNOUNCE_ISSUE_SAVED,
-        issue_id: issue_id,
+        type: ANNOUNCE_ISSUES_SAVED,
+        issue_ids: issue_ids,
         saved_at: Date.now()
     }
 }
 
-function announceIssueSaving(issue_id, field_name, new_value) {
+function announceIssuesSaving(issue_ids, field_name, new_value) {
     return {
-        type: ANNOUNCE_ISSUE_SAVING,
-        issue_id: issue_id,
+        type: ANNOUNCE_ISSUES_SAVING,
+        issue_ids: issue_ids,
 	field_name: field_name,
 	new_value: new_value
     }
@@ -71,23 +71,27 @@ function announceCandidateIssueSaveFailed(error) {
 }
 
 export function updateIssueSubject(issue_id, value) {
-    return updateIssue(issue_id, "subject", value)
+    return updateIssue([issue_id], "subject", value)
 }
 
 export function updateIssueStatus(issue_id, value) {
-    return updateIssue(issue_id, "status", value)
+    return updateIssue([issue_id], "status", value)
 }
 
 export function updateIssueFeature(issue_id, value) {
-    return updateIssue(issue_id, "feature_name", value)
+    return updateIssue([issue_id], "feature_name", value)
 }
 
 export function updateIssueDescription(issue_id, value) {
-    return updateIssue(issue_id, "description", value)
+    return updateIssue([issue_id], "description", value)
 }
 
 export function updateIssueAssignedTo(issue_id, value) {
-    return updateIssue(issue_id, "assigned_to_id", value)
+    return updateIssue([issue_id], "assigned_to_id", value)
+}
+
+export function updateIssueToggleAsFeature(issue_ids, value) {
+    return updateIssue(issue_ids, 'can_group_issues', value)
 }
 
 function announceDeletingIssue(issue_id) {
@@ -112,12 +116,13 @@ function announceIssueDeleteFailed(issue_id, error) {
     }
 }
 
-function updateIssue(issue_id, field_name, new_value, on_done) {
+function updateIssue(issue_ids, field_name, new_value, on_done) {
     return (dispatch, getState) => {
-	dispatch(announceIssueSaving(issue_id, field_name, new_value))
-	let data = {field_name: field_name,
+	dispatch(announceIssuesSaving(issue_ids, field_name, new_value))
+	let data = {issue_ids: issue_ids,
+                    field_name: field_name,
 		    value: new_value }
-	return impfetch(GLOBAL_SETTINGS.API_BASE_URL+"imp/issue/"+issue_id+"/",
+	return impfetch(GLOBAL_SETTINGS.API_BASE_URL+"imp/issue/"+issue_ids[0]+"/",
 			{method: "PUT",
 			 credentials: 'same-origin',
 			 data: data,
@@ -130,8 +135,8 @@ function updateIssue(issue_id, field_name, new_value, on_done) {
 		 dispatch(announceIssueSaveFailed(json.error))
              } else {
 		 console.log('Request succeeded with JSON response', json);
-		 dispatch(announceIssueSaved(json.payload))
-		 dispatch(invalidateIssues([issue_id]))
+                 dispatch(announceIssuesSaved(issue_ids))
+		 dispatch(invalidateIssues(issue_ids))
 		 dispatch(fetchIssuesIfNeeded())
              }
 	     if ( on_done ) {
@@ -146,7 +151,7 @@ function updateIssue(issue_id, field_name, new_value, on_done) {
 }
 
 export function reorderIssue(issue_id_before, issue_id_after, on_done) {
-    return updateIssue(issue_id_before, "issue_id_after", issue_id_after, on_done)
+    return updateIssue([issue_id_before], "issue_id_after", issue_id_after, on_done)
 }
 
 export function startCandidateIssue(list_key) {

@@ -3336,6 +3336,9 @@ class Issue(models.Model):
     adhoc = models.BooleanField(default=False)
     fixed_amount = models.DecimalField(max_digits=12, decimal_places=2, blank=True, null=True)
     fixed_ctc_amount = models.DecimalField(max_digits=12, decimal_places=2, blank=True, null=True)
+    
+    can_group_issues = models.BooleanField(default=False)
+    parent_group = models.ForeignKey("Issue", blank=True, null=True, related_name='group_children')
 
     objects = IssueQuerySet().as_manager()
 

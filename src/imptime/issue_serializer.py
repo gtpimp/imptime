@@ -1,5 +1,6 @@
 import logging
 from rest_framework import serializers
+from drf_compound_fields.fields import ListField
 from base_serializer import BaseSerializer, BaseModelSerializer
 from tag_serializer import TagSerializer
 from user_serializer import UserSerializer
@@ -25,6 +26,9 @@ class IssueSerializer(BaseSerializer):
     dev_estimate_user_quick_name = serializers.CharField()
     actual_hours = serializers.FloatField(source='hours')
     currently_clocked_in_by = UserSerializer(many=True)
+    can_group_issues = serializers.BooleanField()
+    parent_group = serializers.IntegerField(source="parent_group.id")
+    group_children = ListField(source="group_children_ids")
  
     def to_representation(self, issue, *args, **kwargs):
         issue.assigned_to_quick_name = \
@@ -35,6 +39,7 @@ class IssueSerializer(BaseSerializer):
         issue.sprint_id = str(issue.project_id)  # sic
         issue.project_id = str(issue.project.business_id)  # sic
         issue.dev_estimate_hours, issue.dev_estimate_user_quick_name = issue.best_hours_estimate
+        issue.group_children_ids = issue.group_children.all().values_list('id', flat=True)
 
         d = super(IssueSerializer, self).to_representation(
             issue, *args, **kwargs)

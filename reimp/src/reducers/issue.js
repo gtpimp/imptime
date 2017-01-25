@@ -21,8 +21,8 @@ import {
     ANNOUNCE_SAVING_NEW_ISSUE_FAILED,
     ANNOUNCE_DELETING_ISSUE,
     ANNOUNCE_ISSUE_DELETED,
-    ANNOUNCE_ISSUE_SAVED,
-    ANNOUNCE_ISSUE_SAVING,
+    ANNOUNCE_ISSUES_SAVED,
+    ANNOUNCE_ISSUES_SAVING,
     ANNOUNCE_DELETE_ISSUE_FAILED
 } from '../actions/Issue.js'
 
@@ -68,23 +68,24 @@ export default function issue(state = initialState, action) {
         case ANNOUNCE_ISSUES_LOAD_FAILED:
             return state;
 
-	case ANNOUNCE_ISSUE_SAVING:
-	    const new_issue_props = {}
-	    new_issue_props[action.field_name] = action.new_value
-	    const issue_id = action.issue_id
+	case ANNOUNCE_ISSUES_SAVING:
+	    // const new_issue_props = {}
+	    // new_issue_props[action.field_name] = action.new_value
+	    const issue_ids = action.issue_ids
 	    
             return Object.assign({}, state, {
 		items_by_id: Object.assign(
 		    {},
 		    state.items_by_id,
-		    {issue_id: Object.assign(state.items_by_id[issue_id],
-					     new_issue_props)}),
-		saving_item_ids: union(state.saving_item_ids, [issue_id])
+		    /* {issue_id: Object.assign(state.items_by_id[issue_id],
+		       new_issue_props)},*/
+                ),
+		saving_item_ids: union(state.saving_item_ids, issue_ids)
 	    })
-	case ANNOUNCE_ISSUE_SAVED:
+	case ANNOUNCE_ISSUES_SAVED:
 	    return Object.assign({}, state,
 				 {saving_item_ids: difference(state.saving_item_ids || [],
-							      [action.issue_id])
+							      action.issue_ids)
 				 })
 	case ANNOUNCE_CAPTURING_NEW_ISSUE:
             return Object.assign({}, state,
