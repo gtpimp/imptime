@@ -1,0 +1,26 @@
+version: '2'
+
+volumes:
+  static-assets:
+
+services:
+
+  daphne:
+    build:
+      context: ../
+      dockerfile: docker/Dockerfile-django
+
+  django:
+    build:
+      context: ../
+      dockerfile: docker/Dockerfile-django
+
+  nginx:
+    build:
+      context: ../
+      dockerfile: docker/Dockerfile-nginx
+
+  react-static-assets-deployer:
+    build:
+      context: ../
+      dockerfile: docker/Dockerfile-react-static-assets-deployer

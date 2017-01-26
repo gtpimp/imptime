@@ -8,6 +8,8 @@
   },
   "dependencies": {
     "classnames": "^2.2.5",
+    "isomorphic-fetch": "^2.2.1",
+    "lodash": "^4.17.4",
     "moment": "^2.13.0",
     "react": "^15.4.2",
     "react-autosize-textarea": "^0.3.6",

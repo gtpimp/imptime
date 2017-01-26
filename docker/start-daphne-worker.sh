@@ -1,11 +1,28 @@
 #!/bin/bash
 
-set -e
+#force a  early
+ ls > /dev/null
 
 ROOT=/opt/imptime
 cd ${ROOT}
 SRC=${ROOT}/src
 SITE_PATH=${SRC}
+VENV=${ROOT}/venv
+
+#echo "checking for virtualenv"
+#if [ ! -d ${VENV} ]; then
+#    cd ${ROOT}
+#    virtualenv --no-site-packages venv
+#fi
+#
+#echo "activate virtualenv"
+#cd ${VENV}
+#. ./bin/activate
+#if [ $? != 0 ]; then
+#    echo "failed to activate virtualenv at ${VENV}: ABORTING"
+#    exit 1
+#fi
+#cd -
 
 echo "deleting python compiled files"
 cd ${SRC}/implicitdesign
@@ -72,7 +89,6 @@ cd ${ROOT}/src
 python manage.py wait_for_flag db_migrate_complete
 
 cd ${ROOT}/src
-#gunicorn implicitdesign.wsgi -b 0.0.0.0:8000
-daphne implicitdesign.asgi:channel_layer -b 0.0.0.0 -p 8000
+python manage.py runworker
 
 echo "start django complete"

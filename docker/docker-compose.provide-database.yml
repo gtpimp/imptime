@@ -1,0 +1,23 @@
+version: '2'
+
+volumes:
+  static-assets:
+
+services:
+
+  django:
+    depends_on:
+      - postgres
+
+  django-migrate:
+    depends_on:
+      - postgres
+
+  postgres:
+    build:
+      context: ../
+      dockerfile: docker/Dockerfile-postgres
+    ports:
+      - "5432:5432"
+    volumes:
+      - ../:/opt/imptime
