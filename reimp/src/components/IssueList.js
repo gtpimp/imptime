@@ -269,7 +269,7 @@ class IssueList extends Component {
         const at_least_one_issue_selected = selected_ids && selected_ids.length > 0
 
         const issue_rows = []
-        let running_parent_issue = null
+        let running_parent_issue_id = null
         issues.map(function (issue, index) {
 
             if (is_creating_issue && index == 0 && !candidate_issue.issue_id_before) {
@@ -278,13 +278,13 @@ class IssueList extends Component {
 
             const show_issue = !issue.parent_group_id || includes(expanded_issues, issue.parent_group_id)
 
-            if ( issue.parent_group_id && running_parent_issue && issue.parent_group_id != running_parent_issue.id ) {
+            if ( issue.parent_group_id && issue.parent_group_id != running_parent_issue_id ) {
                 // this happens if the issue is separated from its group parent by another issue,
                 // so insert a 'fake' feature issue
                 issue_rows.push(
                     <Issue
-                        key={list_key + issue.id + index}
-                        is_collapsed={!show_issue}
+                        key={list_key + issue.id + index + "fakefeature"}
+                        is_collapsed={false}
                         show_children={includes(expanded_issues, issue.id)}
                         reorderIssue={that.reorderIssue}
                         onClickedIssue={(event) => that.onClickedIssue(event, issue.parent_group_id)}
@@ -292,10 +292,11 @@ class IssueList extends Component {
                         is_selected={selected_ids.indexOf(issue.parent_group_id) !== -1}
                         is_invalidated={invalidated_issue_ids.indexOf(issue.parent_group_id) !== -1}
                         is_saving={saving_issue_ids.indexOf(issue.issue_parent_group_id) !== -1}
-                        issue_id={issue.issue_parent_group_id}
+                        issue_id={issue.parent_group_id}
                         subject_prefix="..."
                     />
                 )
+                running_parent_issue_id = issue.parent_group_id
             }
 
             if ( show_issue ) {
@@ -320,9 +321,9 @@ class IssueList extends Component {
             }
 
             if ( issue.can_group_issues ) {
-                running_parent_issue = issue
+                running_parent_issue_id = issue.id
             } else {
-                running_parent_issue = null
+                running_parent_issue_id = issue.parent_group_id
             }
         })
 

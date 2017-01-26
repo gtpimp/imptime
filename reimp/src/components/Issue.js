@@ -249,7 +249,7 @@ function mapStateToProps(state, props) {
         assignable_user_ids: assignable_user_ids,
         feature_options: feature_options,
         show_children: show_children,
-        subject_prefix: subject_suffix || "",
+        subject_prefix: subject_prefix || "",
         subject_suffix: subject_suffix || ""
     }
 
