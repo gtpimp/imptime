@@ -6,12 +6,14 @@ from rest_framework.decorators import detail_route
 from rest_framework.renderers import JSONRenderer
 from django.contrib.auth.models import User
 from django.http import HttpResponse
+from django.db.models import Prefetch
+from django.db.models import Count, Sum
 from base_api import BaseViewSet
 import json
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.decorators import permission_classes
 from timepiece.models import Issue, IssueHistory, Feature
-from timepiece.models import TagCategory, Tag, IssueTag
+from timepiece.models import TagCategory, Tag, Entry
 
 logger = logging.getLogger(__name__)
 
@@ -49,8 +51,22 @@ class IssueViewSet(BaseViewSet):
                 elif 'general' in detail_levels:
                     s = IssueGeneralDetailsSerializer(issues, many=True)
                 else:
-                    s = IssueSerializer(issues, many=True)
+                    issues = issues.select_related('parent_group')\
+                                   .select_related('project__business')\
+                                   .select_related('assigned_to')\
+                                   .select_related('feature')\
+                                   .prefetch_related('group_children')\
+                                   .prefetch_related('tags__category')\
+                                   .prefetch_related('issue_points__user')\
+                                   .prefetch_related('group_children')\
+                                   .prefetch_related(Prefetch('entries', to_attr='active_clocks',
+                                                              queryset=Entry.objects.select_related('user').filter(status__in=['', 'ready'])))
 
+                    #issues = issues.annotate(active_clocks=Count('entries'))
+                    issues = issues.annotate(actual_hours=Sum('entries__hours'))
+                                   
+                    s = IssueSerializer(issues, many=True)
+                    
                 issues_data = s.data
                 context['issues'] = issues_data
             context['pagination'] = pagination
@@ -205,7 +221,7 @@ class IssueViewSet(BaseViewSet):
             tag_category = TagCategory.objects.get_or_create(business=issue.project.business,
                                                              name=tag_category_name)[0]
             tag = Tag.objects.get_or_create(category=tag_category, name=tag_name)[0]
-            IssueTag.get_or_create(issue=issue, tag=tag)
+            issue.tags.add(tag)
             data = {'status': 'success'}
             
         except Exception, ex:
@@ -225,9 +241,7 @@ class IssueViewSet(BaseViewSet):
             tag_category = TagCategory.objects.get_or_create(business=issue.project.business,
                                                              name=tag_category_name)[0]
             tag = Tag.objects.get_or_create(category=tag_category, name=tag_name)[0]
-            issue_tag = IssueTag.objects.filter(issue=issue, tag=tag)
-            if issue_tag.exists():
-                issue_tag.delete()
+            issue.tags.remove(tag)
             data = {'status': 'success'}
             
         except Exception, ex:

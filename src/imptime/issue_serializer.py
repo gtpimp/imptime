@@ -21,13 +21,13 @@ class IssueSerializer(BaseSerializer):
     position_if_creating_new_issue_after = serializers.IntegerField()
     sprint_id = serializers.CharField()
     project_id = serializers.CharField()
-    tags = TagSerializer(many=True, source='get_tags')
+    tags = TagSerializer(many=True)
     dev_estimate_hours = serializers.FloatField()
     dev_estimate_user_quick_name = serializers.CharField()
-    actual_hours = serializers.FloatField(source='hours')
+    actual_hours = serializers.FloatField()
     currently_clocked_in_by = UserSerializer(many=True)
     can_group_issues = serializers.BooleanField()
-    parent_group_id = serializers.CharField(source="parent_group.id")
+    parent_group_id = serializers.CharField()
     group_children = ListField(source="group_children_ids")
  
     def to_representation(self, issue, *args, **kwargs):
@@ -36,10 +36,12 @@ class IssueSerializer(BaseSerializer):
 
         issue.feature_name = issue.feature.name if issue.feature_id else None
         issue.position_if_creating_new_issue_after = issue.order + 0.5
-        issue.sprint_id = str(issue.project_id)  # sic
+        issue.sprint_id = str(issue.project.id)  # sic
         issue.project_id = str(issue.project.business_id)  # sic
-        issue.dev_estimate_hours, issue.dev_estimate_user_quick_name = issue.best_hours_estimate
-        issue.group_children_ids = issue.group_children.all().values_list('id', flat=True)
+
+        issue.dev_estimate_hours, issue.dev_estimate_user_quick_name = 0,'na' #issue.best_hours_estimate
+        issue.group_children_ids = [x.id for x in issue.group_children.all()]
+        issue.currently_clocked_in_by = [x.user for x in issue.active_clocks]
 
         d = super(IssueSerializer, self).to_representation(
             issue, *args, **kwargs)
@@ -71,5 +73,3 @@ class IssueEstimate(BaseSerializer):
 class IssueWithEstimatesSerializer(IssueSerializer):
 
     issue_estimates = IssueEstimate(many=True)
-
-

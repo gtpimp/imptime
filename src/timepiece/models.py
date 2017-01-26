@@ -3272,6 +3272,48 @@ class Income(models.Model):
 #             ('view_invoice', 'Can view invoices.'),
 #         )
 
+class TagCategory(models.Model):
+    class Meta:
+        unique_together = ('business', 'name')
+    
+    business = models.ForeignKey(Business, null=False, related_name='tag_categories')
+    name = models.CharField(max_length=100, default='tag_category', null=False, blank=True, db_index=True)
+    created = models.DateTimeField(auto_now_add=True)
+    modified = models.DateTimeField(auto_now=True)
+
+    def save(self, *args, **kwargs):
+        was_created = not self.id
+        super(TagCategory, self).save(*args, **kwargs)
+        affected_issues = [x.id for x in self.tags.issues.all()]
+        if was_created:
+            RefreshNotifier().notify_model_create(
+                self, params={'issues': affected_issues})
+        else:
+            RefreshNotifier().notify_model_update(
+                self, params={'issues': affected_issues})
+
+    
+class Tag(models.Model):
+
+    class Meta:
+        unique_together = ('name', 'category')
+    
+    category = models.ForeignKey(TagCategory, null=False, related_name='tags')
+    name = models.CharField(max_length=100, null=False, blank=True, db_index=True)
+    created = models.DateTimeField(auto_now_add=True)
+    modified = models.DateTimeField(auto_now=True)
+
+    def save(self, *args, **kwargs):
+        was_created = not self.id
+        super(Tag, self).save(*args, **kwargs)
+        affected_issues = [x.id for x in self.issues.all()]
+        if was_created:
+            RefreshNotifier().notify_model_create(
+                self, params={'issues': affected_issues})
+        else:
+            RefreshNotifier().notify_model_update(
+                self, params={'issues': affected_issues})
+
 class IssueRepresentation(object):
     """ object used to map helper data when rendering issues that doesn't belong in the database """
 
@@ -3288,8 +3330,7 @@ class IssueQuerySet(QuerySet):
         if user.is_superuser or user.has_perm('timepiece.belongs_to_all_projects'):
             return self
         return self.filter(project__business__users=user)
-
-
+    
 class Issue(models.Model):
 
     ISSUE_STATUS_CHOICES = (
@@ -3339,6 +3380,7 @@ class Issue(models.Model):
     
     can_group_issues = models.BooleanField(default=False)
     parent_group = models.ForeignKey("Issue", blank=True, null=True, related_name='group_children')
+    tags = models.ManyToManyField("Tag", related_name="issues")
 
     objects = IssueQuerySet().as_manager()
 
@@ -4072,73 +4114,3 @@ class Schedule(models.Model):
         num_days -= leave_days
         return { 'num_hours': num_days * settings.NUM_BUSINESS_HOURS_PER_DAY,
                  'leave_hours': leave_days * settings.NUM_BUSINESS_HOURS_PER_DAY }
-                                                      
-
-
-class TagCategory(models.Model):
-    class Meta:
-        unique_together = ('business', 'name')
-    
-    business = models.ForeignKey(Business, null=False, related_name='tag_categories')
-    name = models.CharField(max_length=100, default='tag_category', null=False, blank=True, db_index=True)
-    created = models.DateTimeField(auto_now_add=True)
-    modified = models.DateTimeField(auto_now=True)
-
-    def save(self, *args, **kwargs):
-        was_created = not self.id
-        super(TagCategory, self).save(*args, **kwargs)
-        affected_issues = [x.id for x in self.tags.issues.all()]
-        if was_created:
-            RefreshNotifier().notify_model_create(
-                self, params={'issues': affected_issues})
-        else:
-            RefreshNotifier().notify_model_update(
-                self, params={'issues': affected_issues})
-
-    
-class Tag(models.Model):
-
-    class Meta:
-        unique_together = ('name', 'category')
-    
-    category = models.ForeignKey(TagCategory, null=False, related_name='tags')
-    name = models.CharField(max_length=100, null=False, blank=True, db_index=True)
-    created = models.DateTimeField(auto_now_add=True)
-    modified = models.DateTimeField(auto_now=True)
-
-    def save(self, *args, **kwargs):
-        was_created = not self.id
-        super(Tag, self).save(*args, **kwargs)
-        affected_issues = [x.id for x in self.issues.all()]
-        if was_created:
-            RefreshNotifier().notify_model_create(
-                self, params={'issues': affected_issues})
-        else:
-            RefreshNotifier().notify_model_update(
-                self, params={'issues': affected_issues})
-        
-
-class IssueTag(models.Model):
-
-    class Meta:
-        unique_together = ('issue', 'tag')
-    
-    issue = models.ForeignKey(Issue, null=False, related_name='tags')
-    tag = models.ForeignKey(Tag, null=False, related_name='issues')
-    created = models.DateTimeField(auto_now_add=True)
-    modified = models.DateTimeField(auto_now=True)
-
-    def save(self, *args, **kwargs):
-        was_created = not self.id
-        super(IssueTag, self).save(*args, **kwargs)
-        affected_issues = [ self.issue.id ]
-        if was_created:
-            RefreshNotifier().notify_model_create(self, params={'issues': affected_issues})
-        else:
-            RefreshNotifier().notify_model_update(self, params={'issues': affected_issues})
-        
-
-    def delete(self, *args, **kwargs):
-        affected_issues = [ self.issue.id ]
-        super(IssueTag, self).delete(*args, **kwargs)
-        RefreshNotifier().notify_model_delete(self, params={'issues': affected_issues})
