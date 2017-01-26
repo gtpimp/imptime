@@ -32,14 +32,8 @@ RUN gem install sass
 # Intall node
 RUN curl -sL https://deb.nodesource.com/setup_4.x -o nodesource_setup.sh && bash nodesource_setup.sh && DEBIAN_FRONTEND=noninteractive apt-get install -y nodejs
 
-# Build
-# Copy source to new directory so that it uses its own NPM modules
-RUN mkdir -p /tmp/imptime/work
-COPY reimp /tmp/imptime/work
-WORKDIR /tmp/imptime/work
-RUN npm install
-RUN NODE_ENV=production npm run build
+WORKDIR /
 
-COPY docker/start-react-static-assets-deployer.sh start-react-static-assets-deployer.sh
+COPY docker/start-react-static-assets-deployer-local-sources.sh start-react-static-assets-deployer-local-sources.sh
 
-ENTRYPOINT ["./start-react-static-assets-deployer.sh"]
+ENTRYPOINT ["./start-react-static-assets-deployer-local-sources.sh"]

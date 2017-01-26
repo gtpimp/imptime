@@ -1,6 +1,7 @@
 #!/bin/bash
 
-set -e
+#force a  early
+ ls > /dev/null
 
 ROOT=/opt/imptime
 cd ${ROOT}
@@ -10,15 +11,6 @@ SITE_PATH=${SRC}
 echo "deleting python compiled files"
 cd ${SRC}/implicitdesign
  rm -f `find . -iname "*.pyc"`
-
-#echo "installing requirements"
-#cd ${ROOT}
-#pip install -r requirements.txt
-#if [ $? != 0 ]; then
-#    echo "pip install failed: ABORTING"
-#    exit 1
-#fi
-#cd -
 
 cd ${SITE_PATH}/implicitdesign/external_config
 if [ ! -f "django_local_settings.py" ]; then
