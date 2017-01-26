@@ -39,7 +39,14 @@ class IssueSerializer(BaseSerializer):
         issue.sprint_id = str(issue.project.id)  # sic
         issue.project_id = str(issue.project.business_id)  # sic
 
-        issue.dev_estimate_hours, issue.dev_estimate_user_quick_name = 0,'na' #issue.best_hours_estimate
+        issue.dev_estimate_hours = 0
+        issue.dev_estimate_user_quick_name = None
+        for point in issue.issue_points.all():
+            if point.user_id == issue.assigned_to_id:
+                issue.dev_estimate_hours = point.points
+                issue.dev_estimate_user_quick_name = point.user.username
+                break
+        
         issue.group_children_ids = [x.id for x in issue.group_children.all()]
         issue.currently_clocked_in_by = [x.user for x in issue.active_clocks]
 

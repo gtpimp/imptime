@@ -62,7 +62,6 @@ class IssueViewSet(BaseViewSet):
                                    .prefetch_related(Prefetch('entries', to_attr='active_clocks',
                                                               queryset=Entry.objects.select_related('user').filter(status__in=['', 'ready'])))
 
-                    #issues = issues.annotate(active_clocks=Count('entries'))
                     issues = issues.annotate(actual_hours=Sum('entries__hours'))
                                    
                     s = IssueSerializer(issues, many=True)
