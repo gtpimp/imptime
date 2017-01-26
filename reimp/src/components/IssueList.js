@@ -25,7 +25,9 @@ import {
     updateCandidateSubject,
     cancelCandidateIssue,
     saveCandidateIssue,
-    updateIssueToggleAsFeature
+    updateIssueToggleAsFeature,
+    groupIssuesIntoFeature,
+    ungroupIssuesIntoFeature
 } from '../actions/Issue'
 import Pagination from '../components/Pagination'
 import Toolbar from '../components/Toolbar'
@@ -47,6 +49,8 @@ class IssueList extends Component {
         this.onCancelCandidateIssue = this.onCancelCandidateIssue.bind(this)
         this.toggleAsFeature = this.toggleAsFeature.bind(this)
         this.toggleExpandFeatures = this.toggleExpandFeatures.bind(this)
+        this.groupTogether = this.groupTogether.bind(this)
+        this.ungroupTogether = this.ungroupTogether.bind(this)
     }
 
     componentDidMount() {
@@ -130,11 +134,63 @@ class IssueList extends Component {
     }
 
     toggleExpandFeatures(event) {
-        event.stopPropagation()
         const {dispatch, list_key, selected_ids, selected_items, expanded_issues} = this.props
+        event.stopPropagation()
         const currently_expanded = includes(expanded_issues, selected_items[0].id)
         const new_value = ! currently_expanded
         dispatch(setItemFlag(list_key, selected_ids, 'expanded_issues', new_value))
+    }
+
+    groupTogether(event) {
+        const { selected_ids, selected_items, dispatch } = this.props
+        event.stopPropagation()
+        if ( selected_ids.length == 1 ) {
+            alert("Please select a single feature issue and at least one other issue to group together")
+            return
+        }
+        let feature_issue = null
+        let ok_to_group = true
+        map(selected_items, function(issue) {
+            if ( issue.can_group_issues ) {
+                if ( feature_issue ) {
+                    alert("Please select only one feature issue to group with")
+                    ok_to_group = false
+                } else {
+                    feature_issue = issue
+                }
+            }
+        })
+        if ( feature_issue == null ) {
+            alert("Please select a feature issue to group into")
+            ok_to_group = false
+        }
+        if ( ! ok_to_group ) {
+            return
+        }
+
+        const children_issue_ids = difference(selected_ids, feature_issue.id)
+        dispatch(groupIssuesIntoFeature(children_issue_ids, feature_issue.id))
+    }
+
+    ungroupTogether(event) {
+        const { selected_ids, selected_items, dispatch } = this.props
+        event.stopPropagation()
+        let ok_to_ungroup = true
+        let feature_issue_ids = []
+        map(selected_items, function(issue) {
+            if ( issue.can_group_issues ) {
+                feature_issue_ids = union(feature_issue_ids, issue.id)
+            }
+        })
+        const children_issue_ids = difference(selected_ids, feature_issue_ids)
+        if ( children_issue_ids.length == 0 ) {
+            alert("Please select at least one child issue to ungroup")
+            ok_to_ungroup = false
+        }
+        if ( ok_to_ungroup ) {
+            return
+        }
+        dispatch(ungroupIssuesIntoFeature(children_issue_ids))
     }
 
     reorderIssue(moving_issue_id, move_after_issue_id) {
@@ -212,28 +268,60 @@ class IssueList extends Component {
         const at_least_one_issue_selected = selected_ids && selected_ids.length > 0
 
         const issue_rows = []
+        let running_parent_issue = null
         issues.map(function (issue, index) {
 
             if (is_creating_issue && index == 0 && !candidate_issue.issue_id_before) {
                 issue_rows.push(that.render_candidate_issue())
             }
 
-            issue_rows.push(
-                <Issue
-                    key={list_key + issue.id + index}
-                    is_collapsed={false}
-                    show_children={includes(expanded_issues, issue.id)}
-                    reorderIssue={that.reorderIssue}
-                    onClickedIssue={(event) => that.onClickedIssue(event, issue.id)}
-                    is_loading={loading_item_ids.indexOf(issue.id) !== -1}
-                    is_selected={selected_ids.indexOf(issue.id) !== -1}
-                    is_invalidated={invalidated_issue_ids.indexOf(issue.id) !== -1}
-                    is_saving={saving_issue_ids.indexOf(issue.id) !== -1}
-                    issue_id={issue.id}
-                />
-            )
+            const show_issue = !issue.parent_group_id || includes(expanded_issues, issue.parent_group_id)
+
+            if ( issue.parent_group_id && issue.parent_group_id != running_parent_issue.id ) {
+                // this happens if the issue is separated from its group parent by another issue,
+                // so insert a 'fake' feature issue
+                issue_rows.push(
+                    <Issue
+                        key={list_key + issue.id + index}
+                        is_collapsed={!show_issue}
+                        show_children={includes(expanded_issues, issue.id)}
+                        reorderIssue={that.reorderIssue}
+                        onClickedIssue={(event) => that.onClickedIssue(event, issue.parent_group_id)}
+                        is_loading={loading_item_ids.indexOf(issue.parent_group_id) !== -1}
+                        is_selected={selected_ids.indexOf(issue.parent_group_id) !== -1}
+                        is_invalidated={invalidated_issue_ids.indexOf(issue.parent_group_id) !== -1}
+                        is_saving={saving_issue_ids.indexOf(issue.issue_parent_group_id) !== -1}
+                        issue_id={issue.issue_parent_group_id}
+                        subject_prefix="..."
+                    />
+                )
+            }
+
+            if ( show_issue ) {
+                issue_rows.push(
+                    <Issue
+                        key={list_key + issue.id + index}
+                        is_collapsed={false}
+                        show_children={includes(expanded_issues, issue.id)}
+                        reorderIssue={that.reorderIssue}
+                        onClickedIssue={(event) => that.onClickedIssue(event, issue.id)}
+                        is_loading={loading_item_ids.indexOf(issue.id) !== -1}
+                        is_selected={selected_ids.indexOf(issue.id) !== -1}
+                        is_invalidated={invalidated_issue_ids.indexOf(issue.id) !== -1}
+                        is_saving={saving_issue_ids.indexOf(issue.id) !== -1}
+                        issue_id={issue.id}
+                    />
+                )
+            }
+                
             if (is_creating_issue && candidate_issue.issue_id_before == issue.id) {
                 issue_rows.push(that.render_candidate_issue())
+            }
+
+            if ( issue.can_group_issues ) {
+                running_parent_issue = issue
+            } else {
+                running_parent_issue = null
             }
         })
 
@@ -248,6 +336,16 @@ class IssueList extends Component {
 
                                   <div className="panel__button panel__button--toggle_as_feature"
                                        onClick={this.toggleAsFeature}>
+                                  </div>
+                                }
+                                { at_least_one_issue_selected &&
+                                  <div className="panel__button panel__button--group_together"
+                                       onClick={this.groupTogether}>
+                                  </div>
+                                }
+                                { at_least_one_issue_selected &&
+                                  <div className="panel__button panel__button--ungroup_together"
+                                       onClick={this.ungroupTogether}>
                                   </div>
                                 }
                                 { at_least_one_issue_selected &&

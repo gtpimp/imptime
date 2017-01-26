@@ -86,7 +86,8 @@ class Issue extends Component {
         const {
             issue, is_loading, is_selected, onClickedIssue, assignable_user_ids,
             feature_options, is_invalidated, is_saving,
-            isOver, connectDragSource, connectDropTarget, show_children
+            isOver, connectDragSource, connectDropTarget, show_children,
+            subject_prefix, subject_suffix
         } = this.props
 
         if (!issue) {
@@ -109,7 +110,7 @@ class Issue extends Component {
             )
         } else {
             const isFeature = issue.can_group_issues
-            const belongsToFeature = issue.parent_group || false
+            const belongsToFeature = issue.parent_group_id || false
             const isStandalone = !isFeature && !belongsToFeature
             return connectDragSource(connectDropTarget(
                 <tr key={this.key + "." + issue.id}
@@ -141,7 +142,7 @@ class Issue extends Component {
                         
                     </td>
                     <td className="issue__cell issue__cell--name">
-                        {issue.subject}
+                        {subject_prefix}{issue.subject}{subject_suffix}
                     </td>
                     <td className="issue__cell issue__cell--assignee">
                         <RIEModeToggler
@@ -213,7 +214,8 @@ function mapStateToProps(state, props) {
     const {project, issue, item_list, user} = state
     const {
         issue_id, is_selected, is_collapsed,
-        is_loading, is_invalidated, is_saving, show_children
+        is_loading, is_invalidated, is_saving, show_children,
+        subject_prefix, subject_suffix
     } = props
 
     const this_issue = (issue && issue.items_by_id && issue.items_by_id[issue_id]) || {'loaded': false}
@@ -238,7 +240,9 @@ function mapStateToProps(state, props) {
         is_invalidated: is_invalidated || false,
         assignable_user_ids: assignable_user_ids,
         feature_options: feature_options,
-        show_children: show_children
+        show_children: show_children,
+        subject_prefix: subject_suffix || "",
+        subject_suffix: subject_suffix || ""
     }
 
 }

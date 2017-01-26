@@ -94,6 +94,14 @@ export function updateIssueToggleAsFeature(issue_ids, value) {
     return updateIssue(issue_ids, 'can_group_issues', value)
 }
 
+export function groupIssuesIntoFeature(children_issue_ids, feature_issue_id) {
+    return updateIssue(children_issue_ids, "parent_group_id", feature_issue_id)
+}
+
+export function ungroupIssuesIntoFeature(children_issue_ids) {
+    return updateIssue(children_issue_ids, "parent_group_id", null)
+}
+
 function announceDeletingIssue(issue_id) {
     return {
         type: ANNOUNCE_DELETING_ISSUE,

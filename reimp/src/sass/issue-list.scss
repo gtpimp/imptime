@@ -32,3 +32,11 @@
 .panel__button--toggle_expand_features {
     @include icon(20px, 20px, 'material-icons-blackchevron-right@2x.png')
 }
+
+.panel__button--group_together {
+    @include icon(20px, 20px, 'group_issues_into_feature.png')
+}
+
+.panel__button--ungroup_together {
+    @include icon(20px, 20px, 'ungroup_issues_into_feature.png')
+}
