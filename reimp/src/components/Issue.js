@@ -143,6 +143,14 @@ class Issue extends Component {
                     </td>
                     <td className="issue__cell issue__cell--name">
                         {subject_prefix}{issue.subject}{subject_suffix}
+                        { issue.group_children.length > 0 &&
+                          <span>
+                            ({issue.group_children.length}
+                                { issue.group_children.length == 1 && <span>child</span> }
+                                { issue.group_children.length > 1 && <span>children</span> }
+                            )
+                          </span>
+                        }
                     </td>
                     <td className="issue__cell issue__cell--assignee">
                         <RIEModeToggler

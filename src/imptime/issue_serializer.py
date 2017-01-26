@@ -27,7 +27,7 @@ class IssueSerializer(BaseSerializer):
     actual_hours = serializers.FloatField(source='hours')
     currently_clocked_in_by = UserSerializer(many=True)
     can_group_issues = serializers.BooleanField()
-    parent_group_id = serializers.IntegerField(source="parent_group.id")
+    parent_group_id = serializers.CharField(source="parent_group.id")
     group_children = ListField(source="group_children_ids")
  
     def to_representation(self, issue, *args, **kwargs):

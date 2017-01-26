@@ -124,6 +124,15 @@ class IssueViewSet(BaseViewSet):
                     IssueHistory.add_history(
                         self.request.user, issue, "changed can group issues to",
                         old_can_group_issues, new_value)
+                elif field_name == 'parent_group_id':
+                    if new_value and issue.id == int(new_value):
+                        logger.warning("Trying to set an issue as a parent of itself: %d" % issue.id)
+                    else:
+                        old_parent_group_id = issue.parent_group_id
+                        issue.parent_group_id = new_value
+                        IssueHistory.add_history(
+                            self.request.user, issue, "changed parent group id",
+                            old_parent_group_id, new_value)
                 else:
                     raise Exception("Unsupported field name: %s" % field_name)
                 issue.save()

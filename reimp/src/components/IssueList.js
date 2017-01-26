@@ -2,6 +2,7 @@ import React, {Component, PropTypes} from 'react'
 import {Link} from 'react-router'
 import map from 'lodash/map'
 import union from 'lodash/union'
+import merge from 'lodash/merge'
 import includes from 'lodash/includes'
 import difference from 'lodash/difference'
 import RIEInput from '../widgets/RIEInput'
@@ -168,7 +169,7 @@ class IssueList extends Component {
             return
         }
 
-        const children_issue_ids = difference(selected_ids, feature_issue.id)
+        const children_issue_ids = difference(selected_ids, [feature_issue.id])
         dispatch(groupIssuesIntoFeature(children_issue_ids, feature_issue.id))
     }
 
@@ -179,7 +180,7 @@ class IssueList extends Component {
         let feature_issue_ids = []
         map(selected_items, function(issue) {
             if ( issue.can_group_issues ) {
-                feature_issue_ids = union(feature_issue_ids, issue.id)
+                feature_issue_ids = merge(feature_issue_ids, [issue.id])
             }
         })
         const children_issue_ids = difference(selected_ids, feature_issue_ids)
@@ -187,7 +188,7 @@ class IssueList extends Component {
             alert("Please select at least one child issue to ungroup")
             ok_to_ungroup = false
         }
-        if ( ok_to_ungroup ) {
+        if ( ! ok_to_ungroup ) {
             return
         }
         dispatch(ungroupIssuesIntoFeature(children_issue_ids))
@@ -277,7 +278,7 @@ class IssueList extends Component {
 
             const show_issue = !issue.parent_group_id || includes(expanded_issues, issue.parent_group_id)
 
-            if ( issue.parent_group_id && issue.parent_group_id != running_parent_issue.id ) {
+            if ( issue.parent_group_id && running_parent_issue && issue.parent_group_id != running_parent_issue.id ) {
                 // this happens if the issue is separated from its group parent by another issue,
                 // so insert a 'fake' feature issue
                 issue_rows.push(
