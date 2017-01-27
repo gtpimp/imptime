@@ -24,9 +24,10 @@ export function websocketConnected() {
     }
 }
 
-export function addAsyncMessage(msg) {
+export function addAsyncMessage(added_at, msg) {
     return {
         type: ADD_ASYNC_MSG,
+        added_at: added_at,
         msg: msg
     }
 }

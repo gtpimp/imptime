@@ -2,6 +2,7 @@ import React, { Component, PropTypes } from 'react'
 import { Link } from 'react-router'
 import map from 'lodash/map'
 import { connect } from 'react-redux'
+import moment from 'moment'
 
 class NotificationBar extends Component {
 
@@ -17,12 +18,18 @@ class NotificationBar extends Component {
 	          </div>
 	        }
                   { map(async_messages, function(msg, index) {
-                        return (
-                            <div key={index} className="notification_bar__async_msg">
-                                {msg}
-                            </div>
-                        )
-                })}
+
+                        if ( moment().diff(msg.added_at, 'seconds') < 5 ) {
+                            return (
+                                <div key={index} className="notification_bar__async_msg">
+                                    {msg.added_at.format('h:mm:ss')} {msg.msg}
+                                </div>
+                            )
+                        } else {
+                            return null
+                        }
+                    }
+                )}
                 { false && is_websockets_connected &&
                   <div className="notification_bar__websockets_connected">
                       Websockets OK

@@ -52,6 +52,7 @@ class IssueList extends Component {
         this.toggleExpandFeatures = this.toggleExpandFeatures.bind(this)
         this.groupTogether = this.groupTogether.bind(this)
         this.ungroupTogether = this.ungroupTogether.bind(this)
+        this.addTag = this.addTag.bind(this)
     }
 
     componentDidMount() {
@@ -192,6 +193,12 @@ class IssueList extends Component {
             return
         }
         dispatch(ungroupIssuesIntoFeature(children_issue_ids))
+    }
+
+    addTag(event) {
+        const { selected_ids, selected_items, dispatch } = this.props
+        event.stopPropagation()
+        
     }
 
     reorderIssue(moving_issue_id, move_after_issue_id) {
@@ -355,6 +362,11 @@ class IssueList extends Component {
                                        onClick={this.toggleExpandFeatures}>
                                   </div>
                                 }
+                                { at_least_one_issue_selected &&
+                                  <div className="panel__button panel__button--add_tag"
+                                       onClick={this.addTag}>
+                                  </div>
+                                }
                                 <div className="panel__button panel__button--refresh"
                                      onClick={this.onRefresh}>
                                 </div>
@@ -378,7 +390,7 @@ class IssueList extends Component {
                                         <th className="issue-list__header">Assignee</th>
                                         <th className="issue-list__header">Status</th>
                                         <th className="issue-list__header">Feature</th>
-                                        <th className="issue-list__header">Sprint</th>
+                                        { false && <th className="issue-list__header">Sprint</th>}
                                         <th className="issue-list__header">Progress</th>
                                         <th className="issue-list__header">Estimates</th>
                                         <th className="issue-list__header">Tags</th>
