@@ -14,8 +14,10 @@
 * coordinate container startup
 * lockdown all dependencies (npm, django)
 * use read-only containers
+* NB be sure to stop npm being copies to /tmp
+* start-django doesn't use port from settings 
 ** log externally
-NB be sure to stop npm being copies to /tmp
+
 
 ## Running
 

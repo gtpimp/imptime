@@ -14,10 +14,11 @@ function help {
 # support for cleaning up orphans
 # support for running background
 
-while getopts "dl" OPT; do
+while getopts "dls:" OPT; do
     case $OPT in
         d) DEVELOPMENT_MODE=1 ;;
         l) FROM_LOCAL_SOURCES=1 ;;
+        s) SKIP_BUILD=1 ;;
         \?) help ;;
     esac
 done
@@ -29,8 +30,12 @@ fi
 
 if [ "$DEVELOPMENT_MODE" ]; then
     echo "running in development mode"
-    docker-compose -f $ROOT/docker/docker-compose.yml -f $ROOT/docker/docker-compose.local-sources.yml -f $ROOT/docker/docker-compose.provide-database.yml down
-     docker-compose -f $ROOT/docker/docker-compose.yml -f $ROOT/docker/docker-compose.local-sources.yml -f $ROOT/docker/docker-compose.provide-database.yml up
+    docker-compose -f $ROOT/docker/docker-compose.yml -f $ROOT/docker/docker-compose.develop.yml -f $ROOT/docker/docker-compose.provide-database.yml down
+    if [ "$SKIP_BUILD" ]; then
+        docker-compose -f $ROOT/docker/docker-compose.yml -f $ROOT/docker/docker-compose.develop.yml -f $ROOT/docker/docker-compose.provide-database.yml up
+    else
+        docker-compose -f $ROOT/docker/docker-compose.yml -f $ROOT/docker/docker-compose.develop.yml -f $ROOT/docker/docker-compose.provide-database.yml up --build
+    fi
 fi
 
 if [ "$FROM_LOCAL_SOURCES" ]; then
@@ -44,8 +49,3 @@ if [ -z "$FROM_LOCAL_SOURCES" ] && [ -z "$DEVELOPMENT_MODE" ]; then
     docker-compose -f $ROOT/docker/docker-compose.yml down
     docker-compose -f $ROOT/docker/docker-compose.yml up
 fi
-
-
-#help
-#echo "Bringing up Imptime using prebuilt Docker images"
-#docker-compose up -f docker-compose.yml
