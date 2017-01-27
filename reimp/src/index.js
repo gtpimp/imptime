@@ -5,7 +5,7 @@ import { Router, Route, browserHistory } from 'react-router'
 import { Provider } from 'react-redux'
 import ReactDOM from 'react-dom';
 import App from './containers/App';
-// import './sass/imptime.css'
+import './sass/imptime.css'
 import configureStore from './store/configureStore'
 import ProjectList from './components/ProjectList'
 import SprintList from './components/SprintList'

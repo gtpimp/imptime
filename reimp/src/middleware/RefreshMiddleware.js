@@ -2,10 +2,12 @@ import {
     ASYNC_REFRESH_NOTIFICATION
 } from '../actions/Async'
 
+import moment from 'moment'
 import { invalidateProjects } from '../actions/Projects'
 import { invalidateSprints } from '../actions/Sprints'
 import { invalidateIssues } from '../actions/Issues'
 import { invalidateIssueGeneralDetails } from '../actions/IssueGeneralDetails'
+import { addAsyncMessage } from '../actions/Async'
 
 import {
     invalidateList
@@ -60,7 +62,6 @@ function triggerInvalidateItemLists(d, dispatch) {
     } else {
         console.log("Unknown entity to refresh lists: " + d.entity_name)
     }
-    
 }
 
 function refreshMiddleware(_ref) {
@@ -77,6 +78,7 @@ function refreshMiddleware(_ref) {
                 const payload = action.payload || [{}]
 
                 payload.map((d) => {
+                    
                     if ( d.action_type == "create" ) {
                         triggerInvalidateItemLists(d, dispatch)
                     } else if ( d.action_type == "update" ) {
@@ -87,6 +89,7 @@ function refreshMiddleware(_ref) {
                     } else { 
                         console.log("Unknown action_type for async refresh: " + d.action_type)
                     }
+                    dispatch(addAsyncMessage(moment() + ": " + d.action_type + " " + d.entity_name + " " + d.entity_ref))
                 }) 
             } 
             return next(action)

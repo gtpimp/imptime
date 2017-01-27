@@ -1,12 +1,13 @@
 import React, { Component, PropTypes } from 'react'
 import { Link } from 'react-router'
+import map from 'lodash/map'
 import { connect } from 'react-redux'
 
 class NotificationBar extends Component {
 
     render() {
 
-        const { error_message, is_websockets_connected } = this.props
+        const { error_message, is_websockets_connected, async_messages } = this.props
 
         return (
 	    <div>
@@ -15,6 +16,13 @@ class NotificationBar extends Component {
 		      { error_message }
 	          </div>
 	        }
+                  { map(async_messages, function(msg, index) {
+                        return (
+                            <div key={index} className="notification_bar__async_msg">
+                                {msg}
+                            </div>
+                        )
+                })}
                 { false && is_websockets_connected &&
                   <div className="notification_bar__websockets_connected">
                       Websockets OK
@@ -35,6 +43,7 @@ function mapStateToProps(state, props) {
     const websockets = state.websockets || {}
     return {
         error_message: notification_bar.error_message,
+        async_messages: notification_bar.async_messages,
         is_websockets_connected: websockets.isConnected
     }
 }

@@ -1,6 +1,8 @@
 export const ASYNC_REFRESH_NOTIFICATION = 'ASYNC_REFRESH_NOTIFICATION'
 export const WEBSOCKET_DISCONNECTED = 'WEBSOCKET_DISCONNECTED'
 export const WEBSOCKET_CONNECTED = 'WEBSOCKET_CONNECTED'
+export const ADD_ASYNC_MSG = 'ADD_ASYNC_MSG'
+export const REMOVE_ASYNC_MSG = 'REMOVE_ASYNC_MSG'
 
 export function asyncRefreshNotification(data) {
     const d = (JSON.parse && JSON.parse(data)) || eval(data)
@@ -22,3 +24,17 @@ export function websocketConnected() {
     }
 }
 
+export function addAsyncMessage(msg) {
+    return {
+        type: ADD_ASYNC_MSG,
+        msg: msg
+    }
+}
+
+export function removeAsyncMessage(msg) {
+    return {
+        type: REMOVE_ASYNC_MSG,
+        msg: msg
+        
+    }
+}
