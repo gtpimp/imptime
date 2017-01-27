@@ -1,6 +1,7 @@
 import React, {Component, PropTypes} from 'react'
 import {connect} from 'react-redux'
 import classNames from 'classnames'
+import { format_hours } from '../actions/lib'
 
 class Timer extends Component {
 
@@ -10,7 +11,11 @@ class Timer extends Component {
 
 
     render() {
-        const active = Math.floor((Math.random() * 10) + 1) % 2 === 0
+
+        const { hours, active, onStart, onStop } = this.props
+
+        const duration = format_hours(hours)
+        
         return (
             <div className="timer">
                 <div className="timer__component timer__component--controls">
@@ -19,7 +24,7 @@ class Timer extends Component {
                     <div className="button__icon">
                         <i className="material-icons">access_time</i>
                     </div>
-                    <div className="button__text">
+                    <div className="button__text" onClick={onStop}>
                         Stop
                     </div>
                 </button>
@@ -29,14 +34,14 @@ class Timer extends Component {
                     <div className="button__icon">
                     <i className="material-icons">access_time</i>
                     </div>
-                    <div className="button__text">
+                    <div className="button__text" onClick={onStart}>
                     Start
                     </div>
                 </button>
                 }
                 </div>
                 <div className="timer__component timer__component--time">
-                    <div className={classNames('timer__time', 'timer__time--' + (active ? 'active' : 'inactive'))}>0{Math.floor((Math.random() * 9) + 1)}:{Math.floor((Math.random() * 49)+ 10)}</div>
+                    <div className={classNames('timer__time', 'timer__time--' + (active ? 'active' : 'inactive'))}>{duration}</div>
                 </div>
             </div>
         )
@@ -44,7 +49,13 @@ class Timer extends Component {
 }
 
 function mapStateToProps(state, props) {
-    return {}
+
+    const { hours, active } = props
+    
+    return {
+        hours: hours,
+        active: active
+    }
 }
 
 

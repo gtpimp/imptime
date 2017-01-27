@@ -60,7 +60,11 @@ class IssueViewSet(BaseViewSet):
                                    .prefetch_related('issue_points__user')\
                                    .prefetch_related('group_children')\
                                    .prefetch_related(Prefetch('entries', to_attr='active_clocks',
-                                                              queryset=Entry.objects.select_related('user').filter(status__in=['', 'ready'])))
+                                                              queryset=Entry.objects.select_related('user').filter(end_time__isnull=False)))\
+                                   .prefetch_related(Prefetch('entries', to_attr='my_entries',
+                                                              queryset=Entry.objects.filter(user=request.user).select_related('user')))\
+                                   .prefetch_related(Prefetch('entries', to_attr='my_clocked_in_entries',
+                                                              queryset=Entry.objects.filter(user=request.user).select_related('user').filter(end_time__isnull=True)))
 
                     issues = issues.annotate(actual_hours=Sum('entries__hours'))
                                    

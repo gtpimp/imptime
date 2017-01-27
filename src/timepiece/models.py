@@ -30,11 +30,7 @@ from django.db.models.signals import post_save
 
 logger = logging.getLogger(__name__)
 
-try:
-    from django.utils import timezone
-except ImportError:
-    from timepiece import timezone
-
+from django.utils import timezone
 from timepiece import utils
 
 from dateutil.relativedelta import relativedelta
@@ -2250,16 +2246,18 @@ class Entry(models.Model):
     activity = models.ForeignKey(
         Activity,
         related_name='entries',
+        null=True
     )
     location = models.ForeignKey(
         Location,
         related_name='entries',
+        null=True
     )
     entry_group = models.ForeignKey(
        'EntryGroup',
         related_name='entries',
         blank=True, null=True,
-        on_delete=models.SET_NULL,
+        on_delete=models.SET_NULL
     )
     status = models.CharField(
         max_length=24,
@@ -2267,7 +2265,9 @@ class Entry(models.Model):
         default='unverified',
     )
 
-    source = models.CharField(max_length=20, choices= ( ('quick_clocker', 'Quick clocker'), ('emacs', 'Emacs importer'), ('excel', 'In-site Excel importer') ),
+    source = models.CharField(max_length=20, choices= ( ('quick_clocker', 'Quick clocker'),
+                                                        ('emacs', 'Emacs importer'),
+                                                        ('excel', 'In-site Excel importer') ),
                               null=False, blank=False)
     
     start_time = models.DateTimeField()

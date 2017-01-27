@@ -1,5 +1,6 @@
 import logging
 from rest_framework import serializers
+from django.utils import timezone
 from drf_compound_fields.fields import ListField
 from base_serializer import BaseSerializer, BaseModelSerializer
 from tag_serializer import TagSerializer
@@ -21,10 +22,12 @@ class IssueSerializer(BaseSerializer):
     position_if_creating_new_issue_after = serializers.IntegerField()
     sprint_id = serializers.CharField()
     project_id = serializers.CharField()
-    tags = TagSerializer(many=True) 
+    tags = TagSerializer(many=True)
     dev_estimate_hours = serializers.FloatField()
     dev_estimate_user_quick_name = serializers.CharField()
-    actual_hours = serializers.FloatField(source='hours')
+    actual_hours = serializers.FloatField()
+    my_actual_hours = serializers.FloatField()
+    am_i_clocked_in = serializers.BooleanField()
     currently_clocked_in_by = UserSerializer(many=True)
     can_group_issues = serializers.BooleanField()
     parent_group_id = serializers.CharField(source="parent_group.id")
@@ -40,6 +43,8 @@ class IssueSerializer(BaseSerializer):
         issue.project_id = str(issue.project.business_id)  # sic
         issue.dev_estimate_hours, issue.dev_estimate_user_quick_name = issue.best_hours_estimate
         issue.group_children_ids = issue.group_children.all().values_list('id', flat=True)
+        issue.my_actual_hours = sum([float(x.hours or ((timezone.now()-x.start_time).seconds/3600.0)) for x in issue.my_entries])
+        issue.am_i_clocked_in = len(issue.my_clocked_in_entries)>0
 
         d = super(IssueSerializer, self).to_representation(
             issue, *args, **kwargs)

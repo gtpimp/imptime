@@ -8,7 +8,8 @@ import {
     updateIssueStatus,
     updateIssueFeature,
     updateIssueAssignedTo,
-    deleteTag
+    deleteTag,
+    clock
 } from '../actions/Issue'
 import {
     fetchUsersIfNeeded
@@ -51,6 +52,8 @@ class Issue extends Component {
         super(props)
         this.onChangeStatus = this.onChangeStatus.bind(this)
         this.onDeleteTag = this.onDeleteTag.bind(this)
+        this.onClockIn = this.onClockIn.bind(this)
+        this.onClockOut = this.onClockOut.bind(this)
     }
 
     componentDidMount() {
@@ -77,6 +80,16 @@ class Issue extends Component {
     onDeleteTag(tag) {
         const { issue, dispatch } = this.props
         dispatch(deleteTag([issue.id], tag.category_name, tag.name))
+    }
+
+    onClockIn() {
+        const { issue, dispatch } = this.props
+        dispatch(clock(issue.id, 'clock_in'))
+    }
+
+    onClockOut() {
+        const { issue, dispatch } = this.props
+        dispatch(clock(issue.id, 'clock_out'))
     }
 
     render_collapsed() {
@@ -209,7 +222,11 @@ class Issue extends Component {
                         })}
                     </td>
                     <td className="issue__cell issue__cell--tracking-control">
-                        <Timer />
+                        <Timer hours={issue.my_actual_hours}
+                               active={issue.am_i_clocked_in}
+                               onStart={this.onClockIn}
+                               onStop={this.onClockOut}
+                        />
                     </td>
                 </tr>
             ))
