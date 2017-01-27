@@ -3,7 +3,7 @@ import { connect } from 'react-redux'
 import { DragDropContext } from 'react-dnd';
 var HTML5Backend = require('react-dnd-html5-backend');
 import DevPage from './DevPage'
-import HeaderBar from '../components/HeaderBar'
+import Header from '../components/Header'
 import Websocket from '../components/Websocket'
 import LoginPage from '../containers/LoginPage'
 import { is_authenticated } from '../actions/Auth'
@@ -46,7 +46,7 @@ class App extends Component {
               (
                   <div className="app">
                       <Websocket/>
-		      <HeaderBar/>
+		      <Header/>
 		      <DevPage/>
 
 	          </div>

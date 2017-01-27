@@ -1,0 +1,30 @@
+@import 'variables.scss';
+
+.search-box {
+  color: $color-10;
+  //display: inline-block;
+  align-items: center;
+  //width: 744px;
+  //height: 40px;
+  background-color: #F5F5F5;
+  border-radius: 3px;
+  display: flex;
+  padding-left: 11px;
+  padding-right: 16px;
+}
+
+.search-box__component {
+  > .material-icons {
+    display: block;
+  }
+}
+
+.search-box__component--textfield {
+  height: 40px;
+  width: 700px;
+}
+
+.search-box__textfield {
+  height: 40px;
+  width: 700px;
+}
