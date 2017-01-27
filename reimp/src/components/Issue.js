@@ -7,7 +7,8 @@ import classNames from 'classnames'
 import {
     updateIssueStatus,
     updateIssueFeature,
-    updateIssueAssignedTo
+    updateIssueAssignedTo,
+    deleteTag
 } from '../actions/Issue'
 import {
     fetchUsersIfNeeded
@@ -49,6 +50,7 @@ class Issue extends Component {
     constructor(props) {
         super(props)
         this.onChangeStatus = this.onChangeStatus.bind(this)
+        this.onDeleteTag = this.onDeleteTag.bind(this)
     }
 
     componentDidMount() {
@@ -72,6 +74,11 @@ class Issue extends Component {
         dispatch(updateIssueFeature(issue_id, new_value))
     }
 
+    onDeleteTag(tag) {
+        const { issue, dispatch } = this.props
+        dispatch(deleteTag([issue.id], tag.category_name, tag.name))
+    }
+
     render_collapsed() {
         const {issue, list_key} = this.props
         return (
@@ -89,6 +96,8 @@ class Issue extends Component {
             isOver, connectDragSource, connectDropTarget, show_children,
             subject_prefix, subject_suffix
         } = this.props
+
+        const onDeleteTag = this.onDeleteTag
 
         if (!issue) {
             return (<tr>
@@ -192,7 +201,11 @@ class Issue extends Component {
                     }
                     <td className="issue__cell issue__cell--tags">
                         { map(issue.tags, function(tag, index) {
-                              return (<Tag key={index} category={tag.category_name} name={tag.name}/>)
+                              return (<Tag key={index}
+                                           category={tag.category_name}
+                                           name={tag.name}
+                                           deleteTag={() => onDeleteTag(tag)}
+                                      />)
                         })}
                     </td>
                     <td className="issue__cell issue__cell--tracking-control">

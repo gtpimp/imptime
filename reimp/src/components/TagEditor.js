@@ -35,7 +35,7 @@ class TagEditor extends Component {
                 <h2>Edit tags</h2>
                 {map(selected_items, function(issue, index) {
                      return (
-                         <div>
+                         <div key={index}>
                              {issue.number}
                              {issue.subject}
                          </div>

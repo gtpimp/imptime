@@ -8,9 +8,8 @@ class Tag extends Component {
         super(props)
     }
 
-
     render() {
-        const {category, name} = this.props
+        const {category, name, deleteTag} = this.props
         return (
             <div className="tag">
                 { category &&
@@ -20,6 +19,7 @@ class Tag extends Component {
                 <div className="tag__component tag__component--separator">:</div>
                 }
                 <div className="tag__component tag__component--name">{name}</div>
+                <div onClick={deleteTag}>x</div>
             </div>
         )
     }

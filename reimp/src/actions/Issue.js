@@ -138,7 +138,7 @@ export function addTag(issue_ids, tag_category_name, tag_name, on_done) {
     }    
 }
 
-export function deleteTag(issue_ids, tag_category_name, tag_name, on_done) {
+export function deleteTag(issue_ids, tag_category_name, tag_name) {
     return (dispatch, getState) => {
         const state = getState()
         const API_BASE_URL = state.settings.configured && state.settings.API_BASE_URL
@@ -146,7 +146,7 @@ export function deleteTag(issue_ids, tag_category_name, tag_name, on_done) {
 	let data = {issue_ids: issue_ids,
                     tag_category_name: tag_category_name,
                     tag_name: tag_name}
-	return impfetch(API_BASE_URL+"imp/issue/tag/"+issue_ids[0]+"/",
+	return impfetch(API_BASE_URL+"imp/issue/tag/",
 			{method: "DELETE",
 			 credentials: 'same-origin',
 			 data: data,
@@ -163,9 +163,6 @@ export function deleteTag(issue_ids, tag_category_name, tag_name, on_done) {
 		 dispatch(invalidateIssues(issue_ids))
 		 dispatch(fetchIssuesIfNeeded())
              }
-	     if ( on_done ) {
-		 on_done()
-	     }
 	 })
 	 .catch(function (error) {
              console.log('Request failed', error);
