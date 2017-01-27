@@ -3284,13 +3284,13 @@ class TagCategory(models.Model):
     def save(self, *args, **kwargs):
         was_created = not self.id
         super(TagCategory, self).save(*args, **kwargs)
-        affected_issues = [x.id for x in self.tags.issues.all()]
+        affected_issue_ids = [x for x in Issue.objects.all().filter(tags__category=self).values_list('id', flat=True)]
         if was_created:
             RefreshNotifier().notify_model_create(
-                self, params={'issues': affected_issues})
+                self, params={'issues': affected_issue_ids})
         else:
             RefreshNotifier().notify_model_update(
-                self, params={'issues': affected_issues})
+                self, params={'issues': affected_issue_ids})
 
     
 class Tag(models.Model):

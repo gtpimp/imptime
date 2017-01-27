@@ -8,6 +8,7 @@ import difference from 'lodash/difference'
 import RIEInput from '../widgets/RIEInput'
 import RIEModeToggler from '../widgets/RIEModeToggler'
 import {connect} from 'react-redux'
+import TagEditor from '../components/TagEditor'
 import {
     initList,
     invalidateList,
@@ -52,7 +53,8 @@ class IssueList extends Component {
         this.toggleExpandFeatures = this.toggleExpandFeatures.bind(this)
         this.groupTogether = this.groupTogether.bind(this)
         this.ungroupTogether = this.ungroupTogether.bind(this)
-        this.addTag = this.addTag.bind(this)
+        this.openTagEditor = this.openTagEditor.bind(this)
+        this.closeTagEditor = this.closeTagEditor.bind(this)
     }
 
     componentDidMount() {
@@ -195,10 +197,19 @@ class IssueList extends Component {
         dispatch(ungroupIssuesIntoFeature(children_issue_ids))
     }
 
-    addTag(event) {
+    openTagEditor(event) {
         const { selected_ids, selected_items, dispatch } = this.props
         event.stopPropagation()
+        if ( selected_ids.length == 0 ) {
+            alert("Please select at least one issue to tag")
+            return
+        }
         
+        this.setState({'tag_editor_open': true})
+    }
+
+    closeTagEditor() {
+        this.setState({'tag_editor_open': false})
     }
 
     reorderIssue(moving_issue_id, move_after_issue_id) {
@@ -265,9 +276,10 @@ class IssueList extends Component {
             issues, is_visible, list_key, is_loading,
             saving_issue_ids,
             is_creating_issue, candidate_issue, invalidated_issue_ids,
-            selected_ids, loading_item_ids, has_items, expanded_issues
+            selected_ids, selected_items, loading_item_ids, has_items, expanded_issues
         } = this.props
 
+        const tag_editor_open = (this.state || {}).tag_editor_open || false
         
         if (!is_visible) {
             return (<div></div>)
@@ -336,6 +348,13 @@ class IssueList extends Component {
 
         return (
             <div className="issue-list" style={{opacity: is_loading ? 0.5 : 1}}>
+
+                <TagEditor isOpen={tag_editor_open}
+                           selected_items={selected_items}
+                           selected_ids={selected_ids}
+                           closeTagEditor={this.closeTagEditor} />
+                )
+            
                 <div className="panel panel--full">
                     <Sticky>
                         <div className="panel-heading" onClick={this.onCollapse}>
@@ -364,7 +383,7 @@ class IssueList extends Component {
                                 }
                                 { at_least_one_issue_selected &&
                                   <div className="panel__button panel__button--add_tag"
-                                       onClick={this.addTag}>
+                                       onClick={this.openTagEditor}>
                                   </div>
                                 }
                                 <div className="panel__button panel__button--refresh"
@@ -392,7 +411,7 @@ class IssueList extends Component {
                                         <th className="issue-list__header">Feature</th>
                                         { false && <th className="issue-list__header">Sprint</th>}
                                         <th className="issue-list__header">Progress</th>
-                                        <th className="issue-list__header">Estimates</th>
+                                        { false && <th className="issue-list__header">Estimates</th> }
                                         <th className="issue-list__header">Tags</th>
                                         <th className="issue-list__header">Tracking</th>
                                     </tr>

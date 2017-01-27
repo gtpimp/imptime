@@ -40,3 +40,7 @@
 .panel__button--ungroup_together {
     @include icon(20px, 20px, 'ungroup_issues_into_feature.png')
 }
+
+.panel__button--add_tag {
+    @include icon(20px, 20px, 'tag.png')
+}

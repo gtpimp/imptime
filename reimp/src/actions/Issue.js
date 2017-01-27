@@ -102,6 +102,78 @@ export function ungroupIssuesIntoFeature(children_issue_ids) {
     return updateIssue(children_issue_ids, "parent_group_id", null)
 }
 
+export function addTag(issue_ids, tag_category_name, tag_name, on_done) {
+    return (dispatch, getState) => {
+        const state = getState()
+        const API_BASE_URL = state.settings.configured && state.settings.API_BASE_URL
+	dispatch(announceIssuesSaving(issue_ids, "tags", tag_category_name + ":" + tag_name))
+	let data = {issue_ids: issue_ids,
+                    tag_category_name: tag_category_name,
+                    tag_name: tag_name}
+	return impfetch(API_BASE_URL+"imp/issue/tag/",
+			{method: "POST",
+			 credentials: 'same-origin',
+			 data: data,
+			 headers: {"Content-type": "application/json; charset=UTF-8"}, 
+			 body: JSON.stringify(data)}
+	).then(response => response.json())
+	 .then(json => {
+             if ( json.status != 'success' ) {
+		 console.log('Request failed with JSON response', json);
+		 dispatch(announceIssueSaveFailed(json.error))
+             } else {
+		 console.log('Request succeeded with JSON response', json);
+                 dispatch(announceIssuesSaved(issue_ids))
+		 dispatch(invalidateIssues(issue_ids))
+		 dispatch(fetchIssuesIfNeeded())
+             }
+	     if ( on_done ) {
+		 on_done()
+	     }
+	 })
+	 .catch(function (error) {
+             console.log('Request failed', error);
+	     dispatch(announceIssueSaveFailed(error))
+	 })
+    }    
+}
+
+export function deleteTag(issue_ids, tag_category_name, tag_name, on_done) {
+    return (dispatch, getState) => {
+        const state = getState()
+        const API_BASE_URL = state.settings.configured && state.settings.API_BASE_URL
+	dispatch(announceIssuesSaving(issue_ids, "tags", tag_category_name + ":" + tag_name))
+	let data = {issue_ids: issue_ids,
+                    tag_category_name: tag_category_name,
+                    tag_name: tag_name}
+	return impfetch(API_BASE_URL+"imp/issue/tag/"+issue_ids[0]+"/",
+			{method: "DELETE",
+			 credentials: 'same-origin',
+			 data: data,
+			 headers: {"Content-type": "application/json; charset=UTF-8"}, 
+			 body: JSON.stringify(data)}
+	).then(response => response.json())
+	 .then(json => {
+             if ( json.status != 'success' ) {
+		 console.log('Request failed with JSON response', json);
+		 dispatch(announceIssueSaveFailed(json.error))
+             } else {
+		 console.log('Request succeeded with JSON response', json);
+                 dispatch(announceIssuesSaved(issue_ids))
+		 dispatch(invalidateIssues(issue_ids))
+		 dispatch(fetchIssuesIfNeeded())
+             }
+	     if ( on_done ) {
+		 on_done()
+	     }
+	 })
+	 .catch(function (error) {
+             console.log('Request failed', error);
+	     dispatch(announceIssueSaveFailed(error))
+	 })
+    }    
+}
+
 function announceDeletingIssue(issue_id) {
     return {
         type: ANNOUNCE_DELETING_ISSUE,
