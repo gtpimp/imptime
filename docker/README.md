@@ -15,7 +15,7 @@
 * lockdown all dependencies (npm, django)
 * use read-only containers
 ** log externally
-
+NB be sure to stop npm being copies to /tmp
 
 ## Running
 
