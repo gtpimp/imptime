@@ -24,29 +24,34 @@ class SprintPage extends Component {
 
     componentDidMount() {
         const {dispatch} = this.props
-        // dispatch(expand_list(LIST_KEY__SPRINT_LIST))
+        dispatch(expand_list(LIST_KEY__SPRINT_LIST))
     }
 
     render() {
 
-        const sprint_id = this.props.params.sprintId
+        const { sprint_id } = this.props
         
         return (
             <div>
-                {/*<ProjectList key="projects" list_key={LIST_KEY__PROJECT_LIST}/>*/}
-                <IssueList list_key={LIST_KEY__ISSUE_LIST}
-                           sprint_id={sprint_id}
-                />
+                <StickyContainer>
+                    <IssueList list_key={LIST_KEY__ISSUE_LIST}
+                               sprint_id={sprint_id}
+                    />
+                </StickyContainer>
                 
             </div>
         )
     }
 }
 
-function mapStateToProps(state) {
+function mapStateToProps(state, props) {
     const {} = state
 
-    return {}
+    const { sprint_id } = props.params.sprintId
+    
+    return {
+        sprint_id: sprint_id
+    }
 }
 
 export default connect(mapStateToProps)(SprintPage)

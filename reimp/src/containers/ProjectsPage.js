@@ -30,7 +30,7 @@ class ProjectsPage extends Component {
 
     componentDidMount() {
         const {dispatch} = this.props
-        // dispatch(expand_list(LIST_KEY__SPRINT_LIST))
+        dispatch(expand_list(LIST_KEY__PROJECT_LIST))
     }
 
     onSelectProjects(project_ids) {
@@ -38,7 +38,7 @@ class ProjectsPage extends Component {
         dispatch(selectItems(LIST_KEY__PROJECT_LIST, project_ids))
 
         if ( project_ids.length == 1 ) {
-            browserHistory.push('projects/'+project_ids[0]);
+            browserHistory.push('/projects/'+project_ids[0]);
         }
     }
 
@@ -49,7 +49,8 @@ class ProjectsPage extends Component {
                 <StickyContainer>
                     <ProjectList key="projects"
                                  list_key={LIST_KEY__PROJECT_LIST}
-                                 onSelectProjects={this.onSelectProjects}/>
+                                 onSelectProjects={this.onSelectProjects}
+                    />
                 </StickyContainer>
             </div>
         )
