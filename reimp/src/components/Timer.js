@@ -20,24 +20,24 @@ class Timer extends Component {
             <div className="timer">
                 <div className="timer__component timer__component--controls">
                 { active &&
-                <button className="button button--default button--timer button--stop-timer">
-                    <div className="button__icon">
-                        <i className="material-icons">access_time</i>
-                    </div>
-                    <div className="button__text" onClick={onStop}>
-                        Stop
-                    </div>
-                </button>
+                  <button className="button button--default button--timer button--stop-timer"  onClick={onStop}>
+                      <div className="button__icon">
+                          <i className="material-icons">access_time</i>
+                      </div>
+                      <div className="button__text">
+                          Stop
+                      </div>
+                  </button>
                 }
                 { !active &&
-                <button className="button button--default button--timer button--start-timer">
-                    <div className="button__icon">
-                    <i className="material-icons">access_time</i>
-                    </div>
-                    <div className="button__text" onClick={onStart}>
-                    Start
-                    </div>
-                </button>
+                  <button className="button button--default button--timer button--start-timer"  onClick={onStart}>
+                      <div className="button__icon">
+                          <i className="material-icons">access_time</i>
+                      </div>
+                      <div className="button__text">
+                          Start
+                      </div>
+                  </button>
                 }
                 </div>
                 <div className="timer__component timer__component--time">

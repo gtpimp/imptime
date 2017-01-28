@@ -2,6 +2,7 @@ import React, {Component, PropTypes} from 'react'
 import {connect} from 'react-redux'
 import Header from '../components/Header'
 import Websocket from '../components/Websocket'
+import LoginPage from '../containers/LoginPage'
 import { DragDropContext } from 'react-dnd';
 var HTML5Backend = require('react-dnd-html5-backend');
 import { is_authenticated } from '../actions/Auth'
@@ -31,6 +32,14 @@ class MainLayout extends Component {
             )
         }
 
+        if ( ! is_logged_in ) {
+            return (
+                <div className="app">
+                    <LoginPage />
+                </div>
+            )
+        }
+        
         return (
             <div className="app">
                 <Websocket/>
