@@ -353,8 +353,6 @@ class IssueList extends Component {
                            selected_items={selected_items}
                            selected_ids={selected_ids}
                            closeTagEditor={this.closeTagEditor} />
-                )
-            
                 <div className="panel panel--full">
                     <Sticky>
                         <div className="panel-heading" onClick={this.onCollapse}>
