@@ -2,10 +2,34 @@ import React, {Component, PropTypes} from 'react'
 import {connect} from 'react-redux'
 import Header from '../components/Header'
 import Websocket from '../components/Websocket'
+import { DragDropContext } from 'react-dnd';
+var HTML5Backend = require('react-dnd-html5-backend');
+import { is_authenticated } from '../actions/Auth'
+import { updateSettings } from '../actions/Settings'
 
 class MainLayout extends Component {
 
+    componentDidMount() {
+        const { dispatch } = this.props
+
+        window.onerror = function(msg, url, line, col, error) {
+            //alert("whoops")
+        }
+
+        require.ensure(['../external_config/react_local_settings'], function() {
+            let local_settings = require('../external_config/react_local_settings')
+            dispatch(updateSettings(local_settings.local_settings))
+        })
+    }
+
     render() {
+        const { is_logged_in, are_settings_loaded } = this.props
+
+        if ( ! are_settings_loaded ) {
+            return (
+                <div>Loading settings...</div>
+            )
+        }
 
         return (
             <div className="app">
@@ -20,8 +44,11 @@ class MainLayout extends Component {
 }
 
 function mapStateToProps(state) {
-    return {}
+    const { configured } = state.settings
+    return {
+        is_logged_in: is_authenticated(),
+        are_settings_loaded: configured
+    }
 }
 
-export default connect(mapStateToProps)(MainLayout)
-
+export default connect(mapStateToProps)(DragDropContext(HTML5Backend)(MainLayout))
