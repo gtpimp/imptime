@@ -45,5 +45,6 @@ services:
     build:
       context: ../
       dockerfile: docker/Dockerfile-react-static-assets-deployer-local-sources-dev
+    entrypoint: ['tail', '-f', '/dev/null']
     volumes:
       - ../:/opt/imptime

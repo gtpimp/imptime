@@ -15,7 +15,8 @@
 * lockdown all dependencies (npm, django)
 * use read-only containers
 * NB be sure to stop npm being copies to /tmp
-* start-django doesn't use port from settings 
+* start-django doesn't use port from settings
+* https://developers.google.com/web/progressive-web-apps/
 ** log externally
 
 
