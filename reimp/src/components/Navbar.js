@@ -2,6 +2,7 @@ import React, {Component} from 'react'
 import {connect} from 'react-redux'
 import SearchBox from '../components/SearchBox'
 import {logged_in_user} from '../actions/Auth'
+import { collapseUserDashboard, expandUserDashboard } from '../actions/Header'
 import '../sass/navbar.css'
 import classNames from 'classnames'
 import NavTab from './NavTab'
@@ -14,13 +15,17 @@ class Navbar extends Component {
     }
 
     toggleUserDashboard() {
-        console.log('toggle the user dashboard')
+        const { dispatch, user_dashboard_expanded } = this.props
+        if (user_dashboard_expanded) {
+            dispatch(collapseUserDashboard())
+        } else {
+            dispatch(expandUserDashboard())
+        }
     }
 
     render() {
 
-        const {username} = this.props
-        const is_dashboard_expanded = true
+        const { user_dashboard_expanded, username} = this.props
 
         return (
             <div className="navbar">
@@ -36,7 +41,7 @@ class Navbar extends Component {
                     <div className="navbar__tab"><NavTab to="/projects" label="Projects" /></div>
                     <div className="navbar__tab"><NavTab to="/clients" label="Clients"/></div>
                     <div className="navbar__tab"><NavTab to="/team" label="Team" /></div>
-                    <div className="navbar__tab" onClick={this.toggleUserDashboard}><NavTab style="dashboard-toggle" expanded={is_dashboard_expanded} label={username} /></div>
+                    <div className="navbar__tab" onClick={this.toggleUserDashboard}><NavTab style="dashboard-toggle" expanded={user_dashboard_expanded} label={username} /></div>
                 </div>
             </div>
         )
@@ -44,8 +49,10 @@ class Navbar extends Component {
 }
 
 function mapStateToProps(state, props) {
+    const { header } = state
 
     return {
+        user_dashboard_expanded: header.user_dashboard_expanded,
         username: logged_in_user(state).username
     }
 }

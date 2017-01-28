@@ -8,12 +8,12 @@ import UserDashboard from '../components/UserDashboard'
 class Header extends Component {
 
     render() {
-        const is_dashboard_expanded = true
+        const { user_dashboard_expanded } = this.props
         return (
             <div className="header">
                 <Navbar/>
                 <NotificationBar/>
-                { is_dashboard_expanded &&
+                { user_dashboard_expanded &&
                     <UserDashboard/>
                 }
             </div>
@@ -22,8 +22,11 @@ class Header extends Component {
 }
 
 function mapStateToProps(state, props) {
+    const { header } = state;
 
-    return {}
+    return {
+        user_dashboard_expanded: header.user_dashboard_expanded
+    }
 }
 
 export default connect(mapStateToProps)(Header)

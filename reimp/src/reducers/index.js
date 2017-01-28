@@ -4,6 +4,7 @@ import { combineReducers } from 'redux'
 import map from 'lodash/map'
 import auth from './auth'
 import filter from './filter'
+import header from './header'
 import item_list from './item_list'
 import issue from './issue'
 import issue_general_details from './issue_general_details'
@@ -19,6 +20,7 @@ import settings from './settings'
 const rootReducer = combineReducers({
     auth,
     filter,
+    header,
     issue,
     issue_general_details,
     item_list,
