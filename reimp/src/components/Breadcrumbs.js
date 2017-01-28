@@ -11,7 +11,7 @@ class Breadcrumbs extends Component {
         return (
             <div className="breadcrumbs">
                 { breadcrumbs.map((breadcrumb, index) =>
-                    <Breadcrumb breadcrumb={breadcrumb} is_last={index + 1 === breadcrumbs.length}/>
+                    <Breadcrumb key={index} breadcrumb={breadcrumb} is_last={index + 1 === breadcrumbs.length}/>
                 )}
             </div>
         )

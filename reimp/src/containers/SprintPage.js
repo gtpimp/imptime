@@ -29,10 +29,15 @@ class SprintPage extends Component {
 
     render() {
 
+        const sprint_id = this.props.params.sprintId
+        
         return (
             <div>
                 {/*<ProjectList key="projects" list_key={LIST_KEY__PROJECT_LIST}/>*/}
-                Sprints for {this.props.params.projectId}
+                <IssueList list_key={LIST_KEY__ISSUE_LIST}
+                           sprint_id={sprint_id}
+                />
+                
             </div>
         )
     }

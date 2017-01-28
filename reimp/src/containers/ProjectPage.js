@@ -1,10 +1,6 @@
 import React, {Component, PropTypes} from 'react'
 import {connect} from 'react-redux'
-import ProjectList from '../components/ProjectList'
 import SprintList from '../components/SprintList'
-import IssueList from '../components/IssueList'
-import IssueDetails from '../components/IssueDetails'
-import IssueDeveloperDetails from '../components/IssueDeveloperDetails'
 import {StickyContainer} from 'react-sticky';
 import {
     LIST_KEY__PROJECT_LIST,
@@ -29,10 +25,16 @@ class ProjectPage extends Component {
 
     render() {
 
+        const project_id = this.props.params.projectId
+        
         return (
             <div>
-                {/*<ProjectList key="projects" list_key={LIST_KEY__PROJECT_LIST}/>*/}
                 Project {this.props.params.projectId}
+
+                <SprintList list_key={LIST_KEY__SPRINT_LIST}
+                            project_id={project_id}
+                />
+                
             </div>
         )
     }

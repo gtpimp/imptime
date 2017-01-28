@@ -29,8 +29,9 @@ ReactDOM.render(
     <Provider store={store}>
         <Router history={history}>
             <Route component={MainLayout}>
-                <IndexRoute component={DevPage}/>
-                <Route path="/" component={DevPage}/>
+                <IndexRoute component={ProjectsPage}/>
+                <Route path="/" component={ProjectsPage}/>
+                <Route path="dev" component={DevPage}/>
                 <Route path="projects" component={ProjectsPage}/>
                 <Route path="projects/:projectId" component={ProjectPage}/>
                 <Route path="projects/:projectId/sprints" component={SprintsPage}/>

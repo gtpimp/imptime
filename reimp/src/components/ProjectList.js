@@ -186,6 +186,10 @@ function mapStateToProps(state, props) {
 	return items_by_id[visible_item_id] || { 'id': visible_item_id,
 						 'loaded': false }
     })) || []
+
+    if ( ! l.display_mode ) {
+        l.display_mode = "expanded"
+    }
     
     return {
         list_key: list_key,

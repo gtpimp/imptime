@@ -31,8 +31,9 @@ class ProjectsPage extends Component {
 
         return (
             <div>
-                {/*<ProjectList key="projects" list_key={LIST_KEY__PROJECT_LIST}/>*/}
-                Projects
+                <StickyContainer>
+                    <ProjectList key="projects" list_key={LIST_KEY__PROJECT_LIST}/>
+                </StickyContainer>
             </div>
         )
     }
