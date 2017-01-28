@@ -7,6 +7,7 @@ class Breadcrumbs extends Component {
 
     render() {
         const {breadcrumbs} = this.props
+        console.log('BB', breadcrumbs)
 
         return (
             <div className="breadcrumbs">

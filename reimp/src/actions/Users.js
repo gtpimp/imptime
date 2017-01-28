@@ -2,8 +2,6 @@ import { impfetch } from './lib.js'
 import difference from 'lodash/difference'
 import keys from 'lodash/keys'
 import map from 'lodash/map'
-import { setErrorMessage } from '../actions/Error'
-import { GLOBAL_SETTINGS } from '../settings'
 
 export const ANNOUNCE_USERS_LOADED = 'ANNOUNCE_USERS_LOADED'
 export const ANNOUNCE_USERS_LOAD_FAILED = 'ANNOUNCE_USERS_LOAD_FAILED'
@@ -27,7 +25,7 @@ function announceLoadingUsers(user_ids) {
 function announceUsersLoaded(payload) {
 
     let items_by_id = {}
-    payload.users.map((item, index) => {
+    payload.users.map((item) => {
         items_by_id[item.id] = item
     });
     
@@ -59,7 +57,7 @@ function fetchUsers(dispatch, user_ids) {
         return impfetch(API_BASE_URL+'imp/user/', dispatch, {params:params})
 	    .then(response => response.json())
 	    .then(json => {
-                if (json.status != 'success') {
+                if (json.status !== 'success') {
 		    dispatch(announceUsersLoadFailed(json.error))
                 } else {
 		    dispatch(announceUsersLoaded(json.payload))

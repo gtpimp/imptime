@@ -1,4 +1,3 @@
-import map from 'lodash/map'
 import assign from 'lodash/assign'
 import keys from 'lodash/keys'
 import union from 'lodash/union'
@@ -19,8 +18,6 @@ const initialState = {
 
 export default function user(state = initialState, action) {
 
-    let state_copy = Object.assign({}, state)
-    
     switch (action.type) {
         case INVALIDATE_USERS:
 

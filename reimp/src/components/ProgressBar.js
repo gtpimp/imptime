@@ -1,13 +1,8 @@
-import React, {Component, PropTypes} from 'react'
+import React, {Component} from 'react'
 import {connect} from 'react-redux'
 import classNames from 'classnames'
 
 class ProgressBar extends Component {
-
-    constructor(props) {
-        super(props)
-    }
-
 
     renderSection(section, index) {
         return (

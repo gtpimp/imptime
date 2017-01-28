@@ -1,5 +1,4 @@
-import React, {Component, PropTypes} from 'react'
-import {Link} from 'react-router'
+import React, {Component} from 'react'
 import map from 'lodash/map'
 import {DragSource, DropTarget} from 'react-dnd';
 import {connect} from 'react-redux'
@@ -15,10 +14,8 @@ import {
     fetchUsersIfNeeded
 } from '../actions/Users'
 import RIEDropDown from '../widgets/RIEDropDown'
-import RIEInput from '../widgets/RIEInput'
 import RIEModeToggler from '../widgets/RIEModeToggler'
 import RIEUserDropDown from '../widgets/RIEUserDropDown'
-import OtherUser from '../components/OtherUser'
 import Progress from '../components/Progress'
 import Timer from '../components/Timer'
 import Tag from '../components/Tag'
@@ -57,7 +54,7 @@ class Issue extends Component {
     }
 
     componentDidMount() {
-        const {dispatch, assignable_user_ids, project_id} = this.props
+        const {dispatch, assignable_user_ids} = this.props
         dispatch(fetchUsersIfNeeded(assignable_user_ids))
 
     }
@@ -104,7 +101,7 @@ class Issue extends Component {
 
     render_expanded() {
         const {
-            issue, is_loading, is_selected, onClickedIssue, assignable_user_ids,
+            issue, is_selected, onClickedIssue, assignable_user_ids,
             feature_options, is_invalidated, is_saving,
             isOver, connectDragSource, connectDropTarget, show_children,
             subject_prefix, subject_suffix
@@ -168,7 +165,7 @@ class Issue extends Component {
                         { issue.group_children.length > 0 &&
                           <span>
                             ({issue.group_children.length}
-                                { issue.group_children.length == 1 && <span>child</span> }
+                                { issue.group_children.length === 1 && <span>child</span> }
                                 { issue.group_children.length > 1 && <span>children</span> }
                             )
                           </span>
@@ -250,7 +247,7 @@ class Issue extends Component {
 }
 
 function mapStateToProps(state, props) {
-    const {project, issue, item_list, user} = state
+    const {project, issue} = state
     const {
         issue_id, is_selected, is_collapsed,
         is_loading, is_invalidated, is_saving, show_children,
@@ -300,7 +297,7 @@ const headingTarget = {
             return;
         }
         const dragging_issue_id = dragging_item.id
-        if (issue_id == dragging_issue_id) {
+        if (issue_id === dragging_issue_id) {
             console.log("ignoring dnd on the same element: " + issue_id)
             return;
         }

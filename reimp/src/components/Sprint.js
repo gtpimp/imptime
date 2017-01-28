@@ -1,20 +1,14 @@
-import React, { Component, PropTypes } from 'react'
-import { Link } from 'react-router'
+import React, { Component } from 'react'
 import { DragSource, DropTarget } from 'react-dnd';
 import { connect } from 'react-redux'
-import map from 'lodash/map'
 import classNames from 'classnames'
 import { DndTypes } from '../actions/Dnd'
 import Progress from '../components/Progress'
 
 class Sprint extends Component {
 
-    constructor(props) {
-        super(props)
-    }
-    
     render_collapsed() {
-	const { sprint, list_key } = this.props
+	const { sprint } = this.props
 	return (
 	    <div key={this.key+".collapsed_sprint."+sprint.id}>
 		Sprint: {sprint.name}
@@ -73,7 +67,7 @@ class Sprint extends Component {
 }
 
 function mapStateToProps(state, props) {
-    const { sprint, item_list } = state
+    const { sprint } = state
     const { sprint_id, is_selected, is_collapsed, is_loading } = props
     const this_sprint = (sprint && sprint.items_by_id && sprint.items_by_id[sprint_id]) || {}
     
@@ -101,7 +95,7 @@ const headingTarget = {
 	    return;
 	}
 	const dragging_sprint_id = dragging_item.id
-	if ( sprint_id == dragging_sprint_id ) {
+	if ( sprint_id === dragging_sprint_id ) {
 	    console.log("ignoring dnd on the same element: " + sprint_id)
 	    return;
 	}

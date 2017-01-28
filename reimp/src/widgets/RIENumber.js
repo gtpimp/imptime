@@ -1,5 +1,4 @@
 import React, { PropTypes } from 'react';
-import ReactDOM from 'react-dom';
 import RIEEditBase from './RIEEditBase';
 import { connect } from 'react-redux'
 

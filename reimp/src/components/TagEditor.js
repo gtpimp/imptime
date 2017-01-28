@@ -1,7 +1,6 @@
-import React, {Component, PropTypes} from 'react'
+import React, {Component} from 'react'
 import {connect} from 'react-redux'
 import map from 'lodash/map'
-import classNames from 'classnames'
 import Modal from 'react-modal';
 import RIEInput from '../widgets/RIEInput'
 import RIEModeToggler from '../widgets/RIEModeToggler'
@@ -20,7 +19,7 @@ class TagEditor extends Component {
         const tag_components = raw_tag.split(":")
         const tag_category_name = tag_components[0]
         const tag_name = tag_components[1]
-        const {closeTagEditor, selected_items, selected_ids} = this.props
+        const {closeTagEditor, selected_ids} = this.props
         dispatch(addTag(selected_ids, tag_category_name, tag_name, closeTagEditor))
     }
 

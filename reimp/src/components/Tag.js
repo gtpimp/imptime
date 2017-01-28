@@ -1,12 +1,7 @@
-import React, {Component, PropTypes} from 'react'
+import React, {Component} from 'react'
 import {connect} from 'react-redux'
-import classNames from 'classnames'
 
 class Tag extends Component {
-
-    constructor(props) {
-        super(props)
-    }
 
     render() {
         const {category, name, deleteTag} = this.props

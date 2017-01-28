@@ -1,6 +1,5 @@
-import React, {Component, PropTypes} from 'react'
+import React, {Component} from 'react'
 import {connect} from 'react-redux'
-import classNames from 'classnames'
 import '../sass/primary-toolbar.css'
 import Breadcrumbs from './Breadcrumbs'
 import ToolbarButton from './ToolbarButton'
@@ -27,11 +26,12 @@ class PrimaryToolBar extends Component {
     }
 
     render() {
-        const {value} = this.props
+        const { breadcrumbs, value} = this.props
         return (
             <div className="primary-toolbar">
                 <div className="primary-toolbar__container primary-toolbar__container--left">
-                    <Breadcrumbs breadcrumbs={[{to: '/projects', label: 'Projects'},{to: '/projects/katalyst', label: 'Katalyst'},{to: '/projects/katalyst/sprints/3', label: 'Sprint 3'}]}/>
+                    <Breadcrumbs breadcrumbs={breadcrumbs}/>
+                    {/*<Breadcrumbs breadcrumbs={[{to: '/projects', label: 'Projects'},{to: '/projects/katalyst', label: 'Katalyst'},{to: '/projects/katalyst/sprints/3', label: 'Sprint 3'}]}/>*/}
                 </div>
                 <div className="primary-toolbar__container primary-toolbar__container--right">
                     <ToolbarButton style="toggle" isEnabled={true} onEnable={this.onEnableInfo()} onDisable={this.onDisableInfo()} icon="info" />
@@ -43,7 +43,10 @@ class PrimaryToolBar extends Component {
 }
 
 function mapStateToProps(state, props) {
-    return {}
+    const { breadcrumbs } = state
+    return {
+        breadcrumbs: breadcrumbs
+    }
 }
 
 

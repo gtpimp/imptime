@@ -1,20 +1,11 @@
-import React, { Component, PropTypes } from 'react'
-import { Link } from 'react-router'
-import { DragSource, DropTarget } from 'react-dnd';
+import React, { Component } from 'react'
 import { connect } from 'react-redux'
-import map from 'lodash/map'
 import indexOf from 'lodash/indexOf'
-import classNames from 'classnames'
-import { DndTypes } from '../actions/Dnd'
 import {
     fetchUsersIfNeeded
 } from '../actions/Users'
 
 class OtherUser extends Component {
-
-    constructor(props) {
-        super(props)
-    }
 
     componentDidMount() {
 	const { dispatch, user_id } = this.props
@@ -43,7 +34,7 @@ class OtherUser extends Component {
 	    return ( <div onClick={onClick}>{loading_value}</div> )
 	}
 	
-	if ( render_mode == 'inline--small' ) {
+	if ( render_mode === 'inline--small' ) {
 	    return this.render_inline_small()
 	} else {
 	    return ( <div>Dev error, unsupported render mode: {render_mode}</div> )

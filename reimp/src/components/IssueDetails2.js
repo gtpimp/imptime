@@ -1,6 +1,5 @@
-import React, {Component, PropTypes} from 'react'
+import React, {Component} from 'react'
 import {connect} from 'react-redux'
-import classNames from 'classnames'
 import Progress from '../components/Progress'
 import Timer from '../components/Timer'
 import Tag from '../components/Tag'
@@ -8,10 +7,6 @@ import AttachmentLink from '../components/AttachmentLink'
 
 
 class IssueDetails2 extends Component {
-
-    constructor(props) {
-        super(props)
-    }
 
     render() {
         // const { issue } = this.props

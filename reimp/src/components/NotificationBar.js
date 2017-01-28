@@ -1,5 +1,4 @@
-import React, { Component, PropTypes } from 'react'
-import { Link } from 'react-router'
+import React, { Component } from 'react'
 import map from 'lodash/map'
 import { connect } from 'react-redux'
 import moment from 'moment'

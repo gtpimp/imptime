@@ -1,4 +1,4 @@
-import React, {Component, PropTypes} from 'react'
+import React, {Component} from 'react'
 import {connect} from 'react-redux'
 import classNames from 'classnames'
 import '../sass/toolbar-button.css'
@@ -15,7 +15,7 @@ class ToolbarButton extends Component {
     }
 
     render() {
-        const {style, value} = this.props
+        const {style} = this.props
         return (
             <div className={classNames('toolbar-button', 'toolbar-button--' + style, {
                 'toolbar-button--enabled': style === 'toggle' && this.props.isEnabled,

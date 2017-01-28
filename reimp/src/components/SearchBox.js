@@ -1,9 +1,9 @@
-import React, {Component, PropTypes} from 'react'
+import React, {Component} from 'react'
 import {connect} from 'react-redux'
 import '../sass/search-box.css'
 import RIEModeToggler from '../widgets/RIEModeToggler'
 import RIEInput from '../widgets/RIEInput'
-import {updateGlobalFilter, clearGlobalFilter} from '../actions/Filter'
+import {updateGlobalFilter} from '../actions/Filter'
 
 
 class SearchBox extends Component {

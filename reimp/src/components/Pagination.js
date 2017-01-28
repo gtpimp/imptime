@@ -1,5 +1,4 @@
-import React, { Component, PropTypes } from 'react'
-import { Link } from 'react-router'
+import React, { Component } from 'react'
 import { connect } from 'react-redux'
 import moment from 'moment'
 import {
@@ -12,10 +11,6 @@ class Pagination extends Component {
         super(props)
         this.on_next_page = this.on_next_page.bind(this)
         this.on_prev_page = this.on_prev_page.bind(this)
-    }
-
-    componentDidMount() {
-        const { dispatch, context_key } = this.props
     }
 
     on_next_page(event) {

@@ -1,12 +1,7 @@
-import React, { PropTypes } from 'react';
-import ReactDOM from 'react-dom';
+import React from 'react';
 
 export default class RIEEditBase extends React.Component {
     
-    constructor(props){
-        super(props);
-    }
-
     /* keyDown(event) {
      *     if (event.keyCode === 13) {
        this.finishEditing()

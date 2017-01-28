@@ -1,11 +1,11 @@
 import React, {Component} from 'react'
 import {connect} from 'react-redux'
-import {Link, IndexLink, withRouter} from 'react-router'
+import {Link, withRouter} from 'react-router'
 import '../sass/breadcrumb.css'
 class Breadcrumb extends Component {
 
     render() {
-        const {router, breadcrumb, is_last } = this.props
+        const {breadcrumb, is_last } = this.props
         const { ...props} = this.props
 
         return (

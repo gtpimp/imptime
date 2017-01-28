@@ -3,9 +3,6 @@ import ReactDOM from 'react-dom';
 import RIEStatefulBase from './RIEStatefulBase';
 
 export default class RIETag extends React.Component {
-    constructor(props) {
-        super(props);
-    }
 
     propTypes = {
         text: React.PropTypes.string.isRequired,

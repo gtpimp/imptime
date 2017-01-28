@@ -1,5 +1,4 @@
-import React, { Component, PropTypes } from 'react'
-import ReactDOM from 'react-dom';
+import React  from 'react'
 import Select from 'react-select';
 import RIEEditBase from './RIEEditBase';
 import { connect } from 'react-redux'

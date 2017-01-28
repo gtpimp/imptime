@@ -1,4 +1,4 @@
-import React, { Component, PropTypes } from 'react'
+import React from 'react'
 import ReactDOM from 'react-dom';
 import RIEEditBase from './RIEEditBase';
 import TextareaAutosize from 'react-autosize-textarea'
@@ -61,7 +61,7 @@ export default class RIETextArea extends RIEEditBase {
     }
 
     render() {
-	const { value, onChange, is_editing, is_readonly } = this.props
+	const { is_editing, is_readonly } = this.props
 	return (
 	    <div>
 		{ is_editing && this.renderEditingComponent() }

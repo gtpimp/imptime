@@ -1,4 +1,4 @@
-import React, {Component, PropTypes} from 'react'
+import React, {Component} from 'react'
 import {connect} from 'react-redux'
 import '../sass/header.css'
 import Navbar from '../components/Navbar'
@@ -23,7 +23,7 @@ class Header extends Component {
     }
 }
 
-function mapStateToProps(state, props) {
+function mapStateToProps(state) {
     const { header } = state;
 
     return {

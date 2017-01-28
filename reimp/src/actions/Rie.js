@@ -1,10 +1,3 @@
-import { impfetch } from './lib.js'
-import difference from 'lodash/difference'
-import keys from 'lodash/keys'
-import indexOf from 'lodash/indexOf'
-import map from 'lodash/map'
-import { fetchListIfNeeded } from './ItemList'
-
 export const RIE_RESET = 'RIE_RESET'
 export const RIE_START_EDITING = 'RIE_START_EDITING'
 export const RIE_STOP_EDITING = 'RIE_STOP_EDITING'

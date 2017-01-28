@@ -1,8 +1,6 @@
-import React, { Component, PropTypes } from 'react'
-import ReactDOM from 'react-dom';
+import React from 'react'
 import OtherUser from '../components/OtherUser'
 import Select from 'react-select';
-import TextareaAutosize from 'react-autosize-textarea'
 import { connect } from 'react-redux'
 import {
     fetchUsersIfNeeded

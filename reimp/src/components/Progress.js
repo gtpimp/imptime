@@ -1,4 +1,4 @@
-import React, {Component, PropTypes} from 'react'
+import React, {Component} from 'react'
 import {connect} from 'react-redux'
 import classNames from 'classnames'
 import Duration from '../components/Duration'
@@ -6,11 +6,6 @@ import ProgressBar from '../components/ProgressBar'
 import { format_hours } from '../actions/lib'
 
 class Progress extends Component {
-
-    constructor(props) {
-        super(props)
-    }
-
 
     render() {
         const {issue} = this.props
