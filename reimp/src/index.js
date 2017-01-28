@@ -7,7 +7,7 @@ import ReactDOM from 'react-dom';
 import App from './containers/App';
 import './sass/imptime.css'
 import configureStore from './store/configureStore'
-import ProjectPage from './containers/ProjectPage'
+import ProjectDashboardPage from './containers/ProjectDashboardPage'
 import ProjectsPage from './containers/ProjectsPage'
 import SprintPage from './containers/SprintPage'
 import SprintsPage from './containers/SprintsPage'
@@ -33,7 +33,7 @@ ReactDOM.render(
                 <Route path="/" component={ProjectsPage}/>
                 <Route path="dev" component={DevPage}/>
                 <Route path="projects" component={ProjectsPage}/>
-                <Route path="projects/:projectId" component={ProjectPage}/>
+                <Route path="projects/:projectId" component={ProjectDashboardPage}/>
                 <Route path="projects/:projectId/sprints" component={SprintsPage}/>
                 <Route path="projects/:projectId/sprints/:sprintId" component={SprintPage}/>
                 <Route path="clients" component={ClientsPage}/>

@@ -13,7 +13,10 @@ import {
     LIST_KEY__ISSUE_DEVELOPER_DETAILS
 } from '../actions/ItemListKeyRegistry'
 import {
-    expand_list
+    expand_list,
+    update_list_filter,
+    invalidateList,
+    fetchIssuesIfNeeded
 } from '../actions/ItemList'
 
 class SprintPage extends Component {
@@ -23,20 +26,34 @@ class SprintPage extends Component {
     }
 
     componentDidMount() {
+        const {dispatch, sprint_id} = this.props
+        this.refreshList(sprint_id)
+    }
+
+    componentWillReceiveProps(new_props) {
+        this.refreshList(new_props.sprint_id)
+    }
+
+    refreshList(sprint_id) {
         const {dispatch} = this.props
-        dispatch(expand_list(LIST_KEY__SPRINT_LIST))
+        if ( sprint_id ) {
+            dispatch(update_list_filter(LIST_KEY__ISSUE_LIST, {sprint_id:sprint_id}))
+            dispatch(invalidateList(LIST_KEY__ISSUE_LIST))
+            dispatch(expand_list(LIST_KEY__ISSUE_LIST))
+        }
     }
 
     render() {
 
         const { sprint_id } = this.props
-        
+
         return (
             <div>
+                Sprint {sprint_id}
                 <StickyContainer>
-                    <IssueList list_key={LIST_KEY__ISSUE_LIST}
-                               sprint_id={sprint_id}
-                    />
+                    { sprint_id &&
+                      <IssueList list_key={LIST_KEY__ISSUE_LIST} />
+                    }
                 </StickyContainer>
                 
             </div>
@@ -47,7 +64,7 @@ class SprintPage extends Component {
 function mapStateToProps(state, props) {
     const {} = state
 
-    const { sprint_id } = props.params.sprintId
+    const sprint_id = props.params.sprintId
     
     return {
         sprint_id: sprint_id
@@ -55,4 +72,3 @@ function mapStateToProps(state, props) {
 }
 
 export default connect(mapStateToProps)(SprintPage)
-
