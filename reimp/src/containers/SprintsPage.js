@@ -16,7 +16,7 @@ import {
     expand_list
 } from '../actions/ItemList'
 
-class ProjectPage extends Component {
+class SprintsPage extends Component {
 
     constructor(props) {
         super(props)
@@ -32,7 +32,7 @@ class ProjectPage extends Component {
         return (
             <div>
                 {/*<ProjectList key="projects" list_key={LIST_KEY__PROJECT_LIST}/>*/}
-                Project {this.props.params.projectId}
+                Sprint {this.props.params.sprintId}
             </div>
         )
     }
@@ -44,5 +44,5 @@ function mapStateToProps(state) {
     return {}
 }
 
-export default connect(mapStateToProps)(ProjectPage)
+export default connect(mapStateToProps)(SprintsPage)
 
