@@ -7,6 +7,7 @@ import filter from './filter'
 import item_list from './item_list'
 import issue from './issue'
 import issue_general_details from './issue_general_details'
+import loading from './loading'
 import notification_bar from './notification_bar.js'
 import project from './project'
 import rie from './rie'
@@ -21,6 +22,7 @@ const rootReducer = combineReducers({
     issue,
     issue_general_details,
     item_list,
+    loading,
     notification_bar,
     project,
     rie,

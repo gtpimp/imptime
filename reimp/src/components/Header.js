@@ -2,6 +2,7 @@ import React, {Component, PropTypes} from 'react'
 import {connect} from 'react-redux'
 import '../sass/header.css'
 import Navbar from '../components/Navbar'
+import NotificationBar from '../components/NotificationBar'
 import UserDashboard from '../components/UserDashboard'
 
 class Header extends Component {
@@ -11,6 +12,7 @@ class Header extends Component {
         return (
             <div className="header">
                 <Navbar/>
+                <NotificationBar/>
                 { is_dashboard_expanded &&
                     <UserDashboard/>
                 }

@@ -191,7 +191,8 @@ class Issue extends Component {
                         >
                             <RIEDropDown options={ISSUE_STATUS_CHOICES}/>
                         </RIEModeToggler>
-                    </td><td className="issue__cell issue__cell--feature">
+                    </td>
+                    {false && <td className="issue__cell issue__cell--feature">
                         <RIEModeToggler
                             rie_key={"issue_feature_" + issue.id}
                             initialValue={issue.feature_name || "..."}
@@ -199,7 +200,7 @@ class Issue extends Component {
                         >
                             <RIEDropDown options={feature_options}/>
                         </RIEModeToggler>
-                    </td>
+                    </td> }
                     { false &&
                       <td className="issue__cell issue__cell--sprint">
                           1

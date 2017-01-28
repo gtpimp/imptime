@@ -1,5 +1,6 @@
 import logging
 from django.utils import timezone
+from async.refresh_notifier import RefreshNotifier
 from rest_framework.decorators import detail_route
 from rest_framework.renderers import JSONRenderer
 from django.contrib.auth.models import User
@@ -26,11 +27,11 @@ class IssueClockViewSet(BaseViewSet):
             issue = self.allowed_issue(issue_pk)
 
             if action == 'clock_out' or action == 'clock_in':
-                open_entries = Entry.objects.all().filter(user=request.user, end_time__isnull=True) 
+                open_entries = Entry.objects.all().filter(user=request.user, end_time__isnull=True).select_related('issue')
                 for entry in open_entries:
                     entry.end_time = timezone.now()
                     entry.save()
-                    entry.issue.save()
+                    RefreshNotifier().notify_model_update(entry.issue)
             
             if action == 'clock_in':
                 Entry.objects.create(user=request.user,
@@ -40,7 +41,7 @@ class IssueClockViewSet(BaseViewSet):
                                      end_time=None,
                                      hours=0,
                                      issue=issue)
-                issue.save()
+                RefreshNotifier().notify_model_update(issue)
             data = {'status': 'success'}
             
         except Exception, ex:

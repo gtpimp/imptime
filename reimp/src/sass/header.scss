@@ -1,42 +1,5 @@
 @import 'variables.scss';
-//
-//.header_bar {
-//    vertical-align: middle;
-//    min-width: 600px;
-//    width: 100%;
-//    text-align: left;
-//    background-color: #322f36;
-//    min-height: 50px;
-//    max-height: 50px;
-//    overflow: hidden;
-//}
-//
-//.header_bar__inner {
-//    width: 100%;
-//    margin: auto;
-//    padding: 10px;
-//}
-//
-//.header_bar__logo {
-//    font-weight: bold;
-//    font-size: 15px;
-//    letter-spacing: 2px;
-//    color: #ffffff;
-//    line-height: 50px;
-//    background-image: url('../../public/images2/logo_header.png');
-//    background-repeat: no-repeat;
-//    background-size: 40px;
-//    padding-left: 40px;
-//    padding-top: 0px;
-//    margin-left: 100px;
-//    float: left;
-//
-//    a {
-//	color: #ffffff;
-//	text-decoration: none;
-//    }
-//}
-
+@import 'icon.scss';
 
 .notification_bar__error {
     color: #ffdddd;
@@ -56,3 +19,34 @@
     padding: 5px;
     float: right;
 }
+
+.notification_bar__loading {
+    @include icon(20px, 20px, 'loading.gif');
+    background-position: left;
+    position: fixed;
+    top: 10px;
+    right: 200px;
+    background-color: #996677;
+    padding: 10px;
+    padding-left: 30px;
+    font-size: 10px;
+    min-width: 200px;
+    overflow: hidden;
+    z-index: 999999;
+}
+
+.notification_bar__saving {
+    @include icon(20px, 20px, 'loading.gif');
+    background-position: left;
+    position: fixed;
+    top: 100px;
+    right: 200px;
+    background-color: #993399;
+    padding: 10px;
+    padding-left: 30px;
+    font-size: 10px;
+    min-width: 200px;
+    overflow: hidden;
+    z-index: 999999;
+}
+
