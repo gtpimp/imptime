@@ -1,15 +1,4 @@
 import { impfetch } from './lib.js'
-import difference from 'lodash/difference'
-import keys from 'lodash/keys'
-import map from 'lodash/map'
-import { fetchListIfNeeded } from './ItemList'
-import {
-    invalidateIssues,
-    fetchIssuesIfNeeded
-} from './Issues'
-import { GLOBAL_SETTINGS } from '../settings'
-
-
 export const ANNOUNCE_ISSUES_SAVING = 'ANNOUNCE_ISSUES_SAVING'
 export const ANNOUNCE_ISSUES_SAVED = 'ANNOUNCE_ISSUES_SAVED'
 export const ANNOUNCE_ISSUE_SAVE_FAILED = 'ANNOUNCE_ISSUE_SAVE_FAILED'
@@ -118,7 +107,7 @@ export function addTag(issue_ids, tag_category_name, tag_name, on_done) {
 			 body: JSON.stringify(data)}
 	).then(response => response.json())
 	 .then(json => {
-             if ( json.status != 'success' ) {
+             if ( json.status !== 'success' ) {
 		 console.log('Request failed with JSON response', json);
 		 dispatch(announceIssueSaveFailed(json.error))
              } else {
@@ -152,7 +141,7 @@ export function deleteTag(issue_ids, tag_category_name, tag_name) {
 			 body: JSON.stringify(data)}
 	).then(response => response.json())
 	 .then(json => {
-             if ( json.status != 'success' ) {
+             if ( json.status !== 'success' ) {
 		 console.log('Request failed with JSON response', json);
 		 dispatch(announceIssueSaveFailed(json.error))
              } else {
@@ -205,7 +194,7 @@ function updateIssue(issue_ids, field_name, new_value, on_done) {
 			 body: JSON.stringify(data)}
 	).then(response => response.json())
 	 .then(json => {
-             if ( json.status != 'success' ) {
+             if ( json.status !== 'success' ) {
 		 console.log('Request failed with JSON response', json);
 		 dispatch(announceIssueSaveFailed(json.error))
              } else {
@@ -278,7 +267,7 @@ export function saveCandidateIssue() {
 			 body: JSON.stringify(data)}
 	).then(response => response.json())
 	 .then(json => {
-             if ( json.status != 'success' ) {
+             if ( json.status !== 'success' ) {
 		 console.log('Request failed with JSON response', json);
 		 dispatch(announceCandidateIssueSaveFailed(json.error))
              } else {

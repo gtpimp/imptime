@@ -4,7 +4,6 @@ import SearchBox from '../components/SearchBox'
 import {logged_in_user} from '../actions/Auth'
 import { collapseUserDashboard, expandUserDashboard } from '../actions/Header'
 import '../sass/navbar.css'
-import classNames from 'classnames'
 import NavTab from './NavTab'
 
 class Navbar extends Component {

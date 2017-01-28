@@ -25,17 +25,17 @@ function triggerInvalidateEntity(d, dispatch) {
     //
     // Components which refer to these objects should automatically refresh
     // these object on demand using componentWillReceiveProps
-    if ( d.entity_name == 'project' ) {
+    if ( d.entity_name === 'project' ) {
         dispatch(invalidateProjects([d.entity_ref]))
 	
-    } else if ( d.entity_name == 'sprint' ) {
+    } else if ( d.entity_name === 'sprint' ) {
         dispatch(invalidateSprints([d.entity_ref]))
 	
-    } else if ( d.entity_name == 'issue' ) {
+    } else if ( d.entity_name === 'issue' ) {
         dispatch(invalidateIssues([d.entity_ref]))
         dispatch(invalidateIssueGeneralDetails([d.entity_ref]))
 
-    } else if ( d.entity_name == 'issuetag' || d.entity_nane == 'tag' || d.entity_name=='tagcategory' ) {
+    } else if ( d.entity_name === 'issuetag' || d.entity_nane === 'tag' || d.entity_name === 'tagcategory' ) {
         dispatch(invalidateIssues(d.params.issues))
         dispatch(invalidateIssueGeneralDetails(d.params.issues))
         
@@ -50,13 +50,13 @@ function triggerInvalidateItemLists(d, dispatch) {
     //
     // Components which show lists of objects should automatically
     // refresh their lists on demand using componentWillReceiveProps
-    if ( d.entity_name == 'project' ) {
+    if ( d.entity_name === 'project' ) {
         dispatch(invalidateList(LIST_KEY__PROJECT_LIST))
         
-    } else if ( d.entity_name == 'sprint' ) {
+    } else if ( d.entity_name === 'sprint' ) {
         dispatch(invalidateList(LIST_KEY__SPRINT_LIST))
 	
-    } else if ( d.entity_name == 'issue' ) {
+    } else if ( d.entity_name === 'issue' ) {
         dispatch(invalidateList(LIST_KEY__ISSUE_LIST))
 	
     } else {
@@ -73,17 +73,17 @@ function refreshMiddleware(_ref) {
         return function (action) {
             
             const state = getState()
-            if (action && action.type == ASYNC_REFRESH_NOTIFICATION) {
+            if (action && action.type === ASYNC_REFRESH_NOTIFICATION) {
 
                 const payload = action.payload || [{}]
 
                 payload.map((d) => {
                     
-                    if ( d.action_type == "create" ) {
+                    if ( d.action_type === "create" ) {
                         triggerInvalidateItemLists(d, dispatch)
-                    } else if ( d.action_type == "update" ) {
+                    } else if ( d.action_type === "update" ) {
                         triggerInvalidateEntity(d, dispatch)
-                    } else if ( d.action_type == "delete" ) {
+                    } else if ( d.action_type === "delete" ) {
                         triggerInvalidateEntity(d, dispatch)
                         triggerInvalidateItemLists(d, dispatch)
                     } else { 

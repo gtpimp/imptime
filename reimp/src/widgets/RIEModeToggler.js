@@ -1,8 +1,6 @@
 import React from 'react';
 import { connect } from 'react-redux'
 import {
-    reset,
-    setInitialValue,
     startEditing,
     stopEditing,
     updateValue
@@ -21,25 +19,24 @@ export class RIEModeToggler extends React.Component {
     }
 
     componentDidMount() {
-	const { dispatch, rie_key, initialValue } = this.props
+	const { initialValue } = this.props
         
         this.setState({value: initialValue})
         
-	if ( this.props.initialState == 'editing' ) {
+	if ( this.props.initialState === 'editing' ) {
 	    this.startEditing()
 	}
     }
 
     componentWillReceiveProps(newProps) {
-        const { dispatch, initialValue, is_editing, rie_key } = newProps
+        const { initialValue, is_editing } = newProps
 
-        if ( ! this.state || (! is_editing && initialValue != this.state.value) ) {
+        if ( ! this.state || (! is_editing && initialValue !== this.state.value) ) {
             this.setState({value: initialValue})
         }
     }
     
     onChange(new_value) {
-	const { dispatch, rie_key } = this.props
         this.setState({value: new_value})
     }
 
@@ -114,7 +111,7 @@ export class RIEModeToggler extends React.Component {
 	let readonly_child = null
 
 	React.Children.map(children, function(child, index) {
-	    if ( index == 0 ) {
+	    if ( index === 0 ) {
 		editing_child = React.cloneElement(child, {
 		    value: value,
 		    is_editing: is_editing,
@@ -124,7 +121,7 @@ export class RIEModeToggler extends React.Component {
 		    onSave: that.finishEditing,
 		    onCancel: that.cancelEditing
 		})
-	    } else if ( index == 1 ) {
+	    } else if ( index === 1 ) {
 		readonly_child = React.cloneElement(child, {
 		    value: value,
 		    is_editing: is_editing,
@@ -158,8 +155,8 @@ function mapStateToProps(state, props) {
     const original_initial_value = r.initial_value
 
     return {
-	is_editing: mode == 'editing',
-	is_readonly: mode == 'readonly',
+	is_editing: mode === 'editing',
+	is_readonly: mode === 'readonly',
 	original_initial_value: original_initial_value,
         initialValue: props.initialValue
     }

@@ -1,5 +1,3 @@
-import { setErrorMessage } from '../actions/Error.js'
-import indexOf from 'lodash/indexOf'
 import { UPDATE_LIST_SELECTION } from '../actions/ItemList'
 import {
     ANNOUNCE_ISSUE_SAVED,
@@ -58,7 +56,7 @@ function DevPageMiddleware(_ref) {
 			dispatch(unselectAllItems(issues_list_key))
 			dispatch(update_list_filter(issue_details_developer_key, {issue_id:null}))
 			
-		    } else if (action.list_key == sprints_list_key) {
+		    } else if (action.list_key === sprints_list_key) {
 			// Change selected sprint
 			dispatch(update_list_filter(issues_list_key, {sprint_id:selected_id}))
 			dispatch(invalidateList(issues_list_key))
@@ -73,7 +71,7 @@ function DevPageMiddleware(_ref) {
 			dispatch(update_list_pagination(issues_list_key, {current_page:1}))
 			dispatch(update_list_filter(issue_details_developer_key, {issue_id:null}))
 			
-		    } else if (action.list_key == issues_list_key) {
+		    } else if (action.list_key === issues_list_key) {
 			// Change selected issue
 			const issue_id = selected_id
 			dispatch(update_list_filter(issue_details_developer_key, {issue_id:issue_id}))

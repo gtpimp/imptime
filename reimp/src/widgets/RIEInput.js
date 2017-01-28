@@ -1,5 +1,4 @@
-import React, { PropTypes } from 'react';
-import ReactDOM from 'react-dom';
+import React  from 'react';
 import RIEEditBase from './RIEEditBase';
 import { connect } from 'react-redux'
 
@@ -15,7 +14,7 @@ export class RIEInput extends RIEEditBase {
     }
 
     render() {
-	const { value, onChange, is_editing, is_readonly } = this.props
+	const { value, is_editing, is_readonly } = this.props
 
 	return (
 	    <div>

@@ -1,9 +1,6 @@
-import React, { Component, PropTypes } from 'react'
-import { Link } from 'react-router'
+import React, { Component } from 'react'
 import { connect } from 'react-redux'
 import { login } from '../actions/Auth'
-import RIEInput from '../widgets/RIEInput'
-import RIEModeToggler from '../widgets/RIEModeToggler'
 
 class LoginPage extends Component {
 

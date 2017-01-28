@@ -1,10 +1,7 @@
 import { impfetch } from './lib.js'
 import difference from 'lodash/difference'
 import keys from 'lodash/keys'
-import map from 'lodash/map'
-import { setErrorMessage } from '../actions/Error'
 import { ENTITY_KEY__ISSUE_GENERAL_DETAILS } from '../actions/ItemListKeyRegistry'
-import { GLOBAL_SETTINGS } from '../settings'
 
 export const ANNOUNCE_ISSUE_GENERAL_DETAILS_LOADED = 'ANNOUNCE_ISSUES_GENERAL_DETAILS_LOADED'
 export const ANNOUNCE_ISSUE_GENERAL_DETAILS_LOAD_FAILED = 'ANNOUNCE_ISSUE_GENERAL_DETAILS_LOAD_FAILED'
@@ -60,7 +57,7 @@ function fetchIssueGeneralDetails(dispatch, issue_ids) {
         return impfetch(API_BASE_URL+'imp/issue/', dispatch, {params:params})
 	    .then(response => response.json())
 	    .then(json => {
-                if (json.status != 'success') {
+                if (json.status !== 'success') {
 		    dispatch(announceIssueGeneralDetailsLoadFailed(json.error))
                 } else {
 		    dispatch(announceIssueGeneralDetailsLoaded(json.payload))

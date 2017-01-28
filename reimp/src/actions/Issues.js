@@ -1,10 +1,6 @@
 import { impfetch } from './lib.js'
-import difference from 'lodash/difference'
-import keys from 'lodash/keys'
-import map from 'lodash/map'
 import { fetchListIfNeeded } from './ItemList'
 import { ENTITY_KEY__ISSUE } from '../actions/ItemListKeyRegistry'
-import { GLOBAL_SETTINGS } from '../settings'
 
 export const ANNOUNCE_ISSUES_LOADED = 'ANNOUNCE_ISSUES_LOADED'
 export const ANNOUNCE_ISSUES_LOAD_FAILED = 'ANNOUNCE_ISSUES_LOAD_FAILED'
@@ -65,7 +61,7 @@ function fetchIssuesPromise(dispatch, state, issue_ids) {
         return impfetch(API_BASE_URL+'imp/issue/', dispatch, {params:params})
 	    .then(response => response.json())
 	    .then(json => {
-                if (json.status != 'success') {
+                if (json.status !== 'success') {
 		    dispatch(announceIssuesLoadFailed())
 		    reject(json.error)
                 } else {

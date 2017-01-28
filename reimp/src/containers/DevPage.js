@@ -1,4 +1,4 @@
-import React, {Component, PropTypes} from 'react'
+import React, {Component} from 'react'
 import {connect} from 'react-redux'
 import ProjectList from '../components/ProjectList'
 import SprintList from '../components/SprintList'
@@ -17,10 +17,6 @@ import {
 } from '../actions/ItemList'
 
 class DevPage extends Component {
-
-    constructor(props) {
-        super(props)
-    }
 
     componentDidMount() {
         const {dispatch} = this.props

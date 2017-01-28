@@ -1,11 +1,7 @@
 import { impfetch } from './lib.js'
-import difference from 'lodash/difference'
-import keys from 'lodash/keys'
 import indexOf from 'lodash/indexOf'
-import map from 'lodash/map'
 import { fetchListIfNeeded } from './ItemList'
 import { ENTITY_KEY__SPRINT } from '../actions/ItemListKeyRegistry'
-import { GLOBAL_SETTINGS } from '../settings'
 
 export const ANNOUNCE_SPRINTS_LOADED = 'ANNOUNCE_SPRINTS_LOADED'
 export const ANNOUNCE_SPRINTS_LOAD_FAILED = 'ANNOUNCE_SPRINTS_LOAD_FAILED'
@@ -138,7 +134,7 @@ export function reorderSprints(sprint_id_before, sprint_id_after, on_done) {
 			 body: JSON.stringify(data)}
 	).then(response => response.json())
 	 .then(json => {
-             if (json.status != 'success') {
+             if (json.status !== 'success') {
 		 dispatch(announceSprintsSaveFailed())
              } else {
 		 dispatch(announceSprintsSaved([sprint_id_before, sprint_id_after]))
@@ -163,7 +159,7 @@ function fetchSprintsPromise(dispatch, state, sprint_ids) {
         return impfetch(API_BASE_URL+'imp/sprint/', dispatch, {params:params})
 	    .then(response => response.json())
 	    .then(json => {
-                if (json.status != 'success') {
+                if (json.status !== 'success') {
 		    dispatch(announceSprintsLoadFailed())
 		    reject(json.error)
                 } else {
@@ -234,7 +230,7 @@ export function saveCandidateSprint() {
 			 body: JSON.stringify(data)}
 	).then(response => response.json())
 	 .then(json => {
-             if ( json.status != 'success' ) {
+             if ( json.status !== 'success' ) {
 		 console.log('Request failed with JSON response', json);
 		 dispatch(announceCandidateSprintSaveFailed(json.error))
              } else {

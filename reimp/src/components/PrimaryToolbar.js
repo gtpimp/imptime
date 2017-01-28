@@ -26,7 +26,7 @@ class PrimaryToolBar extends Component {
     }
 
     render() {
-        const { breadcrumbs, value} = this.props
+        const { breadcrumbs} = this.props
         return (
             <div className="primary-toolbar">
                 <div className="primary-toolbar__container primary-toolbar__container--left">

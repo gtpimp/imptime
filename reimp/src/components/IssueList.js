@@ -1,5 +1,4 @@
-import React, {Component, PropTypes} from 'react'
-import {Link} from 'react-router'
+import React, {Component} from 'react'
 import map from 'lodash/map'
 import union from 'lodash/union'
 import merge from 'lodash/merge'
@@ -96,7 +95,7 @@ class IssueList extends Component {
     }
 
     onChangePage() {
-        const {dispatch, issue_ids, list_key} = this.props
+        const {dispatch, list_key} = this.props
         dispatch(invalidateList(list_key))
         dispatch(fetchIssuesIfNeeded(list_key))
     }
@@ -148,7 +147,7 @@ class IssueList extends Component {
     groupTogether(event) {
         const { selected_ids, selected_items, dispatch } = this.props
         event.stopPropagation()
-        if ( selected_ids.length == 1 ) {
+        if ( selected_ids.length === 1 ) {
             alert("Please select a single feature issue and at least one other issue to group together")
             return
         }
@@ -164,7 +163,7 @@ class IssueList extends Component {
                 }
             }
         })
-        if ( feature_issue == null ) {
+        if ( feature_issue === null ) {
             alert("Please select a feature issue to group into")
             ok_to_group = false
         }
@@ -187,7 +186,7 @@ class IssueList extends Component {
             }
         })
         const children_issue_ids = difference(selected_ids, feature_issue_ids)
-        if ( children_issue_ids.length == 0 ) {
+        if ( children_issue_ids.length === 0 ) {
             alert("Please select at least one child issue to ungroup")
             ok_to_ungroup = false
         }
@@ -198,9 +197,9 @@ class IssueList extends Component {
     }
 
     openTagEditor(event) {
-        const { selected_ids, selected_items, dispatch } = this.props
+        const { selected_ids } = this.props
         event.stopPropagation()
-        if ( selected_ids.length == 0 ) {
+        if ( selected_ids.length === 0 ) {
             alert("Please select at least one issue to tag")
             return
         }
@@ -224,7 +223,7 @@ class IssueList extends Component {
 
     render_collapsed() {
 
-        const {issue, selected_items, is_collapsed,
+        const {selected_items,
                selected_ids, loading_item_ids, list_key,
                expanded_issues} = this.props
 
@@ -252,7 +251,7 @@ class IssueList extends Component {
 
     render_candidate_issue() {
 
-        const {candidate_issue, list_key} = this.props
+        const {list_key} = this.props
 
         return (
             <tr key={list_key + ".candidate_issue"} className="issue_list__candidate_issue">
@@ -291,13 +290,13 @@ class IssueList extends Component {
         let running_parent_issue_id = null
         issues.map(function (issue, index) {
 
-            if (is_creating_issue && index == 0 && !candidate_issue.issue_id_before) {
+            if (is_creating_issue && index === 0 && !candidate_issue.issue_id_before) {
                 issue_rows.push(that.render_candidate_issue())
             }
 
             const show_issue = !issue.parent_group_id || includes(expanded_issues, issue.parent_group_id)
 
-            if ( issue.parent_group_id && issue.parent_group_id != running_parent_issue_id ) {
+            if ( issue.parent_group_id && issue.parent_group_id !== running_parent_issue_id ) {
                 // this happens if the issue is separated from its group parent by another issue,
                 // so insert a 'fake' feature issue
                 issue_rows.push(
@@ -335,7 +334,7 @@ class IssueList extends Component {
                 )
             }
                 
-            if (is_creating_issue && candidate_issue.issue_id_before == issue.id) {
+            if (is_creating_issue && candidate_issue.issue_id_before === issue.id) {
                 issue_rows.push(that.render_candidate_issue())
             }
 
@@ -437,7 +436,7 @@ class IssueList extends Component {
 
     render() {
 
-        const {is_visible, is_loading, is_collapsed, is_expanded} = this.props
+        const {is_visible, is_collapsed, is_expanded} = this.props
 
         if (!is_visible) {
             return (<div></div>)
@@ -493,8 +492,8 @@ function mapStateToProps(state, props) {
         loading_item_ids: l.loading_item_ids || [],
         has_items: items && items.length > 0,
         is_loading: l.is_loading,
-        is_collapsed: l.display_mode == "collapsed",
-        is_expanded: l.display_mode == "expanded" || !l.display_mode,
+        is_collapsed: l.display_mode === "collapsed",
+        is_expanded: l.display_mode === "expanded" || !l.display_mode,
         last_updated: l.last_updated,
         is_visible: sprint_id || false,
         candidate_issue: candidate_issue,

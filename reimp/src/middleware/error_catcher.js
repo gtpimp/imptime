@@ -1,5 +1,4 @@
 import { setErrorMessage } from '../actions/Error.js'
-import indexOf from 'lodash/indexOf'
 
 const ACTIONS_TO_IGNORE = []
 
@@ -10,7 +9,7 @@ function error_catcher_middleware(_ref) {
     return function (next) {
 	return function (action) {
 
-	    if ( action && action.type.indexOf('FAILED') !== -1 && ACTIONS_TO_IGNORE.indexOf(action.type) == -1 ) {
+	    if ( action && action.type.indexOf('FAILED') !== -1 && ACTIONS_TO_IGNORE.indexOf(action.type) === -1 ) {
 		console.log(action.error)
 		dispatch(setErrorMessage("Error: " + action.error))
             }

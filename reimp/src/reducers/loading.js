@@ -16,11 +16,11 @@ export default function loading(state = initialState, action) {
     let saving_count
     let loading_count
 
-    if ( action.type == 'CLEAR_LOADING' ) {
+    if ( action.type === CLEAR_LOADING ) {
         return Object.assign({}, state,
                              {is_loading: false,
                               loading_count: 0}) 
-    } else if ( action.type == 'CLEAR_SAVING' ) {
+    } else if ( action.type === CLEAR_SAVING ) {
         return Object.assign({}, state,
                              {is_saving: false,
                               saving_count: 0})

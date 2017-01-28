@@ -1,10 +1,3 @@
-import map from 'lodash/map'
-import assign from 'lodash/assign'
-import keys from 'lodash/keys'
-import union from 'lodash/union'
-import difference from 'lodash/difference'
-import { setErrorMessage } from '../actions/Error'
-
 import {
     RIE_RESET,
     RIE_START_EDITING,

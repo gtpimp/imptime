@@ -1,4 +1,3 @@
-import map from 'lodash/map'
 import assign from 'lodash/assign'
 import keys from 'lodash/keys'
 import difference from 'lodash/difference'

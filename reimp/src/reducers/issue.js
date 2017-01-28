@@ -1,9 +1,7 @@
-import map from 'lodash/map'
 import assign from 'lodash/assign'
 import difference from 'lodash/difference'
 import union from 'lodash/union'
 import keys from 'lodash/keys'
-import { setErrorMessage } from '../actions/Error'
 
 import {
     ANNOUNCE_ISSUES_LOAD_FAILED,

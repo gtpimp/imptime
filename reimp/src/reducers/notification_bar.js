@@ -1,15 +1,11 @@
-import map from 'lodash/map'
-import merge from 'lodash/merge'
 import slice from 'lodash/slice'
-import difference from 'lodash/difference'
 
 import {
     SET_ERROR_MESSAGE
 } from '../actions/Error.js'
 
 import {
-    ADD_ASYNC_MSG,
-    REMOVE_ASYNC_MSG
+    ADD_ASYNC_MSG
 } from '../actions/Async.js'
 
 const initialState = {

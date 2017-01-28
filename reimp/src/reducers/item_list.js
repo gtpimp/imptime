@@ -1,6 +1,4 @@
-import map from 'lodash/map'
 import difference from 'lodash/difference'
-import merge from 'lodash/merge'
 import union from 'lodash/union'
 import { setErrorMessage } from '../actions/Error'
 
@@ -114,7 +112,7 @@ export default function item_list(state = initialState, action) {
             const flag_value = action.flag_value
             
             var flag_ids = l[flag_name] || []
-            if ( flag_value == false ) {
+            if ( flag_value === false ) {
                 flag_ids = difference(flag_ids, action.selected_ids)
             } else {
                 flag_ids = union(flag_ids, action.selected_ids)
