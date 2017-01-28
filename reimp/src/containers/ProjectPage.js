@@ -29,11 +29,13 @@ class ProjectPage extends Component {
         
         return (
             <div>
-                Project {this.props.params.projectId}
+                Project {project_id}
 
-                <SprintList list_key={LIST_KEY__SPRINT_LIST}
-                            project_id={project_id}
-                />
+                <StickyContainer>
+                    <SprintList list_key={LIST_KEY__SPRINT_LIST}
+                                project_id={project_id}
+                    />
+                </StickyContainer>
                 
             </div>
         )
