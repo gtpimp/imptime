@@ -1,0 +1,92 @@
+@import 'variables.scss';
+@import 'icon.scss';
+
+.property-stack {
+  width: 312px;
+  background-color: $color-8;
+  box-shadow: inset 1px 0 0 0 $color-12;
+
+}
+
+.property-stack-component {
+  align-items: center;
+  background-color: $color-8;
+  box-shadow: inset 0 -1px 0 0 #e0e0e0;
+  display: flex;
+  justify-content: space-between;
+  padding-bottom: 15px;
+  padding-left: 16px;
+  padding-right: 16px;
+  padding-top: 20px;
+  width: 100%;
+
+  .property-stack-component__icon {
+    color: $color-6;
+  }
+
+  &:hover {
+    .property-stack-component__icon {
+      color: $color-10;
+    }
+  }
+}
+
+.property-stack-component__content {
+  cursor: pointer;
+  display: inline-block;
+  margin-right: 10px;
+  word-break: break-all;
+  overflow: hidden;
+  width: 100%;
+}
+
+.property-stack-component__icons {
+  display: inline-block;
+}
+
+.property-stack-component__icon {
+  > i.material-icons {
+    display: block;
+  }
+}
+
+.property--parent-title {
+  margin-bottom: 4px;
+}
+
+.property--title {
+
+}
+
+.property-label-1 {
+  color: $color-1;
+  font: $font-1;
+}
+
+.property-label-2 {
+  color: $color-1;
+  font: $font-7;
+}
+
+.property-text {
+  color: $color-10;
+  font: $font-1;
+  line-height: 20px;
+}
+
+.named-property {
+  display: flex;
+  justify-content: space-between;
+}
+
+.named-property__name {
+  color: $color-10;
+  display: inline-block;
+  font: $font-1;
+}
+
+.named-property__value {
+  color: $color-10;
+  display: inline-block;
+  font: $font-1;
+}

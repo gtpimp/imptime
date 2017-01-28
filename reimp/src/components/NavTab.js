@@ -34,7 +34,7 @@ class NavTab extends Component {
             return (
                 <div className={classNames('navtab', 'navtab--' + (this.props.expanded ? 'expanded' : 'collapsed'))}>
                     <div className="navtab__label-wrapper">
-                        <div className={classNames('navtab__label', 'navtab__label--inactive')}>{this.props.label}</div>
+                        <div className={classNames('navtab__label', 'navtab__label--inactive')}>{this.props.label}&nbsp;</div>
                         <div className="navtab__icon"><i className="material-icons">{this.props.expanded ? 'arrow_drop_up' : 'arrow_drop_down'}</i></div>
                     </div>
                 </div>

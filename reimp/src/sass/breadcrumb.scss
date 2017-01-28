@@ -1,0 +1,37 @@
+@import 'variables.scss';
+
+.breadcrumb {
+  display: inline-flex;
+  font: $font-4;
+  line-height: 64px;
+
+  &:last-child {
+    > a,
+    > a:active,
+    > a:focus,
+    > a:visited {
+      color: $color-1;
+      text-decoration: none;
+    }
+  }
+
+  > a,
+  > a:active,
+  > a:focus,
+  > a:visited {
+    color: $color-10;
+    cursor: pointer;
+    text-decoration: none;
+  }
+}
+
+.breadcrumb__separator {
+  align-items: center;
+  display: inline-flex;
+  padding-left: 16px;
+  padding-right: 16px;
+
+  > i.material-icons {
+    line-height: 64px;
+  }
+}

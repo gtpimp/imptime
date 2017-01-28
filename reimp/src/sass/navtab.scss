@@ -9,6 +9,10 @@
   text-transform: uppercase;
 }
 
+.navtab--active {
+  background-color: $color-4;
+}
+
 .navtab--expanded {
   background-color: #f5f5f5;
   box-shadow: inset 1px 0 0 0 #e0e0e0;
@@ -32,13 +36,13 @@
 }
 
 .navtab__label--active {
-  color: $color-15;
+  color: $color-1;
 
   > a,
   > a:active,
   > a:focus,
   > a:visited {
-    color: $color-15;
+    color: $color-1;
     text-decoration: none;
   }
 
