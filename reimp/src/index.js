@@ -7,11 +7,11 @@ import ReactDOM from 'react-dom';
 import App from './containers/App';
 import './sass/imptime.css'
 import configureStore from './store/configureStore'
-import ProjectDashboardPage from './containers/ProjectDashboardPage'
 import ProjectsPage from './containers/ProjectsPage'
-import SprintPage from './containers/SprintPage'
-import SprintDashboardPage from './containers/SprintDashboardPage'
+import ProjectDashboardPage from './containers/ProjectDashboardPage'
 import SprintsPage from './containers/SprintsPage'
+import SprintDashboardPage from './containers/SprintDashboardPage'
+import IssuesPage from './containers/IssuesPage'
 import ClientsPage from './containers/ClientsPage'
 import TeamPage from './containers/TeamPage'
 import MainLayout from './components/MainLayout'
@@ -37,6 +37,7 @@ ReactDOM.render(
                 <Route path="projects/:projectId" component={ProjectDashboardPage}/>
                 <Route path="projects/:projectId/sprints" component={SprintsPage}/>
                 <Route path="projects/:projectId/sprints/:sprintId" component={SprintDashboardPage}/>
+                <Route path="projects/:projectId/sprints/:sprintId/issues" component={IssuesPage}/>
 
                 <Route path="clients" component={ClientsPage}/>
                 <Route path="team" component={TeamPage}/>
