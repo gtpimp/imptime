@@ -10,6 +10,7 @@ import configureStore from './store/configureStore'
 import ProjectDashboardPage from './containers/ProjectDashboardPage'
 import ProjectsPage from './containers/ProjectsPage'
 import SprintPage from './containers/SprintPage'
+import SprintDashboardPage from './containers/SprintDashboardPage'
 import SprintsPage from './containers/SprintsPage'
 import ClientsPage from './containers/ClientsPage'
 import TeamPage from './containers/TeamPage'
@@ -35,7 +36,8 @@ ReactDOM.render(
                 <Route path="projects" component={ProjectsPage}/>
                 <Route path="projects/:projectId" component={ProjectDashboardPage}/>
                 <Route path="projects/:projectId/sprints" component={SprintsPage}/>
-                <Route path="projects/:projectId/sprints/:sprintId" component={SprintPage}/>
+                <Route path="projects/:projectId/sprints/:sprintId" component={SprintDashboardPage}/>
+
                 <Route path="clients" component={ClientsPage}/>
                 <Route path="team" component={TeamPage}/>
             </Route>

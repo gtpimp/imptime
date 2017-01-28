@@ -15,7 +15,9 @@ import {
 } from '../actions/ItemListKeyRegistry'
 import {
     expand_list,
-    selectItems    
+    selectItems,
+    update_list_filter,
+    invalidateList
 } from '../actions/ItemList'
 
 class SprintsPage extends Component {
@@ -26,10 +28,23 @@ class SprintsPage extends Component {
     }
 
     componentDidMount() {
-        const {dispatch} = this.props
-        dispatch(expand_list(LIST_KEY__SPRINT_LIST))
+        const {dispatch, project_id} = this.props
+        this.refreshList(project_id)
     }
 
+    componentWillReceiveProps(new_props) {
+        this.refreshList(new_props.project_id)
+    }
+
+    refreshList(project_id) {
+        const {dispatch} = this.props
+        if ( project_id ) {
+            dispatch(update_list_filter(LIST_KEY__SPRINT_LIST, {project_id:project_id}))
+            dispatch(invalidateList(LIST_KEY__SPRINT_LIST))
+            dispatch(expand_list(LIST_KEY__SPRINT_LIST))
+        }
+    }
+    
     onSelectSprints(sprint_ids) {
         const { dispatch, project_id } = this.props
         dispatch(selectItems(LIST_KEY__SPRINT_LIST, sprint_ids))
