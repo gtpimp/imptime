@@ -3106,7 +3106,7 @@ class UserProfile(models.Model):
         return unicode(self.user.username)
 
     def save(self, *args, **kwargs):
-        if self.authenticate_token is None:
+        if not self.authenticate_token:
             self.authenticate_token = str(uuid.uuid4()).replace("-","")
         super(UserProfile, self).save(*args, **kwargs)
 

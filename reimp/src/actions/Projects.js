@@ -64,7 +64,7 @@ function fetchProjectsPromise(dispatch, state, project_ids) {
 	const params = { filter: { ids: project_ids },
 			 pagination: {'enabled': false} }
 	
-        return impfetch(API_BASE_URL+'imp/project/', {params:params})
+        return impfetch(API_BASE_URL+'imp/project/', dispatch, {params:params})
 	    .then(response => response.json())
 	    .then(json => {
                 if (json.status != 'success') {

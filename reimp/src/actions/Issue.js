@@ -110,7 +110,7 @@ export function addTag(issue_ids, tag_category_name, tag_name, on_done) {
 	let data = {issue_ids: issue_ids,
                     tag_category_name: tag_category_name,
                     tag_name: tag_name}
-	return impfetch(API_BASE_URL+"imp/issue/tag/",
+	return impfetch(API_BASE_URL+"imp/issue/tag/", dispatch,
 			{method: "POST",
 			 credentials: 'same-origin',
 			 data: data,
@@ -144,7 +144,7 @@ export function deleteTag(issue_ids, tag_category_name, tag_name) {
 	let data = {issue_ids: issue_ids,
                     tag_category_name: tag_category_name,
                     tag_name: tag_name}
-	return impfetch(API_BASE_URL+"imp/issue/tag/",
+	return impfetch(API_BASE_URL+"imp/issue/tag/", dispatch,
 			{method: "DELETE",
 			 credentials: 'same-origin',
 			 data: data,
@@ -197,7 +197,7 @@ function updateIssue(issue_ids, field_name, new_value, on_done) {
 	let data = {issue_ids: issue_ids,
                     field_name: field_name,
 		    value: new_value }
-	return impfetch(API_BASE_URL+"imp/issue/"+issue_ids[0]+"/",
+	return impfetch(API_BASE_URL+"imp/issue/"+issue_ids[0]+"/", dispatch,
 			{method: "PUT",
 			 credentials: 'same-origin',
 			 data: data,
@@ -270,7 +270,7 @@ export function saveCandidateIssue() {
 	dispatch(announceCandidateIssueSaving())
 	let data = {issue: state.issue.candidate_issue}
 	
-	return impfetch(API_BASE_URL+"imp/issue/",
+	return impfetch(API_BASE_URL+"imp/issue/", dispatch,
 			{method: "POST",
 			 credentials: 'same-origin',
 			 data: data,
@@ -300,7 +300,7 @@ export function deleteIssue(issue_id) {
         const API_BASE_URL = state.settings.configured && state.settings.API_BASE_URL
 	dispatch(announceDeletingIssue(issue_id))
 	let data = { issue_id: issue_id }
-	return impfetch( API_BASE_URL+"imp/issue/",
+	return impfetch( API_BASE_URL+"imp/issue/", dispatch,
 			{method: "DELETE",
 			 credentials: 'same-origin',
 			 data: data,
@@ -330,7 +330,7 @@ export function clock(issue_id, clock_action) {
 	dispatch(announceDeletingIssue(issue_id))
 	let data = { issue_id: issue_id,
                      clock_action: clock_action }
-	return impfetch( API_BASE_URL+"imp/issue/clock/",
+	return impfetch( API_BASE_URL+"imp/issue/clock/", dispatch,
 			 {method: "POST",
 			  credentials: 'same-origin',
 			  data: data,

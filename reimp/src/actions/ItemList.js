@@ -214,7 +214,7 @@ function tryFetchListAndItems(list_key, matching_items_key, matching_items_promi
 	const params = { filter: l.filter || {},
 			 format: {ids_only: true},
 			 pagination: l.pagination || {} }
-        return impfetch(API_BASE_URL+'imp/' + matching_items_key + "/", {params:params})
+        return impfetch(API_BASE_URL+'imp/' + matching_items_key + "/", dispatch, {params:params})
             .then(response => response.json())
             .then(json => {
 

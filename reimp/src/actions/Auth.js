@@ -1,13 +1,22 @@
 import { impfetch } from './lib.js'
 import { GLOBAL_SETTINGS } from '../settings'
 import cookie from 'react-cookie';
+
 export const SET_AUTH_TOKEN = "SET_AUTH_TOKEN"
+export const CLEAR_AUTH_TOKEN = "CLEAR_AUTH_TOKEN"
 
 function setAuthToken(username, token) {
     return {
         type: SET_AUTH_TOKEN,
         username: username,
         token: token
+    }
+}
+
+function clearAuthentication() {
+    return {
+        type: CLEAR_AUTH_TOKEN,
+        token: null
     }
 }
 
@@ -25,7 +34,7 @@ export function login(username, password) {
 	                headers: {"Content-type": "application/json; charset=UTF-8"}, 
 	                body: JSON.stringify(data)}
         
-        return impfetch(API_BASE_URL+'imp/login/', params)
+        return impfetch(API_BASE_URL+'imp/login/', dispatch, params)
             .then(response => response.json())
             .then(json => {
                 if ( json.token ) {

@@ -57,7 +57,7 @@ function fetchIssueGeneralDetails(dispatch, issue_ids) {
 			 format: { detail_level: 'general' },
 			 pagination: {'enabled': false} }
 	
-        return impfetch(API_BASE_URL+'imp/issue/', {params:params})
+        return impfetch(API_BASE_URL+'imp/issue/', dispatch, {params:params})
 	    .then(response => response.json())
 	    .then(json => {
                 if (json.status != 'success') {

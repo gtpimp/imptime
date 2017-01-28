@@ -56,7 +56,7 @@ function fetchUsers(dispatch, user_ids) {
 			 format: { detail_level: 'general' },
 			 pagination: {'enabled': false} }
 	
-        return impfetch(API_BASE_URL+'imp/user/', {params:params})
+        return impfetch(API_BASE_URL+'imp/user/', dispatch, {params:params})
 	    .then(response => response.json())
 	    .then(json => {
                 if (json.status != 'success') {

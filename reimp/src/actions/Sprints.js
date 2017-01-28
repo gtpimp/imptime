@@ -130,11 +130,12 @@ export function reorderSprints(sprint_id_before, sprint_id_after, on_done) {
 	const data = { sprint_id_before: sprint_id_before,
 		       sprint_id_after: sprint_id_after }
 	
-        return impfetch(API_BASE_URL+'imp/sprint/'+sprint_id_before+'/', {method: "PUT",
-					 credentials: 'same-origin',
-					 data: data,
-					 headers: {"Content-type": "application/json; charset=UTF-8"}, 
-					 body: JSON.stringify(data)}
+        return impfetch(API_BASE_URL+'imp/sprint/'+sprint_id_before+'/', dispatch,
+                        {method: "PUT",
+			 credentials: 'same-origin',
+			 data: data,
+			 headers: {"Content-type": "application/json; charset=UTF-8"}, 
+			 body: JSON.stringify(data)}
 	).then(response => response.json())
 	 .then(json => {
              if (json.status != 'success') {
@@ -159,7 +160,7 @@ function fetchSprintsPromise(dispatch, state, sprint_ids) {
 	const params = { filter: { ids: sprint_ids },
 			 pagination: {'enabled': false} }
 	
-        return impfetch(API_BASE_URL+'imp/sprint/', {params:params})
+        return impfetch(API_BASE_URL+'imp/sprint/', dispatch, {params:params})
 	    .then(response => response.json())
 	    .then(json => {
                 if (json.status != 'success') {
@@ -225,7 +226,7 @@ export function saveCandidateSprint() {
 	dispatch(announceCandidateSprintSaving())
 	let data = {sprint: state.sprint.candidate_sprint}
 	
-	return impfetch(API_BASE_URL+"imp/sprint/",
+	return impfetch(API_BASE_URL+"imp/sprint/", dispatch,
 			{method: "POST",
 			 credentials: 'same-origin',
 			 data: data,

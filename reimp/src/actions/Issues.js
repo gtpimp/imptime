@@ -62,7 +62,7 @@ function fetchIssuesPromise(dispatch, state, issue_ids) {
 	const params = { filter: { ids: issue_ids },
 			 pagination: {'enabled': false} }
 	
-        return impfetch(API_BASE_URL+'imp/issue/', {params:params})
+        return impfetch(API_BASE_URL+'imp/issue/', dispatch, {params:params})
 	    .then(response => response.json())
 	    .then(json => {
                 if (json.status != 'success') {

@@ -2,11 +2,11 @@ import fetch from 'isomorphic-fetch'
 import cookie from 'react-cookie'
 import isArray from 'lodash/isArray'
 import moment from 'moment'
-import { logged_in_user } from '../actions/Auth'
+import { logged_in_user, clearAuthentication } from '../actions/Auth'
 
 const throttles = throttles || {}
 
-export function impfetch(url, args) {
+export function impfetch(url, dispatch, args) {
 
     url = "" + url
     args = args || {}
@@ -59,10 +59,12 @@ export function impfetch(url, args) {
 
         if ( ( (""+response.status)[0] == "4" ) || ( (""+response.status)[0] == "5" ) ) {
             throttles[url].last_failure_at = moment()
+            if ( response.status == 301 ) {
+                dispatch(clearAuthentication())
+            }
         } else {
             throttles[url].last_failure_at = null
         }
-        
         throttles[url].running = false
     })    
     return res
