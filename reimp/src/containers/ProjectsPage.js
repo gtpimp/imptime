@@ -7,6 +7,7 @@ import IssueList from '../components/IssueList'
 import IssueDetails from '../components/IssueDetails'
 import IssueDeveloperDetails from '../components/IssueDeveloperDetails'
 import {StickyContainer} from 'react-sticky';
+import { setBreadcrumbs } from '../actions/Breadcrumbs'
 import {
     LIST_KEY__PROJECT_LIST,
     LIST_KEY__SPRINT_LIST,
@@ -31,6 +32,7 @@ class ProjectsPage extends Component {
     componentDidMount() {
         const {dispatch} = this.props
         dispatch(expand_list(LIST_KEY__PROJECT_LIST))
+        dispatch(setBreadcrumbs([ {to: '/projects', label: 'All Projects'} ]))
     }
 
     onSelectProjects(project_ids) {

@@ -2,6 +2,7 @@ import React, {Component, PropTypes} from 'react'
 import {connect} from 'react-redux'
 import {browserHistory} from 'react-router'
 import {StickyContainer} from 'react-sticky';
+import { setBreadcrumbs } from '../actions/Breadcrumbs'
 import {
     LIST_KEY__PROJECT_LIST,
     LIST_KEY__SPRINT_LIST,
@@ -21,7 +22,21 @@ class ProjectDashboardPage extends Component {
     }
 
     componentDidMount() {
-        const {dispatch} = this.props
+        const {dispatch, project_id} = this.props
+        this.refresh(project_id)
+    }
+
+    componentWillReceiveProps(new_props) {
+        const { project_id } = this.props
+        if ( new_props.project_id != project_id ) {
+            this.refreshList(new_props.project_id)
+        }
+    }
+    
+    refresh(project_id) {
+        const { dispatch } = this.props
+        dispatch(setBreadcrumbs([ {to: '/projects', label: 'All Projects'},
+                                  {to: '/projects/'+project_id, label: project_id} ]))
     }
 
     navigateToSprintsPage() {

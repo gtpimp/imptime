@@ -2,6 +2,7 @@ import React, {Component, PropTypes} from 'react'
 import {connect} from 'react-redux'
 import {browserHistory} from 'react-router'
 import {StickyContainer} from 'react-sticky';
+import { setBreadcrumbs } from '../actions/Breadcrumbs'
 import {
     LIST_KEY__PROJECT_LIST,
     LIST_KEY__SPRINT_LIST,
@@ -21,14 +22,30 @@ class ProjectDashboardPage extends Component {
     }
 
     componentDidMount() {
-        const {dispatch} = this.props
+        const {dispatch, sprint_id, project_id} = this.props
+        this.refresh(sprint_id, project_id)
+    }
+
+    componentWillReceiveProps(new_props) {
+        const { sprint_id } = this.props
+        if ( new_props.sprint_id != sprint_id ) {
+            this.refreshList(new_props.sprint_id, new_props.project_id)
+        }
+    }
+
+    refresh(sprint_id, project_id) {
+        const { dispatch } = this.props
+        dispatch(setBreadcrumbs([ {to: '/projects', label: 'All Projects'},
+                                  {to: '/projects/'+project_id, label: project_id},
+                                  {to: '/projects/'+project_id+'/sprints', label: 'All Sprints'},
+                                  {to: '/projects/'+project_id+'/sprints/'+sprint_id, label: sprint_id} ]))        
     }
 
     navigateToIssuesPage() {
         const { project_id, sprint_id } = this.props
         browserHistory.push('/projects/'+project_id+'/sprints/'+sprint_id+'/issues');
     }
-
+    
     render() {
 
         const { project_id, sprint_id } = this.props

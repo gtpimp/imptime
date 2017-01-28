@@ -5,7 +5,8 @@ import SprintList from '../components/SprintList'
 import IssueList from '../components/IssueList'
 import IssueDetails from '../components/IssueDetails'
 import IssueDeveloperDetails from '../components/IssueDeveloperDetails'
-import {StickyContainer} from 'react-sticky';
+import {StickyContainer} from 'react-sticky'
+import { setBreadcrumbs } from '../actions/Breadcrumbs'
 import {
     LIST_KEY__PROJECT_LIST,
     LIST_KEY__SPRINT_LIST,
@@ -26,20 +27,28 @@ class IssuesPage extends Component {
     }
 
     componentDidMount() {
-        const {dispatch, sprint_id} = this.props
-        this.refreshList(sprint_id)
+        const {dispatch, sprint_id, project_id} = this.props
+        this.refreshList(sprint_id, project_id)
     }
 
     componentWillReceiveProps(new_props) {
-        this.refreshList(new_props.sprint_id)
+        const { sprint_id } = this.props
+        if ( new_props.sprint_id != sprint_id ) {
+            this.refreshList(new_props.sprint_id, new_props.project_id)
+        }
     }
 
-    refreshList(sprint_id) {
+    refreshList(sprint_id, project_id) {
         const {dispatch} = this.props
         if ( sprint_id ) {
             dispatch(update_list_filter(LIST_KEY__ISSUE_LIST, {sprint_id:sprint_id}))
             dispatch(invalidateList(LIST_KEY__ISSUE_LIST))
             dispatch(expand_list(LIST_KEY__ISSUE_LIST))
+            dispatch(setBreadcrumbs([ {to: '/projects', label: 'All Projects'},
+                                      {to: '/projects/'+project_id, label: project_id},
+                                      {to: '/projects/'+project_id+'/sprints', label: 'All Sprints'},
+                                      {to: '/projects/'+project_id+'/sprints/'+sprint_id, label: sprint_id},
+                                      {to: '/projects/'+project_id+'/sprints/'+sprint_id+'/issues', label: 'All Issues'}]))
         }
     }
 
@@ -65,9 +74,11 @@ function mapStateToProps(state, props) {
     const {} = state
 
     const sprint_id = props.params.sprintId
+    const project_id = props.params.projectId
     
     return {
-        sprint_id: sprint_id
+        sprint_id: sprint_id,
+        project_id: project_id
     }
 }
 

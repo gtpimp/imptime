@@ -7,6 +7,7 @@ import IssueList from '../components/IssueList'
 import IssueDetails from '../components/IssueDetails'
 import IssueDeveloperDetails from '../components/IssueDeveloperDetails'
 import {StickyContainer} from 'react-sticky';
+import { setBreadcrumbs } from '../actions/Breadcrumbs'
 import {
     LIST_KEY__PROJECT_LIST,
     LIST_KEY__SPRINT_LIST,
@@ -33,7 +34,10 @@ class SprintsPage extends Component {
     }
 
     componentWillReceiveProps(new_props) {
-        this.refreshList(new_props.project_id)
+        const { project_id } = this.props
+        if ( new_props.project_id != project_id ) {
+            this.refreshList(new_props.project_id)
+        }
     }
 
     refreshList(project_id) {
@@ -42,6 +46,9 @@ class SprintsPage extends Component {
             dispatch(update_list_filter(LIST_KEY__SPRINT_LIST, {project_id:project_id}))
             dispatch(invalidateList(LIST_KEY__SPRINT_LIST))
             dispatch(expand_list(LIST_KEY__SPRINT_LIST))
+            dispatch(setBreadcrumbs([ {to: '/projects', label: 'All Projects'},
+                                      {to: '/projects/'+project_id, label: project_id},
+                                      {to: '/projects/'+project_id+'/sprints', label: 'All Sprints'} ]) )
         }
     }
     
