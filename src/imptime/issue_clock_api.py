@@ -26,10 +26,11 @@ class IssueClockViewSet(BaseViewSet):
             issue = self.allowed_issue(issue_pk)
 
             if action == 'clock_out' or action == 'clock_in':
-                open_entries = issue.entries.all().filter(user=request.user, end_time__isnull=True)
+                open_entries = Entry.objects.all().filter(user=request.user, end_time__isnull=True) 
                 for entry in open_entries:
                     entry.end_time = timezone.now()
                     entry.save()
+                    entry.issue.save()
             
             if action == 'clock_in':
                 Entry.objects.create(user=request.user,

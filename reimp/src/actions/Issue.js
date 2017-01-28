@@ -124,8 +124,6 @@ export function addTag(issue_ids, tag_category_name, tag_name, on_done) {
              } else {
 		 console.log('Request succeeded with JSON response', json);
                  dispatch(announceIssuesSaved(issue_ids))
-		 dispatch(invalidateIssues(issue_ids))
-		 dispatch(fetchIssuesIfNeeded())
              }
 	     if ( on_done ) {
 		 on_done()
@@ -160,8 +158,6 @@ export function deleteTag(issue_ids, tag_category_name, tag_name) {
              } else {
 		 console.log('Request succeeded with JSON response', json);
                  dispatch(announceIssuesSaved(issue_ids))
-		 dispatch(invalidateIssues(issue_ids))
-		 dispatch(fetchIssuesIfNeeded())
              }
 	 })
 	 .catch(function (error) {
@@ -215,8 +211,6 @@ function updateIssue(issue_ids, field_name, new_value, on_done) {
              } else {
 		 console.log('Request succeeded with JSON response', json);
                  dispatch(announceIssuesSaved(issue_ids))
-		 dispatch(invalidateIssues(issue_ids))
-		 dispatch(fetchIssuesIfNeeded())
              }
 	     if ( on_done ) {
 		 on_done()
