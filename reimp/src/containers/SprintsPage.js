@@ -3,9 +3,7 @@ import {connect} from 'react-redux'
 import {browserHistory} from 'react-router'
 import ProjectList from '../components/ProjectList'
 import SprintList from '../components/SprintList'
-import IssueList from '../components/IssueList'
-import IssueDetails from '../components/IssueDetails'
-import IssueDeveloperDetails from '../components/IssueDeveloperDetails'
+import SprintSidebar from '../components/SprintSidebar'
 import {StickyContainer} from 'react-sticky';
 import { setBreadcrumbs } from '../actions/Breadcrumbs'
 import {
@@ -30,17 +28,17 @@ class SprintsPage extends Component {
 
     componentDidMount() {
         const {dispatch, project_id} = this.props
-        this.refreshList(project_id)
+        this.refresh(project_id)
     }
 
     componentWillReceiveProps(new_props) {
         const { project_id } = this.props
         if ( new_props.project_id != project_id ) {
-            this.refreshList(new_props.project_id)
+            this.refresh(new_props.project_id)
         }
     }
 
-    refreshList(project_id) {
+    refresh(project_id) {
         const {dispatch} = this.props
         if ( project_id ) {
             dispatch(update_list_filter(LIST_KEY__SPRINT_LIST, {project_id:project_id}))
@@ -56,18 +54,22 @@ class SprintsPage extends Component {
         const { dispatch, project_id } = this.props
         dispatch(selectItems(LIST_KEY__SPRINT_LIST, sprint_ids))
 
-        if ( sprint_ids.length == 1 ) {
-            browserHistory.push('/projects/'+project_id+'/sprints/'+sprint_ids[0]);
-        }
+        /* if ( sprint_ids.length == 1 ) {
+         *     browserHistory.push('/projects/'+project_id+'/sprints/'+sprint_ids[0]);
+         * }*/
     }
     
     render() {
 
-        const { project_id } = this.props
+        const { project_id, selected_sprints } = this.props
+        const selected_sprint = ( selected_sprints && selected_sprints.length > 0 && selected_sprints[0] ) || null
         
         return (
             <div>
                 <StickyContainer>
+                    { selected_sprint && 
+                      <SprintSidebar sprint_id={selected_sprint.id} project_id={project_id}/>
+                    }
                     <SprintList list_key={LIST_KEY__SPRINT_LIST}
                                 project_id={project_id}
                                 onSelectSprints={this.onSelectSprints}
@@ -80,12 +82,19 @@ class SprintsPage extends Component {
 }
 
 function mapStateToProps(state, props) {
-    const {} = state
+    const {sprint, item_list} = state
+    const items_by_id = sprint && sprint.items_by_id || {}
+    const l = (item_list && item_list[LIST_KEY__SPRINT_LIST]) || {}
+    const selected_items = items_by_id && l.selected_ids && l.selected_ids.map( function(selected_id, index) {
+	return items_by_id[selected_id] || { 'id': selected_id,
+					     'loaded': false }
+    })
 
     const project_id = props.params.projectId
 
     return {
-        project_id: project_id
+        project_id: project_id,
+        selected_sprints: selected_items
     }
 }
 

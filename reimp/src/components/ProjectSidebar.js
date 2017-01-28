@@ -14,29 +14,11 @@ import {
     selectItems
 } from '../actions/ItemList'
 
-class ProjectDashboardPage extends Component {
+class ProjectSidebar extends Component {
 
     constructor(props) {
         super(props)
         this.navigateToSprintsPage = this.navigateToSprintsPage.bind(this)
-    }
-
-    componentDidMount() {
-        const {dispatch, project_id} = this.props
-        this.refresh(project_id)
-    }
-
-    componentWillReceiveProps(new_props) {
-        const { project_id } = this.props
-        if ( new_props.project_id != project_id ) {
-            this.refresh(new_props.project_id)
-        }
-    }
-    
-    refresh(project_id) {
-        const { dispatch } = this.props
-        dispatch(setBreadcrumbs([ {to: '/projects', label: 'All Projects'},
-                                  {to: '/projects/'+project_id, label: project_id} ]))
     }
 
     navigateToSprintsPage() {
@@ -49,11 +31,11 @@ class ProjectDashboardPage extends Component {
         const { project_id } = this.props
         
         return (
-            <div>
+            <div class="project_sidebar">
                 Project {project_id}
 
                 <pre>
-                    I am your project page
+                    I am your project sidebar
                 </pre>
                 
                 <button onClick={this.navigateToSprintsPage}>Take me to your sprints</button>
@@ -65,11 +47,11 @@ class ProjectDashboardPage extends Component {
 function mapStateToProps(state, props) {
     const {} = state
 
-    const project_id = props.params.projectId
+    const { project_id } = props
     return {
         project_id: project_id
     }
 }
 
-export default connect(mapStateToProps)(ProjectDashboardPage)
+export default connect(mapStateToProps)(ProjectSidebar)
 

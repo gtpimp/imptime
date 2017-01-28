@@ -29,7 +29,7 @@ class ProjectDashboardPage extends Component {
     componentWillReceiveProps(new_props) {
         const { sprint_id } = this.props
         if ( new_props.sprint_id != sprint_id ) {
-            this.refreshList(new_props.sprint_id, new_props.project_id)
+            this.refresh(new_props.sprint_id, new_props.project_id)
         }
     }
 

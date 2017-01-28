@@ -2,6 +2,7 @@ import React, {Component, PropTypes} from 'react'
 import {connect} from 'react-redux'
 import ProjectList from '../components/ProjectList'
 import SprintList from '../components/SprintList'
+import IssueSidebar from '../components/IssueSidebar'
 import IssueList from '../components/IssueList'
 import IssueDetails from '../components/IssueDetails'
 import IssueDeveloperDetails from '../components/IssueDeveloperDetails'
@@ -28,17 +29,17 @@ class IssuesPage extends Component {
 
     componentDidMount() {
         const {dispatch, sprint_id, project_id} = this.props
-        this.refreshList(sprint_id, project_id)
+        this.refresh(sprint_id, project_id)
     }
 
     componentWillReceiveProps(new_props) {
         const { sprint_id } = this.props
         if ( new_props.sprint_id != sprint_id ) {
-            this.refreshList(new_props.sprint_id, new_props.project_id)
+            this.refresh(new_props.sprint_id, new_props.project_id)
         }
     }
 
-    refreshList(sprint_id, project_id) {
+    refresh(sprint_id, project_id) {
         const {dispatch} = this.props
         if ( sprint_id ) {
             dispatch(update_list_filter(LIST_KEY__ISSUE_LIST, {sprint_id:sprint_id}))
@@ -54,12 +55,16 @@ class IssuesPage extends Component {
 
     render() {
 
-        const { sprint_id } = this.props
+        const { sprint_id, project_id, selected_issues } = this.props
 
+        const selected_issue = ( selected_issues && selected_issues.length > 0 && selected_issues[0] ) || null
+        
         return (
             <div>
-                Sprint {sprint_id}
                 <StickyContainer>
+                    { selected_issue && 
+                      <IssueSidebar issue_id={selected_issue.id} sprint_id={sprint_id} project_id={project_id}/>
+                    }
                     { sprint_id &&
                       <IssueList list_key={LIST_KEY__ISSUE_LIST} />
                     }
@@ -71,14 +76,21 @@ class IssuesPage extends Component {
 }
 
 function mapStateToProps(state, props) {
-    const {} = state
+    const {issue, item_list} = state
+    const items_by_id = issue && issue.items_by_id || {}
+    const l = (item_list && item_list[LIST_KEY__ISSUE_LIST]) || {}
+    const selected_items = items_by_id && l.selected_ids && l.selected_ids.map( function(selected_id, index) {
+	return items_by_id[selected_id] || { 'id': selected_id,
+					     'loaded': false }
+    })
 
     const sprint_id = props.params.sprintId
     const project_id = props.params.projectId
     
     return {
         sprint_id: sprint_id,
-        project_id: project_id
+        project_id: project_id,
+        selected_issues: selected_items
     }
 }
 

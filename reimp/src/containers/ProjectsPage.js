@@ -1,11 +1,8 @@
 import React, {Component, PropTypes} from 'react'
 import {connect} from 'react-redux'
 import ProjectList from '../components/ProjectList'
+import ProjectSidebar from '../components/ProjectSidebar'
 import {browserHistory} from 'react-router'
-import SprintList from '../components/SprintList'
-import IssueList from '../components/IssueList'
-import IssueDetails from '../components/IssueDetails'
-import IssueDeveloperDetails from '../components/IssueDeveloperDetails'
 import {StickyContainer} from 'react-sticky';
 import { setBreadcrumbs } from '../actions/Breadcrumbs'
 import {
@@ -39,16 +36,22 @@ class ProjectsPage extends Component {
         const { dispatch } = this.props
         dispatch(selectItems(LIST_KEY__PROJECT_LIST, project_ids))
 
-        if ( project_ids.length == 1 ) {
-            browserHistory.push('/projects/'+project_ids[0]);
-        }
+        /* if ( project_ids.length == 1 ) {
+         *     browserHistory.push('/projects/'+project_ids[0]);
+         * }*/
     }
 
     render() {
-
+ 
+        const { selected_projects } = this.props
+        const selected_project = ( selected_projects && selected_projects.length > 0 && selected_projects[0] ) || null
+        
         return (
             <div>
                 <StickyContainer>
+                    { selected_project && 
+                      <ProjectSidebar project_id={selected_project.id}/>
+                    }
                     <ProjectList key="projects"
                                  list_key={LIST_KEY__PROJECT_LIST}
                                  onSelectProjects={this.onSelectProjects}
@@ -60,9 +63,18 @@ class ProjectsPage extends Component {
 }
 
 function mapStateToProps(state) {
-    const {} = state
+    const {project, item_list} = state
+    const items_by_id = project && project.items_by_id || {}
+    const l = (item_list && item_list[LIST_KEY__PROJECT_LIST]) || {}
 
-    return {}
+    const selected_items = items_by_id && l.selected_ids && l.selected_ids.map( function(selected_id, index) {
+	return items_by_id[selected_id] || { 'id': selected_id,
+					     'loaded': false }
+    })
+
+    return {
+        selected_projects: selected_items
+    }
 }
 
 export default connect(mapStateToProps)(ProjectsPage)
