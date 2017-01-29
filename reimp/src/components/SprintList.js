@@ -18,7 +18,6 @@ import {
     cancelCandidateSprint,
     saveCandidateSprint
 } from '../actions/Sprints'
-import Pagination from '../components/Pagination'
 import Sprint from './Sprint'
 
 class SprintList extends Component {
@@ -62,7 +61,7 @@ class SprintList extends Component {
     }
 
     onClickedSprint(sprint_id) {
-        const { onSelectSprints } = this.props
+        const {onSelectSprints} = this.props
         onSelectSprints([sprint_id])
     }
 
@@ -195,39 +194,17 @@ class SprintList extends Component {
         })
 
         return (
-            <div style={{opacity: is_loading ? 0.5 : 1}}>
-                <div className="panel panel--full">
-                        <div className="panel-heading" onClick={this.onCollapse}>
-                            <div className="panel__title">Sprints</div>
-                            <div className="panel__buttons">
-                                <div className="panel__button panel__button--refresh"
-                                     onClick={this.onRefresh}>
-                                </div>
-                                <div className="panel__button panel__button--add"
-                                     onClick={this.onStartCandidateSprint}>
-                                </div>
-                            </div>
-                        </div>
-                        <Pagination list_key={list_key} on_changed={this.onChangePage}/>
-                    <div className="panel-body">
-                        <div className="sprint-list">
-                            <div className="sprint-list__inner">
-                                <div className="sprint-list__section">
-                                    <div className="sprint-list__section-title">Completed</div>
-                                </div>
-                                <table className="table table--sprint-list xtable--default">
-                                    <tbody>
-                                    {sprint_rows}
-                                    </tbody>
-                                </table>
-                                { !is_loading && !has_items &&
-                                <div className="table__no-rows">no sprints</div>
-                                }
-                            </div>
-                        </div>
-                    </div>
+            <div className="sprint-list">
+                <div className="sprint-list__inner">
+                    <table className="table table--sprint-list">
+                        <tbody>
+                        {sprint_rows}
+                        </tbody>
+                    </table>
+                    { !is_loading && !has_items &&
+                    <div className="table__no-rows">no sprints</div>
+                    }
                 </div>
-
             </div>
         )
     }

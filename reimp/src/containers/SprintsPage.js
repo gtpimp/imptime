@@ -3,6 +3,7 @@ import {connect} from 'react-redux'
 import SprintList from '../components/SprintList'
 import SprintSidebar from '../components/SprintSidebar'
 import {setBreadcrumbs} from '../actions/Breadcrumbs'
+import {setActions} from '../actions/Toolbar'
 import {
     LIST_KEY__SPRINT_LIST,
 } from '../actions/ItemListKeyRegistry'
@@ -12,6 +13,9 @@ import {
     update_list_filter,
     invalidateList
 } from '../actions/ItemList'
+import {
+    startCandidateSprint,
+} from '../actions/Sprints'
 
 class SprintsPage extends Component {
 
@@ -32,6 +36,13 @@ class SprintsPage extends Component {
         }
     }
 
+    onStartCandidateSprint(event) {
+        const {dispatch, list_key} = this.props
+        event.stopPropagation()
+        dispatch(startCandidateSprint(list_key))
+        alert('@Gareth')
+    }
+
     refresh(project_id) {
         const {dispatch} = this.props
         if (project_id) {
@@ -41,6 +52,12 @@ class SprintsPage extends Component {
             dispatch(setBreadcrumbs([{to: '/projects', label: 'All Projects'},
                 {to: '/projects/' + project_id, label: project_id},
                 {to: '/projects/' + project_id + '/sprints', label: 'All Sprints'}]))
+            dispatch(setActions([
+                {
+                    icon: 'add',
+                    onClick: this.onStartCandidateSprint
+                }
+            ]))
         }
     }
 

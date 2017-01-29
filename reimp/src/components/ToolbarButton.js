@@ -11,7 +11,12 @@ class ToolbarButton extends Component {
     }
 
     onClick() {
-        console.log('click')
+        const {onClick} = this.props
+        if (onClick) {
+            onClick()
+        } else {
+            console.log('click (no delegate)')
+        }
     }
 
     render() {

@@ -4,6 +4,7 @@ import { connect } from 'react-redux'
 import classNames from 'classnames'
 import { DndTypes } from '../actions/Dnd'
 import Progress from '../components/Progress'
+import '../sass/sprint.css'
 
 class Sprint extends Component {
 

@@ -3,18 +3,16 @@
 
 .list-layout {
     align-items: flex-start;
-    border: 3px solid springgreen;
     display: flex;
 }
 
 .list-layout__list {
-    border: 3px solid orange;
-    width: 100%;
+    flex-grow: 1;
 }
 
 .list-layout__sidebar {
-    border: 3px solid skyblue;
     box-shadow: inset 1px 0 0 0 #E0E0E0;
+    flex-basis: 312px;
+    flex-grow: 0;
     margin-left: 1px;
-    width: 120px;
 }

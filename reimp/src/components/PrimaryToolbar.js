@@ -3,6 +3,7 @@ import {connect} from 'react-redux'
 import '../sass/primary-toolbar.css'
 import Breadcrumbs from './Breadcrumbs'
 import ToolbarButton from './ToolbarButton'
+import map from 'lodash/map'
 
 class PrimaryToolBar extends Component {
 
@@ -26,16 +27,20 @@ class PrimaryToolBar extends Component {
     }
 
     render() {
-        const { breadcrumbs} = this.props
+        const {actions, breadcrumbs} = this.props
         return (
             <div className="primary-toolbar">
                 <div className="primary-toolbar__container primary-toolbar__container--left">
                     <Breadcrumbs breadcrumbs={breadcrumbs}/>
-                    {/*<Breadcrumbs breadcrumbs={[{to: '/projects', label: 'Projects'},{to: '/projects/katalyst', label: 'Katalyst'},{to: '/projects/katalyst/sprints/3', label: 'Sprint 3'}]}/>*/}
                 </div>
                 <div className="primary-toolbar__container primary-toolbar__container--right">
-                    <ToolbarButton style="toggle" isEnabled={true} onEnable={this.onEnableInfo} onDisable={this.onDisableInfo} icon="info" />
+                    <ToolbarButton style="toggle" isEnabled={true} onEnable={this.onEnableInfo} onDisable={this.onDisableInfo} icon="info"/>
                     <ToolbarButton onClick={this.onShowSettings} icon="settings"/>
+                    {actions.map((action, index) => {
+                        return (
+                            <ToolbarButton key={'toolbar_action_' + index} onClick={action.onClick} icon={action.icon}/>
+                        )
+                    })}
                 </div>
             </div>
         )
@@ -43,8 +48,10 @@ class PrimaryToolBar extends Component {
 }
 
 function mapStateToProps(state, props) {
-    const { breadcrumbs } = state
+    const {breadcrumbs, toolbar} = state
+
     return {
+        actions: toolbar.actions,
         breadcrumbs: breadcrumbs
     }
 }

@@ -12,6 +12,7 @@ import notification_bar from './notification_bar.js'
 import project from './project'
 import rie from './rie'
 import sprint from './sprint'
+import toolbar from './toolbar'
 import user from './user'
 import websockets from './websockets'
 import settings from './settings'
@@ -30,6 +31,7 @@ const rootReducer = combineReducers({
     rie,
     routing,
     sprint,
+    toolbar,
     user,
     websockets,
     settings
