@@ -1,4 +1,4 @@
-import React, {Component, PropTypes} from 'react'
+import React, {Component} from 'react'
 import {connect} from 'react-redux'
 import PropertyStack from '../components/PropertyStack'
 import PropertyStackComponent from '../components/PropertyStackComponent'
@@ -6,11 +6,6 @@ import Timestamp from '../components/Timestamp'
 import moment from 'moment'
 
 class TeamPage extends Component {
-
-    componentDidMount() {
-        const {dispatch} = this.props
-        // dispatch(expand_list(LIST_KEY__SPRINT_LIST))
-    }
 
     render() {
 

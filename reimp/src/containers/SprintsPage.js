@@ -1,16 +1,11 @@
 import React, {Component} from 'react'
 import {connect} from 'react-redux'
-import {browserHistory} from 'react-router'
-import ProjectList from '../components/ProjectList'
 import SprintList from '../components/SprintList'
 import SprintSidebar from '../components/SprintSidebar'
 import {StickyContainer} from 'react-sticky';
 import { setBreadcrumbs } from '../actions/Breadcrumbs'
 import {
-    LIST_KEY__PROJECT_LIST,
     LIST_KEY__SPRINT_LIST,
-    LIST_KEY__ISSUE_LIST,
-    LIST_KEY__ISSUE_DEVELOPER_DETAILS
 } from '../actions/ItemListKeyRegistry'
 import {
     expand_list,

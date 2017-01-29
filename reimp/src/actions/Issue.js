@@ -227,7 +227,6 @@ export function startCandidateIssue(list_key) {
 	let issue_id_before = null
 	if ( selected_ids.length > 0 ) {
 	    issue_id_before = selected_ids[0]
-	    const issue_before = issues_by_id[issue_id_before] 
 	}
 	
 	dispatch({
@@ -297,7 +296,7 @@ export function deleteIssue(issue_id) {
 			 body: JSON.stringify(data)}
 	).then(response => response.json())
 	 .then(json => {
-             if ( json.status != 'success' ) {
+             if ( json.status !== 'success' ) {
 		 console.log('Request failed with JSON response', json);
 		 dispatch(announceIssueDeleteFailed(issue_id, json.error))
              } else {
@@ -327,7 +326,7 @@ export function clock(issue_id, clock_action) {
 			  body: JSON.stringify(data)}
 	).then(response => response.json())
 	 .then(json => {
-             if ( json.status != 'success' ) {
+             if ( json.status !== 'success' ) {
 		 console.log('Request failed with JSON response', json);
 		 dispatch(announceIssueDeleteFailed(issue_id, json.error))
              } else {

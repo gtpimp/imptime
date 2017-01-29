@@ -1,4 +1,4 @@
-import React, { Component, PropTypes } from 'react'
+import React, { Component } from 'react'
 import { connect } from 'react-redux'
 import { DragDropContext } from 'react-dnd';
 var HTML5Backend = require('react-dnd-html5-backend');
@@ -11,10 +11,6 @@ import { updateSettings } from '../actions/Settings'
 
 class App extends Component {
 
-    constructor(props) {
-        super(props)
-    }
-    
     componentDidMount() {
         const { dispatch } = this.props
 

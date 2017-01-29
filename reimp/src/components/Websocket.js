@@ -1,5 +1,4 @@
-import React, { Component, PropTypes } from 'react'
-import ReactDOM from 'react-dom';
+import React, { Component } from 'react'
 import { connect } from 'react-redux'
 import { asyncRefreshNotification, websocketDisconnected, websocketConnected } from '../actions/Async'
 
@@ -21,7 +20,7 @@ class Websocket extends Component {
     }
 
     componentWillReceiveProps(new_props) {
-        if ( new_props.url != this.props.url ) {
+        if ( new_props.url !== this.props.url ) {
             this.state.ws.close()
             this.state.ws = new WebSocket(new_props.url);
         }

@@ -1,5 +1,4 @@
-import React, { Component, PropTypes } from 'react'
-import { Link } from 'react-router'
+import React, { Component } from 'react'
 import map from 'lodash/map'
 import { connect } from 'react-redux'
 import {
@@ -27,7 +26,7 @@ class ProjectList extends Component {
     }
 
     switchToSampleContext() {
-        const { dispatch, list_key } = this.props
+        const { dispatch } = this.props
         var project_id = 167
         var sprint_id = 2373
 
@@ -72,7 +71,7 @@ class ProjectList extends Component {
     }
     
     onRefresh(event) {
-        const { dispatch, project_ids, list_key } = this.props
+        const { dispatch, list_key } = this.props
 	dispatch(invalidateList(list_key))
 	dispatch(invalidateAllProjects())
 	dispatch(fetchProjectsIfNeeded(list_key))
@@ -91,7 +90,7 @@ class ProjectList extends Component {
     }
     
     render_collapsed() {
-	const { projects, selected_items } = this.props
+	const { selected_items } = this.props
 
 	return (
 	    <div className="panel panel--collapsed">
@@ -172,7 +171,7 @@ class ProjectList extends Component {
 
 function mapStateToProps(state, props) {
     const { project, item_list } = state
-    const { list_key, only_display_mode } = props
+    const { list_key } = props
     const items_by_id = project && project.items_by_id || {}
     const l = (item_list && item_list[list_key]) || {}
     const visible_item_ids = l.visible_item_ids || []
@@ -199,8 +198,8 @@ function mapStateToProps(state, props) {
 	selected_items: selected_items || [],
         has_items: items && items.length > 0,
         is_loading: l.is_loading,
-	is_collapsed: l.display_mode == "collapsed",
-	is_expanded: l.display_mode == "expanded" || !l.display_mode,
+	is_collapsed: l.display_mode === "collapsed",
+	is_expanded: l.display_mode === "expanded" || !l.display_mode,
         last_updated: l.last_updated
     }
 }

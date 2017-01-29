@@ -1,21 +1,14 @@
-import React, {Component, PropTypes} from 'react'
+import React, {Component} from 'react'
 import {connect} from 'react-redux'
 import ProjectList from '../components/ProjectList'
 import ProjectSidebar from '../components/ProjectSidebar'
-import {browserHistory} from 'react-router'
 import {StickyContainer} from 'react-sticky';
 import { setBreadcrumbs } from '../actions/Breadcrumbs'
 import {
     LIST_KEY__PROJECT_LIST,
-    LIST_KEY__SPRINT_LIST,
-    LIST_KEY__ISSUE_LIST,
-    LIST_KEY__ISSUE_DEVELOPER_DETAILS
 } from '../actions/ItemListKeyRegistry'
 import {
-    initList,
-    invalidateList,
     selectItems,
-    collapse_list,
     expand_list
 } from '../actions/ItemList'
 

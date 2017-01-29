@@ -1,14 +1,7 @@
-import React, {Component, PropTypes} from 'react'
+import React, {Component} from 'react'
 import {connect} from 'react-redux'
-import classNames from 'classnames'
 import IssueDetails2 from '../components/IssueDetails2'
 import Attachments from '../components/Attachments'
-import IssueList from '../components/IssueList'
-import IssueDeveloperDetails from '../components/IssueDeveloperDetails'
-import {
-    LIST_KEY__ISSUE_LIST,
-    LIST_KEY__ISSUE_DEVELOPER_DETAILS
-} from '../actions/ItemListKeyRegistry'
 
 const groups = [
     {

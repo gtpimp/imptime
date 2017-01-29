@@ -1,10 +1,8 @@
-import {createStore} from 'redux'
 import React from 'react';
 import {syncHistoryWithStore} from 'react-router-redux'
 import {IndexRoute, Router, Route, browserHistory} from 'react-router'
 import {Provider} from 'react-redux'
 import ReactDOM from 'react-dom';
-import App from './containers/App';
 import './sass/imptime.css'
 import configureStore from './store/configureStore'
 import ProjectsPage from './containers/ProjectsPage'

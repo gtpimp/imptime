@@ -1,5 +1,4 @@
 import { impfetch } from './lib.js'
-import { GLOBAL_SETTINGS } from '../settings'
 import cookie from 'react-cookie';
 
 export const SET_AUTH_TOKEN = "SET_AUTH_TOKEN"
