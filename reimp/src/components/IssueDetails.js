@@ -54,12 +54,7 @@ const groups = [
 ]
 class IssueDetails extends Component {
 
-    constructor(props) {
-        super(props)
-    }
-
     render() {
-        const {value} = this.props
         return (
             <div className="issue-details">
                 <div className="issue-details__toolbar">

@@ -6,14 +6,14 @@ export class Timestamp extends Component {
 
     render() {
 
-        const { style, value } = this.props
+        const { format, value } = this.props
         const ts = moment(value)
 
         return (
             <div className="timestamp__wrapper">
                 { value &&
                 <div className="timestamp__container">
-                    { style === 'default' &&
+                    { format === 'default' &&
                     <div className="timestamp timestamp--default">
                         <div className="timestamp__instant">
                             {ts.format('LLLL')}
@@ -23,42 +23,42 @@ export class Timestamp extends Component {
                         </div>
                     </div>
                     }
-                    { style === 'precise' &&
+                    { format === 'precise' &&
                     <div className="timestamp timestamp--precise">
                         <div className="timestamp__instant">
                             {ts.format('h:mm:ss a')}
                         </div>
                     </div>
                     }
-                    { style === 'short-time' &&
+                    { format === 'short-time' &&
                     <div className="timestamp timestamp--precise">
                         <div className="timestamp__instant">
                             {ts.format('h:mm')}
                         </div>
                     </div>
                     }
-                    { style === 'short-date' &&
+                    { format === 'short-date' &&
                     <div className="timestamp timestamp--precise">
                         <div className="timestamp__instant">
                             {ts.format('D MMM')}
                         </div>
                     </div>
                     }
-                    { style === 'date' &&
+                    { format === 'date' &&
                     <div className="timestamp timestamp--date">
                         <div className="timestamp__instant">
                             {ts.format('DD MMM YYYY')}
                         </div>
                     </div>
                     }
-                    { style === 'time' &&
+                    { format === 'time' &&
                     <div className="timestamp timestamp--time">
                         <div className="timestamp__instant">
                             {ts.format('HH:mm:ss')}
                         </div>
                     </div>
                     }
-                    { style === 'datetime' &&
+                    { format === 'datetime' &&
                       <div className="timestamp timestamp--time">
                           <div className="timestamp__instant">
                               {ts.format('DD MMM YYYY HH:mm:ss')}
@@ -74,7 +74,7 @@ export class Timestamp extends Component {
 
 function mapStateToProps(state, props) {
     return {
-        style: props.style || 'default'
+        format: props.format || 'default'
     }
 }
 

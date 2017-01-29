@@ -10,20 +10,19 @@ import {
 import {
     expand_list,
     update_list_filter,
-    invalidateList,
-    fetchIssuesIfNeeded
+    invalidateList
 } from '../actions/ItemList'
 
 class IssuesPage extends Component {
 
     componentDidMount() {
-        const {dispatch, sprint_id, project_id} = this.props
+        const {sprint_id, project_id} = this.props
         this.refresh(sprint_id, project_id)
     }
 
     componentWillReceiveProps(new_props) {
         const { sprint_id } = this.props
-        if ( new_props.sprint_id != sprint_id ) {
+        if ( new_props.sprint_id !== sprint_id ) {
             this.refresh(new_props.sprint_id, new_props.project_id)
         }
     }
@@ -66,7 +65,7 @@ class IssuesPage extends Component {
 
 function mapStateToProps(state, props) {
     const {issue, item_list} = state
-    const items_by_id = issue && issue.items_by_id || {}
+    const items_by_id = (issue && issue.items_by_id) || {}
     const l = (item_list && item_list[LIST_KEY__ISSUE_LIST]) || {}
     const selected_items = items_by_id && l.selected_ids && l.selected_ids.map( function(selected_id, index) {
 	return items_by_id[selected_id] || { 'id': selected_id,

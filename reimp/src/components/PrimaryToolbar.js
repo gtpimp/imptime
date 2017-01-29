@@ -34,8 +34,8 @@ class PrimaryToolBar extends Component {
                     {/*<Breadcrumbs breadcrumbs={[{to: '/projects', label: 'Projects'},{to: '/projects/katalyst', label: 'Katalyst'},{to: '/projects/katalyst/sprints/3', label: 'Sprint 3'}]}/>*/}
                 </div>
                 <div className="primary-toolbar__container primary-toolbar__container--right">
-                    <ToolbarButton style="toggle" isEnabled={true} onEnable={this.onEnableInfo()} onDisable={this.onDisableInfo()} icon="info" />
-                    <ToolbarButton onClick={this.onShowSettings()} icon="settings"/>
+                    <ToolbarButton style="toggle" isEnabled={true} onEnable={this.onEnableInfo} onDisable={this.onDisableInfo} icon="info" />
+                    <ToolbarButton onClick={this.onShowSettings} icon="settings"/>
                 </div>
             </div>
         )

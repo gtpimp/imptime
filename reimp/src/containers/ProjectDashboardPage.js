@@ -11,13 +11,13 @@ class ProjectDashboardPage extends Component {
     }
 
     componentDidMount() {
-        const {dispatch, project_id} = this.props
+        const {project_id} = this.props
         this.refresh(project_id)
     }
 
     componentWillReceiveProps(new_props) {
         const { project_id } = this.props
-        if ( new_props.project_id != project_id ) {
+        if ( new_props.project_id !== project_id ) {
             this.refresh(new_props.project_id)
         }
     }
@@ -52,8 +52,6 @@ class ProjectDashboardPage extends Component {
 }
 
 function mapStateToProps(state, props) {
-    const {} = state
-
     const project_id = props.params.projectId
     return {
         project_id: project_id

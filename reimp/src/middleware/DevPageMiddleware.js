@@ -11,7 +11,7 @@ import {
     update_list_pagination
 } from '../actions/ItemList'
 import { fetchSprintsIfNeeded } from '../actions/Sprints'
-import { fetchIssuesIfNeeded, invalidateIssues } from '../actions/Issues'
+import { fetchIssuesIfNeeded } from '../actions/Issues'
 import {
     invalidateIssueGeneralDetails,
     fetchIssueGeneralDetailsIfNeeded
@@ -30,7 +30,6 @@ const issue_details_developer_key = 'issue_developer_details'
 
 function DevPageMiddleware(_ref) {
     var dispatch = _ref.dispatch;
-    var getState = _ref.getState;
 
     return function (next) {
 	return function (action) {
@@ -40,7 +39,7 @@ function DevPageMiddleware(_ref) {
 
 		    const selected_ids = action.selected_ids || []
 		    const selected_id = (selected_ids.length > 0 && selected_ids[0]) || null
-		    if (action.list_key == projects_list_key) {
+		    if (action.list_key === projects_list_key) {
 			// Change selected project
 			dispatch(update_list_filter(sprints_list_key, {project_id:selected_id}))
 			dispatch(invalidateList(sprints_list_key))
@@ -101,6 +100,7 @@ function DevPageMiddleware(_ref) {
 		    dispatch(fetchIssuesIfNeeded(issues_list_key))
 		    dispatch(unselectAllItems(issues_list_key))
 		    break
+			default: break;
 	    }
 	    return next(action)
 	};

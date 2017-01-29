@@ -67,12 +67,10 @@ function triggerInvalidateItemLists(d, dispatch) {
 function refreshMiddleware(_ref) {
 
     var dispatch = _ref.dispatch;
-    var getState = _ref.getState;
-    
+
     return function (next) {
         return function (action) {
             
-            const state = getState()
             if (action && action.type === ASYNC_REFRESH_NOTIFICATION) {
 
                 const payload = action.payload || [{}]
@@ -90,7 +88,9 @@ function refreshMiddleware(_ref) {
                         console.log("Unknown action_type for async refresh: " + d.action_type)
                     }
                     dispatch(addAsyncMessage(moment(), d.action_type + " " + d.entity_name + " " + d.entity_ref))
-                }) 
+                    return
+                })
+                return
             } 
             return next(action)
         }

@@ -33,8 +33,6 @@ class SprintSidebar extends Component {
 }
 
 function mapStateToProps(state, props) {
-    const {} = state
-
     const { sprint_id, project_id } = props
     return {
         sprint_id: sprint_id,

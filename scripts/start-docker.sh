@@ -14,7 +14,7 @@ function help {
 # support for cleaning up orphans
 # support for running background
 
-while getopts "dls:" OPT; do
+while getopts "dl:s" OPT; do
     case $OPT in
         d) DEVELOPMENT_MODE=1 ;;
         l) FROM_LOCAL_SOURCES=1 ;;

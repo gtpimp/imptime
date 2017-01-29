@@ -33,7 +33,6 @@ import {
 import Pagination from '../components/Pagination'
 import Toolbar from '../components/Toolbar'
 import Issue from './Issue'
-import {Sticky, StickyContainer} from 'react-sticky';
 
 class IssueList extends Component {
 
@@ -229,7 +228,6 @@ class IssueList extends Component {
 
         return (
             <div className="panel panel--collapsed">
-                <Sticky>
                     <div className="panel-heading" onClick={this.onExpand}>
                         <div className="panel__title">{ selected_items.map((issue, index) =>
                             <Issue
@@ -244,7 +242,6 @@ class IssueList extends Component {
                         )}
                         </div>
                     </div>
-                </Sticky>
             </div>
         )
     }
@@ -343,6 +340,7 @@ class IssueList extends Component {
             } else {
                 running_parent_issue_id = issue.parent_group_id
             }
+            return
         })
 
         return (
@@ -353,7 +351,6 @@ class IssueList extends Component {
                            selected_ids={selected_ids}
                            closeTagEditor={this.closeTagEditor} />
                 <div className="panel panel--full">
-                    <Sticky>
                         <div className="panel-heading" onClick={this.onCollapse}>
                             <div className="panel__title">Issues</div>
                             <div className="panel__buttons">
@@ -392,7 +389,6 @@ class IssueList extends Component {
                             </div>
                         </div>
                         <Pagination list_key={list_key} on_changed={this.onChangePage}/>
-                    </Sticky>
                     <div className="panel-body">
                         <div className="xissue_list__panel-body__left">
                             <div className="issue-list__inner">
@@ -423,9 +419,7 @@ class IssueList extends Component {
                             </div>
                         </div>
                         <div className="issue_list__panel-body__right">
-                            <StickyContainer>
                                 {this.props.children}
-                            </StickyContainer>
                         </div>
                     </div>
                 </div>
@@ -455,7 +449,7 @@ class IssueList extends Component {
 function mapStateToProps(state, props) {
     const {issue, item_list} = state
     const {list_key} = props
-    const items_by_id = issue && issue.items_by_id || {}
+    const items_by_id = (issue && issue.items_by_id) || {}
     const l = (item_list && item_list[list_key]) || {}
     const filter = l.filter || {}
     const sprint_id = filter.sprint_id || null
