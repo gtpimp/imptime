@@ -34,9 +34,7 @@ class ProjectSidebar extends Component {
         const { project_id, project } = this.props
         
         return (
-            <div className="project_sidebar">
-                Project {project.name}
-
+            <div className="sidebar project_sidebar">
                 <pre>
                     I am your project sidebar
                 </pre>

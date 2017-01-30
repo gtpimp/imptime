@@ -45,7 +45,7 @@ class SprintSidebar extends Component {
         const { sprint_id, sprint, project } = this.props
         
         return (
-            <div className="sprint_sidebar">
+            <div className="sidebar sprint-sidebar">
                 <PropertyStack>
                     <PropertyStackComponent>
                         <div className="property--parent-title">
@@ -71,15 +71,16 @@ class SprintSidebar extends Component {
                             <div className="named-property__value"><Timestamp format="short-date" value={moment()}/></div>
                         </div>
                     </PropertyStackComponent>
-                </PropertyStack>
+                    <PropertyStackComponent>
+                        <div className="property-text">
+                    Sprint {sprint_id}
 
-                Sprint {sprint_id}
-
-                <pre>
                     I am your sprint sidebar
-                </pre>
-                
-                <button onClick={this.navigateToIssuesPage}>Take me to your issues</button>
+
+                    <button onClick={this.navigateToIssuesPage}>Take me to your issues</button>
+                        </div>
+                    </PropertyStackComponent>
+                </PropertyStack>
             </div>
         )
     }

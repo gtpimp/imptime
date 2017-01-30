@@ -29,7 +29,7 @@ class ToolBar extends Component {
             case 'sprints':
                 return <SprintsToolbarPanel key="sprints-panel"/>
             default:
-                throw new Error("Unsupported toolbar panel:", id)
+                throw new Error("Unsupported toolbar panel:" + id)
         }
     }
 

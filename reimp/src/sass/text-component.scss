@@ -1,0 +1,15 @@
+@import 'variables.scss';
+
+.text-component--readonly {
+  color: $color-1;
+  font: $font-7;
+}
+
+.text-component--empty {
+  color: $color-13;
+  font: $font-7;
+}
+
+.text-component--title {
+  font: $font-7;
+}
