@@ -63,7 +63,7 @@ class ProjectsPage extends Component {
 
 function mapStateToProps(state) {
     const {project, page} = state
-    const selected_project_ids = page.project_ids || []
+    const selected_project_ids = (page[PAGE_KEY__PROJECTS_PAGE] ||{}).project_ids || []
     const selected_project_id = (selected_project_ids && selected_project_ids.length > 0 && selected_project_ids[0]) || null
     
     return {
