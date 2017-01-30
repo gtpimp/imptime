@@ -1,36 +1,47 @@
 import React, {Component} from 'react'
 import {connect} from 'react-redux'
-import ToolbarButton from './ToolbarButton'
+import '../sass/toolbar.css'
+import Breadcrumbs from './Breadcrumbs'
+import ProjectToolbarPanel from './ProjectToolbarPanel'
+import ProjectsToolbarPanel from './ProjectsToolbarPanel'
+import SprintToolbarPanel from './SprintToolbarPanel'
+import SprintsToolbarPanel from './SprintsToolbarPanel'
+import IssueToolbarPanel from './IssueToolbarPanel'
+import IssuesToolbarPanel from './IssuesToolbarPanel'
+import ListToolbarPanel from './ListToolbarPanel'
 
-class Toolbar extends Component {
+class ToolBar extends Component {
+
+    renderPanel(id) {
+        switch(id) {
+            case 'issue':
+                return <IssueToolbarPanel/>
+            case 'issues':
+                return <IssuesToolbarPanel/>
+            case 'list':
+                return <ListToolbarPanel/>
+            case 'project':
+                return <ProjectToolbarPanel/>
+            case 'projects':
+                return <ProjectsToolbarPanel/>
+            case 'sprint':
+                return <SprintToolbarPanel/>
+            case 'sprints':
+                return <SprintsToolbarPanel/>
+            default:
+                throw new Error("Unsupported toolbar panel:", id)
+        }
+    }
 
     render() {
-        const {actions} = this.props
-
+        const {breadcrumbs, panelIds} = this.props
         return (
             <div className="toolbar">
-                <div className="toolbar__container">
-                    <div className="toolbar__item">
-                        <button className="button button--default button--primary">New (N)</button>
-                    </div>
-                    <div className="toolbar__item">
-                        <div className="toolbar__label">Inbox</div>
-                    </div>
+                <div className="toolbar__container toolbar__container--left">
+                    <Breadcrumbs breadcrumbs={breadcrumbs}/>
                 </div>
-                <div className="toolbar__container">
-                    <div className="toolbar__item toolbar__item--icon-button">
-                        <div className="icon--info"/>
-                    </div>
-                    <div className="toolbar__item toolbar__item--icon-button">
-                        <div className="icon--settings"/>
-                    </div>
-                    <div className="toolbar__item toolbar__item--icon-button">
-                        <div className="icon--more"/>
-                    </div>
-                    <div className="toolbar__separator"></div>
-                    <div className="toolbar__item">
-                        <div className="mode__dropdown">Richard Mode</div>
-                    </div>
+                <div className="toolbar__container toolbar__container--right">
+                    {panelIds.map((panelId) => this.renderPanel(panelId))}
                 </div>
             </div>
         )
@@ -38,9 +49,13 @@ class Toolbar extends Component {
 }
 
 function mapStateToProps(state, props) {
+    const {breadcrumbs, toolbar} = state
+
     return {
+        panelIds: toolbar.panelIds || ['issue', 'issues', 'project', 'projects', 'sprint', 'sprints', 'list'],
+        breadcrumbs: breadcrumbs
     }
 }
 
 
-export default connect(mapStateToProps)(Toolbar)
+export default connect(mapStateToProps)(ToolBar)

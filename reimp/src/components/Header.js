@@ -3,7 +3,7 @@ import {connect} from 'react-redux'
 import '../sass/header.css'
 import Navbar from '../components/Navbar'
 import NotificationBar from '../components/NotificationBar'
-import PrimaryToolbar from '../components/PrimaryToolbar'
+import Toolbar from '../components/Toolbar'
 import UserDashboard from '../components/UserDashboard'
 
 class Header extends Component {
@@ -17,7 +17,7 @@ class Header extends Component {
                 { user_dashboard_expanded &&
                     <UserDashboard/>
                 }
-                <PrimaryToolbar />
+                <Toolbar />
             </div>
         )
     }

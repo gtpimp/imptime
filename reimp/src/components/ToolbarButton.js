@@ -11,20 +11,27 @@ class ToolbarButton extends Component {
     }
 
     onClick() {
-        const {onClick} = this.props
+        // TODO something like this (needs to handle cases where toggle handlers are not set
+        const {flavour, onClick} = this.props
         if (onClick) {
             onClick()
+        } else if (flavour === 'toggle') {
+            if (this.props.isEnabled) {
+                this.props.onDisable()
+            } else {
+                this.props.onEnable()
+            }
         } else {
             console.log('click (no delegate)')
         }
     }
 
     render() {
-        const {style} = this.props
+        const {flavour} = this.props
         return (
-            <div className={classNames('toolbar-button', 'toolbar-button--' + style, {
-                'toolbar-button--enabled': style === 'toggle' && this.props.isEnabled,
-                'toolbar-button--disabled': style === 'toggle' && !this.props.isEnabled
+            <div className={classNames('toolbar-button', 'toolbar-button--' + flavour, {
+                'toolbar-button--enabled': flavour === 'toggle' && this.props.isEnabled,
+                'toolbar-button--disabled': flavour === 'toggle' && !this.props.isEnabled
             })}
                  onClick={this.onClick}>
                 { this.props.icon &&
@@ -32,7 +39,7 @@ class ToolbarButton extends Component {
                 }
                 { !this.props.icon &&
                 <div className="toolbar-button__content">
-                    { this.props.children}
+                    {/*{ this.props.children}*/}
                 </div>
                 }
             </div>
@@ -44,7 +51,7 @@ class ToolbarButton extends Component {
 function mapStateToProps(state, props) {
 
     return {
-        style: props.style || 'default'
+        flavour: props.flavour || 'default'
     }
 }
 

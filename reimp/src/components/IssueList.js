@@ -30,8 +30,6 @@ import {
     groupIssuesIntoFeature,
     ungroupIssuesIntoFeature
 } from '../actions/Issue'
-import Pagination from '../components/Pagination'
-import Toolbar from '../components/Toolbar'
 import Issue from './Issue'
 
 class IssueList extends Component {

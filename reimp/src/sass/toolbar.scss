@@ -1,51 +1,35 @@
 @import 'variables.scss';
 
+@import 'variables.scss';
+
 .toolbar {
   align-items: center;
-  background-color: $color-8;
-  box-shadow: 0 2px 4px 0 $color-13;
+  background-color: $color-2;
+  //box-shadow: inset 0 -1px 0 1px #E0E0E0;
+  box-sizing: border-box;
   display: flex;
-  height: 56px;
   justify-content: space-between;
-  margin-bottom: 4px;
+  //margin-bottom: 1px;
+  margin-top: 1px;
+  padding-left: 24px;
+  //padding-right: 24px;
   width: 100%;
 }
 
 .toolbar__container {
   align-items: center;
-  display:inline-flex;
-
-  &:first-child {
-    padding-left: 40px;
-
-  }
-
-  &:last-child {
-    padding-right: 40px;
-
-  }
+  background-color: $color-2;
+  display: flex;
+  justify-content: flex-start;
+  //width: 100%;
 }
 
-.toolbar__separator {
-  box-shadow: inset 1px 0 0 0 #E0E0E0;
-  display: inline-block;
-  height: 56px;
-  margin-left: 34px;
-  margin-right: 34px;
-  width: 1px;
+.toolbar__container--left {
+  flex-grow: 1;
 }
 
-.toolbar__item {
-  display: inline-block;
+.toolbar__container--right {
+  flex-grow: 1;
+  justify-content: flex-end;
 }
 
-.toolbar__label {
-  color: $color-1;
-  font: $font-4;
-  padding-left: 56px;
-}
-
-.toolbar__item--icon-button {
-  cursor: pointer;
-  padding-left: 20px;
-}

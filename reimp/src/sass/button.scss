@@ -1,12 +1,13 @@
 @import 'variables.scss';
 
 .button {
+  align-items: center;
   background-color: #FAFAFA;
   border: 1px solid #E0E0E0;
   border-radius: 3px;
+  display: flex;
   text-align: center;
   text-transform: uppercase;
-  vertical-align: middle;
 }
 
 .button--default {
