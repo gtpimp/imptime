@@ -12,7 +12,7 @@ class ProjectToolbarPanel extends Component {
     onOpenProjectClick() {
         console.log('open project clicked')
     }
-
+q
     render() {
         return (
             <div className="toolbar-panel">

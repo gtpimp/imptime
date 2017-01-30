@@ -42,7 +42,7 @@ class ProjectDashboardPage extends Component {
                 Project {project_id}
 
                 <pre>
-                    I am your project page
+                    I am your project dashboard
                 </pre>
                 
                 <button onClick={this.navigateToSprintsPage}>Take me to your sprints</button>

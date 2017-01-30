@@ -44,7 +44,7 @@ class ProjectDashboardPage extends Component {
                 Sprint {sprint_id}
 
                 <pre>
-                    I am your sprint page
+                    I am your sprint dashboard
                 </pre>
                 
                 <button onClick={this.navigateToIssuesPage}>Take me to your issues</button>
