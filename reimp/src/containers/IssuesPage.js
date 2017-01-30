@@ -1,5 +1,7 @@
 import React, {Component} from 'react'
 import {connect} from 'react-redux'
+import concat from 'lodash/concat'
+import includes from 'lodash/includes'
 import IssueSidebar from '../components/IssueSidebar'
 import IssueList from '../components/IssueList'
 import { setBreadcrumbs } from '../actions/Breadcrumbs'
@@ -13,7 +15,7 @@ import {
     update_list_filter,
     invalidateList
 } from '../actions/ItemList'
-import {setActions} from '../actions/Toolbar'
+// import {setActions} from '../actions/Toolbar'
 import {
     set_toolbars,
     select_issues
@@ -27,19 +29,23 @@ class IssuesPage extends Component {
     }
     
     componentDidMount() {
-        const {sprint_id, project_id} = this.props
+        const {sprint_id, project_id, dispatch} = this.props
         this.refresh(sprint_id, project_id)
+        dispatch(set_toolbars(PAGE_KEY__ISSUES_PAGE, ['issues', 'issue']))
     }
 
     componentWillReceiveProps(new_props) {
-        const { sprint_id } = this.props
+        const { sprint_id, dispatch, selected_issues, toolbars } = this.props
+        const selected_a = new_props.selected_issues || []
+        const selected_b = this.props.selected_issues || []
+        
         if ( new_props.sprint_id !== sprint_id ) {
-            this.refresh(new_props.sprint_id, new_props.project_id)
+                this.refresh(new_props.sprint_id, new_props.project_id)
         }
     }
 
     refresh(sprint_id, project_id) {
-        const {dispatch} = this.props
+        const {dispatch, selected_issues, toolbars } = this.props
         if ( sprint_id ) {
             dispatch(update_list_filter(LIST_KEY__ISSUE_LIST, {sprint_id:sprint_id}))
             dispatch(invalidateList(LIST_KEY__ISSUE_LIST))
@@ -49,7 +55,7 @@ class IssuesPage extends Component {
                                       {to: '/projects/'+project_id+'/sprints', label: 'All Sprints'},
                                       {to: '/projects/'+project_id+'/sprints/'+sprint_id, label: sprint_id},
                                       {to: '/projects/'+project_id+'/sprints/'+sprint_id+'/issues', label: 'All Issues'}]))
-            dispatch(set_toolbars(PAGE_KEY__ISSUES_PAGE, ['issues']))
+
             /* dispatch(setActions([
              *     {
              *         icon: 'toggle-as-feature',
@@ -111,7 +117,7 @@ class IssuesPage extends Component {
 
 function mapStateToProps(state, props) {
 
-    const {issue, item_list} = state
+    const {issue, item_list, page} = state
     const items_by_id = (issue && issue.items_by_id) || {}
     const l = (item_list && item_list[LIST_KEY__ISSUE_LIST]) || {}
     const selected_items = items_by_id && l.selected_ids && l.selected_ids.map( function(selected_id, index) {
@@ -125,7 +131,8 @@ function mapStateToProps(state, props) {
     return {
         sprint_id: sprint_id,
         project_id: project_id,
-        selected_issues: selected_items
+        selected_issues: selected_items,
+        toolbars: page.toolbar_names
     }
 }
 
