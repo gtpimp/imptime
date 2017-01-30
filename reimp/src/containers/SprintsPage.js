@@ -6,6 +6,7 @@ import {setBreadcrumbs} from '../actions/Breadcrumbs'
 import {setActions} from '../actions/Toolbar'
 import {
     LIST_KEY__SPRINT_LIST,
+    PAGE_KEY__SPRINTS_PAGE
 } from '../actions/ItemListKeyRegistry'
 import {
     expand_list,
@@ -16,6 +17,10 @@ import {
 import {
     startCandidateSprint,
 } from '../actions/Sprints'
+import {
+    set_toolbars,
+    select_sprints
+} from '../actions/Page'
 
 class SprintsPage extends Component {
 
@@ -58,12 +63,14 @@ class SprintsPage extends Component {
                     onClick: this.onStartCandidateSprint
                 }
             ]))
+            dispatch(set_toolbars(PAGE_KEY__SPRINTS_PAGE, ['sprints']))
         }
     }
 
     onSelectSprints(sprint_ids) {
         const {dispatch} = this.props
         dispatch(selectItems(LIST_KEY__SPRINT_LIST, sprint_ids))
+        dispatch(select_sprints(PAGE_KEY__SPRINTS_PAGE, sprint_ids))
 
         /* if ( sprint_ids.length == 1 ) {
          *     browserHistory.push('/projects/'+project_id+'/sprints/'+sprint_ids[0]);

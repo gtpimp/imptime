@@ -44,22 +44,19 @@ export function set_toolbars(page_key, toolbar_names) {
     }
 }
 
-export function select_issue(page_key, project_ids, sprint_ids, issue_ids) {
+export function select_issues(page_key, issue_ids) {
     return {
         type: UPDATE_PAGE_SELECTION,
 	page_key: page_key,
-        sprint_ids: sprint_ids,
         issue_ids: issue_ids,
-        project_ids: project_ids
     }
 }
 
-export function select_sprints(page_key, project_ids, sprint_ids) {
+export function select_sprints(page_key, sprint_ids) {
     return {
         type: UPDATE_PAGE_SELECTION,
 	page_key: page_key,
-        sprint_ids: sprint_ids,
-        project_ids: project_ids
+        sprint_ids: sprint_ids
     }
 }
 

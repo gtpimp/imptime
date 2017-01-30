@@ -40,7 +40,7 @@ class IssueSerializer(BaseSerializer):
             issue.assigned_to.username if issue.assigned_to_id else None
 
         issue.feature_name = issue.feature.name if issue.feature_id else None
-        issue.position_if_creating_new_issue_after = issue.order + 0.5
+        issue.position_if_creating_new_issue_after = (issue.order or 0) + 0.5
         issue.sprint_id = str(issue.project_id)  # sic
         issue.project_id = str(issue.project.business_id)  # sic
         issue.dev_estimate_hours, issue.dev_estimate_user_quick_name = issue.best_hours_estimate
