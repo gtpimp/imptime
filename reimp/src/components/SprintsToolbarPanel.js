@@ -53,7 +53,6 @@ function mapStateToProps(state, props) {
     const sprint = (selected_sprint_ids.length > 0 && sprint_objs[selected_sprint_ids[0]]) || null
     
     return {
-        selected_sprint_ids: selected_sprint_ids,
         sprint: sprint
     }
     
