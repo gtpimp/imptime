@@ -5,16 +5,27 @@ import IssueList from '../components/IssueList'
 import { setBreadcrumbs } from '../actions/Breadcrumbs'
 import {
     LIST_KEY__ISSUE_LIST,
+    PAGE_KEY__ISSUES_PAGE
 } from '../actions/ItemListKeyRegistry'
 import {
     expand_list,
+    selectItems,
     update_list_filter,
     invalidateList
 } from '../actions/ItemList'
 import {setActions} from '../actions/Toolbar'
+import {
+    set_toolbars,
+    select_issues
+} from '../actions/Page'
 
 class IssuesPage extends Component {
 
+    constructor(props) {
+        super(props)
+        this.onSelectIssues = this.onSelectIssues.bind(this)
+    }
+    
     componentDidMount() {
         const {sprint_id, project_id} = this.props
         this.refresh(sprint_id, project_id)
@@ -38,34 +49,41 @@ class IssuesPage extends Component {
                                       {to: '/projects/'+project_id+'/sprints', label: 'All Sprints'},
                                       {to: '/projects/'+project_id+'/sprints/'+sprint_id, label: sprint_id},
                                       {to: '/projects/'+project_id+'/sprints/'+sprint_id+'/issues', label: 'All Issues'}]))
-            dispatch(setActions([
-                {
-                    icon: 'toggle-as-feature',
-                    onClick: this.toggleAsFeature
-                },
-                {
-                    icon: 'group-together',
-                    onClick: this.groupTogether
-                },
-                {
-                    icon: 'ungroup-together',
-                    onClick: this.ungroupTogether
-                },
-                {
-                    icon: 'expand_features',
-                    onClick: this.toggleExpandFeatures
-                },
-                {
-                    icon: 'add_tag',
-                    onClick: this.openTagEditor
-                },
-                {
-                    icon: 'add',
-                    onClick: this.onStartCandidateIssue
-                }
-            ]))
+            dispatch(set_toolbars(PAGE_KEY__ISSUES_PAGE, ['issues']))
+            /* dispatch(setActions([
+             *     {
+             *         icon: 'toggle-as-feature',
+             *         onClick: this.toggleAsFeature
+             *     },
+             *     {
+             *         icon: 'group-together',
+             *         onClick: this.groupTogether
+             *     },
+             *     {
+             *         icon: 'ungroup-together',
+             *         onClick: this.ungroupTogether
+             *     },
+             *     {
+             *         icon: 'expand_features',
+             *         onClick: this.toggleExpandFeatures
+             *     },
+             *     {
+             *         icon: 'add_tag',
+             *         onClick: this.openTagEditor
+             *     },
+             *     {
+             *         icon: 'add',
+             *         onClick: this.onStartCandidateIssue
+             *     }
+             * ]))*/
 
         }
+    }
+
+    onSelectIssues(issue_ids) {
+        const { dispatch } = this.props
+        dispatch(selectItems(LIST_KEY__ISSUE_LIST, issue_ids))
+        dispatch(select_issues(PAGE_KEY__ISSUES_PAGE, issue_ids))
     }
 
     render() {
@@ -77,7 +95,9 @@ class IssuesPage extends Component {
         return (
             <div className="list-layout">
                 <div className="list-layout__list">
-                    <IssueList list_key={LIST_KEY__ISSUE_LIST} />
+                    <IssueList list_key={LIST_KEY__ISSUE_LIST}
+                               onSelectIssues={this.onSelectIssues}
+                    />
                 </div>
                 { sprint_id && selected_issue &&
                 <div className="list-layout__sidebar">
@@ -90,6 +110,7 @@ class IssuesPage extends Component {
 }
 
 function mapStateToProps(state, props) {
+
     const {issue, item_list} = state
     const items_by_id = (issue && issue.items_by_id) || {}
     const l = (item_list && item_list[LIST_KEY__ISSUE_LIST]) || {}

@@ -57,12 +57,12 @@ class SprintsPage extends Component {
             dispatch(setBreadcrumbs([{to: '/projects', label: 'All Projects'},
                 {to: '/projects/' + project_id, label: project_id},
                 {to: '/projects/' + project_id + '/sprints', label: 'All Sprints'}]))
-            dispatch(setActions([
-                {
-                    icon: 'add',
-                    onClick: this.onStartCandidateSprint
-                }
-            ]))
+            /* dispatch(setActions([
+             *     {
+             *         icon: 'add',
+             *         onClick: this.onStartCandidateSprint
+             *     }
+             * ]))*/
             dispatch(set_toolbars(PAGE_KEY__SPRINTS_PAGE, ['sprints']))
         }
     }

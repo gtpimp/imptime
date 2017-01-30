@@ -80,18 +80,20 @@ class IssueList extends Component {
     }
 
     onClickedIssue(event, issue_id) {
-        const {dispatch, list_key, selected_ids} = this.props
+        const { onSelectIssues, selected_ids } = this.props
         event.stopPropagation()
 
+        let selected_issue_ids = []
         if (event.ctrlKey) {
             if (includes(selected_ids, issue_id)) {
-                dispatch(selectItems(list_key, difference(selected_ids, [issue_id])))
+                selected_issue_ids = difference(selected_ids, [issue_id])
             } else {
-                dispatch(selectItems(list_key, union(selected_ids, [issue_id])))
+                selected_issue_ids = union(selected_ids, [issue_id])
             }
         } else {
-            dispatch(selectItems(list_key, [issue_id]))
+            selected_issue_ids = [issue_id]
         }
+        onSelectIssues(selected_issue_ids)
     }
 
     onChangePage() {
