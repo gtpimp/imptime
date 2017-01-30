@@ -156,6 +156,39 @@ export function deleteTag(issue_ids, tag_category_name, tag_name) {
     }    
 }
 
+export function addEstimate(issue_ids, estimate_hours, on_done) {
+    return (dispatch, getState) => {
+        const state = getState()
+        const API_BASE_URL = state.settings.configured && state.settings.API_BASE_URL
+	dispatch(announceIssuesSaving(issue_ids, "estimate_hours", estimate_hours))
+	let data = {issue_ids: issue_ids,
+                    estimate_hours: estimate_hours}
+	return impfetch(API_BASE_URL+"imp/issue/estimate/", dispatch,
+			{method: "POST",
+			 credentials: 'same-origin',
+			 data: data,
+			 headers: {"Content-type": "application/json; charset=UTF-8"}, 
+			 body: JSON.stringify(data)}
+	).then(response => response.json())
+	 .then(json => {
+             if ( json.status !== 'success' ) {
+		 console.log('Request failed with JSON response', json);
+		 dispatch(announceIssueSaveFailed(json.error))
+             } else {
+		 console.log('Request succeeded with JSON response', json);
+                 dispatch(announceIssuesSaved(issue_ids))
+             }
+	     if ( on_done ) {
+		 on_done()
+	     }
+	 })
+	 .catch(function (error) {
+             console.log('Request failed', error);
+	     dispatch(announceIssueSaveFailed(error))
+	 })
+    }    
+}
+
 function announceDeletingIssue(issue_id) {
     return {
         type: ANNOUNCE_DELETING_ISSUE,

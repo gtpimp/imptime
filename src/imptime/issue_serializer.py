@@ -5,6 +5,7 @@ from drf_compound_fields.fields import ListField
 from base_serializer import BaseSerializer, BaseModelSerializer
 from tag_serializer import TagSerializer
 from user_serializer import UserSerializer
+from issue_estimate_serializer import IssueEstimateSerializer
 from timepiece.models import Issue
 logger = logging.getLogger(__name__)
 
@@ -25,6 +26,7 @@ class IssueSerializer(BaseSerializer):
     tags = TagSerializer(many=True)
     dev_estimate_hours = serializers.FloatField()
     dev_estimate_user_quick_name = serializers.CharField()
+    all_estimates = IssueEstimateSerializer(many=True, source='issue_points')
     actual_hours = serializers.FloatField()
     my_actual_hours = serializers.FloatField()
     am_i_clocked_in = serializers.BooleanField()
@@ -49,7 +51,6 @@ class IssueSerializer(BaseSerializer):
         d = super(IssueSerializer, self).to_representation(
             issue, *args, **kwargs)
         return d
-
 
 class IssueCommentSerializer(BaseSerializer):
     id = serializers.CharField()

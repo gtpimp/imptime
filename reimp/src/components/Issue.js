@@ -89,6 +89,15 @@ class Issue extends Component {
         dispatch(clock(issue.id, 'clock_out'))
     }
 
+    renderEstimates() {
+        const { issue } = this.props
+        map(issue.all_estimates, function(estimate, index) {
+            return (
+                <div>{estimate.user.username}:{estimate.estimate_hours}</div>
+            )
+        })
+    }
+
     render_collapsed() {
         const {issue, list_key} = this.props
         return (
@@ -206,8 +215,8 @@ class Issue extends Component {
                     <td className="issue__cell issue__cell--progress">
                         <Progress issue={issue} />
                     </td>
-                    { false && <td className="issue__cell issue__cell--estimates">
-                        (3) 4:00
+                    { <td className="issue__cell issue__cell--estimates">
+                        {this.renderEstimates()}
                     </td>
                     }
                     <td className="issue__cell issue__cell--tags">

@@ -3,6 +3,7 @@ import project_api
 import sprint_api
 import issue_api
 import issue_tag_api
+import issue_estimate_api
 import issue_clock_api
 import user_api
 import views
@@ -18,6 +19,8 @@ router.register(r'sprint', sprint_api.SprintViewSet,
                 base_name='sprint')
 router.register(r'issue/tag', issue_tag_api.IssueTagViewSet,
                 base_name='issue_tag')
+router.register(r'issue/estimate', issue_estimate_api.IssueEstimateViewSet,
+                base_name='issue_estimate')
 router.register(r'issue/clock', issue_clock_api.IssueClockViewSet,
                 base_name='issue_clock')
 router.register(r'issue', issue_api.IssueViewSet,
