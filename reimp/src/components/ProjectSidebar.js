@@ -33,8 +33,6 @@ class ProjectSidebar extends Component {
 }
 
 function mapStateToProps(state, props) {
-    const {} = state
-
     const { project_id } = props
     return {
         project_id: project_id

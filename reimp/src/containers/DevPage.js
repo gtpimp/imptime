@@ -51,8 +51,6 @@ class DevPage extends Component {
 }
 
 function mapStateToProps(state) {
-    const {} = state
-
     return {}
 }
 

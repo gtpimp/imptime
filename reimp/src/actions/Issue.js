@@ -219,7 +219,6 @@ export function reorderIssue(issue_id_before, issue_id_after, on_done) {
 export function startCandidateIssue(list_key) {
     return (dispatch, getState) => {
 	const state = getState()
-	const issues_by_id = state.issue.items_by_id
 	const l = state.item_list[list_key]
 
 	const selected_ids = l.selected_ids

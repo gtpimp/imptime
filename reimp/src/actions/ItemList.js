@@ -3,7 +3,6 @@ import difference from 'lodash/difference'
 import keys from 'lodash/keys'
 import union from 'lodash/union'
 import map from 'lodash/map'
-import { reorderSprints } from './Sprints'
 
 export const INIT_LIST = 'INIT_LIST'
 export const ANNOUNCE_LIST_LOADED = 'ANNOUNCE_LIST_LOADED'

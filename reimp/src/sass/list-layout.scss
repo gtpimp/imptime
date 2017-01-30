@@ -1,0 +1,18 @@
+@import 'variables.scss';
+@import 'icon.scss';
+
+.list-layout {
+    align-items: flex-start;
+    display: flex;
+}
+
+.list-layout__list {
+    flex-grow: 1;
+}
+
+.list-layout__sidebar {
+    box-shadow: inset 1px 0 0 0 #E0E0E0;
+    flex-basis: 312px;
+    flex-grow: 0;
+    margin-left: 1px;
+}

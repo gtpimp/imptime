@@ -1,21 +1,17 @@
-import React, { Component, PropTypes } from 'react'
-import { Link } from 'react-router'
+import React, { Component } from 'react'
 import { connect } from 'react-redux'
 import indexOf from 'lodash/indexOf'
-import map from 'lodash/map'
 import OtherUser from '../components/OtherUser'
 import {
     updateIssueDescription,
     updateIssueSubject,
     deleteIssue,
-    startCandidateIssue,
     updateCandidateSubject,
     saveCandidateIssue,
     cancelCandidateIssue
 } from '../actions/Issue'
 
 import {
-    invalidateIssueGeneralDetails,
     fetchIssueGeneralDetailsIfNeeded
 } from '../actions/IssueGeneralDetails'
 import RIEModeToggler from '../widgets/RIEModeToggler'
@@ -34,14 +30,14 @@ class IssueDeveloperDetails extends Component {
     }
 
     componentDidMount() {
-	const { dispatch, issue_id, issue } = this.props
+	const { dispatch, issue_id } = this.props
 	if ( issue_id ) {
 	    dispatch(fetchIssueGeneralDetailsIfNeeded([issue_id]))
 	}
     }
 
     componentWillReceiveProps() {
-	const { dispatch, issue_id, issue } = this.props
+	const { dispatch, issue_id } = this.props
 	if ( issue_id ) {
 	    dispatch(fetchIssueGeneralDetailsIfNeeded([issue_id]))
 	}
@@ -90,7 +86,6 @@ class IssueDeveloperDetails extends Component {
     }
 
     renderCreatingIssue() {
-	const { candidate_issue, is_creating_issue } = this.props
 	return (
 
 	    <div className="issue_developer_details">
@@ -127,7 +122,7 @@ class IssueDeveloperDetails extends Component {
     
     render() {
 
-        const { is_visible, issue_id, issue, comments, is_loading,
+        const { is_visible, issue, comments, is_loading,
 		is_creating_issue, subject, description, number } = this.props
 
 	if ( ! is_visible ) {

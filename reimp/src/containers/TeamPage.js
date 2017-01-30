@@ -30,13 +30,13 @@ class TeamPage extends Component {
                     <PropertyStackComponent>
                         <div className="named-property">
                             <div className="named-property__name">Created</div>
-                            <div className="named-property__value"><Timestamp style="short-date" value={moment()}/></div>
+                            <div className="named-property__value"><Timestamp format="short-date" value={moment()}/></div>
                         </div>
                     </PropertyStackComponent>
                     <PropertyStackComponent>
                         <div className="named-property">
                             <div className="named-property__name">First Activity</div>
-                            <div className="named-property__value"><Timestamp style="short-date" value={moment()}/></div>
+                            <div className="named-property__value"><Timestamp format="short-date" value={moment()}/></div>
                         </div>
                     </PropertyStackComponent>
                 </PropertyStack>
@@ -46,8 +46,6 @@ class TeamPage extends Component {
 }
 
 function mapStateToProps(state) {
-    const {} = state
-
     return {}
 }
 

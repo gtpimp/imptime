@@ -11,7 +11,12 @@ class ToolbarButton extends Component {
     }
 
     onClick() {
-        console.log('click')
+        const {onClick} = this.props
+        if (onClick) {
+            onClick()
+        } else {
+            console.log('click (no delegate)')
+        }
     }
 
     render() {
@@ -21,7 +26,7 @@ class ToolbarButton extends Component {
                 'toolbar-button--enabled': style === 'toggle' && this.props.isEnabled,
                 'toolbar-button--disabled': style === 'toggle' && !this.props.isEnabled
             })}
-                 onClick={this.onClick()}>
+                 onClick={this.onClick}>
                 { this.props.icon &&
                 <div className="toolbar-button__icon"><i className="material-icons">{this.props.icon}</i></div>
                 }

@@ -15,8 +15,6 @@ class ClientsPage extends Component {
 }
 
 function mapStateToProps(state) {
-    const {} = state
-
     return {}
 }
 

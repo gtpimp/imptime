@@ -57,7 +57,7 @@ class ProjectsPage extends Component {
 
 function mapStateToProps(state) {
     const {project, item_list} = state
-    const items_by_id = project && project.items_by_id || {}
+    const items_by_id = (project && project.items_by_id) || {}
     const l = (item_list && item_list[LIST_KEY__PROJECT_LIST]) || {}
 
     const selected_items = items_by_id && l.selected_ids && l.selected_ids.map( function(selected_id, index) {

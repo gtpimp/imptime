@@ -1,18 +1,6 @@
-import React, {Component, PropTypes} from 'react'
+import React, {Component} from 'react'
 import {connect} from 'react-redux'
 import {browserHistory} from 'react-router'
-import {StickyContainer} from 'react-sticky';
-import { IssueDetails2 } from '../components/IssueDetails2'
-import {
-    LIST_KEY__PROJECT_LIST,
-    LIST_KEY__SPRINT_LIST,
-    LIST_KEY__ISSUE_LIST,
-    LIST_KEY__ISSUE_DEVELOPER_DETAILS
-} from '../actions/ItemListKeyRegistry'
-import {
-    expand_list,
-    selectItems
-} from '../actions/ItemList'
 
 class IssueSidebar extends Component {
 
@@ -28,7 +16,7 @@ class IssueSidebar extends Component {
 
     render() {
 
-        const { project_id, sprint_id, issue_id } = this.props
+        const { issue_id } = this.props
         
         return (
 
@@ -41,8 +29,6 @@ class IssueSidebar extends Component {
 }
 
 function mapStateToProps(state, props) {
-    const {} = state
-
     const { issue_id, sprint_id, project_id } = props
     return {
         issue_id: issue_id,

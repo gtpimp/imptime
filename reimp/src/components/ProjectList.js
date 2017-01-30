@@ -13,7 +13,6 @@ import {
     fetchProjectsIfNeeded
 } from '../actions/Projects'
 import Pagination from '../components/Pagination'
-import { Sticky } from 'react-sticky';
 
 class ProjectList extends Component {
 
@@ -60,7 +59,7 @@ class ProjectList extends Component {
     }
 
     onClickedProject(project_id) {
-	const { dispatch, onSelectProjects } = this.props
+	const { onSelectProjects } = this.props
         onSelectProjects([project_id])
     }
 
@@ -130,7 +129,6 @@ class ProjectList extends Component {
         return (
             <div style={{ opacity: is_loading ? 0.5 : 1 }}>
 		<div className="panel panel--default">
-		    <Sticky>
 			<div className="panel-heading" onClick={this.onCollapse}>
 			    <div className="panel__title">Projects</div>
 			    <div className="panel__buttons">
@@ -140,7 +138,6 @@ class ProjectList extends Component {
 			    </div>
 			</div>
 			<Pagination list_key={list_key} on_changed={this.onChangePage} />
-		    </Sticky>
                     <div className="panel-body">
 			<table className="table table--default" >
                             <tbody>
@@ -158,7 +155,7 @@ class ProjectList extends Component {
 
     render() {
 
-        const { is_loading, is_collapsed, is_expanded } = this.props
+        const { is_collapsed, is_expanded } = this.props
 
 	return (
 	    <div>
@@ -172,7 +169,7 @@ class ProjectList extends Component {
 function mapStateToProps(state, props) {
     const { project, item_list } = state
     const { list_key } = props
-    const items_by_id = project && project.items_by_id || {}
+    const items_by_id = (project && project.items_by_id) || {}
     const l = (item_list && item_list[list_key]) || {}
     const visible_item_ids = l.visible_item_ids || []
 

@@ -1,6 +1,10 @@
 import React, {Component} from 'react'
 import {connect} from 'react-redux'
 import {browserHistory} from 'react-router'
+import PropertyStack from '../components/PropertyStack'
+import PropertyStackComponent from '../components/PropertyStackComponent'
+import Timestamp from '../components/Timestamp'
+import moment from 'moment'
 
 class SprintSidebar extends Component {
 
@@ -20,6 +24,34 @@ class SprintSidebar extends Component {
         
         return (
             <div className="sprint_sidebar">
+                <PropertyStack>
+                    <PropertyStackComponent>
+                        <div className="property--parent-title">
+                            <div className="property-label-1">Katalyst</div>
+                        </div>
+                        <div className="property--title">
+                            <div className="property-label-2">Sprinasdfdsafdasfdsafasfasfdasfasfasfdsaasfasft 3</div>
+                        </div>
+                    </PropertyStackComponent>
+                    <PropertyStackComponent>
+                        <div className="property-text">Interactive Prototype and develppment of Nunc a adipiscing parturient ullamcorper parturient adipiscing scelerisque donec risus penatibus
+                            parturient.
+                        </div>
+                    </PropertyStackComponent>
+                    <PropertyStackComponent>
+                        <div className="named-property">
+                            <div className="named-property__name">Created</div>
+                            <div className="named-property__value"><Timestamp format="short-date" value={moment()}/></div>
+                        </div>
+                    </PropertyStackComponent>
+                    <PropertyStackComponent>
+                        <div className="named-property">
+                            <div className="named-property__name">First Activity</div>
+                            <div className="named-property__value"><Timestamp format="short-date" value={moment()}/></div>
+                        </div>
+                    </PropertyStackComponent>
+                </PropertyStack>
+
                 Sprint {sprint_id}
 
                 <pre>
@@ -33,8 +65,6 @@ class SprintSidebar extends Component {
 }
 
 function mapStateToProps(state, props) {
-    const {} = state
-
     const { sprint_id, project_id } = props
     return {
         sprint_id: sprint_id,

@@ -34,7 +34,7 @@ class LoginPage extends Component {
                 
                 Password: <input type="password" name="password" ref={(el) => { this.passwordInput = el }}/>
                 <br/>
-                <button class="btn btn-primary" onClick={this.onSubmitLogin}>Login</button>
+                <button className="btn btn-primary" onClick={this.onSubmitLogin}>Login</button>
                 
             </div>
         )

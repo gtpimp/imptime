@@ -44,6 +44,7 @@ function announceSprintsLoaded(payload) {
     let items_by_id = {}
     payload.sprints.map((item, index) => {
         items_by_id[item.id] = item
+		return
     });
     
     return {

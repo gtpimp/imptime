@@ -10,7 +10,7 @@ class Breadcrumb extends Component {
 
         return (
             <div className="breadcrumb">
-                <Link to={breadcrumb.to} {...props}>{breadcrumb.label}</Link>
+                <Link to={breadcrumb.to}>{breadcrumb.label}</Link>
                 { !is_last &&
                 <div className="breadcrumb__separator"><i className="material-icons">chevron_right</i></div>
                 }

@@ -1,7 +1,5 @@
-import merge from 'lodash/merge'
 import { routerReducer as routing } from 'react-router-redux'
 import { combineReducers } from 'redux'
-import map from 'lodash/map'
 import auth from './auth'
 import breadcrumbs from './breadcrumbs'
 import filter from './filter'
@@ -14,6 +12,7 @@ import notification_bar from './notification_bar.js'
 import project from './project'
 import rie from './rie'
 import sprint from './sprint'
+import toolbar from './toolbar'
 import user from './user'
 import websockets from './websockets'
 import settings from './settings'
@@ -32,6 +31,7 @@ const rootReducer = combineReducers({
     rie,
     routing,
     sprint,
+    toolbar,
     user,
     websockets,
     settings

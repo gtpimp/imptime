@@ -4,7 +4,6 @@ const ACTIONS_TO_IGNORE = []
 
 function error_catcher_middleware(_ref) {
     var dispatch = _ref.dispatch;
-    var getState = _ref.getState;
 
     return function (next) {
 	return function (action) {
