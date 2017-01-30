@@ -51,8 +51,10 @@ class ToolBar extends Component {
 function mapStateToProps(state, props) {
     const {breadcrumbs, toolbar} = state
 
+    const page_toolbars = state.page.toolbar_names || []
+    
     return {
-        panelIds: toolbar.panelIds || ['issue', 'issues', 'project', 'projects', 'sprint', 'sprints', 'list'],
+        panelIds: page_toolbars, // ['issue', 'issues', 'project', 'projects', 'sprint', 'sprints', 'list'],
         breadcrumbs: breadcrumbs
     }
 }

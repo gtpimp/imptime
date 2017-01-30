@@ -95,7 +95,7 @@ class Issue extends Component {
         const estimate_list = map(issue.all_estimates, function(estimate, index) {
             if ( estimate.estimate_hours ) {
                 return (
-                  <div>{estimate.user.username}:{format_hours(estimate.estimate_hours)}</div>
+                  <div key={estimate.user.id}>{estimate.user.username}:{format_hours(estimate.estimate_hours)}</div>
                 )
             } else {
                 return null

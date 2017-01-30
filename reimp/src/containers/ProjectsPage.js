@@ -6,11 +6,16 @@ import {StickyContainer} from 'react-sticky';
 import { setBreadcrumbs } from '../actions/Breadcrumbs'
 import {
     LIST_KEY__PROJECT_LIST,
+    PAGE_KEY__PROJECTS_PAGE
 } from '../actions/ItemListKeyRegistry'
 import {
     selectItems,
     expand_list
 } from '../actions/ItemList'
+import {
+    set_toolbars,
+    select_projects
+} from '../actions/Page'
 
 class ProjectsPage extends Component {
 
@@ -23,27 +28,28 @@ class ProjectsPage extends Component {
         const {dispatch} = this.props
         dispatch(expand_list(LIST_KEY__PROJECT_LIST))
         dispatch(setBreadcrumbs([ {to: '/projects', label: 'All Projects'} ]))
+        dispatch(set_toolbars(PAGE_KEY__PROJECTS_PAGE, ['projects']))
     }
 
     onSelectProjects(project_ids) {
         const { dispatch } = this.props
         dispatch(selectItems(LIST_KEY__PROJECT_LIST, project_ids))
+        dispatch(select_projects(PAGE_KEY__PROJECTS_PAGE, project_ids))
 
         /* if ( project_ids.length == 1 ) {
          *     browserHistory.push('/projects/'+project_ids[0]);
          * }*/
     }
-
+            
     render() {
  
-        const { selected_projects } = this.props
-        const selected_project = ( selected_projects && selected_projects.length > 0 && selected_projects[0] ) || null
+        const { selected_project_id } = this.props
         
         return (
             <div>
                 <StickyContainer>
-                    { selected_project && 
-                      <ProjectSidebar project_id={selected_project.id}/>
+                    { selected_project_id && 
+                      <ProjectSidebar project_id={selected_project_id}/>
                     }
                     <ProjectList key="projects"
                                  list_key={LIST_KEY__PROJECT_LIST}
@@ -56,17 +62,13 @@ class ProjectsPage extends Component {
 }
 
 function mapStateToProps(state) {
-    const {project, item_list} = state
-    const items_by_id = (project && project.items_by_id) || {}
-    const l = (item_list && item_list[LIST_KEY__PROJECT_LIST]) || {}
-
-    const selected_items = items_by_id && l.selected_ids && l.selected_ids.map( function(selected_id, index) {
-	return items_by_id[selected_id] || { 'id': selected_id,
-					     'loaded': false }
-    })
-
+    const {project, page} = state
+    const selected_project_ids = page.project_ids || []
+    const selected_project_id = (selected_project_ids && selected_project_ids.length > 0 && selected_project_ids[0]) || null
+    
     return {
-        selected_projects: selected_items
+        selected_project_ids: selected_project_ids,
+        selected_project_id: selected_project_id,
     }
 }
 

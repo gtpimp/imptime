@@ -9,6 +9,7 @@ import issue from './issue'
 import issue_general_details from './issue_general_details'
 import loading from './loading'
 import notification_bar from './notification_bar.js'
+import page from './page'
 import project from './project'
 import rie from './rie'
 import sprint from './sprint'
@@ -27,6 +28,7 @@ const rootReducer = combineReducers({
     item_list,
     loading,
     notification_bar,
+    page,
     project,
     rie,
     routing,
