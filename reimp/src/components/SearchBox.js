@@ -1,8 +1,6 @@
 import React, {Component} from 'react'
 import {connect} from 'react-redux'
 import '../sass/search-box.css'
-import RIEModeToggler from '../widgets/RIEModeToggler'
-import RIEInput from '../widgets/RIEInput'
 import {updateGlobalFilter} from '../actions/Filter'
 
 
@@ -25,18 +23,7 @@ class SearchBox extends Component {
         return (
             <div className="search-box">
                 <div className="search-box__component search-box__icon"><i className="material-icons">search</i></div>
-                <div className="search-box__component search-box__component--textfield">
-                    <RIEModeToggler
-                        rie_key="filter_box"
-                        initialValue={global_filter}
-                        onChange={this.onFilter}
-                    >
-                        <RIEInput className="search-box__textfield" placeholder="Search ImpTime" />
-                        <div className="header_bar__filter_box__current_value">
-                            {global_filter}
-                        </div>
-                    </RIEModeToggler>
-                </div>
+                <input className="search-box__textfield" type="text" placeholder="Search Imptime"/>
                 <div className="search-box__component search-box__icon"><i className="material-icons">arrow_drop_down</i></div>
             </div>
         )

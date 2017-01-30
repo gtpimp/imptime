@@ -15,19 +15,19 @@ class ToolBar extends Component {
     renderPanel(id) {
         switch(id) {
             case 'issue':
-                return <IssueToolbarPanel/>
+                return <IssueToolbarPanel key="issue-panel"/>
             case 'issues':
-                return <IssuesToolbarPanel/>
+                return <IssuesToolbarPanel key="issues-panel"/>
             case 'list':
-                return <ListToolbarPanel/>
+                return <ListToolbarPanel key="list-panel"/>
             case 'project':
-                return <ProjectToolbarPanel/>
+                return <ProjectToolbarPanel key="project-panel"/>
             case 'projects':
-                return <ProjectsToolbarPanel/>
+                return <ProjectsToolbarPanel key="projects-panel"/>
             case 'sprint':
-                return <SprintToolbarPanel/>
+                return <SprintToolbarPanel key="sprint-panel"/>
             case 'sprints':
-                return <SprintsToolbarPanel/>
+                return <SprintsToolbarPanel key="sprints-panel"/>
             default:
                 throw new Error("Unsupported toolbar panel:", id)
         }

@@ -6,7 +6,7 @@
   align-items: center;
   //width: 744px;
   //height: 40px;
-  background-color: #F5F5F5;
+  background-color: $color-4;
   border-radius: 3px;
   display: flex;
   padding-left: 11px;
@@ -25,6 +25,11 @@
 }
 
 .search-box__textfield {
+  background-color: $color-4;
+  border: 0;
+  font: $font-1;
   height: 40px;
+  margin-left: 20px;
   width: 700px;
+  outline: none;
 }
