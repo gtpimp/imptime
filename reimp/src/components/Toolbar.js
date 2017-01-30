@@ -2,9 +2,9 @@ import React, {Component} from 'react'
 import {connect} from 'react-redux'
 import '../sass/toolbar.css'
 import Breadcrumbs from './Breadcrumbs'
-import ProjectToolbarPanel from './ProjectToolbarPanel'
+import ProjectDashboardToolbarPanel from './ProjectDashboardToolbarPanel'
 import ProjectsToolbarPanel from './ProjectsToolbarPanel'
-import SprintToolbarPanel from './SprintToolbarPanel'
+import SprintDashboardToolbarPanel from './SprintDashboardToolbarPanel'
 import SprintsToolbarPanel from './SprintsToolbarPanel'
 import IssueToolbarPanel from './IssueToolbarPanel'
 import IssuesToolbarPanel from './IssuesToolbarPanel'
@@ -20,12 +20,12 @@ class ToolBar extends Component {
                 return <IssuesToolbarPanel key="issues-panel"/>
             case 'list':
                 return <ListToolbarPanel key="list-panel"/>
-            case 'project':
-                return <ProjectToolbarPanel key="project-panel"/>
+            case 'project-dashboard':
+                return <ProjectDashboardToolbarPanel key="project-dashboard-panel"/>
             case 'projects':
                 return <ProjectsToolbarPanel key="projects-panel"/>
-            case 'sprint':
-                return <SprintToolbarPanel key="sprint-panel"/>
+            case 'sprint-dashboard':
+                return <SprintDashboardToolbarPanel key="sprint-dashboard-panel"/>
             case 'sprints':
                 return <SprintsToolbarPanel key="sprints-panel"/>
             default:

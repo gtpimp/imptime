@@ -3,7 +3,7 @@ import {connect} from 'react-redux'
 import '../sass/toolbar-panel.css'
 import ToolbarButton from './ToolbarButton'
 
-class SprintToolbarPanel extends Component {
+class SprintDashboardToolbarPanel extends Component {
 
     onDeleteSprintClick() {
         console.log('delete sprint clicked')
@@ -29,4 +29,4 @@ function mapStateToProps(state, props) {
 }
 
 
-export default connect(mapStateToProps)(SprintToolbarPanel)
+export default connect(mapStateToProps)(SprintDashboardToolbarPanel)
