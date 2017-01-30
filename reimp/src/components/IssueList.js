@@ -8,6 +8,7 @@ import RIEInput from '../widgets/RIEInput'
 import RIEModeToggler from '../widgets/RIEModeToggler'
 import {connect} from 'react-redux'
 import TagEditor from '../components/TagEditor'
+import EstimateEditor from '../components/EstimateEditor'
 import {
     initList,
     invalidateList,
@@ -53,6 +54,8 @@ class IssueList extends Component {
         this.ungroupTogether = this.ungroupTogether.bind(this)
         this.openTagEditor = this.openTagEditor.bind(this)
         this.closeTagEditor = this.closeTagEditor.bind(this)
+        this.openEstimateEditor = this.openEstimateEditor.bind(this)
+        this.closeEstimateEditor = this.closeEstimateEditor.bind(this)
     }
 
     componentDidMount() {
@@ -210,6 +213,21 @@ class IssueList extends Component {
         this.setState({'tag_editor_open': false})
     }
 
+    openEstimateEditor(event) {
+        const {selected_ids} = this.props
+        event.stopPropagation()
+        if (selected_ids.length === 0) {
+            alert("Please select at least one issue to estimate")
+            return
+        }
+
+        this.setState({'estimate_editor_open': true})
+    }
+
+    closeEstimateEditor() {
+        this.setState({'estimate_editor_open': false})
+    }
+
     reorderIssue(moving_issue_id, move_after_issue_id) {
         const {dispatch, list_key} = this.props
         console.log("Moving " + moving_issue_id + " to after " + move_after_issue_id)
@@ -278,6 +296,7 @@ class IssueList extends Component {
         } = this.props
 
         const tag_editor_open = (this.state || {}).tag_editor_open || false
+        const estimate_editor_open = (this.state || {}).estimate_editor_open || false
 
         if (!is_visible) {
             return (<div></div>)
@@ -347,10 +366,17 @@ class IssueList extends Component {
 
         return (
             <div className="issue-list" style={{opacity: is_loading ? 0.5 : 1}}>
+
+                <button onClick={this.openEstimateEditor}>Estimates</button>
+                
                 <TagEditor isOpen={tag_editor_open}
                            selected_items={selected_items}
                            selected_ids={selected_ids}
                            closeTagEditor={this.closeTagEditor}/>
+                <EstimateEditor isOpen={estimate_editor_open}
+                                selected_items={selected_items}
+                                selected_ids={selected_ids}
+                                closeEstimateEditor={this.closeEstimateEditor}/>
                 <div className="issue-list__inner">
                     <table className="table">
                         <thead>
@@ -363,7 +389,7 @@ class IssueList extends Component {
                             { false && <th className="issue-list__header">Feature</th>}
                             { false && <th className="issue-list__header">Sprint</th>}
                             <th className="issue-list__header">Progress</th>
-                            { false && <th className="issue-list__header">Estimates</th> }
+                            <th className="issue-list__header">Estimates</th>
                             <th className="issue-list__header">Tags</th>
                             <th className="issue-list__header">My time</th>
                         </tr>
