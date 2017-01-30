@@ -79,17 +79,17 @@ class IssueList extends Component {
     }
 
     onClickedIssue(event, issue_id) {
-	const { dispatch, list_key, selected_ids } = this.props
+        const {dispatch, list_key, selected_ids} = this.props
         event.stopPropagation()
 
-        if ( event.ctrlKey ) {
-            if ( includes(selected_ids, issue_id) ) {
+        if (event.ctrlKey) {
+            if (includes(selected_ids, issue_id)) {
                 dispatch(selectItems(list_key, difference(selected_ids, [issue_id])))
             } else {
                 dispatch(selectItems(list_key, union(selected_ids, [issue_id])))
             }
         } else {
-	    dispatch(selectItems(list_key, [issue_id]))
+            dispatch(selectItems(list_key, [issue_id]))
         }
     }
 
@@ -131,7 +131,7 @@ class IssueList extends Component {
         event.stopPropagation()
         const {dispatch, selected_ids, selected_items} = this.props
         const current_value = selected_items[0].can_group_issues === true || false
-        const new_value = ! current_value
+        const new_value = !current_value
         dispatch(updateIssueToggleAsFeature(selected_ids, new_value))
     }
 
@@ -139,22 +139,22 @@ class IssueList extends Component {
         const {dispatch, list_key, selected_ids, selected_items, expanded_issues} = this.props
         event.stopPropagation()
         const currently_expanded = includes(expanded_issues, selected_items[0].id)
-        const new_value = ! currently_expanded
+        const new_value = !currently_expanded
         dispatch(setItemFlag(list_key, selected_ids, 'expanded_issues', new_value))
     }
 
     groupTogether(event) {
-        const { selected_ids, selected_items, dispatch } = this.props
+        const {selected_ids, selected_items, dispatch} = this.props
         event.stopPropagation()
-        if ( selected_ids.length === 1 ) {
+        if (selected_ids.length === 1) {
             alert("Please select a single feature issue and at least one other issue to group together")
             return
         }
         let feature_issue = null
         let ok_to_group = true
-        map(selected_items, function(issue) {
-            if ( issue.can_group_issues ) {
-                if ( feature_issue ) {
+        map(selected_items, function (issue) {
+            if (issue.can_group_issues) {
+                if (feature_issue) {
                     alert("Please select only one feature issue to group with")
                     ok_to_group = false
                 } else {
@@ -162,11 +162,11 @@ class IssueList extends Component {
                 }
             }
         })
-        if ( feature_issue === null ) {
+        if (feature_issue === null) {
             alert("Please select a feature issue to group into")
             ok_to_group = false
         }
-        if ( ! ok_to_group ) {
+        if (!ok_to_group) {
             return
         }
 
@@ -175,34 +175,34 @@ class IssueList extends Component {
     }
 
     ungroupTogether(event) {
-        const { selected_ids, selected_items, dispatch } = this.props
+        const {selected_ids, selected_items, dispatch} = this.props
         event.stopPropagation()
         let ok_to_ungroup = true
         let feature_issue_ids = []
-        map(selected_items, function(issue) {
-            if ( issue.can_group_issues ) {
+        map(selected_items, function (issue) {
+            if (issue.can_group_issues) {
                 feature_issue_ids = merge(feature_issue_ids, [issue.id])
             }
         })
         const children_issue_ids = difference(selected_ids, feature_issue_ids)
-        if ( children_issue_ids.length === 0 ) {
+        if (children_issue_ids.length === 0) {
             alert("Please select at least one child issue to ungroup")
             ok_to_ungroup = false
         }
-        if ( ! ok_to_ungroup ) {
+        if (!ok_to_ungroup) {
             return
         }
         dispatch(ungroupIssuesIntoFeature(children_issue_ids))
     }
 
     openTagEditor(event) {
-        const { selected_ids } = this.props
+        const {selected_ids} = this.props
         event.stopPropagation()
-        if ( selected_ids.length === 0 ) {
+        if (selected_ids.length === 0) {
             alert("Please select at least one issue to tag")
             return
         }
-        
+
         this.setState({'tag_editor_open': true})
     }
 
@@ -222,26 +222,28 @@ class IssueList extends Component {
 
     render_collapsed() {
 
-        const {selected_items,
-               selected_ids, loading_item_ids, list_key,
-               expanded_issues} = this.props
+        const {
+            selected_items,
+            selected_ids, loading_item_ids, list_key,
+            expanded_issues
+        } = this.props
 
         return (
             <div className="panel panel--collapsed">
-                    <div className="panel-heading" onClick={this.onExpand}>
-                        <div className="panel__title">{ selected_items.map((issue, index) =>
-                            <Issue
-                                key={list_key + issue.id + index}
-                                is_collapsed={true}
-                                show_children={includes(expanded_issues, issue.id)}
-                                reorderIssue={this.reorderIssue}
-                                onClickedIssue={(event) => this.onClickedIssue(event, issue.id)}
-                                is_loading={loading_item_ids.indexOf(issue.id) !== -1}
-                                is_selected={selected_ids.indexOf(issue.id) !== -1}
-                                issue_id={issue.id}/>
-                        )}
-                        </div>
+                <div className="panel-heading" onClick={this.onExpand}>
+                    <div className="panel__title">{ selected_items.map((issue, index) =>
+                        <Issue
+                            key={list_key + issue.id + index}
+                            is_collapsed={true}
+                            show_children={includes(expanded_issues, issue.id)}
+                            reorderIssue={this.reorderIssue}
+                            onClickedIssue={(event) => this.onClickedIssue(event, issue.id)}
+                            is_loading={loading_item_ids.indexOf(issue.id) !== -1}
+                            is_selected={selected_ids.indexOf(issue.id) !== -1}
+                            issue_id={issue.id}/>
+                    )}
                     </div>
+                </div>
             </div>
         )
     }
@@ -276,7 +278,7 @@ class IssueList extends Component {
         } = this.props
 
         const tag_editor_open = (this.state || {}).tag_editor_open || false
-        
+
         if (!is_visible) {
             return (<div></div>)
         }
@@ -293,7 +295,7 @@ class IssueList extends Component {
 
             const show_issue = !issue.parent_group_id || includes(expanded_issues, issue.parent_group_id)
 
-            if ( issue.parent_group_id && issue.parent_group_id !== running_parent_issue_id ) {
+            if (issue.parent_group_id && issue.parent_group_id !== running_parent_issue_id) {
                 // this happens if the issue is separated from its group parent by another issue,
                 // so insert a 'fake' feature issue
                 issue_rows.push(
@@ -314,7 +316,7 @@ class IssueList extends Component {
                 running_parent_issue_id = issue.parent_group_id
             }
 
-            if ( show_issue ) {
+            if (show_issue) {
                 issue_rows.push(
                     <Issue
                         key={list_key + issue.id + index}
@@ -330,12 +332,12 @@ class IssueList extends Component {
                     />
                 )
             }
-                
+
             if (is_creating_issue && candidate_issue.issue_id_before === issue.id) {
                 issue_rows.push(that.render_candidate_issue())
             }
 
-            if ( issue.can_group_issues ) {
+            if (issue.can_group_issues) {
                 running_parent_issue_id = issue.id
             } else {
                 running_parent_issue_id = issue.parent_group_id
@@ -345,86 +347,37 @@ class IssueList extends Component {
 
         return (
             <div className="issue-list" style={{opacity: is_loading ? 0.5 : 1}}>
-
                 <TagEditor isOpen={tag_editor_open}
                            selected_items={selected_items}
                            selected_ids={selected_ids}
-                           closeTagEditor={this.closeTagEditor} />
-                <div className="panel panel--full">
-                        <div className="panel-heading" onClick={this.onCollapse}>
-                            <div className="panel__title">Issues</div>
-                            <div className="panel__buttons">
-                                { at_least_one_issue_selected &&
-
-                                  <div className="panel__button panel__button--toggle_as_feature"
-                                       onClick={this.toggleAsFeature}>
-                                  </div>
-                                }
-                                { at_least_one_issue_selected &&
-                                  <div className="panel__button panel__button--group_together"
-                                       onClick={this.groupTogether}>
-                                  </div>
-                                }
-                                { at_least_one_issue_selected &&
-                                  <div className="panel__button panel__button--ungroup_together"
-                                       onClick={this.ungroupTogether}>
-                                  </div>
-                                }
-                                { at_least_one_issue_selected &&
-                                  <div className="panel__button panel__button--toggle_expand_features"
-                                       onClick={this.toggleExpandFeatures}>
-                                  </div>
-                                }
-                                { at_least_one_issue_selected &&
-                                  <div className="panel__button panel__button--add_tag"
-                                       onClick={this.openTagEditor}>
-                                  </div>
-                                }
-                                <div className="panel__button panel__button--refresh"
-                                     onClick={this.onRefresh}>
-                                </div>
-                                <div className="panel__button panel__button--add"
-                                     onClick={this.onStartCandidateIssue}>
-                                </div>
-                            </div>
-                        </div>
-                        <Pagination list_key={list_key} on_changed={this.onChangePage}/>
-                    <div className="panel-body">
-                        <div className="xissue_list__panel-body__left">
-                            <div className="issue-list__inner">
-                                <Toolbar> </Toolbar>
-                                <table className="table xtable--compact">
-                                    <thead>
-                                    <tr className="issue-list__headers">
-                                        <th className="issue-list__header">#</th>
-                                        <th className="issue-list__header"></th>
-                                        <th className="issue-list__header">Name</th>
-                                        <th className="issue-list__header">Assignee</th>
-                                        <th className="issue-list__header">Status</th>
-                                        { false && <th className="issue-list__header">Feature</th>}
-                                        { false && <th className="issue-list__header">Sprint</th>}
-                                        <th className="issue-list__header">Progress</th>
-                                        { false && <th className="issue-list__header">Estimates</th> }
-                                        <th className="issue-list__header">Tags</th>
-                                        <th className="issue-list__header">My time</th>
-                                    </tr>
-                                    </thead>
-                                    <tbody>
-                                    {issue_rows}
-                                    </tbody>
-                                </table>
-                                { !is_loading && !has_items &&
-                                <div className="table__no-rows">no issues</div>
-                                }
-                            </div>
-                        </div>
-                        <div className="issue_list__panel-body__right">
-                                {this.props.children}
-                        </div>
-                    </div>
+                           closeTagEditor={this.closeTagEditor}/>
+                <div className="issue-list__inner">
+                    <table className="table">
+                        <thead>
+                        <tr className="issue-list__headers">
+                            <th className="issue-list__header">#</th>
+                            <th className="issue-list__header"></th>
+                            <th className="issue-list__header">Name</th>
+                            <th className="issue-list__header">Assignee</th>
+                            <th className="issue-list__header">Status</th>
+                            { false && <th className="issue-list__header">Feature</th>}
+                            { false && <th className="issue-list__header">Sprint</th>}
+                            <th className="issue-list__header">Progress</th>
+                            { false && <th className="issue-list__header">Estimates</th> }
+                            <th className="issue-list__header">Tags</th>
+                            <th className="issue-list__header">My time</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        {issue_rows}
+                        </tbody>
+                    </table>
+                    { !is_loading && !has_items &&
+                    <div className="table__no-rows">no issues</div>
+                    }
                 </div>
-
             </div>
+
         )
     }
 

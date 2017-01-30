@@ -18,11 +18,6 @@ class Toolbar extends Component {
                     </div>
                 </div>
                 <div className="toolbar__container">
-                    {actions.each((action) => {
-                        <div className="toolbar__item toolbar__item--icon-button">
-                            <ToolbarButton onClick={action.onClick} icon={action.icon}/>
-                        </div>
-                    })}
                     <div className="toolbar__item toolbar__item--icon-button">
                         <div className="icon--info"/>
                     </div>
@@ -43,10 +38,7 @@ class Toolbar extends Component {
 }
 
 function mapStateToProps(state, props) {
-    const {toolbar} = this.state
-    console.log(toolbar)
     return {
-        actions: toolbar.actions
     }
 }
 

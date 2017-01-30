@@ -2,7 +2,6 @@ import React, {Component} from 'react'
 import {connect} from 'react-redux'
 import IssueSidebar from '../components/IssueSidebar'
 import IssueList from '../components/IssueList'
-import {StickyContainer} from 'react-sticky'
 import { setBreadcrumbs } from '../actions/Breadcrumbs'
 import {
     LIST_KEY__ISSUE_LIST,
@@ -12,6 +11,7 @@ import {
     update_list_filter,
     invalidateList
 } from '../actions/ItemList'
+import {setActions} from '../actions/Toolbar'
 
 class IssuesPage extends Component {
 
@@ -38,6 +38,33 @@ class IssuesPage extends Component {
                                       {to: '/projects/'+project_id+'/sprints', label: 'All Sprints'},
                                       {to: '/projects/'+project_id+'/sprints/'+sprint_id, label: sprint_id},
                                       {to: '/projects/'+project_id+'/sprints/'+sprint_id+'/issues', label: 'All Issues'}]))
+            dispatch(setActions([
+                {
+                    icon: 'toggle-as-feature',
+                    onClick: this.toggleAsFeature
+                },
+                {
+                    icon: 'group-together',
+                    onClick: this.groupTogether
+                },
+                {
+                    icon: 'ungroup-together',
+                    onClick: this.ungroupTogether
+                },
+                {
+                    icon: 'expand_features',
+                    onClick: this.toggleExpandFeatures
+                },
+                {
+                    icon: 'add_tag',
+                    onClick: this.openTagEditor
+                },
+                {
+                    icon: 'add',
+                    onClick: this.onStartCandidateIssue
+                }
+            ]))
+
         }
     }
 
@@ -46,18 +73,17 @@ class IssuesPage extends Component {
         const { sprint_id, project_id, selected_issues } = this.props
 
         const selected_issue = ( selected_issues && selected_issues.length > 0 && selected_issues[0] ) || null
-        
+
         return (
-            <div>
-                <StickyContainer>
-                    { selected_issue && 
-                      <IssueSidebar issue_id={selected_issue.id} sprint_id={sprint_id} project_id={project_id}/>
-                    }
-                    { sprint_id &&
-                      <IssueList list_key={LIST_KEY__ISSUE_LIST} />
-                    }
-                </StickyContainer>
-                
+            <div className="list-layout">
+                <div className="list-layout__list">
+                    <IssueList list_key={LIST_KEY__ISSUE_LIST} />
+                </div>
+                { sprint_id && selected_issue &&
+                <div className="list-layout__sidebar">
+                    <IssueSidebar issue_id={selected_issue.id} sprint_id={sprint_id} project_id={project_id}/>
+                </div>
+                }
             </div>
         )
     }
