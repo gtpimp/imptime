@@ -15,9 +15,13 @@ class EstimateEditor extends Component {
     }
 
     saveEstimate(raw_estimate) {
-        const { dispatch } = this.props
-        const estimate_hours = raw_estimate
-        const {closeEstimateEditor, selected_ids} = this.props
+        const { dispatch, closeEstimateEditor, selected_ids } = this.props
+        let estimate_hours = raw_estimate
+        if ( estimate_hours.indexOf(":")>-1 ) {
+            const parts = estimate_hours.split(":")
+            estimate_hours = parseFloat(parts[0]) + parseFloat(parts[1])/60
+        }
+        
         dispatch(addEstimate(selected_ids, estimate_hours, closeEstimateEditor))
     }
 
@@ -39,7 +43,7 @@ class EstimateEditor extends Component {
                      )
                  })}
 
-                     Enter in hours, using a decimal point for fractions of an hour.
+                     Enter in hours, using either a decimal point for fractions of an hour, or HH:MM
 
                      <RIEModeToggler initialValue=""
                                      propName="raw_estimate"

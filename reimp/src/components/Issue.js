@@ -20,6 +20,7 @@ import Progress from '../components/Progress'
 import Timer from '../components/Timer'
 import Tag from '../components/Tag'
 import {DndTypes} from '../actions/Dnd'
+import { format_hours } from '../actions/lib'
 
 const ISSUE_STATUS_CHOICES = [
     {value: 'new', label: 'new'},
@@ -91,11 +92,16 @@ class Issue extends Component {
 
     renderEstimates() {
         const { issue } = this.props
-        map(issue.all_estimates, function(estimate, index) {
-            return (
-                <div>{estimate.user.username}:{estimate.estimate_hours}</div>
-            )
+        const estimate_list = map(issue.all_estimates, function(estimate, index) {
+            if ( estimate.estimate_hours ) {
+                return (
+                  <div>{estimate.user.username}:{format_hours(estimate.estimate_hours)}</div>
+                )
+            } else {
+                return null
+            }
         })
+        return estimate_list
     }
 
     render_collapsed() {
@@ -215,10 +221,9 @@ class Issue extends Component {
                     <td className="issue__cell issue__cell--progress">
                         <Progress issue={issue} />
                     </td>
-                    { <td className="issue__cell issue__cell--estimates">
+                    <td className="issue__cell issue__cell--estimates">
                         {this.renderEstimates()}
                     </td>
-                    }
                     <td className="issue__cell issue__cell--tags">
                         { map(issue.tags, function(tag, index) {
                               return (<Tag key={index}

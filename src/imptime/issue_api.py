@@ -63,7 +63,7 @@ class IssueViewSet(BaseViewSet):
                                                               queryset=Entry.objects.select_related('user').filter(end_time__isnull=False)))\
                                    .prefetch_related(Prefetch('entries', to_attr='my_entries',
                                                               queryset=Entry.objects.filter(user=request.user).select_related('user')))\
-                                   .prefetch_related(Prefetch('issue_points'))\
+                                   .prefetch_related(Prefetch('issue_points', to_attr='all_estimates'))\
                                    .prefetch_related(Prefetch('issue_points__user'))\
                                    .prefetch_related(Prefetch('entries', to_attr='my_clocked_in_entries',
                                                               queryset=Entry.objects.filter(user=request.user).select_related('user').filter(end_time__isnull=True)))

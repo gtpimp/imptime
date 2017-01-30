@@ -36,6 +36,7 @@ class IssueEstimateViewSet(BaseViewSet):
                 IssueHistory.add_history(user, points.issue,
                                          "changed estimate for %s"%points.user,
                                          old_points, points.points)
+                issue.save()
 
             data = {'status': 'success'}
             
