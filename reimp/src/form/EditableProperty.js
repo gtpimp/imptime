@@ -51,7 +51,7 @@ class EditableProperty extends Component {
     
     render() {
 
-        const {children, initial_value, is_readonly, is_editing, is_empty} = this.props
+        const {children, initial_value, is_readonly, is_editing, is_empty, onChange} = this.props
 
 	const that = this
 	let editing_child = null
@@ -62,7 +62,7 @@ class EditableProperty extends Component {
 	    if ( index === 0 ) {
 		editing_child = React.cloneElement(child, {
 		    initial_value: initial_value,
-                    onChange: that.onChange,
+                    onChange: onChange,
                     onKeyDown: that.keyDown
 		})
 	    } else if ( index === 1 ) {

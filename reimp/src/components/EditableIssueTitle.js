@@ -17,7 +17,8 @@ class EditableIssueTitle extends Component {
 
     onChange(new_value) {
         const { dispatch, issue } = this.props
-        dispatch(updateIssueSubject(issue.id, new_value))
+        console.log(new_value)
+        dispatch(updateIssueSubject(issue.id, new_value.title))
     }
 
     render() {
