@@ -57,7 +57,7 @@ class OtherUser extends Component {
 function mapStateToProps(state, props) {
     const { value, render_mode, loading_value } = props
     const user_id = value
-    const user = getUser(state, user_id) || { 'loaded': false, 'id': user_id }
+    const user = (user_id && (getUser(state, user_id)) || { 'loaded': false, 'id': user_id }) || { 'username': 'no-one' }
     
     return {
 	user: user,
