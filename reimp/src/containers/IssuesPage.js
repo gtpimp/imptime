@@ -18,7 +18,8 @@ import {
 // import {setActions} from '../actions/Toolbar'
 import {
     set_toolbars,
-    select_issues
+    select_issues,
+    get_selected_issue_ids
 } from '../actions/Page'
 import {ensureProjectsLoaded, getProject} from '../actions/Projects'
 import {ensureSprintsLoaded, getSprint} from '../actions/Sprints'
@@ -128,8 +129,9 @@ function mapStateToProps(state, props) {
 
     const {issue, item_list, page} = state
     const items_by_id = (issue && issue.items_by_id) || {}
-    const l = (item_list && item_list[LIST_KEY__ISSUE_LIST]) || {}
-    const selected_items = items_by_id && l.selected_ids && l.selected_ids.map( function(selected_id, index) {
+
+    const selected_issue_ids = get_selected_issue_ids(state, PAGE_KEY__ISSUES_PAGE)
+    const selected_items = items_by_id && selected_issue_ids && selected_issue_ids.map( function(selected_id, index) {
 	return items_by_id[selected_id] || { 'id': selected_id,
 					     'loaded': false }
     })

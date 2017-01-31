@@ -1,5 +1,5 @@
 import { impfetch } from './lib.js'
-import { fetchListIfNeeded } from './ItemList'
+import { fetchListIfNeeded, getMissingItemIds } from './ItemList'
 import { ENTITY_KEY__ISSUE } from '../actions/ItemListKeyRegistry'
 
 export const ANNOUNCE_ISSUES_LOADED = 'ANNOUNCE_ISSUES_LOADED'
@@ -79,4 +79,20 @@ export function fetchIssuesIfNeeded(list_key) {
     const matching_items_key = ENTITY_KEY__ISSUE
     const matching_items_promise_func = fetchIssuesPromise
     return fetchListIfNeeded(list_key, matching_items_key, matching_items_promise_func)
+}
+
+export function ensureIssuesLoaded(issue_ids) {
+    return (dispatch, getState) => {
+        const state = getState()
+
+        const issue_ids_to_load = getMissingItemIds(state, issue_ids, 'issue')
+        if ( issue_ids_to_load.length > 0 ) {
+            fetchIssuesPromise(dispatch, state, issue_ids_to_load)
+        }
+    }
+}
+
+export function getIssue(state, issue_id) {
+    // Only gets the issue if it's already loaded
+    return ((state.issue || {}).items_by_id || {})[issue_id] || null
 }

@@ -67,3 +67,15 @@ export function select_projects(page_key, project_ids) {
         project_ids: project_ids
     }
 }
+
+export function get_selected_project_ids(state, page_key) {
+    return (((state ||{}).page || {})[page_key] || {}).project_ids || []
+}
+
+export function get_selected_sprint_ids(state, page_key) {
+    return (((state ||{}).page || {})[page_key] || {}).sprint_ids || []
+}
+
+export function get_selected_issue_ids(state, page_key) {
+    return (((state ||{}).page || {})[page_key] || {}).issue_ids || []
+}
