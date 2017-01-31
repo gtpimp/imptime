@@ -10,6 +10,7 @@ import EditableIssueAssignedUser from '../components/EditableIssueAssignedUser'
 import Timestamp from './Timestamp'
 import moment from 'moment'
 import Sidebar from './Sidebar'
+import OtherUser from '../components/OtherUser'
 import {ensureIssuesLoaded, getIssue} from '../actions/Issues'
 
 class IssueSidebar extends Component {
@@ -46,6 +47,8 @@ class IssueSidebar extends Component {
 
                   <div>
                       #{issue.number}
+
+                      <OtherUser value={issue.assigned_to_id}/>
                       
                       <EditableIssueTitle issue={issue} />
                       <EditableIssueDescription issue={issue} />

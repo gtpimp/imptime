@@ -17,7 +17,7 @@ class OtherUser extends Component {
 
     refresh() {
 	const { dispatch, user_id, user } = this.props
-	if ( user.loaded === false ) {
+	if ( user && user.loaded === false ) {
 	    dispatch(ensureUsersLoaded([user_id]))
 	}
     }
@@ -36,8 +36,12 @@ class OtherUser extends Component {
     }
     
     render() {
-        const { user, render_mode, loading_value, onClick } = this.props
+        const { user_id, user, render_mode, loading_value, onClick } = this.props
 
+        if ( ! user_id ) {
+            return ( <div onClick={onClick}>No-one</div> )
+        }
+        
 	if ( user.loaded === false ) {
 	    return ( <div onClick={onClick}>{loading_value}</div> )
 	}
@@ -51,9 +55,9 @@ class OtherUser extends Component {
 }
 
 function mapStateToProps(state, props) {
-    const { render_mode, loading_value } = props
-    const user_id = props.user_id || props.value
-    const user = getUser(state, user_id) || { 'loaded': false}
+    const { value, render_mode, loading_value } = props
+    const user_id = value
+    const user = getUser(state, user_id) || { 'loaded': false, 'id': user_id }
     
     return {
 	user: user,

@@ -19,21 +19,24 @@ class EditableIssueAssignedUser extends Component {
     onChange(new_value) {
         const { dispatch, issue } = this.props
         console.log(new_value)
-        dispatch(updateIssueAssignedUser(issue.id, new_value.description))
+        dispatch(updateIssueAssignedUser(issue.id, new_value.assigned_to_id))
     }
 
     render() {
         const { issue } = this.props
         
         return (
+            <div>
+            <OtherUser value={issue.assigned_to_id} />
             <EditableProperty property_key='issue_assigned_to'
                               initial_value={issue.assigned_to_id}
                               onChange={this.onChange}
             >
                 <IssueAssignedUserForm />
-                <OtherUser />
+                <Label />
                 <Blank />
             </EditableProperty>
+            </div>
         )
     }
 

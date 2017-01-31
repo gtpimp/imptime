@@ -14,7 +14,7 @@ class IssueAssignedUserForm extends Component {
             <form onSubmit={handleSubmit}>
                 <div>
                     <label htmlFor="assigned">Assigned user</label>
-                    <Field name="assigned" component="dropdown" type="text"/>
+                    <Field name="assigned" component="textarea" type="text"/>
                 </div>
                 <button type="submit">Submit</button>
             </form>
