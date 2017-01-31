@@ -16,6 +16,7 @@ class IssueSerializer(BaseSerializer):
     assigned_to_quick_name = serializers.CharField()
     feature = serializers.CharField()
     subject = serializers.CharField()
+    description = serializers.CharField()
     status = serializers.CharField()
     assigned_to_id = serializers.CharField()
     feature_name = serializers.CharField()

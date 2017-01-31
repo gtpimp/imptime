@@ -1,10 +1,11 @@
 import React, {Component} from 'react'
 import {connect} from 'react-redux'
 import {browserHistory} from 'react-router'
-import PropertyStack from './PropertyStack'
-import PropertyStackComponent from './PropertyStackComponent'
-import EditableIssueTitle from './EditableIssueTitle'
-import IssueDescription from './IssueDescription'
+// import PropertyStack from './PropertyStack'
+// import PropertyStackComponent from './PropertyStackComponent'
+import EditableIssueTitle from '../components/EditableIssueTitle'
+import EditableIssueDescription from '../components/EditableIssueDescription'
+// import IssueDescription from './IssueDescription'
 import Timestamp from './Timestamp'
 import moment from 'moment'
 import Sidebar from './Sidebar'
@@ -40,8 +41,11 @@ class IssueSidebar extends Component {
 
             <Sidebar>
 
-                { issue.id && 
-                  <EditableIssueTitle issue={issue} />
+                { issue.id &&
+                  <div>
+                      <EditableIssueTitle issue={issue} />
+                      <EditableIssueDescription issue={issue} />
+                  </div>
                 }
 
             </Sidebar>
