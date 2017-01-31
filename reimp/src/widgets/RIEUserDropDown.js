@@ -3,7 +3,7 @@ import OtherUser from '../components/OtherUser'
 import Select from 'react-select';
 import { connect } from 'react-redux'
 import {
-    fetchUsersIfNeeded
+    ensureUsersLoaded
 } from '../actions/Users'
 import RIEEditBase from './RIEEditBase';
 
@@ -16,7 +16,7 @@ export class RIEUserDropDown extends RIEEditBase {
     
     componentDidMount() {
 	const { dispatch, user_ids } = this.props
-	dispatch(fetchUsersIfNeeded(user_ids))
+	dispatch(ensureUsersLoaded(user_ids))
     }
 
     onChange(selected_option) {
@@ -31,7 +31,7 @@ export class RIEUserDropDown extends RIEEditBase {
     renderReadonly() {
 	const { value } = this.props
 	return (
-	    <OtherUser user_id={value}
+	    <OtherUser value={value}
 		       render_mode="inline--small"
 		       loading_value={value} />
 	)

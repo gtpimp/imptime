@@ -97,3 +97,15 @@ export function ensureProjectsLoaded(project_ids) {
 export function getProject(state, project_id) {
     return ((state.project || {}).items_by_id || {})[project_id] || null
 }
+
+export function getProjects(state, project_ids) {
+    const project_objs = state.project
+    const items_by_id = (project_objs && project_objs.items_by_id) || {}
+    return items_by_id && project_ids && project_ids.map(function (project_id, index) {
+        return items_by_id[project_id] || {
+            'id': project_id,
+            'loaded': false
+        }
+    })    
+}
+

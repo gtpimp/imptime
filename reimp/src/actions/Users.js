@@ -2,6 +2,7 @@ import { impfetch } from './lib.js'
 import difference from 'lodash/difference'
 import keys from 'lodash/keys'
 import map from 'lodash/map'
+import { getMissingItemIds } from './ItemList'
 
 export const ANNOUNCE_USERS_LOADED = 'ANNOUNCE_USERS_LOADED'
 export const ANNOUNCE_USERS_LOAD_FAILED = 'ANNOUNCE_USERS_LOAD_FAILED'
@@ -44,7 +45,7 @@ function announceUsersLoadFailed(error) {
     }
 }
 
-function fetchUsers(dispatch, user_ids) {
+function fetchUsers(user_ids) {
     return (dispatch, getState) => {
         const state = getState()
         const API_BASE_URL = state.settings.configured && state.settings.API_BASE_URL
@@ -69,23 +70,32 @@ function fetchUsers(dispatch, user_ids) {
 }
 
 function getMissingUsers(state, required_user_ids) {
-    const matching_items = state.user || {}
-    const matching_item_ids = keys(matching_items.items_by_id || {})
-    const matching_item_refs = matching_item_ids.map((item_id, index) => "" + item_id)
-    const loading_item_ids = matching_items.loading_item_ids || []
-    const loading_item_refs = map(loading_item_ids, (item_id, index) => "" + item_id)
-    const required_item_refs = required_user_ids.map((item_id, index) => "" + item_id)
-    const unmatching_item_refs = difference(required_item_refs, matching_item_refs)
-    const unmatching_and_not_loading_item_refs = difference(unmatching_item_refs, loading_item_refs)
-    return unmatching_and_not_loading_item_refs
+    return getMissingItemIds(state, required_user_ids, 'user')
 }
 
-export function fetchUsersIfNeeded(user_ids) {
+export function ensureUsersLoaded(user_ids) {
     return (dispatch, getState) => {
-	const state = getState()
-	const missing_user_ids = getMissingUsers(state, user_ids)
-	if ( missing_user_ids.length > 0 ) {
-	    dispatch(fetchUsers(dispatch, missing_user_ids))
-	}
+        const state = getState()
+
+        const user_ids_to_load = getMissingItemIds(state, user_ids, 'user')
+        if ( user_ids_to_load.length > 0 ) {
+            dispatch(fetchUsers(user_ids_to_load))
+        }
     }
+}
+
+export function getUser(state, user_id) {
+    return ((state.user || {}).items_by_id || {})[user_id] || null
+}
+
+export function getUsers(state, user_ids) {
+    const user_objs = state.user
+    const items_by_id = (user_objs && user_objs.items_by_id) || {}
+    return items_by_id && user_ids && user_ids.map(function (user_id, index) {
+        return items_by_id[user_id] || {
+            'id': user_id,
+            'username': 'loading...',
+            'loaded': false
+        }
+    })    
 }

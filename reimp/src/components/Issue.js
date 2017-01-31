@@ -16,6 +16,7 @@ import {
     ensureUsersLoaded,
     getUser
 } from '../actions/Users'
+import OtherUser from '../components/OtherUser'
 import RIEDropDown from '../widgets/RIEDropDown'
 import RIEModeToggler from '../widgets/RIEModeToggler'
 import RIEUserDropDown from '../widgets/RIEUserDropDown'
@@ -66,11 +67,9 @@ class Issue extends Component {
     }
 
     refresh() {
-        const {dispatch, issue, issue_id, assignable_user_ids} = this.props
+        const {dispatch, issue, issue_id, assignable_user_ids, estimate_user_ids} = this.props
         dispatch(ensureUsersLoaded(assignable_user_ids))
-        if ( issue ) {
-            dispatch(ensureUsersLoaded(map(issue.estimates, (estimate) => estimate.user_id)))
-        }
+        dispatch(ensureUsersLoaded(estimate_user_ids))
     }
 
     onChangeAssignedTo(issue_id, new_value) {
@@ -108,15 +107,16 @@ class Issue extends Component {
         const estimate_list = map(issue.all_estimates, function(estimate, index) {
             if ( estimate.estimate_hours ) {
                 const estimate_user = getUser(estimate.user_id)
-                return (
-                    <div>
-                        { estimate_user &&
-                          <div key={estimate_user.id}>
-                              {estimate_user.username}:{format_hours(estimate.estimate_hours)}
-                          </div>
-                        }
-                    </div>
-                )
+                if ( estimate_user ) {
+                    return (
+                        <div key={estimate_user.id}>
+                            {estimate_user.username}:{format_hours(estimate.estimate_hours)}
+                        </div>
+                    )
+                } else {
+                    return null
+                }
+
             } else {
                 return null
             }
@@ -207,6 +207,10 @@ class Issue extends Component {
                         }
                     </td>
                     <td className="issue__cell issue__cell--assignee">
+
+                        <OtherUser value={issue.assigned_to_id}/>
+
+                        { false && 
                         <RIEModeToggler
                             rie_key={"issue_assigned_to_" + issue.id}
                             initialValue={issue.assigned_to_id || "..."}
@@ -214,6 +218,7 @@ class Issue extends Component {
                         >
                             <RIEUserDropDown user_ids={assignable_user_ids}/>
                         </RIEModeToggler>
+                        }
                     </td>
                     <td className="issue__cell issue__cell--status">
                         <RIEModeToggler
@@ -282,6 +287,8 @@ function mapStateToProps(state, props) {
     const project_id = issue.project_id
     const project = getProject(state, project_id) || {}
     const assignable_user_ids = project.allowed_user_ids || []
+    const estimate_users_ids = map(issue.all_estimates, (estimate) => estimate.user_id)
+    
     // const feature_names = this_project.feature_names || []
     /* const feature_options = feature_names.map(
      *     function (feature_name) {
@@ -290,7 +297,7 @@ function mapStateToProps(state, props) {
      * )*/
 
     return {
-        issue: this_issue,
+        issue: issue,
         issue_id: issue_id,
         is_selected: is_selected,
         is_loading: is_loading,
@@ -299,6 +306,7 @@ function mapStateToProps(state, props) {
         is_expanded: !is_collapsed,
         is_invalidated: is_invalidated || false,
         assignable_user_ids: assignable_user_ids,
+        estimate_users_ids: estimate_users_ids,
         show_children: show_children,
         subject_prefix: subject_prefix || "",
         subject_suffix: subject_suffix || ""

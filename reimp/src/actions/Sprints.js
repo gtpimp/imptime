@@ -261,3 +261,14 @@ export function ensureSprintsLoaded(sprint_ids) {
 export function getSprint(state, sprint_id) {
     return ((state.sprint || {}).items_by_id || {})[sprint_id] || null
 }
+
+export function getSprints(state, sprint_ids) {
+    const sprint_objs = state.sprint
+    const items_by_id = (sprint_objs && sprint_objs.items_by_id) || {}
+    return items_by_id && sprint_ids && sprint_ids.map(function (sprint_id, index) {
+        return items_by_id[sprint_id] || {
+            'id': sprint_id,
+            'loaded': false
+        }
+    })    
+}

@@ -95,7 +95,8 @@ export function ensureIssuesLoaded(issue_ids) {
 }
 
 export function getIssue(state, issue_id) {
-    // Only gets the issue if it's already loaded
+    // Only gets the issue if it's already loaded, use
+    // ensureIssuesLoaded to trigger a fetch from the server
     return ((state.issue || {}).items_by_id || {})[issue_id] || null
 }
 
@@ -109,4 +110,3 @@ export function getIssues(state, issue_ids) {
         }
     })    
 }
-

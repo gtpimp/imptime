@@ -2,15 +2,23 @@ import React, { Component } from 'react'
 import { connect } from 'react-redux'
 import indexOf from 'lodash/indexOf'
 import {
-    fetchUsersIfNeeded
+    ensureUsersLoaded, getUser
 } from '../actions/Users'
 
 class OtherUser extends Component {
 
     componentDidMount() {
-	const { dispatch, user_id } = this.props
-	if ( user_id ) {
-	    dispatch(fetchUsersIfNeeded([user_id]))
+        this.refresh()
+    }
+
+    componentWillReceiveProps() {
+        this.refresh()
+    }
+
+    refresh() {
+	const { dispatch, user_id, user } = this.props
+	if ( user.loaded === false ) {
+	    dispatch(ensureUsersLoaded([user_id]))
 	}
     }
     
@@ -28,9 +36,9 @@ class OtherUser extends Component {
     }
     
     render() {
-        const { user_id, render_mode, loading_value, onClick } = this.props
+        const { user, render_mode, loading_value, onClick } = this.props
 
-	if ( ! user_id ) {
+	if ( user.loaded === false ) {
 	    return ( <div onClick={onClick}>{loading_value}</div> )
 	}
 	
@@ -43,17 +51,13 @@ class OtherUser extends Component {
 }
 
 function mapStateToProps(state, props) {
-    const { user } = state
-    const { user_id, render_mode, loading_value } = props
-
-    const this_user = (user && user.items_by_id && user.items_by_id[user_id]) || {}
-    const is_loading = (user &&
-			user.loading_item_ids &&
-			indexOf(user.loading_item_ids, user_id) !== -1) || false
+    const { render_mode, loading_value } = props
+    const user_id = props.user_id || props.value
+    const user = getUser(state, user_id) || { 'loaded': false}
     
     return {
-	user: this_user,
-	is_loading: is_loading,
+	user: user,
+        user_id: user_id,
 	render_mode: render_mode || "inline--small",
 	loading_value: loading_value || "..."
     }

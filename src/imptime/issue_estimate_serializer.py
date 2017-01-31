@@ -10,6 +10,6 @@ logger = logging.getLogger(__name__)
 
 
 class IssueEstimateSerializer(BaseSerializer):
-    user = UserSerializer(many=False)
+    user_id = serializers.CharField()
     estimate_hours = serializers.FloatField(source="points")
     

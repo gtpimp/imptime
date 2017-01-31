@@ -5,6 +5,7 @@ import {browserHistory} from 'react-router'
 // import PropertyStackComponent from './PropertyStackComponent'
 import EditableIssueTitle from '../components/EditableIssueTitle'
 import EditableIssueDescription from '../components/EditableIssueDescription'
+import EditableIssueAssignedUser from '../components/EditableIssueAssignedUser'
 // import IssueDescription from './IssueDescription'
 import Timestamp from './Timestamp'
 import moment from 'moment'
@@ -40,11 +41,15 @@ class IssueSidebar extends Component {
         return (
 
             <Sidebar>
-
+                
                 { issue.id &&
+
                   <div>
+                      #{issue.number}
+                      
                       <EditableIssueTitle issue={issue} />
                       <EditableIssueDescription issue={issue} />
+                      <EditableIssueAssignedUser issue={issue} />
                   </div>
                 }
 
