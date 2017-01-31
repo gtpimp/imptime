@@ -32,6 +32,7 @@ class IssueToolbarPanel extends Component {
         this.onCollapseFeaturesClick = this.onCollapseFeaturesClick.bind(this)
         this.onExpandFeaturesClick = this.onExpandFeaturesClick.bind(this)
         this.onGroupClick = this.onGroupClick.bind(this)
+        this.onUngroupClick = this.onUngroupClick.bind(this)
         /* this.toggleExpandFeatures = this.toggleExpandFeatures.bind(this)
          * this.groupTogether = this.groupTogether.bind(this)
          * this.ungroupTogether = this.ungroupTogether.bind(this)
@@ -83,7 +84,8 @@ class IssueToolbarPanel extends Component {
     }
 
     onUngroupClick() {
-        console.log('ungroup clicked')
+        const {issue_ids, dispatch} = this.props
+        dispatch(ungroupIssuesIntoFeature(issue_ids))
     }
 
     onAttachClick() {

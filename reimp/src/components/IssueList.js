@@ -148,28 +148,14 @@ class IssueList extends Component {
 
     groupTogether(event) {
         const {selected_ids, dispatch} = this.props
+        event.stopPropagation()
         dispatch(groupUnsortedIssuesIntoFeature(selected_ids))
     }
 
     ungroupTogether(event) {
         const {selected_ids, selected_items, dispatch} = this.props
         event.stopPropagation()
-        let ok_to_ungroup = true
-        let feature_issue_ids = []
-        map(selected_items, function (issue) {
-            if (issue.can_group_issues) {
-                feature_issue_ids = merge(feature_issue_ids, [issue.id])
-            }
-        })
-        const children_issue_ids = difference(selected_ids, feature_issue_ids)
-        if (children_issue_ids.length === 0) {
-            alert("Please select at least one child issue to ungroup")
-            ok_to_ungroup = false
-        }
-        if (!ok_to_ungroup) {
-            return
-        }
-        dispatch(ungroupIssuesIntoFeature(children_issue_ids))
+        dispatch(ungroupIssuesIntoFeature(selected_ids))
     }
 
     openTagEditor(event) {

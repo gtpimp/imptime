@@ -125,13 +125,23 @@ export function groupUnsortedIssuesIntoFeature(issue_ids) {
 
         const children_issue_ids = difference(issue_ids, [feature_issue.id])
         dispatch(groupIssuesIntoFeature(children_issue_ids, feature_issue.id))
-        return updateIssue(children_issue_ids, "parent_group_id", feature_issue.id)
     }
 }
 
 
-export function ungroupIssuesIntoFeature(children_issue_ids) {
-    return updateIssue(children_issue_ids, "parent_group_id", null)
+export function ungroupIssuesIntoFeature(issue_ids) {
+
+    return (dispatch, getState) => {
+        let ok_to_ungroup = true
+        if (issue_ids.length === 0) {
+            alert("Please select at least one child issue to ungroup")
+            ok_to_ungroup = false
+        }
+        if (!ok_to_ungroup) {
+            return
+        }
+        dispatch(updateIssue(issue_ids, "parent_group_id", null))
+    }
 }
 
 export function addTag(issue_ids, tag_category_name, tag_name, on_done) {
