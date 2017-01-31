@@ -10,8 +10,11 @@ import {
     deleteTag,
     clock
 } from '../actions/Issue'
+import { getIssue } from '../actions/Issues'
+import { getProject } from '../actions/Projects'
 import {
-    fetchUsersIfNeeded
+    ensureUsersLoaded,
+    getUser
 } from '../actions/Users'
 import RIEDropDown from '../widgets/RIEDropDown'
 import RIEModeToggler from '../widgets/RIEModeToggler'
@@ -55,9 +58,19 @@ class Issue extends Component {
     }
 
     componentDidMount() {
-        const {dispatch, assignable_user_ids} = this.props
-        dispatch(fetchUsersIfNeeded(assignable_user_ids))
+        this.refresh()
+    }
 
+    componentWillReceiveProps(new_props) {
+        this.refresh()
+    }
+
+    refresh() {
+        const {dispatch, issue, issue_id, assignable_user_ids} = this.props
+        dispatch(ensureUsersLoaded(assignable_user_ids))
+        if ( issue ) {
+            dispatch(ensureUsersLoaded(map(issue.estimates, (estimate) => estimate.user_id)))
+        }
     }
 
     onChangeAssignedTo(issue_id, new_value) {
@@ -94,8 +107,15 @@ class Issue extends Component {
         const { issue } = this.props
         const estimate_list = map(issue.all_estimates, function(estimate, index) {
             if ( estimate.estimate_hours ) {
+                const estimate_user = getUser(estimate.user_id)
                 return (
-                  <div key={estimate.user.id}>{estimate.user.username}:{format_hours(estimate.estimate_hours)}</div>
+                    <div>
+                        { estimate_user &&
+                          <div key={estimate_user.id}>
+                              {estimate_user.username}:{format_hours(estimate.estimate_hours)}
+                          </div>
+                        }
+                    </div>
                 )
             } else {
                 return null
@@ -117,7 +137,7 @@ class Issue extends Component {
     render_expanded() {
         const {
             issue, is_selected, onClickedIssue, assignable_user_ids,
-            feature_options, is_invalidated, is_saving,
+            is_invalidated, is_saving,
             isOver, connectDragSource, connectDropTarget, show_children,
             subject_prefix, subject_suffix
         } = this.props
@@ -204,15 +224,6 @@ class Issue extends Component {
                             <RIEDropDown options={ISSUE_STATUS_CHOICES}/>
                         </RIEModeToggler>
                     </td>
-                    {false && <td className="issue__cell issue__cell--feature">
-                        <RIEModeToggler
-                            rie_key={"issue_feature_" + issue.id}
-                            initialValue={issue.feature_name || "..."}
-                            onChange={(new_value) => this.onChangeFeature(issue.id, new_value)}
-                        >
-                            <RIEDropDown options={feature_options}/>
-                        </RIEModeToggler>
-                    </td> }
                     { false &&
                       <td className="issue__cell issue__cell--sprint">
                           1
@@ -261,23 +272,22 @@ class Issue extends Component {
 }
 
 function mapStateToProps(state, props) {
-    const {project, issue} = state
     const {
         issue_id, is_selected, is_collapsed,
         is_loading, is_invalidated, is_saving, show_children,
         subject_prefix, subject_suffix
     } = props
 
-    const this_issue = (issue && issue.items_by_id && issue.items_by_id[issue_id]) || {'loaded': false}
-    const project_id = this_issue.project_id
-    const this_project = (project && project.items_by_id && project.items_by_id[project_id]) || {}
-    const assignable_user_ids = this_project.allowed_user_ids || []
-    const feature_names = this_project.feature_names || []
-    const feature_options = feature_names.map(
-        function (feature_name) {
-            return {'value': feature_name, 'label': feature_name}
-        }
-    )
+    const issue = getIssue(state, issue_id) || {'loaded': false}
+    const project_id = issue.project_id
+    const project = getProject(state, project_id) || {}
+    const assignable_user_ids = project.allowed_user_ids || []
+    // const feature_names = this_project.feature_names || []
+    /* const feature_options = feature_names.map(
+     *     function (feature_name) {
+     *         return {'value': feature_name, 'label': feature_name}
+     *     }
+     * )*/
 
     return {
         issue: this_issue,
@@ -289,7 +299,6 @@ function mapStateToProps(state, props) {
         is_expanded: !is_collapsed,
         is_invalidated: is_invalidated || false,
         assignable_user_ids: assignable_user_ids,
-        feature_options: feature_options,
         show_children: show_children,
         subject_prefix: subject_prefix || "",
         subject_suffix: subject_suffix || ""
