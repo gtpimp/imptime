@@ -33,5 +33,5 @@ function mapStateToProps(state, props) {
     }
 }
 
-export default connect(mapStateToProps)(reduxForm({form:'issue_title_form', enableReinitialize:true})(IssueTitleForm))
+export default connect(mapStateToProps)(reduxForm({form:'issue_title_form'})(IssueTitleForm))
 

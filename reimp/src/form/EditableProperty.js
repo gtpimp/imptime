@@ -13,6 +13,7 @@ class EditableProperty extends Component {
         super(props)
         this.startEditing = this.startEditing.bind(this)
         this.keyDown = this.keyDown.bind(this)
+        this.onEdited = this.onEdited.bind(this)
     }
 
     componentDidMount() {
@@ -48,10 +49,16 @@ class EditableProperty extends Component {
 	    this.cancelEditing()
 	}        
     }
+
+    onEdited(new_value) {
+        const { onChange } = this.props
+        this.cancelEditing()
+        onChange(new_value)
+    }
     
     render() {
 
-        const {children, initial_value, is_readonly, is_editing, is_empty, onChange} = this.props
+        const {children, initial_value, is_readonly, is_editing, is_empty} = this.props
 
 	const that = this
 	let editing_child = null
@@ -62,7 +69,7 @@ class EditableProperty extends Component {
 	    if ( index === 0 ) {
 		editing_child = React.cloneElement(child, {
 		    initial_value: initial_value,
-                    onChange: onChange,
+                    onChange: that.onEdited,
                     onKeyDown: that.keyDown
 		})
 	    } else if ( index === 1 ) {

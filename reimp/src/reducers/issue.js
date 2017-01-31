@@ -2,6 +2,7 @@ import assign from 'lodash/assign'
 import difference from 'lodash/difference'
 import union from 'lodash/union'
 import keys from 'lodash/keys'
+import map from 'lodash/map'
 
 import {
     ANNOUNCE_ISSUES_LOAD_FAILED,
@@ -67,19 +68,26 @@ export default function issue(state = initialState, action) {
             return state;
 
 	case ANNOUNCE_ISSUES_SAVING:
-	    // const new_issue_props = {}
-	    // new_issue_props[action.field_name] = action.new_value
 	    const issue_ids = action.issue_ids
 	    
-            return Object.assign({}, state, {
+            const state_clone = Object.assign({}, state, {
 		items_by_id: Object.assign(
 		    {},
 		    state.items_by_id,
 		    /* {issue_id: Object.assign(state.items_by_id[issue_id],
-		       new_issue_props)},*/
+		       new_issue_props)}*/
                 ),
 		saving_item_ids: union(state.saving_item_ids, issue_ids)
 	    })
+            
+	    const new_issue_props = {}
+	    new_issue_props[action.field_name] = action.new_value
+            map(issue_ids, function(issue_id, index) {
+                state_clone.items_by_id[issue_id] = Object.assign({}, state.items_by_id[issue_id],
+		                                                  new_issue_props)
+            })
+            return state_clone
+            
 	case ANNOUNCE_ISSUES_SAVED:
 	    return Object.assign({}, state,
 				 {saving_item_ids: difference(state.saving_item_ids || [],
