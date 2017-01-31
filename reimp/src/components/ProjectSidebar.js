@@ -1,12 +1,27 @@
 import React, {Component} from 'react'
 import {connect} from 'react-redux'
 import {browserHistory} from 'react-router'
+import {ensureProjectsLoaded, getProject} from '../actions/Projects'
 
 class ProjectSidebar extends Component {
 
     constructor(props) {
         super(props)
         this.navigateToSprintsPage = this.navigateToSprintsPage.bind(this)
+    }
+
+    componentDidMount() {
+	const { dispatch, project_id } = this.props
+	if ( project_id ) {
+	    dispatch(ensureProjectsLoaded([project_id]))
+	}
+    }
+
+    componentWillReceiveProps() {
+        const { dispatch, project_id } = this.props
+	if ( project_id ) {
+	    dispatch(ensureProjectsLoaded([project_id]))
+	}
     }
 
     navigateToSprintsPage() {
@@ -16,11 +31,11 @@ class ProjectSidebar extends Component {
 
     render() {
 
-        const { project_id } = this.props
+        const { project_id, project } = this.props
         
         return (
             <div className="project_sidebar">
-                Project {project_id}
+                Project {project.name}
 
                 <pre>
                     I am your project sidebar
@@ -34,10 +49,11 @@ class ProjectSidebar extends Component {
 
 function mapStateToProps(state, props) {
     const { project_id } = props
+    const project = getProject(state, project_id)
     return {
-        project_id: project_id
+        project_id: project_id,
+        project: project
     }
 }
 
 export default connect(mapStateToProps)(ProjectSidebar)
-

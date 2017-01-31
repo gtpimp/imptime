@@ -1,5 +1,5 @@
 import { impfetch } from './lib.js'
-import { fetchListIfNeeded } from './ItemList'
+import { fetchListIfNeeded, getMissingItemIds } from './ItemList'
 import { ENTITY_KEY__PROJECT } from '../actions/ItemListKeyRegistry'
 
 export const ANNOUNCE_PROJECTS_LOADED = 'ANNOUNCE_PROJECTS_LOADED'
@@ -83,3 +83,17 @@ export function fetchProjectsIfNeeded(list_key) {
     return fetchListIfNeeded(list_key, matching_items_key, matching_items_promise_func)
 }
 
+export function ensureProjectsLoaded(project_ids) {
+    return (dispatch, getState) => {
+        const state = getState()
+
+        const project_ids_to_load = getMissingItemIds(state, project_ids, 'project')
+        if ( project_ids_to_load.length > 0 ) {
+            fetchProjectsPromise(dispatch, state, project_ids_to_load)
+        }
+    }
+}
+
+export function getProject(state, project_id) {
+    return ((state.project || {}).items_by_id || {})[project_id] || null
+}

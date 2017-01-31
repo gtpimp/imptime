@@ -17,6 +17,7 @@ import {
 import {
     startCandidateSprint,
 } from '../actions/Sprints'
+import {ensureProjectsLoaded, getProject} from '../actions/Projects'
 import {
     set_toolbars,
     select_sprints
@@ -30,15 +31,17 @@ class SprintsPage extends Component {
     }
 
     componentDidMount() {
-        const {project_id} = this.props
+        const {dispatch, project_id} = this.props
         this.refresh(project_id)
+        dispatch(ensureProjectsLoaded([project_id]))
     }
 
     componentWillReceiveProps(new_props) {
-        const {project_id} = this.props
-        if (new_props.project_id !== project_id) {
+        const {dispatch, project_id} = this.props
+        if (new_props.project_id !== project_id || new_props.project.id != this.props.project.id ) {
             this.refresh(new_props.project_id)
         }
+        dispatch(ensureProjectsLoaded([project_id]))
     }
 
     onStartCandidateSprint(event) {
@@ -49,13 +52,13 @@ class SprintsPage extends Component {
     }
 
     refresh(project_id) {
-        const {dispatch} = this.props
+        const {dispatch, project} = this.props
         if (project_id) {
             dispatch(update_list_filter(LIST_KEY__SPRINT_LIST, {project_id: project_id}))
             dispatch(invalidateList(LIST_KEY__SPRINT_LIST))
             dispatch(expand_list(LIST_KEY__SPRINT_LIST))
             dispatch(setBreadcrumbs([{to: '/projects', label: 'All Projects'},
-                {to: '/projects/' + project_id, label: project_id},
+                {to: '/projects/' + project_id, label: project.name},
                 {to: '/projects/' + project_id + '/sprints', label: 'All Sprints'}]))
             /* dispatch(setActions([
              *     {
@@ -112,9 +115,11 @@ function mapStateToProps(state, props) {
         })
 
     const project_id = props.params.projectId
+    const project = getProject(state, project_id) || {}
 
     return {
         project_id: project_id,
+        project: project,
         selected_sprints: selected_items
     }
 }

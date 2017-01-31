@@ -1,6 +1,6 @@
 import { impfetch } from './lib.js'
 import indexOf from 'lodash/indexOf'
-import { fetchListIfNeeded } from './ItemList'
+import { fetchListIfNeeded, getMissingItemIds } from './ItemList'
 import { ENTITY_KEY__SPRINT } from '../actions/ItemListKeyRegistry'
 
 export const ANNOUNCE_SPRINTS_LOADED = 'ANNOUNCE_SPRINTS_LOADED'
@@ -245,4 +245,19 @@ export function saveCandidateSprint() {
 	 })
     }
 
+}
+
+export function ensureSprintsLoaded(sprint_ids) {
+    return (dispatch, getState) => {
+        const state = getState()
+
+        const sprint_ids_to_load = getMissingItemIds(state, sprint_ids, 'sprint')
+        if ( sprint_ids_to_load.length > 0 ) {
+            fetchSprintsPromise(dispatch, state, sprint_ids_to_load)
+        }
+    }
+}
+
+export function getSprint(state, sprint_id) {
+    return ((state.sprint || {}).items_by_id || {})[sprint_id] || null
 }

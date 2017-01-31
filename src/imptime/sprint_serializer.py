@@ -11,6 +11,7 @@ class SprintSerializer(BaseSerializer):
     name = serializers.CharField()
     status_name = serializers.CharField()
     project_id = serializers.CharField(source="business_id") #sic
+    description = serializers.CharField()
 
     def to_representation(self, sprint, *args, **kwargs):
         sprint.status_name = sprint.status2
