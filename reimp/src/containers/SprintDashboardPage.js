@@ -9,6 +9,8 @@ import {
     set_toolbars,
     select_sprints
 } from '../actions/Page'
+import {ensureProjectsLoaded, getProject} from '../actions/Projects'
+import {ensureSprintsLoaded, getSprint} from '../actions/Sprints'
 
 class ProjectDashboardPage extends Component {
 
@@ -18,25 +20,32 @@ class ProjectDashboardPage extends Component {
     }
 
     componentDidMount() {
-        const {sprint_id, project_id, dispatch} = this.props
+        const {sprint_id, project_id, sprint, project, dispatch} = this.props
         dispatch(set_toolbars(PAGE_KEY__SPRINT_DASHBOARD_PAGE, ['sprint-dashboard']))
-        this.refresh(sprint_id, project_id)
+        dispatch(ensureProjectsLoaded([project_id]))
+        dispatch(ensureSprintsLoaded([sprint_id]))
+        this.refresh(sprint, project)
     }
 
     componentWillReceiveProps(new_props) {
-        const { sprint_id } = this.props
-        if ( new_props.sprint_id !== sprint_id ) {
-            this.refresh(new_props.sprint_id, new_props.project_id)
+        const { sprint_id, project_id, dispatch } = this.props
+
+        dispatch(ensureProjectsLoaded([project_id]))
+        dispatch(ensureSprintsLoaded([sprint_id]))
+        if ( new_props.sprint.id !== this.props.sprint.id ||
+             new_props.sprint.name != this.props.sprint.name ||
+             new_props.project.name != this.props.project.name) {
+            this.refresh(new_props.sprint, new_props.project)
         }
     }
 
-    refresh(sprint_id, project_id) {
+    refresh(sprint, project) {
         const { dispatch } = this.props
         dispatch(setBreadcrumbs([ {to: '/projects', label: 'All Projects'},
-                                  {to: '/projects/'+project_id, label: project_id},
-                                  {to: '/projects/'+project_id+'/sprints', label: 'All Sprints'},
-                                  {to: '/projects/'+project_id+'/sprints/'+sprint_id, label: sprint_id} ]))
-        dispatch(select_sprints(PAGE_KEY__SPRINT_DASHBOARD_PAGE, [sprint_id]))
+                                  {to: '/projects/'+project.id, label: project.name},
+                                  {to: '/projects/'+project.id+'/sprints', label: 'All Sprints'},
+                                  {to: '/projects/'+project.id+'/sprints/'+sprint.id, label: sprint.name} ]))
+        dispatch(select_sprints(PAGE_KEY__SPRINT_DASHBOARD_PAGE, [sprint.id]))
     }
 
     navigateToIssuesPage() {
@@ -46,11 +55,11 @@ class ProjectDashboardPage extends Component {
     
     render() {
 
-        const { sprint_id } = this.props
+        const { sprint } = this.props
         
         return (
             <div>
-                Sprint {sprint_id}
+                Sprint {sprint.name}
 
                 <pre>
                     I am your sprint dashboard
@@ -65,10 +74,14 @@ class ProjectDashboardPage extends Component {
 function mapStateToProps(state, props) {
     const project_id = props.params.projectId
     const sprint_id = props.params.sprintId
+    const project = getProject(state, project_id) || {}
+    const sprint = getSprint(state, sprint_id) || {}
     
     return {
         project_id: project_id,
-        sprint_id: sprint_id
+        project: project,
+        sprint_id: sprint_id,
+        sprint: sprint
     }
 }
 

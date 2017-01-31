@@ -32,7 +32,7 @@ class SprintsPage extends Component {
 
     componentDidMount() {
         const {dispatch, project_id, project} = this.props
-        dispatch(update_list_filter(LIST_KEY__SPRINT_LIST, {project_id: -1}))
+        dispatch(update_list_filter(LIST_KEY__SPRINT_LIST, {project_id: project.id || -1}))
         this.refresh(project)
         dispatch(ensureProjectsLoaded([project_id]))
     }
