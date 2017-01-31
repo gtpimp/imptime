@@ -3,6 +3,8 @@ import { combineReducers } from 'redux'
 import auth from './auth'
 import breadcrumbs from './breadcrumbs'
 import filter from './filter'
+import { reducer as redux_form_reducer } from 'redux-form'
+import editable_property from './editable_property'
 import header from './header'
 import item_list from './item_list'
 import issue from './issue'
@@ -21,6 +23,7 @@ import settings from './settings'
 const rootReducer = combineReducers({
     auth,
     breadcrumbs,
+    editable_property,
     filter,
     header,
     issue,
@@ -30,6 +33,7 @@ const rootReducer = combineReducers({
     notification_bar,
     page,
     project,
+    form: redux_form_reducer,
     rie,
     routing,
     sprint,
