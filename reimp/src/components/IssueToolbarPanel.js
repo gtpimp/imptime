@@ -4,17 +4,20 @@ import '../sass/toolbar-panel.css'
 import ToolbarButton from './ToolbarButton'
 import { get_selected_issue_ids } from '../actions/Page'
 import { ensureIssuesLoaded, getIssue } from '../actions/Issues'
-import { PAGE_KEY__ISSUES_PAGE } from '../actions/ItemListKeyRegistry'
+import { LIST_KEY__ISSUE_LIST, PAGE_KEY__ISSUES_PAGE } from '../actions/ItemListKeyRegistry'
 import {
     reorderIssue,
     startCandidateIssue,
     updateCandidateSubject,
     cancelCandidateIssue,
     saveCandidateIssue,
+    groupUnsortedIssuesIntoFeature,
     updateIssueToggleAsFeature,
-    groupIssuesIntoFeature,
     ungroupIssuesIntoFeature
 } from '../actions/Issue'
+import {
+    setItemFlag
+} from '../actions/ItemList'
 
 class IssueToolbarPanel extends Component {
 
@@ -26,6 +29,9 @@ class IssueToolbarPanel extends Component {
          * this.onCancelCandidateIssue = this.onCancelCandidateIssue.bind(this)*/
         this.onMakeFeatureClick = this.onMakeFeatureClick.bind(this)
         this.onUnmakeFeatureClick = this.onUnmakeFeatureClick.bind(this)
+        this.onCollapseFeaturesClick = this.onCollapseFeaturesClick.bind(this)
+        this.onExpandFeaturesClick = this.onExpandFeaturesClick.bind(this)
+        this.onGroupClick = this.onGroupClick.bind(this)
         /* this.toggleExpandFeatures = this.toggleExpandFeatures.bind(this)
          * this.groupTogether = this.groupTogether.bind(this)
          * this.ungroupTogether = this.ungroupTogether.bind(this)
@@ -50,15 +56,13 @@ class IssueToolbarPanel extends Component {
     }
 
     onCollapseFeaturesClick() {
-        console.log('collapse features clicked')
+        const {dispatch, issue_ids} = this.props
+        dispatch(setItemFlag(LIST_KEY__ISSUE_LIST, issue_ids, 'expanded_issues', false))
     }
 
     onExpandFeaturesClick() {
-        console.log('expand features clicked')
-    }
-
-    onExpandFeaturesClick() {
-        console.log('expand features clicked')
+        const {dispatch, issue_ids} = this.props
+        dispatch(setItemFlag(LIST_KEY__ISSUE_LIST, issue_ids, 'expanded_issues', true))
     }
 
     onMakeFeatureClick() {
@@ -74,7 +78,8 @@ class IssueToolbarPanel extends Component {
     }
 
     onGroupClick() {
-        console.log('group clicked')
+        const {issue_ids, dispatch} = this.props
+        dispatch(groupUnsortedIssuesIntoFeature(issue_ids))
     }
 
     onUngroupClick() {

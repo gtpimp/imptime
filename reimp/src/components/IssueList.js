@@ -28,7 +28,7 @@ import {
     cancelCandidateIssue,
     saveCandidateIssue,
     updateIssueToggleAsFeature,
-    groupIssuesIntoFeature,
+    groupUnsortedIssuesIntoFeature,
     ungroupIssuesIntoFeature
 } from '../actions/Issue'
 import Issue from './Issue'
@@ -147,34 +147,8 @@ class IssueList extends Component {
     }
 
     groupTogether(event) {
-        const {selected_ids, selected_items, dispatch} = this.props
-        event.stopPropagation()
-        if (selected_ids.length === 1) {
-            alert("Please select a single feature issue and at least one other issue to group together")
-            return
-        }
-        let feature_issue = null
-        let ok_to_group = true
-        map(selected_items, function (issue) {
-            if (issue.can_group_issues) {
-                if (feature_issue) {
-                    alert("Please select only one feature issue to group with")
-                    ok_to_group = false
-                } else {
-                    feature_issue = issue
-                }
-            }
-        })
-        if (feature_issue === null) {
-            alert("Please select a feature issue to group into")
-            ok_to_group = false
-        }
-        if (!ok_to_group) {
-            return
-        }
-
-        const children_issue_ids = difference(selected_ids, [feature_issue.id])
-        dispatch(groupIssuesIntoFeature(children_issue_ids, feature_issue.id))
+        const {selected_ids, dispatch} = this.props
+        dispatch(groupUnsortedIssuesIntoFeature(selected_ids))
     }
 
     ungroupTogether(event) {

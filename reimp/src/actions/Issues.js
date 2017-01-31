@@ -1,6 +1,8 @@
 import { impfetch } from './lib.js'
 import { fetchListIfNeeded, getMissingItemIds } from './ItemList'
 import { ENTITY_KEY__ISSUE } from '../actions/ItemListKeyRegistry'
+import map from 'lodash/map'
+import difference from 'lodash/difference'
 
 export const ANNOUNCE_ISSUES_LOADED = 'ANNOUNCE_ISSUES_LOADED'
 export const ANNOUNCE_ISSUES_LOAD_FAILED = 'ANNOUNCE_ISSUES_LOAD_FAILED'
@@ -96,3 +98,15 @@ export function getIssue(state, issue_id) {
     // Only gets the issue if it's already loaded
     return ((state.issue || {}).items_by_id || {})[issue_id] || null
 }
+
+export function getIssues(state, issue_ids) {
+    const issue_objs = state.issue
+    const items_by_id = (issue_objs && issue_objs.items_by_id) || {}
+    return items_by_id && issue_ids && issue_ids.map(function (issue_id, index) {
+        return items_by_id[issue_id] || {
+            'id': issue_id,
+            'loaded': false
+        }
+    })    
+}
+

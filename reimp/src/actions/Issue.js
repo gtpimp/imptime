@@ -1,4 +1,8 @@
 import { impfetch } from './lib.js'
+
+import map from 'lodash/map'
+import difference from 'lodash/difference'
+
 export const ANNOUNCE_ISSUES_SAVING = 'ANNOUNCE_ISSUES_SAVING'
 export const ANNOUNCE_ISSUES_SAVED = 'ANNOUNCE_ISSUES_SAVED'
 export const ANNOUNCE_ISSUE_SAVE_FAILED = 'ANNOUNCE_ISSUE_SAVE_FAILED'
@@ -13,6 +17,8 @@ export const ANNOUNCE_SAVING_NEW_ISSUE_FAILED = 'ANNOUNCE_SAVING_NEW_ISSUE_FAILE
 export const ANNOUNCE_DELETING_ISSUE = 'ANNOUNCE_DELETING_ISSUE'
 export const ANNOUNCE_ISSUE_DELETED = 'ANNOUNCE_ISSUE_DELETED'
 export const ANNOUNCE_DELETE_ISSUE_FAILED = 'ANNOUNCE_DELETE_ISSUE_FAILED'
+
+import { getIssues } from '../actions/Issues'
 
 function announceIssueSaveFailed(error) {
     return {
@@ -86,6 +92,43 @@ export function updateIssueToggleAsFeature(issue_ids, value) {
 export function groupIssuesIntoFeature(children_issue_ids, feature_issue_id) {
     return updateIssue(children_issue_ids, "parent_group_id", feature_issue_id)
 }
+
+export function groupUnsortedIssuesIntoFeature(issue_ids) {
+
+    return (dispatch, getState) => {
+        const state = getState()
+        event.stopPropagation()
+        if (issue_ids.length === 1) {
+            alert("Please select a single feature issue and at least one other issue to group together")
+            return
+        }
+        let feature_issue = null
+        let ok_to_group = true
+        const issues = getIssues(state, issue_ids)
+        map(issues, function (issue) {
+            if (issue.can_group_issues) {
+                if (feature_issue) {
+                    alert("Please select only one feature issue to group with")
+                    ok_to_group = false
+                } else {
+                    feature_issue = issue
+                }
+            }
+        })
+        if (feature_issue === null) {
+            alert("Please select a feature issue to group into")
+            ok_to_group = false
+        }
+        if (!ok_to_group) {
+            return
+        }
+
+        const children_issue_ids = difference(issue_ids, [feature_issue.id])
+        dispatch(groupIssuesIntoFeature(children_issue_ids, feature_issue.id))
+        return updateIssue(children_issue_ids, "parent_group_id", feature_issue.id)
+    }
+}
+
 
 export function ungroupIssuesIntoFeature(children_issue_ids) {
     return updateIssue(children_issue_ids, "parent_group_id", null)
