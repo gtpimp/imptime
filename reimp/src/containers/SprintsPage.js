@@ -31,15 +31,16 @@ class SprintsPage extends Component {
     }
 
     componentDidMount() {
-        const {dispatch, project_id} = this.props
-        this.refresh(project_id)
+        const {dispatch, project_id, project} = this.props
+        dispatch(update_list_filter(LIST_KEY__SPRINT_LIST, {project_id: -1}))
+        this.refresh(project)
         dispatch(ensureProjectsLoaded([project_id]))
     }
 
     componentWillReceiveProps(new_props) {
-        const {dispatch, project_id} = this.props
-        if (new_props.project_id !== project_id || new_props.project.id != this.props.project.id ) {
-            this.refresh(new_props.project_id)
+        const {dispatch, project, project_id} = this.props
+        if (new_props.project_id !== project_id || new_props.project.name != project.name ) {
+            this.refresh(new_props.project)
         }
         dispatch(ensureProjectsLoaded([project_id]))
     }
@@ -51,15 +52,15 @@ class SprintsPage extends Component {
         alert('@Gareth')
     }
 
-    refresh(project_id) {
-        const {dispatch, project} = this.props
-        if (project_id) {
-            dispatch(update_list_filter(LIST_KEY__SPRINT_LIST, {project_id: project_id}))
+    refresh(project) {
+        const {dispatch} = this.props
+        if (project.id) {
+            dispatch(update_list_filter(LIST_KEY__SPRINT_LIST, {project_id: project.id}))
             dispatch(invalidateList(LIST_KEY__SPRINT_LIST))
-            dispatch(expand_list(LIST_KEY__SPRINT_LIST))
+            // dispatch(expand_list(LIST_KEY__SPRINT_LIST))
             dispatch(setBreadcrumbs([{to: '/projects', label: 'All Projects'},
-                {to: '/projects/' + project_id, label: project.name},
-                {to: '/projects/' + project_id + '/sprints', label: 'All Sprints'}]))
+                {to: '/projects/' + project.id, label: project.name},
+                {to: '/projects/' + project.id + '/sprints', label: 'All Sprints'}]))
             /* dispatch(setActions([
              *     {
              *         icon: 'add',

@@ -42,7 +42,7 @@ function mapStateToProps(state, props) {
     const sprint_objs = (state.sprint || {}).items_by_id || {}
     const page = state.page || {}
     const selected_sprint_ids = (page[PAGE_KEY__SPRINT_DASHBOARD_PAGE] || {}).sprint_ids || []
-    const sprint = (selected_sprint_ids.length > 0 && sprint_objs[selected_sprint_ids[0]]) || null
+    const sprint = (selected_sprint_ids.length > 0 && sprint_objs[selected_sprint_ids[0]]) || {}
     
     return {
         sprint: sprint,

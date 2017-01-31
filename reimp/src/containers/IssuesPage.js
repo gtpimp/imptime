@@ -20,6 +20,8 @@ import {
     set_toolbars,
     select_issues
 } from '../actions/Page'
+import {ensureProjectsLoaded, getProject} from '../actions/Projects'
+import {ensureSprintsLoaded, getSprint} from '../actions/Sprints'
 
 class IssuesPage extends Component {
 
@@ -29,32 +31,39 @@ class IssuesPage extends Component {
     }
     
     componentDidMount() {
-        const {sprint_id, project_id, dispatch} = this.props
-        this.refresh(sprint_id, project_id)
+        const {sprint_id, project_id, sprint, project, dispatch} = this.props
+        dispatch(update_list_filter(LIST_KEY__ISSUE_LIST, {sprint_id:-1}))
         dispatch(set_toolbars(PAGE_KEY__ISSUES_PAGE, ['issues', 'issue']))
+        dispatch(ensureProjectsLoaded([project_id]))
+        dispatch(ensureSprintsLoaded([sprint_id]))
+        this.refresh(sprint, project)
     }
 
     componentWillReceiveProps(new_props) {
-        const { sprint_id, dispatch, selected_issues, toolbars } = this.props
+        const { dispatch, selected_issues, toolbars } = this.props
         const selected_a = new_props.selected_issues || []
         const selected_b = this.props.selected_issues || []
+        dispatch(ensureProjectsLoaded([new_props.project_id]))
+        dispatch(ensureSprintsLoaded([new_props.sprint_id]))
         
-        if ( new_props.sprint_id !== sprint_id ) {
-                this.refresh(new_props.sprint_id, new_props.project_id)
+        if ( new_props.sprint.id !== this.props.sprint.id ||
+             new_props.sprint.name != this.props.sprint.name ||
+             new_props.project.name != this.props.project.name) {
+                this.refresh(new_props.sprint, new_props.project)
         }
     }
 
-    refresh(sprint_id, project_id) {
+    refresh(sprint, project) {
         const {dispatch, selected_issues, toolbars } = this.props
-        if ( sprint_id ) {
-            dispatch(update_list_filter(LIST_KEY__ISSUE_LIST, {sprint_id:sprint_id}))
+        if ( sprint.id ) {
+            dispatch(update_list_filter(LIST_KEY__ISSUE_LIST, {sprint_id:sprint.id}))
             dispatch(invalidateList(LIST_KEY__ISSUE_LIST))
-            dispatch(expand_list(LIST_KEY__ISSUE_LIST))
+            //dispatch(expand_list(LIST_KEY__ISSUE_LIST))
             dispatch(setBreadcrumbs([ {to: '/projects', label: 'All Projects'},
-                                      {to: '/projects/'+project_id, label: project_id},
-                                      {to: '/projects/'+project_id+'/sprints', label: 'All Sprints'},
-                                      {to: '/projects/'+project_id+'/sprints/'+sprint_id, label: sprint_id},
-                                      {to: '/projects/'+project_id+'/sprints/'+sprint_id+'/issues', label: 'All Issues'}]))
+                                      {to: '/projects/'+project.id, label: project.name},
+                                      {to: '/projects/'+project.id+'/sprints', label: 'All Sprints'},
+                                      {to: '/projects/'+project.id+'/sprints/'+sprint.id, label: sprint.name},
+                                      {to: '/projects/'+project.id+'/sprints/'+sprint.id+'/issues', label: 'All Issues'}]))
 
             /* dispatch(setActions([
              *     {
@@ -127,10 +136,14 @@ function mapStateToProps(state, props) {
 
     const sprint_id = props.params.sprintId
     const project_id = props.params.projectId
+    const project = getProject(state, project_id) || {}
+    const sprint = getSprint(state, sprint_id) || {}
     
     return {
         sprint_id: sprint_id,
+        sprint: sprint,
         project_id: project_id,
+        project: project,
         selected_issues: selected_items,
         toolbars: page.toolbar_names
     }

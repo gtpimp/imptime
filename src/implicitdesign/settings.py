@@ -293,7 +293,7 @@ INSTALLED_APPS = (
     'devops'
 )
 
-PAGINATION_DEFAULT_PAGINATION=10000
+PAGINATION_DEFAULT_PAGINATION=200
 ENDLESS_PAGINATION_PER_PAGE=50
 ENDLESS_PAGINATION_ADD_NOFOLLOW=True #from endless docs: Set to True if your SEO alchemist wants search engines not to follow pagination links.
 
