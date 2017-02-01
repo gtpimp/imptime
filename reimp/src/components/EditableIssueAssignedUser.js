@@ -8,6 +8,7 @@ import Label from '../form/Label'
 import Blank from '../form/Blank'
 import { updateIssueAssignedUser } from '../actions/Issue'
 import { OtherUser } from '../components/OtherUser'
+import { getIssue } from '../actions/Issues'
 
 class EditableIssueAssignedUser extends Component {
 
@@ -21,12 +22,13 @@ class EditableIssueAssignedUser extends Component {
         console.log(new_value)
         dispatch(updateIssueAssignedUser(issue.id, new_value.assigned_to_id))
     }
-
     render() {
         const { issue } = this.props
         
         return (
             <div>
+                assigned to id is: {issue.assigned_to_id}
+                <OtherUser value={issue.assigned_to_id}/>
                 <EditableProperty property_key='issue_assigned_to'
                                   initial_value={issue.assigned_to_id}
                                   onChange={this.onChange}
@@ -42,7 +44,9 @@ class EditableIssueAssignedUser extends Component {
 }
 
 function mapStateToProps(state, props) {
-    const {issue} = props
+    const { issue_id } = props
+    const issue = getIssue(state, issue_id)
+    
     return {
         issue: issue
     }

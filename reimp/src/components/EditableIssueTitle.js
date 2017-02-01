@@ -7,6 +7,7 @@ import IssueTitleForm from '../form/IssueTitleForm'
 import Label from '../form/Label'
 import Blank from '../form/Blank'
 import { updateIssueSubject } from '../actions/Issue'
+import { getIssue } from '../actions/Issues'
 
 class EditableIssueTitle extends Component {
 
@@ -39,7 +40,8 @@ class EditableIssueTitle extends Component {
 }
 
 function mapStateToProps(state, props) {
-    const {issue} = props
+    const { issue_id } = props
+    const issue = getIssue(state, issue_id)
     return {
         issue: issue
     }
