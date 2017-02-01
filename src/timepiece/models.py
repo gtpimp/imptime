@@ -3478,7 +3478,7 @@ class Issue(models.Model):
         except IssuePoints.DoesNotExist:
             business_users = [u.id for u in self.project.business.users]
             if user.id in business_users:
-                return IssuePoints.objects.create(user=user,issue=self)
+                return IssuePoints.objects.get_or_create(user=user,issue=self)[0]
             return None
         except IssuePoints.MultipleObjectsReturned:
             return IssuePoints.objects.filter(user=user,issue=self).order_by("id")[0]
