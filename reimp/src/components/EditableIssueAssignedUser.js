@@ -7,8 +7,9 @@ import IssueAssignedUserForm from '../form/IssueAssignedUserForm'
 import Label from '../form/Label'
 import Blank from '../form/Blank'
 import { updateIssueAssignedUser } from '../actions/Issue'
-import { OtherUser } from '../components/OtherUser'
+import OtherUser from '../components/OtherUser'
 import { getIssue } from '../actions/Issues'
+import { getUser } from '../actions/Users'
 
 class EditableIssueAssignedUser extends Component {
 
@@ -28,13 +29,12 @@ class EditableIssueAssignedUser extends Component {
         return (
             <div>
                 assigned to id is: {issue.assigned_to_id}
-                <OtherUser value={issue.assigned_to_id}/>
                 <EditableProperty property_key='issue_assigned_to'
                                   initial_value={issue.assigned_to_id}
                                   onChange={this.onChange}
                 >
                     <IssueAssignedUserForm />
-                    <Label />
+                    <OtherUser value={issue.assigned_to_id}/>
                     <Blank />
                 </EditableProperty>
             </div>

@@ -104,24 +104,17 @@ class Issue extends Component {
 
     renderEstimates() {
         const { issue } = this.props
-        const estimate_list = map(issue.all_estimates, function(estimate, index) {
-            if ( estimate.estimate_hours ) {
-                const estimate_user = getUser(estimate.user_id)
-                if ( estimate_user ) {
-                    return (
-                        <div key={estimate_user.id}>
-                            {estimate_user.username}:{format_hours(estimate.estimate_hours)}
-                        </div>
-                    )
-                } else {
-                    return null
-                }
-
+        return map(issue.all_estimates, function(estimate, index) {
+            if ( estimate.estimate_hours && estimate.estimate_user ) {
+                return (
+                    <div key={estimate.estimate_user.id}>
+                        {estimate.estimate_user.username}:{format_hours(estimate.estimate_hours)}
+                    </div>
+                )
             } else {
                 return null
             }
         })
-        return estimate_list
     }
 
     render_collapsed() {
@@ -287,7 +280,9 @@ function mapStateToProps(state, props) {
     const project_id = issue.project_id
     const project = getProject(state, project_id) || {}
     const assignable_user_ids = project.allowed_user_ids || []
-    const estimate_users_ids = map(issue.all_estimates, (estimate) => estimate.user_id)
+    map(issue.all_estimates, function(estimate) {
+        estimate.user = getUser(estimate.user_id)
+    })
     
     // const feature_names = this_project.feature_names || []
     /* const feature_options = feature_names.map(
@@ -306,7 +301,6 @@ function mapStateToProps(state, props) {
         is_expanded: !is_collapsed,
         is_invalidated: is_invalidated || false,
         assignable_user_ids: assignable_user_ids,
-        estimate_users_ids: estimate_users_ids,
         show_children: show_children,
         subject_prefix: subject_prefix || "",
         subject_suffix: subject_suffix || ""
