@@ -27,15 +27,14 @@ class EditableIssueAssignedUser extends Component {
         
         return (
             <div>
-            <OtherUser value={issue.assigned_to_id} />
-            <EditableProperty property_key='issue_assigned_to'
-                              initial_value={issue.assigned_to_id}
-                              onChange={this.onChange}
-            >
-                <IssueAssignedUserForm />
-                <Label />
-                <Blank />
-            </EditableProperty>
+                <EditableProperty property_key='issue_assigned_to'
+                                  initial_value={issue.assigned_to_id}
+                                  onChange={this.onChange}
+                >
+                    <IssueAssignedUserForm />
+                    <Label />
+                    <Blank />
+                </EditableProperty>
             </div>
         )
     }
