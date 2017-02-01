@@ -7,9 +7,7 @@ import { Field, reduxForm } from 'redux-form';
 class IssueAssignedUserForm extends Component {
 
     render() {
-
         const { initialValues, handleSubmit } = this.props
-        
         return (
             <form onSubmit={handleSubmit}>
                 <div>

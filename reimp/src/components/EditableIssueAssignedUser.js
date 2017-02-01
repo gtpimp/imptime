@@ -31,6 +31,7 @@ class EditableIssueAssignedUser extends Component {
                 assigned to id is: {issue.assigned_to_id}
                 <EditableProperty property_key='issue_assigned_to'
                                   initial_value={issue.assigned_to_id}
+                                  edit_as_modal={true}
                                   onChange={this.onChange}
                 >
                     <IssueAssignedUserForm />

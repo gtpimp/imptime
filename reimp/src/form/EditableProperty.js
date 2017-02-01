@@ -1,6 +1,7 @@
 import React, {Component} from 'react'
 import {connect} from 'react-redux'
-import '../sass/breadcrumb.css'
+import Modal from 'react-modal';
+import '../sass/editable-property.scss'
 import { isEditing, isReadonly, isEmpty, setEditing, setReadonly, setMode } from '../actions/EditableProperty'
 
 class EditableProperty extends Component {
@@ -12,6 +13,7 @@ class EditableProperty extends Component {
     constructor(props) {
         super(props)
         this.startEditing = this.startEditing.bind(this)
+        this.cancelEditing = this.cancelEditing.bind(this)
         this.keyDown = this.keyDown.bind(this)
         this.onEdited = this.onEdited.bind(this)
     }
@@ -58,7 +60,7 @@ class EditableProperty extends Component {
     
     render() {
 
-        const {children, initial_value, is_readonly, is_editing, is_empty} = this.props
+        const {children, initial_value, is_readonly, is_editing, is_empty, edit_as_modal} = this.props
 
 	const that = this
 	let editing_child = null
@@ -90,7 +92,16 @@ class EditableProperty extends Component {
         return (
             <div className="property-stack-component">
                 <div className="property-stack-component__content">
-                    { is_editing && editing_child }
+                    { is_editing && edit_as_modal &&
+                      <Modal isOpen={true}
+                             className="editable_property_modal"
+                             overlayClassName="editable_property_modal--overlay"
+                             onRequestClose={this.cancelEditing}
+                             contentLabel="Tag editor">
+                          {editing_child}
+                      </Modal>
+                    }
+                    { is_editing && !edit_as_modal && editing_child}
                     { is_readonly && readonly_child }
                     { is_empty && empty_child }
                 </div>
@@ -110,11 +121,12 @@ class EditableProperty extends Component {
 
 function mapStateToProps(state, props) {
 
-    const { property_key, initial_value } = props
+    const { property_key, initial_value, edit_as_modal } = props
     
     return {
         property_key: property_key,
         initial_value: initial_value,
+        edit_as_modal: edit_as_modal,
         is_editing: isEditing(state, property_key),
         is_readonly: isReadonly(state, property_key),
         is_empty: isEmpty(state, property_key)
