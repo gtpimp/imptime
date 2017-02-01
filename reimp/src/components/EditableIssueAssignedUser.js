@@ -6,7 +6,7 @@ import EditableProperty from '../form/EditableProperty'
 import IssueAssignedUserForm from '../form/IssueAssignedUserForm'
 import Label from '../form/Label'
 import Blank from '../form/Blank'
-import { updateIssueAssignedUser } from '../actions/Issue'
+import { updateIssueAssignedTo } from '../actions/Issue'
 import OtherUser from '../components/OtherUser'
 import { getIssue } from '../actions/Issues'
 import { getUser } from '../actions/Users'
@@ -21,20 +21,19 @@ class EditableIssueAssignedUser extends Component {
     onChange(new_value) {
         const { dispatch, issue } = this.props
         console.log(new_value)
-        dispatch(updateIssueAssignedUser(issue.id, new_value.assigned_to_id))
+        dispatch(updateIssueAssignedTo(issue.id, new_value.assigned_to.value))
     }
     render() {
         const { issue } = this.props
         
         return (
             <div>
-                assigned to id is: {issue.assigned_to_id}
                 <EditableProperty property_key='issue_assigned_to'
                                   initial_value={issue.assigned_to_id}
                                   edit_as_modal={true}
                                   onChange={this.onChange}
                 >
-                    <IssueAssignedUserForm />
+                    <IssueAssignedUserForm issue={issue} />
                     <OtherUser value={issue.assigned_to_id}/>
                     <Blank />
                 </EditableProperty>

@@ -201,7 +201,7 @@ class Issue extends Component {
                     </td>
                     <td className="issue__cell issue__cell--assignee">
 
-                        { false && <OtherUser value={issue.assigned_to_id}/> }
+                        <OtherUser value={issue.assigned_to_id}/>
 
                         { false && 
                         <RIEModeToggler

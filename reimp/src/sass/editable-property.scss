@@ -1,10 +1,8 @@
 
 .editable_property_modal {
     position                   : absolute;
-    top                        : 300px;
-    left                       : 300px;
-    right                      : 300px;
-    bottom                     : 100px;
+    top                        : 25%;
+    left                       : 40%;
     border                     : 1px solid #ccc;
     background-color                 : #fff;
     overflow                   : auto;
@@ -12,8 +10,8 @@
     border-radius               : 4px;
     outline                    : none;
     padding                    : 20px;
-    max-width : 200px;
-    max-height: 300px;
+    width : 300px;
+    height: 400px;
 }
 
 .editable_property_modal--overlay {
