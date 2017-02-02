@@ -2,11 +2,11 @@ import logging
 from rest_framework import serializers
 from django.utils import timezone
 from drf_compound_fields.fields import ListField
-from base_serializer import BaseSerializer, BaseModelSerializer
+from base_serializer import BaseSerializer
 from tag_serializer import TagSerializer
 from user_serializer import UserSerializer
 from issue_estimate_serializer import IssueEstimateSerializer
-from timepiece.models import Issue
+from issue_comment_serializer import IssueCommentSerializer
 logger = logging.getLogger(__name__)
 
 
@@ -35,6 +35,7 @@ class IssueSerializer(BaseSerializer):
     can_group_issues = serializers.BooleanField()
     parent_group_id = serializers.CharField(source="parent_group.id")
     group_children = ListField(source="group_children_ids")
+    comments = IssueCommentSerializer(many=True)
  
     def to_representation(self, issue, *args, **kwargs):
         issue.assigned_to_quick_name = \
@@ -53,22 +54,14 @@ class IssueSerializer(BaseSerializer):
             issue, *args, **kwargs)
         return d
 
-class IssueCommentSerializer(BaseSerializer):
-    id = serializers.CharField()
-    comment = serializers.CharField()
-    author_id = serializers.CharField()
-    created = serializers.DateTimeField()
-    modified = serializers.DateTimeField()
-
-
 class IssueGeneralDetailsSerializer(BaseSerializer):
 
     id = serializers.CharField()
     description = serializers.CharField()
-    issue_comments = IssueCommentSerializer(many=True)
+    comments = IssueCommentSerializer(many=True)
 
     def to_representation(self, issue, *args, **kwargs):
-        issue.issue_comments = issue.comments.all().order_by("-created")
+        issue.comments = issue.comments.all().order_by("-created")
         return super(IssueGeneralDetailsSerializer, self)\
             .to_representation(issue, *args, **kwargs)
 
@@ -76,7 +69,4 @@ class IssueEstimate(BaseSerializer):
     pass
     
 class IssueWithEstimatesSerializer(IssueSerializer):
-
     issue_estimates = IssueEstimate(many=True)
-
-

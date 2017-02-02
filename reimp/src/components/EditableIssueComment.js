@@ -1,0 +1,74 @@
+import React, {Component} from 'react'
+import {connect} from 'react-redux'
+import map from 'lodash/map'
+import TextComponent from './TextComponent'
+import EditableProperty from '../form/EditableProperty'
+import { isEditing, isReadonly } from '../actions/EditableProperty'
+import { updateIssueComment, createIssueComment, deleteIssueComment } from '../actions/Issue'
+import { IssueCommentForm } from '../form/IssueCommentForm'
+import Label from '../form/Label'
+import Blank from '../form/Blank'
+import { getIssue } from '../actions/Issues'
+
+class EditableIssueComment extends Component {
+
+    constructor(props) {
+        super(props)
+        this.onChange = this.onChange.bind(this)
+        this.onDelete = this.onDelete.bind(this)
+    }
+
+    onChange(new_value) {
+        const { dispatch, issue_id, comment_id } = this.props
+        if ( comment_id ) {
+            dispatch(updateIssueComment(issue_id, comment_id, new_value.comment))
+        } else {
+            dispatch(createIssueComment(issue_id, new_value.comment))
+        }
+    }
+
+    onDelete(new_value) {
+        const { dispatch, issue_id, comment_id } = this.props
+        dispatch(deleteIssueComment(issue_id, comment_id))
+    }
+    
+    render() {
+        const {issue_id, comment} = this.props
+
+	return (
+
+            <div>
+                <EditableProperty property_key={'issue_comment_'+comment.id}
+                                  initial_value={comment.comment}
+                                  onChange={this.onChange}
+                >
+                    <IssueCommentForm />
+                    <Label />
+                    <Blank />
+                </EditableProperty>
+                <button onClick={this.onDelete}>delete</button>
+            </div>
+        )
+    }
+}
+
+function mapStateToProps(state, props) {
+
+    const { issue_id, comment_id } = props
+    const issue = getIssue(state, issue_id) || {}
+    let comment
+    map(issue.comments || [], function(issue_comment, index) {
+        if ( issue_comment.id = comment_id ) {
+            comment = comment
+        }
+    })
+    
+    return {
+        issue_id: issue_id,
+        comment_id: comment_id,
+        comment: comment
+    }
+}
+
+
+export default connect(mapStateToProps)(EditableIssueComment)

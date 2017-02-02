@@ -55,6 +55,7 @@ class IssueViewSet(BaseViewSet):
                                    .select_related('project__business')\
                                    .select_related('assigned_to')\
                                    .select_related('feature')\
+                                   .prefetch_related('comments')\
                                    .prefetch_related('group_children')\
                                    .prefetch_related('tags__category')\
                                    .prefetch_related('issue_points__user')\

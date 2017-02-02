@@ -93,6 +93,98 @@ export function groupIssuesIntoFeature(children_issue_ids, feature_issue_id) {
     return updateIssue(children_issue_ids, "parent_group_id", feature_issue_id)
 }
 
+export function updateIssueComment(issue_id, comment_id, new_comment) {
+
+    return (dispatch, getState) => {
+	const state = getState()
+        const API_BASE_URL = state.settings.configured && state.settings.API_BASE_URL
+	dispatch(announceIssuesSaving([issue_id], 'comment', new_comment))
+	let data = { issue_id: issue_id,
+                     comment_id: comment_id,
+                     comment: new_comment }
+	return impfetch( API_BASE_URL+"imp/issue/comment/", dispatch,
+			 {method: "PUT",
+			  credentials: 'same-origin',
+			  data: data,
+			  headers: {"Content-type": "application/json; charset=UTF-8"}, 
+			  body: JSON.stringify(data)}
+	).then(response => response.json())
+	 .then(json => {
+             if ( json.status !== 'success' ) {
+		 console.log('Request failed with JSON response', json);
+		 dispatch(announceIssueSaveFailed(issue_id, json.error))
+             } else {
+		 console.log('Request succeeded with JSON response', json);
+		 dispatch(announceIssuesSaved([issue_id]))
+             }
+	 })
+	 .catch(function (error) {
+             console.log('Request failed', error);
+	     dispatch(announceIssueSaveFailed(issue_id, error))
+	 })
+    }
+}
+
+export function createIssueComment(issue_id, new_comment) {
+    return (dispatch, getState) => {
+	const state = getState()
+        const API_BASE_URL = state.settings.configured && state.settings.API_BASE_URL
+	dispatch(announceIssuesSaving([issue_id], 'comment', new_comment))
+	let data = { issue_id: issue_id,
+                     comment: new_comment }
+	return impfetch( API_BASE_URL+"imp/issue/comment/", dispatch,
+			 {method: "POST",
+			  credentials: 'same-origin',
+			  data: data,
+			  headers: {"Content-type": "application/json; charset=UTF-8"}, 
+			  body: JSON.stringify(data)}
+	).then(response => response.json())
+	 .then(json => {
+             if ( json.status !== 'success' ) {
+		 console.log('Request failed with JSON response', json);
+		 dispatch(announceIssueSaveFailed(issue_id, json.error))
+             } else {
+		 console.log('Request succeeded with JSON response', json);
+		 dispatch(announceIssuesSaved([issue_id]))
+             }
+	 })
+	 .catch(function (error) {
+             console.log('Request failed', error);
+	     dispatch(announceIssueSaveFailed(issue_id, error))
+	 })
+    }    
+}
+
+export function deleteIssueComment(issue_id, comment_id) {
+    return (dispatch, getState) => {
+        const state = getState()
+        const API_BASE_URL = state.settings.configured && state.settings.API_BASE_URL
+	dispatch(announceIssuesSaving([issue_id], 'comment', "deleting"))
+        let data = { issue_id: issue_id,
+                     comment_id: comment_id }
+	return impfetch( API_BASE_URL+"imp/issue/comment/", dispatch,
+			 {method: "DELETE",
+			  credentials: 'same-origin',
+			  data: data,
+			  headers: {"Content-type": "application/json; charset=UTF-8"}, 
+			  body: JSON.stringify(data)}
+	).then(response => response.json())
+	 .then(json => {
+             if ( json.status !== 'success' ) {
+		 console.log('Request failed with JSON response', json);
+		 dispatch(announceIssueSaveFailed(issue_id, json.error))
+             } else {
+		 console.log('Request succeeded with JSON response', json);
+		 dispatch(announceIssuesSaved([issue_id]))
+             }
+	 })
+	 .catch(function (error) {
+             console.log('Request failed', error);
+	     dispatch(announceIssueSaveFailed(issue_id, error))
+	 })
+    }    
+}
+
 export function groupUnsortedIssuesIntoFeature(issue_ids) {
 
     return (dispatch, getState) => {

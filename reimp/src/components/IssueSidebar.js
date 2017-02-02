@@ -1,11 +1,13 @@
 import React, {Component} from 'react'
 import {connect} from 'react-redux'
+import map from 'lodash/map'
 import {browserHistory} from 'react-router'
 // import PropertyStack from './PropertyStack'
 // import PropertyStackComponent from './PropertyStackComponent'
 import EditableIssueTitle from '../components/EditableIssueTitle'
 import EditableIssueDescription from '../components/EditableIssueDescription'
 import EditableIssueAssignedUser from '../components/EditableIssueAssignedUser'
+import EditableIssueComment from '../components/EditableIssueComment'
 // import IssueDescription from './IssueDescription'
 import Timestamp from './Timestamp'
 import moment from 'moment'
@@ -53,6 +55,13 @@ class IssueSidebar extends Component {
                       <EditableIssueTitle issue_id={issue.id} />
                       <EditableIssueDescription issue_id={issue.id} />
                       <EditableIssueAssignedUser issue_id={issue.id} />
+
+                      { map(issue.comments, function(comment, index) {
+                      <EditableIssueComment issue_id={issue.id} comment_id={comment.id} />
+                      })}
+
+                      <EditableIssueComment issue_id={issue.id} comment_id={null} />
+                      
                   </div>
                 }
 
@@ -63,7 +72,7 @@ class IssueSidebar extends Component {
 
 function mapStateToProps(state, props) {
     const {issue_id, sprint_id, project_id} = props
-    const issue = getIssue(state, issue_id)
+    const issue = getIssue(state, issue_id) || {}
     return {
         issue: issue || {},
         issue_id: issue_id,
