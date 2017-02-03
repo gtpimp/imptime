@@ -5,7 +5,7 @@ import TextComponent from './TextComponent'
 import EditableProperty from '../form/EditableProperty'
 import { isEditing, isReadonly } from '../actions/EditableProperty'
 import { updateIssueComment, createIssueComment, deleteIssueComment } from '../actions/Issue'
-import { IssueCommentForm } from '../form/IssueCommentForm'
+import IssueCommentForm from '../form/IssueCommentForm'
 import Label from '../form/Label'
 import Blank from '../form/Blank'
 import { getIssue } from '../actions/Issues'
@@ -46,7 +46,7 @@ class EditableIssueComment extends Component {
                     <Label />
                     <Blank />
                 </EditableProperty>
-                <button onClick={this.onDelete}>delete</button>
+                { comment.id && <button onClick={this.onDelete}>delete</button> }
             </div>
         )
     }
@@ -56,10 +56,10 @@ function mapStateToProps(state, props) {
 
     const { issue_id, comment_id } = props
     const issue = getIssue(state, issue_id) || {}
-    let comment
+    let comment = { id: null}
     map(issue.comments || [], function(issue_comment, index) {
-        if ( issue_comment.id = comment_id ) {
-            comment = comment
+        if ( issue_comment.id == comment_id ) {
+            comment = issue_comment
         }
     })
     

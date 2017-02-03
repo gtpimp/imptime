@@ -39,7 +39,7 @@ class IssueSidebar extends Component {
 
     render() {
 
-        const {issue} = this.props
+        const {issue, comments} = this.props
         
         return (
 
@@ -56,8 +56,8 @@ class IssueSidebar extends Component {
                       <EditableIssueDescription issue_id={issue.id} />
                       <EditableIssueAssignedUser issue_id={issue.id} />
 
-                      { map(issue.comments, function(comment, index) {
-                      <EditableIssueComment issue_id={issue.id} comment_id={comment.id} />
+                      { map(comments, function(comment, index) {
+                      return <EditableIssueComment key={comment.id} issue_id={issue.id} comment_id={comment.id} />
                       })}
 
                       <EditableIssueComment issue_id={issue.id} comment_id={null} />
@@ -76,6 +76,7 @@ function mapStateToProps(state, props) {
     return {
         issue: issue || {},
         issue_id: issue_id,
+        comments: issue.comments,
         sprint_id: sprint_id,
         project_id: project_id
     }

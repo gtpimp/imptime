@@ -102,7 +102,7 @@ export function updateIssueComment(issue_id, comment_id, new_comment) {
 	let data = { issue_id: issue_id,
                      comment_id: comment_id,
                      comment: new_comment }
-	return impfetch( API_BASE_URL+"imp/issue/comment/", dispatch,
+	return impfetch( API_BASE_URL+"imp/issue/comment/0/", dispatch,
 			 {method: "PUT",
 			  credentials: 'same-origin',
 			  data: data,
@@ -162,7 +162,7 @@ export function deleteIssueComment(issue_id, comment_id) {
 	dispatch(announceIssuesSaving([issue_id], 'comment', "deleting"))
         let data = { issue_id: issue_id,
                      comment_id: comment_id }
-	return impfetch( API_BASE_URL+"imp/issue/comment/", dispatch,
+	return impfetch( API_BASE_URL+"imp/issue/comment/0/", dispatch,
 			 {method: "DELETE",
 			  credentials: 'same-origin',
 			  data: data,

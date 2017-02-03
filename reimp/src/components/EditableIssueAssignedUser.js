@@ -40,7 +40,6 @@ class EditableIssueAssignedUser extends Component {
             </div>
         )
     }
-
 }
 
 function mapStateToProps(state, props) {

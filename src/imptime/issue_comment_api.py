@@ -44,7 +44,7 @@ class IssueCommentViewSet(BaseViewSet):
             
         return HttpResponse(JSONRenderer().render(data))
     
-    def update(self, request):
+    def update(self, request, pk):
         try:
             params = request.data
             issue_pk = params['issue_id']
@@ -69,7 +69,7 @@ class IssueCommentViewSet(BaseViewSet):
             
         return HttpResponse(JSONRenderer().render(data))
     
-    def delete(self, request):
+    def delete(self, request, pk):
         try:
             params = request.data
             issue_pk = params['issue_id']

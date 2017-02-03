@@ -14,9 +14,9 @@ class App extends Component {
     componentDidMount() {
         const { dispatch } = this.props
 
-        window.onerror = function(msg, url, line, col, error) {
-	    //alert("whoops")
-        }
+        /* window.onerror = function(msg, url, line, col, error) {
+	   //alert("whoops")
+         * }*/
 
         require.ensure(['../external_config/react_local_settings'], function() {
             let local_settings = require('../external_config/react_local_settings')

@@ -79,7 +79,9 @@ class EditableProperty extends Component {
 		    value: initial_value
 		})
 	    } else if ( index === 2 ) {
-                empty_child = React.cloneElement(child)
+                empty_child = React.cloneElement(child, {
+                    value: initial_value
+                })
             }
 	})
 	if ( ! readonly_child ) {
