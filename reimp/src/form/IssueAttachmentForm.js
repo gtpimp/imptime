@@ -2,7 +2,7 @@ import React, {Component} from 'react'
 import {connect} from 'react-redux'
 import classNames from 'classnames'
 import { Field, reduxForm } from 'redux-form'
-import { FileUpload } from'react-fileupload'
+import FileUpload from'react-fileupload'
 import { populateDefaultRequestHeaders } from '../actions/lib'
 
 
@@ -10,13 +10,13 @@ class IssueAttachmentForm extends Component {
 
     render() {
 
-        const { options, initialValues, handleSubmit } = this.props
+        const { options, initialValues, handleSubmit, fileUploadOptions } = this.props
         
         return (
             <form onSubmit={handleSubmit}>
                 <div>
                     <label htmlFor="attachment">Attachment</label>
-                    <FileUpload options={options}>
+                    <FileUpload options={fileUploadOptions}>
                         <button ref="chooseAndUpload">Choose and upload</button>
                     </FileUpload> 
                 </div>

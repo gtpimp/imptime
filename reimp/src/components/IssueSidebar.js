@@ -51,24 +51,37 @@ class IssueSidebar extends Component {
                   <div>
                       #{issue.number}
 
-                      <OtherUser value={issue.assigned_to_id}/>
-                      
-                      <EditableIssueTitle issue_id={issue.id} />
-                      <EditableIssueDescription issue_id={issue.id} />
-                      <EditableIssueAssignedUser issue_id={issue.id} />
+                      <div>
+                          Title: <EditableIssueTitle issue_id={issue.id} />
+                      </div>
 
-                      { map(attachments, function(attachment, index) {
-                            return <EditableIssueAttachment issue_id={issue.id} attachment_id={attachment.id} />
-                        })
-                      }
-                      <EditableIssueAttachment issue_id={issue.id} attachment_id={null} />
-                      
-                      { map(comments, function(comment, index) {
-                            return <EditableIssueComment key={index} issue_id={issue.id} comment_id={comment.id} />
-                        })
-                      }
+                      <div>
+                          Description:
+                          <EditableIssueDescription issue_id={issue.id} />
+                      </div>
 
-                      <EditableIssueComment issue_id={issue.id} comment_id={null} />
+                      <div>
+                          Assigned to:
+                          <EditableIssueAssignedUser issue_id={issue.id} />
+                      </div>
+
+                      <div>
+                          Attachments:
+                          { map(attachments, function(attachment, index) {
+                                return <EditableIssueAttachment issue_id={issue.id} attachment_id={attachment.id} />
+                            })
+                          }
+                          <EditableIssueAttachment issue_id={issue.id} attachment_id={null} />
+                      </div>
+
+                      <div>
+                          Comments:
+                          { map(comments, function(comment, index) {
+                                return <EditableIssueComment key={index} issue_id={issue.id} comment_id={comment.id} />
+                            })
+                          }
+                          <EditableIssueComment issue_id={issue.id} comment_id={null} />
+                      </div>
                       
                   </div>
                 }

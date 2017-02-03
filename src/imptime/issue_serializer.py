@@ -2,8 +2,7 @@ import logging
 from rest_framework import serializers
 from django.utils import timezone
 from drf_compound_fields.fields import ListField
-from base_serializer import BaseSerializeres
-
+from base_serializer import BaseSerializer
 from tag_serializer import TagSerializer
 from user_serializer import UserSerializer
 from issue_estimate_serializer import IssueEstimateSerializer
