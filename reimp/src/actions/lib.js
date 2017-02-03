@@ -13,6 +13,7 @@ export function populateDefaultRequestHeaders(headers) {
     if ( auth_token ) {
         headers['Authorization'] = 'Token ' + auth_token
     }
+    headers['Content-type'] = 'application/json; charset=UTF-8'
 }
 
 export function impfetch(url, dispatch, args) {
@@ -20,9 +21,9 @@ export function impfetch(url, dispatch, args) {
     url = "" + url
     args = args || {}
     if ( ! args.headers ) {
-        args.headers = {"Content-type": "application/json; charset=UTF-8"}
+        args.headers = {}
+        populateDefaultRequestHeaders(args.headers)
     }
-    populateDefaultRequestHeaders(args.headers)
     
     if ( ! args.credentials ) {
         args.credentials = 'same-origin'
