@@ -5,6 +5,16 @@ import { logged_in_user, clearAuthentication } from '../actions/Auth'
 
 const throttles = throttles || {}
 
+export function populateDefaultRequestHeaders(headers) {
+    const csrftoken = cookie.load('csrftoken');
+    headers['X-CSRFToken'] = csrftoken
+
+    const auth_token = logged_in_user().token
+    if ( auth_token ) {
+        headers['Authorization'] = 'Token ' + auth_token
+    }
+}
+
 export function impfetch(url, dispatch, args) {
 
     url = "" + url
@@ -12,19 +22,12 @@ export function impfetch(url, dispatch, args) {
     if ( ! args.headers ) {
         args.headers = {"Content-type": "application/json; charset=UTF-8"}
     }
-    if ( ! args.headers['X-CSRFToken'] ) {
-        const csrftoken = cookie.load('csrftoken');
-        args.headers['X-CSRFToken'] = csrftoken
-    }
+    populateDefaultRequestHeaders(args.headers)
+    
     if ( ! args.credentials ) {
         args.credentials = 'same-origin'
     }
 
-    const auth_token = logged_in_user().token
-    if ( auth_token ) {
-        args.headers['Authorization'] = 'Token ' + auth_token
-    }
-    
     if ( args.params ) {
         let param_payload = JSON.stringify(args.params)
         url += "?params=" + param_payload

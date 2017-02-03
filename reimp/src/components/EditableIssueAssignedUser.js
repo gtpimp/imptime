@@ -34,7 +34,7 @@ class EditableIssueAssignedUser extends Component {
                                   onChange={this.onChange}
                 >
                     <IssueAssignedUserForm issue={issue} />
-                    <OtherUser value={issue.assigned_to_id}/>
+                    <OtherUser />
                     <Blank />
                 </EditableProperty>
             </div>

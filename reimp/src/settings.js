@@ -4,7 +4,7 @@
 export const GLOBAL_SETTINGS = { __CONFIGURED: false }
 
 GLOBAL_SETTINGS.WEBSOCKET_BASE_URL = "wss://localhost:443/refresh"
-GLOBAL_SETTINGS.API_BASE_URL = "http://localhost:8000/" 
+GLOBAL_SETTINGS.API_BASE_URL = "http://localhost:8000/"
 
 // Local settings are loaded by App.js
 /* 

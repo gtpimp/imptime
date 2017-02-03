@@ -24,6 +24,7 @@ from re import sub as re_sub
 from re import UNICODE as re_UNICODE
 from checklist_plugins.registry import get_traffic_plugins, get_dev_plugins, get_finance_plugins
 from django.contrib.auth.models import AbstractUser, AbstractBaseUser
+from lib.models import BaseModel
 
 from django.dispatch import receiver
 from django.db.models.signals import post_save
@@ -3641,7 +3642,7 @@ class IssueComment(models.Model):
     created = models.DateTimeField(auto_now_add=True)
     modified = models.DateTimeField(auto_now=True)
     
-class IssueAttachment(models.Model):
+class IssueAttachment(BaseModel):
     issue = models.ForeignKey(Issue, blank=False, null=False, related_name='attachments')
     attachment = models.FileField(upload_to="issue_attachments", null=False, blank=False)
     name = models.CharField(max_length=255)

@@ -2,11 +2,13 @@ import logging
 from rest_framework import serializers
 from django.utils import timezone
 from drf_compound_fields.fields import ListField
-from base_serializer import BaseSerializer
+from base_serializer import BaseSerializeres
+
 from tag_serializer import TagSerializer
 from user_serializer import UserSerializer
 from issue_estimate_serializer import IssueEstimateSerializer
 from issue_comment_serializer import IssueCommentSerializer
+from issue_attachment_serializer import IssueAttachmentSerializer
 logger = logging.getLogger(__name__)
 
 
@@ -36,6 +38,7 @@ class IssueSerializer(BaseSerializer):
     parent_group_id = serializers.CharField(source="parent_group.id")
     group_children = ListField(source="group_children_ids")
     comments = IssueCommentSerializer(many=True)
+    attachments = IssueAttachmentSerializer(many=True)
  
     def to_representation(self, issue, *args, **kwargs):
         issue.assigned_to_quick_name = \

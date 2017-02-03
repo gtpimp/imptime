@@ -8,6 +8,7 @@ import EditableIssueTitle from '../components/EditableIssueTitle'
 import EditableIssueDescription from '../components/EditableIssueDescription'
 import EditableIssueAssignedUser from '../components/EditableIssueAssignedUser'
 import EditableIssueComment from '../components/EditableIssueComment'
+import EditableIssueAttachment from '../components/EditableIssueAttachment'
 // import IssueDescription from './IssueDescription'
 import Timestamp from './Timestamp'
 import moment from 'moment'
@@ -39,7 +40,7 @@ class IssueSidebar extends Component {
 
     render() {
 
-        const {issue, comments} = this.props
+        const {issue, comments, attachments} = this.props
         
         return (
 
@@ -56,9 +57,16 @@ class IssueSidebar extends Component {
                       <EditableIssueDescription issue_id={issue.id} />
                       <EditableIssueAssignedUser issue_id={issue.id} />
 
+                      { map(attachments, function(attachment, index) {
+                            return <EditableIssueAttachment issue_id={issue.id} attachment_id={attachment.id} />
+                        })
+                      }
+                      <EditableIssueAttachment issue_id={issue.id} attachment_id={null} />
+                      
                       { map(comments, function(comment, index) {
-                      return <EditableIssueComment key={comment.id} issue_id={issue.id} comment_id={comment.id} />
-                      })}
+                            return <EditableIssueComment key={index} issue_id={issue.id} comment_id={comment.id} />
+                        })
+                      }
 
                       <EditableIssueComment issue_id={issue.id} comment_id={null} />
                       
@@ -77,6 +85,7 @@ function mapStateToProps(state, props) {
         issue: issue || {},
         issue_id: issue_id,
         comments: issue.comments,
+        attachments: issue.attachments,
         sprint_id: sprint_id,
         project_id: project_id
     }
