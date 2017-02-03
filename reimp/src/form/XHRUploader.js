@@ -229,7 +229,7 @@ var XHRUploader = function (_Component) {
                 forIn(this.props.headers, function(v,k) {
                     xhr.setRequestHeader(k, v)
                 })
-                // xhr.withCredentials = true;
+                xhr.setRequestHeader('Content-type', 'multipart/form-data')
                 xhr.send(formData);
             }
         }
@@ -256,7 +256,7 @@ var XHRUploader = function (_Component) {
                 forIn(this.props.headers, function(v,k) {
                     xhr.setRequestHeader(k, v)
                 })
-                // xhr.withCredentials = true;
+                xhr.setRequestHeader('Content-type', 'multipart/form-data')
                 xhr.send(formData);
                 this.xhrs[file.index] = xhr;
             }

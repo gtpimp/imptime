@@ -14,6 +14,7 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.decorators import permission_classes
 from timepiece.models import Issue, IssueHistory
 from timepiece.models import IssueAttachment
+from django.core.files import File as DjangoFile
 
 logger = logging.getLogger(__name__)
 
@@ -23,19 +24,26 @@ class IssueAttachmentViewSet(BaseViewSet):
 
     def create(self, request):
         try:
-            params = request.data
-            issue_pk = params['issue_id']
-            attachment_value = params['attachment']
-            
-            issue = self.allowed_issue(issue_pk)
-            attachment = IssueAttachment.objects.get_or_create(issue=issue,
-                                                         author=request.user,
-                                                         attachment=attachment_value)[0]
-            issue.attachments.add(attachment)
-            issue.save()
 
-            IssueHistory.add_history(request.user, issue,
-                                     "added attachment %s"%attachment.id, "", attachment.attachment)
+            import pdb; pdb.set_trace()
+
+            filepath = "blobby.blobbster"
+            with DjangoFile(open(filepath, "ab")) as f:
+                f.write(request.body)
+            
+            # params = request.data
+            # issue_pk = params['issue_id']
+            # attachment_value = params['attachment']
+            
+            # issue = self.allowed_issue(issue_pk)
+            # attachment = IssueAttachment.objects.get_or_create(issue=issue,
+            #                                                    author=request.user,
+            #                                                    attachment=attachment_value)[0]
+            # issue.attachments.add(attachment)
+            # issue.save()
+
+            # IssueHistory.add_history(request.user, issue,
+            #                          "added attachment %s"%attachment.id, "", attachment.attachment)
             data = {'status': 'success'}
             
         except Exception, ex:
