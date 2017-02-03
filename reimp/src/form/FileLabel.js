@@ -1,6 +1,7 @@
 import React, {Component} from 'react'
 import {connect} from 'react-redux'
 import classNames from 'classnames'
+import { impfetch } from '../actions/lib'
 
 class FileLabel extends Component {
 
@@ -11,7 +12,8 @@ class FileLabel extends Component {
 
     onClickDownload() {
         const { download_url } = this.props
-        window.open(download_url, '_blank')
+        impfetch(download_url)
+        // window.open(download_url, '_blank')
     }
     
     render() {

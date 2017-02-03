@@ -1,5 +1,7 @@
 import logging
 from issue_serializer import IssueSerializer
+from django_downloadview import HTTPDownloadView
+from django.contrib.auth.decorators import login_required
 from issue_serializer import IssueGeneralDetailsSerializer
 from issue_serializer import IssueWithEstimatesSerializer
 from rest_framework.decorators import detail_route
@@ -58,9 +60,23 @@ class IssueAttachmentViewSet(BaseViewSet):
         
         return HttpResponse(JSONRenderer().render(data))
 
-    @detail_route(methods=['GET'])
-    def download(self, request, attachment_id):
+class IssueAttachmentDownloadView(HTTPDownloadView):
+
+    @method_decorator(login_required)
+    def get(self, request, *args, **kwargs):
+        return super(IssueAttachmentDownloadView, self).get(request, *args, **kwargs)
+
+    def download_response(self, *response_args, **response_kwargs):
+        original_headers = self.file_instance.request.headers
+        response_kwargs.setdefault('content_type', original_headers['Content-Type'])
+        response = super(IssueAttachmentDownloadView, self).download_response(*response_args, **response_kwargs)
+        return response
+    
+    def get(self, request, pk):
+        attachment_id = pk
         try:
+            attachment = IssueAttachment.objects.filter(issue__in=self.allowed_issues()).get(pk=attachment_id)
+            return HttpResponse()
             data = {'status': 'success'}
             
         except Exception, ex:

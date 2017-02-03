@@ -62,7 +62,7 @@ export function impfetch(url, dispatch, args) {
 
         if ( ( (""+response.status)[0] === "4" ) || ( (""+response.status)[0] === "5" ) ) {
             throttles[url].last_failure_at = moment()
-            if ( response.status === 301 ) {
+            if ( response.status === 301 && dispatch ) {
                 dispatch(clearAuthentication())
             }
         } else {
