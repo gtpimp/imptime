@@ -21,9 +21,9 @@ export function impfetch(url, dispatch, args) {
     args = args || {}
     if ( ! args.headers ) {
         args.headers = {}
-        populateDefaultRequestHeaders(args.headers)
         args.headers['Content-type'] = 'application/json; charset=UTF-8'
     }
+    populateDefaultRequestHeaders(args.headers)
     
     if ( ! args.credentials ) {
         args.credentials = 'same-origin'

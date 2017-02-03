@@ -1,5 +1,6 @@
 import logging
 from issue_serializer import IssueSerializer
+from issue_serializer import IssueAttachmentSerializer
 from issue_serializer import IssueGeneralDetailsSerializer
 from issue_serializer import IssueWithEstimatesSerializer
 from rest_framework.decorators import detail_route
@@ -56,6 +57,7 @@ class IssueViewSet(BaseViewSet):
                                    .select_related('assigned_to')\
                                    .select_related('feature')\
                                    .prefetch_related('comments')\
+                                   .prefetch_related('attachments')\
                                    .prefetch_related('group_children')\
                                    .prefetch_related('tags__category')\
                                    .prefetch_related('issue_points__user')\
@@ -71,7 +73,12 @@ class IssueViewSet(BaseViewSet):
                     
 
                     issues = issues.annotate(actual_hours=Sum('entries__hours'))
-                                   
+
+                    for issue in issues:
+                        for attachment in issue.attachments.all():
+                            attachment.download_url = IssueAttachmentSerializer.get_download_url(request, attachment)
+                            attachment.preview_url = IssueAttachmentSerializer.get_preview_url(request, attachment)
+                    
                     s = IssueSerializer(issues, many=True)
                     
                 issues_data = s.data

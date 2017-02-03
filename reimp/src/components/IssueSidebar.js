@@ -68,7 +68,7 @@ class IssueSidebar extends Component {
                       <div>
                           Attachments:
                           { map(attachments, function(attachment, index) {
-                                return <EditableIssueAttachment issue_id={issue.id} attachment_id={attachment.id} />
+                                return <EditableIssueAttachment key={attachment.id} issue_id={issue.id} attachment_id={attachment.id} />
                             })
                           }
                           <EditableIssueAttachment issue_id={issue.id} attachment_id={null} />
@@ -77,7 +77,7 @@ class IssueSidebar extends Component {
                       <div>
                           Comments:
                           { map(comments, function(comment, index) {
-                                return <EditableIssueComment key={index} issue_id={issue.id} comment_id={comment.id} />
+                                return <EditableIssueComment key={comment.id} issue_id={issue.id} comment_id={comment.id} />
                             })
                           }
                           <EditableIssueComment issue_id={issue.id} comment_id={null} />

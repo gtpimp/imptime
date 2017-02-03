@@ -6,7 +6,7 @@ import EditableProperty from '../form/EditableProperty'
 import { isEditing, isReadonly } from '../actions/EditableProperty'
 import { updateIssueAttachment, createIssueAttachment, deleteIssueAttachment } from '../actions/Issue'
 import IssueAttachmentForm from '../form/IssueAttachmentForm'
-import Label from '../form/Label'
+import FileLabel from '../form/FileLabel'
 import Blank from '../form/Blank'
 import { getIssue } from '../actions/Issues'
 
@@ -35,11 +35,11 @@ class EditableIssueAttachment extends Component {
 
             <div>
                 <EditableProperty property_key={'issue_attachment_'+attachment.id}
-                                  initial_value={attachment.attachment}
+                                  initial_value={attachment}
                                   onChange={this.onChange}
                 >
                     <IssueAttachmentForm issue_id={issue_id} />
-                    <Label value={attachment.name}/>
+                    <FileLabel />
                     <Blank />
                 </EditableProperty>
                 { attachment.id && <button onClick={this.onDelete}>delete</button> }

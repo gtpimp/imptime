@@ -1,15 +1,29 @@
 import logging
 from base_serializer import BaseSerializer
 from rest_framework import serializers
+from rest_framework.reverse import reverse
 logger = logging.getLogger(__name__)
 
 class IssueAttachmentSerializer(BaseSerializer):
     id = serializers.CharField(source="pk")
     name = serializers.CharField()
-    download_url = serializers.CharField(source='download_url')
-    preview_url = serializers.CharField(source='preview_url')
+    download_url = serializers.CharField()
+    preview_url = serializers.CharField()
     created = serializers.DateTimeField()
     modified = serializers.DateTimeField()
 
     def to_representation(self, obj, *args, **kwargs):
         return super(IssueAttachmentSerializer, self).to_representation(obj, *args, **kwargs)
+ 
+    @classmethod
+    def get_download_url(self, request, attachment):
+        return self._base_url(request) + '%s/download/'%attachment.id
+
+    @classmethod
+    def get_preview_url(self, request, attachment):
+        return self._base_url(request) + '%s/preview/'%attachment.id
+
+    @classmethod
+    def _base_url(self, request):
+        # hack
+        return reverse('home', request=request).replace('welcome/', '')+'imp/issue/attachment/'

@@ -24,26 +24,13 @@ class IssueAttachmentViewSet(BaseViewSet):
 
     def create(self, request):
         try:
-
-            import pdb; pdb.set_trace()
-
-            filepath = "blobby.blobbster"
-            with DjangoFile(open(filepath, "ab")) as f:
-                f.write(request.body)
-            
-            # params = request.data
-            # issue_pk = params['issue_id']
-            # attachment_value = params['attachment']
-            
-            # issue = self.allowed_issue(issue_pk)
-            # attachment = IssueAttachment.objects.get_or_create(issue=issue,
-            #                                                    author=request.user,
-            #                                                    attachment=attachment_value)[0]
-            # issue.attachments.add(attachment)
-            # issue.save()
-
-            # IssueHistory.add_history(request.user, issue,
-            #                          "added attachment %s"%attachment.id, "", attachment.attachment)
+            issue_pk = request.POST['issue_id']
+            issue = self.allowed_issue(issue_pk)
+            for name, f in request.FILES.items():
+                attachment = IssueAttachment.objects.create(issue=issue, attachment=f, name=f.name)
+                issue.attachments.add(attachment)
+                issue.save()
+                IssueHistory.add_history(request.user, issue, "added attachment", "", f.name)
             data = {'status': 'success'}
             
         except Exception, ex:
@@ -71,3 +58,13 @@ class IssueAttachmentViewSet(BaseViewSet):
         
         return HttpResponse(JSONRenderer().render(data))
 
+    @detail_route(methods=['GET'])
+    def download(self, request, attachment_id):
+        try:
+            data = {'status': 'success'}
+            
+        except Exception, ex:
+            logger.exception(ex)
+            return self.error_response(ex)
+        
+        return HttpResponse(JSONRenderer().render(data))
