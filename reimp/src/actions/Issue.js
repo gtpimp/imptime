@@ -89,6 +89,10 @@ export function updateIssueToggleAsFeature(issue_ids, value) {
     return updateIssue(issue_ids, 'can_group_issues', value)
 }
 
+export function moveIssuesToSprint(issue_ids, new_sprint_id) {
+    return updateIssue(issue_ids, 'sprint_id', new_sprint_id)
+}
+
 export function groupIssuesIntoFeature(children_issue_ids, feature_issue_id) {
     return updateIssue(children_issue_ids, "parent_group_id", feature_issue_id)
 }

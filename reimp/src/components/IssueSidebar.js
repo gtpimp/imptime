@@ -9,6 +9,7 @@ import EditableIssueDescription from '../components/EditableIssueDescription'
 import EditableIssueAssignedUser from '../components/EditableIssueAssignedUser'
 import EditableIssueComment from '../components/EditableIssueComment'
 import EditableIssueAttachment from '../components/EditableIssueAttachment'
+import EditableIssueInSprint from '../components/EditableIssueInSprint'
 // import IssueDescription from './IssueDescription'
 import Timestamp from './Timestamp'
 import moment from 'moment'
@@ -63,6 +64,11 @@ class IssueSidebar extends Component {
                       <div>
                           Assigned to:
                           <EditableIssueAssignedUser issue_id={issue.id} />
+                      </div>
+
+                      <div>
+                          Sprint:
+                          <EditableIssueInSprint issue_id={issue.id} />
                       </div>
 
                       <div>

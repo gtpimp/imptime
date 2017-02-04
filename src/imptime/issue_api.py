@@ -163,6 +163,12 @@ class IssueViewSet(BaseViewSet):
                         IssueHistory.add_history(
                             self.request.user, issue, "changed parent group id",
                             old_parent_group_id, new_value)
+                elif field_name == 'sprint_id':
+                    old_sprint = issue.project
+                    new_sprint = self.allowed_sprint(new_value)
+                    issue.project = new_sprint
+                    issue.order += 9999
+                    IssueHistory.add_history(request.user, issue, "moved to sprint", unicode(old_sprint), unicode(new_sprint))
                 else:
                     raise Exception("Unsupported field name: %s" % field_name)
                 issue.save()

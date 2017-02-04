@@ -15,3 +15,5 @@ export const PAGE_KEY__SPRINTS_PAGE = 'sprints_page'
 export const PAGE_KEY__SPRINT_DASHBOARD_PAGE = 'sprint_dashboard_page'
 export const PAGE_KEY__ISSUES_PAGE = 'issues_page'
 export const PAGE_KEY__ISSUE_DASHBOARD_PAGE = 'issue_dashboard_page'
+
+export const SELECTOR__SPRINTS = 'selector_sprints'
