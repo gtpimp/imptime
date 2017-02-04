@@ -1,7 +1,7 @@
 import React, {Component} from 'react'
 import {connect} from 'react-redux'
 import classNames from 'classnames'
-import { impfetch } from '../actions/lib'
+import { impfetch } from '../../actions/lib'
 
 class FileLabel extends Component {
 

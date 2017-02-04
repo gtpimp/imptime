@@ -3,7 +3,7 @@ import {connect} from 'react-redux'
 import classNames from 'classnames'
 import { Field, reduxForm } from 'redux-form'
 import FileUpload from 'react-fileupload'
-import { populateDefaultRequestHeaders } from '../actions/lib'
+import { populateDefaultRequestHeaders } from '../../actions/lib'
 
 
 class IssueAttachmentForm extends Component {

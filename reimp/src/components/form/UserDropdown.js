@@ -4,8 +4,7 @@ import Select from 'react-select';
 import { connect } from 'react-redux'
 import {
     ensureUsersLoaded
-} from '../actions/Users'
-import RIEEditBase from './RIEEditBase';
+} from '../../actions/Users'
 
 export class UserDropdown extends Component {
 

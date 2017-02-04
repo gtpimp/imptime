@@ -1,7 +1,7 @@
 import React, {Component} from 'react'
 import {connect} from 'react-redux'
 import classNames from 'classnames'
-import '../sass/toolbar-button.css'
+import '../../sass/toolbar-button.css'
 
 class ToolbarButton extends Component {
 

@@ -1,11 +1,11 @@
 import React, {Component} from 'react'
 import {connect} from 'react-redux'
 import {browserHistory} from 'react-router'
-import '../sass/toolbar-panel.css'
+import '../../sass/toolbar-panel.css'
 import ToolbarButton from './ToolbarButton'
 import {
     PAGE_KEY__SPRINT_DASHBOARD_PAGE
-} from '../actions/ItemListKeyRegistry'
+} from '../../actions/ItemListKeyRegistry'
 
 class SprintDashboardToolbarPanel extends Component {
 
@@ -42,7 +42,7 @@ function mapStateToProps(state, props) {
     const sprint_objs = (state.sprint || {}).items_by_id || {}
     const page = state.page || {}
     const selected_sprint_ids = (page[PAGE_KEY__SPRINT_DASHBOARD_PAGE] || {}).sprint_ids || []
-    const sprint = (selected_sprint_ids.length > 0 && sprint_objs[selected_sprint_ids[0]]) || {}
+    const sprint = (selected_sprint_ids.length > 0 && sprint_objs[selected_sprint_ids[0]]) || null
     
     return {
         sprint: sprint,

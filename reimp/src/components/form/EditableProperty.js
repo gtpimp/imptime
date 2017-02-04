@@ -1,8 +1,8 @@
 import React, {Component} from 'react'
 import {connect} from 'react-redux'
 import Modal from 'react-modal';
-import '../sass/editable-property.scss'
-import { isEditing, isReadonly, isEmpty, setEditing, setReadonly, setMode } from '../actions/EditableProperty'
+import '../../sass/editable-property.scss'
+import { isEditing, isReadonly, isEmpty, setEditing, setReadonly, setMode } from '../../actions/EditableProperty'
 
 class EditableProperty extends Component {
 

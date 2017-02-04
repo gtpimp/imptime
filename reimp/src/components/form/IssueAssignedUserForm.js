@@ -3,8 +3,8 @@ import {connect} from 'react-redux'
 import classNames from 'classnames'
 import { Field, reduxForm } from 'redux-form'
 import SelectList from 'react-widgets/lib/SelectList'
-import { ensureUsersLoaded, getUsers } from '../actions/Users'
-import { ensureProjectsLoaded, getProject } from '../actions/Projects'
+import { ensureUsersLoaded, getUsers } from '../../actions/Users'
+import { ensureProjectsLoaded, getProject } from '../../actions/Projects'
 
 class IssueAssignedUserForm extends Component {
 

@@ -1,6 +1,6 @@
 import React, {Component} from 'react'
 import {connect} from 'react-redux'
-import '../sass/toolbar-panel.css'
+import '../../sass/toolbar-panel.css'
 
 class IssuesToolbarPanel extends Component {
 

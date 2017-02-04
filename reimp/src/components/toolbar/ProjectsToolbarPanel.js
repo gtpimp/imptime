@@ -1,10 +1,10 @@
 import React, {Component} from 'react'
 import {connect} from 'react-redux'
 import {browserHistory} from 'react-router'
-import '../sass/toolbar-panel.css'
+import '../../sass/toolbar-panel.css'
 import {
     PAGE_KEY__PROJECTS_PAGE
-} from '../actions/ItemListKeyRegistry'
+} from '../../actions/ItemListKeyRegistry'
 
 class ProjectsToolbarPanel extends Component {
 

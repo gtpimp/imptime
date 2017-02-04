@@ -1,10 +1,10 @@
 import React, {Component} from 'react'
 import {connect} from 'react-redux'
-import '../sass/toolbar-panel.css'
+import '../../sass/toolbar-panel.css'
 import ToolbarButton from './ToolbarButton'
-import { get_selected_issue_ids } from '../actions/Page'
-import { ensureIssuesLoaded, getIssue } from '../actions/Issues'
-import { LIST_KEY__ISSUE_LIST, PAGE_KEY__ISSUES_PAGE } from '../actions/ItemListKeyRegistry'
+import { get_selected_issue_ids } from '../../actions/Page'
+import { ensureIssuesLoaded, getIssue } from '../../actions/Issues'
+import { LIST_KEY__ISSUE_LIST, PAGE_KEY__ISSUES_PAGE } from '../../actions/ItemListKeyRegistry'
 import {
     reorderIssue,
     startCandidateIssue,
@@ -14,10 +14,10 @@ import {
     groupUnsortedIssuesIntoFeature,
     updateIssueToggleAsFeature,
     ungroupIssuesIntoFeature
-} from '../actions/Issue'
+} from '../../actions/Issue'
 import {
     setItemFlag
-} from '../actions/ItemList'
+} from '../../actions/ItemList'
 
 class IssueToolbarPanel extends Component {
 

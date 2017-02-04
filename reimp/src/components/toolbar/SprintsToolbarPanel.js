@@ -1,10 +1,10 @@
 import React, {Component} from 'react'
 import {connect} from 'react-redux'
-import '../sass/toolbar-panel.css'
+import '../../sass/toolbar-panel.css'
 import {browserHistory} from 'react-router'
 import {
     PAGE_KEY__SPRINTS_PAGE
-} from '../actions/ItemListKeyRegistry'
+} from '../../actions/ItemListKeyRegistry'
 
 class SprintsToolbarPanel extends Component {
 
