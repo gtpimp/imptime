@@ -68,7 +68,7 @@ class IssueSidebar extends Component {
 
                       <div>
                           Sprint:
-                          <EditableIssueInSprint issue_id={issue.id} />
+                          <EditableIssueInSprint issue_ids={[issue.id]} />
                       </div>
 
                       <div>

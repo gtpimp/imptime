@@ -8,7 +8,7 @@ import SprintLabel from './form/SprintLabel'
 import Blank from './form/Blank'
 import { moveIssuesToSprint } from '../actions/Issue'
 import OtherUser from '../components/OtherUser'
-import { getIssue } from '../actions/Issues'
+import { getIssues } from '../actions/Issues'
 import { getUser } from '../actions/Users'
 
 class EditableIssueInSprint extends Component {
@@ -19,17 +19,17 @@ class EditableIssueInSprint extends Component {
     }
 
     onChange(new_value) {
-        const { dispatch, issue } = this.props
-        dispatch(moveIssuesToSprint([issue.id], new_value.sprint_id.value))
+        const { dispatch, issue_ids } = this.props
+        dispatch(moveIssuesToSprint(issue_ids, new_value.sprint_id.value))
     }
     
     render() {
-        const { issue, project_id } = this.props
+        const { sprint_id, project_id } = this.props
         
         return (
             <div>
                 <EditableProperty property_key='issue_sprint_id'
-                                  initial_value={issue.sprint_id}
+                                  initial_value={sprint_id}
                                   edit_as_modal={true}
                                   onChange={this.onChange}
                 >
@@ -43,13 +43,15 @@ class EditableIssueInSprint extends Component {
 }
 
 function mapStateToProps(state, props) {
-    const { issue_id } = props
-    const issue = getIssue(state, issue_id) || {}
-    const project_id = issue.project_id
+    const { issue_ids } = props
+    const issues = getIssues(state, issue_ids) || []
+    const project_id = issues && issues.length > 0 && issues[0].project_id
+    const sprint_id = issues && issues.length > 0 && issues[0].sprint_id
     
     return {
-        issue: issue,
-        project_id: project_id
+        issues: issues,
+        project_id: project_id,
+        sprint_id: sprint_id
     }
 }
 

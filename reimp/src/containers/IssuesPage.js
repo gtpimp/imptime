@@ -3,6 +3,7 @@ import {connect} from 'react-redux'
 import concat from 'lodash/concat'
 import includes from 'lodash/includes'
 import IssueSidebar from '../components/IssueSidebar'
+import MultipleIssueSidebar from '../components/MultipleIssueSidebar'
 import IssueList from '../components/IssueList'
 import { setBreadcrumbs } from '../actions/Breadcrumbs'
 import {
@@ -104,7 +105,7 @@ class IssuesPage extends Component {
 
     render() {
 
-        const { sprint_id, project_id, selected_issues } = this.props
+        const { sprint_id, project_id, selected_issues, selected_issue_ids, is_single_selection, is_multiple_selection } = this.props
 
         const selected_issue = ( selected_issues && selected_issues.length > 0 && selected_issues[0] ) || null
 
@@ -115,10 +116,15 @@ class IssuesPage extends Component {
                                onSelectIssues={this.onSelectIssues}
                     />
                 </div>
-                { sprint_id && selected_issue &&
+                { is_single_selection && sprint_id && selected_issue &&
                 <div className="list-layout__sidebar">
                     <IssueSidebar issue_id={selected_issue.id} sprint_id={sprint_id} project_id={project_id}/>
                 </div>
+                }
+                { is_multiple_selection && sprint_id && selected_issue_ids &&
+                  <div className="list-layout__sidebar">
+                      <MultipleIssueSidebar issue_ids={selected_issue_ids} sprint_id={sprint_id} project_id={project_id}/>
+                  </div>
                 }
             </div>
         )
@@ -147,7 +153,11 @@ function mapStateToProps(state, props) {
         project_id: project_id,
         project: project,
         selected_issues: selected_items,
-        toolbars: page.toolbar_names
+        selected_issue_ids: selected_issue_ids,
+        toolbars: page.toolbar_names,
+        is_single_selection: selected_items.length == 1,
+        is_multiple_selection: selected_items.length > 1,
+        
     }
 }
 
