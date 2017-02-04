@@ -17,6 +17,7 @@ export function invalidateAllIssues() {
 }
 
 export function invalidateIssues(issue_ids) {
+
     return {
         type: INVALIDATE_ISSUES,
 	issue_ids_to_invalidate: issue_ids

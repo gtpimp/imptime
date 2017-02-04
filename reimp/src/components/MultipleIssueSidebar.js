@@ -30,7 +30,7 @@ class MultipleIssueSidebar extends Component {
 
     componentWillReceiveProps(new_props) {
         const {dispatch} = this.props
-        dispatch(ensureIssuesLoaded([new_props.issue_ids]))
+        dispatch(ensureIssuesLoaded(new_props.issue_ids))
     }
     
     render() {

@@ -3,6 +3,8 @@ import difference from 'lodash/difference'
 import union from 'lodash/union'
 import keys from 'lodash/keys'
 import map from 'lodash/map'
+import merge from 'lodash/merge'
+import { stringifyIds } from '../actions/lib.js'
 
 import {
     ANNOUNCE_ISSUES_LOAD_FAILED,
@@ -35,34 +37,39 @@ const initialState = {
 export default function issue(state = initialState, action) {
 
     let new_items_by_id = null
+    let ids = null
     
     switch (action.type) {
 
 	case INVALIDATE_ALL_ISSUES:
+            ids = stringifyIds(keys(state.items_by_id || []))
 	    return Object.assign({}, state,
-				 {invalidated_item_ids:keys(state.items_by_id || {})
-				 })
+				 {invalidated_item_ids:ids}
+            )
 	    
         case INVALIDATE_ISSUES:
+
+            ids = stringifyIds(action.issue_ids_to_invalidate)
+            
 	    return Object.assign(
 		{}, state,
-		{invalidated_item_ids: union(state.invalidated_item_ids,
-					     action.issue_ids_to_invalidate)
-		})
+		{invalidated_item_ids: union(state.invalidated_item_ids, ids)}
+            )
 
         case ANNOUNCE_LOADING_ISSUES:
+
+            ids = stringifyIds(action.issue_ids_to_load)
+            
             return Object.assign({}, state, {
-		loading_item_ids: union(state.loading_item_ids, action.issue_ids_to_load),
-		invalidated_item_ids: difference(state.invalidated_item_ids || [],
-						 action.issue_ids_to_load)
+		loading_item_ids: union(state.loading_item_ids, ids),
+		invalidated_item_ids: difference(state.invalidated_item_ids || [], ids)
 	    })
 	    
         case ANNOUNCE_ISSUES_LOADED:
+            ids = stringifyIds(keys(action.items_by_id))
             return Object.assign({}, state, {
-		loading_item_ids: difference(state.loading_item_ids || [],
-					     keys(action.items_by_id)),
-		items_by_id: Object.assign({},
-					   assign(state.items_by_id, action.items_by_id))
+		loading_item_ids: difference(state.loading_item_ids || [], ids),
+		items_by_id: Object.assign({}, assign(state.items_by_id, action.items_by_id))
 	    })
         case ANNOUNCE_ISSUES_LOAD_FAILED:
             return state;

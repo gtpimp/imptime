@@ -1,9 +1,15 @@
 import fetch from 'isomorphic-fetch'
 import cookie from 'react-cookie'
 import moment from 'moment'
+import map from 'lodash/map'
 import { logged_in_user, clearAuthentication } from '../actions/Auth'
 
 const throttles = throttles || {}
+
+export function stringifyIds(ids) {
+    const x = map(ids, function(id) { return "" + id })
+    return x
+}
 
 export function populateDefaultRequestHeaders(headers) {
     const csrftoken = cookie.load('csrftoken');

@@ -69,10 +69,6 @@ function fetchUsers(user_ids) {
     }
 }
 
-function getMissingUsers(state, required_user_ids) {
-    return getMissingItemIds(state, required_user_ids, 'user')
-}
-
 export function ensureUsersLoaded(user_ids) {
     return (dispatch, getState) => {
         const state = getState()

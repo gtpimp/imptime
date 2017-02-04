@@ -1,8 +1,10 @@
 import { impfetch } from './lib.js'
 import difference from 'lodash/difference'
 import keys from 'lodash/keys'
+import forEach from 'lodash/forEach'
 import union from 'lodash/union'
 import map from 'lodash/map'
+import compact from 'lodash/compact'
 
 export const INIT_LIST = 'INIT_LIST'
 export const ANNOUNCE_LIST_LOADED = 'ANNOUNCE_LIST_LOADED'
@@ -179,19 +181,20 @@ function tryFetchMatchingItems(list_key,
 
 export function getMissingItemIds(state, required_item_ids, matching_items_key) {
     // Returns a list of item_ids which aren't already loaded or invalidated or already loading
-    const required_item_refs = map(required_item_ids, function(item_id, index) { return "" + item_id })
+    const required_item_refs = forEach(required_item_ids, function(item_id) { return "" + item_id })
     const matching_items = state[matching_items_key] || {}
     let matching_item_ids = keys(matching_items.items_by_id || {})
     
     const invalidated_item_refs = map(matching_items.invalidated_item_ids || [], function(item_id, index) { return "" + item_id })
     matching_item_ids = difference(matching_item_ids, invalidated_item_refs)
     
-    const matching_item_refs = map(matching_item_ids, function(item_id, index) { return "" + item_id })
+    const matching_item_refs = forEach(matching_item_ids, function(item_id, index) { return "" + item_id })
     let unmatching_item_ids = difference(required_item_refs, matching_item_refs)
-    unmatching_item_ids = union(unmatching_item_ids, matching_items.invalidated_item_ids || [])
     
-    const loading_item_ids = map(matching_items.loading_item_ids || [], function(item_id, index) { return "" + item_id })
+    const loading_item_ids = forEach(matching_items.loading_item_ids || [], function(item_id, index) { return "" + item_id })
     unmatching_item_ids = difference(unmatching_item_ids, loading_item_ids)
+    
+    unmatching_item_ids = compact(unmatching_item_ids)
     
     return unmatching_item_ids
 }
@@ -265,3 +268,4 @@ export function fetchListIfNeeded(list_key,
 			        matching_items_key,
 			        matching_items_promise_func)
 }
+
