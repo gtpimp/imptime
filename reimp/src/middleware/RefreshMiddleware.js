@@ -81,6 +81,7 @@ function refreshMiddleware(_ref) {
                         triggerInvalidateItemLists(d, dispatch)
                     } else if ( d.action_type === "update" ) {
                         triggerInvalidateEntity(d, dispatch)
+                        triggerInvalidateItemLists(d, dispatch)
                     } else if ( d.action_type === "delete" ) {
                         triggerInvalidateEntity(d, dispatch)
                         triggerInvalidateItemLists(d, dispatch)
