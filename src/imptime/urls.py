@@ -11,6 +11,7 @@ import user_api
 import views
 from rest_framework.routers import DefaultRouter
 from rest_framework.authtoken import views as rest_views
+from issue_attachment_download import IssueAttachmentDownloadView, IssueAttachmentPreviewView
 
 router = DefaultRouter()
 router.register(r'auth', project_api.ProjectViewSet,
@@ -36,6 +37,8 @@ router.register(r'user', user_api.UserViewSet,
 
 urlpatterns = [
     url(r'^$', views.home, name='home'),
-    url(r'^login/', rest_views.obtain_auth_token)
+    url(r'^login/', rest_views.obtain_auth_token),
+    url(r'^issue/attachment/(?P<attachment_id>.*)/preview', IssueAttachmentPreviewView.as_view(), name='preview_attachment'),
+    url(r'^issue/attachment/(?P<attachment_id>.*)/download', IssueAttachmentDownloadView.as_view(), name='download_attachment')
 
 ] + router.urls

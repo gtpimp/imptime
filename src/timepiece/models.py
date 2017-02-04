@@ -3646,6 +3646,7 @@ class IssueAttachment(BaseModel):
     issue = models.ForeignKey(Issue, blank=False, null=False, related_name='attachments')
     attachment = models.FileField(upload_to="issue_attachments", null=False, blank=False)
     name = models.CharField(max_length=255)
+    #mime_type = models.CharField(max_length=255, null=True)
 
 class RedmineToTimepieceBusinessMapping(models.Model):
     redmine_business_name = models.CharField(max_length=255)

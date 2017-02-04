@@ -60,27 +60,16 @@ class IssueAttachmentViewSet(BaseViewSet):
         
         return HttpResponse(JSONRenderer().render(data))
 
-class IssueAttachmentDownloadView(HTTPDownloadView):
+    # @detail_route(methods=['GET'])
+    # def download(self, request, pk):
+    #     attachment_id = pk
+    #     attachment = IssueAttachment.objects.filter(issue__in=self.allowed_issues()).get(pk=attachment_id)
+    #     filepath = os.path.join(settings.MEDIA_ROOT, attachment.attachment.filename)
 
-    @method_decorator(login_required)
-    def get(self, request, *args, **kwargs):
-        return super(IssueAttachmentDownloadView, self).get(request, *args, **kwargs)
-
-    def download_response(self, *response_args, **response_kwargs):
-        original_headers = self.file_instance.request.headers
-        response_kwargs.setdefault('content_type', original_headers['Content-Type'])
-        response = super(IssueAttachmentDownloadView, self).download_response(*response_args, **response_kwargs)
-        return response
-    
-    def get(self, request, pk):
-        attachment_id = pk
-        try:
-            attachment = IssueAttachment.objects.filter(issue__in=self.allowed_issues()).get(pk=attachment_id)
-            return HttpResponse()
-            data = {'status': 'success'}
-            
-        except Exception, ex:
-            logger.exception(ex)
-            return self.error_response(ex)
-        
-        return HttpResponse(JSONRenderer().render(data))
+    #     response = HttpResponse(
+    #         open(filepath, 'rb'),
+    #         content_type='application/force-download'
+    #     )
+    #     response['Content-Disposition'] = 'attachment; filename="%s"' % os.path.basename(attachment.name)
+    #     response['Content-Length'] = os.stat(filepath).st_size
+    #     return response    
