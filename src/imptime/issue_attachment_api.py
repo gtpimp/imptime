@@ -40,12 +40,17 @@ class IssueAttachmentViewSet(BaseViewSet):
             return self.error_response(ex)
             
         return HttpResponse(JSONRenderer().render(data))
+
+    def update(self, request, pk):
+        # This function is required for the 'delete' to register as a
+        # url, this seems like a bug in DjangoRestFramework
+        raise Exception("Not supported")
     
     def delete(self, request, pk):
         try:
             params = request.data
             issue_pk = params['issue_id']
-            attachment_id = params['attachment_id']
+            attachment_id = pk
             issue = self.allowed_issue(issue_pk)
             attachment = IssueAttachment.objects.filter(issue=issue).get(pk=attachment_id)
             IssueHistory.add_history(request.user, issue, "deleted attachment %s"%attachment.id, attachment.attachment, "")
@@ -59,17 +64,3 @@ class IssueAttachmentViewSet(BaseViewSet):
             return self.error_response(ex)
         
         return HttpResponse(JSONRenderer().render(data))
-
-    # @detail_route(methods=['GET'])
-    # def download(self, request, pk):
-    #     attachment_id = pk
-    #     attachment = IssueAttachment.objects.filter(issue__in=self.allowed_issues()).get(pk=attachment_id)
-    #     filepath = os.path.join(settings.MEDIA_ROOT, attachment.attachment.filename)
-
-    #     response = HttpResponse(
-    #         open(filepath, 'rb'),
-    #         content_type='application/force-download'
-    #     )
-    #     response['Content-Disposition'] = 'attachment; filename="%s"' % os.path.basename(attachment.name)
-    #     response['Content-Length'] = os.stat(filepath).st_size
-    #     return response    

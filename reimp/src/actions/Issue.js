@@ -185,6 +185,35 @@ export function deleteIssueComment(issue_id, comment_id) {
     }    
 }
 
+export function deleteIssueAttachment(issue_id, attachment_id) {
+    return (dispatch, getState) => {
+        const state = getState()
+        const API_BASE_URL = state.settings.configured && state.settings.API_BASE_URL
+	dispatch(announceIssuesSaving([issue_id], 'attachment', "deleting"))
+        let data = { issue_id: issue_id }
+	return impfetch( API_BASE_URL+"imp/issue/attachment/"+attachment_id+"/", dispatch,
+			 {method: "DELETE",
+			  credentials: 'same-origin',
+			  data: data,
+			  headers: {"Content-type": "application/json; charset=UTF-8"}, 
+			  body: JSON.stringify(data)}
+	).then(response => response.json())
+	 .then(json => {
+             if ( json.status !== 'success' ) {
+		 console.log('Request failed with JSON response', json);
+		 dispatch(announceIssueSaveFailed(issue_id, json.error))
+             } else {
+		 console.log('Request succeeded with JSON response', json);
+		 dispatch(announceIssuesSaved([issue_id]))
+             }
+	 })
+	 .catch(function (error) {
+             console.log('Request failed', error);
+	     dispatch(announceIssueSaveFailed(issue_id, error))
+	 })
+    }    
+}
+
 export function groupUnsortedIssuesIntoFeature(issue_ids) {
 
     return (dispatch, getState) => {
