@@ -48,8 +48,8 @@ class IssueAssignedUserForm extends Component {
 
 function mapStateToProps(state, props) {
 
-    const { issue, onChange } = props
-    const project = getProject(state, issue.project_id) || {}
+    const { project_id, onChange } = props
+    const project = getProject(state, project_id) || {}
     const assignable_user_ids = project.allowed_user_ids || []
     const users = getUsers(state, assignable_user_ids)
     
@@ -63,9 +63,8 @@ function mapStateToProps(state, props) {
         onSubmit: onChange,
         assignable_users: assignable_users,
         assignable_user_ids: assignable_user_ids,
-        project_id: issue.project_id,
-        project: project,
-        issue: issue
+        project_id: project_id,
+        project: project
     }
 }
 

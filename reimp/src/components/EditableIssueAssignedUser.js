@@ -8,7 +8,7 @@ import Label from './form/Label'
 import Blank from './form/Blank'
 import { updateIssueAssignedTo } from '../actions/Issue'
 import OtherUser from '../components/OtherUser'
-import { getIssue } from '../actions/Issues'
+import { getIssues } from '../actions/Issues'
 import { getUser } from '../actions/Users'
 
 class EditableIssueAssignedUser extends Component {
@@ -19,21 +19,21 @@ class EditableIssueAssignedUser extends Component {
     }
 
     onChange(new_value) {
-        const { dispatch, issue } = this.props
+        const { dispatch, issue_ids } = this.props
         console.log(new_value)
-        dispatch(updateIssueAssignedTo(issue.id, new_value.assigned_to.value))
+        dispatch(updateIssueAssignedTo(issue_ids, new_value.assigned_to.value))
     }
     render() {
-        const { issue } = this.props
+        const { issue, project_id } = this.props
         
         return (
             <div>
                 <EditableProperty property_key='issue_assigned_to'
-                                  initial_value={issue.assigned_to_id}
+                                  initial_value={null}
                                   edit_as_modal={true}
                                   onChange={this.onChange}
                 >
-                    <IssueAssignedUserForm issue={issue} />
+                    <IssueAssignedUserForm project_id={project_id}/>
                     <OtherUser />
                     <Blank />
                 </EditableProperty>
@@ -43,11 +43,15 @@ class EditableIssueAssignedUser extends Component {
 }
 
 function mapStateToProps(state, props) {
-    const { issue_id } = props
-    const issue = getIssue(state, issue_id) || {}
+    const { issue_ids } = props
+    const issues = getIssues(state, issue_ids) || []
+    const issue = issues && issues.length > 0 && issues[0]
+    const project_id = issue.project_id
     
     return {
-        issue: issue
+        issues: issues,
+        issue: issue,
+        project_id: project_id
     }
 }
 
