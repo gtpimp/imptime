@@ -14,7 +14,7 @@ from django.contrib.sessions.models import Session
 @permission_classes(())
 class IssueAttachmentDownloadView(APIView):
 
-    def _get(self, request, attachment_id, content_type, download=True):
+    def _get(self, request, attachment_id, download=True):
         # jump through hoops because we want to download from a url
         # but the login token is normally passed in a custom header.
         token = request.GET['token']
@@ -27,7 +27,7 @@ class IssueAttachmentDownloadView(APIView):
 
         response = HttpResponse(
             open(filepath, 'rb'),
-            content_type=content_type
+            content_type=attachment.content_type
         )
         if download:
             response['Content-Disposition'] = 'attachment; filename="%s"' % os.path.basename(attachment.name)
@@ -36,9 +36,9 @@ class IssueAttachmentDownloadView(APIView):
         
     
     def get(self, request, attachment_id):
-        return self._get(request, attachment_id, content_type='image/jpeg')
+        return self._get(request, attachment_id)
 
 class IssueAttachmentPreviewView(IssueAttachmentDownloadView):
 
     def get(self, request, attachment_id):
-        return self._get(request, attachment_id, content_type='image/jpeg', download=False)
+        return self._get(request, attachment_id, download=False)

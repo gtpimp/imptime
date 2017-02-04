@@ -14,7 +14,7 @@ class FileLabel extends Component {
     onClickDownload(event) {
         const { download_url } = this.props
         event.stopPropagation()
-        window.open(download_url, '_blank')
+        window.open(download_url)
     }
 
     onClickPreview(event) {
@@ -24,18 +24,23 @@ class FileLabel extends Component {
     }
     
     render() {
-        const { filename } = this.props
+        const { filename, exists } = this.props
         return (
             <div>
                 <div onClick={this.onClickPreview}>
                     {filename}
                 </div>
-                <button onClick={this.onClickPreview}>
-                    preview
-                </button>
-                <button onClick={this.onClickDownload}>
-                    download
-                </button>
+
+                { exists &&
+                  <div>
+                      <button onClick={this.onClickPreview}>
+                          preview
+                      </button>
+                      <button onClick={this.onClickDownload}>
+                          download
+                      </button>
+                  </div>
+                }
             </div>
         )
     }
@@ -47,8 +52,10 @@ function mapStateToProps(state, props) {
     const filename = value && value.name || "<none>"
     const download_url = value && value.download_url
     const preview_url = value && value.preview_url
+    const exists = value && value.name
     
     return {
+        exists: exists,
         filename: filename,
         download_url: download_url,
         preview_url: preview_url

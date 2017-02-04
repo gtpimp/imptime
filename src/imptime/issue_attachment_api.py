@@ -29,7 +29,7 @@ class IssueAttachmentViewSet(BaseViewSet):
             issue_pk = request.POST['issue_id']
             issue = self.allowed_issue(issue_pk)
             for name, f in request.FILES.items():
-                attachment = IssueAttachment.objects.create(issue=issue, attachment=f, name=f.name)
+                attachment = IssueAttachment.objects.create(issue=issue, attachment=f, name=f.name, content_type=f.content_type)
                 issue.attachments.add(attachment)
                 issue.save()
                 IssueHistory.add_history(request.user, issue, "added attachment", "", f.name)
