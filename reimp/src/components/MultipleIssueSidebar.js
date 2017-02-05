@@ -4,12 +4,9 @@ import map from 'lodash/map'
 import {browserHistory} from 'react-router'
 // import PropertyStack from './PropertyStack'
 // import PropertyStackComponent from './PropertyStackComponent'
-import EditableIssueTitle from '../components/EditableIssueTitle'
-import EditableIssueDescription from '../components/EditableIssueDescription'
 import EditableIssueAssignedUser from '../components/EditableIssueAssignedUser'
-import EditableIssueComment from '../components/EditableIssueComment'
-import EditableIssueAttachment from '../components/EditableIssueAttachment'
 import EditableIssueInSprint from '../components/EditableIssueInSprint'
+import EditableIssueStatus from '../components/EditableIssueStatus'
 // import IssueDescription from './IssueDescription'
 import Timestamp from './Timestamp'
 import moment from 'moment'
@@ -44,6 +41,11 @@ class MultipleIssueSidebar extends Component {
                 <div>
                     { issues.length } issues selected
                     
+                    <div>
+                        Status:
+                        <EditableIssueStatus issue_ids={issue_ids} project_id={project_id} />
+                    </div>
+
                     <div>
                         Sprint:
                         <EditableIssueInSprint issue_ids={issue_ids} />
