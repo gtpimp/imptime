@@ -29,7 +29,7 @@ class EditableIssueAssignedUser extends Component {
         return (
             <div>
                 <EditableProperty property_key='issue_assigned_to'
-                                  initial_value={null}
+                                  initial_value={issue && issue.assigned_to_id || null}
                                   edit_as_modal={true}
                                   onChange={this.onChange}
                 >

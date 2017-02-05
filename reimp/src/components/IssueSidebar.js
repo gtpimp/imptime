@@ -63,7 +63,7 @@ class IssueSidebar extends Component {
 
                       <div>
                           Assigned to:
-                          <EditableIssueAssignedUser issue_id={issue.id} project_id={issue.project_id} />
+                          <EditableIssueAssignedUser issue_ids={[issue.id]} project_id={issue.project_id} />
                       </div>
 
                       <div>
