@@ -1,6 +1,6 @@
 import { impfetch } from './lib.js'
 import indexOf from 'lodash/indexOf'
-import keyBy from 'lodash/indexOf'
+import keyBy from 'lodash/keyBy'
 import { fetchListIfNeeded, getMissingItemIds } from './ItemList'
 import { ENTITY_KEY__SPRINT } from '../actions/ItemListKeyRegistry'
 
@@ -47,7 +47,7 @@ function announceSprintsLoaded(payload) {
     //     items_by_id[item.id] = item
 		// return
     // });
-    
+
     return {
         type: ANNOUNCE_SPRINTS_LOADED,
         items_by_id: keyBy(payload.sprints, 'id'),
