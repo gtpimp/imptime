@@ -22,7 +22,7 @@ class IssueTitleForm extends Component {
                       className="textarea textarea--text-component"
                       placeholder="Title"
                       onChange={ this.handleChange }
-                      value={initialValues} />
+                      value={initialValues.title} />
                     </div>
                 </div>
                 <button type="submit">Submit</button>

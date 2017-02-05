@@ -20,7 +20,7 @@ class IssueDescriptionForm extends Component {
                         className="textarea textarea--text-component"
                         placeholder="Description"
                         onChange={ this.handleChange }
-                        value={initialValues} />
+                        value={initialValues.description} />
                 {/*</div>*/}
                 </div>
                 <button type="submit">Submit</button>
