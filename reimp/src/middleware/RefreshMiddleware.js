@@ -18,6 +18,7 @@ import {
     LIST_KEY__SPRINT_LIST,
     LIST_KEY__ISSUE_LIST    
 } from '../actions/ItemListKeyRegistry'
+import each from 'lodash/each'
 
 function triggerInvalidateEntity(d, dispatch) {
     // used for updates of existing objects, invalidates or
@@ -75,7 +76,7 @@ function refreshMiddleware(_ref) {
 
                 const payload = action.payload || [{}]
 
-                payload.map((d) => {
+                each(payload, (d) => {
                     
                     if ( d.action_type === "create" ) {
                         triggerInvalidateItemLists(d, dispatch)
@@ -89,7 +90,6 @@ function refreshMiddleware(_ref) {
                         console.log("Unknown action_type for async refresh: " + d.action_type)
                     }
                     dispatch(addAsyncMessage(moment(), d.action_type + " " + d.entity_name + " " + d.entity_ref))
-                    return
                 })
                 return
             } 

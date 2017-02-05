@@ -2,7 +2,6 @@ import { impfetch } from './lib.js'
 import difference from 'lodash/difference'
 import keys from 'lodash/keys'
 import forEach from 'lodash/forEach'
-import union from 'lodash/union'
 import map from 'lodash/map'
 import compact from 'lodash/compact'
 

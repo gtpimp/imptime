@@ -9,9 +9,9 @@ class NavTab extends Component {
 
     render() {
         const {router} = this.props
-        const {index, to, children, style, ...props} = this.props
+        const {index, to, children, variant} = this.props
 
-        if (style === 'link') {
+        if (variant === 'link') {
             let isActive
             if (router.isActive('/', true) && index) {
                 isActive = true
@@ -33,7 +33,7 @@ class NavTab extends Component {
                     }
                 </div>
             )
-        } else if (style === 'dashboard-toggle') {
+        } else if (variant === 'dashboard-toggle') {
             return (
                 <div className={classNames('navtab', 'navtab--' + (this.props.expanded ? 'expanded' : 'collapsed'))}>
                     <div className="navtab__label-wrapper">
@@ -48,7 +48,7 @@ class NavTab extends Component {
 
 function mapStateToProps(state, props) {
     return {
-        style: props.style || 'link'
+        variant: props.variant || 'link'
     }
 }
 

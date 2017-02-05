@@ -3,7 +3,6 @@ import difference from 'lodash/difference'
 import union from 'lodash/union'
 import keys from 'lodash/keys'
 import map from 'lodash/map'
-import merge from 'lodash/merge'
 import { stringifyIds } from '../actions/lib.js'
 
 import {

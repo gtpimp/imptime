@@ -1,4 +1,5 @@
 import { impfetch } from './lib.js'
+import keyBy from 'lodash/keyBy'
 import { fetchListIfNeeded, getMissingItemIds } from './ItemList'
 import { ENTITY_KEY__PROJECT } from '../actions/ItemListKeyRegistry'
 
@@ -32,14 +33,14 @@ function announceLoadingProjects(project_ids) {
 
 function announceProjectsLoaded(payload) {
 
-    let items_by_id = {}
-    payload.projects.map((item, index) => {
-        items_by_id[item.id] = item
-    });
+    // let items_by_id = {}
+    // payload.projects.map((item, index) => {
+    //     items_by_id[item.id] = item
+    // });
 
     return {
         type: ANNOUNCE_PROJECTS_LOADED,
-        items_by_id: items_by_id,
+        items_by_id: keyBy(payload.projects, 'id'),
 	received_at: Date.now()
     }
 }

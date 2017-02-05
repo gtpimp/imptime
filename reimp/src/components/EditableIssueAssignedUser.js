@@ -1,15 +1,11 @@
 import React, {Component} from 'react'
 import {connect} from 'react-redux'
-import classNames from 'classnames'
-import { Field, reduxForm } from 'redux-form'
 import EditableProperty from './form/EditableProperty'
 import IssueAssignedUserForm from './form/IssueAssignedUserForm'
-import Label from './form/Label'
 import Blank from './form/Blank'
 import { updateIssueAssignedTo } from '../actions/Issue'
 import OtherUser from '../components/OtherUser'
 import { getIssues } from '../actions/Issues'
-import { getUser } from '../actions/Users'
 
 class EditableIssueAssignedUser extends Component {
 
@@ -24,7 +20,7 @@ class EditableIssueAssignedUser extends Component {
         dispatch(updateIssueAssignedTo(issue_ids, new_value.assigned_to.value))
     }
     render() {
-        const { issue, project_id } = this.props
+        const { project_id } = this.props
         
         return (
             <div>

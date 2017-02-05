@@ -19,14 +19,14 @@ class EditableProperty extends Component {
     }
 
     componentDidMount() {
-        const {issue_id, property_key, dispatch} = this.props
+        const {property_key, dispatch} = this.props
         const initial_mode = this.props.initial_mode || 'read'
         dispatch(setMode(property_key, initial_mode))
     }
 
     componentWillReceiveProps(new_props) {
         const {dispatch, property_key, initial_mode} = this.props
-        if (new_props.initial_mode != initial_mode) {
+        if (new_props.initial_mode !== initial_mode) {
             dispatch(setMode(property_key, new_props.initial_mode))
         }
     }

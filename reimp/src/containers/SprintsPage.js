@@ -3,13 +3,11 @@ import {connect} from 'react-redux'
 import SprintList from '../components/SprintList'
 import SprintSidebar from '../components/SprintSidebar'
 import {setBreadcrumbs} from '../actions/Breadcrumbs'
-import {setActions} from '../actions/Toolbar'
 import {
     LIST_KEY__SPRINT_LIST,
     PAGE_KEY__SPRINTS_PAGE
 } from '../actions/ItemListKeyRegistry'
 import {
-    expand_list,
     selectItems,
     update_list_filter,
     invalidateList
@@ -39,7 +37,7 @@ class SprintsPage extends Component {
 
     componentWillReceiveProps(new_props) {
         const {dispatch, project, project_id} = this.props
-        if (new_props.project_id !== project_id || new_props.project.name != project.name ) {
+        if (new_props.project_id !== project_id || new_props.project.name !== project.name ) {
             this.refresh(new_props.project)
         }
         dispatch(ensureProjectsLoaded([project_id]))

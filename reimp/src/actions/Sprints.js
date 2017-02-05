@@ -1,5 +1,6 @@
 import { impfetch } from './lib.js'
 import indexOf from 'lodash/indexOf'
+import keyBy from 'lodash/indexOf'
 import { fetchListIfNeeded, getMissingItemIds } from './ItemList'
 import { ENTITY_KEY__SPRINT } from '../actions/ItemListKeyRegistry'
 
@@ -41,15 +42,15 @@ function announceLoadingSprints(sprint_ids) {
 
 function announceSprintsLoaded(payload) {
 
-    let items_by_id = {}
-    payload.sprints.map((item, index) => {
-        items_by_id[item.id] = item
-		return
-    });
+    // let items_by_id = {}
+    // payload.sprints.map((item, index) => {
+    //     items_by_id[item.id] = item
+		// return
+    // });
     
     return {
         type: ANNOUNCE_SPRINTS_LOADED,
-        items_by_id: items_by_id,
+        items_by_id: keyBy(payload.sprints, 'id'),
 	received_at: Date.now()
     }
 }

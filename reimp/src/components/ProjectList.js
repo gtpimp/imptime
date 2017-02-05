@@ -107,7 +107,6 @@ class ProjectList extends Component {
     renderExpandedProject(project, index) {
         const { list_key, loading_item_ids, selected_ids } = this.props
         const that = this
-	let selected = selected_ids.indexOf(project.id) !== -1
 
         return (
         <Project key={list_key + project.id + index}
@@ -123,7 +122,7 @@ class ProjectList extends Component {
 
     render_expanded() {
 
-        const { projects, list_key, is_loading, has_items } = this.props
+        const { projects} = this.props
 
         return (
             <ListTable>
@@ -134,13 +133,8 @@ class ProjectList extends Component {
     }
 
     render() {
-
-        const { is_collapsed, is_expanded } = this.props
-
 	return (
 	    <div>
-		{/*{ is_collapsed && this.render_collapsed() }*/}
-		{/*{ is_expanded && this.render_expanded() }*/}
             { this.render_expanded() }
 	    </div>
 	)

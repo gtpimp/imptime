@@ -34,7 +34,7 @@ class ProjectSidebar extends Component {
 
     render() {
 
-        const {project_id, project} = this.props
+        const {project_id} = this.props
 
         if (project_id) return (
             <Sidebar>

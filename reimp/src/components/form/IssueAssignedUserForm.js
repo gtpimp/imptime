@@ -1,7 +1,6 @@
 import React, {Component} from 'react'
 import {connect} from 'react-redux'
-import classNames from 'classnames'
-import {Field, reduxForm} from 'redux-form'
+import {reduxForm} from 'redux-form'
 import SelectList from 'react-widgets/lib/SelectList'
 import { ensureUsersLoaded, getUsers } from '../../actions/Users'
 import { ensureProjectsLoaded, getProject } from '../../actions/Projects'
@@ -30,7 +29,7 @@ class IssueAssignedUserForm extends Component {
     }
 
     render() {
-        const {initialValues, handleSubmit, assignable_users} = this.props
+        const {handleSubmit} = this.props
         return (
             <form onSubmit={handleSubmit}>
                 <SingleValueSelector />

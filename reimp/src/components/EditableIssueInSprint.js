@@ -1,15 +1,11 @@
 import React, {Component} from 'react'
 import {connect} from 'react-redux'
-import classNames from 'classnames'
-import { Field, reduxForm } from 'redux-form'
 import EditableProperty from './form/EditableProperty'
 import SelectSprintForm from './form/SelectSprintForm'
 import SprintLabel from './form/SprintLabel'
 import Blank from './form/Blank'
 import { moveIssuesToSprint } from '../actions/Issue'
-import OtherUser from '../components/OtherUser'
 import { getIssues } from '../actions/Issues'
-import { getUser } from '../actions/Users'
 
 class EditableIssueInSprint extends Component {
 

@@ -67,7 +67,7 @@ class Issue extends Component {
     }
 
     refresh() {
-        const {dispatch, issue, issue_id, assignable_user_ids, estimate_user_ids} = this.props
+        const {dispatch, assignable_user_ids, estimate_user_ids} = this.props
         dispatch(ensureUsersLoaded(assignable_user_ids))
         dispatch(ensureUsersLoaded(estimate_user_ids))
     }

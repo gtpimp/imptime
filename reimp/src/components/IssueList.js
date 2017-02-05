@@ -1,7 +1,7 @@
 import React, {Component} from 'react'
+import each from 'lodash/each'
 import map from 'lodash/map'
 import union from 'lodash/union'
-import merge from 'lodash/merge'
 import includes from 'lodash/includes'
 import difference from 'lodash/difference'
 import RIEInput from '../widgets/RIEInput'
@@ -12,7 +12,6 @@ import EstimateEditor from '../components/EstimateEditor'
 import {
     initList,
     invalidateList,
-    selectItems,
     collapse_list,
     expand_list,
     setItemFlag
@@ -154,7 +153,7 @@ class IssueList extends Component {
     }
 
     ungroupTogether(event) {
-        const {selected_ids, selected_items, dispatch} = this.props
+        const {selected_ids, dispatch} = this.props
         event.stopPropagation()
         dispatch(ungroupIssuesIntoFeature(selected_ids))
     }
@@ -250,10 +249,10 @@ class IssueList extends Component {
     render_expanded() {
 
         const {
-            issues, is_visible, list_key, is_loading,
+            issues, is_visible, list_key,
             saving_issue_ids,
             is_creating_issue, candidate_issue, invalidated_issue_ids,
-            selected_ids, selected_items, loading_item_ids, has_items, expanded_issues
+            selected_ids, selected_items, loading_item_ids, expanded_issues
         } = this.props
 
         const tag_editor_open = (this.state || {}).tag_editor_open || false
@@ -263,11 +262,11 @@ class IssueList extends Component {
             return (<div></div>)
         }
         const that = this
-        const at_least_one_issue_selected = selected_ids && selected_ids.length > 0
+        // const at_least_one_issue_selected = selected_ids && selected_ids.length > 0
 
         const issue_rows = []
         let running_parent_issue_id = null
-        issues.map(function (issue, index) {
+        each(issues, function (issue, index) {
 
             if (is_creating_issue && index === 0 && !candidate_issue.issue_id_before) {
                 issue_rows.push(that.render_candidate_issue())

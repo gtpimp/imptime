@@ -55,7 +55,6 @@ function mapStateToProps(state, props) {
         sprint: sprint
     }
     
-    return {}
 }
 
 

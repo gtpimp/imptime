@@ -1,8 +1,6 @@
 import { impfetch } from './lib.js'
-import difference from 'lodash/difference'
-import keys from 'lodash/keys'
-import map from 'lodash/map'
 import { getMissingItemIds } from './ItemList'
+import each from 'lodash/each'
 
 export const ANNOUNCE_USERS_LOADED = 'ANNOUNCE_USERS_LOADED'
 export const ANNOUNCE_USERS_LOAD_FAILED = 'ANNOUNCE_USERS_LOAD_FAILED'
@@ -26,9 +24,9 @@ function announceLoadingUsers(user_ids) {
 function announceUsersLoaded(payload) {
 
     let items_by_id = {}
-    payload.users.map((item) => {
+    each(payload.users, (item) => {
         items_by_id[item.id] = item
-    });
+    })
     
     return {
         type: ANNOUNCE_USERS_LOADED,

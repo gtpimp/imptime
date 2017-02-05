@@ -1,7 +1,5 @@
 import React, {Component} from 'react'
 import {connect} from 'react-redux'
-import classNames from 'classnames'
-import { impfetch } from '../../actions/lib'
 import { getSprint, ensureSprintsLoaded } from '../../actions/Sprints'
 
 class SprintLabel extends Component {
@@ -11,7 +9,7 @@ class SprintLabel extends Component {
     }
 
     componentWillReceiveProps(new_props) {
-        if ( new_props.sprint_id != this.props.sprint_id ) {
+        if ( new_props.sprint_id !== this.props.sprint_id ) {
             this.refresh()
         }
     }

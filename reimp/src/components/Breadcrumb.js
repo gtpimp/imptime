@@ -6,8 +6,6 @@ class Breadcrumb extends Component {
 
     render() {
         const {breadcrumb, is_last } = this.props
-        const { ...props} = this.props
-
         return (
             <div className="breadcrumb">
                 <Link to={breadcrumb.to}>{breadcrumb.label}</Link>

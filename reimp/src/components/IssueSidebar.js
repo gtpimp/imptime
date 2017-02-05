@@ -10,11 +10,7 @@ import EditableIssueAssignedUser from '../components/EditableIssueAssignedUser'
 import EditableIssueComment from '../components/EditableIssueComment'
 import EditableIssueAttachment from '../components/EditableIssueAttachment'
 import EditableIssueInSprint from '../components/EditableIssueInSprint'
-// import IssueDescription from './IssueDescription'
-import Timestamp from './Timestamp'
-import moment from 'moment'
 import Sidebar from './Sidebar'
-import OtherUser from '../components/OtherUser'
 import {ensureIssuesLoaded, getIssue} from '../actions/Issues'
 
 class IssueSidebar extends Component {

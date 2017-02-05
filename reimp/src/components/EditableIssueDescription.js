@@ -1,11 +1,7 @@
 import React, {Component} from 'react'
 import {connect} from 'react-redux'
-import classNames from 'classnames'
-import { Field, reduxForm } from 'redux-form'
 import EditableProperty from './form/EditableProperty'
 import IssueDescriptionForm from './form/IssueDescriptionForm'
-import Label from './form/Label'
-import Blank from './form/Blank'
 import { updateIssueDescription } from '../actions/Issue'
 import { getIssue } from '../actions/Issues'
 

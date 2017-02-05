@@ -1,8 +1,6 @@
 import React, {Component} from 'react'
-import OtherUser from '../../components/OtherUser'
-import Select from 'react-select';
 import {connect} from 'react-redux'
-import {ensureUsersLoaded, getUsers} from '../../actions/Users'
+import {ensureUsersLoaded} from '../../actions/Users'
 import '../../sass/single-value-selector.css'
 
 export class SingleValueSelector extends Component {
@@ -34,7 +32,7 @@ export class SingleValueSelector extends Component {
     }
 
     render() {
-        const {options, value} = this.props
+        const {options} = this.props
 
         const suggestions = options.map((option, index) =>
             <div className="single-value-selector__suggestion" key={'suggestion_' + option.value}>

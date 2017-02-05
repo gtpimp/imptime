@@ -1,9 +1,7 @@
 import { impfetch } from './lib.js'
 import { fetchListIfNeeded, getMissingItemIds } from './ItemList'
 import { ENTITY_KEY__ISSUE } from '../actions/ItemListKeyRegistry'
-import map from 'lodash/map'
-import difference from 'lodash/difference'
-
+import keyBy from 'lodash/keyBy'
 export const ANNOUNCE_ISSUES_LOADED = 'ANNOUNCE_ISSUES_LOADED'
 export const ANNOUNCE_ISSUES_LOAD_FAILED = 'ANNOUNCE_ISSUES_LOAD_FAILED'
 export const ANNOUNCE_LOADING_ISSUES = 'ANNOUNCE_LOADING_ISSUES'
@@ -33,14 +31,14 @@ function announceLoadingIssues(issue_ids) {
 
 function announceIssuesLoaded(payload) {
 
-    let items_by_id = {}
-    payload.issues.map((item, index) => {
-        items_by_id[item.id] = item
-    });
+    // let items_by_id = {}
+    // payload.issues.map((item, index) => {
+    //     items_by_id[item.id] = item
+    // });
     
     return {
         type: ANNOUNCE_ISSUES_LOADED,
-        items_by_id: items_by_id,
+        items_by_id: keyBy(payload.issues, 'id'),
 	received_at: Date.now()
     }
 }

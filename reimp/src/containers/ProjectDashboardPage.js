@@ -27,7 +27,7 @@ class ProjectDashboardPage extends Component {
 
     componentWillReceiveProps(new_props) {
         const { project_id, dispatch } = this.props
-        if ( new_props.project_id !== project_id || new_props.project.id != this.props.project.id ) {
+        if ( new_props.project_id !== project_id || new_props.project.id !== this.props.project.id ) {
             this.refresh(new_props.project_id)
         }
         dispatch(ensureProjectsLoaded([project_id]))

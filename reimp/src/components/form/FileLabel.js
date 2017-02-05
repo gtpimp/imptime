@@ -1,7 +1,5 @@
 import React, {Component} from 'react'
 import {connect} from 'react-redux'
-import classNames from 'classnames'
-import { impfetch } from '../../actions/lib'
 
 class FileLabel extends Component {
 
@@ -49,7 +47,7 @@ class FileLabel extends Component {
 function mapStateToProps(state, props) {
 
     const { value } = props
-    const filename = value && value.name || "<none>"
+    const filename = (value && value.name) || "<none>"
     const download_url = value && value.download_url
     const preview_url = value && value.preview_url
     const exists = value && value.name

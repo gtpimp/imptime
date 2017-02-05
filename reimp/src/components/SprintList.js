@@ -2,6 +2,7 @@ import React, {Component} from 'react'
 import {connect} from 'react-redux'
 import RIEInput from '../widgets/RIEInput'
 import RIEModeToggler from '../widgets/RIEModeToggler'
+import each from 'lodash/each'
 import map from 'lodash/map'
 import {
     initList,
@@ -164,15 +165,15 @@ class SprintList extends Component {
     render_expanded() {
 
         const {
-            sprints, list_key, is_loading,
+            sprints, list_key,
             selected_ids,
             is_creating_sprint, candidate_sprint,
-            loading_item_ids, has_items
+            loading_item_ids
         } = this.props
         const that = this
 
         const sprint_rows = []
-        sprints.map(function (sprint, index) {
+        each(sprints, function (sprint, index) {
 
             if (is_creating_sprint && index === 0 && !candidate_sprint.sprint_id_before) {
                 sprint_rows.push(that.render_candidate_sprint())
@@ -191,7 +192,6 @@ class SprintList extends Component {
             if (is_creating_sprint && candidate_sprint.sprint_id_before === sprint.id) {
                 sprint_rows.push(that.render_candidate_sprint())
             }
-            return;
         })
 
         return (

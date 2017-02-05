@@ -1,6 +1,5 @@
 import React, {Component} from 'react'
 import {connect} from 'react-redux'
-import classNames from 'classnames'
 import { Field, reduxForm } from 'redux-form'
 import SelectList from 'react-widgets/lib/SelectList'
 import { getSprints, fetchSprintsIfNeeded } from '../../actions/Sprints'
@@ -20,7 +19,7 @@ class SelectSprintForm extends Component {
     }
 
     componentWillReceiveProps(new_props) {
-        if ( new_props.project_id != this.props.project_id ) {
+        if ( new_props.project_id !== this.props.project_id ) {
             this.refresh()
         }
     }
@@ -40,7 +39,7 @@ class SelectSprintForm extends Component {
     }
     
     render() {
-        const { initialValues, handleSubmit, sprint_options } = this.props
+        const { handleSubmit, sprint_options } = this.props
         return (
             <form onSubmit={handleSubmit}>
                 <div>
@@ -59,7 +58,7 @@ class SelectSprintForm extends Component {
 
 function mapStateToProps(state, props) {
     const { item_list } = state
-    const { project_id, onChange } = props
+    const { onChange } = props
     const l = (item_list && item_list[SELECTOR__SPRINTS]) || {}
     const sprint_ids = l.visible_item_ids || []
     const sprints = getSprints(state, sprint_ids)

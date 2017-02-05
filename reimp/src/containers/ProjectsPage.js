@@ -2,7 +2,6 @@ import React, {Component} from 'react'
 import {connect} from 'react-redux'
 import ProjectList from '../components/ProjectList'
 import ProjectSidebar from '../components/ProjectSidebar'
-import {StickyContainer} from 'react-sticky';
 import { setBreadcrumbs } from '../actions/Breadcrumbs'
 import {
     LIST_KEY__PROJECT_LIST,
@@ -63,7 +62,7 @@ class ProjectsPage extends Component {
 }
 
 function mapStateToProps(state) {
-    const {project, page} = state
+    const {page} = state
     const selected_project_ids = (page[PAGE_KEY__PROJECTS_PAGE] ||{}).project_ids || []
     const selected_project_id = (selected_project_ids && selected_project_ids.length > 0 && selected_project_ids[0]) || null
     

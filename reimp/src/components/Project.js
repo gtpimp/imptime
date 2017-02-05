@@ -3,7 +3,6 @@ import { DragSource, DropTarget } from 'react-dnd';
 import { connect } from 'react-redux'
 import classNames from 'classnames'
 import { DndTypes } from '../actions/Dnd'
-import Progress from '../components/Progress'
 import '../sass/project.css'
 
 class Project extends Component {
