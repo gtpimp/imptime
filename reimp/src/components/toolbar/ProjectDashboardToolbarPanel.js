@@ -27,7 +27,6 @@ class ProjectDashboardToolbarPanel extends Component {
     render() {
         return (
             <div className="toolbar-panel">
-                Project:
                 <ToolbarButton icon="subdirectory_arrow_left" onClick={this.onOpenProjectClick}/>
                 <ToolbarButton icon="delete" onClick={this.onDeleteProjectClick}/>
             </div>

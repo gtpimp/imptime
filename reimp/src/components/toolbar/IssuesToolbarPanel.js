@@ -11,7 +11,6 @@ class IssuesToolbarPanel extends Component {
     render() {
         return (
             <div className="toolbar-panel">
-                Issues:
                 <div className="button button--large button--primary" onClick={this.onNewIssueClick}>+ New Issue</div>
             </div>
         )

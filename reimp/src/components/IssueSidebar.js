@@ -2,8 +2,8 @@ import React, {Component} from 'react'
 import {connect} from 'react-redux'
 import map from 'lodash/map'
 import {browserHistory} from 'react-router'
-// import PropertyStack from './PropertyStack'
-// import PropertyStackComponent from './PropertyStackComponent'
+import PropertyStack from './PropertyStack'
+import PropertyStackComponent from './PropertyStackComponent'
 import EditableIssueTitle from '../components/EditableIssueTitle'
 import EditableIssueDescription from '../components/EditableIssueDescription'
 import EditableIssueAssignedUser from '../components/EditableIssueAssignedUser'
@@ -33,7 +33,7 @@ class IssueSidebar extends Component {
         const {dispatch} = this.props
         dispatch(ensureIssuesLoaded([new_props.issue_id]))
     }
-    
+
     navigateToIssuesPage() {
         const {project_id, sprint_id} = this.props
         browserHistory.push('/projects/' + project_id + '/sprints/' + sprint_id + '/issues');
@@ -42,22 +42,24 @@ class IssueSidebar extends Component {
     render() {
 
         const {issue, comments, attachments} = this.props
-        
-        return (
+
+        if (issue && issue.id) return (
 
             <Sidebar>
-                
+                <PropertyStack>
                 { issue.id &&
 
                   <div>
+                      <PropertyStackComponent>
+                      <div className="text-component--readonly">
                       #{issue.number}
-
+                      </div>
+                      </PropertyStackComponent>
                       <div>
-                          Title: <EditableIssueTitle issue_id={issue.id} />
+                          <EditableIssueTitle issue_id={issue.id} />
                       </div>
 
                       <div>
-                          Description:
                           <EditableIssueDescription issue_id={issue.id} />
                       </div>
 
@@ -88,10 +90,13 @@ class IssueSidebar extends Component {
                           }
                           <EditableIssueComment issue_id={issue.id} comment_id={null} />
                       </div>
+                      <div>
+                          <button onClick={this.openEstimateEditor}>Estimates</button>
+                      </div>
                       
                   </div>
                 }
-
+                </PropertyStack>
             </Sidebar>
         )
     }
@@ -113,54 +118,52 @@ function mapStateToProps(state, props) {
 export default connect(mapStateToProps)(IssueSidebar)
 
 
-
-
 /*{ { false &&
-   <PropertyStack>
-   <PropertyStackComponent>
-   <IssueTitle issue={issue} mode='view-value'/>
-   <IssueTitle issue={issue} mode='view-empty-state'/>
-   <IssueTitle issue={issue} mode='edit'/>
-   </PropertyStackComponent>
-   <PropertyStackComponent>
-   <IssueDescription issue={issue} mode='view-value'/>
-   <IssueDescription issue={issue} mode='view-empty-state'/>
-   <IssueDescription issue={issue} mode='edit'/>
-   </PropertyStackComponent>
-   </PropertyStack>
-   }
-   { false &&
-   <div>
-   <PropertyStackComponent>
-   <div className="property--parent-title">
-   <div className="property-label-1">Katalyst</div>
-   </div>
-   <div className="property--title">
-   <div className="property-label-2">Sprinasdfdsafdasfdsafasfasfdasfasfasfdsaasfasft 3</div>
-   </div>
-   </PropertyStackComponent>
-   <PropertyStackComponent>
-   <div className="property-text">Interactive Prototype and develppment of Nunc a adipiscing parturient ullamcorper parturient adipiscing scelerisque donec risus penatibus
-   parturient.
-   </div>
-   </PropertyStackComponent>
-   <PropertyStackComponent>
-   <div className="named-property">
-   <div className="named-property__name">Created</div>
-   <div className="named-property__value"><Timestamp format="short-date" value={moment()}/></div>
-   </div>
-   </PropertyStackComponent>
-   <PropertyStackComponent>
-   <div className="named-property">
-   <div className="named-property__name">First Activity</div>
-   <div className="named-property__value"><Timestamp format="short-date" value={moment()}/></div>
-   </div>
-   </PropertyStackComponent>
-   <PropertyStackComponent>
-   I am your issues sidebar for {issue_id}
-   </PropertyStackComponent>
-   </div> }
-   }*/
+ <PropertyStack>
+ <PropertyStackComponent>
+ <IssueTitle issue={issue} mode='view-value'/>
+ <IssueTitle issue={issue} mode='view-empty-state'/>
+ <IssueTitle issue={issue} mode='edit'/>
+ </PropertyStackComponent>
+ <PropertyStackComponent>
+ <IssueDescription issue={issue} mode='view-value'/>
+ <IssueDescription issue={issue} mode='view-empty-state'/>
+ <IssueDescription issue={issue} mode='edit'/>
+ </PropertyStackComponent>
+ </PropertyStack>
+ }
+ { false &&
+ <div>
+ <PropertyStackComponent>
+ <div className="property--parent-title">
+ <div className="property-label-1">Katalyst</div>
+ </div>
+ <div className="property--title">
+ <div className="property-label-2">Sprinasdfdsafdasfdsafasfasfdasfasfasfdsaasfasft 3</div>
+ </div>
+ </PropertyStackComponent>
+ <PropertyStackComponent>
+ <div className="property-text">Interactive Prototype and develppment of Nunc a adipiscing parturient ullamcorper parturient adipiscing scelerisque donec risus penatibus
+ parturient.
+ </div>
+ </PropertyStackComponent>
+ <PropertyStackComponent>
+ <div className="named-property">
+ <div className="named-property__name">Created</div>
+ <div className="named-property__value"><Timestamp format="short-date" value={moment()}/></div>
+ </div>
+ </PropertyStackComponent>
+ <PropertyStackComponent>
+ <div className="named-property">
+ <div className="named-property__name">First Activity</div>
+ <div className="named-property__value"><Timestamp format="short-date" value={moment()}/></div>
+ </div>
+ </PropertyStackComponent>
+ <PropertyStackComponent>
+ I am your issues sidebar for {issue_id}
+ </PropertyStackComponent>
+ </div> }
+ }*/
 
 
 

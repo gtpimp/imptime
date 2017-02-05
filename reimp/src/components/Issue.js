@@ -163,9 +163,9 @@ class Issue extends Component {
                 <tr key={this.key + "." + issue.id}
                     onClick={onClickedIssue}
                     className={classNames(
-                        'issue', {
-                            'issue--unselected': !is_selected,
-                            'issue--selected': is_selected,
+                        'issue', 'list-table__row--compact', {
+                            'list-table__row--unselected': !is_selected,
+                            'list-table__row--selected': is_selected,
                             'issue--standalone': isStandalone,
                             'issue--feature': isFeature,
                             'issue--grouped': belongsToFeature,
@@ -175,10 +175,10 @@ class Issue extends Component {
                         'tr--drop-target': isOver
                     })}
                 >
-                    <td className="issue__cell issue__cell--number">
+                    <td className="list-table__cell list-table__cell--number">
                         <div>{issue.number}</div>
                     </td>
-                    <td className="issue__cell issue__cell--icon">
+                    <td className="list-table__cell list-table__cell--icon">
                         { issue.can_group_issues &&
                           <div className="icon--feature">
                           { show_children &&
@@ -186,9 +186,9 @@ class Issue extends Component {
                           }
                           </div>
                         }
-                        
+
                     </td>
-                    <td className="issue__cell issue__cell--name">
+                    <td className="list-table__cell list-table__cell--name">
                         {subject_prefix}{issue.subject}{subject_suffix}
                         { issue.group_children.length > 0 &&
                           <span>
@@ -199,11 +199,11 @@ class Issue extends Component {
                           </span>
                         }
                     </td>
-                    <td className="issue__cell issue__cell--assignee">
+                    <td className="list-table__cell list-table__cell--assignee">
 
                         <OtherUser value={issue.assigned_to_id}/>
 
-                        { false && 
+                        { false &&
                         <RIEModeToggler
                             rie_key={"issue_assigned_to_" + issue.id}
                             initialValue={issue.assigned_to_id || "..."}
@@ -213,7 +213,7 @@ class Issue extends Component {
                         </RIEModeToggler>
                         }
                     </td>
-                    <td className="issue__cell issue__cell--status">
+                    <td className="list-table__cell list-table__cell--status">
                         <RIEModeToggler
                             rie_key={"issue_status_" + issue.id}
                             initialValue={issue.status || "..."}
@@ -223,17 +223,17 @@ class Issue extends Component {
                         </RIEModeToggler>
                     </td>
                     { false &&
-                      <td className="issue__cell issue__cell--sprint">
+                      <td className="list-table__cell list-table__cell--sprint">
                           1
                       </td>
                     }
-                    <td className="issue__cell issue__cell--progress">
+                    <td className="list-table__cell list-table__cell--progress">
                         <Progress issue={issue} />
                     </td>
-                    <td className="issue__cell issue__cell--estimates">
+                    <td className="list-table__cell list-table__cell--estimates">
                         {this.renderEstimates()}
                     </td>
-                    <td className="issue__cell issue__cell--tags">
+                    <td className="list-table__cell list-table__cell--tags">
                         { map(issue.tags, function(tag, index) {
                               return (<Tag key={index}
                                            category={tag.category_name}
@@ -242,7 +242,7 @@ class Issue extends Component {
                                       />)
                         })}
                     </td>
-                    <td className="issue__cell issue__cell--tracking-control">
+                    <td className="list-table__cell list-table__cell--tracking-control">
                         <Timer hours={issue.my_actual_hours}
                                active={issue.am_i_clocked_in}
                                onStart={this.onClockIn}

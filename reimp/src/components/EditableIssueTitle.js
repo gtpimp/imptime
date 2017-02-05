@@ -31,8 +31,8 @@ class EditableIssueTitle extends Component {
                               onChange={this.onChange}
             >
                 <IssueTitleForm />
-                <Label />
-                <Blank />
+                <div className="text-component--readonly">{issue.subject}</div>
+                <div className="text-component--empty">Title</div>
             </EditableProperty>
         )
     }

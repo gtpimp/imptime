@@ -46,16 +46,17 @@ class ProjectsPage extends Component {
         const { selected_project_id } = this.props
         
         return (
-            <div>
-                <StickyContainer>
-                    { selected_project_id && 
-                      <ProjectSidebar project_id={selected_project_id}/>
-                    }
+            <div className="list-layout">
+                <div className="list-layout__list">
                     <ProjectList key="projects"
                                  list_key={LIST_KEY__PROJECT_LIST}
-                                 onSelectProjects={this.onSelectProjects}
-                    />
-                </StickyContainer>
+                                 onSelectProjects={this.onSelectProjects} />
+                </div>
+                { selected_project_id &&
+                <div className="list-layout__sidebar">
+                    <ProjectSidebar project_id={selected_project_id}/>
+                </div>
+                }
             </div>
         )
     }

@@ -4,51 +4,45 @@ import { connect } from 'react-redux'
 import classNames from 'classnames'
 import { DndTypes } from '../actions/Dnd'
 import Progress from '../components/Progress'
-import '../sass/sprint.css'
+import '../sass/project.css'
 
-class Sprint extends Component {
+class Project extends Component {
 
     render_collapsed() {
-	const { sprint } = this.props
+	const { project } = this.props
 	return (
-	    <div key={this.key+".collapsed_sprint."+sprint.id}>
-		Sprint: {sprint.name}
+	    <div key={this.key+".collapsed_project."+project.id}>
+		Project: {project.name}
 	    </div>
 	)
     }
     
     render_expanded() {
-        const { sprint, is_loading, is_selected, isOver,
-		onClickedSprint, connectDragSource, connectDropTarget } = this.props
+        const { project, is_loading, is_selected, isOver,
+		onClickedProject, connectDragSource, connectDropTarget } = this.props
 
-	if ( ! sprint ) {
+	if ( ! project ) {
 	    return (<tr><td>Loading...</td></tr>)
 	}
 	
 	if ( ! is_loading === false ) {
 	    return (
-		<tr key={this.key+"."+sprint.id}
-		    onClick={onClickedSprint}
+		<tr key={this.key+"."+project.id}
+		    onClick={onClickedProject}
 		    className={is_selected ? 'tr--selected' : ''}
 		>
-		    <td>{sprint && sprint.id}</td>
+		    <td>{project && project.id}</td>
 		    <td>Loading...</td>
 		</tr>
 	    )
 	} else {
             return connectDragSource(connectDropTarget(
-		<tr key={this.key+"."+sprint.id}
-		    onClick={onClickedSprint}
-		    className={classNames('sprint', {'tr--selected': is_selected, 'tr--drop-target': isOver, 'list-table__row--unselected': !is_selected,
+		<tr key={this.key+"."+project.id}
+		    onClick={onClickedProject}
+		    className={classNames('project', {'tr--selected': is_selected, 'tr--drop-target': isOver, 'list-table__row--unselected': !is_selected,
                 'list-table__row--selected': is_selected})}
 		    >
-		    <td className="list-table__cell">{sprint.number}</td>
-		    <td className="list-table__cell">{sprint.name}</td>
-		    <td className="list-table__cell">12 March 2016</td>
-		    <td className="list-table__cell">24 March 2016</td>
-		    <td className="list-table__cell">46 Items</td>
-		    <td className="list-table__cell"><Progress issue={sprint} /></td>
-		    <td className="list-table__cell">{sprint.status_name}</td>
+		    <td className="list-table__cell">{project.name}</td>
 		</tr>
             ))
 	}
@@ -69,13 +63,13 @@ class Sprint extends Component {
 }
 
 function mapStateToProps(state, props) {
-    const { sprint } = state
-    const { sprint_id, is_selected, is_collapsed, is_loading } = props
-    const this_sprint = (sprint && sprint.items_by_id && sprint.items_by_id[sprint_id]) || {}
+    const { project } = state
+    const { project_id, is_selected, is_collapsed, is_loading } = props
+    const this_project = (project && project.items_by_id && project.items_by_id[project_id]) || {}
     
     return {
-	sprint: this_sprint,
-	sprint_id: sprint_id,
+	project: this_project,
+	project_id: project_id,
 	is_selected: is_selected,
 	is_loading: is_loading,
 	is_collapsed: is_collapsed,
@@ -85,24 +79,24 @@ function mapStateToProps(state, props) {
 
 const headingSource = {
     beginDrag(props) {
-	return { id: props.sprint_id }
+	return { id: props.project_id }
     }
 };
 
 const headingTarget = {
     drop: (props, monitor, component) => {
-	const { sprint_id } = props
+	const { project_id } = props
 	const dragging_item = monitor.getItem()
 	if ( ! dragging_item ) {
 	    return;
 	}
-	const dragging_sprint_id = dragging_item.id
-	if ( sprint_id === dragging_sprint_id ) {
-	    console.log("ignoring dnd on the same element: " + sprint_id)
+	const dragging_project_id = dragging_item.id
+	if ( project_id === dragging_project_id ) {
+	    console.log("ignoring dnd on the same element: " + project_id)
 	    return;
 	}
 	
-	props.reorderSprints(dragging_sprint_id, sprint_id)
+	props.reorderProjects(dragging_project_id, project_id)
     },
     hover: (props, monitor, component) => {
     },
@@ -127,5 +121,5 @@ function collectDrop(connect, monitor) {
     }
 }
 
-export default connect(mapStateToProps) (DragSource(DndTypes.SPRINT, headingSource, collect) (DropTarget(DndTypes.SPRINT, headingTarget, collectDrop)(Sprint)))
+export default connect(mapStateToProps) (DragSource(DndTypes.PROJECT, headingSource, collect) (DropTarget(DndTypes.PROJECT, headingTarget, collectDrop)(Project)))
     

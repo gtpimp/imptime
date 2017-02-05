@@ -31,8 +31,8 @@ class EditableIssueDescription extends Component {
                               onChange={this.onChange}
             >
                 <IssueDescriptionForm />
-                <Label />
-                <Blank />
+                <div className="text-component--readonly">{issue.description}</div>
+                <div className="text-component--empty">Description</div>
             </EditableProperty>
         )
     }

@@ -12,7 +12,9 @@ import {
     invalidateAllProjects,
     fetchProjectsIfNeeded
 } from '../actions/Projects'
-import Pagination from '../components/Pagination'
+import Project from './Project'
+import ListTable from './ListTable'
+import '../sass/project-list.scss'
 
 class ProjectList extends Component {
 
@@ -47,7 +49,7 @@ class ProjectList extends Component {
         const { dispatch, list_key } = this.props
         dispatch(fetchProjectsIfNeeded(list_key))
     }
-    
+
     onCollapse() {
 	const { dispatch, list_key } = this.props
 	dispatch(collapse_list(list_key))
@@ -68,7 +70,7 @@ class ProjectList extends Component {
 	dispatch(invalidateList(list_key))
 	dispatch(fetchProjectsIfNeeded(list_key))
     }
-    
+
     onRefresh(event) {
         const { dispatch, list_key } = this.props
 	dispatch(invalidateList(list_key))
@@ -87,7 +89,7 @@ class ProjectList extends Component {
 	    </div>
 	)
     }
-    
+
     render_collapsed() {
 	const { selected_items } = this.props
 
@@ -101,56 +103,34 @@ class ProjectList extends Component {
 	    </div>
 	)
     }
-    
-    renderExpandedProject(project, index) {
-        const { selected_ids } = this.props
 
+    renderExpandedProject(project, index) {
+        const { list_key, loading_item_ids, selected_ids } = this.props
+        const that = this
 	let selected = selected_ids.indexOf(project.id) !== -1
-	
+
         return (
-	    <tr key={project.id+"."+index}
-		onClick={() => this.onClickedProject(project.id)}
-		className={selected ? 'tr--selected' : ''}
-	    >
-		{ project.loaded === false &&
-		<td>Loading...</td>
-		}
-		{ project.loaded !== false &&
-		  <td>{project.name}</td>
-		}
-	    </tr>
+        <Project key={list_key + project.id + index}
+                is_collapsed={false}
+                reorderProjects={that.reorderProjects}
+                onClickedProject={() => that.onClickedProject(project.id)}
+                is_loading={loading_item_ids.indexOf(project.id) !== -1}
+                is_selected={selected_ids.indexOf(project.id) !== -1}
+                project_id={project.id}
+        />
         )
     }
 
     render_expanded() {
 
         const { projects, list_key, is_loading, has_items } = this.props
-	
+
         return (
-            <div style={{ opacity: is_loading ? 0.5 : 1 }}>
-		<div className="panel panel--default">
-			<div className="panel-heading" onClick={this.onCollapse}>
-			    <div className="panel__title">Projects</div>
-			    <div className="panel__buttons">
-				<div className="panel__button panel__button--refresh"
-				     onClick={this.onRefresh}>
-				</div>
-			    </div>
-			</div>
-			<Pagination list_key={list_key} on_changed={this.onChangePage} />
-                    <div className="panel-body">
-			<table className="table table--default" >
-                            <tbody>
-				{projects.map((project, index) => this.renderExpandedProject(project, index))}
-                            </tbody>
-			</table>
-			{ !is_loading && !has_items &&
-			  <div className="table__no-rows">no projects</div>
-			}
-                    </div>
-		</div>
-            </div>
+            <ListTable>
+                {projects.map((project, index) => this.renderExpandedProject(project, index))}
+            </ListTable>
         )
+
     }
 
     render() {
@@ -159,8 +139,9 @@ class ProjectList extends Component {
 
 	return (
 	    <div>
-		{ is_collapsed && this.render_collapsed() }
-		{ is_expanded && this.render_expanded() }
+		{/*{ is_collapsed && this.render_collapsed() }*/}
+		{/*{ is_expanded && this.render_expanded() }*/}
+            { this.render_expanded() }
 	    </div>
 	)
     }
@@ -177,7 +158,7 @@ function mapStateToProps(state, props) {
 	return items_by_id[selected_id] || { 'id': selected_id,
 					     'loaded': false }
     })
-    
+
     const items = (items_by_id && visible_item_ids.map( function(visible_item_id, index) {
 	return items_by_id[visible_item_id] || { 'id': visible_item_id,
 						 'loaded': false }
@@ -186,11 +167,12 @@ function mapStateToProps(state, props) {
     if ( ! l.display_mode ) {
         l.display_mode = "expanded"
     }
-    
+
     return {
         list_key: list_key,
         projects: items,
 	project_ids: map(items, 'id'),
+        loading_item_ids: l.loading_item_ids || [],
 	selected_ids: l.selected_ids || [],
 	selected_items: selected_items || [],
         has_items: items && items.length > 0,

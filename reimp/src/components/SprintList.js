@@ -19,6 +19,7 @@ import {
     saveCandidateSprint
 } from '../actions/Sprints'
 import Sprint from './Sprint'
+import ListTable from './ListTable'
 
 class SprintList extends Component {
 
@@ -194,18 +195,9 @@ class SprintList extends Component {
         })
 
         return (
-            <div className="sprint-list">
-                <div className="sprint-list__inner">
-                    <table className="table table--sprint-list">
-                        <tbody>
-                        {sprint_rows}
-                        </tbody>
-                    </table>
-                    { !is_loading && !has_items &&
-                    <div className="table__no-rows">no sprints</div>
-                    }
-                </div>
-            </div>
+            <ListTable>
+                {sprint_rows}
+            </ListTable>
         )
     }
 

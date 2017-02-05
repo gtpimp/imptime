@@ -32,6 +32,7 @@ import {
     ungroupIssuesIntoFeature
 } from '../actions/Issue'
 import Issue from './Issue'
+import ListTable from './ListTable'
 
 class IssueList extends Component {
 
@@ -80,7 +81,7 @@ class IssueList extends Component {
     }
 
     onClickedIssue(event, issue_id) {
-        const { onSelectIssues, selected_ids } = this.props
+        const {onSelectIssues, selected_ids} = this.props
         event.stopPropagation()
 
         let selected_issue_ids = []
@@ -324,11 +325,26 @@ class IssueList extends Component {
             return
         })
 
-        return (
-            <div className="issue-list" style={{opacity: is_loading ? 0.5 : 1}}>
+        const renderHeader = (() => {
+            return (
+                <tr className="list-table__headers">
+                    <th className="list-table__header">#</th>
+                    <th className="list-table__header"></th>
+                    <th className="list-table__header">Name</th>
+                    <th className="list-table__header">Assignee</th>
+                    <th className="list-table__header">Status</th>
+                    { false && <th className="list-table__header">Feature</th>}
+                    { false && <th className="list-table__header">Sprint</th>}
+                    <th className="list-table__header">Progress</th>
+                    <th className="list-table__header">Estimates</th>
+                    <th className="list-table__header">Tags</th>
+                    <th className="list-table__header">My time</th>
+                </tr>)
+        })
 
-                <button onClick={this.openEstimateEditor}>Estimates</button>
-                
+
+        return (
+            <div>
                 <TagEditor isOpen={tag_editor_open}
                            selected_items={selected_items}
                            selected_ids={selected_ids}
@@ -337,31 +353,10 @@ class IssueList extends Component {
                                 selected_items={selected_items}
                                 selected_ids={selected_ids}
                                 closeEstimateEditor={this.closeEstimateEditor}/>
-                <div className="issue-list__inner">
-                    <table className="table">
-                        <thead>
-                        <tr className="issue-list__headers">
-                            <th className="issue-list__header">#</th>
-                            <th className="issue-list__header"></th>
-                            <th className="issue-list__header">Name</th>
-                            <th className="issue-list__header">Assignee</th>
-                            <th className="issue-list__header">Status</th>
-                            { false && <th className="issue-list__header">Feature</th>}
-                            { false && <th className="issue-list__header">Sprint</th>}
-                            <th className="issue-list__header">Progress</th>
-                            <th className="issue-list__header">Estimates</th>
-                            <th className="issue-list__header">Tags</th>
-                            <th className="issue-list__header">My time</th>
-                        </tr>
-                        </thead>
-                        <tbody>
-                        {issue_rows}
-                        </tbody>
-                    </table>
-                    { !is_loading && !has_items &&
-                    <div className="table__no-rows">no issues</div>
-                    }
-                </div>
+
+                <ListTable renderHeader={renderHeader}>
+                    {issue_rows}
+                </ListTable>
             </div>
 
         )

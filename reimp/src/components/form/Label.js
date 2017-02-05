@@ -7,7 +7,7 @@ class Label extends Component {
     render() {
         const { value } = this.props
         return (
-            <div>{value}</div>
+            <div className="label">{value}</div>
         )
     }
 }

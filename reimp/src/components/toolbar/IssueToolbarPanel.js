@@ -113,7 +113,6 @@ class IssueToolbarPanel extends Component {
         
         return (
             <div className="toolbar-panel">
-                Issue:
                 <ToolbarButton flavour="toggle" icon="stars" isEnabled={issue.can_group_issues} onEnable={this.onMakeFeatureClick} onDisable={this.onUnmakeFeatureClick}/>
                 <ToolbarButton icon="label" onClick={this.onNewLabelClick}/>
                 <ToolbarButton icon="expand_more" onClick={this.onExpandFeaturesClick}/>

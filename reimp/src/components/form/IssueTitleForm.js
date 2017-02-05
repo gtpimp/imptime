@@ -2,6 +2,8 @@ import React, {Component} from 'react'
 import {connect} from 'react-redux'
 import classNames from 'classnames'
 import { Field, reduxForm } from 'redux-form';
+import Textarea from 'react-expanding-textarea'
+import '../../sass/text-component.scss'
 
 
 class IssueTitleForm extends Component {
@@ -13,8 +15,16 @@ class IssueTitleForm extends Component {
         return (
             <form onSubmit={handleSubmit}>
                 <div>
-                    <label htmlFor="title">Title</label>
-                    <Field name="title" component="input" type="text"/>
+                    {/*<Field name="title" component="input" type="text"/>*/}
+                    <div className="text-component--edit">
+                  <Textarea
+                      rows="1"
+                      maxLength="3000"
+                      className="textarea textarea--text-component"
+                      placeholder="Title"
+                      onChange={ this.handleChange }
+                      value={initialValues} />
+                    </div>
                 </div>
                 <button type="submit">Submit</button>
             </form>

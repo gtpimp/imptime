@@ -14,6 +14,15 @@ services:
     volumes:
      - ../:/opt/imptime
 
+  daphne-worker-2:
+    image: imptime/django-local-sources-dev
+    build:
+      context: ../
+      dockerfile: docker/Dockerfile-django-local-sources-dev
+    entrypoint: ./start-daphne-worker-local-sources-dev.sh
+    volumes:
+     - ../:/opt/imptime
+
   django:
     image: imptime/django-local-sources-dev
     build:
