@@ -8,12 +8,20 @@ class IssueDescriptionForm extends Component {
     render() {
 
         const { initialValues, handleSubmit } = this.props
+
+        const editor = <Textarea
+                           rows="1"
+                           maxLength="3000"
+                           className="textarea textarea--text-component"
+                           placeholder="Description"
+                           onChange={ this.handleChange }
+                           value={initialValues.description} />
         
         return (
             <form onSubmit={handleSubmit}>
                 <div>
                     {/*<label htmlFor="description">Description</label>*/}
-                    {/*<Field name="description" component="textarea" type="text"/>*/}
+                    {/* <Field name="description" component="textarea" type="text"/>*/}
                     <Textarea
                         rows="1"
                         maxLength="3000"

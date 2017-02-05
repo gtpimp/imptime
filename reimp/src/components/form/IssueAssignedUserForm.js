@@ -1,6 +1,6 @@
 import React, {Component} from 'react'
 import {connect} from 'react-redux'
-import {reduxForm} from 'redux-form'
+import {reduxForm, Field} from 'redux-form'
 import SelectList from 'react-widgets/lib/SelectList'
 import { ensureUsersLoaded, getUsers } from '../../actions/Users'
 import { ensureProjectsLoaded, getProject } from '../../actions/Projects'
@@ -8,6 +8,12 @@ import SingleValueSelector from './SingleValueSelector'
 
 class IssueAssignedUserForm extends Component {
 
+    constructor(props) {
+        super(props)
+        this.renderSingleValueSelector = this.renderSingleValueSelector.bind(this)
+        this.onChangeAndSubmit = this.onChangeAndSubmit.bind(this)
+    }
+    
     componentDidMount() {
         this.refresh()
     }
@@ -22,17 +28,35 @@ class IssueAssignedUserForm extends Component {
         dispatch(ensureUsersLoaded(assignable_user_ids))
     }
 
-    renderSelectList({input, ...rest}) {
+    onChangeAndSubmit(e, fieldOnChange) {
+        const {handleSubmit} = this.props
+        fieldOnChange(e)
+        setTimeout(() => handleSubmit(), 0)
+    }
+    
+    renderSingleValueSelector(field) {
+        const {input, data, ...rest} = field
         return (
-            <SelectList {...input} onBlur={() => input.onBlur()} {...rest}/>
+            <SingleValueSelector
+                onChange={(e) => this.onChangeAndSubmit(e, input.onChange)}
+                value={input.value}
+                options={data}
+                {...rest}
+            />
         )
+        /*<SelectList {...input} onBlur={() => input.onBlur()} {...rest}/> */
     }
 
     render() {
-        const {handleSubmit, assignable_user_options} = this.props
+        const {handleSubmit, assignable_user_options, initialValues } = this.props
         return (
             <form onSubmit={handleSubmit}>
-                <SingleValueSelector options={assignable_user_options}  />
+                <Field name='assigned_user'
+                       component={this.renderSingleValueSelector}
+                       valueField="value"
+                       textField="label"
+                       data={assignable_user_options}
+                />
             </form>
         )
     }

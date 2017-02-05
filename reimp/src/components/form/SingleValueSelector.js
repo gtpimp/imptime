@@ -10,32 +10,17 @@ export class SingleValueSelector extends Component {
         this.onSelected = this.onSelected.bind(this)
     }
 
-    componentDidMount() {
-        this.refresh()
-    }
-
-    componentWillReceiveProps() {
-        this.refresh()
-    }
-
-    refresh() {
-        const {dispatch, user_ids} = this.props
-        dispatch(ensureUsersLoaded(user_ids))
-    }
-
     onSelected(selected_option) {
-        // const {onChange} = this.props
-        // if (!selected_option) {
-        //     return
-        // }
-        // onChange(selected_option.value)
+        const {onChange} = this.props
+        onChange(selected_option.value)
     }
 
     render() {
         const {options} = this.props
 
         const suggestions = options.map((option, index) =>
-            <div className="single-value-selector__suggestion" key={'suggestion_' + option.value}>
+            <div className="single-value-selector__suggestion" key={'suggestion_' + option.value}
+                 onClick={() => this.onSelected(option)}>
                 <div className="single-value-selector__suggestion-number">
                     {(index + 1)}.
                 </div>
