@@ -1,6 +1,7 @@
 import { impfetch } from './lib.js'
 import difference from 'lodash/difference'
 import keys from 'lodash/keys'
+import keyBy from 'lodash/keyBy'
 import { ENTITY_KEY__ISSUE_GENERAL_DETAILS } from '../actions/ItemListKeyRegistry'
 
 export const ANNOUNCE_ISSUE_GENERAL_DETAILS_LOADED = 'ANNOUNCE_ISSUES_GENERAL_DETAILS_LOADED'
@@ -24,15 +25,15 @@ function announceLoadingIssueGeneralDetails(issue_ids_to_load) {
 
 function announceIssueGeneralDetailsLoaded(payload) {
 
-    let items_by_id = {}
-    payload.issues.map((item, index) => {
-        items_by_id[item.id] = item
-        return
-    });
+    // let items_by_id = {}
+    // payload.issues.map((item, index) => {
+    //     items_by_id[item.id] = item
+    //     return
+    // });
     
     return {
         type: ANNOUNCE_ISSUE_GENERAL_DETAILS_LOADED,
-        items_by_id: items_by_id,
+        items_by_id: keyBy(payload.issues, 'id'),
 	received_at: Date.now()
     }
 }

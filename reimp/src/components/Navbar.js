@@ -40,7 +40,7 @@ class Navbar extends Component {
                     <div className="navbar__tab"><NavTab to="/projects" label="Projects" /></div>
                     <div className="navbar__tab"><NavTab to="/clients" label="Clients"/></div>
                     <div className="navbar__tab"><NavTab to="/team" label="Team" /></div>
-                    <div className="navbar__tab" onClick={this.toggleUserDashboard}><NavTab style="dashboard-toggle" expanded={user_dashboard_expanded} label={username} /></div>
+                    <div className="navbar__tab" onClick={this.toggleUserDashboard}><NavTab variant="dashboard-toggle" expanded={user_dashboard_expanded} label={username} /></div>
                 </div>
             </div>
         )

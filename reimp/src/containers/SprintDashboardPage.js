@@ -33,8 +33,8 @@ class ProjectDashboardPage extends Component {
         dispatch(ensureProjectsLoaded([project_id]))
         dispatch(ensureSprintsLoaded([sprint_id]))
         if ( new_props.sprint.id !== this.props.sprint.id ||
-             new_props.sprint.name != this.props.sprint.name ||
-             new_props.project.name != this.props.project.name) {
+             new_props.sprint.name !== this.props.sprint.name ||
+             new_props.project.name !== this.props.project.name) {
             this.refresh(new_props.sprint, new_props.project)
         }
     }

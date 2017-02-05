@@ -1,7 +1,5 @@
 import React, {Component} from 'react'
 import {connect} from 'react-redux'
-import concat from 'lodash/concat'
-import includes from 'lodash/includes'
 import IssueSidebar from '../components/IssueSidebar'
 import MultipleIssueSidebar from '../components/MultipleIssueSidebar'
 import IssueList from '../components/IssueList'
@@ -11,12 +9,10 @@ import {
     PAGE_KEY__ISSUES_PAGE
 } from '../actions/ItemListKeyRegistry'
 import {
-    expand_list,
     selectItems,
     update_list_filter,
     invalidateList
 } from '../actions/ItemList'
-// import {setActions} from '../actions/Toolbar'
 import {
     set_toolbars,
     select_issues,
@@ -42,21 +38,19 @@ class IssuesPage extends Component {
     }
 
     componentWillReceiveProps(new_props) {
-        const { dispatch, selected_issues, toolbars } = this.props
-        const selected_a = new_props.selected_issues || []
-        const selected_b = this.props.selected_issues || []
+        const { dispatch} = this.props
         dispatch(ensureProjectsLoaded([new_props.project_id]))
         dispatch(ensureSprintsLoaded([new_props.sprint_id]))
         
         if ( new_props.sprint.id !== this.props.sprint.id ||
-             new_props.sprint.name != this.props.sprint.name ||
-             new_props.project.name != this.props.project.name) {
+             new_props.sprint.name !== this.props.sprint.name ||
+             new_props.project.name !== this.props.project.name) {
                 this.refresh(new_props.sprint, new_props.project)
         }
     }
 
     refresh(sprint, project) {
-        const {dispatch, selected_issues, toolbars } = this.props
+        const {dispatch} = this.props
         if ( sprint.id ) {
             dispatch(update_list_filter(LIST_KEY__ISSUE_LIST, {sprint_id:sprint.id}))
             dispatch(invalidateList(LIST_KEY__ISSUE_LIST))
@@ -133,7 +127,7 @@ class IssuesPage extends Component {
 
 function mapStateToProps(state, props) {
 
-    const {issue, item_list, page} = state
+    const {issue, page} = state
     const items_by_id = (issue && issue.items_by_id) || {}
 
     const selected_issue_ids = get_selected_issue_ids(state, PAGE_KEY__ISSUES_PAGE)
@@ -155,7 +149,7 @@ function mapStateToProps(state, props) {
         selected_issues: selected_items,
         selected_issue_ids: selected_issue_ids,
         toolbars: page.toolbar_names,
-        is_single_selection: selected_items.length == 1,
+        is_single_selection: selected_items.length === 1,
         is_multiple_selection: selected_items.length > 1,
         
     }

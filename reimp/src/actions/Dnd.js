@@ -1,5 +1,6 @@
 
 export const DndTypes = {
-    SPRINT: 'sprint',
-    ISSUE: 'issue'
+    ISSUE: 'issue',
+    PROJECT: 'project',
+    SPRINT: 'sprint'
 };

@@ -6,16 +6,14 @@
   background-color: $color-8;
 }
 
+.sprint--unselected {
+  background-color: $color-2;
+}
+
+.sprint--selected {
+  background-color: $color-3 !important;
+}
+
 .table--sprint-list {
 }
 
-.sprint__cell {
-  height: 48px;
-  padding-left: 16px;
-  padding-right: 16px;
-  vertical-align: middle;
-
-  &:first-child {
-    padding-left: 26px;
-  }
-}

@@ -13,6 +13,14 @@ services:
     volumes:
      - ../external_config/:/opt/imptime/src/implicitdesign/external_config/
 
+  daphne-worker-2:
+    image: imptime/django
+    depends_on:
+      - redis
+    entrypoint: ./start-daphne-worker.sh
+    volumes:
+     - ../external_config/:/opt/imptime/src/implicitdesign/external_config/
+
   django:
     image: imptime/django
     depends_on:

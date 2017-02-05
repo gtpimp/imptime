@@ -1,9 +1,7 @@
 import React, {Component} from 'react'
 import {connect} from 'react-redux'
 import map from 'lodash/map'
-import TextComponent from './TextComponent'
 import EditableProperty from './form/EditableProperty'
-import { isEditing, isReadonly } from '../actions/EditableProperty'
 import { updateIssueComment, createIssueComment, deleteIssueComment } from '../actions/Issue'
 import IssueCommentForm from './form/IssueCommentForm'
 import Label from './form/Label'
@@ -33,7 +31,7 @@ class EditableIssueComment extends Component {
     }
     
     render() {
-        const {issue_id, comment} = this.props
+        const {comment} = this.props
 
 	return (
 
@@ -58,7 +56,7 @@ function mapStateToProps(state, props) {
     const issue = getIssue(state, issue_id) || {}
     let comment = { id: null}
     map(issue.comments || [], function(issue_comment, index) {
-        if ( issue_comment.id == comment_id ) {
+        if ( issue_comment.id === comment_id ) {
             comment = issue_comment
         }
     })

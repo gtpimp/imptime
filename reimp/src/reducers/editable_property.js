@@ -1,6 +1,3 @@
-import difference from 'lodash/difference'
-import union from 'lodash/union'
-import { setErrorMessage } from '../actions/Error'
 
 import {
     SET_MODE

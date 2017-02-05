@@ -1,9 +1,3 @@
-import { impfetch } from './lib.js'
-import difference from 'lodash/difference'
-import keys from 'lodash/keys'
-import union from 'lodash/union'
-import map from 'lodash/map'
-
 export const INIT_PAGE = 'INIT_PAGE'
 export const SET_PAGE_TOOLBARS = 'SET_PAGE_TOOLBARS'
 export const UPDATE_PAGE_SIDEBAR = 'UPDATE_PAGE_SIDEBAR'

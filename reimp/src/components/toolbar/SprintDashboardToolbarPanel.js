@@ -28,7 +28,6 @@ class SprintDashboardToolbarPanel extends Component {
         const { sprint_id } = this.props
         return (
             <div className="toolbar-panel">
-                Sprint:
                 { sprint_id &&
                   <ToolbarButton icon="subdirectory_arrow_left" onClick={this.onOpenSprintClick}/>
                 }

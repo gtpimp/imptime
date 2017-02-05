@@ -18,7 +18,7 @@ class SearchBox extends Component {
 
     render() {
 
-        const {global_filter} = this.props
+        // const {global_filter} = this.props
 
         return (
             <div className="search-box">

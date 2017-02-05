@@ -2,6 +2,7 @@ import assign from 'lodash/assign'
 import keys from 'lodash/keys'
 import union from 'lodash/union'
 import difference from 'lodash/difference'
+import without from 'lodash/without'
 import { setErrorMessage } from '../actions/Error'
 
 import {
@@ -26,13 +27,14 @@ export default function project(state = initialState, action) {
 
         case INVALIDATE_PROJECTS:
 
-	    let new_project_ids = Object.assign({}, state.items_by_id)
-	    action.project_ids_to_invalidate.map(function(id_to_invalidate) {
-		if ( new_project_ids[id_to_invalidate] ) {
-		    delete new_project_ids[id_to_invalidate]
-		}
-	    })
-	    return Object.assign({}, state, {items_by_id: new_project_ids})
+	    // let new_project_ids = Object.assign({}, state.items_by_id)
+	    // action.project_ids_to_invalidate.map(function(id_to_invalidate) {
+        // if ( new_project_ids[id_to_invalidate] ) {
+		 //    delete new_project_ids[id_to_invalidate]
+        // }
+	    // })
+	    // return Object.assign({}, state, {items_by_id: new_project_ids})
+            return Object.assign({}, state, {items_by_id: without(state.items_by_id, action.project_ids_to_invalidate)})
 
         case ANNOUNCE_LOADING_PROJECTS:
 	    return Object.assign({}, state, {

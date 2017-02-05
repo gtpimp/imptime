@@ -1,7 +1,7 @@
 import React, {Component} from 'react'
+import each from 'lodash/each'
 import map from 'lodash/map'
 import union from 'lodash/union'
-import merge from 'lodash/merge'
 import includes from 'lodash/includes'
 import difference from 'lodash/difference'
 import RIEInput from '../widgets/RIEInput'
@@ -12,7 +12,6 @@ import EstimateEditor from '../components/EstimateEditor'
 import {
     initList,
     invalidateList,
-    selectItems,
     collapse_list,
     expand_list,
     setItemFlag
@@ -32,6 +31,7 @@ import {
     ungroupIssuesIntoFeature
 } from '../actions/Issue'
 import Issue from './Issue'
+import ListTable from './ListTable'
 
 class IssueList extends Component {
 
@@ -80,7 +80,7 @@ class IssueList extends Component {
     }
 
     onClickedIssue(event, issue_id) {
-        const { onSelectIssues, selected_ids } = this.props
+        const {onSelectIssues, selected_ids} = this.props
         event.stopPropagation()
 
         let selected_issue_ids = []
@@ -153,7 +153,7 @@ class IssueList extends Component {
     }
 
     ungroupTogether(event) {
-        const {selected_ids, selected_items, dispatch} = this.props
+        const {selected_ids, dispatch} = this.props
         event.stopPropagation()
         dispatch(ungroupIssuesIntoFeature(selected_ids))
     }
@@ -249,10 +249,10 @@ class IssueList extends Component {
     render_expanded() {
 
         const {
-            issues, is_visible, list_key, is_loading,
+            issues, is_visible, list_key,
             saving_issue_ids,
             is_creating_issue, candidate_issue, invalidated_issue_ids,
-            selected_ids, selected_items, loading_item_ids, has_items, expanded_issues
+            selected_ids, selected_items, loading_item_ids, expanded_issues
         } = this.props
 
         const tag_editor_open = (this.state || {}).tag_editor_open || false
@@ -262,11 +262,11 @@ class IssueList extends Component {
             return (<div></div>)
         }
         const that = this
-        const at_least_one_issue_selected = selected_ids && selected_ids.length > 0
+        // const at_least_one_issue_selected = selected_ids && selected_ids.length > 0
 
         const issue_rows = []
         let running_parent_issue_id = null
-        issues.map(function (issue, index) {
+        each(issues, function (issue, index) {
 
             if (is_creating_issue && index === 0 && !candidate_issue.issue_id_before) {
                 issue_rows.push(that.render_candidate_issue())
@@ -324,11 +324,26 @@ class IssueList extends Component {
             return
         })
 
-        return (
-            <div className="issue-list" style={{opacity: is_loading ? 0.5 : 1}}>
+        const renderHeader = (() => {
+            return (
+                <tr className="list-table__headers">
+                    <th className="list-table__header">#</th>
+                    <th className="list-table__header"></th>
+                    <th className="list-table__header">Name</th>
+                    <th className="list-table__header">Assignee</th>
+                    <th className="list-table__header">Status</th>
+                    { false && <th className="list-table__header">Feature</th>}
+                    { false && <th className="list-table__header">Sprint</th>}
+                    <th className="list-table__header">Progress</th>
+                    <th className="list-table__header">Estimates</th>
+                    <th className="list-table__header">Tags</th>
+                    <th className="list-table__header">My time</th>
+                </tr>)
+        })
 
-                <button onClick={this.openEstimateEditor}>Estimates</button>
-                
+
+        return (
+            <div>
                 <TagEditor isOpen={tag_editor_open}
                            selected_items={selected_items}
                            selected_ids={selected_ids}
@@ -337,31 +352,10 @@ class IssueList extends Component {
                                 selected_items={selected_items}
                                 selected_ids={selected_ids}
                                 closeEstimateEditor={this.closeEstimateEditor}/>
-                <div className="issue-list__inner">
-                    <table className="table">
-                        <thead>
-                        <tr className="issue-list__headers">
-                            <th className="issue-list__header">#</th>
-                            <th className="issue-list__header"></th>
-                            <th className="issue-list__header">Name</th>
-                            <th className="issue-list__header">Assignee</th>
-                            <th className="issue-list__header">Status</th>
-                            { false && <th className="issue-list__header">Feature</th>}
-                            { false && <th className="issue-list__header">Sprint</th>}
-                            <th className="issue-list__header">Progress</th>
-                            <th className="issue-list__header">Estimates</th>
-                            <th className="issue-list__header">Tags</th>
-                            <th className="issue-list__header">My time</th>
-                        </tr>
-                        </thead>
-                        <tbody>
-                        {issue_rows}
-                        </tbody>
-                    </table>
-                    { !is_loading && !has_items &&
-                    <div className="table__no-rows">no issues</div>
-                    }
-                </div>
+
+                <ListTable renderHeader={renderHeader}>
+                    {issue_rows}
+                </ListTable>
             </div>
 
         )

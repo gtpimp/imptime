@@ -1,9 +1,3 @@
-import { impfetch } from './lib.js'
-import difference from 'lodash/difference'
-import keys from 'lodash/keys'
-import union from 'lodash/union'
-import map from 'lodash/map'
-
 export const SET_MODE = 'SET_MODE'
 
 export function setMode(property_key, mode) {
@@ -27,11 +21,11 @@ function getMode(state, property_key) {
 }
 
 export function isEditing(state, property_key) {
-    return getMode(state, property_key) == 'edit'
+    return getMode(state, property_key) === 'edit'
 }
 
 export function isReadonly(state, property_key) {
-    return getMode(state, property_key) == 'read'
+    return getMode(state, property_key) === 'read'
 }
 
 export function isEmpty(state, property_key) {

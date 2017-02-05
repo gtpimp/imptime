@@ -49,7 +49,7 @@ class ToolBar extends Component {
 }
 
 function mapStateToProps(state, props) {
-    const {breadcrumbs, toolbar} = state
+    const {breadcrumbs} = state
 
     const page_toolbars = state.page.toolbar_names || []
     

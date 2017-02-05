@@ -1,8 +1,7 @@
 import React, {Component} from 'react'
 import {connect} from 'react-redux'
-import classNames from 'classnames'
-import { Field, reduxForm } from 'redux-form';
-
+import { reduxForm } from 'redux-form';
+import Textarea from 'react-expanding-textarea'
 
 class IssueDescriptionForm extends Component {
 
@@ -13,8 +12,16 @@ class IssueDescriptionForm extends Component {
         return (
             <form onSubmit={handleSubmit}>
                 <div>
-                    <label htmlFor="description">Description</label>
-                    <Field name="description" component="textarea" type="text"/>
+                    {/*<label htmlFor="description">Description</label>*/}
+                    {/*<Field name="description" component="textarea" type="text"/>*/}
+                    <Textarea
+                        rows="1"
+                        maxLength="3000"
+                        className="textarea textarea--text-component"
+                        placeholder="Description"
+                        onChange={ this.handleChange }
+                        value={initialValues} />
+                {/*</div>*/}
                 </div>
                 <button type="submit">Submit</button>
             </form>

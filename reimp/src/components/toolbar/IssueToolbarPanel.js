@@ -6,11 +6,6 @@ import { get_selected_issue_ids } from '../../actions/Page'
 import { ensureIssuesLoaded, getIssue } from '../../actions/Issues'
 import { LIST_KEY__ISSUE_LIST, PAGE_KEY__ISSUES_PAGE } from '../../actions/ItemListKeyRegistry'
 import {
-    reorderIssue,
-    startCandidateIssue,
-    updateCandidateSubject,
-    cancelCandidateIssue,
-    saveCandidateIssue,
     groupUnsortedIssuesIntoFeature,
     updateIssueToggleAsFeature,
     ungroupIssuesIntoFeature
@@ -43,7 +38,7 @@ class IssueToolbarPanel extends Component {
     }
 
     componentDidMount() {
-        const {dispatch, sprint_id, issue_ids} = this.props
+        const {dispatch, issue_ids} = this.props
         dispatch(ensureIssuesLoaded(issue_ids))
     }
 
@@ -104,7 +99,7 @@ class IssueToolbarPanel extends Component {
 
         const { issue_ids, issue } = this.props
         
-        if (issue_ids.length == 0 ) {
+        if (issue_ids.length === 0 ) {
             return null
         }
         if ( ! issue ) {
@@ -113,7 +108,6 @@ class IssueToolbarPanel extends Component {
         
         return (
             <div className="toolbar-panel">
-                Issue:
                 <ToolbarButton flavour="toggle" icon="stars" isEnabled={issue.can_group_issues} onEnable={this.onMakeFeatureClick} onDisable={this.onUnmakeFeatureClick}/>
                 <ToolbarButton icon="label" onClick={this.onNewLabelClick}/>
                 <ToolbarButton icon="expand_more" onClick={this.onExpandFeaturesClick}/>

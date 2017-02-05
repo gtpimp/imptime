@@ -1,7 +1,3 @@
-import difference from 'lodash/difference'
-import union from 'lodash/union'
-import { setErrorMessage } from '../actions/Error'
-
 import {
     INIT_PAGE,
     SET_PAGE_TOOLBARS,
@@ -44,7 +40,7 @@ export default function page(state = initialState, action) {
             const sidebar = sidebars[action.sidebar_name] || {}
             sidebar.show_sidebar = action.show_sidebar
             sidebars[action.sidebar_name] = sidebar
-	    state_copy[action.page_key] = Object.assign({}, l, sidebars: sidebars)
+	    state_copy[action.page_key] = Object.assign({}, l, {sidebars: sidebars})
 	    return state_copy
         case UPDATE_PAGE_SELECTION:
 	    state_copy[action.page_key] = Object.assign({}, l, {

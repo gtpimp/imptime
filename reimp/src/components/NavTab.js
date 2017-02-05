@@ -3,13 +3,15 @@ import {connect} from 'react-redux'
 import {Link, IndexLink, withRouter} from 'react-router'
 import classNames from 'classnames'
 import '../sass/navtab.css'
+import without from 'lodash/without'
+
 class NavTab extends Component {
 
     render() {
         const {router} = this.props
-        const {index, to, children, style, ...props} = this.props
+        const {index, to, children, variant} = this.props
 
-        if (style === 'link') {
+        if (variant === 'link') {
             let isActive
             if (router.isActive('/', true) && index) {
                 isActive = true
@@ -17,20 +19,21 @@ class NavTab extends Component {
                 isActive = router.isActive(to)
             }
             const LinkComponent = index ? IndexLink : Link
+            const filteredProps = without(this.props, ['router'])
 
             return (
                 <div className={classNames('navtab', 'navtab--' + (isActive ? 'active' : 'inactive'))}>
                     { this.props.label &&
                     <div className="navtab__label-wrapper">
-                        <div className={classNames('navtab__label', 'navtab__label--' + (isActive ? 'active' : 'inactive'))}><LinkComponent to={to} {...props}>{this.props.label}</LinkComponent></div>
+                        <div className={classNames('navtab__label', 'navtab__label--' + (isActive ? 'active' : 'inactive'))}><LinkComponent to={to} {...filteredProps}>{this.props.label}</LinkComponent></div>
                     </div>
                     }
                     { !this.props.label &&
-                    <LinkComponent to={to} {...props}>{children}</LinkComponent>
+                    <LinkComponent to={to} {...filteredProps}>{children}</LinkComponent>
                     }
                 </div>
             )
-        } else if (style === 'dashboard-toggle') {
+        } else if (variant === 'dashboard-toggle') {
             return (
                 <div className={classNames('navtab', 'navtab--' + (this.props.expanded ? 'expanded' : 'collapsed'))}>
                     <div className="navtab__label-wrapper">
@@ -45,7 +48,7 @@ class NavTab extends Component {
 
 function mapStateToProps(state, props) {
     return {
-        style: props.style || 'link'
+        variant: props.variant || 'link'
     }
 }
 

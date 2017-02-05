@@ -11,14 +11,9 @@ import EditableIssueStatus from '../components/EditableIssueStatus'
 import Timestamp from './Timestamp'
 import moment from 'moment'
 import Sidebar from './Sidebar'
-import OtherUser from '../components/OtherUser'
 import {ensureIssuesLoaded, getIssues} from '../actions/Issues'
 
 class MultipleIssueSidebar extends Component {
-
-    constructor(props) {
-        super(props)
-    }
 
     componentDidMount() {
         const {issue_ids, dispatch} = this.props

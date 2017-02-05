@@ -29,14 +29,13 @@ class SprintsToolbarPanel extends Component {
         
         return (
             <div className="toolbar-panel">
-                Sprints:
                 <div className="button button--large button--primary" onClick={this.onNewProjectClick}>
                     + New Sprint
                 </div>
                 { sprint &&
                   <div>
                       <div className="button button--large button--primary" onClick={this.onDashboardClick}>
-                          + Dashboard
+                          Dashboard
                       </div>
                   </div>
                 }
@@ -56,7 +55,6 @@ function mapStateToProps(state, props) {
         sprint: sprint
     }
     
-    return {}
 }
 
 

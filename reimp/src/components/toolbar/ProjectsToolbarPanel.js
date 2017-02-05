@@ -30,11 +30,10 @@ class ProjectsToolbarPanel extends Component {
         
         return (
             <div className="toolbar-panel">
-                Projects
                 <div className="button button--large button--primary" onClick={this.onNewProjectClick}>+ New Project</div>
                 { selected_project_ids &&
                   <div>
-                      <div className="button button--large button--primary" onClick={this.onDashboardClick}>+ Dashboard</div>
+                      <div className="button button--large button--primary" onClick={this.onDashboardClick}>Dashboard</div>
                   </div>
                 }
             </div>

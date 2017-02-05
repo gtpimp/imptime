@@ -1,11 +1,7 @@
 import React, {Component} from 'react'
 import {connect} from 'react-redux'
-import classNames from 'classnames'
-import { Field, reduxForm } from 'redux-form'
 import EditableProperty from './form/EditableProperty'
 import IssueTitleForm from './form/IssueTitleForm'
-import Label from './form/Label'
-import Blank from './form/Blank'
 import { updateIssueSubject } from '../actions/Issue'
 import { getIssue } from '../actions/Issues'
 
@@ -31,8 +27,8 @@ class EditableIssueTitle extends Component {
                               onChange={this.onChange}
             >
                 <IssueTitleForm />
-                <Label />
-                <Blank />
+                <div className="text-component--readonly">{issue.subject}</div>
+                <div className="text-component--empty">Title</div>
             </EditableProperty>
         )
     }

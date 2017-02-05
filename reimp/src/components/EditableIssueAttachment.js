@@ -1,9 +1,7 @@
 import React, {Component} from 'react'
 import {connect} from 'react-redux'
 import map from 'lodash/map'
-import TextComponent from './TextComponent'
 import EditableProperty from './form/EditableProperty'
-import { isEditing, isReadonly } from '../actions/EditableProperty'
 import { deleteIssueAttachment } from '../actions/Issue'
 import IssueAttachmentForm from './form/IssueAttachmentForm'
 import FileLabel from './form/FileLabel'
@@ -54,7 +52,7 @@ function mapStateToProps(state, props) {
     const issue = getIssue(state, issue_id) || {}
     let attachment = { id: null}
     map(issue.attachments || [], function(issue_attachment, index) {
-        if ( issue_attachment.id == attachment_id ) {
+        if ( issue_attachment.id === attachment_id ) {
             attachment = issue_attachment
         }
     })

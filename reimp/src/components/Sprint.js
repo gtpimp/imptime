@@ -39,15 +39,16 @@ class Sprint extends Component {
             return connectDragSource(connectDropTarget(
 		<tr key={this.key+"."+sprint.id}
 		    onClick={onClickedSprint}
-		    className={classNames('sprint', {'tr--selected': is_selected, 'tr--drop-target': isOver})}
+		    className={classNames('sprint', {'tr--selected': is_selected, 'tr--drop-target': isOver, 'list-table__row--unselected': !is_selected,
+                'list-table__row--selected': is_selected})}
 		    >
-		    <td className="sprint__cell">{sprint.number}</td>
-		    <td className="sprint__cell">{sprint.name}</td>
-		    <td className="sprint__cell">12 March 2016</td>
-		    <td className="sprint__cell">24 March 2016</td>
-		    <td className="sprint__cell">46 Items</td>
-		    <td className="sprint__cell"><Progress issue={sprint} /></td>
-		    <td className="sprint__cell">{sprint.status_name}</td>
+		    <td className="list-table__cell">{sprint.number}</td>
+		    <td className="list-table__cell">{sprint.name}</td>
+		    <td className="list-table__cell">12 March 2016</td>
+		    <td className="list-table__cell">24 March 2016</td>
+		    <td className="list-table__cell">46 Items</td>
+		    <td className="list-table__cell"><Progress issue={sprint} /></td>
+		    <td className="list-table__cell">{sprint.status_name}</td>
 		</tr>
             ))
 	}

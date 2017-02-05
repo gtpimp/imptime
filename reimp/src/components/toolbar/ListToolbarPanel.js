@@ -20,7 +20,6 @@ class ListToolbarPanel extends Component {
     render() {
         return (
             <div className="toolbar-panel">
-                List:
                 <ToolbarButton flavour="toggle" icon="info" isEnabled={true} onEnable={this.onEnableInfoClick} onDisable={this.onDisableInfoClick}/>
                 <ToolbarButton icon="settings" onClick={this.onSettingsClick}/>
             </div>

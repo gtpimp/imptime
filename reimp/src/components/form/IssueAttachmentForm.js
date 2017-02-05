@@ -1,7 +1,6 @@
 import React, {Component} from 'react'
 import {connect} from 'react-redux'
-import classNames from 'classnames'
-import { Field, reduxForm } from 'redux-form'
+import { reduxForm } from 'redux-form'
 import FileUpload from 'react-fileupload'
 import { populateDefaultRequestHeaders } from '../../actions/lib'
 
@@ -10,7 +9,7 @@ class IssueAttachmentForm extends Component {
 
     render() {
 
-        const { handleSubmit, upload_url, requestHeaders, issue_id } = this.props
+        const { upload_url, requestHeaders, issue_id } = this.props
         
         return (
             <div>
@@ -34,10 +33,7 @@ class IssueAttachmentForm extends Component {
                                   alert(resp)
                               },
                               doUpload : function(files,mill){
-                                  console.log('you just uploaded',typeof files == 'string' ? files : files[0].name)
-                              },
-                              uploading : function(progress){
-                                  console.log('loading...',progress.loaded/progress.total+'%')
+                                  console.log('you just uploaded',typeof files === 'string' ? files : files[0].name)
                               }
                     }}
                 >
