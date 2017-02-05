@@ -216,7 +216,7 @@ class Issue extends Component {
                     <td className="issue__cell issue__cell--status">
                         <RIEModeToggler
                             rie_key={"issue_status_" + issue.id}
-                            initialValue={issue.status || "..."}
+                            initialValue={issue.status_name || "..."}
                             onChange={(new_value) => this.onChangeStatus(issue.id, new_value)}
                         >
                             <RIEDropDown options={ISSUE_STATUS_CHOICES}/>

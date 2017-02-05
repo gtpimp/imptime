@@ -3315,6 +3315,28 @@ class Tag(models.Model):
             RefreshNotifier().notify_model_update(
                 self, params={'issues': affected_issues})
 
+class IssueStatus(models.Model):
+    name = models.CharField(max_length=255, blank=True, null=True)
+    business = models.ForeignKey(Business, related_name='issue_statuses')
+
+    class Meta:
+        unique_together = (('name', 'business'), )
+
+    def __unicode__(self):
+        return self.name
+
+    def save(self, *args, **kwargs):
+        was_created = not self.id
+        super(IssueStatus, self).save(*args, **kwargs)
+        affected_issues = [x.id for x in self.issues.all()]
+        if was_created:
+            RefreshNotifier().notify_model_create(
+                self, params={'issues': affected_issues})
+        else:
+            RefreshNotifier().notify_model_update(
+                self, params={'issues': affected_issues})
+        
+            
 class IssueRepresentation(object):
     """ object used to map helper data when rendering issues that doesn't belong in the database """
 
@@ -3331,7 +3353,7 @@ class IssueQuerySet(QuerySet):
         if user.is_superuser or user.has_perm('timepiece.belongs_to_all_projects'):
             return self
         return self.filter(project__business__users=user)
-    
+
 class Issue(models.Model):
 
     ISSUE_STATUS_CHOICES = (
@@ -3361,6 +3383,7 @@ class Issue(models.Model):
                                        'tester': [x for x,y in ISSUE_STATUS_CHOICES if x not in ['internal_qa_passed', 'in_client_qa', 'client_qa_passed', 'duplicate', "onhold"]] }
     
     status = models.CharField(max_length=255, choices = ISSUE_STATUS_CHOICES, blank=False)
+    status2 = models.ForeignKey(IssueStatus, related_name='issues', max_length=255, null=True)
     number = models.IntegerField(null=True,blank=True, db_index=True)
     project = models.ForeignKey(Project, related_name='issues')
     subject = models.TextField(db_index=True)
@@ -3624,16 +3647,6 @@ class Issue(models.Model):
 
     def is_fixed_ctc_cost(self):
         return self.fixed_ctc_amount is not None
-
-class IssueStatus(models.Model):
-    name = models.CharField(max_length=255, blank=True, null=True)
-    business = models.ForeignKey(Business,related_name='stati')
-
-    class Meta:
-        unique_together = (('name', 'business'), )
-
-    def __unicode__(self):
-        return self.name
 
 class IssueComment(models.Model):
     issue = models.ForeignKey(Issue, blank=False, null=False, related_name='comments')

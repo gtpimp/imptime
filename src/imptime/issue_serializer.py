@@ -8,6 +8,7 @@ from user_serializer import UserSerializer
 from issue_estimate_serializer import IssueEstimateSerializer
 from issue_comment_serializer import IssueCommentSerializer
 from issue_attachment_serializer import IssueAttachmentSerializer
+from issue_status_serializer import IssueStatusSerializer
 logger = logging.getLogger(__name__)
 
 
@@ -18,7 +19,7 @@ class IssueSerializer(BaseSerializer):
     feature = serializers.CharField()
     subject = serializers.CharField()
     description = serializers.CharField()
-    status = serializers.CharField()
+    status_name = serializers.CharField(source='status2_name')
     assigned_to_id = serializers.CharField()
     feature_name = serializers.CharField()
     number = serializers.IntegerField()
@@ -44,6 +45,7 @@ class IssueSerializer(BaseSerializer):
             issue.assigned_to.username if issue.assigned_to_id else None
 
         issue.feature_name = issue.feature.name if issue.feature_id else None
+        issue.status2_name = issue.status2.name if issue.status2_id else None
         issue.position_if_creating_new_issue_after = (issue.order or 0) + 0.5
         issue.sprint_id = str(issue.project_id)  # sic
         issue.project_id = str(issue.project.business_id)  # sic

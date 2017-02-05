@@ -14,7 +14,7 @@ import json
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.decorators import permission_classes
 from timepiece.models import Issue, IssueHistory, Feature
-from timepiece.models import TagCategory, Tag, Entry
+from timepiece.models import TagCategory, Tag, Entry, IssueStatus
 
 logger = logging.getLogger(__name__)
 
@@ -56,6 +56,7 @@ class IssueViewSet(BaseViewSet):
                                    .select_related('project__business')\
                                    .select_related('assigned_to')\
                                    .select_related('feature')\
+                                   .select_related('status2')\
                                    .prefetch_related('comments')\
                                    .prefetch_related('attachments')\
                                    .prefetch_related('group_children')\
@@ -116,12 +117,13 @@ class IssueViewSet(BaseViewSet):
                     IssueHistory.add_history(
                         self.request.user, issue, "changed description",
                         old_description, issue.description)
-                elif field_name == "status":
-                    old_status = issue.status
-                    issue.status = new_value
+                elif field_name == "status_name":
+                    old_status = issue.status2
+                    new_status = IssueStatus.objects.get_or_create(business_id=issue.project.business_id, name=new_value)[0]
+                    issue.status2_id = new_status.id
                     IssueHistory.add_history(
                         self.request.user, issue, "changed status",
-                        old_status, issue.status)
+                        old_status.name, new_status.name)
                 elif field_name == "feature_name":
                     old_feature_name = issue.feature.name \
                       if issue.feature else "none"

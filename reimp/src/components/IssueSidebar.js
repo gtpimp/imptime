@@ -10,6 +10,7 @@ import EditableIssueAssignedUser from '../components/EditableIssueAssignedUser'
 import EditableIssueComment from '../components/EditableIssueComment'
 import EditableIssueAttachment from '../components/EditableIssueAttachment'
 import EditableIssueInSprint from '../components/EditableIssueInSprint'
+import EditableIssueStatus from '../components/EditableIssueStatus'
 // import IssueDescription from './IssueDescription'
 import Timestamp from './Timestamp'
 import moment from 'moment'
@@ -64,6 +65,11 @@ class IssueSidebar extends Component {
                       <div>
                           Assigned to:
                           <EditableIssueAssignedUser issue_ids={[issue.id]} project_id={issue.project_id} />
+                      </div>
+
+                      <div>
+                          Status:
+                          <EditableIssueStatus issue_ids={[issue.id]} project_id={issue.project_id} />
                       </div>
 
                       <div>
