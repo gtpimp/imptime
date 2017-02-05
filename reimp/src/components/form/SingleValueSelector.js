@@ -65,18 +65,10 @@ export class SingleValueSelector extends Component {
 
 function mapStateToProps(state, props) {
 
-    // const {user_ids} = props
-    // const {user} = state
-    // const users = getUsers(state, user_ids)
-    // const options = users.map((user) => ({
-    //     value: user.id,
-    //     label: user.username
-    // }))
+    const { options } = props
 
     return {
-        // user_ids: user_ids,
-        // users: user,
-        options: [{ value: 1, label: 'John Smith'}, { value: 2, label: 'Maximillian Rentworthy'}, { value: 3, label: 'Isabella Longname du Testcase'}]
+        options: options
     }
 }
 

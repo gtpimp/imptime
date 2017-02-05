@@ -29,10 +29,10 @@ class IssueAssignedUserForm extends Component {
     }
 
     render() {
-        const {handleSubmit} = this.props
+        const {handleSubmit, assignable_user_options} = this.props
         return (
             <form onSubmit={handleSubmit}>
-                <SingleValueSelector />
+                <SingleValueSelector options={assignable_user_options}  />
             </form>
         )
     }
@@ -45,7 +45,7 @@ function mapStateToProps(state, props) {
     const assignable_user_ids = project.allowed_user_ids || []
     const users = getUsers(state, assignable_user_ids)
 
-    const assignable_users = users.map(function (user) {
+    const assignable_user_options = users.map(function (user) {
         return {value: user.id, label: user.username}
     })
 
@@ -53,7 +53,7 @@ function mapStateToProps(state, props) {
         initialValues: {assigned_to: props.initial_value},
         enableReinitialize: true,
         onSubmit: onChange,
-        assignable_users: assignable_users,
+        assignable_user_options: assignable_user_options,
         assignable_user_ids: assignable_user_ids,
         project_id: project_id,
         project: project
