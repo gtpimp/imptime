@@ -34,6 +34,7 @@ class IssuesPage extends Component {
     componentDidMount() {
         const {sprint_id, project_id, sprint, project, dispatch} = this.props
         dispatch(set_toolbars(PAGE_KEY__ISSUES_PAGE, ['issues', 'issue']))
+        dispatch(update_list_filter(LIST_KEY__ISSUE_LIST, {sprint_id:sprint.id || -1}))
         dispatch(ensureProjectsLoaded([project_id]))
         dispatch(ensureSprintsLoaded([sprint_id]))
         this.refresh(sprint, project)

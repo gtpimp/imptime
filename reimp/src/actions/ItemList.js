@@ -239,7 +239,7 @@ function tryFetchListAndItems(list_key, matching_items_key, matching_items_promi
 		}
             })
 	    .catch(function (error) {
-                dispatch(announceListLoadFailed(list_key,"Failed to load list: " + error))
+                dispatch(announceListLoadFailed(list_key,"Failed to load list: " + list_key + " : " + error))
 		throw(error)
             })
     }
