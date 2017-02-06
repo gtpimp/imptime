@@ -12,7 +12,7 @@ function setAuthToken(username, token) {
     }
 }
 
-function clearAuthentication() {
+export function clearAuthentication() {
     return {
         type: CLEAR_AUTH_TOKEN,
         token: null
@@ -53,5 +53,6 @@ export function logged_in_user() {
 }
 
 export function is_authenticated() {
-    return logged_in_user().token || false
+    const user = logged_in_user()
+    return user.token !== null && user.token.length > 0
 }

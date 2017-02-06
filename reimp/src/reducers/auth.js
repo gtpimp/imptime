@@ -18,8 +18,8 @@ export default function auth(state = initialState, action) {
                                  { username: action.username,
                                    token: action.token })
         case CLEAR_AUTH_TOKEN:
-            cookie.save('token', null, { path: '/' })
-            cookie.save('username', null, { path: '/' })
+            cookie.save('token', "", { path: '/' })
+            cookie.save('username', "", { path: '/' })
             return Object.assign({}, state,
                                  { username: null,
                                    token: null })

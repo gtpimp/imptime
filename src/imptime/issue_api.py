@@ -25,7 +25,6 @@ class IssueViewSet(BaseViewSet):
     def list(self, request):
         try:
             context = {}
-
             params = request.GET.get('params', '{}')
             params = json.loads(params)
             pagination = params.get('pagination', {})
