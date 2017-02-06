@@ -200,11 +200,11 @@ class IssueViewSet(BaseViewSet):
                 number=Issue.get_next_issue_number(sprint.business),
                 subject=params['subject'])
             issue.renumber_issue_order()
-            s = IssueSerializer(issue)
-            issue_data = s.data
+            #s = IssueSerializer(issue)
+            #issue_data = s.data
             IssueHistory.add_history(self.request.user, issue,
                                      "created", "", issue.number)
-            context['issue'] = issue_data
+            context['issue'] = { 'number': issue.number }
             data = {'status': 'success', 'payload': context}
 
         except Exception, ex:

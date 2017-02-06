@@ -57,7 +57,6 @@ class IssuesPage extends Component {
             dispatch(update_list_filter(LIST_KEY__ISSUE_LIST, {sprint_id:sprint.id}))
             dispatch(select_sprints(PAGE_KEY__ISSUES_PAGE, [sprint.id]))
             dispatch(invalidateList(LIST_KEY__ISSUE_LIST))
-            //dispatch(expand_list(LIST_KEY__ISSUE_LIST))
             dispatch(setBreadcrumbs([ {to: '/projects', label: 'All Projects'},
                                       {to: '/projects/'+project.id, label: project.name},
                                       {to: '/projects/'+project.id+'/sprints', label: 'All Sprints'},

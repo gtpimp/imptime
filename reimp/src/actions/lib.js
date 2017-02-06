@@ -45,7 +45,7 @@ export function impfetch(url, dispatch, args) {
     const now = moment()
     
     const last_run_was_x_milliseconds_ago = (throttle.last_run_at && now.diff(throttle.last_run_at, 'milliseconds')) || null
-    const is_running = throttle.running && last_run_was_x_milliseconds_ago < THROTTLE_HIT_PAUSE_SECONDS
+    const is_running = throttle.running && last_run_was_x_milliseconds_ago < THROTTLE_HIT_PAUSE_SECONDS*1000
     
     const last_failure_was_x_milliseconds_ago = (throttle.last_failure_at && now.diff(throttle.last_failure_at, 'milliseconds')) || null
     const failed_recently = last_failure_was_x_milliseconds_ago && last_failure_was_x_milliseconds_ago < THROTTLE_HIT_PAUSE_SECONDS*1000

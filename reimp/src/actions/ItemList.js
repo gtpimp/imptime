@@ -227,7 +227,6 @@ function tryFetchListAndItems(list_key, matching_items_key, matching_items_promi
         return impfetch(API_BASE_URL+'imp/' + matching_items_key + "/", dispatch, {params:params})
             .then(response => response.json())
             .then(json => {
-
 		if (json.status !== 'success') {
                     dispatch(announceListLoadFailed(list_key, json.error))
                 } else {

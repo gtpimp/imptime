@@ -39,7 +39,7 @@ class IssueSerializer(BaseSerializer):
     group_children = ListField(source="group_children_ids")
     comments = IssueCommentSerializer(many=True)
     attachments = IssueAttachmentSerializer(many=True)
- 
+
     def to_representation(self, issue, *args, **kwargs):
         issue.assigned_to_quick_name = \
             issue.assigned_to.username if issue.assigned_to_id else None
