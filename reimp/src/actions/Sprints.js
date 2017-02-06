@@ -145,7 +145,7 @@ export function reorderSprints(sprint_id_before, sprint_id_after, on_done) {
 		 }
              }
 	 }).catch(function (error) {
-	     dispatch(announceSprintsSaveFailed("Failed to save sprints: " + error.message))
+	     dispatch(announceSprintsSaveFailed("Failed to save sprints: " + error))
 	 })
     }
 }
@@ -169,8 +169,8 @@ function fetchSprintsPromise(dispatch, state, sprint_ids) {
 		    resolve(json.payload)
                 }
 	    }).catch(function (error) {
-		dispatch(announceSprintsLoadFailed("Failed to load sprints: " + error.message))
-		reject("Failed to load sprints: " + error.message)
+		dispatch(announceSprintsLoadFailed("Failed to load sprints: " + error))
+		reject("Failed to load sprints: " + error)
 	    })
     })
 }

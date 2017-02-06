@@ -72,8 +72,8 @@ function fetchProjectsPromise(dispatch, state, project_ids) {
 		    resolve(json.payload)
                 }
 	    }).catch(function (error) {
-		dispatch(announceProjectsLoadFailed("Failed to load projects: " + error.message))
-		reject("Failed to load projects: " + error.message)
+		dispatch(announceProjectsLoadFailed("Failed to load projects: " + error))
+		reject("Failed to load projects: " + error)
 	    })
     })
 }

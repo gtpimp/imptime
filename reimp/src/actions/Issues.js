@@ -70,8 +70,8 @@ function fetchIssuesPromise(dispatch, state, issue_ids) {
 		    resolve(json.payload)
                 }
 	    }).catch(function (error) {
-		dispatch(announceIssuesLoadFailed("Failed to load issues: " + error.message))
-		reject("Failed to load issues: " + error.message)
+		dispatch(announceIssuesLoadFailed("Failed to load issues: " + error))
+		reject("Failed to load issues: " + error)
 	    })
     })
 }

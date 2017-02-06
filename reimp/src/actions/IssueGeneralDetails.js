@@ -65,7 +65,7 @@ function fetchIssueGeneralDetails(dispatch, issue_ids) {
 		    dispatch(announceIssueGeneralDetailsLoaded(json.payload))
                 }
 	    }).catch(function (error) {
-		dispatch(announceIssueGeneralDetailsLoadFailed("Failed to load issues: " + error.message))
+		dispatch(announceIssueGeneralDetailsLoadFailed("Failed to load issue general details: " + error))
 	    })
     }
 }
