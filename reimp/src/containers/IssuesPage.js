@@ -1,6 +1,7 @@
 import React, {Component} from 'react'
 import {connect} from 'react-redux'
 import IssueSidebar from '../components/IssueSidebar'
+import NewIssueSidebar from '../components/NewIssueSidebar'
 import MultipleIssueSidebar from '../components/MultipleIssueSidebar'
 import IssueList from '../components/IssueList'
 import { setBreadcrumbs } from '../actions/Breadcrumbs'
@@ -16,10 +17,12 @@ import {
 import {
     set_toolbars,
     select_issues,
-    get_selected_issue_ids
+    get_selected_issue_ids,
+    select_sprints
 } from '../actions/Page'
 import {ensureProjectsLoaded, getProject} from '../actions/Projects'
 import {ensureSprintsLoaded, getSprint} from '../actions/Sprints'
+import {getCandidateIssue} from '../actions/Issue'
 
 class IssuesPage extends Component {
 
@@ -30,7 +33,6 @@ class IssuesPage extends Component {
     
     componentDidMount() {
         const {sprint_id, project_id, sprint, project, dispatch} = this.props
-        dispatch(update_list_filter(LIST_KEY__ISSUE_LIST, {sprint_id:sprint.id || -1}))
         dispatch(set_toolbars(PAGE_KEY__ISSUES_PAGE, ['issues', 'issue']))
         dispatch(ensureProjectsLoaded([project_id]))
         dispatch(ensureSprintsLoaded([sprint_id]))
@@ -53,6 +55,7 @@ class IssuesPage extends Component {
         const {dispatch} = this.props
         if ( sprint.id ) {
             dispatch(update_list_filter(LIST_KEY__ISSUE_LIST, {sprint_id:sprint.id}))
+            dispatch(select_sprints(PAGE_KEY__ISSUES_PAGE, [sprint.id]))
             dispatch(invalidateList(LIST_KEY__ISSUE_LIST))
             //dispatch(expand_list(LIST_KEY__ISSUE_LIST))
             dispatch(setBreadcrumbs([ {to: '/projects', label: 'All Projects'},
@@ -99,7 +102,8 @@ class IssuesPage extends Component {
 
     render() {
 
-        const { sprint_id, project_id, selected_issues, selected_issue_ids, is_single_selection, is_multiple_selection } = this.props
+        const { sprint_id, project_id, selected_issues, selected_issue_ids,
+                is_single_selection, is_multiple_selection, is_creating_issue } = this.props
 
         const selected_issue = ( selected_issues && selected_issues.length > 0 && selected_issues[0] ) || null
 
@@ -110,6 +114,11 @@ class IssuesPage extends Component {
                                onSelectIssues={this.onSelectIssues}
                     />
                 </div>
+                { is_creating_issue &&
+                  <div className="list-layout__sidebar">
+                      <NewIssueSidebar />
+                  </div>
+                }
                 { is_single_selection && sprint_id && selected_issue &&
                 <div className="list-layout__sidebar">
                     <IssueSidebar issue_id={selected_issue.id} sprint_id={sprint_id} project_id={project_id}/>
@@ -140,6 +149,8 @@ function mapStateToProps(state, props) {
     const project_id = props.params.projectId
     const project = getProject(state, project_id) || {}
     const sprint = getSprint(state, sprint_id) || {}
+    const candidate_issue = getCandidateIssue(state) || null
+    const is_creating_issue = candidate_issue || false
     
     return {
         sprint_id: sprint_id,
@@ -151,7 +162,7 @@ function mapStateToProps(state, props) {
         toolbars: page.toolbar_names,
         is_single_selection: selected_items.length === 1,
         is_multiple_selection: selected_items.length > 1,
-        
+        is_creating_issue: is_creating_issue        
     }
 }
 

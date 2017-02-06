@@ -427,22 +427,13 @@ export function reorderIssue(issue_id_before, issue_id_after, on_done) {
     return updateIssue([issue_id_before], "issue_id_after", issue_id_after, on_done)
 }
 
-export function startCandidateIssue(list_key) {
+export function startCandidateIssue(sprint_id, issue_id_before) {
     return (dispatch, getState) => {
 	const state = getState()
-	const l = state.item_list[list_key]
-
-	const selected_ids = l.selected_ids
-
-	let issue_id_before = null
-	if ( selected_ids.length > 0 ) {
-	    issue_id_before = selected_ids[0]
-	}
-	
 	dispatch({
 	    type: ANNOUNCE_CAPTURING_NEW_ISSUE,
 	    issue_id_before: issue_id_before,
-	    sprint_id: l.filter.sprint_id
+	    sprint_id: sprint_id
 	})
     }
 }
@@ -549,4 +540,9 @@ export function clock(issue_id, clock_action) {
 	     dispatch(announceIssueDeleteFailed(issue_id, error))
 	 })
     }
+}
+
+export function getCandidateIssue(state) {
+    const issue_objs = state.issue || {}
+    return issue_objs.candidate_issue
 }

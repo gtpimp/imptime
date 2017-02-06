@@ -187,7 +187,7 @@ class IssueViewSet(BaseViewSet):
             context = {}
             params = request.data['issue']
             sprint_id = params['sprint_id']
-            issue_id_before = params['issue_id_before']
+            issue_id_before = params.get('issue_id_before', None)
             if issue_id_before:
                 issue_before = self.allowed_issue(issue_id_before)
                 order = issue_before.order + 0.5
