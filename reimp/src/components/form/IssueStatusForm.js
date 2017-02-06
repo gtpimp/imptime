@@ -4,25 +4,44 @@ import classNames from 'classnames'
 import { Field, reduxForm } from 'redux-form'
 import SelectList from 'react-widgets/lib/SelectList'
 import { ensureProjectsLoaded, getProject } from '../../actions/Projects'
+import SingleValueSelector from './SingleValueSelector'
 
 class IssueStatusForm extends Component {
 
+    constructor(props) {
+        super(props)
+        this.renderSingleValueSelector = this.renderSingleValueSelector.bind(this)
+        this.onChangeAndSubmit = this.onChangeAndSubmit.bind(this)
+    }
+    
     componentDidMount() {
         this.refresh()
     }
 
     componentWillReceiveProps(new_props) {
         this.refresh()
-    }
+    } 
     
     refresh() {
         const { dispatch, assignable_user_ids, project_id } = this.props
         dispatch(ensureProjectsLoaded([project_id]))
     }
     
-    renderStatusList({input, ...rest }) {
+    onChangeAndSubmit(e, fieldOnChange) {
+        const {handleSubmit} = this.props
+        fieldOnChange(e)
+        setTimeout(() => handleSubmit(), 0)
+    }
+
+    renderSingleValueSelector(field) {
+        const {input, data, ...rest} = field
         return (
-            <SelectList {...input} onBlur={() => input.onBlur()} {...rest}/>
+            <SingleValueSelector
+                onChange={(e) => this.onChangeAndSubmit(e, input.onChange)}
+                value={input.value}
+                options={data}
+                {...rest}
+            />
         )
     }
     
@@ -32,7 +51,8 @@ class IssueStatusForm extends Component {
             <form onSubmit={handleSubmit}>
                 <div>
                     <label htmlFor="status">Status</label>
-                    <Field name="issue_status_name" component={this.renderStatusList}
+                    <Field name="issue_status_name"
+                           component={this.renderSingleValueSelector}
                            valueField="value"
                            textField="label"
                            data={status_options}

@@ -25,6 +25,7 @@ import Timer from '../components/Timer'
 import Tag from '../components/Tag'
 import {DndTypes} from '../actions/Dnd'
 import { format_hours } from '../actions/lib'
+import IssueStatusLabel from '../components/form/IssueStatusLabel'
 
 const ISSUE_STATUS_CHOICES = [
     {value: 'new', label: 'new'},
@@ -214,13 +215,7 @@ class Issue extends Component {
                         }
                     </td>
                     <td className="list-table__cell list-table__cell--status">
-                        <RIEModeToggler
-                            rie_key={"issue_status_" + issue.id}
-                            initialValue={issue.status_name || "..."}
-                            onChange={(new_value) => this.onChangeStatus(issue.id, new_value)}
-                        >
-                            <RIEDropDown options={ISSUE_STATUS_CHOICES}/>
-                        </RIEModeToggler>
+                        <IssueStatusLabel value={issue.status_name} />
                     </td>
                     { false &&
                       <td className="list-table__cell list-table__cell--sprint">

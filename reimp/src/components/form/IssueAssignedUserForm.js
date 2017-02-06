@@ -44,7 +44,6 @@ class IssueAssignedUserForm extends Component {
                 {...rest}
             />
         )
-        /*<SelectList {...input} onBlur={() => input.onBlur()} {...rest}/> */
     }
 
     render() {
