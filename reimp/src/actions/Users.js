@@ -62,7 +62,7 @@ function fetchUsers(user_ids) {
 		    dispatch(announceUsersLoaded(json.payload))
                 }
 	    }).catch(function (error) {
-		dispatch(announceUsersLoadFailed("Failed to load users: " + error.message))
+		dispatch(announceUsersLoadFailed("Failed to load users: " + (error || {}).message))
 	    })
     }
 }
