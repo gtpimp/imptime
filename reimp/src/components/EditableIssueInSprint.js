@@ -16,7 +16,7 @@ class EditableIssueInSprint extends Component {
 
     onChange(new_value) {
         const { dispatch, issue_ids } = this.props
-        dispatch(moveIssuesToSprint(issue_ids, new_value.sprint_id.value))
+        dispatch(moveIssuesToSprint(issue_ids, new_value.sprint_id))
     }
     
     render() {

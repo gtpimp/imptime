@@ -11,11 +11,14 @@ import {
     update_list_filter,
     invalidateList
 } from '../../actions/ItemList'
+import SingleValueSelector from './SingleValueSelector'
 
 class SelectSprintForm extends Component {
 
     componentDidMount() {
         this.refresh()
+        this.renderSingleValueSelector = this.renderSingleValueSelector.bind(this)
+        this.onChangeAndSubmit = this.onChangeAndSubmit.bind(this)
     }
 
     componentWillReceiveProps(new_props) {
@@ -31,10 +34,22 @@ class SelectSprintForm extends Component {
         dispatch(invalidateList(SELECTOR__SPRINTS))
         dispatch(fetchSprintsIfNeeded(SELECTOR__SPRINTS))
     }
-    
-    renderSelectList({input, ...rest }) {
+
+    onChangeAndSubmit(e, fieldOnChange) {
+        const {handleSubmit} = this.props
+        fieldOnChange(e)
+        setTimeout(() => handleSubmit(), 0)
+    }
+
+    renderSingleValueSelector(field) {
+        const {input, data, ...rest} = field
         return (
-            <SelectList {...input} onBlur={() => input.onBlur()} {...rest}/>
+            <SingleValueSelector
+                onChange={(e) => this.onChangeAndSubmit(e, input.onChange)}
+                value={input.value}
+                options={data}
+                {...rest}
+            />
         )
     }
     
@@ -44,13 +59,13 @@ class SelectSprintForm extends Component {
             <form onSubmit={handleSubmit}>
                 <div>
                     <label htmlFor="assigned">Move to sprint</label>
-                    <Field name="sprint_id" component={this.renderSelectList}
+                    <Field name="sprint_id"
+                           component={this.renderSingleValueSelector}
                            valueField="value"
                            textField="label"
                            data={sprint_options}
                     />
                 </div>
-                <button type="submit">Submit</button>
             </form>
         )
     }
