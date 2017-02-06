@@ -25,15 +25,14 @@ export default function issue(state = initialState, action) {
 					action.issue_ids_to_invalidate)})
         case ANNOUNCE_LOADING_ISSUE_GENERAL_DETAILS:
             return Object.assign({}, state, {
-		loading_item_ids: union(state.loading_item_ids, action.issue_ids_to_load)
+                loading_item_ids: union(state.loading_item_ids, action.issue_ids_to_load)
 	    })
-	    
         case ANNOUNCE_ISSUE_GENERAL_DETAILS_LOADED:
             return Object.assign({}, state, {
-		loading_item_ids: Object.assign({},
-						difference(state.loading_item_ids || [],
-							   keys(action.items_by_id))),
-		items_by_id: Object.assign({},
+	        loading_item_ids: Object.assign({},
+					        difference(state.loading_item_ids || [],
+						           keys(action.items_by_id))),
+	        items_by_id: Object.assign({},
 					   assign(state.items_by_id, action.items_by_id))
 	    })
         case ANNOUNCE_ISSUE_GENERAL_DETAILS_LOAD_FAILED:

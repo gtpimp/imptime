@@ -50,11 +50,15 @@ class IssueSidebar extends Component {
                 { issue.id &&
 
                   <div>
-                      <PropertyStackComponent>
-                      <div className="text-component--readonly">
-                      #{issue.number}
+
+                      <div className="property-stack-component">
+                          <div className="property-stack-component__content">
+                              <div className="text-component--readonly">
+                                  #{issue.number}
+                              </div>
+                          </div>
                       </div>
-                      </PropertyStackComponent>
+                      
                       <div>
                           <EditableIssueTitle issue_id={issue.id} />
                       </div>
