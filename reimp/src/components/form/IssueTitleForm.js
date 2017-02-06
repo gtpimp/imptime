@@ -28,7 +28,6 @@ class IssueTitleForm extends Component {
                 placeholder="Title"
                 onChange={(e) => this.onChangeAndSubmit(e, input.onChange)}
                 value={input.value}
-                {...rest}
             />
         )
     }
@@ -40,7 +39,7 @@ class IssueTitleForm extends Component {
                 <div>
                     <Field name="title"
                            component={this.renderTextarea} />
-                    <input type="submit" />
+                    <button type="submit">Submit</button>
                 </div>
             </form>
         )
