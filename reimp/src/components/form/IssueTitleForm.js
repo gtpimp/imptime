@@ -1,31 +1,47 @@
 import React, {Component} from 'react'
 import {connect} from 'react-redux'
-import { reduxForm } from 'redux-form';
+import { reduxForm, Field } from 'redux-form';
 import Textarea from 'react-expanding-textarea'
 import '../../sass/text-component.scss'
 
-
 class IssueTitleForm extends Component {
 
-    render() {
+    constructor(props) {
+        super(props)
+        this.renderTextarea = this.renderTextarea.bind(this)
+        this.onChangeAndSubmit = this.onChangeAndSubmit.bind(this)
+    }
 
-        const { initialValues, handleSubmit } = this.props
-        
+    onChangeAndSubmit(e, fieldOnChange) {
+        const {handleSubmit} = this.props
+        fieldOnChange(e)
+        // setTimeout(() => handleSubmit(), 0)
+    }
+    
+    renderTextarea(field) {
+        const {input, data, ...rest} = field
+        return (
+            <Textarea
+                rows="1"
+                maxLength="3000"
+                className="textarea textarea--text-component"
+                placeholder="Title"
+                onChange={(e) => this.onChangeAndSubmit(e, input.onChange)}
+                value={input.value}
+                {...rest}
+            />
+        )
+    }
+    
+    render() {
+        const { handleSubmit } = this.props
         return (
             <form onSubmit={handleSubmit}>
                 <div>
-                    {/*<Field name="title" component="input" type="text"/>*/}
-                    <div className="text-component--edit">
-                  <Textarea
-                      rows="1"
-                      maxLength="3000"
-                      className="textarea textarea--text-component"
-                      placeholder="Title"
-                      onChange={ this.handleChange }
-                      value={initialValues.title} />
-                    </div>
+                    <Field name="title"
+                           component={this.renderTextarea} />
+                    <input type="submit" />
                 </div>
-                <button type="submit">Submit</button>
             </form>
         )
     }

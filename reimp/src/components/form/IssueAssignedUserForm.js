@@ -47,7 +47,7 @@ class IssueAssignedUserForm extends Component {
     }
 
     render() {
-        const {handleSubmit, assignable_user_options, initialValues } = this.props
+        const {handleSubmit, assignable_user_options } = this.props
         return (
             <form onSubmit={handleSubmit}>
                 <Field name='assigned_user'
