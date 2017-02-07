@@ -3,9 +3,8 @@ import {connect} from 'react-redux'
 import EditableProperty from './form/EditableProperty'
 import IssueAssignedUserForm from './form/IssueAssignedUserForm'
 import Blank from './form/Blank'
-import { updateIssueAssignedTo } from '../actions/Issue'
+import { updateIssueAssignedTo, getIssues } from '../actions/Issue'
 import OtherUser from '../components/OtherUser'
-import { getIssues } from '../actions/Issues'
 
 class EditableIssueAssignedUser extends Component {
 

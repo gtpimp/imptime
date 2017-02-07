@@ -5,6 +5,15 @@ import {browserHistory} from 'react-router'
 import {
     PAGE_KEY__SPRINTS_PAGE
 } from '../../actions/ItemListKeyRegistry'
+import {
+    startCandidateSprint
+} from '../../actions/Sprints.js'
+import { ensureSprintsLoaded, getSprint } from '../../actions/Sprints'
+import { ensureProjectsLoaded, getProject } from '../../actions/Projects'
+import {
+    get_selected_project_ids,
+    get_selected_sprint_ids
+} from '../../actions/Page'
 
 class SprintsToolbarPanel extends Component {
 
@@ -14,13 +23,28 @@ class SprintsToolbarPanel extends Component {
         this.onDashboardClick = this.onDashboardClick.bind(this)
     }
     
+    componentDidMount() {
+        this.refresh()
+    }
+
+    componentWillReceiveProps() {
+        this.refresh()
+    }
+
+    refresh() {
+        const {dispatch, sprint_ids, project_id} = this.props
+        dispatch(ensureSprintsLoaded(sprint_ids))
+        dispatch(ensureProjectsLoaded([project_id]))
+    }
+
     onNewProjectClick() {
-        console.log('new project clicked')
+        const { dispatch, project_id } = this.props
+        dispatch(startCandidateSprint(project_id))
     }
 
     onDashboardClick() {
-        const { sprint } = this.props
-        browserHistory.push('/projects/'+sprint.project_id+'/sprints/'+sprint.id);
+        const { project_id } = this.props
+        browserHistory.push('/projects/'+project_id);
     }
     
     render() {
@@ -46,16 +70,17 @@ class SprintsToolbarPanel extends Component {
 
 function mapStateToProps(state, props) {
 
-    const sprint_objs = (state.sprint || {}).items_by_id || {}
-    const page = state.page || {}
-    const selected_sprint_ids = (page[PAGE_KEY__SPRINTS_PAGE] || {}).sprint_ids || []
-    const sprint = (selected_sprint_ids.length > 0 && sprint_objs[selected_sprint_ids[0]]) || null
+    const selected_sprint_ids = get_selected_sprint_ids(state, PAGE_KEY__SPRINTS_PAGE)
+    const sprint = (selected_sprint_ids && selected_sprint_ids.length > 0 && getSprint(state, selected_sprint_ids[0])) || {}
+    const selected_project_ids = get_selected_project_ids(state, PAGE_KEY__SPRINTS_PAGE)
+    const project = (selected_project_ids && selected_project_ids.length > 0 && getProject(state, selected_project_ids[0])) || {}
     
     return {
-        sprint: sprint
+        sprint_ids: selected_sprint_ids,
+        sprint: sprint,
+        last_selected_sprint_id: sprint.id,
+        project_id: project.id
     }
-    
 }
-
 
 export default connect(mapStateToProps)(SprintsToolbarPanel)

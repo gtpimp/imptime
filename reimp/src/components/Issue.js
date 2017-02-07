@@ -8,9 +8,9 @@ import {
     updateIssueFeature,
     updateIssueAssignedTo,
     deleteTag,
+    getIssue,
     clock
 } from '../actions/Issue'
-import { getIssue } from '../actions/Issues'
 import { getProject } from '../actions/Projects'
 import {
     ensureUsersLoaded,

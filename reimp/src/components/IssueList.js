@@ -19,8 +19,6 @@ import {
 import {
     invalidateAllIssues,
     fetchIssuesIfNeeded,
-} from '../actions/Issues'
-import {
     reorderIssue,
     startCandidateIssue,
     updateCandidateSubject,
@@ -356,7 +354,13 @@ class IssueList extends Component {
                                 closeEstimateEditor={this.closeEstimateEditor}/>
 
                 <ListTable renderHeader={renderHeader}>
-                    {issue_rows}
+                    {issue_rows.length > 0 && issue_rows}
+                    {issue_rows.length == 0 &&
+                     (
+                         <tr>
+                             <td colSpan="20">No issues</td>
+                         </tr>
+                     )}
                 </ListTable>
             </div>
 

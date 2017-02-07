@@ -6,9 +6,8 @@ import EditableProperty from './form/EditableProperty'
 import IssueStatusForm from './form/IssueStatusForm'
 import IssueStatusLabel from './form/IssueStatusLabel'
 import Blank from './form/Blank'
-import { updateIssueStatus } from '../actions/Issue'
+import { updateIssueStatus, getIssues } from '../actions/Issue'
 import OtherUser from '../components/OtherUser'
-import { getIssues } from '../actions/Issues'
 import { getUser } from '../actions/Users'
 
 class EditableIssueStatus extends Component {

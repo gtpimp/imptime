@@ -2,8 +2,7 @@ import React, {Component} from 'react'
 import {connect} from 'react-redux'
 import EditableProperty from './form/EditableProperty'
 import IssueDescriptionForm from './form/IssueDescriptionForm'
-import { updateIssueDescription } from '../actions/Issue'
-import { getIssue } from '../actions/Issues'
+import { updateIssueDescription, getIssue } from '../actions/Issue'
 
 class EditableIssueDescription extends Component {
 

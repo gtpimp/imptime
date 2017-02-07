@@ -6,7 +6,7 @@ import { deleteIssueAttachment } from '../actions/Issue'
 import IssueAttachmentForm from './form/IssueAttachmentForm'
 import FileLabel from './form/FileLabel'
 import Blank from './form/Blank'
-import { getIssue } from '../actions/Issues'
+import { getIssue } from '../actions/Issue'
 
 class EditableIssueAttachment extends Component {
 

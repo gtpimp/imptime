@@ -3,9 +3,10 @@ import {connect} from 'react-redux'
 import '../../sass/toolbar-panel.css'
 import ToolbarButton from './ToolbarButton'
 import { get_selected_issue_ids } from '../../actions/Page'
-import { ensureIssuesLoaded, getIssue } from '../../actions/Issues'
 import { LIST_KEY__ISSUE_LIST, PAGE_KEY__ISSUES_PAGE } from '../../actions/ItemListKeyRegistry'
 import {
+    ensureIssuesLoaded,
+    getIssue,
     groupUnsortedIssuesIntoFeature,
     updateIssueToggleAsFeature,
     ungroupIssuesIntoFeature

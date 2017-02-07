@@ -5,7 +5,7 @@ import SelectSprintForm from './form/SelectSprintForm'
 import SprintLabel from './form/SprintLabel'
 import Blank from './form/Blank'
 import { moveIssuesToSprint } from '../actions/Issue'
-import { getIssues } from '../actions/Issues'
+import { getIssues } from '../actions/Issue'
 
 class EditableIssueInSprint extends Component {
 

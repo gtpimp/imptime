@@ -1,7 +1,6 @@
 import { createStore, applyMiddleware, compose } from 'redux'
 import thunk from 'redux-thunk'
 import error_catcher_middleware from '../middleware/error_catcher'
-import DevPageMiddleware from '../middleware/DevPageMiddleware'
 import RefreshMiddleware from '../middleware/RefreshMiddleware'
 import rootReducer from '../reducers'
 import { routerMiddleware } from 'react-router-redux'
@@ -16,7 +15,6 @@ export default function configureStore(initialState) {
         compose(
             applyMiddleware(thunk,
                             routingMiddleware,
-			    DevPageMiddleware,
                             RefreshMiddleware,
 			    error_catcher_middleware),
             window.devToolsExtension ? window.devToolsExtension() : f => f

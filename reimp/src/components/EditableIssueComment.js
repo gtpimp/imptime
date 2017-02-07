@@ -6,7 +6,7 @@ import { updateIssueComment, createIssueComment, deleteIssueComment } from '../a
 import IssueCommentForm from './form/IssueCommentForm'
 import Label from './form/Label'
 import Blank from './form/Blank'
-import { getIssue } from '../actions/Issues'
+import { getIssue } from '../actions/Issue'
 
 class EditableIssueComment extends Component {
 
