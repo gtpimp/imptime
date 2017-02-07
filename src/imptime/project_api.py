@@ -10,7 +10,6 @@ from timepiece.models import Business as Project
 
 logger = logging.getLogger(__name__)
 
-
 @permission_classes((IsAuthenticated,))
 class ProjectViewSet(BaseViewSet):
 
