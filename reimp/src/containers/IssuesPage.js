@@ -119,12 +119,12 @@ class IssuesPage extends Component {
                       <NewIssueSidebar />
                   </div>
                 }
-                { is_single_selection && sprint_id && selected_issue &&
+                { ! is_creating_issue && is_single_selection && sprint_id && selected_issue &&
                 <div className="list-layout__sidebar">
                     <IssueSidebar issue_id={selected_issue.id} sprint_id={sprint_id} project_id={project_id}/>
                 </div>
                 }
-                { is_multiple_selection && sprint_id && selected_issue_ids &&
+                { ! is_creating_issue && is_multiple_selection && sprint_id && selected_issue_ids &&
                   <div className="list-layout__sidebar">
                       <MultipleIssueSidebar issue_ids={selected_issue_ids} sprint_id={sprint_id} project_id={project_id}/>
                   </div>
