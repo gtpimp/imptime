@@ -10,7 +10,7 @@ import {
     groupUnsortedIssuesIntoFeature,
     updateIssueToggleAsFeature,
     ungroupIssuesIntoFeature
-} from '../../actions/Issue'
+} from '../../actions/Issues'
 import {
     setItemFlag
 } from '../../actions/ItemList'

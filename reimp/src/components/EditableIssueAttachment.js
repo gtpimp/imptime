@@ -2,11 +2,10 @@ import React, {Component} from 'react'
 import {connect} from 'react-redux'
 import map from 'lodash/map'
 import EditableProperty from './form/EditableProperty'
-import { deleteIssueAttachment } from '../actions/Issue'
+import { deleteIssueAttachment, getIssue } from '../actions/Issues'
 import IssueAttachmentForm from './form/IssueAttachmentForm'
 import FileLabel from './form/FileLabel'
 import Blank from './form/Blank'
-import { getIssue } from '../actions/Issue'
 
 class EditableIssueAttachment extends Component {
 

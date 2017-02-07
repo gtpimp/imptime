@@ -13,7 +13,7 @@ import {
     updateCandidateSubject,
     cancelCandidateIssue,
     saveCandidateIssue
-} from '../actions/Issue'
+} from '../actions/Issues'
 import IssueTitleForm from './form/IssueTitleForm'
 
 class NewIssueSidebar extends Component {

@@ -2,11 +2,15 @@ import React, {Component} from 'react'
 import {connect} from 'react-redux'
 import map from 'lodash/map'
 import EditableProperty from './form/EditableProperty'
-import { updateIssueComment, createIssueComment, deleteIssueComment } from '../actions/Issue'
+import {
+    updateIssueComment,
+    createIssueComment,
+    deleteIssueComment,
+    getIssue
+} from '../actions/Issues'
 import IssueCommentForm from './form/IssueCommentForm'
 import Label from './form/Label'
 import Blank from './form/Blank'
-import { getIssue } from '../actions/Issue'
 
 class EditableIssueComment extends Component {
 

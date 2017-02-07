@@ -5,7 +5,7 @@ import Modal from 'react-modal';
 import RIEInput from '../widgets/RIEInput'
 import RIEModeToggler from '../widgets/RIEModeToggler'
 
-import { addEstimate } from '../actions/Issue'
+import { addEstimate } from '../actions/Issues'
 
 class EstimateEditor extends Component {
 

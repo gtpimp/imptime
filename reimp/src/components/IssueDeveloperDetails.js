@@ -9,7 +9,7 @@ import {
     updateCandidateSubject,
     saveCandidateIssue,
     cancelCandidateIssue
-} from '../actions/Issue'
+} from '../actions/Issues'
 
 import {
     fetchIssueGeneralDetailsIfNeeded

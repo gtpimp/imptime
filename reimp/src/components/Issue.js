@@ -10,7 +10,7 @@ import {
     deleteTag,
     getIssue,
     clock
-} from '../actions/Issue'
+} from '../actions/Issues'
 import { getProject } from '../actions/Projects'
 import {
     ensureUsersLoaded,

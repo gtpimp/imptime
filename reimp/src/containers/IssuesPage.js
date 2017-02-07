@@ -22,7 +22,7 @@ import {
 } from '../actions/Page'
 import {ensureProjectsLoaded, getProject} from '../actions/Projects'
 import {ensureSprintsLoaded, getSprint} from '../actions/Sprints'
-import {getCandidateIssue} from '../actions/Issue'
+import {getCandidateIssue} from '../actions/Issues'
 
 class IssuesPage extends Component {
 

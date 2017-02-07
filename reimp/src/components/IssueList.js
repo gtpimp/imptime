@@ -26,9 +26,9 @@ import {
     saveCandidateIssue,
     updateIssueToggleAsFeature,
     groupUnsortedIssuesIntoFeature,
-    ungroupIssuesIntoFeature
-} from '../actions/Issue'
-import Issue from './Issue'
+    ungroupIssuesIntoFeature,
+} from '../actions/Issues'
+import Issue from '../components/Issue'
 import ListTable from './ListTable'
 
 class IssueList extends Component {

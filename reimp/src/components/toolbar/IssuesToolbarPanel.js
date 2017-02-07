@@ -6,7 +6,7 @@ import {
     startCandidateIssue,
     ensureIssuesLoaded,
     getIssue
-} from '../../actions/Issue.js'
+} from '../../actions/Issues'
 import {
     PAGE_KEY__ISSUES_PAGE
 } from '../../actions/ItemListKeyRegistry'

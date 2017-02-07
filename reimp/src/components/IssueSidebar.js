@@ -15,7 +15,7 @@ import EditableIssueStatus from '../components/EditableIssueStatus'
 import Timestamp from './Timestamp'
 import moment from 'moment'
 import Sidebar from './Sidebar'
-import {ensureIssuesLoaded, getIssue} from '../actions/Issue'
+import {ensureIssuesLoaded, getIssue} from '../actions/Issues'
 
 class IssueSidebar extends Component {
 

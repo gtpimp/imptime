@@ -5,7 +5,7 @@ import {
 import moment from 'moment'
 import { invalidateProjects } from '../actions/Projects'
 import { invalidateSprints } from '../actions/Sprints'
-import { invalidateIssues } from '../actions/Issue'
+import { invalidateIssues } from '../actions/Issues'
 import { invalidateIssueGeneralDetails } from '../actions/IssueGeneralDetails'
 import { addAsyncMessage } from '../actions/Async'
 

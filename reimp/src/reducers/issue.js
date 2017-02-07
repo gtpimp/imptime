@@ -22,7 +22,7 @@ import {
     ANNOUNCE_ISSUES_SAVED,
     ANNOUNCE_ISSUES_SAVING,
     ANNOUNCE_DELETE_ISSUE_FAILED
-} from '../actions/Issue.js'
+} from '../actions/Issues.js'
 
 const initialState = {
     items_by_id: {},

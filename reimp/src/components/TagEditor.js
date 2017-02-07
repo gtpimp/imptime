@@ -5,7 +5,7 @@ import Modal from 'react-modal';
 import RIEInput from '../widgets/RIEInput'
 import RIEModeToggler from '../widgets/RIEModeToggler'
 
-import { addTag } from '../actions/Issue'
+import { addTag } from '../actions/Issues'
 
 class TagEditor extends Component {
 
