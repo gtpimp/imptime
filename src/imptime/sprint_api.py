@@ -7,6 +7,7 @@ import json
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.decorators import permission_classes
 from timepiece.models import Project as Sprint
+from timepiece.models import ProjectStatus as SprintStatus
 
 logger = logging.getLogger(__name__)
 
@@ -66,6 +67,9 @@ class SprintViewSet(BaseViewSet):
                 sprint = self.allowed_sprint(sprint_pk)
                 if field_name == 'name':
                     sprint.name = new_value
+                elif field_name == "status_name":
+                    new_status = SprintStatus.objects.get_or_create(business_id=sprint.business_id, name=new_value)[0]
+                    sprint.status3_id = new_status.id
                 elif field_name == 'sprint_id_after':
                     old_order = sprint.order
                     after_sprint = self.allowed_sprint(new_value)

@@ -8,6 +8,7 @@ import moment from 'moment'
 import {ensureProjectsLoaded, getProject} from '../actions/Projects'
 import {ensureSprintsLoaded, getSprint} from '../actions/Sprints'
 import EditableSprintName from '../components/EditableSprintName'
+import EditableSprintStatus from '../components/EditableSprintStatus'
 
 class SprintSidebar extends Component {
 
@@ -63,6 +64,13 @@ class SprintSidebar extends Component {
                         <div className="property-text">{sprint.description}
                         </div>
                     </PropertyStackComponent>
+
+                    <PropertyStackComponent>
+                        <div className="property-text">
+                            <EditableSprintStatus sprint_ids={[sprint.id]} project_id={sprint.project_id} />
+                        </div>
+                    </PropertyStackComponent>
+                    
                     <PropertyStackComponent>
                         <div className="named-property">
                             <div className="named-property__name">Created</div>

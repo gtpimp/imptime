@@ -2,6 +2,7 @@ import logging
 from rest_framework import serializers
 from base_serializer import BaseSerializer
 from timepiece.models import BusinessPermissions, Feature, IssueStatus
+from timepiece.models import ProjectStatus as SprintStatus
 from issue_status_serializer import IssueStatusSerializer
 logger = logging.getLogger(__name__)
 
@@ -11,7 +12,8 @@ class ProjectSerializer(BaseSerializer):
     id = serializers.CharField()
     name = serializers.CharField()
     allowed_user_ids = serializers.ListField(child=serializers.CharField())
-    allowed_status_names = serializers.ListField(child=serializers.CharField())
+    allowed_issue_status_names = serializers.ListField(child=serializers.CharField())
+    allowed_sprint_status_names = serializers.ListField(child=serializers.CharField())
     feature_names = serializers.ListField(child=serializers.CharField())
 
     def __init__(self, *args, **kwargs):
@@ -26,8 +28,10 @@ class ProjectSerializer(BaseSerializer):
             [str(x.id) for x in project_users.order_by("username")]
         project.feature_names = \
             Feature.objects.filter(business=project).order_by("name")  # sic
-        project.allowed_status_names = \
+        project.allowed_issue_status_names = \
             [x.name for x in IssueStatus.objects.all().filter(business=project).order_by("name")]
+        project.allowed_sprint_status_names = \
+            [x.name for x in SprintStatus.objects.all().filter(business=project).order_by("name")]
         
         return super(ProjectSerializer, self).to_representation(
             project, *args, **kwargs)

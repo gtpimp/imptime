@@ -143,6 +143,10 @@ export function updateSprintName(sprint_id, value) {
     return updateSprint([sprint_id], "name", value)
 }
 
+export function updateSprintStatus(sprint_ids, value) {
+    return updateSprint(sprint_ids, "status_name", value)
+}
+
 export function reorderSprints(sprint_id_before, sprint_id_after, on_done) {
     return updateSprint([sprint_id_before], "sprint_id_after", sprint_id_after, on_done)
 }

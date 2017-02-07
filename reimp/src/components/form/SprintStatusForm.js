@@ -6,7 +6,7 @@ import SelectList from 'react-widgets/lib/SelectList'
 import { ensureProjectsLoaded, getProject } from '../../actions/Projects'
 import SingleValueSelector from './SingleValueSelector'
 
-class IssueStatusForm extends Component {
+class SprintStatusForm extends Component {
 
     constructor(props) {
         super(props)
@@ -51,7 +51,7 @@ class IssueStatusForm extends Component {
             <form onSubmit={handleSubmit}>
                 <div>
                     <label htmlFor="status">Status</label>
-                    <Field name="issue_status_name"
+                    <Field name="sprint_status_name"
                            component={this.renderSingleValueSelector}
                            valueField="value"
                            textField="label"
@@ -68,7 +68,7 @@ function mapStateToProps(state, props) {
 
     const { project_id, onChange } = props
     const project = getProject(state, project_id) || {}
-    const status_names = project.allowed_issue_status_names || []
+    const status_names = project.allowed_sprint_status_names || []
     const status_options = status_names.map(function(status_name) {
 	return { value: status_name, label: status_name }
     })
@@ -83,4 +83,4 @@ function mapStateToProps(state, props) {
     }
 }
 
-export default connect(mapStateToProps)(reduxForm({form:'issue_status_form'})(IssueStatusForm))
+export default connect(mapStateToProps)(reduxForm({form:'sprint_status_form'})(SprintStatusForm))
