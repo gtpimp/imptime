@@ -62,7 +62,7 @@ class ProjectViewSet(BaseViewSet):
                 project = self.allowed_project(project_pk)
                 if field_name == 'name':
                     project.name = new_value
-                if field_name == 'description':
+                elif field_name == 'description':
                     project.description = new_value
                 else:
                     raise Exception("Unsupported field name: %s" % field_name)

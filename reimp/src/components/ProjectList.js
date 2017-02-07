@@ -1,5 +1,8 @@
 import React, { Component } from 'react'
 import map from 'lodash/map'
+import union from 'lodash/union'
+import includes from 'lodash/includes'
+import difference from 'lodash/difference'
 import { connect } from 'react-redux'
 import {
     initList,
@@ -61,8 +64,20 @@ class ProjectList extends Component {
     }
 
     onClickedProject(project_id) {
-	const { onSelectProjects } = this.props
-        onSelectProjects([project_id])
+        const {onSelectProjects, selected_ids} = this.props
+        event.stopPropagation()
+
+        let selected_project_ids = []
+        if (event.ctrlKey) {
+            if (includes(selected_ids, project_id)) {
+                selected_project_ids = difference(selected_ids, [project_id])
+            } else {
+                selected_project_ids = union(selected_ids, [project_id])
+            }
+        } else {
+            selected_project_ids = [project_id]
+        }
+        onSelectProjects(selected_project_ids)
     }
 
     onChangePage() {

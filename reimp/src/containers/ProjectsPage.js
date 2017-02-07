@@ -58,14 +58,14 @@ class ProjectsPage extends Component {
                       <NewProjectSidebar />
                   </div>
                 }
-                { ! is_creating_project && is_single_selection && project_id && selected_project &&
+                { ! is_creating_project && is_single_selection && selected_project &&
                   <div className="list-layout__sidebar">
-                      <ProjectSidebar project_id={selected_project.id} project_id={project_id}/>
+                      <ProjectSidebar project_id={selected_project.id}/>
                   </div>
                 }
-                { ! is_creating_project && is_multiple_selection && project_id && selected_project_ids &&
+                { ! is_creating_project && is_multiple_selection && selected_project_ids &&
                   <div className="list-layout__sidebar">
-                      <MultipleProjectSidebar project_ids={selected_project_ids} project_id={project_id}/>
+                      <MultipleProjectSidebar project_ids={selected_project_ids}/>
                   </div>
                 }                  
             </div>
