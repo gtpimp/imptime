@@ -38,14 +38,6 @@ export default function sprint(state = initialState, action) {
 	case INVALIDATE_ALL_SPRINTS:
 	    return Object.assign({}, state, {items_by_id: null})
         case INVALIDATE_SPRINTS:
-	    // let new_sprint_ids = Object.assign({}, state.items_by_id)
-	    // action.sprint_ids_to_invalidate.map(function(id_to_invalidate) {
-        // if ( new_sprint_ids[id_to_invalidate] ) {
-		 //    delete new_sprint_ids[id_to_invalidate]
-        // }
-	    // })
-	    // return Object.assign({}, state, {items_by_id: new_sprint_ids})
-
             return Object.assign({}, state, {items_by_id: without(state.items_by_id, action.sprint_ids_to_invalidate)})
 
         case ANNOUNCE_LOADING_SPRINTS:
@@ -58,7 +50,7 @@ export default function sprint(state = initialState, action) {
 						difference(state.loading_item_ids || [],
 							   keys(action.items_by_id))),
 		items_by_id: Object.assign({},
-					      state.items_by_id)
+					   assign(state.items_by_id, action.items_by_id))
 	    })
             state_copy.items_by_id = Object.assign({}, assign(state_copy.items_by_id, action.items_by_id))
             return state_copy

@@ -5,6 +5,7 @@ import {ensureProjectsLoaded, getProject} from '../actions/Projects'
 import Sidebar from './Sidebar'
 import PropertyStack from './PropertyStack'
 import PropertyStackComponent from './PropertyStackComponent'
+import EditableProjectName from '../components/EditableProjectName'
 
 class ProjectSidebar extends Component {
 
@@ -34,11 +35,16 @@ class ProjectSidebar extends Component {
 
     render() {
 
-        const {project_id} = this.props
+        const {project_id, project} = this.props
 
         if (project_id) return (
             <Sidebar>
                 <PropertyStack>
+                    <PropertyStackComponent>
+                        <div className="property--title">
+                            <EditableProjectName project_id={project_id} />
+                        </div>                        
+                    </PropertyStackComponent>
                     <PropertyStackComponent>
                         <button onClick={this.navigateToSprintsPage}>Take me to your sprints</button>
                     </PropertyStackComponent>

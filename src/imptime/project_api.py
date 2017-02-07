@@ -6,8 +6,7 @@ from base_api import BaseViewSet
 import json
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.decorators import permission_classes
-# from timepiece.models import Business as Project
-# from timepiece.models import Project as Sprint
+from timepiece.models import Business as Project
 
 logger = logging.getLogger(__name__)
 
@@ -47,3 +46,50 @@ class ProjectViewSet(BaseViewSet):
             return self.error_response(ex)
         
         return HttpResponse(JSONRenderer().render(data))
+
+    def update(self, request, pk):
+        try:
+            params = request.data
+            field_name = params['field_name']
+            new_value = params['value']
+
+            if 'project_ids' in params:
+                project_pks = params['project_ids']
+            else:
+                project_pks = [pk]
+
+            for project_pk in project_pks:
+                project = self.allowed_project(project_pk)
+                if field_name == 'name':
+                    project.name = new_value
+                if field_name == 'description':
+                    project.description = new_value
+                else:
+                    raise Exception("Unsupported field name: %s" % field_name)
+                project.save()
+            
+            data = {'status': 'success'}
+        except Exception, ex:
+            logger.exception(ex)
+            return self.error_response(ex)
+        
+        return HttpResponse(JSONRenderer().render(data))
+
+    def create(self, request):
+        try:
+            context = {}
+            params = request.data['project']
+            project = Project.objects.create(
+                impd_client=request.user.profile.impd_client,
+                name=params['name'])
+            context['project'] = {'name': project.name}
+            data = {'status': 'success', 'payload': context}
+
+        except Exception, ex:
+            logger.exception(ex)
+            return self.error_response(ex)
+        
+        return HttpResponse(JSONRenderer().render(data))
+
+    
+    

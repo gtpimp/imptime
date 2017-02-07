@@ -3,11 +3,22 @@ import keyBy from 'lodash/keyBy'
 import { fetchListIfNeeded, getMissingItemIds } from './ItemList'
 import { ENTITY_KEY__PROJECT } from '../actions/ItemListKeyRegistry'
 
+export const ANNOUNCE_PROJECTS_SAVING = 'ANNOUNCE_PROJECTS_SAVING'
+export const ANNOUNCE_PROJECTS_SAVED = 'ANNOUNCE_PROJECTS_SAVED'
+export const ANNOUNCE_PROJECT_SAVE_FAILED = 'ANNOUNCE_PROJECT_SAVE_FAILED'
+
 export const ANNOUNCE_PROJECTS_LOADED = 'ANNOUNCE_PROJECTS_LOADED'
 export const ANNOUNCE_PROJECTS_LOAD_FAILED = 'ANNOUNCE_PROJECTS_LOAD_FAILED'
 export const ANNOUNCE_LOADING_PROJECTS = 'ANNOUNCE_LOADING_PROJECTS'
 export const INVALIDATE_PROJECTS = 'INVALIDATE_PROJECTS'
 export const INVALIDATE_ALL_PROJECTS = 'INVALIDATE_ALL_PROJECTS'
+
+export const ANNOUNCE_CAPTURING_NEW_PROJECT = 'ANNOUNCE_CAPTURING_NEW_PROJECT'
+export const UPDATE_NEW_PROJECT_DETAILS = 'UPDATE_NEW_PROJECT_DETAILS'
+export const CANCEL_CREATING_NEW_PROJECT = 'CANCEL_CREATING_NEW_PROJECT'
+export const ANNOUNCE_SAVING_NEW_PROJECT = 'ANNOUNCE_SAVING_NEW_PROJECT'
+export const ANNOUNCE_SAVED_NEW_PROJECT = 'ANNOUNCE_SAVED_NEW_PROJECT'
+export const ANNOUNCE_SAVING_NEW_PROJECT_FAILED = 'ANNOUNCE_SAVING_NEW_PROJECT_FAILED'
 
 export function invalidateAllProjects() {
     return {
@@ -32,12 +43,6 @@ function announceLoadingProjects(project_ids) {
 }
 
 function announceProjectsLoaded(payload) {
-
-    // let items_by_id = {}
-    // payload.projects.map((item, index) => {
-    //     items_by_id[item.id] = item
-    // });
-
     return {
         type: ANNOUNCE_PROJECTS_LOADED,
         items_by_id: keyBy(payload.projects, 'id'),
@@ -50,6 +55,26 @@ function announceProjectsLoadFailed(error) {
         type: ANNOUNCE_PROJECTS_LOAD_FAILED,
         error: error,
         received_at: Date.now()
+    }
+}
+
+function announceCandidateProjectSaving() {
+    return {
+        type: ANNOUNCE_SAVING_NEW_PROJECT
+    }
+}
+
+function announceCandidateProjectSaved(new_project) {
+    return {
+        type: ANNOUNCE_SAVED_NEW_PROJECT,
+	project: new_project
+    }
+}
+
+function announceCandidateProjectSaveFailed(error) {
+    return {
+	type: ANNOUNCE_SAVING_NEW_PROJECT_FAILED,
+	error: error
     }
 }
 
@@ -84,6 +109,64 @@ export function fetchProjectsIfNeeded(list_key) {
     return fetchListIfNeeded(list_key, matching_items_key, matching_items_promise_func)
 }
 
+export function startCandidateProject() {
+    return (dispatch, getState) => {
+	const state = getState()
+	dispatch({
+	    type: ANNOUNCE_CAPTURING_NEW_PROJECT
+	})
+    }
+}
+
+export function updateCandidateName(name) {
+    return {
+	type: UPDATE_NEW_PROJECT_DETAILS,
+	candidate_project: { "name": name }
+    }
+}
+
+export function cancelCandidateProject() {
+    return {
+	type: CANCEL_CREATING_NEW_PROJECT
+    }
+}
+
+export function updateProjectName(project_id, value) {
+    return updateProject([project_id], "name", value)
+}
+
+export function saveCandidateProject() {
+
+    return (dispatch, getState) => {
+	const state = getState()
+        const API_BASE_URL = state.settings.configured && state.settings.API_BASE_URL
+	dispatch(announceCandidateProjectSaving())
+	let data = {project: state.project.candidate_project}
+	
+	return impfetch(API_BASE_URL+"imp/project/", dispatch,
+			{method: "POST",
+			 credentials: 'same-origin',
+			 data: data,
+			 headers: {"Content-type": "application/json; charset=UTF-8"}, 
+			 body: JSON.stringify(data)}
+	).then(response => response.json())
+	 .then(json => {
+             if ( json.status !== 'success' ) {
+		 console.log('Request failed with JSON response', json);
+		 dispatch(announceCandidateProjectSaveFailed(json.error))
+             } else {
+		 console.log('Request succeeded with JSON response', json);
+		 dispatch(announceCandidateProjectSaved(json.payload.project))
+             }
+	 })
+	 .catch(function (error) {
+             console.log('Request failed', error);
+	     dispatch(announceCandidateProjectSaveFailed(error))
+	 })
+    }
+
+}
+
 export function ensureProjectsLoaded(project_ids) {
     return (dispatch, getState) => {
         const state = getState()
@@ -110,3 +193,66 @@ export function getProjects(state, project_ids) {
     })    
 }
 
+export function getCandidateProject(state) {
+    const project_objs = state.project || {}
+    return project_objs.candidate_project
+}
+
+function announceProjectSaveFailed(error) {
+    return {
+        type: ANNOUNCE_PROJECT_SAVE_FAILED,
+        error: error,
+        received_at: Date.now()
+    }
+}
+
+function announceProjectsSaved(project_ids) {
+    return {
+        type: ANNOUNCE_PROJECTS_SAVED,
+        project_ids: project_ids,
+        saved_at: Date.now()
+    }
+}
+
+function announceProjectsSaving(project_ids, field_name, new_value) {
+    return {
+        type: ANNOUNCE_PROJECTS_SAVING,
+        project_ids: project_ids,
+	field_name: field_name,
+	new_value: new_value
+    }
+}
+
+function updateProject(project_ids, field_name, new_value, on_done) {
+    return (dispatch, getState) => {
+        const state = getState()
+        const API_BASE_URL = state.settings.configured && state.settings.API_BASE_URL
+	dispatch(announceProjectsSaving(project_ids, field_name, new_value))
+	let data = {project_ids: project_ids,
+                    field_name: field_name,
+		    value: new_value }
+	return impfetch(API_BASE_URL+"imp/project/"+project_ids[0]+"/", dispatch,
+			{method: "PUT",
+			 credentials: 'same-origin',
+			 data: data,
+			 headers: {"Content-type": "application/json; charset=UTF-8"}, 
+			 body: JSON.stringify(data)}
+	).then(response => response.json())
+	 .then(json => {
+             if ( json.status !== 'success' ) {
+		 console.log('Request failed with JSON response', json);
+		 dispatch(announceProjectSaveFailed(json.error))
+             } else {
+		 console.log('Request succeeded with JSON response', json);
+                 dispatch(announceProjectsSaved(project_ids))
+             }
+	     if ( on_done ) {
+		 on_done()
+	     }
+	 })
+	 .catch(function (error) {
+             console.log('Request failed', error);
+	     dispatch(announceProjectSaveFailed(error))
+	 })
+    }
+}

@@ -42,13 +42,6 @@ function announceLoadingSprints(sprint_ids) {
 }
 
 function announceSprintsLoaded(payload) {
-
-    // let items_by_id = {}
-    // payload.sprints.map((item, index) => {
-    //     items_by_id[item.id] = item
-		// return
-    // });
-
     return {
         type: ANNOUNCE_SPRINTS_LOADED,
         items_by_id: keyBy(payload.sprints, 'id'),
@@ -180,7 +173,6 @@ export function saveCandidateSprint() {
 	     dispatch(announceCandidateSprintSaveFailed(error))
 	 })
     }
-
 }
 
 export function ensureSprintsLoaded(sprint_ids) {

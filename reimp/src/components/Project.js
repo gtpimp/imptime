@@ -94,8 +94,9 @@ const headingTarget = {
 	    console.log("ignoring dnd on the same element: " + project_id)
 	    return;
 	}
-	
-	props.reorderProjects(dragging_project_id, project_id)
+
+        // Can't reorder projects
+	// props.reorderProjects(dragging_project_id, project_id)
     },
     hover: (props, monitor, component) => {
     },

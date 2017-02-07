@@ -104,7 +104,7 @@ class SprintsPage extends Component {
 }
 
 function mapStateToProps(state, props) {
-    const {sprint, page} = state
+    const {sprint} = state
     const items_by_id = (sprint && sprint.items_by_id) || {}
     const selected_sprint_ids = get_selected_sprint_ids(state, PAGE_KEY__SPRINTS_PAGE)
     
