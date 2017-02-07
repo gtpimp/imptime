@@ -74,13 +74,19 @@ class SprintSidebar extends Component {
                     <PropertyStackComponent>
                         <div className="named-property">
                             <div className="named-property__name">Created</div>
-                            <div className="named-property__value"><Timestamp format="short-date" value={moment()}/></div>
+                            <div className="named-property__value"><Timestamp format="short-date" value={moment(sprint.created)}/></div>
                         </div>
                     </PropertyStackComponent>
                     <PropertyStackComponent>
                         <div className="named-property">
                             <div className="named-property__name">First Activity</div>
-                            <div className="named-property__value"><Timestamp format="short-date" value={moment()}/></div>
+                            <div className="named-property__value"><Timestamp format="short-date" value={sprint.first_entry && moment(sprint.first_entry.start_time)}/></div>
+                        </div>
+                    </PropertyStackComponent>
+                    <PropertyStackComponent>
+                        <div className="named-property">
+                            <div className="named-property__name">Last Activity</div>
+                            <div className="named-property__value"><Timestamp format="short-date" value={sprint.last_entry && moment(sprint.last_entry.end_time)}/></div>
                         </div>
                     </PropertyStackComponent>
                     <PropertyStackComponent>

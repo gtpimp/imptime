@@ -4,6 +4,8 @@ import { connect } from 'react-redux'
 import classNames from 'classnames'
 import { DndTypes } from '../actions/Dnd'
 import Progress from '../components/Progress'
+import Timestamp from '../components/Timestamp'
+import moment from 'moment'
 import '../sass/sprint.css'
 
 class Sprint extends Component {
@@ -44,9 +46,13 @@ class Sprint extends Component {
 		    >
 		    <td className="list-table__cell">{sprint.number}</td>
 		    <td className="list-table__cell">{sprint.name}</td>
-		    <td className="list-table__cell">12 March 2016</td>
-		    <td className="list-table__cell">24 March 2016</td>
-		    <td className="list-table__cell">46 Items</td>
+		    <td className="list-table__cell">
+                        <Timestamp format="short-date" value={sprint.first_entry && moment(sprint.first_entry.start_time)}/>
+                    </td>
+		    <td className="list-table__cell">
+                        <Timestamp format="short-date" value={sprint.last_entry && moment(sprint.last_entry.end_time)}/>
+                    </td>
+		    <td className="list-table__cell">{sprint.num_issues || 0} Issues</td>
 		    <td className="list-table__cell"><Progress issue={sprint} /></td>
 		    <td className="list-table__cell">{sprint.status_name}</td>
 		</tr>

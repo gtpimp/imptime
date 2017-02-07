@@ -3,6 +3,7 @@ from sprint_serializer import SprintSerializer
 from rest_framework.renderers import JSONRenderer
 from django.http import HttpResponse
 from base_api import BaseViewSet
+from django.db.models import Prefetch, Count, Sum
 import json
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.decorators import permission_classes
@@ -40,6 +41,7 @@ class SprintViewSet(BaseViewSet):
                     'id', flat=True)]
             else:
                 sprints = sprints.select_related("status3")
+                sprints = sprints.annotate(num_issues=Count('issues'))
                 
                 s = SprintSerializer(sprints, many=True)
                 sprints_data = s.data
