@@ -4,6 +4,9 @@ import moment from 'moment'
 import map from 'lodash/map'
 import { logged_in_user, clearAuthentication } from '../actions/Auth'
 
+export const DUPLICATE_LOADING_ERROR_MESSAGE = 'DUPLICATE_LOADING_ERROR_MESSAGE'
+export const DUPLICATE_SAVING_ERROR_MESSAGE = 'DUPLICATE_SAVING_ERROR_MESSAGE'
+
 const throttles = throttles || {}
 
 export function stringifyIds(ids) {
@@ -52,10 +55,17 @@ export function impfetch(url, dispatch, args) {
     
     if ( is_running || failed_recently ) {
         return new Promise(function(resolve, reject) {
-            // note we reject because we don't want to say anything about
-            // whether the existing throttle succeeded, and the caller should
-            // try again after checking if the data doesn't exist
-            setTimeout(function() { reject(); }, THROTTLE_HIT_PAUSE_SECONDS*1000)
+            // Note we accept because we don't know if this will be an error.
+            // The calling component is highly likely to call again if the data
+            // is still not present so this has a small chance of site integrity.
+            setTimeout(function() {
+
+                if ( args.method === "POST" || args.method === "PUT" || args.method === "DELETE" ) {
+                    reject(DUPLICATE_SAVING_ERROR_MESSAGE)
+                } else {
+                    reject(DUPLICATE_LOADING_ERROR_MESSAGE)
+                }
+            }, 100) // Mini pause to prevent reject thrashing.
         })
     }
 
