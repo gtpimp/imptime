@@ -18,7 +18,8 @@ import {
 import {ensureProjectsLoaded, getProject} from '../actions/Projects'
 import {
     set_toolbars,
-    select_sprints
+    select_sprints,
+    get_selected_sprint_ids
 } from '../actions/Page'
 
 class SprintsPage extends Component {
@@ -103,15 +104,14 @@ class SprintsPage extends Component {
 }
 
 function mapStateToProps(state, props) {
-    const {sprint, item_list} = state
+    const {sprint, page} = state
     const items_by_id = (sprint && sprint.items_by_id) || {}
-    const l = (item_list && item_list[LIST_KEY__SPRINT_LIST]) || {}
-    const selected_items = items_by_id && l.selected_ids && l.selected_ids.map(function (selected_id, index) {
-            return items_by_id[selected_id] || {
-                    'id': selected_id,
-                    'loaded': false
-                }
-        })
+    const selected_sprint_ids = get_selected_sprint_ids(state, PAGE_KEY__SPRINTS_PAGE)
+    
+    const selected_items = items_by_id && selected_sprint_ids && selected_sprint_ids.map(function (selected_id, index) {
+        return items_by_id[selected_id] || {'id': selected_id,
+                                            'loaded': false }
+    })
 
     const project_id = props.params.projectId
     const project = getProject(state, project_id) || {}
@@ -124,4 +124,3 @@ function mapStateToProps(state, props) {
 }
 
 export default connect(mapStateToProps)(SprintsPage)
-

@@ -136,7 +136,7 @@ class IssuesPage extends Component {
 
 function mapStateToProps(state, props) {
 
-    const {issue, page} = state
+    const {issue} = state
     const items_by_id = (issue && issue.items_by_id) || {}
 
     const selected_issue_ids = get_selected_issue_ids(state, PAGE_KEY__ISSUES_PAGE)
@@ -159,7 +159,6 @@ function mapStateToProps(state, props) {
         project: project,
         selected_issues: selected_items,
         selected_issue_ids: selected_issue_ids,
-        toolbars: page.toolbar_names,
         is_single_selection: selected_items.length === 1,
         is_multiple_selection: selected_items.length > 1,
         is_creating_issue: is_creating_issue        
