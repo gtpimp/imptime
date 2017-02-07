@@ -52,11 +52,26 @@ class SprintViewSet(BaseViewSet):
     def update(self, request, pk):
         try:
             params = request.data
-            sprint_before_id = pk
-            sprint_after_id = params['sprint_id_after']
-            sprint_before = self.allowed_sprint(sprint_before_id)
-            sprint_after = self.allowed_sprint(sprint_after_id)
-            sprint_before.move_after(sprint_after)
+            field_name = params['field_name']
+            new_value = params['value']
+
+            if 'sprint_ids' in params:
+                sprint_pks = params['sprint_ids']
+            else:
+                sprint_pks = [pk]
+
+            for sprint_pk in sprint_pks:
+                sprint = self.allowed_sprint(sprint_pk)
+                if field_name == 'name':
+                    sprint.name = new_value
+                elif field_name == 'sprint_id_after':
+                    old_order = sprint.order
+                    after_sprint = self.allowed_sprint(new_value)
+                    sprint.move_after(after_sprint)
+                else:
+                    raise Exception("Unsupported field name: %s" % field_name)
+                sprint.save()
+            
             data = {'status': 'success'}
         except Exception, ex:
             logger.exception(ex)
@@ -80,8 +95,8 @@ class SprintViewSet(BaseViewSet):
                 business=project, #sic
                 order=order,
                 status2='pending',
-                code=Sprint.get_code_from_name(params['title']),
-                name=params['title'])
+                code=Sprint.get_code_from_name(params['name']),
+                name=params['name'])
             sprint.renumber_project_order()
             s = SprintSerializer(sprint)
             sprint_data = s.data

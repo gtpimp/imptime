@@ -21,7 +21,6 @@ class IssueSidebar extends Component {
 
     constructor(props) {
         super(props)
-        this.navigateToIssuesPage = this.navigateToIssuesPage.bind(this)
     }
 
     componentDidMount() {
@@ -32,11 +31,6 @@ class IssueSidebar extends Component {
     componentWillReceiveProps(new_props) {
         const {dispatch} = this.props
         dispatch(ensureIssuesLoaded([new_props.issue_id]))
-    }
-
-    navigateToIssuesPage() {
-        const {project_id, sprint_id} = this.props
-        browserHistory.push('/projects/' + project_id + '/sprints/' + sprint_id + '/issues');
     }
 
     render() {

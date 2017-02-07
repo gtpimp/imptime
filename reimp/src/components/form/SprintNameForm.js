@@ -4,7 +4,7 @@ import { reduxForm, Field } from 'redux-form';
 import Textarea from 'react-expanding-textarea'
 import '../../sass/text-component.scss'
 
-class SprintTitleForm extends Component {
+class SprintNameForm extends Component {
 
     constructor(props) {
         super(props)
@@ -25,7 +25,7 @@ class SprintTitleForm extends Component {
                 rows="1"
                 maxLength="3000"
                 className="textarea textarea--text-component"
-                placeholder="Title"
+                placeholder="Name"
                 onChange={(e) => this.onChangeAndSubmit(e, input.onChange)}
                 value={input.value}
             />
@@ -37,7 +37,7 @@ class SprintTitleForm extends Component {
         return (
             <form onSubmit={handleSubmit}>
                 <div>
-                    <Field name="title"
+                    <Field name="name"
                            component={this.renderTextarea} />
                     <button type="submit">Submit</button>
                 </div>
@@ -51,11 +51,11 @@ function mapStateToProps(state, props) {
     const { onChange } = props
     
     return {
-        initialValues: {title:props.initial_value},
+        initialValues: {name:props.initial_value},
         enableReinitialize: true,
         onSubmit: onChange
     }
 }
 
-export default connect(mapStateToProps)(reduxForm({form:'sprint_title_form'})(SprintTitleForm))
+export default connect(mapStateToProps)(reduxForm({form:'sprint_name_form'})(SprintNameForm))
 

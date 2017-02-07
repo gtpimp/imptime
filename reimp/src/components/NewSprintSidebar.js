@@ -4,17 +4,17 @@ import map from 'lodash/map'
 import {browserHistory} from 'react-router'
 import PropertyStack from './PropertyStack'
 import PropertyStackComponent from './PropertyStackComponent'
-import EditableSprintTitle from '../components/EditableSprintTitle'
+import EditableSprintName from '../components/EditableSprintName'
 import Timestamp from './Timestamp'
 import moment from 'moment'
 import Sidebar from './Sidebar'
 import {
     getCandidateSprint,
-    updateCandidateTitle,
+    updateCandidateName,
     cancelCandidateSprint,
     saveCandidateSprint
 } from '../actions/Sprints'
-import SprintTitleForm from './form/SprintTitleForm'
+import SprintNameForm from './form/SprintNameForm'
 
 class NewSprintSidebar extends Component {
 
@@ -25,7 +25,7 @@ class NewSprintSidebar extends Component {
 
     onSaveCandidateSprint(new_value) {
         const {dispatch} = this.props
-        dispatch(updateCandidateTitle(new_value.title))
+        dispatch(updateCandidateName(new_value.name))
         dispatch(saveCandidateSprint())
     }
 
@@ -38,7 +38,7 @@ class NewSprintSidebar extends Component {
                 <PropertyStack>
                     <div>
                         <div>
-                            <SprintTitleForm onChange={this.onSaveCandidateSprint}/>
+                            <SprintNameForm onChange={this.onSaveCandidateSprint}/>
                         </div>
                     </div>
                 </PropertyStack>

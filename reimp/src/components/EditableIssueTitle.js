@@ -35,7 +35,7 @@ class EditableIssueTitle extends Component {
 
 function mapStateToProps(state, props) {
     const { issue_id } = props
-    const issue = getIssue(state, issue_id)
+    const issue = getIssue(state, issue_id) || {}
     return {
         issue: issue
     }

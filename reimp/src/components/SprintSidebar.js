@@ -7,6 +7,7 @@ import Timestamp from '../components/Timestamp'
 import moment from 'moment'
 import {ensureProjectsLoaded, getProject} from '../actions/Projects'
 import {ensureSprintsLoaded, getSprint} from '../actions/Sprints'
+import EditableSprintName from '../components/EditableSprintName'
 
 class SprintSidebar extends Component {
 
@@ -25,8 +26,9 @@ class SprintSidebar extends Component {
 	}
     }
 
-    componentWillReceiveProps() {
-        const { dispatch, project_id, sprint_id } = this.props
+    componentWillReceiveProps(new_props) {
+        const { dispatch } = this.props
+        const { project_id, sprint_id } = new_props
 	if ( project_id ) {
 	    dispatch(ensureProjectsLoaded([project_id]))
 	}
@@ -48,11 +50,13 @@ class SprintSidebar extends Component {
             <div className="sidebar sprint-sidebar">
                 <PropertyStack>
                     <PropertyStackComponent>
+                        { false && 
                         <div className="property--parent-title">
-                            <div className="property-label-1">{project.name}</div>
+                            <div className="property-label-1">{sprint.name}</div>
                         </div>
+                        }
                         <div className="property--title">
-                            <div className="property-label-2">Sprinasdfdsafdasfdsafasfasfdasfasfasfdsaasfasft 3</div>
+                            <EditableSprintName sprint_id={sprint_id} />
                         </div>
                     </PropertyStackComponent>
                     <PropertyStackComponent>
@@ -89,7 +93,7 @@ class SprintSidebar extends Component {
 function mapStateToProps(state, props) {
     const { sprint_id, project_id } = props
     const project = getProject(state, project_id)
-    const sprint = getSprint(state, sprint_id)
+    const sprint = getSprint(state, sprint_id) || {}
     return {
         sprint_id: sprint_id,
         sprint: sprint,

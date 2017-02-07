@@ -1,9 +1,13 @@
 import React, {Component} from 'react'
 import {connect} from 'react-redux'
+
 import RIEInput from '../widgets/RIEInput'
 import RIEModeToggler from '../widgets/RIEModeToggler'
 import each from 'lodash/each'
 import map from 'lodash/map'
+import union from 'lodash/union'
+import includes from 'lodash/includes'
+import difference from 'lodash/difference'
 import {
     initList,
     invalidateList,
@@ -63,8 +67,20 @@ class SprintList extends Component {
     }
 
     onClickedSprint(sprint_id) {
-        const {onSelectSprints} = this.props
-        onSelectSprints([sprint_id])
+        const {onSelectSprints, selected_ids} = this.props
+        event.stopPropagation()
+
+        let selected_sprint_ids = []
+        if (event.ctrlKey) {
+            if (includes(selected_ids, sprint_id)) {
+                selected_sprint_ids = difference(selected_ids, [sprint_id])
+            } else {
+                selected_sprint_ids = union(selected_ids, [sprint_id])
+            }
+        } else {
+            selected_sprint_ids = [sprint_id]
+        }
+        onSelectSprints(selected_sprint_ids)
     }
 
     onChangePage() {
