@@ -38,6 +38,8 @@ class SprintViewSet(BaseViewSet):
                 context['ids'] = [str(x) for x in sprints.values_list(
                     'id', flat=True)]
             else:
+                sprints = sprints.select_related("status3")
+                
                 s = SprintSerializer(sprints, many=True)
                 sprints_data = s.data
                 context['sprints'] = sprints_data

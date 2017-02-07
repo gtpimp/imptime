@@ -618,6 +618,28 @@ class BusinessPermissions(models.Model):
     def has_be_scheduled(self):
         return self.user.is_superuser or self.can_be_scheduled or self.user.has_perm('timepiece.belongs_to_all_projects')
 
+class ProjectStatus(models.Model):
+    name = models.CharField(max_length=255, blank=True, null=True)
+    business = models.ForeignKey(Business, related_name='project_statuses')
+
+    class Meta:
+        unique_together = (('name', 'business'), )
+
+    def __unicode__(self):
+        return self.name
+
+    def save(self, *args, **kwargs):
+        was_created = not self.id
+        super(ProjectStatus, self).save(*args, **kwargs)
+        affected_projects = [x.id for x in self.projects.all()]
+        if was_created:
+            RefreshNotifier().notify_model_create(
+                self, params={'projects': affected_projects})
+        else:
+            RefreshNotifier().notify_model_update(
+                self, params={'projects': affected_projects})
+
+    
 class ProjectQuerySet(QuerySet):
     def filter_by_logged_in_user(self, user):
         """ restricts entries to those belonging to projects the given
@@ -719,6 +741,9 @@ class Project(models.Model):
     # functionality should hang off this field instead.
     status2 = models.CharField(max_length=100, blank=False, null=False,
                                default='pending', choices = PROJECT_STATUSES, db_index=True)
+
+    # This is the real status now
+    status3 = models.ForeignKey(ProjectStatus, related_name='projects', null=True)
 
     description = models.TextField(blank=True, null=True, db_index=True)
     short_description = models.CharField(max_length=50, blank=True, null=True, db_index=True)
@@ -3383,7 +3408,7 @@ class Issue(models.Model):
                                        'tester': [x for x,y in ISSUE_STATUS_CHOICES if x not in ['internal_qa_passed', 'in_client_qa', 'client_qa_passed', 'duplicate', "onhold"]] }
     
     status = models.CharField(max_length=255, choices = ISSUE_STATUS_CHOICES, blank=False)
-    status2 = models.ForeignKey(IssueStatus, related_name='issues', max_length=255, null=True)
+    status2 = models.ForeignKey(IssueStatus, related_name='issues', null=True)
     number = models.IntegerField(null=True,blank=True, db_index=True)
     project = models.ForeignKey(Project, related_name='issues')
     subject = models.TextField(db_index=True)

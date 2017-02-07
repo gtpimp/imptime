@@ -14,6 +14,6 @@ class SprintSerializer(BaseSerializer):
     description = serializers.CharField()
 
     def to_representation(self, sprint, *args, **kwargs):
-        sprint.status_name = sprint.status2
+        sprint.status_name = sprint.status3.name
         return super(SprintSerializer, self).to_representation(
             sprint, *args, **kwargs)
