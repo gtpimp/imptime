@@ -54,5 +54,5 @@ export function logged_in_user() {
 
 export function is_authenticated() {
     const user = logged_in_user()
-    return user.token !== null && user.token.length > 0
+    return user.token !== null && user.token != undefined && user.token.length > 0
 }

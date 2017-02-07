@@ -38,8 +38,8 @@ class SprintsToolbarPanel extends Component {
     }
 
     onNewProjectClick() {
-        const { dispatch, project_id } = this.props
-        dispatch(startCandidateSprint(project_id))
+        const { dispatch, project_id, last_selected_sprint_id } = this.props
+        dispatch(startCandidateSprint(project_id, last_selected_sprint_id))
     }
 
     onDashboardClick() {

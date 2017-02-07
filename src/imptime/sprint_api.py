@@ -69,7 +69,7 @@ class SprintViewSet(BaseViewSet):
             context = {}
             params = request.data['sprint']
             project_id = params['project_id']
-            sprint_id_before = params['sprint_id_before']
+            sprint_id_before = params.get('sprint_id_before', None)
             if sprint_id_before:
                 sprint_before = self.allowed_sprint(sprint_id_before)
                 order = sprint_before.order + 0.5

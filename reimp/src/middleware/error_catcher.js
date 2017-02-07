@@ -15,11 +15,11 @@ function error_catcher_middleware(_ref) {
 
 	    if ( action && action.type.indexOf('FAILED') !== -1 && ACTIONS_TO_IGNORE.indexOf(action.type) === -1 ) {
 
-                if ( action.error.indexOf(DUPLICATE_LOADING_ERROR_MESSAGE) !== -1 ) {
+                if ( action.error && action.error.indexOf && action.error.indexOf(DUPLICATE_LOADING_ERROR_MESSAGE) !== -1 ) {
                     console.log("Duplicate call running, not an error but component will wait for initialisation: " + action.type)
                     dispatch(duplicateLoading())
                     
-                } else if ( action.error.indexOf(DUPLICATE_SAVING_ERROR_MESSAGE) !== -1 ) {
+                } else if ( action.error && action.error.indexOf && action.error.indexOf(DUPLICATE_SAVING_ERROR_MESSAGE) !== -1 ) {
                     console.log("Duplicate during saving: " + action.error)
 		    dispatch(setErrorMessage("Save conflict error: " + action.error))
                     

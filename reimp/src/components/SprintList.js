@@ -148,7 +148,8 @@ class SprintList extends Component {
 
         return (
             <tr key={list_key + ".candidate_sprint"} className="sprint_list__candidate_sprint">
-                <td>Creating new sprint:</td>
+                <td colSpan="20">Creating new sprint here</td>
+                { false && 
                 <td>
                     <RIEModeToggler propName="candidate_sprint_title"
                                     initialValue=""
@@ -158,6 +159,7 @@ class SprintList extends Component {
                         <RIEInput/>
                     </RIEModeToggler>
                 </td>
+                }
             </tr>
         )
     }

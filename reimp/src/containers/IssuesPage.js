@@ -64,33 +64,6 @@ class IssuesPage extends Component {
                                       {to: '/projects/'+project.id+'/sprints/'+sprint.id, label: sprint.name},
                                       {to: '/projects/'+project.id+'/sprints/'+sprint.id+'/issues', label: 'All Issues'}]))
 
-            /* dispatch(setActions([
-             *     {
-             *         icon: 'toggle-as-feature',
-             *         onClick: this.toggleAsFeature
-             *     },
-             *     {
-             *         icon: 'group-together',
-             *         onClick: this.groupTogether
-             *     },
-             *     {
-             *         icon: 'ungroup-together',
-             *         onClick: this.ungroupTogether
-             *     },
-             *     {
-             *         icon: 'expand_features',
-             *         onClick: this.toggleExpandFeatures
-             *     },
-             *     {
-             *         icon: 'add_tag',
-             *         onClick: this.openTagEditor
-             *     },
-             *     {
-             *         icon: 'add',
-             *         onClick: this.onStartCandidateIssue
-             *     }
-             * ]))*/
-
         }
     }
 

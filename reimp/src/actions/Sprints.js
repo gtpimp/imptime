@@ -181,24 +181,13 @@ export function fetchSprintsIfNeeded(list_key) {
     return fetchListIfNeeded(list_key, matching_items_key, matching_items_promise_func)
 }
 
-export function startCandidateSprint(list_key) {
+export function startCandidateSprint(project_id, sprint_id_before) {
     return (dispatch, getState) => {
 	const state = getState()
-	const sprints_by_id = state.sprint.items_by_id
-	const l = state.item_list[list_key]
-
-	const selected_ids = l.selected_ids
-
-	let sprint_id_before = null
-	if ( selected_ids.length > 0 ) {
-	    sprint_id_before = selected_ids[0]
-	    const sprint_before = sprints_by_id[sprint_id_before] 
-	}
-	
 	dispatch({
 	    type: ANNOUNCE_CAPTURING_NEW_SPRINT,
-	    sprint_id_before: sprint_id_before,
-	    project_id: l.filter.project_id
+	    project_id: project_id,
+            sprint_id_before: sprint_id_before
 	})
     }
 }
@@ -272,4 +261,9 @@ export function getSprints(state, sprint_ids) {
             'loaded': false
         }
     })    
+}
+
+export function getCandidateSprint(state) {
+    const sprint_objs = state.sprint || {}
+    return sprint_objs.candidate_sprint
 }
