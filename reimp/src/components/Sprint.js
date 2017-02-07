@@ -53,7 +53,7 @@ class Sprint extends Component {
                         <Timestamp format="short-date" value={sprint.last_entry && moment(sprint.last_entry.end_time)}/>
                     </td>
 		    <td className="list-table__cell">{sprint.num_issues || 0} Issues</td>
-		    <td className="list-table__cell"><Progress issue={sprint} /></td>
+		    { false && <td className="list-table__cell"><Progress issue={sprint} /></td> }
 		    <td className="list-table__cell">{sprint.status_name}</td>
 		</tr>
             ))

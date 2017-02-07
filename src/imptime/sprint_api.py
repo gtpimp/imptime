@@ -99,16 +99,19 @@ class SprintViewSet(BaseViewSet):
             else:
                 order = 0
             project = self.allowed_project(project_id)
+
+            new_status = SprintStatus.objects.get_or_create(business_id=project_id, name='pending')[0]
             sprint = Sprint.objects.create(
                 business=project, #sic
                 order=order,
                 status2='pending',
+                status3=new_status,
                 code=Sprint.get_code_from_name(params['name']),
                 name=params['name'])
             sprint.renumber_project_order()
-            s = SprintSerializer(sprint)
-            sprint_data = s.data
-            context['sprint'] = sprint_data
+            #s = SprintSerializer(sprint)
+            #sprint_data = s.data
+            context['sprint'] = {'number': sprint.number}
             data = {'status': 'success', 'payload': context}
 
         except Exception, ex:

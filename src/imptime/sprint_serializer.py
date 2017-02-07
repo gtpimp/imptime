@@ -20,7 +20,7 @@ class SprintSerializer(BaseSerializer):
     num_issues = serializers.IntegerField()
 
     def to_representation(self, sprint, *args, **kwargs):
-        sprint.status_name = sprint.status3.name
+        sprint.status_name = sprint.status3 and sprint.status3.name
         sprint.first_entry = Entry.objects.filter(issue__project_id=sprint.id).order_by('start_time').first()
         sprint.last_entry = Entry.objects.filter(issue__project_id=sprint.id).order_by('-end_time').first()
         
