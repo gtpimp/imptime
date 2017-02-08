@@ -17,3 +17,5 @@ export const PAGE_KEY__ISSUES_PAGE = 'issues_page'
 export const PAGE_KEY__ISSUE_DASHBOARD_PAGE = 'issue_dashboard_page'
 
 export const SELECTOR__SPRINTS = 'selector_sprints'
+
+export const FILTER_KEY__GLOBAL = 'global_filter'
