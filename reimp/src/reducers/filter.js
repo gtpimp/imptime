@@ -57,9 +57,9 @@ export default function filter(state=initial_state, action) {
             // don't do anything unless the term matches, because otherwise
             // these results are probably not relevant anymore (ie the
             // user has typed more letters into the filter)
+            state_copy = Object.assign({}, state)
+            l = Object.assign({}, filter_template, state_copy[action.filter_key] || {})
             if ( l.term == action.term ) {
-                state_copy = Object.assign({}, state)
-                l = Object.assign({}, filter_template, state_copy[action.filter_key] || {})
 	        state_copy[action.filter_key] = Object.assign({}, l, {
 		    is_loading: false,
 		    received_at: action.received_at,
@@ -75,12 +75,16 @@ export default function filter(state=initial_state, action) {
             setErrorMessage("Failed to load filter results: " + action.error_message)
             state_copy = Object.assign({}, state)
             l = Object.assign({}, filter_template, state_copy[action.filter_key] || {})
-	    state_copy[action.filter_key] = Object.assign({}, l, {
-                is_loading: false,
-                error: action.error
-	    })
-            return state_copy;
-            
+            if ( l.term == action.term ) {
+	        state_copy[action.filter_key] = Object.assign({}, l, {
+                    is_loading: false,
+                    error: action.error
+	        })
+                return state_copy;
+            } else {
+                return state
+            }
+                
         default:
             return state
     }
