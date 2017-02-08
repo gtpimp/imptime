@@ -7,7 +7,8 @@ export const ANNOUNCE_FILTER_LOADING = 'ANNOUNCE_FILTER_LOADING'
 export const ANNOUNCE_FILTER_LOADED = 'ANNOUNCE_FILTER_LOADED'
 export const ANNOUNCE_FILTER_LOAD_FAILED = 'ANNOUNCE_FILTER_LOAD_FAILED'
 
-export function initFilter(filter_key, url) {
+export function initFilter(filter_key) {
+    const url = 'imp/filter/'
     return {
         type: INIT_FILTER,
         filter_key: filter_key,

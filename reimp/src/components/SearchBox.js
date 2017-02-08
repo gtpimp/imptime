@@ -17,7 +17,7 @@ class SearchBox extends Component {
 
     componentDidMount() {
         const { dispatch, filter_key } = this.props
-        dispatch(initFilter(filter_key, 'search/global/'))
+        dispatch(initFilter(filter_key))
     }
 
     onFilterTermChanged() {

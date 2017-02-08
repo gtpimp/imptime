@@ -1,4 +1,5 @@
 from django.conf.urls import include, url
+import filter_api
 import project_api
 import sprint_api
 import issue_api
@@ -34,6 +35,8 @@ router.register(r'issue', issue_api.IssueViewSet,
                 base_name='issue')
 router.register(r'user', user_api.UserViewSet,
                 base_name='user')
+router.register(r'filter', filter_api.FilterViewSet,
+                base_name='filter')
 
 urlpatterns = [
     url(r'^$', views.home, name='home'),
