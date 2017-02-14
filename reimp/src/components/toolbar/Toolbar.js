@@ -38,7 +38,7 @@ class ToolBar extends Component {
         return (
             <div className="toolbar">
                 <div className="toolbar__container toolbar__container--left">
-                    <Breadcrumbs breadcrumbs={breadcrumbs}/>
+                    <Breadcrumbs />
                 </div>
                 <div className="toolbar__container toolbar__container--right">
                     {panelIds.map((panelId) => this.renderPanel(panelId))}
@@ -49,13 +49,10 @@ class ToolBar extends Component {
 }
 
 function mapStateToProps(state, props) {
-    const {breadcrumbs} = state
-
     const page_toolbars = state.page.toolbar_names || []
     
     return {
-        panelIds: page_toolbars, // ['issue', 'issues', 'project', 'projects', 'sprint', 'sprints', 'list'],
-        breadcrumbs: breadcrumbs
+        panelIds: page_toolbars // ['issue', 'issues', 'project', 'projects', 'sprint', 'sprints', 'list'],
     }
 }
 

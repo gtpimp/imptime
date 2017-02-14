@@ -12,11 +12,10 @@ const editable_property_template = {
 
 export default function editable_property(state = initialState, action) {
 
-    let state_copy = Object.assign({}, state)
-    let l = Object.assign({}, editable_property_template, state_copy[action.property_key] || {})
-    
     switch (action.type) {
         case SET_MODE:
+            let state_copy = Object.assign({}, state)
+            let l = Object.assign({}, editable_property_template, state_copy[action.property_key] || {})
 	    state_copy[action.property_key] = Object.assign({}, l, {mode: action.mode})
             return state_copy
         default:
