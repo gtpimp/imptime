@@ -1,5 +1,5 @@
 from fabric.api import local, settings, abort, run, cd, env, prefix
-from fabric.operations import get
+from fabric.operations import get, put
 import os, errno
 import shutil
 from fabric.contrib.console import confirm, prompt
@@ -43,6 +43,11 @@ To re-import timesheets on implicitdesign.co.za
 -----------------------------------------------
 
   > fab host_impd import_timesheet
+
+To renew certifications on imptime.impd.co.za
+---------------------------------------------
+  
+  > fab host_impd renew_letsencrypt
 
 """
 
@@ -109,3 +114,9 @@ def release(dirpath, git_origin, branch):
         run('git checkout %s' % branch)
         run('git pull %s %s' % (git_origin, branch))
         run('scripts/deploy_local.sh')
+
+def renew_letsencrypt():
+    with cd(''):
+        put(os.path.join(local_code_dir, "..", "scripts", "server_scripts", "renew_letsencrypt.sh"))
+        run("renew_letsencrypt.sh")
+        
