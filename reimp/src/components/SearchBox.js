@@ -2,7 +2,8 @@ import React, {Component} from 'react'
 import {connect} from 'react-redux'
 import map from 'lodash/map'
 import '../sass/search-box.css'
-import {initFilter, runFilter, getFilter} from '../actions/Filter'
+import {browserHistory} from 'react-router'
+import {initFilter, runFilter, getFilter, hideResults, showResults} from '../actions/Filter'
 import { FILTER_KEY__GLOBAL } from '../actions/ItemListKeyRegistry'
 import ReactTimeout from 'react-timeout'
 
@@ -12,8 +13,10 @@ class SearchBox extends Component {
         super(props)
         this.onFilter = this.onFilter.bind(this)
         this.onFilterTermChanged = this.onFilterTermChanged.bind(this)
-
         this.filter_timeout_id = null
+        this.onClickIssueResult = this.onClickIssueResult.bind(this)
+        this.onClickSprintResult = this.onClickSprintResult.bind(this)
+        this.onClickProjectResult = this.onClickProjectResult.bind(this)
     }
 
     componentDidMount() {
@@ -22,7 +25,7 @@ class SearchBox extends Component {
     }
 
     onFilterTermChanged() {
-        const {dispatch, filter_key, setTimeout} = this.props
+        const {setTimeout} = this.props
         const value = this.filter_term_el.value
         const that = this
         
@@ -36,15 +39,37 @@ class SearchBox extends Component {
     onFilter(value) {
         const {dispatch, filter_key} = this.props
         dispatch(runFilter(filter_key, value))
+        dispatch(showResults(filter_key))
+    }
+
+    onHideResults() {
+        const { dispatch, filter_key } = this.props
+        dispatch(hideResults(filter_key))
+    }
+
+    onClickProjectResult(res) {
+        browserHistory.push('/projects/'+res.project_id+'/sprints');
+        this.onHideResults()
+    }
+
+    onClickSprintResult(res) {
+        browserHistory.push('/projects/'+res.project_id+'/sprints/'+res.sprint_id+'/issues');
+        this.onHideResults()
+    }
+
+    onClickIssueResult(res) {
+        browserHistory.push('/projects/'+res.project_id+'/sprints/'+res.sprint_id+'/issues/'+res.issue_id);
+        this.onHideResults()
     }
 
     renderIssueResults(name, issue_results) {
+        const that = this
         return (
             <div className="search-box__issue_results">
                 <h2>{name}</h2>
-                {map(issue_results, function(issue_result) {
+                {map(issue_results, function(issue_result, index) {
                      return (
-                         <div className="search-box__search-result">
+                         <div key={index} className="search-box__search-result" onClick={() => that.onClickIssueResult(issue_result) }>
                              <div>{issue_result.number}</div>
                              <div>{issue_result.subject}</div>
                              <div>{issue_result.status_name}</div>
@@ -59,12 +84,13 @@ class SearchBox extends Component {
     }
 
     renderSprintResults(name, sprint_results) {
+        const that = this
         return (
             <div className="search-box__sprint_results">
                 <h2>{name}</h2>
-                {map(sprint_results, function(sprint_result) {
+                {map(sprint_results, function(sprint_result, index) {
                      return (
-                         <div className="search-box__search-result">
+                         <div key={index} className="search-box__search-result" onClick={() => that.onClickSprintResult(sprint_result) }>
                              <div>{sprint_result.number}</div>
                              <div>{sprint_result.name}</div>
                              <div>{sprint_result.status_name}</div>
@@ -79,12 +105,13 @@ class SearchBox extends Component {
     }
 
     renderProjectResults(name, project_results) {
+        const that = this
         return (
             <div className="search-box__project_results">
                 <h2>{name}</h2>
-                {map(project_results, function(project_result) {
+                {map(project_results, function(project_result, index) {
                      return (
-                         <div className="search-box__search-result">
+                         <div key={index} className="search-box__search-result" onClick={() => that.onClickProjectResult(project_result) }>
                              <div>{project_result.name}</div>
                              <hr/>
                          </div>
@@ -110,7 +137,7 @@ class SearchBox extends Component {
 
     render() {
 
-        const { is_loading, results } = this.props
+        const { is_loading, results, show_results } = this.props
 
         return (
             <div className="search-box">
@@ -124,7 +151,7 @@ class SearchBox extends Component {
                   </div>
                 }
 
-                { results && 
+                { show_results && results && 
                   <div className="search-box__search-results--loaded">
                       { this.renderResults(results) }
                   </div>
@@ -138,13 +165,13 @@ class SearchBox extends Component {
 function mapStateToProps(state, props) {
     const filter_key = FILTER_KEY__GLOBAL
     const filter = getFilter(state, filter_key)
-
     const results = filter.results
     const term = filter.term || null
 
     return {
         filter_key: filter_key,
         results: results,
+        show_results: filter.is_visible,
         term: term,
         is_loading: results && results.is_loading
     }

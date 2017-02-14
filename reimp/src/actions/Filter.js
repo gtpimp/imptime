@@ -6,6 +6,8 @@ export const CLEAR_FILTER = 'CLEAR_FILTER'
 export const ANNOUNCE_FILTER_LOADING = 'ANNOUNCE_FILTER_LOADING'
 export const ANNOUNCE_FILTER_LOADED = 'ANNOUNCE_FILTER_LOADED'
 export const ANNOUNCE_FILTER_LOAD_FAILED = 'ANNOUNCE_FILTER_LOAD_FAILED'
+export const CHANGE_FILTER_DISPLAY_STATE = 'CHANGE_FILTER_DISPLAY_STATE'
+
 import {
     PAGE_KEY__PROJECTS_PAGE,
     PAGE_KEY__SPRINTS_PAGE,
@@ -23,6 +25,22 @@ export function initFilter(filter_key) {
         type: INIT_FILTER,
         filter_key: filter_key,
         url: url
+    }
+}
+
+export function showResults(filter_key) {
+    return {
+        type: CHANGE_FILTER_DISPLAY_STATE,
+        filter_key: filter_key,
+        is_visible: true
+    }
+}
+
+export function hideResults(filter_key) {
+    return {
+        type: CHANGE_FILTER_DISPLAY_STATE,
+        filter_key: filter_key,
+        is_visible: false
     }
 }
 

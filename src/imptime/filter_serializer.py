@@ -17,12 +17,12 @@ class BaseResultSerializer(BaseSerializer):
 
     
 class ProjectResultSerializer(BaseResultSerializer):
-    id = serializers.CharField()
+    project_id = serializers.CharField(source='id')
     name = serializers.CharField()
     
 
 class SprintResultSerializer(BaseResultSerializer):
-    id = serializers.CharField()
+    sprint_id = serializers.CharField(source='id')
     number = serializers.CharField()
     name = serializers.CharField()
     status_name = serializers.CharField()
@@ -36,7 +36,7 @@ class SprintResultSerializer(BaseResultSerializer):
 
     
 class IssueResultSerializer(BaseResultSerializer):
-    id = serializers.CharField()
+    issue_id = serializers.CharField(source='id')
     subject = serializers.CharField()
     status_name = serializers.CharField(source='status2_name')
     assigned_to_quick_name = serializers.CharField()

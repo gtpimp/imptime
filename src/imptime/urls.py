@@ -36,7 +36,7 @@ router.register(r'issue', issue_api.IssueViewSet,
 router.register(r'user', user_api.UserViewSet,
                 base_name='user')
 router.register(r'filter', filter_api.FilterViewSet,
-                base_name='filter')
+                base_name='filter') 
 
 urlpatterns = [
     url(r'^$', views.home, name='home'),

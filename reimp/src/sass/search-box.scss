@@ -52,10 +52,11 @@
     padding: 20px;
     background: #ffffff;
     opacity: 1;
-    max-height: 80%;
+    min-height: 70%;
+    min-width: 80%;
     overflow: auto;
     font-size: 10px;
-    top: 200px;
+    top: 100px;
 }
 
 .search-box__search-result:hover {

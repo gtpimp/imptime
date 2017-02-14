@@ -3,7 +3,8 @@ import {
     CLEAR_FILTER,
     ANNOUNCE_FILTER_LOADING,
     ANNOUNCE_FILTER_LOADED,
-    ANNOUNCE_FILTER_LOAD_FAILED
+    ANNOUNCE_FILTER_LOAD_FAILED,
+    CHANGE_FILTER_DISPLAY_STATE
 } from '../actions/Filter.js'
 import { setErrorMessage } from '../actions/Error'
 
@@ -40,6 +41,14 @@ export default function filter(state=initial_state, action) {
                 results: null,
                 is_loading: false,
                 error: null
+	    })
+	    return state_copy
+
+        case CHANGE_FILTER_DISPLAY_STATE:
+            state_copy = Object.assign({}, state)
+            l = Object.assign({}, filter_template, state_copy[action.filter_key] || {})
+	    state_copy[action.filter_key] = Object.assign({}, l, {
+                is_visible: action.is_visible
 	    })
 	    return state_copy
             
