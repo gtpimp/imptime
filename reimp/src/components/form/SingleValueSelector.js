@@ -23,13 +23,14 @@ export class SingleValueSelector extends Component {
     render_suggestions() {
         const {options} = this.props
         const filter = (this.state || {}).filter || undefined
+        const that = this
 
         const suggestions = options.map( function(option, index) {
             const filterable_label = (index + 1) + ". " + option.label
             if ( filter === undefined || filter.length == 0 || filterable_label.indexOf(filter) > -1) {
                 return (
                     <div className="single-value-selector__suggestion" key={'suggestion_' + option.value}
-                         onClick={() => this.onSelected(option)}>
+                         onClick={() => that.onSelected(option)}>
                         <div className="single-value-selector__suggestion-number">
                             {(index + 1)}.
                         </div>
