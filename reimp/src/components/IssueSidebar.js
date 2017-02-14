@@ -37,71 +37,75 @@ class IssueSidebar extends Component {
 
         const {issue, comments, attachments} = this.props
 
-        if (issue && issue.id) return (
+        if (issue && issue.id) {
+            return (
 
-            <Sidebar>
-                <PropertyStack>
-                { issue.id &&
+                <Sidebar>
+                    <PropertyStack>
+                        { issue.id &&
 
-                  <div>
+                          <div>
 
-                      <div className="property-stack-component">
-                          <div className="property-stack-component__content">
-                              <div className="text-component--readonly">
-                                  #{issue.number}
+                              <div className="property-stack-component">
+                                  <div className="property-stack-component__content">
+                                      <div className="text-component--readonly">
+                                          #{issue.number}
+                                      </div>
+                                  </div>
                               </div>
+                              
+                              <div>
+                                  <EditableIssueTitle issue_id={issue.id} />
+                              </div>
+
+                              <div>
+                                  <EditableIssueDescription issue_id={issue.id} />
+                              </div>
+
+                              <div>
+                                  Assigned to:
+                                  <EditableIssueAssignedUser issue_ids={[issue.id]} project_id={issue.project_id} />
+                              </div>
+
+                              <div>
+                                  Status:
+                                  <EditableIssueStatus issue_ids={[issue.id]} project_id={issue.project_id} />
+                              </div>
+
+                              <div>
+                                  Sprint:
+                                  <EditableIssueInSprint issue_ids={[issue.id]} />
+                              </div>
+
+                              <div>
+                                  Attachments:
+                                  { map(attachments, function(attachment, index) {
+                                        return <EditableIssueAttachment key={attachment.id} issue_id={issue.id} attachment_id={attachment.id} />
+                                    })
+                                  }
+                                  <EditableIssueAttachment issue_id={issue.id} attachment_id={null} />
+                              </div>
+
+                              <div>
+                                  Comments:
+                                  { map(comments, function(comment, index) {
+                                        return <EditableIssueComment key={comment.id} issue_id={issue.id} comment_id={comment.id} />
+                                    })
+                                  }
+                                  <EditableIssueComment issue_id={issue.id} comment_id={null} />
+                              </div>
+                              <div>
+                                  <button onClick={this.openEstimateEditor}>Estimates</button>
+                              </div>
+                              
                           </div>
-                      </div>
-                      
-                      <div>
-                          <EditableIssueTitle issue_id={issue.id} />
-                      </div>
-
-                      <div>
-                          <EditableIssueDescription issue_id={issue.id} />
-                      </div>
-
-                      <div>
-                          Assigned to:
-                          <EditableIssueAssignedUser issue_ids={[issue.id]} project_id={issue.project_id} />
-                      </div>
-
-                      <div>
-                          Status:
-                          <EditableIssueStatus issue_ids={[issue.id]} project_id={issue.project_id} />
-                      </div>
-
-                      <div>
-                          Sprint:
-                          <EditableIssueInSprint issue_ids={[issue.id]} />
-                      </div>
-
-                      <div>
-                          Attachments:
-                          { map(attachments, function(attachment, index) {
-                                return <EditableIssueAttachment key={attachment.id} issue_id={issue.id} attachment_id={attachment.id} />
-                            })
-                          }
-                          <EditableIssueAttachment issue_id={issue.id} attachment_id={null} />
-                      </div>
-
-                      <div>
-                          Comments:
-                          { map(comments, function(comment, index) {
-                                return <EditableIssueComment key={comment.id} issue_id={issue.id} comment_id={comment.id} />
-                            })
-                          }
-                          <EditableIssueComment issue_id={issue.id} comment_id={null} />
-                      </div>
-                      <div>
-                          <button onClick={this.openEstimateEditor}>Estimates</button>
-                      </div>
-                      
-                  </div>
-                }
-                </PropertyStack>
-            </Sidebar>
-        )
+                        }
+                    </PropertyStack>
+                </Sidebar>
+            )
+        } else {
+            return null
+        }
     }
 }
 

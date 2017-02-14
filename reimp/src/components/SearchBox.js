@@ -17,6 +17,8 @@ class SearchBox extends Component {
         this.onClickIssueResult = this.onClickIssueResult.bind(this)
         this.onClickSprintResult = this.onClickSprintResult.bind(this)
         this.onClickProjectResult = this.onClickProjectResult.bind(this)
+        this.onShowResults = this.onShowResults.bind(this)
+        this.keyDown = this.keyDown.bind(this)
     }
 
     componentDidMount() {
@@ -45,6 +47,18 @@ class SearchBox extends Component {
     onHideResults() {
         const { dispatch, filter_key } = this.props
         dispatch(hideResults(filter_key))
+    }
+
+    onShowResults() {
+        const { dispatch, filter_key } = this.props
+        dispatch(showResults(filter_key))
+    }
+
+    keyDown(event) {
+        if (event.keyCode === 27) {
+            event.preventDefault()
+            this.onHideResults()
+        }
     }
 
     onClickProjectResult(res) {
@@ -124,7 +138,7 @@ class SearchBox extends Component {
     
     renderResults(results) {
         return (
-            <div className="search-box__results_by_category">
+            <div className="search-box__results_by_category" onKeyDown={this.keyDown}>
                 { results.sprints_within_active_projects.length > 0 && this.renderSprintResults("Sprint results within active projects", results.sprints_within_active_projects) }
                 { results.issues_within_active_sprints.length > 0 && this.renderIssueResults("Issue results within active sprints", results.issues_within_active_sprints) }
                 { results.issues_within_active_issues.length > 0 && this.renderIssueResults("Issue results within active issues", results.issues_within_active_issues) }
@@ -140,10 +154,12 @@ class SearchBox extends Component {
         const { is_loading, results, show_results } = this.props
 
         return (
-            <div className="search-box">
+            <div className="search-box"  onKeyDown={this.keyDown}>
                 <div className="search-box__component search-box__icon"><i className="material-icons">search</i></div>
                 <input ref={(ref) => this.filter_term_el = ref} className="search-box__textfield" type="text" placeholder="Search Imptime" onChange={this.onFilterTermChanged}/>
-                <div className="search-box__component search-box__icon"><i className="material-icons">arrow_drop_down</i></div>
+                <div className="search-box__component search-box__icon" onClick={this.onShowResults}>
+                    <i className="material-icons">arrow_drop_down</i>
+                </div>
 
                 { is_loading &&
                   <div className="search-box__search-results--loading">

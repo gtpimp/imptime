@@ -1,10 +1,12 @@
 import React, {Component} from 'react'
 import {connect} from 'react-redux'
 import IssueSidebar from '../components/IssueSidebar'
+import {browserHistory} from 'react-router'
 import NewIssueSidebar from '../components/NewIssueSidebar'
 import MultipleIssueSidebar from '../components/MultipleIssueSidebar'
 import IssueList from '../components/IssueList'
 import { setBreadcrumbs } from '../actions/Breadcrumbs'
+import includes from 'lodash/includes'
 import {
     LIST_KEY__ISSUE_LIST,
     PAGE_KEY__ISSUES_PAGE
@@ -53,11 +55,18 @@ class IssuesPage extends Component {
     }
 
     refresh(sprint, project) {
-        const {dispatch} = this.props
+        const {dispatch, default_issue_id, selected_issue_ids} = this.props
         if ( sprint.id ) {
             dispatch(update_list_filter(LIST_KEY__ISSUE_LIST, {sprint_id:sprint.id}))
             dispatch(select_sprints(PAGE_KEY__ISSUES_PAGE, [sprint.id]))
             dispatch(invalidateList(LIST_KEY__ISSUE_LIST))
+
+            const default_issue_id = this.props.params.issueId 
+            if ( default_issue_id != undefined && !includes(selected_issue_ids, default_issue_id) ) {
+                dispatch(selectItems(LIST_KEY__ISSUE_LIST, [default_issue_id]))
+                dispatch(select_issues(PAGE_KEY__ISSUES_PAGE, [default_issue_id]))
+            }
+            
             dispatch(setBreadcrumbs([ {to: '/projects', label: 'All Projects'},
                                       {to: '/projects/'+project.id, label: project.name},
                                       {to: '/projects/'+project.id+'/sprints', label: 'All Sprints'},
@@ -68,9 +77,13 @@ class IssuesPage extends Component {
     }
 
     onSelectIssues(issue_ids) {
-        const { dispatch } = this.props
+        const { dispatch, project_id, sprint_id } = this.props
         dispatch(selectItems(LIST_KEY__ISSUE_LIST, issue_ids))
         dispatch(select_issues(PAGE_KEY__ISSUES_PAGE, issue_ids))
+
+        if ( issue_ids && issue_ids.length === 1 ) {
+            browserHistory.push('/projects/'+project_id+'/sprints/'+sprint_id+'/issues/'+issue_ids[0]);
+        }
     }
 
     render() {
@@ -134,7 +147,7 @@ function mapStateToProps(state, props) {
         selected_issue_ids: selected_issue_ids,
         is_single_selection: selected_items.length === 1,
         is_multiple_selection: selected_items.length > 1,
-        is_creating_issue: is_creating_issue        
+        is_creating_issue: is_creating_issue
     }
 }
 
