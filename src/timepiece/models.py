@@ -439,8 +439,14 @@ class BusinessPermissions(models.Model):
     
     @classmethod
     def _by_user(self, business):
+        # to be deprecated
         bps = BusinessPermissions.objects.filter(business=business)
         return dict( [ (bp.user.id, bp) for bp in bps ] )
+
+    @classmethod
+    def by_user(self, business):
+        # to be deprecated
+        return self.by_user(business)
 
     @classmethod
     def ensure_user_belongs_to_business(self, user, business):
@@ -3654,7 +3660,7 @@ class Issue(models.Model):
             if user_issue_points and user_issue_points.points:
                 return user_issue_points.points, self.assigned_to
 
-        for user_id, bp in BusinessPermissions.by_user(self.project.business).items():
+        for user_id, bp in BusinessPermissions._by_user(self.project.business).items():
             if bp.has_estimate_own_points:
                 user = User.objects.get(pk=user_id)
                 user_issue_points = self.get_user_issue_points(user)

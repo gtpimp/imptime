@@ -53,7 +53,7 @@ class IssueSerializer(BaseSerializer):
         issue.group_children_ids = issue.group_children.all().values_list('id', flat=True)
         issue.my_actual_hours = sum([float(x.hours or ((timezone.now()-x.start_time).seconds/3600.0)) for x in issue.my_entries])
         issue.am_i_clocked_in = len(issue.my_clocked_in_entries)>0
-        issue.currently_clocked_in_by_user_ids = [x.id for x in issue.currently_clocked_in_by]
+        issue.currently_clocked_in_by_user_ids = [x.id for x in issue.currently_clocked_in_by()]
 
         d = super(IssueSerializer, self).to_representation(
             issue, *args, **kwargs)
