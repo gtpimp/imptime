@@ -3,6 +3,7 @@ export const SET_PAGE_TOOLBARS = 'SET_PAGE_TOOLBARS'
 export const UPDATE_PAGE_SIDEBAR = 'UPDATE_PAGE_SIDEBAR'
 export const UPDATE_PAGE_SETTINGS = 'UPDATE_PAGE_SETTINGS'
 export const UPDATE_PAGE_SELECTION = 'UPDATE_PAGE_SELECTION'
+export const SET_ITEMS_FLAG = 'SET_ITEMS_FLAG'
 
 export function initList(page_key) {
     return {
@@ -72,4 +73,14 @@ export function get_selected_sprint_ids(state, page_key) {
 
 export function get_selected_issue_ids(state, page_key) {
     return (((state ||{}).page || {})[page_key] || {}).issue_ids || []
+}
+
+export function setItemFlag(page_key, selected_ids, flag_name, flag_value) {
+    return {
+        type: SET_ITEMS_FLAG,
+        page_key: page_key,
+        selected_ids: selected_ids,
+        flag_name: flag_name,
+        flag_value: flag_value
+    }
 }
