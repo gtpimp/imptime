@@ -118,14 +118,15 @@ class IssueViewSet(BaseViewSet):
                         old_description, issue.description)
                 elif field_name == "status_name":
                     old_status = issue.status2
-                    new_status = IssueStatus.objects.get_or_create(business_id=issue.project.business_id, name=new_value)[0]
+                    new_status = IssueStatus.objects.get_or_create(business_id=issue.project.business_id,
+                                                                   name=new_value)[0]
                     issue.status2_id = new_status.id
                     IssueHistory.add_history(
                         self.request.user, issue, "changed status",
-                        old_status.name, new_status.name)
+                        old_status.name if old_status else '',
+                        new_status.name)
                 elif field_name == "feature_name":
-                    old_feature_name = issue.feature.name \
-                      if issue.feature else "none"
+                    old_feature_name = issue.feature.name if issue.feature else "none"
                     issue.feature = Feature.objects.get_or_create(
                         business=issue.project.business, name=new_value)[0]
                     IssueHistory.add_history(

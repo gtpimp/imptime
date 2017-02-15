@@ -1,5 +1,6 @@
 import React, {Component} from 'react'
 import {connect} from 'react-redux'
+import {browserHistory} from 'react-router'
 import ProjectList from '../components/ProjectList'
 import ProjectSidebar from '../components/ProjectSidebar'
 import NewProjectSidebar from '../components/NewProjectSidebar'
@@ -36,8 +37,12 @@ class ProjectsPage extends Component {
 
     onSelectProjects(project_ids) {
         const { dispatch } = this.props
-        dispatch(selectItems(LIST_KEY__PROJECT_LIST, project_ids))
-        dispatch(select_projects(PAGE_KEY__PROJECTS_PAGE, project_ids))
+        // dispatch(selectItems(LIST_KEY__PROJECT_LIST, project_ids))
+        if ( project_ids && project_ids.length === 1 ) {
+            browserHistory.push('/projects/' + project_ids[0] + '/sprints');
+        } else {
+            dispatch(select_projects(PAGE_KEY__PROJECTS_PAGE, project_ids))
+        }
     }
             
     render() {

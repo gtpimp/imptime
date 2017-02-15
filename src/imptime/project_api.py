@@ -7,6 +7,8 @@ import json
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.decorators import permission_classes
 from timepiece.models import Business as Project
+from timepiece.models import BusinessPermissions
+
 
 logger = logging.getLogger(__name__)
 
@@ -79,8 +81,12 @@ class ProjectViewSet(BaseViewSet):
             context = {}
             params = request.data['project']
             project = Project.objects.create(
-                impd_client=request.user.profile.impd_client,
+                created_by=request.user,
                 name=params['name'])
+
+            BusinessPermissions.ensure_user_belongs_to_business(user=request.user,
+                                                                business=project) #sic
+
             context['project'] = {'name': project.name}
             data = {'status': 'success', 'payload': context}
 

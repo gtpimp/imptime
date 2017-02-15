@@ -145,6 +145,7 @@ class Business(models.Model):
     email = models.EmailField(blank=True)
     description = models.TextField(blank=True)
     created = models.DateTimeField(auto_now_add=True)
+    created_by = models.ForeignKey(User, related_name='businesses_created_by', null=True, blank=True)
     modified = models.DateTimeField(auto_now=True)
     notes = models.TextField(blank=True)
     external_id = models.CharField(max_length=32, blank=True)
@@ -158,7 +159,7 @@ class Business(models.Model):
                                                  ("free", "Free or Equity or Other") ) )
 
     impd_client = models.ForeignKey(Client, null=True, blank=False, related_name='businesses')
-    point_person = models.ForeignKey(User, limit_choices_to={'is_staff': True}, null=True)  
+    point_person = models.ForeignKey(User, limit_choices_to={'is_staff': True}, null=True)
     
     def model_to_dict(self):
         d = model_to_dict_with_date_support(self)
@@ -338,7 +339,7 @@ class Business(models.Model):
         businesses = Business.objects.annotate(models.Min("new_business_projects__entries__end_time")).order_by("-new_business_projects__entries__end_time__min")
         business_ids = []
         for business in businesses:
-            if BusinessPermissions.objects.get_or_create(business=business,user=user)[0].has_view_project_card:
+            if BusinessPermissions.objects.get_or_create(business=business,user=user)[0].is_active_member_of_business:
                 business_ids.append(business.id)
         businesses = businesses.filter(id__in=business_ids)
         return businesses
@@ -387,6 +388,10 @@ class BusinessPermissions(models.Model):
     business = models.ForeignKey(Business, related_name='business_permissions', db_index=True)
     user = models.ForeignKey(User, related_name='business_permissions', db_index=True)
 
+    can_invite_users = models.BooleanField(default=False, verbose_name="Can Invite Users")
+    can_set_user_permissions = models.BooleanField(default=False, verbose_name="Can Set User Permissions")
+    is_active_member_of_business = models.BooleanField(default=True, verbose_name="Is An Active Member of This Business")
+    
     can_view_project_card = models.BooleanField(default=True, verbose_name="Can View Sprint Card")
     can_edit_issues = models.BooleanField(default=True, verbose_name="Can Edit Issues")
     can_view_issues = models.BooleanField(default=True, verbose_name="Can View Issues")
@@ -398,6 +403,7 @@ class BusinessPermissions(models.Model):
     can_add_issue_comment = models.BooleanField(default=True, verbose_name="Can Add Issue Comment")
     can_edit_subject = models.BooleanField(default=True, verbose_name="Can Edit Subject")
     can_edit_feature = models.BooleanField(default=True, verbose_name="Can Edit Feature")
+    can_edit_tags = models.BooleanField(default=True, verbose_name="Can Edit Tags")
     can_create_sprint = models.BooleanField(default=True, verbose_name="Can Create Sprint")
     can_assign_user = models.BooleanField(default=True, verbose_name="Can Assign User")
     can_be_scheduled = models.BooleanField(default=False, verbose_name="Can Be Scheduled")
@@ -413,7 +419,6 @@ class BusinessPermissions(models.Model):
     can_do_dev_checklist = models.BooleanField(default=False, verbose_name="Do dev checklist")
     can_do_traffic_checklist = models.BooleanField(default=False, verbose_name="Traffic checklist")
     can_do_finance_checklist = models.BooleanField(default=False, verbose_name="Finance checklist")
-    
 
     can_edit_permissions = models.BooleanField(default=False, verbose_name="Can Edit Permissions")
     can_toggle_graphs = models.BooleanField(default=False, verbose_name="Can Toggle Graphs")
@@ -433,20 +438,24 @@ class BusinessPermissions(models.Model):
     can_edit_calendar = models.BooleanField(default=False, verbose_name="Can Edit Calendar")
     
     @classmethod
-    def by_user(self, business):
+    def _by_user(self, business):
         bps = BusinessPermissions.objects.filter(business=business)
         return dict( [ (bp.user.id, bp) for bp in bps ] )
 
     @classmethod
+    def ensure_user_belongs_to_business(self, user, business):
+        return BusinessPermissions.objects.get_or_create(business=business, user=user)[0]
+    
+    @classmethod
     def for_user(self, user, business):
-        return BusinessPermissions.objects.get_or_create(business=business,user=user)[0]
+        return user.business_permissions.filter(business=business).first()
 
     @classmethod
     def viewable_users(self, user):
         """ returns all users that this user could know about, based on which businesses they have in common """
         business_ids = self.objects.filter(user=user).values_list('id', flat=True)
         return User.objects.filter(business_permissions__business_id__in=business_ids,
-                                   business_permissions__can_view_project_card=True)
+                                   business_permissions__is_active_member_of_business=True)
 
     @classmethod
     def viewable_users_for_business(self, logged_in_user, business_id):
@@ -456,7 +465,7 @@ class BusinessPermissions(models.Model):
     @classmethod
     def get_users_who_can_capture_time(self):
         """ any user who is allowed to estimate on at least one project """
-        users = User.objects.filter(is_active=True, business_permissions__can_view_project_card=True,
+        users = User.objects.filter(is_active=True, business_permissions__is_active_member_of_business=True,
                                     business_permissions__business__new_business_projects__status2='in dev').distinct()
         return users
     
@@ -464,6 +473,18 @@ class BusinessPermissions(models.Model):
     def has_view_project_card(self):
         return self.user.is_superuser or self.can_view_project_card or self.user.has_perm('timepiece.belongs_to_all_projects')
 
+    @property
+    def has_invite_users(self):
+        return self.user.is_superuser or self.can_invite_users or self.user.has_perm('timepiece.belongs_to_all_projects')
+
+    @property
+    def has_set_user_permissions(self):
+        return self.user.is_superuser or self.can_set_user_permissions or self.user.has_perm('timepiece.belongs_to_all_projects')
+    
+    @property
+    def has_is_active_member_of_business(self):
+        return self.user.is_superuser or self.can_set_user_permissions or self.user.has_perm('timepiece.belongs_to_all_projects')
+    
     @property
     def has_edit_permissions(self):
         return self.user.is_superuser or self.can_edit_permissions or self.user.has_perm('timepiece.belongs_to_all_projects')
@@ -570,6 +591,10 @@ class BusinessPermissions(models.Model):
         return self.user.is_superuser or self.can_edit_feature or self.user.has_perm('timepiece.belongs_to_all_projects')
 
     @property
+    def has_edit_tags(self):
+        return self.user.is_superuser or self.can_edit_tags or self.user.has_perm('timepiece.belongs_to_all_projects')
+
+    @property
     def has_create_sprint(self):
         return self.user.is_superuser or self.can_create_sprint or self.user.has_perm('timepiece.belongs_to_all_projects')
 
@@ -647,7 +672,7 @@ class ProjectQuerySet(QuerySet):
         if user.is_superuser or user.has_perm('timepiece.belongs_to_all_projects'):
             return self
 
-        return self.filter(business__business_permissions__user=user, business__business_permissions__can_view_project_card=True)
+        return self.filter(business__business_permissions__user=user, business__business_permissions__is_active_member_of_business=True)
 
     def filter_active(self):
         return self.filter(status2__in=Project.active_states())
@@ -862,7 +887,7 @@ class Project(models.Model):
     def recalc_secondary_estimates(self):
         """ these are estimates based on the developer estimates, for management and testing """
 
-        project_users = BusinessPermissions.by_user(self.business)
+        project_users = BusinessPermissions._by_user(self.business)
         manager_users = []
         tester_users = []
         user_velocities = {}
@@ -1653,7 +1678,7 @@ class Project(models.Model):
 
         business_users = BusinessPermissions.by_user(self.business)
         for user_id, bp in business_users.items():
-            if not bp.can_view_project_card:
+            if not bp.is_active_member_of_business:
                 continue
 
             if user_id not in user_totals:

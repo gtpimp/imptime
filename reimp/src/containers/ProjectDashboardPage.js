@@ -21,7 +21,6 @@ class ProjectDashboardPage extends Component {
     componentDidMount() {
         const {dispatch, project_id} = this.props
         dispatch(set_toolbars(PAGE_KEY__PROJECT_DASHBOARD_PAGE, ['project-dashboard']))
-        dispatch(ensureProjectsLoaded([project_id]))
         this.refresh(project_id)
     }
 
@@ -30,7 +29,6 @@ class ProjectDashboardPage extends Component {
         if ( new_props.project_id !== project_id || new_props.project.id !== this.props.project.id ) {
             this.refresh(new_props.project_id)
         }
-        dispatch(ensureProjectsLoaded([project_id]))
     }
     
     refresh(project_id) {
@@ -38,6 +36,7 @@ class ProjectDashboardPage extends Component {
         dispatch(setBreadcrumbs([ {to: '/projects', label: 'All Projects'},
                                   {to: '/projects/'+project_id, label: project.name} ]))
         dispatch(select_projects(PAGE_KEY__PROJECT_DASHBOARD_PAGE, [project_id]))
+        dispatch(ensureProjectsLoaded([project_id]))
     }
 
     navigateToSprintsPage() {
@@ -47,11 +46,11 @@ class ProjectDashboardPage extends Component {
 
     render() {
 
-        const { project_id } = this.props
+        const { project } = this.props
         
         return (
             <div>
-                Project {project_id}
+                Project {project.name}
 
                 <pre>
                     I am your project dashboard
