@@ -8,7 +8,10 @@ import {
 } from '../actions/ItemListKeyRegistry'
 import {
     set_toolbars,
-    select_projects
+    select_projects,
+    setPageFlag,
+    clearPageFlag,
+    getPageFlag
 } from '../actions/Page'
 
 class ProjectDashboardPage extends Component {
@@ -16,6 +19,8 @@ class ProjectDashboardPage extends Component {
     constructor(props) {
         super(props)
         this.navigateToSprintsPage = this.navigateToSprintsPage.bind(this)
+        this.onStartInviteUser = this.onStartInviteUser.bind(this)
+        this.onCancelInviteUser = this.onCancelInviteUser.bind(this)
     }
 
     componentDidMount() {
@@ -44,19 +49,45 @@ class ProjectDashboardPage extends Component {
         browserHistory.push('/projects/'+project_id+'/sprints');
     }
 
+    onStartInviteUser() {
+        const { dispatch } = this.props
+        dispatch(setPageFlag(PAGE_KEY__PROJECT_DASHBOARD_PAGE, 'inviting_user'))
+    }
+
+    onCancelInviteUser() {
+        const { dispatch } = this.props
+        dispatch(clearPageFlag(PAGE_KEY__PROJECT_DASHBOARD_PAGE, 'inviting_user'))
+    }
+
+    renderInviteUser() {
+        const { project } = this.props
+
+        return (
+            <div>
+                " Come on up"
+                <button onClick={this.onCancelInviteUser}>Cancel</button>
+            </div>
+        )
+    }
+    
     render() {
 
-        const { project } = this.props
+        const { project, is_inviting_user } = this.props
         
         return (
             <div>
                 Project {project.name}
 
-                <pre>
-                    I am your project dashboard
-                </pre>
-                
-                <button onClick={this.navigateToSprintsPage}>Take me to your sprints</button>
+                { is_inviting_user && this.renderInviteUser() }
+
+                { ! is_inviting_user &&
+                  <div>
+                      
+                      <button onClick={this.onStartInviteUser}>Invite somebody to this project</button>
+                      <br/>
+                      <button onClick={this.navigateToSprintsPage}>Take me to your sprints</button>
+                  </div>
+                }
             </div>
         )
     }
@@ -65,9 +96,11 @@ class ProjectDashboardPage extends Component {
 function mapStateToProps(state, props) {
     const project_id = props.params.projectId
     const project = getProject(state, project_id)
+    const is_inviting_user = getPageFlag(state, PAGE_KEY__PROJECT_DASHBOARD_PAGE, 'inviting_user')
     return {
         project_id: project_id,
-        project: project || {}
+        project: project || {},
+        is_inviting_user: is_inviting_user
     }
 }
 

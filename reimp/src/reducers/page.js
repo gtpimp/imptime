@@ -6,7 +6,7 @@ import {
     UPDATE_PAGE_SIDEBAR,
     UPDATE_PAGE_SETTINGS,
     UPDATE_PAGE_SELECTION,
-    SET_ITEMS_FLAG,
+    SET_PAGE_FLAG,
 } from '../actions/Page.js'
 import { setErrorMessage } from '../actions/Error'
 
@@ -64,22 +64,13 @@ export default function page(state = initialState, action) {
 	    })
             return state_copy;
 
-        case SET_ITEMS_FLAG:
+        case SET_PAGE_FLAG:
             state_copy = Object.assign({}, state)
             l = Object.assign({}, page_template, state_copy[action.page_key] || {})
-
-            const flag_name = "flag_" + action.flag_name
-            const flag_value = action.flag_value
-            
-            var flag_ids = l[flag_name] || []
-            if ( flag_value === false ) {
-                flag_ids = difference(flag_ids, action.selected_ids)
-            } else {
-                flag_ids = union(flag_ids, action.selected_ids)
-            }
-            state_copy[action.page_key] = Object.assign({}, l)
-            state_copy[action.page_key][flag_name] = flag_ids
-	    return state_copy
+            const flag_d = {}
+            flag_d[action.flag_name] = action.flag_value
+            state_copy[action.page_key] = Object.assign({}, l, flag_d)
+            return state_copy
             
         default:
             return state
