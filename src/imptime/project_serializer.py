@@ -29,9 +29,9 @@ class ProjectSerializer(BaseSerializer):
         project.feature_names = \
             Feature.objects.filter(business=project).order_by("name")  # sic
         project.allowed_issue_status_names = \
-            [x.name for x in IssueStatus.objects.all().filter(business=project).order_by("name")]
+            [x for x in IssueStatus.objects.all().filter(business=project).order_by("name").values_list('name', flat=True)]
         project.allowed_sprint_status_names = \
-            [x.name for x in SprintStatus.objects.all().filter(business=project).order_by("name")]
+            [x for x in SprintStatus.objects.all().filter(business=project).order_by("name").values_list('name', flat=True)]
         
         return super(ProjectSerializer, self).to_representation(
             project, *args, **kwargs)
