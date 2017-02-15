@@ -11,7 +11,6 @@ export const INVALIDATE_USERS = 'INVALIDATE_USERS'
 export const ANNOUNCE_SAVING_INVITE = 'ANNOUNCE_SAVING_INVITE'
 export const ANNOUNCE_SAVED_INVITE = 'ANNOUNCE_SAVED_INVITE'
 export const ANNOUNCE_SAVE_INVITE_FAILED = 'ANNOUNCE_SAVE_INVITE_FAILED'
-export const CANCEL_INVITING_USER = 'CANCEL_INVITING_USER'
 
 export function invalidateUsers(user_ids_to_invalidate) {
     return {
@@ -114,6 +113,14 @@ export function getUser(state, user_id) {
     return ((state.user || {}).items_by_id || {})[user_id] || null
 }
 
+export function getLoggedInUser(state) {
+    const user_id = logged_in_user().user_id
+    if ( ! user_id ) {
+        return null
+    }
+    return getUser(state, user_id) || null
+}
+
 export function getUsers(state, user_ids) {
     const user_objs = state.user
     const items_by_id = (user_objs && user_objs.items_by_id) || {}
@@ -127,11 +134,7 @@ export function getUsers(state, user_ids) {
 }
 
 export function has_permission(state, permission_name) {
-    const user_id = logged_in_user().user_id
-    if ( ! user_id ) {
-        return false
-    }
-    const user = getUser(state, user_id)
+    const user = getLoggedInUser(state)
     if ( ! user ) {
         return false
     }
@@ -139,19 +142,14 @@ export function has_permission(state, permission_name) {
     return permissions[permission_name] || false
 }
 
-export function cancelInviteUser() {
-    return {
-	type: CANCEL_INVITING_USER
-    }
-}
-
-export function saveInviteUser(project_id, user_id) {
+export function saveInviteUser(project_id, user_id, user_email) {
 
     return (dispatch, getState) => {
 	const state = getState()
         const API_BASE_URL = state.settings.configured && state.settings.API_BASE_URL
 	dispatch(announceSavingInvite())
-	let data = {user_id: user_id}
+	let data = {user_id: user_id,
+                    user_email: user_email}
 	
 	return impfetch(API_BASE_URL+"imp/project/"+project_id+"/invite/", dispatch,
 			{method: "POST",

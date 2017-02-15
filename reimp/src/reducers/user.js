@@ -12,8 +12,7 @@ import {
     INVALIDATE_USERS,
     ANNOUNCE_SAVING_INVITE,
     ANNOUNCE_SAVED_INVITE,
-    ANNOUNCE_SAVE_INVITE_FAILED,
-    CANCEL_INVITING_USER
+    ANNOUNCE_SAVE_INVITE_FAILED
 } from '../actions/Users.js'
 
 const initialState = {
@@ -66,11 +65,6 @@ export default function user(state = initialState, action) {
         case ANNOUNCE_SAVE_INVITE_FAILED:
             setErrorMessage("Failed to load users: " + action.error_message)
             return state;
-        case CANCEL_INVITING_USER:
-            return Object.assign({}, state, {
-		inviting_user_id: null,
-                inviting_project_id: null
-	    })
         default:
             return state
     }

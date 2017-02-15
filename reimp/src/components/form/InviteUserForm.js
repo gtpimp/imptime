@@ -2,8 +2,7 @@ import React, {Component} from 'react'
 import {connect} from 'react-redux'
 import {reduxForm, Field} from 'redux-form'
 import SelectList from 'react-widgets/lib/SelectList'
-import { ensureUsersLoaded, getUsers } from '../../actions/Users'
-import { ensureProjectsLoaded, getProject } from '../../actions/Projects'
+import { ensureUsersLoaded, getUsers, getLoggedInUser } from '../../actions/Users'
 import SingleValueSelector from './SingleValueSelector'
 
 class InviteUserForm extends Component {
@@ -23,9 +22,8 @@ class InviteUserForm extends Component {
     }
 
     refresh() {
-        const {dispatch, assignable_user_ids, project_id} = this.props
-        dispatch(ensureProjectsLoaded([project_id]))
-        dispatch(ensureUsersLoaded(assignable_user_ids))
+        const {dispatch, known_user_ids, project_id} = this.props
+        dispatch(ensureUsersLoaded(known_user_ids))
     }
 
     onChangeAndSubmit(e, fieldOnChange) {
@@ -47,14 +45,14 @@ class InviteUserForm extends Component {
     }
 
     render() {
-        const {handleSubmit, assignable_user_options } = this.props
+        const {handleSubmit, known_user_options } = this.props
         return (
             <form onSubmit={handleSubmit}>
                 <Field name='assigned_user'
                        component={this.renderSingleValueSelector}
                        valueField="value"
                        textField="label"
-                       data={assignable_user_options}
+                       data={known_user_options}
                 />
             </form>
         )
@@ -64,24 +62,23 @@ class InviteUserForm extends Component {
 function mapStateToProps(state, props) {
 
     const { project_id, onChange } = props
-    const project = getProject(state, project_id) || {}
-    const assignable_user_ids = project.allowed_user_ids || []
-    const users = getUsers(state, assignable_user_ids)
 
-    const assignable_user_options = users.map(function (user) {
+    const logged_in_user = getLoggedInUser(state)
+    
+    const known_user_ids = logged_in_user.known_user_ids || []
+    const users = getUsers(state, known_user_ids)
+
+    const known_user_options = users.map(function (user) {
         return {value: user.id, label: user.username}
     })
 
     return {
-        initialValues: {assigned_to: props.initial_value},
         enableReinitialize: true,
         onSubmit: onChange,
-        assignable_user_options: assignable_user_options,
-        assignable_user_ids: assignable_user_ids,
-        project_id: project_id,
-        project: project
+        known_user_options: known_user_options,
+        known_user_ids: known_user_ids,
+        project_id: project_id
     }
 }
 
 export default connect(mapStateToProps)(reduxForm({form: 'invite_user_form'})(InviteUserForm))
-

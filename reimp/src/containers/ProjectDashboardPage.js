@@ -3,6 +3,8 @@ import {connect} from 'react-redux'
 import {browserHistory} from 'react-router'
 import { setBreadcrumbs } from '../actions/Breadcrumbs'
 import {ensureProjectsLoaded, getProject} from '../actions/Projects'
+import InviteUserForm from '../components/form/InviteUserForm'
+import Modal from 'react-modal';
 import {
     PAGE_KEY__PROJECT_DASHBOARD_PAGE
 } from '../actions/ItemListKeyRegistry'
@@ -13,6 +15,7 @@ import {
     clearPageFlag,
     getPageFlag
 } from '../actions/Page'
+import { saveInviteUser } from '../actions/Users'
 
 class ProjectDashboardPage extends Component {
 
@@ -21,6 +24,7 @@ class ProjectDashboardPage extends Component {
         this.navigateToSprintsPage = this.navigateToSprintsPage.bind(this)
         this.onStartInviteUser = this.onStartInviteUser.bind(this)
         this.onCancelInviteUser = this.onCancelInviteUser.bind(this)
+        this.onSaveInviteUser = this.onSaveInviteUser.bind(this)
     }
 
     componentDidMount() {
@@ -59,14 +63,28 @@ class ProjectDashboardPage extends Component {
         dispatch(clearPageFlag(PAGE_KEY__PROJECT_DASHBOARD_PAGE, 'inviting_user'))
     }
 
+    onSaveInviteUser(user_id, user_email) {
+        alert("not implemented")
+        const { dispatch } = this.props
+        dispatch(saveInviteUser(PAGE_KEY__PROJECT_DASHBOARD_PAGE, user_id, user_email))
+    }
+
     renderInviteUser() {
         const { project } = this.props
 
+        const that = this
         return (
-            <div>
-                " Come on up"
-                <button onClick={this.onCancelInviteUser}>Cancel</button>
-            </div>
+            <Modal isOpen={true}
+                   className="editable-property-modal"
+                   overlayClassName="editable-property-modal__overlay"
+                   onRequestClose={that.onCancelInviteUser}
+                   contentLabel="Invite to this project">
+
+                <div>
+                    <InviteUserForm onChange={this.onSaveInviteUser}/>
+                    <button onClick={this.onCancelInviteUser}>Cancel</button>
+                </div>
+            </Modal>
         )
     }
     
