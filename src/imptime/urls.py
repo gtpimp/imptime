@@ -1,4 +1,5 @@
 from django.conf.urls import include, url
+import auth_api
 import filter_api
 import project_api
 import sprint_api
@@ -40,7 +41,7 @@ router.register(r'filter', filter_api.FilterViewSet,
 
 urlpatterns = [
     url(r'^$', views.home, name='home'),
-    url(r'^login/', rest_views.obtain_auth_token),
+    url(r'^login/', auth_api.AuthViewSet.as_view()),
     url(r'^issue/attachment/(?P<attachment_id>.*)/preview', IssueAttachmentPreviewView.as_view(), name='preview_attachment'),
     url(r'^issue/attachment/(?P<attachment_id>.*)/download', IssueAttachmentDownloadView.as_view(), name='download_attachment')
 

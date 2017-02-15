@@ -1,5 +1,6 @@
 import { impfetch } from './lib.js'
 import { getMissingItemIds } from './ItemList'
+import { logged_in_user } from './Auth'
 import each from 'lodash/each'
 
 export const ANNOUNCE_USERS_LOADED = 'ANNOUNCE_USERS_LOADED'
@@ -123,6 +124,19 @@ export function getUsers(state, user_ids) {
             'loaded': false
         }
     })    
+}
+
+export function has_permission(state, permission_name) {
+    const user_id = logged_in_user().user_id
+    if ( ! user_id ) {
+        return false
+    }
+    const user = getUser(state, user_id)
+    if ( ! user ) {
+        return false
+    }
+    const permissions = user.user_permissions
+    return permissions[permission_name] || false
 }
 
 export function cancelInviteUser() {

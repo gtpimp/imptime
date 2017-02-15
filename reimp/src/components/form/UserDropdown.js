@@ -53,7 +53,6 @@ export class UserDropdown extends Component {
 		/>
 	)
     }
-
 }
 
 function mapStateToProps(state, props) {

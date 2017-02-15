@@ -35,7 +35,7 @@ class UserViewSet(BaseViewSet):
                 context['ids'] = [str(x) for x in users.values_list(
                     'id', flat=True)]
             else:
-                s = UserSerializer(users, many=True)
+                s = UserSerializer(users, many=True, logged_in_user=request.user)
                 users_data = s.data
                 context['users'] = users_data
             context['pagination'] = pagination
