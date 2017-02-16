@@ -23,13 +23,7 @@ class UserSerializer(BaseSerializer):
     def to_representation(self, issue, *args, **kwargs):
 
         if self.logged_in_user:
-            allowed_business_ids = self.logged_in_user.business_permissions.values_list('business_id', flat=True)
-            other_bps = BusinessPermissions.objects\
-                                           .filter(business__in=allowed_business_ids,
-                                                   is_active_member_of_business=True)\
-                                           .exclude(user_id=self.logged_in_user.id)
-                        
-            issue.known_user_ids = other_bps.order_by('user__username').order_by('user_id').values_list('user__id', flat=True).distinct()
+            issue.known_user_ids = BusinessPermissions.viewable_users(self.logged_in_user).order_by('username').values_list('id', flat=True).distinct()
         else:
             issue.known_user_ids = None
             

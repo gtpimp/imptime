@@ -450,7 +450,9 @@ class BusinessPermissions(models.Model):
 
     @classmethod
     def ensure_user_belongs_to_business(self, user, business):
-        return BusinessPermissions.objects.get_or_create(business=business, user=user)[0]
+        return BusinessPermissions.objects.get_or_create(business=business,
+                                                         user=user,
+                                                         defaults={'is_active_member_of_business':True})[0]
     
     @classmethod
     def for_user(self, user, business):
@@ -459,7 +461,10 @@ class BusinessPermissions(models.Model):
     @classmethod
     def viewable_users(self, user):
         """ returns all users that this user could know about, based on which businesses they have in common """
-        business_ids = self.objects.filter(user=user).values_list('id', flat=True)
+        business_ids = BusinessPermissions.objects.filter(user=user,
+                                                          is_active_member_of_business=True)\
+                                                  .values_list('id', flat=True)
+        
         return User.objects.filter(business_permissions__business_id__in=business_ids,
                                    business_permissions__is_active_member_of_business=True)
 
@@ -1939,6 +1944,12 @@ class Project(models.Model):
 
         return totals
 
+class BusinessInvite(BaseModel):
+    business = models.ForeignKey(Business, related_name='invites', null=False)
+    user = models.ForeignKey(User, related_name='invites_received', null=False)
+    invite_sent_at = models.DateTimeField(null=True)
+    invited_by = models.ForeignKey(User, related_name='invites_sent', null=False)
+    
 class RelationshipType(models.Model):
     name = models.CharField(max_length=255, unique=True)
     slug = models.CharField(max_length=255, unique=True, editable=False)

@@ -18,7 +18,6 @@ class UserViewSet(BaseViewSet):
     def list(self, request):
         try:
             context = {}
-
             params = request.GET.get('params', '{}')
             params = json.loads(params)
             pagination = params.get('pagination', {})
@@ -32,8 +31,7 @@ class UserViewSet(BaseViewSet):
                                           pagination=pagination)
 
             if format_args.get('ids_only'):
-                context['ids'] = [str(x) for x in users.values_list(
-                    'id', flat=True)]
+                context['ids'] = [str(x) for x in users.values_list('id', flat=True)]
             else:
                 s = UserSerializer(users, many=True, logged_in_user=request.user)
                 users_data = s.data
@@ -46,13 +44,13 @@ class UserViewSet(BaseViewSet):
         
         return HttpResponse(JSONRenderer().render(data))
 
-    def apply_filter(self, qs, raw_filter_args):
+    # def apply_filter(self, qs, raw_filter_args):
 
-        if 'project_id' in raw_filter_args:
-            # get users belonging to this project
-            project_id = raw_filter_args.pop("project_id")
-            raw_filter_args[
-                'project__business__business_permissions__business_id'] = \
-                project_id
+    #     if 'project_id' in raw_filter_args:
+    #         # get users belonging to this project
+    #         project_id = raw_filter_args.pop("project_id")
+    #         raw_filter_args[
+    #             'project__business__business_permissions__business_id'] = \
+    #             project_id
 
-        return super(UserViewSet, self).apply_filter(qs, raw_filter_args)
+    #     return super(UserViewSet, self).apply_filter(qs, raw_filter_args)

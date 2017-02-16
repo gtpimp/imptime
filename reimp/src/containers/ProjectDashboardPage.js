@@ -64,8 +64,9 @@ class ProjectDashboardPage extends Component {
     }
 
     onSaveInviteUser(user_email) {
-        const { dispatch } = this.props
-        dispatch(saveInviteUser(PAGE_KEY__PROJECT_DASHBOARD_PAGE, user_email))
+        const { dispatch, project_id } = this.props
+        dispatch(saveInviteUser(project_id, user_email))
+        dispatch(clearPageFlag(PAGE_KEY__PROJECT_DASHBOARD_PAGE, 'inviting_user'))
     }
 
     renderInviteUser() {
