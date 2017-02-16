@@ -48,7 +48,7 @@ class InviteUserForm extends Component {
         const {handleSubmit, known_user_options } = this.props
         return (
             <form onSubmit={handleSubmit}>
-                <Field name='invited_user'
+                <Field name='invited_user_email'
                        component={this.renderSingleValueSelector}
                        valueField="value"
                        textField="label"
@@ -69,7 +69,7 @@ function mapStateToProps(state, props) {
     const users = getUsers(state, known_user_ids)
 
     const known_user_options = users.map(function (user) {
-        return {value: user.email, label: user.username}
+        return {value: user.email, label: "" + user.username + " ("+user.email+") "}
     })
 
     return {

@@ -15,7 +15,7 @@ import {
     clearPageFlag,
     getPageFlag
 } from '../actions/Page'
-import { saveInviteUser } from '../actions/Users'
+import { saveInviteUser } from '../actions/Projects'
 
 class ProjectDashboardPage extends Component {
 
@@ -63,9 +63,9 @@ class ProjectDashboardPage extends Component {
         dispatch(clearPageFlag(PAGE_KEY__PROJECT_DASHBOARD_PAGE, 'inviting_user'))
     }
 
-    onSaveInviteUser(user_email) {
+    onSaveInviteUser(new_value) {
         const { dispatch, project_id } = this.props
-        dispatch(saveInviteUser(project_id, user_email))
+        dispatch(saveInviteUser(project_id, new_value.invited_user_email))
         dispatch(clearPageFlag(PAGE_KEY__PROJECT_DASHBOARD_PAGE, 'inviting_user'))
     }
 

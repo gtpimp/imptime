@@ -108,7 +108,7 @@ class ProjectViewSet(BaseViewSet):
             project_id = pk
             context = {}
             project = self.allowed_project(project_id)
-            invited_user_email = request.data['user_email'] 
+            invited_user_email = request.data['user_email']
             invited_user, created_user = User.objects.get_or_create(email=invited_user_email,
                                                                     defaults={'username':invited_user_email})
 
@@ -154,7 +154,7 @@ class ProjectViewSet(BaseViewSet):
 
         content = content.format(PROJECT_NAME=project_invite.business.name, #sic
                                  PROJECT_LINK=settings.WEB_URL_BASE + "projects/%d" % project_invite.business.id) #sic
-                    
+
         queue_email(subject_content="ImpTime: Join project %s" % project_invite.business.name,
                     from_address=settings.FROM_EMAIL,
                     text_content=content,
