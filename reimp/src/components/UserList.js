@@ -10,9 +10,7 @@ import includes from 'lodash/includes'
 import difference from 'lodash/difference'
 import {
     initList,
-    invalidateList,
-    collapse_list,
-    expand_list
+    invalidateList
 } from '../actions/ItemList'
 import {
     invalidateAllUsers,
@@ -31,8 +29,6 @@ class UserList extends Component {
         super(props)
         this.onRefresh = this.onRefresh.bind(this)
         this.onChangePage = this.onChangePage.bind(this)
-        this.onCollapse = this.onCollapse.bind(this)
-        this.onExpand = this.onExpand.bind(this)
         this.onClickedUser = this.onClickedUser.bind(this)
         this.onStartInviteUser = this.onStartInviteUser.bind(this)
         this.onSaveInviteUser = this.onSaveInviteUser.bind(this)
@@ -52,16 +48,6 @@ class UserList extends Component {
         if (project_id) {
             dispatch(fetchUsersIfNeeded(list_key))
         }
-    }
-
-    onCollapse() {
-        const {dispatch, list_key} = this.props
-        dispatch(collapse_list(list_key))
-    }
-
-    onExpand() {
-        const {dispatch, list_key} = this.props
-        dispatch(expand_list(list_key))
     }
 
     onClickedUser(user_id) {

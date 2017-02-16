@@ -3,7 +3,7 @@ import {connect} from 'react-redux'
 import {browserHistory} from 'react-router'
 import { setBreadcrumbs } from '../actions/Breadcrumbs'
 import {ensureProjectsLoaded, getProject} from '../actions/Projects'
-import InviteUserForm from '../components/form/InviteUserForm'
+import ProjectUsers from '../components/ProjectUsers'
 import Modal from 'react-modal';
 import {
     PAGE_KEY__PROJECT_DASHBOARD_PAGE
@@ -15,16 +15,12 @@ import {
     clearPageFlag,
     getPageFlag
 } from '../actions/Page'
-import { saveInviteUser } from '../actions/Projects'
 
 class ProjectDashboardPage extends Component {
 
     constructor(props) {
         super(props)
         this.navigateToSprintsPage = this.navigateToSprintsPage.bind(this)
-        this.onStartInviteUser = this.onStartInviteUser.bind(this)
-        this.onCancelInviteUser = this.onCancelInviteUser.bind(this)
-        this.onSaveInviteUser = this.onSaveInviteUser.bind(this)
     }
 
     componentDidMount() {
@@ -52,41 +48,6 @@ class ProjectDashboardPage extends Component {
         const { project_id } = this.props
         browserHistory.push('/projects/'+project_id+'/sprints');
     }
-
-    onStartInviteUser() {
-        const { dispatch } = this.props
-        dispatch(setPageFlag(PAGE_KEY__PROJECT_DASHBOARD_PAGE, 'inviting_user'))
-    }
-
-    onCancelInviteUser() {
-        const { dispatch } = this.props
-        dispatch(clearPageFlag(PAGE_KEY__PROJECT_DASHBOARD_PAGE, 'inviting_user'))
-    }
-
-    onSaveInviteUser(new_value) {
-        const { dispatch, project_id } = this.props
-        dispatch(saveInviteUser(project_id, new_value.invited_user_email))
-        dispatch(clearPageFlag(PAGE_KEY__PROJECT_DASHBOARD_PAGE, 'inviting_user'))
-    }
-
-    renderInviteUser() {
-        const { project } = this.props
-
-        const that = this
-        return (
-            <Modal isOpen={true}
-                   className="editable-property-modal"
-                   overlayClassName="editable-property-modal__overlay"
-                   onRequestClose={that.onCancelInviteUser}
-                   contentLabel="Invite to this project">
-
-                <div>
-                    <InviteUserForm onChange={this.onSaveInviteUser}/>
-                    <button onClick={this.onCancelInviteUser}>Cancel</button>
-                </div>
-            </Modal>
-        )
-    }
     
     render() {
 
@@ -96,16 +57,12 @@ class ProjectDashboardPage extends Component {
             <div>
                 Project {project.name}
 
-                { is_inviting_user && this.renderInviteUser() }
-
-                { ! is_inviting_user &&
-                  <div>
-                      
-                      <button onClick={this.onStartInviteUser}>Invite somebody to this project</button>
-                      <br/>
-                      <button onClick={this.navigateToSprintsPage}>Take me to your sprints</button>
-                  </div>
-                }
+                <button onClick={this.navigateToSprintsPage}>Take me to your sprints</button>
+                <br/>
+                
+                <div className="project-dashboard__project_users">
+                    <ProjectUsers project_id={project.id} />
+                </div>
             </div>
         )
     }
@@ -114,11 +71,9 @@ class ProjectDashboardPage extends Component {
 function mapStateToProps(state, props) {
     const project_id = props.params.projectId
     const project = getProject(state, project_id)
-    const is_inviting_user = getPageFlag(state, PAGE_KEY__PROJECT_DASHBOARD_PAGE, 'inviting_user')
     return {
         project_id: project_id,
-        project: project || {},
-        is_inviting_user: is_inviting_user
+        project: project || {}
     }
 }
 

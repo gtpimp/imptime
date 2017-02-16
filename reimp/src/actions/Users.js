@@ -1,5 +1,6 @@
 import { impfetch } from './lib.js'
-import { getMissingItemIds } from './ItemList'
+import { fetchListIfNeeded, getMissingItemIds } from './ItemList'
+import { ENTITY_KEY__USER } from '../actions/ItemListKeyRegistry'
 import { logged_in_user } from './Auth'
 import each from 'lodash/each'
 
@@ -45,28 +46,35 @@ function announceUsersLoadFailed(error) {
     }
 }
 
-function fetchUsers(user_ids) {
-    return (dispatch, getState) => {
-        const state = getState()
+function fetchUsersPromise(dispatch, state, user_ids) {
+    return new Promise(function(resolve, reject) {
         const API_BASE_URL = state.settings.configured && state.settings.API_BASE_URL
 	dispatch(announceLoadingUsers(user_ids))
 
 	const params = { filter: { ids: user_ids },
-			 format: { detail_level: 'general' },
 			 pagination: {'enabled': false} }
 	
         return impfetch(API_BASE_URL+'imp/user/', dispatch, {params:params})
 	    .then(response => response.json())
 	    .then(json => {
                 if (json.status !== 'success') {
-		    dispatch(announceUsersLoadFailed(json.error))
+		    dispatch(announceUsersLoadFailed())
+		    reject(json.error)
                 } else {
 		    dispatch(announceUsersLoaded(json.payload))
+		    resolve(json.payload)
                 }
 	    }).catch(function (error) {
-		dispatch(announceUsersLoadFailed("Failed to load users: " + (error || {}).message))
+		dispatch(announceUsersLoadFailed("Failed to load users: " + error))
+		reject("Failed to load users: " + error)
 	    })
-    }
+    })
+}
+
+export function fetchUsersIfNeeded(list_key) {
+    const matching_items_key = ENTITY_KEY__USER
+    const matching_items_promise_func = fetchUsersPromise
+    return fetchListIfNeeded(list_key, matching_items_key, matching_items_promise_func)
 }
 
 export function ensureUsersLoaded(user_ids) {
@@ -75,7 +83,7 @@ export function ensureUsersLoaded(user_ids) {
 
         const user_ids_to_load = getMissingItemIds(state, user_ids, 'user')
         if ( user_ids_to_load.length > 0 ) {
-            dispatch(fetchUsers(user_ids_to_load))
+            fetchUsersPromise(dispatch, state, user_ids_to_load)
         }
     }
 }

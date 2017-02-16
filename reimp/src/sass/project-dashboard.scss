@@ -1,0 +1,43 @@
+@import 'variables.scss';
+
+.project-dashboard-modal {
+    background-color: $color-2;
+    border-radius: 2px;
+    box-shadow: 0 6px 12px 0 rgba(0, 0, 0, 0.5);
+    padding: 16px;
+    width: 288px;
+
+    position: absolute;
+    top: 25%;
+    left: 40%;
+    outline: none;
+    overflow: auto;
+}
+
+.project-dashboard-modal__overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    //background-color: rgba(255, 255, 255, 0.75);
+}
+
+.project-dashboard-modal__row {
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
+}
+
+.project-dashboard-modal__content {
+    margin-top: 13px;
+}
+
+.project-dashboard-modal__title {
+    color: $color-1;
+    font: $font-4;
+}
+
+.project-dashboard-modal__close {
+    cursor: pointer;
+}

@@ -1,219 +1,113 @@
 import React, {Component} from 'react'
 import {connect} from 'react-redux'
-
-import RIEInput from '../widgets/RIEInput'
-import RIEModeToggler from '../widgets/RIEModeToggler'
-import each from 'lodash/each'
-import map from 'lodash/map'
-import union from 'lodash/union'
-import includes from 'lodash/includes'
-import difference from 'lodash/difference'
+import {browserHistory} from 'react-router'
+import { setBreadcrumbs } from '../actions/Breadcrumbs'
+import {ensureProjectsLoaded, getProject} from '../actions/Projects'
+import InviteUserForm from '../components/form/InviteUserForm'
+import Modal from 'react-modal'
+import UserList from './UserList'
 import {
-    initList,
-    invalidateList,
-    collapse_list,
-    expand_list
-} from '../actions/ItemList'
+    PAGE_KEY__PROJECT_DASHBOARD_PAGE,
+    LIST_KEY__USER_LIST
+} from '../actions/ItemListKeyRegistry'
 import {
-    invalidateAllUsers,
-    fetchUsersIfNeeded,
-    startInviteUser,
-    updateInviteTitle,
-    cancelInviteUser,
-    saveInviteUser
-} from '../actions/Users'
-import User from './User'
-import ListTable from './ListTable'
+    set_toolbars,
+    select_projects,
+    setPageFlag,
+    clearPageFlag,
+    getPageFlag
+} from '../actions/Page'
+import { saveInviteUser } from '../actions/Projects'
 
-class ProjectUsers extends Component {
+class ProjectUsersPage extends Component {
 
     constructor(props) {
         super(props)
-        this.onRefresh = this.onRefresh.bind(this)
-        this.onChangePage = this.onChangePage.bind(this)
-        this.onCollapse = this.onCollapse.bind(this)
-        this.onExpand = this.onExpand.bind(this)
-        this.onClickedUser = this.onClickedUser.bind(this)
         this.onStartInviteUser = this.onStartInviteUser.bind(this)
-        this.onSaveInviteUser = this.onSaveInviteUser.bind(this)
         this.onCancelInviteUser = this.onCancelInviteUser.bind(this)
+        this.onSaveInviteUser = this.onSaveInviteUser.bind(this)
     }
 
     componentDidMount() {
-        const {dispatch, list_key, project_id} = this.props
-        if (project_id) {
-            dispatch(initList(list_key))
-            dispatch(fetchUsersIfNeeded(list_key))
+        const {dispatch, project_id} = this.props
+        this.refresh(project_id)
+    }
+
+    componentWillReceiveProps(new_props) {
+        const { project_id, dispatch } = this.props
+        if ( new_props.project_id !== project_id || new_props.project.id !== this.props.project.id ) {
+            this.refresh(new_props.project_id)
         }
     }
-
-    componentWillReceiveProps() {
-        const {dispatch, list_key, project_id} = this.props
-        if (project_id) {
-            dispatch(fetchUsersIfNeeded(list_key))
-        }
+    
+    refresh(project_id) {
+        const { dispatch, project } = this.props
     }
 
-    onCollapse() {
-        const {dispatch, list_key} = this.props
-        dispatch(collapse_list(list_key))
-    }
-
-    onExpand() {
-        const {dispatch, list_key} = this.props
-        dispatch(expand_list(list_key))
-    }
-
-    onClickedUser(user_id) {
-        const {onSelectUsers, selected_ids} = this.props
-        event.stopPropagation()
-
-        let selected_user_ids = []
-        if (event.ctrlKey) {
-            if (includes(selected_ids, user_id)) {
-                selected_user_ids = difference(selected_ids, [user_id])
-            } else {
-                selected_user_ids = union(selected_ids, [user_id])
-            }
-        } else {
-            selected_user_ids = [user_id]
-        }
-        onSelectUsers(selected_user_ids)
-    }
-
-    onChangePage() {
-        const {dispatch, list_key} = this.props
-        dispatch(invalidateList(list_key))
-        dispatch(fetchUsersIfNeeded(list_key))
-    }
-
-    onRefresh(event) {
-        const {dispatch, list_key} = this.props
-        dispatch(invalidateList(list_key))
-        dispatch(invalidateAllUsers())
-        dispatch(fetchUsersIfNeeded(list_key))
-        if (event) {
-            event.stopPropagation()
-        }
-    }
-
-    onStartInviteUser(event) {
-        const {dispatch, list_key} = this.props
-        event.stopPropagation()
-        dispatch(startInviteUser(list_key))
-    }
-
-    onSaveInviteUser(invite_user_title) {
-        const {dispatch} = this.props
-        dispatch(updateInviteTitle(invite_user_title))
-        dispatch(saveInviteUser())
+    onStartInviteUser() {
+        const { dispatch } = this.props
+        dispatch(setPageFlag(PAGE_KEY__PROJECT_DASHBOARD_PAGE, 'inviting_user'))
     }
 
     onCancelInviteUser() {
-        const {dispatch} = this.props
-        dispatch(cancelInviteUser())
+        const { dispatch } = this.props
+        dispatch(clearPageFlag(PAGE_KEY__PROJECT_DASHBOARD_PAGE, 'inviting_user'))
     }
 
-    render_invite_user() {
-        const {list_key} = this.props
+    onSaveInviteUser(new_value) {
+        const { dispatch, project_id } = this.props
+        dispatch(saveInviteUser(project_id, new_value.invited_user_email))
+        dispatch(clearPageFlag(PAGE_KEY__PROJECT_DASHBOARD_PAGE, 'inviting_user'))
+    }
 
+    renderInviteUser() {
+        const that = this
         return (
-            <tr key={list_key + ".invite_user"} className="user_list__invite_user">
-                <td colSpan="20">Creating new user here</td>
-                { false && 
-                  <td>
-                      <RIEModeToggler propName="invite_user_title"
-                                      initialValue=""
-                                      initialState="editing"
-                                      onChange={this.onSaveInviteUser}
-                                      onCancel={this.onCancelInviteUser}>
-                          <RIEInput/>
-                      </RIEModeToggler>
-                  </td>
-                }
-            </tr>
+            <Modal isOpen={true}
+                   className="editable-property-modal"
+                   overlayClassName="editable-property-modal__overlay"
+                   onRequestClose={that.onCancelInviteUser}
+                   contentLabel="Invite to this project">
+
+                <div>
+                    <InviteUserForm onChange={that.onSaveInviteUser}/>
+                    <button onClick={that.onCancelInviteUser}>Cancel</button>
+                </div>
+            </Modal>
         )
     }
-
+    
     render() {
 
-        const {
-            users, list_key,
-            selected_ids,
-            is_inviting_user, invite_user,
-            loading_item_ids
-        } = this.props
-        const that = this
-
-        const user_rows = []
-        each(users, function (user, index) {
-
-            if (is_inviting_user && index === 0 && !invite_user.user_id_before) {
-                user_rows.push(that.render_invite_user())
-            }
-
-            user_rows.push(
-                <User key={list_key + user.id + index}
-                      onClickedUser={() => that.onClickedUser(user.id)}
-                      is_loading={loading_item_ids.indexOf(user.id) !== -1}
-                      is_selected={selected_ids.indexOf(user.id) !== -1}
-                      user_id={user.id}
-                />
-            )
-            if (is_inviting_user && invite_user.user_id_before === user.id) {
-                user_rows.push(that.render_invite_user())
-            }
-        })
-
+        const { is_inviting_user } = this.props
+        
         return (
-            <ListTable>
-                {user_rows}
-            </ListTable>
+            <div>
+                { is_inviting_user && this.renderInviteUser() }
+
+                { ! is_inviting_user &&
+                  <div>
+                      
+                      <button onClick={this.onStartInviteUser}>Invite somebody to this project</button>
+                      <br/>
+                  </div>
+                }
+                AA
+                <UserList list_key={LIST_KEY__USER_LIST} />bb
+            </div>
         )
     }
 }
 
 function mapStateToProps(state, props) {
-    const {user, item_list} = state
-    const {list_key} = props
-    const items_by_id = (user && user.items_by_id) || {}
-    const l = (item_list && item_list[list_key]) || {}
-    const filter = l.filter || {}
-    const project_id = filter.project_id || null
-    const visible_item_ids = l.visible_item_ids || []
-
-    const selected_items = items_by_id && l.selected_ids && l.selected_ids.map(function (selected_id, index) {
-        return items_by_id[selected_id] || {
-            'id': selected_id,
-            'loaded': false
-        }
-    })
-
-    const items = (items_by_id && visible_item_ids.map(function (visible_item_id, index) {
-        return items_by_id[visible_item_id] || {
-            'id': visible_item_id,
-            'loaded': false
-        }
-    })) || []
-
-    const invite_user = (user && user.invite_user) || null
-    const is_inviting_user = invite_user || false
-
+    const { project_id } = props
+    const project = getProject(state, project_id)
+    const is_inviting_user = getPageFlag(state, PAGE_KEY__PROJECT_DASHBOARD_PAGE, 'inviting_user')
     return {
-        list_key: list_key,
         project_id: project_id,
-        users: items,
-        user_ids: map(items, 'id'),
-        selected_ids: l.selected_ids || [],
-        selected_items: selected_items || [],
-        loading_item_ids: l.loading_item_ids || [],
-        has_items: items && items.length > 0,
-        is_visible: project_id || false,
-        is_loading: l.is_loading,
-        last_updated: l.last_updated,
-        invite_user: invite_user,
+        project: project || {},
         is_inviting_user: is_inviting_user
     }
 }
 
-export default connect(mapStateToProps)(ProjectUsers)
+export default connect(mapStateToProps)(ProjectUsersPage)
