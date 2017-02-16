@@ -23,13 +23,18 @@ class UserViewSet(BaseViewSet):
             pagination = params.get('pagination', {})
             filter_args = params.get('filter', {})
             format_args = params.get('format', {})
+            
+            project_id = filter_args.pop('project_id', None)
 
-            users = self.allowed_users()
+            users = self.allowed_users().order_by("username")
+            if project_id:
+                users = users.filter(business_permissions__business_id=project_id).distinct() #sic
             users = self.apply_filter(qs=users,
                                       raw_filter_args=filter_args)
             users = self.apply_pagination(qs=users,
                                           pagination=pagination)
 
+            
             if format_args.get('ids_only'):
                 context['ids'] = [str(x) for x in users.values_list('id', flat=True)]
             else:
@@ -44,13 +49,9 @@ class UserViewSet(BaseViewSet):
         
         return HttpResponse(JSONRenderer().render(data))
 
-    # def apply_filter(self, qs, raw_filter_args):
+    def apply_filter(self, qs, raw_filter_args):
+        project_id = raw_filter_args.pop("project_id", None)
+        if project_id:
+            qs = qs.filter(business_permissions__business_id=project_id).distinct() #sic
 
-    #     if 'project_id' in raw_filter_args:
-    #         # get users belonging to this project
-    #         project_id = raw_filter_args.pop("project_id")
-    #         raw_filter_args[
-    #             'project__business__business_permissions__business_id'] = \
-    #             project_id
-
-    #     return super(UserViewSet, self).apply_filter(qs, raw_filter_args)
+        return super(UserViewSet, self).apply_filter(qs, raw_filter_args)

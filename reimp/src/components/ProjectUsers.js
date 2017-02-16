@@ -8,8 +8,9 @@ import Modal from 'react-modal'
 import UserList from './UserList'
 import {
     PAGE_KEY__PROJECT_DASHBOARD_PAGE,
-    LIST_KEY__USER_LIST
+    LIST_KEY__PROJECT_USER_LIST
 } from '../actions/ItemListKeyRegistry'
+import { update_list_filter } from '../actions/ItemList'
 import {
     set_toolbars,
     select_projects,
@@ -42,6 +43,7 @@ class ProjectUsersPage extends Component {
     
     refresh(project_id) {
         const { dispatch, project } = this.props
+        dispatch(update_list_filter(LIST_KEY__PROJECT_USER_LIST, {'project_id':project_id}))
     }
 
     onStartInviteUser() {
@@ -79,7 +81,7 @@ class ProjectUsersPage extends Component {
     
     render() {
 
-        const { is_inviting_user } = this.props
+        const { is_inviting_user, invited_user_ids } = this.props
         
         return (
             <div>
@@ -92,8 +94,10 @@ class ProjectUsersPage extends Component {
                       <br/>
                   </div>
                 }
-                AA
-                <UserList list_key={LIST_KEY__USER_LIST} />bb
+
+                <h2>Users</h2>
+                <UserList list_key={LIST_KEY__PROJECT_USER_LIST} invited_user_ids={invited_user_ids}  />
+                
             </div>
         )
     }
@@ -106,7 +110,8 @@ function mapStateToProps(state, props) {
     return {
         project_id: project_id,
         project: project || {},
-        is_inviting_user: is_inviting_user
+        is_inviting_user: is_inviting_user,
+        invited_user_ids: (project || {}).invited_user_ids || []
     }
 }
 

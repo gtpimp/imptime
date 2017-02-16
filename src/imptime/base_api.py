@@ -22,7 +22,13 @@ class PermissionHelper():
     def allowed_sprints(self, user):
         return Sprint.objects.all()\
           .filter_by_logged_in_user(user)\
-          .distinct()    
+          .distinct()
+    
+    @classmethod
+    def allowed_projects(self, user):
+        return Project.objects.all()\
+          .filter_by_logged_in_user(user)\
+          .distinct()
 
 
 class BaseViewSet(viewsets.ViewSet):
@@ -89,9 +95,7 @@ class BaseViewSet(viewsets.ViewSet):
         return d_fixed
 
     def allowed_projects(self):
-        return Project.objects.all()\
-          .filter_by_logged_in_user(self.request.user)\
-          .distinct()
+        return PermissionHelper.allowed_projects(self.request.user)
 
     def allowed_project(self, pk):
         return self.allowed_projects().get(pk=pk)

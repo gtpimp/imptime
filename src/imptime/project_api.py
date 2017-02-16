@@ -118,8 +118,12 @@ class ProjectViewSet(BaseViewSet):
             project_invite, created_invite = ProjectInvite.objects.get_or_create(business=project, #sic
                                                                                  user=invited_user,
                                                                                  defaults={'invited_by':request.user})
-            if project_invite.invite_sent_at is None:
-                self._send_invite(project_invite, created_user)
+
+            
+            if created_invite or project_invite.invite_sent_at is None:
+                self._send_invite(project, invited_user, created_user)
+                project_invite.invite_sent_at = timezone.now()
+                project_invite.save()
             
             data = {'status': 'success'}
 
@@ -129,7 +133,7 @@ class ProjectViewSet(BaseViewSet):
         
         return HttpResponse(JSONRenderer().render(data))
 
-    def _send_invite(self, project_invite, created_user):
+    def _send_invite(self, project, invite_user, created_user ):
 
         if created_user:
             content = """
@@ -152,15 +156,13 @@ class ProjectViewSet(BaseViewSet):
 
             """
 
-        content = content.format(PROJECT_NAME=project_invite.business.name, #sic
-                                 PROJECT_LINK=settings.WEB_URL_BASE + "projects/%d" % project_invite.business.id) #sic
+        content = content.format(PROJECT_NAME=project.name,
+                                 PROJECT_LINK=settings.WEB_URL_BASE + "projects/%d" % project.id)
 
-        queue_email(subject_content="ImpTime: Join project %s" % project_invite.business.name,
+        queue_email(subject_content="ImpTime: Join project %s" % project.name,
                     from_address=settings.FROM_EMAIL,
                     text_content=content,
                     html_content=content.replace("\n","<br/>"),
-                    to_addresses=[project_invite.user.email])
-        project_invite.invite_sent_at = timezone.now()
-        project_invite.save()
+                    to_addresses=[invite_user.email])
 
         

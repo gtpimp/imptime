@@ -17,7 +17,7 @@ class User extends Component {
     }
     
     render_wide() {
-        const { user, is_loading, is_selected, isOver,
+        const { user, is_loading, is_selected, isOver, invitation_pending,
 		onClickedUser, connectDragSource, connectDropTarget } = this.props
 
 	if ( ! user ) {
@@ -45,6 +45,9 @@ class User extends Component {
                     <td className="list-table__cell">{user.email}</td>
                     <td className="list-table__cell">{user.first_name}</td>
                     <td className="list-table__cell">{user.last_name}</td>
+                    <td className="list-table__cell">
+                        {invitation_pending && <div>Invite sent</div>}
+                    </td>
 		</tr>
             ))
 	}
@@ -66,7 +69,7 @@ class User extends Component {
 
 function mapStateToProps(state, props) {
     const { user } = state
-    const { user_id, is_selected, is_narrow, is_loading } = props
+    const { user_id, is_selected, is_narrow, is_loading, invitation_pending } = props
     const this_user = (user && user.items_by_id && user.items_by_id[user_id]) || {}
     
     return {
@@ -75,7 +78,8 @@ function mapStateToProps(state, props) {
 	is_selected: is_selected,
 	is_loading: is_loading,
 	is_narrow: is_narrow,
-	is_wide: !is_narrow
+	is_wide: !is_narrow,
+        invitation_pending: invitation_pending
     }
 }
 

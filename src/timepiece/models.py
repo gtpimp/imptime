@@ -1949,6 +1949,18 @@ class BusinessInvite(BaseModel):
     user = models.ForeignKey(User, related_name='invites_received', null=False)
     invite_sent_at = models.DateTimeField(null=True)
     invited_by = models.ForeignKey(User, related_name='invites_sent', null=False)
+    accepted = models.BooleanField(default=False, db_index=True)
+    accepted_at = models.DateTimeField(null=True)
+
+    def save(self, *args, **kwargs):
+        was_created = not self.id
+        super(BusinessInvite, self).save(*args, **kwargs)
+
+        if was_created:
+            RefreshNotifier().notify_model_create(self, params={'users': [self.user_id]})
+        else:
+            RefreshNotifier().notify_model_update(self, params={'users': [self.user_id],
+                                                                'projects': [self.business_id]}) #sic
     
 class RelationshipType(models.Model):
     name = models.CharField(max_length=255, unique=True)

@@ -127,13 +127,16 @@ class UserList extends Component {
             users, list_key,
             selected_ids,
             is_inviting_user, invite_user,
-            loading_item_ids
+            loading_item_ids,
+            invited_user_ids
         } = this.props
         const that = this
 
         const user_rows = []
         each(users, function (user, index) {
 
+            const invitation_pending = includes(invited_user_ids, user.id)
+            
             if (is_inviting_user && index === 0 && !invite_user.user_id_before) {
                 user_rows.push(that.render_invite_user())
             }
@@ -144,6 +147,7 @@ class UserList extends Component {
                       is_loading={loading_item_ids.indexOf(user.id) !== -1}
                       is_selected={selected_ids.indexOf(user.id) !== -1}
                       user_id={user.id}
+                      invitation_pending={invitation_pending}
                 />
             )
             if (is_inviting_user && invite_user.user_id_before === user.id) {
@@ -161,7 +165,7 @@ class UserList extends Component {
 
 function mapStateToProps(state, props) {
     const {user, item_list} = state
-    const {list_key} = props
+    const {list_key, invited_user_ids} = props
     const items_by_id = (user && user.items_by_id) || {}
     const l = (item_list && item_list[list_key]) || {}
     const filter = l.filter || {}
@@ -175,7 +179,7 @@ function mapStateToProps(state, props) {
         }
     })
 
-    const items = (items_by_id && visible_item_ids.map(function (visible_item_id, index) {
+    const items_to_display = (items_by_id && visible_item_ids.map(function (visible_item_id, index) {
         return items_by_id[visible_item_id] || {
             'id': visible_item_id,
             'loaded': false
@@ -188,17 +192,18 @@ function mapStateToProps(state, props) {
     return {
         list_key: list_key,
         project_id: project_id,
-        users: items,
-        user_ids: map(items, 'id'),
+        users: items_to_display,
+        user_ids: map(items_to_display, 'id'),
         selected_ids: l.selected_ids || [],
         selected_items: selected_items || [],
         loading_item_ids: l.loading_item_ids || [],
-        has_items: items && items.length > 0,
+        has_items: items_to_display && items_to_display.length > 0,
         is_visible: project_id || false,
         is_loading: l.is_loading,
         last_updated: l.last_updated,
         invite_user: invite_user,
-        is_inviting_user: is_inviting_user
+        is_inviting_user: is_inviting_user,
+        invited_user_ids: invited_user_ids
     }
 }
 
