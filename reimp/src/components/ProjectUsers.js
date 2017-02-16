@@ -10,10 +10,13 @@ import {
     PAGE_KEY__PROJECT_DASHBOARD_PAGE,
     LIST_KEY__PROJECT_USER_LIST
 } from '../actions/ItemListKeyRegistry'
-import { update_list_filter } from '../actions/ItemList'
+import {
+    update_list_filter,
+    selectItems
+} from '../actions/ItemList'
 import {
     set_toolbars,
-    select_projects,
+    select_users,
     setPageFlag,
     clearPageFlag,
     getPageFlag
@@ -47,9 +50,15 @@ class ProjectUsersPage extends Component {
         dispatch(update_list_filter(LIST_KEY__PROJECT_USER_LIST, {'project_id':project_id}))
     }
 
-    onSelectUsers() {
+    onSelectUsers(user_ids) {
+        const { dispatch, project_id } = this.props
+        dispatch(selectItems(LIST_KEY__PROJECT_USER_LIST, user_ids))
+        dispatch(select_users(PAGE_KEY__PROJECT_DASHBOARD_PAGE, user_ids))
+        if ( user_ids && user_ids.length === 1 ) {
+            browserHistory.push('/projects/'+project_id+'/users/'+user_ids[0]);
+        }
     }
-
+    
     onStartInviteUser() {
         const { dispatch } = this.props
         dispatch(setPageFlag(PAGE_KEY__PROJECT_DASHBOARD_PAGE, 'inviting_user'))

@@ -63,6 +63,14 @@ export function select_projects(page_key, project_ids) {
     }
 }
 
+export function select_users(page_key, user_ids) {
+    return {
+        type: UPDATE_PAGE_SELECTION,
+	page_key: page_key,
+        user_ids: user_ids
+    }
+}
+
 export function get_selected_project_ids(state, page_key) {
     return (((state ||{}).page || {})[page_key] || {}).project_ids || []
 }
@@ -73,6 +81,10 @@ export function get_selected_sprint_ids(state, page_key) {
 
 export function get_selected_issue_ids(state, page_key) {
     return (((state ||{}).page || {})[page_key] || {}).issue_ids || []
+}
+
+export function get_selected_user_ids(state, page_key) {
+    return (((state ||{}).page || {})[page_key] || {}).user_ids || []
 }
 
 export function setPageFlag(page_key, flag_name) {

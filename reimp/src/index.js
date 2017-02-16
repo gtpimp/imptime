@@ -37,6 +37,7 @@ ReactDOM.render(
                 <Route path="projects/:projectId/sprints/:sprintId" component={SprintDashboardPage}/>
                 <Route path="projects/:projectId/sprints/:sprintId/issues" component={IssuesPage}/>
                 <Route path="projects/:projectId/sprints/:sprintId/issues/:issueId" component={IssuesPage}/>
+                <Route path="projects/:projectId/users/:userId" component={ProjectUserPage}/>
 
                 <Route path="clients" component={ClientsPage}/>
                 <Route path="team" component={TeamPage}/>

@@ -14,6 +14,7 @@ export const ENTITY_KEY__USER = 'user'
 
 export const PAGE_KEY__PROJECTS_PAGE = 'projects_page'
 export const PAGE_KEY__PROJECT_DASHBOARD_PAGE = 'project_dashboard_page'
+export const PAGE_KEY__PROJECT_USER_PAGE = 'project_user_page'
 export const PAGE_KEY__SPRINTS_PAGE = 'sprints_page'
 export const PAGE_KEY__SPRINT_DASHBOARD_PAGE = 'sprint_dashboard_page'
 export const PAGE_KEY__ISSUES_PAGE = 'issues_page'

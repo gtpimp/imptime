@@ -120,4 +120,3 @@ export function has_permission(state, permission_name) {
     const permissions = user.user_permissions
     return permissions[permission_name] || false
 }
-

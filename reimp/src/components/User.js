@@ -3,6 +3,7 @@ import { DragSource, DropTarget } from 'react-dnd';
 import { connect } from 'react-redux'
 import classNames from 'classnames'
 import { DndTypes } from '../actions/Dnd'
+import { getUser } from '../actions/Users'
 import '../sass/user.css'
 
 class User extends Component {
@@ -68,12 +69,11 @@ class User extends Component {
 }
 
 function mapStateToProps(state, props) {
-    const { user } = state
     const { user_id, is_selected, is_narrow, is_loading, invitation_pending } = props
-    const this_user = (user && user.items_by_id && user.items_by_id[user_id]) || {}
+    const user = getUser(state, user_id)
     
     return {
-	user: this_user,
+	user: user,
 	user_id: user_id,
 	is_selected: is_selected,
 	is_loading: is_loading,
