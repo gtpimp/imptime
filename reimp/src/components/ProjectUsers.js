@@ -27,6 +27,7 @@ class ProjectUsersPage extends Component {
         this.onStartInviteUser = this.onStartInviteUser.bind(this)
         this.onCancelInviteUser = this.onCancelInviteUser.bind(this)
         this.onSaveInviteUser = this.onSaveInviteUser.bind(this)
+        this.onSelectUsers = this.onSelectUsers.bind(this)
     }
 
     componentDidMount() {
@@ -44,6 +45,9 @@ class ProjectUsersPage extends Component {
     refresh(project_id) {
         const { dispatch, project } = this.props
         dispatch(update_list_filter(LIST_KEY__PROJECT_USER_LIST, {'project_id':project_id}))
+    }
+
+    onSelectUsers() {
     }
 
     onStartInviteUser() {
@@ -96,7 +100,9 @@ class ProjectUsersPage extends Component {
                 }
 
                 <h2>Users</h2>
-                <UserList list_key={LIST_KEY__PROJECT_USER_LIST} invited_user_ids={invited_user_ids}  />
+                <UserList list_key={LIST_KEY__PROJECT_USER_LIST}
+                          invited_user_ids={invited_user_ids}
+                          onSelectUsers={this.onSelectUsers}/>
                 
             </div>
         )
