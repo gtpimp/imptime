@@ -9,6 +9,7 @@ logger = logging.getLogger(__name__)
 class UserSerializer(BaseSerializer):
 
     id = serializers.CharField()
+    email = serializers.CharField()
     username = serializers.CharField()
     first_name = serializers.CharField()
     last_name = serializers.CharField()

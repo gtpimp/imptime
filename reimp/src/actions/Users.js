@@ -48,27 +48,27 @@ function announceUsersLoadFailed(error) {
     }
 }
 
-function announceSavingInvite(user_id, project_id) {
+function announceSavingInvite(user_email, project_id) {
     return {
         type: ANNOUNCE_SAVING_INVITE,
-        user_id: user_id,
+        user_email: user_email,
         project_id: project_id
     }
 }
 
-function announceInviteSaved(user_id, project_id, payload) {
+function announceInviteSaved(user_email, project_id, payload) {
     return {
         type: ANNOUNCE_SAVED_INVITE,
-        user_id: user_id,
+        user_email: user_email,
         project_id: project_id,
         payload: payload
     }
 }
 
-function announceInviteSaveFailed(user_id, project_id, error) {
+function announceInviteSaveFailed(user_email, project_id, error) {
     return {
         type: ANNOUNCE_SAVE_INVITE_FAILED,
-        user_id: user_id,
+        user_email: user_email,
         project_id: project_id,
         error: error
     }
@@ -142,14 +142,13 @@ export function has_permission(state, permission_name) {
     return permissions[permission_name] || false
 }
 
-export function saveInviteUser(project_id, user_id, user_email) {
+export function saveInviteUser(project_id, user_email) {
 
     return (dispatch, getState) => {
 	const state = getState()
         const API_BASE_URL = state.settings.configured && state.settings.API_BASE_URL
 	dispatch(announceSavingInvite())
-	let data = {user_id: user_id,
-                    user_email: user_email}
+	let data = {user_email: user_email}
 	
 	return impfetch(API_BASE_URL+"imp/project/"+project_id+"/invite/", dispatch,
 			{method: "POST",
@@ -161,15 +160,15 @@ export function saveInviteUser(project_id, user_id, user_email) {
 	 .then(json => {
              if ( json.status !== 'success' ) {
 		 console.log('Request failed with JSON response', json);
-		 dispatch(announceInviteSaveFailed(user_id, project_id, json.error))
+		 dispatch(announceInviteSaveFailed(user_email, project_id, json.error))
              } else {
 		 console.log('Request succeeded with JSON response', json);
-		 dispatch(announceInviteSaved(user_id, project_id, json.payload))
+		 dispatch(announceInviteSaved(user_email, project_id, json.payload))
              }
 	 })
 	 .catch(function (error) {
              console.log('Request failed', error);
-	     dispatch(announceInviteSaveFailed(user_id, project_id, error))
+	     dispatch(announceInviteSaveFailed(user_email, project_id, error))
 	 })
     }
 

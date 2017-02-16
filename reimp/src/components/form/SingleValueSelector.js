@@ -1,5 +1,7 @@
 import React, {Component} from 'react'
 import {connect} from 'react-redux'
+import map from 'lodash/map'
+import filter from 'lodash/filter'
 import {ensureUsersLoaded} from '../../actions/Users'
 import '../../sass/single-value-selector.css'
 
@@ -9,6 +11,7 @@ export class SingleValueSelector extends Component {
         super(props)
         this.onSelected = this.onSelected.bind(this)
         this.onSelectionFilterChanged = this.onSelectionFilterChanged.bind(this)
+        this.onKeyDownOnSelectionFilter = this.onKeyDownOnSelectionFilter.bind(this)
     }
 
     onSelected(selected_option) {
@@ -17,31 +20,65 @@ export class SingleValueSelector extends Component {
     }
 
     onSelectionFilterChanged() {
-        this.setState({filter:this.selection_filter_el.value})
+        this.setState({filter_term:this.selection_filter_el.value})
+    }
+
+    onKeyDownOnSelectionFilter(event) {
+        const { onChange } = this.props
+        if (event.keyCode === 13) {
+            const options = this.getFilteredOptions()
+            if ( options.length == 1 ) {
+                onChange(options[0].value)
+            } else {
+                onChange(this.selection_filter_el.value)
+            }
+            event.stopPropagation()
+        }
+    }
+
+    getOptionLabel(option) {
+        return (option.index + 1) + ". " + option.label
+    }
+
+    getFilteredOptions() {
+        const {options} = this.props
+        const that = this
+        const filter_term = (this.state || {}).filter_term || undefined
+        let index = 0
+        return filter(options, function(option) {
+
+            option.index = index
+            let res = false
+            if ( filter_term === undefined || filter_term.length === 0 ) {
+                res = true
+            }
+
+            if ( that.getOptionLabel(option).indexOf(filter_term) > -1 ) {
+                res = true
+            }
+            index += 1
+            return res
+        })
     }
 
     render_suggestions() {
         const {options} = this.props
-        const filter = (this.state || {}).filter || undefined
+        const filter_term = (this.state || {}).filter_term || undefined
         const that = this
 
-        const suggestions = options.map( function(option, index) {
-            const filterable_label = (index + 1) + ". " + option.label
-            if ( filter === undefined || filter.length == 0 || filterable_label.indexOf(filter) > -1) {
-                return (
-                    <div className="single-value-selector__suggestion" key={'suggestion_' + option.value}
-                         onClick={() => that.onSelected(option)}>
-                        <div className="single-value-selector__suggestion-number">
-                            {(index + 1)}.
-                        </div>
-                        <div className="single-value-selector__suggestion-label">
-                            {option.label}
-                        </div>
+        const filtered_options = this.getFilteredOptions(options)
+        const suggestions = map(filtered_options, function(option) {
+            return (
+                <div className="single-value-selector__suggestion" key={'suggestion_' + option.index}
+                     onClick={() => that.onSelected(option)}>
+                    <div className="single-value-selector__suggestion-number">
+                        {(option.index + 1)}.
                     </div>
-                )
-            } else {
-                return null
-            }
+                    <div className="single-value-selector__suggestion-label">
+                        {option.label}
+                    </div>
+                </div>
+            )
         })
         return suggestions
     }
@@ -51,16 +88,14 @@ export class SingleValueSelector extends Component {
         return (
             <div className="single-value-selector">
                 <div className="single-value-selector__input-wrapper">
-                    <input className="single-value-selector__input" ref={(ref)=> this.selection_filter_el=ref}  onChange={this.onSelectionFilterChanged}/>
+                    <input onKeyDown={this.onKeyDownOnSelectionFilter}
+                           className="single-value-selector__input"
+                           ref={(ref)=> this.selection_filter_el=ref}
+                           onChange={this.onSelectionFilterChanged}/>
                 </div>
                 <div className="single-value-selector__suggestions">
                     {this.render_suggestions()}
                 </div>
-                {/*<Field name="assigned_to" component={this.renderSelectList}*/}
-                       {/*valueField="value"*/}
-                       {/*textField="label"*/}
-                       {/*data={assignable_users}*/}
-                {/*/>*/}
             </div>
         )
     }

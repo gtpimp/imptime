@@ -54,12 +54,12 @@ export default function user(state = initialState, action) {
             return state;
         case ANNOUNCE_SAVING_INVITE:
 	    return Object.assign({}, state, {
-		inviting_user_id: action.user_id,
+		inviting_user_email: action.user_email,
                 inviting_project_id: action.project_id
 	    })
         case ANNOUNCE_SAVED_INVITE:
             return Object.assign({}, state, {
-		inviting_user_id: action.user_id,
+		inviting_user_email: action.user_email,
                 inviting_project_id: action.project_id
 	    })
         case ANNOUNCE_SAVE_INVITE_FAILED:

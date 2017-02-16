@@ -21,6 +21,7 @@ class IssuesToolbarPanel extends Component {
     constructor(props) {
         super(props)
         this.onNewIssueClick = this.onNewIssueClick.bind(this)
+        this.onDashboardClick = this.onDashboardClick.bind(this)
     }
     
     componentDidMount() {
@@ -43,8 +44,8 @@ class IssuesToolbarPanel extends Component {
     }
 
     onDashboardClick() {
-        const { sprint } = this.props
-        browserHistory.push('/projects/'+sprint.project_id+'/sprints/'+sprint.id);
+        const { project_id, sprint_id } = this.props
+        browserHistory.push('/projects/'+project_id+'/sprints/'+sprint_id);
     }
 
     render() {
@@ -68,7 +69,8 @@ function mapStateToProps(state, props) {
         issue_ids: selected_issue_ids,
         issue: issue,
         last_selected_issue_id: issue.id,
-        sprint_id: sprint.id
+        sprint_id: sprint.id,
+        project_id: sprint.project_id
     }
 }
 
