@@ -33,6 +33,7 @@ export class SingleValueSelector extends Component {
                 onChange(this.selection_filter_el.value)
             }
             event.stopPropagation()
+            event.preventDefault()
         }
     }
 
@@ -46,7 +47,6 @@ export class SingleValueSelector extends Component {
         const filter_term = (this.state || {}).filter_term || undefined
         let index = 0
         return filter(options, function(option) {
-
             option.index = index
             let res = false
             if ( filter_term === undefined || filter_term.length === 0 ) {
