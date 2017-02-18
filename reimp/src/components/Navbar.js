@@ -3,6 +3,7 @@ import {connect} from 'react-redux'
 import SearchBox from '../components/SearchBox'
 import {logged_in_user} from '../actions/Auth'
 import { collapseUserDashboard, expandUserDashboard } from '../actions/Header'
+import classNames from 'classnames'
 import '../sass/navbar.css'
 import NavTab from './NavTab'
 
@@ -24,13 +25,13 @@ class Navbar extends Component {
 
     render() {
 
-        const { user_dashboard_expanded, username} = this.props
+        const { is_websockets_connected, user_dashboard_expanded, username} = this.props
 
         return (
             <div className="navbar">
                 <div className="navbar__left">
                     <NavTab to="/" index={true}>
-                        <div className="navbar__component navbar__branding">
+                        <div className={classNames('navbar__component', 'navbar__branding', 'navbar__branding--' +(is_websockets_connected ? 'connected' : 'disconnected'))}>
                             &nbsp;
                         </div>
                     </NavTab>
@@ -49,8 +50,10 @@ class Navbar extends Component {
 
 function mapStateToProps(state, props) {
     const { header } = state
+    const websockets = state.websockets || {}
 
     return {
+        is_websockets_connected: websockets.isConnected,
         user_dashboard_expanded: header.user_dashboard_expanded,
         username: logged_in_user(state).username
     }

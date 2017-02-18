@@ -15,11 +15,20 @@
 .navbar__branding {
   align-items: center;
   background-image: url('../images/Logo@2x.png');
+  background-position: center center;
   background-size: 56px 56px;
   cursor: pointer;
   display: inline-flex;
   height: 56px;
   width: 56px;
+}
+
+.navbar__branding--connected {
+
+}
+
+.navbar__branding--disconnected {
+  filter: grayscale(100%);
 }
 
 .navbar__left {
