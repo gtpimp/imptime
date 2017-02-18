@@ -25,10 +25,11 @@ class Navbar extends Component {
 
     render() {
 
-        const { is_websockets_connected, user_dashboard_expanded, username} = this.props
+        const {  is_loading, is_saving, is_websockets_connected, user_dashboard_expanded, username} = this.props
+        const user_initiated_network_activity = is_loading || is_saving
 
         return (
-            <div className="navbar">
+            <div className={classNames('navbar', 'navbar--network-' + ( user_initiated_network_activity ? 'active' : 'inactive' ))}>
                 <div className="navbar__left">
                     <NavTab to="/" index={true}>
                         <div className={classNames('navbar__component', 'navbar__branding', 'navbar__branding--' +(is_websockets_connected ? 'connected' : 'disconnected'))}>
@@ -50,9 +51,12 @@ class Navbar extends Component {
 
 function mapStateToProps(state, props) {
     const { header } = state
+    const loading = state.loading
     const websockets = state.websockets || {}
 
     return {
+        is_loading: loading.is_loading,
+        is_saving: loading.is_saving,
         is_websockets_connected: websockets.isConnected,
         user_dashboard_expanded: header.user_dashboard_expanded,
         username: logged_in_user(state).username

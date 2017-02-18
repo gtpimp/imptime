@@ -8,6 +8,14 @@
   width: 100%;
 }
 
+.navbar--network-active {
+  border-top: 1px solid $color-17;
+}
+
+.navbar--network-inactive {
+  border-top: 1px solid $color-2;
+}
+
 .navbar__home-link {
   display: block;
 }
