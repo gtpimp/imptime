@@ -106,7 +106,7 @@ function getPupIdForProjectUser(state, project_id, user_id) {
 }
 
 function getPupIdsForProjectUsers(state, project_id, user_ids) {
-    return map(user_ids, (user_id) => getPupIdForProjectUsers(state, project_id, user_id))
+    return map(user_ids, (user_id) => getPupIdForProjectUser(state, project_id, user_id))
 }
 
 export function ensureProjectUserPermissionsLoaded(project_id, user_ids) {

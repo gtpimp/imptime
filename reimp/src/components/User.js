@@ -1,5 +1,6 @@
 import React, { Component } from 'react'
 import { DragSource, DropTarget } from 'react-dnd';
+import map from 'lodash/map'
 import { connect } from 'react-redux'
 import classNames from 'classnames'
 import { DndTypes } from '../actions/Dnd'
@@ -52,11 +53,7 @@ class User extends Component {
                         {invitation_pending && <div>Invite sent</div>}
                     </td>
                     <td className="list-table__cell">
-                        { map(user_actions, (user_action, index) =>
-                        <div>
-                            {user_action.render(user)}
-                        </div>
-                        {user_actions}
+                        { map(user_actions, (user_action, index) => user_action.render(user)) }
                     </td>
 		</tr>
             ))
@@ -88,7 +85,7 @@ function mapStateToProps(state, props) {
 	is_loading: is_loading,
 	is_narrow: is_narrow,
 	is_wide: !is_narrow,
-        invitation_pending: invitation_pending
+        invitation_pending: invitation_pending,
         user_actions: user_actions
     }
 }

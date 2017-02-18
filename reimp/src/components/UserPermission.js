@@ -1,11 +1,12 @@
 import React, { Component } from 'react'
 import { connect } from 'react-redux'
 import keys from 'lodash/keys'
+import map from 'lodash/map'
 import classNames from 'classnames'
 import { getUser, ensureUsersLoaded } from '../actions/Users'
 import { getProject, ensureProjectsLoaded } from '../actions/Projects'
 import { getProjectUserPermission, ensureProjectUserPermissionsLoaded } from '../actions/ProjectUserPermissions'
-import '../sass/user_permission.css'
+import '../sass/user-permission.css'
 
 class UserPermission extends Component {
 
@@ -16,30 +17,40 @@ class UserPermission extends Component {
     }
 
     componentWillReceiveProps(new_props) {
-        this.refresh()
+        this.refresh(new_props.project_id, new_props.user_id)
     }
 
-    refresh() {
-        const {dispatch, assignable_user_ids, estimate_user_ids} = this.props
+    refresh(project_id, user_id) {
+        const {dispatch} = this.props
+        project_id = project_id || this.props.project_id
+        user_id = user_id || this.props.user_id
         dispatch(ensureProjectsLoaded([project_id]))
         dispatch(ensureUsersLoaded([user_id]))
         dispatch(ensureProjectUserPermissionsLoaded(project_id, [user_id]))
     }
     
     render() {
-        const { user, project, pup } = this.props
-	{ is_loading &&
-            <tr><td>Loading...</td></tr>
-        }
-        
-	{ !is_loading &&
-          { map(keys(pup), (permission_name, index) =>
-              <div>
-                  <div key={index}>{permission_name}</div>
-                  <div>{pup[permission_name]}</div>
-              </div>
-          )}
-        }
+        const { user, project, pup, is_loading } = this.props
+
+        return (
+            <div className="user-permission">
+                
+	        { is_loading &&
+                  <tr><td>Loading...</td></tr>
+                }
+                
+                { !is_loading &&
+                  map(keys(pup), (permission_name, index) =>
+                      (
+                          <div>
+                              <div key={index}>{permission_name}</div>
+                              <div>{pup[permission_name]}</div>
+                          </div>
+                      )
+                  )
+                }
+            </div>
+        )
     }
 }
 

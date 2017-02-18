@@ -89,10 +89,9 @@ class ProjectUserPage extends Component {
     }
     
     render() {
-        const { project, user_id } = this.props
+        const { project, user_id, show_permissions } = this.props
         return (
             <div>
-
                 { show_permissions && this.user_id && this.renderUserPermissions() }
 
                 { ! show_permissions &&

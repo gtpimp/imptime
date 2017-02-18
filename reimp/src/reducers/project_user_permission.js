@@ -1,6 +1,7 @@
 import assign from 'lodash/assign'
 import keys from 'lodash/keys'
 import union from 'lodash/union'
+import forEach from 'lodash/forEach'
 import difference from 'lodash/difference'
 import without from 'lodash/without'
 import { setErrorMessage } from '../actions/Error'
@@ -14,12 +15,12 @@ import {
     ANNOUNCE_LOADING_PUPS,
     INVALIDATE_PUPS,
     INVALIDATE_ALL_PUPS,
-} from '../actions/Pups.js'
+} from '../actions/ProjectUserPermissions.js'
 
 const initialState = {
     items_by_id: [],
     loading_item_ids: [],
-    saving_item_ids: []
+    saving_item_ids: [],
     pup_ids_by_project_and_user: {}
 }
 
@@ -62,7 +63,7 @@ export default function project_user_permission(state = initialState, action) {
         case ANNOUNCE_PUPS_LOAD_FAILED:
             setErrorMessage("Failed to load project user permissions: " + action.error_message)
             return state;
-        case ANNOUNCE_SAVING_PUPS:
+        case ANNOUNCE_PUPS_SAVING:
 	    return Object.assign({}, state, {
 		saving_item_ids: union(state.saving_item_ids, action.pup_ids_to_save)
 	    })            
