@@ -66,14 +66,16 @@ class ProjectUserPage extends Component {
         browserHistory.push('/projects/'+project_id+'/sprints');
     }
 
-    navigateToProjectUserPermissions() {
-        const { user_id } = this.props
-        browserHistory.push('?permissions=1');
+    navigateToProjectUserPermissions(event) {
+        const { user_id, project_id } = this.props
+        event.stopPropagation()
+        event.preventDefault()
+        browserHistory.push('/projects/'+project_id+'/users/'+user_id+'?permissions=1')
     }
 
     closeProjectUserPermissions() {
-        const { user_id } = this.props
-        browserHistory.push('?permissions=0');
+        const { user_id, project_id } = this.props
+        browserHistory.push('/projects/'+project_id+'/users/'+user_id+'?permissions=0')
     }
 
     renderUserPermissions() {
@@ -90,6 +92,7 @@ class ProjectUserPage extends Component {
     
     render() {
         const { project, user_id, show_permissions } = this.props
+        const that = this
         return (
             <div>
                 { show_permissions && this.user_id && this.renderUserPermissions() }
@@ -101,7 +104,7 @@ class ProjectUserPage extends Component {
                       <div className="project-user__project_users">
                           <ProjectUsers
                               project_id={project.id}
-                              onPermissionsAction={this.navigateToProjectUserPermissions}
+                              onPermissionsAction={that.navigateToProjectUserPermissions}
                           />
                       </div>
                   </div>

@@ -205,7 +205,8 @@ function mapStateToProps(state, props) {
         last_updated: l.last_updated,
         invite_user: invite_user,
         is_inviting_user: is_inviting_user,
-        invited_user_ids: invited_user_ids
+        invited_user_ids: invited_user_ids,
+        user_actions: user_actions
     }
 }
 

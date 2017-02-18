@@ -1,6 +1,7 @@
 import React, { Component } from 'react'
 import { DragSource, DropTarget } from 'react-dnd';
 import map from 'lodash/map'
+import keys from 'lodash/keys'
 import { connect } from 'react-redux'
 import classNames from 'classnames'
 import { DndTypes } from '../actions/Dnd'
@@ -53,7 +54,7 @@ class User extends Component {
                         {invitation_pending && <div>Invite sent</div>}
                     </td>
                     <td className="list-table__cell">
-                        { map(user_actions, (user_action, index) => user_action.render(user)) }
+                        { map(keys(user_actions), (user_action_name, index) => user_actions[user_action_name](user)) }
                     </td>
 		</tr>
             ))

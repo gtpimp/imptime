@@ -31,6 +31,7 @@ class ProjectUsersPage extends Component {
         this.onCancelInviteUser = this.onCancelInviteUser.bind(this)
         this.onSaveInviteUser = this.onSaveInviteUser.bind(this)
         this.onSelectUsers = this.onSelectUsers.bind(this)
+        this.getActionRenderFunc = this.getActionRenderFunc.bind(this)
     }
 
     componentDidMount() {
@@ -92,13 +93,11 @@ class ProjectUsersPage extends Component {
         )
     }
 
-    getRenderedActions() {
-        const { user_id, onPermissionsAction } = this.props
+    getActionRenderFunc() {
+        const { onPermissionsAction } = this.props
         const that = this
         return {
-            render: function(user) {
-                <div onClick={that.onPermissionsAction}>Permissions</div>
-            }
+            render_permissions: (user) => <div key={user.id} onClick={onPermissionsAction}>Permissions</div>
         }
     }
     
@@ -121,7 +120,9 @@ class ProjectUsersPage extends Component {
                 <h2>Users</h2>
                 <UserList list_key={LIST_KEY__PROJECT_USER_LIST}
                           invited_user_ids={invited_user_ids}
-                          onSelectUsers={this.onSelectUsers}/>
+                          onSelectUsers={this.onSelectUsers}
+                          user_actions={this.getActionRenderFunc()}
+                />
                 
             </div>
         )
