@@ -1,5 +1,9 @@
 @import 'variables.scss';
 
+.text-component {
+  overflow-wrap: break-word;
+}
+
 .text-component--readonly {
   color: $color-1;
   font: $font-7;
