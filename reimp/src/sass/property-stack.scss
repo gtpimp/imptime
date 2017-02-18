@@ -33,6 +33,17 @@
   }
 }
 
+.property-stack-component__heading {
+  color: $color-1;
+  display: inline-block;
+  font: $font-2;
+  margin-right: 10px;
+  overflow: hidden;
+  //padding-left: 16px;
+  //padding-top: 20px;
+  width: 100%;
+}
+
 .property-stack-component__content {
   display: inline-block;
   margin-right: 10px;

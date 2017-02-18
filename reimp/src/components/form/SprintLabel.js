@@ -1,6 +1,7 @@
 import React, {Component} from 'react'
 import {connect} from 'react-redux'
 import { getSprint, ensureSprintsLoaded } from '../../actions/Sprints'
+import '../../sass/sprint-label.css'
 
 class SprintLabel extends Component {
 
@@ -24,7 +25,7 @@ class SprintLabel extends Component {
     render() {
         const { sprint } = this.props
         return (
-            <div>
+            <div className="sprint-label">
                 {sprint.name}
             </div>
         )

@@ -58,7 +58,6 @@ class SelectSprintForm extends Component {
         return (
             <form onSubmit={handleSubmit}>
                 <div>
-                    <label htmlFor="assigned">Move to sprint</label>
                     <Field name="sprint_id"
                            component={this.renderSingleValueSelector}
                            valueField="value"

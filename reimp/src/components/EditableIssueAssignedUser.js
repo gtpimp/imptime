@@ -27,10 +27,11 @@ class EditableIssueAssignedUser extends Component {
                                   initial_value={issue && issue.assigned_to_id || null}
                                   edit_as_modal={true}
                                   onChange={this.onChange}
+                                  actionLabel="Assign to"
                 >
                     <IssueAssignedUserForm project_id={project_id}/>
                     <OtherUser />
-                    <Blank />
+                    <div className="text-component--empty">Unassigned</div>
                 </EditableProperty>
             </div>
         )

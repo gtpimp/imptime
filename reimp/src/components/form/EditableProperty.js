@@ -92,16 +92,16 @@ class EditableProperty extends Component {
         }
 
         return (
-            <div className="property-stack-component" onClick={this.startEditing}>
-                <div className="property-stack-component__content">
+            <div onClick={this.startEditing}>
+                <div>
                     { is_editing && edit_as_modal &&
                     <Modal isOpen={true}
                            className="editable-property-modal"
                            overlayClassName="editable-property-modal__overlay"
                            onRequestClose={this.cancelEditing}
-                           contentLabel="Tag editor">
+                           contentLabel={this.props.actionLabel}>
                         <div className="editable-property-modal__row editable-property-modal__row--header">
-                            <label htmlFor="assigned" className="editable-property-modal__title">Assign To</label>
+                            <label htmlFor="assigned" className="editable-property-modal__title">{this.props.actionLabel}</label>
                             <div className="editable-property-modal__close"><i className="material-icons">close</i></div>
                         </div>
                         <div className="editable-property-modal__content">
