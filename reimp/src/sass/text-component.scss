@@ -17,3 +17,10 @@
 .text-component--title {
   font: $font-7;
 }
+
+.text-component--description {
+  color: $color-10;
+  font: $font-1;
+  line-height: 20px;
+  white-space: pre-wrap;
+}
