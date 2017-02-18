@@ -1,5 +1,5 @@
 import React, {Component} from 'react'
-import { connect } from 'react-redux'
+import {connect} from 'react-redux'
 import Modal from 'react-modal';
 import '../sass/modal-dialog.scss'
 import classNames from 'classnames'
@@ -7,13 +7,14 @@ import classNames from 'classnames'
 class ModalDialog extends Component {
 
     render() {
-        const { onClose} = this.props
+        const {} = this.props
 
         return (
-            <Modal isOpen={this.props.isOpen}
+            <Modal isOpen={this.props.isOpen || false}
                    className={classNames('modal-dialog', 'modal-dialog--' + this.props.variant)}
                    overlayClassName="modal-dialog__overlay"
-                   onRequestClose={this.props.onClose || function() {}}>
+                   onRequestClose={this.props.onClose || function () { }}
+                   contentLabel={this.props.title}>
                 <div className="modal-dialog__row modal-dialog__row--header">
                     <label htmlFor="assigned" className="modal-dialog__title">{this.props.title}</label>
                     { this.props.onClose &&
