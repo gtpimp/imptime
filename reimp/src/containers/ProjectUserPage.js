@@ -95,7 +95,7 @@ class ProjectUserPage extends Component {
         const that = this
         return (
             <div>
-                { show_permissions && this.user_id && this.renderUserPermissions() }
+                { show_permissions && user_id && this.renderUserPermissions() }
 
                 { ! show_permissions &&
                   <div>
