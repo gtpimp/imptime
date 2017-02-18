@@ -92,7 +92,7 @@ class EditableProperty extends Component {
         }
 
         return (
-            <div className="property-stack-component">
+            <div className="property-stack-component" onClick={this.startEditing}>
                 <div className="property-stack-component__content">
                     { is_editing && edit_as_modal &&
                     <Modal isOpen={true}
@@ -116,7 +116,7 @@ class EditableProperty extends Component {
                 <div className="property-stack-component__icons">
                     { (is_readonly || is_empty) &&
                     (
-                        <div className="property-stack-component__icon" onClick={this.startEditing}>
+                        <div className="property-stack-component__icon">
                             <i className="material-icons">edit</i>
                         </div>
                     )
