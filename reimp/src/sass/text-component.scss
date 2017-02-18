@@ -2,6 +2,7 @@
 
 .text-component {
   overflow-wrap: break-word;
+  padding: 0;
 }
 
 .text-component--readonly {
@@ -15,7 +16,9 @@
 }
 
 .text-component--title {
+  color: $color-1;
   font: $font-7;
+  line-height: 24px;
 }
 
 .text-component--description {

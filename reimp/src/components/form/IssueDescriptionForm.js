@@ -23,7 +23,7 @@ class IssueDescriptionForm extends Component {
             <Textarea
                 rows="1"
                 maxLength="3000"
-                className="textarea textarea--text-component"
+                className="textarea textarea--text-component textarea--description"
                 placeholder="Description"
                 onChange={(e) => this.onChangeAndSubmit(e, input.onChange)}
                 value={input.value}
