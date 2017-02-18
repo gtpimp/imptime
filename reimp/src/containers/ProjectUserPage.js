@@ -117,7 +117,7 @@ function mapStateToProps(state, props) {
     const project = getProject(state, project_id)
     const user = getUser(state, user_id)
 
-    const opts = this.props.location.query
+    const opts = props.location.query
         
     return {
         project_id: project_id,

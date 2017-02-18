@@ -55,4 +55,5 @@ class ProjectUserPermissionSerializer(BaseSerializer):
     def to_representation(self, project_permission, *args, **kwargs):
         pp = project_permission
         pp.project_id = pp.business_id # sic
-        return super(ProjectUserPermissionSerializer, self).to_representation(project_permission, *args, **kwargs)
+        return super(ProjectUserPermissionSerializer, self).to_representation(pp, *args, **kwargs)
+ 
