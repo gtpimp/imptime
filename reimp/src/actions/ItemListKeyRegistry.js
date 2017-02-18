@@ -11,6 +11,7 @@ export const ENTITY_KEY__SPRINT = 'sprint'
 export const ENTITY_KEY__ISSUE = 'issue'
 export const ENTITY_KEY__ISSUE_GENERAL_DETAILS = 'issue_general_details'
 export const ENTITY_KEY__USER = 'user'
+export const ENTITY_KEY__PROJECT_USER_PERMISSION = 'user'
 
 export const PAGE_KEY__PROJECTS_PAGE = 'projects_page'
 export const PAGE_KEY__PROJECT_DASHBOARD_PAGE = 'project_dashboard_page'

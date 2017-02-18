@@ -1,0 +1,83 @@
+import assign from 'lodash/assign'
+import keys from 'lodash/keys'
+import union from 'lodash/union'
+import difference from 'lodash/difference'
+import without from 'lodash/without'
+import { setErrorMessage } from '../actions/Error'
+
+import {
+    ANNOUNCE_PUPS_SAVING,
+    ANNOUNCE_PUPS_SAVED,
+    ANNOUNCE_PUPS_SAVE_FAILED,
+    ANNOUNCE_PUPS_LOADED,
+    ANNOUNCE_PUPS_LOAD_FAILED,
+    ANNOUNCE_LOADING_PUPS,
+    INVALIDATE_PUPS,
+    INVALIDATE_ALL_PUPS,
+} from '../actions/Pups.js'
+
+const initialState = {
+    items_by_id: [],
+    loading_item_ids: [],
+    saving_item_ids: []
+    pup_ids_by_project_and_user: {}
+}
+
+export default function project_user_permission(state = initialState, action) {
+
+    let state_copy = Object.assign({}, state)
+    let new_items_by_id = null
+    
+    switch (action.type) {
+	case INVALIDATE_ALL_PUPS:
+	    return Object.assign({}, state, {items_by_id: null,
+                                             pup_ids_by_project_and_user: null})
+        case INVALIDATE_PUPS:
+            return Object.assign({}, state, {items_by_id: without(state.items_by_id, action.pup_ids_to_invalidate)})
+
+        case ANNOUNCE_LOADING_PUPS:
+	    return Object.assign({}, state, {
+		loading_item_ids: union(state.loading_item_ids, action.pup_ids_to_load)
+	    })            
+        case ANNOUNCE_PUPS_LOADED:
+            state_copy = Object.assign({}, state, {
+		loading_item_ids: Object.assign({},
+						difference(state.loading_item_ids || [],
+							   keys(action.items_by_id))),
+		items_by_id: Object.assign({},
+					   assign(state.items_by_id, action.items_by_id))
+	    })
+
+            const extra_pup_ids_by_project_and_user = {}
+            forEach(state_copy.items_by_id, (item) => {
+                if ( ! extra_pup_ids_by_project_and_user[item.project_id] ) {
+                    extra_pup_ids_by_project_and_user[item.project_id] = {}
+                }
+                extra_pup_ids_by_project_and_user[item.project_id][item.user_id] = item.id
+            })
+            state_copy.pup_ids_by_project_and_user = Object.assign({},
+                                                                   state_copy.pup_ids_by_project_and_user,
+                                                                   extra_pup_ids_by_project_and_user)
+            return state_copy
+        case ANNOUNCE_PUPS_LOAD_FAILED:
+            setErrorMessage("Failed to load project user permissions: " + action.error_message)
+            return state;
+        case ANNOUNCE_SAVING_PUPS:
+	    return Object.assign({}, state, {
+		saving_item_ids: union(state.saving_item_ids, action.pup_ids_to_save)
+	    })            
+        case ANNOUNCE_PUPS_SAVED:
+            state_copy = Object.assign({}, state, {
+		saving_item_ids: Object.assign({},
+						difference(state.saving_item_ids || [],
+							   action.pup_ids))
+	    })
+            return state_copy
+        case ANNOUNCE_PUPS_SAVE_FAILED:
+            setErrorMessage("Failed to save pups: " + action.error_message)
+            return state;
+
+        default:
+            return state
+    }
+}

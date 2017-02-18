@@ -1,19 +1,36 @@
 import React, { Component } from 'react'
 import { connect } from 'react-redux'
 import classNames from 'classnames'
-import { getUser } from '../actions/Users'
-import '../sass/user.css'
+import { getUser, ensureUsersLoaded } from '../actions/Users'
+import { getProject, ensureProjectsLoaded } from '../actions/Projects'
+import { getProjectUserPermission, ensureProjectUserPermissionsLoaded } from '../actions/ProjectUserPermissions'
+import '../sass/user_permission.css'
 
-class UserPermissions extends Component {
+class UserPermission extends Component {
 
+    ensureProjectUserPermissionsLoaded
+
+    componentDidMount() {
+        this.refresh()
+    }
+
+    componentWillReceiveProps(new_props) {
+        this.refresh()
+    }
+
+    refresh() {
+        const {dispatch, assignable_user_ids, estimate_user_ids} = this.props
+        dispatch(ensureProjectsLoaded([project_id]))
+        dispatch(ensureUsersLoaded([user_id]))
+        dispatch(ensureProjectUserPermissionsLoaded(project_id, [user_id]))
+    }
+    
     render() {
-        const { user, permissions } = this.props
+        const { user, project, pup } = this.props
 
-	if ( ! user || ! permissions ) {
+	if ( ! user.id || ! project.id || ! pup.id ) {
 	    return (<tr><td>Loading...</td></tr>)
 	}
-
-        
         
 	if ( ! is_loading === false ) {
 	    return (
@@ -46,14 +63,19 @@ class UserPermissions extends Component {
 }
 
 function mapStateToProps(state, props) {
-    const { user_id } = props
+    const { project_id, user_id, onClose } = props
     const user = getUser(state, user_id) || {}
+    const project = getProject(state, project_id) || {}
+    const pup = getProjectUserPermission(state, project_id, user_id) || {}
     
     return {
+        project: project,
+        project_id: project_id,
 	user: user,
 	user_id: user_id,
-        permissions: user.permissions
+        pup: pup,
+        pup_id: pup.id
     }
 }
 
-export default connect(mapStateToProps)(UserPermissions)
+export default connect(mapStateToProps)(UserPermission)

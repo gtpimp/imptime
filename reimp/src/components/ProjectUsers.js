@@ -91,6 +91,16 @@ class ProjectUsersPage extends Component {
             </Modal>
         )
     }
+
+    getRenderedActions() {
+        const { user_id, onPermissionsAction } = this.props
+        const that = this
+        return {
+            render: function(user) {
+                <div onClick={that.onPermissionsAction}>Permissions</div>
+            }
+        }
+    }
     
     render() {
 

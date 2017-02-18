@@ -421,6 +421,7 @@ class BusinessPermissions(models.Model):
     can_do_finance_checklist = models.BooleanField(default=False, verbose_name="Finance checklist")
 
     can_edit_permissions = models.BooleanField(default=False, verbose_name="Can Edit Permissions")
+    can_view_permissions = models.BooleanField(default=False, verbose_name="Can View Permissions")
     can_toggle_graphs = models.BooleanField(default=False, verbose_name="Can Toggle Graphs")
     can_edit_project_detail = models.BooleanField(default=False, verbose_name="Can Edit Sprint Detail")
     can_edit_deadlines = models.BooleanField(default=False,verbose_name = "Can Edit Deadlines ")
@@ -500,6 +501,10 @@ class BusinessPermissions(models.Model):
     def has_edit_permissions(self):
         return self.user.is_superuser or self.can_edit_permissions or self.user.has_perm('timepiece.belongs_to_all_projects')
 
+    @property
+    def has_view_permissions(self):
+        return self.user.is_superuser or self.can_view_permissions or self.user.has_perm('timepiece.belongs_to_all_projects')
+    
     @property
     def has_edit_project_detail(self):
         return self.user.is_superuser or self.can_edit_project_detail or self.user.has_perm('timepiece.belongs_to_all_projects')

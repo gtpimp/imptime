@@ -159,6 +159,7 @@ class EditPersonPermission(forms.ModelForm):
         self.fields['can_do_dev_checklist'].widget.attrs['class'] = 'medium-safe'
         self.fields['can_do_traffic_checklist'].widget.attrs['class'] = 'medium-safe'
         self.fields['can_do_finance_checklist'].widget.attrs['class'] = 'medium-safe'
+        self.fields['can_view_permissions'].widget.attrs['class'] = 'unsafe'
 
         self.fields['is_active_member_of_business'].widget.attrs['class'] = 'unsafe'
         self.fields['can_invite_users'].widget.attrs['class'] = 'unsafe'

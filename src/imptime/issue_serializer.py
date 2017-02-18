@@ -55,9 +55,7 @@ class IssueSerializer(BaseSerializer):
         issue.am_i_clocked_in = len(issue.my_clocked_in_entries)>0
         issue.currently_clocked_in_by_user_ids = [x.id for x in issue.currently_clocked_in_by()]
 
-        d = super(IssueSerializer, self).to_representation(
-            issue, *args, **kwargs)
-        return d
+        return super(IssueSerializer, self).to_representation(issue, *args, **kwargs)
 
 class IssueGeneralDetailsSerializer(BaseSerializer):
 

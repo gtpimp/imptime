@@ -3,7 +3,9 @@ import {connect} from 'react-redux'
 import {browserHistory} from 'react-router'
 import { setBreadcrumbs } from '../actions/Breadcrumbs'
 import {ensureProjectsLoaded, getProject} from '../actions/Projects'
+import {ensureUsersLoaded, getUser} from '../actions/Users'
 import ProjectUsers from '../components/ProjectUsers'
+import UserPermission from '../components/UserPermission'
 import Modal from 'react-modal';
 import {
     PAGE_KEY__PROJECT_USER_PAGE
@@ -11,6 +13,7 @@ import {
 import {
     set_toolbars,
     select_projects,
+    select_users,
     setPageFlag,
     clearPageFlag,
     getPageFlag
@@ -21,48 +24,89 @@ class ProjectUserPage extends Component {
     constructor(props) {
         super(props)
         this.navigateToSprintsPage = this.navigateToSprintsPage.bind(this)
+        this.navigateToProjectUserPermissions = this.navigateToProjectUserPermissions.bind(this)
+        this.closeProjectUserPermissions = this.closeProjectUserPermissions.bind(this)
     }
 
     componentDidMount() {
-        const {dispatch, project_id} = this.props
-        dispatch(set_toolbars(PAGE_KEY__PROJECT_USER_PAGE, ['project-user']))
-        this.refresh(project_id)
+        const {dispatch, project_id, user_id} = this.props
+        // dispatch(set_toolbars(PAGE_KEY__PROJECT_USER_PAGE, ['project-user']))
+        this.refresh(project_id, user_id)
     }
 
     componentWillReceiveProps(new_props) {
-        const { project_id, dispatch } = this.props
-        if ( new_props.project_id !== project_id || new_props.project.id !== this.props.project.id ) {
-            this.refresh(new_props.project_id)
+        const { project_id, user_id, dispatch } = this.props
+        if ( new_props.project_id !== project_id || new_props.project.id !== this.props.project.id ||
+             new_props.user_id !== user_id || new_props.user.id != this.props.user.id) {
+            this.refresh(new_props.project_id, new_props.user_id)
         }
     }
     
-    refresh(project_id) {
-        const { dispatch, project } = this.props
-        dispatch(setBreadcrumbs([ {to: '/projects', label: 'All Projects'},
-                                  {to: '/projects/'+project_id, label: project.name} ]))
-        dispatch(select_projects(PAGE_KEY__PROJECT_USER_PAGE, [project_id]))
-        dispatch(ensureProjectsLoaded([project_id]))
+    refresh(project_id, user_id) {
+        const { dispatch } = this.props
+        const breadcrumbs = []
+        if ( project_id ) {
+            dispatch(ensureProjectsLoaded([project_id]))
+            const project = getProject(project_id) || {}
+            breadcrumbs.push({to: '/projects', label: 'All Projects'})
+            breadcrumbs.push({to: '/projects/'+project_id, label: project.name})
+            dispatch(select_projects(PAGE_KEY__PROJECT_USER_PAGE, [project_id]))
+            if ( user_id ) {
+                dispatch(ensureUsersLoaded([user_id]))
+                const user = getUser(user_id) || {}
+                breadcrumbs.push({to: '/projects/'+project_id+'/users', label: 'All Users'})
+                breadcrumbs.push({to: '/projects/'+project_id+'/users/'+user_id, label: user.username})
+                dispatch(select_users(PAGE_KEY__PROJECT_USER_PAGE, [project_id]))
+            }
+        }
     }
 
     navigateToSprintsPage() {
         const { project_id } = this.props
         browserHistory.push('/projects/'+project_id+'/sprints');
     }
+
+    navigateToProjectUserPermissions() {
+        const { user_id } = this.props
+        browserHistory.push('?permissions=1');
+    }
+
+    closeProjectUserPermissions() {
+        const { user_id } = this.props
+        browserHistory.push('?permissions=0');
+    }
+
+    renderUserPermissions() {
+        const { project_id, user_id } = this.props
+        const that = this
+        return (
+            <div className="project-user__user_permissions">
+                <UserPermission project_id={project_id}
+                                user_id={user_id}
+                                onClose={that.closeProjectUserPermissions} />
+            </div>
+        )
+    }
     
     render() {
-
-        const { project, is_inviting_user } = this.props
-        
+        const { project, user_id } = this.props
         return (
             <div>
-                Project {project.name}
 
-                <button onClick={this.navigateToSprintsPage}>Take me to your sprints</button>
-                <br/>
-                
-                <div className="project-user__project_users">
-                    <ProjectUsers project_id={project.id} />
-                </div>
+                { show_permissions && this.user_id && this.renderUserPermissions() }
+
+                { ! show_permissions &&
+                  <div>
+                      Users for project: {project.name}
+                      <br/>
+                      <div className="project-user__project_users">
+                          <ProjectUsers
+                              project_id={project.id}
+                              onPermissionsAction={this.navigateToProjectUserPermissions}
+                          />
+                      </div>
+                  </div>
+                }
             </div>
         )
     }
@@ -70,12 +114,19 @@ class ProjectUserPage extends Component {
 
 function mapStateToProps(state, props) {
     const project_id = props.params.projectId
+    const user_id = props.params.userId
     const project = getProject(state, project_id)
+    const user = getUser(state, user_id)
+
+    const opts = this.props.location.query
+        
     return {
         project_id: project_id,
-        project: project || {}
+        project: project || {},
+        user_id: user_id,
+        user: user || {},
+        show_permissions: opts.permissions === '1'
     }
 }
 
 export default connect(mapStateToProps)(ProjectUserPage)
-

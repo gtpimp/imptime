@@ -18,7 +18,7 @@ class ProjectSerializer(BaseSerializer):
     allowed_issue_status_names = serializers.ListField(child=serializers.CharField())
     allowed_sprint_status_names = serializers.ListField(child=serializers.CharField())
     feature_names = serializers.ListField(child=serializers.CharField())
-    permissions = PermissionSerializer(source='user_permissions')
+    logged_in_users_permissions = PermissionSerializer(source='user_permissions')
     
     def __init__(self, *args, **kwargs):
         logged_in_user = kwargs.pop('logged_in_user')

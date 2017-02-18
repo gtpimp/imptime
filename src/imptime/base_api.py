@@ -6,7 +6,7 @@ from rest_framework import viewsets
 from timepiece.models import Business as Project
 from timepiece.models import Project as Sprint
 from timepiece.models import Issue
-from timepiece.models import BusinessPermissions
+from timepiece.models import BusinessPermissions as ProjectPermissions
 from timepiece.models import Entry as TimesheetEntry
 
 class PermissionHelper():
@@ -30,6 +30,12 @@ class PermissionHelper():
           .filter_by_logged_in_user(user)\
           .distinct()
 
+    @classmethod
+    def allowed_project_permissions(self, user):
+        return ProjectPermissions.objects.filter(business__in=self.allowed_projects(user), #sic
+                                                 is_active_member_of_business=True, #sic
+                                                 can_view_permissions=True)
+
 
 class BaseViewSet(viewsets.ViewSet):
 
@@ -44,7 +50,6 @@ class BaseViewSet(viewsets.ViewSet):
         return HttpResponse(JSONRenderer().render(data), status=500)
     
     def apply_filter(self, qs, raw_filter_args):
-
         raw_filter_args = self._apply_business_project_switch(raw_filter_args)
         filter_args = {}
 
@@ -120,7 +125,11 @@ class BaseViewSet(viewsets.ViewSet):
         return self.allowed_timesheet_entries().get(pk=pk)
 
     def allowed_users(self):
-        return BusinessPermissions.viewable_users(self.request.user).distinct()
+        return ProjectPermissions.viewable_users(self.request.user).distinct()
 
     def allowed_user(self, pk):
         return self.allowed_users().get(pk=pk)
+
+    def allowed_project_permissions(self):
+        return PermissionHelper.allowed_project_permissions(self.request.user)
+    

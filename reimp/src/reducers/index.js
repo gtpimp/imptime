@@ -13,6 +13,7 @@ import loading from './loading'
 import notification_bar from './notification_bar.js'
 import page from './page'
 import project from './project'
+import project_user_permission from './project_user_permission'
 import rie from './rie'
 import sprint from './sprint'
 import toolbar from './toolbar'
@@ -33,6 +34,7 @@ const rootReducer = combineReducers({
     notification_bar,
     page,
     project,
+    project_user_permission,
     form: redux_form_reducer,
     rie,
     routing,
