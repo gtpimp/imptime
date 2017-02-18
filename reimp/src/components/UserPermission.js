@@ -1,5 +1,6 @@
 import React, { Component } from 'react'
 import { connect } from 'react-redux'
+import keys from 'lodash/keys'
 import classNames from 'classnames'
 import { getUser, ensureUsersLoaded } from '../actions/Users'
 import { getProject, ensureProjectsLoaded } from '../actions/Projects'
@@ -27,38 +28,18 @@ class UserPermission extends Component {
     
     render() {
         const { user, project, pup } = this.props
-
-	if ( ! user.id || ! project.id || ! pup.id ) {
-	    return (<tr><td>Loading...</td></tr>)
-	}
+	{ is_loading &&
+            <tr><td>Loading...</td></tr>
+        }
         
-	if ( ! is_loading === false ) {
-	    return (
-		<tr key={this.key+"."+user.id}
-		    onClick={onClickedUser}
-		    className={is_selected ? 'tr--selected' : ''}
-		>
-		    <td>{user && user.id}</td>
-		    <td>Loading...</td>
-		</tr>
-	    )
-	} else {
-            return connectDragSource(connectDropTarget(
-		<tr key={this.key+"."+user.id}
-		    onClick={onClickedUser}
-		    className={classNames('user', {'tr--selected': is_selected, 'tr--drop-target': isOver, 'list-table__row--unselected': !is_selected,
-                'list-table__row--selected': is_selected})}
-		    >
-		    <td className="list-table__cell">{user.username}</td>
-                    <td className="list-table__cell">{user.email}</td>
-                    <td className="list-table__cell">{user.first_name}</td>
-                    <td className="list-table__cell">{user.last_name}</td>
-                    <td className="list-table__cell">
-                        {invitation_pending && <div>Invite sent</div>}
-                    </td>
-		</tr>
-            ))
-	}
+	{ !is_loading &&
+          { map(keys(pup), (permission_name, index) =>
+              <div>
+                  <div key={index}>{permission_name}</div>
+                  <div>{pup[permission_name]}</div>
+              </div>
+          )}
+        }
     }
 }
 
@@ -67,6 +48,8 @@ function mapStateToProps(state, props) {
     const user = getUser(state, user_id) || {}
     const project = getProject(state, project_id) || {}
     const pup = getProjectUserPermission(state, project_id, user_id) || {}
+
+    const is_loading = ( ! user.id || ! project.id || ! pup.id )
     
     return {
         project: project,
@@ -74,7 +57,8 @@ function mapStateToProps(state, props) {
 	user: user,
 	user_id: user_id,
         pup: pup,
-        pup_id: pup.id
+        pup_id: pup.id,
+        is_loading: is_loading
     }
 }
 
