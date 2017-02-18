@@ -137,7 +137,7 @@ function mapStateToProps(state, props) {
         edit_as_modal: edit_as_modal,
         is_editing: isEditing(state, property_key),
         is_readonly: isReadonly(state, property_key),
-        is_empty: isEmpty(state, property_key)
+        is_empty: !initial_value //isEmpty(state, property_key)
     }
 }
 
