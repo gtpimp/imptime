@@ -43,87 +43,55 @@ class IssueSidebar extends Component {
                 <Sidebar>
                     <PropertyStack>
                         { issue.id &&
-
                         <div>
+                            <PropertyStackComponent>
+                                <div className="text-component--readonly">
+                                    #{issue.number}
+                                </div>
+                            </PropertyStackComponent>
 
-                            <div className="property-stack-component">
-                                <div className="property-stack-component__content">
-                                    <div className="text-component--readonly">
-                                        #{issue.number}
-                                    </div>
-                                </div>
-                            </div>
+                            <PropertyStackComponent>
+                                <EditableIssueTitle issue_id={issue.id}/>
+                            </PropertyStackComponent>
 
-                            <div className="property-stack-component">
-                                <div className="property-stack-component__content">
-                                    <EditableIssueTitle issue_id={issue.id}/>
-                                </div>
-                            </div>
+                            <PropertyStackComponent>
+                                <EditableIssueDescription issue_id={issue.id}/>
+                            </PropertyStackComponent>
 
-                            <div className="property-stack-component">
-                                <div className="property-stack-component__content">
-                                    <EditableIssueDescription issue_id={issue.id}/>
-                                </div>
-                            </div>
-                            <div className="property-stack-component">
-                                <div className="property-stack-component__heading">
-                                    Testables:
-                                </div>
-                                <div className="property-stack-component__content">
-                                </div>
-                            </div>
+                            <PropertyStackComponent title="Testables">
+                            </PropertyStackComponent>
 
-                            <div className="property-stack-component">
-                                <div className="property-stack-component__content">
+                            <PropertyStackComponent>
+                                <EditableIssueAssignedUser issue_ids={[issue.id]} project_id={issue.project_id}/>
+                            </PropertyStackComponent>
 
-                                    <EditableIssueAssignedUser issue_ids={[issue.id]} project_id={issue.project_id}/>
-                                </div>
-                            </div>
+                            <PropertyStackComponent>
+                                <EditableIssueStatus issue_ids={[issue.id]} project_id={issue.project_id}/>
+                            </PropertyStackComponent>
 
-                            <div className="property-stack-component">
-                                <div className="property-stack-component__content">
+                            <PropertyStackComponent>
+                                <EditableIssueInSprint issue_ids={[issue.id]}/>
+                            </PropertyStackComponent>
 
-                                    <EditableIssueStatus issue_ids={[issue.id]} project_id={issue.project_id}/>
-                                </div>
-                            </div>
+                            <PropertyStackComponent title="Attachments">
+                                { map(attachments, function (attachment, index) {
+                                    return <EditableIssueAttachment key={attachment.id} issue_id={issue.id} attachment_id={attachment.id}/>
+                                })
+                                }
+                                <EditableIssueAttachment issue_id={issue.id} attachment_id={null}/>
+                            </PropertyStackComponent>
 
-                            <div className="property-stack-component">
-                                <div className="property-stack-component__content">
-                                    <EditableIssueInSprint issue_ids={[issue.id]}/>
-                                </div>
-                            </div>
+                            <PropertyStackComponent title="Comments">
+                                { map(comments, function (comment, index) {
+                                    return <EditableIssueComment key={comment.id} issue_id={issue.id} comment_id={comment.id}/>
+                                })
+                                }
+                                <EditableIssueComment issue_id={issue.id} comment_id={null}/>
+                            </PropertyStackComponent>
 
-                            <div className="property-stack-component">
-                                <div className="property-stack-component__heading">
-                                    Attachments:
-                                </div>
-                                <div className="property-stack-component__content">
-                                    { map(attachments, function (attachment, index) {
-                                        return <EditableIssueAttachment key={attachment.id} issue_id={issue.id} attachment_id={attachment.id}/>
-                                    })
-                                    }
-                                    <EditableIssueAttachment issue_id={issue.id} attachment_id={null}/>
-                                </div>
-                            </div>
-
-                            <div className="property-stack-component">
-                                <div className="property-stack-component__heading">
-                                    Comments:
-                                </div>
-                                <div className="property-stack-component__content">
-                                    { map(comments, function (comment, index) {
-                                        return <EditableIssueComment key={comment.id} issue_id={issue.id} comment_id={comment.id}/>
-                                    })
-                                    }
-                                    <EditableIssueComment issue_id={issue.id} comment_id={null}/>
-                                </div>
-                            </div>
-                            <div className="property-stack-component">
-                                <div className="property-stack-component__content">
-                                    <button onClick={this.openEstimateEditor}>Estimates</button>
-                                </div>
-                            </div>
-
+                            <PropertyStackComponent>
+                                <button onClick={this.openEstimateEditor}>Estimates</button>
+                            </PropertyStackComponent>
                         </div>
                         }
                     </PropertyStack>

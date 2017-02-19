@@ -113,15 +113,6 @@ class EditableProperty extends Component {
                     { is_readonly && readonly_child }
                     { is_empty && empty_child }
                 </div>
-                <div className="property-stack-component__icons">
-                    { (is_readonly || is_empty) &&
-                    (
-                        <div className="property-stack-component__icon">
-                            <i className="material-icons">edit</i>
-                        </div>
-                    )
-                    }
-                </div>
             </div>
         )
     }

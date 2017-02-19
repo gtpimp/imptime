@@ -11,15 +11,10 @@
 .property-stack-component {
   align-items: flex-start;
   background-color: $color-8;
-  box-shadow: inset 0 -1px 0 0 #e0e0e0;
   box-sizing: border-box;
   cursor: pointer;
   display: flex;
   justify-content: space-between;
-  padding-bottom: 15px;
-  padding-left: 16px;
-  padding-right: 16px;
-  padding-top: 20px;
   width: 100%;
 
   .property-stack-component__icon {
@@ -33,20 +28,28 @@
   }
 }
 
-.property-stack-component__heading {
+.property-stack-component__inner {
+  box-shadow: inset 0 -1px 0 0 #e0e0e0;
+  margin-left: 16px;
+  margin-right: 16px;
+  margin-top: 18px;
+  padding-left: 6px;
+  padding-right: 6px;
+  padding-bottom: 18px;
+  width: 100%;
+}
+
+.property-stack-component__title {
   color: $color-1;
   display: inline-block;
   font: $font-2;
   margin-right: 10px;
   overflow: hidden;
-  //padding-left: 16px;
-  //padding-top: 20px;
   width: 100%;
 }
 
 .property-stack-component__content {
   display: inline-block;
-  margin-right: 10px;
   overflow: hidden;
   width: 100%;
 }
