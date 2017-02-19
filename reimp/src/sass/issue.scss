@@ -3,6 +3,16 @@
 .issue {
     color: $color-1;
     width: 100%;
+
+    .reveal-on-hover--block {
+        display: none;
+    }
+
+    &:hover {
+        .reveal-on-hover--block {
+            display: block;
+        }
+    }
 }
 
 .issue--feature {
