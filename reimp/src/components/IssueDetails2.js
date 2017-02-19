@@ -1,7 +1,7 @@
 import React, {Component} from 'react'
 import {connect} from 'react-redux'
 import Progress from '../components/Progress'
-import Timer from '../components/Timer'
+// import Timer from '../components/Timer'
 import Tag from '../components/Tag'
 import AttachmentLink from '../components/AttachmentLink'
 
@@ -49,7 +49,7 @@ class IssueDetails2 extends Component {
                 <div className="issue-details2__section">
                     <div className="issue-details2__progress">
                         <div className="issue-details2__progress-component issue-details2__progress-component--timer">
-                            <Timer />
+                            {/*<Timer />*/}
                         </div>
                         <div className="issue-details2__progress-component issue-details2__progress-component--progress">
                             <Progress issue={issue}/>
