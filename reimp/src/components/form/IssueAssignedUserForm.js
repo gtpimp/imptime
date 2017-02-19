@@ -1,7 +1,6 @@
 import React, {Component} from 'react'
 import {connect} from 'react-redux'
 import {reduxForm, Field} from 'redux-form'
-import SelectList from 'react-widgets/lib/SelectList'
 import { ensureUsersLoaded, getUsers } from '../../actions/Users'
 import { ensureProjectsLoaded, getProject } from '../../actions/Projects'
 import SingleValueSelector from './SingleValueSelector'

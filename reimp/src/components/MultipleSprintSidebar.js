@@ -1,12 +1,5 @@
 import React, {Component} from 'react'
 import {connect} from 'react-redux'
-import map from 'lodash/map'
-import {browserHistory} from 'react-router'
-// import PropertyStack from './PropertyStack'
-// import PropertyStackComponent from './PropertyStackComponent'
-// import SprintDescription from './SprintDescription'
-import Timestamp from './Timestamp'
-import moment from 'moment'
 import Sidebar from './Sidebar'
 import {ensureSprintsLoaded, getSprints} from '../actions/Sprints'
 

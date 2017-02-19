@@ -5,11 +5,10 @@ import ModalDialog from '../components/ModalDialog'
 import Websocket from '../components/Websocket'
 import LoginPage from '../containers/LoginPage'
 import { DragDropContext } from 'react-dnd';
-var HTML5Backend = require('react-dnd-html5-backend');
 import { logged_in_user, is_authenticated } from '../actions/Auth'
 import { updateSettings } from '../actions/Settings'
 import { ensureUsersLoaded } from '../actions/Users'
-import Modal from 'react-modal';
+var HTML5Backend = require('react-dnd-html5-backend');
 
 class MainLayout extends Component {
 

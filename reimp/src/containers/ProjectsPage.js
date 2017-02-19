@@ -11,15 +11,10 @@ import {
     PAGE_KEY__PROJECTS_PAGE
 } from '../actions/ItemListKeyRegistry'
 import {
-    selectItems,
-    expand_list
-} from '../actions/ItemList'
-import {
     set_toolbars,
     select_projects,
     get_selected_project_ids,
 } from '../actions/Page'
-import {ensureProjectsLoaded, getProject} from '../actions/Projects'
 import {getCandidateProject} from '../actions/Projects'
 
 class ProjectsPage extends Component {
@@ -47,7 +42,7 @@ class ProjectsPage extends Component {
             
     render() {
 
-        const {selected_projects, selected_project_ids, project_id,
+        const {selected_projects, selected_project_ids,
                is_single_selection, is_multiple_selection, is_creating_project } = this.props
         const selected_project = ( selected_projects && selected_projects.length > 0 && selected_projects[0] ) || null
         

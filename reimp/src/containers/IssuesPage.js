@@ -55,7 +55,7 @@ class IssuesPage extends Component {
     }
 
     refresh(sprint, project) {
-        const {dispatch, default_issue_id, selected_issue_ids} = this.props
+        const {dispatch, selected_issue_ids} = this.props
         if ( sprint.id ) {
             dispatch(update_list_filter(LIST_KEY__ISSUE_LIST, {sprint_id:sprint.id}))
             dispatch(select_sprints(PAGE_KEY__ISSUES_PAGE, [sprint.id]))

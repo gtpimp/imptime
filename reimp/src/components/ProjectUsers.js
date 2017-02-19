@@ -1,8 +1,6 @@
 import React, {Component} from 'react'
 import {connect} from 'react-redux'
-import {browserHistory} from 'react-router'
-import { setBreadcrumbs } from '../actions/Breadcrumbs'
-import {ensureProjectsLoaded, getProject} from '../actions/Projects'
+import {getProject} from '../actions/Projects'
 import InviteUserForm from '../components/form/InviteUserForm'
 import Modal from 'react-modal'
 import UserList from './UserList'
@@ -12,8 +10,6 @@ import {
 } from '../actions/ItemListKeyRegistry'
 import { update_list_filter } from '../actions/ItemList'
 import {
-    set_toolbars,
-    select_projects,
     setPageFlag,
     clearPageFlag,
     getPageFlag
@@ -31,19 +27,19 @@ class ProjectUsersPage extends Component {
     }
 
     componentDidMount() {
-        const {dispatch, project_id} = this.props
+        const {project_id} = this.props
         this.refresh(project_id)
     }
 
     componentWillReceiveProps(new_props) {
-        const { project_id, dispatch } = this.props
+        const { project_id } = this.props
         if ( new_props.project_id !== project_id || new_props.project.id !== this.props.project.id ) {
             this.refresh(new_props.project_id)
         }
     }
     
     refresh(project_id) {
-        const { dispatch, project } = this.props
+        const { dispatch } = this.props
         dispatch(update_list_filter(LIST_KEY__PROJECT_USER_LIST, {'project_id':project_id}))
     }
 
