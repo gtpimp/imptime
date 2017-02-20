@@ -3,8 +3,7 @@
 {% load bootstrap_toolkit %}
 
 <table>
-  <tr>
-    {% comment %}
+    {% if settings.show_breakdown %}
     <tr>
       <td>Development</td>
       <td></td>
@@ -33,7 +32,8 @@
         R{{ project.new_stats.per_role.manager_and_tester_combined.adjusted_points_billable|floatformat:"0"|intcomma }}
       </td>
     </tr>
-    {% endif %}      
+    {% endif %}
+    {% endif %}
   </tr>
   <tr>
     <td><hr/></td>
@@ -60,12 +60,12 @@
     <td><hr/></td>
   </tr>
 
-  {% comment %}
+  {% if settings.show_breakdown %}
   <tr>
     <td colspan="2">
       With a typical scope creep of {{estimate_stats.ratio_scope_creep}}%
     </td>
     <td style="text-align:right">R{{ estimate_stats.total_estimate_max|floatformat:"0"|intcomma }}</td>
   </tr>
-  {% endcomment %}
+  {% endif %}
 </table>

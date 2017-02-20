@@ -1287,6 +1287,7 @@ class SprintQuoteReportSettingsForm(forms.Form):
     include_features = forms.BooleanField(label="Tick to include features", initial=False, required=False)
     include_rates = forms.BooleanField(label="Tick to include rates", initial=False, required=False)
     show_hours = forms.BooleanField(label="Tick to show hours", initial=False, required=False)
+    show_breakdown = forms.BooleanField(label="Tick to show breakdown", initial=False, required=False)
     show_billable = forms.BooleanField(label="Tick to show billable cost for the sprint", initial=True, required=False)
     show_issue_billable = forms.BooleanField(label="Tick to show billable cost per item", initial=True, required=False)
 
@@ -1669,4 +1670,3 @@ class ClientForm(forms.ModelForm):
     class Meta:
         model = Client
         exclude = [ 'created_at', 'modified_at' ]
-        
