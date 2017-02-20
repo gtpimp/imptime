@@ -27,10 +27,11 @@ class EditableIssueInSprint extends Component {
                                   initial_value={sprint_id}
                                   edit_as_modal={true}
                                   onChange={this.onChange}
+                                  actionLabel="Move to Sprint"
                 >
                     <SelectSprintForm project_id={project_id} />
                     <SprintLabel />
-                    <Blank />
+                    <Blank/>
                 </EditableProperty>
             </div>
         )

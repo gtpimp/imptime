@@ -11,7 +11,7 @@ import {
     getIssue,
     clock
 } from '../actions/Issues'
-import { getProject } from '../actions/Projects'
+import {getProject} from '../actions/Projects'
 import {
     ensureUsersLoaded,
     getUser
@@ -21,10 +21,11 @@ import RIEDropDown from '../widgets/RIEDropDown'
 import RIEModeToggler from '../widgets/RIEModeToggler'
 import RIEUserDropDown from '../widgets/RIEUserDropDown'
 import Progress from '../components/Progress'
-import Timer from '../components/Timer'
+import TimerSwitch from '../components/TimerSwitch'
+import ElapsedTime from '../components/ElapsedTime'
 import Tag from '../components/Tag'
 import {DndTypes} from '../actions/Dnd'
-import { format_hours } from '../actions/lib'
+import {format_hours} from '../actions/lib'
 import IssueStatusLabel from '../components/form/IssueStatusLabel'
 
 const ISSUE_STATUS_CHOICES = [
@@ -89,24 +90,24 @@ class Issue extends Component {
     }
 
     onDeleteTag(tag) {
-        const { issue, dispatch } = this.props
+        const {issue, dispatch} = this.props
         dispatch(deleteTag([issue.id], tag.category_name, tag.name))
     }
 
     onClockIn() {
-        const { issue, dispatch } = this.props
+        const {issue, dispatch} = this.props
         dispatch(clock(issue.id, 'clock_in'))
     }
 
     onClockOut() {
-        const { issue, dispatch } = this.props
+        const {issue, dispatch} = this.props
         dispatch(clock(issue.id, 'clock_out'))
     }
 
     renderEstimates() {
-        const { issue } = this.props
-        return map(issue.all_estimates, function(estimate, index) {
-            if ( estimate.estimate_hours && estimate.estimate_user ) {
+        const {issue} = this.props
+        return map(issue.all_estimates, function (estimate, index) {
+            if (estimate.estimate_hours && estimate.estimate_user) {
                 return (
                     <div key={estimate.estimate_user.id}>
                         {estimate.estimate_user.username}:{format_hours(estimate.estimate_hours)}
@@ -170,32 +171,32 @@ class Issue extends Component {
                             'issue--standalone': isStandalone,
                             'issue--feature': isFeature,
                             'issue--grouped': belongsToFeature,
-                        /*'tr--selected': is_selected,*/
-                        'tr--invalidated': is_invalidated,
-                        'tr--saving': is_saving,
-                        'tr--drop-target': isOver
-                    })}
+                            /*'tr--selected': is_selected,*/
+                            'tr--invalidated': is_invalidated,
+                            'tr--saving': is_saving,
+                            'tr--drop-target': isOver
+                        })}
                 >
                     <td className="list-table__cell list-table__cell--number">
                         <div>{issue.number}</div>
                     </td>
                     <td className="list-table__cell list-table__cell--icon">
                         { issue.can_group_issues &&
-                          <div className="icon--feature">
-                          { show_children &&
+                        <div className="icon--feature">
+                            { show_children &&
                             <div className="icon--more"></div>
-                          }
-                          </div>
+                            }
+                        </div>
                         }
 
                     </td>
                     <td className="list-table__cell list-table__cell--name">
                         {subject_prefix}{issue.subject}{subject_suffix}
                         { issue.group_children.length > 0 &&
-                          <span>
+                        <span>
                             ({issue.group_children.length}
-                                { issue.group_children.length === 1 && <span>child</span> }
-                                { issue.group_children.length > 1 && <span>children</span> }
+                            { issue.group_children.length === 1 && <span>child</span> }
+                            { issue.group_children.length > 1 && <span>children</span> }
                             )
                           </span>
                         }
@@ -215,34 +216,39 @@ class Issue extends Component {
                         }
                     </td>
                     <td className="list-table__cell list-table__cell--status">
-                        <IssueStatusLabel value={issue.status_name} />
+                        <IssueStatusLabel value={issue.status_name}/>
                     </td>
                     { false &&
-                      <td className="list-table__cell list-table__cell--sprint">
-                          1
-                      </td>
+                    <td className="list-table__cell list-table__cell--sprint">
+                        1
+                    </td>
                     }
                     <td className="list-table__cell list-table__cell--progress">
-                        <Progress issue={issue} />
+                        <Progress issue={issue}/>
                     </td>
                     <td className="list-table__cell list-table__cell--estimates">
                         {this.renderEstimates()}
                     </td>
                     <td className="list-table__cell list-table__cell--tags">
-                        { map(issue.tags, function(tag, index) {
-                              return (<Tag key={index}
-                                           category={tag.category_name}
-                                           name={tag.name}
-                                           deleteTag={() => onDeleteTag(tag)}
-                                      />)
+                        { map(issue.tags, function (tag, index) {
+                            return (<Tag key={index}
+                                         category={tag.category_name}
+                                         name={tag.name}
+                                         deleteTag={() => onDeleteTag(tag)}
+                            />)
                         })}
                     </td>
                     <td className="list-table__cell list-table__cell--tracking-control">
-                        <Timer hours={issue.my_actual_hours}
-                               active={issue.am_i_clocked_in}
-                               onStart={this.onClockIn}
-                               onStop={this.onClockOut}
-                        />
+                        <ElapsedTime hours={issue.my_actual_hours} active={issue.am_i_clocked_in}/>
+                    </td>
+                    <td className="list-table__cell list-table__cell--tracking-control">
+                        <div className={classNames({'reveal-on-hover--block': !issue.am_i_clocked_in})}>
+                            <TimerSwitch
+                                active={issue.am_i_clocked_in}
+                                onStart={this.onClockIn}
+                                onStop={this.onClockOut}
+                            />
+                        </div>
                     </td>
                 </tr>
             ))
@@ -275,10 +281,10 @@ function mapStateToProps(state, props) {
     const project_id = issue.project_id
     const project = getProject(state, project_id) || {}
     const assignable_user_ids = project.allowed_user_ids || []
-    map(issue.all_estimates, function(estimate) {
+    map(issue.all_estimates, function (estimate) {
         estimate.user = getUser(estimate.user_id)
     })
-    
+
     // const feature_names = this_project.feature_names || []
     /* const feature_options = feature_names.map(
      *     function (feature_name) {

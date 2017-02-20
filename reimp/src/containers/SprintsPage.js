@@ -1,5 +1,6 @@
 import React, {Component} from 'react'
 import {connect} from 'react-redux'
+import {browserHistory} from 'react-router'
 import SprintList from '../components/SprintList'
 import SprintSidebar from '../components/SprintSidebar'
 import NewSprintSidebar from '../components/NewSprintSidebar'
@@ -14,9 +15,6 @@ import {
     update_list_filter,
     invalidateList
 } from '../actions/ItemList'
-import {
-    startCandidateSprint,
-} from '../actions/Sprints'
 import {ensureProjectsLoaded, getProject} from '../actions/Projects'
 import {
     set_toolbars,
@@ -42,7 +40,7 @@ class SprintsPage extends Component {
     }
 
     componentWillReceiveProps(new_props) {
-        const {dispatch, project, project_id} = this.props
+        const {dispatch} = this.props
 
         dispatch(ensureProjectsLoaded([new_props.project_id]))
         if ( new_props.project.id !== this.props.project.id ||
@@ -64,9 +62,13 @@ class SprintsPage extends Component {
     }
 
     onSelectSprints(sprint_ids) {
-        const {dispatch} = this.props
-        dispatch(selectItems(LIST_KEY__SPRINT_LIST, sprint_ids))
-        dispatch(select_sprints(PAGE_KEY__SPRINTS_PAGE, sprint_ids))
+        const {dispatch, project_id} = this.props
+        if ( sprint_ids && sprint_ids.length === 1 ) {
+            browserHistory.push('/projects/'+project_id+'/sprints/'+sprint_ids[0]+'/issues');
+        } else {
+            dispatch(selectItems(LIST_KEY__SPRINT_LIST, sprint_ids))
+            dispatch(select_sprints(PAGE_KEY__SPRINTS_PAGE, sprint_ids))
+        }
     }
 
     render() {

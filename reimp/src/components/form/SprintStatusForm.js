@@ -1,8 +1,6 @@
 import React, {Component} from 'react'
 import {connect} from 'react-redux'
-import classNames from 'classnames'
 import { Field, reduxForm } from 'redux-form'
-import SelectList from 'react-widgets/lib/SelectList'
 import { ensureProjectsLoaded, getProject } from '../../actions/Projects'
 import SingleValueSelector from './SingleValueSelector'
 
@@ -23,7 +21,7 @@ class SprintStatusForm extends Component {
     } 
     
     refresh() {
-        const { dispatch, assignable_user_ids, project_id } = this.props
+        const { dispatch, project_id } = this.props
         dispatch(ensureProjectsLoaded([project_id]))
     }
     
@@ -46,7 +44,7 @@ class SprintStatusForm extends Component {
     }
     
     render() {
-        const { initialValues, handleSubmit, status_options } = this.props
+        const { handleSubmit, status_options } = this.props
         return (
             <form onSubmit={handleSubmit}>
                 <div>

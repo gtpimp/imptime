@@ -92,16 +92,16 @@ class EditableProperty extends Component {
         }
 
         return (
-            <div className="property-stack-component">
-                <div className="property-stack-component__content">
+            <div onClick={this.startEditing}>
+                <div>
                     { is_editing && edit_as_modal &&
                     <Modal isOpen={true}
                            className="editable-property-modal"
                            overlayClassName="editable-property-modal__overlay"
                            onRequestClose={this.cancelEditing}
-                           contentLabel="Tag editor">
+                           contentLabel={this.props.actionLabel}>
                         <div className="editable-property-modal__row editable-property-modal__row--header">
-                            <label htmlFor="assigned" className="editable-property-modal__title">Assign To</label>
+                            <label htmlFor="assigned" className="editable-property-modal__title">{this.props.actionLabel}</label>
                             <div className="editable-property-modal__close"><i className="material-icons">close</i></div>
                         </div>
                         <div className="editable-property-modal__content">
@@ -112,15 +112,6 @@ class EditableProperty extends Component {
                     { is_editing && !edit_as_modal && editing_child}
                     { is_readonly && readonly_child }
                     { is_empty && empty_child }
-                </div>
-                <div className="property-stack-component__icons">
-                    { (is_readonly || is_empty) &&
-                    (
-                        <div className="property-stack-component__icon" onClick={this.startEditing}>
-                            <i className="material-icons">edit</i>
-                        </div>
-                    )
-                    }
                 </div>
             </div>
         )
@@ -137,7 +128,7 @@ function mapStateToProps(state, props) {
         edit_as_modal: edit_as_modal,
         is_editing: isEditing(state, property_key),
         is_readonly: isReadonly(state, property_key),
-        is_empty: isEmpty(state, property_key)
+        is_empty: !initial_value //isEmpty(state, property_key)
     }
 }
 

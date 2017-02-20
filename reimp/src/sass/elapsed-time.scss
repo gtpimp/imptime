@@ -1,0 +1,9 @@
+@import 'variables.scss';
+
+.timer__time--active {
+  font: $font-2;
+}
+
+.timer__time--inactive {
+  font: $font-1;
+}

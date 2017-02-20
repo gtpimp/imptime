@@ -26,16 +26,18 @@ class LoginPage extends Component {
     render() {
 
         return (
-            <div className="login" onKeyDown={this.onKeyDown}>
+            <div className="login_container">
+            
+                <div className="login_form" onKeyDown={this.onKeyDown}>
+                    Username:
+                    <input type="text" name="username" ref={(el) => { this.usernameInput = el }}/>
+                    <br/>
 
-                Username:
-                <input type="text" name="username" ref={(el) => { this.usernameInput = el }}/>
-                <br/>
-                
-                Password: <input type="password" name="password" ref={(el) => { this.passwordInput = el }}/>
-                <br/>
-                <button className="btn btn-primary" onClick={this.onSubmitLogin}>Login</button>
-                
+                    Password: <input type="password" name="password" ref={(el) => { this.passwordInput = el }}/>
+                    <br/>
+                    <button className="btn btn-primary" onClick={this.onSubmitLogin}>Login</button>
+
+                </div>
             </div>
         )
     }

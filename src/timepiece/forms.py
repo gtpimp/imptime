@@ -142,6 +142,7 @@ class EditPersonPermission(forms.ModelForm):
         self.fields['can_add_issue_comment'].widget.attrs['class'] = 'safe'
         self.fields['can_edit_subject'].widget.attrs['class'] = 'safe'
         self.fields['can_edit_feature'].widget.attrs['class'] = 'safe'
+        self.fields['can_edit_tags'].widget.attrs['class'] = 'safe'
         self.fields['can_create_sprint'].widget.attrs['class'] = 'safe'
         self.fields['can_edit_issue_states'].widget.attrs['class'] = 'safe'
         self.fields['can_edit_project_states'].widget.attrs['class'] = 'safe'
@@ -159,6 +160,9 @@ class EditPersonPermission(forms.ModelForm):
         self.fields['can_do_traffic_checklist'].widget.attrs['class'] = 'medium-safe'
         self.fields['can_do_finance_checklist'].widget.attrs['class'] = 'medium-safe'
 
+        self.fields['is_active_member_of_business'].widget.attrs['class'] = 'unsafe'
+        self.fields['can_invite_users'].widget.attrs['class'] = 'unsafe'
+        self.fields['can_set_user_permissions'].widget.attrs['class'] = 'unsafe'
         self.fields['can_edit_permissions'].widget.attrs['class'] = 'unsafe'
         self.fields['can_toggle_graphs'].widget.attrs['class'] = 'unsafe'
         self.fields['can_edit_project_detail'].widget.attrs['class'] = 'unsafe'

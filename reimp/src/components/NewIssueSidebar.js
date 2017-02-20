@@ -1,17 +1,10 @@
 import React, {Component} from 'react'
 import {connect} from 'react-redux'
-import map from 'lodash/map'
-import {browserHistory} from 'react-router'
 import PropertyStack from './PropertyStack'
-import PropertyStackComponent from './PropertyStackComponent'
-import EditableIssueTitle from '../components/EditableIssueTitle'
-import Timestamp from './Timestamp'
-import moment from 'moment'
 import Sidebar from './Sidebar'
 import {
     getCandidateIssue,
     updateCandidateSubject,
-    cancelCandidateIssue,
     saveCandidateIssue
 } from '../actions/Issues'
 import IssueTitleForm from './form/IssueTitleForm'
@@ -30,8 +23,6 @@ class NewIssueSidebar extends Component {
     }
 
     render() {
-
-        const {issue, comments, attachments} = this.props
 
         return (
             <Sidebar>

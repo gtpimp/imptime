@@ -12,6 +12,7 @@ from rest_framework.decorators import permission_classes
 from timepiece.models import Issue
 from timepiece.models import Project as Sprint
 from timepiece.models import Business as Project
+from filter_serializer import ProjectResultSerializer, SprintResultSerializer, IssueResultSerializer
 
 logger = logging.getLogger(__name__)
 
@@ -23,71 +24,73 @@ class FilterViewSet(BaseViewSet):
         try:
             context = {}
 
-            search_term = request.GET['search_term']
-            active_project_id = request.GET.get('project_id', None)
-            active_sprint_id = request.GET.get('sprint_id', None)
-            active_project = Project.objects.get(pk=active_project_id)
+            params = json.loads(request.GET['params'])
+            filter_args = params['filter'] or {}
+            search_term = filter_args['term']
+            active_project_ids = filter_args.get('active_project_ids', None)
+            active_sprint_ids = filter_args.get('active_sprint_ids', None)
+            active_issue_ids = filter_args.get('active_issue_ids', None)
+            
+            allowed_projects = self.allowed_projects()
+            allowed_sprints = self.allowed_sprints()
+            allowed_issues = self.allowed_issues()
 
-            active_project = \
-                Project.objects.get(pk=active_project_id) if active_project_id else None
-            active_sprint = \
-                Sprint.objects.get(pk=active_sprint_id) if active_sprint_id else None
-            matched_issues = None
-            matched_sprints = None
+            allowed_issues = allowed_issues.filter(Q(number__icontains=search_term) |
+                                                    Q(subject__icontains=search_term))\
+                                           .order_by("project__business__name",
+                                                     "project__name",
+                                                     "subject")\
+                                           .select_related('project')\
+                                           .select_related('project__business')
+            allowed_sprints = allowed_sprints.filter(Q(name__icontains=search_term) |
+                                                     Q(id__icontains=search_term) |
+                                                     Q(description__icontains=search_term) |
+                                                     Q(short_description__icontains=search_term))\
+                                             .order_by("business__name", "name")\
+                                             .select_related('business') #sic
+            allowed_projects = allowed_projects.filter(Q(name__icontains=search_term) |
+                                                       Q(id__icontains=search_term) |
+                                                       Q(description__icontains=search_term))\
+                                               .order_by("name")
 
-            if active_sprint is not None:
-                matched_issues = Issue.objects.filter(project__id=active_sprint.id)\
-                                             .filter(Q(number__icontains=search_term) |
-                                                     Q(subject__icontains=search_term))
-                matched_issues = matched_issues.order_by("project__business__name",
+            issues_within_active_sprints = None
+            sprints_within_active_projects = None
+            issues_within_active_issues = None
+
+            if active_sprint_ids:
+                issues_within_active_sprints = allowed_issues.filter(project__id__in=active_sprint_ids)
+                issues_within_active_sprints = issues_within_active_sprints.order_by("project__business__name",
                                                          "project__name",
                                                          "subject")
-                matched_issues = [x for x in matched_issues[0:500]
+                issues_within_active_sprints = [x for x in issues_within_active_sprints[0:500]
                                   if x.project.can_view_by_user(request.user)]
-                active_project = None
 
-            elif active_project is not None:
-                matched_issues = Issue.objects.filter(project__business__id=active_project.id)\
-                                             .filter(Q(number__icontains=search_term) |
-                                                     Q(subject__icontains=search_term))
-                matched_issues = matched_issues.order_by("project__business__name",
+            if active_project_ids:
+                issues_within_active_projects = allowed_issues.filter(project__business__id__in=active_project_ids)
+                issues_within_active_projects = issues_within_active_projects.order_by("project__business__name",
                                                          "project__name",
                                                          "subject")
-                matched_issues = [x for x in matched_issues[0:500]
+                issues_within_active_projects = [x for x in issues_within_active_projects[0:500]
                                   if x.project.can_view_by_user(request.user)]
 
-                matched_sprints = Sprint.objects.filter(business__id=active_project.id)\
-                                                .filter(Q(name__icontains=search_term) |
-                                                        Q(id__icontains=search_term) |
-                                                        Q(description__icontains=search_term))
-                matched_sprints = matched_sprints.filter_by_logged_in_user(request.user)
+                sprints_within_active_projects = allowed_sprints.filter(business__id__in=active_project_ids)
+                sprints_within_active_projects = sprints_within_active_projects.filter_by_logged_in_user(request.user)
 
-            issues = Issue.objects.filter(Q(number__icontains=search_term) |
-                                          Q(subject__icontains=search_term))
-            issues = issues.order_by("project__business__name",
-                                     "project__name",
-                                     "subject")
-            issues = [x for x in issues[0:500] if x.project.can_view_by_user(request.user)]
+            if active_issue_ids:
+                issues_within_active_issues = allowed_issues.filter(id__in=active_issue_ids)
+                
+            issues = allowed_issues
+            sprints = allowed_sprints
+            projects = allowed_projects
 
-            sprints = Sprint.objects.filter(Q(name__icontains=search_term) |
-                                            Q(id__icontains=search_term) |
-                                            Q(description__icontains=search_term) |
-                                            Q(short_description__icontains=search_term))
-            sprints = sprints.order_by("business__name", "name")
-            sprints = sprints.filter_by_logged_in_user(request.user)
-
-            projects = Project.objects.filter(Q(name__icontains=search_term) |
-                                              Q(description__icontains=search_term))
-            projects = projects.order_by("name")
-            projects = projects.filter_by_logged_in_user(request.user)
-
-            context['projects'] = projects
-            context['sprints'] = sprints
-            context['issues'] = issues
-            context['active_project'] = active_project
-            context['active_sprint'] = active_sprint
-            context['matched_issues'] = matched_issues
-            context['matched_sprints'] = matched_sprints
+            #issues = [x for x in issues[0:500] if x.project.can_view_by_user(request.user)]
+            
+            context['all_projects'] = ProjectResultSerializer(projects, many=True, result_category='all_projects').data
+            context['all_sprints'] = SprintResultSerializer(sprints, many=True, result_category='all_sprints').data
+            context['all_issues'] = IssueResultSerializer(issues, many=True, result_category='all_issues').data
+            context['issues_within_active_issues'] = IssueResultSerializer(issues_within_active_issues, many=True, result_category='issues_within_active_issues').data
+            context['issues_within_active_sprints'] = IssueResultSerializer(issues_within_active_sprints, many=True, result_category='issues_within_active_sprints').data
+            context['sprints_within_active_projects'] = SprintResultSerializer(sprints_within_active_projects, many=True, result_category='sprints_within_active_projects').data
 
             data = {'status': 'success', 'payload': context}
 

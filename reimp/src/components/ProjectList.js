@@ -124,7 +124,7 @@ class ProjectList extends Component {
         const that = this
 
         return (
-        <Project key={list_key + project.id + index}
+        <Project key={list_key + "_" + project.id + "_" + project.name + "_" + index}
                 is_collapsed={false}
                 reorderProjects={that.reorderProjects}
                 onClickedProject={() => that.onClickedProject(project.id)}

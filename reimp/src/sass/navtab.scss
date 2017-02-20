@@ -11,6 +11,13 @@
 
 .navtab--active {
   background-color: $color-4;
+
+  > a,
+  > a:active,
+  > a:focus,
+  > a:visited {
+    text-decoration: none;
+  }
 }
 
 .navtab--expanded {

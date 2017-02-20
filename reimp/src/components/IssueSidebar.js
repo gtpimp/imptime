@@ -37,71 +37,69 @@ class IssueSidebar extends Component {
 
         const {issue, comments, attachments} = this.props
 
-        if (issue && issue.id) return (
+        if (issue && issue.id) {
+            return (
 
-            <Sidebar>
-                <PropertyStack>
-                { issue.id &&
+                <Sidebar>
+                    <PropertyStack>
+                        { issue.id &&
+                        <div>
+                            <PropertyStackComponent>
+                                <div className="text-component--readonly">
+                                    #{issue.number}
+                                </div>
+                            </PropertyStackComponent>
 
-                  <div>
+                            <PropertyStackComponent>
+                                <EditableIssueTitle issue_id={issue.id}/>
+                            </PropertyStackComponent>
 
-                      <div className="property-stack-component">
-                          <div className="property-stack-component__content">
-                              <div className="text-component--readonly">
-                                  #{issue.number}
-                              </div>
-                          </div>
-                      </div>
-                      
-                      <div>
-                          <EditableIssueTitle issue_id={issue.id} />
-                      </div>
+                            <PropertyStackComponent>
+                                <EditableIssueDescription issue_id={issue.id}/>
+                            </PropertyStackComponent>
 
-                      <div>
-                          <EditableIssueDescription issue_id={issue.id} />
-                      </div>
+                            <PropertyStackComponent title="Testables">
+                            </PropertyStackComponent>
 
-                      <div>
-                          Assigned to:
-                          <EditableIssueAssignedUser issue_ids={[issue.id]} project_id={issue.project_id} />
-                      </div>
+                            <PropertyStackComponent>
+                                <EditableIssueAssignedUser issue_ids={[issue.id]} project_id={issue.project_id}/>
+                            </PropertyStackComponent>
 
-                      <div>
-                          Status:
-                          <EditableIssueStatus issue_ids={[issue.id]} project_id={issue.project_id} />
-                      </div>
+                            <PropertyStackComponent>
+                                <EditableIssueStatus issue_ids={[issue.id]} project_id={issue.project_id}/>
+                            </PropertyStackComponent>
 
-                      <div>
-                          Sprint:
-                          <EditableIssueInSprint issue_ids={[issue.id]} />
-                      </div>
+                            <PropertyStackComponent>
+                                <EditableIssueInSprint issue_ids={[issue.id]}/>
+                            </PropertyStackComponent>
 
-                      <div>
-                          Attachments:
-                          { map(attachments, function(attachment, index) {
-                                return <EditableIssueAttachment key={attachment.id} issue_id={issue.id} attachment_id={attachment.id} />
-                            })
-                          }
-                          <EditableIssueAttachment issue_id={issue.id} attachment_id={null} />
-                      </div>
+                            <PropertyStackComponent title="Attachments">
+                                { map(attachments, function (attachment, index) {
+                                    return <EditableIssueAttachment key={attachment.id} issue_id={issue.id} attachment_id={attachment.id}/>
+                                })
+                                }
+                                <EditableIssueAttachment issue_id={issue.id} attachment_id={null}/>
+                            </PropertyStackComponent>
 
-                      <div>
-                          Comments:
-                          { map(comments, function(comment, index) {
-                                return <EditableIssueComment key={comment.id} issue_id={issue.id} comment_id={comment.id} />
-                            })
-                          }
-                          <EditableIssueComment issue_id={issue.id} comment_id={null} />
-                      </div>
-                      <div>
-                          <button onClick={this.openEstimateEditor}>Estimates</button>
-                      </div>
-                      
-                  </div>
-                }
-                </PropertyStack>
-            </Sidebar>
-        )
+                            <PropertyStackComponent title="Comments">
+                                { map(comments, function (comment, index) {
+                                    return <EditableIssueComment key={comment.id} issue_id={issue.id} comment_id={comment.id}/>
+                                })
+                                }
+                                <EditableIssueComment issue_id={issue.id} comment_id={null}/>
+                            </PropertyStackComponent>
+
+                            <PropertyStackComponent>
+                                <button onClick={this.openEstimateEditor}>Estimates</button>
+                            </PropertyStackComponent>
+                        </div>
+                        }
+                    </PropertyStack>
+                </Sidebar>
+            )
+        } else {
+            return null
+        }
     }
 }
 

@@ -9,7 +9,7 @@ class Progress extends Component {
 
     render() {
         const {issue} = this.props
-        const active = issue.currently_clocked_in_by && issue.currently_clocked_in_by.length > 0
+        const active = issue.currently_clocked_in_by_user_ids && issue.currently_clocked_in_by_user_ids.length > 0
         const current = format_hours(issue.actual_hours || 0)
         const max = format_hours(issue.dev_estimate_hours || 0)
         return (

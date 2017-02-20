@@ -2,7 +2,6 @@ import React, {Component} from 'react'
 import {connect} from 'react-redux'
 import '../sass/header.css'
 import Navbar from '../components/Navbar'
-import NotificationBar from '../components/NotificationBar'
 import Toolbar from './toolbar/Toolbar'
 import UserDashboard from '../components/UserDashboard'
 
@@ -13,7 +12,6 @@ class Header extends Component {
         return (
             <div className="header">
                 <Navbar/>
-                <NotificationBar/>
                 { user_dashboard_expanded &&
                     <UserDashboard/>
                 }

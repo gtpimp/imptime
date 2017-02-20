@@ -1,5 +1,6 @@
 import React, {Component} from 'react'
 import {connect} from 'react-redux'
+import {browserHistory} from 'react-router'
 import ProjectList from '../components/ProjectList'
 import ProjectSidebar from '../components/ProjectSidebar'
 import NewProjectSidebar from '../components/NewProjectSidebar'
@@ -10,15 +11,10 @@ import {
     PAGE_KEY__PROJECTS_PAGE
 } from '../actions/ItemListKeyRegistry'
 import {
-    selectItems,
-    expand_list
-} from '../actions/ItemList'
-import {
     set_toolbars,
     select_projects,
     get_selected_project_ids,
 } from '../actions/Page'
-import {ensureProjectsLoaded, getProject} from '../actions/Projects'
 import {getCandidateProject} from '../actions/Projects'
 
 class ProjectsPage extends Component {
@@ -36,13 +32,17 @@ class ProjectsPage extends Component {
 
     onSelectProjects(project_ids) {
         const { dispatch } = this.props
-        dispatch(selectItems(LIST_KEY__PROJECT_LIST, project_ids))
-        dispatch(select_projects(PAGE_KEY__PROJECTS_PAGE, project_ids))
+        // dispatch(selectItems(LIST_KEY__PROJECT_LIST, project_ids))
+        if ( project_ids && project_ids.length === 1 ) {
+            browserHistory.push('/projects/' + project_ids[0] + '/sprints');
+        } else {
+            dispatch(select_projects(PAGE_KEY__PROJECTS_PAGE, project_ids))
+        }
     }
             
     render() {
 
-        const {selected_projects, selected_project_ids, project_id,
+        const {selected_projects, selected_project_ids,
                is_single_selection, is_multiple_selection, is_creating_project } = this.props
         const selected_project = ( selected_projects && selected_projects.length > 0 && selected_projects[0] ) || null
         

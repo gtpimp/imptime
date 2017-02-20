@@ -6,6 +6,7 @@ import moment from 'moment'
 import { invalidateProjects } from '../actions/Projects'
 import { invalidateSprints } from '../actions/Sprints'
 import { invalidateIssues } from '../actions/Issues'
+import { invalidateUsers } from '../actions/Users'
 import { invalidateIssueGeneralDetails } from '../actions/IssueGeneralDetails'
 import { addAsyncMessage } from '../actions/Async'
 
@@ -16,7 +17,8 @@ import {
 import {
     LIST_KEY__PROJECT_LIST,
     LIST_KEY__SPRINT_LIST,
-    LIST_KEY__ISSUE_LIST    
+    LIST_KEY__ISSUE_LIST,
+    LIST_KEY__PROJECT_USER_LIST
 } from '../actions/ItemListKeyRegistry'
 import each from 'lodash/each'
 
@@ -39,6 +41,10 @@ function triggerInvalidateEntity(d, dispatch) {
     } else if ( d.entity_name === 'issuetag' || d.entity_nane === 'tag' || d.entity_name === 'tagcategory' ) {
         dispatch(invalidateIssues(d.params.issues))
         dispatch(invalidateIssueGeneralDetails(d.params.issues))
+
+    } else if ( d.entity_name === 'businessinvite' ) {
+        dispatch(invalidateUsers(d.params.users))
+        dispatch(invalidateProjects(d.params.projects))
         
     } else {
         console.log("Unknown entity to refresh: " + d.entity_name)
@@ -59,7 +65,11 @@ function triggerInvalidateItemLists(d, dispatch) {
 	
     } else if ( d.entity_name === 'issue' ) {
         dispatch(invalidateList(LIST_KEY__ISSUE_LIST))
-	
+
+    } else if ( d.entity_name === 'businessinvite' ) {
+        dispatch(invalidateList(LIST_KEY__PROJECT_USER_LIST))
+
+        
     } else {
         console.log("Unknown entity to refresh lists: " + d.entity_name)
     }

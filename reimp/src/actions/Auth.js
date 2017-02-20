@@ -4,18 +4,18 @@ import cookie from 'react-cookie';
 export const SET_AUTH_TOKEN = "SET_AUTH_TOKEN"
 export const CLEAR_AUTH_TOKEN = "CLEAR_AUTH_TOKEN"
 
-function setAuthToken(username, token) {
+function setAuthToken(username, token, user_id) {
     return {
         type: SET_AUTH_TOKEN,
         username: username,
-        token: token
+        token: token,
+        user_id: user_id
     }
 }
 
 export function clearAuthentication() {
     return {
-        type: CLEAR_AUTH_TOKEN,
-        token: null
+        type: CLEAR_AUTH_TOKEN
     }
 }
 
@@ -37,7 +37,7 @@ export function login(username, password) {
             .then(response => response.json())
             .then(json => {
                 if ( json.token ) {
-                    dispatch(setAuthToken(username, json.token))
+                    dispatch(setAuthToken(username, json.token, json.user_id))
                 } else {
                     alert("Login failed: " + json.non_field_errors)
                 }
@@ -48,11 +48,13 @@ export function login(username, password) {
 
 export function logged_in_user() {
     return { username: cookie.load('username'),
-             token: cookie.load('token')
+             token: cookie.load('token'),
+             user_id: cookie.load('user_id'),
     }
 }
 
 export function is_authenticated() {
     const user = logged_in_user()
-    return user.token !== null && user.token != undefined && user.token.length > 0
+    return user.user_id !== undefined && user.user_id !== null && user.user_id.length > 0 &&
+           user.token !== null && user.token != undefined && user.token.length > 0
 }
