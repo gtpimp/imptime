@@ -37,6 +37,7 @@ class ProjectUserPermissionSerializer(BaseSerializer):
     has_do_traffic_checklist = serializers.BooleanField()
     has_do_finance_checklist = serializers.BooleanField()
     has_edit_permissions = serializers.BooleanField()
+    has_view_permissions = serializers.BooleanField()
     has_toggle_graphs = serializers.BooleanField()
     has_edit_project_detail = serializers.BooleanField()
     has_edit_deadlines = serializers.BooleanField()

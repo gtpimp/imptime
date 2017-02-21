@@ -88,7 +88,6 @@ function fetchProjectUserPermission(dispatch, state, project_id, user_id) {
                                user_id: user_id },
 		     pagination: {'enabled': false} }
 
-    debugger;
     return impfetch(API_BASE_URL+'imp/permission/project/', dispatch, {params:params})
 	.then(response => response.json())
 	.then(json => {
@@ -176,7 +175,7 @@ export function ensureProjectUserPermissionsLoaded(project_id, user_id) {
 }
 
 function getPup(state, pup_id) {
-    return ((state.pup || {}).items_by_id || {})[pup_id] || null
+    return ((state.project_user_permission || {}).items_by_id || {})[pup_id] || null
 }
 
 function getPups(state, pup_ids) {

@@ -2,6 +2,7 @@ import React, { Component } from 'react'
 import { connect } from 'react-redux'
 import keys from 'lodash/keys'
 import map from 'lodash/map'
+import filter from 'lodash/filter'
 import classNames from 'classnames'
 import { getUser, ensureUsersLoaded } from '../actions/Users'
 import { getProject, ensureProjectsLoaded } from '../actions/Projects'
@@ -30,25 +31,40 @@ class UserPermission extends Component {
     }
     
     render() {
-        const { user, project, pup, is_loading } = this.props
+        const { user, project, pup, is_loading, permission_names } = this.props
 
         return (
             <div className="user-permission">
+
+                <h2>Permissions for {user.username} in project {project.name}</h2>
                 
 	        { is_loading &&
                   <tr><td>Loading...</td></tr>
                 }
+
+                { ! pup.has_view_permissions &&
+                  <tr><td>You are not allowed to view permissions</td></tr>
+                }
                 
-                { !is_loading &&
-                  map(keys(pup), (permission_name, index) =>
-                      <tr key={index}>
-                          <td>
-                              <div>
-                                  <div key={index}>{permission_name}</div>
-                                  <div>{pup[permission_name]}</div>
-                              </div>
-                          </td>
-                      </tr>
+                { !is_loading && pup.has_view_permissions &&
+                  map(permission_names, (permission_name, index) =>
+                       <tr key={index}>
+                           <td>
+                               <div>
+                                   <div className="user-permission__permission_name" key={index}>{permission_name.replace(/_/g, " ")}</div>
+                               </div>
+                           </td>
+                           <td>
+                               <div>
+                                   {pup[permission_name] === true &&
+                                    <div className="user-permission__permission_value--on">On</div>
+                                   }
+                                   {pup[permission_name] === false &&
+                                    <div className="user-permission__permission_value--off">Off</div>
+                                   }
+                               </div>
+                           </td>
+                       </tr>
                   )
                 }
             </div>
@@ -62,6 +78,7 @@ function mapStateToProps(state, props) {
     const project = getProject(state, project_id) || {}
     const pup = getProjectUserPermission(state, project_id, user_id) || {}
 
+    const permission_names = filter(keys(pup), function(o) { return o.startsWith("has_") || o.startsWith("is_") })
     const is_loading = ( ! user.id || ! project.id || ! pup.id )
     
     return {
@@ -71,7 +88,8 @@ function mapStateToProps(state, props) {
 	user_id: user_id,
         pup: pup,
         pup_id: pup.id,
-        is_loading: is_loading
+        is_loading: is_loading,
+        permission_names: permission_names
     }
 }
 
