@@ -20,7 +20,7 @@ router = DefaultRouter()
 router.register(r'auth', project_api.ProjectViewSet,
                 base_name='project')
 router.register(r'permission/project', project_user_permission_api.ProjectUserPermissionViewSet,
-                base_name='project_permissions')
+                base_name='project_permission')
 router.register(r'project', project_api.ProjectViewSet,
                 base_name='project')
 router.register(r'sprint', sprint_api.SprintViewSet,

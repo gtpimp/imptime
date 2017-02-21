@@ -1,5 +1,6 @@
 import React, {Component} from 'react'
 import {connect} from 'react-redux'
+import {browserHistory} from 'react-router'
 import {getProject} from '../actions/Projects'
 import InviteUserForm from '../components/form/InviteUserForm'
 import Modal from 'react-modal'

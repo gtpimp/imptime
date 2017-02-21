@@ -21,7 +21,8 @@ const initialState = {
     items_by_id: [],
     loading_item_ids: [],
     saving_item_ids: [],
-    pup_ids_by_project_and_user: {}
+    pup_ids_by_project_and_user: {},
+    loading_pups_by_project_and_user: {}
 }
 
 export default function project_user_permission(state = initialState, action) {
@@ -37,18 +38,32 @@ export default function project_user_permission(state = initialState, action) {
             return Object.assign({}, state, {items_by_id: without(state.items_by_id, action.pup_ids_to_invalidate)})
 
         case ANNOUNCE_LOADING_PUPS:
+            const loading_pups = Object.assign({}, state_copy.loading_pups_by_project_and_user)
+            if ( action.project_id && action.user_id ) {
+                loading_pups[""+action.project_id] = Object.assign({}, loading_pups[""+action.project_id] || {})
+                loading_pups[""+action.project_id][""+action.user_id] = true
+            }
+            
 	    return Object.assign({}, state, {
-		loading_item_ids: union(state.loading_item_ids, action.pup_ids_to_load)
+		loading_item_ids: union(state.loading_item_ids, action.pup_ids_to_load || []),
+                loading_pups_by_project_and_user: loading_pups
 	    })            
         case ANNOUNCE_PUPS_LOADED:
             state_copy = Object.assign({}, state, {
 		loading_item_ids: Object.assign({},
 						difference(state.loading_item_ids || [],
-							   keys(action.items_by_id))),
+							   keys(action.items_by_id || []))),
 		items_by_id: Object.assign({},
 					   assign(state.items_by_id, action.items_by_id))
 	    })
 
+            if ( action.project_id && action.user_id ) {
+                const loading_pups = Object.assign({}, state_copy.loading_pups_by_project_and_user)
+                loading_pups[""+action.project_id] = Object.assign({}, loading_pups[""+action.project_id] || {})
+                loading_pups[""+action.project_id][""+action.user_id] = false
+                state_copy.loading_pups_by_project_and_user = loading_pups
+            }
+            
             const extra_pup_ids_by_project_and_user = {}
             forEach(state_copy.items_by_id, (item) => {
                 if ( ! extra_pup_ids_by_project_and_user[item.project_id] ) {

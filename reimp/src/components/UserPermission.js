@@ -41,16 +41,14 @@ class UserPermission extends Component {
                 
                 { !is_loading &&
                   map(keys(pup), (permission_name, index) =>
-                      (
-                          <tr>
-                              <td>
-                                  <div>
-                                      <div key={index}>{permission_name}</div>
-                                      <div>{pup[permission_name]}</div>
-                                  </div>
-                              </td>
-                          </tr>
-                      )
+                      <tr key={index}>
+                          <td>
+                              <div>
+                                  <div key={index}>{permission_name}</div>
+                                  <div>{pup[permission_name]}</div>
+                              </div>
+                          </td>
+                      </tr>
                   )
                 }
             </div>

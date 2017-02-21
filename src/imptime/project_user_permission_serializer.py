@@ -5,6 +5,7 @@ logger = logging.getLogger(__name__)
 
 class ProjectUserPermissionSerializer(BaseSerializer):
 
+    id = serializers.CharField()
     project_id = serializers.CharField()
     user_id = serializers.CharField()
     

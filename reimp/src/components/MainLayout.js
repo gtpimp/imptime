@@ -37,7 +37,7 @@ class MainLayout extends Component {
     }
 
     render() {
-        const { error_message, is_logged_in, are_settings_loaded } = this.props
+        const { has_error, error_message, is_logged_in, are_settings_loaded } = this.props
 
         if ( ! are_settings_loaded ) {
             return (
@@ -60,7 +60,7 @@ class MainLayout extends Component {
                 <div className="main">
                 {this.props.children}
                 </div>
-                <ModalDialog isOpen={error_message} title="Imp Down">
+                <ModalDialog isOpen={has_error} title="Imp Down">
                     <div>{error_message}</div>
                     <button className="button button--default button--large">Reload</button>
                 </ModalDialog>
@@ -73,9 +73,11 @@ function mapStateToProps(state) {
     const { configured } = state.settings
     const logged_in_user_id = logged_in_user()['user_id'] || null
     const notification_bar = state.notification_bar || {}
+    const error_message = notification_bar.error_message
     
     return {
-        error_message: notification_bar.error_message,
+        has_error: error_message && error_message.length && error_message.length > 0,
+        error_message: error_message,
         is_logged_in: is_authenticated(),
         are_settings_loaded: configured,
         logged_in_user_id: logged_in_user_id

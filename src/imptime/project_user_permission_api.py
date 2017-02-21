@@ -23,15 +23,21 @@ class ProjectUserPermissionViewSet(BaseViewSet):
             pagination = params.get('pagination', {})
             filter_args = params.get('filter', {})
             format_args = params.get('format', {})
-            
+
             pups = self.allowed_project_permissions()
             pups = self.apply_filter(qs=pups, raw_filter_args=filter_args)
-            pups = self.apply_pagination(qs=pups, pagination=pagination)
-            
+
+            if 'project_id' in filter_args and 'user_id' in filter_args and pups.count() == 0:
+                # We return an empty project permission so that the caller can tell what's going on.
+                pups = [ProjectPermissions(business_id=filter_args['project_id'],
+                                           user_id=filter_args['user_id'])]
+            else:
+                pups = self.apply_pagination(qs=pups, pagination=pagination)
+
             if format_args.get('ids_only'):
                 context['ids'] = [str(x) for x in pups.values_list('id', flat=True)]
             else:
-                s = ProjectUserPermissionSerializer(pups, many=True, logged_in_user=request.user)
+                s = ProjectUserPermissionSerializer(pups, many=True)
                 pups_data = s.data
                 context['project_user_permissions'] = pups_data
             context['pagination'] = pagination
