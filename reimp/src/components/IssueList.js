@@ -338,6 +338,7 @@ class IssueList extends Component {
                     <th className="list-table__header">Estimates</th>
                     <th className="list-table__header">Tags</th>
                     <th className="list-table__header">My time</th>
+                    <th className="list-table__header"></th>
                 </tr>)
         })
 

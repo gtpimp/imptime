@@ -1,5 +1,10 @@
 @import 'variables.scss';
 
+.text-component {
+  overflow-wrap: break-word;
+  padding: 0;
+}
+
 .text-component--readonly {
   color: $color-1;
   font: $font-7;
@@ -11,5 +16,14 @@
 }
 
 .text-component--title {
+  color: $color-1;
   font: $font-7;
+  line-height: 24px;
+}
+
+.text-component--description {
+  color: $color-10;
+  font: $font-1;
+  line-height: 20px;
+  white-space: pre-wrap;
 }

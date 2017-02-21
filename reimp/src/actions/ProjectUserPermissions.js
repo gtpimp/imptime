@@ -53,6 +53,26 @@ function announcePupsLoadFailed(error) {
     }
 }
 
+function fetchProjectUserPermission(dispatch, state, project_id, user_id) {
+    dispatch(announceLoadingPups([null]))
+    const API_BASE_URL = state.settings.configured && state.settings.API_BASE_URL
+    const params = { filter: { project_id: project_id,
+                               user_id: user_id },
+		     pagination: {'enabled': false} }
+    
+    return impfetch(API_BASE_URL+'imp/permission/project', dispatch, {params:params})
+	.then(response => response.json())
+	.then(json => {
+            if (json.status !== 'success') {
+		dispatch(announcePupsLoadFailed())
+            } else {
+		dispatch(announcePupsLoaded(json.payload))
+            }
+	}).catch(function (error) {
+	    dispatch(announcePupsLoadFailed("Failed to load pups: " + error))
+	})
+}
+
 function fetchPupsPromise(dispatch, state, pup_ids) {
     return new Promise(function(resolve, reject) {
         const API_BASE_URL = state.settings.configured && state.settings.API_BASE_URL
@@ -109,13 +129,12 @@ function getPupIdsForProjectUsers(state, project_id, user_ids) {
     return map(user_ids, (user_id) => getPupIdForProjectUser(state, project_id, user_id))
 }
 
-export function ensureProjectUserPermissionsLoaded(project_id, user_ids) {
+export function ensureProjectUserPermissionsLoaded(project_id, user_id) {
     return (dispatch, getState) => {
         const state = getState()
-        const pup_ids = getPupIdsForProjectUsers(state, project_id, user_ids)
-        const pup_ids_to_load = getMissingItemIds(state, pup_ids, 'project_user_permission')
-        if ( pup_ids_to_load.length > 0 ) {
-            fetchPupsPromise(dispatch, state, pup_ids_to_load)
+        const pup_id = getPupIdForProjectUser(state, project_id, user_id)
+        if ( pup_id == null ) {
+            fetchProjectUserPermission(dispatch, state, project_id, user_id)
         }
     }
 }

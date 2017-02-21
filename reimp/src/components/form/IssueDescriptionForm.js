@@ -12,18 +12,17 @@ class IssueDescriptionForm extends Component {
     }
 
     onChangeAndSubmit(e, fieldOnChange) {
-        const {handleSubmit} = this.props
         fieldOnChange(e)
         // setTimeout(() => handleSubmit(), 0)
     }
     
     renderTextarea(field) {
-        const {input, data, ...rest} = field
+        const {input} = field
         return (
             <Textarea
                 rows="1"
                 maxLength="3000"
-                className="textarea textarea--text-component"
+                className="textarea textarea--text-component textarea--description"
                 placeholder="Description"
                 onChange={(e) => this.onChangeAndSubmit(e, input.onChange)}
                 value={input.value}

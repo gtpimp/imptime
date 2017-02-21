@@ -1,6 +1,5 @@
 import React, {Component} from 'react'
 import {connect} from 'react-redux'
-import {browserHistory} from 'react-router'
 import '../../sass/toolbar-panel.css'
 import {
     PAGE_KEY__PROJECTS_PAGE
@@ -41,8 +40,6 @@ class ProjectsToolbarPanel extends Component {
 
     render() {
 
-        const { selected_project_ids } = this.props
-        
         return (
             <div className="toolbar-panel">
                 <div className="button button--large button--primary" onClick={this.onNewProjectClick}>+ New Project</div>

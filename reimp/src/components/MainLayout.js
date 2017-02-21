@@ -1,13 +1,14 @@
 import React, {Component} from 'react'
 import {connect} from 'react-redux'
 import Header from '../components/Header'
+import ModalDialog from '../components/ModalDialog'
 import Websocket from '../components/Websocket'
 import LoginPage from '../containers/LoginPage'
 import { DragDropContext } from 'react-dnd';
-var HTML5Backend = require('react-dnd-html5-backend');
 import { logged_in_user, is_authenticated } from '../actions/Auth'
 import { updateSettings } from '../actions/Settings'
 import { ensureUsersLoaded } from '../actions/Users'
+var HTML5Backend = require('react-dnd-html5-backend');
 
 class MainLayout extends Component {
 
@@ -30,13 +31,13 @@ class MainLayout extends Component {
 
     componentWillReceiveProps(new_props) {
         const { dispatch } = this.props
-        if ( new_props.logged_in_user_id && new_props.logged_in_user_id != this.props.logged_in_user_id ) {
+        if ( new_props.logged_in_user_id && new_props.logged_in_user_id !== this.props.logged_in_user_id ) {
             dispatch(ensureUsersLoaded([new_props.logged_in_user_id]))
         }
     }
 
     render() {
-        const { is_logged_in, are_settings_loaded } = this.props
+        const { error_message, is_logged_in, are_settings_loaded } = this.props
 
         if ( ! are_settings_loaded ) {
             return (
@@ -59,6 +60,10 @@ class MainLayout extends Component {
                 <div className="main">
                 {this.props.children}
                 </div>
+                <ModalDialog isOpen={error_message} title="Imp Down">
+                    <div>{error_message}</div>
+                    <button className="button button--default button--large">Reload</button>
+                </ModalDialog>
             </div>
         )
     }
@@ -67,8 +72,10 @@ class MainLayout extends Component {
 function mapStateToProps(state) {
     const { configured } = state.settings
     const logged_in_user_id = logged_in_user()['user_id'] || null
+    const notification_bar = state.notification_bar || {}
     
     return {
+        error_message: notification_bar.error_message,
         is_logged_in: is_authenticated(),
         are_settings_loaded: configured,
         logged_in_user_id: logged_in_user_id

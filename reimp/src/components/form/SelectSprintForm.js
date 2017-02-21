@@ -1,7 +1,6 @@
 import React, {Component} from 'react'
 import {connect} from 'react-redux'
 import { Field, reduxForm } from 'redux-form'
-import SelectList from 'react-widgets/lib/SelectList'
 import { getSprints, fetchSprintsIfNeeded } from '../../actions/Sprints'
 import {
     SELECTOR__SPRINTS
@@ -58,7 +57,6 @@ class SelectSprintForm extends Component {
         return (
             <form onSubmit={handleSubmit}>
                 <div>
-                    <label htmlFor="assigned">Move to sprint</label>
                     <Field name="sprint_id"
                            component={this.renderSingleValueSelector}
                            valueField="value"

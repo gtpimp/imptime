@@ -6,11 +6,22 @@ class PropertyStackComponent extends Component {
     render() {
         return (
             <div className="property-stack-component">
-                <div className="property-stack-component__content">
-                    {this.props.children}
-                </div>
-                <div className="property-stack-component__icons">
-                    <div className="property-stack-component__icon"><i className="material-icons">edit</i></div>
+                <div className="property-stack-component__inner">
+                    { this.props.title &&
+                    <div className="property-stack-component__title">
+                        {this.props.title}
+                    </div>
+                    }
+                    { this.props.children &&
+                    <div className="property-stack-component__content">
+                        {this.props.children}
+                    </div>
+                    }
+                    { false &&
+                    <div className="property-stack-component__icons">
+                        <div className="property-stack-component__icon"><i className="material-icons">edit</i></div>
+                    </div>
+                    }
                 </div>
             </div>
         )
@@ -18,8 +29,7 @@ class PropertyStackComponent extends Component {
 }
 
 function mapStateToProps(state, props) {
-    return {
-    }
+    return {}
 }
 
 

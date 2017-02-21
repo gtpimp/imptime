@@ -15,9 +15,6 @@ import {
     update_list_filter,
     invalidateList
 } from '../actions/ItemList'
-import {
-    startCandidateSprint,
-} from '../actions/Sprints'
 import {ensureProjectsLoaded, getProject} from '../actions/Projects'
 import {
     set_toolbars,
@@ -43,7 +40,7 @@ class SprintsPage extends Component {
     }
 
     componentWillReceiveProps(new_props) {
-        const {dispatch, project, project_id} = this.props
+        const {dispatch} = this.props
 
         dispatch(ensureProjectsLoaded([new_props.project_id]))
         if ( new_props.project.id !== this.props.project.id ||

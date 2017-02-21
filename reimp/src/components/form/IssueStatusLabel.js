@@ -1,14 +1,13 @@
 import React, {Component} from 'react'
 import {connect} from 'react-redux'
-import classNames from 'classnames'
-import { impfetch } from '../../actions/lib'
+import '../../sass/sprint-label.css'
 
 class IssueStatusLabel extends Component {
 
     render() {
         const { status_name } = this.props
         return (
-            <div>
+            <div className="issue-status-label">
                 {status_name}
             </div>
         )

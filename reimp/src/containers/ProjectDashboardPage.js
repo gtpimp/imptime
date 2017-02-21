@@ -4,16 +4,12 @@ import {browserHistory} from 'react-router'
 import { setBreadcrumbs } from '../actions/Breadcrumbs'
 import {ensureProjectsLoaded, getProject} from '../actions/Projects'
 import ProjectUsers from '../components/ProjectUsers'
-import Modal from 'react-modal';
 import {
     PAGE_KEY__PROJECT_DASHBOARD_PAGE
 } from '../actions/ItemListKeyRegistry'
 import {
     set_toolbars,
     select_projects,
-    setPageFlag,
-    clearPageFlag,
-    getPageFlag
 } from '../actions/Page'
 
 class ProjectDashboardPage extends Component {
@@ -30,7 +26,7 @@ class ProjectDashboardPage extends Component {
     }
 
     componentWillReceiveProps(new_props) {
-        const { project_id, dispatch } = this.props
+        const { project_id } = this.props
         if ( new_props.project_id !== project_id || new_props.project.id !== this.props.project.id ) {
             this.refresh(new_props.project_id)
         }
@@ -51,7 +47,7 @@ class ProjectDashboardPage extends Component {
     
     render() {
 
-        const { project, is_inviting_user } = this.props
+        const { project } = this.props
         
         return (
             <div>

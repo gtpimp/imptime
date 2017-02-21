@@ -26,7 +26,7 @@ class UserPermission extends Component {
         user_id = user_id || this.props.user_id
         dispatch(ensureProjectsLoaded([project_id]))
         dispatch(ensureUsersLoaded([user_id]))
-        dispatch(ensureProjectUserPermissionsLoaded(project_id, [user_id]))
+        dispatch(ensureProjectUserPermissionsLoaded(project_id, user_id))
     }
     
     render() {
@@ -42,10 +42,14 @@ class UserPermission extends Component {
                 { !is_loading &&
                   map(keys(pup), (permission_name, index) =>
                       (
-                          <div>
-                              <div key={index}>{permission_name}</div>
-                              <div>{pup[permission_name]}</div>
-                          </div>
+                          <tr>
+                              <td>
+                                  <div>
+                                      <div key={index}>{permission_name}</div>
+                                      <div>{pup[permission_name]}</div>
+                                  </div>
+                              </td>
+                          </tr>
                       )
                   )
                 }

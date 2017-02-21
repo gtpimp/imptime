@@ -1,7 +1,6 @@
 import React, {Component} from 'react'
 import {connect} from 'react-redux'
 import {reduxForm, Field} from 'redux-form'
-import SelectList from 'react-widgets/lib/SelectList'
 import { ensureUsersLoaded, getUsers, getLoggedInUser } from '../../actions/Users'
 import SingleValueSelector from './SingleValueSelector'
 
@@ -22,7 +21,7 @@ class InviteUserForm extends Component {
     }
 
     refresh() {
-        const {dispatch, known_user_ids, project_id} = this.props
+        const {dispatch, known_user_ids} = this.props
         dispatch(ensureUsersLoaded(known_user_ids))
     }
 
