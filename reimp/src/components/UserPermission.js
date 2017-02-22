@@ -31,8 +31,8 @@ class UserPermission extends Component {
         dispatch(ensureProjectUserPermissionsLoaded(project_id, user_id))
     }
 
-    renderPermissionCheckbox(permission_name) {
-        return <input type="text" label={permission_name} key={permission_name} />
+    renderPermissionCheckbox(field, permission_name) {
+        return <input type="checkbox" label={permission_name} key={permission_name} defaultChecked={field.input.value} />
     }
 
     render() {
@@ -68,7 +68,7 @@ class UserPermission extends Component {
                                           { logged_in_users_permissions.has_edit_permissions &&
                                             <form onSubmit={(new_values) => handleSubmit(permission_name, new_values)}>
                                                 <Field name={permission_name}
-                                                       component={() => this.renderPermissionCheckbox(permission_name)}
+                                                       component={(field) => this.renderPermissionCheckbox(field, permission_name)}
                                                        onChange={(new_values) => handleSubmit(new_values)} />
                                             </form>
                                           }
@@ -108,6 +108,7 @@ function mapStateToProps(state, props) {
     return {
         logged_in_users_permissions: logged_in_users_permissions(state, project_id),
         initialValues: pup,
+        enableReinitialize: true,
         project: project,
         project_id: project_id,
 	user: user,
