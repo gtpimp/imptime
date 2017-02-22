@@ -18,6 +18,10 @@ import {
     clearPageFlag,
     getPageFlag
 } from '../actions/Page'
+import {
+    setProjectUserPermission,
+    unsetProjectUserPermission
+} from '../actions/ProjectUserPermissions'
 
 class ProjectUserPage extends Component {
 
@@ -26,6 +30,7 @@ class ProjectUserPage extends Component {
         this.navigateToSprintsPage = this.navigateToSprintsPage.bind(this)
         this.navigateToProjectUserPermissions = this.navigateToProjectUserPermissions.bind(this)
         this.closeProjectUserPermissions = this.closeProjectUserPermissions.bind(this)
+        this.onChangePermission = this.onChangePermission.bind(this)
     }
 
     componentDidMount() {
@@ -78,6 +83,16 @@ class ProjectUserPage extends Component {
         browserHistory.push('/projects/'+project_id+'/users/'+user_id+'?permissions=0')
     }
 
+    onChangePermission(new_values) {
+        const { user_id, project_id, dispatch } = this.props
+
+        // setProjectUserPermission,
+        // unsetProjectUserPermission
+
+        debugger
+        dispatch(setProjectUserPermission(project_id, user_id))
+    }
+
     renderUserPermissions() {
         const { project_id, user_id } = this.props
         const that = this
@@ -85,7 +100,8 @@ class ProjectUserPage extends Component {
             <div className="project-user__user_permissions">
                 <UserPermission project_id={project_id}
                                 user_id={user_id}
-                                onClose={that.closeProjectUserPermissions} />
+                                onClose={that.closeProjectUserPermissions}
+                                onChange={that.onChangePermission} />
             </div>
         )
     }

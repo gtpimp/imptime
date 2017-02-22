@@ -444,6 +444,10 @@ class BusinessPermissions(models.Model):
         bps = BusinessPermissions.objects.filter(business=business)
         return dict( [ (bp.user.id, bp) for bp in bps ] )
 
+    def update_permission(self, permission_name, new_state):
+        import pdb; pdb.set_trace()
+        pass
+    
     @classmethod
     def by_user(self, business):
         # to be deprecated

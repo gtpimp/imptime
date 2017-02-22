@@ -47,3 +47,30 @@ class ProjectUserPermissionViewSet(BaseViewSet):
             return self.error_response(ex)
         
         return HttpResponse(JSONRenderer().render(data))
+
+    def create(self, request):
+        # not strictly a create, we use for updates as well
+        try:
+            context = {}
+            params = request.data
+            project_pk = params['project_id']
+            user_pks = params['user_ids']
+            permission_name = params['permission_name']
+            value = params['value']
+
+            project = self.allowed_project(project_pk)
+
+            if self.logged_in_permissions(project.id) is None or not self.logged_in_permissions(project.id).has_edit_permissions:
+                data = {'status': 'failure', 'payload': {'error_msg':'No permissions to perform this action'}}
+            else:
+                for user_pk in user_pks:
+                    user = self.allowed_users(user_pk)
+                    pup = ProjectPermissions.for_user(user, project)
+                    pup.update_permission(permission_name, value)
+                data = {'status': 'success', 'payload': {}}
+
+        except Exception, ex:
+            logger.exception(ex)
+            return self.error_response(ex)
+        
+        return HttpResponse(JSONRenderer().render(data))

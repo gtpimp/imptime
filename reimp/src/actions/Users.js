@@ -2,6 +2,7 @@ import { impfetch } from './lib.js'
 import { fetchListIfNeeded, getMissingItemIds } from './ItemList'
 import { ENTITY_KEY__USER } from '../actions/ItemListKeyRegistry'
 import { logged_in_user } from './Auth'
+import { getProject } from './Projects'
 import each from 'lodash/each'
 
 export const ANNOUNCE_USERS_LOADED = 'ANNOUNCE_USERS_LOADED'
@@ -112,11 +113,14 @@ export function getUsers(state, user_ids) {
     })    
 }
 
-export function has_permission(state, permission_name) {
-    const user = getLoggedInUser(state)
-    if ( ! user ) {
-        return false
+export function logged_in_users_permissions(state, project_id) {
+    const project = getProject(state, project_id)
+    if ( ! project ) {
+        return {}
     }
-    const permissions = user.user_permissions
-    return permissions[permission_name] || false
+    return project.logged_in_users_permissions || {}
+}
+
+export function has_permission(state, project_id, permission_name) {
+    return logged_in_users_permissions(state, project_id)[permission_name] || false
 }

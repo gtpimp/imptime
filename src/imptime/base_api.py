@@ -45,6 +45,10 @@ class BaseViewSet(viewsets.ViewSet):
     - timepiece.Project = imptime.Sprint
     """
 
+    def __init__(self, *args, **kwargs):
+        super(BaseViewSet, self).__init__(*args, **kwargs)
+        self._logged_in_permissions_by_project = {}
+    
     def error_response(self, ex):
         data = {'status': 'failed', 'error': str(ex)}
         return HttpResponse(JSONRenderer().render(data), status=500)
@@ -133,3 +137,9 @@ class BaseViewSet(viewsets.ViewSet):
     def allowed_project_permissions(self):
         return PermissionHelper.allowed_project_permissions(self.request.user)
     
+    def logged_in_permissions(self, project_id):
+        if project_id in self._logged_in_permissions:
+            return self._logged_in_permissions[project_id]
+        pup = ProjectPermissions.for_user(self.request.user, project)
+        self._logged_in_permissions[project_id] = pup
+        return pup

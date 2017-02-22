@@ -8,7 +8,6 @@ from timepiece.models import BusinessInvite as ProjectInvite
 from project_user_permission_serializer import ProjectUserPermissionSerializer
 logger = logging.getLogger(__name__)
 
-
 class ProjectSerializer(BaseSerializer):
 
     id = serializers.CharField()

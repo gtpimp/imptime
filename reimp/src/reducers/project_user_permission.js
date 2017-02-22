@@ -22,7 +22,8 @@ const initialState = {
     loading_item_ids: [],
     saving_item_ids: [],
     pup_ids_by_project_and_user: {},
-    loading_pups_by_project_and_user: {}
+    loading_pups_by_project_and_user: {},
+    saving_pups_by_project_and_user: {}
 }
 
 export default function project_user_permission(state = initialState, action) {
@@ -79,16 +80,31 @@ export default function project_user_permission(state = initialState, action) {
             setErrorMessage("Failed to load project user permissions: " + action.error_message)
             return state;
         case ANNOUNCE_PUPS_SAVING:
+            const saving_pups = Object.assign({}, state_copy.saving_pups_by_project_and_user)
+            if ( action.project_id && action.user_id ) {
+                saving_pups[""+action.project_id] = Object.assign({}, saving_pups[""+action.project_id] || {})
+                saving_pups[""+action.project_id][""+action.user_id] = true
+            }
+            
 	    return Object.assign({}, state, {
-		saving_item_ids: union(state.saving_item_ids, action.pup_ids_to_save)
-	    })            
+		saving_item_ids: union(state.saving_item_ids, action.pup_ids_to_save || []),
+                saving_pups_by_project_and_user: saving_pups
+	    })
+            
         case ANNOUNCE_PUPS_SAVED:
             state_copy = Object.assign({}, state, {
 		saving_item_ids: Object.assign({},
 						difference(state.saving_item_ids || [],
 							   action.pup_ids))
 	    })
+            if ( action.project_id && action.user_id ) {
+                const saving_pups = Object.assign({}, state_copy.saving_pups_by_project_and_user)
+                saving_pups[""+action.project_id] = Object.assign({}, saving_pups[""+action.project_id] || {})
+                saving_pups[""+action.project_id][""+action.user_id] = false
+                state_copy.saving_pups_by_project_and_user = saving_pups
+            }
             return state_copy
+            
         case ANNOUNCE_PUPS_SAVE_FAILED:
             setErrorMessage("Failed to save pups: " + action.error_message)
             return state;
