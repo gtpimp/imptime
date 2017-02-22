@@ -22,7 +22,7 @@ class ProjectUserPermissionSerializer(BaseSerializer):
     has_edit_description = serializers.BooleanField()
     has_add_issue_comment = serializers.BooleanField()
     has_edit_subject = serializers.BooleanField()
-    has_edit_issue_feature = serializers.BooleanField()
+    has_edit_feature = serializers.BooleanField()
     has_create_sprint = serializers.BooleanField()
     has_assign_user = serializers.BooleanField()
     has_be_scheduled = serializers.BooleanField()

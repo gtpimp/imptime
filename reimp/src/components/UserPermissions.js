@@ -42,11 +42,14 @@ class UserPermissions extends Component {
     onChangePermission(new_values) {
         const { user_id, project_id, dispatch } = this.props
 
-        // setProjectUserPermission,
-        // unsetProjectUserPermission
+        const permission_name = keys(new_values)[0]
+        const new_value = new_values[permission_name]
 
-        debugger
-        dispatch(setProjectUserPermission(project_id, user_id))
+        if ( new_value === true ) {
+            dispatch(setProjectUserPermission(project_id, user_id, permission_name))
+        } else {
+            dispatch(unsetProjectUserPermission(project_id, user_id, permission_name))
+        }
     }
 
     render() {

@@ -243,7 +243,7 @@ function updatePup(project_id, user_id, permission_name, new_value, on_done) {
 
         // Use a descriptive url to prevent the throttling dropping saves on different permissions within the same project
 	return impfetch(API_BASE_URL+"imp/permission/project/?project_id="+project_id+"&user_id="+user_id+"&permission_name="+permission_name, dispatch,
-			{method: "PUT",
+			{method: "POST",
 			 credentials: 'same-origin',
 			 data: data,
 			 headers: {"Content-type": "application/json; charset=UTF-8"}, 

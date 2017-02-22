@@ -60,11 +60,11 @@ class ProjectUserPermissionViewSet(BaseViewSet):
 
             project = self.allowed_project(project_pk)
 
-            if self.logged_in_permissions(project.id) is None or not self.logged_in_permissions(project.id).has_edit_permissions:
+            if self.logged_in_permissions(project) is None or not self.logged_in_permissions(project).has_edit_permissions:
                 data = {'status': 'failure', 'payload': {'error_msg':'No permissions to perform this action'}}
             else:
                 for user_pk in user_pks:
-                    user = self.allowed_users(user_pk)
+                    user = self.allowed_user(user_pk)
                     pup = ProjectPermissions.for_user(user, project)
                     pup.update_permission(permission_name, value)
                 data = {'status': 'success', 'payload': {}}

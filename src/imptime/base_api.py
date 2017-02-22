@@ -137,9 +137,9 @@ class BaseViewSet(viewsets.ViewSet):
     def allowed_project_permissions(self):
         return PermissionHelper.allowed_project_permissions(self.request.user)
     
-    def logged_in_permissions(self, project_id):
-        if project_id in self._logged_in_permissions:
-            return self._logged_in_permissions[project_id]
+    def logged_in_permissions(self, project):
+        if project.id in self._logged_in_permissions_by_project:
+            return self._logged_in_permissions_by_project[project.id]
         pup = ProjectPermissions.for_user(self.request.user, project)
-        self._logged_in_permissions[project_id] = pup
+        self._logged_in_permissions_by_project[project.id] = pup
         return pup

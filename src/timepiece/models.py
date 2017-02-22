@@ -445,8 +445,12 @@ class BusinessPermissions(models.Model):
         return dict( [ (bp.user.id, bp) for bp in bps ] )
 
     def update_permission(self, permission_name, new_state):
-        import pdb; pdb.set_trace()
-        pass
+
+        field_name = permission_name.replace("has_", "can_")
+        if not hasattr(self, field_name):
+            raise Exception("Trying to set unknown permission: %s " % permission_name)
+        setattr(self, field_name, new_state)
+        self.save()
     
     @classmethod
     def by_user(self, business):
@@ -607,7 +611,7 @@ class BusinessPermissions(models.Model):
         return self.user.is_superuser or self.can_edit_subject or self.user.has_perm('timepiece.belongs_to_all_projects')
 
     @property
-    def has_edit_issue_feature(self):
+    def has_edit_feature(self):
         return self.user.is_superuser or self.can_edit_feature or self.user.has_perm('timepiece.belongs_to_all_projects')
 
     @property
