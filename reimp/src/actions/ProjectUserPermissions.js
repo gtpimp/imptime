@@ -168,7 +168,7 @@ export function ensureProjectUserPermissionsLoaded(project_id, user_id) {
             return;
         }
         const pup_id = getPupIdForProjectUser(state, project_id, user_id)
-        if ( pup_id == null ) {
+        if ( pup_id == null || getPup(state, pup_id) == null ) {
             fetchProjectUserPermission(dispatch, state, project_id, user_id)
         }
     }

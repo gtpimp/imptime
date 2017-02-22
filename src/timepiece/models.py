@@ -380,7 +380,7 @@ class Feature(models.Model):
     def __unicode__(self):
         return self.name
 
-class BusinessPermissions(models.Model):
+class BusinessPermissions(BaseModel):
 
     class Meta:
         unique_together = (('user','business'),)
@@ -444,12 +444,12 @@ class BusinessPermissions(models.Model):
         affected_project = self.business #sic
         if was_created:
             RefreshNotifier().notify_model_create(
-                self, params={'projects': [self.business],
-                              'users': [self.user]})
+                self, params={'projects': [self.business_id],
+                              'users': [self.user_id]})
         else:
             RefreshNotifier().notify_model_update(
-                self, params={'projects': [self.business],
-                              'users': [self.user]})
+                self, params={'projects': [self.business_id],
+                              'users': [self.user_id]})
     
     @classmethod
     def _by_user(self, business):
@@ -693,13 +693,13 @@ class ProjectStatus(models.Model):
     def save(self, *args, **kwargs):
         was_created = not self.id
         super(ProjectStatus, self).save(*args, **kwargs)
-        affected_projects = [x.id for x in self.projects.all()]
+        affected_project_ids = [x.id for x in self.projects.all()]
         if was_created:
             RefreshNotifier().notify_model_create(
-                self, params={'projects': affected_projects})
+                self, params={'projects': affected_project_ids})
         else:
             RefreshNotifier().notify_model_update(
-                self, params={'projects': affected_projects})
+                self, params={'projects': affected_project_ids})
 
     
 class ProjectQuerySet(QuerySet):

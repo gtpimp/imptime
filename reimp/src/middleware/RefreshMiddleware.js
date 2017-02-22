@@ -43,13 +43,13 @@ function triggerInvalidateEntity(d, dispatch) {
         dispatch(invalidateIssues(d.params.issues))
         dispatch(invalidateIssueGeneralDetails(d.params.issues))
 
-    } else if ( d.entity_name === 'businessinvite' ) {
+    } else if ( d.entity_name === 'projectinvite' ) {
         dispatch(invalidateUsers(d.params.users))
         dispatch(invalidateProjects(d.params.projects))
 
-    } else if ( d.entity_name === 'businesspermissions' ) {
-        dispatch(invalidateUsers(d.params.users))
-        dispatch(invalidateProjects(d.params.projects))
+    } else if ( d.entity_name === 'projectpermissions' ) {
+        // dispatch(invalidateUsers(d.params.users))
+        // dispatch(invalidateProjects(d.params.projects))
         dispatch(invalidatePups([d.entity_ref]))
         
     } else {
@@ -72,10 +72,10 @@ function triggerInvalidateItemLists(d, dispatch) {
     } else if ( d.entity_name === 'issue' ) {
         dispatch(invalidateList(LIST_KEY__ISSUE_LIST))
 
-    } else if ( d.entity_name === 'businessinvite' ) {
+    } else if ( d.entity_name === 'projectinvite' ) {
         dispatch(invalidateList(LIST_KEY__PROJECT_USER_LIST))
 
-    } else if ( d.entity_name === 'businesspermissions' ) {
+    } else if ( d.entity_name === 'projectpermissions' ) {
         dispatch(invalidateList(LIST_KEY__PROJECT_USER_LIST))
         
     } else {
