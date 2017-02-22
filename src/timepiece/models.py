@@ -437,6 +437,19 @@ class BusinessPermissions(models.Model):
     can_view_ctc_rates = models.BooleanField(default=False, verbose_name="Can View Ctc") # a subpermission of can_view_ctc_billable_rates, used for clients who shouldn't see our internal costing.
     can_view_documents = models.BooleanField(default=False, verbose_name="Can View Docs") # quotes and summaries, usually contains costs and rates
     can_edit_calendar = models.BooleanField(default=False, verbose_name="Can Edit Calendar")
+
+    def save(self, *args, **kwargs):
+        was_created = not self.id
+        super(BusinessPermissions, self).save(*args, **kwargs)
+        affected_project = self.business #sic
+        if was_created:
+            RefreshNotifier().notify_model_create(
+                self, params={'projects': [self.business],
+                              'users': [self.user]})
+        else:
+            RefreshNotifier().notify_model_update(
+                self, params={'projects': [self.business],
+                              'users': [self.user]})
     
     @classmethod
     def _by_user(self, business):

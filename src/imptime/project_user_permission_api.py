@@ -30,7 +30,8 @@ class ProjectUserPermissionViewSet(BaseViewSet):
             if 'project_id' in filter_args and 'user_id' in filter_args and pups.count() == 0:
                 # We return an empty project permission so that the caller can tell what's going on.
                 pups = [ProjectPermissions(business_id=filter_args['project_id'],
-                                           user_id=filter_args['user_id'])]
+                                           user_id=filter_args['user_id'],
+                                           id="not_allowed")]
             else:
                 pups = self.apply_pagination(qs=pups, pagination=pagination)
 

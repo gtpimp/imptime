@@ -7,6 +7,7 @@ import { invalidateProjects } from '../actions/Projects'
 import { invalidateSprints } from '../actions/Sprints'
 import { invalidateIssues } from '../actions/Issues'
 import { invalidateUsers } from '../actions/Users'
+import { invalidatePups } from '../actions/ProjectUserPermissions'
 import { invalidateIssueGeneralDetails } from '../actions/IssueGeneralDetails'
 import { addAsyncMessage } from '../actions/Async'
 
@@ -45,6 +46,11 @@ function triggerInvalidateEntity(d, dispatch) {
     } else if ( d.entity_name === 'businessinvite' ) {
         dispatch(invalidateUsers(d.params.users))
         dispatch(invalidateProjects(d.params.projects))
+
+    } else if ( d.entity_name === 'businesspermissions' ) {
+        dispatch(invalidateUsers(d.params.users))
+        dispatch(invalidateProjects(d.params.projects))
+        dispatch(invalidatePups([d.entity_ref]))
         
     } else {
         console.log("Unknown entity to refresh: " + d.entity_name)
@@ -69,6 +75,8 @@ function triggerInvalidateItemLists(d, dispatch) {
     } else if ( d.entity_name === 'businessinvite' ) {
         dispatch(invalidateList(LIST_KEY__PROJECT_USER_LIST))
 
+    } else if ( d.entity_name === 'businesspermissions' ) {
+        dispatch(invalidateList(LIST_KEY__PROJECT_USER_LIST))
         
     } else {
         console.log("Unknown entity to refresh lists: " + d.entity_name)
