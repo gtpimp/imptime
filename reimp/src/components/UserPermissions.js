@@ -4,16 +4,24 @@ import keys from 'lodash/keys'
 import map from 'lodash/map'
 import filter from 'lodash/filter'
 import classNames from 'classnames'
-import { reduxForm, Field } from 'redux-form';
+import UserPermissionForm from './form/UserPermissionForm'
 import { getUser, ensureUsersLoaded, logged_in_users_permissions } from '../actions/Users'
 import { getProject, ensureProjectsLoaded } from '../actions/Projects'
 import { getProjectUserPermission, ensureProjectUserPermissionsLoaded } from '../actions/ProjectUserPermissions'
 import '../sass/user-permission.css'
+import {
+    setProjectUserPermission,
+    unsetProjectUserPermission
+} from '../actions/ProjectUserPermissions'
 
-class UserPermission extends Component {
 
-    ensureProjectUserPermissionsLoaded
+class UserPermissions extends Component {
 
+    constructor(props) {
+        super(props)
+        this.onChangePermission = this.onChangePermission.bind(this)
+    }
+    
     componentDidMount() {
         this.refresh()
     }
@@ -31,12 +39,18 @@ class UserPermission extends Component {
         dispatch(ensureProjectUserPermissionsLoaded(project_id, user_id))
     }
 
-    renderPermissionCheckbox(field, permission_name) {
-        return <input type="checkbox" label={permission_name} key={permission_name} defaultChecked={field.input.value} />
+    onChangePermission(new_values) {
+        const { user_id, project_id, dispatch } = this.props
+
+        // setProjectUserPermission,
+        // unsetProjectUserPermission
+
+        debugger
+        dispatch(setProjectUserPermission(project_id, user_id))
     }
 
     render() {
-        const { user, project, pup, is_loading,
+        const { user, project, pup, is_loading, onChange,
                 permission_names, handleSubmit, logged_in_users_permissions } = this.props
 
         return (
@@ -66,11 +80,11 @@ class UserPermission extends Component {
                                   <td>
                                       <div>
                                           { logged_in_users_permissions.has_edit_permissions &&
-                                            <form onSubmit={(new_values) => handleSubmit(permission_name, new_values)}>
-                                                <Field name={permission_name}
-                                                       component={(field) => this.renderPermissionCheckbox(field, permission_name)}
-                                                       onChange={(new_values) => handleSubmit(new_values)} />
-                                            </form>
+                                            <UserPermissionForm permission_name={permission_name}
+                                                                user_id={user.id}
+                                                                project_id={project.id}
+                                                                onChange={this.onChangePermission}
+                                            />
                                           }
                                            { ! logged_in_users_permissions.has_edit_permissions &&
                                              <div>
@@ -97,7 +111,7 @@ class UserPermission extends Component {
 }
 
 function mapStateToProps(state, props) {
-    const { project_id, user_id, onClose } = props
+    const { project_id, user_id, onClose, onChange } = props
     const user = getUser(state, user_id) || {}
     const project = getProject(state, project_id) || {}
     const pup = getProjectUserPermission(state, project_id, user_id) || {}
@@ -107,8 +121,7 @@ function mapStateToProps(state, props) {
     
     return {
         logged_in_users_permissions: logged_in_users_permissions(state, project_id),
-        initialValues: pup,
-        enableReinitialize: true,
+        onChange: onChange,
         project: project,
         project_id: project_id,
 	user: user,
@@ -120,4 +133,4 @@ function mapStateToProps(state, props) {
     }
 }
 
-export default connect(mapStateToProps)(reduxForm({form:'project_permission_form'})(UserPermission))
+export default connect(mapStateToProps)(UserPermissions)
