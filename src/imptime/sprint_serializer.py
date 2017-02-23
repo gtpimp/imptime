@@ -5,7 +5,6 @@ from clock_entry_serializer import ClockEntrySerializer
 from timepiece.models import Entry
 logger = logging.getLogger(__name__)
 
-
 class SprintSerializer(BaseSerializer):
 
     id = serializers.CharField()
