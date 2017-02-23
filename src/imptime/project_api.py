@@ -68,9 +68,11 @@ class ProjectViewSet(BaseViewSet):
             for project_pk in project_pks:
                 project = self.allowed_project(project_pk)
                 if field_name == 'name':
-                    project.name = new_value
+                    if self.logged_in_permissions(project).has_edit_project_detail:
+                        project.name = new_value
                 elif field_name == 'description':
-                    project.description = new_value
+                    if self.logged_in_permissions(project).has_edit_project_detail:
+                        project.description = new_value
                 else:
                     raise Exception("Unsupported field name: %s" % field_name)
                 project.save()
@@ -86,6 +88,7 @@ class ProjectViewSet(BaseViewSet):
         try:
             context = {}
             params = request.data['project']
+
             project = Project.objects.create(
                 created_by=request.user,
                 name=params['name'])
@@ -112,20 +115,23 @@ class ProjectViewSet(BaseViewSet):
             invited_user, created_user = User.objects.get_or_create(email=invited_user_email,
                                                                     defaults={'username':invited_user_email})
 
-            ProjectPermissions.ensure_user_belongs_to_business(user=invited_user,
-                                                                business=project) #sic
+            if self.logged_in_permissions(business).has_invite_users:
+                ProjectPermissions.ensure_user_belongs_to_business(user=invited_user,
+                                                                    business=project) #sic
 
-            project_invite, created_invite = ProjectInvite.objects.get_or_create(business=project, #sic
-                                                                                 user=invited_user,
-                                                                                 defaults={'invited_by':request.user})
+                project_invite, created_invite = ProjectInvite.objects.get_or_create(business=project, #sic
+                                                                                     user=invited_user,
+                                                                                     defaults={'invited_by':request.user})
 
-            
-            if created_invite or project_invite.invite_sent_at is None:
-                self._send_invite(project, invited_user, created_user)
-                project_invite.invite_sent_at = timezone.now()
-                project_invite.save()
-            
-            data = {'status': 'success'}
+
+                if created_invite or project_invite.invite_sent_at is None:
+                    self._send_invite(project, invited_user, created_user)
+                    project_invite.invite_sent_at = timezone.now()
+                    project_invite.save()
+
+                data = {'status': 'success'}
+            else:
+                data = {'status': 'failed', 'error_message': 'Permission denied to invite users'}
 
         except Exception, ex:
             logger.exception(ex)

@@ -405,6 +405,8 @@ class BusinessPermissions(BaseModel):
     can_edit_feature = models.BooleanField(default=True, verbose_name="Can Edit Feature")
     can_edit_tags = models.BooleanField(default=True, verbose_name="Can Edit Tags")
     can_create_sprint = models.BooleanField(default=True, verbose_name="Can Create Sprint")
+    can_edit_sprint_status = models.BooleanField(default=True, verbose_name="Can Edit Sprint")
+    can_edit_sprint = models.BooleanField(default=True, verbose_name="Can Edit Sprint")
     can_assign_user = models.BooleanField(default=True, verbose_name="Can Assign User")
     can_be_scheduled = models.BooleanField(default=False, verbose_name="Can Be Scheduled")
     can_view_business_comments = models.BooleanField(default=False, verbose_name="Can view project comments")
@@ -635,6 +637,14 @@ class BusinessPermissions(BaseModel):
     def has_create_sprint(self):
         return self.user.is_superuser or self.can_create_sprint or self.user.has_perm('timepiece.belongs_to_all_projects')
 
+    @property
+    def has_edit_sprint_status(self):
+        return self.user.is_superuser or self.can_edit_sprint_status or self.user.has_perm('timepiece.belongs_to_all_projects')
+
+    @property
+    def has_edit_sprint(self):
+        return self.user.is_superuser or self.can_edit_sprint or self.user.has_perm('timepiece.belongs_to_all_projects')
+    
     @property
     def has_assign_user(self):
         return self.user.is_superuser or self.can_assign_user or self.user.has_perm('timepiece.belongs_to_all_projects')
