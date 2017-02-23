@@ -5,6 +5,7 @@ import forEach from 'lodash/forEach'
 import difference from 'lodash/difference'
 import without from 'lodash/without'
 import { setErrorMessage } from '../actions/Error'
+import { stringifyIds } from '../actions/lib.js'
 
 import {
     ANNOUNCE_PUPS_SAVING,
@@ -23,23 +24,33 @@ const initialState = {
     saving_item_ids: [],
     pup_ids_by_project_and_user: {},
     loading_pups_by_project_and_user: {},
-    saving_pups_by_project_and_user: {}
+    saving_pups_by_project_and_user: {},
+    invalidated_item_ids: []
 }
 
 export default function project_user_permission(state = initialState, action) {
 
     let state_copy = Object.assign({}, state)
     let new_items_by_id = null
+    let ids
     
     switch (action.type) {
 	case INVALIDATE_ALL_PUPS:
-	    return Object.assign({}, state, {items_by_id: null,
-                                             pup_ids_by_project_and_user: null})
+            ids = stringifyIds(keys(state.items_by_id || []))
+	    return Object.assign({}, state,
+				 {invalidated_item_ids:ids}
+            )
+            
         case INVALIDATE_PUPS:
-            return Object.assign({}, state, {items_by_id: without(state.items_by_id, action.pup_ids_to_invalidate)})
+            ids = stringifyIds(action.pup_ids_to_invalidate)
+            
+            return Object.assign({}, state,
+                                 {invalidated_item_ids: union(state.invalidated_item_ids, ids)})
+                                 
 
         case ANNOUNCE_LOADING_PUPS:
             const loading_pups = Object.assign({}, state_copy.loading_pups_by_project_and_user)
+            ids = stringifyIds(action.pup_ids_to_load)
             if ( action.project_id && action.user_id ) {
                 loading_pups[""+action.project_id] = Object.assign({}, loading_pups[""+action.project_id] || {})
                 loading_pups[""+action.project_id][""+action.user_id] = true
@@ -47,7 +58,8 @@ export default function project_user_permission(state = initialState, action) {
             
 	    return Object.assign({}, state, {
 		loading_item_ids: union(state.loading_item_ids, action.pup_ids_to_load || []),
-                loading_pups_by_project_and_user: loading_pups
+                loading_pups_by_project_and_user: loading_pups,
+                invalidated_item_ids: difference(state.invalidated_item_ids || [], ids)
 	    })            
         case ANNOUNCE_PUPS_LOADED:
             state_copy = Object.assign({}, state, {

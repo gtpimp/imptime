@@ -10,6 +10,8 @@ class ProjectUserPermissionSerializer(BaseSerializer):
     user_id = serializers.CharField()
     
     is_active_member_of_business = serializers.BooleanField()
+    has_edit_permissions = serializers.BooleanField()
+    has_view_permissions = serializers.BooleanField()
     has_invite_users = serializers.BooleanField()
     has_set_user_permissions = serializers.BooleanField()
     has_view_project_card = serializers.BooleanField()
@@ -36,8 +38,6 @@ class ProjectUserPermissionSerializer(BaseSerializer):
     has_do_dev_checklist = serializers.BooleanField()
     has_do_traffic_checklist = serializers.BooleanField()
     has_do_finance_checklist = serializers.BooleanField()
-    has_edit_permissions = serializers.BooleanField()
-    has_view_permissions = serializers.BooleanField()
     has_toggle_graphs = serializers.BooleanField()
     has_edit_project_detail = serializers.BooleanField()
     has_edit_deadlines = serializers.BooleanField()

@@ -2,12 +2,18 @@ import React, { Component } from 'react'
 import { connect } from 'react-redux'
 import keys from 'lodash/keys'
 import map from 'lodash/map'
+import includes from 'lodash/includes'
 import filter from 'lodash/filter'
 import classNames from 'classnames'
 import { reduxForm, Field } from 'redux-form';
 import { getUser, ensureUsersLoaded, logged_in_users_permissions } from '../../actions/Users'
 import { getProject, ensureProjectsLoaded } from '../../actions/Projects'
-import { getProjectUserPermission, ensureProjectUserPermissionsLoaded } from '../../actions/ProjectUserPermissions'
+import {
+    getProjectUserPermission,
+    ensureProjectUserPermissionsLoaded,
+    getLoadingProjectUserPermissionIds,
+    getInvalidatedProjectUserPermissionIds
+} from '../../actions/ProjectUserPermissions'
 import '../../sass/user-permission.css'
 
 class UserPermissionForm extends Component {
@@ -47,24 +53,23 @@ class UserPermissionForm extends Component {
         return <input type="checkbox"
                       label={permission_name}
                       key={permission_name}
-                      defaultChecked={input.value}
+                      checked={input.value}
                       onChange={(e) => this.onChangeAndSubmit(e, input.onChange)}
                />
     }
 
     render() {
-        const { is_loading, permission_name, handleSubmit } = this.props
+        const { pup_id, is_loading, permission_name, handleSubmit } = this.props
 
-        if ( is_loading ) {
-            return null
-        }
-        
         return (
             <div className="user-permission">
-                <form onSubmit={handleSubmit}>
-                    <Field name={permission_name}
-                           component={this.renderPermissionCheckbox} />
-                </form>
+                { !pup_id && <div>loading</div> }
+                { pup_id &&
+                  <form onSubmit={handleSubmit}>
+                      <Field name={permission_name}
+                             component={this.renderPermissionCheckbox} />
+                  </form>
+                }
             </div>
         )
     }
@@ -75,7 +80,12 @@ function mapStateToProps(state, props) {
     const user = getUser(state, user_id) || {}
     const project = getProject(state, project_id) || {}
     const pup = getProjectUserPermission(state, project_id, user_id) || {}
-    const is_loading = ( ! user.id || ! project.id || ! pup.id )
+
+    const loading_pup_ids = getLoadingProjectUserPermissionIds(state) || []
+    const invalidated_pup_ids = getInvalidatedProjectUserPermissionIds(state) || []
+    
+    const is_loading = ! user.id || ! project.id || ! pup.id || includes(loading_pup_ids, pup.id)
+    const is_invalidated = includes(invalidated_pup_ids, pup.id)
 
     const initialValues = {}
     initialValues[permission_name] = pup[permission_name]
@@ -92,8 +102,9 @@ function mapStateToProps(state, props) {
 	user_id: user_id,
         pup: pup,
         pup_id: pup.id,
+        permission_name: permission_name,
         is_loading: is_loading,
-        permission_name: permission_name
+        is_invalidated: is_invalidated
     }
 }
 

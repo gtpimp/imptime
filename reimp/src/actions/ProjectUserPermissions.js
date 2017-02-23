@@ -1,6 +1,7 @@
 import { impfetch } from './lib.js'
 import indexOf from 'lodash/indexOf'
 import keyBy from 'lodash/keyBy'
+import includes from 'lodash/includes'
 import map from 'lodash/map'
 import { fetchListIfNeeded, getMissingItemIds } from './ItemList'
 import { ENTITY_KEY__PROJECT_USER_PERMISSION } from '../actions/ItemListKeyRegistry'
@@ -30,11 +31,12 @@ export function invalidatePups(pup_ids) {
     }
 }
 
-function announceLoadingPupsForProjectAndUser(project_id, user_id) {
+function announceLoadingPupsForProjectAndUser(pup_id, project_id, user_id) {
     return {
         type: ANNOUNCE_LOADING_PUPS,
 	project_id: project_id,
-        user_id: user_id
+        user_id: user_id,
+        pup_ids_to_load: [pup_id]
     }
 }
 
@@ -82,7 +84,9 @@ function announcePupsLoadFailedForProjectAndUser(error, project_id, user_id) {
 }
 
 function fetchProjectUserPermission(dispatch, state, project_id, user_id) {
-    dispatch(announceLoadingPupsForProjectAndUser(project_id, user_id))
+
+    const pup_id = getPupIdForProjectUser(state, project_id, user_id)
+    dispatch(announceLoadingPupsForProjectAndUser(pup_id, project_id, user_id))
     const API_BASE_URL = state.settings.configured && state.settings.API_BASE_URL
     const params = { filter: { project_id: project_id,
                                user_id: user_id },
@@ -159,7 +163,15 @@ function getPupIdsForProjectUsers(state, project_id, user_ids) {
 
 function isPupLoadingForProjectUser(state, project_id, user_id) {
     return (((state.project_user_permission || {}).loading_pups_by_project_and_user || {})[project_id] || {})[user_id] === true
-} 
+}
+
+export function getLoadingProjectUserPermissionIds(state) {
+    return state.project_user_permission.loading_item_ids
+}
+
+export function getInvalidatedProjectUserPermissionIds(state) {
+    return state.project_user_permission.invalidated_item_ids
+}
 
 export function ensureProjectUserPermissionsLoaded(project_id, user_id) {
     return (dispatch, getState) => {
@@ -167,7 +179,16 @@ export function ensureProjectUserPermissionsLoaded(project_id, user_id) {
         if ( isPupLoadingForProjectUser(state, project_id, user_id) ) {
             return;
         }
-        const pup_id = getPupIdForProjectUser(state, project_id, user_id)
+        let pup_id = getPupIdForProjectUser(state, project_id, user_id)
+
+        if ( pup_id != null || getPup(state, pup_id) != null ) {
+            const matching_items = state.project_user_permission || {}
+            const invalidated_item_refs = map(matching_items.invalidated_item_ids || [], function(item_id, index) { return "" + item_id })
+            if ( includes(invalidated_item_refs, pup_id) ) {
+                pup_id = null
+            }
+        }
+        
         if ( pup_id == null || getPup(state, pup_id) == null ) {
             fetchProjectUserPermission(dispatch, state, project_id, user_id)
         }
