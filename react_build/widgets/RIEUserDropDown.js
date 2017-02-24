@@ -22,6 +22,9 @@ export class RIEUserDropDown extends RIEEditBase {
     }
 
     onChange(selected_option) {
+        if ( ! selected_option ) {
+            return
+        }
 	const new_value = selected_option.value
 	this.props.onChange(new_value)
 	this.props.onSave(new_value)

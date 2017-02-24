@@ -1,0 +1,52 @@
+@import 'variables.scss';
+@import 'icon.scss';
+
+.notification_bar__error {
+    color: #ffdddd;
+}
+
+.notification_bar__websockets_connected {
+    color: #00ff00;
+}
+
+.notification_bar__websockets_disconnected {
+    color: #ff0000;
+}
+
+.notification_bar__async_msg {
+    color: #ffffff;
+    background-color: #999900;
+    padding: 5px;
+    float: right;
+}
+
+.notification_bar__loading {
+    @include icon(20px, 20px, 'loading.gif');
+    background-position: left;
+    position: fixed;
+    top: 10px;
+    right: 200px;
+    background-color: #996677;
+    padding: 10px;
+    padding-left: 30px;
+    font-size: 10px;
+    min-width: 200px;
+    overflow: hidden;
+    z-index: 999999;
+}
+
+.notification_bar__saving {
+    @include icon(20px, 20px, 'loading.gif');
+    background-position: left;
+    position: fixed;
+    top: 100px;
+    right: 200px;
+    background-color: #993399;
+    padding: 10px;
+    padding-left: 30px;
+    font-size: 10px;
+    min-width: 200px;
+    overflow: hidden;
+    z-index: 999999;
+}
+

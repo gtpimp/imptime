@@ -1,0 +1,52 @@
+@import 'variables';
+
+.progress {
+  display: table;
+  height: 100%;
+  min-width: 136px;
+}
+
+.progress__time {
+  display: inline-block;
+}
+
+.progress__time--max {
+  color: $color-1;
+}
+
+.progress__time--over {
+  color: $color-7;
+}
+
+.progress__time--progress {
+  color: $color-5;
+}
+
+.progress__time-separator {
+  display: inline-block;
+  padding-left: 4px;
+  padding-right: 4px;
+}
+
+.progress__component {
+  display: table-cell;
+  padding-left: 15px;
+  vertical-align: middle;
+
+  &:first-child {
+    padding-left: 0;
+  }
+}
+
+.progress__component--timer {
+  width: 20px;
+}
+
+.progress__component--progress {
+  font: $font-1;
+  width: 116px;
+}
+
+.progress__progress_bar {
+  width: 100%;
+}

@@ -1,0 +1,59 @@
+@import 'variables.scss';
+
+.navbar {
+  align-items: center;
+  background-color: $color-2;
+  display: flex;
+  justify-content: space-between;
+  width: 100%;
+}
+
+.navbar--network-active {
+  border-top: 1px solid $color-17;
+}
+
+.navbar--network-inactive {
+  border-top: 1px solid $color-2;
+}
+
+.navbar__home-link {
+  display: block;
+}
+
+.navbar__branding {
+  align-items: center;
+  background-image: url('../images/Logo@2x.png');
+  background-position: center center;
+  background-size: 56px 56px;
+  cursor: pointer;
+  display: inline-flex;
+  height: 56px;
+  width: 56px;
+}
+
+.navbar__branding--connected {
+
+}
+
+.navbar__branding--disconnected {
+  filter: grayscale(100%);
+}
+
+.navbar__left {
+  display: flex;
+}
+
+.navbar__component {
+  height: 56px;
+}
+
+.navbar__search {
+  align-items: center;
+  display: flex;
+  margin-left: 8px;
+}
+
+.navbar__tab {
+  align-items: center;
+  display: inline-flex;
+}

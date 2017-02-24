@@ -1,0 +1,26 @@
+
+export const LIST_KEY__PROJECT_LIST = 'projects'
+export const LIST_KEY__SPRINT_LIST = 'sprints'
+export const LIST_KEY__ISSUE_LIST = 'issues'
+export const LIST_KEY__ISSUE_DEVELOPER_DETAILS = 'issue_developer_details'
+export const LIST_KEY__USER_LIST = 'users'
+export const LIST_KEY__PROJECT_USER_LIST = 'project_users'
+
+export const ENTITY_KEY__PROJECT = 'project'
+export const ENTITY_KEY__SPRINT = 'sprint'
+export const ENTITY_KEY__ISSUE = 'issue'
+export const ENTITY_KEY__ISSUE_GENERAL_DETAILS = 'issue_general_details'
+export const ENTITY_KEY__USER = 'user'
+export const ENTITY_KEY__PROJECT_USER_PERMISSION = 'user'
+
+export const PAGE_KEY__PROJECTS_PAGE = 'projects_page'
+export const PAGE_KEY__PROJECT_DASHBOARD_PAGE = 'project_dashboard_page'
+export const PAGE_KEY__PROJECT_USER_PAGE = 'project_user_page'
+export const PAGE_KEY__SPRINTS_PAGE = 'sprints_page'
+export const PAGE_KEY__SPRINT_DASHBOARD_PAGE = 'sprint_dashboard_page'
+export const PAGE_KEY__ISSUES_PAGE = 'issues_page'
+export const PAGE_KEY__ISSUE_DASHBOARD_PAGE = 'issue_dashboard_page'
+
+export const SELECTOR__SPRINTS = 'selector_sprints'
+
+export const FILTER_KEY__GLOBAL = 'global_filter'

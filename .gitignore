@@ -42,3 +42,8 @@ design/node_modules/.bin
 venv
 npm-debug.log
 .sass-cache
+src/imptime/static/css/imptime.css
+src/imptime/static/js/imptime.js
+external_config
+src/django-colorful
+src/unicodecsv

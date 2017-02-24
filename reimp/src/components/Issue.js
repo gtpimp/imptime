@@ -1,0 +1,356 @@
+import React, {Component} from 'react'
+import map from 'lodash/map'
+import {DragSource, DropTarget} from 'react-dnd';
+import {connect} from 'react-redux'
+import classNames from 'classnames'
+import {
+    updateIssueStatus,
+    updateIssueFeature,
+    updateIssueAssignedTo,
+    deleteTag,
+    getIssue,
+    clock
+} from '../actions/Issues'
+import {getProject} from '../actions/Projects'
+import {
+    ensureUsersLoaded,
+    getUser
+} from '../actions/Users'
+import OtherUser from '../components/OtherUser'
+import RIEDropDown from '../widgets/RIEDropDown'
+import RIEModeToggler from '../widgets/RIEModeToggler'
+import RIEUserDropDown from '../widgets/RIEUserDropDown'
+import Progress from '../components/Progress'
+import TimerSwitch from '../components/TimerSwitch'
+import ElapsedTime from '../components/ElapsedTime'
+import Tag from '../components/Tag'
+import {DndTypes} from '../actions/Dnd'
+import {format_hours} from '../actions/lib'
+import IssueStatusLabel from '../components/form/IssueStatusLabel'
+
+const ISSUE_STATUS_CHOICES = [
+    {value: 'new', label: 'new'},
+    {value: 'devdone', label: 'dev_done'},
+    {value: 'in_internal_qa', label: 'internal qa'},
+    {value: 'internal_qa_passed', label: 'internal qa passed'},
+    {value: 'in_client_qa', label: 'external qa'},
+    {value: 'client_qa_passed', label: 'external qa passed'},
+    {value: 'reopened', label: 'reopened'},
+    {value: 'onhold', label: 'on hold'},
+    {value: 'bug', label: 'bug'},
+    {value: 'to be estimated', label: 'to be estimated'},
+    {value: 'needscodereview', label: 'needs code review'},
+    {value: "cannot reproduce", label: "cannot reproduce"},
+    {value: "discuss with client", label: "discuss with client"},
+    {value: 'dev unclear', label: 'dev unclear'},
+    {value: 'duplicate', label: 'duplicate'},
+    {value: 'to be designed', label: 'to be designed'},
+    {value: 'imported', label: 'imported'},
+    {value: 'management', label: 'management'},
+    {value: 'quick_clocker', label: 'quick clocker'}
+]
+
+class Issue extends Component {
+
+    constructor(props) {
+        super(props)
+        this.onChangeStatus = this.onChangeStatus.bind(this)
+        this.onDeleteTag = this.onDeleteTag.bind(this)
+        this.onClockIn = this.onClockIn.bind(this)
+        this.onClockOut = this.onClockOut.bind(this)
+    }
+
+    componentDidMount() {
+        this.refresh()
+    }
+
+    componentWillReceiveProps(new_props) {
+        this.refresh()
+    }
+
+    refresh() {
+        const {dispatch, assignable_user_ids, estimate_user_ids} = this.props
+        dispatch(ensureUsersLoaded(assignable_user_ids))
+        dispatch(ensureUsersLoaded(estimate_user_ids))
+    }
+
+    onChangeAssignedTo(issue_id, new_value) {
+        const {dispatch} = this.props
+        dispatch(updateIssueAssignedTo(issue_id, new_value))
+    }
+
+    onChangeStatus(issue_id, new_value) {
+        const {dispatch} = this.props
+        dispatch(updateIssueStatus(issue_id, new_value))
+    }
+
+    onChangeFeature(issue_id, new_value) {
+        const {dispatch} = this.props
+        dispatch(updateIssueFeature(issue_id, new_value))
+    }
+
+    onDeleteTag(tag) {
+        const {issue, dispatch} = this.props
+        dispatch(deleteTag([issue.id], tag.category_name, tag.name))
+    }
+
+    onClockIn() {
+        const {issue, dispatch} = this.props
+        dispatch(clock(issue.id, 'clock_in'))
+    }
+
+    onClockOut() {
+        const {issue, dispatch} = this.props
+        dispatch(clock(issue.id, 'clock_out'))
+    }
+
+    renderEstimates() {
+        const {issue} = this.props
+        return map(issue.all_estimates, function (estimate, index) {
+            if (estimate.estimate_hours && estimate.estimate_user) {
+                return (
+                    <div key={estimate.estimate_user.id}>
+                        {estimate.estimate_user.username}:{format_hours(estimate.estimate_hours)}
+                    </div>
+                )
+            } else {
+                return null
+            }
+        })
+    }
+
+    render_collapsed() {
+        const {issue, list_key} = this.props
+        return (
+            <div key={"collapsed_issue_" + issue.id + "_" + list_key}>
+                {issue.number}
+                {issue.subject}
+            </div>
+        )
+    }
+
+    render_expanded() {
+        const {
+            issue, is_selected, onClickedIssue, assignable_user_ids,
+            is_invalidated, is_saving,
+            isOver, connectDragSource, connectDropTarget, show_children,
+            subject_prefix, subject_suffix
+        } = this.props
+
+        const onDeleteTag = this.onDeleteTag
+
+        if (!issue) {
+            return (<tr>
+                <td>Loading...</td>
+            </tr>)
+        }
+
+        if (issue.loaded === false) {
+            return (
+                <tr key={this.key + "." + issue.id}
+                    onClick={onClickedIssue}
+                    className={classNames('issue', {'tr--selected': is_selected, 'tr--drop-target': isOver})}
+                >
+                    <td>
+                        <div className="issue_list__issue_number_button">{issue.number}</div>
+                    </td>
+                    <td>Loading...</td>
+                </tr>
+            )
+        } else {
+            const isFeature = issue.can_group_issues
+            const belongsToFeature = issue.parent_group_id || false
+            const isStandalone = !isFeature && !belongsToFeature
+            return connectDragSource(connectDropTarget(
+                <tr key={this.key + "." + issue.id}
+                    onClick={onClickedIssue}
+                    className={classNames(
+                        'issue', 'list-table__row--compact', {
+                            'list-table__row--unselected': !is_selected,
+                            'list-table__row--selected': is_selected,
+                            'issue--standalone': isStandalone,
+                            'issue--feature': isFeature,
+                            'issue--grouped': belongsToFeature,
+                            /*'tr--selected': is_selected,*/
+                            'tr--invalidated': is_invalidated,
+                            'tr--saving': is_saving,
+                            'tr--drop-target': isOver
+                        })}
+                >
+                    <td className="list-table__cell list-table__cell--number">
+                        <div>{issue.number}</div>
+                    </td>
+                    <td className="list-table__cell list-table__cell--icon">
+                        { issue.can_group_issues &&
+                        <div className="icon--feature">
+                            { show_children &&
+                            <div className="icon--more"></div>
+                            }
+                        </div>
+                        }
+
+                    </td>
+                    <td className="list-table__cell list-table__cell--name">
+                        {subject_prefix}{issue.subject}{subject_suffix}
+                        { issue.group_children.length > 0 &&
+                        <span>
+                            ({issue.group_children.length}
+                            { issue.group_children.length === 1 && <span>child</span> }
+                            { issue.group_children.length > 1 && <span>children</span> }
+                            )
+                          </span>
+                        }
+                    </td>
+                    <td className="list-table__cell list-table__cell--assignee">
+
+                        <OtherUser value={issue.assigned_to_id}/>
+
+                        { false &&
+                        <RIEModeToggler
+                            rie_key={"issue_assigned_to_" + issue.id}
+                            initialValue={issue.assigned_to_id || "..."}
+                            onChange={(new_value) => this.onChangeAssignedTo(issue.id, new_value)}
+                        >
+                            <RIEUserDropDown user_ids={assignable_user_ids}/>
+                        </RIEModeToggler>
+                        }
+                    </td>
+                    <td className="list-table__cell list-table__cell--status">
+                        <IssueStatusLabel value={issue.status_name}/>
+                    </td>
+                    { false &&
+                    <td className="list-table__cell list-table__cell--sprint">
+                        1
+                    </td>
+                    }
+                    <td className="list-table__cell list-table__cell--progress">
+                        <Progress issue={issue}/>
+                    </td>
+                    <td className="list-table__cell list-table__cell--estimates">
+                        {this.renderEstimates()}
+                    </td>
+                    <td className="list-table__cell list-table__cell--tags">
+                        { map(issue.tags, function (tag, index) {
+                            return (<Tag key={index}
+                                         category={tag.category_name}
+                                         name={tag.name}
+                                         deleteTag={() => onDeleteTag(tag)}
+                            />)
+                        })}
+                    </td>
+                    <td className="list-table__cell list-table__cell--tracking-control">
+                        <ElapsedTime hours={issue.my_actual_hours} active={issue.am_i_clocked_in}/>
+                    </td>
+                    <td className="list-table__cell list-table__cell--tracking-control">
+                        <div className={classNames({'reveal-on-hover--block': !issue.am_i_clocked_in})}>
+                            <TimerSwitch
+                                active={issue.am_i_clocked_in}
+                                onStart={this.onClockIn}
+                                onStop={this.onClockOut}
+                            />
+                        </div>
+                    </td>
+                </tr>
+            ))
+        }
+    }
+
+    render() {
+        const {is_collapsed, is_expanded} = this.props
+
+        if (is_collapsed) {
+            return this.render_collapsed()
+        }
+        else if (is_expanded) {
+            return this.render_expanded()
+        } else {
+            return ( <div>Dev error</div> )
+        }
+    }
+
+}
+
+function mapStateToProps(state, props) {
+    const {
+        issue_id, is_selected, is_collapsed,
+        is_loading, is_invalidated, is_saving, show_children,
+        subject_prefix, subject_suffix
+    } = props
+
+    const issue = getIssue(state, issue_id) || {'loaded': false}
+    const project_id = issue.project_id
+    const project = getProject(state, project_id) || {}
+    const assignable_user_ids = project.allowed_user_ids || []
+    map(issue.all_estimates, function (estimate) {
+        estimate.user = getUser(estimate.user_id)
+    })
+
+    // const feature_names = this_project.feature_names || []
+    /* const feature_options = feature_names.map(
+     *     function (feature_name) {
+     *         return {'value': feature_name, 'label': feature_name}
+     *     }
+     * )*/
+
+    return {
+        issue: issue,
+        issue_id: issue_id,
+        is_selected: is_selected,
+        is_loading: is_loading,
+        is_saving: is_saving,
+        is_collapsed: is_collapsed,
+        is_expanded: !is_collapsed,
+        is_invalidated: is_invalidated || false,
+        assignable_user_ids: assignable_user_ids,
+        show_children: show_children,
+        subject_prefix: subject_prefix || "",
+        subject_suffix: subject_suffix || ""
+    }
+
+}
+
+const headingSource = {
+    beginDrag(props) {
+        return {id: props.issue_id}
+    }
+}
+
+const headingTarget = {
+    drop: (props, monitor, component) => {
+        const {issue_id} = props
+        const dragging_item = monitor.getItem()
+        if (!dragging_item) {
+            return;
+        }
+        const dragging_issue_id = dragging_item.id
+        if (issue_id === dragging_issue_id) {
+            console.log("ignoring dnd on the same element: " + issue_id)
+            return;
+        }
+
+        props.reorderIssue(dragging_issue_id, issue_id)
+    },
+    hover: (props, monitor, component) => {
+    },
+    canDrop: (props, monitor) => {
+        return true;
+    }
+
+}
+
+function collect(connect, monitor) {
+    return {
+        connectDragSource: connect.dragSource(),
+        isDragging: monitor.isDragging()
+    };
+}
+
+function collectDrop(connect, monitor) {
+    return {
+        connectDropTarget: connect.dropTarget(),
+        isOver: monitor.isOver(),
+        canDrop: monitor.canDrop()
+    }
+}
+
+export default connect(mapStateToProps)(DragSource(DndTypes.ISSUE, headingSource, collect)(DropTarget(DndTypes.ISSUE, headingTarget, collectDrop)(Issue)))

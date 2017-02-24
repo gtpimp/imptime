@@ -1,0 +1,21 @@
+@import 'variables.scss';
+@import 'icon.scss';
+
+.list-layout {
+    align-items: flex-start;
+    display: flex;
+    height: 100%;
+}
+
+.list-layout__list {
+    flex-grow: 1;
+}
+
+.list-layout__sidebar {
+    background-color: $color-8;
+    box-shadow: inset 1px 0 0 0 #E0E0E0;
+    flex-basis: 312px;
+    flex-grow: 0;
+    height: 100%;
+    margin-left: 1px;
+}

@@ -3268,8 +3268,8 @@ def _augment_issue_data(issue, current_user, users_allowed_to_estimate_on_busine
 def add_feature(request, business_id):
 
     business = timepiece.Business.objects.get(pk=business_id)
-    has_edit_issue_feature = timepiece.BusinessPermissions.objects.get_or_create(business=business, user=request.user)[0].has_edit_issue_feature
-    if not has_edit_issue_feature:
+    has_edit_feature = timepiece.BusinessPermissions.objects.get_or_create(business=business, user=request.user)[0].has_edit_feature
+    if not has_edit_feature:
         raise PermissionDenied
 
     try:
@@ -3662,8 +3662,8 @@ def update_issue_with_feature(request):
 
     business = issue.project.business
 
-    has_edit_issue_feature = timepiece.BusinessPermissions.objects.get_or_create(business=business, user=request.user)[0].has_edit_issue_feature
-    if not has_edit_issue_feature:
+    has_edit_feature = timepiece.BusinessPermissions.objects.get_or_create(business=business, user=request.user)[0].has_edit_feature
+    if not has_edit_feature:
         raise PermissionDenied
 
     old_feature = issue.feature
@@ -4943,7 +4943,7 @@ def bulk_change_issue_feature(request, context=None):
         return HttpResponse("No feature chosen: %s" % form.errors)
 
     bp = timepiece.BusinessPermissions.for_user(request.user, selected_project.business)
-    if not bp.has_edit_issue_feature:
+    if not bp.has_edit_feature:
         return HttpResponse("No permission")
 
     new_feature = timepiece.Feature.objects.get(pk=form.cleaned_data['feature'])

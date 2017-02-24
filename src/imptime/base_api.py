@@ -1,11 +1,40 @@
 from django.core.paginator import Paginator
 from django.conf import settings
+from django.http import HttpResponse
+from rest_framework.renderers import JSONRenderer
 from rest_framework import viewsets
 from timepiece.models import Business as Project
 from timepiece.models import Project as Sprint
 from timepiece.models import Issue
-from timepiece.models import BusinessPermissions
+from timepiece.models import BusinessPermissions as ProjectPermissions
 from timepiece.models import Entry as TimesheetEntry
+
+class PermissionHelper():
+    @classmethod
+    def allowed_issues(self, user):
+        allowed_sprint_ids = self.allowed_sprints(user)\
+          .values_list('id', flat=True)
+        return Issue.objects.all()\
+                            .filter(project_id__in=allowed_sprint_ids)\
+                            .distinct()
+
+    @classmethod
+    def allowed_sprints(self, user):
+        return Sprint.objects.all()\
+          .filter_by_logged_in_user(user)\
+          .distinct()
+    
+    @classmethod
+    def allowed_projects(self, user):
+        return Project.objects.all()\
+          .filter_by_logged_in_user(user)\
+          .distinct()
+
+    @classmethod
+    def allowed_project_permissions(self, user):
+        return ProjectPermissions.objects.filter(business__in=self.allowed_projects(user), #sic
+                                                 is_active_member_of_business=True, #sic
+                                                 can_view_permissions=True)
 
 
 class BaseViewSet(viewsets.ViewSet):
@@ -16,8 +45,15 @@ class BaseViewSet(viewsets.ViewSet):
     - timepiece.Project = imptime.Sprint
     """
 
+    def __init__(self, *args, **kwargs):
+        super(BaseViewSet, self).__init__(*args, **kwargs)
+        self._logged_in_permissions_by_project = {}
+    
+    def error_response(self, ex):
+        data = {'status': 'failed', 'error': str(ex)}
+        return HttpResponse(JSONRenderer().render(data), status=500)
+    
     def apply_filter(self, qs, raw_filter_args):
-
         raw_filter_args = self._apply_business_project_switch(raw_filter_args)
         filter_args = {}
 
@@ -68,27 +104,19 @@ class BaseViewSet(viewsets.ViewSet):
         return d_fixed
 
     def allowed_projects(self):
-        return Project.objects.all()\
-          .filter_by_logged_in_user(self.request.user)\
-          .distinct()
+        return PermissionHelper.allowed_projects(self.request.user)
 
     def allowed_project(self, pk):
         return self.allowed_projects().get(pk=pk)
 
     def allowed_sprints(self):
-        return Sprint.objects.all()\
-          .filter_by_logged_in_user(self.request.user)\
-          .distinct()
+        return PermissionHelper.allowed_sprints(self.request.user)
 
     def allowed_sprint(self, pk):
         return self.allowed_sprints().get(pk=pk)
 
     def allowed_issues(self):
-        allowed_sprint_ids = self.allowed_sprints()\
-          .values_list('id', flat=True)
-        return Issue.objects.all()\
-                            .filter(project_id__in=allowed_sprint_ids)\
-                            .distinct()
+        return PermissionHelper.allowed_issues(self.request.user)
 
     def allowed_issue(self, pk):
         return self.allowed_issues().get(pk=pk)
@@ -101,7 +129,17 @@ class BaseViewSet(viewsets.ViewSet):
         return self.allowed_timesheet_entries().get(pk=pk)
 
     def allowed_users(self):
-        return BusinessPermissions.viewable_users(self.request.user).distinct()
+        return ProjectPermissions.viewable_users(self.request.user).distinct()
 
     def allowed_user(self, pk):
         return self.allowed_users().get(pk=pk)
+
+    def allowed_project_permissions(self):
+        return PermissionHelper.allowed_project_permissions(self.request.user)
+
+    def logged_in_permissions(self, project):
+        if project.id in self._logged_in_permissions_by_project:
+            return self._logged_in_permissions_by_project[project.id]
+        pup = ProjectPermissions.for_user(self.request.user, project)
+        self._logged_in_permissions_by_project[project.id] = pup
+        return pup

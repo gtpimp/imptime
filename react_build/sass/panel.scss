@@ -101,8 +101,8 @@
 
     .panel__button--expand {
 	background-image: url('../images2/material-icons-whiteexpand-more.png');
-    }    
-    
+    }
+
     .panel__button--next-page {
 	background-image: url('../images2/material-icons-blackchevron-right.png');
 	margin: 0;
@@ -131,11 +131,11 @@
     max-width: $width;
     min-width: $width;
     width: $width;
-    
+
     .panel-heading {
 	background-color: $panel-focus-header-background-color;
     }
-    
+
 }
 
 .panel--default {
@@ -147,7 +147,7 @@
     .panel-heading {
 	background-color: $panel-focus-header-background-color;
     }
-    
+
 }
 
 .panel--collapsed {

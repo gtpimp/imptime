@@ -1,0 +1,21 @@
+FROM ubuntu:16.04
+
+RUN apt-get update && DEBIAN_FRONTEND=noninteractive apt-get install -y \
+  curl \
+  git \
+  libjpeg-dev \
+  libxml2-dev \
+  libxslt1-dev \
+  nodejs-legacy \
+  npm \
+  python-dev \
+  python-pip \
+  postgresql-server-dev-9.5 \
+  redis-server \
+  vim
+
+COPY docker/start-daphne-worker-local-sources-dev.sh start-daphne-worker-local-sources-dev.sh
+COPY docker/start-django-local-sources-dev.sh start-django-local-sources-dev.sh
+COPY docker/start-migrate-local-sources-dev.sh start-migrate-local-sources-dev.sh
+
+ENTRYPOINT ["./start-django-local-sources-dev.sh"]

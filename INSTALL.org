@@ -1,0 +1,111 @@
+Installing imptime:
+
+- download a db backup, to be supplied by imptime representative
+
+- create a new database, called imptime, for postgres user
+
+- restore db, as psql user:
+    pg_restore -i imptime imptime_sanitized.pgdump
+
+- checkout code:
+    git clone git@git.impd.co.za:imptime
+
+- create src/implicitdesign/local_settings.py file:
+    import os
+    PROJECT_HOME = os.path.dirname(os.path.realpath(__file__))
+    LOG_FOLDER=os.path.join(PROJECT_HOME, "..", "..", 'logs')
+
+    DATABASES = {
+	'default': {
+	    'ENGINE': 'django.db.backends.postgresql_psycopg2', # Add 'postgresql_psycopg2', 'postgresql', 'mysql', 'sqlite3' or 'oracle'.
+	    'NAME': 'imptime',                      # Or path to database file if using sqlite3.
+	    'USER': 'imp',                      # Not used with sqlite3.
+	    'PASSWORD': 'imp',                  # Not used with sqlite3.
+	    'HOST': 'localhost',                      # Set to empty string for localhost. Not used with sqlite3.
+	    'PORT': '',                      # Set to empty string for default. Not used with sqlite3.
+	}}
+
+    CHANNEL_LAYERS = {
+	"default": {
+	    "BACKEND": "asgi_redis.RedisChannelLayer",
+	    "CONFIG": {
+		"hosts": [("localhost", 6379)],
+	    },
+	    "ROUTING": "async.routing.channel_routing"
+	},
+    }
+
+    LOGGING = {
+	'version': 1,
+	'disable_existing_loggers': True,
+	'formatters': {
+	    'verbose': {
+		'format': '%(levelname)s %(asctime)s %(process)d %(filename)s %(lineno)d: %(message)s'
+	    },
+	    'simple': {
+		'format': '%(asctime)s %(levelname)s %(message)s'
+	    },
+	},
+	'handlers': {
+	    'mail_admins': {
+		'level': 'ERROR',
+		'class': 'django.utils.log.AdminEmailHandler'
+	    },
+	    'file':{
+		'level':'DEBUG',
+		'class':'logging.handlers.RotatingFileHandler',
+		'filename':os.path.join(LOG_FOLDER, "imptime.log"),
+		'formatter': 'verbose',
+		'maxBytes':604800, 
+		'backupCount':50
+	    },
+	     'console': {
+		'level': 'DEBUG',
+		'class': 'logging.StreamHandler',
+		'formatter': 'verbose'
+	    }
+	},
+	'loggers': {
+	    'django': {
+		'handlers':['file'],
+		'propagate': True,
+		'level':'INFO',
+	    },
+	    '': {
+		'handlers': ['file'],
+		'propagate': True,
+		'level': "INFO"
+	    }
+	},
+    }
+
+
+- install dependencies, on ubuntu these are:
+
+    # install dependencies
+    echo "Dependencies for ubuntu, for reference:"
+    echo "---------------------------------------"
+    echo "sudo apt install python-dev postgresql-server-dev-9.5 virtualenv"
+    echo "sudo apt install libjpeg-dev libxml2-dev libxslt1-dev"
+    echo "sudo apt install redis-server"
+    echo "sudo apt install npm nodejs-legacy"
+
+- prepare python:
+    cd scripts
+    ./deploy_local.sh
+
+- prepare react:
+    export NODE_ENV=development
+    cd react_build
+    npm install
+
+- build react:
+    cd scripts
+    ./react_build_and_watch.sh
+
+- start django:
+    cd src
+    python manage.py runserver
+
+
+   

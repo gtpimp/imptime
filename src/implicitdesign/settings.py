@@ -32,7 +32,6 @@ NUM_DAYS_FOR_FINANCE_SPRINT_CHECKLISTS=5
 NUM_DAYS_FOR_DEV_SPRINT_CHECKLISTS=2
 
 CORS_ORIGIN_ALLOW_ALL = True
-CORS_URLS_REGEX = r'^/timepiece/noui/.*$'
 
 # Maximum number of days before expecting a new development timesheet
 # entry for a particular project. This is used to raise an alarm if
@@ -50,6 +49,12 @@ DATABASES = {
         'HOST': 'localhost',                      # Set to empty string for localhost. Not used with sqlite3.
         'PORT': '',                      # Set to empty string for default. Not used with sqlite3.
     },
+}
+
+REDIS = {
+    'HOST': 'redis',
+    'PORT': 6379,
+    'DB': 0
 }
 
 # Local time zone for this installation. Choices can be found here:
@@ -88,6 +93,8 @@ MEDIA_URL = '/media/'
 
 DJIKI_IMAGES_PATH='wiki'
 DJIKI_AUTHORIZATION_BACKEND="djiki.auth.base.OnlyAuthenticatedEdits"
+
+WEB_URL_BASE = "http://localhost:3000/"
 
 # Absolute path to the directory static files should be collected to.
 # Don't put anything in this directory yourself; store your static files
@@ -193,6 +200,7 @@ TEMPLATES = [
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
+    'corsheaders.middleware.CorsMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
@@ -230,6 +238,15 @@ WSGI_APPLICATION = 'implicitdesign.wsgi.application'
 #     os.path.join(PROJECT_HOME, "templates"),
 # )
 
+REST_FRAMEWORK = {
+   'DEFAULT_AUTHENTICATION_CLASSES': (
+       'rest_framework.authentication.TokenAuthentication',
+   ),
+   'DEFAULT_PERMISSION_CLASSES': (
+        'rest_framework.permissions.IsAuthenticated'
+   ),
+   'PAGINATE_BY': 20,
+}
     
 INSTALLED_APPS = (
     'django.contrib.auth',
@@ -243,6 +260,8 @@ INSTALLED_APPS = (
     'filebrowser',
     'django.contrib.admin',
     'channels',
+    'rest_framework',
+    'rest_framework.authtoken',
 
     'raven.contrib.django.raven_compat',
     
@@ -272,6 +291,8 @@ INSTALLED_APPS = (
     'creole',
     
     'noui',
+
+    'devops'
 )
 
 PAGINATION_DEFAULT_PAGINATION=200
@@ -414,8 +435,8 @@ WEEKLY_HOURS_MAIL_RECIPIENT = ""
 # DON'T PUT ANY MORE SETTINGS AFTER THIS POINT, OTHERWISE local_settings.py CAN'T OVERRIDE THEM
 #
 #
-if os.path.exists(os.path.join(PROJECT_HOME,"local_settings.py")):
-    from local_settings import *
+if os.path.exists(os.path.join(PROJECT_HOME, "external_config","django_local_settings.py")):
+    from external_config.django_local_settings import *
 
 if os.path.exists(os.path.join(PROJECT_HOME,"version_number.py")):
     from version_number import *

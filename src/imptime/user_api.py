@@ -18,40 +18,40 @@ class UserViewSet(BaseViewSet):
     def list(self, request):
         try:
             context = {}
-
             params = request.GET.get('params', '{}')
             params = json.loads(params)
             pagination = params.get('pagination', {})
             filter_args = params.get('filter', {})
             format_args = params.get('format', {})
+            
+            project_id = filter_args.pop('project_id', None)
 
-            users = self.allowed_users()
+            users = self.allowed_users().order_by("username")
+            if project_id:
+                users = users.filter(business_permissions__business_id=project_id).distinct() #sic
             users = self.apply_filter(qs=users,
                                       raw_filter_args=filter_args)
             users = self.apply_pagination(qs=users,
                                           pagination=pagination)
 
+            
             if format_args.get('ids_only'):
-                context['ids'] = [str(x) for x in users.values_list(
-                    'id', flat=True)]
+                context['ids'] = [str(x) for x in users.values_list('id', flat=True)]
             else:
-                s = UserSerializer(users, many=True)
+                s = UserSerializer(users, many=True, logged_in_user=request.user)
                 users_data = s.data
                 context['users'] = users_data
             context['pagination'] = pagination
             data = {'status': 'success', 'payload': context}
         except Exception, ex:
             logger.exception(ex)
-            data = {'status': 'failed', 'error': str(ex)}
+            return self.error_response(ex)
+        
         return HttpResponse(JSONRenderer().render(data))
 
     def apply_filter(self, qs, raw_filter_args):
-
-        if 'project_id' in raw_filter_args:
-            # get users belonging to this project
-            project_id = raw_filter_args.pop("project_id")
-            raw_filter_args[
-                'project__business__business_permissions__business_id'] = \
-                project_id
+        project_id = raw_filter_args.pop("project_id", None)
+        if project_id:
+            qs = qs.filter(business_permissions__business_id=project_id).distinct() #sic
 
         return super(UserViewSet, self).apply_filter(qs, raw_filter_args)

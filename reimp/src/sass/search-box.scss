@@ -1,0 +1,88 @@
+@import 'variables.scss';
+
+.search-box {
+  color: $color-10;
+  //display: inline-block;
+  align-items: center;
+  //width: 744px;
+  //height: 40px;
+  background-color: $color-4;
+  border-radius: 3px;
+  display: flex;
+  padding-left: 11px;
+  padding-right: 16px;
+}
+
+.search-box__component {
+  > .material-icons {
+    display: block;
+  }
+}
+
+.search-box__component--textfield {
+  height: 40px;
+  width: 700px;
+}
+
+.search-box__textfield {
+  background-color: $color-4;
+  border: 0;
+  font: $font-1;
+  height: 40px;
+  margin-left: 20px;
+  width: 700px;
+  outline: none;
+}
+
+.search-box__search-results--loading {
+    position: fixed;
+    z-index: 9999;
+    border: 1px solid #000000;
+    padding: 20px;
+    background: #f055ff;
+    min-height: 200px;
+    opacity: 1;
+    top: 50px;
+}
+
+.search-box__search-results--loaded {
+    position: fixed;
+    z-index: 9999;
+    border: 1px solid #000000;
+    padding: 20px;
+    background: #ffffff;
+    opacity: 1;
+    min-height: 70%;
+    min-width: 80%;
+    overflow: auto;
+    font-size: 10px;
+    top: 100px;
+}
+
+.search-box__search-result:hover {
+    background: #123321;
+}
+
+
+.search-box__results_by_category {
+    position: relative;
+}
+
+.search-box__project_results {
+    float: left;
+    width: 33%
+}
+
+.search-box__sprint_results {
+    float: left;
+    width: 33%
+}
+
+.search-box__issue_results {
+    float: left;
+    width: 33%
+}
+
+search-box__component search-box__icon {
+    cursor: pointer;
+}

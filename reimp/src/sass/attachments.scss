@@ -1,0 +1,68 @@
+@import 'variables.scss';
+
+.attachments {
+  background-color: $color-14;
+  box-sizing: border-box;
+  height: 100%;
+  padding: 16px;
+  width: 100%;
+}
+
+.attachments__preview {
+  background-image: url('http://images5.fanpop.com/image/photos/31500000/Screenshot-for-Windows-XP-Professional-windows-xp-31595496-1366-768.jpg');
+  //box-shadow: 0 2px 8px 0 rgba(0, 0, 0, 0.5);
+  height: 100%;
+  background-size: contain;
+  background-repeat: no-repeat;
+}
+
+.attachments__navigator-wrapper {
+  //position: absolute;
+  //bottom: 16px;
+  //height:
+  text-align: center;
+  width: 100%;
+}
+
+.attachments__navigator {
+  align-content: center;
+  background-color: $color-1;
+  border-radius: 3px;
+  color: $color-2;
+  display: inline-flex;
+  font: $font-1;
+  justify-content: space-between;
+  height: 32px;
+  padding-left: 16px;
+  padding-right: 16px;
+}
+
+.attachments__navigator-component {
+  display: inline-block;
+  line-height: 32px;
+
+  > i {
+    line-height: 32px;
+  }
+}
+
+.attachments__navigator-component--of {
+  margin-left: 8px;
+  margin-right: 8px;
+}
+
+.attachments__navigator-component--arrow-left {
+  margin-right: 40px;
+}
+
+.attachments__navigator-component--arrow-right {
+  margin-left: 40px;
+}
+
+.attachments__navigator-component--enabled {
+  color: $color-2;
+}
+
+.attachments__navigator-component--disabled {
+  color: $color-14;
+}

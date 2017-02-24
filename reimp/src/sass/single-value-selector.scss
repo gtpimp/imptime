@@ -1,0 +1,36 @@
+@import 'variables.scss';
+
+.single-value-selector__input {
+  background-color: $color-4;
+  border: 1px solid $color-5;
+  border-radius: 3px;
+  color: $color-1;
+  box-sizing: border-box;
+  font: $font-8;
+  height: 40px;
+  line-height: 24px;
+  outline: none;
+  padding: 8px;
+  width: 100%;
+}
+
+.single-value-selector__suggestions {
+  border-top: 1px solid $color-12;
+  margin-top: 14px;
+}
+
+.single-value-selector__suggestion {
+  color: $color-1;
+  display: flex;
+  font: $font-8;
+  margin-bottom: 14px;
+  margin-top: 14px;
+}
+
+.single-value-selector__suggestion-number {
+  width: 2em;
+}
+
+.single-value-selector__suggestion-label {
+
+}

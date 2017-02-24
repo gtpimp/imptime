@@ -1,3 +1,24 @@
 @import 'variables';
 
+.sprint {
+  border: 1px solid $color-12;
+  box-sizing: border-box;
+  background-color: $color-8;
+  height: 48px;
+}
 
+.table--sprint-list {
+  border-collapse:separate;
+  border-spacing:5em;
+}
+
+.sprint-cell {
+  height: 48px;
+  padding-left: 16px;
+  padding-right: 16px;
+  vertical-align: middle;
+
+  &:first-child {
+    padding-left: 24px;
+  }
+}

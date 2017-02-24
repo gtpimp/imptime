@@ -1,0 +1,22 @@
+@import 'variables.scss';
+@import 'icon.scss';
+
+.panel__button--toggle_as_feature {
+    @include icon(20px, 20px, 'icon_feature_blue 4@2x.png')
+}
+
+.panel__button--toggle_expand_features {
+    @include icon(20px, 20px, 'material-icons-blackchevron-right@2x.png')
+}
+
+.panel__button--group_together {
+    @include icon(20px, 20px, 'group_issues_into_feature.png')
+}
+
+.panel__button--ungroup_together {
+    @include icon(20px, 20px, 'ungroup_issues_into_feature.png')
+}
+
+.panel__button--add_tag {
+    @include icon(20px, 20px, 'tag.png')
+}

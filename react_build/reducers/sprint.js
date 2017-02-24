@@ -13,7 +13,14 @@ import {
     ANNOUNCE_SPRINTS_SAVE_FAILED,
     ANNOUNCE_SAVING_SPRINTS,
     INVALIDATE_SPRINTS,
-    INVALIDATE_ALL_SPRINTS
+    INVALIDATE_ALL_SPRINTS,
+    
+    ANNOUNCE_CAPTURING_NEW_SPRINT,
+    UPDATE_NEW_SPRINT_DETAILS,
+    CANCEL_CREATING_NEW_SPRINT,
+    ANNOUNCE_SAVING_NEW_SPRINT,
+    ANNOUNCE_SAVED_NEW_SPRINT,
+    ANNOUNCE_SAVING_NEW_SPRINT_FAILED
 } from '../actions/Sprints.js'
 
 const initialState = {
@@ -25,6 +32,7 @@ const initialState = {
 export default function sprint(state = initialState, action) {
 
     let state_copy = Object.assign({}, state)
+    let new_items_by_id = null
     
     switch (action.type) {
 	case INVALIDATE_ALL_SPRINTS:
@@ -68,6 +76,47 @@ export default function sprint(state = initialState, action) {
         case ANNOUNCE_SPRINTS_SAVE_FAILED:
             setErrorMessage("Failed to save sprints: " + action.error_message)
             return state;
+
+	case ANNOUNCE_CAPTURING_NEW_SPRINT:
+            return Object.assign({}, state,
+				 { candidate_sprint: {
+				     sprint_id_before: action.sprint_id_before,
+				     project_id: action.project_id}
+				 })
+	case UPDATE_NEW_SPRINT_DETAILS:
+	    return Object.assign(
+		{}, state,
+		{candidate_sprint: Object.assign({},
+						state.candidate_sprint || {},
+						action.candidate_sprint)
+		})
+	case CANCEL_CREATING_NEW_SPRINT:
+	    return Object.assign(
+		{}, state,
+		{candidate_sprint: null})
+	    
+	case ANNOUNCE_SAVING_NEW_SPRINT:
+	    return Object.assign(
+		{}, state,
+		{candidate_sprint: Object.assign({},
+						state.candidate_sprint || {},
+						{saving: true})})
+	case ANNOUNCE_SAVED_NEW_SPRINT:
+	    new_items_by_id = Object.assign({}, state.items_by_id)
+	    new_items_by_id[action.sprint.id] = action.sprint
+	    return Object.assign({},
+				 state,
+				 {candidate_sprint: null},
+				 {items_by_id: new_items_by_id})
+	    
+	case ANNOUNCE_SAVING_NEW_SPRINT_FAILED:
+	    return Object.assign(
+		{}, state,
+		{candidate_sprint: Object.assign({},
+						state.candidate_sprint || {},
+						{is_saving: false})})
+
+            
         default:
             return state
     }

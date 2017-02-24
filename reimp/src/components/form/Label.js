@@ -1,0 +1,21 @@
+import React, {Component} from 'react'
+import {connect} from 'react-redux'
+
+class Label extends Component {
+
+    render() {
+        const { value } = this.props
+        return (
+            <div className="label">{value}</div>
+        )
+    }
+}
+
+function mapStateToProps(state, props) {
+    return {
+        value: props.value
+    }
+}
+
+export default connect(mapStateToProps)(Label)
+

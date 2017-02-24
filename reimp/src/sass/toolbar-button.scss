@@ -1,0 +1,28 @@
+@import 'variables.scss';
+
+.toolbar-button {
+  cursor: pointer;
+  display: inline-block;
+  margin-left: 20px;
+  padding: 3px;
+
+  &:first-child {
+    margin-left: 0;
+  }
+}
+
+.toolbar-button__icon {
+  color: $color-10;
+  display: flex;
+}
+
+.toolbar-button__content {
+
+}
+
+.toolbar-button--enabled {
+  background-color: $color-4;
+  border: 1px solid $color-12;
+  border-radius: 3px;
+  //display: flex;
+}

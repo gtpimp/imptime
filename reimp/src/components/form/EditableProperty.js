@@ -1,0 +1,140 @@
+import React, {Component} from 'react'
+import {connect} from 'react-redux'
+import Modal from 'react-modal';
+import '../../sass/editable-property.scss'
+import { isEditing, isReadonly, isEmpty, setEditing, setReadonly, setMode } from '../../actions/EditableProperty'
+
+class EditableProperty extends Component {
+
+    // The first child must be the editing component for the property
+    // The (optional) second child must be the readonly component for the property
+    // The (optional) third child must be the empty component for the property
+
+    constructor(props) {
+        super(props)
+        this.startEditing = this.startEditing.bind(this)
+        this.cancelEditing = this.cancelEditing.bind(this)
+        this.keyDown = this.keyDown.bind(this)
+        this.onEdited = this.onEdited.bind(this)
+    }
+
+    componentDidMount() {
+        const {property_key, dispatch} = this.props
+        const initial_mode = this.props.initial_mode || 'read'
+        dispatch(setMode(property_key, initial_mode))
+    }
+
+    componentWillReceiveProps(new_props) {
+        const {dispatch, property_key, initial_mode} = this.props
+        if (new_props.initial_mode !== initial_mode) {
+            dispatch(setMode(property_key, new_props.initial_mode))
+        }
+    }
+
+    startEditing() {
+        const {dispatch, property_key, can_edit} = this.props
+        if ( can_edit ) {
+            dispatch(setEditing(property_key))
+        }
+    }
+
+    cancelEditing() {
+        const {dispatch, property_key} = this.props
+        dispatch(setReadonly(property_key))
+    }
+
+    keyDown(event) {
+        const {is_editing} = this.props
+        if (!is_editing) {
+            return
+        }
+        if (event.keyCode === 27) {
+            event.preventDefault()
+            this.cancelEditing()
+        }
+    }
+
+    onEdited(new_value) {
+        const {onChange, can_edit} = this.props
+        this.cancelEditing()
+        if ( can_edit ) {
+            onChange(new_value)
+        }
+    }
+
+    render() {
+
+        const {children, initial_value, is_readonly, is_editing, is_empty, edit_as_modal} = this.props
+
+        const that = this
+        let editing_child = null
+        let readonly_child = null
+        let empty_child = null
+
+        React.Children.map(children, function (child, index) {
+            if (index === 0) {
+                editing_child = React.cloneElement(child, {
+                    initial_value: initial_value,
+                    onChange: that.onEdited,
+                    onKeyDown: that.keyDown
+		})
+	    } else if ( index === 1 ) {
+		readonly_child = React.cloneElement(child, {
+		    value: initial_value
+		})
+	    } else if ( index === 2 ) {
+                empty_child = React.cloneElement(child, {
+                    value: initial_value
+                })
+            }
+        })
+        if (!readonly_child) {
+            readonly_child = editing_child
+        }
+        if (!empty_child) {
+            empty_child = readonly_child
+        }
+
+        return (
+            <div onClick={this.startEditing}>
+                <div>
+                    { is_editing && edit_as_modal &&
+                    <Modal isOpen={true}
+                           className="editable-property-modal"
+                           overlayClassName="editable-property-modal__overlay"
+                           onRequestClose={this.cancelEditing}
+                           contentLabel={this.props.actionLabel}>
+                        <div className="editable-property-modal__row editable-property-modal__row--header">
+                            <label htmlFor="assigned" className="editable-property-modal__title">{this.props.actionLabel}</label>
+                            <div className="editable-property-modal__close"><i className="material-icons">close</i></div>
+                        </div>
+                        <div className="editable-property-modal__content">
+                            {editing_child}
+                        </div>
+                    </Modal>
+                    }
+                    { is_editing && !edit_as_modal && editing_child}
+                    { is_readonly && readonly_child }
+                    { is_empty && empty_child }
+                </div>
+            </div>
+        )
+    }
+}
+
+function mapStateToProps(state, props) {
+
+    const {property_key, initial_value, edit_as_modal, can_edit} = props
+
+    return {
+        property_key: property_key,
+        initial_value: initial_value,
+        edit_as_modal: edit_as_modal,
+        can_edit: can_edit,
+        is_editing: can_edit && isEditing(state, property_key),
+        is_readonly: isReadonly(state, property_key),
+        is_empty: !initial_value //isEmpty(state, property_key)
+    }
+}
+
+export default connect(mapStateToProps)(EditableProperty)

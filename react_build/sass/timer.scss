@@ -1,0 +1,39 @@
+@import 'variables';
+
+.timer {
+  display: table;
+  min-width: 136px;
+}
+
+.timer__component {
+  display: table-cell;
+  padding-left: 16px;
+  vertical-align: middle;
+
+  &:first-child {
+    padding-left: 0;
+  }
+
+}
+
+.timer__time--active {
+  font: $font-2;
+}
+
+.timer__time--inactive {
+  font: $font-1;
+}
+
+.button--start-timer {
+  background-color: $color-8;
+  color: $color-10;
+}
+
+.button--stop-timer {
+  background-color: $color-9;
+  color: $color-2;
+}
+
+.button--timer {
+  width: 9em;
+}

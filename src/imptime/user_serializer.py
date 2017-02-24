@@ -1,14 +1,33 @@
 import logging
 from rest_framework import serializers
-from base_serializer import BaseModelSerializer
+from base_serializer import BaseSerializer
 from django.contrib.auth.models import User
+from timepiece.models import BusinessPermissions
 logger = logging.getLogger(__name__)
 
-
-class UserSerializer(BaseModelSerializer):
-
-    class Meta:
-        model = User
-        fields = ('id', 'username', 'first_name', 'last_name')
+class UserSerializer(BaseSerializer):
 
     id = serializers.CharField()
+    email = serializers.CharField()
+    username = serializers.CharField()
+    first_name = serializers.CharField()
+    last_name = serializers.CharField()
+    known_user_ids = serializers.ListField(child=serializers.CharField()) # only set for the logged in user
+    
+    def __init__(self, *args, **kwargs):
+        logged_in_user = kwargs.pop('logged_in_user', None)
+        super(UserSerializer, self).__init__(*args, **kwargs)
+        self.logged_in_user = logged_in_user
+        
+    def to_representation(self, user, *args, **kwargs):
+        if self.logged_in_user:
+            user.known_user_ids = BusinessPermissions.viewable_users(self.logged_in_user)\
+                                                     .order_by('username')\
+                                                     .values_list('id', flat=True)\
+                                                     .distinct()
+        else:
+            user.known_user_ids = None
+
+        return super(UserSerializer, self).to_representation(user, *args, **kwargs)
+        
+        

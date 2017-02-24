@@ -1,0 +1,45 @@
+{
+  "name": "reimp",
+  "version": "0.1.0",
+  "private": true,
+  "devDependencies": {
+    "create-react-app-sass": "^1.1.0",
+    "node-sass": "^4.3.0",
+    "react-scripts": "0.8.5",
+    "sass-loader": "^4.1.1"
+  },
+  "dependencies": {
+    "classnames": "^2.2.5",
+    "isomorphic-fetch": "^2.2.1",
+    "lodash": "^4.17.4",
+    "moment": "^2.13.0",
+    "react": "^15.4.2",
+    "react-autosize-textarea": "^0.3.6",
+    "react-classnames": "^0.1.2",
+    "react-cookie": "^0.4.6",
+    "react-dnd": "^2.1.4",
+    "react-dnd-html5-backend": "^2.1.2",
+    "react-dom": "^15.4.2",
+    "react-expanding-textarea": "^0.1.7",
+    "react-fileupload": "^2.4.0",
+    "react-modal": "^1.6.5",
+    "react-redux": "^4.4.5",
+    "react-router": "^2.4.1",
+    "react-router-redux": "^4.0.7",
+    "react-select": "^1.0.0-rc.2",
+    "react-sticky": "^5.0.3",
+    "react-timeout": "^1.0.0",
+    "react-websocket": "^1.1.6",
+    "react-widgets": "^3.4.5",
+    "redux": "^3.5.2",
+    "redux-form": "^6.5.0",
+    "redux-logger": "^2.6.1",
+    "redux-thunk": "^2.1.0"
+  },
+  "scripts": {
+    "start": "react-scripts-with-sass start",
+    "build": "react-scripts-with-sass build",
+    "test": "react-scripts test --env=jsdom",
+    "eject": "react-scripts eject"
+  }
+}

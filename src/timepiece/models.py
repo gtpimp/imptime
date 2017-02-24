@@ -24,17 +24,14 @@ from re import sub as re_sub
 from re import UNICODE as re_UNICODE
 from checklist_plugins.registry import get_traffic_plugins, get_dev_plugins, get_finance_plugins
 from django.contrib.auth.models import AbstractUser, AbstractBaseUser
+from lib.models import BaseModel
 
 from django.dispatch import receiver
 from django.db.models.signals import post_save
 
 logger = logging.getLogger(__name__)
 
-try:
-    from django.utils import timezone
-except ImportError:
-    from timepiece import timezone
-
+from django.utils import timezone
 from timepiece import utils
 
 from dateutil.relativedelta import relativedelta
@@ -148,6 +145,7 @@ class Business(models.Model):
     email = models.EmailField(blank=True)
     description = models.TextField(blank=True)
     created = models.DateTimeField(auto_now_add=True)
+    created_by = models.ForeignKey(User, related_name='businesses_created_by', null=True, blank=True)
     modified = models.DateTimeField(auto_now=True)
     notes = models.TextField(blank=True)
     external_id = models.CharField(max_length=32, blank=True)
@@ -161,7 +159,7 @@ class Business(models.Model):
                                                  ("free", "Free or Equity or Other") ) )
 
     impd_client = models.ForeignKey(Client, null=True, blank=False, related_name='businesses')
-    point_person = models.ForeignKey(User, limit_choices_to={'is_staff': True}, default=3)  
+    point_person = models.ForeignKey(User, limit_choices_to={'is_staff': True}, null=True)
     
     def model_to_dict(self):
         d = model_to_dict_with_date_support(self)
@@ -341,7 +339,7 @@ class Business(models.Model):
         businesses = Business.objects.annotate(models.Min("new_business_projects__entries__end_time")).order_by("-new_business_projects__entries__end_time__min")
         business_ids = []
         for business in businesses:
-            if BusinessPermissions.objects.get_or_create(business=business,user=user)[0].has_view_project_card:
+            if BusinessPermissions.objects.get_or_create(business=business,user=user)[0].is_active_member_of_business:
                 business_ids.append(business.id)
         businesses = businesses.filter(id__in=business_ids)
         return businesses
@@ -382,7 +380,7 @@ class Feature(models.Model):
     def __unicode__(self):
         return self.name
 
-class BusinessPermissions(models.Model):
+class BusinessPermissions(BaseModel):
 
     class Meta:
         unique_together = (('user','business'),)
@@ -390,6 +388,10 @@ class BusinessPermissions(models.Model):
     business = models.ForeignKey(Business, related_name='business_permissions', db_index=True)
     user = models.ForeignKey(User, related_name='business_permissions', db_index=True)
 
+    can_invite_users = models.BooleanField(default=False, verbose_name="Can Invite Users")
+    can_set_user_permissions = models.BooleanField(default=False, verbose_name="Can Set User Permissions")
+    is_active_member_of_business = models.BooleanField(default=True, verbose_name="Is An Active Member of This Business")
+    
     can_view_project_card = models.BooleanField(default=True, verbose_name="Can View Sprint Card")
     can_edit_issues = models.BooleanField(default=True, verbose_name="Can Edit Issues")
     can_view_issues = models.BooleanField(default=True, verbose_name="Can View Issues")
@@ -401,7 +403,10 @@ class BusinessPermissions(models.Model):
     can_add_issue_comment = models.BooleanField(default=True, verbose_name="Can Add Issue Comment")
     can_edit_subject = models.BooleanField(default=True, verbose_name="Can Edit Subject")
     can_edit_feature = models.BooleanField(default=True, verbose_name="Can Edit Feature")
+    can_edit_tags = models.BooleanField(default=True, verbose_name="Can Edit Tags")
     can_create_sprint = models.BooleanField(default=True, verbose_name="Can Create Sprint")
+    can_edit_sprint_status = models.BooleanField(default=True, verbose_name="Can Edit Sprint")
+    can_edit_sprint = models.BooleanField(default=True, verbose_name="Can Edit Sprint")
     can_assign_user = models.BooleanField(default=True, verbose_name="Can Assign User")
     can_be_scheduled = models.BooleanField(default=False, verbose_name="Can Be Scheduled")
     can_view_business_comments = models.BooleanField(default=False, verbose_name="Can view project comments")
@@ -416,9 +421,9 @@ class BusinessPermissions(models.Model):
     can_do_dev_checklist = models.BooleanField(default=False, verbose_name="Do dev checklist")
     can_do_traffic_checklist = models.BooleanField(default=False, verbose_name="Traffic checklist")
     can_do_finance_checklist = models.BooleanField(default=False, verbose_name="Finance checklist")
-    
 
     can_edit_permissions = models.BooleanField(default=False, verbose_name="Can Edit Permissions")
+    can_view_permissions = models.BooleanField(default=False, verbose_name="Can View Permissions")
     can_toggle_graphs = models.BooleanField(default=False, verbose_name="Can Toggle Graphs")
     can_edit_project_detail = models.BooleanField(default=False, verbose_name="Can Edit Sprint Detail")
     can_edit_deadlines = models.BooleanField(default=False,verbose_name = "Can Edit Deadlines ")
@@ -434,22 +439,58 @@ class BusinessPermissions(models.Model):
     can_view_ctc_rates = models.BooleanField(default=False, verbose_name="Can View Ctc") # a subpermission of can_view_ctc_billable_rates, used for clients who shouldn't see our internal costing.
     can_view_documents = models.BooleanField(default=False, verbose_name="Can View Docs") # quotes and summaries, usually contains costs and rates
     can_edit_calendar = models.BooleanField(default=False, verbose_name="Can Edit Calendar")
+
+    def save(self, *args, **kwargs):
+        was_created = not self.id
+        super(BusinessPermissions, self).save(*args, **kwargs)
+        affected_project = self.business #sic
+        if was_created:
+            RefreshNotifier().notify_model_create(
+                self, params={'projects': [self.business_id],
+                              'users': [self.user_id]})
+        else:
+            RefreshNotifier().notify_model_update(
+                self, params={'projects': [self.business_id],
+                              'users': [self.user_id]})
     
     @classmethod
-    def by_user(self, business):
+    def _by_user(self, business):
+        # to be deprecated
         bps = BusinessPermissions.objects.filter(business=business)
         return dict( [ (bp.user.id, bp) for bp in bps ] )
 
+    def update_permission(self, permission_name, new_state):
+
+        field_name = permission_name.replace("has_", "can_")
+        if not hasattr(self, field_name):
+            raise Exception("Trying to set unknown permission: %s " % permission_name)
+        setattr(self, field_name, new_state)
+        self.save()
+    
+    @classmethod
+    def by_user(self, business):
+        # to be deprecated
+        return self.by_user(business)
+
+    @classmethod
+    def ensure_user_belongs_to_business(self, user, business):
+        return BusinessPermissions.objects.get_or_create(business=business,
+                                                         user=user,
+                                                         defaults={'is_active_member_of_business':True})[0]
+    
     @classmethod
     def for_user(self, user, business):
-        return BusinessPermissions.objects.get_or_create(business=business,user=user)[0]
+        return user.business_permissions.filter(business=business).first()
 
     @classmethod
     def viewable_users(self, user):
         """ returns all users that this user could know about, based on which businesses they have in common """
-        business_ids = self.objects.filter(user=user).values_list('id', flat=True)
+        business_ids = BusinessPermissions.objects.filter(user=user,
+                                                          is_active_member_of_business=True)\
+                                                  .values_list('id', flat=True)
+        
         return User.objects.filter(business_permissions__business_id__in=business_ids,
-                                   business_permissions__can_view_project_card=True)
+                                   business_permissions__is_active_member_of_business=True)
 
     @classmethod
     def viewable_users_for_business(self, logged_in_user, business_id):
@@ -459,7 +500,7 @@ class BusinessPermissions(models.Model):
     @classmethod
     def get_users_who_can_capture_time(self):
         """ any user who is allowed to estimate on at least one project """
-        users = User.objects.filter(is_active=True, business_permissions__can_view_project_card=True,
+        users = User.objects.filter(is_active=True, business_permissions__is_active_member_of_business=True,
                                     business_permissions__business__new_business_projects__status2='in dev').distinct()
         return users
     
@@ -468,9 +509,25 @@ class BusinessPermissions(models.Model):
         return self.user.is_superuser or self.can_view_project_card or self.user.has_perm('timepiece.belongs_to_all_projects')
 
     @property
+    def has_invite_users(self):
+        return self.user.is_superuser or self.can_invite_users or self.user.has_perm('timepiece.belongs_to_all_projects')
+
+    @property
+    def has_set_user_permissions(self):
+        return self.user.is_superuser or self.can_set_user_permissions or self.user.has_perm('timepiece.belongs_to_all_projects')
+    
+    @property
+    def has_is_active_member_of_business(self):
+        return self.user.is_superuser or self.can_set_user_permissions or self.user.has_perm('timepiece.belongs_to_all_projects')
+    
+    @property
     def has_edit_permissions(self):
         return self.user.is_superuser or self.can_edit_permissions or self.user.has_perm('timepiece.belongs_to_all_projects')
 
+    @property
+    def has_view_permissions(self):
+        return self.user.is_superuser or self.can_view_permissions or self.user.has_perm('timepiece.belongs_to_all_projects')
+    
     @property
     def has_edit_project_detail(self):
         return self.user.is_superuser or self.can_edit_project_detail or self.user.has_perm('timepiece.belongs_to_all_projects')
@@ -569,13 +626,25 @@ class BusinessPermissions(models.Model):
         return self.user.is_superuser or self.can_edit_subject or self.user.has_perm('timepiece.belongs_to_all_projects')
 
     @property
-    def has_edit_issue_feature(self):
+    def has_edit_feature(self):
         return self.user.is_superuser or self.can_edit_feature or self.user.has_perm('timepiece.belongs_to_all_projects')
+
+    @property
+    def has_edit_tags(self):
+        return self.user.is_superuser or self.can_edit_tags or self.user.has_perm('timepiece.belongs_to_all_projects')
 
     @property
     def has_create_sprint(self):
         return self.user.is_superuser or self.can_create_sprint or self.user.has_perm('timepiece.belongs_to_all_projects')
 
+    @property
+    def has_edit_sprint_status(self):
+        return self.user.is_superuser or self.can_edit_sprint_status or self.user.has_perm('timepiece.belongs_to_all_projects')
+
+    @property
+    def has_edit_sprint(self):
+        return self.user.is_superuser or self.can_edit_sprint or self.user.has_perm('timepiece.belongs_to_all_projects')
+    
     @property
     def has_assign_user(self):
         return self.user.is_superuser or self.can_assign_user or self.user.has_perm('timepiece.belongs_to_all_projects')
@@ -621,6 +690,28 @@ class BusinessPermissions(models.Model):
     def has_be_scheduled(self):
         return self.user.is_superuser or self.can_be_scheduled or self.user.has_perm('timepiece.belongs_to_all_projects')
 
+class ProjectStatus(models.Model):
+    name = models.CharField(max_length=255, blank=True, null=True)
+    business = models.ForeignKey(Business, related_name='project_statuses')
+
+    class Meta:
+        unique_together = (('name', 'business'), )
+
+    def __unicode__(self):
+        return self.name
+
+    def save(self, *args, **kwargs):
+        was_created = not self.id
+        super(ProjectStatus, self).save(*args, **kwargs)
+        affected_project_ids = [x.id for x in self.projects.all()]
+        if was_created:
+            RefreshNotifier().notify_model_create(
+                self, params={'projects': affected_project_ids})
+        else:
+            RefreshNotifier().notify_model_update(
+                self, params={'projects': affected_project_ids})
+
+    
 class ProjectQuerySet(QuerySet):
     def filter_by_logged_in_user(self, user):
         """ restricts entries to those belonging to projects the given
@@ -628,7 +719,7 @@ class ProjectQuerySet(QuerySet):
         if user.is_superuser or user.has_perm('timepiece.belongs_to_all_projects'):
             return self
 
-        return self.filter(business__business_permissions__user=user, business__business_permissions__can_view_project_card=True)
+        return self.filter(business__business_permissions__user=user, business__business_permissions__is_active_member_of_business=True)
 
     def filter_active(self):
         return self.filter(status2__in=Project.active_states())
@@ -686,8 +777,10 @@ class Project(models.Model):
     created = models.DateTimeField(auto_now_add=True)
     modified = models.DateTimeField(auto_now=True)
     billable = models.BooleanField(default=False)
-    point_person = models.ForeignKey(User, limit_choices_to={'is_staff': True})
-    quote_uncertainty = models.FloatField(null=True, blank=True, default=0.25, verbose_name="Uncertainty overhead as a decimal between 0 and 1")
+    point_person = models.ForeignKey(User, limit_choices_to={'is_staff': True}, null=True)
+    quote_uncertainty = models.FloatField(null=True, blank=True, default=0.25,
+                                          verbose_name="Uncertainty overhead as a decimal between 0 and 1")
+    number = models.IntegerField(null=False)
     users = models.ManyToManyField(
         User,
         related_name='user_projects',
@@ -705,6 +798,7 @@ class Project(models.Model):
         Attribute,
         limit_choices_to={'type': 'project-type'},
         related_name='projects_with_type',
+        null=True
     )
 
     # Deprecated. Still used in a few places, but needs to be removed completely.
@@ -712,11 +806,16 @@ class Project(models.Model):
         Attribute,
         limit_choices_to={'type': 'project-status'},
         related_name='projects_with_status',
+        null=True
     )
 
     # This status will replace the original status. All new
-    # functionality should hang of this field instead.
-    status2 = models.CharField(max_length=100, blank=False, null=False, default='pending', choices = PROJECT_STATUSES, db_index=True)
+    # functionality should hang off this field instead.
+    status2 = models.CharField(max_length=100, blank=False, null=False,
+                               default='pending', choices = PROJECT_STATUSES, db_index=True)
+
+    # This is the real status now
+    status3 = models.ForeignKey(ProjectStatus, related_name='projects', null=True)
 
     description = models.TextField(blank=True, null=True, db_index=True)
     short_description = models.CharField(max_length=50, blank=True, null=True, db_index=True)
@@ -835,7 +934,7 @@ class Project(models.Model):
     def recalc_secondary_estimates(self):
         """ these are estimates based on the developer estimates, for management and testing """
 
-        project_users = BusinessPermissions.by_user(self.business)
+        project_users = BusinessPermissions._by_user(self.business)
         manager_users = []
         tester_users = []
         user_velocities = {}
@@ -1008,6 +1107,15 @@ class Project(models.Model):
 
         return new_name
 
+    @classmethod
+    def get_last_project_number(self, business):
+        largest_number =  Project.objects.filter(business=business).filter(number__isnull=False).aggregate(largest_number=Max("number"))['largest_number']
+        return largest_number or 0
+
+    @classmethod
+    def get_next_project_number(self, business):
+        return Project.get_last_project_number(business) + 1 
+    
     def save(self, *args, **kwargs):
 
         self.code = Project.get_code_from_name(self.name)
@@ -1017,6 +1125,11 @@ class Project(models.Model):
             while duplicate_projects.filter(code=self.code).exists():
                 self.code = self.code + "_d"
         new_project = self.id is None
+
+        if self.number is None or self.number == -1:
+            self.number = Project.get_next_project_number(self.business)
+
+        
         super(Project, self).save(*args, **kwargs)
         if new_project:
             self._sync_from_previous_project()
@@ -1612,7 +1725,7 @@ class Project(models.Model):
 
         business_users = BusinessPermissions.by_user(self.business)
         for user_id, bp in business_users.items():
-            if not bp.can_view_project_card:
+            if not bp.is_active_member_of_business:
                 continue
 
             if user_id not in user_totals:
@@ -1867,6 +1980,24 @@ class Project(models.Model):
 
         return totals
 
+class BusinessInvite(BaseModel):
+    business = models.ForeignKey(Business, related_name='invites', null=False)
+    user = models.ForeignKey(User, related_name='invites_received', null=False)
+    invite_sent_at = models.DateTimeField(null=True)
+    invited_by = models.ForeignKey(User, related_name='invites_sent', null=False)
+    accepted = models.BooleanField(default=False, db_index=True)
+    accepted_at = models.DateTimeField(null=True)
+
+    def save(self, *args, **kwargs):
+        was_created = not self.id
+        super(BusinessInvite, self).save(*args, **kwargs)
+
+        if was_created:
+            RefreshNotifier().notify_model_create(self, params={'users': [self.user_id]})
+        else:
+            RefreshNotifier().notify_model_update(self, params={'users': [self.user_id],
+                                                                'projects': [self.business_id]}) #sic
+    
 class RelationshipType(models.Model):
     name = models.CharField(max_length=255, unique=True)
     slug = models.CharField(max_length=255, unique=True, editable=False)
@@ -2231,16 +2362,18 @@ class Entry(models.Model):
     activity = models.ForeignKey(
         Activity,
         related_name='entries',
+        null=True
     )
     location = models.ForeignKey(
         Location,
         related_name='entries',
+        null=True
     )
     entry_group = models.ForeignKey(
        'EntryGroup',
         related_name='entries',
         blank=True, null=True,
-        on_delete=models.SET_NULL,
+        on_delete=models.SET_NULL
     )
     status = models.CharField(
         max_length=24,
@@ -2248,7 +2381,9 @@ class Entry(models.Model):
         default='unverified',
     )
 
-    source = models.CharField(max_length=20, choices= ( ('quick_clocker', 'Quick clocker'), ('emacs', 'Emacs importer'), ('excel', 'In-site Excel importer') ),
+    source = models.CharField(max_length=20, choices= ( ('quick_clocker', 'Quick clocker'),
+                                                        ('emacs', 'Emacs importer'),
+                                                        ('excel', 'In-site Excel importer') ),
                               null=False, blank=False)
     
     start_time = models.DateTimeField()
@@ -3087,7 +3222,7 @@ class UserProfile(models.Model):
         return unicode(self.user.username)
 
     def save(self, *args, **kwargs):
-        if self.authenticate_token is None:
+        if not self.authenticate_token:
             self.authenticate_token = str(uuid.uuid4()).replace("-","")
         super(UserProfile, self).save(*args, **kwargs)
 
@@ -3253,6 +3388,70 @@ class Income(models.Model):
 #             ('view_invoice', 'Can view invoices.'),
 #         )
 
+class TagCategory(models.Model):
+    class Meta:
+        unique_together = ('business', 'name')
+    
+    business = models.ForeignKey(Business, null=False, related_name='tag_categories')
+    name = models.CharField(max_length=100, default='tag_category', null=False, blank=True, db_index=True)
+    created = models.DateTimeField(auto_now_add=True)
+    modified = models.DateTimeField(auto_now=True)
+
+    def save(self, *args, **kwargs):
+        was_created = not self.id
+        super(TagCategory, self).save(*args, **kwargs)
+        affected_issue_ids = [x for x in Issue.objects.all().filter(tags__category=self).values_list('id', flat=True)]
+        if was_created:
+            RefreshNotifier().notify_model_create(
+                self, params={'issues': affected_issue_ids})
+        else:
+            RefreshNotifier().notify_model_update(
+                self, params={'issues': affected_issue_ids})
+
+    
+class Tag(models.Model):
+
+    class Meta:
+        unique_together = ('name', 'category')
+    
+    category = models.ForeignKey(TagCategory, null=False, related_name='tags')
+    name = models.CharField(max_length=100, null=False, blank=True, db_index=True)
+    created = models.DateTimeField(auto_now_add=True)
+    modified = models.DateTimeField(auto_now=True)
+
+    def save(self, *args, **kwargs):
+        was_created = not self.id
+        super(Tag, self).save(*args, **kwargs)
+        affected_issues = [x.id for x in self.issues.all()]
+        if was_created:
+            RefreshNotifier().notify_model_create(
+                self, params={'issues': affected_issues})
+        else:
+            RefreshNotifier().notify_model_update(
+                self, params={'issues': affected_issues})
+
+class IssueStatus(models.Model):
+    name = models.CharField(max_length=255, blank=True, null=True)
+    business = models.ForeignKey(Business, related_name='issue_statuses')
+
+    class Meta:
+        unique_together = (('name', 'business'), )
+
+    def __unicode__(self):
+        return self.name
+
+    def save(self, *args, **kwargs):
+        was_created = not self.id
+        super(IssueStatus, self).save(*args, **kwargs)
+        affected_issues = [x.id for x in self.issues.all()]
+        if was_created:
+            RefreshNotifier().notify_model_create(
+                self, params={'issues': affected_issues})
+        else:
+            RefreshNotifier().notify_model_update(
+                self, params={'issues': affected_issues})
+        
+            
 class IssueRepresentation(object):
     """ object used to map helper data when rendering issues that doesn't belong in the database """
 
@@ -3269,7 +3468,6 @@ class IssueQuerySet(QuerySet):
         if user.is_superuser or user.has_perm('timepiece.belongs_to_all_projects'):
             return self
         return self.filter(project__business__users=user)
-
 
 class Issue(models.Model):
 
@@ -3300,6 +3498,7 @@ class Issue(models.Model):
                                        'tester': [x for x,y in ISSUE_STATUS_CHOICES if x not in ['internal_qa_passed', 'in_client_qa', 'client_qa_passed', 'duplicate', "onhold"]] }
     
     status = models.CharField(max_length=255, choices = ISSUE_STATUS_CHOICES, blank=False)
+    status2 = models.ForeignKey(IssueStatus, related_name='issues', null=True)
     number = models.IntegerField(null=True,blank=True, db_index=True)
     project = models.ForeignKey(Project, related_name='issues')
     subject = models.TextField(db_index=True)
@@ -3317,6 +3516,10 @@ class Issue(models.Model):
     adhoc = models.BooleanField(default=False)
     fixed_amount = models.DecimalField(max_digits=12, decimal_places=2, blank=True, null=True)
     fixed_ctc_amount = models.DecimalField(max_digits=12, decimal_places=2, blank=True, null=True)
+    
+    can_group_issues = models.BooleanField(default=False)
+    parent_group = models.ForeignKey("Issue", blank=True, null=True, related_name='group_children')
+    tags = models.ManyToManyField("Tag", related_name="issues")
 
     objects = IssueQuerySet().as_manager()
 
@@ -3334,6 +3537,10 @@ class Issue(models.Model):
          
         return largest_number or 0
 
+    def currently_clocked_in_by(self):
+        active_clocks = Entry.objects.filter(issue_id=self.id).is_open()
+        return [ x.user for x in active_clocks ]
+    
     @classmethod
     def get_next_issue_number(self, business):
         return Issue.get_last_issue_number(business) +1 
@@ -3347,6 +3554,9 @@ class Issue(models.Model):
     def status_as_class(self):
         return 'status_%s' % self.status.replace(" ","_").lower()
 
+    def get_tags(self):
+        return IssueTag.objects.filter(issue=self).order_by("tag__category__name")
+    
     def get_points(self):
         business_users = self.project.business.users
         for user in business_users:
@@ -3407,7 +3617,7 @@ class Issue(models.Model):
         except IssuePoints.DoesNotExist:
             business_users = [u.id for u in self.project.business.users]
             if user.id in business_users:
-                return IssuePoints.objects.create(user=user,issue=self)
+                return IssuePoints.objects.get_or_create(user=user,issue=self)[0]
             return None
         except IssuePoints.MultipleObjectsReturned:
             return IssuePoints.objects.filter(user=user,issue=self).order_by("id")[0]
@@ -3473,6 +3683,7 @@ class Issue(models.Model):
     def hours(self):
         return self.related_entries.all().aggregate(total_hours=Sum('hours'))['total_hours']
 
+    @property
     def hours_for_user(self, user):
         return self.related_entries.all().filter(user=user).aggregate(total_hours=Sum('hours'))['total_hours'] or 0
 
@@ -3508,7 +3719,7 @@ class Issue(models.Model):
             if user_issue_points and user_issue_points.points:
                 return user_issue_points.points, self.assigned_to
 
-        for user_id, bp in BusinessPermissions.by_user(self.project.business).items():
+        for user_id, bp in BusinessPermissions._by_user(self.project.business).items():
             if bp.has_estimate_own_points:
                 user = User.objects.get(pk=user_id)
                 user_issue_points = self.get_user_issue_points(user)
@@ -3552,16 +3763,6 @@ class Issue(models.Model):
     def is_fixed_ctc_cost(self):
         return self.fixed_ctc_amount is not None
 
-class IssueStatus(models.Model):
-    name = models.CharField(max_length=255, blank=True, null=True)
-    business = models.ForeignKey(Business,related_name='stati')
-
-    class Meta:
-        unique_together = (('name', 'business'), )
-
-    def __unicode__(self):
-        return self.name
-
 class IssueComment(models.Model):
     issue = models.ForeignKey(Issue, blank=False, null=False, related_name='comments')
     comment = models.TextField(blank=True)
@@ -3569,10 +3770,11 @@ class IssueComment(models.Model):
     created = models.DateTimeField(auto_now_add=True)
     modified = models.DateTimeField(auto_now=True)
     
-class IssueAttachment(models.Model):
+class IssueAttachment(BaseModel):
     issue = models.ForeignKey(Issue, blank=False, null=False, related_name='attachments')
     attachment = models.FileField(upload_to="issue_attachments", null=False, blank=False)
     name = models.CharField(max_length=255)
+    content_type = models.CharField(max_length=255, null=True)
 
 class RedmineToTimepieceBusinessMapping(models.Model):
     redmine_business_name = models.CharField(max_length=255)
@@ -4042,5 +4244,3 @@ class Schedule(models.Model):
         num_days -= leave_days
         return { 'num_hours': num_days * settings.NUM_BUSINESS_HOURS_PER_DAY,
                  'leave_hours': leave_days * settings.NUM_BUSINESS_HOURS_PER_DAY }
-                                                      
-

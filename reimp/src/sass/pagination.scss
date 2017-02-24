@@ -1,0 +1,18 @@
+@import 'variables.scss';
+@import 'snippets.scss';
+
+.pager .icon {
+    cursor: pointer;
+    background-repeat: no-repeat;
+    padding-bottom: 15px;
+    width: 30px;
+}
+
+.pager .icon--previous-page {
+    background-image: url('../../public/images2/ic_forward_black_18dp.png');
+    @include flip-horizontally()
+}
+
+.pager .icon--next-page {
+    background-image: url('../../public/images2/ic_forward_black_18dp.png');
+}

@@ -1,0 +1,37 @@
+@import 'variables.scss';
+
+@media (min-width: 1200px) {
+    .container {
+	width: 100%;
+    }
+}
+
+html, body {
+    background-color: $color-2;
+    height: 100%;
+    margin: 0;
+    min-width: 1264px;
+    width: 100%;
+}
+
+#root {
+  height: 100%;
+}
+
+.app {
+  height: 100%;
+}
+
+.main {
+  height: 100%;
+}
+
+.error {
+    color: $error-color;
+}
+
+.group:after {
+    content: "";
+    display: table;
+    clear: both;
+}

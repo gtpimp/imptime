@@ -1,0 +1,26 @@
+@import 'variables.scss';
+
+.timer-switch {
+  display: table;
+  min-width: 136px;
+}
+
+.button--start-timer {
+  background-color: $color-8;
+  color: $color-10;
+}
+
+.button--stop-timer {
+  background-color: $color-9;
+  color: $color-2;
+}
+
+.button--timer {
+  width: 9em;
+}
+
+@keyframes spin { 100% { transform:rotate(360deg); } }
+
+.timer-switch__icon {
+  animation:spin 4s linear infinite;
+}

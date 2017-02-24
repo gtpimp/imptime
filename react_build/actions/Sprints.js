@@ -4,6 +4,7 @@ import keys from 'lodash/keys'
 import indexOf from 'lodash/indexOf'
 import map from 'lodash/map'
 import { fetchListIfNeeded } from './ItemList'
+import { ENTITY_KEY__SPRINT } from '../actions/ItemListKeyRegistry'
 
 export const ANNOUNCE_SPRINTS_LOADED = 'ANNOUNCE_SPRINTS_LOADED'
 export const ANNOUNCE_SPRINTS_LOAD_FAILED = 'ANNOUNCE_SPRINTS_LOAD_FAILED'
@@ -13,6 +14,13 @@ export const ANNOUNCE_SPRINTS_SAVE_FAILED = 'ANNOUNCE_SPRINTS_SAVE_FAILED'
 export const ANNOUNCE_SAVING_SPRINTS = 'ANNOUNCE_SAVING_SPRINTS'
 export const INVALIDATE_SPRINTS = 'INVALIDATE_SPRINTS'
 export const INVALIDATE_ALL_SPRINTS = 'INVALIDATE_ALL_SPRINTS'
+
+export const ANNOUNCE_CAPTURING_NEW_SPRINT = 'ANNOUNCE_CAPTURING_NEW_SPRINT'
+export const UPDATE_NEW_SPRINT_DETAILS = 'UPDATE_NEW_SPRINT_DETAILS'
+export const CANCEL_CREATING_NEW_SPRINT = 'CANCEL_CREATING_NEW_SPRINT'
+export const ANNOUNCE_SAVING_NEW_SPRINT = 'ANNOUNCE_SAVING_NEW_SPRINT'
+export const ANNOUNCE_SAVED_NEW_SPRINT = 'ANNOUNCE_SAVED_NEW_SPRINT'
+export const ANNOUNCE_SAVING_NEW_SPRINT_FAILED = 'ANNOUNCE_SAVING_NEW_SPRINT_FAILED'
 
 export function invalidateAllSprints() {
     return {
@@ -80,6 +88,27 @@ function announceSprintsSaveFailed(error) {
     }
 }
 
+function announceCandidateSprintSaving() {
+    return {
+        type: ANNOUNCE_SAVING_NEW_SPRINT
+    }
+}
+
+function announceCandidateSprintSaved(new_sprint) {
+    return {
+        type: ANNOUNCE_SAVED_NEW_SPRINT,
+	sprint: new_sprint
+    }
+}
+
+function announceCandidateSprintSaveFailed(error) {
+    return {
+	type: ANNOUNCE_SAVING_NEW_SPRINT_FAILED,
+	error: error
+    }
+}
+
+
 
 export function reorderSprints(sprint_id_before, sprint_id_after, on_done) {
 
@@ -145,7 +174,73 @@ function fetchSprintsPromise(dispatch, sprint_ids) {
 }
 
 export function fetchSprintsIfNeeded(list_key) {
-    const matching_items_key = 'sprint'
+    const matching_items_key = ENTITY_KEY__SPRINT
     const matching_items_promise_func = fetchSprintsPromise
     return fetchListIfNeeded(list_key, matching_items_key, matching_items_promise_func)
+}
+
+export function startCandidateSprint(list_key) {
+    return (dispatch, getState) => {
+	const state = getState()
+	const sprints_by_id = state.sprint.items_by_id
+	const l = state.item_list[list_key]
+
+	const selected_ids = l.selected_ids
+
+	let sprint_id_before = null
+	if ( selected_ids.length > 0 ) {
+	    sprint_id_before = selected_ids[0]
+	    const sprint_before = sprints_by_id[sprint_id_before] 
+	}
+	
+	dispatch({
+	    type: ANNOUNCE_CAPTURING_NEW_SPRINT,
+	    sprint_id_before: sprint_id_before,
+	    project_id: l.filter.project_id
+	})
+    }
+}
+
+export function updateCandidateTitle(title) {
+    return {
+	type: UPDATE_NEW_SPRINT_DETAILS,
+	candidate_sprint: { "title": title }
+    }
+}
+
+export function cancelCandidateSprint() {
+    return {
+	type: CANCEL_CREATING_NEW_SPRINT
+    }
+}
+
+export function saveCandidateSprint() {
+
+    return (dispatch, getState) => {
+	const state = getState()
+	dispatch(announceCandidateSprintSaving())
+	let data = {sprint: state.sprint.candidate_sprint}
+	
+	return impfetch("/imp/sprint/",
+			{method: "POST",
+			 credentials: 'same-origin',
+			 data: data,
+			 headers: {"Content-type": "application/json; charset=UTF-8"}, 
+			 body: JSON.stringify(data)}
+	).then(response => response.json())
+	 .then(json => {
+             if ( json.status != 'success' ) {
+		 console.log('Request failed with JSON response', json);
+		 dispatch(announceCandidateSprintSaveFailed(json.error))
+             } else {
+		 console.log('Request succeeded with JSON response', json);
+		 dispatch(announceCandidateSprintSaved(json.payload.sprint))
+             }
+	 })
+	 .catch(function (error) {
+             console.log('Request failed', error);
+	     dispatch(announceCandidateSprintSaveFailed(error))
+	 })
+    }
+
 }

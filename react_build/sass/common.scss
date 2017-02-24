@@ -7,11 +7,18 @@
 }
 
 html, body {
-    height: 100%;
-    width: 100%;
     background-color: #CECECF;
+    height: 100%;
+    margin: 0;
+    width: 100%;
 }
 
-error {
+.error {
     color: $error-color;
+}
+
+.group:after {
+    content: "";
+    display: table;
+    clear: both;
 }

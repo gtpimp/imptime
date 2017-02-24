@@ -1,0 +1,42 @@
+{
+  "manifest_version": 2,
+
+  "name": "ImpTime Developer Tools",
+  "description": "Adds ImpTime debugging tools to the Chrome Developer Tools",
+  "version": "0.1",
+  "minimum_chrome_version": "55",
+  "icons": {
+    "48": "icons/icon48.png",
+    "128": "icons/icon128.png"
+  },
+
+  "devtools_page": "main.html",
+
+  "browser_action": {
+    "default_icon": "icons/icon48.png"
+  },
+
+  "content_security_policy": "script-src 'self' 'unsafe-eval'; object-src 'self'",
+  "web_accessible_resources": [ "main.html", "panel.html"],
+
+  "background": {
+    "scripts": [ "build/background.js" ],
+    "persistent": false
+  },
+
+  "permissions": [
+    "file:///*",
+    "http://*/*",
+    "https://*/*",
+    "activeTab",
+    "https://ajax.googleapis.com/"
+  ],
+
+  "content_scripts": [
+    {
+      "matches": ["<all_urls>"],
+      "js": ["build/inject.js"],
+      "run_at": "document_start"
+    }
+  ]
+}

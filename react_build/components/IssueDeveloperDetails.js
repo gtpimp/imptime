@@ -40,6 +40,13 @@ class IssueDeveloperDetails extends Component {
 	}
     }
 
+    componentWillReceiveProps() {
+	const { dispatch, issue_id, issue } = this.props
+	if ( issue_id ) {
+	    dispatch(fetchIssueGeneralDetailsIfNeeded([issue_id]))
+	}
+    }
+
     onChangeSubject(issue_id, value) {
 	const { dispatch } = this.props
 	dispatch(updateIssueSubject(issue_id, value))
@@ -121,7 +128,7 @@ class IssueDeveloperDetails extends Component {
     render() {
 
         const { is_visible, issue_id, issue, comments, is_loading,
-		is_creating_issue } = this.props
+		is_creating_issue, subject, description, number } = this.props
 
 	if ( ! is_visible ) {
 	    return (<div></div>)
@@ -146,11 +153,11 @@ class IssueDeveloperDetails extends Component {
 			    </div>
 			</div>
 			<div className="issue_developer_details__panel-body">
-			    <h3>issue#{issue.number}:
+			    <h3>issue#{number}:
 
 				<RIEModeToggler
 				    rie_key="issue_subject"
-				    initialValue={issue.subject || "..."}
+				    initialValue={subject || "..."}
 				    onChange={(new_value) => this.onChangeSubject(issue.id, new_value)}
 				>
 				    <RIEInput />
@@ -158,7 +165,7 @@ class IssueDeveloperDetails extends Component {
 			    </h3>
 			    <RIEModeToggler
 				rie_key={"issue_description"}
-				initialValue={issue.description || ""}
+				initialValue={description || ""}
 				onChange={this.onChangeDescription}
 			    >
 				<RIETextArea />
@@ -202,10 +209,13 @@ function mapStateToProps(state, props) {
         issue_id: issue_id,
 	issue: issue,
 	comments: comments,
-        is_loading: general_details.is_loading,
+        is_loading: is_loading,
 	is_visible: issue_id || is_creating_issue || false,
 	is_creating_issue: is_creating_issue,
-	candidate_issue: candidate_issue
+	candidate_issue: candidate_issue,
+        description: general_details.description,
+        subject: issue.subject,
+        number: issue.number
     }
 }
 
