@@ -1,6 +1,9 @@
 import assign from 'lodash/assign'
 import keys from 'lodash/keys'
 import union from 'lodash/union'
+import forEach from 'lodash/forEach'
+import merge from 'lodash/merge'
+import map from 'lodash/map'
 import difference from 'lodash/difference'
 import without from 'lodash/without'
 import { setErrorMessage } from '../actions/Error'
@@ -40,6 +43,13 @@ export default function user(state = initialState, action) {
 		loading_item_ids: union(state.loading_item_ids, action.user_ids_to_load)
 	    })
         case ANNOUNCE_USERS_LOADED:
+
+            const empty_user_ids = difference(state.loading_item_ids, keys(action.items_by_id))
+            forEach(empty_user_ids, function(empty_user_id) {
+                action.items_by_id[empty_user_id] = {id: empty_user_id,
+                                                     username: 'empty'}
+            })
+            
             return Object.assign({}, state, {
 
 		loading_item_ids: Object.assign({},

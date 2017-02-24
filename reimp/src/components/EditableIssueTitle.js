@@ -3,6 +3,7 @@ import {connect} from 'react-redux'
 import EditableProperty from './form/EditableProperty'
 import IssueTitleForm from './form/IssueTitleForm'
 import { updateIssueSubject, getIssue } from '../actions/Issues'
+import { has_permission } from '../actions/Users'
 
 class EditableIssueTitle extends Component {
 
@@ -17,12 +18,13 @@ class EditableIssueTitle extends Component {
     }
 
     render() {
-        const { issue } = this.props
+        const { issue, can_edit } = this.props
         
         return (
             <EditableProperty property_key='issue_title'
                               initial_value={issue.subject}
                               onChange={this.onChange}
+                              can_edit={can_edit}
             >
                 <IssueTitleForm />
                 <div className="text-component--readonly">{issue.subject}</div>
@@ -36,8 +38,10 @@ class EditableIssueTitle extends Component {
 function mapStateToProps(state, props) {
     const { issue_id } = props
     const issue = getIssue(state, issue_id) || {}
+    const can_edit = has_permission(state, issue.project_id, 'has_edit_subject')
     return {
-        issue: issue
+        issue: issue,
+        can_edit: can_edit
     }
 }
 

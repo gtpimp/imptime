@@ -1,8 +1,11 @@
 import React, { Component } from 'react'
 import { DragSource, DropTarget } from 'react-dnd';
+import map from 'lodash/map'
+import keys from 'lodash/keys'
 import { connect } from 'react-redux'
 import classNames from 'classnames'
 import { DndTypes } from '../actions/Dnd'
+import { getUser } from '../actions/Users'
 import '../sass/user.css'
 
 class User extends Component {
@@ -18,7 +21,7 @@ class User extends Component {
     
     render_wide() {
         const { user, is_loading, is_selected, isOver, invitation_pending,
-		onClickedUser, connectDragSource, connectDropTarget } = this.props
+		onClickedUser, connectDragSource, connectDropTarget, user_actions } = this.props
 
 	if ( ! user ) {
 	    return (<tr><td>Loading...</td></tr>)
@@ -38,8 +41,10 @@ class User extends Component {
             return connectDragSource(connectDropTarget(
 		<tr key={this.key+"."+user.id}
 		    onClick={onClickedUser}
-		    className={classNames('user', {'tr--selected': is_selected, 'tr--drop-target': isOver, 'list-table__row--unselected': !is_selected,
-                'list-table__row--selected': is_selected})}
+		    className={classNames('user', {'tr--selected': is_selected,
+                                                   'tr--drop-target': isOver,
+                                                   'list-table__row--unselected': !is_selected,
+                                                   'list-table__row--selected': is_selected})}
 		    >
 		    <td className="list-table__cell">{user.username}</td>
                     <td className="list-table__cell">{user.email}</td>
@@ -47,6 +52,9 @@ class User extends Component {
                     <td className="list-table__cell">{user.last_name}</td>
                     <td className="list-table__cell">
                         {invitation_pending && <div>Invite sent</div>}
+                    </td>
+                    <td className="list-table__cell">
+                        { map(keys(user_actions), (user_action_name, index) => user_actions[user_action_name](user)) }
                     </td>
 		</tr>
             ))
@@ -68,18 +76,18 @@ class User extends Component {
 }
 
 function mapStateToProps(state, props) {
-    const { user } = state
-    const { user_id, is_selected, is_narrow, is_loading, invitation_pending } = props
-    const this_user = (user && user.items_by_id && user.items_by_id[user_id]) || {}
+    const { user_id, is_selected, is_narrow, is_loading, invitation_pending, user_actions } = props
+    const user = getUser(state, user_id)
     
     return {
-	user: this_user,
+	user: user,
 	user_id: user_id,
 	is_selected: is_selected,
 	is_loading: is_loading,
 	is_narrow: is_narrow,
 	is_wide: !is_narrow,
-        invitation_pending: invitation_pending
+        invitation_pending: invitation_pending,
+        user_actions: user_actions
     }
 }
 
@@ -129,4 +137,3 @@ function collectDrop(connect, monitor) {
 }
 
 export default connect(mapStateToProps) (DragSource(DndTypes.USER, headingSource, collect) (DropTarget(DndTypes.USER, headingTarget, collectDrop)(User)))
-    

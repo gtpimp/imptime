@@ -32,8 +32,10 @@ class EditableProperty extends Component {
     }
 
     startEditing() {
-        const {dispatch, property_key} = this.props
-        dispatch(setEditing(property_key))
+        const {dispatch, property_key, can_edit} = this.props
+        if ( can_edit ) {
+            dispatch(setEditing(property_key))
+        }
     }
 
     cancelEditing() {
@@ -53,9 +55,11 @@ class EditableProperty extends Component {
     }
 
     onEdited(new_value) {
-        const {onChange} = this.props
+        const {onChange, can_edit} = this.props
         this.cancelEditing()
-        onChange(new_value)
+        if ( can_edit ) {
+            onChange(new_value)
+        }
     }
 
     render() {
@@ -120,13 +124,14 @@ class EditableProperty extends Component {
 
 function mapStateToProps(state, props) {
 
-    const {property_key, initial_value, edit_as_modal} = props
+    const {property_key, initial_value, edit_as_modal, can_edit} = props
 
     return {
         property_key: property_key,
         initial_value: initial_value,
         edit_as_modal: edit_as_modal,
-        is_editing: isEditing(state, property_key),
+        can_edit: can_edit,
+        is_editing: can_edit && isEditing(state, property_key),
         is_readonly: isReadonly(state, property_key),
         is_empty: !initial_value //isEmpty(state, property_key)
     }

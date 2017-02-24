@@ -5,9 +5,8 @@ from timepiece.models import Feature, IssueStatus
 from timepiece.models import ProjectStatus as SprintStatus
 from timepiece.models import BusinessPermissions as ProjectPermissions
 from timepiece.models import BusinessInvite as ProjectInvite
-from permission_serializer import PermissionSerializer
+from project_user_permission_serializer import ProjectUserPermissionSerializer
 logger = logging.getLogger(__name__)
-
 
 class ProjectSerializer(BaseSerializer):
 
@@ -18,7 +17,7 @@ class ProjectSerializer(BaseSerializer):
     allowed_issue_status_names = serializers.ListField(child=serializers.CharField())
     allowed_sprint_status_names = serializers.ListField(child=serializers.CharField())
     feature_names = serializers.ListField(child=serializers.CharField())
-    permissions = PermissionSerializer(source='user_permissions')
+    logged_in_users_permissions = ProjectUserPermissionSerializer(source='user_permissions')
     
     def __init__(self, *args, **kwargs):
         logged_in_user = kwargs.pop('logged_in_user')
@@ -52,6 +51,6 @@ class ProjectSerializer(BaseSerializer):
         
         project.user_permissions = ProjectPermissions.for_user(user=self.logged_in_user,
                                                                business=project) #sic
-        
+
         return super(ProjectSerializer, self).to_representation(
             project, *args, **kwargs)

@@ -380,7 +380,7 @@ class Feature(models.Model):
     def __unicode__(self):
         return self.name
 
-class BusinessPermissions(models.Model):
+class BusinessPermissions(BaseModel):
 
     class Meta:
         unique_together = (('user','business'),)
@@ -405,6 +405,8 @@ class BusinessPermissions(models.Model):
     can_edit_feature = models.BooleanField(default=True, verbose_name="Can Edit Feature")
     can_edit_tags = models.BooleanField(default=True, verbose_name="Can Edit Tags")
     can_create_sprint = models.BooleanField(default=True, verbose_name="Can Create Sprint")
+    can_edit_sprint_status = models.BooleanField(default=True, verbose_name="Can Edit Sprint")
+    can_edit_sprint = models.BooleanField(default=True, verbose_name="Can Edit Sprint")
     can_assign_user = models.BooleanField(default=True, verbose_name="Can Assign User")
     can_be_scheduled = models.BooleanField(default=False, verbose_name="Can Be Scheduled")
     can_view_business_comments = models.BooleanField(default=False, verbose_name="Can view project comments")
@@ -421,6 +423,7 @@ class BusinessPermissions(models.Model):
     can_do_finance_checklist = models.BooleanField(default=False, verbose_name="Finance checklist")
 
     can_edit_permissions = models.BooleanField(default=False, verbose_name="Can Edit Permissions")
+    can_view_permissions = models.BooleanField(default=False, verbose_name="Can View Permissions")
     can_toggle_graphs = models.BooleanField(default=False, verbose_name="Can Toggle Graphs")
     can_edit_project_detail = models.BooleanField(default=False, verbose_name="Can Edit Sprint Detail")
     can_edit_deadlines = models.BooleanField(default=False,verbose_name = "Can Edit Deadlines ")
@@ -436,6 +439,19 @@ class BusinessPermissions(models.Model):
     can_view_ctc_rates = models.BooleanField(default=False, verbose_name="Can View Ctc") # a subpermission of can_view_ctc_billable_rates, used for clients who shouldn't see our internal costing.
     can_view_documents = models.BooleanField(default=False, verbose_name="Can View Docs") # quotes and summaries, usually contains costs and rates
     can_edit_calendar = models.BooleanField(default=False, verbose_name="Can Edit Calendar")
+
+    def save(self, *args, **kwargs):
+        was_created = not self.id
+        super(BusinessPermissions, self).save(*args, **kwargs)
+        affected_project = self.business #sic
+        if was_created:
+            RefreshNotifier().notify_model_create(
+                self, params={'projects': [self.business_id],
+                              'users': [self.user_id]})
+        else:
+            RefreshNotifier().notify_model_update(
+                self, params={'projects': [self.business_id],
+                              'users': [self.user_id]})
     
     @classmethod
     def _by_user(self, business):
@@ -443,6 +459,14 @@ class BusinessPermissions(models.Model):
         bps = BusinessPermissions.objects.filter(business=business)
         return dict( [ (bp.user.id, bp) for bp in bps ] )
 
+    def update_permission(self, permission_name, new_state):
+
+        field_name = permission_name.replace("has_", "can_")
+        if not hasattr(self, field_name):
+            raise Exception("Trying to set unknown permission: %s " % permission_name)
+        setattr(self, field_name, new_state)
+        self.save()
+    
     @classmethod
     def by_user(self, business):
         # to be deprecated
@@ -500,6 +524,10 @@ class BusinessPermissions(models.Model):
     def has_edit_permissions(self):
         return self.user.is_superuser or self.can_edit_permissions or self.user.has_perm('timepiece.belongs_to_all_projects')
 
+    @property
+    def has_view_permissions(self):
+        return self.user.is_superuser or self.can_view_permissions or self.user.has_perm('timepiece.belongs_to_all_projects')
+    
     @property
     def has_edit_project_detail(self):
         return self.user.is_superuser or self.can_edit_project_detail or self.user.has_perm('timepiece.belongs_to_all_projects')
@@ -598,7 +626,7 @@ class BusinessPermissions(models.Model):
         return self.user.is_superuser or self.can_edit_subject or self.user.has_perm('timepiece.belongs_to_all_projects')
 
     @property
-    def has_edit_issue_feature(self):
+    def has_edit_feature(self):
         return self.user.is_superuser or self.can_edit_feature or self.user.has_perm('timepiece.belongs_to_all_projects')
 
     @property
@@ -609,6 +637,14 @@ class BusinessPermissions(models.Model):
     def has_create_sprint(self):
         return self.user.is_superuser or self.can_create_sprint or self.user.has_perm('timepiece.belongs_to_all_projects')
 
+    @property
+    def has_edit_sprint_status(self):
+        return self.user.is_superuser or self.can_edit_sprint_status or self.user.has_perm('timepiece.belongs_to_all_projects')
+
+    @property
+    def has_edit_sprint(self):
+        return self.user.is_superuser or self.can_edit_sprint or self.user.has_perm('timepiece.belongs_to_all_projects')
+    
     @property
     def has_assign_user(self):
         return self.user.is_superuser or self.can_assign_user or self.user.has_perm('timepiece.belongs_to_all_projects')
@@ -667,13 +703,13 @@ class ProjectStatus(models.Model):
     def save(self, *args, **kwargs):
         was_created = not self.id
         super(ProjectStatus, self).save(*args, **kwargs)
-        affected_projects = [x.id for x in self.projects.all()]
+        affected_project_ids = [x.id for x in self.projects.all()]
         if was_created:
             RefreshNotifier().notify_model_create(
-                self, params={'projects': affected_projects})
+                self, params={'projects': affected_project_ids})
         else:
             RefreshNotifier().notify_model_update(
-                self, params={'projects': affected_projects})
+                self, params={'projects': affected_project_ids})
 
     
 class ProjectQuerySet(QuerySet):

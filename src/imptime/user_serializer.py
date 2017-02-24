@@ -20,7 +20,6 @@ class UserSerializer(BaseSerializer):
         self.logged_in_user = logged_in_user
         
     def to_representation(self, user, *args, **kwargs):
-
         if self.logged_in_user:
             user.known_user_ids = BusinessPermissions.viewable_users(self.logged_in_user)\
                                                      .order_by('username')\

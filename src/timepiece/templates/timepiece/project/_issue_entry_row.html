@@ -67,13 +67,13 @@
     </div>
   </td>
 
-  <td class="feature_col" {% has_permission has_edit_issue_feature project.business %} onclick="return imp.show_inline_editor(this);" style="z-index:100;" {% end_permission %} url_for_update="{% url 'update_issue_with_feature' %}" issue_id="{{issue.id}}" url_for_options="{% url 'business_features' business.id %}" selected_value="{{issue.feature.id}}" >
+  <td class="feature_col" {% has_permission has_edit_feature project.business %} onclick="return imp.show_inline_editor(this);" style="z-index:100;" {% end_permission %} url_for_update="{% url 'update_issue_with_feature' %}" issue_id="{{issue.id}}" url_for_options="{% url 'business_features' business.id %}" selected_value="{{issue.feature.id}}" >
 
     <div class="styled-select">		     
       <div class="readonly_value"> 
         {{ issue.feature.name|default_if_none:"" }}
       </div>
-      {% has_permission has_edit_issue_feature project.business %}
+      {% has_permission has_edit_feature project.business %}
       <div id="dialog" class="inline_editor" supports_enter_for_submit="true" style="display:none">
         Add new feature or Filter existing features: <br/><input class="filter" id="feature_box" type="text" name="new_feature"/>
         <div class='transient_selection' width="100%">

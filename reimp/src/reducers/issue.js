@@ -45,9 +45,7 @@ export default function issue(state = initialState, action) {
             )
 	    
         case INVALIDATE_ISSUES:
-
             ids = stringifyIds(action.issue_ids_to_invalidate)
-            
 	    return Object.assign(
 		{}, state,
 		{invalidated_item_ids: union(state.invalidated_item_ids, ids)}

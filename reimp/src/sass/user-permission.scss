@@ -1,0 +1,26 @@
+
+.project-user__user_permissions {
+    padding: 50px;
+    position: relative;
+    width: 50%;
+}
+
+.user-permission {
+    float: left;
+}
+
+.user-permission__permission_name {
+    float: left;
+}
+
+.user-permission__permission_value--on {
+    float: left;
+    padding-left: 8px;
+    color: #33ff33;
+}
+
+.user-permission__permission_value--off {
+    float: left;
+    padding-left: 8px;
+    color: #ff0033;
+}

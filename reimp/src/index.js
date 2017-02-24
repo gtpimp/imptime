@@ -13,6 +13,7 @@ import IssuesPage from './containers/IssuesPage'
 import ClientsPage from './containers/ClientsPage'
 import TeamPage from './containers/TeamPage'
 import MainLayout from './components/MainLayout'
+import ProjectUserPage from './containers/ProjectUserPage'
 import DevPage from './containers/DevPage'
 
 /* /projects
@@ -37,6 +38,8 @@ ReactDOM.render(
                 <Route path="projects/:projectId/sprints/:sprintId" component={SprintDashboardPage}/>
                 <Route path="projects/:projectId/sprints/:sprintId/issues" component={IssuesPage}/>
                 <Route path="projects/:projectId/sprints/:sprintId/issues/:issueId" component={IssuesPage}/>
+                <Route path="projects/:projectId/users" component={ProjectUserPage}/>
+                <Route path="projects/:projectId/users/:userId" component={ProjectUserPage}/>
 
                 <Route path="clients" component={ClientsPage}/>
                 <Route path="team" component={TeamPage}/>

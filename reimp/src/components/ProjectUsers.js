@@ -1,5 +1,6 @@
 import React, {Component} from 'react'
 import {connect} from 'react-redux'
+import {browserHistory} from 'react-router'
 import {getProject} from '../actions/Projects'
 import InviteUserForm from '../components/form/InviteUserForm'
 import Modal from 'react-modal'
@@ -8,8 +9,13 @@ import {
     PAGE_KEY__PROJECT_DASHBOARD_PAGE,
     LIST_KEY__PROJECT_USER_LIST
 } from '../actions/ItemListKeyRegistry'
-import { update_list_filter } from '../actions/ItemList'
 import {
+    update_list_filter,
+    selectItems
+} from '../actions/ItemList'
+import {
+    set_toolbars,
+    select_users,
     setPageFlag,
     clearPageFlag,
     getPageFlag
@@ -24,6 +30,7 @@ class ProjectUsersPage extends Component {
         this.onCancelInviteUser = this.onCancelInviteUser.bind(this)
         this.onSaveInviteUser = this.onSaveInviteUser.bind(this)
         this.onSelectUsers = this.onSelectUsers.bind(this)
+        this.getActionRenderFunc = this.getActionRenderFunc.bind(this)
     }
 
     componentDidMount() {
@@ -43,9 +50,15 @@ class ProjectUsersPage extends Component {
         dispatch(update_list_filter(LIST_KEY__PROJECT_USER_LIST, {'project_id':project_id}))
     }
 
-    onSelectUsers() {
+    onSelectUsers(user_ids) {
+        const { dispatch, project_id } = this.props
+        dispatch(selectItems(LIST_KEY__PROJECT_USER_LIST, user_ids))
+        dispatch(select_users(PAGE_KEY__PROJECT_DASHBOARD_PAGE, user_ids))
+        if ( user_ids && user_ids.length === 1 ) {
+            browserHistory.push('/projects/'+project_id+'/users/'+user_ids[0]);
+        }
     }
-
+    
     onStartInviteUser() {
         const { dispatch } = this.props
         dispatch(setPageFlag(PAGE_KEY__PROJECT_DASHBOARD_PAGE, 'inviting_user'))
@@ -78,6 +91,14 @@ class ProjectUsersPage extends Component {
             </Modal>
         )
     }
+
+    getActionRenderFunc() {
+        const { onPermissionsAction } = this.props
+        const that = this
+        return {
+            render_permissions: (user) => <div key={user.id} onClick={onPermissionsAction}>Permissions</div>
+        }
+    }
     
     render() {
 
@@ -98,7 +119,9 @@ class ProjectUsersPage extends Component {
                 <h2>Users</h2>
                 <UserList list_key={LIST_KEY__PROJECT_USER_LIST}
                           invited_user_ids={invited_user_ids}
-                          onSelectUsers={this.onSelectUsers}/>
+                          onSelectUsers={this.onSelectUsers}
+                          user_actions={this.getActionRenderFunc()}
+                />
                 
             </div>
         )

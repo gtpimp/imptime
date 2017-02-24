@@ -105,72 +105,81 @@ class IssueViewSet(BaseViewSet):
                 issue = self.allowed_issue(issue_pk)
 
                 if field_name == "subject":
-                    old_subject = issue.subject
-                    issue.subject = new_value
-                    IssueHistory.add_history(
-                        self.request.user, issue, "changed subject",
-                        old_subject, issue.subject)
-                elif field_name == "description":
-                    old_description = issue.description
-                    issue.description = new_value
-                    IssueHistory.add_history(
-                        self.request.user, issue, "changed description",
-                        old_description, issue.description)
-                elif field_name == "status_name":
-                    old_status = issue.status2
-                    new_status = IssueStatus.objects.get_or_create(business_id=issue.project.business_id,
-                                                                   name=new_value)[0]
-                    issue.status2_id = new_status.id
-                    IssueHistory.add_history(
-                        self.request.user, issue, "changed status",
-                        old_status.name if old_status else '',
-                        new_status.name)
-                elif field_name == "feature_name":
-                    old_feature_name = issue.feature.name if issue.feature else "none"
-                    issue.feature = Feature.objects.get_or_create(
-                        business=issue.project.business, name=new_value)[0]
-                    IssueHistory.add_history(
-                        self.request.user, issue, "changed feature",
-                        old_feature_name, issue.feature.name)
-                elif field_name == 'issue_id_after':
-                    old_order = issue.order
-                    after_issue = self.allowed_issue(new_value)
-                    issue.move_after(after_issue)
-                    IssueHistory.add_history(
-                        self.request.user, issue, "changed order",
-                        old_order, issue.order)
-                elif field_name == 'assigned_to_id':
-                    old_assigned_to = \
-                        issue.assigned_to.username \
-                        if issue.assigned_to else "no-one"
-                    issue.assigned_to_id = new_value
-                    new_assigned_to = \
-                        User.objects.get(pk=new_value).username \
-                        if new_value else "no-one"
-                    IssueHistory.add_history(
-                        self.request.user, issue, "changed assigned to",
-                        old_assigned_to, new_assigned_to)
-                elif field_name == 'can_group_issues':
-                    old_can_group_issues = issue.can_group_issues
-                    issue.can_group_issues = new_value
-                    IssueHistory.add_history(
-                        self.request.user, issue, "changed can group issues to",
-                        old_can_group_issues, new_value)
-                elif field_name == 'parent_group_id':
-                    if new_value and issue.id == int(new_value):
-                        logger.warning("Trying to set an issue as a parent of itself: %d" % issue.id)
-                    else:
-                        old_parent_group_id = issue.parent_group_id
-                        issue.parent_group_id = new_value
+                    if self.logged_in_permissions(issue.project.business).has_edit_subject:
+                        old_subject = issue.subject
+                        issue.subject = new_value
                         IssueHistory.add_history(
-                            self.request.user, issue, "changed parent group id",
-                            old_parent_group_id, new_value)
+                            self.request.user, issue, "changed subject",
+                            old_subject, issue.subject)
+                elif field_name == "description":
+                    if self.logged_in_permissions(issue.project.business).has_edit_description:
+                        old_description = issue.description
+                        issue.description = new_value
+                        IssueHistory.add_history(
+                            self.request.user, issue, "changed description",
+                            old_description, issue.description)
+                elif field_name == "status_name":
+                    if self.logged_in_permissions(issue.project.business).has_edit_issue_states:
+                        old_status = issue.status2
+                        new_status = IssueStatus.objects.get_or_create(business_id=issue.project.business_id,
+                                                                       name=new_value)[0]
+                        issue.status2_id = new_status.id
+                        IssueHistory.add_history(
+                            self.request.user, issue, "changed status",
+                            old_status.name if old_status else '',
+                            new_status.name)
+                elif field_name == "feature_name":
+                    if self.logged_in_permissions(issue.project.business).has_edit_feature:
+                        old_feature_name = issue.feature.name if issue.feature else "none"
+                        issue.feature = Feature.objects.get_or_create(
+                            business=issue.project.business, name=new_value)[0]
+                        IssueHistory.add_history(
+                            self.request.user, issue, "changed feature",
+                            old_feature_name, issue.feature.name)
+                elif field_name == 'issue_id_after':
+                    if self.logged_in_permissions(issue.project.business).has_edit_issues:
+                        old_order = issue.order
+                        after_issue = self.allowed_issue(new_value)
+                        issue.move_after(after_issue)
+                        IssueHistory.add_history(
+                            self.request.user, issue, "changed order",
+                            old_order, issue.order)
+                elif field_name == 'assigned_to_id':
+                    if self.logged_in_permissions(issue.project.business).has_assign_user:
+                        old_assigned_to = \
+                            issue.assigned_to.username \
+                            if issue.assigned_to else "no-one"
+                        issue.assigned_to_id = new_value
+                        new_assigned_to = \
+                            User.objects.get(pk=new_value).username \
+                            if new_value else "no-one"
+                        IssueHistory.add_history(
+                            self.request.user, issue, "changed assigned to",
+                            old_assigned_to, new_assigned_to)
+                elif field_name == 'can_group_issues':
+                    if self.logged_in_permissions(issue.project.business).has_edit_issues:
+                        old_can_group_issues = issue.can_group_issues
+                        issue.can_group_issues = new_value
+                        IssueHistory.add_history(
+                            self.request.user, issue, "changed can group issues to",
+                            old_can_group_issues, new_value)
+                elif field_name == 'parent_group_id':
+                    if self.logged_in_permissions(issue.project.business).has_edit_issues:
+                        if new_value and issue.id == int(new_value):
+                            logger.warning("Trying to set an issue as a parent of itself: %d" % issue.id)
+                        else:
+                            old_parent_group_id = issue.parent_group_id
+                            issue.parent_group_id = new_value
+                            IssueHistory.add_history(
+                                self.request.user, issue, "changed parent group id",
+                                old_parent_group_id, new_value)
                 elif field_name == 'sprint_id':
-                    old_sprint = issue.project
-                    new_sprint = self.allowed_sprint(new_value)
-                    issue.project = new_sprint
-                    issue.order += 9999
-                    IssueHistory.add_history(request.user, issue, "moved to sprint", unicode(old_sprint), unicode(new_sprint))
+                    if self.logged_in_permissions(issue.project.business).has_edit_issues:
+                        old_sprint = issue.project
+                        new_sprint = self.allowed_sprint(new_value)
+                        issue.project = new_sprint
+                        issue.order += 9999
+                        IssueHistory.add_history(request.user, issue, "moved to sprint", unicode(old_sprint), unicode(new_sprint))
                 else:
                     raise Exception("Unsupported field name: %s" % field_name)
                 issue.save()
@@ -195,18 +204,22 @@ class IssueViewSet(BaseViewSet):
             else:
                 order = 0
             sprint = self.allowed_sprint(sprint_id)
-            issue = Issue.objects.create(
-                project=sprint,   # sic
-                order=order,
-                number=Issue.get_next_issue_number(sprint.business),
-                subject=params['subject'])
-            issue.renumber_issue_order()
-            #s = IssueSerializer(issue)
-            #issue_data = s.data
-            IssueHistory.add_history(self.request.user, issue,
-                                     "created", "", issue.number)
-            context['issue'] = { 'number': issue.number }
-            data = {'status': 'success', 'payload': context}
+
+            if self.logged_in_permissions(issue.project.business).has_edit_issues:
+                issue = Issue.objects.create(
+                    project=sprint,   # sic
+                    order=order,
+                    number=Issue.get_next_issue_number(sprint.business),
+                    subject=params['subject'])
+                issue.renumber_issue_order()
+                #s = IssueSerializer(issue)
+                #issue_data = s.data
+                IssueHistory.add_history(self.request.user, issue,
+                                         "created", "", issue.number)
+                context['issue'] = { 'number': issue.number }
+                data = {'status': 'success', 'payload': context}
+            else:
+                data = {'status': 'failed', 'error_message': 'Permission denied to create issues'}
 
         except Exception, ex:
             logger.exception(ex)
@@ -220,11 +233,15 @@ class IssueViewSet(BaseViewSet):
             params = request.data
             issue_id = params['issue_id']
             issue = self.allowed_issue(issue_id)
-            IssueHistory.add_history(self.request.user, issue,
-                                     "deleted", issue.id, "")
-            issue.delete()
-            context['issue_id'] = issue_id
-            data = {'status': 'success', 'payload': context}
+
+            if self.logged_in_permissions(issue.project.business).has_delete_issue:
+                IssueHistory.add_history(self.request.user, issue,
+                                         "deleted", issue.id, "")
+                issue.delete()
+                context['issue_id'] = issue_id
+                data = {'status': 'success', 'payload': context}
+            else:
+                data = {'status': 'failed', 'error_message': 'Permission denied to delete issues'}
 
         except Exception, ex:
             logger.exception(ex)

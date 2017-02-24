@@ -24,7 +24,11 @@ class RefreshNotifier(object):
             entity_name = 'project'
         elif entity_name == 'project':
             entity_name = 'sprint'
-        
+        elif entity_name == 'businesspermissions':
+            entity_name = 'projectpermissions'
+        elif entity_name == 'businessinvite':
+            entity_name = 'projectinvite'
+
         try:
             post_data = {'entity_name': entity_name,
                          'entity_ref': obj.id,

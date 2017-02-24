@@ -68,14 +68,17 @@ class SprintViewSet(BaseViewSet):
             for sprint_pk in sprint_pks:
                 sprint = self.allowed_sprint(sprint_pk)
                 if field_name == 'name':
-                    sprint.name = new_value
+                    if self.logged_in_permissions(sprint.business).has_edit_sprint:
+                        sprint.name = new_value
                 elif field_name == "status_name":
-                    new_status = SprintStatus.objects.get_or_create(business_id=sprint.business_id, name=new_value)[0]
-                    sprint.status3_id = new_status.id
+                    if self.logged_in_permissions(sprint.business).has_edit_issue_states:
+                        new_status = SprintStatus.objects.get_or_create(business_id=sprint.business_id, name=new_value)[0]
+                        sprint.status3_id = new_status.id
                 elif field_name == 'sprint_id_after':
-                    old_order = sprint.order
-                    after_sprint = self.allowed_sprint(new_value)
-                    sprint.move_after(after_sprint)
+                    if self.logged_in_permissions(sprint.business).has_edit_sprint:
+                        old_order = sprint.order
+                        after_sprint = self.allowed_sprint(new_value)
+                        sprint.move_after(after_sprint)
                 else:
                     raise Exception("Unsupported field name: %s" % field_name)
                 sprint.save()
@@ -100,19 +103,22 @@ class SprintViewSet(BaseViewSet):
                 order = 0
             project = self.allowed_project(project_id)
 
-            new_status = SprintStatus.objects.get_or_create(business_id=project_id, name='pending')[0]
-            sprint = Sprint.objects.create(
-                business=project, #sic
-                order=order,
-                status2='pending',
-                status3=new_status,
-                code=Sprint.get_code_from_name(params['name']),
-                name=params['name'])
-            sprint.renumber_project_order()
-            #s = SprintSerializer(sprint)
-            #sprint_data = s.data
-            context['sprint'] = {'number': sprint.number}
-            data = {'status': 'success', 'payload': context}
+            if self.logged_in_permissions(sprint.business).has_create_sprint:
+                new_status = SprintStatus.objects.get_or_create(business_id=project_id, name='pending')[0]
+                sprint = Sprint.objects.create(
+                    business=project, #sic
+                    order=order,
+                    status2='pending',
+                    status3=new_status,
+                    code=Sprint.get_code_from_name(params['name']),
+                    name=params['name'])
+                sprint.renumber_project_order()
+                #s = SprintSerializer(sprint)
+                #sprint_data = s.data
+                context['sprint'] = {'number': sprint.number}
+                data = {'status': 'success', 'payload': context}
+            else:
+                data = {'status': 'failed', 'error_message': 'Permission denied to create sprint'}
 
         except Exception, ex:
             logger.exception(ex)

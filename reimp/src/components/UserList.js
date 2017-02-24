@@ -128,7 +128,8 @@ class UserList extends Component {
             selected_ids,
             is_inviting_user, invite_user,
             loading_item_ids,
-            invited_user_ids
+            invited_user_ids,
+            user_actions
         } = this.props
         const that = this
 
@@ -148,6 +149,7 @@ class UserList extends Component {
                       is_selected={selected_ids.indexOf(user.id) !== -1}
                       user_id={user.id}
                       invitation_pending={invitation_pending}
+                      user_actions={user_actions}
                 />
             )
             if (is_inviting_user && invite_user.user_id_before === user.id) {
@@ -165,7 +167,7 @@ class UserList extends Component {
 
 function mapStateToProps(state, props) {
     const {user, item_list} = state
-    const {list_key, invited_user_ids} = props
+    const {list_key, invited_user_ids, user_actions} = props
     const items_by_id = (user && user.items_by_id) || {}
     const l = (item_list && item_list[list_key]) || {}
     const filter = l.filter || {}
@@ -203,7 +205,8 @@ function mapStateToProps(state, props) {
         last_updated: l.last_updated,
         invite_user: invite_user,
         is_inviting_user: is_inviting_user,
-        invited_user_ids: invited_user_ids
+        invited_user_ids: invited_user_ids,
+        user_actions: user_actions
     }
 }
 
