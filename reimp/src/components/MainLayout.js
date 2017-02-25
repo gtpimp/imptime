@@ -47,7 +47,7 @@ class MainLayout extends Component {
 
         if ( ! is_logged_in ) {
             return (
-                <div className="app">
+                <div className="app app--login">
                     <LoginPage />
                 </div>
             )

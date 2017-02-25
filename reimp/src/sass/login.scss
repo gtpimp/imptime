@@ -1,15 +1,118 @@
+@import 'variables.scss';
 
-.login_container {
-    height: 100%;
-    width: 100%;
-    position: fixed;
-    top: 0px;
-    left: 0px;
-    opacity: 0.5;
+.app--login {
+    background-color: $color-18;
 }
 
-.login_form {
-    margin: auto;
-    top: 200px;
-    border: 1px solid #121212;
+.login-page {
+    height: 100%;
+}
+
+.login-page__header {
+    align-items: center;
+    background-color: $color-2;
+    display: flex;
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 0;
+    width: 100%;
+}
+
+.login-page__logo {
+    align-items: center;
+    background-image: url('../images/Logo@2x.png');
+    background-position: center center;
+    background-size: 56px 56px;
+    cursor: pointer;
+    display: inline-flex;
+    height: 56px;
+    width: 56px;
+}
+
+.login-page__title {
+    color: $color-1;
+    font: $font-10;
+    padding-left: 35px;
+}
+
+.login-container {
+    align-items: center;
+    display: flex;
+    justify-content: center;
+    height: 100%;
+}
+
+.login-form {
+    width: 400px;
+    //height: 424px;
+    background-color: #FFFFFF;
+    box-shadow: 0 4px 12px 0 rgba(0,0,0,0.3);
+    border-radius: 2px;
+}
+
+.login__header {
+    border-bottom: 1px solid $color-12;
+    font: $font-5;
+    padding-bottom: 23px;
+    padding-left: 32px;
+    padding-top: 24px;
+}
+
+.login__body {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-around;
+    padding-bottom: 40px;
+    padding-left: 32px;
+    padding-right: 32px;
+    padding-top: 36px;
+
+    > input {
+        background-color: $color-2;
+        border-left: 0;
+        border-right: 0;
+        border-top: 0;
+        border-bottom: 1px solid $color-14;
+        color: $color-1;
+        box-sizing: border-box;
+        font: $font-9;
+        height: 40px;
+        line-height: 24px;
+        margin-bottom: 40px;
+        outline: none;
+        padding-left: 0;
+        padding-right: 0;
+        padding-top: 8px;
+        padding-bottom: 14px;
+        width: 100%;
+    }
+
+    > input:-webkit-autofill {
+        -webkit-box-shadow: 0 0 0px 1000px white inset;
+    }
+
+    > .button {
+        align-self: center;
+        flex-basis: auto;
+        flex-grow: 0;
+    }
+}
+
+.button--login {
+    background-color: $color-19;
+    color: $color-2;
+}
+
+.login-form__message {
+    margin-bottom: 20px;
+}
+
+.login__forgot-password-link {
+    align-self: center;
+    color: $color-19;
+    cursor: pointer;
+    font: $font-2;
+    margin-top: 36px;
+    text-transform: uppercase;
 }
