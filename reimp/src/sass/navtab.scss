@@ -20,6 +20,15 @@
   }
 }
 
+.navtab--inactive {
+  > a,
+  > a:active,
+  > a:focus,
+  > a:visited {
+    text-decoration: none;
+  }
+}
+
 .navtab--expanded {
   background-color: #f5f5f5;
   box-shadow: inset 1px 0 0 0 #e0e0e0;

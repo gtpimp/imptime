@@ -1,0 +1,36 @@
+@import 'variables.scss';
+
+.search-input {
+  color: $color-10;
+  align-items: center;
+  background-color: $color-4;
+  border-radius: 3px;
+  display: flex;
+  padding-left: 11px;
+  padding-right: 16px;
+}
+
+.search-input__component {
+  > .material-icons {
+    display: block;
+  }
+}
+
+.search-input__component--textfield {
+  height: 40px;
+  width: 700px;
+}
+
+.search-input__textfield {
+  background-color: $color-4;
+  border: 0;
+  font: $font-1;
+  height: 40px;
+  margin-left: 20px;
+  width: 700px;
+  outline: none;
+}
+
+search-input__component search-input__icon {
+    cursor: pointer;
+}

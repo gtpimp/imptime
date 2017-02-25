@@ -55,7 +55,7 @@ class ProjectDashboardPage extends Component {
 
                 <button onClick={this.navigateToSprintsPage}>Take me to your sprints</button>
                 <br/>
-                
+
                 <div className="project-dashboard__project_users">
                     <ProjectUsers project_id={project.id} />
                 </div>

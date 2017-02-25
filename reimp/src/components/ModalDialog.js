@@ -15,8 +15,8 @@ class ModalDialog extends Component {
                    overlayClassName="modal-dialog__overlay"
                    onRequestClose={this.props.onClose || function () { }}
                    contentLabel={this.props.title}>
-                <div className="modal-dialog__row modal-dialog__row--header">
-                    <label htmlFor="assigned" className="modal-dialog__title">{this.props.title}</label>
+                <div className={classNames('modal-dialog__header', 'modal-dialog__header--' + this.props.variant)}>
+                    <label htmlFor="assigned" className={classNames('modal-dialog__title', 'modal-dialog__title--' + this.props.variant)}>{this.props.title}</label>
                     { this.props.onClose &&
                     <div className="modal-dialog__close"><i className="material-icons">close</i></div>
                     }
@@ -31,7 +31,7 @@ class ModalDialog extends Component {
 
 function mapStateToProps(state, props) {
     return {
-        format: props.format || 'default'
+        variant: props.variant || 'default'
     }
 }
 

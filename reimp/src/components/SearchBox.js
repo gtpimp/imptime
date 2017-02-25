@@ -4,8 +4,9 @@ import map from 'lodash/map'
 import '../sass/search-box.css'
 import {browserHistory} from 'react-router'
 import {initFilter, runFilter, getFilter, hideResults, showResults} from '../actions/Filter'
-import { FILTER_KEY__GLOBAL } from '../actions/ItemListKeyRegistry'
+import {FILTER_KEY__GLOBAL} from '../actions/ItemListKeyRegistry'
 import ReactTimeout from 'react-timeout'
+import SearchInput from './SearchInput'
 
 class SearchBox extends Component {
 
@@ -22,7 +23,7 @@ class SearchBox extends Component {
     }
 
     componentDidMount() {
-        const { dispatch, filter_key } = this.props
+        const {dispatch, filter_key} = this.props
         dispatch(initFilter(filter_key))
     }
 
@@ -30,12 +31,14 @@ class SearchBox extends Component {
         const {setTimeout} = this.props
         const value = this.filter_term_el.value
         const that = this
-        
-        if ( this.filter_timeout_id != null ) {
+
+        if (this.filter_timeout_id != null) {
             clearTimeout(this.filter_timeout_id)
             this.filter_timeout_id = null
         }
-        this.filter_timeout_id = setTimeout(function() { that.onFilter(value) }, 500)
+        this.filter_timeout_id = setTimeout(function () {
+            that.onFilter(value)
+        }, 500)
     }
 
     onFilter(value) {
@@ -45,12 +48,12 @@ class SearchBox extends Component {
     }
 
     onHideResults() {
-        const { dispatch, filter_key } = this.props
+        const {dispatch, filter_key} = this.props
         dispatch(hideResults(filter_key))
     }
 
     onShowResults() {
-        const { dispatch, filter_key } = this.props
+        const {dispatch, filter_key} = this.props
         dispatch(showResults(filter_key))
     }
 
@@ -62,17 +65,17 @@ class SearchBox extends Component {
     }
 
     onClickProjectResult(res) {
-        browserHistory.push('/projects/'+res.project_id+'/sprints');
+        browserHistory.push('/projects/' + res.project_id + '/sprints');
         this.onHideResults()
     }
 
     onClickSprintResult(res) {
-        browserHistory.push('/projects/'+res.project_id+'/sprints/'+res.sprint_id+'/issues');
+        browserHistory.push('/projects/' + res.project_id + '/sprints/' + res.sprint_id + '/issues');
         this.onHideResults()
     }
 
     onClickIssueResult(res) {
-        browserHistory.push('/projects/'+res.project_id+'/sprints/'+res.sprint_id+'/issues/'+res.issue_id);
+        browserHistory.push('/projects/' + res.project_id + '/sprints/' + res.sprint_id + '/issues/' + res.issue_id);
         this.onHideResults()
     }
 
@@ -81,18 +84,18 @@ class SearchBox extends Component {
         return (
             <div className="search-box__issue_results">
                 <h2>{name}</h2>
-                {map(issue_results, function(issue_result, index) {
-                     return (
-                         <div key={index} className="search-box__search-result" onClick={() => that.onClickIssueResult(issue_result) }>
-                             <div>{issue_result.number}</div>
-                             <div>{issue_result.subject}</div>
-                             <div>{issue_result.status_name}</div>
-                             <div>{issue_result.project_name}</div>
-                             <hr/>
-                         </div>
-                     )
-                 }
-                 )}
+                {map(issue_results, function (issue_result, index) {
+                        return (
+                            <div key={index} className="search-box__search-result" onClick={() => that.onClickIssueResult(issue_result) }>
+                                <div>{issue_result.number}</div>
+                                <div>{issue_result.subject}</div>
+                                <div>{issue_result.status_name}</div>
+                                <div>{issue_result.project_name}</div>
+                                <hr/>
+                            </div>
+                        )
+                    }
+                )}
             </div>
         )
     }
@@ -102,18 +105,18 @@ class SearchBox extends Component {
         return (
             <div className="search-box__sprint_results">
                 <h2>{name}</h2>
-                {map(sprint_results, function(sprint_result, index) {
-                     return (
-                         <div key={index} className="search-box__search-result" onClick={() => that.onClickSprintResult(sprint_result) }>
-                             <div>{sprint_result.number}</div>
-                             <div>{sprint_result.name}</div>
-                             <div>{sprint_result.status_name}</div>
-                             <div>{sprint_result.project_name}</div>
-                             <hr/>
-                         </div>
-                     )
-                 }
-                 )}
+                {map(sprint_results, function (sprint_result, index) {
+                        return (
+                            <div key={index} className="search-box__search-result" onClick={() => that.onClickSprintResult(sprint_result) }>
+                                <div>{sprint_result.number}</div>
+                                <div>{sprint_result.name}</div>
+                                <div>{sprint_result.status_name}</div>
+                                <div>{sprint_result.project_name}</div>
+                                <hr/>
+                            </div>
+                        )
+                    }
+                )}
             </div>
         )
     }
@@ -123,19 +126,19 @@ class SearchBox extends Component {
         return (
             <div className="search-box__project_results">
                 <h2>{name}</h2>
-                {map(project_results, function(project_result, index) {
-                     return (
-                         <div key={index} className="search-box__search-result" onClick={() => that.onClickProjectResult(project_result) }>
-                             <div>{project_result.name}</div>
-                             <hr/>
-                         </div>
-                     )
-                 }
-                 )}
+                {map(project_results, function (project_result, index) {
+                        return (
+                            <div key={index} className="search-box__search-result" onClick={() => that.onClickProjectResult(project_result) }>
+                                <div>{project_result.name}</div>
+                                <hr/>
+                            </div>
+                        )
+                    }
+                )}
             </div>
-        )        
+        )
     }
-    
+
     renderResults(results) {
         return (
             <div className="search-box__results_by_category" onKeyDown={this.keyDown}>
@@ -151,28 +154,24 @@ class SearchBox extends Component {
 
     render() {
 
-        const { is_loading, results, show_results } = this.props
+        const {is_loading, results, show_results} = this.props
 
         return (
-            <div className="search-box"  onKeyDown={this.keyDown}>
-                <div className="search-box__component search-box__icon"><i className="material-icons">search</i></div>
-                <input ref={(ref) => this.filter_term_el = ref} className="search-box__textfield" type="text" placeholder="Search Imptime" onChange={this.onFilterTermChanged}/>
-                <div className="search-box__component search-box__icon" onClick={this.onShowResults}>
-                    <i className="material-icons">arrow_drop_down</i>
-                </div>
+            <div className="search-box" onKeyDown={this.keyDown}>
+                <SearchInput termRef={(ref) => this.filter_term_el = ref} placeholder="Search Imptime" onOpenDropDown={this.onShowResults} onChange={this.onFilterTermChanged}/>
 
                 { is_loading &&
-                  <div className="search-box__search-results--loading">
-                      <div>Loading...</div>
-                  </div>
+                <div className="search-box__search-results--loading">
+                    <div>Loading...</div>
+                </div>
                 }
 
-                { show_results && results && 
-                  <div className="search-box__search-results--loaded">
-                      { this.renderResults(results) }
-                  </div>
+                { show_results && results &&
+                <div className="search-box__search-results--loaded">
+                    { this.renderResults(results) }
+                </div>
                 }
-                
+
             </div>
         )
     }
