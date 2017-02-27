@@ -1,5 +1,6 @@
 import React, {Component} from 'react'
 import {connect} from 'react-redux'
+import {browserHistory} from 'react-router'
 import Header from '../components/Header'
 import ModalDialog from '../components/ModalDialog'
 import Websocket from '../components/Websocket'
@@ -13,7 +14,7 @@ var HTML5Backend = require('react-dnd-html5-backend');
 class MainLayout extends Component {
 
     componentDidMount() {
-        const { dispatch, location, logged_in_user_id } = this.props
+        const { dispatch, location, logged_in_user_id, has_usable_password } = this.props
 
         window.onerror = function(msg, url, line, col, error) {
             //alert("whoops")
@@ -25,6 +26,9 @@ class MainLayout extends Component {
 
             if ( logged_in_user_id ) {
                 dispatch(ensureUsersLoaded([logged_in_user_id]))
+                if ( has_usable_password === false ) {
+                    browserHistory.push('/password')
+                }
             } else {
                 if ( location.query.autologin !== undefined ) {
                     dispatch(auto_login(location.query.autologin))
@@ -75,7 +79,9 @@ class MainLayout extends Component {
 
 function mapStateToProps(state) {
     const { configured } = state.settings
-    const logged_in_user_id = logged_in_user()['user_id'] || null
+    const user = logged_in_user()
+    const logged_in_user_id = user['user_id'] || null
+    const has_usable_password = user['has_usable_password'] || false
     const notification_bar = state.notification_bar || {}
     const error_message = notification_bar.error_message
     
@@ -84,7 +90,8 @@ function mapStateToProps(state) {
         error_message: error_message,
         is_logged_in: is_authenticated(),
         are_settings_loaded: configured,
-        logged_in_user_id: logged_in_user_id
+        logged_in_user_id: logged_in_user_id,
+        has_usable_password: has_usable_password
     }
 }
 

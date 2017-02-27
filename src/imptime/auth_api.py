@@ -23,7 +23,8 @@ class LoginViewSet(rest_views.ObtainAuthToken):
         user = serializer.validated_data['user']
         token, created = Token.objects.get_or_create(user=user)
         return Response({'token': token.key,
-                         'user_id': user.id})
+                         'user_id': user.id,
+                         'has_usable_password': user.has_usable_password()})
 
 @permission_classes((IsAuthenticated,))
 class AuthViewSet(BaseViewSet):
@@ -38,8 +39,11 @@ class AuthViewSet(BaseViewSet):
 
 @permission_classes(())
 class AutoLoginViewSet(BaseViewSet):
-    
+
     def create(self, request):
+        return self._auto_login(request)
+    
+    def _auto_login(self, request):
         user = request.user
         token = request.data['token']
         user = UserAutoLoginToken.check_and_use_auto_login(token)
@@ -52,4 +56,5 @@ class AutoLoginViewSet(BaseViewSet):
         token, created = Token.objects.get_or_create(user=user)
         return Response({'username': user.username,
                          'token': token.key,
-                         'user_id': user.id})
+                         'user_id': user.id,
+                         'has_usable_password': user.has_usable_password()})

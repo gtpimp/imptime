@@ -5,12 +5,13 @@ import { SubmissionError } from 'redux-form'
 export const SET_AUTH_TOKEN = "SET_AUTH_TOKEN"
 export const CLEAR_AUTH_TOKEN = "CLEAR_AUTH_TOKEN"
 
-function setAuthToken(username, token, user_id) {
+function setAuthToken(username, token, user_id, has_usable_password) {
     return {
         type: SET_AUTH_TOKEN,
         username: username,
         token: token,
-        user_id: user_id
+        user_id: user_id,
+        has_usable_password: has_usable_password
     }
 }
 
@@ -41,7 +42,7 @@ export function auto_login(auto_login_token) {
             .then(response => response.json())
             .then(json => {
                 if ( json.token ) {
-                    dispatch(setAuthToken(json.username, json.token, json.user_id))
+                    dispatch(setAuthToken(json.username, json.token, json.user_id, json.has_usable_password))
                 } else {
                     throw new SubmissionError({ _error: 'Failed to login' })
                 }
@@ -67,7 +68,7 @@ export function login(dispatch, settings, username, password) {
         .then(response => response.json())
         .then(json => {
             if ( json.token ) {
-                dispatch(setAuthToken(username, json.token, json.user_id))
+                dispatch(setAuthToken(username, json.token, json.user_id, json.has_usable_password))
             } else {
                 throw new SubmissionError({ _error: 'Invalid credentials' })
             }
@@ -92,6 +93,7 @@ export function logged_in_user() {
     return { username: cookie.load('username'),
              token: cookie.load('token'),
              user_id: cookie.load('user_id'),
+             has_usable_password: cookie.load('has_usable_password')
     }
 }
 
