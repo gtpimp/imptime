@@ -1,5 +1,6 @@
 import logging
 from user_serializer import UserSerializer
+from rest_framework.decorators import list_route
 from rest_framework.renderers import JSONRenderer
 from django.http import HttpResponse
 from base_api import BaseViewSet
@@ -15,9 +16,8 @@ from rest_framework.response import Response
 
 logger = logging.getLogger(__name__)
 
-
-class AuthViewSet(rest_views.ObtainAuthToken):
-
+class LoginViewSet(rest_views.ObtainAuthToken):
+    
     def post(self, request, *args, **kwargs):
         # cut and pasted from venv/lib/python2.7/site-packages/rest_framework/authtoken/views.py
         serializer = self.serializer_class(data=request.data)
@@ -26,3 +26,15 @@ class AuthViewSet(rest_views.ObtainAuthToken):
         token, created = Token.objects.get_or_create(user=user)
         return Response({'token': token.key,
                          'user_id': user.id})
+
+
+@permission_classes((IsAuthenticated,))
+class AuthViewSet(BaseViewSet):
+
+    @list_route(methods=['POST'])
+    def change_password(self, request, *args, **kwargs):
+        password = request.data['password']
+        user = request.user
+        user.set_password(password)
+        user.save()
+        return Response({'status': 'success'})

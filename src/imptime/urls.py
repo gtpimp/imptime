@@ -17,8 +17,8 @@ from rest_framework.authtoken import views as rest_views
 from issue_attachment_download import IssueAttachmentDownloadView, IssueAttachmentPreviewView
 
 router = DefaultRouter()
-router.register(r'auth', project_api.ProjectViewSet,
-                base_name='project')
+router.register(r'auth', auth_api.AuthViewSet,
+                base_name='auth')
 router.register(r'permission/project', project_user_permission_api.ProjectUserPermissionViewSet,
                 base_name='project_permission')
 router.register(r'project', project_api.ProjectViewSet,
@@ -44,7 +44,7 @@ router.register(r'filter', filter_api.FilterViewSet,
 
 urlpatterns = [
     url(r'^$', views.home, name='home'),
-    url(r'^login/', auth_api.AuthViewSet.as_view()),
+    url(r'^login/', auth_api.LoginViewSet.as_view()),
     url(r'^issue/attachment/(?P<attachment_id>.*)/preview', IssueAttachmentPreviewView.as_view(), name='preview_attachment'),
     url(r'^issue/attachment/(?P<attachment_id>.*)/download', IssueAttachmentDownloadView.as_view(), name='download_attachment')
 

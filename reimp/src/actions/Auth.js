@@ -2,7 +2,6 @@ import { impfetch } from './lib.js'
 import cookie from 'react-cookie';
 import { SubmissionError } from 'redux-form'
 
-
 export const SET_AUTH_TOKEN = "SET_AUTH_TOKEN"
 export const CLEAR_AUTH_TOKEN = "CLEAR_AUTH_TOKEN"
 
@@ -47,6 +46,19 @@ export function login(dispatch, settings, username, password) {
             }
         })
     
+}
+
+export function change_password(dispatch, settings, password) {
+
+    const API_BASE_URL = settings.configured && settings.API_BASE_URL
+    const data = { 'password': password }
+    const params = {method: "POST",
+	            credentials: 'same-origin',
+	            data: data,
+	            headers: {"Content-type": "application/json; charset=UTF-8"}, 
+	            body: JSON.stringify(data)}
+    
+    return impfetch(API_BASE_URL+'imp/auth/change_password/', dispatch, params)
 }
 
 export function logged_in_user() {
