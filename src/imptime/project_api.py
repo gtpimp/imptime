@@ -116,7 +116,7 @@ class ProjectViewSet(BaseViewSet):
             invited_user, created_user = User.objects.get_or_create(email=invited_user_email,
                                                                     defaults={'username':invited_user_email})
 
-            if self.logged_in_permissions(business).has_invite_users:
+            if self.logged_in_permissions(project).has_invite_users:
                 ProjectPermissions.ensure_user_belongs_to_business(user=invited_user,
                                                                     business=project) #sic
 

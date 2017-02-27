@@ -77,6 +77,7 @@ class ProjectUsersPage extends Component {
     }
 
     renderInviteUser() {
+        const { project_id } = this.props
         const that = this
         return (
             <ModalDialog isOpen={true}
@@ -85,7 +86,7 @@ class ProjectUsersPage extends Component {
                          variant="large">
 
                 <div>
-                    <InviteUserForm onChange={that.onSaveInviteUser}/>
+                    <InviteUserForm project_id={project_id} onChange={that.onSaveInviteUser}/>
                 </div>
             </ModalDialog>
         )
