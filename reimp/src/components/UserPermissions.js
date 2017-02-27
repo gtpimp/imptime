@@ -27,11 +27,16 @@ class UserPermissions extends Component {
     }
 
     componentWillReceiveProps(new_props) {
-        this.refresh(new_props.project_id, new_props.user_id)
+        if ( new_props.user_id != this.props.user_id || new_props.project_id != this.props.project_id ||
+             new_props.user.id != this.props.user.id || new_props.project.id != this.props.project.id ) {
+            this.refresh(new_props.project_id, new_props.user_id, new_props.user, new_props.project)
+        }
     }
 
-    refresh(project_id, user_id) {
+    refresh(project_id, user_id, user, project) {
         const {dispatch} = this.props
+        user = user || {}
+        project = project || {}
         project_id = project_id || this.props.project_id
         user_id = user_id || this.props.user_id
         dispatch(ensureProjectsLoaded([project_id]))

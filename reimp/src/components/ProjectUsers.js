@@ -95,7 +95,7 @@ class ProjectUsersPage extends Component {
         const {onPermissionsAction} = this.props
         const that = this
         return {
-            render_permissions: (user) => <div key={user.id} onClick={onPermissionsAction}>Permissions</div>
+            render_permissions: (user) => <button key={user.id} onClick={() => onPermissionsAction(user, event)}>Permissions</button>
         }
     }
 
@@ -106,14 +106,6 @@ class ProjectUsersPage extends Component {
         return (
             <div>
                 { is_inviting_user && this.renderInviteUser() }
-
-                { !is_inviting_user &&
-                <div>
-
-                    <button onClick={this.onStartInviteUser}>Invite somebody to this project</button>
-                    <br/>
-                </div>
-                }
 
                 <h2>Team</h2>
                 <div className="invite-user-button" onClick={this.onStartInviteUser}><i className="material-icons md-18">add_circle_outline</i></div>
