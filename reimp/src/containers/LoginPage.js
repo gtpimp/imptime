@@ -1,8 +1,8 @@
 import React, {Component} from 'react'
 import {connect} from 'react-redux'
 import {login} from '../actions/Auth'
+import { Field, reduxForm } from 'redux-form'
 import Message from '../components/Message'
-import LoginForm from '../components/form/LoginForm'
 
 class LoginPage extends Component {
 
@@ -19,6 +19,7 @@ class LoginPage extends Component {
     render() {
 
         const that = this
+        const { handleSubmit } = this.props
         
         return (
             <div className="login-page">
@@ -28,7 +29,20 @@ class LoginPage extends Component {
                 </div>
 
                 <div className="login-container">
-                    <LoginForm onLogin={that.onLogin} />
+                    <div className="login-form" >
+                        <div className="login__header">Log In</div>
+                        <div className="login__body">
+                            <form onSubmit={handleSubmit(this.onLogin)}>
+                                <Field name="username" placeholder="Email Address" component="input" />
+                                <Field name="password" placeholder="Password" component="input" />
+                                <div className="login-form__message">
+                                    <Message variant="error">Invalid username/password combination (@Gareth to wire up)</Message>
+                                </div>
+                                <button type="submit" className="button button--large button--login">Log In</button>
+                                <div className="login__forgot-password-link">forgot password?</div>
+                            </form>
+                        </div>
+                    </div>
                 </div>
             </div>
         )
@@ -41,4 +55,4 @@ function mapStateToProps(state, props) {
     }
 }
 
-export default connect(mapStateToProps)(LoginPage)
+export default connect(mapStateToProps)(reduxForm({form:'login_page'})(LoginPage))
