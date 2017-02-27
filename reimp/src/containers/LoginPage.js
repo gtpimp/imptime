@@ -1,5 +1,6 @@
 import React, {Component} from 'react'
 import {connect} from 'react-redux'
+import { Field, reduxForm } from 'redux-form'
 import {login} from '../actions/Auth'
 import Message from '../components/Message'
 
@@ -26,6 +27,8 @@ class LoginPage extends Component {
 
     render() {
 
+        const { handleSubmit } = this.props
+        
         return (
             <div className="login-page">
                 <div className="login-page__header">
@@ -38,13 +41,11 @@ class LoginPage extends Component {
                     <div className="login-form" onKeyDown={this.onKeyDown}>
                         <div className="login__header">Log In</div>
                         <div className="login__body">
-                            <input type="email" placeholder="Email Address" name="username" ref={(el) => {
-                                this.usernameInput = el
-                            }}/>
+                            <form onSubmit={handleSubmit}>
+                                <Field name="username" placeholder="Email Address" component="input" />
+                                <Field name="password" placeholder="Password" component="input" />
+                            </form>
 
-                            <input type="password" name="password" placeholder="Password" ref={(el) => {
-                                this.passwordInput = el
-                            }}/>
                             <div className="login-form__message">
                                 <Message variant="error">Invalid username/password combination (@Gareth to wire up)</Message>
                             </div>
@@ -60,7 +61,9 @@ class LoginPage extends Component {
 
 function mapStateToProps(state, props) {
 
-    return {}
+    return {
+        onSubmit: login
+    }
 }
 
-export default connect(mapStateToProps)(LoginPage)
+export default connect(mapStateToProps)(reduxForm({form:'login_form'})(LoginPage))

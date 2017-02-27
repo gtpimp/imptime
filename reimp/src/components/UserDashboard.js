@@ -19,9 +19,7 @@ class UserDashboard extends Component {
 
         return (
             <div className="user-dashboard">
-
                 <button onClick={this.onLogout}>Logout</button>
-                
             </div>
         )
     }
