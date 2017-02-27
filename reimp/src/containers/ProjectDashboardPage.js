@@ -28,13 +28,14 @@ class ProjectDashboardPage extends Component {
 
     componentWillReceiveProps(new_props) {
         const { project_id } = this.props
-        if ( new_props.project_id !== project_id || new_props.project.id !== this.props.project.id ) {
-            this.refresh(new_props.project_id)
+        if ( new_props.loaded !== this.props.loaded || new_props.project_id !== project_id || new_props.project.id !== this.props.project.id ) {
+            this.refresh(new_props.project_id, new_props.project)
         }
     }
     
-    refresh(project_id) {
-        const { dispatch, project } = this.props
+    refresh(project_id, project) {
+        const { dispatch } = this.props
+        project = project || {}
         dispatch(setBreadcrumbs([ {to: '/projects', label: 'All Projects'},
                                   {to: '/projects/'+project_id, label: project.name} ]))
         dispatch(select_projects(PAGE_KEY__PROJECT_DASHBOARD_PAGE, [project_id]))
@@ -57,10 +58,8 @@ class ProjectDashboardPage extends Component {
         
         return (
             <div>
-                Project {project.name}
-
-                <button onClick={this.navigateToSprintsPage}>Take me to your sprints</button>
-                <button onClick={this.navigateToProjectUsersPage}>Take me to your users</button>
+                <button className="button button--large button--primary" onClick={this.navigateToSprintsPage}>Sprints</button>
+                <button className="button button--large button--primary" onClick={this.navigateToProjectUsersPage}>Users</button>
                 <br/>
                 
             </div>
@@ -70,12 +69,12 @@ class ProjectDashboardPage extends Component {
 
 function mapStateToProps(state, props) {
     const project_id = props.params.projectId
-    const project = getProject(state, project_id)
+    const project = getProject(state, project_id) || {}
     return {
         project_id: project_id,
-        project: project || {}
+        project: project,
+        loaded: project.name
     }
 }
 
 export default connect(mapStateToProps)(ProjectDashboardPage)
-

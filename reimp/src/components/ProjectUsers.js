@@ -95,7 +95,7 @@ class ProjectUsersPage extends Component {
         const {onPermissionsAction} = this.props
         const that = this
         return {
-            render_permissions: (user) => <button key={user.id} onClick={() => onPermissionsAction(user, event)}>Permissions</button>
+            render_permissions: (user) => <button className="button" key={user.id} onClick={() => onPermissionsAction(user, event)}>Permissions</button>
         }
     }
 

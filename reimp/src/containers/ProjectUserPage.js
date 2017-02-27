@@ -104,8 +104,6 @@ class ProjectUserPage extends Component {
 
                 { ! show_permissions &&
                   <div>
-                      Users for project: {project.name}
-                      <br/>
                       <div className="project-user__project_users">
                           <ProjectUsers
                               project_id={project.id}
