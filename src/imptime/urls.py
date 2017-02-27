@@ -19,6 +19,8 @@ from issue_attachment_download import IssueAttachmentDownloadView, IssueAttachme
 router = DefaultRouter()
 router.register(r'auth', auth_api.AuthViewSet,
                 base_name='auth')
+router.register(r'autologin', auth_api.AutoLoginViewSet,
+                base_name='authlogin')
 router.register(r'permission/project', project_user_permission_api.ProjectUserPermissionViewSet,
                 base_name='project_permission')
 router.register(r'project', project_api.ProjectViewSet,

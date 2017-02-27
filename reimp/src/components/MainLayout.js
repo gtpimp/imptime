@@ -5,7 +5,7 @@ import ModalDialog from '../components/ModalDialog'
 import Websocket from '../components/Websocket'
 import LoginPage from '../containers/LoginPage'
 import { DragDropContext } from 'react-dnd';
-import { logged_in_user, is_authenticated } from '../actions/Auth'
+import { logged_in_user, is_authenticated, auto_login } from '../actions/Auth'
 import { updateSettings } from '../actions/Settings'
 import { ensureUsersLoaded } from '../actions/Users'
 var HTML5Backend = require('react-dnd-html5-backend');
@@ -13,7 +13,7 @@ var HTML5Backend = require('react-dnd-html5-backend');
 class MainLayout extends Component {
 
     componentDidMount() {
-        const { dispatch, logged_in_user_id } = this.props
+        const { dispatch, location, logged_in_user_id } = this.props
 
         window.onerror = function(msg, url, line, col, error) {
             //alert("whoops")
@@ -25,6 +25,10 @@ class MainLayout extends Component {
 
             if ( logged_in_user_id ) {
                 dispatch(ensureUsersLoaded([logged_in_user_id]))
+            } else {
+                if ( location.query.autologin !== undefined ) {
+                    dispatch(auto_login(location.query.autologin))
+                }
             }
         })
     }

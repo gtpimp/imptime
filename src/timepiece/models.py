@@ -3235,6 +3235,31 @@ class UserProfile(models.Model):
         """ for use in cases where a businesspermissions object is required for a user,
         but without a specific business """
         return self.businesses.first()
+
+class UserAutoLoginToken(BaseModel):
+    user = models.OneToOneField(User, unique=True, related_name='auto_login')
+    token = models.CharField(max_length=100)
+    expire_at = models.DateTimeField()
+    used = models.BooleanField(default=False)
+
+    @classmethod
+    def get_auto_login_token(self, user):
+        a = UserAutoLoginToken.objects.get_or_create(user=user, defaults={'expire_at':timezone.now()})[0]
+        a.expire_at = timezone.now() + relativedelta(hours=settings.AUTO_LOGIN_EXPIRE_IN_HOURS)
+        a.token = str(uuid.uuid4()).replace("-","")+str(uuid.uuid4()).replace("-","")
+        a.used = False
+        a.save()
+        return a.token
+
+    @classmethod
+    def check_and_use_auto_login(self, token):
+        a = UserAutoLoginToken.objects.filter(token=token).first()
+        if a is None or a.used == True or a.expire_at < timezone.now():
+            return None
+        a.used = True
+        a.save()
+        return a.user
+        
     
 class ProjectHours(models.Model):
     week_start = models.DateField(verbose_name='start of week')

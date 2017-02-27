@@ -24,6 +24,33 @@ export function logout() {
     return clearAuthentication()
 }
 
+export function auto_login(auto_login_token) {
+    return (dispatch, getState) => {
+        const state = getState()
+        const { settings } = state
+        const API_BASE_URL = settings.configured && settings.API_BASE_URL
+        const data = { 'token': auto_login_token }
+
+        const params = {method: "POST",
+	                credentials: 'same-origin',
+	                data: data,
+	                headers: {"Content-type": "application/json; charset=UTF-8"}, 
+	                body: JSON.stringify(data)}
+        
+        return impfetch(API_BASE_URL+'imp/autologin/', dispatch, params)
+            .then(response => response.json())
+            .then(json => {
+                if ( json.token ) {
+                    dispatch(setAuthToken(json.username, json.token, json.user_id))
+                } else {
+                    throw new SubmissionError({ _error: 'Failed to login' })
+                }
+            })
+        
+    }
+    
+}
+
 export function login(dispatch, settings, username, password) {
 
     const API_BASE_URL = settings.configured && settings.API_BASE_URL
