@@ -17,15 +17,15 @@ class UserDashboard extends Component {
     }
 
     onChangePassword() {
-        browserHistory.push('/password')
+        browserHistory.push('/password/change')
     }
     
     render() {
 
         return (
             <div className="user-dashboard">
-                <button onClick={this.onLogout}>Logout</button>
-                <button onClick={this.onChangePassword}>Change password</button>
+                <button className="button button--primary button--large" onClick={this.onLogout}>Logout</button>
+                <button className="button button--primary button--large" onClick={this.onChangePassword}>Change password</button>
                 
             </div>
         )

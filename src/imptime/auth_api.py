@@ -1,7 +1,10 @@
 import logging
 from user_serializer import UserSerializer
+from mailqueue.mailqueue_helper import queue_email
 from rest_framework.decorators import list_route
+from django.conf import settings
 from rest_framework.renderers import JSONRenderer
+from django.contrib.auth.models import User
 from django.http import HttpResponse
 from base_api import BaseViewSet
 import json
@@ -39,7 +42,7 @@ class AuthViewSet(BaseViewSet):
 
 @permission_classes(())
 class AutoLoginViewSet(BaseViewSet):
-
+    
     def create(self, request):
         return self._auto_login(request)
     
@@ -58,3 +61,33 @@ class AutoLoginViewSet(BaseViewSet):
                          'token': token.key,
                          'user_id': user.id,
                          'has_usable_password': user.has_usable_password()})
+
+    @list_route(methods=['POST'])
+    def forgot_password(self, request):
+        username = request.data['username']
+        user = User.objects.filter(username=username).first()
+        if user is None:
+            raise Exception("Unknown username")
+        user.set_unusable_password()
+        user.save()
+
+        content = """
+
+        Your password has been reset, click the link below to choose a new one:
+
+        {LOGIN_LINK}
+
+        """
+            
+        auto_login_token = UserAutoLoginToken.get_auto_login_token(user)
+            
+        content = content.format(LOGIN_LINK=settings.WEB_URL_BASE + "?autologin="+auto_login_token)
+
+        queue_email(subject_content="ImpTime: Reset password",
+                    from_address=settings.FROM_EMAIL,
+                    text_content=content,
+                    html_content=content.replace("\n","<br/>"),
+                    to_addresses=[user.email])
+        
+        return Response({'status': 'success'})
+    

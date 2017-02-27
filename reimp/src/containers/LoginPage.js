@@ -1,6 +1,7 @@
 import React, {Component} from 'react'
 import {connect} from 'react-redux'
 import {login} from '../actions/Auth'
+import {browserHistory} from 'react-router'
 import { Field, reduxForm } from 'redux-form'
 import Message from '../components/Message'
 
@@ -9,11 +10,16 @@ class LoginPage extends Component {
     constructor(props) {
         super(props)
         this.onLogin = this.onLogin.bind(this)
+        this.onClickedForgotPassword = this.onClickedForgotPassword.bind(this)
     }
 
     onLogin(values) {
         const { dispatch, settings } = this.props
         return login(dispatch, settings, values.username, values.password)
+    }
+
+    onClickedForgotPassword() {
+        browserHistory.push('/password/forgot');
     }
     
     render() {
@@ -41,7 +47,7 @@ class LoginPage extends Component {
                                   </div>
                                 }
                                 <button disabled={submitting} type="submit" className="button button--large button--login">Log In</button>
-                                <div className="login__forgot-password-link">forgot password?</div>
+                                <div className="login__forgot-password-link" onClick={this.onClickedForgotPassword}>forgot password?</div>
                             </form>
                         </div>
                     </div>

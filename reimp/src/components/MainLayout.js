@@ -14,7 +14,8 @@ var HTML5Backend = require('react-dnd-html5-backend');
 class MainLayout extends Component {
 
     componentDidMount() {
-        const { dispatch, location, logged_in_user_id, has_usable_password } = this.props
+        const { dispatch } = this.props
+        const that = this
 
         window.onerror = function(msg, url, line, col, error) {
             //alert("whoops")
@@ -23,37 +24,51 @@ class MainLayout extends Component {
         require.ensure(['../external_config/react_local_settings'], function() {
             let local_settings = require('../external_config/react_local_settings')
             dispatch(updateSettings(local_settings.local_settings))
-
-            if ( logged_in_user_id ) {
-                dispatch(ensureUsersLoaded([logged_in_user_id]))
-                if ( has_usable_password === false ) {
-                    browserHistory.push('/password')
-                }
-            } else {
-                if ( location.query.autologin !== undefined ) {
-                    dispatch(auto_login(location.query.autologin))
-                }
-            }
+            that.refresh(that.props)
         })
     }
 
     componentWillReceiveProps(new_props) {
-        const { dispatch } = this.props
         if ( new_props.logged_in_user_id && new_props.logged_in_user_id !== this.props.logged_in_user_id ) {
-            dispatch(ensureUsersLoaded([new_props.logged_in_user_id]))
+            this.refresh(new_props)
+        }
+    }
+
+    refresh(props) {
+        const { dispatch, location, logged_in_user_id, settings, has_usable_password } = props
+        dispatch(ensureUsersLoaded([logged_in_user_id]))
+        
+        if ( logged_in_user_id ) {
+            dispatch(ensureUsersLoaded([logged_in_user_id]))
+            if ( has_usable_password === "false" ) {
+                browserHistory.push('/password/change')
+            }
+        } else {
+            if ( settings.configured && location.query.autologin !== undefined ) {
+                auto_login(dispatch, settings, location.query.autologin)
+                    .then( () => {
+                        const user = logged_in_user()
+                        if ( user.has_usable_password === "false" ) {
+                            browserHistory.push('/password/change')
+                        }
+                    })
+            }
         }
     }
 
     render() {
         const { has_error, error_message, is_logged_in, are_settings_loaded } = this.props
 
+        const allow_non_auth = this.props.location.pathname.indexOf('password/forgot') != -1 ||
+                               this.props.location.pathname.indexOf('password/reminded') != -1
+        
         if ( ! are_settings_loaded ) {
             return (
                 <div>Loading settings...</div>
             )
         }
 
-        if ( ! is_logged_in ) {
+        if ( ! is_logged_in && ! allow_non_auth  ) {
             return (
                 <div className="app app--login">
                     <LoginPage />
@@ -91,7 +106,8 @@ function mapStateToProps(state) {
         is_logged_in: is_authenticated(),
         are_settings_loaded: configured,
         logged_in_user_id: logged_in_user_id,
-        has_usable_password: has_usable_password
+        has_usable_password: has_usable_password,
+        settings: state.settings
     }
 }
 
