@@ -6,6 +6,10 @@ import Message from '../../components/Message'
 
 class LoginForm extends Component {
 
+    validate() {
+        alert("Validating")
+    }
+    
     render() {
 
         const { handleSubmit } = this.props
