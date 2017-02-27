@@ -19,6 +19,10 @@ export function clearAuthentication() {
     }
 }
 
+export function logout() {
+    return clearAuthentication()
+}
+
 export function login(username, password) {
 
     return (dispatch, getState) => {
