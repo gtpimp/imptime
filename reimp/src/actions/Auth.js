@@ -1,5 +1,7 @@
 import { impfetch } from './lib.js'
 import cookie from 'react-cookie';
+import { SubmissionError } from 'redux-form'
+
 
 export const SET_AUTH_TOKEN = "SET_AUTH_TOKEN"
 export const CLEAR_AUTH_TOKEN = "CLEAR_AUTH_TOKEN"
@@ -23,29 +25,27 @@ export function logout() {
     return clearAuthentication()
 }
 
-export function login(username, password) {
-    return (dispatch, getState) => {
-        const state = getState()
-        const API_BASE_URL = state.settings.configured && state.settings.API_BASE_URL
-        const data = { 'username': username,
-                       'password': password }
+export function login(dispatch, settings, username, password) {
 
-        const params = {method: "POST",
-	                credentials: 'same-origin',
-	                data: data,
-	                headers: {"Content-type": "application/json; charset=UTF-8"}, 
-	                body: JSON.stringify(data)}
-        
-        return impfetch(API_BASE_URL+'imp/login/', dispatch, params)
-            .then(response => response.json())
-            .then(json => {
-                if ( json.token ) {
-                    dispatch(setAuthToken(username, json.token, json.user_id))
-                } else {
-                    alert("Login failed: " + json.non_field_errors)
-                }
-            })
-    }
+    const API_BASE_URL = settings.configured && settings.API_BASE_URL
+    const data = { 'username': username,
+                   'password': password }
+
+    const params = {method: "POST",
+	            credentials: 'same-origin',
+	            data: data,
+	            headers: {"Content-type": "application/json; charset=UTF-8"}, 
+	            body: JSON.stringify(data)}
+    
+    return impfetch(API_BASE_URL+'imp/login/', dispatch, params)
+        .then(response => response.json())
+        .then(json => {
+            if ( json.token ) {
+                dispatch(setAuthToken(username, json.token, json.user_id))
+            } else {
+                throw new SubmissionError({ _error: 'Invalid credentials' })
+            }
+        })
     
 }
 

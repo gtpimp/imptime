@@ -12,14 +12,14 @@ class LoginPage extends Component {
     }
 
     onLogin(values) {
-        const { dispatch } = this.props
-        dispatch(login(values.username, values.password))
+        const { dispatch, settings } = this.props
+        return login(dispatch, settings, values.username, values.password)
     }
     
     render() {
 
         const that = this
-        const { handleSubmit } = this.props
+        const { handleSubmit, error, submitting } = this.props
         
         return (
             <div className="login-page">
@@ -33,12 +33,14 @@ class LoginPage extends Component {
                         <div className="login__header">Log In</div>
                         <div className="login__body">
                             <form onSubmit={handleSubmit(this.onLogin)}>
-                                <Field name="username" placeholder="Email Address" component="input" />
-                                <Field name="password" placeholder="Password" component="input" />
-                                <div className="login-form__message">
-                                    <Message variant="error">Invalid username/password combination (@Gareth to wire up)</Message>
-                                </div>
-                                <button type="submit" className="button button--large button--login">Log In</button>
+                                <Field name="username" type="text" placeholder="Email Address" component="input" />
+                                <Field name="password" type="password" placeholder="Password" component="input" />
+                                { error &&
+                                  <div className="login-form__message">
+                                      <Message variant="error">Invalid username/password combination</Message>
+                                  </div>
+                                }
+                                <button disabled={submitting} type="submit" className="button button--large button--login">Log In</button>
                                 <div className="login__forgot-password-link">forgot password?</div>
                             </form>
                         </div>
@@ -52,6 +54,7 @@ class LoginPage extends Component {
 function mapStateToProps(state, props) {
 
     return {
+        settings: state.settings
     }
 }
 
