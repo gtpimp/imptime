@@ -24,7 +24,6 @@ export function logout() {
 }
 
 export function login(username, password) {
-
     return (dispatch, getState) => {
         const state = getState()
         const API_BASE_URL = state.settings.configured && state.settings.API_BASE_URL

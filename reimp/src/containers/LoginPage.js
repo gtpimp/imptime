@@ -1,33 +1,24 @@
 import React, {Component} from 'react'
 import {connect} from 'react-redux'
-import { Field, reduxForm } from 'redux-form'
 import {login} from '../actions/Auth'
 import Message from '../components/Message'
+import LoginForm from '../components/form/LoginForm'
 
 class LoginPage extends Component {
 
     constructor(props) {
         super(props)
-        this.onSubmitLogin = this.onSubmitLogin.bind(this)
-        this.onKeyDown = this.onKeyDown.bind(this)
+        this.onLogin = this.onLogin.bind(this)
     }
 
-    onSubmitLogin() {
-        const {dispatch} = this.props
-        const username = this.usernameInput.value || ""
-        const password = this.passwordInput.value || ""
-        dispatch(login(username, password))
+    onLogin(values) {
+        const { dispatch } = this.props
+        dispatch(login(values.username, values.password))
     }
-
-    onKeyDown(event) {
-        if (event.keyCode === 13) {
-            this.onSubmitLogin()
-        }
-    }
-
+    
     render() {
 
-        const { handleSubmit } = this.props
+        const that = this
         
         return (
             <div className="login-page">
@@ -37,22 +28,7 @@ class LoginPage extends Component {
                 </div>
 
                 <div className="login-container">
-
-                    <div className="login-form" onKeyDown={this.onKeyDown}>
-                        <div className="login__header">Log In</div>
-                        <div className="login__body">
-                            <form onSubmit={handleSubmit}>
-                                <Field name="username" placeholder="Email Address" component="input" />
-                                <Field name="password" placeholder="Password" component="input" />
-                            </form>
-
-                            <div className="login-form__message">
-                                <Message variant="error">Invalid username/password combination (@Gareth to wire up)</Message>
-                            </div>
-                            <button className="button button--large button--login" onClick={this.onSubmitLogin}>Log In</button>
-                            <div className="login__forgot-password-link">forgot password?</div>
-                        </div>
-                    </div>
+                    <LoginForm onLogin={that.onLogin} />
                 </div>
             </div>
         )
@@ -62,8 +38,7 @@ class LoginPage extends Component {
 function mapStateToProps(state, props) {
 
     return {
-        onSubmit: login
     }
 }
 
-export default connect(mapStateToProps)(reduxForm({form:'login_form'})(LoginPage))
+export default connect(mapStateToProps)(LoginPage)
