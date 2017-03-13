@@ -5,7 +5,7 @@ export const ADD_ASYNC_MSG = 'ADD_ASYNC_MSG'
 export const REMOVE_ASYNC_MSG = 'REMOVE_ASYNC_MSG'
 
 export function asyncRefreshNotification(data) {
-    const d = (JSON.parse && JSON.parse(data)) || eval(data)
+    const d = JSON.parse(data)
     return {
         type: ASYNC_REFRESH_NOTIFICATION,
         payload: d
