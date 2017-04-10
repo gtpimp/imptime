@@ -1,0 +1,37 @@
+FROM ubuntu:16.04
+
+RUN apt-get update && DEBIAN_FRONTEND=noninteractive apt-get install -y \
+  libjpeg8-dev \
+  libpq-dev \
+  postgresql \
+  python \
+  python2.7-dev \
+  python-pip \
+  vim
+
+RUN apt-get update && DEBIAN_FRONTEND=noninteractive apt-get install -y wget vim
+
+RUN mkdir -p /opt/imptime/api
+WORKDIR /opt/imptime/api
+
+COPY requirements.txt requirements.txt
+RUN pip install -r requirements.txt
+
+WORKDIR /opt/imptime/
+RUN mkdir -p logs
+COPY * /opt/imptime/api/
+COPY version.txt /opt/imptime/api/version.txt
+
+WORKDIR /opt/imptime/api/
+
+RUN echo 'deb http://www.rabbitmq.com/debian/ testing main' | tee /etc/apt/sources.list.d/rabbitmq.list
+RUN wget -O- https://www.rabbitmq.com/rabbitmq-release-signing-key.asc | apt-key add -
+
+RUN apt-get update && apt-get install -y rabbitmq-server
+RUN apt-get install -y curl vim telnet
+
+COPY docker/start-rabbitmq-configurer.sh start-rabbitmq-configurer.sh
+
+RUN apt-get install -y wget
+
+ENTRYPOINT ["./start-rabbitmq-configurer.sh"]

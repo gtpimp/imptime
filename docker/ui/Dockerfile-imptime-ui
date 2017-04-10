@@ -1,0 +1,36 @@
+FROM ubuntu:16.04
+
+# Install packages for building ruby
+RUN apt-get update && apt-get install -y --force-yes build-essential curl git wget vim
+
+# NOT NEEDED? RUN apt-get install -y --force-yes zlib1g-dev libssl-dev libreadline-dev libyaml-dev libxml2-dev libxslt-dev wget
+RUN apt-get install -y --force-yes \
+  libpq-dev \
+  postgresql \
+  python \
+  python2.7-dev \
+  python-pip
+
+RUN apt-get install -y --force-yes libffi-dev
+RUN apt-get install -y --force-yes libjpeg8-dev
+RUN apt-get clean
+
+RUN mkdir -p /opt/imptime/ui
+WORKDIR /opt/imptime
+RUN mkdir -p logs media
+
+COPY requirements.txt /opt/imptime/ui/
+
+WORKDIR /opt/imptime/ui
+RUN pip install -r requirements.txt
+
+WORKDIR /opt/imptime/ui
+COPY * /opt/imptime/ui/
+
+COPY docker/start-ui.sh start-ui.sh
+COPY docker/start-dev-ui.sh start-dev-ui.sh
+COPY docker/start-migrate-ui-database.sh start-migrate-ui-database.sh
+COPY docker/start-ui-refresh-listener.sh start-ui-refresh-listener.sh
+COPY docker/start-ui-worker.sh start-ui-worker.sh
+
+WORKDIR /opt/imptime/ui

@@ -1,0 +1,28 @@
+FROM ubuntu:16.04
+
+RUN apt-get update && DEBIAN_FRONTEND=noninteractive apt-get install -y \
+  libjpeg8-dev \
+  libpq-dev \
+  postgresql \
+  python \
+  python2.7-dev \
+  python-pip \
+  wget \
+  vim
+
+
+RUN mkdir -p /opt/imptime/api
+WORKDIR /opt/imptime/
+RUN mkdir -p logs
+
+COPY requirements.txt .
+RUN pip install -r requirements.txt
+
+COPY version.txt /opt/imptime/api/version.txt
+COPY * /opt/imptime/api/
+
+WORKDIR /opt/imptime/api/
+
+COPY docker/start-api.sh start-api.sh
+COPY docker/migrate-api-database.sh migrate-api-database.sh
+COPY docker/start-dev-api.sh start-dev-api.sh
