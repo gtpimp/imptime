@@ -22,7 +22,8 @@ RUN apt-get update && apt-get install -y --force-yes \
   python2.7-dev \
   python-pip \
   libffi-dev \
-  libjpeg8-dev
+  libjpeg8-dev \
+  libxslt1-dev
 
 RUN apt-get clean
 
