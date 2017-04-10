@@ -1,16 +1,30 @@
 FROM ubuntu:16.04
 
-RUN apt-get update && DEBIAN_FRONTEND=noninteractive apt-get install -y \
+
+RUN apt-get update && apt-get install -y --force-yes \
+  build-essential \
+  curl \
+  git \
+  wget \
+  vim \
+  less \
+  emacs \
+  libpq-dev \
+  postgresql \
+  python \
+  python2.7-dev \
+  python-pip \
+  libyaml-dev \
+  libxml2-dev \
   libjpeg8-dev \
   libpq-dev \
   postgresql \
   python \
   python2.7-dev \
   python-pip \
-  wget \
-  vim
-
-
+  libffi-dev \
+  libjpeg8-dev
+  
 RUN mkdir -p /opt/imptime/api
 WORKDIR /opt/imptime/
 RUN mkdir -p logs

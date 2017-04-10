@@ -1,18 +1,29 @@
 FROM ubuntu:16.04
 
-# Install packages for building ruby
-RUN apt-get update && apt-get install -y --force-yes build-essential curl git wget vim
-
-# NOT NEEDED? RUN apt-get install -y --force-yes zlib1g-dev libssl-dev libreadline-dev libyaml-dev libxml2-dev libxslt-dev wget
-RUN apt-get install -y --force-yes \
+RUN apt-get update && apt-get install -y --force-yes \
+  build-essential \
+  curl \
+  git \
+  wget \
+  vim \
+  less \
+  emacs \
   libpq-dev \
   postgresql \
   python \
   python2.7-dev \
-  python-pip
+  python-pip \
+  libyaml-dev \
+  libxml2-dev \
+  libjpeg8-dev \
+  libpq-dev \
+  postgresql \
+  python \
+  python2.7-dev \
+  python-pip \
+  libffi-dev \
+  libjpeg8-dev
 
-RUN apt-get install -y --force-yes libffi-dev
-RUN apt-get install -y --force-yes libjpeg8-dev
 RUN apt-get clean
 
 RUN mkdir -p /opt/imptime/ui
