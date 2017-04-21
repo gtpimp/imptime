@@ -5,7 +5,7 @@ RUN apt-get update && apt-get install -y --force-yes build-essential curl git li
 RUN apt-get install -y --force-yes libffi-dev
 RUN apt-get install -y --force-yes libjpeg8-dev
 RUN apt-get install -y --force-yes autoconf
-RUN apt-get install -y --force-yes vim
+RUN apt-get install -y --force-yes vim emacs
 RUN apt-get clean
 
 # # Build ruby

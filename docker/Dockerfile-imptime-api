@@ -4,11 +4,11 @@ FROM ubuntu:16.04
 RUN apt-get update && apt-get install -y --force-yes \
   build-essential \
   curl \
+  emacs \
   git \
   wget \
   vim \
   less \
-  emacs \
   libpq-dev \
   postgresql \
   python \

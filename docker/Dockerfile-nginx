@@ -3,7 +3,8 @@ FROM ubuntu:16.04
 RUN apt-get update && DEBIAN_FRONTEND=noninteractive apt-get install -y \
   nginx \
   openssl \
-  vim
+  vim \
+  emacs
 
 RUN rm /etc/nginx/sites-enabled/*
 COPY docker/nginx.conf /etc/nginx/sites-available/imptime.conf

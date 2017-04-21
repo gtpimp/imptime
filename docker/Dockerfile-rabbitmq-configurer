@@ -4,10 +4,12 @@ RUN apt-get update && DEBIAN_FRONTEND=noninteractive apt-get install -y \
   libjpeg8-dev \
   libpq-dev \
   postgresql \
+  git \
   python \
   python2.7-dev \
   python-pip \
-  vim
+  vim \
+  emacs
 
 RUN apt-get update && DEBIAN_FRONTEND=noninteractive apt-get install -y wget vim
 
