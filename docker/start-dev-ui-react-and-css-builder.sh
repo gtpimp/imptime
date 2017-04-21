@@ -2,6 +2,6 @@
 
 set -e
 
-cd /opt/imptime/ui/mobile
+cd /opt/imptime/ui/reimp
 npm install
 npm start
