@@ -41,7 +41,6 @@ COPY * /opt/imptime/ui/
 
 COPY docker/start-ui.sh start-ui.sh
 COPY docker/start-dev-ui.sh start-dev-ui.sh
-COPY docker/start-migrate-ui-database.sh start-migrate-ui-database.sh
 COPY docker/start-ui-refresh-listener.sh start-ui-refresh-listener.sh
 COPY docker/start-ui-worker.sh start-ui-worker.sh
 
