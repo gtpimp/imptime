@@ -45,19 +45,19 @@ RUN npm run build
 RUN npm install -g yuglify
 RUN rm /tmp/build/reimp/src/external_config/react_local_settings.js
 
-RUN mkdir -p /opt/imptime/ui
+RUN mkdir -p /opt/imptime/api
 WORKDIR /opt/imptime/
 RUN mkdir -p logs media
 
-COPY requirements.txt /opt/imptime/ui
-WORKDIR /opt/imptime/ui/
+COPY requirements.txt /opt/imptime/api
+WORKDIR /opt/imptime/api/
 RUN pip install -r requirements.txt
 
-WORKDIR /opt/imptime/ui
-COPY * /opt/imptime/ui/
+WORKDIR /opt/imptime/api
+COPY * /opt/imptime/api/
 WORKDIR /opt/imptime/static_collected/
 
-WORKDIR /opt/imptime/ui
+WORKDIR /opt/imptime/api
 RUN python manage.py collectstatic --noinput
 
 COPY docker/deploy-static-assets.sh deploy-static-assets.sh

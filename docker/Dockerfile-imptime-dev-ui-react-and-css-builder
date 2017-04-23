@@ -5,6 +5,6 @@ RUN apt-get update && apt-get install -y --force-yes build-essential curl git wg
 # Intall node
 RUN curl -sL https://deb.nodesource.com/setup_4.x -o nodesource_setup.sh && bash nodesource_setup.sh && DEBIAN_FRONTEND=noninteractive apt-get install -y nodejs
 
-WORKDIR /opt/imptime/ui
+WORKDIR /opt/imptime/api
 COPY docker/start-dev-ui-react-and-css-builder.sh start-dev-ui-react-and-css-builder.sh
 ENTRYPOINT ["./start-dev-ui-react-and-css-builder.sh"]

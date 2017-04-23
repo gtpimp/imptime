@@ -2,6 +2,6 @@
 
 set -e
 
-cd /opt/imptime/ui/reimp
+cd /opt/imptime/api/reimp
 npm install
 npm start
