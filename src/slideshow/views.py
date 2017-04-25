@@ -122,13 +122,18 @@ def calculate_dev_hours_stats(project, user):
     manager_rate = stats['per_role']['manager']['hours_billable_core_rate']
     developer_rate = stats['per_role']['developer']['hours_billable_core_rate']
     tester_rate = stats['per_role']['tester']['hours_billable_core_rate']
+    
+    users_rate = stats['per_user'][user]['rate'].full_rate  #   user stats['per_role']['developer']['hours_billable_core_rate']
 
     if spendable_budget == 0:
        #spendable_budget = 1
        ratio = 0
     else:
        ratio = 100 / float(spendable_budget)
-      
+
+    budget_used = stats['total_stats']['hours_billable_core_rate']
+    budget_available = spendable_budget - budget_used
+       
     # calculate the total time by reworking the formula:
     #  : dev_time*dev_rate + tester_time*tester_rate + manager_time*manager_rate = budget
     # with the substitution:
@@ -136,25 +141,19 @@ def calculate_dev_hours_stats(project, user):
     #
     _tt = project.time_ratio_for_role('tester')*float(stats['per_role']['tester']['average_billable_rate'])
     _mm = project.time_ratio_for_role('manager')*float(stats['per_role']['manager']['average_billable_rate'])
-    _b = spendable_budget
-    _d_rate = float(stats['per_role']['developer']['average_billable_rate'])
+    _b = budget_available
+    _d_rate = float(users_rate)
     _d_ratio = project.time_ratio_for_role('developer')
-
  
     if _d_rate > 0:
-        total_time = _b/_d_rate * (1 / (_tt/_d_rate + _mm/_d_rate + _d_ratio))
+        remaining_time = _b/_d_rate * (1 / (_tt/_d_rate + _mm/_d_rate + _d_ratio))
     else:
-        total_time = 0
+        remaining_time = 0
     
-    total_dev_time = project.time_ratio_for_role('developer') * total_time
-    dev_budget_used = stats['per_role']['developer']['hours_billable_core_rate']
-    dev_hours_used = float(dev_budget_used)/float(stats['per_role']['developer']['average_billable_rate'] or 1)
+    remaining_users_time = project.time_ratio_for_role('developer') * remaining_time
+    dev_hours_used = stats['per_user'][user]['hours_billable']
+    return remaining_users_time, dev_hours_used, ratio, manager_rate, developer_rate, tester_rate
 
-    dev_hours_clocked = float
-    dev_hours_available = total_dev_time - dev_hours_used
-    
-    return dev_hours_available, dev_hours_used, ratio, manager_rate, developer_rate, tester_rate
-    
 
 @login_required
 def ratios(request, template="slideshow/ratios.html", context=None):

@@ -1445,7 +1445,7 @@ class Project(models.Model):
                                      'users_in_role': [],
                                      'projected_billable': 0, 'points_estimated_open_non_adhoc_billable':0,
                                      'projected_estimated_billable':0,
-                                     'adjusted_points_billable':0}
+                                     'adjusted_points_billable':0 }
 
         users = self.business.get_users_allowed_to_estimate_on_business(current_user)
 
