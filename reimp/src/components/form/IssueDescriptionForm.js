@@ -58,4 +58,3 @@ function mapStateToProps(state, props) {
 }
 
 export default connect(mapStateToProps)(reduxForm({form:'issue_description_form'})(IssueDescriptionForm))
-
