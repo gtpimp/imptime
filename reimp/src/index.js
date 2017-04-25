@@ -6,6 +6,9 @@ import ReactDOM from 'react-dom';
 import './sass/imptime.css'
 import configureStore from './store/configureStore'
 import ProjectsPage from './containers/ProjectsPage'
+import ChangePasswordPage from './containers/ChangePasswordPage'
+import ForgotPasswordPage from './containers/ForgotPasswordPage'
+import PasswordReminderSentPage from './containers/PasswordReminderSentPage'
 import ProjectDashboardPage from './containers/ProjectDashboardPage'
 import SprintsPage from './containers/SprintsPage'
 import SprintDashboardPage from './containers/SprintDashboardPage'
@@ -31,6 +34,9 @@ ReactDOM.render(
             <Route component={MainLayout}>
                 <IndexRoute component={ProjectsPage}/>
                 <Route path="/" component={ProjectsPage}/>
+                <Route path="/password/change" component={ChangePasswordPage}/>
+                <Route path="/password/forgot" component={ForgotPasswordPage}/>
+                <Route path="/password/reminded" component={PasswordReminderSentPage}/>
                 <Route path="dev" component={DevPage}/>
                 <Route path="projects" component={ProjectsPage}/>
                 <Route path="projects/:projectId" component={ProjectDashboardPage}/>

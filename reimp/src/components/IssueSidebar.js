@@ -15,7 +15,14 @@ import EditableIssueStatus from '../components/EditableIssueStatus'
 import Timestamp from './Timestamp'
 import moment from 'moment'
 import Sidebar from './Sidebar'
-import {ensureIssuesLoaded, getIssue} from '../actions/Issues'
+import {
+    ensureIssuesLoaded,
+    getIssue,
+    populateEstimates
+} from '../actions/Issues'
+import { ensureUsersLoaded } from '../actions/Users'
+import {format_hours} from '../actions/lib'
+import {getProject} from '../actions/Projects'
 
 class IssueSidebar extends Component {
 
@@ -24,15 +31,34 @@ class IssueSidebar extends Component {
     }
 
     componentDidMount() {
-        const {issue_id, dispatch} = this.props
-        dispatch(ensureIssuesLoaded([issue_id]))
+        this.refresh(this.props)
     }
 
     componentWillReceiveProps(new_props) {
-        const {dispatch} = this.props
-        dispatch(ensureIssuesLoaded([new_props.issue_id]))
+        this.refresh(new_props)
     }
 
+    refresh(props) {
+        const {dispatch, issue_id, assignable_user_ids} = props
+        dispatch(ensureIssuesLoaded([issue_id]))
+        dispatch(ensureUsersLoaded(assignable_user_ids))
+    }
+
+    renderEstimates() {
+        const {issue} = this.props
+        return map(issue.all_estimates, function (estimate, index) {
+            if (estimate.estimate_hours && estimate.estimate_user) {
+                return (
+                    <div key={estimate.estimate_user.id}>
+                        {estimate.estimate_user.username}:{format_hours(estimate.estimate_hours)}
+                    </div>
+                )
+            } else {
+                return null
+            }
+        })
+    }
+    
     render() {
 
         const {issue, comments, attachments} = this.props
@@ -90,6 +116,7 @@ class IssueSidebar extends Component {
                             </PropertyStackComponent>
 
                             <PropertyStackComponent>
+                                { this.renderEstimates() }
                                 <button onClick={this.openEstimateEditor}>Estimates</button>
                             </PropertyStackComponent>
                         </div>
@@ -106,13 +133,18 @@ class IssueSidebar extends Component {
 function mapStateToProps(state, props) {
     const {issue_id, sprint_id, project_id} = props
     const issue = getIssue(state, issue_id) || {}
+    const project = getProject(state, project_id) || {}    
+    const assignable_user_ids = project.allowed_user_ids || []
+    populateEstimates(state, issue)
+    
     return {
         issue: issue || {},
         issue_id: issue_id,
         comments: issue.comments,
         attachments: issue.attachments,
         sprint_id: sprint_id,
-        project_id: project_id
+        project_id: project_id,
+        assignable_user_ids: assignable_user_ids,
     }
 }
 

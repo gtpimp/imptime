@@ -5,6 +5,7 @@ import { ENTITY_KEY__ISSUE } from '../actions/ItemListKeyRegistry'
 import map from 'lodash/map'
 import difference from 'lodash/difference'
 import keyBy from 'lodash/keyBy'
+import { getUser } from '../actions/Users'
 
 export const ANNOUNCE_ISSUES_SAVING = 'ANNOUNCE_ISSUES_SAVING'
 export const ANNOUNCE_ISSUES_SAVED = 'ANNOUNCE_ISSUES_SAVED'
@@ -127,6 +128,12 @@ export function getIssues(state, issue_ids) {
             'loaded': false
         }
     })    
+}
+
+export function populateEstimates(state, issue) {
+    map(issue.all_estimates, function (estimate) {
+        estimate.user = getUser(state, estimate.user_id)
+    })
 }
 
 function announceIssueSaveFailed(error) {

@@ -5,7 +5,9 @@ import {
     DUPLICATE_LOADING_ERROR_MESSAGE,
     DUPLICATE_SAVING_ERROR_MESSAGE
 } from '../actions/lib'
-const ACTIONS_TO_IGNORE = []
+const ACTIONS_TO_IGNORE = [
+    
+]
 
 function error_catcher_middleware(_ref) {
     var dispatch = _ref.dispatch;

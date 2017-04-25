@@ -3,7 +3,7 @@ import {connect} from 'react-redux'
 import {browserHistory} from 'react-router'
 import {getProject} from '../actions/Projects'
 import InviteUserForm from '../components/form/InviteUserForm'
-import Modal from 'react-modal'
+import ModalDialog from '../components/ModalDialog'
 import UserList from './UserList'
 import {
     PAGE_KEY__PROJECT_DASHBOARD_PAGE,
@@ -20,7 +20,8 @@ import {
     clearPageFlag,
     getPageFlag
 } from '../actions/Page'
-import { saveInviteUser } from '../actions/Projects'
+import {saveInviteUser} from '../actions/Projects'
+import '../sass/inviting.css'
 
 class ProjectUsersPage extends Component {
 
@@ -39,97 +40,89 @@ class ProjectUsersPage extends Component {
     }
 
     componentWillReceiveProps(new_props) {
-        const { project_id } = this.props
-        if ( new_props.project_id !== project_id || new_props.project.id !== this.props.project.id ) {
+        const {project_id} = this.props
+        if (new_props.project_id !== project_id || new_props.project.id !== this.props.project.id) {
             this.refresh(new_props.project_id)
         }
     }
-    
+
     refresh(project_id) {
-        const { dispatch } = this.props
-        dispatch(update_list_filter(LIST_KEY__PROJECT_USER_LIST, {'project_id':project_id}))
+        const {dispatch} = this.props
+        dispatch(update_list_filter(LIST_KEY__PROJECT_USER_LIST, {'project_id': project_id}))
     }
 
     onSelectUsers(user_ids) {
-        const { dispatch, project_id } = this.props
+        const {dispatch, project_id} = this.props
         dispatch(selectItems(LIST_KEY__PROJECT_USER_LIST, user_ids))
         dispatch(select_users(PAGE_KEY__PROJECT_DASHBOARD_PAGE, user_ids))
-        if ( user_ids && user_ids.length === 1 ) {
-            browserHistory.push('/projects/'+project_id+'/users/'+user_ids[0]);
+        if (user_ids && user_ids.length === 1) {
+            browserHistory.push('/projects/' + project_id + '/users/' + user_ids[0]);
         }
     }
-    
+
     onStartInviteUser() {
-        const { dispatch } = this.props
+        const {dispatch} = this.props
         dispatch(setPageFlag(PAGE_KEY__PROJECT_DASHBOARD_PAGE, 'inviting_user'))
     }
 
     onCancelInviteUser() {
-        const { dispatch } = this.props
+        const {dispatch} = this.props
         dispatch(clearPageFlag(PAGE_KEY__PROJECT_DASHBOARD_PAGE, 'inviting_user'))
     }
 
     onSaveInviteUser(new_value) {
-        const { dispatch, project_id } = this.props
+        const {dispatch, project_id} = this.props
         dispatch(saveInviteUser(project_id, new_value.invited_user_email))
         dispatch(clearPageFlag(PAGE_KEY__PROJECT_DASHBOARD_PAGE, 'inviting_user'))
     }
 
     renderInviteUser() {
+        const { project_id } = this.props
         const that = this
         return (
-            <Modal isOpen={true}
-                   className="editable-property-modal"
-                   overlayClassName="editable-property-modal__overlay"
-                   onRequestClose={that.onCancelInviteUser}
-                   contentLabel="Invite to this project">
+            <ModalDialog isOpen={true}
+                         onClose={that.onCancelInviteUser}
+                         title="Invite People to Project"
+                         variant="large">
 
                 <div>
-                    <InviteUserForm onChange={that.onSaveInviteUser}/>
-                    <button onClick={that.onCancelInviteUser}>Cancel</button>
+                    <InviteUserForm project_id={project_id} onChange={that.onSaveInviteUser}/>
                 </div>
-            </Modal>
+            </ModalDialog>
         )
     }
 
     getActionRenderFunc() {
-        const { onPermissionsAction } = this.props
+        const {onPermissionsAction} = this.props
         const that = this
         return {
-            render_permissions: (user) => <div key={user.id} onClick={onPermissionsAction}>Permissions</div>
+            render_permissions: (user) => <button className="button" key={user.id} onClick={() => onPermissionsAction(user, event)}>Permissions</button>
         }
     }
-    
+
     render() {
 
-        const { is_inviting_user, invited_user_ids } = this.props
-        
+        const {is_inviting_user, invited_user_ids} = this.props
+
         return (
             <div>
                 { is_inviting_user && this.renderInviteUser() }
 
-                { ! is_inviting_user &&
-                  <div>
-                      
-                      <button onClick={this.onStartInviteUser}>Invite somebody to this project</button>
-                      <br/>
-                  </div>
-                }
-
-                <h2>Users</h2>
+                <h2>Team</h2>
+                <div className="invite-user-button" onClick={this.onStartInviteUser}><i className="material-icons md-18">add_circle_outline</i></div>
                 <UserList list_key={LIST_KEY__PROJECT_USER_LIST}
                           invited_user_ids={invited_user_ids}
                           onSelectUsers={this.onSelectUsers}
                           user_actions={this.getActionRenderFunc()}
                 />
-                
+
             </div>
         )
     }
 }
 
 function mapStateToProps(state, props) {
-    const { project_id } = props
+    const {project_id} = props
     const project = getProject(state, project_id)
     const is_inviting_user = getPageFlag(state, PAGE_KEY__PROJECT_DASHBOARD_PAGE, 'inviting_user')
     return {

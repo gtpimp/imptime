@@ -9,6 +9,7 @@ import {
     updateIssueAssignedTo,
     deleteTag,
     getIssue,
+    populateEstimates,
     clock
 } from '../actions/Issues'
 import {getProject} from '../actions/Projects'
@@ -69,9 +70,8 @@ class Issue extends Component {
     }
 
     refresh() {
-        const {dispatch, assignable_user_ids, estimate_user_ids} = this.props
+        const {dispatch, assignable_user_ids} = this.props
         dispatch(ensureUsersLoaded(assignable_user_ids))
-        dispatch(ensureUsersLoaded(estimate_user_ids))
     }
 
     onChangeAssignedTo(issue_id, new_value) {
@@ -281,9 +281,7 @@ function mapStateToProps(state, props) {
     const project_id = issue.project_id
     const project = getProject(state, project_id) || {}
     const assignable_user_ids = project.allowed_user_ids || []
-    map(issue.all_estimates, function (estimate) {
-        estimate.user = getUser(estimate.user_id)
-    })
+    populateEstimates(state, issue)
 
     // const feature_names = this_project.feature_names || []
     /* const feature_options = feature_names.map(

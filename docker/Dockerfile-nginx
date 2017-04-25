@@ -1,32 +1,26 @@
 FROM ubuntu:16.04
 
 RUN apt-get update && DEBIAN_FRONTEND=noninteractive apt-get install -y \
-  curl \
   nginx \
   openssl \
-  vim
+  vim \
+  emacs
 
 RUN rm /etc/nginx/sites-enabled/*
-COPY docker/nginx/nginx.conf /etc/nginx/nginx.conf
-COPY docker/nginx/sites-available/* /etc/nginx/sites-available/
-WORKDIR /etc/nginx
-RUN for f in sites-available/*.conf; do ln -s "/etc/nginx/sites-available/$(basename $f)" "/etc/nginx/sites-enabled/$(basename $f)"; done
+COPY docker/nginx.conf /etc/nginx/sites-available/imptime.conf
+COPY docker/nginx_localhost.conf /etc/nginx/sites-available/imptime_localhost.conf
+RUN ln -s /etc/nginx/sites-available/imptime.conf /etc/nginx/sites-enabled/imptime.conf
+
+# __token_imptime_dev_conf__
+
+WORKDIR /opt/imptime
+COPY docker/reload-nginx.sh /opt/imptime
 
 RUN mkdir /etc/nginx/ssl
 
 # forward request and error logs to docker log collector
 RUN ln -sf /dev/stdout /var/log/nginx/access.log \
 	&& ln -sf /dev/stderr /var/log/nginx/error.log
-
-RUN openssl req \
-    -x509 \
-    -nodes \
-    -days 365 \
-    -newkey \
-    rsa:2048 \
-    -subj "/CN=*" \
-    -keyout /etc/nginx/ssl/certificate.key \
-    -out /etc/nginx/ssl/certificate.crt
 
 EXPOSE 80 443
 
