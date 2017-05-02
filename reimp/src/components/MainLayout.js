@@ -21,11 +21,7 @@ class MainLayout extends Component {
             //alert("whoops")
         }
 
-        require.ensure(['../external_config/react_local_settings'], function() {
-            let local_settings = require('../external_config/react_local_settings')
-            dispatch(updateSettings(local_settings.local_settings))
-            that.refresh(that.props)
-        })
+        dispatch(updateSettings(window.LOCAL_SETTINGS))
     }
 
     componentWillReceiveProps(new_props) {
