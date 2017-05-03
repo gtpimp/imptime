@@ -20,8 +20,6 @@ class MainLayout extends Component {
         window.onerror = function(msg, url, line, col, error) {
             //alert("whoops")
         }
-
-        dispatch(updateSettings(window.LOCAL_SETTINGS))
     }
 
     componentWillReceiveProps(new_props) {

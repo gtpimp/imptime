@@ -17,11 +17,7 @@ class App extends Component {
         /* window.onerror = function(msg, url, line, col, error) {
 	   //alert("whoops")
          * }*/
-
-        require.ensure(['../external_config/react_local_settings'], function() {
-            let local_settings = require('../external_config/react_local_settings')
-            dispatch(updateSettings(local_settings.local_settings))
-        })
+        dispatch(updateSettings(window.LOCAL_SETTINGS))
     }
 
     render() {
