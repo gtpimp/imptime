@@ -21,9 +21,6 @@ class LoginViewSet(rest_views.ObtainAuthToken):
     
     def post(self, request, *args, **kwargs):
         # cut and pasted from venv/lib/python2.7/site-packages/rest_framework/authtoken/views.py
-
-        import pdb; pdb.set_trace()
-        
         serializer = self.serializer_class(data=request.data)
         serializer.is_valid(raise_exception=True)
         user = serializer.validated_data['user']

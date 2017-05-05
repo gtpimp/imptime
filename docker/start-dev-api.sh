@@ -2,7 +2,7 @@
 
 set -e
 
-cd /opt/imptime/api
+cd /opt/imptime/api/
 python manage.py wait_for_flag db_migrate_complete
 python manage.py wait_for_flag rabbitmq_ready
 
