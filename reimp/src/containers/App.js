@@ -17,7 +17,6 @@ class App extends Component {
         /* window.onerror = function(msg, url, line, col, error) {
 	   //alert("whoops")
          * }*/
-        dispatch(updateSettings(window.LOCAL_SETTINGS))
     }
 
     render() {
