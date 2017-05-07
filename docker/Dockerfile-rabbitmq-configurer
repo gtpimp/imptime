@@ -1,37 +1,4 @@
-FROM ubuntu:16.04
-
-RUN apt-get update && DEBIAN_FRONTEND=noninteractive apt-get install -y \
-  build-essential \
-  curl \
-  emacs \
-  git \
-  wget \
-  vim \
-  less \
-  libpq-dev \
-  postgresql \
-  python \
-  python2.7-dev \
-  python-pip \
-  libyaml-dev \
-  libxml2-dev \
-  libjpeg8-dev \
-  libpq-dev \
-  postgresql \
-  python \
-  python2.7-dev \
-  python-pip \
-  libffi-dev \
-  libjpeg8-dev \
-  libxslt1-dev
-
-RUN apt-get update && DEBIAN_FRONTEND=noninteractive apt-get install -y wget vim
-
-RUN mkdir -p /opt/imptime/api
-WORKDIR /opt/imptime/api
-
-COPY requirements.txt requirements.txt
-RUN pip install -r requirements.txt
+FROM imptime/base:latest
 
 WORKDIR /opt/imptime/
 RUN mkdir -p logs
@@ -47,7 +14,5 @@ RUN apt-get update && apt-get install -y rabbitmq-server
 RUN apt-get install -y curl vim telnet
 
 COPY docker/start-rabbitmq-configurer.sh start-rabbitmq-configurer.sh
-
-RUN apt-get install -y wget
 
 ENTRYPOINT ["./start-rabbitmq-configurer.sh"]

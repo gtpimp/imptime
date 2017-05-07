@@ -1,39 +1,5 @@
-FROM ubuntu:16.04
-
-
-RUN apt-get update && apt-get install -y --force-yes \
-  build-essential \
-  curl \
-  emacs \
-  git \
-  wget \
-  vim \
-  less \
-  libpq-dev \
-  postgresql \
-  python \
-  python2.7-dev \
-  python-pip \
-  libyaml-dev \
-  libxml2-dev \
-  libjpeg8-dev \
-  libpq-dev \
-  postgresql \
-  python \
-  python2.7-dev \
-  python-pip \
-  libffi-dev \
-  libjpeg8-dev \
-  libxslt1-dev
-
+FROM imptime/base:latest
   
-RUN mkdir -p /opt/imptime/api
-WORKDIR /opt/imptime/
-RUN mkdir -p logs
-
-COPY requirements.txt .
-RUN pip install -r requirements.txt
-
 COPY version.txt /opt/imptime/api/version.txt
 COPY * /opt/imptime/api/
 

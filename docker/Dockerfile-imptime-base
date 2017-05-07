@@ -1,0 +1,46 @@
+FROM ubuntu:16.04
+
+RUN apt-get update && apt-get install -y --force-yes \
+  build-essential \
+  autoconf \
+  curl \
+  emacs \
+  nano \
+  git \
+  wget \
+  vim \
+  less \
+  libpq-dev \
+  postgresql \
+  python \
+  python2.7-dev \
+  python-pip \
+  zlib1g-dev \
+  libyaml-dev \
+  libxml2-dev \
+  libjpeg8-dev \
+  libffi-dev \
+  libxslt1-dev \
+  libxslt-dev \
+  libreadline-dev \
+  libssl-dev \
+  
+# Install node
+RUN curl -sL https://deb.nodesource.com/setup_4.x -o nodesource_setup.sh && bash nodesource_setup.sh && DEBIAN_FRONTEND=noninteractive apt-get install -y nodejs
+
+# Build sassc
+WORKDIR /tmp/
+RUN git clone https://github.com/sass/sassc.git --branch 3.4 --depth 1
+RUN git clone https://github.com/sass/libsass.git --branch 3.4 --depth 1
+WORKDIR /tmp/sassc
+RUN export SASS_LIBSASS_PATH="/tmp/libsass" && make
+RUN export SASS_LIBSASS_PATH="/tmp/libsass" && make install
+
+RUN mkdir -p /opt/imptime/api
+WORKDIR /opt/imptime/
+RUN mkdir -p logs
+
+COPY requirements.txt .
+RUN pip install -r requirements.txt
+
+
