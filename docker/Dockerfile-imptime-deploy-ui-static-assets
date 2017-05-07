@@ -1,13 +1,5 @@
 FROM imptime/base:latest
 
-# Build sassc
-WORKDIR /tmp/
-RUN git clone https://github.com/sass/sassc.git --branch 3.4 --depth 1
-RUN git clone https://github.com/sass/libsass.git --branch 3.4 --depth 1
-WORKDIR /tmp/sassc
-RUN export SASS_LIBSASS_PATH="/tmp/libsass" && make
-RUN export SASS_LIBSASS_PATH="/tmp/libsass" && make install
-
 # Build
 # Note: build artefacts (e.g. .sass-cache and node_modules are excluded by the .dockerignore file)
 # Use empty react_local_settings just so the build will work, the correct version gets mounted at runtime
