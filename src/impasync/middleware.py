@@ -2,7 +2,7 @@ from threading import local
 from channels import Group
 import json
 from collections import OrderedDict
-from async.refresh_consumer import REFRESH_GROUP_NAME
+from impasync.refresh_consumer import REFRESH_GROUP_NAME
 import logging
 
 logger = logging.getLogger(__name__)

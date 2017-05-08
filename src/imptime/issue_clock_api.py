@@ -1,6 +1,6 @@
 import logging
 from django.utils import timezone
-from async.refresh_notifier import RefreshNotifier
+from impasync.refresh_notifier import RefreshNotifier
 from rest_framework.decorators import detail_route
 from rest_framework.renderers import JSONRenderer
 from django.contrib.auth.models import User
