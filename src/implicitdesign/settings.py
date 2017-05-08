@@ -285,7 +285,7 @@ INSTALLED_APPS = (
     'invoicing',
     'animated_website',
     'slideshow',
-    'async',
+    'impasync',
 
     'sorl.thumbnail',
     'creole',
@@ -358,7 +358,7 @@ AUTO_LOGIN_EXPIRE_IN_HOURS = 24
 CHANNEL_LAYERS = {
     "default": {
         "BACKEND": "asgiref.inmemory.ChannelLayer",
-        "ROUTING": "async.routing.channel_routing"
+        "ROUTING": "impasync.routing.channel_routing"
         }
 }
 
