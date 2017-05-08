@@ -470,7 +470,7 @@ class BusinessPermissions(BaseModel):
     @classmethod
     def by_user(self, business):
         # to be deprecated
-        return self.by_user(business)
+        return self._by_user(business)
 
     @classmethod
     def ensure_user_belongs_to_business(self, user, business):
