@@ -4,7 +4,7 @@ from dateutil.relativedelta import relativedelta
 import api
 import calendar
 from lib.models import model_to_dict_with_date_support
-from async.refresh_notifier import RefreshNotifier
+from impasync.refresh_notifier import RefreshNotifier
 from caldav_helper import CalDavHelper
 import uuid
 from colorful.fields import RGBColorField
