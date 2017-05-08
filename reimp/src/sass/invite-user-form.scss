@@ -1,0 +1,140 @@
+@import 'variables.scss';
+
+.invite-user-form {
+}
+
+.invite-user-form__form {
+}
+
+.invite-user-form__filter {
+  padding-bottom: 16px;
+  padding-left: 16px;
+  padding-right: 16px;
+  padding-top: 0;
+}
+
+.invite-user-form__list-wrapper {
+  $height: 336px;
+  border-top: 1px solid $color-12;
+  height: $height;
+  max-height: $height;
+  min-height: $height;
+  overflow-y: auto;
+}
+
+.invite-user-form__list {
+  background-color: $color-8;
+}
+
+.invite-user-form__list-item {
+  align-items: center;
+  background-color: $color-8;
+  display: flex;
+  justify-content: space-between;
+  padding-bottom: 14px;
+  padding-left: 32px;
+  padding-right: 32px;
+  padding-top: 14px;
+}
+
+.invite-user-form__list-item--selected {
+  background-color: $color-22;
+}
+
+.invite-user-form__list-item--unselected {
+  background-color: $color-8;
+}
+
+.invite-user-form__identity {
+
+}
+
+.invite-user-form__name {
+  color: $color-1;
+  font: $font-8;
+  margin-bottom: 4px;
+}
+
+.invite-user-form__email {
+  color: $color-23;
+  font: $font-12;
+}
+
+.invite-user-form__toggle {
+
+}
+
+.invite-user-form__toggle--selected {
+  color: $color-24;
+}
+
+.invite-user-form__toggle--unselected {
+  color: $color-25;
+  opacity: 0.37;
+}
+
+.invite-user-form__new-contact {
+  border-top: 1px solid $color-12;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding-bottom: 16px;
+  padding-left: 32px;
+  padding-right: 32px;
+  padding-top: 16px;
+
+  /* this needs DRYing */
+  > input {
+    background-color: $color-2;
+    border-left: 0;
+    border-right: 0;
+    border-top: 0;
+    border-bottom: 1px solid $color-14;
+    color: $color-1;
+    box-sizing: border-box;
+    font: $font-9;
+    height: 40px;
+    line-height: 24px;
+    //margin-bottom: 40px;
+    outline: none;
+    //padding-left: 0;
+    //padding-right: 0;
+    //padding-top: 8px;
+    //padding-bottom: 14px;
+    width: 100%;
+  }
+
+  > input:-webkit-autofill {
+    -webkit-box-shadow: 0 0 0px 1000px white inset;
+  }
+  /* end needs DRYing */
+
+}
+
+.invite-user-form__new-contact-hint {
+  color: $color-1;
+  font: $font-8;
+  margin-bottom: 16px;
+  text-align: center;
+}
+
+.invite-user-form__footer {
+  border-top: 1px solid $color-12;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding-bottom: 16px;
+  padding-top: 16px;
+}
+
+.button--invite {
+  align-self: center;
+  background-color: $color-19;
+  color: $color-2;
+}
+
+.button--close-invite {
+  align-self: center;
+  background-color: $color-18;
+  color: $color-2;
+}

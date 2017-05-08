@@ -2,7 +2,7 @@
 
 .single-value-selector__input {
   background-color: $color-4;
-  border: 1px solid $color-5;
+  border: 1px solid $color-4;
   border-radius: 3px;
   color: $color-1;
   box-sizing: border-box;
@@ -12,6 +12,10 @@
   outline: none;
   padding: 8px;
   width: 100%;
+
+  &:focus {
+    border: 1px solid $color-5;
+  }
 }
 
 .single-value-selector__suggestions {

@@ -1,0 +1,13 @@
+FROM imptime/base:latest
+  
+COPY version.txt /opt/imptime/api/version.txt
+COPY * /opt/imptime/api/
+
+WORKDIR /opt/imptime/api/
+
+COPY docker/start-api.sh start-api.sh
+COPY docker/migrate-api-database.sh migrate-api-database.sh
+COPY docker/start-dev-api.sh start-dev-api.sh
+COPY docker/start-ui-refresh-listener.sh start-ui-refresh-listener.sh
+COPY docker/start-ui-worker.sh start-ui-worker.sh
+

@@ -31,34 +31,39 @@ class ProjectUserPage extends Component {
     componentDidMount() {
         const {dispatch, project_id, user_id} = this.props
         // dispatch(set_toolbars(PAGE_KEY__PROJECT_USER_PAGE, ['project-user']))
-        this.refresh(project_id, user_id)
+        this.refresh(project_id, user_id, null, null)
     }
 
     componentWillReceiveProps(new_props) {
         const { project_id, user_id, dispatch } = this.props
         if ( new_props.project_id !== project_id || new_props.project.id !== this.props.project.id ||
              new_props.user_id !== user_id || new_props.user.id != this.props.user.id) {
-            this.refresh(new_props.project_id, new_props.user_id)
+            this.refresh(new_props.project_id, new_props.user_id, new_props.project, new_props.user)
         }
     }
     
-    refresh(project_id, user_id) {
+    refresh(project_id, user_id, project, user) {
         const { dispatch } = this.props
         const breadcrumbs = []
+        project = project || {}
+        user = user || {}
         if ( project_id ) {
             dispatch(ensureProjectsLoaded([project_id]))
-            const project = getProject(project_id) || {}
-            breadcrumbs.push({to: '/projects', label: 'All Projects'})
-            breadcrumbs.push({to: '/projects/'+project_id, label: project.name})
             dispatch(select_projects(PAGE_KEY__PROJECT_USER_PAGE, [project_id]))
+            breadcrumbs.push({to: '/projects', label: 'All Projects'})
+            if ( project_id === project.id ) {
+                breadcrumbs.push({to: '/projects/'+project_id, label: project.name})
+            }
             if ( user_id ) {
                 dispatch(ensureUsersLoaded([user_id]))
-                const user = getUser(user_id) || {}
                 breadcrumbs.push({to: '/projects/'+project_id+'/users', label: 'All Users'})
-                breadcrumbs.push({to: '/projects/'+project_id+'/users/'+user_id, label: user.username})
+                if ( user_id === user.id ) {
+                    breadcrumbs.push({to: '/projects/'+project_id+'/users/'+user_id, label: user.username})
+                }
                 dispatch(select_users(PAGE_KEY__PROJECT_USER_PAGE, [project_id]))
             }
         }
+        dispatch(setBreadcrumbs(breadcrumbs))
     }
 
     navigateToSprintsPage() {
@@ -66,16 +71,16 @@ class ProjectUserPage extends Component {
         browserHistory.push('/projects/'+project_id+'/sprints');
     }
 
-    navigateToProjectUserPermissions(event) {
-        const { user_id, project_id } = this.props
+    navigateToProjectUserPermissions(user, event) {
+        const { project_id } = this.props
         event.stopPropagation()
         event.preventDefault()
-        browserHistory.push('/projects/'+project_id+'/users/'+user_id+'?permissions=1')
+        browserHistory.push('/projects/'+project_id+'/users/'+user.id+'/?permissions=1')
     }
 
     closeProjectUserPermissions() {
         const { user_id, project_id } = this.props
-        browserHistory.push('/projects/'+project_id+'/users/'+user_id+'?permissions=0')
+        browserHistory.push('/projects/'+project_id+'/users/'+user_id+'/?permissions=0')
     }
 
     renderUserPermissions() {
@@ -99,8 +104,6 @@ class ProjectUserPage extends Component {
 
                 { ! show_permissions &&
                   <div>
-                      Users for project: {project.name}
-                      <br/>
                       <div className="project-user__project_users">
                           <ProjectUsers
                               project_id={project.id}
@@ -127,7 +130,8 @@ function mapStateToProps(state, props) {
         project: project || {},
         user_id: user_id,
         user: user || {},
-        show_permissions: opts.permissions === '1'
+        show_permissions: opts.permissions === '1',
+        username: (user || {}).username
     }
 }
 

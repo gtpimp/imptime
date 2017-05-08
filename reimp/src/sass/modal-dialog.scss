@@ -3,15 +3,23 @@
 .modal-dialog {
   background-color: $color-2;
   border-radius: 2px;
-  box-shadow: 0 6px 12px 0 rgba(0, 0, 0, 0.5);
-  padding: 16px;
-  width: 288px;
-
+  box-shadow: 0 4px 12px 0 rgba(0,0,0,0.3);
+  box-sizing: border-box;
   position: absolute;
   top: 25%;
   left: 40%;
   outline: none;
   overflow: auto;
+}
+
+.modal-dialog--default {
+
+  width: 288px;
+}
+
+.modal-dialog--large {
+
+  width: 400px;
 }
 
 .modal-dialog__overlay {
@@ -20,22 +28,37 @@
   left: 0;
   right: 0;
   bottom: 0;
-  //background-color: rgba(255, 255, 255, 0.75);
 }
 
 .modal-dialog__content {
-  margin-top: 13px;
+  //margin-top: 13px;
 }
 
-.modal-dialog__row {
+.modal-dialog__header {
+  box-sizing: border-box;
   display: flex;
   justify-content: space-between;
   width: 100%;
 }
 
+.modal-dialog__header--default {
+  padding: 16px;
+}
+
+.modal-dialog__header--large {
+  padding: 24px;
+}
+
 .modal-dialog__title {
   color: $color-1;
+}
+
+.modal-dialog__title--default {
   font: $font-4;
+}
+
+.modal-dialog__title--large {
+  font: $font-5;
 }
 
 .modal-dialog__close {

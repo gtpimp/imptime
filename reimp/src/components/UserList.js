@@ -144,7 +144,7 @@ class UserList extends Component {
 
             user_rows.push(
                 <User key={list_key + user.id + index}
-                      onClickedUser={() => that.onClickedUser(user.id)}
+                      // onClickedUser={() => that.onClickedUser(user.id)}
                       is_loading={loading_item_ids.indexOf(user.id) !== -1}
                       is_selected={selected_ids.indexOf(user.id) !== -1}
                       user_id={user.id}

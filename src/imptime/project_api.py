@@ -14,6 +14,7 @@ from rest_framework.decorators import permission_classes
 from timepiece.models import Business as Project
 from timepiece.models import BusinessPermissions as ProjectPermissions
 from timepiece.models import BusinessInvite as ProjectInvite
+from timepiece.models import UserAutoLoginToken
 
 
 logger = logging.getLogger(__name__)
@@ -115,7 +116,7 @@ class ProjectViewSet(BaseViewSet):
             invited_user, created_user = User.objects.get_or_create(email=invited_user_email,
                                                                     defaults={'username':invited_user_email})
 
-            if self.logged_in_permissions(business).has_invite_users:
+            if self.logged_in_permissions(project).has_invite_users:
                 ProjectPermissions.ensure_user_belongs_to_business(user=invited_user,
                                                                     business=project) #sic
 
@@ -162,13 +163,13 @@ class ProjectViewSet(BaseViewSet):
 
             """
 
+        auto_login_token = UserAutoLoginToken.get_auto_login_token(invite_user)
+            
         content = content.format(PROJECT_NAME=project.name,
-                                 PROJECT_LINK=settings.WEB_URL_BASE + "projects/%d" % project.id)
+                                 PROJECT_LINK=settings.WEB_URL_BASE + "projects/%d" % project.id + "?autologin="+auto_login_token)
 
         queue_email(subject_content="ImpTime: Join project %s" % project.name,
                     from_address=settings.FROM_EMAIL,
                     text_content=content,
                     html_content=content.replace("\n","<br/>"),
                     to_addresses=[invite_user.email])
-
-        

@@ -5,10 +5,10 @@ import '../sass/breadcrumb.css'
 class Breadcrumb extends Component {
 
     render() {
-        const {breadcrumb, is_last } = this.props
+        const {label, to, is_last } = this.props
         return (
             <div className="breadcrumb">
-                <Link to={breadcrumb.to}>{breadcrumb.label}</Link>
+                <Link to={to}>{label}</Link>
                 { !is_last &&
                 <div className="breadcrumb__separator"><i className="material-icons">chevron_right</i></div>
                 }
@@ -18,7 +18,11 @@ class Breadcrumb extends Component {
 }
 
 function mapStateToProps(state, props) {
-    return {}
+    const { breadcrumb } = props
+    return {
+        label: breadcrumb.label,
+        to: breadcrumb.to
+    }
 }
 
 

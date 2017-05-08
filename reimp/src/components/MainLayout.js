@@ -1,53 +1,72 @@
 import React, {Component} from 'react'
 import {connect} from 'react-redux'
+import {browserHistory} from 'react-router'
 import Header from '../components/Header'
 import ModalDialog from '../components/ModalDialog'
 import Websocket from '../components/Websocket'
 import LoginPage from '../containers/LoginPage'
 import { DragDropContext } from 'react-dnd';
-import { logged_in_user, is_authenticated } from '../actions/Auth'
-import { updateSettings } from '../actions/Settings'
+import { logged_in_user, is_authenticated, auto_login } from '../actions/Auth'
+import { updateSettings, isConfigured } from '../actions/Settings'
 import { ensureUsersLoaded } from '../actions/Users'
 var HTML5Backend = require('react-dnd-html5-backend');
 
 class MainLayout extends Component {
 
     componentDidMount() {
-        const { dispatch, logged_in_user_id } = this.props
+        const { dispatch } = this.props
+        const that = this
 
-        window.onerror = function(msg, url, line, col, error) {
-            //alert("whoops")
-        }
+        /* window.onerror = function(msg, url, line, col, error) {
+         *     alert("whoops")
+         * }*/
 
-        require.ensure(['../external_config/react_local_settings'], function() {
-            let local_settings = require('../external_config/react_local_settings')
-            dispatch(updateSettings(local_settings.local_settings))
-
-            if ( logged_in_user_id ) {
-                dispatch(ensureUsersLoaded([logged_in_user_id]))
-            }
-        })
+        dispatch(updateSettings(window.LOCAL_SETTINGS))
     }
 
     componentWillReceiveProps(new_props) {
-        const { dispatch } = this.props
         if ( new_props.logged_in_user_id && new_props.logged_in_user_id !== this.props.logged_in_user_id ) {
-            dispatch(ensureUsersLoaded([new_props.logged_in_user_id]))
+            this.refresh(new_props)
+        }
+    }
+
+    refresh(props) {
+        const { dispatch, location, logged_in_user_id, settings, has_usable_password } = props
+        dispatch(ensureUsersLoaded([logged_in_user_id]))
+        
+        if ( logged_in_user_id ) {
+            dispatch(ensureUsersLoaded([logged_in_user_id]))
+            if ( has_usable_password === "false" ) {
+                browserHistory.push('/password/change')
+            }
+        } else {
+            if ( settings.configured && location.query.autologin !== undefined ) {
+                auto_login(dispatch, settings, location.query.autologin)
+                    .then( () => {
+                        const user = logged_in_user()
+                        if ( user.has_usable_password === "false" ) {
+                            browserHistory.push('/password/change')
+                        }
+                    })
+            }
         }
     }
 
     render() {
         const { has_error, error_message, is_logged_in, are_settings_loaded } = this.props
 
+        const allow_non_auth = this.props.location.pathname.indexOf('password/forgot') != -1 ||
+                               this.props.location.pathname.indexOf('password/reminded') != -1
+        
         if ( ! are_settings_loaded ) {
             return (
                 <div>Loading settings...</div>
             )
         }
 
-        if ( ! is_logged_in ) {
+        if ( ! is_logged_in && ! allow_non_auth  ) {
             return (
-                <div className="app">
+                <div className="app app--login">
                     <LoginPage />
                 </div>
             )
@@ -70,8 +89,10 @@ class MainLayout extends Component {
 }
 
 function mapStateToProps(state) {
-    const { configured } = state.settings
-    const logged_in_user_id = logged_in_user()['user_id'] || null
+    const { configured } = isConfigured(state)
+    const user = logged_in_user()
+    const logged_in_user_id = user['user_id'] || null
+    const has_usable_password = user['has_usable_password'] || false
     const notification_bar = state.notification_bar || {}
     const error_message = notification_bar.error_message
     
@@ -80,7 +101,9 @@ function mapStateToProps(state) {
         error_message: error_message,
         is_logged_in: is_authenticated(),
         are_settings_loaded: configured,
-        logged_in_user_id: logged_in_user_id
+        logged_in_user_id: logged_in_user_id,
+        has_usable_password: has_usable_password,
+        settings: state.settings
     }
 }
 

@@ -198,9 +198,9 @@ TEMPLATES = [
 # )
 
 MIDDLEWARE = [
+    'corsheaders.middleware.CorsMiddleware',
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
-    'corsheaders.middleware.CorsMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
@@ -351,6 +351,9 @@ INVOICE_DETAILS={'name':'ImplicitDesign',
 #LOGOUT_URL=
 LOGIN_REDIRECT_URL = "/"
 
+# The number of hours before auto-login tokens expire
+AUTO_LOGIN_EXPIRE_IN_HOURS = 24
+
 # Websockets
 CHANNEL_LAYERS = {
     "default": {
@@ -435,8 +438,8 @@ WEEKLY_HOURS_MAIL_RECIPIENT = ""
 # DON'T PUT ANY MORE SETTINGS AFTER THIS POINT, OTHERWISE local_settings.py CAN'T OVERRIDE THEM
 #
 #
-if os.path.exists(os.path.join(PROJECT_HOME, "external_config","django_local_settings.py")):
-    from external_config.django_local_settings import *
+if os.path.exists(os.path.join(PROJECT_HOME, "external_config","api_local_settings.py")):
+    from external_config.api_local_settings import *
 
 if os.path.exists(os.path.join(PROJECT_HOME,"version_number.py")):
     from version_number import *

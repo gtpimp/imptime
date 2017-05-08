@@ -21,7 +21,6 @@ class EstimateEditor extends Component {
             const parts = estimate_hours.split(":")
             estimate_hours = parseFloat(parts[0]) + parseFloat(parts[1])/60
         }
-        
         dispatch(addEstimate(selected_ids, estimate_hours, closeEstimateEditor))
     }
 
