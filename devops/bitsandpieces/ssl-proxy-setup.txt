@@ -1,0 +1,172 @@
+sudo apt-get install nginx
+sudo add-apt-repository ppa:certbot/certbot && sudo apt-get update && sudo apt-get install certbot -y
+sudo certbot certonly --standalone -d api.careerimptime.com -d candidates.careerimptime.com -d clients.careerimptime.com
+
+copy maintenance_website/* /opt/imptime_maintenance
+
+IP for application server currently has to be set manually to switch box
+
+maintenance_on.sh:
+#!/bin/bash
+
+rm /etc/nginx/sites-enabled/imptime.conf
+ln -s /etc/nginx/sites-available/imptime_maintenance.conf /etc/nginx/sites-enabled/imptime_maintenance.conf
+
+nginx -s reload
+
+maintenance_off.sh:
+#!/bin/bash
+
+rm /etc/nginx/sites-enabled/imptime_maintenance.conf
+ln -s /etc/nginx/sites-available/imptime.conf /etc/nginx/sites-enabled/imptime.conf
+
+nginx -s reload
+
+
+
+/etc/nginx/sites-available/imptime.conf: (also link to sites-available)
+
+upstream application_server {
+    server 172.30.2.242;
+}
+
+server {
+    listen 80;
+    server_name localhost;
+
+    access_log /var/log/nginx/imptime-access.80.log;
+    error_log /var/log/nginx/imptime-error.80.log;
+
+    return 301 https://$host$request_uri;
+}
+
+server {
+    listen 80;
+    server_name careerimptime.com;
+
+    access_log /var/log/nginx/bundlebrat-access.80.log;
+    error_log /var/log/nginx/bundlebrat-error.80.log;
+
+    return 301 https://www.$host$request_uri;
+}
+
+server {
+     listen 443;
+     server_name clients.*;
+
+     client_max_body_size 4G;
+
+     access_log /var/log/nginx/imptime-access.client.log;
+     error_log /var/log/nginx/imptime-error.client.log;
+
+     location / {
+     proxy_pass         http://application_server;
+     proxy_redirect     off;
+     proxy_set_header   Host $host;
+     proxy_http_version 1.1;
+     proxy_set_header   Upgrade $http_upgrade;
+     proxy_set_header   Connection "upgrade";
+     proxy_set_header   X-Real-IP $remote_addr;
+     proxy_set_header   X-Forwarded-For $proxy_add_x_forwarded_for;
+     proxy_set_header   X-Forwarded-Host $server_name;
+}
+
+     ssl on;
+     ssl_certificate /etc/letsencrypt/live/api.careerimptime.com/fullchain.pem;
+     ssl_certificate_key /etc/letsencrypt/live/api.careerimptime.com/privkey.pem;
+     ssl_session_timeout 5m;
+     ssl_protocols TLSv1.2;
+     ssl_ciphers "EECDH+AESGCM:EDH+AESGCM:AES256+EECDH:AES256+EDH";
+     ssl_prefer_server_ciphers on;
+}
+
+server {
+
+      listen 443;
+      server_name candidates.*;
+
+      client_max_body_size 4G;
+
+      access_log /var/log/nginx/imptime-access.candidate.log;
+      error_log /var/log/nginx/imptime-error.candidate.log;
+
+         location / {
+      proxy_pass         http://application_server;
+      proxy_redirect     off;
+      proxy_set_header   Host $host;
+      proxy_http_version 1.1;
+      proxy_set_header   Upgrade $http_upgrade;
+      proxy_set_header   Connection "upgrade";
+      proxy_set_header   X-Real-IP $remote_addr;
+      proxy_set_header   X-Forwarded-For $proxy_add_x_forwarded_for;
+      proxy_set_header   X-Forwarded-Host $server_name;
+ }
+
+      ssl on;
+      ssl_certificate /etc/letsencrypt/live/api.careerimptime.com/fullchain.pem;
+      ssl_certificate_key /etc/letsencrypt/live/api.careerimptime.com/privkey.pem;
+      ssl_session_timeout 5m;
+      ssl_protocols TLSv1.2;
+      ssl_ciphers "EECDH+AESGCM:EDH+AESGCM:AES256+EECDH:AES256+EDH";
+      ssl_prefer_server_ciphers on;
+ }
+
+server {
+
+     listen 443;
+     server_name api.*;
+
+     client_max_body_size 4G;
+
+     access_log /var/log/nginx/imptime-access.api.log;
+     error_log /var/log/nginx/imptime-error.api.log;
+
+location / {
+     proxy_pass         http://application_server;
+     proxy_redirect     off;
+     proxy_set_header   Host $host;
+     proxy_http_version 1.1;
+     proxy_set_header   Upgrade $http_upgrade;
+     proxy_set_header   Connection "upgrade";
+     proxy_set_header   X-Real-IP $remote_addr;
+     proxy_set_header   X-Forwarded-For $proxy_add_x_forwarded_for;
+     proxy_set_header   X-Forwarded-Host $server_name;
+}
+     ssl on;
+     ssl_certificate /etc/letsencrypt/live/api.careerimptime.com/fullchain.pem;
+     ssl_certificate_key /etc/letsencrypt/live/api.careerimptime.com/privkey.pem;
+     ssl_session_timeout 5m;
+     ssl_protocols TLSv1.2;
+     ssl_ciphers "EECDH+AESGCM:EDH+AESGCM:AES256+EECDH:AES256+EDH";
+     ssl_prefer_server_ciphers on;
+}
+
+
+
+/etc/nginx/sites-available/imptime_maintenance.conf
+--------------
+server {
+
+     listen 443;
+     server_name maintenance.*;
+
+     root /opt/imptime_maintenance/www;
+
+     client_max_body_size 4G;
+
+     access_log /var/log/nginx/imptime-maintenance-access.443.log;
+     error_log /var/log/nginx/imptime-maintenance-error.443.log;
+
+     location / {
+        #try_files $uri /index.html;
+        try_files $uri $uri/ /index.html =404;
+     }
+
+     ssl on;
+     ssl_certificate /etc/letsencrypt/live/maintenance.careerimptime.com/fullchain.pem;
+     ssl_certificate_key /etc/letsencrypt/live/maintenance.careerimptime.com/privkey.pem;
+     ssl_session_timeout 5m;
+     ssl_protocols TLSv1.2;
+     ssl_ciphers "EECDH+AESGCM:EDH+AESGCM:AES256+EECDH:AES256+EDH";
+     ssl_prefer_server_ciphers on;
+}
