@@ -127,7 +127,10 @@ def calculate_dev_hours_stats(project, user):
     developer_rate = stats['per_role']['developer']['average_billable_rate']
     tester_rate = stats['per_role']['tester']['average_billable_rate']
 
-    this_users_rate = stats['per_user'][user]['rate'].full_rate
+    try:
+        this_users_rate = stats['per_user'][user]['rate'].full_rate
+    except KeyError:
+        this_users_rate = 0
 
     manager_ratio = project.time_ratio_for_role('manager')
     developer_ratio = project.time_ratio_for_role('developer')
