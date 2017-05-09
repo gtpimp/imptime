@@ -2,6 +2,7 @@
 
 {% load timepiece_tags %}
 {% load bootstrap_toolkit %}
+{% load static %}
 {% block content %}
 
 
@@ -9,7 +10,7 @@
   {% include "slideshow/_ratios.html" %}
 </div>
 <div class="col-md-4">
-  <img src="{{ STATIC_URL }}/images/implicitDesignLogoTransparent.png"/>
+  <img src="{% static 'images/implicitDesignLogoTransparent.png' %}"/>
 </div>
 
 {% endblock %}
