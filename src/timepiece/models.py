@@ -630,6 +630,10 @@ class BusinessPermissions(BaseModel):
         return self.user.is_superuser or self.can_edit_feature or self.user.has_perm('timepiece.belongs_to_all_projects')
 
     @property
+    def has_edit_issue_feature(self):
+        return self.has_edit_feature
+    
+    @property
     def has_edit_tags(self):
         return self.user.is_superuser or self.can_edit_tags or self.user.has_perm('timepiece.belongs_to_all_projects')
 
