@@ -1,5 +1,6 @@
 {% load humanize %}
 {% load currency %}
+{% load static %}
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
@@ -109,7 +110,7 @@
     <table>
 	<tr>
 	    <td width="60%">
-		<img width="200px" src="{{STATIC_URL}}images/implicitDesignLogo.jpg"/><br/>
+		<img width="200px" src="{% static 'images/implicitDesignLogo.jpg' %}"/><br/>
 	    </td>
 	    <td>
 		<h2>
