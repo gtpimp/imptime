@@ -3,14 +3,27 @@
 cd "`dirname \"$0\"`/.."
 BASE_DIR=$(pwd)
 
+# This is used to keep the stack numbers unique, enter a sequence number
 STACK_NUMBER=$1
+if [ -z ${STACK_NUMBER} ]; then
+    echo "You must give a unique stack number as first parameter"
+    exit 1
+fi
+
+PROD_ZIP_FILENAME=$2
+if [ -z ${PROD_ZIP_FILENAME} ]; then
+    PROD_ZIP_FILENAME="imptime_prod_`date +%d%B%Y_%H%M%S`.zip"
+    echo "Auto setting zip file to: ${PROD_ZIP_FILENAME}"
+    echo "To change this, pass as the second parameter"
+fi
+
 AWS_PROFILE_NAME=imptime_rhoberman
-AWS_REGION=eu-west-1
+AWS_REGION=eu-west-2
 IAM_INSTANCE_PROFILE_NAME=production-server
 IMAGE_ID=ami-405f7226
 INSTANCE_TYPE=t2.medium
-IMPTIME_CONF_ZIP_URL_PARAMETER=https://s3-eu-west-1.amazonaws.com/imptime-production-conf/external_config.zip
-IMPTIME_RELEASE_ZIP_URL_PARAMETER=https://s3-eu-west-1.amazonaws.com/imptime-releases/imptime_prod_09May2017_112359.zip
+IMPTIME_CONF_ZIP_URL_PARAMETER=https://s3-eu-west-2.amazonaws.com/imptime.prod.conf/external_config.zip
+IMPTIME_RELEASE_ZIP_URL_PARAMETER=https://s3-eu-west-2.amazonaws.com/imptime.releases/${PROD_ZIP_FILENAME}
 KEY_NAME=imptime-production-devops
 NAME="ImpTime (Production - $STACK_NUMBER)"
 PUBLIC_SUBNET_PARAMETER=subnet-3fc12676
