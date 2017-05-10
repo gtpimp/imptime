@@ -1,7 +1,8 @@
 #!/usr/bin/env bash
 
-cd "`dirname \"$0\"`/.."
-BASE_DIR=$(pwd)
+BASE_DIR=$1
+# cd "`dirname \"$0\"`/.."
+# BASE_DIR=$(pwd)
 DIST_DIR=$BASE_DIR/secret/dist
 ZIP=$DIST_DIR/external_config.zip
 
