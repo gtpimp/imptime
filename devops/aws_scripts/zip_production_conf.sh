@@ -1,12 +1,12 @@
 #!/usr/bin/env bash
 
-BASE_DIR=$1
+SECRET_DIR=$1
 # cd "`dirname \"$0\"`/.."
-# BASE_DIR=$(pwd)
-DIST_DIR=$BASE_DIR/secret/dist
+# SECRET_DIR=$(pwd)
+DIST_DIR=$SECRET_DIR/dist
 ZIP=$DIST_DIR/external_config.zip
 
 mkdir -p $DIST_DIR
 rm $ZIP
-cd $BASE_DIR/secret/
+cd $SECRET_DIR/
 zip -r $ZIP external_config/*
