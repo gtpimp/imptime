@@ -9,4 +9,3 @@ mkdir -p $DIST_DIR
 rm $ZIP
 cd $BASE_DIR/secret/
 zip -r $ZIP external_config/*
-

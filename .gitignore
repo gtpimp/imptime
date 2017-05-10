@@ -46,3 +46,5 @@ src/imptime/static/js/imptime.js
 external_config
 src/django-colorful
 src/unicodecsv
+devops/secret
+

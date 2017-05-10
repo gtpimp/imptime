@@ -17,22 +17,24 @@ if [ -z ${PROD_ZIP_FILENAME} ]; then
     echo "To change this, pass as the second parameter"
 fi
 
-AWS_PROFILE_NAME=imptime_rhoberman
+# Must match a name in your credentials
+AWS_PROFILE_NAME=imptime_devops_prod
+
 AWS_REGION=eu-west-2
-IAM_INSTANCE_PROFILE_NAME=production-server
-IMAGE_ID=ami-405f7226
+IAM_INSTANCE_PROFILE_NAME=production_server
+IMAGE_ID=ami-f1d7c395
 INSTANCE_TYPE=t2.medium
-IMPTIME_CONF_ZIP_URL_PARAMETER=https://s3-eu-west-2.amazonaws.com/imptime.prod.conf/external_config.zip
-IMPTIME_RELEASE_ZIP_URL_PARAMETER=https://s3-eu-west-2.amazonaws.com/imptime.releases/${PROD_ZIP_FILENAME}
-KEY_NAME=imptime-production-devops
+IMPTIME_CONF_ZIP_URL_PARAMETER=https://s3-${AWS_REGION}.amazonaws.com/imptime.prod.conf/external_config.zip
+IMPTIME_RELEASE_ZIP_URL_PARAMETER=https://s3-${AWS_REGION}.amazonaws.com/imptime.releases/${PROD_ZIP_FILENAME}
+KEY_NAME=imptime_production_devops
 NAME="ImpTime (Production - $STACK_NUMBER)"
-PUBLIC_SUBNET_PARAMETER=subnet-3fc12676
-SECURITY_GROUP_PARAMETER=sg-fbaf7f82
+PUBLIC_SUBNET_PARAMETER=subnet-41aa920b
+SECURITY_GROUP_PARAMETER=sg-6238ab0b
 STACK_NAME=Production$STACK_NUMBER
 
 if [ -z ${STACK_NUMBER} ]
 then
-    echo "Usage: create_imptime_application-server.sh <stack number>"
+    echo "Usage: create_imptime_application_server.sh <stack number>"
     exit 1;
 fi
 
