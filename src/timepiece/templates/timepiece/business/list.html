@@ -26,10 +26,6 @@
 
     <div class="row-fluid">
         <div class="span12">
-            {% load pagination_tags %}
-            {% autopaginate businesses %}
-
-            {% paginate %}
             <table class='table table-bordered table-striped table-condensed'>
                 <thead>
                     <tr>
@@ -46,7 +42,6 @@
                     {% endfor %}
                 </tbody>
             </table>
-            {% paginate %}
         </div>
     </div>
 {% endblock %}

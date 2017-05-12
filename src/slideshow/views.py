@@ -169,7 +169,11 @@ def calculate_dev_hours_stats(project, user):
     #     remaining_time = 0
     
     remaining_users_time = developer_ratio * remaining_time
-    dev_hours_used = stats['per_user'][user]['hours_billable']
+    try:
+        dev_hours_used = stats['per_user'][user]['hours_billable']
+    except KeyError:
+        dev_hours_used = 0
+    
     return remaining_users_time, dev_hours_used, ratio, manager_rate, developer_rate, tester_rate
 
 @login_required
