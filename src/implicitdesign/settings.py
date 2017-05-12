@@ -198,15 +198,15 @@ TEMPLATES = [
 # )
 
 MIDDLEWARE = [
+    'corsheaders.middleware.CorsMiddleware',
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
-    'corsheaders.middleware.CorsMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
-    'async.middleware.MergeAsyncNotificationsMiddleware',
+    'impasync.middleware.MergeAsyncNotificationsMiddleware',
 ]
 
 # MIDDLEWARE = (
@@ -285,7 +285,7 @@ INSTALLED_APPS = (
     'invoicing',
     'animated_website',
     'slideshow',
-    'async',
+    'impasync',
 
     'sorl.thumbnail',
     'creole',
@@ -358,7 +358,7 @@ AUTO_LOGIN_EXPIRE_IN_HOURS = 24
 CHANNEL_LAYERS = {
     "default": {
         "BACKEND": "asgiref.inmemory.ChannelLayer",
-        "ROUTING": "async.routing.channel_routing"
+        "ROUTING": "impasync.routing.channel_routing"
         }
 }
 
@@ -438,8 +438,8 @@ WEEKLY_HOURS_MAIL_RECIPIENT = ""
 # DON'T PUT ANY MORE SETTINGS AFTER THIS POINT, OTHERWISE local_settings.py CAN'T OVERRIDE THEM
 #
 #
-if os.path.exists(os.path.join(PROJECT_HOME, "external_config","django_local_settings.py")):
-    from external_config.django_local_settings import *
+if os.path.exists(os.path.join(PROJECT_HOME, "external_config","api_local_settings.py")):
+    from external_config.api_local_settings import *
 
 if os.path.exists(os.path.join(PROJECT_HOME,"version_number.py")):
     from version_number import *

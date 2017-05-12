@@ -1,36 +1,4 @@
-FROM ubuntu:16.04
-
-# Install packages for building ruby
-RUN apt-get update && apt-get install -y --force-yes build-essential curl git libpq-dev python python2.7-dev python-pip zlib1g-dev libssl-dev libreadline-dev libyaml-dev libxml2-dev libxslt-dev wget
-RUN apt-get install -y --force-yes libffi-dev
-RUN apt-get install -y --force-yes libjpeg8-dev
-RUN apt-get install -y --force-yes autoconf
-RUN apt-get install -y --force-yes vim emacs
-RUN apt-get clean
-
-# # Build ruby
-# RUN wget http://ftp.ruby-lang.org/pub/ruby/2.3/ruby-2.3.1.tar.gz
-# RUN tar -xzvf ruby-2.3.1.tar.gz
-# WORKDIR ruby-2.3.1/
-# RUN ./configure
-# RUN make
-# RUN make install
-# RUN ruby -v
-
-# # Install gems
-# RUN echo 'gem: --no-rdoc --no-ri' >> /.gemrc
-# RUN gem install sass
-
-# Install node
-RUN curl -sL https://deb.nodesource.com/setup_4.x -o nodesource_setup.sh && bash nodesource_setup.sh && DEBIAN_FRONTEND=noninteractive apt-get install -y nodejs
-
-# Build sassc
-WORKDIR /tmp/
-RUN git clone https://github.com/sass/sassc.git --branch 3.4 --depth 1
-RUN git clone https://github.com/sass/libsass.git --branch 3.4 --depth 1
-WORKDIR /tmp/sassc
-RUN export SASS_LIBSASS_PATH="/tmp/libsass" && make
-RUN export SASS_LIBSASS_PATH="/tmp/libsass" && make install
+FROM imptime/base:latest
 
 # Build
 # Note: build artefacts (e.g. .sass-cache and node_modules are excluded by the .dockerignore file)
@@ -48,10 +16,6 @@ RUN rm /tmp/build/reimp/src/external_config/react_local_settings.js
 RUN mkdir -p /opt/imptime/api
 WORKDIR /opt/imptime/
 RUN mkdir -p logs media
-
-COPY requirements.txt /opt/imptime/api
-WORKDIR /opt/imptime/api/
-RUN pip install -r requirements.txt
 
 WORKDIR /opt/imptime/api
 COPY * /opt/imptime/api/

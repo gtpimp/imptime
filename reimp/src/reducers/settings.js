@@ -3,8 +3,8 @@ import { UPDATE_SETTINGS } from '../actions/Settings'
 
 const initialState = {
     configured: false,
-    WEBSOCKET_BASE_URL: "wss://localhost:443/refresh",
-    API_BASE_URL:"http://localhost:8000/" 
+    WEBSOCKET_BASE_URL: "wss://not/configured",
+    API_BASE_URL:"http://not/configured/" 
 }
 
 export default function settings(state = initialState, action) {

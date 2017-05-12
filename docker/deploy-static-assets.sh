@@ -12,12 +12,12 @@ echo "Using hashed static_collected path: $STATIC_ASSETS_PATH"
 # django generated urls, which have a unique identifier in the path.
 mkdir -p $STATIC_ASSETS_PATH
 cp -R /tmp/build/reimp/build/static/* $STATIC_ASSETS_PATH
-cp -R /opt/imptime/static_collected/* $STATIC_ASSETS_PATH
+cp -R /opt/imptime/static/* $STATIC_ASSETS_PATH
 
 # Also copy the static content to the root folder. This is for the
 # react generated files, which have a unique identifier in the filename.
 cp -R /tmp/build/reimp/build/static/* /opt/imptime/global/static_collected/
-cp -R /opt/imptime/static_collected/* /opt/imptime/global/static_collected/
+cp -R /opt/imptime/static/* /opt/imptime/global/static_collected/
 
 # Copy the index.html and other basic files to the public folder, to
 # keep them separate from the static code (nginx is configured to

@@ -4,7 +4,7 @@ from dateutil.relativedelta import relativedelta
 import api
 import calendar
 from lib.models import model_to_dict_with_date_support
-from async.refresh_notifier import RefreshNotifier
+from impasync.refresh_notifier import RefreshNotifier
 from caldav_helper import CalDavHelper
 import uuid
 from colorful.fields import RGBColorField
@@ -470,7 +470,7 @@ class BusinessPermissions(BaseModel):
     @classmethod
     def by_user(self, business):
         # to be deprecated
-        return self.by_user(business)
+        return self._by_user(business)
 
     @classmethod
     def ensure_user_belongs_to_business(self, user, business):
@@ -629,6 +629,10 @@ class BusinessPermissions(BaseModel):
     def has_edit_feature(self):
         return self.user.is_superuser or self.can_edit_feature or self.user.has_perm('timepiece.belongs_to_all_projects')
 
+    @property
+    def has_edit_issue_feature(self):
+        return self.has_edit_feature
+    
     @property
     def has_edit_tags(self):
         return self.user.is_superuser or self.can_edit_tags or self.user.has_perm('timepiece.belongs_to_all_projects')
@@ -1445,7 +1449,7 @@ class Project(models.Model):
                                      'users_in_role': [],
                                      'projected_billable': 0, 'points_estimated_open_non_adhoc_billable':0,
                                      'projected_estimated_billable':0,
-                                     'adjusted_points_billable':0}
+                                     'adjusted_points_billable':0 }
 
         users = self.business.get_users_allowed_to_estimate_on_business(current_user)
 

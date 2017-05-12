@@ -4,7 +4,7 @@ from lib.date_helper import convert_datetime_to_iso_string
 import logging
 logger = logging.getLogger(__name__)
 
-from async.middleware import add_notification
+from impasync.middleware import add_notification
 
 class RefreshNotifier(object):
 

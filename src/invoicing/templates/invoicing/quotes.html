@@ -1,5 +1,6 @@
 {% extends "invoicing/base.html" %}
 
+{% load static %}
 {% load currency %}
 {% load bootstrap_toolkit %}
 {% load add_class %}
@@ -75,11 +76,11 @@
       <td>{{quote.project.long_name}}</td>
       <td>
         {% if quote.status == 'accepted' %}
-        <img width="15px" src="{{STATIC_URL}}images/icons/tick.png"/>
+        <img width="15px" src="{% static 'images/icons/tick.png' %}"/>
         {% elif quote.status == 'sent to client' %}
-        <img width="15px" src="{{STATIC_URL}}images/icons/application_go.png"/>
+        <img width="15px" src="{% static 'images/icons/application_go.png' %}"/>
         {% elif quote.status == 'rejected' %}
-        <img width="15px" src="{{STATIC_URL}}images/icons/cross.png"/>
+        <img width="15px" src="{% static 'images/icons/cross.png' %}"/>
         {% endif %}
         {{quote.status}}
       </td>

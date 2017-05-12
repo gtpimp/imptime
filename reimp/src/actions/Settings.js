@@ -7,3 +7,7 @@ export function updateSettings(new_settings) {
         new_settings: new_settings
     }
 }
+
+export function isConfigured(state) {
+    return state.settings
+}
