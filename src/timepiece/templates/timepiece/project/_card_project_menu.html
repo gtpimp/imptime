@@ -105,7 +105,7 @@
 {% end_permission %}
 {% endcomment %}
 
-{% if perms.timepiece.view_project_cards %}
+{% has_permission has_view_ctc_billable_rates project.business %}
 <li class='menu_item'>
   <a onclick="imp.projects.show_project_card_as_popup(event,'{% url 'get_project_card_for_business'  business_id=project.business.id project_id=project.id %}');return false" href='#' target_id=".issue_detail" project_card_url="{% url 'get_project_card_for_business'  business_id=business.id project_id=project.id  %}" business_id="{{ business.id }}" project_id="{{ project.id }}" title="Project card">
     Project card
