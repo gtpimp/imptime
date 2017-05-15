@@ -1,0 +1,36 @@
+{% load timepiece_tags %}
+{% load humanize %}
+{% load static %}
+
+{% has_permission has_view_ctc_billable_rates project.business %}
+
+<div class="accordion">
+    <h1 class="accordion_heading accordion-toggle">Invoices</h1>
+    <div class="accordion_content" style="display:none">
+        <table>
+            <tbody>
+                {% for invoice in invoices %}
+                <tr class="clickable" onclick="window.open('{% url 'invoicing:edit_invoice' invoice.id %}'); return false;">
+                    <td>{{invoice.status}}</td>
+                    <td>
+                        {% if invoice.is_overdue %}
+                        <div class="error"><h3>Overdue by {{invoice.days_till_due}} days</h3></div>
+                        {% else %}
+                        <div class="info">Due in {{invoice.days_till_due}} days</div>
+                        {% endif %}
+                    </td>
+                    <td>
+                        <td class="money_cell money_billable" style="text-align:right">{{invoice.currency_symbol}}{{invoice.cost|intcomma}}</td>
+                    </td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td>No invoices{{msg}}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+
+{% end_permission %}

@@ -1,0 +1,160 @@
+{% load timepiece_tags %}
+{% load humanize %}
+{% load static %}
+
+<div class="accordion">
+    <h1 class="accordion_heading accordion-toggle">Actuals</h1>
+    <div class="accordion_content" style="display:none">
+        <table>
+            <thead>
+                <th>Assigned user</th>
+                <th colspan="4">Hours</th>
+
+                <th>% complete</th>
+
+                {% has_permission has_view_ctc_rates project.business %}
+                <th colspan="2" class="money_cell money_ctc">ctc</th>
+                {% end_permission %}
+                {% has_permission has_view_ctc_billable_rates project.business %}
+                <th colspan="3" class="money_cell money_billable">billable</th>
+                {% end_permission %}
+            </thead>
+            <tbody>
+                <tr class="table_info_row">
+                    <td></td>
+
+                    <td>All</td>
+                    <td>Real issues</td>
+                    <td>Closed real issues</td>
+                    <td>Adhoc</td>
+
+                    <td>(using closed issues)</td>
+
+                    <td class="money_cell money_ctc">Rate</td>
+                    <td class="money_cell money_ctc">Amount</td>
+                    <td class="money_cell money_billable">Rate</td>
+                    <td class="money_cell money_billable">Amount</td>
+                    <td class="money_cell money_billable">(of which adhoc is)</td>
+                </tr>
+
+                {% for user, values in project.new_stats.per_user.items %}
+                <tr>
+	            <td>{{ user.username }} ({{ values.rate.time_tracking_mode|slice:"0:1" }})</td>
+
+	            <td>{{ values.hours|default:"" }}</td>
+                    <td>{{ values.hours_real|default:""|intcomma }}</td>
+                    <td>{{ values.hours_closed_real|default:""|intcomma }}</td>
+                    <td>{{ values.hours_adhoc|default:""|intcomma }}</td>
+
+                    <td>{% if values.percentage_points_complete %}{{ values.percentage_points_complete|default:""|floatformat:"0"|intcomma}}%{% endif %}</td>
+
+                    {% has_permission has_view_ctc_rates project.business %}
+                    <td class="money_cell money_ctc">{% if values.rate.amount and values.hours_ctc %}R{{ values.rate.amount|default:""|floatformat:"0"|intcomma }}{% endif %}</td>
+	            <td class="money_cell money_ctc">{% if values.hours_ctc %}R{{ values.hours_ctc|default:""|floatformat:"0"|intcomma }}{% endif %}</td>
+                    {% end_permission %}
+                    <td class="money_cell money_billable">{% if values.rate.billable_amount and values.hours_billable %}R{{ values.rate.billable_amount|default:""|floatformat:"0"|intcomma }}{% endif %}</td>
+	            <td class="money_cell money_billable">
+                        {% if values.hours_billable %}
+                        R{{ values.hours_billable|default:""|floatformat:"0"|intcomma }}
+                        {% if values.rate.time_tracking_mode != "developer" %}
+                        ({{ values.rate.time_tracking_mode|slice:"0:1" }})
+                        {% endif %}
+                        {% endif %}
+                        
+                    </td>
+
+                </tr>
+                {% endfor %}
+                <tr>
+                    <th>Total</th>
+                    
+                    <th>{{ project.new_stats.total.hours }}</th>
+                    <th>{{ project.new_stats.total.hours_real_issues }}</th>
+                    <th>{{ project.new_stats.total.hours_closed_real_issues }}</th>
+                    <th>{{ project.new_stats.total.hours_adhoc }}</th>
+
+                    <th>{{ project.new_stats.total.percentage_points_complete|default:""|floatformat:"0"|intcomma }}%</th>
+
+                    {% has_permission has_view_ctc_rates project.business %}
+                    <th class="money_cell money_ctc"></th>
+                    <th class="money_cell money_ctc">{% if project.new_stats.total.hours_ctc %}R{{ project.new_stats.total.hours_ctc|default:""|floatformat:"0"|intcomma }}{% endif %}</th>
+                    {% end_permission %}
+                    <th class="money_cell money_billable"></th>
+                    <th class="money_cell money_billable">{% if project.new_stats.total.hours_billable %}R{{ project.new_stats.total.hours_billable|default:""|floatformat:"0"|intcomma }}{% endif %}</th>
+                    <td class="money_cell money_billable" style="text-align:right">{% if project.new_stats.total.hours_adhoc_billable %}R{{ project.new_stats.total.hours_adhoc_billable|default:""|floatformat:"0"|intcomma }}{% endif %}</td>
+
+                </tr>
+                
+            </tbody>
+        </table>
+
+        <table>
+            <thead>
+                <tr>
+                    <th></th>
+                    <th>Hours</th>
+                    <th>% of total hours</th>
+
+                    {% has_permission has_view_ctc_billable_rates project.business %}
+                    <th class="money_cell money_billable">billable</th>
+                    <th>% of total cost</th>
+                    {% end_permission %}
+                </tr>
+                <tr>
+                    <td>Development</td>
+                    <td>{{project.new_stats.per_role.developer.hours}}</td>
+                    <td>{{project.new_stats.per_role.developer.percentage_of_total_hours|default:""|floatformat:"0"|intcomma}}%</td>
+                    {% has_permission has_view_ctc_billable_rates project.business %}
+                    <td class="money_cell money_billable">
+                        {% if project.new_stats.per_role.developer.hours_billable%}
+                        R{{project.new_stats.per_role.developer.hours_billable|default:""|floatformat:"0"|intcomma}}
+                        {% endif %}
+                    </td>
+                    <td class="money_cell money_billable">
+                        {% if project.new_stats.per_role.developer.percentage_of_total_hours_billable %}
+                        {{project.new_stats.per_role.developer.percentage_of_total_hours_billable|default:""|floatformat:"0"|intcomma}}%
+                        {% endif %}
+                    </td>
+                    {% end_permission %}
+                </tr>
+                <tr>
+                    <td>Management</td>
+                    <td>{{project.new_stats.per_role.manager.hours}}</td>
+                    <td>{{project.new_stats.per_role.manager.percentage_of_total_hours|default:""|floatformat:"0"|intcomma}}%</td>
+
+                    {% has_permission has_view_ctc_billable_rates project.business %}
+                    <td class="money_cell money_billable">
+                        {% if project.new_stats.per_role.manager.hours_billable%}
+                        R{{project.new_stats.per_role.manager.hours_billable|default:""|floatformat:"0"|intcomma}}
+                        {% endif %}
+                    </td>
+                    <td class="money_cell money_billable">
+                        {% if project.new_stats.per_role.manager.percentage_of_total_hours_billable %}
+                        {{project.new_stats.per_role.manager.percentage_of_total_hours_billable|default:""|floatformat:"0"|intcomma}}%
+                        {% endif %}
+                    </td>
+                    {% end_permission %}
+                </tr>
+                <tr>
+                    <td>QA & Testing</td>
+                    <td>{{project.new_stats.per_role.tester.hours}}</td>
+                    <td>{{project.new_stats.per_role.tester.percentage_of_total_hours|default:""|floatformat:"0"|intcomma}}%</td>
+
+                    {% has_permission has_view_ctc_billable_rates project.business %}
+                    <td class="money_cell money_billable">
+                        {% if project.new_stats.per_role.tester.hours_billable%}
+                        R{{project.new_stats.per_role.tester.hours_billable|default:""|floatformat:"0"|intcomma}}
+                        {% endif %}
+                    </td>
+                    <td class="money_cell money_billable">
+                        {% if project.new_stats.per_role.tester.percentage_of_total_hours_billable %}
+                        {{project.new_stats.per_role.tester.percentage_of_total_hours_billable|default:""|floatformat:"0"|intcomma}}%
+                        {% endif %}
+                    </td>
+                    {% end_permission %}
+                </tr>
+
+            </tbody>
+        </table>
+    </div>
+</div>

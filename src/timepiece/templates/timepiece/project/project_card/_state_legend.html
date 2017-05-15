@@ -1,0 +1,31 @@
+{% load timepiece_tags %}
+{% load humanize %}
+{% load static %}
+
+<div class="accordion">
+    <h1 class="accordion_heading accordion-toggle">State legend</h1>
+    <div class="accordion_content" style="display:none">
+        <table>
+            <thead>
+                <th>User</th>
+                <th>Role</th>
+            </thead>
+            <tbody>
+                {% for user, values in project.new_stats.per_user.items %}
+                <tr>
+                    <td>{{ user.username }}</td>
+                    <td>{{ values.rate.time_tracking_mode }}</td>
+                </tr>
+                <tr class="table_info_row">
+                    <td colspan="99" style="text-align: left">
+                        Open states are:{% for s in values.open_status_options %}
+                        {{ s }}, 
+                        {% endfor %}
+                        <br/><br/>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>

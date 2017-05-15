@@ -1,0 +1,30 @@
+{% load timepiece_tags %}
+{% load humanize %}
+{% load static %}
+
+{% has_permission has_view_deadlines project.business %}
+<div class="accordion">
+    <h1 class="accordion_heading accordion-toggle">Deadlines</h1>
+    <div class="accordion_content" style="display:none">
+        <table>
+            <tr>
+	        <td>Start Dev</td>
+	        <td>{{project.start_dev_at|date:'D d-M-Y'|default:"not set"}}</td>
+            </tr>
+            <tr>
+	        <td>Start Internal QA</td>
+	        <td>{{project.start_internal_qa_at|date:'D d-M-Y'|default:"not set"}}</td>
+            </tr>
+            <tr>
+	        <td>Start Client QA</td>
+	        <td>{{project.start_client_qa_at|date:'D d-M-Y'|default:"not set"}}</td>
+            </tr>
+            <tr>
+	        <td>Invoice at</td>
+	        <td>{{project.invoice_at|date:'D d-M-Y'|default:"not set"}}</td>
+            </tr>
+        </table>
+    </div>
+</div>
+{% end_permission %}
+

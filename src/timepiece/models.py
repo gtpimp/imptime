@@ -570,6 +570,7 @@ class BusinessPermissions(BaseModel):
     @property
     def has_edit_ctc_billable_rates(self):
         return self.user.is_superuser or self.can_edit_ctc_billable_rates or self.user.has_perm('timepiece.belongs_to_all_projects')
+    
     @property
     def has_view_ctc_billable_rates(self):
         """ means the section containing costs like billable or ctc. 

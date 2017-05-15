@@ -1,0 +1,70 @@
+{% load timepiece_tags %}
+{% load humanize %}
+{% load static %}
+
+{% has_permission has_view_project_card project.business %}
+<div class="accordion">
+    <h1 class="accordion_heading accordion-toggle">
+        Comparative estimates 
+        <span class="tip">(as if each person works on every issue at their own estimates)</span>
+    </h1>
+    <div class="accordion_content" style="display:none">
+        <table>
+            <thead>
+                <th>User</th>
+                <th>Hours</th>
+                <th>Velocity</th>
+                <th>Hours</th>
+
+                {% has_permission has_view_ctc_rates project.business %}
+                <th colspan="2" class="money_cell money_ctc">ctc</th>
+                {% end_permission %}
+                <th colspan="2" class="money_cell money_billable">billable</th>
+            </thead>
+            <tbody>
+                <tr class="table_info_row">
+                    <td></td>
+                    <td>Real Issues</td>
+                    
+                    <td>Estimated</td>
+
+                    <td>Adjusted</td>
+
+                    <td class="money_cell money_ctc">Rate</td>
+                    <td class="money_cell money_ctc">Amount</td>
+
+                    <td class="money_cell money_billable">Rate</td>
+                    <td class="money_cell money_billable">Amount</td>
+                </tr>
+                {% for user, values in project.new_stats.per_user.items %}
+                <tr>
+	            <td>{{ user.username }} ({{ values.rate.time_tracking_mode|slice:"0:1" }})</td>
+
+                    <td>{{ values.points_comparative_non_adhoc|default:""|intcomma }}</td>
+
+	            <td>{% if values.rate.velocity and values.points_comparative_non_adhoc %}{{ values.rate.velocity|default:""|floatformat:"2"|intcomma }}{% endif %}</td>
+
+                    <td>{{ values.adjusted_points_comparative_non_adhoc|default:""|floatformat:"2"|intcomma }}</td>
+
+                    {% has_permission has_view_ctc_rates project.business %}
+                    <td class="money_cell money_ctc">{% if values.rate.amount and values.adjusted_points_comparative_ctc %}R{{ values.rate.amount|default:""|floatformat:"0"|intcomma }}{% endif %}</td>
+                    <td class="money_cell money_ctc">{% if values.adjusted_points_comparative_ctc %}R{{ values.adjusted_points_comparative_ctc|default:""|floatformat:"0"|intcomma}}{% endif %}</td>
+                    {% end_permission %}
+                    {% has_permission has_view_ctc_billable_rates project.business %}
+                    <td class="money_cell money_billable">{% if values.rate.billable_amount and values.adjusted_points_comparative_billable %}R{{ values.rate.billable_amount|default:""|floatformat:"0"|intcomma }}{% endif %}</td>
+                    <td class="money_cell money_billable">
+                        {% if values.adjusted_points_comparative_billable %}
+                        R{{ values.adjusted_points_comparative_billable|default:""|floatformat:"0"|intcomma}}
+                        {% if values.rate.time_tracking_mode != "developer" %}
+                        ({{ values.rate.time_tracking_mode|slice:"0:1" }})
+                        {% endif %}
+                        {% endif %}
+                    </td>
+                    {% end_permission %}
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% end_permission %}

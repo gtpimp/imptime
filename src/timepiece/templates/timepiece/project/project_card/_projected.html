@@ -1,0 +1,136 @@
+{% load timepiece_tags %}
+{% load humanize %}
+{% load static %}
+
+
+<div class="accordion">
+    <h1 class="accordion_heading accordion-toggle">
+        Projected
+        <span class="tip">(uses the hours ratio for completed issues to estimate the overall project cost)</span>
+    </h1>
+    <div class="accordion_content" style="display:none">
+        <table>
+            <thead>
+                <th>Assigned user</th>
+                <th colspan="3">Closed real issues</th>
+
+                <th colspan="2">Open real issues</th>
+
+                {% has_permission has_view_ctc_rates project.business %}
+                <th colspan="2" class="money_cell money_ctc">ctc</th>
+                {% end_permission %}
+                {% has_permission has_view_ctc_billable_rates project.business %}
+                <th colspan="2" class="money_cell money_billable">billable</th>
+                {% end_permission %}
+                <th colspan="3" class="money_cell money_billable">Projected costs</th>
+            </thead>
+            <tbody>
+                <tr class="table_info_row">
+                    <td></td>
+
+                    <td>Hours</td>
+                    <td>Hours</td>
+                    <td>Actual velocity</td>
+
+                    <td>Hours</td>
+                    <td>Velocity adjusted points</td>
+
+                    <td class="money_cell money_ctc">Rate</td>
+                    <td class="money_cell money_ctc">Remaining</td>
+                    <td class="money_cell money_billable">Rate</td>
+                    <td class="money_cell money_billable">Remaining</td>
+
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                </tr>
+
+                {% for user, values in project.new_stats.per_user.items %}
+                <tr>
+	            <td>{{ user.username }} ({{ values.rate.time_tracking_mode|slice:"0:1" }})</td>
+
+	            <td>{{ values.points_closed_non_adhoc|default:""|intcomma }}</td>
+                    <td>{{ values.hours_closed_real|default:""|intcomma }}</td>
+                    <td>{% if values.calculated_velocity and values.points_calculated_open_non_adhoc %}{{ values.calculated_velocity|default:""|floatformat:"2"|intcomma }}{% endif %}</td>
+
+                    <td>{{ values.points_open_non_adhoc|default:""|intcomma }}</td>
+                    <td>{% if values.points_calculated_open_non_adhoc %}{{ values.points_calculated_open_non_adhoc|floatformat:"2"|default:""|intcomma }}{% endif %}</td>
+
+                    {% has_permission has_view_ctc_rates project.business %}
+                    <td class="money_cell money_ctc">{% if values.rate.amount and values.points_calculated_open_non_adhoc_ctc %}R{{ values.rate.amount|default:""|floatformat:"0"|intcomma }}{% endif %}</td>
+	            <td class="money_cell money_ctc">{% if values.points_calculated_open_non_adhoc_ctc %}R{{ values.points_calculated_open_non_adhoc_ctc|default:""|floatformat:"0"|intcomma }}{% endif %}</td>
+                    {% end_permission %}
+                    {% has_permission has_view_ctc_billable_rates project.business %}
+                    <td class="money_cell money_billable">{% if values.rate.billable_amount and values.points_calculated_open_non_adhoc_billable %}R{{ values.rate.billable_amount|default:""|floatformat:"0"|intcomma }}{% endif %}</td>
+                    <td class="money_cell money_billable">{% if values.points_calculated_open_non_adhoc_billable %}R{{ values.points_calculated_open_non_adhoc_billable|default:""|floatformat:"0"|intcomma }}{% endif %}</td>
+                    {% end_permission %}
+
+                    <td></td>
+                    <td></td>
+
+                </tr>
+                {% endfor %}
+                <tr>
+                    <th>Total</th>
+                    
+                    <th></th>
+                    <th></th>
+                    <th></th>
+                    <th></th>
+                    <th></th>
+                    <th class="money_cell money_ctc"></th>
+                    <th class="money_cell money_ctc">
+                        {% has_permission has_view_ctc_billable_rates project.business %}
+                        {% if project.new_stats.total.points_calculated_open_non_adhoc_ctc %}R {{project.new_stats.total.points_calculated_open_non_adhoc_ctc|default:""|floatformat:"0"|intcomma }}{% endif %}
+                        {% end_permission %}
+                    </th>
+
+                    <th class="money_cell money_billable"></th>
+                    <th class="money_cell money_billable">
+                        {% has_permission has_view_ctc_billable_rates project.business %}
+                        {% if project.new_stats.total.points_calculated_open_non_adhoc_billable %}R {{project.new_stats.total.points_calculated_open_non_adhoc_billable|default:""|floatformat:"0"|intcomma }}{% endif %}
+                        {% end_permission %}
+                    </th>
+                    
+                    <th>
+                        {% has_permission has_view_ctc_billable_rates project.business %}
+                        {% if project.new_stats.total.hours_billable %}R{{ project.new_stats.total.hours_billable|default:""|floatformat:"0"|intcomma }}{% endif %}
+                        {% end_permission %}
+                    </th>
+                    <th>
+                        {% has_permission has_view_ctc_billable_rates project.business %}
+                        {% if project.new_stats.total.projected_total_billable %}R{{ project.new_stats.total.projected_total_billable|default:""|floatformat:"0"|intcomma }}{% endif %}
+                        {% end_permission %}
+                    </th>
+                    <th>
+                        {% has_permission has_view_ctc_billable_rates project.business %}
+                        {% if project.new_stats.total.projected_estimated_total_billable %}
+                        R{{ project.new_stats.total.projected_estimated_total_billable|default:""|floatformat:"0"|intcomma }}
+                        {% endif %}
+                        {% end_permission %}
+                    </th>
+                    
+                </tr>
+
+                <tr>
+                    <td></td>
+                    
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td class="money_cell money_ctc"></td>
+                    <td class="money_cell money_ctc"></td>
+                    <td class="money_cell money_billable"></td>
+                    <td class="money_cell money_billable"></td>
+                    <td>issues remaining</td>
+                    <td>actual</td>
+                    <td>Projected total (actual velocity)</td>
+                    <td>Projected total (estimated velocity)</td>
+                </tr>
+                
+            </tbody>
+        </table>
+    </div>
+</div>

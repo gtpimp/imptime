@@ -128,8 +128,8 @@ class EditPersonForm(auth_forms.UserChangeForm):
 class EditPersonPermission(forms.ModelForm):
     class Meta:
         model = timepiece.BusinessPermissions
-        exclude = ( 'user', 'business' )
-
+        exclude = ( 'user', 'business', 'created', 'modified' )
+ 
     def __init__(self, *args, **kwargs):
         super(EditPersonPermission, self).__init__(*args, **kwargs)
 
@@ -1193,7 +1193,7 @@ def lookup_project(name, projects):
 issue_status_formset = modelformset_factory(timepiece.Issue, form=IssueStatusForm,extra=0 ,can_delete=True, exclude=[])
 expense_formset = modelformset_factory(timepiece.Expense, can_delete=True, extra=2, exclude=[])
 permissions_formset = modelformset_factory(timepiece.BusinessPermissions, form=EditPersonPermission,extra=0, exclude=['user', 'business'] )
-
+ 
 class ExpenseForm(forms.Form):
     date = forms.DateField(required=True)
     amount = forms.FloatField(required=True)

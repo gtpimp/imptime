@@ -1,0 +1,20 @@
+{% load timepiece_tags %}
+{% load humanize %}
+{% load static %}
+
+<div style="clear:left;" class="traffic_bar">
+    <div style="width:{{project.stats.percent_dev_done|floatformat:"0"}}%;" class="{{project.stats.percent_dev_done_traffic_class}}">
+        {{project.stats.percent_dev_done|floatformat:"0"}}%&nbsp;hours&nbsp;dev_done
+    </div>
+</div>
+<div style="clear:left;" class="traffic_bar">
+    <div style="width:{{project.stats.percent_tested|floatformat:"0"}}%;" class="{{project.stats.percent_tested_traffic_class}}">
+        {{project.stats.percent_tested|floatformat:"0"}}%&nbsp;hours&nbsp;tested
+    </div>
+</div>
+
+<br/>
+<hr/>
+
+
+

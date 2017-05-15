@@ -1,0 +1,65 @@
+{% load timepiece_tags %}
+{% load humanize %}
+{% load static %}
+
+{% has_permission has_view_ctc_billable_rates project.business %}
+<div class="accordion">
+    <h1 class="accordion_heading accordion-toggle">Features</h1>
+    <div class="accordion_content" style="display:none">
+        <table>
+            <thead>
+                <th></th>
+                {% has_permission has_view_ctc_rates project.business %}
+                <th class="money_cell money_ctc">ctc</th>
+                {% end_permission %}
+                {% has_permission has_view_ctc_billable_rates project.business %}
+                <th class="money_cell money_billable">billable</th>
+                {% end_permission %}
+            </thead>
+            <tbody>
+                {% for data in project.costs_by_feature.values %} 
+                <tr>
+                    <th>{{data.name}}</th>
+                    {% has_permission has_view_ctc_rates project.business %}
+                    <td class="money_cell money_ctc">R{{data.ctc|floatformat:"0"|intcomma}}</td>
+                    {% end_permission %}
+                    {% has_permission has_view_ctc_billable_rates project.business %}
+                    <td class="money_cell money_billable">R{{data.billable|floatformat:"0"|intcomma}}</td>
+                    {% end_permission %}
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<script>
+ $.plot(".{{project.id}}_graph_ctc_by_feature",
+        [ {%spaceless%} 
+            {% for data in project.costs_by_feature.values %} 
+            { label:"{{data.name}}", 
+              data: {{data.ctc}}
+            },
+          {% endfor %} 
+            {%endspaceless%}
+        ],
+        { series: { pie: { show: true } },
+          legend: { show: false} } );
+ 
+ $.plot(".{{project.id}}_graph_billable_by_feature",
+        [ {%spaceless%} 
+            {% for data in project.costs_by_feature.values %} 
+            { label:"{{data.name}}", 
+              data: {{data.billable}}
+            },
+          {% endfor %} 
+            {%endspaceless%}
+        ],
+        { series: { pie: { show: true } },
+          legend: { show: false} } );
+
+</script>
+
+
+{% end_permission %}
+

@@ -1,0 +1,114 @@
+{% load timepiece_tags %}
+{% load humanize %}
+{% load static %}
+
+{% has_permission has_view_ctc_billable_rates project.business %}
+
+<div class="toggle_graphs_section">
+    <div class="graph">
+        <h1>hours by user</h1>
+        <div class="{{project.id}}_graph_hours_by_user" style="height:300px;width:300px;"></div>
+        <div style="clear:both"></div>
+        <hr/>
+    </div>
+    <div style="clear:both"></div>
+
+    
+    {% has_permission has_view_ctc_rates project.business %}
+    <div class="graph money_cell money_ctc"">
+        <h1>ctc per user</h1>
+        <div class="{{project.id}}_graph_ctc_by_user" style="height:300px;width:300px;"></div>
+        <div style="clear:both"></div>
+        <hr/>
+    </div>
+    <div style="clear:both"></div>
+    {% end_permission %}
+    <div class="graph money_cell money_billable">
+        <h1>billable per user</h1>
+        <div class="{{project.id}}_graph_billable_by_user" style="height:300px;width:300px;"></div>
+        <div style="clear:both"></div>
+        <hr/>
+    </div>
+    {% has_permission has_view_ctc_rates project.business %}
+    <div class="graph">
+        <h1>profit per user</h1>
+        <div class="{{project.id}}_graph_profit_by_user" style="height:300px;width:300px;"></div>
+        <div style="clear:both"></div>
+        <hr/>
+    </div>
+    <div style="clear:both"></div>
+    {% end_permission %}
+    {% has_permission has_view_ctc_rates project.business %}
+    <div class="graph">
+        <h1>ctc per feature</h1>
+        <div class="{{project.id}}_graph_ctc_by_feature" style="height:300px;width:300px;"></div>
+        <div style="clear:both"></div>
+        <hr/>
+    </div>
+    {% end_permission %}
+    <div style="clear:both"></div>
+    <div class="graph">
+        <h1>billable per feature</h1>
+        <div class="{{project.id}}_graph_billable_by_feature" style="height:300px;width:300px;"></div>
+        <div style="clear:both"></div>
+        <hr/>
+    </div>
+    <div style="clear:both"></div>
+</div>
+
+
+<script>
+
+ $.plot(".{{project.id}}_graph_profit_by_user",
+        [ {%spaceless%} 
+            {% for username,amounts in project.users_and_hours.users.items %} 
+            { label:"{{username}}", 
+              data: {{amounts.profit}}
+            },
+          {% endfor %} 
+            {%endspaceless%}
+        ],
+        { series: { pie: { show: true } },
+          legend: { show: false} } );
+  
+
+ $.plot(".{{project.id}}_graph_hours_by_user",
+        [ {%spaceless%} 
+            {% for username,amounts in project.users_and_hours.users.items %} 
+            { label:"{{username}}", 
+              data: {{amounts.hours}}
+            },
+          {% endfor %} 
+            {%endspaceless%}
+        ],
+        { series: { pie: { show: true } },
+          legend: { show: false} } );
+
+ {% has_permission has_view_ctc_rates project.business %}
+ $.plot(".{{project.id}}_graph_ctc_by_user",
+        [ {%spaceless%} 
+            {% for username,amounts in project.users_and_hours.users.items %} 
+            { label:"{{username}}", 
+              data: {{amounts.revenue}}
+            },
+          {% endfor %} 
+            {%endspaceless%}
+        ],
+        { series: { pie: { show: true } },
+          legend: { show: false} } );
+ {% end_permission %}
+ $.plot(".{{project.id}}_graph_billable_by_user",
+        [ {%spaceless%} 
+            {% for username,amounts in project.users_and_hours.users.items %} 
+            { label:"{{username}}", 
+              data: {{amounts.billed}}
+            },
+          {% endfor %} 
+            {%endspaceless%}
+        ],
+        { series: { pie: { show: true } },
+          legend: { show: false} } );
+
+</script>
+
+{% end_permission %}

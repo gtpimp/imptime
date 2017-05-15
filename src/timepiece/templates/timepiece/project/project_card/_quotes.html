@@ -1,0 +1,46 @@
+{% load timepiece_tags %}
+{% load humanize %}
+{% load static %}
+
+
+{% has_permission has_view_ctc_billable_rates project.business %}
+<div class="accordion">
+    <h1 class="accordion_heading accordion-toggle">Quotes</h1>
+    <div class="accordion_content" style="display:none">
+        <table>
+            <tbody>
+                {% for quote in quotes %}
+                <tr class="clickable" onclick="window.open('{% url 'invoicing:edit_quote' quote.id %}'); return false;">
+                    <td>
+                        {% if quote.quote_document %}
+                        <a href="{{quote.quote_document.url}}">{{quote.quote_document}}</a>
+                        {% endif %}
+                    </td>
+                    <td>
+                        {% if quote.status == 'accepted' %}
+                        <img width="15px" src="{% static 'images/icons/tick.png' %}"/>
+                        Accepted on {{quote.accepted_at|date:'D d-M-Y'}}
+                        {% elif quote.status == 'sent to client' %}
+                        <img width="15px" src="{% static 'images/icons/application_go.png' %}"/>
+                        Sent to client on {{quote.sent_to_client_at|date:'D d-M-Y'}}
+                        {% elif quote.status == 'rejected' %}
+                        <img width="15px" src="{% static 'images/icons/cross.png' %}"/>
+                        {{quote.status}}
+                        {% endif %}
+                    </td>
+                    <td class="money_cell money_billable">
+                        {% has_permission has_view_ctc_billable_rates quote.project.business %}
+                        {{quote.currency_symbol}}{{quote.amount|intcomma}}
+                        {% end_permission %}
+                    </td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td>No quotes{{msg}}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% end_permission %}

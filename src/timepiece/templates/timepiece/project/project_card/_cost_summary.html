@@ -1,0 +1,37 @@
+{% load timepiece_tags %}
+{% load humanize %}
+{% load static %}
+
+{% has_permission has_view_ctc_billable_rates project.business %}
+<div class="accordion">
+    <h1 class="accordion_heading accordion-toggle">Cost summary</h1>
+    <div class="accordion_content">
+        <table>
+            <thead>
+                <th class="money_cell money_ctc">CTC</th>
+                <th class="money_cell money_billable">Billable</th>
+                <th>Budget</th>
+                <th>Projected cost</th>
+            </thead>
+            <tbody>
+                <tr>
+                    <td class="money_cell money_ctc">R{{ project.new_stats.total.hours_ctc|floatformat:"0"|intcomma }}</td>
+                    <td class="money_cell money_billable">
+                        R{{ project.new_stats.total.hours_billable|floatformat:"0"|intcomma }}
+                    </td>
+                    <td>
+                        {% has_permission has_view_budget project.business %}
+                        R{{project.budget|floatformat:"0"|intcomma}}
+                        {% end_permission %}
+                    </td>
+                    <td>
+                        {% has_permission has_view_budget project.business %}
+                        R{{project.new_stats.total.projected_total_billable|default:""|floatformat:"0"|intcomma }}
+                        {% end_permission %}
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+{% end_permission %}

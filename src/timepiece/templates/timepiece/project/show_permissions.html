@@ -26,7 +26,11 @@
         <div class="span12">
 	    <form method="POST" action="{% url 'show_permissions' business_id=business.id %}">
 	      {% csrf_token %}
-	      {{ permission_forms.management_form }}
+	        {{ permission_forms.management_form }}
+
+                {% if permission_forms.errors %}
+                {{permission_forms.errors}}
+                {% endif %}
 	      
 	      <h3>Safe fields</h3>
 	      <table class='permissions_list table table-striped table-bordered table-condensed'>

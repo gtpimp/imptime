@@ -1,0 +1,96 @@
+{% load timepiece_tags %}
+{% load humanize %}
+{% load static %}
+
+<div class="accordion">
+    <h1 class="accordion_heading accordion-toggle">
+        Estimates
+        <span class="tip">(uses the estimates for issues assigned to each developer)</span>
+    </h1>
+    <div class="accordion_content" style="display:none">
+        <table>
+            <thead>
+                <th>Assigned user</th>
+                <th>Hours</th>
+
+                <th>Velocity</th>
+
+                <th>Hours</th>
+
+                {% has_permission has_view_ctc_rates project.business %}
+                <th colspan="2" class="money_cell money_ctc">ctc</th>
+                {% end_permission %}
+                <th colspan="2" class="money_cell money_billable">billable</th>
+            </thead>
+            <tbody>
+                <tr class="table_info_row">
+                    <td></td>
+                    <td>Real Issues</td>
+                    
+                    <td>Estimated</td>
+                    <td>Adjusted</td>
+
+                    <td  class="money_cell money_ctc">Rate</td>
+                    <td  class="money_cell money_ctc">Amount</td>
+
+                    <td  class="money_cell money_billable">Rate</td>
+                    <td  class="money_cell money_billable">Amount</td>
+                </tr>
+
+                {% for user, values in project.new_stats.per_user.items %}
+                <tr>
+	            <td>{{ user.username }} ({{ values.rate.time_tracking_mode|slice:"0:1" }})</td>
+                    <td>{{ values.points_non_adhoc|default:""|intcomma }}</td>
+	            <td>{% if values.rate.velocity and values.points_non_adhoc %}{{ values.rate.velocity|default:""|floatformat:"2"|intcomma }}{% endif %}</td>
+                    <td>{{ values.adjusted_points_non_adhoc|default:""|floatformat:"2"|intcomma }}</td>
+
+                    {% has_permission has_view_ctc_rates project.business %}
+                    <td class="money_cell money_ctc">{% if values.rate.amount and values.adjusted_points_ctc %}R{{ values.rate.amount|default:""|floatformat:"0"|intcomma }}{% endif %}</td>
+                    <td class="money_cell money_ctc">{% if values.adjusted_points_ctc %}R{{ values.adjusted_points_ctc|default:""|floatformat:"0"|intcomma}}{% endif %}</td>
+                    {% end_permission %}
+                    <td class="money_cell money_billable">{% if values.rate.billable_amount and values.adjusted_points_billable %}R{{ values.rate.billable_amount|default:""|floatformat:"0"|intcomma }}{% endif %}</td>
+                    <td class="money_cell money_billable">
+                        {% if values.adjusted_points_billable %}
+                        R{{ values.adjusted_points_billable|default:""|floatformat:"0"|intcomma}}
+                        {% if values.rate.time_tracking_mode != "developer" %}
+                        ({{ values.rate.time_tracking_mode|slice:"0:1" }})
+                        {% endif %}
+                        {% endif %}
+                    </td>
+                </tr>
+                {% endfor %}
+
+                <tr>
+                    <th>Total</th>
+                    <th></th>
+
+                    <th></th>
+                    <th></th>
+
+                    <th class="money_cell money_ctc"></th>
+                    <th class="money_cell money_ctc"></th>
+                    <th class="money_cell money_billable"></th>
+                    <th class="money_cell money_billable">{% if project.new_stats.total.points_billable %}R{{ project.new_stats.total.points_billable|default:""|floatformat:"0"|intcomma }}{% endif %} </th>
+                </tr>
+                <tr>
+                    <th></th>
+                    <th></th>
+
+                    <th></th>
+                    <th></th>
+
+                    <th class="money_cell money_billable" colspan="3">
+                        {% if project.new_stats.total.hours_billable_with_scope_creep %}
+                        Total with expected scope creep of {{project.new_stats.total.scope_creep_percentage}}%
+                        {% endif %}
+                    </th>
+                    <th class="money_cell money_billable">
+                        {% if project.new_stats.total.hours_billable_with_scope_creep %}R{{ project.new_stats.total.hours_billable_with_scope_creep|default:""|floatformat:"0"|intcomma }}{% endif %} 
+                    </th>     
+
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+

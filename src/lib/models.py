@@ -27,8 +27,8 @@ class BaseModel(models.Model):
         abstract=True
         default_permissions = []
 
-    created = models.DateTimeField()
-    modified = models.DateTimeField()
+    created = models.DateTimeField(auto_now_add=True)
+    modified = models.DateTimeField(auto_now=True)
     deleted = models.BooleanField(default=False)
 
     def save(self, *args, **kwargs):

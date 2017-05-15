@@ -1,0 +1,18 @@
+{% load timepiece_tags %}
+{% load humanize %}
+{% load static %}
+
+<div id="project_id_{{project.id}}">
+
+    <div class="sprint_name">{{ project.name }} ({{project.id}})</div>
+
+    {% has_permission has_view_issues project.business %}
+    <div {% ifequal 0 project.issues|length %}style="color:red"{% endifequal %}>
+        {{ project.issues.count }} issues
+    </div>
+    <br/>
+    {% end_permission %}
+    Last modified {% if project.stats.end_time %} {{ project.stats.end_time|timesince }} ago {% endif %}
+    <br/>
+
+</div>         
