@@ -1576,11 +1576,8 @@ def add_user_to_project(request, project_id):
                 project=project,
             )
             _set_project_rate_to_default_for_user(user, project)
-    if 'next' in request.REQUEST and request.REQUEST['next']:
-        return HttpResponseRedirect(request.REQUEST['next'])
-    else:
-        return HttpResponseRedirect(
-            reverse('view_project', args=(project.pk,)))
+    return HttpResponseRedirect(
+        reverse('view_project', args=(project.pk,)))
 
 
 @csrf_exempt
@@ -1597,11 +1594,8 @@ def remove_user_from_project(request, project_id, user_id):
         pass
     else:
         rel.delete()
-    if 'next' in request.REQUEST and request.REQUEST['next']:
-        return HttpResponseRedirect(request.REQUEST['next'])
-    else:
-        return HttpResponseRedirect(
-            reverse('view_project', args=(project.pk,)))
+    return HttpResponseRedirect(
+        reverse('view_project', args=(project.pk,)))
 
 
 @permission_required('timepiece.change_project')
