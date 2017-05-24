@@ -810,8 +810,14 @@ class ProjectForm(forms.ModelForm):
     # )
     # business.widget.attrs['placeholder'] = 'Search'
 
-    def __init__(self, *args, **kwargs):
+    def __init__(self, bp, *args, **kwargs):
         super(ProjectForm, self).__init__(*args, **kwargs)
+        self.bp = bp
+        if not self.bp.can_view_ctc_billable_rates:
+            del self.fields['ratio_management']
+            del self.fields['ratio_testing']
+            del self.fields['ratio_scope_creep']
+            del self.fields['commission_percentage']
 
     def save(self):
         instance = super(ProjectForm, self).save(commit=False)

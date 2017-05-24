@@ -5,13 +5,13 @@
 
 <li class="divider"></li>
 
-{% if perms.timepiece.change_project %}
+{% has_permission has_edit_project_detail project.business %}
 <li class='menu_item' >
   <a href="#" onclick="imp.popup_page('{% url 'edit_project' project_id=project.id %}'); return false;">
     Edit sprint
   </a>
 </li>
-{% endif %}
+{% end_permission %}
 
 <li class="menu_item commonly_used">
   <a href="#" onclick="return imp.select_text_for_emacs('** sprint#{{project.id}} {{project.name}}');">

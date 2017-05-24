@@ -1672,7 +1672,6 @@ def unbillable_project(request, project_id=None):
 
 
 
-@permission_required('timepiece.change_project')
 @login_required
 def update_project(request, project_id=None, template='timepiece/project/edit.html'):
 
@@ -1682,13 +1681,15 @@ def update_project(request, project_id=None, template='timepiece/project/edit.ht
     else:
         project = get_object_or_404(timepiece.Project, pk=project_id)
 
-    form = timepiece_forms.ProjectForm(request.POST or None, instance=project)
-    if request.POST and form.is_valid():
-        project = form.save()
-        project.save()
-        return HttpResponseRedirect(
-            reverse('edit_project', args=(project.id,))
-            )
+    bp = timepiece.BusinessPermissions.for_user(request.user, project.business)
+    if bp.has_edit_project_detail:
+        form = timepiece_forms.ProjectForm(bp=bp, data=request.POST or None, instance=project)
+        if request.POST and form.is_valid():
+            project = form.save()
+            project.save()
+            return HttpResponseRedirect(
+                reverse('edit_project', args=(project.id,))
+                )
 
     context = {
         'project': project,
