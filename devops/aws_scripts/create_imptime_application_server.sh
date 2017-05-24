@@ -10,27 +10,40 @@ if [ -z ${STACK_NUMBER} ]; then
     exit 1
 fi
 
-PROD_ZIP_FILENAME=$2
-if [ -z ${PROD_ZIP_FILENAME} ]; then
-    PROD_ZIP_FILENAME="imptime_prod_`date +%d%B%Y_%H%M%S`.zip"
-    echo "Auto setting zip file to: ${PROD_ZIP_FILENAME}"
+TARGET_SERVER=$2
+if [ -z ${TARGET_SERVER} ]; then
+    echo "You must supply a target server, one of [prod,staging]"
+    exit 1
+fi
+
+SERVER_TYPE=$3
+if [ -z {$SERVER_TYPE} ]; then
+    echo "You must supply a server type, one of [application, proxy, monitoring]"
+    exit 1
+fi
+
+ZIP_FILENAME=$4
+if [ -z ${ZIP_FILENAME} ]; then
+    ZIP_FILENAME="imptime_${TARGET_SERVER}_`date +%d%B%Y_%H%M%S`.zip"
+    echo "Auto setting zip file to: ${ZIP_FILENAME}"
     echo "To change this, pass as the second parameter"
 fi
 
+
 # Must match a name in your credentials
-AWS_PROFILE_NAME=imptime_devops_prod
+AWS_PROFILE_NAME=imptime_devops_${TARGET_SERVER}
 
 AWS_REGION=eu-west-2
-IAM_INSTANCE_PROFILE_NAME=production_server
+IAM_INSTANCE_PROFILE_NAME=${TARGET_SERVER}_server
 IMAGE_ID=ami-f1d7c395
 INSTANCE_TYPE=t2.medium
-IMPTIME_CONF_ZIP_URL_PARAMETER=https://s3-${AWS_REGION}.amazonaws.com/imptime.prod.conf/external_config.zip
-IMPTIME_RELEASE_ZIP_URL_PARAMETER=https://s3-${AWS_REGION}.amazonaws.com/imptime.releases/${PROD_ZIP_FILENAME}
-KEY_NAME=imptime_production_devops
-NAME="ImpTime (Production - $STACK_NUMBER)"
+IMPTIME_CONF_ZIP_URL_PARAMETER=https://s3-${AWS_REGION}.amazonaws.com/imptime.${TARGET_SERVER}.conf/${SERVER_TYPE}_external_config.zip
+IMPTIME_RELEASE_ZIP_URL_PARAMETER=https://s3-${AWS_REGION}.amazonaws.com/imptime.releases/${ZIP_FILENAME}
+KEY_NAME=imptime_${TARGET_SERVER}_devops
+EC2_INSTANCE_NAME="ImpTime (${TARGET_SERVER} - ${SERVER_TYPE} - $STACK_NUMBER)"
 PUBLIC_SUBNET_PARAMETER=subnet-41aa920b
 SECURITY_GROUP_PARAMETER=sg-6238ab0b
-STACK_NAME=Production$STACK_NUMBER
+STACK_NAME=${EC2_INSTANCE_NAME}$STACK_NUMBER
 
 if [ -z ${STACK_NUMBER} ]
 then
@@ -61,6 +74,6 @@ aws cloudformation create-stack \
         ParameterKey=ImptimeConfZipUrlParameter,ParameterValue=$IMPTIME_CONF_ZIP_URL_PARAMETER \
         ParameterKey=ImptimeReleaseZipUrlParameter,ParameterValue=$IMPTIME_RELEASE_ZIP_URL_PARAMETER \
         ParameterKey=KeyNameParameter,ParameterValue=$KEY_NAME \
-        "ParameterKey=NameParameter,ParameterValue=$NAME" \
+        "ParameterKey=NameParameter,ParameterValue=${EC2_INSTANCE_NAME}" \
         ParameterKey=PublicSubnetParameter,ParameterValue=$PUBLIC_SUBNET_PARAMETER \
         ParameterKey=SecurityGroupParameter,ParameterValue=$SECURITY_GROUP_PARAMETER
