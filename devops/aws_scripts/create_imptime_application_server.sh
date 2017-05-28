@@ -45,23 +45,22 @@ PUBLIC_SUBNET_PARAMETER=subnet-41aa920b
 SECURITY_GROUP_PARAMETER=sg-6238ab0b
 STACK_NAME=${EC2_INSTANCE_NAME}$STACK_NUMBER
 
-if [ -z ${STACK_NUMBER} ]
-then
-    echo "Usage: create_imptime_application_server.sh <stack number>"
-    exit 1;
-fi
-
+echo "Validating template"
 aws cloudformation validate-template \
     --profile $AWS_PROFILE_NAME \
     --region $AWS_REGION \
     --template-body file://$BASE_DIR/aws/cloud_formation_templates/imptime_application_server.cfn.yml \
-
+    
 if [ $? -ne 0 ]
 then
   echo "Exiting after CloudFormation template failed to validate." >&2
   exit 1
 fi
 
+echo "Template validated"
+
+
+echo "Creating stack"
 aws cloudformation create-stack \
     --profile $AWS_PROFILE_NAME \
     --region $AWS_REGION \
@@ -77,3 +76,5 @@ aws cloudformation create-stack \
         "ParameterKey=NameParameter,ParameterValue=${EC2_INSTANCE_NAME}" \
         ParameterKey=PublicSubnetParameter,ParameterValue=$PUBLIC_SUBNET_PARAMETER \
         ParameterKey=SecurityGroupParameter,ParameterValue=$SECURITY_GROUP_PARAMETER
+
+echo "Stack created"
