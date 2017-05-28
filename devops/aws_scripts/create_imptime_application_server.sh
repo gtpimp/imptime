@@ -26,7 +26,7 @@ ZIP_FILENAME=$4
 if [ -z "${ZIP_FILENAME}" ]; then
     ZIP_FILENAME="imptime_${TARGET_SERVER}_`date +%d%B%Y_%H%M%S`.zip"
     echo "Auto setting zip file to: ${ZIP_FILENAME}"
-    echo "To change this, pass as the second parameter"
+    echo "To change this, pass as the last parameter"
 fi
 
 
@@ -44,6 +44,9 @@ EC2_INSTANCE_NAME="ImpTime_${TARGET_SERVER}_${SERVER_TYPE}_${STACK_NUMBER}"
 PUBLIC_SUBNET_PARAMETER=subnet-41aa920b
 SECURITY_GROUP_PARAMETER=sg-6238ab0b
 STACK_NAME="ImpTime${STACK_NUMBER}"
+
+echo "Expecting a config zip file to exist at: ${IMPTIME_CONF_ZIP_URL_PARAMETER}"
+echo "Expecting a release zip file to exist at: ${IMPTIME_RELEASE_ZIP_URL_PARAMETER}"
 
 echo "Validating template"
 aws cloudformation validate-template \
