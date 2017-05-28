@@ -17,7 +17,7 @@ if [ -z "${TARGET_SERVER}" ]; then
 fi
 
 SERVER_TYPE=$3
-if [ -z "{$SERVER_TYPE}" ]; then
+if [ -z "${SERVER_TYPE}" ]; then
     echo "You must supply a server type, one of [application, proxy, monitoring]"
     exit 1
 fi
