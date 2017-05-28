@@ -43,7 +43,7 @@ KEY_NAME=imptime_${TARGET_SERVER}_devops
 EC2_INSTANCE_NAME="ImpTime_${TARGET_SERVER}_${SERVER_TYPE}_${STACK_NUMBER}"
 PUBLIC_SUBNET_PARAMETER=subnet-41aa920b
 SECURITY_GROUP_PARAMETER=sg-6238ab0b
-STACK_NAME=${EC2_INSTANCE_NAME}
+STACK_NAME="ImpTime${STACK_NUMBER}"
 
 echo "Validating template"
 aws cloudformation validate-template \
