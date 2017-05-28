@@ -45,7 +45,7 @@ Resources:
               01_add_ubuntu_user_to_docker_group:
                 command: !Sub |
                   #!/bin/bash
-                  mkdir /var/log/imptime
+                  sudo mkdir /var/log/imptime
               02_add_ubuntu_user_to_docker_group:
                 command: !Sub |
                   #!/bin/bash
