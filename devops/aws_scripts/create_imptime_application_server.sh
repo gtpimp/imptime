@@ -23,7 +23,7 @@ if [ -z "${SERVER_TYPE}" ]; then
 fi
 
 ZIP_FILENAME=$4
-if [ -z ${ZIP_FILENAME} ]; then
+if [ -z "${ZIP_FILENAME}" ]; then
     ZIP_FILENAME="imptime_${TARGET_SERVER}_`date +%d%B%Y_%H%M%S`.zip"
     echo "Auto setting zip file to: ${ZIP_FILENAME}"
     echo "To change this, pass as the second parameter"
