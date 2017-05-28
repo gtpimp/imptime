@@ -82,8 +82,8 @@ Resources:
             type: "S3"
             roleName: !Ref IAMInstanceProfileNameParameter
             buckets:
-              - "imptime-releases"
-              - "imptime-production-conf"
+              - "imptime.releases"
+              - "imptime.production.conf"
     Properties:
       BlockDeviceMappings:
         - DeviceName: "/dev/sda1"

@@ -45,8 +45,8 @@ PUBLIC_SUBNET_PARAMETER=subnet-41aa920b
 SECURITY_GROUP_PARAMETER=sg-6238ab0b
 STACK_NAME="ImpTime${STACK_NUMBER}"
 
-echo "Expecting a config zip file to exist at: ${IMPTIME_CONF_ZIP_URL_PARAMETER}"
-echo "Expecting a release zip file to exist at: ${IMPTIME_RELEASE_ZIP_URL_PARAMETER}"
+echo "Assuming that a config zip file exists at: ${IMPTIME_CONF_ZIP_URL_PARAMETER}"
+echo "Assuming that a release zip file exists at: ${IMPTIME_RELEASE_ZIP_URL_PARAMETER}"
 
 echo "Validating template"
 aws cloudformation validate-template \
