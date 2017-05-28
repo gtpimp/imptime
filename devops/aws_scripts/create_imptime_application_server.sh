@@ -5,19 +5,19 @@ BASE_DIR=$(pwd)
 
 # This is used to keep the stack numbers unique, enter a sequence number
 STACK_NUMBER=$1
-if [ -z ${STACK_NUMBER} ]; then
+if [ -z "${STACK_NUMBER}" ]; then
     echo "You must give a unique stack number as first parameter"
     exit 1
 fi
 
 TARGET_SERVER=$2
-if [ -z ${TARGET_SERVER} ]; then
-    echo "You must supply a target server, one of [prod,staging]"
+if [ -z "${TARGET_SERVER}" ]; then
+    echo "You must supply a target server, one of [production,staging]"
     exit 1
 fi
 
 SERVER_TYPE=$3
-if [ -z {$SERVER_TYPE} ]; then
+if [ -z "{$SERVER_TYPE}" ]; then
     echo "You must supply a server type, one of [application, proxy, monitoring]"
     exit 1
 fi
