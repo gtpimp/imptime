@@ -45,7 +45,7 @@ Resources:
               01_add_ubuntu_user_to_docker_group:
                 command: !Sub |
                   #!/bin/bash
-                  mkdir /var/log/imptime
+                  sudo mkdir /var/log/imptime
               02_add_ubuntu_user_to_docker_group:
                 command: !Sub |
                   #!/bin/bash
@@ -82,8 +82,8 @@ Resources:
             type: "S3"
             roleName: !Ref IAMInstanceProfileNameParameter
             buckets:
-              - "imptime-releases"
-              - "imptime-production-conf"
+              - "imptime.releases"
+              - "imptime.production.conf"
     Properties:
       BlockDeviceMappings:
         - DeviceName: "/dev/sda1"

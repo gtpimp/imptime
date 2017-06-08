@@ -30,14 +30,14 @@ class ProjectList extends Component {
     }
 
     switchToSampleContext() {
-        const { dispatch } = this.props
+        const { dispatch, project_ids, sprint_ids } = this.props
 
-        dispatch(selectItems('projects', [project_id]))
+        dispatch(selectItems('projects', [project_ids]))
         dispatch(collapse_list('projects'))
 
-        dispatch(selectItems('sprints', [sprint_id]))
+        dispatch(selectItems('sprints', [sprint_ids]))
         dispatch(collapse_list('sprints'))
-	}
+    }
 
     componentDidMount() {
 	const { dispatch, list_key } = this.props
@@ -108,11 +108,11 @@ class ProjectList extends Component {
 
 	return (
 	    <div className="panel panel--collapsed">
-		    <div className="panel-heading" onClick={this.onExpand}>
-			<div className="panel__title">
-			    { selected_items.map((project, index) => this.renderCollapsedProject(project)) }
-			</div>
+		<div className="panel-heading" onClick={this.onExpand}>
+		    <div className="panel__title">
+			{ selected_items.map((project, index) => this.renderCollapsedProject(project)) }
 		    </div>
+		</div>
 	    </div>
 	)
     }
@@ -122,14 +122,14 @@ class ProjectList extends Component {
         const that = this
 
         return (
-        <Project key={list_key + "_" + project.id + "_" + project.name + "_" + index}
-                is_collapsed={false}
-                reorderProjects={that.reorderProjects}
-                onClickedProject={() => that.onClickedProject(project.id)}
-                is_loading={loading_item_ids.indexOf(project.id) !== -1}
-                is_selected={selected_ids.indexOf(project.id) !== -1}
-                project_id={project.id}
-        />
+            <Project key={list_key + "_" + project.id + "_" + project.name + "_" + index}
+                     is_collapsed={false}
+                     reorderProjects={that.reorderProjects}
+                     onClickedProject={() => that.onClickedProject(project.id)}
+                     is_loading={loading_item_ids.indexOf(project.id) !== -1}
+                     is_selected={selected_ids.indexOf(project.id) !== -1}
+                     project_id={project.id}
+            />
         )
     }
 
@@ -148,7 +148,7 @@ class ProjectList extends Component {
     render() {
 	return (
 	    <div>
-            { this.render_expanded() }
+                { this.render_expanded() }
 	    </div>
 	)
     }

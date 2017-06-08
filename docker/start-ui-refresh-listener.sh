@@ -3,7 +3,7 @@
 set -e
 
 cd /opt/imptime/api
-python manage.py wait_for_flag ui_db_migrate_complete
+python manage.py wait_for_flag db_migrate_complete
 
 >&2 echo "starting ui-refresh-listener..."
 
