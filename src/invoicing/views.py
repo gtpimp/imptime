@@ -236,7 +236,7 @@ def print_invoice_from_phantomjs(request, invoice_id, username, token, template=
 
 def _get_best_bp(request, invoice=None):
     if invoice is None or invoice.project is None:
-        return timepiece.BusinessPermissions.for_user(request.user, timepiece.Business.objects.all()[0])
+        return timepiece.BusinessPermissions.for_user(request.user).first()
     else:
         return timepiece.BusinessPermissions.for_user(request.user, invoice.project.business)
 
