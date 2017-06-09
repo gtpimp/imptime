@@ -479,8 +479,16 @@ class BusinessPermissions(BaseModel):
                                                          defaults={'is_active_member_of_business':True})[0]
     
     @classmethod
-    def for_user(self, user, business):
-        return user.business_permissions.filter(business=business).first()
+    def for_user(self, user, business=None):
+        qs = user.business_permissions
+        if business is not None:
+            qs = qs.filter(business=business)
+
+        bp = qs.first()
+        if bp is None and user.is_superuser:
+            return self.objects.get_or_create(business=business, user=user)[0]
+        else:
+            return qs.first()
 
     @classmethod
     def viewable_users(self, user):
