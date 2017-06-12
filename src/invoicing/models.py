@@ -132,7 +132,7 @@ class Invoice(models.Model):
 
     @property
     def cost_with_vat(self):
-        return self.cost + self.vat
+        return (self.cost or 0) + (self.vat or 0)
 
     @property
     def amount_paid(self):
