@@ -86,7 +86,7 @@ Resources:
               - "imptime.production.conf"
     Properties:
       BlockDeviceMappings:
-        - DeviceName: "/dev/sda1"
+        - DeviceName: "/dev/sdk"
           Ebs:
             VolumeSize: 50
       DisableApiTermination: "false"
