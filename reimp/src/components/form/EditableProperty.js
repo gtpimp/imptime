@@ -57,7 +57,7 @@ class EditableProperty extends Component {
     onEdited(new_value) {
         const {onChange, can_edit} = this.props
         this.cancelEditing()
-        if ( can_edit ) {
+        if (can_edit) {
             onChange(new_value)
         }
     }
@@ -75,15 +75,15 @@ class EditableProperty extends Component {
             if (index === 0) {
                 editing_child = React.cloneElement(child, {
                     initial_value: initial_value,
-                    onChange: that.onEdited,
+                    onSubmitted: that.onEdited,
                     onKeyDown: that.keyDown
-		})
-	    } else if ( index === 1 ) {
-		readonly_child = React.cloneElement(child, {
-		    value: initial_value
-		})
-	    } else if ( index === 2 ) {
-                empty_child = React.cloneElement(child, {
+                })
+            } else if ( index === 1 ) {
+                readonly_child = React.cloneElement(child, {
+                    value: initial_value
+                })
+            } else if ( index === 2 ) {
+               empty_child = React.cloneElement(child, {
                     value: initial_value
                 })
             }

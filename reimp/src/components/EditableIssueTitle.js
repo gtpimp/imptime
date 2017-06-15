@@ -39,6 +39,7 @@ function mapStateToProps(state, props) {
     const { issue_id } = props
     const issue = getIssue(state, issue_id) || {}
     const can_edit = has_permission(state, issue.project_id, 'has_edit_subject')
+    console.log(issue.subject)
     return {
         issue: issue,
         can_edit: can_edit

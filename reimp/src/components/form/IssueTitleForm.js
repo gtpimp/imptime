@@ -9,24 +9,25 @@ class IssueTitleForm extends Component {
     constructor(props) {
         super(props)
         this.renderTextarea = this.renderTextarea.bind(this)
-        this.onChangeAndSubmit = this.onChangeAndSubmit.bind(this)
+        /* this.onChangeAndSubmit = this.onChangeAndSubmit.bind(this)*/
     }
 
-    onChangeAndSubmit(e, fieldOnChange) {
-        const {handleSubmit} = this.props
-        fieldOnChange(e)
-        // setTimeout(() => handleSubmit(), 0)
-    }
+    /* onChangeAndSubmit(e, fieldOnChange) {
+     *     const {handleSubmit} = this.props
+     *     debugger
+     *     fieldOnChange(e)
+     *     // setTimeout(() => handleSubmit(), 0)
+     * }*/
     
     renderTextarea(field) {
-        const {input, data, ...rest} = field
+        const {input, data, onChange, ...rest} = field
         return (
             <Textarea
                 rows="1"
                 maxLength="3000"
                 className="textarea textarea--text-component textarea--title"
                 placeholder="Title"
-                onChange={(e) => this.onChangeAndSubmit(e, input.onChange)}
+                onChange={input.onChange}
                 value={input.value}
             />
         )
@@ -34,6 +35,7 @@ class IssueTitleForm extends Component {
     
     render() {
         const { handleSubmit } = this.props
+  
         return (
             <form onSubmit={handleSubmit}>
                 <div>
@@ -48,12 +50,12 @@ class IssueTitleForm extends Component {
 
 function mapStateToProps(state, props) {
 
-    const { onChange } = props
+    const { onSubmitted } = props
     
     return {
         initialValues: {title:props.initial_value},
         enableReinitialize: true,
-        onSubmit: onChange
+        onSubmit: onSubmitted
     }
 }
 

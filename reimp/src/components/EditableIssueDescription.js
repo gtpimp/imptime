@@ -13,7 +13,7 @@ class EditableIssueDescription extends Component {
 
     onChange(new_value) {
         const { dispatch, issue } = this.props
-        console.log(new_value)
+ 
         dispatch(updateIssueDescription(issue.id, new_value.description))
     }
 
