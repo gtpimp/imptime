@@ -37,6 +37,7 @@ class EditableIssueComment extends Component {
 
     render() {
         const {comment, can_edit} = this.props
+
         return (
 
             <div>

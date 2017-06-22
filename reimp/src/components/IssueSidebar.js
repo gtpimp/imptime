@@ -64,6 +64,7 @@ class IssueSidebar extends Component {
         const {issue, comments, attachments} = this.props
 
         if (issue && issue.id) {
+
             return (
 
                 <Sidebar>
@@ -80,7 +81,7 @@ class IssueSidebar extends Component {
                                 <EditableIssueTitle issue_id={issue.id}/>
                             </PropertyStackComponent>
 
-                            <PropertyStackComponent>
+                            <PropertyStackComponent title="Description">
                                 <EditableIssueDescription issue_id={issue.id}/>
                             </PropertyStackComponent>
 
@@ -108,10 +109,10 @@ class IssueSidebar extends Component {
                             </PropertyStackComponent>
 
                             <PropertyStackComponent title="Comments">
-                            {/* { map(comments, function (comment, index) {
-                             *     return <EditableIssueComment key={comment.id} issue_id={issue.id} comment_id={comment.id}/>
-                             * })
-                             * }*/}
+                              {/* { map(comments, function (comment, index) {
+                                  return <EditableIssueComment key={comment.id} issue_id={issue.id} comment_id={comment.id}/>
+                                  })
+                                  } */}
                                 <EditableIssueComment issue_id={issue.id} comment_id={null}/>
                             </PropertyStackComponent>
 

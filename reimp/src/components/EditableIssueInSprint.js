@@ -5,6 +5,7 @@ import SelectSprintForm from './form/SelectSprintForm'
 import SprintLabel from './form/SprintLabel'
 import Blank from './form/Blank'
 import { moveIssuesToSprint, getIssues } from '../actions/Issues'
+import { has_permission } from '../actions/Users'
 
 class EditableIssueInSprint extends Component {
 
@@ -14,13 +15,13 @@ class EditableIssueInSprint extends Component {
     }
 
     onChange(new_value) {
-        const { dispatch, issue_ids } = this.props
-        dispatch(moveIssuesToSprint(issue_ids, new_value.sprint_id))
+        const { dispatch, issue } = this.props
+        dispatch(moveIssuesToSprint(issue.id, new_value.sprint_id))
     }
-    
+
     render() {
-        const { sprint_id, project_id } = this.props
-        
+        const { sprint_id, project_id, can_edit } = this.props
+
         return (
             <div>
                 <EditableProperty property_key='issue_sprint_id'
@@ -28,6 +29,7 @@ class EditableIssueInSprint extends Component {
                                   edit_as_modal={true}
                                   onChange={this.onChange}
                                   actionLabel="Move to Sprint"
+                                  can_edit={can_edit}
                 >
                     <SelectSprintForm project_id={project_id} />
                     <SprintLabel />
@@ -40,14 +42,17 @@ class EditableIssueInSprint extends Component {
 
 function mapStateToProps(state, props) {
     const { issue_ids } = props
-    const issues = getIssues(state, issue_ids) || []
-    const project_id = issues && issues.length > 0 && issues[0].project_id
-    const sprint_id = issues && issues.length > 0 && issues[0].sprint_id
-    
+
+    const issue = getIssues(state, issue_ids) || []
+    const project_id = issue && issue.length > 0 && issue[0].project_id
+    const sprint_id = issue && issue.length > 0 && issue[0].sprint_id
+    const can_edit = has_permission(state, issue.project_id, 'has_edit_subject')
+
     return {
-        issues: issues,
+        issues: issue,
         project_id: project_id,
-        sprint_id: sprint_id
+        sprint_id: sprint_id,
+        can_edit: can_edit
     }
 }
 

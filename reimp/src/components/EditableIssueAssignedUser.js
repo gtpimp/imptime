@@ -16,7 +16,6 @@ class EditableIssueAssignedUser extends Component {
 
     onChange(new_value) {
         const { dispatch, issue } = this.props
-        console.log(issue)
         dispatch(updateIssueAssignedTo(issue.id, new_value.assigned_user))
     }
 
