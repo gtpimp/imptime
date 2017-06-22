@@ -49,12 +49,12 @@ class IssueCommentForm extends Component {
 
 function mapStateToProps(state, props) {
 
-    const { onChange } = props
+    const { onSubmitted } = props
     
     return {
         initialValues: {comment:props.initial_value},
         enableReinitialize: true,
-        onSubmit: onChange
+        onSubmit: onSubmitted
     }
 }
 

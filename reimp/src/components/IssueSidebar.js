@@ -58,7 +58,7 @@ class IssueSidebar extends Component {
             }
         })
     }
-    
+
     render() {
 
         const {issue, comments, attachments} = this.props
@@ -87,15 +87,15 @@ class IssueSidebar extends Component {
                             <PropertyStackComponent title="Testables">
                             </PropertyStackComponent>
 
-                            <PropertyStackComponent>
+                            <PropertyStackComponent title="Assigned User">
                                 <EditableIssueAssignedUser issue_ids={[issue.id]} project_id={issue.project_id}/>
                             </PropertyStackComponent>
 
-                            <PropertyStackComponent>
+                            <PropertyStackComponent title="Issue Status">
                                 <EditableIssueStatus issue_ids={[issue.id]} project_id={issue.project_id}/>
                             </PropertyStackComponent>
 
-                            <PropertyStackComponent>
+                            <PropertyStackComponent title="Sprint Name">
                                 <EditableIssueInSprint issue_ids={[issue.id]}/>
                             </PropertyStackComponent>
 
@@ -108,10 +108,10 @@ class IssueSidebar extends Component {
                             </PropertyStackComponent>
 
                             <PropertyStackComponent title="Comments">
-                                { map(comments, function (comment, index) {
-                                    return <EditableIssueComment key={comment.id} issue_id={issue.id} comment_id={comment.id}/>
-                                })
-                                }
+                            {/* { map(comments, function (comment, index) {
+                             *     return <EditableIssueComment key={comment.id} issue_id={issue.id} comment_id={comment.id}/>
+                             * })
+                             * }*/}
                                 <EditableIssueComment issue_id={issue.id} comment_id={null}/>
                             </PropertyStackComponent>
 
@@ -133,10 +133,10 @@ class IssueSidebar extends Component {
 function mapStateToProps(state, props) {
     const {issue_id, sprint_id, project_id} = props
     const issue = getIssue(state, issue_id) || {}
-    const project = getProject(state, project_id) || {}    
+    const project = getProject(state, project_id) || {}
     const assignable_user_ids = project.allowed_user_ids || []
     populateEstimates(state, issue)
-    
+
     return {
         issue: issue || {},
         issue_id: issue_id,
@@ -197,6 +197,3 @@ export default connect(mapStateToProps)(IssueSidebar)
  </PropertyStackComponent>
  </div> }
  }*/
-
-
-
