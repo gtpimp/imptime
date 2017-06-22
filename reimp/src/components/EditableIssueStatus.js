@@ -16,7 +16,7 @@ class EditableIssueStatus extends Component {
 
     onChange(new_value) {
         const { dispatch, issue_ids } = this.props
-        console.log(new_value)
+
         dispatch(updateIssueStatus(issue_ids, new_value.issue_status_name))
     }
     render() {
@@ -29,6 +29,7 @@ class EditableIssueStatus extends Component {
                                   edit_as_modal={true}
                                   onChange={this.onChange}
                                   can_edit={can_edit}
+                                  actionLabel="Issue Status"
                 >
                     <IssueStatusForm project_id={project_id}/>
                     <IssueStatusLabel />
