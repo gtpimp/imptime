@@ -33,7 +33,6 @@ class EditableProperty extends Component {
 
     startEditing() {
         const {dispatch, property_key, can_edit} = this.props
-        console.log(can_edit, "hhh")
         if ( can_edit ) {
             dispatch(setEditing(property_key))
         }
@@ -107,7 +106,7 @@ class EditableProperty extends Component {
                            contentLabel={this.props.actionLabel}>
                         <div className="editable-property-modal__row editable-property-modal__row--header">
                             <label htmlFor="assigned" className="editable-property-modal__title">{this.props.actionLabel}</label>
-                            <div className="editable-property-modal__close"><i className="material-icons">close</i></div>
+                            <div className="editable-property-modal__close"><i className="material-icons" onClick={this.cancelEditing}>close</i></div>
                         </div>
                         <div className="editable-property-modal__content">
                             {editing_child}
