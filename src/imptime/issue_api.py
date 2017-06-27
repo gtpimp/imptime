@@ -70,7 +70,7 @@ class IssueViewSet(BaseViewSet):
                                    .prefetch_related(Prefetch('issue_points__user'))\
                                    .prefetch_related(Prefetch('entries', to_attr='my_clocked_in_entries',
                                                               queryset=Entry.objects.filter(user=request.user).select_related('user').filter(end_time__isnull=True)))
-                    
+
 
                     issues = issues.annotate(actual_hours=Sum('entries__hours'))
 
@@ -78,9 +78,9 @@ class IssueViewSet(BaseViewSet):
                         for attachment in issue.attachments.all():
                             attachment.download_url = IssueAttachmentSerializer.get_download_url(request, attachment)
                             attachment.preview_url = IssueAttachmentSerializer.get_preview_url(request, attachment)
-                    
+
                     s = IssueSerializer(issues, many=True)
-                    
+
                 issues_data = s.data
                 context['issues'] = issues_data
             context['pagination'] = pagination
@@ -205,7 +205,7 @@ class IssueViewSet(BaseViewSet):
                 order = 0
             sprint = self.allowed_sprint(sprint_id)
 
-            if self.logged_in_permissions(issue.project.business).has_edit_issues:
+            if self.logged_in_permissions(issue_before.project.business).has_edit_issues:
                 issue = Issue.objects.create(
                     project=sprint,   # sic
                     order=order,
@@ -213,7 +213,7 @@ class IssueViewSet(BaseViewSet):
                     subject=params['subject'])
                 issue.renumber_issue_order()
                 #s = IssueSerializer(issue)
-                #issue_data = s.data
+
                 IssueHistory.add_history(self.request.user, issue,
                                          "created", "", issue.number)
                 context['issue'] = { 'number': issue.number }

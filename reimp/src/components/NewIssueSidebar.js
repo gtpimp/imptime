@@ -29,7 +29,7 @@ class NewIssueSidebar extends Component {
                 <PropertyStack>
                     <div>
                         <div>
-                            <IssueTitleForm onChange={this.onSaveCandidateIssue}/>
+                            <IssueTitleForm onSubmitted={this.onSaveCandidateIssue}/>
                         </div>
                     </div>
                 </PropertyStack>
