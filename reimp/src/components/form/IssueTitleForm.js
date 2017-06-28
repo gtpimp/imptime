@@ -9,6 +9,7 @@ class IssueTitleForm extends Component {
     constructor(props) {
         super(props)
         this.renderTextarea = this.renderTextarea.bind(this)
+        this.keyDown = this.keyDown.bind(this)
         /* this.onChangeAndSubmit = this.onChangeAndSubmit.bind(this)*/
     }
 
@@ -18,7 +19,13 @@ class IssueTitleForm extends Component {
      *     fieldOnChange(e)
      *     // setTimeout(() => handleSubmit(), 0)
      * }*/
-    
+    keyDown(event) {
+        const { onKeyDown } = this.props
+        if (onKeyDown) {
+            onKeyDown(event)
+        }
+    }
+
     renderTextarea(field) {
         const {input, data, onChange, ...rest} = field
         return (
@@ -29,13 +36,14 @@ class IssueTitleForm extends Component {
                 placeholder="Title"
                 onChange={input.onChange}
                 value={input.value}
+                onKeyDown={this.keyDown}
             />
         )
     }
-    
+
     render() {
         const { handleSubmit } = this.props
-  
+
         return (
             <form onSubmit={handleSubmit}>
                 <div>
@@ -51,7 +59,7 @@ class IssueTitleForm extends Component {
 function mapStateToProps(state, props) {
 
     const { onSubmitted } = props
-    
+
     return {
         initialValues: {title:props.initial_value},
         enableReinitialize: true,
@@ -60,4 +68,3 @@ function mapStateToProps(state, props) {
 }
 
 export default connect(mapStateToProps)(reduxForm({form:'issue_title_form'})(IssueTitleForm))
-

@@ -45,6 +45,7 @@ class EditableProperty extends Component {
 
     keyDown(event) {
         const {is_editing} = this.props
+
         if (!is_editing) {
             return
         }

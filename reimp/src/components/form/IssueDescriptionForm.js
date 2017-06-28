@@ -9,13 +9,21 @@ class IssueDescriptionForm extends Component {
         super(props)
         this.renderTextarea = this.renderTextarea.bind(this)
         this.onChangeAndSubmit = this.onChangeAndSubmit.bind(this)
+        this.keyDown = this.keyDown.bind(this)
     }
 
     onChangeAndSubmit(e, fieldOnChange) {
         fieldOnChange(e)
         // setTimeout(() => handleSubmit(), 0)
     }
-    
+
+     keyDown(event) {
+        const { onKeyDown } = this.props
+        if (onKeyDown) {
+            onKeyDown(event)
+        }
+    }
+
     renderTextarea(field) {
         const {input} = field
         return (
@@ -26,10 +34,11 @@ class IssueDescriptionForm extends Component {
                 placeholder="Description"
                 onChange={(e) => this.onChangeAndSubmit(e, input.onChange)}
                 value={input.value}
+                onKeyDown={this.keyDown}
             />
         )
     }
-    
+
     render() {
 
         const { handleSubmit } = this.props
@@ -49,7 +58,7 @@ class IssueDescriptionForm extends Component {
 function mapStateToProps(state, props) {
 
     const { onSubmitted } = props
-    
+
     return {
         initialValues: {description:props.initial_value},
         enableReinitialize: true,
