@@ -42,7 +42,7 @@ class SprintViewSet(BaseViewSet):
             else:
                 sprints = sprints.select_related("status3")
                 sprints = sprints.annotate(num_issues=Count('issues'))
-                
+
                 s = SprintSerializer(sprints, many=True)
                 sprints_data = s.data
                 context['sprints'] = sprints_data
@@ -51,7 +51,7 @@ class SprintViewSet(BaseViewSet):
         except Exception, ex:
             logger.exception(ex)
             return self.error_response(ex)
-            
+
         return HttpResponse(JSONRenderer().render(data))
 
     def update(self, request, pk):
@@ -82,12 +82,12 @@ class SprintViewSet(BaseViewSet):
                 else:
                     raise Exception("Unsupported field name: %s" % field_name)
                 sprint.save()
-            
+
             data = {'status': 'success'}
         except Exception, ex:
             logger.exception(ex)
             return self.error_response(ex)
-        
+
         return HttpResponse(JSONRenderer().render(data))
 
     def create(self, request):
@@ -102,8 +102,8 @@ class SprintViewSet(BaseViewSet):
             else:
                 order = 0
             project = self.allowed_project(project_id)
-
-            if self.logged_in_permissions(sprint.business).has_create_sprint:
+            #import pdb; pdb.set_trace()
+            if self.logged_in_permissions(project).has_create_sprint:
                 new_status = SprintStatus.objects.get_or_create(business_id=project_id, name='pending')[0]
                 sprint = Sprint.objects.create(
                     business=project, #sic
@@ -123,7 +123,5 @@ class SprintViewSet(BaseViewSet):
         except Exception, ex:
             logger.exception(ex)
             return self.error_response(ex)
-        
-        return HttpResponse(JSONRenderer().render(data))
 
-    
+        return HttpResponse(JSONRenderer().render(data))

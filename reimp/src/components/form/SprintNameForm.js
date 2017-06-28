@@ -9,15 +9,15 @@ class SprintNameForm extends Component {
     constructor(props) {
         super(props)
         this.renderTextarea = this.renderTextarea.bind(this)
-        this.onChangeAndSubmit = this.onChangeAndSubmit.bind(this)
+        /* this.onChangeAndSubmit = this.onChangeAndSubmit.bind(this)*/
     }
 
-    onChangeAndSubmit(e, fieldOnChange) {
-        const {handleSubmit} = this.props
-        fieldOnChange(e)
-        // setTimeout(() => handleSubmit(), 0)
-    }
-    
+    /* onChangeAndSubmit(e, fieldOnChange) {
+     *     const {handleSubmit} = this.props
+     *     fieldOnChange(e)
+     *     // setTimeout(() => handleSubmit(), 0)
+     * }*/
+
     renderTextarea(field) {
         const {input, data, ...rest} = field
         return (
@@ -26,12 +26,12 @@ class SprintNameForm extends Component {
                 maxLength="3000"
                 className="textarea textarea--text-component"
                 placeholder="Name"
-                onChange={(e) => this.onChangeAndSubmit(e, input.onChange)}
+                onChange={input.onChange}
                 value={input.value}
             />
         )
     }
-    
+
     render() {
         const { handleSubmit } = this.props
         return (
@@ -48,14 +48,13 @@ class SprintNameForm extends Component {
 
 function mapStateToProps(state, props) {
 
-    const { onChange } = props
-    
+    const { onSubmitted } = props
+
     return {
         initialValues: {name:props.initial_value},
         enableReinitialize: true,
-        onSubmit: onChange
+        onSubmit: onSubmitted
     }
 }
 
 export default connect(mapStateToProps)(reduxForm({form:'sprint_name_form'})(SprintNameForm))
-

@@ -38,7 +38,7 @@ class NewSprintSidebar extends Component {
                 <PropertyStack>
                     <div>
                         <div>
-                            <SprintNameForm onChange={this.onSaveCandidateSprint}/>
+                            <SprintNameForm onSubmitted={this.onSaveCandidateSprint}/>
                         </div>
                     </div>
                 </PropertyStack>
