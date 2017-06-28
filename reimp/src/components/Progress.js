@@ -18,7 +18,7 @@ class Progress extends Component {
                     { active && <div className={classNames('icon--timer-' + (active ? 'active' : 'inactive'))}></div> }
                 </div>
                 <div className="progress__component progress__component--progress">
-                    <div className="progress__times">
+                    <div className="progress__time">
                         <div className={classNames('progress__time', 'progress__time--' + ( current <= max ? 'progress' : 'over'))}>
                             <Duration value={current}/>
                         </div>

@@ -7,7 +7,7 @@
 }
 
 .progress__time {
-  display: inline-block;
+    display: inline-block;
 }
 
 .progress__time--max {
@@ -19,7 +19,7 @@
 }
 
 .progress__time--progress {
-  color: $color-5;
+    color: $color-5;
 }
 
 .progress__time-separator {
@@ -47,5 +47,7 @@
 }
 
 .progress__progress_bar {
-  width: 100%;
+    width: 100%;
+    line-height: 0%
+
 }
