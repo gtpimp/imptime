@@ -72,6 +72,12 @@
 
     {% end_permission %}
 
+    {% has_permission has_create_sprint business %}  
+    <li>
+      <a href="{% url 'testable:dashboard' business.id %}">Testables</a></li>
+    </li>
+    {% end_permission %}
+    
     {% include "timepiece/project/_card_project_menu.html" %}
     
   </ul>

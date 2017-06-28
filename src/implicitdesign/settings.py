@@ -283,6 +283,7 @@ INSTALLED_APPS = (
     'implicitdesign',
     'jira_interface',
     'invoicing',
+    'testable',
     'animated_website',
     'slideshow',
     'impasync',

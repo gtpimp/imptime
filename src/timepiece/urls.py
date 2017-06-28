@@ -647,6 +647,7 @@ urlpatterns = [
                        url(r'^send_calendar_invite/(?P<event_id>.*)$', views.send_calendar_invite, {}, name='send_calendar_invite'),
 
                        url(r'^invoicing/', include('invoicing.urls', namespace="invoicing"), {}, "invoicing"),
+                       url(r'^testable/', include('testable.urls', namespace="testable"), {}, "testable"),
                        url(r'^noui/', include('noui.urls', namespace="noui"), {}, "noui"),
 
                        url(r'^business_cost_summary/(?P<business_id>.*)', views.business_cost_summary, {}, name="business_cost_summary"),

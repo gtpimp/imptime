@@ -410,6 +410,7 @@ class BusinessPermissions(BaseModel):
     can_assign_user = models.BooleanField(default=True, verbose_name="Can Assign User")
     can_be_scheduled = models.BooleanField(default=False, verbose_name="Can Be Scheduled")
     can_view_business_comments = models.BooleanField(default=False, verbose_name="Can view project comments")
+    can_view_testables = models.BooleanField(default=True, verbose_name="Can View Testables")
 
     can_view_actual_hours = models.BooleanField(default=False, verbose_name="Can View Actual Hours")
     can_see_other_user_points = models.BooleanField(default=False, verbose_name="Can See Other User's Points")
@@ -666,6 +667,10 @@ class BusinessPermissions(BaseModel):
     def has_view_business_comments(self):
         return self.user.is_superuser or self.can_view_business_comments or self.user.has_perm('timepiece.belongs_to_all_projects')
 
+    @property
+    def has_view_testables(self):
+        return self.user.is_superuser or self.can_view_testables or self.user.has_perm('timepiece.belongs_to_all_projects')
+    
     @property
     def has_edit_business_comments(self):
         return self.user.is_superuser or self.can_edit_business_comments or self.user.has_perm('timepiece.belongs_to_all_projects')
