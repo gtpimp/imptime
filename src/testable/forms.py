@@ -2,13 +2,16 @@ from django import forms
 from django.forms.models import modelformset_factory
 from invoicing.fields import GroupedModelChoiceField
 from dateutil.relativedelta import relativedelta
+from django.db.models import Count, Q
 from datetime import datetime
 from django.conf import settings
-from testable.models import Testable
+from testable.models import Testable, TestEvent
 from timepiece.models import Feature, IssueStatus, Project
 
 class TestableFilterForm(forms.Form):
 
+    TEST_EVENT_FILTER_CHOICES = [ ('all', 'All'), ('untested', 'Untested'), ('failed', 'Failed'), ('passed', 'Passed') ]
+    
     projects = forms.ModelMultipleChoiceField(required=False,
                                               queryset=Project.objects.all().order_by("business__name", "name"),
                                               widget=forms.CheckboxSelectMultiple())
@@ -20,6 +23,9 @@ class TestableFilterForm(forms.Form):
                                               widget=forms.CheckboxSelectMultiple())
     only_included_in_regression_test = forms.BooleanField(initial=False, required=False)
 
+    test_event_status = forms.ChoiceField(required=False,
+                                            choices=TEST_EVENT_FILTER_CHOICES)
+    
     def __init__(self, *args, **kwargs):
         self.business = kwargs.pop('business')
         super(TestableFilterForm, self).__init__(*args, **kwargs)
@@ -47,4 +53,14 @@ class TestableFilterForm(forms.Form):
             qs = qs.filter(issue__feature__in=f['features'])
         if f.get('only_included_in_regression_test', True):
             qs = qs.filter(include_in_regression_test=True)
+        if 'test_event_status' in f:
+
+            status = f['test_event_status']
+            if status == 'untested':
+                qs = qs.annotate(num_test_events=Count('test_events')).filter(Q(num_test_events=0)|Q(test_events__status='unknown'))
+            elif status == 'passed':
+                qs = qs.filter(test_events__is_latest=True, test_events__status='passed')
+            elif status == 'failed':
+                qs = qs.filter(test_events__is_latest=True, test_events__status='failed')
+                
         return qs.order_by("issue__project__order", "issue__order", "order").distinct()

@@ -39,11 +39,14 @@ class Testable(models.Model):
 
     @property
     def last_test_event(self):
-        return self.test_events.order_by("-checked_at").first()
+        return self.test_events.filter(is_latest=True).first()
     
 class TestEvent(models.Model):
+
+    TEST_EVENT_CHOICES = [ ('unknown', 'Any'), ('failed', 'Failed'), ('passed', 'Passed') ]
+    
     testable = models.ForeignKey(Testable, blank=True, null=False, related_name='test_events')
     checked_by = models.ForeignKey(User, related_name='test_events', blank=False, null=False)
     checked_at = models.DateTimeField(null=False)
-    status = models.CharField(max_length=10, default='unknown', choices=[ ('unknown', 'Unknown'), ('failed', 'Failed'), ('passed', 'Passed') ])
-    
+    status = models.CharField(max_length=10, default='unknown', choices=TEST_EVENT_CHOICES)
+    is_latest = models.BooleanField(default=False) # Helper field for queries, if true then is this is the latest test event for the particular testable

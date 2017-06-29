@@ -45,6 +45,18 @@
   </tr>
 
   <tr>
+    <th>Test Status</th>
+    <td>
+      {% if not active_filter.test_event_status or active_filter.test_event_status == 'all' %}
+      All
+      {% else %}
+      Only {{active_filter.test_event_status}} testables
+      {% endif %}
+    </td>
+  </tr>
+
+  
+  <tr>
     <th>Enabled</th>
     <td>
       {% if active_filter.only_included_in_regression_test %}
