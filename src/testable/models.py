@@ -21,6 +21,8 @@ class Testable(models.Model):
     @property
     def clean_steps(self):
         s = self.steps.strip()
+        if not s:
+            return s
         if s[0] == ':':
             s = s[1:]
         if s.startswith('s:'):
