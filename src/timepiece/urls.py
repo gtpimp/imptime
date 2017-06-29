@@ -691,8 +691,5 @@ urlpatterns = [
                         url(r'^issue_clock_out$', views.issue_clock_out, {}, name='issue_clock_out'),
                        
                        url(r'^project_cost_summary/(?P<project_id>\d+)$', views.project_cost_summary, {}, name='project_cost_summary'),
-                       
-                       
-                       
 
 ]

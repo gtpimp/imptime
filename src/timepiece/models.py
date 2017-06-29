@@ -3549,7 +3549,7 @@ class Issue(models.Model):
     story_points = models.FloatField(null=True,blank=True)    
     order = models.FloatField(null=True,blank=True)
     order2 = models.CharField(max_length=50, default=None, null=True,blank=True) #alternative means of ordering by string (used by eg jira)
-    feature = models.ForeignKey("Feature",blank=True,null=True,related_name='issues')
+    feature = models.ForeignKey("Feature", blank=True, null=True, related_name='issues')
     assigned_to = models.ForeignKey(User, related_name='assigned_issues', blank=True,null=True)
     interface_plugin_number = models.CharField(max_length=255, null=True, blank=True) #eg jira
     created = models.DateTimeField(auto_now_add=True)
