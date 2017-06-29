@@ -1,4 +1,11 @@
+{% load timepiece_tags %}
 
-{{testable}}
+{% if testable.steps %}
 
+<div class="testable_item">
+  <div class="testable_item__steps">
+    {{testable.clean_steps|asmarkdown|safe}}
+  </div>
+</div>
 
+{% endif %}
