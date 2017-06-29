@@ -6,3 +6,9 @@
 .testable_filter_form ul {
     float: left;
 }
+
+.testable_list_content {
+    overflow: auto;
+    max-height: 60vh;
+}
+

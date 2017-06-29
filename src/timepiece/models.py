@@ -3571,6 +3571,9 @@ class Issue(models.Model):
         super(Issue, self).save(*args, **kwargs)
         if was_created:
             RefreshNotifier().notify_model_create(self)
+
+            from testable.models import Testable
+            Testable.create(issue=self)
         else:
             RefreshNotifier().notify_model_update(self)
     

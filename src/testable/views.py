@@ -40,10 +40,10 @@ def test_session(request, business_id, template="testable/test_session.html", co
     filter_form = TestableFilterForm(request.POST or None, business=business)
     if filter_form.is_valid():
         testables = filter_form.filter()
+        context['active_filter'] = filter_form.cleaned_data
     else:
         testables = None
+        context['active_filter'] = None
     context['filter_form'] = filter_form
-    context['active_filter'] = filter_form.cleaned_data
     context['testables'] = testables
     return render(request, template, context)
-    

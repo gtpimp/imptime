@@ -161,6 +161,7 @@ TEMPLATES = [
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
+                #"django.core.context_processors.request",
                 "django.contrib.auth.context_processors.auth",
                 #"django.core.context_processors.debug",
                 #"django.core.context_processors.i18n",
@@ -273,7 +274,7 @@ INSTALLED_APPS = (
     'dateutil',
     'djcelery',
     'colorful',
-    #'endless_pagination',
+    'el_pagination',
     'mailqueue',
     'corsheaders',
 

@@ -18,33 +18,33 @@ class TestableFilterForm(forms.Form):
     features = forms.ModelMultipleChoiceField(required=False,
                                               queryset=Feature.objects.all().order_by("name"),
                                               widget=forms.CheckboxSelectMultiple())
-    included_in_regression_test = forms.BooleanField(initial=False, required=False)
+    only_included_in_regression_test = forms.BooleanField(initial=False, required=False)
 
     def __init__(self, *args, **kwargs):
         self.business = kwargs.pop('business')
         super(TestableFilterForm, self).__init__(*args, **kwargs)
 
         available_projects = Project.objects.filter(business=self.business).distinct()
-        self.fields['projects'].widget.choices = [ ('_all_', 'All') ] + [ (x.id, str(x)) for x in available_projects.order_by("name") ]
-        self.fields['projects'].widget.initial = ["_all_",]
+        self.fields['projects'].widget.choices = [ ('', 'All') ] + [ (x.id, str(x)) for x in available_projects.order_by("name") ]
+        self.fields['projects'].widget.initial = ["",]
         
         available_features = Feature.objects.filter(issues__project__business=self.business).distinct()
-        self.fields['features'].widget.choices = [ ('_all_', 'All') ] + [ (x.id, str(x)) for x in available_features.order_by("name") ]
-        self.fields['features'].widget.initial = ["_all_",]
+        self.fields['features'].widget.choices = [ ('', 'All') ] + [ (x.id, str(x)) for x in available_features.order_by("name") ]
+        self.fields['features'].widget.initial = ["",]
 
         available_statuses = IssueStatus.objects.filter(issues__project__business=self.business).distinct()
-        self.fields['statuses'].widget.choices = [ ('_all_', 'All') ] + [ (x.id, str(x)) for x in available_statuses.order_by("name") ]
-        self.fields['statuses'].widget.initial = ["_all_",]
+        self.fields['statuses'].widget.choices = [ ('', 'All') ] + [ (x.id, str(x)) for x in available_statuses.order_by("name") ]
+        self.fields['statuses'].widget.initial = ["",]
         
     def filter(self):
         qs = Testable.objects.filter(issue__project__business=self.business)
         f = self.cleaned_data
-        if 'projects' in f:
+        if 'projects' in f and f['projects'].count() > 0:
             qs = qs.filter(issue__project__in=f['projects'])
-        if 'statuses' in f:
+        if 'statuses' in f and f['statuses'].count() > 0:
             qs = qs.filter(issue__status2__in=f['statuses'])
-        if 'features' in f:
+        if 'features' in f and f['features'].count() > 0:
             qs = qs.filter(issue__feature__in=f['features'])
-        if 'included_in_regression_test' in f:
-            qs = qs.filter(include_in_regression_test=f['included_in_regression_test'])
+        if f.get('only_included_in_regression_test', True):
+            qs = qs.filter(include_in_regression_test=True)
         return qs.order_by("issue__project__order", "issue__order").distinct()
