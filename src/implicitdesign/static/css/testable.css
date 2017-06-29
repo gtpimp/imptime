@@ -8,8 +8,13 @@
 }
 
 .testable_list_content {
-    overflow: auto;
-    max-height: 60vh;
+    /*overflow: auto;*/
+    /*max-height: 60vh;*/
+}
+
+.testable_item {
+    border-top: 1px solid #222222;
+    margin-bottom: 40px;
 }
 
 .testable_item__issue_summary {

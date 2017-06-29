@@ -47,4 +47,4 @@ class TestableFilterForm(forms.Form):
             qs = qs.filter(issue__feature__in=f['features'])
         if f.get('only_included_in_regression_test', True):
             qs = qs.filter(include_in_regression_test=True)
-        return qs.order_by("issue__project__order", "issue__order").distinct()
+        return qs.order_by("issue__project__order", "issue__order", "order").distinct()

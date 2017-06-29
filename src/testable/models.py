@@ -12,6 +12,7 @@ class Testable(models.Model):
     include_in_regression_test = models.BooleanField(default=True, blank=True)
     issue = models.ForeignKey(Issue, blank=True, null=False, related_name='testables')
     steps = models.TextField(null=False)
+    order = models.IntegerField(null=False, default=0)
 
     def __init__(self, *args, **kwargs):
         super(Testable, self).__init__(*args, **kwargs)
@@ -33,5 +34,5 @@ class Testable(models.Model):
         if len(groups) <= 1:
             return
         step_groups = groups[1:]
-        for step_group in step_groups:
-            Testable.objects.create(steps=step_group, issue=issue)
+        for index, step_group in enumerate(step_groups):
+            Testable.objects.create(steps=step_group, issue=issue, order=index)

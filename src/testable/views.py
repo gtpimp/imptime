@@ -13,6 +13,7 @@ from django.core.urlresolvers import reverse, resolve
 from django.template import RequestContext
 from django.contrib import messages
 from timepiece import forms as timepiece_forms
+from testable.models import Testable
 from testable.forms import TestableFilterForm
 import logging
 logger = logging.getLogger(__name__)
@@ -37,12 +38,12 @@ def test_session(request, business_id, template="testable/test_session.html", co
     if bp is None:
         raise PermissionDenied
 
-    filter_form = TestableFilterForm(request.POST or None, business=business)
+    filter_form = TestableFilterForm(request.POST or {}, business=business)
     if filter_form.is_valid():
         testables = filter_form.filter()
         context['active_filter'] = filter_form.cleaned_data
     else:
-        testables = None
+        testables = Testable.objects.none()
         context['active_filter'] = None
     context['filter_form'] = filter_form
     context['testables'] = testables

@@ -19,7 +19,7 @@
         <td>
           <a class="testable_item__issue_summary__number_value" target="_blank" href="{% url 'highlighted_project_list' testable.issue.project_id testable.issue.id %}">
             {{testable.issue.number}}
-          </div>
+          </a>
         </td>
         <td class="testable_item__issue_summary__subject_value">{{testable.issue.subject|slice:"0,100"}}</td>
         <td class="testable_item__issue_summary__status_value">{{testable.issue.status2}}</td>
