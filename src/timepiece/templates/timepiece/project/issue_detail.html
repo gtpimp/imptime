@@ -27,6 +27,23 @@
   {% if issue.id %}
     <div class="change_issue_number">
       <div class="small_button btn title" onclick="$(this).parents('.change_issue_number').find('.content').toggle(); return false;">Change number</div>
+
+      {% has_permission has_view_testables project.business %}
+      {% if issue.testable.include_in_regression_test %}
+      <div class="testable_item__issue_detail--exclude-button">
+        <a class="btn btn-secondary" onclick="imp.on_exclude_issue_from_regression_test($(this), '{% url 'testable:exclude_from_regression_test_for_issue' issue.pk %}');">
+          Exclude from regression test
+        </a>
+      </div>
+      {% else %}
+      <div class="testable_item__issue_detail--include-button" {% if issue.testable.include_in_regression_test %}style="display:none"{% endif %}>
+        <a class="btn btn-secondary" onclick="imp.on_include_issue_in_regression_test($(this), '{% url 'testable:include_in_regression_test_for_issue' issue.pk %}');">
+          Include in regression test
+        </a>
+      </div>
+      {% endif %}
+      {% end_permission %}
+      
       <div class="content" style="display:none">
         <form method="POST" action="{% url 'edit_issue_number' issue.id %}">
           {% csrf_token %}

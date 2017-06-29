@@ -14,6 +14,7 @@ from django.http import HttpResponse, HttpResponseRedirect
 from django.core.urlresolvers import reverse, resolve
 from django.template import RequestContext
 from django.contrib import messages
+from timepiece.models import Issue
 from timepiece import forms as timepiece_forms
 from testable.models import Testable
 from testable.forms import TestableFilterForm
@@ -27,7 +28,7 @@ def dashboard(request, business_id, template="testable/testable_dashboard.html",
     context['business'] = business
     context['filter_form'] = TestableFilterForm(business=business)
     bp = BusinessPermissions.for_user(request.user, business=business)
-    if bp is None:
+    if bp is None or not bp.has_view_testables:
         raise PermissionDenied
     return render(request, template, context)
 
@@ -37,10 +38,10 @@ def test_session(request, business_id, template="testable/test_session.html", co
     business = Business.objects.all().get(pk=business_id)
     context['business'] = business
     bp = BusinessPermissions.for_user(request.user, business=business)
-    if bp is None:
+    if bp is None or not bp.has_view_testables:
         raise PermissionDenied
 
-    filter_form = TestableFilterForm(request.POST or {}, business=business)
+    filter_form = TestableFilterForm(request.GET or {}, business=business)
     if filter_form.is_valid():
         testables = filter_form.filter()
         context['active_filter'] = filter_form.cleaned_data
@@ -58,7 +59,7 @@ def exclude_from_regression_test(request, testable_id, context=None):
     testable = Testable.objects.get(pk=testable_id)
     business = testable.issue.project.business
     bp = BusinessPermissions.for_user(request.user, business=business)
-    if bp is None:
+    if bp is None or not bp.has_view_testables:
         raise PermissionDenied
     testable.include_in_regression_test = False
     testable.save()
@@ -72,9 +73,41 @@ def include_in_regression_test(request, testable_id, context=None):
     testable = Testable.objects.get(pk=testable_id)
     business = testable.issue.project.business
     bp = BusinessPermissions.for_user(request.user, business=business)
-    if bp is None:
+    if bp is None or not bp.has_view_testables:
         raise PermissionDenied
     testable.include_in_regression_test = True
     testable.save()
     context['status'] = 'success'
     return HttpResponse(json.dumps(context))
+
+@login_required
+@csrf_exempt
+def exclude_from_regression_test_for_issue(request, issue_id, context=None):
+    context = context or {}
+    issue = Issue.objects.get(pk=issue_id)
+    business = issue.project.business
+    bp = BusinessPermissions.for_user(request.user, business=business)
+    if bp is None or not bp.has_view_testables:
+        raise PermissionDenied
+    for testable in issue.testables.all():
+        testable.include_in_regression_test = False
+        testable.save()
+    context['status'] = 'success'
+    return HttpResponse(json.dumps(context))
+
+@login_required
+@csrf_exempt
+def include_in_regression_test_for_issue(request, issue_id, context=None):
+    context = context or {}
+    issue = Issue.objects.get(pk=issue_id)
+    business = issue.project.business
+    bp = BusinessPermissions.for_user(request.user, business=business)
+    if bp is None or not bp.has_view_testables:
+        raise PermissionDenied
+
+    for testable in issue.testables.all():
+        testable.include_in_regression_test = True
+        testable.save()
+    context['status'] = 'success'
+    return HttpResponse(json.dumps(context))
+    
