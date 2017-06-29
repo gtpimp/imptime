@@ -22,6 +22,22 @@
          var el = $(this);
          testable.on_include_in_regression_test(event, el);
      });
+     $(".testable_item__issue_summary__include_in_regression_test").click( function(event) {
+         var el = $(this);
+         testable.on_include_in_regression_test(event, el);
+     });
+     $(".testable_item__test_event__test_passed").click( function(event) {
+         var el = $(this);
+         testable.on_change_test_status(event, el);
+     });
+     $(".testable_item__test_event__test_failed").click( function(event) {
+         var el = $(this);
+         testable.on_change_test_status(event, el);
+     });
+     $(".testable_item__test_event__test_unknown").click( function(event) {
+         var el = $(this);
+         testable.on_change_test_status(event, el);
+     });
  });
 </script>
 

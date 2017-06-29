@@ -17,6 +17,20 @@
     margin-bottom: 40px;
 }
 
+.testable_item:hover {
+    background-color: white;
+}
+
+.testable_item__content {
+    position: relative;
+    margin-bottom: 60px;
+}
+
+
+.testable_item__steps {
+    float: left;
+}
+
 .testable_item__issue_summary {
     width: 100%;
     font-size: 10px;
@@ -42,7 +56,27 @@
 .testable_item__issue_summary__created_at_heading {
 }
 
+.testable_item__issue_summary__subject_value {
+    font-weight: bold;
+}
+
 .testable_item__issue_summary__number_value {
     cursor: pointer;
     color: blue;
+}
+
+.testable_item__test_event {
+    float: right;
+    font-size: 10px;
+}
+
+.testable_item__last_test_event__status {
+    float: right;
+}
+
+.testable_item__test_event__actions {
+    float: right;
+}
+
+.testable_item__last_test_event__status_icon {
 }

@@ -1,13 +1,14 @@
 {% load timepiece_tags %}
+{% load static %}
 
 {% if testable.steps %}
 
-<div class="testable_item" data-testable-id="{{testable.id}}">
+<div class="testable_item">
 
   <table class="testable_item__issue_summary">
     <thead>
-      <th class="testable_item__issue_summary__number_header">#</th>
-      <th class="testable_item__issue_summary__subject_heading">Subject</th>
+      <th class="testable_item__issue_summary__number_header"></th>
+      <th class="testable_item__issue_summary__subject_heading"></th>
       <th class="testable_item__issue_summary__status_heading">Status</th>
       <th class="testable_item__issue_summary__feature_heading">Feature</th>
       <th class="testable_item__issue_summary__assigned_to_heading">Assigned to</th>
@@ -17,7 +18,8 @@
     <tbody>
       <tr>
         <td>
-          <a class="testable_item__issue_summary__number_value" target="_blank" href="{% url 'highlighted_project_list' testable.issue.project_id testable.issue.id %}">
+          <a class="testable_item__issue_summary__number_value" target="_blank"
+             href="{% url 'highlighted_project_list' testable.issue.project_id testable.issue.id %}">
             {{testable.issue.number}}
           </a>
         </td>
@@ -45,11 +47,47 @@
       </tr>
     </tbody>
   </table>    
-  
-  <div class="testable_item__steps">
-    {{testable.clean_steps|asmarkdown|safe}}
-  </div>
-  
-</div>
 
+  <div class="testable_item__content">
+    
+    <div class="testable_item__steps">
+      {{testable.clean_steps|asmarkdown|safe}}
+    </div>
+
+    <div class="testable_item__test_event">
+
+      <div class="testable_item__test_event__status">
+        {% if testable.last_test_event and testable.last_test_event.status != 'unknown' %}
+        <div class="testable_item__last_test_event__status_icon">
+          {% if testable.last_test_event.status == 'passed' %}
+          <img src="{% static 'images/icons/tick.png' %}"/>
+          {% endif %}
+          {% if testable.last_test_event.status == 'failed' %}
+          <img src="{% static 'images/icons/red_cross.png' %}"/>
+          {% endif %}
+        </div>
+        
+        by {{testable.last_test_event.checked_by.username}} at {{testable.last_test_event.checked_at}}
+        {% else %}
+        Never tested (test events are reset each time the issue description is saved)
+        {% endif %}
+
+      </div>
+
+      <div class="testable_item__test_event__actions">
+        <a class="btn btn-success testable_item__test_event__test_passed" ajax_url="{% url 'testable:test_passed' testable.pk %}">
+          Pass
+        </a>
+        <a class="btn btn-danger testable_item__test_event__test_failed" ajax_url="{% url 'testable:test_failed' testable.pk %}">
+          Fail
+        </a>
+        <a class="btn btn-warning testable_item__test_event__test_unknown" ajax_url="{% url 'testable:test_unknown' testable.pk %}">
+          Unknown
+        </a>
+      </div>
+      
+    </div>
+    <div style="clear:both"></div>
+  </div>
+</div>
 {% endif %}

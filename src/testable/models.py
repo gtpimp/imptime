@@ -36,3 +36,14 @@ class Testable(models.Model):
         step_groups = groups[1:]
         for index, step_group in enumerate(step_groups):
             Testable.objects.create(steps=step_group, issue=issue, order=index)
+
+    @property
+    def last_test_event(self):
+        return self.test_events.order_by("-checked_at").first()
+        
+class TestEvent(models.Model):
+    testable = models.ForeignKey(Testable, blank=True, null=False, related_name='test_events')
+    checked_by = models.ForeignKey(User, related_name='test_events', blank=False, null=False)
+    checked_at = models.DateTimeField(null=False)
+    status = models.CharField(max_length=10, default='unknown', choices=[ ('unknown', 'Unknown'), ('failed', 'Failed'), ('passed', 'Passed') ])
+    

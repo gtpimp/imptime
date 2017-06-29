@@ -1,5 +1,6 @@
 from timepiece.models import Business, BusinessPermissions
 from django.db.models import Sum, Count, Q, F, Max, Min
+from django.utils import timezone
 from django.views.decorators.csrf import csrf_exempt
 import json
 from django.core.exceptions import PermissionDenied
@@ -14,9 +15,9 @@ from django.http import HttpResponse, HttpResponseRedirect
 from django.core.urlresolvers import reverse, resolve
 from django.template import RequestContext
 from django.contrib import messages
-from timepiece.models import Issue
+from timepiece.models import Issue, IssueStatus
 from timepiece import forms as timepiece_forms
-from testable.models import Testable
+from testable.models import Testable, TestEvent
 from testable.forms import TestableFilterForm
 import logging
 logger = logging.getLogger(__name__)
@@ -110,4 +111,42 @@ def include_in_regression_test_for_issue(request, issue_id, context=None):
         testable.save()
     context['status'] = 'success'
     return HttpResponse(json.dumps(context))
+
+@login_required
+@csrf_exempt
+def test_passed(request, testable_id):
+    return _update_test_status(request, testable_id, 'passed', 'internal_qa_passed')
+
+@login_required
+@csrf_exempt
+def test_failed(request, testable_id):
+    return _update_test_status(request, testable_id, 'failed', 'reopened')
+
+@login_required
+@csrf_exempt
+def test_unknown(request, testable_id):
+    return _update_test_status(request, testable_id, 'unknown', None)
+
+def _update_test_status(request, testable_id, status, new_issue_status_name):
+    context = {}
+    testable = Testable.objects.get(pk=testable_id)
+    business = testable.issue.project.business
+    bp = BusinessPermissions.for_user(request.user, business=business)
+    if bp is None or not bp.has_view_testables:
+        raise PermissionDenied
+
+    TestEvent.objects.create(testable=testable,
+                             checked_by=request.user,
+                             checked_at=timezone.now(),
+                             status=status)
+
+    if new_issue_status_name is not None:
+        issue = testable.issue
+        old_status = issue.status2
+        issue.status2 = IssueStatus.objects.get_or_create(name=new_issue_status_name, business=business)[0]
+        issue.save()
+        timepiece.IssueHistory.add_history(request.user, issue, "changed status because of test", old_status, issue.status)
     
+    context['status'] = 'success'
+    return HttpResponse(json.dumps(context))
+

@@ -31,6 +31,19 @@ var testable = ( function() {
             change_exclusion_flag(url, function() {
                 window.location.reload();
             });
+        },
+
+        on_change_test_status: function(event, el) {
+            var on_done = imp.loading("updating test state");
+            url = $(el).attr('ajax_url');
+            $.ajax({type:"POST",
+                    url: url,
+                    dataType:"json",
+                    success : function (data) {
+		        on_done();
+                        window.location.reload();
+                    }
+            });        
         }
     };
     

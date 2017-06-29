@@ -3581,7 +3581,8 @@ def issue_detail_update(request,  template="timepiece/project/issue_detail.html"
         old_description = edited_issue.description
         edited_issue.description = request.POST["new_value"]
         edited_issue.save()
-        edited_issue.on_description_updated()
+        if old_description != edited_issue.description:
+            edited_issue.on_description_updated()
         timepiece.IssueHistory.add_history(request.user, edited_issue, "changed description", old_description, edited_issue.description)
     except KeyError:
         pass
