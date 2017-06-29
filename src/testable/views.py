@@ -1,5 +1,7 @@
 from timepiece.models import Business, BusinessPermissions
 from django.db.models import Sum, Count, Q, F, Max, Min
+from django.views.decorators.csrf import csrf_exempt
+import json
 from django.core.exceptions import PermissionDenied
 import copy
 import datetime
@@ -48,3 +50,31 @@ def test_session(request, business_id, template="testable/test_session.html", co
     context['filter_form'] = filter_form
     context['testables'] = testables
     return render(request, template, context)
+
+@login_required
+@csrf_exempt
+def exclude_from_regression_test(request, testable_id, context=None):
+    context = context or {}
+    testable = Testable.objects.get(pk=testable_id)
+    business = testable.issue.project.business
+    bp = BusinessPermissions.for_user(request.user, business=business)
+    if bp is None:
+        raise PermissionDenied
+    testable.include_in_regression_test = False
+    testable.save()
+    context['status'] = 'success'
+    return HttpResponse(json.dumps(context))
+
+@login_required
+@csrf_exempt
+def include_in_regression_test(request, testable_id, context=None):
+    context = context or {}
+    testable = Testable.objects.get(pk=testable_id)
+    business = testable.issue.project.business
+    bp = BusinessPermissions.for_user(request.user, business=business)
+    if bp is None:
+        raise PermissionDenied
+    testable.include_in_regression_test = True
+    testable.save()
+    context['status'] = 'success'
+    return HttpResponse(json.dumps(context))

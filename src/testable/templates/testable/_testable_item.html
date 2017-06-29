@@ -2,7 +2,7 @@
 
 {% if testable.steps %}
 
-<div class="testable_item">
+<div class="testable_item" data-testable-id="{{testable.id}}">
 
   <table class="testable_item__issue_summary">
     <thead>
@@ -27,6 +27,21 @@
         <td class="testable_item__issue_summary__assigned_to_value">{{testable.issue.assigned_to.username}}</td>
         <td class="testable_item__issue_summary__last_modified_at_value">{{testable.issue.modified}}</td>
         <td class="testable_item__issue_summary__created_at_value">{{testable.issue.created}}</td>
+
+        <td class="testable_item__issue_summary__include_in_regression_test_value">
+          {% if testable.include_in_regression_test %}
+          <a class="btn btn-secondary testable_item__issue_summary__exclude_from_regression_test"
+             ajax_url="{% url 'testable:exclude_from_regression_test' testable.pk %}">
+            Exclude
+          </a>
+          {% else %}
+          <a class="btn btn-secondary testable_item__issue_summary__exclude_from_regression_test"
+             ajax_url="{% url 'testable:include_in_regression_test' testable.pk %}">
+            Include
+          </a>
+          {% endif %}
+        </td>
+        
       </tr>
     </tbody>
   </table>    

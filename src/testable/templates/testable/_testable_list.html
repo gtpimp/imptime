@@ -12,4 +12,17 @@
   {% endfor %}
 </div>
 
+<script>
+ $(document).ready(function() {
+     $(".testable_item__issue_summary__exclude_from_regression_test").click( function(event) {
+         var el = $(this);
+         testable.on_exclude_from_regression_test(event, el);
+     });
+     $(".testable_item__issue_summary__include_in_regression_test").click( function(event) {
+         var el = $(this);
+         testable.on_include_in_regression_test(event, el);
+     });
+ });
+</script>
+
 {% show_pages %}
