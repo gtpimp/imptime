@@ -40,7 +40,7 @@ class Testable(models.Model):
     @property
     def last_test_event(self):
         return self.test_events.order_by("-checked_at").first()
-        
+    
 class TestEvent(models.Model):
     testable = models.ForeignKey(Testable, blank=True, null=False, related_name='test_events')
     checked_by = models.ForeignKey(User, related_name='test_events', blank=False, null=False)
