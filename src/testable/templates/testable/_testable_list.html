@@ -5,11 +5,10 @@
 
 {% show_pages %}
 <div class="testable_list_content">
-  <table>
   {% for testable in testables %}
-    {% include "testable/_testable_item.html" %}
-    {% empty %}
-    <tr><td>No testables</td></tr>
+  {% include "testable/_testable_item.html" %}
+  {% empty %}
+  No testables
   {% endfor %}
 </div>
 
