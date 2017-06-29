@@ -1,0 +1,59 @@
+<table>
+  <tr>
+    <th>Projects</th>
+    <td>
+      <table>
+        {% for v in active_filter.projects %}
+        <tr>
+          <td>{{v}}</td>
+        </tr>
+        {% empty %}
+        <tr><td>All</td></tr>
+        {% endfor %}
+      </table>
+    </td>
+  </tr>
+
+  <tr>
+    <th>Statuses</th>
+    <td>
+      <table>
+        {% for v in active_filter.statuses %}
+        <tr>
+          <td>{{v}}</td>
+        </tr>
+        {% empty %}
+        <tr><td>All</td></tr>
+        {% endfor %}
+      </table>
+    </td>
+  </tr>
+
+  <tr>
+    <th>Features</th>
+    <td>
+      <table>
+        {% for v in active_filter.features %}
+        <tr>
+          <td>{{v}}</td>
+        </tr>
+        {% empty %}
+        <tr><td>All</td></tr>
+        {% endfor %}
+      </table>
+    </td>
+  </tr>
+
+  <tr>
+    <th>Enabled</th>
+    <td>
+      {% if active_filter.included_in_regression_test %}
+      Only active
+      {% else %}
+      active and inactive testables
+      {% endif %}
+    </td>
+  </tr>
+
+  
+</table>

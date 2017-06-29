@@ -26,18 +26,18 @@ class TestableFilterForm(forms.Form):
 
         available_projects = Project.objects.filter(business=self.business).distinct()
         self.fields['projects'].widget.choices = [ ('_all_', 'All') ] + [ (x.id, str(x)) for x in available_projects.order_by("name") ]
-        self.fields['projects'].widget.initial = "_all_"
+        self.fields['projects'].widget.initial = ["_all_",]
         
         available_features = Feature.objects.filter(issues__project__business=self.business).distinct()
         self.fields['features'].widget.choices = [ ('_all_', 'All') ] + [ (x.id, str(x)) for x in available_features.order_by("name") ]
-        self.fields['features'].widget.initial = "_all_"
+        self.fields['features'].widget.initial = ["_all_",]
 
         available_statuses = IssueStatus.objects.filter(issues__project__business=self.business).distinct()
         self.fields['statuses'].widget.choices = [ ('_all_', 'All') ] + [ (x.id, str(x)) for x in available_statuses.order_by("name") ]
-        self.fields['statuses'].widget.initial = "_all_"
+        self.fields['statuses'].widget.initial = ["_all_",]
         
     def filter(self):
-        qs = Testable.objects.filter(issue__project__business__in=self.business)
+        qs = Testable.objects.filter(issue__project__business=self.business)
         f = self.cleaned_data
         if 'projects' in f:
             qs = qs.filter(issue__project__in=f['projects'])
@@ -47,4 +47,4 @@ class TestableFilterForm(forms.Form):
             qs = qs.filter(issue__feature__in=f['features'])
         if 'included_in_regression_test' in f:
             qs = qs.filter(include_in_regression_test=f['included_in_regression_test'])
-        return qs
+        return qs.order_by("issue__project__order", "issue__order").distinct()

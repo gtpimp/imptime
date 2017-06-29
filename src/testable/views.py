@@ -43,6 +43,7 @@ def test_session(request, business_id, template="testable/test_session.html", co
     else:
         testables = None
     context['filter_form'] = filter_form
+    context['active_filter'] = filter_form.cleaned_data
     context['testables'] = testables
     return render(request, template, context)
     

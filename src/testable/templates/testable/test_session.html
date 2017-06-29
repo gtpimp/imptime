@@ -3,6 +3,23 @@
 
 {% block content %}
 
-{% include "testable/_filter_form.html" %}
+{% include "testable/_filter_summary.html" %}
+
+<button class="filter_form_filter_show" btn btn-secondary">Edit Filter</button>
+<div class="filter_form_section" style="display:none">
+  <button class="filter_form_filter_hide" btn btn-secondary">Cancel</button>
+  {% include "testable/_filter_form.html" %}
+</div>
+
+<script>
+ $(".filter_form_filter_show").click(function() {
+     $(".filter_form_section").show();
+     $(".filter_form_filter_show").hide();
+ });
+ $(".filter_form_filter_hide").click(function() {
+     $(".filter_form_section").hide();
+     $(".filter_form_filter_show").show();
+ });
+</script>
 
 {% endblock %}
