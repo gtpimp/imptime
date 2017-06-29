@@ -149,4 +149,3 @@ def _update_test_status(request, testable_id, status, new_issue_status_name):
     
     context['status'] = 'success'
     return HttpResponse(json.dumps(context))
-

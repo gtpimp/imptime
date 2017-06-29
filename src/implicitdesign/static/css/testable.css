@@ -18,7 +18,7 @@
 }
 
 .testable_item:hover {
-    background-color: white;
+    background-color: #dedede;
 }
 
 .testable_item__content {
@@ -29,6 +29,7 @@
 
 .testable_item__steps {
     float: left;
+    margin-bottom: 20px;
 }
 
 .testable_item__issue_summary {
