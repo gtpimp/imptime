@@ -12,3 +12,32 @@
     max-height: 60vh;
 }
 
+.testable_item__issue_summary {
+    width: 100%;
+    font-size: 10px;
+    text-align: center;
+}
+
+.testable_item__issue_summary__subject_heading {
+    width: 50%;
+}
+
+.testable_item__issue_summary__status_heading {
+}
+
+.testable_item__issue_summary__feature_heading {
+}
+
+.testable_item__issue_summary__assigned_to_heading {
+}
+
+.testable_item__issue_summary__last_modified_at_heading {
+}
+
+.testable_item__issue_summary__created_at_heading {
+}
+
+.testable_item__issue_summary__number_value {
+    cursor: pointer;
+    color: blue;
+}

@@ -3,9 +3,38 @@
 {% if testable.steps %}
 
 <div class="testable_item">
+
+  <table class="testable_item__issue_summary">
+    <thead>
+      <th class="testable_item__issue_summary__number_header">#</th>
+      <th class="testable_item__issue_summary__subject_heading">Subject</th>
+      <th class="testable_item__issue_summary__status_heading">Status</th>
+      <th class="testable_item__issue_summary__feature_heading">Feature</th>
+      <th class="testable_item__issue_summary__assigned_to_heading">Assigned to</th>
+      <th class="testable_item__issue_summary__last_modified_at_heading">Last modified at</th>
+      <th class="testable_item__issue_summary__created_at_heading">Created at</th>
+    </thead>
+    <tbody>
+      <tr>
+        <td>
+          <a class="testable_item__issue_summary__number_value" target="_blank" href="{% url 'highlighted_project_list' testable.issue.project_id testable.issue.id %}">
+            {{testable.issue.number}}
+          </div>
+        </td>
+        <td class="testable_item__issue_summary__subject_value">{{testable.issue.subject|slice:"0,100"}}</td>
+        <td class="testable_item__issue_summary__status_value">{{testable.issue.status2}}</td>
+        <td class="testable_item__issue_summary__feature_value">{{testable.issue.feature|default:""}}</td>
+        <td class="testable_item__issue_summary__assigned_to_value">{{testable.issue.assigned_to.username}}</td>
+        <td class="testable_item__issue_summary__last_modified_at_value">{{testable.issue.modified}}</td>
+        <td class="testable_item__issue_summary__created_at_value">{{testable.issue.created}}</td>
+      </tr>
+    </tbody>
+  </table>    
+  
   <div class="testable_item__steps">
     {{testable.clean_steps|asmarkdown|safe}}
   </div>
+  
 </div>
 
 {% endif %}
