@@ -5,11 +5,17 @@ from dateutil.relativedelta import relativedelta
 from django.db.models import Count, Q
 from datetime import datetime
 from django.conf import settings
+<<<<<<< HEAD
 from testable.models import Testable, TestableSession, TestableResult
+=======
+from testable.models import Testable, TestEvent
+>>>>>>> prod
 from timepiece.models import Feature, IssueStatus, Project
 
 class TestableFilterForm(forms.Form):
 
+    TEST_EVENT_FILTER_CHOICES = [ ('all', 'All'), ('untested', 'Untested'), ('failed', 'Failed'), ('passed', 'Passed') ]
+    
     projects = forms.ModelMultipleChoiceField(required=False,
                                               queryset=Project.objects.none(),
                                               widget=forms.CheckboxSelectMultiple())
@@ -55,15 +61,14 @@ class TestableFilterForm(forms.Form):
             qs = qs.filter(issue__feature__in=f['features'])
         if f.get('only_included_in_regression_test', True):
             qs = qs.filter(include_in_regression_test=True)
-        if 'test_event_status' in f:
-            status = f['test_event_status']
+        if 'testable_result_status' in f:
+            status = f['testable_result_status']
             if status == 'untested':
-                qs = qs.annotate(num_test_events=Count('test_events')).filter(Q(num_test_events=0)|Q(test_events__status='unknown'))
+                qs = qs.annotate(num_testable_results=Count('testable_results')).filter(Q(num_testable_results=0)|Q(testable_results__status='unknown'))
             elif status == 'passed':
-                qs = qs.filter(test_events__is_latest=True, test_events__status='passed')
+                qs = qs.filter(testable_results__is_latest=True, testable_results__status='passed')
             elif status == 'failed':
-                qs = qs.filter(test_events__is_latest=True, test_events__status='failed')
-
+                qs = qs.filter(testable_results__is_latest=True, testable_results__status='failed')
         return qs.order_by("issue__project__order", "issue__order", "order").distinct()
 
 class TestableSessionCreateForm(forms.ModelForm):

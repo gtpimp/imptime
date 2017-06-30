@@ -155,10 +155,12 @@ def _update_test_status(request, testable_id, status, new_issue_status_name):
     if bp is None or not bp.has_view_testables:
         raise PermissionDenied
 
+    TestEvent.objects.filter(testable=testable).update(is_latest=False)
     TestEvent.objects.create(testable=testable,
                              checked_by=request.user,
                              checked_at=timezone.now(),
-                             status=status)
+                             status=status,
+                             is_latest=True)
 
     if new_issue_status_name is not None:
         issue = testable.issue
