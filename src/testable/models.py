@@ -31,7 +31,11 @@ class Testable(models.Model):
     
     @classmethod
     def update_from_issue_description(self, issue, description):
-        Testable.objects.filter(issue=issue).delete()
+        testables_to_delete = Testable.objects.filter(issue=issue)
+        for testable_to_delete in testables_to_delete:
+            testable_to_delete.testable_results.update(testable=None)
+            testable_to_delete.delete()
+        
         groups = re.split("testable", description, flags=re.IGNORECASE)
         if len(groups) <= 1:
             return
@@ -51,8 +55,9 @@ class TestableSession(models.Model):
     
 class TestableResult(models.Model):
     TESTABLE_RESULT_CHOICES = [ ('untested', 'Untested'), ('failed', 'Failed'), ('passed', 'Passed') ]
-    testable = models.ForeignKey(Testable, blank=True, null=False, related_name='testable_results')
-    testable_session = models.ForeignKey(TestableSession, blank=True, null=False, related_name='testable_results')
+    testable = models.ForeignKey(Testable, blank=True, null=True, related_name='testable_results')
+    testable_session = models.ForeignKey(TestableSession, blank=True, null=False,
+                                         related_name='testable_results')
     checked_by = models.ForeignKey(User, related_name='testable_results', blank=False, null=False)
     checked_at = models.DateTimeField(null=False)
     status = models.CharField(max_length=10, default='untested', choices=TESTABLE_RESULT_CHOICES)

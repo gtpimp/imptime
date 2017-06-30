@@ -5,11 +5,7 @@ from dateutil.relativedelta import relativedelta
 from django.db.models import Count, Q
 from datetime import datetime
 from django.conf import settings
-<<<<<<< HEAD
 from testable.models import Testable, TestableSession, TestableResult
-=======
-from testable.models import Testable, TestEvent
->>>>>>> prod
 from timepiece.models import Feature, IssueStatus, Project
 
 class TestableFilterForm(forms.Form):

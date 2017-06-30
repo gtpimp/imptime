@@ -1,5 +1,6 @@
 {% load timepiece_tags %}
 {% load static %}
+{% load testable_tags %}
 
 {% if testable.steps %}
 
@@ -34,7 +35,7 @@
           {% if testable.include_in_regression_test %}
           <a class="btn btn-secondary testable_item__issue_summary__exclude_from_regression_test"
              ajax_url="{% url 'testable:exclude_from_regression_test' testable.pk %}">
-            Exclude
+            Mark as Obsolete
           </a>
           {% else %}
           <a class="btn btn-secondary testable_item__issue_summary__exclude_from_regression_test"
@@ -57,32 +58,33 @@
     <div class="testable_item__test_event">
 
       <div class="testable_item__test_event__status">
-        {% if testable.last_test_event and testable.last_test_event.status != 'unknown' %}
-        <div class="testable_item__last_test_event__status_icon">
-          {% if testable.last_test_event.status == 'passed' %}
+        {% set_test_result testable=testable testable_session=testable_session %}
+        {% if testable.test_result %}
+        <div class="testable_item__test_result__status_icon">
+          {% if testable.test_result.status == 'passed' %}
           <img src="{% static 'images/icons/tick.png' %}"/>
           {% endif %}
-          {% if testable.last_test_event.status == 'failed' %}
+          {% if testable.test_result.status == 'failed' %}
           <img src="{% static 'images/icons/red_cross.png' %}"/>
           {% endif %}
         </div>
         
-        by {{testable.last_test_event.checked_by.username}} at {{testable.last_test_event.checked_at}}
+        by {{testable.test_result.checked_by.username}} at {{testable.test_result.checked_at}}
         {% else %}
-        Never tested (test events are reset each time the issue description is saved)
+        Untested (testable results are reset each time the issue description is saved)
         {% endif %}
 
       </div>
 
       <div class="testable_item__test_event__actions">
-        <a class="btn btn-success testable_item__test_event__test_passed" ajax_url="{% url 'testable:test_passed' testable.pk %}">
+        <a class="btn btn-success testable_item__test_event__test_passed" ajax_url="{% url 'testable:test_passed' testable_id=testable.pk testable_session_id=testable_session.pk %}">
           Pass
         </a>
-        <a class="btn btn-danger testable_item__test_event__test_failed" ajax_url="{% url 'testable:test_failed' testable.pk %}">
+        <a class="btn btn-danger testable_item__test_event__test_failed" ajax_url="{% url 'testable:test_failed' testable_id=testable.pk testable_session_id=testable_session.pk %}">
           Fail
         </a>
-        <a class="btn btn-warning testable_item__test_event__test_unknown" ajax_url="{% url 'testable:test_unknown' testable.pk %}">
-          Unknown
+        <a class="btn btn-warning testable_item__test_event__test_untested" ajax_url="{% url 'testable:test_untested' testable_id=testable.pk testable_session_id=testable_session.pk %}">
+          Untested
         </a>
       </div>
       

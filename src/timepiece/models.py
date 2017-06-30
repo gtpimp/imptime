@@ -3573,7 +3573,7 @@ class Issue(models.Model):
             RefreshNotifier().notify_model_create(self)
 
             from testable.models import Testable
-            Testable.create(issue=self)
+            Testable.update_from_issue_description(issue=self, description=self.description)
         else:
             RefreshNotifier().notify_model_update(self)
     

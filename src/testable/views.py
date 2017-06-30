@@ -134,34 +134,36 @@ def include_in_regression_test_for_issue(request, issue_id, context=None):
 
 @login_required
 @csrf_exempt
-def test_passed(request, testable_id):
-    return _update_test_status(request, testable_id, 'passed', 'internal_qa_passed')
+def test_passed(request, testable_session_id, testable_id):
+    return _update_test_status(request, testable_session_id, testable_id, 'passed', 'internal_qa_passed')
 
 @login_required
 @csrf_exempt
-def test_failed(request, testable_id):
-    return _update_test_status(request, testable_id, 'failed', 'reopened')
+def test_failed(request, testable_session_id, testable_id):
+    return _update_test_status(request, testable_session_id, testable_id, 'failed', 'reopened')
 
 @login_required
 @csrf_exempt
-def test_unknown(request, testable_id):
-    return _update_test_status(request, testable_id, 'unknown', None)
+def test_untested(request, testable_session_id, testable_id):
+    return _update_test_status(request, testable_id, testable_session_id, 'untested', None)
 
-def _update_test_status(request, testable_id, status, new_issue_status_name):
+def _update_test_status(request, testable_session_id, testable_id, status, new_issue_status_name):
     context = {}
     testable = Testable.objects.get(pk=testable_id)
+    testable_session = TestableSession.objects.get(pk=testable_session_id)
     business = testable.issue.project.business
     bp = BusinessPermissions.for_user(request.user, business=business)
     if bp is None or not bp.has_view_testables:
         raise PermissionDenied
 
-    TestEvent.objects.filter(testable=testable).update(is_latest=False)
-    TestEvent.objects.create(testable=testable,
-                             checked_by=request.user,
-                             checked_at=timezone.now(),
-                             status=status,
-                             is_latest=True)
-
+    testable_result = TestableResult.objects.filter(testable_session=testable_session, testable=testable).first()
+    if testable_result is None:
+        testable_result = TestableResult(testable_session=testable_session, testable=testable)
+    testable_result.checked_by = request.user
+    testable_result.checked_at = timezone.now()
+    testable_result.status = status
+    testable_result.save()
+    
     if new_issue_status_name is not None:
         issue = testable.issue
         old_status = issue.status2
