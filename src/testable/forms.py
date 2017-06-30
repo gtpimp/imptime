@@ -21,10 +21,12 @@ class TestableFilterForm(forms.Form):
     features = forms.ModelMultipleChoiceField(required=False,
                                               queryset=Feature.objects.none(),
                                               widget=forms.CheckboxSelectMultiple())
-    only_included_in_regression_test = forms.BooleanField(initial=False, required=False)
+    only_included_in_regression_test = forms.BooleanField(initial=False, required=False,
+                                                          label="Exclude obsolete testables")
 
     testable_result_status = forms.ChoiceField(required=False,
-                                               choices=TestableResult.TESTABLE_RESULT_CHOICES)
+                                               choices=[ ("", "All"), ("this_testable_session_only", "All added to this testable session") ] + TestableResult.TESTABLE_RESULT_CHOICES,
+                                               label="Test status for this session")
 
 
     def __init__(self, *args, **kwargs):
@@ -46,7 +48,7 @@ class TestableFilterForm(forms.Form):
         self.fields['statuses'].widget.choices = [ ('', 'All') ] + [ (x.id, str(x)) for x in available_statuses.order_by("name") ]
         self.fields['statuses'].widget.initial = ["",]
 
-    def filter(self):
+    def filter(self, testable_session=None):
         qs = Testable.objects.filter(issue__project__business=self.business)
         f = self.cleaned_data
         if 'projects' in f and f['projects'].count() > 0:
@@ -57,14 +59,15 @@ class TestableFilterForm(forms.Form):
             qs = qs.filter(issue__feature__in=f['features'])
         if f.get('only_included_in_regression_test', True):
             qs = qs.filter(include_in_regression_test=True)
-        if 'testable_result_status' in f:
+        if 'testable_result_status' in f and f['testable_result_status']:
             status = f['testable_result_status']
+            qs = qs.filter(testable_results__testable_session=testable_session)
             if status == 'untested':
-                qs = qs.annotate(num_testable_results=Count('testable_results')).filter(Q(num_testable_results=0)|Q(testable_results__status='unknown'))
+                qs = qs.filter(testable_results__status='untested')
             elif status == 'passed':
-                qs = qs.filter(testable_results__is_latest=True, testable_results__status='passed')
+                qs = qs.filter(testable_results__status='passed')
             elif status == 'failed':
-                qs = qs.filter(testable_results__is_latest=True, testable_results__status='failed')
+                qs = qs.filter(testable_results__status='failed')
         return qs.order_by("issue__project__order", "issue__order", "order").distinct()
 
 class TestableSessionCreateForm(forms.ModelForm):

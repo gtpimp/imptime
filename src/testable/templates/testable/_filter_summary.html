@@ -1,71 +1,75 @@
-<table>
-  <tr>
-    <th>Projects</th>
-    <td>
-      <table>
-        {% for v in active_filter.projects %}
-        <tr>
-          <td>{{v}}</td>
-        </tr>
-        {% empty %}
-        <tr><td>All</td></tr>
-        {% endfor %}
-      </table>
-    </td>
-  </tr>
 
-  <tr>
-    <th>Statuses</th>
-    <td>
-      <table>
-        {% for v in active_filter.statuses %}
-        <tr>
-          <td>{{v}}</td>
-        </tr>
-        {% empty %}
-        <tr><td>All</td></tr>
-        {% endfor %}
-      </table>
-    </td>
-  </tr>
-
-  <tr>
+<table class="testable__summary_filter">
+  <thead>
+    <th>Project</th>
+    <th>Issue statuses</th>
     <th>Features</th>
-    <td>
-      <table>
-        {% for v in active_filter.features %}
-        <tr>
-          <td>{{v}}</td>
-        </tr>
-        {% empty %}
-        <tr><td>All</td></tr>
-        {% endfor %}
-      </table>
-    </td>
-  </tr>
-
-  <tr>
-    <th>Test Status</th>
-    <td>
-      {% if not active_filter.test_event_status or active_filter.test_event_status == 'all' %}
-      All
-      {% else %}
-      Only {{active_filter.test_event_status}} testables
-      {% endif %}
-    </td>
-  </tr>
-
-  
-  <tr>
-    <th>Enabled</th>
-    <td>
-      {% if active_filter.only_included_in_regression_test %}
-      Only active
-      {% else %}
-      active and inactive testables
-      {% endif %}
-    </td>
-  </tr>
-
-  
+    <th>Test statuses</th>
+    <th>Test results</th>
+    <th>Obsolete tests</th>
+  </thead>
+  <tbody>
+    <tr>
+      <td>
+        <table>
+          {% for v in active_filter.projects %}
+          <tr>
+            <td>{{v}}</td>
+          </tr>
+          {% empty %}
+          <tr><td>All</td></tr>
+          {% endfor %}
+        </table>
+      </td>
+      <td>
+        <table>
+          {% for v in active_filter.statuses %}
+          <tr>
+            <td>{{v}}</td>
+          </tr>
+          {% empty %}
+          <tr><td>All</td></tr>
+          {% endfor %}
+        </table>
+      </td>
+      <td>
+        <table>
+          {% for v in active_filter.features %}
+          <tr>
+            <td>{{v}}</td>
+          </tr>
+          {% empty %}
+          <tr><td>All</td></tr>
+          {% endfor %}
+        </table>
+      </td>
+      <td>
+        {% if not active_filter.test_event_status or active_filter.test_event_status == 'all' %}
+        All
+        {% else %}
+        Only {{active_filter.test_event_status}} testables
+        {% endif %}
+      </td>
+      <td>
+        {{ active_filter.testable_result_status }}
+      </td>
+      <td>
+        {% if active_filter.only_included_in_regression_test %}
+        Exclude obsolete testables
+        {% else %}
+        Include obsolete testables
+        {% endif %}
+      </td>
+    </tr>
+  </tbody>
 </table>
+
+<button class="filter_form_filter_show" btn btn-secondary">Edit Filter</button>
+
+<div class="filter_form_section" {% if not filter_form.errors %}style="display:none"{% endif %}>
+  <button class="filter_form_filter_hide" btn btn-secondary">Cancel</button>
+  {% include "testable/_filter_form.html" %}
+</div>
+<div style="clear:both"></div>
+
+

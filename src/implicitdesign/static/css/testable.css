@@ -81,3 +81,13 @@
 
 .testable_item__last_test_event__status_icon {
 }
+
+.testable__summary_filter {
+    text-align: left;
+    padding: 5px;
+}
+
+.testable__summary_filter th {
+    padding-left: 5px;
+    padding-right: 5px;
+}

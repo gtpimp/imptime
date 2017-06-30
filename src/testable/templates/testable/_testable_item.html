@@ -2,6 +2,8 @@
 {% load static %}
 {% load testable_tags %}
 
+{% set_test_result testable=testable testable_session=testable_session %}
+
 {% if testable.steps %}
 
 <div class="testable_item">
@@ -43,6 +45,13 @@
             Include
           </a>
           {% endif %}
+
+          {% if testable.test_result %}
+          <a class="btn btn-secondary testable_item__test_event__test_remove" ajax_url="{% url 'testable:test_remove' testable_id=testable.pk testable_session_id=testable_session.pk %}">
+            Remove from test session
+          </a>
+          {% endif %}
+          
         </td>
         
       </tr>
@@ -58,7 +67,6 @@
     <div class="testable_item__test_event">
 
       <div class="testable_item__test_event__status">
-        {% set_test_result testable=testable testable_session=testable_session %}
         {% if testable.test_result %}
         <div class="testable_item__test_result__status_icon">
           {% if testable.test_result.status == 'passed' %}
@@ -66,6 +74,9 @@
           {% endif %}
           {% if testable.test_result.status == 'failed' %}
           <img src="{% static 'images/icons/red_cross.png' %}"/>
+          {% endif %}
+          {% if testable.test_result.status == 'untested' %}
+          Not tested
           {% endif %}
         </div>
         
@@ -83,9 +94,16 @@
         <a class="btn btn-danger testable_item__test_event__test_failed" ajax_url="{% url 'testable:test_failed' testable_id=testable.pk testable_session_id=testable_session.pk %}">
           Fail
         </a>
+        {% if not testable.test_result %}
+        <a class="btn btn-warning testable_item__test_event__test_untested" ajax_url="{% url 'testable:test_untested' testable_id=testable.pk testable_session_id=testable_session.pk %}">
+          Add
+        </a>
+        {% endif %}
+        {% if testable.test_result %}
         <a class="btn btn-warning testable_item__test_event__test_untested" ajax_url="{% url 'testable:test_untested' testable_id=testable.pk testable_session_id=testable_session.pk %}">
           Untested
         </a>
+        {% endif %}
       </div>
       
     </div>

@@ -14,5 +14,6 @@ urlpatterns = [
     url(r'^test_passed/(?P<testable_session_id>\d+)/(?P<testable_id>\d+)$', views.test_passed, name='test_passed'),
     url(r'^test_failed/(?P<testable_session_id>\d+)/(?P<testable_id>\d+)$', views.test_failed, name='test_failed'),
     url(r'^test_untested/(?P<testable_session_id>\d+)/(?P<testable_id>\d+)$', views.test_untested, name='test_untested'),
+    url(r'^test_remove/(?P<testable_session_id>\d+)/(?P<testable_id>\d+)$', views.test_remove, name='test_remove'),
 ]
 

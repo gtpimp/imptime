@@ -63,7 +63,7 @@ def test_session(request, testable_session_id, template="testable/test_session.h
 
     filter_form = TestableFilterForm(request.GET or {}, business=business)
     if filter_form.is_valid():
-        testables = filter_form.filter()
+        testables = filter_form.filter(testable_session=testable_session)
         context['active_filter'] = filter_form.cleaned_data
     else:
         testables = Testable.objects.none()
@@ -145,7 +145,7 @@ def test_failed(request, testable_session_id, testable_id):
 @login_required
 @csrf_exempt
 def test_untested(request, testable_session_id, testable_id):
-    return _update_test_status(request, testable_id, testable_session_id, 'untested', None)
+    return _update_test_status(request, testable_session_id, testable_id, 'untested', None)
 
 def _update_test_status(request, testable_session_id, testable_id, status, new_issue_status_name):
     context = {}
@@ -171,5 +171,21 @@ def _update_test_status(request, testable_session_id, testable_id, status, new_i
         issue.save()
         timepiece.IssueHistory.add_history(request.user, issue, "changed status because of test", old_status, issue.status)
     
+    context['status'] = 'success'
+    return HttpResponse(json.dumps(context))
+
+@login_required
+@csrf_exempt
+def test_remove(request, testable_session_id, testable_id):
+    context = {}
+    testable = Testable.objects.get(pk=testable_id)
+    testable_session = TestableSession.objects.get(pk=testable_session_id)
+    business = testable.issue.project.business
+    bp = BusinessPermissions.for_user(request.user, business=business)
+    if bp is None or not bp.has_view_testables:
+        raise PermissionDenied
+
+    testable_result = TestableResult.objects.filter(testable_session=testable_session, testable=testable).first()
+    testable_result.delete()
     context['status'] = 'success'
     return HttpResponse(json.dumps(context))
