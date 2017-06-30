@@ -2,40 +2,48 @@ from django import forms
 from django.forms.models import modelformset_factory
 from invoicing.fields import GroupedModelChoiceField
 from dateutil.relativedelta import relativedelta
+from django.db.models import Count, Q
 from datetime import datetime
 from django.conf import settings
-from testable.models import Testable
+from testable.models import Testable, TestableSession, TestableResult
 from timepiece.models import Feature, IssueStatus, Project
 
 class TestableFilterForm(forms.Form):
 
     projects = forms.ModelMultipleChoiceField(required=False,
-                                              queryset=Project.objects.all().order_by("business__name", "name"),
+                                              queryset=Project.objects.none(),
                                               widget=forms.CheckboxSelectMultiple())
     statuses = forms.ModelMultipleChoiceField(required=False,
-                                              queryset=IssueStatus.objects.all().order_by("name"),
+                                              queryset=IssueStatus.objects.none(),
                                               widget=forms.CheckboxSelectMultiple())
     features = forms.ModelMultipleChoiceField(required=False,
-                                              queryset=Feature.objects.all().order_by("name"),
+                                              queryset=Feature.objects.none(),
                                               widget=forms.CheckboxSelectMultiple())
     only_included_in_regression_test = forms.BooleanField(initial=False, required=False)
+
+    testable_result_status = forms.ChoiceField(required=False,
+                                               choices=TestableResult.TESTABLE_RESULT_CHOICES)
+
 
     def __init__(self, *args, **kwargs):
         self.business = kwargs.pop('business')
         super(TestableFilterForm, self).__init__(*args, **kwargs)
 
         available_projects = Project.objects.filter(business=self.business).distinct()
+        self.fields['projects'].queryset = available_projects
         self.fields['projects'].widget.choices = [ ('', 'All') ] + [ (x.id, str(x)) for x in available_projects.order_by("name") ]
         self.fields['projects'].widget.initial = ["",]
         
         available_features = Feature.objects.filter(issues__project__business=self.business).distinct()
+        self.fields['features'].queryset = available_features
         self.fields['features'].widget.choices = [ ('', 'All') ] + [ (x.id, str(x)) for x in available_features.order_by("name") ]
         self.fields['features'].widget.initial = ["",]
 
         available_statuses = IssueStatus.objects.filter(issues__project__business=self.business).distinct()
+        self.fields['statuses'].queryset = available_statuses
         self.fields['statuses'].widget.choices = [ ('', 'All') ] + [ (x.id, str(x)) for x in available_statuses.order_by("name") ]
         self.fields['statuses'].widget.initial = ["",]
-        
+
     def filter(self):
         qs = Testable.objects.filter(issue__project__business=self.business)
         f = self.cleaned_data
@@ -47,4 +55,34 @@ class TestableFilterForm(forms.Form):
             qs = qs.filter(issue__feature__in=f['features'])
         if f.get('only_included_in_regression_test', True):
             qs = qs.filter(include_in_regression_test=True)
+        if 'test_event_status' in f:
+            status = f['test_event_status']
+            if status == 'untested':
+                qs = qs.annotate(num_test_events=Count('test_events')).filter(Q(num_test_events=0)|Q(test_events__status='unknown'))
+            elif status == 'passed':
+                qs = qs.filter(test_events__is_latest=True, test_events__status='passed')
+            elif status == 'failed':
+                qs = qs.filter(test_events__is_latest=True, test_events__status='failed')
+
         return qs.order_by("issue__project__order", "issue__order", "order").distinct()
+
+class TestableSessionCreateForm(forms.ModelForm):
+
+    name = forms.CharField(required=False, label="New testable session name")
+    
+    class Meta:
+        model = TestableSession
+        fields = ['name']
+
+class TestableSessionSelectForm(forms.Form):
+ 
+    testable_session = forms.ModelChoiceField(required=False,
+                                              queryset=TestableSession.objects.none())
+
+    def __init__(self, *args, **kwargs):
+        self.business = kwargs.pop('business')
+        super(TestableSessionSelectForm, self).__init__(*args, **kwargs)
+        available_test_sessions = TestableSession.objects.all().filter(business=self.business).distinct()
+        self.fields['testable_session'].queryset = available_test_sessions
+        self.fields['testable_session'].widget.choices = [ ('', '---') ] + [ (x.id, str(x)) for x in available_test_sessions.order_by("name") ]
+        self.fields['testable_session'].widget.initial = ["",]

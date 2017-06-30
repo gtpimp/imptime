@@ -17,8 +17,8 @@ from django.template import RequestContext
 from django.contrib import messages
 from timepiece.models import Issue, IssueStatus
 from timepiece import forms as timepiece_forms
-from testable.models import Testable, TestEvent
-from testable.forms import TestableFilterForm
+from testable.models import Testable, TestableSession, TestableResult
+from testable.forms import TestableFilterForm, TestableSessionCreateForm, TestableSessionSelectForm
 import logging
 logger = logging.getLogger(__name__)
 
@@ -27,16 +27,35 @@ def dashboard(request, business_id, template="testable/testable_dashboard.html",
     context = context or {}
     business = Business.objects.all().get(pk=business_id)
     context['business'] = business
-    context['filter_form'] = TestableFilterForm(business=business)
+
+    new_testable_session_form = TestableSessionCreateForm(request.POST or None)
+    testable_session_select_form = TestableSessionSelectForm(request.POST or None, business=business)
+    
+    if 'name' in request.POST and new_testable_session_form.is_valid() and new_testable_session_form['name']:
+        testable_session = new_testable_session_form.save(commit=False)
+        testable_session.business = business
+        testable_session.created_by = request.user
+        testable_session.save()
+        new_testable_session_form.save_m2m()
+        return HttpResponseRedirect(reverse('testable:testable_session', args=[testable_session.id]))
+        
+    if 'testable_session' in request.POST and testable_session_select_form.is_valid():
+        testable_session = testable_session_select_form.cleaned_data['testable_session']
+        return HttpResponseRedirect(reverse('testable:testable_session', args=[testable_session.id]))
+
+    context['new_testable_session_form'] = new_testable_session_form
+    context['testable_session_select_form'] = testable_session_select_form
+    
     bp = BusinessPermissions.for_user(request.user, business=business)
     if bp is None or not bp.has_view_testables:
         raise PermissionDenied
     return render(request, template, context)
 
 @login_required
-def test_session(request, business_id, template="testable/test_session.html", context=None):
+def test_session(request, testable_session_id, template="testable/test_session.html", context=None):
     context = context or {}
-    business = Business.objects.all().get(pk=business_id)
+    testable_session = TestableSession.objects.get(pk=testable_session_id)
+    business = testable_session.business
     context['business'] = business
     bp = BusinessPermissions.for_user(request.user, business=business)
     if bp is None or not bp.has_view_testables:
@@ -51,6 +70,7 @@ def test_session(request, business_id, template="testable/test_session.html", co
         context['active_filter'] = None
     context['filter_form'] = filter_form
     context['testables'] = testables
+    context['testable_session'] = testable_session
     return render(request, template, context)
 
 @login_required

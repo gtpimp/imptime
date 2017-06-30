@@ -5,7 +5,7 @@ from django.contrib.auth.models import User
 from django.db.models import Sum, Count, Q, F, Max, Min
 from django.db import models
 from datetime import datetime, date
-from timepiece.models import Issue
+from timepiece.models import Issue, Business
 import re
 
 class Testable(models.Model):
@@ -17,7 +17,7 @@ class Testable(models.Model):
     def __init__(self, *args, **kwargs):
         super(Testable, self).__init__(*args, **kwargs)
         self._step_groups = None
-
+ 
     @property
     def clean_steps(self):
         s = self.steps.strip()
@@ -37,13 +37,20 @@ class Testable(models.Model):
         for index, step_group in enumerate(step_groups):
             Testable.objects.create(steps=step_group, issue=issue, order=index)
 
-    @property
-    def last_test_event(self):
-        return self.test_events.order_by("-checked_at").first()
-        
-class TestEvent(models.Model):
-    testable = models.ForeignKey(Testable, blank=True, null=False, related_name='test_events')
-    checked_by = models.ForeignKey(User, related_name='test_events', blank=False, null=False)
-    checked_at = models.DateTimeField(null=False)
-    status = models.CharField(max_length=10, default='unknown', choices=[ ('unknown', 'Unknown'), ('failed', 'Failed'), ('passed', 'Passed') ])
+class TestableSession(models.Model):
+    name = models.CharField(max_length=255, unique=True)
+    created_at = models.DateTimeField(null=False, auto_now_add=True)
+    created_by = models.ForeignKey(User, related_name='testable_sessions', blank=False, null=False)
+    modified_at = models.DateTimeField(null=False, auto_now=True)
+    business = models.ForeignKey(Business, blank=True, null=False, related_name='test_sessions')
+
+    def __unicode__(self):
+        return self.name
     
+class TestableResult(models.Model):
+    TESTABLE_RESULT_CHOICES = [ ('untested', 'Untested'), ('failed', 'Failed'), ('passed', 'Passed') ]
+    testable = models.ForeignKey(Testable, blank=True, null=False, related_name='testable_results')
+    testable_session = models.ForeignKey(TestableSession, blank=True, null=False, related_name='testable_results')
+    checked_by = models.ForeignKey(User, related_name='testable_results', blank=False, null=False)
+    checked_at = models.DateTimeField(null=False)
+    status = models.CharField(max_length=10, default='untested', choices=TESTABLE_RESULT_CHOICES)
