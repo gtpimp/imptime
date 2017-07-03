@@ -49,8 +49,9 @@ class SprintList extends Component {
         }
     }
 
-    componentWillReceiveProps() {
-        const {dispatch, list_key, project_id} = this.props
+    componentWillReceiveProps(new_props) {
+        const {dispatch, list_key} = this.props
+        const { project_id } = new_props
         if (project_id) {
             dispatch(fetchSprintsIfNeeded(list_key))
         }
@@ -165,7 +166,7 @@ class SprintList extends Component {
         return (
             <tr key={list_key + ".candidate_sprint"} className="sprint_list__candidate_sprint">
                 <td colSpan="20">Creating new sprint here</td>
-                { false && 
+                { false &&
                 <td>
                     <RIEModeToggler propName="candidate_sprint_title"
                                     initialValue=""
