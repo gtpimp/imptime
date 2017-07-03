@@ -10,7 +10,7 @@ class UserDashboard extends Component {
         super(props)
         this.onLogout = this.onLogout.bind(this)
     }
-    
+
     onLogout() {
         const { dispatch } = this.props
         dispatch(logout())
@@ -19,14 +19,14 @@ class UserDashboard extends Component {
     onChangePassword() {
         browserHistory.push('/password/change')
     }
-    
+
     render() {
 
         return (
-            <div className="user-dashboard">
-                <button className="button button--primary button--large" onClick={this.onLogout}>Logout</button>
-                <button className="button button--primary button--large" onClick={this.onChangePassword}>Change password</button>
-                
+            <div className="user-dashboard button">
+                <button className="button--primary button--large" onClick={this.onLogout}>Logout</button>
+                <button className="button--primary button--large" onClick={this.onChangePassword}>Change password</button>
+
             </div>
         )
     }
