@@ -11,20 +11,20 @@ class IssueStatusForm extends Component {
         this.renderSingleValueSelector = this.renderSingleValueSelector.bind(this)
         this.onChangeAndSubmit = this.onChangeAndSubmit.bind(this)
     }
-    
+
     componentDidMount() {
         this.refresh()
     }
 
     componentWillReceiveProps(new_props) {
         this.refresh()
-    } 
-    
+    }
+
     refresh() {
         const { dispatch, project_id } = this.props
         dispatch(ensureProjectsLoaded([project_id]))
     }
-    
+
     onChangeAndSubmit(e, fieldOnChange) {
         const {handleSubmit} = this.props
         fieldOnChange(e)
@@ -42,7 +42,7 @@ class IssueStatusForm extends Component {
             />
         )
     }
-    
+
     render() {
         const { handleSubmit, status_options } = this.props
         return (
@@ -64,17 +64,17 @@ class IssueStatusForm extends Component {
 
 function mapStateToProps(state, props) {
 
-    const { project_id, onChange } = props
+    const { project_id, onSubmitted } = props
     const project = getProject(state, project_id) || {}
     const status_names = project.allowed_issue_status_names || []
     const status_options = status_names.map(function(status_name) {
 	return { value: status_name, label: status_name }
     })
-    
+
     return {
         initialValues: {assigned_to: props.initial_value},
         enableReinitialize: true,
-        onSubmit: onChange,
+        onSubmit: onSubmitted,
         status_options: status_options,
         project_id: project_id,
         project: project

@@ -16,7 +16,6 @@ class EditableIssueStatus extends Component {
 
     onChange(new_value) {
         const { dispatch, issue_ids } = this.props
-
         dispatch(updateIssueStatus(issue_ids, new_value.issue_status_name))
     }
     render() {
