@@ -43,6 +43,10 @@ class Testable(models.Model):
         for index, step_group in enumerate(step_groups):
             Testable.objects.create(steps=step_group, issue=issue, order=index)
 
+    @property
+    def most_recent_result(self):
+        return self.testable_results.order_by("-checked_at").first()
+            
 class TestableSession(models.Model):
     name = models.CharField(max_length=255, unique=True)
     created_at = models.DateTimeField(null=False, auto_now_add=True)

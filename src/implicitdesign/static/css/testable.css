@@ -71,7 +71,7 @@
     font-size: 10px;
 }
 
-.testable_item__last_test_event__status {
+.testable_item__most_recent_result__status {
     float: right;
 }
 
@@ -79,7 +79,7 @@
     float: right;
 }
 
-.testable_item__last_test_event__status_icon {
+.testable_item__most_recent_result__status_icon {
 }
 
 .testable__summary_filter {

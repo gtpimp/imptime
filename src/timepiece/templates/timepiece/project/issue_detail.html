@@ -138,20 +138,21 @@
     <div class="issue_test_events">
       {% for testable in issue.testables.all %}
       <div class="issue_detail__testable_tag">
-        {% with test_event=testable.last_test_event %}
+        {% with test_event=testable.most_recent_result %}
         {% if test_event %}
         Testable{{forloop.counter}}: 
-        <div class="testable_item__last_test_event__status_icon">
+        <div class="testable_item__most_recent_result__status_icon">
           {% if test_event.status == 'passed' %}
           <img src="{% static 'images/icons/tick.png' %}"/>
           {% endif %}
           {% if test_event.status == 'failed' %}
           <img src="{% static 'images/icons/red_cross.png' %}"/>
           {% endif %}
-          {% if test_event.status == 'unknown' %}
+          {% if test_event.status == 'untested' %}
           Untested
           {% endif %}
           at {{test_event.checked_at}} by {{test_event.checked_by.username}}
+          in {{test_event.testable_session}}
         </div>
         {% endif %}
         {% endwith %}
