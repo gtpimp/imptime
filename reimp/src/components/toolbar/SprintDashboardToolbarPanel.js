@@ -14,7 +14,7 @@ class SprintDashboardToolbarPanel extends Component {
         this.onDeleteSprintClick = this.onDeleteSprintClick.bind(this)
         this.onOpenSprintClick = this.onOpenSprintClick.bind(this)
     }
-    
+
     onDeleteSprintClick() {
         console.log('delete sprint clicked')
     }
@@ -41,13 +41,15 @@ function mapStateToProps(state, props) {
     const sprint_objs = (state.sprint || {}).items_by_id || {}
     const page = state.page || {}
     const selected_sprint_ids = (page[PAGE_KEY__SPRINT_DASHBOARD_PAGE] || {}).sprint_ids || []
-    const sprint = (selected_sprint_ids.length > 0 && sprint_objs[selected_sprint_ids[0]]) || null
-    
+    const sprint = (selected_sprint_ids.length > 0 && sprint_objs[selected_sprint_ids[0]]) || {}
+    const sprint_id = sprint.id || null
+    const project_id = sprint.project_id || null
+
     return {
         sprint: sprint,
-        sprint_id: sprint.id,
-        project_id: sprint.project_id
-    }    
+        sprint_id: sprint_id,
+        project_id: project_id
+    }
 }
 
 

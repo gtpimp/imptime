@@ -18,15 +18,18 @@ class EditableSprintName extends Component {
 
     render() {
         const { sprint } = this.props
-        
+
         return (
             <EditableProperty property_key='sprint_name'
                               initial_value={sprint.name}
                               onChange={this.onChange}
+                              can_edit={true}
+                              edit_as_modal={true}
+                              actionLabel="Edit Sprint Name"
             >
-                <SprintNameForm />
-                <div className="text-component--readonly">{sprint.name}</div>
-                <div className="text-component--empty">Name</div>
+              <SprintNameForm />
+              <div className="text-component--readonly">{sprint.name}</div>
+              <div className="text-component--empty">Name</div>
             </EditableProperty>
         )
     }
@@ -35,6 +38,7 @@ class EditableSprintName extends Component {
 function mapStateToProps(state, props) {
     const { sprint_id } = props
     const sprint = getSprint(state, sprint_id) || {}
+
     return {
         sprint: sprint
     }

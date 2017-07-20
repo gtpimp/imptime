@@ -2,6 +2,9 @@ import React, {Component} from 'react'
 import {connect} from 'react-redux'
 import {browserHistory} from 'react-router'
 import { setBreadcrumbs } from '../actions/Breadcrumbs'
+import EditableSprintName from '../components/EditableSprintName.js'
+import PropertyStackComponent from '../components/PropertyStackComponent'
+import '../sass/sprint-dashboard.scss'
 import {
     PAGE_KEY__SPRINT_DASHBOARD_PAGE
 } from '../actions/ItemListKeyRegistry'
@@ -10,7 +13,9 @@ import {
     select_sprints
 } from '../actions/Page'
 import {ensureProjectsLoaded, getProject} from '../actions/Projects'
-import {ensureSprintsLoaded, getSprint} from '../actions/Sprints'
+import {ensureSprintsLoaded,
+        getSprint
+} from '../actions/Sprints'
 
 class ProjectDashboardPage extends Component {
 
@@ -32,6 +37,7 @@ class ProjectDashboardPage extends Component {
 
         dispatch(ensureProjectsLoaded([project_id]))
         dispatch(ensureSprintsLoaded([sprint_id]))
+
         if ( new_props.sprint.id !== this.props.sprint.id ||
              new_props.sprint.name !== this.props.sprint.name ||
              new_props.project.name !== this.props.project.name) {
@@ -52,20 +58,31 @@ class ProjectDashboardPage extends Component {
         const { project_id, sprint_id } = this.props
         browserHistory.push('/projects/'+project_id+'/sprints/'+sprint_id+'/issues');
     }
-    
+
+
     render() {
 
-        const { sprint } = this.props
-        
+        const { sprint, sprint_id } = this.props
+
         return (
             <div>
-                Sprint {sprint.name}
+              Sprint {sprint.name}
 
-                <pre>
-                    I am your sprint dashboard
-                </pre>
-                
+              <pre>
+                I am your sprint dashboard
+              </pre>
+              <div>
                 <button onClick={this.navigateToIssuesPage}>Take me to your issues</button>
+              </div>
+              <div>
+                <div>
+
+                </div>
+                <PropertyStackComponent className="property-stack-component__small">
+                  <EditableSprintName sprint_id={sprint_id}/>
+                </PropertyStackComponent>
+              </div>
+              {this.renderSprintName}
             </div>
         )
     }
@@ -76,14 +93,13 @@ function mapStateToProps(state, props) {
     const sprint_id = props.params.sprintId
     const project = getProject(state, project_id) || {}
     const sprint = getSprint(state, sprint_id) || {}
-    
+
     return {
         project_id: project_id,
         project: project,
         sprint_id: sprint_id,
-        sprint: sprint
+        sprint: sprint,
     }
 }
 
 export default connect(mapStateToProps)(ProjectDashboardPage)
-
