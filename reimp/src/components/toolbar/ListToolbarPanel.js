@@ -2,6 +2,7 @@ import React, {Component} from 'react'
 import {connect} from 'react-redux'
 import '../../sass/toolbar-panel.css'
 import ToolbarButton from './ToolbarButton'
+import ReactTooltip from 'react-tooltip'
 
 class ListToolbarPanel extends Component {
 
@@ -20,8 +21,9 @@ class ListToolbarPanel extends Component {
     render() {
         return (
             <div className="toolbar-panel">
-                <ToolbarButton flavour="toggle" icon="info" isEnabled={true} onEnable={this.onEnableInfoClick} onDisable={this.onDisableInfoClick}/>
-                <ToolbarButton icon="settings" onClick={this.onSettingsClick}/>
+              <ToolbarButton tooltip="Info" flavour="toggle" icon="info" isEnabled={true} onEnable={this.onEnableInfoClick} onDisable={this.onDisableInfoClick}/>
+              <ToolbarButton tooltip="Settings" icon="settings" onClick={this.onSettingsClick}/>
+              <ReactTooltip place="bottom" type="info" />
             </div>
         )
     }
