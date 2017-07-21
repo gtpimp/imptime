@@ -10,7 +10,8 @@ import {
     deleteTag,
     getIssue,
     populateEstimates,
-    clock
+    clock,
+    deleteIssue
 } from '../actions/Issues'
 import {getProject} from '../actions/Projects'
 import {
@@ -24,6 +25,7 @@ import RIEUserDropDown from '../widgets/RIEUserDropDown'
 import Progress from '../components/Progress'
 import TimerSwitch from '../components/TimerSwitch'
 import ElapsedTime from '../components/ElapsedTime'
+import DeleteIssue from '../components/DeleteIssue'
 import Tag from '../components/Tag'
 import {DndTypes} from '../actions/Dnd'
 import {format_hours} from '../actions/lib'
@@ -59,6 +61,7 @@ class Issue extends Component {
         this.onDeleteTag = this.onDeleteTag.bind(this)
         this.onClockIn = this.onClockIn.bind(this)
         this.onClockOut = this.onClockOut.bind(this)
+        this.onDeleteIssue = this.onDeleteIssue.bind(this)
     }
 
     componentDidMount() {
@@ -104,6 +107,12 @@ class Issue extends Component {
         dispatch(clock(issue.id, 'clock_out'))
     }
 
+    onDeleteIssue() {
+        const { issue, dispatch } = this.props
+        console.log(issue.id)
+        dispatch(deleteIssue(issue.id))
+    }
+
     renderEstimates() {
         const {issue} = this.props
         return map(issue.all_estimates, function (estimate, index) {
@@ -134,7 +143,8 @@ class Issue extends Component {
             issue, is_selected, onClickedIssue, assignable_user_ids,
             is_invalidated, is_saving,
             isOver, connectDragSource, connectDropTarget, show_children,
-            subject_prefix, subject_suffix
+            subject_prefix, subject_suffix,
+            issue_id
         } = this.props
 
         const onDeleteTag = this.onDeleteTag
@@ -161,95 +171,103 @@ class Issue extends Component {
             const isFeature = issue.can_group_issues
             const belongsToFeature = issue.parent_group_id || false
             const isStandalone = !isFeature && !belongsToFeature
+
             return connectDragSource(connectDropTarget(
                 <tr key={this.key + "." + issue.id}
                     onClick={onClickedIssue}
                     className={classNames(
-                        'issue', 'list-table__row--compact', {
-                            'list-table__row--unselected': !is_selected,
-                            'list-table__row--selected': is_selected,
-                            'issue--standalone': isStandalone,
-                            'issue--feature': isFeature,
-                            'issue--grouped': belongsToFeature,
-                            /*'tr--selected': is_selected,*/
-                            'tr--invalidated': is_invalidated,
-                            'tr--saving': is_saving,
-                            'tr--drop-target': isOver
-                        })}
+                            'issue', 'list-table__row--compact', {
+                                'list-table__row--unselected': !is_selected,
+                                'list-table__row--selected': is_selected,
+                                'issue--standalone': isStandalone,
+                                'issue--feature': isFeature,
+                                'issue--grouped': belongsToFeature,
+                                /*'tr--selected': is_selected,*/
+                                'tr--invalidated': is_invalidated,
+                                'tr--saving': is_saving,
+                                'tr--drop-target': isOver
+                            })}
                 >
-                    <td className="list-table__cell list-table__cell--number">
-                        <div>{issue.number}</div>
-                    </td>
-                    <td className="list-table__cell list-table__cell--icon">
-                        { issue.can_group_issues &&
-                        <div className="icon--feature">
-                            { show_children &&
-                            <div className="icon--more"></div>
-                            }
-                        </div>
+                  <td className="list-table__cell list-table__cell--number">
+                    <div>{issue.number}</div>
+                  </td>
+                  <td className="list-table__cell list-table__cell--icon">
+                    { issue.can_group_issues &&
+                      <div className="icon--feature">
+                        { show_children &&
+                          <div className="icon--more"></div>
                         }
-
-                    </td>
-                    <td className="list-table__cell list-table__cell--name">
-                        {subject_prefix}{issue.subject}{subject_suffix}
-                        { issue.group_children.length > 0 &&
-                        <span>
-                            ({issue.group_children.length}
-                            { issue.group_children.length === 1 && <span>child</span> }
-                            { issue.group_children.length > 1 && <span>children</span> }
-                            )
-                          </span>
-                        }
-                    </td>
-                    <td className="list-table__cell list-table__cell--assignee">
-
-                        <OtherUser value={issue.assigned_to_id}/>
-
-                        { false &&
-                        <RIEModeToggler
-                            rie_key={"issue_assigned_to_" + issue.id}
-                            initialValue={issue.assigned_to_id || "..."}
-                            onChange={(new_value) => this.onChangeAssignedTo(issue.id, new_value)}
-                        >
-                            <RIEUserDropDown user_ids={assignable_user_ids}/>
-                        </RIEModeToggler>
-                        }
-                    </td>
-                    <td className="list-table__cell list-table__cell--status">
-                        <IssueStatusLabel value={issue.status_name}/>
-                    </td>
-                    { false &&
-                    <td className="list-table__cell list-table__cell--sprint">
-                        1
-                    </td>
+                      </div>
                     }
-                    <td className="list-table__cell list-table__cell--progress">
-                        <Progress issue={issue}/>
+
+                  </td>
+                  <td className="list-table__cell list-table__cell--name">
+                    {subject_prefix}{issue.subject}{subject_suffix}
+                    { issue.group_children.length > 0 &&
+                      <span>
+                        ({issue.group_children.length}
+                        { issue.group_children.length === 1 && <span>child</span> }
+                        { issue.group_children.length > 1 && <span>children</span> }
+                        )
+                      </span>
+                    }
+                  </td>
+                  <td className="list-table__cell list-table__cell--assignee">
+
+                    <OtherUser value={issue.assigned_to_id}/>
+
+                    { false &&
+                      <RIEModeToggler
+                          rie_key={"issue_assigned_to_" + issue.id}
+                          initialValue={issue.assigned_to_id || "..."}
+                          onChange={(new_value) => this.onChangeAssignedTo(issue.id, new_value)}
+                      >
+                        <RIEUserDropDown user_ids={assignable_user_ids}/>
+                      </RIEModeToggler>
+                    }
+                  </td>
+                  <td className="list-table__cell list-table__cell--status">
+                    <IssueStatusLabel value={issue.status_name}/>
+                  </td>
+                  { false &&
+                    <td className="list-table__cell list-table__cell--sprint">
+                      1
                     </td>
-                    <td className="list-table__cell list-table__cell--estimates">
-                        {this.renderEstimates()}
-                    </td>
-                    <td className="list-table__cell list-table__cell--tags">
-                        { map(issue.tags, function (tag, index) {
-                            return (<Tag key={index}
-                                         category={tag.category_name}
-                                         name={tag.name}
-                                         deleteTag={() => onDeleteTag(tag)}
-                            />)
-                        })}
-                    </td>
-                    <td className="list-table__cell list-table__cell--tracking-control">
-                        <ElapsedTime hours={issue.my_actual_hours} active={issue.am_i_clocked_in}/>
-                    </td>
-                    <td className="list-table__cell list-table__cell--tracking-control">
-                        <div className={classNames({'reveal-on-hover--block': !issue.am_i_clocked_in})}>
-                            <TimerSwitch
-                                active={issue.am_i_clocked_in}
-                                onStart={this.onClockIn}
-                                onStop={this.onClockOut}
-                            />
-                        </div>
-                    </td>
+                  }
+                  <td className="list-table__cell list-table__cell--progress">
+                    <Progress issue={issue}/>
+                  </td>
+                  <td className="list-table__cell list-table__cell--estimates">
+                    {this.renderEstimates()}
+                  </td>
+                  <td className="list-table__cell list-table__cell--tags">
+                    { map(issue.tags, function (tag, index) {
+                          return (<Tag key={index}
+                                       category={tag.category_name}
+                                       name={tag.name}
+                                       deleteTag={() => onDeleteTag(tag)}
+                                  />)
+                      })}
+                  </td>
+                  <td className="list-table__cell list-table__cell--tracking-control">
+                    <ElapsedTime hours={issue.my_actual_hours} active={issue.am_i_clocked_in}/>
+                  </td>
+                  <td className="list-table__cell list-table__cell--tracking-control">
+                    <div className={classNames({'reveal-on-hover--block': !issue.am_i_clocked_in})}>
+                      <TimerSwitch
+                          active={issue.am_i_clocked_in}
+                          onStart={this.onClockIn}
+                          onStop={this.onClockOut}
+                      />
+                    </div>
+                  </td>
+                  <td className="list-table__cell list-table__cell--tracking-control">
+                    <div className={classNames({'reveal-on-hover--block': !issue.am_i_clocked_in})}>
+                      <DeleteIssue
+                          onDelete ={this.onDeleteIssue}
+                      />
+                    </div>
+                  </td>
                 </tr>
             ))
         }
