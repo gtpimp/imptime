@@ -84,7 +84,7 @@ export class SingleValueSelector extends Component {
     }
 
     render() {
-        
+
         return (
             <div className="single-value-selector">
                 <div className="single-value-selector__input-wrapper">
