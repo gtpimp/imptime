@@ -2,6 +2,7 @@ import React, {Component} from 'react'
 import {connect} from 'react-redux'
 import '../../sass/toolbar-panel.css'
 import ToolbarButton from './ToolbarButton'
+import ReactTooltip from 'react-tooltip'
 import { get_selected_issue_ids } from '../../actions/Page'
 import { LIST_KEY__ISSUE_LIST, PAGE_KEY__ISSUES_PAGE } from '../../actions/ItemListKeyRegistry'
 import {
@@ -47,7 +48,7 @@ class IssueToolbarPanel extends Component {
         const {dispatch, issue_ids} = this.props
         dispatch(ensureIssuesLoaded(issue_ids))
     }
-    
+
     onNewLabelClick() {
         console.log('new label clicked')
     }
@@ -99,25 +100,26 @@ class IssueToolbarPanel extends Component {
     render() {
 
         const { issue_ids, issue } = this.props
-        
+
         if (issue_ids.length === 0 ) {
             return null
         }
         if ( ! issue ) {
             return null
-        } 
-        
+        }
+
         return (
             <div className="toolbar-panel">
-                <ToolbarButton flavour="toggle" icon="stars" isEnabled={issue.can_group_issues} onEnable={this.onMakeFeatureClick} onDisable={this.onUnmakeFeatureClick}/>
-                <ToolbarButton icon="label" onClick={this.onNewLabelClick}/>
-                <ToolbarButton icon="expand_more" onClick={this.onExpandFeaturesClick}/>
-                <ToolbarButton icon="expand_less" onClick={this.onCollapseFeaturesClick}/>
-                <ToolbarButton icon="call_merge" onClick={this.onGroupClick}/>
-                <ToolbarButton icon="call_split" onClick={this.onUngroupClick}/>
-                <ToolbarButton icon="attach_file" onClick={this.onAttachClick}/>
-                <ToolbarButton icon="exit_to_app" onClick={this.onAssignClick}/>
-                <ToolbarButton icon="alarm" onClick={this.onEstimateClick}/>
+              <ToolbarButton flavour="toggle" tooltip="Favourite" icon="stars" isEnabled={issue.can_group_issues} onEnable={this.onMakeFeatureClick} onDisable={this.onUnmakeFeatureClick}/>
+              <ToolbarButton tooltip="Lebel" icon="label" onClick={this.onNewLabelClick}/>
+              <ToolbarButton tooltip="Expand" icon="expand_more" onClick={this.onExpandFeaturesClick}/>
+              <ToolbarButton tooltip="Contract" icon="expand_less" onClick={this.onCollapseFeaturesClick}/>
+              <ToolbarButton tooltip="Merge" icon="call_merge" onClick={this.onGroupClick}/>
+              <ToolbarButton tooltip="Split" icon="call_split" onClick={this.onUngroupClick}/>
+              <ToolbarButton tooltip="Attach" icon="attach_file" onClick={this.onAttachClick}/>
+              <ToolbarButton tooltip="Exit" icon="exit_to_app" onClick={this.onAssignClick}/>
+              <ToolbarButton tooltip="Alarm" icon="alarm" onClick={this.onEstimateClick}/>
+              <ReactTooltip place="bottom" type="info" />
             </div>
         )
     }
@@ -127,7 +129,7 @@ function mapStateToProps(state, props) {
 
     const selected_issue_ids = get_selected_issue_ids(state, PAGE_KEY__ISSUES_PAGE)
     const issue = selected_issue_ids && selected_issue_ids.length > 0 && getIssue(state, selected_issue_ids[0])
-    
+
     return {
         issue_ids: selected_issue_ids,
         issue: issue

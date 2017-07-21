@@ -50,7 +50,7 @@ class ToolBar extends Component {
 
 function mapStateToProps(state, props) {
     const page_toolbars = state.page.toolbar_names || []
-    
+
     return {
         panelIds: page_toolbars // ['issue', 'issues', 'project', 'projects', 'sprint', 'sprints', 'list'],
     }

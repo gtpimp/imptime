@@ -35,7 +35,7 @@ class ToolbarButton extends Component {
             })}
                  onClick={this.onClick}>
                 { this.props.icon &&
-                <div className="toolbar-button__icon"><i className="material-icons">{this.props.icon}</i></div>
+                  <div className="toolbar-button__icon"><i data-tip={this.props.tooltip} className="material-icons">{this.props.icon}</i></div>
                 }
                 { !this.props.icon &&
                 <div className="toolbar-button__content">
