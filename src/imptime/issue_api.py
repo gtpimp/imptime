@@ -198,14 +198,13 @@ class IssueViewSet(BaseViewSet):
             params = request.data['issue']
             sprint_id = params['sprint_id']
             issue_id_before = params.get('issue_id_before', None)
-            #import pdb; pdb.set_trace()
+
             if issue_id_before:
                 issue_before = self.allowed_issue(issue_id_before)
                 order = issue_before.order + 0.5
             else:
                 order = 0
             sprint = self.allowed_sprint(sprint_id)
-            #import pdb; pdb.set_trace()
 
             def create_issue():
                 issue = Issue.objects.create(
