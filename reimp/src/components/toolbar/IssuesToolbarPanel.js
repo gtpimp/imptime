@@ -23,7 +23,7 @@ class IssuesToolbarPanel extends Component {
         this.onNewIssueClick = this.onNewIssueClick.bind(this)
         this.onDashboardClick = this.onDashboardClick.bind(this)
     }
-    
+
     componentDidMount() {
         this.refresh()
     }

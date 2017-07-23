@@ -3,6 +3,7 @@ import {connect} from 'react-redux'
 import {browserHistory} from 'react-router'
 import '../../sass/toolbar-panel.css'
 import ToolbarButton from './ToolbarButton'
+import ReactTooltip from 'react-tooltip'
 import {
     PAGE_KEY__SPRINT_DASHBOARD_PAGE
 } from '../../actions/ItemListKeyRegistry'
@@ -29,9 +30,10 @@ class SprintDashboardToolbarPanel extends Component {
         return (
             <div className="toolbar-panel">
                 { sprint_id &&
-                  <ToolbarButton icon="subdirectory_arrow_left" onClick={this.onOpenSprintClick}/>
+                  <ToolbarButton tooltip="Back" icon="subdirectory_arrow_left" onClick={this.onOpenSprintClick}/>
                 }
-                <ToolbarButton icon="delete" onClick={this.onDeleteSprintClick}/>
+              <ToolbarButton tooltip="Delete" icon="delete" onClick={this.onDeleteSprintClick}/>
+              <ReactTooltip place="bottom" type="info" />
             </div>
         )
     }

@@ -21,6 +21,8 @@
 .single-value-selector__suggestions {
   border-top: 1px solid $color-12;
   margin-top: 14px;
+  overflow-y: scroll;
+  height: 35vh;
 }
 
 .single-value-selector__suggestion {
@@ -29,6 +31,7 @@
   font: $font-8;
   margin-bottom: 14px;
   margin-top: 14px;
+  cursor:default;
 }
 
 .single-value-selector__suggestion-number {
@@ -37,4 +40,8 @@
 
 .single-value-selector__suggestion-label {
 
+}
+
+.ReactModal__Body--open {
+  overflow-y: hidden;
 }

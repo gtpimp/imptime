@@ -3,6 +3,7 @@ import {connect} from 'react-redux'
 import {browserHistory} from 'react-router'
 import '../../sass/toolbar-panel.css'
 import ToolbarButton from './ToolbarButton'
+import ReactTooltip from 'react-tooltip'
 import {
     PAGE_KEY__PROJECT_DASHBOARD_PAGE
 } from '../../actions/ItemListKeyRegistry'
@@ -14,7 +15,7 @@ class ProjectDashboardToolbarPanel extends Component {
         this.onDeleteProjectClick = this.onDeleteProjectClick.bind(this)
         this.onOpenProjectClick = this.onOpenProjectClick.bind(this)
     }
-    
+
     onDeleteProjectClick() {
         console.log('delete project clicked')
     }
@@ -27,8 +28,9 @@ class ProjectDashboardToolbarPanel extends Component {
     render() {
         return (
             <div className="toolbar-panel">
-                <ToolbarButton icon="subdirectory_arrow_left" onClick={this.onOpenProjectClick}/>
-                <ToolbarButton icon="delete" onClick={this.onDeleteProjectClick}/>
+              <ToolbarButton tooltip="Back" icon="subdirectory_arrow_left" onClick={this.onOpenProjectClick}/>
+                <ToolbarButton tooltip="Delete" icon="delete" onClick={this.onDeleteProjectClick}/>
+                <ReactTooltip place="bottom" type="info" />
             </div>
         )
     }
@@ -38,7 +40,7 @@ function mapStateToProps(state, props) {
     const page = state.page || {}
     const selected_project_ids = (page[PAGE_KEY__PROJECT_DASHBOARD_PAGE] || {}).project_ids || []
     const project_id = (selected_project_ids.length > 0 && selected_project_ids[0]) || null
-    
+
     return {
         project_id: project_id
     }
