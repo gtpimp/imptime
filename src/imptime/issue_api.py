@@ -198,28 +198,39 @@ class IssueViewSet(BaseViewSet):
             params = request.data['issue']
             sprint_id = params['sprint_id']
             issue_id_before = params.get('issue_id_before', None)
+            #import pdb; pdb.set_trace()
             if issue_id_before:
                 issue_before = self.allowed_issue(issue_id_before)
                 order = issue_before.order + 0.5
             else:
                 order = 0
             sprint = self.allowed_sprint(sprint_id)
+            #import pdb; pdb.set_trace()
 
-            if self.logged_in_permissions(issue_before.project.business).has_edit_issues:
+            def create_issue():
                 issue = Issue.objects.create(
-                    project=sprint,   # sic
-                    order=order,
-                    number=Issue.get_next_issue_number(sprint.business),
-                    subject=params['subject'])
+                        project=sprint,   # sic
+                        order=order,
+                        number=Issue.get_next_issue_number(sprint.business),
+                        subject=params['subject'])
                 issue.renumber_issue_order()
-                #s = IssueSerializer(issue)
-
                 IssueHistory.add_history(self.request.user, issue,
-                                         "created", "", issue.number)
-                context['issue'] = { 'number': issue.number }
-                data = {'status': 'success', 'payload': context}
+                                             "created", "", issue.number)
+                return issue
+
+            if issue_id_before:
+                issue = issue_id_before
+                if self.logged_in_permissions(issue.project.business).has_edit_issues:
+                    issue =  create_issue()
+                else:
+                    data = {'status': 'failed', 'error_message': 'Permission denied to create issues'}
+            elif not issue_id_before:
+                issue =  create_issue()
             else:
-                data = {'status': 'failed', 'error_message': 'Permission denied to create issues'}
+                data = {'status': 'failed', 'error_message': 'Failed creating issue'}
+
+            context['issue'] = { 'number': issue.number }
+            data = {'status': 'success', 'payload': context}
 
         except Exception, ex:
             logger.exception(ex)

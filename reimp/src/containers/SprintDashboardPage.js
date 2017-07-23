@@ -4,7 +4,7 @@ import {browserHistory} from 'react-router'
 import { setBreadcrumbs } from '../actions/Breadcrumbs'
 import EditableSprintName from '../components/EditableSprintName.js'
 import PropertyStackComponent from '../components/PropertyStackComponent'
-import '../sass/sprint-dashboard.scss'
+//import '../sass/sprint-dashboard.scss'
 import {
     PAGE_KEY__SPRINT_DASHBOARD_PAGE
 } from '../actions/ItemListKeyRegistry'

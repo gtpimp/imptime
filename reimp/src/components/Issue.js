@@ -262,7 +262,7 @@ class Issue extends Component {
                     </div>
                   </td>
                   <td className="list-table__cell list-table__cell--tracking-control">
-                    <div className={classNames({'reveal-on-hover--block': !issue.am_i_clocked_in})}>
+                    <div className={"reveal-on-hover--block"}>
                       <DeleteIssue
                           onDelete ={this.onDeleteIssue}
                       />
