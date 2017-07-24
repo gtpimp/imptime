@@ -20,7 +20,7 @@ class OtherUser extends Component {
 	    dispatch(ensureUsersLoaded([user_id]))
 	}
     }
-    
+
     render_inline_small() {
 	const { user, loading_value, onClick } = this.props
 
@@ -33,18 +33,18 @@ class OtherUser extends Component {
 	    </div>
 	)
     }
-    
+
     render() {
         const { user_id, user, render_mode, loading_value, onClick } = this.props
 
         if ( ! user_id ) {
-            return ( <div onClick={onClick}>No-one</div> )
+            return ( <div onClick={onClick}></div> )
         }
-        
+
 	if ( user.loaded === false ) {
 	    return ( <div onClick={onClick}>{loading_value}</div> )
 	}
-	
+
 	if ( render_mode === 'inline--small' ) {
 	    return this.render_inline_small()
 	} else {

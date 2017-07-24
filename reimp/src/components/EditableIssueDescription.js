@@ -14,13 +14,13 @@ class EditableIssueDescription extends Component {
 
     onChange(new_value) {
         const { dispatch, issue } = this.props
- 
+
         dispatch(updateIssueDescription(issue.id, new_value.description))
     }
 
     render() {
         const { issue, can_edit } = this.props
-        
+
         return (
             <EditableProperty property_key='issue_description'
                               initial_value={issue.description}
@@ -29,7 +29,7 @@ class EditableIssueDescription extends Component {
             >
                 <IssueDescriptionForm />
                 <div className="text-component--readonly text-component--description">{issue.description}</div>
-                <div className="text-component--empty text-component--description">Description</div>
+                <div className="text-component--empty text-component--description"></div>
             </EditableProperty>
         )
     }
