@@ -51,8 +51,8 @@ class IssuesToolbarPanel extends Component {
     render() {
         return (
             <div className="toolbar-panel">
-                <div className="button button--large button--primary" onClick={this.onNewIssueClick}>+ New Issue</div>
-                <div className="button button--large button--primary" onClick={this.onDashboardClick}>+ Dashboard</div>
+              <div className="button toolbar-button--small button--large button--primary" onClick={this.onNewIssueClick}>+ New Issue</div>
+              <div className="button toolbar-button--large button--large button--primary" onClick={this.onDashboardClick}>+ Dashboard</div>
             </div>
         )
     }
