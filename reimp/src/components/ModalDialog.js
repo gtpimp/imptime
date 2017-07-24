@@ -18,7 +18,7 @@ class ModalDialog extends Component {
                 <div className={classNames('modal-dialog__header', 'modal-dialog__header--' + this.props.variant)}>
                     <label htmlFor="assigned" className={classNames('modal-dialog__title', 'modal-dialog__title--' + this.props.variant)}>{this.props.title}</label>
                     { this.props.onClose &&
-                    <div className="modal-dialog__close"><i className="material-icons">close</i></div>
+                      <div className="modal-dialog__close"><i className="material-icons" onClick={this.props.onClose || function () { }}>close</i></div>
                     }
                 </div>
                 <div className="modal-dialog__content">
