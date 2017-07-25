@@ -43,6 +43,7 @@ class InviteUserForm extends Component {
                 onChange={(e) => this.onChangeAndSubmit(e, input.onChange)}
                 value={input.value}
                 options={data}
+                placeholder="Search contacts or invite by email"
                 {...rest}
             />
         )
@@ -54,7 +55,7 @@ class InviteUserForm extends Component {
             <div className="invite-user-form">
                 <form className="invite-user-form__form" onSubmit={handleSubmit}>
                     <div className="invite-user-form__filter">
-                        <SearchInput placeholder="Search contacts or invite by email" xtermRef={(ref) => this.filter_term_el = ref} onChange={this.onFilterTermChanged}/>
+                      {/* <SearchInput placeholder="Search contacts or invite by email" xtermRef={(ref) => this.filter_term_el = ref} onChange={this.onFilterTermChanged}/> */}
                         <Field name='invited_user_email'
                                component={this.renderSingleValueSelector}
                                valueField="value"
@@ -97,7 +98,7 @@ class InviteUserForm extends Component {
                               <button className="button button--large button--close-invite" gareth="otherwise this one">Close</button>
                           </div>
                       </div>
-                    } 
+                    }
                 </form>
             </div>
         )
@@ -113,9 +114,9 @@ function mapStateToProps(state, props) {
 
     const known_user_ids = logged_in_user.known_user_ids || []
     const invitable_user_ids = difference(known_user_ids, project.allowed_user_ids)
-    
+
     const invitable_users = getUsers(state, invitable_user_ids)
-    
+
     const invitable_user_options = invitable_users.map(function (user) {
         return {value: user.email, label: "" + user.username + " (" + user.email + ") "}
     })

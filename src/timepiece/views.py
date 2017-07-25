@@ -241,7 +241,7 @@ def clock_out(request, entry_id):
         'form': form,
         'entry': entry,
     }
-    return render(request, 
+    return render(request,
         'timepiece/time-sheet/entry/clock_out.html',
         context
     )
@@ -533,7 +533,7 @@ def get_project_card_for_business(request,business_id, project_id):
 
     project.recalc_secondary_estimates()
     project.calculate_new_stats(request.user)
-    
+
     context = { 'business':business,
                 'current_business':business,
                 'current_user':request.user,
@@ -816,7 +816,7 @@ def invoice_projects(request):
         'issue__project__pk', 'status', 'issue__project__status__label', 'issue__project__business__name',
     ).annotate(s=Sum('hours')).order_by('issue__project__type__label',
                                         'issue__project__name', 'status')
-    return render(request, 
+    return render(request,
         'timepiece/time-sheet/invoice/make_invoice.html', {
         'date_form': date_form,
         'project_totals': project_totals if to_date else [],
@@ -969,7 +969,7 @@ def remove_invoice_entry(request, invoice_id, entry_id):
             'invoice': invoice,
             'entry': entry,
         }
-        return render(request, 
+        return render(request,
             'timepiece/time-sheet/invoice/remove_invoice_entry.html',
             context
         )
@@ -1037,8 +1037,8 @@ def create_edit_business(request, business=None):
             instance=business
         )
 
-    
-    add_user_form = timepiece_forms.AddUserToBusinessForm()    
+
+    add_user_form = timepiece_forms.AddUserToBusinessForm()
     context = {
         'business': business,
         'business_form': business_form,
@@ -1125,7 +1125,7 @@ def view_person(request, person_id):
     else:
         if person.profile.id != request.user.id:
             raise Exception("Can't edit this person")
-    
+
     context = {
         'person': person,
     }
@@ -1159,7 +1159,7 @@ def create_edit_person(request, person_id=None, template='timepiece/person/creat
     else:
         if person.profile.id != request.user.id:
             raise Exception("Can't edit this person")
-        
+
     if request.POST:
         if person:
             profile_form = timepiece_forms.UserProfileForm(creator=request.user, data=request.POST, instance=person.profile, prefix='profile')
@@ -1254,7 +1254,7 @@ def project_detail(request, business_id):
 
     #print user_totals
 
-    
+
 
     context.update({
         'current_user':request.user,
@@ -1294,7 +1294,7 @@ def users_last_active(request, context=None):
 def amounts_billed(request):
 
     raise Exception("This page is too slow")
-    
+
     if request.GET:
         form = timepiece_forms.ProjectSearchForm(request.GET)
     else:
@@ -1696,7 +1696,7 @@ def update_project(request, project_id=None, template='timepiece/project/edit.ht
         'business': project.business,
         'project_form': form,
     }
-    
+
     return render(request, template, context)
 
 @permission_required('timepiece.add_project')
@@ -2662,7 +2662,7 @@ def _get_daily_hours(user, entries, from_date=None, to_date=None):
 
     hours = OrderedDict()
     daily_average_hours_per_week = OrderedDict()
-            
+
     running_date = from_date
     running_hours_per_week = 0
     running_days_in_week = 0
@@ -2674,12 +2674,12 @@ def _get_daily_hours(user, entries, from_date=None, to_date=None):
         if running_date.weekday() == 0:
             running_days_in_week = 0
             running_hours_per_week = 0
-        
+
         running_hours_per_week += hours_this_day
 
         if not timepiece.Holiday.is_a_holiday(running_date) and not timepiece.CalendarEvent.is_on_leave(running_date, user):
             running_days_in_week += 1
-        
+
         daily_average_hours_per_week[running_date] = float(running_hours_per_week)/(running_days_in_week or 1)
         running_date += relativedelta(days=1)
 
@@ -3197,7 +3197,7 @@ def _augment_issue_data(issue, current_user, users_allowed_to_estimate_on_busine
     issue.representation.ctc = 0
     issue.representation.billable = 0
     issue.representation.estimated_cost = 0
-            
+
     for user in users_allowed_to_estimate_on_business:
 
         per_user_issue_data = {}
@@ -3213,7 +3213,7 @@ def _augment_issue_data(issue, current_user, users_allowed_to_estimate_on_busine
         else:
             completion_against_estimated_hours = ((hours/user_points)*100) if user_points>0 else 0.0
 
-                
+
         per_user_issue_data["completion"] = completion_against_estimated_hours
         per_user_issue_data["hours"] = hours
         per_user_issue_data["has_hours"] = per_user_issue_data["hours"]>0
@@ -3229,7 +3229,7 @@ def _augment_issue_data(issue, current_user, users_allowed_to_estimate_on_busine
         if per_user_issue_data["completion_width"]>100:
             per_user_issue_data["completion_width"] = 100
 
-            
+
         per_user_issue_data["has_estimate"] =  (per_user_issue_data["issue_points"] is not None and per_user_issue_data["issue_points"]>0) or per_user_issue_data["completion"]>0
         per_user_issue_data["can_estimate"] = True
         issue.add_user_to_representation(user, per_user_issue_data)
@@ -3239,7 +3239,7 @@ def _augment_issue_data(issue, current_user, users_allowed_to_estimate_on_busine
             issue.representation.billable += hours * rate['billable_amount']
             estimated_cost = user_points * timepiece.Rate.convert_to_full_rate(issue.project, rate['billable_amount']) * rate['velocity']
             issue.representation.estimated_cost += estimated_cost
-        
+
         if current_user.id == user.id:
             issue.representation.current_user_issue_data = per_user_issue_data
 
@@ -3248,7 +3248,7 @@ def _augment_issue_data(issue, current_user, users_allowed_to_estimate_on_busine
 
     if issue.is_fixed_cost():
         issue.representation.billable += float(issue.fixed_amount)
-            
+
     # for user, hours in issue.hours_for_users():
     #     if user not in users_allowed_to_estimate_on_business:
     #         # users with hours but without estimates need a column too
@@ -3448,22 +3448,22 @@ def get_project_detail(request, project_id, context=None):
             'percentage_over_budget': float(context['total_billable'] - project.spendable_budget)/project.spendable_budget if project.spendable_budget else 0,
             'dev_hours_available': dev_hours_available
     }
-    
+
     context['has_open_sprints'] = business.has_open_sprints()
 
     plot_data = {}
     plot_data.setdefault(project_id, [])
-    
+
     plot_data[project_id].append({'project': project.name,
                                   'values': values,
                                   'dev_hours_used': dev_hours_used })
 
     context['plot_data_json'] = json.dumps(plot_data)
-    
+
 
     if 'selected_issue_ids_for_context_menu' in request.session:
         context['selected_issue_ids'] = [int(x) for x in request.session['selected_issue_ids_for_context_menu']]
-        
+
     issues_list_rendered = render(request, "timepiece/project/project_detail.html", context)
     #project_menu_rendered = render(request, "timepiece/project/_card_project_menu.html", context)
     project_menu_rendered = render(request, "timepiece/_navigation_project_specific_menu.html", context)
@@ -3738,7 +3738,7 @@ def issue_subject_update(request,  template="timepiece/project/issue_detail.html
         get_interface_plugin(request, project.business).update_issue_subject(edited_issue)
     except KeyError:
         pass
-    
+
     return HttpResponse("")
 
 @csrf_exempt
@@ -3772,7 +3772,7 @@ def issue_points_update(request,  template="timepiece/project/issue_detail.html"
             get_interface_plugin(request, current_project.business).update_issue_actual_hours(edited_issue_points.issue)
     else:
         new_estimate = request.POST["new_value"]
-    
+
     edited_issue_points.points = float(new_estimate)
     edited_issue_points.save()
     context['issue_number_form'] = timepiece_forms.IssueNumberForm(instance=edited_issue_points.issue)
@@ -3843,7 +3843,7 @@ def view_project_rates(request, project_id, template="timepiece/project/view_rat
         raise PermissionDenied
 
     project.recalc_secondary_estimates()
-    
+
     context['project'] = project
     context['current_user'] = request.user
     context['users_and_hours'] = project.users_and_hours()
@@ -3891,7 +3891,7 @@ def edit_project_rate(request, project_id):
             ret_val = "Unsupported field"
         project.save()
         project.recalc_secondary_estimates()
-        
+
     else:
         rate = project.get_user_rate(user_name)
 
@@ -4078,7 +4078,7 @@ def issue_search(request, active_project_id=None, active_business_id=None, templ
             business = businesses[0]
             res['best_match'] = { 'javascript' : "imp.nav.show_business("+str(business.id)+", '" + reverse('closed_project_list', args=[business.id])+"');" }
         return HttpResponse(json.dumps(res), content_type='application/json')
-        
+
     return render(request, template, context)
 
 @render_with('timepiece/project/show_timeline.html')
@@ -4328,7 +4328,7 @@ def delete_issue_comment(request, comment_id):
     old_comment_text = comment.comment
     old_comment_id = comment.id
     comment.delete()
-    
+
     get_interface_plugin(request, business).delete_issue_comment(comment)
     timepiece.IssueHistory.add_history(request.user, issue, "deleted comment %s"%old_comment_id, old_comment_text, "")
     return HttpResponse("ok")
@@ -4393,7 +4393,7 @@ def sortable_issue_update(request, project_id, context=None):
             issue.order = item_order_count
             issue.save()
             timepiece.IssueHistory.add_history(request.user, issue, "order", old_order, issue.order)
-        
+
         if old_project != new_project or old_order != item_order_count:
             get_interface_plugin(request, new_project.business).move_issue(issue, old_project=old_project)
 
@@ -4489,7 +4489,7 @@ def sprint_report(request, project_id, context=None):
             if DATA['report_type'] == 'Quote':
                 prefix = "Proposal"
             filename = prefix + "_implicitdesign_" + project.long_name().replace(" ","") + "_" + datetime.datetime.today().strftime("%d%m%Y") + ".pdf"
-            
+
             try:
                 url = create_url_from_query_dict(url, qd=DATA)
                 transaction.commit()
@@ -4532,7 +4532,7 @@ def sprint_report(request, project_id, context=None):
 
         if not DATA.get('report_type', None):
             return HttpResponse("No permission to generate quotes or invalid POST")
-        
+
         if DATA['report_type'] == 'Quote' and quote_form.is_valid():
             if not bp.has_view_ctc_billable_rates:
                 return HttpResponse("No permission to generate quotes")
@@ -4596,7 +4596,7 @@ def sprint_report(request, project_id, context=None):
     except Exception, ex:
         logger.exception(ex)
         raise
-        
+
     return render(request, template, context)
 
 @login_required
@@ -4613,7 +4613,7 @@ def edit_issue_number(request, issue_id, context=None):
         timepiece.IssueHistory.add_history(request.user, issue, "issue number", old_number, issue.number)
         return HttpResponse(issue.number)
     return Http404("Couldn't not edit issue number : %s", form.errors)
-    
+
 @login_required
 def show_issue_history(request, issue_id, template="timepiece/project/issue_history.html", context=None):
     context = context or {}
@@ -4764,7 +4764,7 @@ def generate_preview_business_document(request, business_id, template="timepiece
             filename = form.cleaned_data['filename'] + "_" + datetime.datetime.today().strftime("%d%m%Y") + ".pdf"
             transaction.commit()
             response = render_url_to_pdf(url, request, basename=filename)
-            
+
             #response = HttpResponse(as_pdf, content_type='application/pdf')
             #response['Content-Disposition'] = 'attachment; filename="%s"' % filename
 
@@ -4810,9 +4810,9 @@ def generate_business_document(request, business_id, context=None):
         document.save()
         form.save_m2m()
         messages.info(request, "Document %s uploaded" % document.filename)
-        
+
     return view_business_documents(request, business_id)
-    
+
 @login_required
 def issue_checkbox_context_menu(request, project_id, template="timepiece/project/issue_checkbox_context_menu.html", context=None):
     context = context or {}
@@ -4848,7 +4848,7 @@ def issue_checkbox_context_menu(request, project_id, template="timepiece/project
 
     return render(request, template, context)
 
-@csrf_exempt 
+@csrf_exempt
 @login_required
 def move_issue_to_project(request):
     issue_id = request.POST['issue_id'];
@@ -4861,7 +4861,7 @@ def move_issue_to_project(request):
         return HttpResponse(json.dumps({ "status": "No permission" }))
 
     issue = timepiece.Issue.objects.get(pk=issue_id)
-    
+
     old_project = issue.project
     bp = timepiece.BusinessPermissions.for_user(request.user, old_project.business)
     if not bp.has_edit_issues:
@@ -4878,9 +4878,9 @@ def move_issue_to_project(request):
 @login_required
 def bulk_move_issues_to_project(request, dest_project_id, context=None):
     selected_issue_ids = request.session['selected_issue_ids_for_context_menu']
-    
+
     dest_project = timepiece.Project.objects.get(pk=dest_project_id)
-    
+
     bp = timepiece.BusinessPermissions.for_user(request.user, dest_project.business)
     if not bp.has_edit_issues:
         return HttpResponse("No permission")
@@ -4905,7 +4905,7 @@ def bulk_move_issues_to_project(request, dest_project_id, context=None):
 def bulk_change_issue_state(request, context=None):
     selected_issue_ids = request.session['selected_issue_ids_for_context_menu']
     selected_project = timepiece.Project.objects.get(pk=request.session['selected_issue_project_id'])
-    
+
     form = timepiece_forms.IssueCheckboxContextMenuChangeStateForm(selected_project, request.GET or None)
     if not form.is_valid():
         return HttpResponse("No state chosen: %s" % form.errors)
@@ -4923,7 +4923,7 @@ def bulk_change_issue_state(request, context=None):
             issue.save()
             timepiece.IssueHistory.add_history(request.user, issue, "changed status", old_status, new_status)
             get_interface_plugin(request, selected_project.business).update_issue_status(issue)
-            
+
     messages.info(request, "%d issues changed state to %s" % (len(selected_issue_ids), new_status))
     return HttpResponseRedirect(reverse('project_list', args=[selected_project.id]))
 
@@ -4932,7 +4932,7 @@ def bulk_change_issue_state(request, context=None):
 def bulk_change_issue_feature(request, context=None):
     selected_issue_ids = request.session['selected_issue_ids_for_context_menu']
     selected_project = timepiece.Project.objects.get(pk=request.session['selected_issue_project_id'])
-    
+
     form = timepiece_forms.IssueCheckboxContextMenuChangeFeatureForm(selected_project, request.GET or None)
     if not form.is_valid():
         return HttpResponse("No feature chosen: %s" % form.errors)
@@ -4957,7 +4957,7 @@ def bulk_change_issue_feature(request, context=None):
 def bulk_change_issue_assignee(request, context=None):
     selected_issue_ids = request.session['selected_issue_ids_for_context_menu']
     selected_project = timepiece.Project.objects.get(pk=request.session['selected_issue_project_id'])
-    
+
     form = timepiece_forms.IssueCheckboxContextMenuChangeAssigneeForm(selected_project, request.GET or None)
     if not form.is_valid():
         return HttpResponse("No assignee chosen: %s" % form.errors)
@@ -4991,7 +4991,7 @@ def bulk_delete_issues(request, context=None):
         issue = timepiece.Issue.objects.get(pk=selected_issue_id)
         timepiece.IssueHistory.add_history(request.user, issue, "deleted", issue.id, "")
         issue.delete()
-        
+
     messages.info(request, "%d issues deleted" % (len(selected_issue_ids)))
     return HttpResponseRedirect(reverse('project_list', args=[selected_project.id]))
 
@@ -5023,7 +5023,7 @@ def bulk_move_issue_above_issue(request, context=None):
             num_moved += 1
             selected_project.refresh_issues_order()
             get_interface_plugin(request, selected_project.business).move_issue(issue, old_project=selected_project)
-    
+
     messages.info(request, "%d issues moved above %s %s" % (num_moved, focus_issue.number, focus_issue.subject))
     return HttpResponseRedirect(reverse('project_list', args=[selected_project.id]))
 
@@ -5055,7 +5055,7 @@ def bulk_move_issue_below_issue(request, context=None):
             num_moved += 1
             selected_project.refresh_issues_order()
             get_interface_plugin(request, selected_project.business).move_issue(issue, old_project=selected_project)
-    
+
     messages.info(request, "%d issues moved below %s %s" % (num_moved, focus_issue.number, focus_issue.subject))
     return HttpResponseRedirect(reverse('project_list', args=[selected_project.id]))
 
@@ -5151,7 +5151,7 @@ def auto_issue_sort(request, project_id, template="timepiece/project/auto_issue_
 
         messages.info(request, "Auto ordered issues in %s" % project)
         project.refresh_issues_order()
-    
+
         return HttpResponse(json.dumps({'redirect_url':reverse('project_list', args=[project.id])}))
     else:
         context['states'] = [x['status'] for x in project.issues.order_by("status").values("status").distinct()]
@@ -5222,7 +5222,7 @@ def _create_js_entry_event(entry):
                  'textColor': "#000000",
                  'borderColor': "#0000ff",
                  'editable': False,
-                 }    
+                 }
 
 def _create_js_calendar_event(event):
 
@@ -5327,7 +5327,7 @@ def create_calendar_event(request, context=None):
     if form_new_event.is_valid():
 
         if form_new_event.cleaned_data['business'] is not None:
-            
+
             bp = timepiece.BusinessPermissions.for_user(request.user, form_new_event.cleaned_data['business'])
             if not bp.has_edit_calendar:
                 raise PermissionDenied
@@ -5412,7 +5412,7 @@ def business_cost_summary(request, business_id, template="timepiece/project/busi
     context['business'] = business
 
     project_infos = []
-    
+
     running_budget = 0
     running_spendable_budget = 0
     running_ctc = 0
@@ -5458,7 +5458,7 @@ def business_cost_summary(request, business_id, template="timepiece/project/busi
 
     context['project_infos'] = project_infos
 
-    
+
     sundry_invoiced = 0
     sundry_paid = 0
     sundry_owed = 0
@@ -5466,7 +5466,7 @@ def business_cost_summary(request, business_id, template="timepiece/project/busi
         sundry_invoiced += invoice.cost
         sundry_paid += invoice.amount_paid
         sundry_owed += invoice.amount_owed
-    
+
     running_amount_invoiced += sundry_invoiced
     running_amount_paid += sundry_paid
     running_amount_owed += sundry_owed
@@ -5529,7 +5529,7 @@ def business_comments(request, business_id):
             return HttpResponse(json.dumps({ 'success':True }))
     else:
         comment = None
-    
+
     context = { 'business':business,
                 'comment':comment,
                 'business_comment_form':form,
@@ -5593,7 +5593,7 @@ def traffic_checklist(request, business_id, template="timepiece/project/traffic_
 
     checklist = timepiece.TrafficChecklist.get_todays_checklist(request.user, business)
     checklist.recalculate_all()
-    
+
     form = timepiece_forms.TrafficChecklistForm(request.POST or None, instance=checklist)
     if form.is_valid():
         checklist = form.save(commit=False)
@@ -5604,7 +5604,7 @@ def traffic_checklist(request, business_id, template="timepiece/project/traffic_
 
         # ajax call, don't redirect
         context['msg'] = 'Saved'
-        
+
     context['form'] = form
     context['checklist'] = checklist
     context['business'] = business
@@ -5621,7 +5621,7 @@ def dev_checklist(request, business_id, template="timepiece/project/dev_checklis
 
     checklist = timepiece.DevChecklist.get_todays_checklist(request.user, business)
     checklist.recalculate_all()
-    
+
     form = timepiece_forms.DevChecklistForm(request.POST or None, instance=checklist)
     if form.is_valid():
         checklist = form.save(commit=False)
@@ -5632,7 +5632,7 @@ def dev_checklist(request, business_id, template="timepiece/project/dev_checklis
 
         # ajax call, don't redirect
         context['msg'] = 'Saved'
-        
+
     context['form'] = form
     context['checklist'] = checklist
     context['business'] = business
@@ -5649,7 +5649,7 @@ def finance_checklist(request, business_id, template="timepiece/project/finance_
 
     checklist = timepiece.FinanceChecklist.get_todays_checklist(request.user, business)
     checklist.recalculate_all()
-    
+
     form = timepiece_forms.FinanceChecklistForm(request.POST or None, instance=checklist)
     if form.is_valid():
         checklist = form.save(commit=False)
@@ -5660,7 +5660,7 @@ def finance_checklist(request, business_id, template="timepiece/project/finance_
 
         # ajax call, don't redirect
         context['msg'] = 'Saved'
-        
+
     context['form'] = form
     context['checklist'] = checklist
     context['business'] = business
@@ -5685,7 +5685,7 @@ def user_notifications(request, template="timepiece/project/user_notifications.h
 	context['notifications'] = notifications
 	if notifications.count() == 0:
 		return HttpResponse("")
-	
+
 	return render(request, template, context)
 
 @login_required
@@ -5755,7 +5755,7 @@ def dashboard(request, template="timepiece/dashboard/dashboard.html"):
         checklist_errors.append( (business,
                                   "(%s) %d %s errors" % (state, checklist.items.filter(passed=False).count(), checklist_name),
                                   checklist.items.filter(passed=False).values('msg')[0:3]) )
-        
+
     def create_checklist_summary(state, businesses):
         for business in businesses:
             create_checklist_info(state, 'dev', business, timepiece.DevChecklist.get_todays_checklist(request.user, business))
@@ -5767,7 +5767,7 @@ def dashboard(request, template="timepiece/dashboard/dashboard.html"):
     create_checklist_summary("pending", businesses.filter_has_only_pending_projects())
     #create_checklist_summary(businesses.filter_has_hopeful_projects())
     context['checklist_errors'] = checklist_errors
-    
+
     return render(request, template, context)
 
 @login_required
@@ -5806,7 +5806,7 @@ def quick_clocker(request, template="timepiece/time-sheet/quick_clocker.html", c
             open_entry.save()
 
         messages.info(request, "%s clocked into %s" % (new_entry.user.username, project.long_name()))
-            
+
         return HttpResponseRedirect(reverse('quick_clocker'))
 
     allowed_entries = timepiece.Entry.objects.all().filter_by_logged_in_user(request.user)
@@ -5822,7 +5822,7 @@ def quick_clocker(request, template="timepiece/time-sheet/quick_clocker.html", c
                                                                              initial={'entry':logged_in_users_active_entry,
                                                                                       'clock_out_time':api.localised_today()})
     context['clock_in_form'] = clock_in_form
-    
+
     return render(request, template, context)
 
 @login_required
@@ -5876,7 +5876,7 @@ def _get_quick_clocker_issue(project, user):
         issue_subject = "general development"
     else:
         issue_subject = rate.time_tracking_mode
-    
+
     try:
         issue = timepiece.Issue.objects.get(project=project, subject=issue_subject, assigned_to=user)
     except timepiece.Issue.MultipleObjectsReturned:
@@ -5913,11 +5913,11 @@ def scheduler(request, template="timepiece/scheduler/scheduler.html", context=No
 
     businesses = timepiece.Business.objects.filter_has_can_add_dev_time_projects().distinct()
     users = timepiece.BusinessPermissions.get_users_who_can_capture_time().order_by("username")
-    
+
     schedules = timepiece.Schedule.objects.filter(scheduled_date__gte=date_from, scheduled_date__lt=date_to)
 
     actuals = timepiece.Entry.objects.filter(start_time__gte=date_from, start_time__lt=date_to)
-    
+
     context['businesses'] = businesses
     context['schedules'] = schedules
     context['actuals'] = actuals
@@ -5925,7 +5925,7 @@ def scheduler(request, template="timepiece/scheduler/scheduler.html", context=No
     context['date'] = date_from
     context['schedule_filter_form'] = schedule_filter_form
     context['public_holidays'] = timepiece.Holiday.objects.filter(applies_on__gte=date_from, applies_on__lt=date_to)
-    
+
     return render(request, template, context)
 
 @permission_required('timepiece.scheduler')
@@ -5992,7 +5992,7 @@ def client_list(request, template="timepiece/client/client_list.html", context=N
 
     clients = timepiece.Client.objects.all().order_by("name")
     context['clients'] = clients
-    
+
     return render(request, template, context)
 
 @login_required
@@ -6002,7 +6002,7 @@ def add_client(request, template="timepiece/client/add_client.html", context=Non
     form = timepiece_forms.ClientForm(request.POST or None, request.FILES or None)
     if not request.user.is_superuser:
         return HttpResponseForbidden("Not allowed")
-    
+
     if form.is_valid():
         form.save()
         messages.info(request, "Client created")

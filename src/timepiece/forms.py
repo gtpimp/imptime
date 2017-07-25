@@ -129,7 +129,7 @@ class EditPersonPermission(forms.ModelForm):
     class Meta:
         model = timepiece.BusinessPermissions
         exclude = ( 'user', 'business', 'created', 'modified' )
- 
+
     def __init__(self, *args, **kwargs):
         super(EditPersonPermission, self).__init__(*args, **kwargs)
 
@@ -233,7 +233,7 @@ class AddUserToProjectForm(forms.Form):
         return self.cleaned_data['user']
 
 class AssignUserToIssueForm(forms.Form):
-    user = forms.ModelChoiceField(required=False, label='User:', 
+    user = forms.ModelChoiceField(required=False, label='User:',
                                   queryset=auth_models.User.objects.order_by("username"))
     user.widget.attrs['placeholder'] = 'Add User'
 
@@ -243,10 +243,10 @@ class AssignUserToIssueForm(forms.Form):
         else:
             business = None
         super(AssignUserToIssueForm, self).__init__(*args, **kwargs)
-        
+
         if business is not None:
             self.fields['user'].widget.choices = [ ('', '') ] + [ (x.id, str(x)) for x in business.users.order_by("username") ]
-    
+
     def save(self):
         return self.cleaned_data['user']
 
@@ -396,7 +396,7 @@ class ImportEntriesForm(forms.Form):
             return False
 
 
-        entry_list = entry.split('\t')        
+        entry_list = entry.split('\t')
         project_name = entry_list[1] if len(entry_list) > 1 else None
         if project_name is None:
             return False
@@ -424,12 +424,12 @@ class ImportEntriesForm(forms.Form):
             line_number += 1
             if len(raw_entry.strip())==0:
                 continue
-            
+
             if self._ignore_project(raw_entry):
                 continue;
 
             count += 1
-            
+
             try:
                 raw_entry = raw_entry.replace("|", "\t")
                 raw_date, raw_business, raw_project, raw_issue_number, raw_description, raw_hours = raw_entry.split("\t")
@@ -510,14 +510,14 @@ class ImportEntriesForm(forms.Form):
             tidy_entry(entry)
             entry.save()
             entries.append(entry)
-            
-        return {'entries':entries, 
+
+        return {'entries':entries,
                 'errors': errors,
                 'count': count,
                 'total_hours':total_hours,
                 'num_entries_updated': num_entries_updated,
                 'num_entries_created': num_entries_created}
-    
+
 class AddUpdateEntryForm(forms.Form):
     """
     This form will provide a way for users to add missed log entries and to
@@ -622,7 +622,7 @@ class AddUpdateEntryForm(forms.Form):
         self.instance.comments = self.cleaned_data['comments']
         if self.cleaned_data['issue_number'].strip():
             self.instance.issue = project.issues.get(number=self.cleaned_data['issue_number'].strip())
-            
+
         tidy_entry(self.instance)
         self.instance.save()
         return self.instance
@@ -655,7 +655,7 @@ class DateForm(forms.Form):
     project = forms.ModelChoiceField(
          queryset=timepiece.Project.objects.all(),
          widget=forms.HiddenInput(), required=False,
-    ) 
+    )
 
     def clean(self):
         cleaned_data = super(DateForm, self).clean()
@@ -772,7 +772,7 @@ class ProjectionForm(DateForm):
 class BusinessForm(forms.ModelForm):
     class Meta:
         model = timepiece.Business
-        fields = ('name', 'email', 'description', 'invoice_method', 'notes', 'sync_with', 'point_person')
+        fields = ('name', 'email', 'description', 'invoice_method', 'notes', 'sync_with', 'point_person', 'archived')
         exclude = ['impd_client','point_person']
 
     def save(self, impd_client):
@@ -787,7 +787,7 @@ class AddUserToBusinessForm(forms.Form):
 
     def save(self):
         return self.cleaned_data['point_person']
-    
+
 
 class ProjectForm(forms.ModelForm):
     class Meta:
@@ -885,14 +885,14 @@ class IssueForm(forms.ModelForm):
 
     class Meta:
         model = timepiece.Issue
-        fields = ( 
+        fields = (
             'subject',
             'description',
             'status',
             'feature',
             'assigned_to'
             )
-        
+
     def __init__ (self, *args, **kwargs):
         if 'business' in kwargs:
             business = kwargs.pop('business')
@@ -910,7 +910,7 @@ class IssueForm(forms.ModelForm):
 
         if business is not None:
             self.fields['assigned_to'].widget.choices = [ ('', '') ] + [ (x.id, str(x)) for x in business.users ]
-        
+
 
 class ProjectRelationshipForm(forms.ModelForm):
     class Meta:
@@ -937,7 +937,7 @@ class UserSearchForm(forms.Form):
                               choices=[ ( 'all', 'All'), ('staff', 'Staff only'), ('non-staff', 'Non staff') ],
                               required=False,
                               initial='staff')
-    
+
 
 class UserForm(forms.ModelForm):
 
@@ -1112,7 +1112,7 @@ class SalaryForm(forms.ModelForm):
 
 class AggregatedTimesheetFormByProject(forms.Form):
 
-    project = forms.ModelChoiceField(label='Project:', 
+    project = forms.ModelChoiceField(label='Project:',
                                      queryset=Project.objects.order_by("business__name", "name"))
 
     def __init__(self, user, *args, **kwargs):
@@ -1124,19 +1124,19 @@ class AggregatedTimesheetFormByProject(forms.Form):
         return { 'project': self.cleaned_data['project'] }
 
 class GraphFilterForm(forms.Form):
-    
-    business = forms.ModelChoiceField(required=False, label='Business:', 
+
+    business = forms.ModelChoiceField(required=False, label='Business:',
                                       queryset=timepiece.Business.objects.order_by("name", "name"))
-    project = forms.ModelChoiceField(required=False, label='Project:', 
+    project = forms.ModelChoiceField(required=False, label='Project:',
                                      queryset=Project.objects.order_by("business__name", "name"))
-    user = forms.ModelChoiceField(required=False, label='User:', 
+    user = forms.ModelChoiceField(required=False, label='User:',
                                   queryset=auth_models.User.objects.order_by("username"))
 
     enabled_series = forms.MultipleChoiceField(required=False, label="Graphs",
-                                               choices = ( ("all_hours", "all hours"), ("billable_hours", "billable hours"), 
-                                                           ("expected_hours", "expected hours"), ("atrate","atrate"), 
-                                                           ("cash_flow_atrate", "cash flow atrate"), 
-                                                           ("cash_flow_atrate_with_expenses", "cash flow atrate with expenses"), 
+                                               choices = ( ("all_hours", "all hours"), ("billable_hours", "billable hours"),
+                                                           ("expected_hours", "expected hours"), ("atrate","atrate"),
+                                                           ("cash_flow_atrate", "cash flow atrate"),
+                                                           ("cash_flow_atrate_with_expenses", "cash flow atrate with expenses"),
                                                            ("cash_flow_invoiced", "cash flow invoiced"),
                                                            ("salaries", "salaries"), ("invoices","invoices"), ("expenses","expenses&salaries") ),
                                                widget = CheckboxSelectMultiple)
@@ -1159,7 +1159,7 @@ class GraphFilterForm(forms.Form):
         return v
 
 class SalaryFilterForm(forms.Form):
-    user = forms.ModelChoiceField(required=False, label='User:', 
+    user = forms.ModelChoiceField(required=False, label='User:',
                                   queryset=auth_models.User.objects.order_by("username"))
 
     def save(self):
@@ -1189,7 +1189,7 @@ def lookup_project(name, projects):
 
     rxp = re.compile('[^0-9a-zA-Z]', flags=re.I)
     convert_name = lambda n: rxp.sub('', n).lower()
-    
+
     lookup_name = convert_name(name)
     for project in projects:
         if lookup_name == convert_name(project):
@@ -1199,7 +1199,7 @@ def lookup_project(name, projects):
 issue_status_formset = modelformset_factory(timepiece.Issue, form=IssueStatusForm,extra=0 ,can_delete=True, exclude=[])
 expense_formset = modelformset_factory(timepiece.Expense, can_delete=True, extra=2, exclude=[])
 permissions_formset = modelformset_factory(timepiece.BusinessPermissions, form=EditPersonPermission,extra=0, exclude=['user', 'business'] )
- 
+
 class ExpenseForm(forms.Form):
     date = forms.DateField(required=True)
     amount = forms.FloatField(required=True)
@@ -1227,7 +1227,7 @@ class SprintInvoiceReportSettingsForm(forms.Form):
 
     include_features = forms.BooleanField(label="Tick to include features", initial=False, required=False)
     include_billable_per_user = forms.BooleanField(label="Tick to include billable per user", initial=True, required=False)
-    only_these_statuses = forms.MultipleChoiceField( label="Only include these statuses", 
+    only_these_statuses = forms.MultipleChoiceField( label="Only include these statuses",
                                                      required=True, initial=('all',),
                                                      widget = CheckboxSelectMultiple)
     only_assigned_to = forms.MultipleChoiceField(label="Only assigned to these users",
@@ -1263,8 +1263,8 @@ class SprintInvoiceReportSettingsForm(forms.Form):
                 only_these_issues = project.issues.all()
             else:
                 only_these_issues = []
-        self.fields['only_these_issue_numbers'].choices = [ (issue.number, issue.number) for issue in only_these_issues ] 
-        self.fields['only_these_issue_numbers'].initial = [ issue.number for issue in only_these_issues ] 
+        self.fields['only_these_issue_numbers'].choices = [ (issue.number, issue.number) for issue in only_these_issues ]
+        self.fields['only_these_issue_numbers'].initial = [ issue.number for issue in only_these_issues ]
 
     @classmethod
     def get_initial_data_for_priceless_summary(self):
@@ -1291,7 +1291,7 @@ class SprintQuoteReportSettingsForm(forms.Form):
                                        choices = ( ("billable", "Estimates"),
                                                    ("quote", "Quote") ) )
 
-    only_these_statuses = forms.MultipleChoiceField( label="Only include these statuses", 
+    only_these_statuses = forms.MultipleChoiceField( label="Only include these statuses",
                                                      required=True, initial=('New',),
                                                      widget = CheckboxSelectMultiple)
 
@@ -1305,7 +1305,7 @@ class SprintQuoteReportSettingsForm(forms.Form):
     preferred_user_for_estimates = forms.ChoiceField( label="User's estimates to use where conflicts",
                                                       required=False )
 
-    is_final = forms.BooleanField(label="Tick for final, untick for provisional", 
+    is_final = forms.BooleanField(label="Tick for final, untick for provisional",
                                   initial=False, required=False)
 
     only_these_issue_numbers = forms.MultipleChoiceField(required=False,
@@ -1318,21 +1318,21 @@ class SprintQuoteReportSettingsForm(forms.Form):
         self.project = project
         if not self.bp.has_view_ctc_billable_rates or not self.bp.has_view_ctc_rates:
             del self.fields['show_billable']
-        
+
         self.fields['only_these_statuses'].choices = [('all', 'Any status'),] + list( [ (x['status'],x['status']) for x in project.issues.values('status').distinct()] )
         self.fields['preferred_user_for_estimates'].choices = [ (x.user.id, x.user) for x in BusinessPermissions.by_user(project.business).values() if x.has_estimate_own_points ]
-        
+
         if only_these_issues is None:
             only_these_issues = project.issues.all()
             only_these_issues = project.issues.filter(adhoc=False)
-        self.fields['only_these_issue_numbers'].choices = [ (issue.number, issue.number) for issue in only_these_issues ] 
-        self.fields['only_these_issue_numbers'].initial = [ issue.number for issue in only_these_issues ] 
+        self.fields['only_these_issue_numbers'].choices = [ (issue.number, issue.number) for issue in only_these_issues ]
+        self.fields['only_these_issue_numbers'].initial = [ issue.number for issue in only_these_issues ]
 
 class NewBusinessDocumentForm(forms.ModelForm):
     class Meta:
         model = timepiece.BusinessDocument
         exclude = ( 'filename', 'business', 'created_by', 'created_at', 'deleted', 'token', 'mime_type', 'modified_by', 'modified_at' )
-        
+
 class EditBusinessDocumentForm(forms.ModelForm):
 
     project = GroupedModelChoiceField('business', required=False, queryset=timepiece.Project.objects.all().filter_open().order_by("business__name", "name"))
@@ -1340,7 +1340,7 @@ class EditBusinessDocumentForm(forms.ModelForm):
     class Meta:
         model = timepiece.BusinessDocument
         fields = ( 'doc_type', 'comments', 'project', 'filename', 'doc' )
-        
+
 
 class GenerateBusinessDocumentForm(forms.Form):
 
@@ -1350,8 +1350,8 @@ class GenerateBusinessDocumentForm(forms.Form):
     content = forms.CharField(widget=forms.Textarea, required=True)
 
 class IssueCheckboxContextMenuChangeStateForm(forms.Form):
-    
-    status = forms.ChoiceField( label="New status", 
+
+    status = forms.ChoiceField( label="New status",
                                 required=True, initial=('New',) )
 
     def __init__(self, project, *args, **kwargs):
@@ -1360,8 +1360,8 @@ class IssueCheckboxContextMenuChangeStateForm(forms.Form):
         self.fields['status'].widget.attrs['onchange'] = "this.form.submit();"
 
 class IssueCheckboxContextMenuSelectByStateForm(forms.Form):
-    
-    status = forms.ChoiceField( label="Status to select", 
+
+    status = forms.ChoiceField( label="Status to select",
                                 required=True, initial=('New',) )
 
     def __init__(self, project, *args, **kwargs):
@@ -1370,8 +1370,8 @@ class IssueCheckboxContextMenuSelectByStateForm(forms.Form):
         self.fields['status'].widget.attrs['onchange'] = "this.form.submit();"
 
 class IssueCheckboxContextMenuChangeFeatureForm(forms.Form):
-    
-    feature = forms.ChoiceField( label="New feature", 
+
+    feature = forms.ChoiceField( label="New feature",
                                 required=True, initial=('New',) )
 
     def __init__(self, project, *args, **kwargs):
@@ -1380,8 +1380,8 @@ class IssueCheckboxContextMenuChangeFeatureForm(forms.Form):
         self.fields['feature'].widget.attrs['onchange'] = "this.form.submit();"
 
 class IssueCheckboxContextMenuChangeAssigneeForm(forms.Form):
-    
-    assignee = forms.ChoiceField( label="New assignee", 
+
+    assignee = forms.ChoiceField( label="New assignee",
                                 required=True, initial=('New',) )
 
     def __init__(self, project, *args, **kwargs):
@@ -1390,9 +1390,9 @@ class IssueCheckboxContextMenuChangeAssigneeForm(forms.Form):
         self.fields['assignee'].widget.attrs['onchange'] = "this.form.submit();"
 
 class IssueCheckboxContextMenuActiveIssueForm(forms.Form):
-    
+
     focus_issue = forms.ChoiceField(required=True)
-    
+
     def __init__(self, project, label, *args, **kwargs):
         super(IssueCheckboxContextMenuActiveIssueForm, self).__init__(*args, **kwargs)
         self.fields['focus_issue'].choices = [ ('', '') ] + [ (x.id, "%s %s" % (x.number, x.subject)) for x in project.issues.all().order_by("order") ]
@@ -1401,15 +1401,15 @@ class IssueCheckboxContextMenuActiveIssueForm(forms.Form):
 
 class IssueCheckboxContextMenuChangeIssueAdhocForm(forms.Form):
 
-    adhoc = forms.ChoiceField( label="Adhoc", 
+    adhoc = forms.ChoiceField( label="Adhoc",
                                required=True, initial=('New',) )
-    
+
     def __init__(self, project, label, *args, **kwargs):
         super(IssueCheckboxContextMenuChangeIssueAdhocForm, self).__init__(*args, **kwargs)
         self.fields['adhoc'].choices = [ ('', ''), ('set_adhoc', "Make adhoc"), ('unset_adhoc', 'Make standard issue') ]
         self.fields['adhoc'].label = label
         self.fields['adhoc'].widget.attrs['onchange'] = "this.form.submit();"
-        
+
 
 # class NewCalendarEventForm(forms.ModelForm):
 #     class Meta:
@@ -1515,7 +1515,7 @@ class CalendarEventCreateForm(forms.ModelForm):
                 hours = 2 #default min
         data['hours'] = hours
         return data
-    
+
 class CalendarEventUpdateForm(forms.ModelForm):
 
     end = forms.DateTimeField()
@@ -1526,7 +1526,7 @@ class CalendarEventUpdateForm(forms.ModelForm):
     class Meta:
         model = CalendarEvent
         exclude = []
-    
+
     def __init__(self, allowed_users, allowed_businesses, *args, **kwargs):
         super(CalendarEventUpdateForm, self).__init__(*args, **kwargs)
         self.fields['business'].required = False

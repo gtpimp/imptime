@@ -26,7 +26,7 @@ def clients(request, template="invoicing/clients.html", context=None):
 @login_required
 def invoices(request, template="invoicing/invoices.html", context=None):
     context = context or {}
-    
+
     bp = _get_best_bp(request)
     if not bp.has_view_invoices:
         raise PermissionDenied
@@ -132,7 +132,7 @@ def edit_invoice(request, invoice_id, template="invoicing/edit_invoice.html", co
         for item in items_formset.deleted_objects:
             item.delete()
         items_formset.save_m2m()
-            
+
         payments = payments_formset.save(commit=False)
         for payment in payments:
             payment.invoice = invoice
@@ -149,10 +149,10 @@ def edit_invoice(request, invoice_id, template="invoicing/edit_invoice.html", co
         payments_formset.save_m2m()
         for payment in payments_formset.deleted_objects:
             payment.delete()
-                
+
         messages.info(request, "Invoice updated")
         return HttpResponseRedirect(reverse('invoicing:edit_invoice', kwargs={'invoice_id':invoice.id}))
-    
+
     context['summary_form'] = timepiece_forms.SprintInvoiceReportSettingsForm(
         invoice.project, bp,
         initial=timepiece_forms.SprintInvoiceReportSettingsForm.get_initial_data_for_priceless_summary())
@@ -188,7 +188,7 @@ def generate_invoice(request, invoice_id, context=None):
                                                      'username':request.user.username,
                                                      'token':request.user.profile.authenticate_token}))
     filename = "%s_%s_invoice%s.pdf" % (invoice.client.filename_prefix,
-                                        settings.INVOICE_DETAILS['name'].lower().replace(" ",""), 
+                                        settings.INVOICE_DETAILS['name'].lower().replace(" ",""),
                                         invoice.invoice_number)
     response = render_url_to_pdf(url, request, basename=filename)
 
@@ -236,7 +236,7 @@ def print_invoice_from_phantomjs(request, invoice_id, username, token, template=
 
 def _get_best_bp(request, invoice=None):
     if invoice is None or invoice.project is None:
-        return timepiece.BusinessPermissions.for_user(request.user).first()
+        return timepiece.BusinessPermissions.for_user(request.user)
     else:
         return timepiece.BusinessPermissions.for_user(request.user, invoice.project.business)
 
@@ -253,7 +253,7 @@ def clone_invoice(request, invoice_id, template="invoicing/edit_invoice.html", c
         item.id = models.InvoiceItem.objects.all().aggregate(Max('id'))['id__max']+1
         item.invoice_id = invoice.id
         item.save()
-        
+
     messages.info(request, "Invoice cloned")
     return HttpResponseRedirect(reverse('invoicing:edit_invoice', kwargs={'invoice_id':invoice.id}))
 

@@ -3,6 +3,7 @@ import {connect} from 'react-redux'
 import map from 'lodash/map'
 import filter from 'lodash/filter'
 import {ensureUsersLoaded} from '../../actions/Users'
+import SearchInput from '../SearchInput'
 import '../../sass/single-value-selector.css'
 
 export class SingleValueSelector extends Component {
@@ -88,10 +89,11 @@ export class SingleValueSelector extends Component {
         return (
             <div className="single-value-selector">
                 <div className="single-value-selector__input-wrapper">
-                    <input onKeyDown={this.onKeyDownOnSelectionFilter}
-                           className="single-value-selector__input"
-                           ref={(ref)=> this.selection_filter_el=ref}
-                           onChange={this.onSelectionFilterChanged}/>
+                  <input onKeyDown={this.onKeyDownOnSelectionFilter}
+                         placeholder={this.props['placeholder'] || ""}
+                         className="single-value-selector__input"
+                         ref={(ref)=> this.selection_filter_el=ref}
+                         onChange={this.onSelectionFilterChanged}/>
                 </div>
                 <div className="single-value-selector__suggestions">
                     {this.render_suggestions()}

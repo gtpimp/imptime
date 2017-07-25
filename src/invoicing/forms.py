@@ -11,15 +11,15 @@ class ClientInvoiceDetailsForm(forms.ModelForm):
     class Meta:
         model = models.ClientInvoiceDetails
         exclude = []
-    
+
 class InvoiceForm(forms.ModelForm):
 
     class Meta:
         model = models.Invoice
-        fields = [ 'client', 'project', 'business', 'invoice_number', 'internal_comment', 'client_order_name', 'client_order_number', 'status', 
+        fields = [ 'client', 'project', 'business', 'invoice_number', 'internal_comment', 'client_order_name', 'client_order_number', 'status',
                    'issued_at', 'payment_due', 'invoice_note', 'footer_terms' ]
 
-    project = GroupedModelChoiceField('business', required=False, queryset=timepiece.Project.objects.all().order_by("business__name", "name"))
+    project = GroupedModelChoiceField('business', required=False, queryset=timepiece.Project.objects.filter(business__archived=False).order_by("business__name", "name"))
 
     def __init__(self, *args, **kwargs):
         super(InvoiceForm, self).__init__(*args, **kwargs)
@@ -29,6 +29,8 @@ class InvoiceForm(forms.ModelForm):
         self.fields['payment_due'].initial = datetime.today() + relativedelta(days=settings.INVOICE_PAYMENT_DAYS)
         self.fields['payment_due'].widget.attrs['class'] = 'date_field'
         self.fields['issued_at'].initial = datetime.today()
+        self.fields['client'].queryset = models.ClientInvoiceDetails.objects.filter(invoices__business__archived=False).order_by("invoices__business__name", "name")
+        self.fields['business'].queryset = timepiece.Business.objects.filter(archived=False).order_by("name")
 
 class InvoiceItemForm(forms.ModelForm):
 
@@ -50,7 +52,7 @@ class InvoicePaymentForm(forms.ModelForm):
 invoice_payment_formset = modelformset_factory(models.InvoicePayment, form=InvoicePaymentForm, can_delete=True, extra=1)
 
 class InvoiceFilterForm(forms.Form):
-    
+
     client = forms.ModelChoiceField(required=False, queryset=models.ClientInvoiceDetails.objects.order_by("name"))
     project = GroupedModelChoiceField('business', required=False, queryset=timepiece.Project.objects.all().filter_open().order_by("business__name", "name"))
     status = forms.ChoiceField(required=False, choices=( ('all', 'All'),) + models.Invoice.INVOICE_STATUSES)
@@ -94,7 +96,7 @@ class InvoiceFilterForm(forms.Form):
         return qs
 
 class QuoteFilterForm(forms.Form):
-    
+
     client = forms.ModelChoiceField(required=False, queryset=models.ClientInvoiceDetails.objects.order_by("name"))
     project = GroupedModelChoiceField('business', required=False, queryset=timepiece.Project.objects.all().filter_open().order_by("business__name", "name"))
     status = forms.ChoiceField(required=False, choices=( ('all', 'All'),) + models.Quote.QUOTE_STATUSES)
@@ -130,7 +132,7 @@ class QuoteFilterForm(forms.Form):
 
 class QuoteForm(forms.ModelForm):
 
-    
+
     class Meta:
         model = models.Quote
         fields = [ 'status', 'project', 'internal_comment',
@@ -184,4 +186,3 @@ class StatementFilterForm(forms.Form):
         if data['issued_to']:
             qs = qs.filter(issued_at__lte=data['issued_to'])
         return qs
-            

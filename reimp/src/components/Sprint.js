@@ -18,7 +18,7 @@ class Sprint extends Component {
 	    </div>
 	)
     }
-    
+
     render_expanded() {
         const { sprint, is_loading, is_selected, isOver,
 		onClickedSprint, connectDragSource, connectDropTarget } = this.props
@@ -26,7 +26,7 @@ class Sprint extends Component {
 	if ( ! sprint ) {
 	    return (<tr><td>Loading...</td></tr>)
 	}
-	
+
 	if ( ! is_loading === false ) {
 	    return (
 		<tr key={this.key+"."+sprint.id}
@@ -78,7 +78,7 @@ function mapStateToProps(state, props) {
     const { sprint } = state
     const { sprint_id, is_selected, is_collapsed, is_loading } = props
     const this_sprint = (sprint && sprint.items_by_id && sprint.items_by_id[sprint_id]) || {}
-    
+
     return {
 	sprint: this_sprint,
 	sprint_id: sprint_id,
@@ -107,7 +107,7 @@ const headingTarget = {
 	    console.log("ignoring dnd on the same element: " + sprint_id)
 	    return;
 	}
-	
+
 	props.reorderSprints(dragging_sprint_id, sprint_id)
     },
     hover: (props, monitor, component) => {
@@ -115,7 +115,7 @@ const headingTarget = {
     canDrop: (props, monitor) => {
 	return true;
     }
-    
+
 }
 
 function collect(connect, monitor) {
@@ -134,4 +134,3 @@ function collectDrop(connect, monitor) {
 }
 
 export default connect(mapStateToProps) (DragSource(DndTypes.SPRINT, headingSource, collect) (DropTarget(DndTypes.SPRINT, headingTarget, collectDrop)(Sprint)))
-    

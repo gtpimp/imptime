@@ -15,12 +15,12 @@ MAIL_ADMINS = [ "gtp@implicitdesign.co.za" ]
 MANAGERS = ADMINS
 
 REDMINE_DB_MAPPING = [ { 'username' : 'test',
-                         'business' : 'projects', 
+                         'business' : 'projects',
                          'db' : 'redmine_projects' }
                        ]
 
 SENTRY_ENABLED = False
-    
+
 SESSION_EXPIRE_AT_BROWSER_CLOSE = True
 
 
@@ -107,10 +107,10 @@ STATIC_ROOT = os.path.join(PROJECT_HOME, '..', '..', 'static')
 STATIC_URL = '/static/'
 
 # Additional locations of static files
-STATICFILES_DIRS = (os.path.join(PROJECT_HOME, 'static/'), 
+STATICFILES_DIRS = (os.path.join(PROJECT_HOME, 'static/'),
                     )
 
-    
+
 # List of finder classes that know how to find static files in
 # various locations.
 STATICFILES_FINDERS = (
@@ -218,10 +218,10 @@ MIDDLEWARE = [
 #     'django.middleware.csrf.CsrfViewMiddleware',
 #     'django.contrib.messages.middleware.MessageMiddleware',
 #     # 'pagination.middleware.PaginationMiddleware',
-    
+
 #     # Uncomment the next line for simple clickjacking protection:
 #     # 'django.middleware.clickjacking.XFrameOptionsMiddleware',
-    
+
 #     # 'raven.contrib.django.raven_compat.middleware.SentryResponseErrorIdMiddleware'
 
 # )
@@ -247,7 +247,7 @@ REST_FRAMEWORK = {
    ),
    'PAGINATE_BY': 20,
 }
-    
+
 INSTALLED_APPS = (
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -264,7 +264,7 @@ INSTALLED_APPS = (
     'rest_framework.authtoken',
 
     'raven.contrib.django.raven_compat',
-    
+
     'bootstrap_toolkit',
     'bootstrap3',
     'pagination',
@@ -289,7 +289,7 @@ INSTALLED_APPS = (
 
     'sorl.thumbnail',
     'creole',
-    
+
     'noui',
 
     'devops'
@@ -337,7 +337,7 @@ INVOICE_DETAILS={'name':'ImplicitDesign',
                  'contact_email':'gtp@implicitdesign.co.za',
                  'vat_rate':0.14,
                  'vat_rate_percentage':14,
-                 
+
                  'bank_company_name':'IMPLICITDESIGN CC',
                  'bank_name':'Standard Bank',
                  'bank_account_number':'07-310-446-9',
@@ -392,7 +392,7 @@ LOGGING = {
             'class':'logging.handlers.RotatingFileHandler',
             'filename':os.path.join(LOG_FOLDER, "imptime.log"),
             'formatter': 'verbose',
-            'maxBytes':604800, 
+            'maxBytes':604800,
             'backupCount':50
         },
          'console': {
@@ -420,13 +420,13 @@ LOGGING = {
     },
 }
 
-#EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 EMAIL_USE_TLS = True
-#EMAIL_HOST = 'mail.implicitdesign.co.za'
-EMAIL_HOST = 'localhost'
+EMAIL_HOST = 'mail.implicitdesign.co.za'
+# EMAIL_HOST = 'localhost'
 EMAIL_HOST_USER = 'timesheet@implicitdesign.co.za'
 EMAIL_HOST_PASSWORD = 'WRONG'
-    # EMAIL_PORT = 587
+EMAIL_PORT = 587
 
 FROM_EMAIL="imptime@impd.co.za"
 WEEKLY_HOURS_MAIL_RECIPIENT = ""
@@ -449,4 +449,3 @@ else:
 #check that required settings are set
 if DATABASES['default']['ENGINE'] == 'django.db.backends.':
     raise Exception("Unconfigured databases setting, please correct in local_settings.py")
-

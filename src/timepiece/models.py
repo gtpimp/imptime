@@ -111,7 +111,7 @@ class BusinessQuerySet(QuerySet):
 
     def filter_has_at_least_one_open_project(self):
         return self.filter( new_business_projects__status2__in=Project.pending_states()+Project.active_states()+Project.hopeful_states() )
-    
+
     def filter_has_hopeful_projects(self):
         return self.filter(new_business_projects__status2__in=Project.hopeful_states())
 
@@ -120,7 +120,7 @@ class BusinessQuerySet(QuerySet):
 
     def filter_has_can_add_dev_time_projects(self):
         return self.filter(new_business_projects__status2__in=Project.can_add_dev_time_states())
-    
+
     def get_checklist_summary(self):
 
         res = { 'traffic_ok': True, 'dev_ok': True, 'finance_ok': True }
@@ -132,14 +132,14 @@ class BusinessQuerySet(QuerySet):
 
     def budget(self):
         return self.aggregate(total=Sum('new_business_projects__budget'))['total']
-    
+
 class Business(models.Model):
-    
+
     DEFAULT_STATUS_COLOURS = COLOURS
 
     class Meta:
         ordering = ('name',)
-        
+
     name = models.CharField(max_length=255, blank=True)
     slug = models.SlugField(max_length=255, unique=True, blank=True)
     email = models.EmailField(blank=True)
@@ -151,23 +151,24 @@ class Business(models.Model):
     external_id = models.CharField(max_length=32, blank=True)
     objects = BusinessQuerySet.as_manager()
     sync_with = models.CharField( max_length=100, blank=True, null=True, choices=( ("jira", "Jira"), ) )
-    invoice_method = models.CharField( max_length=50, blank=False, null=False, 
+    invoice_method = models.CharField( max_length=50, blank=False, null=False,
                                        default="billable_hours_per_sprint",
-                                       choices=( ("billable_hours_per_sprint", "Billable Hours per Sprint"), 
-                                                 ("billable_hours_per_month", "Billable Hours per Month"), 
+                                       choices=( ("billable_hours_per_sprint", "Billable Hours per Sprint"),
+                                                 ("billable_hours_per_month", "Billable Hours per Month"),
                                                  ("fixed_quote", "Fixed quote"),
                                                  ("free", "Free or Equity or Other") ) )
 
     impd_client = models.ForeignKey(Client, null=True, blank=False, related_name='businesses')
     point_person = models.ForeignKey(User, limit_choices_to={'is_staff': True}, null=True)
-    
+    archived = models.BooleanField(default=False, db_index=True)
+
     def model_to_dict(self):
         d = model_to_dict_with_date_support(self)
         return d
-        
+
     def wiki_name(self):
         return self.name.replace(" ", "_").lower()
-    
+
     def has_recent_traffic_checklist(self):
         return TrafficChecklist.objects.filter(business=self).filter(created_at__gte=datetime.datetime.today()-timedelta(days=settings.NUM_DAYS_FOR_TRAFFIC_SPRINT_CHECKLISTS)).count() > 0
 
@@ -188,7 +189,7 @@ class Business(models.Model):
             return Invoice.objects.filter(business=self).first().client
         except:
             return None
-    
+
     def has_recent_passed_dev_checklist(self):
         cl = DevChecklist.objects.filter(business=self).order_by("-pk").first()
         return cl is not None and cl.passed
@@ -200,13 +201,13 @@ class Business(models.Model):
     @property
     def sprints(self):
         return Project.objects.filter(business=self)
-    
+
     def get_ordered_projects(self):
         all_business_projects = Project.objects.filter(business=self)
-        
+
         orderless_projects = all_business_projects.filter(order__isnull=True).order_by("-id")
         ordered_projects = all_business_projects.exclude(order__isnull=True).order_by("order")
-        
+
         if len(orderless_projects) > 0:
             all_projects = [ project for project in orderless_projects ] + [project for project in ordered_projects]
             for index, project in enumerate(all_projects):
@@ -241,7 +242,7 @@ class Business(models.Model):
         return [x.user for x in BusinessPermissions.objects.filter(business=self, can_do_finance_checklist=True)]
 
     def get_all_business_permissions(self,user=None):
-        permissions_qs = BusinessPermissions.objects.filter(business=self)        
+        permissions_qs = BusinessPermissions.objects.filter(business=self)
         if user is not None:
             try:
                 return permissions_qs.get(user=user)
@@ -277,7 +278,7 @@ class Business(models.Model):
             return True
         except IndexError:
             return False
-    
+
     @property
     def users(self):
         user_ids =  Project.objects.filter(business__id = self.id).values_list("users", flat=True)
@@ -358,7 +359,7 @@ class Business(models.Model):
     @classmethod
     def get_related_business_by_user(cls, user):
         return cls.objects.all().filter_by_logged_in_user(user).distinct()
-        
+
 class BusinessComment(models.Model):
     business = models.ForeignKey(Business, null=False, blank=False, related_name='business_comments')
     comment = models.TextField(null=True, blank=True)
@@ -367,7 +368,7 @@ class BusinessComment(models.Model):
     modified_at = models.DateTimeField(auto_now=True)
     modified_by = models.ForeignKey(User, null=False, blank=False, related_name='business_comments_modified_by')
 
-    def __unicode__(self): 
+    def __unicode__(self):
         return self.comment
 
 class Feature(models.Model):
@@ -391,7 +392,7 @@ class BusinessPermissions(BaseModel):
     can_invite_users = models.BooleanField(default=False, verbose_name="Can Invite Users")
     can_set_user_permissions = models.BooleanField(default=False, verbose_name="Can Set User Permissions")
     is_active_member_of_business = models.BooleanField(default=True, verbose_name="Is An Active Member of This Business")
-    
+
     can_view_project_card = models.BooleanField(default=True, verbose_name="Can View Sprint Card")
     can_edit_issues = models.BooleanField(default=True, verbose_name="Can Edit Issues")
     can_view_issues = models.BooleanField(default=True, verbose_name="Can View Issues")
@@ -452,7 +453,7 @@ class BusinessPermissions(BaseModel):
             RefreshNotifier().notify_model_update(
                 self, params={'projects': [self.business_id],
                               'users': [self.user_id]})
-    
+
     @classmethod
     def _by_user(self, business):
         # to be deprecated
@@ -466,7 +467,7 @@ class BusinessPermissions(BaseModel):
             raise Exception("Trying to set unknown permission: %s " % permission_name)
         setattr(self, field_name, new_state)
         self.save()
-    
+
     @classmethod
     def by_user(self, business):
         # to be deprecated
@@ -477,7 +478,7 @@ class BusinessPermissions(BaseModel):
         return BusinessPermissions.objects.get_or_create(business=business,
                                                          user=user,
                                                          defaults={'is_active_member_of_business':True})[0]
-    
+
     @classmethod
     def for_user(self, user, business=None):
         qs = user.business_permissions
@@ -496,7 +497,7 @@ class BusinessPermissions(BaseModel):
         business_ids = BusinessPermissions.objects.filter(user=user,
                                                           is_active_member_of_business=True)\
                                                   .values_list('id', flat=True)
-        
+
         return User.objects.filter(business_permissions__business_id__in=business_ids,
                                    business_permissions__is_active_member_of_business=True)
 
@@ -504,14 +505,14 @@ class BusinessPermissions(BaseModel):
     def viewable_users_for_business(self, logged_in_user, business_id):
         users = self.viewable_users(user=logged_in_user)
         return users.filter(business_permissions__business_id=business_id).distinct()
-    
+
     @classmethod
     def get_users_who_can_capture_time(self):
         """ any user who is allowed to estimate on at least one project """
         users = User.objects.filter(is_active=True, business_permissions__is_active_member_of_business=True,
                                     business_permissions__business__new_business_projects__status2='in dev').distinct()
         return users
-    
+
     @property
     def has_view_project_card(self):
         return self.user.is_superuser or self.can_view_project_card or self.user.has_perm('timepiece.belongs_to_all_projects')
@@ -523,11 +524,11 @@ class BusinessPermissions(BaseModel):
     @property
     def has_set_user_permissions(self):
         return self.user.is_superuser or self.can_set_user_permissions or self.user.has_perm('timepiece.belongs_to_all_projects')
-    
+
     @property
     def has_is_active_member_of_business(self):
         return self.user.is_superuser or self.can_set_user_permissions or self.user.has_perm('timepiece.belongs_to_all_projects')
-    
+
     @property
     def has_edit_permissions(self):
         return self.user.is_superuser or self.can_edit_permissions or self.user.has_perm('timepiece.belongs_to_all_projects')
@@ -535,7 +536,7 @@ class BusinessPermissions(BaseModel):
     @property
     def has_view_permissions(self):
         return self.user.is_superuser or self.can_view_permissions or self.user.has_perm('timepiece.belongs_to_all_projects')
-    
+
     @property
     def has_edit_project_detail(self):
         return self.user.is_superuser or self.can_edit_project_detail or self.user.has_perm('timepiece.belongs_to_all_projects')
@@ -546,7 +547,7 @@ class BusinessPermissions(BaseModel):
     @property
     def has_view_issues(self):
         return self.user.is_superuser or self.can_view_issues or self.user.has_perm('timepiece.belongs_to_all_projects')
-    
+
     @property
     def has_edit_budget(self):
         return self.user.is_superuser or self.can_edit_budget or self.user.has_perm('timepiece.belongs_to_all_projects')
@@ -560,29 +561,29 @@ class BusinessPermissions(BaseModel):
     @property
     def has_view_deadlines(self):
         return self.user.is_superuser or self.can_view_deadlines or self.user.has_perm('timepiece.belongs_to_all_projects')
-    
+
     @property
     def has_edit_invoices(self):
         return self.user.is_superuser or self.can_edit_invoices or self.user.has_perm('timepiece.belongs_to_all_projects')
     @property
     def has_view_invoices(self):
         return self.user.is_superuser or self.can_view_invoices or self.user.has_perm('timepiece.belongs_to_all_projects')
-    
+
     @property
     def has_edit_quotes(self):
         return self.user.is_superuser or self.can_edit_quotes or self.user.has_perm('timepiece.belongs_to_all_projects')
     @property
     def has_view_quotes(self):
         return self.user.is_superuser or self.can_view_quotes or self.user.has_perm('timepiece.belongs_to_all_projects')
-    
+
     @property
     def has_edit_ctc_billable_rates(self):
         return self.user.is_superuser or self.can_edit_ctc_billable_rates or self.user.has_perm('timepiece.belongs_to_all_projects')
-    
+
     @property
     def has_view_ctc_billable_rates(self):
-        """ means the section containing costs like billable or ctc. 
-            Doesn't confer ctc viewing by itself, 
+        """ means the section containing costs like billable or ctc.
+            Doesn't confer ctc viewing by itself,
             a users needs to have 'has_view_ctc_rates' too.  """
         return self.user.is_superuser or self.can_view_ctc_billable_rates or self.user.has_perm('timepiece.belongs_to_all_projects')
 
@@ -610,11 +611,11 @@ class BusinessPermissions(BaseModel):
     @property
     def has_see_other_user_points(self):
         return self.user.is_superuser or self.can_see_other_user_points or self.user.has_perm('timepiece.belongs_to_all_projects')
-    
+
     @property
     def has_estimate_own_points(self):
         return self.can_estimate_own_points
-    
+
     @property
     def has_add_issue(self):
         return self.user.is_superuser or self.can_add_issue or self.user.has_perm('timepiece.belongs_to_all_projects')
@@ -641,7 +642,7 @@ class BusinessPermissions(BaseModel):
     @property
     def has_edit_issue_feature(self):
         return self.has_edit_feature
-    
+
     @property
     def has_edit_tags(self):
         return self.user.is_superuser or self.can_edit_tags or self.user.has_perm('timepiece.belongs_to_all_projects')
@@ -657,7 +658,7 @@ class BusinessPermissions(BaseModel):
     @property
     def has_edit_sprint(self):
         return self.user.is_superuser or self.can_edit_sprint or self.user.has_perm('timepiece.belongs_to_all_projects')
-    
+
     @property
     def has_assign_user(self):
         return self.user.is_superuser or self.can_assign_user or self.user.has_perm('timepiece.belongs_to_all_projects')
@@ -724,7 +725,7 @@ class ProjectStatus(models.Model):
             RefreshNotifier().notify_model_update(
                 self, params={'projects': affected_project_ids})
 
-    
+
 class ProjectQuerySet(QuerySet):
     def filter_by_logged_in_user(self, user):
         """ restricts entries to those belonging to projects the given
@@ -736,13 +737,13 @@ class ProjectQuerySet(QuerySet):
 
     def filter_active(self):
         return self.filter(status2__in=Project.active_states())
-    
+
     def filter_pending(self):
         return self.filter(status2__in=Project.pending_states())
-    
+
     def filter_closed(self):
         return self.filter(status2__in=Project.closed_states())
-    
+
     def filter_hopeful(self):
         return self.filter(status2__in=Project.hopeful_states())
 
@@ -769,16 +770,16 @@ class Project(models.Model):
     PROJECT_STATUSES = ( ('gathering specs', 'gathering specs'),
                          ('quote sent', 'quote sent'),
                          ('pending', 'pending'),
-                         ('hopeful', 'hopeful'), 
+                         ('hopeful', 'hopeful'),
                          ('in dev', 'in development'),
-                         ('in client qa', 'in client qa'), 
-                         ('waiting to invoice', 'waiting to invoice'), 
-                         ('invoiced', 'invoiced'), 
+                         ('in client qa', 'in client qa'),
+                         ('waiting to invoice', 'waiting to invoice'),
+                         ('invoiced', 'invoiced'),
                          ('waiting to close', 'waiting to close'),
                          ('on hold', 'on hold'),
                          ('closed', 'closed') )
 
-    code = models.CharField(max_length=255,blank=True,null=True)        
+    code = models.CharField(max_length=255,blank=True,null=True)
     name = models.CharField(max_length=255, db_index=True)
     budget = models.DecimalField(max_digits=12, decimal_places=2, default=0)
     tracker_url = models.CharField(max_length=255, blank=True, null=False,
@@ -854,7 +855,7 @@ class Project(models.Model):
         point_person = User.objects.get_or_create(username="auto")[0]
         try:
             project_status = Attribute.objects.get(type='project-status', label='open')
-        except: 
+        except:
             project_status = Attribute.objects.create(type='project-status', label='open', billable=True, enable_timetracking=True)
         try:
             project_type = Attribute.objects.get(type='project-type', label='default')
@@ -864,7 +865,7 @@ class Project(models.Model):
         try:
             project = Project.objects.get(name=project_name, business=business)
         except Project.DoesNotExist:
-            project = Project.objects.create(name=project_name, business=business, 
+            project = Project.objects.create(name=project_name, business=business,
                                              point_person=point_person,
                                              status=project_status, type=project_type,
                                              description=description,
@@ -900,22 +901,22 @@ class Project(models.Model):
         else:
             ratio_of_time = 1 - (self.ratio_testing+self.ratio_management)
         return ratio_of_time
-    
+
     def estimated_budget_for_role(self, role_name, include_scope_creep=True):
         if not self.budget:
             return None
 
         if role_name == "commission":
             return float(self.budget) * float(self.commission_percentage)/100
-        
+
         elif role_name in ["developer", "manager", "tester"]:
             if include_scope_creep:
                 return self.new_stats['per_role'][role_name]['adjusted_points_non_adhoc_core_rate']
             else:
                 return self.new_stats['per_role'][role_name]['adjusted_points_non_adhoc_core_rate_no_scope_creep']
-        
+
         return None
-    
+
     def get_points(self):
         user_ids = [user.id for user in self.business.users]
         users = User.objects.filter(id__in = user_ids)
@@ -928,10 +929,10 @@ class Project(models.Model):
 
         distinct_user_qs = IssuePoints.objects.filter(user__id__in = user_ids).values_list("user").distinct()
         return [ (User.objects.get(pk=qs[0]), IssuePoints.objects.filter(user__id = qs[0]).order_by("issue")) for qs in distinct_user_qs]
-    
+
     def get_points_total(self):
         ret = {}
-        for user in self.users.all(): 
+        for user in self.users.all():
             total = user.user_points.filter(issue__project=self).aggregate(Sum("points"))
             ret[user] = total['points__sum'] if total['points__sum'] else 0
         return ret
@@ -943,7 +944,7 @@ class Project(models.Model):
 
         del d['users']
         return d
-    
+
     def recalc_secondary_estimates(self):
         """ these are estimates based on the developer estimates, for management and testing """
 
@@ -984,7 +985,7 @@ class Project(models.Model):
                     estimate = round(estimate, 2)
                 for user_id, bp, user in tester_users:
                     issue.set_points(user=user, points=estimate)
-    
+
     def refresh_issues_order(self):
         """ Doesn''t re-sort, just makes the numbers sequential """
         order = 1
@@ -1009,7 +1010,7 @@ class Project(models.Model):
         if not rate:
             return None
         return rate.time_tracking_mode
-    
+
     @property
     def scheduled_events(self):
         return self.calendar_events.all().filter(Q(event_type='planned')|Q(event_type='meeting'))
@@ -1048,12 +1049,12 @@ class Project(models.Model):
                           'velocity': float(x['velocity']) or 1,
                         })
                         for x in Rate.objects.filter(project=self).values('user', 'amount', 'billable_amount', 'velocity') ] )
-        
+
     def get_user_rate(self, user):
 
         if isinstance(user, basestring):
             user = User.objects.get(username=user)
-        
+
         try:
             return Rate.objects.get(project=self, user=user)
         except Rate.DoesNotExist:
@@ -1081,7 +1082,7 @@ class Project(models.Model):
     @property
     def next_issue_number(self):
         return Issue.objects.filter(project__business=self.business).aggregate(n=Max('number'))['n']+1
-    
+
     @classmethod
     def get_project_from_name(self, name, business):
         project_id = None
@@ -1127,8 +1128,8 @@ class Project(models.Model):
 
     @classmethod
     def get_next_project_number(self, business):
-        return Project.get_last_project_number(business) + 1 
-    
+        return Project.get_last_project_number(business) + 1
+
     def save(self, *args, **kwargs):
 
         self.code = Project.get_code_from_name(self.name)
@@ -1142,14 +1143,14 @@ class Project(models.Model):
         if self.number is None or self.number == -1:
             self.number = Project.get_next_project_number(self.business)
 
-        
+
         super(Project, self).save(*args, **kwargs)
         if new_project:
             self._sync_from_previous_project()
             RefreshNotifier().notify_model_create(self)
         else:
             RefreshNotifier().notify_model_update(self)
-            
+
 
     @property
     def previous_project(self):
@@ -1158,7 +1159,7 @@ class Project(models.Model):
         if not project:
             project = qs.first()
         return project
-            
+
     def _sync_from_previous_project(self):
         """ Add all users from other projects in this business """
 
@@ -1182,7 +1183,7 @@ class Project(models.Model):
                             time_tracking_mode = previous_rate.time_tracking_mode)
                 rate.save(recalc_secondary_estimates=False)
                 user_ids_with_rates.append(previous_rate.user.id)
-                
+
         for user in users.exclude(pk__in=user_ids_with_rates):
             rate = Rate(project=self, user=user, amount=user.profile.amount,
                         billable_amount=user.profile.billable_amount,
@@ -1199,7 +1200,7 @@ class Project(models.Model):
         return p.values()
 
     def costs_by_feature(self):
-        
+
         if hasattr(self, '_cached_billable_by_feature'):
             return self._cached_billable_by_feature
 
@@ -1229,18 +1230,18 @@ class Project(models.Model):
 
     @classmethod
     def most_recent_project(self, business_id):
-        entries_per_business_ids = Entry.objects.filter(issue__project__business_id=business_id).order_by('-end_time').values('issue__project_id') 
+        entries_per_business_ids = Entry.objects.filter(issue__project__business_id=business_id).order_by('-end_time').values('issue__project_id')
         project_returned = None
-        
+
         if len(entries_per_business_ids) != 0:
             project_id = entries_per_business_ids[0]['issue__project_id']
-            
+
             try:
-                project_returned = Project.objects.get(pk=project_id)            
+                project_returned = Project.objects.get(pk=project_id)
             except Project.DoesNotExist:
                 project_returned = None
 
-        if not project_returned: 
+        if not project_returned:
             qs = Project.objects.filter(business__id=business_id).order_by("-id")
             project_returned = qs[0] if len(qs) > 0 else None
 
@@ -1278,7 +1279,7 @@ class Project(models.Model):
 
     def can_add_dev_time(self):
         return self.status2 in self.can_add_dev_time_states() and self.is_open
-    
+
     @property
     def is_open(self):
 
@@ -1298,7 +1299,7 @@ class Project(models.Model):
                 preferred_user_id = BusinessPermissions.by_user(self.business).keys()[0]
             except:
                 raise Exception("No preferred user selected. If there is no preferred user in the report list, then ensure at least one user has the permission 'can estimate own points'")
-        
+
         if self._estimate_stats is not None:
             return self._estimate_stats
         if issues is None:
@@ -1345,7 +1346,7 @@ class Project(models.Model):
 
             managers = [x.user for x in Rate.objects.filter(project=self, time_tracking_mode='manager')]
             testers = [x.user for x in Rate.objects.filter(project=self, time_tracking_mode='tester')]
-            
+
             for issue in issues:
 
                 points = []
@@ -1358,7 +1359,7 @@ class Project(models.Model):
                 else:
                     points = issue.issue_points.all().values('points', 'user')
                     user_id = None
-                    
+
                 if len(points) == 0 or points[0]['points'] is None:
                     points = 0
                 else:
@@ -1406,7 +1407,7 @@ class Project(models.Model):
                         except IndexError:
                             pass
 
-                        
+
                 total_estimated_hours += points or 0
                 issue_data['combined_cost_with_scope_creep'] = issue_data['combined_cost']
 
@@ -1467,7 +1468,7 @@ class Project(models.Model):
                 return res[0]['total']
             except:
                 return 0
-        
+
         for user in users:
             entries = entries_for_project.filter(user=user)
 
@@ -1488,10 +1489,10 @@ class Project(models.Model):
                 exclude_features_for_role = []
             elif rate.time_tracking_mode == 'tester':
                 exclude_features_for_role = []
-                                    
+
             stats_per_user[user]['points_non_adhoc'] = _get_total(issue_points.filter(issue__adhoc=False).values('user').annotate(total=Sum('points')))
             stats_per_user[user]['open_status_options'] = sorted(open_status_options)
-                
+
             stats_per_user[user]['points_closed_non_adhoc'] = _get_total(issue_points.exclude(issue__status__in=open_status_options).filter(issue__adhoc=False).values('user').annotate(total=Sum('points')))
             stats_per_user[user]['points_closed'] = _get_total(issue_points.exclude(issue__status__in=open_status_options).values('user').annotate(total=Sum('points')))
             stats_per_user[user]['points_open_non_adhoc'] = _get_total(issue_points.filter(issue__status__in=open_status_options).filter(issue__adhoc=False).values('user').annotate(total=Sum('points')))
@@ -1512,7 +1513,7 @@ class Project(models.Model):
               (stats_per_user[user]['rate'].full_velocity or 0) * \
               float(stats_per_user[user]['rate'].billable_amount or 0)
 
-              
+
             stats_per_user[user]['points_comparative_non_adhoc'] = _get_total(issue_points_comparative.filter(issue__adhoc=False).values('user').annotate(total=Sum('points')))
             stats_per_user[user]['points_comparative_closed_non_adhoc'] = _get_total(issue_points_comparative.exclude(issue__status__in=open_status_options).filter(issue__adhoc=False).values('user').annotate(total=Sum('points')))
             stats_per_user[user]['points_comparative_open_non_adhoc'] = _get_total(issue_points_comparative.filter(issue__status__in=open_status_options).filter(issue__adhoc=False).values('user').annotate(total=Sum('points')))
@@ -1521,16 +1522,16 @@ class Project(models.Model):
 
             stats_per_user[user]['adjusted_points_comparative_ctc'] = stats_per_user[user]['adjusted_points_comparative_non_adhoc'] * float(stats_per_user[user]['rate'].amount)
             stats_per_user[user]['adjusted_points_comparative_billable'] = stats_per_user[user]['adjusted_points_comparative_non_adhoc'] * float(stats_per_user[user]['rate'].full_rate)
-            
+
             stats_per_user[user]['hours'] = _get_total(entries.order_by('user').values('user').annotate(total=Sum('hours')))
 
             stats_per_user[user]['hours_for_role'] = _get_total(entries.filter_on_role(stats_per_user[user]['rate'].time_tracking_mode).values('user').annotate(total=Sum('hours')))
-            
+
             stats_per_user[user]['hours_real'] = _get_total(entries.filter(issue__adhoc=False).order_by('user').values('user').annotate(total=Sum('hours')))
             stats_per_user[user]['hours_closed'] = _get_total(entries.exclude(issue__status__in=open_status_options).order_by('user').values('user').annotate(total=Sum('hours')))
             stats_per_user[user]['hours_closed_real'] = _get_total(entries.filter(issue__adhoc=False).exclude(issue__status__in=open_status_options).order_by('user').values('user').annotate(total=Sum('hours')))
             stats_per_user[user]['hours_adhoc'] = _get_total(entries.filter(issue__adhoc=True).order_by('user').values('user').annotate(total=Sum('hours')))
-            
+
             stats_per_user[user]['hours_ctc'] = stats_per_user[user]['rate'].amount * stats_per_user[user]['hours']
             stats_per_user[user]['hours_billable'] = stats_per_user[user]['rate'].full_rate * float(stats_per_user[user]['hours'])
 
@@ -1545,11 +1546,11 @@ class Project(models.Model):
                 stats_per_user[user]['calculated_velocity'] = (float(stats_per_user[user]['hours_for_role']) or 0) / float((stats_per_user[user]['points_closed'] or 1))
             # if stats_per_user[user]['hours_closed_real']:
             #     #stats_per_user[user]['calculated_velocity'] = (float(stats_per_user[user]['hours_closed_real']) or 0) / float((stats_per_user[user]['points_closed_non_adhoc'] or 1))
-                
+
             # else:
             #     stats_per_user[user]['calculated_velocity'] = 1
             stats_per_user[user]['calculated_work_ratio'] = 1 # to be fixed (float(stats_per_user[user]['hours_adhoc']) or 0.0) / (float((stats_per_user[user]['hours'] or 1)))
-            
+
             stats_per_user[user]['points_calculated_open_non_adhoc'] = (stats_per_user[user]['points_open_non_adhoc'] or 0) * (stats_per_user[user]['calculated_velocity'] or 1)
             stats_per_user[user]['points_calculated_open_non_adhoc_ctc'] = float(stats_per_user[user]['rate'].amount) * (stats_per_user[user]['points_calculated_open_non_adhoc'] or 0)
             stats_per_user[user]['points_calculated_open_non_adhoc_billable'] = float(stats_per_user[user]['rate'].full_rate) * (stats_per_user[user]['points_calculated_open_non_adhoc'] or 0)
@@ -1563,7 +1564,7 @@ class Project(models.Model):
             stats_per_user[user]['points_estimated_open_non_adhoc_billable'] = float(stats_per_user[user]['rate'].full_rate) * (stats_per_user[user]['points_estimated_open_non_adhoc'] or 0)
 
             stats_per_user[user]['percentage_points_complete'] = float(stats_per_user[user]['points_closed_non_adhoc'] or 0) / float(stats_per_user[user]['points_non_adhoc'] or 1) * 100
-            
+
             stats_per_role[rate.time_tracking_mode]['adjusted_points_non_adhoc_core_rate'] += stats_per_user[user]['adjusted_points_non_adhoc_core_rate']
             stats_per_role[rate.time_tracking_mode]['adjusted_points_non_adhoc_core_rate_no_scope_creep'] += stats_per_user[user]['adjusted_points_non_adhoc_core_rate_no_scope_creep']
             stats_per_role[rate.time_tracking_mode]['users_in_role'].append(user)
@@ -1579,12 +1580,12 @@ class Project(models.Model):
                 if hours is None:
                     continue
                 hours = float(hours)
-                
+
                 stats_per_role[role]['hours'] += hours
                 stats_per_role[role]['hours_billable'] += hours * float(rate.full_rate)
                 stats_per_role[role]['per_user'][user] = { 'hours_billable_core_rate' : hours * float(rate.billable_amount) }
                 stats_per_role[role]['hours_billable_core_rate'] += stats_per_role[role]['per_user'][user]['hours_billable_core_rate']
-                
+
                 #stats_per_role[rate.time_tracking_mode]['points_calculated_open_non_adhoc_billable_core_rate'] += stats_per_user[user]['points_calculated_open_non_adhoc_billable_core_rate']
                 #stats_per_role[rate.time_tracking_mode]['points_calculated_open_non_adhoc_billable'] += float(stats_per_user[user]['points_calculated_open_non_adhoc_billable'])
                 #stats_per_role[rate.time_tracking_mode]['points_estimated_open_non_adhoc_billable'] += float(stats_per_user[user]['points_estimated_open_non_adhoc_billable'])
@@ -1595,9 +1596,9 @@ class Project(models.Model):
         # stats_per_role['manager_and_tester_combined']['projected_billable'] = stats_per_role['manager']['projected_billable'] + stats_per_role['tester']['projected_billable']
         # stats_per_role['manager_and_tester_combined']['projected_estimated_billable'] = stats_per_role['manager']['projected_estimated_billable'] + stats_per_role['tester']['projected_estimated_billable']
         # stats_per_role['manager_and_tester_combined']['adjusted_points_billable'] = stats_per_role['manager']['adjusted_points_billable'] + stats_per_role['tester']['adjusted_points_billable']
-                    
+
         total_stats = {}
-        
+
         total_stats['points_billable'] = sum(stats_per_user[x]['adjusted_points_billable'] or 0 for x in users)
         total_stats['points_comparative_billable'] = sum(stats_per_user[x]['adjusted_points_comparative_billable'] or 0 for x in users)
         total_stats['points_non_adhoc'] = sum(stats_per_user[x]['points_non_adhoc'] or 0 for x in users)
@@ -1613,7 +1614,7 @@ class Project(models.Model):
 
         total_stats['hours_billable_core_rate'] = sum( [ stats_per_user[x]['hours_billable_core_rate'] or 0 for x in users ] ) + ctc_and_billable_totals['fixed_amount_total']
         total_stats['hours_real_billable'] = sum( [ stats_per_user[x]['hours_real_billable'] or 0 for x in users ] )
-        
+
         total_stats['hours_billable_with_scope_creep'] = float(total_stats['points_billable'])
         total_stats['scope_creep_percentage'] = self.ratio_scope_creep*100
         total_stats['hours_adhoc_billable'] = sum(stats_per_user[x]['hours_adhoc_billable'] or 0 for x in users)
@@ -1624,17 +1625,17 @@ class Project(models.Model):
         total_stats['unadjusted_points_billable_core_rate'] = sum(stats_per_user[x]['unadjusted_points_billable_core_rate'] or 0 for x in users)
         total_stats['unadjusted_points_billable_core_rate_no_scope_creep'] = sum(stats_per_user[x]['unadjusted_points_billable_core_rate_no_scope_creep'] or 0 for x in users)
 
-                
+
         total_stats['percentage_points_complete'] = (total_stats['points_closed_non_adhoc'] or 0) / (total_stats['points_non_adhoc'] or 1) * 100
 
-        
+
         total_stats['projected_total_billable_no_more_adhoc'] = float(total_stats['points_calculated_open_non_adhoc_billable']) + float(total_stats['hours_billable'])
         total_stats['projected_total_billable_no_more_adhoc_with_scope_creep'] = float(total_stats['projected_total_billable_no_more_adhoc'])
-        
+
         total_stats['projected_adhoc_billable'] = 1/(total_stats['percentage_points_complete']/100 or 1) * (float(total_stats['hours_adhoc_billable'] or 0)) - (float(total_stats['hours_adhoc_billable'] or 0))
         total_stats['projected_total_billable'] = float(total_stats['points_calculated_open_non_adhoc_billable']) + float(total_stats['hours_billable'])
         total_stats['projected_total_billable_with_scope_creep'] = total_stats['projected_total_billable']
-        
+
         total_stats['projected_estimated_total_billable'] = float(total_stats['points_estimated_open_non_adhoc_billable']) + float(total_stats['hours_billable'])
         total_stats['projected_estimated_total_billable'] = float(total_stats['points_estimated_open_non_adhoc_billable']) + float(total_stats['hours_billable'])
 
@@ -1642,7 +1643,7 @@ class Project(models.Model):
         total_stats['testing_points_non_adhoc'] = total_stats['points_non_adhoc'] * self.ratio_testing
 
         total_stats['total_quote_cost'] = float(total_stats['hours_billable_with_scope_creep'])
-        
+
         for role_name, role_stat in stats_per_role.items():
             role_stat['percentage_of_total_hours'] = float(role_stat['hours'] or 0.0) / float(total_stats['hours'] or 1) * 100
             role_stat['percentage_of_total_hours_billable'] = float(role_stat['hours_billable'] or 0.0) / float(total_stats['hours_billable'] or 1) * 100
@@ -1650,18 +1651,18 @@ class Project(models.Model):
             positive_rates = [x for x in role_stat['users_in_role'] if stats_per_user[x]['rate'].full_rate > 0]
             role_stat['average_billable_rate'] = sum([stats_per_user[x]['rate'].full_rate for x in positive_rates])/len(positive_rates)\
                                                    if len(positive_rates)>0 else 0
-            
+
         self._new_stats = {'per_user': stats_per_user,
                            'per_role': stats_per_role,
                            'total': total_stats}
-        
+
         return self._new_stats
 
-    
+
     def cache_stats(self, start=None, end=None, issues=None):
         stats = {}
         entries = Entry.objects.filter(issue__project=self)
-        
+
         if issues is None:
             issues = self.issues
 
@@ -1712,7 +1713,7 @@ class Project(models.Model):
         stats['end_time'] = self._last_entry_end_time
         stats['entries'] = entries
         stats['issues_with_time_entries'] = issues_with_time_entries
-        
+
         stats['users_and_hours'] = self._get_users_and_hours(stats)
         stats['cost_per_developer'] = self._get_cost_per_developer(stats)
 
@@ -1754,16 +1755,16 @@ class Project(models.Model):
             billed = float(user_total['hours']) * float(rate.full_rate)
 
             users_and_hours['users'][user.username] = {
-                'hours':user_total['hours'], 
-                'rate':rate, 
-                'revenue': float(user_total['hours'])*float(rate.amount), 
+                'hours':user_total['hours'],
+                'rate':rate,
+                'revenue': float(user_total['hours'])*float(rate.amount),
                 'end_time': user_total['end_time'],
                 'billed': billed
                 }
             user_info = users_and_hours['users'][user.username]
             user_info['profit'] = user_info['billed'] - user_info['revenue']
             user_info['velocity'] = rate.velocity
-            
+
             total_hours += user_total['hours']
             total_revenue += float(user_total['hours'])*float(rate.amount)
             total_billed += float(rate.full_rate) * float(user_total['hours'])
@@ -1780,7 +1781,7 @@ class Project(models.Model):
 
     def _get_cost_per_developer(self, stats):
         ret = {}
-        
+
         users_and_hours = stats['users_and_hours']
 
         for user, points in self.get_points_total().items():
@@ -1796,12 +1797,12 @@ class Project(models.Model):
                 continue
             velocity = rate.full_velocity or 1
             user_hours = user_info['hours']
-            
+
             total_adjusted_billed = points * float(rate.full_rate) * velocity
             total_adjusted_ctc = points * float(rate.amount) * velocity
 
             ret[user] = {
-                'points': points, 
+                'points': points,
                 'hours':user_hours,
                 'ctc':rate.amount*user_hours,
                 'billable':float(rate.full_rate)*float(user_hours),
@@ -1861,7 +1862,7 @@ class Project(models.Model):
         entries_qs = IssuePoints.objects.filter(issue__project=self, user=user)
         if issue_status is not None:
             entries_qs = entries_qs.filter(issue__status=issue_status)
-            
+
         total = entries_qs.aggregate(points=Sum('points'))['points']
         return total
 
@@ -1874,16 +1875,16 @@ class Project(models.Model):
 
     def get_users_with_time_but_no_estimates_in_this_project(self):
         users = [ User.objects.get(pk=user['user']) for user in Entry.objects.all().filter(issue__project=self).filter(hours__gt=0).exclude(issue__isnull=False).order_by('user').values('user').annotate(Count('user'))]
-        return [ user for user in users if not BusinessPermissions.for_user(user, self.business).has_estimate_own_points ] 
+        return [ user for user in users if not BusinessPermissions.for_user(user, self.business).has_estimate_own_points ]
 
     # def users_and_hours(self, **entry_filter):
     #     """ deprecated, use the stats property instead """
-        
+
     #     cache = True
     #     if 'cache' in entry_filter:
     #         cache = entry_filter['cache']
     #         del(entry_filter['cache'])
-        
+
     #     if self._users_and_hours is not None and cache:
     #         return self._users_and_hours
 
@@ -1893,10 +1894,10 @@ class Project(models.Model):
 
     #     if entry_filter:
     #         entries_qs = entries_qs.filter(**entry_filter)
-        
+
     #     user_totals = entries_qs.values("user").annotate(hours=Sum('hours'), end_time=Max("end_time"))
     #     user_totals = dict( (x['user'], x) for x in user_totals )
-        
+
     #     res = {'users':{}, 'totals':{}}
     #     total_hours = 0
     #     total_revenue = 0
@@ -1923,16 +1924,16 @@ class Project(models.Model):
     #         billed = float(user_total['hours']) * float(rate.full_rate)
 
     #         res['users'][user.username] = {
-    #             'hours':user_total['hours'], 
-    #             'rate':rate, 
-    #             'revenue': float(user_total['hours'])*float(rate.amount), 
+    #             'hours':user_total['hours'],
+    #             'rate':rate,
+    #             'revenue': float(user_total['hours'])*float(rate.amount),
     #             'end_time': user_total['end_time'],
     #             'billed': billed
     #             }
     #         user_info = res['users'][user.username]
     #         user_info['profit'] = user_info['billed'] - user_info['revenue']
     #         user_info['velocity'] = rate.velocity
-            
+
     #         total_hours += user_total['hours']
     #         total_revenue += float(user_total['hours'])*float(rate.amount)
     #         total_billed += float(rate.full_rate) * float(user_total['hours'])
@@ -1969,15 +1970,15 @@ class Project(models.Model):
 
     def get_ordered_issues(self):
         all_project_issues = Issue.objects.filter(project=self)
-        
+
         orderless_issues = all_project_issues.filter(order__isnull=True).order_by('-id')
         ordered_issues = all_project_issues.exclude(order__isnull=True).order_by('order', 'order2')
-        
+
         if len(orderless_issues) > 0:
             all_issues = [ issue for issue in orderless_issues ] + [ issue for issue in ordered_issues ]
             for index,issue in enumerate(all_issues):
                 if issue.order != index:
-                    issue.order = index            
+                    issue.order = index
                     issue.save()
         return Issue.objects.filter(project=self).order_by("order", "order2")
 
@@ -2010,7 +2011,7 @@ class BusinessInvite(BaseModel):
         else:
             RefreshNotifier().notify_model_update(self, params={'users': [self.user_id],
                                                                 'projects': [self.business_id]}) #sic
-    
+
 class RelationshipType(models.Model):
     name = models.CharField(max_length=255, unique=True)
     slug = models.CharField(max_length=255, unique=True, editable=False)
@@ -2218,7 +2219,7 @@ class EntriesQuerySet(QuerySet):
 
         if role_if_no_feature is None:
             role_if_no_feature = role
-            
+
         other_roles_reserved_feature_names = [v for k,v in TIME_TRACKING_MODES_RESERVED_FEATURE_NAMES.items() if k != role and v is not None]
         features_to_exclude = [ item for sublist in other_roles_reserved_feature_names for item in sublist ]
 
@@ -2233,7 +2234,7 @@ class EntriesQuerySet(QuerySet):
                 qs = qs.exclude(Q(issue__feature__isnull=True)|Q(issue__feature__name__in=features_to_exclude))
 
         return qs
-        
+
     def billable_for_user(self, user_id):
         total = 0
         qs = self.filter(user_id=user_id).values('issue__project').annotate(num_hours=Sum('hours'))
@@ -2260,7 +2261,7 @@ class EntriesQuerySet(QuerySet):
             if rate is not None:
                 total += rate['billable_amount'] * entry['num_hours']
         return total
-    
+
 class EntryQuerySet(EntriesQuerySet):
     """QuerySet extension to provide filtering by billable status"""
 
@@ -2289,7 +2290,7 @@ class EntryQuerySet(EntriesQuerySet):
         if to_date:
             datesQ &= Q(end_time__lt=to_date) if to_date else Q()
         return self.filter(datesQ)
-    
+
     def date_trunc(self, key='month', extra_values=None):
         select = {"day": {"date": """DATE_TRUNC('day', end_time)"""},
                   "week": {"date": """DATE_TRUNC('week', end_time)"""},
@@ -2398,7 +2399,7 @@ class Entry(models.Model):
                                                         ('emacs', 'Emacs importer'),
                                                         ('excel', 'In-site Excel importer') ),
                               null=False, blank=False)
-    
+
     start_time = models.DateTimeField()
     end_time = models.DateTimeField(blank=True, null=True, db_index=True)
     seconds_paused = models.PositiveIntegerField(default=0)
@@ -2432,8 +2433,8 @@ class Entry(models.Model):
 
         activity = Activity.objects.get_or_create(code='dev')[0]
         location = Location.objects.get_or_create(name='office')[0]
-        entry = Entry(user=user, 
-                      start_time=start_time, 
+        entry = Entry(user=user,
+                      start_time=start_time,
                       end_time=end_time,
                       activity=activity,
                       location=location,
@@ -2453,7 +2454,7 @@ class Entry(models.Model):
         minutes = int(minutes_fraction*60)
         return { 'hours': full_hours,
                  'minutes': minutes }
-        
+
     @property
     def atrate(self):
         return self.hours * self.rate
@@ -2482,7 +2483,7 @@ class Entry(models.Model):
         if rate:
             return rate.amount
         return 0
-        
+
     def _rate_object(self):
         try:
             return self._rate
@@ -2494,8 +2495,8 @@ class Entry(models.Model):
             except Rate.MultipleObjectsReturned:
                 self._rate = Rate.objects.filter(project=self.issue.project, user=self.user).first()
             return self._rate
-        
-        
+
+
 
     @classmethod
     def set_hours_for_user(self, user, issue, new_hours):
@@ -2789,7 +2790,7 @@ class Entry(models.Model):
         uninvoiced = entries.exclude(status='invoiced').aggregate(uninv=Sum('hours'))['uninv']
         invoiced = entries.filter(status='invoiced').filter(issue__project__billable=True).aggregate(total=Sum('hours'))['total']
         unbillable = entries.filter(status='invoiced').exclude(issue__project__billable=True).aggregate(total=Sum('hours'))['total']
-        
+
         # invoiced = entries.filter(
         #     status='invoiced').aggregate(i=Sum('hours'))['i']
         # uninvoiced = entries.exclude(
@@ -2833,11 +2834,11 @@ class Entry(models.Model):
             ('view_entry_summary', 'Can view entry summary page'),
             ('view_payroll_summary', 'Can view payroll summary page'),
         )
-    
+
     def try_get_issue_id(self):
         """ Make a best attempt to identify what the issue number. """
         return Issue.extract_issue_id(self.comments)
-    
+
 class EntryGroup(models.Model):
     VALID_STATUS = ('invoiced', 'not-invoiced')
     STATUS_CHOICES = [status for status in ENTRY_STATUS \
@@ -3226,11 +3227,11 @@ class UserProfile(models.Model):
     impd_client = models.ForeignKey(Client, null=True, blank=False, related_name='profiles')
 
     required_daily_work_hours = models.IntegerField(default=8, null=False, blank=True)
-    
+
     class Meta:
         ordering = ('user',)
         permissions = ( ( 'can_manage_client_users', 'Can manage client users' ), )
-        
+
     def __unicode__(self):
         return unicode(self.user.username)
 
@@ -3242,7 +3243,7 @@ class UserProfile(models.Model):
     @property
     def businesses(self):
         return Business.objects.all().filter_by_logged_in_user(self.user).order_by("name").distinct()
-    
+
     @property
     def best_business_for_permissions(self):
         """ for use in cases where a businesspermissions object is required for a user,
@@ -3272,8 +3273,8 @@ class UserAutoLoginToken(BaseModel):
         a.used = True
         a.save()
         return a.user
-        
-    
+
+
 class ProjectHours(models.Model):
     week_start = models.DateField(verbose_name='start of week')
     project = models.ForeignKey(Project)
@@ -3298,7 +3299,7 @@ class ProjectHours(models.Model):
 class SalaryQuerySet(QuerySet):
     def amount(self):
         return self.aggregate(Sum('amount'))['amount__sum']
-        
+
 class Salary(models.Model):
     user = models.ForeignKey(User)
     amount = models.DecimalField(max_digits=12,decimal_places=2,default=0)
@@ -3313,7 +3314,7 @@ class Salary(models.Model):
     locked = models.BooleanField(default=False)
 
     objects = SalaryQuerySet.as_manager()
-    
+
     @property
     def net_pay(self):
         return self.amount + self.bonus - self.paye - self.uif
@@ -3335,7 +3336,7 @@ class Salary(models.Model):
             self.expenses = 0
             self.save()
             return previous
-        
+
     def ytd(self):
         # From start of current tax year
         tax_year_start = datetime.datetime(self.date.year, 3, 1)
@@ -3345,7 +3346,7 @@ class Salary(models.Model):
             .annotate(ytd_amount=Sum('amount'), ytd_bonus=Sum('bonus'), ytd_paye=Sum('paye'), ytd_uif=Sum('uif'), ytd_expenses=Sum('expenses'))[0]
 
         #return {'take_home_total': ytd['ytd_amount'] - ytd['ytd_paye'] - ytd['ytd_uif'] - ytd['ytd_expenses'],
-        return {'take_home_total': ytd['ytd_amount']+ytd['ytd_bonus'], 
+        return {'take_home_total': ytd['ytd_amount']+ytd['ytd_bonus'],
                 'paye': ytd['ytd_paye']}
 
     @property
@@ -3383,7 +3384,7 @@ class Rate(models.Model):
     def convert_to_full_rate(self, project, amount):
         comm_ratio = (1-project.commission_percentage/100) or 1
         return float(amount) / comm_ratio
-    
+
     @property
     def full_velocity(self):
         return self.convert_to_full_velocity(self.project, self.velocity)
@@ -3391,12 +3392,12 @@ class Rate(models.Model):
     @classmethod
     def convert_to_full_velocity(self, project, velocity):
         return velocity * (1+float(project.ratio_scope_creep))
-                
+
     @classmethod
     def for_business(self, user_id, business_id):
         """ best guess """
         return Rate.objects.filter(user_id=user_id, project__business_id=business_id).order_by("project__order").first()
-        
+
 class Expense(models.Model):
     date = models.DateField()
     amount = models.DecimalField(max_digits=12,decimal_places=0,default=0)
@@ -3429,7 +3430,7 @@ class Income(models.Model):
 class TagCategory(models.Model):
     class Meta:
         unique_together = ('business', 'name')
-    
+
     business = models.ForeignKey(Business, null=False, related_name='tag_categories')
     name = models.CharField(max_length=100, default='tag_category', null=False, blank=True, db_index=True)
     created = models.DateTimeField(auto_now_add=True)
@@ -3446,12 +3447,12 @@ class TagCategory(models.Model):
             RefreshNotifier().notify_model_update(
                 self, params={'issues': affected_issue_ids})
 
-    
+
 class Tag(models.Model):
 
     class Meta:
         unique_together = ('name', 'category')
-    
+
     category = models.ForeignKey(TagCategory, null=False, related_name='tags')
     name = models.CharField(max_length=100, null=False, blank=True, db_index=True)
     created = models.DateTimeField(auto_now_add=True)
@@ -3488,14 +3489,14 @@ class IssueStatus(models.Model):
         else:
             RefreshNotifier().notify_model_update(
                 self, params={'issues': affected_issues})
-        
-            
+
+
 class IssueRepresentation(object):
     """ object used to map helper data when rendering issues that doesn't belong in the database """
 
     @property
     def options(self):
-        return str([ list(pair) for pair in Issue.ISSUE_STATUS_CHOICES ]) 
+        return str([ list(pair) for pair in Issue.ISSUE_STATUS_CHOICES ])
 
 
 class IssueQuerySet(QuerySet):
@@ -3534,14 +3535,14 @@ class Issue(models.Model):
     STATUSES_INDICATING_INCOMPLETE = { 'developer': ['new', 'bug', 'reopened', 'dev unclear'],
                                        'manager': [x for x,y in ISSUE_STATUS_CHOICES if x not in ['client_qa_passed', 'duplicate', "onhold"]],
                                        'tester': [x for x,y in ISSUE_STATUS_CHOICES if x not in ['internal_qa_passed', 'in_client_qa', 'client_qa_passed', 'duplicate', "onhold"]] }
-    
+
     status = models.CharField(max_length=255, choices = ISSUE_STATUS_CHOICES, blank=False)
     status2 = models.ForeignKey(IssueStatus, related_name='issues', null=True)
     number = models.IntegerField(null=True,blank=True, db_index=True)
     project = models.ForeignKey(Project, related_name='issues')
     subject = models.TextField(db_index=True)
     description = models.TextField(blank=True)
-    story_points = models.FloatField(null=True,blank=True)    
+    story_points = models.FloatField(null=True,blank=True)
     order = models.FloatField(null=True,blank=True)
     order2 = models.CharField(max_length=50, default=None, null=True,blank=True) #alternative means of ordering by string (used by eg jira)
     feature = models.ForeignKey("Feature",blank=True,null=True,related_name='issues')
@@ -3554,7 +3555,7 @@ class Issue(models.Model):
     adhoc = models.BooleanField(default=False)
     fixed_amount = models.DecimalField(max_digits=12, decimal_places=2, blank=True, null=True)
     fixed_ctc_amount = models.DecimalField(max_digits=12, decimal_places=2, blank=True, null=True)
-    
+
     can_group_issues = models.BooleanField(default=False)
     parent_group = models.ForeignKey("Issue", blank=True, null=True, related_name='group_children')
     tags = models.ManyToManyField("Tag", related_name="issues")
@@ -3568,20 +3569,20 @@ class Issue(models.Model):
             RefreshNotifier().notify_model_create(self)
         else:
             RefreshNotifier().notify_model_update(self)
-    
+
     @classmethod
     def get_last_issue_number(self, business):
         largest_number =  Issue.objects.filter(project__business=business).filter(number__isnull=False).aggregate(largest_number=Max("number"))['largest_number']
-         
+
         return largest_number or 0
 
     def currently_clocked_in_by(self):
         active_clocks = Entry.objects.filter(issue_id=self.id).is_open()
         return [ x.user for x in active_clocks ]
-    
+
     @classmethod
     def get_next_issue_number(self, business):
-        return Issue.get_last_issue_number(business) +1 
+        return Issue.get_last_issue_number(business) +1
 
     def __init__(self, *args, **kwargs):
         super(Issue, self).__init__(*args, **kwargs)
@@ -3594,7 +3595,7 @@ class Issue(models.Model):
 
     def get_tags(self):
         return IssueTag.objects.filter(issue=self).order_by("tag__category__name")
-    
+
     def get_points(self):
         business_users = self.project.business.users
         for user in business_users:
@@ -3644,11 +3645,11 @@ class Issue(models.Model):
 
     def get_issue_points_by_user(self):
         return dict( [ (x['user'], float(x['points'] or 0)) for x in IssuePoints.objects.filter(issue=self).values('user', 'points') ] )
-    
+
     def get_user_issue_points(self, user):
 
         if isinstance(user,basestring):
-            user = User.objects.get(username=user)        
+            user = User.objects.get(username=user)
 
         try:
             return IssuePoints.objects.get(user=user, issue=self)
@@ -3667,7 +3668,7 @@ class Issue(models.Model):
             issue_points = IssuePoints.objects.create(user=user, issue=self)
 
         if issue_points != points:
-            issue_points.points = points 
+            issue_points.points = points
             issue_points.save()
 
     @classmethod
@@ -3684,7 +3685,7 @@ class Issue(models.Model):
                 except Exception:
                     pass
         return issue_id
-        
+
     @property
     def issue_number_duplicates_in_business(self):
         return Issue.objects.filter(project__business=self.project.business).filter(number=self.number).exclude(pk=self.id)
@@ -3727,7 +3728,7 @@ class Issue(models.Model):
 
     def get_issue_hours_by_user(self):
         return dict( [ (x['user'], float(x['hours'] or 0)) for x in self.related_entries.all().filter(hours__gt=0).values("user").order_by("user").annotate(hours=Sum('hours')) ] )
-    
+
     def hours_for_users(self):
         return [ (User.objects.get(pk=x['user']), x['hours']) for x in self.related_entries.all().filter(hours__gt=0).values("user").order_by("user").annotate(hours=Sum('hours')) ]
 
@@ -3751,7 +3752,7 @@ class Issue(models.Model):
     @property
     def best_hours_estimate(self):
         """ 'best' means for the either the assigned user or the user who has put time against the issue. """
-        
+
         if self.assigned_to:
             user_issue_points = self.get_user_issue_points(self.assigned_to)
             if user_issue_points and user_issue_points.points:
@@ -3807,7 +3808,7 @@ class IssueComment(models.Model):
     author = models.ForeignKey(User, related_name='issue_comments', blank=False, null=False)
     created = models.DateTimeField(auto_now_add=True)
     modified = models.DateTimeField(auto_now=True)
-    
+
 class IssueAttachment(BaseModel):
     issue = models.ForeignKey(Issue, blank=False, null=False, related_name='attachments')
     attachment = models.FileField(upload_to="issue_attachments", null=False, blank=False)
@@ -3851,7 +3852,7 @@ class IssuePoints(models.Model):
         return u'%s:%s - %s hours' % (self.issue.subject, self.user.username, self.points)
 
 class IssueHistory(models.Model):
-    
+
     issue_id = models.IntegerField(blank=False, null=False, db_index=True)
     created_by = models.ForeignKey(User, blank=False, null=False)
     created_at = models.DateTimeField(auto_now_add=True)
@@ -3863,13 +3864,13 @@ class IssueHistory(models.Model):
     def add_history(self, user, issue, description, before, after):
         IssueHistory.objects.create(created_by=user, issue_id=issue.id, description=description,
                                     before=before, after=after)
-        
+
     @classmethod
     def for_issue(self, issue):
         return IssueHistory.objects.filter(issue_id=issue.id).order_by("-created_at")
 
 class BusinessHistory(models.Model):
-    
+
     business_id = models.IntegerField(blank=False, null=False, db_index=True)
     created_by = models.ForeignKey(User, blank=False, null=False)
     created_at = models.DateTimeField(auto_now_add=True)
@@ -3881,14 +3882,14 @@ class BusinessHistory(models.Model):
     def add_history(self, user, business, description, before, after):
         BusinessHistory.objects.create(created_by=user, business_id=business.id, description=description,
                                        before=before, after=after)
-        
+
     @classmethod
     def for_business(self, business):
         return BusinessHistory.objects.filter(business_id=business.id).order_by("-created_at")
 
 
 class BusinessDocument(models.Model):
-    
+
     DOC_TYPE_CHOICES = ( ('invoice', 'Invoice'), ('summary', 'Sprint summary'),
                          ('proposal', 'Sprint proposal'), ('contract', 'Contract'),
                          ('other', 'Other') )
@@ -3897,7 +3898,7 @@ class BusinessDocument(models.Model):
     project = models.ForeignKey(Project, null=True, blank=True, related_name='documents', db_index=True)
     filename = models.CharField(max_length=255, null=False, blank=False)
     doc = models.FileField(upload_to="project_documents", null=False, blank=False)
-    doc_type = models.CharField(max_length=100, null=False, blank=False, 
+    doc_type = models.CharField(max_length=100, null=False, blank=False,
                                 choices = DOC_TYPE_CHOICES )
     mime_type = models.CharField(max_length=50, null=False, blank=False)
     token = models.CharField(max_length=255, null=False, blank=False, db_index=True)
@@ -3942,7 +3943,7 @@ class CalendarEvent(models.Model):
         if not self.caldav_uid and self.id:
             self.caldav_uid = "imptime%s" % str(self.id)
             super(CalendarEvent, self).save(*args, **kwargs)
-        
+
         if update_caldav:
             try:
                 CalDavHelper().on_event_saved(imptime_event=self)
@@ -3954,7 +3955,7 @@ class CalendarEvent(models.Model):
             CalDavHelper().on_event_deleted(self)
         except Exception, ex:
             logger.exception(ex)
-            
+
         if update_caldav:
             super(CalendarEvent, self).delete(*args, **kwargs)
 
@@ -3968,7 +3969,7 @@ class CalendarEvent(models.Model):
                 if user:
                     users.add(user)
         return users
-            
+
     @property
     def end(self):
         return self.start + datetime.timedelta(hours=float(self.hours))
@@ -3984,7 +3985,7 @@ class CalendarEvent(models.Model):
     @classmethod
     def cant_work_event_types(self):
         return [ 'leave', 'sickday', 'office_closed' ]
-    
+
     def get_colour(self):
         index = self.user_id % len(COLOURS)
         threshold = int("0x999999", 0)
@@ -3997,7 +3998,7 @@ class CalendarEvent(models.Model):
 
     def __unicode__(self):
         return "Starts at %s, ends at %s \n%s " % (self.start.strftime('%d %B %Y %H:%M'), self.end.strftime('%d %B %Y %H:%M'), self.description)
-    
+
 class BaseChecklist(models.Model):
     class Meta:
         abstract=True
@@ -4024,8 +4025,8 @@ class BaseChecklist(models.Model):
                                             created_by=logged_in_user, modified_by=logged_in_user)
             checklist.recalculate_all()
         return checklist
-    
-    
+
+
     def is_ok(self):
         return self.passed
 
@@ -4039,9 +4040,9 @@ class BaseChecklistItem(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     issue = models.ForeignKey(Issue, null=True, blank=True)
     project = models.ForeignKey(Project, null=True, blank=True, db_index=True)
-                    
+
 class TrafficChecklist(BaseChecklist):
-    
+
     # have_made_new_staging_release_today = models.BooleanField(default=False, blank=True, verbose_name="has there been a new release to the client's staging server today?")
     # has_incoming_issues_created = models.BooleanField(default=False, blank=True, verbose_name="have issues been created for all client emails (for this project), and are they in the 'incoming' sprint?")
     # is_requote_required = models.BooleanField(default=False, blank=True, verbose_name="have any changes to existing sprints, which may have caused a re-quote to be required, been reviewed?")
@@ -4061,7 +4062,7 @@ class TrafficChecklist(BaseChecklist):
     modified_at = models.DateTimeField(auto_now=True)
     modified_by = models.ForeignKey(User, null=False, blank=True, related_name='traffic_checklist_modified_by')
 
-    
+
     def is_ok(self):
         return super(TrafficChecklist, self).is_ok() and self.created_at > datetime.datetime.today()-timedelta(days=settings.NUM_DAYS_FOR_TRAFFIC_SPRINT_CHECKLISTS)
 
@@ -4080,7 +4081,7 @@ class TrafficChecklist(BaseChecklist):
 
 class TrafficChecklistItem(BaseChecklistItem):
     traffic_checklist = models.ForeignKey(TrafficChecklist, null=False, blank=True, db_index=True, related_name="items")
-    
+
 class DevChecklist(BaseChecklist):
 
     # has_reviewed_previous_days_issues = models.BooleanField(default=False, blank=True, verbose_name="Were yesterday's issues reviewed?")
@@ -4094,7 +4095,7 @@ class DevChecklist(BaseChecklist):
     created_at = models.DateTimeField(auto_now_add=True)
     modified_at = models.DateTimeField(auto_now=True)
     modified_by = models.ForeignKey(User, null=False, blank=True, related_name='dev_checklist_modified_by')
-    
+
     def is_ok(self):
         return super(DevChecklist, self).is_ok() and self.created_at > datetime.datetime.today()-timedelta(days=settings.NUM_DAYS_FOR_DEV_SPRINT_CHECKLISTS)
 
@@ -4113,14 +4114,14 @@ class DevChecklist(BaseChecklist):
 
 class DevChecklistItem(BaseChecklistItem):
     dev_checklist = models.ForeignKey(DevChecklist, null=False, blank=True, db_index=True, related_name="items")
-    
+
 class FinanceChecklist(BaseChecklist):
 
     created_by = models.ForeignKey(User, null=False, blank=False, related_name='finance_checklist_created_by')
     created_at = models.DateTimeField(auto_now_add=True)
     modified_at = models.DateTimeField(auto_now=True)
     modified_by = models.ForeignKey(User, null=False, blank=True, related_name='finance_checklist_modified_by')
-    
+
     def is_ok(self):
         return super(FinanceChecklist, self).is_ok() and self.created_at > datetime.datetime.today()-timedelta(days=settings.NUM_DAYS_FOR_FINANCE_SPRINT_CHECKLISTS)
 
@@ -4139,7 +4140,7 @@ class FinanceChecklist(BaseChecklist):
 
 class FinanceChecklistItem(BaseChecklistItem):
     finance_checklist = models.ForeignKey(FinanceChecklist, null=False, blank=True, db_index=True, related_name="items")
-    
+
 class UserNotification(models.Model):
 	user = models.ForeignKey(User, related_name='notifications')
 	notification_type = models.CharField(max_length=50, null=False, blank=False,
@@ -4161,13 +4162,13 @@ class UserNotification(models.Model):
 	def create_default_notifications(self, user):
 		UserNotification.objects.get_or_create(user=user, notification_type="planned_for_today", applies_on=datetime.datetime.today().date(),
 											   defaults={'seen':False})
-					
+
 	def user_graph_from_date(self):
 		return self.user_graph_to_date() - relativedelta(days=14)
 
 	def user_graph_to_date(self):
 		return datetime.datetime.today().date()
-	
+
 	def get_hours_for_user_graph(self):
 		to_date = self.user_graph_to_date()
 		from_date = self.user_graph_from_date()
@@ -4192,7 +4193,7 @@ class UserNotification(models.Model):
 
 	def get_planned_events_for_today(self):
 		return CalendarEvent.objects.filter(user=self.user, start__gte=datetime.datetime.today().date(), start__lt=datetime.datetime.today().date()+relativedelta(days=1)).order_by("start")
-	
+
 
 class Holiday(models.Model):
     applies_on = models.DateField(blank=True, null=True)
@@ -4221,7 +4222,7 @@ class ScheduleQuerySet(QuerySet):
 
     def hours(self):
         return self.aggregate(num_hours=Sum('num_hours'))['num_hours']
-    
+
     def billable_for_user(self, user_id):
         schedules = self.filter(user_id=user_id)
         total = 0
@@ -4249,7 +4250,7 @@ class ScheduleQuerySet(QuerySet):
                 total += rate.full_rate * schedule['num_hours']
         return total
 
-        
+
 class Schedule(models.Model):
     business = models.ForeignKey('business', null=False, blank=False)
     scheduled_date = models.DateField(null=False, blank=False)

@@ -231,7 +231,7 @@ class IssueList extends Component {
         return (
             <tr key={list_key + ".candidate_issue"} className="issue_list__candidate_issue">
                 <td colSpan="20">Creating new issue here</td>
-                { false && 
+                { false &&
                 <td>
                     <RIEModeToggler initialValue=""
                                     propName="candidate_issue_subject"
