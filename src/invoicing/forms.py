@@ -29,7 +29,7 @@ class InvoiceForm(forms.ModelForm):
         self.fields['payment_due'].initial = datetime.today() + relativedelta(days=settings.INVOICE_PAYMENT_DAYS)
         self.fields['payment_due'].widget.attrs['class'] = 'date_field'
         self.fields['issued_at'].initial = datetime.today()
-        self.fields['client'].queryset = models.ClientInvoiceDetails.objects.filter(invoices__business__archived=False).order_by("invoices__business__name", "name")
+        self.fields['client'].queryset = models.ClientInvoiceDetails.objects.filter(invoices__business__archived=False).order_by("name").distinct()
         self.fields['business'].queryset = timepiece.Business.objects.filter(archived=False).order_by("name")
 
 class InvoiceItemForm(forms.ModelForm):

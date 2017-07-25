@@ -14,6 +14,8 @@ urlpatterns = [
         name='edit_invoice'),
     url(r'^clone_invoice/(?P<invoice_id>.*)$', views.clone_invoice,
         name='clone_invoice'),
+    url(r'^invoice_pay_in_full/(?P<invoice_id>.*)$', views.invoice_pay_in_full,
+        name='invoice_pay_in_full'),
 
     url(r'^preview_invoice/(?P<invoice_id>.*)$', views.preview_invoice,
         name='preview_invoice'),

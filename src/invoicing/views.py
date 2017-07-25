@@ -163,6 +163,12 @@ def edit_invoice(request, invoice_id, template="invoicing/edit_invoice.html", co
     return render(request, template, context)
 
 @login_required
+def invoice_pay_in_full(request, invoice_id):
+    import pdb;pdb.set_trace()
+    messages.info(request, "Invoice paid in full")
+    return HttpResponseRedirect(reverse('invoicing:edit_invoice', kwargs={'invoice_id':invoice_id}))
+
+@login_required
 def preview_invoice(request, invoice_id, template="invoicing/preview_invoice.html", context=None):
 
     invoice = models.Invoice.objects.get(pk=invoice_id)

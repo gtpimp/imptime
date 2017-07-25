@@ -8,7 +8,7 @@
 
 {% block content %}
 
-<h1>Edit invoice {{invoice.client.name}} 
+<h1>Edit invoice {{invoice.client.name}}
 {% if invoice.project %}
   : {{invoice.project.business}} - {{invoice.project}}
 {% endif %}
@@ -68,6 +68,7 @@
     <div class="payments" style="display:none">
       <hr/>
       <h3>Payments</h3>
+      <a class="btn btn-secondary" href="{% url 'invoicing:invoice_pay_in_full' invoice.pk %}">Pay in full</a>
       <table class='table-striped table-bordered table-hover table-condensed'>
         <thead>
           <th>Amount</th>
@@ -109,7 +110,7 @@
   {% endif %}
 
   {% include "invoicing/_invoice_form.html" %}
-  
+
   <input class="btn btn-primary" type="submit" value="save"/>
 </form>
 
