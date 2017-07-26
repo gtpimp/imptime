@@ -38,7 +38,7 @@ class InvoiceItemForm(forms.ModelForm):
         model = models.InvoiceItem
         fields = [ 'num_units', 'unit_cost', 'description', 'order' ]
 
-invoice_item_formset = modelformset_factory(models.InvoiceItem, form=InvoiceItemForm, can_delete=True, extra=5)
+invoice_item_formset = modelformset_factory(models.InvoiceItem, form=InvoiceItemForm, can_delete=True, extra=3)
 
 class InvoicePaymentForm(forms.ModelForm):
     class Meta:
