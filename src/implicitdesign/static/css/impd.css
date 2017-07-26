@@ -324,7 +324,10 @@ a.ico-calc {
 }
 
 .invoice--top_container-buttons {
-    width: 50%;
+}
+
+.invoice--top_container-buttons-first {
+    width: 6.5%;
     float: left;
 }
 
