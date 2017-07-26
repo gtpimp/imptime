@@ -9,15 +9,15 @@ body {
     width: 8px;
     background-color: #FFFFFF;
 }
- 
+
 ::-webkit-scrollbar-track {
-    -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.3); 
+    -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.3);
     *border-radius: 10px;
 }
- 
+
 ::-webkit-scrollbar-thumb {
     *border-radius: 10px;
-    -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.5); 
+    -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.5);
 }
 
 .nav-parent {
@@ -61,7 +61,7 @@ body {
 
 .sub-navbar-inner span.nav-link {
     width: 13%;
-    display: inline;    
+    display: inline;
     padding: 0 0 10px 0;
     line-height: 20px;
     overflow:hidden;
@@ -76,7 +76,7 @@ body {
 }
 
 .sub_nagivation_head {
-    background: #413d44;    
+    background: #413d44;
     line-height: 30px;
 }
 
@@ -136,7 +136,7 @@ a.ico-calc {
 
 .hexagon {
   position: absolute;
-  width: 30px; 
+  width: 30px;
   height: 17.32px;
   background-color: #e7e8e9;
   margin: 2px 0;
@@ -227,7 +227,7 @@ a.ico-calc {
     left:15%;
     width: 25%;
     float: right;
-    
+
 }
 
 .money_sprint_banner {
@@ -281,4 +281,87 @@ a.ico-calc {
 
 .sprint_menu_trigger {
     cursor: pointer;
+}
+
+.payments--headers {
+    width: 50%;
+    height: 40px;
+}
+
+.payments--header {
+    margin-right: 10px;
+    float: left;
+}
+
+.payments--header-button {
+    float: left;
+}
+
+.invoice--header {
+    width: 100%;
+}
+
+.invoice--top_container {
+    width: 100%;
+}
+
+.invoice--top_container-breakdown {
+    width: 50%;
+    float: right;
+}
+
+.invoice--top_container-breakdown-slip {
+    width: 250px;
+    height: 180px;
+    float: right;
+    margin-right: 50px;
+}
+
+.invoice--top_container-breakdown-slip-table {
+    margin-left: 15px;
+    width: 220px;
+    margin-right: 15px;
+}
+
+.invoice--top_container-buttons {
+    width: 50%;
+    float: left;
+}
+
+.invoice--header-buttons {
+    height: 40px;
+    width: 100%;
+
+}
+
+.invoice--hr-top {
+    border: 0;
+    border-top: 1px solid #eeeeee;
+    border-bottom: 1px solid #ffffff;
+    margin-bottom: 10px;
+}
+
+.invoice--hr-bottom {
+    border: 0;
+    border-top: 1px solid #eeeeee;
+    border-bottom: 1px solid #ffffff;
+    margin-top: -10px;
+}
+
+.invoice--form_container {
+    width:100%;
+    float: left;
+}
+
+.invoice--form-left_container {
+    float: left;
+}
+
+.invoice--form-right_container {
+    float: right;
+}
+
+.invoice--form-left-second_header {
+    float: left;
+    width: 100%;
 }

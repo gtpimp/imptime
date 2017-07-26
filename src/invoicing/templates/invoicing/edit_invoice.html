@@ -8,111 +8,124 @@
 
 {% block content %}
 
-<h1>Edit invoice {{invoice.client.name}}
-{% if invoice.project %}
-  : {{invoice.project.business}} - {{invoice.project}}
-{% endif %}
-</h1>
-
-<br/><br/>
-
-<div class="{% if invoice.is_overdue %}alert-error{% else %}{% if invoice.status == 'paid' %}alert-success{% else %}alert-info{% endif %}{% endif %}">
-  <h3>{{invoice.status}}</h3>
-  <table>
-    <tr>
-      <td colspan="3">
-        {% if invoice.is_overdue %}
-          <div class="error"><h3>Overdue by {{invoice.days_till_due}} days</h3></div>
-        {% else %}
-          <div class="info">Due in {{invoice.days_till_due}} days</div>
-        {% endif %}
-      </td>
-    <tr>
-      <td>Cost (without VAT if any)</td><td style="text-align:right">{{invoice.currency_symbol}} {{invoice.cost|currency}}</td>
-    </tr>
-    <tr>
-      <td>Cost (with VAT if any)</td><td style="text-align:right">{{invoice.currency_symbol}} {{invoice.cost_with_vat|currency}}</td>
-    </tr>
-    <tr>
-      <td>Paid</td><td style="text-align:right">{{invoice.currency_symbol}} {{invoice.amount_paid|currency|default:"0"}}</td>
-    </tr>
-    <tr>
-      <td>Owing</td><td style="text-align:right">{{invoice.currency_symbol}} {{invoice.amount_owed|currency}}</td>
-    </tr>
-  </table>
-</div>
-<br/><br/>
-
-{% if invoice.project.id %}
-<form target="_blank" method="POST" action="{% url 'sprint_report' invoice.project.id %}">
-  <div style="display:none">
-    {{ summary_form }}
+  <div class="invoice--header">
+    <h1>Edit invoice {{invoice.client.name}}
+      {% if invoice.project %}
+        : {{invoice.project.business}} - {{invoice.project}}
+      {% endif %}
+    </h1>
   </div>
-  <input type="hidden" name="report_type" value="Invoice"/>
-  <input class="btn btn-primary" type="submit" value="Sprint summary"/>
-</form>
-{% endif %}
 
-
-<form method="POST" action="{% url 'invoicing:edit_invoice' invoice.id %}">
-  <input class="btn btn-primary" type="submit" value="Save"/>
-  <a class="btn btn-primary" target="_blank" href="{% url 'invoicing:preview_invoice' invoice.id %}">Preview / Print</a>
-  {% if payments_formset %}
-    <a class="btn btn-secondary" href="#" onclick="$(this).parents().parents().find('.payments').toggle(); return false">Payments</a>
-  {% endif %}
-  <a class="btn" onclick="if ( ! confirm('Are you sure you want to copy this invoice?') ) { return false; }" href="{% url 'invoicing:clone_invoice' invoice.id %}">Make a Copy</a>
-  <a class="btn btn-secondary" href="{% url 'invoicing:invoices' %}">Back to Invoices</a>
-  <br/><br/><br/>
-
-  {% if payments_formset %}
-    <div class="payments" style="display:none">
-      <hr/>
-      <h3>Payments</h3>
-      <a class="btn btn-secondary" href="{% url 'invoicing:invoice_pay_in_full' invoice.pk %}">Pay in full</a>
-      <table class='table-striped table-bordered table-hover table-condensed'>
-        <thead>
-          <th>Amount</th>
-          <th>Paid at</th>
-          <th>Description</th>
-          <th>Delete?</th>
-        </thead>
-        <tbody>
-            {% bootstrap_form payments_formset.management_form %}
-            {% for itemform in payments_formset %}
+  <form method="POST" action="{% url 'invoicing:edit_invoice' invoice.id %}">
+    <div class="invoice--top_container">
+      <div class="invoice--top_container-breakdown">
+        <div class="invoice--top_container-breakdown-slip {% if invoice.is_overdue %}alert-error{% else %}{% if invoice.status == 'paid' %}alert-success{% else %}alert-info{% endif %}{% endif %}">
+          <h3 style="text-align:center;">{{invoice.status}}</h3>
+          <table class="invoice--top_container-breakdown-slip-table">
+            <tr>
+              <td colspan="3">
+                {% if invoice.is_overdue %}
+                  <div class="error" style="text-align:center;"><h3>Overdue by {{invoice.days_till_due}} days</h3></div>
+                {% else %}
+                  <div class="info" style="text-align:center;">Due in {{invoice.days_till_due}} days</div>
+                {% endif %}
+              </td>
               <tr>
-                <td>
-                  <div class='form-group{% if itemform.errors.amount%} has-error{%endif%}'>
-                      {{ itemform.amount|add_class:'form-control' }}
-                  </div>
-                </td>
-                <td>
-                  <div class='form-group{% if itemform.errors.paid_at %} has-error{%endif%}'>
-                      {{  itemform.paid_at }}
-                  </div>
-                </td>
-                <td>
-                  <div class='form-group{% if itemform.errors.description %} has-error{%endif%}'>
-                      {{ itemform.description|add_class:'form-control' }}
-                  </div>
-                </td>
-                <td>
-                  <div class='form-group'>
-                      {{ itemform.id}}
-                      {{ itemform.DELETE|add_class:'form-control' }}
-                  </div>
-                </td>
+                <td>Cost (without VAT if any)</td><td style="text-align:right">{{invoice.currency_symbol}} {{invoice.cost|currency}}</td>
               </tr>
-            {% endfor %}
-        </tbody>
-      </table>
-      <hr/>
+              <tr>
+                <td>Cost (with VAT if any)</td><td style="text-align:right">{{invoice.currency_symbol}} {{invoice.cost_with_vat|currency}}</td>
+              </tr>
+              <tr>
+                <td>Paid</td><td style="text-align:right">{{invoice.currency_symbol}} {{invoice.amount_paid|currency|default:"0"}}</td>
+              </tr>
+              <tr>
+                <td>Owing</td><td style="text-align:right">{{invoice.currency_symbol}} {{invoice.amount_owed|currency}}</td>
+              </tr>
+          </table>
+        </div>
+      </div>
+
+      <div class="invoice--top_container-buttons">
+        <div class="invoice--header-buttons">
+          {% if invoice.project.id %}
+            <form target="_blank" method="POST" action="{% url 'sprint_report' invoice.project.id %}">
+              <div style="display:none">
+                {{ summary_form }}
+              </div>
+              <input type="hidden" name="report_type" value="Invoice"/>
+              <input class="btn btn-primary" type="submit" value="Sprint summary"/>
+            </form>
+          {% endif %}
+
+          <input class="btn btn-primary" type="submit" value="Save"/>
+          <a class="btn btn-primary" target="_blank" href="{% url 'invoicing:preview_invoice' invoice.id %}">Preview / Print</a>
+          {% if payments_formset %}
+            <a class="btn btn-secondary" href="#" onclick="$(this).parents().parents().find('.payments').toggle(); return false">Payments</a>
+          {% endif %}
+          <a class="btn" onclick="if ( ! confirm('Are you sure you want to copy this invoice?') ) { return false; }" href="{% url 'invoicing:clone_invoice' invoice.id %}">Make a Copy</a>
+          <a class="btn btn-secondary" href="{% url 'invoicing:invoices' %}">Back to Invoices</a>
+        </div>
+
+        {% if payments_formset %}
+          <div class="payments" style="display:none">
+            <hr/>
+            <div class="payments--headers">
+              <div class="payments--header">
+                <h3>Payments</h3>
+              </div>
+              <div class="payments--header-button">
+                <a class="btn btn-success" href="{% url 'invoicing:invoice_pay_in_full' invoice.pk %}">Pay in full</a>
+              </div>
+            </div>
+            <table class='table-striped table-bordered table-hover table-condensed'>
+              <thead>
+                <th>Amount</th>
+                <th>Paid at</th>
+                <th>Description</th>
+                <th>Delete?</th>
+              </thead>
+              <tbody>
+                {% bootstrap_form payments_formset.management_form %}
+                {% for itemform in payments_formset %}
+                  <tr>
+                    <td>
+                      <div class='form-group{% if itemform.errors.amount%} has-error{%endif%}'>
+                        {{ itemform.amount|add_class:'form-control' }}
+                      </div>
+                    </td>
+                    <td>
+                      <div class='form-group{% if itemform.errors.paid_at %} has-error{%endif%}'>
+                        {{  itemform.paid_at }}
+                      </div>
+                    </td>
+                    <td>
+                      <div class='form-group{% if itemform.errors.description %} has-error{%endif%}'>
+                        {{ itemform.description|add_class:'form-control' }}
+                      </div>
+                    </td>
+                    <td>
+                      <div class='form-group'>
+                        {{ itemform.id}}
+                        {{ itemform.DELETE|add_class:'form-control' }}
+                      </div>
+                    </td>
+                  </tr>
+                {% endfor %}
+              </tbody>
+            </table>
+            <hr/>
+          </div>
+        {% endif %}
+      </div>
     </div>
-  {% endif %}
 
-  {% include "invoicing/_invoice_form.html" %}
+    <div class="invoice--form_container">
+      {% include "invoicing/_invoice_form.html" %}
+      <input class="btn btn-primary" type="submit" value="save"/>
+    </div>
 
-  <input class="btn btn-primary" type="submit" value="save"/>
-</form>
+  </form>
 
 
 {% endblock %}

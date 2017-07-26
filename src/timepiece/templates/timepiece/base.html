@@ -60,8 +60,8 @@
 
     {% block css %}
         <link type="text/css" rel="stylesheet" href="{% static 'css/jquery-ui.css' %}" />
-	<link type="text/css" rel="stylesheet" media="screen" href="{% static 'css/books.css' %}" />
-	<link type="text/css" rel="stylesheet" href="{% static 'css/timepiece.css' %}" />
+	      <link type="text/css" rel="stylesheet" media="screen" href="{% static 'css/books.css' %}" />
+	      <link type="text/css" rel="stylesheet" href="{% static 'css/timepiece.css' %}" />
         <link type="text/css" rel="stylesheet" href="{% static 'timepiece/css/jquery.contextmenu.css' %}" />
         <link href="{% static 'font/durasans.font' %}" rel='stylesheet' type='text/css'>
         <link type="text/css" rel="stylesheet" href="{% static 'timepiece/css/bootstrap-datetimepicker.min.css' %}" />
@@ -86,7 +86,7 @@
 <body id="{% block bodyid %}{% endblock bodyid %}">
 
     {% include "timepiece/loading.html" %}
-  
+
     {% block navigation %}
         {% include "timepiece/navigation_bar.html" %}
         {% if user.id %}
@@ -102,7 +102,7 @@
         {% endblock messages %}
 
         {% if user.is_authenticated %}
-      
+
           <div style="display:none"
             {% block breadcrumb %}
                 <ul class="breadcrumb">

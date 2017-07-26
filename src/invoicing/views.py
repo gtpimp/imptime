@@ -164,8 +164,17 @@ def edit_invoice(request, invoice_id, template="invoicing/edit_invoice.html", co
 
 @login_required
 def invoice_pay_in_full(request, invoice_id):
-    import pdb;pdb.set_trace()
-    messages.info(request, "Invoice paid in full")
+    invoice = models.Invoice.objects.get(pk=invoice_id)
+    if invoice.amount_owed:
+        invoice_payment = models.InvoicePayment.objects.create(
+            invoice=invoice,
+            amount=invoice.amount_owed,
+            paid_at=datetime.today(),
+            description='Paid in full'
+        )
+        messages.info(request, "Invoice paid in full")
+    else:
+        messages.info(request, "Invoice already paid in full")
     return HttpResponseRedirect(reverse('invoicing:edit_invoice', kwargs={'invoice_id':invoice_id}))
 
 @login_required

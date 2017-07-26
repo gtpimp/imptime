@@ -3,3 +3,17 @@
     width: 50%;
     background-color: #efefef;
 }
+
+.payments--headers {
+    width: 50%;
+    height: 40px;
+}
+
+.payments--header {
+    margin-right: 10px;
+    float: left;
+}
+
+.payments--header-button {
+    float: left;
+}

@@ -4,11 +4,11 @@
 
 {% csrf_token %}
 
-<h3>Invoice details</h3>
-<div class="col-md-5">
 
+<div class="invoice--form-left_container">
+  <h3>Invoice details</h3>
   <div class='form-group{% if form.errors.invoice_number%} has-error{%endif%}'>
-    <div class="col-md-6">
+    <div class="col-md-5">
       Invoice Number
     </div>
     <div class="col-md-5">
@@ -17,8 +17,8 @@
   </div>
 
   <div class='form-group{% if form.errors.client%} has-error{%endif%}'>
-    <div class="col-md-6">
-      Client 
+    <div class="col-md-5">
+      Client
       {% if invoice.client.id %}
         <a onclick="if (!confirm('Editing {{invoice.client.name}} \r\nmeans any changes to this invoice will be lost, continue?') ) return false;" href="{% url 'invoicing:edit_client' invoice.client.id %}">(edit)</a>
       {% endif %}
@@ -29,7 +29,7 @@
   </div>
 
   <div class='form-group{% if form.errors.project%} has-error{%endif%}'>
-    <div class="col-md-6">
+    <div class="col-md-5">
       Sprint (optional)
     </div>
     <div class="col-md-5">
@@ -38,7 +38,7 @@
   </div>
 
   <div class='form-group{% if form.errors.business%} has-error{%endif%}'>
-    <div class="col-md-6">
+    <div class="col-md-5">
       Project (optional if project is specified)
     </div>
     <div class="col-md-5">
@@ -47,7 +47,7 @@
   </div>
 
   <div class='form-group{% if form.errors.status%} has-error{%endif%}'>
-    <div class="col-md-6">
+    <div class="col-md-5">
       Status
     </div>
     <div class="col-md-5">
@@ -55,7 +55,7 @@
     </div>
   </div>
   <div class='form-group{% if form.errors.issued_at%} has-error{%endif%}'>
-    <div class="col-md-6">
+    <div class="col-md-5">
       Issued at
     </div>
     <div class="col-md-5">
@@ -63,7 +63,7 @@
     </div>
   </div>
   <div class='form-group{% if form.errors.payment_due%} has-error{%endif%}'>
-    <div class="col-md-6">
+    <div class="col-md-5">
       Payment due
     </div>
     <div class="col-md-5">
@@ -72,7 +72,7 @@
   </div>
 
   <div class='form-group{% if form.errors.invoice_note%} has-error{%endif%}'>
-    <div class="col-md-6">
+    <div class="col-md-5">
       Invoice note
     </div>
     <div class="col-md-5">
@@ -80,66 +80,82 @@
     </div>
   </div>
 
-</div>
-
-<div class="col-md-6">
-  <div class='form-group{% if form.errors.internal_comment%} has-error{%endif%}'>
-    <div class="col-md-5">
-      Internal Comment (not shown on the invoice)
-    </div>
-    <div class="col-md-6">
-      {{ form.internal_comment|add_class:'form-control' }}
-    </div>
-  </div>
   <div class='form-group{% if form.errors.client_order_name%} has-error{%endif%}'>
     <div class="col-md-5">
       Order name (optional)
     </div>
-    <div class="col-md-6">
+    <div class="col-md-5">
       {{ form.client_order_name|add_class:'form-control' }}
     </div>
   </div>
+
   <div class='form-group{% if form.errors.client_order_number%} has-error{%endif%}'>
     <div class="col-md-5">
       Order number (optional)
     </div>
-    <div class="col-md-6">
+    <div class="col-md-5">
       {{ form.client_order_number|add_class:'form-control' }}
+    </div>
+  </div>
+
+  <div class='form-group{% if form.errors.internal_comment%} has-error{%endif%}'>
+    <div class="col-md-5">
+      Internal Comment (not shown on the invoice)
+    </div>
+    <div class="col-md-5">
+      {{ form.internal_comment|add_class:'form-control' }}
+    </div>
+  </div>
+
+  <h3 class="invoice--form-left-second_header">Extra info</h3>
+  <div class='form-group{% if form.errors.footer_terms%} has-error{%endif%}'>
+    <div class="col-md-5">
+      Footer terms (optional)
+    </div>
+    <div class="col-md-5">
+      {{ form.footer_terms|add_class:'form-control' }}
+    </div>
+  </div>
+
+  <div class='form-group{% if form.errors.issues_list%} has-error{%endif%}'>
+    <div class="col-md-5">
+      Issues list (optional)
+    </div>
+    <div class="col-md-5">
+      {{ form.issues_list|add_class:'form-control' }}
     </div>
   </div>
 
 </div>
 
-<div style="clear:both"></div>
-
-<br/><br/><br/>
-<h3>Line items</h3>
-<table class='table table-striped'>
-  <thead>
-    <th>Num units</th>
-    <th>Cost per unit</th>
-    <th>Description</th>
-    <th>Cost</th>
-    <th>Order</th>
-    <th>Delete?</th>
-  </thead>
-  <tbody>
+<div class="invoice--form-right_container">
+  <h3>Line items</h3>
+  <table class='table table-striped'>
+    <thead>
+      <th>Num units</th>
+      <th>Cost per unit</th>
+      <th>Description</th>
+      <th>Cost</th>
+      <th>Order</th>
+      <th>Delete?</th>
+    </thead>
+    <tbody>
       {% bootstrap_form items_formset.management_form %}
       {% for itemform in items_formset %}
         <tr>
           <td>
             <div class='form-group{% if itemform.errors.num_units%} has-error{%endif%}'>
-                {{ itemform.num_units|add_class:'form-control' }}
+              {{ itemform.num_units|add_class:'form-control' }}
             </div>
           </td>
           <td>
             <div class='form-group{% if itemform.errors.unit_cost %} has-error{%endif%}'>
-                {{  itemform.unit_cost|add_class:'form-control' }}
+              {{  itemform.unit_cost|add_class:'form-control' }}
             </div>
           </td>
           <td>
             <div class='form-group{% if itemform.errors.description %} has-error{%endif%}'>
-                {{ itemform.description|add_class:'form-control' }}
+              {{ itemform.description|add_class:'form-control' }}
             </div>
           </td>
           <td>
@@ -149,13 +165,13 @@
           </td>
           <td>
             <div class='form-group{% if itemform.errors.order %} has-error{%endif%}'>
-                {{ itemform.order|add_class:'form-control' }}
+              {{ itemform.order|add_class:'form-control' }}
             </div>
           </td>
           <td>
             <div class='form-group'>
-                {{ itemform.id}}
-                {{ itemform.DELETE|add_class:'form-control' }}
+              {{ itemform.id}}
+              {{ itemform.DELETE|add_class:'form-control' }}
             </div>
           </td>
         </tr>
@@ -166,28 +182,11 @@
         <th></th>
         <th style="text-align:right">{{invoice.currency_symbol}} {{invoice.cost|currency}}</th>
       </tr>
-  </tbody>
-</table>
-
-<br/><br/>
-<h3>Extra info</h3>
-<div class='form-group{% if form.errors.footer_terms%} has-error{%endif%}'>
-  <div class="col-md-5">
-    Footer terms (optional)
-  </div>
-  <div class="col-md-6">
-    {{ form.footer_terms|add_class:'form-control' }}
-  </div>
+    </tbody>
+  </table>
 </div>
 
-<div class='form-group{% if form.errors.issues_list%} has-error{%endif%}'>
-  <div class="col-md-5">
-    Issues list (optional)
-  </div>
-  <div class="col-md-6">
-    {{ form.issues_list|add_class:'form-control' }}
-  </div>
-</div>
+<div style="clear:both"></div>
 
 <div style="clear:both"></div>
 
