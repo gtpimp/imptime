@@ -35,7 +35,7 @@ export default function cost_summary(state = initialState, action) {
 		            loading_sprint_ids: Object.assign({},
 						                                      difference(state.loading_sprint_ids || [],
 							                                               [action.sprint_id])),
-		            items_by_sprint_id: Object.assign({}, state.items_by_sprint_id)
+		            items_by_sprint_id: Object.assign({}, action.cost_summary)
 	          })
             action.cost_summary.received_at = action.received_at
             state_copy.items_by_sprint_id[action.sprint_id] = action.cost_summary

@@ -7,11 +7,11 @@
 <div class="money_cell money_sprint_banner">
 
   <h1>{{ project.long_name }}</h1>
-  
+
   {% calculate_role_data user project %}
 
   <h1>Budget</h1>
-  
+
   <p>
     <h2>Client expectations</h2>
     <ul>
@@ -29,13 +29,13 @@
       </li>
       <li>
         {% if project.spendable_budget > project.new_stats.total.unadjusted_points_billable_core_rate %}
-        <span class="generic_green">
-          This is less than the spendable budget
-        </span>
+          <span class="generic_green">
+            This is less than the spendable budget
+          </span>
         {% else %}
-        <span class="generic_red">
-          This is more than the spendable budget
-        </span>
+          <span class="generic_red">
+            This is more than the spendable budget
+          </span>
         {% endif %}
       </li>
     </ul>
@@ -48,45 +48,45 @@
       <li>
         Spent so far : R{{ project.new_stats.total.hours_billable_core_rate|floatformat:"0"|default:0 }}
       </li>
-      
+
       <li>{% spaceless %}
-        
+
         {% if project.has_budget %}
-        {% budget_traffic_bar project %}
+          {% budget_traffic_bar project %}
         {% else %}
-        <div style="color:red">No budget</div>
+          <div style="color:red">No budget</div>
         {% endif %}
-        {% endspaceless %}
+      {% endspaceless %}
       </li>
     </ul>
   </p>
-  
+
   <p>
     <h1>Breakdown of actuals versus estimated</h1>
   </p>
 
   <div style="float:right">
     {% for role_name, data in role_data.per_role.items %}
-    <div style="float:left">
-      
-      <h2>{{ role_name }}</h2>
-      <ul>
-        <li>Estimate: R{{ data.budget|floatformat:"0"|default:0 }}</li>
-        <li class="tip">without {{ project.ratio_scope_creep|multiply:100|floatformat:"0" }}% scope creep: R{{ data.budget_without_scope_creep|floatformat:"0"|default:0 }}</li>
-        <li>
-          <span class="{% if data.budget > data.hours_billable_core_rate %}generic_green{% else %}generic_red{% endif %}">
-            Actual : R{{ data.hours_billable_core_rate|floatformat:"0"|default:0 }}
-          </span>
-        </li>
+      <div style="float:left">
 
-        {% for user, user_role_data in data.per_user.items %}
-        {% if user_role_data.hours_billable_core_rate %}
-        <li><span class="tip">{{ user }} : R{{ user_role_data.hours_billable_core_rate|floatformat:"0"|intcomma|default:"" }}</span></li>
-        {% endif %}
-        {% endfor %}
-        
-      </ul>
-    </div>
+        <h2>{{ role_name }}</h2>
+        <ul>
+          <li>Estimate: R{{ data.budget|floatformat:"0"|default:0 }}</li>
+          <li class="tip">without {{ project.ratio_scope_creep|multiply:100|floatformat:"0" }}% scope creep: R{{ data.budget_without_scope_creep|floatformat:"0"|default:0 }}</li>
+          <li>
+            <span class="{% if data.budget > data.hours_billable_core_rate %}generic_green{% else %}generic_red{% endif %}">
+              Actual : R{{ data.hours_billable_core_rate|floatformat:"0"|default:0 }}
+            </span>
+          </li>
+
+          {% for user, user_role_data in data.per_user.items %}
+            {% if user_role_data.hours_billable_core_rate %}
+              <li><span class="tip">{{ user }} : R{{ user_role_data.hours_billable_core_rate|floatformat:"0"|intcomma|default:"" }}</span></li>
+            {% endif %}
+          {% endfor %}
+
+        </ul>
+      </div>
     {% endfor %}
   </div>
 

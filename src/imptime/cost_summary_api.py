@@ -24,11 +24,11 @@ class CostSummaryViewSet(BaseViewSet):
             if not bp.has_view_ctc_billable_rates:
                 return self.error_response("No permission to do that")
 
-            cost_summary = sprint.calculate_new_stats(request.user)
-            cost_summary['sprint_id'] = sprint.id
+            cost_summary = sprint.prepare_stats_for_json(request.user)
             context['cost_summary'] = cost_summary
 
             data = {'status': 'success', 'payload': context}
+
         except Exception, ex:
             logger.exception(ex)
             return self.error_response(ex)

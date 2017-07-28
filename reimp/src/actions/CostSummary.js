@@ -11,6 +11,7 @@ export const ANNOUNCE_LOADING_COST_SUMMARY = 'ANNOUNCE_LOADING_COST_SUMMARY'
 export const INVALIDATE_COST_SUMMARY = 'INVALIDATE_COST_SUMMARY'
 
 export function invalidateCostSummary(sprint_id) {
+    sprint_id = parseInt(sprint_id)
     return {
         type: INVALIDATE_COST_SUMMARY,
 	      sprint_id_to_invalidate: sprint_id
@@ -18,6 +19,7 @@ export function invalidateCostSummary(sprint_id) {
 }
 
 function announceLoadingCostSummary(sprint_id) {
+    sprint_id = parseInt(sprint_id)
     return {
         type: ANNOUNCE_LOADING_COST_SUMMARY,
 	      sprint_id_to_load: sprint_id
@@ -28,8 +30,8 @@ function announceCostSummaryLoaded(payload) {
     const cost_summary = payload.cost_summary
     return {
         type: ANNOUNCE_COST_SUMMARY_LOADED,
-        cost_summary: payload.cost_summary,
-        sprint_id: payload.cost_summary.sprint_id,
+        cost_summary: cost_summary,
+        sprint_id: cost_summary.sprint_id,
 	      received_at: Date.now()
     }
 }
@@ -43,6 +45,7 @@ function announceCostSummaryLoadFailed(error) {
 }
 
 export function ensureCostSummaryLoaded(sprint_id) {
+    sprint_id = parseInt(sprint_id)
     return (dispatch, getState) => {
         const state = getState()
         if ( isLoadingCostSummary(state, sprint_id) ) {
@@ -55,6 +58,7 @@ export function ensureCostSummaryLoaded(sprint_id) {
 }
 
 function fetchCostSummary(dispatch, state, sprint_id) {
+    sprint_id = parseInt(sprint_id)
     return (dispatch, getState) => {
         const state = getState()
         const API_BASE_URL = state.settings.configured && state.settings.API_BASE_URL
@@ -76,10 +80,12 @@ function fetchCostSummary(dispatch, state, sprint_id) {
 
 
 export function getCostSummary(state, sprint_id) {
-    return ((state.cost_summary || {}).items_by_id || {})[sprint_id] || null
+    sprint_id = parseInt(sprint_id)
+    return ((state.cost_summary || {}).items_by_sprint_id || {})[sprint_id] || null
 }
 
 export function isLoadingCostSummary(state, sprint_id) {
+    sprint_id = parseInt(sprint_id)
     const loading_ids = (state.cost_summary || {}).loading_sprint_ids || []
     const test = includes(loading_ids, sprint_id)
     return includes(loading_ids, sprint_id)

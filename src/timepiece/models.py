@@ -1658,6 +1658,48 @@ class Project(models.Model):
 
         return self._new_stats
 
+    def prepare_stats_for_json(self, user):
+        stats = self.calculate_new_stats(user)
+        json_stats = {}
+        json_stats['sprint_id'] = self.pk
+        json_stats['budget'] = self.budget
+        json_stats['internal_commision'] = self.estimated_budget_for_role("commission")
+        json_stats['spendable_budget'] = self.spendable_budget
+
+        total = stats['total']
+        json_stats['estimated_cost'] = total['unadjusted_points_billable_core_rate']
+        if self.spendable_budget > total['unadjusted_points_billable_core_rate']:
+            json_stats['spendable_budget_msg'] = 'This is less than the spendable budget'
+        else:
+            json_stats['spendable_budget_msg'] = 'This is more than the spendable budget'
+
+        json_stats['spent'] = total['hours_billable_core_rate']
+        #TODO add traffic bar
+        if self.has_budget and self.stats['amount_under_budget'] > 0:
+            json_stats['budget_status'] = 'R%s under budget' %(self.stats['amount_under_budget'])
+            json_stats['under_budget'] = True
+        elif self.has_budget:
+            json_stats['budget_status'] = 'R%s over budget' %(self.stats['amount_over_budget'])
+            json_stats['under_budget'] = False
+        else:
+            json_stats['budget_status'] = 'No budget'
+            json_stats['under_budget'] = None
+
+        per_role = stats['per_role']
+        json_stats['per_role'] = {}
+        for role_name, data in per_role.iteritems():
+            json_stats['per_role'][role_name] = {}
+            json_stats['per_role'][role_name]['budget'] = self.estimated_budget_for_role(role_name)
+            json_stats['per_role'][role_name]['ratio_scope_creep'] = self.ratio_scope_creep
+            json_stats['per_role'][role_name]['budget_without_scope_creep'] = self.estimated_budget_for_role\
+                                                                              (role_name, include_scope_creep=False)
+            json_stats['per_role'][role_name]['hours_billable_core_rate'] = data['hours_billable_core_rate']
+
+            json_stats['per_role'][role_name]['per_user'] = {}
+            for user, user_data in data['per_user'].iteritems():
+                json_stats['per_role'][role_name]['per_user'][user.pk] = user_data['hours_billable_core_rat']
+
+        return json_stats
 
     def cache_stats(self, start=None, end=None, issues=None):
         stats = {}

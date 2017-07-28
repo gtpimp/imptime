@@ -63,7 +63,19 @@ class SprintCostSummaryPage extends Component {
 
               { ! is_loading &&
                 <div>
-                  Showing cost summary for {sprint.id}
+                  Showing cost summary for {cost_summary.sprint_id}
+                  <br/>
+                  {cost_summary.budget}
+                  <br/>
+                  {cost_summary.internal_commision}
+                  <br/>
+                  {cost_summary.spendable_budget}
+                  <br/>
+                  {cost_summary.estimated_cost}
+                  <br/>
+                  {cost_summary.spendable_budget_msg}
+                  <br/>
+                  {cost_summary.spent}
                 </div>
               }
 
@@ -73,7 +85,6 @@ class SprintCostSummaryPage extends Component {
 }
 
 function mapStateToProps(state, props) {
-
     const sprint_id = props.params.sprintId
     const project_id = props.params.projectId
     const project = getProject(state, project_id) || {}

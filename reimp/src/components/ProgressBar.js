@@ -40,7 +40,7 @@ class ProgressBar extends Component {
         }
         return (
             <div className="progress-bar">
-                { sections.map((section, index) => this.renderSection(section, index))}
+              { sections.map((section, index) => this.renderSection(section, index))}
             </div>
         )
     }
