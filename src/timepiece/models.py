@@ -1697,7 +1697,7 @@ class Project(models.Model):
 
             json_stats['per_role'][role_name]['per_user'] = {}
             for user, user_data in data['per_user'].iteritems():
-                json_stats['per_role'][role_name]['per_user'][user.pk] = user_data['hours_billable_core_rat']
+                json_stats['per_role'][role_name]['per_user'][user.pk] = user_data['hours_billable_core_rate']
 
         return json_stats
 

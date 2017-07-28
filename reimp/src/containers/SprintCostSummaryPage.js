@@ -47,6 +47,23 @@ class SprintCostSummaryPage extends Component {
         }
     }
 
+    render_per_role(per_role) {
+        return (
+            <div>
+              {
+                  Object.keys(per_role).map((key, index) => (
+                      <p key={index}> this is my key {key} and this is my value {per_role[key]}</p>
+                  ))
+              }
+            </div>
+        )
+        /* for (const role in cost_summary.per_role){
+         *     return (
+         *         <p>{role}</p>
+         *     )
+         * }*/
+    }
+
     render() {
 
         const { sprint_id, sprint, project_id, cost_summary, is_loading } = this.props
@@ -64,18 +81,57 @@ class SprintCostSummaryPage extends Component {
               { ! is_loading &&
                 <div>
                   Showing cost summary for {cost_summary.sprint_id}
-                  <br/>
-                  {cost_summary.budget}
-                  <br/>
-                  {cost_summary.internal_commision}
-                  <br/>
-                  {cost_summary.spendable_budget}
-                  <br/>
-                  {cost_summary.estimated_cost}
-                  <br/>
-                  {cost_summary.spendable_budget_msg}
-                  <br/>
-                  {cost_summary.spent}
+                  <h1>Budget</h1>
+
+                  <p>
+                    <h2>Client expectations</h2>
+                    <ul>
+                      <li>Budget given to client : R{cost_summary.budget}</li>
+                      <li>Internal commission : R{cost_summary.internal_commision}</li>
+                      <li>Spendable budget : R{cost_summary.spendable_budget}</li>
+                    </ul>
+                  </p>
+
+                  <p>
+                    <h2>Estimated versus budget</h2>
+                    <ul>
+                      <li>
+                        Sprint estimated cost : R{cost_summary.estimated_cost}
+                      </li>
+                      <li>
+                        {cost_summary.spendable_budget_msg}
+                      </li>
+                    </ul>
+                  </p>
+
+                  <p>
+                    <h2>Actual versus budget</h2>
+                    <ul>
+
+                      <li>
+                        Spent so far : R{cost_summary.spent}
+                      </li>
+
+                      <li>
+                        {cost_summary.budget_status}
+                      </li>
+                    </ul>
+                  </p>
+
+                  { cost_summary.under_budget &&
+                    <p>Under budget</p>
+                  }
+
+                  { ! cost_summary.under_budget &&
+                    <p>Over budget</p>
+                  }
+
+                  { cost_summary.per_role &&
+                    <div>
+                      {this.render_per_role(cost_summary.per_role)}
+                    </div>
+                  }
+
                 </div>
               }
 

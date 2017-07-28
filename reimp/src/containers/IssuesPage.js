@@ -32,7 +32,7 @@ class IssuesPage extends Component {
         super(props)
         this.onSelectIssues = this.onSelectIssues.bind(this)
     }
-    
+
     componentDidMount() {
         const {sprint_id, project_id, sprint, project, dispatch} = this.props
         dispatch(set_toolbars(PAGE_KEY__ISSUES_PAGE, ['issues', 'issue']))
@@ -46,11 +46,11 @@ class IssuesPage extends Component {
         const { dispatch} = this.props
         dispatch(ensureProjectsLoaded([new_props.project_id]))
         dispatch(ensureSprintsLoaded([new_props.sprint_id]))
-        
+
         if ( new_props.sprint.id !== this.props.sprint.id ||
              new_props.sprint.name !== this.props.sprint.name ||
              new_props.project.name !== this.props.project.name) {
-                this.refresh(new_props.sprint, new_props.project)
+            this.refresh(new_props.sprint, new_props.project)
         }
     }
 
@@ -61,12 +61,12 @@ class IssuesPage extends Component {
             dispatch(select_sprints(PAGE_KEY__ISSUES_PAGE, [sprint.id]))
             dispatch(invalidateList(LIST_KEY__ISSUE_LIST))
 
-            const default_issue_id = this.props.params.issueId 
+            const default_issue_id = this.props.params.issueId
             if ( default_issue_id != undefined && !includes(selected_issue_ids, default_issue_id) ) {
                 dispatch(selectItems(LIST_KEY__ISSUE_LIST, [default_issue_id]))
                 dispatch(select_issues(PAGE_KEY__ISSUES_PAGE, [default_issue_id]))
             }
-            
+
             dispatch(setBreadcrumbs([ {to: '/projects', label: 'All Projects'},
                                       {to: '/projects/'+project.id, label: project.name},
                                       {to: '/projects/'+project.id+'/sprints', label: 'All Sprints'},
@@ -95,24 +95,24 @@ class IssuesPage extends Component {
 
         return (
             <div className="list-layout">
-                <div className="list-layout__list">
-                    <IssueList list_key={LIST_KEY__ISSUE_LIST}
-                               onSelectIssues={this.onSelectIssues}
-                    />
-                </div>
-                { is_creating_issue &&
-                  <div className="list-layout__sidebar">
-                      <NewIssueSidebar />
-                  </div>
-                }
-                { ! is_creating_issue && is_single_selection && sprint_id && selected_issue &&
+              <div className="list-layout__list">
+                <IssueList list_key={LIST_KEY__ISSUE_LIST}
+                           onSelectIssues={this.onSelectIssues}
+                />
+              </div>
+              { is_creating_issue &&
                 <div className="list-layout__sidebar">
-                    <IssueSidebar issue_id={selected_issue.id} sprint_id={sprint_id} project_id={project_id}/>
+                  <NewIssueSidebar />
                 </div>
+              }
+                { ! is_creating_issue && is_single_selection && sprint_id && selected_issue &&
+                  <div className="list-layout__sidebar">
+                    <IssueSidebar issue_id={selected_issue.id} sprint_id={sprint_id} project_id={project_id}/>
+                  </div>
                 }
                 { ! is_creating_issue && is_multiple_selection && sprint_id && selected_issue_ids &&
                   <div className="list-layout__sidebar">
-                      <MultipleIssueSidebar issue_ids={selected_issue_ids} sprint_id={sprint_id} project_id={project_id}/>
+                    <MultipleIssueSidebar issue_ids={selected_issue_ids} sprint_id={sprint_id} project_id={project_id}/>
                   </div>
                 }
             </div>
@@ -127,8 +127,8 @@ function mapStateToProps(state, props) {
 
     const selected_issue_ids = get_selected_issue_ids(state, PAGE_KEY__ISSUES_PAGE)
     const selected_items = items_by_id && selected_issue_ids && selected_issue_ids.map( function(selected_id, index) {
-	return items_by_id[selected_id] || { 'id': selected_id,
-					     'loaded': false }
+	      return items_by_id[selected_id] || { 'id': selected_id,
+					                                   'loaded': false }
     })
 
     const sprint_id = props.params.sprintId
@@ -137,7 +137,7 @@ function mapStateToProps(state, props) {
     const sprint = getSprint(state, sprint_id) || {}
     const candidate_issue = getCandidateIssue(state) || null
     const is_creating_issue = candidate_issue || false
-    
+
     return {
         sprint_id: sprint_id,
         sprint: sprint,
