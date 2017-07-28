@@ -4,7 +4,7 @@ import filter_api
 import project_api
 import project_user_permission_api
 import sprint_api
-import sprint_summary_api
+import cost_summary_api
 import issue_api
 import issue_attachment_api
 import issue_tag_api
@@ -44,7 +44,7 @@ router.register(r'user', user_api.UserViewSet,
                 base_name='user')
 router.register(r'filter', filter_api.FilterViewSet,
                 base_name='filter')
-router.register(r'cost_summary', cost_summary_api.CostSummartViewSet,
+router.register(r'cost_summary', cost_summary_api.CostSummaryViewSet,
                 base_name='cost_summary')
 
 urlpatterns = [

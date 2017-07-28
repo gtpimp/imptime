@@ -13,33 +13,32 @@ import {
 } from '../actions/CostSummary.js'
 
 const initialState = {
-    items_by_id: [],
-    loading_item_ids: [],
-    saving_item_ids: []
+    items_by_sprint_id: {},
+    loading_sprint_ids: []
 }
 
 export default function cost_summary(state = initialState, action) {
 
     let state_copy = Object.assign({}, state)
-    let new_items_by_id = null
+    let new_items_by_sprint_id = null
 
     switch (action.type) {
         case INVALIDATE_COST_SUMMARY:
-            return Object.assign({}, state, {items_by_id: without(state.items_by_id, action.cost_summary_to_invalidate)})
+            return Object.assign({}, state, {items_by_sprint_id: without(state.items_by_sprint_id, action.sprint_id_to_invalidate)})
 
         case ANNOUNCE_LOADING_COST_SUMMARY:
 	          return Object.assign({}, state, {
-		            loading_item_ids: union(state.loading_item_ids, action.cost_summary_to_load)
+		            loading_sprint_ids: union(state.loading_sprint_ids, [action.sprint_id_to_load])
 	          })
         case ANNOUNCE_COST_SUMMARY_LOADED:
             state_copy = Object.assign({}, state, {
-		            loading_item_ids: Object.assign({},
-						                                    difference(state.loading_item_ids || [],
-							                                             keys(action.items_by_id))),
-		            items_by_id: Object.assign({},
-					                                 assign(state.items_by_id, action.items_by_id))
+		            loading_sprint_ids: Object.assign({},
+						                                      difference(state.loading_sprint_ids || [],
+							                                               [action.sprint_id])),
+		            items_by_sprint_id: Object.assign({}, state.items_by_sprint_id)
 	          })
-            state_copy.items_by_id = Object.assign({}, assign(state_copy.items_by_id, action.items_by_id))
+            action.cost_summary.received_at = action.received_at
+            state_copy.items_by_sprint_id[action.sprint_id] = action.cost_summary
             return state_copy
         case ANNOUNCE_COST_SUMMARY_LOAD_FAILED:
             setErrorMessage("Failed to load cost summary: " + action.error_message)

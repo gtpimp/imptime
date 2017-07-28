@@ -22,6 +22,7 @@ class ProjectDashboardPage extends Component {
     constructor(props) {
         super(props)
         this.navigateToIssuesPage = this.navigateToIssuesPage.bind(this)
+        this.navigateToCostSummaryPage = this.navigateToCostSummaryPage.bind(this)
     }
 
     componentDidMount() {
@@ -59,6 +60,11 @@ class ProjectDashboardPage extends Component {
         browserHistory.push('/projects/'+project_id+'/sprints/'+sprint_id+'/issues');
     }
 
+    navigateToCostSummaryPage() {
+        const { project_id, sprint_id } = this.props
+        browserHistory.push('/projects/'+project_id+'/sprints/'+sprint_id+'/costSummary');
+    }
+
 
     render() {
 
@@ -73,6 +79,7 @@ class ProjectDashboardPage extends Component {
               </pre>
               <div>
                 <button onClick={this.navigateToIssuesPage}>Take me to your issues</button>
+                <button onClick={this.navigateToCostSummaryPage}>Cost Summary</button>
               </div>
               <div>
                 <div>

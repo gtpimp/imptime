@@ -13,19 +13,20 @@ from timepiece.models import BusinessPermissions
 logger = logging.getLogger(__name__)
 
 @permission_classes((IsAuthenticated,))
-class CostSummartViewSet(BaseViewSet):
+class CostSummaryViewSet(BaseViewSet):
 
-    def list(self, request, pk):
+    def retrieve(self, request, pk):
         try:
+            sprint_id = pk
             context = {}
-            import pdb;pdb.set_trace()
-            project = timepiece.Project.objects.get(pk=pk)
-            bp = timepiece.BusinessPermissions.for_user(request.user, project.business)
+            sprint = Sprint.objects.get(pk=sprint_id)
+            bp = BusinessPermissions.for_user(request.user, sprint.business)  # sic
             if not bp.has_view_ctc_billable_rates:
                 return self.error_response("No permission to do that")
 
-            project.calculate_new_stats(request.user)
-            context['project'] = project
+            cost_summary = sprint.calculate_new_stats(request.user)
+            cost_summary['sprint_id'] = sprint.id
+            context['cost_summary'] = cost_summary
 
             data = {'status': 'success', 'payload': context}
         except Exception, ex:

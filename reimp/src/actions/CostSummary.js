@@ -1,6 +1,7 @@
 import { impfetch } from './lib.js'
 import indexOf from 'lodash/indexOf'
 import keyBy from 'lodash/keyBy'
+import includes from 'lodash/includes'
 import { fetchListIfNeeded, getMissingItemIds } from './ItemList'
 import { ENTITY_KEY__COST_SUMMARY } from '../actions/ItemListKeyRegistry'
 
@@ -24,9 +25,11 @@ function announceLoadingCostSummary(sprint_id) {
 }
 
 function announceCostSummaryLoaded(payload) {
+    const cost_summary = payload.cost_summary
     return {
         type: ANNOUNCE_COST_SUMMARY_LOADED,
-        item_by_id: keyBy(payload.cost_summary, 'id'),
+        cost_summary: payload.cost_summary,
+        sprint_id: payload.cost_summary.sprint_id,
 	      received_at: Date.now()
     }
 }
@@ -42,14 +45,42 @@ function announceCostSummaryLoadFailed(error) {
 export function ensureCostSummaryLoaded(sprint_id) {
     return (dispatch, getState) => {
         const state = getState()
-
-        const cost_summary_to_load = getMissingItemIds(state, sprint_id, 'cost_summary')
-        if ( cost_summary_to_load.length > 0 ) {
-            fetchCostSummaryPromise(dispatch, state, cost_summary_to_load)
+        if ( isLoadingCostSummary(state, sprint_id) ) {
+            return
+        }
+        if ( getCostSummary(state, sprint_id) === null ) {
+            dispatch(fetchCostSummary(dispatch, state, sprint_id))
         }
     }
 }
 
+function fetchCostSummary(dispatch, state, sprint_id) {
+    return (dispatch, getState) => {
+        const state = getState()
+        const API_BASE_URL = state.settings.configured && state.settings.API_BASE_URL
+	      dispatch(announceLoadingCostSummary(sprint_id))
+	      return impfetch(API_BASE_URL+'imp/cost_summary/'+sprint_id+'/', dispatch)
+            .then(response => response.json())
+	          .then(json => {
+                if (json.status !== 'success') {
+		                dispatch(announceCostSummaryLoadFailed(json.error))
+                } else {
+                    dispatch(announceCostSummaryLoaded(json.payload))
+		                dispatch(ensureCostSummaryLoaded(json.payload.cost_summary.sprint_id))
+                }
+	          }).catch(function (error) {
+		            dispatch(announceCostSummaryLoadFailed("Failed to load cost summary: " + error))
+	          })
+    }
+}
+
+
 export function getCostSummary(state, sprint_id) {
     return ((state.cost_summary || {}).items_by_id || {})[sprint_id] || null
+}
+
+export function isLoadingCostSummary(state, sprint_id) {
+    const loading_ids = (state.cost_summary || {}).loading_sprint_ids || []
+    const test = includes(loading_ids, sprint_id)
+    return includes(loading_ids, sprint_id)
 }

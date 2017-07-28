@@ -20,12 +20,15 @@ import toolbar from './toolbar'
 import user from './user'
 import websockets from './websockets'
 import settings from './settings'
+import cost_summary from './cost_summary'
 
 const rootReducer = combineReducers({
     auth,
     breadcrumbs,
+    cost_summary,
     editable_property,
     filter,
+    form: redux_form_reducer,
     header,
     issue,
     issue_general_details,
@@ -35,14 +38,13 @@ const rootReducer = combineReducers({
     page,
     project,
     project_user_permission,
-    form: redux_form_reducer,
     rie,
     routing,
+    settings,
     sprint,
     toolbar,
     user,
     websockets,
-    settings
 })
 
 export default rootReducer

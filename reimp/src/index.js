@@ -12,6 +12,7 @@ import PasswordReminderSentPage from './containers/PasswordReminderSentPage'
 import ProjectDashboardPage from './containers/ProjectDashboardPage'
 import SprintsPage from './containers/SprintsPage'
 import SprintDashboardPage from './containers/SprintDashboardPage'
+import SprintCostSummaryPage from './containers/SprintCostSummaryPage'
 import IssuesPage from './containers/IssuesPage'
 import ClientsPage from './containers/ClientsPage'
 import TeamPage from './containers/TeamPage'
@@ -44,6 +45,7 @@ ReactDOM.render(
                 <Route path="projects/:projectId/sprints/:sprintId" component={SprintDashboardPage}/>
                 <Route path="projects/:projectId/sprints/:sprintId/issues" component={IssuesPage}/>
                 <Route path="projects/:projectId/sprints/:sprintId/issues/:issueId" component={IssuesPage}/>
+                <Route path="projects/:projectId/sprints/:sprintId/costSummary" component={SprintCostSummaryPage}/>
                 <Route path="projects/:projectId/users" component={ProjectUserPage}/>
                 <Route path="projects/:projectId/users/:userId" component={ProjectUserPage}/>
 
