@@ -1690,14 +1690,14 @@ class Project(models.Model):
         for role_name, data in per_role.iteritems():
             json_stats['per_role'][role_name] = {}
             json_stats['per_role'][role_name]['budget'] = self.estimated_budget_for_role(role_name)
-            json_stats['per_role'][role_name]['ratio_scope_creep'] = self.ratio_scope_creep
+            json_stats['per_role'][role_name]['ratio_scope_creep'] = self.ratio_scope_creep * 100
             json_stats['per_role'][role_name]['budget_without_scope_creep'] = self.estimated_budget_for_role\
                                                                               (role_name, include_scope_creep=False)
             json_stats['per_role'][role_name]['hours_billable_core_rate'] = data['hours_billable_core_rate']
 
-            json_stats['per_role'][role_name]['per_user'] = {}
+            json_stats['per_user'] = {}
             for user, user_data in data['per_user'].iteritems():
-                json_stats['per_role'][role_name]['per_user'][user.pk] = user_data['hours_billable_core_rate']
+                json_stats['per_user'][user.pk] = user_data['hours_billable_core_rate']
 
         return json_stats
 

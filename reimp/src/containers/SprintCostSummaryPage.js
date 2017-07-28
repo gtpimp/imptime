@@ -11,6 +11,7 @@ import {ensureProjectsLoaded, getProject} from '../actions/Projects'
 import {ensureSprintsLoaded, getSprint} from '../actions/Sprints'
 import {ensureCostSummaryLoaded, getCostSummary, isLoadingCostSummary} from '../actions/CostSummary'
 import {getCandidateIssue} from '../actions/Issues'
+import OtherUser from '../components/OtherUser'
 
 class SprintCostSummaryPage extends Component {
 
@@ -23,13 +24,14 @@ class SprintCostSummaryPage extends Component {
         dispatch(ensureProjectsLoaded([project_id]))
         dispatch(ensureSprintsLoaded([sprint_id]))
         dispatch(ensureCostSummaryLoaded(sprint_id))
+        this.refresh(sprint, project)
     }
 
     componentWillReceiveProps(new_props) {
         const { dispatch} = this.props
         dispatch(ensureProjectsLoaded([new_props.project_id]))
         dispatch(ensureSprintsLoaded([new_props.sprint_id]))
-        /* dispatch(ensureCostSummaryLoaded(new_props.sprint_id))*/
+        dispatch(ensureCostSummaryLoaded(new_props.sprint_id))
 
         if ( new_props.sprint.id !== this.props.sprint.id ) {
             this.refresh(new_props.sprint, new_props.project)
@@ -47,21 +49,39 @@ class SprintCostSummaryPage extends Component {
         }
     }
 
+    render_per_user(per_user) {
+        return (
+            <div>
+              {
+              Object.keys(per_user).map((user, index) => (
+              <div>
+                <li>
+                  <OtherUser value={user} /> : R{per_user[user]}
+                </li>
+              </div>
+              ))
+              }
+            </div>
+        )
+    }
+
     render_per_role(per_role) {
         return (
             <div>
               {
-                  Object.keys(per_role).map((key, index) => (
-                      <p key={index}> this is my key {key} and this is my value {per_role[key]}</p>
+                  Object.keys(per_role).map((role, index) => (
+                      <div>
+                        <h3>{role}</h3>
+                        <ul>
+                          <li>Estimate: R{per_role[role]["budget"]}</li>
+                          <li>without {per_role[role]["ratio_scope_creep"]}% scope creep: R{ per_role[role]["budget_without_scope_creep"]}</li>
+                          <li>Actual : R{per_role[role]["hours_billable_core_rate"]}</li>
+                        </ul>
+                      </div>
                   ))
               }
             </div>
         )
-        /* for (const role in cost_summary.per_role){
-         *     return (
-         *         <p>{role}</p>
-         *     )
-         * }*/
     }
 
     render() {
@@ -126,9 +146,16 @@ class SprintCostSummaryPage extends Component {
                     <p>Over budget</p>
                   }
 
+                  <h2>Breakdown of actuals versus estimated</h2>
                   { cost_summary.per_role &&
                     <div>
                       {this.render_per_role(cost_summary.per_role)}
+                    </div>
+                  }
+
+                  { cost_summary.per_user &&
+                    <div>
+                      {this.render_per_user(cost_summary.per_user)}
                     </div>
                   }
 
