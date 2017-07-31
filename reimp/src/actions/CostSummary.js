@@ -70,7 +70,7 @@ function fetchCostSummary(dispatch, state, sprint_id) {
 		                dispatch(announceCostSummaryLoadFailed(json.error))
                 } else {
                     dispatch(announceCostSummaryLoaded(json.payload))
-		                dispatch(ensureCostSummaryLoaded(json.payload.cost_summary.sprint_id))
+		                /* dispatch(ensureCostSummaryLoaded(json.payload.cost_summary.sprint_id))*/
                 }
 	          }).catch(function (error) {
 		            dispatch(announceCostSummaryLoadFailed("Failed to load cost summary: " + error))

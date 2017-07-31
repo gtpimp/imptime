@@ -12,6 +12,15 @@ import {ensureSprintsLoaded, getSprint} from '../actions/Sprints'
 import {ensureCostSummaryLoaded, getCostSummary, isLoadingCostSummary} from '../actions/CostSummary'
 import {getCandidateIssue} from '../actions/Issues'
 import OtherUser from '../components/OtherUser'
+import {
+    LIST_KEY__SPRINT_LIST,
+    PAGE_KEY__SPRINTS_PAGE,
+    PAGE_KEY__PROJECTS_PAGE
+} from '../actions/ItemListKeyRegistry'
+import {
+    select_sprints,
+    select_projects,
+} from '../actions/Page'
 
 class SprintCostSummaryPage extends Component {
 
@@ -33,7 +42,9 @@ class SprintCostSummaryPage extends Component {
         dispatch(ensureSprintsLoaded([new_props.sprint_id]))
         dispatch(ensureCostSummaryLoaded(new_props.sprint_id))
 
-        if ( new_props.sprint.id !== this.props.sprint.id ) {
+        if ( new_props.sprint.id !== this.props.sprint.id ||
+             new_props.sprint.name !== this.props.sprint.name ||
+             new_props.project.name !== this.props.project.name ) {
             this.refresh(new_props.sprint, new_props.project)
         }
     }
@@ -46,6 +57,8 @@ class SprintCostSummaryPage extends Component {
                                       {to: '/projects/'+project.id+'/sprints', label: 'All Sprints'},
                                       {to: '/projects/'+project.id+'/sprints/'+sprint.id, label: sprint.name},
                                       {to: '/projects/'+project.id+'/sprints/'+sprint.id+'/costSummary', label: 'Cost Summary'}]))
+            dispatch(select_sprints(PAGE_KEY__SPRINTS_PAGE, [sprint.id]))
+            /* dispatch(select_projects(PAGE_KEY__PROJECTS_PAGE, [project.id]))*/
         }
     }
 
@@ -70,9 +83,9 @@ class SprintCostSummaryPage extends Component {
             <div>
               {
                   Object.keys(per_role).map((role, index) => (
-                      <div>
+                      <div className="cost-summary__role">
                         <h3>{role}</h3>
-                        <ul>
+                        <ul className="cost-summary__list">
                           <li>Estimate: R{per_role[role]["budget"]}</li>
                           <li>without {per_role[role]["ratio_scope_creep"]}% scope creep: R{ per_role[role]["budget_without_scope_creep"]}</li>
                           <li>Actual : R{per_role[role]["hours_billable_core_rate"]}</li>
@@ -86,12 +99,10 @@ class SprintCostSummaryPage extends Component {
 
     render() {
 
-        const { sprint_id, sprint, project_id, cost_summary, is_loading } = this.props
+        const { sprint_id, sprint, long_name, project_id, cost_summary, per_role, per_user, is_loading } = this.props
 
         return (
-
-            <div>
-
+            <div className="cost-summary">
               { is_loading &&
                 <div>
                   Loading...
@@ -100,12 +111,12 @@ class SprintCostSummaryPage extends Component {
 
               { ! is_loading &&
                 <div>
-                  Showing cost summary for {cost_summary.sprint_id}
-                  <h1>Budget</h1>
+                  <h1 className="cost-summary__page-header">{ long_name }</h1>
+                  <h1 className="cost-summary__header">Budget</h1>
 
                   <p>
-                    <h2>Client expectations</h2>
-                    <ul>
+                    <h2 className="cost-summary__sub-header">Client expectations</h2>
+                    <ul className="cost-summary__list">
                       <li>Budget given to client : R{cost_summary.budget}</li>
                       <li>Internal commission : R{cost_summary.internal_commision}</li>
                       <li>Spendable budget : R{cost_summary.spendable_budget}</li>
@@ -113,8 +124,8 @@ class SprintCostSummaryPage extends Component {
                   </p>
 
                   <p>
-                    <h2>Estimated versus budget</h2>
-                    <ul>
+                    <h2 className="cost-summary__sub-header">Estimated versus budget</h2>
+                    <ul className="cost-summary__list">
                       <li>
                         Sprint estimated cost : R{cost_summary.estimated_cost}
                       </li>
@@ -125,13 +136,11 @@ class SprintCostSummaryPage extends Component {
                   </p>
 
                   <p>
-                    <h2>Actual versus budget</h2>
-                    <ul>
-
+                    <h2 className="cost-summary__sub-header">Actual versus budget</h2>
+                    <ul className="cost-summary__list">
                       <li>
                         Spent so far : R{cost_summary.spent}
                       </li>
-
                       <li>
                         {cost_summary.budget_status}
                       </li>
@@ -142,26 +151,27 @@ class SprintCostSummaryPage extends Component {
                     <p>Under budget</p>
                   }
 
-                  { ! cost_summary.under_budget &&
-                    <p>Over budget</p>
-                  }
+                    { ! cost_summary.under_budget &&
+                      <p>Over budget</p>
+                    }
 
-                  <h2>Breakdown of actuals versus estimated</h2>
-                  { cost_summary.per_role &&
+                  <h1 className="cost-summary__header">Breakdown of actuals versus estimated</h1>
+
+                  <div className="cost-summary__roles">
+                    { per_role &&
+                      <div>
+                        {this.render_per_role(per_role)}
+                      </div>
+                    }
+                  </div>
+
+                  { per_user &&
                     <div>
-                      {this.render_per_role(cost_summary.per_role)}
+                      {this.render_per_user(per_user)}
                     </div>
                   }
-
-                  { cost_summary.per_user &&
-                    <div>
-                      {this.render_per_user(cost_summary.per_user)}
-                    </div>
-                  }
-
                 </div>
               }
-
             </div>
         )
     }
@@ -169,10 +179,13 @@ class SprintCostSummaryPage extends Component {
 
 function mapStateToProps(state, props) {
     const sprint_id = props.params.sprintId
+    const sprint = getSprint(state, sprint_id) || {}
     const project_id = props.params.projectId
     const project = getProject(state, project_id) || {}
-    const sprint = getSprint(state, sprint_id) || {}
+    const long_name = project.name + " - " + sprint.name || ""
     const cost_summary = getCostSummary(state, sprint_id) || {}
+    const per_role = cost_summary.per_role || {}
+    const per_user = cost_summary.per_user || {}
     const is_loading = isLoadingCostSummary(state, sprint_id)
 
     return {
@@ -180,8 +193,11 @@ function mapStateToProps(state, props) {
         sprint: sprint,
         project_id: project_id,
         project: project,
+        long_name: long_name,
         is_loading: is_loading,
         cost_summary: cost_summary,
+        per_role: per_role,
+        per_user: per_user,
     }
 }
 

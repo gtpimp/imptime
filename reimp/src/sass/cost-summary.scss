@@ -1,0 +1,33 @@
+.cost-summary {
+    padding-left: 26px;
+    padding-right: 26px;
+    text-align: right;
+}
+
+.cost-summary__page-header {
+    border-bottom: 1px solid #545454;
+    height: 50px;
+}
+
+.cost-summary__header {
+    border-bottom: 1px solid #545454;
+    height: 50px;
+    padding-top: 25px;
+    font-size: 30px;
+}
+
+.cost-summary__sub-header {
+    font-size: 17px;
+}
+
+.cost-summary__list {
+    list-style: none;
+}
+
+.cost-summary__roles {
+    float:right;
+}
+
+.cost-summary__role {
+    float:left;
+}
