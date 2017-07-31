@@ -1683,7 +1683,7 @@ class Project(models.Model):
             json_stats['under_budget'] = False
         else:
             json_stats['budget_status'] = 'No budget'
-            json_stats['under_budget'] = None
+            json_stats['under_budget'] = False
 
         per_role = stats['per_role']
         json_stats['per_role'] = {}

@@ -154,15 +154,23 @@ class SprintCostSummaryPage extends Component {
                       <li>
                         Spent so far : R{cost_summary.spent}
                       </li>
-                      <li>
-                        {cost_summary.budget_status}
-                      </li>
                     </ul>
                   </p>
 
-
-
-
+                  <div>
+                    { cost_summary.under_budget &&
+                      <div className="cost-summary___green cost-summary__colourbar">
+                        {cost_summary.budget_status}
+                      </div>
+                    }
+                  </div>
+                  <div>
+                    { ! cost_summary.under_budget &&
+                      <div className="cost-summary___red cost-summary__colourbar">
+                        {cost_summary.budget_status}
+                      </div>
+                    }
+                  </div>
 
                   <h1 className="cost-summary__header">Breakdown of actuals versus estimated</h1>
 
