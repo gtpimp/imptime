@@ -87,7 +87,7 @@ class SprintCostSummaryPage extends Component {
                         <h3>{role}</h3>
                         <ul className="cost-summary__list">
                           <li>Estimate: R{per_role[role]["budget"]}</li>
-                          <li>without {per_role[role]["ratio_scope_creep"]}% scope creep: R{ per_role[role]["budget_without_scope_creep"]}</li>
+                          <li className="cost-summary__italics">without {per_role[role]["ratio_scope_creep"]}% scope creep: R{ per_role[role]["budget_without_scope_creep"]}</li>
                           <li>Actual : R{per_role[role]["hours_billable_core_rate"]}</li>
                         </ul>
                       </div>
@@ -130,7 +130,20 @@ class SprintCostSummaryPage extends Component {
                         Sprint estimated cost : R{cost_summary.estimated_cost}
                       </li>
                       <li>
-                        {cost_summary.spendable_budget_msg}
+                        <div>
+                          { cost_summary.under_budget &&
+                            <span className="cost-summary___green">
+                              {cost_summary.spendable_budget_msg}
+                            </span>
+                          }
+                        </div>
+                        <div>
+                          { ! cost_summary.under_budget &&
+                            <span className="cost-summary___red">
+                              {cost_summary.spendable_budget_msg}
+                            </span>
+                          }
+                        </div>
                       </li>
                     </ul>
                   </p>
@@ -147,13 +160,9 @@ class SprintCostSummaryPage extends Component {
                     </ul>
                   </p>
 
-                  { cost_summary.under_budget &&
-                    <p>Under budget</p>
-                  }
 
-                    { ! cost_summary.under_budget &&
-                      <p>Over budget</p>
-                    }
+
+
 
                   <h1 className="cost-summary__header">Breakdown of actuals versus estimated</h1>
 

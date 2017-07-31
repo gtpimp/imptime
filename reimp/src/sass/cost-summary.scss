@@ -31,3 +31,23 @@
 .cost-summary__role {
     float:left;
 }
+
+.cost-summary__italics {
+    font-style: italic;
+    font-size: 15px;
+}
+
+.cost-summary___green {
+    background-color: #97CAAE;
+    padding: 2px;
+}
+
+.cost-summary___yellow {
+    background-color: #A6A400;
+    padding: 2px;
+}
+
+.cost-summary___red {
+    background-color: #E59999;
+    padding: 2px;
+}
