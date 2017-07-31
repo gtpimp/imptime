@@ -68,8 +68,13 @@ class SprintCostSummaryPage extends Component {
               {
               Object.keys(per_user).map((user, index) => (
               <div>
-                <li>
-                  <OtherUser value={user} /> : R{per_user[user]}
+                <li className="cost-summary___user cost-summary__italics">
+                  <span className="cost-summary___user-details">
+                  : R{per_user[user]}
+                  </span>
+                  <span className="cost-summary___user-name">
+                    <OtherUser value={user} />
+                  </span>
                 </li>
               </div>
               ))
@@ -84,11 +89,32 @@ class SprintCostSummaryPage extends Component {
               {
                   Object.keys(per_role).map((role, index) => (
                       <div className="cost-summary__role">
-                        <h3>{role}</h3>
+                        <h3 className="cost-summary___no-colour-pad">{role}</h3>
                         <ul className="cost-summary__list">
-                          <li>Estimate: R{per_role[role]["budget"]}</li>
+                          <li className="cost-summary___no-colour-pad">Estimate: R{per_role[role]["budget"]}</li>
                           <li className="cost-summary__italics">without {per_role[role]["ratio_scope_creep"]}% scope creep: R{ per_role[role]["budget_without_scope_creep"]}</li>
-                          <li>Actual : R{per_role[role]["hours_billable_core_rate"]}</li>
+                          <li>
+                            <div>
+                              { per_role[role]["under_budget"] &&
+                                <span className="cost-summary___green">
+                                  Actual : R{per_role[role]["hours_billable_core_rate"]}
+                                </span>
+                              }
+                            </div>
+                            <div>
+                              { ! per_role[role]["under_budget"] &&
+                                <span className="cost-summary___red">
+                                  Actual : R{per_role[role]["hours_billable_core_rate"]}
+                                </span>
+                              }
+                            </div>
+                          </li>
+
+                          { per_role[role]["per_user"] &&
+                            <div>
+                              {this.render_per_user(per_role[role]["per_user"])}
+                            </div>
+                          }
                         </ul>
                       </div>
                   ))
@@ -99,7 +125,7 @@ class SprintCostSummaryPage extends Component {
 
     render() {
 
-        const { sprint_id, sprint, long_name, project_id, cost_summary, per_role, per_user, is_loading } = this.props
+        const { sprint_id, sprint, long_name, project_id, cost_summary, per_role, is_loading } = this.props
 
         return (
             <div className="cost-summary">
@@ -110,7 +136,7 @@ class SprintCostSummaryPage extends Component {
               }
 
               { ! is_loading &&
-                <div>
+                <div className="cost-summary__content">
                   <h1 className="cost-summary__page-header">{ long_name }</h1>
                   <h1 className="cost-summary__header">Budget</h1>
 
@@ -181,12 +207,6 @@ class SprintCostSummaryPage extends Component {
                       </div>
                     }
                   </div>
-
-                  { per_user &&
-                    <div>
-                      {this.render_per_user(per_user)}
-                    </div>
-                  }
                 </div>
               }
             </div>
@@ -202,7 +222,6 @@ function mapStateToProps(state, props) {
     const long_name = project.name + " - " + sprint.name || ""
     const cost_summary = getCostSummary(state, sprint_id) || {}
     const per_role = cost_summary.per_role || {}
-    const per_user = cost_summary.per_user || {}
     const is_loading = isLoadingCostSummary(state, sprint_id)
 
     return {
@@ -214,7 +233,6 @@ function mapStateToProps(state, props) {
         is_loading: is_loading,
         cost_summary: cost_summary,
         per_role: per_role,
-        per_user: per_user,
     }
 }
 

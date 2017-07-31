@@ -1,6 +1,9 @@
 .cost-summary {
     padding-left: 26px;
     padding-right: 26px;
+}
+
+.cost-summary__content {
     text-align: right;
 }
 
@@ -26,6 +29,7 @@
 
 .cost-summary__roles {
     float:right;
+    margin-top: -20px;
 }
 
 .cost-summary__role {
@@ -35,6 +39,7 @@
 .cost-summary__italics {
     font-style: italic;
     font-size: 15px;
+    padding: 2px;
 }
 
 .cost-summary___green {
@@ -52,9 +57,26 @@
     padding: 2px;
 }
 
+.cost-summary___no-colour-pad {
+    padding: 2px;
+}
+
 .cost-summary__colourbar {
     width: 100%;
     text-align: center;
     color: #fff;
     font-weight: 800;
+}
+
+.cost-summary___user {
+    float: right;
+    width: 100%;
+}
+
+.cost-summary___user-name {
+    float: right;
+}
+
+.cost-summary___user-details {
+    float: right;
 }
