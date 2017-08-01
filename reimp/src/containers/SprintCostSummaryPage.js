@@ -117,7 +117,7 @@ class SprintCostSummaryPage extends Component {
 
     render() {
 
-        const { sprint_id, sprint, long_name, project_id, cost_summary, per_role, is_loading } = this.props
+        const { sprint_id, sprint, project, project_id, cost_summary, per_role, is_loading } = this.props
 
         return (
             <div className="cost-summary">
@@ -129,7 +129,7 @@ class SprintCostSummaryPage extends Component {
 
               { ! is_loading &&
                 <div className="cost-summary__content">
-                  <h1 className="cost-summary__page-header">{ long_name }</h1>
+                  <h1 className="cost-summary__page-header">{project.name} - {sprint.name}</h1>
                   <h1 className="cost-summary__header">Budget</h1>
 
                   <p>
@@ -215,7 +215,6 @@ function mapStateToProps(state, props) {
     const sprint = getSprint(state, sprint_id) || {}
     const project_id = props.params.projectId
     const project = getProject(state, project_id) || {}
-    const long_name = project.name + " - " + sprint.name || ""
     const cost_summary = getCostSummary(state, sprint_id) || {}
     const per_role = cost_summary.per_role || {}
     const is_loading = isLoadingCostSummary(state, sprint_id)
@@ -225,7 +224,6 @@ function mapStateToProps(state, props) {
         sprint: sprint,
         project_id: project_id,
         project: project,
-        long_name: long_name,
         is_loading: is_loading,
         cost_summary: cost_summary,
         per_role: per_role,
