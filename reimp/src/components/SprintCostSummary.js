@@ -5,6 +5,7 @@ import {ensureProjectsLoaded, getProject} from '../actions/Projects'
 import {ensureSprintsLoaded, getSprint} from '../actions/Sprints'
 import {ensureCostSummaryLoaded, getCostSummary} from '../actions/CostSummary'
 import OtherUser from '../components/OtherUser'
+import CurrencyValue from '../components/CurrencyValue'
 
 class SprintCostSummary extends Component {
 
@@ -37,12 +38,12 @@ class SprintCostSummary extends Component {
         /* const {dispatch} = this.props*/
     }
 
-    renderUser(user, index) {
+    renderUser(value, index) {
         return (
             <div>
               <li className="cost-summary___user cost-summary__italics">
                 <span className="cost-summary___user-details">
-            : R{user}
+                 : <CurrencyValue value={value} />
                 </span>
                 <span className="cost-summary___user-name">
                   <OtherUser value={index} />
@@ -57,20 +58,21 @@ class SprintCostSummary extends Component {
             <div>
               <h3 className="cost-summary___no-colour-pad">{index}</h3>
               <ul className="cost-summary__list">
-                <li className="cost-summary___no-colour-pad">Estimate: R{role.budget}</li>
-                <li className="cost-summary__italics">without {role.ratio_scope_creep}% scope creep: R{ role.budget_without_scope_creep}</li>
+                <li className="cost-summary___no-colour-pad">Estimate: <CurrencyValue value={role.budget} /></li>
+                <li className="cost-summary__italics">without {role.ratio_scope_creep}% scope creep:
+                  <CurrencyValue value={role.budget_without_scope_creep} /></li>
                 <li>
                   <div>
                     { role.under_budget &&
                       <span className="cost-summary___green">
-                        Actual : R{role.hours_billable_core_rate}
+                        Actual: <CurrencyValue value={role.hours_billable_core_rate} />
                       </span>
                     }
                   </div>
                   <div>
                     { ! role.under_budget &&
                       <span className="cost-summary___red">
-                        Actual : R{role.hours_billable_core_rate}
+                        Actual: <CurrencyValue value={role.hours_billable_core_rate} />
                       </span>
                     }
                   </div>
@@ -101,9 +103,9 @@ class SprintCostSummary extends Component {
               <p>
                 <h2 className="cost-summary__sub-header">Client expectations</h2>
                 <ul className="cost-summary__list">
-                  <li>Budget given to client : R{cost_summary.budget}</li>
-                  <li>Internal commission : R{cost_summary.internal_commision}</li>
-                  <li>Spendable budget : R{cost_summary.spendable_budget}</li>
+                  <li>Budget given to client: <CurrencyValue value={cost_summary.budget} /></li>
+                  <li>Internal commission: <CurrencyValue value={cost_summary.internal_commision} /></li>
+                  <li>Spendable budget: <CurrencyValue value={cost_summary.spendable_budget} /></li>
                 </ul>
               </p>
 
@@ -111,7 +113,7 @@ class SprintCostSummary extends Component {
                 <h2 className="cost-summary__sub-header">Estimated versus budget</h2>
                 <ul className="cost-summary__list">
                   <li>
-                    Sprint estimated cost : R{cost_summary.estimated_cost}
+                    Sprint estimated cost: <CurrencyValue value={cost_summary.estimated_cost} />
                   </li>
                   <li>
                     <div>
@@ -136,7 +138,7 @@ class SprintCostSummary extends Component {
                 <h2 className="cost-summary__sub-header">Actual versus budget</h2>
                 <ul className="cost-summary__list">
                   <li>
-                    Spent so far : R{cost_summary.spent}
+                    Spent so far: <CurrencyValue value={cost_summary.spent} />
                   </li>
                 </ul>
               </p>
