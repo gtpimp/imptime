@@ -7,6 +7,7 @@ import MultipleIssueSidebar from '../components/MultipleIssueSidebar'
 import IssueList from '../components/IssueList'
 import { setBreadcrumbs } from '../actions/Breadcrumbs'
 import includes from 'lodash/includes'
+import map from 'lodash/map'
 import {ensureProjectsLoaded, getProject} from '../actions/Projects'
 import {ensureSprintsLoaded, getSprint} from '../actions/Sprints'
 import {ensureCostSummaryLoaded, getCostSummary, isLoadingCostSummary} from '../actions/CostSummary'
@@ -62,63 +63,54 @@ class SprintCostSummaryPage extends Component {
         }
     }
 
-    render_per_user(per_user) {
+    renderUser(user, index) {
         return (
             <div>
-              {
-              Object.keys(per_user).map((user, index) => (
-              <div>
-                <li className="cost-summary___user cost-summary__italics">
-                  <span className="cost-summary___user-details">
-                  : R{per_user[user]}
-                  </span>
-                  <span className="cost-summary___user-name">
-                    <OtherUser value={user} />
-                  </span>
-                </li>
-              </div>
-              ))
-              }
+              <li className="cost-summary___user cost-summary__italics">
+                <span className="cost-summary___user-details">
+                  : R{user}
+                </span>
+                <span className="cost-summary___user-name">
+                  <OtherUser value={index} />
+                </span>
+              </li>
             </div>
         )
     }
 
-    render_per_role(per_role) {
+    renderRole(role, index) {
         return (
             <div>
-              {
-                  Object.keys(per_role).map((role, index) => (
-                      <div className="cost-summary__role">
-                        <h3 className="cost-summary___no-colour-pad">{role}</h3>
-                        <ul className="cost-summary__list">
-                          <li className="cost-summary___no-colour-pad">Estimate: R{per_role[role]["budget"]}</li>
-                          <li className="cost-summary__italics">without {per_role[role]["ratio_scope_creep"]}% scope creep: R{ per_role[role]["budget_without_scope_creep"]}</li>
-                          <li>
-                            <div>
-                              { per_role[role]["under_budget"] &&
-                                <span className="cost-summary___green">
-                                  Actual : R{per_role[role]["hours_billable_core_rate"]}
-                                </span>
-                              }
-                            </div>
-                            <div>
-                              { ! per_role[role]["under_budget"] &&
-                                <span className="cost-summary___red">
-                                  Actual : R{per_role[role]["hours_billable_core_rate"]}
-                                </span>
-                              }
-                            </div>
-                          </li>
-
-                          { per_role[role]["per_user"] &&
-                            <div>
-                              {this.render_per_user(per_role[role]["per_user"])}
-                            </div>
-                          }
-                        </ul>
-                      </div>
-                  ))
-              }
+              <h3 className="cost-summary___no-colour-pad">{index}</h3>
+              <ul className="cost-summary__list">
+                <li className="cost-summary___no-colour-pad">Estimate: R{role.budget}</li>
+                <li className="cost-summary__italics">without {role.ratio_scope_creep}% scope creep: R{ role.budget_without_scope_creep}</li>
+                <li>
+                  <div>
+                    { role.under_budget &&
+                      <span className="cost-summary___green">
+                        Actual : R{role.hours_billable_core_rate}
+                      </span>
+                    }
+                  </div>
+                  <div>
+                    { ! role.under_budget &&
+                      <span className="cost-summary___red">
+                        Actual : R{role.hours_billable_core_rate}
+                      </span>
+                    }
+                  </div>
+                </li>
+                { role.per_user &&
+                  <div>
+                    {map(role.per_user, (user, index) =>
+                        <div>
+                         { this.renderUser(user, index) }
+                        </div>
+                     )}
+                  </div>
+                }
+              </ul>
             </div>
         )
     }
@@ -203,7 +195,11 @@ class SprintCostSummaryPage extends Component {
                   <div className="cost-summary__roles">
                     { per_role &&
                       <div>
-                        {this.render_per_role(per_role)}
+                        {map(per_role, (role, index) =>
+                            <div className="cost-summary__role">
+                             {this.renderRole(role, index)}
+                            </div>
+                         )}
                       </div>
                     }
                   </div>
