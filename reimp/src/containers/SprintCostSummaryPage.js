@@ -3,7 +3,11 @@ import {connect} from 'react-redux'
 import { setBreadcrumbs } from '../actions/Breadcrumbs'
 import {ensureProjectsLoaded, getProject} from '../actions/Projects'
 import {ensureSprintsLoaded, getSprint} from '../actions/Sprints'
-import {ensureCostSummaryLoaded, isLoadingCostSummary} from '../actions/CostSummary'
+import {
+    ensureCostSummaryLoaded,
+    isLoadingCostSummary,
+    invalidateCostSummary
+} from '../actions/CostSummary'
 import {
     PAGE_KEY__SPRINTS_PAGE,
 } from '../actions/ItemListKeyRegistry'
@@ -16,10 +20,11 @@ class SprintCostSummaryPage extends Component {
 
     constructor(props) {
         super(props)
+        this.invalidateCostSummary = this.invalidateCostSummary.bind(this)
     }
 
     componentDidMount() {
-        const {sprint_id, project_id, sprint, project, dispatch} = this.props
+        const { sprint_id, project_id, sprint, project, dispatch } = this.props
         dispatch(ensureProjectsLoaded([project_id]))
         dispatch(ensureSprintsLoaded([sprint_id]))
         dispatch(ensureCostSummaryLoaded(sprint_id))
@@ -27,7 +32,7 @@ class SprintCostSummaryPage extends Component {
     }
 
     componentWillReceiveProps(new_props) {
-        const { dispatch} = this.props
+        const { dispatch } = this.props
         dispatch(ensureProjectsLoaded([new_props.project_id]))
         dispatch(ensureSprintsLoaded([new_props.sprint_id]))
         dispatch(ensureCostSummaryLoaded(new_props.sprint_id))
@@ -40,7 +45,7 @@ class SprintCostSummaryPage extends Component {
     }
 
     refresh(sprint, project) {
-        const {dispatch} = this.props
+        const { dispatch } = this.props
         if ( sprint.id ) {
             dispatch(setBreadcrumbs([ {to: '/projects', label: 'All Projects'},
                                       {to: '/projects/'+project.id, label: project.name},
@@ -49,6 +54,11 @@ class SprintCostSummaryPage extends Component {
                                       {to: '/projects/'+project.id+'/sprints/'+sprint.id+'/costSummary', label: 'Cost Summary'}]))
             dispatch(select_sprints(PAGE_KEY__SPRINTS_PAGE, [sprint.id]))
         }
+    }
+
+    invalidateCostSummary() {
+        const { dispatch, sprint_id } = this.props
+        dispatch(invalidateCostSummary(sprint_id))
     }
 
     render() {
@@ -65,6 +75,7 @@ class SprintCostSummaryPage extends Component {
 
               { ! is_loading &&
                 <div>
+                  <button onClick={this.invalidateCostSummary}>Refresh</button>
                   <SprintCostSummary {...this.props}/>
                 </div>
               }
@@ -78,7 +89,6 @@ function mapStateToProps(state, props) {
     const sprint = getSprint(state, sprint_id) || {}
     const project_id = props.params.projectId
     const project = getProject(state, project_id) || {}
-    /* const per_role = cost_summary.per_role || {}*/
     const is_loading = isLoadingCostSummary(state, sprint_id)
 
     return {
