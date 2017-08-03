@@ -6,7 +6,6 @@ import {ensureSprintsLoaded, getSprint} from '../actions/Sprints'
 import {
     ensureCostSummaryLoaded,
     isLoadingCostSummary,
-    invalidateCostSummary
 } from '../actions/CostSummary'
 import {
     PAGE_KEY__SPRINTS_PAGE,
@@ -21,7 +20,6 @@ class SprintCostSummaryPage extends Component {
 
     constructor(props) {
         super(props)
-        this.invalidateCostSummary = this.invalidateCostSummary.bind(this)
     }
 
     componentDidMount() {
@@ -48,19 +46,14 @@ class SprintCostSummaryPage extends Component {
 
     refresh(sprint, project) {
         const { dispatch } = this.props
+        dispatch(select_sprints(PAGE_KEY__SPRINTS_PAGE, [sprint.id]))
         if ( sprint.id ) {
             dispatch(setBreadcrumbs([ {to: '/projects', label: 'All Projects'},
                                       {to: '/projects/'+project.id, label: project.name},
                                       {to: '/projects/'+project.id+'/sprints', label: 'All Sprints'},
                                       {to: '/projects/'+project.id+'/sprints/'+sprint.id, label: sprint.name},
                                       {to: '/projects/'+project.id+'/sprints/'+sprint.id+'/costSummary', label: 'Cost Summary'}]))
-            dispatch(select_sprints(PAGE_KEY__SPRINTS_PAGE, [sprint.id]))
         }
-    }
-
-    invalidateCostSummary() {
-        const { dispatch, sprint_id } = this.props
-        dispatch(invalidateCostSummary(sprint_id))
     }
 
     render() {
@@ -71,13 +64,13 @@ class SprintCostSummaryPage extends Component {
             <div className="cost-summary">
               { is_loading &&
                 <div>
+                  <br/>
                   Loading...
                 </div>
               }
 
               { ! is_loading &&
                 <div>
-                  <button onClick={this.invalidateCostSummary}>Refresh</button>
                   <SprintCostSummary {...this.props}/>
                 </div>
               }

@@ -30,7 +30,7 @@ class ToolBar extends Component {
             case 'sprints':
                 return <SprintsToolbarPanel key="sprints-panel"/>
             case 'cost-summary':
-                return <CostSummaryToolbarPanel key="cost-summary-panel"/>
+                return <CostSummaryToolbarPanel key="cost-summary-panel" {...this.props}/>
             default:
                 throw new Error("Unsupported toolbar panel:" + id)
         }

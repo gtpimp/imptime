@@ -5,9 +5,21 @@ import ToolbarButton from './ToolbarButton'
 import ReactTooltip from 'react-tooltip'
 import {
     invalidateCostSummary
-} from '../actions/CostSummary'
+} from '../../actions/CostSummary'
+import {
+    PAGE_KEY__SPRINTS_PAGE
+} from '../../actions/ItemListKeyRegistry'
+import { ensureSprintsLoaded, getSprint } from '../../actions/Sprints'
+import {
+    get_selected_sprint_ids
+} from '../../actions/Page'
 
 class CostSummaryToolbarPanel extends Component {
+
+    constructor(props) {
+        super(props)
+        this.invalidateCostSummary = this.invalidateCostSummary.bind(this)
+    }
 
     onSettingsClick() {
         console.log('settings clicked')
@@ -37,7 +49,14 @@ class CostSummaryToolbarPanel extends Component {
 }
 
 function mapStateToProps(state, props) {
-    return {}
+
+    const selected_sprint_ids = get_selected_sprint_ids(state, PAGE_KEY__SPRINTS_PAGE)
+    const sprint = (selected_sprint_ids && selected_sprint_ids.length > 0 && getSprint(state, selected_sprint_ids[0])) || {}
+    const sprint_id = sprint.id || null
+
+    return {
+        sprint_id: sprint_id
+    }
 }
 
 
