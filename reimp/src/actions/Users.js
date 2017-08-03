@@ -31,7 +31,7 @@ function announceUsersLoaded(payload) {
     each(payload.users, (item) => {
         items_by_id[item.id] = item
     })
-    
+
     return {
         type: ANNOUNCE_USERS_LOADED,
         items_by_id: items_by_id,
@@ -54,7 +54,7 @@ function fetchUsersPromise(dispatch, state, user_ids) {
 
 	const params = { filter: { ids: user_ids },
 			 pagination: {'enabled': false} }
-	
+
         return impfetch(API_BASE_URL+'imp/user/', dispatch, {params:params})
 	    .then(response => response.json())
 	    .then(json => {
@@ -110,7 +110,7 @@ export function getUsers(state, user_ids) {
             'username': 'loading...',
             'loaded': false
         }
-    })    
+    })
 }
 
 export function logged_in_users_permissions(state, project_id) {
