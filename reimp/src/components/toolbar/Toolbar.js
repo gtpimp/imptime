@@ -9,6 +9,7 @@ import SprintsToolbarPanel from './SprintsToolbarPanel'
 import IssueToolbarPanel from './IssueToolbarPanel'
 import IssuesToolbarPanel from './IssuesToolbarPanel'
 import ListToolbarPanel from './ListToolbarPanel'
+import CostSummaryToolbarPanel from './CostSummaryToolbarPanel'
 
 class ToolBar extends Component {
 
@@ -28,6 +29,8 @@ class ToolBar extends Component {
                 return <SprintDashboardToolbarPanel key="sprint-dashboard-panel"/>
             case 'sprints':
                 return <SprintsToolbarPanel key="sprints-panel"/>
+            case 'cost-summary':
+                return <CostSummaryToolbarPanel key="cost-summary-panel"/>
             default:
                 throw new Error("Unsupported toolbar panel:" + id)
         }

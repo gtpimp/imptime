@@ -12,6 +12,7 @@ import {
     PAGE_KEY__SPRINTS_PAGE,
 } from '../actions/ItemListKeyRegistry'
 import {
+    set_toolbars,
     select_sprints,
 } from '../actions/Page'
 import SprintCostSummary from '../components/SprintCostSummary'
@@ -25,6 +26,7 @@ class SprintCostSummaryPage extends Component {
 
     componentDidMount() {
         const { sprint_id, project_id, sprint, project, dispatch } = this.props
+        dispatch(set_toolbars(PAGE_KEY__SPRINTS_PAGE, ['cost-summary']))
         dispatch(ensureProjectsLoaded([project_id]))
         dispatch(ensureSprintsLoaded([sprint_id]))
         dispatch(ensureCostSummaryLoaded(sprint_id))
