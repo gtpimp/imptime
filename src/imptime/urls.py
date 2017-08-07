@@ -5,6 +5,7 @@ import project_api
 import project_user_permission_api
 import sprint_api
 import cost_summary_api
+import time_summary_api
 import issue_api
 import issue_attachment_api
 import issue_tag_api
@@ -46,6 +47,8 @@ router.register(r'filter', filter_api.FilterViewSet,
                 base_name='filter')
 router.register(r'cost_summary', cost_summary_api.CostSummaryViewSet,
                 base_name='cost_summary')
+router.register(r'time_summary', time_summary_api.TimeSummaryViewSet,
+                base_name='time_summary')
 
 urlpatterns = [
     url(r'^$', views.home, name='home'),

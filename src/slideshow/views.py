@@ -69,14 +69,14 @@ def progress(request, template="slideshow/progress.html", context=None):
 
     projects = timepiece.Project.objects.filter().filter_open().filter_in_dev_or_pending()\
         .order_by('business_id', 'order')
-   
+
     plot_data = {}
 
 
     # ##
     # projects = projects.filter(business__name='bundlebrat')
     # ##
-    
+
     for project in projects:
         business = project.business
         business_id = business.id
@@ -85,7 +85,7 @@ def progress(request, template="slideshow/progress.html", context=None):
 
         dev_stats = calculate_dev_hours_stats(project, request.user)
         dev_hours_available, dev_hours_used, ratio, manager_rate, developer_rate, tester_rate = dev_stats
-            
+
         values = {
             'manager_rate': calculate_progress_ratio(manager_rate, ratio),
             'developer_rate': calculate_progress_ratio(developer_rate, ratio),
@@ -94,19 +94,19 @@ def progress(request, template="slideshow/progress.html", context=None):
             'dev_hours_available': dev_hours_available
         }
 
-        point_person = project.point_person.first_name + ' ' +  project.point_person.last_name    
-        
+        point_person = project.point_person.first_name + ' ' +  project.point_person.last_name
+
         plot_data[business_id].append({'project': project.name, 'values': values,
                                        'point_person': point_person,'dev_hours_used': dev_hours_used })
         #business_list[business] = True
         business_proj_list.append([project.business.point_person.last_name, business.name ,business])
-        
+
     business_proj_list.sort(key=itemgetter(0,1))
-   
+
     for bus_data in business_proj_list:
         business_list[bus_data[2]] = True
-        
-    context['business_list'] = business_list    
+
+    context['business_list'] = business_list
     context['plot_data_json'] = json.dumps(plot_data)
 
     return render(request, template, context)
@@ -115,10 +115,10 @@ def calculate_progress_ratio(rate, ratio):
     value = round(rate * ratio, 2)
     return value if value < 100 else 100
 
-def calculate_dev_hours_stats(project, user):    
+def calculate_dev_hours_stats(project, user):
     stats = project.calculate_new_stats(user)
     spendable_budget = project.spendable_budget
-   
+
     # manager_rate = stats['per_role']['manager']['hours_billable_core_rate']
     # developer_rate = stats['per_role']['developer']['hours_billable_core_rate']
     # tester_rate = stats['per_role']['tester']['hours_billable_core_rate']
@@ -135,7 +135,7 @@ def calculate_dev_hours_stats(project, user):
     manager_ratio = project.time_ratio_for_role('manager')
     developer_ratio = project.time_ratio_for_role('developer')
     tester_ratio = project.time_ratio_for_role('tester')
-    
+
     #users_rate = stats['per_user'][user]['rate'].full_rate  #   user stats['per_role']['developer']['hours_billable_core_rate']
 
     if spendable_budget == 0:
@@ -162,18 +162,18 @@ def calculate_dev_hours_stats(project, user):
         remaining_time = _b / ( (manager_ratio*manager_rate) + (developer_ratio*this_users_rate) + (tester_ratio*tester_rate) )
     except ZeroDivisionError:
         remaining_time = 0
-        
+
     # if _d_rate > 0:
     #     remaining_time = _b/_d_rate * (1 / (_tt/_d_rate + _mm/_d_rate + _d_ratio))
     # else:
     #     remaining_time = 0
-    
+
     remaining_users_time = developer_ratio * remaining_time
     try:
         dev_hours_used = stats['per_user'][user]['hours_billable']
     except KeyError:
         dev_hours_used = 0
-    
+
     return remaining_users_time, dev_hours_used, ratio, manager_rate, developer_rate, tester_rate
 
 @login_required

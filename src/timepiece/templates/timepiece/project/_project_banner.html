@@ -25,12 +25,12 @@
 
   </span>
 
-  
+
   <span class="active_project_title">
     <span class="business_name">{{project.business.name}}</span>  <span class="project_id">#{{project.id}}</span> <span class="project_name">{{project.name}}</span> <span class="project_description">{{project.short_description}}</span>
-        <div class="project_list_progress_graph_container" >
-            <div id="sprint_graph"/>
-        </div>
+    <div class="project_list_progress_graph_container" >
+      <div id="sprint_graph"/>
+    </div>
   </span>
 </div>
 
@@ -45,7 +45,7 @@
            color: colour,
            hoverable: true,
            ratio: length
-           
+
        }
    }
 
@@ -59,11 +59,11 @@
        if ( !has_budget ) {
            return [
                line('Manager', 0, starting_y, 100, 'orange'),
-           ];                
+           ];
        } if (over_budget) {
            return [
                line('Manager', 0, starting_y, 100, 'red'),
-           ];                
+           ];
        }
        else {
            return [
@@ -97,7 +97,7 @@
            var total_cost_percentage = values.manager_rate + values.developer_rate + values.tester_rate;
            var label = "";
            var percentage_over_budget = values['percentage_over_budget'];
-           
+
            var data_line = createLinePerSprint(y, values.manager_rate, values.developer_rate, values.tester_rate, values.has_budget, percentage_over_budget>0);
            data_points = data_points.concat(data_line);
 
@@ -181,17 +181,17 @@
 
    $(document).ready(
        function () {
-         for (project_id in main_map) {
-             var values = main_map[project_id]['data_points'];
-             var labels = main_map[project_id]['labels'];
-             var options = shared_options(labels);
-             var div_id = "#sprint_graph";
-             $(div_id).css("height", calculate_graph_height(labels.length) + 10);
-             $.plot($("#sprint_graph"),
-                  values,
-                  options);
-         }
-           
+           for (project_id in main_map) {
+               var values = main_map[project_id]['data_points'];
+               var labels = main_map[project_id]['labels'];
+               var options = shared_options(labels);
+               var div_id = "#sprint_graph";
+               $(div_id).css("height", calculate_graph_height(labels.length) + 10);
+               $.plot($("#sprint_graph"),
+                      values,
+                      options);
+           }
+
        });
 
   </script>

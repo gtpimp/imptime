@@ -3458,6 +3458,7 @@ def get_project_detail(request, project_id, context=None):
                                   'values': values,
                                   'dev_hours_used': dev_hours_used })
 
+    import pdb;pdb.set_trace()
     context['plot_data_json'] = json.dumps(plot_data)
 
 

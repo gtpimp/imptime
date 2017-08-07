@@ -87,6 +87,5 @@ export function getCostSummary(state, sprint_id) {
 export function isLoadingCostSummary(state, sprint_id) {
     sprint_id = parseInt(sprint_id)
     const loading_ids = (state.cost_summary || {}).loading_sprint_ids || []
-    const test = includes(loading_ids, sprint_id)
     return includes(loading_ids, sprint_id)
 }

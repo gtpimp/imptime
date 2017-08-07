@@ -15,6 +15,7 @@ import {
     select_sprints,
 } from '../actions/Page'
 import SprintCostSummary from '../components/SprintCostSummary'
+import SprintTimeSummary from '../components/SprintTimeSummary'
 
 class SprintCostSummaryPage extends Component {
 
@@ -72,6 +73,7 @@ class SprintCostSummaryPage extends Component {
               { ! is_loading &&
                 <div>
                   <SprintCostSummary {...this.props}/>
+                  <SprintTimeSummary {...this.props}/>
                 </div>
               }
             </div>
