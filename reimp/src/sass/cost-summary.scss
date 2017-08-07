@@ -1,6 +1,11 @@
-.cost-summary {
+.cost-summary__page {
     padding-left: 26px;
     padding-right: 26px;
+}
+
+.cost-summary {
+    width: 50%;
+    float: right;
 }
 
 .cost-summary__content {

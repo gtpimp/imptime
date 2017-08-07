@@ -7,6 +7,9 @@ import {
     invalidateCostSummary
 } from '../../actions/CostSummary'
 import {
+    invalidateTimeSummary
+} from '../../actions/TimeSummary'
+import {
     PAGE_KEY__SPRINTS_PAGE
 } from '../../actions/ItemListKeyRegistry'
 import { ensureSprintsLoaded, getSprint } from '../../actions/Sprints'
@@ -18,7 +21,13 @@ class CostSummaryToolbarPanel extends Component {
 
     constructor(props) {
         super(props)
-        this.invalidateCostSummary = this.invalidateCostSummary.bind(this)
+        this.invalidateComponents = this.invalidateComponents.bind(this)
+    }
+
+    invalidateComponents() {
+        const { dispatch, sprint_id } = this.props
+        dispatch(invalidateCostSummary(sprint_id))
+        dispatch(invalidateTimeSummary(sprint_id))
     }
 
     onSettingsClick() {
@@ -41,7 +50,7 @@ class CostSummaryToolbarPanel extends Component {
     render() {
         return (
             <div className="toolbar-panel">
-              <ToolbarButton tooltip="Refresh" icon="refresh" onClick={this.invalidateCostSummary}/>
+              <ToolbarButton tooltip="Refresh" icon="refresh" onClick={this.invalidateComponents}/>
               <ReactTooltip place="bottom" type="info" />
             </div>
         )

@@ -21,6 +21,7 @@ import user from './user'
 import websockets from './websockets'
 import settings from './settings'
 import cost_summary from './cost_summary'
+import time_summary from './time_summary'
 
 const rootReducer = combineReducers({
     auth,
@@ -42,6 +43,7 @@ const rootReducer = combineReducers({
     routing,
     settings,
     sprint,
+    time_summary,
     toolbar,
     user,
     websockets,

@@ -26,7 +26,6 @@ class SprintTimeSummary extends Component {
         dispatch(ensureProjectsLoaded([new_props.project_id]))
         dispatch(ensureSprintsLoaded([new_props.sprint_id]))
         dispatch(ensureTimeSummaryLoaded(new_props.sprint_id))
-
         if ( new_props.sprint.id !== this.props.sprint.id ||
              new_props.sprint.name !== this.props.sprint.name ||
              new_props.project.name !== this.props.project.name ) {
@@ -40,11 +39,18 @@ class SprintTimeSummary extends Component {
 
     render() {
 
-        const { sprint, project, time_summary } = this.props
+        const { sprint, project, time_summary, values } = this.props
 
         return (
             <div>
-              Test
+              <p>Sprint ID: {time_summary.sprint_id}</p>
+              <p>Total Billable: {values.total_billable}</p>
+              <p>Manager Rate:  {values.manager_rate}</p>
+              <p>Developer Rate: {values.developer_rate}</p>
+              <p>Tester Rate:  {values.tester_rate}</p>
+              <p>Has Budget: {values.has_budget}</p>
+              <p>Percentage Over Budget: {values.percentage_over_budget}</p>
+              <p>Dev Hours Available: {values.dev_hours_available}</p>
             </div>
         )
     }
@@ -56,6 +62,8 @@ function mapStateToProps(state, props) {
     const project_id = props.params.projectId
     const project = getProject(state, project_id) || {}
     const time_summary = getTimeSummary(state, sprint_id) || {}
+    debugger;
+    const values = time_summary.values || {}
 
     return {
         sprint_id: sprint_id,

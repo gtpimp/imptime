@@ -43,7 +43,7 @@ class TimeSummaryViewSet(BaseViewSet):
                           "values": values,
                           "dev_hours_used": dev_hours_used }
 
-            context["time_summary"] = json.dumps(plot_data)
+            context["time_summary"] = plot_data
             data = {"status": "success", "payload": context}
 
         except Exception, ex:

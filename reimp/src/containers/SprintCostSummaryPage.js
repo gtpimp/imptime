@@ -8,6 +8,10 @@ import {
     isLoadingCostSummary,
 } from '../actions/CostSummary'
 import {
+    ensureTimeSummaryLoaded,
+    isLoadingTimeSummary,
+} from '../actions/TimeSummary'
+import {
     PAGE_KEY__SPRINTS_PAGE,
 } from '../actions/ItemListKeyRegistry'
 import {
@@ -29,6 +33,7 @@ class SprintCostSummaryPage extends Component {
         dispatch(ensureProjectsLoaded([project_id]))
         dispatch(ensureSprintsLoaded([sprint_id]))
         dispatch(ensureCostSummaryLoaded(sprint_id))
+        /* dispatch(ensureTimeSummaryLoaded(sprint_id))*/
         this.refresh(sprint, project)
     }
 
@@ -37,6 +42,7 @@ class SprintCostSummaryPage extends Component {
         dispatch(ensureProjectsLoaded([new_props.project_id]))
         dispatch(ensureSprintsLoaded([new_props.sprint_id]))
         dispatch(ensureCostSummaryLoaded(new_props.sprint_id))
+        /* dispatch(ensureTimeSummaryLoaded(new_props.sprint_id))*/
 
         if ( new_props.sprint.id !== this.props.sprint.id ||
              new_props.sprint.name !== this.props.sprint.name ||
@@ -62,7 +68,7 @@ class SprintCostSummaryPage extends Component {
         const { is_loading } = this.props
 
         return (
-            <div className="cost-summary">
+            <div className="cost-summary__page">
               { is_loading &&
                 <div>
                   <br/>
@@ -72,8 +78,12 @@ class SprintCostSummaryPage extends Component {
 
               { ! is_loading &&
                 <div>
-                  <SprintCostSummary {...this.props}/>
-                  <SprintTimeSummary {...this.props}/>
+                  <div className="time-summary">
+                    <SprintTimeSummary {...this.props}/>
+                  </div>
+                  <div className="cost-summary">
+                    <SprintCostSummary {...this.props}/>
+                  </div>
                 </div>
               }
             </div>
@@ -86,7 +96,7 @@ function mapStateToProps(state, props) {
     const sprint = getSprint(state, sprint_id) || {}
     const project_id = props.params.projectId
     const project = getProject(state, project_id) || {}
-    const is_loading = isLoadingCostSummary(state, sprint_id)
+    const is_loading = isLoadingCostSummary(state, sprint_id) || isLoadingTimeSummary(state, sprint_id)
 
     return {
         sprint_id: sprint_id,

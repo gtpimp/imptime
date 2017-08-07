@@ -102,7 +102,7 @@ class SprintViewSet(BaseViewSet):
             else:
                 order = 0
             project = self.allowed_project(project_id)
-            #import pdb; pdb.set_trace()
+
             if self.logged_in_permissions(project).has_create_sprint:
                 new_status = SprintStatus.objects.get_or_create(business_id=project_id, name='pending')[0]
                 sprint = Sprint.objects.create(

@@ -62,7 +62,7 @@ function fetchTimeSummary(dispatch, state, sprint_id) {
     return (dispatch, getState) => {
         const state = getState()
         const API_BASE_URL = state.settings.configured && state.settings.API_BASE_URL
-	      /* dispatch(announceLoadingTimeSummary(sprint_id))*/
+	      dispatch(announceLoadingTimeSummary(sprint_id))
 	      return impfetch(API_BASE_URL+'imp/time_summary/'+sprint_id+'/', dispatch)
             .then(response => response.json())
 	          .then(json => {
