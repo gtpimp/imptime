@@ -37,18 +37,27 @@ class SprintTimeSummary extends Component {
     }
 
     renderUser(value, index) {
+
+        const { has_budget } = this.props
+
         return (
             <div>
               <span>
                 <OtherUser value={index} />
               </span>
-              <p>Total Billable: {value.total_billable}</p>
-              <p>Manager Rate:  {value.manager_rate}</p>
-              <p>Developer Rate: {value.developer_rate}</p>
-              <p>Tester Rate:  {value.tester_rate}</p>
-              <p>Has Budget: {value.has_budget}</p>
-              <p>Percentage Over Budget: {value.percentage_over_budget}</p>
-              <p>Dev Hours Available: {value.dev_hours_available}</p>
+              <p>Dev Hours Used: {value.dev_hours_used}</p>
+              { has_budget &&
+                <div>
+                  <p>Developer Hours Available: {value.dev_hours_available}</p>
+                  <p>Tester Hours Available: {value.tester_hours_available}</p>
+                  <p>Manager Hours Available: {value.manager_hours_available}</p>
+                </div>
+              }
+              { ! has_budget &&
+                <div>
+                  <p>Percentage Over Budget: {value.percentage_over_budget}</p>
+                </div>
+              }
             </div>
         )
     }
@@ -68,7 +77,6 @@ class SprintTimeSummary extends Component {
                    )}
                 </div>
               }
-
             </div>
         )
     }
@@ -80,6 +88,7 @@ function mapStateToProps(state, props) {
     const project = getProject(state, project_id) || {}
     const time_summary = getTimeSummary(state, sprint_id) || {}
     const per_user = time_summary.per_user || {}
+    const has_budget = time_summary.has_budget || null
 
     return {
         sprint_id: sprint_id,
@@ -88,6 +97,7 @@ function mapStateToProps(state, props) {
         project: project,
         time_summary: time_summary,
         per_user: per_user,
+        has_budget: has_budget,
     }
 }
 
