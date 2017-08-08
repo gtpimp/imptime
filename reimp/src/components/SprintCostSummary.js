@@ -18,7 +18,7 @@ class SprintCostSummary extends Component {
         dispatch(ensureProjectsLoaded([project_id]))
         dispatch(ensureSprintsLoaded([sprint_id]))
         dispatch(ensureCostSummaryLoaded(sprint_id))
-        this.refresh(sprint, project)
+        this.refresh()
     }
 
     componentWillReceiveProps(new_props) {
@@ -30,12 +30,11 @@ class SprintCostSummary extends Component {
         if ( new_props.sprint.id !== this.props.sprint.id ||
              new_props.sprint.name !== this.props.sprint.name ||
              new_props.project.name !== this.props.project.name ) {
-            this.refresh(new_props.sprint, new_props.project)
+            this.refresh()
         }
     }
 
-    refresh(sprint, project) {
-        /* const {dispatch} = this.props*/
+    refresh() {
     }
 
     renderUser(value, index) {
@@ -177,9 +176,8 @@ class SprintCostSummary extends Component {
 }
 
 function mapStateToProps(state, props) {
-    const sprint_id = props.params.sprintId
+    const {sprint_id, project_id} = props
     const sprint = getSprint(state, sprint_id) || {}
-    const project_id = props.params.projectId
     const project = getProject(state, project_id) || {}
     const cost_summary = getCostSummary(state, sprint_id) || {}
     const per_role = cost_summary.per_role || {}

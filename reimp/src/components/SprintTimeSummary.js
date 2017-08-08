@@ -57,9 +57,8 @@ class SprintTimeSummary extends Component {
 }
 
 function mapStateToProps(state, props) {
-    const sprint_id = props.params.sprintId
+    const {sprint_id, project_id} = props
     const sprint = getSprint(state, sprint_id) || {}
-    const project_id = props.params.projectId
     const project = getProject(state, project_id) || {}
     const time_summary = getTimeSummary(state, sprint_id) || {}
     debugger;

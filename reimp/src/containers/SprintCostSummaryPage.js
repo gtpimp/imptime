@@ -32,8 +32,6 @@ class SprintCostSummaryPage extends Component {
         dispatch(set_toolbars(PAGE_KEY__SPRINTS_PAGE, ['cost-summary']))
         dispatch(ensureProjectsLoaded([project_id]))
         dispatch(ensureSprintsLoaded([sprint_id]))
-        dispatch(ensureCostSummaryLoaded(sprint_id))
-        /* dispatch(ensureTimeSummaryLoaded(sprint_id))*/
         this.refresh(sprint, project)
     }
 
@@ -41,8 +39,6 @@ class SprintCostSummaryPage extends Component {
         const { dispatch } = this.props
         dispatch(ensureProjectsLoaded([new_props.project_id]))
         dispatch(ensureSprintsLoaded([new_props.sprint_id]))
-        dispatch(ensureCostSummaryLoaded(new_props.sprint_id))
-        /* dispatch(ensureTimeSummaryLoaded(new_props.sprint_id))*/
 
         if ( new_props.sprint.id !== this.props.sprint.id ||
              new_props.sprint.name !== this.props.sprint.name ||
@@ -65,7 +61,7 @@ class SprintCostSummaryPage extends Component {
 
     render() {
 
-        const { is_loading } = this.props
+        const { is_loading, sprint_id, project_id } = this.props
 
         return (
             <div className="cost-summary__page">
@@ -79,10 +75,10 @@ class SprintCostSummaryPage extends Component {
               { ! is_loading &&
                 <div>
                   <div className="time-summary">
-                    <SprintTimeSummary {...this.props}/>
+                    <SprintTimeSummary sprint_id={sprint_id} project_id={project_id}/>
                   </div>
                   <div className="cost-summary">
-                    <SprintCostSummary {...this.props}/>
+                    <SprintCostSummary sprint_id={sprint_id} project_id={project_id}/>
                   </div>
                 </div>
               }
