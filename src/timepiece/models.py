@@ -281,13 +281,16 @@ class Business(models.Model):
 
     @property
     def users(self):
-        user_ids =  Project.objects.filter(business__id = self.id).values_list("users", flat=True)
-        user_ids = [user_id for user_id in user_ids if user_id is not None]
-        user_ids = list(set(user_ids))
-        return_users = []
-        for user_id in user_ids:
-            return_users.append(User.objects.get(id=user_id))
-        return return_users
+
+        return BusinessPermissions.active_users_for_business(self.id)
+
+        # user_ids =  Project.objects.filter(business__id = self.id).values_list("users", flat=True)
+        # user_ids = [user_id for user_id in user_ids if user_id is not None]
+        # user_ids = list(set(user_ids))
+        # return_users = []
+        # for user_id in user_ids:
+        #     return_users.append(User.objects.get(id=user_id))
+        # return return_users
 
     def get_colour_for_status(self, status_name):
         possible_states = [x['status'] for x in Issue.objects.filter(project__business=self).values('status').order_by("status").distinct()]
@@ -502,9 +505,9 @@ class BusinessPermissions(BaseModel):
                                    business_permissions__is_active_member_of_business=True)
 
     @classmethod
-    def viewable_users_for_business(self, logged_in_user, business_id):
-        users = self.viewable_users(user=logged_in_user)
-        return users.filter(business_permissions__business_id=business_id).distinct()
+    def active_users_for_business(self, business_id):
+        return User.objects.filter(business_permissions__business_id=business_id,
+                                   business_permissions__is_active_member_of_business=True).distinct()
 
     @classmethod
     def get_users_who_can_capture_time(self):

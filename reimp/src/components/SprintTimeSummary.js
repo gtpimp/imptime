@@ -18,7 +18,7 @@ class SprintTimeSummary extends Component {
         dispatch(ensureProjectsLoaded([project_id]))
         dispatch(ensureSprintsLoaded([sprint_id]))
         dispatch(ensureTimeSummaryLoaded(sprint_id))
-        this.refresh(sprint, project)
+        this.refresh()
     }
 
     componentWillReceiveProps(new_props) {
@@ -29,28 +29,46 @@ class SprintTimeSummary extends Component {
         if ( new_props.sprint.id !== this.props.sprint.id ||
              new_props.sprint.name !== this.props.sprint.name ||
              new_props.project.name !== this.props.project.name ) {
-            this.refresh(new_props.sprint, new_props.project)
+            this.refresh()
         }
     }
 
-    refresh(sprint, project) {
-        /* const {dispatch} = this.props*/
+    refresh() {
+    }
+
+    renderUser(value, index) {
+        return (
+            <div>
+              <span>
+                <OtherUser value={index} />
+              </span>
+              <p>Total Billable: {value.total_billable}</p>
+              <p>Manager Rate:  {value.manager_rate}</p>
+              <p>Developer Rate: {value.developer_rate}</p>
+              <p>Tester Rate:  {value.tester_rate}</p>
+              <p>Has Budget: {value.has_budget}</p>
+              <p>Percentage Over Budget: {value.percentage_over_budget}</p>
+              <p>Dev Hours Available: {value.dev_hours_available}</p>
+            </div>
+        )
     }
 
     render() {
 
-        const { sprint, project, time_summary, values } = this.props
+        const { sprint, project, per_user } = this.props
 
         return (
             <div>
-              <p>Sprint ID: {time_summary.sprint_id}</p>
-              <p>Total Billable: {values.total_billable}</p>
-              <p>Manager Rate:  {values.manager_rate}</p>
-              <p>Developer Rate: {values.developer_rate}</p>
-              <p>Tester Rate:  {values.tester_rate}</p>
-              <p>Has Budget: {values.has_budget}</p>
-              <p>Percentage Over Budget: {values.percentage_over_budget}</p>
-              <p>Dev Hours Available: {values.dev_hours_available}</p>
+              { per_user &&
+                <div>
+                  {map(per_user, (value, index) =>
+                      <div className="cost-summary__role" key={index}>
+                        {this.renderUser(value, index)}
+                      </div>
+                   )}
+                </div>
+              }
+
             </div>
         )
     }
@@ -61,8 +79,7 @@ function mapStateToProps(state, props) {
     const sprint = getSprint(state, sprint_id) || {}
     const project = getProject(state, project_id) || {}
     const time_summary = getTimeSummary(state, sprint_id) || {}
-    debugger;
-    const values = time_summary.values || {}
+    const per_user = time_summary.per_user || {}
 
     return {
         sprint_id: sprint_id,
@@ -70,6 +87,7 @@ function mapStateToProps(state, props) {
         project_id: project_id,
         project: project,
         time_summary: time_summary,
+        per_user: per_user,
     }
 }
 

@@ -18,7 +18,7 @@ class ProjectSerializer(BaseSerializer):
     allowed_sprint_status_names = serializers.ListField(child=serializers.CharField())
     feature_names = serializers.ListField(child=serializers.CharField())
     logged_in_users_permissions = ProjectUserPermissionSerializer(source='user_permissions')
-    
+
     def __init__(self, *args, **kwargs):
         logged_in_user = kwargs.pop('logged_in_user')
         super(ProjectSerializer, self).__init__(*args, **kwargs)
@@ -29,26 +29,25 @@ class ProjectSerializer(BaseSerializer):
         # every line of this function, we mark every line with sic to
         # put us off propagating the confusion out of this function.
 
-        project_users = ProjectPermissions.viewable_users_for_business(logged_in_user=self.logged_in_user,
-                                                                       business_id=project.id) #sic
+        project_users = ProjectPermissions.active_users_for_business(business_id=project.id) #sic
 
         project_user_ids = project_users.values_list('id', flat=True).order_by("username")
-        
+
         project.allowed_user_ids = project_user_ids
 
         project.invited_user_ids = project_user_ids.filter(invites_received__accepted=False)
         project.feature_names = Feature.objects.filter(business=project).order_by("name")  # sic
-        
+
         project.allowed_issue_status_names =  [x for x in IssueStatus.objects.all()\
                                                .filter(business=project)\
                                                .order_by("name")\
                                                .values_list('name', flat=True)] #sic
-        
+
         project.allowed_sprint_status_names = [x for x in SprintStatus.objects.all()\
                                                .filter(business=project)\
                                                .order_by("name")\
                                                .values_list('name', flat=True)] #sic
-        
+
         project.user_permissions = ProjectPermissions.for_user(user=self.logged_in_user,
                                                                business=project) #sic
 

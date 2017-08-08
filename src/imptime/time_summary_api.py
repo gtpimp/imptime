@@ -8,7 +8,7 @@ import json
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.decorators import permission_classes
 from timepiece.models import Project as Sprint
-from timepiece.models import BusinessPermissions, Entry
+from timepiece.models import BusinessPermissions, Entry, Rate, User
 
 logger = logging.getLogger(__name__)
 
@@ -25,25 +25,46 @@ class TimeSummaryViewSet(BaseViewSet):
             cost_totals = all_entries.cost_totals_for_project(sprint)
             total_billable = cost_totals["billable"]
 
-            dev_stats = calculate_dev_hours_stats(sprint, request.user)
-            dev_hours_available, dev_hours_used, ratio, manager_rate, developer_rate, tester_rate = dev_stats
+            time_summary = { "sprint_id": sprint.id,
+                             "sprint": sprint.name,
+                             "per_user": {} }
 
-            values = {
-                "total_billable": total_billable,
-                "manager_rate":  calculate_progress_ratio(manager_rate, ratio),
-                "developer_rate": calculate_progress_ratio(developer_rate, ratio),
-                "tester_rate":  calculate_progress_ratio(tester_rate, ratio),
-                "has_budget": sprint.spendable_budget > 0,
-                "percentage_over_budget": float(total_billable - sprint.spendable_budget)/sprint.spendable_budget if sprint.spendable_budget else 0,
-                "dev_hours_available": dev_hours_available
-            }
+            bp = BusinessPermissions.for_user(request.user, sprint.business)
+            if not bp.has_edit_issues:
+                return self.error_response("No permission to view time summary")
 
-            plot_data = { "sprint_id": sprint.id,
-                          "sprint": sprint.name,
-                          "values": values,
-                          "dev_hours_used": dev_hours_used }
+            developers = Rate.objects.filter(project=sprint, time_tracking_mode="developer")\
+                                     .values_list('user', flat=True)
 
-            context["time_summary"] = plot_data
+            users = BusinessPermissions.active_users_for_business(sprint.business.pk)\
+                                       .filter(pk__in=developers)
+
+            # users = User.objects.filter(business_permissions__business_id=sprint.business.pk)
+            # user_pks = []
+            # import pdb;pdb.set_trace()
+            # for user in users:
+            #     permission = user.business_permissions.filter(business_id=sprint.business.pk, is_active_member_of_business=True)
+            #     if permission: user_pks.append(user.pk)
+
+            for user in users:
+                dev_stats = calculate_dev_hours_stats(sprint, user)
+                dev_hours_available, dev_hours_used, ratio, manager_rate, developer_rate, tester_rate = dev_stats
+
+                values = {
+                    "total_billable": total_billable,
+                    "manager_rate":  calculate_progress_ratio(manager_rate, ratio),
+                    "developer_rate": calculate_progress_ratio(developer_rate, ratio),
+                    "tester_rate":  calculate_progress_ratio(tester_rate, ratio),
+                    "has_budget": sprint.spendable_budget > 0,
+                    "percentage_over_budget": float(total_billable - sprint.spendable_budget)/sprint.spendable_budget if sprint.spendable_budget else 0,
+                    "dev_hours_used": dev_hours_used,
+                    "dev_hours_available": dev_hours_available
+                }
+
+                time_summary["per_user"][user.pk] = values
+
+            context["time_summary"] = time_summary
+
             data = {"status": "success", "payload": context}
 
         except Exception, ex:

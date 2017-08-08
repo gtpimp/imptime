@@ -1571,10 +1571,13 @@ def add_user_to_project(request, project_id):
         form = timepiece_forms.AddUserToProjectForm(request.POST)
         if form.is_valid():
             user = form.save()
-            timepiece.ProjectRelationship.objects.get_or_create(
-                user=user,
-                project=project,
-            )
+            # timepiece.ProjectRelationship.objects.get_or_create(
+            #     user=user,
+            #     project=project,
+            # )
+            bp = timepiece.BusinessPermissions.objects.get_or_create(business=project.business_id, user=user)[0]
+            bp.is_active_member_of_business = True
+            bp.save()
             _set_project_rate_to_default_for_user(user, project)
     return HttpResponseRedirect(
         reverse('view_project', args=(project.pk,)))

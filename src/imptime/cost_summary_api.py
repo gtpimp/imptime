@@ -22,7 +22,7 @@ class CostSummaryViewSet(BaseViewSet):
             sprint = Sprint.objects.get(pk=sprint_id)
             bp = BusinessPermissions.for_user(request.user, sprint.business)  # sic
             if not bp.has_view_ctc_billable_rates:
-                return self.error_response("No permission to do that")
+                return self.error_response("No permission to view cost summary")
 
             cost_summary = sprint.prepare_stats_for_json(request.user)
             context['cost_summary'] = cost_summary
