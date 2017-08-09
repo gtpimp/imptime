@@ -161,6 +161,7 @@ TEMPLATES = [
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
+                #"django.core.context_processors.request",
                 "django.contrib.auth.context_processors.auth",
                 #"django.core.context_processors.debug",
                 #"django.core.context_processors.i18n",
@@ -273,7 +274,7 @@ INSTALLED_APPS = (
     'dateutil',
     'djcelery',
     'colorful',
-    #'endless_pagination',
+    'el_pagination',
     'mailqueue',
     'corsheaders',
 
@@ -283,6 +284,7 @@ INSTALLED_APPS = (
     'implicitdesign',
     'jira_interface',
     'invoicing',
+    'testable',
     'animated_website',
     'slideshow',
     'impasync',
@@ -296,8 +298,8 @@ INSTALLED_APPS = (
 )
 
 PAGINATION_DEFAULT_PAGINATION=200
-ENDLESS_PAGINATION_PER_PAGE=50
-ENDLESS_PAGINATION_ADD_NOFOLLOW=True #from endless docs: Set to True if your SEO alchemist wants search engines not to follow pagination links.
+EL_PAGINATION_PER_PAGE=50
+EL_PAGINATION_ADD_NOFOLLOW=True
 
 INVOICE_PAYMENT_DAYS=30
 

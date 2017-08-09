@@ -367,4 +367,13 @@ a.ico-calc {
 .invoice--form-left-second_header {
     float: left;
     width: 100%;
+
+.issue_detail__testable_tag {
+    background-color: white;
+    float: right;
+    margin:5px;
+    border-radius: 5px;
+    padding-left: 2px;
+    padding-right: 2px;
+    font-size: 8px;
 }

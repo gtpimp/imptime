@@ -38,7 +38,7 @@ class InvoiceQuerySet(QuerySet):
                (self.filter(client__taxable=False).aggregate(Sum('items__total_cost'))['items__total_cost__sum'] or 0)
 
     def vat(self):
-        return self.cost_with_vat() - self.cost()
+        return (self.cost_with_vat() or 0) - (self.cost() or 0)
 
     def cost(self):
         return self.aggregate(Sum('items__total_cost'))['items__total_cost__sum']

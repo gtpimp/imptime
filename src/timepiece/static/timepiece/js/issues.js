@@ -504,6 +504,26 @@ imp.refresh_show_all_users = function(menu_el, logged_in_username) {
     return false;
 };
 
+imp.on_exclude_issue_from_regression_test = function(el, url) {
+    var on_done = imp.issue_loading("Saving");
+    var response = $.ajax({type:"POST",
+                           url: url});
+    response.done( function() {
+	on_done();
+	imp.refresh_issue_detail();
+    } );
+};
+
+imp.on_include_issue_in_regression_test = function(el, url) {
+    var on_done = imp.issue_loading("Saving");
+    var response = $.ajax({type:"POST",
+                           url: url});
+    response.done( function() {
+	on_done();
+	imp.refresh_issue_detail();
+    } );
+};
+
 imp.on_add_issue_comment = function(el, url) {
     var container = el.parent();
     var on_done = imp.issue_loading("Creating comment");

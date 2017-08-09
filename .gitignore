@@ -48,3 +48,4 @@ src/django-colorful
 src/unicodecsv
 devops/secret
 
+.tern-port

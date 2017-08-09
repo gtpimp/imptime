@@ -84,6 +84,15 @@
 				            </a>	
 			            </li>
 
+			            {% has_permission has_view_testables business %}  
+			            <li>
+				      <a href="#"  onclick="imp.do_form_show(this , '{% url 'testable:dashboard' business.id %}' ); return false;">
+				        Testables
+				      </a>	
+			            </li>
+                                    {% end_permission %}
+
+                                    
 			            {% ifequal business.sync_with "jira" %}
 			            <li>
 				            <a href="#" onclick="imp.projects.show_project_card_as_popup(this, '{% url 'jira:sync_business_from_jira' business.id %}', 'Synching...', {'reload_on_done':'{% url 'closed_project_list' business.id %}'}); return false;">

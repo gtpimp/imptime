@@ -27,6 +27,23 @@
   {% if issue.id %}
     <div class="change_issue_number">
       <div class="small_button btn title" onclick="$(this).parents('.change_issue_number').find('.content').toggle(); return false;">Change number</div>
+
+      {% has_permission has_view_testables project.business %}
+      {% if issue.testable.include_in_regression_test %}
+      <div class="testable_item__issue_detail--exclude-button">
+        <a class="small_button btn btn-secondary" onclick="imp.on_exclude_issue_from_regression_test($(this), '{% url 'testable:exclude_from_regression_test_for_issue' issue.pk %}');">
+          Exclude from regression test
+        </a>
+      </div>
+      {% else %}
+      <div class="testable_item__issue_detail--include-button" {% if issue.testable.include_in_regression_test %}style="display:none"{% endif %}>
+        <a class="small_button btn btn-secondary" onclick="imp.on_include_issue_in_regression_test($(this), '{% url 'testable:include_in_regression_test_for_issue' issue.pk %}');">
+          Include in regression test
+        </a>
+      </div>
+      {% endif %}
+      {% end_permission %}
+
       <div class="content" style="display:none">
         <form method="POST" action="{% url 'edit_issue_number' issue.id %}">
           {% csrf_token %}
@@ -55,6 +72,8 @@
       {% if issue.due_date %}
         Due date: {{ issue.due_date|date:'D d-M-Y' }} <br/>
       {% endif %}
+
+      
     </p>
   </div>
   {% endif %}
@@ -115,6 +134,33 @@
       </div>
       <a href="http://daringfireball.net/projects/markdown/syntax" class="markdown_help" target="_blank" style="display:none">markdown syntax</a>
     </div>
+
+    <div class="issue_test_events">
+      {% for testable in issue.testables.all %}
+      <div class="issue_detail__testable_tag">
+        {% with test_event=testable.most_recent_result %}
+        {% if test_event %}
+        Testable{{forloop.counter}}: 
+        <div class="testable_item__most_recent_result__status_icon">
+          {% if test_event.status == 'passed' %}
+          <img src="{% static 'images/icons/tick.png' %}"/>
+          {% endif %}
+          {% if test_event.status == 'failed' %}
+          <img src="{% static 'images/icons/red_cross.png' %}"/>
+          {% endif %}
+          {% if test_event.status == 'untested' %}
+          Untested
+          {% endif %}
+          at {{test_event.checked_at}} by {{test_event.checked_by.username}}
+          in {{test_event.testable_session}}
+        </div>
+        {% endif %}
+        {% endwith %}
+      </div>
+      {% endfor %}
+      <div style="clear:both"></div>
+    </div>
+    
     <div class="issue_comments">
       <br/>
       {% if issue.comments_in_order.count %}

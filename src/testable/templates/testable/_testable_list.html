@@ -1,0 +1,48 @@
+
+{% load el_pagination_tags %}
+
+{% paginate testables %}
+
+{% show_pages %}
+<div class="testable_list_content">
+  {% for testable in testables %}
+  {% include "testable/_testable_item.html" %}
+  {% empty %}
+  No testables
+  {% endfor %}
+</div>
+
+<script>
+ $(document).ready(function() {
+     $(".testable_item__issue_summary__exclude_from_regression_test").click( function(event) {
+         var el = $(this);
+         testable.on_exclude_from_regression_test(event, el);
+     });
+     $(".testable_item__issue_summary__include_in_regression_test").click( function(event) {
+         var el = $(this);
+         testable.on_include_in_regression_test(event, el);
+     });
+     $(".testable_item__issue_summary__include_in_regression_test").click( function(event) {
+         var el = $(this);
+         testable.on_include_in_regression_test(event, el);
+     });
+     $(".testable_item__test_event__test_passed").click( function(event) {
+         var el = $(this);
+         testable.on_change_test_status(event, el);
+     });
+     $(".testable_item__test_event__test_failed").click( function(event) {
+         var el = $(this);
+         testable.on_change_test_status(event, el);
+     });
+     $(".testable_item__test_event__test_untested").click( function(event) {
+         var el = $(this);
+         testable.on_change_test_status(event, el);
+     });
+     $(".testable_item__test_event__test_remove").click( function(event) {
+         var el = $(this);
+         testable.on_change_test_status(event, el);
+     });
+ });
+</script>
+
+{% show_pages %}

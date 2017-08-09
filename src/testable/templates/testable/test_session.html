@@ -1,0 +1,26 @@
+{% extends "testable/base.html" %}
+
+{% block content %}
+
+<h1>Testable session {{testable_session}} for project {{testable_session.business}}</h1>
+
+<a class="btn btn-info" href="{% url 'testable:dashboard' business.id %}" >Back to testable sessions</a>
+
+{% include "testable/_filter_summary.html" %}
+
+<script>
+ $(".filter_form_filter_show").click(function() {
+     $(".filter_form_section").show();
+     $(".filter_form_filter_show").hide();
+ });
+ $(".filter_form_filter_hide").click(function() {
+     $(".filter_form_section").hide();
+     $(".filter_form_filter_show").show();
+ });
+</script>
+
+<div/>
+
+{% include "testable/_testable_list.html" %}
+
+{% endblock %}
