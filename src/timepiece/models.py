@@ -3661,9 +3661,6 @@ class Issue(models.Model):
     def status_as_class(self):
         return 'status_%s' % self.status.replace(" ","_").lower()
 
-    def get_tags(self):
-        return IssueTag.objects.filter(issue=self).order_by("tag__category__name")
-
     def get_points(self):
         business_users = self.project.business.users
         for user in business_users:
