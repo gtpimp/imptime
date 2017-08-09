@@ -43,6 +43,7 @@ django-mptt==0.7.4
 django-notify==1.1.2
 django-nyt==0.9.7.3
 django-pagination==1.0.7
+django-el-pagination==3.1.0
 django-picklefield==0.3.2
 django-pipeline==1.5.4
 django-sekizai==0.8.2
