@@ -147,11 +147,7 @@ imp.projects.attach_sortable = function(sortable, sortable_url, move_issue_to_pr
 };
 
 imp.projects.load_or_display_issues = function(project_id, element, expand_url) {
-    if ( imp.highlight_issue_id ) {
-	$("#"+imp.highlight_issue_id).removeClass("highlight");
-        imp.highlight_issue_id = null;
-    }
-    
+
     imp.current_issue_detail_url = null;
     imp.current_issue_id = null;
 
@@ -185,6 +181,7 @@ imp.projects.load_or_display_issues = function(project_id, element, expand_url) 
 	imp.projects.attach_sortable( sortable, sortable_url, move_issue_to_project_url );
         imp.on_issue_rows_loaded($(element));
         imp.projects.already_loaded_sprints[project_id] = data;
+
     };
 
     if ( imp.projects.already_loaded_sprints[project_id] ) {
@@ -269,6 +266,12 @@ imp.on_issue_rows_loaded = function(issue_row_container) {
 	$(this).removeClass("hovered");
     });
     imp.refresh_hidden_fields(issue_row_container);
+
+    if ( imp.initial_highlight_issue_id ) {
+        imp.highlight_issue_id = imp.initial_highlight_issue_id;
+        imp.initial_highlight_issue_id = null;
+    }
+    
     imp.highlight_issue();
     imp.set_issue_checkbox_hooks(issue_row_container);
     imp.set_assigned_by_clickable(issue_row_container);

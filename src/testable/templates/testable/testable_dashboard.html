@@ -1,0 +1,26 @@
+{% extends "testable/base.html" %}
+
+{% block content %}
+
+Testable dashboard.
+
+<h1>Testing {{business}}</h1>
+
+<h2>Select a test session or create a new one</h2>
+
+<form method="POST">
+  {% csrf_token %}
+  {{ testable_session_select_form }}
+  <input type="submit" class="btn btn-primary" value="Resume test session" />
+</form>
+
+<form method="POST">
+  {% csrf_token %}
+  {{ new_testable_session_form }}
+  <input type="submit" class="btn btn-primary" value="Start new test session" />
+</form>
+
+
+{% endblock %}
+
+

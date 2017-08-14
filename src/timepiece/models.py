@@ -416,6 +416,7 @@ class BusinessPermissions(BaseModel):
     can_assign_user = models.BooleanField(default=True, verbose_name="Can Assign User")
     can_be_scheduled = models.BooleanField(default=False, verbose_name="Can Be Scheduled")
     can_view_business_comments = models.BooleanField(default=False, verbose_name="Can view project comments")
+    can_view_testables = models.BooleanField(default=True, verbose_name="Can View Testables")
 
     can_view_actual_hours = models.BooleanField(default=False, verbose_name="Can View Actual Hours")
     can_see_other_user_points = models.BooleanField(default=False, verbose_name="Can See Other User's Points")
@@ -672,6 +673,10 @@ class BusinessPermissions(BaseModel):
     def has_view_business_comments(self):
         return self.user.is_superuser or self.can_view_business_comments or self.user.has_perm('timepiece.belongs_to_all_projects')
 
+    @property
+    def has_view_testables(self):
+        return self.user.is_superuser or self.can_view_testables or self.user.has_perm('timepiece.belongs_to_all_projects')
+    
     @property
     def has_edit_business_comments(self):
         return self.user.is_superuser or self.can_edit_business_comments or self.user.has_perm('timepiece.belongs_to_all_projects')
@@ -3602,7 +3607,7 @@ class Issue(models.Model):
     story_points = models.FloatField(null=True,blank=True)
     order = models.FloatField(null=True,blank=True)
     order2 = models.CharField(max_length=50, default=None, null=True,blank=True) #alternative means of ordering by string (used by eg jira)
-    feature = models.ForeignKey("Feature",blank=True,null=True,related_name='issues')
+    feature = models.ForeignKey("Feature", blank=True, null=True, related_name='issues')
     assigned_to = models.ForeignKey(User, related_name='assigned_issues', blank=True,null=True)
     interface_plugin_number = models.CharField(max_length=255, null=True, blank=True) #eg jira
     created = models.DateTimeField(auto_now_add=True)
@@ -3624,6 +3629,9 @@ class Issue(models.Model):
         super(Issue, self).save(*args, **kwargs)
         if was_created:
             RefreshNotifier().notify_model_create(self)
+
+            from testable.models import Testable
+            Testable.update_from_issue_description(issue=self, description=self.description)
         else:
             RefreshNotifier().notify_model_update(self)
 
@@ -3637,6 +3645,14 @@ class Issue(models.Model):
         active_clocks = Entry.objects.filter(issue_id=self.id).is_open()
         return [ x.user for x in active_clocks ]
 
+    def on_description_updated(self):
+        from testable.models import Testable
+        Testable.update_from_issue_description(issue=self, description=self.description)
+    
+    @property
+    def testable(self):
+        return self.testables.first()
+    
     @classmethod
     def get_next_issue_number(self, business):
         return Issue.get_last_issue_number(business) +1
@@ -3649,9 +3665,6 @@ class Issue(models.Model):
 
     def status_as_class(self):
         return 'status_%s' % self.status.replace(" ","_").lower()
-
-    def get_tags(self):
-        return IssueTag.objects.filter(issue=self).order_by("tag__category__name")
 
     def get_points(self):
         business_users = self.project.business.users
