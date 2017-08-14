@@ -220,8 +220,10 @@ class Business(models.Model):
         business_permissions_by_user = BusinessPermissions.by_user(self)
         bp = BusinessPermissions.objects.get_or_create(business=self,user=current_user)[0]
         can_view_other_user_points = BusinessPermissions.has_see_other_user_points
+
         if can_view_other_user_points:
-            business_users = User.objects.filter(id__in = business_permissions_by_user.keys())
+            users = BusinessPermissions.active_users_for_business(self)
+            business_users = users.filter(id__in = business_permissions_by_user.keys())
             developers = [user for user in business_users if business_permissions_by_user[user.id].has_estimate_own_points]
             support_staff = [ user for user in business_users if Rate.for_business(user.id, self.id) and Rate.for_business(user.id, self.id).time_tracking_mode in [ 'tester', 'manager' ] ]
             users = list(set(developers + support_staff))

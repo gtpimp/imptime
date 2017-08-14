@@ -37,8 +37,11 @@ class TimeSummaryViewSet(BaseViewSet):
             developers = Rate.objects.filter(project=sprint, time_tracking_mode="developer")\
                                      .values_list('user', flat=True)
 
-            users = BusinessPermissions.active_users_for_business(sprint.business.pk)\
-                                       .filter(pk__in=developers)
+            users = sprint.business.get_users_allowed_to_estimate_on_business(request.user)
+            user_pks = [x.id for x in users]
+            users = User.objects.filter(pk__in=user_pks).filter(pk__in=developers)
+            # users = BusinessPermissions.active_users_for_business(sprint.business.pk)\
+            #                            .filter(pk__in=developers)
 
             for user in users:
                 dev_stats = calculate_dev_hours_stats(sprint, user)
