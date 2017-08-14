@@ -3152,7 +3152,7 @@ def add_issue(request, project_id, template="timepiece/project/_add_issue_form.h
             return get_issue_row(request, issue.id)
     else:
         plugin_form = get_interface_plugin(request, project.business).get_create_issue_form()
-#    import pdb; pdb.set_trace()
+
     context['plugin_form'] = plugin_form
     context['business'] = current_business
     context['new_issue_form'] = new_issue_form;
@@ -3638,13 +3638,13 @@ def issue_status_update(request,  template="timepiece/project/issue_detail.html"
     context['project'] = project
     context['supports_description'] = True
     context['issue_number_form'] = timepiece_forms.IssueNumberForm(instance=edited_issue)
-    #import pdb; pdb.set_trace()
-    old_status = edited_issue.status2.name
-    edited_issue.status2.name = request.POST["selected_value"]
-    edited_issue.save()
-    #import pdb; pdb.set_trace()
-    timepiece.IssueHistory.add_history(request.user, edited_issue, "changed status", old_status, edited_issue.status2.name)
 
+    old_status = edited_issue.status2.name
+
+    edited_issue.status2 = timepiece.IssueStatus.objects.get(business=project.business, name=request.POST["selected_value"])
+    edited_issue.save()
+
+    timepiece.IssueHistory.add_history(request.user, edited_issue, "changed status", old_status, edited_issue.status2.name)
     get_interface_plugin(request, project.business).update_issue_status(edited_issue)
 
     return HttpResponse(json.dumps({ 'new_value': edited_issue.status2.name }), content_type='application/json')
@@ -4269,7 +4269,7 @@ def get_issue_row(request,issue_id):
     context['issue'] = refresh_issue
     r = render(request, 'timepiece/project/_issue_entry_row.html',
                            context)
-    import pdb; pdb.set_trace()
+
     return r
 
 @csrf_exempt
@@ -4918,8 +4918,8 @@ def bulk_change_issue_state(request, context=None):
     new_status = form.cleaned_data['status']
     for selected_issue_id in selected_issue_ids:
         issue = timepiece.Issue.objects.get(pk=selected_issue_id)
-        if new_status != issue.status2:
-            old_status = issue.status2
+        if new_status != issue.status2.name:
+            old_status = issue.status2.name
             issue.status = new_status
             issue.save()
             timepiece.IssueHistory.add_history(request.user, issue, "changed status", old_status, new_status)
