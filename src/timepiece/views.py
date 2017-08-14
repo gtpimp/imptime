@@ -3068,7 +3068,7 @@ def create_invoice(request, context=None):
 @login_required
 def time_sheet_download(request, user_id, context=None):
     context = context or {}
-    to_date = datetime.datetime.strptime(request.GET['to_date'], "%Y%m%d").date()
+    to_date = datetime.datetime.strptime(request.GET['to_date'], "%Y%m%d").date() + datetime.timedelta(1)
     from_date = datetime.datetime.strptime(request.GET['from_date'], "%Y%m%d").date()
     entries = timepiece.Entry.objects.filter_by_logged_in_user(request.user).filter(start_time__gte=from_date).filter(end_time__lte=to_date)
 
