@@ -3640,7 +3640,6 @@ def issue_status_update(request,  template="timepiece/project/issue_detail.html"
     context['issue_number_form'] = timepiece_forms.IssueNumberForm(instance=edited_issue)
 
     old_status = edited_issue.status2.name
-
     edited_issue.status2 = timepiece.IssueStatus.objects.get(business=project.business, name=request.POST["selected_value"])
     edited_issue.save()
 
@@ -4269,7 +4268,6 @@ def get_issue_row(request,issue_id):
     context['issue'] = refresh_issue
     r = render(request, 'timepiece/project/_issue_entry_row.html',
                            context)
-
     return r
 
 @csrf_exempt
