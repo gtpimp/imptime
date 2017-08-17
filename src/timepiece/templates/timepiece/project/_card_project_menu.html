@@ -95,6 +95,14 @@
 </li>
 {% end_permission %}
 
+{% has_permission has_edit_ctc_billable_rates project.business %}
+<li class='menu_item' >
+  <a href="#" onclick="imp.popup_page('{% url 'view_rates_summary' project.id %}'); return false;">
+    Rates summary
+  </a>
+</li>
+{% end_permission %}
+
 {% comment %}
 {% has_permission has_view_actual_hours project.business %}
 <li class='menu_item' >
@@ -117,7 +125,7 @@
 <li class='menu_item' >
   <a href="#" onclick="window.open('{% url 'show_permissions' business.id %}')">
     Permissions
-  </a> 
+  </a>
 </li>
 {% end_permission %}
 

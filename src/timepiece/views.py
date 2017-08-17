@@ -3850,6 +3850,23 @@ def view_project_rates(request, project_id, template="timepiece/project/view_rat
     context['users_and_hours'] = project.users_and_hours()
     context['recalculate_url'] = reverse('view_project_rates', args=[project_id])
     context['time_tracking_mode_options'] = ",".join( list( [x for x,y in timepiece.Rate.TIME_TRACKING_MODES] ) )
+
+    return render(request, template, context)
+
+@csrf_exempt
+@login_required
+def view_rates_summary(request, project_id, template="timepiece/project/view_rates_summary.html", context=None):
+    context = context or {}
+    project = timepiece.Project.objects.filter(pk=project_id).filter_by_logged_in_user(request.user)[0]
+    has_view_ctc_billable_rates = timepiece.BusinessPermissions.objects.get_or_create(business=project.business, user=request.user)[0].has_view_ctc_billable_rates
+    if not has_view_ctc_billable_rates:
+        raise PermissionDenied
+
+    project.recalc_secondary_estimates()
+
+    context['project'] = project
+    context['users_and_hours'] = project.users_and_hours()
+
     return render(request, template, context)
 
 @csrf_exempt
@@ -4268,6 +4285,7 @@ def get_issue_row(request,issue_id):
     context['issue'] = refresh_issue
     r = render(request, 'timepiece/project/_issue_entry_row.html',
                            context)
+
     return r
 
 @csrf_exempt
