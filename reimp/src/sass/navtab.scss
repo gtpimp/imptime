@@ -36,16 +36,16 @@
 
 .navtab__label-wrapper {
   display: inline-flex;
-  padding-left: 24px;
-  padding-right: 24px;
-
+  padding-left: 12px;
+  padding-right: 12px;
 
 }
 
 .navtab__label {
   display: inline-block;
-  line-height: 24px;
-
+  line-height: 56px;
+  margin-right: 12px;
+   margin-left: 12px;
   > a {
     display: inline-block;
   }
