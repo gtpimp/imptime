@@ -66,7 +66,7 @@ allows for a flexible specification and on-going client-liason.
 <p>
 We assist the client in managing the project budget, by identifying
 where costs can be reduced or functionality can be
-streamlined. 
+streamlined.
 </p>
 
 <p>
@@ -102,7 +102,7 @@ This proposal is a quote.
 
 <p>
 The following costing is based on the list of issues given later in
-this document. 
+this document.
 </p>
 
 {% ifequal settings.preamble_type "billable" %}
@@ -121,7 +121,7 @@ this document.
    testing and expected scope creep.
   </p>
   {% endifequal %}
-  
+
 
   <p>
 
@@ -149,7 +149,7 @@ this document.
       <td>R{{user_info.rate}}</td>
     {% endfor %}
   </tbody>
-  
+
 </table>
 
 {% endif %}
@@ -160,7 +160,7 @@ this document.
     <h3 style="text-align:center">Breakdown by feature</h3>
 
     <table>
-      {% for feature_name, feature_min_cost in estimate_stats.features.items %} 
+      {% for feature_name, feature_min_cost in estimate_stats.features.items %}
         <tr>
           <th>{{feature_name}}</th>
           {% if settings.show_billable %}
@@ -176,16 +176,16 @@ this document.
 
   <script>
   $.plot(".graph_estimate_by_feature",
-		   [ {%spaceless%} 
-		       {% for feature_name, feature_min_cost in estimate_stats.features.items %} 
-			 { label:"{{feature_name}}", 
+		   [ {%spaceless%}
+		       {% for feature_name, feature_min_cost in estimate_stats.features.items %}
+			 { label:"{{feature_name}}",
 			   data: {{feature_min_cost}}
 			 },
-		       {% endfor %} 
+		       {% endfor %}
 		     {%endspaceless%}
 		   ],
-		   { series: { 
-		       pie: { 
+		   { series: {
+		       pie: {
 		        show: true,
 			radius: 1,
 			label: {
@@ -231,7 +231,7 @@ Our estimates are usually slightly high. Usually this is balanced out
 by smaller tweaks or adjustments that are identified during
 testing. In general these estimates are a realistic reflection of the
 cost to deliver the requirements, rather than optimistic or
-pessimistic. 
+pessimistic.
 </p>
 
 {% endifequal %}
@@ -294,7 +294,7 @@ identified in the specification phase which greatly reduces risk.
 	  <td>{{estimate.points|floatformat:2}} hour{% if estimate.points != 1 %}s{% endif %}</td>
         {% endif %}
         {% if settings.show_issue_billable %}
-          
+
           <!-- this is the cost with management, testing and scope creep -->
           <td>R{{estimate.combined_cost_with_scope_creep|floatformat:"0"|intcomma}}</td>
 
