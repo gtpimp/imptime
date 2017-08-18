@@ -47,10 +47,15 @@ class NavTab extends Component {
 }
 
 function mapStateToProps(state, props) {
+    const { routing } = state
+
+    const location = routing.locationBeforeTransitions || {}
+    const pathname = location.pathname || null
+
     return {
-        variant: props.variant || 'link'
+        variant: props.variant || 'link',
+        pathname: pathname
     }
 }
-
 
 export default connect(mapStateToProps)(withRouter(NavTab))

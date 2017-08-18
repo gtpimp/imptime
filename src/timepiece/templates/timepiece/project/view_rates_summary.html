@@ -1,0 +1,35 @@
+{% load humanize %}
+{% load timepiece_tags %}
+
+<div class="rate_info">
+  <h1>{{project.business.name}} - {{project.name}}</h1>
+  <h2>Rates Summary</h2>
+
+  <table>
+
+    <thead>
+      <tr>
+        <th>Sprint name</th>
+        {% for user_name in users_and_hours.users.keys %}
+            <td>{{user_name}}</td>
+        {% endfor %}>
+    </thead>
+
+    <tbody>
+      {% for sprint_name in project.business.sprints %}
+        <tr>
+          <td>{{sprint_name}}</td>
+          {% for user_name, rate_info in users_and_hours.users.items %}
+            {% has_permission has_view_ctc_rates project.business %}
+              <td>
+              <div class="editable_rate rate_info_amount_{{user_name}}">R{{rate_info.rate.amount|floatformat:"0"|intcomma}}</div>
+              </td>
+            {% end_permission %}
+          {% endfor %}
+        </tr>
+      {% endfor %}
+    </tbody>
+
+  </table>
+
+</div>

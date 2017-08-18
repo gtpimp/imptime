@@ -3639,15 +3639,14 @@ def issue_status_update(request,  template="timepiece/project/issue_detail.html"
     context['supports_description'] = True
     context['issue_number_form'] = timepiece_forms.IssueNumberForm(instance=edited_issue)
 
-    old_status = edited_issue.status
-    edited_issue.status = request.POST["selected_value"]
+    old_status = edited_issue.status2.name
+    edited_issue.status2 = timepiece.IssueStatus.objects.get(business=project.business, name=request.POST["selected_value"])
     edited_issue.save()
 
-    timepiece.IssueHistory.add_history(request.user, edited_issue, "changed status", old_status, edited_issue.status)
-
+    timepiece.IssueHistory.add_history(request.user, edited_issue, "changed status", old_status, edited_issue.status2.name)
     get_interface_plugin(request, project.business).update_issue_status(edited_issue)
 
-    return HttpResponse(json.dumps({ 'new_value': edited_issue.status }), content_type='application/json')
+    return HttpResponse(json.dumps({ 'new_value': edited_issue.status2.name }), content_type='application/json')
 
 @csrf_exempt
 @login_required
@@ -3851,6 +3850,23 @@ def view_project_rates(request, project_id, template="timepiece/project/view_rat
     context['users_and_hours'] = project.users_and_hours()
     context['recalculate_url'] = reverse('view_project_rates', args=[project_id])
     context['time_tracking_mode_options'] = ",".join( list( [x for x,y in timepiece.Rate.TIME_TRACKING_MODES] ) )
+
+    return render(request, template, context)
+
+@csrf_exempt
+@login_required
+def view_rates_summary(request, project_id, template="timepiece/project/view_rates_summary.html", context=None):
+    context = context or {}
+    project = timepiece.Project.objects.filter(pk=project_id).filter_by_logged_in_user(request.user)[0]
+    has_view_ctc_billable_rates = timepiece.BusinessPermissions.objects.get_or_create(business=project.business, user=request.user)[0].has_view_ctc_billable_rates
+    if not has_view_ctc_billable_rates:
+        raise PermissionDenied
+
+    project.recalc_secondary_estimates()
+
+    context['project'] = project
+    context['users_and_hours'] = project.users_and_hours()
+
     return render(request, template, context)
 
 @csrf_exempt
@@ -4919,8 +4935,8 @@ def bulk_change_issue_state(request, context=None):
     new_status = form.cleaned_data['status']
     for selected_issue_id in selected_issue_ids:
         issue = timepiece.Issue.objects.get(pk=selected_issue_id)
-        if new_status != issue.status:
-            old_status = issue.status
+        if new_status != issue.status2.name:
+            old_status = issue.status2.name
             issue.status = new_status
             issue.save()
             timepiece.IssueHistory.add_history(request.user, issue, "changed status", old_status, new_status)

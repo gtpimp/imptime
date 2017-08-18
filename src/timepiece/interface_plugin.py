@@ -39,7 +39,7 @@ def get_interface_plugin(request, business, user=None):
     global default_interface_plugin
     if not business.sync_with:
         return default_interface_plugin
-    
+
     if business.sync_with == 'jira':
         from jira_interface.jira_sync import JiraSync
         return JiraSync(request, business.id, user)

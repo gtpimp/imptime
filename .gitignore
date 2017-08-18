@@ -47,5 +47,5 @@ external_config
 src/django-colorful
 src/unicodecsv
 devops/secret
-
-.tern-port
+.tern-project
+reimp/.tern-port
