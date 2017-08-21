@@ -7,7 +7,7 @@ class ListTable extends Component {
         return (
             <div className="list-table">
                 <div className="list-table__inner">
-                    <table className="table table--list-table">
+                    <table className="table list-table__cell--icon">
                         { this.props.renderHeader &&
                         <thead>
                         {this.props.renderHeader()}
