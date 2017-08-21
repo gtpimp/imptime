@@ -14,9 +14,7 @@ class ChangePasswordPage extends Component {
 
     onChangePassword(values) {
         const { dispatch, settings } = this.props
-        return change_password(dispatch, settings, values.password)
-           .then( () => { browserHistory.goBack() })
-        
+        return dispatch(change_password(values.password))
     }
     
     render() {

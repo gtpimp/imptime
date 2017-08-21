@@ -49,13 +49,12 @@ function announceUsersLoadFailed(error) {
 
 function fetchUsersPromise(dispatch, state, user_ids) {
     return new Promise(function(resolve, reject) {
-        const API_BASE_URL = state.settings.configured && state.settings.API_BASE_URL
 	dispatch(announceLoadingUsers(user_ids))
 
 	const params = { filter: { ids: user_ids },
 			 pagination: {'enabled': false} }
 
-        return impfetch(API_BASE_URL+'imp/user/', dispatch, {params:params})
+        return impfetch(state, 'imp/user/', dispatch, {params:params})
 	    .then(response => response.json())
 	    .then(json => {
                 if (json.status !== 'success') {

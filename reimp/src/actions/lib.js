@@ -24,9 +24,15 @@ export function populateDefaultRequestHeaders(headers) {
     }
 }
 
-export function impfetch(url, dispatch, args) {
+export function impfetch(state, url, dispatch, args) {
 
     url = "" + url
+
+    let absolute_url = url
+    if (!(startsWith(url, 'http://') || startsWith(url, 'https://'))) {
+        absolute_url = state.settings.API_BASE + url
+    }
+    
     args = args || {}
     if ( ! args.headers ) {
         args.headers = {}
@@ -40,10 +46,10 @@ export function impfetch(url, dispatch, args) {
 
     if ( args.params ) {
         let param_payload = JSON.stringify(args.params)
-        url += "?params=" + param_payload
+        absolute_url += "?params=" + param_payload
     }
 
-    const throttle = throttles[url] || {}
+    const throttle = throttles[absolute_url] || {}
     const THROTTLE_HIT_PAUSE_SECONDS = 0.5
     const now = moment()
     
@@ -70,21 +76,21 @@ export function impfetch(url, dispatch, args) {
     }
 
     // we continue to reference the main throttles object to help with multi-threading
-    throttles[url] = throttle
-    throttles[url].running = true
-    throttles[url].last_run_at = moment()
-    const res = fetch(url, args)
+    throttles[absolute_url] = throttle
+    throttles[absolute_url].running = true
+    throttles[absolute_url].last_run_at = moment()
+    const res = fetch(absolute_url, args)
     res.then(function(response) {
 
         if ( ( (""+response.status)[0] === "4" ) || ( (""+response.status)[0] === "5" ) ) {
-            throttles[url].last_failure_at = moment()
+            throttles[absolute_url].last_failure_at = moment()
             if ( (response.status === 301 || response.status === 401) && dispatch ) {
                 dispatch(clearAuthentication())
             }
         } else {
-            throttles[url].last_failure_at = null
+            throttles[absolute_url].last_failure_at = null
         }
-        throttles[url].running = false
+        throttles[absolute_url].running = false
     })    
     return res
 }

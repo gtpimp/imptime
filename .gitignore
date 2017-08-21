@@ -48,4 +48,4 @@ src/django-colorful
 src/unicodecsv
 devops/secret
 .tern-project
-reimp/.tern-port
+.tern-port

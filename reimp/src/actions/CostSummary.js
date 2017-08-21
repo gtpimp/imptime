@@ -61,20 +61,19 @@ function fetchCostSummary(dispatch, state, sprint_id) {
     sprint_id = parseInt(sprint_id)
     return (dispatch, getState) => {
         const state = getState()
-        const API_BASE_URL = state.settings.configured && state.settings.API_BASE_URL
-	      dispatch(announceLoadingCostSummary(sprint_id))
-	      return impfetch(API_BASE_URL+'imp/cost_summary/'+sprint_id+'/', dispatch)
+	dispatch(announceLoadingCostSummary(sprint_id))
+	return impfetch(state, 'imp/cost_summary/'+sprint_id+'/', dispatch)
             .then(response => response.json())
-	          .then(json => {
+	    .then(json => {
                 if (json.status !== 'success') {
-		                dispatch(announceCostSummaryLoadFailed(json.error))
+		    dispatch(announceCostSummaryLoadFailed(json.error))
                 } else {
                     dispatch(announceCostSummaryLoaded(json.payload))
-		                /* dispatch(ensureCostSummaryLoaded(json.payload.cost_summary.sprint_id))*/
+		    /* dispatch(ensureCostSummaryLoaded(json.payload.cost_summary.sprint_id))*/
                 }
-	          }).catch(function (error) {
-		            dispatch(announceCostSummaryLoadFailed("Failed to load cost summary: " + error))
-	          })
+	    }).catch(function (error) {
+		dispatch(announceCostSummaryLoadFailed("Failed to load cost summary: " + error))
+	    })
     }
 }
 

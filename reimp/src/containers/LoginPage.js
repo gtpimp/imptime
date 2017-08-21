@@ -15,7 +15,7 @@ class LoginPage extends Component {
 
     onLogin(values) {
         const { dispatch, settings } = this.props
-        return login(dispatch, settings, values.username, values.password)
+        return dispatch(login(values.username, values.password))
     }
 
     onClickedForgotPassword() {

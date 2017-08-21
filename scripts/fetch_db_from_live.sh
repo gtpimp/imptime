@@ -43,7 +43,7 @@ if [ "${SANITIZE}" != 'n' ]; then
 fi
 
 echo "Dumping db (use 'imp' for the password)"
-sudo su - postgres -c "pg_dump -i -h localhost -p 5432 -F c -b -v -U imp -f ~/${ANONYMISED_FILENAME} implicitdesign"
+sudo su - postgres -c "pg_dump -i -h localhost -p 5432 --no-privileges --no-owner -F c -b -v -U imp -f ~/${ANONYMISED_FILENAME} implicitdesign"
 sudo mv /var/lib/postgresql/${ANONYMISED_FILENAME} ${LOCAL_BACKUP_PATH}
 echo "Sanitised backup at ${LOCAL_BACKUP_PATH}/${ANONYMISED_FILENAME}"
 

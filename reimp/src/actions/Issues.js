@@ -73,13 +73,12 @@ function announceIssuesLoadFailed(error) {
 
 function fetchIssuesPromise(dispatch, state, issue_ids) {
     return new Promise(function(resolve, reject) {
-        const API_BASE_URL = state.settings.configured && state.settings.API_BASE_URL
 	      dispatch(announceLoadingIssues(issue_ids))
 
 	      const params = { filter: { ids: issue_ids },
 			                   pagination: {'enabled': false} }
 
-        return impfetch(API_BASE_URL+'imp/issue/', dispatch, {params:params})
+        return impfetch(state, 'imp/issue/', dispatch, {params:params})
 	          .then(response => response.json())
 	          .then(json => {
                 if (json.status !== 'success') {
@@ -217,12 +216,11 @@ export function updateIssueComment(issue_id, comment_id, new_comment) {
 
     return (dispatch, getState) => {
 	      const state = getState()
-        const API_BASE_URL = state.settings.configured && state.settings.API_BASE_URL
 	      dispatch(announceIssuesSaving([issue_id], 'comment', new_comment))
 	      let data = { issue_id: issue_id,
                      comment_id: comment_id,
                      comment: new_comment }
-	      return impfetch( API_BASE_URL+"imp/issue/comment/0/", dispatch,
+	      return impfetch( state, "imp/issue/comment/0/", dispatch,
 			                   {method: "PUT",
 			                    credentials: 'same-origin',
 			                    data: data,
@@ -248,11 +246,10 @@ export function updateIssueComment(issue_id, comment_id, new_comment) {
 export function createIssueComment(issue_id, new_comment) {
     return (dispatch, getState) => {
 	      const state = getState()
-        const API_BASE_URL = state.settings.configured && state.settings.API_BASE_URL
 	      dispatch(announceIssuesSaving([issue_id], 'comment', new_comment))
 	      let data = { issue_id: issue_id,
                      comment: new_comment }
-	      return impfetch( API_BASE_URL+"imp/issue/comment/", dispatch,
+	      return impfetch( state, "imp/issue/comment/", dispatch,
 			                   {method: "POST",
 			                    credentials: 'same-origin',
 			                    data: data,
@@ -278,40 +275,38 @@ export function createIssueComment(issue_id, new_comment) {
 export function deleteIssueComment(issue_id, comment_id) {
     return (dispatch, getState) => {
         const state = getState()
-        const API_BASE_URL = state.settings.configured && state.settings.API_BASE_URL
-	      dispatch(announceIssuesSaving([issue_id], 'comment', "deleting"))
+	dispatch(announceIssuesSaving([issue_id], 'comment', "deleting"))
         let data = { issue_id: issue_id,
                      comment_id: comment_id }
-	      return impfetch( API_BASE_URL+"imp/issue/comment/0/", dispatch,
-			                   {method: "DELETE",
-			                    credentials: 'same-origin',
-			                    data: data,
-			                    headers: {"Content-type": "application/json; charset=UTF-8"},
-			                    body: JSON.stringify(data)}
-	      ).then(response => response.json())
-	       .then(json => {
+	return impfetch( state, "imp/issue/comment/0/", dispatch,
+			 {method: "DELETE",
+			  credentials: 'same-origin',
+			  data: data,
+			  headers: {"Content-type": "application/json; charset=UTF-8"},
+			  body: JSON.stringify(data)}
+	).then(response => response.json())
+	 .then(json => {
              if ( json.status !== 'success' ) {
-		             console.log('Request failed with JSON response', json);
-		             dispatch(announceIssueSaveFailed(issue_id, json.error))
+		 console.log('Request failed with JSON response', json);
+		 dispatch(announceIssueSaveFailed(issue_id, json.error))
              } else {
-		             console.log('Request succeeded with JSON response', json);
-		             dispatch(announceIssuesSaved([issue_id]))
+		 console.log('Request succeeded with JSON response', json);
+		 dispatch(announceIssuesSaved([issue_id]))
              }
-	       })
-	       .catch(function (error) {
+	 })
+	 .catch(function (error) {
              console.log('Request failed', error);
-	           dispatch(announceIssueSaveFailed(issue_id, error))
-	       })
+	     dispatch(announceIssueSaveFailed(issue_id, error))
+	 })
     }
 }
 
 export function deleteIssueAttachment(issue_id, attachment_id) {
     return (dispatch, getState) => {
         const state = getState()
-        const API_BASE_URL = state.settings.configured && state.settings.API_BASE_URL
 	      dispatch(announceIssuesSaving([issue_id], 'attachment', "deleting"))
         let data = { issue_id: issue_id }
-	      return impfetch( API_BASE_URL+"imp/issue/attachment/"+attachment_id+"/", dispatch,
+	      return impfetch( state, "imp/issue/attachment/"+attachment_id+"/", dispatch,
 			                   {method: "DELETE",
 			                    credentials: 'same-origin',
 			                    data: data,
@@ -388,12 +383,11 @@ export function ungroupIssuesIntoFeature(issue_ids) {
 export function addTag(issue_ids, tag_category_name, tag_name, on_done) {
     return (dispatch, getState) => {
         const state = getState()
-        const API_BASE_URL = state.settings.configured && state.settings.API_BASE_URL
 	      dispatch(announceIssuesSaving(issue_ids, "tags", tag_category_name + ":" + tag_name))
 	      let data = {issue_ids: issue_ids,
                     tag_category_name: tag_category_name,
                     tag_name: tag_name}
-	      return impfetch(API_BASE_URL+"imp/issue/tag/", dispatch,
+	      return impfetch(state, "imp/issue/tag/", dispatch,
 			                  {method: "POST",
 			                   credentials: 'same-origin',
 			                   data: data,
@@ -422,12 +416,11 @@ export function addTag(issue_ids, tag_category_name, tag_name, on_done) {
 export function deleteTag(issue_ids, tag_category_name, tag_name) {
     return (dispatch, getState) => {
         const state = getState()
-        const API_BASE_URL = state.settings.configured && state.settings.API_BASE_URL
 	      dispatch(announceIssuesSaving(issue_ids, "tags", tag_category_name + ":" + tag_name))
 	      let data = {issue_ids: issue_ids,
                     tag_category_name: tag_category_name,
                     tag_name: tag_name}
-	      return impfetch(API_BASE_URL+"imp/issue/tag/", dispatch,
+	      return impfetch(state, "imp/issue/tag/", dispatch,
 			                  {method: "DELETE",
 			                   credentials: 'same-origin',
 			                   data: data,
@@ -453,11 +446,10 @@ export function deleteTag(issue_ids, tag_category_name, tag_name) {
 export function addEstimate(issue_ids, estimate_hours, on_done) {
     return (dispatch, getState) => {
         const state = getState()
-        const API_BASE_URL = state.settings.configured && state.settings.API_BASE_URL
 	      dispatch(announceIssuesSaving(issue_ids, "estimate_hours", estimate_hours))
 	      let data = {issue_ids: issue_ids,
                     estimate_hours: estimate_hours}
-	      return impfetch(API_BASE_URL+"imp/issue/estimate/", dispatch,
+	      return impfetch(state, "imp/issue/estimate/", dispatch,
 			                  {method: "POST",
 			                   credentials: 'same-origin',
 			                   data: data,
@@ -508,12 +500,11 @@ function announceIssueDeleteFailed(issue_id, error) {
 function updateIssue(issue_ids, field_name, new_value, on_done) {
     return (dispatch, getState) => {
         const state = getState()
-        const API_BASE_URL = state.settings.configured && state.settings.API_BASE_URL
 	      dispatch(announceIssuesSaving(issue_ids, field_name, new_value))
 	      let data = {issue_ids: issue_ids,
                     field_name: field_name,
 		                value: new_value }
-	      return impfetch(API_BASE_URL+"imp/issue/"+issue_ids[0]+"/", dispatch,
+	      return impfetch(state, "imp/issue/"+issue_ids[0]+"/", dispatch,
 			                  {method: "PUT",
 			                   credentials: 'same-origin',
 			                   data: data,
@@ -571,11 +562,10 @@ export function saveCandidateIssue() {
 
     return (dispatch, getState) => {
 	      const state = getState()
-        const API_BASE_URL = state.settings.configured && state.settings.API_BASE_URL
 	      dispatch(announceCandidateIssueSaving())
 	      let data = {issue: state.issue.candidate_issue}
 
-	      return impfetch(API_BASE_URL+"imp/issue/", dispatch,
+	      return impfetch(state, "imp/issue/", dispatch,
 			                  {method: "POST",
 			                   credentials: 'same-origin',
 			                   data: data,
@@ -602,10 +592,9 @@ export function saveCandidateIssue() {
 export function deleteIssue(issue_id) {
     return (dispatch, getState) => {
 	      const state = getState()
-        const API_BASE_URL = state.settings.configured && state.settings.API_BASE_URL
 	      dispatch(announceDeletingIssue(issue_id))
 	      let data = { issue_id: issue_id }
-	      return impfetch( API_BASE_URL+"imp/issue/", dispatch,
+	      return impfetch( state, "imp/issue/", dispatch,
 			                   {method: "DELETE",
 			                    credentials: 'same-origin',
 			                    data: data,
@@ -631,11 +620,10 @@ export function deleteIssue(issue_id) {
 export function clock(issue_id, clock_action) {
     return (dispatch, getState) => {
 	      const state = getState()
-        const API_BASE_URL = state.settings.configured && state.settings.API_BASE_URL
 	      dispatch(announceDeletingIssue(issue_id))
 	      let data = { issue_id: issue_id,
                      clock_action: clock_action }
-	      return impfetch( API_BASE_URL+"imp/issue/clock/", dispatch,
+	      return impfetch( state, "imp/issue/clock/", dispatch,
 			                   {method: "POST",
 			                    credentials: 'same-origin',
 			                    data: data,

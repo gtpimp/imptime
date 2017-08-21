@@ -1,6 +1,7 @@
 import { impfetch } from './lib.js'
 import cookie from 'react-cookie';
 import { SubmissionError } from 'redux-form'
+import {browserHistory} from 'react-router'
 
 export const SET_AUTH_TOKEN = "SET_AUTH_TOKEN"
 export const CLEAR_AUTH_TOKEN = "CLEAR_AUTH_TOKEN"
@@ -25,75 +26,88 @@ export function logout() {
     return clearAuthentication()
 }
 
-export function auto_login(dispatch, settings, auto_login_token) {
-    const API_BASE_URL = settings.configured && settings.API_BASE_URL
-    const data = { 'token': auto_login_token }
+export function auto_login(auto_login_token) {
+    return (dispatch, getState) => {
+        const state = getState()
+        const data = { 'token': auto_login_token }
 
-    const params = {method: "POST",
-	            credentials: 'same-origin',
-	            data: data,
-	            headers: {"Content-type": "application/json; charset=UTF-8"}, 
-	            body: JSON.stringify(data)}
-    
-    return impfetch(API_BASE_URL+'imp/autologin/', dispatch, params)
-        .then(response => response.json())
-        .then(json => {
-            if ( json.token ) {
-                dispatch(setAuthToken(json.username, json.token, json.user_id, json.has_usable_password))
-            } else {
-                throw new SubmissionError({ _error: 'Failed to login' })
-            }
-        })
-    
-}
-
-export function login(dispatch, settings, username, password) {
-
-    const API_BASE_URL = settings.configured && settings.API_BASE_URL
-    const data = { 'username': username,
-                   'password': password }
-
-    const params = {method: "POST",
-	            credentials: 'same-origin',
-	            data: data,
-	            headers: {"Content-type": "application/json; charset=UTF-8"}, 
-	            body: JSON.stringify(data)}
-    
-    return impfetch(API_BASE_URL+'imp/login/', dispatch, params)
-        .then(response => response.json())
-        .then(json => {
-            if ( json.token ) {
-                dispatch(setAuthToken(username, json.token, json.user_id, json.has_usable_password))
-            } else {
-                throw new SubmissionError({ _error: 'Invalid credentials' })
-            }
-        })
+        const params = {method: "POST",
+	                credentials: 'same-origin',
+	                data: data,
+	                headers: {"Content-type": "application/json; charset=UTF-8"}, 
+	                body: JSON.stringify(data)}
+        
+        return impfetch(state, 'imp/autologin/', dispatch, params)
+            .then(response => response.json())
+            .then(json => {
+                if ( json.token ) {
+                    dispatch(setAuthToken(json.username, json.token, json.user_id, json.has_usable_password))
+                    if ( json.has_usable_password === "false" ) {
+                        browserHistory.push('/password/change')
+                    }
+                } else {
+                    throw new SubmissionError({ _error: 'Failed to login' })
+                }
+            })
+    }
     
 }
 
-export function forgot_password(dispatch, settings, username) {
-    
-    const API_BASE_URL = settings.configured && settings.API_BASE_URL
-    const data = { 'username': username }
-    const params = {method: "POST",
-	            credentials: 'same-origin',
-	            data: data,
-	            headers: {"Content-type": "application/json; charset=UTF-8"}, 
-	            body: JSON.stringify(data)}
-    return impfetch(API_BASE_URL+'imp/autologin/forgot_password/', dispatch, params)
+export function login(username, password) {
+
+    return (dispatch, getState) => {
+        const state = getState()
+        const data = { 'username': username,
+                       'password': password }
+
+        const params = {method: "POST",
+	                credentials: 'same-origin',
+	                data: data,
+	                headers: {"Content-type": "application/json; charset=UTF-8"}, 
+	                body: JSON.stringify(data)}
+        
+        return impfetch(state, 'imp/login/', dispatch, params)
+            .then(response => response.json())
+            .then(json => {
+                if ( json.token ) {
+                    dispatch(setAuthToken(username, json.token, json.user_id, json.has_usable_password))
+                } else {
+                    throw new SubmissionError({ _error: 'Invalid credentials' })
+                }
+            })
+    }
+}
+
+export function forgot_password(username) {
+
+    return (dispatch, getState) => {
+
+        const state = getState()
+        const data = { 'username': username }
+        const params = {method: "POST",
+	                credentials: 'same-origin',
+	                data: data,
+	                headers: {"Content-type": "application/json; charset=UTF-8"}, 
+	                body: JSON.stringify(data)}
+        return impfetch(state, 'imp/autologin/forgot_password/', dispatch, params).then(
+            () => { browserHistory.push('/password/reminded') })
+    }
 }
 
 export function change_password(dispatch, settings, password) {
 
-    const API_BASE_URL = settings.configured && settings.API_BASE_URL
-    const data = { 'password': password }
-    const params = {method: "POST",
-	            credentials: 'same-origin',
-	            data: data,
-	            headers: {"Content-type": "application/json; charset=UTF-8"}, 
-	            body: JSON.stringify(data)}
-    
-    return impfetch(API_BASE_URL+'imp/auth/change_password/', dispatch, params)
+    return (dispatch, getState) => {
+        const state = getState()
+        const data = { 'password': password }
+        const params = {method: "POST",
+	                credentials: 'same-origin',
+	                data: data,
+	                headers: {"Content-type": "application/json; charset=UTF-8"}, 
+	                body: JSON.stringify(data)}
+        
+        return impfetch(state, 'imp/auth/change_password/', dispatch, params).then(
+            () => { browserHistory.goBack() })
+    }
 }
 
 export function logged_in_user() {

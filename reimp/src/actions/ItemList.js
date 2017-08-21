@@ -204,7 +204,6 @@ function tryFetchListAndItems(list_key, matching_items_key, matching_items_promi
     
     return (dispatch, getState) => {
 	const state = getState()
-        const API_BASE_URL = state.settings.configured && state.settings.API_BASE_URL
         
 	const item_list = state.item_list || {}
 	const l = item_list[list_key] || {}
@@ -223,7 +222,7 @@ function tryFetchListAndItems(list_key, matching_items_key, matching_items_promi
 	const params = { filter: l.filter || {},
 			 format: {ids_only: true},
 			 pagination: l.pagination || {} }
-        return impfetch(API_BASE_URL+'imp/' + matching_items_key + "/", dispatch, {params:params})
+        return impfetch(state, 'imp/' + matching_items_key + "/", dispatch, {params:params})
             .then(response => response.json())
             .then(json => {
 		if (json.status !== 'success') {

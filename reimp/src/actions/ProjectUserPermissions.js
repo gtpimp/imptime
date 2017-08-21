@@ -87,12 +87,11 @@ function fetchProjectUserPermission(dispatch, state, project_id, user_id) {
 
     const pup_id = getPupIdForProjectUser(state, project_id, user_id)
     dispatch(announceLoadingPupsForProjectAndUser(pup_id, project_id, user_id))
-    const API_BASE_URL = state.settings.configured && state.settings.API_BASE_URL
     const params = { filter: { project_id: project_id,
                                user_id: user_id },
 		     pagination: {'enabled': false} }
  
-    return impfetch(API_BASE_URL+'imp/permission/project/', dispatch, {params:params})
+    return impfetch(state, 'imp/permission/project/', dispatch, {params:params})
 	.then(response => response.json())
 	.then(json => {
             if (json.status !== 'success') {
@@ -107,12 +106,11 @@ function fetchProjectUserPermission(dispatch, state, project_id, user_id) {
 
 function fetchPupsPromise(dispatch, state, pup_ids) {
     return new Promise(function(resolve, reject) {
-        const API_BASE_URL = state.settings.configured && state.settings.API_BASE_URL
 	dispatch(announceLoadingPups(pup_ids))
 	const params = { filter: { ids: pup_ids },
 			 pagination: {'enabled': false} }
 	
-        return impfetch(API_BASE_URL+'imp/permission/project/', dispatch, {params:params})
+        return impfetch(state, 'imp/permission/project/', dispatch, {params:params})
 	    .then(response => response.json())
 	    .then(json => {
                 if (json.status !== 'success') {
@@ -255,7 +253,6 @@ function announcePupsSavingForProjectAndUser(project_id, user_id, field_name, ne
 function updatePup(project_id, user_id, permission_name, new_value, on_done) {
     return (dispatch, getState) => {
         const state = getState()
-        const API_BASE_URL = state.settings.configured && state.settings.API_BASE_URL
 	dispatch(announcePupsSavingForProjectAndUser(project_id, user_id, permission_name, new_value))
 	let data = {project_id: project_id,
                     user_ids: [user_id],
@@ -263,7 +260,7 @@ function updatePup(project_id, user_id, permission_name, new_value, on_done) {
 		    value: new_value }
 
         // Use a descriptive url to prevent the throttling dropping saves on different permissions within the same project
-	return impfetch(API_BASE_URL+"imp/permission/project/?project_id="+project_id+"&user_id="+user_id+"&permission_name="+permission_name, dispatch,
+	return impfetch(state, "imp/permission/project/?project_id="+project_id+"&user_id="+user_id+"&permission_name="+permission_name, dispatch,
 			{method: "POST",
 			 credentials: 'same-origin',
 			 data: data,
