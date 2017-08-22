@@ -152,7 +152,7 @@ function tryFetchMatchingItems(list_key,
     // The second half of tryFetchListAndItems, separated out for clarity
 
     return (dispatch, getState) => {
-    
+
 	if ( ! required_item_ids ) {
 	    return
 	}
@@ -182,18 +182,18 @@ export function getMissingItemIds(state, required_item_ids, matching_items_key) 
     const required_item_refs = forEach(required_item_ids, function(item_id) { return "" + item_id })
     const matching_items = state[matching_items_key] || {}
     let matching_item_ids = keys(matching_items.items_by_id || {})
-    
+
     const invalidated_item_refs = map(matching_items.invalidated_item_ids || [], function(item_id, index) { return "" + item_id })
     matching_item_ids = difference(matching_item_ids, invalidated_item_refs)
-    
+
     const matching_item_refs = forEach(matching_item_ids, function(item_id, index) { return "" + item_id })
     let unmatching_item_ids = difference(required_item_refs, matching_item_refs)
-    
+
     const loading_item_ids = forEach(matching_items.loading_item_ids || [], function(item_id, index) { return "" + item_id })
     unmatching_item_ids = difference(unmatching_item_ids, loading_item_ids)
-    
+
     unmatching_item_ids = compact(unmatching_item_ids)
-    
+
     return unmatching_item_ids
 }
 
@@ -201,42 +201,42 @@ function tryFetchListAndItems(list_key, matching_items_key, matching_items_promi
 
     // First tries to fetch the list of items, and then fetches all
     // missing matching items
-    
-    return (dispatch, getState) => {
-	const state = getState()
-        
-	const item_list = state.item_list || {}
-	const l = item_list[list_key] || {}
 
-	if ( ! shouldFetchList(state, list_key) ) {
-	    const visible_item_ids = l.visible_item_ids
-	    if ( visible_item_ids ) {
-		dispatch(tryFetchMatchingItems(list_key,
-					       visible_item_ids,
-					       matching_items_key, matching_items_promise_func))
-	    }
-	    return
-	}
-	
-	dispatch(announceListLoading(list_key))
-	const params = { filter: l.filter || {},
-			 format: {ids_only: true},
-			 pagination: l.pagination || {} }
+    return (dispatch, getState) => {
+	      const state = getState()
+
+	      const item_list = state.item_list || {}
+	      const l = item_list[list_key] || {}
+
+	      if ( ! shouldFetchList(state, list_key) ) {
+	          const visible_item_ids = l.visible_item_ids
+	          if ( visible_item_ids ) {
+		            dispatch(tryFetchMatchingItems(list_key,
+					                                     visible_item_ids,
+					                                     matching_items_key, matching_items_promise_func))
+	          }
+	          return
+	      }
+
+	      dispatch(announceListLoading(list_key))
+	      const params = { filter: l.filter || {},
+			                   format: {ids_only: true},
+			                   pagination: l.pagination || {} }
         return impfetch(state, 'imp/' + matching_items_key + "/", dispatch, {params:params})
             .then(response => response.json())
             .then(json => {
-		if (json.status !== 'success') {
+		            if (json.status !== 'success') {
                     dispatch(announceListLoadFailed(list_key, json.error))
                 } else {
-		    dispatch(announceListLoaded(list_key, json.payload))
-		    const required_item_ids = json.payload.ids || []
-		    dispatch(tryFetchMatchingItems(list_key,
-						   required_item_ids,
-						   matching_items_key,
-						   matching_items_promise_func))
-		}
+		                dispatch(announceListLoaded(list_key, json.payload))
+		                const required_item_ids = json.payload.ids || []
+		                dispatch(tryFetchMatchingItems(list_key,
+						                                       required_item_ids,
+						                                       matching_items_key,
+						                                       matching_items_promise_func))
+		            }
             })
-	    .catch(function (error) {
+	          .catch(function (error) {
                 dispatch(announceListLoadFailed(list_key,"Failed to load list: " + list_key + " : " + error))
             })
     }
@@ -263,4 +263,3 @@ export function fetchListIfNeeded(list_key,
 			        matching_items_key,
 			        matching_items_promise_func)
 }
-

@@ -29,17 +29,17 @@ export function impfetch(state, url, dispatch, args) {
     url = "" + url
 
     let absolute_url = url
-    if (!(startsWith(url, 'http://') || startsWith(url, 'https://'))) {
-        absolute_url = state.settings.API_BASE + url
+    if (!(url.startsWith('http://') || url.startsWith('https://'))) {
+        absolute_url = state.settings.API_BASE_URL + url
     }
-    
+
     args = args || {}
     if ( ! args.headers ) {
         args.headers = {}
         args.headers['Content-type'] = 'application/json; charset=UTF-8'
     }
     populateDefaultRequestHeaders(args.headers)
-    
+
     if ( ! args.credentials ) {
         args.credentials = 'same-origin'
     }
@@ -52,13 +52,13 @@ export function impfetch(state, url, dispatch, args) {
     const throttle = throttles[absolute_url] || {}
     const THROTTLE_HIT_PAUSE_SECONDS = 0.5
     const now = moment()
-    
+
     const last_run_was_x_milliseconds_ago = (throttle.last_run_at && now.diff(throttle.last_run_at, 'milliseconds')) || null
     const is_running = throttle.running && last_run_was_x_milliseconds_ago < THROTTLE_HIT_PAUSE_SECONDS*1000
-    
+
     const last_failure_was_x_milliseconds_ago = (throttle.last_failure_at && now.diff(throttle.last_failure_at, 'milliseconds')) || null
     const failed_recently = last_failure_was_x_milliseconds_ago && last_failure_was_x_milliseconds_ago < THROTTLE_HIT_PAUSE_SECONDS*1000
-    
+
     if ( is_running || failed_recently ) {
         return new Promise(function(resolve, reject) {
             // Note we accept because we don't know if this will be an error.
@@ -91,7 +91,7 @@ export function impfetch(state, url, dispatch, args) {
             throttles[absolute_url].last_failure_at = null
         }
         throttles[absolute_url].running = false
-    })    
+    })
     return res
 }
 

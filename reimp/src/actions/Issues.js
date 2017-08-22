@@ -275,29 +275,29 @@ export function createIssueComment(issue_id, new_comment) {
 export function deleteIssueComment(issue_id, comment_id) {
     return (dispatch, getState) => {
         const state = getState()
-	dispatch(announceIssuesSaving([issue_id], 'comment', "deleting"))
+	      dispatch(announceIssuesSaving([issue_id], 'comment', "deleting"))
         let data = { issue_id: issue_id,
                      comment_id: comment_id }
-	return impfetch( state, "imp/issue/comment/0/", dispatch,
-			 {method: "DELETE",
-			  credentials: 'same-origin',
-			  data: data,
-			  headers: {"Content-type": "application/json; charset=UTF-8"},
-			  body: JSON.stringify(data)}
-	).then(response => response.json())
-	 .then(json => {
+	      return impfetch( state, "imp/issue/comment/0/", dispatch,
+			                   {method: "DELETE",
+			                    credentials: 'same-origin',
+			                    data: data,
+			                    headers: {"Content-type": "application/json; charset=UTF-8"},
+			                    body: JSON.stringify(data)}
+	      ).then(response => response.json())
+	       .then(json => {
              if ( json.status !== 'success' ) {
-		 console.log('Request failed with JSON response', json);
-		 dispatch(announceIssueSaveFailed(issue_id, json.error))
+		             console.log('Request failed with JSON response', json);
+		             dispatch(announceIssueSaveFailed(issue_id, json.error))
              } else {
-		 console.log('Request succeeded with JSON response', json);
-		 dispatch(announceIssuesSaved([issue_id]))
+		             console.log('Request succeeded with JSON response', json);
+		             dispatch(announceIssuesSaved([issue_id]))
              }
-	 })
-	 .catch(function (error) {
+	       })
+	       .catch(function (error) {
              console.log('Request failed', error);
-	     dispatch(announceIssueSaveFailed(issue_id, error))
-	 })
+	           dispatch(announceIssueSaveFailed(issue_id, error))
+	       })
     }
 }
 

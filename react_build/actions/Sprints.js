@@ -48,7 +48,7 @@ function announceSprintsLoaded(payload) {
     payload.sprints.map((item, index) => {
         items_by_id[item.id] = item
     });
-    
+
     return {
         type: ANNOUNCE_SPRINTS_LOADED,
         items_by_id: items_by_id,
@@ -122,16 +122,16 @@ export function reorderSprints(sprint_id_before, sprint_id_after, on_done) {
 	    // do nothing, already saving
 	    return
 	}
-	
+
 	dispatch(announceSavingSprints([sprint_id_before, sprint_id_after]))
 
 	const data = { sprint_id_before: sprint_id_before,
 		       sprint_id_after: sprint_id_after }
-	
+
         return impfetch('/imp/sprint/'+sprint_id_before+'/', {method: "PUT",
 					 credentials: 'same-origin',
 					 data: data,
-					 headers: {"Content-type": "application/json; charset=UTF-8"}, 
+					 headers: {"Content-type": "application/json; charset=UTF-8"},
 					 body: JSON.stringify(data)}
 	).then(response => response.json())
 	 .then(json => {
@@ -149,27 +149,27 @@ export function reorderSprints(sprint_id_before, sprint_id_after, on_done) {
     }
 }
 
-function fetchSprintsPromise(dispatch, sprint_ids) {
+function fetchSprintsPromise(state, dispatch, sprint_ids) {
     return new Promise(function(resolve, reject) {
-	dispatch(announceLoadingSprints(sprint_ids))
+	      dispatch(announceLoadingSprints(sprint_ids))
 
-	const params = { filter: { ids: sprint_ids },
-			 pagination: {'enabled': false} }
-	
-        return impfetch('/imp/sprint/', {params:params})
-	    .then(response => response.json())
-	    .then(json => {
+	      const params = { filter: { ids: sprint_ids },
+			                   pagination: {'enabled': false} }
+
+        return impfetch(state, '/imp/sprint/', {params:params})
+	          .then(response => response.json())
+	          .then(json => {
                 if (json.status != 'success') {
-		    dispatch(announceSprintsLoadFailed())
-		    reject(json.error)
+		                dispatch(announceSprintsLoadFailed())
+		                reject(json.error)
                 } else {
-		    dispatch(announceSprintsLoaded(json.payload))
-		    resolve(json.payload)
+		                dispatch(announceSprintsLoaded(json.payload))
+		                resolve(json.payload)
                 }
-	    }).catch(function (error) {
-		dispatch(announceSprintsLoadFailed("Failed to load sprints: " + error.message))
-		reject("Failed to load sprints: " + error.message)
-	    })
+	          }).catch(function (error) {
+		            dispatch(announceSprintsLoadFailed("Failed to load sprints: " + error.message))
+		            reject("Failed to load sprints: " + error.message)
+	          })
     })
 }
 
@@ -190,9 +190,9 @@ export function startCandidateSprint(list_key) {
 	let sprint_id_before = null
 	if ( selected_ids.length > 0 ) {
 	    sprint_id_before = selected_ids[0]
-	    const sprint_before = sprints_by_id[sprint_id_before] 
+	    const sprint_before = sprints_by_id[sprint_id_before]
 	}
-	
+
 	dispatch({
 	    type: ANNOUNCE_CAPTURING_NEW_SPRINT,
 	    sprint_id_before: sprint_id_before,
@@ -220,12 +220,12 @@ export function saveCandidateSprint() {
 	const state = getState()
 	dispatch(announceCandidateSprintSaving())
 	let data = {sprint: state.sprint.candidate_sprint}
-	
+
 	return impfetch("/imp/sprint/",
 			{method: "POST",
 			 credentials: 'same-origin',
 			 data: data,
-			 headers: {"Content-type": "application/json; charset=UTF-8"}, 
+			 headers: {"Content-type": "application/json; charset=UTF-8"},
 			 body: JSON.stringify(data)}
 	).then(response => response.json())
 	 .then(json => {

@@ -13,15 +13,15 @@ export const INVALIDATE_USERS = 'INVALIDATE_USERS'
 
 export function invalidateUsers(user_ids_to_invalidate) {
     return {
-	type: INVALIDATE_USERS,
-	user_ids_to_invalidate: user_ids_to_invalidate
+	      type: INVALIDATE_USERS,
+	      user_ids_to_invalidate: user_ids_to_invalidate
     }
 }
 
 function announceLoadingUsers(user_ids) {
     return {
         type: ANNOUNCE_LOADING_USERS,
-	user_ids_to_load: user_ids
+	      user_ids_to_load: user_ids
     }
 }
 
@@ -35,7 +35,7 @@ function announceUsersLoaded(payload) {
     return {
         type: ANNOUNCE_USERS_LOADED,
         items_by_id: items_by_id,
-	received_at: Date.now()
+	      received_at: Date.now()
     }
 }
 
@@ -49,25 +49,25 @@ function announceUsersLoadFailed(error) {
 
 function fetchUsersPromise(dispatch, state, user_ids) {
     return new Promise(function(resolve, reject) {
-	dispatch(announceLoadingUsers(user_ids))
+	      dispatch(announceLoadingUsers(user_ids))
 
-	const params = { filter: { ids: user_ids },
-			 pagination: {'enabled': false} }
+	      const params = { filter: { ids: user_ids },
+			                   pagination: {'enabled': false} }
 
         return impfetch(state, 'imp/user/', dispatch, {params:params})
-	    .then(response => response.json())
-	    .then(json => {
+	          .then(response => response.json())
+	          .then(json => {
                 if (json.status !== 'success') {
-		    dispatch(announceUsersLoadFailed())
-		    reject(json.error)
+		                dispatch(announceUsersLoadFailed())
+		                reject(json.error)
                 } else {
-		    dispatch(announceUsersLoaded(json.payload))
-		    resolve(json.payload)
+		                dispatch(announceUsersLoaded(json.payload))
+		                resolve(json.payload)
                 }
-	    }).catch(function (error) {
-		dispatch(announceUsersLoadFailed("Failed to load users: " + error))
-		reject("Failed to load users: " + error)
-	    })
+	          }).catch(function (error) {
+		            dispatch(announceUsersLoadFailed("Failed to load users: " + error))
+		            reject("Failed to load users: " + error)
+	          })
     })
 }
 

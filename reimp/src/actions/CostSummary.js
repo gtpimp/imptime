@@ -52,28 +52,28 @@ export function ensureCostSummaryLoaded(sprint_id) {
             return
         }
         if ( getCostSummary(state, sprint_id) === null ) {
-            dispatch(fetchCostSummary(dispatch, state, sprint_id))
+            dispatch(fetchCostSummary(sprint_id))
         }
     }
 }
 
-function fetchCostSummary(dispatch, state, sprint_id) {
+function fetchCostSummary(sprint_id) {
     sprint_id = parseInt(sprint_id)
     return (dispatch, getState) => {
         const state = getState()
-	dispatch(announceLoadingCostSummary(sprint_id))
-	return impfetch(state, 'imp/cost_summary/'+sprint_id+'/', dispatch)
+	      dispatch(announceLoadingCostSummary(sprint_id))
+	      return impfetch(state, 'imp/cost_summary/'+sprint_id+'/', dispatch)
             .then(response => response.json())
-	    .then(json => {
+	          .then(json => {
                 if (json.status !== 'success') {
-		    dispatch(announceCostSummaryLoadFailed(json.error))
+		                dispatch(announceCostSummaryLoadFailed(json.error))
                 } else {
                     dispatch(announceCostSummaryLoaded(json.payload))
-		    /* dispatch(ensureCostSummaryLoaded(json.payload.cost_summary.sprint_id))*/
+		                /* dispatch(ensureCostSummaryLoaded(json.payload.cost_summary.sprint_id))*/
                 }
-	    }).catch(function (error) {
-		dispatch(announceCostSummaryLoadFailed("Failed to load cost summary: " + error))
-	    })
+	          }).catch(function (error) {
+		            dispatch(announceCostSummaryLoadFailed("Failed to load cost summary: " + error))
+	          })
     }
 }
 

@@ -113,34 +113,35 @@ function announceIssueDeleteFailed(issue_id, error) {
 
 function updateIssue(issue_id, field_name, new_value, on_done) {
     return (dispatch, getState) => {
-	dispatch(announceIssueSaving(issue_id, field_name, new_value))
-	let data = {field_name: field_name,
-		    value: new_value }
-	return impfetch("/imp/issue/"+issue_id+"/",
-			{method: "PUT",
-			 credentials: 'same-origin',
-			 data: data,
-			 headers: {"Content-type": "application/json; charset=UTF-8"}, 
-			 body: JSON.stringify(data)}
-	).then(response => response.json())
-	 .then(json => {
+        state = getState()
+	      dispatch(announceIssueSaving(issue_id, field_name, new_value))
+	      let data = {field_name: field_name,
+		                value: new_value }
+	      return impfetch(state, "/imp/issue/"+issue_id+"/",
+			                  {method: "PUT",
+			                   credentials: 'same-origin',
+			                   data: data,
+			                   headers: {"Content-type": "application/json; charset=UTF-8"},
+			                   body: JSON.stringify(data)}
+	      ).then(response => response.json())
+	       .then(json => {
              if ( json.status != 'success' ) {
-		 console.log('Request failed with JSON response', json);
-		 dispatch(announceIssueSaveFailed(json.error))
+		             console.log('Request failed with JSON response', json);
+		             dispatch(announceIssueSaveFailed(json.error))
              } else {
-		 console.log('Request succeeded with JSON response', json);
-		 dispatch(announceIssueSaved(json.payload))
-		 dispatch(invalidateIssues([issue_id]))
-		 dispatch(fetchIssuesIfNeeded())
+		             console.log('Request succeeded with JSON response', json);
+		             dispatch(announceIssueSaved(json.payload))
+		             dispatch(invalidateIssues([issue_id]))
+		             dispatch(fetchIssuesIfNeeded())
              }
-	     if ( on_done ) {
-		 on_done()
-	     }
-	 })
-	 .catch(function (error) {
+	           if ( on_done ) {
+		             on_done()
+	           }
+	       })
+	       .catch(function (error) {
              console.log('Request failed', error);
-	     dispatch(announceIssueSaveFailed(error))
-	 })
+	           dispatch(announceIssueSaveFailed(error))
+	       })
     }
 }
 
@@ -159,9 +160,9 @@ export function startCandidateIssue(list_key) {
 	let issue_id_before = null
 	if ( selected_ids.length > 0 ) {
 	    issue_id_before = selected_ids[0]
-	    const issue_before = issues_by_id[issue_id_before] 
+	    const issue_before = issues_by_id[issue_id_before]
 	}
-	
+
 	dispatch({
 	    type: ANNOUNCE_CAPTURING_NEW_ISSUE,
 	    issue_id_before: issue_id_before,
@@ -186,59 +187,58 @@ export function cancelCandidateIssue() {
 export function saveCandidateIssue() {
 
     return (dispatch, getState) => {
-	const state = getState()
-	dispatch(announceCandidateIssueSaving())
-	let data = {issue: state.issue.candidate_issue}
-	
-	return impfetch("/imp/issue/",
-			{method: "POST",
-			 credentials: 'same-origin',
-			 data: data,
-			 headers: {"Content-type": "application/json; charset=UTF-8"}, 
-			 body: JSON.stringify(data)}
-	).then(response => response.json())
-	 .then(json => {
+	      const state = getState()
+	      dispatch(announceCandidateIssueSaving())
+	      let data = {issue: state.issue.candidate_issue}
+
+	      return impfetch(state, "/imp/issue/",
+			                  {method: "POST",
+			                   credentials: 'same-origin',
+			                   data: data,
+			                   headers: {"Content-type": "application/json; charset=UTF-8"},
+			                   body: JSON.stringify(data)}
+	      ).then(response => response.json())
+	       .then(json => {
              if ( json.status != 'success' ) {
-		 console.log('Request failed with JSON response', json);
-		 dispatch(announceCandidateIssueSaveFailed(json.error))
+		             console.log('Request failed with JSON response', json);
+		             dispatch(announceCandidateIssueSaveFailed(json.error))
              } else {
-		 console.log('Request succeeded with JSON response', json);
-		 dispatch(announceCandidateIssueSaved(json.payload.issue))
+		             console.log('Request succeeded with JSON response', json);
+		             dispatch(announceCandidateIssueSaved(json.payload.issue))
              }
-	 })
-	 .catch(function (error) {
+	       })
+	       .catch(function (error) {
              console.log('Request failed', error);
-	     dispatch(announceCandidateIssueSaveFailed(error))
-	 })
+	           dispatch(announceCandidateIssueSaveFailed(error))
+	       })
     }
 
 }
 
 export function deleteIssue(issue_id) {
     return (dispatch, getState) => {
-	const state = getState()
-	dispatch(announceDeletingIssue(issue_id))
-	let data = { issue_id: issue_id }
-	return impfetch("/imp/issue/",
-			{method: "DELETE",
-			 credentials: 'same-origin',
-			 data: data,
-			 headers: {"Content-type": "application/json; charset=UTF-8"}, 
-			 body: JSON.stringify(data)}
-	).then(response => response.json())
-	 .then(json => {
+	      const state = getState()
+	      dispatch(announceDeletingIssue(issue_id))
+	      let data = { issue_id: issue_id }
+	      return impfetch(state, "/imp/issue/",
+			                  {method: "DELETE",
+			                   credentials: 'same-origin',
+			                   data: data,
+			                   headers: {"Content-type": "application/json; charset=UTF-8"},
+			                   body: JSON.stringify(data)}
+	      ).then(response => response.json())
+	       .then(json => {
              if ( json.status != 'success' ) {
-		 console.log('Request failed with JSON response', json);
-		 dispatch(announceIssueDeleteFailed(issue_id, json.error))
+		             console.log('Request failed with JSON response', json);
+		             dispatch(announceIssueDeleteFailed(issue_id, json.error))
              } else {
-		 console.log('Request succeeded with JSON response', json);
-		 dispatch(announceIssueDeleted(issue_id))
+		             console.log('Request succeeded with JSON response', json);
+		             dispatch(announceIssueDeleted(issue_id))
              }
-	 })
-	 .catch(function (error) {
+	       })
+	       .catch(function (error) {
              console.log('Request failed', error);
-	     dispatch(announceIssueDeleteFailed(issue_id, error))
-	 })
+	           dispatch(announceIssueDeleteFailed(issue_id, error))
+	       })
     }
 }
-

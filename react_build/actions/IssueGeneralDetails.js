@@ -30,7 +30,7 @@ function announceIssueGeneralDetailsLoaded(payload) {
     payload.issues.map((item, index) => {
         items_by_id[item.id] = item
     });
-    
+
     return {
         type: ANNOUNCE_ISSUE_GENERAL_DETAILS_LOADED,
         items_by_id: items_by_id,
@@ -46,25 +46,26 @@ function announceIssueGeneralDetailsLoadFailed(error) {
     }
 }
 
-function fetchIssueGeneralDetails(dispatch, issue_ids) {
+function fetchIssueGeneralDetails(issue_ids) {
     return (dispatch, getState) => {
-	dispatch(announceLoadingIssueGeneralDetails(issue_ids))
+	      dispatch(announceLoadingIssueGeneralDetails(issue_ids))
+        const state = getState()
 
-	const params = { filter: { ids: issue_ids },
-			 format: { detail_level: 'general' },
-			 pagination: {'enabled': false} }
-	
-        return impfetch('/imp/issue/', {params:params})
-	    .then(response => response.json())
-	    .then(json => {
+	      const params = { filter: { ids: issue_ids },
+			                   format: { detail_level: 'general' },
+			                   pagination: {'enabled': false} }
+
+        return impfetch(state, '/imp/issue/', {params:params})
+	          .then(response => response.json())
+	          .then(json => {
                 if (json.status != 'success') {
-		    dispatch(announceIssueGeneralDetailsLoadFailed(json.error))
+		                dispatch(announceIssueGeneralDetailsLoadFailed(json.error))
                 } else {
-		    dispatch(announceIssueGeneralDetailsLoaded(json.payload))
+		                dispatch(announceIssueGeneralDetailsLoaded(json.payload))
                 }
-	    }).catch(function (error) {
-		dispatch(announceIssueGeneralDetailsLoadFailed("Failed to load issues: " + error.message))
-	    })
+	          }).catch(function (error) {
+		            dispatch(announceIssueGeneralDetailsLoadFailed("Failed to load issues: " + error.message))
+	          })
     }
 }
 
@@ -79,16 +80,16 @@ function getMissingIssueGeneralDetails(state, required_issue_ids) {
     const loading_item_ids = matching_items.loading_item_ids
     let missing_item_ids = difference(required_item_refs, matching_item_refs)
     missing_item_ids = difference(missing_item_ids, loading_item_ids)
-    
+
     return missing_item_ids
 }
 
 export function fetchIssueGeneralDetailsIfNeeded(issue_ids) {
     return (dispatch, getState) => {
-	const state = getState()
-	const missing_issue_ids = getMissingIssueGeneralDetails(state, issue_ids)
-	if ( missing_issue_ids.length > 0 ) {
-	    dispatch(fetchIssueGeneralDetails(dispatch, missing_issue_ids))
-	}
+	      const state = getState()
+	      const missing_issue_ids = getMissingIssueGeneralDetails(state, issue_ids)
+	      if ( missing_issue_ids.length > 0 ) {
+	          dispatch(fetchIssueGeneralDetails(missing_issue_ids))
+	      }
     }
 }

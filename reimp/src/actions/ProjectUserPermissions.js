@@ -83,47 +83,50 @@ function announcePupsLoadFailedForProjectAndUser(error, project_id, user_id) {
     }
 }
 
-function fetchProjectUserPermission(dispatch, state, project_id, user_id) {
+function fetchProjectUserPermission(project_id, user_id) {
+    return (dispatch, getState) => {
+        const state = getState()
+        const pup_id = getPupIdForProjectUser(state, project_id, user_id)
+        dispatch(announceLoadingPupsForProjectAndUser(pup_id, project_id, user_id))
+        const params = { filter: { project_id: project_id,
+                                   user_id: user_id },
+		                     pagination: {'enabled': false} }
 
-    const pup_id = getPupIdForProjectUser(state, project_id, user_id)
-    dispatch(announceLoadingPupsForProjectAndUser(pup_id, project_id, user_id))
-    const params = { filter: { project_id: project_id,
-                               user_id: user_id },
-		     pagination: {'enabled': false} }
- 
-    return impfetch(state, 'imp/permission/project/', dispatch, {params:params})
-	.then(response => response.json())
-	.then(json => {
-            if (json.status !== 'success') {
-		dispatch(announcePupsLoadFailedForProjectAndUser(project_id, user_id))
-            } else {
-		dispatch(announcePupsLoadedForProjectAndUser(json.payload, project_id, user_id))
-            }
-	}).catch(function (error) {
-	    dispatch(announcePupsLoadFailedForProjectAndUser("Failed to load pups: " + error, project_id, user_id))
-	})
+        return impfetch(state, 'imp/permission/project/', dispatch, {params:params})
+	          .then(response => response.json())
+	          .then(json => {
+                if (json.status !== 'success') {
+		                dispatch(announcePupsLoadFailedForProjectAndUser(project_id, user_id))
+                } else {
+		                dispatch(announcePupsLoadedForProjectAndUser(json.payload, project_id, user_id))
+                }
+	          }).catch(function (error) {
+	              dispatch(announcePupsLoadFailedForProjectAndUser("Failed to load pups: " + error, project_id, user_id))
+	          })
+
+    }
 }
 
 function fetchPupsPromise(dispatch, state, pup_ids) {
     return new Promise(function(resolve, reject) {
-	dispatch(announceLoadingPups(pup_ids))
-	const params = { filter: { ids: pup_ids },
-			 pagination: {'enabled': false} }
-	
+	      dispatch(announceLoadingPups(pup_ids))
+	      const params = { filter: { ids: pup_ids },
+			                   pagination: {'enabled': false} }
+
         return impfetch(state, 'imp/permission/project/', dispatch, {params:params})
-	    .then(response => response.json())
-	    .then(json => {
+	          .then(response => response.json())
+	          .then(json => {
                 if (json.status !== 'success') {
-		    dispatch(announcePupsLoadFailed())
-		    reject(json.error)
+		                dispatch(announcePupsLoadFailed())
+		                reject(json.error)
                 } else {
-		    dispatch(announcePupsLoaded(json.payload))
-		    resolve(json.payload)
+		                dispatch(announcePupsLoaded(json.payload))
+		                resolve(json.payload)
                 }
-	    }).catch(function (error) {
-		dispatch(announcePupsLoadFailed("Failed to load pups: " + error))
-		reject("Failed to load pups: " + error)
-	    })
+	          }).catch(function (error) {
+		            dispatch(announcePupsLoadFailed("Failed to load pups: " + error))
+		            reject("Failed to load pups: " + error)
+	          })
     })
 }
 
@@ -186,9 +189,9 @@ export function ensureProjectUserPermissionsLoaded(project_id, user_id) {
                 pup_id = null
             }
         }
-        
+
         if ( pup_id == null || getPup(state, pup_id) == null ) {
-            fetchProjectUserPermission(dispatch, state, project_id, user_id)
+            dispatch(fetchProjectUserPermission(project_id, user_id))
         }
     }
 }
@@ -205,7 +208,7 @@ function getPups(state, pup_ids) {
             'id': pup_id,
             'loaded': false
         }
-    })    
+    })
 }
 
 export function hasPermission(state, project_id, user_id, permission_name) {
@@ -253,35 +256,35 @@ function announcePupsSavingForProjectAndUser(project_id, user_id, field_name, ne
 function updatePup(project_id, user_id, permission_name, new_value, on_done) {
     return (dispatch, getState) => {
         const state = getState()
-	dispatch(announcePupsSavingForProjectAndUser(project_id, user_id, permission_name, new_value))
-	let data = {project_id: project_id,
+	      dispatch(announcePupsSavingForProjectAndUser(project_id, user_id, permission_name, new_value))
+	      let data = {project_id: project_id,
                     user_ids: [user_id],
                     permission_name: permission_name,
-		    value: new_value }
+		                value: new_value }
 
         // Use a descriptive url to prevent the throttling dropping saves on different permissions within the same project
-	return impfetch(state, "imp/permission/project/?project_id="+project_id+"&user_id="+user_id+"&permission_name="+permission_name, dispatch,
-			{method: "POST",
-			 credentials: 'same-origin',
-			 data: data,
-			 headers: {"Content-type": "application/json; charset=UTF-8"}, 
-			 body: JSON.stringify(data)}
-	).then(response => response.json())
-	 .then(json => {
+	      return impfetch(state, "imp/permission/project/?project_id="+project_id+"&user_id="+user_id+"&permission_name="+permission_name, dispatch,
+			                  {method: "POST",
+			                   credentials: 'same-origin',
+			                   data: data,
+			                   headers: {"Content-type": "application/json; charset=UTF-8"},
+			                   body: JSON.stringify(data)}
+	      ).then(response => response.json())
+	       .then(json => {
              if ( json.status !== 'success' ) {
-		 console.log('Request failed with JSON response', json);
-		 dispatch(announcePupSaveFailedForProjectAndUser(project_id, user_id, json.error))
+		             console.log('Request failed with JSON response', json);
+		             dispatch(announcePupSaveFailedForProjectAndUser(project_id, user_id, json.error))
              } else {
-		 console.log('Request succeeded with JSON response', json);
+		             console.log('Request succeeded with JSON response', json);
                  dispatch(announcePupsSavedForProjectAndUser(project_id, user_id))
              }
-	     if ( on_done ) {
-		 on_done()
-	     }
-	 })
-	 .catch(function (error) {
+	           if ( on_done ) {
+		             on_done()
+	           }
+	       })
+	       .catch(function (error) {
              console.log('Request failed', error);
-	     dispatch(announcePupSaveFailedForProjectAndUser(project_id, user_id, error))
-	 })
+	           dispatch(announcePupSaveFailedForProjectAndUser(project_id, user_id, error))
+	       })
     }
 }

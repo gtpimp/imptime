@@ -11,15 +11,15 @@ export const INVALIDATE_USERS = 'INVALIDATE_USERS'
 
 export function invalidateUsers(user_ids_to_invalidate) {
     return {
-	type: INVALIDATE_USERS,
-	user_ids_to_invalidate: user_ids_to_invalidate
+	      type: INVALIDATE_USERS,
+	      user_ids_to_invalidate: user_ids_to_invalidate
     }
 }
 
 function announceLoadingUsers(user_ids) {
     return {
         type: ANNOUNCE_LOADING_USERS,
-	user_ids_to_load: user_ids
+	      user_ids_to_load: user_ids
     }
 }
 
@@ -29,11 +29,11 @@ function announceUsersLoaded(payload) {
     payload.users.map((item, index) => {
         items_by_id[item.id] = item
     });
-    
+
     return {
         type: ANNOUNCE_USERS_LOADED,
         items_by_id: items_by_id,
-	received_at: Date.now()
+	      received_at: Date.now()
     }
 }
 
@@ -47,23 +47,24 @@ function announceUsersLoadFailed(error) {
 
 function fetchUsers(dispatch, user_ids) {
     return (dispatch, getState) => {
-	dispatch(announceLoadingUsers(user_ids))
+        state = getState()
+	      dispatch(announceLoadingUsers(user_ids))
 
-	const params = { filter: { ids: user_ids },
-			 format: { detail_level: 'general' },
-			 pagination: {'enabled': false} }
-	
-        return impfetch('/imp/user/', {params:params})
-	    .then(response => response.json())
-	    .then(json => {
+	      const params = { filter: { ids: user_ids },
+			                   format: { detail_level: 'general' },
+			                   pagination: {'enabled': false} }
+
+        return impfetch(state, '/imp/user/', {params:params})
+	          .then(response => response.json())
+	          .then(json => {
                 if (json.status != 'success') {
-		    dispatch(announceUsersLoadFailed(json.error))
+		                dispatch(announceUsersLoadFailed(json.error))
                 } else {
-		    dispatch(announceUsersLoaded(json.payload))
+		                dispatch(announceUsersLoaded(json.payload))
                 }
-	    }).catch(function (error) {
-		dispatch(announceUsersLoadFailed("Failed to load users: " + error.message))
-	    })
+	          }).catch(function (error) {
+		            dispatch(announceUsersLoadFailed("Failed to load users: " + error.message))
+	          })
     }
 }
 
@@ -81,10 +82,10 @@ function getMissingUsers(state, required_user_ids) {
 
 export function fetchUsersIfNeeded(user_ids) {
     return (dispatch, getState) => {
-	const state = getState()
-	const missing_user_ids = getMissingUsers(state, user_ids)
-	if ( missing_user_ids.length > 0 ) {
-	    dispatch(fetchUsers(dispatch, missing_user_ids))
-	}
+	      const state = getState()
+	      const missing_user_ids = getMissingUsers(state, user_ids)
+	      if ( missing_user_ids.length > 0 ) {
+	          dispatch(fetchUsers(dispatch, missing_user_ids))
+	      }
     }
 }

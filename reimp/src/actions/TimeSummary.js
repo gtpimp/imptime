@@ -52,18 +52,17 @@ export function ensureTimeSummaryLoaded(sprint_id) {
             return
         }
         if ( getTimeSummary(state, sprint_id) === null ) {
-            dispatch(fetchTimeSummary(dispatch, state, sprint_id))
+            dispatch(fetchTimeSummary(sprint_id))
         }
     }
 }
 
-function fetchTimeSummary(dispatch, state, sprint_id) {
+function fetchTimeSummary(sprint_id) {
     sprint_id = parseInt(sprint_id)
     return (dispatch, getState) => {
         const state = getState()
-        const API_BASE_URL = state.settings.configured && state.settings.API_BASE_URL
 	      dispatch(announceLoadingTimeSummary(sprint_id))
-	      return impfetch(API_BASE_URL+'imp/time_summary/'+sprint_id+'/', dispatch)
+	      return impfetch(state, 'imp/time_summary/'+sprint_id+'/', dispatch)
             .then(response => response.json())
 	          .then(json => {
                 if (json.status !== 'success') {

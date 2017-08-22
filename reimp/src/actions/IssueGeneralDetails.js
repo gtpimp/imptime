@@ -30,7 +30,7 @@ function announceIssueGeneralDetailsLoaded(payload) {
     //     items_by_id[item.id] = item
     //     return
     // });
-    
+
     return {
         type: ANNOUNCE_ISSUE_GENERAL_DETAILS_LOADED,
         items_by_id: keyBy(payload.issues, 'id'),
@@ -49,23 +49,23 @@ function announceIssueGeneralDetailsLoadFailed(error) {
 function fetchIssueGeneralDetails(dispatch, issue_ids) {
     return (dispatch, getState) => {
         const state = getState()
-	dispatch(announceLoadingIssueGeneralDetails(issue_ids))
+	      dispatch(announceLoadingIssueGeneralDetails(issue_ids))
 
-	const params = { filter: { ids: issue_ids },
-			 format: { detail_level: 'general' },
-			 pagination: {'enabled': false} }
-	
+	      const params = { filter: { ids: issue_ids },
+			                   format: { detail_level: 'general' },
+			                   pagination: {'enabled': false} }
+
         return impfetch(state, 'imp/issue/', dispatch, {params:params})
-	    .then(response => response.json())
-	    .then(json => {
+	          .then(response => response.json())
+	          .then(json => {
                 if (json.status !== 'success') {
-		    dispatch(announceIssueGeneralDetailsLoadFailed(json.error))
+		                dispatch(announceIssueGeneralDetailsLoadFailed(json.error))
                 } else {
-		    dispatch(announceIssueGeneralDetailsLoaded(json.payload))
+		                dispatch(announceIssueGeneralDetailsLoaded(json.payload))
                 }
-	    }).catch(function (error) {
-		dispatch(announceIssueGeneralDetailsLoadFailed("Failed to load issue general details: " + error))
-	    })
+	          }).catch(function (error) {
+		            dispatch(announceIssueGeneralDetailsLoadFailed("Failed to load issue general details: " + error))
+	          })
     }
 }
 
@@ -80,7 +80,7 @@ function getMissingIssueGeneralDetails(state, required_issue_ids) {
     const loading_item_ids = matching_items.loading_item_ids
     let missing_item_ids = difference(required_item_refs, matching_item_refs)
     missing_item_ids = difference(missing_item_ids, loading_item_ids)
-    
+
     return missing_item_ids
 }
 

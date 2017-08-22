@@ -62,27 +62,27 @@ function announceProjectsLoadFailed(error) {
     }
 }
 
-function fetchProjectsPromise(dispatch, project_ids) {
+function fetchProjectsPromise(state, dispatch, project_ids) {
     return new Promise(function(resolve, reject) {
-	dispatch(announceLoadingProjects(project_ids))
+	      dispatch(announceLoadingProjects(project_ids))
 
-	const params = { filter: { ids: project_ids },
-			 pagination: {'enabled': false} }
-	
-        return impfetch('/imp/project/', {params:params})
-	    .then(response => response.json())
-	    .then(json => {
+	      const params = { filter: { ids: project_ids },
+			                   pagination: {'enabled': false} }
+
+        return impfetch(state, '/imp/project/', {params:params})
+	          .then(response => response.json())
+	          .then(json => {
                 if (json.status != 'success') {
-		    dispatch(announceProjectsLoadFailed())
-		    reject(json.error)
+		                dispatch(announceProjectsLoadFailed())
+		                reject(json.error)
                 } else {
-		    dispatch(announceProjectsLoaded(json.payload))
-		    resolve(json.payload)
+		                dispatch(announceProjectsLoaded(json.payload))
+		                resolve(json.payload)
                 }
-	    }).catch(function (error) {
-		dispatch(announceProjectsLoadFailed("Failed to load projects: " + error.message))
-		reject("Failed to load projects: " + error.message)
-	    })
+	          }).catch(function (error) {
+		            dispatch(announceProjectsLoadFailed("Failed to load projects: " + error.message))
+		            reject("Failed to load projects: " + error.message)
+	          })
     })
 }
 

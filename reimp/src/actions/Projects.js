@@ -85,25 +85,25 @@ function announceCandidateProjectSaveFailed(error) {
 
 function fetchProjectsPromise(dispatch, state, project_ids) {
     return new Promise(function(resolve, reject) {
-	dispatch(announceLoadingProjects(project_ids))
+	      dispatch(announceLoadingProjects(project_ids))
 
-	const params = { filter: { ids: project_ids },
-			 pagination: {'enabled': false} }
+	      const params = { filter: { ids: project_ids },
+			                   pagination: {'enabled': false} }
 
         return impfetch(state, 'imp/project/', dispatch, {params:params})
-	    .then(response => response.json())
-	    .then(json => {
+	          .then(response => response.json())
+	          .then(json => {
                 if (json.status !== 'success') {
-		    dispatch(announceProjectsLoadFailed())
-		    reject(json.error)
+		                dispatch(announceProjectsLoadFailed())
+		                reject(json.error)
                 } else {
-		    dispatch(announceProjectsLoaded(json.payload))
-		    resolve(json.payload)
+		                dispatch(announceProjectsLoaded(json.payload))
+		                resolve(json.payload)
                 }
-	    }).catch(function (error) {
-		dispatch(announceProjectsLoadFailed("Failed to load projects: " + error))
-		reject("Failed to load projects: " + error)
-	    })
+	          }).catch(function (error) {
+		            dispatch(announceProjectsLoadFailed("Failed to load projects: " + error))
+		            reject("Failed to load projects: " + error)
+	          })
     })
 }
 
@@ -229,33 +229,33 @@ function announceProjectsSaving(project_ids, field_name, new_value) {
 function updateProject(project_ids, field_name, new_value, on_done) {
     return (dispatch, getState) => {
         const state = getState()
-	dispatch(announceProjectsSaving(project_ids, field_name, new_value))
-	let data = {project_ids: project_ids,
+	      dispatch(announceProjectsSaving(project_ids, field_name, new_value))
+	      let data = {project_ids: project_ids,
                     field_name: field_name,
-		    value: new_value }
-	return impfetch(state, "imp/project/"+project_ids[0]+"/", dispatch,
-			{method: "PUT",
-			 credentials: 'same-origin',
-			 data: data,
-			 headers: {"Content-type": "application/json; charset=UTF-8"},
-			 body: JSON.stringify(data)}
-	).then(response => response.json())
-	 .then(json => {
+		                value: new_value }
+	      return impfetch(state, "imp/project/"+project_ids[0]+"/", dispatch,
+			                  {method: "PUT",
+			                   credentials: 'same-origin',
+			                   data: data,
+			                   headers: {"Content-type": "application/json; charset=UTF-8"},
+			                   body: JSON.stringify(data)}
+	      ).then(response => response.json())
+	       .then(json => {
              if ( json.status !== 'success' ) {
-		 console.log('Request failed with JSON response', json);
-		 dispatch(announceProjectSaveFailed(json.error))
+		             console.log('Request failed with JSON response', json);
+		             dispatch(announceProjectSaveFailed(json.error))
              } else {
-		 console.log('Request succeeded with JSON response', json);
+		             console.log('Request succeeded with JSON response', json);
                  dispatch(announceProjectsSaved(project_ids))
              }
-	     if ( on_done ) {
-		 on_done()
-	     }
-	 })
-	 .catch(function (error) {
+	           if ( on_done ) {
+		             on_done()
+	           }
+	       })
+	       .catch(function (error) {
              console.log('Request failed', error);
-	     dispatch(announceProjectSaveFailed(error))
-	 })
+	           dispatch(announceProjectSaveFailed(error))
+	       })
     }
 }
 

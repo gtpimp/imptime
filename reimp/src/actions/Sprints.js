@@ -30,14 +30,14 @@ export function invalidateAllSprints() {
 export function invalidateSprints(sprint_ids) {
     return {
         type: INVALIDATE_SPRINTS,
-	sprint_ids_to_invalidate: sprint_ids
+	      sprint_ids_to_invalidate: sprint_ids
     }
 }
 
 function announceLoadingSprints(sprint_ids) {
     return {
         type: ANNOUNCE_LOADING_SPRINTS,
-	sprint_ids_to_load: sprint_ids
+	      sprint_ids_to_load: sprint_ids
     }
 }
 
@@ -45,7 +45,7 @@ function announceSprintsLoaded(payload) {
     return {
         type: ANNOUNCE_SPRINTS_LOADED,
         items_by_id: keyBy(payload.sprints, 'id'),
-	received_at: Date.now()
+	      received_at: Date.now()
     }
 }
 
@@ -66,38 +66,38 @@ function announceCandidateSprintSaving() {
 function announceCandidateSprintSaved(new_sprint) {
     return {
         type: ANNOUNCE_SAVED_NEW_SPRINT,
-	sprint: new_sprint
+	      sprint: new_sprint
     }
 }
 
 function announceCandidateSprintSaveFailed(error) {
     return {
-	type: ANNOUNCE_SAVING_NEW_SPRINT_FAILED,
-	error: error
+	      type: ANNOUNCE_SAVING_NEW_SPRINT_FAILED,
+	      error: error
     }
 }
 
 function fetchSprintsPromise(dispatch, state, sprint_ids) {
     return new Promise(function(resolve, reject) {
-	dispatch(announceLoadingSprints(sprint_ids))
+	      dispatch(announceLoadingSprints(sprint_ids))
 
-	const params = { filter: { ids: sprint_ids },
-			 pagination: {'enabled': false} }
-	
+	      const params = { filter: { ids: sprint_ids },
+			                   pagination: {'enabled': false} }
+
         return impfetch(state, 'imp/sprint/', dispatch, {params:params})
-	    .then(response => response.json())
-	    .then(json => {
+	          .then(response => response.json())
+	          .then(json => {
                 if (json.status !== 'success') {
-		    dispatch(announceSprintsLoadFailed())
-		    reject(json.error)
+		                dispatch(announceSprintsLoadFailed())
+		                reject(json.error)
                 } else {
-		    dispatch(announceSprintsLoaded(json.payload))
-		    resolve(json.payload)
+		                dispatch(announceSprintsLoaded(json.payload))
+		                resolve(json.payload)
                 }
-	    }).catch(function (error) {
-		dispatch(announceSprintsLoadFailed("Failed to load sprints: " + error))
-		reject("Failed to load sprints: " + error)
-	    })
+	          }).catch(function (error) {
+		            dispatch(announceSprintsLoadFailed("Failed to load sprints: " + error))
+		            reject("Failed to load sprints: " + error)
+	          })
     })
 }
 
@@ -109,25 +109,25 @@ export function fetchSprintsIfNeeded(list_key) {
 
 export function startCandidateSprint(project_id, sprint_id_before) {
     return (dispatch, getState) => {
-	const state = getState()
-	dispatch({
-	    type: ANNOUNCE_CAPTURING_NEW_SPRINT,
-	    project_id: project_id,
+	      const state = getState()
+	      dispatch({
+	          type: ANNOUNCE_CAPTURING_NEW_SPRINT,
+	          project_id: project_id,
             sprint_id_before: sprint_id_before
-	})
+	      })
     }
 }
 
 export function updateCandidateName(name) {
     return {
-	type: UPDATE_NEW_SPRINT_DETAILS,
-	candidate_sprint: { "name": name }
+	      type: UPDATE_NEW_SPRINT_DETAILS,
+	      candidate_sprint: { "name": name }
     }
 }
 
 export function cancelCandidateSprint() {
     return {
-	type: CANCEL_CREATING_NEW_SPRINT
+	      type: CANCEL_CREATING_NEW_SPRINT
     }
 }
 
@@ -146,30 +146,30 @@ export function reorderSprints(sprint_id_before, sprint_id_after, on_done) {
 export function saveCandidateSprint() {
 
     return (dispatch, getState) => {
-	const state = getState()
-	dispatch(announceCandidateSprintSaving())
-	let data = {sprint: state.sprint.candidate_sprint}
-	
-	return impfetch(state, "imp/sprint/", dispatch,
-			{method: "POST",
-			 credentials: 'same-origin',
-			 data: data,
-			 headers: {"Content-type": "application/json; charset=UTF-8"}, 
-			 body: JSON.stringify(data)}
-	).then(response => response.json())
-	 .then(json => {
+	      const state = getState()
+	      dispatch(announceCandidateSprintSaving())
+	      let data = {sprint: state.sprint.candidate_sprint}
+
+	      return impfetch(state, "imp/sprint/", dispatch,
+			                  {method: "POST",
+			                   credentials: 'same-origin',
+			                   data: data,
+			                   headers: {"Content-type": "application/json; charset=UTF-8"},
+			                   body: JSON.stringify(data)}
+	      ).then(response => response.json())
+	       .then(json => {
              if ( json.status !== 'success' ) {
-		 console.log('Request failed with JSON response', json);
-		 dispatch(announceCandidateSprintSaveFailed(json.error))
+		             console.log('Request failed with JSON response', json);
+		             dispatch(announceCandidateSprintSaveFailed(json.error))
              } else {
-		 console.log('Request succeeded with JSON response', json);
-		 dispatch(announceCandidateSprintSaved(json.payload.sprint))
+		             console.log('Request succeeded with JSON response', json);
+		             dispatch(announceCandidateSprintSaved(json.payload.sprint))
              }
-	 })
-	 .catch(function (error) {
+	       })
+	       .catch(function (error) {
              console.log('Request failed', error);
-	     dispatch(announceCandidateSprintSaveFailed(error))
-	 })
+	           dispatch(announceCandidateSprintSaveFailed(error))
+	       })
     }
 }
 
@@ -196,7 +196,7 @@ export function getSprints(state, sprint_ids) {
             'id': sprint_id,
             'loaded': false
         }
-    })    
+    })
 }
 
 export function getCandidateSprint(state) {
@@ -224,40 +224,40 @@ function announceSprintsSaving(sprint_ids, field_name, new_value) {
     return {
         type: ANNOUNCE_SPRINTS_SAVING,
         sprint_ids: sprint_ids,
-	field_name: field_name,
-	new_value: new_value
+	      field_name: field_name,
+	      new_value: new_value
     }
 }
 
 function updateSprint(sprint_ids, field_name, new_value, on_done) {
     return (dispatch, getState) => {
         const state = getState()
-	dispatch(announceSprintsSaving(sprint_ids, field_name, new_value))
-	let data = {sprint_ids: sprint_ids,
+	      dispatch(announceSprintsSaving(sprint_ids, field_name, new_value))
+	      let data = {sprint_ids: sprint_ids,
                     field_name: field_name,
-		    value: new_value }
-	return impfetch(state, "imp/sprint/"+sprint_ids[0]+"/", dispatch,
-			{method: "PUT",
-			 credentials: 'same-origin',
-			 data: data,
-			 headers: {"Content-type": "application/json; charset=UTF-8"}, 
-			 body: JSON.stringify(data)}
-	).then(response => response.json())
-	 .then(json => {
+		                value: new_value }
+	      return impfetch(state, "imp/sprint/"+sprint_ids[0]+"/", dispatch,
+			                  {method: "PUT",
+			                   credentials: 'same-origin',
+			                   data: data,
+			                   headers: {"Content-type": "application/json; charset=UTF-8"},
+			                   body: JSON.stringify(data)}
+	      ).then(response => response.json())
+	       .then(json => {
              if ( json.status !== 'success' ) {
-		 console.log('Request failed with JSON response', json);
-		 dispatch(announceSprintSaveFailed(json.error))
+		             console.log('Request failed with JSON response', json);
+		             dispatch(announceSprintSaveFailed(json.error))
              } else {
-		 console.log('Request succeeded with JSON response', json);
+		             console.log('Request succeeded with JSON response', json);
                  dispatch(announceSprintsSaved(sprint_ids))
              }
-	     if ( on_done ) {
-		 on_done()
-	     }
-	 })
-	 .catch(function (error) {
+	           if ( on_done ) {
+		             on_done()
+	           }
+	       })
+	       .catch(function (error) {
              console.log('Request failed', error);
-	     dispatch(announceSprintSaveFailed(error))
-	 })
+	           dispatch(announceSprintSaveFailed(error))
+	       })
     }
 }

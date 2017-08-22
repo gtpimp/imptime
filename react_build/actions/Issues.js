@@ -44,7 +44,7 @@ function announceIssuesLoaded(payload) {
     payload.issues.map((item, index) => {
         items_by_id[item.id] = item
     });
-    
+
     return {
         type: ANNOUNCE_ISSUES_LOADED,
         items_by_id: items_by_id,
@@ -60,27 +60,27 @@ function announceIssuesLoadFailed(error) {
     }
 }
 
-function fetchIssuesPromise(dispatch, issue_ids) {
+function fetchIssuesPromise(state, dispatch, issue_ids) {
     return new Promise(function(resolve, reject) {
-	dispatch(announceLoadingIssues(issue_ids))
+	      dispatch(announceLoadingIssues(issue_ids))
 
-	const params = { filter: { ids: issue_ids },
-			 pagination: {'enabled': false} }
-	
-        return impfetch('/imp/issue/', {params:params})
-	    .then(response => response.json())
-	    .then(json => {
+	      const params = { filter: { ids: issue_ids },
+			                   pagination: {'enabled': false} }
+
+        return impfetch(state, '/imp/issue/', {params:params})
+	          .then(response => response.json())
+	          .then(json => {
                 if (json.status != 'success') {
-		    dispatch(announceIssuesLoadFailed())
-		    reject(json.error)
+		                dispatch(announceIssuesLoadFailed())
+		                reject(json.error)
                 } else {
-		    dispatch(announceIssuesLoaded(json.payload))
-		    resolve(json.payload)
+		                dispatch(announceIssuesLoaded(json.payload))
+		                resolve(json.payload)
                 }
-	    }).catch(function (error) {
-		dispatch(announceIssuesLoadFailed("Failed to load issues: " + error.message))
-		reject("Failed to load issues: " + error.message)
-	    })
+	          }).catch(function (error) {
+		            dispatch(announceIssuesLoadFailed("Failed to load issues: " + error.message))
+		            reject("Failed to load issues: " + error.message)
+	          })
     })
 }
 
