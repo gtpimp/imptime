@@ -1,7 +1,11 @@
 import React, { Component } from 'react'
 import { connect } from 'react-redux'
 import { ensureProjectsLoaded, getProject } from '../actions/Projects'
-import { ensureProjectStatementLoaded, getProjectStatement } from '../actions/ProjectStatement'
+import {
+    ensureProjectStatementLoaded,
+    getProjectStatement,
+    isLoadingProjectStatement
+} from '../actions/ProjectStatement'
 import { setBreadcrumbs } from '../actions/Breadcrumbs'
 import {
     PAGE_KEY__PROJECT_DASHBOARD_PAGE
@@ -47,11 +51,22 @@ class ProjectStatementPage extends Component {
 
     render() {
 
-        const { project } = this.props
+        const { is_loading, project_statement } = this.props
 
         return (
             <div>
-              test
+              { is_loading &&
+                <div>
+                  <br/>
+                  Loading...
+                </div>
+              }
+
+              { ! is_loading &&
+                <div>
+                  {project_statement.project_id}
+                </div>
+              }
             </div>
         )
     }
@@ -60,11 +75,14 @@ class ProjectStatementPage extends Component {
 function mapStateToProps(state, props) {
     const project_id = props.params.projectId
     const project = getProject(state, project_id) || {}
-    /* const is_loading = isLoadingCostSummary(state, sprint_id) || isLoadingTimeSummary(state, sprint_id)*/
+    const project_statement = getProjectStatement(state, project_id) || {}
+    const is_loading = isLoadingProjectStatement(state, project_id)
 
     return {
         project_id: project_id,
-        project: project
+        project: project,
+        project_statement: project_statement,
+        is_loading: is_loading,
     }
 }
 
