@@ -40,8 +40,6 @@ class TimeSummaryViewSet(BaseViewSet):
             users = sprint.business.get_users_allowed_to_estimate_on_business(request.user)
             user_pks = [x.id for x in users]
             users = User.objects.filter(pk__in=user_pks).filter(pk__in=developers)
-            # users = BusinessPermissions.active_users_for_business(sprint.business.pk)\
-            #                            .filter(pk__in=developers)
 
             for user in users:
                 dev_stats = calculate_dev_hours_stats(sprint, user)
@@ -58,7 +56,6 @@ class TimeSummaryViewSet(BaseViewSet):
                 time_summary["per_user"][user.pk] = values
 
             context["time_summary"] = time_summary
-
             data = {"status": "success", "payload": context}
 
         except Exception, ex:
