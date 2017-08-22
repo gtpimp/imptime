@@ -1,24 +1,25 @@
-import React from 'react';
-import {syncHistoryWithStore} from 'react-router-redux'
-import {IndexRoute, Router, Route, browserHistory} from 'react-router'
-import {Provider} from 'react-redux'
-import ReactDOM from 'react-dom';
 import './sass/imptime.css'
-import configureStore from './store/configureStore'
-import ProjectsPage from './containers/ProjectsPage'
 import ChangePasswordPage from './containers/ChangePasswordPage'
+import ClientsPage from './containers/ClientsPage'
+import DevPage from './containers/DevPage'
 import ForgotPasswordPage from './containers/ForgotPasswordPage'
+import IssuesPage from './containers/IssuesPage'
+import MainLayout from './components/MainLayout'
 import PasswordReminderSentPage from './containers/PasswordReminderSentPage'
 import ProjectDashboardPage from './containers/ProjectDashboardPage'
-import SprintsPage from './containers/SprintsPage'
-import SprintDashboardPage from './containers/SprintDashboardPage'
-import SprintCostSummaryPage from './containers/SprintCostSummaryPage'
-import IssuesPage from './containers/IssuesPage'
-import ClientsPage from './containers/ClientsPage'
-import TeamPage from './containers/TeamPage'
-import MainLayout from './components/MainLayout'
+import ProjectStatementPage from './containers/ProjectStatementPage'
 import ProjectUserPage from './containers/ProjectUserPage'
-import DevPage from './containers/DevPage'
+import ProjectsPage from './containers/ProjectsPage'
+import React from 'react';
+import ReactDOM from 'react-dom';
+import SprintCostSummaryPage from './containers/SprintCostSummaryPage'
+import SprintDashboardPage from './containers/SprintDashboardPage'
+import SprintsPage from './containers/SprintsPage'
+import TeamPage from './containers/TeamPage'
+import configureStore from './store/configureStore'
+import {IndexRoute, Router, Route, browserHistory} from 'react-router'
+import {Provider} from 'react-redux'
+import {syncHistoryWithStore} from 'react-router-redux'
 
 /* /projects
  /projects/{project-id}
@@ -41,6 +42,7 @@ ReactDOM.render(
                 <Route path="dev" component={DevPage}/>
                 <Route path="projects" component={ProjectsPage}/>
                 <Route path="projects/:projectId" component={ProjectDashboardPage}/>
+                <Route path="projects/:projectId/projectStatement" component={ProjectStatementPage}/>
                 <Route path="projects/:projectId/sprints" component={SprintsPage}/>
                 <Route path="projects/:projectId/sprints/:sprintId" component={SprintDashboardPage}/>
                 <Route path="projects/:projectId/sprints/:sprintId/issues" component={IssuesPage}/>

@@ -18,6 +18,7 @@ class ProjectDashboardPage extends Component {
         super(props)
         this.navigateToSprintsPage = this.navigateToSprintsPage.bind(this)
         this.navigateToProjectUsersPage = this.navigateToProjectUsersPage.bind(this)
+        this.navigateToProjectStatementPage = this.navigateToProjectStatementPage.bind(this)
     }
 
     componentDidMount() {
@@ -32,7 +33,7 @@ class ProjectDashboardPage extends Component {
             this.refresh(new_props.project_id, new_props.project)
         }
     }
-    
+
     refresh(project_id, project) {
         const { dispatch } = this.props
         project = project || {}
@@ -51,17 +52,23 @@ class ProjectDashboardPage extends Component {
         const { project_id } = this.props
         browserHistory.push('/projects/'+project_id+'/users');
     }
-    
+
+    navigateToProjectStatementPage() {
+        const { project_id } = this.props
+        browserHistory.push('/projects/'+project_id+'/projectStatement');
+    }
+
     render() {
 
         const { project } = this.props
-        
+
         return (
             <div>
                 <button className="button button--large button--primary" onClick={this.navigateToSprintsPage}>Sprints</button>
                 <button className="button button--large button--primary" onClick={this.navigateToProjectUsersPage}>Users</button>
+                <button className="button button--large button--primary" onClick={this.navigateToProjectStatementPage}>Project Statement</button>
                 <br/>
-                
+
             </div>
         )
     }

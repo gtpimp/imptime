@@ -43,7 +43,7 @@ class ProjectStatementPage extends Component {
 
     render() {
 
-        const { project_id } = this.props
+        /* const { project_id } = this.props*/
 
         return (
             <div>

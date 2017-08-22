@@ -1,21 +1,13 @@
-import React, {Component} from 'react'
-import {connect} from 'react-redux'
 import '../../sass/toolbar-panel.css'
-import ToolbarButton from './ToolbarButton'
+import React, {Component} from 'react'
 import ReactTooltip from 'react-tooltip'
-import {
-    invalidateCostSummary
-} from '../../actions/CostSummary'
-import {
-    invalidateTimeSummary
-} from '../../actions/TimeSummary'
-import {
-    PAGE_KEY__SPRINTS_PAGE
-} from '../../actions/ItemListKeyRegistry'
-import { ensureSprintsLoaded, getSprint } from '../../actions/Sprints'
-import {
-    get_selected_sprint_ids
-} from '../../actions/Page'
+import ToolbarButton from './ToolbarButton'
+import { PAGE_KEY__SPRINTS_PAGE } from '../../actions/ItemListKeyRegistry'
+import { connect } from 'react-redux'
+import { getSprint } from '../../actions/Sprints'
+import { get_selected_sprint_ids } from '../../actions/Page'
+import { invalidateCostSummary } from '../../actions/CostSummary'
+import { invalidateTimeSummary } from '../../actions/TimeSummary'
 
 class CostSummaryToolbarPanel extends Component {
 
