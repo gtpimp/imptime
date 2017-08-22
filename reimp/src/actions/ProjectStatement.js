@@ -65,7 +65,6 @@ function fetchProjectStatement(project_id) {
 		                dispatch(announceProjectStatementLoadFailed(json.error))
                 } else {
                     dispatch(announceProjectStatementLoaded(json.payload))
-		                /* dispatch(ensureProjectStatementLoaded(json.payload.project_statement.project_id))*/
                 }
 	          }).catch(function (error) {
 		            dispatch(announceProjectStatementLoadFailed("Failed to load project statment: " + error))

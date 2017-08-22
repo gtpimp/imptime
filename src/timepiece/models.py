@@ -365,6 +365,7 @@ class Business(models.Model):
     def get_related_business_by_user(cls, user):
         return cls.objects.all().filter_by_logged_in_user(user).distinct()
 
+
 class BusinessComment(models.Model):
     business = models.ForeignKey(Business, null=False, blank=False, related_name='business_comments')
     comment = models.TextField(null=True, blank=True)
@@ -676,7 +677,7 @@ class BusinessPermissions(BaseModel):
     @property
     def has_view_testables(self):
         return self.user.is_superuser or self.can_view_testables or self.user.has_perm('timepiece.belongs_to_all_projects')
-    
+
     @property
     def has_edit_business_comments(self):
         return self.user.is_superuser or self.can_edit_business_comments or self.user.has_perm('timepiece.belongs_to_all_projects')
@@ -3648,11 +3649,11 @@ class Issue(models.Model):
     def on_description_updated(self):
         from testable.models import Testable
         Testable.update_from_issue_description(issue=self, description=self.description)
-    
+
     @property
     def testable(self):
         return self.testables.first()
-    
+
     @classmethod
     def get_next_issue_number(self, business):
         return Issue.get_last_issue_number(business) +1

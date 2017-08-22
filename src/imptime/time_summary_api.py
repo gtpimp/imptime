@@ -68,10 +68,6 @@ class TimeSummaryViewSet(BaseViewSet):
         return HttpResponse(JSONRenderer().render(data))
 
 
-def calculate_progress_ratio(rate, ratio):
-    value = round(rate * ratio, 2)
-    return value if value < 100 else 100
-
 def calculate_dev_hours_stats(sprint, user):
     stats = sprint.calculate_new_stats(user)
     spendable_budget = sprint.spendable_budget

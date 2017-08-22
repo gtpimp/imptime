@@ -1,6 +1,7 @@
 import React, { Component } from 'react'
 import { connect } from 'react-redux'
 import { ensureProjectsLoaded, getProject } from '../actions/Projects'
+import { ensureProjectStatementLoaded, getProjectStatement } from '../actions/ProjectStatement'
 import { setBreadcrumbs } from '../actions/Breadcrumbs'
 import {
     PAGE_KEY__PROJECT_DASHBOARD_PAGE
@@ -23,13 +24,14 @@ class ProjectStatementPage extends Component {
         const { project_id, project, dispatch } = this.props
         dispatch(set_toolbars(PAGE_KEY__SPRINTS_PAGE, ['cost-summary']))
         dispatch(ensureProjectsLoaded([project_id]))
+        dispatch(ensureProjectStatementLoaded([project_id]))
         this.refresh(project)
     }
 
     componentWillReceiveProps(new_props) {
         const { dispatch } = this.props
         dispatch(ensureProjectsLoaded([new_props.project_id]))
-
+        dispatch(ensureProjectStatementLoaded([new_props.project_id]))
         if ( new_props.project.name !== this.props.project.name ) {
             this.refresh(new_props.project)
         }

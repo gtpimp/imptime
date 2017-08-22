@@ -3,6 +3,7 @@ import auth_api
 import filter_api
 import project_api
 import project_user_permission_api
+import project_statement_api
 import sprint_api
 import cost_summary_api
 import time_summary_api
@@ -49,6 +50,8 @@ router.register(r'cost_summary', cost_summary_api.CostSummaryViewSet,
                 base_name='cost_summary')
 router.register(r'time_summary', time_summary_api.TimeSummaryViewSet,
                 base_name='time_summary')
+router.register(r'project_statement', project_statement_api.ProjectStatementViewSet,
+                base_name='project_statement')
 
 urlpatterns = [
     url(r'^$', views.home, name='home'),
