@@ -81,7 +81,6 @@ export function runFilter(filter_key, term) {
     return (dispatch, getState) => {
         const state = getState()
         const filter = getFilter(state, filter_key)
-        const API_BASE_URL = state.settings.configured && state.settings.API_BASE_URL
 	dispatch(announceFilterLoading(filter_key, term))
 
         const selected_project_ids = get_selected_project_ids(state, PAGE_KEY__PROJECTS_PAGE)
@@ -93,7 +92,7 @@ export function runFilter(filter_key, term) {
                                    selected_sprint_ids: selected_sprint_ids,
                                    selected_issue_ids: selected_issue_ids } }
 	
-        return impfetch(API_BASE_URL + filter.url, dispatch, {params:params})
+        return impfetch(state, filter.url, dispatch, {params:params})
 	    .then(response => response.json())
 	    .then(json => {
                 if (json.status !== 'success') {

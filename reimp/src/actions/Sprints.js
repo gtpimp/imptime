@@ -79,13 +79,12 @@ function announceCandidateSprintSaveFailed(error) {
 
 function fetchSprintsPromise(dispatch, state, sprint_ids) {
     return new Promise(function(resolve, reject) {
-        const API_BASE_URL = state.settings.configured && state.settings.API_BASE_URL
 	dispatch(announceLoadingSprints(sprint_ids))
 
 	const params = { filter: { ids: sprint_ids },
 			 pagination: {'enabled': false} }
 	
-        return impfetch(API_BASE_URL+'imp/sprint/', dispatch, {params:params})
+        return impfetch(state, 'imp/sprint/', dispatch, {params:params})
 	    .then(response => response.json())
 	    .then(json => {
                 if (json.status !== 'success') {
@@ -148,11 +147,10 @@ export function saveCandidateSprint() {
 
     return (dispatch, getState) => {
 	const state = getState()
-        const API_BASE_URL = state.settings.configured && state.settings.API_BASE_URL
 	dispatch(announceCandidateSprintSaving())
 	let data = {sprint: state.sprint.candidate_sprint}
 	
-	return impfetch(API_BASE_URL+"imp/sprint/", dispatch,
+	return impfetch(state, "imp/sprint/", dispatch,
 			{method: "POST",
 			 credentials: 'same-origin',
 			 data: data,
@@ -234,12 +232,11 @@ function announceSprintsSaving(sprint_ids, field_name, new_value) {
 function updateSprint(sprint_ids, field_name, new_value, on_done) {
     return (dispatch, getState) => {
         const state = getState()
-        const API_BASE_URL = state.settings.configured && state.settings.API_BASE_URL
 	dispatch(announceSprintsSaving(sprint_ids, field_name, new_value))
 	let data = {sprint_ids: sprint_ids,
                     field_name: field_name,
 		    value: new_value }
-	return impfetch(API_BASE_URL+"imp/sprint/"+sprint_ids[0]+"/", dispatch,
+	return impfetch(state, "imp/sprint/"+sprint_ids[0]+"/", dispatch,
 			{method: "PUT",
 			 credentials: 'same-origin',
 			 data: data,

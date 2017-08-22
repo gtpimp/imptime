@@ -39,13 +39,11 @@
   padding-left: 24px;
   padding-right: 24px;
 
-
 }
 
 .navtab__label {
   display: inline-block;
-  line-height: 24px;
-
+  line-height: 56px;
   > a {
     display: inline-block;
   }
@@ -80,6 +78,7 @@
 .navtab__icon {
   display: inline-block;
   line-height: 24px;
+  padding-top: 20%;
 
   > i.material-icons {
     display: block;

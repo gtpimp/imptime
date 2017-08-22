@@ -23,7 +23,7 @@
 	</button>
 	{% endif %}
       </div>
-  
+
   {% if issue.id %}
     <div class="change_issue_number">
       <div class="small_button btn title" onclick="$(this).parents('.change_issue_number').find('.content').toggle(); return false;">Change number</div>
@@ -73,24 +73,24 @@
         Due date: {{ issue.due_date|date:'D d-M-Y' }} <br/>
       {% endif %}
 
-      
+
     </p>
   </div>
   {% endif %}
   {% if user.is_superuser %}
     {% for dup in issue.issue_number_duplicates_in_business %}
     <div>
-      Warning: has duplicate: 
+      Warning: has duplicate:
       <span class="secret_link issue_number" onclick="imp.show_issue_detail({{dup.pk}}, '{% url 'issue_detail' dup.pk %}');">{{issue.number}}</span>
       {{dup.subject}}
     </div>
     {% endfor %}
-    
-    
+
+
   {% endif %}
 
   {% comment %}
-  <div class="issue_status" style="margin-bottom:10px"><h3>{{issue.status}}</h3></div> 
+  <div class="issue_status" style="margin-bottom:10px"><h3>{{issue.status}}</h3></div>
   {% endcomment %}
 
     {% if issue.pk %} {% has_permission has_view_ctc_billable_rates project.business %}
@@ -140,7 +140,7 @@
       <div class="issue_detail__testable_tag">
         {% with test_event=testable.most_recent_result %}
         {% if test_event %}
-        Testable{{forloop.counter}}: 
+        Testable{{forloop.counter}}:
         <div class="testable_item__most_recent_result__status_icon">
           {% if test_event.status == 'passed' %}
           <img src="{% static 'images/icons/tick.png' %}"/>
@@ -160,7 +160,7 @@
       {% endfor %}
       <div style="clear:both"></div>
     </div>
-    
+
     <div class="issue_comments">
       <br/>
       {% if issue.comments_in_order.count %}
@@ -172,11 +172,11 @@
 	    {{comment.modified}}
 	    {{comment.author}}
 	   </div>
-           
+
 	   <div class="markdown_content">
 	     {{comment.comment|asmarkdown|with_issue_links|safe}}
            </div>
-           
+
            {% has_permission has_add_issue_comment issue.project.business %}
            <div class="edit_comment" style="display:none">
              <textarea name="comment" data-url="{% url 'edit_issue_comment' comment.pk %}">{{comment.comment}}</textarea>
@@ -266,13 +266,13 @@
         <div class="new_attachment" style="display:none">
           <input type="file" name="attachment" data-url="{% url 'add_issue_attachment' issue.pk %}"/>
         </div>
-       
+
 
         {% end_permission %}
-        
+
   {% endif %}
   <hr/>
-        
+
   {% has_permission has_view_actual_hours project.business %}
     <a href="#" class="btn small_button" onclick="$(this).parent().find('.timesheet_entries').toggle(); return false;">
       <img src="{% static 'images/icons/clock.png' %}"/>

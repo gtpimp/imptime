@@ -41,13 +41,7 @@ class MainLayout extends Component {
             }
         } else {
             if ( settings.configured && location.query.autologin !== undefined ) {
-                auto_login(dispatch, settings, location.query.autologin)
-                    .then( () => {
-                        const user = logged_in_user()
-                        if ( user.has_usable_password === "false" ) {
-                            browserHistory.push('/password/change')
-                        }
-                    })
+                dispatch(auto_login(location.query.autologin))
             }
         }
     }

@@ -10,9 +10,7 @@ RUN rm /etc/nginx/sites-enabled/*
 COPY docker/nginx.conf /etc/nginx/sites-available/imptime.conf
 COPY docker/nginx_no_dns.conf /etc/nginx/sites-available/imptime_port_based_access.conf
 COPY docker/nginx_dev.conf /etc/nginx/sites-available/imptime_dev.conf
-
 RUN ln -s /etc/nginx/sites-available/imptime.conf /etc/nginx/sites-enabled/imptime.conf
-RUN ln -s /etc/nginx/sites-available/imptime_port_based_access.conf /etc/nginx/sites-enabled/imptime_port_based_access.conf
 
 # __token_imptime_dev_conf__
 

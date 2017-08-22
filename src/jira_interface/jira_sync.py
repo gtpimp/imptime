@@ -57,7 +57,7 @@ class JiraSync(object):
         active_user = user_settings.timepiece_user
         jira = JIRA(**kwargs)
         gh = GreenHopper(**kwargs)
-        
+
         return { 'active_user': active_user,
                  'settings': settings,
                  'jira': jira,
@@ -88,14 +88,14 @@ class JiraSync(object):
         jira_issues = []
         for timepiece_issue in timepiece_issues:
             jira_issue = self.jira.create_issue(project={'key': jira_project_key}, summary=timepiece_issue.subject,
-                                            description=timepiece_issue.description, issuetype={'name': issue_type_name}, 
+                                            description=timepiece_issue.description, issuetype={'name': issue_type_name},
                                             assignee={'name':jira_assignee})
             timepiece_issue.interface_plugin_number = jira_issue.key
             timepiece_issue.subject="%s %s" % (jira_issue.key, jira_issue.fields.summary)
             timepiece_issue.save()
             logger.debug("Created jira_issue with key: %s" % jira_issue.key)
             jira_issues.append(jira_issue)
-            
+
         if jira_issues:
             self.gh.add_issues_to_sprint(timepiece_project.interface_plugin_number, [z.key for z in jira_issues])
 
@@ -149,7 +149,7 @@ class JiraSync(object):
             if not found:
                 if self.request:
                     messages.error(self.request, "No jira sprint found matching this project. Expected %s" % timepiece_sprint.interface_plugin_number)
-            
+
             if self.request:
                 messages.info(self.request, "Sync of %s from jira complete, %d issues synced, %d issues deleted" % (timepiece_sprint, num_synced, num_deleted))
         except Exception, ex:
@@ -243,7 +243,7 @@ class JiraSync(object):
                 timepiece_issue = timepiece.Issue.objects.filter(interface_plugin_number=jira_issue.key)[0]
 
             if timepiece_issue.project != timepiece_project:
-                timepiece.IssueHistory.add_history(self.active_user, timepiece_issue, "Moved from sprint %s during jira import" % timepiece_issue.project.name, 
+                timepiece.IssueHistory.add_history(self.active_user, timepiece_issue, "Moved from sprint %s during jira import" % timepiece_issue.project.name,
                                                    timepiece_issue.status, state)
                 timepiece_issue.project = timepiece_project
 
@@ -302,8 +302,8 @@ class JiraSync(object):
                     except timepiece.IssueComment.DoesNotExist:
                         author = self._get_or_create_timepiece_equivalent_of_jira_user(jira_comment.author)
                         created = dateparser.parse(jira_comment.created)
-                        new_comment = timepiece.IssueComment.objects.create(issue_id=timepiece_issue.id, 
-                                                                            comment=jira_comment.body, 
+                        new_comment = timepiece.IssueComment.objects.create(issue_id=timepiece_issue.id,
+                                                                            comment=jira_comment.body,
                                                                             author=author)
                         timepiece.IssueComment.objects.filter(pk=new_comment.id).update(created=created)
                         timepiece.IssueHistory.add_history(self.active_user, timepiece_issue, "Comment added during jira import", "", jira_comment.body)
@@ -329,7 +329,7 @@ class JiraSync(object):
                 timepiece.UserProfile.objects.create(user=user)
                 messages.info(self.request, "Auto created user %s (id=%d)" % (user, user.id))
             return user
-            
+
     def add_issue_comment(self, timepiece_comment):
         if not self._connect():
             return
@@ -340,7 +340,7 @@ class JiraSync(object):
         if not self._connect():
             return
         jira_issue = self._get_jira_issue(timepiece_comment.issue)
-        
+
         # TODO: implement this properly
         self.jira.add_comment(jira_issue, "(Edit of previous comment)\n" + timepiece_comment.comment)
 
@@ -370,7 +370,7 @@ class JiraSync(object):
         jira_issue = self._get_jira_issue(timepiece_issue)
         transitions = self.jira.transitions(jira_issue)
 
-        transition = [ t for t in transitions if t['id'] == timepiece_issue.status ][0]
+        transition = [ t for t in transitions if t['id'] == timepiece_issue.status2.name ][0]
         self.jira.transition_issue(jira_issue, transitionId=transition['id'])
 
         timepiece_issue.status = transition['name']
@@ -409,13 +409,13 @@ class JiraSync(object):
             # compare each worklog with each timepiece-jira-enabled
             # user that has entries for this issue, and create them.
             worklogs = self.jira.worklogs(jira_issue)
-            
+
             worklog_seconds_grouped_by_user = {}
             for worklog in worklogs:
                 worklog_timepiece_user = self._get_or_create_timepiece_equivalent_of_jira_user(worklog.author)
                 worklog_seconds_grouped_by_user.setdefault(worklog_timepiece_user, 0)
                 worklog_seconds_grouped_by_user[worklog_timepiece_user] += worklog.timeSpentSeconds
-                
+
             timepiece_entry_totals_by_user = timepiece_issue.entries.all().values("user").annotate(Sum("hours"))
             for timepiece_entry_totals_for_user in timepiece_entry_totals_by_user:
                 timepiece_entry_user = User.objects.get(pk=timepiece_entry_totals_for_user['user'])
@@ -438,19 +438,19 @@ class JiraSync(object):
                         missing_seconds = timepiece_seconds - jira_seconds
                 else:
                     missing_seconds = timepiece_seconds
-                
+
                 if missing_seconds > 0:
                     jira_hours_pattern = u'%fm' % float(missing_seconds/60)
                     jira_for_user = self._create_jira_connection_for_user(timepiece_issue.project.business, timepiece_entry_user)['jira']
                     jira_for_user.add_worklog(jira_issue, timeSpent=jira_hours_pattern)
-            
+
     def update_issue_assigned_to(self, timepiece_issue, username, *args, **kwargs):
         if not self._connect():
             return
         if timepiece_issue.interface_plugin_number is None:
             return
         jira_issue = self._get_jira_issue(timepiece_issue)
-        
+
         business = timepiece_issue.project.business
         try:
             settings = business.jira.get_query_set().all()[0]
@@ -484,7 +484,7 @@ class JiraSync(object):
         timepiece_issue.save()
 
         try:
-            self.gh.add_issues_to_sprint(timepiece_issue.project.interface_plugin_number, [jira_issue.key], 
+            self.gh.add_issues_to_sprint(timepiece_issue.project.interface_plugin_number, [jira_issue.key],
                                          rankFieldId=self.settings.custom_field_name_for_issue_order)
         except Exception, ex:
             logger.exception(ex)
@@ -499,7 +499,7 @@ class JiraSync(object):
         jira_issue_types = self.gh.issue_types()
         jira_users = self.gh.search_assignable_users_for_projects("", [x.key for x in jira_projects])
         return JiraCreateIssueForm(jira_projects, jira_issue_types, jira_users, post_data, prefix='jira_form')
-        
+
     def get_allowed_stati(self, timepiece_issue, *args, **kwargs):
         if not self._connect():
             return
@@ -540,7 +540,7 @@ class JiraSync(object):
                 return
 
         try:
-            self.gh.move_issue(sprint_id=timepiece_issue.project.interface_plugin_number, 
+            self.gh.move_issue(sprint_id=timepiece_issue.project.interface_plugin_number,
                                issue_key=timepiece_issue.interface_plugin_number,
                                move_after_issue_key=timepiece_issue_moved_after_key,
                                move_before_issue_key=timepiece_issue_moved_before_key,
@@ -561,11 +561,11 @@ class JiraSync(object):
         # if not self._connect():
         #     return None
         # if timepiece_issue.interface_plugin_number is None and new_timepiece_project.interface_plugin_number is not None:
-        #     
+        #
         #     jira_issue_type_name = self.gh.issue_types()[0].name # pick a default issue type
 
         #     new_jira_project = self._get_jira_project(new_timepiece_project)
-        #     jira_issue = self.jira.create_issue(project={'key': new_jira_project.key}, 
+        #     jira_issue = self.jira.create_issue(project={'key': new_jira_project.key},
         #                                         summary=timepiece_issue.subject,
         #                                         description=timepiece_issue.description, issuetype={'name': jira_issue_type_name})
         #     timepiece_issue.interface_plugin_number = jira_issue.key

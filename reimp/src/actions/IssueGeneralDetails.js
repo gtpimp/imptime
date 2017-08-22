@@ -49,14 +49,13 @@ function announceIssueGeneralDetailsLoadFailed(error) {
 function fetchIssueGeneralDetails(dispatch, issue_ids) {
     return (dispatch, getState) => {
         const state = getState()
-        const API_BASE_URL = state.settings.configured && state.settings.API_BASE_URL
 	dispatch(announceLoadingIssueGeneralDetails(issue_ids))
 
 	const params = { filter: { ids: issue_ids },
 			 format: { detail_level: 'general' },
 			 pagination: {'enabled': false} }
 	
-        return impfetch(API_BASE_URL+'imp/issue/', dispatch, {params:params})
+        return impfetch(state, 'imp/issue/', dispatch, {params:params})
 	    .then(response => response.json())
 	    .then(json => {
                 if (json.status !== 'success') {

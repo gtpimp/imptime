@@ -62,7 +62,7 @@ urlpatterns = [
         views.add_user_to_business,
         name='add_user_to_business',
     ),
-                   
+
     url(r'^project/list/$',
         views.list_projects,
         name='list_projects'
@@ -369,6 +369,7 @@ urlpatterns = [
     ),
 
     url(r'^view_project_rates/(?P<project_id>\d+)$', views.view_project_rates, name='view_project_rates'),
+    url(r'^view_rates_summary/(?P<project_id>\d+)$', views.view_rates_summary, name='view_rates_summary'),
     url(r'^ajax/edit_project_rate/(?P<project_id>\d+)$', views.edit_project_rate, name='edit_project_rate'),
     url(r'^ajax/edit_default_user_rates$', views.edit_default_user_rates, name='edit_default_user_rates'),
 
@@ -529,7 +530,7 @@ urlpatterns = [
         views.open_issue,
         name='open_issue',
     ),
-    
+
     url(
         r'^time-sheet/highlighted_project_list/(?P<project_id>\d+)/(?P<highlight_issue_id>\d+)$',
         views.project_list,
@@ -574,8 +575,8 @@ urlpatterns = [
         r'^time-sheet/feature_filter/(?P<project_id>\d+)$',
         views.feature_filter,
         name='feature_filter',
-        ),        
-        
+        ),
+
    url(
         r'^time-sheet/business_users/(?P<business_id>\d+)/$',
         views.business_users,
@@ -665,7 +666,7 @@ urlpatterns = [
                        url(r'^checklist/dev/(?P<business_id>.*)', views.dev_checklist, {}, name='dev_checklist'),
                        url(r'^checklist/traffic/(?P<business_id>.*)', views.traffic_checklist, {}, name='traffic_checklist'),
                        url(r'^checklist/recalculate', views.recalculate_all_checklists, {}, name='recalculate_all_checklists'),
-                       
+
 
                        url(r'^project/(?P<project_id>\d+)/edit_project_deadlines/$', views.edit_project_deadlines, {}, name='edit_project_deadlines'),
 
@@ -689,7 +690,7 @@ urlpatterns = [
 
                         url(r'^issue_clock_in$', views.issue_clock_in, {}, name='issue_clock_in'),
                         url(r'^issue_clock_out$', views.issue_clock_out, {}, name='issue_clock_out'),
-                       
+
                        url(r'^project_cost_summary/(?P<project_id>\d+)$', views.project_cost_summary, {}, name='project_cost_summary'),
 
 ]
