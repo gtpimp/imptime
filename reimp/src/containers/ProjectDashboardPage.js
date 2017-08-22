@@ -68,7 +68,6 @@ class ProjectDashboardPage extends Component {
                 <button className="button button--large button--primary" onClick={this.navigateToProjectUsersPage}>Users</button>
                 <button className="button button--large button--primary" onClick={this.navigateToProjectStatementPage}>Project Statement</button>
                 <br/>
-
             </div>
         )
     }

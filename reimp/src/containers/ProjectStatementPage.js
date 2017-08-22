@@ -1,9 +1,12 @@
-import React, {Component} from 'react'
-import {connect} from 'react-redux'
+import React, { Component } from 'react'
+import { connect } from 'react-redux'
+import { ensureProjectsLoaded, getProject } from '../actions/Projects'
 import { setBreadcrumbs } from '../actions/Breadcrumbs'
-import {ensureProjectsLoaded, getProject} from '../actions/Projects'
 import {
     PAGE_KEY__PROJECT_DASHBOARD_PAGE
+} from '../actions/ItemListKeyRegistry'
+import {
+    PAGE_KEY__SPRINTS_PAGE,
 } from '../actions/ItemListKeyRegistry'
 import {
     set_toolbars,
@@ -34,16 +37,15 @@ class ProjectStatementPage extends Component {
 
     refresh(project) {
         const { dispatch } = this.props
-        dispatch(select_projects(PAGE_KEY__PROJECT_DASHBOARD_PAGE, [project_id]))
+        dispatch(select_projects(PAGE_KEY__PROJECT_DASHBOARD_PAGE, [project.id]))
         dispatch(setBreadcrumbs([ {to: '/projects', label: 'All Projects'},
-                                  {to: '/projects/'+project_id, label: project.name},
-                                  {to: '/projects/'+project_id+'/projectStatement', label: 'Project Statement'}]))
-        }
+                                  {to: '/projects/'+project.id, label: project.name},
+                                  {to: '/projects/'+project.id+'/projectStatement', label: 'Project Statement'}]))
     }
 
     render() {
 
-        /* const { project_id } = this.props*/
+        const { project } = this.props
 
         return (
             <div>
@@ -60,7 +62,7 @@ function mapStateToProps(state, props) {
 
     return {
         project_id: project_id,
-        project: project,
+        project: project
     }
 }
 

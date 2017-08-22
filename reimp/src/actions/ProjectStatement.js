@@ -48,7 +48,7 @@ export function ensureProjectStatementLoaded(project_id) {
             return
         }
         if ( getProjectStatement(state, project_id) === null ) {
-            /* dispatch(fetchProjectStatement(project_id))*/
+            dispatch(fetchProjectStatement(project_id))
         }
     }
 }
