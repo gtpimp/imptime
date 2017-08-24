@@ -15,7 +15,7 @@ from django.conf import settings
 
 from . import defaults
 from .utils import get_storage
-
+from timepiece.models import upload_to
 
 class MailerMessageManager(models.Manager):
     def send_queued(self, limit=None):
@@ -126,7 +126,9 @@ class MailerMessage(models.Model):
 
 @python_2_unicode_compatible
 class Attachment(models.Model):
-    file_attachment = models.FileField(storage=get_storage(), upload_to='mail-queue/attachments', blank=True, null=True)
+    file_attachment = models.FileField(storage=get_storage(),
+                                       upload_to=upload_to('mail-queue/attachments'),
+                                       blank=True, null=True)
     email = models.ForeignKey(MailerMessage, blank=True, null=True)
     name = models.CharField(blank=True, null=True, max_length=255)
 
