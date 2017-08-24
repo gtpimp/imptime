@@ -3642,7 +3642,7 @@ def issue_status_update(request,  template="timepiece/project/issue_detail.html"
     context['supports_description'] = True
     context['issue_number_form'] = timepiece_forms.IssueNumberForm(instance=edited_issue)
 
-    old_status = edited_issue.status2.name
+    old_status = edited_issue.status2.name if edited_issue.status2 else ""
     edited_issue.status2 = timepiece.IssueStatus.objects.get(business=project.business, name=request.POST["selected_value"])
     edited_issue.save()
 
@@ -4938,7 +4938,7 @@ def bulk_change_issue_state(request, context=None):
     new_status = form.cleaned_data['status']
     for selected_issue_id in selected_issue_ids:
         issue = timepiece.Issue.objects.get(pk=selected_issue_id)
-        if new_status != issue.status2.name:
+        if issue.status2 and new_status != issue.status2.name:
             old_status = issue.status2.name
             issue.status = new_status
             issue.save()

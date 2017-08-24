@@ -3535,6 +3535,8 @@ class Tag(models.Model):
 class IssueStatus(models.Model):
     name = models.CharField(max_length=255, blank=True, null=True)
     business = models.ForeignKey(Business, related_name='issue_statuses')
+    created = models.DateTimeField(auto_now_add=True)
+    modified = models.DateTimeField(auto_now=True)
 
     class Meta:
         unique_together = (('name', 'business'), )
