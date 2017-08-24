@@ -1,5 +1,7 @@
 import random
 import markdown
+from django.http import StreamingHttpResponse
+import os
 import time
 from mailqueue.mailqueue_helper import queue_email, queue_admin_email
 from caldav_helper import CalDavHelper
@@ -6100,3 +6102,9 @@ def issue_clock_out(request):
         open_entry.end_time = clock_time
         open_entry.save()
     return HttpResponse(json.dumps({"status":"ok"}))
+
+# @login_required
+# def download_media(request, url):
+#     with open(os.path.join(settings.MEDIA_ROOT, url)) as f:
+#         response = HttpResponse(f.read())
+#         return response

@@ -348,8 +348,8 @@ INVOICE_DETAILS={'name':'ImplicitDesign',
                  'bank_swift_code':'SBZAZAJJ'}
 
 
-DEFAULT_FILE_STORAGE = 'storages.backends.s3boto.S3BotoStorage'
-AWS_DEFAULT_ACL = 'private'
+# DEFAULT_FILE_STORAGE = 'storages.backends.s3boto.S3BotoStorage'
+# AWS_DEFAULT_ACL = 'private'
 
 # # These urls may need to be specified on a production server when the site it not hosted at the root domain.
 #LOGIN_URL=

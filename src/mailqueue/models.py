@@ -12,10 +12,10 @@ from django.core.mail import EmailMultiAlternatives
 from django.db.models.signals import post_save
 from django.dispatch import receiver
 from django.conf import settings
+from lib.fields import upload_to
 
 from . import defaults
 from .utils import get_storage
-from timepiece.models import upload_to
 
 class MailerMessageManager(models.Manager):
     def send_queued(self, limit=None):

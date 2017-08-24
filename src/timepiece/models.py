@@ -7,6 +7,7 @@ import calendar
 from lib.models import model_to_dict_with_date_support
 from impasync.refresh_notifier import RefreshNotifier
 from caldav_helper import CalDavHelper
+from lib.fields import upload_to
 import uuid
 from colorful.fields import RGBColorField
 from interface_plugin import get_interface_plugin
@@ -50,12 +51,6 @@ TIME_TRACKING_MODES_WITHOUT_VELOCITY = [ "tester", "manager" ]
 TIME_TRACKING_MODES_RESERVED_FEATURE_NAMES = { 'developer': None,
                                                'tester': ['testing',],
                                                'manager': ['management',] }
-
-def upload_to(subfolder):
-    def upload(instance, filename, subfolder=subfolder):
-        path = str(uuid.uuid4())
-        return os.path.join(subfolder, path, filename)
-    return upload
 
 class Client(models.Model):
     """ a client is a top-level customer of the system,
