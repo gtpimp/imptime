@@ -359,10 +359,19 @@ AUTO_LOGIN_EXPIRE_IN_HOURS = 24
 # Websockets
 CHANNEL_LAYERS = {
     "default": {
-        "BACKEND": "asgiref.inmemory.ChannelLayer",
-        "ROUTING": "impasync.routing.channel_routing"
+        "BACKEND": "asgi_redis.RedisChannelLayer",
+        "ROUTING": "impasync.routing.channel_routing",
+        "CONFIG": {
+            "hosts": [("redis", 6379)],
         }
+    }
 }
+# CHANNEL_LAYERS = {
+#     "default": {
+#         "BACKEND": "asgiref.inmemory.ChannelLayer",
+#         "ROUTING": "impasync.routing.channel_routing"
+#         }
+# }
 
 # A sample logging configuration. The only tangible logging
 # performed by this configuration is to send an email to

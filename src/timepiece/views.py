@@ -3643,13 +3643,17 @@ def issue_status_update(request,  template="timepiece/project/issue_detail.html"
     context['issue_number_form'] = timepiece_forms.IssueNumberForm(instance=edited_issue)
 
     old_status = edited_issue.status2.name if edited_issue.status2 else ""
-    edited_issue.status2 = timepiece.IssueStatus.objects.get(business=project.business, name=request.POST["selected_value"])
+    new_status_name = request.POST["selected_value"]
+    if len(new_status_name.strip())>0:
+        edited_issue.status2 = timepiece.IssueStatus.objects.get_or_create(business=project.business, name=new_status_name)[0]
+    else:
+        edited_issue.status2 = None
     edited_issue.save()
 
-    timepiece.IssueHistory.add_history(request.user, edited_issue, "changed status", old_status, edited_issue.status2.name)
+    timepiece.IssueHistory.add_history(request.user, edited_issue, "changed status", old_status, new_status_name)
     get_interface_plugin(request, project.business).update_issue_status(edited_issue)
 
-    return HttpResponse(json.dumps({ 'new_value': edited_issue.status2.name }), content_type='application/json')
+    return HttpResponse(json.dumps({ 'new_value': new_status_name }), content_type='application/json')
 
 @csrf_exempt
 @login_required
