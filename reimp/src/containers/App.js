@@ -8,6 +8,7 @@ import Websocket from '../components/Websocket'
 import LoginPage from '../containers/LoginPage'
 import { is_authenticated } from '../actions/Auth'
 import { updateSettings } from '../actions/Settings'
+import Raven from 'raven-js'
 
 class App extends Component {
 
@@ -17,6 +18,12 @@ class App extends Component {
         /* window.onerror = function(msg, url, line, col, error) {
 	   //alert("whoops")
          * }*/
+
+        const SENTRY_PUBLIC_DSN = store.getState().settings.SENTRY_PUBLIC_DSN
+        if (SENTRY_PUBLIC_DSN) {
+            Raven.config(SENTRY_PUBLIC_DSN).install()
+        }
+
     }
 
     render() {
