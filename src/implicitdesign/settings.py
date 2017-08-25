@@ -348,8 +348,12 @@ INVOICE_DETAILS={'name':'ImplicitDesign',
                  'bank_swift_code':'SBZAZAJJ'}
 
 
-# DEFAULT_FILE_STORAGE = 'storages.backends.s3boto.S3BotoStorage'
-# AWS_DEFAULT_ACL = 'private'
+DEFAULT_FILE_STORAGE = 'storages.backends.s3boto.S3BotoStorage'
+AWS_DEFAULT_ACL = 'private'
+
+# This setting allows bucket names with dots
+AWS_S3_CALLING_FORMAT = 'boto.s3.connection.OrdinaryCallingFormat'
+
 
 # # These urls may need to be specified on a production server when the site it not hosted at the root domain.
 #LOGIN_URL=

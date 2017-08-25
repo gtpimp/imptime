@@ -3894,6 +3894,10 @@ class IssueAttachment(BaseModel):
     name = models.CharField(max_length=255)
     content_type = models.CharField(max_length=255, null=True)
 
+    @property
+    def download_url(self):
+        return "/media/" + self.attachment.name
+
 class RedmineToTimepieceBusinessMapping(models.Model):
     redmine_business_name = models.CharField(max_length=255)
     timepiece_business_name = models.CharField(max_length=255)

@@ -39,7 +39,7 @@ urlpatterns = [
     url(r'^welcome/', include('animated_website.urls'), name='animated_website'),
     url(r'^selectable/', include('selectable.urls'), name='selectable'),
     url(r'^us/', views.us),
-    # url(r'^media/(?P<url>.*)$', timepiece_views.download_media),
+    url(r'^media/(?P<url>.*)$', timepiece_views.download_media),
 
     url(r'^accounts/login/$', views.primary_login, name='auth_login'),
          

@@ -253,7 +253,7 @@
       {% for attachment in issue.attachments.all %}
         <ul class="unstyled">
           <li>
-            <a target="_blank" href={{ attachment.attachment.url }}>{{attachment.name}}</a>
+            <a target="_blank" href={{ attachment.download_url }}>{{attachment.name}}</a>
             <img class="secret_link" onclick="return imp.delete_issue_attachment('{% url 'delete_issue_attachment' attachment.id %}');" src="{% static 'images/timepiece/icons/cross.png' %}"/>
           </li>
         </ul>
