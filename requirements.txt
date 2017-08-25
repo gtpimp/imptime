@@ -128,4 +128,4 @@ zope.interface==4.3.3
 boto==2.47.0
 boto3==1.4.6
 botocore==1.6.7
-django-storages=1.6.5
+django-storages==1.6.5

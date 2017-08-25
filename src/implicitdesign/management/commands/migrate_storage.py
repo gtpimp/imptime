@@ -10,6 +10,9 @@ from django.core.files.storage import get_storage_class, default_storage
 from django.db.models import FileField
 from django.apps import apps
 
+OLD_DEFAULT_FILE_STORAGE = 'django.core.files.storage.FileSystemStorage'
+NEW_DEFAULT_FILE_STORAGE = 'storages.backends.s3boto.S3BotoStorage'
+
 OLD_STORAGE = getattr(settings, 'OLD_STORAGE', {})
 #: The storage engine where everything was stored in.
 OLD_DEFAULT_FILE_STORAGE = getattr(settings, 'OLD_DEFAULT_FILE_STORAGE', default_storage)
