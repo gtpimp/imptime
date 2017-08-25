@@ -17,7 +17,7 @@ from lib.fields import UploadTo
 from . import defaults
 from .utils import get_storage
 
-upload_to_logos = UploadTo("mail-queue/attachments")
+upload_to_mailqueue = UploadTo("mail-queue/attachments")
 
 
 class MailerMessageManager(models.Manager):
@@ -130,7 +130,7 @@ class MailerMessage(models.Model):
 @python_2_unicode_compatible
 class Attachment(models.Model):
     file_attachment = models.FileField(storage=get_storage(),
-                                       upload_to=upload_to_logos,
+                                       upload_to=upload_to_mailqueue,
                                        blank=True, null=True)
     email = models.ForeignKey(MailerMessage, blank=True, null=True)
     name = models.CharField(blank=True, null=True, max_length=255)
