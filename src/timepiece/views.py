@@ -6118,3 +6118,11 @@ def download_media(request, url):
         with open(os.path.join(settings.MEDIA_ROOT, url)) as f:
             response = HttpResponse(f.read())
             return response
+
+def download_issue_attachment(request, issue_attachment_id):
+    issue_attachment = timepiece.IssueAttachment.objects.get(pk=issue_attachment_id)
+    bp = timepiece.BusinessPermissions.for_user(request.user, issue_attachment.issue.project.business)
+    if not bp.has_view_issues:
+        raise PermissionDenied
+    return download_media(issue_attachment.attachment.url)
+
