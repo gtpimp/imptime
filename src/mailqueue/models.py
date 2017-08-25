@@ -12,10 +12,10 @@ from django.core.mail import EmailMultiAlternatives
 from django.db.models.signals import post_save
 from django.dispatch import receiver
 from django.conf import settings
+from lib.fields import upload_to
 
 from . import defaults
 from .utils import get_storage
-
 
 class MailerMessageManager(models.Manager):
     def send_queued(self, limit=None):
@@ -126,7 +126,9 @@ class MailerMessage(models.Model):
 
 @python_2_unicode_compatible
 class Attachment(models.Model):
-    file_attachment = models.FileField(storage=get_storage(), upload_to='mail-queue/attachments', blank=True, null=True)
+    file_attachment = models.FileField(storage=get_storage(),
+                                       upload_to=upload_to('mail-queue/attachments'),
+                                       blank=True, null=True)
     email = models.ForeignKey(MailerMessage, blank=True, null=True)
     name = models.CharField(blank=True, null=True, max_length=255)
 

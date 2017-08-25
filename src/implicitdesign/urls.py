@@ -9,6 +9,7 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.staticfiles.storage import staticfiles_storage
 from django.views.generic.base import RedirectView
 import django.contrib.auth.views as django_auth
+import timepiece.views as timepiece_views
 
 admin.site.login = login_required(admin.site.login)
 
@@ -38,6 +39,7 @@ urlpatterns = [
     url(r'^welcome/', include('animated_website.urls'), name='animated_website'),
     url(r'^selectable/', include('selectable.urls'), name='selectable'),
     url(r'^us/', views.us),
+    # url(r'^media/(?P<url>.*)$', timepiece_views.download_media),
 
     url(r'^accounts/login/$', views.primary_login, name='auth_login'),
          

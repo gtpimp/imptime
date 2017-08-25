@@ -5,8 +5,11 @@ from django.contrib.auth.models import User
 from django.db.models import Sum, Count, Q, F, Max, Min
 from django.db import models
 from datetime import datetime, date
+from lib.fields import upload_to
 
 CURRENCY_SYMBOLS = ( ("R", "R"), ("£","£"), ("€","€"), ("bitcoin","B") )
+
+
 
 class ClientInvoiceDetails(models.Model):
     name = models.CharField(max_length=255, null=False, blank=False)
@@ -207,7 +210,7 @@ class Quote(models.Model):
     amount = models.IntegerField(null=True, blank=True) # in rands
     currency_symbol = models.CharField(max_length=3, blank=False, null=False, default="R", choices=CURRENCY_SYMBOLS)
     quote_document = models.ForeignKey("timepiece.BusinessDocument", blank=True, null=True)
-    additional_document = models.FileField(upload_to="quotes_additional_documents", null=True, blank=True)
+    additional_document = models.FileField(upload_to=upload_to("quotes_additional_documents"), null=True, blank=True)
 
     @property
     def is_sent(self):
