@@ -3,6 +3,7 @@ import markdown
 from django.http import StreamingHttpResponse
 from django.core.files.storage import default_storage as storage
 import requests
+from lib.file_helper import download_media
 import os
 import time
 from mailqueue.mailqueue_helper import queue_email, queue_admin_email
@@ -4696,7 +4697,9 @@ def download_business_document(request, document_token, template="timepiece/proj
     context['business'] = business
     context['documents'] = business.documents.all().order_by("-created_at")
 
-    response = HttpResponse(document.doc, content_type=document.mime_type)
+    response = download_media(request, document.doc.name,
+                              content_type=document.mime_type)
+    #response = HttpResponse(document.doc, content_type=document.mime_type)
     response['Content-Disposition'] = 'attachment; filename="%s"' % document.filename
     return response
 
@@ -6105,24 +6108,12 @@ def issue_clock_out(request):
         open_entry.save()
     return HttpResponse(json.dumps({"status":"ok"}))
 
-@login_required
-def download_media(request, url):
-
-    if 's3' in settings.DEFAULT_FILE_STORAGE:
-        storage_url = storage.url(url)
-        res = requests.get(storage_url)
-        response = HttpResponse(res.content)
-        response['content-type'] = res.headers['content-type']
-        return response
-    else:
-        with open(os.path.join(settings.MEDIA_ROOT, url)) as f:
-            response = HttpResponse(f.read())
-            return response
-
 def download_issue_attachment(request, issue_attachment_id):
     issue_attachment = timepiece.IssueAttachment.objects.get(pk=issue_attachment_id)
     bp = timepiece.BusinessPermissions.for_user(request.user, issue_attachment.issue.project.business)
     if not bp.has_view_issues:
         raise PermissionDenied
-    return download_media(issue_attachment.attachment.url)
+    return download_media(request,
+                          issue_attachment.attachment.name,
+                          content_type=issue_attachment.content_type)
 

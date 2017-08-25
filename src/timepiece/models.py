@@ -3897,7 +3897,7 @@ class IssueAttachment(BaseModel):
 
     @property
     def download_url(self):
-        return reverse('timepiece:download_issue_attachment', kwargs={'issue_attachment_id':self.id})
+        return reverse('download_issue_attachment', kwargs={'issue_attachment_id':self.id})
 
 class RedmineToTimepieceBusinessMapping(models.Model):
     redmine_business_name = models.CharField(max_length=255)
