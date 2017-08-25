@@ -8,12 +8,17 @@ from datetime import date
 from django.core.exceptions import ValidationError
 from django.forms.models import ModelChoiceIterator, ModelChoiceField
 from itertools import groupby
+from django.utils.deconstruct import deconstructible
 
-def upload_to(subfolder):
-    def upload(instance, filename, subfolder=subfolder):
+@deconstructible
+class UploadTo(object):
+    def __init__(self, sub_path):
+        self.path = sub_path
+
+    def __call__(self, instance, filename):
         path = str(uuid.uuid4())
-        return os.path.join(subfolder, path, filename)
-    return upload
+        return os.path.join(subfolder, self.path, filename)
+
 
 class ProtectedForeignKey(models.ForeignKey):
     def __init__(self, *args, **kwargs):

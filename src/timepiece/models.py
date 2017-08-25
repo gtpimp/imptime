@@ -7,7 +7,7 @@ import calendar
 from lib.models import model_to_dict_with_date_support
 from impasync.refresh_notifier import RefreshNotifier
 from caldav_helper import CalDavHelper
-from lib.fields import upload_to
+from lib.fields import UploadTo
 import uuid
 from colorful.fields import RGBColorField
 from interface_plugin import get_interface_plugin
@@ -52,13 +52,17 @@ TIME_TRACKING_MODES_RESERVED_FEATURE_NAMES = { 'developer': None,
                                                'tester': ['testing',],
                                                'manager': ['management',] }
 
+upload_to_logos = UploadTo("logos")
+upload_to_attachments = UploadTo("issue_attachments")
+upload_to_project_documents = UploadTo("project_documents")
+
 class Client(models.Model):
     """ a client is a top-level customer of the system,
     which has their own users etc. """
     name = models.CharField(max_length=255, null=False, blank=True)
     code = models.CharField(max_length=100, null=False, blank=True)
     email = models.EmailField(null=False, blank=False)
-    logo = models.FileField(upload_to=upload_to("logos"), null=True, blank=True)
+    logo = models.FileField(upload_to=upload_to_logos, null=True, blank=True)
 
     created_at = models.DateTimeField(auto_now_add=True)
     modified_at = models.DateTimeField(auto_now=True)
@@ -3886,7 +3890,7 @@ class IssueComment(models.Model):
 
 class IssueAttachment(BaseModel):
     issue = models.ForeignKey(Issue, blank=False, null=False, related_name='attachments')
-    attachment = models.FileField(upload_to=upload_to("issue_attachments"), null=False, blank=False)
+    attachment = models.FileField(upload_to=upload_to_attachments, null=False, blank=False)
     name = models.CharField(max_length=255)
     content_type = models.CharField(max_length=255, null=True)
 
@@ -3972,7 +3976,7 @@ class BusinessDocument(models.Model):
     business = models.ForeignKey(Business, null=False, blank=False, related_name='documents', db_index=True)
     project = models.ForeignKey(Project, null=True, blank=True, related_name='documents', db_index=True)
     filename = models.CharField(max_length=255, null=False, blank=False)
-    doc = models.FileField(upload_to=upload_to("project_documents"), null=False, blank=False)
+    doc = models.FileField(upload_to=upload_to_project_documents, null=False, blank=False)
     doc_type = models.CharField(max_length=100, null=False, blank=False,
                                 choices = DOC_TYPE_CHOICES )
     mime_type = models.CharField(max_length=50, null=False, blank=False)
