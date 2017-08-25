@@ -5,7 +5,7 @@ import os
 import uuid
 import urlparse
 from subprocess import call
-
+from time import sleep
 from django.conf import settings
 from django.http import HttpResponse
 import json
@@ -182,12 +182,13 @@ class RequestToPDF(object):
                 settings.STATIC_URL]
             logger.debug("Rendering pdf using %s" % (phantom_args))
             call(phantom_args)
+
+            # Seems to be a timing issue with big pdfs, so sleep (not sure if this helps)
+            sleep(2)
         except Exception, ex:
             logger.exception(ex)
             raise
-
         
-        # Once the pdf is created, remove the cookie file.
         os.remove(cookie_file)
         response = self._return_response(file_src, basename, as_image)
         if as_response:

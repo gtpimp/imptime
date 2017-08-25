@@ -16,8 +16,8 @@ class UploadTo(object):
         self.path = sub_path
 
     def __call__(self, instance, filename):
-        path = str(uuid.uuid4())
-        return os.path.join(subfolder, self.path, filename)
+        unique_path = str(uuid.uuid4())
+        return os.path.join(unique_path, self.path, filename)
 
 
 class ProtectedForeignKey(models.ForeignKey):
