@@ -6108,6 +6108,7 @@ def issue_clock_out(request):
         open_entry.save()
     return HttpResponse(json.dumps({"status":"ok"}))
 
+@login_required
 def download_issue_attachment(request, issue_attachment_id):
     issue_attachment = timepiece.IssueAttachment.objects.get(pk=issue_attachment_id)
     bp = timepiece.BusinessPermissions.for_user(request.user, issue_attachment.issue.project.business)
