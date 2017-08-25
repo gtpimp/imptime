@@ -13,15 +13,15 @@ from django.apps import apps
 OLD_DEFAULT_FILE_STORAGE = 'django.core.files.storage.FileSystemStorage'
 NEW_DEFAULT_FILE_STORAGE = 'storages.backends.s3boto.S3BotoStorage'
 
-OLD_STORAGE = getattr(settings, 'OLD_STORAGE', {})
+#OLD_STORAGE = getattr(settings, 'OLD_STORAGE', {})
 #: The storage engine where everything was stored in.
-OLD_DEFAULT_FILE_STORAGE = getattr(settings, 'OLD_DEFAULT_FILE_STORAGE', default_storage)
+#OLD_DEFAULT_FILE_STORAGE = getattr(settings, 'OLD_DEFAULT_FILE_STORAGE', default_storage)
 if isinstance(OLD_DEFAULT_FILE_STORAGE, str):
     OLD_DEFAULT_FILE_STORAGE = get_storage_class(OLD_DEFAULT_FILE_STORAGE)()
 
-NEW_STORAGE = getattr(settings, 'NEW_STORAGE', {})
+#NEW_STORAGE = getattr(settings, 'NEW_STORAGE', {})
 #: The storage engine where everything will be stored in.
-NEW_DEFAULT_FILE_STORAGE = getattr(settings, 'NEW_DEFAULT_FILE_STORAGE', default_storage)
+#NEW_DEFAULT_FILE_STORAGE = getattr(settings, 'NEW_DEFAULT_FILE_STORAGE', default_storage)
 if isinstance(NEW_DEFAULT_FILE_STORAGE, str):
     NEW_DEFAULT_FILE_STORAGE = get_storage_class(NEW_DEFAULT_FILE_STORAGE)()
 
@@ -30,18 +30,21 @@ class Command(LabelCommand):
     args = '<app_name.Model app_name.Model2 ...>'
     label = 'model (app_name.ModelName)'
     help = __doc__
-    option_list = LabelCommand.option_list + (
-        make_option(
-            '--overwrite', '-f', action='store_true', dest='overwrite',
-            help='Overwrite file that exist in the new storage backend'
-        ),
-        make_option(
-            '--to-new', action='store_true', dest='to_new',
-            help='Copy files from the current storage backend to the new storage backend'
-        ),
-    )
+    # option_list = LabelCommand.option_list + (
+    #     make_option(
+    #         '--overwrite', '-f', action='store_true', dest='overwrite',
+    #         help='Overwrite file that exist in the new storage backend'
+    #     ),
+    #     make_option(
+    #         '--to-new', action='store_true', dest='to_new',
+    #         help='Copy files from the current storage backend to the new storage backend'
+    #     ),
+    # )
 
     def handle_label(self, label, **options):
+
+        options['to_new'] = True
+        
         app_label, model_name = label.split('.')
         model_class = apps.get_model(app_label, model_name)
         if model_class is None:
@@ -52,40 +55,36 @@ class Command(LabelCommand):
         for field in model_class._meta.fields:
             if isinstance(field, FileField):
                 field_names.append(field.name)
-                field_path = '%s.%s' % (label, field.name)
-                if options['to_new']:
-                    if field_path in NEW_STORAGE:
-                        old_storages[field_path] = NEW_STORAGE[field_path]
-                    else:
-                        old_storages[field_path] = NEW_DEFAULT_FILE_STORAGE
-                else:
-                    if field_path in OLD_STORAGE:
-                        old_storages[field_path] = OLD_STORAGE[field_path]
-                    else:
-                        old_storages[field_path] = OLD_DEFAULT_FILE_STORAGE
+                # field_path = '%s.%s' % (label, field.name)
+
+                # old_storages[field_path] = NEW_DEFAULT_FILE_STORAGE
+                
         # Move the files for all the models
         for instance in model_class._default_manager.all():
             logging.debug('Handling "%s"' % instance)
             # check all field names
             for fn in reversed(field_names):
                 field = getattr(instance, fn)
-                if options['to_new']:
-                    new_storage = old_storages['%s.%s' % (label, fn)]
-                    old_storage = field.storage
-                else:
-                    old_storage = old_storages['%s.%s' % (label, fn)]
-                    new_storage = field.storage
+
+                #new_storage
+                
+                # if options['to_new']:
+                #     new_storage = old_storages['%s.%s' % (label, fn)]
+                #     old_storage = field.storage
+                # else:
+                #     old_storage = old_storages['%s.%s' % (label, fn)]
+                #     new_storage = field.storage
 
                 if field.name == '':
                     logging.debug('Field is empty, ignoring file.')
-                elif new_storage == old_storage:
-                    logging.debug('Same storage engine, ignoring file.')
+                # elif new_storage == old_storage:
+                #     logging.debug('Same storage engine, ignoring file.')
                 # do we have multiple files?
                 elif hasattr(field, 'names'):
                     for name in reversed(field.names):
-                        self.move_file(new_storage, old_storage, name, options)
+                        self.move_file(NEW_DEFAULT_FILE_STORAGE, OLD_DEFAULT_FILE_STORAGE, name, options)
                 else:
-                    self.move_file(new_storage, old_storage, field.name, options)
+                    self.move_file(NEW_DEFAULT_FILE_STORAGE, OLD_DEFAULT_FILE_STORAGE, field.name, options)
         return ''
 
     def move_file(self, new_storage, old_storage, filename, options):
@@ -103,12 +102,11 @@ class Command(LabelCommand):
         '''
         # check whether file exists in old storage
         if not old_storage.exists(filename):
-            logging.info('File doesn\'t exist in old storage, ignoring file.')
+            print("Not found: " + filename)
         # check wether file alread exists in the new storage
-        elif not options['overwrite'] and new_storage.exists(filename):
-            logging.info('File already exists in storage, ignoring file.')
+        elif new_storage.exists(filename):
+            print("Already exists, Ignoring: " + filename)
         else:
-            logging.info('Moving file "%s" to new storage.' % filename)
-            print filename
+            print('Moving file "%s" to new storage.' % filename)
             f = old_storage.open(filename)
             new_storage.save(filename, f)
