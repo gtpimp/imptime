@@ -63,7 +63,7 @@ class Client(models.Model):
     name = models.CharField(max_length=255, null=False, blank=True)
     code = models.CharField(max_length=100, null=False, blank=True)
     email = models.EmailField(null=False, blank=False)
-    logo = models.FileField(upload_to=upload_to_logos, null=True, blank=True)
+    logo = models.FileField(max_length=255, upload_to=upload_to_logos, null=True, blank=True)
 
     created_at = models.DateTimeField(auto_now_add=True)
     modified_at = models.DateTimeField(auto_now=True)
@@ -3891,7 +3891,7 @@ class IssueComment(models.Model):
 
 class IssueAttachment(BaseModel):
     issue = models.ForeignKey(Issue, blank=False, null=False, related_name='attachments')
-    attachment = models.FileField(upload_to=upload_to_attachments, null=False, blank=False)
+    attachment = models.FileField(max_length=255, upload_to=upload_to_attachments, null=False, blank=False)
     name = models.CharField(max_length=255)
     content_type = models.CharField(max_length=255, null=True)
 
@@ -3981,7 +3981,7 @@ class BusinessDocument(models.Model):
     business = models.ForeignKey(Business, null=False, blank=False, related_name='documents', db_index=True)
     project = models.ForeignKey(Project, null=True, blank=True, related_name='documents', db_index=True)
     filename = models.CharField(max_length=255, null=False, blank=False)
-    doc = models.FileField(upload_to=upload_to_project_documents, null=False, blank=False)
+    doc = models.FileField(max_length=255, upload_to=upload_to_project_documents, null=False, blank=False)
     doc_type = models.CharField(max_length=100, null=False, blank=False,
                                 choices = DOC_TYPE_CHOICES )
     mime_type = models.CharField(max_length=50, null=False, blank=False)

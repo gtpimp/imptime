@@ -129,7 +129,8 @@ class MailerMessage(models.Model):
 
 @python_2_unicode_compatible
 class Attachment(models.Model):
-    file_attachment = models.FileField(storage=get_storage(),
+    file_attachment = models.FileField(max_length=255,
+                                       storage=get_storage(),
                                        upload_to=upload_to_mailqueue,
                                        blank=True, null=True)
     email = models.ForeignKey(MailerMessage, blank=True, null=True)
