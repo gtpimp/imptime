@@ -321,7 +321,7 @@ EMACSIMPORTER_RATES = { "test":{"id-test.org":50,
                                 "id-fonk.org":200} }
 EMACSIMPORTER_TEMP_DIR = "/tmp"
 EMACS_USERS_TO_PROCESS = ["test", ]
-EMACS_ADMIN_USER_EMAILS = ["gtp@implicitdesign.co.za",]
+EMACS_ADMIN_USER_EMAILS = ["gtp@impd.co.za",]
 
 PDF_TEMP_FOLDER = "/tmp"
 CALDAV_TEMP_FOLDER = "/tmp"
@@ -440,9 +440,9 @@ LOGGING = {
 
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 EMAIL_USE_TLS = True
-EMAIL_HOST = 'mail.implicitdesign.co.za'
+EMAIL_HOST = 'mail.impd.co.za'
 # EMAIL_HOST = 'localhost'
-EMAIL_HOST_USER = 'timesheet@implicitdesign.co.za'
+EMAIL_HOST_USER = 'imptime@impd.co.za'
 EMAIL_HOST_PASSWORD = 'WRONG'
 EMAIL_PORT = 587
 
