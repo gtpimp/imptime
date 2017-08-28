@@ -50,10 +50,17 @@ def import_timesheet(request):
             user = User.objects.get(username=username)
             mail_to.update([user.email])
             mail_to = list(mail_to)
-            
+
             the_extractor = Extractor(username=username)
-            status = the_extractor.extract_for_filecontent(filename=form.filename,
-                                                           file_content=form.filecontent)
+
+            try:
+                with transaction.atomic():
+                    status = the_extractor.extract_for_filecontent(filename=form.filename,
+                                                                   file_content=form.filecontent)
+                    if len(status['errors'])>0:
+                        raise Exception("Importer failed")
+            except Exception, ex:
+                status['errors'].append(str(ex))            
 
             if len(status.get('errors', [])) > 0:
                 raise Exception("\n".join(status['errors']))
@@ -74,7 +81,6 @@ def import_timesheet(request):
                       from_email="info@implicitdesign.co.za",
                       recipient_list=mail_to,
                       fail_silently=True)
-            transaction.rollback()
             return HttpResponse(json.dumps({'status':'failed', 'msg': str(ex)}))
 
     return HttpResponse("Validation error: %s" % form.errors)

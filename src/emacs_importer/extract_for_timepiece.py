@@ -40,38 +40,7 @@ class Extractor(object):
     def extract_for_filecontent(self, filename, file_content):
         self._process_org_string(file_content, filename)
         return self.status
-            
-    # def extract(self):
-
-    #     with transaction.commit_manually():
-
-    #         try:
-    #             self.timings_before = self.get_project_timings_for_user()
-    #             includes = ["*.org",]
-    #             excludes = [".git",]
-    #             for root, dirs, files in os.walk(self.input_path, topdown=True):
-    #                 dirs[:] = [d for d in dirs if d not in excludes] 
-    #                 for pat in includes:
-    #                     for f in fnmatch.filter(files, pat):
-    #                         try:
-    #                             self._handle_file(root, f)
-    #                         except Exception, ex:
-    #                             self.status['errors'].append("%s: Failure handling file [%s]: %s" % (self.username, f, ex))
-    #             self.timings_after = self.get_project_timings_for_user()
-
-    #             try:
-    #                 self.check_changed_closed_projects()
-    #             except Exception, ex:
-    #                 self.status['errors'].append("%s: General failure: %s" % (self.username,ex))
-                
-    #         finally:
-    #             if len(self.status['errors'])==0:
-    #                 transaction.commit()
-    #             else:
-    #                 transaction.rollback()
-
-    #     return self.status
-
+    
     def check_changed_closed_projects(self):
 
         for p_id, info_before in self.timings_before.items():
@@ -142,7 +111,7 @@ class Extractor(object):
                 raise Exception("Invalid timesheet for %s, missing a one star section in %s" % (self.username, filename))
             if section_name != "development":
                 continue
-                
+
             if orgnode.Level() == 2:
                 sprint_name = orgnode.Heading()
 
@@ -152,7 +121,7 @@ class Extractor(object):
                     logger.error("Found a development section for a project which doesn't exist: %s" % business_name)
                     self.status['infos'].append("Found a development section for a project which doesn't exist: %s" % business_name)
                     return
-                
+
                 self._process_orgnode(business, sprint_name, orgnode, issues_processed)
 
         for issue in issues_processed:
@@ -165,10 +134,6 @@ class Extractor(object):
         self.timings_after = self.get_project_timings_for_user(business=business)
         self.check_changed_closed_projects()
 
-        if len(self.status['errors'])==0:
-            transaction.commit()
-        else:
-            transaction.rollback()
                 
     def _process_orgnode(self, business, sprint_name, orgnode, issues_processed):
         activity = Activity.objects.get_or_create(code='dev')[0]
