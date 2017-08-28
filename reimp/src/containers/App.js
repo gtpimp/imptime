@@ -8,7 +8,6 @@ import Websocket from '../components/Websocket'
 import LoginPage from '../containers/LoginPage'
 import { is_authenticated } from '../actions/Auth'
 import { updateSettings } from '../actions/Settings'
-import Raven from 'raven-js'
 
 class App extends Component {
 
@@ -18,11 +17,6 @@ class App extends Component {
         /* window.onerror = function(msg, url, line, col, error) {
 	   //alert("whoops")
          * }*/
-
-        const RAVEN_DSN = store.getState().settings.RAVEN_DSN
-        if (RAVEN_DSN) {
-            Raven.config(RAVEN_DSN).install()
-        }
 
     }
 
