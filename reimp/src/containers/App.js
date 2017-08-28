@@ -19,9 +19,9 @@ class App extends Component {
 	   //alert("whoops")
          * }*/
 
-        const SENTRY_PUBLIC_DSN = store.getState().settings.SENTRY_PUBLIC_DSN
-        if (SENTRY_PUBLIC_DSN) {
-            Raven.config(SENTRY_PUBLIC_DSN).install()
+        const RAVEN_DSN = store.getState().settings.RAVEN_DSN
+        if (RAVEN_DSN) {
+            Raven.config(RAVEN_DSN).install()
         }
 
     }
