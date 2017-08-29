@@ -4,6 +4,7 @@ export const UPDATE_PAGE_SIDEBAR = 'UPDATE_PAGE_SIDEBAR'
 export const UPDATE_PAGE_SETTINGS = 'UPDATE_PAGE_SETTINGS'
 export const UPDATE_PAGE_SELECTION = 'UPDATE_PAGE_SELECTION'
 export const SET_PAGE_FLAG = 'SET_PAGE_FLAG'
+export const FILTER_ISSUE_LIST_COLUMNS = 'FILTER_ISSUE_LIST_COLUMNS'
 
 export function initList(page_key) {
     return {
@@ -68,6 +69,14 @@ export function select_users(page_key, user_ids) {
         type: UPDATE_PAGE_SELECTION,
 	      page_key: page_key,
         user_ids: user_ids
+    }
+}
+
+export function filter_issue_list_colums(page_key, filter_columns) {
+    return {
+        type: FILTER_ISSUE_LIST_COLUMNS,
+        page_key: page_key,
+        filter_columns: filter_columns
     }
 }
 

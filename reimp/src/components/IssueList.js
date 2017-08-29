@@ -252,7 +252,8 @@ class IssueList extends Component {
             issues, is_visible, list_key,
             saving_issue_ids,
             is_creating_issue, candidate_issue, invalidated_issue_ids,
-            selected_ids, selected_items, loading_item_ids, expanded_issues
+            selected_ids, selected_items, loading_item_ids, expanded_issues,
+            issueHeaderList
         } = this.props
 
         const tag_editor_open = (this.state || {}).tag_editor_open || false
@@ -325,27 +326,23 @@ class IssueList extends Component {
         })
 
         const renderHeader = (() => {
+//            var headerList = ["#", ".", "Name", "Assignee", "Status", "Progress", "Estimates", "Tags", "My Time"]
+
             return (
                 <tr className="list-table__headers">
-                    <th className="list-table__header">#</th>
-                    <th className="list-table__header"></th>
-                    <th className="list-table__header">Name</th>
-                    <th className="list-table__header">Assignee</th>
-                    <th className="list-table__header">Status</th>
-                    { false && <th className="list-table__header">Feature</th>}
-                    { false && <th className="list-table__header">Sprint</th>}
-                    <th className="list-table__header">Progress</th>
-                    <th className="list-table__header">Estimates</th>
-                    <th className="list-table__header">Tags</th>
-                    <th className="list-table__header">My time</th>
-                    <th className="list-table__header"></th>
+                  { issueHeaderList.map(function(header){
+                        return <th className="list-table__header">{header}</th>
+                    })}
+                { false && <th className="list-table__header">Feature</th>} {/* These were here before mapping was introducted but may need to be removed */}
+                { false && <th className="list-table__header">Sprint</th>}
+
                 </tr>)
         })
 
-
         return (
+
             <div>
-                <TagEditor isOpen={tag_editor_open}
+            <TagEditor isOpen={tag_editor_open}
                            selected_items={selected_items}
                            selected_ids={selected_ids}
                            closeTagEditor={this.closeTagEditor}/>
@@ -356,7 +353,7 @@ class IssueList extends Component {
 
                 <ListTable renderHeader={renderHeader}>
                     {issue_rows.length > 0 && issue_rows}
-                    {issue_rows.length == 0 &&
+                    {issue_rows.length === 0 &&
                      (
                          <tr>
                              <td colSpan="20">No issues</td>
@@ -387,6 +384,7 @@ class IssueList extends Component {
 }
 
 function mapStateToProps(state, props) {
+//    debugger
     const {issue, item_list} = state
     const {list_key} = props
     const items_by_id = (issue && issue.items_by_id) || {}

@@ -7,6 +7,7 @@ import {
     UPDATE_PAGE_SETTINGS,
     UPDATE_PAGE_SELECTION,
     SET_PAGE_FLAG,
+    FILTER_ISSUE_LIST_COLUMNS
 } from '../actions/Page.js'
 import { setErrorMessage } from '../actions/Error'
 
@@ -17,7 +18,8 @@ const page_template = {
     toolbars: null,
     settings: null,
     selection: null,
-    sidebars: null
+    sidebars: null,
+    filter_issue_columns: false
 }
 
 export default function page(state = initialState, action) {
@@ -71,6 +73,12 @@ export default function page(state = initialState, action) {
             flag_d[action.flag_name] = action.flag_value
             state_copy[action.page_key] = Object.assign({}, l, flag_d)
             return state_copy
+
+        case FILTER_ISSUE_LIST_COLUMNS:
+            state_copy = Object.assign({}, state)
+            l = Object.assign({}, page_template, state_copy[action.page_key] || {})
+	          state_copy[action.page_key] = Object.assign({}, l, {"filter_issue_columns": action.filter_columns})
+	          return state_copy
 
         default:
             return state

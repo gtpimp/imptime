@@ -12,9 +12,11 @@ import {
 } from '../../actions/ItemListKeyRegistry'
 import {
     get_selected_issue_ids,
-    get_selected_sprint_ids
+    get_selected_sprint_ids,
+    filter_issue_list_colums
 } from '../../actions/Page'
 import { ensureSprintsLoaded, getSprint } from '../../actions/Sprints'
+import ToggleButton from './ToggleButton'
 
 class IssuesToolbarPanel extends Component {
 
@@ -22,6 +24,7 @@ class IssuesToolbarPanel extends Component {
         super(props)
         this.onNewIssueClick = this.onNewIssueClick.bind(this)
         this.onDashboardClick = this.onDashboardClick.bind(this)
+        this.onIssueFilterToggleButtonClick = this.onIssueFilterToggleButtonClick.bind(this)
     }
 
     componentDidMount() {
@@ -48,9 +51,16 @@ class IssuesToolbarPanel extends Component {
         browserHistory.push('/projects/'+project_id+'/sprints/'+sprint_id);
     }
 
+    onIssueFilterToggleButtonClick(filter_columns) {
+        const { dispatch } = this.props
+        dispatch(filter_issue_list_colums(PAGE_KEY__ISSUES_PAGE, filter_columns))
+    }
+
     render() {
+
         return (
             <div className="toolbar-panel">
+              <ToggleButton onChange={this.onIssueFilterToggleButtonClick} on_label={"Show all columns"} off_label={"Show less columns"}/>
               <div className="button toolbar-button--small button--large button--primary" onClick={this.onNewIssueClick}>+ New Issue</div>
               <div className="button toolbar-button--large button--large button--primary" onClick={this.onDashboardClick}>+ Dashboard</div>
             </div>
@@ -59,7 +69,6 @@ class IssuesToolbarPanel extends Component {
 }
 
 function mapStateToProps(state, props) {
-
     const selected_issue_ids = get_selected_issue_ids(state, PAGE_KEY__ISSUES_PAGE)
     const issue = (selected_issue_ids && selected_issue_ids.length > 0 && getIssue(state, selected_issue_ids[0])) || {}
     const selected_sprint_ids = get_selected_sprint_ids(state, PAGE_KEY__ISSUES_PAGE)

@@ -1,0 +1,52 @@
+@import 'variables';
+
+.toggle-button {
+
+    .toggle-button__label {
+        display: inline-block;
+        height: 20px;
+        font: $settings-font-2;
+        margin: $padding-large 0;
+    }
+
+    .toggle-button__input {
+        position: relative;
+        display: inline-block;
+        height: 20px;
+        width: 44px;
+        background: $button-disabled-color;
+        border-radius: 100px;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        vertical-align: middle;
+        margin: 0 $padding-medium;
+
+        &:after {
+            position: absolute;
+            left: -2px;
+            top: -3px;
+            display: block;
+            width: 26px;
+            height: 26px;
+            border-radius: 100px;
+            background: $background-color;
+            box-shadow: 0 0 1px 0 rgba(0,0,0,0.12), 0 1px 1px 0 rgba(0,0,0,0.24);
+            content: '';
+            transition: all 0.3s ease;
+        }
+
+        &:active:after {
+            transform: scale(1.15, 0.85);
+        }
+    }
+
+    &.toggle-button--checked {
+        .toggle-button__input {
+            background: $button-hover-background;
+        }
+        .toggle-button__input:after {
+              left: 20px;
+              background: $button-active-background;
+        }
+    }
+}
