@@ -1,3 +1,8 @@
+import {ISSUE_HEADER_LIST_REQUIRED,
+        ISSUE_HEADER_LIST_OPTIONAL
+} from './ItemListKeyRegistry'
+
+
 export const INIT_PAGE = 'INIT_PAGE'
 export const SET_PAGE_TOOLBARS = 'SET_PAGE_TOOLBARS'
 export const UPDATE_PAGE_SIDEBAR = 'UPDATE_PAGE_SIDEBAR'
@@ -72,11 +77,29 @@ export function select_users(page_key, user_ids) {
     }
 }
 
-export function filter_issue_list_colums(page_key, filter_columns) {
+function get_issue_header_list(filter_columns){
+
+    if (filter_columns) {
+        var issue_header_list =
+            ISSUE_HEADER_LIST_REQUIRED.concat(ISSUE_HEADER_LIST_OPTIONAL)
+    }
+    else if (!filter_columns) {
+        var issue_header_list = ISSUE_HEADER_LIST_REQUIRED
+    }
+
+    return issue_header_list
+}
+
+
+export function filter_issue_list_columns(page_key, filter_columns) {
+
+    var issue_header_list = get_issue_header_list(filter_columns)
+
     return {
         type: FILTER_ISSUE_LIST_COLUMNS,
         page_key: page_key,
-        filter_columns: filter_columns
+        filter_columns: filter_columns,
+        issue_header_list: issue_header_list
     }
 }
 

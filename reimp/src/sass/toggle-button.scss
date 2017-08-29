@@ -1,33 +1,33 @@
-@import 'variables';
+@import 'variables.scss';
 
 .toggle-button {
 
     .toggle-button__label {
         display: inline-block;
-        height: 20px;
-        font: $settings-font-2;
-        margin: $padding-large 0;
+        height: 10px;
+        font: $settings-font-4;
+        margin: $padding-medium-small 0;
     }
 
     .toggle-button__input {
         position: relative;
         display: inline-block;
-        height: 20px;
-        width: 44px;
+        height: 10px;
+        width: 22px;
         background: $button-disabled-color;
         border-radius: 100px;
         cursor: pointer;
         transition: all 0.3s ease;
         vertical-align: middle;
-        margin: 0 $padding-medium;
+        margin: 0 $padding-medium-small;
 
         &:after {
             position: absolute;
             left: -2px;
-            top: -3px;
+            top: -2px;
             display: block;
-            width: 26px;
-            height: 26px;
+            width: 13px;
+            height: 13px;
             border-radius: 100px;
             background: $background-color;
             box-shadow: 0 0 1px 0 rgba(0,0,0,0.12), 0 1px 1px 0 rgba(0,0,0,0.24);
@@ -45,7 +45,7 @@
             background: $button-hover-background;
         }
         .toggle-button__input:after {
-              left: 20px;
+              left: 10px;
               background: $button-active-background;
         }
     }

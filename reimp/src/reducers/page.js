@@ -9,6 +9,9 @@ import {
     SET_PAGE_FLAG,
     FILTER_ISSUE_LIST_COLUMNS
 } from '../actions/Page.js'
+import {ISSUE_HEADER_LIST_REQUIRED,
+        ISSUE_HEADER_LIST_OPTIONAL
+} from '../actions/ItemListKeyRegistry'
 import { setErrorMessage } from '../actions/Error'
 
 const initialState = {}
@@ -19,7 +22,8 @@ const page_template = {
     settings: null,
     selection: null,
     sidebars: null,
-    filter_issue_columns: false
+    filter_issue_columns: true,
+    issue_header_list: ISSUE_HEADER_LIST_REQUIRED.concat(ISSUE_HEADER_LIST_OPTIONAL)
 }
 
 export default function page(state = initialState, action) {
@@ -77,7 +81,9 @@ export default function page(state = initialState, action) {
         case FILTER_ISSUE_LIST_COLUMNS:
             state_copy = Object.assign({}, state)
             l = Object.assign({}, page_template, state_copy[action.page_key] || {})
-	          state_copy[action.page_key] = Object.assign({}, l, {"filter_issue_columns": action.filter_columns})
+	          state_copy[action.page_key] = Object.assign({}, l,
+                                                        {"filter_issue_columns": action.filter_columns},
+                                                        {"issue_header_list": action.issue_header_list} )
 	          return state_copy
 
         default:

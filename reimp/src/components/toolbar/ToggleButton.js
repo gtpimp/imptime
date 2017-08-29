@@ -12,6 +12,7 @@ class ToggleButton extends Component {
 
     onClick(event) {
         const {onChange, value} = this.props
+
         if (onChange) {
             onChange(!value)
         }
@@ -22,9 +23,10 @@ class ToggleButton extends Component {
 
         return (
             <div onClick={this.onClick} className={classNames("toggle-button", {"toggle-button--checked": value})}>
-              <div className="toggle-button__label">{off_label || "Off"}</div>
-              <div className="toggle-button__input"></div>
-              <div className="toggle-button__label">{on_label || "On"}</div>
+              {/* <div className="toggle-button__label">{off_label || "Off"}</div> */}
+              <div className="toggle-button__input">
+                <div className="toggle-button__label">{on_label || "On"}</div>
+              </div>
             </div>
         )
     }
