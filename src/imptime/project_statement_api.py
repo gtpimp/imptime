@@ -31,11 +31,12 @@ class ProjectStatementViewSet(BaseViewSet):
             self._enrich_rates_per_user(times)
             self._fix_keys(times)
             times_by_sprint = self._group_by_sprint(times)
-            self._enrich_totals(times_by_sprint)
-            
-            context['project_statement'] = { "project_id": project.id,
-                                             "times_by_sprint": times_by_sprint }
 
+            project_statement = { "project_id": project.id,
+                                  "times_by_sprint": times_by_sprint }
+            self._enrich_totals(project_statement)
+            
+            context['project_statement'] = project_statement
             data = {'status': 'success', 'payload': context}
 
         except Exception, ex:
@@ -57,13 +58,19 @@ class ProjectStatementViewSet(BaseViewSet):
             grouped[sprint_id]['users'].append(time_per_user)
         return grouped
 
-    def _enrich_totals(self, times_by_sprint):
+    def _enrich_totals(self, project_statement):
+        times_by_sprint = project_statement['times_by_sprint']
+        grand_totals = { 'total_hours': 0,
+                         'total_billable_cost': 0 }
         for time_by_sprint in times_by_sprint.values():
             time_by_sprint['totals']['total_hours'] = 0
             time_by_sprint['totals']['total_billable_cost'] = 0
             for time_per_user in time_by_sprint['users']:
                 time_by_sprint['totals']['total_hours'] += time_per_user['total_hours']
                 time_by_sprint['totals']['total_billable_cost'] += time_per_user['billable_cost']
+            grand_totals['total_hours'] += time_by_sprint['totals']['total_hours']
+            grand_totals['total_billable_cost'] += time_by_sprint['totals']['total_billable_cost']
+        project_statement['grand_totals'] = grand_totals
     
     def _enrich_rates_per_user(self, times):
         for time_per_user in times:

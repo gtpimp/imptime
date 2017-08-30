@@ -58,6 +58,21 @@ class ProjectStatement extends Component {
                                   {to: '/projects/'+project.id+'/projectStatement', label: 'Project Statement'}]))
     }
 
+    render_totals(grand_totals) {
+        return (
+            <div className="project_statement__grand_totals">
+              <h2>Running total across project</h2>
+              <div className="project_statement__grand_totals__total_hours">
+                <Hours hours={grand_totals.total_hours}/>
+              </div>
+              <div className="project_statement__grand_totals__total_billable_cost">
+                <CurrencyValue value={grand_totals.total_billable_cost}/>
+              </div>
+              <div className="clear"></div>
+            </div>
+        )
+    }
+
     render_sprint_times(sprint_id, times_for_sprint) {
         return (
             <div key={sprint_id} className="project_statement__times_for_sprint">
@@ -112,7 +127,9 @@ class ProjectStatement extends Component {
                 </div>
               }
 
-              { ! is_loading &&
+                { ! is_loading &&
+                  <div>
+                    { project_statement.grand_totals && that.render_totals(project_statement.grand_totals) }
                     <div className="project__statement__times_grid">
                           { map(keys(project_statement.times_by_sprint),
                                 function(sprint_id) {
@@ -122,7 +139,8 @@ class ProjectStatement extends Component {
                                )
                           }
                     </div>
-              }
+                  </div>
+                }
             </div>
         )
     }

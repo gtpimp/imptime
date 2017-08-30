@@ -25,12 +25,12 @@
     font-weight: bold;
     float: left;
     clear:both;
+    background-color: $color-4;
 }
 
 .project_statement__sprint_name {
     float: left;
     padding-left: 10px;
-    background-color: $color-24;
 }
 
 .project_statement__sprint_header__total_billable_cost {
@@ -47,4 +47,17 @@
     clear:left; 
 }
 
+.project_statement__grand_totals {
+    background-color: $color-4;
+    margin-bottom: 30px;
+    border-bottom: 1px solid $form-field-border;
+}
+
+.project_statement__grand_totals__total_hours {
+    float: left;
+}
+
+.project_statement__grand_totals__total_billable_cost {
+    float: left;
+}
 

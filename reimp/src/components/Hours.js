@@ -9,7 +9,7 @@ class Hours extends Component {
         const {hours} = this.props
 
         return (
-            <div className="elapsed-time">{hours}</div>
+            <div className="elapsed-time">{hours} hours</div>
         )
     }
 }
