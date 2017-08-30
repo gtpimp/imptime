@@ -1308,8 +1308,8 @@ class SprintQuoteReportSettingsForm(forms.Form):
 
     include_exclude_vat = forms.ChoiceField( label="Include or Exclude VAT in quote",
                                                      required=True,
-                                                     choices = ( ("exclude_vat", "Exclude VAT"),
-                                                                 ("include_vat", "Include VAT"),
+                                                     choices = ( ("exclude_vat", "Costs exclude VAT"),
+                                                                 ("include_vat", "Costs include VAT"),
                                                                  ("no_vat", "Don't show VAT message"),
                                                     )
                                             )

@@ -122,18 +122,6 @@ this document.
     </p>
   {% endifequal %}
 
-  {% ifequal settings.include_exclude_vat "exclude_vat"%}
-    <p>
-      Please note, all cost amounts in this document are VAT Exclusive. VAT will be added to issued invoices.
-      <p>
-  {% endifequal %}
-
-  {% ifequal settings.include_exclude_vat "include_vat"%}
-    <p>
-      Please note, all cost amounts in this document are VAT Inclusive.
-      <p>
-  {% endifequal %}
-
   <p>
 
     {% include "timepiece/project/_sprint_quote_report_costings.html" %}
