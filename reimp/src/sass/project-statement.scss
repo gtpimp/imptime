@@ -2,6 +2,7 @@
 
 .project__statement__times_grid {
     padding: 10px;
+    float: left;
 }
 
 .project_statement__times_for_sprint {
@@ -59,5 +60,19 @@
 
 .project_statement__grand_totals__total_billable_cost {
     float: left;
+}
+
+.project_statement__times_for_user {
+    float: left;
+    clear: left;
+    border-bottom: 1px solid $form-field-border;
+    margin-bottom: 50px;
+}
+
+.project_statement__user_header__total_billable_cost {
+    float: left;    
+}
+    
+.project_statement__user_header__total_hours {
 }
 

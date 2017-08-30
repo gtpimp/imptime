@@ -101,3 +101,4 @@ export function format_hours(hours) {
     }
     return new Date(hours*60*60*1000).toISOString().substr(11,5)
 }
+

@@ -27,13 +27,17 @@ class ProjectStatementViewSet(BaseViewSet):
 
             date_from_inclusive = datetime(2017, 8, 01)
             date_to_inclusive = datetime(2017, 9, 01)
-            times = self._get_times(project, date_from_inclusive, date_to_inclusive)
-            self._enrich_rates_per_user(times)
-            self._fix_keys(times)
-            times_by_sprint = self._group_by_sprint(times)
-
+            entries = self._get_entries(project, date_from_inclusive, date_to_inclusive)
+            
+            times_by_sprint = self._get_times_by_sprint(entries)
+            self._enrich_rates_per_user(times_by_sprint)
+            self._fix_keys(times_by_sprint)
+            times_by_sprint = self._group_by_sprint(times_by_sprint)
+            times_by_user = self._enrich_times_by_user(times_by_sprint)
+            
             project_statement = { "project_id": project.id,
-                                  "times_by_sprint": times_by_sprint }
+                                  "times_by_sprint": times_by_sprint,
+                                  "times_by_user": times_by_user }
             self._enrich_totals(project_statement)
             
             context['project_statement'] = project_statement
@@ -81,15 +85,27 @@ class ProjectStatementViewSet(BaseViewSet):
             else:
                 time_per_user['rate'] = 0
             time_per_user['billable_cost'] = float(time_per_user['rate']) * float(time_per_user['total_hours'])
-    
-    def _get_times(self, project, date_from_inclusive, date_to_inclusive):
+
+    def _get_entries(self, project, date_from_inclusive, date_to_inclusive):
         # The date filter only includes all entries ended in the time
         # period, it doesn't attempt to split entries that are longer
         # than a day.
-        entries = Entry.objects.filter(issue__project__business=project,
-                                       end_time__gte=date_from_inclusive,
-                                       end_time__lte=date_to_inclusive)
-        
+        return Entry.objects.filter(issue__project__business=project,
+                                    end_time__gte=date_from_inclusive,
+                                    end_time__lte=date_to_inclusive)
+            
+    def _get_times_by_sprint(self, entries):
         return entries.order_by("issue__project__order", "user_id")\
                       .values('issue__project_id', 'user_id')\
                       .annotate(total_hours=Sum('hours'))
+
+    def _enrich_times_by_user(self, times_by_sprint):
+        times_by_user = {}
+        for sprint_id, sprint_times in times_by_sprint.items():
+            for user_time in sprint_times['users']:
+                user_id = user_time['user_id']
+                times_by_user.setdefault(user_id,
+                                         { 'total_hours': 0, 'total_billable_cost': 0 })
+                times_by_user[user_id]['total_hours'] += user_time['total_hours']
+                times_by_user[user_id]['total_billable_cost'] += user_time['billable_cost']
+        return times_by_user

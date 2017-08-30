@@ -112,6 +112,24 @@ class ProjectStatement extends Component {
             </div>
         )
     }
+
+    render_user_times(user_id, times_for_user) {
+        return (
+            <div key={user_id} className="project_statement__times_for_user">
+              <div className="project_statement__user_header">
+                <div className="project_statement__user_name">
+                  <OtherUser value={user_id}/>
+                </div>
+                <div className="project_statement__user_header__total_hours">
+                  <Hours hours={times_for_user.total_hours}/>
+                </div>
+                <div className="project_statement__user_header__total_billable_cost">
+                  <CurrencyValue value={times_for_user.total_billable_cost}/>
+                </div>
+              </div>
+            </div>
+        )
+    }
     
     render() {
 
@@ -131,13 +149,25 @@ class ProjectStatement extends Component {
                   <div>
                     { project_statement.grand_totals && that.render_totals(project_statement.grand_totals) }
                     <div className="project__statement__times_grid">
-                          { map(keys(project_statement.times_by_sprint),
-                                function(sprint_id) {
-                                    var times_for_sprint = project_statement.times_by_sprint[sprint_id]
-                                    return that.render_sprint_times(sprint_id, times_for_sprint)
-                                }
-                               )
-                          }
+                      <h2>Summary by sprint</h2>
+                      { map(keys(project_statement.times_by_sprint),
+                            function(sprint_id) {
+                                var times_for_sprint = project_statement.times_by_sprint[sprint_id]
+                                return that.render_sprint_times(sprint_id, times_for_sprint)
+                            }
+                        )
+                      }
+                    </div>
+
+                    <div className="project__statement__times_grid">
+                      <h2>Summary by user</h2>
+                      { map(keys(project_statement.times_by_user),
+                            function(user_id) {
+                                var times_for_user = project_statement.times_by_user[user_id]
+                                return that.render_user_times(user_id, times_for_user)
+                            }
+                        )
+                      }
                     </div>
                   </div>
                 }
