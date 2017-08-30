@@ -5,11 +5,15 @@ import { map, keys } from 'lodash'
 import OtherUser from './OtherUser'
 import SprintName from './SprintName'
 import CurrencyValue from './CurrencyValue'
+import Timestamp from './Timestamp'
 import Hours from './Hours'
 import {
     ensureProjectStatementLoaded,
     getProjectStatement,
-    isLoadingProjectStatement
+    isLoadingProjectStatement,
+    update_project_statement_filter,
+    get_project_statement_filter,
+    invalidateProjectStatement
 } from '../actions/ProjectStatement'
 import { setBreadcrumbs } from '../actions/Breadcrumbs'
 import {
@@ -22,11 +26,17 @@ import {
     set_toolbars,
     select_projects,
 } from '../actions/Page'
+import DatePicker from 'react-datepicker';
+import moment from 'moment';
+import 'react-datepicker/dist/react-datepicker.css';
 
 class ProjectStatement extends Component {
 
     constructor(props) {
         super(props)
+        this.updateDateFromInclusive = this.updateDateFromInclusive.bind(this)
+        this.updateDateToInclusive = this.updateDateToInclusive.bind(this)
+        this.refreshStatement = this.refreshStatement.bind(this)
     }
 
     componentDidMount() {
@@ -40,14 +50,33 @@ class ProjectStatement extends Component {
     }
 
     componentWillReceiveProps(new_props) {
-        const { dispatch } = this.props
+        const { dispatch, filter } = this.props
         if ( new_props.project_id ) {
             dispatch(ensureProjectsLoaded([new_props.project_id]))
-            dispatch(ensureProjectStatementLoaded([new_props.project_id]))
+            dispatch(ensureProjectStatementLoaded([new_props.project_id], filter))
         }
         if ( new_props.project.name !== this.props.project.name ) {
             this.refresh(new_props.project, new_props.project_statement)
         }
+    }
+
+    updateDateFromInclusive(new_value) {
+        const { filter, dispatch } = this.props
+        dispatch(update_project_statement_filter(
+            new_value,
+            filter.date_to_inclusive))
+    }
+
+    updateDateToInclusive(new_value) {
+        const { filter, dispatch } = this.props
+        dispatch(update_project_statement_filter(
+            filter.date_from_inclusive,
+            new_value))
+    }
+
+    refreshStatement() {
+        const { project_id, dispatch } = this.props
+        dispatch(invalidateProjectStatement(project_id))
     }
 
     refresh(project, project_statement) {
@@ -56,6 +85,28 @@ class ProjectStatement extends Component {
         dispatch(setBreadcrumbs([ {to: '/projects', label: 'All Projects'},
                                   {to: '/projects/'+project.id, label: project.name},
                                   {to: '/projects/'+project.id+'/projectStatement', label: 'Project Statement'}]))
+    }
+
+    render_filter() {
+        const { filter } = this.props
+        return (
+            <div>
+
+              From:
+              <DatePicker selected={filter.date_from_inclusive}
+                          dateFormat="DD/MM/YYYY"
+                          onChange={this.updateDateFromInclusive} />
+
+              To:
+
+              <DatePicker selected={filter.date_to_inclusive}
+                          dateFormat="DD/MM/YYYY"
+                          onChange={this.updateDateToInclusive} />
+
+              <button onClick={this.refreshStatement}>Filter</button>
+              
+            </div>
+        )
     }
 
     render_totals(grand_totals) {
@@ -133,7 +184,7 @@ class ProjectStatement extends Component {
     
     render() {
 
-        const { is_loading, project_statement } = this.props
+        const { is_loading, project_statement, filter } = this.props
         const that = this;
 
         return (
@@ -145,8 +196,17 @@ class ProjectStatement extends Component {
                 </div>
               }
 
+                { that.render_filter() }
+                
                 { ! is_loading &&
                   <div>
+                    <h3 className="project__statement__date_range">
+                      <div className="project__statement__date_range__element">Statement from</div>
+                      <div className="project__statement__date_range__element"><Timestamp value={project_statement.date_from_inclusive}/></div>
+                      <div className="project__statement__date_range__element">to</div>
+                      <div className="project__statement__date_range__element"><Timestamp value={project_statement.date_to_inclusive}/></div>
+                      <div className="project__statement__date_range__element">(inclusive)</div>
+                    </h3>
                     { project_statement.grand_totals && that.render_totals(project_statement.grand_totals) }
                     <div className="project__statement__times_grid">
                       <h2>Summary by sprint</h2>
@@ -181,12 +241,21 @@ function mapStateToProps(state, props) {
     const project = getProject(state, project_id) || {}
     const project_statement = getProjectStatement(state, project_id) || {}
     const is_loading = isLoadingProjectStatement(state, project_id)
+    const filter = get_project_statement_filter(state)
+
+    if ( ! filter.date_from_inclusive ) {
+        filter.date_from_inclusive = moment().startOf('month');
+    }
+    if ( ! filter.date_to_inclusive ) {
+        filter.date_to_inclusive = moment().endOf('month');
+    }
 
     return {
         project_id: project_id,
         project: project,
         project_statement: project_statement,
-        is_loading: is_loading
+        is_loading: is_loading,
+        filter: filter
     }
 }
 

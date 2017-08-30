@@ -3,6 +3,8 @@
 .project__statement__times_grid {
     padding: 10px;
     float: left;
+    margin-right: 50px;
+    border-right: 1px solid $form-field-border;
 }
 
 .project_statement__times_for_sprint {
@@ -52,14 +54,17 @@
     background-color: $color-4;
     margin-bottom: 30px;
     border-bottom: 1px solid $form-field-border;
+    clear: both;
 }
 
 .project_statement__grand_totals__total_hours {
     float: left;
+    margin-right: 30px;
 }
 
 .project_statement__grand_totals__total_billable_cost {
     float: left;
+    margin-right: 30px;
 }
 
 .project_statement__times_for_user {
@@ -74,5 +79,16 @@
 }
     
 .project_statement__user_header__total_hours {
+
 }
 
+.project__statement__date_range__element {
+    float: left;
+    padding-right: 10px;
+}
+
+.project__statement__date_range {
+    clear: both;
+    margin-bottom: 50px;
+    font-size: $font-size-small;
+}

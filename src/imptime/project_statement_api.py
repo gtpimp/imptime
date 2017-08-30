@@ -18,6 +18,8 @@ class ProjectStatementViewSet(BaseViewSet):
 
     def retrieve(self, request, pk):
         try:
+            params = request.GET.get('params', '{}')
+            params = json.loads(params)
             project_id = pk
             context = {}
             project = Project.objects.get(pk=project_id)
@@ -25,8 +27,8 @@ class ProjectStatementViewSet(BaseViewSet):
             if not bp.has_view_ctc_billable_rates:
                 return self.error_response("No permission to view project statement")
 
-            date_from_inclusive = datetime(2017, 8, 01)
-            date_to_inclusive = datetime(2017, 9, 01)
+            date_from_inclusive = params['filter']['date_from_inclusive'] or datetime.now()
+            date_to_inclusive = params['filter']['date_to_inclusive'] or datetime.now()
             entries = self._get_entries(project, date_from_inclusive, date_to_inclusive)
             
             times_by_sprint = self._get_times_by_sprint(entries)
@@ -36,6 +38,8 @@ class ProjectStatementViewSet(BaseViewSet):
             times_by_user = self._enrich_times_by_user(times_by_sprint)
             
             project_statement = { "project_id": project.id,
+                                  "date_from_inclusive": date_from_inclusive,
+                                  "date_to_inclusive": date_to_inclusive,
                                   "times_by_sprint": times_by_sprint,
                                   "times_by_user": times_by_user }
             self._enrich_totals(project_statement)
