@@ -12,9 +12,11 @@ import {
 } from '../../actions/ItemListKeyRegistry'
 import {
     get_selected_issue_ids,
-    get_selected_sprint_ids
+    get_selected_sprint_ids,
+    filter_issue_list_columns
 } from '../../actions/Page'
 import { ensureSprintsLoaded, getSprint } from '../../actions/Sprints'
+import ToggleButton from './ToggleButton'
 
 class IssuesToolbarPanel extends Component {
 
@@ -22,6 +24,7 @@ class IssuesToolbarPanel extends Component {
         super(props)
         this.onNewIssueClick = this.onNewIssueClick.bind(this)
         this.onDashboardClick = this.onDashboardClick.bind(this)
+        this.onIssueFilterToggleButtonClick = this.onIssueFilterToggleButtonClick.bind(this)
     }
 
     componentDidMount() {
@@ -48,9 +51,20 @@ class IssuesToolbarPanel extends Component {
         browserHistory.push('/projects/'+project_id+'/sprints/'+sprint_id);
     }
 
+    onIssueFilterToggleButtonClick(filter_columns) {
+        const { dispatch } = this.props
+        dispatch(filter_issue_list_columns(PAGE_KEY__ISSUES_PAGE, filter_columns))
+    }
+
     render() {
+        const { is_issues_columns_filtered } = this.props
         return (
             <div className="toolbar-panel">
+              <ToggleButton value={is_issues_columns_filtered}
+                            onChange={this.onIssueFilterToggleButtonClick}
+                            on_label={"On"}
+                            off_label={"Off"}
+              />
               <div className="button toolbar-button--small button--large button--primary" onClick={this.onNewIssueClick}>+ New Issue</div>
               <div className="button toolbar-button--large button--large button--primary" onClick={this.onDashboardClick}>+ Dashboard</div>
             </div>
@@ -59,18 +73,21 @@ class IssuesToolbarPanel extends Component {
 }
 
 function mapStateToProps(state, props) {
-
+    const { page } = state
     const selected_issue_ids = get_selected_issue_ids(state, PAGE_KEY__ISSUES_PAGE)
     const issue = (selected_issue_ids && selected_issue_ids.length > 0 && getIssue(state, selected_issue_ids[0])) || {}
     const selected_sprint_ids = get_selected_sprint_ids(state, PAGE_KEY__ISSUES_PAGE)
     const sprint = (selected_sprint_ids && selected_sprint_ids.length > 0 && getSprint(state, selected_sprint_ids[0])) || {}
+    const issues_page = page.issues_page || {}
+    const is_issues_columns_filtered = issues_page.filter_issue_columns || null
 
     return {
         issue_ids: selected_issue_ids,
         issue: issue,
         last_selected_issue_id: issue.id,
         sprint_id: sprint.id,
-        project_id: sprint.project_id
+        project_id: sprint.project_id,
+        is_issues_columns_filtered: is_issues_columns_filtered
     }
 }
 

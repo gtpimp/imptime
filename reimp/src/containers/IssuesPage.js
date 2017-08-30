@@ -89,7 +89,9 @@ class IssuesPage extends Component {
     render() {
 
         const { sprint_id, project_id, selected_issues, selected_issue_ids,
-                is_single_selection, is_multiple_selection, is_creating_issue } = this.props
+                is_single_selection, is_multiple_selection, is_creating_issue,
+                issue_header_list
+        } = this.props
 
         const selected_issue = ( selected_issues && selected_issues.length > 0 && selected_issues[0] ) || null
 
@@ -98,6 +100,7 @@ class IssuesPage extends Component {
               <div className="list-layout__list">
                 <IssueList list_key={LIST_KEY__ISSUE_LIST}
                            onSelectIssues={this.onSelectIssues}
+                           issueHeaderList={issue_header_list}
                 />
               </div>
               { is_creating_issue &&
@@ -105,16 +108,16 @@ class IssuesPage extends Component {
                   <NewIssueSidebar />
                 </div>
               }
-                { ! is_creating_issue && is_single_selection && sprint_id && selected_issue &&
-                  <div className="list-layout__sidebar">
-                    <IssueSidebar issue_id={selected_issue.id} sprint_id={sprint_id} project_id={project_id}/>
-                  </div>
-                }
-                { ! is_creating_issue && is_multiple_selection && sprint_id && selected_issue_ids &&
-                  <div className="list-layout__sidebar">
-                    <MultipleIssueSidebar issue_ids={selected_issue_ids} sprint_id={sprint_id} project_id={project_id}/>
-                  </div>
-                }
+              { ! is_creating_issue && is_single_selection && sprint_id && selected_issue &&
+                <div className="list-layout__sidebar">
+                  <IssueSidebar issue_id={selected_issue.id} sprint_id={sprint_id} project_id={project_id}/>
+                </div>
+              }
+              { ! is_creating_issue && is_multiple_selection && sprint_id && selected_issue_ids &&
+                <div className="list-layout__sidebar">
+                  <MultipleIssueSidebar issue_ids={selected_issue_ids} sprint_id={sprint_id} project_id={project_id}/>
+                </div>
+              }
             </div>
         )
     }
@@ -122,8 +125,9 @@ class IssuesPage extends Component {
 
 function mapStateToProps(state, props) {
 
-    const {issue} = state
+    const {issue, page} = state
     const items_by_id = (issue && issue.items_by_id) || {}
+    const issues_page = page.issues_page || {}
 
     const selected_issue_ids = get_selected_issue_ids(state, PAGE_KEY__ISSUES_PAGE)
     const selected_items = items_by_id && selected_issue_ids && selected_issue_ids.map( function(selected_id, index) {
@@ -138,6 +142,8 @@ function mapStateToProps(state, props) {
     const candidate_issue = getCandidateIssue(state) || null
     const is_creating_issue = candidate_issue || false
 
+    var issue_header_list = issues_page.issue_header_list || []
+
     return {
         sprint_id: sprint_id,
         sprint: sprint,
@@ -147,7 +153,8 @@ function mapStateToProps(state, props) {
         selected_issue_ids: selected_issue_ids,
         is_single_selection: selected_items.length === 1,
         is_multiple_selection: selected_items.length > 1,
-        is_creating_issue: is_creating_issue
+        is_creating_issue: is_creating_issue,
+        issue_header_list: issue_header_list
     }
 }
 

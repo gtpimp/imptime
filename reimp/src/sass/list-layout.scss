@@ -9,6 +9,8 @@
 
 .list-layout__list {
     flex-grow: 1;
+    max-height: calc(100vh - 56px - 64px);
+    overflow-y: scroll;
 }
 
 .list-layout__sidebar {

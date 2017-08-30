@@ -1306,6 +1306,14 @@ class SprintQuoteReportSettingsForm(forms.Form):
     preferred_user_for_estimates = forms.ChoiceField( label="User's estimates to use where conflicts",
                                                       required=False )
 
+    include_exclude_vat = forms.ChoiceField( label="Include or Exclude VAT in quote",
+                                                     required=True,
+                                                     choices = ( ("exclude_vat", "Exclude VAT"),
+                                                                 ("include_vat", "Include VAT"),
+                                                                 ("no_vat", "Don't show VAT message"),
+                                                    )
+                                            )
+
     is_final = forms.BooleanField(label="Tick for final, untick for provisional",
                                   initial=False, required=False)
 
