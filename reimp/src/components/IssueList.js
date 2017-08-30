@@ -1,6 +1,7 @@
 import React, {Component} from 'react'
 import each from 'lodash/each'
 import map from 'lodash/map'
+import keys from 'lodash/keys'
 import union from 'lodash/union'
 import includes from 'lodash/includes'
 import difference from 'lodash/difference'
@@ -253,7 +254,7 @@ class IssueList extends Component {
             saving_issue_ids,
             is_creating_issue, candidate_issue, invalidated_issue_ids,
             selected_ids, selected_items, loading_item_ids, expanded_issues,
-            issueHeaderList
+            issue_header_list
         } = this.props
 
         const tag_editor_open = (this.state || {}).tag_editor_open || false
@@ -309,7 +310,7 @@ class IssueList extends Component {
                         is_invalidated={invalidated_issue_ids.indexOf(issue.id) !== -1}
                         is_saving={saving_issue_ids.indexOf(issue.id) !== -1}
                         issue_id={issue.id}
-                        issue_header_list={issueHeaderList}
+                        issue_header_list={issue_header_list}
                     />
                 )
             }
@@ -327,13 +328,14 @@ class IssueList extends Component {
         })
 
         const renderHeader = (() => {
-//            var headerList = ["#", ".", "Name", "Assignee", "Status", "Progress", "Estimates", "Tags", "My Time"]
-
             return (
                 <tr className="list-table__headers">
-                  { issueHeaderList.map(function(header){
-                        return <th className="list-table__header">{header}</th>
-                    })}
+                  { map(keys(issue_header_list),
+                        function(header_key){
+                            var header_name = issue_header_list[header_key]
+                            return <th key={header_key} className="list-table__header">{header_name}</th>
+                        })
+                  }
                 { false && <th className="list-table__header">Feature</th>} {/* These were here before mapping was introducted but may need to be removed */}
                 { false && <th className="list-table__header">Sprint</th>}
 
@@ -381,13 +383,11 @@ class IssueList extends Component {
             </div>
         )
     }
-
 }
 
 function mapStateToProps(state, props) {
-//    debugger
     const {issue, item_list} = state
-    const {list_key} = props
+    const {list_key, issue_header_list} = props
     const items_by_id = (issue && issue.items_by_id) || {}
     const l = (item_list && item_list[list_key]) || {}
     const filter = l.filter || {}
@@ -431,7 +431,8 @@ function mapStateToProps(state, props) {
         is_visible: sprint_id || false,
         candidate_issue: candidate_issue,
         is_creating_issue: is_creating_issue,
-        expanded_issues: l.flag_expanded_issues
+        expanded_issues: l.flag_expanded_issues,
+        issue_header_list: issue_header_list
     }
 }
 

@@ -75,7 +75,7 @@ export default function issue(state = initialState, action) {
             const state_clone = Object.assign({}, state, {
 		items_by_id: Object.assign(
 		    {},
-		    state.items_by_id,
+		    state.items_by_id
 		    /* {issue_id: Object.assign(state.items_by_id[issue_id],
 		       new_issue_props)}*/
                 ),

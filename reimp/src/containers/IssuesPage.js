@@ -20,7 +20,9 @@ import {
     set_toolbars,
     select_issues,
     get_selected_issue_ids,
-    select_sprints
+    select_sprints,
+    get_header_list,
+    set_wide_column_mode
 } from '../actions/Page'
 import {ensureProjectsLoaded, getProject} from '../actions/Projects'
 import {ensureSprintsLoaded, getSprint} from '../actions/Sprints'
@@ -39,6 +41,7 @@ class IssuesPage extends Component {
         dispatch(update_list_filter(LIST_KEY__ISSUE_LIST, {sprint_id:sprint.id || -1}))
         dispatch(ensureProjectsLoaded([project_id]))
         dispatch(ensureSprintsLoaded([sprint_id]))
+        dispatch(set_wide_column_mode(PAGE_KEY__ISSUES_PAGE, false))
         this.refresh(sprint, project)
     }
 
@@ -100,7 +103,7 @@ class IssuesPage extends Component {
               <div className="list-layout__list">
                 <IssueList list_key={LIST_KEY__ISSUE_LIST}
                            onSelectIssues={this.onSelectIssues}
-                           issueHeaderList={issue_header_list}
+                           issue_header_list={issue_header_list}
                 />
               </div>
               { is_creating_issue &&
@@ -125,14 +128,12 @@ class IssuesPage extends Component {
 
 function mapStateToProps(state, props) {
 
-    const {issue, page} = state
+    const {issue} = state
     const items_by_id = (issue && issue.items_by_id) || {}
-    const issues_page = page.issues_page || {}
-
     const selected_issue_ids = get_selected_issue_ids(state, PAGE_KEY__ISSUES_PAGE)
     const selected_items = items_by_id && selected_issue_ids && selected_issue_ids.map( function(selected_id, index) {
-	      return items_by_id[selected_id] || { 'id': selected_id,
-					                                   'loaded': false }
+	return items_by_id[selected_id] || { 'id': selected_id,
+					     'loaded': false }
     })
 
     const sprint_id = props.params.sprintId
@@ -141,8 +142,7 @@ function mapStateToProps(state, props) {
     const sprint = getSprint(state, sprint_id) || {}
     const candidate_issue = getCandidateIssue(state) || null
     const is_creating_issue = candidate_issue || false
-
-    var issue_header_list = issues_page.issue_header_list || []
+    const issue_header_list = get_header_list(state, PAGE_KEY__ISSUES_PAGE)
 
     return {
         sprint_id: sprint_id,

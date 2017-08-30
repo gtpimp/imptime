@@ -1,5 +1,7 @@
 import React, {Component} from 'react'
 import map from 'lodash/map'
+import keys from 'lodash/keys'
+import includes from 'lodash/includes'
 import {DragSource, DropTarget} from 'react-dnd';
 import {connect} from 'react-redux'
 import classNames from 'classnames'
@@ -144,7 +146,7 @@ class Issue extends Component {
             is_invalidated, is_saving,
             isOver, connectDragSource, connectDropTarget, show_children,
             subject_prefix, subject_suffix,
-            issue_id, issue_header_list
+            issue_id, visible_header_keys
         } = this.props
 
         const onDeleteTag = this.onDeleteTag
@@ -188,51 +190,50 @@ class Issue extends Component {
                                 'tr--drop-target': isOver
                             })}
                 >
-                   {issue_header_list.indexOf("#") !== -1 &&
-                  <td className="list-table__cell list-table__cell--number">
-                    <div>{issue.number}</div>
-                  </td>
+                  {includes(visible_header_keys, "number") &&
+                     <td className="list-table__cell list-table__cell--number">
+                       <div>{issue.number}</div>
+                     </td>
                    }
-                   {issue_header_list.indexOf(".") !== -1 &&
-                  <td className="list-table__cell list-table__cell--icon">
-                    { issue.can_group_issues &&
-                      <div className="icon--feature">
-                        { show_children &&
-                          <div className="icon--more"></div>
-                        }
-                      </div>
-                    }
-                  </td>
+                     {includes(visible_header_keys, "expand_feature") &&
+                     <td className="list-table__cell list-table__cell--icon">
+                     { issue.can_group_issues &&
+                       <div className="icon--feature">
+                         { show_children &&
+                           <div className="icon--more"></div>
+                         }
+                       </div>
+                     }
+                     </td>
                    }
-                   {issue_header_list.indexOf("Name") !== -1 &&
-                  <td className="list-table__cell list-table__cell--name">
-                    {subject_prefix}{issue.subject}{subject_suffix}
-                    { issue.group_children.length > 0 &&
-                      <span>
-                        ({issue.group_children.length}
-                        { issue.group_children.length === 1 && <span>child</span> }
-                        { issue.group_children.length > 1 && <span>children</span> }
-                        )
-                      </span>
-                    }
-                  </td>
+                     {includes(visible_header_keys, "name") &&
+                     <td className="list-table__cell list-table__cell--name">
+                       {subject_prefix}{issue.subject}{subject_suffix}
+                       { issue.group_children.length > 0 &&
+                         <span>
+                           ({issue.group_children.length}
+                            {issue.group_children.length === 1 && <span>child</span>}
+                            {issue.group_children.length > 1 && <span>children</span>}
+                           )
+                         </span>
+                       }
+                     </td>
                    }
-                  {issue_header_list.indexOf("Assignee") !== -1 &&
-                   <td className="list-table__cell
-                                  list-table__cell--assignee">
-                    <OtherUser value={issue.assigned_to_id}/>
-                    { false &&
-                      <RIEModeToggler
-                          rie_key={"issue_assigned_to_" + issue.id}
-                          initialValue={issue.assigned_to_id || "..."}
-                          onChange={(new_value) =>
-                              this.onChangeAssignedTo(issue.id, new_value)}>
-                        <RIEUserDropDown user_ids={assignable_user_ids}/>
-                      </RIEModeToggler>
-                    }
-                  </td>
-                  }
-                  {issue_header_list.indexOf("Status") !== -1 &&
+                     {includes(visible_header_keys, "assignee") &&
+                     <td className="list-table__cell list-table__cell--assignee">
+                     <OtherUser value={issue.assigned_to_id}/>
+                     { false &&
+                       <RIEModeToggler
+                           rie_key={"issue_assigned_to_" + issue.id}
+                           initialValue={issue.assigned_to_id || "..."}
+                           onChange={(new_value) =>
+                               this.onChangeAssignedTo(issue.id, new_value)}>
+                         <RIEUserDropDown user_ids={assignable_user_ids}/>
+                       </RIEModeToggler>
+                     }
+                     </td>
+                   }
+                     {includes(visible_header_keys, "status") &&
                    <td className="list-table__cell list-table__cell--status">
                     <IssueStatusLabel value={issue.status_name}/>
                   </td>
@@ -242,17 +243,17 @@ class Issue extends Component {
                       1
                     </td>
                   }
-                  {issue_header_list.indexOf("Progress") !== -1 &&
+                    {includes(visible_header_keys, "progress") &&
                   <td className="list-table__cell list-table__cell--progress">
                     <Progress issue={issue}/>
                   </td>
                   }
-                   {issue_header_list.indexOf("Estimates") !== -1 &&
+                  {includes(visible_header_keys, "estimates") &&
                   <td className="list-table__cell list-table__cell--estimates">
                     {this.renderEstimates()}
                   </td>
                    }
-                   {issue_header_list.indexOf("Tags") !== -1 &&
+                  {includes(visible_header_keys, "tags") &&
                   <td className="list-table__cell list-table__cell--tags">
                     { map(issue.tags, function (tag, index) {
                           return (<Tag key={index}
@@ -263,11 +264,12 @@ class Issue extends Component {
                       })}
                   </td>
                    }
-                   {issue_header_list.indexOf("My Time") !== -1 &&
+                {includes(visible_header_keys, "my_time") &&
                   <td className="list-table__cell list-table__cell--tracking-control">
                     <ElapsedTime hours={issue.my_actual_hours} active={issue.am_i_clocked_in}/>
                   </td>
                    }
+                {includes(visible_header_keys, "clock_in") &&
                   <td className="list-table__cell list-table__cell--tracking-control">
                     <div className={classNames({'reveal-on-hover--block': !issue.am_i_clocked_in})}>
                       <TimerSwitch
@@ -276,14 +278,17 @@ class Issue extends Component {
                           onStop={this.onClockOut}
                       />
                     </div>
-                  </td>
+                 </td>
+                }
+                {includes(visible_header_keys, "delete") &&
                   <td className="list-table__cell list-table__cell--tracking-control">
                     <div className={"reveal-on-hover--block"}>
                       <DeleteIssue
                           onDelete ={this.onDeleteIssue}
                       />
                     </div>
-                  </td>
+                 </td>
+                }
                 </tr>
             ))
         }
@@ -308,7 +313,7 @@ function mapStateToProps(state, props) {
     const {
         issue_id, is_selected, is_collapsed,
         is_loading, is_invalidated, is_saving, show_children,
-        subject_prefix, subject_suffix
+        subject_prefix, subject_suffix, issue_header_list
     } = props
 
     const issue = getIssue(state, issue_id) || {'loaded': false}
@@ -336,9 +341,9 @@ function mapStateToProps(state, props) {
         assignable_user_ids: assignable_user_ids,
         show_children: show_children,
         subject_prefix: subject_prefix || "",
-        subject_suffix: subject_suffix || ""
+        subject_suffix: subject_suffix || "",
+        visible_header_keys: keys(issue_header_list)
     }
-
 }
 
 const headingSource = {

@@ -12,7 +12,6 @@ class ToggleButton extends Component {
 
     onClick(event) {
         const {onChange, value} = this.props
-
         if (onChange) {
             onChange(!value)
         }

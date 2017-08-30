@@ -8,14 +8,14 @@ class ListTable extends Component {
             <div className="list-table">
                 <div className="list-table__inner">
                     <table className="table list-table__cell">
-                        { this.props.renderHeader &&
+                      { this.props.renderHeader &&
                         <thead>
-                        {this.props.renderHeader()}
+                          {this.props.renderHeader()}
                         </thead>
-                        }
-                        <tbody>
+                      }
+                      <tbody>
                         {this.props.children}
-                        </tbody>
+                      </tbody>
                     </table>
                 </div>
             </div>
