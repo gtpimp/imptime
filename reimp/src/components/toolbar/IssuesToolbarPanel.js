@@ -62,8 +62,8 @@ class IssuesToolbarPanel extends Component {
             <div className="toolbar-panel">
               <ToggleButton value={is_issues_columns_filtered}
                             onChange={this.onIssueFilterToggleButtonClick}
-                            on_label={"On"}
-                            off_label={"Off"}
+                            on_label={"Wide"}
+                            off_label={"Narrow"}
               />
               <div className="button toolbar-button--small button--large button--primary" onClick={this.onNewIssueClick}>+ New Issue</div>
               <div className="button toolbar-button--large button--large button--primary" onClick={this.onDashboardClick}>+ Dashboard</div>

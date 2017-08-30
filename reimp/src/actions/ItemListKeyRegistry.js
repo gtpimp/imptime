@@ -30,8 +30,9 @@ export var ISSUE_HEADER_LIST_REQUIRED = ["#",
                                          "Name",
                                          "Assignee",
                                          "Status",
-                                         "Progress"]
+                                         ]
 
 export var ISSUE_HEADER_LIST_OPTIONAL = ["Estimates",
                                          "Tags",
+                                         "Progress",
                                          "My Time"]
