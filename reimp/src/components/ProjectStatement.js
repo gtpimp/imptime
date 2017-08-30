@@ -80,8 +80,11 @@ class ProjectStatement extends Component {
                                 <div className="project_statement__time_for_user__user">
                                   <OtherUser value={time_for_user.user_id} />
                                 </div>
+                                <div className="project_statement__time_for_user__rate">
+                                  @<CurrencyValue value={time_for_user.rate}  />
+                                </div>
                                 <div className="project_statement__time_for_user__hours">
-                                  <Hours hours={time_for_user.total_hours} active={true} />
+                                  <Hours hours={time_for_user.total_hours} />
                                 </div>
                                 <div className="project_statement__time_for_user__cost">
                                   <CurrencyValue value={time_for_user.billable_cost} />
