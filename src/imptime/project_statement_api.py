@@ -1,6 +1,7 @@
 import logging
 from sprint_serializer import SprintSerializer # change to new serializer once created
 from rest_framework.renderers import JSONRenderer
+from datetime import datetime
 from django.http import HttpResponse
 from base_api import BaseViewSet
 from django.db.models import Prefetch, Count, Sum
@@ -8,7 +9,7 @@ import json
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.decorators import permission_classes
 from timepiece.models import Business as Project
-from timepiece.models import BusinessPermissions
+from timepiece.models import BusinessPermissions, Entry, Rate
 
 logger = logging.getLogger(__name__)
 
@@ -24,8 +25,16 @@ class ProjectStatementViewSet(BaseViewSet):
             if not bp.has_view_ctc_billable_rates:
                 return self.error_response("No permission to view project statement")
 
-            project_statement = { "project_id": project.id }
-            context['project_statement'] = project_statement
+            date_from_inclusive = datetime(2017, 8, 01)
+            date_to_inclusive = datetime(2017, 9, 01)
+            times = self._get_times(project, date_from_inclusive, date_to_inclusive)
+            self._enrich_rates_per_user(times)
+            self._fix_keys(times)
+            times_by_sprint = self._group_by_sprint(times)
+            self._enrich_totals(times_by_sprint)
+            
+            context['project_statement'] = { "project_id": project.id,
+                                             "times_by_sprint": times_by_sprint }
 
             data = {'status': 'success', 'payload': context}
 
@@ -35,90 +44,45 @@ class ProjectStatementViewSet(BaseViewSet):
 
         return HttpResponse(JSONRenderer().render(data))
 
-    # def retrieve(self, request, pk):
-#         try:
-#             project_id = pk
-#             context = {}
-#             project = Project.objects.get(pk=project_id)
+    def _fix_keys(self, times):
+        for time_per_user in times:
+            time_per_user['sprint_id'] = time_per_user['issue__project_id']
+            del time_per_user['issue__project_id']
 
-#             project_statement = { "project_id": project.id }
+    def _group_by_sprint(self, times):
+        grouped = {}
+        for time_per_user in times:
+            sprint_id = time_per_user['sprint_id']
+            grouped.setdefault(sprint_id, { 'users': [], 'totals': {} })
+            grouped[sprint_id]['users'].append(time_per_user)
+        return grouped
 
-#             bp = BusinessPermissions.for_user(request.user, sprint.business)
-#             if not bp.has_edit_issues:
-#                 return self.error_response("No permission to view project statement")
-
-#             developers = Rate.objects.filter(project=sprint, time_tracking_mode="developer")\
-#                                      .values_list('user', flat=True)
-
-#             users = sprint.business.get_users_allowed_to_estimate_on_business(request.user)
-#             user_pks = [x.id for x in users]
-#             users = User.objects.filter(pk__in=user_pks).filter(pk__in=developers)
-#             # users = BusinessPermissions.active_users_for_business(sprint.business.pk)\
-#             #                            .filter(pk__in=developers)
-
-#             for user in users:
-#                 dev_stats = calculate_dev_hours_stats(sprint, user)
-#                 dev_hours_available, tester_hours_available, manager_hours_available, dev_hours_used, ratio, manager_rate, developer_rate, tester_rate = dev_stats
-
-#                 values = {
-#                     "percentage_over_budget": round(float(total_billable - sprint.spendable_budget)/sprint.spendable_budget * 100, 2) if sprint.spendable_budget else 0,
-#                     "dev_hours_used": round(dev_hours_used, 2),
-#                     "dev_hours_available": round(dev_hours_available, 2),
-#                     "tester_hours_available": round(tester_hours_available, 2),
-#                     "manager_hours_available": round(manager_hours_available, 2)
-#                 }
-
-#                 time_summary["per_user"][user.pk] = values
-
-#             context["time_summary"] = time_summary
-
-#             data = {"status": "success", "payload": context}
-
-#         except Exception, ex:
-#             logger.exception(ex)
-#             return self.error_response(ex)
-
-#         return HttpResponse(JSONRenderer().render(data))
-
-
-# def calculate_dev_hours_stats(sprint, user):
-#     stats = sprint.calculate_new_stats(user)
-#     spendable_budget = sprint.spendable_budget
-
-#     manager_rate = stats["per_role"]["manager"]["average_billable_rate"]
-#     developer_rate = stats["per_role"]["developer"]["average_billable_rate"]
-#     tester_rate = stats["per_role"]["tester"]["average_billable_rate"]
-
-#     try:
-#         this_users_rate = stats["per_user"][user]["rate"].full_rate
-#     except KeyError:
-#         this_users_rate = 0
-
-#     manager_ratio = sprint.time_ratio_for_role("manager")
-#     developer_ratio = sprint.time_ratio_for_role("developer")
-#     tester_ratio = sprint.time_ratio_for_role("tester")
-
-#     if spendable_budget == 0:
-#        ratio = 0
-#     else:
-#        ratio = 100 / float(spendable_budget)
-
-#     budget_used = stats["total"]["hours_billable_core_rate"]
-#     budget_available = spendable_budget - budget_used
-
-#     _b = budget_available
-#     try:
-#         remaining_time = _b / ( (manager_ratio*manager_rate) + (developer_ratio*this_users_rate) + (tester_ratio*tester_rate) )
-#     except ZeroDivisionError:
-#         remaining_time = 0
-
-#     remaining_dev_time = developer_ratio * remaining_time
-#     remaining_tester_time = tester_ratio * remaining_time
-#     remaining_manager_time = manager_ratio * remaining_time
-
-#     try:
-#         dev_hours_used = stats["per_user"][user]["hours_billable"]
-#     except KeyError:
-#         dev_hours_used = 0
-
-#     return remaining_dev_time, remaining_tester_time, remaining_manager_time, dev_hours_used, ratio, manager_rate, developer_rate, tester_rate
+    def _enrich_totals(self, times_by_sprint):
+        for time_by_sprint in times_by_sprint.values():
+            time_by_sprint['totals']['total_hours'] = 0
+            time_by_sprint['totals']['total_billable_cost'] = 0
+            for time_per_user in time_by_sprint['users']:
+                time_by_sprint['totals']['total_hours'] += time_per_user['total_hours']
+                time_by_sprint['totals']['total_billable_cost'] += time_per_user['billable_cost']
+    
+    def _enrich_rates_per_user(self, times):
+        for time_per_user in times:
+            rate = Rate.objects.filter(user_id=time_per_user['user_id'],
+                                       project=time_per_user['issue__project_id']).first()
+            if rate:
+                time_per_user['rate'] = rate.full_rate
+            else:
+                time_per_user['rate'] = 0
+            time_per_user['billable_cost'] = float(time_per_user['rate']) * float(time_per_user['total_hours'])
+    
+    def _get_times(self, project, date_from_inclusive, date_to_inclusive):
+        # The date filter only includes all entries ended in the time
+        # period, it doesn't attempt to split entries that are longer
+        # than a day.
+        entries = Entry.objects.filter(issue__project__business=project,
+                                       end_time__gte=date_from_inclusive,
+                                       end_time__lte=date_to_inclusive)
+        
+        return entries.order_by("issue__project__order", "user_id")\
+                      .values('issue__project_id', 'user_id')\
+                      .annotate(total_hours=Sum('hours'))

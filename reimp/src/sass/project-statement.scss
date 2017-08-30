@@ -1,0 +1,46 @@
+@import 'variables.scss';
+
+.project__statement__times_grid {
+    padding: 10px;
+}
+
+.project_statement__times_for_sprint {
+    float: left;
+    clear: left;
+    border-bottom: 1px solid $form-field-border;
+    margin-bottom: 50px;
+}
+
+.project_statement__time_for_user {
+    border: 1px solid $form-field-border;
+    padding: 10px;
+    float: left;
+}
+
+.project_statement__sprint_header {
+    font-weight: bold;
+    float: left;
+    clear:both;
+}
+
+.project_statement__sprint_name {
+    float: left;
+    padding-left: 10px;
+    background-color: $color-24;
+}
+
+.project_statement__sprint_header__total_billable_cost {
+    float: left;
+    padding-left: 10px;
+}
+
+.project_statement__sprint_header__total_hours {
+    float: left;
+    padding-left: 10px;
+}
+
+.project_statement__times_for_sprint__users {
+    clear:left; 
+}
+
+
