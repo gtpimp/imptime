@@ -219,7 +219,7 @@ class IssueViewSet(BaseViewSet):
                 return issue
 
             if issue_id_before:
-                issue = issue_id_before
+                issue = self.allowed_issue(issue_id_before)
                 if self.logged_in_permissions(issue.project.business).has_edit_issues:
                     issue =  create_issue()
                 else:

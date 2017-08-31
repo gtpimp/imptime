@@ -3,6 +3,25 @@
 {% load bootstrap_toolkit %}
 
 <table>
+
+    {% ifequal settings.include_exclude_vat "exclude_vat"%}
+    <tr>
+      <th>
+        All cost amounts in this document are VAT Exclusive.
+        <br/>
+        VAT will be added to issued invoices.
+      </th>
+    </tr>
+  {% endifequal %}
+
+  {% ifequal settings.include_exclude_vat "include_vat"%}
+    <tr>
+      <th>
+        All cost amounts in this document are VAT Inclusive.
+      </th>
+    </tr>
+  {% endifequal %}
+
     {% if settings.show_breakdown %}
     <tr>
       <td>Development</td>

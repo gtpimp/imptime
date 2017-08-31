@@ -321,7 +321,7 @@ EMACSIMPORTER_RATES = { "test":{"id-test.org":50,
                                 "id-fonk.org":200} }
 EMACSIMPORTER_TEMP_DIR = "/tmp"
 EMACS_USERS_TO_PROCESS = ["test", ]
-EMACS_ADMIN_USER_EMAILS = ["gtp@implicitdesign.co.za",]
+EMACS_ADMIN_USER_EMAILS = ["gtp@impd.co.za",]
 
 PDF_TEMP_FOLDER = "/tmp"
 CALDAV_TEMP_FOLDER = "/tmp"
@@ -348,6 +348,13 @@ INVOICE_DETAILS={'name':'ImplicitDesign',
                  'bank_swift_code':'SBZAZAJJ'}
 
 
+DEFAULT_FILE_STORAGE = 'storages.backends.s3boto.S3BotoStorage'
+AWS_DEFAULT_ACL = 'private'
+
+# This setting allows bucket names with dots
+AWS_S3_CALLING_FORMAT = 'boto.s3.connection.OrdinaryCallingFormat'
+
+
 # # These urls may need to be specified on a production server when the site it not hosted at the root domain.
 #LOGIN_URL=
 #LOGOUT_URL=
@@ -359,10 +366,19 @@ AUTO_LOGIN_EXPIRE_IN_HOURS = 24
 # Websockets
 CHANNEL_LAYERS = {
     "default": {
-        "BACKEND": "asgiref.inmemory.ChannelLayer",
-        "ROUTING": "impasync.routing.channel_routing"
+        "BACKEND": "asgi_redis.RedisChannelLayer",
+        "ROUTING": "impasync.routing.channel_routing",
+        "CONFIG": {
+            "hosts": [("redis", 6379)],
         }
+    }
 }
+# CHANNEL_LAYERS = {
+#     "default": {
+#         "BACKEND": "asgiref.inmemory.ChannelLayer",
+#         "ROUTING": "impasync.routing.channel_routing"
+#         }
+# }
 
 # A sample logging configuration. The only tangible logging
 # performed by this configuration is to send an email to
@@ -424,9 +440,9 @@ LOGGING = {
 
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 EMAIL_USE_TLS = True
-EMAIL_HOST = 'mail.implicitdesign.co.za'
+EMAIL_HOST = 'mail.impd.co.za'
 # EMAIL_HOST = 'localhost'
-EMAIL_HOST_USER = 'timesheet@implicitdesign.co.za'
+EMAIL_HOST_USER = 'imptime@impd.co.za'
 EMAIL_HOST_PASSWORD = 'WRONG'
 EMAIL_PORT = 587
 

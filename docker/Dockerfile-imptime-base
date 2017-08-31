@@ -23,7 +23,13 @@ RUN apt-get update && apt-get install -y --force-yes \
   libxslt1-dev \
   libxslt-dev \
   libreadline-dev \
-  libssl-dev
+  libssl-dev \
+  chrpath \
+  libxft-dev \
+  libfreetype6-dev \
+  libfreetype6 \
+  libfontconfig1-dev \
+  libfontconfig1
   
 # Install node
 RUN curl -sL https://deb.nodesource.com/setup_4.x -o nodesource_setup.sh && bash nodesource_setup.sh && DEBIAN_FRONTEND=noninteractive apt-get install -y nodejs

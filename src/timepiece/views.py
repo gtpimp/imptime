@@ -1,5 +1,10 @@
 import random
 import markdown
+from django.http import StreamingHttpResponse
+from django.core.files.storage import default_storage as storage
+import requests
+from lib.file_helper import download_media
+import os
 import time
 from mailqueue.mailqueue_helper import queue_email, queue_admin_email
 from caldav_helper import CalDavHelper
@@ -3642,14 +3647,18 @@ def issue_status_update(request,  template="timepiece/project/issue_detail.html"
     context['supports_description'] = True
     context['issue_number_form'] = timepiece_forms.IssueNumberForm(instance=edited_issue)
 
-    old_status = edited_issue.status2.name
-    edited_issue.status2 = timepiece.IssueStatus.objects.get(business=project.business, name=request.POST["selected_value"])
+    old_status = edited_issue.status2.name if edited_issue.status2 else ""
+    new_status_name = request.POST["selected_value"]
+    if len(new_status_name.strip())>0:
+        edited_issue.status2 = timepiece.IssueStatus.objects.get_or_create(business=project.business, name=new_status_name)[0]
+    else:
+        edited_issue.status2 = None
     edited_issue.save()
 
-    timepiece.IssueHistory.add_history(request.user, edited_issue, "changed status", old_status, edited_issue.status2.name)
+    timepiece.IssueHistory.add_history(request.user, edited_issue, "changed status", old_status, new_status_name)
     get_interface_plugin(request, project.business).update_issue_status(edited_issue)
 
-    return HttpResponse(json.dumps({ 'new_value': edited_issue.status2.name }), content_type='application/json')
+    return HttpResponse(json.dumps({ 'new_value': new_status_name }), content_type='application/json')
 
 @csrf_exempt
 @login_required
@@ -4688,7 +4697,9 @@ def download_business_document(request, document_token, template="timepiece/proj
     context['business'] = business
     context['documents'] = business.documents.all().order_by("-created_at")
 
-    response = HttpResponse(document.doc, content_type=document.mime_type)
+    response = download_media(request, document.doc.name,
+                              content_type=document.mime_type)
+    #response = HttpResponse(document.doc, content_type=document.mime_type)
     response['Content-Disposition'] = 'attachment; filename="%s"' % document.filename
     return response
 
@@ -4938,7 +4949,7 @@ def bulk_change_issue_state(request, context=None):
     new_status = form.cleaned_data['status']
     for selected_issue_id in selected_issue_ids:
         issue = timepiece.Issue.objects.get(pk=selected_issue_id)
-        if new_status != issue.status2.name:
+        if issue.status2 and new_status != issue.status2.name:
             old_status = issue.status2.name
             issue.status = new_status
             issue.save()
@@ -5869,7 +5880,7 @@ def quick_clocker_clock_out(request):
 @login_required
 @csrf_exempt
 def quick_clocker_edit_entry(request, entry_id=None):
-    entry = timepiece.Entry.objects_original.all().filter(user=request.user, source='quick_clocker').get(pk=entry_id)
+    entry = timepiece.Entry.objects_original.all().filter(user=request.user).get(pk=entry_id)
     projects = timepiece.Project.objects.filter(business=entry.issue.project.business).filter_can_add_dev_time_states().order_by("name")
     form = timepiece_forms.QuickClockerEditEntry(projects, request.POST or None, instance=entry)
     if form.is_valid():
@@ -6096,3 +6107,14 @@ def issue_clock_out(request):
         open_entry.end_time = clock_time
         open_entry.save()
     return HttpResponse(json.dumps({"status":"ok"}))
+
+@login_required
+def download_issue_attachment(request, issue_attachment_id):
+    issue_attachment = timepiece.IssueAttachment.objects.get(pk=issue_attachment_id)
+    bp = timepiece.BusinessPermissions.for_user(request.user, issue_attachment.issue.project.business)
+    if not bp.has_view_issues:
+        raise PermissionDenied
+    return download_media(request,
+                          issue_attachment.attachment.name,
+                          content_type=issue_attachment.content_type)
+

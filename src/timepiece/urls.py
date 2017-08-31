@@ -503,12 +503,19 @@ urlpatterns = [
         name='add_issue_attachment'
         ),
 
+
+     url(
+        r'^download_issue_attachment/(?P<issue_attachment_id>\d+)/$',
+        views.download_issue_attachment,
+        name='download_issue_attachment'
+        ),
+    
      url(
         r'^add_issue_comment/(?P<issue_id>\d+)/$',
         views.add_issue_comment,
         name='add_issue_comment'
         ),
-
+    
      url(r'^edit_issue_comment/(?P<comment_id>\d+)/$', views.edit_issue_comment, name='edit_issue_comment'),
      url(r'^delete_issue_comment/(?P<comment_id>\d+)/$', views.delete_issue_comment, name='delete_issue_comment'),
 

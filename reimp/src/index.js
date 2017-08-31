@@ -20,6 +20,7 @@ import configureStore from './store/configureStore'
 import {IndexRoute, Router, Route, browserHistory} from 'react-router'
 import {Provider} from 'react-redux'
 import {syncHistoryWithStore} from 'react-router-redux'
+import Raven from 'raven-js'
 
 /* /projects
  /projects/{project-id}
@@ -29,6 +30,11 @@ import {syncHistoryWithStore} from 'react-router-redux'
 
 const store = configureStore({})
 const history = syncHistoryWithStore(browserHistory, store)
+
+const RAVEN_DSN = (window.LOCAL_SETTINGS || {}).RAVEN_DSN
+if (RAVEN_DSN) {
+    Raven.config(RAVEN_DSN).install()
+}
 
 ReactDOM.render(
     <Provider store={store}>
