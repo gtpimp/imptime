@@ -206,6 +206,11 @@ class Business(models.Model):
         return cl is not None and cl.passed
 
     @property
+    def allowed_user_ids(self):
+        project_users = BusinessPermissions.active_users_for_business(business_id=self.id)
+        return project_users.values_list('id', flat=True).order_by("username")
+    
+    @property
     def sprints(self):
         return Project.objects.filter(business=self)
 

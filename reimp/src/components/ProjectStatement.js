@@ -15,6 +15,7 @@ import {
     get_project_statement_filter,
     invalidateProjectStatement
 } from '../actions/ProjectStatement'
+import { ensureUsersLoaded } from '../actions/Users'
 import { setBreadcrumbs } from '../actions/Breadcrumbs'
 import {
     PAGE_KEY__PROJECT_DASHBOARD_PAGE
@@ -58,6 +59,9 @@ class ProjectStatement extends Component {
         if ( new_props.project.name !== this.props.project.name ) {
             this.refresh(new_props.project, new_props.project_statement)
         }
+        if ( new_props.project.allowed_user_ids != this.props.project.allowed_user_ids ) {
+            this.refresh(new_props.project, new_props.project_statement)
+        }
     }
 
     updateDateFromInclusive(new_value) {
@@ -85,6 +89,7 @@ class ProjectStatement extends Component {
         dispatch(setBreadcrumbs([ {to: '/projects', label: 'All Projects'},
                                   {to: '/projects/'+project.id, label: project.name},
                                   {to: '/projects/'+project.id+'/projectStatement', label: 'Project Statement'}]))
+        dispatch(ensureUsersLoaded(project.allowed_user_ids))
     }
 
     render_filter() {
@@ -139,8 +144,9 @@ class ProjectStatement extends Component {
                 </div>
               </div>
               <div className="project_statement__times_for_sprint__users">
-                { map(times_for_sprint.users,
-                      function(time_for_user) {
+                { map(keys(times_for_sprint.users),
+                      function(user_id) {
+                          const time_for_user = times_for_sprint.users[user_id]
                           return (
                               <div key={""+time_for_user.user_id+sprint_id} className="project_statement__time_for_user">
                                 <div className="project_statement__time_for_user__user">
