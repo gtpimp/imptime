@@ -152,7 +152,7 @@ class ProjectStatement extends Component {
                                     <tbody>
                                       <tr>
                                         <th>
-                                          Hour
+                                          Hours
                                         </th>
                                         <th>
                                           Rate
