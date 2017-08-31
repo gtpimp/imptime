@@ -131,50 +131,104 @@ class ProjectStatement extends Component {
 
     render_user_headers(project_statement) {
         return (
-            <div className="project__statement__sprint_times__header_group">
-              <div className="project__statement__sprint_times__header_row">
-                { map(project_statement.users_with_time,
-                      function(user_id) {
+            <div className="project__statement__times_grid">
+
+              <div className="project__statement__sprint_times__sprint_column">
+                <div className="project__statement__sprint_times__sprint_column_header">
+                </div>
+
+                { map(keys(project_statement.times_by_sprint),
+                      function(sprint_id) {
                           return (
-                              <div key={user_id} className="project__statement__sprint_times__header_cell">
+                              <div className="project__statement__sprint_times__sprint">
+                                <SprintName sprint_id={sprint_id} />
+                              </div>
+                          )
+                      }
+                     )
+                }
+              </div>
+              
+              { map(project_statement.users_with_time,
+                    function(user_id) {
+                        return (
+                            <div key={user_id} className="project__statement__sprint_times__user_column">
+                              <div className="project__statement__sprint_times__header__user">
                                 <OtherUser value={user_id} />
                               </div>
-                              <div key={user_id} className="project__statement__sprint_times__header_cell">
-                                <div className="project__statement__sprint_times__sub_header_cell">
-                                  Hours
+                              <div className="project__statement__sprint_times__values">
+                                <div className="project__statement__sprint_times__hours_column">
+                                  <div className="project__statement__sprint_times__header__hours">
+                                    Hours
+                                  </div>
+                                  { map(keys(project_statement.times_by_sprint),
+                                      function(sprint_id) {
+                                          const time_for_user = project_statement.times_by_sprint[sprint_id].users[user_id]
+                                          return (
+                                              <div className="project__statement__sprint_times__value__hours">
+                                                <Hours hours={time_for_user.total_hours}/>
+                                              </div>
+                                          )
+                                      }
+                                       )
+                                  }
                                 </div>
-                                <div className="project__statement__sprint_times__sub_header_cell">
-                                  Rate
+                                <div className="project__statement__sprint_times__rate_column">
+                                  <div className="project__statement__sprint_times__header__hours">
+                                    Rate
+                                  </div>
+                                  { map(keys(project_statement.times_by_sprint),
+                                      function(sprint_id) {
+                                          const time_for_user = project_statement.times_by_sprint[sprint_id].users[user_id]
+                                          return (
+                                              <div className="project__statement__sprint_times__value__rate">
+                                                <CurrencyValue value={time_for_user.rate}/>
+                                              </div>
+                                          )
+                                      }
+                                       )
+                                  }
                                 </div>
-                                <div className="project__statement__sprint_times__sub_header_cell">
-                                  Cost
+                                <div className="project__statement__sprint_times__cost_column">
+                                  <div className="project__statement__sprint_times__header__cost">
+                                    Cost
+                                  </div>
+                                  { map(keys(project_statement.times_by_sprint),
+                                      function(sprint_id) {
+                                          const time_for_user = project_statement.times_by_sprint[sprint_id].users[user_id]
+                                          return (
+                                              <div className="project__statement__sprint_times__value__cost">
+                                                <CurrencyValue value={time_for_user.billable_cost}/>
+                                              </div>
+                                          )
+                                      }
+                                       )
+                                  }
                                 </div>
                               </div>
-                          )
-                      }
-                     )
-                }
-              </div>
-              <div className="project__statement__sprint_times__header_subrow">
-                { map(project_statement.users_with_time,
-                      function(user_id) {
+
+                            </div>
+                        )
+                    }
+                   )
+              }
+
+              <div className="project__statement__sprint_times__sprint_column">
+                <div className="project__statement__sprint_times__sprint_column_header">
+                </div>
+                { map(keys(project_statement.times_by_sprint),
+                      function(sprint_id) {
                           return (
-                              <div key={user_id} className="project__statement__sprint_times__header_cell">
-                                <div className="project__statement__sprint_times__sub_header_cell">
-                                  Hours
-                                </div>
-                                <div className="project__statement__sprint_times__sub_header_cell">
-                                  Rate
-                                </div>
-                                <div className="project__statement__sprint_times__sub_header_cell">
-                                  Cost
-                                </div>
+                              <div className="project__statement__sprint_times__sprint">
+                                <SprintName sprint_id={sprint_id} />
                               </div>
                           )
                       }
                      )
                 }
               </div>
+
+            
             </div>
         )
     }
@@ -215,7 +269,7 @@ class ProjectStatement extends Component {
                   <OtherUser value={user_id}/>
                 </div>
                 <div className="project_statement__user_header__total_hours">
-                  <Hours hours={times_for_user.total_hours}/>
+                  
                 </div>
                 <div className="project_statement__user_header__total_billable_cost">
                   <CurrencyValue value={times_for_user.total_billable_cost}/>

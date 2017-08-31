@@ -3,144 +3,100 @@
 .project__statement__times_grid {
     width: 100%;
     display: flex;
-    flex-direction: column;
+    flex-direction: row;
 }
 
-.project__statement__sprint_times__header_group {
+.project__statement__sprint_times__sprint_column {
+    flex-grow: 1;
     display: flex;
     flex-direction: column;
-    flex-grow: 1;
 }
 
-.project__statement__sprint_times__header_row {
+.project__statement__sprint_times__sprint {
+    font-weight: bold;
+}
+
+.project__statement__sprint_times__user_column {
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+    border-right: 1px solid $form-field-border;
+    padding-right: 5px;
+    padding-left: 5px;
+}
+
+.project__statement__sprint_times__header__user {
+    font-weight: bold;
+    background-color: $color-24;
+}
+
+.project__statement__sprint_times__header__hours {
+    background-color: $color-24;
+}
+
+.project__statement__sprint_times__header__rate {
+    background-color: $color-24;
+}
+
+.project__statement__sprint_times__header__cost {
+    background-color: $color-24;
+}
+
+.project__statement__sprint_times__values {
     display: flex;
     flex-direction: row;
 }
 
-.project__statement__sprint_times__header_cell {
-    flex-grow: 3;
+.project__statement__sprint_times__hours_column {
     display: flex;
-    flex-direction: row;
-}
-
-.project__statement__sprint_times__sub_header_cell {
     flex-grow: 1;
+    flex-direction: column;
 }
 
+.project__statement__sprint_times__rate_column {
+    display: flex;
+    flex-grow: 1;
+    flex-direction: column;
+}
 
-/* .project__statement__sprint_times__header {
-   border-bottom: 1px solid $form-field-border;
-   }
+.project__statement__sprint_times__cost_column {
+    display: flex;
+    flex-grow: 1;
+    flex-direction: column;
+}
 
-   .project__statement__sprint_times__header_row {
-   width: 100%;
-   border-bottom: 1px solid $form-field-border;
-   background-color: $color-4;
-   }
+.project__statement__sprint_times__value__rate .currency_value {
+    float: left;
+}
 
-   .project__statement__sprint_times__header_subrow {
-   clear: left;
-   width: 100%;
-   
-   }
+.project__statement__sprint_times__value__cost .currency_value {
+    float: left;
+}
 
-   .project__statement__sprint_times__header_cell {
-   float: left;
-   }
+.project__statement__sprint_times__value__hours {
+    padding-bottom: 5px;
+    padding-top: 5px;
+    border-bottom: 1px solid $form-field-border;
+}
 
-   .project__statement__sprint_times__sub_header_cell {
-   float: left;
-   } */
+.project__statement__sprint_times__value__rate {
+    padding-bottom: 5px;
+    padding-top: 5px;
+    border-bottom: 1px solid $form-field-border;
+}
 
-/* .project__statement__times_grid {
-   padding: 10px;
-   float: left;
-   margin-right: 50px;
-   border-right: 1px solid $form-field-border;
-   }
+.project__statement__sprint_times__value__cost {
+    padding-bottom: 5px;
+    padding-top: 5px;
+    border-bottom: 1px solid $form-field-border;
+}
 
-   .project_statement__times_for_sprint {
-   float: left;
-   clear: left;
-   border-bottom: 1px solid $form-field-border;
-   margin-bottom: 50px;
-   }
+.project__statement__sprint_times__sprint {
+    padding-bottom: 5px;
+    padding-top: 5px;
+    border-bottom: 1px solid $form-field-border;
+}
 
-   .project_statement__time_for_user__rate {
-   float: right;
-   }
-
-   .project_statement__time_for_user {
-   border: 1px solid $form-field-border;
-   padding: 10px;
-   float: left;
-   }
-
-   .project_statement__sprint_header {
-   font-weight: bold;
-   float: left;
-   clear:both;
-   background-color: $color-4;
-   }
-
-   .project_statement__sprint_name {
-   float: left;
-   padding-left: 10px;
-   }
-
-   .project_statement__sprint_header__total_billable_cost {
-   float: left;
-   padding-left: 10px;
-   }
-
-   .project_statement__sprint_header__total_hours {
-   float: left;
-   padding-left: 10px;
-   }
-
-   .project_statement__times_for_sprint__users {
-   clear:left; 
-   }
-
-   .project_statement__grand_totals {
-   background-color: $color-4;
-   margin-bottom: 30px;
-   border-bottom: 1px solid $form-field-border;
-   clear: both;
-   }
-
-   .project_statement__grand_totals__total_hours {
-   float: left;
-   margin-right: 30px;
-   }
-
-   .project_statement__grand_totals__total_billable_cost {
-   float: left;
-   margin-right: 30px;
-   }
-
-   .project_statement__times_for_user {
-   float: left;
-   clear: left;
-   border-bottom: 1px solid $form-field-border;
-   margin-bottom: 50px;
-   }
-
-   .project_statement__user_header__total_billable_cost {
-   float: left;    
-   }
-   
-   .project_statement__user_header__total_hours {
-
-   }
-
-   .project__statement__date_range__element {
-   float: left;
-   padding-right: 10px;
-   }
-
-   .project__statement__date_range {
-   clear: both;
-   margin-bottom: 50px;
-   font-size: $font-size-small;
-   } */
+.project__statement__sprint_times__sprint_column_header {
+    height: 35px;
+}
