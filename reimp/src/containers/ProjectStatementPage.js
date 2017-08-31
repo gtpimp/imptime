@@ -1,21 +1,18 @@
-import React, { Component } from 'react'
-import { connect } from 'react-redux'
-import { ensureProjectsLoaded, getProject } from '../actions/Projects'
-import {
-    ensureProjectStatementLoaded,
-    getProjectStatement,
-    isLoadingProjectStatement
-} from '../actions/ProjectStatement'
+import React, {Component} from 'react'
+import {connect} from 'react-redux'
+import {browserHistory} from 'react-router'
 import { setBreadcrumbs } from '../actions/Breadcrumbs'
+import {ensureProjectsLoaded, getProject} from '../actions/Projects'
+import {ensureUsersLoaded, getUser} from '../actions/Users'
+import ProjectStatement from '../components/ProjectStatement'
+import Modal from 'react-modal';
 import {
-    PAGE_KEY__PROJECT_DASHBOARD_PAGE
-} from '../actions/ItemListKeyRegistry'
-import {
-    PAGE_KEY__SPRINTS_PAGE,
+    PAGE_KEY__PROJECT_USER_PAGE
 } from '../actions/ItemListKeyRegistry'
 import {
     set_toolbars,
     select_projects,
+    select_users
 } from '../actions/Page'
 
 class ProjectStatementPage extends Component {
@@ -25,48 +22,40 @@ class ProjectStatementPage extends Component {
     }
 
     componentDidMount() {
-        const { project_id, project, dispatch } = this.props
-        dispatch(set_toolbars(PAGE_KEY__SPRINTS_PAGE, ['cost-summary']))
-        dispatch(ensureProjectsLoaded([project_id]))
-        dispatch(ensureProjectStatementLoaded([project_id]))
-        this.refresh(project)
+        const {dispatch, project_id, user_id} = this.props
+        this.refresh(project_id, user_id, null, null)
     }
 
     componentWillReceiveProps(new_props) {
-        const { dispatch } = this.props
-        dispatch(ensureProjectsLoaded([new_props.project_id]))
-        dispatch(ensureProjectStatementLoaded([new_props.project_id]))
-        if ( new_props.project.name !== this.props.project.name ) {
-            this.refresh(new_props.project)
+        const { project_id, user_id, dispatch } = this.props
+        if ( new_props.project_id !== project_id || new_props.project.id !== this.props.project.id ) {
+            this.refresh(new_props.project_id, new_props.project)
         }
     }
-
-    refresh(project) {
+    
+    refresh(project_id, project, user) {
         const { dispatch } = this.props
-        dispatch(select_projects(PAGE_KEY__PROJECT_DASHBOARD_PAGE, [project.id]))
-        dispatch(setBreadcrumbs([ {to: '/projects', label: 'All Projects'},
-                                  {to: '/projects/'+project.id, label: project.name},
-                                  {to: '/projects/'+project.id+'/projectStatement', label: 'Project Statement'}]))
+        const breadcrumbs = []
+        project = project || {}
+        if ( project_id ) {
+            dispatch(ensureProjectsLoaded([project_id]))
+            dispatch(select_projects(PAGE_KEY__PROJECT_USER_PAGE, [project_id]))
+            breadcrumbs.push({to: '/projects', label: 'All Projects'})
+            if ( project_id === project.id ) {
+                breadcrumbs.push({to: '/projects/'+project_id, label: project.name})
+            }
+        }
+        dispatch(setBreadcrumbs(breadcrumbs))
     }
 
     render() {
-
-        const { is_loading, project_statement } = this.props
-
+        const { project } = this.props
+        const that = this
         return (
-            <div>
-              { is_loading &&
-                <div>
-                  <br/>
-                  Loading...
-                </div>
-              }
-
-              { ! is_loading &&
-                <div>
-                  {project_statement.project_id}
-                </div>
-              }
+            <div className="project-user__project_statement">
+              <ProjectStatement
+                 project_id={project.id}
+                 />
             </div>
         )
     }
@@ -74,15 +63,13 @@ class ProjectStatementPage extends Component {
 
 function mapStateToProps(state, props) {
     const project_id = props.params.projectId
-    const project = getProject(state, project_id) || {}
-    const project_statement = getProjectStatement(state, project_id) || {}
-    const is_loading = isLoadingProjectStatement(state, project_id)
-
+    const project = getProject(state, project_id)
+ 
+    const opts = props.location.query
+        
     return {
         project_id: project_id,
-        project: project,
-        project_statement: project_statement,
-        is_loading: is_loading,
+        project: project || {}
     }
 }
 

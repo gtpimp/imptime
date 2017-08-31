@@ -13,7 +13,8 @@ import {
 import {
     get_selected_issue_ids,
     get_selected_sprint_ids,
-    filter_issue_list_columns
+    set_wide_column_mode,
+    get_wide_column_mode
 } from '../../actions/Page'
 import { ensureSprintsLoaded, getSprint } from '../../actions/Sprints'
 import ToggleButton from './ToggleButton'
@@ -24,7 +25,7 @@ class IssuesToolbarPanel extends Component {
         super(props)
         this.onNewIssueClick = this.onNewIssueClick.bind(this)
         this.onDashboardClick = this.onDashboardClick.bind(this)
-        this.onIssueFilterToggleButtonClick = this.onIssueFilterToggleButtonClick.bind(this)
+        this.onIssueWideViewToggleButtonClick = this.onIssueWideViewToggleButtonClick.bind(this)
     }
 
     componentDidMount() {
@@ -51,17 +52,17 @@ class IssuesToolbarPanel extends Component {
         browserHistory.push('/projects/'+project_id+'/sprints/'+sprint_id);
     }
 
-    onIssueFilterToggleButtonClick(filter_columns) {
+    onIssueWideViewToggleButtonClick(wide_view) {
         const { dispatch } = this.props
-        dispatch(filter_issue_list_columns(PAGE_KEY__ISSUES_PAGE, filter_columns))
+        dispatch(set_wide_column_mode(PAGE_KEY__ISSUES_PAGE, wide_view))
     }
 
     render() {
-        const { is_issues_columns_filtered } = this.props
+        const { wide_column_mode } = this.props
         return (
             <div className="toolbar-panel">
-              <ToggleButton value={is_issues_columns_filtered}
-                            onChange={this.onIssueFilterToggleButtonClick}
+              <ToggleButton value={wide_column_mode}
+                            onChange={this.onIssueWideViewToggleButtonClick}
                             on_label={"Wide"}
                             off_label={"Narrow"}
               />
@@ -73,13 +74,11 @@ class IssuesToolbarPanel extends Component {
 }
 
 function mapStateToProps(state, props) {
-    const { page } = state
     const selected_issue_ids = get_selected_issue_ids(state, PAGE_KEY__ISSUES_PAGE)
     const issue = (selected_issue_ids && selected_issue_ids.length > 0 && getIssue(state, selected_issue_ids[0])) || {}
     const selected_sprint_ids = get_selected_sprint_ids(state, PAGE_KEY__ISSUES_PAGE)
     const sprint = (selected_sprint_ids && selected_sprint_ids.length > 0 && getSprint(state, selected_sprint_ids[0])) || {}
-    const issues_page = page.issues_page || {}
-    const is_issues_columns_filtered = issues_page.filter_issue_columns || null
+    const wide_column_mode = get_wide_column_mode(state, PAGE_KEY__ISSUES_PAGE)
 
     return {
         issue_ids: selected_issue_ids,
@@ -87,7 +86,7 @@ function mapStateToProps(state, props) {
         last_selected_issue_id: issue.id,
         sprint_id: sprint.id,
         project_id: sprint.project_id,
-        is_issues_columns_filtered: is_issues_columns_filtered
+        wide_column_mode: wide_column_mode
     }
 }
 

@@ -1,5 +1,6 @@
-import {ISSUE_HEADER_LIST_REQUIRED,
-        ISSUE_HEADER_LIST_OPTIONAL
+import {ISSUE_HEADER_LIST_WIDE,
+        ISSUE_HEADER_LIST_NARROW,
+        PAGE_KEY__ISSUES_PAGE
 } from './ItemListKeyRegistry'
 
 
@@ -9,7 +10,7 @@ export const UPDATE_PAGE_SIDEBAR = 'UPDATE_PAGE_SIDEBAR'
 export const UPDATE_PAGE_SETTINGS = 'UPDATE_PAGE_SETTINGS'
 export const UPDATE_PAGE_SELECTION = 'UPDATE_PAGE_SELECTION'
 export const SET_PAGE_FLAG = 'SET_PAGE_FLAG'
-export const FILTER_ISSUE_LIST_COLUMNS = 'FILTER_ISSUE_LIST_COLUMNS'
+export const WIDE_COLUMN_MODE = 'WIDE_COLUMN_MODE'
 
 export function initList(page_key) {
     return {
@@ -77,29 +78,33 @@ export function select_users(page_key, user_ids) {
     }
 }
 
-function get_issue_header_list(filter_columns){
-
-    if (filter_columns) {
-        var issue_header_list =
-            ISSUE_HEADER_LIST_REQUIRED.concat(ISSUE_HEADER_LIST_OPTIONAL)
-    }
-    else if (!filter_columns) {
-        var issue_header_list = ISSUE_HEADER_LIST_REQUIRED
-    }
-
-    return issue_header_list
+export function get_wide_column_mode(state, page_key) {
+    return (state.page[page_key] || {}).wide_column_mode
 }
 
+export function get_header_list(state, page_key) {
+    return (state.page[page_key] || {}).header_list || [];
+}
 
-export function filter_issue_list_columns(page_key, filter_columns) {
+export function set_wide_column_mode(page_key, wide_column_mode) {
 
-    var issue_header_list = get_issue_header_list(filter_columns)
-
+    // temp hack, will be genericised later.
+    var HEADER_LIST_WIDE = ISSUE_HEADER_LIST_WIDE
+    var HEADER_LIST_NARROW = ISSUE_HEADER_LIST_NARROW
+    
+    var header_list;
+    if ( wide_column_mode ) {
+        header_list = HEADER_LIST_WIDE
+        
+    } else {
+        header_list = HEADER_LIST_NARROW
+    }
+    
     return {
-        type: FILTER_ISSUE_LIST_COLUMNS,
+        type: WIDE_COLUMN_MODE,
         page_key: page_key,
-        filter_columns: filter_columns,
-        issue_header_list: issue_header_list
+        wide_column_mode: wide_column_mode,
+        header_list: header_list
     }
 }
 

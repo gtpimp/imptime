@@ -10,10 +10,12 @@ import {
     ANNOUNCE_PROJECT_STATEMENT_LOADED,
     ANNOUNCE_LOADING_PROJECT_STATEMENT,
     INVALIDATE_PROJECT_STATEMENT,
+    UPDATE_PROJECT_STATEMENT_FILTER
 } from '../actions/ProjectStatement.js'
 
 const initialState = {
     items_by_project_id: {},
+    filter: {},
     loading_project_ids: []
 }
 
@@ -43,6 +45,17 @@ export default function project_statement(state = initialState, action) {
         case ANNOUNCE_PROJECT_STATEMENT_LOAD_FAILED:
             setErrorMessage("Failed to load project statement: " + action.error_message)
             return state;
+
+        case UPDATE_PROJECT_STATEMENT_FILTER:
+            // note: one filter for all projects, which seems more
+            // natural than every project having its own filter
+            return Object.assign({},
+                                 state,
+                                 { filter: Object.assign({},
+                                                         state.filter,
+                                                         { date_from_inclusive: action.date_from_inclusive,
+                                                           date_to_inclusive: action.date_to_inclusive })
+                                 })
 
         default:
             return state

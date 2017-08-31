@@ -5,6 +5,7 @@ export const ANNOUNCE_LOADING_PROJECT_STATEMENT = 'ANNOUNCE_LOADING_PROJECT_STAT
 export const ANNOUNCE_PROJECT_STATEMENT_LOADED = 'ANNOUNCE_PROJECT_STATEMENT_LOADED'
 export const ANNOUNCE_PROJECT_STATEMENT_LOAD_FAILED = 'ANNOUNCE_PROJECT_STATEMENT_LOAD_FAILED'
 export const INVALIDATE_PROJECT_STATEMENT = 'INVALIDATE_PROJECT_STATEMENT'
+export const UPDATE_PROJECT_STATEMENT_FILTER = 'UPDATE_PROJECT_STATEMENT_FILTER'
 
 export function invalidateProjectStatement(project_id) {
     project_id = parseInt(project_id)
@@ -40,7 +41,7 @@ function announceProjectStatementLoadFailed(error) {
     }
 }
 
-export function ensureProjectStatementLoaded(project_id) {
+export function ensureProjectStatementLoaded(project_id, filter) {
     project_id = parseInt(project_id)
     return (dispatch, getState) => {
         const state = getState()
@@ -48,27 +49,28 @@ export function ensureProjectStatementLoaded(project_id) {
             return
         }
         if ( getProjectStatement(state, project_id) === null ) {
-            dispatch(fetchProjectStatement(project_id))
+            dispatch(fetchProjectStatement(project_id, filter))
         }
     }
 }
 
-function fetchProjectStatement(project_id) {
+function fetchProjectStatement(project_id, filter) {
     project_id = parseInt(project_id)
     return (dispatch, getState) => {
         const state = getState()
-	      dispatch(announceLoadingProjectStatement(project_id))
-	      return impfetch(state, 'imp/project_statement/'+project_id+'/', dispatch)
+        const params = { filter: filter }
+	dispatch(announceLoadingProjectStatement(project_id))
+	return impfetch(state, 'imp/project_statement/'+project_id+'/', dispatch, {params:params})
             .then(response => response.json())
-	          .then(json => {
+	    .then(json => {
                 if (json.status !== 'success') {
-		                dispatch(announceProjectStatementLoadFailed(json.error))
+		    dispatch(announceProjectStatementLoadFailed(json.error))
                 } else {
                     dispatch(announceProjectStatementLoaded(json.payload))
                 }
-	          }).catch(function (error) {
-		            dispatch(announceProjectStatementLoadFailed("Failed to load project statment: " + error))
-	          })
+	    }).catch(function (error) {
+		dispatch(announceProjectStatementLoadFailed("Failed to load project statment: " + error))
+	    })
     }
 }
 
@@ -82,4 +84,16 @@ export function isLoadingProjectStatement(state, project_id) {
     project_id = parseInt(project_id)
     const loading_ids = (state.project_statement || {}).loading_project_ids || []
     return includes(loading_ids, project_id)
+}
+
+export function update_project_statement_filter(date_from_inclusive, date_to_inclusive) {
+    return {
+        type: UPDATE_PROJECT_STATEMENT_FILTER,
+        date_from_inclusive: date_from_inclusive,
+        date_to_inclusive: date_to_inclusive
+    }
+}
+
+export function get_project_statement_filter(state) {
+    return state.project_statement.filter
 }

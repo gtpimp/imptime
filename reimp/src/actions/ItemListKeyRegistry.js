@@ -25,14 +25,20 @@ export const SELECTOR__SPRINTS = 'selector_sprints'
 
 export const FILTER_KEY__GLOBAL = 'global_filter'
 
-export var ISSUE_HEADER_LIST_REQUIRED = ["#",
-                                         ".",
-                                         "Name",
-                                         "Assignee",
-                                         "Status",
-                                         ]
+export var ISSUE_HEADER_LIST_WIDE = {'number':"#",
+                                     'expand_feature': '',
+                                     'name': "Name",
+                                     'assignee': "Assignee",
+                                     'status': "Status",
+                                     'estimated': "Estimates",
+                                     'tags': "Tags",
+                                     'progress': "Progress",
+                                     'my_time': "My Time",
+                                     'clock_in': "Clock in",
+                                     'delete': "Delete"}
 
-export var ISSUE_HEADER_LIST_OPTIONAL = ["Estimates",
-                                         "Tags",
-                                         "Progress",
-                                         "My Time"]
+export var ISSUE_HEADER_LIST_NARROW = {'number':"#",
+                                       'expand_feature': '',
+                                       'name': "Name",
+                                       'assignee': "Assignee",
+                                       'status': "Status"}

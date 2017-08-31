@@ -59,10 +59,10 @@ function mapStateToProps(state, props) {
     const user = ((user_id && (getUser(state, user_id))) || { 'loaded': false, 'id': user_id }) || { 'username': 'no-one' }
 
     return {
-	      user: user,
+	user: user,
         user_id: user_id,
-	      render_mode: render_mode || "inline--small",
-	      loading_value: loading_value || "..."
+	render_mode: render_mode || "inline--small",
+	loading_value: loading_value || "..."
     }
 }
 

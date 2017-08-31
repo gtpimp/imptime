@@ -74,6 +74,7 @@ export class Timestamp extends Component {
 
 function mapStateToProps(state, props) {
     return {
+        value: props.value,
         format: props.format || 'default'
     }
 }

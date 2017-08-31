@@ -173,7 +173,7 @@ function tryFetchMatchingItems(list_key,
 		.catch(function (error) {
 		    dispatch(announceMatchingItemsLoadFailed(list_key, "Failed to load entity list: " + error))
 		})
-         }
+        }
     }
 }
 
@@ -203,40 +203,40 @@ function tryFetchListAndItems(list_key, matching_items_key, matching_items_promi
     // missing matching items
 
     return (dispatch, getState) => {
-	      const state = getState()
+	const state = getState()
 
-	      const item_list = state.item_list || {}
-	      const l = item_list[list_key] || {}
+	const item_list = state.item_list || {}
+	const l = item_list[list_key] || {}
 
-	      if ( ! shouldFetchList(state, list_key) ) {
-	          const visible_item_ids = l.visible_item_ids
-	          if ( visible_item_ids ) {
-		            dispatch(tryFetchMatchingItems(list_key,
-					                                     visible_item_ids,
-					                                     matching_items_key, matching_items_promise_func))
-	          }
-	          return
-	      }
+	if ( ! shouldFetchList(state, list_key) ) {
+	    const visible_item_ids = l.visible_item_ids
+	    if ( visible_item_ids ) {
+		dispatch(tryFetchMatchingItems(list_key,
+					       visible_item_ids,
+					       matching_items_key, matching_items_promise_func))
+	    }
+	    return null
+	}
 
-	      dispatch(announceListLoading(list_key))
-	      const params = { filter: l.filter || {},
-			                   format: {ids_only: true},
-			                   pagination: l.pagination || {} }
+	dispatch(announceListLoading(list_key))
+	const params = { filter: l.filter || {},
+			 format: {ids_only: true},
+			 pagination: l.pagination || {} }
         return impfetch(state, 'imp/' + matching_items_key + "/", dispatch, {params:params})
             .then(response => response.json())
             .then(json => {
-		            if (json.status !== 'success') {
+		if (json.status !== 'success') {
                     dispatch(announceListLoadFailed(list_key, json.error))
                 } else {
-		                dispatch(announceListLoaded(list_key, json.payload))
-		                const required_item_ids = json.payload.ids || []
-		                dispatch(tryFetchMatchingItems(list_key,
-						                                       required_item_ids,
-						                                       matching_items_key,
-						                                       matching_items_promise_func))
-		            }
+		    dispatch(announceListLoaded(list_key, json.payload))
+		    const required_item_ids = json.payload.ids || []
+		    dispatch(tryFetchMatchingItems(list_key,
+						   required_item_ids,
+						   matching_items_key,
+						   matching_items_promise_func))
+		}
             })
-	          .catch(function (error) {
+	    .catch(function (error) {
                 dispatch(announceListLoadFailed(list_key,"Failed to load list: " + list_key + " : " + error))
             })
     }

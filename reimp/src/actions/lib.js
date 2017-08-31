@@ -96,5 +96,19 @@ export function impfetch(state, url, dispatch, args) {
 }
 
 export function format_hours(hours) {
-    return new Date(hours*60*60*1000).toISOString().substr(11,5)
+    if ( ! hours ) {
+        hours = 0
+    }
+    const raw_seconds = hours*60*60
+    var sec_num = parseInt(raw_seconds, 10)
+    var hours   = Math.floor(sec_num / 3600)
+    var minutes = Math.floor((sec_num - (hours * 3600)) / 60)
+    var seconds = sec_num - (hours * 3600) - (minutes * 60)
+
+    if (hours   < 10) {hours   = "0"+hours}
+    if (minutes < 10) {minutes = "0"+minutes}
+    if (seconds < 10) {seconds = "0"+seconds}
+    return hours+':'+minutes
 }
+
+

@@ -197,27 +197,27 @@ function tryFetchListAndItems(list_key, matching_items_key, matching_items_promi
 	      }
 
 	      dispatch(announceListLoading(list_key))
-	      const params = { filter: l.filter || {},
-			                   format: {ids_only: true},
-			                   pagination: l.pagination || {} }
+	const params = { filter: l.filter || {},
+			 format: {ids_only: true},
+			 pagination: l.pagination || {} }
         return impfetch(state, '/imp/' + matching_items_key + "/", {params:params})
             .then(response => response.json())
             .then(json => {
 
-		            if (json.status != 'success') {
+		if (json.status != 'success') {
                     dispatch(announceListLoadFailed(list_key, json.error))
                 } else {
-		                dispatch(announceListLoaded(list_key, json.payload))
-		                const required_item_ids = json.payload.ids || []
-		                dispatch(tryFetchMatchingItems(list_key,
-						                                       required_item_ids,
-						                                       matching_items_key,
-						                                       matching_items_promise_func))
-		            }
+		    dispatch(announceListLoaded(list_key, json.payload))
+		    const required_item_ids = json.payload.ids || []
+		    dispatch(tryFetchMatchingItems(list_key,
+						   required_item_ids,
+						   matching_items_key,
+						   matching_items_promise_func))
+		}
             })
-	          .catch(function (error) {
+	    .catch(function (error) {
                 dispatch(announceListLoadFailed(list_key,"Failed to load list: " + error))
-		            throw(error)
+		throw(error)
             })
     }
 }

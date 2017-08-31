@@ -7,11 +7,8 @@ import {
     UPDATE_PAGE_SETTINGS,
     UPDATE_PAGE_SELECTION,
     SET_PAGE_FLAG,
-    FILTER_ISSUE_LIST_COLUMNS
+    WIDE_COLUMN_MODE
 } from '../actions/Page.js'
-import {ISSUE_HEADER_LIST_REQUIRED,
-        ISSUE_HEADER_LIST_OPTIONAL
-} from '../actions/ItemListKeyRegistry'
 import { setErrorMessage } from '../actions/Error'
 
 const initialState = {}
@@ -22,8 +19,8 @@ const page_template = {
     settings: null,
     selection: null,
     sidebars: null,
-    filter_issue_columns: true,
-    issue_header_list: ISSUE_HEADER_LIST_REQUIRED.concat(ISSUE_HEADER_LIST_OPTIONAL)
+    header_list: null,
+    wide_column_mode: true
 }
 
 export default function page(state = initialState, action) {
@@ -64,9 +61,9 @@ export default function page(state = initialState, action) {
             state_copy = Object.assign({}, state)
             l = Object.assign({}, page_template, state_copy[action.page_key] || {})
 	          state_copy[action.page_key] = Object.assign({}, l, {
-                sprint_ids: action.sprint_ids || l.sprint_ids || null,
-                project_ids: action.project_ids || l.project_ids || null,
-                issue_ids: action.issue_ids || l.issue_ids || null
+                      sprint_ids: action.sprint_ids || l.sprint_ids || null,
+                      project_ids: action.project_ids || l.project_ids || null,
+                      issue_ids: action.issue_ids || l.issue_ids || null
 	          })
             return state_copy;
 
@@ -78,12 +75,12 @@ export default function page(state = initialState, action) {
             state_copy[action.page_key] = Object.assign({}, l, flag_d)
             return state_copy
 
-        case FILTER_ISSUE_LIST_COLUMNS:
+        case WIDE_COLUMN_MODE:
             state_copy = Object.assign({}, state)
             l = Object.assign({}, page_template, state_copy[action.page_key] || {})
 	          state_copy[action.page_key] = Object.assign({}, l,
-                                                        {"filter_issue_columns": action.filter_columns},
-                                                        {"issue_header_list": action.issue_header_list} )
+                                                        {"wide_column_mode": action.wide_column_mode},
+                                                        {"header_list": action.header_list} )
 	          return state_copy
 
         default:
