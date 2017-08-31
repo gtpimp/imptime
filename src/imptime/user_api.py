@@ -29,12 +29,10 @@ class UserViewSet(BaseViewSet):
             users = self.allowed_users().order_by("username")
             if project_id:
                 users = users.filter(business_permissions__business_id=project_id).distinct() #sic
-            users = self.apply_filter(qs=users,
-                                      raw_filter_args=filter_args)
-            users = self.apply_pagination(qs=users,
-                                          pagination=pagination)
+            users = self.apply_filter(qs=users, raw_filter_args=filter_args)
+            users = self.apply_pagination(qs=users, pagination=pagination)
 
-            
+
             if format_args.get('ids_only'):
                 context['ids'] = [str(x) for x in users.values_list('id', flat=True)]
             else:

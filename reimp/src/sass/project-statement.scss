@@ -1,94 +1,146 @@
 @import 'variables.scss';
 
 .project__statement__times_grid {
-    padding: 10px;
-    float: left;
-    margin-right: 50px;
-    border-right: 1px solid $form-field-border;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
 }
 
-.project_statement__times_for_sprint {
-    float: left;
-    clear: left;
-    border-bottom: 1px solid $form-field-border;
-    margin-bottom: 50px;
+.project__statement__sprint_times__header_group {
+    display: flex;
+    flex-direction: column;
+    flex-grow: 1;
 }
 
-.project_statement__time_for_user__rate {
-    float: right;
+.project__statement__sprint_times__header_row {
+    display: flex;
+    flex-direction: row;
 }
 
-.project_statement__time_for_user {
-    border: 1px solid $form-field-border;
-    padding: 10px;
-    float: left;
+.project__statement__sprint_times__header_cell {
+    flex-grow: 3;
+    display: flex;
+    flex-direction: row;
 }
 
-.project_statement__sprint_header {
-    font-weight: bold;
-    float: left;
-    clear:both;
-    background-color: $color-4;
+.project__statement__sprint_times__sub_header_cell {
+    flex-grow: 1;
 }
 
-.project_statement__sprint_name {
-    float: left;
-    padding-left: 10px;
-}
 
-.project_statement__sprint_header__total_billable_cost {
-    float: left;
-    padding-left: 10px;
-}
+/* .project__statement__sprint_times__header {
+   border-bottom: 1px solid $form-field-border;
+   }
 
-.project_statement__sprint_header__total_hours {
-    float: left;
-    padding-left: 10px;
-}
+   .project__statement__sprint_times__header_row {
+   width: 100%;
+   border-bottom: 1px solid $form-field-border;
+   background-color: $color-4;
+   }
 
-.project_statement__times_for_sprint__users {
-    clear:left; 
-}
+   .project__statement__sprint_times__header_subrow {
+   clear: left;
+   width: 100%;
+   
+   }
 
-.project_statement__grand_totals {
-    background-color: $color-4;
-    margin-bottom: 30px;
-    border-bottom: 1px solid $form-field-border;
-    clear: both;
-}
+   .project__statement__sprint_times__header_cell {
+   float: left;
+   }
 
-.project_statement__grand_totals__total_hours {
-    float: left;
-    margin-right: 30px;
-}
+   .project__statement__sprint_times__sub_header_cell {
+   float: left;
+   } */
 
-.project_statement__grand_totals__total_billable_cost {
-    float: left;
-    margin-right: 30px;
-}
+/* .project__statement__times_grid {
+   padding: 10px;
+   float: left;
+   margin-right: 50px;
+   border-right: 1px solid $form-field-border;
+   }
 
-.project_statement__times_for_user {
-    float: left;
-    clear: left;
-    border-bottom: 1px solid $form-field-border;
-    margin-bottom: 50px;
-}
+   .project_statement__times_for_sprint {
+   float: left;
+   clear: left;
+   border-bottom: 1px solid $form-field-border;
+   margin-bottom: 50px;
+   }
 
-.project_statement__user_header__total_billable_cost {
-    float: left;    
-}
-    
-.project_statement__user_header__total_hours {
+   .project_statement__time_for_user__rate {
+   float: right;
+   }
 
-}
+   .project_statement__time_for_user {
+   border: 1px solid $form-field-border;
+   padding: 10px;
+   float: left;
+   }
 
-.project__statement__date_range__element {
-    float: left;
-    padding-right: 10px;
-}
+   .project_statement__sprint_header {
+   font-weight: bold;
+   float: left;
+   clear:both;
+   background-color: $color-4;
+   }
 
-.project__statement__date_range {
-    clear: both;
-    margin-bottom: 50px;
-    font-size: $font-size-small;
-}
+   .project_statement__sprint_name {
+   float: left;
+   padding-left: 10px;
+   }
+
+   .project_statement__sprint_header__total_billable_cost {
+   float: left;
+   padding-left: 10px;
+   }
+
+   .project_statement__sprint_header__total_hours {
+   float: left;
+   padding-left: 10px;
+   }
+
+   .project_statement__times_for_sprint__users {
+   clear:left; 
+   }
+
+   .project_statement__grand_totals {
+   background-color: $color-4;
+   margin-bottom: 30px;
+   border-bottom: 1px solid $form-field-border;
+   clear: both;
+   }
+
+   .project_statement__grand_totals__total_hours {
+   float: left;
+   margin-right: 30px;
+   }
+
+   .project_statement__grand_totals__total_billable_cost {
+   float: left;
+   margin-right: 30px;
+   }
+
+   .project_statement__times_for_user {
+   float: left;
+   clear: left;
+   border-bottom: 1px solid $form-field-border;
+   margin-bottom: 50px;
+   }
+
+   .project_statement__user_header__total_billable_cost {
+   float: left;    
+   }
+   
+   .project_statement__user_header__total_hours {
+
+   }
+
+   .project__statement__date_range__element {
+   float: left;
+   padding-right: 10px;
+   }
+
+   .project__statement__date_range {
+   clear: both;
+   margin-bottom: 50px;
+   font-size: $font-size-small;
+   } */

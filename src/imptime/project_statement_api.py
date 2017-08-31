@@ -36,10 +36,11 @@ class ProjectStatementViewSet(BaseViewSet):
             self._fix_keys(times_by_sprint)
             times_by_sprint = self._group_by_sprint(times_by_sprint)
             self._add_all_allowed_users(project, times_by_sprint)
-            self._remove_users_with_no_time(times_by_sprint)
+            users_with_time = self._remove_users_with_no_time(times_by_sprint)
             times_by_user = self._enrich_times_by_user(times_by_sprint)
             
             project_statement = { "project_id": project.id,
+                                  "users_with_time": list(users_with_time),
                                   "date_from_inclusive": date_from_inclusive,
                                   "date_to_inclusive": date_to_inclusive,
                                   "times_by_sprint": times_by_sprint,
@@ -135,6 +136,7 @@ class ProjectStatementViewSet(BaseViewSet):
             for user_id, user_time in sprint_times['users'].items():
                 if user_id not in users_with_time:
                     del sprint_times['users'][user_id]
+        return users_with_time
                     
             
         
