@@ -1,102 +1,36 @@
 @import 'variables.scss';
 
+
 .project__statement__times_grid {
     width: 100%;
-    display: flex;
-    flex-direction: row;
+    font: $settings-font-4;
 }
 
-.project__statement__sprint_times__sprint_column {
-    flex-grow: 1;
-    display: flex;
-    flex-direction: column;
+.project__statement__times_grid__header {
+    background-color: $panel-focus-header-background-color;
 }
 
-.project__statement__sprint_times__sprint {
-    font-weight: bold;
+.project__statement__times_grid td {
+    border-bottom: 1px solid $color-6;
+    padding: 3px;
 }
 
-.project__statement__sprint_times__user_column {
-    flex-grow: 1;
-    display: flex;
-    flex-direction: column;
-    border-right: 1px solid $form-field-border;
-    padding-right: 5px;
-    padding-left: 5px;
+td.project__statement__times_grid__inner_cell {
+    border-bottom: none;
 }
 
-.project__statement__sprint_times__header__user {
-    font-weight: bold;
-    background-color: $color-24;
+.project__statement__times_grid__rate_cell {
+    font-size: $font-size-small;
 }
 
-.project__statement__sprint_times__header__hours {
-    background-color: $color-24;
+.project__statement__times_grid__sprint_total {
+    background-color: $panel-focus-header-background-color;
 }
 
-.project__statement__sprint_times__header__rate {
-    background-color: $color-24;
+.project__statement__timed_grid__user_total {
+    background-color: $panel-focus-header-background-color;
 }
 
-.project__statement__sprint_times__header__cost {
-    background-color: $color-24;
-}
-
-.project__statement__sprint_times__values {
-    display: flex;
-    flex-direction: row;
-}
-
-.project__statement__sprint_times__hours_column {
-    display: flex;
-    flex-grow: 1;
-    flex-direction: column;
-}
-
-.project__statement__sprint_times__rate_column {
-    display: flex;
-    flex-grow: 1;
-    flex-direction: column;
-}
-
-.project__statement__sprint_times__cost_column {
-    display: flex;
-    flex-grow: 1;
-    flex-direction: column;
-}
-
-.project__statement__sprint_times__value__rate .currency_value {
-    float: left;
-}
-
-.project__statement__sprint_times__value__cost .currency_value {
-    float: left;
-}
-
-.project__statement__sprint_times__value__hours {
-    padding-bottom: 5px;
-    padding-top: 5px;
-    border-bottom: 1px solid $form-field-border;
-}
-
-.project__statement__sprint_times__value__rate {
-    padding-bottom: 5px;
-    padding-top: 5px;
-    border-bottom: 1px solid $form-field-border;
-}
-
-.project__statement__sprint_times__value__cost {
-    padding-bottom: 5px;
-    padding-top: 5px;
-    border-bottom: 1px solid $form-field-border;
-}
-
-.project__statement__sprint_times__sprint {
-    padding-bottom: 5px;
-    padding-top: 5px;
-    border-bottom: 1px solid $form-field-border;
-}
-
-.project__statement__sprint_times__sprint_column_header {
-    height: 35px;
+.project__statement__times_grid__grand_total {
+    background-color: $color-5;
 }
