@@ -12,7 +12,7 @@ class Hours extends Component {
         const formatted_hours = format_hours(hours)
 
         return (
-            <div className="elapsed-time">{formatted_hours} hours</div>
+            <div className="elapsed-time">{formatted_hours}</div>
         )
     }
 }

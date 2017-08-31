@@ -42,7 +42,7 @@ class ProjectStatement extends Component {
 
     componentDidMount() {
         const { project_id, project, dispatch, project_statement } = this.props
-        dispatch(set_toolbars(PAGE_KEY__SPRINTS_PAGE, ['cost-summary']))
+        dispatch(set_toolbars(PAGE_KEY__SPRINTS_PAGE, ['project-statement']))
         if ( project_id ) {
             dispatch(ensureProjectsLoaded([project_id]))
             dispatch(ensureProjectStatementLoaded([project_id]))
@@ -95,41 +95,34 @@ class ProjectStatement extends Component {
     render_filter() {
         const { filter } = this.props
         return (
-            <div>
+            <div className="project__statement__filter">
 
-              From:
-              <DatePicker selected={filter.date_from_inclusive}
-                          dateFormat="DD/MM/YYYY"
-                          onChange={this.updateDateFromInclusive} />
+              <div className="project__statement__filter__from">
+                From:
+                <DatePicker selected={filter.date_from_inclusive}
+                            dateFormat="DD/MM/YYYY"
+                            onChange={this.updateDateFromInclusive} />
+              </div>
 
+              <div className="project__statement__filter__to">
               To:
-
               <DatePicker selected={filter.date_to_inclusive}
                           dateFormat="DD/MM/YYYY"
                           onChange={this.updateDateToInclusive} />
+              </div>
 
-              <button onClick={this.refreshStatement}>Filter</button>
+              <div className="project__statement__filter__submit">
+                <button onClick={this.refreshStatement}>Filter</button>
+              </div>
+
+              <div className="clear">
+              </div>
               
             </div>
         )
     }
 
-    render_totals(grand_totals) {
-        return (
-            <div className="project_statement__grand_totals">
-              <h2>Running total across project</h2>
-              <div className="project_statement__grand_totals__total_hours">
-                <Hours hours={grand_totals.total_hours}/>
-              </div>
-              <div className="project_statement__grand_totals__total_billable_cost">
-                <CurrencyValue value={grand_totals.total_billable_cost}/>
-              </div>
-              <div className="clear"></div>
-            </div>
-        )
-    }
-
-    render_user_headers(project_statement) {
+    render_sprint_totals(project_statement) {
         return (
             <table className="project__statement__times_grid">
               <thead className="project__statement__times_grid__header">
@@ -139,7 +132,7 @@ class ProjectStatement extends Component {
                   { map(project_statement.users_with_time,
                         function(user_id) {
                             return (
-                                <th>
+                                <th key={user_id}>
                                   <OtherUser value={user_id} />
                                 </th>
                             )
@@ -154,19 +147,21 @@ class ProjectStatement extends Component {
                   { map(project_statement.users_with_time,
                         function(user_id) {
                             return (
-                                <td>
+                                <td key={user_id}>
                                   <table width="100%">
-                                    <tr>
-                                      <th>
-                                        Hour
-                                      </th>
-                                      <th>
-                                        Rate
-                                      </th>
-                                      <th>
-                                        Cost
-                                      </th>
-                                    </tr>
+                                    <tbody>
+                                      <tr>
+                                        <th>
+                                          Hour
+                                        </th>
+                                        <th>
+                                          Rate
+                                        </th>
+                                        <th>
+                                          Cost
+                                        </th>
+                                      </tr>
+                                    </tbody>
                                   </table>
                                 </td>
                             )
@@ -181,7 +176,7 @@ class ProjectStatement extends Component {
                       function(sprint_id) {
                           const times_for_sprint = project_statement.times_by_sprint[sprint_id]
                           return (
-                              <tr>
+                              <tr key={sprint_id}>
                                 <th>
                                   <SprintName sprint_id={sprint_id} />
                                 </th>
@@ -189,20 +184,22 @@ class ProjectStatement extends Component {
                                       function(user_id) {
                                           const time_for_user = times_for_sprint.users[user_id]
                                           return (
-                                              <td>
+                                              <td key={user_id}>
                                                 <table width="100%">
-                                                  <tr>
-                                                    <td className="project__statement__times_grid__inner_cell">
-                                                      <Hours hours={time_for_user.total_hours}/>
-                                                    </td>
-                                                    <td className="project__statement__times_grid__inner_cell project__statement__times_grid__rate_cell">
-                                                      <CurrencyValue value={time_for_user.rate}/>
-                                                    </td>
-                                                    <td className="project__statement__times_grid__inner_cell">
-                                                      <CurrencyValue value={time_for_user.billable_cost}/>
-                                                    </td>
-                                                  </tr>
-                                                  </table>
+                                                  <tbody>
+                                                    <tr>
+                                                      <td className="project__statement__times_grid__inner_cell">
+                                                        <Hours hours={time_for_user.total_hours}/>
+                                                      </td>
+                                                      <td className="project__statement__times_grid__inner_cell project__statement__times_grid__rate_cell">
+                                                        <CurrencyValue value={time_for_user.rate}/>
+                                                      </td>
+                                                      <td className="project__statement__times_grid__inner_cell">
+                                                        <CurrencyValue value={time_for_user.billable_cost}/>
+                                                      </td>
+                                                    </tr>
+                                                  </tbody>
+                                                </table>
                                               </td>
                                           )
                                       }
@@ -223,18 +220,20 @@ class ProjectStatement extends Component {
                         function(user_id) {
                             const time_for_user = project_statement.times_by_user[user_id]
                             return (
-                                <th>
+                                <th key={user_id}>
                                   <table width="100%">
-                                    <tr>
-                                      <td className="project__statement__times_grid__inner_cell">
-                                        <Hours hours={time_for_user.total_hours}/>
-                                      </td>
-                                      <td className="project__statement__times_grid__inner_cell">
-                                      </td>
-                                      <td className="project__statement__times_grid__inner_cell">
-                                        <CurrencyValue value={time_for_user.total_billable_cost}/>
-                                      </td>
-                                    </tr>
+                                    <tbody>
+                                      <tr>
+                                        <td className="project__statement__times_grid__inner_cell">
+                                          <Hours hours={time_for_user.total_hours}/>
+                                        </td>
+                                        <td className="project__statement__times_grid__inner_cell">
+                                        </td>
+                                        <td className="project__statement__times_grid__inner_cell">
+                                          <CurrencyValue value={time_for_user.total_billable_cost}/>
+                                        </td>
+                                      </tr>
+                                    </tbody>
                                   </table>
                                 </th>
                             )
@@ -250,52 +249,6 @@ class ProjectStatement extends Component {
         )
     }
 
-    render_sprint_times(sprint_id, times_for_sprint) {
-        return (
-            <div className="project__statement__sprint_times__row">
-              <div className="project_statement__sprint_name">
-                <SprintName sprint_id={sprint_id}/>
-              </div>
-              { map(keys(times_for_sprint.users),
-                    function(user_id) {
-                        const time_for_user = times_for_sprint.users[user_id]
-                        return (
-                            <div key={user_id} className="project__statement__sprint_times__user_cell">
-                              <div className="project_statement__sprint_header__total_hours">
-                                <Hours hours={times_for_sprint.totals.total_hours}/>
-                              </div>
-                              <div className="project_statement__time_for_user__rate">
-                                @<CurrencyValue value={time_for_user.rate}  />
-                              </div>
-                              <div className="project_statement__sprint_header__total_billable_cost">
-                                <CurrencyValue value={times_for_sprint.totals.total_billable_cost}/>
-                              </div>
-                            </div>
-                        )
-                    }
-              )}
-            </div>
-        )
-    }
-
-    render_user_times(user_id, times_for_user) {
-        return (
-            <div key={user_id} className="project_statement__times_for_user">
-              <div className="project_statement__user_header">
-                <div className="project_statement__user_name">
-                  <OtherUser value={user_id}/>
-                </div>
-                <div className="project_statement__user_header__total_hours">
-                  
-                </div>
-                <div className="project_statement__user_header__total_billable_cost">
-                  <CurrencyValue value={times_for_user.total_billable_cost}/>
-                </div>
-              </div>
-            </div>
-        )
-    }
-    
     render() {
 
         const { is_loading, project_statement, filter } = this.props
@@ -323,7 +276,7 @@ class ProjectStatement extends Component {
                     </h3>
 
                     <div className="project__statement__times_grid">
-                        { project_statement.grand_totals && this.render_user_headers(project_statement) }
+                        { project_statement.grand_totals && this.render_sprint_totals(project_statement) }
                     </div>
                     
                   </div>

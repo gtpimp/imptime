@@ -1,9 +1,32 @@
 @import 'variables.scss';
 
 
+.project__statement__filter {
+    font: $settings-font-4;
+    border-bottom: 1px solid $color-6;
+    padding-bottom: 20px;
+    margin-top: 20px;
+}
+
+.project__statement__filter__from {
+    float: left;
+}
+
+.project__statement__filter__to {
+    float: left;
+    margin-left: 10px;
+}
+
+.project__statement__filter__submit {
+    float: left;
+    margin-top: 11px;
+    padding-left: 10px;
+}
+
 .project__statement__times_grid {
     width: 100%;
     font: $settings-font-4;
+    clear: both;
 }
 
 .project__statement__times_grid__header {
@@ -17,6 +40,7 @@
 
 td.project__statement__times_grid__inner_cell {
     border-bottom: none;
+    width: 33%;
 }
 
 .project__statement__times_grid__rate_cell {
@@ -33,4 +57,14 @@ td.project__statement__times_grid__inner_cell {
 
 .project__statement__times_grid__grand_total {
     background-color: $color-5;
+}
+
+.project__statement__date_range {
+    clear: both;
+}
+
+.project__statement__date_range__element {
+    float: left;
+    padding: 5px;
+    font: $settings-font-3;
 }
