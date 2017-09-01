@@ -101,7 +101,19 @@ class ProjectStatementViewSet(BaseViewSet):
 
     @detail_route(methods=['POST'])
     def download_issues_worked_on(self, request, pk):
-        return HttpResponse("Coming soon...")
+        response, writer, data = self._prepare_csv(request, pk, "issue_worked_on")
+        
+        writer.writerow(["Issues worked on (during selected period)"])
+        writer.writerow([])
+
+        writer.writerow(['sprint_id', 'sprint_name', 'issue_number', 'subject'])
+        
+        for issue_info in data['issues']:
+            writer.writerow([issue_info['sprint_id'],
+                             data['sprint_infos'][issue_info['sprint_id']]['sprint_name'],
+                             issue_info['number'],
+                             issue_info['subject']])
+        return response
     
     def _get_data(self, user, project_id, date_from_inclusive, date_to_inclusive):
         project = Project.objects.get(pk=project_id)
