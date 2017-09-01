@@ -185,12 +185,11 @@ th.project__statement__times_grid__inner_cell {
     cursor: pointer;
 }
 
-.project__statement__issues_grid__footer {
+.project__statement__footer {
     background-color: $color-12;
-    height: 10px;
-}
-
-.project__statement__issues_grid__footer_cell {
     width: 100%;
-    height: 10px;
+    height: 20px;
+    border-bottom: 1px solid $color-25;
+    margin-bottom: 5px;
+    margin-top: 10px;
 }
