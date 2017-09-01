@@ -1,6 +1,7 @@
 # Django settings for implicitdesign project.
 import sys
 import os
+from django.utils.translation import ugettext_lazy as _
 
 DEBUG = True
 PROJECT_HOME = os.path.dirname(os.path.realpath(__file__))
@@ -242,6 +243,7 @@ WSGI_APPLICATION = 'implicitdesign.wsgi.application'
 REST_FRAMEWORK = {
    'DEFAULT_AUTHENTICATION_CLASSES': (
        'rest_framework.authentication.TokenAuthentication',
+       'imptime.authentication.FormTokenAuthenticated',
    ),
    'DEFAULT_PERMISSION_CLASSES': (
         'rest_framework.permissions.IsAuthenticated'

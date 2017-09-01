@@ -17,7 +17,10 @@ import {
     isLoadingProjectStatement,
     update_project_statement_filter,
     get_project_statement_filter,
-    invalidateProjectStatement
+    invalidateProjectStatement,
+    download_sprint_budgets,
+    download_sprint_breakdown,
+    download_issues_worked_on
 } from '../actions/ProjectStatement'
 import { ensureUsersLoaded } from '../actions/Users'
 import { setBreadcrumbs } from '../actions/Breadcrumbs'
@@ -42,6 +45,9 @@ class ProjectStatement extends Component {
         this.updateDateFromInclusive = this.updateDateFromInclusive.bind(this)
         this.updateDateToInclusive = this.updateDateToInclusive.bind(this)
         this.refreshStatement = this.refreshStatement.bind(this)
+        this.download_sprint_budgets = this.download_sprint_budgets.bind(this)
+        this.download_sprint_breakdown_by_user = this.download_sprint_breakdown_by_user.bind(this)
+        this.download_issues_worked_on = this.download_issues_worked_on.bind(this)
     }
 
     componentDidMount() {
@@ -63,20 +69,33 @@ class ProjectStatement extends Component {
         if ( new_props.project.name !== this.props.project.name ) {
             this.refresh(new_props.project, new_props.project_statement)
         }
-        if ( new_props.project.allowed_user_ids != this.props.project.allowed_user_ids ) {
+        if ( new_props.project.allowed_user_ids !== this.props.project.allowed_user_ids ) {
             this.refresh(new_props.project, new_props.project_statement)
         }
     }
 
-    updateDateFromInclusive(new_value) {
-        const { filter, dispatch } = this.props
-        dispatch(update_project_statement_filter(
-            new_value,
-            filter.date_to_inclusive))
+    download_sprint_budgets(event) {
+        const { project_id, dispatch } = this.props
+        event.preventDefault()
+        dispatch(download_sprint_budgets(project_id))
+    }
+    
+    download_sprint_breakdown_by_user(event) {
+        const { project_id, dispatch  } = this.props
+        event.preventDefault()
+        dispatch(download_sprint_breakdown(project_id))
+    }
+    
+    download_issues_worked_on(event) {
+        const { project_id, dispatch  } = this.props
+        event.preventDefault()
+        dispatch(download_issues_worked_on(project_id))
     }
 
-    download_sprint_breakdown_by_user() {
-        
+    updateDateFromInclusive(new_value) {
+        const { filter, dispatch } = this.props
+        dispatch(update_project_statement_filter(new_value,
+                                                 filter.date_to_inclusive))
     }
 
     updateDateToInclusive(new_value) {
@@ -272,7 +291,7 @@ class ProjectStatement extends Component {
                   <th>Total budget</th>
                   <th>Total spendable budget</th>
                   <th>Remaining budget</th>
-                  <th>Progress</th>
+                  <th>Budget progress</th>
                   <th>Spent budget</th>
                 </tr>
               </thead>

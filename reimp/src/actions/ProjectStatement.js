@@ -1,5 +1,5 @@
 import includes from 'lodash/includes'
-import { impfetch } from './lib.js'
+import { impfetch, download } from './lib.js'
 
 export const ANNOUNCE_LOADING_PROJECT_STATEMENT = 'ANNOUNCE_LOADING_PROJECT_STATEMENT'
 export const ANNOUNCE_PROJECT_STATEMENT_LOADED = 'ANNOUNCE_PROJECT_STATEMENT_LOADED'
@@ -95,4 +95,31 @@ export function update_project_statement_filter(date_from_inclusive, date_to_inc
 
 export function get_project_statement_filter(state) {
     return state.project_statement.filter
+}
+
+export function download_sprint_budgets(project_id) {
+    return (dispatch, getState) => {
+        const state = getState()
+        const url = 'imp/project_statement/'+project_id+'/download_sprint_budgets/'
+        const filter = get_project_statement_filter(state)
+        return download(state, url, filter)
+    }
+}
+
+export function download_sprint_breakdown(project_id) {
+    return (dispatch, getState) => {
+        const state = getState()
+        const url = 'imp/project_statement/'+project_id+'/download_sprint_breakdown/'
+        const filter = get_project_statement_filter(state)
+        return download(state, url, filter)
+    }
+}
+
+export function download_issues_worked_on(project_id) {
+    return (dispatch, getState) => {
+        const state = getState()
+        const url = 'imp/project_statement/'+project_id+'/download_issues_worked_on/'
+        const filter = get_project_statement_filter(state)
+        return download(state, url, filter)
+    }
 }

@@ -1,6 +1,6 @@
 import logging
-from sprint_serializer import SprintSerializer # change to new serializer once created
 from rest_framework.renderers import JSONRenderer
+from rest_framework.decorators import detail_route
 from datetime import datetime
 from django.http import HttpResponse
 from base_api import BaseViewSet
@@ -11,6 +11,8 @@ from rest_framework.decorators import permission_classes
 from timepiece.models import Business as Project
 from timepiece.models import Project as Sprint
 from timepiece.models import BusinessPermissions, Entry, Rate
+from imptime.authentication import FormTokenAuthenticated
+from project_statement_serializer import ProjectStatementFilterSerializer
 
 logger = logging.getLogger(__name__)
 
@@ -22,11 +24,6 @@ class ProjectStatementViewSet(BaseViewSet):
             params = request.GET.get('params', '{}')
             params = json.loads(params)
             project_id = pk
-            context = {}
-            project = Project.objects.get(pk=project_id)
-            bp = BusinessPermissions.for_user(request.user, project)  # sic
-            if not bp.has_view_ctc_billable_rates:
-                return self.error_response("No permission to view project statement")
 
             if params:
                 date_from_inclusive = params['filter']['date_from_inclusive'] or datetime.now()
@@ -34,37 +31,69 @@ class ProjectStatementViewSet(BaseViewSet):
             else:
                 date_from_inclusive = datetime.now()
                 date_to_inclusive = datetime.now()
-                
-            entries = self._get_entries(project, date_from_inclusive, date_to_inclusive)
-
-            times_by_sprint = self._get_times_by_sprint(entries)
-            self._enrich_rates_per_user(times_by_sprint)
-            self._fix_keys(times_by_sprint)
-            times_by_sprint = self._group_by_sprint(times_by_sprint)
-            sprint_infos = self._get_sprint_infos(times_by_sprint)
-            self._add_all_allowed_users(project, times_by_sprint, sprint_infos)
-            users_with_time = self._remove_users_with_no_time(times_by_sprint)
-            times_by_user = self._enrich_times_by_user(times_by_sprint)
             
-            project_statement = { "project_id": project.id,
-                                  "users_with_time": list(users_with_time),
-                                  "date_from_inclusive": date_from_inclusive,
-                                  "date_to_inclusive": date_to_inclusive,
-                                  "sprint_infos": sprint_infos,
-                                  "times_by_sprint": times_by_sprint,
-                                  "times_by_user": times_by_user,
-                                  "issues": self._get_affected_issue_ids(entries) }
-            self._enrich_totals(project_statement)
-            self._enrich_with_sprint_budgets_across_time(times_by_sprint)
-            
-            context['project_statement'] = project_statement
-            data = {'status': 'success', 'payload': context}
+            data = self._get_data(user=request.user,
+                                  project_id=project_id,
+                                  date_from_inclusive=date_from_inclusive,
+                                  date_to_inclusive=date_to_inclusive)
 
         except Exception, ex:
             logger.exception(ex)
             return self.error_response(ex)
 
         return HttpResponse(JSONRenderer().render(data))
+
+    @detail_route(methods=['POST'])
+    def download_sprint_budgets(self, request, pk):
+        project_id = pk 
+        filter = self._get_download_filter(request)
+        data = self._get_data(user=request.user,
+                              project_id=project_id,
+                              date_from_inclusive=filter['date_from_inclusive'],
+                              date_to_inclusive=filter['date_to_inclusive'])
+        
+        return HttpResponse(JSONRenderer().render(data))
+
+    @detail_route(methods=['POST'])
+    def download_sprint_breakdown():
+        return HttpResponse("Coming soon...")
+
+    @detail_route(methods=['POST'])
+    def download_issues_worked_on():
+        return HttpResponse("Coming soon...")
+    
+    def _get_data(self, user, project_id, date_from_inclusive, date_to_inclusive):
+        context = {}
+        project = Project.objects.get(pk=project_id)
+        bp = BusinessPermissions.for_user(user, project)  # sic
+        if not bp.has_view_ctc_billable_rates:
+            return self.error_response("No permission to view project statement")
+
+        entries = self._get_entries(project, date_from_inclusive, date_to_inclusive)
+
+        times_by_sprint = self._get_times_by_sprint(entries)
+        self._enrich_rates_per_user(times_by_sprint)
+        self._fix_keys(times_by_sprint)
+        times_by_sprint = self._group_by_sprint(times_by_sprint)
+        sprint_infos = self._get_sprint_infos(times_by_sprint)
+        self._add_all_allowed_users(project, times_by_sprint, sprint_infos)
+        users_with_time = self._remove_users_with_no_time(times_by_sprint)
+        times_by_user = self._enrich_times_by_user(times_by_sprint)
+
+        project_statement = { "project_id": project.id,
+                              "users_with_time": list(users_with_time),
+                              "date_from_inclusive": date_from_inclusive,
+                              "date_to_inclusive": date_to_inclusive,
+                              "sprint_infos": sprint_infos,
+                              "times_by_sprint": times_by_sprint,
+                              "times_by_user": times_by_user,
+                              "issues": self._get_affected_issue_ids(entries) }
+        self._enrich_totals(project_statement)
+        self._enrich_with_sprint_budgets_across_time(times_by_sprint)
+
+        context['project_statement'] = project_statement
+        data = {'status': 'success', 'payload': context}
+        return data
 
     def _fix_keys(self, times):
         for time_per_user in times:
@@ -154,7 +183,6 @@ class ProjectStatementViewSet(BaseViewSet):
         return dict([ (x['id'], {'sprint_name':x['name'], 'project_id':x['business_id']}) for x in sprints ])
     
     def _enrich_with_sprint_budgets_across_time(self, times_by_sprint):
-        sprint_budgets = {}
         sprints = Sprint.objects.filter(pk__in=times_by_sprint.keys())
         for sprint in sprints:
             all_entries = Entry.objects.all().filter(issue__project=sprint) #sic
@@ -177,4 +205,9 @@ class ProjectStatementViewSet(BaseViewSet):
                     'sprint_name': ['issue__project__name'],
                     'sprint_id': x['issue__project_id'] } for x in raw ]
         return fixed
-    
+
+    def _get_download_filter(self, request):
+        raw_filter = json.loads(request.GET.keys()[0])
+        s = ProjectStatementFilterSerializer(data=raw_filter)
+        s.is_valid(raise_exception=True)
+        return s.validated_data
