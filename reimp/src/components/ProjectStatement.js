@@ -151,13 +151,13 @@ class ProjectStatement extends Component {
                                   <table width="100%">
                                     <tbody>
                                       <tr>
-                                        <th>
+                                        <th className="project__statement__times_grid__inner_cell">
                                           Hours
                                         </th>
-                                        <th>
+                                        <th className="project__statement__times_grid__inner_cell">
                                           Rate
                                         </th>
-                                        <th>
+                                        <th className="project__statement__times_grid__inner_cell">
                                           Cost
                                         </th>
                                       </tr>

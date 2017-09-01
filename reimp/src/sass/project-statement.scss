@@ -38,10 +38,19 @@
     padding: 3px;
 }
 
+.project__statement__times_grid th {
+    border-bottom: 1px solid $color-6;
+    padding: 3px;
+}
+
 td.project__statement__times_grid__inner_cell {
     border-bottom: none;
     width: 33%;
     text-align: left;
+}
+
+th.project__statement__times_grid__inner_cell {
+    border-bottom: none;
 }
 
 .project__statement__times_grid__rate_cell {
