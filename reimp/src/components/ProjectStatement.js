@@ -3,6 +3,7 @@ import { connect } from 'react-redux'
 import { ensureProjectsLoaded, getProject } from '../actions/Projects'
 import { map, keys } from 'lodash'
 import OtherUser from './OtherUser'
+import SprintTimeSummary from './SprintTimeSummary'
 import SprintLink from './SprintLink'
 import IssueLink from './IssueLink'
 import CurrencyValue from './CurrencyValue'
@@ -266,9 +267,9 @@ class ProjectStatement extends Component {
                   <th></th>
                   <th>Total budget</th>
                   <th>Total spendable budget</th>
-                  <th>Spent budget</th>
                   <th>Remaining budget</th>
                   <th>Progress</th>
+                  <th>Spent budget</th>
                 </tr>
               </thead>
               <tbody>
@@ -289,15 +290,15 @@ class ProjectStatement extends Component {
                                   <CurrencyValue value={ times_for_sprint.totals_across_time.spendable_budget } />
                                 </td>
                                 <td>
-                                  <CurrencyValue value={ times_for_sprint.totals_across_time.total_billable_cost } />
-                                </td>
-                                <td>
                                   <CurrencyValue value={ times_for_sprint.totals_across_time.remaining_budget } />
                                 </td>
                                 <td className="project__statement__budgets_grid__progress_bar">
                                   <ProgressBar current={ times_for_sprint.totals_across_time.total_billable_cost }
                                                max={ times_for_sprint.totals_across_time.spendable_budget } />
                                 </td>
+                                <th>
+                                  <CurrencyValue value={ times_for_sprint.totals_across_time.total_billable_cost } />
+                                </th>
                               </tr>
                           )
                       }
@@ -305,6 +306,22 @@ class ProjectStatement extends Component {
                 }
               </tbody>
             </table>
+        )
+    }
+
+    render_remaining_budgets(project_statement) {
+        const { sprint_infos } = project_statement
+        return (
+            map(keys(sprint_infos),
+                function(sprint_id) {
+                    const sprint_info = sprint_infos[sprint_id]
+                    return (
+                        <SprintTimeSummary key={sprint_id}
+                                           sprint_id={sprint_id}
+                                           project_id={sprint_info.project_id}/>
+                    )
+                    
+                })
         )
     }
 
@@ -370,17 +387,22 @@ class ProjectStatement extends Component {
                     </h3>
 
                     <div className="project__statement__budgets_grid">
-                        <h2 className="project__statement__times_grid__header">Sprint budgets (for all periods)</h2>
+                        <h2 className="project__statement__times_grid__header">Sprint budgets (for sprints worked on in the selected period)</h2>
                         { project_statement.grand_totals && this.render_sprint_budgets(project_statement) }
                     </div>
                     
                     <div className="project__statement__times_grid">
-                        <h2 className="project__statement__times_grid__header">Sprint breakdown by user (for selected period)</h2>
+                        <h2 className="project__statement__times_grid__header">Sprint breakdown by user (during selected period)</h2>
                         { project_statement.grand_totals && this.render_sprint_totals(project_statement) }
                     </div>
 
+                    <div className="project__statement__remaining_grid">
+                        <h2 className="project__statement__times_remaining__header">Remaining time (for sprints worked on in the selected period)</h2>
+                        { project_statement.grand_totals && this.render_remaining_budgets(project_statement) }
+                    </div>
+                        
                     <div className="project__statement__issues_grid">
-                        <h2 className="project__statement__times_grid__header">Issues worked on (for selected period)</h2>
+                        <h2 className="project__statement__times_grid__header">Issues worked on (during selected period)</h2>
                         { project_statement.grand_totals && this.render_issues_worked_on(project_statement) }
                     </div>
 
