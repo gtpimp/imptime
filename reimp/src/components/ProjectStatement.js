@@ -3,7 +3,8 @@ import { connect } from 'react-redux'
 import { ensureProjectsLoaded, getProject } from '../actions/Projects'
 import { map, keys } from 'lodash'
 import OtherUser from './OtherUser'
-import SprintName from './SprintName'
+import SprintLink from './SprintLink'
+import IssueLink from './IssueLink'
 import CurrencyValue from './CurrencyValue'
 import UserRate from './UserRate'
 import ProgressBar from './ProgressBar'
@@ -125,6 +126,7 @@ class ProjectStatement extends Component {
     }
 
     render_sprint_totals(project_statement) {
+        const { sprint_infos } = project_statement
         return (
             <table className="project__statement__times_grid__table">
               <thead className="project__statement__times_grid__header">
@@ -180,7 +182,9 @@ class ProjectStatement extends Component {
                           return (
                               <tr key={sprint_id}>
                                 <th>
-                                  <SprintName sprint_id={sprint_id} />
+                                  <SprintLink sprint_id={sprint_id}
+                                              sprint_name={sprint_infos[sprint_id].sprint_name}
+                                              project_id={sprint_infos[sprint_id].project_id} />
                                 </th>
                                 { map(project_statement.users_with_time,
                                       function(user_id) {
@@ -254,15 +258,18 @@ class ProjectStatement extends Component {
     }
 
     render_sprint_budgets(project_statement) {
+        const { sprint_infos } = project_statement
         return (
             <table className="project__statement__budgets_grid__table">
               <thead className="project__statement__budgets_grid__header">
-                <th></th>
-                <th>Total budget</th>
-                <th>Total spendable budget</th>
-                <th>Spent budget</th>
-                <th>Remaining budget</th>
-                <th>Progress</th>
+                <tr>
+                  <th></th>
+                  <th>Total budget</th>
+                  <th>Total spendable budget</th>
+                  <th>Spent budget</th>
+                  <th>Remaining budget</th>
+                  <th>Progress</th>
+                </tr>
               </thead>
               <tbody>
                 { map(keys(project_statement.times_by_sprint),
@@ -271,7 +278,9 @@ class ProjectStatement extends Component {
                           return (
                               <tr key={sprint_id}>
                                 <th>
-                                  <SprintName sprint_id={sprint_id} />
+                                  <SprintLink sprint_id={sprint_id}
+                                              sprint_name={sprint_infos[sprint_id].sprint_name}
+                                              project_id={sprint_infos[sprint_id].project_id} />
                                 </th>
                                 <td>
                                   <CurrencyValue value={ times_for_sprint.totals_across_time.budget }/>
@@ -288,6 +297,41 @@ class ProjectStatement extends Component {
                                 <td className="project__statement__budgets_grid__progress_bar">
                                   <ProgressBar current={ times_for_sprint.totals_across_time.total_billable_cost }
                                                max={ times_for_sprint.totals_across_time.spendable_budget } />
+                                </td>
+                              </tr>
+                          )
+                      }
+                     )
+                }
+              </tbody>
+            </table>
+        )
+    }
+
+    render_issues_worked_on(project_statement) {
+        const { project_id } = this.props
+        const { sprint_infos } = project_statement
+        return (
+            <table className="project__statement__issues_grid__table">
+              <tbody>
+                { map(project_statement.issues,
+                      function(issue_info) {
+                          return (
+                              <tr key={issue_info.number}>
+                                <td>
+                                  <SprintLink sprint_id={issue_info.sprint_id}
+                                              sprint_name={sprint_infos[issue_info.sprint_id].sprint_name}
+                                              project_id={sprint_infos[issue_info.sprint_id].project_id}
+                                              />
+                                </td>
+                                <td>
+                                  <IssueLink issue_id={issue_info.id}
+                                             issue_number={issue_info.number}
+                                             sprint_id={issue_info.sprint_id}
+                                             project_id={project_id} />
+                                </td>
+                                <td>
+                                  <div>{ issue_info.subject }</div>
                                 </td>
                               </tr>
                           )
@@ -335,6 +379,12 @@ class ProjectStatement extends Component {
                         { project_statement.grand_totals && this.render_sprint_totals(project_statement) }
                     </div>
 
+                    <div className="project__statement__issues_grid">
+                        <h2 className="project__statement__times_grid__header">Issues worked on (for selected period)</h2>
+                        { project_statement.grand_totals && this.render_issues_worked_on(project_statement) }
+                    </div>
+
+                        
                   </div>
                 }
             </div>
