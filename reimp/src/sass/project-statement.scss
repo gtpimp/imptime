@@ -51,7 +51,7 @@
 }
 
 .project__statement__times_grid__header {
-    background-color: $panel-focus-header-background-color;
+    background-color: $color-12;
 }
 
 .project__statement__times_grid td {
@@ -78,11 +78,11 @@ th.project__statement__times_grid__inner_cell {
 }
 
 .project__statement__times_grid__sprint_total {
-    background-color: $panel-focus-header-background-color;
+    background-color: $color-12;
 }
 
 .project__statement__timed_grid__user_total {
-    background-color: $panel-focus-header-background-color;
+    background-color: $color-12;
 }
 
 .project__statement__times_grid__grand_total {
@@ -112,11 +112,11 @@ th.project__statement__times_grid__inner_cell {
 }
 
 .project__statement__budgets_grid__header {
-    background-color: $panel-focus-header-background-color;
+    background-color: $color-12;
 }
 
 .project__statement__times_grid__footer {
-    background-color: $panel-focus-header-background-color;
+    background-color: $color-12;
 }
 
 .project__statement__budgets_grid td {
@@ -148,4 +148,32 @@ th.project__statement__times_grid__inner_cell {
 
 .project__statement__issues_grid__table th {
     float: left;
+}
+
+.project__statement__remaining_grid {
+    font: $settings-font-4;
+    clear: both;
+    width: 100%;
+    margin-top: 50px;
+}
+
+.project__statement__remaining_grid__header {
+    width: 100%;
+    text-align: center;
+    border-top: 1px solid $color-25;
+    padding: 5px;
+    margin-bottom: 0px;
+    background-color: $color-12;
+}
+
+.project__statement__remaining_grid__sprint_name {
+    background-color: $color-12;
+    width: 100%;
+    margin: 0px;
+    padding: 5px;
+    border-top: 1px solid $color-25;
+    margin-top: 20px;
+}
+
+.project__statement__separator {
 }

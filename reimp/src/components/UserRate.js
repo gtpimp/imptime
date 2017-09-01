@@ -19,7 +19,7 @@ class UserRate extends Component {
         
         return (
             <div className={classNames("user_rate",
-                            {"user_rate--empty" :value==0})}>
+                                       {"user_rate--empty" :value==0})}>
               @R {formatted_currency}
             </div>
         )

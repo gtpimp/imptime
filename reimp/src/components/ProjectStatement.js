@@ -316,9 +316,17 @@ class ProjectStatement extends Component {
                 function(sprint_id) {
                     const sprint_info = sprint_infos[sprint_id]
                     return (
-                        <SprintTimeSummary key={sprint_id}
-                                           sprint_id={sprint_id}
-                                           project_id={sprint_info.project_id}/>
+                        <div>
+                          <h3 className="project__statement__remaining_grid__sprint_name"> 
+                            <SprintLink sprint_id={sprint_id}
+                                        sprint_name={sprint_info.sprint_name}
+                                        project_id={sprint_info.project_id}
+                            />
+                          </h3>
+                          <SprintTimeSummary key={sprint_id}
+                                             sprint_id={sprint_id}
+                                             project_id={sprint_info.project_id}/>
+                        </div>
                     )
                     
                 })
@@ -386,21 +394,25 @@ class ProjectStatement extends Component {
                       <div className="project__statement__date_range__element">(inclusive)</div>
                     </h3>
 
+                    <div className="project__statement__separator" />
                     <div className="project__statement__budgets_grid">
                         <h2 className="project__statement__times_grid__header">Sprint budgets (for sprints worked on in the selected period)</h2>
                         { project_statement.grand_totals && this.render_sprint_budgets(project_statement) }
                     </div>
-                    
+
+                    <div className="project__statement__separator" />
                     <div className="project__statement__times_grid">
                         <h2 className="project__statement__times_grid__header">Sprint breakdown by user (during selected period)</h2>
                         { project_statement.grand_totals && this.render_sprint_totals(project_statement) }
                     </div>
 
+                    <div className="project__statement__separator" />
                     <div className="project__statement__remaining_grid">
-                        <h2 className="project__statement__times_remaining__header">Remaining time (for sprints worked on in the selected period)</h2>
+                        <h2 className="project__statement__remaining_grid__header">Remaining time (for sprints worked on in the selected period)</h2>
                         { project_statement.grand_totals && this.render_remaining_budgets(project_statement) }
                     </div>
-                        
+
+                    <div className="project__statement__separator" />
                     <div className="project__statement__issues_grid">
                         <h2 className="project__statement__times_grid__header">Issues worked on (during selected period)</h2>
                         { project_statement.grand_totals && this.render_issues_worked_on(project_statement) }

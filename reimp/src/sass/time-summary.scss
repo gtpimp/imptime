@@ -12,6 +12,8 @@
 
 .sprint_time_summary__table td {
     border-bottom: 1px solid $color-6;
+    width: 10%;
+    text-align: right;
 }
 
 .sprint_time_summary__table th {
@@ -24,5 +26,5 @@
 }
 
 .sprint_time_summary__table__header {
-    background-color: $panel-focus-header-background-color;
+    background-color: $color-12;
 }
