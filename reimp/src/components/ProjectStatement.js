@@ -292,7 +292,7 @@ class ProjectStatement extends Component {
                   <th>Total spendable budget</th>
                   <th>Remaining budget</th>
                   <th>Budget progress</th>
-                  <th>Spent budget</th>
+                  <th>Spent</th>
                 </tr>
               </thead>
               <tbody>

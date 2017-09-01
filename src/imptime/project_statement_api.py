@@ -13,6 +13,7 @@ from timepiece.models import Project as Sprint
 from timepiece.models import BusinessPermissions, Entry, Rate
 from imptime.authentication import FormTokenAuthenticated
 from project_statement_serializer import ProjectStatementFilterSerializer
+import csv
 
 logger = logging.getLogger(__name__)
 
@@ -32,10 +33,12 @@ class ProjectStatementViewSet(BaseViewSet):
                 date_from_inclusive = datetime.now()
                 date_to_inclusive = datetime.now()
             
-            data = self._get_data(user=request.user,
-                                  project_id=project_id,
-                                  date_from_inclusive=date_from_inclusive,
-                                  date_to_inclusive=date_to_inclusive)
+            project_statement = self._get_data(user=request.user,
+                                               project_id=project_id,
+                                               date_from_inclusive=date_from_inclusive,
+                                               date_to_inclusive=date_to_inclusive)
+
+            data = {'status': 'success', 'payload': { 'project_statement': project_statement}}
 
         except Exception, ex:
             logger.exception(ex)
@@ -51,8 +54,29 @@ class ProjectStatementViewSet(BaseViewSet):
                               project_id=project_id,
                               date_from_inclusive=filter['date_from_inclusive'],
                               date_to_inclusive=filter['date_to_inclusive'])
+
+        response = HttpResponse(content_type='text/csv')
+        filename = "sprint_budgets_for_{project_name}_from_{date_from}_to_{date_to}_at_{now}.csv".format(
+            project_name=data['project_name'],
+            date_from=filter['date_from_inclusive'].strftime("%d%b%Y"),
+            date_to=filter['date_to_inclusive'].strftime("%d%b%Y"),
+            now=datetime.now().strftime("%d%b%Y_%H%M"))
+        response['Content-Disposition'] = 'attachment; filename="%s"' % filename
+        writer = csv.writer(response)
+        writer.writerow(["From",filter['date_from_inclusive']])
+        writer.writerow(["To",filter['date_to_inclusive']])
+        writer.writerow(["Sprint budgets (for sprints worked on in the selected period)"])
+        writer.writerow([])
+        writer.writerow(["","Total budget", "Total spendable budget", "Remaining budget", "Spent"])
         
-        return HttpResponse(JSONRenderer().render(data))
+        for sprint_id, times_for_sprint in data['times_by_sprint'].items():
+            writer.writerow([data['sprint_infos'][sprint_id]['sprint_name'],
+                             times_for_sprint['totals_across_time']['budget'],
+                             times_for_sprint['totals_across_time']['spendable_budget'],
+                             times_for_sprint['totals_across_time']['remaining_budget'],
+                             times_for_sprint['totals_across_time']['total_billable_cost']])
+
+        return response
 
     @detail_route(methods=['POST'])
     def download_sprint_breakdown():
@@ -63,7 +87,6 @@ class ProjectStatementViewSet(BaseViewSet):
         return HttpResponse("Coming soon...")
     
     def _get_data(self, user, project_id, date_from_inclusive, date_to_inclusive):
-        context = {}
         project = Project.objects.get(pk=project_id)
         bp = BusinessPermissions.for_user(user, project)  # sic
         if not bp.has_view_ctc_billable_rates:
@@ -81,6 +104,7 @@ class ProjectStatementViewSet(BaseViewSet):
         times_by_user = self._enrich_times_by_user(times_by_sprint)
 
         project_statement = { "project_id": project.id,
+                              "project_name": project.name,
                               "users_with_time": list(users_with_time),
                               "date_from_inclusive": date_from_inclusive,
                               "date_to_inclusive": date_to_inclusive,
@@ -91,9 +115,7 @@ class ProjectStatementViewSet(BaseViewSet):
         self._enrich_totals(project_statement)
         self._enrich_with_sprint_budgets_across_time(times_by_sprint)
 
-        context['project_statement'] = project_statement
-        data = {'status': 'success', 'payload': context}
-        return data
+        return project_statement
 
     def _fix_keys(self, times):
         for time_per_user in times:
@@ -211,3 +233,6 @@ class ProjectStatementViewSet(BaseViewSet):
         s = ProjectStatementFilterSerializer(data=raw_filter)
         s.is_valid(raise_exception=True)
         return s.validated_data
+
+    def _get_sprint_names(self, sprint_ids):
+        return Sprint.objects.filter(pk__in=sprint_ids).values('name',flat=True)
