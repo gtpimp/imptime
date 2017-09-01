@@ -387,6 +387,9 @@ class ProjectStatement extends Component {
                   )
                 }
               </tbody>
+              <tfoot className="project__statement__issues_grid__footer">
+                <tr><td><div className="project__statement__issues_grid__footer_cell"/>></td></tr>
+              </tfoot>
             </table>
         )
     }

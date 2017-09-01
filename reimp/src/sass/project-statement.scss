@@ -184,3 +184,13 @@ th.project__statement__times_grid__inner_cell {
     float: right;
     cursor: pointer;
 }
+
+.project__statement__issues_grid__footer {
+    background-color: $color-12;
+    height: 10px;
+}
+
+.project__statement__issues_grid__footer_cell {
+    width: 100%;
+    height: 10px;
+}

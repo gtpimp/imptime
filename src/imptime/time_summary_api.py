@@ -108,7 +108,7 @@ class TimeSummaryViewSet(BaseViewSet):
         remaining_manager_time = manager_ratio * remaining_time
 
         try:
-            dev_hours_used = stats["per_user"][user]["hours_billable"]
+            dev_hours_used = stats["per_user"][user]["hours"]
         except KeyError:
             dev_hours_used = 0
 
