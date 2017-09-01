@@ -27,17 +27,16 @@ export default function time_summary(state = initialState, action) {
             return Object.assign({}, state, {items_by_sprint_id: without(state.items_by_sprint_id, action.sprint_id_to_invalidate)})
 
         case ANNOUNCE_LOADING_TIME_SUMMARY:
-	          return Object.assign({}, state, {
-		            loading_sprint_ids: union(state.loading_sprint_ids, [action.sprint_id_to_load])
-	          })
+	    return Object.assign({}, state, {
+		loading_sprint_ids: union(state.loading_sprint_ids, [action.sprint_id_to_load])
+	    })
         case ANNOUNCE_TIME_SUMMARY_LOADED:
             state_copy = Object.assign({}, state, {
-		            loading_sprint_ids: Object.assign({},
-						                                      difference(state.loading_sprint_ids || [],
-							                                               [action.sprint_id])),
-		            items_by_sprint_id: Object.assign({}, action.time_summary)
-	          })
-            action.time_summary.received_at = action.received_at
+		loading_sprint_ids: Object.assign({},
+						  difference(state.loading_sprint_ids || [],
+							     [action.sprint_id])),
+		items_by_sprint_id: Object.assign({}, state.items_by_sprint_id)
+	    })
             state_copy.items_by_sprint_id[action.sprint_id] = action.time_summary
             return state_copy
         case ANNOUNCE_TIME_SUMMARY_LOAD_FAILED:

@@ -28,11 +28,11 @@ function announceLoadingTimeSummary(sprint_id) {
 
 function announceTimeSummaryLoaded(payload) {
     const time_summary = payload.time_summary
+    time_summary.received_at = Date.now()
     return {
         type: ANNOUNCE_TIME_SUMMARY_LOADED,
         time_summary: time_summary,
-        sprint_id: time_summary.sprint_id,
-	      received_at: Date.now()
+        sprint_id: time_summary.sprint_id
     }
 }
 

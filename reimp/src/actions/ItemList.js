@@ -1,7 +1,6 @@
 import { impfetch } from './lib.js'
 import difference from 'lodash/difference'
 import keys from 'lodash/keys'
-import forEach from 'lodash/forEach'
 import map from 'lodash/map'
 import compact from 'lodash/compact'
 
@@ -177,23 +176,35 @@ function tryFetchMatchingItems(list_key,
     }
 }
 
+function _stringify_id(id) {
+    return "d" + id
+}
+
+function _unstringify_id(id) {
+    return id.substr(1)
+}
+
 export function getMissingItemIds(state, required_item_ids, matching_items_key) {
     // Returns a list of item_ids which aren't already loaded or invalidated or already loading
-    const required_item_refs = forEach(required_item_ids, function(item_id) { return "" + item_id })
+
+    // const matching_item_refs = forEach(matching_item_ids, function(item_id, index) { return "" + item_id })
+    
+    const required_item_refs = map(required_item_ids, _stringify_id)
     const matching_items = state[matching_items_key] || {}
     let matching_item_ids = keys(matching_items.items_by_id || {})
 
-    const invalidated_item_refs = map(matching_items.invalidated_item_ids || [], function(item_id, index) { return "" + item_id })
+    const invalidated_item_refs = map(matching_items.invalidated_item_ids || [], _stringify_id)
     matching_item_ids = difference(matching_item_ids, invalidated_item_refs)
 
-    const matching_item_refs = forEach(matching_item_ids, function(item_id, index) { return "" + item_id })
+    const matching_item_refs = map(matching_item_ids, _stringify_id)
     let unmatching_item_ids = difference(required_item_refs, matching_item_refs)
 
-    const loading_item_ids = forEach(matching_items.loading_item_ids || [], function(item_id, index) { return "" + item_id })
+    const loading_item_ids = map(matching_items.loading_item_ids || [], _stringify_id)
     unmatching_item_ids = difference(unmatching_item_ids, loading_item_ids)
 
     unmatching_item_ids = compact(unmatching_item_ids)
-
+    unmatching_item_ids = map(unmatching_item_ids, _unstringify_id)
+    
     return unmatching_item_ids
 }
 
