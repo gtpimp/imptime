@@ -11,6 +11,7 @@ from rest_framework.decorators import permission_classes
 from timepiece.models import Business as Project
 from timepiece.models import Project as Sprint
 from timepiece.models import BusinessPermissions, Entry, Rate
+from django.contrib.auth.models import User
 from imptime.authentication import FormTokenAuthenticated
 from project_statement_serializer import ProjectStatementFilterSerializer
 import csv
@@ -48,23 +49,8 @@ class ProjectStatementViewSet(BaseViewSet):
 
     @detail_route(methods=['POST'])
     def download_sprint_budgets(self, request, pk):
-        project_id = pk 
-        filter = self._get_download_filter(request)
-        data = self._get_data(user=request.user,
-                              project_id=project_id,
-                              date_from_inclusive=filter['date_from_inclusive'],
-                              date_to_inclusive=filter['date_to_inclusive'])
-
-        response = HttpResponse(content_type='text/csv')
-        filename = "sprint_budgets_for_{project_name}_from_{date_from}_to_{date_to}_at_{now}.csv".format(
-            project_name=data['project_name'],
-            date_from=filter['date_from_inclusive'].strftime("%d%b%Y"),
-            date_to=filter['date_to_inclusive'].strftime("%d%b%Y"),
-            now=datetime.now().strftime("%d%b%Y_%H%M"))
-        response['Content-Disposition'] = 'attachment; filename="%s"' % filename
-        writer = csv.writer(response)
-        writer.writerow(["From",filter['date_from_inclusive']])
-        writer.writerow(["To",filter['date_to_inclusive']])
+        response, writer, data = self._prepare_csv(request, pk, "sprint_budgets")
+        
         writer.writerow(["Sprint budgets (for sprints worked on in the selected period)"])
         writer.writerow([])
         writer.writerow(["","Total budget", "Total spendable budget", "Remaining budget", "Spent"])
@@ -79,11 +65,42 @@ class ProjectStatementViewSet(BaseViewSet):
         return response
 
     @detail_route(methods=['POST'])
-    def download_sprint_breakdown():
-        return HttpResponse("Coming soon...")
+    def download_sprint_breakdown(self, request, pk):
+        response, writer, data = self._prepare_csv(request, pk, "sprint_breakdown")
+        
+        writer.writerow(["Sprint breakdown by user (during selected period)"])
+        writer.writerow([])
+
+        row = ['',]
+        for user_id in data['users_with_time']:
+            row.extend([data['user_infos'][user_id]['username'],'',''])
+        writer.writerow(row)
+
+        row = ['',]
+        for user_id in data['users_with_time']:
+            row.extend(['Hours', 'Rate', 'Cost'])
+        writer.writerow(row)
+
+        for sprint_id, times_for_sprint in data['times_by_sprint'].items():
+            row = [data['sprint_infos'][sprint_id]['sprint_name']]
+            for user_id in data['users_with_time']:
+                time_for_user = times_for_sprint['users'][user_id]
+                row.extend([time_for_user['total_hours'], time_for_user['rate'], time_for_user['billable_cost']])
+            row.extend([times_for_sprint['totals']['total_billable_cost']])
+            writer.writerow(row)
+
+        row = ['',]
+        for user_id in data['users_with_time']:
+            time_for_user = data['times_by_user'][user_id]
+            row.extend([time_for_user['total_hours'], '', time_for_user['total_billable_cost']])
+        row.extend([data['grand_totals']['total_billable_cost']])
+        writer.writerow(row)
+
+        return response
+            
 
     @detail_route(methods=['POST'])
-    def download_issues_worked_on():
+    def download_issues_worked_on(self, request, pk):
         return HttpResponse("Coming soon...")
     
     def _get_data(self, user, project_id, date_from_inclusive, date_to_inclusive):
@@ -102,6 +119,7 @@ class ProjectStatementViewSet(BaseViewSet):
         self._add_all_allowed_users(project, times_by_sprint, sprint_infos)
         users_with_time = self._remove_users_with_no_time(times_by_sprint)
         times_by_user = self._enrich_times_by_user(times_by_sprint)
+        user_infos = self._get_user_infos(project)
 
         project_statement = { "project_id": project.id,
                               "project_name": project.name,
@@ -109,6 +127,7 @@ class ProjectStatementViewSet(BaseViewSet):
                               "date_from_inclusive": date_from_inclusive,
                               "date_to_inclusive": date_to_inclusive,
                               "sprint_infos": sprint_infos,
+                              "user_infos": user_infos,
                               "times_by_sprint": times_by_sprint,
                               "times_by_user": times_by_user,
                               "issues": self._get_affected_issue_ids(entries) }
@@ -203,6 +222,11 @@ class ProjectStatementViewSet(BaseViewSet):
     def _get_sprint_infos(self, times_by_sprint):
         sprints = Sprint.objects.filter(pk__in=times_by_sprint.keys()).values('id', 'name', 'business_id')
         return dict([ (x['id'], {'sprint_name':x['name'], 'project_id':x['business_id']}) for x in sprints ])
+
+    def _get_user_infos(self, project):
+        users_ids = project.allowed_user_ids
+        users = User.objects.filter(pk__in=users_ids).values('id', 'username', 'email')
+        return dict([ (x['id'], {'username':x['username'], 'email':x['email']}) for x in users ])
     
     def _enrich_with_sprint_budgets_across_time(self, times_by_sprint):
         sprints = Sprint.objects.filter(pk__in=times_by_sprint.keys())
@@ -236,3 +260,25 @@ class ProjectStatementViewSet(BaseViewSet):
 
     def _get_sprint_names(self, sprint_ids):
         return Sprint.objects.filter(pk__in=sprint_ids).values('name',flat=True)
+
+    def _prepare_csv(self, request, pk, filename_prefix):
+        project_id = pk 
+        filter = self._get_download_filter(request)
+        data = self._get_data(user=request.user,
+                              project_id=project_id,
+                              date_from_inclusive=filter['date_from_inclusive'],
+                              date_to_inclusive=filter['date_to_inclusive'])
+
+        response = HttpResponse(content_type='text/csv')
+        filename = "{prefix}_for_{project_name}_from_{date_from}_to_{date_to}_at_{now}.csv".format(
+            prefix=filename_prefix,
+            project_name=data['project_name'],
+            date_from=filter['date_from_inclusive'].strftime("%d%b%Y"),
+            date_to=filter['date_to_inclusive'].strftime("%d%b%Y"),
+            now=datetime.now().strftime("%d%b%Y_%H%M"))
+        response['Content-Disposition'] = 'attachment; filename="%s"' % filename
+        writer = csv.writer(response)
+        writer.writerow(["From",filter['date_from_inclusive']])
+        writer.writerow(["To",filter['date_to_inclusive']])
+        return response, writer, data 
+    
