@@ -42,12 +42,12 @@ class TimeSummaryViewSet(BaseViewSet):
             # users = BusinessPermissions.active_users_for_business(sprint.business.pk)\
             #                            .filter(pk__in=developers)
 
+            budget_ratio = total_billable / (sprint.spendable_budget or 1)
+            
             for sprint_developer in sprint_developers:
                 dev_stats = self.calculate_dev_hours_stats(sprint, sprint_developer)
                 dev_hours_available, tester_hours_available, manager_hours_available, dev_hours_used, ratio, manager_rate, developer_rate, tester_rate = dev_stats
-
                 values = {
-                    "percentage_over_budget": round(float(total_billable - sprint.spendable_budget)/sprint.spendable_budget * 100, 2) if sprint.spendable_budget else 0,
                     "dev_hours_used": round(dev_hours_used, 2),
                     "dev_hours_available": round(dev_hours_available, 2),
                     "tester_hours_available": round(tester_hours_available, 2),
@@ -57,6 +57,8 @@ class TimeSummaryViewSet(BaseViewSet):
                 time_summary["per_user"][sprint_developer.id] = values
 
             time_summary['all_user_ids'] = [x.id for x in sprint_users]
+            time_summary['budget_ratio'] = budget_ratio
+
             context["time_summary"] = time_summary
             data = {"status": "success", "payload": context}
 

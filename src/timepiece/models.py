@@ -3451,6 +3451,11 @@ class Rate(models.Model):
         if recalc_secondary_estimates:
             self.project.recalc_secondary_estimates()
 
+    @classmethod
+    def full_rate_for_project(self, user_id, project_id):
+        rate = self.objects.filter(user_id=user_id, project_id=project_id).first()
+        return rate.full_rate if rate else 0
+            
     @property
     def full_rate(self):
         return self.convert_to_full_rate(self.project, self.billable_amount)

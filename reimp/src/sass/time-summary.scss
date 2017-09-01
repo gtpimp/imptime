@@ -2,3 +2,25 @@
     width: 50%;
     float: left;
 }
+
+.sprint_time_summary__table {
+    width: 100%;
+    font: $settings-font-4;
+}
+
+.sprint_time_summary__table td {
+    border-bottom: 1px solid $color-6;
+}
+
+.sprint_time_summary__table th {
+    border-bottom: 1px solid $color-6;
+}
+
+.sprint_time_summary__table th {
+    border-bottom: 1px solid $color-6;
+    padding: 3px;
+}
+
+.sprint_time_summary__table__header {
+    background-color: $panel-focus-header-background-color;
+}

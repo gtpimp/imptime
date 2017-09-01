@@ -2,6 +2,7 @@ import React, {Component} from 'react'
 import {connect} from 'react-redux'
 import map from 'lodash/map'
 import {ensureProjectsLoaded, getProject} from '../actions/Projects'
+import ProgressBar from './ProgressBar'
 import {ensureSprintsLoaded, getSprint} from '../actions/Sprints'
 import {ensureTimeSummaryLoaded, getTimeSummary} from '../actions/TimeSummary'
 import OtherUser from '../components/OtherUser'
@@ -40,37 +41,43 @@ class SprintTimeSummary extends Component {
     refresh() {
     }
 
-    renderSummaryForDeveloper(developers, user_id) {
-        const { has_budget } = this.props
+    renderSummaryForDevelopers(developers) {
+        const { time_summary } = this.props
         return (
 
             <table className="sprint_time_summary__table">
-              <thead>
-                <th>
-                  Developer
-                </th>
-                <th>
-                  Dev hours used
-                </th>
-                <th>
-                  Dev hours remaining (assuming only 1 developer)
-                </th>
-                <th>
-                  Tester hours remaining (assuming only 1 developer)
-                </th>
-                <th>
-                  Manager hours remaining (assuming only 1 developer)
-                </th>
-                <th>
-                  Budget progress
-                </th>
+              <thead className="sprint_time_summary__table__header">
+                <tr>
+                  <th>
+                    Developer
+                  </th>
+                  <th>
+                    Dev hours used
+                  </th>
+                  <th>
+                    Dev hours remaining (assuming only 1 developer)
+                  </th>
+                  <th>
+                    Tester hours remaining (assuming only 1 developer)
+                  </th>
+                  <th>
+                    Manager hours remaining (assuming only 1 developer)
+                  </th>
+                  <th>
+                    Budget progress<br/>
+                    <ProgressBar current={ time_summary.budget_ratio } max={ 1.0 } />
+                  </th>
+                </tr>
               </thead>
               <tbody>
-                {map(per_user, (developer, developer_id) =>
-                    <tr>
+                {map(developers, (developer, developer_id) =>
+                    <tr key={developer_id}>
                       <th>
                         <OtherUser value={developer_id} />
                       </th>
+                      <td>
+                        <Hours value={developer.dev_hours_used}/>
+                      </td>
                       <td>
                         <Hours value={developer.dev_hours_available}/>
                       </td>
@@ -80,34 +87,10 @@ class SprintTimeSummary extends Component {
                       <td>
                         <Hours value={developer.manager_hours_available}/>
                       </td>
-                      <td>
-                        { has_budget &&
-                          <p>Percentage Over Budget: {developer.percentage_over_budget}</p>
-                        }
-                      </td>
                     </tr>
                 )}
               </tbody>
             </table>
-            
-            <div>
-              <span>
-                <OtherUser value={user_id} />
-              </span>
-              <p>Dev Hours Used: {developer.dev_hours_used}</p>
-              { has_budget &&
-                <div>
-                  <p>Developer Hours Available: {developer.dev_hours_available}</p>
-                  <p>Tester Hours Available: {developer.tester_hours_available}</p>
-                  <p>Manager Hours Available: {developer.manager_hours_available}</p>
-                  <div>
-                    { has_budget &&
-                      <p>Percentage Over Budget: {developer.percentage_over_budget}</p>
-                    } 
-                  </div>
-                </div>
-              }
-            </div>
         )
     }
 
@@ -116,7 +99,7 @@ class SprintTimeSummary extends Component {
         return (
             <div>
               { per_user &&
-                this.renderSummaryForDevelopers(per_user, user_id)
+                this.renderSummaryForDevelopers(per_user)
               }
             </div>
         )
@@ -129,7 +112,6 @@ function mapStateToProps(state, props) {
     const project = getProject(state, project_id) || {}
     const time_summary = getTimeSummary(state, sprint_id) || {}
     const per_user = time_summary.per_user || {}
-    const has_budget = time_summary.has_budget || null
 
     return {
         sprint_id: sprint_id,
@@ -137,8 +119,7 @@ function mapStateToProps(state, props) {
         project_id: project_id,
         project: project,
         time_summary: time_summary,
-        per_user: per_user,
-        has_budget: has_budget
+        per_user: per_user
     }
 }
 

@@ -101,8 +101,7 @@ class ProjectStatementViewSet(BaseViewSet):
             time_per_user['billable_cost'] = float(time_per_user['rate']) * float(time_per_user['total_hours'])
 
     def _get_rate(self, user_id, sprint_id):
-        rate = Rate.objects.filter(user_id=user_id, project=sprint_id).first()
-        return rate.full_rate if rate else 0
+        return Rate.full_rate_for_project(user_id=user_id, project_id=sprint_id) #sic
             
     def _get_entries(self, project, date_from_inclusive, date_to_inclusive):
         # The date filter only includes all entries ended in the time
