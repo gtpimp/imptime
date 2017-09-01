@@ -75,6 +75,10 @@ class ProjectStatement extends Component {
             filter.date_to_inclusive))
     }
 
+    download_sprint_breakdown_by_user() {
+        
+    }
+
     updateDateToInclusive(new_value) {
         const { filter, dispatch } = this.props
         dispatch(update_project_statement_filter(
@@ -109,10 +113,10 @@ class ProjectStatement extends Component {
               </div>
 
               <div className="project__statement__filter__to">
-              To:
-              <DatePicker selected={filter.date_to_inclusive}
-                          dateFormat="DD/MM/YYYY"
-                          onChange={this.updateDateToInclusive} />
+                To:
+                <DatePicker selected={filter.date_to_inclusive}
+                            dateFormat="DD/MM/YYYY"
+                            onChange={this.updateDateToInclusive} />
               </div>
 
               <div className="project__statement__filter__submit">
@@ -142,7 +146,7 @@ class ProjectStatement extends Component {
                                 </th>
                             )
                         }
-                       )
+                    )
                   }
                 </tr>
 
@@ -171,11 +175,11 @@ class ProjectStatement extends Component {
                                 </td>
                             )
                         }
-                       )
+                    )
                   }
                 </tr>
-                </thead>
-                <tbody>
+              </thead>
+              <tbody>
 
                 { map(keys(project_statement.times_by_sprint),
                       function(sprint_id) {
@@ -210,18 +214,18 @@ class ProjectStatement extends Component {
                                               </td>
                                           )
                                       }
-                                     )
+                                  )
                                 }
-                                <th className="project__statement__times_grid__sprint_total">
-                                  <CurrencyValue value={times_for_sprint.totals.total_billable_cost}/>
-                                </th>
+                                              <th className="project__statement__times_grid__sprint_total">
+                                                <CurrencyValue value={times_for_sprint.totals.total_billable_cost}/>
+                                              </th>
                               </tr>
                           )
                       }
-                     )
+                  )
                 }
-            </tbody>
-            <tfoot className="project__statement__times_grid__footer">
+              </tbody>
+              <tfoot className="project__statement__times_grid__footer">
                 <tr className="project__statement__times_grid__user_total">
                   <th>
                   </th>
@@ -247,11 +251,11 @@ class ProjectStatement extends Component {
                                 </th>
                             )
                         }
-                       )
+                    )
                   }
-                  <th className="project__statement__times_grid__grand_total">
-                    <CurrencyValue value={project_statement.grand_totals.total_billable_cost}/>
-                  </th>
+                                <th className="project__statement__times_grid__grand_total">
+                                  <CurrencyValue value={project_statement.grand_totals.total_billable_cost}/>
+                                </th>
                 </tr>
               </tfoot>
             </table>
@@ -302,7 +306,7 @@ class ProjectStatement extends Component {
                               </tr>
                           )
                       }
-                     )
+                  )
                 }
               </tbody>
             </table>
@@ -347,7 +351,7 @@ class ProjectStatement extends Component {
                                   <SprintLink sprint_id={issue_info.sprint_id}
                                               sprint_name={sprint_infos[issue_info.sprint_id].sprint_name}
                                               project_id={sprint_infos[issue_info.sprint_id].project_id}
-                                              />
+                                  />
                                 </td>
                                 <td>
                                   <IssueLink issue_id={issue_info.id}
@@ -361,7 +365,7 @@ class ProjectStatement extends Component {
                               </tr>
                           )
                       }
-                     )
+                  )
                 }
               </tbody>
             </table>
@@ -396,24 +400,31 @@ class ProjectStatement extends Component {
 
                     <div className="project__statement__separator" />
                     <div className="project__statement__budgets_grid">
-                        <h2 className="project__statement__times_grid__header">Sprint budgets (for sprints worked on in the selected period)</h2>
-                        { project_statement.grand_totals && this.render_sprint_budgets(project_statement) }
+                      <h2 className="project__statement__times_grid__header">Sprint budgets (for sprints worked on in the selected period)
+                        <div className="project__statement__grid_icon icon--download_as_csv" onClick={this.download_sprint_budgets} />
+                      </h2>
+                      { project_statement.grand_totals && this.render_sprint_budgets(project_statement) }
                     </div>
 
                     <div className="project__statement__separator" />
                     <div className="project__statement__times_grid">
-                        <h2 className="project__statement__times_grid__header">Sprint breakdown by user (during selected period)</h2>
-                        { project_statement.grand_totals && this.render_sprint_totals(project_statement) }
+                      <h2 className="project__statement__times_grid__header">Sprint breakdown by user (during selected period)
+                        <div className="project__statement__grid_icon icon--download_as_csv" onClick={this.download_sprint_breakdown_by_user} />
+                      </h2>
+                      { project_statement.grand_totals && this.render_sprint_totals(project_statement) }
                     </div>
 
                     <div className="project__statement__separator" />
                     <div className="project__statement__remaining_grid">
-                        <h2 className="project__statement__remaining_grid__header">Remaining time (for sprints worked on in the selected period)</h2>
-                        { project_statement.grand_totals && this.render_remaining_budgets(project_statement) }
+                      <h2 className="project__statement__remaining_grid__header">Remaining time (for sprints worked on in the selected period)
+                      </h2>
+                      { project_statement.grand_totals && this.render_remaining_budgets(project_statement) }
                     </div>
 
                     <div className="project__statement__issues_grid">
-                        <h2 className="project__statement__times_grid__header">Issues worked on (during selected period)</h2>
+                      <h2 className="project__statement__times_grid__header">Issues worked on (during selected period)
+                        <div className="project__statement__grid_icon icon--download_as_csv" onClick={this.download_issues_worked_on} />
+                      </h2>
                         { project_statement.grand_totals && this.render_issues_worked_on(project_statement) }
                     </div>
 
