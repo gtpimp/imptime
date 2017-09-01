@@ -74,7 +74,6 @@ function fetchProjectStatement(project_id, filter) {
     }
 }
 
-
 export function getProjectStatement(state, project_id) {
     project_id = parseInt(project_id)
     return ((state.project_statement || {}).items_by_project_id || {})[project_id] || null

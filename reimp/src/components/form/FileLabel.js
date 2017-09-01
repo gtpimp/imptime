@@ -48,8 +48,8 @@ function mapStateToProps(state, props) {
 
     const { value } = props
     const filename = (value && value.name) || "<none>"
-    const download_url = value && value.download_url
-    const preview_url = value && value.preview_url
+    const download_url = value && value.react_download_url
+    const preview_url = value && value.react_preview_url
     const exists = value && value.name
     
     return {

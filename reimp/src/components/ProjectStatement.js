@@ -5,6 +5,7 @@ import { map, keys } from 'lodash'
 import OtherUser from './OtherUser'
 import SprintName from './SprintName'
 import CurrencyValue from './CurrencyValue'
+import ProgressBar from './ProgressBar'
 import Timestamp from './Timestamp'
 import Hours from './Hours'
 import {
@@ -124,7 +125,7 @@ class ProjectStatement extends Component {
 
     render_sprint_totals(project_statement) {
         return (
-            <table className="project__statement__times_grid">
+            <table className="project__statement__times_grid__table">
               <thead className="project__statement__times_grid__header">
                 <tr>
                   <th>
@@ -213,7 +214,9 @@ class ProjectStatement extends Component {
                       }
                      )
                 }
-                <tr className="project__statement__timed_grid__user_total">
+            </tbody>
+            <tfoot className="project__statement__times_grid__footer">
+                <tr className="project__statement__times_grid__user_total">
                   <th>
                   </th>
                   { map(project_statement.users_with_time,
@@ -244,6 +247,52 @@ class ProjectStatement extends Component {
                     <CurrencyValue value={project_statement.grand_totals.total_billable_cost}/>
                   </th>
                 </tr>
+              </tfoot>
+            </table>
+        )
+    }
+
+    render_sprint_budgets(project_statement) {
+        return (
+            <table className="project__statement__budgets_grid__table">
+              <thead className="project__statement__budgets_grid__header">
+                <th></th>
+                <th>Total budget</th>
+                <th>Total spendable budget</th>
+                <th>Spent budget</th>
+                <th>Remaining budget</th>
+                <th>Progress</th>
+              </thead>
+              <tbody>
+                { map(keys(project_statement.times_by_sprint),
+                      function(sprint_id) {
+                          const times_for_sprint = project_statement.times_by_sprint[sprint_id]
+                          return (
+                              <tr key={sprint_id}>
+                                <th>
+                                  <SprintName sprint_id={sprint_id} />
+                                </th>
+                                <td>
+                                  <CurrencyValue value={ times_for_sprint.totals.budget }/>
+                                </td>
+                                <td>
+                                  <CurrencyValue value={ times_for_sprint.totals.spendable_budget } />
+                                </td>
+                                <td>
+                                  <CurrencyValue value={ times_for_sprint.totals.total_billable_cost } />
+                                </td>
+                                <td>
+                                  <CurrencyValue value={ times_for_sprint.totals.remaining_budget } />
+                                </td>
+                                <td>
+                                  <ProgressBar current={ times_for_sprint.totals.total_billable_cost }
+                                               max={ times_for_sprint.totals.spendable_budget } />
+                                </td>
+                              </tr>
+                          )
+                      }
+                     )
+                }
               </tbody>
             </table>
         )
@@ -255,7 +304,7 @@ class ProjectStatement extends Component {
         const that = this;
 
         return (
-            <div>
+            <div className="project__statement">
               { is_loading &&
                 <div>
                   <br/>
@@ -266,7 +315,7 @@ class ProjectStatement extends Component {
                 { that.render_filter() }
                 
                 { ! is_loading &&
-                  <div>
+                  <div className="project__statement__table_container">
                     <h3 className="project__statement__date_range">
                       <div className="project__statement__date_range__element">Statement from</div>
                       <div className="project__statement__date_range__element"><Timestamp value={project_statement.date_from_inclusive}/></div>
@@ -275,10 +324,16 @@ class ProjectStatement extends Component {
                       <div className="project__statement__date_range__element">(inclusive)</div>
                     </h3>
 
-                    <div className="project__statement__times_grid">
-                        { project_statement.grand_totals && this.render_sprint_totals(project_statement) }
+                    <div className="project__statement__budgets_grid">
+                        <h2 className="project__statement__times_grid__header">Sprint budgets</h2>
+                        { project_statement.grand_totals && this.render_sprint_budgets(project_statement) }
                     </div>
                     
+                    <div className="project__statement__times_grid">
+                        <h2 className="project__statement__times_grid__header">Sprint breakdown by user</h2>
+                        { project_statement.grand_totals && this.render_sprint_totals(project_statement) }
+                    </div>
+
                   </div>
                 }
             </div>
@@ -293,11 +348,20 @@ function mapStateToProps(state, props) {
     const is_loading = isLoadingProjectStatement(state, project_id)
     const filter = get_project_statement_filter(state)
 
+    const num_days_before_month_become_interesting = 7
     if ( ! filter.date_from_inclusive ) {
-        filter.date_from_inclusive = moment().startOf('month');
+        if ( moment().date() < num_days_before_month_become_interesting ) {
+            filter.date_from_inclusive = moment().subtract(1, 'months').startOf('month');
+        } else {
+            filter.date_from_inclusive = moment().startOf('month');
+        }
     }
     if ( ! filter.date_to_inclusive ) {
-        filter.date_to_inclusive = moment().endOf('month');
+        if ( moment().date() < num_days_before_month_become_interesting ) {
+            filter.date_to_inclusive = moment().subtract(1, 'months').endOf('month');
+        } else {
+            filter.date_to_inclusive = moment().endOf('month');
+        }
     }
 
     return {

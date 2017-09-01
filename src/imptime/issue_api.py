@@ -76,8 +76,8 @@ class IssueViewSet(BaseViewSet):
 
                     for issue in issues:
                         for attachment in issue.attachments.all():
-                            attachment.download_url = IssueAttachmentSerializer.get_download_url(request, attachment)
-                            attachment.preview_url = IssueAttachmentSerializer.get_preview_url(request, attachment)
+                            attachment.react_download_url = IssueAttachmentSerializer.get_download_url(request, attachment)
+                            attachment.react_preview_url = IssueAttachmentSerializer.get_preview_url(request, attachment)
 
                     s = IssueSerializer(issues, many=True)
 

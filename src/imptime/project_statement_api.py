@@ -9,6 +9,7 @@ import json
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.decorators import permission_classes
 from timepiece.models import Business as Project
+from timepiece.models import Project as Sprint
 from timepiece.models import BusinessPermissions, Entry, Rate
 
 logger = logging.getLogger(__name__)
@@ -46,6 +47,7 @@ class ProjectStatementViewSet(BaseViewSet):
                                   "times_by_sprint": times_by_sprint,
                                   "times_by_user": times_by_user }
             self._enrich_totals(project_statement)
+            self._enrich_with_sprint_budgets(times_by_sprint)
             
             context['project_statement'] = project_statement
             data = {'status': 'success', 'payload': context}
@@ -138,5 +140,12 @@ class ProjectStatementViewSet(BaseViewSet):
                     del sprint_times['users'][user_id]
         return users_with_time
                     
+    def _enrich_with_sprint_budgets(self, times_by_sprint):
+        sprint_budgets = {}
+        sprints = Sprint.objects.filter(pk__in=times_by_sprint.keys())
+        for sprint in sprints:
+            times_by_sprint[sprint.id]['totals']['spendable_budget'] = sprint.spendable_budget
+            times_by_sprint[sprint.id]['totals']['budget'] = sprint.budget
+            times_by_sprint[sprint.id]['totals']['remaining_budget'] = sprint.spendable_budget - times_by_sprint[sprint.id]['totals']['total_billable_cost']
             
         

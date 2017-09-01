@@ -3,9 +3,15 @@ import { connect } from 'react-redux'
 import {
     ensureSprintsLoaded, getSprint
 } from '../actions/Sprints'
+import {browserHistory} from 'react-router'
 
 class SprintName extends Component {
 
+    constructor(props) {
+        super(props)
+        this.on_clicked = this.on_clicked.bind(this)
+    }
+    
     componentDidMount() {
         this.refresh(this.props)
     }
@@ -21,16 +27,26 @@ class SprintName extends Component {
 	}
     }
 
+    on_clicked() {
+        const { sprint, onClick, open_on_click } = this.props
+        if ( onClick ) {
+            onClick(sprint.id)
+        } else if ( open_on_click ) {
+            browserHistory.push('/projects/' + sprint.project_id + '/sprints/' + sprint.id);
+        }
+    }
+    
     render_inline_small() {
-	      const { sprint, loading_value, onClick } = this.props
+	const { sprint, loading_value } = this.props
 
-	      return (
-	          <div key={this.key+".collapsed_sprint."+sprint.id}
-		             onClick={onClick}
-	          >
-		          {sprint.name }
-	          </div>
-	      )
+	return (
+	    <div className="sprint_name--inline-small"
+                 key={this.key+".collapsed_sprint."+sprint.id}
+		 onClick={this.on_clicked}
+	         >
+	      {sprint.name }
+	    </div>
+	)
     }
 
     render() {
@@ -60,7 +76,9 @@ function mapStateToProps(state, props) {
 	sprint: sprint,
         sprint_id: sprint_id,
 	render_mode: render_mode || "inline--small",
-	loading_value: loading_value || "..."
+	loading_value: loading_value || "...",
+        onClick: props.onClick,
+        open_on_click: props.open_on_click || true
     }
 }
 

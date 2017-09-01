@@ -1,19 +1,22 @@
 @import 'variables.scss';
 
 .sprint {
-  border: 1px solid $color-12;
-  box-sizing: border-box;
-  background-color: $color-8;
+    border: 1px solid $color-12;
+    box-sizing: border-box;
+    background-color: $color-8;
 }
 
 .sprint--unselected {
-  background-color: $color-2;
+    background-color: $color-2;
 }
 
 .sprint--selected {
-  background-color: $color-3 !important;
+    background-color: $color-3 !important;
 }
 
 .table--sprint-list {
 }
 
+.sprint_name--inline-small {
+    cursor: pointer;
+}

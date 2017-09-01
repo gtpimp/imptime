@@ -1,5 +1,21 @@
 @import 'variables.scss';
 
+.project__statement {
+    display: flex;
+    flex-align: center;
+    flex-direction: column;
+}
+
+.project__statement__times_grid__header {
+    width: 100%;
+    text-align: center;
+    border-top: 1px solid $color-25;
+    padding: 5px;
+    margin-bottom: 0px;
+}
+
+.project__statement__table_container {
+}
 
 .project__statement__filter {
     font: $settings-font-4;
@@ -24,9 +40,14 @@
 }
 
 .project__statement__times_grid {
-    width: 100%;
     font: $settings-font-4;
     clear: both;
+    width: 100%;
+    margin-top: 50px;
+}
+
+.project__statement__times_grid__table {
+    width: 100%;
 }
 
 .project__statement__times_grid__header {
@@ -35,7 +56,6 @@
 
 .project__statement__times_grid td {
     border-bottom: 1px solid $color-6;
-    padding: 3px;
 }
 
 .project__statement__times_grid th {
@@ -77,4 +97,33 @@ th.project__statement__times_grid__inner_cell {
     float: left;
     padding: 5px;
     font: $settings-font-3;
+}
+
+.project__statement__budgets_grid {
+    margin-top: 50px;
+    font: $settings-font-4;
+    clear: both;
+    width: 100%;
+    margin-top: 50px;
+}
+
+.project__statement__budgets_grid__table {
+    width: 100%;
+}
+
+.project__statement__budgets_grid__header {
+    background-color: $panel-focus-header-background-color;
+}
+
+.project__statement__times_grid__footer {
+    background-color: $panel-focus-header-background-color;
+}
+
+.project__statement__budgets_grid td {
+    border-bottom: 1px solid $color-6;
+}
+
+.project__statement__budgets_grid th {
+    border-bottom: 1px solid $color-6;
+    padding: 3px;
 }
