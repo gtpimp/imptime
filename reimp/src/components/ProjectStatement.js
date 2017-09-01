@@ -5,6 +5,7 @@ import { map, keys } from 'lodash'
 import OtherUser from './OtherUser'
 import SprintName from './SprintName'
 import CurrencyValue from './CurrencyValue'
+import UserRate from './UserRate'
 import ProgressBar from './ProgressBar'
 import Timestamp from './Timestamp'
 import Hours from './Hours'
@@ -193,7 +194,7 @@ class ProjectStatement extends Component {
                                                         <Hours hours={time_for_user.total_hours}/>
                                                       </td>
                                                       <td className="project__statement__times_grid__inner_cell project__statement__times_grid__rate_cell">
-                                                        <CurrencyValue value={time_for_user.rate}/>
+                                                        <UserRate value={time_for_user.rate}/>
                                                       </td>
                                                       <td className="project__statement__times_grid__inner_cell">
                                                         <CurrencyValue value={time_for_user.billable_cost}/>
@@ -273,20 +274,20 @@ class ProjectStatement extends Component {
                                   <SprintName sprint_id={sprint_id} />
                                 </th>
                                 <td>
-                                  <CurrencyValue value={ times_for_sprint.totals.budget }/>
+                                  <CurrencyValue value={ times_for_sprint.totals_across_time.budget }/>
                                 </td>
                                 <td>
-                                  <CurrencyValue value={ times_for_sprint.totals.spendable_budget } />
+                                  <CurrencyValue value={ times_for_sprint.totals_across_time.spendable_budget } />
                                 </td>
                                 <td>
-                                  <CurrencyValue value={ times_for_sprint.totals.total_billable_cost } />
+                                  <CurrencyValue value={ times_for_sprint.totals_across_time.total_billable_cost } />
                                 </td>
                                 <td>
-                                  <CurrencyValue value={ times_for_sprint.totals.remaining_budget } />
+                                  <CurrencyValue value={ times_for_sprint.totals_across_time.remaining_budget } />
                                 </td>
-                                <td>
-                                  <ProgressBar current={ times_for_sprint.totals.total_billable_cost }
-                                               max={ times_for_sprint.totals.spendable_budget } />
+                                <td className="project__statement__budgets_grid__progress_bar">
+                                  <ProgressBar current={ times_for_sprint.totals_across_time.total_billable_cost }
+                                               max={ times_for_sprint.totals_across_time.spendable_budget } />
                                 </td>
                               </tr>
                           )
@@ -325,12 +326,12 @@ class ProjectStatement extends Component {
                     </h3>
 
                     <div className="project__statement__budgets_grid">
-                        <h2 className="project__statement__times_grid__header">Sprint budgets</h2>
+                        <h2 className="project__statement__times_grid__header">Sprint budgets (for all periods)</h2>
                         { project_statement.grand_totals && this.render_sprint_budgets(project_statement) }
                     </div>
                     
                     <div className="project__statement__times_grid">
-                        <h2 className="project__statement__times_grid__header">Sprint breakdown by user</h2>
+                        <h2 className="project__statement__times_grid__header">Sprint breakdown by user (for selected period)</h2>
                         { project_statement.grand_totals && this.render_sprint_totals(project_statement) }
                     </div>
 

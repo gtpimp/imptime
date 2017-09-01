@@ -97,7 +97,7 @@ function mapStateToProps(state, props) {
         project: project,
         time_summary: time_summary,
         per_user: per_user,
-        has_budget: has_budget,
+        has_budget: has_budget
     }
 }
 

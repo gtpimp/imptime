@@ -47,7 +47,7 @@ class ProjectStatementViewSet(BaseViewSet):
                                   "times_by_sprint": times_by_sprint,
                                   "times_by_user": times_by_user }
             self._enrich_totals(project_statement)
-            self._enrich_with_sprint_budgets(times_by_sprint)
+            self._enrich_with_sprint_budgets_across_time(times_by_sprint)
             
             context['project_statement'] = project_statement
             data = {'status': 'success', 'payload': context}
@@ -140,12 +140,18 @@ class ProjectStatementViewSet(BaseViewSet):
                     del sprint_times['users'][user_id]
         return users_with_time
                     
-    def _enrich_with_sprint_budgets(self, times_by_sprint):
+    def _enrich_with_sprint_budgets_across_time(self, times_by_sprint):
         sprint_budgets = {}
         sprints = Sprint.objects.filter(pk__in=times_by_sprint.keys())
         for sprint in sprints:
-            times_by_sprint[sprint.id]['totals']['spendable_budget'] = sprint.spendable_budget
-            times_by_sprint[sprint.id]['totals']['budget'] = sprint.budget
-            times_by_sprint[sprint.id]['totals']['remaining_budget'] = sprint.spendable_budget - times_by_sprint[sprint.id]['totals']['total_billable_cost']
-            
-        
+            all_entries = Entry.objects.all().filter(issue__project=sprint) #sic
+            all_entries = all_entries.order_by("issue__project__order", "user_id")\
+                                     .values('issue__project_id', 'user_id')\
+                                     .annotate(total_hours=Sum('hours'))
+            spent = sum([float(x['total_hours']) * self._get_rate(x['user_id'],
+                                                                  x['issue__project_id']) for x in all_entries])
+            remaining_budget = sprint.spendable_budget - spent
+            times_by_sprint[sprint.id]['totals_across_time'] = { 'spendable_budget': sprint.spendable_budget,
+                                                                 'budget': sprint.budget,
+                                                                 'total_billable_cost': spent,
+                                                                 'remaining_budget': remaining_budget }

@@ -1,0 +1,10 @@
+@import 'variables.scss';
+
+.user_rate {
+    float: right;
+    margin-left: 3px;
+}
+
+.user_rate--empty {
+    color: $warning-color;
+}
