@@ -76,30 +76,6 @@ class SprintTimeSummary extends Component {
               <tbody>
                 {map(developers, (developer, developer_id) =>
                     <tr key={developer_id}>
-                      <th>
-                        <OtherUser value={developer_id} />
-                      </th>
-                      <td>
-                        <UserRate value={developer.dev_rate} />
-                      </td>
-                      <td>
-                        <Hours hours={developer.dev_hours_used}/>
-                      </td>
-                      <td>
-                        <Hours hours={developer.dev_hours_available}/>
-                      </td>
-                      <td>
-                        <Hours hours={developer.tester_hours_available}/>
-                      </td>
-                      <td>
-                        <Hours hours={developer.manager_hours_available}/>
-                      </td>
-                    </tr>
-                )}
-              </tbody>
-            </table>
-        )
-    }
 
     render() {
         const { sprint, project, per_user } = this.props

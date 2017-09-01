@@ -412,7 +412,6 @@ class ProjectStatement extends Component {
                         { project_statement.grand_totals && this.render_remaining_budgets(project_statement) }
                     </div>
 
-                    <div className="project__statement__separator" />
                     <div className="project__statement__issues_grid">
                         <h2 className="project__statement__times_grid__header">Issues worked on (during selected period)</h2>
                         { project_statement.grand_totals && this.render_issues_worked_on(project_statement) }

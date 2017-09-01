@@ -60,8 +60,6 @@ class TimeSummaryViewSet(BaseViewSet):
                 time_summary["per_user"][sprint_developer.id] = values
 
             time_summary['all_user_ids'] = [x.id for x in sprint_users]
-            time_summary['budget_ratio'] = budget_ratio
-
             context["time_summary"] = time_summary
             data = {"status": "success", "payload": context}
 
