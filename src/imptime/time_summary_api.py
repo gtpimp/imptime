@@ -38,12 +38,12 @@ class TimeSummaryViewSet(BaseViewSet):
                                      .values_list('user', flat=True)
 
             sprint_users = sprint.business.get_users_allowed_to_estimate_on_business(request.user)
-            sprint_developers = User.objects.filter(pk__in=[x.id for x in sprint_users]).filter(pk__in=developers)
-            # users = BusinessPermissions.active_users_for_business(sprint.business.pk)\
-            #                            .filter(pk__in=developers)
-
+            active_sprint_users = all_entries.order_by('user_id').distinct().values('user_id')
+            sprint_developers = User.objects.filter(pk__in=[x.id for x in sprint_users])\
+                                            .filter(pk__in=active_sprint_users)\
+                                            .filter(pk__in=developers)
             budget_ratio = total_billable / (sprint.spendable_budget or 1)
-            
+
             for sprint_developer in sprint_developers:
                 dev_stats = self.calculate_dev_hours_stats(sprint, sprint_developer)
                 dev_hours_available, tester_hours_available, manager_hours_available, dev_hours_used, ratio, manager_rate, developer_rate, tester_rate = dev_stats
@@ -51,7 +51,10 @@ class TimeSummaryViewSet(BaseViewSet):
                     "dev_hours_used": round(dev_hours_used, 2),
                     "dev_hours_available": round(dev_hours_available, 2),
                     "tester_hours_available": round(tester_hours_available, 2),
-                    "manager_hours_available": round(manager_hours_available, 2)
+                    "manager_hours_available": round(manager_hours_available, 2),
+                    "dev_rate": developer_rate,
+                    "avg_tester_rate": tester_rate,
+                    "avg_manager_rate": manager_rate
                 }
                 
                 time_summary["per_user"][sprint_developer.id] = values
@@ -74,7 +77,7 @@ class TimeSummaryViewSet(BaseViewSet):
         spendable_budget = sprint.spendable_budget
 
         manager_rate = stats["per_role"]["manager"]["average_billable_rate"]
-        developer_rate = stats["per_role"]["developer"]["average_billable_rate"]
+        developer_rate = stats["per_user"][user]["rate"].full_rate
         tester_rate = stats["per_role"]["tester"]["average_billable_rate"]
 
         try:

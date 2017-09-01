@@ -1,8 +1,9 @@
 import React, {Component} from 'react'
 import {connect} from 'react-redux'
+import UserRate from './UserRate'
 import map from 'lodash/map'
 import {ensureProjectsLoaded, getProject} from '../actions/Projects'
-import ProgressBar from './ProgressBar'
+import ProgressBar from './ProgressBar' 
 import {ensureSprintsLoaded, getSprint} from '../actions/Sprints'
 import {ensureTimeSummaryLoaded, getTimeSummary} from '../actions/TimeSummary'
 import OtherUser from '../components/OtherUser'
@@ -51,6 +52,9 @@ class SprintTimeSummary extends Component {
                   <th>
                     Developer
                   </th>
+                  <th> 
+                    Rate
+                  </th>
                   <th>
                     Dev hours used
                   </th>
@@ -76,16 +80,19 @@ class SprintTimeSummary extends Component {
                         <OtherUser value={developer_id} />
                       </th>
                       <td>
-                        <Hours value={developer.dev_hours_used}/>
+                        <UserRate value={developer.dev_rate} />
                       </td>
                       <td>
-                        <Hours value={developer.dev_hours_available}/>
+                        <Hours hours={developer.dev_hours_used}/>
                       </td>
                       <td>
-                        <Hours value={developer.tester_hours_available}/>
+                        <Hours hours={developer.dev_hours_available}/>
                       </td>
                       <td>
-                        <Hours value={developer.manager_hours_available}/>
+                        <Hours hours={developer.tester_hours_available}/>
+                      </td>
+                      <td>
+                        <Hours hours={developer.manager_hours_available}/>
                       </td>
                     </tr>
                 )}
