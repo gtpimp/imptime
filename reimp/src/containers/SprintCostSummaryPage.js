@@ -44,6 +44,7 @@ class SprintCostSummaryPage extends Component {
         dispatch(set_toolbars(PAGE_KEY__SPRINTS_PAGE, ['cost-summary']))
         dispatch(ensureProjectsLoaded([project_id]))
         dispatch(ensureSprintsLoaded([sprint_id]))
+        dispatch(invalidateProjectStatement(sprint.project_id))
         this.refresh(sprint, project)
     }
 
@@ -107,10 +108,6 @@ class SprintCostSummaryPage extends Component {
                               Sprint breakdown by user
                               <div className="project__statement__grid_icon icon--download_as_csv" onClick={this.download_sprint_breakdown_by_user} />
                             </h2>
-                            <div>
-                              (from <Timestamp value={project_statement.date_from_inclusive}/> to
-                              <Timestamp value={project_statement.date_to_inclusive}/>)
-                            </div>
                             <SprintBreakdown project_statement={project_statement} />
                           </div>
                       )

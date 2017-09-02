@@ -36,7 +36,8 @@ export default function project_statement(state = initialState, action) {
             state_copy = Object.assign({}, state, {
 		loading_project_ids: Object.assign({},
 						   difference(state.loading_project_ids || [],
-							      [action.project_id]))
+							      [action.project_id])),
+                items_by_project_id: Object.assign({}, state.items_by_project_id)
 	    })
             action.project_statement.received_at = action.received_at
             state_copy.items_by_project_id[action.project_id] = Object.assign({}, action.project_statement)

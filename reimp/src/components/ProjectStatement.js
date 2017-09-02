@@ -57,6 +57,7 @@ class ProjectStatement extends Component {
         if ( project_id ) {
             dispatch(ensureProjectsLoaded([project_id]))
             dispatch(ensureProjectStatementLoaded([project_id], filter))
+            dispatch(invalidateProjectStatement(project_id))
         }
         this.refresh(project, project_statement)
     }
