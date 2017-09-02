@@ -51,11 +51,11 @@ class ProjectStatement extends Component {
     }
 
     componentDidMount() {
-        const { project_id, project, dispatch, project_statement } = this.props
+        const { project_id, project, dispatch, project_statement, filter } = this.props
         dispatch(set_toolbars(PAGE_KEY__SPRINTS_PAGE, ['project-statement']))
         if ( project_id ) {
             dispatch(ensureProjectsLoaded([project_id]))
-            dispatch(ensureProjectStatementLoaded([project_id]))
+            dispatch(ensureProjectStatementLoaded([project_id], filter))
         }
         this.refresh(project, project_statement)
     }
@@ -478,7 +478,7 @@ function mapStateToProps(state, props) {
             filter.date_to_inclusive = moment().endOf('month');
         }
     }
-
+    
     return {
         project_id: project_id,
         project: project,
