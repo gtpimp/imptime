@@ -3438,8 +3438,8 @@ class Salary(models.Model):
 class Rate(models.Model):
     TIME_TRACKING_MODES = [ ('developer', 'Developer'), ('manager', 'Manager'), ('tester', 'Tester') ]
     project = models.ForeignKey(Project, related_name="rate")
-    user = models.ForeignKey(User)
-    amount = models.DecimalField(max_digits=12, decimal_places=2, default=0)
+    user = models.ForeignKey(User, related_name="rates")
+    amount = models.DecimalField(max_digits=12, decimal_places=2, default=0) #ctc
     billable_amount = models.DecimalField(max_digits=12, decimal_places=2, default=0)
     velocity = models.FloatField(default=1)
     work_ratio = models.FloatField(default=0)

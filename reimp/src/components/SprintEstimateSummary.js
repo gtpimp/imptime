@@ -61,12 +61,20 @@ class SprintEstimateSummary extends Component {
             <table className="sprint_estimate__comparative_summary__table">
               <thead className="sprint_estimate__comparative_summary_grid_header">
                 <th>User</th>
-                <th>Type</th>
-                <th>Hours (by developer)</th>
+                <th>Hours (as estimated)</th>
                 <th>Velocity</th>
                 <th>Hours (with velocity)</th>
-                <th>Rate</th>
-                <th>Cost</th>
+                <th>Developer Rate</th>
+                <th>Developer Cost</th>
+                <th>Tester estimates</th>
+                <th>Tester rate</th>
+                <th>Tester cost</th>
+                <th>Manager estimates</th>
+                <th>Manager rate</th>
+                <th>Manager cost</th>
+                <th>Working cost</th>
+                <th>Ratio scope creep</th>
+                <th>Total cost</th>
               </thead>
               <tbody>
                 { map(keys(comparative_estimates),
@@ -75,12 +83,20 @@ class SprintEstimateSummary extends Component {
                           return (
                               <tr>
                                 <td><OtherUser value={user_id}/></td>
-                                <td>{estimates.time_tracking_mode}</td>
-                                <td><Hours hours={estimates.original_hours}/></td>
-                                <td>{estimates.velocity}</td>
-                                <td><Hours hours={estimates.velocity_adjusted_hours}/></td>
-                                <td><CurrencyValue value={estimates.rate}/></td>
-                                <td><CurrencyValue value={estimates.cost}/></td>
+                                <td><Hours hours={estimates.developer_original_hours}/></td>
+                                <td>{estimates.developer_velocity}</td>
+                                <td><Hours hours={estimates.developer_adjusted_hours}/></td>
+                                <td><UserRate value={estimates.developer_rate_with_commission}/></td>
+                                <td><CurrencyValue value={estimates.developer_cost}/></td>
+                                <td><Hours hours={estimates.tester_adjusted_hours}/></td>
+                                <td><UserRate value={estimates.tester_rate_with_commission}/></td>
+                                <td><CurrencyValue value={estimates.tester_cost}/></td>
+                                <td><Hours hours={estimates.manager_adjusted_hours}/></td>
+                                <td><UserRate value={estimates.manager_rate_with_commission}/></td>
+                                <td><CurrencyValue value={estimates.manager_cost}/></td>
+                                <th><CurrencyValue value={estimates.working_cost}/></th>
+                                <td>{estimates.ratio_scope_creep}</td>
+                                <th><CurrencyValue value={estimates.total_cost}/></th>
                               </tr>
                           )
                       }

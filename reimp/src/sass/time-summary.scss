@@ -1,13 +1,21 @@
 @import 'variables.scss';
 
 .time-summary {
-    width: 50%;
-    float: left;
+}
+
+.sprint_time_summary {
+    font: $settings-font-4;
+}
+
+.sprint_time_summary__header {
+    text-align: center;
+    border-top: 1px solid $color-25;
+    padding: 5px;
+    margin-bottom: 0px;
 }
 
 .sprint_time_summary__table {
     width: 100%;
-    font: $settings-font-4;
 }
 
 .sprint_time_summary__table td {

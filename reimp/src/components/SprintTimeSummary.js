@@ -106,7 +106,14 @@ class SprintTimeSummary extends Component {
         return (
             <div>
               { per_user &&
-                this.renderSummaryForDevelopers(per_user)
+                (
+                    <div className="sprint_time_summary">
+                      <h2 className="sprint_time_summary__header">
+                        Time remaining (as if each person worked on all remaining issues themselves)
+                      </h2>
+                      {this.renderSummaryForDevelopers(per_user)}
+                    </div>
+                )
               }
             </div>
         )
