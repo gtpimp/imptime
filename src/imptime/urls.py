@@ -1,18 +1,19 @@
 from django.conf.urls import include, url
 import auth_api
-import filter_api
-import project_api
-import project_user_permission_api
-import project_statement_api
-import sprint_api
 import cost_summary_api
-import time_summary_api
+import estimate_summary_api
+import filter_api
 import issue_api
 import issue_attachment_api
-import issue_tag_api
-import issue_estimate_api
 import issue_clock_api
 import issue_comment_api
+import issue_estimate_api
+import issue_tag_api
+import project_api
+import project_statement_api
+import project_user_permission_api
+import sprint_api
+import time_summary_api
 import user_api
 import views
 from rest_framework.routers import DefaultRouter
@@ -50,6 +51,8 @@ router.register(r'cost_summary', cost_summary_api.CostSummaryViewSet,
                 base_name='cost_summary')
 router.register(r'time_summary', time_summary_api.TimeSummaryViewSet,
                 base_name='time_summary')
+router.register(r'estimate_summary', estimate_summary_api.EstimateSummaryViewSet,
+                base_name='estimate_summary')
 router.register(r'project_statement', project_statement_api.ProjectStatementViewSet,
                 base_name='project_statement')
 

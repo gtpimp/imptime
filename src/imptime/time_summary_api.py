@@ -31,7 +31,7 @@ class TimeSummaryViewSet(BaseViewSet):
                              "per_user": {} }
 
             bp = BusinessPermissions.for_user(request.user, sprint.business)
-            if not bp.has_edit_issues:
+            if not bp.has_view_ctc_billable_rates:
                 return self.error_response("No permission to view time summary")
 
             developers = Rate.objects.filter(project=sprint, time_tracking_mode="developer")\

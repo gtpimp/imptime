@@ -1,0 +1,57 @@
+@import 'variables.scss';
+
+.estimate-summary {
+    width: 100%;
+}
+
+.sprint_estimate__grid_icon {
+    float: right;
+    cursor: pointer;
+}
+
+.sprint_estimate__comparative_summary {
+    display: flex;
+    flex-align: center;
+    flex-direction: column;
+    width: 96%;
+    margin-left: 2%;
+    padding: 0px;
+    border-left: 1px solid $color-25;
+    border-right: 1px solid $color-25;
+    font: $settings-font-4;
+}
+
+.sprint_estimate__comparative_summary__header {
+    text-align: center;
+    border-top: 1px solid $color-25;
+    padding: 5px;
+    margin-bottom: 0px;
+}
+
+.sprint_estimate__comparative_summary_grid {
+    font: $settings-font-4;
+    clear: both;
+    width: 100%;
+}
+
+.sprint_estimate__comparative_summary__table {
+    width: 100%;
+}
+
+.sprint_estimate__comparative_summary__table {
+    text-align: right;
+}
+
+.sprint_estimate__comparative_summary_grid_header {
+    background-color: $color-12;
+}
+
+.sprint_estimate__comparative_summary_grid_header td {
+    border-bottom: 1px solid $color-6;
+}
+
+.sprint_estimate__comparative_summary_grid_header th {
+    border-bottom: 1px solid $color-6;
+    padding: 3px;
+}
+

@@ -20,6 +20,7 @@ import {
 } from '../actions/Page'
 import SprintCostSummary from '../components/SprintCostSummary'
 import SprintTimeSummary from '../components/SprintTimeSummary'
+import SprintEstimateSummary from '../components/SprintEstimateSummary'
 
 class SprintCostSummaryPage extends Component {
 
@@ -76,6 +77,9 @@ class SprintCostSummaryPage extends Component {
                 <div>
                   <div className="time-summary">
                     <SprintTimeSummary sprint_id={sprint_id} project_id={project_id}/>
+                  </div>
+                  <div className="estimate-summary">
+                    <SprintEstimateSummary sprint_id={sprint_id} project_id={project_id}/>
                   </div>
                   <div className="cost-summary">
                     <SprintCostSummary sprint_id={sprint_id} project_id={project_id}/>

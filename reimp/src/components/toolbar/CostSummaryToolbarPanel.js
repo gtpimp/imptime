@@ -8,6 +8,7 @@ import { getSprint } from '../../actions/Sprints'
 import { get_selected_sprint_ids } from '../../actions/Page'
 import { invalidateCostSummary } from '../../actions/CostSummary'
 import { invalidateTimeSummary } from '../../actions/TimeSummary'
+import { invalidateEstimateSummary } from '../../actions/EstimateSummary'
 
 class CostSummaryToolbarPanel extends Component {
 
@@ -20,6 +21,7 @@ class CostSummaryToolbarPanel extends Component {
         const { dispatch, sprint_id } = this.props
         dispatch(invalidateCostSummary(sprint_id))
         dispatch(invalidateTimeSummary(sprint_id))
+        dispatch(invalidateEstimateSummary(sprint_id))
     }
 
     onSettingsClick() {
