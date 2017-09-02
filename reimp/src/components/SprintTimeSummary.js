@@ -109,7 +109,7 @@ class SprintTimeSummary extends Component {
                 (
                     <div className="sprint_time_summary">
                       <h2 className="sprint_time_summary__header">
-                        Time remaining (if each developer works on all remaining issues themselves)
+                        Time remaining based on budget (if each developer works on all remaining issues themselves)
                       </h2>
                       {this.renderSummaryForDevelopers(per_user)}
                     </div>

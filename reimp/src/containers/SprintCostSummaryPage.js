@@ -84,6 +84,7 @@ class SprintCostSummaryPage extends Component {
                   <div className="estimate-summary">
                     <SprintEstimateSummary sprint_id={sprint_id} project_id={project_id}/>
                   </div>
+                  <div className="sprint_cost_summary__footer"/>
                 </div>
               }
             </div>
