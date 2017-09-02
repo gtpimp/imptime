@@ -1,4 +1,4 @@
-import { impfetch } from './lib.js'
+import { impfetch, download } from './lib.js'
 import indexOf from 'lodash/indexOf'
 import keyBy from 'lodash/keyBy'
 import includes from 'lodash/includes'
@@ -87,3 +87,11 @@ export function isLoadingEstimateSummary(state, sprint_id) {
     const loading_ids = (state.estimate_summary || {}).loading_sprint_ids || []
     return includes(loading_ids, sprint_id)
 }
+
+export function download_sprint_comparative_estimates(sprint_id) {
+    return (dispatch, getState) => {
+        const state = getState()
+        const url = 'imp/estimate_summary/'+sprint_id+'/download_comparative_summary/'
+        return download(state, url)
+    }
+}    

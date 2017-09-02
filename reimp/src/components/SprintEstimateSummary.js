@@ -5,7 +5,10 @@ import { map, keys } from 'lodash'
 import {ensureProjectsLoaded, getProject} from '../actions/Projects'
 import ProgressBar from './ProgressBar' 
 import {ensureSprintsLoaded, getSprint} from '../actions/Sprints'
-import {ensureEstimateSummaryLoaded, getEstimateSummary} from '../actions/EstimateSummary'
+import {ensureEstimateSummaryLoaded,
+        getEstimateSummary,
+        download_sprint_comparative_estimates
+} from '../actions/EstimateSummary'
 import OtherUser from '../components/OtherUser'
 import { ensureUsersLoaded } from '../actions/Users'
 import CurrencyValue from '../components/CurrencyValue'
@@ -44,7 +47,9 @@ class SprintEstimateSummary extends Component {
     }
 
     download_sprint_comparative_estimates(event) {
+        const { sprint_id, dispatch } = this.props
         event.preventDefault()
+        dispatch(download_sprint_comparative_estimates(sprint_id))
     }
 
     refresh() {
