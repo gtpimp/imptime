@@ -140,3 +140,19 @@ export function download(state, url, params) {
     
     document.body.removeChild(form);
 }
+
+export function hash_flat_object(obj) {
+    // only suitable for very simple object types
+    return hash_string(JSON.stringify(obj))
+}
+
+export function hash_string(str) {
+  var hash = 0, i, chr;
+  if (str.length === 0) return hash;
+  for (i = 0; i < str.length; i++) {
+    chr   = str.charCodeAt(i);
+    hash  = ((hash << 5) - hash) + chr;
+    hash |= 0;
+  }
+  return hash;
+};

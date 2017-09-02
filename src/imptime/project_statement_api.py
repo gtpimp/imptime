@@ -2,6 +2,7 @@ import logging
 from rest_framework.renderers import JSONRenderer
 from rest_framework.decorators import detail_route
 from datetime import datetime
+from dateutil.relativedelta import relativedelta
 from django.http import HttpResponse
 from base_api import BaseViewSet
 from django.db.models import Prefetch, Count, Sum
@@ -28,14 +29,17 @@ class ProjectStatementViewSet(BaseViewSet):
             project_id = pk
 
             if params:
-                date_from_inclusive = params['filter']['date_from_inclusive'] or datetime.now()
-                date_to_inclusive = params['filter']['date_to_inclusive'] or datetime.now()
+                date_from_inclusive = params['filter']['date_from_inclusive']
+                date_to_inclusive = params['filter']['date_to_inclusive']
+                sprint_ids = params['filter'].setdefault('sprint_ids', None)
             else:
-                date_from_inclusive = datetime.now()
-                date_to_inclusive = datetime.now()
-            
+                date_from_inclusive = datetime.now()-relativedelta(years=50)
+                date_to_inclusive = datetime.now()+relativedelta(years=50)
+                sprint_ids = None
+
             project_statement = self._get_data(user=request.user,
                                                project_id=project_id,
+                                               sprint_ids=sprint_ids,
                                                date_from_inclusive=date_from_inclusive,
                                                date_to_inclusive=date_to_inclusive)
 
@@ -115,13 +119,17 @@ class ProjectStatementViewSet(BaseViewSet):
                              issue_info['subject']])
         return response
     
-    def _get_data(self, user, project_id, date_from_inclusive, date_to_inclusive):
+    def _get_data(self, user, project_id, date_from_inclusive, date_to_inclusive, sprint_ids=None):
         project = Project.objects.get(pk=project_id)
         bp = BusinessPermissions.for_user(user, project)  # sic
         if not bp.has_view_ctc_billable_rates:
             return self.error_response("No permission to view project statement")
 
-        entries = self._get_entries(project, date_from_inclusive, date_to_inclusive)
+        for_all_time = date_from_inclusive is None and date_to_inclusive is None
+        date_from_inclusive = date_from_inclusive or datetime.now()-relativedelta(years=50)
+        date_to_inclusive = date_to_inclusive or datetime.now()+relativedelta(years=50)
+        
+        entries = self._get_entries(project, date_from_inclusive, date_to_inclusive, sprint_ids=sprint_ids)
 
         times_by_sprint = self._get_times_by_sprint(entries)
         self._enrich_rates_per_user(times_by_sprint)
@@ -136,6 +144,7 @@ class ProjectStatementViewSet(BaseViewSet):
         project_statement = { "project_id": project.id,
                               "project_name": project.name,
                               "users_with_time": list(users_with_time),
+                              "for_all_time": for_all_time,
                               "date_from_inclusive": date_from_inclusive,
                               "date_to_inclusive": date_to_inclusive,
                               "sprint_infos": sprint_infos,
@@ -185,13 +194,16 @@ class ProjectStatementViewSet(BaseViewSet):
     def _get_rate(self, user_id, sprint_id):
         return Rate.full_rate_for_project(user_id=user_id, project_id=sprint_id) #sic
             
-    def _get_entries(self, project, date_from_inclusive, date_to_inclusive):
+    def _get_entries(self, project, date_from_inclusive, date_to_inclusive, sprint_ids=None):
         # The date filter only includes all entries ended in the time
         # period, it doesn't attempt to split entries that are longer
         # than a day.
-        return Entry.objects.filter(issue__project__business=project,
-                                    end_time__gte=date_from_inclusive,
-                                    end_time__lte=date_to_inclusive)
+        entries = Entry.objects.filter(issue__project__business=project,
+                                       end_time__gte=date_from_inclusive,
+                                       end_time__lte=date_to_inclusive)
+        if sprint_ids:
+            entries = entries.filter(issue__project__in=sprint_ids)
+        return entries
             
     def _get_times_by_sprint(self, entries):
         return entries.order_by("issue__project__order", "user_id")\
@@ -256,7 +268,9 @@ class ProjectStatementViewSet(BaseViewSet):
                                                                  'remaining_budget': remaining_budget }
 
     def _get_affected_issue_ids(self, entries):
-        raw = entries.order_by("issue__project_id", "issue_id").distinct().values("issue_id", "issue__number", "issue__subject", "issue__project_id", "issue__project__name")
+        raw = entries.order_by("issue__project_id", "issue_id")\
+                     .distinct()\
+                     .values("issue_id", "issue__number", "issue__subject", "issue__project_id", "issue__project__name")
         fixed = [ { 'id': x['issue_id'],
                     'number': x['issue__number'],
                     'subject': x['issue__subject'],
@@ -279,14 +293,15 @@ class ProjectStatementViewSet(BaseViewSet):
         data = self._get_data(user=request.user,
                               project_id=project_id,
                               date_from_inclusive=filter['date_from_inclusive'],
-                              date_to_inclusive=filter['date_to_inclusive'])
+                              date_to_inclusive=filter['date_to_inclusive'],
+                              sprint_ids=filter.setdefault('sprint_ids', None))
 
         response = HttpResponse(content_type='text/csv')
         filename = "{prefix}_for_{project_name}_from_{date_from}_to_{date_to}_at_{now}.csv".format(
             prefix=filename_prefix,
             project_name=data['project_name'],
-            date_from=filter['date_from_inclusive'].strftime("%d%b%Y"),
-            date_to=filter['date_to_inclusive'].strftime("%d%b%Y"),
+            date_from=filter['date_from_inclusive'].strftime("%d%b%Y") if filter['date_from_inclusive'] else "all",
+            date_to=filter['date_to_inclusive'].strftime("%d%b%Y") if filter['date_to_inclusive'] else "all",
             now=datetime.now().strftime("%d%b%Y_%H%M"))
         response['Content-Disposition'] = 'attachment; filename="%s"' % filename
         writer = csv.writer(response)

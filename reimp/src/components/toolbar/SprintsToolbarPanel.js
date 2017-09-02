@@ -34,7 +34,9 @@ class SprintsToolbarPanel extends Component {
     refresh() {
         const {dispatch, sprint_ids, project_id} = this.props
         dispatch(ensureSprintsLoaded(sprint_ids))
-        dispatch(ensureProjectsLoaded([project_id]))
+        if ( project_id ) {
+            dispatch(ensureProjectsLoaded([project_id]))
+        }
     }
 
     onNewProjectClick() {

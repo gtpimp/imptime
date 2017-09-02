@@ -21,11 +21,22 @@ import {
 import SprintCostSummary from '../components/SprintCostSummary'
 import SprintTimeSummary from '../components/SprintTimeSummary'
 import SprintEstimateSummary from '../components/SprintEstimateSummary'
+import SprintBreakdown from '../components/SprintBreakdown'
+import Timestamp from '../components/Timestamp'
+import {
+    ensureProjectStatementLoaded,
+    getProjectStatement,
+    isLoadingProjectStatement,
+    update_project_statement_filter,
+    invalidateProjectStatement,
+    download_sprint_breakdown
+} from '../actions/ProjectStatement'
 
 class SprintCostSummaryPage extends Component {
 
     constructor(props) {
         super(props)
+        this.download_sprint_breakdown_by_user = this.download_sprint_breakdown_by_user.bind(this)
     }
 
     componentDidMount() {
@@ -57,12 +68,22 @@ class SprintCostSummaryPage extends Component {
                                       {to: '/projects/'+project.id+'/sprints', label: 'All Sprints'},
                                       {to: '/projects/'+project.id+'/sprints/'+sprint.id, label: sprint.name},
                                       {to: '/projects/'+project.id+'/sprints/'+sprint.id+'/costSummary', label: 'Cost Summary'}]))
+            dispatch(update_project_statement_filter(null, null, [sprint.id]))
+            if ( project.id ) {
+                dispatch(ensureProjectStatementLoaded([project.id]))
+            }
         }
     }
 
+    download_sprint_breakdown_by_user(event) {
+        const { project_id, dispatch  } = this.props
+        event.preventDefault()
+        dispatch(download_sprint_breakdown(project_id))
+    }
+    
     render() {
 
-        const { is_loading, sprint_id, project_id } = this.props
+        const { is_loading, sprint_id, project_id, project_statement } = this.props
 
         return (
             <div className="cost-summary__page">
@@ -77,6 +98,23 @@ class SprintCostSummaryPage extends Component {
                 <div>
                   <div className="cost-summary">
                     <SprintCostSummary sprint_id={sprint_id} project_id={project_id}/>
+                  </div>
+                  <div className="sprint-breakdown-summary">
+                    { project_statement &&
+                      (
+                          <div>
+                            <h2 className="project__statement__times_grid__header">
+                              Sprint breakdown by user
+                              <div className="project__statement__grid_icon icon--download_as_csv" onClick={this.download_sprint_breakdown_by_user} />
+                            </h2>
+                            <div>
+                              (from <Timestamp value={project_statement.date_from_inclusive}/> to
+                              <Timestamp value={project_statement.date_to_inclusive}/>)
+                            </div>
+                            <SprintBreakdown project_statement={project_statement} />
+                          </div>
+                      )
+                    }
                   </div>
                   <div className="time-summary">
                     <SprintTimeSummary sprint_id={sprint_id} project_id={project_id}/>
@@ -98,13 +136,15 @@ function mapStateToProps(state, props) {
     const project_id = props.params.projectId
     const project = getProject(state, project_id) || {}
     const is_loading = isLoadingCostSummary(state, sprint_id) || isLoadingTimeSummary(state, sprint_id)
-
+    const project_statement = getProjectStatement(state, project_id)
+    
     return {
         sprint_id: sprint_id,
         sprint: sprint,
         project_id: project_id,
         project: project,
         is_loading: is_loading,
+        project_statement: project_statement
     }
 }
 

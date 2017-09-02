@@ -29,7 +29,7 @@ function announceProjectStatementLoaded(payload) {
         type: ANNOUNCE_PROJECT_STATEMENT_LOADED,
         project_statement: project_statement,
         project_id: project_statement.project_id,
-	      received_at: Date.now()
+	received_at: Date.now()
     }
 }
 
@@ -41,10 +41,11 @@ function announceProjectStatementLoadFailed(error) {
     }
 }
 
-export function ensureProjectStatementLoaded(project_id, filter) {
+export function ensureProjectStatementLoaded(project_id, override_filter) {
     project_id = parseInt(project_id)
     return (dispatch, getState) => {
         const state = getState()
+        const filter = override_filter || get_project_statement_filter(state)
         if ( isLoadingProjectStatement(state, project_id) ) {
             return
         }
@@ -85,11 +86,12 @@ export function isLoadingProjectStatement(state, project_id) {
     return includes(loading_ids, project_id)
 }
 
-export function update_project_statement_filter(date_from_inclusive, date_to_inclusive) {
+export function update_project_statement_filter(date_from_inclusive, date_to_inclusive, sprint_ids) {
     return {
         type: UPDATE_PROJECT_STATEMENT_FILTER,
         date_from_inclusive: date_from_inclusive,
-        date_to_inclusive: date_to_inclusive
+        date_to_inclusive: date_to_inclusive,
+        sprint_ids: sprint_ids || null
     }
 }
 

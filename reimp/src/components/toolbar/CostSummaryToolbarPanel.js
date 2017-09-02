@@ -9,6 +9,7 @@ import { get_selected_sprint_ids } from '../../actions/Page'
 import { invalidateCostSummary } from '../../actions/CostSummary'
 import { invalidateTimeSummary } from '../../actions/TimeSummary'
 import { invalidateEstimateSummary } from '../../actions/EstimateSummary'
+import { invalidateProjectStatement } from'../../actions/ProjectStatement'
 
 class CostSummaryToolbarPanel extends Component {
 
@@ -18,10 +19,13 @@ class CostSummaryToolbarPanel extends Component {
     }
 
     invalidateComponents() {
-        const { dispatch, sprint_id } = this.props
+        const { dispatch, sprint_id, sprint } = this.props
         dispatch(invalidateCostSummary(sprint_id))
         dispatch(invalidateTimeSummary(sprint_id))
         dispatch(invalidateEstimateSummary(sprint_id))
+        if ( sprint && sprint.project_id ) {
+            dispatch(invalidateProjectStatement(sprint.project_id))
+        }
     }
 
     onSettingsClick() {
