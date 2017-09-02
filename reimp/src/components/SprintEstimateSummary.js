@@ -112,7 +112,7 @@ class SprintEstimateSummary extends Component {
             <div>
               <div className="sprint_estimate__comparative_summary"> 
                 <h2 className="sprint_estimate__comparative_summary__header">
-                  Comparative estimates (as if each person works on every issue at their own estimates)
+                  Comparative estimates (as if each person works on all issues at their own estimates)
                   <div className="sprint_estimate__grid_icon icon--download_as_csv" onClick={this.download_sprint_comparative_estimates} />
                 </h2>
                 <div className="sprint_estimate__comparative_summary_grid">

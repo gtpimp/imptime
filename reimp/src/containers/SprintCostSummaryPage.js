@@ -75,14 +75,14 @@ class SprintCostSummaryPage extends Component {
 
               { ! is_loading &&
                 <div>
+                  <div className="cost-summary">
+                    <SprintCostSummary sprint_id={sprint_id} project_id={project_id}/>
+                  </div>
                   <div className="time-summary">
                     <SprintTimeSummary sprint_id={sprint_id} project_id={project_id}/>
                   </div>
                   <div className="estimate-summary">
                     <SprintEstimateSummary sprint_id={sprint_id} project_id={project_id}/>
-                  </div>
-                  <div className="cost-summary">
-                    <SprintCostSummary sprint_id={sprint_id} project_id={project_id}/>
                   </div>
                 </div>
               }

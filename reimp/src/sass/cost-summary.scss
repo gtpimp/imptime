@@ -1,3 +1,5 @@
+@import 'variables.scss';
+
 .cost-summary__page {
     padding-left: 26px;
     padding-right: 26px;
@@ -5,11 +7,12 @@
 
 .cost-summary {
     width: 50%;
-    float: right;
+    font: $font-11;
 }
 
 .cost-summary__content {
-    text-align: right;
+    text-align: left;
+    width: 50%;
 }
 
 .cost-summary__page-header {
@@ -21,11 +24,9 @@
     border-bottom: 1px solid #545454;
     height: 50px;
     padding-top: 25px;
-    font-size: 30px;
 }
 
 .cost-summary__sub-header {
-    font-size: 17px;
 }
 
 .cost-summary__list {
@@ -43,7 +44,6 @@
 
 .cost-summary__italics {
     font-style: italic;
-    font-size: 15px;
     padding: 2px;
 }
 

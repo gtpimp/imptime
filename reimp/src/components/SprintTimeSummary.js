@@ -59,13 +59,13 @@ class SprintTimeSummary extends Component {
                     Dev hours used
                   </th>
                   <th>
-                    Dev hours remaining (assuming only 1 developer)
+                    Dev hours remaining
                   </th>
                   <th>
-                    Tester hours remaining (assuming only 1 developer)
+                    Tester hours remaining
                   </th>
                   <th>
-                    Manager hours remaining (assuming only 1 developer)
+                    Manager hours remaining
                   </th> 
                   <th>
                     Budget progress<br/>
@@ -109,7 +109,7 @@ class SprintTimeSummary extends Component {
                 (
                     <div className="sprint_time_summary">
                       <h2 className="sprint_time_summary__header">
-                        Time remaining (as if each person worked on all remaining issues themselves)
+                        Time remaining (if each developer works on all remaining issues themselves)
                       </h2>
                       {this.renderSummaryForDevelopers(per_user)}
                     </div>

@@ -96,9 +96,6 @@ class SprintCostSummary extends Component {
 
         return (
             <div className="cost-summary__content">
-              <h1 className="cost-summary__page-header">{project.name} - {sprint.name}</h1>
-              <h1 className="cost-summary__header">Budget</h1>
-
               <p>
                 <h2 className="cost-summary__sub-header">Client expectations</h2>
                 <ul className="cost-summary__list">
@@ -157,7 +154,7 @@ class SprintCostSummary extends Component {
                 }
               </div>
 
-              <h1 className="cost-summary__header">Breakdown of actuals versus estimated</h1>
+              <h2 className="cost-summary__header">Breakdown of actuals versus estimated</h2>
 
               <div className="cost-summary__roles">
                 { per_role &&
