@@ -5,7 +5,7 @@ class FormTokenAuthenticated(authentication.TokenAuthentication):
     def authenticate(self, request):
         if request.method != 'POST':
             return None
-        token = request.POST['http_authorization']
+        token = request.POST.get('http_authorization', None)
         if not token:
             return None
 
