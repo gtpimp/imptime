@@ -48,6 +48,7 @@ class LoginPage extends Component {
                                 }
                                 <button disabled={submitting} type="submit" className="button button--large button--login">Log In</button>
                                 <div className="login__forgot-password-link" onClick={this.onClickedForgotPassword}>forgot password?</div>
+                                <a className="button button--large" href="http://api.imptime.com">Go to old ImpTime</a>
                             </form>
                         </div>
                     </div>
