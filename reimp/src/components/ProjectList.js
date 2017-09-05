@@ -61,7 +61,7 @@ class ProjectList extends Component {
 	dispatch(expand_list(list_key))
     }
 
-    onClickedProject(project_id) {
+    onClickedProject(event, project_id) {
         const {onSelectProjects, selected_ids} = this.props
         event.stopPropagation()
 
@@ -125,7 +125,7 @@ class ProjectList extends Component {
             <Project key={list_key + "_" + project.id + "_" + project.name + "_" + index}
                      is_collapsed={false}
                      reorderProjects={that.reorderProjects}
-                     onClickedProject={() => that.onClickedProject(project.id)}
+                     onClickedProject={(event) => that.onClickedProject(event, project.id)}
                      is_loading={loading_item_ids.indexOf(project.id) !== -1}
                      is_selected={selected_ids.indexOf(project.id) !== -1}
                      project_id={project.id}
