@@ -206,6 +206,11 @@ class Business(models.Model):
         return cl is not None and cl.passed
 
     @property
+    def allowed_user_ids(self):
+        project_users = BusinessPermissions.active_users_for_business(business_id=self.id)
+        return project_users.values_list('id', flat=True).order_by("username")
+    
+    @property
     def sprints(self):
         return Project.objects.filter(business=self)
 
@@ -3433,8 +3438,8 @@ class Salary(models.Model):
 class Rate(models.Model):
     TIME_TRACKING_MODES = [ ('developer', 'Developer'), ('manager', 'Manager'), ('tester', 'Tester') ]
     project = models.ForeignKey(Project, related_name="rate")
-    user = models.ForeignKey(User)
-    amount = models.DecimalField(max_digits=12, decimal_places=2, default=0)
+    user = models.ForeignKey(User, related_name="rates")
+    amount = models.DecimalField(max_digits=12, decimal_places=2, default=0) #ctc
     billable_amount = models.DecimalField(max_digits=12, decimal_places=2, default=0)
     velocity = models.FloatField(default=1)
     work_ratio = models.FloatField(default=0)
@@ -3446,6 +3451,11 @@ class Rate(models.Model):
         if recalc_secondary_estimates:
             self.project.recalc_secondary_estimates()
 
+    @classmethod
+    def full_rate_for_project(self, user_id, project_id):
+        rate = self.objects.filter(user_id=user_id, project_id=project_id).first()
+        return rate.full_rate if rate else 0
+            
     @property
     def full_rate(self):
         return self.convert_to_full_rate(self.project, self.billable_amount)

@@ -1,4 +1,12 @@
+
 .currency_value {
-    float: right;
     margin-left: 3px;
+}
+
+.currency_value--right {
+    float: right;
+}
+
+.currency_value--left {
+    float: left;
 }

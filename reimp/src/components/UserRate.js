@@ -2,10 +2,10 @@ import React, {Component} from 'react'
 import {connect} from 'react-redux'
 import classNames from 'classnames'
 
-class CurrencyValue extends Component {
+class UserRate extends Component {
 
     render() {
-        const { value, float_direction } = this.props
+        const { value, class_name } = this.props
 
         var formatter = new Intl.NumberFormat('en-GB', {
             style: 'decimal',
@@ -18,25 +18,21 @@ class CurrencyValue extends Component {
         const formatted_currency = formatter.format(value)
         
         return (
-            <div className={classNames("currency_value", "currency_value--"+float_direction)}>
-              R {formatted_currency}
+            <div className={classNames("user_rate",
+                                       {"user_rate--empty" :value==0})}>
+              @R {formatted_currency}
             </div>
         )
     }
 }
 
 function mapStateToProps(state, props) {
-    const { value } = props
-    let { float_direction } = props
-    if ( float_direction === undefined  ) {
-        float_direction = "right"
-    }
-    
+    const { value, class_name } = props
+
     return {
         value: value,
-        float_direction: float_direction
+        class_name: class_name || "currency_value"
     }
 }
 
-export default connect(mapStateToProps)(CurrencyValue)
-
+export default connect(mapStateToProps)(UserRate)

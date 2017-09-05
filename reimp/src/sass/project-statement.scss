@@ -1,94 +1,195 @@
 @import 'variables.scss';
 
+.project__statement {
+    display: flex;
+    flex-align: center;
+    flex-direction: column;
+    width: 96%;
+    margin-left: 2%;
+    padding: 0px;
+    border-left: 1px solid $color-25;
+    border-right: 1px solid $color-25;
+}
+
+.project__statement__times_grid__header {
+    text-align: center;
+    border-top: 1px solid $color-25;
+    padding: 5px;
+    margin-bottom: 0px;
+}
+
+.project__statement__table_container {
+}
+
+.project__statement__filter {
+    font: $settings-font-4;
+    border-bottom: 1px solid $color-6;
+    padding-bottom: 20px;
+    margin-top: 20px;
+}
+
+.project__statement__filter__from {
+    float: left;
+}
+
+.project__statement__filter__to {
+    float: left;
+    margin-left: 10px;
+}
+
+.project__statement__filter__submit {
+    float: left;
+    margin-top: 11px;
+    padding-left: 10px;
+}
+
 .project__statement__times_grid {
-    padding: 10px;
-    float: left;
-    margin-right: 50px;
-    border-right: 1px solid $form-field-border;
-}
-
-.project_statement__times_for_sprint {
-    float: left;
-    clear: left;
-    border-bottom: 1px solid $form-field-border;
-    margin-bottom: 50px;
-}
-
-.project_statement__time_for_user__rate {
-    float: right;
-}
-
-.project_statement__time_for_user {
-    border: 1px solid $form-field-border;
-    padding: 10px;
-    float: left;
-}
-
-.project_statement__sprint_header {
-    font-weight: bold;
-    float: left;
-    clear:both;
-    background-color: $color-4;
-}
-
-.project_statement__sprint_name {
-    float: left;
-    padding-left: 10px;
-}
-
-.project_statement__sprint_header__total_billable_cost {
-    float: left;
-    padding-left: 10px;
-}
-
-.project_statement__sprint_header__total_hours {
-    float: left;
-    padding-left: 10px;
-}
-
-.project_statement__times_for_sprint__users {
-    clear:left; 
-}
-
-.project_statement__grand_totals {
-    background-color: $color-4;
-    margin-bottom: 30px;
-    border-bottom: 1px solid $form-field-border;
+    font: $settings-font-4;
     clear: both;
+    width: 100%;
+    margin-top: 50px;
 }
 
-.project_statement__grand_totals__total_hours {
-    float: left;
-    margin-right: 30px;
+.project__statement__times_grid__table {
+    width: 100%;
 }
 
-.project_statement__grand_totals__total_billable_cost {
-    float: left;
-    margin-right: 30px;
+.project__statement__times_grid__header {
+    background-color: $color-12;
 }
 
-.project_statement__times_for_user {
-    float: left;
-    clear: left;
-    border-bottom: 1px solid $form-field-border;
-    margin-bottom: 50px;
+.project__statement__times_grid td {
+    border-bottom: 1px solid $color-6;
 }
 
-.project_statement__user_header__total_billable_cost {
-    float: left;    
-}
-    
-.project_statement__user_header__total_hours {
-
+.project__statement__times_grid th {
+    border-bottom: 1px solid $color-6;
+    padding: 3px;
 }
 
-.project__statement__date_range__element {
-    float: left;
-    padding-right: 10px;
+td.project__statement__times_grid__inner_cell {
+    border-bottom: none;
+    width: 33%;
+    text-align: left;
+}
+
+th.project__statement__times_grid__inner_cell {
+    border-bottom: none;
+}
+
+.project__statement__times_grid__rate_cell {
+    font-size: $font-size-small;
+}
+
+.project__statement__times_grid__sprint_total {
+    background-color: $color-12;
+}
+
+.project__statement__timed_grid__user_total {
+    background-color: $color-12;
+}
+
+.project__statement__times_grid__grand_total {
+    background-color: $color-5;
 }
 
 .project__statement__date_range {
     clear: both;
-    margin-bottom: 50px;
-    font-size: $font-size-small;
+}
+
+.project__statement__date_range__element {
+    float: left;
+    padding: 5px;
+    font: $settings-font-3;
+}
+
+.project__statement__budgets_grid {
+    margin-top: 50px;
+    font: $settings-font-4;
+    clear: both;
+    width: 100%;
+    margin-top: 50px;
+}
+
+.project__statement__budgets_grid__table {
+    width: 100%;
+}
+
+.project__statement__budgets_grid__header {
+    background-color: $color-12;
+}
+
+.project__statement__times_grid__footer {
+    background-color: $color-12;
+}
+
+.project__statement__budgets_grid td {
+    border-bottom: 1px solid $color-6;
+}
+
+.project__statement__budgets_grid th {
+    border-bottom: 1px solid $color-6;
+    padding: 3px;
+}
+
+.project__statement__budgets_grid__progress_bar {
+    padding-right: 15px;
+}
+
+.project__statement__issues_grid {
+    font: $settings-font-4;
+    clear: both;
+    width: 100%;
+    margin-top: 50px;
+}
+
+.project__statement__issues_grid__table {
+}
+
+.project__statement__issues_grid__table td {
+    padding-right: 5px;
+}
+
+.project__statement__issues_grid__table th {
+    float: left;
+}
+
+.project__statement__remaining_grid {
+    font: $settings-font-4;
+    clear: both;
+    width: 100%;
+    margin-top: 50px;
+}
+
+.project__statement__remaining_grid__header {
+    text-align: center;
+    border-top: 1px solid $color-25;
+    padding: 5px;
+    margin-bottom: 0px;
+    background-color: $color-12;
+}
+
+.project__statement__remaining_grid__sprint_name {
+    background-color: $color-12;
+    margin: 0px;
+    padding: 5px;
+    border-top: 1px solid $color-25;
+    margin-top: 20px;
+}
+
+.project__statement__separator {
+}
+
+.project__statement__grid_icon {
+    float: right;
+    cursor: pointer;
+}
+
+.project__statement__footer {
+    background-color: $color-12;
+    width: 100%;
+    height: 20px;
+    border-bottom: 1px solid $color-25;
+    margin-bottom: 5px;
+    margin-top: 10px;
 }

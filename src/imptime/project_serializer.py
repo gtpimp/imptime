@@ -29,12 +29,7 @@ class ProjectSerializer(BaseSerializer):
         # every line of this function, we mark every line with sic to
         # put us off propagating the confusion out of this function.
 
-        project_users = ProjectPermissions.active_users_for_business(business_id=project.id) #sic
-
-        project_user_ids = project_users.values_list('id', flat=True).order_by("username")
-
-        project.allowed_user_ids = project_user_ids
-
+        project_user_ids = project.allowed_user_ids #sic
         project.invited_user_ids = project_user_ids.filter(invites_received__accepted=False)
         project.feature_names = Feature.objects.filter(business=project).order_by("name")  # sic
 
@@ -53,3 +48,5 @@ class ProjectSerializer(BaseSerializer):
 
         return super(ProjectSerializer, self).to_representation(
             project, *args, **kwargs)
+
+    

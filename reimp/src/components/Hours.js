@@ -12,7 +12,10 @@ class Hours extends Component {
         const formatted_hours = format_hours(hours)
 
         return (
-            <div className="elapsed-time">{formatted_hours} hours</div>
+            <div className={classNames("hours",
+                                       {"hours--negative" :hours<0})}>
+              {formatted_hours}
+            </div>
         )
     }
 }

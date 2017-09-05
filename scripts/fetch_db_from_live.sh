@@ -18,6 +18,7 @@ DB_NAME="implicitdesign"
 
 echo "Fetching backup for ${DATE}_${TIME}..."
 scp gtp@live.implicitdesign.co.za:/home/timesheet/db_backups/${FILENAME} ${LOCAL_BACKUP_PATH}
+echo "Downloaded to ${LOCAL_BACKUP_PATH}/${FILENAME}"
 
 echo "Recreating db"
 

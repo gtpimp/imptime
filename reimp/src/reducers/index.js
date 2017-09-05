@@ -1,6 +1,7 @@
 import auth from './auth'
 import breadcrumbs from './breadcrumbs'
 import cost_summary from './cost_summary'
+import estimate_summary from './estimate_summary'
 import editable_property from './editable_property'
 import filter from './filter'
 import header from './header'
@@ -29,6 +30,7 @@ const rootReducer = combineReducers({
     breadcrumbs,
     cost_summary,
     editable_property,
+    estimate_summary,
     filter,
     form: redux_form_reducer,
     header,

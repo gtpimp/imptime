@@ -34,13 +34,13 @@ export default function project_statement(state = initialState, action) {
 	          })
         case ANNOUNCE_PROJECT_STATEMENT_LOADED:
             state_copy = Object.assign({}, state, {
-		            loading_project_ids: Object.assign({},
-						                                      difference(state.loading_project_ids || [],
-							                                               [action.project_id])),
-		            items_by_project_id: Object.assign({}, action.project_statement)
-	          })
+		loading_project_ids: Object.assign({},
+						   difference(state.loading_project_ids || [],
+							      [action.project_id])),
+                items_by_project_id: Object.assign({}, state.items_by_project_id)
+	    })
             action.project_statement.received_at = action.received_at
-            state_copy.items_by_project_id[action.project_id] = action.project_statement
+            state_copy.items_by_project_id[action.project_id] = Object.assign({}, action.project_statement)
             return state_copy
         case ANNOUNCE_PROJECT_STATEMENT_LOAD_FAILED:
             setErrorMessage("Failed to load project statement: " + action.error_message)
@@ -54,7 +54,8 @@ export default function project_statement(state = initialState, action) {
                                  { filter: Object.assign({},
                                                          state.filter,
                                                          { date_from_inclusive: action.date_from_inclusive,
-                                                           date_to_inclusive: action.date_to_inclusive })
+                                                           date_to_inclusive: action.date_to_inclusive,
+                                                           sprint_ids: action.sprint_ids })
                                  })
 
         default:

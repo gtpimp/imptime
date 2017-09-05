@@ -191,12 +191,12 @@ class Issue extends Component {
                             })}
                 >
                   {includes(visible_header_keys, "number") &&
-                     <td className="list-table__cell list-table__cell--number">
+                     <td className="list-table__cell list-table__cell--issue-number">
                        <div>{issue.number}</div>
                      </td>
                    }
                      {includes(visible_header_keys, "expand_feature") &&
-                     <td className="list-table__cell list-table__cell--icon">
+                     <td className="list-table__cell list-table__cell--issue-icon">
                      { issue.can_group_issues &&
                        <div className="icon--feature">
                          { show_children &&
@@ -207,7 +207,7 @@ class Issue extends Component {
                      </td>
                    }
                      {includes(visible_header_keys, "name") &&
-                     <td className="list-table__cell list-table__cell--name">
+                     <td className="list-table__cell list-table__cell--issue-name">
                        {subject_prefix}{issue.subject}{subject_suffix}
                        { issue.group_children.length > 0 &&
                          <span>
@@ -220,7 +220,7 @@ class Issue extends Component {
                      </td>
                    }
                      {includes(visible_header_keys, "assignee") &&
-                     <td className="list-table__cell list-table__cell--assignee">
+                     <td className="list-table__cell list-table__cell--issue-assignee">
                      <OtherUser value={issue.assigned_to_id}/>
                      { false &&
                        <RIEModeToggler
@@ -234,27 +234,27 @@ class Issue extends Component {
                      </td>
                    }
                      {includes(visible_header_keys, "status") &&
-                   <td className="list-table__cell list-table__cell--status">
+                   <td className="list-table__cell list-table__cell--issue-status">
                     <IssueStatusLabel value={issue.status_name}/>
                   </td>
                   }
                   { false &&
-                    <td className="list-table__cell list-table__cell--sprint">
+                    <td className="list-table__cell list-table__cell--issue-sprint">
                       1
                     </td>
                   }
                     {includes(visible_header_keys, "progress") &&
-                  <td className="list-table__cell list-table__cell--progress">
+                  <td className="list-table__cell list-table__cell--issue-progress">
                     <Progress issue={issue}/>
                   </td>
                   }
                   {includes(visible_header_keys, "estimates") &&
-                  <td className="list-table__cell list-table__cell--estimates">
+                  <td className="list-table__cell list-table__cell--issue-estimates">
                     {this.renderEstimates()}
                   </td>
                    }
                   {includes(visible_header_keys, "tags") &&
-                  <td className="list-table__cell list-table__cell--tags">
+                  <td className="list-table__cell list-table__cell--issue-tags">
                     { map(issue.tags, function (tag, index) {
                           return (<Tag key={index}
                                        category={tag.category_name}
@@ -265,12 +265,12 @@ class Issue extends Component {
                   </td>
                    }
                 {includes(visible_header_keys, "my_time") &&
-                  <td className="list-table__cell list-table__cell--tracking-control">
+                  <td className="list-table__cell list-table__cell--issue-tracking-control">
                     <ElapsedTime hours={issue.my_actual_hours} active={issue.am_i_clocked_in}/>
                   </td>
                    }
                 {includes(visible_header_keys, "clock_in") &&
-                  <td className="list-table__cell list-table__cell--tracking-control">
+                  <td className="list-table__cell list-table__cell--issue-tracking-control">
                     <div className={classNames({'reveal-on-hover--block': !issue.am_i_clocked_in})}>
                       <TimerSwitch
                           active={issue.am_i_clocked_in}
@@ -281,7 +281,7 @@ class Issue extends Component {
                  </td>
                 }
                 {includes(visible_header_keys, "delete") &&
-                  <td className="list-table__cell list-table__cell--tracking-control">
+                  <td className="list-table__cell list-table__cell--issue-delete">
                     <div className={"reveal-on-hover--block"}>
                       <DeleteIssue
                           onDelete ={this.onDeleteIssue}

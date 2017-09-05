@@ -1,5 +1,6 @@
 import React, {Component} from 'react'
 import {connect} from 'react-redux'
+import ProgressBar from './ProgressBar' 
 import map from 'lodash/map'
 import {ensureProjectsLoaded, getProject} from '../actions/Projects'
 import {ensureSprintsLoaded, getSprint} from '../actions/Sprints'
@@ -57,33 +58,44 @@ class SprintCostSummary extends Component {
             <div>
               <h3 className="cost-summary___no-colour-pad">{index}</h3>
               <ul className="cost-summary__list">
-                <li className="cost-summary___no-colour-pad">Estimate: <CurrencyValue value={role.budget} /></li>
-                <li className="cost-summary__italics">without {role.ratio_scope_creep}% scope creep:
-                  <CurrencyValue value={role.budget_without_scope_creep} /></li>
+                <li>
+                  <div className="cost-summary__estimate_without_scope_creep">
+                    <div>Estimate: </div>
+                    <CurrencyValue value={role.budget} />
+                  </div>
+                </li>
+                <li>
+                  <div className="cost-summary__estimate_with_scope_creep">
+                    <div>without {role.ratio_scope_creep}% scope creep:</div>
+                    <CurrencyValue value={role.budget_without_scope_creep} />
+                  </div>
+                </li>
                 <li>
                   <div>
                     { role.under_budget &&
-                      <span className="cost-summary___green">
-                        Actual: <CurrencyValue value={role.hours_billable_core_rate} />
-                      </span>
+                      <div className="cost-summary__within_budget">
+                        <div>Actual:</div>
+                        <CurrencyValue value={role.hours_billable_core_rate} />
+                      </div>
                     }
                   </div>
                   <div>
                     { ! role.under_budget &&
-                      <span className="cost-summary___red">
-                        Actual: <CurrencyValue value={role.hours_billable_core_rate} />
-                      </span>
+                      <div className="cost-summary__over_budget">
+                        <div> Actual:</div>
+                        <CurrencyValue value={role.hours_billable_core_rate} />
+                      </div>
                     }
                   </div>
                 </li>
                 { role.per_user &&
-                  <div>
+                  <li>
                     {map(role.per_user, (user, index) =>
                         <div key={index}>
                           { this.renderUser(user, index) }
                         </div>
                      )}
-                  </div>
+                  </li>
                 }
               </ul>
             </div>
@@ -96,10 +108,7 @@ class SprintCostSummary extends Component {
 
         return (
             <div className="cost-summary__content">
-              <h1 className="cost-summary__page-header">{project.name} - {sprint.name}</h1>
-              <h1 className="cost-summary__header">Budget</h1>
-
-              <p>
+              <p className="cost-summary__tile">
                 <h2 className="cost-summary__sub-header">Client expectations</h2>
                 <ul className="cost-summary__list">
                   <li>Budget given to client: <CurrencyValue value={cost_summary.budget} /></li>
@@ -108,7 +117,7 @@ class SprintCostSummary extends Component {
                 </ul>
               </p>
 
-              <p>
+              <p className="cost-summary__tile">
                 <h2 className="cost-summary__sub-header">Estimated versus budget</h2>
                 <ul className="cost-summary__list">
                   <li>
@@ -117,14 +126,14 @@ class SprintCostSummary extends Component {
                   <li>
                     <div>
                       { cost_summary.under_budget &&
-                        <span className="cost-summary___green">
+                        <span className="cost-summary__within_budget">
                           {cost_summary.spendable_budget_msg}
                         </span>
                       }
                     </div>
                     <div>
                       { ! cost_summary.under_budget &&
-                        <span className="cost-summary___red">
+                        <span className="cost-summary__over_budget">
                           {cost_summary.spendable_budget_msg}
                         </span>
                       }
@@ -133,43 +142,44 @@ class SprintCostSummary extends Component {
                 </ul>
               </p>
 
-              <p>
+              <p className="cost-summary__tile">
                 <h2 className="cost-summary__sub-header">Actual versus budget</h2>
                 <ul className="cost-summary__list">
                   <li>
                     Spent so far: <CurrencyValue value={cost_summary.spent} />
                   </li>
+                  <li>
+                    <ProgressBar current={ cost_summary.spent } max={ cost_summary.spendable_budget } />
+                  </li>
                 </ul>
+
+                <div>
+                  { cost_summary.under_budget &&
+                    <div className="cost-summary___green cost-summary__colourbar">
+                      {cost_summary.budget_status}
+                    </div>
+                  }
+                </div>
+                <div>
+                  { ! cost_summary.under_budget &&
+                    <div className="cost-summary___red cost-summary__colourbar">
+                      {cost_summary.budget_status}
+                    </div>
+                  }
+                </div>
               </p>
 
-              <div>
-                { cost_summary.under_budget &&
-                  <div className="cost-summary___green cost-summary__colourbar">
-                    {cost_summary.budget_status}
-                  </div>
-                }
-              </div>
-              <div>
-                { ! cost_summary.under_budget &&
-                  <div className="cost-summary___red cost-summary__colourbar">
-                    {cost_summary.budget_status}
-                  </div>
-                }
-              </div>
+              <p className="cost-summary__tile">
+                <h2 className="cost-summary__sub-header">Breakdown of actuals versus estimated</h2>
 
-              <h1 className="cost-summary__header">Breakdown of actuals versus estimated</h1>
-
-              <div className="cost-summary__roles">
-                { per_role &&
-                  <div>
-                    {map(per_role, (role, index) =>
-                        <div className="cost-summary__role" key={index}>
-                          {this.renderRole(role, index)}
-                        </div>
-                     )}
-                  </div>
-                }
-              </div>
+                <div className="cost-summary__roles">
+                  {map(per_role, (role, index) =>
+                      <div className="cost-summary__role" key={index}>
+                        {this.renderRole(role, index)}
+                      </div>
+                   )}
+                </div>
+              </p>
             </div>
         )
     }

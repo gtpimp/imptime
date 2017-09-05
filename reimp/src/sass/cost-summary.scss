@@ -1,15 +1,20 @@
+@import 'variables.scss';
+
 .cost-summary__page {
     padding-left: 26px;
     padding-right: 26px;
 }
 
 .cost-summary {
-    width: 50%;
-    float: right;
+    width: 100%;
+    font: $font-11;
 }
 
 .cost-summary__content {
-    text-align: right;
+    text-align: left;
+    width: 100%;
+    display: flex;
+    flex-direction: row;
 }
 
 .cost-summary__page-header {
@@ -21,49 +26,48 @@
     border-bottom: 1px solid #545454;
     height: 50px;
     padding-top: 25px;
-    font-size: 30px;
 }
 
 .cost-summary__sub-header {
-    font-size: 17px;
 }
 
 .cost-summary__list {
     list-style: none;
+    padding-left: 10px;
 }
 
 .cost-summary__roles {
-    float:right;
-    margin-top: -20px;
 }
 
 .cost-summary__role {
-    float:left;
 }
 
-.cost-summary__italics {
+.cost-summary__estimate_with_scope_creep {
     font-style: italic;
-    font-size: 15px;
     padding: 2px;
+    display: flex;
+    flex-direction: row;
 }
 
-.cost-summary___green {
+.cost-summary__within_budget {
     background-color: #97CAAE;
     padding: 2px;
+    display: flex;
+    flex-direction: row;
 }
 
-.cost-summary___yellow {
-    background-color: #A6A400;
-    padding: 2px;
-}
-
-.cost-summary___red {
+.cost-summary__over_budget {
     background-color: #E59999;
     padding: 2px;
+    display: flex;
+    flex-direction: row;
 }
 
-.cost-summary___no-colour-pad {
+.cost-summary__estimate_without_scope_creep {
     padding: 2px;
+    display: flex;
+    flex-direction: row;
+
 }
 
 .cost-summary__colourbar {
@@ -84,4 +88,13 @@
 
 .cost-summary___user-details {
     float: right;
+}
+
+.cost-summary__tile {
+    padding: 10px;
+}
+
+.cost-summary__roles {
+    display: flex;
+    flex-direction: row;
 }

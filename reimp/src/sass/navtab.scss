@@ -1,12 +1,18 @@
 @import 'variables.scss';
 
 .navtab {
-  align-items: center;
-  cursor: pointer;
-  display: inline-flex;
-  font: $font-6;
-  height: 56px;
-  text-transform: uppercase;
+    align-items: center;
+    cursor: pointer;
+    display: inline-flex;
+    font: $font-6;
+    height: 56px;
+    text-transform: uppercase;
+    border-bottom: 1px solid $color-2;
+}
+
+.navtab:hover {
+    border-bottom: 1px solid $color-24;
+    cursor: pointer;
 }
 
 .navtab--active {

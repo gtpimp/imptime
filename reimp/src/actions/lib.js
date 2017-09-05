@@ -79,6 +79,7 @@ export function impfetch(state, url, dispatch, args) {
     throttles[absolute_url] = throttle
     throttles[absolute_url].running = true
     throttles[absolute_url].last_run_at = moment()
+
     const res = fetch(absolute_url, args)
     res.then(function(response) {
 
@@ -101,7 +102,7 @@ export function format_hours(hours) {
     }
     const raw_seconds = hours*60*60
     var sec_num = parseInt(raw_seconds, 10)
-    var hours   = Math.floor(sec_num / 3600)
+    hours   = Math.floor(sec_num / 3600)
     var minutes = Math.floor((sec_num - (hours * 3600)) / 60)
     var seconds = sec_num - (hours * 3600) - (minutes * 60)
 
@@ -112,3 +113,46 @@ export function format_hours(hours) {
 }
 
 
+export function download(state, url, params) {
+    let form = document.createElement('form');
+
+    let absolute_url = url
+    if (!(url.startsWith('http://') || url.startsWith('https://'))) {
+        absolute_url = state.settings.API_BASE_URL + url
+    }
+    
+    if ( params ) {
+        let param_payload = JSON.stringify(params)
+        absolute_url += "?" + param_payload
+    }
+    
+    form.setAttribute('action', absolute_url);
+    form.setAttribute('method', 'post')
+    
+    let input = document.createElement('input');
+    input.name = 'http_authorization'
+    input.value = logged_in_user().token
+    
+    form.appendChild(input)
+    
+    document.body.appendChild(form)
+    form.submit()
+    
+    document.body.removeChild(form);
+}
+
+export function hash_flat_object(obj) {
+    // only suitable for very simple object types
+    return hash_string(JSON.stringify(obj))
+}
+
+export function hash_string(str) {
+  var hash = 0, i, chr;
+  if (str.length === 0) return hash;
+  for (i = 0; i < str.length; i++) {
+    chr   = str.charCodeAt(i);
+    hash  = ((hash << 5) - hash) + chr;
+    hash |= 0;
+  }
+  return hash;
+};

@@ -20,3 +20,43 @@
 .panel__button--add_tag {
     @include icon(20px, 20px, 'tag.png')
 }
+
+.list-table__cell--issue-number {
+    font: $font-11;
+}
+
+.list-table__cell--issue-icon {
+}
+
+.list-table__cell--issue-name {
+    
+}
+
+.list-table__cell--issue-assignee {
+    font: $font-11;
+}
+
+.list-table__cell--issue-status {
+    font: $font-11;
+}
+
+.list-table__cell--issue-sprint {
+    font: $font-11;
+}
+
+.list-table__cell--issue-progress {
+    
+}
+
+.list-table__cell--issue-estimates {
+}
+
+.list-table__cell--issue-tags {
+}
+
+.list-table__cell--issue-tracking-control {
+}
+
+.list-table__cell--issue-delete {
+    
+}
