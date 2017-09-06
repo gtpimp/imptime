@@ -37,18 +37,12 @@ class TimeSummaryViewSet(BaseViewSet):
             developers = Rate.objects.filter(project=sprint, time_tracking_mode="developer")\
                                      .values_list('user', flat=True)
 
-<<<<<<< HEAD
-            users = sprint.business.get_users_allowed_to_estimate_on_business(request.user)
-            user_pks = [x.id for x in users]
-            users = User.objects.filter(pk__in=user_pks).filter(pk__in=developers)
-=======
             sprint_users = sprint.business.get_users_allowed_to_estimate_on_business(request.user)
             active_sprint_users = all_entries.order_by('user_id').distinct().values('user_id')
             sprint_developers = User.objects.filter(pk__in=[x.id for x in sprint_users])\
                                             .filter(pk__in=active_sprint_users)\
                                             .filter(pk__in=developers)
             budget_ratio = total_billable / (sprint.spendable_budget or 1)
->>>>>>> 491223e8441770b2b2a81d05cf49f04f1782bea1
 
             for sprint_developer in sprint_developers:
                 dev_stats = self.calculate_dev_hours_stats(sprint, sprint_developer)
@@ -62,7 +56,7 @@ class TimeSummaryViewSet(BaseViewSet):
                     "avg_tester_rate": tester_rate,
                     "avg_manager_rate": manager_rate
                 }
-                
+
                 time_summary["per_user"][sprint_developer.id] = values
 
             time_summary['all_user_ids'] = [x.id for x in sprint_users]

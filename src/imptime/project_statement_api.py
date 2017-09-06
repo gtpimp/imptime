@@ -27,38 +27,6 @@ class ProjectStatementViewSet(BaseViewSet):
             params = request.GET.get('params', '{}')
             params = json.loads(params)
             project_id = pk
-<<<<<<< HEAD
-            context = {}
-            project = Project.objects.get(pk=project_id)
-            project_statement = {
-                "project_id": project.id,
-                "per_user": {}
-            }
-
-            bp = BusinessPermissions.for_user(request.user, project)  # sic
-            if not bp.has_view_ctc_billable_rates:
-                return self.error_response("No permission to view project statement")
-
-            date_from_inclusive = params['filter']['date_from_inclusive'] or datetime.now()
-            date_to_inclusive = params['filter']['date_to_inclusive'] or datetime.now()
-            entries = self._get_entries(project, date_from_inclusive, date_to_inclusive)
-
-            times_by_sprint = self._get_times_by_sprint(entries)
-            self._enrich_rates_per_user(times_by_sprint)
-            self._fix_keys(times_by_sprint)
-            times_by_sprint = self._group_by_sprint(times_by_sprint)
-            times_by_user = self._enrich_times_by_user(times_by_sprint)
-
-            project_statement = { "project_id": project.id,
-                                  "date_from_inclusive": date_from_inclusive,
-                                  "date_to_inclusive": date_to_inclusive,
-                                  "times_by_sprint": times_by_sprint,
-                                  "times_by_user": times_by_user }
-            self._enrich_totals(project_statement)
-
-            context['project_statement'] = project_statement
-            data = {'status': 'success', 'payload': context}
-=======
 
             if params:
                 date_from_inclusive = params['filter']['date_from_inclusive']
@@ -76,7 +44,6 @@ class ProjectStatementViewSet(BaseViewSet):
                                                date_to_inclusive=date_to_inclusive)
 
             data = {'status': 'success', 'payload': { 'project_statement': project_statement}}
->>>>>>> 491223e8441770b2b2a81d05cf49f04f1782bea1
 
         except Exception, ex:
             logger.exception(ex)
@@ -87,11 +54,11 @@ class ProjectStatementViewSet(BaseViewSet):
     @detail_route(methods=['POST'])
     def download_sprint_budgets(self, request, pk):
         response, writer, data = self._prepare_csv(request, pk, "sprint_budgets")
-        
+
         writer.writerow(["Sprint budgets (for sprints worked on in the selected period)"])
         writer.writerow([])
         writer.writerow(["","Total budget", "Total spendable budget", "Remaining budget", "Spent"])
-        
+
         for sprint_id, times_for_sprint in data['times_by_sprint'].items():
             writer.writerow([data['sprint_infos'][sprint_id]['sprint_name'],
                              times_for_sprint['totals_across_time']['budget'],
@@ -104,7 +71,7 @@ class ProjectStatementViewSet(BaseViewSet):
     @detail_route(methods=['POST'])
     def download_sprint_breakdown(self, request, pk):
         response, writer, data = self._prepare_csv(request, pk, "sprint_breakdown")
-        
+
         writer.writerow(["Sprint breakdown by user (during selected period)"])
         writer.writerow([])
 
@@ -134,24 +101,24 @@ class ProjectStatementViewSet(BaseViewSet):
         writer.writerow(row)
 
         return response
-            
+
 
     @detail_route(methods=['POST'])
     def download_issues_worked_on(self, request, pk):
         response, writer, data = self._prepare_csv(request, pk, "issue_worked_on")
-        
+
         writer.writerow(["Issues worked on (during selected period)"])
         writer.writerow([])
 
         writer.writerow(['sprint_id', 'sprint_name', 'issue_number', 'subject'])
-        
+
         for issue_info in data['issues']:
             writer.writerow([issue_info['sprint_id'],
                              data['sprint_infos'][issue_info['sprint_id']]['sprint_name'],
                              issue_info['number'],
                              issue_info['subject']])
         return response
-    
+
     def _get_data(self, user, project_id, date_from_inclusive, date_to_inclusive, sprint_ids=None):
         project = Project.objects.get(pk=project_id)
         bp = BusinessPermissions.for_user(user, project)  # sic
@@ -161,7 +128,7 @@ class ProjectStatementViewSet(BaseViewSet):
         for_all_time = date_from_inclusive is None and date_to_inclusive is None
         date_from_inclusive = date_from_inclusive or datetime.now()-relativedelta(years=50)
         date_to_inclusive = date_to_inclusive or datetime.now()+relativedelta(years=50)
-        
+
         entries = self._get_entries(project, date_from_inclusive, date_to_inclusive, sprint_ids=sprint_ids)
 
         times_by_sprint = self._get_times_by_sprint(entries)
@@ -226,25 +193,18 @@ class ProjectStatementViewSet(BaseViewSet):
 
     def _get_rate(self, user_id, sprint_id):
         return Rate.full_rate_for_project(user_id=user_id, project_id=sprint_id) #sic
-            
+
     def _get_entries(self, project, date_from_inclusive, date_to_inclusive, sprint_ids=None):
         # The date filter only includes all entries ended in the time
         # period, it doesn't attempt to split entries that are longer
         # than a day.
-<<<<<<< HEAD
-        return Entry.objects.filter(issue__project__business=project,
-                                    end_time__gte=date_from_inclusive,
-                                    end_time__lte=date_to_inclusive)
-
-=======
         entries = Entry.objects.filter(issue__project__business=project,
                                        end_time__gte=date_from_inclusive,
                                        end_time__lte=date_to_inclusive)
         if sprint_ids:
             entries = entries.filter(issue__project__in=sprint_ids)
         return entries
-            
->>>>>>> 491223e8441770b2b2a81d05cf49f04f1782bea1
+
     def _get_times_by_sprint(self, entries):
         return entries.order_by("issue__project__order", "user_id")\
                       .values('issue__project_id', 'issue__project__name', 'user_id')\
@@ -260,7 +220,7 @@ class ProjectStatementViewSet(BaseViewSet):
                                                        'total_hours': 0,
                                                        'billable_cost': 0,
                                                        'rate': self._get_rate(user_id, sprint_id) }
-    
+
     def _enrich_times_by_user(self, times_by_sprint):
         times_by_user = {}
         for sprint_id, sprint_times in times_by_sprint.items():
@@ -291,7 +251,7 @@ class ProjectStatementViewSet(BaseViewSet):
         users_ids = project.allowed_user_ids
         users = User.objects.filter(pk__in=users_ids).values('id', 'username', 'email')
         return dict([ (x['id'], {'username':x['username'], 'email':x['email']}) for x in users ])
-    
+
     def _enrich_with_sprint_budgets_across_time(self, times_by_sprint):
         sprints = Sprint.objects.filter(pk__in=times_by_sprint.keys())
         for sprint in sprints:
@@ -328,7 +288,7 @@ class ProjectStatementViewSet(BaseViewSet):
         return Sprint.objects.filter(pk__in=sprint_ids).values('name',flat=True)
 
     def _prepare_csv(self, request, pk, filename_prefix):
-        project_id = pk 
+        project_id = pk
         filter = self._get_download_filter(request)
         data = self._get_data(user=request.user,
                               project_id=project_id,
@@ -347,5 +307,4 @@ class ProjectStatementViewSet(BaseViewSet):
         writer = csv.writer(response)
         writer.writerow(["From",filter['date_from_inclusive']])
         writer.writerow(["To",filter['date_to_inclusive']])
-        return response, writer, data 
-    
+        return response, writer, data
