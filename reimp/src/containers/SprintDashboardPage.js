@@ -69,7 +69,7 @@ class ProjectDashboardPage extends Component {
 
     render() {
 
-        const { sprint, sprint_id, has_ctc_permission } = this.props
+        const { sprint, sprint_id, has_view_ctc_billable_rates_permission } = this.props
 
         return (
             <div>
@@ -80,7 +80,7 @@ class ProjectDashboardPage extends Component {
               </pre>
               <div>
                 <button onClick={this.navigateToIssuesPage}>Take me to your issues</button>
-                { has_ctc_permission &&
+                { has_view_ctc_billable_rates_permission &&
                   <div>
                     <button onClick={this.navigateToCostSummaryPage}>Cost Summary</button>
                   </div>
@@ -105,14 +105,14 @@ function mapStateToProps(state, props) {
     const sprint_id = props.params.sprintId
     const project = getProject(state, project_id) || {}
     const sprint = getSprint(state, sprint_id) || {}
-    const has_ctc_permission = has_permission(state, project_id, 'has_edit_ctc_billable_rates')
+    const has_view_ctc_billable_rates_permission = has_permission(state, project_id, 'has_view_ctc_billable_rates')
 
     return {
         project_id: project_id,
         project: project,
         sprint_id: sprint_id,
         sprint: sprint,
-        has_ctc_permission: has_ctc_permission,
+        has_view_ctc_billable_rates_permission: has_view_ctc_billable_rates_permission
     }
 }
 

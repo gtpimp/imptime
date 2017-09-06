@@ -18,28 +18,19 @@ class SprintTimeSummary extends Component {
     }
 
     componentDidMount() {
-        const {sprint_id, project_id, sprint, project, time_summary, dispatch} = this.props
+        this.refresh(this.props)
+    }
+
+    componentWillReceiveProps(new_props) {
+        this.refresh(new_props)
+    }
+
+    refresh(props) {
+        const {sprint_id, project_id, sprint, project, time_summary, dispatch} = props
         dispatch(ensureProjectsLoaded([project_id]))
         dispatch(ensureSprintsLoaded([sprint_id]))
         dispatch(ensureTimeSummaryLoaded(sprint_id))
         dispatch(ensureUsersLoaded(time_summary.all_user_ids))
-        this.refresh()
-    }
-
-    componentWillReceiveProps(new_props) {
-        const { dispatch} = this.props
-        dispatch(ensureProjectsLoaded([new_props.project_id]))
-        dispatch(ensureSprintsLoaded([new_props.sprint_id]))
-        dispatch(ensureTimeSummaryLoaded(new_props.sprint_id))
-        dispatch(ensureUsersLoaded(new_props.time_summary.all_user_ids))
-        if ( new_props.sprint.id !== this.props.sprint.id ||
-             new_props.sprint.name !== this.props.sprint.name ||
-             new_props.project.name !== this.props.project.name ) {
-            this.refresh()
-        }
-    }
-
-    refresh() {
     }
 
     renderSummaryForDevelopers(developers) {
