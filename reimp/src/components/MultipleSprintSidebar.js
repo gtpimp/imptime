@@ -14,11 +14,11 @@ class MultipleSprintSidebar extends Component {
         const {dispatch} = this.props
         dispatch(ensureSprintsLoaded(new_props.sprint_ids))
     }
-    
+
     render() {
 
         const {sprints, sprint_ids, project_id} = this.props
-        
+
         return (
 
             <Sidebar>
@@ -43,6 +43,3 @@ function mapStateToProps(state, props) {
 }
 
 export default connect(mapStateToProps)(MultipleSprintSidebar)
-
-
-

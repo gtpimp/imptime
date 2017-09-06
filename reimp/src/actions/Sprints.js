@@ -83,7 +83,6 @@ function fetchSprintsPromise(dispatch, state, sprint_ids) {
 
 	      const params = { filter: { ids: sprint_ids },
 			                   pagination: {'enabled': false} }
-
         return impfetch(state, 'imp/sprint/', dispatch, {params:params})
 	          .then(response => response.json())
 	          .then(json => {
