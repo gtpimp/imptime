@@ -515,8 +515,8 @@ class BusinessPermissions(BaseModel):
         """ returns all users that this user could know about, based on which businesses they have in common """
         business_ids = BusinessPermissions.objects.filter(user=user,
                                                           is_active_member_of_business=True)\
-                                                  .values_list('id', flat=True)
-
+                                                  .values_list('business_id', flat=True)
+ 
         return User.objects.filter(business_permissions__business_id__in=business_ids,
                                    business_permissions__is_active_member_of_business=True)
 
