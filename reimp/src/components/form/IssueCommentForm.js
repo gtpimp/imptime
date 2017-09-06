@@ -15,7 +15,7 @@ class IssueCommentForm extends Component {
         fieldOnChange(e)
         // setTimeout(() => handleSubmit(), 0)
     }
-    
+
     renderTextarea(field) {
         const {input} = field
         return (
@@ -29,19 +29,21 @@ class IssueCommentForm extends Component {
             />
         )
     }
-    
+
     render() {
 
         const { handleSubmit } = this.props
-        
+
         return (
             <form onSubmit={handleSubmit}>
-                <div>
-                    <label htmlFor="comment">Comment</label>
-                    <Field name="comment"
-                           component={this.renderTextarea} />
+              <div>
+                <label htmlFor="comment">Comment</label>
+                <div className="issue_sidebar--textarea">
+                  <Field name="comment"
+                         component={this.renderTextarea} />
                 </div>
-                <button type="submit">Submit</button>
+              </div>
+              <button type="submit">Submit</button>
             </form>
         )
     }
@@ -50,7 +52,7 @@ class IssueCommentForm extends Component {
 function mapStateToProps(state, props) {
 
     const { onSubmitted } = props
-    
+
     return {
         initialValues: {comment:props.initial_value},
         enableReinitialize: true,
@@ -59,4 +61,3 @@ function mapStateToProps(state, props) {
 }
 
 export default connect(mapStateToProps)(reduxForm({form:'issue_comment_form'})(IssueCommentForm))
-

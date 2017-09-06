@@ -41,15 +41,31 @@ class EditableIssueComment extends Component {
         return (
 
             <div>
-              <EditableProperty property_key={'issue_comment_'+comment.id}
-                                initial_value={comment.comment}
-                                onChange={this.onChange}
-                                can_edit={can_edit}
-              >
-                <IssueCommentForm />
-                <Label />
-                <Blank />
-              </EditableProperty>
+              { comment &&
+                <EditableProperty property_key={'issue_comment_'+comment.id}
+                                  initial_value={comment.comment}
+                                  onChange={this.onChange}
+                                  can_edit={can_edit}
+                    >
+                  <IssueCommentForm />
+                  <Label />
+                  <Blank />
+                </EditableProperty>
+              }
+
+              { ! comment &&
+                test
+                <EditableProperty property_key={'issue_comment'}
+                                  initial_value=''
+                                  onChange={this.onChange}
+                                  can_edit={can_edit}
+                    >
+                  <IssueCommentForm />
+                  <Label />
+                  <Blank />
+                </EditableProperty>
+              }
+
               { comment.id && <button onClick={this.onDelete}>delete</button> }
             </div>
         )

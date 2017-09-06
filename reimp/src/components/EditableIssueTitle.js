@@ -19,16 +19,16 @@ class EditableIssueTitle extends Component {
 
     render() {
         const { issue, can_edit } = this.props
-        
+
         return (
             <EditableProperty property_key='issue_title'
                               initial_value={issue.subject}
                               onChange={this.onChange}
                               can_edit={can_edit}
             >
-                <IssueTitleForm />
-                <div className="text-component--readonly">{issue.subject}</div>
-                <div className="text-component--empty">Title</div>
+              <IssueTitleForm />
+              <div className="text-component--readonly">{issue.subject}</div>
+              <div className="text-component--empty">Title</div>
             </EditableProperty>
         )
     }
