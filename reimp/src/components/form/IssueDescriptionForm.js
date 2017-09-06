@@ -17,7 +17,7 @@ class IssueDescriptionForm extends Component {
         // setTimeout(() => handleSubmit(), 0)
     }
 
-     keyDown(event) {
+    keyDown(event) {
         const { onKeyDown } = this.props
         if (onKeyDown) {
             onKeyDown(event)
@@ -45,11 +45,13 @@ class IssueDescriptionForm extends Component {
 
         return (
             <form onSubmit={handleSubmit}>
-                <div>
-                    <Field name="description"
-                           component={this.renderTextarea} />
+              <div>
+                <div className="issue_sidebar--textarea">
+                  <Field name="description"
+                         component={this.renderTextarea} />
                 </div>
-                <button type="submit">Submit</button>
+              </div>
+              <button type="submit">Submit</button>
             </form>
         )
     }
