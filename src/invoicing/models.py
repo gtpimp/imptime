@@ -26,6 +26,7 @@ class ClientInvoiceDetails(models.Model):
     contact_last_name = models.CharField(max_length=255, null=True, blank=True)
     contact_email = models.CharField(max_length=255, null=True, blank=True)
     contact_phone = models.CharField(max_length=255, null=True, blank=True)
+    archived = models.BooleanField(default=False, db_index=True)
 
     def __unicode__(self):
         return self.name
@@ -87,7 +88,7 @@ class Invoice(models.Model):
         if self.project is not None:
             self.business = self.project.business
         super(Invoice, self).save(*args, **kwargs)
-    
+
     @classmethod
     def next_invoice_number(self):
         return (Invoice.objects.all().aggregate(Max('invoice_number'))['invoice_number__max'] or 0)+1
@@ -187,15 +188,15 @@ class QuoteQuerySet(QuerySet):
 
     def quotes_waiting(self):
         return self.filter(status='sent to client')
-    
+
     def amount_waiting(self):
         return self.quotes_waiting().aggregate(Sum('amount'))['amount__sum']
 
     def quotes_accepted(self):
         return self.filter(status='accepted')
-    
+
     def amount_accepted(self):
-        return self.quotes_accepted().aggregate(Sum('amount'))['amount__sum']    
+        return self.quotes_accepted().aggregate(Sum('amount'))['amount__sum']
 
 class Quote(models.Model):
     QUOTE_STATUSES = ( ('creating', 'Creating'), ('sent to client', 'Sent to client'), ('accepted', 'Accepted by client'), ('rejected', 'Rejected by client'), ('work done', 'Work done') )
@@ -233,4 +234,3 @@ class Quote(models.Model):
             return self.amount
         else:
             return None
-    

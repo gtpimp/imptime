@@ -29,7 +29,7 @@ class InvoiceForm(forms.ModelForm):
         self.fields['payment_due'].initial = datetime.today() + relativedelta(days=settings.INVOICE_PAYMENT_DAYS)
         self.fields['payment_due'].widget.attrs['class'] = 'date_field'
         self.fields['issued_at'].initial = datetime.today()
-        self.fields['client'].queryset = models.ClientInvoiceDetails.objects.filter(invoices__business__archived=False).order_by("name").distinct()
+        self.fields['client'].queryset = models.ClientInvoiceDetails.objects.filter(archived=False).order_by("name").distinct()
         self.fields['business'].queryset = timepiece.Business.objects.filter(archived=False).order_by("name")
 
 class InvoiceItemForm(forms.ModelForm):
@@ -53,7 +53,8 @@ invoice_payment_formset = modelformset_factory(models.InvoicePayment, form=Invoi
 
 class InvoiceFilterForm(forms.Form):
 
-    client = forms.ModelChoiceField(required=False, queryset=models.ClientInvoiceDetails.objects.order_by("name"))
+    client = forms.ModelChoiceField(required=False, queryset=models.ClientInvoiceDetails.
+                                    objects.filter(archived=False).order_by("name").distinct())
     project = GroupedModelChoiceField('business', required=False, queryset=timepiece.Project.objects.all().filter_open().order_by("business__name", "name"))
     status = forms.ChoiceField(required=False, choices=( ('all', 'All'),) + models.Invoice.INVOICE_STATUSES)
     invoice_number = forms.IntegerField(required=False)
