@@ -37,7 +37,6 @@ class IssueCommentForm extends Component {
         return (
             <form onSubmit={handleSubmit}>
               <div>
-                <label htmlFor="comment">Comment</label>
                 <div className="issue_sidebar--textarea">
                   <Field name="comment"
                          component={this.renderTextarea} />

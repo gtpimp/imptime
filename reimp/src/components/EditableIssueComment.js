@@ -36,40 +36,42 @@ class EditableIssueComment extends Component {
     }
 
     render() {
-        const {comment, can_edit} = this.props
-
+        const {comment, can_edit, issue_id} = this.props
         return (
 
             <div>
-              test
-              { comment &&
-                <EditableProperty property_key={'issue_comment_'+comment.id}
-                                  initial_value={comment.comment}
+            { comment.id &&
+              <EditableProperty property_key={'issue_comment_'+issue_id+'_'+comment.id}
+                initial_value={comment.comment}
+                onChange={this.onChange}
+                can_edit={can_edit}
+                >
+                <IssueCommentForm />
+                <div>
+                  issue_comment_{issue_id}_{comment.id}
+                </div>
+                <Label />
+                <Blank />
+                </EditableProperty>
+            }
+
+            { ! comment.id &&
+              <div>
+                <EditableProperty property_key={'issue_comment_'+issue_id}
+                                  initial_value=''
                                   onChange={this.onChange}
                                   can_edit={can_edit}
-                    >
+                >
                   <IssueCommentForm />
-                  <Label />
-                  <Blank />
+                  <div className="text-component--readonly"></div>
+                  <div className="text-component--empty">
+                    <button>Create comment</button>
+                  </div>
                 </EditableProperty>
-              }
+              </div>
+            }
 
-              { ! comment &&
-                <div>
-                  test
-                  <EditableProperty property_key='issue_comment'
-                                    initial_value=''
-                                    onChange={this.onChange}
-                                    can_edit={can_edit}
-                    >
-                    <IssueCommentForm />
-                    <Label />
-                    <Blank />
-                  </EditableProperty>
-                </div>
-              }
-
-              { comment.id && <button onClick={this.onDelete}>delete</button> }
+            { comment.id && <button onClick={this.onDelete}>delete</button> }
             </div>
         )
     }
