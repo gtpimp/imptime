@@ -41,6 +41,7 @@ class EditableIssueComment extends Component {
         return (
 
             <div>
+              test
               { comment &&
                 <EditableProperty property_key={'issue_comment_'+comment.id}
                                   initial_value={comment.comment}
@@ -54,16 +55,18 @@ class EditableIssueComment extends Component {
               }
 
               { ! comment &&
-                test
-                <EditableProperty property_key={'issue_comment'}
-                                  initial_value=''
-                                  onChange={this.onChange}
-                                  can_edit={can_edit}
+                <div>
+                  test
+                  <EditableProperty property_key='issue_comment'
+                                    initial_value=''
+                                    onChange={this.onChange}
+                                    can_edit={can_edit}
                     >
-                  <IssueCommentForm />
-                  <Label />
-                  <Blank />
-                </EditableProperty>
+                    <IssueCommentForm />
+                    <Label />
+                    <Blank />
+                  </EditableProperty>
+                </div>
               }
 
               { comment.id && <button onClick={this.onDelete}>delete</button> }
