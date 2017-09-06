@@ -84,7 +84,7 @@ function mapStateToProps(state, props) {
         issue_ids: selected_issue_ids,
         issue: issue,
         last_selected_issue_id: issue.id,
-        sprint_id: sprint.id,
+        sprint_id: sprint.id || null,
         project_id: sprint.project_id,
         wide_column_mode: wide_column_mode
     }
