@@ -188,7 +188,7 @@ export function getMissingItemIds(state, required_item_ids, matching_items_key) 
     // Returns a list of item_ids which aren't already loaded or invalidated or already loading
 
     // const matching_item_refs = forEach(matching_item_ids, function(item_id, index) { return "" + item_id })
-    
+
     const required_item_refs = map(required_item_ids, _stringify_id)
     const matching_items = state[matching_items_key] || {}
     let matching_item_ids = keys(matching_items.items_by_id || {})
@@ -204,7 +204,7 @@ export function getMissingItemIds(state, required_item_ids, matching_items_key) 
 
     unmatching_item_ids = compact(unmatching_item_ids)
     unmatching_item_ids = map(unmatching_item_ids, _unstringify_id)
-    
+
     return unmatching_item_ids
 }
 
