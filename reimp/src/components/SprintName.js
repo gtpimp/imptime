@@ -11,7 +11,7 @@ class SprintName extends Component {
         super(props)
         this.on_clicked = this.on_clicked.bind(this)
     }
-    
+
     componentDidMount() {
         this.refresh(this.props)
     }
@@ -21,10 +21,10 @@ class SprintName extends Component {
     }
 
     refresh(props) {
-	const { dispatch, sprint_id, sprint } = props
-	if ( sprint.loaded === false ) {
-	    dispatch(ensureSprintsLoaded([sprint_id]))
-	}
+	      const { dispatch, sprint_id, sprint } = props
+	      if ( sprint.loaded === false ) {
+	          dispatch(ensureSprintsLoaded([sprint_id]))
+	      }
     }
 
     on_clicked() {
@@ -35,18 +35,18 @@ class SprintName extends Component {
             browserHistory.push('/projects/' + sprint.project_id + '/sprints/' + sprint.id);
         }
     }
-    
-    render_inline_small() {
-	const { sprint, loading_value } = this.props
 
-	return (
-	    <div className="sprint_name--inline-small"
+    render_inline_small() {
+	      const { sprint, loading_value } = this.props
+
+	      return (
+	          <div className="sprint_name--inline-small"
                  key={this.key+".collapsed_sprint."+sprint.id}
-		 onClick={this.on_clicked}
-	         >
-	      {sprint.name }
-	    </div>
-	)
+		             onClick={this.on_clicked}
+	          >
+	            {sprint.name }
+	          </div>
+	      )
     }
 
     render() {
@@ -56,15 +56,15 @@ class SprintName extends Component {
             return ( <div onClick={onClick}></div> )
         }
 
-	if ( sprint.loaded === false ) {
-	    return ( <div onClick={onClick}>{loading_value}</div> )
-	}
+	      if ( sprint.loaded === false ) {
+	          return ( <div onClick={onClick}>{loading_value}</div> )
+	      }
 
-	if ( render_mode === 'inline--small' ) {
-	    return this.render_inline_small()
-	} else {
-	    return ( <div>Dev error, unsupported render mode: {render_mode}</div> )
-	}
+	      if ( render_mode === 'inline--small' ) {
+	          return this.render_inline_small()
+	      } else {
+	          return ( <div>Dev error, unsupported render mode: {render_mode}</div> )
+	      }
     }
 }
 
@@ -73,10 +73,10 @@ function mapStateToProps(state, props) {
     const sprint = ((sprint_id && (getSprint(state, sprint_id))) || { 'loaded': false, 'id': sprint_id }) || { 'sprintname': 'no-one' }
 
     return {
-	sprint: sprint,
+	      sprint: sprint,
         sprint_id: sprint_id,
-	render_mode: render_mode || "inline--small",
-	loading_value: loading_value || "...",
+	      render_mode: render_mode || "inline--small",
+	      loading_value: loading_value || "...",
         onClick: props.onClick,
         open_on_click: props.open_on_click || true
     }

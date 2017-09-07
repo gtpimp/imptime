@@ -101,7 +101,7 @@ class SprintViewSet(BaseViewSet):
                 order = sprint_before.order + 0.5
             else:
                 order = 0
-            project = self.allowed_project(project_id)
+                project = self.allowed_project(project_id)
 
             if self.logged_in_permissions(project).has_create_sprint:
                 new_status = SprintStatus.objects.get_or_create(business_id=project_id, name='pending')[0]
