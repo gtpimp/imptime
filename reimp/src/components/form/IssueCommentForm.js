@@ -2,6 +2,7 @@ import React, {Component} from 'react'
 import {connect} from 'react-redux'
 import { Field, reduxForm } from 'redux-form';
 import Textarea from 'react-expanding-textarea'
+import { getIssue } from '../../actions/Issues'
 
 class IssueCommentForm extends Component {
 
@@ -9,11 +10,19 @@ class IssueCommentForm extends Component {
         super(props)
         this.renderTextarea = this.renderTextarea.bind(this)
         this.onChangeAndSubmit = this.onChangeAndSubmit.bind(this)
+        this.keyDown = this.keyDown.bind(this)
     }
 
     onChangeAndSubmit(e, fieldOnChange) {
         fieldOnChange(e)
         // setTimeout(() => handleSubmit(), 0)
+    }
+
+    keyDown(event) {
+        const { onKeyDown } = this.props
+        if (onKeyDown) {
+            onKeyDown(event)
+        }
     }
 
     renderTextarea(field) {
@@ -22,10 +31,11 @@ class IssueCommentForm extends Component {
             <Textarea
                 rows="1"
                 maxLength="3000"
-                className="textarea textarea--text-component"
+                className="textarea textarea--text-component textarea--comment"
                 placeholder="Comment"
                 onChange={(e) => this.onChangeAndSubmit(e, input.onChange)}
                 value={input.value}
+                onKeyDown={this.keyDown}
             />
         )
     }
@@ -49,10 +59,10 @@ class IssueCommentForm extends Component {
 }
 
 function mapStateToProps(state, props) {
-
-    const { onSubmitted } = props
+    const { onSubmitted, issue_id, comment } = props
 
     return {
+        comment: comment,
         initialValues: {comment:props.initial_value},
         enableReinitialize: true,
         onSubmit: onSubmitted

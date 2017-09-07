@@ -26,7 +26,6 @@ class EditableProperty extends Component {
 
     componentWillReceiveProps(new_props) {
         const {dispatch, property_key, initial_mode} = this.props
-        debugger;
         if (new_props.initial_mode !== initial_mode) {
             dispatch(setMode(property_key, new_props.initial_mode))
         }

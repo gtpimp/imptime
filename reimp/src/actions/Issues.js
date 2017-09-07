@@ -118,6 +118,15 @@ export function getIssue(state, issue_id) {
     return ((state.issue || {}).items_by_id || {})[issue_id] || null
 }
 
+/* export function getComment(state, issue_id, comment_id) {
+ *     return (dispatch, getState) => {
+ *         dispatch(ensureIssuesLoaded([issue_id]))
+ *         const issue = dispatch(getIssue(state, issue_id))
+ *         const comment = issue
+ *         return comment
+ *     }
+ * }*/
+
 export function getIssues(state, issue_ids) {
     const issue_objs = state.issue
     const items_by_id = (issue_objs && issue_objs.items_by_id) || {}

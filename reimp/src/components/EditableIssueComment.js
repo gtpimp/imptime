@@ -42,17 +42,15 @@ class EditableIssueComment extends Component {
             <div>
             { comment.id &&
               <EditableProperty property_key={'issue_comment_'+issue_id+'_'+comment.id}
-                initial_value={comment.comment}
-                onChange={this.onChange}
-                can_edit={can_edit}
-                >
-                <IssueCommentForm />
-                <div>
-                  issue_comment_{issue_id}_{comment.id}
-                </div>
-                <Label />
-                <Blank />
-                </EditableProperty>
+                                initial_value={comment.comment}
+                                onChange={this.onChange}
+                                can_edit={can_edit}
+              >
+                <IssueCommentForm form={'issue_comment_form_'+issue_id+'_'+comment.id}
+                                  issue_id={issue_id} comment={comment}/>
+                <div className="text-component--readonly text-component--comment">{comment.comment}</div>
+                <div className="text-component--empty"></div>
+              </EditableProperty>
             }
 
             { ! comment.id &&
@@ -62,7 +60,7 @@ class EditableIssueComment extends Component {
                                   onChange={this.onChange}
                                   can_edit={can_edit}
                 >
-                  <IssueCommentForm />
+                  <IssueCommentForm form={'issue_comment_form_'+issue_id} issue_id={issue_id} />
                   <div className="text-component--readonly"></div>
                   <div className="text-component--empty">
                     <button>Create comment</button>

@@ -22,3 +22,10 @@
   font: $font-7;
   line-height: 24px;
 }
+
+.textarea--comment {
+  color: $color-10;
+  font: $font-1;
+  line-height: 20px;
+  white-space: pre-wrap;
+}
