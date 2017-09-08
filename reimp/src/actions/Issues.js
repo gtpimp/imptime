@@ -308,6 +308,95 @@ export function deleteIssueComment(issue_id, comment_id) {
     }
 }
 
+export function updateIssueTestable(issue_id, testable_id, new_testable) {
+
+    return (dispatch, getState) => {
+	      const state = getState()
+	      dispatch(announceIssuesSaving([issue_id], 'testable', new_testable))
+	      let data = { issue_id: issue_id,
+                     testable_id: testable_id,
+                     testable: new_testable }
+	      return impfetch( state, "imp/issue/testable/0/", dispatch,
+			                   {method: "PUT",
+			                    credentials: 'same-origin',
+			                    data: data,
+			                    headers: {"Content-type": "application/json; charset=UTF-8"},
+			                    body: JSON.stringify(data)}
+	      ).then(response => response.json())
+	       .then(json => {
+             if ( json.status !== 'success' ) {
+		             console.log('Request failed with JSON response', json);
+		             dispatch(announceIssueSaveFailed(issue_id, json.error))
+             } else {
+		             console.log('Request succeeded with JSON response', json);
+		             dispatch(announceIssuesSaved([issue_id]))
+             }
+	       })
+	       .catch(function (error) {
+             console.log('Request failed', error);
+	           dispatch(announceIssueSaveFailed(issue_id, error))
+	       })
+    }
+}
+
+export function createIssueTestable(issue_id, new_testable) {
+    return (dispatch, getState) => {
+	      const state = getState()
+	      dispatch(announceIssuesSaving([issue_id], 'testable', new_testable))
+	      let data = { issue_id: issue_id,
+                     testable: new_testable }
+	      return impfetch( state, "imp/issue/testable/", dispatch,
+			                   {method: "POST",
+			                    credentials: 'same-origin',
+			                    data: data,
+			                    headers: {"Content-type": "application/json; charset=UTF-8"},
+			                    body: JSON.stringify(data)}
+	      ).then(response => response.json())
+	       .then(json => {
+             if ( json.status !== 'success' ) {
+		             console.log('Request failed with JSON response', json);
+		             dispatch(announceIssueSaveFailed(issue_id, json.error))
+             } else {
+		             console.log('Request succeeded with JSON response', json);
+		             dispatch(announceIssuesSaved([issue_id]))
+             }
+	       })
+	       .catch(function (error) {
+             console.log('Request failed', error);
+	           dispatch(announceIssueSaveFailed(issue_id, error))
+	       })
+    }
+}
+
+export function deleteIssueTestable(issue_id, testable_id) {
+    return (dispatch, getState) => {
+        const state = getState()
+	      dispatch(announceIssuesSaving([issue_id], 'testable', "deleting"))
+        let data = { issue_id: issue_id,
+                     testable_id: testable_id }
+	      return impfetch( state, "imp/issue/testable/0/", dispatch,
+			                   {method: "DELETE",
+			                    credentials: 'same-origin',
+			                    data: data,
+			                    headers: {"Content-type": "application/json; charset=UTF-8"},
+			                    body: JSON.stringify(data)}
+	      ).then(response => response.json())
+	       .then(json => {
+             if ( json.status !== 'success' ) {
+		             console.log('Request failed with JSON response', json);
+		             dispatch(announceIssueSaveFailed(issue_id, json.error))
+             } else {
+		             console.log('Request succeeded with JSON response', json);
+		             dispatch(announceIssuesSaved([issue_id]))
+             }
+	       })
+	       .catch(function (error) {
+             console.log('Request failed', error);
+	           dispatch(announceIssueSaveFailed(issue_id, error))
+	       })
+    }
+}
+
 export function deleteIssueAttachment(issue_id, attachment_id) {
     return (dispatch, getState) => {
         const state = getState()
