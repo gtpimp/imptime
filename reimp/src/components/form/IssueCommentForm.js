@@ -3,6 +3,7 @@ import {connect} from 'react-redux'
 import { Field, reduxForm } from 'redux-form';
 import Textarea from 'react-expanding-textarea'
 import { getIssue } from '../../actions/Issues'
+import OtherUser from '../../components/OtherUser'
 
 class IssueCommentForm extends Component {
 
@@ -42,18 +43,28 @@ class IssueCommentForm extends Component {
 
     render() {
 
-        const { handleSubmit } = this.props
+        const { comment, handleSubmit } = this.props
 
         return (
-            <form onSubmit={handleSubmit}>
-              <div>
-                <div className="issue_sidebar--textarea">
-                  <Field name="comment"
-                         component={this.renderTextarea} />
+            <div>
+              { comment &&
+                <div className="text-component--readonly text-component--comment">
+                  <div className="issue_sidebar--comment_date" >
+                    {comment.modified} - <div className="issue_sidebar--comment_author">
+                    <OtherUser value={comment.author_id} /></div>
+                  </div>
                 </div>
-              </div>
-              <button type="submit">Submit</button>
-            </form>
+              }
+              <form onSubmit={handleSubmit}>
+                <div>
+                  <div className="issue_sidebar--textarea">
+                    <Field name="comment"
+                           component={this.renderTextarea} />
+                  </div>
+                </div>
+                <button className="button issue_sidebar--textarea" type="submit">Submit</button>
+              </form>
+            </div>
         )
     }
 }

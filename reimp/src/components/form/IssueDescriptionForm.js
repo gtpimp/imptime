@@ -51,7 +51,7 @@ class IssueDescriptionForm extends Component {
                          component={this.renderTextarea} />
                 </div>
               </div>
-              <button type="submit">Submit</button>
+              <button className="button issue_sidebar--textarea" type="submit">Submit</button>
             </form>
         )
     }

@@ -3,3 +3,21 @@
     border: solid 1px #dcdcdc;
     margin-bottom: 5px;
 }
+
+.issue_sidebar--textarea--readonly {
+    margin-bottom: 5px;
+}
+
+.issue_sidebar--button {
+    padding: 10px;
+    margin-bottom: 5px;
+}
+
+.issue_sidebar--comment_date {
+    font-weight: 500;
+    margin-bottom: 2px;
+}
+
+.issue_sidebar--comment_author {
+    display: inline-block;
+}

@@ -203,7 +203,7 @@ export function getMissingItemIds(state, required_item_ids, matching_items_key) 
     item_ids_to_load = difference(item_ids_to_load, loading_item_ids)
 
     // get the list of all un-invalidated items
-    const existing_item_ids = keys(items.items_by_id || {})
+    const existing_item_ids = map(keys(items.items_by_id || {}), _stringify_id)
     const invalidated_item_ids = map(items.invalidated_item_ids || [], _stringify_id)
     const uninvalidated_item_ids = difference(existing_item_ids, invalidated_item_ids)
 

@@ -14,6 +14,7 @@ import IssueCommentForm from './form/IssueCommentForm'
 import Label from './form/Label'
 import Blank from './form/Blank'
 import { has_permission } from '../actions/Users'
+import OtherUser from '../components/OtherUser'
 
 class EditableIssueComment extends Component {
 
@@ -63,7 +64,15 @@ class EditableIssueComment extends Component {
                     >
                   <IssueCommentForm form={'issue_comment_form_'+issue_id+'_'+comment.id}
                                     issue_id={issue_id} comment={comment}/>
-                  <div className="text-component--readonly text-component--comment">{comment.comment}</div>
+                  <div className="text-component--readonly text-component--comment">
+                    <div className="issue_sidebar--comment_date" >
+                      {comment.modified} - <div className="issue_sidebar--comment_author">
+                      <OtherUser value={comment.author_id} /></div>
+                    </div>
+                    <div className="issue_sidebar--textarea--readonly" >
+                      {comment.comment}
+                    </div>
+                  </div>
                   <div className="text-component--empty"></div>
                 </EditableProperty>
               }
@@ -78,13 +87,13 @@ class EditableIssueComment extends Component {
                     <IssueCommentForm form={'issue_comment_form_'+issue_id} issue_id={issue_id} />
                     <div className="text-component--readonly"></div>
                     <div className="text-component--empty">
-                      <button>Create comment</button>
+                      <button className="button button--primary issue_sidebar--button">Create comment</button>
                     </div>
                   </EditableProperty>
                 </div>
               }
 
-              { comment.id && <button onClick={this.onDelete}>delete</button> }
+              { comment.id && <button className="button button--danger issue_sidebar--button" onClick={this.onDelete}>delete</button> }
             </div>
         )
     }
