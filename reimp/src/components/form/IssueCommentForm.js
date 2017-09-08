@@ -61,16 +61,16 @@ class IssueCommentForm extends Component {
 function mapStateToProps(state, props) {
     const { onSubmitted, issue_id, comment } = props
     const { issue } = state;
-    const loading_item_id = issue.loading_item_ids || {}
-    const initial_value = comment.comment;
+    /* const loading_item_id = issue.loading_item_ids || {}*/
+    /* const initial_value = comment.comment;*/
 
     return {
         comment: comment,
         initialValues: {comment:props.initial_value},
         enableReinitialize: true,
         onSubmit: onSubmitted,
-        initial_value: initial_value,
-        loading_item_id: loading_item_id
+        /* initial_value: initial_value,
+         * loading_item_id: loading_item_id*/
     }
 }
 

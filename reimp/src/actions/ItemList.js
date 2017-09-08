@@ -189,23 +189,32 @@ export function getMissingItemIds(state, required_item_ids, matching_items_key) 
 
     // const matching_item_refs = forEach(matching_item_ids, function(item_id, index) { return "" + item_id })
 
+    // take required
+    // remove those that are loading
+    // get the existing list that isn't invalidated
+
     const required_item_refs = map(required_item_ids, _stringify_id)
-    const matching_items = state[matching_items_key] || {}
-    let matching_item_ids = keys(matching_items.items_by_id || {})
+    const items = state[matching_items_key] || {}
 
-    const invalidated_item_refs = map(matching_items.invalidated_item_ids || [], _stringify_id)
-    matching_item_ids = difference(matching_item_ids, invalidated_item_refs)
+    let item_ids_to_load = required_item_refs
 
-    const matching_item_refs = map(matching_item_ids, _stringify_id)
-    let unmatching_item_ids = difference(required_item_refs, matching_item_refs)
+    // remove items being loaded
+    const loading_item_ids = map(items.loading_item_ids || [], _stringify_id)
+    item_ids_to_load = difference(item_ids_to_load, loading_item_ids)
 
-    const loading_item_ids = map(matching_items.loading_item_ids || [], _stringify_id)
-    unmatching_item_ids = difference(unmatching_item_ids, loading_item_ids)
+    // get the list of all un-invalidated items
+    const existing_item_ids = keys(items.items_by_id || {})
+    const invalidated_item_ids = map(items.invalidated_item_ids || [], _stringify_id)
+    const uninvalidated_item_ids = difference(existing_item_ids, invalidated_item_ids)
 
-    unmatching_item_ids = compact(unmatching_item_ids)
-    unmatching_item_ids = map(unmatching_item_ids, _unstringify_id)
+    // remove all un-invalidated items
+    item_ids_to_load = difference(item_ids_to_load, uninvalidated_item_ids)
 
-    return unmatching_item_ids
+    // remove nulls and convert back to original ids
+    item_ids_to_load = compact(item_ids_to_load)
+    item_ids_to_load = map(item_ids_to_load, _unstringify_id)
+
+    return item_ids_to_load
 }
 
 function tryFetchListAndItems(list_key, matching_items_key, matching_items_promise_func) {

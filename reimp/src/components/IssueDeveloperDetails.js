@@ -30,17 +30,17 @@ class IssueDeveloperDetails extends Component {
     }
 
     componentDidMount() {
-	const { dispatch, issue_id } = this.props
-	if ( issue_id ) {
-	    dispatch(fetchIssueGeneralDetailsIfNeeded([issue_id]))
-	}
+	      const { dispatch, issue_id } = this.props
+	      if ( issue_id ) {
+	          dispatch(fetchIssueGeneralDetailsIfNeeded([issue_id]))
+	      }
     }
 
     componentWillReceiveProps() {
-	const { dispatch, issue_id } = this.props
-	if ( issue_id ) {
-	    dispatch(fetchIssueGeneralDetailsIfNeeded([issue_id]))
-	}
+	      const { dispatch, issue_id } = this.props
+	      if ( issue_id ) {
+	          dispatch(fetchIssueGeneralDetailsIfNeeded([issue_id]))
+	      }
     }
 
     onChangeSubject(issue_id, value) {
@@ -119,7 +119,7 @@ class IssueDeveloperDetails extends Component {
 	    </div>
 	)
     }
-    
+
     render() {
 
         const { is_visible, issue, comments, is_loading,
@@ -168,7 +168,7 @@ class IssueDeveloperDetails extends Component {
 			</div>
 
 			<div>
-			    { comments.map((comment) => this.renderComment(comment)) } 
+			    { comments.map((comment) => this.renderComment(comment)) }
 			</div>
 		    </div>
 		</div>
@@ -199,7 +199,7 @@ function mapStateToProps(state, props) {
 
     const candidate_issue = state_issues.candidate_issue
     const is_creating_issue = candidate_issue || false
-    
+
     return {
         issue_id: issue_id,
 	issue: issue,

@@ -6,7 +6,9 @@ import {
     updateIssueComment,
     createIssueComment,
     deleteIssueComment,
-    getIssue
+    ensureIssuesLoaded,
+    getIssue,
+    is_issue_invalidated
 } from '../actions/Issues'
 import IssueCommentForm from './form/IssueCommentForm'
 import Label from './form/Label'
@@ -21,6 +23,17 @@ class EditableIssueComment extends Component {
         this.onDelete = this.onDelete.bind(this)
     }
 
+    componentWillMount() {
+        const { dispatch, issue_id } = this.props
+        dispatch(ensureIssuesLoaded([issue_id]))
+    }
+
+    componentWillReceiveProps(new_props) {
+        const { dispatch } = this.props
+        const { issue_id } = new_props
+        dispatch(ensureIssuesLoaded([issue_id]))
+    }
+
     onChange(new_value) {
         const { dispatch, issue_id, comment_id } = this.props
         if ( comment_id ) {
@@ -29,6 +42,8 @@ class EditableIssueComment extends Component {
             dispatch(createIssueComment(issue_id, new_value.comment))
         }
     }
+
+
 
     onDelete(new_value) {
         const { dispatch, issue_id, comment_id } = this.props
@@ -92,7 +107,8 @@ function mapStateToProps(state, props) {
         issue_id: issue_id,
         comment_id: comment_id,
         comment: comment,
-        can_edit: can_edit
+        can_edit: can_edit,
+        is_invalidated: is_issue_invalidated(state, issue.id),
     }
 }
 

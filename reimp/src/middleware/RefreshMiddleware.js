@@ -31,10 +31,10 @@ function triggerInvalidateEntity(d, dispatch) {
     // these object on demand using componentWillReceiveProps
     if ( d.entity_name === 'project' ) {
         dispatch(invalidateProjects([d.entity_ref]))
-	
+
     } else if ( d.entity_name === 'sprint' ) {
         dispatch(invalidateSprints([d.entity_ref]))
-	
+
     } else if ( d.entity_name === 'issue' ) {
         dispatch(invalidateIssues([d.entity_ref]))
         dispatch(invalidateIssueGeneralDetails([d.entity_ref]))
@@ -51,7 +51,7 @@ function triggerInvalidateEntity(d, dispatch) {
         // dispatch(invalidateUsers(d.params.users))
         // dispatch(invalidateProjects(d.params.projects))
         dispatch(invalidatePups([d.entity_ref]))
-        
+
     } else {
         console.log("Unknown entity to refresh: " + d.entity_name)
     }
@@ -65,10 +65,10 @@ function triggerInvalidateItemLists(d, dispatch) {
     // refresh their lists on demand using componentWillReceiveProps
     if ( d.entity_name === 'project' ) {
         dispatch(invalidateList(LIST_KEY__PROJECT_LIST))
-        
+
     } else if ( d.entity_name === 'sprint' ) {
         dispatch(invalidateList(LIST_KEY__SPRINT_LIST))
-	
+
     } else if ( d.entity_name === 'issue' ) {
         dispatch(invalidateList(LIST_KEY__ISSUE_LIST))
 
@@ -77,7 +77,7 @@ function triggerInvalidateItemLists(d, dispatch) {
 
     } else if ( d.entity_name === 'projectpermissions' ) {
         dispatch(invalidateList(LIST_KEY__PROJECT_USER_LIST))
-        
+
     } else {
         console.log("Unknown entity to refresh lists: " + d.entity_name)
     }
@@ -89,13 +89,13 @@ function refreshMiddleware(_ref) {
 
     return function (next) {
         return function (action) {
-            
+
             if (action && action.type === ASYNC_REFRESH_NOTIFICATION) {
 
                 const payload = action.payload || [{}]
 
                 each(payload, (d) => {
-                    
+
                     if ( d.action_type === "create" ) {
                         triggerInvalidateItemLists(d, dispatch)
                     } else if ( d.action_type === "update" ) {
@@ -104,13 +104,13 @@ function refreshMiddleware(_ref) {
                     } else if ( d.action_type === "delete" ) {
                         triggerInvalidateEntity(d, dispatch)
                         triggerInvalidateItemLists(d, dispatch)
-                    } else { 
+                    } else {
                         console.log("Unknown action_type for async refresh: " + d.action_type)
                     }
                     dispatch(addAsyncMessage(moment(), d.action_type + " " + d.entity_name + " " + d.entity_ref))
                 })
                 return
-            } 
+            }
             return next(action)
         }
     }

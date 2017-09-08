@@ -60,6 +60,7 @@ class IssueList extends Component {
         if (sprint_id) {
             dispatch(initList(list_key))
             dispatch(fetchIssuesIfNeeded(list_key))
+            console.log(list_key)
         }
     }
 

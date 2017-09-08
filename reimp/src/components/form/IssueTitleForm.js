@@ -10,15 +10,8 @@ class IssueTitleForm extends Component {
         super(props)
         this.renderTextarea = this.renderTextarea.bind(this)
         this.keyDown = this.keyDown.bind(this)
-        /* this.onChangeAndSubmit = this.onChangeAndSubmit.bind(this)*/
     }
 
-    /* onChangeAndSubmit(e, fieldOnChange) {
-     *     const {handleSubmit} = this.props
-     *     debugger
-     *     fieldOnChange(e)
-     *     // setTimeout(() => handleSubmit(), 0)
-     * }*/
     keyDown(event) {
         const { onKeyDown } = this.props
         if (onKeyDown) {

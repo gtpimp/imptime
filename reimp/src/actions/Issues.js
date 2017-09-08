@@ -35,7 +35,6 @@ export function invalidateAllIssues() {
 }
 
 export function invalidateIssues(issue_ids) {
-
     return {
         type: INVALIDATE_ISSUES,
 	      issue_ids_to_invalidate: issue_ids
@@ -74,7 +73,6 @@ function announceIssuesLoadFailed(error) {
 function fetchIssuesPromise(dispatch, state, issue_ids) {
     return new Promise(function(resolve, reject) {
 	      dispatch(announceLoadingIssues(issue_ids))
-
 	      const params = { filter: { ids: issue_ids },
 			                   pagination: {'enabled': false} }
 
@@ -658,4 +656,8 @@ export function clock(issue_id, clock_action) {
 export function getCandidateIssue(state) {
     const issue_objs = state.issue || {}
     return issue_objs.candidate_issue
+}
+
+export function is_issue_invalidated(state, issue_id) {
+    return (((state.issue || {}).invalidated_item_ids) || []).indexOf(issue_id) !== -1
 }
