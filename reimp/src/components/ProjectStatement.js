@@ -23,6 +23,7 @@ import {
     download_sprint_breakdown,
     download_issues_worked_on
 } from '../actions/ProjectStatement'
+import { TimeChart } from './TimeChart'
 import { ensureUsersLoaded } from '../actions/Users'
 import { setBreadcrumbs } from '../actions/Breadcrumbs'
 import {
@@ -102,9 +103,7 @@ class ProjectStatement extends Component {
 
     updateDateToInclusive(new_value) {
         const { filter, dispatch } = this.props
-        dispatch(update_project_statement_filter(
-            filter.date_from_inclusive,
-            new_value))
+        dispatch(update_project_statement_filter(filter.date_from_inclusive, new_value))
     }
 
     refreshStatement() {
@@ -269,7 +268,7 @@ class ProjectStatement extends Component {
 
     render() {
 
-        const { is_loading, project_statement, filter } = this.props
+        const { is_loading, project_statement, filter, project_id } = this.props
         const that = this;
 
         return (
@@ -310,6 +309,14 @@ class ProjectStatement extends Component {
                     </div>
 
                     <div className="project__statement__separator" />
+                    <div className="project__statement__times_grid">
+                      <h2 className="project__statement__times_grid__header">Sprint breakdown by user (during selected period)
+                        <div className="project__statement__grid_icon icon--download_as_csv" onClick={this.download_sprint_breakdown_by_user} />
+                      </h2>
+                      <TimeChart project_id={project_id} filter={filter} />
+                    </div>
+
+                    <div className="project__statement__separator" />
                     <div className="project__statement__remaining_grid">
                       <h2 className="project__statement__remaining_grid__header">Remaining time (for sprints worked on in the selected period)
                       </h2>
@@ -322,7 +329,7 @@ class ProjectStatement extends Component {
                       </h2>
                         { project_statement.grand_totals && this.render_issues_worked_on(project_statement) }
                     </div>
-
+                    
                     <div className="project__statement__footer"/>
                         
                   </div>

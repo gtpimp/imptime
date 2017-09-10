@@ -7,6 +7,7 @@ import { connect } from 'react-redux'
 import { getProject } from '../../actions/Projects'
 import { get_selected_project_ids } from '../../actions/Page'
 import { invalidateProjectStatement } from '../../actions/ProjectStatement'
+import { invalidateTimeChart } from '../../actions/TimeChart'
 import { invalidateTimeSummary } from '../../actions/TimeSummary'
 
 class ProjectStatementToolbarPanel extends Component {
@@ -19,6 +20,7 @@ class ProjectStatementToolbarPanel extends Component {
     invalidateComponents() {
         const { dispatch, project_id } = this.props
         dispatch(invalidateProjectStatement(project_id))
+        dispatch(invalidateTimeChart(project_id))
     }
 
     onSettingsClick() {
