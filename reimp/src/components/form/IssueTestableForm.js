@@ -3,7 +3,6 @@ import {connect} from 'react-redux'
 import { Field, reduxForm } from 'redux-form';
 import Textarea from 'react-expanding-textarea'
 import { getIssue } from '../../actions/Issues'
-import OtherUser from '../../components/OtherUser'
 
 class IssueTestableForm extends Component {
 
@@ -49,10 +48,6 @@ class IssueTestableForm extends Component {
             <div>
               { testable &&
                 <div className="text-component--readonly text-component--testable">
-                  <div className="issue_sidebar--testable_date" >
-                    {testable.modified} - <div className="issue_sidebar--testable_author">
-                    <OtherUser value={testable.author_id} /></div>
-                  </div>
                 </div>
               }
               <form onSubmit={handleSubmit}>

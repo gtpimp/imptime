@@ -14,7 +14,6 @@ import IssueTestableForm from './form/IssueTestableForm'
 import Label from './form/Label'
 import Blank from './form/Blank'
 import { has_permission } from '../actions/Users'
-import OtherUser from '../components/OtherUser'
 
 class EditableIssueTestable extends Component {
 
@@ -58,19 +57,15 @@ class EditableIssueTestable extends Component {
             <div>
               { testable.id &&
                 <EditableProperty property_key={'issue_testable_'+issue_id+'_'+testable.id}
-                                  initial_value={testable.testable}
+                                  initial_value={testable.steps}
                                   onChange={this.onChange}
                                   can_edit={can_edit}
                     >
                   <IssueTestableForm form={'issue_testable_form_'+issue_id+'_'+testable.id}
                                     issue_id={issue_id} testable={testable}/>
                   <div className="text-component--readonly text-component--testable">
-                    <div className="issue_sidebar--testable_date" >
-                      {testable.modified} - <div className="issue_sidebar--testable_author">
-                      <OtherUser value={testable.author_id} /></div>
-                    </div>
                     <div className="issue_sidebar--textarea--readonly" >
-                      {testable.testable}
+                      {testable.steps}
                     </div>
                   </div>
                   <div className="text-component--empty"></div>

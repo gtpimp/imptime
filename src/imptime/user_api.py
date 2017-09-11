@@ -23,7 +23,7 @@ class UserViewSet(BaseViewSet):
             pagination = params.get('pagination', {})
             filter_args = params.get('filter', {})
             format_args = params.get('format', {})
-            
+
             project_id = filter_args.pop('project_id', None)
 
             users = self.allowed_users().order_by("username")
@@ -44,7 +44,7 @@ class UserViewSet(BaseViewSet):
         except Exception, ex:
             logger.exception(ex)
             return self.error_response(ex)
-        
+
         return HttpResponse(JSONRenderer().render(data))
 
     def apply_filter(self, qs, raw_filter_args):

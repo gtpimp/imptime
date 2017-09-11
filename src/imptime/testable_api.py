@@ -26,16 +26,18 @@ class TestableViewSet(BaseViewSet):
             params = request.data
             issue_pk = params['issue_id']
             testable_value = params['testable']
-
             issue = self.allowed_issue(issue_pk)
-            testable = Testable.objects.get_or_create(issue=issue,
-                                                      author=request.user,
-                                                      testable=testable_value)[0]
-            issue.testables.add(testable)
-            issue.save()
+            testables = issue.testables.all().order_by('order').values_list('order', flat=True)
+            max_order = 0
+            if testables:
+                max_order = max(testables)
 
+            testable = Testable.objects.get_or_create(issue=issue,
+                                                      steps=testable_value,
+                                                      order=max_order)[0]
+            issue.save()
             IssueHistory.add_history(request.user, issue,
-                                     "added testable %s" % testable.id, "", testable.testable)
+                                     "added testable %s" % testable.id, "", testable.steps)
             data = {'status': 'success'}
 
         except Exception, ex:
@@ -53,12 +55,11 @@ class TestableViewSet(BaseViewSet):
 
             issue = self.allowed_issue(issue_pk)
             testable = Testable.objects.filter(issue=issue).get(pk=testable_id)
-            old_testable_value = testable.testable
-            testable.testable = testable_value
-            testable.author = request.user
+            old_testable_value = testable.steps
+            testable.steps = testable_value
 
             IssueHistory.add_history(request.user, issue, "edited testable %s" % testable_id,
-                                     old_testable_value, testable.testable)
+                                     old_testable_value, testable.steps)
             testable.save()
             issue.save()
             data = {'status': 'success'}
@@ -76,7 +77,7 @@ class TestableViewSet(BaseViewSet):
             testable_id = params['testable_id']
             issue = self.allowed_issue(issue_pk)
             testable = Testable.objects.filter(issue=issue).get(pk=testable_id)
-            IssueHistory.add_history(request.user, issue, "deleted testable %s" % testable.id, testable.testable, "")
+            IssueHistory.add_history(request.user, issue, "deleted testable %s" % testable.id, testable.steps, "")
             testable.delete()
             issue.save()
 
