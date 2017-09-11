@@ -75,6 +75,8 @@ from timepiece import utils
 from timepiece import forms as timepiece_forms
 from timepiece.templatetags.timepiece_tags import seconds_to_hours
 from timepiece.templatetags.timepiece_tags import get_active_hours
+from testable.forms import TestableFormSet
+from testable.models import Testable
 from emacs_importer import report_helper
 from emacs_importer import models as bamboo_models
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
@@ -3549,6 +3551,11 @@ def issue_detail(request, issue_id, template="timepiece/project/issue_detail.htm
     context = context or {}
     issue =  timepiece.Issue.objects.get(pk=issue_id)
     context['issue'] = issue
+    testable_formset = TestableFormSet(
+        issue,
+        request.POST or None
+    )
+    context['testable_formset'] = testable_formset
 
     context['supports_description'] = True
     project = issue.project
@@ -6117,4 +6124,3 @@ def download_issue_attachment(request, issue_attachment_id):
     return download_media(request,
                           issue_attachment.attachment.name,
                           content_type=issue_attachment.content_type)
-

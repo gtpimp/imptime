@@ -1,5 +1,6 @@
 from django import forms
 from django.forms.models import modelformset_factory
+from django.forms import BaseModelFormSet
 from invoicing.fields import GroupedModelChoiceField
 from dateutil.relativedelta import relativedelta
 from django.db.models import Count, Q
@@ -11,7 +12,7 @@ from timepiece.models import Feature, IssueStatus, Project
 class TestableFilterForm(forms.Form):
 
     TEST_EVENT_FILTER_CHOICES = [ ('all', 'All'), ('untested', 'Untested'), ('failed', 'Failed'), ('passed', 'Passed') ]
-    
+
     projects = forms.ModelMultipleChoiceField(required=False,
                                               queryset=Project.objects.none(),
                                               widget=forms.CheckboxSelectMultiple())
@@ -37,7 +38,7 @@ class TestableFilterForm(forms.Form):
         self.fields['projects'].queryset = available_projects
         self.fields['projects'].widget.choices = [ ('', 'All') ] + [ (x.id, str(x)) for x in available_projects.order_by("name") ]
         self.fields['projects'].widget.initial = ["",]
-        
+
         available_features = Feature.objects.filter(issues__project__business=self.business).distinct()
         self.fields['features'].queryset = available_features
         self.fields['features'].widget.choices = [ ('', 'All') ] + [ (x.id, str(x)) for x in available_features.order_by("name") ]
@@ -73,13 +74,13 @@ class TestableFilterForm(forms.Form):
 class TestableSessionCreateForm(forms.ModelForm):
 
     name = forms.CharField(required=False, label="New testable session name")
-    
+
     class Meta:
         model = TestableSession
         fields = ['name']
 
 class TestableSessionSelectForm(forms.Form):
- 
+
     testable_session = forms.ModelChoiceField(required=False,
                                               queryset=TestableSession.objects.none())
 
@@ -90,3 +91,29 @@ class TestableSessionSelectForm(forms.Form):
         self.fields['testable_session'].queryset = available_test_sessions
         self.fields['testable_session'].widget.choices = [ ('', '---') ] + [ (x.id, str(x)) for x in available_test_sessions.order_by("name") ]
         self.fields['testable_session'].widget.initial = ["",]
+
+
+class TestableForm(forms.ModelForm):
+    class Meta:
+        model = Testable
+        fields = ['steps', 'issue']
+        widgets = {
+            'issue': forms.HiddenInput()
+        }
+
+    def __init__(self, *args, **kwargs):
+        super(TestableForm, self).__init__(*args, **kwargs)
+        self.fields['steps'].label = "Testable"
+
+class BaseTestableFormSet(BaseModelFormSet):
+    def __init__(self, issue, *args, **kwargs):
+        super(BaseTestableFormSet, self).__init__(*args, **kwargs)
+        self.queryset = Testable.objects.filter(issue=issue)
+
+TestableFormSet = modelformset_factory(
+    Testable,
+    form=TestableForm,
+    formset=BaseTestableFormSet,
+    extra=3,
+    max_num=3
+)
