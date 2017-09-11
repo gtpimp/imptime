@@ -53,7 +53,7 @@ def import_timesheet(request):
 
             the_extractor = Extractor(username=username)
 
-            status = {}
+            status = {'errors': [], 'infos': []}
             try:
                 with transaction.atomic():
                     status = the_extractor.extract_for_filecontent(filename=form.filename,
