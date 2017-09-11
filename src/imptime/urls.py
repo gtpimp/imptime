@@ -13,6 +13,7 @@ import project_api
 import project_statement_api
 import project_user_permission_api
 import sprint_api
+import time_chart_api
 import time_summary_api
 import user_api
 import views
@@ -29,6 +30,8 @@ router.register(r'permission/project', project_user_permission_api.ProjectUserPe
                 base_name='project_permission')
 router.register(r'project', project_api.ProjectViewSet,
                 base_name='project')
+router.register(r'time_chart', time_chart_api.TimeChartViewSet,
+                base_name='time_chart')
 router.register(r'sprint', sprint_api.SprintViewSet,
                 base_name='sprint')
 router.register(r'issue/tag', issue_tag_api.IssueTagViewSet,
