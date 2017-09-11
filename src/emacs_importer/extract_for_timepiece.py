@@ -115,7 +115,7 @@ class Extractor(object):
             if orgnode.Level() == 2:
                 sprint_name = orgnode.Heading()
 
-            if orgnode.Level() >= 3 and sprint_name is not None:
+            if orgnode.Level() == 3 and sprint_name is not None:
 
                 if business is None:
                     logger.error("Found a development section for a project which doesn't exist: %s" % business_name)
