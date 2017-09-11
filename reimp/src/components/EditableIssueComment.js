@@ -6,12 +6,15 @@ import {
     updateIssueComment,
     createIssueComment,
     deleteIssueComment,
-    getIssue
+    ensureIssuesLoaded,
+    getIssue,
+    is_issue_invalidated
 } from '../actions/Issues'
 import IssueCommentForm from './form/IssueCommentForm'
 import Label from './form/Label'
 import Blank from './form/Blank'
 import { has_permission } from '../actions/Users'
+import OtherUser from '../components/OtherUser'
 
 class EditableIssueComment extends Component {
 
@@ -19,6 +22,17 @@ class EditableIssueComment extends Component {
         super(props)
         this.onChange = this.onChange.bind(this)
         this.onDelete = this.onDelete.bind(this)
+    }
+
+    componentWillMount() {
+        const { dispatch, issue_id } = this.props
+        dispatch(ensureIssuesLoaded([issue_id]))
+    }
+
+    componentWillReceiveProps(new_props) {
+        const { dispatch } = this.props
+        const { issue_id } = new_props
+        dispatch(ensureIssuesLoaded([issue_id]))
     }
 
     onChange(new_value) {
@@ -30,27 +44,56 @@ class EditableIssueComment extends Component {
         }
     }
 
+
+
     onDelete(new_value) {
         const { dispatch, issue_id, comment_id } = this.props
         dispatch(deleteIssueComment(issue_id, comment_id))
     }
 
     render() {
-        const {comment, can_edit} = this.props
-
+        const {comment, can_edit, issue_id} = this.props
         return (
 
             <div>
-              <EditableProperty property_key={'issue_comment_'+comment.id}
-                                initial_value={comment.comment}
-                                onChange={this.onChange}
-                                can_edit={can_edit}
-              >
-                <IssueCommentForm />
-                <Label />
-                <Blank />
-              </EditableProperty>
-              { comment.id && <button onClick={this.onDelete}>delete</button> }
+              { comment.id &&
+                <EditableProperty property_key={'issue_comment_'+issue_id+'_'+comment.id}
+                                  initial_value={comment.comment}
+                                  onChange={this.onChange}
+                                  can_edit={can_edit}
+                    >
+                  <IssueCommentForm form={'issue_comment_form_'+issue_id+'_'+comment.id}
+                                    issue_id={issue_id} comment={comment}/>
+                  <div className="text-component--readonly text-component--comment">
+                    <div className="issue_sidebar--comment_date" >
+                      {comment.modified} - <div className="issue_sidebar--comment_author">
+                      <OtherUser value={comment.author_id} /></div>
+                    </div>
+                    <div className="issue_sidebar--textarea--readonly" >
+                      {comment.comment}
+                    </div>
+                  </div>
+                  <div className="text-component--empty"></div>
+                </EditableProperty>
+              }
+
+              { ! comment.id &&
+                <div>
+                  <EditableProperty property_key={'issue_comment_'+issue_id}
+                                    initial_value=''
+                                    onChange={this.onChange}
+                                    can_edit={can_edit}
+                    >
+                    <IssueCommentForm form={'issue_comment_form_'+issue_id} issue_id={issue_id} />
+                    <div className="text-component--readonly"></div>
+                    <div className="text-component--empty">
+                      <button className="button button--primary issue_sidebar--button">Create comment</button>
+                    </div>
+                  </EditableProperty>
+                </div>
+              }
+
+              { comment.id && <button className="button button--danger issue_sidebar--button" onClick={this.onDelete}>delete</button> }
             </div>
         )
     }
@@ -73,7 +116,8 @@ function mapStateToProps(state, props) {
         issue_id: issue_id,
         comment_id: comment_id,
         comment: comment,
-        can_edit: can_edit
+        can_edit: can_edit,
+        is_invalidated: is_issue_invalidated(state, issue.id),
     }
 }
 

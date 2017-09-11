@@ -84,7 +84,7 @@ class EditableProperty extends Component {
                     value: initial_value
                 })
             } else if ( index === 2 ) {
-               empty_child = React.cloneElement(child, {
+                empty_child = React.cloneElement(child, {
                     value: initial_value
                 })
             }
@@ -98,26 +98,26 @@ class EditableProperty extends Component {
 
         return (
             <div onClick={this.startEditing}>
-                <div>
-                    { is_editing && edit_as_modal &&
-                    <Modal isOpen={true}
-                           className="editable-property-modal"
-                           overlayClassName="editable-property-modal__overlay"
-                           onRequestClose={this.cancelEditing}
-                           contentLabel={this.props.actionLabel}>
-                        <div className="editable-property-modal__row editable-property-modal__row--header">
-                            <label htmlFor="assigned" className="editable-property-modal__title">{this.props.actionLabel}</label>
-                            <div className="editable-property-modal__close"><i className="material-icons" onClick={this.cancelEditing}>close</i></div>
-                        </div>
-                        <div className="editable-property-modal__content">
-                            {editing_child}
-                        </div>
-                    </Modal>
-                    }
-                    { is_editing && !edit_as_modal && editing_child}
-                    { is_readonly && readonly_child }
-                    { is_empty && empty_child }
-                </div>
+              <div>
+                { is_editing && edit_as_modal &&
+                  <Modal isOpen={true}
+                         className="editable-property-modal"
+                         overlayClassName="editable-property-modal__overlay"
+                         onRequestClose={this.cancelEditing}
+                         contentLabel={this.props.actionLabel}>
+                    <div className="editable-property-modal__row editable-property-modal__row--header">
+                      <label htmlFor="assigned" className="editable-property-modal__title">{this.props.actionLabel}</label>
+                      <div className="editable-property-modal__close"><i className="material-icons" onClick={this.cancelEditing}>close</i></div>
+                    </div>
+                    <div className="editable-property-modal__content">
+                      {editing_child}
+                    </div>
+                  </Modal>
+                }
+                { is_editing && !edit_as_modal && editing_child}
+                { is_readonly && readonly_child }
+                { is_empty && empty_child }
+              </div>
             </div>
         )
     }

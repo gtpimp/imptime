@@ -50,7 +50,7 @@ class IssueSidebar extends Component {
             if (estimate.estimate_hours && estimate.estimate_user) {
                 return (
                     <div key={estimate.estimate_user.id}>
-                        {estimate.estimate_user.username}:{format_hours(estimate.estimate_hours)}
+                      {estimate.estimate_user.username}:{format_hours(estimate.estimate_hours)}
                     </div>
                 )
             } else {
@@ -68,61 +68,61 @@ class IssueSidebar extends Component {
             return (
 
                 <Sidebar>
-                    <PropertyStack>
-                        { issue.id &&
-                        <div>
-                            <PropertyStackComponent>
-                                <div className="text-component--readonly">
-                                    #{issue.number}
-                                </div>
-                            </PropertyStackComponent>
+                  <PropertyStack>
+                    { issue.id &&
+                      <div>
+                        <PropertyStackComponent>
+                          <div className="text-component--readonly">
+                            #{issue.number}
+                          </div>
+                        </PropertyStackComponent>
 
-                            <PropertyStackComponent>
-                                <EditableIssueTitle issue_id={issue.id}/>
-                            </PropertyStackComponent>
+                        <PropertyStackComponent>
+                          <EditableIssueTitle issue_id={issue.id}/>
+                        </PropertyStackComponent>
 
-                            <PropertyStackComponent title="Description">
-                                <EditableIssueDescription issue_id={issue.id}/>
-                            </PropertyStackComponent>
+                        <PropertyStackComponent title="Description">
+                          <EditableIssueDescription issue_id={issue.id}/>
+                        </PropertyStackComponent>
 
-                            <PropertyStackComponent title="Testables">
-                            </PropertyStackComponent>
+                        <PropertyStackComponent title="Testables">
+                        </PropertyStackComponent>
 
-                            <PropertyStackComponent title="Assigned User">
-                                <EditableIssueAssignedUser issue_ids={[issue.id]} project_id={issue.project_id}/>
-                            </PropertyStackComponent>
+                        <PropertyStackComponent title="Assigned User">
+                          <EditableIssueAssignedUser issue_ids={[issue.id]} project_id={issue.project_id}/>
+                        </PropertyStackComponent>
 
-                            <PropertyStackComponent title="Issue Status">
-                                <EditableIssueStatus issue_ids={[issue.id]} project_id={issue.project_id}/>
-                            </PropertyStackComponent>
+                        <PropertyStackComponent title="Issue Status">
+                          <EditableIssueStatus issue_ids={[issue.id]} project_id={issue.project_id}/>
+                        </PropertyStackComponent>
 
-                            <PropertyStackComponent title="Sprint Name">
-                                <EditableIssueInSprint issue_ids={[issue.id]}/>
-                            </PropertyStackComponent>
+                        <PropertyStackComponent title="Sprint Name">
+                          <EditableIssueInSprint issue_ids={[issue.id]}/>
+                        </PropertyStackComponent>
 
-                            <PropertyStackComponent title="Attachments">
-                                { map(attachments, function (attachment, index) {
-                                    return <EditableIssueAttachment key={attachment.id} issue_id={issue.id} attachment_id={attachment.id}/>
-                                })
-                                }
-                                <EditableIssueAttachment issue_id={issue.id} attachment_id={null}/>
-                            </PropertyStackComponent>
+                        <PropertyStackComponent title="Attachments">
+                          { map(attachments, function (attachment, index) {
+                                return <EditableIssueAttachment key={attachment.id} issue_id={issue.id} attachment_id={attachment.id}/>
+                            })
+                          }
+                          <EditableIssueAttachment issue_id={issue.id} attachment_id={null}/>
+                        </PropertyStackComponent>
 
-                            <PropertyStackComponent title="Comments">
-                              {/* { map(comments, function (comment, index) {
-                                  return <EditableIssueComment key={comment.id} issue_id={issue.id} comment_id={comment.id}/>
-                                  })
-                                  } */}
-                                <EditableIssueComment issue_id={issue.id} comment_id={null}/>
-                            </PropertyStackComponent>
+                        <PropertyStackComponent title="Comments">
+                          { map(comments, function (comment, index) {
+                                return <EditableIssueComment key={issue.id, comment.id} issue_id={issue.id} comment_id={comment.id}/>
+                            })
+                          }
+                          <EditableIssueComment issue_id={issue.id} comment_id={null}/>
+                        </PropertyStackComponent>
 
-                            <PropertyStackComponent>
-                                { this.renderEstimates() }
-                                <button onClick={this.openEstimateEditor}>Estimates</button>
-                            </PropertyStackComponent>
-                        </div>
-                        }
-                    </PropertyStack>
+                        <PropertyStackComponent>
+                          { this.renderEstimates() }
+                          <button onClick={this.openEstimateEditor}>Estimates</button>
+                        </PropertyStackComponent>
+                      </div>
+                    }
+                  </PropertyStack>
                 </Sidebar>
             )
         } else {
@@ -153,48 +153,48 @@ export default connect(mapStateToProps)(IssueSidebar)
 
 
 /*{ { false &&
- <PropertyStack>
- <PropertyStackComponent>
- <IssueTitle issue={issue} mode='view-value'/>
- <IssueTitle issue={issue} mode='view-empty-state'/>
- <IssueTitle issue={issue} mode='edit'/>
- </PropertyStackComponent>
- <PropertyStackComponent>
- <IssueDescription issue={issue} mode='view-value'/>
- <IssueDescription issue={issue} mode='view-empty-state'/>
- <IssueDescription issue={issue} mode='edit'/>
- </PropertyStackComponent>
- </PropertyStack>
- }
- { false &&
- <div>
- <PropertyStackComponent>
- <div className="property--parent-title">
- <div className="property-label-1">Katalyst</div>
- </div>
- <div className="property--title">
- <div className="property-label-2">Sprinasdfdsafdasfdsafasfasfdasfasfasfdsaasfasft 3</div>
- </div>
- </PropertyStackComponent>
- <PropertyStackComponent>
- <div className="property-text">Interactive Prototype and develppment of Nunc a adipiscing parturient ullamcorper parturient adipiscing scelerisque donec risus penatibus
- parturient.
- </div>
- </PropertyStackComponent>
- <PropertyStackComponent>
- <div className="named-property">
- <div className="named-property__name">Created</div>
- <div className="named-property__value"><Timestamp format="short-date" value={moment()}/></div>
- </div>
- </PropertyStackComponent>
- <PropertyStackComponent>
- <div className="named-property">
- <div className="named-property__name">First Activity</div>
- <div className="named-property__value"><Timestamp format="short-date" value={moment()}/></div>
- </div>
- </PropertyStackComponent>
- <PropertyStackComponent>
- I am your issues sidebar for {issue_id}
- </PropertyStackComponent>
- </div> }
- }*/
+   <PropertyStack>
+   <PropertyStackComponent>
+   <IssueTitle issue={issue} mode='view-value'/>
+   <IssueTitle issue={issue} mode='view-empty-state'/>
+   <IssueTitle issue={issue} mode='edit'/>
+   </PropertyStackComponent>
+   <PropertyStackComponent>
+   <IssueDescription issue={issue} mode='view-value'/>
+   <IssueDescription issue={issue} mode='view-empty-state'/>
+   <IssueDescription issue={issue} mode='edit'/>
+   </PropertyStackComponent>
+   </PropertyStack>
+   }
+   { false &&
+   <div>
+   <PropertyStackComponent>
+   <div className="property--parent-title">
+   <div className="property-label-1">Katalyst</div>
+   </div>
+   <div className="property--title">
+   <div className="property-label-2">Sprinasdfdsafdasfdsafasfasfdasfasfasfdsaasfasft 3</div>
+   </div>
+   </PropertyStackComponent>
+   <PropertyStackComponent>
+   <div className="property-text">Interactive Prototype and develppment of Nunc a adipiscing parturient ullamcorper parturient adipiscing scelerisque donec risus penatibus
+   parturient.
+   </div>
+   </PropertyStackComponent>
+   <PropertyStackComponent>
+   <div className="named-property">
+   <div className="named-property__name">Created</div>
+   <div className="named-property__value"><Timestamp format="short-date" value={moment()}/></div>
+   </div>
+   </PropertyStackComponent>
+   <PropertyStackComponent>
+   <div className="named-property">
+   <div className="named-property__name">First Activity</div>
+   <div className="named-property__value"><Timestamp format="short-date" value={moment()}/></div>
+   </div>
+   </PropertyStackComponent>
+   <PropertyStackComponent>
+   I am your issues sidebar for {issue_id}
+   </PropertyStackComponent>
+   </div> }
+   }*/

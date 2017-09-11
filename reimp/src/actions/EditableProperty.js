@@ -2,9 +2,9 @@ export const SET_MODE = 'SET_MODE'
 
 export function setMode(property_key, mode) {
     return {
-	type: SET_MODE,
+	      type: SET_MODE,
         mode: mode,
-	property_key: property_key
+	      property_key: property_key
     }
 }
 

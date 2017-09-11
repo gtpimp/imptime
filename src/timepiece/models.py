@@ -209,7 +209,7 @@ class Business(models.Model):
     def allowed_user_ids(self):
         project_users = BusinessPermissions.active_users_for_business(business_id=self.id)
         return project_users.values_list('id', flat=True).order_by("username")
-    
+
     @property
     def sprints(self):
         return Project.objects.filter(business=self)
@@ -516,7 +516,7 @@ class BusinessPermissions(BaseModel):
         business_ids = BusinessPermissions.objects.filter(user=user,
                                                           is_active_member_of_business=True)\
                                                   .values_list('business_id', flat=True)
- 
+
         return User.objects.filter(business_permissions__business_id__in=business_ids,
                                    business_permissions__is_active_member_of_business=True)
 
@@ -3455,7 +3455,7 @@ class Rate(models.Model):
     def full_rate_for_project(self, user_id, project_id):
         rate = self.objects.filter(user_id=user_id, project_id=project_id).first()
         return rate.full_rate if rate else 0
-            
+
     @property
     def full_rate(self):
         return self.convert_to_full_rate(self.project, self.billable_amount)
