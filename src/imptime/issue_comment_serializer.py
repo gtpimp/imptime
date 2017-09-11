@@ -8,9 +8,10 @@ class IssueCommentSerializer(BaseSerializer):
     comment = serializers.CharField()
     author_id = serializers.CharField()
     created = serializers.DateTimeField()
-    modified = serializers.DateTimeField()
+    modified = serializers.SerializerMethodField()
 
     def to_representation(self, obj, *args, **kwargs):
         return super(IssueCommentSerializer, self).to_representation(obj, *args, **kwargs)
 
-
+    def get_modified(self, obj):
+        return obj.created.strftime('%b, %d, %Y, %I:%M %p')

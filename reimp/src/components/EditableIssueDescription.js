@@ -24,12 +24,12 @@ class EditableIssueDescription extends Component {
         return (
             <EditableProperty property_key='issue_description'
                               initial_value={issue.description}
-            onChange={this.onChange}
-            can_edit={can_edit}
+                              onChange={this.onChange}
+                              can_edit={can_edit}
             >
-                <IssueDescriptionForm />
-                <div className="text-component--readonly text-component--description">{issue.description}</div>
-                <div className="text-component--empty text-component--description"></div>
+              <IssueDescriptionForm />
+              <div className="text-component--readonly text-component--description">{issue.description}</div>
+              <div className="text-component--empty text-component--description"></div>
             </EditableProperty>
         )
     }

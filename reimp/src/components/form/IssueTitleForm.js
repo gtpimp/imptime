@@ -10,15 +10,8 @@ class IssueTitleForm extends Component {
         super(props)
         this.renderTextarea = this.renderTextarea.bind(this)
         this.keyDown = this.keyDown.bind(this)
-        /* this.onChangeAndSubmit = this.onChangeAndSubmit.bind(this)*/
     }
 
-    /* onChangeAndSubmit(e, fieldOnChange) {
-     *     const {handleSubmit} = this.props
-     *     debugger
-     *     fieldOnChange(e)
-     *     // setTimeout(() => handleSubmit(), 0)
-     * }*/
     keyDown(event) {
         const { onKeyDown } = this.props
         if (onKeyDown) {
@@ -46,11 +39,13 @@ class IssueTitleForm extends Component {
 
         return (
             <form onSubmit={handleSubmit}>
-                <div>
-                    <Field name="title"
-                           component={this.renderTextarea} />
-                    <button type="submit">Submit</button>
+              <div>
+                <div className="issue_sidebar--textarea">
+                  <Field name="title"
+                         component={this.renderTextarea} />
                 </div>
+                <button className="button issue_sidebar--textarea" type="submit">Submit</button>
+              </div>
             </form>
         )
     }

@@ -56,7 +56,7 @@ class TimeSummaryViewSet(BaseViewSet):
                     "avg_tester_rate": tester_rate,
                     "avg_manager_rate": manager_rate
                 }
-                
+
                 time_summary["per_user"][sprint_developer.id] = values
 
             time_summary['all_user_ids'] = [x.id for x in sprint_users]
