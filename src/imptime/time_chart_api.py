@@ -1,5 +1,6 @@
 import logging
-from datetime import datetime
+from datetime import datetime, date
+from dateutil.relativedelta import relativedelta
 from rest_framework.renderers import JSONRenderer
 from django.http import HttpResponse
 from base_api import BaseViewSet
@@ -42,7 +43,8 @@ class TimeChartViewSet(BaseViewSet):
             user_ids = all_entries.order_by("user_id").values("user_id").distinct().values_list('user_id', flat=True)
             times_by_user = {}
             for user_id in user_ids:
-                times_by_user[user_id] = all_entries.filter(user_id=user_id).extra(select={'started_on':"date(start_time)"}).values('started_on').order_by('started_on').annotate(daily_hours=Sum('hours'))
+                entries = all_entries.filter(user_id=user_id).extra(select={'started_on':"date(start_time)"}).values('started_on').order_by('started_on').annotate(daily_hours=Sum('hours'))
+                times_by_user[user_id] = self._fill_empty_days(filter['date_from_inclusive'], filter['date_to_inclusive'], entries)
 
             context['time_chart'] = { 'times_by_user': times_by_user,
                                       'project_id': project_id,
@@ -60,5 +62,19 @@ class TimeChartViewSet(BaseViewSet):
         raw_filter = json.loads(request.GET['params'])['filter']
         s = TimeChartFilterSerializer(data=raw_filter)
         s.is_valid(raise_exception=True)
+        s.validated_data.setdefault('date_from_inclusive', datetime.now()-relativedelta(years=1))
+        s.validated_data.setdefault('date_to_inclusive', datetime.now()+relativedelta(years=1))
         return s.validated_data
-    
+
+    def _fill_empty_days(self, date_from, date_to, values):
+        d = date_from
+        values_index = 0
+        filled_values = []
+        while d <= date_to:
+            if len(values) > values_index and values[values_index]['started_on'] == d.date():
+                filled_values.append(values[values_index])
+                values_index += 1
+            else:
+                filled_values.append({'started_on':d, 'daily_hours':0})
+            d += relativedelta(days=1)
+        return filled_values

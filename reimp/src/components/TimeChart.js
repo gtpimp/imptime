@@ -52,7 +52,7 @@ class TimeChart extends Component {
     renderUserChart(user_id, times_for_user) {
 
         return (
-            <div>
+            <div key={user_id}>
               <OtherUser value={user_id} />
               <BarChart width={600} height={300} data={times_for_user}>
                 <Bar dataKey='daily_hours' fill="#8884d8"/>
