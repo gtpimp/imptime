@@ -18,7 +18,7 @@ function announceLoadingTimeChart(project_id) {
     project_id = parseInt(project_id)
     return {
         type: ANNOUNCE_LOADING_TIME_CHART,
-	      project_id_to_load: project_id
+	project_id_to_load: project_id
     }
 }
 
@@ -27,7 +27,7 @@ function announceTimeChartLoaded(payload) {
     return {
         type: ANNOUNCE_TIME_CHART_LOADED,
         time_chart: time_chart,
-        project_id: time_chart.project_id,
+        project_id: parseInt(time_chart.project_id),
 	received_at: Date.now()
     }
 }
@@ -59,7 +59,7 @@ function fetchTimeChart(project_id, filter) {
         const state = getState()
         const params = { filter: filter }
 	dispatch(announceLoadingTimeChart(project_id))
-	return impfetch(state, 'imp/time_chart/'+project_id+'/', dispatch, {params:params})
+	return impfetch(state, 'imp/time_chart/'+project_id+'/times_per_user_for_project/', dispatch, {params:params})
             .then(response => response.json())
 	    .then(json => {
                 if (json.status !== 'success') {

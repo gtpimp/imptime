@@ -1,6 +1,7 @@
 import React, { Component } from 'react'
 import { connect } from 'react-redux'
 import { ensureProjectsLoaded, getProject } from '../actions/Projects'
+import {BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend} from 'recharts'
 import { map, keys } from 'lodash'
 import OtherUser from './OtherUser'
 import SprintTimeSummary from './SprintTimeSummary'
@@ -25,23 +26,45 @@ import moment from 'moment';
 import 'react-datepicker/dist/react-datepicker.css';
 
 class TimeChart extends Component {
-
+ 
     componentDidMount() {
         const { project_id, project, dispatch, project_statement, filter } = this.props
         if ( project_id ) {
             dispatch(ensureProjectsLoaded([project_id]))
             dispatch(ensureTimeChartLoaded([project_id], filter))
+
+            // Needed because there isn't a single timechart, it depends on the filter
             dispatch(invalidateTimeChart([project_id], filter))
         }
-        this.refresh(project, project_statement)
     }
 
     componentWillReceiveProps(new_props) {
-        const { dispatch, filter } = this.props
+        const { dispatch, filter, project_id } = this.props
         if ( new_props.project_id ) {
             dispatch(ensureProjectsLoaded([new_props.project_id]))
             dispatch(ensureTimeChartLoaded([new_props.project_id], filter))
         }
+        if ( new_props.filter != filter ) {
+            dispatch(invalidateTimeChart([project_id], filter))
+        }
+    }
+
+    renderUserChart(user_id, times_for_user) {
+
+        return (
+            <div>
+              <OtherUser value={user_id} />
+              <BarChart width={600} height={300} data={times_for_user}>
+                <Bar dataKey='daily_hours' fill="#8884d8"/>
+                <CartesianGrid strokeDasharray="3 3"/>
+                <XAxis dataKey="started_on"/>
+                <YAxis/>
+                <Tooltip/>
+                <Legend />
+              </BarChart>
+            </div>
+        )
+        
     }
 
     render() {
@@ -52,7 +75,12 @@ class TimeChart extends Component {
         return (
 
             <div>
-              This is the time chart
+              { map(keys(time_chart.times_by_user),
+                    function(user_id) {
+                        const times_for_user = time_chart.times_by_user[user_id]
+                        return that.renderUserChart(user_id, times_for_user)
+                    })
+              }
             </div>
             
         )

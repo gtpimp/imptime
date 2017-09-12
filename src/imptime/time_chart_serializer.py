@@ -7,4 +7,4 @@ class TimeChartFilterSerializer(BaseSerializer):
 
     date_to_inclusive = serializers.DateTimeField(allow_null=True, required=False)
     date_from_inclusive = serializers.DateTimeField(required=False, allow_null=True)
-    sprint_ids = serializers.ListField(child=serializers.IntegerField(required=False), allow_null=True)
+    sprint_ids = serializers.ListField(child=serializers.IntegerField(required=False), allow_null=True, required=False)

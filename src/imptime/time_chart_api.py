@@ -31,7 +31,7 @@ class TimeChartViewSet(BaseViewSet):
             
             all_entries = Entry.objects.filter(issue__project__business=project).order_by("start_time")
             filter = self._get_download_filter(request)
-
+ 
             if filter.get('date_from_inclusive', None):
                 all_entries = all_entries.filter(start_time__gte=filter['date_from_inclusive'])
             if filter.get('date_to_inclusive', None):
@@ -40,10 +40,14 @@ class TimeChartViewSet(BaseViewSet):
                 all_entries = all_entries.filter(project_id__in=filter['sprint_ids'])
 
             user_ids = all_entries.order_by("user_id").values("user_id").distinct().values_list('user_id', flat=True)
+            times_by_user = {}
             for user_id in user_ids:
-                user_entries_per_day = all_entries.filter(user_id=user_id).extra(select={'started_on':"date(start_time)"}).values('started_on').order_by('started_on').annotate(daily_hours=Sum('hours'))
-            
-            context["times_by_user"] = user_entries_per_day
+                times_by_user[user_id] = all_entries.filter(user_id=user_id).extra(select={'started_on':"date(start_time)"}).values('started_on').order_by('started_on').annotate(daily_hours=Sum('hours'))
+
+            context['time_chart'] = { 'times_by_user': times_by_user,
+                                      'project_id': project_id,
+                                      'filter': filter }
+                
             data = {"status": "success", "payload": context}
 
         except Exception, ex:
@@ -53,7 +57,7 @@ class TimeChartViewSet(BaseViewSet):
         return HttpResponse(JSONRenderer().render(data))
 
     def _get_download_filter(self, request):
-        raw_filter = json.loads(request.GET.keys()[0])
+        raw_filter = json.loads(request.GET['params'])['filter']
         s = TimeChartFilterSerializer(data=raw_filter)
         s.is_valid(raise_exception=True)
         return s.validated_data

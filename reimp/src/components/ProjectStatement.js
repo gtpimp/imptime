@@ -23,7 +23,7 @@ import {
     download_sprint_breakdown,
     download_issues_worked_on
 } from '../actions/ProjectStatement'
-import { TimeChart } from './TimeChart'
+import TimeChart from './TimeChart'
 import { ensureUsersLoaded } from '../actions/Users'
 import { setBreadcrumbs } from '../actions/Breadcrumbs'
 import {
@@ -310,8 +310,8 @@ class ProjectStatement extends Component {
 
                     <div className="project__statement__separator" />
                     <div className="project__statement__times_grid">
-                      <h2 className="project__statement__times_grid__header">Sprint breakdown by user (during selected period)
-                        <div className="project__statement__grid_icon icon--download_as_csv" onClick={this.download_sprint_breakdown_by_user} />
+                          <h2 className="project__statement__times_grid__header">
+                                Days worked per user
                       </h2>
                       <TimeChart project_id={project_id} filter={filter} />
                     </div>
