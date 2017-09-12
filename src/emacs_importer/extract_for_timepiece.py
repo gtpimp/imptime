@@ -154,7 +154,7 @@ class Extractor(object):
         try:
             project = Project.get_project_from_name(name=sprint_name, business=business)
         except Project.DoesNotExist:
-            raise Exception("No sprint found for [%s] in business %s" % (sprint_name, business.name)) #sic, sprints are called projects
+            raise Exception("No sprint found for [%s] in project %s" % (sprint_name, business.name)) #sic, sprints are called projects
 
         issue_id = Issue.extract_issue_id(orgnode.headline)
 
@@ -191,6 +191,10 @@ class Extractor(object):
         
         # Insert the clock entries
         for clock in orgnode.getClocks():
+
+            if clock['from'].day != clock['to'].day:
+                raise Exception("Clock entry spans more than one day, if this is real then split the entry. From=%s, To=%s" % (clock['from'], clock['to']))
+            
             Entry.objects.create(user=timesheet_user,
                                  source='emacs',
                                  start_time=clock['from'], end_time=clock['to'],
