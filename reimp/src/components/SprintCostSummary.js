@@ -41,14 +41,14 @@ class SprintCostSummary extends Component {
     renderUser(value, index) {
         return (
             <div>
-              <li className="cost-summary___user cost-summary__italics">
+              <div className="cost-summary___user cost-summary__italics">
                 <span className="cost-summary___user-details">
                  : <CurrencyValue value={value} />
                 </span>
                 <span className="cost-summary___user-name">
                   <OtherUser value={index} />
                 </span>
-              </li>
+              </div>
             </div>
         )
     }
@@ -169,7 +169,7 @@ class SprintCostSummary extends Component {
                 </div>
               </p>
 
-              <p className="cost-summary__tile">
+              <div className="cost-summary__tile">
                 <h2 className="cost-summary__sub-header">Breakdown of actuals versus estimated</h2>
 
                 <div className="cost-summary__roles">
@@ -179,7 +179,7 @@ class SprintCostSummary extends Component {
                       </div>
                    )}
                 </div>
-              </p>
+              </div>
             </div>
         )
     }
@@ -198,7 +198,7 @@ function mapStateToProps(state, props) {
         project_id: project_id,
         project: project,
         cost_summary: cost_summary,
-        per_role: per_role,
+        per_role: per_role
     }
 }
 

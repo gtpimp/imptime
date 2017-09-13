@@ -107,7 +107,7 @@ function mapStateToProps(state, props) {
     const project = getProject(state, project_id) || {}
     const is_loading = isLoadingTimeChart(state, project_id)
     const time_chart = getTimeChart(state, project_id) || {}
-
+    
     return {
         project_id: project_id,
         project: project,

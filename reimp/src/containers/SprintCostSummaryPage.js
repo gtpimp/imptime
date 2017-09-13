@@ -22,6 +22,7 @@ import SprintCostSummary from '../components/SprintCostSummary'
 import SprintTimeSummary from '../components/SprintTimeSummary'
 import SprintEstimateSummary from '../components/SprintEstimateSummary'
 import SprintBreakdown from '../components/SprintBreakdown'
+import TimeChart from '../components/TimeChart'
 import Timestamp from '../components/Timestamp'
 import {
     ensureProjectStatementLoaded,
@@ -40,7 +41,7 @@ class SprintCostSummaryPage extends Component {
     }
 
     componentDidMount() {
-        const { sprint_id, project_id, sprint, project, dispatch } = this.props
+        const { sprint_id, project_id, sprint, project, filter, dispatch } = this.props
         dispatch(set_toolbars(PAGE_KEY__SPRINTS_PAGE, ['cost-summary']))
         dispatch(ensureProjectsLoaded([project_id]))
         dispatch(ensureSprintsLoaded([sprint_id]))
@@ -84,7 +85,7 @@ class SprintCostSummaryPage extends Component {
     
     render() {
 
-        const { is_loading, sprint_id, project_id, project_statement } = this.props
+        const { is_loading, sprint_id, project_id, project_statement, filter } = this.props
 
         return (
             <div className="cost-summary__page">
@@ -116,6 +117,9 @@ class SprintCostSummaryPage extends Component {
                   <div className="time-summary">
                     <SprintTimeSummary sprint_id={sprint_id} project_id={project_id}/>
                   </div>
+                  <div className="time-chart">
+                    <TimeChart project_id={project_id} filter={filter} />
+                  </div>
                   <div className="estimate-summary">
                     <SprintEstimateSummary sprint_id={sprint_id} project_id={project_id}/>
                   </div>
@@ -134,6 +138,7 @@ function mapStateToProps(state, props) {
     const project = getProject(state, project_id) || {}
     const is_loading = isLoadingCostSummary(state, sprint_id) || isLoadingTimeSummary(state, sprint_id)
     const project_statement = getProjectStatement(state, project_id)
+    const filter = { sprint_ids: [sprint_id] }
     
     return {
         sprint_id: sprint_id,
@@ -141,7 +146,8 @@ function mapStateToProps(state, props) {
         project_id: project_id,
         project: project,
         is_loading: is_loading,
-        project_statement: project_statement
+        project_statement: project_statement,
+        filter: filter
     }
 }
 
