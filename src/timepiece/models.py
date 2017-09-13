@@ -3825,7 +3825,8 @@ class Issue(models.Model):
     def get_assigned_hours_estimate(self):
         if not self.assigned_to:
             return 0, None
-        if not BusinessPermissions.for_user(self.assigned_to, self.project.business).has_estimate_own_points:
+        bp = BusinessPermissions.for_user(self.assigned_to, self.project.business)
+        if bp is None or not bp.has_estimate_own_points:
             return 0, None
         user_issue_points = self.get_user_issue_points(self.assigned_to)
         if not user_issue_points or not user_issue_points.points:
@@ -3835,7 +3836,8 @@ class Issue(models.Model):
     def set_assigned_hours_estimate(self, hours):
         if not self.assigned_to:
             return
-        if not BusinessPermissions.for_user(self.assigned_to, self.project.business).has_estimate_own_points:
+        bp = BusinessPermissions.for_user(self.assigned_to, self.project.business)
+        if bp is None or not bp.has_estimate_own_points:
             return
         self.set_points(self.assigned_to, hours)
 
