@@ -1,7 +1,7 @@
 import React, { Component } from 'react'
 import { connect } from 'react-redux'
 import { ensureProjectsLoaded, getProject } from '../actions/Projects'
-import {BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend} from 'recharts'
+import {BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ReferenceLine} from 'recharts'
 import { map, keys } from 'lodash'
 import OtherUser from './OtherUser'
 import SprintTimeSummary from './SprintTimeSummary'
@@ -24,6 +24,24 @@ import { setBreadcrumbs } from '../actions/Breadcrumbs'
 import DatePicker from 'react-datepicker';
 import moment from 'moment';
 import 'react-datepicker/dist/react-datepicker.css';
+
+class TimeChartTooltip extends Component {
+
+    render() {
+
+        const { active, payload, label } = this.props
+
+        if ( ! active ) {
+            return null
+        }
+        
+        return (
+            <div className="time_chart__tooltip">
+              {payload[0].value} hours on  {moment(label).format('dddd DD-MMM-YYYY')}
+            </div>
+        )
+    }
+}
 
 class TimeChart extends Component {
 
@@ -49,13 +67,15 @@ class TimeChart extends Component {
             dispatch(ensureProjectsLoaded([new_props.project_id]))
             dispatch(ensureTimeChartLoaded([new_props.project_id], filter))
         }
-        if ( new_props.filter != filter ) {
-            dispatch(invalidateTimeChart([project_id], filter))
-        }
+        if ( new_props.filter != filter &&
+             (new_props.filter.sprint_ids != filter.sprint_ids ||
+              new_props.project_id != project_id) ) {
+            // dispatch(invalidateTimeChart([project_id], filter))
+        } 
     }
 
     xAxisTickFormatter(tickItem) {
-        return moment(tickItem).format('MM-DD dddd')
+        return moment(tickItem).format('DD-MMM')
     }
     
     renderUserChart(user_id, times_for_user) {
@@ -69,17 +89,18 @@ class TimeChart extends Component {
               </h2>
               <BarChart width={500} height={100} data={times_for_user}>
                 <Bar dataKey='daily_hours' fill="#8884d8"/>
-                <CartesianGrid strokeDasharray="3 3"/>
                 <XAxis dataKey="started_on"
                        tickFormatter={this.xAxisTickFormatter}/>
                 <YAxis domain={y_axis_domain}
                        minTickGap={1}
+                       interval={1}
+                       hide={true}
                        allowDataOverflow={true}/>
-                <Tooltip/>
+                <ReferenceLine y={8} label="" stroke="orange"/>
+                <Tooltip content={<TimeChartTooltip/>}/>
               </BarChart>
             </div>
         )
-        
     }
 
     render() {
@@ -97,7 +118,6 @@ class TimeChart extends Component {
                     })
               }
             </div>
-            
         )
     }
 }

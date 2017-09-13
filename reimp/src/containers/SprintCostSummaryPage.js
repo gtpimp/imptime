@@ -117,7 +117,10 @@ class SprintCostSummaryPage extends Component {
                   <div className="time-summary">
                     <SprintTimeSummary sprint_id={sprint_id} project_id={project_id}/>
                   </div>
-                  <div className="time-chart">
+                  <div className="time-summary__time-chart">
+                    <h2 className="time-summary__header">
+                      Sprint graphs
+                    </h2>
                     <TimeChart project_id={project_id} filter={filter} />
                   </div>
                   <div className="estimate-summary">
