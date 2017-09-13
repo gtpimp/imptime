@@ -12,7 +12,7 @@ from phantom_pdf.generator import create_url_from_query_dict, render_url_to_pdf
 from django.contrib.humanize.templatetags.humanize import intcomma
 import urllib
 import api
-from invoicing.models import Invoice, Quote, ClientInvoiceDetails, IssueStatus
+from invoicing.models import Invoice, Quote, ClientInvoiceDetails
 from django.contrib.auth import login as django_login, load_backend
 from django.core.files.base import ContentFile
 import csv
@@ -4921,7 +4921,7 @@ def bulk_move_issues_to_project(request, dest_project_id, context=None):
         issue = timepiece.Issue.objects.get(pk=selected_issue_id)
         old_project = issue.project
         issue.project = dest_project
-        issue.order += 9999
+        issue.order += 99999999
         issue.save()
         timepiece.IssueHistory.add_history(request.user, issue, "moved project", unicode(old_project), unicode(dest_project))
         get_interface_plugin(request, dest_project.business).move_issue(issue, old_project=old_project)
@@ -4949,7 +4949,7 @@ def bulk_change_issue_state(request, context=None):
     if not form.cleaned_data['status']:
         new_status = None
     else:
-        new_status = IssueStatus.objects.get_or_create(name=form.cleaned_data['status'], business=selected_project.business)[0]
+        new_status = timepiece.IssueStatus.objects.get_or_create(name=form.cleaned_data['status'], business=selected_project.business)[0]
     for selected_issue_id in selected_issue_ids:
         issue = timepiece.Issue.objects.get(pk=selected_issue_id)
         if not issue.status2 or new_status != issue.status2.name:
@@ -5049,15 +5049,15 @@ def bulk_move_issue_above_issue(request, context=None):
 
     selected_issues = selected_project.issues.all().filter(pk__in=selected_issue_ids).order_by("-order", "-order2")
     num_moved = 0
-    for issue in selected_issues:
+    for index, issue in enumerate(selected_issues):
         if issue.order >= focus_issue.order:
             old_order = issue.order
-            issue.order = focus_issue.order-1
+            issue.order = focus_issue.order-(index+1)
             issue.save()
             timepiece.IssueHistory.add_history(request.user, issue, "order changed", old_order, issue.order)
             num_moved += 1
-            selected_project.refresh_issues_order()
             get_interface_plugin(request, selected_project.business).move_issue(issue, old_project=selected_project)
+    selected_project.refresh_issues_order()
 
     messages.info(request, "%d issues moved above %s %s" % (num_moved, focus_issue.number, focus_issue.subject))
     return HttpResponseRedirect(reverse('project_list', args=[selected_project.id]))
@@ -5081,15 +5081,15 @@ def bulk_move_issue_below_issue(request, context=None):
 
     selected_issues = selected_project.issues.all().filter(pk__in=selected_issue_ids).order_by("order", "order2")
     num_moved = 0
-    for issue in selected_issues:
+    for index, issue in enumerate(selected_issues):
         if issue.order <= focus_issue.order:
             old_order = issue.order
-            issue.order = focus_issue.order+1
+            issue.order = focus_issue.order+(index+1)
             issue.save()
             timepiece.IssueHistory.add_history(request.user, issue, "order changed", old_order, issue.order)
             num_moved += 1
-            selected_project.refresh_issues_order()
             get_interface_plugin(request, selected_project.business).move_issue(issue, old_project=selected_project)
+    selected_project.refresh_issues_order()
 
     messages.info(request, "%d issues moved below %s %s" % (num_moved, focus_issue.number, focus_issue.subject))
     return HttpResponseRedirect(reverse('project_list', args=[selected_project.id]))
