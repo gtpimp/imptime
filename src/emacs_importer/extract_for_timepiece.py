@@ -146,6 +146,7 @@ class Extractor(object):
         self.projects_handled.append(project)
         
         issue_id = Issue.extract_issue_id(orgnode.headline)
+        issue = None
 
         if issue_id is not None:
             try:
