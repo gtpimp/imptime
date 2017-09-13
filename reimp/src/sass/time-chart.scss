@@ -1,0 +1,33 @@
+@import 'variables.scss';
+
+.time_chart__user_chart {
+    float: left;
+    margin-right: 10px;
+    box-shadow: 0px 0px 1px 0px #aaaaaa;
+    margin-bottom: 10px;
+}                       
+
+.time_chart__user_chart_title {
+    font-size: 10px;
+    text-align: center;
+}
+
+.time-summary__time-chart {
+    font: $settings-font-4;
+}
+
+.time-summary__header {
+    text-align: center;
+    border-top: 1px solid $color-25;
+    padding: 5px;
+    margin-bottom: 0px;
+}
+
+.time_chart__tooltip {
+    -webkit-box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    box-sizing: border-box;
+    padding: 10px;
+    background-color: #fff;
+    border: 1px solid  $color-25;
+}
