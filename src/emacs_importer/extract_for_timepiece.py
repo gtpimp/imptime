@@ -22,20 +22,8 @@ class Extractor(object):
                        'num_entries_refreshed':0,
                        'num_issues_created':0}
 
-    def get_project_timings_for_user(self, business):
-        timesheet_user = User.objects.get(username=self.username)
-        timings = {}
-        projects = Project.objects.filter(business=business)
-        for p in projects:
-            hours_per_issue = Entry.objects.filter(issue__project=p, user=timesheet_user).order_by('issue__order', 'issue__number').values('issue').annotate(hours=Sum('hours'))
-
-            hours_by_issue = {}
-            for x in hours_per_issue:
-                hours_by_issue[x['issue']] = x['hours']
-            timings[p.id] = { 'total_hours': p.total_hours_for_user(user=timesheet_user),
-                              'hours_by_issue': hours_by_issue }
-            
-        return timings
+    def get_project_timings_for_user(self, business, timesheet_user):
+        return float(Entry.objects.filter(issue__project__business=business, user=timesheet_user).aggregate(total_hours=Sum('hours'))['total_hours'])
 
     def extract_for_filecontent(self, filename, file_content):
         self._process_org_string(file_content, filename)
@@ -55,7 +43,6 @@ class Extractor(object):
 
     def _process_org_nodes(self, orgnodes, filename):
 
-        self.projects_handled = []
         is_valid_timesheet_file = filename[-4:] == ".org" and filename[0] != "." and filename[0] != "#"
         if not is_valid_timesheet_file:
             logger.debug("Ignoring, Not a timesheet file: %s" % filename)
@@ -73,8 +60,8 @@ class Extractor(object):
             except:
                 business = None
 
-        self.timings_before = self.get_project_timings_for_user(business=business)
         timesheet_user = User.objects.get(username=self.username)
+        self.timings_before = self.get_project_timings_for_user(business=business, timesheet_user=timesheet_user)
 
         live_entries = Entry.objects.all().filter(user=timesheet_user,
                                                   issue__project__business=business,
@@ -114,7 +101,7 @@ class Extractor(object):
                 logger.exception(ex)
                 self.status['infos'].append("Couldn't update actual time in the interface because: %s" % ex)
 
-        self.timings_after = self.get_project_timings_for_user(business=business)
+        self.timings_after = self.get_project_timings_for_user(business=business, timesheet_user=timesheet_user)
         logger.info("Added %s hours of time for %s" % ((self.timings_after - self.timings_before), self.username))
                 
     def _process_orgnode(self, business, sprint_name, orgnode, issues_processed):
@@ -141,10 +128,6 @@ class Extractor(object):
         if not project.can_add_dev_time():
             return
 
-        if project in self.projects_handled:
-            raise Exception("Duplicate sprint in timesheet file: %s %s" % (sprint_name, business.name))
-        self.projects_handled.append(project)
-        
         issue_id = Issue.extract_issue_id(orgnode.headline)
         issue = None
 
