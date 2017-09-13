@@ -2,7 +2,7 @@ import React, { Component } from 'react'
 import { connect } from 'react-redux'
 import { ensureProjectsLoaded, getProject } from '../actions/Projects'
 import {BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ReferenceLine} from 'recharts'
-import { map, keys } from 'lodash'
+import { map, keys, isEqual, isArray } from 'lodash'
 import OtherUser from './OtherUser'
 import SprintTimeSummary from './SprintTimeSummary'
 import SprintLink from './SprintLink'
@@ -68,10 +68,11 @@ class TimeChart extends Component {
             dispatch(ensureTimeChartLoaded([new_props.project_id], filter))
         }
         if ( new_props.filter != filter &&
-             (new_props.filter.sprint_ids != filter.sprint_ids ||
-              new_props.project_id != project_id) ) {
-            // dispatch(invalidateTimeChart([project_id], filter))
-        } 
+             isArray(new_props.filter.sprint_ids) &&
+             isArray(filter.sprint_ids) &&
+             ! isEqual(filter.sprint_ids.sort(), new_props.filter.sprint_ids.sort()) ) {
+            dispatch(invalidateTimeChart([project_id], filter))
+        }
     }
 
     xAxisTickFormatter(tickItem) {
