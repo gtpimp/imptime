@@ -193,7 +193,8 @@ class Extractor(object):
         for clock in orgnode.getClocks():
 
             if clock['from'].day != clock['to'].day:
-                raise Exception("Clock entry spans more than one day, if this is real then split the entry. From=%s, To=%s" % (clock['from'], clock['to']))
+                self.status['errors'].append("Clock entry spans more than one day, if this is real then split the entry. From=%s, To=%s" % (clock['from'], clock['to']))
+                continue
             
             Entry.objects.create(user=timesheet_user,
                                  source='emacs',
