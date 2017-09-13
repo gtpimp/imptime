@@ -7,7 +7,7 @@ from timepiece.interface_plugin import get_interface_plugin
 from orgnode import makelist_from_file, makelist_from_string
 from django.db import transaction
 from django.contrib.auth.models import User
-from timepiece.models import Business, Project, Activity, Entry, Location, Attribute, Issue, Feature
+from timepiece.models import Business, Project, Activity, Entry, Location, Attribute, Issue, Feature, IssueStatus
 import logging
 logger = logging.getLogger(__name__)
 
@@ -41,26 +41,6 @@ class Extractor(object):
         self._process_org_string(file_content, filename)
         return self.status
     
-    def check_changed_closed_projects(self):
-
-        for p_id, info_before in self.timings_before.items():
-            info_after = self.timings_after[p_id]
-            if info_before['total_hours'] != info_after['total_hours']:
-                project = Project.objects.get(pk=p_id)
-                if not project.can_add_dev_time():
-                    failures = []
-                    for issue in project.issues.all().order_by("order", "number").values('pk', 'number'):
-                        hours_before = info_before['hours_by_issue'].get(issue['pk'], 0)
-                        hours_after = info_after['hours_by_issue'].get(issue['pk'], 0)
-                        if hours_before != hours_after:
-                            failures.append( "On issue%s in %s : was %s hours, now %s hours" % (issue['number'], project.long_name(), hours_before, hours_after) )
-
-                    self.status['errors'].append("Import failed: Dev time for user %s was changed for a closed sprint in status %s: %s. Expected %s hours, but changed to %s hours. \n\n   %s\n" % \
-                                                 (User.objects.get(username=self.username).username,
-                                                  project.status2, project.long_name(),
-                                                  info_before['total_hours'], info_after['total_hours'],
-                                                  "\n  ".join(failures)))
-
     def _handle_file(self, dirname, fname):
             self._process_org_file(dirname, fname)
     
@@ -75,6 +55,7 @@ class Extractor(object):
 
     def _process_org_nodes(self, orgnodes, filename):
 
+        self.projects_handled = []
         is_valid_timesheet_file = filename[-4:] == ".org" and filename[0] != "." and filename[0] != "#"
         if not is_valid_timesheet_file:
             logger.debug("Ignoring, Not a timesheet file: %s" % filename)
@@ -92,13 +73,15 @@ class Extractor(object):
             except:
                 business = None
 
+        self.timings_before = self.get_project_timings_for_user(business=business)
         timesheet_user = User.objects.get(username=self.username)
 
-        self.timings_before = {}
-        if business:
-            self.timings_before = self.get_project_timings_for_user(business=business)
-            Entry.objects.all().filter(user=timesheet_user, issue__project__business=business, source='emacs').delete()
-
+        live_entries = Entry.objects.all().filter(user=timesheet_user,
+                                                  issue__project__business=business,
+                                                  issue__project__status2__in=Project.can_add_dev_time_states(),
+                                                  source='emacs')
+        live_entries.delete()
+        
         sprint_name = None
 
         issues_processed = set()
@@ -132,8 +115,7 @@ class Extractor(object):
                 self.status['infos'].append("Couldn't update actual time in the interface because: %s" % ex)
 
         self.timings_after = self.get_project_timings_for_user(business=business)
-        self.check_changed_closed_projects()
-
+        logger.info("Added %s hours of time for %s" % ((self.timings_after - self.timings_before), self.username))
                 
     def _process_orgnode(self, business, sprint_name, orgnode, issues_processed):
         activity = Activity.objects.get_or_create(code='dev')[0]
@@ -156,20 +138,30 @@ class Extractor(object):
         except Project.DoesNotExist:
             raise Exception("No sprint found for [%s] in project %s" % (sprint_name, business.name)) #sic, sprints are called projects
 
+        if not project.can_add_dev_time():
+            return
+
+        if project in self.projects_handled:
+            raise Exception("Duplicate sprint in timesheet file: %s %s" (sprint_name, business.name))
+        self.projects_handled.append(project)
+        
         issue_id = Issue.extract_issue_id(orgnode.headline)
 
         if issue_id is not None:
             try:
                 # this filter allows that issues could be in the wrong sprint, but they must be in the right business
-                issue = Issue.objects.get(number=issue_id, project__business=project.business) 
+                issue = Issue.objects.get(number=issue_id, project__business=project.business)
             except Issue.DoesNotExist:
                 issue = None
 
             except Issue.MultipleObjectsReturned:
                 issue = Issue.objects.filter(number=issue_id, project__business=project.business).order_by("-interface_plugin_number", "-id")[0]
 
-        feature, subject = self._unpack_subject(orgnode.Heading(), project.business)
+        if issue and not issue.project.can_add_dev_time():
+            return
                 
+        feature, subject = self._unpack_subject(orgnode.Heading(), project.business)
+
         if issue_id is None or issue is None:
             # Auto create the issue
             try:
@@ -177,7 +169,7 @@ class Extractor(object):
                                                             subject=subject,
                                                             defaults={'auto_created_during_import':True,
                                                                       'adhoc':True,
-                                                                      'status':'imported',
+                                                                      'status2':IssueStatus.get_or_create(name='new', business=business)[0],
                                                                       'feature':feature,
                                                                       'assigned_to':timesheet_user,
                                                                       'number':Issue.get_next_issue_number(project.business),
