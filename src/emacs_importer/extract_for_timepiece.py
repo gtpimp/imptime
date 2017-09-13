@@ -142,7 +142,7 @@ class Extractor(object):
             return
 
         if project in self.projects_handled:
-            raise Exception("Duplicate sprint in timesheet file: %s %s" (sprint_name, business.name))
+            raise Exception("Duplicate sprint in timesheet file: %s %s" % (sprint_name, business.name))
         self.projects_handled.append(project)
         
         issue_id = Issue.extract_issue_id(orgnode.headline)
