@@ -12,7 +12,7 @@ from phantom_pdf.generator import create_url_from_query_dict, render_url_to_pdf
 from django.contrib.humanize.templatetags.humanize import intcomma
 import urllib
 import api
-from invoicing.models import Invoice, Quote, ClientInvoiceDetails
+from invoicing.models import Invoice, Quote, ClientInvoiceDetails, IssueStatus
 from django.contrib.auth import login as django_login, load_backend
 from django.core.files.base import ContentFile
 import csv
@@ -4946,12 +4946,15 @@ def bulk_change_issue_state(request, context=None):
     if not bp.has_edit_issue_states:
         return HttpResponse("No permission")
 
-    new_status = form.cleaned_data['status']
+    if not form.cleaned_data['status']:
+        new_status = None
+    else:
+        new_status = IssueStatus.objects.get_or_create(name=form.cleaned_data['status'], business=selected_project.business)[0]
     for selected_issue_id in selected_issue_ids:
         issue = timepiece.Issue.objects.get(pk=selected_issue_id)
-        if issue.status2 and new_status != issue.status2.name:
-            old_status = issue.status2.name
-            issue.status = new_status
+        if not issue.status2 or new_status != issue.status2.name:
+            old_status = issue.status2.name if issue.status2 else None
+            issue.status2 = new_status
             issue.save()
             timepiece.IssueHistory.add_history(request.user, issue, "changed status", old_status, new_status)
             get_interface_plugin(request, selected_project.business).update_issue_status(issue)
