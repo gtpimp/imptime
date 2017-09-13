@@ -311,7 +311,7 @@ class ProjectStatement extends Component {
                     <div className="project__statement__separator" />
                     <div className="project__statement__times_grid">
                           <h2 className="project__statement__times_grid__header">
-                                Days worked per user
+                                Pictoral work for the given range
                       </h2>
                       <TimeChart project_id={project_id} filter={filter} />
                     </div>

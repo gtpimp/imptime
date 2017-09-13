@@ -26,7 +26,12 @@ import moment from 'moment';
 import 'react-datepicker/dist/react-datepicker.css';
 
 class TimeChart extends Component {
- 
+
+    constructor(props) {
+        super(props)
+        this.xAxisTickFormatter = this.xAxisTickFormatter.bind(this)
+    }
+    
     componentDidMount() {
         const { project_id, project, dispatch, project_statement, filter } = this.props
         if ( project_id ) {
@@ -49,18 +54,28 @@ class TimeChart extends Component {
         }
     }
 
+    xAxisTickFormatter(tickItem) {
+        return moment(tickItem).format('MM-DD dddd')
+    }
+    
     renderUserChart(user_id, times_for_user) {
 
+        const y_axis_domain = [0, 10]
+
         return (
-            <div key={user_id}>
-              <OtherUser value={user_id} />
-              <BarChart width={600} height={300} data={times_for_user}>
+            <div className="time_chart__user_chart" key={user_id}>
+              <h2 className="time_chart__user_chart_title">
+                <OtherUser value={user_id} />
+              </h2>
+              <BarChart width={500} height={100} data={times_for_user}>
                 <Bar dataKey='daily_hours' fill="#8884d8"/>
                 <CartesianGrid strokeDasharray="3 3"/>
-                <XAxis dataKey="started_on"/>
-                <YAxis/>
+                <XAxis dataKey="started_on"
+                       tickFormatter={this.xAxisTickFormatter}/>
+                <YAxis domain={y_axis_domain}
+                       minTickGap={1}
+                       allowDataOverflow={true}/>
                 <Tooltip/>
-                <Legend />
               </BarChart>
             </div>
         )
