@@ -158,6 +158,9 @@ class Extractor(object):
                 issue = Issue.objects.filter(number=issue_id, project__business=project.business).order_by("-interface_plugin_number", "-id")[0]
 
         if issue and not issue.project.can_add_dev_time():
+            self.status['infos'].append(("Issue %s has been moved to sprint %s (id=%s), but it's still in sprint %s (id=%s) in your timesheet. " +\
+                                        "Because sprint %s has been closed this time has been ignored, please update your timesheet if this is wrong") %
+                                         (issue.number, issue.project.name, issue.project.id, project.name, project.id, issue.project.id))
             return
                 
         feature, subject = self._unpack_subject(orgnode.Heading(), project.business)
