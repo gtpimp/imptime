@@ -135,17 +135,8 @@
           <a href="http://daringfireball.net/projects/markdown/syntax" class="markdown_help" target="_blank" style="display:none">markdown syntax</a>
         </div>
 
-        <div>
-          <form method="POST">
-            Testables
-            {% csrf_token %}
-            {{ testable_formset.management_form }}
-            {% if testable_formset %}
-              {% for formset_form in testable_formset %}
-                {{ formset_form show_label=False }}
-              {% endfor %}
-            {% endif %}
-          </form>
+        <div class="js-issue-testables" >
+          {% include 'timepiece/project/_issue_testables.html' %}
         </div>
 
         <div class="issue_test_events">

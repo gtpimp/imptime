@@ -57,7 +57,7 @@ urlpatterns = [
         views.create_edit_business,
         name='edit_business',
     ),
-        url(
+    url(
         r'^business/(?P<business_id>\d+)/point_person/add/$',
         views.add_user_to_business,
         name='add_user_to_business',
@@ -377,92 +377,92 @@ urlpatterns = [
         r'^ajax/set_project_rate$',
         views.set_project_rate,
         name='set_project_rate',
-        ),
+    ),
     url(
         r'^ajax/create_expense$',
         views.create_expense,
         name='create_expense'
-        ),
+    ),
 
     # salary views
     url(
         r'^salary/list',
         views.SalaryView.as_view(),
         name='salary_view'
-        ),
+    ),
     url(
         r'^salary/edit/(?P<user_id>\d+)/$',
         views.salary_edit,
         name='salary_edit'
-        ),
+    ),
     url(
         r'^salary/payslip/(?P<salary_id>\d+)/(?P<preview>\d+)$',
         views.salary_payslip,
         name='salary_payslip'
-        ),
+    ),
 
     # Expenses views
     url(
         r'^expense/list',
         views.expense_list,
         name='expense_list'
-        ),
+    ),
 
     # Timesheet views
     url(
         r'^incremental_timesheets_by_project$',
         views.incremental_timesheets_by_project,
         name='incremental_timesheets_by_project'
-        ),
+    ),
 
     url(
         r'^revenue$',
         views.revenue,
         name='revenue'
-        ),
+    ),
 
     url(
         r'^graphs$',
         views.graphs,
         name='graphs'
-        ),
+    ),
     url(
         r'^daily_graph/(?P<user_id>.*)$',
         views.daily_graph,
         name='daily_graph'
-        ),
+    ),
 
      url(
          r'^invoice/list',
          views.invoice_list,
          name='invoice_list'
-         ),
+     ),
     url(
         r'^ajax/create_invoice$',
         views.create_invoice,
         name='create_invoice'
-        ),
+    ),
     url(r'^show_timeline/(?P<project_id>\d+)$', views.show_timeline, name='show_timeline'),
     url(
         r'^show_permissions/(?P<business_id>\d+)$',
         views.show_permissions,
         name='show_permissions'
-      ),
+    ),
     url(
         r'^add_issue/(?P<project_id>\d+)$',
         views.add_issue,
         name='add_issue'
-      ),
+    ),
     url(
         r'^add_project/(?P<business_id>\d+)$',
         views.add_project,
         name='add_project'
-      ),
+    ),
     url(
         r'^delete_issue/(?P<project_id>\d+)$',
         views.delete_issue,
         name='delete_issue'
-      ),
+    ),
     url(
         r'time-sheet/get_issue_row/(?P<issue_id>\d+)$',
         views.get_issue_row,
@@ -473,7 +473,7 @@ urlpatterns = [
         r'^edit_issue_number/(?P<issue_id>\d+)$',
         views.edit_issue_number,
         name='edit_issue_number'
-      ),
+    ),
 
     url(
         r'time-sheet/get_project_row/(?P<project_id>\d+)$',
@@ -484,46 +484,55 @@ urlpatterns = [
         r'^sortable_issue_update/(?P<project_id>\d+)/$',
         views.sortable_issue_update,
         name='sortable_issue_update'
-        ),
+    ),
     url(
         r'^sortable_project_update$',
         views.sortable_project_update,
         name='sortable_project_update'
-        ),
+    ),
 
     url(
         r'^move_issue_to_project/$',
         views.move_issue_to_project,
         name='move_issue_to_project'
-        ),
+    ),
 
      url(
-        r'^add_issue_attachment/(?P<issue_id>\d+)/$',
-        views.add_issue_attachment,
-        name='add_issue_attachment'
-        ),
+         r'^add_issue_attachment/(?P<issue_id>\d+)/$',
+         views.add_issue_attachment,
+         name='add_issue_attachment'
+     ),
 
 
      url(
-        r'^download_issue_attachment/(?P<issue_attachment_id>\d+)/$',
-        views.download_issue_attachment,
-        name='download_issue_attachment'
-        ),
-    
+         r'^download_issue_attachment/(?P<issue_attachment_id>\d+)/$',
+         views.download_issue_attachment,
+         name='download_issue_attachment'
+     ),
+
      url(
-        r'^add_issue_comment/(?P<issue_id>\d+)/$',
-        views.add_issue_comment,
-        name='add_issue_comment'
-        ),
-    
+         r'^add_issue_comment/(?P<issue_id>\d+)/$',
+         views.add_issue_comment,
+         name='add_issue_comment'
+     ),
+
      url(r'^edit_issue_comment/(?P<comment_id>\d+)/$', views.edit_issue_comment, name='edit_issue_comment'),
-     url(r'^delete_issue_comment/(?P<comment_id>\d+)/$', views.delete_issue_comment, name='delete_issue_comment'),
+    url(r'^delete_issue_comment/(?P<comment_id>\d+)/$', views.delete_issue_comment, name='delete_issue_comment'),
+
+    url(
+        r'^add_issue_testable/(?P<issue_id>\d+)/$',
+        views.add_issue_testable,
+        name='add_issue_testable'
+    ),
+
+     url(r'^edit_issue_testable/(?P<testable_id>\d+)/$', views.edit_issue_testable, name='edit_issue_testable'),
+    url(r'^delete_issue_testable/(?P<testable_id>\d+)/$', views.delete_issue_testable, name='delete_issue_testable'),
 
      url(
-        r'^delete_issue_attachment/(?P<attachment_id>\d+)/$',
-        views.delete_issue_attachment,
-        name='delete_issue_attachment'
-        ),
+         r'^delete_issue_attachment/(?P<attachment_id>\d+)/$',
+         views.delete_issue_attachment,
+         name='delete_issue_attachment'
+     ),
 
     url(
         r'^time-sheet/project_list/(?P<project_id>\d+)/$',
@@ -556,62 +565,62 @@ urlpatterns = [
         views.get_project_detail,
         name='get_project_detail',
     ),
-   url(
+    url(
         r'^time-sheet/add_feature/(?P<business_id>\d+)/$',
         views.add_feature,
         name='add_feature',
-        ),
-   url(
+    ),
+    url(
         r'^time-sheet/business_features/(?P<business_id>\d+)/$',
         views.business_features,
         name='business_features',
-        ),
-   url(
+    ),
+    url(
         r'^time-sheet/allowed_issue_stati/(?P<issue_id>\d+)/$',
         views.allowed_issue_stati,
         name='allowed_issue_stati',
-        ),
+    ),
 
    url(
-        r'^time-sheet/status_filter/(?P<project_id>\d+)$',
-        views.status_filter,
-        name='status_filter',
-        ),
+       r'^time-sheet/status_filter/(?P<project_id>\d+)$',
+       views.status_filter,
+       name='status_filter',
+   ),
 
     url(
         r'^time-sheet/feature_filter/(?P<project_id>\d+)$',
         views.feature_filter,
         name='feature_filter',
-        ),
+    ),
 
    url(
-        r'^time-sheet/business_users/(?P<business_id>\d+)/$',
-        views.business_users,
-        name='business_users',
-        ),
-   url(
+       r'^time-sheet/business_users/(?P<business_id>\d+)/$',
+       views.business_users,
+       name='business_users',
+   ),
+    url(
         r'^time-sheet/issue_users/(?P<issue_id>\d+)/$',
         views.issue_users,
         name='issue_users',
-        ),
-   url(
+    ),
+    url(
         r'^time-sheet/sprint_export/(?P<project_id>\d+)/$',
         views.sprint_export,
         name='sprint_export',
-  	),
+    ),
 
 
    url(
-        r'^time-sheet/sprint_report_settings/(?P<project_id>\d+)/$',
-        views.sprint_report_settings,
-        name='sprint_report_settings',
-  	),
+       r'^time-sheet/sprint_report_settings/(?P<project_id>\d+)/$',
+       views.sprint_report_settings,
+       name='sprint_report_settings',
+   ),
 
    url(
-        r'^time-sheet/sprint_report/(?P<project_id>\d+)/$',
-        views.sprint_report,
-        name='sprint_report',
-  	),
+       r'^time-sheet/sprint_report/(?P<project_id>\d+)/$',
+       views.sprint_report,
+       name='sprint_report',
+   ),
     # url(
     #     r'^project/(?P<pk>\d+)/delete/$',
     #     views.DeleteProjectView.as_view(),
@@ -622,81 +631,81 @@ urlpatterns = [
     url(r'^slideshow/', include('slideshow.urls', namespace="slideshow"), {}, "slideshow"),
 
                        url(r'^time-sheet/show_issue_history/(?P<issue_id>\d+)/$', views.show_issue_history, name="show_issue_history"),
-                       url(r'^time-sheet/view_business_documents/(?P<business_id>\d+)/$', views.view_business_documents, name="view_business_documents"),
-                       url(r'^time-sheet/download_business_document/(?P<document_token>.*)/$', views.download_business_document, name="download_business_document"),
-                       url(r'^time-sheet/edit_business_document/(?P<document_token>.*)/$', views.edit_business_document, name="edit_business_document"),
-                       url(r'^time-sheet/delete_business_document/(?P<document_token>.*)/$', views.delete_business_document, name="delete_business_document"),
-                       url(r'^time-sheet/generate_business_document/(?P<business_id>.*)/$', views.generate_business_document, name="generate_business_document"),
-                       url(r'^time-sheet/generate_preview_business_document/(?P<business_id>.*)/$', views.generate_preview_business_document, name="generate_preview_business_document"),
+    url(r'^time-sheet/view_business_documents/(?P<business_id>\d+)/$', views.view_business_documents, name="view_business_documents"),
+    url(r'^time-sheet/download_business_document/(?P<document_token>.*)/$', views.download_business_document, name="download_business_document"),
+    url(r'^time-sheet/edit_business_document/(?P<document_token>.*)/$', views.edit_business_document, name="edit_business_document"),
+    url(r'^time-sheet/delete_business_document/(?P<document_token>.*)/$', views.delete_business_document, name="delete_business_document"),
+    url(r'^time-sheet/generate_business_document/(?P<business_id>.*)/$', views.generate_business_document, name="generate_business_document"),
+    url(r'^time-sheet/generate_preview_business_document/(?P<business_id>.*)/$', views.generate_preview_business_document, name="generate_preview_business_document"),
 
                        url(r'^issue_checkbox_context_menu/(?P<project_id>.*)/$', views.issue_checkbox_context_menu, {}, 'issue_checkbox_context_menu'),
-                       url(r'^bulk_move_issues_to_project/(?P<dest_project_id>.*)/$', views.bulk_move_issues_to_project, {}, 'bulk_move_issues_to_project'),
-                       url(r'^bulk_change_issue_state/$', views.bulk_change_issue_state, {}, 'bulk_change_issue_state'),
-                       url(r'^bulk_change_issue_feature/$', views.bulk_change_issue_feature, {}, 'bulk_change_issue_feature'),
-                       url(r'^bulk_change_issue_assignee/$', views.bulk_change_issue_assignee, {}, 'bulk_change_issue_assignee'),
-                       url(r'^bulk_delete_issues/$', views.bulk_delete_issues, {}, 'bulk_delete_issues'),
-                       url(r'^bulk_move_issue_above_issue/$', views.bulk_move_issue_above_issue, {}, 'bulk_move_issue_above_issue'),
-                       url(r'^bulk_move_issue_below_issue/$', views.bulk_move_issue_below_issue, {}, 'bulk_move_issue_below_issue'),
-                       url(r'^bulk_clear_selected_issues/$', views.bulk_clear_selected_issues, {}, 'bulk_clear_selected_issues'),
-                       url(r'^bulk_select_issues/(?P<project_id>.*)/$', views.bulk_select_issues_for_project, {}, 'bulk_select_issues_for_project'),
-                       url(r'^bulk_select_by_issue_state/(?P<project_id>.*)/$', views.bulk_select_by_issue_state, {}, 'bulk_select_by_issue_state'),
-                       url(r'^bulk_change_issue_adhoc/$', views.bulk_change_issue_adhoc, {}, 'bulk_change_issue_adhoc'),
+    url(r'^bulk_move_issues_to_project/(?P<dest_project_id>.*)/$', views.bulk_move_issues_to_project, {}, 'bulk_move_issues_to_project'),
+    url(r'^bulk_change_issue_state/$', views.bulk_change_issue_state, {}, 'bulk_change_issue_state'),
+    url(r'^bulk_change_issue_feature/$', views.bulk_change_issue_feature, {}, 'bulk_change_issue_feature'),
+    url(r'^bulk_change_issue_assignee/$', views.bulk_change_issue_assignee, {}, 'bulk_change_issue_assignee'),
+    url(r'^bulk_delete_issues/$', views.bulk_delete_issues, {}, 'bulk_delete_issues'),
+    url(r'^bulk_move_issue_above_issue/$', views.bulk_move_issue_above_issue, {}, 'bulk_move_issue_above_issue'),
+    url(r'^bulk_move_issue_below_issue/$', views.bulk_move_issue_below_issue, {}, 'bulk_move_issue_below_issue'),
+    url(r'^bulk_clear_selected_issues/$', views.bulk_clear_selected_issues, {}, 'bulk_clear_selected_issues'),
+    url(r'^bulk_select_issues/(?P<project_id>.*)/$', views.bulk_select_issues_for_project, {}, 'bulk_select_issues_for_project'),
+    url(r'^bulk_select_by_issue_state/(?P<project_id>.*)/$', views.bulk_select_by_issue_state, {}, 'bulk_select_by_issue_state'),
+    url(r'^bulk_change_issue_adhoc/$', views.bulk_change_issue_adhoc, {}, 'bulk_change_issue_adhoc'),
 
                        url(r'^issue/clear_adhoc_status/(?P<issue_id>.*)/$', views.clear_issue_adhoc_status, {}, name='clear_issue_adhoc_status'),
 
                        url(r'^auto_issue_sort/(?P<project_id>.*)/$', views.auto_issue_sort, {}, 'auto_issue_sort'),
 
                        url(r'^calendar/$', views.calendar, {}, name='calendar'),
-                       url(r'^calendar_events/$', views.calendar_events, {}, name='calendar_events'),
-                       url(r'^create_calendar_event/$', views.create_calendar_event, {}, name='create_calendar_event'),
-                       url(r'^update_calendar_event/(?P<event_id>.*)/$', views.update_calendar_event, {}, name='update_calendar_event'),
-                       url(r'^delete_calendar_event/(?P<event_id>.*)/$', views.delete_calendar_event, {}, name='delete_calendar_event'),
-                       url(r'^render_calendar_scheduled_sprints/$', views.render_calendar_scheduled_sprints, {}, name='render_calendar_scheduled_sprints'),
-                       url(r'^send_calendar_invite/(?P<event_id>.*)$', views.send_calendar_invite, {}, name='send_calendar_invite'),
+    url(r'^calendar_events/$', views.calendar_events, {}, name='calendar_events'),
+    url(r'^create_calendar_event/$', views.create_calendar_event, {}, name='create_calendar_event'),
+    url(r'^update_calendar_event/(?P<event_id>.*)/$', views.update_calendar_event, {}, name='update_calendar_event'),
+    url(r'^delete_calendar_event/(?P<event_id>.*)/$', views.delete_calendar_event, {}, name='delete_calendar_event'),
+    url(r'^render_calendar_scheduled_sprints/$', views.render_calendar_scheduled_sprints, {}, name='render_calendar_scheduled_sprints'),
+    url(r'^send_calendar_invite/(?P<event_id>.*)$', views.send_calendar_invite, {}, name='send_calendar_invite'),
 
                        url(r'^invoicing/', include('invoicing.urls', namespace="invoicing"), {}, "invoicing"),
-                       url(r'^testable/', include('testable.urls', namespace="testable"), {}, "testable"),
-                       url(r'^noui/', include('noui.urls', namespace="noui"), {}, "noui"),
+    url(r'^testable/', include('testable.urls', namespace="testable"), {}, "testable"),
+    url(r'^noui/', include('noui.urls', namespace="noui"), {}, "noui"),
 
                        url(r'^business_cost_summary/(?P<business_id>.*)', views.business_cost_summary, {}, name="business_cost_summary"),
-                       url(r'^project_status_update/(?P<project_id>.*)', views.project_status_update, {}, name='project_status_update'),
-                       url(r'^allowed_project_stati/(?P<project_id>.*)', views.allowed_project_stati, {}, name='allowed_project_stati'),
+    url(r'^project_status_update/(?P<project_id>.*)', views.project_status_update, {}, name='project_status_update'),
+    url(r'^allowed_project_stati/(?P<project_id>.*)', views.allowed_project_stati, {}, name='allowed_project_stati'),
 
                        url(r'^business_comments/(?P<business_id>.*)', views.business_comments, {}, name='business_comments'),
-                       url(r'^show_business_history/(?P<business_id>.*)', views.show_business_history, {}, name='show_business_history'),
+    url(r'^show_business_history/(?P<business_id>.*)', views.show_business_history, {}, name='show_business_history'),
 
                        url(r'^checklist/traffic/nav_only/(?P<business_id>.*)', views.render_checklist_navigation, {}, name='render_checklist_navigation'),
-                       url(r'^checklist/traffic/status_icon/(?P<business_id>.*)', views.render_checklist_status_icon_traffic, {}, name='render_checklist_status_icon_traffic'),
-                       url(r'^checklist/dev/status_icon/(?P<business_id>.*)', views.render_checklist_status_icon_dev, {}, name='render_checklist_status_icon_dev'),
-                       url(r'^checklist/finance/status_icon/(?P<business_id>.*)', views.render_checklist_status_icon_finance, {}, name='render_checklist_status_icon_finance'),
-                       url(r'^checklist/finance/(?P<business_id>.*)', views.finance_checklist, {}, name='finance_checklist'),
-                       url(r'^checklist/dev/(?P<business_id>.*)', views.dev_checklist, {}, name='dev_checklist'),
-                       url(r'^checklist/traffic/(?P<business_id>.*)', views.traffic_checklist, {}, name='traffic_checklist'),
-                       url(r'^checklist/recalculate', views.recalculate_all_checklists, {}, name='recalculate_all_checklists'),
+    url(r'^checklist/traffic/status_icon/(?P<business_id>.*)', views.render_checklist_status_icon_traffic, {}, name='render_checklist_status_icon_traffic'),
+    url(r'^checklist/dev/status_icon/(?P<business_id>.*)', views.render_checklist_status_icon_dev, {}, name='render_checklist_status_icon_dev'),
+    url(r'^checklist/finance/status_icon/(?P<business_id>.*)', views.render_checklist_status_icon_finance, {}, name='render_checklist_status_icon_finance'),
+    url(r'^checklist/finance/(?P<business_id>.*)', views.finance_checklist, {}, name='finance_checklist'),
+    url(r'^checklist/dev/(?P<business_id>.*)', views.dev_checklist, {}, name='dev_checklist'),
+    url(r'^checklist/traffic/(?P<business_id>.*)', views.traffic_checklist, {}, name='traffic_checklist'),
+    url(r'^checklist/recalculate', views.recalculate_all_checklists, {}, name='recalculate_all_checklists'),
 
 
                        url(r'^project/(?P<project_id>\d+)/edit_project_deadlines/$', views.edit_project_deadlines, {}, name='edit_project_deadlines'),
 
 					   url(r'^user_notifications/$', views.user_notifications, {}, name='user_notifications'),
-					   url(r'^user_notification/(?P<notification_id>\d+)/seen/$', views.seen_user_notification, {}, name='seen_user_notification'),
-					   url(r'^user_notifications/seen/$', views.seen_all_user_notifications, {}, name='seen_all_user_notifications'),
-                       url(r'^blocked$', views.blocked, {}, name='blocked'),
-                       url(r'^dashboard$', views.dashboard, {}, name='dashboard'),
-                       url(r'^quick_clocker$', views.quick_clocker, {}, name='quick_clocker'),
-                       url(r'^quick_clocker_clock_out$', views.quick_clocker_clock_out, {}, name='quick_clocker_clock_out'),
-                       url(r'^quick_clocker_edit_entry/(?P<entry_id>\d+)$', views.quick_clocker_edit_entry, {}, name='quick_clocker_edit_entry'),
-                       url(r'^quick_clocker_delete_entry/(?P<entry_id>\d+)$', views.quick_clocker_delete_entry, {}, name='quick_clocker_delete_entry'),
+    url(r'^user_notification/(?P<notification_id>\d+)/seen/$', views.seen_user_notification, {}, name='seen_user_notification'),
+    url(r'^user_notifications/seen/$', views.seen_all_user_notifications, {}, name='seen_all_user_notifications'),
+    url(r'^blocked$', views.blocked, {}, name='blocked'),
+    url(r'^dashboard$', views.dashboard, {}, name='dashboard'),
+    url(r'^quick_clocker$', views.quick_clocker, {}, name='quick_clocker'),
+    url(r'^quick_clocker_clock_out$', views.quick_clocker_clock_out, {}, name='quick_clocker_clock_out'),
+    url(r'^quick_clocker_edit_entry/(?P<entry_id>\d+)$', views.quick_clocker_edit_entry, {}, name='quick_clocker_edit_entry'),
+    url(r'^quick_clocker_delete_entry/(?P<entry_id>\d+)$', views.quick_clocker_delete_entry, {}, name='quick_clocker_delete_entry'),
 
                        url(r'^scheduler$', views.scheduler, {}, name='scheduler'),
-                       url(r'^schedule_edit/(?P<business_id>\d+)/(?P<user_id>\d+)/(?P<scheduled_date>.*)$', views.schedule_edit, {}, name='schedule_edit'),
-                       url(r'^issue_action_menu/(?P<issue_id>\d+)$', views.issue_action_menu, {}, name='issue_action_menu'),
+    url(r'^schedule_edit/(?P<business_id>\d+)/(?P<user_id>\d+)/(?P<scheduled_date>.*)$', views.schedule_edit, {}, name='schedule_edit'),
+    url(r'^issue_action_menu/(?P<issue_id>\d+)$', views.issue_action_menu, {}, name='issue_action_menu'),
 
                        url(r'^clients$', views.client_list, {}, name='client_list'),
-                       url(r'^client$', views.add_client, {}, name='add_client'),
-                       url(r'^client/(?P<client_code>.*)$', views.edit_client, {}, name='edit_client'),
+    url(r'^client$', views.add_client, {}, name='add_client'),
+    url(r'^client/(?P<client_code>.*)$', views.edit_client, {}, name='edit_client'),
 
                         url(r'^issue_clock_in$', views.issue_clock_in, {}, name='issue_clock_in'),
-                        url(r'^issue_clock_out$', views.issue_clock_out, {}, name='issue_clock_out'),
+    url(r'^issue_clock_out$', views.issue_clock_out, {}, name='issue_clock_out'),
 
                        url(r'^project_cost_summary/(?P<project_id>\d+)$', views.project_cost_summary, {}, name='project_cost_summary'),
 

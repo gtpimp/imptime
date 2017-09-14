@@ -1,0 +1,46 @@
+{% load timepiece_tags %}
+{% load static %}
+
+<div class="issue_testables">issue_comments
+  <br/>
+  {% if issue.testables_in_order.count %}
+    <h3>Testables</h3>
+  {% endif %}
+  {% for testable in issue.testables_in_order %}
+    <div class="testable_section edit_testable_section">
+
+      <div class="markdown_content">
+        {{testable.steps|asmarkdown|with_issue_links|safe}}
+      </div>
+
+      {% has_permission has_edit_description issue.project.business %}
+      <div class="edit_testable" style="display:none">
+        <textarea name="testable" data-url="{% url 'edit_issue_testable' testable.pk %}">{{testable.steps}}</textarea>
+        <input type="button" class="small_button btn" onclick="imp.on_edit_issue_testable($(this), '{% url 'edit_issue_testable' testable.pk %}');" value="save"/>
+        <input type="button" class="small_button btn" onclick="$(this).parents('.testable_section').find('.edit_testable_button').show(); $(this).parents('.testable_section').find('.markdown_content').show(); $(this).parents('.edi prot_testable').hide(); return false;" value="cancel"/>
+      </div>
+
+      <a class="edit_testable_button small_button btn" href="#" onclick="$(this).parent().find('.edit_testable').show(); $(this).hide(); $(this).parents('.testable_section').find('.markdown_content').hide(); return false;">
+        <img src="{% static 'images/icons/comment_edit.png' %}"/>
+      </a>
+      <a class="delete_testable_button small_button btn" href="#" onclick="return imp.delete_issue_testable('{% url 'delete_issue_testable' testable.pk %}');">
+        <img src="{% static 'images/timepiece/icons/comment_delete.png' %}"/>
+      </a>
+      {% end_permission %}
+    </div>
+	  <hr/>
+  {% endfor %}
+
+  {% has_permission has_edit_description issue.project.business %}
+  <div class="testable_section">
+    <a class="new_testable_button btn small_button" href="#" onclick="$(this).parent().find('.new_testable').show(); $(this).hide(); return false;">
+      <img src="{% static 'images/timepiece/icons/comment_add.png' %}"/>
+    </a>
+    <div class="new_testable" style="display:none">
+	    <textarea name="testable" data-url="{% url 'add_issue_testable' issue.pk %}"></textarea>
+	    <input type="button" class="btn small_button" onclick="imp.on_add_issue_testable($(this), '{% url 'add_issue_testable' issue.id %}');" value="save"/>
+	    <input type="button" class="btn small_button" onclick="$(this).parents('.testable_section').find('.new_testable_button').show(); $(this).parents('.new_testable').hide(); return false;" value="cancel"/>
+    </div>
+  </div>
+  {% end_permission %}
+</div>

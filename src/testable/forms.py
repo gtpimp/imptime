@@ -101,14 +101,20 @@ class TestableForm(forms.ModelForm):
             'issue': forms.HiddenInput()
         }
 
-    def __init__(self, *args, **kwargs):
+    def __init__(self, issue, *args, **kwargs):
         super(TestableForm, self).__init__(*args, **kwargs)
-        self.fields['steps'].label = "Testable"
+        self.fields['steps'].label = ""
+        self.fields['issue'].initial = issue
+
 
 class BaseTestableFormSet(BaseModelFormSet):
     def __init__(self, issue, *args, **kwargs):
+        self.issue = issue
         super(BaseTestableFormSet, self).__init__(*args, **kwargs)
         self.queryset = Testable.objects.filter(issue=issue)
+
+    def _construct_form(self, i, **kwargs):
+        return super(BaseTestableFormSet, self)._construct_form(i, issue=self.issue, **kwargs)
 
 TestableFormSet = modelformset_factory(
     Testable,
