@@ -73,7 +73,7 @@ class SprintBreakdown extends Component {
                                 </th>
                                 { map(project_statement.users_with_time,
                                       function(user_id) {
-                                          const time_for_user = times_for_sprint.users[user_id]
+                                          const time_for_user = times_for_sprint.users[user_id] || { rate: 0, total_hours: 0, billable_cost: 0}
                                           return (
                                               <td key={user_id}>
                                                 <table width="100%">
@@ -111,7 +111,7 @@ class SprintBreakdown extends Component {
                   </th>
                   { map(project_statement.users_with_time,
                         function(user_id) {
-                            const time_for_user = project_statement.times_by_user[user_id]
+                            const time_for_user = project_statement.times_by_user[user_id] || { total_hours: 0, total_billable_cost: 0}
                             return (
                                 <th key={user_id}>
                                   <table width="100%">

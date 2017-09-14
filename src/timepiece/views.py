@@ -1582,7 +1582,7 @@ def add_user_to_project(request, project_id):
             #     user=user,
             #     project=project,
             # )
-            bp = timepiece.BusinessPermissions.objects.get_or_create(business=project.business_id, user=user)[0]
+            bp = timepiece.BusinessPermissions.objects.get_or_create(business_id=project.business_id, user=user)[0]
             bp.is_active_member_of_business = True
             bp.save()
             _set_project_rate_to_default_for_user(user, project)
@@ -4928,7 +4928,7 @@ def bulk_move_issues_to_project(request, dest_project_id, context=None):
         issue = timepiece.Issue.objects.get(pk=selected_issue_id)
         old_project = issue.project
         issue.project = dest_project
-        issue.order += 9999
+        issue.order += 99999999
         issue.save()
         timepiece.IssueHistory.add_history(request.user, issue, "moved project", unicode(old_project), unicode(dest_project))
         get_interface_plugin(request, dest_project.business).move_issue(issue, old_project=old_project)
@@ -4953,12 +4953,15 @@ def bulk_change_issue_state(request, context=None):
     if not bp.has_edit_issue_states:
         return HttpResponse("No permission")
 
-    new_status = form.cleaned_data['status']
+    if not form.cleaned_data['status']:
+        new_status = None
+    else:
+        new_status = timepiece.IssueStatus.objects.get_or_create(name=form.cleaned_data['status'], business=selected_project.business)[0]
     for selected_issue_id in selected_issue_ids:
         issue = timepiece.Issue.objects.get(pk=selected_issue_id)
-        if issue.status2 and new_status != issue.status2.name:
-            old_status = issue.status2.name
-            issue.status = new_status
+        if not issue.status2 or new_status != issue.status2.name:
+            old_status = issue.status2.name if issue.status2 else None
+            issue.status2 = new_status
             issue.save()
             timepiece.IssueHistory.add_history(request.user, issue, "changed status", old_status, new_status)
             get_interface_plugin(request, selected_project.business).update_issue_status(issue)
@@ -5053,15 +5056,15 @@ def bulk_move_issue_above_issue(request, context=None):
 
     selected_issues = selected_project.issues.all().filter(pk__in=selected_issue_ids).order_by("-order", "-order2")
     num_moved = 0
-    for issue in selected_issues:
+    for index, issue in enumerate(selected_issues):
         if issue.order >= focus_issue.order:
             old_order = issue.order
-            issue.order = focus_issue.order-1
+            issue.order = focus_issue.order-(index+1)
             issue.save()
             timepiece.IssueHistory.add_history(request.user, issue, "order changed", old_order, issue.order)
             num_moved += 1
-            selected_project.refresh_issues_order()
             get_interface_plugin(request, selected_project.business).move_issue(issue, old_project=selected_project)
+    selected_project.refresh_issues_order()
 
     messages.info(request, "%d issues moved above %s %s" % (num_moved, focus_issue.number, focus_issue.subject))
     return HttpResponseRedirect(reverse('project_list', args=[selected_project.id]))
@@ -5085,15 +5088,15 @@ def bulk_move_issue_below_issue(request, context=None):
 
     selected_issues = selected_project.issues.all().filter(pk__in=selected_issue_ids).order_by("order", "order2")
     num_moved = 0
-    for issue in selected_issues:
+    for index, issue in enumerate(selected_issues):
         if issue.order <= focus_issue.order:
             old_order = issue.order
-            issue.order = focus_issue.order+1
+            issue.order = focus_issue.order+(index+1)
             issue.save()
             timepiece.IssueHistory.add_history(request.user, issue, "order changed", old_order, issue.order)
             num_moved += 1
-            selected_project.refresh_issues_order()
             get_interface_plugin(request, selected_project.business).move_issue(issue, old_project=selected_project)
+    selected_project.refresh_issues_order()
 
     messages.info(request, "%d issues moved below %s %s" % (num_moved, focus_issue.number, focus_issue.subject))
     return HttpResponseRedirect(reverse('project_list', args=[selected_project.id]))
