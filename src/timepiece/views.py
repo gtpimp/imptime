@@ -4387,7 +4387,7 @@ def add_issue_testable(request, issue_id):
     business = issue.project.business
     bp = timepiece.BusinessPermissions.for_user(request.user, business)
 
-    if not bp.has_add_issue_comment:
+    if not bp.has_edit_description:
         raise PermissionDenied
 
     text = request.POST['testable']
