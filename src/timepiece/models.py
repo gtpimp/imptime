@@ -3888,6 +3888,9 @@ class Issue(models.Model):
     def comments_in_order(self):
         return self.comments.all().order_by("-created")
 
+    def testables_in_order(self):
+        return self.testables.all().order_by("order")
+
     def is_fixed_cost(self):
         return self.fixed_amount is not None
 

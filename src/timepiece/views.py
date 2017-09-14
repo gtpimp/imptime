@@ -75,6 +75,8 @@ from timepiece import utils
 from timepiece import forms as timepiece_forms
 from timepiece.templatetags.timepiece_tags import seconds_to_hours
 from timepiece.templatetags.timepiece_tags import get_active_hours
+from testable.forms import TestableFormSet
+from testable.models import Testable
 from emacs_importer import report_helper
 from emacs_importer import models as bamboo_models
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
@@ -3549,6 +3551,13 @@ def issue_detail(request, issue_id, template="timepiece/project/issue_detail.htm
     context = context or {}
     issue =  timepiece.Issue.objects.get(pk=issue_id)
     context['issue'] = issue
+    testable_formset = TestableFormSet(issue)
+    context['testable_formset'] = testable_formset
+    context['testables'] = issue.testables.all()
+
+    # if request.POST and testable_formset.is_valid():
+    #     for instance in testable_formset:
+    #         instance.save()
 
     context['supports_description'] = True
     project = issue.project
@@ -3564,6 +3573,14 @@ def issue_detail(request, issue_id, template="timepiece/project/issue_detail.htm
     if 'timesheet_as_csv' in request.GET and request.GET['timesheet_as_csv'] == "1":
         return CSVTimesheetExport(name='issue%d'%issue.number, project=project, timesheet_entries=issue.related_entries, request=request).render_to_response(context)
 
+    return render(request, template, context)
+
+def issue_testables(request, issue_id, template="timepiece/project/_issue_testables_form.html", context=None):
+    context = context or {}
+    testable_formset = TestableFormSet(issue, request.POST or None)
+    context['testable_formset'] = testable_formset
+    if request.is_ajax():
+        return render(request, template, context)
     return render(request, template, context)
 
 @csrf_exempt
@@ -4361,6 +4378,65 @@ def delete_issue_comment(request, comment_id):
 
     get_interface_plugin(request, business).delete_issue_comment(comment)
     timepiece.IssueHistory.add_history(request.user, issue, "deleted comment %s"%old_comment_id, old_comment_text, "")
+    return HttpResponse("ok")
+
+@csrf_exempt
+@login_required
+def add_issue_testable(request, issue_id):
+    issue = timepiece.Issue.objects.get(pk=issue_id)
+    business = issue.project.business
+    bp = timepiece.BusinessPermissions.for_user(request.user, business)
+
+    if not bp.has_add_issue_comment:
+        raise PermissionDenied
+
+    text = request.POST['testable']
+    new_testable = Testable.objects.create(
+        steps=text,
+        issue=issue)
+    timepiece.IssueHistory.add_history(request.user, issue, "added testable %s"%new_testable.id, "", new_testable.steps)
+
+    get_interface_plugin(request, business).add_testable(new_testable)
+
+    return HttpResponse("ok")
+
+@csrf_exempt
+@login_required
+def edit_issue_testable(request, testable_id):
+    testable = Testable.objects.get(pk=testable_id)
+    issue = testable.issue
+    business = issue.project.business
+    bp = timepiece.BusinessPermissions.for_user(request.user, business)
+
+    if not bp.has_edit_description:
+        raise PermissionDenied
+
+    text = request.POST['testable']
+    old_testable = testable.steps
+    testable.steps = text
+    testable.save()
+
+    get_interface_plugin(request, business).edit_testable(testable)
+    timepiece.IssueHistory.add_history(request.user, issue, "edited testable %s"%testable.id, old_testable, testable.steps)
+    return HttpResponse("ok")
+
+@csrf_exempt
+@login_required
+def delete_issue_testable(request, testable_id):
+    testable = Testable.objects.get(pk=testable_id)
+    issue = testable.issue
+    business = issue.project.business
+    bp = timepiece.BusinessPermissions.for_user(request.user, business)
+
+    if not bp.has_edit_description:
+        raise PermissionDenied
+
+    old_testable_text = testable.steps
+    old_testable_id = testable.id
+    testable.delete()
+
+    get_interface_plugin(request, business).delete_testable(testable)
+    timepiece.IssueHistory.add_history(request.user, issue, "deleted testable %s"%old_testable_id, old_testable_text, "")
     return HttpResponse("ok")
 
 @csrf_exempt
@@ -6120,4 +6196,3 @@ def download_issue_attachment(request, issue_attachment_id):
     return download_media(request,
                           issue_attachment.attachment.name,
                           content_type=issue_attachment.content_type)
-

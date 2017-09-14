@@ -10,9 +10,9 @@ var testable = ( function() {
 		    on_done();
                     callback();
                 }
-        });        
+        });
     }
-    
+
     return {
 
         on_exclude_from_regression_test: function(event, el) {
@@ -43,8 +43,8 @@ var testable = ( function() {
 		        on_done();
                         window.location.reload();
                     }
-            });        
+            });
         }
     };
-    
+
 }());
