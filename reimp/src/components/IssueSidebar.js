@@ -25,7 +25,7 @@ import { ensureUsersLoaded } from '../actions/Users'
 import {format_hours} from '../actions/lib'
 import {getProject} from '../actions/Projects'
 
-class IssueSidebar extends Component {
+    class IssueSidebar extends Component {
 
     constructor(props) {
         super(props)
