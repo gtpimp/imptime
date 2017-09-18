@@ -32,6 +32,12 @@ class DefaultInterfacePlugin(object):
         return None
     def update_issue_actual_hours(self, timepiece_issue, *args, **kwargs):
         return None
+    def add_testable(self, testable, *args, **kwargs):
+        return
+    def edit_testable(self, testable, *args, **kwargs):
+        return
+    def delete_testable(self, testable, *args, **kwargs):
+        return
 
 default_interface_plugin = DefaultInterfacePlugin()
 

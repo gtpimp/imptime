@@ -8,33 +8,33 @@
   <h3>Issue: {{ next_issue_number }} <img src="{% static 'images/timepiece/icons/bin_closed.png' %}" alt="cancel" onclick="return imp.close_add_issue(this);"/> </h3>
 
   <form class="add_issue_form" method="POST" action="">
-    {% csrf_token %}    
+    {% csrf_token %}
     {{ new_issue_form.non_field_errors }}
     <div id="first" class="subject_class" onsubmit="return validateForm();">
-    {{ new_issue_form.subject.label }} {{ new_issue_form.subject }} 
+    {{ new_issue_form.subject.label }} {{ new_issue_form.subject }}
     </div>
     <div class="description_class">
-      {{ new_issue_form.description.label }} {{ new_issue_form.description }} 
+      {{ new_issue_form.description.label }} {{ new_issue_form.description }}
     </div>
 
     {% has_permission can_edit_issue_states business %}
       <div class="description_class">
-        {{ new_issue_form.status.label }} {{ new_issue_form.status }} 
+        {{ new_issue_form.status2.label }} {{ new_issue_form.status2 }}
       </div>
     {% end_permission %}
     {% has_permission has_edit_issue_feature business %}
       <div class="description_class">
-        {{ new_issue_form.feature.label }} {{ new_issue_form.feature }} 
+        {{ new_issue_form.feature.label }} {{ new_issue_form.feature }}
       </div>
     {% end_permission %}
     {% has_permission has_assign_user business %}
       <div class="description_class">
-        {{ new_issue_form.assigned_to.label }} {{ new_issue_form.assigned_to }} 
+        {{ new_issue_form.assigned_to.label }} {{ new_issue_form.assigned_to }}
       </div>
     {% end_permission %}
     {%  has_permission has_estimate_own_points business  %}
       <div class="description_class">
-        {{ new_issue_form.estimated_hours.label }} {{ new_issue_form.estimated_hours }} 
+        {{ new_issue_form.estimated_hours.label }} {{ new_issue_form.estimated_hours }}
       </div>
     {% end_permission %}
 
@@ -59,7 +59,7 @@
      if (title=="" || title==null) { } else {
     	 alert("Please enter a subject!");
      }
-     
+
      return false;
  }
 

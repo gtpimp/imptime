@@ -37,8 +37,8 @@ imp.show_issue_detail = function(issue_id, url, msg, args) {
 				if (args && args.reload_on_done) {window.location=args.reload_on_done;
 				    return;
 				}
-				
-				
+
+
 var a =6;
 				$(".issue_detail .subject_class input").focus();
 				imp.refresh_show_numbers();
@@ -83,7 +83,7 @@ imp.bulk_clear_selected_issues = function(clear_url) {
 
     if ( ! confirm('Unselect all checkboxes?') ) {
 	return false;
-    } 
+    }
 
     var on_done = imp.loading("unchecking");
     $.ajax({type:"GET",
@@ -171,7 +171,7 @@ imp.on_issue_form_submit = function(element, sprint_id, url, on_success) {
 	on_done();
 	if ( on_success ) {
 	    on_success();
-        
+
 	}
     };
 
@@ -210,7 +210,7 @@ imp.attach_upload_issue_attachment = function(el) {
     var input_el = container.find("input");
     var on_done = imp.issue_loading("Uploading attachment");
     container.find('.new_attachment').show();
-    el.hide(); 
+    el.hide();
 
     input_el.fileupload({
 		      type: "POST",
@@ -281,7 +281,7 @@ alert(a);
 
 	}
 
-	
+
 
 	// Create and show menu
 	menu.css({zIndex:1000001, overflow:"auto", height:"50%", width: "300px" /*left:left, top:top*/})
@@ -335,7 +335,7 @@ imp.on_add_issue_comment = function(el, url) {
     var on_done = imp.issue_loading("Creating comment");
     var input_el = container.find("textarea");
     container.find('.new_comment').show();
-    el.hide(); 
+    el.hide();
 
     var response = $.ajax({type:"POST",
                            url: url,
@@ -352,7 +352,7 @@ imp.on_edit_issue_comment = function(el, url) {
     var container = el.parent();
     var on_done = imp.issue_loading("Saving comment");
     var input_el = container.find("textarea");
-    el.hide(); 
+    el.hide();
 
     var response = $.ajax({type:"POST",
                            url: url,
@@ -365,8 +365,8 @@ imp.on_edit_issue_comment = function(el, url) {
 };
 
 imp.delete_issue_comment = function(url) {
-    if ( ! confirm('Are you sure you want to delete this comment?') ) { 
-	return false; 
+    if ( ! confirm('Are you sure you want to delete this comment?') ) {
+	return false;
     };
     var on_done = imp.issue_loading("Deleting comment");
 
@@ -876,4 +876,3 @@ imp.show_issue_history = function(url) {
      }
  }
 };
-

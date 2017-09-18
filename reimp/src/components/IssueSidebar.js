@@ -8,6 +8,7 @@ import EditableIssueTitle from '../components/EditableIssueTitle'
 import EditableIssueDescription from '../components/EditableIssueDescription'
 import EditableIssueAssignedUser from '../components/EditableIssueAssignedUser'
 import EditableIssueComment from '../components/EditableIssueComment'
+import EditableIssueTestable from '../components/EditableIssueTestable'
 import EditableIssueAttachment from '../components/EditableIssueAttachment'
 import EditableIssueInSprint from '../components/EditableIssueInSprint'
 import EditableIssueStatus from '../components/EditableIssueStatus'
@@ -61,7 +62,7 @@ class IssueSidebar extends Component {
 
     render() {
 
-        const {issue, comments, attachments} = this.props
+        const {issue, comments, testables, attachments} = this.props
 
         if (issue && issue.id) {
 
@@ -86,6 +87,11 @@ class IssueSidebar extends Component {
                         </PropertyStackComponent>
 
                         <PropertyStackComponent title="Testables">
+                          { map(testables, function (testable, index) {
+                                return <EditableIssueTestable key={issue.id, testable.id} issue_id={issue.id} testable_id={testable.id}/>
+                            })
+                          }
+                          <EditableIssueTestable issue_id={issue.id} testable_id={null}/>
                         </PropertyStackComponent>
 
                         <PropertyStackComponent title="Assigned User">
@@ -142,6 +148,7 @@ function mapStateToProps(state, props) {
         issue: issue || {},
         issue_id: issue_id,
         comments: issue.comments,
+        testables: issue.testables,
         attachments: issue.attachments,
         sprint_id: sprint_id,
         project_id: project_id,

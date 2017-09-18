@@ -13,14 +13,14 @@ imp.highlight_issue = function(issue_id) {
     // highlight the given issue or the default issue
 
     if ( imp.highlight_issue_id ) {
-	$("#"+imp.highlight_issue_id).removeClass("highlight");
+	      $("#"+imp.highlight_issue_id).removeClass("highlight");
     }
 
     if (!issue_id) {
-	issue_id = imp.highlight_issue_id;
+	      issue_id = imp.highlight_issue_id;
     }
     if (!issue_id) {
-	return;
+	      return;
     }
     imp.highlight_issue_id = issue_id;
 
@@ -29,7 +29,7 @@ imp.highlight_issue = function(issue_id) {
 
     setTimeout( function() {
         issue_el.scrollintoview();
-        }, 
+    },
                 200 );
 };
 
@@ -39,95 +39,95 @@ imp.search_on_issue_number = function(issue_number) {
 };
 
 imp.show_issue_detail = function(issue_id, url, msg, args) {
-   
-    if ( issue_id == null || imp.current_issue_id != issue_id ) { 
 
-	imp.current_issue_id = issue_id;
-	msg = msg || "loading issue detail";
-	var on_done = imp.loading(msg);
-    
-	$(".issue_detail").load(url, function(response, status, xhr) {
-	    if (args && args.reload_on_done) {
-		window.location=args.reload_on_done;
-		return;
-	    }
-            
-	    var el = $("#" + imp.current_issue_id);
-	    el.find(".subject_class input").focus();
+    if ( issue_id == null || imp.current_issue_id != issue_id ) {
+
+	      imp.current_issue_id = issue_id;
+	      msg = msg || "loading issue detail";
+	      var on_done = imp.loading(msg);
+
+	      $(".issue_detail").load(url, function(response, status, xhr) {
+	          if (args && args.reload_on_done) {
+		            window.location=args.reload_on_done;
+		            return;
+	          }
+
+	          var el = $("#" + imp.current_issue_id);
+	          el.find(".subject_class input").focus();
             imp.refresh_hidden_fields(el);
-	    imp.current_issue_detail_url = url;
-	    imp.update_splitter_dimensions(imp.current_issue_id);
+	          imp.current_issue_detail_url = url;
+	          imp.update_splitter_dimensions(imp.current_issue_id);
 
-	    if ( issue_id ) {
-		imp.highlight_issue(imp.current_issue_id);
-	    }
-	    
-	    on_done();
-	});
-    } 
+	          if ( issue_id ) {
+		            imp.highlight_issue(imp.current_issue_id);
+	          }
 
- };
+	          on_done();
+	      });
+    }
+
+};
 
 imp.refresh_issue_detail = function(args) {
     $(".issue_detail").load(imp.current_issue_detail_url, function() {
-	if (args && args.reload_on_done) {
-	    window.location=args.reload_on_done;
-	    return;
-	}
-	var el = $("#" + imp.current_issue_id);
-	el.find(".subject_class input").focus();
+	      if (args && args.reload_on_done) {
+	          window.location=args.reload_on_done;
+	          return;
+	      }
+	      var el = $("#" + imp.current_issue_id);
+	      el.find(".subject_class input").focus();
         imp.refresh_hidden_fields(el);
-	imp.loading("Loading issue detail");
+	      imp.loading("Loading issue detail");
     });
 };
 
 imp.post_issue_number_form = function(form_child_el, issue_id) {
     var form = $(form_child_el).parents("form");
     $.ajax({type:"POST",
-	    url: form.attr('action'),
-	    data: form.serialize(),
-	    success: function(data) {
-		var issue_number = data;
-		imp.refresh_issue_detail();
-		$(document).find(".issue_instance_row[id='"+issue_id+"']").find(".issue_number").html(issue_number);
-	    }
-	   });
+	          url: form.attr('action'),
+	          data: form.serialize(),
+	          success: function(data) {
+		            var issue_number = data;
+		            imp.refresh_issue_detail();
+		            $(document).find(".issue_instance_row[id='"+issue_id+"']").find(".issue_number").html(issue_number);
+	          }
+	  });
     return false;
 };
 
 imp.bulk_run_action = function(action_url, project_ids_affected) {
-    
+
     var on_done = imp.loading("updating");
     $.ajax({type:"GET",
-	    url: action_url,
-	    success: function(data) {
-		
+	          url: action_url,
+	          success: function(data) {
+
                 $.each(project_ids_affected, function(index, project_id) {
                     imp.refresh_project(project_id);
                 });
-                
-		on_done();
-	    }
-	   });
+
+		            on_done();
+	          }
+	  });
 
 };
 
 imp.bulk_clear_selected_issues = function(project_id, clear_url) {
 
     if ( ! confirm('Unselect all checkboxes?') ) {
-	return false;
+	      return false;
     }
     var project_el = imp.get_active_issue_list_el();
 
     var on_done = imp.loading("unchecking");
     $.ajax({type:"GET",
-	    url: clear_url,
-	    success: function(data) {
-		$(".issue_checkbox_cell input[type='checkbox']").attr("checked", false);
+	          url: clear_url,
+	          success: function(data) {
+		            $(".issue_checkbox_cell input[type='checkbox']").attr("checked", false);
                 imp.hide_issue_checkboxes(project_el);
-		on_done();
-	    }
-	   });
+		            on_done();
+	          }
+	  });
     return false;
 
 };
@@ -135,19 +135,19 @@ imp.bulk_clear_selected_issues = function(project_id, clear_url) {
 imp.bulk_check_all_issues = function(project_id, check_url) {
 
     if ( ! confirm('Select all checkboxes?') ) {
-	return false;
-    } 
+	      return false;
+    }
     var project_el = imp.get_active_issue_list_el();
-    
+
     var on_done = imp.loading("Checking");
     $.ajax({type:"GET",
-	    url: check_url,
-	    success: function(data) {
-		project_el.find(".issue_checkbox_cell input[type='checkbox']").attr("checked", true);
+	          url: check_url,
+	          success: function(data) {
+		            project_el.find(".issue_checkbox_cell input[type='checkbox']").attr("checked", true);
                 imp.show_issue_checkboxes(project_el);
-		on_done();
-	    }
-	   });
+		            on_done();
+	          }
+	  });
     return false;
 
 };
@@ -163,28 +163,28 @@ imp.do_form_show  = function(element, url) {
     var to_edit = $(".to_edit_expanded_form");
 
     $.ajax({type:"GET",
-	    url: url,
-	    success: function(data) {
-		to_edit.append($(data));
-	    }
-	   });
+	          url: url,
+	          success: function(data) {
+		            to_edit.append($(data));
+	          }
+	  });
 
     to_edit.show();
     to_edit.css("z-index",200);
 
     setTimeout(function() {
-		   to_edit.find("textarea").markItUp(markdown_settings);
-	       }, 100);
+		    to_edit.find("textarea").markItUp(markdown_settings);
+	  }, 100);
 
     function key_up_for_form(form) {
-       var current_form = form;
-       return function(event) {
-	   event.stopImmediatePropagation();
-	   if(event.which === 27) {
-	       imp.do_form_remove(current_form);
-	   }
-       };
-       to_edit.keyup( key_up_for_form(parent) );
+        var current_form = form;
+        return function(event) {
+	          event.stopImmediatePropagation();
+	          if(event.which === 27) {
+	              imp.do_form_remove(current_form);
+	          }
+        };
+        to_edit.keyup( key_up_for_form(parent) );
     }
 };
 
@@ -205,8 +205,8 @@ imp.do_form_remove  = function() {
 
 imp.create_issue_and_add_another = function(element, sprint_id, url) {
     imp.on_issue_form_submit(element, sprint_id, url, function() {
-				 imp.do_form_show(element, url);
-			     });
+				imp.do_form_show(element, url);
+		});
     return false;
 };
 
@@ -219,25 +219,25 @@ imp.on_issue_form_submit = function(element, sprint_id, url, on_success) {
         var table_body =  sprint_el.find(".issue_list_body");
         if(table_body.length > 0) {
             table_body.append(data);
-	    imp.on_issue_rows_loaded(table_body);
+	          imp.on_issue_rows_loaded(table_body);
         }
         imp.do_form_remove();
 
-	var issue_id = $(data).attr("id");
-	$(document).find(".issue_instance_row[id='"+issue_id+"']").find(".issue_number").click();
-	imp.highlight_issue(issue_id);
+	      var issue_id = $(data).attr("id");
+	      $(document).find(".issue_instance_row[id='"+issue_id+"']").find(".issue_number").click();
+	      imp.highlight_issue(issue_id);
 
-	on_done();
-	if ( on_success ) {
-	    on_success();
-	}
+	      on_done();
+	      if ( on_success ) {
+	          on_success();
+	      }
     };
 
     $.ajax({type:"POST",
             url: url,
             data: mform.serialize(),
-	    success: handle_success_for_form
-           });
+	          success: handle_success_for_form
+    });
     return false;
 };
 
@@ -248,16 +248,16 @@ imp.on_project_form_cancel = function(element) {
 
 imp.delete_issue_attachment = function(url) {
     if ( ! confirm("Are you sure you want to delete this file?") ) {
-	return false;
+	      return false;
     }
     var on_global_loading_done = imp.loading("deleting");
     $.ajax({type:"GET",
-	    url: url,
-	    success: function(data) {
-		on_global_loading_done();
-		imp.refresh_issue_detail();
-	    }
-	   });
+	          url: url,
+	          success: function(data) {
+		            on_global_loading_done();
+		            imp.refresh_issue_detail();
+	          }
+	  });
     return false;
 };
 
@@ -267,21 +267,21 @@ imp.attach_upload_issue_attachment = function(el) {
     var input_el = container.find("input");
     var on_done = imp.issue_loading("Uploading attachment");
     container.find('.new_attachment').show();
-    el.hide(); 
+    el.hide();
 
     input_el.fileupload({
-		      type: "POST",
-		      done: function (e, data) {
-			  on_done();
-			  imp.refresh_issue_detail();
-		      }
-		  });
+		    type: "POST",
+		    done: function (e, data) {
+			      on_done();
+			      imp.refresh_issue_detail();
+		    }
+		});
 
     return false;
 };
 
-imp.attach_issue_filters = function(container) { 
-    
+imp.attach_issue_filters = function(container) {
+
     container.find(".filterable").each( function() {
         var el = $(this);
         var el_trigger = el.find(".filter_trigger");
@@ -292,18 +292,18 @@ imp.attach_issue_filters = function(container) {
         el_trigger.on("click", function() {
 
             imp.popup(filter_popup_url);
-            
+
             // if (imp.popup_dialog) {
             //     var dlg = $(".project_card_dialog_container").find(".dialog_content");
             //     dlg.html("loading options...");
             //     dlg.load(filter_popup_url);
             // } else {
             //     $(".project_card_dialog_container").dialog( { width: 600,
-	    //     				              height: 400,
-	    //     				              open: function(event, ui) {
-	    //     					          $(".project_card_dialog_container").find(".dialog_content").load(filter_popup_url);
-	    //     				              }
-	    //     				            });
+	          //     				              height: 400,
+	          //     				              open: function(event, ui) {
+	          //     					          $(".project_card_dialog_container").find(".dialog_content").load(filter_popup_url);
+	          //     				              }
+	          //     				            });
             // }
             return false;
         });
@@ -354,7 +354,7 @@ imp.are_issue_checkboxes_visible = function(el) {
 imp.get_selected_issue_ids_for_get = function(issue_row_container) {
     var selected_issue_checkboxes = "";
     issue_row_container.find(".issue_checkbox_cell input:checked").each( function() {
-									     selected_issue_checkboxes += $(this).parents(".issue_instance_row").attr("id")+",";
+				selected_issue_checkboxes += $(this).parents(".issue_instance_row").attr("id")+",";
     });
     return selected_issue_checkboxes;
 };
@@ -364,20 +364,20 @@ imp.show_issue_action_menu = function(el, issue_id) {
     var on_done = imp.loading("Loading context menu");
     var response = $.ajax({type:"GET",
                            url: imp.config.issue_action_menu_url.replace("999999", issue_id),
-			   success: function(data) {
-			       on_done();
-			       var menu = $(data);
-			       menu.appendTo(document.body);
+			                     success: function(data) {
+			                         on_done();
+			                         var menu = $(data);
+			                         menu.appendTo(document.body);
                                imp.display_menu(el, menu);
                            }
-                          });
+    });
 };
 
 imp.display_menu = function(e, menu) {
     menu.show();
 
     var left = e.pageX + 5, /* nudge to the right, so the pointer is covering the title */
-    top = e.pageY;
+        top = e.pageY;
     if (top + menu.height() >= $(window).height()) {
         top -= menu.height();
     }
@@ -394,17 +394,17 @@ imp.display_menu = function(e, menu) {
         .css({left:0, top:0, width:'100%', height:'100%', position:'absolute', zIndex:1000000})
         .appendTo(document.body)
         .bind('contextmenu click', function() {
-                  // If click or right click anywhere else on page: remove clean up.
-                  bg.remove();
-                  menu.remove();
-                  return false;
-              });
+            // If click or right click anywhere else on page: remove clean up.
+            bg.remove();
+            menu.remove();
+            return false;
+        });
 
     // When clicking on a link in menu: clean up (in addition to handlers on link already)
     menu.find('a').click(function() {
-                             bg.remove();
-                             menu.remove();
-                         });
+        bg.remove();
+        menu.remove();
+    });
 };
 
 
@@ -423,47 +423,47 @@ imp.set_issue_checkbox_hooks = function(issue_row_container) {
         if ( ! imp.checkboxes.project_id && imp.active_project ) {
             imp.checkboxes.project_id = imp.active_project.id;
         }
-        
+
         if ( ! imp.checkboxes.project_id ) {
             alert("Error, no sprint selected");
             return;
         }
 
-	var on_done = imp.loading("Loading context menu");
-	var selected_issue_ids = imp.get_selected_issue_ids_for_get(issue_row_container);
-	var response = $.ajax({type:"GET",
+	      var on_done = imp.loading("Loading context menu");
+	      var selected_issue_ids = imp.get_selected_issue_ids_for_get(issue_row_container);
+	      var response = $.ajax({type:"GET",
                                url: imp.config.issue_checkbox_context_menu_url.replace("999999", imp.checkboxes.project_id),
-			       data: {checked_issue_numbers: selected_issue_ids},
+			                         data: {checked_issue_numbers: selected_issue_ids},
                                success: function(data) {
-				   on_done();
-				   var menu = $(data);
-				   menu.appendTo(document.body);
-				   callback(el, menu);
+				                           on_done();
+				                           var menu = $(data);
+				                           menu.appendTo(document.body);
+				                           callback(el, menu);
                                }
-                              });
+        });
     };
 
 
     // On contextmenu event (right click)
     issue_row_container.find(".issue_checkbox_cell").bind('contextmenu', function(e) {
-							      fetch_menu_html( $(this), imp.display_menu );
-							      return false;
-							  });
+				fetch_menu_html( $(this), imp.display_menu );
+				return false;
+		});
 
     // If an issue checkbox is ticked, then show all issue checkboxes
     issue_row_container.find(".issue_checkbox_cell input").click(function(e) {
-								     if ( $(this).attr("checked") ) {
-									 imp.show_issue_checkboxes($(this));
-								     }
-								 });
+				if ( $(this).attr("checked") ) {
+						imp.show_issue_checkboxes($(this));
+				}
+		});
 
     // If an issue checkbox is hidden, show on hover and hide on unhover
     issue_row_container.find(".issue_checkbox_td").hover(function() {
-	var el = $(this).find(".issue_checkbox_cell").css("display", "inline");
+	      var el = $(this).find(".issue_checkbox_cell").css("display", "inline");
     }, function() {
-	if ( ! imp.are_issue_checkboxes_visible($(this)) ) {
-	    var el = $(this).find(".issue_checkbox_cell").hide();
-	}
+	      if ( ! imp.are_issue_checkboxes_visible($(this)) ) {
+	          var el = $(this).find(".issue_checkbox_cell").hide();
+	      }
     });
 
 };
@@ -509,8 +509,8 @@ imp.on_exclude_issue_from_regression_test = function(el, url) {
     var response = $.ajax({type:"POST",
                            url: url});
     response.done( function() {
-	on_done();
-	imp.refresh_issue_detail();
+	      on_done();
+	      imp.refresh_issue_detail();
     } );
 };
 
@@ -519,8 +519,8 @@ imp.on_include_issue_in_regression_test = function(el, url) {
     var response = $.ajax({type:"POST",
                            url: url});
     response.done( function() {
-	on_done();
-	imp.refresh_issue_detail();
+	      on_done();
+	      imp.refresh_issue_detail();
     } );
 };
 
@@ -529,66 +529,114 @@ imp.on_add_issue_comment = function(el, url) {
     var on_done = imp.issue_loading("Creating comment");
     var input_el = container.find("textarea");
     container.find('.new_comment').show();
-    el.hide(); 
+    el.hide();
 
     var response = $.ajax({type:"POST",
                            url: url,
                            data: {'comment':input_el.val()}
-                          });
+    });
     response.done( function() {
-	on_done();
-	imp.refresh_issue_detail();
+	      on_done();
+	      imp.refresh_issue_detail();
     } );
 };
 
 imp.on_edit_issue_comment = function(el, url) {
-
     var container = el.parent();
     var on_done = imp.issue_loading("Saving comment");
     var input_el = container.find("textarea");
-    el.hide(); 
+    el.hide();
 
     var response = $.ajax({type:"POST",
                            url: url,
                            data: {'comment':input_el.val()}
-                          });
+    });
     response.done( function() {
-	on_done();
-	imp.refresh_issue_detail();
+	      on_done();
+	      imp.refresh_issue_detail();
     } );
 };
 
 imp.delete_issue_comment = function(url) {
-    if ( ! confirm('Are you sure you want to delete this comment?') ) { 
-	return false; 
+    if ( ! confirm('Are you sure you want to delete this comment?') ) {
+	      return false;
     };
     var on_done = imp.issue_loading("Deleting comment");
 
     var response = $.ajax({type:"POST",
                            url: url
-                          });
+    });
     response.done( function() {
-		       on_done();
-		       imp.refresh_issue_detail();
-		   });
+		    on_done();
+		    imp.refresh_issue_detail();
+		});
+    return false;
+};
+
+imp.on_add_issue_testable = function(el, url) {
+    var container = el.parent();
+    var on_done = imp.issue_loading("Creating testable");
+    var input_el = container.find("textarea");
+    container.find('.new_testable').show();
+    el.hide();
+
+    var response = $.ajax({type:"POST",
+                           url: url,
+                           data: {'testable':input_el.val()}
+    });
+    response.done( function() {
+	      on_done();
+	      imp.refresh_issue_detail();
+    } );
+};
+
+imp.on_edit_issue_testable = function(el, url) {
+    var container = el.parent();
+    var on_done = imp.issue_loading("Saving testable");
+    var input_el = container.find("textarea");
+    el.hide();
+
+    var response = $.ajax({type:"POST",
+                           url: url,
+                           data: {'testable':input_el.val()}
+    });
+    response.done( function() {
+	      on_done();
+	      imp.refresh_issue_detail();
+    } );
+};
+
+imp.delete_issue_testable = function(url) {
+    if ( ! confirm('Are you sure you want to delete this testable?') ) {
+	      return false;
+    };
+    var on_done = imp.issue_loading("Deleting testable");
+
+    var response = $.ajax({type:"POST",
+                           url: url
+    });
+    response.done( function() {
+		    on_done();
+		    imp.refresh_issue_detail();
+		});
     return false;
 };
 
 imp.on_project_form_submit = function(element, url) {
     var mform = $(element);
     var handle_success_for_form = function(form) {
-          var a_form = form;
-          return function(data) {
-              var form = a_form;
-              var button = a_form.parent().parent().parent();
-              $(document).find(".project_list").prepend(data);
-              imp.do_form_remove(button);
-          };
+        var a_form = form;
+        return function(data) {
+            var form = a_form;
+            var button = a_form.parent().parent().parent();
+            $(document).find(".project_list").prepend(data);
+            imp.do_form_remove(button);
+        };
     };
     var response = $.ajax({type:"POST",
                            url: url,
                            data: mform.serialize()
-                          });
+    });
     response.done( handle_success_for_form(mform) );
     return false;
 };
@@ -603,7 +651,7 @@ imp.delete_issue_from_issues_list = function(element, url, item_id) {
             dataType:"json",
             success: function() {
                 closest_row.remove();
-		on_done();
+		            on_done();
             }});
 
 };
@@ -614,20 +662,20 @@ imp.sort_issues_by_state = function(el, sort_url) {
     var state_els = issue_list_el.find("li");
     var ordered_states = [];
     state_els.each(function(index, row) {
-		       var elem = $(row);
-		       var state_name = elem.attr("state_name");
-		       ordered_states.push(state_name);
-		   });
+		    var elem = $(row);
+		    var state_name = elem.attr("state_name");
+		    ordered_states.push(state_name);
+		});
     var joined_ordered_states = ordered_states.join(',');
     var response = $.ajax({type:"POST",
                            url: sort_url,
                            data: { ordered_states:joined_ordered_states },
                            dataType:"json",
                            success : function (data) {
-			       on_done();
-			       window.location = data.redirect_url;
+			                         on_done();
+			                         window.location = data.redirect_url;
                            }
-                          });
+    });
 };
 
 imp.clickable_description_box = function(element, url, item_id, args) {
@@ -643,19 +691,19 @@ imp.clickable_description_box = function(element, url, item_id, args) {
     args = args || {};
 
     var cancel = function() {
-	textbox.show();
-	submitButton.remove();
-	textField.remove();
-	textbox.find(".markdown_help").hide();
-	imp.refresh_issue_detail();
-	attachments.show();
+	      textbox.show();
+	      submitButton.remove();
+	      textField.remove();
+	      textbox.find(".markdown_help").hide();
+	      imp.refresh_issue_detail();
+	      attachments.show();
     };
 
     textField.keyup(function(e) {
-			e.stopImmediatePropagation();
-			if(e.which === 27) {
-			    cancel();
-			}
+			  e.stopImmediatePropagation();
+			  if(e.which === 27) {
+			      cancel();
+			  }
     });
     textbox.hide();
     attachments.hide();
@@ -666,23 +714,23 @@ imp.clickable_description_box = function(element, url, item_id, args) {
     commentField.append(textField);
 
     submitButton.click(function(e) {
-			   var new_value = textField.val();
-			   var on_done = imp.loading("saving");
-			   var response = $.ajax({type:"POST",
-						  url: url,
-						  data : { item_id: item_id, new_value: new_value },
-						  dataType:"json"});
-			   response.done( function() {
-					      on_done();
-					      if ( ! args.refresh_url ) {
-						  imp.refresh_issue_detail();
-					      } else {
-						  imp.current_issue_id = "";
-						  imp.show_issue_detail(null, args.refresh_url, "refreshing");
-					      }
-					      attachments.show();
-					  });
-		       });
+			  var new_value = textField.val();
+			  var on_done = imp.loading("saving");
+			  var response = $.ajax({type:"POST",
+						                   url: url,
+						                   data : { item_id: item_id, new_value: new_value },
+						                   dataType:"json"});
+			  response.done( function() {
+					  on_done();
+					  if ( ! args.refresh_url ) {
+						    imp.refresh_issue_detail();
+					  } else {
+						    imp.current_issue_id = "";
+						    imp.show_issue_detail(null, args.refresh_url, "refreshing");
+					  }
+					  attachments.show();
+				});
+		});
     commentField.append(submitButton);
     commentField.append(cancelButton);
     textbox.parent().append(commentField);
@@ -698,26 +746,26 @@ imp.clickable_description_box = function(element, url, item_id, args) {
 imp.clock_in = function(element, user_id, issue_id, url) {
     var on_done = imp.issue_loading("Clocking in");
     var response = $.ajax({type:"POST",
-			   url: url,
-			   data: {issue_id: issue_id},
-			   dataType:"json",
-			   success: function(data) {
-			       on_done();
-			       imp.refresh_issue_detail();
-			   }
+			                     url: url,
+			                     data: {issue_id: issue_id},
+			                     dataType:"json",
+			                     success: function(data) {
+			                         on_done();
+			                         imp.refresh_issue_detail();
+			                     }
     });
 };
 
 imp.clock_out = function(element, user_id, issue_id, url) {
     var on_done = imp.issue_loading("Clocking out");
     var response = $.ajax({type:"POST",
-			   url: url,
-			   data: {issue_id: issue_id},
-			   dataType:"json",
-			   success: function(data) {
-			       on_done();
-			       imp.refresh_issue_detail();
-			   }
+			                     url: url,
+			                     data: {issue_id: issue_id},
+			                     dataType:"json",
+			                     success: function(data) {
+			                         on_done();
+			                         imp.refresh_issue_detail();
+			                     }
     });
 };
 
@@ -735,31 +783,31 @@ imp.sync_from_remote = function(issue_id, url) {
                            url: url,
                            data : { issue_id: issue_id },
                            success: function(data) {
-			       on_done();
-			       imp.refresh_issue_detail();
-			   }
-			  });
+			                         on_done();
+			                         imp.refresh_issue_detail();
+			                     }
+		});
 };
 
 imp.clickable_subject_box = function(element, url, item_id, size, width, issue_id, initial_value) {
 
     if (!issue_id) {
-	issue_id = item_id;
+	      issue_id = item_id;
     }
 
     var textbox = $(element),
         commentTextArea = $("<input/>");
     var value;
     if ( initial_value ) {
-	value = initial_value;
+	      value = initial_value;
     } else {
-	value = $.trim(textbox.html());
+	      value = $.trim(textbox.html());
     }
     size = size || value.length;
     width = width || "80%";
 
     if ( value == "&nbsp;" ) {
-	value = "0";
+	      value = "0";
     }
 
     imp.highlight_issue(issue_id);
@@ -778,15 +826,15 @@ imp.clickable_subject_box = function(element, url, item_id, size, width, issue_i
                 readonly_el.html(new_value);
                 editable_el.remove();
                 readonly_el.show();
-	        var on_done = imp.issue_loading(issue_id, "editing");
+	              var on_done = imp.issue_loading(issue_id, "editing");
                 var response = $.ajax({type:"POST",
                                        url: url,
                                        data : { item_id: item_id, new_value: new_value, issue_id: issue_id },
                                        dataType:"json"});
                 response.done( function() {
-		    imp.refresh_closest_issue_parent_row(readonly_el);
-		    on_done();
-	        } );
+		                imp.refresh_closest_issue_parent_row(readonly_el);
+		                on_done();
+	              } );
             }
 
             if(e.which === 27) {
@@ -804,15 +852,15 @@ imp.refresh_closest_issue_parent_row = function(element) {
     element = $(element);
     var closest_row = element.parents(".issue_instance_row");
     var url = closest_row.attr("refresh_url");
-     $.ajax({type:"GET",
-             url: url,
-             success: function(data) {
-                 if ( $(closest_row).length > 0 ) {
-                     $(closest_row)[0].outerHTML = $(data)[0].outerHTML;
-		     imp.on_issue_rows_loaded($(".issue_instance_row"));
-                 }
-           }
-         });
+    $.ajax({type:"GET",
+            url: url,
+            success: function(data) {
+                if ( $(closest_row).length > 0 ) {
+                    $(closest_row)[0].outerHTML = $(data)[0].outerHTML;
+		                imp.on_issue_rows_loaded($(".issue_instance_row"));
+                }
+            }
+    });
 };
 
 
@@ -871,7 +919,7 @@ imp.select_business_feature = function(element, issue_id, request_url, update_ur
 
     var response = $.ajax( { type: "GET",
                              url : request_url
-                           });
+    });
 
     imp.highlight_issue(issue_id);
 
@@ -898,34 +946,34 @@ imp.clickable_assign_user_box = function(element, update_url, issue_id) {
     imp.highlight_issue(issue_id);
 
     var cancel = function() {
-	el.find(".existing_assign").show();
-	form.hide();
+	      el.find(".existing_assign").show();
+	      form.hide();
     };
 
     var save = function() {
-	var on_done = imp.issue_loading(issue_id, "assigning");
-	var value = form.find("[name='user_1']").val();
+	      var on_done = imp.issue_loading(issue_id, "assigning");
+	      var value = form.find("[name='user_1']").val();
 
-	$.ajax({type:"POST",
-		url: update_url,
-		data : { issue_id: issue_id, user_id: value },
-		dataType:"json",
-		success: function() {
-		    el.find(".existing_assign").show();
-		    imp.refresh_closest_issue_parent_row(el);
-		    on_done();
-		}});
+	      $.ajax({type:"POST",
+		            url: update_url,
+		            data : { issue_id: issue_id, user_id: value },
+		            dataType:"json",
+		            success: function() {
+		                el.find(".existing_assign").show();
+		                imp.refresh_closest_issue_parent_row(el);
+		                on_done();
+		            }});
     };
 
     form.find(".assign_button").click(function(event) {
-					  event.stopImmediatePropagation();
-					  save();
-				      });
+				event.stopImmediatePropagation();
+				save();
+		});
 
     form.keyup( function(event) {
 		    event.stopImmediatePropagation();
 		    if(event.which === 27) {
-			cancel();
+			      cancel();
 		    }
 		    return false;
 		});
@@ -936,13 +984,13 @@ imp.clickable_assign_user_box = function(element, update_url, issue_id) {
 imp.show_inline_editor = function(el, args) {
 
     if ( imp.inline_editor.active ) {
-    return false;
+        return false;
     }
 
     imp.inline_editor.active = true;
 
     if ( ! args ) {
-	    args = { blank_entry:true };
+	      args = { blank_entry:true };
     }
 
     var on_done = imp.loading("fetching options...");
@@ -956,7 +1004,7 @@ imp.show_inline_editor = function(el, args) {
     var url_for_options = imp.inline_editor.td.attr("url_for_options");
     var old_value = editor.val();
     if ( ! old_value ) {
-	old_value = imp.inline_editor.td.attr("selected_value");
+	      old_value = imp.inline_editor.td.attr("selected_value");
     }
 
     imp.inline_editor.issue_id = imp.inline_editor.td.attr("issue_id");
@@ -964,9 +1012,9 @@ imp.show_inline_editor = function(el, args) {
     imp.highlight_issue(imp.inline_editor.issue_id);
 
     var deactivate_select = function() {
-	imp.inline_editor.active = false;
-	imp.inline_editor.editor_container.hide();
-	imp.inline_editor.readonly_value.show();
+	      imp.inline_editor.active = false;
+	      imp.inline_editor.editor_container.hide();
+	      imp.inline_editor.readonly_value.show();
     };
 
     var on_changed = function() {
@@ -992,12 +1040,12 @@ imp.show_inline_editor = function(el, args) {
                                        args.callback(data);
                                    }
                                }
-                              });
+        });
     };
 
     var activate_select = function() {
 
-	//editor.change( on_changed );
+	      //editor.change( on_changed );
 
         if ( ! imp.inline_editor_key_event_set ) {
             $("body").keyup( function(event) {
@@ -1006,11 +1054,11 @@ imp.show_inline_editor = function(el, args) {
                 }
                 event.stopImmediatePropagation();
                 if(event.which === 27) {
-		    deactivate_select();
-	        }
+		                deactivate_select();
+	              }
                 if(event.which === 13) {
                     if ( imp.inline_editor.editor_container.attr("supports_enter_for_submit") == "true") {
-		        on_changed();
+		                    on_changed();
                     } else {
                         var items = imp.inline_editor.editor_container.find("input[type='radio']");
                         var visible_items = items.parent("label").filter(":visible");
@@ -1020,11 +1068,11 @@ imp.show_inline_editor = function(el, args) {
                             on_changed();
                         }
                     }
-	        }
+	              }
             });
             imp.inline_editor_key_event_set = true;
         };
-        
+
         if ( imp.inline_editor.created_value_editor.length > 0 ) {
             imp.inline_editor.created_value_editor.on("keyup", function() {
                 var x = imp.inline_editor.created_value_editor.val();
@@ -1041,7 +1089,7 @@ imp.show_inline_editor = function(el, args) {
                             items.attr("checked", false);
                             visible_items.find("input").attr("checked",true);
                             imp.inline_editor.editor_container.append($("<span class='enter_tip'>(press enter to select)</span>"));
-                        }                        
+                        }
                     }
                 } else {
                     imp.inline_editor.editor_container.find("input[type='radio']").parent("label").show();
@@ -1049,8 +1097,8 @@ imp.show_inline_editor = function(el, args) {
             });
         }
 
-	imp.inline_editor.readonly_value.hide();
-	imp.inline_editor.editor_container.show();
+	      imp.inline_editor.readonly_value.hide();
+	      imp.inline_editor.editor_container.show();
         imp.inline_editor.editor_container.find("input[name='transient_selection']").on("click", function() {
             imp.inline_editor.created_value_editor.val("");
             on_changed();
@@ -1061,34 +1109,34 @@ imp.show_inline_editor = function(el, args) {
     };
 
     if (url_for_options) {
-	$.ajax({type:"GET",
-		url: url_for_options,
-		success: function(data) {
-		    var new_option;
-		    editor.html("");
+	      $.ajax({type:"GET",
+		            url: url_for_options,
+		            success: function(data) {
+		                var new_option;
+		                editor.html("");
 
-		    if ( args.blank_entry ) {
+		                if ( args.blank_entry ) {
 
                         new_option = $("<label><input value='' type='radio' name='transient_selection'><i>None</i></label>");
-			editor.append(new_option);
-		    }
+			                  editor.append(new_option);
+		                }
 
-		    $.each(data, function( index, value ) {
-			       
+		                $.each(data, function( index, value ) {
+
                         new_option = $("<label lower_case_value='"+value[1].toLowerCase() + "'><input id='"+ value[0] + "' value='" + value[0] + "' type='radio' name='transient_selection'>"+value[1]+"</label>");
-			if (old_value == value[0]) {
-			    new_option.find("input").attr("checked",true);
-			}
-			editor.append(new_option);
-		    });
+			                  if (old_value == value[0]) {
+			                      new_option.find("input").attr("checked",true);
+			                  }
+			                  editor.append(new_option);
+		                });
 
-		    activate_select();
-		    on_done();
-		}
-	       });
+		                activate_select();
+		                on_done();
+		            }
+	      });
     } else {
-	activate_select();
-	on_done();
+	      activate_select();
+	      on_done();
     }
 
     return false;
