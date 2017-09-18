@@ -99,7 +99,13 @@ def progress(request, template="slideshow/progress.html", context=None):
         plot_data[business_id].append({'project': project.name, 'values': values,
                                        'point_person': point_person,'dev_hours_used': dev_hours_used })
         #business_list[business] = True
-        business_proj_list.append([project.business.point_person.last_name, business.name ,business])
+
+        if project.business.point_person:
+            point_person_name = project.business.point_person.last_name
+        else:
+            point_person_name = "unknown"
+            
+        business_proj_list.append([point_person_name, business.name ,business])
 
     business_proj_list.sort(key=itemgetter(0,1))
 
