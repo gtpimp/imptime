@@ -61,10 +61,12 @@ def import_timesheet(request):
                     if len(status['errors'])>0:
                         raise Exception("Importer failed")
             except Exception, ex:
-                logger.exception(ex)
                 status['errors'].append(str(ex))            
 
             if len(status.get('errors', [])) > 0:
+                for error in status['errors']:
+                    logger.error("Error importing timesheet for %s : %s - %s" %(username, form.filename, error))
+                    
                 send_mail(subject="Errors importing timesheet for %s : %s" %(username, form.filename),
                           message="\n".join(status['errors']),
                           from_email="info@implicitdesign.co.za",
