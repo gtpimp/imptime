@@ -906,7 +906,7 @@ class IssueForm(forms.ModelForm):
         if business is not None:
             self.fields['feature'].widget.choices = [('', '')] + list((x.id, x.name) for x in Feature.objects.filter(business=business))
 
-        self.fields['status2'].queryset = IssueStatus.objects.filter(business=business)
+        self.fields['status2'].queryset = IssueStatus.objects.filter(business=business).order_by('name')
 
         if business is not None:
             self.fields['status2'].initial = IssueStatus.objects.get_or_create(business=business, name='new')[0]
