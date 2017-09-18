@@ -27,7 +27,7 @@ from selectable import forms as selectable_forms
 from timepiece.lookups import ProjectLookup, QuickLookup
 from timepiece.lookups import UserLookup, BusinessLookup
 
-from timepiece.models import Project, Business, Entry, Activity, UserProfile, Attribute, Location, Activity, Feature, Issue, BusinessPermissions, BusinessComment, Client
+from timepiece.models import Project, Business, Entry, Activity, UserProfile, Attribute, Location, Activity, Feature, Issue, IssueStatus, BusinessPermissions, BusinessComment, Client
 from timepiece.models import ProjectHours, Salary, CalendarEvent, TrafficChecklist, DevChecklist, FinanceChecklist, Schedule
 from timepiece.fields import UserModelChoiceField
 from django.contrib.auth.models import User
@@ -889,28 +889,28 @@ class IssueForm(forms.ModelForm):
         fields = (
             'subject',
             'description',
-            'status',
+            'status2',
             'feature',
             'assigned_to'
             )
 
-    def __init__ (self, *args, **kwargs):
+    def __init__(self, *args, **kwargs):
         if 'business' in kwargs:
             business = kwargs.pop('business')
         else:
             business = None
-        super(IssueForm,self).__init__(*args, **kwargs)
+        super(IssueForm, self).__init__(*args, **kwargs)
         self.fields['subject'].widget = forms.TextInput()
         self.fields['subject'].required = False
 
         if business is not None:
-            self.fields['feature'].widget.choices = [ ('', '') ] + list( (x.id, x.name) for x in Feature.objects.filter(business=business) )
+            self.fields['feature'].widget.choices = [('', '')] + list((x.id, x.name) for x in Feature.objects.filter(business=business))
 
-        self.fields['status'].widget.choices = Issue.ISSUE_STATUS_CHOICES
-        self.fields['status'].initial = 'new'
+        self.fields['status2'].queryset = IssueStatus.objects.filter(business=business)
 
         if business is not None:
-            self.fields['assigned_to'].widget.choices = [ ('', '') ] + [ (x.id, str(x)) for x in business.users ]
+            self.fields['status2'].initial = IssueStatus.objects.get_or_create(business=business, name='new')[0]
+            self.fields['assigned_to'].widget.choices = [('', '')] + [(x.id, str(x)) for x in business.users]
 
 
 class ProjectRelationshipForm(forms.ModelForm):
