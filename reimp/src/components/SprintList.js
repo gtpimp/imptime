@@ -9,6 +9,9 @@ import union from 'lodash/union'
 import includes from 'lodash/includes'
 import difference from 'lodash/difference'
 import {
+    PAGE_KEY__SPRINTS_TOOLBAR
+} from '../actions/ItemListKeyRegistry'
+import {
     initList,
     invalidateList,
     collapse_list,
@@ -21,7 +24,8 @@ import {
     startCandidateSprint,
     updateCandidateTitle,
     cancelCandidateSprint,
-    saveCandidateSprint
+    saveCandidateSprint,
+    get_display_all
 } from '../actions/Sprints'
 import Sprint from './Sprint'
 import ListTable from './ListTable'
@@ -182,7 +186,7 @@ class SprintList extends Component {
     }
 
     render_sprint(sprint, list_key, index, that, loading_item_ids, selected_ids) {
-        const display_all = true
+        const { display_all } = this.props
         const can_display = display_all || sprint.status_name !== 'closed'
         if (! can_display ) {
             return null;
@@ -209,7 +213,6 @@ class SprintList extends Component {
             loading_item_ids
         } = this.props
         const that = this
-        const display_closed = true
         const sprint_rows = []
         each(sprints, function (sprint, index) {
 
@@ -269,6 +272,7 @@ function mapStateToProps(state, props) {
 
     const candidate_sprint = (sprint && sprint.candidate_sprint) || null
     const is_creating_sprint = candidate_sprint || false
+    const display_all = get_display_all(state, PAGE_KEY__SPRINTS_TOOLBAR)
 
     return {
         list_key: list_key,
@@ -285,7 +289,8 @@ function mapStateToProps(state, props) {
         is_expanded: l.display_mode === "expanded" || !l.display_mode,
         last_updated: l.last_updated,
         candidate_sprint: candidate_sprint,
-        is_creating_sprint: is_creating_sprint
+        is_creating_sprint: is_creating_sprint,
+        display_all: display_all
     }
 }
 
