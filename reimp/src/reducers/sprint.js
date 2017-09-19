@@ -20,8 +20,13 @@ import {
     CANCEL_CREATING_NEW_SPRINT,
     ANNOUNCE_SAVING_NEW_SPRINT,
     ANNOUNCE_SAVED_NEW_SPRINT,
-    ANNOUNCE_SAVING_NEW_SPRINT_FAILED
+    ANNOUNCE_SAVING_NEW_SPRINT_FAILED,
+    DISPLAY_ALL_MODE
 } from '../actions/Sprints.js'
+
+const displayStatus = {
+    display_all: false
+}
 
 const initialState = {
     items_by_id: [],
@@ -33,6 +38,7 @@ export default function sprint(state = initialState, action) {
 
     let state_copy = Object.assign({}, state)
     let new_items_by_id = null
+    let l
 
     switch (action.type) {
 	      case INVALIDATE_ALL_SPRINTS:
@@ -111,6 +117,10 @@ export default function sprint(state = initialState, action) {
 						                                     state.candidate_sprint || {},
 						                                     {is_saving: false})})
 
+        case DISPLAY_ALL_MODE:
+            l = Object.assign({}, displayStatus, state_copy[action.page_key] || {})
+	          state_copy[action.page_key] = Object.assign({}, l, {"display_all": action.display_all})
+	          return state_copy
 
         default:
             return state

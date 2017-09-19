@@ -3,10 +3,13 @@ import {connect} from 'react-redux'
 import '../../sass/toolbar-panel.css'
 import {browserHistory} from 'react-router'
 import {
-    PAGE_KEY__SPRINTS_PAGE
+    PAGE_KEY__SPRINTS_PAGE,
+    PAGE_KEY__SPRINTS_TOOLBAR
 } from '../../actions/ItemListKeyRegistry'
 import {
-    startCandidateSprint
+    startCandidateSprint,
+    get_display_all,
+    set_display_all
 } from '../../actions/Sprints.js'
 import { ensureSprintsLoaded, getSprint } from '../../actions/Sprints'
 import { ensureProjectsLoaded, getProject } from '../../actions/Projects'
@@ -14,6 +17,7 @@ import {
     get_selected_project_ids,
     get_selected_sprint_ids
 } from '../../actions/Page'
+import ToggleButton from './ToggleButton'
 
 class SprintsToolbarPanel extends Component {
 
@@ -21,8 +25,9 @@ class SprintsToolbarPanel extends Component {
         super(props)
         this.onNewProjectClick = this.onNewProjectClick.bind(this)
         this.onDashboardClick = this.onDashboardClick.bind(this)
+        this.onSprintShowClosedToggleButtonClick = this.onSprintShowClosedToggleButtonClick.bind(this)
     }
-    
+
     componentDidMount() {
         this.refresh()
     }
@@ -48,23 +53,33 @@ class SprintsToolbarPanel extends Component {
         const { project_id } = this.props
         browserHistory.push('/projects/'+project_id);
     }
-    
+
+    onSprintShowClosedToggleButtonClick(display_all) {
+        const { dispatch } = this.props
+        dispatch(set_display_all(PAGE_KEY__SPRINTS_TOOLBAR, display_all))
+    }
+
     render() {
 
-        const { sprint } = this.props
-        
+        const { sprint, display_all } = this.props
+
         return (
             <div className="toolbar-panel">
-                <div className="button button--large button--primary" onClick={this.onNewProjectClick}>
-                    + New Sprint
-                </div>
-                { sprint &&
-                  <div>
-                      <div className="button button--large button--primary" onClick={this.onDashboardClick}>
-                          Dashboard
-                      </div>
+              <ToggleButton value={display_all}
+                            onChange={this.onSprintShowClosedToggleButtonClick}
+                            on_label={"All"}
+                            off_label={"Open"}
+              />
+              <div className="button button--large button--primary" onClick={this.onNewProjectClick}>
+                + New Sprint
+              </div>
+              { sprint &&
+                <div>
+                  <div className="button button--large button--primary" onClick={this.onDashboardClick}>
+                    Dashboard
                   </div>
-                }
+                </div>
+              }
             </div>
         )
     }
@@ -76,12 +91,14 @@ function mapStateToProps(state, props) {
     const sprint = (selected_sprint_ids && selected_sprint_ids.length > 0 && getSprint(state, selected_sprint_ids[0])) || {}
     const selected_project_ids = get_selected_project_ids(state, PAGE_KEY__SPRINTS_PAGE)
     const project = (selected_project_ids && selected_project_ids.length > 0 && getProject(state, selected_project_ids[0])) || {}
-    
+    const display_all = get_display_all(state, PAGE_KEY__SPRINTS_TOOLBAR)
+
     return {
         sprint_ids: selected_sprint_ids,
         sprint: sprint,
         last_selected_sprint_id: sprint.id,
-        project_id: project.id
+        project_id: project.id,
+        display_all: display_all
     }
 }
 
