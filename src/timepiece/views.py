@@ -1148,6 +1148,60 @@ def view_person(request, person_id):
 
     return context
 
+@permission_required('timepiece.can_manage_client_users')
+@login_required
+def edit_leave(request, person_id=None, template="timepiece/person/edit_leave.html"):
+    context = {}
+    if person_id:
+        person = get_object_or_404(auth_models.User, pk=person_id)
+    else:
+        person = None
+
+    if request.user.is_superuser:
+        pass
+    elif request.user.is_staff:
+        if person.profile.impd_client_id != request.user.profile.impd_client_id:
+            raise Exception("Can't edit this person")
+    else:
+        if person.profile.id != request.user.id:
+            raise Exception("Can't edit this person")
+
+    form = timepiece_forms.PersonLeaveForm(request.POST or None)
+    if form.is_valid():
+        timepiece.CalendarEvent.objects.get_or_create(start=form.cleaned_data['date'],
+                                                      user=person,
+                                                      event_type=form.cleaned_data['reason'],
+                                                      status='CONFIRMED',
+                                                      hours=8)[0]
+        return HttpResponseRedirect(reverse('edit_leave', args=(person_id,)))
+
+    context['existing_leaves'] = timepiece.CalendarEvent.objects.filter(user=person).order_by("start")
+    context['new_leave_form'] = form
+    context['person'] = person
+    return render(request, template, context)
+
+@permission_required('timepiece.can_manage_client_users')
+@login_required
+def delete_leave(request, person_id, calendar_event_id):
+    context = {}
+    if person_id:
+        person = get_object_or_404(auth_models.User, pk=person_id)
+    else:
+        person = None
+
+    if request.user.is_superuser:
+        pass
+    elif request.user.is_staff:
+        if person.profile.impd_client_id != request.user.profile.impd_client_id:
+            raise Exception("Can't edit this person")
+    else:
+        if person.profile.id != request.user.id:
+            raise Exception("Can't edit this person")
+
+    calendar_event = timepiece.CalendarEvent.objects.get(pk=calendar_event_id)
+    calendar_event.delete()
+    return HttpResponseRedirect(reverse('edit_leave', args=(person_id,)))
+        
 
 @permission_required('timepiece.can_manage_client_users')
 @login_required
@@ -1163,8 +1217,21 @@ def create_edit_person(request, person_id=None, template='timepiece/person/creat
     elif request.user.is_staff:
         if person.profile.impd_client_id != request.user.profile.impd_client_id:
             raise Exception("Can't edit this person")
+        
+    if person_id:
+        person = get_object_or_404(auth_models.User, pk=person_id)
+    else:
+        person = None
+
+    if request.user.is_superuser:
+        pass
+    elif request.user.is_staff:
+        if person.profile.impd_client_id != request.user.profile.impd_client_id:
+            raise Exception("Can't edit this person")
     else:
         if person.profile.id != request.user.id:
+            raise Exception("Can't edit this person")
+        if person.profile.impd_client_id != request.user.profile.impd_client_id:
             raise Exception("Can't edit this person")
 
     if request.POST:
@@ -1181,8 +1248,7 @@ def create_edit_person(request, person_id=None, template='timepiece/person/creat
             person = person_form.save()
             profile = profile_form.save(request.user, person)
 
-            return HttpResponseRedirect(reverse('view_person', args=(person.id,))
-        )
+            return HttpResponseRedirect(reverse('view_person', args=(person.id,)))
     else:
         if person:
             profile = timepiece.UserProfile.objects.get_or_create(user=person)[0]

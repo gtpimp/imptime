@@ -42,20 +42,31 @@ def timesheets(request, template="slideshow/timesheets.html", context=None):
     today = datetime.datetime.today().date()
 
     from_date = today - relativedelta(days=14)
+
     from_date = from_date.replace(day=1)
 
     to_date = today
 
     daily_hours = {}
+
     for user in users:
         entries = timepiece.Entry.objects.filter(user=user)
         daily_hours[user.username] = {'daily_hours': {}, 'weekly_average': {}}
         daily_hours[user.username].update(_get_daily_hours(user, entries, from_date, to_date))
         daily_hours[user.username]['required_average'] = user.profile.required_daily_work_hours
 
-        context['daily_hours'] = daily_hours
-        context['from_date'] = from_date
-        context['to_date'] = to_date
+        events_in_range = timepiece.CalendarEvent.objects\
+                                                 .filter(start__gte=from_date, start__lte=to_date)\
+                                                 .values('start', 'hours')
+        user_events = events_in_range.filter(user=user)
+
+        daily_hours[user.username]['sick_days'] = user_events.filter(event_type='sickday')
+        daily_hours[user.username]['leave_days'] = user_events.filter(event_type='leave')
+        daily_hours[user.username]['public_holidays'] = events_in_range.filter(event_type='office_closed')
+        
+    context['daily_hours'] = daily_hours
+    context['from_date'] = from_date
+    context['to_date'] = to_date
 
     return render(request, template, context)
 

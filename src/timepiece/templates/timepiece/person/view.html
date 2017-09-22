@@ -14,6 +14,7 @@
             <ul class="unstyled subnav">
                 {% if perms.auth.change_person or user.is_staff %}
                     <li><a href="{% url 'edit_person' person.pk %}">Edit Person</a></li>
+                    <li><a href="{% url 'edit_leave' person.pk %}">Holidays and Sick Leave</a></li>
                     <li><a href="{% url 'delete_person' person.pk %}">Delete Person</a></li>
                 {% endif %}
                 {% if perms.auth.view_entry_summary %}

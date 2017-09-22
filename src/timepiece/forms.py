@@ -1690,3 +1690,10 @@ class ClientForm(forms.ModelForm):
     class Meta:
         model = Client
         exclude = [ 'created_at', 'modified_at' ]
+
+class PersonLeaveForm(forms.Form):
+    date = forms.DateField(initial=datetime.today(), required=True)
+    reason = forms.ChoiceField(required=True,
+                               choices=(('leave', 'Leave'),
+                                        ('sickday', 'Sick'),
+                                        ('office_closed', 'Office closed') ))

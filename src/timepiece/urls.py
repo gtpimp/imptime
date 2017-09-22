@@ -41,6 +41,9 @@ urlpatterns = [
         views.create_edit_person,
         name='edit_person',
     ),
+
+    url(r'^person/(?P<person_id>\d+)/leave/$', views.edit_leave, name='edit_leave',),
+    url(r'^person/(?P<person_id>\d+)/(?P<calendar_event_id>\d+)delete/$', views.delete_leave, name='delete_leave',),
     url(r'^business/list/$', views.list_businesses, name='list_businesses'),
     url(
         r'^business/create/$',
