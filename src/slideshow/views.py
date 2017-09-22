@@ -62,7 +62,8 @@ def timesheets(request, template="slideshow/timesheets.html", context=None):
 
         daily_hours[user.username]['sick_days'] = user_events.filter(event_type='sickday')
         daily_hours[user.username]['leave_days'] = user_events.filter(event_type='leave')
-        daily_hours[user.username]['public_holidays'] = events_in_range.filter(event_type='office_closed')
+        daily_hours[user.username]['office_closed'] = user_events.filter(event_type='office_closed')
+        daily_hours[user.username]['public_holidays'] = timepiece.Holiday.objects.filter(applies_on__gte=from_date, applies_on__lte=to_date)
         
     context['daily_hours'] = daily_hours
     context['from_date'] = from_date

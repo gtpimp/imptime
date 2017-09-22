@@ -67,7 +67,7 @@
  $(document).ready(
      function() {
 
-         var colours = ['orange', 'green', 'blue', 'indigo', 'red', 'purple'];
+         var colours = ['orange', 'green', 'blue', 'indigo', 'indigo', 'red', 'purple'];
          
 
                  {% for user,values in daily_hours.items %} 
@@ -109,9 +109,21 @@
                               },
                               points: {show: false},
                             },
+                            { label:"office_closed",
+                              data: [ {% for entry in values.office_closed %} 
+                                  [ {{entry.start|epoch}},{{entry.hours}}], {% endfor %} ],
+                              lines: {show: false, steps: true, fill: true},
+                              bars: {
+                                  show: true,
+                                  barWidth: 24 * 60 * 60 * 1000,
+                                  align: "center",
+                                  horizontal: false
+                              },
+                              points: {show: false},
+                            },
                             { label:"public_holidays",
                               data: [ {% for entry in values.public_holidays %} 
-                                  [ {{entry.start|epoch}},{{entry.hours}}], {% endfor %} ],
+                                  [ {{entry.applies_on|epoch}},8], {% endfor %} ],
                               lines: {show: false, steps: true, fill: true},
                               bars: {
                                   show: true,

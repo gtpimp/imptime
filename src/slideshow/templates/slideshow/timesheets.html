@@ -49,7 +49,7 @@
   $(document).ready( 
                function() {
 
-                   var colours = ['orange', 'green', 'blue', 'indigo', 'red', 'purple'];
+                   var colours = ['orange', 'green', 'blue', 'indigo', 'indigo', 'red', 'purple'];
                    
                    $.plot($("#graph_legend"),
                           [ { label:"hours", data: [] },
@@ -104,8 +104,8 @@
                             },
                             points: {show: false},
                           },
-                          { label:"public_holidays",
-                            data: [ {% for entry in values.public_holidays %} 
+                          { label:"office_closed",
+                            data: [ {% for entry in values.office_closed %} 
                                 [ {{entry.start|epoch}},{{entry.hours}}], {% endfor %} ],
                             lines: {show: false, steps: true, fill: true},
                             bars: {
@@ -116,6 +116,18 @@
                             },
                             points: {show: false},
                           },
+                            { label:"public_holidays",
+                              data: [ {% for entry in values.public_holidays %} 
+                                  [ {{entry.applies_on|epoch}},8], {% endfor %} ],
+                              lines: {show: false, steps: true, fill: true},
+                              bars: {
+                                  show: true,
+                                  barWidth: 24 * 60 * 60 * 1000,
+                                  align: "center",
+                                  horizontal: false
+                              },
+                              points: {show: false},
+                            },
                           { label:"weekly average",
                             data: [ {% for date, hours in values.weekly_average.items %} 
                                                     [ {{date|epoch}},{{hours}}], {% endfor %} ],
