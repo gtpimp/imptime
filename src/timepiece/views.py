@@ -2662,17 +2662,31 @@ def daily_graph(request, user_id, template="timepiece/graphs/daily_graph.html", 
     else:
         users = [User.objects.get(pk=user_id)]
 
+    user = users.order_by("username")
+
     context = context or {}
 
     today = datetime.datetime.today().date()
 
     from_date, to_date =  _get_filter_dates_only(request, context, (today - relativedelta(months=1), today))
 
-    daily_hours = {}
+    daily_hours = OrderedDict()
+
     for user in users:
         entries = timepiece.Entry.objects.filter(user=user)
         daily_hours[user.username] = {'daily_hours':{}, 'weekly_average':{}}
-        daily_hours[user.username]['daily_hours'], daily_hours[user.username]['weekly_average'], daily_hours[user.username]['daily_hours_by_project'],  = _get_daily_hours(user, entries, from_date, to_date)
+        daily, weekly, daily_by_project = _get_daily_hours(user, entries, from_date, to_date)
+        daily_hours[user.username]['daily_hours'] = daily
+        daily_hours[user.username]['weekly_average'] = weekly
+        daily_hours[user.username]['daily_hours_by_project'] = daily_by_project
+
+        events_in_range = timepiece.CalendarEvent.objects\
+                                                 .filter(start__gte=from_date, start__lte=to_date)\
+                                                 .values('start', 'hours')
+        user_events = events_in_range.filter(user=user)
+        daily_hours[user.username]['sick_days'] = user_events.filter(event_type='sickday')
+        daily_hours[user.username]['leave_days'] = user_events.filter(event_type='leave')
+        daily_hours[user.username]['public_holidays'] = events_in_range.filter(event_type='office_closed')
 
     context['daily_hours'] = daily_hours
     context['from_date'] = from_date

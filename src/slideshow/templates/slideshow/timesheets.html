@@ -49,6 +49,8 @@
   $(document).ready( 
                function() {
 
+                   var colours = ['orange', 'green', 'blue', 'indigo', 'red', 'purple'];
+                   
                    $.plot($("#graph_legend"),
                           [ { label:"hours", data: [] },
                             { label:"sickdays", data: [] },
@@ -60,7 +62,7 @@
                               xaxis: { show: false },
                               yaxis: { show: false },
                               grid: { show: false },
-                              colors: ['orange', 'green', 'blue', 'yellow', 'red', 'purple']
+                              colors: colours
                           })
                    
                  {% for user,values in daily_hours.items %} 
@@ -151,8 +153,7 @@
 			  bars: {
 			    show: false
 			  },
-                          colors: ['orange', 'green', 'blue', 'yellow', 'red', 'purple'],
-
+                          colors: colours
 			}
                  );
                  {% endfor %}
