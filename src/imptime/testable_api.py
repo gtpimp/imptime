@@ -34,7 +34,7 @@ class TestableViewSet(BaseViewSet):
 
             testable = Testable.objects.get_or_create(issue=issue,
                                                       steps=testable_value,
-                                                      order=max_order)[0]
+                                                      order=max_order+1)[0]
             issue.save()
             IssueHistory.add_history(request.user, issue,
                                      "added testable %s" % testable.id, "", testable.steps)
