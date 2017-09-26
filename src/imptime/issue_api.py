@@ -118,7 +118,6 @@ class IssueViewSet(BaseViewSet):
                         IssueHistory.add_history(
                             self.request.user, issue, "changed description",
                             old_description, issue.description)
-                        issue.on_description_updated()
                 elif field_name == "status_name":
                     if self.logged_in_permissions(issue.project.business).has_edit_issue_states:
                         old_status = issue.status2

@@ -3662,10 +3662,6 @@ class Issue(models.Model):
         active_clocks = Entry.objects.filter(issue_id=self.id).is_open()
         return [ x.user for x in active_clocks ]
 
-    def on_description_updated(self):
-        from testable.models import Testable
-        Testable.update_from_issue_description(issue=self, description=self.description)
-
     @property
     def testable(self):
         return self.testables.first()
