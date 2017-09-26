@@ -10,11 +10,16 @@
   <img src="{% static 'images/implicitDesignLogoTransparent.png' %}"/>
 </div>
 
+<div class="time_chart col-md-1" style="border: 1px solid #bebebe; margin:2px;">
+  <h3>Legend</h3>
+  <div style="width:100px; height:200px" class="timesheet_graph_container" id="graph_legend"></div>
+</div>
 {% for user,days_hours in daily_hours.items %}
 
 <div class="time_chart col-md-3" style="border: 1px solid #bebebe; margin:2px;">
 
-    <h3>{{user}}</h3>
+  <h3>{{user}}</h3>
+
     <div style="width:100%; height:200px" class="timesheet_graph_container" id="graph{{user}}"></div>
 
     <div class="available_hours" style="font-size:7px;margin-top:5px;">
@@ -44,6 +49,22 @@
   $(document).ready( 
                function() {
 
+                   var colours = ['orange', 'green', 'blue', 'indigo', 'indigo', 'red', 'purple'];
+                   
+                   $.plot($("#graph_legend"),
+                          [ { label:"hours", data: [] },
+                            { label:"sickdays", data: [] },
+                            { label:"leave", data: [] },
+                            { label:"public_holidays", data: [] },
+                            { label:"weekly_average", data: [] },
+                            { label:"monthly_average", data: [] } ],
+                          {
+                              xaxis: { show: false },
+                              yaxis: { show: false },
+                              grid: { show: false },
+                              colors: colours
+                          })
+                   
                  {% for user,values in daily_hours.items %} 
 
                  $.plot($("#graph{{user}}"),
@@ -59,7 +80,55 @@
                             },
                             points: {show: false},
 			  },
-			  { label:"weekly average",
+                          { label:"sickdays",
+                            data: [ {% for entry in values.sick_days %} 
+                                [ {{entry.start|epoch}},{{entry.hours}}], {% endfor %} ],
+                            lines: {show: false, steps: false, fill: true},
+                            bars: {
+                                show:  true,
+                                barWidth: 24 * 60 * 60 * 1000,
+                                align: "center",
+                                horizontal: false
+                            },
+                            points: {show: false},
+                          },
+                          { label:"leave",
+                            data: [ {% for entry in values.leave_days %} 
+                                [ {{entry.start|epoch}},{{entry.hours}}], {% endfor %} ],
+                            lines: {show: false, steps: true, fill: true},
+                            bars: {
+                                show: true,
+                                barWidth: 24 * 60 * 60 * 1000,
+                                align: "center",
+                                horizontal: false
+                            },
+                            points: {show: false},
+                          },
+                          { label:"office_closed",
+                            data: [ {% for entry in values.office_closed %} 
+                                [ {{entry.start|epoch}},{{entry.hours}}], {% endfor %} ],
+                            lines: {show: false, steps: true, fill: true},
+                            bars: {
+                                show: true,
+                                barWidth: 24 * 60 * 60 * 1000,
+                                align: "center",
+                                horizontal: false
+                            },
+                            points: {show: false},
+                          },
+                            { label:"public_holidays",
+                              data: [ {% for entry in values.public_holidays %} 
+                                  [ {{entry.applies_on|epoch}},8], {% endfor %} ],
+                              lines: {show: false, steps: true, fill: true},
+                              bars: {
+                                  show: true,
+                                  barWidth: 24 * 60 * 60 * 1000,
+                                  align: "center",
+                                  horizontal: false
+                              },
+                              points: {show: false},
+                            },
+                          { label:"weekly average",
                             data: [ {% for date, hours in values.weekly_average.items %} 
                                                     [ {{date|epoch}},{{hours}}], {% endfor %} ],
 			    lines: {show: false, steps: false, fill: false},
@@ -95,7 +164,8 @@
                                     position: "nw" },
 			  bars: {
 			    show: false
-			  }
+			  },
+                          colors: colours
 			}
                  );
                  {% endfor %}

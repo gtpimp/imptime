@@ -3649,9 +3649,6 @@ class Issue(models.Model):
         super(Issue, self).save(*args, **kwargs)
         if was_created:
             RefreshNotifier().notify_model_create(self)
-
-            from testable.models import Testable
-            Testable.update_from_issue_description(issue=self, description=self.description)
         else:
             RefreshNotifier().notify_model_update(self)
 
@@ -4018,7 +4015,7 @@ class BusinessDocument(models.Model):
 class CalendarEvent(models.Model):
 
     EVENT_TYPES = ( ('planned', 'Planned'), ('meeting', 'Meeting'), ('leave', 'Leave'), ('sickday', 'Sick day'),
-					('office_closed', 'Office Closed'), ('personal', 'Personal'),
+                    ('office_closed', 'Office Closed'), ('personal', 'Personal'),
                     ('deadline', 'Deadline') )
     EVENT_STATUSES = ( ('ready', 'Ready'), ('done', 'Done'), ('cancelled', 'Cancelled'), ("CONFIRMED", "Confirmed"), ("UNKNOWN", "UNKNOWN") )
 
@@ -4037,7 +4034,7 @@ class CalendarEvent(models.Model):
 
         if not self.caldav_uid and self.id:
             self.caldav_uid = "imptime%s" % str(self.id)
-            super(CalendarEvent, self).save(*args, **kwargs)
+            super(CalendarEvent, self).save()
 
         if update_caldav:
             try:
@@ -4075,7 +4072,7 @@ class CalendarEvent(models.Model):
 
     @classmethod
     def is_on_leave(self, d, user):
-        return self.objects.filter(user=user, start=d, event_type__in=self.cant_work_event_types(), status__in=['ready', 'done']).count()>0
+        return self.objects.filter(user=user, start=d, event_type__in=self.cant_work_event_types(), status__in=['ready', 'done', 'CONFIRMED']).count()>0
 
     @classmethod
     def cant_work_event_types(self):

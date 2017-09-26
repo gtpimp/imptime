@@ -1,0 +1,51 @@
+{% extends "timepiece/person/base.html" %}
+{% block title %}{% if not person %}Create Person{% else %}Edit {{ person.get_full_name }}{% endif %}{% endblock %}
+{% load bootstrap_toolkit %}
+{% load static %}
+
+{% block crumbs %}
+{{ block.super }}
+<li>
+  <span class="divider">/</span>
+  <a href="{% url 'edit_person' person.pk %}">Edit Person</a>
+</li>
+{% endblock crumbs %}
+
+{% block content %}
+<div class="row-fluid">
+  <div class="span12">
+    <h2>Leave & Sick days for {{person.username}} </h2>
+
+    <br style="clear: both;" />
+
+    <table class="table table-striped">
+      <tbody>
+        {% for leave in existing_leaves %}
+        <tr>
+          <td>{{leave.start|date:'D d M Y'}}</td>
+          <td>{{leave.event_type}}</td>
+          <td>
+            <a onclick="if (!confirm('Are you sure you want to delete this event?')) { return false }"
+               href="{% url 'delete_leave' person.id leave.id %}">
+              <img src="{% static 'images/timepiece/icons/cross.png' %}"/>
+            </a>
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+    
+    <form id="create-edit-person" class="form-horizontal" action="" method="post" accept-charset="utf-8">
+      
+      {% csrf_token %}
+      {{ new_leave_form|as_bootstrap:"horizontal" }}
+      
+      <div class="form-actions">
+        <input class="btn btn-primary" type="submit" value="Save" name="submit" />
+        <input class="btn" type="button" onclick="history.go(-1)" value="Cancel" />
+      </div>
+    </form>
+  </div>
+</div>
+{% endblock %}
+

@@ -28,20 +28,6 @@ class Testable(models.Model):
             s = s[2:]
         return s
 
-    @classmethod
-    def update_from_issue_description(self, issue, description):
-        testables_to_delete = Testable.objects.filter(issue=issue)
-        for testable_to_delete in testables_to_delete:
-            testable_to_delete.testable_results.update(testable=None)
-            testable_to_delete.delete()
-
-        groups = re.split("testable", description, flags=re.IGNORECASE)
-        if len(groups) <= 1:
-            return
-        step_groups = groups[1:]
-        for index, step_group in enumerate(step_groups):
-            Testable.objects.create(steps=step_group, issue=issue, order=index)
-
     @property
     def most_recent_result(self):
         return self.testable_results.order_by("-checked_at").first()

@@ -9,6 +9,9 @@ import union from 'lodash/union'
 import includes from 'lodash/includes'
 import difference from 'lodash/difference'
 import {
+    PAGE_KEY__SPRINTS_TOOLBAR
+} from '../actions/ItemListKeyRegistry'
+import {
     initList,
     invalidateList,
     collapse_list,
@@ -21,7 +24,8 @@ import {
     startCandidateSprint,
     updateCandidateTitle,
     cancelCandidateSprint,
-    saveCandidateSprint
+    saveCandidateSprint,
+    get_display_all
 } from '../actions/Sprints'
 import Sprint from './Sprint'
 import ListTable from './ListTable'
@@ -120,10 +124,10 @@ class SprintList extends Component {
     reorderSprints(moving_sprint_id, move_after_sprint_id) {
         const {dispatch, list_key} = this.props
         dispatch(reorderSprints(moving_sprint_id, move_after_sprint_id,
-            function () {
-                dispatch(invalidateList(list_key))
-                dispatch(fetchSprintsIfNeeded(list_key))
-            }))
+                                function () {
+                                    dispatch(invalidateList(list_key))
+                                    dispatch(fetchSprintsIfNeeded(list_key))
+                                }))
     }
 
     // renderCollapsedSprint(sprint) {
@@ -165,19 +169,38 @@ class SprintList extends Component {
 
         return (
             <tr key={list_key + ".candidate_sprint"} className="sprint_list__candidate_sprint">
-                <td colSpan="20">Creating new sprint here</td>
-                { false &&
+              <td colSpan="20">Creating new sprint here</td>
+              { false &&
                 <td>
-                    <RIEModeToggler propName="candidate_sprint_title"
-                                    initialValue=""
-                                    initialState="editing"
-                                    onChange={this.onSaveCandidateSprint}
-                                    onCancel={this.onCancelCandidateSprint}>
-                        <RIEInput/>
-                    </RIEModeToggler>
+                  <RIEModeToggler propName="candidate_sprint_title"
+                                  initialValue=""
+                                  initialState="editing"
+                                  onChange={this.onSaveCandidateSprint}
+                                  onCancel={this.onCancelCandidateSprint}>
+                    <RIEInput/>
+                  </RIEModeToggler>
                 </td>
-                }
+              }
             </tr>
+        )
+    }
+
+    render_sprint(sprint, list_key, index, that, loading_item_ids, selected_ids) {
+        const { display_all } = this.props
+        const can_display = display_all || sprint.status_name !== 'closed'
+        if (! can_display ) {
+            return null;
+        }
+
+        return (
+            <Sprint key={list_key + sprint.id + index}
+                    is_collapsed={false}
+                    reorderSprints={that.reorderSprints}
+                    onClickedSprint={() => that.onClickedSprint(sprint.id)}
+                    is_loading={loading_item_ids.indexOf(sprint.id) !== -1}
+                    is_selected={selected_ids.indexOf(sprint.id) !== -1}
+                    sprint_id={sprint.id}
+            />
         )
     }
 
@@ -190,23 +213,14 @@ class SprintList extends Component {
             loading_item_ids
         } = this.props
         const that = this
-
         const sprint_rows = []
         each(sprints, function (sprint, index) {
 
             if (is_creating_sprint && index === 0 && !candidate_sprint.sprint_id_before) {
                 sprint_rows.push(that.render_candidate_sprint())
             }
-
             sprint_rows.push(
-                <Sprint key={list_key + sprint.id + index}
-                        is_collapsed={false}
-                        reorderSprints={that.reorderSprints}
-                        onClickedSprint={() => that.onClickedSprint(sprint.id)}
-                        is_loading={loading_item_ids.indexOf(sprint.id) !== -1}
-                        is_selected={selected_ids.indexOf(sprint.id) !== -1}
-                        sprint_id={sprint.id}
-                />
+                that.render_sprint(sprint, list_key, index, that, loading_item_ids, selected_ids)
             )
             if (is_creating_sprint && candidate_sprint.sprint_id_before === sprint.id) {
                 sprint_rows.push(that.render_candidate_sprint())
@@ -215,7 +229,7 @@ class SprintList extends Component {
 
         return (
             <ListTable>
-                {sprint_rows}
+              {sprint_rows}
             </ListTable>
         )
     }
@@ -225,9 +239,9 @@ class SprintList extends Component {
 
         return (
             <div>
-                {/*{ is_collapsed && this.render_collapsed() }*/}
-                {/*{ is_expanded && this.render_expanded() }*/}
-                { this.render_expanded() }
+              {/*{ is_collapsed && this.render_collapsed() }*/}
+              {/*{ is_expanded && this.render_expanded() }*/}
+              { this.render_expanded() }
             </div>
         )
     }
@@ -243,21 +257,22 @@ function mapStateToProps(state, props) {
     const visible_item_ids = l.visible_item_ids || []
 
     const selected_items = items_by_id && l.selected_ids && l.selected_ids.map(function (selected_id, index) {
-            return items_by_id[selected_id] || {
-                    'id': selected_id,
-                    'loaded': false
-                }
-        })
+        return items_by_id[selected_id] || {
+            'id': selected_id,
+            'loaded': false
+        }
+    })
 
     const items = (items_by_id && visible_item_ids.map(function (visible_item_id, index) {
-            return items_by_id[visible_item_id] || {
-                    'id': visible_item_id,
-                    'loaded': false
-                }
-        })) || []
+        return items_by_id[visible_item_id] || {
+            'id': visible_item_id,
+            'loaded': false
+        }
+    })) || []
 
     const candidate_sprint = (sprint && sprint.candidate_sprint) || null
     const is_creating_sprint = candidate_sprint || false
+    const display_all = get_display_all(state, PAGE_KEY__SPRINTS_TOOLBAR)
 
     return {
         list_key: list_key,
@@ -274,7 +289,8 @@ function mapStateToProps(state, props) {
         is_expanded: l.display_mode === "expanded" || !l.display_mode,
         last_updated: l.last_updated,
         candidate_sprint: candidate_sprint,
-        is_creating_sprint: is_creating_sprint
+        is_creating_sprint: is_creating_sprint,
+        display_all: display_all
     }
 }
 
