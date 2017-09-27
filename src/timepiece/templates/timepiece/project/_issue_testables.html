@@ -23,7 +23,7 @@
       <div class="issue_sidebar--testable_order">
         {{ testable.order }}
       </div>
-      <div class="issue_sidebar--testable markdown_content">
+      <div id="testable{{ testable.pk }}" class="issue_sidebar--testable markdown_content">
         {{testable.steps|asmarkdown|with_issue_links|safe}}
       </div>
 
@@ -34,10 +34,14 @@
         <input type="button" class="small_button btn testable_delete" onclick="$(this).parents('.testable_section').find('.edit_testable_button').show(); $(this).parents('.testable_section').find('.markdown_content').show(); $(this).parents('.edit_testable').hide(); return false;" value="cancel"/>
       </div>
 
-      <a class="edit_testable_button small_button btn" href="#" onclick="$(this).parent().find('.edit_testable').show(); $(this).hide(); $(this).parents('.testable_section').find('.markdown_content').hide(); return false;">
+      <a class="edit_testable_button small_button btn" href="#" data-pk="{{ testable.pk }}"
+         onmouseover="imp.onmouseover_issue_testable($(this));" onmouseout="imp.onmouseout_issue_testable($(this));"
+         onclick="$(this).parent().find('.edit_testable').show(); $(this).hide(); $(this).parents('.testable_section').find('.markdown_content').hide(); return false;">
         <img src="{% static 'images/icons/comment_edit.png' %}" title="Edit testable"/>
       </a>
-      <a class="delete_testable_button small_button btn" href="#" onclick="return imp.delete_issue_testable('{% url 'delete_issue_testable' testable.pk %}');">
+      <a class="delete_testable_button small_button btn" href="#" data-pk="{{ testable.pk }}"
+         onmouseover="imp.onmouseover_issue_testable($(this));" onmouseout="imp.onmouseout_issue_testable($(this));"
+         onclick="return imp.delete_issue_testable('{% url 'delete_issue_testable' testable.pk %}');">
         <img src="{% static 'images/timepiece/icons/comment_delete.png' %}" title="Delete testable"/>
       </a>
       {% end_permission %}
