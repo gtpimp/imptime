@@ -20,7 +20,9 @@
   {% for testable in issue.testables_in_order %}
     <div class="testable_section edit_testable_section">
 
-      {{ testable.order }}
+      <div class="issue_sidebar--testable_order">
+        {{ testable.order }}
+      </div>
       <div class="issue_sidebar--testable markdown_content">
         {{testable.steps|asmarkdown|with_issue_links|safe}}
       </div>
