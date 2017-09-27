@@ -10,13 +10,16 @@ logger = logging.getLogger(__name__)
 def testable__update_from_issue_description(Testable, issue, description):
     Testable.objects.filter(issue=issue).delete()
     groups = re.split("testable", description, flags=re.IGNORECASE)
-    import pdb;pdb.set_trace()
     if len(groups) <= 1:
         return
     step_groups = groups[1:]
-    import pdb;pdb.set_trace()
+    issue_description = groups[:1]
+    issue.description = issue_description
+    issue.save()
+    order_count = 1
     for step_group in step_groups:
-        Testable.objects.create(steps=step_group, issue=issue)
+        Testable.objects.create(steps=step_group, issue=issue, order=order_count)
+        order_count += 1
 
 def forwards_func(apps, schema_editor):
     Issue = apps.get_model('timepiece.Issue')
