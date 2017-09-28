@@ -1,5 +1,5 @@
 import { impfetch } from './lib.js'
-import cookie from 'react-cookie';
+import cookie from 'react-cookies';
 import { SubmissionError } from 'redux-form'
 import {browserHistory} from 'react-router'
 

@@ -7,7 +7,6 @@ import Header from '../components/Header'
 import Websocket from '../components/Websocket'
 import LoginPage from '../containers/LoginPage'
 import { is_authenticated } from '../actions/Auth'
-import { updateSettings } from '../actions/Settings'
 
 class App extends Component {
 
