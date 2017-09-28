@@ -185,7 +185,7 @@
               <div class="edit_comment" style="display:none">
                 <textarea name="comment" data-url="{% url 'edit_issue_comment' comment.pk %}">{{comment.comment}}</textarea>
                 <input type="button" class="small_button btn" onclick="imp.on_edit_issue_comment($(this), '{% url 'edit_issue_comment' comment.pk %}');" value="save"/>
-                <input type="button" class="small_button btn" onclick="$(this).parents('.comment_section').find('.edit_comment_button').show(); $(this).parents('.comment_section').find('.markdown_content').show(); $(this).parents('.edi prot_comment').hide(); return false;" value="cancel"/>
+                <input type="button" class="small_button btn" onclick="$(this).parents('.comment_section').find('.edit_comment_button').show(); $(this).parents('.comment_section').find('.markdown_content').show(); $(this).parents('.edit_comment').hide(); return false;" value="cancel"/>
               </div>
 
               <a class="edit_comment_button small_button btn" href="#" onclick="$(this).parent().find('.edit_comment').show(); $(this).hide(); $(this).parents('.comment_section').find('.markdown_content').hide(); return false;">

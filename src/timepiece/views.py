@@ -1201,7 +1201,7 @@ def delete_leave(request, person_id, calendar_event_id):
     calendar_event = timepiece.CalendarEvent.objects.get(pk=calendar_event_id)
     calendar_event.delete()
     return HttpResponseRedirect(reverse('edit_leave', args=(person_id,)))
-        
+
 
 @permission_required('timepiece.can_manage_client_users')
 @login_required
@@ -1217,7 +1217,7 @@ def create_edit_person(request, person_id=None, template='timepiece/person/creat
     elif request.user.is_staff:
         if person.profile.impd_client_id != request.user.profile.impd_client_id:
             raise Exception("Can't edit this person")
-        
+
     if person_id:
         person = get_object_or_404(auth_models.User, pk=person_id)
     else:
@@ -4470,11 +4470,18 @@ def add_issue_testable(request, issue_id):
         raise PermissionDenied
 
     text = request.POST['testable']
+    testables = issue.testables.all().order_by('order').values_list('order', flat=True)
+    max_order = 0
+    if testables:
+        max_order = max(testables)
+
     new_testable = Testable.objects.create(
         steps=text,
-        issue=issue)
-    timepiece.IssueHistory.add_history(request.user, issue, "added testable %s"%new_testable.id, "", new_testable.steps)
+        issue=issue,
+        order=max_order+1)
 
+    timepiece.IssueHistory.add_history(
+        request.user, issue, "added testable %s"%new_testable.id, "", new_testable.steps)
     get_interface_plugin(request, business).add_testable(new_testable)
 
     return HttpResponse("ok")
