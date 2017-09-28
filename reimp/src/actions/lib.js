@@ -1,5 +1,5 @@
 import fetch from 'isomorphic-fetch'
-import cookie from 'react-cookie'
+import cookie from 'react-cookies'
 import moment from 'moment'
 import map from 'lodash/map'
 import { logged_in_user, clearAuthentication } from '../actions/Auth'

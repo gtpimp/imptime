@@ -2659,17 +2659,13 @@ def daily_graph(request, user_id, template="timepiece/graphs/daily_graph.html", 
         users = [request.user]
     elif not user_id:
         users = User.objects.all().filter(is_staff=True)
+        user = users.order_by("username")
     else:
         users = [User.objects.get(pk=user_id)]
 
-    user = users.order_by("username")
-
     context = context or {}
-
     today = datetime.datetime.today().date()
-
     from_date, to_date =  _get_filter_dates_only(request, context, (today - relativedelta(months=1), today))
-
     daily_hours = OrderedDict()
 
     for user in users:
