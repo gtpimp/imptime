@@ -370,6 +370,16 @@ daily by each individual working on the project.
     <h4 id="issue_description_{{issue.id}}">{{issue.number}} - {{issue.subject}}</h4>
     {{issue.description|asmarkdown|safe}}
 
+    {% if issue.testables_in_order %}
+    <div class="issue_testables">
+      <br/>
+      {% for testable in issue.testables_in_order %}
+      <div class="markdown_content">{{testable.steps|asmarkdown|safe}}</div>
+      <hr/>
+      {% endfor %}
+    </div>
+    {% endif %}
+    
     <div class="issue_comments">
       <br/>
       {% for comment in issue.comments_in_order %}
