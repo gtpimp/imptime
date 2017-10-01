@@ -13,7 +13,7 @@ def testable__update_from_issue_description(Testable, issue, description):
     if len(groups) <= 1:
         return
     step_groups = groups[1:]
-    issue_description = groups[:1]
+    issue_description = groups[0]
     issue.description = issue_description
     issue.save()
     order_count = 1
