@@ -1175,7 +1175,7 @@ def edit_leave(request, person_id=None, template="timepiece/person/edit_leave.ht
                                                       hours=8)[0]
         return HttpResponseRedirect(reverse('edit_leave', args=(person_id,)))
 
-    context['existing_leaves'] = timepiece.CalendarEvent.objects.filter(user=person).order_by("start")
+    context['existing_leaves'] = timepiece.CalendarEvent.objects.filter(user=person).order_by("-start")
     context['new_leave_form'] = form
     context['person'] = person
     return render(request, template, context)
