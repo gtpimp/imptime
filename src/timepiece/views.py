@@ -5435,14 +5435,15 @@ def _create_js_calendar_event(event):
              'status': event.status
              }
 
+    description = (event.description || "").strip()[0:30]
     if event.event_type == "meeting":
-        res['title'] = "M: %s..." % event.description.strip()[0:30]
+        res['title'] = "M: %s..." % description
     elif event.event_type == "sickday":
-        res['title'] = "S: %s..." % event.description.strip()[0:30]
+        res['title'] = "S: %s..." % description
     elif event.event_type == "office_closed":
-        res['title'] = "X: %s..." % event.description.strip()[0:30]
+        res['title'] = "X: %s..." % description
     elif event.business is None:
-        res['title'] = "G: %s..." % event.description.strip()[0:30]
+        res['title'] = "G: %s..." % description
     else:
         res['title'] = event.business.name
 
