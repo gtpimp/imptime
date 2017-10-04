@@ -17,14 +17,28 @@ class ToggleButton extends Component {
         }
     }
 
+    setLabel() {
+        const { value, on_label, off_label } = this.props
+        
+        let label
+        if (value) {
+            label = on_label || "on"
+        } else {
+            label = off_label || "off"
+        }
+        
+        return label
+    }
+    
     render() {
-        const { on_label, off_label, value} = this.props
+        const { value } = this.props
 
+        const label = this.setLabel()
+        
         return (
             <div onClick={this.onClick} className={classNames("toggle-button", {"toggle-button--checked": value})}>
-              {/* <div className="toggle-button__label">{off_label || "Off"}</div> */}
               <div className="toggle-button__input">
-                <div className="toggle-button__label">{on_label || "On"}</div>
+                <div className="toggle-button__label">{label}</div>
               </div>
             </div>
         )
