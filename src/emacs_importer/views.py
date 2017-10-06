@@ -9,7 +9,7 @@ import os
 from forms import ImportTimesheetForm
 from django.core.mail import send_mail
 import pprint
-from implicitdesign import settings
+from django.conf import settings
 from django.contrib.auth.decorators import login_required, permission_required
 from tasks import import_timesheets_from_emacs_task, import_timesheets_from_emacs
 from django.contrib.auth.decorators import user_passes_test
@@ -61,22 +61,24 @@ def import_timesheet(request):
                     if len(status['errors'])>0:
                         raise Exception("Importer failed")
             except Exception, ex:
-                logger.exception(ex)
                 status['errors'].append(str(ex))            
 
             if len(status.get('errors', [])) > 0:
+                for error in status['errors']:
+                    logger.error("Error importing timesheet for %s : %s - %s" %(username, form.filename, error))
+                    
                 send_mail(subject="Errors importing timesheet for %s : %s" %(username, form.filename),
                           message="\n".join(status['errors']),
-                          from_email="info@implicitdesign.co.za",
+                          from_email=settings.FROM_EMAIL,
                           recipient_list=mail_to,
-                          fail_silently=True)
+                          fail_silently=False)
 
             elif len(status.get('infos', [])) > 0:
                 send_mail(subject="Warnings importing timesheet for %s : %s" %(username, form.filename),
                           message="\n".join(status['infos']),
-                          from_email="info@implicitdesign.co.za",
+                          from_email=settings.FROM_EMAIL,
                           recipient_list=mail_to,
-                          fail_silently=True)
+                          fail_silently=False)
             
             return HttpResponse(json.dumps({'status':status,
                                             'msg':"Single file import of %s complete." % (form.filename)}))
@@ -84,8 +86,8 @@ def import_timesheet(request):
             logger.exception(ex)
             send_mail(subject="Problems importing timesheet for %s : %s" %(username, form.filename),
                       message=str(ex),
-                      from_email="info@implicitdesign.co.za",
-                      recipient_list=mail_to,
+                      from_email=settings.FROM_EMAIL,
+                      recipient_list=settings.EMACS_ADMIN_USER_EMAILS,
                       fail_silently=True)
             return HttpResponse(json.dumps({'status':'failed', 'msg': str(ex)}))
 

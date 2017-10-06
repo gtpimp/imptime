@@ -1176,3 +1176,16 @@ imp.on_set_issue_fixed_cost = function (_fixed_amount_el, _fixed_ctc_amount_el) 
         imp.refresh_issue_detail();
     });
 };
+
+
+imp.onmouseover_issue_testable = function(el) {
+    var testable_id = el.attr('data-pk')
+    var textarea = document.getElementById("testable" + testable_id);
+    $(textarea).addClass("issue_sidebar--testable-focus");
+};
+
+imp.onmouseout_issue_testable = function(el) {
+    var testable_id = el.attr('data-pk')
+    var textarea = document.getElementById("testable" + testable_id);
+    $(textarea).removeClass("issue_sidebar--testable-focus");
+};

@@ -1148,6 +1148,60 @@ def view_person(request, person_id):
 
     return context
 
+@permission_required('timepiece.can_manage_client_users')
+@login_required
+def edit_leave(request, person_id=None, template="timepiece/person/edit_leave.html"):
+    context = {}
+    if person_id:
+        person = get_object_or_404(auth_models.User, pk=person_id)
+    else:
+        person = None
+
+    if request.user.is_superuser:
+        pass
+    elif request.user.is_staff:
+        if person.profile.impd_client_id != request.user.profile.impd_client_id:
+            raise Exception("Can't edit this person")
+    else:
+        if person.profile.id != request.user.id:
+            raise Exception("Can't edit this person")
+
+    form = timepiece_forms.PersonLeaveForm(request.POST or None)
+    if form.is_valid():
+        timepiece.CalendarEvent.objects.get_or_create(start=form.cleaned_data['date'],
+                                                      user=person,
+                                                      event_type=form.cleaned_data['reason'],
+                                                      status='CONFIRMED',
+                                                      hours=8)[0]
+        return HttpResponseRedirect(reverse('edit_leave', args=(person_id,)))
+
+    context['existing_leaves'] = timepiece.CalendarEvent.objects.filter(user=person).order_by("-start")
+    context['new_leave_form'] = form
+    context['person'] = person
+    return render(request, template, context)
+
+@permission_required('timepiece.can_manage_client_users')
+@login_required
+def delete_leave(request, person_id, calendar_event_id):
+    context = {}
+    if person_id:
+        person = get_object_or_404(auth_models.User, pk=person_id)
+    else:
+        person = None
+
+    if request.user.is_superuser:
+        pass
+    elif request.user.is_staff:
+        if person.profile.impd_client_id != request.user.profile.impd_client_id:
+            raise Exception("Can't edit this person")
+    else:
+        if person.profile.id != request.user.id:
+            raise Exception("Can't edit this person")
+
+    calendar_event = timepiece.CalendarEvent.objects.get(pk=calendar_event_id)
+    calendar_event.delete()
+    return HttpResponseRedirect(reverse('edit_leave', args=(person_id,)))
+
 
 @permission_required('timepiece.can_manage_client_users')
 @login_required
@@ -1163,8 +1217,21 @@ def create_edit_person(request, person_id=None, template='timepiece/person/creat
     elif request.user.is_staff:
         if person.profile.impd_client_id != request.user.profile.impd_client_id:
             raise Exception("Can't edit this person")
+
+    if person_id:
+        person = get_object_or_404(auth_models.User, pk=person_id)
+    else:
+        person = None
+
+    if request.user.is_superuser:
+        pass
+    elif request.user.is_staff:
+        if person.profile.impd_client_id != request.user.profile.impd_client_id:
+            raise Exception("Can't edit this person")
     else:
         if person.profile.id != request.user.id:
+            raise Exception("Can't edit this person")
+        if person.profile.impd_client_id != request.user.profile.impd_client_id:
             raise Exception("Can't edit this person")
 
     if request.POST:
@@ -1181,8 +1248,7 @@ def create_edit_person(request, person_id=None, template='timepiece/person/creat
             person = person_form.save()
             profile = profile_form.save(request.user, person)
 
-            return HttpResponseRedirect(reverse('view_person', args=(person.id,))
-        )
+            return HttpResponseRedirect(reverse('view_person', args=(person.id,)))
     else:
         if person:
             profile = timepiece.UserProfile.objects.get_or_create(user=person)[0]
@@ -2593,20 +2659,31 @@ def daily_graph(request, user_id, template="timepiece/graphs/daily_graph.html", 
         users = [request.user]
     elif not user_id:
         users = User.objects.all().filter(is_staff=True)
+        user = users.order_by("username")
     else:
         users = [User.objects.get(pk=user_id)]
 
     context = context or {}
-
     today = datetime.datetime.today().date()
-
     from_date, to_date =  _get_filter_dates_only(request, context, (today - relativedelta(months=1), today))
+    daily_hours = OrderedDict()
 
-    daily_hours = {}
     for user in users:
         entries = timepiece.Entry.objects.filter(user=user)
         daily_hours[user.username] = {'daily_hours':{}, 'weekly_average':{}}
-        daily_hours[user.username]['daily_hours'], daily_hours[user.username]['weekly_average'], daily_hours[user.username]['daily_hours_by_project'],  = _get_daily_hours(user, entries, from_date, to_date)
+        daily, weekly, daily_by_project = _get_daily_hours(user, entries, from_date, to_date)
+        daily_hours[user.username]['daily_hours'] = daily
+        daily_hours[user.username]['weekly_average'] = weekly
+        daily_hours[user.username]['daily_hours_by_project'] = daily_by_project
+
+        events_in_range = timepiece.CalendarEvent.objects\
+                                                 .filter(start__gte=from_date, start__lte=to_date)\
+                                                 .values('start', 'hours')
+        user_events = events_in_range.filter(user=user)
+        daily_hours[user.username]['sick_days'] = user_events.filter(event_type='sickday')
+        daily_hours[user.username]['leave_days'] = user_events.filter(event_type='leave')
+        daily_hours[user.username]['office_closed'] = user_events.filter(event_type='office_closed')
+        daily_hours[user.username]['public_holidays'] = timepiece.Holiday.objects.filter(applies_on__gte=from_date, applies_on__lte=to_date)
 
     context['daily_hours'] = daily_hours
     context['from_date'] = from_date
@@ -3606,8 +3683,6 @@ def issue_detail_update(request,  template="timepiece/project/issue_detail.html"
         old_description = edited_issue.description
         edited_issue.description = request.POST["new_value"]
         edited_issue.save()
-        if old_description != edited_issue.description:
-            edited_issue.on_description_updated()
         timepiece.IssueHistory.add_history(request.user, edited_issue, "changed description", old_description, edited_issue.description)
     except KeyError:
         pass
@@ -4391,11 +4466,18 @@ def add_issue_testable(request, issue_id):
         raise PermissionDenied
 
     text = request.POST['testable']
+    testables = issue.testables.all().order_by('order').values_list('order', flat=True)
+    max_order = 0
+    if testables:
+        max_order = max(testables)
+
     new_testable = Testable.objects.create(
         steps=text,
-        issue=issue)
-    timepiece.IssueHistory.add_history(request.user, issue, "added testable %s"%new_testable.id, "", new_testable.steps)
+        issue=issue,
+        order=max_order+1)
 
+    timepiece.IssueHistory.add_history(
+        request.user, issue, "added testable %s"%new_testable.id, "", new_testable.steps)
     get_interface_plugin(request, business).add_testable(new_testable)
 
     return HttpResponse("ok")
@@ -5353,14 +5435,15 @@ def _create_js_calendar_event(event):
              'status': event.status
              }
 
+    description = (event.description || "").strip()[0:30]
     if event.event_type == "meeting":
-        res['title'] = "M: %s..." % event.description.strip()[0:30]
+        res['title'] = "M: %s..." % description
     elif event.event_type == "sickday":
-        res['title'] = "S: %s..." % event.description.strip()[0:30]
+        res['title'] = "S: %s..." % description
     elif event.event_type == "office_closed":
-        res['title'] = "X: %s..." % event.description.strip()[0:30]
+        res['title'] = "X: %s..." % description
     elif event.business is None:
-        res['title'] = "G: %s..." % event.description.strip()[0:30]
+        res['title'] = "G: %s..." % description
     else:
         res['title'] = event.business.name
 
