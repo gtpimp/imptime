@@ -203,8 +203,8 @@ export function updateIssueDescription(issue_id, value) {
     return updateIssue([issue_id], "description", value)
 }
 
-export function updateIssueAssignedTo(issue_ids, value) {
-    return updateIssue(issue_ids, "assigned_to_id", value)
+export function updateIssueAssignedTo(issue_id, value) {
+    return updateIssue([issue_id], "assigned_to_id", value)
 }
 
 export function updateIssueToggleAsFeature(issue_ids, value) {

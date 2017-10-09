@@ -180,7 +180,7 @@ class IssueList extends Component {
             alert("Please select at least one issue to estimate")
             return
         }
-
+        debugger;
         this.setState({'estimate_editor_open': true})
     }
 
@@ -192,10 +192,10 @@ class IssueList extends Component {
         const {dispatch, list_key} = this.props
         console.log("Moving " + moving_issue_id + " to after " + move_after_issue_id)
         dispatch(reorderIssue(moving_issue_id, move_after_issue_id,
-            function () {
-                dispatch(invalidateList(list_key))
-                dispatch(fetchIssuesIfNeeded(list_key))
-            }))
+                              function () {
+                                  dispatch(invalidateList(list_key))
+                                  dispatch(fetchIssuesIfNeeded(list_key))
+                              }))
     }
 
     render_collapsed() {
@@ -208,20 +208,20 @@ class IssueList extends Component {
 
         return (
             <div className="panel panel--collapsed">
-                <div className="panel-heading" onClick={this.onExpand}>
-                    <div className="panel__title">{ selected_items.map((issue, index) =>
-                        <Issue
-                            key={list_key + issue.id + index}
-                            is_collapsed={true}
-                            show_children={includes(expanded_issues, issue.id)}
-                            reorderIssue={this.reorderIssue}
-                            onClickedIssue={(event) => this.onClickedIssue(event, issue.id)}
-                            is_loading={loading_item_ids.indexOf(issue.id) !== -1}
-                            is_selected={selected_ids.indexOf(issue.id) !== -1}
-                            issue_id={issue.id}/>
-                    )}
-                    </div>
+              <div className="panel-heading" onClick={this.onExpand}>
+                <div className="panel__title">{ selected_items.map((issue, index) =>
+                    <Issue
+                        key={list_key + issue.id + index}
+                        is_collapsed={true}
+                        show_children={includes(expanded_issues, issue.id)}
+                        reorderIssue={this.reorderIssue}
+                        onClickedIssue={(event) => this.onClickedIssue(event, issue.id)}
+                        is_loading={loading_item_ids.indexOf(issue.id) !== -1}
+                        is_selected={selected_ids.indexOf(issue.id) !== -1}
+                        issue_id={issue.id}/>
+                )}
                 </div>
+              </div>
             </div>
         )
     }
@@ -232,18 +232,18 @@ class IssueList extends Component {
 
         return (
             <tr key={list_key + ".candidate_issue"} className="issue_list__candidate_issue">
-                <td colSpan="20">Creating new issue here</td>
-                { false &&
+              <td colSpan="20">Creating new issue here</td>
+              { false &&
                 <td>
-                    <RIEModeToggler initialValue=""
-                                    propName="candidate_issue_subject"
-                                    initialState="editing"
-                                    onChange={this.onSaveCandidateIssue}
-                                    onCancel={this.onCancelCandidateIssue}>
-                        <RIEInput/>
-                    </RIEModeToggler>
+                  <RIEModeToggler initialValue=""
+                                  propName="candidate_issue_subject"
+                                  initialState="editing"
+                                  onChange={this.onSaveCandidateIssue}
+                                  onCancel={this.onCancelCandidateIssue}>
+                    <RIEInput/>
+                  </RIEModeToggler>
                 </td>
-                }
+              }
             </tr>
         )
     }
@@ -337,8 +337,8 @@ class IssueList extends Component {
                             return <th key={header_key} className="list-table__header">{header_name}</th>
                         })
                   }
-                { false && <th className="list-table__header">Feature</th>} {/* These were here before mapping was introducted but may need to be removed */}
-                { false && <th className="list-table__header">Sprint</th>}
+                  { false && <th className="list-table__header">Feature</th>} {/* These were here before mapping was introducted but may need to be removed */}
+                  { false && <th className="list-table__header">Sprint</th>}
 
                 </tr>)
         })
@@ -346,24 +346,24 @@ class IssueList extends Component {
         return (
 
             <div>
-            <TagEditor isOpen={tag_editor_open}
-                           selected_items={selected_items}
-                           selected_ids={selected_ids}
-                           closeTagEditor={this.closeTagEditor}/>
-                <EstimateEditor isOpen={estimate_editor_open}
-                                selected_items={selected_items}
-                                selected_ids={selected_ids}
-                                closeEstimateEditor={this.closeEstimateEditor}/>
+              <TagEditor isOpen={tag_editor_open}
+                         selected_items={selected_items}
+                         selected_ids={selected_ids}
+                         closeTagEditor={this.closeTagEditor}/>
+              <EstimateEditor isOpen={estimate_editor_open}
+                              selected_items={selected_items}
+                              selected_ids={selected_ids}
+                              closeEstimateEditor={this.closeEstimateEditor}/>
 
-                <ListTable renderHeader={renderHeader}>
-                    {issue_rows.length > 0 && issue_rows}
-                    {issue_rows.length === 0 &&
-                     (
-                         <tr>
-                             <td colSpan="20">No issues</td>
-                         </tr>
-                     )}
-                </ListTable>
+              <ListTable renderHeader={renderHeader}>
+                {issue_rows.length > 0 && issue_rows}
+                {issue_rows.length === 0 &&
+                 (
+                     <tr>
+                       <td colSpan="20">No issues</td>
+                     </tr>
+                 )}
+              </ListTable>
             </div>
 
         )
@@ -379,8 +379,8 @@ class IssueList extends Component {
 
         return (
             <div>
-                { is_collapsed && this.render_collapsed() }
-                { is_expanded && this.render_expanded() }
+              { is_collapsed && this.render_collapsed() }
+              { is_expanded && this.render_expanded() }
             </div>
         )
     }
@@ -398,18 +398,18 @@ function mapStateToProps(state, props) {
     const saving_item_ids = (issue && issue.saving_item_ids) || []
 
     const selected_items = items_by_id && l.selected_ids && l.selected_ids.map(function (selected_id, index) {
-            return items_by_id[selected_id] || {
-                    'id': selected_id,
-                    'loaded': false
-                }
-        })
+        return items_by_id[selected_id] || {
+            'id': selected_id,
+            'loaded': false
+        }
+    })
 
     const items = (items_by_id && visible_item_ids.map(function (visible_item_id, index) {
-            return items_by_id[visible_item_id] || {
-                    'id': visible_item_id,
-                    'loaded': false
-                }
-        })) || []
+        return items_by_id[visible_item_id] || {
+            'id': visible_item_id,
+            'loaded': false
+        }
+    })) || []
 
     const candidate_issue = (issue && issue.candidate_issue) || null
     const is_creating_issue = candidate_issue || false

@@ -5435,7 +5435,7 @@ def _create_js_calendar_event(event):
              'status': event.status
              }
 
-    description = (event.description || "").strip()[0:30]
+    description = (event.description or "").strip()[0:30]
     if event.event_type == "meeting":
         res['title'] = "M: %s..." % description
     elif event.event_type == "sickday":
