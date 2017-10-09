@@ -17,16 +17,16 @@ class Command(BaseCommand):
         except Exception, ex:
             send_mail(subject="Problems importing timesheets",
                       message=str(ex),
-                      from_email="info@implicitdesign.co.za",
                       recipient_list=["gtp@implicitdesign.co.za",],
+                      from_email=settings.FROM_EMAIL,
                       fail_silently=True)
             raise ex
 
         if len(status['infos'])>0:
             send_mail(subject="Warnings importing timesheets",
                       message="\n".join(status['infos']),
-                      from_email="info@implicitdesign.co.za",
                       recipient_list=["gtp@implicitdesign.co.za",],
+                      from_email=settings.FROM_EMAIL,
                       fail_silently=False)
             
             print("Some warnings during import:")
@@ -35,8 +35,8 @@ class Command(BaseCommand):
         if len(status['errors'])>0:
             send_mail(subject="Problems importing timesheets",
                       message="\n".join(status['errors']),
-                      from_email="info@implicitdesign.co.za",
                       recipient_list=["gtp@implicitdesign.co.za",],
+                      from_email=settings.FROM_EMAIL,
                       fail_silently=False)
             
             print("Some errors during import:")

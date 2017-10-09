@@ -30,7 +30,7 @@ def import_timesheets(self):
         except Exception, ex:
             send_mail(subject="Problems importing timesheets",
                       message=str(ex),
-                      from_email="info@implicitdesign.co.za",
+                      from_email=settings.FROM_EMAIL,
                       recipient_list=["gtp@implicitdesign.co.za",],
                       fail_silently=True)
 
