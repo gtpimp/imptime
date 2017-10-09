@@ -23,7 +23,7 @@ class Extractor(object):
                        'num_issues_created':0}
 
     def get_project_timings_for_user(self, business, timesheet_user):
-        return float(Entry.objects.filter(issue__project__business=business, user=timesheet_user).aggregate(total_hours=Sum('hours'))['total_hours'])
+        return float(Entry.objects.filter(issue__project__business=business, user=timesheet_user).aggregate(total_hours=Sum('hours'))['total_hours'] or 0)
 
     def extract_for_filecontent(self, filename, file_content):
         self._process_org_string(file_content, filename)
