@@ -49,3 +49,4 @@ src/unicodecsv
 devops/secret
 .tern-project
 .tern-port
+docs/doc/_book/

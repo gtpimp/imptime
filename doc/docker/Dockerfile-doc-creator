@@ -1,0 +1,25 @@
+FROM ubuntu:16.04
+
+WORKDIR /opt/docker/doc
+RUN mkdir /opt/docker/doc/logs
+RUN apt-get update
+RUN DEBIAN_FRONTEND=noninteractive apt-get install -y --force-yes \
+  python \
+  python2.7-dev \
+  python-pip \
+  realpath \
+  wget \
+  python-django \
+  python-requests \
+  curl \
+  emacs
+
+RUN apt-get install -y --force-yes calibre
+
+RUN curl -sL https://deb.nodesource.com/setup_4.x -o nodesource_setup.sh && bash nodesource_setup.sh && DEBIAN_FRONTEND=noninteractive apt-get install -y nodejs
+RUN npm install gitbook-cli -g
+RUN gitbook init
+
+COPY docker/doc_compiler.sh doc_compiler.sh
+
+ENTRYPOINT ["./doc_compiler.sh"]
