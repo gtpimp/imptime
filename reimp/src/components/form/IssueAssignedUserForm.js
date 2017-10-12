@@ -12,7 +12,7 @@ class IssueAssignedUserForm extends Component {
         this.renderSingleValueSelector = this.renderSingleValueSelector.bind(this)
         this.onChangeAndSubmit = this.onChangeAndSubmit.bind(this)
     }
-    
+
     componentDidMount() {
         this.refresh()
     }
@@ -32,7 +32,7 @@ class IssueAssignedUserForm extends Component {
         fieldOnChange(e)
         setTimeout(() => handleSubmit(), 0)
     }
-    
+
     renderSingleValueSelector(field) {
         const {input, data, ...rest} = field
         return (
@@ -49,12 +49,12 @@ class IssueAssignedUserForm extends Component {
         const {handleSubmit, assignable_user_options } = this.props
         return (
             <form onSubmit={handleSubmit}>
-                <Field name='assigned_user'
-                       component={this.renderSingleValueSelector}
-                       valueField="value"
-                       textField="label"
-                       data={assignable_user_options}
-                />
+              <Field name='assigned_user'
+                     component={this.renderSingleValueSelector}
+                     valueField="value"
+                     textField="label"
+                     data={assignable_user_options}
+              />
             </form>
         )
     }
@@ -62,7 +62,7 @@ class IssueAssignedUserForm extends Component {
 
 function mapStateToProps(state, props) {
 
-    const { project_id, onChange } = props
+    const { project_id, onSubmitted } = props
     const project = getProject(state, project_id) || {}
     const assignable_user_ids = project.allowed_user_ids || []
     const users = getUsers(state, assignable_user_ids)
@@ -74,7 +74,7 @@ function mapStateToProps(state, props) {
     return {
         initialValues: {assigned_to: props.initial_value},
         enableReinitialize: true,
-        onSubmit: onChange,
+        onSubmit: onSubmitted,
         assignable_user_options: assignable_user_options,
         assignable_user_ids: assignable_user_ids,
         project_id: project_id,
@@ -83,4 +83,3 @@ function mapStateToProps(state, props) {
 }
 
 export default connect(mapStateToProps)(reduxForm({form: 'issue_assigned_user_form'})(IssueAssignedUserForm))
-
