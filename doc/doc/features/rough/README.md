@@ -9,17 +9,41 @@
 - AI quality control
 - personal assistant : soft touch
 
-## Inbox
+## Quick to capture ideas and thoughts
+### Inbox
 
 Create issues by emailing a project. These issues go into an inbox to be processed
 
 - productivity
 
+### iPads in every room
+
+### Voice recognition
+
 ## Review process
 
-Easy to draw a list of things to be done and then prioritise
+Easy to draw a list of things to be done and then prioritise.
+
+### Daily review
+### Weekly review
+### Monthly review
+### Incremental review
+
+One feature at a time, eg a widget on a phone, or ipad. Can do
+incremental reviews.
+
+### Context menu for review items
+
+- schedule with suggestions
+- delegate with suggestion
+
+### Success thermometer of success at deferring Q2 items
+
 
 ## Project management
+
+### Recurring issues
+
 
 ### Feature issues
 
@@ -31,9 +55,18 @@ Manageable groups of work to be done
 
 ### Estimates
 
-Multiple developers can estimate
+Multiple developers can estimate.
+
+Velocity
 
 ### Priorities within a sprint
+
+### Scheduling
+
+Immediate / Soon / Later / Never
+
+### Deadlines
+
 
 ## Soft touch reminders
 
@@ -46,6 +79,12 @@ Do, Defer, Delegate
 ### Defer
 
 ### Delegate
+
+## Notifications
+
+### alert, cell phone notifications, iphone, iwatch
+
+
 
 ## Automated quality indicators
 
@@ -88,6 +127,15 @@ doing. as they get deffered they change colour and become more pressing.
 
 You are in different moods at different times, the available options
 will reflect that.
+
+### Give me nothing to do : Off button
+
+
+#### Gamification
+
+Offer 2 nice tasks for each sucky task
+
+
 
 ## Life balance
 
@@ -132,6 +180,17 @@ We will define what is private and what is not, there won't be an
 option to go full 1984.
 
 
+# Accounting
+
+## Quotes
+## Invoices
+## Recons
+## Statements
+
+# Mini-contracts
+
+Distributed teams, markups, re-invoicing, commissions are all handled
+as mini-contracts which affect all accounting pages.
 
 
 

@@ -72,7 +72,7 @@ class Invoice(models.Model):
     internal_comment = models.TextField(blank=True, null=True, verbose_name="Comment (doesn't appear on the invoice")
     business = models.ForeignKey("timepiece.Business", blank=True, null=True, related_name='invoices')
     project = models.ForeignKey("timepiece.Project", blank=True, null=True, related_name='invoices')
-    invoice_number = models.IntegerField(default=0, null=False, blank=False)
+    invoice_number = models.IntegerField(default=0, null=False, blank=False, unique=True)
     client_order_name = models.CharField(max_length=50, null=True, blank=True, verbose_name="Optional client order name")
     client_order_number = models.CharField(max_length=50, null=True, blank=True, verbose_name="Optional client order number")
     created = models.DateTimeField(auto_now_add=True)
