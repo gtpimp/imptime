@@ -17,6 +17,7 @@ import {
     invalidateAllProjectDashboards,
     fetchProjectDashboardsIfNeeded
 } from '../actions/ProjectDashboards'
+import ProjectDashboard from './ProjectDashboard'
 import '../sass/project-dashboard-list.scss'
 import { ENTITY_KEY__PROJECT_DASHBOARD } from '../actions/ItemListKeyRegistry'
 
@@ -55,19 +56,13 @@ class ProjectDashboardList extends Component {
 	}
     }
 
-    renderProjectDashboard(project_dashboard) {
-        return (
-            <div>{project_dashboard.id}</div>
-        )
-    }
-
     render() {
         const { project_dashboards } = this.props
 	return (
 	    <div>
               <div>Project Dashboards</div>
               {map(project_dashboards, (project_dashboard) =>
-                  {return this.renderProjectDashboard(project_dashboard)}
+                <ProjectDashboard key={project_dashboard.id} project_id={project_dashboard.project_id} />
               )}
 	    </div>
 	)

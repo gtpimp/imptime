@@ -50,6 +50,7 @@ class ProjectDashboardViewSet(BaseViewSet):
         return HttpResponse(JSONRenderer().render(data))
 
     def get_project_dashboard(self, project):
-        return { 'id': project.id }
+        return { 'id': project.id,
+                 'project_id': project.id }
     
     

@@ -85,9 +85,8 @@ export function ensureProjectDashboardsLoaded(project_ids) {
     }
 }
 
-export function getProject(state, project_id) {
-    const test = ((state[ENTITY_KEY__PROJECT_DASHBOARD] || {}).items_by_id || {})[project_id] || null
-    return ((state.project || {}).items_by_id || {})[project_id] || null
+export function getProjectDashboard(state, project_id) {
+    return ((state[ENTITY_KEY__PROJECT_DASHBOARD] || {}).items_by_id || {})[project_id] || null
 }
 
 export function getProjectDashboards(state, project_ids) {
