@@ -61,9 +61,11 @@ class ProjectDashboardViewSet(BaseViewSet):
         most_recent_entries_per_user = entries.order_by('user__username').values('user_id').annotate(Max('end_time'), Min('start_time'))
         d['most_recent_entry_per_user'] = most_recent_entries_per_user
         sprint_infos = self.get_open_sprints(entries)
-        self.set_users_for_open_sprints(sprint_infos, entries)
-        self.set_rates_for_open_sprints(sprint_infos, entries)
-        self.set_progress_for_open_sprints(sprint_infos, entries)
+        entries_for_open_sprints = entries.exclude(issue__project__status2__in=Sprint.closed_states()) #sic
+        self.set_users(sprint_infos, entries_for_open_sprints)
+        self.set_rates(sprint_infos, entries_for_open_sprints)
+        self.set_progress(sprint_infos, entries_for_open_sprints)
+        self.set_hours(sprint_infos, entries_for_open_sprints)
         d['sprint_infos'] = sprint_infos
 
         d['sprint_ids'] = sprint_infos.keys()
@@ -77,14 +79,15 @@ class ProjectDashboardViewSet(BaseViewSet):
         [ d.setdefault(x['issue__project_id'], {'users':{}, 'budget':{}}) for x in entries_for_open_sprints ]
         return d
     
-    def set_users_for_open_sprints(self, sprint_infos, entries):
-        entries_for_open_sprints = entries.exclude(issue__project__status2__in=Sprint.closed_states()) #sic
-        entries_for_open_sprints = entries_for_open_sprints.values('user_id', 'issue__project_id').order_by("user__username").values('issue__project_id', 'user_id').distinct()
+    def set_users(self, sprint_infos, entries_for_open_sprints):
+        entries_for_open_sprints = entries_for_open_sprints.values('user_id', 'issue__project_id')\
+                                                           .order_by("user__username")\
+                                                           .values('issue__project_id', 'user_id')\
+                                                           .distinct()
         for x in entries_for_open_sprints:
             sprint_infos[x['issue__project_id']]['users'][x['user_id']] = {}
     
-    def set_rates_for_open_sprints(self, sprint_infos, entries):
-        entries_for_open_sprints = entries.exclude(issue__project__status2__in=Sprint.closed_states()) #sic
+    def set_rates(self, sprint_infos, entries_for_open_sprints):
         valid_rates = Rate.objects.filter(project__in=entries_for_open_sprints.values('issue__project_id'), #sic
                                           user__in=entries_for_open_sprints.values('user_id'),
                                           billable_amount__gt=0)\
@@ -93,11 +96,18 @@ class ProjectDashboardViewSet(BaseViewSet):
             if x['user_id'] in sprint_infos[x['project_id']]['users']:
                 sprint_infos[x['project_id']]['users'][x['user_id']]['rate'] = x['billable_amount']
 
-    def set_progress_for_open_sprints(self, sprint_infos, entries):
+    def set_hours(self, sprint_infos, entries_for_open_sprints):
+        hours = entries_for_open_sprints.order_by("issue__project__order", "user_id")\
+                                        .values('issue__project_id', 'user_id')\
+                                        .annotate(total_hours=Sum('hours'))
+        for x in hours:
+            sprint_infos[x['issue__project_id']]['users'][x['user_id']]['hours'] = x['total_hours']
+                
+    def set_progress(self, sprint_infos, entries_for_open_sprints):
         open_sprints = Sprint.objects.filter(pk__in=sprint_infos.keys())
         for sprint in open_sprints:
             spendable_budget = sprint.spendable_budget
-            total_billable = entries.filter(issue__project__id=sprint.id).cost_totals_for_project(sprint)['billable'] #sic
+            total_billable = entries_for_open_sprints.filter(issue__project__id=sprint.id).cost_totals_for_project(sprint)['billable'] #sic
             sprint_infos[sprint.id]['budget'] = { 'spendable_budget':spendable_budget,
                                                   'total_billable': total_billable,
                                                   'budget_ratio': total_billable / (spendable_budget or 1) }

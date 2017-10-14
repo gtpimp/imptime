@@ -4,6 +4,21 @@
     font-size: $font-size-small;
 }
 
+.project_dashboard h2 {
+    background-color: $color-11;
+}
+
+.project_dashboard h3 {
+    background-color: $color-12;
+}
+
+.project_dashboard table {
+    width: 100%;
+}
+
+
+
+
 .project_dashboard__recent_entries_per_user {
 }
 
@@ -20,4 +35,18 @@
 
 .project_dashboard__sprint_progress {
     min-width: 50px;
+}
+
+
+.project_dashboard__sprint_users__username {
+    width: 33%;
+    text-align: right;
+}
+
+.project_dashboard__sprint_users__rate {
+    width: 33%;
+}
+
+.project_dashboard__sprint_users__hours {
+    width: 33%;
 }

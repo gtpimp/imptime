@@ -1,5 +1,5 @@
 import React, { Component } from 'react'
-import { map } from 'lodash'
+import { map, size } from 'lodash'
 import { DragSource, DropTarget } from 'react-dnd'
 import { connect } from 'react-redux'
 import classNames from 'classnames'
@@ -16,6 +16,7 @@ import SprintName from './SprintName'
 import OtherUser from './OtherUser'
 import UserRate from './UserRate'
 import ProgressBar from './ProgressBar'
+import Hours from './Hours'
 import Timestamp from './Timestamp'
 
 class ProjectDashboard extends Component {
@@ -46,13 +47,13 @@ class ProjectDashboard extends Component {
     renderOpenSprints() {
         const { project_dashboard } = this.props
 
-        if ( ! project_dashboard.sprint_infos ) {
+        if ( ! project_dashboard.sprint_infos || size(project_dashboard.sprint_infos)==0 ) {
             return (<div className="project_dashboard__open_sprints">No open sprints</div>)
         }        
         return (
 
             <div className="project_dashboard__open_sprints">
-              <div>Open sprints</div>
+              <div><h3>Open sprints</h3></div>
               <table>
                 <tbody>
                   {map(project_dashboard.sprint_infos, (sprint_info, sprint_id) =>
@@ -73,11 +74,14 @@ class ProjectDashboard extends Component {
                                   {map(sprint_info.users, (user_info, user_id) =>
                                       (
                                           <tr key={user_id}>
-                                            <td>
+                                            <td className="project_dashboard__sprint_users__username">
                                               <OtherUser user_id={user_id}/>
                                             </td>
-                                            <td>
+                                            <td className="project_dashboard__sprint_users__rate">
                                               <UserRate value={user_info.rate}/>
+                                            </td>
+                                            <td className="project_dashboard__sprint_users__hours">
+                                              <Hours hours={user_info.hours}/>
                                             </td>
                                           </tr>
                                       ))}
@@ -94,9 +98,18 @@ class ProjectDashboard extends Component {
 
     renderMostRecentEntriesPerUser() {
         const { project_dashboard } = this.props
+
+        if ( ! project_dashboard.most_recent_entry_per_user ) {
+            return (
+                <div className="project_dashboard__recent_entries_per_user">
+                  No user activity
+                </div>
+            )
+        }
+        
         return (
             <div className="project_dashboard__recent_entries_per_user">
-              <div>All users's activity</div>
+              <div><h3>All users activity</h3></div>
               <table>
                 <tbody>
                   {map(project_dashboard.most_recent_entry_per_user, (entry) => 
@@ -130,7 +143,9 @@ class ProjectDashboard extends Component {
               }
               { project_dashboard_id &&
                 <div>
-                  <ProjectName project_id={project_id}/>
+                  <h2>
+                    <ProjectName project_id={project_id}/>
+                  </h2>
                   {this.renderOpenSprints()}
                   {this.renderMostRecentEntriesPerUser()}
                 </div>
