@@ -37,7 +37,7 @@ class ProjectDashboardViewSet(BaseViewSet):
                 context['ids'] = [str(x) for x in projects.values_list(
                     'id', flat=True)]
             else:
-                project_dashboards = [ self.get_project_dashboard(project) for project in projects ]
+                project_dashboards = [ self.get_project_dashboard(request.user, project) for project in projects ]
                 context['project_dashboards'] = project_dashboards
                 
             context['pagination'] = pagination
@@ -49,11 +49,55 @@ class ProjectDashboardViewSet(BaseViewSet):
 
         return HttpResponse(JSONRenderer().render(data))
 
-    def get_project_dashboard(self, project):
+    def get_project_dashboard(self, user, project):
         d = { 'id': project.id,
               'project_id': project.id }
 
+        bp = BusinessPermissions.for_user(user, project)  # sic
+        if not bp.has_view_ctc_billable_rates:
+            return d
+        
         entries = Entry.objects.all().filter(issue__project__business=project)
-        most_recent_entries_per_user = entries.order_by('user__id').values('user_id').annotate(Max('end_time'), Min('start_time'))
+        most_recent_entries_per_user = entries.order_by('user__username').values('user_id').annotate(Max('end_time'), Min('start_time'))
         d['most_recent_entry_per_user'] = most_recent_entries_per_user
+        sprint_infos = self.get_open_sprints(entries)
+        self.set_users_for_open_sprints(sprint_infos, entries)
+        self.set_rates_for_open_sprints(sprint_infos, entries)
+        self.set_progress_for_open_sprints(sprint_infos, entries)
+        d['sprint_infos'] = sprint_infos
+
+        d['sprint_ids'] = sprint_infos.keys()
+        d['user_ids'] = entries.values_list('user_id', flat=True).distinct()
         return d
+
+    def get_open_sprints(self, entries):
+        entries_for_open_sprints = entries.exclude(issue__project__status2__in=Sprint.closed_states())\
+                                          .values("issue__project_id").distinct()
+        d = {}
+        [ d.setdefault(x['issue__project_id'], {'users':{}, 'budget':{}}) for x in entries_for_open_sprints ]
+        return d
+    
+    def set_users_for_open_sprints(self, sprint_infos, entries):
+        entries_for_open_sprints = entries.exclude(issue__project__status2__in=Sprint.closed_states()) #sic
+        entries_for_open_sprints = entries_for_open_sprints.values('user_id', 'issue__project_id').order_by("user__username").values('issue__project_id', 'user_id').distinct()
+        for x in entries_for_open_sprints:
+            sprint_infos[x['issue__project_id']]['users'][x['user_id']] = {}
+    
+    def set_rates_for_open_sprints(self, sprint_infos, entries):
+        entries_for_open_sprints = entries.exclude(issue__project__status2__in=Sprint.closed_states()) #sic
+        valid_rates = Rate.objects.filter(project__in=entries_for_open_sprints.values('issue__project_id'), #sic
+                                          user__in=entries_for_open_sprints.values('user_id'),
+                                          billable_amount__gt=0)\
+                                  .values('billable_amount', 'project_id', 'user_id')
+        for x in valid_rates:
+            if x['user_id'] in sprint_infos[x['project_id']]['users']:
+                sprint_infos[x['project_id']]['users'][x['user_id']]['rate'] = x['billable_amount']
+
+    def set_progress_for_open_sprints(self, sprint_infos, entries):
+        open_sprints = Sprint.objects.filter(pk__in=sprint_infos.keys())
+        for sprint in open_sprints:
+            spendable_budget = sprint.spendable_budget
+            total_billable = entries.filter(issue__project__id=sprint.id).cost_totals_for_project(sprint)['billable'] #sic
+            sprint_infos[sprint.id]['budget'] = { 'spendable_budget':spendable_budget,
+                                                  'total_billable': total_billable,
+                                                  'budget_ratio': total_billable / (spendable_budget or 1) }

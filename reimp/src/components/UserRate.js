@@ -30,7 +30,7 @@ function mapStateToProps(state, props) {
     const { value, class_name } = props
 
     return {
-        value: value,
+        value: value || 0,
         class_name: class_name || "currency_value"
     }
 }

@@ -1,10 +1,23 @@
 @import 'variables.scss';
 
-.project_dashboard__recent_entries_per_user {
+.project_dashboard {
     font-size: $font-size-small;
+}
+
+.project_dashboard__recent_entries_per_user {
+}
+
+.project_dashboard__open_sprints {
+}
+
+.project_dashboard__recent_entries_per_user {
+    margin-top: 15px;
 }
 
 .project_dashboard__recent_entry_for_user {
     width: 100%;
 }
 
+.project_dashboard__sprint_progress {
+    min-width: 50px;
+}

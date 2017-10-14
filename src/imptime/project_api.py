@@ -110,7 +110,6 @@ class ProjectViewSet(BaseViewSet):
     def invite(self, request, pk):
         try:
             project_id = pk
-            context = {}
             project = self.allowed_project(project_id)
             invited_user_email = request.data['user_email']
             invited_user, created_user = User.objects.get_or_create(email=invited_user_email,

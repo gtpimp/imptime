@@ -32,7 +32,7 @@ class ProjectName extends Component {
         if ( onClick ) {
             onClick(project.id)
         } else if ( open_on_click ) {
-            browserHistory.push('/projects/' + project.project_id);
+            browserHistory.push('/projects/' + project.id);
         }
     }
 
@@ -73,10 +73,10 @@ function mapStateToProps(state, props) {
     const project = ((project_id && (getProject(state, project_id))) || { 'loaded': false, 'id': project_id }) || { 'projectname': 'no-one' }
 
     return {
-	      project: project,
+	project: project,
         project_id: project_id,
-	      render_mode: render_mode || "inline--small",
-	      loading_value: loading_value || "...",
+	render_mode: render_mode || "inline--small",
+	loading_value: loading_value || "...",
         onClick: props.onClick,
         open_on_click: props.open_on_click || true
     }
