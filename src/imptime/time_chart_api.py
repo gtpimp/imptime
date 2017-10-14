@@ -1,6 +1,5 @@
 import logging
 from datetime import datetime, date
-from dateutil.relativedelta import relativedelta
 from rest_framework.renderers import JSONRenderer
 from django.http import HttpResponse
 from base_api import BaseViewSet
@@ -12,7 +11,8 @@ from timepiece.models import Business as Project
 from timepiece.models import Project as Sprint
 from timepiece.models import BusinessPermissions, Entry, Rate, User
 from rest_framework.decorators import detail_route
-from time_chart_serializer import TimeChartFilterSerializer
+from time_chart_serializer import TimeChartFilterSerializer 
+from lib import chart_helper
 
 logger = logging.getLogger(__name__)
 
@@ -40,7 +40,7 @@ class TimeChartViewSet(BaseViewSet):
             times_by_user = {}
             for user_id in user_ids:
                 entries = all_entries.filter(user_id=user_id).extra(select={'started_on':"date(start_time)"}).values('started_on').order_by('started_on').annotate(daily_hours=Sum('hours'))
-                times_by_user[user_id] = self._fill_empty_days(filter['date_from_inclusive'], filter['date_to_inclusive'], entries)
+                times_by_user[user_id] = chart_helper.fill_empty_days(filter['date_from_inclusive'], filter['date_to_inclusive'], entries)
 
             context['time_chart'] = { 'times_by_user': times_by_user,
                                       'project_id': project_id,
@@ -63,19 +63,6 @@ class TimeChartViewSet(BaseViewSet):
         s.validated_data.setdefault('date_to_inclusive', None)
 
         return s.validated_data
-
-    def _fill_empty_days(self, date_from, date_to, values):
-        d = date_from
-        values_index = 0
-        filled_values = []
-        while d <= date_to:
-            if len(values) > values_index and values[values_index]['started_on'] == d.date():
-                filled_values.append(values[values_index])
-                values_index += 1
-            else:
-                filled_values.append({'started_on':d, 'daily_hours':0})
-            d += relativedelta(days=1)
-        return filled_values
 
     def _fix_filter_dates(self, filter, entries):
         if filter['date_from_inclusive'] is None:

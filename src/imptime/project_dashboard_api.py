@@ -66,8 +66,9 @@ class ProjectDashboardViewSet(BaseViewSet):
         self.set_rates(sprint_infos, entries_for_open_sprints)
         self.set_progress(sprint_infos, entries_for_open_sprints)
         self.set_hours(sprint_infos, entries_for_open_sprints)
+        self.set_recent_activity(sprint_infos, entries)
         d['sprint_infos'] = sprint_infos
-
+        
         d['sprint_ids'] = sprint_infos.keys()
         d['user_ids'] = entries.values_list('user_id', flat=True).distinct()
         return d
@@ -111,3 +112,6 @@ class ProjectDashboardViewSet(BaseViewSet):
             sprint_infos[sprint.id]['budget'] = { 'spendable_budget':spendable_budget,
                                                   'total_billable': total_billable,
                                                   'budget_ratio': total_billable / (spendable_budget or 1) }
+
+    def set_recent_activity(self, sprint_infos, entries):
+        pass

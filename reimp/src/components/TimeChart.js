@@ -50,47 +50,20 @@ class TimeChart extends Component {
         this.xAxisTickFormatter = this.xAxisTickFormatter.bind(this)
     }
     
-    componentDidMount() {
-        const { project_id, project, dispatch, project_statement, filter } = this.props
-        if ( project_id ) {
-            dispatch(ensureProjectsLoaded([project_id]))
-            dispatch(ensureTimeChartLoaded([project_id], filter))
-
-            // Needed because there isn't a single timechart, it depends on the filter
-            dispatch(invalidateTimeChart([project_id], filter))
-        }
-    }
-
-    componentWillReceiveProps(new_props) {
-        const { dispatch, filter, project_id } = this.props
-        if ( new_props.project_id ) {
-            dispatch(ensureProjectsLoaded([new_props.project_id]))
-            dispatch(ensureTimeChartLoaded([new_props.project_id], filter))
-        }
-        if ( new_props.filter != filter &&
-             isArray(new_props.filter.sprint_ids) &&
-             isArray(filter.sprint_ids) &&
-             ! isEqual(filter.sprint_ids.sort(), new_props.filter.sprint_ids.sort()) ) {
-            dispatch(invalidateTimeChart([project_id], filter))
-        }
-    }
-
     xAxisTickFormatter(tickItem) {
         return moment(tickItem).format('DD-MMM')
     }
     
-    renderUserChart(user_id, times_for_user) {
+    render() {
 
+        const { times, xaxis_datakey, yaxis_datakey } = this.props
         const y_axis_domain = [0, 10]
 
         return (
-            <div className="time_chart__user_chart" key={user_id}>
-              <h2 className="time_chart__user_chart_title">
-                <OtherUser user_id={user_id} />
-              </h2>
-              <BarChart width={500} height={100} data={times_for_user}>
-                <Bar dataKey='daily_hours' fill="#8884d8"/>
-                <XAxis dataKey="started_on"
+            <div className="time_chart">
+              <BarChart width={500} height={100} data={times}>
+                <Bar dataKey={yaxis_datakey} fill="#8884d8"/>
+                <XAxis dataKey={xaxis_datakey}
                        tickFormatter={this.xAxisTickFormatter}/>
                 <YAxis domain={y_axis_domain}
                        minTickGap={1}
@@ -104,37 +77,15 @@ class TimeChart extends Component {
         )
     }
 
-    render() {
-
-        const { is_loading, time_chart, filter } = this.props
-        const that = this;
-
-        return (
-
-            <div>
-              { map(keys(time_chart.times_by_user),
-                    function(user_id) {
-                        const times_for_user = time_chart.times_by_user[user_id]
-                        return that.renderUserChart(user_id, times_for_user)
-                    })
-              }
-            </div>
-        )
-    }
 }
 
 function mapStateToProps(state, props) {
-    const { project_id, filter } = props
-    const project = getProject(state, project_id) || {}
-    const is_loading = isLoadingTimeChart(state, project_id)
-    const time_chart = getTimeChart(state, project_id) || {}
+    const { times, xaxis_datakey, yaxis_datakey } = props
     
     return {
-        project_id: project_id,
-        project: project,
-        time_chart: time_chart,
-        is_loading: is_loading,
-        filter: filter
+        times,
+        xaxis_datakey,
+        yaxis_datakey
     }
 }
 
