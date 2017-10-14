@@ -2,6 +2,7 @@ import React, {Component} from 'react'
 import {connect} from 'react-redux'
 import '../../sass/toolbar.css'
 import Breadcrumbs from '../../components/Breadcrumbs'
+import ProjectDashboardsToolbarPanel from './ProjectDashboardsToolbarPanel'
 import ProjectDashboardToolbarPanel from './ProjectDashboardToolbarPanel'
 import ProjectsToolbarPanel from './ProjectsToolbarPanel'
 import SprintDashboardToolbarPanel from './SprintDashboardToolbarPanel'
@@ -22,6 +23,8 @@ class ToolBar extends Component {
                 return <IssuesToolbarPanel key="issues-panel"/>
             case 'list':
                 return <ListToolbarPanel key="list-panel"/>
+            case 'project-dashboards':
+                return <ProjectDashboardsToolbarPanel key="project-dashboards-toolbar-panel" {...this.props}/>
             case 'project-dashboard':
                 return <ProjectDashboardToolbarPanel key="project-dashboard-panel"/>
             case 'projects':
@@ -58,7 +61,7 @@ function mapStateToProps(state, props) {
     const page_toolbars = state.page.toolbar_names || []
 
     return {
-        panelIds: page_toolbars // ['issue', 'issues', 'project', 'projects', 'sprint', 'sprints', 'list'],
+        panelIds: page_toolbars
     }
 }
 

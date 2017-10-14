@@ -31,7 +31,7 @@ class ProjectDashboardViewSet(BaseViewSet):
 
             projects = self.allowed_projects().order_by("name")
             projects = self.apply_filter(qs=projects, raw_filter_args=filter_args)
-            projects = self.apply_pagination(qs=projects, pagination=pagination)            
+            projects = self.apply_pagination(qs=projects, pagination=pagination)
 
             if format_args.get('ids_only', None):
                 context['ids'] = [str(x) for x in projects.values_list(
@@ -50,7 +50,9 @@ class ProjectDashboardViewSet(BaseViewSet):
         return HttpResponse(JSONRenderer().render(data))
 
     def get_project_dashboard(self, project):
-        return { 'id': project.id,
-                 'project_id': project.id }
-    
-    
+        d = { 'id': project.id,
+              'project_id': project.id }
+
+        # import pdb; pdb.set_trace()
+        
+        return d
