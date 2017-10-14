@@ -56,12 +56,12 @@ class TimeChart extends Component {
     
     render() {
 
-        const { times, xaxis_datakey, yaxis_datakey } = this.props
+        const { times, xaxis_datakey, yaxis_datakey, width, height, reference_line_hours } = this.props
         const y_axis_domain = [0, 10]
 
         return (
             <div className="time_chart">
-              <BarChart width={500} height={100} data={times}>
+              <BarChart width={width} height={height} data={times}>
                 <Bar dataKey={yaxis_datakey} fill="#8884d8"/>
                 <XAxis dataKey={xaxis_datakey}
                        tickFormatter={this.xAxisTickFormatter}/>
@@ -70,7 +70,9 @@ class TimeChart extends Component {
                        interval={1}
                        hide={true}
                        allowDataOverflow={true}/>
-                <ReferenceLine y={8} label="" stroke="orange"/>
+                { reference_line_hours > 0 && 
+                  <ReferenceLine y={8} label="" stroke="orange"/>
+                }
                 <Tooltip content={<TimeChartTooltip/>}/>
               </BarChart>
             </div>
@@ -80,12 +82,20 @@ class TimeChart extends Component {
 }
 
 function mapStateToProps(state, props) {
-    const { times, xaxis_datakey, yaxis_datakey } = props
-    
+    const { times, xaxis_datakey, yaxis_datakey, width, height } = props
+    let { reference_line_hours } = props
+    if ( reference_line_hours === undefined ) {
+        reference_line_hours = 8
+    } else {
+        reference_line_hours = 0
+    }
     return {
         times,
         xaxis_datakey,
-        yaxis_datakey
+        yaxis_datakey,
+        width: width || 500,
+        height: height || 100,
+        reference_line_hours: reference_line_hours
     }
 }
 

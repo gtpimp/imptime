@@ -18,6 +18,7 @@ import UserRate from './UserRate'
 import ProgressBar from './ProgressBar'
 import Hours from './Hours'
 import Timestamp from './Timestamp'
+import TimeChart from './TimeChart'
 
 class ProjectDashboard extends Component {
 
@@ -58,7 +59,7 @@ class ProjectDashboard extends Component {
                 <tbody>
                   {map(project_dashboard.sprint_infos, (sprint_info, sprint_id) =>
                       (
-                          <tr key={sprint_id} >
+                          <tr key={sprint_id} className="project_dashboard__sprint_info"> 
                             <td>
                               <SprintName sprint_id={sprint_id}/>
                             </td>
@@ -87,6 +88,19 @@ class ProjectDashboard extends Component {
                                       ))}
                                 </tbody>
                               </table>
+                            </td>
+                            <td>
+                              <div className="project_dashboard__recent_activity">
+                                { sprint_info.recent_activity_for_all_users.has_any_hours &&
+                                  <TimeChart times={sprint_info.recent_activity_for_all_users.hours}
+                                             yaxis_datakey="daily_hours"
+                                             xaxis_datakey="started_on"
+                                             reference_line_hours={0}
+                                             width={150}
+                                             height={75}
+                                  />
+                                }
+                              </div>
                             </td>
                           </tr>
                       ))}

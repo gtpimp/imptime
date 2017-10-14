@@ -14,12 +14,14 @@
 
 .project_dashboard table {
     width: 100%;
+    border-collapse: collapse;
 }
 
-
-
-
 .project_dashboard__recent_entries_per_user {
+}
+
+.project_dashboard__sprint_info {
+    border-bottom: 1px solid $color-26;
 }
 
 .project_dashboard__open_sprints {

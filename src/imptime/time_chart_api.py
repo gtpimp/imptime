@@ -39,7 +39,7 @@ class TimeChartViewSet(BaseViewSet):
             user_ids = all_entries.order_by("user_id").values("user_id").distinct().values_list('user_id', flat=True)
             times_by_user = {}
             for user_id in user_ids:
-                entries = all_entries.filter(user_id=user_id).extra(select={'started_on':"date(start_time)"}).values('started_on').order_by('started_on').annotate(daily_hours=Sum('hours'))
+                entries = all_entries.filter(user_id=user_id).by_day()
                 times_by_user[user_id] = chart_helper.fill_empty_days(filter['date_from_inclusive'], filter['date_to_inclusive'], entries)
 
             context['time_chart'] = { 'times_by_user': times_by_user,

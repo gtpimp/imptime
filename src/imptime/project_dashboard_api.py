@@ -3,6 +3,7 @@ from rest_framework.renderers import JSONRenderer
 from rest_framework.decorators import detail_route
 from datetime import datetime
 from dateutil.relativedelta import relativedelta
+from django.utils import timezone
 from django.http import HttpResponse
 from base_api import BaseViewSet
 from django.db.models import Prefetch, Count, Sum, Max, Min
@@ -14,6 +15,7 @@ from timepiece.models import Project as Sprint
 from timepiece.models import BusinessPermissions, Entry, Rate
 from django.contrib.auth.models import User
 import csv
+from lib import chart_helper
 
 logger = logging.getLogger(__name__)
 
@@ -114,4 +116,11 @@ class ProjectDashboardViewSet(BaseViewSet):
                                                   'budget_ratio': total_billable / (spendable_budget or 1) }
 
     def set_recent_activity(self, sprint_infos, entries):
-        pass
+        date_to = timezone.now()
+        date_from = date_to - relativedelta(days=30)
+        
+        for sprint_id, sprint_info in sprint_infos.items():
+            entries_for_sprint = entries.filter(issue__project_id=sprint_id).filter(start_time__gte=date_from, start_time__lte=date_to)
+            entries_for_sprint_by_day = entries_for_sprint.by_day()
+            sprint_info['recent_activity_for_all_users'] = { 'hours': chart_helper.fill_empty_days(date_from, date_to, entries_for_sprint_by_day),
+                                                             'has_any_hours': entries_for_sprint.count()>0 }
