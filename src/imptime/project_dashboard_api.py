@@ -34,14 +34,22 @@ class ProjectDashboardViewSet(BaseViewSet):
             projects = self.allowed_projects().order_by("name")
             projects = self.apply_filter(qs=projects, raw_filter_args=filter_args)
 
+            project_dashboards = []
+            for project in projects:
+                project_dashboards.append({'project': project,
+                                           'project_id': project.id,
+                                           'project_created_at': project.created,
+                                           'recent_activity':self.get_recent_activity(project)})
+
+            project_dashboards = self.sort(project_dashboards)
+
+            # Pagination not supported because we're not using a queryset, to be implemented if required.
+            # project_dashboards = self.apply_pagination(qs=projects, pagination=pagination)
+            
             if format_args.get('ids_only', None):
-                # Note: only paginate for ids, because the dashboard sorting needs the dashboard data
-                projects = self.apply_pagination(qs=projects, pagination=pagination)
-                context['ids'] = [str(x) for x in projects.values_list(
-                    'id', flat=True)]
+                context['ids'] = [x['project_id'] for x in project_dashboards]
             else:
-                project_dashboards = [ self.get_project_dashboard(request.user, project) for project in projects ]
-                project_dashboards = self.sort(project_dashboards)
+                project_dashboards = [ self.populate_project_dashboard(request.user, project_dashboard) for project_dashboard in project_dashboards ]
                 context['project_dashboards'] = project_dashboards
                 
             context['pagination'] = pagination
@@ -53,16 +61,17 @@ class ProjectDashboardViewSet(BaseViewSet):
 
         return HttpResponse(JSONRenderer().render(data))
 
-    def get_project_dashboard(self, user, project):
-        d = { 'id': project.id,
-              'project_id': project.id,
-              'project_name': project.name }
+    def populate_project_dashboard(self, user, project_dashboard):
+        project = project_dashboard.pop('project')
+        d = project_dashboard
+        d['id'] = project.id,
+        d['project_name'] = project.name
 
         bp = BusinessPermissions.for_user(user, project)  # sic
         entries = Entry.objects.all().filter(issue__project__business=project)
         sprint_infos = self.get_open_sprints(entries)
         if bp.has_view_ctc_billable_rates:
-            most_recent_entries_per_user = entries.order_by('user__username').values('user_id').annotate(Max('end_time'), Min('start_time'))
+            most_recent_entries_per_user = entries.order_by('-start_time').values('user_id').annotate(Max('end_time'), Min('start_time'))
             d['most_recent_entry_per_user'] = most_recent_entries_per_user
             entries_for_open_sprints = entries.exclude(issue__project__status2__in=Sprint.closed_states()) #sic
             self.set_users(sprint_infos, entries_for_open_sprints)
@@ -71,7 +80,6 @@ class ProjectDashboardViewSet(BaseViewSet):
             self.set_hours(sprint_infos, entries_for_open_sprints)
             
         self.set_recent_activity_chart(sprint_infos, entries)
-        d['recent_activity'] = self.set_recent_activity(project, entries)
         d['sprint_infos'] = sprint_infos
         
         d['sprint_ids'] = sprint_infos.keys()
@@ -128,8 +136,8 @@ class ProjectDashboardViewSet(BaseViewSet):
             sprint_info['recent_activity_for_all_users'] = { 'hours': chart_helper.fill_empty_days(date_from, date_to, entries_for_sprint_by_day),
                                                              'has_any_hours': entries_for_sprint.count()>0 }
 
-    def set_recent_activity(self, project, entries):
-
+    def get_recent_activity(self, project):
+        entries = Entry.objects.all().filter(issue__project__business=project)
         issue = Issue.objects.filter(project__business=project)\
                              .order_by("-modified")\
                              .values("id", "project_id", "project__business_id", "modified", "number", "subject")\
@@ -163,5 +171,11 @@ class ProjectDashboardViewSet(BaseViewSet):
         return d
 
     def sort(self, project_dashboards):
-        return sorted(project_dashboards, key=lambda x: x['recent_activity']['most_recent_clock_entry'])
+        return sorted(project_dashboards, key=lambda x: x['recent_activity']['most_recent_clock_entry']['start_time'] \
+                        if 'start_time' in x['recent_activity']['most_recent_clock_entry']
+                        else (x['recent_activity']['most_recent_issue']['modified']
+                                if 'modified' in x['recent_activity']['most_recent_issue']
+                                else x['project_created_at']),
+                      reverse=False
+        )
     
