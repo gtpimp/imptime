@@ -40,7 +40,7 @@ class TimesheetDashboard extends Component {
                 <div className="timesheet_dashboard__charts">
                   { map(timesheet_dashboard.times_by_user, (times_for_user, user_id) =>
                       (
-                          <div key={user_id}>
+                          <div key={user_id} className="timesheet_dashboard__chart">
                             <OtherUser user_id={user_id} />
                             <TimeChart times={times_for_user.worked}
                                        sick_days={true}
@@ -48,6 +48,7 @@ class TimesheetDashboard extends Component {
                                        leave_days={true}
                                        office_closed={true}
                                        average_hours_worked={times_for_user.average_hours_worked}
+                                       show_y_axis={true}
                                        yaxis_datakey="daily_hours"
                                        xaxis_datakey="started_on"
                                        reference_line_hours={8}
