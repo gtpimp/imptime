@@ -19,9 +19,13 @@ from lib import chart_helper
 
 logger = logging.getLogger(__name__)
 
+
 @permission_classes((IsAuthenticated,))
 class ProjectDashboardViewSet(BaseViewSet):
 
+    NUM_DAYS_FOR_ACTIVE = 60
+    NUM_DAYS_FOR_EXPIRED = 120
+    
     def list(self, request):
         try:
             context = {}
@@ -71,7 +75,7 @@ class ProjectDashboardViewSet(BaseViewSet):
         entries = Entry.objects.all().filter(issue__project__business=project)
         sprint_infos = self.get_open_sprints(entries)
         if bp.has_view_ctc_billable_rates:
-            most_recent_entries_per_user = entries.order_by('-start_time').values('user_id').annotate(Max('end_time'), Min('start_time'))
+            most_recent_entries_per_user = entries.order_by('user_id').values('user_id').annotate(Max('end_time'), Min('start_time')).order_by('-end_time__max')
             d['most_recent_entry_per_user'] = most_recent_entries_per_user
             entries_for_open_sprints = entries.exclude(issue__project__status2__in=Sprint.closed_states()) #sic
             self.set_users(sprint_infos, entries_for_open_sprints)
@@ -128,7 +132,7 @@ class ProjectDashboardViewSet(BaseViewSet):
 
     def set_recent_activity_chart(self, sprint_infos, entries):
         date_to = timezone.now()
-        date_from = date_to - relativedelta(days=30)
+        date_from = date_to - relativedelta(days=self.NUM_DAYS_FOR_ACTIVE)
         
         for sprint_id, sprint_info in sprint_infos.items():
             entries_for_sprint = entries.filter(issue__project_id=sprint_id).filter(start_time__gte=date_from, start_time__lte=date_to)
@@ -162,11 +166,19 @@ class ProjectDashboardViewSet(BaseViewSet):
             entry['issue_subject'] = entry.pop("issue__subject")
             if len(entry['issue_subject'])>50:
                 entry['issue_subject'] = entry['issue_subject'][0:47] + "..."
-            
-            
+
+        
+        is_inactive = ('start_time' in entry and (entry['start_time'] + relativedelta(days=self.NUM_DAYS_FOR_ACTIVE) < timezone.now())) or \
+                      ('modified' in issue and issue['modified'] + relativedelta(days=self.NUM_DAYS_FOR_ACTIVE) < timezone.now())
+        is_expired = ('start_time' in entry and (entry['start_time'] + relativedelta(days=self.NUM_DAYS_FOR_EXPIRED) < timezone.now())) or \
+                     ('modified' in issue and issue['modified'] + relativedelta(days=self.NUM_DAYS_FOR_EXPIRED) < timezone.now())
+                
         d = {
             'most_recent_clock_entry': entry,
-            'most_recent_issue': issue
+            'most_recent_issue': issue,
+            'is_inactive': is_inactive and not is_expired,
+            'is_expired': is_expired,
+            'is_active': not is_inactive and not is_expired
         }
         return d
 
@@ -176,6 +188,6 @@ class ProjectDashboardViewSet(BaseViewSet):
                         else (x['recent_activity']['most_recent_issue']['modified']
                                 if 'modified' in x['recent_activity']['most_recent_issue']
                                 else x['project_created_at']),
-                      reverse=False
+                      reverse=True
         )
     

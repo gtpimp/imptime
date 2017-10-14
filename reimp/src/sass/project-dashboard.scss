@@ -2,10 +2,29 @@
 
 .project_dashboard {
     font-size: $font-size-small;
+    /*background-color: $color-26;*/
+    border: 1px solid $color-26;
+}
+
+.project_dashboard__title {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+}
+
+.project_dashboard.project_dashboard--active .project_dashboard__title {
+    background-color: $color-27;
+}
+
+.project_dashboard.project_dashboard--inactive .project_dashboard__title {
+    background-color: $color-28;
+}
+
+.project_dashboard.project_dashboard--expired .project_dashboard__title {
+    background-color: $color-29;
 }
 
 .project_dashboard h2 {
-    background-color: $color-11;
 }
 
 .project_dashboard h3 {

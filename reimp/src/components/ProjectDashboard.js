@@ -182,7 +182,7 @@ class ProjectDashboard extends Component {
                 <tbody>
                   {map(project_dashboard.most_recent_entry_per_user, (entry) => 
                       (
-                          <tr key={entry.user_id}
+                          <tr key={entry.user_id+'_'+entry.start_time__min}
                               className="project_dashboard__recent_entry_for_user">
                             <td>
                               <OtherUser user_id={entry.user_id}/>
@@ -205,15 +205,25 @@ class ProjectDashboard extends Component {
         const { project_dashboard_id, project_id, project_dashboard } = this.props
 
         return (
-            <div className="project_dashboard">
+            <div className={classNames("project_dashboard",
+                                       {"project_dashboard--active":project_dashboard.recent_activity && project_dashboard.recent_activity.is_active,
+                                        "project_dashboard--inactive":project_dashboard.recent_activity && project_dashboard.recent_activity.is_inactive,
+                                        "project_dashboard--expired":!project_dashboard.recent_activity || project_dashboard.recent_activity.is_expired})}>
               { ! project_dashboard_id &&
                 <div>Loading...</div>
               }
               { project_dashboard_id &&
                 <div>
-                  <h2>
-                    <ProjectName project_id={project_id}/>
-                  </h2>
+                  <div className="project_dashboard__title">
+                    <h2 className="project_dashboard__name">
+                      <ProjectName project_id={project_id}/>
+                    </h2>
+                    <div className="project_dashboard__status">
+                      { project_dashboard.recent_activity.is_active && (<span>Active</span>) }
+                      { project_dashboard.recent_activity.is_inactive && (<span>Inactive</span>) }
+                      { project_dashboard.recent_activity.is_expired && (<span>Expired</span>) }
+                    </div>
+                  </div>
                   {this.renderRecentActivity()}
                   {this.renderOpenSprints()}
                   {this.renderMostRecentEntriesPerUser()}
@@ -230,7 +240,7 @@ function mapStateToProps(state, props) {
     
     return {
         project_id,
-	project_dashboard,
+	project_dashboard: project_dashboard || {},
         project_dashboard_id: (project_dashboard || {}).id
     }
 }
