@@ -144,7 +144,7 @@ export function saveCandidateProject() {
     return (dispatch, getState) => {
 	      const state = getState()
 	      dispatch(announceCandidateProjectSaving())
-	      let data = {project: state.project.candidate_project}
+	      let data = {project: state[ENTITY_KEY__PROJECT].candidate_project}
 
 	      return impfetch(state, "imp/project/", dispatch,
 			                  {method: "POST",
@@ -173,7 +173,7 @@ export function saveCandidateProject() {
 export function ensureProjectsLoaded(project_ids) {
     return (dispatch, getState) => {
         const state = getState()
-        const project_ids_to_load = getMissingItemIds(state, project_ids, 'project')
+        const project_ids_to_load = getMissingItemIds(state, project_ids, ENTITY_KEY__PROJECT)
         if ( project_ids_to_load.length > 0 ) {
             fetchProjectsPromise(dispatch, state, project_ids_to_load)
         }
@@ -181,12 +181,11 @@ export function ensureProjectsLoaded(project_ids) {
 }
 
 export function getProject(state, project_id) {
-    const test = ((state.project || {}).items_by_id || {})[project_id] || null
-    return ((state.project || {}).items_by_id || {})[project_id] || null
+    return ((state[ENTITY_KEY__PROJECT] || {}).items_by_id || {})[project_id] || null
 }
 
 export function getProjects(state, project_ids) {
-    const project_objs = state.project
+    const project_objs = state[ENTITY_KEY__PROJECT]
     const items_by_id = (project_objs && project_objs.items_by_id) || {}
     return items_by_id && project_ids && project_ids.map(function (project_id, index) {
         return items_by_id[project_id] || {
@@ -197,7 +196,7 @@ export function getProjects(state, project_ids) {
 }
 
 export function getCandidateProject(state) {
-    const project_objs = state.project || {}
+    const project_objs = state[ENTITY_KEY__PROJECT] || {}
     return project_objs.candidate_project
 }
 

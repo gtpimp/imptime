@@ -59,6 +59,11 @@ export function expand_list(list_key) {
     }
 }
 
+export function getDisplayMode(state, list_key) {
+    return ((state.item_list || {})[list_key] || {}).display_mode
+}
+
+
 export function unselectAllItems(list_key) {
     return {
 	      type: UPDATE_LIST_SELECTION,
@@ -278,8 +283,50 @@ function shouldFetchList(state, list_key) {
 }
 
 export function fetchListIfNeeded(list_key,
-				                          matching_items_key, matching_items_promise_func) {
+				  matching_items_key, matching_items_promise_func) {
     return tryFetchListAndItems(list_key,
-			                          matching_items_key,
-			                          matching_items_promise_func)
+			        matching_items_key,
+			        matching_items_promise_func)
+}
+
+export function getVisibleItemIds(state, list_key) {
+    const item_list = ((state || {}).item_list || {})[list_key] || {}
+    const visible_item_ids = item_list.visible_item_ids || []
+    return visible_item_ids
+}
+
+export function getVisibleItems(state, list_key, entity_key) {
+    const visible_item_ids = getVisibleItemIds(state, list_key)
+    const items_by_id = ((state || {})[entity_key] || {}).items_by_id || {}
+    return (items_by_id && visible_item_ids.map( function(visible_item_id, index) {
+	return items_by_id[visible_item_id] || { 'id': visible_item_id,
+						 'loaded': false }
+    })) || []    
+}
+
+export function getSelectedItemIds(state, list_key) {
+    const item_list = ((state || {}).item_list || {})[list_key] || {}
+    const selected_item_ids = item_list.selected_ids || []
+    return selected_item_ids    
+}
+
+export function getSelectedItems(state, list_key, entity_key) {
+    const selected_item_ids = getSelectedItemIds(state, list_key)
+    const items_by_id = ((state || {})[entity_key] || {}).items_by_id || {}
+    return (items_by_id && selected_item_ids.map( function(selected_item_id, index) {
+	return items_by_id[selected_item_id] || { 'id': selected_item_id,
+						  'loaded': false }
+    })) || []        
+}
+
+export function isLoading(state, list_key) {
+    return (state.item_list || {}).is_loading || false
+}
+
+export function getLastUpdated(state, list_key) {
+    return (state.item_list || {}).last_updated || null
+}
+
+export function getLoadingItemIds(state, list_key) {
+    return (state.item_list || {}).loading_item_ids || []
 }

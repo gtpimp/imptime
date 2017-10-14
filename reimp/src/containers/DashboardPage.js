@@ -1,8 +1,10 @@
 import React, {Component} from 'react'
 import {connect} from 'react-redux'
 import { setBreadcrumbsActive } from '../actions/Breadcrumbs'
+import ProjectDashboardList from '../components/ProjectDashboardList'
+import { LIST_KEY__PROJECT_DASHBOARD_LIST } from '../actions/ItemListKeyRegistry'
 
-class ClientsPage extends Component {
+class DashboardPage extends Component {
 
     componentDidMount() {
         const { dispatch } = this.props
@@ -18,8 +20,7 @@ class ClientsPage extends Component {
 
         return (
             <div>
-                {/*<ProjectList key="projects" list_key={LIST_KEY__PROJECT_LIST}/>*/}
-              Clients
+              <ProjectDashboardList list_key={LIST_KEY__PROJECT_DASHBOARD_LIST} />
             </div>
         )
     }
@@ -29,5 +30,4 @@ function mapStateToProps(state) {
     return {}
 }
 
-export default connect(mapStateToProps)(ClientsPage)
-
+export default connect(mapStateToProps)(DashboardPage)

@@ -9,7 +9,15 @@ import {
     invalidateList,
     selectItems,
     collapse_list,
-    expand_list
+    expand_list,
+    getVisibleItemIds,
+    getVisibleItems,
+    isLoading,
+    getLastUpdated,
+    getLoadingItemIds,
+    getSelectedItemIds,
+    getSelectedItems,
+    getDisplayMode
 } from '../actions/ItemList'
 import {
     invalidateAllProjects,
@@ -18,6 +26,7 @@ import {
 import Project from './Project'
 import ListTable from './ListTable'
 import '../sass/project-list.scss'
+import { ENTITY_KEY__PROJECT } from '../actions/ItemListKeyRegistry'
 
 class ProjectList extends Component {
 
@@ -159,34 +168,27 @@ function mapStateToProps(state, props) {
     const { list_key } = props
     const items_by_id = (project && project.items_by_id) || {}
     const l = (item_list && item_list[list_key]) || {}
-    const visible_item_ids = l.visible_item_ids || []
-
-    const selected_items = items_by_id && l.selected_ids && l.selected_ids.map( function(selected_id, index) {
-	return items_by_id[selected_id] || { 'id': selected_id,
-					     'loaded': false }
-    })
-
-    const items = (items_by_id && visible_item_ids.map( function(visible_item_id, index) {
-	return items_by_id[visible_item_id] || { 'id': visible_item_id,
-						 'loaded': false }
-    })) || []
-
-    if ( ! l.display_mode ) {
-        l.display_mode = "expanded"
-    }
+    const visible_item_ids = getVisibleItemIds(state, list_key)
+    const visible_items = getVisibleItems(state, list_key, ENTITY_KEY__PROJECT)
+    const selected_item_ids = getSelectedItemIds(state, list_key)
+    const selected_items = getSelectedItems(state, list_key, ENTITY_KEY__PROJECT)
+    const display_mode = getDisplayMode(state, list_key) || "expanded"
+    const loading_item_ids = getLoadingItemIds(state, list_key)
+    const is_loading = isLoading(state, list_key)
+    const last_updated = getLastUpdated(state, list_key)
 
     return {
         list_key: list_key,
-        projects: items,
-	project_ids: map(items, 'id'),
-        loading_item_ids: l.loading_item_ids || [],
-	selected_ids: l.selected_ids || [],
-	selected_items: selected_items || [],
-        has_items: items && items.length > 0,
-        is_loading: l.is_loading,
-	is_collapsed: l.display_mode === "collapsed",
-	is_expanded: l.display_mode === "expanded" || !l.display_mode,
-        last_updated: l.last_updated
+        projects: visible_items,
+	project_ids: visible_item_ids,
+        loading_item_ids,
+	selected_ids: selected_item_ids,
+	selected_items,
+        has_items: visible_items && visible_items.length > 0,
+        is_loading,
+	is_collapsed: display_mode === "collapsed",
+	is_expanded: display_mode === "expanded" || display_mode,
+        last_updated
     }
 }
 
