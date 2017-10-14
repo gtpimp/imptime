@@ -1,7 +1,10 @@
 import React, { Component } from 'react'
 import { connect } from 'react-redux'
 import { ensureProjectsLoaded, getProject } from '../actions/Projects'
-import {BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ReferenceLine} from 'recharts'
+import {
+    BarChart, ComposedChart, Bar, XAxis, YAxis, CartesianGrid,
+    Tooltip, Legend, ReferenceLine, Scatter
+} from 'recharts'
 import { map, keys, isEqual, isArray } from 'lodash'
 import OtherUser from './OtherUser'
 import SprintTimeSummary from './SprintTimeSummary'
@@ -37,7 +40,28 @@ class TimeChartTooltip extends Component {
         
         return (
             <div className="time_chart__tooltip">
-              {payload[0].value} hours on  {moment(label).format('dddd DD-MMM-YYYY')}
+              { map(payload, (series) =>
+                  (
+                      <div key={series.dataKey+"_"+label+"_"+name} className="time_chart__tooltip_series">
+                        { series.dataKey == 'daily_hours' &&
+                          <div>{series.value} hours on {moment(label).format('dddd DD-MMM-YYYY')}</div>
+                        }
+                        { series.dataKey == 'sick_days' && series.value > 0 &&
+                          <div>Sick day</div>
+                        }
+                        { series.dataKey == 'leave_days' && series.value > 0 &&
+                          <div>Leave</div>
+                        }
+                        { series.dataKey == 'office_closed' && series.value > 0 &&
+                          <div>Office closed</div>
+                        }
+                        { series.dataKey == 'public_holidays' && series.value > 0 &&
+                          <div>Public holiday</div>
+                        }
+                      </div>
+                  )
+              )}
+              
             </div>
         )
     }
@@ -56,12 +80,13 @@ class TimeChart extends Component {
     
     render() {
 
-        const { times, xaxis_datakey, yaxis_datakey, width, height, reference_line_hours } = this.props
+        const { times, xaxis_datakey, yaxis_datakey, width, height,
+                reference_line_hours, public_holidays, sick_days, leave_days, office_closed  } = this.props
         const y_axis_domain = [0, 10]
 
         return (
             <div className="time_chart">
-              <BarChart width={width} height={height} data={times}>
+              <ComposedChart width={width} height={height} data={times}>
                 <Bar dataKey={yaxis_datakey} fill="#8884d8"/>
                 <XAxis dataKey={xaxis_datakey}
                        tickFormatter={this.xAxisTickFormatter}/>
@@ -71,14 +96,25 @@ class TimeChart extends Component {
                        hide={true}
                        allowDataOverflow={true}/>
                 { reference_line_hours > 0 && 
-                  <ReferenceLine y={8} label="" stroke="orange"/>
+                  <ReferenceLine y={reference_line_hours} label="" stroke="orange"/>
+                }
+                { sick_days &&
+                  <Scatter dataKey={'sick_days'} shape='triangle'/>
+                }
+                { leave_days &&
+                  <Scatter dataKey={'leave_days'} shape='square'/>
+                }
+                { office_closed &&
+                  <Scatter dataKey={'office_closed'} shape='cross'/>
+                }
+                { public_holidays &&
+                  <Scatter dataKey={'public_holidays'} shape='cross'/>
                 }
                 <Tooltip content={<TimeChartTooltip/>}/>
-              </BarChart>
+              </ComposedChart>
             </div>
         )
     }
-
 }
 
 function mapStateToProps(state, props) {
@@ -86,8 +122,6 @@ function mapStateToProps(state, props) {
     let { reference_line_hours } = props
     if ( reference_line_hours === undefined ) {
         reference_line_hours = 8
-    } else {
-        reference_line_hours = 0
     }
     return {
         times,

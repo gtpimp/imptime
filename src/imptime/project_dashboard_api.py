@@ -23,8 +23,8 @@ logger = logging.getLogger(__name__)
 @permission_classes((IsAuthenticated,))
 class ProjectDashboardViewSet(BaseViewSet):
 
-    NUM_DAYS_FOR_ACTIVE = 60
-    NUM_DAYS_FOR_EXPIRED = 120
+    NUM_DAYS_FOR_ACTIVE = 30
+    NUM_DAYS_FOR_EXPIRED = 90
     
     def list(self, request):
         try:

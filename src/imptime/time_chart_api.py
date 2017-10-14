@@ -1,5 +1,8 @@
 import logging
+from dateutil.relativedelta import relativedelta
+from collections import OrderedDict
 from datetime import datetime, date
+from django.utils import timezone
 from rest_framework.renderers import JSONRenderer
 from django.http import HttpResponse
 from base_api import BaseViewSet
@@ -9,16 +12,41 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.decorators import permission_classes
 from timepiece.models import Business as Project
 from timepiece.models import Project as Sprint
-from timepiece.models import BusinessPermissions, Entry, Rate, User
-from rest_framework.decorators import detail_route
+from timepiece.models import BusinessPermissions, Entry, Rate, User, Holiday, CalendarEvent
+from rest_framework.decorators import detail_route, list_route
 from time_chart_serializer import TimeChartFilterSerializer 
 from lib import chart_helper
 
 logger = logging.getLogger(__name__)
 
+
 @permission_classes((IsAuthenticated,))
 class TimeChartViewSet(BaseViewSet):
 
+    NUM_DAYS_FOR_ACTIVE_USER = 60
+    NUM_DAYS_FOR_TIMESHEET_DASHBOARD = 31
+    
+    @list_route(methods=['GET'])
+    def timesheet_dashboard(self, request):
+        try:
+            context = {}
+            params = request.GET.get('params', '{}')
+            params = json.loads(params)
+
+            users = self.allowed_users().order_by("username")
+            users = self.get_active_users(users)
+            times_by_user = self.get_user_times(users)
+            
+            context['timesheet_dashboard'] = { 'times_by_user': times_by_user }
+            data = {"status": "success", "payload": context}
+
+        except Exception, ex:
+            logger.exception(ex)
+            return self.error_response(ex)
+
+        return HttpResponse(JSONRenderer().render(data))
+    
+    
     @detail_route(methods=['GET'])
     def times_per_user_for_project(self, request, pk):
         try:
@@ -43,7 +71,6 @@ class TimeChartViewSet(BaseViewSet):
                 times_by_user[user_id] = chart_helper.fill_empty_days(filter['date_from_inclusive'], filter['date_to_inclusive'], entries)
 
             context['time_chart'] = { 'times_by_user': times_by_user,
-                                      'project_id': project_id,
                                       'filter': filter }
                 
             data = {"status": "success", "payload": context}
@@ -82,7 +109,126 @@ class TimeChartViewSet(BaseViewSet):
         if filter.get('date_from_inclusive', None):
             entries = entries.filter(start_time__gte=filter['date_from_inclusive'])
         if filter.get('date_to_inclusive', None):
-            all_ntries = entries.filter(start_time__lte=filter['date_to_inclusive'])
+            entries = entries.filter(start_time__lte=filter['date_to_inclusive'])
         if filter.get('sprint_ids', None):
             entries = entries.filter(issue__project_id__in=filter['sprint_ids'])
         return entries
+
+    def get_active_users(self, users):
+        return users.filter(timepiece_entries__start_time__gte=timezone.now()-relativedelta(days=self.NUM_DAYS_FOR_ACTIVE_USER))
+    
+    def get_user_times(self, users):
+        daily_hours = {}
+        to_date = timezone.now()
+        from_date = to_date - relativedelta(days=self.NUM_DAYS_FOR_TIMESHEET_DASHBOARD)
+        all_entries = Entry.objects.filter(start_time__gte=from_date, end_time__lte=to_date)
+        events_in_range = CalendarEvent.objects\
+                                       .filter(start__gte=from_date, start__lte=to_date)\
+                                       .values('start', 'hours')
+        for user in users:
+            entries = all_entries.filter(user=user).by_day()
+
+            user_events = events_in_range.filter(user=user)
+
+            sick_days = user_events.filter(event_type='sickday')
+            leave_days = user_events.filter(event_type='leave')
+            office_closed = user_events.filter(event_type='office_closed')
+            public_holidays = Holiday.objects.filter(applies_on__gte=from_date, applies_on__lte=to_date)
+            
+            daily_hours[user.id] = {'worked': chart_helper.fill_empty_days(from_date, to_date, entries),
+                                    'sick_days': sick_days.values('start'),
+                                    'leave_days': leave_days.values('start'),
+                                    'office_closed': office_closed.values('start'),
+                                    'public_holidays': public_holidays.values('applies_on')
+            }
+
+            merged_hours = daily_hours[user.id]['worked']
+            self._merge_days(from_date, to_date, merged_hours,
+                             [x.date() for x in sick_days.values_list('start', flat=True)],
+                             'sick_days')
+
+            self._merge_days(from_date, to_date, merged_hours,
+                             [x.date() for x in leave_days.values_list('start', flat=True)],
+                             'leave_days')
+
+            self._merge_days(from_date, to_date, merged_hours,
+                             [x.date() for x in office_closed.values_list('start', flat=True)],
+                             'office_closed')
+
+            self._merge_days(from_date, to_date, merged_hours,
+                             public_holidays.values_list('applies_on', flat=True),
+                             'public_holidays')
+
+            daily_hours[user.id]['merged_hours'] = merged_hours
+            
+
+        return daily_hours
+ 
+    def _merge_days(self, from_date, to_date, primary_hours, secondary_hours, y_label):
+        for primary_hour in primary_hours:
+            if primary_hour['started_on'].date() in list(secondary_hours):
+                primary_hour[y_label] = 8
+            else:
+                primary_hour[y_label] = -1
+
+    # def _get_daily_hours(self, user, entries, from_date=None, to_date=None):
+    #     entries = entries.filter(start_time__gte=from_date, start_time__lte=to_date).extra({'on_day': 'date(start_time)'})
+    #     entries_hours_per_day = entries.values('on_day').order_by("on_day").annotate(total_hours=Sum('hours'))
+    #     daily_hours_by_project = entries.values('on_day', 'issue__project__business__name',
+    #                                             'issue__project__name').order_by("on_day", "issue__project__business__name",
+    #                                                                              "issue__project__name").annotate(
+    #         total_hours=Sum('hours'))
+
+    #     hours_per_day = {}
+    #     for entry_hours_per_day in entries_hours_per_day:
+    #         hours_per_day[entry_hours_per_day['on_day']] = entry_hours_per_day['total_hours']
+
+    #     hours = OrderedDict()
+    #     daily_average_hours_per_week = OrderedDict()
+    #     daily_average_hours_per_month = OrderedDict()
+
+    #     running_date = from_date
+    #     running_hours_per_week = 0
+    #     running_days_in_week = 0
+    #     running_hours_per_month = 0
+    #     running_days_in_month = 0
+
+    #     total_hours_by_month = OrderedDict()
+
+    #     month_date = running_date.replace(day=1)
+    #     total_hours_by_month[month_date] = {'total_available_hours_per_month': 0,
+    #                                         'total_worked_hours_per_month': 0}
+    #     while running_date <= to_date:
+
+    #         hours_this_day = hours_per_day.get(running_date, 0)
+    #         hours[running_date] = hours_this_day
+
+    #         if running_date.weekday() == 0:
+    #             running_days_in_week = 0
+    #             running_hours_per_week = 0
+    #         if running_date.day == 1:
+    #             running_days_in_month = 0
+    #             running_hours_per_month = 0
+    #             month_date = running_date.replace(day=1)
+    #             total_hours_by_month[month_date] = {'total_available_hours_per_month': 0,
+    #                                                 'total_worked_hours_per_month': 0}
+
+    #         running_hours_per_week += hours_this_day
+    #         running_hours_per_month += hours_this_day
+    #         total_hours_by_month[month_date]['total_worked_hours_per_month'] += hours_this_day
+
+    #         if not Holiday.is_a_holiday(running_date) and not CalendarEvent.is_on_leave(running_date, user):
+    #             running_days_in_week += 1
+    #             running_days_in_month += 1
+    #             total_hours_by_month[month_date][
+    #                 'total_available_hours_per_month'] += user.profile.required_daily_work_hours
+
+    #         daily_average_hours_per_week[running_date] = float(running_hours_per_week) / (running_days_in_week or 1)
+    #         daily_average_hours_per_month[running_date] = float(running_hours_per_month) / (running_days_in_month or 1)
+    #         running_date += relativedelta(days=1)
+
+    #     return {'daily_hours': hours,
+    #             'weekly_average': daily_average_hours_per_week,
+    #             'monthly_average': daily_average_hours_per_month,
+    #             'daily_hours_by_project': daily_hours_by_project,
+    #             'total_hours_by_month': total_hours_by_month}

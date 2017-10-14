@@ -2,6 +2,8 @@ import React, {Component} from 'react'
 import {connect} from 'react-redux'
 import { setBreadcrumbsActive } from '../actions/Breadcrumbs'
 import ProjectDashboardList from '../components/ProjectDashboardList'
+import TimesheetDashboard from '../components/TimesheetDashboard'
+
 import { PAGE_KEY__DASHBOARD_PAGE, LIST_KEY__PROJECT_DASHBOARD_LIST } from '../actions/ItemListKeyRegistry'
 import {
     set_toolbars
@@ -24,7 +26,8 @@ class DashboardPage extends Component {
 
         return (
             <div>
-              <ProjectDashboardList list_key={LIST_KEY__PROJECT_DASHBOARD_LIST} />
+              <TimesheetDashboard />
+              { false && <ProjectDashboardList list_key={LIST_KEY__PROJECT_DASHBOARD_LIST} /> }
             </div>
         )
     }

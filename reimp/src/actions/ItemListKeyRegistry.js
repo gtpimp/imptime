@@ -14,6 +14,7 @@ export const ENTITY_KEY__ISSUE_GENERAL_DETAILS = 'issue_general_details'
 export const ENTITY_KEY__USER = 'user'
 export const ENTITY_KEY__PROJECT_USER_PERMISSION = 'user'
 export const ENTITY_KEY__PROJECT_DASHBOARD = 'project_dashboard'
+export const ENTITY_KEY__TIMESHEET_DASHBOARD = 'timesheet_dashboard'
 
 export const PAGE_KEY__DASHBOARD_PATH = 'dashboard_page'
 export const PAGE_KEY__PROJECTS_PAGE = 'projects_page'
