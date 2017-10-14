@@ -4,6 +4,12 @@
 
 .timesheet_dashboard__charts {
     display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    -webkit-flex-flow: row wrap;
+    flex-flow: row wrap;
+    -webkit-align-content: flex-end;
+    align-content: flex-end;
 }
 
 .timesheet_dashboard__chart {

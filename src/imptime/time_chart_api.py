@@ -121,9 +121,6 @@ class TimeChartViewSet(BaseViewSet):
         daily_hours = {}
         to_date = timezone.now()
 
-        # ##
-        to_date = to_date - relativedelta(days=60)
-        # ##
         from_date = to_date - relativedelta(days=self.NUM_DAYS_FOR_TIMESHEET_DASHBOARD)
         all_entries = Entry.objects.filter(start_time__gte=from_date, end_time__lte=to_date)
         events_in_range = CalendarEvent.objects\
@@ -174,7 +171,7 @@ class TimeChartViewSet(BaseViewSet):
                                day in office_closed or \
                                day in public_holidays)
             
-            total_days_worked = user_entries.aggregate(total_hours=Sum('hours'))['total_hours'] / (user.profile.required_daily_work_hours or 8)
+            total_days_worked = (user_entries.aggregate(total_hours=Sum('hours'))['total_hours'] or 0) / (user.profile.required_daily_work_hours or 8)
             available_days = ((to_date-from_date).days+1-num_days_off) # to_date and from_date are inclusive, so add 1
             daily_hours[user.id]['average_hours_worked'] = (((total_days_worked or 0)/available_days) if available_days else 0) * (user.profile.required_daily_work_hours or 8)
 
