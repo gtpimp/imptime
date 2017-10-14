@@ -47,6 +47,7 @@ class TimesheetDashboard extends Component {
                                        public_holidays={true}
                                        leave_days={true}
                                        office_closed={true}
+                                       average_hours_worked={times_for_user.average_hours_worked}
                                        yaxis_datakey="daily_hours"
                                        xaxis_datakey="started_on"
                                        reference_line_hours={8}

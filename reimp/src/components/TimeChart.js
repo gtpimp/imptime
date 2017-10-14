@@ -81,7 +81,7 @@ class TimeChart extends Component {
     render() {
 
         const { times, xaxis_datakey, yaxis_datakey, width, height,
-                reference_line_hours, public_holidays, sick_days, leave_days, office_closed  } = this.props
+                reference_line_hours, public_holidays, sick_days, leave_days, office_closed, average_hours_worked } = this.props
         const y_axis_domain = [0, 10]
 
         return (
@@ -97,6 +97,9 @@ class TimeChart extends Component {
                        allowDataOverflow={true}/>
                 { reference_line_hours > 0 && 
                   <ReferenceLine y={reference_line_hours} label="" stroke="orange"/>
+                }
+                { average_hours_worked &&
+                  <ReferenceLine y={average_hours_worked} label="" stroke="blue"/>
                 }
                 { sick_days &&
                   <Scatter dataKey={'sick_days'} shape='triangle'/>

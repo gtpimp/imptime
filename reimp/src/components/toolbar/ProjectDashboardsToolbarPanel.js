@@ -20,6 +20,7 @@ class ProjectDashboardsToolbarPanel extends Component {
         const { dispatch, project_id } = this.props
         dispatch(invalidateAllProjectDashboards())
         dispatch(invalidateList(LIST_KEY__PROJECT_DASHBOARD_LIST))
+        dispatch(invalidateAllTimesheetDashboards())
     }
 
     render() {

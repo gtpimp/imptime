@@ -10,7 +10,7 @@ def fill_empty_days(date_from, date_to, values, x_label='started_on', y_label='d
             filled_values.append(values[values_index])
             values_index += 1
         else:
-            filled_values.append({x_label:d, y_label:0})
+            filled_values.append({x_label:d, y_label:3})
         d += relativedelta(days=1)
     return filled_values
 

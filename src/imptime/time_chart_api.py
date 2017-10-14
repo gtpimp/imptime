@@ -1,7 +1,7 @@
 import logging
 from dateutil.relativedelta import relativedelta
 from collections import OrderedDict
-from datetime import datetime, date
+from datetime import datetime, date, timedelta
 from django.utils import timezone
 from rest_framework.renderers import JSONRenderer
 from django.http import HttpResponse
@@ -24,7 +24,7 @@ logger = logging.getLogger(__name__)
 class TimeChartViewSet(BaseViewSet):
 
     NUM_DAYS_FOR_ACTIVE_USER = 60
-    NUM_DAYS_FOR_TIMESHEET_DASHBOARD = 31
+    NUM_DAYS_FOR_TIMESHEET_DASHBOARD = 30
     
     @list_route(methods=['GET'])
     def timesheet_dashboard(self, request):
@@ -120,13 +120,18 @@ class TimeChartViewSet(BaseViewSet):
     def get_user_times(self, users):
         daily_hours = {}
         to_date = timezone.now()
+
+        # ##
+        to_date = to_date - relativedelta(days=60)
+        # ##
         from_date = to_date - relativedelta(days=self.NUM_DAYS_FOR_TIMESHEET_DASHBOARD)
         all_entries = Entry.objects.filter(start_time__gte=from_date, end_time__lte=to_date)
         events_in_range = CalendarEvent.objects\
                                        .filter(start__gte=from_date, start__lte=to_date)\
                                        .values('start', 'hours')
         for user in users:
-            entries = all_entries.filter(user=user).by_day()
+            user_entries = all_entries.filter(user=user)
+            entries = user_entries.by_day()
 
             user_events = events_in_range.filter(user=user)
 
@@ -160,13 +165,27 @@ class TimeChartViewSet(BaseViewSet):
                              'public_holidays')
 
             daily_hours[user.id]['merged_hours'] = merged_hours
+
+            daygenerator = ((from_date + timedelta(x)).date() for x in xrange((to_date - from_date).days+1))
+            num_days_off = sum(1 for day in daygenerator if \
+                               day.weekday() in [5,6] or \
+                               day in sick_days or \
+                               day in leave_days or \
+                               day in office_closed or \
+                               day in public_holidays)
             
+            total_days_worked = user_entries.aggregate(total_hours=Sum('hours'))['total_hours'] / (user.profile.required_daily_work_hours or 8)
+            available_days = ((to_date-from_date).days+1-num_days_off) # to_date and from_date are inclusive, so add 1
+            daily_hours[user.id]['average_hours_worked'] = (((total_days_worked or 0)/available_days) if available_days else 0) * (user.profile.required_daily_work_hours or 8)
 
         return daily_hours
  
     def _merge_days(self, from_date, to_date, primary_hours, secondary_hours, y_label):
         for primary_hour in primary_hours:
-            if primary_hour['started_on'].date() in list(secondary_hours):
+            d = primary_hour['started_on']
+            if isinstance(primary_hour['started_on'], datetime):
+                d = primary_hour['started_on'].date()
+            if d in list(secondary_hours):
                 primary_hour[y_label] = 8
             else:
                 primary_hour[y_label] = -1
