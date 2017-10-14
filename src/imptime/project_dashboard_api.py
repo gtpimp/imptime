@@ -12,7 +12,7 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.decorators import permission_classes
 from timepiece.models import Business as Project
 from timepiece.models import Project as Sprint
-from timepiece.models import BusinessPermissions, Entry, Rate
+from timepiece.models import BusinessPermissions, Entry, Rate, Issue
 from django.contrib.auth.models import User
 import csv
 from lib import chart_helper
@@ -33,13 +33,15 @@ class ProjectDashboardViewSet(BaseViewSet):
 
             projects = self.allowed_projects().order_by("name")
             projects = self.apply_filter(qs=projects, raw_filter_args=filter_args)
-            projects = self.apply_pagination(qs=projects, pagination=pagination)
 
             if format_args.get('ids_only', None):
+                # Note: only paginate for ids, because the dashboard sorting needs the dashboard data
+                projects = self.apply_pagination(qs=projects, pagination=pagination)
                 context['ids'] = [str(x) for x in projects.values_list(
                     'id', flat=True)]
             else:
                 project_dashboards = [ self.get_project_dashboard(request.user, project) for project in projects ]
+                project_dashboards = self.sort(project_dashboards)
                 context['project_dashboards'] = project_dashboards
                 
             context['pagination'] = pagination
@@ -53,22 +55,23 @@ class ProjectDashboardViewSet(BaseViewSet):
 
     def get_project_dashboard(self, user, project):
         d = { 'id': project.id,
-              'project_id': project.id }
+              'project_id': project.id,
+              'project_name': project.name }
 
         bp = BusinessPermissions.for_user(user, project)  # sic
-        if not bp.has_view_ctc_billable_rates:
-            return d
-        
         entries = Entry.objects.all().filter(issue__project__business=project)
-        most_recent_entries_per_user = entries.order_by('user__username').values('user_id').annotate(Max('end_time'), Min('start_time'))
-        d['most_recent_entry_per_user'] = most_recent_entries_per_user
         sprint_infos = self.get_open_sprints(entries)
-        entries_for_open_sprints = entries.exclude(issue__project__status2__in=Sprint.closed_states()) #sic
-        self.set_users(sprint_infos, entries_for_open_sprints)
-        self.set_rates(sprint_infos, entries_for_open_sprints)
-        self.set_progress(sprint_infos, entries_for_open_sprints)
-        self.set_hours(sprint_infos, entries_for_open_sprints)
-        self.set_recent_activity(sprint_infos, entries)
+        if bp.has_view_ctc_billable_rates:
+            most_recent_entries_per_user = entries.order_by('user__username').values('user_id').annotate(Max('end_time'), Min('start_time'))
+            d['most_recent_entry_per_user'] = most_recent_entries_per_user
+            entries_for_open_sprints = entries.exclude(issue__project__status2__in=Sprint.closed_states()) #sic
+            self.set_users(sprint_infos, entries_for_open_sprints)
+            self.set_rates(sprint_infos, entries_for_open_sprints)
+            self.set_progress(sprint_infos, entries_for_open_sprints)
+            self.set_hours(sprint_infos, entries_for_open_sprints)
+            
+        self.set_recent_activity_chart(sprint_infos, entries)
+        d['recent_activity'] = self.set_recent_activity(project, entries)
         d['sprint_infos'] = sprint_infos
         
         d['sprint_ids'] = sprint_infos.keys()
@@ -115,7 +118,7 @@ class ProjectDashboardViewSet(BaseViewSet):
                                                   'total_billable': total_billable,
                                                   'budget_ratio': total_billable / (spendable_budget or 1) }
 
-    def set_recent_activity(self, sprint_infos, entries):
+    def set_recent_activity_chart(self, sprint_infos, entries):
         date_to = timezone.now()
         date_from = date_to - relativedelta(days=30)
         
@@ -124,3 +127,41 @@ class ProjectDashboardViewSet(BaseViewSet):
             entries_for_sprint_by_day = entries_for_sprint.by_day()
             sprint_info['recent_activity_for_all_users'] = { 'hours': chart_helper.fill_empty_days(date_from, date_to, entries_for_sprint_by_day),
                                                              'has_any_hours': entries_for_sprint.count()>0 }
+
+    def set_recent_activity(self, project, entries):
+
+        issue = Issue.objects.filter(project__business=project)\
+                             .order_by("-modified")\
+                             .values("id", "project_id", "project__business_id", "modified", "number", "subject")\
+                             .first()
+        if issue is None:
+            issue = {'id': None}
+        else:
+            issue['sprint_id'] = issue.pop('project_id')
+            issue['project_id'] = issue.pop('project__business_id')
+            if len(issue['subject'])>50:
+                issue['subject'] = issue['subject'][0:47] + "..."
+
+        entry = entries.order_by("-start_time")\
+                       .values("id", "start_time", "user_id", "issue_id", "issue__number", "issue__subject", "issue__project_id", "issue__project__business_id")\
+                       .first()
+        if entry is None:
+            entry = {'id': None}
+        else:
+            entry['sprint_id'] = entry.pop('issue__project_id')
+            entry['project_id'] = entry.pop('issue__project__business_id')
+            entry['issue_number'] = entry.pop("issue__number")
+            entry['issue_subject'] = entry.pop("issue__subject")
+            if len(entry['issue_subject'])>50:
+                entry['issue_subject'] = entry['issue_subject'][0:47] + "..."
+            
+            
+        d = {
+            'most_recent_clock_entry': entry,
+            'most_recent_issue': issue
+        }
+        return d
+
+    def sort(self, project_dashboards):
+        return sorted(project_dashboards, key=lambda x: x['recent_activity']['most_recent_clock_entry'])
+    

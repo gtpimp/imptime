@@ -19,6 +19,7 @@ import ProgressBar from './ProgressBar'
 import Hours from './Hours'
 import Timestamp from './Timestamp'
 import TimeChart from './TimeChart'
+import IssueLink from './IssueLink'
 
 class ProjectDashboard extends Component {
 
@@ -43,6 +44,59 @@ class ProjectDashboard extends Component {
                 dispatch(ensureUsersLoaded(project_dashboard.user_ids))
             }
         }
+    }
+
+    renderRecentActivity() {
+        const { project_dashboard } = this.props
+        return (
+            <div className="project_dashboard__recent_activity">
+              <table>
+                <thead>
+                  { project_dashboard.recent_activity.most_recent_clock_entry.id &&
+                  <tr>
+                    <td>Most recent clock</td>
+                    <td>
+                      <IssueLink issue_id={project_dashboard.recent_activity.most_recent_clock_entry.issue_id}
+                                 sprint_id={project_dashboard.recent_activity.most_recent_clock_entry.sprint_id}
+                                 project_id={project_dashboard.recent_activity.most_recent_clock_entry.project_id}
+                                 issue_number={project_dashboard.recent_activity.most_recent_clock_entry.issue_number}
+                      />
+                    </td>
+                    <td>
+                      {project_dashboard.recent_activity.most_recent_clock_entry.issue_subject}
+                    </td>
+                    <td>
+                      <OtherUser user_id={project_dashboard.recent_activity.most_recent_clock_entry.user_id} format="from_now"/>
+                    </td>
+                    <td>
+                      <Timestamp value={project_dashboard.recent_activity.most_recent_clock_entry.start_time} format="from_now"/>
+                    </td>
+                  </tr>
+                  }
+                  { project_dashboard.recent_activity.most_recent_issue.id &&
+                  <tr>
+                    <td>Most recent issue</td>
+                    <td>
+                      <IssueLink issue_id={project_dashboard.recent_activity.most_recent_issue.issue_id}
+                                 sprint_id={project_dashboard.recent_activity.most_recent_issue.sprint_id}
+                                 project_id={project_dashboard.recent_activity.most_recent_issue.project_id}
+                                 issue_number={project_dashboard.recent_activity.most_recent_issue.number}
+                      />
+                    </td>
+                    <td>
+                      {project_dashboard.recent_activity.most_recent_issue.subject}
+                    </td>
+                    <td>
+                    </td>
+                    <td>
+                      <Timestamp value={project_dashboard.recent_activity.most_recent_issue.modified} format="from_now"/>
+                    </td>
+                  </tr>
+                  }
+                </thead>
+              </table>
+            </div>
+        )
     }
 
     renderOpenSprints() {
@@ -134,10 +188,10 @@ class ProjectDashboard extends Component {
                               <OtherUser user_id={entry.user_id}/>
                             </td>
                             <td>
-                              <Timestamp value={entry.start_time__min} format="datetime"/>
+                              <Timestamp value={entry.start_time__min} format="from_now"/>
                             </td>
                             <td>
-                              <Timestamp value={entry.end_time__max} format="datetime"/>
+                              <Timestamp value={entry.end_time__max} format="from_now"/>
                             </td>
                           </tr>
                       ))}
@@ -160,6 +214,7 @@ class ProjectDashboard extends Component {
                   <h2>
                     <ProjectName project_id={project_id}/>
                   </h2>
+                  {this.renderRecentActivity()}
                   {this.renderOpenSprints()}
                   {this.renderMostRecentEntriesPerUser()}
                 </div>
