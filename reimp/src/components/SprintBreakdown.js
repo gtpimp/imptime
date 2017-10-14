@@ -22,7 +22,7 @@ class SprintBreakdown extends Component {
                         function(user_id) {
                             return (
                                 <th key={user_id}>
-                                  <OtherUser value={user_id} />
+                                  <OtherUser user_id={user_id} />
                                 </th>
                             )
                         }

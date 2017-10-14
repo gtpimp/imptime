@@ -221,7 +221,7 @@ class Issue extends Component {
                   }
                   {includes(visible_header_keys, "assignee") &&
                    <td className="list-table__cell list-table__cell--issue-assignee">
-                     <OtherUser value={issue.assigned_to_id}/>
+                     <OtherUser user_id={issue.assigned_to_id}/>
                      { false &&
                        <RIEModeToggler
                            rie_key={"issue_assigned_to_" + issue.id}

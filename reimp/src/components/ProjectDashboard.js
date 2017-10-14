@@ -1,13 +1,17 @@
 import React, { Component } from 'react'
-import { DragSource, DropTarget } from 'react-dnd';
+import { map } from 'lodash'
+import { DragSource, DropTarget } from 'react-dnd'
 import { connect } from 'react-redux'
 import classNames from 'classnames'
 import { DndTypes } from '../actions/Dnd'
-import '../sass/project.css'
+import '../sass/project-dashboard.css'
 import {
     getProjectDashboard,
     ensureProjectDashboardsLoaded
 } from '../actions/ProjectDashboards'
+import ProjectName from './ProjectName'
+import OtherUser from './OtherUser'
+import Timestamp from './Timestamp'
 
 class ProjectDashboard extends Component {
 
@@ -25,9 +29,34 @@ class ProjectDashboard extends Component {
             dispatch(ensureProjectDashboardsLoaded([project_id]))
         }
     }
+
+    renderMostRecentEntriesPerUser() {
+        const { project_dashboard } = this.props
+        return (
+            <div className="project_dashboard__recent_entries_per_user">
+              <table>
+                {map(project_dashboard.most_recent_entry_per_user, (entry) => 
+                    (
+                        <tr key={entry.user_id}
+                            className="project_dashboard__recent_entry_for_user">
+                          <td>
+                            <OtherUser user_id={entry.user_id}/>
+                          </td>
+                          <td>
+                            <Timestamp value={entry.start_time__min} format="datetime"/>
+                          </td>
+                          <td>
+                            <Timestamp value={entry.end_time__max} format="datetime"/>
+                          </td>
+                        </tr>
+                    ))}
+              </table>
+            </div>
+        )
+    }
     
     render() {
-        const { project_dashboard_id, project_dashboard } = this.props
+        const { project_dashboard_id, project_id, project_dashboard } = this.props
 
         return (
             <div className="project_dashboard">
@@ -35,7 +64,10 @@ class ProjectDashboard extends Component {
                 <div>Loading...</div>
               }
               { project_dashboard_id &&
-                <div>{project_dashboard_id}</div>
+                <div>
+                  <ProjectName project_id={project_id}/>
+                  {this.renderMostRecentEntriesPerUser()}
+                </div>
               }
             </div>
         )
@@ -52,6 +84,5 @@ function mapStateToProps(state, props) {
         project_dashboard_id: (project_dashboard || {}).id
     }
 }
-
 
 export default connect(mapStateToProps)(ProjectDashboard)

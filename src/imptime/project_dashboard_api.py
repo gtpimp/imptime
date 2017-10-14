@@ -5,7 +5,7 @@ from datetime import datetime
 from dateutil.relativedelta import relativedelta
 from django.http import HttpResponse
 from base_api import BaseViewSet
-from django.db.models import Prefetch, Count, Sum
+from django.db.models import Prefetch, Count, Sum, Max, Min
 import json
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.decorators import permission_classes
@@ -53,6 +53,7 @@ class ProjectDashboardViewSet(BaseViewSet):
         d = { 'id': project.id,
               'project_id': project.id }
 
-        # import pdb; pdb.set_trace()
-        
+        entries = Entry.objects.all().filter(issue__project__business=project)
+        most_recent_entries_per_user = entries.order_by('user__id').values('user_id').annotate(Max('end_time'), Min('start_time'))
+        d['most_recent_entry_per_user'] = most_recent_entries_per_user
         return d

@@ -25,8 +25,9 @@ class OtherUser extends Component {
 	      const { user, loading_value, onClick } = this.props
 
 	      return (
-	          <div key={this.key+".collapsed_user."+user.id}
-		             onClick={onClick}
+	          <div className="other_user"
+                       key={this.key+".collapsed_user."+user.id}
+		       onClick={onClick}
 	          >
 		          { user.username && user.username }
 		          { ! user.username && loading_value }
@@ -54,8 +55,7 @@ class OtherUser extends Component {
 }
 
 function mapStateToProps(state, props) {
-    const { value, render_mode, loading_value } = props
-    const user_id = value
+    const { user_id, render_mode, loading_value } = props
     const user = ((user_id && (getUser(state, user_id))) || { 'loaded': false, 'id': user_id }) || { 'username': 'no-one' }
 
     return {

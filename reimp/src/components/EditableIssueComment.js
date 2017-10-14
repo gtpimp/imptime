@@ -67,7 +67,7 @@ class EditableIssueComment extends Component {
                   <div className="text-component--readonly text-component--comment">
                     <div className="issue_sidebar--comment_date" >
                       {comment.modified} - <div className="issue_sidebar--comment_author">
-                      <OtherUser value={comment.author_id} /></div>
+                      <OtherUser user_id={comment.author_id} /></div>
                     </div>
                     <div className="issue_sidebar--textarea--readonly" >
                       {comment.comment}

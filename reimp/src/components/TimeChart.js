@@ -86,7 +86,7 @@ class TimeChart extends Component {
         return (
             <div className="time_chart__user_chart" key={user_id}>
               <h2 className="time_chart__user_chart_title">
-                <OtherUser value={user_id} />
+                <OtherUser user_id={user_id} />
               </h2>
               <BarChart width={500} height={100} data={times_for_user}>
                 <Bar dataKey='daily_hours' fill="#8884d8"/>

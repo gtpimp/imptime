@@ -31,7 +31,7 @@ export class RIEUserDropDown extends RIEEditBase {
     renderReadonly() {
 	const { value } = this.props
 	return (
-	    <OtherUser value={value}
+	    <OtherUser user_id={value}
 		       render_mode="inline--small"
 		       loading_value={value} />
 	)

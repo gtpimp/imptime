@@ -46,7 +46,7 @@ class SprintCostSummary extends Component {
                  : <CurrencyValue value={value} />
                 </span>
                 <span className="cost-summary___user-name">
-                  <OtherUser value={index} />
+                  <OtherUser user_id={index} />
                 </span>
               </div>
             </div>
