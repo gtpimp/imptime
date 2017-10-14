@@ -32,11 +32,8 @@ class IssueViewSet(BaseViewSet):
             format_args = params.get('format', {})
 
             issues = self.allowed_issues().order_by("order")
-
-            issues = self.apply_filter(qs=issues,
-                                       raw_filter_args=filter_args)
-            issues = self.apply_pagination(qs=issues,
-                                           pagination=pagination)
+            issues = self.apply_filter(qs=issues, raw_filter_args=filter_args)
+            issues = self.apply_pagination(qs=issues, pagination=pagination)
 
             if format_args.get('ids_only', None):
                 context['ids'] = [str(x) for x in issues.values_list(

@@ -22,12 +22,26 @@ class ProjectDashboardViewSet(BaseViewSet):
 
     def list(self, request):
         try:
+            context = {}
             params = request.GET.get('params', '{}')
             params = json.loads(params)
+            pagination = params.get('pagination', {})
+            filter_args = params.get('filter', {})
+            format_args = params.get('format', {})
 
             projects = self.allowed_projects().order_by("name")
-            project_dashboards = [ self.get_project_dashboard for project in projects ]
-            data = {'status': 'success', 'payload': { 'project_dashboards': project_dashboards}}
+            projects = self.apply_filter(qs=projects, raw_filter_args=filter_args)
+            projects = self.apply_pagination(qs=projects, pagination=pagination)            
+
+            if format_args.get('ids_only', None):
+                context['ids'] = [str(x) for x in projects.values_list(
+                    'id', flat=True)]
+            else:
+                project_dashboards = [ self.get_project_dashboard(project) for project in projects ]
+                context['project_dashboards'] = project_dashboards
+                
+            context['pagination'] = pagination
+            data = {'status': 'success', 'payload': context}
 
         except Exception, ex:
             logger.exception(ex)

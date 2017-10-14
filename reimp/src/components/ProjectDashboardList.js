@@ -55,9 +55,9 @@ class ProjectDashboardList extends Component {
 	}
     }
 
-    renderProjectDashboard(project) {
+    renderProjectDashboard(project_dashboard) {
         return (
-            <div>{project.id}</div>
+            <div>{project_dashboard.id}</div>
         )
     }
 
@@ -67,7 +67,7 @@ class ProjectDashboardList extends Component {
 	    <div>
               <div>Project Dashboards</div>
               {map(project_dashboards, (project_dashboard) =>
-                  {this.renderProjectDashboard()}
+                  {return this.renderProjectDashboard(project_dashboard)}
               )}
 	    </div>
 	)

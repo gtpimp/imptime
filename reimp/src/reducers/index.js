@@ -12,6 +12,7 @@ import loading from './loading'
 import notification_bar from './notification_bar.js'
 import page from './page'
 import project from './project'
+import project_dashboard from './project_dashboard'
 import project_statement from './project_statement'
 import project_user_permission from './project_user_permission'
 import rie from './rie'
@@ -42,6 +43,7 @@ const rootReducer = combineReducers({
     notification_bar,
     page,
     project,
+    project_dashboard,
     project_statement,
     project_user_permission,
     rie,
