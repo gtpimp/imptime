@@ -31,7 +31,7 @@ class TimeChartTooltip extends Component {
 
         const { active, payload, label } = this.props
 
-        if ( ! active ) {
+        if ( ! active || ! payload ) {
             return null
         }
         

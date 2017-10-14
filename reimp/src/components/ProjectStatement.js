@@ -23,7 +23,7 @@ import {
     download_sprint_breakdown,
     download_issues_worked_on
 } from '../actions/ProjectStatement'
-import TimeChart from './TimeChart'
+import SprintTimeChartByUser from '../components/SprintTimeChartByUser'
 import { ensureUsersLoaded } from '../actions/Users'
 import { setBreadcrumbs } from '../actions/Breadcrumbs'
 import {
@@ -313,7 +313,7 @@ class ProjectStatement extends Component {
                           <h2 className="project__statement__times_grid__header">
                                 Pictoral work for the given range
                       </h2>
-                      <TimeChart project_id={project_id} filter={filter} />
+                      <SprintTimeChartByUser project_id={project_id} filter={filter} />
                     </div>
 
                     <div className="project__statement__separator" />

@@ -26,25 +26,7 @@ import DatePicker from 'react-datepicker';
 import moment from 'moment';
 import 'react-datepicker/dist/react-datepicker.css';
 
-class TimeChartTooltip extends Component {
-
-    render() {
-
-        const { active, payload, label } = this.props
-
-        if ( ! active ) {
-            return null
-        }
-        
-        return (
-            <div className="time_chart__tooltip">
-              {payload[0].value} hours on  {moment(label).format('dddd DD-MMM-YYYY')}
-            </div>
-        )
-    }
-}
-
-class TimeChart extends Component {
+class SprintTimeChartByUser extends Component {
 
     componentDidMount() {
         const { project_id, project, dispatch, project_statement, filter } = this.props
@@ -87,9 +69,9 @@ class TimeChart extends Component {
                               <h2 className="time_chart__user_chart_title">
                                 <OtherUser user_id={user_id} />
                               </h2>
-                              <TimeChart times=times_for_user
+                              <TimeChart times={times_for_user}
                                          yaxis_datakey="daily_hours"
-                                         xaxis_datakey=""started_on"/>
+                                         xaxis_datakey="started_on"/>
                             </div>
                         )
                     })
@@ -114,4 +96,4 @@ function mapStateToProps(state, props) {
     }
 }
 
-export default connect(mapStateToProps)(TimeChart)
+export default connect(mapStateToProps)(SprintTimeChartByUser)

@@ -1,6 +1,6 @@
 from dateutil.relativedelta import relativedelta
 
-def fill_empty_days(self, date_from, date_to, values):
+def fill_empty_days(date_from, date_to, values):
     """ ensures there is a value for each date in values """
     d = date_from
     values_index = 0
