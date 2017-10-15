@@ -90,12 +90,12 @@ export default function item_list(state = initialState, action) {
             return state_copy;
 	case UPDATE_LIST_PAGINATION:
 	    state_copy[action.list_key] = Object.assign({}, l, {
-		pagination: Object.assign({}, state_copy[action.list_key].pagination, action.pagination)
+		pagination: Object.assign({}, (state_copy[action.list_key] || {}).pagination, action.pagination)
 	    })
 	    return state_copy
 	case UPDATE_LIST_FILTER:
 	    state_copy[action.list_key] = Object.assign({}, l, {
-		filter: Object.assign({}, state_copy[action.list_key].filter, action.filter)
+		filter: Object.assign({}, (state_copy[action.list_key] || {}).filter, action.filter)
 	    })
 	    return state_copy
 	case UPDATE_LIST_SELECTION:
