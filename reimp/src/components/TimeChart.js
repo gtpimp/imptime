@@ -44,7 +44,7 @@ class TimeChartTooltip extends Component {
               { map(payload, (series) =>
                   (
                       <div key={series.dataKey+"_"+label+"_"+name} className="time_chart__tooltip_series">
-                        { series.dataKey == 'graph_y' &&
+                        { series.dataKey == 'graph_y' || series.dataKey == "daily_hours" &&
                           <div>{series.value} hours on {moment(label).format('dddd DD-MMM-YYYY')}</div>
                         }
                         { series.dataKey == 'sick_days' && series.value > 0 &&
