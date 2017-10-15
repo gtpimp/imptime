@@ -12,6 +12,7 @@ import IssuesToolbarPanel from './IssuesToolbarPanel'
 import ListToolbarPanel from './ListToolbarPanel'
 import CostSummaryToolbarPanel from './CostSummaryToolbarPanel'
 import ProjectStatementToolbarPanel from './ProjectStatementToolbarPanel'
+import UserTimesheetsToolbarPanel from './UserTimesheetsToolbarPanel'
 
 class ToolBar extends Component {
 
@@ -37,6 +38,8 @@ class ToolBar extends Component {
                 return <CostSummaryToolbarPanel key="cost-summary-panel" {...this.props}/>
             case 'project-statement':
                 return <ProjectStatementToolbarPanel key="project-summary-panel" {...this.props}/>
+            case 'user-timesheets':
+                return <UserTimesheetsToolbarPanel key="user-timesheet-panel" {...this.props}/>
             default:
                 throw new Error("Unsupported toolbar panel:" + id)
         }

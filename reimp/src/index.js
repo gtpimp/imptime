@@ -15,6 +15,7 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import SprintCostSummaryPage from './containers/SprintCostSummaryPage'
 import SprintDashboardPage from './containers/SprintDashboardPage'
+import UserTimesheetPage from './containers/UserTimesheetPage'
 import SprintsPage from './containers/SprintsPage'
 import TeamPage from './containers/TeamPage'
 import configureStore from './store/configureStore'
@@ -59,6 +60,7 @@ ReactDOM.render(
                 <Route path="projects/:projectId/users/:userId" component={ProjectUserPage}/>
 
                 <Route path="dashboard" component={DashboardPage}/>
+                <Route path="usertimesheets" component={UserTimesheetPage}/>
                 <Route path="clients" component={ClientsPage}/>
                 <Route path="team" component={TeamPage}/>
             </Route>

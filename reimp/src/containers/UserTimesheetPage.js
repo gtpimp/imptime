@@ -4,20 +4,19 @@ import { setBreadcrumbsActive } from '../actions/Breadcrumbs'
 import ProjectDashboardList from '../components/ProjectDashboardList'
 import UserTimesheetList from '../components/UserTimesheetList'
 
-import { PAGE_KEY__DASHBOARD_PAGE,
-         LIST_KEY__PROJECT_DASHBOARD_LIST,
+import { PAGE_KEY__USER_TIMESHEET_PAGE,
          LIST_KEY__USER_TIMESHEET_LIST
 } from '../actions/ItemListKeyRegistry'
 import {
     set_toolbars
 } from '../actions/Page'
 
-class DashboardPage extends Component {
+class UserTimesheetPage extends Component {
 
     componentDidMount() {
         const { dispatch } = this.props
         dispatch(setBreadcrumbsActive(false))
-        dispatch(set_toolbars(PAGE_KEY__DASHBOARD_PAGE, ['project-dashboards']))
+        dispatch(set_toolbars(PAGE_KEY__USER_TIMESHEET_PAGE, ['user-timesheets']))
     }
 
     componentWillReceiveProps() {
@@ -29,7 +28,7 @@ class DashboardPage extends Component {
 
         return (
             <div>
-              <ProjectDashboardList list_key={LIST_KEY__PROJECT_DASHBOARD_LIST} />
+              <UserTimesheetList list_key={LIST_KEY__USER_TIMESHEET_LIST} />
             </div>
         )
     }
@@ -39,4 +38,4 @@ function mapStateToProps(state) {
     return {}
 }
 
-export default connect(mapStateToProps)(DashboardPage)
+export default connect(mapStateToProps)(UserTimesheetPage)

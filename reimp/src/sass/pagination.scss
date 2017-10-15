@@ -1,6 +1,16 @@
 @import 'variables.scss';
 @import 'snippets.scss';
 
+.pager {
+    clear: both;
+    display: flex;
+    font-size: $font-size-small;
+}
+
+.pager__text {
+    margin-left: 10px;
+}
+
 .pager .icon {
     cursor: pointer;
     background-repeat: no-repeat;

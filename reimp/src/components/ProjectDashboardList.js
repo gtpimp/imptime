@@ -82,14 +82,20 @@ class ProjectDashboardList extends Component {
 	return (
 	    <div>
               <div>Project Dashboards</div>
-              <div className="project-dashboard-list__project-dashboards">
-                {!is_loading && map(project_dashboards, (project_dashboard) =>
-                    <div key={project_dashboard.id} className="project-dashboard-list__project-dashboard">
-                      <ProjectDashboard key={project_dashboard.id} project_id={project_dashboard.project_id} />
-                    </div> 
-                 )}
-                 <Pagination list_key={list_key} on_changed={this.onRefresh} />
-              </div>
+              { is_loading && <div>Loading...</div> }
+              { ! is_loading &&
+                <div>
+                  <Pagination list_key={list_key} on_changed={this.onRefresh} />
+                  <div className="project-dashboard-list__project-dashboards">
+                    {map(project_dashboards, (project_dashboard) =>
+                        <div key={project_dashboard.id} className="project-dashboard-list__project-dashboard">
+                          <ProjectDashboard key={project_dashboard.id} project_id={project_dashboard.project_id} />
+                        </div> 
+                     )}
+                  </div>
+                  <Pagination list_key={list_key} on_changed={this.onRefresh} />
+                </div>
+              }
 	    </div>
 	)
     }

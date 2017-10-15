@@ -43,9 +43,7 @@ class Pagination extends Component {
                       }
                 </div>
                 <div className="pager__text">
-		    Showing {this.props.first_item_index} to {this.props.last_item_index}
-		    out of 
-		    {this.props.num_items}
+		  Showing {this.props.first_item_index} to {this.props.last_item_index} out of {this.props.num_items}
 		</div>
                 { this.props.has_prev_page &&
                   <div className="icon icon--previous-page" onClick={this.on_prev_page}>

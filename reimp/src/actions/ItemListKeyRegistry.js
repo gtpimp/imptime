@@ -26,6 +26,7 @@ export const PAGE_KEY__SPRINTS_TOOLBAR = 'sprints_toolbar'
 export const PAGE_KEY__SPRINT_DASHBOARD_PAGE = 'sprint_dashboard_page'
 export const PAGE_KEY__ISSUES_PAGE = 'issues_page'
 export const PAGE_KEY__ISSUE_DASHBOARD_PAGE = 'issue_dashboard_page'
+export const PAGE_KEY__USER_TIMESHEET_PAGE = 'user_timesheet_page'
 
 export const SELECTOR__SPRINTS = 'selector_sprints'
 
