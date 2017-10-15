@@ -166,22 +166,23 @@ class TimeChartViewSet(BaseViewSet):
                                     'public_holidays': public_holidays.values('applies_on')
             }
 
+            daily_hours[user.id]['required_daily_work_hours'] = (user.profile.required_daily_work_hours or 8)
             merged_hours = daily_hours[user.id]['worked']
             self._merge_days(from_date, to_date, merged_hours,
                              [x.date() for x in sick_days.values_list('start', flat=True)],
-                             'sick_days')
+                             'sick_days', daily_hours[user.id]['required_daily_work_hours'])
 
             self._merge_days(from_date, to_date, merged_hours,
                              [x.date() for x in leave_days.values_list('start', flat=True)],
-                             'leave_days')
+                             'leave_days', daily_hours[user.id]['required_daily_work_hours'])
 
             self._merge_days(from_date, to_date, merged_hours,
                              [x.date() for x in office_closed.values_list('start', flat=True)],
-                             'office_closed')
+                             'office_closed', daily_hours[user.id]['required_daily_work_hours'])
 
             self._merge_days(from_date, to_date, merged_hours,
                              public_holidays.values_list('applies_on', flat=True),
-                             'public_holidays')
+                             'public_holidays', daily_hours[user.id]['required_daily_work_hours'])
 
             daily_hours[user.id]['merged_hours'] = merged_hours
 
@@ -192,7 +193,6 @@ class TimeChartViewSet(BaseViewSet):
             daygenerator = ((from_date + timedelta(x)).date() for x in xrange((to_date - from_date).days+1))
             num_days_off = sum(1 for day in daygenerator if day.weekday() in [5,6] or day in allowed_off_days)
 
-            daily_hours[user.id]['required_daily_work_hours'] = (user.profile.required_daily_work_hours or 8)
             daily_hours[user.id]['required_daily_work_hours_warning_threshold'] = daily_hours[user.id]['required_daily_work_hours'] * self.DAILY_WORK_HOURS_WARNING_THRESHOLD
             total_days_worked = (user_entries.aggregate(total_hours=Sum('hours'))['total_hours'] or 0) / daily_hours[user.id]['required_daily_work_hours']
             available_days = ((to_date-from_date).days+1-num_days_off) # to_date and from_date are inclusive, so add 1
@@ -202,13 +202,13 @@ class TimeChartViewSet(BaseViewSet):
 
         return daily_hours
  
-    def _merge_days(self, from_date, to_date, primary_hours, secondary_hours, y_label):
+    def _merge_days(self, from_date, to_date, primary_hours, secondary_hours, y_label, required_daily_work_hours):
         for primary_hour in primary_hours:
             d = primary_hour['started_on']
             if isinstance(primary_hour['started_on'], datetime):
                 d = primary_hour['started_on'].date()
             if d in list(secondary_hours):
-                primary_hour[y_label] = 8
+                primary_hour[y_label] = required_daily_work_hours
             else:
                 primary_hour[y_label] = -1
 
