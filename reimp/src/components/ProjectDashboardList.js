@@ -63,7 +63,7 @@ class ProjectDashboardList extends Component {
               <div>Project Dashboards</div>
               <div className="project-dashboard-list__project-dashboards">
                 {map(project_dashboards, (project_dashboard) =>
-                    <div className="project-dashboard-list__project-dashboard">
+                    <div key={project_dashboard.id} className="project-dashboard-list__project-dashboard">
                       <ProjectDashboard key={project_dashboard.id} project_id={project_dashboard.project_id} />
                     </div> 
                  )}

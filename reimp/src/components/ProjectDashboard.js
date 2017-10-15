@@ -70,7 +70,7 @@ class ProjectDashboard extends Component {
                     </td>
                     <td>
                       <Timestamp value={project_dashboard.recent_activity.most_recent_clock_entry.start_time} format="from_now"/>
-                    </td>
+7                    </td>
                   </tr>
                   }
                   { project_dashboard.recent_activity.most_recent_issue.id &&

@@ -28,25 +28,44 @@ class TimeChartViewSet(BaseViewSet):
     DAILY_WORK_HOURS_WARNING_THRESHOLD = 0.938
     
     @list_route(methods=['GET'])
-    def timesheet_dashboard(self, request):
+    def user_timesheet(self, request):
         try:
             context = {}
             params = request.GET.get('params', '{}')
             params = json.loads(params)
+            pagination = params.get('pagination', {})
+            filter_args = params.get('filter', {})
+            format_args = params.get('format', {})
 
-            users = self.allowed_users().order_by("username")
-            users = self.get_active_users(users)
-            times_by_user = self.get_user_times(users)
+            project_id = filter_args.pop('project_id', None)
+
+            users = self.allowed_users().filter(is_staff=True).order_by("username")
+
+            # We don't have a global permission for user lists yet, so
+            # for the moment only super users can view all user
+            # timesheets.
+            if not request.user.is_superuser:
+                users = [request.user]
+            else:
+                if project_id:
+                    users = users.filter(business_permissions__business_id=project_id).distinct() #sic
+                users = self.apply_filter(qs=users, raw_filter_args=filter_args)
+                users = self.apply_pagination(qs=users, pagination=pagination)
             
-            context['timesheet_dashboard'] = { 'times_by_user': times_by_user }
-            data = {"status": "success", "payload": context}
-
+            if format_args.get('ids_only'):
+                if not request.user.is_superuser:
+                    context['ids'] = [str(request.user.id)]
+                else:
+                    context['ids'] = [str(x) for x in users.values_list('id', flat=True)]
+            else:
+                times_by_user = self.get_user_times(users)
+                context['user_timesheets'] = times_by_user
+            context['pagination'] = pagination
+            data = {'status': 'success', 'payload': context}
         except Exception, ex:
             logger.exception(ex)
             return self.error_response(ex)
-
         return HttpResponse(JSONRenderer().render(data))
-    
     
     @detail_route(methods=['GET'])
     def times_per_user_for_project(self, request, pk):
@@ -177,6 +196,8 @@ class TimeChartViewSet(BaseViewSet):
             total_days_worked = (user_entries.aggregate(total_hours=Sum('hours'))['total_hours'] or 0) / daily_hours[user.id]['required_daily_work_hours']
             available_days = ((to_date-from_date).days+1-num_days_off) # to_date and from_date are inclusive, so add 1
             daily_hours[user.id]['average_hours_worked'] = (((total_days_worked or 0)/available_days) if available_days else 0) * daily_hours[user.id]['required_daily_work_hours']
+            daily_hours[user.id]['user_id'] = user.id
+            daily_hours[user.id]['id'] = user.id
 
         return daily_hours
  

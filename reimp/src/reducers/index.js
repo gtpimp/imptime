@@ -18,7 +18,7 @@ import project_user_permission from './project_user_permission'
 import rie from './rie'
 import settings from './settings'
 import sprint from './sprint'
-import timesheet_dashboard from './timesheet_dashboard'
+import user_timesheet from './user_timesheet'
 import time_chart from './time_chart'
 import time_summary from './time_summary'
 import toolbar from './toolbar'
@@ -51,11 +51,11 @@ const rootReducer = combineReducers({
     routing,
     settings,
     sprint,
-    timesheet_dashboard,
     time_chart,
     time_summary,
     toolbar,
     user,
+    user_timesheet,
     websockets,
 })
 

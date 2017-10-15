@@ -151,8 +151,8 @@ function announceMatchingItemsLoadFailed(list_key, error) {
 }
 
 function tryFetchMatchingItems(list_key,
-			                         required_item_ids,
-			                         matching_items_key, matching_items_promise_func) {
+			       required_item_ids,
+			       matching_items_key, matching_items_promise_func) {
     // The second half of tryFetchListAndItems, separated out for clarity
 
     return (dispatch, getState) => {
@@ -222,11 +222,13 @@ export function getMissingItemIds(state, required_item_ids, matching_items_key) 
     return item_ids_to_load
 }
 
-function tryFetchListAndItems(list_key, matching_items_key, matching_items_promise_func) {
+function tryFetchListAndItems(list_key, matching_items_key, matching_items_promise_func, fetch_item_ids_url) {
 
     // First tries to fetch the list of items, and then fetches all
     // missing matching items
 
+    fetch_item_ids_url = fetch_item_ids_url || 'imp/' + matching_items_key + '/'
+    
     return (dispatch, getState) => {
 	      const state = getState()
 
@@ -247,7 +249,7 @@ function tryFetchListAndItems(list_key, matching_items_key, matching_items_promi
 	      const params = { filter: l.filter || {},
 			                   format: {ids_only: true},
 			                   pagination: l.pagination || {} }
-        return impfetch(state, 'imp/' + matching_items_key + "/", dispatch, {params:params})
+        return impfetch(state, fetch_item_ids_url, dispatch, {params:params})
             .then(response => response.json())
             .then(json => {
 		            if (json.status !== 'success') {
@@ -283,10 +285,13 @@ function shouldFetchList(state, list_key) {
 }
 
 export function fetchListIfNeeded(list_key,
-				  matching_items_key, matching_items_promise_func) {
+				  matching_items_key,
+                                  matching_items_promise_func,
+                                  fetch_item_ids_url ) {
     return tryFetchListAndItems(list_key,
 			        matching_items_key,
-			        matching_items_promise_func)
+			        matching_items_promise_func,
+                                fetch_item_ids_url)
 }
 
 export function getVisibleItemIds(state, list_key) {

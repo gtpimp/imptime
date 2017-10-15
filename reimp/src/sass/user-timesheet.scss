@@ -1,8 +1,8 @@
 
-.timesheet_dashboard {
+.user-timesheet {
 }
 
-.timesheet_dashboard__charts {
+.user-timesheet__charts {
     display: flex;
     flex-direction: row;
     justify-content: space-between;
@@ -12,6 +12,6 @@
     align-content: flex-end;
 }
 
-.timesheet_dashboard__chart {
+.user-timesheet__chart {
     margin: 20px;
 }

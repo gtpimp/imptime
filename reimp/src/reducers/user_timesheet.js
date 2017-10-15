@@ -6,11 +6,12 @@ import without from 'lodash/without'
 import { setErrorMessage } from '../actions/Error'
 
 import {
-    ANNOUNCE_TIMESHEET_DASHBOARD_LOADED,
-    ANNOUNCE_TIMESHEET_DASHBOARD_LOAD_FAILED,
-    ANNOUNCE_LOADING_TIMESHEET_DASHBOARD,
-    INVALIDATE_TIMESHEET_DASHBOARD,
-} from '../actions/TimesheetDashboards.js'
+    ANNOUNCE_USER_TIMESHEETS_LOADED,
+    ANNOUNCE_USER_TIMESHEETS_LOAD_FAILED,
+    ANNOUNCE_LOADING_USER_TIMESHEETS,
+    INVALIDATE_USER_TIMESHEETS,
+    INVALIDATE_ALL_USER_TIMESHEETS,
+} from '../actions/UserTimesheets.js'
 
 const initialState = {
     items_by_id: {},
@@ -18,20 +19,23 @@ const initialState = {
     saving_item_ids: []
 }
 
-export default function timesheet_dashboard(state = initialState, action) {
+export default function user_timesheet(state = initialState, action) {
 
     let state_copy = Object.assign({}, state)
     let new_items_by_id = null
 
     switch (action.type) {
-        case INVALIDATE_TIMESHEET_DASHBOARD:
-            return Object.assign({}, state, {items_by_id: without(state.items_by_id, action.timesheet_ids_to_invalidate)})
+	case INVALIDATE_ALL_USER_TIMESHEETS:
+	    return Object.assign({}, state, {items_by_id: null})
 
-        case ANNOUNCE_LOADING_TIMESHEET_DASHBOARD:
+        case INVALIDATE_USER_TIMESHEETS:
+            return Object.assign({}, state, {items_by_id: without(state.items_by_id, action.user_ids_to_invalidate)})
+
+        case ANNOUNCE_LOADING_USER_TIMESHEETS:
 	    return Object.assign({}, state, {
-		loading_item_ids: union(state.loading_item_ids, action.timesheet_ids_to_load)
+		loading_item_ids: union(state.loading_item_ids, action.user_ids_to_load)
 	    })
-        case ANNOUNCE_TIMESHEET_DASHBOARD_LOADED:
+        case ANNOUNCE_USER_TIMESHEETS_LOADED:
             state_copy = Object.assign({}, state, {
 		loading_item_ids: Object.assign({},
 						difference(state.loading_item_ids || [],
@@ -42,8 +46,8 @@ export default function timesheet_dashboard(state = initialState, action) {
             state_copy.items_by_id = Object.assign({}, assign(state_copy.items_by_id, action.items_by_id))
             return state_copy
             
-        case ANNOUNCE_TIMESHEET_DASHBOARD_LOAD_FAILED:
-            setErrorMessage("Failed to load timesheets dashboards: " + action.error_message)
+        case ANNOUNCE_USER_TIMESHEETS_LOAD_FAILED:
+            setErrorMessage("Failed to load user timesheets: " + action.error_message)
             return state;
 
         default:
