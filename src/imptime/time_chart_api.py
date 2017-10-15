@@ -39,7 +39,8 @@ class TimeChartViewSet(BaseViewSet):
 
             project_id = filter_args.pop('project_id', None)
 
-            users = self.allowed_users().filter(is_staff=True).order_by("username")
+            users = self.allowed_users().order_by("username")
+            users = self.get_active_users(users)
 
             # We don't have a global permission for user lists yet, so
             # for the moment only super users can view all user
