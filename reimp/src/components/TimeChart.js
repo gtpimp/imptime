@@ -108,7 +108,7 @@ class TimeChart extends Component {
                   <ReferenceLine y={reference_line_hours} label="" stroke="orange"/>
                 }
                 { is_bad &&
-                  <ReferenceLine y={average_hours_worked || 1} stroke="red" stokeWidth={5}/>
+                  <ReferenceLine y={average_hours_worked || 0.1} stroke="red" stokeWidth={5}/>
                 }
                 { is_good &&
                   <ReferenceLine y={average_hours_worked} stroke="blue"/>

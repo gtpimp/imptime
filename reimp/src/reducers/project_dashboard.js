@@ -16,7 +16,9 @@ import {
 const initialState = {
     items_by_id: {},
     loading_item_ids: [],
-    saving_item_ids: []
+    saving_item_ids: [],
+    all_sprint_ids: [],
+    all_user_ids: []
 }
 
 export default function project_dashboard(state = initialState, action) {
@@ -41,7 +43,10 @@ export default function project_dashboard(state = initialState, action) {
 						difference(state.loading_item_ids || [],
 							   keys(action.items_by_id))),
 		items_by_id: Object.assign({},
-					   assign(state.items_by_id, action.items_by_id))
+					   assign(state.items_by_id, action.items_by_id)),
+                all_sprint_ids: action.all_sprint_ids,
+                all_project_ids: action.all_project_ids,
+                all_user_ids: action.all_user_ids
 	    })
             state_copy.items_by_id = Object.assign({}, assign(state_copy.items_by_id, action.items_by_id))
             return state_copy

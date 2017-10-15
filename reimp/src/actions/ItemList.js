@@ -335,3 +335,17 @@ export function getLastUpdated(state, list_key) {
 export function getLoadingItemIds(state, list_key) {
     return (state.item_list || {}).loading_item_ids || []
 }
+
+export function haveItemsBeenRetrieved(state, ids, entity_key) {
+    // useful for api calls which return objects referring to many sprint or project etc. (eg project_dashboard)
+    // these api calls usually return a list of these secondary objects and the component can then load them in one go,
+    // instead of triggering them piecemeal.
+    // This function is used to check if those secondary objects have been retrieved, and so the rest of the rendering can continue.
+    // It does not attempt to check invalidation or loading flags, since its purpose is just to check if the bulk loads have been completed.
+    if ( !ids || ids.length == 0 ) {
+        return true
+    }
+    const items = (state[entity_key] || {}).items_by_id || {}
+    const sample_item = items[ids[0]]
+    return sample_item !== undefined
+}

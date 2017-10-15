@@ -2,6 +2,7 @@ import logging
 from rest_framework.renderers import JSONRenderer
 from rest_framework.decorators import detail_route
 from datetime import datetime
+from itertools import chain
 from dateutil.relativedelta import relativedelta
 from django.utils import timezone
 from django.http import HttpResponse
@@ -46,16 +47,17 @@ class ProjectDashboardViewSet(BaseViewSet):
                                            'recent_activity':self.get_recent_activity(project)})
 
             project_dashboards = self.sort(project_dashboards)
-
-            # Pagination not supported because we're not using a queryset, to be implemented if required.
-            # project_dashboards = self.apply_pagination(qs=projects, pagination=pagination)
+            project_dashboards = self.apply_pagination(qs=project_dashboards, pagination=pagination)
             
             if format_args.get('ids_only', None):
                 context['ids'] = [x['project_id'] for x in project_dashboards]
             else:
                 project_dashboards = [ self.populate_project_dashboard(request.user, project_dashboard) for project_dashboard in project_dashboards ]
                 context['project_dashboards'] = project_dashboards
-                
+                context['all_project_ids'] = [x['project_id'] for x in project_dashboards]
+                context['all_sprint_ids'] = list(set(list(chain.from_iterable( [x['sprint_ids'] for x in project_dashboards]))))
+                context['all_user_ids'] = list(set(list(chain.from_iterable( [x['user_ids'] for x in project_dashboards]))))
+            
             context['pagination'] = pagination
             data = {'status': 'success', 'payload': context}
 
@@ -69,6 +71,7 @@ class ProjectDashboardViewSet(BaseViewSet):
         project = project_dashboard.pop('project')
         d = project_dashboard
         d['id'] = project.id,
+        d['project_id'] = project.id,
         d['project_name'] = project.name
 
         bp = BusinessPermissions.for_user(user, project)  # sic

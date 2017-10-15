@@ -33,6 +33,9 @@ function announceProjectDashboardsLoaded(payload) {
     return {
         type: ANNOUNCE_PROJECT_DASHBOARDS_LOADED,
         items_by_id: keyBy(payload.project_dashboards, 'id'),
+        all_sprint_ids: payload.all_sprint_ids,
+        all_project_ids: payload.all_project_ids,
+        all_user_ids: payload.all_user_ids,
 	received_at: Date.now()
     }
 }
@@ -49,8 +52,8 @@ function fetchProjectDashboardsPromise(dispatch, state, project_ids) {
     return new Promise(function(resolve, reject) {
 	      dispatch(announceLoadingProjectDashboards(project_ids))
 
-	      const params = { filter: { ids: project_ids },
-			                   pagination: {'enabled': false} }
+	const params = { filter: { ids: project_ids },
+			 pagination: {'enabled': false} }
 
         return impfetch(state, 'imp/project_dashboard/', dispatch, {params:params})
 	          .then(response => response.json())
@@ -59,8 +62,8 @@ function fetchProjectDashboardsPromise(dispatch, state, project_ids) {
 		                dispatch(announceProjectDashboardsLoadFailed())
 		                reject(json.error)
                 } else {
-		                dispatch(announceProjectDashboardsLoaded(json.payload))
-		                resolve(json.payload)
+		    dispatch(announceProjectDashboardsLoaded(json.payload))
+		    resolve(json.payload)
                 }
 	          }).catch(function (error) {
 		            dispatch(announceProjectDashboardsLoadFailed("Failed to load project dashboards: " + error))
@@ -98,4 +101,19 @@ export function getProjectDashboards(state, project_ids) {
             'loaded': false
         }
     })
+}
+
+export function getAllProjectIds(state) {
+    const project_objs = state[ENTITY_KEY__PROJECT_DASHBOARD] || {}
+    return project_objs.all_project_ids || []
+}
+
+export function getAllSprintIds(state) {
+    const project_objs = state[ENTITY_KEY__PROJECT_DASHBOARD] || {}
+    return project_objs.all_sprint_ids || []
+}
+
+export function getAllUserIds(state) {
+    const project_objs = state[ENTITY_KEY__PROJECT_DASHBOARD] || {}
+    return project_objs.all_user_ids || []
 }

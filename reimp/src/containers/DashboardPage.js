@@ -29,7 +29,7 @@ class DashboardPage extends Component {
 
         return (
             <div>
-              <UserTimesheetList list_key={LIST_KEY__USER_TIMESHEET_LIST} />
+              { false && <UserTimesheetList list_key={LIST_KEY__USER_TIMESHEET_LIST} />}
               <ProjectDashboardList list_key={LIST_KEY__PROJECT_DASHBOARD_LIST} />
             </div>
         )

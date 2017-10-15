@@ -1,5 +1,6 @@
 from django.core.paginator import Paginator
 from django.conf import settings
+import math
 from django.http import HttpResponse
 from rest_framework.renderers import JSONRenderer
 from rest_framework import viewsets
@@ -78,20 +79,28 @@ class BaseViewSet(viewsets.ViewSet):
         page_size = pagination.get(
             'page_size', settings.PAGINATION_DEFAULT_PAGINATION)
         current_page = pagination.get('current_page', 1)
-
-        p = Paginator(qs, page_size)
-        page = p.page(current_page)
-
         pagination['page_size'] = page_size
         pagination['current_page'] = current_page
-        pagination['num_pages'] = p.num_pages
-        pagination['num_items'] = p.count
-        pagination['has_next_page'] = page.has_next()
-        pagination['has_prev_page'] = page.has_previous()
-        pagination['first_item_index'] = page.start_index()
-        pagination['last_item_index'] = page.end_index()
-
-        return page.object_list
+        
+        if isinstance(qs, list):
+            page = qs[(current_page-1)*page_size:current_page*page_size]
+            pagination['num_pages'] = math.ceil(len(qs)/page_size)
+            pagination['num_items'] = len(qs)
+            pagination['has_next_page'] = current_page < pagination['num_pages']
+            pagination['has_prev_page'] = current_page > 0
+            pagination['first_item_index'] = (current_page-1)*page_size
+            pagination['last_item_index'] = (current_page*page_size)-1
+            return page
+        else:
+            p = Paginator(qs, page_size)
+            page = p.page(current_page)
+            pagination['num_pages'] = p.num_pages
+            pagination['num_items'] = p.count
+            pagination['has_next_page'] = page.has_next()
+            pagination['has_prev_page'] = page.has_previous()
+            pagination['first_item_index'] = page.start_index()
+            pagination['last_item_index'] = page.end_index()
+            return page.object_list
 
     def _apply_business_project_switch(self, d):
         d_fixed = {}
