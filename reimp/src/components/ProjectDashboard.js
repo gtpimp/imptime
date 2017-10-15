@@ -52,6 +52,16 @@ class ProjectDashboard extends Component {
             <div className="project_dashboard__recent_activity">
               <table>
                 <thead>
+                  <tr>
+                    <td>Project created</td>
+                    <td><Timestamp value={project_dashboard.recent_activity.project_created_at} format="from_now"/></td>
+                  </tr>
+                  { project_dashboard.recent_activity.sprint_last_modified_at &&
+                    <tr>
+                      <td>Most recent sprint change</td>
+                      <td><Timestamp value={project_dashboard.recent_activity.sprint_last_modified_at} format="from_now"/></td>
+                    </tr>
+                  }
                   { project_dashboard.recent_activity.most_recent_clock_entry.id &&
                   <tr>
                     <td>Most recent clock</td>
@@ -70,14 +80,14 @@ class ProjectDashboard extends Component {
                     </td>
                     <td>
                       <Timestamp value={project_dashboard.recent_activity.most_recent_clock_entry.start_time} format="from_now"/>
-7                    </td>
+                    </td>
                   </tr>
                   }
                   { project_dashboard.recent_activity.most_recent_issue.id &&
                   <tr>
                     <td>Most recent issue</td>
                     <td>
-                      <IssueLink issue_id={project_dashboard.recent_activity.most_recent_issue.issue_id}
+                      <IssueLink issue_id={project_dashboard.recent_activity.most_recent_issue.id}
                                  sprint_id={project_dashboard.recent_activity.most_recent_issue.sprint_id}
                                  project_id={project_dashboard.recent_activity.most_recent_issue.project_id}
                                  issue_number={project_dashboard.recent_activity.most_recent_issue.number}
@@ -89,7 +99,7 @@ class ProjectDashboard extends Component {
                     <td>
                     </td>
                     <td>
-                      <Timestamp value={project_dashboard.recent_activity.most_recent_issue.modified} format="from_now"/>
+                      <Timestamp value={project_dashboard.recent_activity.most_recent_issue.created} format="from_now"/>
                     </td>
                   </tr>
                   }
@@ -103,7 +113,12 @@ class ProjectDashboard extends Component {
         const { project_dashboard } = this.props
 
         if ( ! project_dashboard.sprint_infos || size(project_dashboard.sprint_infos)==0 ) {
-            return (<div className="project_dashboard__open_sprints">No open sprints</div>)
+            return (
+                <div className="project_dashboard__open_sprints">
+                  <div><h3>Open sprints</h3></div>
+                  No open sprints
+                </div>
+            )
         }        
         return (
 

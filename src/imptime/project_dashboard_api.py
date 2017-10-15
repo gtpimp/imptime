@@ -146,9 +146,10 @@ class ProjectDashboardViewSet(BaseViewSet):
     def get_recent_activity(self, project):
         entries = Entry.objects.all().filter(issue__project__business=project)
         issue = Issue.objects.filter(project__business=project)\
-                             .order_by("-modified")\
-                             .values("id", "project_id", "project__business_id", "modified", "number", "subject")\
+                             .order_by("-created")\
+                             .values("id", "project_id", "project__business_id", "created", "number", "subject")\
                              .first()
+
         if issue is None:
             issue = {'id': None}
         else:
@@ -170,27 +171,43 @@ class ProjectDashboardViewSet(BaseViewSet):
             if len(entry['issue_subject'])>50:
                 entry['issue_subject'] = entry['issue_subject'][0:47] + "..."
 
+        has_active_entries = 'start_time' in entry and \
+                             entry['start_time'] + relativedelta(days=self.NUM_DAYS_FOR_ACTIVE) >= timezone.now()
+        has_unexpired_entries = 'start_time' in entry and \
+                                entry['start_time'] + relativedelta(days=self.NUM_DAYS_FOR_EXPIRED) >= timezone.now()
+        has_active_issues = 'created' in issue and  \
+                            issue['created'] + relativedelta(days=self.NUM_DAYS_FOR_ACTIVE) >= timezone.now()
+        has_unexpired_issues = 'createdd' in issue and  \
+                               issue['created'] + relativedelta(days=self.NUM_DAYS_FOR_EXPIRED) >= timezone.now()
+
+        is_active = has_active_entries or has_active_issues
+        is_inactive = not is_active and (has_unexpired_entries or has_unexpired_issues)
+        is_expired = not is_active and not is_inactive
+
+        most_recent_sprint_modified_dates = Sprint.objects.filter(business=project)\
+                                                          .order_by("-modified")\
+                                                          .values('modified', 'name')
+        sprint_last_modified_at = most_recent_sprint_modified_dates[0]['modified'] if len(most_recent_sprint_modified_dates)>0 else None
+
+        default_date = timezone.now()-relativedelta(years=1)
+        sort_date = max(default_date,
+                        entry.get('start_time', default_date),
+                        issue.get('created', default_date),
+                        project.created or default_date,
+                        sprint_last_modified_at or default_date)
         
-        is_inactive = ('start_time' in entry and (entry['start_time'] + relativedelta(days=self.NUM_DAYS_FOR_ACTIVE) < timezone.now())) or \
-                      ('modified' in issue and issue['modified'] + relativedelta(days=self.NUM_DAYS_FOR_ACTIVE) < timezone.now())
-        is_expired = ('start_time' in entry and (entry['start_time'] + relativedelta(days=self.NUM_DAYS_FOR_EXPIRED) < timezone.now())) or \
-                     ('modified' in issue and issue['modified'] + relativedelta(days=self.NUM_DAYS_FOR_EXPIRED) < timezone.now())
-                
         d = {
             'most_recent_clock_entry': entry,
             'most_recent_issue': issue,
-            'is_inactive': is_inactive and not is_expired,
+            'project_created_at': project.created,
+            'sprint_last_modified_at': sprint_last_modified_at,
+            'is_inactive': is_inactive,
             'is_expired': is_expired,
-            'is_active': not is_inactive and not is_expired
+            'is_active': is_active,
+            'sort_date': sort_date
         }
         return d
 
     def sort(self, project_dashboards):
-        return sorted(project_dashboards, key=lambda x: x['recent_activity']['most_recent_clock_entry']['start_time'] \
-                        if 'start_time' in x['recent_activity']['most_recent_clock_entry']
-                        else (x['recent_activity']['most_recent_issue']['modified']
-                                if 'modified' in x['recent_activity']['most_recent_issue']
-                                else x['project_created_at']),
-                      reverse=True
-        )
-    
+        return sorted(project_dashboards, key=lambda x: x['recent_activity']['sort_date'],
+                      reverse=True)
