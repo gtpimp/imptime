@@ -4,7 +4,7 @@ import classNames from 'classnames'
 import { ensureProjectsLoaded, getProject } from '../actions/Projects'
 import {
     BarChart, ComposedChart, Bar, XAxis, YAxis, CartesianGrid,
-    Tooltip, Legend, ReferenceLine, Scatter, ReferenceArea
+    Tooltip, Legend, ReferenceLine, Scatter, ReferenceArea, Rectangle
 } from 'recharts'
 import { map, keys, isEqual, isArray } from 'lodash'
 import OtherUser from './OtherUser'
@@ -73,10 +73,20 @@ class TimeChart extends Component {
     constructor(props) {
         super(props)
         this.xAxisTickFormatter = this.xAxisTickFormatter.bind(this)
+        this.customBar = this.customBar.bind(this)
     }
     
     xAxisTickFormatter(tickItem) {
         return moment(tickItem).format('DD-MMM')
+    }
+
+    customBar(bar_props) {
+        return <Rectangle {...bar_props}
+                          className={classNames("recharts-bar-rectangle",
+                                                {"recharts-bar-rectangle--leave-day": bar_props.leave_days>0,
+                                                 "recharts-bar-rectangle--sick-day": bar_props.sick_days>0,
+                                                 "recharts-bar-rectangle--office-closed": bar_props.office_closed>0,
+                                                 "recharts-bar-rectangle--public-holiday": bar_props.public_holidays>0})} />
     }
     
     render() {
@@ -95,7 +105,7 @@ class TimeChart extends Component {
                                        {"time_chart--bad":is_bad,
                                         "time_chart--good":is_good})} >
               <ComposedChart width={width} height={height} data={times}>
-                <Bar dataKey={yaxis_datakey} fill="#8884d8"/>
+                <Bar dataKey={yaxis_datakey} fill="#8884d8" shape={this.customBar}/>
                 <XAxis dataKey={xaxis_datakey}
                        tickFormatter={this.xAxisTickFormatter}/>
                 <YAxis domain={y_axis_domain}

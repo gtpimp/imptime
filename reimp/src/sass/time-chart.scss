@@ -19,6 +19,22 @@
     background-color: $color-31;
 }
 
+.recharts-bar-rectangle.recharts-bar-rectangle--leave-day {
+    fill: $color-32;
+}
+
+.recharts-bar-rectangle.recharts-bar-rectangle--sick-day {
+    fill: $color-32;
+}
+
+.recharts-bar-rectangle.recharts-bar-rectangle--office-closed {
+    fill: $color-32;
+}
+
+.recharts-bar-rectangle.recharts-bar-rectangle--public-holiday {
+    fill: $color-32;
+}
+
 .time_chart__user_chart_title {
     font-size: 10px;
     text-align: center;

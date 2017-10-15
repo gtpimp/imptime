@@ -168,6 +168,10 @@ class TimeChartViewSet(BaseViewSet):
 
             daily_hours[user.id]['required_daily_work_hours'] = (user.profile.required_daily_work_hours or 8)
             merged_hours = daily_hours[user.id]['worked']
+
+            for h in merged_hours:
+                h['graph_y'] = h['daily_hours']
+            
             self._merge_days(from_date, to_date, merged_hours,
                              [x.date() for x in sick_days.values_list('start', flat=True)],
                              'sick_days', daily_hours[user.id]['required_daily_work_hours'])
@@ -202,74 +206,15 @@ class TimeChartViewSet(BaseViewSet):
 
         return daily_hours
  
-    def _merge_days(self, from_date, to_date, primary_hours, secondary_hours, y_label, required_daily_work_hours):
+    def _merge_days(self, from_date, to_date, primary_hours, secondary_hours, secondary_y_label, required_daily_work_hours,
+                    primary_x_label="started_on", graph_y_label="graph_y",
+                    primary_y_label="daily_hours"):
         for primary_hour in primary_hours:
-            d = primary_hour['started_on']
-            if isinstance(primary_hour['started_on'], datetime):
-                d = primary_hour['started_on'].date()
+            d = primary_hour[primary_x_label]
+            if isinstance(primary_hour[primary_x_label], datetime):
+                d = primary_hour[primary_x_label].date()
             if d in list(secondary_hours):
-                primary_hour[y_label] = required_daily_work_hours
+                primary_hour[secondary_y_label] = required_daily_work_hours
+                primary_hour[graph_y_label] = required_daily_work_hours
             else:
-                primary_hour[y_label] = -1
-
-    # def _get_daily_hours(self, user, entries, from_date=None, to_date=None):
-    #     entries = entries.filter(start_time__gte=from_date, start_time__lte=to_date).extra({'on_day': 'date(start_time)'})
-    #     entries_hours_per_day = entries.values('on_day').order_by("on_day").annotate(total_hours=Sum('hours'))
-    #     daily_hours_by_project = entries.values('on_day', 'issue__project__business__name',
-    #                                             'issue__project__name').order_by("on_day", "issue__project__business__name",
-    #                                                                              "issue__project__name").annotate(
-    #         total_hours=Sum('hours'))
-
-    #     hours_per_day = {}
-    #     for entry_hours_per_day in entries_hours_per_day:
-    #         hours_per_day[entry_hours_per_day['on_day']] = entry_hours_per_day['total_hours']
-
-    #     hours = OrderedDict()
-    #     daily_average_hours_per_week = OrderedDict()
-    #     daily_average_hours_per_month = OrderedDict()
-
-    #     running_date = from_date
-    #     running_hours_per_week = 0
-    #     running_days_in_week = 0
-    #     running_hours_per_month = 0
-    #     running_days_in_month = 0
-
-    #     total_hours_by_month = OrderedDict()
-
-    #     month_date = running_date.replace(day=1)
-    #     total_hours_by_month[month_date] = {'total_available_hours_per_month': 0,
-    #                                         'total_worked_hours_per_month': 0}
-    #     while running_date <= to_date:
-
-    #         hours_this_day = hours_per_day.get(running_date, 0)
-    #         hours[running_date] = hours_this_day
-
-    #         if running_date.weekday() == 0:
-    #             running_days_in_week = 0
-    #             running_hours_per_week = 0
-    #         if running_date.day == 1:
-    #             running_days_in_month = 0
-    #             running_hours_per_month = 0
-    #             month_date = running_date.replace(day=1)
-    #             total_hours_by_month[month_date] = {'total_available_hours_per_month': 0,
-    #                                                 'total_worked_hours_per_month': 0}
-
-    #         running_hours_per_week += hours_this_day
-    #         running_hours_per_month += hours_this_day
-    #         total_hours_by_month[month_date]['total_worked_hours_per_month'] += hours_this_day
-
-    #         if not Holiday.is_a_holiday(running_date) and not CalendarEvent.is_on_leave(running_date, user):
-    #             running_days_in_week += 1
-    #             running_days_in_month += 1
-    #             total_hours_by_month[month_date][
-    #                 'total_available_hours_per_month'] += user.profile.required_daily_work_hours
-
-    #         daily_average_hours_per_week[running_date] = float(running_hours_per_week) / (running_days_in_week or 1)
-    #         daily_average_hours_per_month[running_date] = float(running_hours_per_month) / (running_days_in_month or 1)
-    #         running_date += relativedelta(days=1)
-
-    #     return {'daily_hours': hours,
-    #             'weekly_average': daily_average_hours_per_week,
-    #             'monthly_average': daily_average_hours_per_month,
-    #             'daily_hours_by_project': daily_hours_by_project,
-    #             'total_hours_by_month': total_hours_by_month}
+                primary_hour[secondary_y_label] = -1

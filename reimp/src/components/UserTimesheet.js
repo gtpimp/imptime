@@ -50,7 +50,7 @@ class UserTimesheet extends Component {
                              average_hours_worked_warning_threshold={user_timesheet.required_daily_work_hours_warning_threshold}
                              reference_line_hours={user_timesheet.required_daily_work_hours}
                              show_y_axis={true}
-                             yaxis_datakey="daily_hours"
+                             yaxis_datakey="graph_y"
                              xaxis_datakey="started_on"
                              width={500}
                              height={200}
