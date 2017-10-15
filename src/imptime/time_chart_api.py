@@ -1,5 +1,6 @@
 import logging
 from dateutil.relativedelta import relativedelta
+from itertools import chain
 from collections import OrderedDict
 from datetime import datetime, date, timedelta
 from django.utils import timezone
@@ -141,13 +142,13 @@ class TimeChartViewSet(BaseViewSet):
     def get_user_times(self, users):
         daily_hours = {}
         to_date = timezone.now()
-
         from_date = to_date - relativedelta(days=self.NUM_DAYS_FOR_TIMESHEET_DASHBOARD)
         all_entries = Entry.objects.filter(start_time__gte=from_date, end_time__lte=to_date)
         events_in_range = CalendarEvent.objects\
                                        .filter(start__gte=from_date, start__lte=to_date)\
                                        .values('start', 'hours')
         for user in users:
+
             user_entries = all_entries.filter(user=user)
             entries = user_entries.by_day()
 
@@ -184,13 +185,12 @@ class TimeChartViewSet(BaseViewSet):
 
             daily_hours[user.id]['merged_hours'] = merged_hours
 
+            allowed_off_days = list(set(list(chain(sick_days.values_list('start', flat=True),
+                                                   leave_days.values_list('start', flat=True),
+                                                   office_closed.values_list('start', flat=True),
+                                                   public_holidays.values_list('applies_on', flat=True)))))
             daygenerator = ((from_date + timedelta(x)).date() for x in xrange((to_date - from_date).days+1))
-            num_days_off = sum(1 for day in daygenerator if \
-                               day.weekday() in [5,6] or \
-                               day in sick_days or \
-                               day in leave_days or \
-                               day in office_closed or \
-                               day in public_holidays)
+            num_days_off = sum(1 for day in daygenerator if day.weekday() in [5,6] or day in allowed_off_days)
 
             daily_hours[user.id]['required_daily_work_hours'] = (user.profile.required_daily_work_hours or 8)
             daily_hours[user.id]['required_daily_work_hours_warning_threshold'] = daily_hours[user.id]['required_daily_work_hours'] * self.DAILY_WORK_HOURS_WARNING_THRESHOLD
