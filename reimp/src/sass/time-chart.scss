@@ -5,7 +5,11 @@
     margin-right: 10px;
     box-shadow: 0px 0px 1px 0px #aaaaaa;
     margin-bottom: 10px;
-}                       
+}
+
+.time_chart--bad {
+    background-color: $color-30;
+}
 
 .time_chart__user_chart_title {
     font-size: 10px;

@@ -48,10 +48,11 @@ class TimesheetDashboard extends Component {
                                        leave_days={true}
                                        office_closed={true}
                                        average_hours_worked={times_for_user.average_hours_worked}
+                                       average_hours_worked_warning_threshold={times_for_user.required_daily_work_hours_warning_threshold}
+                                       reference_line_hours={times_for_user.required_daily_work_hours}
                                        show_y_axis={true}
                                        yaxis_datakey="daily_hours"
                                        xaxis_datakey="started_on"
-                                       reference_line_hours={8}
                                        width={500}
                                        height={200}
                             />

@@ -25,6 +25,7 @@ class TimeChartViewSet(BaseViewSet):
 
     NUM_DAYS_FOR_ACTIVE_USER = 60
     NUM_DAYS_FOR_TIMESHEET_DASHBOARD = 30
+    DAILY_WORK_HOURS_WARNING_THRESHOLD = 0.938
     
     @list_route(methods=['GET'])
     def timesheet_dashboard(self, request):
@@ -170,10 +171,12 @@ class TimeChartViewSet(BaseViewSet):
                                day in leave_days or \
                                day in office_closed or \
                                day in public_holidays)
-            
-            total_days_worked = (user_entries.aggregate(total_hours=Sum('hours'))['total_hours'] or 0) / (user.profile.required_daily_work_hours or 8)
+
+            daily_hours[user.id]['required_daily_work_hours'] = (user.profile.required_daily_work_hours or 8)
+            daily_hours[user.id]['required_daily_work_hours_warning_threshold'] = daily_hours[user.id]['required_daily_work_hours'] * self.DAILY_WORK_HOURS_WARNING_THRESHOLD
+            total_days_worked = (user_entries.aggregate(total_hours=Sum('hours'))['total_hours'] or 0) / daily_hours[user.id]['required_daily_work_hours']
             available_days = ((to_date-from_date).days+1-num_days_off) # to_date and from_date are inclusive, so add 1
-            daily_hours[user.id]['average_hours_worked'] = (((total_days_worked or 0)/available_days) if available_days else 0) * (user.profile.required_daily_work_hours or 8)
+            daily_hours[user.id]['average_hours_worked'] = (((total_days_worked or 0)/available_days) if available_days else 0) * daily_hours[user.id]['required_daily_work_hours']
 
         return daily_hours
  

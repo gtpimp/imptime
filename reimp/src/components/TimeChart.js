@@ -1,9 +1,10 @@
 import React, { Component } from 'react'
 import { connect } from 'react-redux'
+import classNames from 'classnames'
 import { ensureProjectsLoaded, getProject } from '../actions/Projects'
 import {
     BarChart, ComposedChart, Bar, XAxis, YAxis, CartesianGrid,
-    Tooltip, Legend, ReferenceLine, Scatter
+    Tooltip, Legend, ReferenceLine, Scatter, ReferenceArea
 } from 'recharts'
 import { map, keys, isEqual, isArray } from 'lodash'
 import OtherUser from './OtherUser'
@@ -81,12 +82,18 @@ class TimeChart extends Component {
     render() {
 
         const { times, xaxis_datakey, yaxis_datakey, width, height,
-                reference_line_hours, public_holidays, sick_days, leave_days, office_closed, average_hours_worked,
+                reference_line_hours, public_holidays, sick_days, leave_days,
+                office_closed, average_hours_worked, average_hours_worked_warning_threshold,
                 show_y_axis } = this.props
         const y_axis_domain = [0, 10]
 
+        const is_bad = average_hours_worked_warning_threshold && average_hours_worked < average_hours_worked_warning_threshold
+        const is_good = average_hours_worked_warning_threshold && average_hours_worked >= average_hours_worked_warning_threshold
+        
         return (
-            <div className="time_chart">
+            <div className={classNames("time_chart",
+                                       {"time_chart--bad":is_bad,
+                                        "time_chart--good":is_good})} >
               <ComposedChart width={width} height={height} data={times}>
                 <Bar dataKey={yaxis_datakey} fill="#8884d8"/>
                 <XAxis dataKey={xaxis_datakey}
@@ -100,8 +107,11 @@ class TimeChart extends Component {
                 { reference_line_hours > 0 && 
                   <ReferenceLine y={reference_line_hours} label="" stroke="orange"/>
                 }
-                { average_hours_worked &&
-                  <ReferenceLine y={average_hours_worked} label="" stroke="blue"/>
+                { is_bad &&
+                  <ReferenceLine y={average_hours_worked || 1} stroke="red" stokeWidth={5}/>
+                }
+                { is_good &&
+                  <ReferenceLine y={average_hours_worked} stroke="blue"/>
                 }
                 { sick_days &&
                   <Scatter dataKey={'sick_days'} shape='triangle'/>
