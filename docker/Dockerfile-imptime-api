@@ -15,3 +15,4 @@ COPY docker/migrate-api-database.sh migrate-api-database.sh
 COPY docker/start-dev-api.sh start-dev-api.sh
 COPY docker/start-ui-refresh-listener.sh start-ui-refresh-listener.sh
 COPY docker/start-ui-worker.sh start-ui-worker.sh
+COPY docker/create_issues_from_incoming_email.sh create_issues_from_incoming_email.sh
