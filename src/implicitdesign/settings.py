@@ -451,6 +451,11 @@ EMAIL_PORT = 587
 FROM_EMAIL="imptime@impd.co.za"
 WEEKLY_HOURS_MAIL_RECIPIENT = ""
 
+ISSUE_INBOX_HOST = 'mail.impd.co.za'
+ISSUE_INBOX_USER = 'impbox@impd.co.za'
+ISSUE_INBOX_PASSWORD = 'xxxx'
+ISSUE_INBOX_FOLDER = "INBOX"
+
 # AUTH_USER_MODEL = 'timepiece.ClientUser'
 
 #################
