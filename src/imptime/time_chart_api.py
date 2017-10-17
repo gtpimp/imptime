@@ -26,7 +26,7 @@ class TimeChartViewSet(BaseViewSet):
 
     NUM_DAYS_FOR_ACTIVE_USER = 60
     NUM_DAYS_FOR_TIMESHEET_DASHBOARD = 30
-    DAILY_WORK_HOURS_WARNING_THRESHOLD = 0.938
+    DAILY_WORK_HOURS_WARNING_THRESHOLD = 0.9375
     
     @list_route(methods=['GET'])
     def user_timesheet(self, request):
@@ -141,7 +141,7 @@ class TimeChartViewSet(BaseViewSet):
     
     def get_user_times(self, users):
         daily_hours = {}
-        to_date = timezone.now()
+        to_date = timezone.now() - relativedelta(days=1) # yesterday
         from_date = to_date - relativedelta(days=self.NUM_DAYS_FOR_TIMESHEET_DASHBOARD)
         all_entries = Entry.objects.filter(start_time__gte=from_date, end_time__lte=to_date)
         events_in_range = CalendarEvent.objects\
@@ -194,7 +194,17 @@ class TimeChartViewSet(BaseViewSet):
                                                    leave_days.values_list('start', flat=True),
                                                    office_closed.values_list('start', flat=True),
                                                    public_holidays.values_list('applies_on', flat=True)))))
+            
+            allowed_off_days = [d.date() if isinstance(d, datetime) else d for d in allowed_off_days ]
             daygenerator = ((from_date + timedelta(x)).date() for x in xrange((to_date - from_date).days+1))
+
+            if user.username == 'michael':
+                ds = []
+                x = [(from_date + timedelta(x)).date() for x in xrange((to_date - from_date).days+1)]
+                for d in x:
+                    if d.weekday() in [5,6] or d in allowed_off_days: 
+                        ds.append(d)
+                    
             num_days_off = sum(1 for day in daygenerator if day.weekday() in [5,6] or day in allowed_off_days)
 
             daily_hours[user.id]['required_daily_work_hours_warning_threshold'] = daily_hours[user.id]['required_daily_work_hours'] * self.DAILY_WORK_HOURS_WARNING_THRESHOLD

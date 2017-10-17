@@ -1,17 +1,10 @@
+@import 'variables.scss';
 
-.user-timesheet {
+.user_timesheet {
+    font-size: $font-size-small;
 }
 
-.user-timesheet__charts {
-    display: flex;
-    flex-direction: row;
-    justify-content: space-between;
-    -webkit-flex-flow: row wrap;
-    flex-flow: row wrap;
-    -webkit-align-content: flex-end;
-    align-content: flex-end;
-}
-
-.user-timesheet__chart {
-    margin: 20px;
+.user_timesheet__chart__warning_message {
+    color: $error-color;
+    float: right;
 }

@@ -33,6 +33,9 @@ class UserTimesheet extends Component {
     render() {
         const { user_timesheet, user_id } = this.props
 
+        const is_bad = user_timesheet.average_hours_worked < user_timesheet.required_daily_work_hours_warning_threshold
+        const is_good = user_timesheet.average_hours_worked >= user_timesheet.required_daily_work_hours_warning_threshold
+        
         return (
             <div className="user_timesheet">
               { ! user_timesheet.id &&
@@ -41,6 +44,11 @@ class UserTimesheet extends Component {
               { user_timesheet.id &&
                 <div key={user_id} className="user_timesheet__chart">
                   <OtherUser user_id={user_id} />
+                  { is_bad &&
+                    <div className="user_timesheet__chart__warning_message"> 
+                      Average is below {user_timesheet.required_daily_work_hours_warning_threshold}
+                    </div>
+                  }
                   <TimeChart times={user_timesheet.worked}
                              sick_days={true}
                              public_holidays={true}
@@ -53,7 +61,7 @@ class UserTimesheet extends Component {
                              yaxis_datakey="graph_y"
                              xaxis_datakey="started_on"
                              width={500}
-                             height={200}
+                             height={150}
                   />
                 </div>
               }
