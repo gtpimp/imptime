@@ -454,7 +454,7 @@ class ImportEntriesForm(forms.Form):
                 try:
                     business = Business.objects.get(name__iexact=raw_business)
                 except:
-                    allowed_businesses = Business.objects.filter(new_business_projects__users=self.user)
+                    allowed_businesses = BusinessPermissions.active_businesses_for_user(self.user)
                     errors.append( {'line':raw_entry,
                                     'line_number':line_number,
                                     'error':"Invalid business name %s" % raw_business,
@@ -1146,8 +1146,7 @@ class GraphFilterForm(forms.Form):
         super(GraphFilterForm, self).__init__(*args, **kwargs)
         self.fields['project'].label_from_instance = lambda obj: format(obj.long_name())
         self.fields['project'].queryset = Project.objects.filter(users=user).order_by("business__name", "name")
-        self.fields['business'].queryset = timepiece.Business.objects.filter(new_business_projects__users=user).order_by("name", "name")
-
+        self.fields['business'].queryset = BusinessPermissions.active_businesses_for_user(user).order_by("name", "name")
 
     def save(self):
         v = {}

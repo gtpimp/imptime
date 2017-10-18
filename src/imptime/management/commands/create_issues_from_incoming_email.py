@@ -26,7 +26,6 @@ class Command(BaseCommand):
                 logger.info("Connected")
                 
                 try:
-                    import pdb; pdb.set_trace()
                     def callback(args):
                         self.handle_email(args)
                     self.connection.idle(callback=callback)

@@ -105,7 +105,7 @@ class BusinessQuerySet(QuerySet):
         user (typically the logged in user) is assigned to """
         if user.is_superuser or user.has_perm('timepiece.belongs_to_all_projects'):
             return self
-        return self.filter(new_business_projects__users=user).distinct()
+        return self.filter(pk__in=BusinessPermissions.active_businesses_for_user(user))
 
     def filter_has_any_active_projects(self):
         return self.filter(new_business_projects__status2__in=Project.active_states())
@@ -499,14 +499,17 @@ class BusinessPermissions(BaseModel):
                                                          defaults={'is_active_member_of_business':True})[0]
 
     @classmethod
-    def for_user(self, user, business=None):
+    def for_user(self, user, business=None, auto_create=True):
         qs = user.business_permissions
         if business is not None:
             qs = qs.filter(business=business)
 
         bp = qs.first()
         if bp is None and user.is_superuser:
-            return self.objects.get_or_create(business=business, user=user)[0]
+            if auto_create:
+                return self.objects.get_or_create(business=business, user=user)[0]
+            else:
+                return None
         else:
             return qs.first()
 
@@ -520,6 +523,11 @@ class BusinessPermissions(BaseModel):
         return User.objects.filter(business_permissions__business_id__in=business_ids,
                                    business_permissions__is_active_member_of_business=True)
 
+    @classmethod
+    def active_businesses_for_user(self, user):
+        bps = self.objects.filter(user=user, is_active_member_of_business=True)
+        return Business.objects.filter(business_permissions__in=bps)
+    
     @classmethod
     def active_users_for_business(self, business_id):
         return User.objects.filter(business_permissions__business_id=business_id,
@@ -755,8 +763,7 @@ class ProjectQuerySet(QuerySet):
         user (typically the logged in user) is assigned to """
         if user.is_superuser or user.has_perm('timepiece.belongs_to_all_projects'):
             return self
-
-        return self.filter(business__business_permissions__user=user, business__business_permissions__is_active_member_of_business=True)
+        return self.filter(business__in=BusinessPermissions.active_businesses_for_user(user))
 
     def filter_active(self):
         return self.filter(status2__in=Project.active_states())
@@ -2246,7 +2253,7 @@ class EntriesQuerySet(QuerySet):
         user (typically the logged in user) is assigned to """
         if user.is_superuser:
             return self
-        return self.filter(issue__project__users=user)
+        return self.filter(issue__project__business__in=BusinessPermissions.active_businesses_for_user(user))
 
     def cost_totals_for_project(self, project):
         """ this function assumes that all entries in the queryset
@@ -3594,7 +3601,7 @@ class IssueQuerySet(QuerySet):
         user (typically the logged in user) is assigned to """
         if user.is_superuser or user.has_perm('timepiece.belongs_to_all_projects'):
             return self
-        return self.filter(project__business__users=user)
+        return self.filter(project__business__in=BusinessPermissions.active_businesses_for_user(user))
 
 class Issue(models.Model):
 

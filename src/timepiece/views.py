@@ -1441,7 +1441,7 @@ def list_projects(request):
         last_active[user.username] = entries.filter(user=user).aggregate(end_time=Max('end_time'))['end_time']
 
     businesses = timepiece.Business.get_related_business_by_user(request.user).order_by("name")
-
+    
     context = {'active_businesses': businesses.filter_has_any_active_projects(),
                'pending_businesses': businesses.filter_has_only_pending_projects(),
                'closed_businesses': businesses.filter_has_only_closed_projects(),
@@ -2701,7 +2701,10 @@ def graphs(request, template="timepiece/graphs/graph.html", context=None):
     context = context or {}
 
     if request.GET:
-        entries = timepiece.Entry.objects.filter_by_logged_in_user(request.user).filter(status='approved').filter(issue__project__users=request.user)
+        entries = timepiece.Entry.objects\
+                                 .filter_by_logged_in_user(request.user)\
+                                 .filter(status='approved')
+                                         
     else:
         entries = timepiece.Entry.objects.none()
 
