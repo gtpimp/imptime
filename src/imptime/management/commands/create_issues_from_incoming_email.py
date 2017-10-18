@@ -175,8 +175,12 @@ class Command(BaseCommand):
             if part.get_content_maintype() == 'multipart':
                 continue
             if part.get_content_maintype() == 'text':
-                _html = part.get_payload(decode = True)
-                res['Text'] = html2text.html2text(_html)
+                text = part.get_payload(decode = True)
+                if part.get_content_subtype() == "html":
+                    res['content'] = text
+                elif 'content' not in res or not res['content']:
+                    # prefer html over plain text
+                    res['content'] = text
 
             elif part.get_content_maintype() == 'application' and part.get_filename():
                 fname = os.path.join("your/folder", os.part.get_filename())
@@ -215,7 +219,7 @@ class Command(BaseCommand):
         
 
     def resolve_issue_content(self, message, default_subject, project):
-        content = message['Text']
+        content = message['content']
         raw_issues = []
         if '***' in content:
             orgnodes = makelist_from_string(content)
