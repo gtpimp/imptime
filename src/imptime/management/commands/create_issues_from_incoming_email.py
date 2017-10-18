@@ -1,7 +1,14 @@
 from django.core.management.base import BaseCommand, CommandError
-from timepiece import models
+from timepiece.models import Project as Sprint
+from django.core.mail import send_mail
+from timepiece.models import Business as Project
+from timepiece.models import Activity, Entry, Location, Attribute, Issue, Feature, IssueStatus, IssueComment
+from timepiece.models import ProjectStatus as SprintStatus
+from emacs_importer.orgnode import makelist_from_file, makelist_from_string
+import html2text
 import signal
 import os
+from datetime import datetime
 from emacs_importer import models as redmine_models
 from django.conf import settings
 from django.contrib.auth.models import User
@@ -9,6 +16,7 @@ import imaplib2, time
 from threading import Thread, Event
 import logging
 logger = logging.getLogger(__name__)
+import email
 
 class Command(BaseCommand):
 
@@ -21,20 +29,26 @@ class Command(BaseCommand):
         if kwargs["action"] == "stop":
             self.stop()
         elif kwargs["action"] == "start":
-            self.thread = Thread(target=self.idle)
-            self.thread.start()
-            self.mail_waiting = Event()
-            self.inbox = None
-            open(self.PID_FILENAME, "w").write(str(os.getpid()))
+            self.start()
         else:
             raise Exception("Unknown action")
 
     def stop(self):
         if not os.path.exists(self.PID_FILENAME):
             return
+        logger.info("Stopping")
         pid = open(self.PID_FILENAME).read()
         os.kill(int(pid), signal.SIGKILL)
         os.remove(self.PID_FILENAME)
+        logger.info("Stopped")
+
+    def start(self):
+        self.stop()
+        self.thread = Thread(target=self.idle)
+        self.thread.start()
+        self.mail_waiting = Event()
+        self.inbox = None
+        open(self.PID_FILENAME, "w").write(str(os.getpid()))
         
     def _connect(self):
         logger.info("Creating connection to " + settings.ISSUE_INBOX_HOST)
@@ -59,7 +73,6 @@ class Command(BaseCommand):
         logger.info("Starting imap idle thread")
         try:
             self._connect()
-            self.process_inbox()
             while True:
                 try:
                     self.process_inbox()
@@ -87,6 +100,173 @@ class Command(BaseCommand):
     def process_inbox(self):
         print "Processing inbox"
         typ, raw_email_numbers = self.inbox.search(None, 'ALL')
+        issues_created = []
         for message_number in raw_email_numbers[0].split():
-            type, email = self.inbox.fetch(message_number, '(RFC822)')
-            print('Message %s\n%s\n' % (message_number, email[0][1]))
+            try:
+                try:
+                    message = "not set"
+                    type, raw_msg = self.inbox.fetch(message_number, '(RFC822)')
+                    email_message = email.message_from_string(raw_msg[0][1])
+                    print('Message %s\n%s\n' % (message_number, email_message))
+                    message = self.unpack_email(email_message)
+                except Exception, ex:
+                    logger.exception(ex)
+                    send_mail(subject="Problems parsing email: %d" % message_number,
+                              message=message,
+                              from_email=settings.FROM_EMAIL,
+                              recipient_list=settings.EMACS_ADMIN_USER_EMAILS,
+                              fail_silently=False)
+                    continue
+
+                user_email = message['from']
+                
+                try:
+                    user, project, sprint, default_subject = self.resolve_parts(message)
+                    user_email = user.email
+                    raw_issues = self.resolve_issue_content(message, default_subject, project)
+                    for raw_issue in raw_issues:
+                        new_issue = self.create_issue(message, user, project, sprint, raw_issue)
+                        logger.debug("Created issue %s %s" % (new_issue.id, new_issue.subject))
+                        issues_created.append(new_issue)
+                    self.notify_issues_created(user, project, issues_created)
+                except Exception, ex:
+                    logger.exception(ex)
+                    to_addresses = [settings.EMACS_ADMIN_USER_EMAILS, user_email]
+                    send_mail(subject="Couldn't create issues from email",
+                              message="Failed to process your email. Please resend it \n\n%s\n\n%s" % (ex, str(email_message)),
+                              from_email=settings.FROM_EMAIL,
+                              recipient_list=to_addresses,
+                              fail_silently=False)
+            finally:
+                #self.inbox.store(message_number, '+FLAGS', '\\Deleted')
+                #self.inbox.expunge()
+                pass
+
+    def notify_issues_created(self, user, project, issues_created):
+
+        if len(issues_created) == 1:
+            subject = "Issue by email for %s: %s" % (project.name, issues_created[0].subject)
+        else:
+            subject = "%d issues by email for %s" % (len(issues_created), project.name)
+
+        body = ""
+        for issue in issues_created:
+            body += "#%s %s\n===============\n%s\n\n" % (issue.number, issue.subject, issue.description)
+            
+        to_addresses = [settings.EMACS_ADMIN_USER_EMAILS, user.email]
+        send_mail(subject=subject,
+                  message=body,
+                  from_email=settings.FROM_EMAIL,
+                  recipient_list=to_addresses,
+                  fail_silently=False)
+
+    def unpack_email(self, message):
+        res = {
+            'from' : email.utils.parseaddr(message['From'])[1],
+            'from_name' : email.utils.parseaddr(message['From'])[0],
+            'time' : datetime.fromtimestamp(email.utils.mktime_tz(email.utils.parsedate_tz(message['Date']))),
+            'to' : message['To'],
+            'subject' : email.Header.decode_header(message["Subject"])[0][0],
+            'content' : '',
+            'files' : []
+        }
+
+        for part in message.walk():
+            if part.get_content_maintype() == 'multipart':
+                continue
+            if part.get_content_maintype() == 'text':
+                _html = part.get_payload(decode = True)
+                res['Text'] = html2text.html2text(_html)
+
+            elif part.get_content_maintype() == 'application' and part.get_filename():
+                fname = os.path.join("your/folder", os.part.get_filename())
+                attachment = open(fname, 'wb')
+                attachment.write(part.get_payload(decode = True))
+                attachment.close()
+                res['files'].append({'filename': part.get_filename(),
+                                      'content': part.get_payload(decode = True)})
+
+        return res
+
+    def resolve_parts(self, message):
+        user = self.get_user(message)
+        
+        parts = message['subject'].split("/")
+        if len(parts) == 2:
+            project_name = parts[0]
+            subject = parts[1]
+        else:
+            project_name = parts[0]
+            subject = None
+        
+        project = Project.objects.filter(name=project_name)\
+                                 .filter_by_logged_in_user(user)\
+                                 .first()
+        if project is None:
+            raise Exception("No project found with name %s" % project_name)
+
+        sprint_name = settings.ISSUE_INBOX_DEFAULT_SPRINT_NAME
+        sprint = Sprint.objects.get_or_create(business=project,
+                                              name=sprint_name,
+                                              defaults={'status3': SprintStatus.objects.get_or_create(name='pending',
+                                                                                                      business=project)[0],
+                                                        'description': "For incoming unprocessed issues"})[0]
+        return user, project, sprint, subject
+        
+
+    def resolve_issue_content(self, message, default_subject, project):
+        content = message['Text']
+        raw_issues = []
+        if '***' in content:
+            orgnodes = makelist_from_string(content)
+            for orgnode in orgnodes:
+                if orgnode.Level() == 3:
+                    subject = orgnode.Heading()
+                    if '|' in subject:
+                        feature_name, subject = subject.split('|')
+                        feature = Feature.objects.get_or_create(name=feature_name, business=project)[0]
+                    else:
+                        feature = None
+                    description = orgnode.CleanBody()
+                    raw_issues.append({'subject': subject,
+                                       'description': description,
+                                       'feature': feature})
+        else:
+            raw_issues.append({'subject': default_subject,
+                               'description': content,
+                               'feature': None})
+        return raw_issues
+    
+    def get_user(self, message):
+        user = User.objects.filter(email=message['from']).first()
+        if user is None:
+            raise Exception("No user found with email %s" % message['from'])
+        if not user.is_active:
+            raise Exception("User is not active")
+        return user
+
+    def create_issue(self, message, user, project, sprint, raw_issue):
+        issue, is_new = Issue.objects.get_or_create(project=sprint,
+                                                    subject=raw_issue['subject'],
+                                                    defaults={'auto_created_during_import':True,
+                                                              'adhoc':False,
+                                                              'status': 'new', #obsolete
+                                                              'status2':IssueStatus.objects.get_or_create(name='new', business=project)[0],
+                                                              'feature':raw_issue['feature'],
+                                                              'assigned_to':user,
+                                                              'number':Issue.get_next_issue_number(project),
+                                                              'description':raw_issue['description'],
+                                                              'story_points':0,
+                                                              'order':Issue.get_next_order(sprint),
+                                                              'created':message['time'],
+                                                              'modified':message['time']})
+
+        if not is_new:
+            IssueComment.objects.create(issue=issue,
+                                        comment=raw_issue['description'],
+                                        author=user,
+                                        created=message['time'],
+                                        modified=message['time'])
+        
+        logger.info("Created issue %s for %s by email" % (issue.id, user.username))
+        return issue

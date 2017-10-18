@@ -455,6 +455,7 @@ ISSUE_INBOX_HOST = 'mail.impd.co.za'
 ISSUE_INBOX_USER = 'impbox@impd.co.za'
 ISSUE_INBOX_PASSWORD = 'xxxx'
 ISSUE_INBOX_FOLDER = "INBOX"
+ISSUE_INBOX_DEFAULT_SPRINT_NAME = "Inbox"
 
 # AUTH_USER_MODEL = 'timepiece.ClientUser'
 

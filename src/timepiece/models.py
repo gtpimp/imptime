@@ -853,8 +853,7 @@ class Project(models.Model):
         null=True
     )
 
-    # This status will replace the original status. All new
-    # functionality should hang off this field instead.
+    # Deprecated.
     status2 = models.CharField(max_length=100, blank=False, null=False,
                                default='pending', choices = PROJECT_STATUSES, db_index=True)
 
@@ -1313,13 +1312,9 @@ class Project(models.Model):
     @property
     def is_open(self):
 
-        if self.status2 in self.closed_states():
+        if (self.status2 and self.status2 in self.closed_states()) or \
+            (self.status3 and self.status3.name in self.closed_states()):
             return False
-
-        manually_closed = not(self.status.label == 'open' or self.status.label == "reopened")
-        if manually_closed:
-            return False
-
         return True
 
     def estimate_stats(self, issues=None, preferred_user_id=None):
