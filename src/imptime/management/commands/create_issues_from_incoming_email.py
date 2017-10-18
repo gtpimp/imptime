@@ -270,11 +270,16 @@ class Command(BaseCommand):
                                         created=message['time'],
                                         modified=message['time'])
 
-        for f in message['files']:
+        for attachment_content in message['files']:
+            temp_physical_filename = os.path.join(settings.ISSUE_INBOX_TEMP_ATTACHMENT_FOLDER,
+                                                  attachment_content['filename'])
+            with open(temp_physical_filename, "wb") as f:
+                f.write(attachment_content['content'])
+            django_file = DjangoFile(open(temp_physical_filename))
             IssueAttachment.objects.create(issue=issue,
-                                           name=f['filename'],
-                                           content_type=f['content_type'],
-                                           attachment=DjangoFile(f['content']))
+                                           name=attachment_content['filename'],
+                                           content_type=attachment_content['content_type'],
+                                           attachment=django_file)
             
         logger.info("Created issue %s for %s by email" % (issue.id, user.username))
         return issue
