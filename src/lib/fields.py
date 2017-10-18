@@ -16,7 +16,6 @@ class UploadTo(object):
         self.path = sub_path
 
     def __call__(self, instance, filename):
-        import pdb; pdb.set_trace()
         unique_path = str(uuid.uuid4())
         return os.path.join(self.path, unique_path, filename)
 
