@@ -2,12 +2,13 @@ from django.core.management.base import BaseCommand, CommandError
 from timepiece.models import Project as Sprint
 from django.core.mail import send_mail
 from timepiece.models import Business as Project
-from timepiece.models import Activity, Entry, Location, Attribute, Issue, Feature, IssueStatus, IssueComment
+from timepiece.models import Activity, Entry, Location, Attribute, Issue, Feature, IssueStatus, IssueComment, IssueAttachment
 from timepiece.models import ProjectStatus as SprintStatus
 from emacs_importer.orgnode import makelist_from_file, makelist_from_string
 import html2text
 import signal
 import os
+from django.core.files import File as DjangoFile
 from datetime import datetime
 from emacs_importer import models as redmine_models
 from django.conf import settings
@@ -170,25 +171,21 @@ class Command(BaseCommand):
             'content' : '',
             'files' : []
         }
-
         for part in message.walk():
             if part.get_content_maintype() == 'multipart':
                 continue
-            if part.get_content_maintype() == 'text':
+            if part.get_filename():
+                res['files'].append({'filename': part.get_filename(),
+                                     'content_type': part.get_content_type(),
+                                     'content': part.get_payload(decode = True)})
+            elif part.get_content_maintype() == 'text':
                 text = part.get_payload(decode = True)
                 if part.get_content_subtype() == "html":
                     res['content'] = text
                 elif 'content' not in res or not res['content']:
                     # prefer html over plain text
                     res['content'] = text
-
-            elif part.get_content_maintype() == 'application' and part.get_filename():
-                fname = os.path.join("your/folder", os.part.get_filename())
-                attachment = open(fname, 'wb')
-                attachment.write(part.get_payload(decode = True))
-                attachment.close()
-                res['files'].append({'filename': part.get_filename(),
-                                      'content': part.get_payload(decode = True)})
+                
 
         return res
 
@@ -236,7 +233,8 @@ class Command(BaseCommand):
                                        'description': description,
                                        'feature': feature})
         else:
-            raw_issues.append({'subject': default_subject,
+            content = content or ''
+            raw_issues.append({'subject': default_subject or content[0:20],
                                'description': content,
                                'feature': None})
         return raw_issues
@@ -259,7 +257,7 @@ class Command(BaseCommand):
                                                               'feature':raw_issue['feature'],
                                                               'assigned_to':user,
                                                               'number':Issue.get_next_issue_number(project),
-                                                              'description':raw_issue['description'],
+                                                              'description':raw_issue['description'][0:settings.ISSUE_INBOX_MAX_ISSUE_DESCRIPTION_LENGTH],
                                                               'story_points':0,
                                                               'order':Issue.get_next_order(sprint),
                                                               'created':message['time'],
@@ -271,6 +269,12 @@ class Command(BaseCommand):
                                         author=user,
                                         created=message['time'],
                                         modified=message['time'])
-        
+
+        for f in message['files']:
+            IssueAttachment.objects.create(issue=issue,
+                                           name=f['filename'],
+                                           content_type=f['content_type'],
+                                           attachment=DjangoFile(f['content']))
+            
         logger.info("Created issue %s for %s by email" % (issue.id, user.username))
         return issue
