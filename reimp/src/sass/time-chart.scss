@@ -5,7 +5,35 @@
     margin-right: 10px;
     box-shadow: 0px 0px 1px 0px #aaaaaa;
     margin-bottom: 10px;
-}                       
+}
+
+.time_chart {
+    font-size: $font-size-small;
+}
+
+.time_chart--bad {
+    background-color: $color-30;
+}
+
+.time_chart--good {
+    background-color: $color-31;
+}
+
+.recharts-bar-rectangle.recharts-bar-rectangle--leave-day {
+    fill: $color-32;
+}
+
+.recharts-bar-rectangle.recharts-bar-rectangle--sick-day {
+    fill: $color-32;
+}
+
+.recharts-bar-rectangle.recharts-bar-rectangle--office-closed {
+    fill: $color-32;
+}
+
+.recharts-bar-rectangle.recharts-bar-rectangle--public-holiday {
+    fill: $color-32;
+}
 
 .time_chart__user_chart_title {
     font-size: 10px;
@@ -30,4 +58,5 @@
     padding: 10px;
     background-color: #fff;
     border: 1px solid  $color-25;
+    opacity: 0.6;
 }

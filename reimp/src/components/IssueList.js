@@ -180,7 +180,6 @@ class IssueList extends Component {
             alert("Please select at least one issue to estimate")
             return
         }
-        debugger;
         this.setState({'estimate_editor_open': true})
     }
 

@@ -11,6 +11,7 @@ import {
     set_toolbars,
     select_projects,
 } from '../actions/Page'
+import ProjectDashboard from '../components/ProjectDashboard'
 
 class ProjectDashboardPage extends Component {
 
@@ -67,6 +68,8 @@ class ProjectDashboardPage extends Component {
                 <button className="button button--large button--primary" onClick={this.navigateToSprintsPage}>Sprints</button>
                 <button className="button button--large button--primary" onClick={this.navigateToProjectUsersPage}>Users</button>
                 <button className="button button--large button--primary" onClick={this.navigateToProjectStatementPage}>Project Statement</button>
+
+                <ProjectDashboard project_id={project.id} />
                 <br/>
             </div>
         )

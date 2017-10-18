@@ -8,7 +8,9 @@ class ProgressBar extends Component {
         return (
             <div key={'section__' + index}
                  className={classNames('progress-bar__section', 'progress-bar__section--' + section.style)}
-                 style={{width: (section.percentage * 100) + "%"}}></div>
+                 style={{width: (section.percentage * 100) + "%"}}>
+              {section.label}
+            </div>
         )
     }
 
@@ -16,27 +18,35 @@ class ProgressBar extends Component {
         const {current, max} = this.props
         const fullWidth = Math.max(current, max)
         const sections = []
-        if (current <= max) {
-            sections.push({
-                percentage: current / fullWidth,
-                style: 'progress'
-            })
-            sections.push({
-                percentage: (max - current) / fullWidth,
-                style: 'remaining'
-            })
-        }
-        /* if (current > max) {
-         *     sections.push({
-         *         percentage: max / fullWidth,
-         *         style: 'progress'
-         *     })
-         * }*/
-        if (current > max) {
+
+        if ( !max && current>0 ) {
             sections.push({
                 percentage: 1.0,
-                style: 'over'
+                style: 'invalid'
             })
+        } else {
+            if (current <= max) {
+                sections.push({
+                    percentage: current / fullWidth,
+                    style: 'progress'
+                })
+                sections.push({
+                    percentage: (max - current) / fullWidth,
+                    style: 'remaining'
+                })
+            }
+            /* if (current > max) {
+             *     sections.push({
+             *         percentage: max / fullWidth,
+             *         style: 'progress'
+             *     })
+             * }*/
+            if (current > max) {
+                sections.push({
+                    percentage: 1.0,
+                    style: 'over'
+                })
+            }
         }
         return (
             <div className="progress-bar">

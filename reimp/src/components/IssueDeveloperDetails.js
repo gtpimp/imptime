@@ -78,7 +78,7 @@ class IssueDeveloperDetails extends Component {
 		<div>
 		    {comment.comment}
 		</div>
-		<div className="issue_developer_details__comment__author">By <OtherUser value={comment.author_id} /></div>
+		<div className="issue_developer_details__comment__author">By <OtherUser user_id={comment.author_id} /></div>
 		<div className="issue_developer_details__comment__created">At {comment.created}</div>
 		<div className="issue_developer_details__comment__separator">&nbsp;</div>
 	    </div>

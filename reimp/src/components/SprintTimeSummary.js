@@ -68,7 +68,7 @@ class SprintTimeSummary extends Component {
                 {map(developers, (developer, developer_id) =>
                     <tr key={developer_id}>
                       <th>
-                        <OtherUser value={developer_id} />
+                        <OtherUser user_id={developer_id} />
                       </th>
                       <td>
                         <UserRate value={developer.dev_rate} />

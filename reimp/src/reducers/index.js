@@ -12,11 +12,13 @@ import loading from './loading'
 import notification_bar from './notification_bar.js'
 import page from './page'
 import project from './project'
+import project_dashboard from './project_dashboard'
 import project_statement from './project_statement'
 import project_user_permission from './project_user_permission'
 import rie from './rie'
 import settings from './settings'
 import sprint from './sprint'
+import user_timesheet from './user_timesheet'
 import time_chart from './time_chart'
 import time_summary from './time_summary'
 import toolbar from './toolbar'
@@ -42,6 +44,7 @@ const rootReducer = combineReducers({
     notification_bar,
     page,
     project,
+    project_dashboard,
     project_statement,
     project_user_permission,
     rie,
@@ -52,6 +55,7 @@ const rootReducer = combineReducers({
     time_summary,
     toolbar,
     user,
+    user_timesheet,
     websockets,
 })
 

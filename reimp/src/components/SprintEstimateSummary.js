@@ -82,7 +82,7 @@ class SprintEstimateSummary extends Component {
                           const estimates = comparative_estimates[user_id]
                           return (
                               <tr key={user_id}>
-                                <td><OtherUser value={user_id}/></td>
+                                <td><OtherUser user_id={user_id}/></td>
                                 <td><Hours hours={estimates.developer_original_hours}/></td>
                                 <td>{estimates.developer_velocity}</td>
                                 <td><Hours hours={estimates.developer_adjusted_hours}/></td>

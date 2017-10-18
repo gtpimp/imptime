@@ -1,47 +1,73 @@
 @import 'variables.scss';
 
-.project-dashboard-modal {
-    background-color: $color-2;
-    border-radius: 2px;
-    box-shadow: 0 6px 12px 0 rgba(0, 0, 0, 0.5);
-    padding: 16px;
-    width: 288px;
-
-    position: absolute;
-    top: 25%;
-    left: 40%;
-    outline: none;
-    overflow: auto;
+.project_dashboard {
+    font-size: $font-size-small;
+    /*background-color: $color-26;*/
+    border: 1px solid $color-26;
 }
 
-.project-dashboard-modal__overlay {
-    position: fixed;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    //background-color: rgba(255, 255, 255, 0.75);
-}
-
-.project-dashboard-modal__row {
+.project_dashboard__title {
     display: flex;
+    flex-direction: row;
     justify-content: space-between;
+}
+
+.project_dashboard.project_dashboard--active .project_dashboard__title {
+    background-color: $color-27;
+}
+
+.project_dashboard.project_dashboard--inactive .project_dashboard__title {
+    background-color: $color-28;
+}
+
+.project_dashboard.project_dashboard--expired .project_dashboard__title {
+    background-color: $color-29;
+}
+
+.project_dashboard h2 {
+}
+
+.project_dashboard h3 {
+    background-color: $color-12;
+}
+
+.project_dashboard table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.project_dashboard__recent_entries_per_user {
+}
+
+.project_dashboard__sprint_info {
+    border-bottom: 1px solid $color-26;
+}
+
+.project_dashboard__open_sprints {
+}
+
+.project_dashboard__recent_entries_per_user {
+    margin-top: 15px;
+}
+
+.project_dashboard__recent_entry_for_user {
     width: 100%;
 }
 
-.project-dashboard-modal__content {
-    margin-top: 13px;
+.project_dashboard__sprint_progress {
+    min-width: 50px;
 }
 
-.project-dashboard-modal__title {
-    color: $color-1;
-    font: $font-4;
+
+.project_dashboard__sprint_users__username {
+    width: 33%;
+    text-align: right;
 }
 
-.project-dashboard-modal__close {
-    cursor: pointer;
+.project_dashboard__sprint_users__rate {
+    width: 33%;
 }
 
-.project-dashboard__project_users {
-    width: 30%;
+.project_dashboard__sprint_users__hours {
+    width: 33%;
 }

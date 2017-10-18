@@ -43,9 +43,7 @@ class Pagination extends Component {
                       }
                 </div>
                 <div className="pager__text">
-		    Showing {this.props.first_item_index} to {this.props.last_item_index}
-		    out of 
-		    {this.props.num_items}
+		  Showing {this.props.first_item_index} to {this.props.last_item_index} out of {this.props.num_items}
 		</div>
                 { this.props.has_prev_page &&
                   <div className="icon icon--previous-page" onClick={this.on_prev_page}>
@@ -66,7 +64,7 @@ class Pagination extends Component {
 function mapStateToProps(state, props) {
 
     const { item_list } = state
-    const { list_key } = props
+    const { list_key, on_changed } = props
     const l = (item_list && item_list[list_key]) || {}
     const pagination = l.pagination || {}
 
@@ -81,7 +79,8 @@ function mapStateToProps(state, props) {
 	has_prev_page: pagination.has_prev_page || false,
 	has_next_page: pagination.has_next_page || false,
         is_loading: l.is_loading,
-	received_at: moment(l.received_at).format('h:mm:ss a')
+	received_at: moment(l.received_at).format('h:mm:ss a'),
+        on_changed
     }
 
 }

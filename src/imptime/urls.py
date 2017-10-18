@@ -11,6 +11,7 @@ import issue_estimate_api
 import issue_tag_api
 import testable_api
 import project_api
+import project_dashboard_api
 import project_statement_api
 import project_user_permission_api
 import sprint_api
@@ -59,6 +60,8 @@ router.register(r'time_summary', time_summary_api.TimeSummaryViewSet,
                 base_name='time_summary')
 router.register(r'estimate_summary', estimate_summary_api.EstimateSummaryViewSet,
                 base_name='estimate_summary')
+router.register(r'project_dashboard', project_dashboard_api.ProjectDashboardViewSet,
+                base_name='project_dashboard')
 router.register(r'project_statement', project_statement_api.ProjectStatementViewSet,
                 base_name='project_statement')
 

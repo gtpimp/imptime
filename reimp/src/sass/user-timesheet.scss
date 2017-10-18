@@ -1,0 +1,10 @@
+@import 'variables.scss';
+
+.user_timesheet {
+    font-size: $font-size-small;
+}
+
+.user_timesheet__chart__warning_message {
+    color: $error-color;
+    float: right;
+}

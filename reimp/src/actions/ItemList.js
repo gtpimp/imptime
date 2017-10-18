@@ -59,6 +59,11 @@ export function expand_list(list_key) {
     }
 }
 
+export function getDisplayMode(state, list_key) {
+    return ((state.item_list || {})[list_key] || {}).display_mode
+}
+
+
 export function unselectAllItems(list_key) {
     return {
 	      type: UPDATE_LIST_SELECTION,
@@ -146,8 +151,8 @@ function announceMatchingItemsLoadFailed(list_key, error) {
 }
 
 function tryFetchMatchingItems(list_key,
-			                         required_item_ids,
-			                         matching_items_key, matching_items_promise_func) {
+			       required_item_ids,
+			       matching_items_key, matching_items_promise_func) {
     // The second half of tryFetchListAndItems, separated out for clarity
 
     return (dispatch, getState) => {
@@ -217,11 +222,13 @@ export function getMissingItemIds(state, required_item_ids, matching_items_key) 
     return item_ids_to_load
 }
 
-function tryFetchListAndItems(list_key, matching_items_key, matching_items_promise_func) {
+function tryFetchListAndItems(list_key, matching_items_key, matching_items_promise_func, fetch_item_ids_url) {
 
     // First tries to fetch the list of items, and then fetches all
     // missing matching items
 
+    fetch_item_ids_url = fetch_item_ids_url || 'imp/' + matching_items_key + '/'
+    
     return (dispatch, getState) => {
 	      const state = getState()
 
@@ -242,7 +249,7 @@ function tryFetchListAndItems(list_key, matching_items_key, matching_items_promi
 	      const params = { filter: l.filter || {},
 			                   format: {ids_only: true},
 			                   pagination: l.pagination || {} }
-        return impfetch(state, 'imp/' + matching_items_key + "/", dispatch, {params:params})
+        return impfetch(state, fetch_item_ids_url, dispatch, {params:params})
             .then(response => response.json())
             .then(json => {
 		            if (json.status !== 'success') {
@@ -278,8 +285,67 @@ function shouldFetchList(state, list_key) {
 }
 
 export function fetchListIfNeeded(list_key,
-				                          matching_items_key, matching_items_promise_func) {
+				  matching_items_key,
+                                  matching_items_promise_func,
+                                  fetch_item_ids_url ) {
     return tryFetchListAndItems(list_key,
-			                          matching_items_key,
-			                          matching_items_promise_func)
+			        matching_items_key,
+			        matching_items_promise_func,
+                                fetch_item_ids_url)
+}
+
+export function getVisibleItemIds(state, list_key) {
+    const item_list = ((state || {}).item_list || {})[list_key] || {}
+    const visible_item_ids = item_list.visible_item_ids || []
+    return visible_item_ids
+}
+
+export function getVisibleItems(state, list_key, entity_key) {
+    const visible_item_ids = getVisibleItemIds(state, list_key)
+    const items_by_id = ((state || {})[entity_key] || {}).items_by_id || {}
+    return (items_by_id && visible_item_ids.map( function(visible_item_id, index) {
+	return items_by_id[visible_item_id] || { 'id': visible_item_id,
+						 'loaded': false }
+    })) || []    
+}
+
+export function getSelectedItemIds(state, list_key) {
+    const item_list = ((state || {}).item_list || {})[list_key] || {}
+    const selected_item_ids = item_list.selected_ids || []
+    return selected_item_ids    
+}
+
+export function getSelectedItems(state, list_key, entity_key) {
+    const selected_item_ids = getSelectedItemIds(state, list_key)
+    const items_by_id = ((state || {})[entity_key] || {}).items_by_id || {}
+    return (items_by_id && selected_item_ids.map( function(selected_item_id, index) {
+	return items_by_id[selected_item_id] || { 'id': selected_item_id,
+						  'loaded': false }
+    })) || []        
+}
+
+export function isLoading(state, list_key) {
+    return (state.item_list || {}).is_loading || false
+}
+
+export function getLastUpdated(state, list_key) {
+    return (state.item_list || {}).last_updated || null
+}
+
+export function getLoadingItemIds(state, list_key) {
+    return (state.item_list || {}).loading_item_ids || []
+}
+
+export function haveItemsBeenRetrieved(state, ids, entity_key) {
+    // useful for api calls which return objects referring to many sprint or project etc. (eg project_dashboard)
+    // these api calls usually return a list of these secondary objects and the component can then load them in one go,
+    // instead of triggering them piecemeal.
+    // This function is used to check if those secondary objects have been retrieved, and so the rest of the rendering can continue.
+    // It does not attempt to check invalidation or loading flags, since its purpose is just to check if the bulk loads have been completed.
+    if ( !ids || ids.length == 0 ) {
+        return true
+    }
+    const items = (state[entity_key] || {}).items_by_id || {}
+    const sample_item = items[ids[0]]
+    return sample_item !== undefined
 }

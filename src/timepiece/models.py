@@ -2381,6 +2381,12 @@ class EntryQuerySet(EntriesQuerySet):
                                                       'date')
         return qs
 
+    def by_day(self):
+        return self.extra(select={'started_on':"date(start_time)"})\
+                   .values('started_on')\
+                   .order_by('started_on')\
+                   .annotate(daily_hours=Sum('hours'))
+    
     # def timespan(self, from_date, to_date=None, span=None):
     #     """
     #     Takes a beginning date a filters entries. An optional to_date can be

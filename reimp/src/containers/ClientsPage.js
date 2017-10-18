@@ -19,7 +19,7 @@ class ClientsPage extends Component {
         return (
             <div>
                 {/*<ProjectList key="projects" list_key={LIST_KEY__PROJECT_LIST}/>*/}
-                Clients
+              Clients
             </div>
         )
     }

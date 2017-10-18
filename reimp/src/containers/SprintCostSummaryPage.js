@@ -22,7 +22,7 @@ import SprintCostSummary from '../components/SprintCostSummary'
 import SprintTimeSummary from '../components/SprintTimeSummary'
 import SprintEstimateSummary from '../components/SprintEstimateSummary'
 import SprintBreakdown from '../components/SprintBreakdown'
-import TimeChart from '../components/TimeChart'
+import SprintTimeChartByUser from '../components/SprintTimeChartByUser'
 import Timestamp from '../components/Timestamp'
 import {
     ensureProjectStatementLoaded,
@@ -121,7 +121,7 @@ class SprintCostSummaryPage extends Component {
                     <h2 className="time-summary__header">
                       Sprint graphs
                     </h2>
-                    <TimeChart project_id={project_id} filter={filter} />
+                    <SprintTimeChartByUser project_id={project_id} filter={filter} />
                   </div>
                   <div className="estimate-summary">
                     <SprintEstimateSummary sprint_id={sprint_id} project_id={project_id}/>

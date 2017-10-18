@@ -5,6 +5,10 @@
   height: 4px;
 }
 
+.progress-bar__section--invalid {
+    background-color: $warning-color;
+}
+
 .progress-bar__section--over {
   background-color: $color-7;
 }
