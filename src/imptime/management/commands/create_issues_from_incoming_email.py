@@ -139,9 +139,8 @@ class Command(BaseCommand):
                               recipient_list=to_addresses,
                               fail_silently=False)
             finally:
-                #self.inbox.store(message_number, '+FLAGS', '\\Deleted')
-                #self.inbox.expunge()
-                pass
+                self.inbox.store(message_number, '+FLAGS', '\\Deleted')
+                self.inbox.expunge()
 
     def notify_issues_created(self, user, project, issues_created):
 
