@@ -48,6 +48,7 @@ function announceUsersLoadFailed(error) {
 }
 
 function fetchUsersPromise(dispatch, state, user_ids) {
+
     return new Promise(function(resolve, reject) {
 	      dispatch(announceLoadingUsers(user_ids))
 
