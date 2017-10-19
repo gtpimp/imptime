@@ -21,6 +21,13 @@ class LoginViewSet(rest_views.ObtainAuthToken):
     
     def post(self, request, *args, **kwargs):
         # cut and pasted from venv/lib/python2.7/site-packages/rest_framework/authtoken/views.py
+
+        username = request.data['username']
+        if not User.objects.filter(username=username).exists():
+            user_by_email = User.objects.filter(email=username).first()
+            if user_by_email:
+                request.data['username'] = user_by_email.username
+        
         serializer = self.serializer_class(data=request.data)
         serializer.is_valid(raise_exception=True)
         user = serializer.validated_data['user']
