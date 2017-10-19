@@ -78,7 +78,7 @@ def do_s3_backup(aws_region, aws_profile_name, s3_bucket_name, output_folder):
     _cmd(AWS_BIN, cmd_args)
     
 def create_zip(backup_folder, timestamp):
-    zip_filename = "%s.zip" % timestamp
+    zip_filename = "imptime_backup_%s.zip" % timestamp
     zip_filepath = os.path.join(backup_folder, zip_filename)
     logger.info("Zipping to {zip_filepath}".format(zip_filepath=zip_filepath))
     _cmd("zip", ["-r", zip_filepath, output_folder])
