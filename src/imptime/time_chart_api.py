@@ -141,8 +141,9 @@ class TimeChartViewSet(BaseViewSet):
     
     def get_user_times(self, users):
         daily_hours = {}
-        to_date = timezone.now().replace(hour=0, minute=0, second=0) 
-        from_date = to_date - relativedelta(days=self.NUM_DAYS_FOR_TIMESHEET_DASHBOARD)
+
+        to_date = timezone.now().replace(hour=0, minute=0, second=0) - relativedelta(seconds=1)
+        from_date = to_date - relativedelta(days=self.NUM_DAYS_FOR_TIMESHEET_DASHBOARD) + relativedelta(seconds=2)
         all_entries = Entry.objects.filter(start_time__gte=from_date, end_time__lte=to_date)
         events_in_range = CalendarEvent.objects\
                                        .filter(start__gte=from_date, start__lte=to_date)\
