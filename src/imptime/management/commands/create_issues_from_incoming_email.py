@@ -39,7 +39,11 @@ class Command(BaseCommand):
             return
         logger.info("Stopping")
         pid = open(self.PID_FILENAME).read()
-        os.kill(int(pid), signal.SIGKILL)
+        try:
+            os.kill(int(pid), signal.SIGKILL)
+        except OSError:
+            logger.info("Failed to kill existing process with pid %s, assuming already dead so ignoring" % pid)
+            pass
         os.remove(self.PID_FILENAME)
         logger.info("Stopped")
 
