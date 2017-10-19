@@ -184,7 +184,7 @@ class Command(BaseCommand):
             elif part.get_content_maintype() == 'text':
                 text = part.get_payload(decode = True)
                 if part.get_content_subtype() == "html":
-                    res['content'] = text
+                    res['content'] = html2text.html2text(text)
                 elif 'content' not in res or not res['content']:
                     # prefer html over plain text
                     res['content'] = text

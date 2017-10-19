@@ -1311,7 +1311,6 @@ class Project(models.Model):
 
     @property
     def is_open(self):
-
         if (self.status2 and self.status2 in self.closed_states()) or \
             (self.status3 and self.status3.name in self.closed_states()):
             return False
