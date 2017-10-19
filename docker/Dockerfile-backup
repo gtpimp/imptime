@@ -1,0 +1,34 @@
+FROM ubuntu:16.04
+
+RUN apt-get update && DEBIAN_FRONTEND=noninteractive apt-get install -y \
+    cron \
+    anacron \
+    zip \
+    vim \
+    python \
+    git \
+    python-pip \
+    lftp \
+    postgresql-client \
+    postgresql-client-common \
+    rsync \
+    ssh \
+    sshpass \
+    language-pack-en
+
+RUN pip install awscli --force-reinstall --upgrade
+
+RUN mkdir -p /opt/imptime/
+
+WORKDIR /opt/awscli
+RUN git clone --depth 1 -b 1.11.162 https://github.com/aws/aws-cli.git
+
+COPY docker/backup.cron /var/spool/cron/crontabs/root/backup-cron
+RUN chmod 0644 /var/spool/cron/crontabs/root/backup-cron
+RUN touch /var/log/backup.log
+
+COPY docker/backup.py /opt/imptime/
+
+WORKDIR /opt/awscli/aws-cli
+
+CMD ["cron", "-f"]
