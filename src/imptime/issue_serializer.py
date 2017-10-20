@@ -7,6 +7,7 @@ from tag_serializer import TagSerializer
 from issue_estimate_serializer import IssueEstimateSerializer
 from issue_comment_serializer import IssueCommentSerializer
 from issue_attachment_serializer import IssueAttachmentSerializer
+from visual_spec_document_serializer import VisualSpecDocumentSerializer
 from testable_serializer import TestableSerializer
 logger = logging.getLogger(__name__)
 
@@ -39,6 +40,7 @@ class IssueSerializer(BaseSerializer):
     comments = IssueCommentSerializer(many=True)
     testables = TestableSerializer(many=True)
     attachments = IssueAttachmentSerializer(many=True)
+    visual_spec_documents = VisualSpecDocumentSerializer(many=True, source="enriched_visual_spec_documents")
 
     def to_representation(self, issue, *args, **kwargs):
         issue.assigned_to_quick_name = \
@@ -54,7 +56,6 @@ class IssueSerializer(BaseSerializer):
         issue.my_actual_hours = sum([float(x.hours or ((timezone.now()-x.start_time).seconds/3600.0)) for x in issue.my_entries])
         issue.am_i_clocked_in = len(issue.my_clocked_in_entries) > 0
         issue.currently_clocked_in_by_user_ids = [x.id for x in issue.currently_clocked_in_by()]
-
         return super(IssueSerializer, self).to_representation(issue, *args, **kwargs)
 
 class IssueGeneralDetailsSerializer(BaseSerializer):
