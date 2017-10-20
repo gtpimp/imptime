@@ -116,7 +116,7 @@ class Command(BaseCommand):
                     message = self.unpack_email(email_message)
                 except Exception, ex:
                     logger.exception(ex)
-                    send_mail(subject="Problems parsing email: %d" % message_number,
+                    send_mail(subject="Problems parsing email: %s" % message_number,
                               message=message,
                               from_email=settings.FROM_EMAIL,
                               recipient_list=settings.EMACS_ADMIN_USER_EMAILS,
@@ -142,6 +142,13 @@ class Command(BaseCommand):
                               from_email=settings.FROM_EMAIL,
                               recipient_list=to_addresses,
                               fail_silently=False)
+            except Exception, ex:
+                logger.exception(ex)
+                send_mail(subject="Issue creator general error: %s" % message_number,
+                          message=str(ex),
+                          from_email=settings.FROM_EMAIL,
+                          recipient_list=settings.EMACS_ADMIN_USER_EMAILS,
+                          fail_silently=True)
             finally:
                 self.inbox.store(message_number, '+FLAGS', '\\Deleted')
                 self.inbox.expunge()
