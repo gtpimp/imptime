@@ -203,7 +203,7 @@ class Command(BaseCommand):
             project_name = parts[0]
             subject = None
         
-        project = Project.objects.filter(name=project_name)\
+        project = Project.objects.filter(name__iexact=project_name)\
                                  .filter_by_logged_in_user(user)\
                                  .first()
         if project is None:
