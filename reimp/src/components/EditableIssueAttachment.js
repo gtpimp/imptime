@@ -33,11 +33,16 @@ class EditableIssueAttachment extends Component {
             <div>
                 <EditableProperty property_key={'issue_attachment_'+attachment.id}
                                   initial_value={attachment}
+                                  can_edit={true}
                                   onChange={this.onChange}
                 >
-                    <IssueAttachmentForm issue_id={issue_id} />
-                    <FileLabel />
-                    <Blank />
+                  <IssueAttachmentForm issue_id={issue_id} />
+                  <div>
+                    { attachment.id && <FileLabel value={attachment} /> }
+                    { ! attachment.id && <div className="btn">upload</div> }
+                  </div>
+                  <Blank />
+                    
                 </EditableProperty>
                 { attachment.id && <button onClick={this.onDelete}>delete</button> }
             </div>

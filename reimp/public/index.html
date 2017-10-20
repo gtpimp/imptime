@@ -86,14 +86,18 @@
           </div>
           <div class="block block--message">
             <div class="block__content">
-              Gathering Imps ... 
-              <br/><br/>
-              Please wait a few moments
-              <div>
+              <div style="display:none" id="loading_msg">
+                Gathering Imps ... 
+                <br/><br/>
+                Please wait a few moments
               </div>
             </div>
           </div>
         </div>
+
+        <script>
+         setTimeout(function() { document.getElementById("loading_msg").style.display = "block" }, 1000);
+        </script>
 
       </div>
     </body>

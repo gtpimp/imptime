@@ -1,6 +1,6 @@
 from lib.models import BaseModel
 from lib.fields import UploadTo, ProtectedForeignKey
-from timepiece import Issue
+from timepiece.models import Issue
 from django.db import models
 import logging
 logger = logging.getLogger(__name__)
@@ -20,6 +20,6 @@ class VisualIssue(BaseModel):
     visual_spec_document = ProtectedForeignKey(VisualSpecDocument)
     issue = ProtectedForeignKey(Issue)
     order = models.IntegerField(default=1)
-    shape = models.ChoiceField(max_length=50, choices=SHAPES, default='circle')
+    shape = models.CharField(max_length=50, choices=SHAPES, default='circle')
     x_pos = models.IntegerField()
     y_pos = models.IntegerField()
