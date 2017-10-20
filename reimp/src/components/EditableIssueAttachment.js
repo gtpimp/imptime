@@ -40,9 +40,7 @@ class EditableIssueAttachment extends Component {
                   <div>
                     { attachment.id && <FileLabel value={attachment} /> }
                     { ! attachment.id &&
-                      <button className="button button--primary">
-                        upload
-                      </button>
+                      <IssueAttachmentForm issue_id={issue_id} />
                     }
                   </div>
                   <Blank />
