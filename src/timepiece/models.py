@@ -8,7 +8,7 @@ import calendar
 from lib.models import model_to_dict_with_date_support
 from impasync.refresh_notifier import RefreshNotifier
 from caldav_helper import CalDavHelper
-from lib.fields import UploadTo
+from lib.fields import UploadTo, ProtectedForeignKey
 import uuid
 from colorful.fields import RGBColorField
 from interface_plugin import get_interface_plugin
