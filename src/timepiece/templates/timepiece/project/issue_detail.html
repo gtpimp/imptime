@@ -127,7 +127,7 @@
               <img src="{% static 'images/timepiece/icons/note_edit.png' %}" title="Edit description"/>
 	          </div>
 	          {% end_permission %}
-            <div class="markdown_content" style="display:none">{{issue.description}}</div>
+            <div class="markdown_content" style="display:none">{{issue.description|safe}}</div>
             <div class="content">{% if issue.description %} {{issue.description|asmarkdown|with_issue_links|safe}}</div>
             {% else %}No issue detail{% endif %}
 
