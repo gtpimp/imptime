@@ -111,8 +111,10 @@ class Command(BaseCommand):
                 try:
                     message = "not set"
                     type, raw_msg = self.inbox.fetch(message_number, '(RFC822)')
-                    email_message = email.message_from_string(raw_msg[0][1])
-                    print('Message %s\n%s\n' % (message_number, email_message))
+                    raw_email_text = raw_msg[0][1]
+                    logger.debug("Processing email: %s" % raw_email_text)
+                    email_message = email.message_from_string(raw_email_text)
+                    logger.debug('Message %s\n%s\n' % (message_number, email_message))
                     message = self.unpack_email(email_message)
                 except Exception, ex:
                     logger.exception(ex)
