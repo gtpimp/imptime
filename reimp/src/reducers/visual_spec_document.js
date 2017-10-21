@@ -45,7 +45,6 @@ export default function visual_spec_document(state = initialState, action) {
 		items_by_id: Object.assign({},
 					   assign(state.items_by_id, action.items_by_id)),
 	    })
-            state_copy.items_by_id = Object.assign({}, assign(state_copy.items_by_id, action.items_by_id))
             return state_copy
             
         case ANNOUNCE_VISUAL_SPEC_DOCUMENTS_LOAD_FAILED:

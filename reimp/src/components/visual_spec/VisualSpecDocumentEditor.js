@@ -3,6 +3,7 @@ import { connect } from 'react-redux'
 import {
     ensureVisualSpecDocumentsLoaded, getVisualSpecDocument
 } from '../../actions/VisualSpecDocuments'
+import '../../sass/visual-spec-document-editor.scss'
 
 class VisualSpecDocumentEditor extends Component {
 
@@ -29,8 +30,16 @@ class VisualSpecDocumentEditor extends Component {
         }
 
         return (
-            <div>
+            <div className="vsd-editor">
+
               Viewing {visual_spec_document_id}
+
+              <div className="vsd-editor__doc_image_container">
+                { visual_spec_document.image_url && <img className="vsd-editor__doc_image"
+                                                         role="presentation"
+                                                         src={visual_spec_document.image_url} /> }
+              </div>
+              
             </div>
         )
     }
@@ -39,7 +48,7 @@ class VisualSpecDocumentEditor extends Component {
 function mapStateToProps(state, props) {
     const { visual_spec_document_id } = props
 
-    const visual_spec_document = getVisualSpecDocument(visual_spec_document_id) || { 'name': 'loading', 'loaded': false }
+    const visual_spec_document = getVisualSpecDocument(state, visual_spec_document_id) || { 'name': 'loading', 'loaded': false }
     
     return {
         visual_spec_document_id,
