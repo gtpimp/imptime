@@ -1,11 +1,11 @@
 import React, {Component} from 'react'
 import {connect} from 'react-redux'
 import map from 'lodash/map'
-import EditableProperty from './form/EditableProperty'
-import { deleteIssueVisualSpecDocument, getIssue } from '../actions/Issues'
-import IssueVisualSpecDocumentForm from './form/IssueVisualSpecDocumentForm'
-import FileLabel from './form/FileLabel'
-import Blank from './form/Blank'
+import EditableProperty from '../form/EditableProperty'
+import { deleteIssueVisualSpecDocument, getIssue } from '../../actions/Issues'
+import IssueVisualSpecDocumentForm from './IssueVisualSpecDocumentForm'
+import FileLabel from '../form/FileLabel'
+import Blank from '../form/Blank'
 import {browserHistory} from 'react-router'
 
 class EditableIssueVisualSpecDocument extends Component {

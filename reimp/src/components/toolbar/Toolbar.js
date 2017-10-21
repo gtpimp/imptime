@@ -13,7 +13,7 @@ import ListToolbarPanel from './ListToolbarPanel'
 import CostSummaryToolbarPanel from './CostSummaryToolbarPanel'
 import ProjectStatementToolbarPanel from './ProjectStatementToolbarPanel'
 import UserTimesheetsToolbarPanel from './UserTimesheetsToolbarPanel'
-import VisualSpecDocumentToolbarPanel from './VisualSpecDocumentToolbarPanel'
+import VisualSpecDocumentToolbarPanel from '../visual_spec/VisualSpecDocumentToolbarPanel'
 
 class ToolBar extends Component {
 

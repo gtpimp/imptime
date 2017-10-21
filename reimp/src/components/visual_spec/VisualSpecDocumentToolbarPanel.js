@@ -2,7 +2,7 @@ import React, {Component} from 'react'
 import {connect} from 'react-redux'
 import {browserHistory} from 'react-router'
 import '../../sass/toolbar-panel.css'
-import ToolbarButton from './ToolbarButton'
+import ToolbarButton from '../toolbar/ToolbarButton'
 import ReactTooltip from 'react-tooltip'
 import { invalidateAllVisualSpecDocuments } from '../../actions/VisualSpecDocuments'
 

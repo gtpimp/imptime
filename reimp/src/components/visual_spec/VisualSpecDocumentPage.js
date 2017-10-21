@@ -1,12 +1,12 @@
 import React, {Component} from 'react'
 import {connect} from 'react-redux'
-import { setBreadcrumbsActive } from '../actions/Breadcrumbs'
-import VisualSpecDocumentEditor from '../components/VisualSpecDocumentEditor'
+import { setBreadcrumbsActive } from '../../actions/Breadcrumbs'
+import VisualSpecDocumentEditor from './VisualSpecDocumentEditor'
 
-import { PAGE_KEY__VISUAL_SPEC_DOCUMENT_PAGE } from '../actions/ItemListKeyRegistry'
+import { PAGE_KEY__VISUAL_SPEC_DOCUMENT_PAGE } from '../../actions/ItemListKeyRegistry'
 import {
     set_toolbars
-} from '../actions/Page'
+} from '../../actions/Page'
 
 class VisualSpecDocumentPage extends Component {
 

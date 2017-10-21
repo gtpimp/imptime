@@ -44,9 +44,6 @@ export default function visual_spec_document(state = initialState, action) {
 							   keys(action.items_by_id))),
 		items_by_id: Object.assign({},
 					   assign(state.items_by_id, action.items_by_id)),
-                all_sprint_ids: action.all_sprint_ids,
-                all_visual_spec_document_ids: action.all_visual_spec_document_ids,
-                all_user_ids: action.all_user_ids
 	    })
             state_copy.items_by_id = Object.assign({}, assign(state_copy.items_by_id, action.items_by_id))
             return state_copy

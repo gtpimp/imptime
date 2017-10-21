@@ -2,7 +2,7 @@ import React, { Component } from 'react'
 import { connect } from 'react-redux'
 import {
     ensureVisualSpecDocumentsLoaded, getVisualSpecDocument
-} from '../actions/VisualSpecDocuments'
+} from '../../actions/VisualSpecDocuments'
 
 class VisualSpecDocumentEditor extends Component {
 
