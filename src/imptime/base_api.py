@@ -9,6 +9,7 @@ from timepiece.models import Project as Sprint
 from timepiece.models import Issue
 from timepiece.models import BusinessPermissions as ProjectPermissions
 from timepiece.models import Entry as TimesheetEntry
+from imptime.models import VisualSpecDocument
 
 class PermissionHelper():
     @classmethod
@@ -143,6 +144,9 @@ class BaseViewSet(viewsets.ViewSet):
     def allowed_user(self, pk):
         return self.allowed_users().get(pk=pk)
 
+    def allowed_visual_spec_documents(self):
+        return VisualSpecDocument.objects.filter(issue__in=self.allowed_issues())
+    
     def allowed_project_permissions(self):
         return PermissionHelper.allowed_project_permissions(self.request.user)
 

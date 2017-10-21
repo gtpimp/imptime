@@ -18,7 +18,7 @@ class VisualIssue(BaseModel):
 
     SHAPES = [ ('circle', 'Circle') ]
     
-    visual_spec_document = ProtectedForeignKey(VisualSpecDocument, related_name='visual_spec_documents')
+    visual_spec_document = ProtectedForeignKey(VisualSpecDocument, related_name='visual_issues')
     issue = ProtectedForeignKey(Issue, related_name='visual_issues')
     order = models.IntegerField(default=1)
     shape = models.CharField(max_length=50, choices=SHAPES, default='circle')

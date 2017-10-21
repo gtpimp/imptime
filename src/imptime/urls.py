@@ -50,7 +50,7 @@ router.register(r'issue/clock', issue_clock_api.IssueClockViewSet,
                 base_name='issue_clock')
 router.register(r'issue/testable', testable_api.TestableViewSet,
                 base_name='testable')
-router.register(r'issue/visual_spec_document', visual_spec_document_api.VisualSpecDocumentViewSet,
+router.register(r'visual_spec_document', visual_spec_document_api.VisualSpecDocumentViewSet,
                 base_name='visual_spec_document')
 router.register(r'issue', issue_api.IssueViewSet,
                 base_name='issue')

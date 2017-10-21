@@ -3,6 +3,7 @@ import difference from 'lodash/difference'
 import keys from 'lodash/keys'
 import keyBy from 'lodash/keyBy'
 import { fetchListIfNeeded, getMissingItemIds } from './ItemList'
+
 import { ENTITY_KEY__VISUAL_SPEC_DOCUMENT } from '../actions/ItemListKeyRegistry'
 
 export const ANNOUNCE_VISUAL_SPEC_DOCUMENTS_LOADED = 'ANNOUNCE_VISUAL_SPEC_DOCUMENTS_LOADED'
@@ -70,6 +71,12 @@ function fetchVisualSpecDocumentsPromise(dispatch, state, visual_spec_document_i
 		reject("Failed to load visual spec documents: " + error)
 	    })
     })
+}
+
+export function fetchProjectsIfNeeded(list_key) {
+    const matching_items_key = ENTITY_KEY__VISUAL_SPEC_DOCUMENT
+    const matching_items_promise_func = fetchVisualSpecDocumentsPromise
+    return fetchListIfNeeded(list_key, matching_items_key, matching_items_promise_func)
 }
 
 export function ensureVisualSpecDocumentsLoaded(visual_spec_document_ids) {

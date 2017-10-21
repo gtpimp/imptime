@@ -7,7 +7,7 @@ from tag_serializer import TagSerializer
 from issue_estimate_serializer import IssueEstimateSerializer
 from issue_comment_serializer import IssueCommentSerializer
 from issue_attachment_serializer import IssueAttachmentSerializer
-from visual_spec_document_serializer import VisualSpecDocumentSerializer
+from visual_spec_document_serializer import VisualSpecDocumentDownloadSerializer
 from testable_serializer import TestableSerializer
 logger = logging.getLogger(__name__)
 
@@ -40,7 +40,7 @@ class IssueSerializer(BaseSerializer):
     comments = IssueCommentSerializer(many=True)
     testables = TestableSerializer(many=True)
     attachments = IssueAttachmentSerializer(many=True)
-    visual_spec_documents = VisualSpecDocumentSerializer(many=True, source="enriched_visual_spec_documents")
+    visual_spec_documents = VisualSpecDocumentDownloadSerializer(many=True, source="enriched_visual_spec_documents")
 
     def to_representation(self, issue, *args, **kwargs):
         issue.assigned_to_quick_name = \

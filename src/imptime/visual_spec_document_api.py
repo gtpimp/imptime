@@ -2,8 +2,7 @@ import logging
 from issue_serializer import IssueSerializer
 from django_downloadview import HTTPDownloadView
 from django.contrib.auth.decorators import login_required
-from issue_serializer import IssueGeneralDetailsSerializer
-from issue_serializer import IssueWithEstimatesSerializer
+from visual_spec_document_serializer import VisualSpecDocumentSerializer
 from rest_framework.decorators import detail_route
 from rest_framework.renderers import JSONRenderer
 from django.contrib.auth.models import User
@@ -14,10 +13,8 @@ from base_api import BaseViewSet
 import json
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.decorators import permission_classes
-from timepiece.models import Issue, IssueHistory
-from timepiece.models import IssueAttachment
+from timepiece.models import IssueHistory
 from imptime.models import VisualSpecDocument
-from django.core.files import File as DjangoFile
 
 logger = logging.getLogger(__name__)
 
@@ -25,6 +22,40 @@ logger = logging.getLogger(__name__)
 @permission_classes((IsAuthenticated,))
 class VisualSpecDocumentViewSet(BaseViewSet):
 
+    def list(self, request):
+        try:
+            context = {}
+            params = request.GET.get('params', '{}')
+            params = json.loads(params)
+            pagination = params.get('pagination', {})
+            filter_args = params.get('filter', {})
+            format_args = params.get('format', {})
+
+            visual_spec_documents = self.allowed_visual_spec_documents()
+            visual_spec_documents = self.apply_filter(qs=visual_spec_documents,
+                                                      raw_filter_args=filter_args)
+            visual_spec_documents = self.apply_pagination(qs=visual_spec_documents,
+                                                          pagination=pagination)
+
+            if format_args.get('ids_only'):
+                context['ids'] = [str(x) for x in visual_spec_documents.values_list(
+                    'id', flat=True)]
+            else:
+
+                for vsd in visual_spec_documents:
+                    vsd.image_url = VisualSpecDocumentSerializer.get_image_url(self.request, vsd)
+                
+                s = VisualSpecDocumentSerializer(visual_spec_documents, many=True)
+                visual_spec_documents_data = s.data
+                context['visual_spec_documents'] = visual_spec_documents_data
+            context['pagination'] = pagination
+            data = {'status': 'success', 'payload': context}
+        except Exception, ex:
+            logger.exception(ex)
+            return self.error_response(ex)
+        
+        return HttpResponse(JSONRenderer().render(data))
+    
     def create(self, request):
         try:
             issue_pk = request.POST['issue_id']
