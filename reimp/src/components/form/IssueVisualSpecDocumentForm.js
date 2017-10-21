@@ -7,13 +7,16 @@ class IssueVisualSpecDocumentForm extends Component {
 
     render() {
 
-        const { upload_relative_url, issue_id } = this.props
+        const { upload_relative_url, issue_id, onChange } = this.props
         
         return (
             <div>
               <label htmlFor="visual_spec_document">Visual spec document</label>
               <FileUploader upload_relative_url={upload_relative_url}
-                            upload_params={{issue_id: issue_id}} />
+                            upload_params={{issue_id: issue_id}}
+                            onSuccess={onChange}
+                            onFailure={onChange}
+              />
             </div>
         )
     }
