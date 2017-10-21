@@ -6,9 +6,7 @@ import FileUploader from './FileUploader'
 class IssueVisualSpecDocumentForm extends Component {
 
     render() {
-
         const { upload_relative_url, issue_id, onChange } = this.props
-        
         return (
             <div>
               <label htmlFor="visual_spec_document">Visual spec document</label>

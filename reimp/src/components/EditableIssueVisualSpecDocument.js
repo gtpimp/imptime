@@ -6,6 +6,7 @@ import { deleteIssueVisualSpecDocument, getIssue } from '../actions/Issues'
 import IssueVisualSpecDocumentForm from './form/IssueVisualSpecDocumentForm'
 import FileLabel from './form/FileLabel'
 import Blank from './form/Blank'
+import {browserHistory} from 'react-router'
 
 class EditableIssueVisualSpecDocument extends Component {
 
@@ -13,6 +14,7 @@ class EditableIssueVisualSpecDocument extends Component {
         super(props)
         this.onDelete = this.onDelete.bind(this)
         this.onChange = this.onChange.bind(this)
+        this.onOpen = this.onOpen.bind(this)
     }
 
     onChange() {
@@ -23,6 +25,11 @@ class EditableIssueVisualSpecDocument extends Component {
     onDelete(new_value) {
         const { dispatch, issue_id, visual_spec_document_id } = this.props
         dispatch(deleteIssueVisualSpecDocument(issue_id, visual_spec_document_id))
+    }
+
+    onOpen() {
+        const {visual_spec_document, project_id} = this.props
+        browserHistory.push('/projects/' + project_id + '/visualSpec/' + visual_spec_document.id);
     }
 
     render() {
@@ -46,7 +53,8 @@ class EditableIssueVisualSpecDocument extends Component {
                   <Blank />
                     
                 </EditableProperty>
-                { visual_spec_document.id && <button onClick={this.onDelete}>delete</button> }
+                { visual_spec_document.id && <button className="button" onClick={this.onDelete}>delete</button> }
+                { visual_spec_document.id && <button className="button" onClick={this.onOpen}>open</button> }
             </div>
         )
     }
@@ -65,6 +73,7 @@ function mapStateToProps(state, props) {
     
     return {
         issue_id: issue_id,
+        project_id: issue.project_id,
         visual_spec_document_id: visual_spec_document_id,
         visual_spec_document: visual_spec_document
     }

@@ -17,6 +17,7 @@ import SprintCostSummaryPage from './containers/SprintCostSummaryPage'
 import SprintDashboardPage from './containers/SprintDashboardPage'
 import UserTimesheetPage from './containers/UserTimesheetPage'
 import SprintsPage from './containers/SprintsPage'
+import VisualSpecDocumentPage from './containers/VisualSpecDocumentPage'
 import TeamPage from './containers/TeamPage'
 import configureStore from './store/configureStore'
 import {IndexRoute, Router, Route, browserHistory} from 'react-router'
@@ -58,6 +59,7 @@ ReactDOM.render(
                 <Route path="projects/:projectId/sprints/:sprintId/costSummary" component={SprintCostSummaryPage}/>
                 <Route path="projects/:projectId/users" component={ProjectUserPage}/>
                 <Route path="projects/:projectId/users/:userId" component={ProjectUserPage}/>
+                <Route path="projects/:projectId/visualSpec/:visualSpecDocumentId" component={VisualSpecDocumentPage}/>
 
                 <Route path="dashboard" component={DashboardPage}/>
                 <Route path="usertimesheets" component={UserTimesheetPage}/>

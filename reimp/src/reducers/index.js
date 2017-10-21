@@ -23,6 +23,7 @@ import time_chart from './time_chart'
 import time_summary from './time_summary'
 import toolbar from './toolbar'
 import user from './user'
+import visual_spec_document from './visual_spec_document'
 import websockets from './websockets'
 import { combineReducers } from 'redux'
 import { reducer as redux_form_reducer } from 'redux-form'
@@ -56,6 +57,7 @@ const rootReducer = combineReducers({
     toolbar,
     user,
     user_timesheet,
+    visual_spec_document,
     websockets,
 })
 
