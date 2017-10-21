@@ -12,7 +12,7 @@ export const ANNOUNCE_LOADING_VISUAL_SPEC_DOCUMENTS = 'ANNOUNCE_LOADING_VISUAL_S
 export const INVALIDATE_VISUAL_SPEC_DOCUMENTS = 'INVALIDATE_VISUAL_SPEC_DOCUMENTS'
 export const INVALIDATE_ALL_VISUAL_SPEC_DOCUMENTS = 'INVALIDATE_ALL_VISUAL_SPEC_DOCUMENTS'
 
-export function invalidateAllProjectDashboards() {
+export function invalidateAllVisualSpecDocuments() {
     return {
         type: INVALIDATE_ALL_VISUAL_SPEC_DOCUMENTS
     }
