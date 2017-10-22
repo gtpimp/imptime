@@ -1,5 +1,7 @@
 import React, { Component } from 'react'
 import { connect } from 'react-redux'
+import {DndTypes} from '../../actions/Dnd'
+import {DropTarget} from 'react-dnd';
 import {
     ensureVisualSpecDocumentsLoaded, getVisualSpecDocument
 } from '../../actions/VisualSpecDocuments'
@@ -23,13 +25,13 @@ class VisualSpecDocumentEditor extends Component {
     }
 
     render() {
-        const { visual_spec_document_id, visual_spec_document } = this.props
+        const { visual_spec_document_id, visual_spec_document, connectDropTarget } = this.props
         
         if ( ! visual_spec_document_id ) {
             return null
         }
 
-        return (
+        return connectDropTarget(
             <div className="vsd-editor">
 
               Viewing {visual_spec_document_id}
@@ -56,5 +58,36 @@ function mapStateToProps(state, props) {
     }
 }
 
+const headingTarget = {
+    drop: (props, monitor, component) => {
+        const {visual_spec_issue_id} = props
+        const dragging_item = monitor.getItem()
+        if (!dragging_item) {
+            return;
+        }
+        const dragging_issue_id = dragging_item.id
+        if (visual_spec_issue_id === dragging_issue_id) {
+            console.log("ignoring dnd on the same element: " + visual_spec_issue_id)
+            return;
+        }
 
-export default connect(mapStateToProps)(VisualSpecDocumentEditor)
+        alert("the eagle has landed")
+    },
+    hover: (props, monitor, component) => {
+    },
+    canDrop: (props, monitor) => {
+        return true;
+    }
+
+}
+
+function collectDrop(connect, monitor) {
+    return {
+        connectDropTarget: connect.dropTarget(),
+        isOver: monitor.isOver(),
+        canDrop: monitor.canDrop()
+    }
+}
+
+
+export default connect(mapStateToProps)(DropTarget(DndTypes.VISUAL_SPEC_ISSUE, headingTarget, collectDrop)(VisualSpecDocumentEditor))

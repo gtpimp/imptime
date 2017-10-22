@@ -5,6 +5,7 @@ import '../../sass/toolbar-panel.css'
 import ToolbarButton from '../toolbar/ToolbarButton'
 import ReactTooltip from 'react-tooltip'
 import { invalidateAllVisualSpecDocuments } from '../../actions/VisualSpecDocuments'
+import VisualSpecIssue from './VisualSpecIssue'
 
 class VisualSpecDocumentToolbarPanel extends Component {
 
@@ -22,6 +23,7 @@ class VisualSpecDocumentToolbarPanel extends Component {
         return (
             <div className="toolbar-panel">
               <ToolbarButton tooltip="Refresh" icon="refresh" onClick={this.invalidateComponents}/>
+              <VisualSpecIssue name="New"/>
               <ReactTooltip place="bottom" type="info" />
             </div>
         )
