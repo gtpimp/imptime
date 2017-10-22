@@ -3707,6 +3707,10 @@ class Issue(models.Model):
         self.save()
         return self
 
+    def get_next_child_order(self):
+        max_child_order = Issue.objects.filter(parent_group=self).aggregate(max_order=Max('order'))['max_order'] or 0
+        return max_child_order+0.1
+    
     @classmethod
     def get_next_order(self, project):
         project_issue_order = Issue.objects.filter(project = project).aggregate(max_order=Max('order'))

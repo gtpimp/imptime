@@ -15,6 +15,7 @@ import json
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.decorators import permission_classes
 from timepiece.models import Issue, IssueHistory, Feature
+from imptime.models import VisualSpecIssue
 from timepiece.models import TagCategory, Tag, Entry, IssueStatus
 
 logger = logging.getLogger(__name__)
@@ -252,6 +253,7 @@ class IssueViewSet(BaseViewSet):
             if self.logged_in_permissions(issue.project.business).has_delete_issue:
                 IssueHistory.add_history(self.request.user, issue,
                                          "deleted", issue.id, "")
+                VisualSpecIssue.objects.filter(issue=issue).delete()
                 issue.delete()
                 context['issue_id'] = issue_id
                 data = {'status': 'success', 'payload': context}

@@ -85,8 +85,6 @@ const headingTarget = {
         } else {
             dispatch(updateVisualSpecIssue([dragging_visual_issue_id], "pointer", 100, 100))
         }
-
-        alert("the eagle has landed")
     },
     hover: (props, monitor, component) => {
     },

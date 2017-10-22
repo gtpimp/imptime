@@ -13,7 +13,7 @@ from base_api import BaseViewSet
 import json
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.decorators import permission_classes
-from timepiece.models import Issue, IssueStatus
+from timepiece.models import Issue, IssueStatus, IssueHistory
 from imptime.models import VisualSpecIssue
 
 logger = logging.getLogger(__name__)
@@ -60,14 +60,20 @@ class VisualSpecIssueViewSet(BaseViewSet):
             s = VisualSpecIssueSerializer(data=params)
             if s.is_valid():
                 parent_issue = visual_spec_document.issue
+                if not parent_issue.can_group_issues:
+                    parent_issue.can_group_issues = True
+                    parent_issue.save()
+                    IssueHistory.add_history(request.user, parent_issue, "auto change to feature for visual speccing", "", "1")
+                new_issue_order=parent_issue.get_next_child_order()
                 issue = Issue.objects.create(project=parent_issue.project,
-                                             subject="unnamed visual issue for %s"%visual_spec_document.name,
+                                             subject="unnamed visual issue %d for %s"%(new_issue_order,visual_spec_document.name),
                                              adhoc=False,
                                              status2=IssueStatus.objects.get_or_create(name='new', business=parent_issue.project.business)[0],
                                              parent_group=visual_spec_document.issue,
                                              assigned_to=parent_issue.assigned_to,
                                              number=Issue.get_next_issue_number(visual_spec_document.issue.project.business),
-                                             order=Issue.get_next_order(parent_issue.project))
+                                             order=new_issue_order)
+                parent_issue.renumber_issue_order()
                 visual_spec_issue = s.save(issue=issue)
             else:
                 return self.error_response(Exception("Invalid post data: %s" % s.errors))
