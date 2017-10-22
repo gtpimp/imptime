@@ -17,6 +17,7 @@ export const ENTITY_KEY__PROJECT_USER_PERMISSION = 'user'
 export const ENTITY_KEY__PROJECT_DASHBOARD = 'project_dashboard'
 export const ENTITY_KEY__USER_TIMESHEET = 'user_timesheet'
 export const ENTITY_KEY__VISUAL_SPEC_DOCUMENT = 'visual_spec_document'
+export const ENTITY_KEY__VISUAL_SPEC_ISSUE = 'visual_spec_issue'
 
 export const PAGE_KEY__DASHBOARD_PATH = 'dashboard_page'
 export const PAGE_KEY__PROJECTS_PAGE = 'projects_page'

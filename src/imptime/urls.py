@@ -20,8 +20,8 @@ import time_summary_api
 import user_api
 import views
 import visual_spec_document_api
+import visual_spec_issue_api
 from rest_framework.routers import DefaultRouter
-from rest_framework.authtoken import views as rest_views
 from issue_attachment_download import IssueAttachmentDownloadView, IssueAttachmentPreviewView
 from visual_spec_document_download import VisualSpecDocumentDownloadView, VisualSpecDocumentPreviewView
 
@@ -52,6 +52,8 @@ router.register(r'issue/testable', testable_api.TestableViewSet,
                 base_name='testable')
 router.register(r'visual_spec_document', visual_spec_document_api.VisualSpecDocumentViewSet,
                 base_name='visual_spec_document')
+router.register(r'visual_spec_issue', visual_spec_issue_api.VisualSpecIssueViewSet,
+                base_name='visual_spec_issue')
 router.register(r'issue', issue_api.IssueViewSet,
                 base_name='issue')
 router.register(r'user', user_api.UserViewSet,

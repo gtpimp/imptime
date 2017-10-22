@@ -25,20 +25,18 @@ class VisualSpecDocumentDownloadSerializer(BaseSerializer):
         return reverse('home', request=request).replace('/welcome/', '')
 
 
-class VisualIssueSerializer(BaseSerializer):
-    issue_id = serializers.CharField()
-    order = serializers.IntegerField()
-    shape = serializers.CharField()
-    x_pos = serializers.IntegerField()
-    y_pos = serializers.IntegerField()
-
-
 class VisualSpecDocumentSerializer(BaseSerializer):
     id = serializers.CharField(source="pk")
     name = serializers.CharField()
     issue_id = serializers.CharField()
     image_url = serializers.CharField()
-    visual_issues = VisualIssueSerializer(many=True, source="visual_issues.all")
+    visual_spec_issue_ids = serializers.ListField(child=serializers.CharField())
+    issue_ids = serializers.ListField(child=serializers.CharField())
+
+    def to_representation(self, obj, *args, **kwargs):
+        obj.visual_spec_issue_ids = obj.visual_spec_issues.all().values_list('id', flat=True)
+        obj.issue_ids = obj.visual_spec_issues.all().values_list('issue_id', flat=True)
+        return super(VisualSpecDocumentSerializer, self).to_representation(obj, *args, **kwargs)
     
     @classmethod
     def get_image_url(self, request, visual_spec_document):

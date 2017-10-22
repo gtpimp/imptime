@@ -42,7 +42,7 @@ function mapStateToProps(state, props) {
 
 const headingSource = {
     beginDrag(props) {
-        return {id: props.visual_spec_issue_id || "new_visual_spec_issue_id"}
+        return {id: props.visual_spec_issue_id || "new"}
     }
 }
 

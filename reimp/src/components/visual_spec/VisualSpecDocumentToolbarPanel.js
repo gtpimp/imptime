@@ -5,6 +5,7 @@ import '../../sass/toolbar-panel.css'
 import ToolbarButton from '../toolbar/ToolbarButton'
 import ReactTooltip from 'react-tooltip'
 import { invalidateAllVisualSpecDocuments } from '../../actions/VisualSpecDocuments'
+import { invalidateAllVisualSpecIssues } from '../../actions/VisualSpecIssues'
 import VisualSpecIssue from './VisualSpecIssue'
 
 class VisualSpecDocumentToolbarPanel extends Component {
@@ -17,6 +18,7 @@ class VisualSpecDocumentToolbarPanel extends Component {
     invalidateComponents() {
         const { dispatch } = this.props
         dispatch(invalidateAllVisualSpecDocuments())
+        dispatch(invalidateAllVisualSpecIssues())
     }
 
     render() {
