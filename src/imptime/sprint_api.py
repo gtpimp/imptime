@@ -108,7 +108,6 @@ class SprintViewSet(BaseViewSet):
                 sprint = Sprint.objects.create(
                     business=project, #sic
                     order=order,
-                    status2='pending',
                     status3=new_status,
                     code=Sprint.get_code_from_name(params['name']),
                     name=params['name'])

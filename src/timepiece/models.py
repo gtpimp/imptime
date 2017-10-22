@@ -111,22 +111,22 @@ class BusinessQuerySet(QuerySet):
         return self.filter(new_business_projects__status3__name__in=Project.active_states())
 
     def filter_has_only_pending_projects(self):
-        return self.filter(new_business_projects__status__name__in=Project.pending_states()).exclude(new_business_projects__status__name__in=Project.active_states())
+        return self.filter(new_business_projects__status3__name__in=Project.pending_states()).exclude(new_business_projects__status3__name__in=Project.active_states())
 
     def filter_has_only_closed_projects(self):
-        return self.exclude(new_business_projects__status__name__in= Project.pending_states()+Project.active_states()+Project.hopeful_states() )
+        return self.exclude(new_business_projects__status3__name__in= Project.pending_states()+Project.active_states()+Project.hopeful_states() )
 
     def filter_has_at_least_one_open_project(self):
-        return self.filter( new_business_projects__status__name__in=Project.pending_states()+Project.active_states()+Project.hopeful_states() )
+        return self.filter( new_business_projects__status3__name__in=Project.pending_states()+Project.active_states()+Project.hopeful_states() )
 
     def filter_has_hopeful_projects(self):
-        return self.filter(new_business_projects__status__name__in=Project.hopeful_states())
+        return self.filter(new_business_projects__status3__name__in=Project.hopeful_states())
 
     def exclude_has_closed_projects(self):
-        return self.filter(new_business_projects__status__name__in=Project.pending_states()+Project.active_states() )
+        return self.filter(new_business_projects__status3__name__in=Project.pending_states()+Project.active_states() )
 
     def filter_has_can_add_dev_time_projects(self):
-        return self.filter(new_business_projects__status__name__in=Project.can_add_dev_time_states())
+        return self.filter(new_business_projects__status3__name__in=Project.can_add_dev_time_states())
 
     def get_checklist_summary(self):
 
@@ -537,7 +537,7 @@ class BusinessPermissions(BaseModel):
     def get_users_who_can_capture_time(self):
         """ any user who is allowed to estimate on at least one project """
         users = User.objects.filter(is_active=True, business_permissions__is_active_member_of_business=True,
-                                    business_permissions__business__new_business_projects__status__name='in dev').distinct()
+                                    business_permissions__business__new_business_projects__status3__name='in dev').distinct()
         return users
 
     @property
@@ -1478,7 +1478,7 @@ class Project(models.Model):
                 return 0
 
         for user in users:
-            entries = entries_for_project.delsfilter(user=user)
+            entries = entries_for_project.filter(user=user)
 
             stats_per_user[user] = {}
             rate = Rate.objects.filter(project=self, user=user).first() or Rate(project=self, user=user, amount=0, billable_amount=0, velocity=1)
