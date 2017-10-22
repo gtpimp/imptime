@@ -108,25 +108,25 @@ class BusinessQuerySet(QuerySet):
         return self.filter(pk__in=BusinessPermissions.active_businesses_for_user(user))
 
     def filter_has_any_active_projects(self):
-        return self.filter(new_business_projects__status2__in=Project.active_states())
+        return self.filter(new_business_projects__status3__name__in=Project.active_states())
 
     def filter_has_only_pending_projects(self):
-        return self.filter(new_business_projects__status2__in=Project.pending_states()).exclude(new_business_projects__status2__in=Project.active_states())
+        return self.filter(new_business_projects__status__name__in=Project.pending_states()).exclude(new_business_projects__status__name__in=Project.active_states())
 
     def filter_has_only_closed_projects(self):
-        return self.exclude(new_business_projects__status2__in= Project.pending_states()+Project.active_states()+Project.hopeful_states() )
+        return self.exclude(new_business_projects__status__name__in= Project.pending_states()+Project.active_states()+Project.hopeful_states() )
 
     def filter_has_at_least_one_open_project(self):
-        return self.filter( new_business_projects__status2__in=Project.pending_states()+Project.active_states()+Project.hopeful_states() )
+        return self.filter( new_business_projects__status__name__in=Project.pending_states()+Project.active_states()+Project.hopeful_states() )
 
     def filter_has_hopeful_projects(self):
-        return self.filter(new_business_projects__status2__in=Project.hopeful_states())
+        return self.filter(new_business_projects__status__name__in=Project.hopeful_states())
 
     def exclude_has_closed_projects(self):
-        return self.filter(new_business_projects__status2__in=Project.pending_states()+Project.active_states() )
+        return self.filter(new_business_projects__status__name__in=Project.pending_states()+Project.active_states() )
 
     def filter_has_can_add_dev_time_projects(self):
-        return self.filter(new_business_projects__status2__in=Project.can_add_dev_time_states())
+        return self.filter(new_business_projects__status__name__in=Project.can_add_dev_time_states())
 
     def get_checklist_summary(self):
 
@@ -537,7 +537,7 @@ class BusinessPermissions(BaseModel):
     def get_users_who_can_capture_time(self):
         """ any user who is allowed to estimate on at least one project """
         users = User.objects.filter(is_active=True, business_permissions__is_active_member_of_business=True,
-                                    business_permissions__business__new_business_projects__status2='in dev').distinct()
+                                    business_permissions__business__new_business_projects__status__name='in dev').distinct()
         return users
 
     @property
@@ -766,34 +766,34 @@ class ProjectQuerySet(QuerySet):
         return self.filter(business__in=BusinessPermissions.active_businesses_for_user(user))
 
     def filter_active(self):
-        return self.filter(status2__in=Project.active_states())
+        return self.filter(status__name__in=Project.active_states())
 
     def filter_pending(self):
-        return self.filter(status2__in=Project.pending_states())
+        return self.filter(status__name__in=Project.pending_states())
 
     def filter_closed(self):
-        return self.filter(status2__in=Project.closed_states())
+        return self.filter(status__name__in=Project.closed_states())
 
     def filter_hopeful(self):
-        return self.filter(status2__in=Project.hopeful_states())
+        return self.filter(status__name__in=Project.hopeful_states())
 
     def filter_open(self):
-        return self.exclude(Q(status2__in=Project.closed_states())|Q(status__label='closed')).order_by("order")
+        return self.exclude(status3__name__in=Project.closed_states()).order_by("order")
 
     def filter_has_time(self):
-        return self.exclude(Q(status2__in=Project.closed_states())|Q(status__label='closed')).order_by("order")
+        return self.exclude(status3__name__in=Project.closed_states()).order_by("order")
 
     def filter_in_dev(self):
-        return self.filter(status2='in dev')
+        return self.filter(status3__name='in dev')
 
     def filter_in_client_qa(self):
-        return self.filter(status2='in client_qa')
+        return self.filter(status3__name='in client_qa')
 
     def filter_in_dev_or_pending(self):
-        return self.filter(Q(status2='in dev')|Q(status2='pending'))
+        return self.filter(Q(status3__name='in dev')|Q(status3__name='pending'))
 
     def filter_can_add_dev_time_states(self):
-        return self.filter(status2__in=Project.can_add_dev_time_states())
+        return self.filter(status__name__in=Project.can_add_dev_time_states())
 
 class Project(models.Model):
 
@@ -845,19 +845,6 @@ class Project(models.Model):
         null=True
     )
 
-    # Deprecated. Still used in a few places, but needs to be removed completely.
-    status = models.ForeignKey(
-        Attribute,
-        limit_choices_to={'type': 'project-status'},
-        related_name='projects_with_status',
-        null=True
-    )
-
-    # Deprecated.
-    status2 = models.CharField(max_length=100, blank=False, null=False,
-                               default='pending', choices = PROJECT_STATUSES, db_index=True)
-
-    # This is the real status now
     status3 = models.ForeignKey(ProjectStatus, related_name='projects', null=True)
 
     description = models.TextField(blank=True, null=True, db_index=True)
@@ -1184,7 +1171,7 @@ class Project(models.Model):
     @property
     def previous_project(self):
         qs = self.business.get_ordered_projects().exclude(id=self.id)
-        project = qs.exclude(status2='closed').first()
+        project = qs.exclude(status__name='closed').first()
         if not project:
             project = qs.first()
         return project
@@ -1277,13 +1264,11 @@ class Project(models.Model):
         return project_returned
 
     def close(self):
-        self.status = Attribute.objects.get(label='closed', type='project-status')
-        self.status2 = 'closed'
+        self.status3 = ProjectStatus.objects.get_or_create(name='closed', business=self.business)[0]
         self.save()
 
     def open(self):
-        self.status = Attribute.objects.get(label='open', type='project-status')
-        self.status2 = 'pending'
+        self.status3 = ProjectStatus.objects.get_or_create(name='pending', business=self.business)[0]
         self.save()
 
     @classmethod
@@ -1307,12 +1292,11 @@ class Project(models.Model):
         return ( 'hopeful', 'pending', 'in dev', 'in client qa', 'gathering specs', 'quote sent' )
 
     def can_add_dev_time(self):
-        return self.status2 in self.can_add_dev_time_states() and self.is_open
+        return self.status3.name in self.can_add_dev_time_states() and self.is_open
 
     @property
     def is_open(self):
-        if (self.status2 and self.status2 in self.closed_states()) or \
-            (self.status3 and self.status3.name in self.closed_states()):
+        if self.status3 and self.status3.name in self.closed_states():
             return False
         return True
 
@@ -1494,7 +1478,7 @@ class Project(models.Model):
                 return 0
 
         for user in users:
-            entries = entries_for_project.filter(user=user)
+            entries = entries_for_project.delsfilter(user=user)
 
             stats_per_user[user] = {}
             rate = Rate.objects.filter(project=self, user=user).first() or Rate(project=self, user=user, amount=0, billable_amount=0, velocity=1)
@@ -2026,7 +2010,7 @@ class Project(models.Model):
     #     return res
 
     class Meta:
-        ordering = ('name', 'status', 'type',)
+        ordering = ('name', 'status3__name', 'type',)
         permissions = (
             ('view_project', 'Can view project'),
             ('email_project_report', 'Can email project report'),
