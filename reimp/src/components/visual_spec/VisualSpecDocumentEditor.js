@@ -1,4 +1,5 @@
 import React, { Component } from 'react'
+import { map } from 'lodash'
 import { connect } from 'react-redux'
 import {DndTypes} from '../../actions/Dnd'
 import {DropTarget} from 'react-dnd';
@@ -12,6 +13,7 @@ import {
 } from '../../actions/VisualSpecIssues'
 import { ensureIssuesLoaded } from '../../actions/Issues'
 import '../../sass/visual-spec-document-editor.scss'
+import VisualSpecIssue from './VisualSpecIssue'
 
 class VisualSpecDocumentEditor extends Component {
 
@@ -38,7 +40,8 @@ class VisualSpecDocumentEditor extends Component {
     }
 
     render() {
-        const { visual_spec_document_id, visual_spec_document, connectDropTarget } = this.props
+        const { visual_spec_document_id, visual_spec_document,
+                connectDropTarget, visual_spec_issue_ids } = this.props
         
         if ( ! visual_spec_document_id ) {
             return null
@@ -53,7 +56,15 @@ class VisualSpecDocumentEditor extends Component {
                 { visual_spec_document.image_url && <img className="vsd-editor__doc_image"
                                                          role="presentation"
                                                          src={visual_spec_document.image_url} /> }
+
+                { map(visual_spec_issue_ids, (visual_spec_issue_id) => {
+                      return (
+                          <VisualSpecIssue key={visual_spec_issue_id} visual_spec_issue_id={visual_spec_issue_id} />
+                      )
+                  }) }
+
               </div>
+
               
             </div>
         )

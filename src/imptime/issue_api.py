@@ -20,7 +20,6 @@ from timepiece.models import TagCategory, Tag, Entry, IssueStatus
 
 logger = logging.getLogger(__name__)
 
-
 @permission_classes((IsAuthenticated,))
 class IssueViewSet(BaseViewSet):
 

@@ -4,6 +4,8 @@ import {DndTypes} from '../../actions/Dnd'
 import {DragSource} from 'react-dnd';
 import classNames from 'classnames'
 import '../../sass/visual-spec-issue.scss'
+import { getVisualSpecIssue } from '../../actions/VisualSpecIssues'
+import { getIssue } from '../../actions/Issues'
 
 class VisualSpecIssue extends Component {
 
@@ -19,7 +21,7 @@ class VisualSpecIssue extends Component {
     }
 
     render() {
-        const { name, isDragging, connectDragSource } = this.props
+        const { name, visual_spec_issue, issue, isDragging, connectDragSource } = this.props
 
         return connectDragSource(
             <div className={classNames("visual-spec-issue",
@@ -33,10 +35,13 @@ class VisualSpecIssue extends Component {
 }
 
 function mapStateToProps(state, props) {
-    const { name } = props
+    const { name, visual_spec_issue_id } = props
+    const visual_spec_issue = getVisualSpecIssue(state, visual_spec_issue_id) || {}
+    const issue = (visual_spec_issue.issue_id && getIssue(state, visual_spec_issue.issue_id)) || {}
 
     return {
-        name: name || "new visual spec issue"
+        visual_spec_issue,
+        name: issue.subject || name
     }
 }
 
