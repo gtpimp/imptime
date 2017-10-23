@@ -61,7 +61,7 @@ function triggerInvalidateEntity(d, dispatch) {
         dispatch(invalidateVisualSpecIssues([d.entity_ref]))
         
     } else {
-        console.log("Unknown entity to refresh: " + d.entity_name)
+        console.log("Ignoring: Unknown entity to refresh: " + d.entity_name)
     }
 }
 
@@ -87,7 +87,7 @@ function triggerInvalidateItemLists(d, dispatch) {
         dispatch(invalidateList(LIST_KEY__PROJECT_USER_LIST))
 
     } else {
-        console.log("Unknown entity to refresh lists: " + d.entity_name)
+        console.log("Ignoring: Unknown entity to refresh lists: " + d.entity_name)
     }
 }
 

@@ -179,11 +179,12 @@ function announceVisualSpecIssueDeleteFailed(visual_spec_issue_id, error) {
     }
 }
 
-function updateVisualSpecIssue(visual_spec_issue_ids, shape, x_pos, y_pos, on_done) {
+export function updateVisualSpecIssue(visual_spec_document_id, visual_spec_issue_ids, shape, x_pos, y_pos, on_done) {
     return (dispatch, getState) => {
         const state = getState()
 	dispatch(announceVisualSpecIssuesSaving(visual_spec_issue_ids))
-	let data = {visual_spec_issue_ids: visual_spec_issue_ids,
+	let data = {visual_spec_document_id: visual_spec_document_id, 
+                    visual_spec_issue_ids: visual_spec_issue_ids,
                     shape: shape,
                     x_pos: x_pos,
                     y_pos: y_pos}

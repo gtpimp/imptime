@@ -1,11 +1,18 @@
 import React, { Component } from 'react'
 import { connect } from 'react-redux'
+import ReactDOM from 'react-dom';
 import {DndTypes} from '../../actions/Dnd'
 import {DragSource} from 'react-dnd';
 import classNames from 'classnames'
 import '../../sass/visual-spec-issue.scss'
 import { getVisualSpecIssue } from '../../actions/VisualSpecIssues'
 import { getIssue } from '../../actions/Issues'
+import {
+    createVisualSpecIssue,
+    updateVisualSpecIssue,
+    ensureVisualSpecIssuesLoaded,
+    is_visual_spec_issue_invalidated
+} from '../../actions/VisualSpecIssues'
 
 class VisualSpecIssue extends Component {
 
@@ -13,19 +20,32 @@ class VisualSpecIssue extends Component {
         this.refresh()
     }
 
-    componentWillReceiveProps() {
-        this.refresh()
+    componentWillReceiveProps(props) {
+        this.refresh(props)
     }
 
-    refresh() {
+    refresh(these_props) {
+        const props = these_props || this.props
+        const { dispatch, visual_spec_issue_id } = props
+        if ( visual_spec_issue_id ) {
+            dispatch(ensureVisualSpecIssuesLoaded([visual_spec_issue_id]))
+        }
     }
 
     render() {
         const { name, visual_spec_issue, issue, isDragging, connectDragSource } = this.props
 
+        const style = {}
+        if ( !isDragging && visual_spec_issue.x_pos ) {
+            style.top = visual_spec_issue.y_pos
+            style.left = visual_spec_issue.x_pos
+        }
+        
         return connectDragSource(
             <div className={classNames("visual-spec-issue",
-                                       {"visual-spec-issue--dragging": isDragging})}>
+                                       {"visual-spec-issue--dragging": isDragging})}
+                 style={style}
+            >
               {name}
               { isDragging && <span>(here I go)</span> }
               { !isDragging && <span>(not moving)</span> }
@@ -38,16 +58,36 @@ function mapStateToProps(state, props) {
     const { name, visual_spec_issue_id } = props
     const visual_spec_issue = getVisualSpecIssue(state, visual_spec_issue_id) || {}
     const issue = (visual_spec_issue.issue_id && getIssue(state, visual_spec_issue.issue_id)) || {}
+    const is_invalidated = is_visual_spec_issue_invalidated(state, visual_spec_issue_id)
 
     return {
+        visual_spec_issue_id,
         visual_spec_issue,
-        name: issue.subject || name
+        name: issue.subject || name,
+        is_invalidated: is_invalidated || false
     }
 }
 
 const headingSource = {
-    beginDrag(props) {
-        return {id: props.visual_spec_issue_id || "new"}
+    beginDrag(props, monitor, component) {
+        return {
+            id: props.visual_spec_issue_id || "new"
+        }
+    },
+    endDrag(props, monitor, component) {
+        const { dispatch } = props
+        const drop_result = monitor.getDropResult()
+        const child_pos = drop_result.child_pos
+        const visual_spec_document_id = drop_result.visual_spec_document_id
+        const parent_pos = drop_result.pos
+        const x_pos = child_pos.x
+        const y_pos = child_pos.y
+        console.log("child_pos=" + child_pos + ", x_pos=" + x_pos + ", y_pos=" + y_pos)
+        if ( props.visual_spec_issue_id ) {
+            dispatch(updateVisualSpecIssue(visual_spec_document_id, [props.visual_spec_issue_id], "pointer", x_pos, y_pos))
+        } else {
+            dispatch(createVisualSpecIssue(visual_spec_document_id, "pointer", x_pos, y_pos))
+        }
     }
 }
 

@@ -1,4 +1,5 @@
 import React, { Component } from 'react'
+import ReactDOM from 'react-dom';
 import { map } from 'lodash'
 import { connect } from 'react-redux'
 import {DndTypes} from '../../actions/Dnd'
@@ -7,9 +8,7 @@ import {
     ensureVisualSpecDocumentsLoaded, getVisualSpecDocument
 } from '../../actions/VisualSpecDocuments'
 import {
-    ensureVisualSpecIssuesLoaded,
-    createVisualSpecIssue,
-    updateVisualSpecIssue
+    ensureVisualSpecIssuesLoaded
 } from '../../actions/VisualSpecIssues'
 import { ensureIssuesLoaded } from '../../actions/Issues'
 import '../../sass/visual-spec-document-editor.scss'
@@ -59,7 +58,8 @@ class VisualSpecDocumentEditor extends Component {
 
                 { map(visual_spec_issue_ids, (visual_spec_issue_id) => {
                       return (
-                          <VisualSpecIssue key={visual_spec_issue_id} visual_spec_issue_id={visual_spec_issue_id} />
+                          <VisualSpecIssue key={visual_spec_issue_id}
+                                           visual_spec_issue_id={visual_spec_issue_id} />
                       )
                   }) }
 
@@ -87,15 +87,12 @@ const headingTarget = {
     drop: (props, monitor, component) => {
         const {dispatch, visual_spec_document_id} = props
         const dragging_item = monitor.getItem()
-        if (!dragging_item) {
-            return;
-        }
-        const dragging_visual_issue_id = dragging_item.id
-        if ( dragging_visual_issue_id == "new" ) {
-            dispatch(createVisualSpecIssue(visual_spec_document_id, "pointer", 100, 100))
-        } else {
-            dispatch(updateVisualSpecIssue([dragging_visual_issue_id], "pointer", 100, 100))
-        }
+
+        const child_pos = monitor.getClientOffset()
+        
+        return { visual_spec_document_id: visual_spec_document_id,
+                 child_pos: child_pos,
+                 pos: ReactDOM.findDOMNode(component).getBoundingClientRect() }
     },
     hover: (props, monitor, component) => {
     },

@@ -88,9 +88,32 @@ class VisualSpecIssueViewSet(BaseViewSet):
         return HttpResponse(JSONRenderer().render(data))
 
     def update(self, request, pk):
-        # This function is required for the 'delete' to register as a
-        # url, this seems like a bug in DjangoRestFramework
-        raise Exception("Not supported")
+        try:
+            params = json.loads(request.body)
+            visual_spec_issue_ids = params.pop('visual_spec_issue_ids')
+            self.allowed_visual_spec_documents().get(pk=params['visual_spec_document_id'])
+            visual_spec_issues = self.allowed_visual_spec_issues().filter(pk__in=visual_spec_issue_ids)
+            for vsi in visual_spec_issues:
+                params['id'] = vsi.id
+                params['issue_id'] = vsi.issue_id
+                s = VisualSpecIssueSerializer(data=params, instance=vsi)
+                if s.is_valid():
+                    s.save()
+                else:
+                    return self.error_response(Exception("Invalid post data: %s" % s.errors))
+
+            s = VisualSpecIssueSerializer(visual_spec_issues, many=True)
+            visual_spec_issues_data = s.data
+            context = {'visual_spec_issues': visual_spec_issues_data}
+                
+            data = {'status': 'success',
+                    'payload': context}
+            
+        except Exception, ex:
+            logger.exception(ex)
+            return self.error_response(ex)
+            
+        return HttpResponse(JSONRenderer().render(data))
     
     def delete(self, request, pk):
         try:
