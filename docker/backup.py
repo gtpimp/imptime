@@ -134,7 +134,7 @@ def do_s3_upload(zip_filepath, aws_region, aws_profile_name, s3_bucket_name):
     cmd_args = ["s3", "cp", "--region", aws_region]
     if aws_profile_name:
         cmd_args.extend(["--profile", aws_profile_name])
-    cmd_args.extend(["--recursive", "--exclude", '"*logs/*', zip_filepath, s3_bucket_name])
+    cmd_args.extend([zip_filepath, s3_bucket_name])
     _cmd(AWS_BIN, cmd_args)
     
 timestamp = datetime.datetime.now().strftime("%Y-%m-%d-%H-%M-%S")
