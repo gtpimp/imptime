@@ -80,9 +80,10 @@ const headingSource = {
         const child_pos = drop_result.child_pos
         const visual_spec_document_id = drop_result.visual_spec_document_id
         const parent_pos = drop_result.pos
-        const x_pos = child_pos.x
-        const y_pos = child_pos.y
+        const x_pos = child_pos.x - parent_pos.left
+        const y_pos = child_pos.y - parent_pos.top
         console.log("child_pos=" + child_pos + ", x_pos=" + x_pos + ", y_pos=" + y_pos)
+        console.log("parent_pos=" + parent_pos + ", x_pos=" + parent_pos.left + ", y_pos=" + parent_pos.top)
         if ( props.visual_spec_issue_id ) {
             dispatch(updateVisualSpecIssue(visual_spec_document_id, [props.visual_spec_issue_id], "pointer", x_pos, y_pos))
         } else {

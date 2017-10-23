@@ -150,10 +150,12 @@ function announceVisualSpecIssueCreateFailed() {
 }
 
 
-function announceVisualSpecIssuesSaving(visual_spec_issue_ids) {
+function announceVisualSpecIssuesSaving(visual_spec_issue_ids, x_pos, y_pos) {
     return {
         type: ANNOUNCE_VISUAL_SPEC_ISSUES_SAVING,
         visual_spec_issue_ids: visual_spec_issue_ids,
+        x_pos: x_pos,
+        y_pos: y_pos
     }
 }
 
@@ -182,7 +184,7 @@ function announceVisualSpecIssueDeleteFailed(visual_spec_issue_id, error) {
 export function updateVisualSpecIssue(visual_spec_document_id, visual_spec_issue_ids, shape, x_pos, y_pos, on_done) {
     return (dispatch, getState) => {
         const state = getState()
-	dispatch(announceVisualSpecIssuesSaving(visual_spec_issue_ids))
+	dispatch(announceVisualSpecIssuesSaving(visual_spec_issue_ids, x_pos, y_pos))
 	let data = {visual_spec_document_id: visual_spec_document_id, 
                     visual_spec_issue_ids: visual_spec_issue_ids,
                     shape: shape,

@@ -76,14 +76,11 @@ export default function visual_spec_issue(state = initialState, action) {
 		items_by_id: Object.assign(
 		    {},
 		    state.items_by_id
-		    /* {visual_spec_issue_id: Object.assign(state.items_by_id[visual_spec_issue_id],
-		       new_visual_spec_issue_props)}*/
                 ),
 		saving_item_ids: union(state.saving_item_ids, visual_spec_issue_ids)
 	    })
 
-	    const new_visual_spec_issue_props = {}
-	    new_visual_spec_issue_props[action.field_name] = action.new_value
+	    const new_visual_spec_issue_props = {x_pos: action.x_pos, y_pos: action.y_pos}
             map(visual_spec_issue_ids, function(visual_spec_issue_id, index) {
                 state_clone.items_by_id[visual_spec_issue_id] = Object.assign({}, state.items_by_id[visual_spec_issue_id],
 		                                                              new_visual_spec_issue_props)
