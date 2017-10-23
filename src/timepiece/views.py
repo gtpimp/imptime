@@ -1729,7 +1729,9 @@ def create_open_project(request, project_id=None):
 @login_required
 def invoiced_project(request, project_id=None):
     project = get_object_or_404(timepiece.Project, pk=project_id)
-    project.status = timepiece.Attribute.objects.get(label='closed', type='project-status')
+    project.status3 = timepiece.ProjectStatus.objects\
+                                             .get_or_create(name='closed',
+                                                            business=project.business)[0]
     project.billable = True
     project.save()
     timepiece.Entry.objects.filter_by_logged_in_user(request.user).filter(issue__project=project).update(status='invoiced')
@@ -1740,7 +1742,9 @@ def invoiced_project(request, project_id=None):
 @login_required
 def unbillable_project(request, project_id=None):
     project = get_object_or_404(timepiece.Project, pk=project_id)
-    project.status = timepiece.Attribute.objects.get(label='closed', type='project-status')
+    project.status3 = timepiece.ProjectStatus.objects\
+                                             .get_or_create(name='closed',
+                                                            business=project.business)[0]
     project.billable = False
     project.save()
     timepiece.Entry.objects.filter_by_logged_in_user(request.user).filter(issue__project=project).update(status='invoiced')
@@ -5621,7 +5625,7 @@ def business_cost_summary(request, business_id, template="timepiece/project/busi
     for project in timepiece.Project.objects.all().filter(business=business).filter_by_logged_in_user(request.user).order_by("order"):
         stats = project.stats
         project_info = { 'project': project,
-                         'status': project.status2,
+                         'status': project.status3.name,
                          'budget': project.budget,
                          'spendable_budget': project.spendable_budget,
                          'ctc': stats['ctc'],
@@ -5688,12 +5692,18 @@ def business_cost_summary(request, business_id, template="timepiece/project/busi
 @login_required
 def project_status_update(request, project_id):
     project = timepiece.Project.objects.get(pk=project_id)
-    has_edit_status = timepiece.BusinessPermissions.objects.get_or_create(business=project.business, user=request.user)[0].has_edit_project_states
+    has_edit_status = timepiece.BusinessPermissions.objects\
+                                                   .get_or_create(business=project.business, user=request.user)[0]\
+                                                   .has_edit_project_states
     if not has_edit_status:
         raise PermissionDenied
-    project.status2 = request.POST["selected_value"]
+    project.status3 = timepiece.ProjectStatus.objects\
+                                             .get_or_create(business=project.business,
+                                                            name=request.POST["selected_value"])[0]
     project.save()
-    return HttpResponse(json.dumps({ 'new_value': project.status2, 'is_open': project.is_open }), content_type='application/json')
+    return HttpResponse(json.dumps({ 'new_value': project.status3.name,
+                                     'is_open': project.is_open }),
+                        content_type='application/json')
 
 @login_required
 def allowed_project_stati(request, project_id):

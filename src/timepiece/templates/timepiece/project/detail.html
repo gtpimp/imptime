@@ -227,7 +227,7 @@ $(document).ready(function(){
                             <td><a href="{% url 'view_project' project_id=project.id %}" title="{{ project.short_description }}">{{ project.name }}</a> 
 			        <a id="a_b{{forloop.parentloop.counter}}p{{ forloop.counter }}" href="javascript:void(0);" 
 				   onclick="expand_collapse_sprint('b{{ forloop.parentloop.counter }}p{{ forloop.counter }}')" class="expanded">[-]</a></td>
-			    <td>{{ project.status.label }}</td>			   
+			    <td>{{ project.status3.name }}</td>			   
 			    <td />
 			    <td>{% if project_totals.hours > 0 %}{{ project_totals.hours }}{% endif %}</td>
 			    <td>{{ project_totals.revenue|currency }}</td>

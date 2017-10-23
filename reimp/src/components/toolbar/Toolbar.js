@@ -13,6 +13,7 @@ import ListToolbarPanel from './ListToolbarPanel'
 import CostSummaryToolbarPanel from './CostSummaryToolbarPanel'
 import ProjectStatementToolbarPanel from './ProjectStatementToolbarPanel'
 import UserTimesheetsToolbarPanel from './UserTimesheetsToolbarPanel'
+import VisualSpecDocumentToolbarPanel from '../visual_spec/VisualSpecDocumentToolbarPanel'
 
 class ToolBar extends Component {
 
@@ -40,6 +41,8 @@ class ToolBar extends Component {
                 return <ProjectStatementToolbarPanel key="project-summary-panel" {...this.props}/>
             case 'user-timesheets':
                 return <UserTimesheetsToolbarPanel key="user-timesheet-panel" {...this.props}/>
+            case 'visual-spec-document':
+                return <VisualSpecDocumentToolbarPanel key='visual-spec-document' {...this.props}/>
             default:
                 throw new Error("Unsupported toolbar panel:" + id)
         }

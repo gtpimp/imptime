@@ -1,5 +1,5 @@
 import difference from 'lodash/difference'
-import union from 'lodash/union'
+import { union } from 'lodash'
 import { setErrorMessage } from '../actions/Error'
 
 import {

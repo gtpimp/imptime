@@ -65,7 +65,7 @@ export function select_sprints(page_key, sprint_ids) {
 export function select_projects(page_key, project_ids) {
     return {
         type: UPDATE_PAGE_SELECTION,
-	      page_key: page_key,
+	page_key: page_key,
         project_ids: project_ids
     }
 }

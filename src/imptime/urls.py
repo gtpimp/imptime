@@ -19,9 +19,11 @@ import time_chart_api
 import time_summary_api
 import user_api
 import views
+import visual_spec_document_api
+import visual_spec_issue_api
 from rest_framework.routers import DefaultRouter
-from rest_framework.authtoken import views as rest_views
 from issue_attachment_download import IssueAttachmentDownloadView, IssueAttachmentPreviewView
+from visual_spec_document_download import VisualSpecDocumentDownloadView, VisualSpecDocumentPreviewView
 
 router = DefaultRouter()
 router.register(r'auth', auth_api.AuthViewSet,
@@ -48,6 +50,10 @@ router.register(r'issue/clock', issue_clock_api.IssueClockViewSet,
                 base_name='issue_clock')
 router.register(r'issue/testable', testable_api.TestableViewSet,
                 base_name='testable')
+router.register(r'visual_spec_document', visual_spec_document_api.VisualSpecDocumentViewSet,
+                base_name='visual_spec_document')
+router.register(r'visual_spec_issue', visual_spec_issue_api.VisualSpecIssueViewSet,
+                base_name='visual_spec_issue')
 router.register(r'issue', issue_api.IssueViewSet,
                 base_name='issue')
 router.register(r'user', user_api.UserViewSet,
@@ -69,6 +75,8 @@ urlpatterns = [
     url(r'^$', views.home, name='home'),
     url(r'^login/', auth_api.LoginViewSet.as_view()),
     url(r'^issue/attachment/(?P<attachment_id>.*)/preview', IssueAttachmentPreviewView.as_view(), name='preview_attachment'),
-    url(r'^issue/attachment/(?P<attachment_id>.*)/download', IssueAttachmentDownloadView.as_view(), name='download_attachment')
+    url(r'^issue/attachment/(?P<attachment_id>.*)/download', IssueAttachmentDownloadView.as_view(), name='download_attachment'),
+    url(r'^issue/visual_spec_document/(?P<visual_spec_document_id>.*)/preview', VisualSpecDocumentPreviewView.as_view(), name='preview_visual_spec_document'),
+    url(r'^issue/visual_spec_document/(?P<visual_spec_document_id>.*)/download', VisualSpecDocumentDownloadView.as_view(), name='download_visual_spec_document')
 
 ] + router.urls

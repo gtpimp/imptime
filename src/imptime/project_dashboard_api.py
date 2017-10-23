@@ -80,7 +80,7 @@ class ProjectDashboardViewSet(BaseViewSet):
         if bp.has_view_ctc_billable_rates:
             most_recent_entries_per_user = entries.order_by('user_id').values('user_id').annotate(Max('end_time'), Min('start_time')).order_by('-end_time__max')
             d['most_recent_entry_per_user'] = most_recent_entries_per_user
-            entries_for_open_sprints = entries.exclude(issue__project__status2__in=Sprint.closed_states()) #sic
+            entries_for_open_sprints = entries.exclude(issue__project__status3__name__in=Sprint.closed_states()) #sic
             self.set_users(sprint_infos, entries_for_open_sprints)
             self.set_rates(sprint_infos, entries_for_open_sprints)
             self.set_progress(sprint_infos, entries_for_open_sprints)
@@ -94,7 +94,7 @@ class ProjectDashboardViewSet(BaseViewSet):
         return d
 
     def get_open_sprints(self, entries):
-        entries_for_open_sprints = entries.exclude(issue__project__status2__in=Sprint.closed_states())\
+        entries_for_open_sprints = entries.exclude(issue__project__status3__name__in=Sprint.closed_states())\
                                           .values("issue__project_id").distinct()
         d = {}
         [ d.setdefault(x['issue__project_id'], {'users':{}, 'budget':{}}) for x in entries_for_open_sprints ]

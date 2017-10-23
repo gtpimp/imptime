@@ -9,6 +9,8 @@ import { invalidateIssues } from '../actions/Issues'
 import { invalidateUsers } from '../actions/Users'
 import { invalidatePups } from '../actions/ProjectUserPermissions'
 import { invalidateIssueGeneralDetails } from '../actions/IssueGeneralDetails'
+import { invalidateVisualSpecDocuments } from '../actions/VisualSpecDocuments'
+import { invalidateVisualSpecIssues } from '../actions/VisualSpecIssues'
 import { addAsyncMessage } from '../actions/Async'
 
 import {
@@ -52,8 +54,14 @@ function triggerInvalidateEntity(d, dispatch) {
         // dispatch(invalidateProjects(d.params.projects))
         dispatch(invalidatePups([d.entity_ref]))
 
+    } else if ( d.entity_name === 'visualspecdocument' ) {
+        dispatch(invalidateVisualSpecDocuments([d.entity_ref]))
+
+    } else if ( d.entity_name === 'visualspecissue' ) {
+        dispatch(invalidateVisualSpecIssues([d.entity_ref]))
+        
     } else {
-        console.log("Unknown entity to refresh: " + d.entity_name)
+        console.log("Ignoring: Unknown entity to refresh: " + d.entity_name)
     }
 }
 
@@ -79,7 +87,7 @@ function triggerInvalidateItemLists(d, dispatch) {
         dispatch(invalidateList(LIST_KEY__PROJECT_USER_LIST))
 
     } else {
-        console.log("Unknown entity to refresh lists: " + d.entity_name)
+        console.log("Ignoring: Unknown entity to refresh lists: " + d.entity_name)
     }
 }
 

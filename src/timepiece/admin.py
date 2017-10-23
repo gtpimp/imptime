@@ -82,33 +82,6 @@ class ContractMilestoneInline(admin.TabularInline):
     model = timepiece.ContractMilestone
 
 
-class ProjectContractAdmin(admin.ModelAdmin):
-    model = timepiece.ProjectContract
-    list_display = ('project', 'start_date', 'end_date', 'status',
-                    'num_hours', 'hours_assigned', 'hours_unassigned',
-                    'hours_worked')
-    ordering = ('-end_date',)
-    inlines = (ContractAssignmentInline, ContractMilestoneInline)
-    list_filter = ('status',)
-    raw_id_fields = ('project',)
-    list_per_page = 20
-
-    def hours_unassigned(self, obj):
-        return obj.num_hours - obj.hours_assigned
-
-    # disabled by copelco 1/23/2012
-    # def save_formset(self, request, form, formset, change):
-    #     instances = formset.save()
-    #     form.save_m2m()
-    #     run_projection()
-
-    # def delete_model(self, request, obj):
-    #     obj.delete()
-    #     run_projection()
-
-admin.site.register(timepiece.ProjectContract, ProjectContractAdmin)
-
-
 class ProjectContractInline(admin.TabularInline):
     model = timepiece.ProjectContract
 
@@ -116,40 +89,10 @@ class ProjectContractInline(admin.TabularInline):
 class ProjectAdmin(admin.ModelAdmin):
     model = timepiece.Project
     raw_id_fields = ('business',)
-    list_display = ('name', 'business', 'point_person', 'status', 'type',)
-    list_filter = ('type', 'status')
+    list_display = ('name', 'business', 'point_person', 'status3', 'type',)
+    list_filter = ('type', 'status3')
     inlines = (ProjectContractInline,)
 admin.site.register(timepiece.Project, ProjectAdmin)
-
-
-class ContractAssignmentAdmin(admin.ModelAdmin):
-    list_display = ('id', 'contract', 'user', 'start_date',
-                    'end_date', 'min_hours_per_week', 'num_hours', 'worked',
-                    'remaining')
-    list_filter = ('contract',)
-    ordering = ('-start_date',)
-
-    def queryset(self, request):
-        qs = super(ContractAssignmentAdmin, self).queryset(request)
-        return qs.exclude(contract__status='complete')
-
-    def worked(self, obj):
-        hours_worked = float(obj.hours_worked)
-        percent = hours_worked * 100.0 / float(obj.num_hours)
-        return "%.2f (%.2f%%)" % (hours_worked, percent)
-
-    def remaining(self, obj):
-        return "%.2f" % (obj.hours_remaining,)
-
-    def save_model(self, request, obj, form, change):
-        obj.save()
-        run_projection()
-
-    def delete_model(self, request, obj):
-        obj.delete()
-        run_projection()
-
-admin.site.register(timepiece.ContractAssignment, ContractAssignmentAdmin)
 
 
 class PersonScheduleAdmin(admin.ModelAdmin):

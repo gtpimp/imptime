@@ -14,9 +14,93 @@
         <meta name="theme-color" content="#ffffff">
         <script type="text/javascript" src="/local_settings/"></script>
         <title>ImpTime</title>
+
+        <style>
+         .init .header {
+             align-items: center;
+             background-color: darkorange;
+             display: flex;
+             height: 72px;
+             justify-content: center;
+             width: 100%;
+             box-shadow: 0 0 4px 0 rgba(0, 0, 0, 0.12);
+         }
+
+         .init .block {
+             text-align: center;
+             width: 100%;
+         }
+
+         .init .block--message {
+             padding-top: 64px;
+         }
+
+         .init .block--link {
+             padding-top: 54px;
+
+         }
+
+         .init .block__content {
+             display: inline-block;
+             color: rgba(0, 0, 0, 0.87);
+             font-family: Roboto, sans-serif;
+             font-size: 32px;
+             line-height: 40px;
+             max-width: 328px;
+         }
+
+         @media (min-width: 720px) {
+             .init .block__content {
+                 font-size: 40px;
+                 line-height: 47px;
+                 max-width: 484px;
+             }
+         }
+
+         .init .block__link {
+             display: inline-block;
+             color: #555500;
+             font-family: Roboto, sans-serif;
+             font-size: 16px;
+             line-height: 19px;
+             max-width: 484px;
+             text-align: center;
+         }
+
+         .init a.block__link, .init a.block__link:visited, .init a.block__link:active, .init a.block__link:focus {
+             background-position: center right;
+             background-repeat: no-repeat;
+             background-size: 8px 12px;
+             padding-right: 18px;
+             text-decoration: none;
+         }
+        </style>
+        
     </head>
     <body>
-        <div id="root"></div>
+      <div id="root">
 
+        <div class="init">
+
+          <div class="header">
+          </div>
+          <div class="block block--message">
+            <div class="block__content">
+              <div style="display:none" id="loading_msg">
+                Gathering Imps
+                <br/>
+                ... 
+                <br/><br/>
+                Please wait a few moments
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <script>
+         setTimeout(function() { document.getElementById("loading_msg").style.display = "block" }, 1000);
+        </script>
+
+      </div>
     </body>
 </html>

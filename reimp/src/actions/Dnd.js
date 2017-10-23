@@ -3,5 +3,7 @@ export const DndTypes = {
     ISSUE: 'issue',
     PROJECT: 'project',
     SPRINT: 'sprint',
-    USER: 'user'
+    USER: 'user',
+    VISUAL_SPEC_ISSUE: 'visual_spec_issue',
 };
+

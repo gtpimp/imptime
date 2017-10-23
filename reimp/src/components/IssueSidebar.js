@@ -4,14 +4,15 @@ import map from 'lodash/map'
 import {browserHistory} from 'react-router'
 import PropertyStack from './PropertyStack'
 import PropertyStackComponent from './PropertyStackComponent'
-import EditableIssueTitle from '../components/EditableIssueTitle'
-import EditableIssueDescription from '../components/EditableIssueDescription'
-import EditableIssueAssignedUser from '../components/EditableIssueAssignedUser'
-import EditableIssueComment from '../components/EditableIssueComment'
-import EditableIssueTestable from '../components/EditableIssueTestable'
-import EditableIssueAttachment from '../components/EditableIssueAttachment'
-import EditableIssueInSprint from '../components/EditableIssueInSprint'
-import EditableIssueStatus from '../components/EditableIssueStatus'
+import EditableIssueTitle from './EditableIssueTitle'
+import EditableIssueDescription from './EditableIssueDescription'
+import EditableIssueAssignedUser from './EditableIssueAssignedUser'
+import EditableIssueComment from './EditableIssueComment'
+import EditableIssueTestable from './EditableIssueTestable'
+import EditableIssueAttachment from './EditableIssueAttachment'
+import EditableIssueInSprint from './EditableIssueInSprint'
+import EditableIssueStatus from './EditableIssueStatus'
+import EditableIssueVisualSpecDocument from './visual_spec/EditableIssueVisualSpecDocument'
 // import IssueDescription from './IssueDescription'
 import Timestamp from './Timestamp'
 import moment from 'moment'
@@ -62,7 +63,7 @@ import {getProject} from '../actions/Projects'
 
     render() {
 
-        const {issue, comments, testables, attachments} = this.props
+        const {issue, comments, testables, attachments, visual_spec_documents} = this.props
 
         if (issue && issue.id) {
 
@@ -126,6 +127,19 @@ import {getProject} from '../actions/Projects'
                           { this.renderEstimates() }
                           <button onClick={this.openEstimateEditor}>Estimates</button>
                         </PropertyStackComponent>
+
+                        <PropertyStackComponent title="Visual Spec Documents">
+                          { map(visual_spec_documents, function (visual_spec_document, index) {
+                                return <EditableIssueVisualSpecDocument key={visual_spec_document.id}
+                                                                        issue_id={issue.id}
+                                                                        visual_spec_document_id={visual_spec_document.id}/>
+                            })
+                          }
+                          <EditableIssueVisualSpecDocument issue_id={issue.id} visual_spec_document_id={null}/>
+                        </PropertyStackComponent>
+
+                        
+                        
                       </div>
                     }
                   </PropertyStack>
@@ -150,6 +164,7 @@ function mapStateToProps(state, props) {
         comments: issue.comments,
         testables: issue.testables,
         attachments: issue.attachments,
+        visual_spec_documents: issue.visual_spec_documents,
         sprint_id: sprint_id,
         project_id: project_id,
         assignable_user_ids: assignable_user_ids,
@@ -157,51 +172,3 @@ function mapStateToProps(state, props) {
 }
 
 export default connect(mapStateToProps)(IssueSidebar)
-
-
-/*{ { false &&
-   <PropertyStack>
-   <PropertyStackComponent>
-   <IssueTitle issue={issue} mode='view-value'/>
-   <IssueTitle issue={issue} mode='view-empty-state'/>
-   <IssueTitle issue={issue} mode='edit'/>
-   </PropertyStackComponent>
-   <PropertyStackComponent>
-   <IssueDescription issue={issue} mode='view-value'/>
-   <IssueDescription issue={issue} mode='view-empty-state'/>
-   <IssueDescription issue={issue} mode='edit'/>
-   </PropertyStackComponent>
-   </PropertyStack>
-   }
-   { false &&
-   <div>
-   <PropertyStackComponent>
-   <div className="property--parent-title">
-   <div className="property-label-1">Katalyst</div>
-   </div>
-   <div className="property--title">
-   <div className="property-label-2">Sprinasdfdsafdasfdsafasfasfdasfasfasfdsaasfasft 3</div>
-   </div>
-   </PropertyStackComponent>
-   <PropertyStackComponent>
-   <div className="property-text">Interactive Prototype and develppment of Nunc a adipiscing parturient ullamcorper parturient adipiscing scelerisque donec risus penatibus
-   parturient.
-   </div>
-   </PropertyStackComponent>
-   <PropertyStackComponent>
-   <div className="named-property">
-   <div className="named-property__name">Created</div>
-   <div className="named-property__value"><Timestamp format="short-date" value={moment()}/></div>
-   </div>
-   </PropertyStackComponent>
-   <PropertyStackComponent>
-   <div className="named-property">
-   <div className="named-property__name">First Activity</div>
-   <div className="named-property__value"><Timestamp format="short-date" value={moment()}/></div>
-   </div>
-   </PropertyStackComponent>
-   <PropertyStackComponent>
-   I am your issues sidebar for {issue_id}
-   </PropertyStackComponent>
-   </div> }
-   }*/
