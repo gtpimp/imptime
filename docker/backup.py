@@ -128,6 +128,14 @@ def do_scp_upload(zip_filepath, ssh_user, ssh_key, ssh_host, ssh_folder):
                  "{ssh_user}@{ssh_host}:{ssh_folder}".format(ssh_user=ssh_user, ssh_host=ssh_host, ssh_folder=ssh_folder) ]
     _cmd("scp", cmd_args)
 
+def do_s3_upload(zip_filepath, aws_region, aws_profile_name, s3_bucket_name):
+    output_filepath = os.path.join(output_folder, "s3")
+    logger.info("Backing up %s to %s" % (zip_filepath, s3_bucket_name))
+    cmd_args = ["s3", "cp", "--region", aws_region]
+    if aws_profile_name:
+        cmd_args.extend(["--profile", aws_profile_name])
+    cmd_args.extend([zip_filepath, s3_bucket_name])
+    _cmd(AWS_BIN, cmd_args)
     
 timestamp = datetime.datetime.now().strftime("%Y-%m-%d-%H-%M-%S")
 if not os.path.exists(backup_folder):
@@ -222,5 +230,15 @@ for scp_upload in settings.SCP_UPLOAD:
             logger.exception(ex)
             exit(1)
         
+for s3_upload in settings.S3_UPLOAD:
+    if s3_upload['ENABLED'] == True:
+        try:
+            do_s3_upload(zip_filepath=zip_filepath,
+                         aws_region=s3_upload['AWS_REGION'],
+                         aws_profile_name=s3_upload['AWS_PROFILE_NAME'],
+                         s3_bucket_name=s3_upload['BUCKET_NAME'])
+        except Exception, ex:
+            logger.exception(ex)
+            exit(1)
             
 logger.info("Backup process complete for %s" % timestamp)
