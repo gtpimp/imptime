@@ -45,7 +45,12 @@ class EditableIssueVisualSpecDocument extends Component {
                 >
                   <IssueVisualSpecDocumentForm issue_id={issue_id} />
                   <div>
-                    { visual_spec_document.id && <FileLabel value={visual_spec_document} /> }
+                    { visual_spec_document.id &&
+                      <FileLabel value={visual_spec_document}
+                                 extra_buttons={[<button onClick={this.onDelete}>delete</button>,
+                                                 <button onClick={this.onOpen}>spec</button>]}
+                      />
+                    }
                     { ! visual_spec_document.id &&
                       <IssueVisualSpecDocumentForm issue_id={issue_id} />
                     }
@@ -53,8 +58,6 @@ class EditableIssueVisualSpecDocument extends Component {
                   <Blank />
                     
                 </EditableProperty>
-                { visual_spec_document.id && <button className="button" onClick={this.onDelete}>delete</button> }
-                { visual_spec_document.id && <button className="button" onClick={this.onOpen}>open</button> }
             </div>
         )
     }

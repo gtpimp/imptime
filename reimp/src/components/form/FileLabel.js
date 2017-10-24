@@ -1,5 +1,6 @@
 import React, {Component} from 'react'
 import {connect} from 'react-redux'
+import { map } from 'lodash'
 
 class FileLabel extends Component {
 
@@ -22,23 +23,35 @@ class FileLabel extends Component {
     }
     
     render() {
-        const { filename, exists } = this.props
+        const { filename, exists, extra_buttons } = this.props
         return (
-            <div>
+            <div className="file_label">
                 <div onClick={this.onClickPreview}>
                     {filename}
                 </div>
 
                 { exists &&
                   <div>
-                      <button onClick={this.onClickPreview}>
-                          preview
-                      </button>
-                      <button onClick={this.onClickDownload}>
-                          download
-                      </button>
+                    <button onClick={this.onClickPreview}>
+                      preview
+                    </button>
                   </div>
                 }
+                { exists &&
+                  <div>
+                    <button onClick={this.onClicDownload}>
+                      download
+                    </button>
+                  </div>
+                }
+                { map(extra_buttons, function(extra_button) {
+                      return (
+                          <div>
+                            {extra_button}
+                          </div>
+                      )
+                })}
+
             </div>
         )
     }
@@ -46,7 +59,7 @@ class FileLabel extends Component {
 
 function mapStateToProps(state, props) {
 
-    const { value } = props
+    const { value, extra_buttons } = props
     const filename = (value && value.name) || "<none>"
     const download_url = value && value.download_url
     const preview_url = value && value.preview_url
@@ -56,7 +69,8 @@ function mapStateToProps(state, props) {
         exists: exists,
         filename: filename,
         download_url: download_url,
-        preview_url: preview_url
+        preview_url: preview_url,
+        extra_buttons: extra_buttons
     }
 }
 

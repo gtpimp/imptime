@@ -38,15 +38,17 @@ class EditableIssueAttachment extends Component {
                 >
                   <IssueAttachmentForm issue_id={issue_id} />
                   <div>
-                    { attachment.id && <FileLabel value={attachment} /> }
+                    { attachment.id &&
+                      <FileLabel value={attachment}
+                                 extra_buttons={[<button onClick={this.onDelete}>delete</button>]}
+                      />
+                    }
                     { ! attachment.id &&
                       <IssueAttachmentForm issue_id={issue_id} />
                     }
                   </div>
                   <Blank />
-                    
                 </EditableProperty>
-                { attachment.id && <button onClick={this.onDelete}>delete</button> }
             </div>
         )
     }
