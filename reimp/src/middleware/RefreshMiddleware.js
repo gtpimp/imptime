@@ -9,7 +9,7 @@ import { invalidateIssues } from '../actions/Issues'
 import { invalidateUsers } from '../actions/Users'
 import { invalidatePups } from '../actions/ProjectUserPermissions'
 import { invalidateIssueGeneralDetails } from '../actions/IssueGeneralDetails'
-import { invalidateVisualSpecDocuments } from '../actions/VisualSpecDocuments'
+import { invalidateVisualSpecDocuments, invalidateAllVisualSpecDocuments } from '../actions/VisualSpecDocuments'
 import { invalidateVisualSpecIssues } from '../actions/VisualSpecIssues'
 import { addAsyncMessage } from '../actions/Async'
 
@@ -59,7 +59,6 @@ function triggerInvalidateEntity(d, dispatch) {
 
     } else if ( d.entity_name === 'visualspecissue' ) {
         dispatch(invalidateVisualSpecIssues([d.entity_ref]))
-        
     } else {
         console.log("Ignoring: Unknown entity to refresh: " + d.entity_name)
     }
@@ -85,7 +84,10 @@ function triggerInvalidateItemLists(d, dispatch) {
 
     } else if ( d.entity_name === 'projectpermissions' ) {
         dispatch(invalidateList(LIST_KEY__PROJECT_USER_LIST))
-
+    } else if ( d.entity_name === 'visualspecissue' ) {
+        if ( d.action_type === "create" ) {
+            dispatch(invalidateAllVisualSpecDocuments())
+        }
     } else {
         console.log("Ignoring: Unknown entity to refresh lists: " + d.entity_name)
     }

@@ -49,8 +49,6 @@ class VisualSpecDocumentEditor extends Component {
         return connectDropTarget(
             <div className="vsd-editor">
 
-              Viewing {visual_spec_document_id}
-
               <div className="vsd-editor__doc_image_container">
                 { visual_spec_document.image_url && <img className="vsd-editor__doc_image"
                                                          role="presentation"
@@ -85,14 +83,14 @@ function mapStateToProps(state, props) {
 
 const headingTarget = {
     drop: (props, monitor, component) => {
-        const {dispatch, visual_spec_document_id} = props
+        const {dispatch, visual_spec_document_id} = props 
+        const distance_moved = monitor.getDifferenceFromInitialOffset()
         const dragging_item = monitor.getItem()
-
         const child_pos = monitor.getClientOffset()
-        
         return { visual_spec_document_id: visual_spec_document_id,
                  child_pos: child_pos,
-                 pos: ReactDOM.findDOMNode(component).getBoundingClientRect() }
+                 distance_moved: distance_moved,
+                 parent_pos: ReactDOM.findDOMNode(component).getBoundingClientRect() }
     },
     hover: (props, monitor, component) => {
     },
@@ -109,6 +107,5 @@ function collectDrop(connect, monitor) {
         canDrop: monitor.canDrop()
     }
 }
-
 
 export default connect(mapStateToProps)(DropTarget(DndTypes.VISUAL_SPEC_ISSUE, headingTarget, collectDrop)(VisualSpecDocumentEditor))

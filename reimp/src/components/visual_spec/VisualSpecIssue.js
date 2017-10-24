@@ -75,18 +75,18 @@ const headingSource = {
         }
     },
     endDrag(props, monitor, component) {
-        const { dispatch } = props
+        const { dispatch, visual_spec_issue } = props
         const drop_result = monitor.getDropResult()
-        const child_pos = drop_result.child_pos
-        const visual_spec_document_id = drop_result.visual_spec_document_id
-        const parent_pos = drop_result.pos
-        const x_pos = child_pos.x - parent_pos.left
-        const y_pos = child_pos.y - parent_pos.top
-        console.log("child_pos=" + child_pos + ", x_pos=" + x_pos + ", y_pos=" + y_pos)
-        console.log("parent_pos=" + parent_pos + ", x_pos=" + parent_pos.left + ", y_pos=" + parent_pos.top)
+        const { child_pos, visual_spec_document_id, parent_pos, distance_moved } = drop_result
+        let x_pos
+        let y_pos
         if ( props.visual_spec_issue_id ) {
+            x_pos = visual_spec_issue.x_pos + distance_moved.x
+            y_pos = visual_spec_issue.y_pos + distance_moved.y
             dispatch(updateVisualSpecIssue(visual_spec_document_id, [props.visual_spec_issue_id], "pointer", x_pos, y_pos))
         } else {
+            x_pos = child_pos.x - parent_pos.left
+            y_pos = child_pos.y - parent_pos.top
             dispatch(createVisualSpecIssue(visual_spec_document_id, "pointer", x_pos, y_pos))
         }
     }
