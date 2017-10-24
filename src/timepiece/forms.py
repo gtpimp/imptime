@@ -1615,7 +1615,7 @@ class QuickClockerForm(forms.Form):
         self.fields['user'].queryset = users
         self.fields['user'].choices = [ (x.id, x.username) for x in self.users ]
         self.fields['project'].queryset = projects
-        self.fields['project'].choices = [ (x.id, "<b>%s</b>     %s <span searchable_name='%s' style='font-size:9px'>(%s)</span>"%(x.business.name, x.name, (x.name.lower() + " " + x.business.name.lower()), x.status2)) for x in projects ]
+        self.fields['project'].choices = [ (x.id, "<b>%s</b>     %s <span searchable_name='%s' style='font-size:9px'>(%s)</span>"%(x.business.name, x.name, (x.name.lower() + " " + x.business.name.lower()), x.status3.name)) for x in projects ]
 
 class QuickClockerClockOutForm(forms.Form):
     entry = forms.ModelChoiceField(required=True, queryset=Entry.objects.none(), label="", widget=ButtonRadioSelect())

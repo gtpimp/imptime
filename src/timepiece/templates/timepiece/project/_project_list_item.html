@@ -12,7 +12,7 @@
      url_for_update="{% url 'project_status_update' project.id %}" 
      url_for_options="{% url 'allowed_project_stati' project.id %}" 
      move_issue_to_project_url="{% url 'move_issue_to_project' %}" 
-     selected_value="{{project.status}}"  >
+     selected_value="{{project.status3.name}}"  >
   <div class="loading"> 
     <img style="display:none" class="loading" src="{% static 'images/icons/loadingAnimation.gif' %}"/> 
   </div>
@@ -21,7 +21,7 @@
   <p>
     <small>
       <span class="readonly_value"> 
-        {{ project.status2 }}
+        {{ project.status3.name }}
       </span>
 
       {% has_permission has_edit_project_states project.business %}

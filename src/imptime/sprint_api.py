@@ -42,7 +42,6 @@ class SprintViewSet(BaseViewSet):
             else:
                 sprints = sprints.select_related("status3")
                 sprints = sprints.annotate(num_issues=Count('issues'))
-
                 s = SprintSerializer(sprints, many=True)
                 sprints_data = s.data
                 context['sprints'] = sprints_data
@@ -108,7 +107,6 @@ class SprintViewSet(BaseViewSet):
                 sprint = Sprint.objects.create(
                     business=project, #sic
                     order=order,
-                    status2='pending',
                     status3=new_status,
                     code=Sprint.get_code_from_name(params['name']),
                     name=params['name'])

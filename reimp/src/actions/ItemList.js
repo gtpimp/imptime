@@ -1,8 +1,5 @@
 import { impfetch } from './lib.js'
-import difference from 'lodash/difference'
-import keys from 'lodash/keys'
-import map from 'lodash/map'
-import compact from 'lodash/compact'
+import { keys, map, compact, difference, includes } from 'lodash'
 
 export const INIT_LIST = 'INIT_LIST'
 export const ANNOUNCE_LIST_LOADED = 'ANNOUNCE_LIST_LOADED'
@@ -349,3 +346,4 @@ export function haveItemsBeenRetrieved(state, ids, entity_key) {
     const sample_item = items[ids[0]]
     return sample_item !== undefined
 }
+
