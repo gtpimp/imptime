@@ -41,6 +41,8 @@ class IssueSerializer(BaseSerializer):
     testables = TestableSerializer(many=True)
     attachments = IssueAttachmentSerializer(many=True)
     visual_spec_documents = VisualSpecDocumentDownloadSerializer(many=True, source="enriched_visual_spec_documents")
+    created_at = serializers.DateTimeField(source='created')
+    modified_at = serializers.DateTimeField(source='modified')
 
     def to_representation(self, issue, *args, **kwargs):
         issue.assigned_to_quick_name = \

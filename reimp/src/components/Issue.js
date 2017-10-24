@@ -32,6 +32,7 @@ import Tag from '../components/Tag'
 import {DndTypes} from '../actions/Dnd'
 import {format_hours} from '../actions/lib'
 import IssueStatusLabel from '../components/form/IssueStatusLabel'
+import Timestamp from './Timestamp'
 
 const ISSUE_STATUS_CHOICES = [
     {value: 'new', label: 'new'},
@@ -233,11 +234,16 @@ class Issue extends Component {
                      }
                    </td>
                   }
-                  {includes(visible_header_keys, "status") &&
-                   <td className="list-table__cell list-table__cell--issue-status">
-                     <IssueStatusLabel value={issue.status_name}/>
+                  {includes(visible_header_keys, "created_at") &&
+                   <td className="list-table__cell list-table__cell--issue-created-at">
+                     <Timestamp value={issue.created_at} format="from_now"/>
                    </td>
                   }
+                   {includes(visible_header_keys, "status") &&
+                    <td className="list-table__cell list-table__cell--issue-status">
+                      <IssueStatusLabel value={issue.status_name}/>
+                    </td>
+                   }
                   { false &&
                     <td className="list-table__cell list-table__cell--issue-sprint">
                       1
