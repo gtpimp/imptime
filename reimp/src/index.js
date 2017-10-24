@@ -59,7 +59,7 @@ ReactDOM.render(
                 <Route path="projects/:projectId/sprints/:sprintId/costSummary" component={SprintCostSummaryPage}/>
                 <Route path="projects/:projectId/users" component={ProjectUserPage}/>
                 <Route path="projects/:projectId/users/:userId" component={ProjectUserPage}/>
-                <Route path="projects/:projectId/visualSpec/:visualSpecDocumentId" component={VisualSpecDocumentPage}/>
+                <Route path="projects/:projectId/sprints/:sprintId/issues/:issueId/visualSpec/:visualSpecDocumentId" component={VisualSpecDocumentPage}/>
 
                 <Route path="dashboard" component={DashboardPage}/>
                 <Route path="usertimesheets" component={UserTimesheetPage}/>

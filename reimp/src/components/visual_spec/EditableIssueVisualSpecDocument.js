@@ -28,8 +28,10 @@ class EditableIssueVisualSpecDocument extends Component {
     }
 
     onOpen() {
-        const {visual_spec_document, project_id} = this.props
-        browserHistory.push('/projects/' + project_id + '/visualSpec/' + visual_spec_document.id);
+        const {visual_spec_document, project_id, sprint_id, issue_id} = this.props
+        if ( issue_id ) {
+            browserHistory.push('/projects/' + project_id + '/sprints/' + sprint_id + '/issues/' + issue_id + '/visualSpec/' + visual_spec_document.id);
+        }
     }
 
     render() {
@@ -77,6 +79,7 @@ function mapStateToProps(state, props) {
     return {
         issue_id: issue_id,
         project_id: issue.project_id,
+        sprint_id: issue.sprint_id,
         visual_spec_document_id: visual_spec_document_id,
         visual_spec_document: visual_spec_document
     }

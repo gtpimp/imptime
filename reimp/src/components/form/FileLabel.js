@@ -44,9 +44,9 @@ class FileLabel extends Component {
                     </button>
                   </div>
                 }
-                { map(extra_buttons, function(extra_button) {
+                { map(extra_buttons, function(extra_button, index) {
                       return (
-                          <div>
+                          <div key={index}_>
                             {extra_button}
                           </div>
                       )
