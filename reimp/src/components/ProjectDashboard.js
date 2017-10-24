@@ -243,6 +243,10 @@ class ProjectDashboard extends Component {
                       { project_dashboard.recent_activity.is_inactive && (<span>Inactive</span>) }
                       { project_dashboard.recent_activity.is_expired && (<span>Expired</span>) }
                     </div>
+                    <div className="project_dashboard__status_reason">
+                      { project_dashboard.recent_activity.sort_reason }
+                      <Timestamp value={project_dashboard.recent_activity.sort_date} format="from_now"/>
+                    </div>
                   </div>
                   {this.renderRecentActivity()}
                   {this.renderOpenSprints()}

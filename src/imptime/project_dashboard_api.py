@@ -171,30 +171,25 @@ class ProjectDashboardViewSet(BaseViewSet):
             if len(entry['issue_subject'])>50:
                 entry['issue_subject'] = entry['issue_subject'][0:47] + "..."
 
-        has_active_entries = 'start_time' in entry and \
-                             entry['start_time'] + relativedelta(days=self.NUM_DAYS_FOR_ACTIVE) >= timezone.now()
-        has_unexpired_entries = 'start_time' in entry and \
-                                entry['start_time'] + relativedelta(days=self.NUM_DAYS_FOR_EXPIRED) >= timezone.now()
-        has_active_issues = 'created' in issue and  \
-                            issue['created'] + relativedelta(days=self.NUM_DAYS_FOR_ACTIVE) >= timezone.now()
-        has_unexpired_issues = 'createdd' in issue and  \
-                               issue['created'] + relativedelta(days=self.NUM_DAYS_FOR_EXPIRED) >= timezone.now()
-
-        is_active = has_active_entries or has_active_issues
-        is_inactive = not is_active and (has_unexpired_entries or has_unexpired_issues)
-        is_expired = not is_active and not is_inactive
-
         most_recent_sprint_modified_dates = Sprint.objects.filter(business=project)\
                                                           .order_by("-modified")\
                                                           .values('modified', 'name')
         sprint_last_modified_at = most_recent_sprint_modified_dates[0]['modified'] if len(most_recent_sprint_modified_dates)>0 else None
+        sprint_last_created_at = Sprint.objects.filter(business=project).order_by("-created").first()
 
-        default_date = timezone.now()-relativedelta(years=1)
-        sort_date = max(default_date,
-                        entry.get('start_time', default_date),
-                        issue.get('created', default_date),
-                        project.created or default_date,
-                        sprint_last_modified_at or default_date)
+        default_date = timezone.now()-relativedelta(years=10)
+        sort_fields = { 'n/a': default_date,
+                        'timesheet entry': entry.get('start_time', default_date),
+                        'issue creation': issue.get('created', default_date),
+                        'project creation': project.created or default_date,
+                        'sprint creation': (sprint_last_created_at.created or default_date) if sprint_last_created_at else default_date }
+
+        sort_reason = max(sort_fields, key=sort_fields.get)
+        sort_date = sort_fields[sort_reason]
+
+        is_active = sort_date + relativedelta(days=self.NUM_DAYS_FOR_ACTIVE) >= timezone.now()
+        is_inactive = not is_active and sort_date + relativedelta(days=self.NUM_DAYS_FOR_EXPIRED) >= timezone.now()
+        is_expired = not is_active and not is_inactive
         
         d = {
             'most_recent_clock_entry': entry,
@@ -204,7 +199,8 @@ class ProjectDashboardViewSet(BaseViewSet):
             'is_inactive': is_inactive,
             'is_expired': is_expired,
             'is_active': is_active,
-            'sort_date': sort_date
+            'sort_date': sort_date,
+            'sort_reason': sort_reason
         }
         return d
 
