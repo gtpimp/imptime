@@ -87,11 +87,13 @@ export function isLoadingProjectStatement(state, project_id) {
 }
 
 export function update_project_statement_filter(date_from_inclusive, date_to_inclusive, sprint_ids) {
-    return {
-        type: UPDATE_PROJECT_STATEMENT_FILTER,
-        date_from_inclusive: date_from_inclusive,
-        date_to_inclusive: date_to_inclusive,
-        sprint_ids: sprint_ids || null
+    return (dispatch, getState) => {
+        dispatch({
+            type: UPDATE_PROJECT_STATEMENT_FILTER,
+            date_from_inclusive: date_from_inclusive,
+            date_to_inclusive: date_to_inclusive,
+            sprint_ids: sprint_ids || null
+        })
     }
 }
 

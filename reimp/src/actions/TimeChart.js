@@ -10,7 +10,7 @@ export function invalidateTimeChart(project_id) {
     project_id = parseInt(project_id)
     return {
         type: INVALIDATE_TIME_CHART,
-	      project_id_to_invalidate: project_id
+	project_id_to_invalidate: project_id
     }
 }
 
@@ -27,7 +27,7 @@ function announceTimeChartLoaded(payload) {
     return {
         type: ANNOUNCE_TIME_CHART_LOADED,
         time_chart: time_chart,
-        project_id: parseInt(time_chart.project_id),
+        project_id: parseInt(payload.project_id),
 	received_at: Date.now()
     }
 }

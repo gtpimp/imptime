@@ -195,9 +195,11 @@ class ProjectDashboard extends Component {
               <div><h3>All users activity</h3></div>
               <table>
                 <thead>
-                  <td></td>
-                  <td>First entry</td>
-                  <td>Most recent entry</td>
+                  <tr>
+                    <td></td>
+                    <td>First entry</td>
+                    <td>Most recent entry</td>
+                  </tr>
                 </thead>
                 <tbody>
                   {map(project_dashboard.most_recent_entry_per_user, (entry) => 

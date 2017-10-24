@@ -53,7 +53,7 @@ class TimeChartViewSet(BaseViewSet):
                     users = users.filter(business_permissions__business_id=project_id).distinct() #sic
                 users = self.apply_filter(qs=users, raw_filter_args=filter_args)
                 users = self.apply_pagination(qs=users, pagination=pagination)
-            
+
             if format_args.get('ids_only'):
                 if not request.user.is_superuser:
                     context['ids'] = [str(request.user.id)]
@@ -94,7 +94,7 @@ class TimeChartViewSet(BaseViewSet):
 
             context['time_chart'] = { 'times_by_user': times_by_user,
                                       'filter': filter }
-                
+            context['project_id'] = project_id
             data = {"status": "success", "payload": context}
 
         except Exception, ex:

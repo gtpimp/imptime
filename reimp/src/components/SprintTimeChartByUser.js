@@ -35,7 +35,7 @@ class SprintTimeChartByUser extends Component {
             dispatch(ensureTimeChartLoaded([project_id], filter))
 
             // Needed because there isn't a single timechart, it depends on the filter
-            dispatch(invalidateTimeChart([project_id], filter))
+            dispatch(invalidateTimeChart(project_id, filter))
         }
     }
 

@@ -210,24 +210,28 @@ class ProjectStatement extends Component {
     render_remaining_budgets(project_statement) {
         const { sprint_infos } = project_statement
         return (
-            map(keys(sprint_infos),
-                function(sprint_id) {
-                    const sprint_info = sprint_infos[sprint_id]
-                    return (
-                        <div key={sprint_id}>
-                          <h3 className="project__statement__remaining_grid__sprint_name"> 
-                            <SprintLink sprint_id={sprint_id}
-                                        sprint_name={sprint_info.sprint_name}
-                                        project_id={sprint_info.project_id}
+            <div>
+              {map(keys(sprint_infos),
+                  function(sprint_id) {
+                      const sprint_info = sprint_infos[sprint_id]
+                      return (
+                          <div key={sprint_id}>
+                            <h3 className="project__statement__remaining_grid__sprint_name"> 
+                              <SprintLink sprint_id={sprint_id}
+                                          sprint_name={sprint_info.sprint_name}
+                                          project_id={sprint_info.project_id}
+                              />
+                            </h3>
+                            <SprintTimeSummary key={sprint_id}
+                                               sprint_id={sprint_id}
+                                               project_id={sprint_info.project_id}
+                                               show_heading={false}
                             />
-                          </h3>
-                          <SprintTimeSummary key={sprint_id}
-                                             sprint_id={sprint_id}
-                                             project_id={sprint_info.project_id}/>
-                        </div>
-                    )
-                    
-                })
+                          </div>
+                      )
+
+                  })}
+            </div>
         )
     }
 
@@ -263,6 +267,29 @@ class ProjectStatement extends Component {
                 }
               </tbody>
             </table>
+        )
+    }
+
+    render_filter_range(title) {
+        const { project_statement } = this.props
+        return (
+            <div className="project__statement__times_grid__header_summary">
+              <div className="project__statement__times_grid__header_summary_item">
+                {title}
+              </div>
+              <div className="project__statement__times_grid__header_summary_item">
+                from
+              </div>
+              <div className="project__statement__times_grid__header_summary_item">
+                <Timestamp value={project_statement.date_from_inclusive} format="date"/>
+              </div>
+              <div className="project__statement__times_grid__header_summary_item">
+                to
+              </div>
+              <div className="project__statement__times_grid__header_summary_item">
+                <Timestamp value={project_statement.date_to_inclusive} format="date"/>
+              </div>
+            </div>
         )
     }
 
@@ -302,7 +329,8 @@ class ProjectStatement extends Component {
 
                     <div className="project__statement__separator" />
                     <div className="project__statement__times_grid">
-                      <h2 className="project__statement__times_grid__header">Sprint breakdown by user (during selected period)
+                      <h2 className="project__statement__times_grid__header">
+                          { this.render_filter_range("Sprint breakdown by user") }
                         <div className="project__statement__grid_icon icon--download_as_csv" onClick={this.download_sprint_breakdown_by_user} />
                       </h2>
                       { project_statement.grand_totals && this.render_sprint_totals(project_statement) }
@@ -310,21 +338,24 @@ class ProjectStatement extends Component {
 
                     <div className="project__statement__separator" />
                     <div className="project__statement__times_grid">
-                          <h2 className="project__statement__times_grid__header">
-                                Pictoral work for the given range
+                      <h2 className="project__statement__times_grid__header">
+                        { this.render_filter_range("Timesheets for work") }
                       </h2>
                       <SprintTimeChartByUser project_id={project_id} filter={filter} />
                     </div>
 
                     <div className="project__statement__separator" />
                     <div className="project__statement__remaining_grid">
-                      <h2 className="project__statement__remaining_grid__header">Remaining time (for sprints worked on in the selected period)
+                      <h2 className="project__statement__remaining_grid__header">
+                        { this.render_filter_range("Remaining time in sprints worked on") }
+                        (if each developer works on all remaining issues themselves)
                       </h2>
                       { project_statement.grand_totals && this.render_remaining_budgets(project_statement) }
                     </div>
 
                     <div className="project__statement__issues_grid">
-                      <h2 className="project__statement__times_grid__header">Issues worked on (during selected period)
+                      <h2 className="project__statement__times_grid__header">
+                        { this.render_filter_range("Issues worked on") }
                         <div className="project__statement__grid_icon icon--download_as_csv" onClick={this.download_issues_worked_on} />
                       </h2>
                         { project_statement.grand_totals && this.render_issues_worked_on(project_statement) }

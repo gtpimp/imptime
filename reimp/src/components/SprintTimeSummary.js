@@ -93,15 +93,17 @@ class SprintTimeSummary extends Component {
     }
 
     render() {
-        const { sprint, project, per_user } = this.props
+        const { sprint, project, per_user, show_heading } = this.props
         return (
             <div>
               { per_user &&
                 (
                     <div className="sprint_time_summary">
+                      { show_heading &&
                       <h2 className="sprint_time_summary__header">
                         Time remaining based on budget (if each developer works on all remaining issues themselves)
                       </h2>
+                      }
                       {this.renderSummaryForDevelopers(per_user)}
                     </div>
                 )
@@ -112,7 +114,7 @@ class SprintTimeSummary extends Component {
 }
 
 function mapStateToProps(state, props) {
-    const {sprint_id, project_id} = props
+    const {sprint_id, project_id, show_heading} = props
     const sprint = getSprint(state, sprint_id) || {}
     const project = getProject(state, project_id) || {}
     const time_summary = getTimeSummary(state, sprint_id) || {}
@@ -124,7 +126,8 @@ function mapStateToProps(state, props) {
         project_id: project_id,
         project: project,
         time_summary: time_summary,
-        per_user: per_user
+        per_user: per_user,
+        show_heading: show_heading !== false
     }
 }
 

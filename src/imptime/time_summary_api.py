@@ -43,15 +43,16 @@ class TimeSummaryViewSet(BaseViewSet):
                                             .filter(pk__in=active_sprint_users)\
                                             .filter(pk__in=developers)
             budget_ratio = total_billable / (sprint.spendable_budget or 1)
+            has_budget = sprint.spendable_budget > 0
 
             for sprint_developer in sprint_developers:
                 dev_stats = self.calculate_dev_hours_stats(sprint, sprint_developer)
                 dev_hours_available, tester_hours_available, manager_hours_available, dev_hours_used, ratio, manager_rate, developer_rate, tester_rate = dev_stats
                 values = {
                     "dev_hours_used": round(dev_hours_used, 2),
-                    "dev_hours_available": round(dev_hours_available, 2),
-                    "tester_hours_available": round(tester_hours_available, 2),
-                    "manager_hours_available": round(manager_hours_available, 2),
+                    "dev_hours_available": round(dev_hours_available, 2) if has_budget else None,
+                    "tester_hours_available": round(tester_hours_available, 2) if has_budget else None,
+                    "manager_hours_available": round(manager_hours_available, 2) if has_budget else None,
                     "dev_rate": developer_rate,
                     "avg_tester_rate": tester_rate,
                     "avg_manager_rate": manager_rate
