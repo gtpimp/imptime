@@ -95,6 +95,14 @@ import {getProject} from '../actions/Projects'
                           <EditableIssueTestable issue_id={issue.id} testable_id={null}/>
                         </PropertyStackComponent>
 
+                        <PropertyStackComponent title="Comments">
+                          { map(comments, function (comment, index) {
+                                return <EditableIssueComment key={issue.id, comment.id} issue_id={issue.id} comment_id={comment.id}/>
+                            })
+                          }
+                          <EditableIssueComment issue_id={issue.id} comment_id={null}/>
+                        </PropertyStackComponent>
+                        
                         <PropertyStackComponent title="Assigned User">
                           <EditableIssueAssignedUser issue_ids={[issue.id]} project_id={issue.project_id}/>
                         </PropertyStackComponent>
@@ -113,14 +121,6 @@ import {getProject} from '../actions/Projects'
                             })
                           }
                           <EditableIssueAttachment issue_id={issue.id} attachment_id={null}/>
-                        </PropertyStackComponent>
-
-                        <PropertyStackComponent title="Comments">
-                          { map(comments, function (comment, index) {
-                                return <EditableIssueComment key={issue.id, comment.id} issue_id={issue.id} comment_id={comment.id}/>
-                            })
-                          }
-                          <EditableIssueComment issue_id={issue.id} comment_id={null}/>
                         </PropertyStackComponent>
 
                         <PropertyStackComponent>
