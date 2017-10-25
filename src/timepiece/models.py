@@ -745,6 +745,10 @@ class ProjectStatus(models.Model):
     def __unicode__(self):
         return self.name
 
+    @classmethod
+    def for_business(self, name, business):
+        return ProjectStatus.objects.get_or_create(name=name, business=business)[0]
+    
     def save(self, *args, **kwargs):
         was_created = not self.id
         super(ProjectStatus, self).save(*args, **kwargs)
@@ -845,7 +849,7 @@ class Project(models.Model):
         null=True
     )
 
-    status3 = models.ForeignKey(ProjectStatus, related_name='projects', null=True)
+    status3 = models.ForeignKey(ProjectStatus, related_name='projects', null=False)
 
     description = models.TextField(blank=True, null=True, db_index=True)
     short_description = models.CharField(max_length=50, blank=True, null=True, db_index=True)
@@ -870,10 +874,6 @@ class Project(models.Model):
         description = "%s %s" % (project_name, (description or ""))
         point_person = User.objects.get_or_create(username="auto")[0]
         try:
-            project_status = Attribute.objects.get(type='project-status', label='open')
-        except:
-            project_status = Attribute.objects.create(type='project-status', label='open', billable=True, enable_timetracking=True)
-        try:
             project_type = Attribute.objects.get(type='project-type', label='default')
         except:
             project_type = Attribute.objects.create(type='project-type', label='default', billable=True, enable_timetracking=True)
@@ -883,7 +883,8 @@ class Project(models.Model):
         except Project.DoesNotExist:
             project = Project.objects.create(name=project_name, business=business,
                                              point_person=point_person,
-                                             status=project_status, type=project_type,
+                                             status3=ProjectStatus.for_business('open', business),
+                                             type=project_type,
                                              description=description,
                                              short_description=short_description)
         return project
@@ -1171,7 +1172,7 @@ class Project(models.Model):
     @property
     def previous_project(self):
         qs = self.business.get_ordered_projects().exclude(id=self.id)
-        project = qs.exclude(status__name='closed').first()
+        project = qs.exclude(status3__name='closed').first()
         if not project:
             project = qs.first()
         return project

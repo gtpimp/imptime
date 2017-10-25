@@ -3188,8 +3188,8 @@ def add_project(request, business_id , template="timepiece/project/create_edit_p
     project = timepiece.Project(  business = business,
                                   point_person = request.user,
                                   type = timepiece.Attribute.objects.get(label="default"),
-                                  status = timepiece.Attribute.objects.get(label="open"),
-                                  )
+                                  status3 = timepiece.ProjectStatus.for_business('open', business)
+    )
 
     has_create_sprint = timepiece.BusinessPermissions.objects.get_or_create(business=business, user=request.user)[0].has_create_sprint
     if not has_create_sprint:
