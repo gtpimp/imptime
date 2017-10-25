@@ -66,7 +66,7 @@ class VisualSpecIssueViewSet(BaseViewSet):
                     IssueHistory.add_history(request.user, parent_issue, "auto change to feature for visual speccing", "", "1")
                 new_issue_order=parent_issue.get_next_child_order()
                 issue = Issue.objects.create(project=parent_issue.project,
-                                             subject="unnamed visual issue %d for %s"%(new_issue_order,visual_spec_document.name),
+                                             subject="",
                                              adhoc=False,
                                              status2=IssueStatus.objects.get_or_create(name='new', business=parent_issue.project.business)[0],
                                              parent_group=visual_spec_document.issue,

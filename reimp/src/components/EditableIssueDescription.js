@@ -4,6 +4,7 @@ import EditableProperty from './form/EditableProperty'
 import IssueDescriptionForm from './form/IssueDescriptionForm'
 import { updateIssueDescription, getIssue } from '../actions/Issues'
 import { has_permission } from '../actions/Users'
+import Blank from './form/Blank'
 
 class EditableIssueDescription extends Component {
 
@@ -29,7 +30,9 @@ class EditableIssueDescription extends Component {
             >
               <IssueDescriptionForm />
               <div className="text-component--readonly text-component--description">{issue.description}</div>
-              <div className="text-component--empty text-component--description"></div>
+              <div className="text-component--empty text-component--description">
+                ...
+              </div>
             </EditableProperty>
         )
     }

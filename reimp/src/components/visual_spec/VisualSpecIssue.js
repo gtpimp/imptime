@@ -7,6 +7,8 @@ import classNames from 'classnames'
 import '../../sass/visual-spec-issue.scss'
 import { getVisualSpecIssue } from '../../actions/VisualSpecIssues'
 import { getIssue } from '../../actions/Issues'
+import EditableIssueTitle from '../EditableIssueTitle'
+import EditableIssueDescription from '../EditableIssueDescription'
 import ToolTip from 'react-portal-tooltip'
 import {
     createVisualSpecIssue,
@@ -85,8 +87,9 @@ class VisualSpecIssue extends Component {
                          position="right"
                          arrow="center"
                          parent={"#visual_spec_issue_"+visual_spec_issue.id}>
-                  <div>
-                    {name}
+                  <div className="visual-spec-issue--tooltip">
+                    <EditableIssueTitle issue_id={issue.id} />
+                    <EditableIssueDescription issue_id={issue.id} />
                   </div>
                 </ToolTip>
               }
@@ -105,6 +108,7 @@ function mapStateToProps(state, props) {
     return {
         visual_spec_issue_id,
         visual_spec_issue,
+        issue,
         name: issue.subject || name,
         is_invalidated: is_invalidated || false
     }
