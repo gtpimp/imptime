@@ -65,7 +65,7 @@ class Extractor(object):
 
         live_entries = Entry.objects.all().filter(user=timesheet_user,
                                                   issue__project__business=business,
-                                                  issue__project__status2__in=Project.can_add_dev_time_states(),
+                                                  issue__project__status3__name__in=Project.can_add_dev_time_states(),
                                                   source='emacs')
         live_entries.delete()
         
