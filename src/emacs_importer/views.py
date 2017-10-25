@@ -61,6 +61,7 @@ def import_timesheet(request):
                     if len(status['errors'])>0:
                         raise Exception("Importer failed")
             except Exception, ex:
+                logger.exception(ex)
                 status['errors'].append(str(ex))            
 
             if len(status.get('errors', [])) > 0:
