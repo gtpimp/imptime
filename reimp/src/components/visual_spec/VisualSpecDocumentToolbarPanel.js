@@ -26,12 +26,14 @@ class VisualSpecDocumentToolbarPanel extends Component {
             <div className="toolbar-panel">
               <ToolbarButton tooltip="Refresh" icon="refresh" onClick={this.invalidateComponents}/>
               <ToolbarButton>
-                <VisualSpecIssue name="New"/>
+                <div className="toolbar-panel__visual_spec">
+                  <VisualSpecIssue name="New"/>
+                </div>
               </ToolbarButton>
               <ReactTooltip place="bottom" type="info" />
             </div>
         )
-    }
+    } 
 }
 
 function mapStateToProps(state, props) {

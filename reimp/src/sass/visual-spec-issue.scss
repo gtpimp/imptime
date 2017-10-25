@@ -6,8 +6,14 @@
 
 .visual-spec-issue__image {
     background-image: url('../../public/images2/ic_insert_comment_white_36dp.png');
-    background-repeat: no;
-    width: 40px;
-    height: 40px;
+    background-repeat: no-repeat;
+    width: 36px;
+    height: 36px;
 }
 
+
+.toolbar-panel__visual_spec {
+    background-color: $color-25;
+    height:36px;
+    width: 36px
+}
