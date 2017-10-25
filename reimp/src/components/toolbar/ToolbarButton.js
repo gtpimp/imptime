@@ -39,7 +39,7 @@ class ToolbarButton extends Component {
                 }
                 { !this.props.icon &&
                 <div className="toolbar-button__content">
-                    {/*{ this.props.children}*/}
+                    { this.props.children}
                 </div>
                 }
             </div>

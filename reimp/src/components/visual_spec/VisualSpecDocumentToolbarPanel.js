@@ -25,7 +25,9 @@ class VisualSpecDocumentToolbarPanel extends Component {
         return (
             <div className="toolbar-panel">
               <ToolbarButton tooltip="Refresh" icon="refresh" onClick={this.invalidateComponents}/>
-              <VisualSpecIssue name="New"/>
+              <ToolbarButton>
+                <VisualSpecIssue name="New"/>
+              </ToolbarButton>
               <ReactTooltip place="bottom" type="info" />
             </div>
         )

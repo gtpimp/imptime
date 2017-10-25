@@ -7,6 +7,7 @@ import classNames from 'classnames'
 import '../../sass/visual-spec-issue.scss'
 import { getVisualSpecIssue } from '../../actions/VisualSpecIssues'
 import { getIssue } from '../../actions/Issues'
+import ToolTip from 'react-portal-tooltip'
 import {
     createVisualSpecIssue,
     updateVisualSpecIssue,
@@ -16,6 +17,16 @@ import {
 
 class VisualSpecIssue extends Component {
 
+    state = {
+        isTooltipActive: false
+    }
+    
+    constructor(props) {
+        super(props)
+        this.showTooltip = this.showTooltip.bind(this)
+        this.hideTooltip = this.hideTooltip.bind(this)
+    }
+    
     componentDidMount() {
         this.refresh()
     }
@@ -32,8 +43,16 @@ class VisualSpecIssue extends Component {
         }
     }
 
+    showTooltip() {
+        this.setState({isTooltipActive: true})
+    }
+    hideTooltip() {
+        this.setState({isTooltipActive: false})
+    }
+
     render() {
         const { name, visual_spec_issue, issue, isDragging, connectDragSource } = this.props
+        const { isTooltipActive } = this.state
 
         const style = {}
         if ( !isDragging && visual_spec_issue.x_pos ) {
@@ -41,14 +60,37 @@ class VisualSpecIssue extends Component {
             style.left = visual_spec_issue.x_pos
         }
         
-        return connectDragSource(
-            <div className={classNames("visual-spec-issue",
-                                       {"visual-spec-issue--dragging": isDragging})}
-                 style={style}
-            >
-              {name}
-              { isDragging && <span>(here I go)</span> }
-              { !isDragging && <span>(not moving)</span> }
+        return ( 
+            <div>
+              {connectDragSource(
+                  <div id={"visual_spec_issue_"+visual_spec_issue.id}  ref={(element) => { this.tooltip_parent = element }}
+                  className={classNames("visual-spec-issue",
+                                        {"visual-spec-issue--dragging": isDragging})}
+                  style={style}
+                  >
+                  { ! visual_spec_issue.id &&
+                    <div className="visual-spec-issue__image"> </div>
+                  }
+
+                  { visual_spec_issue.id &&
+                    <div onMouseEnter={this.showTooltip} onMouseLeave={this.hideTooltip}>
+                      <div className="visual-spec-issue__image"> </div>
+                    </div>
+                  }
+                  </div>
+              )}
+
+              { visual_spec_issue.id &&
+                <ToolTip active={isTooltipActive}
+                         position="right"
+                         arrow="center"
+                         parent={"#visual_spec_issue_"+visual_spec_issue.id}>
+                  <div>
+                    {name}
+                  </div>
+                </ToolTip>
+              }
+
             </div>
         )
     }
