@@ -98,7 +98,12 @@
         </div>
 
         <script>
-         setTimeout(function() { document.getElementById("loading_msg").style.display = "block" }, 1000);
+         setTimeout(function() {
+             var el = document.getElementById("loading_msg");
+             if ( el ) {
+                 el.style.display = "block";
+             }
+         }, 1000);
         </script>
 
       </div>
