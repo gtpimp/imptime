@@ -131,7 +131,6 @@ def do_scp_upload(zip_filepath, ssh_user, ssh_key, ssh_host, ssh_folder):
     _cmd("scp", cmd_args)
 
 def do_s3_upload(zip_filepath, aws_region, aws_profile_name, s3_bucket_name):
-    output_filepath = os.path.join(output_folder, "s3")
     logger.info("Backing up %s to %s" % (zip_filepath, s3_bucket_name))
     cmd_args = ["s3", "cp", "--region", aws_region]
     if aws_profile_name:
