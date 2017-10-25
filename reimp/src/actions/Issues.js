@@ -430,7 +430,7 @@ export function deleteIssueVisualSpecDocument(issue_id, visual_spec_document_id)
         const state = getState()
 	dispatch(announceIssuesSaving([issue_id], 'visual_spec_document', "deleting"))
         let data = { issue_id: issue_id }
-	return impfetch( state, "imp/issue/visual_spec_document/"+visual_spec_document_id+"/", dispatch,
+	return impfetch( state, "imp/visual_spec_document/"+visual_spec_document_id+"/", dispatch,
 			 {method: "DELETE",
 			  credentials: 'same-origin',
 			  data: data,

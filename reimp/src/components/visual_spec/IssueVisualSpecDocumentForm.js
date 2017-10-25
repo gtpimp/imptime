@@ -23,7 +23,7 @@ class IssueVisualSpecDocumentForm extends Component {
 function mapStateToProps(state, props) {
 
     const { onChange, issue_id } = props
-    const upload_relative_url = 'imp/issue/visual_spec_document/'
+    const upload_relative_url = 'imp/visual_spec_document/'
     
     return {
         onSubmit: onChange,

@@ -1,5 +1,6 @@
 import os
 from django.contrib.auth.models import User
+from authentication import get_user_by_token
 from django.core.exceptions import PermissionDenied
 from timepiece.models import BusinessPermissions as ProjectPermissions
 from django.conf import settings
@@ -19,11 +20,7 @@ class VisualSpecDocumentDownloadView(APIView):
     def _get(self, request, visual_spec_document_id, download=True):
         # jump through hoops because we want to download from a url
         # but the login token is normally passed in a custom header.
-        token = request.GET['token']
-        session = Session.objects.get(pk=request.COOKIES['sessionid'])
-        s_data = session.get_decoded()
-        user_id = s_data.get('_auth_user_id')
-        user = User.objects.get(pk=user_id, profile__authenticate_token=token)
+        user = get_user_by_token(request)
         visual_spec_document = VisualSpecDocument.objects.filter(issue__in=PermissionHelper.allowed_issues(user)).get(pk=visual_spec_document_id)
 
         bp = ProjectPermissions.for_user(user, visual_spec_document.issue.project.business)

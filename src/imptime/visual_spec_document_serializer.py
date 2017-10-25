@@ -14,11 +14,11 @@ class VisualSpecDocumentDownloadSerializer(BaseSerializer):
 
     @classmethod
     def get_download_url(self, request, visual_spec_document):
-        return self._base_url(request) + '/imp/issue/visual_spec_document/%s/download?token=%s'%(visual_spec_document.id, request.user.profile.authenticate_token)
+        return self._base_url(request) + '/imp/visual_spec_document/%s/download?token=%s'%(visual_spec_document.id, request.user.profile.authenticate_token)
 
     @classmethod
     def get_preview_url(self, request, visual_spec_document):
-        return self._base_url(request) + '/imp/issue/visual_spec_document/%s/preview?token=%s'%(visual_spec_document.id, request.user.profile.authenticate_token)
+        return self._base_url(request) + '/imp/visual_spec_document/%s/preview?token=%s'%(visual_spec_document.id, request.user.profile.authenticate_token)
 
     @classmethod
     def _base_url(self, request):
