@@ -99,6 +99,7 @@ def ftp_upload_backup(ftp_user, ftp_password, ftp_host, zip_filepath, dest_folde
 def do_rsync(local_folder, dest_url, dest_user, dest_folder, dest_port, dest_ssh_key=None, dest_password=None):
     if dest_ssh_key:
         ssh_key_filepath = os.path.join(CONFIG_FOLDER, dest_ssh_key)
+        _cmd("sudo", ["chmod", "0600", ssh_key_filepath])
         cmd_args = ["-rlptghe",]
                     
         cmd_args.extend(["'ssh -i {ssh_key_filepath} -p {dest_port} -o StrictHostKeyChecking=no'"\
@@ -120,6 +121,7 @@ def do_rsync(local_folder, dest_url, dest_user, dest_folder, dest_port, dest_ssh
 
 def do_scp_upload(zip_filepath, ssh_user, ssh_key, ssh_host, ssh_folder):
     ssh_key_filepath = os.path.join(CONFIG_FOLDER, ssh_key)
+    _cmd("sudo", ["chmod", "0600", ssh_key_filepath])
     cmd_args = [ "-i",
                  ssh_key_filepath,
                  "-o",
