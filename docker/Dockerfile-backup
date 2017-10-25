@@ -30,8 +30,8 @@ RUN mkdir -p /opt/imptime/
 WORKDIR /opt/awscli
 RUN git clone --depth 1 -b 1.11.162 https://github.com/aws/aws-cli.git
 
-COPY docker/backup.cron /var/spool/cron/crontabs/root/backup-cron
-RUN chmod 0644 /var/spool/cron/crontabs/root/backup-cron
+COPY docker/backup.cron /var/spool/cron/crontabs/root
+RUN chmod 0644 /var/spool/cron/crontabs/root
 RUN touch /var/log/backup.log
 
 COPY docker/backup.py /opt/imptime/
