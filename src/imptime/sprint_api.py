@@ -8,6 +8,7 @@ import json
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.decorators import permission_classes
 from timepiece.models import Project as Sprint
+from timepiece.models import Business as Project
 from timepiece.models import ProjectStatus as SprintStatus
 
 logger = logging.getLogger(__name__)
@@ -94,6 +95,7 @@ class SprintViewSet(BaseViewSet):
             context = {}
             params = request.data['sprint']
             project_id = params['project_id']
+            project = Project.objects.get(pk=project_id)
             sprint_id_before = params.get('sprint_id_before', None)
             if sprint_id_before:
                 sprint_before = self.allowed_sprint(sprint_id_before)
