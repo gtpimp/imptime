@@ -770,16 +770,16 @@ class ProjectQuerySet(QuerySet):
         return self.filter(business__in=BusinessPermissions.active_businesses_for_user(user))
 
     def filter_active(self):
-        return self.filter(status__name__in=Project.active_states())
+        return self.filter(status3__name__in=Project.active_states())
 
     def filter_pending(self):
-        return self.filter(status__name__in=Project.pending_states())
+        return self.filter(status3__name__in=Project.pending_states())
 
     def filter_closed(self):
-        return self.filter(status__name__in=Project.closed_states())
+        return self.filter(status3__name__in=Project.closed_states())
 
     def filter_hopeful(self):
-        return self.filter(status__name__in=Project.hopeful_states())
+        return self.filter(status3__name__in=Project.hopeful_states())
 
     def filter_open(self):
         return self.exclude(status3__name__in=Project.closed_states()).order_by("order")
@@ -797,7 +797,7 @@ class ProjectQuerySet(QuerySet):
         return self.filter(Q(status3__name='in dev')|Q(status3__name='pending'))
 
     def filter_can_add_dev_time_states(self):
-        return self.filter(status__name__in=Project.can_add_dev_time_states())
+        return self.filter(status3__name__in=Project.can_add_dev_time_states())
 
 class Project(models.Model):
 
@@ -848,7 +848,7 @@ class Project(models.Model):
         related_name='projects_with_type',
         null=True
     )
-
+    
     status3 = models.ForeignKey(ProjectStatus, related_name='projects', null=False)
 
     description = models.TextField(blank=True, null=True, db_index=True)
