@@ -65,8 +65,10 @@ export function updateVisibleItemIdAbove(list_key, item_id_to_move, item_id_to_m
         const state = getState()
         const item_ids = getVisibleItemIds(state, list_key)
         const index_of_item_id_to_move = indexOf(item_ids, item_id_to_move)
-        const index_of_item_id_to_before = indexOf(item_ids, item_id_to_move_before)
+        const index_of_item_id_to_before = indexOf(item_ids, item_id_to_move_before)+1
         const reordered_item_ids = move(item_ids, index_of_item_id_to_move, index_of_item_id_to_before)
+
+        console.log("Moving " + index_of_item_id_to_move + " to " + index_of_item_id_to_before)
 
         dispatch({
             type: UPDATE_VISIBLE_ITEM_IDS,
