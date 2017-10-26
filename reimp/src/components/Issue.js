@@ -1,10 +1,10 @@
 import React, {Component} from 'react'
-import map from 'lodash/map'
-import keys from 'lodash/keys'
-import includes from 'lodash/includes'
+import { keys, keyBy, map, includes, flatMap } from 'lodash'
 import {DragSource, DropTarget} from 'react-dnd';
 import {connect} from 'react-redux'
 import classNames from 'classnames'
+import { ENTITY_KEY__ISSUE } from '../actions/ItemListKeyRegistry'
+import { getSelectedItems } from '../actions/ItemList'
 import {
     updateIssueStatus,
     updateIssueFeature,
@@ -147,7 +147,8 @@ class Issue extends Component {
             is_invalidated, is_saving,
             isOver, connectDragSource, connectDropTarget, show_children,
             subject_prefix, subject_suffix,
-            issue_id, visible_header_keys
+            issue_id, visible_header_keys,
+            isFeatureOfSelectedIssue, belongsToSelectedFeature
         } = this.props
 
         const onDeleteTag = this.onDeleteTag
@@ -172,8 +173,8 @@ class Issue extends Component {
             )
         } else {
             const isFeature = issue.can_group_issues
-            const belongsToFeature = issue.parent_group_id || false
-            const isStandalone = !isFeature && !belongsToFeature
+            const belongsToAFeature = issue.parent_group_id || false
+            const isStandalone = !isFeature && !belongsToAFeature
 
             return connectDragSource(connectDropTarget(
                 <tr key={this.key + "." + issue.id}
@@ -184,7 +185,9 @@ class Issue extends Component {
                                 'list-table__row--selected': is_selected,
                                 'issue--standalone': isStandalone,
                                 'issue--feature': isFeature,
-                                'issue--grouped': belongsToFeature,
+                                'issue--grouped': belongsToAFeature,
+                                'issue--feature-of-selected-issue': isFeatureOfSelectedIssue,
+                                'issue--belongs-to-selected-feature': belongsToSelectedFeature,
                                 /*'tr--selected': is_selected,*/
                                 'tr--invalidated': is_invalidated,
                                 'tr--saving': is_saving,
@@ -319,13 +322,14 @@ function mapStateToProps(state, props) {
     const {
         issue_id, is_selected, is_collapsed,
         is_loading, is_invalidated, is_saving, show_children,
-        subject_prefix, subject_suffix, issue_header_list
+        subject_prefix, subject_suffix, issue_header_list, list_key
     } = props
 
     const issue = getIssue(state, issue_id) || {'loaded': false}
     const project_id = issue.project_id
     const project = getProject(state, project_id) || {}
     const assignable_user_ids = project.allowed_user_ids || []
+    const selectedIssues = getSelectedItems(state, list_key, ENTITY_KEY__ISSUE) || []
     populateEstimates(state, issue)
 
     // const feature_names = this_project.feature_names || []
@@ -334,6 +338,13 @@ function mapStateToProps(state, props) {
      *         return {'value': feature_name, 'label': feature_name}
      *     }
      * )*/
+
+    const isFeatureOfSelectedIssue = includes(flatMap(selectedIssues, function(o) { return ["" + o.parent_group_id] }), "" + issue_id)
+    const belongsToSelectedFeature = includes(flatMap(selectedIssues, function(o) { return map(o.group_children, function(id) { return "" + id }) }), "" + issue_id)
+
+    // //
+    const x = flatMap(selectedIssues, function(o) { return map(o.group_children, function(id) { return "" + id }) })
+    // //
 
     return {
         issue: issue,
@@ -348,7 +359,9 @@ function mapStateToProps(state, props) {
         show_children: show_children,
         subject_prefix: subject_prefix || "",
         subject_suffix: subject_suffix || "",
-        visible_header_keys: keys(issue_header_list)
+        visible_header_keys: keys(issue_header_list),
+        isFeatureOfSelectedIssue,
+        belongsToSelectedFeature
     }
 }
 

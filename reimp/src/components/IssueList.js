@@ -211,6 +211,7 @@ class IssueList extends Component {
                 <div className="panel__title">{ selected_items.map((issue, index) =>
                     <Issue
                         key={list_key + issue.id + index}
+                        list_key={list_key}
                         is_collapsed={true}
                         show_children={includes(expanded_issues, issue.id)}
                         reorderIssue={this.reorderIssue}
@@ -282,6 +283,7 @@ class IssueList extends Component {
                 issue_rows.push(
                     <Issue
                         key={list_key + issue.id + index + "fakefeature"}
+                        list_key={list_key}
                         is_collapsed={false}
                         show_children={includes(expanded_issues, issue.id)}
                         reorderIssue={that.reorderIssue}
@@ -301,6 +303,7 @@ class IssueList extends Component {
                 issue_rows.push(
                     <Issue
                         key={list_key + issue.id + index}
+                        list_key={list_key}
                         is_collapsed={false}
                         show_children={includes(expanded_issues, issue.id)}
                         reorderIssue={that.reorderIssue}

@@ -35,12 +35,12 @@
 }
 
 .list-table__row--selected {
-    background-color: $color-3 !important;
+    background-color: $color-3;
 }
 
 .list-table__row--compact {
     .list-table__cell {
-	height: 35px !important;
+	height: 35px;
     }
 }
 
