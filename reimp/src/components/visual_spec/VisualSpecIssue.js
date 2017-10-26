@@ -58,8 +58,15 @@ class VisualSpecIssue extends Component {
 
         const style = {}
         if ( !isDragging && visual_spec_issue.x_pos ) {
-            style.top = visual_spec_issue.y_pos
-            style.left = visual_spec_issue.x_pos
+            if ( visual_spec_issue.y_pos > 100 ) {
+                visual_spec_issue.y_pos = 90
+            }
+            if ( visual_spec_issue.x_pos > 100 ) {
+                visual_spec_issue.x_pos = 90
+            }
+            
+            style.top = visual_spec_issue.y_pos + "%"
+            style.left = visual_spec_issue.x_pos + "%"
         }
         
         return ( 
@@ -127,12 +134,12 @@ const headingSource = {
         let x_pos
         let y_pos
         if ( props.visual_spec_issue_id ) {
-            x_pos = visual_spec_issue.x_pos + distance_moved.x
-            y_pos = visual_spec_issue.y_pos + distance_moved.y
+            x_pos = visual_spec_issue.x_pos + (100*distance_moved.x / parent_pos.width)
+            y_pos = visual_spec_issue.y_pos + (100*distance_moved.y / parent_pos.height)
             dispatch(updateVisualSpecIssue(visual_spec_document_id, [props.visual_spec_issue_id], "pointer", x_pos, y_pos))
         } else {
-            x_pos = child_pos.x - parent_pos.left
-            y_pos = child_pos.y - parent_pos.top
+            x_pos = 100*child_pos.x/ parent_pos.width
+            y_pos = 100*child_pos.y/ parent_pos.height
             dispatch(createVisualSpecIssue(visual_spec_document_id, "pointer", x_pos, y_pos))
         }
     }

@@ -33,8 +33,8 @@ class VisualSpecIssue(BaseModel):
     issue = ProtectedForeignKey(Issue, related_name='visual_spec_issues')
     order = models.IntegerField(default=1)
     shape = models.CharField(max_length=50, choices=SHAPES, default='circle')
-    x_pos = models.IntegerField()
-    y_pos = models.IntegerField()
+    x_pos = models.FloatField()
+    y_pos = models.FloatField()
 
     def save(self, *args, **kwargs):
         was_created = not self.id

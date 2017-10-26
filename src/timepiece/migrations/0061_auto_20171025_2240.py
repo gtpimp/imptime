@@ -16,7 +16,7 @@ class Migration(migrations.Migration):
         migrations.AlterField(
             model_name='project',
             name='status3',
-            field=models.ForeignKey(default='open', on_delete=django.db.models.deletion.CASCADE, related_name='projects', to='timepiece.ProjectStatus'),
+            field=models.ForeignKey(default=1, on_delete=django.db.models.deletion.CASCADE, related_name='projects', to='timepiece.ProjectStatus'),
             preserve_default=False,
         ),
     ]
