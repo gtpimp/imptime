@@ -15,7 +15,8 @@ import {
     UPDATE_LIST_PAGINATION,
     UPDATE_LIST_FILTER,
     UPDATE_LIST_SELECTION,
-    UPDATE_LIST_DISPLAY_MODE
+    UPDATE_LIST_DISPLAY_MODE,
+    UPDATE_VISIBLE_ITEM_IDS
 } from '../actions/ItemList.js'
 
 const initialState = {}
@@ -120,6 +121,11 @@ export default function item_list(state = initialState, action) {
             state_copy[action.list_key] = Object.assign({}, l)
             state_copy[action.list_key][flag_name] = flag_ids
 	    return state_copy
+
+        case UPDATE_VISIBLE_ITEM_IDS:
+            state_copy[action.list_key] = Object.assign({}, l, {
+                visible_item_ids: action.visible_item_ids})
+            return state_copy
             
         default:
             return state

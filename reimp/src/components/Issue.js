@@ -342,10 +342,6 @@ function mapStateToProps(state, props) {
     const isFeatureOfSelectedIssue = includes(flatMap(selectedIssues, function(o) { return ["" + o.parent_group_id] }), "" + issue_id)
     const belongsToSelectedFeature = includes(flatMap(selectedIssues, function(o) { return map(o.group_children, function(id) { return "" + id }) }), "" + issue_id)
 
-    // //
-    const x = flatMap(selectedIssues, function(o) { return map(o.group_children, function(id) { return "" + id }) })
-    // //
-
     return {
         issue: issue,
         issue_id: issue_id,
