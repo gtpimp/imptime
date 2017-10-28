@@ -50,9 +50,9 @@ class VisualSpecDocumentEditor extends Component {
             <div className="vsd-editor">
 
               <div className="vsd-editor__doc_image_container">
-                { visual_spec_document.image_url && <img className="vsd-editor__doc_image"
+                { visual_spec_document.lores_url && <img className="vsd-editor__doc_image"
                                                          role="presentation"
-                                                         src={visual_spec_document.image_url} /> }
+                                                         src={visual_spec_document.lores_url} /> }
 
                 { map(visual_spec_issue_ids, (visual_spec_issue_id) => {
                       return (
