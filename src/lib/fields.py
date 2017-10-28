@@ -46,7 +46,7 @@ class LoResImageField(ProcessedImageField):
     def __init__(self, *args, **kwargs):
 
         super(LoResImageField, self).__init__(processors=[ResizeToRatio(1.0, 1.0)], 
-                                              options={'quality': 60},
+                                              options={'quality': 20},
                                               *args, **kwargs)
 
     def deconstruct(self):
