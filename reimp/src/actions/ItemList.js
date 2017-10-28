@@ -1,6 +1,6 @@
 import { impfetch } from './lib.js'
-import { keys, map, compact, difference, includes } from 'lodash'
-
+import { indexOf, keys, map, compact, difference, includes } from 'lodash'
+import move from 'lodash-move'
 export const INIT_LIST = 'INIT_LIST'
 export const ANNOUNCE_LIST_LOADED = 'ANNOUNCE_LIST_LOADED'
 export const ANNOUNCE_LIST_LOAD_FAILED = 'ANNOUNCE_LIST_LOAD_FAILED'
@@ -14,8 +14,7 @@ export const UPDATE_LIST_PAGINATION = 'UPDATE_LIST_PAGINATION'
 export const UPDATE_LIST_FILTER = 'UPDATE_LIST_FILTER'
 export const UPDATE_LIST_SELECTION = 'UPDATE_LIST_SELECTION'
 export const UPDATE_LIST_DISPLAY_MODE = 'UPDATE_LIST_DISPLAY_MODE'
-
-
+export const UPDATE_VISIBLE_ITEM_IDS = 'UPDATE_VISIBLE_ITEM_IDS'
 
 export function initList(list_key) {
     return {
@@ -58,6 +57,25 @@ export function expand_list(list_key) {
 
 export function getDisplayMode(state, list_key) {
     return ((state.item_list || {})[list_key] || {}).display_mode
+}
+
+export function updateVisibleItemIdAbove(list_key, item_id_to_move, item_id_to_move_before) {
+    // just changes it in redux, if you want to hit the server, do that somewhere else
+    return (dispatch, getState) => {
+        const state = getState()
+        const item_ids = getVisibleItemIds(state, list_key)
+        const index_of_item_id_to_move = indexOf(item_ids, item_id_to_move)
+        const index_of_item_id_to_before = indexOf(item_ids, item_id_to_move_before)+1
+        const reordered_item_ids = move(item_ids, index_of_item_id_to_move, index_of_item_id_to_before)
+
+        console.log("Moving " + index_of_item_id_to_move + " to " + index_of_item_id_to_before)
+
+        dispatch({
+            type: UPDATE_VISIBLE_ITEM_IDS,
+            list_key: list_key,
+            visible_item_ids: reordered_item_ids
+        })
+    }
 }
 
 

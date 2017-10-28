@@ -1,6 +1,6 @@
 import { impfetch } from './lib.js'
 
-import { fetchListIfNeeded, getMissingItemIds } from './ItemList'
+import { fetchListIfNeeded, getMissingItemIds, updateVisibleItemIdAbove } from './ItemList'
 import { ENTITY_KEY__ISSUE } from '../actions/ItemListKeyRegistry'
 import map from 'lodash/map'
 import difference from 'lodash/difference'
@@ -654,8 +654,11 @@ function updateIssue(issue_ids, field_name, new_value, on_done) {
     }
 }
 
-export function reorderIssue(issue_id_before, issue_id_after, on_done) {
-    return updateIssue([issue_id_before], "issue_id_after", issue_id_after, on_done)
+export function reorderIssue(moving_issue_id, issue_id_after, list_key, on_done) {
+    return (dispatch, getState) => {
+        dispatch(updateVisibleItemIdAbove(list_key, moving_issue_id, issue_id_after))
+        dispatch(updateIssue([moving_issue_id], "issue_id_after", issue_id_after, on_done))
+    }
 }
 
 export function startCandidateIssue(sprint_id, issue_id_before) {
