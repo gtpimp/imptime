@@ -13,6 +13,9 @@ class VisualSpecDocument(BaseModel):
     hires = HiResImageField(upload_to=upload_to_visual_spec_documents)
     lores = LoResImageField(upload_to=upload_to_visual_spec_documents)
     thumbnail = ThumbnailImageField(upload_to=upload_to_visual_spec_documents)
+
+    hires_width = models.IntegerField()
+    hires_height = models.IntegerField()
     
     name = models.CharField(max_length=255)
     content_type = models.CharField(max_length=255, null=True)

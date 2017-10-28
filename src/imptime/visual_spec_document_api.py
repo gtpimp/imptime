@@ -1,5 +1,6 @@
 import logging
 from issue_serializer import IssueSerializer
+import PIL
 from django_downloadview import HTTPDownloadView
 from django.contrib.auth.decorators import login_required
 from visual_spec_document_serializer import VisualSpecDocumentSerializer
@@ -65,10 +66,13 @@ class VisualSpecDocumentViewSet(BaseViewSet):
             issue = self.allowed_issue(issue_pk)
             for name, f in request.FILES.items():
                 if not f.content_type.startswith('image'):
-                    raise Exception("Document must be an image, not %s" % f.content_tye)
+                    raise Exception("Document must be an image, not %s" % f.content_type)
+                width, height = PIL.Image.open(f).size
                 VisualSpecDocument.objects.create(issue=issue,
                                                   hires=f,
                                                   lores=f,
+                                                  hires_width=width,
+                                                  hires_height=height,
                                                   thumbnail=f,
                                                   name=f.name,
                                                   content_type=f.content_type)

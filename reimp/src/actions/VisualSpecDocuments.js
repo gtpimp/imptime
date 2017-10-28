@@ -1,9 +1,6 @@
 import { impfetch } from './lib.js'
-import difference from 'lodash/difference'
-import keys from 'lodash/keys'
-import keyBy from 'lodash/keyBy'
+import { map, keys, keyBy, pickBy, includes, difference } from 'lodash'
 import { fetchListIfNeeded, getMissingItemIds } from './ItemList'
-
 import { ENTITY_KEY__VISUAL_SPEC_DOCUMENT } from '../actions/ItemListKeyRegistry'
 
 export const ANNOUNCE_VISUAL_SPEC_DOCUMENTS_LOADED = 'ANNOUNCE_VISUAL_SPEC_DOCUMENTS_LOADED'
@@ -91,4 +88,9 @@ export function ensureVisualSpecDocumentsLoaded(visual_spec_document_ids) {
 
 export function getVisualSpecDocument(state, visual_spec_document_id) {
     return ((state[ENTITY_KEY__VISUAL_SPEC_DOCUMENT] || {}).items_by_id || {})[visual_spec_document_id] || null
+}
+
+export function getVisualSpecDocuments(state, visual_spec_document_ids) {
+    const stringified_visual_spec_document_ids = map(visual_spec_document_ids, function(id) { return "" + id })
+    return pickBy((state[ENTITY_KEY__VISUAL_SPEC_DOCUMENT] || {}).items_by_id || {}, function(v,k) { return includes(stringified_visual_spec_document_ids, k) })
 }

@@ -3,7 +3,6 @@ from issue_serializer import IssueSerializer
 from issue_attachment_serializer import IssueAttachmentSerializer
 from issue_serializer import IssueGeneralDetailsSerializer
 from issue_serializer import IssueWithEstimatesSerializer
-from visual_spec_document_serializer import VisualSpecDocumentDownloadSerializer
 from rest_framework.decorators import detail_route
 from rest_framework.renderers import JSONRenderer
 from django.contrib.auth.models import User
@@ -76,14 +75,6 @@ class IssueViewSet(BaseViewSet):
                         for attachment in issue.attachments.all():
                             attachment.react_download_url = IssueAttachmentSerializer.get_download_url(request, attachment)
                             attachment.react_preview_url = IssueAttachmentSerializer.get_preview_url(request, attachment)
-                            
-                        visual_spec_documents = []
-                        for visual_spec_document in issue.visual_spec_documents.all():
-                            visual_spec_document.react_hires_url = VisualSpecDocumentDownloadSerializer.get_hires_url(request, visual_spec_document)
-                            visual_spec_document.react_lores_url = VisualSpecDocumentDownloadSerializer.get_lores_url(request, visual_spec_document)
-                            visual_spec_document.react_preview_url = VisualSpecDocumentDownloadSerializer.get_preview_url(request, visual_spec_document)
-                            visual_spec_documents.append(visual_spec_document)
-                        issue.enriched_visual_spec_documents = visual_spec_documents
 
                     s = IssueSerializer(issues, many=True)
 

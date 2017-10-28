@@ -46,7 +46,7 @@ class LoResImageField(ProcessedImageField):
     def __init__(self, *args, **kwargs):
 
         super(LoResImageField, self).__init__(processors=[ResizeToRatio(1.0, 1.0)], 
-                                              options={'quality': 30},
+                                              options={'quality': 60},
                                               *args, **kwargs)
 
     def deconstruct(self):
@@ -56,7 +56,7 @@ class LoResImageField(ProcessedImageField):
 
 class ThumbnailImageField(ProcessedImageField):
     def __init__(self, *args, **kwargs):
-        super(ThumbnailImageField, self).__init__(processors=[ResizeToFill(50, 50)], 
+        super(ThumbnailImageField, self).__init__(processors=[ResizeToFill(150, 150)], 
                                                   options={'quality': 60},
                                                   *args, **kwargs)
     def deconstruct(self):

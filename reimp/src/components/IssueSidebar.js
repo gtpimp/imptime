@@ -13,6 +13,7 @@ import EditableIssueAttachment from './EditableIssueAttachment'
 import EditableIssueInSprint from './EditableIssueInSprint'
 import EditableIssueStatus from './EditableIssueStatus'
 import EditableIssueVisualSpecDocument from './visual_spec/EditableIssueVisualSpecDocument'
+import VisualSpecDocumentGallery from './visual_spec/VisualSpecDocumentGallery'
 // import IssueDescription from './IssueDescription'
 import Timestamp from './Timestamp'
 import moment from 'moment'
@@ -129,12 +130,7 @@ import {getProject} from '../actions/Projects'
                         </PropertyStackComponent>
 
                         <PropertyStackComponent title="Visual Spec Documents">
-                          { map(visual_spec_documents, function (visual_spec_document, index) {
-                                return <EditableIssueVisualSpecDocument key={visual_spec_document.id}
-                                                                        issue_id={issue.id}
-                                                                        visual_spec_document_id={visual_spec_document.id}/>
-                            })
-                          }
+                          <VisualSpecDocumentGallery visual_spec_document_ids={issue.visual_spec_document_ids} />
                           <EditableIssueVisualSpecDocument issue_id={issue.id} visual_spec_document_id={null}/>
                         </PropertyStackComponent>
 
