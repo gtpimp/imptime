@@ -1,5 +1,8 @@
 from django.forms import TypedChoiceField, CharField, IntegerField
 from dateutil.relativedelta import relativedelta
+from imagekit.models import ImageSpecField
+from imagekit.processors import ResizeToFill
+from pilkit_processors import ResizeToRatio
 import re
 import uuid
 import os
@@ -23,3 +26,39 @@ class ProtectedForeignKey(models.ForeignKey):
     def __init__(self, *args, **kwargs):
         kwargs['on_delete'] = models.PROTECT
         super(ProtectedForeignKey, self).__init__(*args, **kwargs)
+
+class HiResImageField(models.ImageField):
+    def __init__(self, *args, **kwargs):
+
+        if 'null' not in kwargs:
+            kwargs['null'] = True
+        if 'blank' not in kwargs:
+            kwargs['blank'] = True
+
+        super(HiResImageField, self).__init__(*args, **kwargs)
+
+    def deconstruct(self):
+        name, path, args, kwargs = super(HiResImageField, self).deconstruct()
+        return name, path, args, kwargs
+
+
+class LoResImageField(ImageSpecField):
+    def __init__(self, *args, **kwargs):
+
+        super(LoResImageField, self).__init__(processors=[ResizeToRatio(1.0, 1.0)], 
+                                              options={'quality': 30},
+                                              *args, **kwargs)
+
+    def deconstruct(self):
+        name, path, args, kwargs = super(LoResImageField, self).deconstruct()
+        return name, path, args, kwargs
+
+
+class ThumbnailImageField(ImageSpecField):
+    def __init__(self, *args, **kwargs):
+        super(ThumbnailImageField, self).__init__(processors=[ResizeToFill(50, 50)], 
+                                                  options={'quality': 60},
+                                                  *args, **kwargs)
+    def deconstruct(self):
+        name, path, args, kwargs = super(ThumbnailImageField, self).deconstruct()
+        return name, path, args, kwargs

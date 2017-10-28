@@ -279,6 +279,7 @@ INSTALLED_APPS = (
     'el_pagination',
     'mailqueue',
     'corsheaders',
+    'imagekit',
 
     'imptime',
     'timepiece',

@@ -1,5 +1,6 @@
 from lib.models import BaseModel
 from lib.fields import UploadTo, ProtectedForeignKey
+from lib.fields import HiResImageField, LoResImageField, ThumbnailImageField
 from timepiece.models import Issue
 from impasync.refresh_notifier import RefreshNotifier
 from django.db import models
@@ -11,6 +12,10 @@ upload_to_visual_spec_documents = UploadTo("visual_spec_documents")
 
 class VisualSpecDocument(BaseModel):
     document = models.FileField(max_length=255, upload_to=upload_to_visual_spec_documents, null=False, blank=False)
+    hires = HiResImageField(upload_to=upload_to_visual_spec_documents, null=True)
+    lores = LoResImageField(source='hires', null=True)
+    thumbnail = ThumbnailImageField(source='hires', null=True)
+    
     name = models.CharField(max_length=255)
     content_type = models.CharField(max_length=255, null=True)
     issue = ProtectedForeignKey(Issue, related_name='visual_spec_documents')

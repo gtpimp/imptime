@@ -61,10 +61,13 @@ class VisualSpecDocumentViewSet(BaseViewSet):
             issue_pk = request.POST['issue_id']
             issue = self.allowed_issue(issue_pk)
             for name, f in request.FILES.items():
-                VisualSpecDocument.objects.create(issue=issue,
+                vsd = VisualSpecDocument.objects.create(issue=issue,
                                                   document=f,
                                                   name=f.name,
                                                   content_type=f.content_type)
+                if f.content_type.startswith('image'):
+                    vsd.hires = f
+                    vsd.save()
                 issue.save()
                 IssueHistory.add_history(request.user, issue, "added visual spec document", "", f.name)
             data = {'status': 'success'}

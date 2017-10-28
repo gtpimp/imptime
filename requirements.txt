@@ -131,3 +131,5 @@ botocore==1.6.7
 django-storages==1.6.5
 imaplib2==2.45.0
 html2text==2017.10.4
+django-imagekit==4.0.1
+
