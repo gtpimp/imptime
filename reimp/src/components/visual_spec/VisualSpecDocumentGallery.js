@@ -4,6 +4,7 @@ import map from 'lodash/map'
 import classNames from 'classnames'
 import {browserHistory} from 'react-router'
 import { getVisualSpecDocuments, ensureVisualSpecDocumentsLoaded } from '../../actions/VisualSpecDocuments'
+import VisualSpecDocumentGalleryImage from './VisualSpecDocumentGalleryImage'
 import '../../sass/visual-spec-document-gallery.scss'
 
 class VisualSpecDocumentGallery extends Component {
@@ -26,23 +27,23 @@ class VisualSpecDocumentGallery extends Component {
         dispatch(ensureVisualSpecDocumentsLoaded(visual_spec_document_ids))
     }
 
-    selectDocument(event, image) {
+    selectDocument(event, visual_spec_document) {
         const { dispatch } = this.props
-        const vsd = image.visual_spec_document
+        const vsd = visual_spec_document
         browserHistory.push('/projects/' + vsd.project_id + '/sprints/' + vsd.sprint_id + '/issues/' + vsd.issue_id + '/visualSpec/' + vsd.id);
     }
 
     render() {
-        const { image_set, active_visual_spec_document_id } = this.props
+        const { image_set, active_visual_spec_document_id, isOver, connectDragSource, connectDropTarget } = this.props
         const that = this
         return (
             <div className="visual_spec_document_gallery">
-              {map(image_set, function(image) {
-                   return <img className={classNames("visual_spec_document_gallery__image",
-                                                     {"visual_spec_document_gallery__image--selected": active_visual_spec_document_id===image.visual_spec_document.id})}
-                               key={image.visual_spec_document.id}
-                               src={image.src}
-                               onClick={(event) => that.selectDocument(event, image)} />
+              {map(image_set, function(image, index) {
+                   return <VisualSpecDocumentGalleryImage key={image.visual_spec_document.id + "_" + index}
+                                                          visual_spec_document_id={image.visual_spec_document.id}
+                                                          is_active={active_visual_spec_document_id===image.visual_spec_document.id}
+                                                          onSelected={(event) => this.selectDocument(image_set.visual_spec_document)}
+                          />
                })}
             </div>
         )
