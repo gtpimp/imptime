@@ -163,7 +163,9 @@ class Issue extends Component {
             return (
                 <tr key={this.key + "." + issue.id}
                     onClick={onClickedIssue}
-                    className={classNames('issue', {'tr--selected': is_selected, 'tr--drop-target': isOver})}
+                    className={classNames('issue', {'tr--selected': is_selected,
+                                                    'tr--drop-target': isOver,
+                                                    'issue--drop-target': isOver})}
                 >
                   <td>
                     <div className="issue_list__issue_number_button">{issue.number}</div>

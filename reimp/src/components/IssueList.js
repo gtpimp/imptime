@@ -430,7 +430,7 @@ function mapStateToProps(state, props) {
         is_collapsed: l.display_mode === "collapsed",
         is_expanded: l.display_mode === "expanded" || !l.display_mode,
         last_updated: l.last_updated,
-        is_visible: sprint_id || false,
+        is_visible: sprint_id || (visible_item_ids && visible_item_ids.length > 0) || false,
         candidate_issue: candidate_issue,
         is_creating_issue: is_creating_issue,
         expanded_issues: l.flag_expanded_issues,

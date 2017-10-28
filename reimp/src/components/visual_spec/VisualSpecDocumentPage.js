@@ -3,10 +3,17 @@ import {connect} from 'react-redux'
 import { setBreadcrumbsActive } from '../../actions/Breadcrumbs'
 import VisualSpecDocumentEditor from './VisualSpecDocumentEditor'
 import VisualSpecDocumentGallery from './VisualSpecDocumentGallery'
+import IssueList from '../../components/IssueList'
 import {
     ensureVisualSpecDocumentsLoaded, getVisualSpecDocument
 } from '../../actions/VisualSpecDocuments'
-import { PAGE_KEY__VISUAL_SPEC_DOCUMENT_PAGE } from '../../actions/ItemListKeyRegistry'
+import {
+    update_list_filter, setItemFlag
+} from '../../actions/ItemList'
+import { PAGE_KEY__VISUAL_SPEC_DOCUMENT_PAGE,
+         LIST_KEY__VISUAL_SPEC_DOCUMENT_ISSUE_LIST,
+         ISSUE_HEADER_LIST_VISUAL_SPEC_DOCUMENT_PAGE
+} from '../../actions/ItemListKeyRegistry'
 import {
     set_toolbars,
     select_projects,
@@ -61,12 +68,17 @@ class VisualSpecDocumentPage extends Component {
                                     [active_visual_spec_document.sprint_id]))
             dispatch(select_issues(PAGE_KEY__VISUAL_SPEC_DOCUMENT_PAGE,
                                    [active_visual_spec_document.issue_id]))
+            dispatch(update_list_filter(LIST_KEY__VISUAL_SPEC_DOCUMENT_ISSUE_LIST, {parent_group_id: issue_id || -1}))
+            dispatch(setItemFlag(LIST_KEY__VISUAL_SPEC_DOCUMENT_ISSUE_LIST, [issue_id], 'expanded_issues', true))
         }
     }
     
     render() {
 
-        const { visual_spec_document_ids, active_visual_spec_document_id, issue } = this.props
+        const { visual_spec_document_ids,
+                active_visual_spec_document_id,
+                issue,
+                issue_header_list } = this.props
         
         return (
             <div>
@@ -75,11 +87,22 @@ class VisualSpecDocumentPage extends Component {
                   <VisualSpecDocumentGallery visual_spec_document_ids={issue.visual_spec_document_ids}
                                              active_visual_spec_document_id={active_visual_spec_document_id} />
                 }
-                { ! issue.id &&
-                  <div>Loading...</div>
-                }
+                  { ! issue.id &&
+                    <div>Loading...</div>
+                  }
               </div>
-              <VisualSpecDocumentEditor visual_spec_document_id={active_visual_spec_document_id} />
+              <div className="visual_spec_document_page__content">
+                <div className="visual_spec_document_page__issue_list">
+                  { issue.id && 
+                    <IssueList list_key={LIST_KEY__VISUAL_SPEC_DOCUMENT_ISSUE_LIST}
+                               issue_header_list={issue_header_list}
+                    />
+                  }
+                </div>
+                <div>
+                  <VisualSpecDocumentEditor visual_spec_document_id={active_visual_spec_document_id} />
+                </div>
+              </div>
             </div>
         )
     }
@@ -96,6 +119,7 @@ function mapStateToProps(state, props) {
     const issue = getIssue(state, issue_id) || {}
     const is_loaded = project && project.id && sprint && sprint.id && issue && issue.id
     const visual_spec_document_ids = issue.visual_spec_document_ids || []
+    const issue_header_list = ISSUE_HEADER_LIST_VISUAL_SPEC_DOCUMENT_PAGE
     
     return {
         active_visual_spec_document_id,
@@ -107,7 +131,8 @@ function mapStateToProps(state, props) {
         sprint_id,
         issue,
         issue_id,
-        is_loaded
+        is_loaded,
+        issue_header_list
     }
 }
 

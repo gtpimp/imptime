@@ -73,3 +73,8 @@
 .issue_link {
     cursor: pointer;
 }
+
+.issue--drop-target td {
+    padding-bottom: 50px;
+    background-color: black;
+}

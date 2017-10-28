@@ -1,6 +1,8 @@
 @import 'variables.scss';
 
 .visual_spec_document_page__gallery {
-    overflow-y: auto;
-    max-height: 150px;
+}
+
+.visual_spec_document_page__content {
+    display: flex;
 }
