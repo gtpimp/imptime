@@ -1,0 +1,25 @@
+@import 'variables.scss';
+
+.visual_spec_document_page__gallery {
+    overflow-y: auto;
+    height: 200px;
+    margin-top: 10px;
+}
+
+.visual_spec_document_gallery__image {
+    width: 130px;
+    height: 130px;
+    cursor: pointer;
+    margin-left: 20px;
+    margin-right: 20px;
+    -webkit-box-shadow: 10px 10px 5px 0px rgba(0,0,0,0.14);
+    -moz-box-shadow: 10px 10px 5px 0px rgba(0,0,0,0.14);
+    box-shadow: 10px 10px 5px 0px rgba(0,0,0,0.14);
+}
+
+.visual_spec_document_gallery__image--selected {
+    -webkit-box-shadow: 10px 10px 5px 0px rgba(0,0,0,0.75);
+    -moz-box-shadow: 10px 10px 5px 0px rgba(0,0,0,0.75);
+    box-shadow: 10px 10px 5px 0px rgba(0,0,0,0.75);
+}
+ 

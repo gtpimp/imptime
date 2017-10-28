@@ -1,8 +1,10 @@
 import React, {Component} from 'react'
 import {connect} from 'react-redux'
 import map from 'lodash/map'
+import classNames from 'classnames'
 import {browserHistory} from 'react-router'
 import { getVisualSpecDocuments, ensureVisualSpecDocumentsLoaded } from '../../actions/VisualSpecDocuments'
+import '../../sass/visual-spec-document-gallery.scss'
 
 class VisualSpecDocumentGallery extends Component {
     constructor(props) {
@@ -31,12 +33,14 @@ class VisualSpecDocumentGallery extends Component {
     }
 
     render() {
-        const { image_set } = this.props
+        const { image_set, active_visual_spec_document_id } = this.props
         const that = this
         return (
             <div className="visual_spec_document_gallery">
               {map(image_set, function(image) {
-                   return <img key={image.visual_spec_document.id}
+                   return <img className={classNames("visual_spec_document_gallery__image",
+                                                     {"visual_spec_document_gallery__image--selected": active_visual_spec_document_id===image.visual_spec_document.id})}
+                               key={image.visual_spec_document.id}
                                src={image.src}
                                onClick={(event) => that.selectDocument(event, image)} />
                })}
@@ -47,7 +51,7 @@ class VisualSpecDocumentGallery extends Component {
 
 function mapStateToProps(state, props) {
 
-    const { visual_spec_document_ids } = props
+    const { visual_spec_document_ids, active_visual_spec_document_id } = props
 
     const visual_spec_documents = getVisualSpecDocuments(state, visual_spec_document_ids) || []
     const image_set = map(visual_spec_documents, function(vsd) {
@@ -60,7 +64,8 @@ function mapStateToProps(state, props) {
     })
     
     return {
-        image_set
+        image_set,
+        active_visual_spec_document_id
     }
 }
 
