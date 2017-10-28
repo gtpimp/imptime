@@ -8,6 +8,8 @@ class VisualSpecDocumentSerializer(BaseSerializer):
     id = serializers.CharField(source="pk")
     name = serializers.CharField()
     issue_id = serializers.CharField()
+    sprint_id = serializers.CharField(source="issue.project_id")
+    project_id = serializers.CharField(source="issue.project.business_id")
     download_url = serializers.CharField()
     hires_url = serializers.CharField()
     lores_url = serializers.CharField()

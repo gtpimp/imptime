@@ -3,7 +3,6 @@ import {connect} from 'react-redux'
 import map from 'lodash/map'
 import {browserHistory} from 'react-router'
 import { getVisualSpecDocuments, ensureVisualSpecDocumentsLoaded } from '../../actions/VisualSpecDocuments'
-import Gallery from 'react-photo-gallery';
 
 class VisualSpecDocumentGallery extends Component {
     constructor(props) {
@@ -12,6 +11,7 @@ class VisualSpecDocumentGallery extends Component {
 
     componentDidMount() {
         this.refresh()
+        this.selectDocument = this.selectDocument.bind(this)
     }
 
     componentWillReceiveProps(props) {
@@ -24,13 +24,25 @@ class VisualSpecDocumentGallery extends Component {
         dispatch(ensureVisualSpecDocumentsLoaded(visual_spec_document_ids))
     }
 
+    selectDocument(event, image) {
+        const { dispatch } = this.props
+        const vsd = image.visual_spec_document
+        browserHistory.push('/projects/' + vsd.project_id + '/sprints/' + vsd.sprint_id + '/issues/' + vsd.issue_id + '/visualSpec/' + vsd.id);
+    }
+
     render() {
         const { image_set } = this.props
+        const that = this
         return (
-            <Gallery photos={image_set} />
+            <div className="visual_spec_document_gallery">
+              {map(image_set, function(image) {
+                   return <img key={image.visual_spec_document.id}
+                               src={image.src}
+                               onClick={(event) => that.selectDocument(event, image)} />
+               })}
+            </div>
         )
     }
-    
 }
 
 function mapStateToProps(state, props) {
@@ -43,9 +55,7 @@ function mapStateToProps(state, props) {
             src: vsd.preview_url,
             width: vsd.hires_width,
             height: vsd.hires_height,
-            srcset: "vsd.hires_url " + vsd.hires_width + "w, " +
-                    "vsd.lores_url " + vsd.hires_width/2 + "w, " +
-                    "vsd.preview_url 100w"
+            visual_spec_document: vsd
         }
     })
     
