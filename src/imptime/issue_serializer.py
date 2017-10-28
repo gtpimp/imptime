@@ -58,7 +58,7 @@ class IssueSerializer(BaseSerializer):
         issue.my_actual_hours = sum([float(x.hours or ((timezone.now()-x.start_time).seconds/3600.0)) for x in issue.my_entries])
         issue.am_i_clocked_in = len(issue.my_clocked_in_entries) > 0
         issue.currently_clocked_in_by_user_ids = [x.id for x in issue.currently_clocked_in_by()]
-        issue.visual_spec_document_ids = issue.visual_spec_documents.all().order_by("id").values_list('id', flat=True)
+        issue.visual_spec_document_ids = issue.visual_spec_documents.all().order_by("order", "id").values_list('id', flat=True)
         return super(IssueSerializer, self).to_representation(issue, *args, **kwargs)
 
 class IssueGeneralDetailsSerializer(BaseSerializer):

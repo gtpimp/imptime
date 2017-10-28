@@ -15,7 +15,6 @@ class VisualSpecIssueSerializer(BaseModelSerializer):
         fields = ['id',
                   'visual_spec_document_id',
                   'issue_id',
-                  'order',
                   'shape',
                   'x_pos',
                   'y_pos']

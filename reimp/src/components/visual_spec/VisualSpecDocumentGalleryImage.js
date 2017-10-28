@@ -75,9 +75,7 @@ const headingTarget = {
             console.log("ignoring dnd on the same element: " + visual_spec_document_id)
             return;
         }
-
-        alert("dropped")
-        // props.reorderVisual_Spec_Document(dragging_visual_spec_document_id, visual_spec_document_id)
+        props.onReorder(dragging_visual_spec_document_id, visual_spec_document_id)
     },
     hover: (props, monitor, component) => {
     },
@@ -91,7 +89,7 @@ function collect(connect, monitor) {
     return {
         connectDragSource: connect.dragSource(),
         isDragging: monitor.isDragging()
-    };
+    }
 }
 
 function collectDrop(connect, monitor) {

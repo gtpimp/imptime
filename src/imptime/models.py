@@ -20,6 +20,7 @@ class VisualSpecDocument(BaseModel):
     name = models.CharField(max_length=255)
     content_type = models.CharField(max_length=255, null=True)
     issue = ProtectedForeignKey(Issue, related_name='visual_spec_documents')
+    order = models.IntegerField(default=1)
 
     def save(self, *args, **kwargs):
         was_created = not self.id
@@ -29,6 +30,21 @@ class VisualSpecDocument(BaseModel):
         else:
             RefreshNotifier().notify_model_update(self)
 
+    def move_after(self, other_visual_spec_document):
+        self.order = other_visual_spec_document.order + 1
+        self.save()
+        self.renumber_visual_spec_document_order()
+
+    def renumber_visual_spec_document_order(self):
+        """ Doesn't re-sort, just makes the numbers sequential """
+        order = 0
+        for vsd in self.issue.visual_spec_documents\
+                               .all().order_by("order", "id"):
+            old_order = vsd.order
+            if old_order != order:
+                vsd.order = order
+                vsd.save()
+            order += 10
 
 class VisualSpecIssue(BaseModel):
 
@@ -37,7 +53,6 @@ class VisualSpecIssue(BaseModel):
     
     visual_spec_document = ProtectedForeignKey(VisualSpecDocument, related_name='visual_spec_issues')
     issue = ProtectedForeignKey(Issue, related_name='visual_spec_issues')
-    order = models.IntegerField(default=1)
     shape = models.CharField(max_length=50, choices=SHAPES, default='circle')
     x_pos = models.FloatField()
     y_pos = models.FloatField()

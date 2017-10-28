@@ -3,7 +3,11 @@ import {connect} from 'react-redux'
 import map from 'lodash/map'
 import classNames from 'classnames'
 import {browserHistory} from 'react-router'
-import { getVisualSpecDocuments, ensureVisualSpecDocumentsLoaded } from '../../actions/VisualSpecDocuments'
+import { getVisualSpecDocuments,
+         ensureVisualSpecDocumentsLoaded,
+         invalidateVisualSpecDocuments,
+         reorderVisualSpecDocument
+} from '../../actions/VisualSpecDocuments'
 import VisualSpecDocumentGalleryImage from './VisualSpecDocumentGalleryImage'
 import '../../sass/visual-spec-document-gallery.scss'
 
@@ -15,6 +19,7 @@ class VisualSpecDocumentGallery extends Component {
     componentDidMount() {
         this.refresh()
         this.selectDocument = this.selectDocument.bind(this)
+        this.reorderDocuments  = this.reorderDocuments.bind(this)
     }
 
     componentWillReceiveProps(props) {
@@ -25,6 +30,14 @@ class VisualSpecDocumentGallery extends Component {
         const props = these_props || this.props
         const { dispatch, visual_spec_document_ids } = props
         dispatch(ensureVisualSpecDocumentsLoaded(visual_spec_document_ids))
+    }
+
+    reorderDocuments(moving_visual_spec_document_id, move_after_visual_spec_document_id) {
+        const {dispatch, visual_spec_document_ids} = this.props
+        dispatch(reorderVisualSpecDocument(visual_spec_document_ids, moving_visual_spec_document_id, move_after_visual_spec_document_id,
+                              function () {
+                                  dispatch(invalidateVisualSpecDocuments(visual_spec_document_ids))
+                              }))
     }
 
     selectDocument(event, visual_spec_document) {
@@ -41,8 +54,9 @@ class VisualSpecDocumentGallery extends Component {
               {map(image_set, function(image, index) {
                    return <VisualSpecDocumentGalleryImage key={image.visual_spec_document.id + "_" + index}
                                                           visual_spec_document_id={image.visual_spec_document.id}
+                                                          onReorder={that.reorderDocuments}
                                                           is_active={active_visual_spec_document_id===image.visual_spec_document.id}
-                                                          onSelected={(event) => this.selectDocument(image_set.visual_spec_document)}
+                                                          onSelected={(event) => that.selectDocument(event, image.visual_spec_document)}
                           />
                })}
             </div>
@@ -66,7 +80,8 @@ function mapStateToProps(state, props) {
     
     return {
         image_set,
-        active_visual_spec_document_id
+        active_visual_spec_document_id,
+        visual_spec_document_ids
     }
 }
 

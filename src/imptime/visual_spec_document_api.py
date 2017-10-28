@@ -32,7 +32,7 @@ class VisualSpecDocumentViewSet(BaseViewSet):
             filter_args = params.get('filter', {})
             format_args = params.get('format', {})
 
-            visual_spec_documents = self.allowed_visual_spec_documents()
+            visual_spec_documents = self.allowed_visual_spec_documents().order_by("order", "id")
             visual_spec_documents = self.apply_filter(qs=visual_spec_documents,
                                                       raw_filter_args=filter_args)
             visual_spec_documents = self.apply_pagination(qs=visual_spec_documents,
@@ -87,9 +87,29 @@ class VisualSpecDocumentViewSet(BaseViewSet):
         return HttpResponse(JSONRenderer().render(data))
 
     def update(self, request, pk):
-        # This function is required for the 'delete' to register as a
-        # url, this seems like a bug in DjangoRestFramework
-        raise Exception("Not supported")
+        try:
+            params = request.data
+            field_name = params['field_name']
+            new_value = params['value']
+
+            visual_spec_document_ids = params.pop('issue_ids', [pk])
+
+            for vsd_id in visual_spec_document_ids:
+                vsd = self.allowed_visual_spec_documents().get(pk=vsd_id) 
+
+                if field_name == 'visual_spec_document_id_after':
+                    after_vsd = self.allowed_visual_spec_documents().get(pk=new_value)
+                    vsd.move_after(after_vsd)
+                else:
+                    raise Exception("Unsupported field name: %s" % field_name)
+
+            data = {'status': 'success', 'payload': visual_spec_document_ids}
+
+        except Exception, ex:
+            logger.exception(ex)
+            return self.error_response(ex)
+
+        return HttpResponse(JSONRenderer().render(data))
     
     def delete(self, request, pk):
         try:

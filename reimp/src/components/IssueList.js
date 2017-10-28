@@ -189,7 +189,6 @@ class IssueList extends Component {
 
     reorderIssue(moving_issue_id, move_after_issue_id) {
         const {dispatch, list_key} = this.props
-        console.log("Moving " + moving_issue_id + " to after " + move_after_issue_id)
         dispatch(reorderIssue(moving_issue_id, move_after_issue_id, list_key,
                               function () {
                                   dispatch(invalidateList(list_key))
