@@ -1,6 +1,6 @@
 from django.forms import TypedChoiceField, CharField, IntegerField
 from dateutil.relativedelta import relativedelta
-from imagekit.models import ImageSpecField
+from imagekit.models import ImageSpecField, ProcessedImageField
 from imagekit.processors import ResizeToFill
 from pilkit_processors import ResizeToRatio
 import re
@@ -42,7 +42,7 @@ class HiResImageField(models.ImageField):
         return name, path, args, kwargs
 
 
-class LoResImageField(ImageSpecField):
+class LoResImageField(ProcessedImageField):
     def __init__(self, *args, **kwargs):
 
         super(LoResImageField, self).__init__(processors=[ResizeToRatio(1.0, 1.0)], 
@@ -54,7 +54,7 @@ class LoResImageField(ImageSpecField):
         return name, path, args, kwargs
 
 
-class ThumbnailImageField(ImageSpecField):
+class ThumbnailImageField(ProcessedImageField):
     def __init__(self, *args, **kwargs):
         super(ThumbnailImageField, self).__init__(processors=[ResizeToFill(50, 50)], 
                                                   options={'quality': 60},

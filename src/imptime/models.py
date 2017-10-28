@@ -9,12 +9,10 @@ logger = logging.getLogger(__name__)
 
 upload_to_visual_spec_documents = UploadTo("visual_spec_documents")
 
-
 class VisualSpecDocument(BaseModel):
-    document = models.FileField(max_length=255, upload_to=upload_to_visual_spec_documents, null=False, blank=False)
-    hires = HiResImageField(upload_to=upload_to_visual_spec_documents, null=True)
-    lores = LoResImageField(source='hires', null=True)
-    thumbnail = ThumbnailImageField(source='hires', null=True)
+    hires = HiResImageField(upload_to=upload_to_visual_spec_documents)
+    lores = LoResImageField(upload_to=upload_to_visual_spec_documents)
+    thumbnail = ThumbnailImageField(upload_to=upload_to_visual_spec_documents)
     
     name = models.CharField(max_length=255)
     content_type = models.CharField(max_length=255, null=True)

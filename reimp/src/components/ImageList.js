@@ -2,7 +2,7 @@ import React, {Component} from 'react'
 import {connect} from 'react-redux'
 import { map } from 'lodash'
 
-class FileLabel extends Component {
+class ImageList extends Component {
 
     constructor(props) {
         super(props)
@@ -26,17 +26,17 @@ class FileLabel extends Component {
         const { filename, exists, extra_buttons } = this.props
         return (
             <div className="file_label">
-                <div onClick={this.onClickPreview}>
-                    {filename}
-                </div>
+              <div onClick={this.onClickPreview}>
+                {filename}
+              </div>
 
-                { exists &&
-                  <div>
-                    <button onClick={this.onClickPreview}>
-                      preview
-                    </button>
-                  </div>
-                }
+              { exists &&
+                <div>
+                  <button onClick={this.onClickPreview}>
+                    preview
+                  </button>
+                </div>
+              }
                 { exists &&
                   <div>
                     <button onClick={this.onClickDownload}>
@@ -44,13 +44,13 @@ class FileLabel extends Component {
                     </button>
                   </div>
                 }
-                { map(extra_buttons, function(extra_button, index) {
-                      return (
-                          <div key={index}>
-                            {extra_button}
-                          </div>
-                      )
-                })}
+                  { map(extra_buttons, function(extra_button, index) {
+                        return (
+                            <div key={index}>
+                              {extra_button}
+                            </div>
+                        )
+                    })}
 
             </div>
         )
@@ -59,19 +59,11 @@ class FileLabel extends Component {
 
 function mapStateToProps(state, props) {
 
-    const { value, extra_buttons } = props
-    const filename = (value && value.name) || "<none>"
-    const download_url = value && value.download_url
-    const preview_url = value && value.preview_url
-    const exists = value && value.name
+    const { images } = props
     
     return {
-        exists: exists,
-        filename: filename,
-        download_url: download_url,
-        preview_url: preview_url,
-        extra_buttons: extra_buttons
+        images
     }
 }
 
-export default connect(mapStateToProps)(FileLabel)
+export default connect(mapStateToProps)(ImageList)

@@ -15,8 +15,11 @@ from lib import file_helper
 from imptime.models import VisualSpecDocument
 
 @permission_classes(())
-class VisualSpecDocumentDownloadView(APIView):
+class VisualSpecDocumentHiresView(APIView):
 
+    def _get_doc_field(self, visual_spec_document):
+        return visual_spec_document.hires
+    
     def _get(self, request, visual_spec_document_id, download=True):
         # jump through hoops because we want to download from a url
         # but the login token is normally passed in a custom header.
@@ -28,13 +31,23 @@ class VisualSpecDocumentDownloadView(APIView):
             return PermissionDenied()
 
         return file_helper.download_media(request,
-                                          visual_spec_document.document.name,
+                                          self._get_doc_field(visual_spec_document).name,
                                           content_type=visual_spec_document.content_type)
     
     def get(self, request, visual_spec_document_id):
         return self._get(request, visual_spec_document_id)
 
-class VisualSpecDocumentPreviewView(VisualSpecDocumentDownloadView):
-
+class VisualSpecDocumentPreviewView(VisualSpecDocumentHiresView):
     def get(self, request, visual_spec_document_id):
         return self._get(request, visual_spec_document_id, download=False)
+
+    def _get_doc_field(self, visual_spec_document):
+        return visual_spec_document.thumbnail
+    
+
+class VisualSpecDocumentLoresView(VisualSpecDocumentHiresView):
+    def get(self, request, visual_spec_document_id):
+        return self._get(request, visual_spec_document_id, download=False)
+
+    def _get_doc_field(self, visual_spec_document):
+        return visual_spec_document.lores

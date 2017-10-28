@@ -43,7 +43,10 @@ class VisualSpecDocumentViewSet(BaseViewSet):
             else:
 
                 for vsd in visual_spec_documents:
-                    vsd.image_url = VisualSpecDocumentSerializer.get_image_url(self.request, vsd)
+                    vsd.download_url = VisualSpecDocumentSerializer.get_hires_url(self.request, vsd)
+                    vsd.hires_url = vsd.download_url
+                    vsd.lores_url = VisualSpecDocumentSerializer.get_lores_url(self.request, vsd)
+                    vsd.preview_url = VisualSpecDocumentSerializer.get_preview_url(self.request, vsd)
                 
                 s = VisualSpecDocumentSerializer(visual_spec_documents, many=True)
                 visual_spec_documents_data = s.data
@@ -61,13 +64,14 @@ class VisualSpecDocumentViewSet(BaseViewSet):
             issue_pk = request.POST['issue_id']
             issue = self.allowed_issue(issue_pk)
             for name, f in request.FILES.items():
-                vsd = VisualSpecDocument.objects.create(issue=issue,
-                                                  document=f,
+                if not f.content_type.startswith('image'):
+                    raise Exception("Document must be an image, not %s" % f.content_tye)
+                VisualSpecDocument.objects.create(issue=issue,
+                                                  hires=f,
+                                                  lores=f,
+                                                  thumbnail=f,
                                                   name=f.name,
                                                   content_type=f.content_type)
-                if f.content_type.startswith('image'):
-                    vsd.hires = f
-                    vsd.save()
                 issue.save()
                 IssueHistory.add_history(request.user, issue, "added visual spec document", "", f.name)
             data = {'status': 'success'}
@@ -93,7 +97,7 @@ class VisualSpecDocumentViewSet(BaseViewSet):
             IssueHistory.add_history(request.user,
                                      issue,
                                      "deleted visual spec document %s"%visual_spec_document.id,
-                                     visual_spec_document.visual_spec_document,
+                                     visual_spec_document.hires.name,
                                      "")
             visual_spec_document.delete()
             issue.save()

@@ -79,7 +79,8 @@ class IssueViewSet(BaseViewSet):
                             
                         visual_spec_documents = []
                         for visual_spec_document in issue.visual_spec_documents.all():
-                            visual_spec_document.react_download_url = VisualSpecDocumentDownloadSerializer.get_download_url(request, visual_spec_document)
+                            visual_spec_document.react_hires_url = VisualSpecDocumentDownloadSerializer.get_hires_url(request, visual_spec_document)
+                            visual_spec_document.react_lores_url = VisualSpecDocumentDownloadSerializer.get_lores_url(request, visual_spec_document)
                             visual_spec_document.react_preview_url = VisualSpecDocumentDownloadSerializer.get_preview_url(request, visual_spec_document)
                             visual_spec_documents.append(visual_spec_document)
                         issue.enriched_visual_spec_documents = visual_spec_documents
