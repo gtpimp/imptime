@@ -15,3 +15,11 @@
     -moz-box-shadow: 10px 10px 5px 0px rgba(0,0,0,0.75);
     box-shadow: 10px 10px 5px 0px rgba(0,0,0,0.75);
 }
+
+.vsd-editor__image_loading {
+    position: absolute;
+    top: 10px;
+    background: white;
+    border-color: 1px solid black;
+    padding: 5px;
+}

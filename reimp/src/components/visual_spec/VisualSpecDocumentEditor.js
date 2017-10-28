@@ -16,6 +16,11 @@ import VisualSpecIssue from './VisualSpecIssue'
 
 class VisualSpecDocumentEditor extends Component {
 
+    constructor(props) {
+        super(props)
+        this.onVisualSpecDocumentImageLoaded = this.onVisualSpecDocumentImageLoaded.bind(this)
+    }
+    
     componentDidMount() {
         this.refresh()
     }
@@ -36,11 +41,19 @@ class VisualSpecDocumentEditor extends Component {
         if ( visual_spec_document && visual_spec_document.issue_ids ) {
             dispatch(ensureIssuesLoaded(visual_spec_document.issue_ids))
         }
+        if ( !these_props || this.props.visual_spec_document_id != these_props.visual_spec_document_id ) {
+            this.setState({visual_spec_document_image_loaded: false})
+        }
+    }
+
+    onVisualSpecDocumentImageLoaded() {
+        this.setState({visual_spec_document_image_loaded: true})
     }
 
     render() {
         const { visual_spec_document_id, visual_spec_document,
                 connectDropTarget, visual_spec_issue_ids } = this.props
+        const { visual_spec_document_image_loaded } = this.state || {}
         
         if ( ! visual_spec_document_id ) {
             return null
@@ -50,16 +63,28 @@ class VisualSpecDocumentEditor extends Component {
             <div className="vsd-editor">
 
               <div className="vsd-editor__doc_image_container">
-                { visual_spec_document.lores_url && <img className="vsd-editor__doc_image"
-                                                         role="presentation"
-                                                         src={visual_spec_document.lores_url} /> }
+                { visual_spec_document.lores_url &&
+                  <img className="vsd-editor__doc_image"
+                       role="presentation"
+                       src={visual_spec_document.lores_url}
+                       onLoad={this.onVisualSpecDocumentImageLoaded}
+                  />
+                }
 
-                { map(visual_spec_issue_ids, (visual_spec_issue_id) => {
-                      return (
-                          <VisualSpecIssue key={visual_spec_issue_id}
-                                           visual_spec_issue_id={visual_spec_issue_id} />
-                      )
-                  }) }
+                { !visual_spec_document_image_loaded &&
+                  <div className="vsd-editor__image_loading">
+                    Loading...
+                  </div>
+                }
+
+                { visual_spec_document_image_loaded &&
+                  map(visual_spec_issue_ids, (visual_spec_issue_id) => {
+                  return (
+                      <VisualSpecIssue key={visual_spec_issue_id}
+                                       visual_spec_issue_id={visual_spec_issue_id} />
+                  )
+                  })
+                }
 
               </div>
 
