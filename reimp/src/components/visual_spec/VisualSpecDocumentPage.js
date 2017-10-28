@@ -1,5 +1,6 @@
 import React, {Component} from 'react'
 import {connect} from 'react-redux'
+import { map } from 'lodash'
 import { setBreadcrumbsActive } from '../../actions/Breadcrumbs'
 import VisualSpecDocumentEditor from './VisualSpecDocumentEditor'
 import VisualSpecDocumentGallery from './VisualSpecDocumentGallery'
@@ -8,7 +9,7 @@ import {
     ensureVisualSpecDocumentsLoaded, getVisualSpecDocument
 } from '../../actions/VisualSpecDocuments'
 import {
-    update_list_filter, setItemFlag
+    update_list_filter, setItemFlag, selectItems
 } from '../../actions/ItemList'
 import { PAGE_KEY__VISUAL_SPEC_DOCUMENT_PAGE,
          LIST_KEY__VISUAL_SPEC_DOCUMENT_ISSUE_LIST,
@@ -47,7 +48,8 @@ class VisualSpecDocumentPage extends Component {
     refresh(these_props) {
         const props = these_props || this.props
         const { dispatch, active_visual_spec_document, active_visual_spec_document_id,
-                project, project_id, sprint, sprint_id, issue, issue_id } = props
+                project, project_id, sprint, sprint_id, issue, issue_id,
+                issue_ids_for_active_visual_spec_document } = props
         dispatch(ensureProjectsLoaded([project_id]))
         dispatch(ensureSprintsLoaded([sprint_id]))
         dispatch(ensureIssuesLoaded([issue_id]))
@@ -70,6 +72,7 @@ class VisualSpecDocumentPage extends Component {
                                    [active_visual_spec_document.issue_id]))
             dispatch(update_list_filter(LIST_KEY__VISUAL_SPEC_DOCUMENT_ISSUE_LIST, {parent_group_id: issue_id || -1}))
             dispatch(setItemFlag(LIST_KEY__VISUAL_SPEC_DOCUMENT_ISSUE_LIST, [issue_id], 'expanded_issues', true))
+            dispatch(selectItems(LIST_KEY__VISUAL_SPEC_DOCUMENT_ISSUE_LIST, issue_ids_for_active_visual_spec_document))
         }
     }
     
@@ -120,6 +123,7 @@ function mapStateToProps(state, props) {
     const is_loaded = project && project.id && sprint && sprint.id && issue && issue.id
     const visual_spec_document_ids = issue.visual_spec_document_ids || []
     const issue_header_list = ISSUE_HEADER_LIST_VISUAL_SPEC_DOCUMENT_PAGE
+    const issue_ids_for_active_visual_spec_document = (active_visual_spec_document.id && active_visual_spec_document.issue_ids) || []
     
     return {
         active_visual_spec_document_id,
@@ -132,7 +136,8 @@ function mapStateToProps(state, props) {
         issue,
         issue_id,
         is_loaded,
-        issue_header_list
+        issue_header_list,
+        issue_ids_for_active_visual_spec_document
     }
 }
 

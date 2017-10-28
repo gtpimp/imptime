@@ -73,7 +73,7 @@ class VisualSpecDocumentEditor extends Component {
 
                 { !visual_spec_document_image_loaded &&
                   <div className="vsd-editor__image_loading">
-                    Loading...
+                    <h2>Loading Image...</h2>
                   </div>
                 }
 
