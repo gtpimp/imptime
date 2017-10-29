@@ -9,6 +9,8 @@ import { getVisualSpecIssue } from '../../actions/VisualSpecIssues'
 import { getIssue } from '../../actions/Issues'
 import EditableIssueTitle from '../EditableIssueTitle'
 import EditableIssueDescription from '../EditableIssueDescription'
+import EditableIssueAssignedUser from '../EditableIssueAssignedUser'
+import EditableIssueStatus from '../EditableIssueStatus'
 import ToolTip from 'react-portal-tooltip'
 import {
     LIST_KEY__VISUAL_SPEC_DOCUMENT_ISSUE_LIST
@@ -99,7 +101,7 @@ class VisualSpecIssue extends Component {
                   </div>
               )}
 
-              { visual_spec_issue.id && !isDragging &&
+              { visual_spec_issue.id && issue.id && !isDragging &&
                 <ToolTip active={isTooltipActive}
                          position="right"
                          arrow="center"
@@ -107,6 +109,8 @@ class VisualSpecIssue extends Component {
                   <div className="visual-spec-issue--tooltip">
                     <EditableIssueTitle issue_id={issue.id} />
                     <EditableIssueDescription issue_id={issue.id} />
+                    <EditableIssueAssignedUser issue_ids={[issue.id]} project_id={issue.project_id}/>
+                    <EditableIssueStatus issue_ids={[issue.id]} project_id={issue.project_id}/>
                   </div>
                 </ToolTip>
               }
