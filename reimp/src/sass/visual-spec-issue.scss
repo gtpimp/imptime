@@ -5,20 +5,20 @@
 }
 
 .visual-spec-issue__image {
-    border: 1px solid $color-25;
-    background-image: url('../../public/images2/ic_insert_comment_white_36dp.png');
+    background-image: url('../../public/images2/visual_spec_issue__circle.png');
     background-repeat: no-repeat;
-    width: 36px;
-    height: 36px;
+    width: 60px;
+    height: 60px;
 }
 
 
 .toolbar-panel__visual_spec {
-    background-color: $color-25;
     height:36px;
-    width: 36px
+    width: 36px;
+    overflow: hidden;
 }
 
 .visual-spec-issue--tooltip .blank {
     height: 20px;
 }
+
