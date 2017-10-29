@@ -43,7 +43,7 @@ class IssueViewSet(BaseViewSet):
 
                 detail_levels = format_args.get('detail_level', '').split(",")
                 if len(detail_levels) == 0:
-                    s = IssueSerializer(issues, many=True)
+                    s = IssueSerializer(issues, logged_in_user=request.user, many=True)
                 elif 'estimates' in detail_levels:
                     s = IssueWithEstimatesSerializer(issues, many=True)
                 elif 'general' in detail_levels:
@@ -79,7 +79,7 @@ class IssueViewSet(BaseViewSet):
                             attachment.react_download_url = IssueAttachmentSerializer.get_download_url(request, attachment)
                             attachment.react_preview_url = IssueAttachmentSerializer.get_preview_url(request, attachment)
 
-                    s = IssueSerializer(issues, many=True)
+                    s = IssueSerializer(issues, logged_in_user=request.user, many=True)
 
                 issues_data = s.data
                 context['issues'] = issues_data

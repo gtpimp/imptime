@@ -13,7 +13,9 @@ import EditableIssueAttachment from './EditableIssueAttachment'
 import EditableIssueInSprint from './EditableIssueInSprint'
 import EditableIssueStatus from './EditableIssueStatus'
 import EditableIssueVisualSpecDocument from './visual_spec/EditableIssueVisualSpecDocument'
+import EditableIssueEstimate from './EditableIssueEstimate'
 import VisualSpecDocumentGallery from './visual_spec/VisualSpecDocumentGallery'
+import IssueEstimatesSummary from './IssueEstimatesSummary'
 // import IssueDescription from './IssueDescription'
 import Timestamp from './Timestamp'
 import moment from 'moment'
@@ -45,21 +47,6 @@ import {getProject} from '../actions/Projects'
         const {dispatch, issue_id, assignable_user_ids} = props
         dispatch(ensureIssuesLoaded([issue_id]))
         dispatch(ensureUsersLoaded(assignable_user_ids))
-    }
-
-    renderEstimates() {
-        const {issue} = this.props
-        return map(issue.all_estimates, function (estimate, index) {
-            if (estimate.estimate_hours && estimate.estimate_user) {
-                return (
-                    <div key={estimate.estimate_user.id}>
-                      {estimate.estimate_user.username}:{format_hours(estimate.estimate_hours)}
-                    </div>
-                )
-            } else {
-                return null
-            }
-        })
     }
 
     render() {
@@ -124,9 +111,11 @@ import {getProject} from '../actions/Projects'
                           <EditableIssueAttachment issue_id={issue.id} attachment_id={null}/>
                         </PropertyStackComponent>
 
-                        <PropertyStackComponent>
-                          { this.renderEstimates() }
-                          <button onClick={this.openEstimateEditor}>Estimates</button>
+                        <PropertyStackComponent title="Estimates">
+                          <IssueEstimatesSummary issue_id={issue.id} />
+                          <div>
+                            My estimate: <EditableIssueEstimate issue_id={issue.id} />
+                          </div>
                         </PropertyStackComponent>
 
                         <PropertyStackComponent title="Visual Spec Documents">

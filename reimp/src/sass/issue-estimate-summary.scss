@@ -1,0 +1,10 @@
+@import 'variables.scss';
+
+.issue_estimate_summary__estimate-entry {
+    display: flex;
+    font-size: $font-size-small;
+}
+
+.issue_estimate_summary__estimate-entry .other_user {
+    margin-right: 3px;
+}

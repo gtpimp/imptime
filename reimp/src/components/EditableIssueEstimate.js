@@ -36,7 +36,6 @@ class EditableIssueEstimate extends Component {
             </EditableProperty>
         )
     }
-
 }
 
 function mapStateToProps(state, props) {

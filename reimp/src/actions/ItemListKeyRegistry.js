@@ -57,5 +57,6 @@ export var ISSUE_HEADER_LIST_NARROW = {'number':"#",
 export var ISSUE_HEADER_LIST_VISUAL_SPEC_DOCUMENT_PAGE = {
     'number':'#',
     'name': 'Name',
-    'status': 'Status'
+    'status': 'Status',
+    'estimates': "Estimates",
 }

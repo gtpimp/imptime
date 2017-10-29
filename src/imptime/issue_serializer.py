@@ -7,7 +7,7 @@ from tag_serializer import TagSerializer
 from issue_estimate_serializer import IssueEstimateSerializer
 from issue_comment_serializer import IssueCommentSerializer
 from issue_attachment_serializer import IssueAttachmentSerializer
-from visual_spec_document_serializer import VisualSpecDocumentSerializer
+from timepiece.models import BusinessPermissions
 from testable_serializer import TestableSerializer
 logger = logging.getLogger(__name__)
 
@@ -45,10 +45,16 @@ class IssueSerializer(BaseSerializer):
     created_at = serializers.DateTimeField(source='created')
     modified_at = serializers.DateTimeField(source='modified')
 
+    def __init__(self, *args, **kwargs):
+        self.logged_in_user = kwargs.pop('logged_in_user')
+        return super(IssueSerializer, self).__init__(*args, **kwargs)
+    
     def to_representation(self, issue, *args, **kwargs):
         issue.assigned_to_quick_name = \
             issue.assigned_to.username if issue.assigned_to_id else None
 
+        bp = BusinessPermissions.for_user(user=self.logged_in_user, business=issue.project.business, auto_create=False) 
+        
         issue.feature_name = issue.feature.name if issue.feature_id else None
         issue.status2_name = issue.status2.name if issue.status2_id else None
         issue.position_if_creating_new_issue_after = (issue.order or 0) + 0.5
@@ -60,6 +66,10 @@ class IssueSerializer(BaseSerializer):
         issue.am_i_clocked_in = len(issue.my_clocked_in_entries) > 0
         issue.currently_clocked_in_by_user_ids = [x.id for x in issue.currently_clocked_in_by()]
         issue.visual_spec_document_ids = issue.visual_spec_documents.all().order_by("order", "id").values_list('id', flat=True)
+
+        if not bp.has_see_other_user_points:
+            issue.all_estimates = None
+        
         return super(IssueSerializer, self).to_representation(issue, *args, **kwargs)
 
 class IssueGeneralDetailsSerializer(BaseSerializer):

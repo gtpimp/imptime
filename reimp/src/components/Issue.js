@@ -25,6 +25,7 @@ import RIEDropDown from '../widgets/RIEDropDown'
 import RIEModeToggler from '../widgets/RIEModeToggler'
 import RIEUserDropDown from '../widgets/RIEUserDropDown'
 import Progress from '../components/Progress'
+import IssueEstimatesSummary from '../components/IssueEstimatesSummary'
 import TimerSwitch from '../components/TimerSwitch'
 import ElapsedTime from '../components/ElapsedTime'
 import DeleteIssue from '../components/DeleteIssue'
@@ -262,7 +263,7 @@ class Issue extends Component {
                   }
                   {includes(visible_header_keys, "estimates") &&
                    <td className="list-table__cell list-table__cell--issue-estimates">
-                     {this.renderEstimates()}
+                     <IssueEstimatesSummary issue_id={issue.id} />
                    </td>
                   }
                   {includes(visible_header_keys, "tags") &&
