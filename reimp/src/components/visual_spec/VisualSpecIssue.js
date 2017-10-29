@@ -89,7 +89,7 @@ class VisualSpecIssue extends Component {
                   </div>
               )}
 
-              { visual_spec_issue.id &&
+              { visual_spec_issue.id && !isDragging &&
                 <ToolTip active={isTooltipActive}
                          position="right"
                          arrow="center"
