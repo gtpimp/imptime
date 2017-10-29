@@ -24,7 +24,7 @@ import {
 } from '../../actions/Page'
 import { ensureProjectsLoaded, getProject } from '../../actions/Projects'
 import { ensureSprintsLoaded, getSprint } from '../../actions/Sprints'
-import { ensureIssuesLoaded, getIssue } from '../../actions/Issues'
+import { ensureIssuesLoaded, getIssue, is_issue_invalidated } from '../../actions/Issues'
 import {setBreadcrumbs} from '../../actions/Breadcrumbs'
 import '../../sass/visual-spec-document-page.scss'
 
@@ -40,7 +40,8 @@ class VisualSpecDocumentPage extends Component {
     componentWillReceiveProps(new_props) {
         if ( new_props.active_visual_spec_document_id != this.props.active_visual_spec_document_id ||
              new_props.active_visual_spec_document.loaded != this.props.active_visual_spec_document.loaded ||
-             new_props.is_loaded != this.props.is_loaded ) {
+             new_props.is_loaded != this.props.is_loaded ||
+             new_props.issue_is_invalidated != this.props.issue_is_invalidated ) {
             this.refresh(new_props)
         }
     }
@@ -124,6 +125,7 @@ function mapStateToProps(state, props) {
     const visual_spec_document_ids = issue.visual_spec_document_ids || []
     const issue_header_list = ISSUE_HEADER_LIST_VISUAL_SPEC_DOCUMENT_PAGE
     const issue_ids_for_active_visual_spec_document = (active_visual_spec_document.id && active_visual_spec_document.issue_ids) || []
+    const issue_is_invalidated = is_issue_invalidated(state, issue_id)
     
     return {
         active_visual_spec_document_id,
@@ -137,7 +139,8 @@ function mapStateToProps(state, props) {
         issue_id,
         is_loaded,
         issue_header_list,
-        issue_ids_for_active_visual_spec_document
+        issue_ids_for_active_visual_spec_document,
+        issue_is_invalidated
     }
 }
 
