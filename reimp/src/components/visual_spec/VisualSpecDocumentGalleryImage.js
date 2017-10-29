@@ -2,7 +2,6 @@ import React, {Component} from 'react'
 import {connect} from 'react-redux'
 import map from 'lodash/map'
 import classNames from 'classnames'
-import {browserHistory} from 'react-router'
 import { getVisualSpecDocument, ensureVisualSpecDocumentsLoaded } from '../../actions/VisualSpecDocuments'
 import {DragSource, DropTarget} from 'react-dnd';
 import {DndTypes} from '../../actions/Dnd'

@@ -1,6 +1,7 @@
 import React, {Component} from 'react'
 import {connect} from 'react-redux'
-import { map } from 'lodash'
+import {browserHistory} from 'react-router'
+import { map, includes, compact } from 'lodash'
 import { setBreadcrumbsActive } from '../../actions/Breadcrumbs'
 import VisualSpecDocumentEditor from './VisualSpecDocumentEditor'
 import VisualSpecDocumentGallery from './VisualSpecDocumentGallery'
@@ -31,6 +32,11 @@ import '../../sass/visual-spec-document-page.scss'
 
 class VisualSpecDocumentPage extends Component {
 
+    constructor(props) {
+        super(props)
+        this.onSelectIssues = this.onSelectIssues.bind(this)
+    }
+    
     componentDidMount() {
         const { dispatch } = this.props
         dispatch(set_toolbars(PAGE_KEY__VISUAL_SPEC_DOCUMENT_PAGE, ['visual-spec-document']))
@@ -79,6 +85,19 @@ class VisualSpecDocumentPage extends Component {
             dispatch(selectItems(LIST_KEY__VISUAL_SPEC_DOCUMENT_ISSUE_LIST, issue_ids_for_active_visual_spec_document))
         }
     }
+
+    onSelectIssues(selected_issue_ids) {
+        const { dispatch, issue_ids_for_active_visual_spec_document, visual_spec_documents,
+                project_id, sprint_id, issue_id, active_visual_spec_document_id } = this.props
+        if ( !selected_issue_ids || !selected_issue_ids.length ) {
+            return
+        }
+        const selected_issue_id = selected_issue_ids[0]
+        if ( ! includes(issue_ids_for_active_visual_spec_document, selected_issue_id) ) {
+            const vsd_id = compact(map(visual_spec_documents, (vsd) => { return includes(vsd.issue_ids, selected_issue_id) && vsd.id }))[0]
+            browserHistory.push('/projects/' + project_id + '/sprints/' + sprint_id + '/issues/' + issue_id + '/visualSpec/' + vsd_id);
+        }
+    }
     
     render() {
 
@@ -106,6 +125,7 @@ class VisualSpecDocumentPage extends Component {
                   { issue.id && 
                     <IssueList list_key={LIST_KEY__VISUAL_SPEC_DOCUMENT_ISSUE_LIST}
                                issue_header_list={issue_header_list}
+                               onSelectIssues={this.onSelectIssues}
                     />
                   }
                 </div>
@@ -139,6 +159,7 @@ function mapStateToProps(state, props) {
         active_visual_spec_document_id,
         visual_spec_document_ids,
         active_visual_spec_document,
+        visual_spec_documents,
         visual_spec_documents_editor_urls,
         project,
         project_id,
