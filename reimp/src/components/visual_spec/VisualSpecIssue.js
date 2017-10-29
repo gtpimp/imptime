@@ -154,8 +154,8 @@ const headingSource = {
             y_pos = visual_spec_issue.y_pos + (100*distance_moved.y / parent_pos.height)
             dispatch(updateVisualSpecIssue(visual_spec_document_id, [props.visual_spec_issue_id], "pointer", x_pos, y_pos))
         } else {
-            x_pos = 100*child_pos.x/ parent_pos.width
-            y_pos = 100*child_pos.y/ parent_pos.height
+            x_pos = 100*(child_pos.x-parent_pos.left)/ parent_pos.width
+            y_pos = 100*(child_pos.y-parent_pos.top)/ parent_pos.height
             dispatch(createVisualSpecIssue(visual_spec_document_id, "pointer", x_pos, y_pos))
         }
     }
