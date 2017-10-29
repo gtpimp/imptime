@@ -30,6 +30,7 @@ class IssueSerializer(BaseSerializer):
     dev_estimate_hours = serializers.FloatField()
     dev_estimate_user_quick_name = serializers.CharField()
     all_estimates = IssueEstimateSerializer(many=True)
+    my_estimate = IssueEstimateSerializer(many=True)
     actual_hours = serializers.FloatField()
     my_actual_hours = serializers.FloatField()
     am_i_clocked_in = serializers.BooleanField()

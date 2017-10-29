@@ -213,6 +213,10 @@ export function updateIssueToggleAsFeature(issue_ids, value) {
     return updateIssue(issue_ids, 'can_group_issues', value)
 }
 
+export function updateIssueEstimate(issue_ids, value) {
+    return updateIssue(issue_ids, 'my_estimate', value)
+}
+
 export function moveIssuesToSprint(issue_ids, new_sprint_id) {
     return updateIssue(issue_ids, 'sprint_id', new_sprint_id)
 }

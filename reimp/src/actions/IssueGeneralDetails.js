@@ -51,9 +51,9 @@ function fetchIssueGeneralDetails(dispatch, issue_ids) {
         const state = getState()
 	      dispatch(announceLoadingIssueGeneralDetails(issue_ids))
 
-	      const params = { filter: { ids: issue_ids },
-			                   format: { detail_level: 'general' },
-			                   pagination: {'enabled': false} }
+	const params = { filter: { ids: issue_ids },
+			 format: { detail_level: 'general' },
+			 pagination: {'enabled': false} }
 
         return impfetch(state, 'imp/issue/', dispatch, {params:params})
 	          .then(response => response.json())

@@ -2,6 +2,7 @@ import logging
 from issue_serializer import IssueSerializer
 from issue_attachment_serializer import IssueAttachmentSerializer
 from issue_serializer import IssueGeneralDetailsSerializer
+from lib import hours_helper
 from issue_serializer import IssueWithEstimatesSerializer
 from rest_framework.decorators import detail_route
 from rest_framework.renderers import JSONRenderer
@@ -15,7 +16,7 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.decorators import permission_classes
 from timepiece.models import Issue, IssueHistory, Feature
 from imptime.models import VisualSpecIssue
-from timepiece.models import TagCategory, Tag, Entry, IssueStatus
+from timepiece.models import TagCategory, Tag, Entry, IssueStatus, IssuePoints
 
 logger = logging.getLogger(__name__)
 
@@ -64,6 +65,8 @@ class IssueViewSet(BaseViewSet):
                                    .prefetch_related(Prefetch('entries', to_attr='my_entries',
                                                               queryset=Entry.objects.filter(user=request.user).select_related('user')))\
                                    .prefetch_related(Prefetch('issue_points', to_attr='all_estimates'))\
+                                   .prefetch_related(Prefetch('issue_points', to_attr='my_estimate',
+                                                              queryset=IssuePoints.objects.filter(user=request.user, issue__in=issues)))\
                                    .prefetch_related(Prefetch('issue_points__user'))\
                                    .prefetch_related(Prefetch('entries', to_attr='my_clocked_in_entries',
                                                               queryset=Entry.objects.filter(user=request.user).select_related('user').filter(end_time__isnull=True)))
@@ -91,7 +94,7 @@ class IssueViewSet(BaseViewSet):
         try:
             params = request.data
             field_name = params['field_name']
-            new_value = params['value']
+            new_value = params.get('value', None)
 
             if 'issue_ids' in params:
                 issue_pks = params['issue_ids']
@@ -177,6 +180,15 @@ class IssueViewSet(BaseViewSet):
                         issue.project = new_sprint
                         issue.order += 9999
                         IssueHistory.add_history(request.user, issue, "moved to sprint", unicode(old_sprint), unicode(new_sprint))
+                elif field_name == "my_estimate":
+                    if self.logged_in_permissions(issue.project.business).has_estimate_own_points:
+                        estimate = IssuePoints.objects.get_or_create(user=request.user, issue=issue)[0]
+                        old_estimate_hours = estimate.points if estimate.points is not None else "not set"
+                        estimate.points = hours_helper.convert_to_decimal(new_value)
+                        estimate.save()
+                        IssueHistory.add_history(request.user, issue,
+                                                 "changed estimate for %s" % request.user, old_estimate_hours, new_value)
+                        
                 else:
                     raise Exception("Unsupported field name: %s" % field_name)
                 issue.save()

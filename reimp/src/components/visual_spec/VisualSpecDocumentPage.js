@@ -11,7 +11,7 @@ import {
     ensureVisualSpecDocumentsLoaded, getVisualSpecDocument, getVisualSpecDocuments
 } from '../../actions/VisualSpecDocuments'
 import {
-    update_list_filter, setItemFlag, selectItems
+    update_list_filter, setItemFlag, selectItems, update_list_format
 } from '../../actions/ItemList'
 import { PAGE_KEY__VISUAL_SPEC_DOCUMENT_PAGE,
          LIST_KEY__VISUAL_SPEC_DOCUMENT_ISSUE_LIST,

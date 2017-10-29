@@ -23,9 +23,9 @@ class Hours extends Component {
 function mapStateToProps(state, props) {
 
     const {hours} = props
-
+    const fixed_hours = hours || 0
     return {
-        hours: hours
+        hours: fixed_hours
     }
 }
 

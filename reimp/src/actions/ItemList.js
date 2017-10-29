@@ -12,6 +12,7 @@ export const SET_ITEMS_FLAG = 'SET_ITEMS_FLAG'
 export const INVALIDATE_LIST = 'INVALIDATE_LIST'
 export const UPDATE_LIST_PAGINATION = 'UPDATE_LIST_PAGINATION'
 export const UPDATE_LIST_FILTER = 'UPDATE_LIST_FILTER'
+export const UPDATE_LIST_FORMAT = 'UPDATE_LIST_FORMAT'
 export const UPDATE_LIST_SELECTION = 'UPDATE_LIST_SELECTION'
 export const UPDATE_LIST_DISPLAY_MODE = 'UPDATE_LIST_DISPLAY_MODE'
 export const UPDATE_VISIBLE_ITEM_IDS = 'UPDATE_VISIBLE_ITEM_IDS'
@@ -37,6 +38,14 @@ export function update_list_filter(list_key, filter) {
         type: UPDATE_LIST_FILTER,
         list_key: list_key,
         filter: filter
+    }
+}
+
+export function update_list_format(list_key, format) {
+    return {
+        type: UPDATE_LIST_FORMAT,
+        list_key: list_key,
+        format: format
     }
 }
 
@@ -283,8 +292,13 @@ function tryFetchListAndItems(list_key, matching_items_key, matching_items_promi
 	}
 
 	dispatch(announceListLoading(list_key))
+
+        const format = l.format || {}
+        format.ids_only = true
+        
 	const params = { filter: l.filter || {},
-			 format: {ids_only: true},
+			 format: format,
+                         detail_level: l.detail_level || {},
 			 pagination: l.pagination || {} }
         return impfetch(state, fetch_item_ids_url, dispatch, {params:params})
             .then(response => response.json())
