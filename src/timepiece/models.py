@@ -3710,6 +3710,8 @@ class Issue(models.Model):
 
     def get_next_child_order(self):
         max_child_order = Issue.objects.filter(parent_group=self).aggregate(max_order=Max('order'))['max_order'] or 0
+        if max_child_order == 0:
+            max_child_order = self.order
         return max_child_order+0.1
     
     @classmethod

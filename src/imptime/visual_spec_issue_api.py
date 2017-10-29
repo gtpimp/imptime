@@ -75,6 +75,7 @@ class VisualSpecIssueViewSet(BaseViewSet):
                                              order=new_issue_order)
                 parent_issue.renumber_issue_order()
                 visual_spec_issue = s.save(issue=issue)
+                parent_issue.save()
             else:
                 return self.error_response(Exception("Invalid post data: %s" % s.errors))
             
