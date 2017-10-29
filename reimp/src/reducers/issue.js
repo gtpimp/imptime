@@ -21,7 +21,8 @@ import {
     ANNOUNCE_ISSUE_DELETED,
     ANNOUNCE_ISSUES_SAVED,
     ANNOUNCE_ISSUES_SAVING,
-    ANNOUNCE_DELETE_ISSUE_FAILED
+    ANNOUNCE_DELETE_ISSUE_FAILED,
+    SET_ISSUE_STORE_VALUE
 } from '../actions/Issues.js'
 
 const initialState = {
@@ -35,6 +36,9 @@ export default function issue(state = initialState, action) {
 
     let new_items_by_id = null
     let ids = null
+    let new_issue_props = null
+    let issue_ids = null
+    let state_clone = null
 
     switch (action.type) {
 
@@ -70,9 +74,9 @@ export default function issue(state = initialState, action) {
             return state;
 
 	case ANNOUNCE_ISSUES_SAVING:
-	    const issue_ids = action.issue_ids
+	    issue_ids = action.issue_ids
 
-            const state_clone = Object.assign({}, state, {
+            state_clone = Object.assign({}, state, {
 		items_by_id: Object.assign(
 		    {},
 		    state.items_by_id
@@ -82,7 +86,7 @@ export default function issue(state = initialState, action) {
 		saving_item_ids: union(state.saving_item_ids, issue_ids)
 	    })
 
-	    const new_issue_props = {}
+	    new_issue_props = {}
 	    new_issue_props[action.field_name] = action.new_value
             map(issue_ids, function(issue_id, index) {
                 state_clone.items_by_id[issue_id] = Object.assign({}, state.items_by_id[issue_id],
@@ -151,6 +155,17 @@ export default function issue(state = initialState, action) {
             return Object.assign({}, state, {
 		saving_item_ids: difference(state.saving_item_ids, [action.deleting_issue_id])
 	    })
+
+        case SET_ISSUE_STORE_VALUE:
+	    issue_ids = action.issue_ids
+            state_clone = Object.assign({}, state)
+	    new_issue_props = {}
+	    new_issue_props[action.field_name] = action.new_value
+            map(issue_ids, function(issue_id, index) {
+                state_clone.items_by_id[issue_id] = Object.assign({}, state.items_by_id[issue_id],
+		                                                  new_issue_props)
+            })
+            return state_clone
 
         default:
             return state

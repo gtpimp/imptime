@@ -27,6 +27,8 @@ export const ANNOUNCE_SAVING_NEW_ISSUE_FAILED = 'ANNOUNCE_SAVING_NEW_ISSUE_FAILE
 export const ANNOUNCE_DELETING_ISSUE = 'ANNOUNCE_DELETING_ISSUE'
 export const ANNOUNCE_ISSUE_DELETED = 'ANNOUNCE_ISSUE_DELETED'
 export const ANNOUNCE_DELETE_ISSUE_FAILED = 'ANNOUNCE_DELETE_ISSUE_FAILED'
+export const SET_ISSUE_STORE_VALUE = 'SET_ISSUE_STORE_VALUE'
+
 
 export function invalidateAllIssues() {
     return {
@@ -651,6 +653,15 @@ function updateIssue(issue_ids, field_name, new_value, on_done) {
              console.log('Request failed', error);
 	           dispatch(announceIssueSaveFailed(error))
 	       })
+    }
+}
+
+export function setIssueStoreValue(issue_ids, field_name, new_value) {
+    return {
+        type: SET_ISSUE_STORE_VALUE,
+        issue_ids: issue_ids,
+        field_name: field_name,
+        new_value: new_value
     }
 }
 

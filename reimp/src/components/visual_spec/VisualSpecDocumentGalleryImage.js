@@ -28,9 +28,14 @@ class VisualSpecDocumentGalleryImage extends Component {
     }
 
     render() {
-        const { visual_spec_document_id, image_url, is_active, isOver,
+        const { visual_spec_document_id, image_url, is_active, isOver, isDragging,
                 connectDragSource, connectDropTarget, onSelected } = this.props
         const that = this
+
+        if ( isDragging ) {
+            return null
+        }
+        
         return connectDragSource(connectDropTarget(
             <div key={visual_spec_document_id}>
               <img className={classNames("visual_spec_document_gallery__image",

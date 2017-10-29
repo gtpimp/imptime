@@ -47,7 +47,7 @@ class VisualSpecDocumentGallery extends Component {
     }
 
     render() {
-        const { image_set, active_visual_spec_document_id, isOver, connectDragSource, connectDropTarget } = this.props
+        const { image_set, active_visual_spec_document_id, connectDragSource, connectDropTarget } = this.props
         const that = this
         return (
             <div className="visual_spec_document_gallery">

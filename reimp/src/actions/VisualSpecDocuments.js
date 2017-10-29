@@ -2,7 +2,7 @@ import { impfetch } from './lib.js'
 import { compact, map, keys, keyBy, includes, difference, indexOf, identity } from 'lodash'
 import move from 'lodash-move'
 import { fetchListIfNeeded, getMissingItemIds } from './ItemList'
-import { invalidateIssues } from './Issues'
+import { setIssueStoreValue } from './Issues'
 import { ENTITY_KEY__VISUAL_SPEC_DOCUMENT } from '../actions/ItemListKeyRegistry'
 
 import {
@@ -60,9 +60,17 @@ export function reorderVisualSpecDocument(visual_spec_document_ids, moving_visua
         const item_ids = map(visual_spec_document_ids, function(id) { return "" + id })
         
         const index_of_item_id_to_move = indexOf(item_ids, item_id_to_move)
-        const index_of_item_id_to_after = indexOf(item_ids, item_id_to_move_after)
+        let index_of_item_id_to_after = indexOf(item_ids, item_id_to_move_after)
+
+        if ( index_of_item_id_to_move > index_of_item_id_to_after ) {
+            index_of_item_id_to_after += 1
+        }
         const reordered_item_ids = move(item_ids, index_of_item_id_to_move, index_of_item_id_to_after)
 
+        const vsd = getVisualSpecDocument(state, moving_visual_spec_document_id)
+        if ( vsd.id ) {
+            dispatch(setIssueStoreValue([vsd.issue_id], 'visual_spec_document_ids', reordered_item_ids))
+        }
         dispatch(updateItem(ENTITY_KEY__VISUAL_SPEC_DOCUMENT, [moving_visual_spec_document_id],
                             "visual_spec_document_id_after", visual_spec_document_id_after, on_done))
     }

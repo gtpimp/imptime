@@ -23,6 +23,7 @@ export const ANNOUNCE_SAVING_NEW_ITEM_FAILED = 'ANNOUNCE_SAVING_NEW_ITEM_FAILED'
 export const ANNOUNCE_DELETING_ITEM = 'ANNOUNCE_DELETING_ITEM'
 export const ANNOUNCE_ITEM_DELETED = 'ANNOUNCE_ITEM_DELETED'
 export const ANNOUNCE_DELETE_ITEM_FAILED = 'ANNOUNCE_DELETE_ITEM_FAILED'
+export const SET_ITEM_STORE_VALUE = 'SET_ITEM_STORE_VALUE'
 
 export function invalidateAllItems(entity_key) {
     return {
@@ -36,6 +37,15 @@ export function invalidateItems(entity_key, item_ids) {
         type: INVALIDATE_ITEMS,
         entity_key: entity_key,
 	item_ids_to_invalidate: item_ids
+    }
+}
+
+export function setIssueStoreValue(item_ids, field_name, new_value) {
+    return {
+        type: SET_ITEM_STORE_VALUE,
+        item_ids: item_ids,
+        field_name: field_name,
+        new_value: new_value
     }
 }
 

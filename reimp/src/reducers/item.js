@@ -22,7 +22,8 @@ import {
     ANNOUNCE_ITEM_DELETED,
     ANNOUNCE_ITEMS_SAVED,
     ANNOUNCE_ITEMS_SAVING,
-    ANNOUNCE_DELETE_ITEM_FAILED
+    ANNOUNCE_DELETE_ITEM_FAILED,
+    SET_ITEM_STORE_VALUE
 } from '../actions/Item.js'
 
 const initialState = {
@@ -154,6 +155,17 @@ export default function item(state = initialState, action) {
             s.saving_item_ids = difference(s.saving_item_ids, [action.deleting_item_id])
             return setItemState(state, action, s)
 
+        case SET_ITEM_STORE_VALUE:
+            s = cloneItemState(state, action)
+	    item_ids = action.item_ids
+            s.items_by_id = Object.assign({}, s.items_by_id)
+            new_item_props = {}
+	    new_item_props[action.field_name] = action.new_value
+            map(item_ids, function(item_id, index) {
+                s.items_by_id[item_id] = Object.assign({}, s.items_by_id[item_id], new_item_props)
+            })
+            return setItemState(state, action, s)
+            
         default:
             return state
     }
