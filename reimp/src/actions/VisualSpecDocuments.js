@@ -8,11 +8,6 @@ import { ENTITY_KEY__VISUAL_SPEC_DOCUMENT } from '../actions/ItemListKeyRegistry
 import {
     invalidateAllItems,
     invalidateItems,
-    announceItemSaveFailed,
-    announceItemsSaving,
-    announceLoadingItems,
-    announceItemsLoaded,
-    announceItemsLoadFailed,
     fetchItemsPromise,
     fetchItemsIfNeeded,
     ensureItemsLoaded,
@@ -35,52 +30,7 @@ export function invalidateVisualSpecDocuments(visual_spec_document_ids_to_invali
     }
 }
 
-function announceVisualSpecDocumentSaveFailed(error) {
-    return (dispatch, getState) => {
-        dispatch(announceItemSaveFailed(ENTITY_KEY__VISUAL_SPEC_DOCUMENT, error))
-    }
-}
-
-function announceVisualSpecDocumentsSaved(visual_spec_document_ids) {
-        return (dispatch, getState) => {
-            dispatch(invalidateAllItems(ENTITY_KEY__VISUAL_SPEC_DOCUMENT,
-                                        visual_spec_document_ids))
-    }
-}
-
-function announceVisualSpecDocumentsSaving(visual_spec_document_ids, field_name, new_value) {
-    return (dispatch, getState) => {
-        dispatch(announceItemsSaving(ENTITY_KEY__VISUAL_SPEC_DOCUMENT,
-                                     visual_spec_document_ids, field_name, new_value))
-    }
-}
-
-function announceLoadingVisualSpecDocuments(visual_spec_document_ids_to_load) {
-    return (dispatch, getState) => {
-        dispatch(announceLoadingItems(ENTITY_KEY__VISUAL_SPEC_DOCUMENT,
-                                      visual_spec_document_ids_to_load))
-    }
-}
-
-function announceVisualSpecDocumentsLoaded(payload) {
-    return (dispatch, getState) => {
-        dispatch(announceItemsLoaded(ENTITY_KEY__VISUAL_SPEC_DOCUMENT,
-                                     payload.visual_spec_documents))
-    }
-}
-
-function announceVisualSpecDocumentsLoadFailed(error) {
-    return (dispatch, getState) => {
-        dispatch(announceItemsLoadFailed(ENTITY_KEY__VISUAL_SPEC_DOCUMENT, error))
-    }
-}
-
-function fetchVisualSpecDocumentsPromise(dispatch, state, visual_spec_document_ids) {
-    return fetchItemsPromise(dispatch, state,
-                             ENTITY_KEY__VISUAL_SPEC_DOCUMENT, visual_spec_document_ids)
-}
-
-function updateVisualSpecDocument(visual_spec_document_ids, field_name, new_value, on_done) {
+export function updateVisualSpecDocument(visual_spec_document_ids, field_name, new_value, on_done) {
     return updateItem(ENTITY_KEY__VISUAL_SPEC_DOCUMENT, visual_spec_document_ids, field_name, new_value, on_done)
 }
 
@@ -100,11 +50,6 @@ export function getVisualSpecDocument(state, visual_spec_document_id) {
 
 export function getVisualSpecDocuments(state, visual_spec_document_ids) {
     return getItems(state, ENTITY_KEY__VISUAL_SPEC_DOCUMENT, visual_spec_document_ids)
-    const items_by_id = (state[ENTITY_KEY__VISUAL_SPEC_DOCUMENT] || {}).items_by_id || {}
-    const docs = map(visual_spec_document_ids, function(id) {
-        return items_by_id[id]
-    })
-    return compact(docs)
 }
 
 export function reorderVisualSpecDocument(visual_spec_document_ids, moving_visual_spec_document_id, visual_spec_document_id_after, on_done) {

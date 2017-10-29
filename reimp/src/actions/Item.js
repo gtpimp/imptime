@@ -47,8 +47,9 @@ function announceLoadingItems(entity_key, item_ids) {
     }
 }
 
-function announceItemsLoaded(entity_key, item_payload) {
+function announceItemsLoaded(entity_key, payload) {
 
+    const item_payload = payload[entity_key + "s"]
     return {
         type: ANNOUNCE_ITEMS_LOADED,
         entity_key: entity_key, 
@@ -165,7 +166,7 @@ function announceItemDeleteFailed(entity_key, item_id, error) {
     }
 }
 
-function updateItem(entity_key, item_ids, field_name, new_value, on_done) {
+export function updateItem(entity_key, item_ids, field_name, new_value, on_done) {
     return (dispatch, getState) => {
         const state = getState()
 	dispatch(announceItemsSaving(entity_key, item_ids, field_name, new_value))
@@ -222,7 +223,7 @@ export function saveCandidateItem(entity_key) {
     return (dispatch, getState) => {
 	      const state = getState()
 	      dispatch(announceCandidateItemSaving(entity_key, ))
-	      let data = {item: state.item.candidate_item}
+	      let data = {item: ((state.item || {})[entity_key] || {}).candidate_item}
 
 	      return impfetch(state, "imp/"+entity_key+"/", dispatch,
 			                  {method: "POST",
@@ -287,11 +288,11 @@ export function is_item_invalidated(state, entity_key, item_id) {
 export function getItem(state, entity_key, item_id) {
     // Only gets the item if it's already loaded, use
     // ensureItemsLoaded to trigger a fetch from the server
-    return ((state[entity_key] || {}).items_by_id || {})[item_id] || null
+    return (((state.item || {})[entity_key] || {}).items_by_id || {})[item_id] || null
 }
 
 export function getItems(state, entity_key, item_ids) {
-    const item_objs = state[entity_key]
+    const item_objs = (state.item || {})[entity_key]
     const items_by_id = (item_objs && item_objs.items_by_id) || {}
     return items_by_id && item_ids && compact(item_ids.map(function (item_id, index) {
         return items_by_id[item_id] || {

@@ -26,10 +26,6 @@ import {
 } from '../actions/Item.js'
 
 const initialState = {
-    items_by_id: {},
-    loading_item_ids: [],
-    saving_item_ids: [],
-    invalidated_item_ids: []
 }
 
 function cloneItemState(state, action) {
