@@ -16,6 +16,7 @@ import project_dashboard from './project_dashboard'
 import project_statement from './project_statement'
 import project_user_permission from './project_user_permission'
 import rie from './rie'
+import item from './item'
 import settings from './settings'
 import sprint from './sprint'
 import user_timesheet from './user_timesheet'
@@ -23,7 +24,6 @@ import time_chart from './time_chart'
 import time_summary from './time_summary'
 import toolbar from './toolbar'
 import user from './user'
-import visual_spec_document from './visual_spec_document'
 import visual_spec_issue from './visual_spec_issue'
 import websockets from './websockets'
 import { combineReducers } from 'redux'
@@ -39,6 +39,7 @@ const rootReducer = combineReducers({
     filter,
     form: redux_form_reducer,
     header,
+    item,
     issue,
     issue_general_details,
     item_list,
@@ -58,7 +59,6 @@ const rootReducer = combineReducers({
     toolbar,
     user,
     user_timesheet,
-    visual_spec_document,
     visual_spec_issue,
     websockets,
 })

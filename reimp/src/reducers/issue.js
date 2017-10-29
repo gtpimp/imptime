@@ -38,17 +38,17 @@ export default function issue(state = initialState, action) {
 
     switch (action.type) {
 
-	      case INVALIDATE_ALL_ISSUES:
+	case INVALIDATE_ALL_ISSUES:
             ids = stringifyIds(keys(state.items_by_id || []))
-	          return Object.assign({}, state,
-				                         {invalidated_item_ids:ids}
+	    return Object.assign({}, state,
+				 {invalidated_item_ids:ids}
             )
 
         case INVALIDATE_ISSUES:
             ids = stringifyIds(action.issue_ids_to_invalidate)
-	          return Object.assign(
-		            {}, state,
-		            {invalidated_item_ids: union(state.invalidated_item_ids, ids)}
+	    return Object.assign(
+		{}, state,
+		{invalidated_item_ids: union(state.invalidated_item_ids, ids)}
             )
 
         case ANNOUNCE_LOADING_ISSUES:
@@ -56,16 +56,16 @@ export default function issue(state = initialState, action) {
             ids = stringifyIds(action.issue_ids_to_load)
 
             return Object.assign({}, state, {
-		            loading_item_ids: union(state.loading_item_ids, ids),
-		            invalidated_item_ids: difference(state.invalidated_item_ids || [], ids)
-	          })
+		loading_item_ids: union(state.loading_item_ids, ids),
+		invalidated_item_ids: difference(state.invalidated_item_ids || [], ids)
+	    })
 
         case ANNOUNCE_ISSUES_LOADED:
             ids = stringifyIds(keys(action.items_by_id))
             return Object.assign({}, state, {
-		            loading_item_ids: difference(state.loading_item_ids || [], ids),
-		            items_by_id: Object.assign({}, assign(state.items_by_id, action.items_by_id))
-	          })
+		loading_item_ids: difference(state.loading_item_ids || [], ids),
+		items_by_id: Object.assign({}, assign(state.items_by_id, action.items_by_id))
+	    })
         case ANNOUNCE_ISSUES_LOAD_FAILED:
             return state;
 
@@ -90,67 +90,67 @@ export default function issue(state = initialState, action) {
             })
             return state_clone
 
-	      case ANNOUNCE_ISSUES_SAVED:
-	          return Object.assign({}, state,
-				                         {saving_item_ids: difference(state.saving_item_ids || [],
-							                                                action.issue_ids)
-				                         })
-	      case ANNOUNCE_CAPTURING_NEW_ISSUE:
+	case ANNOUNCE_ISSUES_SAVED:
+	    return Object.assign({}, state,
+				 {saving_item_ids: difference(state.saving_item_ids || [],
+							      action.issue_ids)
+				 })
+	case ANNOUNCE_CAPTURING_NEW_ISSUE:
             return Object.assign({}, state,
-				                         { candidate_issue: {
-				                             issue_id_before: action.issue_id_before,
-				                             sprint_id: action.sprint_id}
-				                         })
-	      case UPDATE_NEW_ISSUE_DETAILS:
-	          return Object.assign(
-		            {}, state,
-		            {candidate_issue: Object.assign({},
-						                                    state.candidate_issue || {},
-						                                    action.candidate_issue)
-		            })
-	      case CANCEL_CREATING_NEW_ISSUE:
-	          return Object.assign(
-		            {}, state,
-		            {candidate_issue: null})
+				 { candidate_issue: {
+				     issue_id_before: action.issue_id_before,
+				     sprint_id: action.sprint_id}
+				 })
+	case UPDATE_NEW_ISSUE_DETAILS:
+	    return Object.assign(
+		{}, state,
+		{candidate_issue: Object.assign({},
+						state.candidate_issue || {},
+						action.candidate_issue)
+		})
+	case CANCEL_CREATING_NEW_ISSUE:
+	    return Object.assign(
+		{}, state,
+		{candidate_issue: null})
 
-	      case ANNOUNCE_SAVING_NEW_ISSUE:
-	          return Object.assign(
-		            {}, state,
-		            {candidate_issue: Object.assign({},
-						                                    state.candidate_issue || {},
-						                                    {saving: true})})
-	      case ANNOUNCE_SAVED_NEW_ISSUE:
-	          new_items_by_id = Object.assign({}, state.items_by_id)
-	          new_items_by_id[action.issue.id] = action.issue
-	          return Object.assign({},
-				                         state,
-				                         {candidate_issue: null},
-				                         {items_by_id: new_items_by_id})
+	case ANNOUNCE_SAVING_NEW_ISSUE:
+	    return Object.assign(
+		{}, state,
+		{candidate_issue: Object.assign({},
+						state.candidate_issue || {},
+						{saving: true})})
+	case ANNOUNCE_SAVED_NEW_ISSUE:
+	    new_items_by_id = Object.assign({}, state.items_by_id)
+	    new_items_by_id[action.issue.id] = action.issue
+	    return Object.assign({},
+				 state,
+				 {candidate_issue: null},
+				 {items_by_id: new_items_by_id})
 
-	      case ANNOUNCE_SAVING_NEW_ISSUE_FAILED:
-	          return Object.assign(
-		            {}, state,
-		            {candidate_issue: Object.assign({},
-						                                    state.candidate_issue || {},
-						                                    {is_saving: false})})
+	case ANNOUNCE_SAVING_NEW_ISSUE_FAILED:
+	    return Object.assign(
+		{}, state,
+		{candidate_issue: Object.assign({},
+						state.candidate_issue || {},
+						{is_saving: false})})
 
-	      case ANNOUNCE_DELETING_ISSUE:
+	case ANNOUNCE_DELETING_ISSUE:
             return Object.assign({}, state, {
-		            saving_item_ids: union(state.saving_item_ids, [action.deleting_issue_id])
-	          })
-	      case ANNOUNCE_ISSUE_DELETED:
-	          new_items_by_id = Object.assign({}, state.items_by_id)
-	          if ( new_items_by_id[action.deleted_issue_id] ) {
-		            delete new_items_by_id[action.deleted_issue_id]
-	          }
-	          return Object.assign({}, state,
-				                         {saving_item_ids: difference(state.saving_item_ids || [],
-							                                                [action.deleted_issue_id]),
-				                          items_by_id: new_items_by_id})
-	      case ANNOUNCE_DELETE_ISSUE_FAILED:
+		saving_item_ids: union(state.saving_item_ids, [action.deleting_issue_id])
+	    })
+	case ANNOUNCE_ISSUE_DELETED:
+	    new_items_by_id = Object.assign({}, state.items_by_id)
+	    if ( new_items_by_id[action.deleted_issue_id] ) {
+		delete new_items_by_id[action.deleted_issue_id]
+	    }
+	    return Object.assign({}, state,
+				 {saving_item_ids: difference(state.saving_item_ids || [],
+							      [action.deleted_issue_id]),
+				  items_by_id: new_items_by_id})
+	case ANNOUNCE_DELETE_ISSUE_FAILED:
             return Object.assign({}, state, {
-		            saving_item_ids: difference(state.saving_item_ids, [action.deleting_issue_id])
-	          })
+		saving_item_ids: difference(state.saving_item_ids, [action.deleting_issue_id])
+	    })
 
         default:
             return state
