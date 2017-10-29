@@ -15,6 +15,7 @@ export const UPDATE_LIST_FILTER = 'UPDATE_LIST_FILTER'
 export const UPDATE_LIST_SELECTION = 'UPDATE_LIST_SELECTION'
 export const UPDATE_LIST_DISPLAY_MODE = 'UPDATE_LIST_DISPLAY_MODE'
 export const UPDATE_VISIBLE_ITEM_IDS = 'UPDATE_VISIBLE_ITEM_IDS'
+export const HIGHLIGHT_LIST_SELECTION = 'HIGHLIGHT_LIST_SELECTION'
 
 export function initList(list_key) {
     return {
@@ -96,6 +97,15 @@ export function selectItems(list_key, selected_ids) {
 	      type: UPDATE_LIST_SELECTION,
 	      list_key: list_key,
 	      selected_ids: selected_ids
+    }
+}
+
+export function highlightItems(list_key, highlighted_ids) {
+
+    return {
+	type: HIGHLIGHT_LIST_SELECTION,
+	list_key: list_key,
+	highlighted_ids: highlighted_ids
     }
 }
 

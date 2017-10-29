@@ -200,7 +200,7 @@ class IssueList extends Component {
 
         const {
             selected_items,
-            selected_ids, loading_item_ids, list_key,
+            selected_ids, highlighted_ids, loading_item_ids, list_key,
             expanded_issues
         } = this.props
 
@@ -217,6 +217,7 @@ class IssueList extends Component {
                         onClickedIssue={(event) => this.onClickedIssue(event, issue.id)}
                         is_loading={loading_item_ids.indexOf(issue.id) !== -1}
                         is_selected={selected_ids.indexOf(issue.id) !== -1}
+                        is_highlighted={highlighted_ids.indexOf(issue.id) !== -1}
                         issue_id={issue.id}/>
                 )}
                 </div>
@@ -253,7 +254,7 @@ class IssueList extends Component {
             issues, is_visible, list_key,
             saving_issue_ids,
             is_creating_issue, candidate_issue, invalidated_issue_ids,
-            selected_ids, selected_items, loading_item_ids, expanded_issues,
+            selected_ids, highlighted_ids, selected_items, loading_item_ids, expanded_issues,
             issue_header_list
         } = this.props
 
@@ -289,6 +290,7 @@ class IssueList extends Component {
                         onClickedIssue={(event) => that.onClickedIssue(event, issue.parent_group_id)}
                         is_loading={loading_item_ids.indexOf(issue.parent_group_id) !== -1}
                         is_selected={selected_ids.indexOf(issue.parent_group_id) !== -1}
+                        is_highlighted={highlighted_ids.indexOf(issue.parent_group_id) !== -1}
                         is_invalidated={invalidated_issue_ids.indexOf(issue.parent_group_id) !== -1}
                         is_saving={saving_issue_ids.indexOf(issue.issue_parent_group_id) !== -1}
                         issue_id={issue.parent_group_id}
@@ -309,6 +311,7 @@ class IssueList extends Component {
                         onClickedIssue={(event) => that.onClickedIssue(event, issue.id)}
                         is_loading={loading_item_ids.indexOf(issue.id) !== -1}
                         is_selected={selected_ids.indexOf(issue.id) !== -1}
+                        is_highlighted={highlighted_ids.indexOf(issue.id) !== -1}
                         is_invalidated={invalidated_issue_ids.indexOf(issue.id) !== -1}
                         is_saving={saving_issue_ids.indexOf(issue.id) !== -1}
                         issue_id={issue.id}
@@ -405,6 +408,13 @@ function mapStateToProps(state, props) {
         }
     })
 
+    const highlighted_items = items_by_id && l.highlighted_ids && l.highlighted_ids.map(function (highlighted_id, index) {
+        return items_by_id[highlighted_id] || {
+            'id': highlighted_id,
+            'loaded': false
+        }
+    })
+
     const items = (items_by_id && visible_item_ids.map(function (visible_item_id, index) {
         return items_by_id[visible_item_id] || {
             'id': visible_item_id,
@@ -421,6 +431,7 @@ function mapStateToProps(state, props) {
         issues: items,
         issue_ids: map(items, 'id'),
         selected_ids: l.selected_ids || [],
+        highlighted_ids: l.highlighted_ids || [],
         invalidated_issue_ids: invalidated_item_ids,
         saving_issue_ids: saving_item_ids,
         selected_items: selected_items || [],

@@ -143,7 +143,7 @@ class Issue extends Component {
 
     render_expanded() {
         const {
-            issue, is_selected, onClickedIssue, assignable_user_ids,
+            issue, is_selected, is_highlighted, onClickedIssue, assignable_user_ids,
             is_invalidated, is_saving,
             isOver, connectDragSource, connectDropTarget, show_children,
             subject_prefix, subject_suffix,
@@ -185,6 +185,7 @@ class Issue extends Component {
                             'issue', 'list-table__row--compact', {
                                 'list-table__row--unselected': !is_selected,
                                 'list-table__row--selected': is_selected,
+                                'list-table__row--highlighted': is_highlighted,
                                 'issue--standalone': isStandalone,
                                 'issue--feature': isFeature,
                                 'issue--grouped': belongsToAFeature,
@@ -326,7 +327,7 @@ class Issue extends Component {
 
 function mapStateToProps(state, props) {
     const {
-        issue_id, is_selected, is_collapsed,
+        issue_id, is_selected, is_highlighted, is_collapsed,
         is_loading, is_invalidated, is_saving, show_children,
         subject_prefix, subject_suffix, issue_header_list, list_key
     } = props
@@ -352,6 +353,7 @@ function mapStateToProps(state, props) {
         issue: issue,
         issue_id: issue_id,
         is_selected: is_selected,
+        is_highlighted: is_highlighted,
         is_loading: is_loading,
         is_saving: is_saving,
         is_collapsed: is_collapsed,

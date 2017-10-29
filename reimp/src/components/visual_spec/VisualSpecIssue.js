@@ -11,11 +11,15 @@ import EditableIssueTitle from '../EditableIssueTitle'
 import EditableIssueDescription from '../EditableIssueDescription'
 import ToolTip from 'react-portal-tooltip'
 import {
+    LIST_KEY__VISUAL_SPEC_DOCUMENT_ISSUE_LIST
+} from '../../actions/ItemListKeyRegistry'
+import {
     createVisualSpecIssue,
     updateVisualSpecIssue,
     ensureVisualSpecIssuesLoaded,
     is_visual_spec_issue_invalidated
 } from '../../actions/VisualSpecIssues'
+import { highlightItems } from '../../actions/ItemList'
 
 class VisualSpecIssue extends Component {
 
@@ -46,9 +50,15 @@ class VisualSpecIssue extends Component {
     }
 
     showTooltip() {
+        const { dispatch, issue } = this.props
         this.setState({isTooltipActive: true})
+        if ( issue.id ) {
+            dispatch(highlightItems(LIST_KEY__VISUAL_SPEC_DOCUMENT_ISSUE_LIST, [issue.id]))
+        }
     }
+    
     hideTooltip() {
+        const { dispatch } = this.props
         this.setState({isTooltipActive: false})
     }
 

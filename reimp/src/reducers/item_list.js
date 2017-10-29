@@ -15,6 +15,7 @@ import {
     UPDATE_LIST_PAGINATION,
     UPDATE_LIST_FILTER,
     UPDATE_LIST_SELECTION,
+    HIGHLIGHT_LIST_SELECTION,
     UPDATE_LIST_DISPLAY_MODE,
     UPDATE_VISIBLE_ITEM_IDS
 } from '../actions/ItemList.js'
@@ -102,6 +103,10 @@ export default function item_list(state = initialState, action) {
 	case UPDATE_LIST_SELECTION:
 	    state_copy[action.list_key] = Object.assign({}, l, {
 		selected_ids: action.selected_ids})
+	    return state_copy
+        case HIGHLIGHT_LIST_SELECTION:
+	    state_copy[action.list_key] = Object.assign({}, l, {
+		highlighted_ids: action.highlighted_ids})
 	    return state_copy
 	case UPDATE_LIST_DISPLAY_MODE:
 	    state_copy[action.list_key] = Object.assign({}, l, {

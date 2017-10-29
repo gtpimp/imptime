@@ -38,6 +38,10 @@
     background-color: $color-3;
 }
 
+.list-table__row--highlighted {
+    font-weight: bold;
+}
+
 .list-table__row--compact {
     .list-table__cell {
 	height: 35px;

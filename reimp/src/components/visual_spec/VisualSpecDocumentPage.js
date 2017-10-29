@@ -52,6 +52,8 @@ class VisualSpecDocumentPage extends Component {
         const { dispatch, active_visual_spec_document, active_visual_spec_document_id,
                 project, project_id, sprint, sprint_id, issue, issue_id, visual_spec_document_ids,
                 issue_ids_for_active_visual_spec_document } = props
+
+        dispatch(update_list_filter(LIST_KEY__VISUAL_SPEC_DOCUMENT_ISSUE_LIST, {parent_group_id: issue_id || -1}))
         dispatch(ensureProjectsLoaded([project_id]))
         dispatch(ensureSprintsLoaded([sprint_id]))
         dispatch(ensureIssuesLoaded([issue_id]))
@@ -73,7 +75,6 @@ class VisualSpecDocumentPage extends Component {
                                     [active_visual_spec_document.sprint_id]))
             dispatch(select_issues(PAGE_KEY__VISUAL_SPEC_DOCUMENT_PAGE,
                                    [active_visual_spec_document.issue_id]))
-            dispatch(update_list_filter(LIST_KEY__VISUAL_SPEC_DOCUMENT_ISSUE_LIST, {parent_group_id: issue_id || -1}))
             dispatch(setItemFlag(LIST_KEY__VISUAL_SPEC_DOCUMENT_ISSUE_LIST, [issue_id], 'expanded_issues', true))
             dispatch(selectItems(LIST_KEY__VISUAL_SPEC_DOCUMENT_ISSUE_LIST, issue_ids_for_active_visual_spec_document))
         }
