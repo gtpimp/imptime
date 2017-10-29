@@ -59,36 +59,37 @@ class VisualSpecDocumentEditor extends Component {
             return null
         }
 
-        return connectDropTarget(
+        return (
             <div className="vsd-editor">
+              {connectDropTarget(
+                   <div className="vsd-editor__doc_image_container">
+                     { visual_spec_document.lores_url &&
+                       <img className="vsd-editor__doc_image"
+                            role="presentation"
+                            src={visual_spec_document.lores_url}
+                            onLoad={this.onVisualSpecDocumentImageLoaded}
+                       />
+                     }
 
-              <div className="vsd-editor__doc_image_container">
-                { visual_spec_document.lores_url &&
-                  <img className="vsd-editor__doc_image"
-                       role="presentation"
-                       src={visual_spec_document.lores_url}
-                       onLoad={this.onVisualSpecDocumentImageLoaded}
-                  />
-                }
+                       { !visual_spec_document_image_loaded &&
+                         <div className="vsd-editor__image_loading">
+                           <h2>Loading Image...</h2>
+                         </div>
+                       }
 
-                { !visual_spec_document_image_loaded &&
-                  <div className="vsd-editor__image_loading">
-                    <h2>Loading Image...</h2>
-                  </div>
-                }
+                         { visual_spec_document_image_loaded &&
+                           map(visual_spec_issue_ids, (visual_spec_issue_id) => {
+                               return (
+                                   <VisualSpecIssue key={visual_spec_issue_id}
+                                                    visual_spec_issue_id={visual_spec_issue_id} />
+                               )
+                           })
+                         }
 
-                { visual_spec_document_image_loaded &&
-                  map(visual_spec_issue_ids, (visual_spec_issue_id) => {
-                  return (
-                      <VisualSpecIssue key={visual_spec_issue_id}
-                                       visual_spec_issue_id={visual_spec_issue_id} />
-                  )
-                  })
-                }
+                   </div>
 
-              </div>
-
-              
+                   
+               )}
             </div>
         )
     }
