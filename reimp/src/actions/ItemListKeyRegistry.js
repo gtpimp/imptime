@@ -59,4 +59,5 @@ export var ISSUE_HEADER_LIST_VISUAL_SPEC_DOCUMENT_PAGE = {
     'name': 'Name',
     'status': 'Status',
     'estimates': "Estimates",
+    'small_delete': ""
 }

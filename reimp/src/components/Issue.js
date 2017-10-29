@@ -302,6 +302,13 @@ class Issue extends Component {
                      </div>
                    </td>
                   }
+                  {includes(visible_header_keys, "small_delete") &&
+                   <td className="list-table__cell list-table__cell--issue-small-delete">
+                     <div className={"reveal-on-hover--block"}>
+                       <div className="issue__small-delete-image" onClick={this.onDeleteIssue} />
+                     </div>
+                   </td>
+                  }
                 </tr>
             ))
         }
