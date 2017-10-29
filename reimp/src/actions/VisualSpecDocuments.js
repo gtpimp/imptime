@@ -175,9 +175,5 @@ export function reorderVisualSpecDocument(visual_spec_document_ids, moving_visua
         const reordered_item_ids = move(item_ids, index_of_item_id_to_move, index_of_item_id_to_after)
         dispatch(updateVisualSpecDocument([moving_visual_spec_document_id], "visual_spec_document_id_after",
                                           visual_spec_document_id_after, on_done))
-        const vsd = getVisualSpecDocument(state, moving_visual_spec_document_id) || {}
-        if ( vsd.issue_id ) {
-            dispatch(invalidateIssues([vsd.issue_id]))
-        }
     }
 }

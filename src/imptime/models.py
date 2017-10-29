@@ -38,13 +38,17 @@ class VisualSpecDocument(BaseModel):
     def renumber_visual_spec_document_order(self):
         """ Doesn't re-sort, just makes the numbers sequential """
         order = 0
+        at_least_one_changed = False
         for vsd in self.issue.visual_spec_documents\
                                .all().order_by("order", "id"):
             old_order = vsd.order
             if old_order != order:
                 vsd.order = order
                 vsd.save()
+                at_least_one_changed = True
             order += 10
+        if at_least_one_changed:
+            self.issue.save() # force invalidation
 
 class VisualSpecIssue(BaseModel):
 
