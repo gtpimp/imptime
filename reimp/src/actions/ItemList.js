@@ -59,16 +59,19 @@ export function getDisplayMode(state, list_key) {
     return ((state.item_list || {})[list_key] || {}).display_mode
 }
 
-export function updateVisibleItemIdAbove(list_key, item_id_to_move, item_id_to_move_before) {
+export function updateVisibleItemIdAbove(list_key, item_id_to_move, item_id_to_move_after) {
     // just changes it in redux, if you want to hit the server, do that somewhere else
     return (dispatch, getState) => {
         const state = getState()
         const item_ids = getVisibleItemIds(state, list_key)
         const index_of_item_id_to_move = indexOf(item_ids, item_id_to_move)
-        const index_of_item_id_to_before = indexOf(item_ids, item_id_to_move_before)+1
-        const reordered_item_ids = move(item_ids, index_of_item_id_to_move, index_of_item_id_to_before)
+        let index_of_item_id_to_after = indexOf(item_ids, item_id_to_move_after)
+        if ( index_of_item_id_to_move > index_of_item_id_to_after ) {
+            index_of_item_id_to_after += 1
+        }
+        const reordered_item_ids = move(item_ids, index_of_item_id_to_move, index_of_item_id_to_after)
 
-        console.log("Moving " + index_of_item_id_to_move + " to " + index_of_item_id_to_before)
+        console.log("Moving " + index_of_item_id_to_move + " to " + index_of_item_id_to_after)
 
         dispatch({
             type: UPDATE_VISIBLE_ITEM_IDS,

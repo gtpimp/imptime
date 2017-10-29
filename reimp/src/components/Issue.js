@@ -306,8 +306,12 @@ class Issue extends Component {
     }
 
     render() {
-        const {is_collapsed, is_expanded} = this.props
+        const {is_collapsed, is_expanded, isDragging} = this.props
 
+        if ( isDragging ) {
+            return null
+        }
+        
         if (is_collapsed) {
             return this.render_collapsed()
         }
