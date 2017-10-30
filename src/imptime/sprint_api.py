@@ -31,7 +31,7 @@ class SprintViewSet(BaseViewSet):
             filter_args = self._set_default_filter(params.get('filter', {}))
             format_args = params.get('format', {})
 
-            sprints = self.allowed_sprints().order_by("order")
+            sprints = self.allowed_template_sprints().order_by("order")
             sprints = self.apply_filter(qs=sprints,
                                         raw_filter_args=filter_args)
             sprints = self.apply_pagination(qs=sprints,
