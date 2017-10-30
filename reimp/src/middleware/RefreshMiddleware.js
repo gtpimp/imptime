@@ -20,6 +20,7 @@ import {
 import {
     LIST_KEY__PROJECT_LIST,
     LIST_KEY__SPRINT_LIST,
+    LIST_KEY__SPRINT_TEMPLATE_LIST,
     LIST_KEY__ISSUE_LIST,
     LIST_KEY__PROJECT_USER_LIST,
     LIST_KEY__VISUAL_SPEC_DOCUMENT_ISSUE_LIST
@@ -76,10 +77,10 @@ function triggerInvalidateItemLists(d, dispatch) {
 
     } else if ( d.entity_name === 'sprint' ) {
         dispatch(invalidateList(LIST_KEY__SPRINT_LIST))
+        dispatch(invalidateList(LIST_KEY__SPRINT_TEMPLATE_LIST))
 
     } else if ( d.entity_name === 'issue' ) {
         dispatch(invalidateList(LIST_KEY__ISSUE_LIST))
-
     } else if ( d.entity_name === 'projectinvite' ) {
         dispatch(invalidateList(LIST_KEY__PROJECT_USER_LIST))
 

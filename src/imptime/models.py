@@ -2,6 +2,7 @@ from lib.models import BaseModel
 from lib.fields import UploadTo, ProtectedForeignKey
 from lib.fields import HiResImageField, LoResImageField, ThumbnailImageField
 from timepiece.models import Issue
+from timepiece.models import Project as Sprint
 from impasync.refresh_notifier import RefreshNotifier
 from django.db import models
 import logging
@@ -69,3 +70,6 @@ class VisualSpecIssue(BaseModel):
         else:
             RefreshNotifier().notify_model_update(self)
     
+class SprintTemplate(BaseModel):
+    sprint = ProtectedForeignKey(Sprint, related_name='templates')
+    clones = ProtectedForeignKey(Sprint, related_name='cloned_from_sprint_template')

@@ -18,6 +18,7 @@ class ProjectDashboardPage extends Component {
     constructor(props) {
         super(props)
         this.navigateToSprintsPage = this.navigateToSprintsPage.bind(this)
+        this.navigateToSprintTemplatesPage = this.navigateToSprintTemplatesPage.bind(this)
         this.navigateToProjectUsersPage = this.navigateToProjectUsersPage.bind(this)
         this.navigateToProjectStatementPage = this.navigateToProjectStatementPage.bind(this)
     }
@@ -49,6 +50,11 @@ class ProjectDashboardPage extends Component {
         browserHistory.push('/projects/'+project_id+'/sprints');
     }
 
+    navigateToSprintTemplatesPage() {
+        const { project_id } = this.props
+        browserHistory.push('/projects/'+project_id+'/sprintTemplates');
+    }
+
     navigateToProjectUsersPage() {
         const { project_id } = this.props
         browserHistory.push('/projects/'+project_id+'/users');
@@ -65,12 +71,13 @@ class ProjectDashboardPage extends Component {
 
         return (
             <div>
-                <button className="button button--large button--primary" onClick={this.navigateToSprintsPage}>Sprints</button>
-                <button className="button button--large button--primary" onClick={this.navigateToProjectUsersPage}>Users</button>
-                <button className="button button--large button--primary" onClick={this.navigateToProjectStatementPage}>Project Statement</button>
+              <button className="button button--large button--primary" onClick={this.navigateToSprintsPage}>Sprints</button>
+              <button className="button button--large button--primary" onClick={this.navigateToSprintTemplatesPage}>Sprint templates</button>
+              <button className="button button--large button--primary" onClick={this.navigateToProjectUsersPage}>Users</button>
+              <button className="button button--large button--primary" onClick={this.navigateToProjectStatementPage}>Project Statement</button>
 
-                <ProjectDashboard project_id={project.id} />
-                <br/>
+              <ProjectDashboard project_id={project.id} />
+              <br/>
             </div>
         )
     }

@@ -7,6 +7,7 @@ import ProjectDashboardToolbarPanel from './ProjectDashboardToolbarPanel'
 import ProjectsToolbarPanel from './ProjectsToolbarPanel'
 import SprintDashboardToolbarPanel from './SprintDashboardToolbarPanel'
 import SprintsToolbarPanel from './SprintsToolbarPanel'
+import SprintTemplatesToolbarPanel from './SprintTemplatesToolbarPanel'
 import IssueToolbarPanel from './IssueToolbarPanel'
 import IssuesToolbarPanel from './IssuesToolbarPanel'
 import ListToolbarPanel from './ListToolbarPanel'
@@ -35,6 +36,8 @@ class ToolBar extends Component {
                 return <SprintDashboardToolbarPanel key="sprint-dashboard-panel"/>
             case 'sprints':
                 return <SprintsToolbarPanel key="sprints-panel"/>
+            case 'sprint-templates':
+                return <SprintTemplatesToolbarPanel key="sprint-templates-panel"/>
             case 'cost-summary':
                 return <CostSummaryToolbarPanel key="cost-summary-panel" {...this.props}/>
             case 'project-statement':

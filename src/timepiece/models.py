@@ -813,6 +813,9 @@ class Project(models.Model):
                          ('on hold', 'on hold'),
                          ('closed', 'closed') )
 
+    PROJECT_TYPES = ( ('sprint', 'Sprint'),
+                      ('template', 'Template') )
+    
     code = models.CharField(max_length=255,blank=True,null=True)
     name = models.CharField(max_length=255, db_index=True)
     budget = models.DecimalField(max_digits=12, decimal_places=2, default=0)
@@ -828,6 +831,7 @@ class Project(models.Model):
     point_person = models.ForeignKey(User, limit_choices_to={'is_staff': True}, null=True)
     quote_uncertainty = models.FloatField(null=True, blank=True, default=0.25,
                                           verbose_name="Uncertainty overhead as a decimal between 0 and 1")
+    project_type = models.CharField(max_length=20, null=False, choices=PROJECT_TYPES, default='sprint')
     number = models.IntegerField(null=False)
     users = models.ManyToManyField(
         User,

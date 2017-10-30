@@ -17,6 +17,7 @@ import SprintCostSummaryPage from './containers/SprintCostSummaryPage'
 import SprintDashboardPage from './containers/SprintDashboardPage'
 import UserTimesheetPage from './containers/UserTimesheetPage'
 import SprintsPage from './containers/SprintsPage'
+import SprintTemplatesPage from './containers/SprintTemplatesPage'
 import VisualSpecDocumentPage from './components/visual_spec/VisualSpecDocumentPage'
 import TeamPage from './containers/TeamPage'
 import configureStore from './store/configureStore'
@@ -53,6 +54,7 @@ ReactDOM.render(
                 <Route path="projects/:projectId" component={ProjectDashboardPage}/>
                 <Route path="projects/:projectId/projectStatement" component={ProjectStatementPage}/>
                 <Route path="projects/:projectId/sprints" component={SprintsPage}/>
+                <Route path="projects/:projectId/sprintTemplates" component={SprintTemplatesPage}/>
                 <Route path="projects/:projectId/sprints/:sprintId" component={SprintDashboardPage}/>
                 <Route path="projects/:projectId/sprints/:sprintId/issues" component={IssuesPage}/>
                 <Route path="projects/:projectId/sprints/:sprintId/issues/:issueId" component={IssuesPage}/>

@@ -28,7 +28,7 @@ class SprintViewSet(BaseViewSet):
             params = request.GET.get('params', '{}')
             params = json.loads(params)
             pagination = params.get('pagination', {})
-            filter_args = params.get('filter', {})
+            filter_args = self._set_default_filter(params.get('filter', {}))
             format_args = params.get('format', {})
 
             sprints = self.allowed_sprints().order_by("order")
@@ -95,6 +95,7 @@ class SprintViewSet(BaseViewSet):
             context = {}
             params = request.data['sprint']
             project_id = params['project_id']
+            default_sprint_args = self._apply_business_project_switch(params.get('default_sprint_args', {}))
             project = Project.objects.get(pk=project_id)
             sprint_id_before = params.get('sprint_id_before', None)
             if sprint_id_before:
@@ -111,10 +112,9 @@ class SprintViewSet(BaseViewSet):
                     order=order,
                     status3=new_status,
                     code=Sprint.get_code_from_name(params['name']),
-                    name=params['name'])
+                    name=params['name'],
+                    **default_sprint_args)
                 sprint.renumber_project_order()
-                #s = SprintSerializer(sprint)
-                #sprint_data = s.data
                 context['sprint'] = {'number': sprint.number}
                 data = {'status': 'success', 'payload': context}
             else:
@@ -125,3 +125,8 @@ class SprintViewSet(BaseViewSet):
             return self.error_response(ex)
 
         return HttpResponse(JSONRenderer().render(data))
+
+    def _set_default_filter(self, filter_args):
+        if 'ids' not in filter_args:
+            filter_args.setdefault('sprint_type', 'sprint')
+        return filter_args

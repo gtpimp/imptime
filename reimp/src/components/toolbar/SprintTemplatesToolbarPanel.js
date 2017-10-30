@@ -3,8 +3,8 @@ import {connect} from 'react-redux'
 import '../../sass/toolbar-panel.css'
 import {browserHistory} from 'react-router'
 import {
-    PAGE_KEY__SPRINTS_PAGE,
-    PAGE_KEY__SPRINTS_TOOLBAR
+    PAGE_KEY__SPRINT_TEMPLATES_PAGE,
+    PAGE_KEY__SPRINT_TEMPLATES_TOOLBAR
 } from '../../actions/ItemListKeyRegistry'
 import {
     startCandidateSprint,
@@ -23,7 +23,7 @@ class SprintsToolbarPanel extends Component {
 
     constructor(props) {
         super(props)
-        this.onNewSprintClick = this.onNewSprintClick.bind(this)
+        this.onNewTemplateClick = this.onNewTemplateClick.bind(this)
         this.onDashboardClick = this.onDashboardClick.bind(this)
         this.onSprintShowClosedToggleButtonClick = this.onSprintShowClosedToggleButtonClick.bind(this)
     }
@@ -44,9 +44,9 @@ class SprintsToolbarPanel extends Component {
         }
     }
 
-    onNewSprintClick() {
+    onNewTemplateClick() {
         const { dispatch, project_id, last_selected_sprint_id } = this.props
-        dispatch(startCandidateSprint(project_id, last_selected_sprint_id))
+        dispatch(startCandidateSprint(project_id, last_selected_sprint_id, {sprint_type: 'template'}))
     }
 
     onDashboardClick() {
@@ -56,7 +56,7 @@ class SprintsToolbarPanel extends Component {
 
     onSprintShowClosedToggleButtonClick(display_all) {
         const { dispatch } = this.props
-        dispatch(set_display_all(PAGE_KEY__SPRINTS_TOOLBAR, display_all))
+        dispatch(set_display_all(PAGE_KEY__SPRINT_TEMPLATES_TOOLBAR, display_all))
     }
 
     render() {
@@ -70,16 +70,9 @@ class SprintsToolbarPanel extends Component {
                             on_label={"All"}
                             off_label={"Open"}
               />
-              <div className="button button--large button--primary" onClick={this.onNewSprintClick}>
-                + New Sprint
+              <div className="button button--large button--primary" onClick={this.onNewTemplateClick}>
+                + New Template
               </div>
-              { sprint &&
-                <div>
-                  <div className="button button--large button--primary" onClick={this.onDashboardClick}>
-                    Dashboard
-                  </div>
-                </div>
-              }
             </div>
         )
     }
@@ -87,11 +80,11 @@ class SprintsToolbarPanel extends Component {
 
 function mapStateToProps(state, props) {
 
-    const selected_sprint_ids = get_selected_sprint_ids(state, PAGE_KEY__SPRINTS_PAGE)
+    const selected_sprint_ids = get_selected_sprint_ids(state, PAGE_KEY__SPRINT_TEMPLATES_PAGE)
     const sprint = (selected_sprint_ids && selected_sprint_ids.length > 0 && getSprint(state, selected_sprint_ids[0])) || {}
-    const selected_project_ids = get_selected_project_ids(state, PAGE_KEY__SPRINTS_PAGE)
+    const selected_project_ids = get_selected_project_ids(state, PAGE_KEY__SPRINT_TEMPLATES_PAGE)
     const project = (selected_project_ids && selected_project_ids.length > 0 && getProject(state, selected_project_ids[0])) || {}
-    const display_all = get_display_all(state, PAGE_KEY__SPRINTS_TOOLBAR)
+    const display_all = get_display_all(state, PAGE_KEY__SPRINT_TEMPLATES_TOOLBAR)
 
     return {
         sprint_ids: selected_sprint_ids,

@@ -7,8 +7,8 @@ import NewSprintSidebar from '../components/NewSprintSidebar'
 import MultipleSprintSidebar from '../components/MultipleSprintSidebar'
 import {setBreadcrumbs} from '../actions/Breadcrumbs'
 import {
-    LIST_KEY__SPRINT_LIST,
-    PAGE_KEY__SPRINTS_PAGE
+    LIST_KEY__SPRINT_TEMPLATE_LIST,
+    PAGE_KEY__SPRINT_TEMPLATES_PAGE
 } from '../actions/ItemListKeyRegistry'
 import {
     selectItems,
@@ -24,7 +24,7 @@ import {
 } from '../actions/Page'
 import {getCandidateSprint} from '../actions/Sprints'
 
-class SprintsPage extends Component {
+class SprintTemplatesPage extends Component {
 
     constructor(props) {
         super(props)
@@ -32,11 +32,10 @@ class SprintsPage extends Component {
     }
 
     componentDidMount() {
-        const {dispatch, project_id, project, list_key, page_key, default_filter} = this.props
-        dispatch(set_toolbars(page_key, ['sprints']))
-        dispatch(update_list_filter(list_key, Object.assign({},
-                                                            default_filter,
-                                                            {project_id: project.id})))
+        const {dispatch, project_id, project, list_key, page_key} = this.props
+        dispatch(set_toolbars(page_key, ['sprint-templates']))
+        dispatch(update_list_filter(list_key, {project_id: project.id || -1,
+                                               sprint_type:'template'}))
         dispatch(ensureProjectsLoaded([project_id]))
         this.refresh(project)
     }
@@ -56,12 +55,13 @@ class SprintsPage extends Component {
         if (project.id) {
             dispatch(update_list_filter(list_key, Object.assign({},
                                                                 default_filter,
-                                                                {project_id: project.id})))
+                                                                {project_id: project.id,
+                                                                 sprint_type:'template'})))
             dispatch(select_projects(page_key, [project.id]))
             dispatch(invalidateList(list_key))
             dispatch(setBreadcrumbs([{to: '/projects', label: 'All Projects'},
-                {to: '/projects/' + project.id, label: project.name},
-                {to: '/projects/' + project.id + '/sprints', label: 'All Sprints'}]))
+                                     {to: '/projects/' + project.id, label: project.name},
+                                     {to: '/projects/' + project.id + '/sprints', label: 'All Sprints'}]))
         }
     }
 
@@ -83,27 +83,27 @@ class SprintsPage extends Component {
 
         return (
             <div className="list-layout">
-                <div className="list-layout__list">
-                    <SprintList list_key={list_key}
-                                project_id={project_id}
-                                onSelectSprints={this.onSelectSprints}
-                    />
+              <div className="list-layout__list">
+                <SprintList list_key={list_key}
+                            project_id={project_id}
+                            onSelectSprints={this.onSelectSprints}
+                />
+              </div>
+              { is_creating_sprint &&
+                <div className="list-layout__sidebar">
+                  <NewSprintSidebar />
                 </div>
-                { is_creating_sprint &&
-                  <div className="list-layout__sidebar">
-                      <NewSprintSidebar />
-                  </div>
-                }
+              }
                 { ! is_creating_sprint && is_single_selection && project_id && selected_sprint &&
                   <div className="list-layout__sidebar">
-                      <SprintSidebar sprint_id={selected_sprint.id} project_id={project_id}/>
+                    <SprintSidebar sprint_id={selected_sprint.id} project_id={project_id}/>
                   </div>
                 }
-                { ! is_creating_sprint && is_multiple_selection && project_id && selected_sprint_ids &&
-                  <div className="list-layout__sidebar">
+                  { ! is_creating_sprint && is_multiple_selection && project_id && selected_sprint_ids &&
+                    <div className="list-layout__sidebar">
                       <MultipleSprintSidebar sprint_ids={selected_sprint_ids} project_id={project_id}/>
-                  </div>
-                }                  
+                    </div>
+                  }                  
             </div>
         )
     }
@@ -112,8 +112,8 @@ class SprintsPage extends Component {
 function mapStateToProps(state, props) {
     const {sprint} = state
     const default_filter = props.default_filter || {}
-    let list_key = props.list_key || LIST_KEY__SPRINT_LIST
-    let page_key = props.page_key || PAGE_KEY__SPRINTS_PAGE
+    let list_key = props.list_key || LIST_KEY__SPRINT_TEMPLATE_LIST
+    let page_key = props.page_key || PAGE_KEY__SPRINT_TEMPLATES_PAGE
     const items_by_id = (sprint && sprint.items_by_id) || {}
     const selected_sprint_ids = get_selected_sprint_ids(state, page_key)
     
@@ -141,4 +141,4 @@ function mapStateToProps(state, props) {
     }
 }
 
-export default connect(mapStateToProps)(SprintsPage)
+export default connect(mapStateToProps)(SprintTemplatesPage)

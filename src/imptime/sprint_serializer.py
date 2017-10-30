@@ -17,6 +17,7 @@ class SprintSerializer(BaseSerializer):
     last_entry = ClockEntrySerializer()
     created = serializers.DateTimeField()
     num_issues = serializers.IntegerField()
+    sprint_type = serializers.CharField(source="project_type")
 
     def to_representation(self, sprint, *args, **kwargs):
         sprint.status_name = sprint.status3 and sprint.status3.name
