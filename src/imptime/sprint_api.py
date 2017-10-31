@@ -10,6 +10,7 @@ from rest_framework.decorators import permission_classes
 from timepiece.models import Project as Sprint
 from timepiece.models import Business as Project
 from timepiece.models import ProjectStatus as SprintStatus
+from rest_framework.decorators import detail_route
 
 logger = logging.getLogger(__name__)
 
@@ -126,7 +127,34 @@ class SprintViewSet(BaseViewSet):
 
         return HttpResponse(JSONRenderer().render(data))
 
+    @detail_route(methods=['POST'])
+    def clone(self, request, pk):
+        try:
+            context = {}
+            sprint_id = pk
+            if not self.logged_in_permissions(project).has_create_sprint:
+                raise Exception("No permission to create a sprint")
+
+            original_sprint = self.allowed_sprint(sprint_id)
+
+            new_status = SprintStatus.objects.get_or_create(business_id=project_id, name='pending')[0]
+            new_name = original_sprint.name + " " + timezone.now().format('DD-MMM-YYYY')
+            sprint_clone = Sprint.objects.create(
+                business=original_sprint.project, #sic
+                name=new_name,
+                order=999,
+                status3=new_status,
+                code=Sprint.get_code_from_name(new_name))
+            
+            return HttpResponse(JSONRenderer().render(data))
+        except Exception, ex:
+            logger.exception(ex)
+            return self.error_response(ex)
+
+        
     def _set_default_filter(self, filter_args):
         if 'ids' not in filter_args:
             filter_args.setdefault('sprint_type', 'sprint')
         return filter_args
+
+    

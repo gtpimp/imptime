@@ -67,12 +67,8 @@ class SprintsPage extends Component {
 
     onSelectSprints(sprint_ids) {
         const {dispatch, project_id, list_key, page_key} = this.props
-        if ( sprint_ids && sprint_ids.length === 1 ) {
-            browserHistory.push('/projects/'+project_id+'/sprints/'+sprint_ids[0]);
-        } else {
-            dispatch(selectItems(list_key, sprint_ids))
-            dispatch(select_sprints(page_key, sprint_ids))
-        }
+        dispatch(selectItems(list_key, sprint_ids))
+        dispatch(select_sprints(page_key, sprint_ids))
     }
 
     render() {

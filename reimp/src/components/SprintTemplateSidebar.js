@@ -6,16 +6,17 @@ import PropertyStackComponent from '../components/PropertyStackComponent'
 import Timestamp from '../components/Timestamp'
 import moment from 'moment'
 import {ensureProjectsLoaded, getProject} from '../actions/Projects'
-import {ensureSprintsLoaded, getSprint} from '../actions/Sprints'
+import {ensureSprintsLoaded, getSprint, cloneTemplateSprint} from '../actions/Sprints'
 import EditableSprintName from '../components/EditableSprintName'
 import EditableSprintStatus from '../components/EditableSprintStatus'
 
-class SprintSidebar extends Component {
+class SprintTemplateSidebar extends Component {
 
     constructor(props) {
         super(props)
         this.navigateToIssuesPage = this.navigateToIssuesPage.bind(this)
         this.navigateToDashboardPage = this.navigateToDashboardPage.bind(this)
+        this.cloneSprint = this.cloneSprint.bind(this)
     }
 
     componentDidMount() {
@@ -49,6 +50,11 @@ class SprintSidebar extends Component {
         browserHistory.push('/projects/'+project_id+'/sprints/'+sprint_id);
     }
 
+    cloneSprint() {
+        const { dispatch, sprint_id } = this.props
+        dispatch(cloneTemplateSprint(sprint_id))
+    }             
+
     render() {
 
         const { sprint_id, sprint, project } = this.props
@@ -66,6 +72,11 @@ class SprintSidebar extends Component {
                         <div className="property-text">
                             <button className="button button--large button--primary" onClick={this.navigateToDashboardPage}>
                                 Dashboard
+                            </button>
+                        </div>
+                        <div className="property-text">
+                            <button className="button button--large button--primary" onClick={this.cloneSprint}>
+                                Clone now
                             </button>
                         </div>
                     </PropertyStackComponent>
@@ -91,18 +102,6 @@ class SprintSidebar extends Component {
                             <div className="named-property__value"><Timestamp format="short-date" value={moment(sprint.created)}/></div>
                         </div>
                     </PropertyStackComponent>
-                    <PropertyStackComponent>
-                        <div className="named-property">
-                            <div className="named-property__name">First Activity</div>
-                            <div className="named-property__value"><Timestamp format="short-date" value={sprint.first_entry && moment(sprint.first_entry.start_time)}/></div>
-                        </div>
-                    </PropertyStackComponent>
-                    <PropertyStackComponent>
-                        <div className="named-property">
-                            <div className="named-property__name">Last Activity</div>
-                            <div className="named-property__value"><Timestamp format="short-date" value={sprint.last_entry && moment(sprint.last_entry.end_time)}/></div>
-                        </div>
-                    </PropertyStackComponent>
                 </PropertyStack>
             </div>
         )
@@ -121,5 +120,5 @@ function mapStateToProps(state, props) {
     }
 }
 
-export default connect(mapStateToProps)(SprintSidebar)
+export default connect(mapStateToProps)(SprintTemplateSidebar)
 

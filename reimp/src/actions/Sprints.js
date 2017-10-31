@@ -22,6 +22,10 @@ export const ANNOUNCE_SAVED_NEW_SPRINT = 'ANNOUNCE_SAVED_NEW_SPRINT'
 export const ANNOUNCE_SAVING_NEW_SPRINT_FAILED = 'ANNOUNCE_SAVING_NEW_SPRINT_FAILED'
 export const DISPLAY_ALL_MODE = 'DISPLAY_ALL_MODE'
 
+export const ANNOUNCE_CLONING_SPRINT = 'ANNOUNCE_CLONING_SPRINT'
+export const ANNOUNCE_CLONED_SPRINT = 'ANNOUNCE_CLONED_SPRINT'
+export const ANNOUNCE_CLONED_SPRINT_FAILED = 'ANNOUNCE_CLONED_SPRINT_FAILED'
+
 export function invalidateAllSprints() {
     return {
         type: INVALIDATE_ALL_SPRINTS
@@ -272,6 +276,51 @@ function updateSprint(sprint_ids, field_name, new_value, on_done) {
 	 .catch(function (error) {
              console.log('Request failed', error);
 	     dispatch(announceSprintSaveFailed(error))
+	 })
+    }
+}
+
+export function announceCloningSprint(sprint_id) {
+    return {
+        key: ANNOUNCE_CLONING_SPRINT,
+        sprint_id: sprint_id
+    }
+}
+
+export function announceClonedSprint(sprint_id, payload) {
+    return {
+        key: ANNOUNCE_CLONED_SPRINT,
+        sprint_id: sprint_id,
+        payload: payload
+    }
+}
+
+export function cloneTemplateSprint(sprint_id) {
+
+    return (dispatch, getState) => {
+	const state = getState()
+	dispatch(announceCloningSprint(sprint_id))
+	let data = {}
+
+	return impfetch(state, "imp/sprint/clone/" + sprint_id, dispatch,
+			{method: "POST",
+			 credentials: 'same-origin',
+			 data: data,
+			 headers: {"Content-type": "application/json; charset=UTF-8"},
+			 body: JSON.stringify(data)}
+	).then(response => response.json())
+	 .then(json => {
+             if ( json.status !== 'success' ) {
+		 console.log('Request failed with JSON response', json);
+		 dispatch(announceCloneSprintFailed(json.error))
+             } else {
+		 console.log('Request succeeded with JSON response', json);
+		 dispatch(announceClonedSprint(sprint_id, json.payload.sprint))
+             }
+	 })
+	 .catch(function (error) {
+             console.log('Request failed', error);
+	     dispatch(announceCloneSprintFailed(error))
 	 })
     }
 }

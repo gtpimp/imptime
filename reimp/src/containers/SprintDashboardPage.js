@@ -74,27 +74,19 @@ class ProjectDashboardPage extends Component {
         return (
             <div>
               Sprint {sprint.name}
-
-              <pre>
-                I am your sprint dashboard
-              </pre>
-              <div>
-                <button onClick={this.navigateToIssuesPage}>Take me to your issues</button>
-                { has_view_ctc_billable_rates_permission &&
-                  <div>
-                    <button onClick={this.navigateToCostSummaryPage}>Cost Summary</button>
-                  </div>
-                }
-              </div>
-              <div>
+              <button className="button button--large button--primary" onClick={this.navigateToIssuesPage}>
+                Issues
+              </button>
+              { has_view_ctc_billable_rates_permission &&
                 <div>
-
+                  <button className="button button--large button--primary" onClick={this.navigateToCostSummaryPage}>
+                    Cost Summary
+                  </button>
                 </div>
-                <PropertyStackComponent className="property-stack-component__small">
-                  <EditableSprintName sprint_id={sprint_id}/>
-                </PropertyStackComponent>
-              </div>
-              {this.renderSprintName}
+              }
+              <PropertyStackComponent className="property-stack-component__small">
+              <EditableSprintName sprint_id={sprint_id}/>
+              </PropertyStackComponent>
             </div>
         )
     }
