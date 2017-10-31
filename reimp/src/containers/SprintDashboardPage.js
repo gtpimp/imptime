@@ -66,7 +66,6 @@ class ProjectDashboardPage extends Component {
         browserHistory.push('/projects/'+project_id+'/sprints/'+sprint_id+'/costSummary');
     }
 
-
     render() {
 
         const { sprint, sprint_id, has_view_ctc_billable_rates_permission } = this.props

@@ -11,6 +11,7 @@ from rest_framework.decorators import permission_classes
 from timepiece.models import Project as Sprint
 from timepiece.models import Business as Project
 from timepiece.models import ProjectStatus as SprintStatus
+from timepiece.models import Issue
 from rest_framework.decorators import detail_route
 
 logger = logging.getLogger(__name__)
@@ -147,6 +148,36 @@ class SprintViewSet(BaseViewSet):
                 project_type='sprint', #sic
                 code=Sprint.get_code_from_name(new_name))
 
+            mapped_issues = {}
+            for template_issue in template_sprint.issues.all().order_by("order"):
+                new_issue = Issue.objects.create(
+                    status = template_issue.status,
+                    status2 = template_issue.status2,
+                    number = template_issue.number,
+                    project = sprint_clone, #sic
+                    subject = template_issue.subject,
+                    description = template_issue.description,
+                    story_points = template_issue.story_points,
+                    order = template_issue.order,
+                    order2 = template_issue.order2,
+                    feature = template_issue.feature,
+                    assigned_to = template_issue.assigned_to,
+                    created = timezone.now(),
+                    modified = timezone.now(),
+                    auto_created_during_import = False,
+                    adhoc = template_issue.adhoc,
+                    fixed_amount = template_issue.fixed_amount,
+                    fixed_ctc_amount = template_issue.fixed_ctc_amount,
+                    can_group_issues = template_issue.can_group_issues)
+                mapped_issues[template_issue] = new_issue
+                
+                for template_issue in mapped_issues.keys():
+                    if template_issue.parent_group:
+                        new_issue.parent_group = mapped_issues[template_issue.parent_group]
+                        new_issue.save()
+                    if template_issue.tags:
+                        new_issue.tags.set(template_issue.tags.all())
+            
             data = {
                 'status': 'success',
                 'payload': { 'new_sprint_id': sprint_clone.id }

@@ -70,11 +70,19 @@ class IssuesPage extends Component {
                 dispatch(select_issues(PAGE_KEY__ISSUES_PAGE, [default_issue_id]))
             }
 
-            dispatch(setBreadcrumbs([ {to: '/projects', label: 'All Projects'},
-                                      {to: '/projects/'+project.id, label: project.name},
-                                      {to: '/projects/'+project.id+'/sprints', label: 'All Sprints'},
-                                      {to: '/projects/'+project.id+'/sprints/'+sprint.id, label: sprint.name},
-                                      {to: '/projects/'+project.id+'/sprints/'+sprint.id+'/issues', label: 'All Issues'}]))
+            if ( sprint.sprint_type == 'sprint' ) {
+                dispatch(setBreadcrumbs([ {to: '/projects', label: 'All Projects'},
+                                          {to: '/projects/'+project.id, label: project.name},
+                                          {to: '/projects/'+project.id+'/sprints', label: 'All Sprints'},
+                                          {to: '/projects/'+project.id+'/sprints/'+sprint.id, label: sprint.name},
+                                          {to: '/projects/'+project.id+'/sprints/'+sprint.id+'/issues', label: 'All Issues'}]))
+            } else if ( sprint.sprint_type == 'template' ) {
+                dispatch(setBreadcrumbs([ {to: '/projects', label: 'All Projects'},
+                                          {to: '/projects/'+project.id, label: project.name},
+                                          {to: '/projects/'+project.id+'/sprintTemplates', label: 'All Templates'},
+                                          {to: '/projects/'+project.id+'/sprintTemplates/'+sprint.id, label: sprint.name},
+                                          {to: '/projects/'+project.id+'/sprintTemplates/'+sprint.id+'/issues', label: 'All Issues'}]))
+            }
 
         }
     }
