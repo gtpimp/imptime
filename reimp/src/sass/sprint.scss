@@ -1,6 +1,7 @@
 @import 'variables.scss';
 
 .sprint {
+    box-shadow: inset 0 -1px 0 0 #E0E0E0, 0 0 5px 0 rgba(0,0,0,0.16);
 }
 
 .sprint--unselected {
@@ -14,4 +15,12 @@
 
 .sprint_link {
     cursor: pointer;
+}
+
+.sprint__type-sprint {
+    
+}
+
+.sprint__is_clone {
+    background-color: $color-34;
 }

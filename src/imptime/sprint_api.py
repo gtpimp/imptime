@@ -12,6 +12,7 @@ from timepiece.models import Project as Sprint
 from timepiece.models import Business as Project
 from timepiece.models import ProjectStatus as SprintStatus
 from timepiece.models import Issue
+from imptime.models import SprintTemplate
 from rest_framework.decorators import detail_route
 
 logger = logging.getLogger(__name__)
@@ -97,7 +98,8 @@ class SprintViewSet(BaseViewSet):
             context = {}
             params = request.data['sprint']
             project_id = params['project_id']
-            default_sprint_args = self._apply_business_project_switch(params.get('default_sprint_args', {}))
+            default_sprint_args = params.get('default_sprint_args', {})
+            fixed_default_sprint_args = self._apply_business_project_switch(default_sprint_args)
             project = Project.objects.get(pk=project_id)
             sprint_id_before = params.get('sprint_id_before', None)
             if sprint_id_before:
@@ -115,8 +117,13 @@ class SprintViewSet(BaseViewSet):
                     status3=new_status,
                     code=Sprint.get_code_from_name(params['name']),
                     name=params['name'],
-                    **default_sprint_args)
+                    **fixed_default_sprint_args)
                 sprint.renumber_project_order()
+
+                if default_sprint_args.get('sprint_type', None) == 'template':
+                    sprint_template = SprintTemplate.objects.create(sprint=sprint)
+                    context['sprint_template_id'] = sprint_template.id
+                
                 context['sprint'] = {'number': sprint.number}
                 data = {'status': 'success', 'payload': context}
             else:
@@ -148,6 +155,10 @@ class SprintViewSet(BaseViewSet):
                 project_type='sprint', #sic
                 code=Sprint.get_code_from_name(new_name))
 
+            sprint_template = template_sprint.templates.all().first()
+            sprint_template.clones.add(sprint_clone)
+            sprint_template.save()
+
             mapped_issues = {}
             for template_issue in template_sprint.issues.all().order_by("order"):
                 new_issue = Issue.objects.create(
@@ -177,7 +188,9 @@ class SprintViewSet(BaseViewSet):
                         new_issue.save()
                     if template_issue.tags:
                         new_issue.tags.set(template_issue.tags.all())
-            
+
+            template_sprint.save()
+                        
             data = {
                 'status': 'success',
                 'payload': { 'new_sprint_id': sprint_clone.id }

@@ -9,6 +9,7 @@ import {ensureProjectsLoaded, getProject} from '../actions/Projects'
 import {ensureSprintsLoaded, getSprint} from '../actions/Sprints'
 import EditableSprintName from '../components/EditableSprintName'
 import EditableSprintStatus from '../components/EditableSprintStatus'
+import SprintName from './SprintName'
 
 class SprintSidebar extends Component {
 
@@ -68,6 +69,12 @@ class SprintSidebar extends Component {
                                 Dashboard
                             </button>
                         </div>
+                        { sprint.sprint_template_id &&
+                          <div className="property-text">
+                            Cloned from <SprintName sprint_id={sprint.sprint_template_id} />
+                          </div>
+                        }
+                        
                     </PropertyStackComponent>
                     <PropertyStackComponent>
                         <div className="property--title">

@@ -71,5 +71,5 @@ class VisualSpecIssue(BaseModel):
             RefreshNotifier().notify_model_update(self)
     
 class SprintTemplate(BaseModel):
-    sprint = ProtectedForeignKey(Sprint, related_name='templates')
-    clones = ProtectedForeignKey(Sprint, related_name='cloned_from_sprint_template')
+    sprint = ProtectedForeignKey(Sprint, related_name='templates', null=False)
+    clones = models.ManyToManyField(Sprint, related_name='parent_sprint_templates')

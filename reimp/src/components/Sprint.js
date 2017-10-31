@@ -41,10 +41,11 @@ class Sprint extends Component {
             return connectDragSource(connectDropTarget(
 		            <tr key={this.key+"."+sprint.id}
 		                onClick={onClickedSprint}
-		                className={classNames('sprint', {//'tr--selected': is_selected,
-                                                                 'tr--drop-target': isOver,
-                                                                 'list-table__row--unselected': !is_selected,
-                                                                 'list-table__row--selected': is_selected})}
+		                className={classNames('sprint', 'sprint__type-'+sprint.sprint_type,
+                                                      {'tr--drop-target': isOver,
+                                                       'sprint__is_clone': sprint.sprint_template_id,
+                                                       'list-table__row--unselected': !is_selected,
+                                                       'list-table__row--selected': is_selected})}
 		            >
 		              <td className="list-table__cell">{sprint.number}</td>
 		              <td className="list-table__cell">{sprint.name}</td>

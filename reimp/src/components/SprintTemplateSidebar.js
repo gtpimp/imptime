@@ -1,5 +1,6 @@
 import React, {Component} from 'react'
 import {connect} from 'react-redux'
+import { map } from 'lodash'
 import {browserHistory} from 'react-router'
 import PropertyStack from '../components/PropertyStack'
 import PropertyStackComponent from '../components/PropertyStackComponent'
@@ -9,6 +10,8 @@ import {ensureProjectsLoaded, getProject} from '../actions/Projects'
 import {ensureSprintsLoaded, getSprint, cloneTemplateSprint} from '../actions/Sprints'
 import EditableSprintName from '../components/EditableSprintName'
 import EditableSprintStatus from '../components/EditableSprintStatus'
+import SprintName from './SprintName'
+
 
 class SprintTemplateSidebar extends Component {
 
@@ -83,6 +86,14 @@ class SprintTemplateSidebar extends Component {
                             </button>
                         </div>
                     </PropertyStackComponent>
+                    { sprint.sprint_clone_ids &&
+                      <PropertyStackComponent>
+                        <div>
+                          Clones of this template:
+                          { map(sprint.sprint_clone_ids, (sprint_clone_id) => <SprintName sprint_id={sprint_clone_id} />)}
+                        </div>
+                      </PropertyStackComponent>
+                    }
                     <PropertyStackComponent>
                         <div className="property--title">
                             <EditableSprintName sprint_id={sprint_id} />
