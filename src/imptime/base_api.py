@@ -24,16 +24,8 @@ class PermissionHelper():
     def allowed_sprints(self, user):
         return Sprint.objects.all()\
           .filter_by_logged_in_user(user)\
-          .filter(project_type='sprint')\
           .distinct()
 
-    @classmethod
-    def allowed_template_sprints(self, user):
-        return Sprint.objects.all()\
-          .filter_by_logged_in_user(user)\
-          .filter(project_type='template')\
-          .distinct()
-    
     @classmethod
     def allowed_projects(self, user):
         return Project.objects.all()\
@@ -133,9 +125,6 @@ class BaseViewSet(viewsets.ViewSet):
     def allowed_sprint(self, pk):
         return self.allowed_sprints().get(pk=pk)
 
-    def allowed_template_sprints(self, pk):
-        return self.allowed_template_sprints().get(pk=pk)
-    
     def allowed_issues(self):
         return PermissionHelper.allowed_issues(self.request.user)
 

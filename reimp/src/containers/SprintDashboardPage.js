@@ -73,7 +73,6 @@ class ProjectDashboardPage extends Component {
 
         return (
             <div>
-              Sprint {sprint.name}
               <button className="button button--large button--primary" onClick={this.navigateToIssuesPage}>
                 Issues
               </button>

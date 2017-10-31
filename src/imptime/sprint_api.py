@@ -5,6 +5,7 @@ from django.http import HttpResponse
 from base_api import BaseViewSet
 from django.db.models import Prefetch, Count, Sum
 import json
+from django.utils import timezone
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.decorators import permission_classes
 from timepiece.models import Project as Sprint
@@ -32,7 +33,7 @@ class SprintViewSet(BaseViewSet):
             filter_args = self._set_default_filter(params.get('filter', {}))
             format_args = params.get('format', {})
 
-            sprints = self.allowed_template_sprints().order_by("order")
+            sprints = self.allowed_sprints().order_by("order")
             sprints = self.apply_filter(qs=sprints,
                                         raw_filter_args=filter_args)
             sprints = self.apply_pagination(qs=sprints,
@@ -77,7 +78,6 @@ class SprintViewSet(BaseViewSet):
                         sprint.status3_id = new_status.id
                 elif field_name == 'sprint_id_after':
                     if self.logged_in_permissions(sprint.business).has_edit_sprint:
-                        old_order = sprint.order
                         after_sprint = self.allowed_sprint(new_value)
                         sprint.move_after(after_sprint)
                 else:
@@ -130,21 +130,27 @@ class SprintViewSet(BaseViewSet):
     @detail_route(methods=['POST'])
     def clone(self, request, pk):
         try:
-            context = {}
-            sprint_id = pk
+            template_sprint_id = pk
+            template_sprint = self.allowed_sprints().get(pk=template_sprint_id)
+            project = template_sprint.business # sic
             if not self.logged_in_permissions(project).has_create_sprint:
                 raise Exception("No permission to create a sprint")
 
-            original_sprint = self.allowed_sprint(sprint_id)
 
-            new_status = SprintStatus.objects.get_or_create(business_id=project_id, name='pending')[0]
-            new_name = original_sprint.name + " " + timezone.now().format('DD-MMM-YYYY')
+            new_status = SprintStatus.objects.get_or_create(business_id=project.id, name='pending')[0]
+            new_name = template_sprint.name + " " + timezone.now().strftime('%d %B %Y')
             sprint_clone = Sprint.objects.create(
-                business=original_sprint.project, #sic
+                business=template_sprint.business, #sic
                 name=new_name,
                 order=999,
                 status3=new_status,
+                project_type='sprint', #sic
                 code=Sprint.get_code_from_name(new_name))
+
+            data = {
+                'status': 'success',
+                'payload': { 'new_sprint_id': sprint_clone.id }
+            }
             
             return HttpResponse(JSONRenderer().render(data))
         except Exception, ex:
@@ -153,7 +159,7 @@ class SprintViewSet(BaseViewSet):
 
         
     def _set_default_filter(self, filter_args):
-        if 'ids' not in filter_args:
+        if 'ids' not in filter_args and 'sprint_type' not in filter_args:
             filter_args.setdefault('sprint_type', 'sprint')
         return filter_args
 

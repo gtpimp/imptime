@@ -24,7 +24,7 @@ export const DISPLAY_ALL_MODE = 'DISPLAY_ALL_MODE'
 
 export const ANNOUNCE_CLONING_SPRINT = 'ANNOUNCE_CLONING_SPRINT'
 export const ANNOUNCE_CLONED_SPRINT = 'ANNOUNCE_CLONED_SPRINT'
-export const ANNOUNCE_CLONED_SPRINT_FAILED = 'ANNOUNCE_CLONED_SPRINT_FAILED'
+export const ANNOUNCE_CLONE_SPRINT_FAILED = 'ANNOUNCE_CLONE_SPRINT_FAILED'
 
 export function invalidateAllSprints() {
     return {
@@ -156,7 +156,7 @@ export function set_display_all(page_key, display_all) {
 
     return {
         type: DISPLAY_ALL_MODE,
-        page_key: page_key,
+        page_type: page_key,
         display_all: display_all
     }
 }
@@ -280,29 +280,36 @@ function updateSprint(sprint_ids, field_name, new_value, on_done) {
     }
 }
 
+export function announceCloneSprintFailed(sprint_id) {
+    return {
+        type: ANNOUNCE_CLONE_SPRINT_FAILED,
+        sprint_id: sprint_id
+    }
+}
+
 export function announceCloningSprint(sprint_id) {
     return {
-        key: ANNOUNCE_CLONING_SPRINT,
+        type: ANNOUNCE_CLONING_SPRINT,
         sprint_id: sprint_id
     }
 }
 
 export function announceClonedSprint(sprint_id, payload) {
     return {
-        key: ANNOUNCE_CLONED_SPRINT,
+        type: ANNOUNCE_CLONED_SPRINT,
         sprint_id: sprint_id,
-        payload: payload
+        new_sprint_id: payload.new_sprint_id
     }
 }
 
-export function cloneTemplateSprint(sprint_id) {
+export function cloneTemplateSprint(sprint_id, onDone) {
 
     return (dispatch, getState) => {
 	const state = getState()
 	dispatch(announceCloningSprint(sprint_id))
 	let data = {}
 
-	return impfetch(state, "imp/sprint/clone/" + sprint_id, dispatch,
+	return impfetch(state, "imp/sprint/" + sprint_id + "/clone/", dispatch,
 			{method: "POST",
 			 credentials: 'same-origin',
 			 data: data,
@@ -315,7 +322,10 @@ export function cloneTemplateSprint(sprint_id) {
 		 dispatch(announceCloneSprintFailed(json.error))
              } else {
 		 console.log('Request succeeded with JSON response', json);
-		 dispatch(announceClonedSprint(sprint_id, json.payload.sprint))
+		 dispatch(announceClonedSprint(sprint_id, json.payload))
+                 if ( onDone ) {
+                     onDone(json.payload.new_sprint_id)
+                 }
              }
 	 })
 	 .catch(function (error) {

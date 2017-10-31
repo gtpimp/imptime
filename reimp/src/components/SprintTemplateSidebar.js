@@ -51,8 +51,11 @@ class SprintTemplateSidebar extends Component {
     }
 
     cloneSprint() {
-        const { dispatch, sprint_id } = this.props
-        dispatch(cloneTemplateSprint(sprint_id))
+        const { dispatch, project_id, sprint_id } = this.props
+        const onDone = function(new_sprint_id) {
+            browserHistory.push('/projects/'+project_id+'/sprints/'+new_sprint_id);
+        }
+        dispatch(cloneTemplateSprint(sprint_id, onDone))
     }             
 
     render() {

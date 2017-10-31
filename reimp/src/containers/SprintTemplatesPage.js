@@ -2,7 +2,7 @@ import React, {Component} from 'react'
 import {connect} from 'react-redux'
 import {browserHistory} from 'react-router'
 import SprintList from '../components/SprintList'
-import SprintTemplateSidebar from '../components/SprintSidebar'
+import SprintTemplateSidebar from '../components/SprintTemplateSidebar'
 import NewSprintSidebar from '../components/NewSprintSidebar'
 import MultipleSprintSidebar from '../components/MultipleSprintSidebar'
 import {setBreadcrumbs} from '../actions/Breadcrumbs'
@@ -61,7 +61,7 @@ class SprintTemplatesPage extends Component {
             dispatch(invalidateList(list_key))
             dispatch(setBreadcrumbs([{to: '/projects', label: 'All Projects'},
                                      {to: '/projects/' + project.id, label: project.name},
-                                     {to: '/projects/' + project.id + '/sprints', label: 'All Sprints'}]))
+                                     {to: '/projects/' + project.id + '/sprintTemplates', label: 'All Templates'}]))
         }
     }
 
@@ -90,16 +90,16 @@ class SprintTemplatesPage extends Component {
                   <NewSprintSidebar />
                 </div>
               }
-                { ! is_creating_sprint && is_single_selection && project_id && selected_sprint &&
-                  <div className="list-layout__sidebar">
-                    <SprintTemplateSidebar sprint_id={selected_sprint.id} project_id={project_id}/>
-                  </div>
-                }
-                { ! is_creating_sprint && is_multiple_selection && project_id && selected_sprint_ids &&
-                  <div className="list-layout__sidebar">
-                    <MultipleSprintSidebar sprint_ids={selected_sprint_ids} project_id={project_id}/>
-                  </div>
-                }                  
+              { ! is_creating_sprint && is_single_selection && project_id && selected_sprint &&
+                <div className="list-layout__sidebar">
+                  <SprintTemplateSidebar sprint_id={selected_sprint.id} project_id={project_id}/>
+                </div>
+              }
+              { ! is_creating_sprint && is_multiple_selection && project_id && selected_sprint_ids &&
+                <div className="list-layout__sidebar">
+                  <MultipleSprintSidebar sprint_ids={selected_sprint_ids} project_id={project_id}/>
+                </div>
+              }                  
             </div>
         )
     }
