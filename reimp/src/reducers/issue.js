@@ -101,9 +101,11 @@ export default function issue(state = initialState, action) {
 				 })
 	case ANNOUNCE_CAPTURING_NEW_ISSUE:
             return Object.assign({}, state,
-				 { candidate_issue: {
-				     issue_id_before: action.issue_id_before,
-				     sprint_id: action.sprint_id}
+				 { candidate_issue: Object.assign(
+                                     {},
+                                     {issue_id_before: action.issue_id_before,
+				      sprint_id: action.sprint_id},
+                                     action.additional_props || {})
 				 })
 	case UPDATE_NEW_ISSUE_DETAILS:
 	    return Object.assign(

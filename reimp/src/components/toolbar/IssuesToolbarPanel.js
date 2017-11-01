@@ -4,6 +4,7 @@ import '../../sass/toolbar-panel.css'
 import {browserHistory} from 'react-router'
 import {
     startCandidateIssue,
+    startCandidateFeature,
     ensureIssuesLoaded,
     getIssue
 } from '../../actions/Issues'
@@ -24,6 +25,7 @@ class IssuesToolbarPanel extends Component {
     constructor(props) {
         super(props)
         this.onNewIssueClick = this.onNewIssueClick.bind(this)
+        this.onNewFeatureClick = this.onNewFeatureClick.bind(this)
         this.onDashboardClick = this.onDashboardClick.bind(this)
         this.onIssueWideViewToggleButtonClick = this.onIssueWideViewToggleButtonClick.bind(this)
     }
@@ -46,6 +48,11 @@ class IssuesToolbarPanel extends Component {
         const { dispatch, last_selected_issue_id, sprint_id } = this.props
         dispatch(startCandidateIssue(sprint_id, last_selected_issue_id))
     }
+    
+    onNewFeatureClick() {
+        const { dispatch, last_selected_issue_id, sprint_id } = this.props
+        dispatch(startCandidateFeature(sprint_id, last_selected_issue_id))
+    }
 
     onDashboardClick() {
         const { project_id, sprint_id } = this.props
@@ -67,6 +74,7 @@ class IssuesToolbarPanel extends Component {
                             off_label={"Narrow"}
               />
               <div className="button toolbar-button--small button--large button--primary" onClick={this.onNewIssueClick}>+ New Issue</div>
+              <div className="button toolbar-button--small button--large button--primary" onClick={this.onNewFeatureClick}>+ New Feature</div>
               <div className="button toolbar-button--large button--large button--primary" onClick={this.onDashboardClick}>+ Dashboard</div>
             </div>
         )

@@ -300,6 +300,8 @@ export function announceClonedSprint(sprint_id, payload) {
         type: ANNOUNCE_CLONED_SPRINT,
         sprint_id: sprint_id,
         new_sprint_id: payload.new_sprint_id
+    }
+}
 
 export function cloneTemplateSprint(sprint_id, onDone) {
 

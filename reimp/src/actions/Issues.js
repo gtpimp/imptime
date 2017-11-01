@@ -687,6 +687,18 @@ export function startCandidateIssue(sprint_id, issue_id_before) {
     }
 }
 
+export function startCandidateFeature(sprint_id, issue_id_before) {
+    return (dispatch, getState) => {
+	const state = getState()
+	dispatch({
+	    type: ANNOUNCE_CAPTURING_NEW_ISSUE,
+	    issue_id_before: issue_id_before,
+	    sprint_id: sprint_id,
+            additional_props: { can_group_issues: true }
+	})
+    }
+}
+
 export function updateCandidateSubject(subject) {
     return {
 	      type: UPDATE_NEW_ISSUE_DETAILS,

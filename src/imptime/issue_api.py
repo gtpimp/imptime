@@ -220,7 +220,8 @@ class IssueViewSet(BaseViewSet):
                         project=sprint,   # sic
                         order=order,
                         number=Issue.get_next_issue_number(sprint.business),
-                        subject=params['subject'])
+                        subject=params['subject'],
+                        can_group_issues=params.get('can_group_issues', False)) 
                 issue.renumber_issue_order()
                 IssueHistory.add_history(self.request.user, issue,
                                              "created", "", issue.number)
