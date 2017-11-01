@@ -246,6 +246,12 @@ class Business(models.Model):
                 users = User.objects.none()
         return users
 
+    def create_default_statuses(self):
+        for code, name in Issue.ISSUE_STATUS_CHOICES:
+            IssueStatus.objects.get_or_create(name=name, business=self)
+        for code, name in Project.PROJECT_STATUSES:
+            ProjectStatus.objects.get_or_create(name=name, business=self)
+    
     def get_traffic_owners(self):
         return [x.user for x in BusinessPermissions.objects.filter(business=self, can_do_traffic_checklist=True)]
 

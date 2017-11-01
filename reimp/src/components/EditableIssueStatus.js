@@ -32,7 +32,7 @@ class EditableIssueStatus extends Component {
                 >
                     <IssueStatusForm project_id={project_id}/>
                     <IssueStatusLabel />
-                    <Blank />
+                    <div className="text-component--empty">No status</div>
                 </EditableProperty>
             </div>
         )

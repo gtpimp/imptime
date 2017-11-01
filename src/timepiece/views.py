@@ -1034,6 +1034,7 @@ def create_edit_business(request, business=None):
         )
         if business_form.is_valid():
             business = business_form.save(request.user.profile.impd_client)
+            business.create_default_statuses()
             business.ensure_single_sprint(point_person=request.user)
             _set_project_rate_to_default_for_user(request.user, business.sprints.first())
             return HttpResponseRedirect(

@@ -219,6 +219,7 @@ class IssueViewSet(BaseViewSet):
                 issue = Issue.objects.create(
                         project=sprint,   # sic
                         order=order,
+                        status2 = IssueStatus.objects.get_or_create(name='new', business=sprint.business)[0],
                         number=Issue.get_next_issue_number(sprint.business),
                         subject=params['subject'],
                         can_group_issues=params.get('can_group_issues', False)) 
