@@ -137,7 +137,7 @@ export default function sprint(state = initialState, action) {
             return Object.assign({}, state,
                                  {cloning_sprint: Object.assign({},
                                                                 state.cloning_sprint,
-                                                                {new_sprint_id: payload.new_sprint_id})})
+                                                                {new_sprint_id: action.new_sprint_id})})
             
         default:
             return state

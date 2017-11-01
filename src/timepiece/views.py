@@ -1255,7 +1255,7 @@ def create_edit_person(request, person_id=None, template='timepiece/person/creat
             profile_form = timepiece_forms.UserProfileForm(request.user, instance=profile, prefix='profile')
             person_form = timepiece_forms.EditPersonForm(instance=person)
         else:
-            profile_form = timepiece_forms.UserProfileForm(request.user, creator=request.user, prefix='profile')
+            profile_form = timepiece_forms.UserProfileForm(request.user, prefix='profile')
             person_form = timepiece_forms.CreatePersonForm()
 
     context = {

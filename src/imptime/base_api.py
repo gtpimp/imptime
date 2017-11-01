@@ -133,8 +133,8 @@ class BaseViewSet(viewsets.ViewSet):
     def allowed_sprint(self, pk):
         return self.allowed_sprints().get(pk=pk)
 
-    def allowed_template_sprints(self, pk):
-        return self.allowed_template_sprints().get(pk=pk)
+    def allowed_template_sprints(self):
+        return PermissionHelper.allowed_template_sprints(self.request.user)
     
     def allowed_issues(self):
         return PermissionHelper.allowed_issues(self.request.user)

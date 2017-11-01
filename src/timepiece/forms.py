@@ -983,7 +983,9 @@ class UserProfileForm(forms.ModelForm):
             del self.fields['impd_client']
 
     def save(self, creator, user):
-        profile = super(UserProfileForm, self).save()
+        profile = super(UserProfileForm, self).save(commit=False)
+        profile.user = user
+        profile.save()
 
         if user.profile != profile:
             user.profile = profile
@@ -1003,10 +1005,6 @@ class UserProfileForm(forms.ModelForm):
             user.save()
             # for group in self.cleaned_data['groups']:
             #     group.user_set.add(user)
-
-        if profile.user != user:
-            profile.user = user
-            profile.save()
 
         return self.instance
 
