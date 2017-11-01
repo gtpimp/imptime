@@ -333,7 +333,7 @@ class Business(models.Model):
         kwargs.update({"name":"Sprint0",
                        "business":self ,
                        "type":Attribute.objects.get(label="default"),
-                       "status":Attribute.objects.get(label="open"),
+                       "status3":ProjectStatus.objects.get_or_create(name="pending", business=self)[0]
                        })
 
         if len(Project.objects.filter(business = self)) == 0:

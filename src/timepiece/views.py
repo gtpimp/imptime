@@ -5293,10 +5293,11 @@ def bulk_select_by_issue_state(request, project_id, context=None):
     form = timepiece_forms.IssueCheckboxContextMenuSelectByStateForm(selected_project, request.GET or None)
 
     if form.is_valid():
-        state = form.cleaned_data['status']
-        selected_issues = selected_project.issues.filter(status2__name=state)
+        state_id = form.cleaned_data['status']
+        state_to_select = timepiece.IssueStatus.objects.get(pk=state_id, business_id=selected_project.business_id)
+        selected_issues = selected_project.issues.filter(status2=state_to_select)
         request.session['selected_issue_ids_for_context_menu'] = [x.id for x in selected_issues]
-        messages.info(request, "%d issues selected for state %s" % (selected_issues.count(), state))
+        messages.info(request, "%d issues selected for state %s" % (selected_issues.count(), state_to_select.name))
     else:
         messages.info(request, "Failure: %s" % form.errors)
     return HttpResponseRedirect(reverse('project_list', args=[selected_project.id]))
