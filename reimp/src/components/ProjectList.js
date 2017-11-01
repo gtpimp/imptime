@@ -104,10 +104,17 @@ class ProjectList extends Component {
     }
 
     renderCollapsedProject(project) {
-	const { list_key } = this.props
+	const { list_key, loading_item_ids } = this.props
+        const is_loading=loading_item_ids.indexOf(project.id) !== -1
+        
 	return (
 	    <div key={"collapsed_project_"+project.id+"_"+list_key}>
-		Project: {project.name}
+              { is_loading && "Loading..." }
+              { ! is_loading &&
+                <div>
+                  Project: {project.name}
+                </div>
+              }
 	    </div>
 	)
     }
@@ -130,12 +137,14 @@ class ProjectList extends Component {
         const { list_key, loading_item_ids, selected_ids } = this.props
         const that = this
 
+        const is_loading = loading_item_ids.indexOf(project.id) !== -1 || project.loaded === false
+        
         return (
             <Project key={list_key + "_" + project.id + "_" + project.name + "_" + index}
                      is_collapsed={false}
                      reorderProjects={that.reorderProjects}
                      onClickedProject={(event) => that.onClickedProject(event, project.id)}
-                     is_loading={loading_item_ids.indexOf(project.id) !== -1}
+                     is_loading={is_loading}
                      is_selected={selected_ids.indexOf(project.id) !== -1}
                      project_id={project.id}
             />
